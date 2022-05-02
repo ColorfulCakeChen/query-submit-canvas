@@ -1139,25 +1139,28 @@ class Base {
 
       + `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `
       + `pointwise1ActivationName=`
-      + `${PointDepthPoint.Params.pointwise1ActivationId.getStringOfValue( testParams.out.pointwise1ActivationId )}`
-      + `(${testParams.out.pointwise1ActivationId}), `
+        + `${PointDepthPoint.Params.pointwise1ActivationId.getStringOfValue( testParams.out.pointwise1ActivationId )}`
+        + `(${testParams.out.pointwise1ActivationId}), `
 
       + `bDepthwise2Requested=${flags.bDepthwise2Requested}, `
 
-      + `depthwise_AvgMax_Or_ChannelMultiplier=${testParams.out.depthwise_AvgMax_Or_ChannelMultiplier}, `
+      + `depthwise_AvgMax_Or_ChannelMultiplier=`
+        + `${ValueDesc.StridesPad.Singleton.getStringOfValue( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier )}, `
       + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, depthwiseFilterWidth=${testParams.out.depthwiseFilterWidth}, `
-      + `depthwiseStridesPad=${testParams.out.depthwiseStridesPad}, `
+      + `depthwiseStridesPad=`
+        + `${ValueDesc.StridesPad.Singleton.getStringOfValue( testParams.out.depthwiseStridesPad )}`
+        + `(${testParams.out.depthwiseStridesPad}), `
       + `bDepthwiseBias=${testParams.out.bDepthwiseBias}, `
       + `depthwiseActivationName=`
-      + `${PointDepthPoint.Params.depthwiseActivationId.getStringOfValue( testParams.out.depthwiseActivationId )}`
-      + `(${testParams.out.depthwiseActivationId}), `
+        + `${PointDepthPoint.Params.depthwiseActivationId.getStringOfValue( testParams.out.depthwiseActivationId )}`
+        + `(${testParams.out.depthwiseActivationId}), `
 
       + `bConcat1Requested=${flags.bConcat1Requested}, `
 
       + `pointwise21ChannelCount=${testParams.out.pointwise21ChannelCount}, bPointwise21Bias=${testParams.out.bPointwise21Bias}, `
       + `pointwise21ActivationName=`
-      + `${PointDepthPoint.Params.pointwise21ActivationId.getStringOfValue( testParams.out.pointwise21ActivationId )}`
-      + `(${testParams.out.pointwise21ActivationId}), `
+        + `${PointDepthPoint.Params.pointwise21ActivationId.getStringOfValue( testParams.out.pointwise21ActivationId )}`
+        + `(${testParams.out.pointwise21ActivationId}), `
 
       + `bOutput1Requested=${testParams.out.bOutput1Requested}, `
 
