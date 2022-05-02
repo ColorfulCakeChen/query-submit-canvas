@@ -4,5 +4,5 @@ export { channelCount1_pointwise1Before } from "./ValueDesc/ValueDesc_Other.js";
 export { Pointwise_HigherHalfDifferent } from "./ValueDesc/ValueDesc_Other.js";
 export { Depthwise_HigherHalfDifferent } from "./ValueDesc/ValueDesc_Other.js";
 export { AvgMax_Or_ChannelMultiplier } from "./ValueDesc/ValueDesc_Other.js";
-export { StridesPad } from "./ValueDesc/ValueDesc_Other.js";
+export { StridesPad } from "./ValueDesc/ValueDesc_StridesPad.js";
 export { WhetherShuffleChannel } from "./ValueDesc/ValueDesc_Other.js";
