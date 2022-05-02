@@ -5,8 +5,6 @@ export { ShuffleNetV2_ByMobileNetV1 };
 export { MobileNetV2 };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
-// import * as ParamDesc from "../Unpacker/ParamDesc.js";
-// import * as Weights from "../Unpacker/Weights.js";
 import * as PointDepthPoint from "./PointDepthPoint.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
 import { Params } from "./Block_Param.js";
