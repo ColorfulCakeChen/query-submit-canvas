@@ -329,7 +329,7 @@ class Base {
         + `PointDepthPoint, (yieldCount == ${testParams.yieldCount}), testParams.id == ${testParams.id}`;
 
       console.log( msg );
-      alert( msg );
+      alert( msg + e );
 
       throw e;
     }
