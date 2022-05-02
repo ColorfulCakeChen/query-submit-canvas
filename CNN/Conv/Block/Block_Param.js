@@ -40,19 +40,9 @@ class Params extends Weights.Params {
    * @param {number} stepCountRequested
    *   How many steps inside this block are wanted.
    *   - If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   *
-   *   - If one (== 1), the step count will be automatically calculated so that the block's output has half of source's
-   *     ( height, width ) and double channel count (depth).
-   *       - Every step will use depthwise convolution ( strides = 1, pad = "valid" ) and pointwise21. So every step will
-   *         shrink the input a little.
-   *       - The step0's depthwise convolution will also use channel multiplier 2 to double the channel count.
-   *       - The stepLast may use a smaller depthwise filter so that it could just make output's ( height, width ) as half of source.
-   *       - If ( depthwiseFilterHeight == 1 ), the depthwiseFilterHeight will become 2 forcibly. Otherwise, the source size
-   *         could not be shrinked.
-   *
-   *   - If ( stepCountRequested >= 2 ), this block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
+   *   - It must be ( >= 2 ). Because this block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
    *       (i.e. to halve height x width) and use ( stepCountRequested - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" )
-   *       until the block end. (This can not be achieved by only one step. So there is at least two steps.)
+   *       until the block end. These can not be achieved by only one step. So there is at least two steps.
    *
    * @param {number} pointwise1ChannelCountRate
    *   The first 1x1 pointwise convolution output channel count over of the second 1x1 pointwise convolution output channel count.
@@ -85,9 +75,6 @@ class Params extends Weights.Params {
    *   Whether a (concatenator and) channel shuffler will be used.
    *
    *   - If ( nWhetherShuffleChannel == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
-   *
-   *   - If ( stepCountRequested <= 1 ), this flag will be ignored.
-   *       This block will be NotShuffleNet_NotMobileNet. There will be no channel shuffler.
    *
    *   - If ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.NONE ), (0),
    *       this block will be MobileNetV1 or MobileNetV2 (i.e. with add-input-to-output, no channel shuffler).
@@ -212,7 +199,7 @@ class Params extends Weights.Params {
 Params.sourceHeight =               new ParamDesc.Int(                   "sourceHeight",               1, ( 10 * 1024 ) );
 Params.sourceWidth =                new ParamDesc.Int(                   "sourceWidth",                1, ( 10 * 1024 ) );
 Params.sourceChannelCount =         new ParamDesc.Int(                   "sourceChannelCount",         1, ( 10 * 1024 ) );
-Params.stepCountRequested =         new ParamDesc.Int(                   "stepCountRequested",         1, (  1 * 1024 ) );
+Params.stepCountRequested =         new ParamDesc.Int(                   "stepCountRequested",         2, (  1 * 1024 ) );
 Params.pointwise1ChannelCountRate = new ParamDesc.Int(                   "pointwise1ChannelCountRate", 0,             2 );
 Params.depthwiseFilterHeight =      new ParamDesc.Int(                   "depthwiseFilterHeight",      1, ( 10 * 1024 ) );
 Params.depthwiseFilterWidth =       new ParamDesc.Int(                   "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
