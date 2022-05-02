@@ -290,6 +290,7 @@ class ShuffleNetV2 extends Base {
 
     this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
 
+//!!! ...unfinished... (2022/05/02) should be moved to another method so that it can be avoided to create channel shuffler in sub-class.
     // In ShuffleNetV2, all steps (except step0) uses channel shuffler (with two convolution groups).
     {
       let outputGroupCount = 2; // Always with two convolution groups.
