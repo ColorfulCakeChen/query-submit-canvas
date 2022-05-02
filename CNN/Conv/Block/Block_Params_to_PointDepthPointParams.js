@@ -71,7 +71,7 @@ class Base {
    *   - Double channels.
    *     - By concat, if ShuffleNetV2.
    *     - By channelMultiplier of depthwise convolution, if (Our) ShuffleNetV2 when ( pointwise1ChannelCount == 0 ).
-   *     - By pointwise21, if MobileNetV2.
+   *     - By pointwise1 (for ( pointwise1ChannelCountRate == 1 )) and pointwise21 (for ( pointwise1ChannelCountRate == 0 )), if MobileNetV2.
    */
   configTo_beforeStep0() {}
 
@@ -124,7 +124,8 @@ class Base {
 }
 
 
-/** Provide parameters for ShuffleNetV2 (i.e. shuffle channel by ChannelShuffler.ConcatPointwiseConv).
+/**
+ * Provide parameters for ShuffleNetV2 (i.e. shuffle channel by ChannelShuffler.ConcatPointwiseConv).
  *
  *
  * 1. Be ware of ( pointwise1ChannelCountRate == 2 )
