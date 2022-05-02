@@ -526,7 +526,7 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
     // The input0 will be copied as pointwise1's higher half.
     //
     if ( this.pointwise1ChannelCountRate > 0 ) {
-      this.pointwise1ChannelCount = blockParams.sourceChannelCount
+      this.pointwise1ChannelCount = blockParams.sourceChannelCount;
 
     // In ShuffleNetV2_ByMobileNetV1's head, if ( pointwise1ChannelCountRate == 0 ), pointwise1ChannelCount is also 0.
     //
@@ -545,6 +545,8 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
     // In ShuffleNetV2_ByMobileNetV1's head, pointwise21ChannelCount is always twice of input0's channel count.
     //
     this.pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
+
+    this.bOutput1Requested = false; // In ShuffleNetV2_ByMobileNetV1, there is always only output0 (i.e. no output1).
   }
 
 
