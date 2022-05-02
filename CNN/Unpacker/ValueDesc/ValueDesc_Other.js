@@ -2,6 +2,7 @@ export { channelCount1_pointwise1Before };
 export { Pointwise_HigherHalfDifferent };
 export { Depthwise_HigherHalfDifferent };
 export { AvgMax_Or_ChannelMultiplier };
+export { StridesPad };
 export { WhetherShuffleChannel };
 
 import { Int } from "./ValueDesc_Base.js";
@@ -115,6 +116,29 @@ class AvgMax_Or_ChannelMultiplier extends Int {
 AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
 
 
+/** Describe id, range, name of (convolution's) strides and pad.
+ *
+ * Convert number value into integer between [ 0, 4 ] representing strides and pad:
+ *   -  0: STRIDES_1_PAD_VALID (strides = 1, pad = "valid")
+ *   -  1: STRIDES_1_PAD_SAME (strides = 1, pad = "same")
+ *   -  2: STRIDES_2_PAD_SAME (strides = 2, pad = "same")
+ */
+class StridesPad extends Int {
+
+  constructor() {
+    super( 0, 2, [
+      "STRIDES_1_PAD_VALID", // (0) (strides = 1, pad = "valid")
+      "STRIDES_1_PAD_SAME",  // (1) (strides = 1, pad = "same")
+      "STRIDES_2_PAD_SAME",  // (2) (strides = 2, pad = "same")
+    ] );
+  }
+
+}
+
+/** The only one ValueDesc.StridesPad instance. */
+StridesPad.Singleton = new StridesPad;
+
+
 /** Describe id, range, name of WhetherShuffleChannel.
  *
  * Convert number value into integer between [ 0, 3 ] representing operation:
@@ -126,7 +150,7 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
 class WhetherShuffleChannel extends Int {
 
   constructor() {
-    super( 0, 2, [
+    super( 0, 3, [
       "NONE",                // (0)
       "BY_CHANNEL_SHUFFLER", // (1)
       "BY_POINTWISE22",      // (2)
