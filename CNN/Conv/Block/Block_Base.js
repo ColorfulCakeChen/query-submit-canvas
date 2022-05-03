@@ -15,14 +15,14 @@ import { Params } from "./Block_Params.js";
  *
  * All types of block will output an image whose height and width are only half of the input image's height and width.
  *
- * They all do it by the same method: depthwise convolution with ( strides = 2 ). Most will do it with ( pad = "same" ). 
+ * They all do it at step0 and by the same method: depthwise convolution with ( strides = 2 ). Most will do it with ( pad = "same" ). 
  * But some will do it with ( pad = "valid" ).
  *
  *
  * 2. Double channels
  *
- * All types of block will output an image whose channel count is twice of the input image's channel count. But they do
- * it with different ways:
+ * All types of block will output an image whose channel count is twice of the input image's channel count. But they all do
+ * it at step0 but with different ways:
  *
 
 !!! ...unfinished... (2022/05/03)
