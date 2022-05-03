@@ -77,6 +77,8 @@ class Base {
   configTo_beforeStep0() {
     this.inputHeight0 = this.blockParams.sourceHeight; // step0 inputs the source image size.
     this.inputWidth0 = this.blockParams.sourceWidth;
+
+//!!! ...unfinished... (2022/05/03) bias, activation of pointwise1, depthwise1, pointwise2
   }
 
   /**
