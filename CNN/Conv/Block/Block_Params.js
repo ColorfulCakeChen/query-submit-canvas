@@ -44,6 +44,9 @@ class Params extends Weights.Params {
    *       (i.e. to halve height x width) and use ( stepCountRequested - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" )
    *       until the block end. These can not be achieved by only one step. So there is at least two steps.
    *
+
+!!! ...unfinished... (2022/05/03) changed to bPointwise1?
+
    * @param {number} pointwise1ChannelCountRate
    *   The first 1x1 pointwise convolution output channel count over of the second 1x1 pointwise convolution output channel count.
    * That is, pointwise1ChannelCount = ( pointwise21ChannelCount * pointwise1ChannelCountRate ).
@@ -75,6 +78,9 @@ class Params extends Weights.Params {
    * (i.e. nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that it will not be restricted by the range
    * of the activation function.
    *
+
+!!! ...unfinished... (2022/05/03) changed to  ConvBlockType ?
+
    * @param {boolean} nWhetherShuffleChannel
    *   Whether a (concatenator and) channel shuffler will be used.
    *
