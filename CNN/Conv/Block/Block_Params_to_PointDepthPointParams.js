@@ -559,6 +559,8 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 
     // Except that ShuffleNetV2_ByMobileNetV1 does not have channel shuffler. The pointwise21 will do channel shuffling.
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH; // (-5)
+    
+//!!! ...unfinished... (2022/05/03) pointwise1ChannelCount?
   }
 
   /** @override */
