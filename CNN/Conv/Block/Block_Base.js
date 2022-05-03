@@ -11,6 +11,63 @@ import { Params } from "./Block_Params.js";
  * Implement a block of ( depthwise convolution and pointwise convolution ) or ShuffleNetV2 (with 2 output channel groups) or MobileNetV1
  * or MobileNetV2.
  *
+ * 1. Halve Height, Halve Width
+ *
+ * All types of block will output an image whose height and width are only half of the input image's height and width.
+ *
+ * They all do it by the same method: depthwise convolution with ( strides = 2 ). Most will do it with ( pad = "same" ). 
+ * But some will do it with ( pad = "valid" ).
+ *
+ *
+ * 2. Double channels
+ *
+ * All types of block will output an image whose channel count is twice of the input image's channel count. But they do
+ * it with different ways:
+ *
+
+!!! ...unfinished... (2022/05/03)
+
+ *
+ *   - ShuffleNetV2
+ *
+ *     - ( pointwise1ChannelCountRate == 0 )
+ *
+ *     - ( pointwise1ChannelCountRate > 0 )
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * 3. Bias and Activation
+ *
+ *
+
+!!! ...unfinished... (2022/05/03) pointwise1
+
+ *     - ( pointwise1ChannelCountRate == 0 )
+ *
+ *
+ *
+ *
+ *     - ( pointwise1ChannelCountRate > 0 )
+ *
+
+!!! ...unfinished... (2022/05/03) depthwise, pointwise2
+
+!!! ...unfinished... (2022/05/03) pointwise2 at block end
+
+
+ *
+ *
+ * 4.
+ *
+ * Note: In modern deep learning CNN, there is batch normalization after convolution and before activation. The batch normalization
+ * has bias internally. We do not have batch normalization in architecture so an explicit bias will be used before every activation
+ * function.
+ *
+ *
  *
  * @member {boolean} bInitOk
  *  If true, this object initialized (i.e. initer()) successfully.
