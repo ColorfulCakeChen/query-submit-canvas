@@ -74,12 +74,18 @@ class Base {
    *     - By channelMultiplier of depthwise convolution, if (Our) ShuffleNetV2 when ( pointwise1ChannelCount == 0 ).
    *     - By pointwise1 (for ( pointwise1ChannelCountRate == 1 )) and pointwise21 (for ( pointwise1ChannelCountRate == 0 )), if MobileNetV2.
    */
-  configTo_beforeStep0() {}
+  configTo_beforeStep0() {
+    this.inputHeight0 = this.blockParams.sourceHeight; // step0 inputs the source image size.
+    this.inputWidth0 = this.blockParams.sourceWidth;
+  }
 
   /**
    * Called after step0 is created (i.e. before step1, 2, 3, ...). Sub-class should override this method to adjust data members.
    */
-  configTo_afterStep0() {}
+  configTo_afterStep0() {
+    this.inputHeight0 = this.blockParams.outputHeight; // all steps (except step0) inputs half the source image size.
+    this.inputWidth0 = this.blockParams.outputWidth;
+  }
 
   /**
    * Called before stepLast is about to be created. Sub-class could override this method to adjust data members.
@@ -209,10 +215,13 @@ class ShuffleNetV2 extends Base {
 
   /** @override */
   configTo_beforeStep0() {
+    super.configTo_beforeStep0(); // step0's inputHeight0, inputWidth0.
+
     let blockParams = this.blockParams;
 
-    this.inputHeight0 = blockParams.sourceHeight; // step0 inputs the source image size.
-    this.inputWidth0 = blockParams.sourceWidth;
+//!!! (2022/05/03 Remarked) be moved to class Base.
+//     this.inputHeight0 = blockParams.sourceHeight; // step0 inputs the source image size.
+//     this.inputWidth0 = blockParams.sourceWidth;
 
     this.channelCount0_pointwise1Before = blockParams.sourceChannelCount; // Step0 uses the original input channel count (as input0).
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE; // with concatenation.
@@ -267,10 +276,13 @@ class ShuffleNetV2 extends Base {
 
   /** @override */
   configTo_afterStep0() {
+    super.configTo_afterStep0(); // step1, 2, 3, ...'s inputHeight0, inputWidth0.
+
     let blockParams = this.blockParams;
 
-    this.inputHeight0 = blockParams.outputHeight; // all steps (except step0) inputs half the source image size.
-    this.inputWidth0 = blockParams.outputWidth;
+//!!! (2022/05/03 Remarked) be moved to class Base.
+//     this.inputHeight0 = blockParams.outputHeight; // all steps (except step0) inputs half the source image size.
+//     this.inputWidth0 = blockParams.outputWidth;
 
     // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
     this.channelCount0_pointwise1Before = this.outChannels0;
@@ -667,10 +679,13 @@ class MobileNetV2 extends Base {
 
   /** @override */
   configTo_beforeStep0() {
+    super.configTo_beforeStep0(); // step0's inputHeight0, inputWidth0.
+
     let blockParams = this.blockParams;
 
-    this.inputHeight0 = blockParams.sourceHeight; // step0 inputs the source image size.
-    this.inputWidth0 = blockParams.sourceWidth;
+//!!! (2022/05/03 Remarked) be moved to class Base.
+//     this.inputHeight0 = blockParams.sourceHeight; // step0 inputs the source image size.
+//     this.inputWidth0 = blockParams.sourceWidth;
 
 //!!! (2021/10/11 Remarked) Unfortunately, the sub-class (i.e. NotShuffleNet_NotMobileNet) also call this method.
 //     // Currently, MobileNetV2 must have at least 2 steps because PointDepthPoint can not achieve the head/body/tail
@@ -734,10 +749,13 @@ class MobileNetV2 extends Base {
 
   /** @override */
   configTo_afterStep0() {
+    super.configTo_afterStep0(); // step1, 2, 3, ...'s inputHeight0, inputWidth0.
+
     let blockParams = this.blockParams;
 
-    this.inputHeight0 = blockParams.outputHeight; // all steps (except step0) inputs half the source image size.
-    this.inputWidth0 = blockParams.outputWidth;
+//!!! (2022/05/03 Remarked) be moved to class Base.
+//     this.inputHeight0 = blockParams.outputHeight; // all steps (except step0) inputs half the source image size.
+//     this.inputWidth0 = blockParams.outputWidth;
 
     // The input0 of all steps (except step0) have the same depth as previous (also step0's) step's output0.
     this.channelCount0_pointwise1Before = this.outChannels0;
