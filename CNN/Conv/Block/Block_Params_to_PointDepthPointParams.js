@@ -528,6 +528,7 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
       this.pointwise1ChannelCount = blockParams.sourceChannelCount;
 
     // In ShuffleNetV2_ByMobileNetV1's head, if ( pointwise1ChannelCountRate == 0 ), pointwise1ChannelCount is also 0.
+    // But, in this case, pointwise1 will still be created by PointDepthPoint.
     //
     // The input0 will just be pass-through as pointwise1's lower half.
     // The input0 will also be copied as pointwise1's higher half.
@@ -560,7 +561,21 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
     // Except that ShuffleNetV2_ByMobileNetV1 does not have channel shuffler. The pointwise21 will do channel shuffling.
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH; // (-5)
     
-//!!! ...unfinished... (2022/05/03) pointwise1ChannelCount?
+    // In ShuffleNetV2_ByMobileNetV1's body/tail, if ( pointwise1ChannelCountRate != 0 ), pointwise1ChannelCount is always the same
+    // as pointwise21 output channel count. (i.e. pointwise1ChannelCountRate is always viewed as 1.)
+    //
+    // The input0's lower half will be processed by pointwise1's lower half.
+    // The input0's higher half will be pass-through as pointwise1's higher half.
+    //
+    if ( this.pointwise1ChannelCountRate > 0 ) {
+      this.pointwise1ChannelCount = this.pointwise21ChannelCount;
+
+    // In ShuffleNetV2_ByMobileNetV1's body/tail, if ( pointwise1ChannelCountRate == 0 ), pointwise1ChannelCount is also 0.
+    // In this case, pointwise1 will not be created by PointDepthPoint.
+    //
+    } else {
+      this.pointwise1ChannelCount = 0;
+    }
   }
 
   /** @override */
