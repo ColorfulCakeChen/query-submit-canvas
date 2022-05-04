@@ -5,7 +5,6 @@ import * as ChannelShuffler from "../../ChannelShuffler.js";
 import { Params } from "../Block_Param.js";
 import { Base } from "./Base.js";
 
-
 /**
  * Provide parameters for ShuffleNetV2 (i.e. shuffle channel by ChannelShuffler.ConcatPointwiseConv).
  *
