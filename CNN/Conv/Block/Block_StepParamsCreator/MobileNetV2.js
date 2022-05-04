@@ -7,7 +7,8 @@ import { Base } from "./Base.js";
 
 //!!! ...unfinished... (2022/05/02)
 
-/** Provide parameters for MobileNetV2 (i.e. with pointwise1, with add-input-to-output).
+/**
+ * Provide parameters for MobileNetV2 (i.e. with pointwise1, with add-input-to-output).
  *
  *
  * 1. Be ware of ( pointwise1ChannelCountRate == 1 )
@@ -76,6 +77,9 @@ class MobileNetV2 extends Base {
     this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
     this.bOutput1Requested = false;                                  // In MobileNetV2, all steps do not have output1.
+
+//!!! ...unfinished... (2022/05/04)
+// If ( bPointwise1 == false ), should use channelMultiplier = 2 or 4 to expand.
 
     // In MobileNet, all steps have pointwise1 convolution before depthwise convolution. Its channel count is adjustable by user's request.
     // If ( pointwise1ChannelCountRate == 0 ), it is the same as no pointwise1.
