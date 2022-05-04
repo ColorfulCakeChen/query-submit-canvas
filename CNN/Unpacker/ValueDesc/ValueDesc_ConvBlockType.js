@@ -5,7 +5,7 @@ import { Int } from "./ValueDesc_Base.js";
 /** Describe id, range, name of ConvBlockType (Convolution Block Type).
  *
  * Convert number value into integer between [ 0, 6 ] representing operation:
- *   - 0: MOBILE_NET_V1                             (i.e. no-add-inut-to-output)
+ *   - 0: MOBILE_NET_V1                             (i.e. no-add-inut-to-output, pointwise1 is same size of pointwise21)
  *   - 1: MOBILE_NET_V2                             (i.e. add-inut-to-output, pointwise1 is tiwce size of pointwise21)
  *   - 2: MOBILE_NET_V2_THIN                        (i.e. add-inut-to-output, pointwise1 is same size of pointwise21)
  *   - 3: SHUFFLE_NET_V2                            (i.e. by channel shuffler)
