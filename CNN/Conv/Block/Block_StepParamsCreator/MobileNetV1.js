@@ -31,17 +31,15 @@ class MobileNetV1 extends Base {
 
     this.channelCount0_pointwise1Before = blockParams.sourceChannelCount; // Step0 uses the original input channel count (as input0).
 
-    // In MobileNetV2:
-    //   - Step0 can not do add-input-to-output because the input0's ( height, width ) has been halven.
-    //   - All steps (include step0) do not use input1.
+    // In MobileNetV1, all steps (include step0) do not use input1.
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT;
 
-    If ( blockParams.bPointwise1 == false ) { // use channelMultiplier = 2 or 4 to expand.
+    If ( blockParams.bPointwise1 == false ) {
       this.pointwise1ChannelCount = 0;                                  // NoPointwise1.
-      this.depthwise_AvgMax_Or_ChannelMultiplier = 4;                   // Quadruple of input0. (Double of pointwise21.)
+      this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                   // Double of input0. (Same as pointwise21.)
 
     } else {
-      this.pointwise1ChannelCount = blockParams.sourceChannelCount * 4; // Quadruple of input0. (Double of pointwise21.)
+      this.pointwise1ChannelCount = blockParams.sourceChannelCount * 2; // Double of input0. (Same as pointwise21.)
       this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     }
 
@@ -51,8 +49,11 @@ class MobileNetV1 extends Base {
     // Step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
 
-    // In MobileNetV2's original design, it is not always "twice". We choose "twice" just for comparing with ShuffleNetV2.
-    this.pointwise21ChannelCount = blockParams.sourceChannelCount * 2; // In MobileNetV2, all steps' output0 is double depth of source input0.
+    // In MobileNetV2, all steps' output0 is double depth of source input0.
+    //
+    // Note: In MobileNetV2's original design, it is not always "twice". We choose "twice" just for comparing with ShuffleNetV2.
+    //
+    this.pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
 
     this.bOutput1Requested = false; // In MobileNetV2, all steps do not have output1.
 
@@ -71,10 +72,8 @@ class MobileNetV1 extends Base {
     // The input0 of all steps (except step0) have the same depth as previous (also step0's) step's output0.
     this.channelCount0_pointwise1Before = this.outChannels0;
 
-    // In MobileNetV2:
-    //   - All steps (except step0) do add-input-to-output (without concatenation).
-    //   - All steps (include step0) do not use input1.
-    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT;
+    // In MobileNetV1, all steps (include step0) do not use input1.
+    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT;
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1; // Because step0 has already double output channel count.
 
