@@ -93,15 +93,11 @@ class Base {
    */
   configTo_beforeStepLast() {
 
-//!!! (2022/05/04 Remarked) ShuffleNetV2_ByMobileNetV1 can not work.
-//     // By default, the stepLast of this block (i.e. at-block-end) may use a different activation function after pointwise2 convolution.
-//     //
-//     // Even if in MobileNetV2 (pointwise2 convolution does not have activation function in default), this is still true.
-//     this.pointwise21ActivationId = this.blockParams.nActivationIdAtBlockEnd;
-
     // Besides, the stepLast may use a different depthwise filter size. This is especially true for NotShuffleNet_NotMobileNet.
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Last;
     this.depthwiseFilterWidth = this.depthwiseFilterWidth_Last;
+
+    this.bias_activation_setup_forStepLast(); // bias, activation of pointwise1, depthwise1, pointwise2
   }
 
   /**
