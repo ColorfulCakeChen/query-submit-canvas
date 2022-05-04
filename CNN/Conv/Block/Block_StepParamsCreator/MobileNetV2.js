@@ -5,7 +5,7 @@ import { Params } from "../Block_Param.js";
 import { Base } from "./Base.js";
 
 /**
- * Provide parameters for MobileNetV2 (i.e. with pointwise1, with add-input-to-output).
+ * Provide parameters for MobileNetV2 (i.e. add-inut-to-output, pointwise1 is tiwce size of pointwise21).
  *
  *
  */
@@ -26,10 +26,10 @@ class MobileNetV2 extends Base {
 
     If ( blockParams.bPointwise1 == false ) { // use channelMultiplier = 2 or 4 to expand.
       this.pointwise1ChannelCount = 0;                                  // NoPointwise1.
-      this.depthwise_AvgMax_Or_ChannelMultiplier = 4;                   // Quadruple of input0.
+      this.depthwise_AvgMax_Or_ChannelMultiplier = 4;                   // Quadruple of input0. (Double of pointwise21.)
 
     } else {
-      this.pointwise1ChannelCount = blockParams.sourceChannelCount * 4; // Quadruple of input0.
+      this.pointwise1ChannelCount = blockParams.sourceChannelCount * 4; // Quadruple of input0. (Double of pointwise21.)
       this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     }
 
@@ -38,14 +38,6 @@ class MobileNetV2 extends Base {
 
     // Step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
-
-
-//!!! ...unfinished... (2022/05/04) ( this.bPointwise21Bias = false ) should be ported to other StepParamsCreator.
-
-    // In MobileNetV2, since there is no activation function after pointwise21, it needs not bias after pointwise21. The reason
-    // is the pointwise1 of the next step has bias before activation to complete affine transformation.
-    this.bPointwise21Bias = false;
-
 
     // In MobileNetV2's original design, it is not always "twice". We choose "twice" just for comparing with ShuffleNetV2.
     this.pointwise21ChannelCount = blockParams.sourceChannelCount * 2; // In MobileNetV2, all steps' output0 is double depth of source input0.
@@ -82,14 +74,7 @@ class MobileNetV2 extends Base {
 
   /** @override */
   configTo_beforeStepLast() {
-    super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
-
-//!!! ...unfinished... (2022/05/04) ( this.bPointwise21Bias = false ) should be ported to other StepParamsCreator.
-
-    // In MobileNetV2, although there is no activation function after pointwise21, it should have bias after pointwise21 for
-    // the stepLast. The reason is the stepLast does not have the next step's pointwise1 to provide bias to complete affine
-    // transformation. It must do it by itself.
-    this.bPointwise21Bias = true;
+    super.configTo_beforeStepLast(); // stepLast's pointwise21 bias.
   }
 
 }
