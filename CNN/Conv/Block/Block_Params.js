@@ -76,12 +76,16 @@ class Params extends Weights.Params {
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be
    * extracted from inputFloat32Array (i.e. by evolution).
    *
-   * @param {number} nActivationIdAtBlockEnd
-   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution of the last PointDepthPoint's
-   * pointwise2ActivationId of this block. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If the output of
-   * this block needs to be any arbitrary value, it is recommended not to use activation at the end of this block
-   * (i.e. nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that it will not be restricted by the range
-   * of the activation function.
+
+//!!! (2022/05/04 Remarked) ShuffleNetV2_ByMobileNetV1 can not work.
+//
+//    * @param {number} nActivationIdAtBlockEnd
+//    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution of the last PointDepthPoint's
+//    * pointwise2ActivationId of this block. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If the output of
+//    * this block needs to be any arbitrary value, it is recommended not to use activation at the end of this block
+//    * (i.e. nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that it will not be restricted by the range
+//    * of the activation function.
+
    *
    * @param {number} nConvBlockType
    *   The type of this convolution block (ValueDesc.ConvBlockType.Singleton.Ids.Xxx).
@@ -126,7 +130,11 @@ class Params extends Weights.Params {
     stepCountRequested,
     bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth,
-    nActivationId, nActivationIdAtBlockEnd,
+    nActivationId,
+
+//!!! (2022/05/04 Remarked) ShuffleNetV2_ByMobileNetV1 can not work.
+//    nActivationIdAtBlockEnd,
+
     nConvBlockType,
     bKeepInputTensor
   ) {
@@ -151,7 +159,10 @@ class Params extends Weights.Params {
       [ Params.depthwiseFilterHeight,      depthwiseFilterHeight ],
       [ Params.depthwiseFilterWidth,       depthwiseFilterWidth ],
       [ Params.nActivationId,              nActivationId ],
-      [ Params.nActivationIdAtBlockEnd,    nActivationIdAtBlockEnd ],
+
+//!!! (2022/05/04 Remarked) ShuffleNetV2_ByMobileNetV1 can not work.
+//      [ Params.nActivationIdAtBlockEnd,    nActivationIdAtBlockEnd ],
+
       [ Params.nConvBlockType,             nConvBlockType ],
       [ Params.bKeepInputTensor,           bKeepInputTensor ],
     ] );
@@ -209,8 +220,10 @@ class Params extends Weights.Params {
 
   get nActivationId()               { return this.parameterMapModified.get( Params.nActivationId ); }
   get nActivationIdName()           { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
-  get nActivationIdAtBlockEnd()     { return this.parameterMapModified.get( Params.nActivationIdAtBlockEnd ); }
-  get nActivationIdAtBlockEndName() { return Params.nActivationIdAtBlockEnd.getStringOfValue( this.nActivationIdAtBlockEnd ); }
+
+//!!! (2022/05/04 Remarked) ShuffleNetV2_ByMobileNetV1 can not work.
+//   get nActivationIdAtBlockEnd()     { return this.parameterMapModified.get( Params.nActivationIdAtBlockEnd ); }
+//   get nActivationIdAtBlockEndName() { return Params.nActivationIdAtBlockEnd.getStringOfValue( this.nActivationIdAtBlockEnd ); }
 
   get nConvBlockType()              { return this.parameterMapModified.get( Params.nConvBlockType ); }
   get nConvBlockTypeName()          { return Params.nConvBlockType.getStringOfValue( this.nConvBlockType ); }
@@ -233,7 +246,10 @@ Params.bPointwise1 =                new ParamDesc.Bool(                  "bPoint
 Params.depthwiseFilterHeight =      new ParamDesc.Int(                   "depthwiseFilterHeight",      1, ( 10 * 1024 ) );
 Params.depthwiseFilterWidth =       new ParamDesc.Int(                   "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
 Params.nActivationId =              new ParamDesc.ActivationFunction(    "nActivationId" );
-Params.nActivationIdAtBlockEnd =    new ParamDesc.ActivationFunction(    "nActivationIdAtBlockEnd" );
+
+//!!! (2022/05/04 Remarked) ShuffleNetV2_ByMobileNetV1 can not work.
+//Params.nActivationIdAtBlockEnd =    new ParamDesc.ActivationFunction(    "nActivationIdAtBlockEnd" );
+
 Params.nConvBlockType =             new ParamDesc.ConvBlockType(         "nConvBlockType" );
 Params.bKeepInputTensor =           new ParamDesc.Bool(                  "bKeepInputTensor" );
 
