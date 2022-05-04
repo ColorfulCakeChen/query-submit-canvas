@@ -45,19 +45,24 @@ class Params extends Weights.Params {
    *       until the block end. These can not be achieved by only one step. So there is at least two steps.
    *
 
-!!! ...unfinished... (2022/05/03) changed to bPointwise1?
 
-   * @param {number} pointwise1ChannelCountRate
-   *   The first 1x1 pointwise convolution output channel count over of the second 1x1 pointwise convolution output channel count.
-   * That is, pointwise1ChannelCount = ( pointwise21ChannelCount * pointwise1ChannelCountRate ).
-   *   - If ( pointwise1ChannelCountRate == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
-   *   - If ( pointwise1ChannelCountRate == 0 ), there will be no pointwise1.
-   *   - If ( pointwise1ChannelCountRate == 1 ):
-   *       - For MobileNetV2: pointhwise1 is double. pointhwise21 is alwyas double. (Non-standard)
-   *       - For ShuffleNetV2: pointwise1 is single. depthwise is double. (Standard)
-   *   - If ( pointwise1ChannelCountRate == 2 ):
-   *       - For MobileNetV2: pointhwise1 is quadruple. pointhwise21 is double. (Standard)
-   *       - For ShuffleNetV2: pointwise1 is double. depthwise is quadruple! (Not suggested)
+   * @param {boolean} bPointwise1
+   *   If false, there will be no pointwise1 (i.e. the 1st pointwise convolution).If null, it will be extracted from inputFloat32Array
+   * (i.e. by evolution).
+
+!!! (2022/05/03 Remarked)
+//    * @param {number} pointwise1ChannelCountRate
+//    *   The first 1x1 pointwise convolution output channel count over of the second 1x1 pointwise convolution output channel count.
+//    * That is, pointwise1ChannelCount = ( pointwise21ChannelCount * pointwise1ChannelCountRate ).
+//    *   - If ( pointwise1ChannelCountRate == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
+//    *   - If ( pointwise1ChannelCountRate == 0 ), there will be no pointwise1.
+//    *   - If ( pointwise1ChannelCountRate == 1 ):
+//    *       - For MobileNetV2: pointhwise1 is double. pointhwise21 is alwyas double. (Non-standard)
+//    *       - For ShuffleNetV2: pointwise1 is single. depthwise is double. (Standard)
+//    *   - If ( pointwise1ChannelCountRate == 2 ):
+//    *       - For MobileNetV2: pointhwise1 is quadruple. pointhwise21 is double. (Standard)
+//    *       - For ShuffleNetV2: pointwise1 is double. depthwise is quadruple! (Not suggested)
+
    *
    * @param {number} depthwiseFilterHeight
    *   The height of depthwise convolution's filter. At least 1 (so that 1D data could be processed). If null, it will be extracted
@@ -119,7 +124,7 @@ class Params extends Weights.Params {
   constructor( inputFloat32Array, byteOffsetBegin,
     sourceHeight, sourceWidth, sourceChannelCount,
     stepCountRequested,
-    pointwise1ChannelCountRate,
+    bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth,
     nActivationId, nActivationIdAtBlockEnd,
     nConvBlockType,
@@ -142,7 +147,7 @@ class Params extends Weights.Params {
       [ Params.sourceWidth,                sourceWidth ],
       [ Params.sourceChannelCount,         sourceChannelCount ],
       [ Params.stepCountRequested,         stepCountRequested ],
-      [ Params.pointwise1ChannelCountRate, pointwise1ChannelCountRate ],
+      [ Params.bPointwise1,                bPointwise1 ],
       [ Params.depthwiseFilterHeight,      depthwiseFilterHeight ],
       [ Params.depthwiseFilterWidth,       depthwiseFilterWidth ],
       [ Params.nActivationId,              nActivationId ],
@@ -197,7 +202,7 @@ class Params extends Weights.Params {
   get sourceChannelCount()          { return this.parameterMapModified.get( Params.sourceChannelCount ); }
 
   get stepCountRequested()          { return this.parameterMapModified.get( Params.stepCountRequested ); }
-  get pointwise1ChannelCountRate()  { return this.parameterMapModified.get( Params.pointwise1ChannelCountRate ); }
+  get bPointwise1()                 { return this.parameterMapModified.get( Params.bPointwise1 ); }
 
   get depthwiseFilterHeight()       { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
   get depthwiseFilterWidth()        { return this.parameterMapModified.get( Params.depthwiseFilterWidth ); }
@@ -219,7 +224,12 @@ Params.sourceHeight =               new ParamDesc.Int(                   "source
 Params.sourceWidth =                new ParamDesc.Int(                   "sourceWidth",                1, ( 10 * 1024 ) );
 Params.sourceChannelCount =         new ParamDesc.Int(                   "sourceChannelCount",         1, ( 10 * 1024 ) );
 Params.stepCountRequested =         new ParamDesc.Int(                   "stepCountRequested",         2, (  1 * 1024 ) );
-Params.pointwise1ChannelCountRate = new ParamDesc.Int(                   "pointwise1ChannelCountRate", 0,             2 );
+
+Params.bPointwise1 =                new ParamDesc.Bool(                  "bPointwise1" );
+
+// !!! (2022/05/03 Remarked)
+// Params.pointwise1ChannelCountRate = new ParamDesc.Int(                   "pointwise1ChannelCountRate", 0,             2 );
+
 Params.depthwiseFilterHeight =      new ParamDesc.Int(                   "depthwiseFilterHeight",      1, ( 10 * 1024 ) );
 Params.depthwiseFilterWidth =       new ParamDesc.Int(                   "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
 Params.nActivationId =              new ParamDesc.ActivationFunction(    "nActivationId" );
