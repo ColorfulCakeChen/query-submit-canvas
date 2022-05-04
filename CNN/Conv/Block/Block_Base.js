@@ -25,14 +25,28 @@ import { Params } from "./Block_Params.js";
  * it at step0 but with different ways:
  *
 
-!!! ...unfinished... (2022/05/03)
+!!! ...unfinished... (2022/05/04)
 
+ *   - MobileNetV1
+ *     - ( bPointwise1 == false ), depthwise1 double ( channelMultiplier == 2 ) of input0.
+ *     - ( bPointwise1 == true ), pointwise1 double of input0.
+ *
+ *   - MobileNetV2
+ *     - ( bPointwise1 == false ), depthwise1 quadruple ( channelMultiplier == 4 ) of input0. pointwis21 double of input0.
+ *     - ( bPointwise1 == true ), pointwise1 quadruple of input0. pointwis21 double of input0.
+ *
+ *   - MobileNetV2_Thin
+ *     - ( bPointwise1 == false ), depthwise1 double ( channelMultiplier == 2 ) of input0. pointwis21 double of input0.
+ *     - ( bPointwise1 == true ), pointwise1 double of input0. pointwis21 double of input0.
  *
  *   - ShuffleNetV2
  *
- *     - ( bPointwise1 == 0 )
+ *     - ( bPointwise1 == false )
  *
- *     - ( bPointwise1 > 0 )
+ *     - ( bPointwise1 == true )
+ *
+ *
+ *
  *
  *
  *
