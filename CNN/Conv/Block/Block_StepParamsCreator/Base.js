@@ -203,7 +203,7 @@ class Base {
   static create_byBlockParams( blockParams ) {
 
     tf.util.assert( ( blockParams.stepCountRequested >= 2 ),
-      `Block.Params_to_PointDepthPointParams.Base.create_byBlockParams(): `
+      `Block.StepParamsCreator.Base.create_byBlockParams(): `
         + `blockParams.stepCountRequested ( ${blockParams.stepCountRequested} ) must be >= 2.` );
 
     switch ( blockParams.nConvBlockType ) {
@@ -230,7 +230,7 @@ class Base {
 
       default:
         tf.util.assert( false,
-          `Block.Params_to_PointDepthPointParams.Base.create_byBlockParams(): `
+          `Block.StepParamsCreator.Base.create_byBlockParams(): `
             + `unknown this.nConvBlockType ( ${blockParams.nConvBlockType} ) value.` );
         break;
     }
