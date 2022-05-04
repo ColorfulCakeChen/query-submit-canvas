@@ -126,15 +126,22 @@ class Base {
    * The reason is for ShuffleNetV2_ByMobileNetV1 to undo activation escaping scales.
    *
    * In ShuffleNetV2_ByMobileNetV1, if an operation has activation function, it will scale its convolution filters for escaping
-   * the activation function's non-linear parts. This results in its output is different from ShuffleNetV2. In order to resolve
-   * this issue, the last operation (i.e. pointwise2) should have no activation (so it will not scale its convolution filters for
-   * escaping the activation function's non-linear parts).
+   * the activation function's non-linear parts. This results in its output is wrong (i.e. different from ShuffleNetV2). In order
+   * to resolve this issue, the last operation (i.e. pointwise2) should have no activation (so it will not scale its convolution
+   * filters for escaping the activation function's non-linear parts).
    *
    *
-   * 2. Drawback
+   * 2. Advantage
    *
-   * The advantage of original ShuffleNetV2 configuration is that the bias of its depthwise1 could be dropped (and speed up
-   * performance). This is because:
+   * Although it is for solving ShuffleNetV2_ByMobileNetV1's issue, it does have practical advantage. The output could have any
+   * value (i.e. the whole number line). If the last operation (i.e. pointwise2) has activation function, the output value will
+   * be restricted by the activation function (e.g. [ -1, +1 ]).
+   *
+   *
+   * 3. Drawback
+   *
+   * However, the original ShuffleNetV2 configuration also has its own advantage: the bias of its depthwise1 could be dropped
+   * (and speed up performance). This is because:
    *
    *   "If an operation has no activation function, it can have no bias too. Because the next operation's bias can
    *    achieve the same result."
