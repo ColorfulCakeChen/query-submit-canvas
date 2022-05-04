@@ -118,7 +118,11 @@ class Base {
    *   - depthwise1: bias, no activation.
    *   - pointwise2: bias, activation.
    *
-   * We use configuration the former (i.e. like original MobileNetV2) in all classes Block.Params_to_PointDepthPointParams.Xxx.
+   * We use the former configuration (i.e. original MobileNetV2) in all classes Block.Params_to_PointDepthPointParams.Xxx.
+   *
+   *
+   * 1. Reason
+   *
    * The reason is for ShuffleNetV2_ByMobileNetV1 to undo activation escaping scales.
    *
    * In ShuffleNetV2_ByMobileNetV1, if an operation has activation function, it will scale its convolution filters for escaping
@@ -126,12 +130,20 @@ class Base {
    * this issue, the last operation (i.e. pointwise2) should have no activation (so it will not scale its convolution filters for
    * escaping the activation function's non-linear parts).
    *
+   *
+   * 2. Drawback
+   *
+   * The advantage of original ShuffleNetV2 configuration is that the bias of its depthwise1 could be dropped (and speed up
+   * performance). This is because:
+   *
+   *   "If an operation has no activation function, it can have no bias too. Because the next operation's bias can
+   *    achieve the same result."
+   *
+   * In MobileNetV2 configuration, this advantage is disappeared. The no-activation is at pointwise2. It does not have a next
+   * operation to remedy its bias. So it does not have chance to spped up performance by dropping bias.
+   *
    */
   bias_activation_setup() {
-
-    // Note: If an operation has no activation function, it can have no bias too. Because the next operation's bias can
-    //        achieve the same result.
-
     this.bPointwise1Bias = true;
     this.pointwise1ActivationId = this.blockParams.nActivationId;
 
