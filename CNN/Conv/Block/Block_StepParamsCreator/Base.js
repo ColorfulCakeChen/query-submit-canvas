@@ -11,6 +11,13 @@ import { ShuffleNetV2_ByPointwise22 } from "./ShuffleNetV2_ByPointwise22.js";
 import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
 import { ShuffleNetV2_ByMobileNetV1_padValid } from "./ShuffleNetV2_ByMobileNetV1_padValid.js";
 
+
+//!!! ...unfinished... (2022/05/04)
+// How to let only the last block's stepLast's pointwise21 has bias when multiple convolution blocks are used?
+// Let other block's every step's pointwise21 has no-bias.
+//
+
+
 /**
  * Basic class for all Params_to_PointDepthPointParams.Xxx classes.
  *
@@ -127,6 +134,12 @@ class Base {
    * Config the bias and activation of pointwise1, depthwise1, pointwise2 for stepLast.
    */
   bias_activation_setup_forStepLast() {
+
+//!!! ...unfinished... (2022/05/04)
+// How to let only the last block's stepLast's pointwise21 has bias when multiple convolution blocks are used?
+// Let other block's every step's pointwise21 has no-bias.
+//
+
 
     // The stepLast's pointwise21 must always have bias, although there is no activation function after pointwise21.
     // The reason is the stepLast does not have the next step's pointwise1 to provide bias to complete affine
