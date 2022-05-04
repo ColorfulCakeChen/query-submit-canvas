@@ -4,7 +4,7 @@ import * as ValueMax from "../ValueMax.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as PointDepthPoint from "./PointDepthPoint.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
-import * as Block_StepParamsCreator from "./Block_StepParamsCreator.js";
+import * as StepParamsCreator from "./Block_StepParamsCreator.js";
 import { Params } from "./Block_Params.js";
 
 /**
@@ -212,7 +212,7 @@ class Base {
     yield progressRoot;  // Parameters extracted. Report progress.
 
     // 2. Create every steps.
-    let stepParamsMaker = PointDepthPointParamsCreator.Base.create_byBlockParams( params );
+    let stepParamsMaker = StepParamsCreator.Base.create_byBlockParams( params );
     stepParamsMaker.determine_stepCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real step count.
 
     for ( let i = 0; i < stepParamsMaker.stepCount; ++i ) { // Progress for step0, 1, 2, 3, ... 
