@@ -83,27 +83,27 @@ class Params extends Weights.Params {
    *
    *   - If ( nConvBlockType == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
    *
-   *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1 (0).
+   *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1 (0):
    *       This block will be MobileNetV1 (i.e. no add-input-to-output, no channel shuffler).
    *
-   *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2 (1).
+   *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2 (1):
    *       This block will be (original) MobileNetV2 (i.e. with add-input-to-output, no channel shuffler).
    *       Its pointwise1 will be twice size of pointwise21
    *
-   *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN (2).
+   *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN (2):
    *       This block will be (thin) MobileNetV2 (i.e. with add-input-to-output, no channel shuffler).
    *       Its pointwise1 will be the same size of pointwise21
    *
-   *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2 (3)
+   *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2 (3):
    *       This block will be ShuffleNetV2. There is a channel shuffler for concat-shuffle-split.
    *
-   *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22 (4).
+   *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22 (4):
    *       This block will be ShuffleNetV2_ByPointwise22. The channel shuffling is done by pointwise22.
    *
-   *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5).
+   *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5):
    *       This block will be ShuffleNetV2_ByMobileNetV1. The channel shuffling is integrated inside pointwise1, depthwise1, pointwise21.
    *
-   *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6).
+   *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6):
    *       This block will be ShuffleNetV2_ByMobileNetV1. The channel shuffling is integrated inside pointwise1, depthwise1, pointwise21.
    *       Its depthwise1 will use ( pad = "valid" ).
    *
