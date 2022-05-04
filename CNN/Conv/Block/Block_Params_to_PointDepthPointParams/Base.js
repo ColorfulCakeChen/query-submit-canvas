@@ -135,7 +135,7 @@ class Base {
    *
    * Although it is for solving ShuffleNetV2_ByMobileNetV1's issue, it does have practical advantage. The output could have any
    * value (i.e. the whole number line). If the last operation (i.e. pointwise2) has activation function, the output value will
-   * be restricted by the activation function (e.g. [ -1, +1 ]).
+   * be restricted by the activation function (e.g. [ -1, +1 ] for tanh()).
    *
    *
    * 3. Drawback
