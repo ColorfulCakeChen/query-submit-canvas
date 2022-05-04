@@ -107,6 +107,14 @@ class Base {
     this.inputHeight0 = this.blockParams.outputHeight; // all steps (except step0) inputs half the source image size.
     this.inputWidth0 = this.blockParams.outputWidth;
 
+    // All steps (except step0 in NoPointwise1) will not double the channel count by depthwise, because step0 has already double
+    // output channel count.
+    //
+    this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
+
+    // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
+    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
+
     this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
 
