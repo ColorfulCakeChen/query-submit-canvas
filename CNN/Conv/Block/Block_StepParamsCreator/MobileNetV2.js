@@ -24,7 +24,7 @@ class MobileNetV2 extends Base {
     //   - All steps (include step0) do not use input1.
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT;
 
-    If ( blockParams.bPointwise1 == false ) { // use channelMultiplier = 2 or 4 to expand.
+    If ( blockParams.bPointwise1 == false ) {
       this.pointwise1ChannelCount = 0;                                  // NoPointwise1.
       this.depthwise_AvgMax_Or_ChannelMultiplier = 4;                   // Quadruple of input0. (Double of pointwise21.)
 
