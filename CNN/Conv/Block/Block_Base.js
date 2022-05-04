@@ -276,7 +276,8 @@ class Base {
 //!!! (2022/05/04 Remarked) ShuffleNetV2_ByMobileNetV1 can not work.
 //     this.nActivationIdAtBlockEnd = params.nActivationIdAtBlockEnd;
 //     this.nActivationIdAtBlockEndName = params.nActivationIdAtBlockEndName;
-
+    
+    this.bPointwise2BiasAtBlockEnd = params.bPointwise2BiasAtBlockEnd;
     this.nConvBlockType = params.nConvBlockType;
     this.nConvBlockTypeName = params.nConvBlockTypeName;
     this.bKeepInputTensor = params.bKeepInputTensor;
@@ -295,20 +296,20 @@ class Base {
     yield progressRoot;  // Parameters extracted. Report progress.
 
     // 2. Create every steps.
-    let stepParamsMaker = StepParamsCreator.Base.create_byBlockParams( params );
-    stepParamsMaker.determine_stepCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real step count.
+    let stepParamsCreator = StepParamsCreator.Base.create_byBlockParams( params );
+    stepParamsCreator.determine_stepCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real step count.
 
-    for ( let i = 0; i < stepParamsMaker.stepCount; ++i ) { // Progress for step0, 1, 2, 3, ... 
+    for ( let i = 0; i < stepParamsCreator.stepCount; ++i ) { // Progress for step0, 1, 2, 3, ... 
       progressForSteps.addChild( new ValueMax.Percentage.Aggregate() );
     }
 
     let stepParams, step, stepIniter;
 
-    this.stepsArray = new Array( stepParamsMaker.stepCount );
+    this.stepsArray = new Array( stepParamsCreator.stepCount );
     for ( let i = 0; i < this.stepsArray.length; ++i ) { // Step0, 1, 2, 3, ..., StepLast.
 
       if ( 0 == i ) { // Step0.
-        stepParamsMaker.configTo_beforeStep0();
+        stepParamsCreator.configTo_beforeStep0();
       }
 
       // StepLast. (Note: Step0 may also be StepLast.) 
@@ -317,7 +318,7 @@ class Base {
       //   - a different depthwise filter size may be used.
       //   - a different activation function may be used after pointwise2 convolution.
       if ( ( this.stepsArray.length - 1 ) == i ) {
-        stepParamsMaker.configTo_beforeStepLast();
+        stepParamsCreator.configTo_beforeStepLast();
       }
 
       // Assert image size.
@@ -327,16 +328,16 @@ class Base {
           previousStep = this.stepsArray[ i - 1 ];
         }
 
-        this.assert_ImageSize_BetweenStep( stepParamsMaker, previousStep );
+        this.assert_ImageSize_BetweenStep( stepParamsCreator, previousStep );
       }
 
       // Create current step.
-      stepParams = stepParamsMaker.create_PointDepthPointParams( params.defaultInput, this.byteOffsetEnd );
+      stepParams = stepParamsCreator.create_PointDepthPointParams( params.defaultInput, this.byteOffsetEnd );
 
       if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
 
         // If channelShuffler is not null, keep it so that its tensors could be released.
-        let channelShuffler = stepParamsMaker.channelShuffler;
+        let channelShuffler = stepParamsCreator.channelShuffler;
         if ( channelShuffler ) {
 
           tf.util.assert( ( !this.channelShuffler ) || ( this.channelShuffler == channelShuffler ),
@@ -370,7 +371,7 @@ class Base {
       step.dispose_all_sub_BoundsArraySet(); // Reduce memory footprint by release unused bounds array set.
 
       if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
-        stepParamsMaker.configTo_afterStep0();
+        stepParamsCreator.configTo_afterStep0();
       }
     }
 
@@ -464,37 +465,37 @@ class Base {
   /**
    * Assert image size.
    *
-   * @param {Params_to_PointDepthPointParams.Base} stepParamsMaker
+   * @param {Params_to_PointDepthPointParams.Base} stepParamsCreator
    *   The maker which will produce current step (PointDepthPoint.Base) object.
    *
    * @param {PointDepthPoint.Base} previousStep
    *   The previous step (PointDepthPoint.Base) object.
    */
-  assert_ImageSize_BetweenStep( stepParamsMaker, previousStep ) {
+  assert_ImageSize_BetweenStep( stepParamsCreator, previousStep ) {
 
     if ( 0 == i ) { // Step0.
-      tf.util.assert( ( stepParamsMaker.inputHeight == this.sourceHeight ),
+      tf.util.assert( ( stepParamsCreator.inputHeight == this.sourceHeight ),
         `Block.initer(): `
-          + `step${i}'s input image height ( ${stepParamsMaker.inputHeight} ) should be the same as `
+          + `step${i}'s input image height ( ${stepParamsCreator.inputHeight} ) should be the same as `
           + `block's source image height ( ${this.sourceHeight} ).`
       );
 
-      tf.util.assert( ( stepParamsMaker.inputWidth == this.sourceWidth ),
+      tf.util.assert( ( stepParamsCreator.inputWidth == this.sourceWidth ),
         `Block.initer(): `
-          + `step${i}'s input image width ( ${stepParamsMaker.inputWidth} ) should be the same as `
+          + `step${i}'s input image width ( ${stepParamsCreator.inputWidth} ) should be the same as `
           + `block's source image width ( ${this.sourceWidth} ).`
       );
 
     } else { // After Step0.
-      tf.util.assert( ( stepParamsMaker.inputHeight == previousStep.outputHeight ),
+      tf.util.assert( ( stepParamsCreator.inputHeight == previousStep.outputHeight ),
         `Block.initer(): `
-          + `step${i}'s input image height ( ${stepParamsMaker.inputHeight} ) should be the same as `
+          + `step${i}'s input image height ( ${stepParamsCreator.inputHeight} ) should be the same as `
           + `step${ i - 1 }'s output image height ( ${previousStep.outputHeight} ).`
       );
 
-      tf.util.assert( ( stepParamsMaker.inputWidth == previousStep.outputWidth ),
+      tf.util.assert( ( stepParamsCreator.inputWidth == previousStep.outputWidth ),
         `Block.initer(): `
-          + `step${i}'s input image width ( ${stepParamsMaker.inputWidth} ) should be the same as `
+          + `step${i}'s input image width ( ${stepParamsCreator.inputWidth} ) should be the same as `
           + `step${ i - 1 }'s output image width ( ${previousStep.outputWidth} ).`
       );
     }
@@ -547,6 +548,7 @@ class Base {
 //!!! (2022/05/04 Remarked) ShuffleNetV2_ByMobileNetV1 can not work.
 //      + `nActivationIdAtBlockEndName=${this.nActivationIdAtBlockEndName}(${this.nActivationIdAtBlockEnd}), `
 
+      + `bPointwise2BiasAtBlockEnd=${this.bPointwise2BiasAtBlockEnd}, `
       + `nConvBlockType=${this.nConvBlockTypeName}(${this.nConvBlockType}), `
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, outputChannelCount=${this.outputChannelCount}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}`
