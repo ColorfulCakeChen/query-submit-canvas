@@ -109,22 +109,22 @@ class Base {
    * Config the bias and activation of pointwise1, depthwise1, pointwise2.
    *
    * In original MobileNetV2:
-   *   - pointwise1: has bias, has activation.
-   *   - depthwise1: has bias, has activation.
-   *   - pointwise2: has bias, no activation.
+   *   - pointwise1: bias, activation.
+   *   - depthwise1: bias, activation.
+   *   - pointwise2: bias, no activation.
    *
    * In original ShuffleNetV2:
-   *   - pointwise1: has bias, has activation.
-   *   - depthwise1: has bias, no activation.
-   *   - pointwise2: has bias, has activation.
+   *   - pointwise1: bias, activation.
+   *   - depthwise1: bias, no activation.
+   *   - pointwise2: bias, activation.
    *
-   * We use configuration like original MobileNetV2:
-   *   - pointwise1: has bias, has activation.
-   *   - depthwise1: has bias, has activation.
-   *   - pointwise2: has bias, no activation.
+   * We use configuration the former (i.e. like original MobileNetV2) in all classes Block.Params_to_PointDepthPointParams.Xxx.
+   * The reason is for ShuffleNetV2_ByMobileNetV1 to undo activation escaping scales.
    *
-   * The reason
-   *
+   * In ShuffleNetV2_ByMobileNetV1, if an operation has activation function, it will scale its convolution filters for escaping
+   * the activation function's non-linear parts. This results in its output is different from ShuffleNetV2. In order to resolve
+   * this issue, the last operation (i.e. pointwise2) should have no activation (so it will not scale its convolution filters for
+   * escaping the activation function's non-linear parts).
    *
    */
   bias_activation_setup() {
@@ -132,11 +132,15 @@ class Base {
     // Note: If an operation has no activation function, it can have no bias too. Because the next operation's bias can
     //        achieve the same result.
 
-//!!! ...unfinished... (2022/05/03) bias, activation of pointwise1, depthwise1, pointwise2
-    this.bPointwise1Bias = this.pointwise1ActivationId =
-    this.bDepthwiseBias = this.depthwiseActivationId =
-    this.bPointwise21Bias = this.pointwise21ActivationId =
+    this.bPointwise1Bias = true;
+    this.pointwise1ActivationId = this.blockParams.nActivationId;
 
+    this.bDepthwiseBias = true;
+    this.depthwiseActivationId = this.blockParams.nActivationId;
+
+    this.bPointwise21Bias = true;
+    this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+  }
 
   /**
    *
