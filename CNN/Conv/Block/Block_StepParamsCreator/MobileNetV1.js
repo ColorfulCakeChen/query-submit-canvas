@@ -67,8 +67,6 @@ class MobileNetV1 extends Base {
   configTo_afterStep0() {
     super.configTo_afterStep0(); // step1, 2, 3, ...'s inputHeight0, inputWidth0.
 
-    //let blockParams = this.blockParams;
-
     // The input0 of all steps (except step0) have the same depth as previous (also step0's) step's output0.
     this.channelCount0_pointwise1Before = this.outChannels0;
 
