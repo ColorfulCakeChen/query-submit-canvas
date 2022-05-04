@@ -80,7 +80,7 @@ class Base {
     this.inputHeight0 = this.blockParams.sourceHeight; // step0 inputs the source image size.
     this.inputWidth0 = this.blockParams.sourceWidth;
 
-    this.bias_activation_setup(); // bias, activation of pointwise1, depthwise1, pointwise2
+    this.bias_activation_setup_forStep0(); // bias, activation of pointwise1, depthwise1, pointwise2
   }
 
   /**
@@ -150,7 +150,7 @@ class Base {
    * operation to remedy its bias. So it does not have chance to spped up performance by dropping bias.
    *
    */
-  bias_activation_setup() {
+  bias_activation_setup_forStep0() {
     this.bPointwise1Bias = true;
     this.pointwise1ActivationId = this.blockParams.nActivationId;
 
