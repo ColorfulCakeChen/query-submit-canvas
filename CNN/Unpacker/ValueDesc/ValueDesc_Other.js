@@ -119,8 +119,8 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
  *
  * Convert number value into integer between [ 0, 6 ] representing operation:
  *   - 0: MOBILE_NET_V1                             (i.e. no-add-inut-to-output)
- *   - 1: MOBILE_NET_V2                             (i.e. pointwise1 quadruple, add-inut-to-output)
- *   - 2: MOBILE_NET_V2_SMALL                       (i.e. pointwise1 double, add-inut-to-output)
+ *   - 1: MOBILE_NET_V2                             (i.e. add-inut-to-output, pointwise1 is tiwce size of pointwise21)
+ *   - 2: MOBILE_NET_V2_THIN                        (i.e. add-inut-to-output, pointwise1 is same size of pointwise21)
  *   - 3: SHUFFLE_NET_V2                            (i.e. by channel shuffler)
  *   - 4: SHUFFLE_NET_V2_BY_POINTWISE22             (i.e. by pointwise22)
  *   - 5: SHUFFLE_NET_V2_BY_MOBILE_NET_V1           (i.e. by integrated pointwise1, depthwise1, pointwise21)
@@ -132,7 +132,7 @@ class ConvBlockType extends Int {
     super( 0, 6, [
       "MOBILE_NET_V1",                             // (0)
       "MOBILE_NET_V2",                             // (1)
-      "MOBILE_NET_V2_SMALL",                       // (2)
+      "MOBILE_NET_V2_THIN",                        // (2)
       "SHUFFLE_NET_V2",                            // (3)
       "SHUFFLE_NET_V2_BY_POINTWISE22",             // (4)
       "SHUFFLE_NET_V2_BY_MOBILE_NET_V1",           // (5)
