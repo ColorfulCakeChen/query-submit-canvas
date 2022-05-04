@@ -43,21 +43,7 @@ class MobileNetV1 extends Base {
       this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     }
 
-    this.depthwiseFilterHeight = this.depthwiseFilterHeight_Default; // All steps uses default depthwise filter size.
-    this.depthwiseFilterWidth = this.depthwiseFilterWidth_Default;
-
-    // Step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
-    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
-
-    // In MobileNetV2, all steps' output0 is double depth of source input0.
-    //
-    // Note: In MobileNetV2's original design, it is not always "twice". We choose "twice" just for comparing with ShuffleNetV2.
-    //
-    this.pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
-
-    this.bOutput1Requested = false; // In MobileNetV2, all steps do not have output1.
-
-    this.bKeepInputTensor = blockParams.bKeepInputTensor; // Step0 may or may not keep input tensor according to caller's necessary.
+    this.bOutput1Requested = false; // In MobileNet, all steps do not have output1.
 
     this.outChannels0 = this.pointwise21ChannelCount;
     this.outChannels1 = 0;
@@ -72,13 +58,6 @@ class MobileNetV1 extends Base {
 
     // In MobileNetV1, all steps (include step0) do not use input1.
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT;
-
-    this.depthwise_AvgMax_Or_ChannelMultiplier = 1; // Because step0 has already double output channel count.
-
-    // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
-    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
-
-    this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
 
   /** @override */
