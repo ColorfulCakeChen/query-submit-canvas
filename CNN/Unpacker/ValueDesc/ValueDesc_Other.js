@@ -124,7 +124,7 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
  *   - 3: SHUFFLE_NET_V2                            (i.e. by channel shuffler)
  *   - 4: SHUFFLE_NET_V2_BY_POINTWISE22             (i.e. by pointwise22)
  *   - 5: SHUFFLE_NET_V2_BY_MOBILE_NET_V1           (i.e. by integrated pointwise1, depthwise1, pointwise21)
- *   - 6: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (i.e. by depthwise1 with ( pad = "valid" )
+ *   - 6: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (i.e. by depthwise1 with ( pad = "valid" ) )
  */
 class ConvBlockType extends Int {
 
