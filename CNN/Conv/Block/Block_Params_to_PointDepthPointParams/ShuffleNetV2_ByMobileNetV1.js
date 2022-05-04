@@ -1,5 +1,4 @@
 export { ShuffleNetV2_ByMobileNetV1 };
-export { ShuffleNetV2_ByMobileNetV1_padValid };
 
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { Params } from "../Block_Param.js";
