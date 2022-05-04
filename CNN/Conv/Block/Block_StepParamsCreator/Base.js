@@ -190,7 +190,8 @@ class Base {
    *
    * 3.2 Workable for MobileNet with ( bPointwise1 == true )
    *
-   * If ( bPointwise1 == true ), it is workable for MobileNetV1, MobileNetV2 and MobileNetV2_Thin.
+   * If ( bPointwise1 == true ), it is workable for MobileNetV1, MobileNetV2 and MobileNetV2_Thin. All non-stepLast's pointwise21
+   * need not bias. But the stepLast's pointwise21 still needs bias for final output.
    *
 
 
