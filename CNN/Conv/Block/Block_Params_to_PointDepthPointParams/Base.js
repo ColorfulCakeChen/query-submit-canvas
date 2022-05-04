@@ -3,6 +3,13 @@ export { Base };
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import * as PointDepthPoint from "../../PointDepthPoint.js";
 import { Params } from "../Block_Params.js";
+import { MobileNetV1 } from "./MobileNetV1.js";
+import { MobileNetV2 } from "./MobileNetV2.js";
+import { MobileNetV2_Thin } from "./MobileNetV2_Thin.js";
+import { ShuffleNetV2 } from "./ShuffleNetV2.js";
+import { ShuffleNetV2_ByPointwise22 } from "./ShuffleNetV2_ByPointwise22.js";
+import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
+import { ShuffleNetV2_ByMobileNetV1_padValid } from "./ShuffleNetV2_ByMobileNetV1_padValid.js";
 
 /**
  * Basic class for all Params_to_PointDepthPointParams.Xxx classes.
