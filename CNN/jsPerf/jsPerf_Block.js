@@ -270,6 +270,9 @@ class HeightWidthDepth {
     tf.dispose( outputTensor3d );
   }
 
+//!!! ...unfinished... (2022/05/04)
+// assert pointwise2's bias for MobileNet with ( bPointwise1 == true ) in multiple blocks situation.
+
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
 
