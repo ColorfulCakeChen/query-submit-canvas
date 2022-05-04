@@ -194,8 +194,8 @@ class Base {
     this.nActivationIdName = params.nActivationIdName;
     this.nActivationIdAtBlockEnd = params.nActivationIdAtBlockEnd;
     this.nActivationIdAtBlockEndName = params.nActivationIdAtBlockEndName;
-    this.nWhetherShuffleChannel = params.nWhetherShuffleChannel;
-    this.nWhetherShuffleChannelName = params.nWhetherShuffleChannelName;
+    this.nConvBlockType = params.nConvBlockType;
+    this.nConvBlockTypeName = params.nConvBlockTypeName;
     this.bKeepInputTensor = params.bKeepInputTensor;
 
     // The parameters which are determined (inferenced) from the above parameters.
@@ -427,34 +427,32 @@ class Base {
       `Block.create_Params_to_PointDepthPointParams(): `
         + `blockParams.stepCountRequested ( ${blockParams.stepCountRequested} ) must be >= 2.` );
 
-    switch ( blockParams.nWhetherShuffleChannel ) {
-      case ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
-        // ( pointwise1ChannelCountRate == 0 ), will be similar to MobileNetV1.
-        // ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV2 without expanding.
-        // ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
-        return new Params_to_PointDepthPointParams.MobileNetV2( blockParams );
-        break;
+    switch ( blockParams.nConvBlockType ) {
+      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
+        return new Params_to_PointDepthPointParams.MobileNetV1( blockParams ); break;
 
-      case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER: // (1) ShuffleNetV2
-        return new Params_to_PointDepthPointParams.ShuffleNetV2( blockParams );
-        break;
+      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (1)
+        return new Params_to_PointDepthPointParams.MobileNetV2( blockParams ); break;
 
-      case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) ShuffleNetV2_ByPointwise22
-        return new Params_to_PointDepthPointParams.ShuffleNetV2_ByPointwise22( blockParams );
-        break;
+      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
+        return new Params_to_PointDepthPointParams.MobileNetV2_Thin( blockParams ); break;
 
-      case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_MOBILE_NET_V1: // (3) ShuffleNetV2_ByMobileNetV1
-        return new Params_to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1( blockParams );
-        break;
+      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (3)
+        return new Params_to_PointDepthPointParams.ShuffleNetV2( blockParams ); break;
 
-      case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_MOBILE_NET_V1_PAD_VALID: // (4) ShuffleNetV2_ByMobileNetV1
-        return new Params_to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1_padValid( blockParams );
-        break;
+      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (4)
+        return new Params_to_PointDepthPointParams.ShuffleNetV2_ByPointwise22( blockParams ); break;
+
+      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
+        return new Params_to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1( blockParams ); break;
+
+      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
+        return new Params_to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1_padValid( blockParams ); break;
 
       default:
         tf.util.assert( false,
           `Block.create_Params_to_PointDepthPointParams(): `
-            + `unknown this.nWhetherShuffleChannel ( ${blockParams.nWhetherShuffleChannel} ) value.` );
+            + `unknown this.nConvBlockType ( ${blockParams.nConvBlockType} ) value.` );
         break;
     }
   }
