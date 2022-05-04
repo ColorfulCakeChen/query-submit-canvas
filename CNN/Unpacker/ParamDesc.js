@@ -3,7 +3,7 @@ export { ActivationFunction };
 export { channelCount1_pointwise1Before };
 export { AvgMax_Or_ChannelMultiplier };
 export { StridesPad };
-export { WhetherShuffleChannel };
+export { ConvBlockType };
 
 import * as ValueDesc from "./ValueDesc.js";
 
@@ -150,14 +150,14 @@ class StridesPad extends Base {
 
 
 /**
- * Describe some properties of an WhetherShuffleChannel parameter.
+ * Describe some properties of an ConvBlockType parameter.
  *
- * @member {ValueDesc.WhetherShuffleChannel} valueDesc
- *   The range of the parameter's all possible values. It is a ValueDesc.WhetherShuffleChannel object.
+ * @member {ValueDesc.ConvBlockType} valueDesc
+ *   The range of the parameter's all possible values. It is a ValueDesc.ConvBlockType object.
  */
-class WhetherShuffleChannel extends Base {
+class ConvBlockType extends Base {
 
   constructor( paramName ) {
-    super( paramName, ValueDesc.WhetherShuffleChannel.Singleton );
+    super( paramName, ValueDesc.ConvBlockType.Singleton );
   }
 }
