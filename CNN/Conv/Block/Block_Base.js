@@ -212,7 +212,7 @@ class Base {
     yield progressRoot;  // Parameters extracted. Report progress.
 
     // 2. Create every steps.
-    let stepParamsMaker = Base.create_Params_to_PointDepthPointParams( params );
+    let stepParamsMaker = Params_to_PointDepthPointParams.Base.create_byBlockParams( params );
     stepParamsMaker.determine_stepCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real step count.
 
     for ( let i = 0; i < stepParamsMaker.stepCount; ++i ) { // Progress for step0, 1, 2, 3, ... 
