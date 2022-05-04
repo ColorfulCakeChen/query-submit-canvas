@@ -11,6 +11,7 @@ import { Params } from "./Block_Params.js";
  * Implement a block of ( depthwise convolution and pointwise convolution ) or ShuffleNetV2 (with 2 output channel groups) or MobileNetV1
  * or MobileNetV2.
  *
+ *
  * 1. Halve Height, Halve Width
  *
  * All types of block will output an image whose height and width are only half of the input image's height and width.
@@ -47,18 +48,97 @@ import { Params } from "./Block_Params.js";
  *
  * 3. Bias and Activation
  *
-
-
-//!!! ...unfinished... (2022/05/04)
-// All steps (except stepLast) could use ( this.bPointwise21Bias = true ).
-// stepLast uses ( this.bPointwise21Bias = false ) is enough.
-
- * In all classes Block.Params_to_PointDepthPointParams.Xxx, the former bias and activation configuration of original MobileNetV2 are used.
+ * In original MobileNetV2: (note: tf.batchNorm() has bias intrinsically.)
  *   - pointwise1: bias, activation.
  *   - depthwise1: bias, activation.
  *   - pointwise2: bias, no activation.
  *
- * (Please see Block.StepParamsCreator.Base.bias_activation_setup_forStep0() explanation.)
+ * In original ShuffleNetV2:
+ *   - pointwise1: bias, activation.
+ *   - depthwise1: bias, no activation.
+ *   - pointwise2: bias, activation.
+ *
+ * We use the former configuration (i.e. original MobileNetV2) in all classes Block.Params_to_PointDepthPointParams.Xxx.
+ *
+ *
+ * 3.1 Reason
+ *
+ * The reason is for ShuffleNetV2_ByMobileNetV1 to undo activation escaping scales.
+ *
+ * In ShuffleNetV2_ByMobileNetV1, if an operation has activation function, it will scale its convolution filters for escaping
+ * the activation function's non-linear parts. This results in its output is wrong (i.e. different from ShuffleNetV2). In order
+ * to resolve this issue, the last operation (i.e. pointwise2) should have no activation (so it will not scale its convolution
+ * filters for escaping the activation function's non-linear parts).
+ *
+ *
+ * 3.2 Advantage
+ *
+ * Although this choice is mainly for solving ShuffleNetV2_ByMobileNetV1's issue, it does have practical advantage in fact. The
+ * output could have any value (i.e. the whole number line). If the last operation (i.e. pointwise2) has activation function,
+ * the output value will be restricted by the activation function (e.g. [ -1, +1 ] for tanh()).
+ *
+ *
+ * 3.3 Improvement
+ *
+ * In some cases, the pointwise2's bias could sometimes be dropped and remedied by the bias of the next step's pointwise1 or
+ * depthwise1. This could improve performance.
+ *
+ *
+ * 3.3.1 Precondition of Improvement
+ *
+ * For affine transformation:
+ *
+ *   "If an operation has no activation function, it can also have no bias too because the next operation's bias can
+ *    achieve the same result. (Multiple affine transformations can be combined into one affine transformation.)"
+ *
+ * Here, the next operation should be:
+ *   - pointwise convolution with bias. or,
+ *   - depthwise convolution with ( pad = "valid" ) and bias.
+ *
+ *
+ * 3.3.2 Not workable for does depthwise convolution with ( pad = "same" )?
+ *
+ * The reason is that the depthwise convolution with ( pad = "same" ) will pad zero. The count of these padded zero is
+ * different according to the input pixel position. The varying zero count results in that varying bias is required.
+ * This is impossible since data in the same channel could only have the same bias.
+ *
+ * On the other hand, the depthwise convolution with ( pad = "valid" ) does not pad any value. The per channel (fixed)
+ * bias is sufficient to remedy the previous affine transformation's no-bias.
+ *
+ *
+ * 3.3.3 Not workable for ( bPointwise1 == false ), usually.
+ *
+ * It means that the next step will be no pointwise1. The remedy must be done by the next step's depthwise. Only in
+ * ShuffleNetV2_ByMobileNetV1_padValid, the depthwise is ( pad = "valid" ) and workable. In other ConvBlockType, 
+ * the depthwise is ( pad = "same" ) and not workable.
+ *
+ *
+ * 3.3.4 Not workable for ShuffleNetV2_Xxx
+ *
+ * The non-step0 of ShuffleNetV2_Xxx does not have any pointwise or depthwise convolution for the input1. It means
+ * that there is no chance to remedy the previous step's pointwise21's no-bias before concat-shuffle-split.
+ *
+ * Although ShuffleNetV2_ByMobileNetV1_Xxx always has pointwise1 intrinsically no matter ( bPointwise1 == false )
+ * or ( bPointwise1 == true ), however, ShuffleNetV2_ByMobileNetV1_Xxx's pointwise1's higher half just pass-through
+ * input0's higher half. It is the same as no-bias and can not remedy the previous step's pointwise21's no-bias.
+ *
+ *
+ * 3.3.5 Not workable for stepLast
+ *
+ * Since stepLast does not have the next step (i.e. itself is the last step), there is no next step's pointwise1 to
+ * remedy stepLast's pointwise21's no-bias.
+ *
+ *
+ * 3.3.6 Workable for MobileNet with ( bPointwise1 == true )
+ *
+ * In summary, when ( bPointwise1 == true ), it is workable for MobileNetV1, MobileNetV2 and MobileNetV2_Thin. All
+ * non-stepLast's pointwise21 need not bias. Only the stepLast's pointwise21 needs bias for final output.
+ *
+ * (Note: All steps' pointwise1 and depthwise1 also need bias because they have activation function (i.e. not affine
+ * transformation).)
+ *
+ * In fact, if multiple convolution blocks are used, only the last block's stepLast's pointwise21 needs bias. All other
+ * block's every step's pointwise21 needs not bias.
  *
  *
  * 4.
