@@ -136,6 +136,11 @@ class Base {
    * value (i.e. the whole number line). If the last operation (i.e. pointwise2) has activation function, the output value will
    * be restricted by the activation function (e.g. [ -1, +1 ] for tanh()).
    *
+
+//!!! ...unfinished... (2022/05/04)
+// All steps (except stepLast) could use ( this.bPointwise21Bias = true ).
+// stepLast uses ( this.bPointwise21Bias = false ) is enough.
+
    *
    * 3. Drawback
    *
@@ -155,6 +160,11 @@ class Base {
 
     this.bDepthwiseBias = true;
     this.depthwiseActivationId = this.blockParams.nActivationId;
+
+
+//!!! ...unfinished... (2022/05/04)
+// All steps (except stepLast) could use ( this.bPointwise21Bias = true ).
+// stepLast uses ( this.bPointwise21Bias = false ) is enough.
 
     this.bPointwise21Bias = true;
     this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
