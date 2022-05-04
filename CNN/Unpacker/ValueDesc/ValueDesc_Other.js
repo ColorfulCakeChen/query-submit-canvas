@@ -2,7 +2,7 @@ export { channelCount1_pointwise1Before };
 export { Pointwise_HigherHalfDifferent };
 export { Depthwise_HigherHalfDifferent };
 export { AvgMax_Or_ChannelMultiplier };
-export { WhetherShuffleChannel };
+export { ConvBlock };
 
 import { Int } from "./ValueDesc_Base.js";
 
@@ -115,24 +115,28 @@ class AvgMax_Or_ChannelMultiplier extends Int {
 AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
 
 
-/** Describe id, range, name of WhetherShuffleChannel.
+/** Describe id, range, name of ConvBlock (Convolution Block).
  *
- * Convert number value into integer between [ 0, 4 ] representing operation:
- *   - 0: NONE (i.e. MobileNetV2)
- *   - 1: BY_CHANNEL_SHUFFLER        (i.e. ShuffleNetV2)
- *   - 2: BY_POINTWISE22             (i.e. ShuffleNetV2_ByPointwise22)
- *   - 3: BY_MOBILE_NET_V1           (i.e. ShuffleNetV2_ByMobileNetV1)
- *   - 4: BY_MOBILE_NET_V1_PAD_VALID (i.e. ShuffleNetV2_ByMobileNetV1_padValid)
+ * Convert number value into integer between [ 0, 6 ] representing operation:
+ *   - 0: MOBILE_NET_V1                             (i.e. no-add-inut-to-output)
+ *   - 1: MOBILE_NET_V2_DOUBLE_POINTWISE1           (i.e. pointwise1 double, add-inut-to-output)
+ *   - 2: MOBILE_NET_V2_QUADRUPLE_POINTWISE1        (i.e. pointwise1 quadruple, add-inut-to-output)
+ *   - 3: SHUFFLE_NET_V2                            (i.e. by channel shuffler)
+ *   - 4: SHUFFLE_NET_V2_BY_POINTWISE22             (i.e. by pointwise22)
+ *   - 5: SHUFFLE_NET_V2_BY_MOBILE_NET_V1           (i.e. by integrated pointwise1, depthwise1, pointwise21)
+ *   - 6: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (i.e. by depthwise1 with ( pad = "valid" )
  */
-class WhetherShuffleChannel extends Int {
+class ConvBlock extends Int {
 
   constructor() {
-    super( 0, 4, [
-      "NONE",                       // (0)
-      "BY_CHANNEL_SHUFFLER",        // (1)
-      "BY_POINTWISE22",             // (2)
-      "BY_MOBILE_NET_V1",           // (3)
-      "BY_MOBILE_NET_V1_PAD_VALID", // (4)
+    super( 0, 6, [
+      "MOBILE_NET_V1",                             // (0)
+      "MOBILE_NET_V2_DOUBLE_POINTWISE1",           // (1)
+      "MOBILE_NET_V2_QUADRUPLE_POINTWISE1",        // (2)
+      "SHUFFLE_NET_V2",                            // (3)
+      "SHUFFLE_NET_V2_BY_POINTWISE22",             // (4)
+      "SHUFFLE_NET_V2_BY_MOBILE_NET_V1",           // (5)
+      "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID", // (6)
     ] );
   }
 
