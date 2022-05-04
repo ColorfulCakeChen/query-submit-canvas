@@ -42,23 +42,12 @@ import { Params } from "./Block_Params.js";
  *
  * 3. Bias and Activation
  *
+ * In all classes Block.Params_to_PointDepthPointParams.Xxx, the former bias and activation configuration of original MobileNetV2 are used.
+ *   - pointwise1: bias, activation.
+ *   - depthwise1: bias, activation.
+ *   - pointwise2: bias, no activation.
  *
-
-!!! ...unfinished... (2022/05/03) pointwise1
-
- *     - ( bPointwise1 == 0 )
- *
- *
- *
- *
- *     - ( bPointwise1 > 0 )
- *
-
-!!! ...unfinished... (2022/05/03) depthwise, pointwise2
-
-!!! ...unfinished... (2022/05/03) pointwise2 at block end
-
-
+ * (Please see Block.StepParamsCreator.Base.bias_activation_setup_forStep0() explanation.)
  *
  *
  * 4.
