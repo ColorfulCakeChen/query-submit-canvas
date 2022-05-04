@@ -417,46 +417,6 @@ class Base {
     }
   }
 
-  /**
-   * @param {Params} blockParams
-   *   The Block.Params object to be reference.
-   */
-  static create_Params_to_PointDepthPointParams( blockParams ) {
-
-    tf.util.assert( ( blockParams.stepCountRequested >= 2 ),
-      `Block.create_Params_to_PointDepthPointParams(): `
-        + `blockParams.stepCountRequested ( ${blockParams.stepCountRequested} ) must be >= 2.` );
-
-    switch ( blockParams.nConvBlockType ) {
-      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-        return new Params_to_PointDepthPointParams.MobileNetV1( blockParams ); break;
-
-      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (1)
-        return new Params_to_PointDepthPointParams.MobileNetV2( blockParams ); break;
-
-      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
-        return new Params_to_PointDepthPointParams.MobileNetV2_Thin( blockParams ); break;
-
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (3)
-        return new Params_to_PointDepthPointParams.ShuffleNetV2( blockParams ); break;
-
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (4)
-        return new Params_to_PointDepthPointParams.ShuffleNetV2_ByPointwise22( blockParams ); break;
-
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
-        return new Params_to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1( blockParams ); break;
-
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-        return new Params_to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1_padValid( blockParams ); break;
-
-      default:
-        tf.util.assert( false,
-          `Block.create_Params_to_PointDepthPointParams(): `
-            + `unknown this.nConvBlockType ( ${blockParams.nConvBlockType} ) value.` );
-        break;
-    }
-  }
-
   /** Process input, destroy or keep input, return result.
    *
    * @param {tf.tensor3d} inputTensor
@@ -501,7 +461,7 @@ class Base {
       + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
       + `nActivationIdName=${this.nActivationIdName}(${this.nActivationId}), `
       + `nActivationIdAtBlockEndName=${this.nActivationIdAtBlockEndName}(${this.nActivationIdAtBlockEnd}), `
-      + `nWhetherShuffleChannel=${this.nWhetherShuffleChannelName}(${this.nWhetherShuffleChannel}), `
+      + `nConvBlockType=${this.nConvBlockTypeName}(${this.nConvBlockType}), `
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, outputChannelCount=${this.outputChannelCount}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}`
     ;
