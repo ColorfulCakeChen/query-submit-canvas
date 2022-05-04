@@ -47,6 +47,12 @@ import { Params } from "./Block_Params.js";
  *
  * 3. Bias and Activation
  *
+
+
+//!!! ...unfinished... (2022/05/04)
+// All steps (except stepLast) could use ( this.bPointwise21Bias = true ).
+// stepLast uses ( this.bPointwise21Bias = false ) is enough.
+
  * In all classes Block.Params_to_PointDepthPointParams.Xxx, the former bias and activation configuration of original MobileNetV2 are used.
  *   - pointwise1: bias, activation.
  *   - depthwise1: bias, activation.
