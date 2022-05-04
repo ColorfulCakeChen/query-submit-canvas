@@ -136,7 +136,7 @@ class Base {
     this.bDepthwiseBias = true;
     this.depthwiseActivationId = blockParams.nActivationId;
 
-    if ( ( blockParams.bPointwise1 == true ) && ( ValueDesc.ConvBlockType.isMobileNet( blockParams.nConvBlockType ) ) ) {
+    if ( ( ValueDesc.ConvBlockType.isMobileNet( blockParams.nConvBlockType ) ) && ( blockParams.bPointwise1 == true ) ) {
 
       // When MobileNet with ( bPointwise1 == true ), all non-stepLast's pointwise21 could have no bias. The next step's
       // pointwise1's bias could remedy it because pointwise21 is affine (i.e. does not have activation function). This
@@ -154,20 +154,28 @@ class Base {
    * Config the bias and activation of pointwise1, depthwise1, pointwise2 for stepLast.
    */
   bias_activation_setup_forStepLast() {
+    let blockParams = this.blockParams;
 
-//!!! ...unfinished... (2022/05/04)
-// How to let only the last block's stepLast's pointwise21 has bias when multiple convolution blocks are used?
-// Let other block's every step's pointwise21 has no-bias.
-//
+    if (   ( ValueDesc.ConvBlockType.isMobileNet( blockParams.nConvBlockType ) ) && ( blockParams.bPointwise1 == true )
+        && ( blockParams.bLastBlock == false )
+       ) {
 
+      // When MobileNet with ( bPointwise1 == true ) and this block is not the last block of multiple blocks, the stepLast's
+      // pointwise21 could still have no bias. The next block's step0's pointwise1's bias could remedy it because
+      // pointwise21 is affine (i.e. does not have activation function). This could improve performance.
+      //
+      // Note: The next block should be MobileNet with ( bPointwise1 == true ). Otherwise, the result may be wrong.
+      //
+      this.bPointwise21Bias = false;
 
-    // The stepLast's pointwise21 must always have bias, although there is no activation function after pointwise21.
-    // The reason is the stepLast does not have the next step's pointwise1 to provide bias to complete affine
-    // transformation. It must do it by itself.
-    //
-    // This is still true for MobileNet with ( bPointwise1 == true ).
-    //
-    this.bPointwise21Bias = true;
+    } else {
+
+      // In general cases, the stepLast's pointwise21 must have bias, although there is no activation function after it.
+      // The reason is the stepLast does not have the next step's pointwise1 to provide bias to complete affine
+      // transformation. It must do it by itself.
+      //
+      this.bPointwise21Bias = true;
+    }
   }
 
   /**
