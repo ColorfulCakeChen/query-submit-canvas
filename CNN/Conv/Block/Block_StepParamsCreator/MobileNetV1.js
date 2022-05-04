@@ -12,11 +12,12 @@ import { Base } from "./Base.js";
  *
  * The reasons are:
  *
- *   - Better than MobileNetV2: According to experience of ShuffleNetV2_ByMobileNetV1, the CLIP_BY_VALUE_N3_P3 activation
- *     function could achieve skipping connection (i.e. residual connection) without add-input-to-output (i.e MobileNetV2).
+ *   - Inference speed faster than MobileNetV2: According to experience of ShuffleNetV2_ByMobileNetV1, the CLIP_BY_VALUE_N3_P3
+ *     activation function could achieve skipping connection (i.e. residual connection) without add-input-to-output (i.e MobileNetV2).
  *
- *   - Better than ShuffleNetV2_ByMobileNetV1: All block's every step's pointwise21 needs not bias. Only the last block's
- *     stepLast's pointwise21 needs bias.
+ *   - Inference speed faster than ShuffleNetV2_ByMobileNetV1: All block's every step's pointwise21 needs not bias. Only the
+ *     last block's stepLast's pointwise21 needs bias. (But ShuffleNetV2_ByMobileNetV1's learning speed is faster than MobileNetv1
+ *     because less filter weights need to be learned.)
  *
  *
  *
