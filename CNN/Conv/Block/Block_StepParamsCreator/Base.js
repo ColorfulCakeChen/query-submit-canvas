@@ -91,12 +91,6 @@ class Base {
     // step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
 
-    // All steps' output0 is double depth of source input0.
-    //
-    // Note: In original MobileNet(V2) design, it is not always "twice". We choose "twice" just for comparing with ShuffleNetV2.
-    //
-    this.pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
-
     this.bKeepInputTensor = blockParams.bKeepInputTensor; // step0 may or may not keep input tensor according to caller's necessary.
   }
 
