@@ -189,9 +189,20 @@ class Base {
    *
    *
    * 3.2 Workable for MobileNet with ( bPointwise1 == true )
+
+
+//!!! ...unfinished... (2022/05/04)
+// Whether does MobileNetV2's add-input-to-output matter?
+
    *
    * If ( bPointwise1 == true ), it is workable for MobileNetV1, MobileNetV2 and MobileNetV2_Thin. All non-stepLast's pointwise21
    * need not bias. But the stepLast's pointwise21 still needs bias for final output.
+   *
+   * (Note: All steps' pointwise1 and depthwise1 need bias because they have activation function.)
+   *
+   * In fact, if multiple ConvBlock is used, only the last step's pointwise21 of the last block's needs bias. All other block's
+   * every step's pointwise21 needs not bias.
+   *
    *
 
 
