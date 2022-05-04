@@ -2,7 +2,7 @@ export { channelCount1_pointwise1Before };
 export { Pointwise_HigherHalfDifferent };
 export { Depthwise_HigherHalfDifferent };
 export { AvgMax_Or_ChannelMultiplier };
-export { ConvBlock };
+export { ConvBlockType };
 
 import { Int } from "./ValueDesc_Base.js";
 
@@ -115,7 +115,7 @@ class AvgMax_Or_ChannelMultiplier extends Int {
 AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
 
 
-/** Describe id, range, name of ConvBlock (Convolution Block).
+/** Describe id, range, name of ConvBlockType (Convolution Block Type).
  *
  * Convert number value into integer between [ 0, 6 ] representing operation:
  *   - 0: MOBILE_NET_V1                             (i.e. no-add-inut-to-output)
@@ -126,7 +126,7 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
  *   - 5: SHUFFLE_NET_V2_BY_MOBILE_NET_V1           (i.e. by integrated pointwise1, depthwise1, pointwise21)
  *   - 6: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (i.e. by depthwise1 with ( pad = "valid" )
  */
-class ConvBlock extends Int {
+class ConvBlockType extends Int {
 
   constructor() {
     super( 0, 6, [
@@ -142,6 +142,6 @@ class ConvBlock extends Int {
 
 }
 
-/** The only one ValueDesc.WhetherShuffleChannel instance. */
-WhetherShuffleChannel.Singleton = new WhetherShuffleChannel;
+/** The only one ValueDesc.ConvBlockType instance. */
+ConvBlockType.Singleton = new ConvBlockType;
 
