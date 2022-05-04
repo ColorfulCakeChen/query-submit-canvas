@@ -139,12 +139,38 @@ class Base {
    *
    * 3. Improvement
    *
-   * The pointwise2's bias could sometimes be dropped (and speed up performance). This is because:
+   * In some cases, the pointwise2's bias could sometimes be dropped and remedied by the bias of the next step's pointwise1 or
+   * depthwise1. This could improve performance.
+   *
+   *
+   * 3.1 Precondition of Improvement
+   *
+   * For affine transformation:
    *
    *   "If an operation has no activation function, it can also have no bias too because the next operation's bias can
    *    achieve the same result. (Multiple affine transformations can be combined into one affine transformation.)"
    *
-   * If the next step (i.e. it must not be the stepLast) has pointwise1 (with bias), 
+   * Here, the next operation should be:
+   *   - pointwise convolution with bias. or,
+   *   - depthwise convolution with ( pad = "valid" ) and bias.
+   *
+   *
+   * 3.1.1 
+   *
+
+   *
+   * 3.1.1
+   *
+   * So, if ( bPointwise1 == false ) or ( ( bPointwise1 == true ) but ShuffleNetV2_ByMobileNetV1_Xxx ), the next step will
+   * not have bias to remedy the previous step pointwise21's no-bias. (Note: ShuffleNetV2_ByMobileNetV1_Xxx's pointwise1's higher
+   * half just pass-through input0. It is the same as no-bias and can not remedy the previous step pointwise21's no-bias.)
+   *
+   * Q: Why does depthwise convolution need ( pad = "valid" )?
+   * A: ( pad = "same" )
+   *
+   *
+   *
+   * If a step has next step (i.e. it must not be the stepLast) and the next step has pointwise1 (with bias), 
    *
    *
 
@@ -153,10 +179,6 @@ class Base {
 // All steps (except stepLast) could use ( this.bPointwise21Bias = true ).
 // stepLast uses ( this.bPointwise21Bias = false ) is enough.
 
-   *
-   * However, if ( bPointwise1 == false ) or ( ( bPointwise1 == true ) but ShuffleNetV2_ByMobileNetV1_Xxx ), the next step will
-   * not have bias to remedy the previous step pointwise21's no-bias. (Note: ShuffleNetV2_ByMobileNetV1_Xxx's pointwise1's higher
-   * half just pass-through input0. It is the same as no-bias and can not remedy the previous step pointwise21's no-bias.)
    *
    *
    *
