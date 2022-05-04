@@ -195,8 +195,11 @@ class Base {
     this.depthwiseFilterWidth = params.depthwiseFilterWidth;
     this.nActivationId = params.nActivationId;
     this.nActivationIdName = params.nActivationIdName;
-    this.nActivationIdAtBlockEnd = params.nActivationIdAtBlockEnd;
-    this.nActivationIdAtBlockEndName = params.nActivationIdAtBlockEndName;
+
+//!!! (2022/05/04 Remarked) ShuffleNetV2_ByMobileNetV1 can not work.
+//     this.nActivationIdAtBlockEnd = params.nActivationIdAtBlockEnd;
+//     this.nActivationIdAtBlockEndName = params.nActivationIdAtBlockEndName;
+
     this.nConvBlockType = params.nConvBlockType;
     this.nConvBlockTypeName = params.nConvBlockTypeName;
     this.bKeepInputTensor = params.bKeepInputTensor;
@@ -463,7 +466,10 @@ class Base {
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
       + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
       + `nActivationIdName=${this.nActivationIdName}(${this.nActivationId}), `
-      + `nActivationIdAtBlockEndName=${this.nActivationIdAtBlockEndName}(${this.nActivationIdAtBlockEnd}), `
+
+//!!! (2022/05/04 Remarked) ShuffleNetV2_ByMobileNetV1 can not work.
+//      + `nActivationIdAtBlockEndName=${this.nActivationIdAtBlockEndName}(${this.nActivationIdAtBlockEnd}), `
+
       + `nConvBlockType=${this.nConvBlockTypeName}(${this.nConvBlockType}), `
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, outputChannelCount=${this.outputChannelCount}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}`
