@@ -43,6 +43,12 @@ class MobileNetV1 extends Base {
       this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     }
 
+    // All steps' output0 is double depth of source input0.
+    //
+    // Note: In original MobileNet(V2) design, it is not always "twice". We choose "twice" just for comparing with ShuffleNetV2.
+    //
+    this.pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
+
     this.bOutput1Requested = false; // In MobileNet, all steps do not have output1.
 
     this.outChannels0 = this.pointwise21ChannelCount;
