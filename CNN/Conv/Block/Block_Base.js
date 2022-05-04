@@ -272,14 +272,9 @@ class Base {
     this.depthwiseFilterWidth = params.depthwiseFilterWidth;
     this.nActivationId = params.nActivationId;
     this.nActivationIdName = params.nActivationIdName;
-
-//!!! (2022/05/04 Remarked) ShuffleNetV2_ByMobileNetV1 can not work.
-//     this.nActivationIdAtBlockEnd = params.nActivationIdAtBlockEnd;
-//     this.nActivationIdAtBlockEndName = params.nActivationIdAtBlockEndName;
-    
-    this.bPointwise2BiasAtBlockEnd = params.bPointwise2BiasAtBlockEnd;
     this.nConvBlockType = params.nConvBlockType;
     this.nConvBlockTypeName = params.nConvBlockTypeName;
+    this.bLastBlock = params.bLastBlock;
     this.bKeepInputTensor = params.bKeepInputTensor;
 
     // The parameters which are determined (inferenced) from the above parameters.
@@ -544,12 +539,8 @@ class Base {
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
       + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
       + `nActivationIdName=${this.nActivationIdName}(${this.nActivationId}), `
-
-//!!! (2022/05/04 Remarked) ShuffleNetV2_ByMobileNetV1 can not work.
-//      + `nActivationIdAtBlockEndName=${this.nActivationIdAtBlockEndName}(${this.nActivationIdAtBlockEnd}), `
-
-      + `bPointwise2BiasAtBlockEnd=${this.bPointwise2BiasAtBlockEnd}, `
       + `nConvBlockType=${this.nConvBlockTypeName}(${this.nConvBlockType}), `
+      + `bLastBlock=${this.bLastBlock}, `
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, outputChannelCount=${this.outputChannelCount}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}`
     ;
