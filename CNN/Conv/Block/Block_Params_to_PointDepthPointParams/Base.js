@@ -80,7 +80,7 @@ class Base {
     this.inputHeight0 = this.blockParams.sourceHeight; // step0 inputs the source image size.
     this.inputWidth0 = this.blockParams.sourceWidth;
 
-//!!! ...unfinished... (2022/05/03) bias, activation of pointwise1, depthwise1, pointwise2
+    this.bias_activation_setup(); // bias, activation of pointwise1, depthwise1, pointwise2
   }
 
   /**
@@ -104,6 +104,39 @@ class Base {
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Last;
     this.depthwiseFilterWidth = this.depthwiseFilterWidth_Last;
   }
+
+  /**
+   * Config the bias and activation of pointwise1, depthwise1, pointwise2.
+   *
+   * In original MobileNetV2:
+   *   - pointwise1: has bias, has activation.
+   *   - depthwise1: has bias, has activation.
+   *   - pointwise2: has bias, no activation.
+   *
+   * In original ShuffleNetV2:
+   *   - pointwise1: has bias, has activation.
+   *   - depthwise1: has bias, no activation.
+   *   - pointwise2: has bias, has activation.
+   *
+   * We use configuration like original MobileNetV2:
+   *   - pointwise1: has bias, has activation.
+   *   - depthwise1: has bias, has activation.
+   *   - pointwise2: has bias, no activation.
+   *
+   * The reason
+   *
+   *
+   */
+  bias_activation_setup() {
+
+    // Note: If an operation has no activation function, it can have no bias too. Because the next operation's bias can
+    //        achieve the same result.
+
+//!!! ...unfinished... (2022/05/03) bias, activation of pointwise1, depthwise1, pointwise2
+    this.bPointwise1Bias = this.pointwise1ActivationId =
+    this.bDepthwiseBias = this.depthwiseActivationId =
+    this.bPointwise21Bias = this.pointwise21ActivationId =
+
 
   /**
    *
