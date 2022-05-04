@@ -1,8 +1,8 @@
 export { MobileNetV2 };
 
-import * as ValueDesc from "../Unpacker/ValueDesc.js";
+import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { Params } from "../Block_Param.js";
-import { Base } from "./Params_to_PointDepthPointParams_Base.js";
+import { Base } from "./Base.js";
 
 
 //!!! ...unfinished... (2022/05/02)
