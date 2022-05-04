@@ -90,9 +90,11 @@ class Params extends Weights.Params {
    *       Its depthwise1 will use ( pad = "valid" ).
    *
    * @param {boolean} bLastBlock
-   *   Whether is this block the last block in  multiple blocks situation. It is used to determine whether the stepLast's
+   *   Whether is this block the last block in multiple blocks situation. It is used to determine whether the stepLast's
    * pointwise2 could have no bias. Because the stepLast's pointwise2 usually should have bias. If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
+   * 
+   * Note: It is only useful when both this and next block (i.e. blocks) are MobileNet with ( bPointwise1 == true ).
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply() will not dispose inputTensor (i.e. will be kept). If null, it will be extracted from
