@@ -136,11 +136,6 @@ class Base {
    * value (i.e. the whole number line). If the last operation (i.e. pointwise2) has activation function, the output value will
    * be restricted by the activation function (e.g. [ -1, +1 ] for tanh()).
    *
-
-//!!! ...unfinished... (2022/05/04)
-// All steps (except stepLast) could use ( this.bPointwise21Bias = true ).
-// stepLast uses ( this.bPointwise21Bias = false ) is enough.
-
    *
    * 3. Drawback
    *
@@ -152,6 +147,20 @@ class Base {
    *
    * In MobileNetV2 configuration, this advantage is disappeared. The no-activation is at pointwise2. It does not have a next
    * operation to remedy its bias. So it does not have chance to spped up performance by dropping bias.
+   *
+
+
+//!!! ...unfinished... (2022/05/04)
+// All steps (except stepLast) could use ( this.bPointwise21Bias = true ).
+// stepLast uses ( this.bPointwise21Bias = false ) is enough.
+
+   *
+   * However, if ( bPointwise1 == false ) or ( ( bPointwise1 == true ) but ShuffleNetV2_ByMobileNetV1_Xxx ), the next step will
+   * not have bias to remedy the previous step pointwise21's no-bias. (Note: ShuffleNetV2_ByMobileNetV1_Xxx's pointwise1's higher
+   * half just pass-through input0. It is the same as no-bias and can not remedy the previous step pointwise21's no-bias.)
+   *
+   *
+   *
    *
    */
   bias_activation_setup_forStep0() {
