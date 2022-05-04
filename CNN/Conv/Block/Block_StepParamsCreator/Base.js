@@ -142,8 +142,8 @@ class Base {
    * However, the original ShuffleNetV2 configuration also has its own advantage: the bias of its depthwise1 could be dropped
    * (and speed up performance). This is because:
    *
-   *   "If an operation has no activation function, it can have no bias too. Because the next operation's bias can
-   *    achieve the same result."
+   *   "If an operation has no activation function, it can also have no bias too because the next operation's bias can
+   *    achieve the same result. (Multiple affine transformations can be combined into one affine transformation.)"
    *
    * In MobileNetV2 configuration, this advantage is disappeared. The no-activation is at pointwise2. It does not have a next
    * operation to remedy its bias. So it does not have chance to spped up performance by dropping bias.
