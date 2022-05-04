@@ -155,22 +155,34 @@ class Base {
    *   - depthwise convolution with ( pad = "valid" ) and bias.
    *
    *
-   * 3.1.1 
+   * 3.1.1 Why does depthwise convolution need ( pad = "valid" )?
    *
-
+   * The reason is that the depthwise convolution with ( pad = "same" ) will pad zero. The count of these padded zero is
+   * different according to the input pixel position. The varying zero count results in that varying bias is required.
+   * This is impossible since data in the same channel could only have the same bias.
    *
-   * 3.1.1
-   *
-   * So, if ( bPointwise1 == false ) or ( ( bPointwise1 == true ) but ShuffleNetV2_ByMobileNetV1_Xxx ), the next step will
-   * not have bias to remedy the previous step pointwise21's no-bias. (Note: ShuffleNetV2_ByMobileNetV1_Xxx's pointwise1's higher
-   * half just pass-through input0. It is the same as no-bias and can not remedy the previous step pointwise21's no-bias.)
-   *
-   * Q: Why does depthwise convolution need ( pad = "valid" )?
-   * A: ( pad = "same" )
+   * On the other hand, the depthwise convolution with ( pad = "valid" ) does not pad any value. The fixed per channel bias
+   * is sufficient to remedy the previous affine transformation's no-bias.
    *
    *
+   * 3.1.2 Usually not workable for ( bPointwise1 == false ).
    *
-   * If a step has next step (i.e. it must not be the stepLast) and the next step has pointwise1 (with bias), 
+   * It means that the next step will be no pointwise1. The remedy must be done by the next step's depthwise. Only in
+   * ShuffleNetV2_ByMobileNetV1_padValid, the depthwise is ( pad = "valid" ) and workable. In other ConvBlockType, 
+   * the depthwise is ( pad = "same" ) and not workable.
+   *
+   *
+   * 3.1.3 Not workable for ShuffleNetV2_ByMobileNetV1_Xxx
+   *
+   * No matter ( bPointwise1 == false ) or ( bPointwise1 == true ), ShuffleNetV2_ByMobileNetV1_Xxx always has pointwise1
+   * intrinsically. However, ShuffleNetV2_ByMobileNetV1_Xxx's pointwise1's higher half just pass-through input0.
+   * It is the same as no-bias and can not remedy the previous step's pointwise21's no-bias.
+   *
+   *
+   * 3.1.4 Not workable for stepLast
+   *
+   * Since stepLast does not have the next step (i.e. itself is the last step), there is no next step's pointwise1 to remedy
+   * stepLast's pointwise21's no-bias.
    *
    *
 
