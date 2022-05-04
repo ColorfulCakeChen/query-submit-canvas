@@ -1,8 +1,8 @@
 export { Base };
 
-import * as ValueDesc from "../Unpacker/ValueDesc.js";
-import * as PointDepthPoint from "./PointDepthPoint.js";
-import { Params } from "../Block_Param.js";
+import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
+import * as PointDepthPoint from "../../PointDepthPoint.js";
+import { Params } from "../Block_Params.js";
 
 /**
  * Basic class for all Params_to_PointDepthPointParams.Xxx classes.
