@@ -67,36 +67,45 @@ class Params extends Weights.Params {
    *   The width of depthwise convolution's filter. At least 2 (so that meaningless ( 1 * 1 ) could be avoided). If null, it will
    * be extracted from inputFloat32Array (i.e. by evolution).
    *
-   * @param {string} nActivationId
+   * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be
    * extracted from inputFloat32Array (i.e. by evolution).
    *
-   * @param {string} nActivationIdAtBlockEnd
+   * @param {number} nActivationIdAtBlockEnd
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution of the last PointDepthPoint's
    * pointwise2ActivationId of this block. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If the output of
    * this block needs to be any arbitrary value, it is recommended not to use activation at the end of this block
    * (i.e. nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that it will not be restricted by the range
    * of the activation function.
    *
-
-!!! ...unfinished... (2022/05/03) changed to  ConvBlockType ?
-
-   * @param {boolean} nWhetherShuffleChannel
-   *   Whether a (concatenator and) channel shuffler will be used.
+   * @param {number} nConvBlockType
+   *   The type of this convolution block (ValueDesc.ConvBlockType.Singleton.Ids.Xxx).
    *
-   *   - If ( nWhetherShuffleChannel == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
+   *   - If ( nConvBlockType == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
    *
-   *   - If ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.NONE ), (0),
-   *       this block will be MobileNetV1 or MobileNetV2 (i.e. with add-input-to-output, no channel shuffler).
+   *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1 (0).
+   *       This block will be MobileNetV1 (i.e. no add-input-to-output, no channel shuffler).
    *
-   *   - If ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFFLER ), (1),
-   *       this block will be ShuffleNetV2. There is a channel shuffler by concat-shuffle-split.
+   *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2 (1).
+   *       This block will be (original) MobileNetV2 (i.e. with add-input-to-output, no channel shuffler).
+   *       Its pointwise1 will be twice size of pointwise21
    *
-   *   - If ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22 ), (2),
-   *       this block will be ShuffleNetV2_ByPointwise22. There is a channel shuffler by pointwise22.
+   *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN (2).
+   *       This block will be (thin) MobileNetV2 (i.e. with add-input-to-output, no channel shuffler).
+   *       Its pointwise1 will be the same size of pointwise21
    *
-   *   - If ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_MOBILE_NET_V1 ), (3),
-   *       this block will be ShuffleNetV2_ByMobileNetV1. There is a channel shuffler integrated inside pointwise21.
+   *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2 (3)
+   *       This block will be ShuffleNetV2. There is a channel shuffler for concat-shuffle-split.
+   *
+   *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22 (4).
+   *       This block will be ShuffleNetV2_ByPointwise22. The channel shuffling is done by pointwise22.
+   *
+   *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5).
+   *       This block will be ShuffleNetV2_ByMobileNetV1. The channel shuffling is integrated inside pointwise1, depthwise1, pointwise21.
+   *
+   *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6).
+   *       This block will be ShuffleNetV2_ByMobileNetV1. The channel shuffling is integrated inside pointwise1, depthwise1, pointwise21.
+   *       Its depthwise1 will use ( pad = "valid" ).
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply() will not dispose inputTensor (i.e. will be kept). If null, it will be extracted from
@@ -215,6 +224,6 @@ Params.depthwiseFilterHeight =      new ParamDesc.Int(                   "depthw
 Params.depthwiseFilterWidth =       new ParamDesc.Int(                   "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
 Params.nActivationId =              new ParamDesc.ActivationFunction(    "nActivationId" );
 Params.nActivationIdAtBlockEnd =    new ParamDesc.ActivationFunction(    "nActivationIdAtBlockEnd" );
-Params.nWhetherShuffleChannel =     new ParamDesc.WhetherShuffleChannel( "nWhetherShuffleChannel" );
+Params.nConvBlockType =             new ParamDesc.ConvBlockType(         "nConvBlockType" );
 Params.bKeepInputTensor =           new ParamDesc.Bool(                  "bKeepInputTensor" );
 
