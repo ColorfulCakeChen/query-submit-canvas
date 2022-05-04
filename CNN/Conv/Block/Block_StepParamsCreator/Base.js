@@ -78,10 +78,26 @@ class Base {
    *   - Double channels. (Please see explanation of class Block.Base)
    */
   configTo_beforeStep0() {
-    this.inputHeight0 = this.blockParams.sourceHeight; // step0 inputs the source image size.
-    this.inputWidth0 = this.blockParams.sourceWidth;
+    let blockParams = this.blockParams;
+
+    this.inputHeight0 = blockParams.sourceHeight; // step0 inputs the source image size.
+    this.inputWidth0 = blockParams.sourceWidth;
 
     this.bias_activation_setup_forStep0(); // bias, activation of pointwise1, depthwise1, pointwise2
+
+    this.depthwiseFilterHeight = this.depthwiseFilterHeight_Default;
+    this.depthwiseFilterWidth = this.depthwiseFilterWidth_Default;
+
+    // step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
+    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
+
+    // All steps' output0 is double depth of source input0.
+    //
+    // Note: In original MobileNet(V2) design, it is not always "twice". We choose "twice" just for comparing with ShuffleNetV2.
+    //
+    this.pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
+
+    this.bKeepInputTensor = blockParams.bKeepInputTensor; // step0 may or may not keep input tensor according to caller's necessary.
   }
 
   /**
@@ -90,6 +106,8 @@ class Base {
   configTo_afterStep0() {
     this.inputHeight0 = this.blockParams.outputHeight; // all steps (except step0) inputs half the source image size.
     this.inputWidth0 = this.blockParams.outputWidth;
+
+    this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
 
   /**
