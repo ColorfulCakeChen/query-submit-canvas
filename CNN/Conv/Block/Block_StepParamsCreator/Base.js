@@ -184,24 +184,20 @@ class Base {
    *
    * 3.1.4 Not workable for stepLast
    *
-   * Since stepLast does not have the next step (i.e. itself is the last step), there is no next step's pointwise1 to remedy
-   * stepLast's pointwise21's no-bias.
+   * Since stepLast does not have the next step (i.e. itself is the last step), there is no next step's pointwise1 to
+   * remedy stepLast's pointwise21's no-bias.
    *
    *
    * 3.2 Workable for MobileNet with ( bPointwise1 == true )
-
-
-//!!! ...unfinished... (2022/05/04)
-// Whether does MobileNetV2's add-input-to-output matter?
-
    *
-   * If ( bPointwise1 == true ), it is workable for MobileNetV1, MobileNetV2 and MobileNetV2_Thin. All non-stepLast's pointwise21
-   * need not bias. But the stepLast's pointwise21 still needs bias for final output.
+   * In summary, when ( bPointwise1 == true ), it is workable for MobileNetV1, MobileNetV2 and MobileNetV2_Thin. All
+   * non-stepLast's pointwise21 need not bias. Only the stepLast's pointwise21 needs bias for final output.
    *
-   * (Note: All steps' pointwise1 and depthwise1 need bias because they have activation function.)
+   * (Note: All steps' pointwise1 and depthwise1 also need bias because they have activation function (i.e. not affine
+   * transformation).)
    *
-   * In fact, if multiple ConvBlock is used, only the last step's pointwise21 of the last block's needs bias. All other block's
-   * every step's pointwise21 needs not bias.
+   * In fact, if multiple convolution blocks are used, only the last block's stepLast's pointwise21 needs bias. All other
+   * block's every step's pointwise21 needs not bias.
    *
    *
 
