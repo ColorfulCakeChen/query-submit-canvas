@@ -30,9 +30,9 @@ import { Params } from "./Block_Params.js";
  *
  *   - ShuffleNetV2
  *
- *     - ( pointwise1ChannelCountRate == 0 )
+ *     - ( bPointwise1 == 0 )
  *
- *     - ( pointwise1ChannelCountRate > 0 )
+ *     - ( bPointwise1 > 0 )
  *
  *
  *
@@ -46,12 +46,12 @@ import { Params } from "./Block_Params.js";
 
 !!! ...unfinished... (2022/05/03) pointwise1
 
- *     - ( pointwise1ChannelCountRate == 0 )
+ *     - ( bPointwise1 == 0 )
  *
  *
  *
  *
- *     - ( pointwise1ChannelCountRate > 0 )
+ *     - ( bPointwise1 > 0 )
  *
 
 !!! ...unfinished... (2022/05/03) depthwise, pointwise2
@@ -187,7 +187,7 @@ class Base {
     this.sourceWidth = params.sourceWidth;
     this.sourceChannelCount = params.sourceChannelCount;
     this.stepCountRequested = params.stepCountRequested;
-    this.pointwise1ChannelCountRate = params.pointwise1ChannelCountRate;
+    this.bPointwise1 = params.bPointwise1;
     this.depthwiseFilterHeight = params.depthwiseFilterHeight;
     this.depthwiseFilterWidth = params.depthwiseFilterWidth;
     this.nActivationId = params.nActivationId;
@@ -456,7 +456,7 @@ class Base {
     let str =
         `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, sourceChannelCount=${this.sourceChannelCount}, `
       + `stepCountRequested=${this.stepCountRequested}, stepCount=${this.stepCount}, `
-      + `pointwise1ChannelCountRate=${this.pointwise1ChannelCountRate}, `
+      + `bPointwise1=${this.bPointwise1}, `
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
       + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
       + `nActivationIdName=${this.nActivationIdName}(${this.nActivationId}), `
