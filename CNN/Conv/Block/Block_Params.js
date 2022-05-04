@@ -122,7 +122,7 @@ class Params extends Weights.Params {
     pointwise1ChannelCountRate,
     depthwiseFilterHeight, depthwiseFilterWidth,
     nActivationId, nActivationIdAtBlockEnd,
-    nWhetherShuffleChannel,
+    nConvBlockType,
     bKeepInputTensor
   ) {
 
@@ -147,7 +147,7 @@ class Params extends Weights.Params {
       [ Params.depthwiseFilterWidth,       depthwiseFilterWidth ],
       [ Params.nActivationId,              nActivationId ],
       [ Params.nActivationIdAtBlockEnd,    nActivationIdAtBlockEnd ],
-      [ Params.nWhetherShuffleChannel,     nWhetherShuffleChannel ],
+      [ Params.nConvBlockType,             nConvBlockType ],
       [ Params.bKeepInputTensor,           bKeepInputTensor ],
     ] );
 
@@ -207,8 +207,8 @@ class Params extends Weights.Params {
   get nActivationIdAtBlockEnd()     { return this.parameterMapModified.get( Params.nActivationIdAtBlockEnd ); }
   get nActivationIdAtBlockEndName() { return Params.nActivationIdAtBlockEnd.getStringOfValue( this.nActivationIdAtBlockEnd ); }
 
-  get nWhetherShuffleChannel()      { return this.parameterMapModified.get( Params.nWhetherShuffleChannel ); }
-  get nWhetherShuffleChannelName()  { return Params.nWhetherShuffleChannel.getStringOfValue( this.nWhetherShuffleChannel ); }
+  get nConvBlockType()              { return this.parameterMapModified.get( Params.nConvBlockType ); }
+  get nConvBlockTypeName()          { return Params.nConvBlockType.getStringOfValue( this.nConvBlockType ); }
 
   get bKeepInputTensor()            { return this.parameterMapModified.get( Params.bKeepInputTensor ); }
 }
