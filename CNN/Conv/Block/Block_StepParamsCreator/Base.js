@@ -74,6 +74,10 @@ class Base {
    *   - Double channels.
    *     - By concat, if ShuffleNetV2.
    *     - By channelMultiplier of depthwise convolution, if (Our) ShuffleNetV2 when ( pointwise1ChannelCount == 0 ).
+
+
+!!! ...unfinished... (2022/05/04) quadruple of input0, double of input0.
+
    *     - By pointwise1 (for ( pointwise1ChannelCountRate == 1 )) and pointwise21 (for ( pointwise1ChannelCountRate == 0 )), if MobileNetV2.
    */
   configTo_beforeStep0() {
