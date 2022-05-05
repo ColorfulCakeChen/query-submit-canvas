@@ -66,8 +66,12 @@ import { Params } from "./Block_Params.js";
 //
 // pointwise1 convolution can not be omitted because it is responsible for channel expanding (to quadruple of step0's input0).
 //
+// 
+// For ShuffleNetV2:
+// For ShuffleNetV2_ByPointwise22:
+// For ShuffleNetV2_ByMobileNetV1:
+// For ShuffleNetV2_ByMobileNetV1_padValid:
 //
-
 
  *
  * 3. Bias and Activation
