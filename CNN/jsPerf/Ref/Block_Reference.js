@@ -42,11 +42,12 @@ class Base {
       let sourceWidth = this.testParams.out.sourceWidth;
       let sourceChannelCount = this.testParams.out.sourceChannelCount;
       let stepCountRequested = this.testParams.out.stepCountRequested;
-      let pointwise1ChannelCountRate = this.testParams.out.pointwise1ChannelCountRate;
+      let bPointwise1 = this.testParams.out.bPointwise1;
       let depthwiseFilterHeight = this.testParams.out.depthwiseFilterHeight;
+      let depthwiseFilterWidth = this.testParams.out.depthwiseFilterWidth;
       let nActivationId = this.testParams.out.nActivationId;
-      let nActivationIdAtBlockEnd = this.testParams.out.nActivationIdAtBlockEnd;
-      let nWhetherShuffleChannel = this.testParams.out.nWhetherShuffleChannel;
+      let bPointwise2BiasAtBlockEnd = this.testParams.out.bPointwise2BiasAtBlockEnd;
+      let nConvBlockType = this.testParams.out.nConvBlockType;
       let bKeepInputTensor = this.testParams.out.bKeepInputTensor;
 
       let referredParams = {};
@@ -173,9 +174,11 @@ class Base {
     let extractedParams = new Block.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
       testParams.in.sourceHeight, testParams.in.sourceWidth, testParams.in.sourceChannelCount,
       testParams.in.stepCountRequested,
-      testParams.in.pointwise1ChannelCountRate,
-      testParams.in.depthwiseFilterHeight, testParams.in.nActivationId, testParams.in.nActivationIdAtBlockEnd,
-      testParams.in.nWhetherShuffleChannel,
+      testParams.in.bPointwise1,
+      testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
+      testParams.in.nActivationId,
+      testParams.in.bPointwise2BiasAtBlockEnd,
+      testParams.in.nConvBlockType,
       testParams.in.bKeepInputTensor
     );
 
@@ -213,18 +216,20 @@ class Base {
     Base.AssertTwoEqualValues( "sourceChannelCount", block.sourceChannelCount, testParams.out.sourceChannelCount, parametersDescription );
     Base.AssertTwoEqualValues( "stepCountRequested", block.stepCountRequested, testParams.out.stepCountRequested, parametersDescription );
 
-    Base.AssertTwoEqualValues( "pointwise1ChannelCountRate",
-      block.pointwise1ChannelCountRate, testParams.out.pointwise1ChannelCountRate, parametersDescription );
+    Base.AssertTwoEqualValues( "bPointwise1", block.bPointwise1, testParams.out.bPointwise1, parametersDescription );
 
-    Base.AssertTwoEqualValues( "depthwiseFilterHeight", block.depthwiseFilterHeight, testParams.out.depthwiseFilterHeight, parametersDescription );
+    Base.AssertTwoEqualValues( "depthwiseFilterHeight",
+      block.depthwiseFilterHeight, testParams.out.depthwiseFilterHeight, parametersDescription );
+
+    Base.AssertTwoEqualValues( "depthwiseFilterWidth",
+      block.depthwiseFilterWidth, testParams.out.depthwiseFilterWidth, parametersDescription );
 
     Base.AssertTwoEqualValues( "nActivationId", block.nActivationId, testParams.out.nActivationId, parametersDescription );
 
-    Base.AssertTwoEqualValues( "nActivationIdAtBlockEnd",
-      block.nActivationIdAtBlockEnd, testParams.out.nActivationIdAtBlockEnd, parametersDescription );
+    Base.AssertTwoEqualValues( "bPointwise2BiasAtBlockEnd",
+      block.bPointwise2BiasAtBlockEnd, testParams.out.bPointwise2BiasAtBlockEnd, parametersDescription );
 
-    Base.AssertTwoEqualValues( "nWhetherShuffleChannel",
-      block.nWhetherShuffleChannel, testParams.out.nWhetherShuffleChannel, parametersDescription );
+    Base.AssertTwoEqualValues( "nConvBlockType", block.nConvBlockType, testParams.out.nConvBlockType, parametersDescription );
 
     // Referred parameters.
     Base.AssertTwoEqualValues( "outputHeight", block.outputHeight, testParams.out.outputHeight, parametersDescription );
@@ -260,7 +265,7 @@ class Base {
     }
 
     let stepCountRequested = blockParams.stepCountRequested;
-    let nWhetherShuffleChannel = blockParams.nWhetherShuffleChannel;
+    let nConvBlockType = blockParams.nConvBlockType;
 
     let stepCount = stepParamsArray.length;
 
@@ -286,6 +291,8 @@ class Base {
       } else {
         asserter.propertyValue( "bKeepInputTensor", false );
       }
+
+//!!! ...unfinished... (2022/05/05)
 
       if ( 0 == stepIndex ) {
         pointwise1ChannelCount = stepParams.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate;
