@@ -59,9 +59,7 @@ class Params extends Weights.Params {
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be
    * extracted from inputFloat32Array (i.e. by evolution).
-
-//!!! ...unfinished... (2022/05/05)
-
+   *
    * @param {boolean} bPointwise2BiasAtBlockEnd
    *   If true, the stepLast's pointwise2 will have bias. If false, the stepLast's pointwise2 will have no bias. If null, it will
    * be extracted from inputFloat32Array (i.e. by evolution).
@@ -102,16 +100,6 @@ class Params extends Weights.Params {
    *       This block will be ShuffleNetV2_ByMobileNetV1. The channel shuffling is integrated inside pointwise1, depthwise1, pointwise21.
    *       Its depthwise1 will use ( pad = "valid" ).
    *
-
-//!!! ...unfinished... (2022/05/05)
-
-   * @param {boolean} bLastBlock
-   *   Whether is this block the last block in multiple blocks situation. It is used to determine whether the stepLast's
-   * pointwise2 could have no bias. Because the stepLast's pointwise2 usually should have bias. If null, it will be extracted
-   * from inputFloat32Array (i.e. by evolution).
-   * 
-   * Note: bLastBlock is only useful when both this and next block (i.e. blocks) are MobileNet with ( bPointwise1 == true ).
-   *
    * @param {boolean} bKeepInputTensor
    *   If true, apply() will not dispose inputTensor (i.e. will be kept). If null, it will be extracted from
    * inputFloat32Array (i.e. by evolution).
@@ -127,8 +115,8 @@ class Params extends Weights.Params {
     bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth,
     nActivationId,
+    bPointwise2BiasAtBlockEnd,
     nConvBlockType,
-    bLastBlock,
     bKeepInputTensor
   ) {
 
@@ -152,8 +140,8 @@ class Params extends Weights.Params {
       [ Params.depthwiseFilterHeight,      depthwiseFilterHeight ],
       [ Params.depthwiseFilterWidth,       depthwiseFilterWidth ],
       [ Params.nActivationId,              nActivationId ],
+      [ Params.bPointwise2BiasAtBlockEnd,  bPointwise2BiasAtBlockEnd ],
       [ Params.nConvBlockType,             nConvBlockType ],
-      [ Params.bLastBlock,                 bLastBlock ],
       [ Params.bKeepInputTensor,           bKeepInputTensor ],
     ] );
 
@@ -211,10 +199,11 @@ class Params extends Weights.Params {
   get nActivationId()               { return this.parameterMapModified.get( Params.nActivationId ); }
   get nActivationIdName()           { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
 
+  get bPointwise2BiasAtBlockEnd()   { return this.parameterMapModified.get( Params.bPointwise2BiasAtBlockEnd ); }
+
   get nConvBlockType()              { return this.parameterMapModified.get( Params.nConvBlockType ); }
   get nConvBlockTypeName()          { return Params.nConvBlockType.getStringOfValue( this.nConvBlockType ); }
 
-  get bLastBlock()                  { return this.parameterMapModified.get( Params.bLastBlock ); }
   get bKeepInputTensor()            { return this.parameterMapModified.get( Params.bKeepInputTensor ); }
 }
 
@@ -228,7 +217,7 @@ Params.bPointwise1 =                new ParamDesc.Bool(                  "bPoint
 Params.depthwiseFilterHeight =      new ParamDesc.Int(                   "depthwiseFilterHeight",      1, ( 10 * 1024 ) );
 Params.depthwiseFilterWidth =       new ParamDesc.Int(                   "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
 Params.nActivationId =              new ParamDesc.ActivationFunction(    "nActivationId" );
+Params.bPointwise2BiasAtBlockEnd =  new ParamDesc.Bool(                  "bPointwise2BiasAtBlockEnd" );
 Params.nConvBlockType =             new ParamDesc.ConvBlockType(         "nConvBlockType" );
-Params.bLastBlock =                 new ParamDesc.Bool(                  "bLastBlock" );
 Params.bKeepInputTensor =           new ParamDesc.Bool(                  "bKeepInputTensor" );
 
