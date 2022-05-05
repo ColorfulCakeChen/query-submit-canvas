@@ -29,12 +29,12 @@ class MobileNetV2 extends MobileNetV2_Thin {
 
   /** @override */
   configTo_afterStep0() {
-    super.configTo_afterStep0(); // step1, 2, 3, ...'s inputHeight0, inputWidth0.
+    super.configTo_afterStep0(); // step1, 2, 3, ... are the same as MobileNetV2_Thin.
   }
 
   /** @override */
   configTo_beforeStepLast() {
-    super.configTo_beforeStepLast(); // stepLast's pointwise21 bias.
+    super.configTo_beforeStepLast(); // stepLast is the same as MobileNetV2_Thin.
   }
 
 }
