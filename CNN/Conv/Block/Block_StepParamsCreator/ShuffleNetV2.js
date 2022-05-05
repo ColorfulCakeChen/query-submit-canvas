@@ -135,6 +135,8 @@ class ShuffleNetV2 extends Base {
     // The output0:
     //   - It will have double channel count of source input0.
     //   - It is the concatenation of pointwise21's result and input1.
+    //
+    this.pointwise21ChannelCount = this.blockParams.sourceChannelCount * 2;
     this.bOutput1Requested = false;
 
     this.outChannels0 = this.outChannels0 + this.outChannels1;
