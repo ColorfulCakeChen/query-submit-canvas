@@ -13,7 +13,7 @@ import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
 import { ShuffleNetV2_ByMobileNetV1_padValid } from "./ShuffleNetV2_ByMobileNetV1_padValid.js";
 
 /**
- * Basic class for all Params_to_PointDepthPointParams.Xxx classes.
+ * Basic class for all Block.StepParamsCreator.Xxx classes.
  *
  *
  * @member {number} outChannels0
@@ -198,7 +198,7 @@ class Base {
    *   The Block.Params object to be reference.
    *
    * @return {Base}
-   *   Return newly created Block.Params_to_PointDepthPointParams.Xxx object according to blockParams.nConvBlockType.
+   *   Return newly created Block.StepParamsCreator.Xxx object according to blockParams.nConvBlockType.
    */
   static create_byBlockParams( blockParams ) {
 
@@ -206,38 +206,32 @@ class Base {
       `Block.StepParamsCreator.Base.create_byBlockParams(): `
         + `blockParams.stepCountRequested ( ${blockParams.stepCountRequested} ) must be >= 2.` );
 
-    switch ( blockParams.nConvBlockType ) {
-      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-        return new Params_to_PointDepthPointParams.MobileNetV1( blockParams ); break;
+    tf.util.assert(
+      (   ( blockParams.nConvBlockType >= 0 )
+       && ( blockParams.nConvBlockType < Base.nConvBlockType_to_StepParamsCreator_ClassArray.length )
+      ),
+      `Block.StepParamsCreator.Base.create_byBlockParams(): `
+        + `unknown blockParams.nConvBlockType ( ${blockParams.nConvBlockType} ) value.`
+    );
 
-      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-        return new Params_to_PointDepthPointParams.MobileNetV1_padValid( blockParams ); break;
+    let classStepParamsCreator = Base.nConvBlockType_to_StepParamsCreator_ClassArray[ blockParams.nConvBlockType ];
+    let aStepParamsCreator = new classStepParamsCreator( blockParams );
 
-      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (2)
-        return new Params_to_PointDepthPointParams.MobileNetV2( blockParams ); break;
-
-      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (3)
-        return new Params_to_PointDepthPointParams.MobileNetV2_Thin( blockParams ); break;
-
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-        return new Params_to_PointDepthPointParams.ShuffleNetV2( blockParams ); break;
-
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-        return new Params_to_PointDepthPointParams.ShuffleNetV2_ByPointwise22( blockParams ); break;
-
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-        return new Params_to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1( blockParams ); break;
-
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
-        return new Params_to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1_padValid( blockParams ); break;
-
-      default:
-        tf.util.assert( false,
-          `Block.StepParamsCreator.Base.create_byBlockParams(): `
-            + `unknown this.nConvBlockType ( ${blockParams.nConvBlockType} ) value.` );
-        break;
-    }
+    return aStepParamsCreator;
   }
 
 }
 
+/**
+ * Mapping nConvBlockType (number as array index) to StepParamsCreator class object.
+ */
+Base.nConvBlockType_to_StepParamsCreator_ClassArray[] = [
+  MobileNetV1,                         // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1 (0)
+  MobileNetV1_padValid,                // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID (1)
+  MobileNetV2,                         // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2 (2)
+  MobileNetV2_Thin,                    // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN (3)
+  ShuffleNetV2,                        // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2 (4)
+  ShuffleNetV2_ByPointwise22,          // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22 (5)
+  ShuffleNetV2_ByMobileNetV1,          // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (6)
+  ShuffleNetV2_ByMobileNetV1_padValid, // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (7)
+];
