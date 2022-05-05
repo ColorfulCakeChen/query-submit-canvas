@@ -53,9 +53,13 @@ import { Params } from "./Block_Params.js";
 // The reason is that the previous step's pointwise21 (which always has no activation function) and the next step's pointwise1
 // could be combined into one pointwise convolution.
 //
-// It is better to let the pointwise21 always has bias (and still no activation function). All non-step0's pointwise1
-// only needs activation function (without pointwise convolution, without bias). Or, all non-step0's pointwise1 could
-// be dropped totally (without pointwise convolution, without bias, without activation function).
+// It is better to let the pointwise21 always has bias (and still no activation function). And:
+//
+//   - All non-step0's pointwise1 only needs activation function (without pointwise convolution, without bias). Or,
+//
+//   - All step's (including step0 and non-step0) pointwise1 could be dropped totally (without pointwise convolution,
+//       without bias, without activation function).
+//
 // 
 // 
 // For MobileNetV2:
