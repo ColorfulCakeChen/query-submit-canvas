@@ -51,12 +51,10 @@ class ShuffleNetV2 extends Base {
   determine_stepCount_depthwiseFilterHeightWidth_Default_Last() {
     super.determine_stepCount_depthwiseFilterHeightWidth_Default_Last();
 
-    let blockParams = this.blockParams;
-
     // ShuffleNetV2_Xxx must have at least 2 steps because PointDepthPoint can not achieve the head/body/tail of
     // ShuffleNetV2 at the same time.
     tf.util.assert( this.stepCount >= 2,
-      `Block.Params_to_PointDepthPointParams.ShuffleNetV2(): `
+      `Block.StepParamsCreator.ShuffleNetV2.determine_stepCount_depthwiseFilterHeightWidth_Default_Last(): `
         + `stepCount ( ${this.stepCount} ) must be at least 2 in ShuffleNetV2_Xxx.` );
   }
 
