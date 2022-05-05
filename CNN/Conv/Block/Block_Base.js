@@ -47,13 +47,21 @@ import { Params } from "./Block_Params.js";
  *
 
 //!!! ...unfinished... (2022/05/05)
-// For MobileNetV1, only step0's pointwise1 is meaningful. All non-step0's pointwise1 is meaningless.
+// For MobileNetV1 and MobileNetV2_Thin:
+//
+// Only step0's pointwise1 is meaningful. All non-step0's pointwise1 is meaningless.
 // The reason is that the previous step's pointwise21 (which always has no activation function) and the next step's pointwise1
 // could be combined into one pointwise convolution.
 //
 // It is better to let the pointwise21 always has bias (and still  no activation function). All non-step0's pointwise1
 // only needs activation function (without pointwise convolution, without bias).
 // 
+// 
+// For MobileNetV2:
+//
+// pointwise1 convolution can not be omitted because it is responsible for channel expanding (to quadruple of step0's input0).
+//
+//
 
 
  *
