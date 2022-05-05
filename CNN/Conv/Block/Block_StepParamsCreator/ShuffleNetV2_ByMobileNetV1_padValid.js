@@ -54,5 +54,10 @@ class ShuffleNetV2_ByMobileNetV1_padValid extends ShuffleNetV2_ByMobileNetV1 {
     // Except padding is "valid" (not "same").
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
   }
+
+  /** @override */
+  configTo_beforeStepLast() {
+    super.configTo_beforeStepLast(); // StepLast is the same as ShuffleNetV2_ByMobileNetV1.
+  }
 }
 
