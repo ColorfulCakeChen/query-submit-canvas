@@ -35,7 +35,7 @@ class MobileNetV1 extends Base {
     // In MobileNetV1, all steps (include step0) do not use input1.
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT;
 
-    If ( blockParams.bPointwise1 == false ) {
+    if ( blockParams.bPointwise1 == false ) {
       this.pointwise1ChannelCount = 0;                                  // NoPointwise1.
       this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                   // Double of input0. (Same as pointwise21.)
 
