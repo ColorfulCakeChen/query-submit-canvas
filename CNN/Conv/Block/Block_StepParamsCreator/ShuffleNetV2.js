@@ -9,52 +9,22 @@ import { Base } from "./Base.js";
  * Provide parameters for ShuffleNetV2 (i.e. shuffle channel by ChannelShuffler.ConcatPointwiseConv).
  *
  *
-
-!!! ...unfinished... (2022/05/04)
-
- * 1. Be ware of ( pointwise1ChannelCountRate == 2 )
- *
- * ShuffleNetV2 always double the channel count. It is achieved by concatenation. This is different from MobileNetV2 which achieves
- * channel count doubling by pointwise1.
- *
- * That is, if ( pointwise1ChannelCountRate == 2 ), there will be 4 times (not 2 times) channels to be processed in fact. It could be
- * expected that the performance will be slower than ( pointwise1ChannelCountRate == 2 ) in MobileNetV2 unfairly.
- *
- * So, the original ShuffleNetV2 should be ( pointwise1ChannelCountRate == 1 ).
- *
- *
- * 2. A special case: NoPointwise1 ShuffleNetV2 (i.e. without pointwise1, with concatenator).
+ * 1. Special case: NoPointwise1 ( blockParams.bPointwise1 == false ) ShuffleNetV2 (i.e. without pointwise1, with concatenator).
  * 
- * Q: How to specify the NoPointwise1 configuration?
- * A: By  (   ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFFLER )
- *         or ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22 )
- *        )
- *    and ( pointwise1ChannelCountRate == 0 )
- *    in the parameters of Block.Params.
- *
  * What is the different of the NoPointwise1 configuration?
  *
- * When the poitwise1 convolution (of every step (including step 0)) is discarded (i.e. ( pointwise1ChannelCountRate == 0 ) ),
- * the step 0 and step 0's branch could be achieved simultaneously by:
- *   - once depthwise convolution (channelMultipler = 2, strides = 2, pad = same, bias, COS).
+ * When the poitwise1 convolution (of every step (including step0)) is discarded (i.e. ( blockParams.bPointwise1 == false ) ),
+ * the step0 and step0's branch could be achieved simultaneously by:
+ *   - once depthwise convolution (channelMultipler = 2, strides = 2, pad = same, bias, CLIP_BY_VALUE_N3_P3).
  *   - No need to concatenate because the above operation already double channel count.
  *
  * Note that:
- *   - The depthwise1 convolution (channelMultipler = 2, strides = 2) of step 0 achieves simultaneously two depthwise
+ *   - The depthwise1 convolution (channelMultipler = 2, strides = 2) of step0 achieves simultaneously two depthwise
  *     convolution (channelMultipler = 1, strides = 2) of step0 and step0's branch. So, it is one less depthwise
  *     convolution and one less concatenating (than original ShuffleNetV2).
  *
- *   - Even if the pointwise1 convolution is discarded, just two steps of this simplied ShuffleNetV2 still compose an
- *     effective Fourier series which should have enough expressive power for approximating any function. By given
- *     the following configuration in the Block.Params:
- *       - (   ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFFLER )
- *          or ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22 ) )
- *       - ( pointwise1ChannelCountRate == 0 )
- *       - ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.COS) 
- *       - ( nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE)
  *
- *
- * 3. Drawback when ( pointwise1ChannelCountRate == 0 )
+ * 1. Drawback when ( blockParams.bPointwise1 == false )
  *
  * Channel shuffler has a characteristic that it always does not shuffle the first and last channel (i.e. the channel 0
  * and channel ( N - 1 ) will always be at the same place). In ShuffleNetV2, the pointwise1 could alleviate this issue
@@ -69,10 +39,10 @@ import { Base } from "./Base.js";
  *   - In bad side, it wastes a channel (i.e. the last channel) if there is no information needed to be kept and passed
  *       to the next block.
  *
- * If ( pointwise1ChannelCountRate == 0 ), there will be no pointwise1 (i.e. no chance) to shuffle the (first and) last
+ * If ( blockParams.bPointwise1 == false ), there will be no pointwise1 (i.e. no chance) to shuffle the (first and) last
  * channel's position.
  *
- * So, it is NOT suggested to use ShuffleNetV2 with ( pointwise1ChannelCountRate == 0 ).
+ * So, it may be NOT suggested to use ShuffleNetV2 with ( blockParams.bPointwise1 == false ).
  *
  */
 class ShuffleNetV2 extends Base {
@@ -98,7 +68,7 @@ class ShuffleNetV2 extends Base {
 
     this.channelCount0_pointwise1Before = blockParams.sourceChannelCount; // Step0 uses the original input channel count (as input0).
 
-    If ( blockParams.bPointwise1 == false ) {
+    if ( blockParams.bPointwise1 == false ) {
 
       // NoPointwise1 ShuffleNetV2 (expanding by once depthwise).
       //
@@ -129,8 +99,6 @@ class ShuffleNetV2 extends Base {
   configTo_afterStep0() {
     super.configTo_afterStep0();
 
-//!!! ...unfinished... (2022/05/04)
-
     // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
     this.channelCount0_pointwise1Before = this.outChannels0;
 
@@ -138,6 +106,7 @@ class ShuffleNetV2 extends Base {
     //
     // The channel count of input1 must be the same as pointwise21's result. The result of pointwise21 (which operates on input0)
     // will be concatenated with input1.
+    //
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1;
 
     this.channelShuffler_init(); // In ShuffleNetV2, all steps (except step0) uses channel shuffler (with two convolution groups).
@@ -147,7 +116,7 @@ class ShuffleNetV2 extends Base {
    * Create channel shuffler if necessary and put in this.channelShuffler.
    *
    * Sub-class could override this method. For example, if sub-class does not need channel shuffler, it could override and do
-   *  nothing so that it can be avoided to create channel shuffler in sub-class.
+   * nothing so that it can be avoided to create channel shuffler in sub-class.
    */
   channelShuffler_init() {
     let blockParams = this.blockParams;
