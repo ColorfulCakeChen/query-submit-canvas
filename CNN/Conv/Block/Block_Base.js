@@ -63,14 +63,24 @@ import { Params } from "./Block_Params.js";
 // 
 // 
 // For MobileNetV2:
+//   - pointwise1 convolution can not be omitted because it is responsible for channel expanding (to quadruple of step0's input0).
 //
-// pointwise1 convolution can not be omitted because it is responsible for channel expanding (to quadruple of step0's input0).
 //
-// 
 // For ShuffleNetV2:
+//   - pointwise1 could be omitted. Although it is suggested to have pointwise1 to alleviate the issue of
+//     the first and last channel (i.e. the channel 0 and channel ( N - 1 )) stationary at the same place.
+//
 // For ShuffleNetV2_ByPointwise22:
+//   - pointwise1 could be omitted. And, it does not have ShuffleNetV2's of first and last channel (i.e. the channel 0
+//     and channel ( N - 1 )) stationary issue.
+//
 // For ShuffleNetV2_ByMobileNetV1:
 // For ShuffleNetV2_ByMobileNetV1_padValid:
+//   - step0 always has pointwise1 (even if ( blockParams.bPointwise1 == false )) because it is responsible for channel expanding
+//     (to double of step0's input0).
+//   - all non-step0 could has no pointwise1.
+//
+//
 //
 
  *
