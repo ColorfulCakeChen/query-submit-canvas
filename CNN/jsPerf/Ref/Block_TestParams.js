@@ -52,13 +52,13 @@ class Base extends TestParams.Base {
    *   Return this object self.
    */
   set_By_ParamsScattered(
-    sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, pointwise1ChannelCountRate,
-    depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel, bKeepInputTensor
+    sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, bPointwise1,
+    depthwiseFilterHeight, depthwiseFilterWidth, nActivationId, bPointwise2BiasAtBlockEnd, nConvBlockType, bKeepInputTensor
   ) {
     this.in.paramsNumberArrayObject = {};
     this.out = {
-      sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, pointwise1ChannelCountRate,
-      depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel, bKeepInputTensor
+      sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, bPointwise1,
+      depthwiseFilterHeight, depthwiseFilterWidth, nActivationId, bPointwise2BiasAtBlockEnd, nConvBlockType, bKeepInputTensor
     };
 
     Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
@@ -94,31 +94,32 @@ class Base extends TestParams.Base {
     let blockParams = this.out;
 
     // Fill in outputHeight, outputWidth.
-    Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( blockParams, blockParams.sourceHeight, blockParams.sourceWidth );
+    Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call(
+      blockParams, blockParams.sourceHeight, blockParams.sourceWidth );
 
-    let stepParamsMaker = Block.Base.create_Params_to_PointDepthPointParams( blockParams );
-    stepParamsMaker.determine_stepCount_depthwiseFilterHeight_Default_Last();
+    let stepParamsCreator = Block.StepParamsCreator.Base.create_byBlockParams( blockParams );
+    stepParamsCreator.determine_stepCount_depthwiseFilterHeightWidth_Default_Last();
 
-    this.stepsArray.length = stepParamsMaker.stepCount;
+    this.stepsArray.length = stepParamsCreator.stepCount;
     let paramsNameOrderArray = Base.paramsNameOrderArray_Basic.slice(); // Shallow copy.
 
     let paramsNumberArrayObject = {};
     Object.assign( paramsNumberArrayObject, this.in.paramsNumberArrayObject ); // Shallow copy.
 
     let channelShuffler;
-    for ( let i = 0; i < stepParamsMaker.stepCount; ++i ) { // Step0, 1, 2, 3, ..., StepLast.
+    for ( let i = 0; i < stepParamsCreator.stepCount; ++i ) { // Step0, 1, 2, 3, ..., StepLast.
 
       if ( 0 == i ) { // Step0.
-        stepParamsMaker.configTo_beforeStep0();
+        stepParamsCreator.configTo_beforeStep0();
       }
 
       if ( ( this.stepsArray.length - 1 ) == i ) { // StepLast. (Note: Step0 may also be StepLast.)
-        stepParamsMaker.configTo_beforeStepLast();
+        stepParamsCreator.configTo_beforeStepLast();
       }
 
       // If channelShuffler is not null, keep it so that its tensors could be released.
-      if ( stepParamsMaker.channelShuffler ) {
-        channelShuffler = stepParamsMaker.channelShuffler;
+      if ( stepParamsCreator.channelShuffler ) {
+        channelShuffler = stepParamsCreator.channelShuffler;
       }
 
       let stepName = `step${i}`;
@@ -126,21 +127,22 @@ class Base extends TestParams.Base {
 
       let stepTestParams = new PointDepthPoint_TestParams.Base( this.id );
       stepTestParams.set_By_ParamsScattered(
-        stepParamsMaker.channelCount0_pointwise1Before,
-        stepParamsMaker.channelCount1_pointwise1Before,
-        stepParamsMaker.pointwise1ChannelCount, stepParamsMaker.bPointwise1Bias, stepParamsMaker.pointwise1ActivationId,
-        stepParamsMaker.depthwise_AvgMax_Or_ChannelMultiplier, stepParamsMaker.depthwiseFilterHeight, stepParamsMaker.depthwiseStridesPad,
-        stepParamsMaker.bDepthwiseBias, stepParamsMaker.depthwiseActivationId,
-        stepParamsMaker.pointwise21ChannelCount, stepParamsMaker.bPointwise21Bias, stepParamsMaker.pointwise21ActivationId,
-        stepParamsMaker.bOutput1Requested,
-        stepParamsMaker.bKeepInputTensor
+        stepParamsCreator.channelCount0_pointwise1Before,
+        stepParamsCreator.channelCount1_pointwise1Before,
+        stepParamsCreator.pointwise1ChannelCount, stepParamsCreator.bPointwise1Bias, stepParamsCreator.pointwise1ActivationId,
+        stepParamsCreator.depthwise_AvgMax_Or_ChannelMultiplier,
+        stepParamsCreator.depthwiseFilterHeight, stepParamsCreator.depthwiseFilterWidth, stepParamsCreator.depthwiseStridesPad,
+        stepParamsCreator.bDepthwiseBias, stepParamsCreator.depthwiseActivationId,
+        stepParamsCreator.pointwise21ChannelCount, stepParamsCreator.bPointwise21Bias, stepParamsCreator.pointwise21ActivationId,
+        stepParamsCreator.bOutput1Requested,
+        stepParamsCreator.bKeepInputTensor
       );
 
       this.stepsArray[ i ] = stepTestParams;
       paramsNumberArrayObject[ stepName ] = stepTestParams.in.inputFloat32Array;
 
       if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
-        stepParamsMaker.configTo_afterStep0();
+        stepParamsCreator.configTo_afterStep0();
       }
     }
 
@@ -200,6 +202,10 @@ class Base extends TestParams.Base {
    *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
    */
   * ParamsGenerator( sourceHeight, sourceWidth, sourceChannelCount ) {
+    // (2022/04/30 Remarked) For speed up testing by reduce testing space.
+    //let depthwiseFilterMaxSize = 5;
+    let depthwiseFilterMaxSize = 3;
+
     this.sourceHeight = sourceHeight;
     this.sourceWidth = sourceWidth;
     this.sourceChannelCount = sourceChannelCount;
@@ -215,64 +221,33 @@ class Base extends TestParams.Base {
         Block.Params.stepCountRequested.valueDesc.range.min + 5
       ],
 
-//      pointwise1ChannelCountRate: undefined,
-      pointwise1ChannelCountRate: [
-        Block.Params.pointwise1ChannelCountRate.valueDesc.range.min,
-        Block.Params.pointwise1ChannelCountRate.valueDesc.range.max
+//      bPointwise1: undefined,
+      bPointwise1: [
+        Block.Params.bPointwise1.valueDesc.range.min,
+        Block.Params.bPointwise1.valueDesc.range.max
       ],
 
-//      depthwiseFilterHeight: undefined,
-      depthwiseFilterHeight: [
-        2, //Block.Params.depthwiseFilterHeight.valueDesc.range.min, // WASM is fault when filterHeight = 1
-        Block.Params.depthwiseFilterHeight.valueDesc.range.max
-      ],
+      // (2022/05/05) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
+      depthwiseFilterHeight: [ Block.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
+      depthwiseFilterWidth: [ Block.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
 
-      // Because the logic of activation function is simpler than other, it is just randomly tested once
-      // for speeding up testing.
-      //
       // Beware of NONE and RELU. They easily result in infinity value because they do not have upper bound.
       //
-//      nActivationId: undefined,
-//!!! (2021/10/08 Remarked) Ignore NONE and RELU for avoiding infinity.
-//       nActivationId: [
-//         ValueDesc.ActivationFunction.Singleton.range.min,
-//         ValueDesc.ActivationFunction.Singleton.range.max
-//       ],
-//       nActivationId: [
-//         ValueDesc.ActivationFunction.Singleton.range.min + 1, // Exclude NONE for avoiding infinity.
-//         ValueDesc.ActivationFunction.Singleton.range.max - 1  // Exclude RELU for avoiding infinity.
-//       ],
+//       nActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+//       nActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
       nActivationId: [
-        ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.ActivationFunction.Singleton.Ids.SIGMOID
-        //!!! (2021/10/12 Remarked) It seems that the tanh has more floating-point error.
-        //ValueDesc.ActivationFunction.Singleton.Ids.TANH
+        ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+        ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3 ],
+
+      bPointwise2BiasAtBlockEnd: [
+        Block.Params.bPointwise2BiasAtBlockEnd.valueDesc.range.min,
+        Block.Params.bPointwise2BiasAtBlockEnd.valueDesc.range.max
       ],
 
-//      nActivationIdAtBlockEnd: undefined,
-//       nActivationIdAtBlockEnd: [
-//         ValueDesc.ActivationFunction.Singleton.range.min,
-//         ValueDesc.ActivationFunction.Singleton.range.max
-//       ],
-//       nActivationIdAtBlockEnd: [
-//         ValueDesc.ActivationFunction.Singleton.range.min + 1, // Exclude NONE for avoiding infinity.
-//         ValueDesc.ActivationFunction.Singleton.range.max - 1  // Exclude RELU for avoiding infinity.
-//       ],
-//       nActivationIdAtBlockEnd: [
-//         ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-//         ValueDesc.ActivationFunction.Singleton.Ids.RELU6
-//       ],
-      nActivationIdAtBlockEnd: [
-        ValueDesc.ActivationFunction.Singleton.Ids.NONE,
-        ValueDesc.ActivationFunction.Singleton.Ids.SIGMOID
-        //!!! (2021/10/12 Remarked) It seems that the tanh has more floating-point error.
-        //ValueDesc.ActivationFunction.Singleton.Ids.TANH
-      ],
-
-//      nWhetherShuffleChannel: undefined,
-      nWhetherShuffleChannel: [
-        Block.Params.nWhetherShuffleChannel.valueDesc.range.min,
-        Block.Params.nWhetherShuffleChannel.valueDesc.range.max
+//      nConvBlockType: undefined,
+      nConvBlockType: [
+        Block.Params.nConvBlockType.valueDesc.range.min,
+        Block.Params.nConvBlockType.valueDesc.range.max
       ],
 
 //      bKeepInputTensor: undefined,
@@ -290,11 +265,12 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.sourceWidth,                this.valueOutMinMax.sourceWidth ),
       new TestParams.ParamDescConfig( Block.Params.sourceChannelCount,         this.valueOutMinMax.sourceChannelCount ),
       new TestParams.ParamDescConfig( Block.Params.stepCountRequested,         this.valueOutMinMax.stepCountRequested ),
-      new TestParams.ParamDescConfig( Block.Params.pointwise1ChannelCountRate, this.valueOutMinMax.pointwise1ChannelCountRate ),
+      new TestParams.ParamDescConfig( Block.Params.bPointwise1,                this.valueOutMinMax.bPointwise1 ),
       new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,      this.valueOutMinMax.depthwiseFilterHeight ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterWidth,       this.valueOutMinMax.depthwiseFilterWidth ),
       new TestParams.ParamDescConfig( Block.Params.nActivationId,              this.valueOutMinMax.nActivationId ),
-      new TestParams.ParamDescConfig( Block.Params.nActivationIdAtBlockEnd,    this.valueOutMinMax.nActivationIdAtBlockEnd ),
-      new TestParams.ParamDescConfig( Block.Params.nWhetherShuffleChannel,     this.valueOutMinMax.nWhetherShuffleChannel ),
+      new TestParams.ParamDescConfig( Block.Params.bPointwise2BiasAtBlockEnd,  this.valueOutMinMax.bPointwise2BiasAtBlockEnd ),
+      new TestParams.ParamDescConfig( Block.Params.nConvBlockType,             this.valueOutMinMax.nConvBlockType ),
       new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,           this.valueOutMinMax.bKeepInputTensor ),
     ];
 
@@ -314,10 +290,11 @@ Base.paramsNameOrderArray_Basic = [
   Block.Params.sourceWidth.paramName,
   Block.Params.sourceChannelCount.paramName,
   Block.Params.stepCountRequested.paramName,
-  Block.Params.pointwise1ChannelCountRate.paramName,
+  Block.Params.bPointwise1.paramName,
   Block.Params.depthwiseFilterHeight.paramName,
+  Block.Params.depthwiseFilterWidth.paramName,
   Block.Params.nActivationId.paramName,
-  Block.Params.nActivationIdAtBlockEnd.paramName,
-  Block.Params.nWhetherShuffleChannel.paramName,
+  Block.Params.bPointwise2BiasAtBlockEnd.paramName,
+  Block.Params.nConvBlockType.paramName,
   Block.Params.bKeepInputTensor.paramName,
 ];
