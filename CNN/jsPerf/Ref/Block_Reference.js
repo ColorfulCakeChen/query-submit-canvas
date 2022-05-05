@@ -328,6 +328,13 @@ class Base {
 
       asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
+      if ( 0 == stepIndex ) {
+        asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
+      } else {
+        asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount * 2 );
+      }
+
+
 //!!! ...unfinished... (2022/05/05) nConvBlockType, pointwise1ChannelCount
 //
 //       case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
@@ -340,6 +347,18 @@ class Base {
 //       case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
 //       case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
 //
+
+      switch ( nConvBlockType ) {
+        case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
+        case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+        case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (2)
+        case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (3)
+
+        case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
+        case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+        case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+        case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+      }
 
       switch ( nConvBlockType ) {
         case ValueDesc.nConvBlockType.Singleton.Ids.NONE: // (0) 2. MobileNetV2 or MobileNetV1
