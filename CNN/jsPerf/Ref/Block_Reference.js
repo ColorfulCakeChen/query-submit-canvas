@@ -331,7 +331,29 @@ class Base {
       if ( 0 == stepIndex ) {
         asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
       } else {
-        asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount * 2 );
+        switch ( nConvBlockType ) {
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (2)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (3)
+            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount * 2 );
+            break;
+
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
+            break;
+
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount * 2 );
+            break;
+
+          default:
+            tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
+               `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}` );
+            break;
+        }
       }
 
 
@@ -348,17 +370,6 @@ class Base {
 //       case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
 //
 
-      switch ( nConvBlockType ) {
-        case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-        case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-        case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (2)
-        case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (3)
-
-        case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-        case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-        case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-        case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
-      }
 
       switch ( nConvBlockType ) {
         case ValueDesc.nConvBlockType.Singleton.Ids.NONE: // (0) 2. MobileNetV2 or MobileNetV1
