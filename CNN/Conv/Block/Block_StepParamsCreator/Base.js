@@ -4,6 +4,7 @@ import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import * as PointDepthPoint from "../../PointDepthPoint.js";
 import { Params } from "../Block_Params.js";
 import { MobileNetV1 } from "./MobileNetV1.js";
+import { MobileNetV1_padValid } from "./MobileNetV1_padValid.js";
 import { MobileNetV2 } from "./MobileNetV2.js";
 import { MobileNetV2_Thin } from "./MobileNetV2_Thin.js";
 import { ShuffleNetV2 } from "./ShuffleNetV2.js";
@@ -223,22 +224,25 @@ class Base {
       case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
         return new Params_to_PointDepthPointParams.MobileNetV1( blockParams ); break;
 
-      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (1)
+      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+        return new Params_to_PointDepthPointParams.MobileNetV1_padValid( blockParams ); break;
+
+      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (2)
         return new Params_to_PointDepthPointParams.MobileNetV2( blockParams ); break;
 
-      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
+      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (3)
         return new Params_to_PointDepthPointParams.MobileNetV2_Thin( blockParams ); break;
 
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (3)
+      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
         return new Params_to_PointDepthPointParams.ShuffleNetV2( blockParams ); break;
 
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (4)
+      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
         return new Params_to_PointDepthPointParams.ShuffleNetV2_ByPointwise22( blockParams ); break;
 
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
+      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
         return new Params_to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1( blockParams ); break;
 
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
+      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
         return new Params_to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1_padValid( blockParams ); break;
 
       default:
