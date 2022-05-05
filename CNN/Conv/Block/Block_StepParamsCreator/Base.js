@@ -12,13 +12,6 @@ import { ShuffleNetV2_ByPointwise22 } from "./ShuffleNetV2_ByPointwise22.js";
 import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
 import { ShuffleNetV2_ByMobileNetV1_padValid } from "./ShuffleNetV2_ByMobileNetV1_padValid.js";
 
-
-//!!! ...unfinished... (2022/05/04)
-// How to let only the last block's stepLast's pointwise21 has bias when multiple convolution blocks are used?
-// Let other block's every step's pointwise21 has no-bias.
-//
-
-
 /**
  * Basic class for all Params_to_PointDepthPointParams.Xxx classes.
  *
