@@ -78,7 +78,7 @@ import { Params } from "./PointDepthPoint_Params.js";
  *
  *   - When
  *     - ( channelCount1_pointwise1Before == 0 ): ONE_INPUT:
- *       (MobileNetV1 or MobileNetV2's head or simplified ShuffleNetV2(_ByPointwise22)'s head with ( pointwise1ChannelCount == 0 ) )
+ *       (MobileNetV1 or MobileNetV2's head or simplified ShuffleNetV2(_ByPointwise22)'s head with ( blockParams.bPointwise1 == false ) )
  * <pre>
  * input0 - pointwise1 - depthwise1 ---------------- pointwise21
  *                                                 \ pointwise22
