@@ -157,24 +157,17 @@ class Base {
   bias_activation_setup_forStepLast() {
     let blockParams = this.blockParams;
 
-    if (   ( ValueDesc.ConvBlockType.isMobileNet( blockParams.nConvBlockType ) ) && ( blockParams.bPointwise1 == true )
-        && ( blockParams.bLastBlock == false )
-       ) {
-
-      // When MobileNet with ( bPointwise1 == true ) and this block is not the last block of multiple blocks, the stepLast's
-      // pointwise21 could still have no bias. The next block's step0's pointwise1's bias could remedy it because
-      // pointwise21 is affine (i.e. does not have activation function). This could improve performance.
-      //
-      // Note: The next block should be MobileNet with ( bPointwise1 == true ). Otherwise, the result may be wrong.
-      //
+    // Only if requested, the stepLast's pointwise21 could have no bias. Usually, this is used when the next block's
+    // step0's ( blockParams.bPointwise1 == true ) so that it could remedy this block's stepLast's pointwise21 has no bias.
+    //
+    if ( blockParams.bPointwise2BiasAtBlockEnd == false ) {
       this.bPointwise21Bias = false;
 
+    // In general cases, the stepLast's pointwise21 must have bias, although there is no activation function after it.
+    // The reason is the stepLast does not have the next step's pointwise1 to provide bias to complete affine
+    // transformation. It must do it by itself.
+    //
     } else {
-
-      // In general cases, the stepLast's pointwise21 must have bias, although there is no activation function after it.
-      // The reason is the stepLast does not have the next step's pointwise1 to provide bias to complete affine
-      // transformation. It must do it by itself.
-      //
       this.bPointwise21Bias = true;
     }
   }
