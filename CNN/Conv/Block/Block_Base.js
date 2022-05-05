@@ -137,8 +137,9 @@ import { Params } from "./Block_Params.js";
  * (Note: All steps' pointwise1 and depthwise1 also need bias because they have activation function (i.e. not affine
  * transformation).)
  *
- * In fact, if multiple convolution blocks are used, only the last block's stepLast's pointwise21 needs bias. All other
- * block's every step's pointwise21 needs not bias.
+ * In fact, if multiple convolution blocks are used:
+ *   - All non-last other block's every step's pointwise21 needs not bias (i.e. ( bPointwise2BiasAtBlockEnd == false ) ).
+ *   - Only the last block's stepLast's pointwise21 needs bias (i.e. ( bPointwise2BiasAtBlockEnd == true ) ).
  *
  *
  * 4.
