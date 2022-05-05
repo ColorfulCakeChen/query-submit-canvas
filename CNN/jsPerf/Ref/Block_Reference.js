@@ -521,6 +521,15 @@ class Base {
           break;
       }
 
+      // .addInput0ToPointwise21
+      if ( 0 == stepIndex ) {
+      } else {
+
+//!!! ...unfinished... (2022/05/05)
+// should assert .addInput0ToPointwise21 exists if MobileNetV2.
+
+      }
+
     }
   }
 
