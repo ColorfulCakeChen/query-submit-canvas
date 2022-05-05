@@ -514,16 +514,16 @@ class Base {
           `sourceHeight=${testParams.out.sourceHeight}, sourceWidth=${testParams.out.sourceWidth}, `
         + `sourceChannelCount=${testParams.out.sourceChannelCount}, `
         + `stepCountRequested=${testParams.out.stepCountRequested}, `
-        + `pointwise1ChannelCountRate=${testParams.out.pointwise1ChannelCountRate}, `
-        + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, `
+        + `bPointwise1=${testParams.out.bPointwise1}, `
+        + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, depthwiseFilterWidth=${testParams.out.depthwiseFilterWidth}, `
 
         + `nActivationIdName=${ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.nActivationId )}`
-        + `(${testParams.out.nActivationId}), `
-        + `nActivationIdAtBlockEndName=${ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.nActivationIdAtBlockEnd )}`
-        + `(${testParams.out.nActivationIdAtBlockEnd}), `
+          + `(${testParams.out.nActivationId}), `
 
-        + `nWhetherShuffleChannel=${ValueDesc.WhetherShuffleChannel.Singleton.getStringOf( testParams.out.nWhetherShuffleChannel )}`
-        + `(${testParams.out.nWhetherShuffleChannel}), `
+        + `bPointwise2BiasAtBlockEnd=${testParams.out.bPointwise2BiasAtBlockEnd}, `
+
+        + `nConvBlockType=${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockType )}`
+          + `(${testParams.out.nConvBlockType}), `
 
         + `outputHeight=${referredParams.outputHeight}, outputWidth=${referredParams.outputWidth}, `
 //        + `outputChannelCount=${???.outputChannelCount}, `
