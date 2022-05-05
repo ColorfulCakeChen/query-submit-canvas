@@ -45,6 +45,17 @@ import { Params } from "./Block_Params.js";
  *     - ( bPointwise1 == false ), pointwise1 (lower half pass through, higher half copy input0) double of input0.
  *     - ( bPointwise1 == true ), pointwise1 (higher half copy input0) double of input0.
  *
+
+//!!! ...unfinished... (2022/05/05)
+// For MobileNetV1, only step0's pointwise1 is meaningful. All non-step0's pointwise1 is meaningless.
+// The reason is that the previous step's pointwise21 (which always has no activation function) and the next step's pointwise1
+// could be combined into one pointwise convolution.
+//
+// It is better to let the pointwise21 always has bias (and still  no activation function). All non-step0's pointwise1
+// only needs activation function (without pointwise convolution, without bias).
+// 
+
+
  *
  * 3. Bias and Activation
  *
