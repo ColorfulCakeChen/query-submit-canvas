@@ -59,6 +59,19 @@ class Params extends Weights.Params {
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be
    * extracted from inputFloat32Array (i.e. by evolution).
+
+//!!! ...unfinished... (2022/05/05)
+
+   * @param {boolean} bPointwise2BiasAtBlockEnd
+   *   If true, the stepLast's pointwise2 will have bias. If false, the stepLast's pointwise2 will have no bias. If null, it will
+   * be extracted from inputFloat32Array (i.e. by evolution).
+   *
+   *   - Usually, it should be true (i.e. the stepLast's pointwise2 should have bias) so that it can complete affine transformation
+   *       and output any value (i.e. the whole number line).
+   *
+   *   - However, if both this block and the next block (i.e. this is not the last block so that there is next block) are MobileNet
+   *       with ( bPointwise1 == true ), it could be false. This reason is that the next block's pointwise1's bias could remedy
+   *       this block's stepLast's pointwise2's no bias. This could improve inference performance.
    *
    * @param {number} nConvBlockType
    *   The type of this convolution block (ValueDesc.ConvBlockType.Singleton.Ids.Xxx).
@@ -89,6 +102,9 @@ class Params extends Weights.Params {
    *       This block will be ShuffleNetV2_ByMobileNetV1. The channel shuffling is integrated inside pointwise1, depthwise1, pointwise21.
    *       Its depthwise1 will use ( pad = "valid" ).
    *
+
+//!!! ...unfinished... (2022/05/05)
+
    * @param {boolean} bLastBlock
    *   Whether is this block the last block in multiple blocks situation. It is used to determine whether the stepLast's
    * pointwise2 could have no bias. Because the stepLast's pointwise2 usually should have bias. If null, it will be extracted
