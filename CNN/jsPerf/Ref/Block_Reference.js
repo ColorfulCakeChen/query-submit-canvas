@@ -328,6 +328,7 @@ class Base {
 
       asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
+      // channelCount0_pointwise1Before
       if ( 0 == stepIndex ) {
         asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
       } else {
@@ -356,6 +357,7 @@ class Base {
         }
       }
 
+      // channelCount1_pointwise1Before
       if ( 0 == stepIndex ) {
         switch ( nConvBlockType ) {
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
@@ -389,23 +391,31 @@ class Base {
 
       } else {
 
-//!!! ...unfinished... (2022/05/05) channelCount1_pointwise1Before
         switch ( nConvBlockType ) {
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+            asserter.propertyValue( "channelCount1_pointwise1Before", ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
+            break;
+
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (2)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (3)
-            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount * 2 );
+            asserter.propertyValue( "channelCount1_pointwise1Before",
+              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT );
             break;
 
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
+            asserter.propertyValue( "channelCount1_pointwise1Before",
+              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 );
+            break;
+
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
+            asserter.propertyValue( "channelCount1_pointwise1Before", blockParams.sourceChannelCount ); // TWO_INPUTS
             break;
 
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
-            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount * 2 );
+            asserter.propertyValue( "channelCount1_pointwise1Before",
+              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH );
             break;
 
           default:
@@ -415,8 +425,10 @@ class Base {
         }
       }
 
+//!!! ...unfinished... (2022/05/05) pointwise1ChannelCount
 
-//!!! ...unfinished... (2022/05/05) nConvBlockType, pointwise1ChannelCount
+
+//!!! ...unfinished... (2022/05/05) nConvBlockType
 //
 //       case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
 //       case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -434,19 +446,6 @@ class Base {
         case ValueDesc.nConvBlockType.Singleton.Ids.NONE: // (0) 2. MobileNetV2 or MobileNetV1
         {
           let pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
-          if ( 0 == stepIndex ) {
-            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
-          } else {
-            asserter.propertyValue( "channelCount0_pointwise1Before", pointwise21ChannelCount );
-          }
-
-          if ( 0 == stepIndex ) {
-            asserter.propertyValue( "channelCount1_pointwise1Before",
-              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
-          } else {
-            asserter.propertyValue( "channelCount1_pointwise1Before",
-              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT );
-          }
 
           asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
           asserter.propertyValue( "depthwiseFilterHeight", blockParams.depthwiseFilterHeight );
@@ -470,24 +469,6 @@ class Base {
         case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER: // (1) 3. ShuffleNetV2
         case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22:      // (2) 4. ShuffleNetV2_ByPointwise22
         {
-          asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
-
-          if ( 0 == stepIndex ) {
-            if ( stepParams.pointwise1ChannelCount == 0 ) {
-              asserter.propertyValue( "channelCount1_pointwise1Before",
-                ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
-            } else {
-              asserter.propertyValue( "channelCount1_pointwise1Before",
-                ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE );
-            }
-          } else {
-            if ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER ) { // (1) ShuffleNetV2
-              asserter.propertyValue( "channelCount1_pointwise1Before",
-                ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 );
-            } else { // ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22 ) (2) ShuffleNetV2_ByPointwise22
-              asserter.propertyValue( "channelCount1_pointwise1Before", blockParams.sourceChannelCount );
-            }
-          }
 
           if ( 0 == stepIndex ) {
             if ( stepParams.pointwise1ChannelCount == 0 ) {
