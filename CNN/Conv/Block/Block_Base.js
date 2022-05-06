@@ -60,6 +60,10 @@ import { Params } from "./Block_Params.js";
 //   - All step's (including step0 and non-step0) pointwise1 could be dropped totally (without pointwise convolution,
 //       without bias, without activation function).
 //
+//   - ??? All step's depthwise have no bias if its ( pad = "valid" ).
+//   - ??? All non-step0's depthwise have no bias if its ( pad = "valid" ).
+//
+//
 // 
 // 
 // For MobileNetV2:
