@@ -134,11 +134,11 @@ import { Params } from "./Block_Params.js";
  *   - depthwise convolution with ( pad = "valid" ) and bias.
  *
  *
- * 3.3.2 Not workable for does depthwise convolution with ( pad = "same" )?
+ * 3.3.2 Not workable for depthwise convolution with ( pad = "same" )?
  *
  * The reason is that the depthwise convolution with ( pad = "same" ) will pad zero. The count of these padded zero is
  * different according to the input pixel position. The varying zero count results in that varying bias is required.
- * This is impossible since data in the same channel could only have the same bias.
+ * Varying bias is impossible to be achieved since data in the same channel could only have the same bias.
  *
  * On the other hand, the depthwise convolution with ( pad = "valid" ) does not pad any value. The per channel (fixed)
  * bias is sufficient to remedy the previous affine transformation's no-bias.
