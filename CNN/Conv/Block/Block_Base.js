@@ -46,6 +46,30 @@ import { Params } from "./Block_Params.js";
  *     - ( bPointwise1 == true ), pointwise1 (higher half copy input0) double of input0.
  *
 
+
+//!!! ...unfinished... (2022/05/06)
+ * It seems that pointwise21 has no activation function is only feasible in the following cases:
+ *
+ *   - MobileNetV2_Xxx: It has add-input-to-output to modify pointwise21 output.
+ *
+ *   - At the block end: So that ShuffleNetV2_ByMobileNetV1 could undo activation escaping scales.
+ *       In ShuffleNetV2_ByMobileNetV1, if an operation has activation function, it will scale its convolution filters for escaping
+ *       the activation function's non-linear parts. This results in its output is wrong (i.e. different from ShuffleNetV2). In order
+ *       to resolve this issue, the last operation (i.e. pointwise2) should have no activation (so it will not scale its convolution
+ *       filters for escaping the activation function's non-linear parts).
+ *
+ * For other cases, if pointwise21 has no activation function, pointwise21 and the next block's pointwis1 are just only one
+ * (not two) pointwise convolution in fact. The reason is that multiple affine transformations can be combined into one affine
+ * transformation.
+ *
+ *
+ *
+
+
+
+
+
+
 //!!! ...unfinished... (2022/05/05)
 // For MobileNetV1 and MobileNetV2_Thin:
 //
