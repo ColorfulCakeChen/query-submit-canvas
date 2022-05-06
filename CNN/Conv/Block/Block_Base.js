@@ -129,9 +129,9 @@ import { Params } from "./Block_Params.js";
  *   "If an operation has no activation function, it can also have no bias too because the next operation's bias can
  *    achieve the same result. (Multiple affine transformations can be combined into one affine transformation.)"
  *
- * Here, the next operation should be:
- *   - pointwise convolution with bias. or,
- *   - depthwise convolution with ( pad = "valid" ) and bias.
+ * Here, those involved operations should be:
+ *   - pointwise convolution. or,
+ *   - depthwise convolution with ( pad = "valid" ).
  *
  *
  * 3.3.2 Not workable for depthwise convolution with ( pad = "same" )?
