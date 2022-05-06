@@ -61,6 +61,20 @@ class ConvBlockType extends Int {
     }
   }
 
+  /**
+   * @param {number} nConvBlockType  The numeric identifier of ConvBlockType. (ConvBlockType.Singleton.Ids.Xxx)
+   * @return {boolean} Return true, if it is Xxx_PAD_VALID.
+   */
+  static  isPadValid() {
+    switch ( nConvBlockType ) {
+      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+        return true;
+      default:
+        return false;
+    }
+  }
+
 }
 
 /** The only one ValueDesc.ConvBlockType instance. */
