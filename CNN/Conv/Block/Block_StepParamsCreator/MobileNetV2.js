@@ -29,7 +29,19 @@ class MobileNetV2 extends MobileNetV2_Thin {
 
   /** @override */
   configTo_afterStep0() {
-    super.configTo_afterStep0(); // step1, 2, 3, ... are the same as MobileNetV2_Thin.
+    super.configTo_afterStep0(); // step1, 2, 3, ... are almost the same as MobileNetV2_Thin.
+
+    let blockParams = this.blockParams;
+
+    // Except
+    if ( blockParams.bPointwise1 == false ) {
+      this.pointwise1ChannelCount = 0;                                       // NoPointwise1.
+      this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                        // Double of pointwise21. (Quadruple of step0's input0.)
+
+    } else {
+      this.pointwise1ChannelCount = this.channelCount0_pointwise1Before * 2; // Double of pointwise21. (Quadruple of step0's input0.)
+      this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
+    }
   }
 
   /** @override */
