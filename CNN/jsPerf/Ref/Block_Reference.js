@@ -316,32 +316,46 @@ class Base {
         asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
       }
 
-//!!! (2022/05/07 Remarked)
-//       asserter.propertyValue( "bDepthwiseBias", true );
-//       asserter.propertyValue( "depthwiseActivationId", blockParams.nActivationId );
+      asserter.propertyValue( "bPointwise21Bias", true );
 
-      
       if ( 0 == stepIndex ) {
+        if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
+          asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+        } else {
+          asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
+        }
+
       } else {
-      }
+        if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
+          asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
-//!!! (2022/05/07 Remarked)
-      if ( ( stepCount - 1 ) != stepIndex ) {
-        if ( ( ValueDesc.ConvBlockType.isMobileNet( blockParams.nConvBlockType ) ) && ( blockParams.bPointwise1 == true ) ) {
-          asserter.propertyValue( "bPointwise21Bias", false );
         } else {
-          asserter.propertyValue( "bPointwise21Bias", true );
+          if ( blockParams.bPointwise2ActivatedAtBlockEnd == false ) {
+            asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+          } else {
+            asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
+          }
         }
 
-      } else { // stepLast
-        if ( blockParams.bPointwise2BiasAtBlockEnd == false ) {
-          asserter.propertyValue( "bPointwise21Bias", false );
-        } else {
-          asserter.propertyValue( "bPointwise21Bias", true );
-        }
       }
 
-      asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+//!!! (2022/05/07 Remarked) according to MobileNetV2_Xxx or bPointwise2ActivatedAtBlockEnd
+//       if ( ( stepCount - 1 ) != stepIndex ) {
+//         if ( ( ValueDesc.ConvBlockType.isMobileNet( blockParams.nConvBlockType ) ) && ( blockParams.bPointwise1 == true ) ) {
+//           asserter.propertyValue( "bPointwise21Bias", false );
+//         } else {
+//           asserter.propertyValue( "bPointwise21Bias", true );
+//         }
+//
+//       } else { // stepLast
+//         if ( blockParams.bPointwise2BiasAtBlockEnd == false ) {
+//           asserter.propertyValue( "bPointwise21Bias", false );
+//         } else {
+//           asserter.propertyValue( "bPointwise21Bias", true );
+//         }
+//       }
+//
+//       asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
 
       // channelCount0_pointwise1Before
