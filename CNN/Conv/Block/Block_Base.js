@@ -137,7 +137,8 @@ import { Params } from "./Block_Params.js";
  * step's pointwise1 is not continusous multiple affine transformation and will not become just one affine transformation.
  *
  * For all other ConvBlockType, all non-stepLast's pointwise2 must have activation function (to become non-affine transformation).
- * The reason is to avoid the previous step's pointwise2 and the next step's pointwis1 become just one affine transformation.
+ * The reason is to avoid the previous step's pointwise2 and the next step's pointwis1 become just one (i.e. not two) affine
+ * transformation (i.e. do twice computation but just have same effect of one computation).
  *
  *
  * 3.2 non-MobileNetV2_Xxx's pointwise2
