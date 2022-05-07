@@ -8,8 +8,8 @@ import * as StepParamsCreator from "./Block_StepParamsCreator.js";
 import { Params } from "./Block_Params.js";
 
 /**
- * Implement a block of ( depthwise convolution and pointwise convolution ) or ShuffleNetV2 (with 2 output channel groups) or MobileNetV1
- * or MobileNetV2.
+ * Implement a block of  or MobileNetV1 or MobileNetV2 or ShuffleNetV2 (with 2 output channel groups). It is a sequence of
+ * depthwise convolution and pointwise convolution.
  *
  *
  * 1. Halve Height, Halve Width
