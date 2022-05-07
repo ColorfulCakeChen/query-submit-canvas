@@ -118,16 +118,22 @@ import { Params } from "./Block_Params.js";
  *
  * MobileNetV2_Xxx use the following (which is MobileNetV2's original design):
  *   - pointwise1: bias, activation.
- *   - depthwise1: bias, activation.
- *   - pointwise2: bias, no activation.
+ *   - depthwise:  bias, activation.
+ *   - pointwise2: bias, NO activation.
  *
  * All non-MobileNetV2_Xxx ConvBlockType use the following (which is ShuffleNetV2's original design):
  *   - pointwise1: bias, activation.
- *   - depthwise1: bias, no activation.
- *   - pointwise2: bias, activation.
- *     - stepLast's pointwise2: bias, activation or no activation (according to blockParams.bPointwise2ActivatedAtBlockEnd).
- *         This is not ShuffleNetV2's original design. It is our extra rule for ShuffleNetV2_ByMobileNetV1 to undo
- *         activation escaping scales.
+ *
+ *   - depthwise:  NO bias, NO activation.
+ *     - In ShuffleNetV2's original design, depthwise always has bias.
+ *     - We drop depthwise's bias because it could be achieved by pointwise2's bias.
+ *
+ *   - pointwise2:
+ *     - non-stepLast: bias, activation.
+ *     - stepLast:     bias, activation or no activation (according to blockParams.bPointwise2ActivatedAtBlockEnd).
+ *       - In ShuffleNetV2's original design, pointwise2 always has bias and activation. We adjust it according to
+ *           blockParams.bPointwise2ActivatedAtBlockEnd for ShuffleNetV2_ByMobileNetV1 to undo activation escaping
+ *           scales.
  *
  *
  * 3.1 MobileNetV2_Xxx's pointwise2
@@ -153,6 +159,10 @@ import { Params } from "./Block_Params.js";
  * function's non-linear parts).
  *
  * This is achieved by caller specifying ( blockParams.bPointwise2ActivatedAtBlockEnd == false ) for the last block.
+ *
+ * Although this design is mainly for solving ShuffleNetV2_ByMobileNetV1's issue, it does have practical advantage in fact. The
+ * output could have any value (i.e. the whole number line). If the last operation (i.e. pointwise2) always has activation function,
+ * the output value will always be restricted by the activation function (e.g. [ -1, +1 ] for tanh()).
  *
  *
  * 3.3 non-MobileNetV2_Xxx's depthwise
