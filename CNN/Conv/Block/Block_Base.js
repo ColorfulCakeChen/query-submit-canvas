@@ -114,18 +114,59 @@ import { Params } from "./Block_Params.js";
  *
  * 3. Bias and Activation
  *
- * In original MobileNetV2: (note: tf.batchNorm() has bias intrinsically.)
+ * (Note: tf.batchNorm() has bias intrinsically.)
+ *
+ * MobileNetV2_Xxx use the following (which is MobileNetV2's original design):
  *   - pointwise1: bias, activation.
  *   - depthwise1: bias, activation.
  *   - pointwise2: bias, no activation.
  *
- * In original ShuffleNetV2:
+ * All non-MobileNetV2_Xxx ConvBlockType use the following (which is ShuffleNetV2's original design):
  *   - pointwise1: bias, activation.
  *   - depthwise1: bias, no activation.
  *   - pointwise2: bias, activation.
+ *     - stepLast's pointwise2: bias, activation or no activation (according to blockParams.bPointwise2ActivatedAtBlockEnd).
+ *         This is not ShuffleNetV2's original design. It is our extra rule for ShuffleNetV2_ByMobileNetV1 to undo
+ *         activation escaping scales.
  *
- * We use the former configuration (i.e. original MobileNetV2) in all classes Block.Params_to_PointDepthPointParams.Xxx.
  *
+ * 3.1 MobileNetV2_Xxx's pointwise2
+ *
+ * The reason why MobileNetV2_Xxx's pointwise2 could always have no activation function is that MobileNetV2_Xxx's pointwise2
+ * has add-input-to-output so its step's output is not affine transformation (even if no activation function). It and the next
+ * step's pointwise1 is not continusous multiple affine transformation and will not become just one affine transformation.
+ *
+ * For all other ConvBlockType, all non-stepLast's pointwise2 must have activation function (to become non-affine transformation).
+ * The reason is to avoid the previous step's pointwise2 and the next step's pointwis1 become just one affine transformation.
+ *
+ *
+ * 3.2 non-MobileNetV2_Xxx's pointwise2
+ *
+ * The reason why non-MobileNetV2_Xxx's stepLast's pointwise2 may or may not have activation function is for
+ * ShuffleNetV2_ByMobileNetV1 to undo activation escaping scales.
+ *
+ * In ShuffleNetV2_ByMobileNetV1, if an operation has activation function, its pass-through part will scale its convolution filters
+ * for escaping the activation function's non-linear parts (in order to keep linear). This results in its output is wrong (i.e.
+ * different from original ShuffleNetV2). In order to resolve this issue, the last block's last operation (i.e. last block's
+ * stepLast's pointwise2) should have no activation (so it will not scale its convolution filters for escaping the activation
+ * function's non-linear parts).
+ *
+ * This is achieved by caller specifying ( blockParams.bPointwise2ActivatedAtBlockEnd == false ) for the last block.
+ *
+ *
+ * 3.3 non-MobileNetV2_Xxx's depthwise
+ *
+ * The reason why non-MobileNetV2_Xxx's depthwise does not have bias is for
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+
+!!! Old?
+
  *
  * 3.1 Reason
  *
