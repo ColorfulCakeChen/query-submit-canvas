@@ -130,18 +130,37 @@ class Base {
     this.bDepthwiseBias = true;
     this.depthwiseActivationId = blockParams.nActivationId;
 
-    if ( ( ValueDesc.ConvBlockType.isMobileNet( blockParams.nConvBlockType ) ) && ( blockParams.bPointwise1 == true ) ) {
+//!!! (2022/05/07 Remarked) Always bias. But not always activation. According to bPointwise2ActivatedAtBlockEnd ans whether MobileNetV2.
+//     if ( ( ValueDesc.ConvBlockType.isMobileNet( blockParams.nConvBlockType ) ) && ( blockParams.bPointwise1 == true ) ) {
+//
+//       // When MobileNet with ( bPointwise1 == true ), all non-stepLast's pointwise21 could have no bias. The next step's
+//       // pointwise1's bias could remedy it because pointwise21 is affine (i.e. does not have activation function). This
+//       // could improve performance.
+//       //
+//       this.bPointwise21Bias = false;
+//     } else {
+//       this.bPointwise21Bias = true;
+//     }
+//
+//     this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
-      // When MobileNet with ( bPointwise1 == true ), all non-stepLast's pointwise21 could have no bias. The next step's
-      // pointwise1's bias could remedy it because pointwise21 is affine (i.e. does not have activation function). This
-      // could improve performance.
-      //
-      this.bPointwise21Bias = false;
+
+    this.bPointwise21Bias = true; // All steps' outputs needs bias (even if MobileNetV2_Xxx).
+
+    // MobileNetV2_Xxx's pointwise2 always does not have activation function.
+    //
+    // The reason is that MobileNetV2_Xxx's pointwise2 has add-input-to-output so its step's output is not affine transformation
+    // (even if no activation function). It and the next step's pointwise1 is not continusous multiple affine transformation
+    // and will not become just one affine transformation.
+    //
+    if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
+      this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+
+    // For all other ConvBlockType, all non-stepLast's pointwise2 must have activation function (to become non-affine transformation).
+    // The reason is to avoid the previous step's pointwise2 and the next step's pointwis1 become just one affine transformation.
     } else {
-      this.bPointwise21Bias = true;
+      this.pointwise21ActivationId = blockParams.nActivationId;
     }
-
-    this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
   }
 
   /**
@@ -150,18 +169,39 @@ class Base {
   bias_activation_setup_forStepLast() {
     let blockParams = this.blockParams;
 
-    // Only if requested, the stepLast's pointwise21 could have no bias. Usually, this is used when the next block's
-    // step0's ( blockParams.bPointwise1 == true ) so that it could remedy this block's stepLast's pointwise21 has no bias.
-    //
-    if ( blockParams.bPointwise2BiasAtBlockEnd == false ) {
-      this.bPointwise21Bias = false;
+//!!! (2022/05/07 Remarked) Always bias. But not always activation. According to bPointwise2ActivatedAtBlockEnd ans whether MobileNetV2.
+//
+//     // Only if requested, the stepLast's pointwise21 could have no bias. Usually, this is used when the next block's
+//     // step0's ( blockParams.bPointwise1 == true ) so that it could remedy this block's stepLast's pointwise21 has no bias.
+//     //
+//     if ( blockParams.bPointwise2BiasAtBlockEnd == false ) {
+//       this.bPointwise21Bias = false;
+//
+//     // In general cases, the stepLast's pointwise21 must have bias, although there is no activation function after it.
+//     // The reason is the stepLast does not have the next step's pointwise1 to provide bias to complete affine
+//     // transformation. It must do it by itself.
+//     //
+//     } else {
+//       this.bPointwise21Bias = true;
+//     }
 
-    // In general cases, the stepLast's pointwise21 must have bias, although there is no activation function after it.
-    // The reason is the stepLast does not have the next step's pointwise1 to provide bias to complete affine
-    // transformation. It must do it by itself.
+
+    // MobileNetV2_Xxx's pointwise2 always does not have activation function.
     //
+    // The reason is that MobileNetV2_Xxx's pointwise2 has add-input-to-output so its step's output is not affine transformation
+    // (even if no activation function). It and the next step's pointwise1 is not continusous multiple affine transformation
+    // and will not become just one affine transformation.
+    //
+    if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
+      this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+      
+    // For all other ConvBlockType, whether stepLast's pointwise2 has activation function is according to specified flag.
     } else {
-      this.bPointwise21Bias = true;
+      if ( blockParams.bPointwise2ActivatedAtBlockEnd == false ) {
+        this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+      } else {
+        this.pointwise21ActivationId = blockParams.nActivationId;
+      }
     }
   }
 
