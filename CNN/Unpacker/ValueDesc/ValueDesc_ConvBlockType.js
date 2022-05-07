@@ -47,6 +47,20 @@ class ConvBlockType extends Int {
 
   /**
    * @param {number} nConvBlockType  The numeric identifier of ConvBlockType. (ConvBlockType.Singleton.Ids.Xxx)
+   * @return {boolean} Return true, if it is MOBILE_NET_V2_Xxx.
+   */
+  static isMobileNetV2( nConvBlockType ) {
+    switch ( nConvBlockType ) {
+      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (2)
+      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (3)
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * @param {number} nConvBlockType  The numeric identifier of ConvBlockType. (ConvBlockType.Singleton.Ids.Xxx)
    * @return {boolean} Return true, if it is SHUFFLE_NET_Xxx.
    */
   static isShuffleNet( nConvBlockType ) {
