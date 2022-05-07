@@ -60,9 +60,6 @@ class Params extends Weights.Params {
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be
    * extracted from inputFloat32Array (i.e. by evolution).
    *
-
-!!! ...unfinished... (2022/05/07)
-
    * @param {boolean} bPointwise2ActivatedAtBlockEnd
    *   If true, the stepLast's pointwise2 will have activation function. If false, the stepLast's pointwise2 will have no activation
    * function. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
@@ -74,7 +71,6 @@ class Params extends Weights.Params {
    *     - There is one exception: for MobileNetV2_Xxx, its pointwise2 always has no activation function no matter whether
    *         bPointwise2ActivatedAtBlockEnd is true or false. The Reason is that it has add-input-to-output to modify pointwise2
    *         output. So, even if its block output is not affine transformation (even it has no activation function).
-   *
    *
    *   - Only when this block is the last block of a neural network, it should be false (i.e. has no activation function). There are
    *       two reasons:
@@ -88,50 +84,6 @@ class Params extends Weights.Params {
    *     - Even if not ShuffleNetV2_ByMobileNetV1 (i.e. for other ConvBlockType), it does have practical advantage in fact. The
    *         output could have any value (i.e. the whole number line). If the last operation (i.e. pointwise2) has activation
    *         function, the output value will be restricted by the activation function (e.g. [ -1, +1 ] for tanh()).
-   *
-   *
-
-!!! (2022/05/07 Remarked) Replaced by bPointwise2ActivatedAtBlockEnd
-//    * @param {boolean} bPointwise2BiasAtBlockEnd
-//    *   If true, the stepLast's pointwise2 will have bias. If false, the stepLast's pointwise2 will have no bias. If null, it will
-//    * be extracted from inputFloat32Array (i.e. by evolution).
-//    *
-//    *   - Usually, it should be true (i.e. the stepLast's pointwise2 should have bias) so that it can complete affine transformation
-//    *       and output any value (i.e. the whole number line).
-//    *
-//    *   - However, if both this block and the next block (i.e. this is not the last block so that there is next block) are MobileNet
-//    *       with ( bPointwise1 == true ), it could be false. This reason is that the next block's pointwise1's bias could remedy
-//    *       this block's stepLast's pointwise2's no bias. This could improve inference performance.
-//    *
-//    * @param {number} nConvBlockType
-//    *   The type of this convolution block (ValueDesc.ConvBlockType.Singleton.Ids.Xxx).
-//    *
-//    *   - If ( nConvBlockType == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
-//    *
-//    *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1 (0):
-//    *       This block will be MobileNetV1 (i.e. no add-input-to-output, no channel shuffler).
-//    *
-//    *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2 (1):
-//    *       This block will be (original) MobileNetV2 (i.e. with add-input-to-output, no channel shuffler).
-//    *       Its pointwise1 will be twice size of pointwise21
-//    *
-//    *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN (2):
-//    *       This block will be (thin) MobileNetV2 (i.e. with add-input-to-output, no channel shuffler).
-//    *       Its pointwise1 will be the same size of pointwise21
-//    *
-//    *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2 (3):
-//    *       This block will be ShuffleNetV2. There is a channel shuffler for concat-shuffle-split.
-//    *
-//    *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22 (4):
-//    *       This block will be ShuffleNetV2_ByPointwise22. The channel shuffling is done by pointwise22.
-//    *
-//    *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5):
-//    *       This block will be ShuffleNetV2_ByMobileNetV1. The channel shuffling is integrated inside pointwise1, depthwise1, pointwise21.
-//    *
-//    *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6):
-//    *       This block will be ShuffleNetV2_ByMobileNetV1. The channel shuffling is integrated inside pointwise1, depthwise1, pointwise21.
-//    *       Its depthwise1 will use ( pad = "valid" ).
-
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply() will not dispose inputTensor (i.e. will be kept). If null, it will be extracted from
