@@ -167,7 +167,29 @@ import { Params } from "./Block_Params.js";
  *
  * 3.3 non-MobileNetV2_Xxx's depthwise
  *
- * The reason why non-MobileNetV2_Xxx's depthwise does not have bias is for
+ * The reason why non-MobileNetV2_Xxx's depthwise does not have bias is for affine transformation:
+ *
+ *   "If an operation has no activation function, it can also have no bias too because the next operation's bias can
+ *    achieve the same result. (Multiple affine transformations can be combined into one affine transformation.)"
+ *
+ * Since the non-MobileNetV2_Xxx's depthwise's next operation (i.e. pointwise2) always has bias, it is not necessary to have bias
+ * in the depthwise.
+ *
+ *
+ * 3.3.1 Note the assumption's detail
+ *
+ * To accomplish the above affine transformation combination assumption, the "next operation" should be:
+ *   - pointwise convolution. or,
+ *   - depthwise convolution with ( pad = "valid" ).
+ *
+ * Why not workable if the next operation is depthwise convolution with ( pad = "same" )?
+ *
+ * The reason is that the depthwise convolution with ( pad = "same" ) will pad zero. The count of these padded zero is
+ * different according to the input pixel position. The varying zero count results in that varying bias is required.
+ * Varying bias is impossible to be achieved since data in the same channel could only have the same bias.
+ *
+ * On the other hand, the depthwise convolution with ( pad = "valid" ) does not pad any value. The per channel (fixed)
+ * bias is sufficient to remedy the previous affine transformation's no-bias.
  *
  *
  *
