@@ -90,56 +90,48 @@ class Params extends Weights.Params {
    *         function, the output value will be restricted by the activation function (e.g. [ -1, +1 ] for tanh()).
    *
    *
-   *
-!!!
-   *   - Usually, it should be true (i.e. the stepLast's pointwise2 should have bias) so that it can complete affine transformation
-   *       and output any value (i.e. the whole number line).
-   *
-   *   - However, if both this block and the next block (i.e. this is not the last block so that there is next block) are MobileNet
-   *       with ( bPointwise1 == true ), it could be false. This reason is that the next block's pointwise1's bias could remedy
-   *       this block's stepLast's pointwise2's no bias. This could improve inference performance.
-   *
 
-!!! (2022/05/07 Remarked) Replaced by 
-   * @param {boolean} bPointwise2BiasAtBlockEnd
-   *   If true, the stepLast's pointwise2 will have bias. If false, the stepLast's pointwise2 will have no bias. If null, it will
-   * be extracted from inputFloat32Array (i.e. by evolution).
-   *
-   *   - Usually, it should be true (i.e. the stepLast's pointwise2 should have bias) so that it can complete affine transformation
-   *       and output any value (i.e. the whole number line).
-   *
-   *   - However, if both this block and the next block (i.e. this is not the last block so that there is next block) are MobileNet
-   *       with ( bPointwise1 == true ), it could be false. This reason is that the next block's pointwise1's bias could remedy
-   *       this block's stepLast's pointwise2's no bias. This could improve inference performance.
-   *
-   * @param {number} nConvBlockType
-   *   The type of this convolution block (ValueDesc.ConvBlockType.Singleton.Ids.Xxx).
-   *
-   *   - If ( nConvBlockType == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
-   *
-   *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1 (0):
-   *       This block will be MobileNetV1 (i.e. no add-input-to-output, no channel shuffler).
-   *
-   *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2 (1):
-   *       This block will be (original) MobileNetV2 (i.e. with add-input-to-output, no channel shuffler).
-   *       Its pointwise1 will be twice size of pointwise21
-   *
-   *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN (2):
-   *       This block will be (thin) MobileNetV2 (i.e. with add-input-to-output, no channel shuffler).
-   *       Its pointwise1 will be the same size of pointwise21
-   *
-   *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2 (3):
-   *       This block will be ShuffleNetV2. There is a channel shuffler for concat-shuffle-split.
-   *
-   *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22 (4):
-   *       This block will be ShuffleNetV2_ByPointwise22. The channel shuffling is done by pointwise22.
-   *
-   *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5):
-   *       This block will be ShuffleNetV2_ByMobileNetV1. The channel shuffling is integrated inside pointwise1, depthwise1, pointwise21.
-   *
-   *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6):
-   *       This block will be ShuffleNetV2_ByMobileNetV1. The channel shuffling is integrated inside pointwise1, depthwise1, pointwise21.
-   *       Its depthwise1 will use ( pad = "valid" ).
+!!! (2022/05/07 Remarked) Replaced by bPointwise2ActivatedAtBlockEnd
+//    * @param {boolean} bPointwise2BiasAtBlockEnd
+//    *   If true, the stepLast's pointwise2 will have bias. If false, the stepLast's pointwise2 will have no bias. If null, it will
+//    * be extracted from inputFloat32Array (i.e. by evolution).
+//    *
+//    *   - Usually, it should be true (i.e. the stepLast's pointwise2 should have bias) so that it can complete affine transformation
+//    *       and output any value (i.e. the whole number line).
+//    *
+//    *   - However, if both this block and the next block (i.e. this is not the last block so that there is next block) are MobileNet
+//    *       with ( bPointwise1 == true ), it could be false. This reason is that the next block's pointwise1's bias could remedy
+//    *       this block's stepLast's pointwise2's no bias. This could improve inference performance.
+//    *
+//    * @param {number} nConvBlockType
+//    *   The type of this convolution block (ValueDesc.ConvBlockType.Singleton.Ids.Xxx).
+//    *
+//    *   - If ( nConvBlockType == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
+//    *
+//    *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1 (0):
+//    *       This block will be MobileNetV1 (i.e. no add-input-to-output, no channel shuffler).
+//    *
+//    *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2 (1):
+//    *       This block will be (original) MobileNetV2 (i.e. with add-input-to-output, no channel shuffler).
+//    *       Its pointwise1 will be twice size of pointwise21
+//    *
+//    *   - ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN (2):
+//    *       This block will be (thin) MobileNetV2 (i.e. with add-input-to-output, no channel shuffler).
+//    *       Its pointwise1 will be the same size of pointwise21
+//    *
+//    *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2 (3):
+//    *       This block will be ShuffleNetV2. There is a channel shuffler for concat-shuffle-split.
+//    *
+//    *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22 (4):
+//    *       This block will be ShuffleNetV2_ByPointwise22. The channel shuffling is done by pointwise22.
+//    *
+//    *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5):
+//    *       This block will be ShuffleNetV2_ByMobileNetV1. The channel shuffling is integrated inside pointwise1, depthwise1, pointwise21.
+//    *
+//    *   - ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6):
+//    *       This block will be ShuffleNetV2_ByMobileNetV1. The channel shuffling is integrated inside pointwise1, depthwise1, pointwise21.
+//    *       Its depthwise1 will use ( pad = "valid" ).
+
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply() will not dispose inputTensor (i.e. will be kept). If null, it will be extracted from
@@ -156,7 +148,7 @@ class Params extends Weights.Params {
     bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth,
     nActivationId,
-    bPointwise2BiasAtBlockEnd,
+    bPointwise2ActivatedAtBlockEnd,
     nConvBlockType,
     bKeepInputTensor
   ) {
@@ -173,17 +165,17 @@ class Params extends Weights.Params {
     //
 
     let parameterMap = new Map( [
-      [ Params.sourceHeight,               sourceHeight ],
-      [ Params.sourceWidth,                sourceWidth ],
-      [ Params.sourceChannelCount,         sourceChannelCount ],
-      [ Params.stepCountRequested,         stepCountRequested ],
-      [ Params.bPointwise1,                bPointwise1 ],
-      [ Params.depthwiseFilterHeight,      depthwiseFilterHeight ],
-      [ Params.depthwiseFilterWidth,       depthwiseFilterWidth ],
-      [ Params.nActivationId,              nActivationId ],
-      [ Params.bPointwise2BiasAtBlockEnd,  bPointwise2BiasAtBlockEnd ],
-      [ Params.nConvBlockType,             nConvBlockType ],
-      [ Params.bKeepInputTensor,           bKeepInputTensor ],
+      [ Params.sourceHeight,                   sourceHeight ],
+      [ Params.sourceWidth,                    sourceWidth ],
+      [ Params.sourceChannelCount,             sourceChannelCount ],
+      [ Params.stepCountRequested,             stepCountRequested ],
+      [ Params.bPointwise1,                    bPointwise1 ],
+      [ Params.depthwiseFilterHeight,          depthwiseFilterHeight ],
+      [ Params.depthwiseFilterWidth,           depthwiseFilterWidth ],
+      [ Params.nActivationId,                  nActivationId ],
+      [ Params.bPointwise2ActivatedAtBlockEnd, bPointwise2ActivatedAtBlockEnd ],
+      [ Params.nConvBlockType,                 nConvBlockType ],
+      [ Params.bKeepInputTensor,               bKeepInputTensor ],
     ] );
 
     super( inputFloat32Array, byteOffsetBegin, parameterMap );
@@ -227,38 +219,38 @@ class Params extends Weights.Params {
     this.outputWidth =  Math.ceil( sourceWidth  / stridesWidth );
   }
   
-  get sourceHeight()                { return this.parameterMapModified.get( Params.sourceHeight ); }
-  get sourceWidth()                 { return this.parameterMapModified.get( Params.sourceWidth ); }
-  get sourceChannelCount()          { return this.parameterMapModified.get( Params.sourceChannelCount ); }
+  get sourceHeight()                   { return this.parameterMapModified.get( Params.sourceHeight ); }
+  get sourceWidth()                    { return this.parameterMapModified.get( Params.sourceWidth ); }
+  get sourceChannelCount()             { return this.parameterMapModified.get( Params.sourceChannelCount ); }
 
-  get stepCountRequested()          { return this.parameterMapModified.get( Params.stepCountRequested ); }
-  get bPointwise1()                 { return this.parameterMapModified.get( Params.bPointwise1 ); }
+  get stepCountRequested()             { return this.parameterMapModified.get( Params.stepCountRequested ); }
+  get bPointwise1()                    { return this.parameterMapModified.get( Params.bPointwise1 ); }
 
-  get depthwiseFilterHeight()       { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
-  get depthwiseFilterWidth()        { return this.parameterMapModified.get( Params.depthwiseFilterWidth ); }
+  get depthwiseFilterHeight()          { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
+  get depthwiseFilterWidth()           { return this.parameterMapModified.get( Params.depthwiseFilterWidth ); }
 
-  get nActivationId()               { return this.parameterMapModified.get( Params.nActivationId ); }
-  get nActivationIdName()           { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
+  get nActivationId()                  { return this.parameterMapModified.get( Params.nActivationId ); }
+  get nActivationIdName()              { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
 
-  get bPointwise2BiasAtBlockEnd()   { return this.parameterMapModified.get( Params.bPointwise2BiasAtBlockEnd ); }
+  get bPointwise2ActivatedAtBlockEnd() { return this.parameterMapModified.get( Params.bPointwise2ActivatedAtBlockEnd ); }
 
-  get nConvBlockType()              { return this.parameterMapModified.get( Params.nConvBlockType ); }
-  get nConvBlockTypeName()          { return Params.nConvBlockType.getStringOfValue( this.nConvBlockType ); }
+  get nConvBlockType()                 { return this.parameterMapModified.get( Params.nConvBlockType ); }
+  get nConvBlockTypeName()             { return Params.nConvBlockType.getStringOfValue( this.nConvBlockType ); }
 
-  get bKeepInputTensor()            { return this.parameterMapModified.get( Params.bKeepInputTensor ); }
+  get bKeepInputTensor()               { return this.parameterMapModified.get( Params.bKeepInputTensor ); }
 }
 
 
 // Define parameter descriptions.
-Params.sourceHeight =               new ParamDesc.Int(                   "sourceHeight",               1, ( 10 * 1024 ) );
-Params.sourceWidth =                new ParamDesc.Int(                   "sourceWidth",                1, ( 10 * 1024 ) );
-Params.sourceChannelCount =         new ParamDesc.Int(                   "sourceChannelCount",         1, ( 10 * 1024 ) );
-Params.stepCountRequested =         new ParamDesc.Int(                   "stepCountRequested",         2, (  1 * 1024 ) );
-Params.bPointwise1 =                new ParamDesc.Bool(                  "bPointwise1" );
-Params.depthwiseFilterHeight =      new ParamDesc.Int(                   "depthwiseFilterHeight",      1, ( 10 * 1024 ) );
-Params.depthwiseFilterWidth =       new ParamDesc.Int(                   "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
-Params.nActivationId =              new ParamDesc.ActivationFunction(    "nActivationId" );
-Params.bPointwise2BiasAtBlockEnd =  new ParamDesc.Bool(                  "bPointwise2BiasAtBlockEnd" );
-Params.nConvBlockType =             new ParamDesc.ConvBlockType(         "nConvBlockType" );
-Params.bKeepInputTensor =           new ParamDesc.Bool(                  "bKeepInputTensor" );
+Params.sourceHeight =                   new ParamDesc.Int(                "sourceHeight",               1, ( 10 * 1024 ) );
+Params.sourceWidth =                    new ParamDesc.Int(                "sourceWidth",                1, ( 10 * 1024 ) );
+Params.sourceChannelCount =             new ParamDesc.Int(                "sourceChannelCount",         1, ( 10 * 1024 ) );
+Params.stepCountRequested =             new ParamDesc.Int(                "stepCountRequested",         2, (  1 * 1024 ) );
+Params.bPointwise1 =                    new ParamDesc.Bool(               "bPointwise1" );
+Params.depthwiseFilterHeight =          new ParamDesc.Int(                "depthwiseFilterHeight",      1, ( 10 * 1024 ) );
+Params.depthwiseFilterWidth =           new ParamDesc.Int(                "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
+Params.nActivationId =                  new ParamDesc.ActivationFunction( "nActivationId" );
+Params.bPointwise2ActivatedAtBlockEnd = new ParamDesc.Bool(               "bPointwise2ActivatedAtBlockEnd" );
+Params.nConvBlockType =                 new ParamDesc.ConvBlockType(      "nConvBlockType" );
+Params.bKeepInputTensor =               new ParamDesc.Bool(               "bKeepInputTensor" );
 
