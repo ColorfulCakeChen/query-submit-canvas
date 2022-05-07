@@ -127,6 +127,15 @@ class Base {
     this.bPointwise1Bias = true;
     this.pointwise1ActivationId = blockParams.nActivationId;
 
+//!!! ...unfinished... (2022/05/07) Should non-MobileNetV2_Xxx's depthwise have bias and activation?
+//
+//  *   "If an operation has no activation function, it can also have no bias too because the next operation's bias can
+//  *    achieve the same result. (Multiple affine transformations can be combined into one affine transformation.)"
+//  *
+//  * Here, those involved operations should be:
+//  *   - pointwise convolution. or,
+//  *   - depthwise convolution with ( pad = "valid" ).
+
     this.bDepthwiseBias = true;
     this.depthwiseActivationId = blockParams.nActivationId;
 
