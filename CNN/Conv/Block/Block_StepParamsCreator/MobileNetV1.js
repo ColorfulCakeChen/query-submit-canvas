@@ -13,11 +13,12 @@ import { Base } from "./Base.js";
  * The reasons are:
  *
  *   - Inference speed faster than MobileNetV2: According to experience of ShuffleNetV2_ByMobileNetV1, the CLIP_BY_VALUE_N3_P3
- *     activation function could achieve skipping connection (i.e. residual connection) without add-input-to-output (i.e MobileNetV2).
+ *       activation function could achieve skipping connection (i.e. residual connection) without add-input-to-output (i.e MobileNetV2).
  *
- *   - Inference speed faster than ShuffleNetV2_ByMobileNetV1: All block's every step's pointwise21 needs not bias. Only the
- *     last block's stepLast's pointwise21 needs bias. (But ShuffleNetV2_ByMobileNetV1's learning speed is faster than MobileNetv1
- *     because less filter weights need to be learned.)
+ *   - Inference speed could be faster than ShuffleNetV2_ByMobileNetV1: MobileNetV1_Xxx's all steps could have no pointwise1.
+ *       ShuffleNetV2_ByMobileNetV1's step0 always have pointwise1 (even if ( blockParams.bPointwise1 == false ), it still exists
+ *       internally). (But ShuffleNetV2_ByMobileNetV1's learning speed is faster than MobileNetv1 because less filter weights
+ *       need to be learned.)
  *
  *
  *
