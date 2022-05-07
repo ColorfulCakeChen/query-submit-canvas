@@ -60,6 +60,47 @@ class Params extends Weights.Params {
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be
    * extracted from inputFloat32Array (i.e. by evolution).
    *
+
+!!! ...unfinished... (2022/05/07)
+
+   * @param {boolean} bPointwise2ActivatedAtBlockEnd
+   *   If true, the stepLast's pointwise2 will have activation function. If false, the stepLast's pointwise2 will have no activation
+   * function. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   *
+   *   - If there will be next block after this block, it usually should be true (i.e. has activation function). The reason is that
+   *       this block's stepLast's pointwise2 (if has no activation function) and the next block's step0's pointwise1 are essentially
+   *       just one pointwise convolution. (Multiple affine transformations can always be combined into just one affine transformation.)
+   *
+   *     - There is one exception: for MobileNetV2_Xxx, its pointwise2 always has no activation function no matter whether
+   *         bPointwise2ActivatedAtBlockEnd is true or false. The Reason is that it has add-input-to-output to modify pointwise2
+   *         output. So, even if its block output is not affine transformation (even it has no activation function).
+   *
+   *
+   *   - Only when this block is the last block of a neural network, it should be false (i.e. has no activation function). There are
+   *       two reasons:
+   *
+   *     - For ShuffleNetV2_ByMobileNetV1, let it undo activation escaping scales.
+   *         In ShuffleNetV2_ByMobileNetV1, if an operation has activation function, the pass-through half part will scale its
+   *         convolution filters for escaping the activation function's non-linear parts. This results in its output is wrong
+   *         (i.e. different from ShuffleNetV2). In order to resolve this issue, the last operation (i.e. pointwise2) should have
+   *         no activation (so it will not scale its convolution filters for escaping the activation function's non-linear parts).
+   *
+   *     - Even if not ShuffleNetV2_ByMobileNetV1 (i.e. for other ConvBlockType), it does have practical advantage in fact. The
+   *         output could have any value (i.e. the whole number line). If the last operation (i.e. pointwise2) has activation
+   *         function, the output value will be restricted by the activation function (e.g. [ -1, +1 ] for tanh()).
+   *
+   *
+   *
+!!!
+   *   - Usually, it should be true (i.e. the stepLast's pointwise2 should have bias) so that it can complete affine transformation
+   *       and output any value (i.e. the whole number line).
+   *
+   *   - However, if both this block and the next block (i.e. this is not the last block so that there is next block) are MobileNet
+   *       with ( bPointwise1 == true ), it could be false. This reason is that the next block's pointwise1's bias could remedy
+   *       this block's stepLast's pointwise2's no bias. This could improve inference performance.
+   *
+
+!!! (2022/05/07 Remarked) Replaced by 
    * @param {boolean} bPointwise2BiasAtBlockEnd
    *   If true, the stepLast's pointwise2 will have bias. If false, the stepLast's pointwise2 will have no bias. If null, it will
    * be extracted from inputFloat32Array (i.e. by evolution).
