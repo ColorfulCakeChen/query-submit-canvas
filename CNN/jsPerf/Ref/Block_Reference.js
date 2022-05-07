@@ -308,9 +308,24 @@ class Base {
       asserter.propertyValue( "bPointwise1Bias", true );
       asserter.propertyValue( "pointwise1ActivationId", blockParams.nActivationId );
 
-      asserter.propertyValue( "bDepthwiseBias", true );
-      asserter.propertyValue( "depthwiseActivationId", blockParams.nActivationId );
+      if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
+        asserter.propertyValue( "bDepthwiseBias", true );
+        asserter.propertyValue( "depthwiseActivationId", blockParams.nActivationId );
+      } else {
+        asserter.propertyValue( "bDepthwiseBias", false );
+        asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+      }
 
+//!!! (2022/05/07 Remarked)
+//       asserter.propertyValue( "bDepthwiseBias", true );
+//       asserter.propertyValue( "depthwiseActivationId", blockParams.nActivationId );
+
+      
+      if ( 0 == stepIndex ) {
+      } else {
+      }
+
+//!!! (2022/05/07 Remarked)
       if ( ( stepCount - 1 ) != stepIndex ) {
         if ( ( ValueDesc.ConvBlockType.isMobileNet( blockParams.nConvBlockType ) ) && ( blockParams.bPointwise1 == true ) ) {
           asserter.propertyValue( "bPointwise21Bias", false );
@@ -327,6 +342,7 @@ class Base {
       }
 
       asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+
 
       // channelCount0_pointwise1Before
       if ( 0 == stepIndex ) {
