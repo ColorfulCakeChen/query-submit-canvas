@@ -517,8 +517,47 @@ class Base {
         }
       }
 
-//!!! ...unfinished... (2022/05/09) depthwiseStridesPad
+      // depthwiseStridesPad
+      if ( 0 == stepIndex ) { //step0
+        switch ( nConvBlockType ) {
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+            asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME );
+            break;
 
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+            asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID );
+            break;
+
+          default: tf.util.assert( false, strUnknownConvBlockType ); break;
+        }
+
+      } else { // step1, 2, 3, ...
+        switch ( nConvBlockType ) {
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+            asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME );
+            break;
+
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+            asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID );
+            break;
+
+          default: tf.util.assert( false, strUnknownConvBlockType ); break;
+        }
+      }
+
+//!!! ...unfinished... (2022/05/09)
       if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
         asserter.propertyValue( "bDepthwiseBias", true );
         asserter.propertyValue( "depthwiseActivationId", blockParams.nActivationId );
