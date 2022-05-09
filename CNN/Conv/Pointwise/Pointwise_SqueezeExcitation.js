@@ -10,6 +10,23 @@ import { Base } from "./Pointwise_Base.js";
 // globale avg pooling - pointwise - pointwise - multiplyToInput
 // And the, the original pointwise
 
+
+//!!! ...unfinished... (2022/05/09) What if:
+// pointwise1 ( bias, activation )
+// depthwise ( channelMultipler > 1, bias / no bias, activation / no activation )
+// pointwiseSE ( bias, activation )
+// pointwise2 ( bias, activation )
+//
+// pointwise1 - depthwise - pointwiseSE - multiply - pointwise2
+//                        \-------------/
+//
+// No global average pooloing.
+//
+//
+//
+//
+
+
 /**
  *
  */
