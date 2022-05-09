@@ -226,8 +226,8 @@ class Base {
 
     Base.AssertTwoEqualValues( "nActivationId", block.nActivationId, testParams.out.nActivationId, parametersDescription );
 
-    Base.AssertTwoEqualValues( "bPointwise2BiasAtBlockEnd",
-      block.bPointwise2BiasAtBlockEnd, testParams.out.bPointwise2BiasAtBlockEnd, parametersDescription );
+    Base.AssertTwoEqualValues( "bPointwise2ActivatedAtBlockEnd",
+      block.bPointwise2ActivatedAtBlockEnd, testParams.out.bPointwise2ActivatedAtBlockEnd, parametersDescription );
 
     Base.AssertTwoEqualValues( "nConvBlockType", block.nConvBlockType, testParams.out.nConvBlockType, parametersDescription );
 
@@ -276,6 +276,9 @@ class Base {
     tf.util.assert( ( stepCount > 0 ),
       `Block stepCount (${stepCount}) should be larger than 0. ${parametersDescription}`);
 
+    tf.util.assert( ( stepCount >= 2 ),
+      `Block stepCount (${stepCount}) should be >= 2. ${parametersDescription}`);
+
     let stepName, stepParams, pointwise1ChannelCount;
     for ( let stepIndex = 0; stepIndex < stepCount; ++stepIndex ) {
       stepName = `step${stepIndex}`;
@@ -294,7 +297,7 @@ class Base {
             `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}`;
 
       // channelCount0_pointwise1Before
-      if ( 0 == stepIndex ) { //step0
+      if ( 0 == stepIndex ) { // step0
         asserter.propertyValue( "channelCount0_pointwise1Before", single_Step0Input0ChannelCount );
       } else { // step1, 2, 3, ...
         switch ( nConvBlockType ) {
@@ -320,7 +323,7 @@ class Base {
       }
 
       // channelCount1_pointwise1Before
-      if ( 0 == stepIndex ) { //step0
+      if ( 0 == stepIndex ) { // step0
         switch ( nConvBlockType ) {
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -381,7 +384,7 @@ class Base {
       }
 
       // pointwise1ChannelCount
-      if ( 0 == stepIndex ) { //step0
+      if ( 0 == stepIndex ) { // step0
         switch ( nConvBlockType ) {
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -460,7 +463,7 @@ class Base {
       asserter.propertyValue( "depthwiseFilterWidth", blockParams.depthwiseFilterWidth );
 
       // depthwise_AvgMax_Or_ChannelMultiplier
-      if ( 0 == stepIndex ) { //step0
+      if ( 0 == stepIndex ) { // step0
         switch ( nConvBlockType ) {
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -518,7 +521,7 @@ class Base {
       }
 
       // depthwiseStridesPad
-      if ( 0 == stepIndex ) { //step0
+      if ( 0 == stepIndex ) { // step0
         switch ( nConvBlockType ) {
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
@@ -557,7 +560,6 @@ class Base {
         }
       }
 
-//!!! ...unfinished... (2022/05/09)
       if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
         asserter.propertyValue( "bDepthwiseBias", true );
         asserter.propertyValue( "depthwiseActivationId", blockParams.nActivationId );
@@ -571,47 +573,27 @@ class Base {
 
       asserter.propertyValue( "bPointwise21Bias", true );
 
-      if ( 0 == stepIndex ) { //step0
+      // pointwise21ActivationId
+      if ( ( stepCount - 1 ) > stepIndex ) { // step0, 1, 2, 3, ..., ( stepCount - 2 )
         if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
           asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
         } else {
           asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
         }
-
-      } else { // step1, 2, 3, ...
+      } else { // stepLast
         if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
           asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
-
         } else {
-          if ( blockParams.bPointwise2ActivatedAtBlockEnd == false ) {
+          if ( blockParams.pointwise21ActivationId == false ) {
             asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
           } else {
             asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
           }
         }
-
       }
 
-//!!! (2022/05/07 Remarked) according to MobileNetV2_Xxx or bPointwise2ActivatedAtBlockEnd
-//       if ( ( stepCount - 1 ) != stepIndex ) {
-//         if ( ( ValueDesc.ConvBlockType.isMobileNet( blockParams.nConvBlockType ) ) && ( blockParams.bPointwise1 == true ) ) {
-//           asserter.propertyValue( "bPointwise21Bias", false );
-//         } else {
-//           asserter.propertyValue( "bPointwise21Bias", true );
-//         }
-//
-//       } else { // stepLast
-//         if ( blockParams.bPointwise2BiasAtBlockEnd == false ) {
-//           asserter.propertyValue( "bPointwise21Bias", false );
-//         } else {
-//           asserter.propertyValue( "bPointwise21Bias", true );
-//         }
-//       }
-//
-//       asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+//!!! ...unfinished... (2022/05/09)
 
-
-//!!! ...unfinished... (2022/05/05) pointwise1ChannelCount
 
 
 //!!! ...unfinished... (2022/05/05) nConvBlockType
