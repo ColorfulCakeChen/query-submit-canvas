@@ -286,13 +286,179 @@ class Base {
 
       let asserter = new ObjectPropertyAsserter.Base( `Block.${stepName}`, stepParams, parametersDescription );
 
+      // channelCount0_pointwise1Before
       if ( 0 == stepIndex ) {
-        asserter.propertyValue( "bKeepInputTensor", blockParams.bKeepInputTensor );
+        asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
       } else {
-        asserter.propertyValue( "bKeepInputTensor", false );
+        switch ( nConvBlockType ) {
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
+            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount * 2 );
+            break;
+
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
+            break;
+
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount * 2 );
+            break;
+
+          default:
+            tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
+               `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}` );
+            break;
+        }
       }
 
+      // channelCount1_pointwise1Before
+      if ( 0 == stepIndex ) {
+        switch ( nConvBlockType ) {
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
+            asserter.propertyValue( "channelCount1_pointwise1Before", ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
+            break;
+
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+            if ( blockParams.bPointwise1 == false ) {
+              asserter.propertyValue( "channelCount1_pointwise1Before", ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
+            } else {
+              asserter.propertyValue( "channelCount1_pointwise1Before",
+                ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE );
+            }
+            break;
+
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+            asserter.propertyValue( "channelCount1_pointwise1Before",
+              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 );
+            break;
+
+          default:
+            tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
+               `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}` );
+            break;
+        }
+
+      } else {
+
+        switch ( nConvBlockType ) {
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+            asserter.propertyValue( "channelCount1_pointwise1Before", ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
+            break;
+
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
+            asserter.propertyValue( "channelCount1_pointwise1Before",
+              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT );
+            break;
+
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
+            asserter.propertyValue( "channelCount1_pointwise1Before",
+              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 );
+            break;
+
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+            asserter.propertyValue( "channelCount1_pointwise1Before", blockParams.sourceChannelCount ); // TWO_INPUTS
+            break;
+
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+            asserter.propertyValue( "channelCount1_pointwise1Before",
+              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH );
+            break;
+
+          default:
+            tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
+               `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}` );
+            break;
+        }
+      }
+
+
 //!!! ...unfinished... (2022/05/05) pointwise1ChannelCount
+      // pointwise1ChannelCount
+      if ( 0 == stepIndex ) {
+
+        if ( blockParams.bPointwise1 == false ) {
+          asserter.propertyValue( "pointwise1ChannelCount", 0 );
+        } else {
+          switch ( nConvBlockType ) {
+            case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
+            case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+            case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
+              asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount * 2 );
+              break;
+
+            case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
+              asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount * 4 );
+              break;
+
+            case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
+            case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+              asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount * 2 );
+              break;
+
+            case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+            case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+              if ( stepParams instanceof PointDepthPoint_TestParams.Base ) {
+                asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount ); // Single in params.
+              } else { // PointDepthPoint.Base
+                asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount * 2 ); // Double internally.
+              }
+              break;
+
+            default:
+              tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
+                 `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}` );
+              break;
+          }
+        }
+
+
+      } else {
+
+        switch ( nConvBlockType ) {
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+            asserter.propertyValue( "channelCount1_pointwise1Before", ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
+            break;
+
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
+            asserter.propertyValue( "channelCount1_pointwise1Before",
+              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT );
+            break;
+
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
+            asserter.propertyValue( "channelCount1_pointwise1Before",
+              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 );
+            break;
+
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+            asserter.propertyValue( "channelCount1_pointwise1Before", blockParams.sourceChannelCount ); // TWO_INPUTS
+            break;
+
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+            asserter.propertyValue( "channelCount1_pointwise1Before",
+              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH );
+            break;
+
+          default:
+            tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
+               `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}` );
+            break;
+        }
+      }
 
 //!!! (2022/05/05 Remarked) different conv block type, different pointwise1ChannelCount.
 //       if ( 0 == stepIndex ) {
@@ -358,103 +524,6 @@ class Base {
 //       asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
 
-      // channelCount0_pointwise1Before
-      if ( 0 == stepIndex ) {
-        asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
-      } else {
-        switch ( nConvBlockType ) {
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (2)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (3)
-            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount * 2 );
-            break;
-
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
-            break;
-
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
-            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount * 2 );
-            break;
-
-          default:
-            tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
-               `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}` );
-            break;
-        }
-      }
-
-      // channelCount1_pointwise1Before
-      if ( 0 == stepIndex ) {
-        switch ( nConvBlockType ) {
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (2)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (3)
-            asserter.propertyValue( "channelCount1_pointwise1Before", ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
-            break;
-
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-            if ( blockParams.bPointwise1 == false ) {
-              asserter.propertyValue( "channelCount1_pointwise1Before", ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
-            } else {
-              asserter.propertyValue( "channelCount1_pointwise1Before",
-                ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE );
-            }
-            break;
-
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
-            asserter.propertyValue( "channelCount1_pointwise1Before",
-              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 );
-            break;
-
-          default:
-            tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
-               `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}` );
-            break;
-        }
-
-      } else {
-
-        switch ( nConvBlockType ) {
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-            asserter.propertyValue( "channelCount1_pointwise1Before", ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
-            break;
-
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (2)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (3)
-            asserter.propertyValue( "channelCount1_pointwise1Before",
-              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT );
-            break;
-
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-            asserter.propertyValue( "channelCount1_pointwise1Before",
-              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 );
-            break;
-
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-            asserter.propertyValue( "channelCount1_pointwise1Before", blockParams.sourceChannelCount ); // TWO_INPUTS
-            break;
-
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
-            asserter.propertyValue( "channelCount1_pointwise1Before",
-              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH );
-            break;
-
-          default:
-            tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
-               `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}` );
-            break;
-        }
-      }
-
 //!!! ...unfinished... (2022/05/05) pointwise1ChannelCount
 
 
@@ -462,8 +531,8 @@ class Base {
 //
 //       case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
 //       case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-//       case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (2)
-//       case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (3)
+//       case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
+//       case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
 //
 //       case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
 //       case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
@@ -558,6 +627,12 @@ class Base {
 //!!! ...unfinished... (2022/05/05)
 // should assert .addInput0ToPointwise21 exists if MobileNetV2.
 
+      }
+
+      if ( 0 == stepIndex ) {
+        asserter.propertyValue( "bKeepInputTensor", blockParams.bKeepInputTensor );
+      } else {
+        asserter.propertyValue( "bKeepInputTensor", false );
       }
 
     }
