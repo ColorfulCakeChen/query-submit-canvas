@@ -456,6 +456,12 @@ class Base {
       asserter.propertyValue( "bPointwise1Bias", true );
       asserter.propertyValue( "pointwise1ActivationId", blockParams.nActivationId );
 
+      asserter.propertyValue( "depthwiseFilterHeight", blockParams.depthwiseFilterHeight );
+      asserter.propertyValue( "depthwiseFilterWidth", blockParams.depthwiseFilterWidth );
+
+//!!! ...unfinished... (2022/05/09) depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad
+
+
       if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
         asserter.propertyValue( "bDepthwiseBias", true );
         asserter.propertyValue( "depthwiseActivationId", blockParams.nActivationId );
@@ -464,8 +470,8 @@ class Base {
         asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
       }
 
-//!!! ...unfinished... (2022/05/09) depthwiseFilterHeight, depthwiseFilterWidth, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad
 
+//!!! ...unfinished... (2022/05/09) pointwise21ChannelCount
 
       asserter.propertyValue( "bPointwise21Bias", true );
 
