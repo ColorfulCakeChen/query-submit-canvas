@@ -428,11 +428,14 @@ class Base {
         }
 
       } else { // step1, 2, 3, ...
-
         switch ( nConvBlockType ) {
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
             if ( blockParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
@@ -446,27 +449,10 @@ class Base {
               asserter.propertyValue( "pointwise1ChannelCount", quadruple_Step0Input0ChannelCount );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-            if ( blockParams.bPointwise1 == false )
-              asserter.propertyValue( "pointwise1ChannelCount", 0 );
-            else
-              asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount );
-            break;
-
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
-            if ( blockParams.bPointwise1 == false )
-              asserter.propertyValue( "pointwise1ChannelCount", 0 );
-            else
-              asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount );
-            break;
-
           default: tf.util.assert( false, strUnknownConvBlockType ); break;
         }
       }
 
-//!!! ...unfinished... (2022/05/09) bPointwise1Bias
       asserter.propertyValue( "bPointwise1Bias", true );
       asserter.propertyValue( "pointwise1ActivationId", blockParams.nActivationId );
 
@@ -477,6 +463,9 @@ class Base {
         asserter.propertyValue( "bDepthwiseBias", false );
         asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
       }
+
+//!!! ...unfinished... (2022/05/09) depthwiseFilterHeight, depthwiseFilterWidth, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad
+
 
       asserter.propertyValue( "bPointwise21Bias", true );
 
