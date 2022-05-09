@@ -5,8 +5,8 @@ import * as PointDepthPoint from "../../PointDepthPoint.js";
 import { Params } from "../Block_Params.js";
 import { MobileNetV1 } from "./MobileNetV1.js";
 import { MobileNetV1_padValid } from "./MobileNetV1_padValid.js";
-import { MobileNetV2 } from "./MobileNetV2.js";
 import { MobileNetV2_Thin } from "./MobileNetV2_Thin.js";
+import { MobileNetV2 } from "./MobileNetV2.js";
 import { ShuffleNetV2 } from "./ShuffleNetV2.js";
 import { ShuffleNetV2_ByPointwise22 } from "./ShuffleNetV2_ByPointwise22.js";
 import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
@@ -258,8 +258,8 @@ class Base {
 Base.nConvBlockType_to_StepParamsCreator_ClassArray[] = [
   MobileNetV1,                         // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1 (0)
   MobileNetV1_padValid,                // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID (1)
-  MobileNetV2,                         // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2 (2)
-  MobileNetV2_Thin,                    // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN (3)
+  MobileNetV2_Thin,                    // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN (2)
+  MobileNetV2,                         // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2 (3)
   ShuffleNetV2,                        // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2 (4)
   ShuffleNetV2_ByPointwise22,          // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22 (5)
   ShuffleNetV2_ByMobileNetV1,          // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (6)
