@@ -96,7 +96,7 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
     // In this case, pointwise1 will not be created by PointDepthPoint (i.e. different from step0).
     //
     if ( blockParams.bPointwise1 == false ) {
-      this.pointwise1ChannelCount = 0;
+      this.pointwise1ChannelCount = 0; // (Intrinsically, zero, too.)
 
     // In ShuffleNetV2_ByMobileNetV1's body/tail, if ( blockParams.bPointwise1 == true ), pointwise1ChannelCount is always the
     // same as pointwise21 output channel count (which is already doubled as twice of step0's input0).
