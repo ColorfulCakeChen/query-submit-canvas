@@ -496,7 +496,6 @@ class Base {
 
       } else { // step1, 2, 3, ...
         switch ( nConvBlockType ) {
-//!!! ...unfinished... (2022/05/09) depthwise_AvgMax_Or_ChannelMultiplier
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
@@ -504,17 +503,14 @@ class Base {
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
-            if ( blockParams.bPointwise1 == false )
-              asserter.propertyValue( "pointwise1ChannelCount", 0 );
-            else
-              asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount );
+            asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
             if ( blockParams.bPointwise1 == false )
-              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+              asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", quadruple_Step0Input0ChannelCount );
+              asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
           default: tf.util.assert( false, strUnknownConvBlockType ); break;
