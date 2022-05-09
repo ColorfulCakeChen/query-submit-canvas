@@ -267,6 +267,10 @@ class Base {
     let stepCountRequested = blockParams.stepCountRequested;
     let nConvBlockType = blockParams.nConvBlockType;
 
+    let single_Step0Input0ChannelCount = blockParams.sourceChannelCount;        // Single of step0's input0 channel count.
+    let double_Step0Input0ChannelCount = double_Step0Input0ChannelCount * 2;    // Double of step0's input0 channel count.
+    let quadruple_Step0Input0ChannelCount = blockParams.sourceChannelCount * 4; // Quadruple of step0's input0 channel count.
+
     let stepCount = stepParamsArray.length;
 
     tf.util.assert( ( stepCount > 0 ),
@@ -286,37 +290,37 @@ class Base {
 
       let asserter = new ObjectPropertyAsserter.Base( `Block.${stepName}`, stepParams, parametersDescription );
 
+      let strUnknownConvBlockType = `Block_Reference.Base.AssertParameters_Block_steps(): `
+            `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}`;
+
       // channelCount0_pointwise1Before
-      if ( 0 == stepIndex ) {
-        asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
-      } else {
+      if ( 0 == stepIndex ) { //step0
+        asserter.propertyValue( "channelCount0_pointwise1Before", single_Step0Input0ChannelCount );
+      } else { // step1, 2, 3, ...
         switch ( nConvBlockType ) {
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
-            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount * 2 );
+            asserter.propertyValue( "channelCount0_pointwise1Before", double_Step0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
+            asserter.propertyValue( "channelCount0_pointwise1Before", single_Step0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
-            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount * 2 );
+            asserter.propertyValue( "channelCount0_pointwise1Before", double_Step0Input0ChannelCount );
             break;
 
-          default:
-            tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
-               `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}` );
-            break;
+          default: tf.util.assert( false, strUnknownConvBlockType ); break;
         }
       }
 
       // channelCount1_pointwise1Before
-      if ( 0 == stepIndex ) {
+      if ( 0 == stepIndex ) { //step0
         switch ( nConvBlockType ) {
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -341,14 +345,10 @@ class Base {
               ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 );
             break;
 
-          default:
-            tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
-               `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}` );
-            break;
+          default: tf.util.assert( false, strUnknownConvBlockType ); break;
         }
 
-      } else {
-
+      } else { // step1, 2, 3, ...
         switch ( nConvBlockType ) {
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -367,7 +367,7 @@ class Base {
             break;
 
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-            asserter.propertyValue( "channelCount1_pointwise1Before", blockParams.sourceChannelCount ); // TWO_INPUTS
+            asserter.propertyValue( "channelCount1_pointwise1Before", single_Step0Input0ChannelCount ); // TWO_INPUTS
             break;
 
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
@@ -376,18 +376,12 @@ class Base {
               ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH );
             break;
 
-          default:
-            tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
-               `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}` );
-            break;
+          default: tf.util.assert( false, strUnknownConvBlockType ); break;
         }
       }
 
-
-//!!! ...unfinished... (2022/05/05) pointwise1ChannelCount
       // pointwise1ChannelCount
-      if ( 0 == stepIndex ) {
-
+      if ( 0 == stepIndex ) { //step0
         switch ( nConvBlockType ) {
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -395,14 +389,14 @@ class Base {
             if ( blockParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount * 2 );
+              asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
             if ( blockParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount * 4 );
+              asserter.propertyValue( "pointwise1ChannelCount", quadruple_Step0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
@@ -410,7 +404,7 @@ class Base {
             if ( blockParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount * 2 );
+              asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
@@ -419,70 +413,60 @@ class Base {
               if ( stepParams instanceof PointDepthPoint_TestParams.Base ) {
                 asserter.propertyValue( "pointwise1ChannelCount", 0 ); // Zero in parameters.
               } else { // PointDepthPoint.Base
-                asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount * 2 ); // Double in reality internally.
+                asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount ); // Double in reality internally.
               }
             } else {
               if ( stepParams instanceof PointDepthPoint_TestParams.Base ) {
-                asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount ); // Single in parameters.
+                asserter.propertyValue( "pointwise1ChannelCount", single_Step0Input0ChannelCount ); // Single in parameters.
               } else { // PointDepthPoint.Base
-                asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount * 2 ); // Double in reality internally.
+                asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount ); // Double in reality internally.
               }
             }
             break;
 
-          default:
-            tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
-               `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}` );
-            break;
+          default: tf.util.assert( false, strUnknownConvBlockType ); break;
         }
 
-      } else {
+      } else { // step1, 2, 3, ...
 
         switch ( nConvBlockType ) {
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-            asserter.propertyValue( "channelCount1_pointwise1Before", ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
+            if ( blockParams.bPointwise1 == false )
+              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+            else
+              asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
-            asserter.propertyValue( "channelCount1_pointwise1Before",
-              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT );
+            if ( blockParams.bPointwise1 == false )
+              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+            else
+              asserter.propertyValue( "pointwise1ChannelCount", quadruple_Step0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-            asserter.propertyValue( "channelCount1_pointwise1Before",
-              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 );
-            break;
-
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-            asserter.propertyValue( "channelCount1_pointwise1Before", blockParams.sourceChannelCount ); // TWO_INPUTS
+            if ( blockParams.bPointwise1 == false )
+              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+            else
+              asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
           case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
-            asserter.propertyValue( "channelCount1_pointwise1Before",
-              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH );
+            if ( blockParams.bPointwise1 == false )
+              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+            else
+              asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount );
             break;
 
-          default:
-            tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
-               `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}` );
-            break;
+          default: tf.util.assert( false, strUnknownConvBlockType ); break;
         }
       }
 
-//!!! (2022/05/05 Remarked) different conv block type, different pointwise1ChannelCount.
-//       if ( 0 == stepIndex ) {
-//         pointwise1ChannelCount = stepParams.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate;
-//       } else {
-//         // Although pointwise1ChannelCount is based on pointwise21ChannelCount, it is never changed after step0.
-//         // Even if pointwise21ChannelCount is changed after step0 (e.g. ShuffleNetV2_ByPointwise22's stepLast),
-//         // pointwise1ChannelCount is still the same as step0.
-//       }
-//
-//       asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
-
+//!!! ...unfinished... (2022/05/09) bPointwise1Bias
       asserter.propertyValue( "bPointwise1Bias", true );
       asserter.propertyValue( "pointwise1ActivationId", blockParams.nActivationId );
 
@@ -496,14 +480,14 @@ class Base {
 
       asserter.propertyValue( "bPointwise21Bias", true );
 
-      if ( 0 == stepIndex ) {
+      if ( 0 == stepIndex ) { //step0
         if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
           asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
         } else {
           asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
         }
 
-      } else {
+      } else { // step1, 2, 3, ...
         if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
           asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
@@ -556,7 +540,7 @@ class Base {
       switch ( nConvBlockType ) {
         case ValueDesc.nConvBlockType.Singleton.Ids.NONE: // (0) 2. MobileNetV2 or MobileNetV1
         {
-          let pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
+          let pointwise21ChannelCount = double_Step0Input0ChannelCount;
 
           asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
           asserter.propertyValue( "depthwiseFilterHeight", blockParams.depthwiseFilterHeight );
@@ -608,7 +592,7 @@ class Base {
             if ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER ) { // (1) ShuffleNetV2
               asserter.propertyValue( "pointwise21ChannelCount", blockParams.sourceChannelCount );
             } else { // ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22 ) (2) ShuffleNetV2_ByPointwise22
-              asserter.propertyValue( "pointwise21ChannelCount", ( blockParams.sourceChannelCount * 2 ) );
+              asserter.propertyValue( "pointwise21ChannelCount", ( double_Step0Input0ChannelCount ) );
             }
           }
 
@@ -619,7 +603,7 @@ class Base {
 
           } else { // stepLast
             asserter.propertyValue( "bOutput1Requested", false );
-            //asserter.propertyValue( "outChannels0", ( blockParams.sourceChannelCount * 2 ) );
+            //asserter.propertyValue( "outChannels0", ( double_Step0Input0ChannelCount ) );
             //asserter.propertyValue( "outChannels1", 0 );
           }
 
