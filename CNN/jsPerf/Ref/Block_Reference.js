@@ -388,41 +388,53 @@ class Base {
       // pointwise1ChannelCount
       if ( 0 == stepIndex ) {
 
-        if ( blockParams.bPointwise1 == false ) {
-          asserter.propertyValue( "pointwise1ChannelCount", 0 );
-        } else {
-          switch ( nConvBlockType ) {
-            case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-            case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-            case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
+        switch ( nConvBlockType ) {
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
+            if ( blockParams.bPointwise1 == false )
+              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+            else
               asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount * 2 );
-              break;
+            break;
 
-            case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
+            if ( blockParams.bPointwise1 == false )
+              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+            else
               asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount * 4 );
-              break;
+            break;
 
-            case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-            case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+            if ( blockParams.bPointwise1 == false )
+              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+            else
               asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount * 2 );
-              break;
+            break;
 
-            case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-            case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+            if ( blockParams.bPointwise1 == false ) {
               if ( stepParams instanceof PointDepthPoint_TestParams.Base ) {
-                asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount ); // Single in params.
+                asserter.propertyValue( "pointwise1ChannelCount", 0 ); // Zero in parameters.
               } else { // PointDepthPoint.Base
-                asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount * 2 ); // Double internally.
+                asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount * 2 ); // Double in reality internally.
               }
-              break;
+            } else {
+              if ( stepParams instanceof PointDepthPoint_TestParams.Base ) {
+                asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount ); // Single in parameters.
+              } else { // PointDepthPoint.Base
+                asserter.propertyValue( "pointwise1ChannelCount", blockParams.sourceChannelCount * 2 ); // Double in reality internally.
+              }
+            }
+            break;
 
-            default:
-              tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
-                 `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}` );
-              break;
-          }
+          default:
+            tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
+               `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}` );
+            break;
         }
-
 
       } else {
 
