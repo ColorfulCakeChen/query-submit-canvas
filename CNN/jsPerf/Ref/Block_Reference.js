@@ -296,6 +296,15 @@ class Base {
       let strUnknownConvBlockType = `Block_Reference.Base.AssertParameters_Block_steps(): `
             `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}`;
 
+      // inputHeight0, inputWidth0
+      if ( 0 == stepIndex ) { // step0
+        asserter.propertyValue( "inputHeight0", blockParams.sourceHeight );
+        asserter.propertyValue( "inputWidth0", blockParams.sourceWidth );
+      } else { // step1, 2, 3, ...
+        asserter.propertyValue( "inputHeight0", blockParams.outputHeight );
+        asserter.propertyValue( "inputWidth0", blockParams.outputWidth );
+      }
+
       // channelCount0_pointwise1Before
       if ( 0 == stepIndex ) { // step0
         asserter.propertyValue( "channelCount0_pointwise1Before", single_Step0Input0ChannelCount );
@@ -571,6 +580,7 @@ class Base {
 
 //!!! ...unfinished... (2022/05/09) pointwise21ChannelCount
 
+
       asserter.propertyValue( "bPointwise21Bias", true );
 
       // pointwise21ActivationId
@@ -592,7 +602,7 @@ class Base {
         }
       }
 
-//!!! ...unfinished... (2022/05/09)
+//!!! ...unfinished... (2022/05/09) bOutput1Requested
 
 
 
