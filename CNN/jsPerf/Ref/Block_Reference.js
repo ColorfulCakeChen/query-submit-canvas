@@ -577,9 +577,28 @@ class Base {
         asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
       }
 
+      // pointwise21ChannelCount
+      { // step0, 1, 2, 3, ...
+        switch ( nConvBlockType ) {
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+            asserter.propertyValue( "pointwise21ChannelCount", double_Step0Input0ChannelCount );
+            asserter.propertyValue( "pointwise22ChannelCount", 0 );
+            break;
 
-//!!! ...unfinished... (2022/05/09) pointwise21ChannelCount
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+            asserter.propertyValue( "pointwise21ChannelCount", single_Step0Input0ChannelCount );
+            asserter.propertyValue( "pointwise22ChannelCount", single_Step0Input0ChannelCount );
+            break;
 
+          default: tf.util.assert( false, strUnknownConvBlockType ); break;
+        }
+      }
 
       asserter.propertyValue( "bPointwise21Bias", true );
 
