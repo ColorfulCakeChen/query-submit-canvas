@@ -266,9 +266,9 @@ class Base {
     this.depthwiseFilterWidth = params.depthwiseFilterWidth;
     this.nActivationId = params.nActivationId;
     this.nActivationIdName = params.nActivationIdName;
+    this.bPointwise2ActivatedAtBlockEnd = params.bPointwise2ActivatedAtBlockEnd;
     this.nConvBlockType = params.nConvBlockType;
     this.nConvBlockTypeName = params.nConvBlockTypeName;
-    this.bLastBlock = params.bLastBlock;
     this.bKeepInputTensor = params.bKeepInputTensor;
 
     // The parameters which are determined (inferenced) from the above parameters.
@@ -533,8 +533,8 @@ class Base {
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
       + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
       + `nActivationIdName=${this.nActivationIdName}(${this.nActivationId}), `
+      + `bPointwise2ActivatedAtBlockEnd=${this.bPointwise2ActivatedAtBlockEnd}, `
       + `nConvBlockType=${this.nConvBlockTypeName}(${this.nConvBlockType}), `
-      + `bLastBlock=${this.bLastBlock}, `
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, outputChannelCount=${this.outputChannelCount}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}`
     ;
