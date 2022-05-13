@@ -9,6 +9,7 @@ import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js";
 import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js"; 
 import * as Block_TestParams from "./Block_TestParams.js"; 
 import * as Block from "../../Conv/Block.js";
+import * as BoundsSetArray_Asserter from "./BoundsSetArray_Asserter.js";
 
 /**
  * Reference computation of class Block.Base.
@@ -17,7 +18,7 @@ class Base {
 
   constructor() {
     this.PointDepthPoint_Reference = new PointDepthPoint_Reference.Base();
-    this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.5 );
+    this.asserter_Equal = new TensorTools.Asserter_Equal( 0.4, 0.001 );
 
     // For reducing memory allocation.
     this.imageInArray = new Array( 2 );  // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
@@ -122,7 +123,6 @@ class Base {
         Base.AssertTwoEqualValues( "outChannels", block.outputChannelCount, outputTensorChannelCount, strNote );
       }
 
-//!!! ...unfinished... (2022/05/13)
       // Test correctness of Block BoundsArraySet.
       this.assert_imageOut_BoundsArraySet( block.boundsArraySet, imageOutReference, parametersDescription );
 
@@ -149,16 +149,22 @@ class Base {
 
   }
 
-//!!! ...unfinished... (2022/05/13)
-//       // Test correctness of Block BoundsArraySet.
-//       this.assert_imageOut_BoundsArraySet( block.boundsArraySet, imageOutReference, parametersDescription );
-
+  /**
+   * Check the Block's output's BoundsArraySet.
+   *
+   * @param {BoundsArraySet} aBoundsArraySet      The bounds array set of the Block.
+   * @param {NumberImage.Base} imageOutReference  Refernece output Image data of the Block_Reference's calcResult().
+   */
+  assert_imageOut_BoundsArraySet( aBoundsArraySet, imageOutReference, parametersDescription ) {
+    BoundsSetArray_Asserter.assert_BoundsArraySet_Outputs( this.asserter_Equal,
+      aBoundsArraySet, [ imageOutReference ], `Block`, parametersDescription );
+  }
 
   /**
    * Check the Block's output according to input (for correctness testing).
    *
    * @param {tf.tensor3d} outputTensor            The output tensor of the Block's apply().
-   * @param {NumberImage.Base} imageOutReference  Refernece output Image data.
+   * @param {NumberImage.Base} imageOutReference  Refernece output Image data of the Block_Reference's calcResult().
    */
   assert_imageOut_Tensors_byNumberArrays( outputTensor, imageOutReference, parametersDescription ) {
     let outputArrayRef;
@@ -169,7 +175,7 @@ class Base {
       outputArrayRef = null;
     }
 
-    this.asserter_Tensor_NumberArray.assert(
+    this.asserter_Equal.assert(
       outputTensor, outputArrayRef,
       "Block", `outputTensor`, `outputRef`, parametersDescription
     );
