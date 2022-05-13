@@ -13,6 +13,10 @@ import { MobileNetV1 } from "./MobileNetV1.js";
  */
 class MobileNetV1_padValid extends MobileNetV1 {
 
+  constructor( blockParams ) {
+    super( blockParams );
+  }
+
   /** @override */
   configTo_beforeStep0() {
     super.configTo_beforeStep0(); // Step0 is almost the same as MobileNetV1.
