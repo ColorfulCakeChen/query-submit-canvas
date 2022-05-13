@@ -1,7 +1,7 @@
 export { ShuffleNetV2_ByPointwise22 };
 
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
-import { Params } from "../Block_Param.js";
+import { Params } from "../Block_Params.js";
 import { ShuffleNetV2 } from "./ShuffleNetV2.js";
 
 /**
