@@ -1,4 +1,4 @@
-export { Base };
+export { Base }; // Block.StepParamsCreator.Base
 
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import * as PointDepthPoint from "../../PointDepthPoint.js";
@@ -13,7 +13,7 @@ import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
 import { ShuffleNetV2_ByMobileNetV1_padValid } from "./ShuffleNetV2_ByMobileNetV1_padValid.js";
 
 /**
- * Basic class for all Block.StepParamsCreator.Xxx classes.
+ * Base class for all Block.StepParamsCreator.Xxx classes.
  *
  *
  * @member {number} outChannels0
