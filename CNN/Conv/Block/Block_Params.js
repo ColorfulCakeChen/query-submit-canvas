@@ -85,6 +85,10 @@ class Params extends Weights.Params {
    *         output could have any value (i.e. the whole number line). If the last operation (i.e. pointwise2) has activation
    *         function, the output value will be restricted by the activation function (e.g. [ -1, +1 ] for tanh()).
    *
+   * @param {number} nConvBlockType
+   *   The convolution block type (ValueDesc.ConvBlockType.Singleton.Ids.Xxx). If null, it will be extracted from inputFloat32Array
+   * (i.e. by evolution).
+   *
    * @param {boolean} bKeepInputTensor
    *   If true, apply() will not dispose inputTensor (i.e. will be kept). If null, it will be extracted from
    * inputFloat32Array (i.e. by evolution).
