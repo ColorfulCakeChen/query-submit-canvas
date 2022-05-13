@@ -1,8 +1,8 @@
 export { Params };
 
-import * as ValueDesc from "../Unpacker/ValueDesc.js";
-import * as ParamDesc from "../Unpacker/ParamDesc.js";
-import * as Weights from "../Unpacker/Weights.js";
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as ParamDesc from "../../Unpacker/ParamDesc.js";
+import * as Weights from "../../Unpacker/Weights.js";
 
 /**
  * Convolution block parameters.
