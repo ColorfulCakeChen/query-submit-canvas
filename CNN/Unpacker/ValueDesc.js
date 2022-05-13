@@ -6,4 +6,3 @@ export { Depthwise_HigherHalfDifferent } from "./ValueDesc/ValueDesc_Other.js";
 export { AvgMax_Or_ChannelMultiplier } from "./ValueDesc/ValueDesc_Other.js";
 export { ConvBlockType } from "./ValueDesc/ValueDesc_ConvBlockType.js";
 export { StridesPad } from "./ValueDesc/ValueDesc_StridesPad.js";
-export { WhetherShuffleChannel } from "./ValueDesc/ValueDesc_Other.js";
