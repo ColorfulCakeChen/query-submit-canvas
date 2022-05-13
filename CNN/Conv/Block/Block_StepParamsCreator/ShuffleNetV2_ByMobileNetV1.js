@@ -34,6 +34,10 @@ import { ShuffleNetV2 } from "./ShuffleNetV2.js";
  */
 class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 
+  constructor( blockParams ) {
+    super( blockParams );
+  }
+
   /** @override */
   configTo_beforeStep0() {
     super.configTo_beforeStep0(); // Use same input0 (height, width, channel count), bias, activation, depthwise filter size (as ShuffleNetV2).
