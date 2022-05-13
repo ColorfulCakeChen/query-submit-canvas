@@ -676,17 +676,21 @@ class Base {
         asserter.propertyValue( "outChannels1", 0 );
       }
 
+      // .addInput0ToPointwise21, .addInput0ToPointwise22
+      if ( stepParams instanceof PointDepthPoint.Base ) {
 
-//!!! ...unfinished... (2022/05/13)
-      // .addInput0ToPointwise21
-      if ( 0 == stepIndex ) {
-      } else {
+        // addInput0ToPointwise21
+        if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
+          asserter.propertyValueNE( "addInput0ToPointwise21", null ); // Only MobileNetV2_Xxx has add-input-to-output.
+        } else {
+          asserter.propertyValue( "addInput0ToPointwise21", null );
+        }
 
-//!!! ...unfinished... (2022/05/05)
-// should assert .addInput0ToPointwise21 exists if MobileNetV2.
-
+        // addInput0ToPointwise22
+        asserter.propertyValue( "addInput0ToPointwise22", null ); // None of any neural network has add-input-to-output1.
       }
 
+      // bKeepInputTensor
       if ( 0 == stepIndex ) {
         asserter.propertyValue( "bKeepInputTensor", blockParams.bKeepInputTensor );
       } else {
