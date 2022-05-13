@@ -16,6 +16,7 @@ import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
 import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js"; 
 import * as NumberImage from "./NumberImage.js";
 import * as ImageSourceBag from "./ImageSourceBag.js";
+import * as BoundsSetArray_Asserter from "./BoundsSetArray_Asserter.js";
 
 
 /**
@@ -342,53 +343,8 @@ class Base {
    * @param {NumberImage.Base[]} imageOutReferenceArray  Refernece output Image data of the PointDepthPoint_Reference's calcResult().
    */
   assert_imageOut_BoundsArraySet( aBoundsArraySet, imageOutReferenceArray, parametersDescription ) {
-
-    // Note: For using "this", defined as an arrow function.
-    let assert_byIndex = ( indexName, index, aScaleBoundsArray, refScaleBoundsArray ) => {
-
-      tf.util.assert(
-        (   ( ( aScaleBoundsArray == null ) && ( refScaleBoundsArray == null ) )
-         || ( ( aScaleBoundsArray != null ) && ( refScaleBoundsArray != null ) ) ),
-        `PointDepthPoint_Reference.Base.assert_imageOut_BoundsArraySet().assert_byIndex( `
-          + `indexName=${indexName}, index=${index} ): `
-          + `aScaleBoundsArray (${aScaleBoundsArray}) and refScaleBoundsArray (${refScaleBoundsArray}) `
-          + `must both null or both non-null. ${parametersDescription}`);
-
-      if ( ( aScaleBoundsArray == null ) || ( refScaleBoundsArray == null ) )
-        return;
-
-      this.asserter_Equal.assert_NumberArray_NumberArray(
-        aScaleBoundsArray.boundsArray.lowers, refScaleBoundsArray.boundsArray.lowers,
-        `PointDepthPoint`, `${indexName}${index}.boundsArray.lowers`, `${indexName}Ref${index}.boundsArray.lowers`, parametersDescription
-      );
-
-      this.asserter_Equal.assert_NumberArray_NumberArray(
-        aScaleBoundsArray.boundsArray.uppers, refScaleBoundsArray.boundsArray.uppers,
-        `PointDepthPoint`, `${indexName}${index}.boundsArray.uppers`, `${indexName}Ref${index}.boundsArray.uppers`, parametersDescription
-      );
-
-      this.asserter_Equal.assert_NumberArray_NumberArray(
-        aScaleBoundsArray.scaleArraySet.do.scales, refScaleBoundsArray.scaleArraySet.do.scales,
-        `PointDepthPoint`, `${indexName}${index}.scaleArraySet.do.scales`, `${indexName}Ref${index}.scaleArraySet.do.scales`, parametersDescription
-      );
-
-      this.asserter_Equal.assert_NumberArray_NumberArray(
-        aScaleBoundsArray.scaleArraySet.undo.scales, refScaleBoundsArray.scaleArraySet.undo.scales,
-        `PointDepthPoint`, `${indexName}${index}.scaleArraySet.undo.scales`, `${indexName}Ref${index}.scaleArraySet.undo.scales`, parametersDescription
-      );
-    }
-
-    //!!! (2022/04/27 Remarked) input tensor count may be different.
-    //assert_byIndex( "input", 0, aBoundsArraySet.input0, imageOutReferenceArray[ 0 ].boundsArraySet.input0 );
-    //assert_byIndex( "input", 1, aBoundsArraySet.input1, imageOutReferenceArray[ 0 ].boundsArraySet.input1 );
-    assert_byIndex( "output", 0, aBoundsArraySet.output0, imageOutReferenceArray[ 0 ].boundsArraySet.output0 );
-
-    if ( imageOutReferenceArray[ 1 ] ) {
-      //!!! (2022/04/27 Remarked) input tensor count may be different.
-      //assert_byIndex( "input", 0, aBoundsArraySet.input0, imageOutReferenceArray[ 1 ].boundsArraySet.input0 );
-      //assert_byIndex( "input", 1, aBoundsArraySet.input1, imageOutReferenceArray[ 1 ].boundsArraySet.input1 );
-      assert_byIndex( "output", 1, aBoundsArraySet.output1, imageOutReferenceArray[ 1 ].boundsArraySet.output0 );
-    }
+    BoundsSetArray_Asserter.assert_BoundsArraySet_Outputs( this.asserter_Equal,
+      aBoundsArraySet, imageOutReferenceArray, `PointDepthPoint`, parametersDescription );
   }
 
   /**
