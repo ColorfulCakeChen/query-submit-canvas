@@ -122,25 +122,12 @@ class Base {
         Base.AssertTwoEqualValues( "outChannels", block.outputChannelCount, outputTensorChannelCount, strNote );
       }
 
-      // Test correctness of Block.apply.
-      {
-        let outputArrayRef;
-
-        if ( imageOutReference ) {
-          outputArrayRef = imageOutReference.dataArray; // Get referenced result (as number array).
-        } else {
-          outputArrayRef = null;
-        }
-
-        this.asserter_Tensor_NumberArray.assert(
-          outputTensor3d, outputArrayRef,
-          "Block", `outputTensor`, `outputRef`, parametersDescription
-        );
-      }
-
 //!!! ...unfinished... (2022/05/13)
-// assert Block's BoundsArraySet.InputsOutputs.
+      // Test correctness of Block BoundsArraySet.
+      this.assert_imageOut_BoundsArraySet( block.boundsArraySet, imageOutReference, parametersDescription );
 
+      // Test correctness of Block.apply.
+      this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, imageOutReference, parametersDescription );
 
       block.disposeTensors();
       let memoryInfo_afterDispose = tf.memory();
@@ -160,6 +147,32 @@ class Base {
       throw e;
     }
 
+  }
+
+//!!! ...unfinished... (2022/05/13)
+//       // Test correctness of Block BoundsArraySet.
+//       this.assert_imageOut_BoundsArraySet( block.boundsArraySet, imageOutReference, parametersDescription );
+
+
+  /**
+   * Check the Block's output according to input (for correctness testing).
+   *
+   * @param {tf.tensor3d} outputTensor            The output tensor of the Block's apply().
+   * @param {NumberImage.Base} imageOutReference  Refernece output Image data.
+   */
+  assert_imageOut_Tensors_byNumberArrays( outputTensor, imageOutReference, parametersDescription ) {
+    let outputArrayRef;
+
+    if ( imageOutReference ) {
+      outputArrayRef = imageOutReference.dataArray; // Get referenced result (as number array).
+    } else {
+      outputArrayRef = null;
+    }
+
+    this.asserter_Tensor_NumberArray.assert(
+      outputTensor, outputArrayRef,
+      "Block", `outputTensor`, `outputRef`, parametersDescription
+    );
   }
 
   /**
