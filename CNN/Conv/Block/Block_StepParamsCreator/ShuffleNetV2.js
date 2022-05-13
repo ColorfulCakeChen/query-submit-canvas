@@ -47,6 +47,10 @@ import { Base } from "./Base.js";
  */
 class ShuffleNetV2 extends Base {
 
+  constructor( blockParams ) {
+    super( blockParams );
+  }
+
   /** @override */
   determine_stepCount_depthwiseFilterHeightWidth_Default_Last() {
     super.determine_stepCount_depthwiseFilterHeightWidth_Default_Last();
