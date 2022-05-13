@@ -39,6 +39,10 @@ import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
  */
 class ShuffleNetV2_ByMobileNetV1_padValid extends ShuffleNetV2_ByMobileNetV1 {
 
+  constructor( blockParams ) {
+    super( blockParams );
+  }
+
   /** @override */
   configTo_beforeStep0() {
     super.configTo_beforeStep0(); // Step0 is almost the same as ShuffleNetV2_ByMobileNetV1.
