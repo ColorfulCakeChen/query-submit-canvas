@@ -11,6 +11,10 @@ import { MobileNetV2_Thin } from "./MobileNetV2_Thin.js";
  */
 class MobileNetV2 extends MobileNetV2_Thin {
 
+  constructor( blockParams ) {
+    super( blockParams );
+  }
+
   /** @override */
   configTo_beforeStep0() {
     super.configTo_beforeStep0(); // step0's inputHeight0, inputWidth0, bias, activation.
