@@ -25,6 +25,10 @@ import { Base } from "./Base.js";
  */
 class MobileNetV1 extends Base {
 
+  constructor( blockParams ) {
+    super( blockParams );
+  }
+
   /** @override */
   configTo_beforeStep0() {
     super.configTo_beforeStep0(); // step0's inputHeight0, inputWidth0, bias, activation.
