@@ -1,7 +1,6 @@
 export { MobileNetV2_Thin };
 
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
-import { Params } from "../Block_Param.js";
 import { MobileNetV1 } from "./MobileNetV1.js";
 
 /**
