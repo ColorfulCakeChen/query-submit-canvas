@@ -2,7 +2,7 @@ export { ShuffleNetV2 };
 
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import * as ChannelShuffler from "../../ChannelShuffler.js";
-import { Params } from "../Block_Param.js";
+import { Params } from "../Block_Params.js";
 import { Base } from "./Base.js";
 
 /**
