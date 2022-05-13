@@ -1,7 +1,7 @@
 export { MobileNetV1_padValid };
 
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
-import { Params } from "../Block_Param.js";
+import { Params } from "../Block_Params.js";
 import { MobileNetV1 } from "./MobileNetV1.js";
 
 /**
