@@ -35,10 +35,10 @@ class ConvBlockType extends Int {
    */
   static isMobileNet( nConvBlockType ) {
     switch ( nConvBlockType ) {
-      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
-      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
+      case ConvBlockType.Singleton.Ids.MOBILE_NET_V1: // (0)
+      case ConvBlockType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+      case ConvBlockType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
+      case ConvBlockType.Singleton.Ids.MOBILE_NET_V2: // (3)
         return true;
       default:
         return false;
@@ -51,8 +51,8 @@ class ConvBlockType extends Int {
    */
   static isMobileNetV2( nConvBlockType ) {
     switch ( nConvBlockType ) {
-      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
-      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
+      case ConvBlockType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
+      case ConvBlockType.Singleton.Ids.MOBILE_NET_V2: // (3)
         return true;
       default:
         return false;
@@ -65,10 +65,10 @@ class ConvBlockType extends Int {
    */
   static isShuffleNet( nConvBlockType ) {
     switch ( nConvBlockType ) {
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+      case ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
+      case ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+      case ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+      case ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
         return true;
       default:
         return false;
@@ -81,8 +81,8 @@ class ConvBlockType extends Int {
    */
   static  isPadValid() {
     switch ( nConvBlockType ) {
-      case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-      case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+      case ConvBlockType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+      case ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
         return true;
       default:
         return false;
