@@ -22,7 +22,7 @@ class Base {
 
     // For reducing memory allocation.
     this.imageInArray = new Array( 2 );  // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
-    //this.imageOutArray = new Array( 2 ); // imageOutArray[ 0 ] is output0, imageOutArray[ 1 ] is output1.
+    this.arrayTemp_forInterleave_asGrouptTwo = [];
   }
 
   /**
@@ -185,9 +185,13 @@ class Base {
    * @param {Block_TestParams.Base} testParams
    *   The test parameters. It is the value of Block_TestParams.Base.ParamsGenerator()'s result.
    *
+   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
+   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Block value bounds
+   * set. It will be kept (not cloned) directly. So caller should not modify them.
+   *
    * @return {Block.Base} The created Block object.
    */
-  static Block_create( testParams ) {
+  static Block_create( testParams, inputScaleBoundsArray0 ) {
 
     let block = new Block.Base();
 
@@ -205,7 +209,7 @@ class Base {
       testParams.in.bKeepInputTensor
     );
 
-    let bInitOk = block.init( progress, extractedParams );
+    let bInitOk = block.init( progress, extractedParams, inputScaleBoundsArray0, this.arrayTemp_forInterleave_asGrouptTwo );
 
     let parametersDescription = `( ${block.parametersDescription} )`;
 
