@@ -7,6 +7,7 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 //import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 //import * as TensorTools from "../util/TensorTools.js";
+import * as BatchIdCalculator from "./BatchIdCalculator.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 import * as ChannelShufflerPool from "../Conv/ChannelShufflerPool.js";
@@ -527,27 +528,6 @@ class HeightWidthDepth {
     this.test_Weights_Float32Array_RestrictedClone();
     this.test_ValueRange_valueInputOutputGenerator();
 
-    class BatchIdCalculator {
-      constructor() {
-        this.lastBatchId = -1;
-      }
-
-      checkAndDisplay( currentTestParamsId ) {
-        const batchMessageInterval = 50 * 1000; //100 * 1000; // Every so many test cases, display a message.
-
-        let currentBatchId = ( currentTestParamsId - ( currentTestParamsId % batchMessageInterval ) ) / batchMessageInterval;
-        if ( this.lastBatchId != currentBatchId ) {
-          let beginTestParamsId = ( this.lastBatchId + 1 ) * batchMessageInterval;
-          let endTestParamsId = ( currentBatchId + 1 ) * batchMessageInterval - 1;
-
-          console.log( `${tf.getBackend()}, `
-            + `testParams.id between [${beginTestParamsId} - ${endTestParamsId}] ...` );
-
-          this.lastBatchId = currentBatchId;
-        }
-      }
-    }
-
     tf.tidy( () => {
 
       let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag and channelShufflerPool.
@@ -562,7 +542,7 @@ class HeightWidthDepth {
         let testParamsGenerator = testParams.ParamsGenerator();
         let testReference = new PointDepthPoint_Reference.Base();
 
-        let batchIdCalculator = new BatchIdCalculator();
+        let batchIdCalculator = new BatchIdCalculator.Base( 50 * 1000 );
         for ( let testParams of testParamsGenerator ) {
           batchIdCalculator.checkAndDisplay( testParams.id );
           testReference.testCorrectness( imageSourceBag, testParams, channelShufflerPool );
