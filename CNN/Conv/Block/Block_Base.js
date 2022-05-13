@@ -2,6 +2,7 @@ export { Base };
 
 import * as ValueMax from "../ValueMax.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
+import * as BoundsArraySet from "../BoundsArraySet.js";
 import * as PointDepthPoint from "./PointDepthPoint.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
 import * as StepParamsCreator from "./Block_StepParamsCreator.js";
@@ -192,6 +193,10 @@ class Base {
    * @param {Params} params
    *   A Params object. The params.extract() will be called to extract parameters.
    *
+   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
+   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Block value bounds
+   * set. It will be kept (not cloned) directly. So caller should not modify them.
+   *
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
    *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
@@ -205,7 +210,7 @@ class Base {
    *
    * @see PointDepthPoint.Base.initer()
    */
-  * initer( progressParent, params, arrayTemp_forInterleave_asGrouptTwo ) {
+  * initer( progressParent, params, inputScaleBoundsArray0, arrayTemp_forInterleave_asGrouptTwo ) {
 
     // Both MobileNetV3 and ShuffleNetV2:
     //   - They all do not use (depthwise convolution) channelMultiplier.
@@ -293,12 +298,14 @@ class Base {
     }
 
     let stepParams, step, stepIniter;
+    let inputScaleBoundsArray;
 
     this.stepsArray = new Array( stepParamsCreator.stepCount );
     for ( let i = 0; i < this.stepsArray.length; ++i ) { // Step0, 1, 2, 3, ..., StepLast.
 
       if ( 0 == i ) { // Step0.
         stepParamsCreator.configTo_beforeStep0();
+        inputScaleBoundsArray = inputScaleBoundsArray0;
       }
 
       // StepLast. (Note: Step0 may also be StepLast.) 
@@ -346,7 +353,9 @@ class Base {
       }
 
       step = this.stepsArray[ i ] = new PointDepthPoint.Base();
-      stepIniter = step.initer( progressForSteps.children[ i ], stepParams, this.channelShuffler, arrayTemp_forInterleave_asGrouptTwo );
+      stepIniter = step.initer( progressForSteps.children[ i ], stepParams,
+        inputScaleBoundsArray, null,
+        this.channelShuffler, arrayTemp_forInterleave_asGrouptTwo );
 
       this.bInitOk = yield* stepIniter;
       if ( !this.bInitOk )
@@ -356,11 +365,11 @@ class Base {
       this.tensorWeightCountTotal += step.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += step.tensorWeightCountExtracted;
 
-//!!! ...unfinished... (2022/04/28)
       step.dispose_all_sub_BoundsArraySet(); // Reduce memory footprint by release unused bounds array set.
 
       if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
         stepParamsCreator.configTo_afterStep0();
+        inputScaleBoundsArray = step.boundsArraySet.output0;
       }
     }
 
@@ -370,8 +379,10 @@ class Base {
     this.outputChannelCount = this.stepLast.outChannelsAll;
 
     {
-//!!! ...unfinished... (2022/04/28)
-// Create Block self BoundsArraySet.InputsOutputs.
+      this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, null,
+        this.stepLast.boundsArraySet.output0.channelCount, 0 );
+
+      this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.stepLast.boundsArraySet );
 
       this.dispose_all_sub_BoundsArraySet(); // Release all steps' bounds array set for reducing memory footprint.
     }
