@@ -31,6 +31,15 @@ class Base {
   }
 
   /**
+   * Assert ( this.object[ propertyName ] != value ).
+   */
+  propertyValueNE( propertyName, value ) {
+    let propertyValue = this.object[ propertyName ];
+    tf.util.assert( ( propertyValue != value ),
+      `${this.objectName}.${propertyName} (${propertyValue}) should not be (${value}). ${this.contextDescription}`);
+  }
+
+  /**
    * Assert ( this.object[ propertyName ] <= value ).
    */
   propertyValueLE( propertyName, value ) {
