@@ -290,7 +290,7 @@ class Base {
     yield progressRoot;  // Parameters extracted. Report progress.
 
     // 2. Create every steps.
-    let stepParamsCreator = StepParamsCreator.Base.create_byBlockParams( params );
+    let stepParamsCreator = Base.create_StepParamsCreator_byBlockParams( params );
     stepParamsCreator.determine_stepCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real step count.
 
     for ( let i = 0; i < stepParamsCreator.stepCount; ++i ) { // Progress for step0, 1, 2, 3, ... 
@@ -552,5 +552,46 @@ class Base {
     return str;
   }
 
+  /**
+   * @param {Params} blockParams
+   *   The Block.Params object to be reference.
+   *
+   * @return {Base}
+   *   Return newly created Block.StepParamsCreator.Xxx object according to blockParams.nConvBlockType.
+   */
+  static create_StepParamsCreator_byBlockParams( blockParams ) {
+
+    tf.util.assert( ( blockParams.stepCountRequested >= 2 ),
+      `Block.StepParamsCreator.Base.create_byBlockParams(): `
+        + `blockParams.stepCountRequested ( ${blockParams.stepCountRequested} ) must be >= 2.` );
+
+    tf.util.assert(
+      (   ( blockParams.nConvBlockType >= 0 )
+       && ( blockParams.nConvBlockType < Base.nConvBlockType_to_StepParamsCreator_ClassArray.length )
+      ),
+      `Block.Base.create_StepParamsCreator_byBlockParams(): `
+        + `unknown blockParams.nConvBlockType ( ${blockParams.nConvBlockType} ) value.`
+    );
+
+    let classStepParamsCreator = Base.nConvBlockType_to_StepParamsCreator_ClassArray[ blockParams.nConvBlockType ];
+    let aStepParamsCreator = new classStepParamsCreator( blockParams );
+
+    return aStepParamsCreator;
+  }
+
 }
 
+
+/**
+ * Mapping nConvBlockType (number as array index) to StepParamsCreator class object.
+ */
+Base.nConvBlockType_to_StepParamsCreator_ClassArray = [
+  StepParamsCreator.MobileNetV1,                         // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1 (0)
+  StepParamsCreator.MobileNetV1_padValid,                // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID (1)
+  StepParamsCreator.MobileNetV2_Thin,                    // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN (2)
+  StepParamsCreator.MobileNetV2,                         // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2 (3)
+  StepParamsCreator.ShuffleNetV2,                        // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2 (4)
+  StepParamsCreator.ShuffleNetV2_ByPointwise22,          // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22 (5)
+  StepParamsCreator.ShuffleNetV2_ByMobileNetV1,          // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (6)
+  StepParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid, // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (7)
+];
