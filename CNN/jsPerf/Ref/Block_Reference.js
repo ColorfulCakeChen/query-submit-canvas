@@ -9,7 +9,7 @@ import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js";
 import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js"; 
 import * as Block_TestParams from "./Block_TestParams.js"; 
 import * as Block from "../../Conv/Block.js";
-import * as BoundsSetArray_Asserter from "./BoundsSetArray_Asserter.js";
+import * as BoundsArraySet_Asserter from "./BoundsArraySet_Asserter.js";
 
 /**
  * Reference computation of class Block.Base.
@@ -156,7 +156,7 @@ class Base {
    * @param {NumberImage.Base} imageOutReference  Refernece output Image data of the Block_Reference's calcResult().
    */
   assert_imageOut_BoundsArraySet( aBoundsArraySet, imageOutReference, parametersDescription ) {
-    BoundsSetArray_Asserter.assert_BoundsArraySet_Outputs( this.asserter_Equal,
+    BoundsArraySet_Asserter.assert_BoundsArraySet_Outputs( this.asserter_Equal,
       aBoundsArraySet, [ imageOutReference ], `Block`, parametersDescription );
   }
 
