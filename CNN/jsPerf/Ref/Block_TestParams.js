@@ -53,12 +53,14 @@ class Base extends TestParams.Base {
    */
   set_By_ParamsScattered(
     sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, bPointwise1,
-    depthwiseFilterHeight, depthwiseFilterWidth, nActivationId, bPointwise2BiasAtBlockEnd, nConvBlockType, bKeepInputTensor
+    depthwiseFilterHeight, depthwiseFilterWidth, nActivationId,
+    bPointwise2ActivatedAtBlockEnd, nConvBlockType, bKeepInputTensor
   ) {
     this.in.paramsNumberArrayObject = {};
     this.out = {
       sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, bPointwise1,
-      depthwiseFilterHeight, depthwiseFilterWidth, nActivationId, bPointwise2BiasAtBlockEnd, nConvBlockType, bKeepInputTensor
+      depthwiseFilterHeight, depthwiseFilterWidth, nActivationId,
+      bPointwise2ActivatedAtBlockEnd, nConvBlockType, bKeepInputTensor
     };
 
     Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
@@ -80,7 +82,7 @@ class Base extends TestParams.Base {
    *
    * @param {object} this.out
    *   An object which has the following data members: sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested,
-   * pointwise1ChannelCountRate, depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel,
+   * bPointwise1, depthwiseFilterHeight, depthwiseFilterWidth, nActivationId, bPointwise2ActivatedAtBlockEnd, nConvBlockType,
    * bKeepInputTensor, outputHeight, outputWidth.
    *
    * @param {number} weightsElementOffsetBegin
@@ -235,9 +237,9 @@ class Base extends TestParams.Base {
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3 ],
 
-      bPointwise2BiasAtBlockEnd: [
-        Block.Params.bPointwise2BiasAtBlockEnd.valueDesc.range.min,
-        Block.Params.bPointwise2BiasAtBlockEnd.valueDesc.range.max
+      bPointwise2ActivatedAtBlockEnd: [
+        Block.Params.bPointwise2ActivatedAtBlockEnd.valueDesc.range.min,
+        Block.Params.bPointwise2ActivatedAtBlockEnd.valueDesc.range.max
       ],
 
 //      nConvBlockType: undefined,
@@ -257,17 +259,17 @@ class Base extends TestParams.Base {
     //
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
-      new TestParams.ParamDescConfig( Block.Params.sourceHeight,               this.valueOutMinMax.sourceHeight ),
-      new TestParams.ParamDescConfig( Block.Params.sourceWidth,                this.valueOutMinMax.sourceWidth ),
-      new TestParams.ParamDescConfig( Block.Params.sourceChannelCount,         this.valueOutMinMax.sourceChannelCount ),
-      new TestParams.ParamDescConfig( Block.Params.stepCountRequested,         this.valueOutMinMax.stepCountRequested ),
-      new TestParams.ParamDescConfig( Block.Params.bPointwise1,                this.valueOutMinMax.bPointwise1 ),
-      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,      this.valueOutMinMax.depthwiseFilterHeight ),
-      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterWidth,       this.valueOutMinMax.depthwiseFilterWidth ),
-      new TestParams.ParamDescConfig( Block.Params.nActivationId,              this.valueOutMinMax.nActivationId ),
-      new TestParams.ParamDescConfig( Block.Params.bPointwise2BiasAtBlockEnd,  this.valueOutMinMax.bPointwise2BiasAtBlockEnd ),
-      new TestParams.ParamDescConfig( Block.Params.nConvBlockType,             this.valueOutMinMax.nConvBlockType ),
-      new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,           this.valueOutMinMax.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( Block.Params.sourceHeight,                   this.valueOutMinMax.sourceHeight ),
+      new TestParams.ParamDescConfig( Block.Params.sourceWidth,                    this.valueOutMinMax.sourceWidth ),
+      new TestParams.ParamDescConfig( Block.Params.sourceChannelCount,             this.valueOutMinMax.sourceChannelCount ),
+      new TestParams.ParamDescConfig( Block.Params.stepCountRequested,             this.valueOutMinMax.stepCountRequested ),
+      new TestParams.ParamDescConfig( Block.Params.bPointwise1,                    this.valueOutMinMax.bPointwise1 ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,          this.valueOutMinMax.depthwiseFilterHeight ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterWidth,           this.valueOutMinMax.depthwiseFilterWidth ),
+      new TestParams.ParamDescConfig( Block.Params.nActivationId,                  this.valueOutMinMax.nActivationId ),
+      new TestParams.ParamDescConfig( Block.Params.bPointwise2ActivatedAtBlockEnd, this.valueOutMinMax.bPointwise2ActivatedAtBlockEnd ),
+      new TestParams.ParamDescConfig( Block.Params.nConvBlockType,                 this.valueOutMinMax.nConvBlockType ),
+      new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,               this.valueOutMinMax.bKeepInputTensor ),
     ];
 
     yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
@@ -290,7 +292,7 @@ Base.paramsNameOrderArray_Basic = [
   Block.Params.depthwiseFilterHeight.paramName,
   Block.Params.depthwiseFilterWidth.paramName,
   Block.Params.nActivationId.paramName,
-  Block.Params.bPointwise2BiasAtBlockEnd.paramName,
+  Block.Params.bPointwise2ActivatedAtBlockEnd.paramName,
   Block.Params.nConvBlockType.paramName,
   Block.Params.bKeepInputTensor.paramName,
 ];
