@@ -5,6 +5,7 @@ export { init, testCorrectness, disposeTensors };
 //import * as ValueRange from "../Unpacker/ValueRange.js";
 //import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
+import * as BatchIdCalculator from "./BatchIdCalculator.js";
 import * as Block from "../Conv/Block.js";
 import * as Block_Reference from "./Ref/Block_Reference.js";
 import * as Block_TestParams from "./Ref/Block_TestParams.js"; 
@@ -86,8 +87,6 @@ class HeightWidthDepth {
     // The block performance testing should:
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
     //
-
-//!!! ...unfinished... (2022/05/13)
 
     this.testCaseMap = new Map();
 
@@ -191,7 +190,7 @@ class HeightWidthDepth {
     }
   }
 
-  // Test apply by Xxx
+  /** Test apply by Xxx */
   testBlock_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
     let block = testCase.block;
@@ -199,42 +198,27 @@ class HeightWidthDepth {
     tf.dispose( outputTensor3d );
   }
 
-//!!! ...unfinished... (2022/05/04)
-// assert pointwise2's bias for MobileNet with ( bPointwise1 == true ) in multiple blocks situation.
-
-  // Testing whether the results of different implementation are the same.
+  /** Testing whether the results of different implementation are the same. */
   testCorrectness() {
 
     tf.tidy( () => {
 
       let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
 
-      // Test different input image width (even and odd).
-      let originalImageSizeArray = [
-        { height: 3, width: 4, depth: 4 },
-        { height: 3, width: 5, depth: 4 },
-      ];
-
-      for ( let originalImageSize of originalImageSizeArray ) {
-
+      {
         // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors
         //       dynamically created in them.
-        let imageSourceBag = new ImageSourceBag.Base( originalImageSize.height, originalImageSize.width );
+        let imageSourceBag = new ImageSourceBag.Base();
 
         let testParams = new Block_TestParams.Base();
-        let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width, originalImageSize.depth );
+        let testParamsGenerator = testParams.ParamsGenerator();
         let testReference = new Block_Reference.Base();
 
-        let batchMessageInterval = 10 * 1000; // Every so many test cases, display a message.
+        let batchIdCalculator = new BatchIdCalculator.Base( 50 * 1000 );
 
         try {
           for ( testParams of testParamsGenerator ) {
-            if ( ( testParams.id % batchMessageInterval ) == 0 ) {
-              console.log( `${tf.getBackend()}, `
-                + `input image ( height, width ) = ( ${imageSourceBag.originalHeight}, ${imageSourceBag.originalWidth} ), `
-                + `testParams.id between [${testParams.id} - ${testParams.id + batchMessageInterval - 1}] ...` );
-            }
-
+            batchIdCalculator.checkAndDisplay( testParams.id );
             testReference.testCorrectness( imageSourceBag, testParams );
           }
 
@@ -271,8 +255,8 @@ function init() {
 
   let depth = 4;
 
-  // Using mobile phone's resolution ( 2160 * 1080 ) will crash the computer.
-  // Using ( 1 / 10 ) of computer screen ( 1920 * 1080 ).
+  // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
+  // Using ( 1 / 10 ) of computer screen ( 1080 * 1920 ).
   globalThis.testSet_108x192x4 = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
 
   globalThis.testSet_All = [
