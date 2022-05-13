@@ -138,6 +138,10 @@ class Base {
         );
       }
 
+//!!! ...unfinished... (2022/05/13)
+// assert Block's BoundsArraySet.InputsOutputs.
+
+
       block.disposeTensors();
       let memoryInfo_afterDispose = tf.memory();
 
