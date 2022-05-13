@@ -1,10 +1,10 @@
 export { Base };
 
-import * as ValueMax from "../ValueMax.js";
-import * as ValueDesc from "../Unpacker/ValueDesc.js";
+import * as ValueMax from "../../ValueMax.js";
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
-import * as PointDepthPoint from "./PointDepthPoint.js";
-import * as ChannelShuffler from "./ChannelShuffler.js";
+import * as PointDepthPoint from "../PointDepthPoint.js";
+import * as ChannelShuffler from "../ChannelShuffler.js";
 import * as StepParamsCreator from "./Block_StepParamsCreator.js";
 import { Params } from "./Block_Params.js";
 
