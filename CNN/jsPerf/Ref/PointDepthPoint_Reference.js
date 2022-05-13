@@ -338,11 +338,8 @@ class Base {
   /**
    * Check the PointDepthPoint's output's BoundsArraySet.
    *
-   * @param {BoundsArraySet} aBoundsArraySet
-   *   The bounds array set of the PointDepthPoint_Reference's calcResult().
-   *
-   * @param {NumberImage.Base[]} imageOutReferenceArray
-   *   Refernece output Image data.
+   * @param {BoundsArraySet} aBoundsArraySet             The bounds array set of the PointDepthPoint.
+   * @param {NumberImage.Base[]} imageOutReferenceArray  Refernece output Image data of the PointDepthPoint_Reference's calcResult().
    */
   assert_imageOut_BoundsArraySet( aBoundsArraySet, imageOutReferenceArray, parametersDescription ) {
 
@@ -397,11 +394,8 @@ class Base {
   /**
    * Check the PointDepthPoint's output according to input (for correctness testing).
    *
-   * @param {tf.tensor3d[]} outputTensors
-   *   The output array of the PointDepthPoint's apply_and_destroy_or_keep().
-   *
-   * @param {NumberImage.Base[]} imageOutReferenceArray
-   *   Refernece output Image data.
+   * @param {tf.tensor3d[]} outputTensors                The output array of the PointDepthPoint's apply_and_destroy_or_keep().
+   * @param {NumberImage.Base[]} imageOutReferenceArray  Refernece output Image data of the PointDepthPoint_Reference's calcResult().
    */
   assert_imageOut_Tensors_byNumberArrays( outputTensors, imageOutReferenceArray, parametersDescription ) {
 
