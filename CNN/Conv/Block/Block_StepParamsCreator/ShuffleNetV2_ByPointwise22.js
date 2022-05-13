@@ -84,6 +84,10 @@ import { ShuffleNetV2 } from "./ShuffleNetV2.js";
  */
 class ShuffleNetV2_ByPointwise22 extends ShuffleNetV2 {
 
+  constructor( blockParams ) {
+    super( blockParams );
+  }
+
   /** @override */
   configTo_beforeStep0() {
     super.configTo_beforeStep0(); // Step0 is the same as ShuffleNetV2.
