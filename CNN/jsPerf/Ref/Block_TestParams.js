@@ -206,15 +206,11 @@ class Base extends TestParams.Base {
     //let depthwiseFilterMaxSize = 5;
     let depthwiseFilterMaxSize = 3;
 
-    this.sourceHeight = sourceHeight;
-    this.sourceWidth = sourceWidth;
-    this.sourceChannelCount = sourceChannelCount;
-
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.valueOutMinMax = {
-      sourceHeight: [ this.sourceHeight, this.sourceHeight ], //5,
-      sourceWidth:  [ this.sourceWidth,  this.sourceWidth  ], //5,
-      sourceChannelCount: [ this.sourceChannelCount, this.sourceChannelCount ],
+      sourceHeight: [ 3, 3 ],
+      sourceWidth:  [ 4, 5 ], // Test different input image width (even and odd).
+      sourceChannelCount: [ 4, 4 ],
 
       stepCountRequested: [
         Block.Params.stepCountRequested.valueDesc.range.min,
