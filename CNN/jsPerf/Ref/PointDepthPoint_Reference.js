@@ -16,7 +16,7 @@ import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
 import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js"; 
 import * as NumberImage from "./NumberImage.js";
 import * as ImageSourceBag from "./ImageSourceBag.js";
-import * as BoundsSetArray_Asserter from "./BoundsSetArray_Asserter.js";
+import * as BoundsArraySet_Asserter from "./BoundsArraySet_Asserter.js";
 
 
 /**
@@ -343,7 +343,7 @@ class Base {
    * @param {NumberImage.Base[]} imageOutReferenceArray  Refernece output Image data of the PointDepthPoint_Reference's calcResult().
    */
   assert_imageOut_BoundsArraySet( aBoundsArraySet, imageOutReferenceArray, parametersDescription ) {
-    BoundsSetArray_Asserter.assert_BoundsArraySet_Outputs( this.asserter_Equal,
+    BoundsArraySet_Asserter.assert_BoundsArraySet_Outputs( this.asserter_Equal,
       aBoundsArraySet, imageOutReferenceArray, `PointDepthPoint`, parametersDescription );
   }
 
