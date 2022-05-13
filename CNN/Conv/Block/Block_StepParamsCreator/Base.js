@@ -3,14 +3,6 @@ export { Base }; // Block.StepParamsCreator.Base
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import * as PointDepthPoint from "../../PointDepthPoint.js";
 import { Params } from "../Block_Params.js";
-import { MobileNetV1 } from "./MobileNetV1.js";
-import { MobileNetV1_padValid } from "./MobileNetV1_padValid.js";
-import { MobileNetV2_Thin } from "./MobileNetV2_Thin.js";
-import { MobileNetV2 } from "./MobileNetV2.js";
-import { ShuffleNetV2 } from "./ShuffleNetV2.js";
-import { ShuffleNetV2_ByPointwise22 } from "./ShuffleNetV2_ByPointwise22.js";
-import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
-import { ShuffleNetV2_ByMobileNetV1_padValid } from "./ShuffleNetV2_ByMobileNetV1_padValid.js";
 
 /**
  * Base class for all Block.StepParamsCreator.Xxx classes.
@@ -222,46 +214,5 @@ class Base {
     );
     return params;
   }
-  
-  /**
-   * @param {Params} blockParams
-   *   The Block.Params object to be reference.
-   *
-   * @return {Base}
-   *   Return newly created Block.StepParamsCreator.Xxx object according to blockParams.nConvBlockType.
-   */
-  static create_byBlockParams( blockParams ) {
-
-    tf.util.assert( ( blockParams.stepCountRequested >= 2 ),
-      `Block.StepParamsCreator.Base.create_byBlockParams(): `
-        + `blockParams.stepCountRequested ( ${blockParams.stepCountRequested} ) must be >= 2.` );
-
-    tf.util.assert(
-      (   ( blockParams.nConvBlockType >= 0 )
-       && ( blockParams.nConvBlockType < Base.nConvBlockType_to_StepParamsCreator_ClassArray.length )
-      ),
-      `Block.StepParamsCreator.Base.create_byBlockParams(): `
-        + `unknown blockParams.nConvBlockType ( ${blockParams.nConvBlockType} ) value.`
-    );
-
-    let classStepParamsCreator = Base.nConvBlockType_to_StepParamsCreator_ClassArray[ blockParams.nConvBlockType ];
-    let aStepParamsCreator = new classStepParamsCreator( blockParams );
-
-    return aStepParamsCreator;
-  }
 
 }
-
-/**
- * Mapping nConvBlockType (number as array index) to StepParamsCreator class object.
- */
-Base.nConvBlockType_to_StepParamsCreator_ClassArray = [
-  MobileNetV1,                         // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1 (0)
-  MobileNetV1_padValid,                // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID (1)
-  MobileNetV2_Thin,                    // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN (2)
-  MobileNetV2,                         // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2 (3)
-  ShuffleNetV2,                        // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2 (4)
-  ShuffleNetV2_ByPointwise22,          // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22 (5)
-  ShuffleNetV2_ByMobileNetV1,          // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (6)
-  ShuffleNetV2_ByMobileNetV1_padValid, // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (7)
-];
