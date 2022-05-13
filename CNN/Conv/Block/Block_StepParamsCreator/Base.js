@@ -255,7 +255,7 @@ class Base {
 /**
  * Mapping nConvBlockType (number as array index) to StepParamsCreator class object.
  */
-Base.nConvBlockType_to_StepParamsCreator_ClassArray[] = [
+Base.nConvBlockType_to_StepParamsCreator_ClassArray = [
   MobileNetV1,                         // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1 (0)
   MobileNetV1_padValid,                // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID (1)
   MobileNetV2_Thin,                    // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN (2)
