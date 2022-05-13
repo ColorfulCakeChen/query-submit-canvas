@@ -9,7 +9,7 @@ import * as Block from "../Conv/Block.js";
 import * as Block_Reference from "./Ref/Block_Reference.js";
 import * as Block_TestParams from "./Ref/Block_TestParams.js"; 
 import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
-
+import * as NumberImage from "./Ref/NumberImage.js"; 
 
 /**
  * Test CNN Block.
@@ -48,7 +48,7 @@ class HeightWidthDepth {
   }
 
   block_PerformanceTest_init() {
-      
+
     // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
     this.disposeTensors();
 
@@ -69,168 +69,97 @@ class HeightWidthDepth {
         let dataTensor3d = tf.reshape( t, shape );
         dataTensor3dArray[ i ] = dataTensor3d;
 
-        this.testPerformance_ImageDataArray[ i ] = {
-          height: this.height, width: this.width, depth: this.depth,
-          dataArray: dataTensor3d.dataSync()
-        };
+        this.testPerformance_ImageDataArray[ i ] = new NumberImage.Base(
+          this.height, this.width, this.depth, dataTensor3d.dataSync() );
       }
 
       return dataTensor3dArray;
     });
 
-//!!! ...unfinished... (2021/10/12 Remarked)
-//     this.performanceTestNames = [
-//       "NotShuffleNet_NotMobileNet_Pointwise1Rate_0",
-//       "NotShuffleNet_NotMobileNet_Pointwise1Rate_1",
-//       "NotShuffleNet_NotMobileNet_Pointwise1Rate_2",
-//
-//       "MobileNet_Step_N_Pointwise1Rate_0",
-//       "MobileNet_Step_N_Pointwise1Rate_1",
-//       "MobileNet_Step_N_Pointwise1Rate_2",
-//
-//       "ShuffleNetV2_Step_N_Pointwise1Rate_0",
-//       "ShuffleNetV2_Step_N_Pointwise1Rate_1",
-//       "ShuffleNetV2_Step_N_Pointwise1Rate_2",
-//
-//       "ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_0",
-//       "ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_1",
-//       "ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_2",
-//     ];
+    let stepCountRequested = 10;
 
-    // sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, pointwise1ChannelCountRate,
-    // depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd,
-    // nWhetherShuffleChannel, bKeepInputTensor
+    // sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, bPointwise1,
+    // depthwiseFilterHeight, depthwiseFilterWidth, nActivationId, bPointwise2ActivatedAtBlockEnd,
+    // nConvBlockType, bKeepInputTensor
     //
     //
     // The block performance testing should:
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
     //
 
-//!!! ...unfinished... (2021/10/11) Perhaps, drop MobileNetV2_Pointwise1Rate_0, MobileNetV2_Pointwise1Rate_1,
-// ShuffleNetV2_Pointwise1Rate_1, ShuffleNetV2_Pointwise1Rate_2, ShuffleNetV2_ByPointwise22_Pointwise1Rate_2.
-// Because they are unfair.
+//!!! ...unfinished... (2022/05/13)
 
     this.testCaseMap = new Map();
 
-    // Test Case 1: (NotShuffleNet_NotMobileNet, pointwise1ChannelCountRate 0)
-    this.testCaseMap.set( "NotShuffleNet_NotMobileNet_Pointwise1Rate_0", { testParams: 
+    // Test Case 1: (MobileNetV1, ( bPointwise1 == true ))
+    this.testCaseMap.set( "MobileNetV1_bPointwise1_true", { testParams: 
       ( new Block_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, 1, 0,
-        3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE,
+        this.height, this.width, this.depth, stepCountRequested, true,
+        3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
+        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1,
         true
       ) } );
 
-    // Test Case 2: (NotShuffleNet_NotMobileNet, pointwise1ChannelCountRate 1)
-    this.testCaseMap.set( "NotShuffleNet_NotMobileNet_Pointwise1Rate_1", { testParams:
+    // Test Case 2: (MobileNetV1_padValid, ( bPointwise1 == true ))
+    this.testCaseMap.set( "MobileNetV1_padValid_bPointwise1_true", { testParams: 
       ( new Block_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, 1, 1,
-        3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE,
+        this.height, this.width, this.depth, stepCountRequested, true,
+        3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
+        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
         true
       ) } );
 
-    // Test Case 3: (NotShuffleNet_NotMobileNet, pointwise1ChannelCountRate 2)
-    this.testCaseMap.set( "NotShuffleNet_NotMobileNet_Pointwise1Rate_2", { testParams:
+    // Test Case 3: (MobileNetV2_Thin, ( bPointwise1 == true ))
+    this.testCaseMap.set( "MobileNetV2_Thin_bPointwise1_true", { testParams: 
       ( new Block_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, 1, 2,
-        3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE,
+        this.height, this.width, this.depth, stepCountRequested, true,
+        3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
+        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_THIN,
         true
       ) } );
 
-
-    // For calculate the step count.
-    let stepCountRequested;
-    for ( let name_testCase of this.testCaseMap.entries() ) {
-      let name = name_testCase[ 0 ];
-      let testCase = name_testCase[ 1 ];
-      if ( !testCase.block ) {
-        testCase.block = Block_Reference.Base.Block_create( testCase.testParams );
-        stepCountRequested = testCase.block.stepCount;
-      }
-    }
-
-    // Test Case 4: (MobileNet, Step N, pointwise1ChannelCountRate 0)
-    this.testCaseMap.set( "MobileNet_Step_N_Pointwise1Rate_0", { testParams:
+    // Test Case 4: (MobileNetV2, ( bPointwise1 == true ))
+    this.testCaseMap.set( "MobileNetV2_bPointwise1_true", { testParams: 
       ( new Block_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, 0,
-        3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE,
+        this.height, this.width, this.depth, stepCountRequested, true,
+        3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
+        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2,
         true
       ) } );
 
-    // Test Case 5: (MobileNet, Step N, pointwise1ChannelCountRate 1)
-    this.testCaseMap.set( "MobileNet_Step_N_Pointwise1Rate_1", { testParams:
+    // Test Case 5: (ShuffleNetV2, ( bPointwise1 == true ))
+    this.testCaseMap.set( "ShuffleV2_bPointwise1_true", { testParams: 
       ( new Block_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, 1,
-        3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE,
+        this.height, this.width, this.depth, stepCountRequested, true,
+        3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
+        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2,
         true
       ) } );
 
-    // Test Case 6: (MobileNet, Step N, pointwise1ChannelCountRate 2)
-    this.testCaseMap.set( "MobileNet_Step_N_Pointwise1Rate_2", { testParams:
+    // Test Case 6: (ShuffleNetV2_byPointwise22, ( bPointwise1 == true ))
+    this.testCaseMap.set( "ShuffleV2_byPointwise22_bPointwise1_true", { testParams: 
       ( new Block_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, 2,
-        3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE,
+        this.height, this.width, this.depth, stepCountRequested, true,
+        3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
+        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE22,
         true
       ) } );
 
-
-    // Test Case 7: (ShuffleNetV2, Step N, pointwise1ChannelCountRate 0)
-    this.testCaseMap.set( "ShuffleNetV2_Step_N_Pointwise1Rate_0", { testParams:
+    // Test Case 7: (ShuffleNetV2_byMobileNetV1, ( bPointwise1 == true ))
+    this.testCaseMap.set( "ShuffleNetV2_byMobileNetV1_bPointwise1_true", { testParams: 
       ( new Block_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, 0,
-        3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER,
+        this.height, this.width, this.depth, stepCountRequested, true,
+        3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
+        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
         true
       ) } );
 
-    // Test Case 8: (ShuffleNetV2, Step N, pointwise1ChannelCountRate 1)
-    this.testCaseMap.set( "ShuffleNetV2_Step_N_Pointwise1Rate_1", { testParams:
+    // Test Case 8: (ShuffleNetV2_byMobileNetV1_padValid, ( bPointwise1 == true ))
+    this.testCaseMap.set( "ShuffleNetV2_byMobileNetV1_padValid_bPointwise1_true", { testParams: 
       ( new Block_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, 1,
-        3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER,
-        true
-      ) } );
-
-    // Test Case 9: (ShuffleNetV2, Step N, pointwise1ChannelCountRate 2)
-    this.testCaseMap.set( "ShuffleNetV2_Step_N_Pointwise1Rate_2", { testParams:
-      ( new Block_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, 2,
-        3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER,
-        true
-      ) } );
-
-
-    // Test Case 10: (ShuffleNetV2_ByPointwise22, Step N, pointwise1ChannelCountRate 0)
-    this.testCaseMap.set( "ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_0", { testParams:
-      ( new Block_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, 0,
-        3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22,
-        true
-      ) } );
-
-    // Test Case 11: (ShuffleNetV2_ByPointwise22, Step N, pointwise1ChannelCountRate 1)
-    this.testCaseMap.set( "ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_1", { testParams:
-      ( new Block_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, 1,
-        3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22,
-        true
-      ) } );
-
-    // Test Case 12: (ShuffleNetV2_ByPointwise22, Step N, pointwise1ChannelCountRate 2)
-    this.testCaseMap.set( "ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_2", { testParams:
-      ( new Block_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, 2,
-        3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22,
+        this.height, this.width, this.depth, stepCountRequested, true,
+        3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
+        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
         true
       ) } );
 
