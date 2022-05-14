@@ -427,8 +427,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
           // 3.4.1.2 bHigherHalfPassThroughShuffle
           // 3.4.2.2 bAllPassThroughShuffle
-            this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo );
-          }
+          this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo );
           break;
 
         default:
