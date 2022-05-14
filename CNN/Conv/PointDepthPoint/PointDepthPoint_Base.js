@@ -446,6 +446,10 @@ class Base extends ReturnOrClone.Base {
         } else {
           nHigherHalfDifferent_pointwise1
             = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH;
+
+//!!! ...unfinished... (2022/05/14)
+// should force pointwise1 has no bias and no activation.
+
           outputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before; // For depthwise1 (by pass-through-input-to-output)
         }
 
