@@ -6,7 +6,12 @@ export { Base };
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import { Base } from "./Pointwise_Base.js";
 
-//!!! ...unfinished... (2022/05/08) Add squeeze and excitation before pointiwse.
+
+//!!! ...unfinished... (2022/05/14)
+// Perhaps, let pointwise1 become squeeze and excitation before depthwise.
+
+
+//!!! ...unfinished... (2022/05/08) Add squeeze and excitation before pointwise.
 // globale avg pooling - pointwise - pointwise - multiplyToInput
 // And the, the original pointwise
 
