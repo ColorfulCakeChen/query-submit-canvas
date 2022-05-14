@@ -8,8 +8,8 @@ import { Base } from "./Pointwise_Base.js";
 
 
 //!!! ...unfinished... (2022/05/14)
-// Perhaps, let pointwise1 become squeeze and excitation before depthwise.
-
+// Q: Perhaps, let pointwise1 become squeeze and excitation before depthwise.
+// A: It may not be possible because input and output channel count may be different.
 
 //!!! ...unfinished... (2022/05/08) Add squeeze and excitation before pointwise.
 // globale avg pooling - pointwise - pointwise - multiplyToInput
