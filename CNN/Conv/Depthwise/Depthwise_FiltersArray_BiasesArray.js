@@ -40,7 +40,7 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 
 //!!! ...unfinished... (2021/11/12) What if channel multiplier is 0? is 2?
 
- *   - If true:
+ *   - If ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ):
  *
  *     - Can not be used when:
  *       - ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
