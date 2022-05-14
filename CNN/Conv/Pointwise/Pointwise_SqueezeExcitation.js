@@ -11,6 +11,11 @@ import { Base } from "./Pointwise_Base.js";
 // Q: Perhaps, let pointwise1 become squeeze and excitation before depthwise.
 // A: It may not be possible because input and output channel count may be different.
 
+
+//!!! ...unfinished... (2022/05/14)
+// Fo half copy and pass-through, the squeeze and excitation should also pass-through
+// (i.e filter = 0, bias = 1) (compare to pass-through for addition operation: filter = 1, bias = 0)
+
 //!!! ...unfinished... (2022/05/08) Add squeeze and excitation before pointwise.
 // globale avg pooling - pointwise - pointwise - multiplyToInput
 // And the, the original pointwise
