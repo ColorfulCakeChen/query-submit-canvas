@@ -1040,9 +1040,9 @@ class Base extends ReturnOrClone.Base {
    * Release all BoundsArraySet of pointwise1, depthwise1, depthwise2, pointwise21, pointwise22,
    * concat1, addInput0ToPointwise21, addInput0ToPointwise22, concat2ShuffleSplit.
    *
-   * (Note: This PointDepthPoint's BoundsArraySet is kept.)
-   *
    * This could reduce memory footprint.
+   *
+   * (Note: This PointDepthPoint's BoundsArraySet is kept.)
    */
   dispose_all_sub_BoundsArraySet() {
     delete this.pointwise1?.boundsArraySet;
