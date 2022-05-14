@@ -450,7 +450,9 @@ class Base {
   }
 
   /**
-   * Release all steps' BoundsArraySet. (But this block's BoundsArraySet is kept.) This could reduce memory footprint.
+   * Release all steps' BoundsArraySet. This could reduce memory footprint.
+   *
+   * (Note: This block's BoundsArraySet is kept.)
    */
   dispose_all_sub_BoundsArraySet() {
     if ( !this.stepsArray )
