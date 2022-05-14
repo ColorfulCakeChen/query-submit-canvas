@@ -418,7 +418,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     }
 
     // Shuffle channels.
-    {
+    if ( this.channelShuffler_outputGroupCount > 0 ) { // Pre-shuffle channels by shuffling the filters and biases.
+
       switch ( this.nHigherHalfDifferent ) {
 
         // 3.4
@@ -426,9 +427,19 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
           // 3.4.1.2 bHigherHalfPassThroughShuffle
           // 3.4.2.2 bAllPassThroughShuffle
-          if ( this.channelShuffler_outputGroupCount > 0 ) { // Pre-shuffle channels by shuffling the filters and biases.
             this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo );
           }
+          break;
+
+        default:
+          tf.util.assert( false,
+            `Pointwise.FiltersArray_BiasesArray.init(): `
+              + `channelShuffler_outputGroupCount (${this.channelShuffler_outputGroupCount}) should be zero when `
+              + `nHigherHalfDifferent=`
+                + `${ValueDesc.Pointwise_HigherHalfDifferent.Singleton.getStringOf( this.nHigherHalfDifferent )}`
+                + `(${this.nHigherHalfDifferent}). `
+              + `Usually, only HIGHER_HALF_PASS_THROUGH could have channel shuffler.`
+          );
           break;
       }
     }
