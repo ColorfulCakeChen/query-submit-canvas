@@ -502,9 +502,9 @@ class Base {
     }
 
     // pointwise1 parameters.
-//!!! (2021/11/15 Remarked)
-//    asserter.propertyValue( "pointwise1ChannelCount", testParams.out.pointwise1ChannelCount );
-    
+    let bPointwise1Bias_shouldBe = testParams.out.bPointwise1Bias;
+    let pointwise1ActivationId_shouldBe = testParams.out.pointwise1ActivationId;
+
     // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
     // (i.e. (ShuffleNetV2_ByMobileNetV1's head) )
     //
@@ -525,16 +525,19 @@ class Base {
       // no biases. Not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough. (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough)
       //
       } else { // ( 0 == testParams.out.pointwise1ChannelCount )
-        let pointwise1ChannelCount = ( testParams.out.channelCount0_pointwise1Before * 2 ); // Aa doubled input channel count.
+        let pointwise1ChannelCount = ( testParams.out.channelCount0_pointwise1Before * 2 ); // As doubled input channel count.
         asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
+
+        bPointwise1Bias_shouldBe = false;
+        pointwise1ActivationId_shouldBe = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
       }
 
     } else {
       asserter.propertyValue( "pointwise1ChannelCount", testParams.out.pointwise1ChannelCount );
     }
 
-    asserter.propertyValue( "bPointwise1Bias", testParams.out.bPointwise1Bias );
-    asserter.propertyValue( "pointwise1ActivationId", testParams.out.pointwise1ActivationId );
+    asserter.propertyValue( "bPointwise1Bias", bPointwise1Bias_shouldBe );
+    asserter.propertyValue( "pointwise1ActivationId", pointwise1ActivationId_shouldBe );
 
     let pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( testParams.out.pointwise1ActivationId );
     asserter.propertyValue( "pointwise1ActivationName", pointwise1ActivationName );
