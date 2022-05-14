@@ -58,8 +58,8 @@ class Pointwise_HigherHalfDifferent extends Int {
   constructor() {
     super( 0, 4, [
       "NONE",                                                 // (0) (for normal poitwise convolution. no higher half different.)
-      "HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH", // (1) (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
-      "HIGHER_HALF_COPY_LOWER_HALF",                          // (2) (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
+      "HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH", // (1) (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head) ( pointwise1ChannelCount == 0 )
+      "HIGHER_HALF_COPY_LOWER_HALF",                          // (2) (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head) ( pointwise1ChannelCount > 0 )
       "HIGHER_HALF_ANOTHER_POINTWISE",                        // (3) (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
       "HIGHER_HALF_PASS_THROUGH",                             // (4) (for pointwise1/pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
     ] );
