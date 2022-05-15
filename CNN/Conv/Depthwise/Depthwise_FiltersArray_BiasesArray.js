@@ -350,7 +350,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
         // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
         this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray );
-        this.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( this.nActivationId );
+        this.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId(
+          this.nActivationId,
+
+          // For depthwise (i.e. not squeeze-and-excitaion pointwise), pass-through style should be
+          // ( filterValue = 1, biasValue = 0, with activation escaping).
+          ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING
+        );
       }
 
       // Round 2
