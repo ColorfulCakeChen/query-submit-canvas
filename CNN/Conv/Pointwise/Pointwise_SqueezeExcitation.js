@@ -99,4 +99,6 @@ class Pointwise_SqueezeExcitation extends Pointwise_Base {
 
   }
 
+//!!! ...unfinished... (2022/05/15) should deletel sub pointwise.boundsArraySet
+
 }
