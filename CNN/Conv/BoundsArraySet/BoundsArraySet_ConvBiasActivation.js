@@ -183,14 +183,22 @@ class ConvBiasActivation extends InputsOutputs {
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of this convolution.
    *
+   * @param {number} nPassThroughStyleId
+   *   The pass-through style id (ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) of this convolution.
+   *
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
-  adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( nActivationId ) {
+  adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId(
+    nActivationId, nPassThroughStyleId ) {
+
     const theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
+    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
 
     let doEscapingScale;
     for ( let outChannel = 0; outChannel < this.afterBias.length; ++outChannel ) {
+
+//!!! ...unfinished... (2022/05/15) thePassThroughStyleInfo
 
       // 1. Determine (activationEscaping) .scaleArraySet (of .output0)
       {
