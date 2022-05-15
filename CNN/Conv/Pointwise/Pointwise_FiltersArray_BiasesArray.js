@@ -28,6 +28,10 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  *         (i.e. bPointwise == bExisted == true ) and always will not have biases (no matter how bBias is). It is
  *         all-pass-through-and-channel-shuffling mode.
  *
+ * @member {number} nPassThroughStyleId
+ *   The pass-through style id (ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) of this convolution. It only affect the channels
+ * which need to be pass-through from input to output.
+ *
  * @member {number} outputChannelCount_Real
  *   Usually, the same as outputChannelCount. But when ( this.bAllPassThrough == true ) or ( this.bAllPassThroughShuffle == true ),
  * outputChannelCount_Real will be the same as inputChannelCount (in this case, the outputChannelCount is zero).
@@ -135,7 +139,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
   /**
    */
   constructor(
-    inputChannelCount, outputChannelCount, bBias, nActivationId,
+    inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
     super();
@@ -143,6 +147,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
+    this.nPassThroughStyleId = nPassThroughStyleId;
 
     this.nHigherHalfDifferent = nHigherHalfDifferent;
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
@@ -515,6 +520,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
               // Note: The .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
 
+
+
+//!!! ...unfinished... (2022/05/15) nPassThroughStyleId
+
               if ( ( inChannelToPartBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
                 if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                   if ( inChannelToPartBegin == outChannelSub ) { // The only one filter position (in the pass-through part) has non-zero value.
@@ -569,6 +578,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
               break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
             // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
+
+//!!! ...unfinished... (2022/05/15) nPassThroughStyleId
 
             if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
               // Do nothing because pass-through needs no bias.
