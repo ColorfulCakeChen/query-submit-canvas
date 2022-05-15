@@ -12,7 +12,7 @@ import { Base } from "./Pointwise_Base.js";
 // A: It may not be possible because input and output channel count may be different.
 
 
-//!!! ...unfinished... (2022/05/14)
+//!!! ...unfinished... (2022/05/15)
 // Fo half copy and pass-through, the squeeze and excitation should also pass-through
 // (i.e filter = 0, bias = 1) (compare to pass-through for addition operation: filter = 1, bias = 0)
 //
@@ -21,6 +21,17 @@ import { Base } from "./Pointwise_Base.js";
 // pointwise2's filterValueAdjusted = undoDepthwiseActivationEscapingScale * undoPointwiseSEActivationEscapingScale * filterValue
 //
 //
+//
+// o should undo previous activation escaping scale
+// o when pass-through, filter = 0, bias = 1 (not: filter 1, bias 0)
+// o even if there is pass-through, it is not necessary to activation escaping scale.
+// o The bounds array set of output (which is input multiplied by squeeze-and-excitation) should include squeeze-and-excitation.
+//   However, the activation escaping scale should be the same as input's activation escaping scale.
+//   So that the next operation (e.g. pointwise2) could restore the correct input (with squeeze-and-excitation) 。
+//
+// PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING
+// PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING
+
 
 //!!! ...unfinished... (2022/05/08) Add squeeze and excitation before pointwise.
 // globale avg pooling - pointwise - pointwise - multiplyToInput
