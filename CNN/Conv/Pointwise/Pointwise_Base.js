@@ -1,11 +1,10 @@
 export { Base };
 
 //import * as FloatValue from "../../Unpacker/FloatValue.js";
-//import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as Weights from "../../Unpacker/Weights.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
 import * as ReturnOrClone_Activation from "../ReturnOrClone_Activation.js";
-//import * as ChannelShuffler from "../ChannelShuffler.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import { FiltersArray_BiasesArray } from "./Pointwise_FiltersArray_BiasesArray.js";
 
@@ -47,6 +46,10 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
 
     super(
       inputChannelCount, outputChannelCount, bBias, nActivationId,
+
+      // For non-squeeze-and-excitaion pointwise, pass-through style should be ( filterValue = 1, biasValue = 0, with activation escaping).
+      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING,
+
       nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
   }
 
