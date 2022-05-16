@@ -1,7 +1,7 @@
 export { ConstantWhenPassThrough };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-import { Base } from "./Pointwise_Base.js";
+import { Base } from "./Depthwise_Base.js";
 
 /**
  * Depthwise convolution whose output will be constant value (no matter what input) when pass-through.
