@@ -1,7 +1,7 @@
 export { ShuffleNetV2_ByMobileNetV1_padValid };
 
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
-import { Params } from "../Block_Params.js";
+import { Params } from "../Stage_Params.js";
 import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
 
 /**
@@ -39,29 +39,29 @@ import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
  */
 class ShuffleNetV2_ByMobileNetV1_padValid extends ShuffleNetV2_ByMobileNetV1 {
 
-  constructor( blockParams ) {
-    super( blockParams );
+  constructor( stageParams ) {
+    super( stageParams );
   }
 
   /** @override */
-  configTo_beforeStep0() {
-    super.configTo_beforeStep0(); // Step0 is almost the same as ShuffleNetV2_ByMobileNetV1.
+  configTo_beforeBlock0() {
+    super.configTo_beforeBlock0(); // Block0 is almost the same as ShuffleNetV2_ByMobileNetV1.
 
     // Except padding is "valid" (not "same").
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID;
   }
 
   /** @override */
-  configTo_afterStep0() {
-    super.configTo_afterStep0(); // Step1, 2, 3, ... are almost the same as ShuffleNetV2_ByMobileNetV1.
+  configTo_afterBlock0() {
+    super.configTo_afterBlock0(); // Block1, 2, 3, ... are almost the same as ShuffleNetV2_ByMobileNetV1.
 
     // Except padding is "valid" (not "same").
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
   }
 
   /** @override */
-  configTo_beforeStepLast() {
-    super.configTo_beforeStepLast(); // StepLast is the same as ShuffleNetV2_ByMobileNetV1.
+  configTo_beforeBlockLast() {
+    super.configTo_beforeBlockLast(); // BlockLast is the same as ShuffleNetV2_ByMobileNetV1.
   }
 }
 
