@@ -547,7 +547,7 @@ class Base {
 //!!! ...unfinished... (2022/05/16) multiply
 
     // Calculate value bounds of every output channels.
-    imageOutNew.boundsArraySet.output0.set_all_byScaleBoundsArray_add(
+    imageOutNew.boundsArraySet.output0.set_all_byScaleBoundsArray_multiply(
       imageOutNew.boundsArraySet.input0, another.boundsArraySet.output0 );
 
     return imageOutNew;
