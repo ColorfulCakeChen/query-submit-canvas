@@ -228,6 +228,19 @@ class ScaleArraySet {
     return this;
   }
 
+  
+  /**
+   * @param {ScaleArraySet} aScaleArraySet  The ScaleArraySet to multiply.
+   *
+   * @return {ScaleArraySet} Return this (modified) object.
+   */
+  multiply_all_byScaleArraySet( aScaleArraySet ) {
+    this.do.multiply_all_byScaleArray( aScaleArraySet.do );
+    this.undo.multiply_all_byScaleArray( aScaleArraySet.undo );
+    return this;
+  }
+
+
 //!!! ...unfinished... (2021/12/26)
 /**
  * - For depthwise with ( pad == same ), it seems that the activation escaping can not be undone completely, because pad is always 0
