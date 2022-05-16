@@ -525,7 +525,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
               if ( ( inChannelToPartBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
                 if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-                  if ( inChannelToPartBegin == outChannelSub ) { // The only one filter position (in the pass-through part) has non-zero value.
+                  if ( inChannelToPartBegin == outChannelSub ) { // The only one filter position (in the pass-through part) may have non-zero value.
                     this.filtersArray[ filterIndex ] = filterValuePassThrough;
 
                     tBounds
