@@ -6,7 +6,7 @@ import { Int } from "./ValueDesc_Base.js";
  * Describe convolution pass-through style parameter's id, range, name.
  *
  * Convert number value into integer between [ 0, 1 ] representing operation:
- *   - 0: PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING    (pointwise)
+ *   - 0: PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING    (depthwise, pointwise)
  *   - 1: PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING (squeeze-and-excitation)
  *
  */
