@@ -3,28 +3,28 @@ export { Base };
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
-import * as PointDepthPoint from "../PointDepthPoint.js";
+import * as Block from "../Block.js";
 import * as ChannelShuffler from "../ChannelShuffler.js";
-import * as StepParamsCreator from "./Block_StepParamsCreator.js";
-import { Params } from "./Block_Params.js";
+import * as BlockParamsCreator from "./Stage_BlockParamsCreator.js";
+import { Params } from "./Stage_Params.js";
 
 /**
- * Implement a block of  or MobileNetV1 or MobileNetV2 or ShuffleNetV2 (with 2 output channel groups). It is a sequence of
+ * Implement a stage of  or MobileNetV1 or MobileNetV2 or ShuffleNetV2 (with 2 output channel groups). It is a sequence of
  * depthwise convolution and pointwise convolution.
  *
  *
  * 1. Halve Height, Halve Width
  *
- * All types of block will output an image whose height and width are only half of the input image's height and width.
+ * All types of stage will output an image whose height and width are only half of the input image's height and width.
  *
- * They all do it at step0 and by the same method: depthwise convolution with ( strides = 2 ). Most will do it with ( pad = "same" ). 
+ * They all do it at block0 and by the same method: depthwise convolution with ( strides = 2 ). Most will do it with ( pad = "same" ). 
  * But some will do it with ( pad = "valid" ).
  *
  *
  * 2. Double channels
  *
- * All types of block will output an image whose channel count is twice of the input image's channel count. But they all do
- * it at step0 but with different ways:
+ * All types of stage will output an image whose channel count is twice of the input image's channel count. But they all do
+ * it at block0 but with different ways:
  *
  *   - MobileNetV1 (0)
  *     - ( bPointwise1 == false ), depthwise1 double ( channelMultiplier == 2 ) of input0.
@@ -54,7 +54,7 @@ import { Params } from "./Block_Params.js";
  *   - depthwise:  bias, activation.
  *   - pointwise2: bias, NO activation.
  *
- * All non-MobileNetV2_Xxx ConvBlockType use the following (which is ShuffleNetV2's original design):
+ * All non-MobileNetV2_Xxx ConvStageType use the following (which is ShuffleNetV2's original design):
  *   - pointwise1: bias, activation.
  *
  *   - depthwise:  NO bias, NO activation.
@@ -62,18 +62,18 @@ import { Params } from "./Block_Params.js";
  *     - We drop depthwise's bias because it could be achieved by pointwise2's bias.
  *
  *   - pointwise2:
- *     - non-stepLast: bias, activation.
- *     - stepLast:     bias, activation or no activation (according to blockParams.bPointwise2ActivatedAtBlockEnd).
+ *     - non-blockLast: bias, activation.
+ *     - blockLast:     bias, activation or no activation (according to stageParams.bPointwise2ActivatedAtStageEnd).
  *       - In ShuffleNetV2's original design, pointwise2 always has bias and activation. We adjust it according to
- *           blockParams.bPointwise2ActivatedAtBlockEnd for ShuffleNetV2_ByMobileNetV1 to undo activation escaping
+ *           stageParams.bPointwise2ActivatedAtStageEnd for ShuffleNetV2_ByMobileNetV1 to undo activation escaping
  *           scales.
  *
  *
  * 3.1 MobileNetV2_Xxx's pointwise2: no activation
  *
  * The reason why MobileNetV2_Xxx's pointwise2 could always have no activation function is that MobileNetV2_Xxx's pointwise2
- * has add-input-to-output so its step's output is not affine transformation (even if no activation function). It and the next
- * step's pointwise1 is not continusous multiple affine transformation and will not become just one affine transformation.
+ * has add-input-to-output so its block's output is not affine transformation (even if no activation function). It and the next
+ * block's pointwise1 is not continusous multiple affine transformation and will not become just one affine transformation.
  *
  *
  * 3.2 non-MobileNetV2_Xxx's pointwise2: activation or no activation
@@ -81,23 +81,23 @@ import { Params } from "./Block_Params.js";
  *
  * 3.2.1 Default: activation
  *
- * By default, for all non-MobileNetV2_Xxx ConvBlockType, all non-stepLast's pointwise2 should have activation function (to
- * become non-affine transformation). The reason is to avoid the previous step's pointwise2 and the next step's pointwis1 become
+ * By default, for all non-MobileNetV2_Xxx ConvStageType, all non-blockLast's pointwise2 should have activation function (to
+ * become non-affine transformation). The reason is to avoid the previous block's pointwise2 and the next block's pointwis1 become
  * just one (i.e. not two) affine transformation (i.e. do twice computation but just have same effect of one computation).
  *
  *
- * 3.2.2 stepLast: activation or no activation
+ * 3.2.2 blockLast: activation or no activation
  *
- * The reason why non-MobileNetV2_Xxx's stepLast's pointwise2 may or may not have activation function is for
+ * The reason why non-MobileNetV2_Xxx's blockLast's pointwise2 may or may not have activation function is for
  * ShuffleNetV2_ByMobileNetV1 to undo activation escaping scales.
  *
  * In ShuffleNetV2_ByMobileNetV1, if an operation has activation function, its pass-through part will scale its convolution filters
  * for escaping the activation function's non-linear parts (in order to keep linear). This results in its output is wrong (i.e.
- * different from original ShuffleNetV2). In order to resolve this issue, the last block's last operation (i.e. last block's
- * stepLast's pointwise2) should have no activation (so it will not scale its convolution filters for escaping the activation
+ * different from original ShuffleNetV2). In order to resolve this issue, the last stage's last operation (i.e. last stage's
+ * blockLast's pointwise2) should have no activation (so it will not scale its convolution filters for escaping the activation
  * function's non-linear parts).
  *
- * This is achieved by caller specifying ( blockParams.bPointwise2ActivatedAtBlockEnd == false ) for the last block.
+ * This is achieved by caller specifying ( stageParams.bPointwise2ActivatedAtStageEnd == false ) for the last stage.
  *
  * Although this design is mainly for solving ShuffleNetV2_ByMobileNetV1's issue, it does have practical advantage in fact. The
  * output could have any value (i.e. the whole number line). If the last operation (i.e. pointwise2) always has activation function,
@@ -154,23 +154,23 @@ import { Params } from "./Block_Params.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by initer(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
- * @member {PointDepthPoint.Base[]} stepsArray
- *   All computation steps of this block.
+ * @member {PointDepthPoint.Base[]} blocksArray
+ *   All computation blocks of this stage.
  *
- * @member {PointDepthPoint.Base} step0
- *   The first computation step of this block.
+ * @member {PointDepthPoint.Base} block0
+ *   The first computation block of this stage.
  *
- * @member {PointDepthPoint.Base} stepLast
- *   The last computation step of this block. It may be the same as this.step0 when there is only one step inside this block.
+ * @member {PointDepthPoint.Base} blockLast
+ *   The last computation block of this stage. It may be the same as this.block0 when there is only one block inside this stage.
  *
  * @member {number} outputHeight
- *   The output image height of this block's last step.
+ *   The output image height of this stage's last block.
  *
  * @member {number} outputWidth
- *   The output image width of this block's last step.
+ *   The output image width of this stage's last block.
  *
  * @member {number} outputChannelCount
- *   The output channel count of this block's last step.
+ *   The output channel count of this stage's last block.
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
@@ -194,7 +194,7 @@ class Base {
    *   A Params object. The params.extract() will be called to extract parameters.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
-   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Block value bounds
+   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Stage value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
    *
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
@@ -221,17 +221,17 @@ class Base {
     //   - They all use depthwise convolution with ( strides = 2 ) for shrinking (halving) height x width.
     //   - They all do use batch normalization (include bias) after pointwise and depthwise convolution.
     //
-    // Inisde one of their block, three convolutions are used:
+    // Inisde one of their stage, three convolutions are used:
     //   A) 1x1 (pointwise) convolution, with activation.
     //   B) depthwise convolution, (ShuffleNetV2) without or (MobileNetV2) with activation.
     //   C) 1x1 (pointwise) convolution, (ShuffleNetV2) with or (MobileNetV2) without activation.
     //
     // In MobileNetV3, convolution A expands channel count (with activation), convolution C shrinks channel count (without activation).
     // It may use squeeze-and-excitation after convolution B (without activation). When there is necessary to increase output channel
-    // count (usually in step 0 of a block), the convolution C is responsible for this.
+    // count (usually in block 0 of a stage), the convolution C is responsible for this.
     //
     // In ShuffleNetV2, convolution A (with activation), convolution B (without activation) and convolution C (with activation) never
-    // change channel count. When there is necessary to increase output channel count (usually in step 0 of a block), it expands channel
+    // change channel count. When there is necessary to increase output channel count (usually in block 0 of a stage), it expands channel
     // count by concatenating two shrinked (halven) height x width.
 
 
@@ -244,7 +244,7 @@ class Base {
 
     let progressRoot = progressParent.getRoot();
     let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( progressMax ) ); // For parameters extracting.
-    let progressForSteps = progressParent.addChild( new ValueMax.Percentage.Aggregate() ); // for step0, step1, 2, 3, ... 
+    let progressForBlocks = progressParent.addChild( new ValueMax.Percentage.Aggregate() ); // for block0, block1, 2, 3, ... 
 
     this.disposeTensors();
 
@@ -265,15 +265,15 @@ class Base {
     this.sourceHeight = params.sourceHeight;
     this.sourceWidth = params.sourceWidth;
     this.sourceChannelCount = params.sourceChannelCount;
-    this.stepCountRequested = params.stepCountRequested;
+    this.blockCountRequested = params.blockCountRequested;
     this.bPointwise1 = params.bPointwise1;
     this.depthwiseFilterHeight = params.depthwiseFilterHeight;
     this.depthwiseFilterWidth = params.depthwiseFilterWidth;
     this.nActivationId = params.nActivationId;
     this.nActivationIdName = params.nActivationIdName;
-    this.bPointwise2ActivatedAtBlockEnd = params.bPointwise2ActivatedAtBlockEnd;
-    this.nConvBlockType = params.nConvBlockType;
-    this.nConvBlockTypeName = params.nConvBlockTypeName;
+    this.bPointwise2ActivatedAtStageEnd = params.bPointwise2ActivatedAtStageEnd;
+    this.nConvStageType = params.nConvStageType;
+    this.nConvStageTypeName = params.nConvStageTypeName;
     this.bKeepInputTensor = params.bKeepInputTensor;
 
     // The parameters which are determined (inferenced) from the above parameters.
@@ -289,56 +289,56 @@ class Base {
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
-    // 2. Create every steps.
-    let stepParamsCreator = Base.create_StepParamsCreator_byBlockParams( params );
-    stepParamsCreator.determine_stepCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real step count.
+    // 2. Create every blocks.
+    let blockParamsCreator = Base.create_BlockParamsCreator_byStageParams( params );
+    blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
 
-    for ( let i = 0; i < stepParamsCreator.stepCount; ++i ) { // Progress for step0, 1, 2, 3, ... 
-      progressForSteps.addChild( new ValueMax.Percentage.Aggregate() );
+    for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Progress for block0, 1, 2, 3, ... 
+      progressForBlocks.addChild( new ValueMax.Percentage.Aggregate() );
     }
 
-    let stepParams, step, stepIniter;
+    let blockParams, block, blockIniter;
     let inputScaleBoundsArray;
 
-    this.stepsArray = new Array( stepParamsCreator.stepCount );
-    for ( let i = 0; i < this.stepsArray.length; ++i ) { // Step0, 1, 2, 3, ..., StepLast.
+    this.blocksArray = new Array( blockParamsCreator.blockCount );
+    for ( let i = 0; i < this.blocksArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
 
-      if ( 0 == i ) { // Step0.
-        stepParamsCreator.configTo_beforeStep0();
+      if ( 0 == i ) { // Block0.
+        blockParamsCreator.configTo_beforeBlock0();
         inputScaleBoundsArray = inputScaleBoundsArray0;
       }
 
-      // StepLast. (Note: Step0 may also be StepLast.) 
+      // BlockLast. (Note: Block0 may also be BlockLast.) 
       //
-      // If this is the last step of this block (i.e. at-block-end)
+      // If this is the last block of this stage (i.e. at-stage-end)
       //   - a different depthwise filter size may be used.
       //   - a different activation function may be used after pointwise2 convolution.
-      if ( ( this.stepsArray.length - 1 ) == i ) {
-        stepParamsCreator.configTo_beforeStepLast();
+      if ( ( this.blocksArray.length - 1 ) == i ) {
+        blockParamsCreator.configTo_beforeBlockLast();
       }
 
       // Assert image size.
       {
-        let previousStep;
-        if ( 0 < i ) { // Except Step0.
-          previousStep = this.stepsArray[ i - 1 ];
+        let previousBlock;
+        if ( 0 < i ) { // Except Block0.
+          previousBlock = this.blocksArray[ i - 1 ];
         }
 
-        this.assert_ImageSize_BetweenStep( stepParamsCreator, previousStep );
+        this.assert_ImageSize_BetweenBlock( blockParamsCreator, previousBlock );
       }
 
-      // Create current step.
-      stepParams = stepParamsCreator.create_PointDepthPointParams( params.defaultInput, this.byteOffsetEnd );
+      // Create current block.
+      blockParams = blockParamsCreator.create_PointDepthPointParams( params.defaultInput, this.byteOffsetEnd );
 
       if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
 
         // If channelShuffler is not null, keep it so that its tensors could be released.
-        let channelShuffler = stepParamsCreator.channelShuffler;
+        let channelShuffler = blockParamsCreator.channelShuffler;
         if ( channelShuffler ) {
 
           tf.util.assert( ( !this.channelShuffler ) || ( this.channelShuffler == channelShuffler ),
-              `Block.initer(): `
-                + `At most, only one (and same) channel shuffler could be used (and shared by all steps of a block).` );
+              `Stage.initer(): `
+                + `At most, only one (and same) channel shuffler could be used (and shared by all blocks of a stage).` );
 
           this.channelShuffler = channelShuffler;
 
@@ -352,44 +352,44 @@ class Base {
       // If channelShuffler has ever got, never change it.
       }
 
-      step = this.stepsArray[ i ] = new PointDepthPoint.Base();
-      stepIniter = step.initer( progressForSteps.children[ i ], stepParams,
+      block = this.blocksArray[ i ] = new PointDepthPoint.Base();
+      blockIniter = block.initer( progressForBlocks.children[ i ], blockParams,
         inputScaleBoundsArray, null,
         this.channelShuffler, arrayTemp_forInterleave_asGrouptTwo );
 
-      this.bInitOk = yield* stepIniter;
+      this.bInitOk = yield* blockIniter;
       if ( !this.bInitOk )
         return false;
-      this.byteOffsetEnd = step.byteOffsetEnd;
+      this.byteOffsetEnd = block.byteOffsetEnd;
 
-      this.tensorWeightCountTotal += step.tensorWeightCountTotal;
-      this.tensorWeightCountExtracted += step.tensorWeightCountExtracted;
+      this.tensorWeightCountTotal += block.tensorWeightCountTotal;
+      this.tensorWeightCountExtracted += block.tensorWeightCountExtracted;
 
-      step.dispose_all_sub_BoundsArraySet(); // Reduce memory footprint by release unused bounds array set.
+      block.dispose_all_sub_BoundsArraySet(); // Reduce memory footprint by release unused bounds array set.
 
-      if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
-        stepParamsCreator.configTo_afterStep0();
-        inputScaleBoundsArray = step.boundsArraySet.output0;
+      if ( 0 == i ) { // After block0 (i.e. for block1, 2, 3, ...)
+        blockParamsCreator.configTo_afterBlock0();
+        inputScaleBoundsArray = block.boundsArraySet.output0;
       }
     }
 
-    this.step0 = this.stepsArray[ 0 ]; // Shortcut to the first step.
-    this.stepLast = this.stepsArray[ this.stepsArray.length - 1 ]; // Shortcut to the last step.
+    this.block0 = this.blocksArray[ 0 ]; // Shortcut to the first block.
+    this.blockLast = this.blocksArray[ this.blocksArray.length - 1 ]; // Shortcut to the last block.
 
-    this.outputChannelCount = this.stepLast.outChannelsAll;
+    this.outputChannelCount = this.blockLast.outChannelsAll;
 
     {
       this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, null,
-        this.stepLast.boundsArraySet.output0.channelCount, 0 );
+        this.blockLast.boundsArraySet.output0.channelCount, 0 );
 
-      this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.stepLast.boundsArraySet );
+      this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.blockLast.boundsArraySet );
 
-      this.dispose_all_sub_BoundsArraySet(); // Release all steps' bounds array set for reducing memory footprint.
+      this.dispose_all_sub_BoundsArraySet(); // Release all blocks' bounds array set for reducing memory footprint.
     }
 
-    // In our Block design, no matter which configuration, the outputChannelCount always is twice as sourceChannelCount.
+    // In our Stage design, no matter which configuration, the outputChannelCount always is twice as sourceChannelCount.
     tf.util.assert( ( this.outputChannelCount == ( this.sourceChannelCount * 2 ) ),
-        `Block.initer(): `
+        `Stage.initer(): `
           + `the outputChannelCount ( ${this.outputChannelCount} ) should always be twice as `
           + `sourceChannelCount ( ${this.sourceChannelCount} ).` );
 
@@ -425,20 +425,20 @@ class Base {
 
   /** Release all tensors. */
   disposeTensors() {
-    if ( this.stepsArray ) {
-      for ( let i = 0; i < this.stepsArray.length; ++i ) {
-        let step = this.stepsArray[ i ];
-        step.disposeTensors();
+    if ( this.blocksArray ) {
+      for ( let i = 0; i < this.blocksArray.length; ++i ) {
+        let block = this.blocksArray[ i ];
+        block.disposeTensors();
       }
-      this.stepsArray = null;
+      this.blocksArray = null;
     }
 
     if ( this.channelShuffler ) {
-      this.channelShuffler.disposeTensors(); // Block is responsible for releasing the channel shuffler shared by all steps of the block.
+      this.channelShuffler.disposeTensors(); // Stage is responsible for releasing the channel shuffler shared by all blocks of the stage.
       this.channelShuffler = false;
     }
 
-    this.step0 = this.stepLast = null; // It has already de disposed by this.step0 or this.steps1After.
+    this.block0 = this.blockLast = null; // It has already de disposed by this.block0 or this.blocks1After.
 
     this.outputChannelCount = -1;
 
@@ -450,55 +450,55 @@ class Base {
   }
 
   /**
-   * Release all steps' BoundsArraySet. This could reduce memory footprint.
+   * Release all blocks' BoundsArraySet. This could reduce memory footprint.
    *
-   * (Note: This block's BoundsArraySet is kept.)
+   * (Note: This stage's BoundsArraySet is kept.)
    */
   dispose_all_sub_BoundsArraySet() {
-    if ( !this.stepsArray )
+    if ( !this.blocksArray )
       return;
 
-    for ( let i = 0; i < this.stepsArray.length; ++i ) {
-      let step = this.stepsArray[ i ];
-      delete step.boundsArraySet;
+    for ( let i = 0; i < this.blocksArray.length; ++i ) {
+      let block = this.blocksArray[ i ];
+      delete block.boundsArraySet;
     }
   }
 
   /**
    * Assert image size.
    *
-   * @param {Params_to_PointDepthPointParams.Base} stepParamsCreator
-   *   The maker which will produce current step (PointDepthPoint.Base) object.
+   * @param {Params_to_PointDepthPointParams.Base} blockParamsCreator
+   *   The maker which will produce current block (PointDepthPoint.Base) object.
    *
-   * @param {PointDepthPoint.Base} previousStep
-   *   The previous step (PointDepthPoint.Base) object.
+   * @param {PointDepthPoint.Base} previousBlock
+   *   The previous block (PointDepthPoint.Base) object.
    */
-  assert_ImageSize_BetweenStep( stepParamsCreator, previousStep ) {
+  assert_ImageSize_BetweenBlock( blockParamsCreator, previousBlock ) {
 
-    if ( 0 == i ) { // Step0.
-      tf.util.assert( ( stepParamsCreator.inputHeight == this.sourceHeight ),
-        `Block.initer(): `
-          + `step${i}'s input image height ( ${stepParamsCreator.inputHeight} ) should be the same as `
-          + `block's source image height ( ${this.sourceHeight} ).`
+    if ( 0 == i ) { // Block0.
+      tf.util.assert( ( blockParamsCreator.inputHeight == this.sourceHeight ),
+        `Stage.initer(): `
+          + `block${i}'s input image height ( ${blockParamsCreator.inputHeight} ) should be the same as `
+          + `stage's source image height ( ${this.sourceHeight} ).`
       );
 
-      tf.util.assert( ( stepParamsCreator.inputWidth == this.sourceWidth ),
-        `Block.initer(): `
-          + `step${i}'s input image width ( ${stepParamsCreator.inputWidth} ) should be the same as `
-          + `block's source image width ( ${this.sourceWidth} ).`
+      tf.util.assert( ( blockParamsCreator.inputWidth == this.sourceWidth ),
+        `Stage.initer(): `
+          + `block${i}'s input image width ( ${blockParamsCreator.inputWidth} ) should be the same as `
+          + `stage's source image width ( ${this.sourceWidth} ).`
       );
 
-    } else { // After Step0.
-      tf.util.assert( ( stepParamsCreator.inputHeight == previousStep.outputHeight ),
-        `Block.initer(): `
-          + `step${i}'s input image height ( ${stepParamsCreator.inputHeight} ) should be the same as `
-          + `step${ i - 1 }'s output image height ( ${previousStep.outputHeight} ).`
+    } else { // After Block0.
+      tf.util.assert( ( blockParamsCreator.inputHeight == previousBlock.outputHeight ),
+        `Stage.initer(): `
+          + `block${i}'s input image height ( ${blockParamsCreator.inputHeight} ) should be the same as `
+          + `block${ i - 1 }'s output image height ( ${previousBlock.outputHeight} ).`
       );
 
-      tf.util.assert( ( stepParamsCreator.inputWidth == previousStep.outputWidth ),
-        `Block.initer(): `
-          + `step${i}'s input image width ( ${stepParamsCreator.inputWidth} ) should be the same as `
-          + `step${ i - 1 }'s output image width ( ${previousStep.outputWidth} ).`
+      tf.util.assert( ( blockParamsCreator.inputWidth == previousBlock.outputWidth ),
+        `Stage.initer(): `
+          + `block${i}'s input image width ( ${blockParamsCreator.inputWidth} ) should be the same as `
+          + `block${ i - 1 }'s output image width ( ${previousBlock.outputWidth} ).`
       );
     }
   }
@@ -517,37 +517,37 @@ class Base {
     let outputTensors = this.intermediateOutputTensors;
 
     outputTensors[ 0 ] = inputTensor;
-    outputTensors[ 1 ] = null; // Note: The step0 should only input one tensor.
+    outputTensors[ 1 ] = null; // Note: The block0 should only input one tensor.
 
-    let stepsArray = this.stepsArray;
-    let step;
-    for ( let i = 0; i < stepsArray.length; ++i ) {
-      inputTensors[ 0 ] = outputTensors[ 0 ]; // Previous step's output becomes next step's input.
+    let blocksArray = this.blocksArray;
+    let block;
+    for ( let i = 0; i < blocksArray.length; ++i ) {
+      inputTensors[ 0 ] = outputTensors[ 0 ]; // Previous block's output becomes next block's input.
       inputTensors[ 1 ] = outputTensors[ 1 ];
 
-      step = stepsArray[ i ];
-      step.apply( inputTensors, outputTensors );
+      block = blocksArray[ i ];
+      block.apply( inputTensors, outputTensors );
     }
 
-    return outputTensors[ 0 ]; // Note: The stepLast should only output one tensor.
+    return outputTensors[ 0 ]; // Note: The blockLast should only output one tensor.
   }
 
-  /** How many steps inside this blocked are created. (may different from this.stepCountRequested.) */
-  get stepCount() {
-    return this.stepsArray.length;
+  /** How many blocks inside this stage are created. (may different from this.blockCountRequested.) */
+  get blockCount() {
+    return this.blocksArray.length;
   }
 
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
   get parametersDescription() {
     let str =
         `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, sourceChannelCount=${this.sourceChannelCount}, `
-      + `stepCountRequested=${this.stepCountRequested}, stepCount=${this.stepCount}, `
+      + `blockCountRequested=${this.blockCountRequested}, blockCount=${this.blockCount}, `
       + `bPointwise1=${this.bPointwise1}, `
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
       + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
       + `nActivationIdName=${this.nActivationIdName}(${this.nActivationId}), `
-      + `bPointwise2ActivatedAtBlockEnd=${this.bPointwise2ActivatedAtBlockEnd}, `
-      + `nConvBlockType=${this.nConvBlockTypeName}(${this.nConvBlockType}), `
+      + `bPointwise2ActivatedAtStageEnd=${this.bPointwise2ActivatedAtStageEnd}, `
+      + `nConvStageType=${this.nConvStageTypeName}(${this.nConvStageType}), `
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, outputChannelCount=${this.outputChannelCount}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}`
     ;
@@ -555,45 +555,45 @@ class Base {
   }
 
   /**
-   * @param {Params} blockParams
-   *   The Block.Params object to be reference.
+   * @param {Params} stageParams
+   *   The Stage.Params object to be reference.
    *
    * @return {Base}
-   *   Return newly created Block.StepParamsCreator.Xxx object according to blockParams.nConvBlockType.
+   *   Return newly created Stage.BlockParamsCreator.Xxx object according to stageParams.nConvStageType.
    */
-  static create_StepParamsCreator_byBlockParams( blockParams ) {
+  static create_BlockParamsCreator_byStageParams( stageParams ) {
 
-    tf.util.assert( ( blockParams.stepCountRequested >= 2 ),
-      `Block.StepParamsCreator.Base.create_byBlockParams(): `
-        + `blockParams.stepCountRequested ( ${blockParams.stepCountRequested} ) must be >= 2.` );
+    tf.util.assert( ( stageParams.blockCountRequested >= 2 ),
+      `Stage.BlockParamsCreator.Base.create_byStageParams(): `
+        + `stageParams.blockCountRequested ( ${stageParams.blockCountRequested} ) must be >= 2.` );
 
     tf.util.assert(
-      (   ( blockParams.nConvBlockType >= 0 )
-       && ( blockParams.nConvBlockType < Base.nConvBlockType_to_StepParamsCreator_ClassArray.length )
+      (   ( stageParams.nConvStageType >= 0 )
+       && ( stageParams.nConvStageType < Base.nConvStageType_to_BlockParamsCreator_ClassArray.length )
       ),
-      `Block.Base.create_StepParamsCreator_byBlockParams(): `
-        + `unknown blockParams.nConvBlockType ( ${blockParams.nConvBlockType} ) value.`
+      `Stage.Base.create_BlockParamsCreator_byStageParams(): `
+        + `unknown stageParams.nConvStageType ( ${stageParams.nConvStageType} ) value.`
     );
 
-    let classStepParamsCreator = Base.nConvBlockType_to_StepParamsCreator_ClassArray[ blockParams.nConvBlockType ];
-    let aStepParamsCreator = new classStepParamsCreator( blockParams );
+    let classBlockParamsCreator = Base.nConvStageType_to_BlockParamsCreator_ClassArray[ stageParams.nConvStageType ];
+    let aBlockParamsCreator = new classBlockParamsCreator( stageParams );
 
-    return aStepParamsCreator;
+    return aBlockParamsCreator;
   }
 
 }
 
 
 /**
- * Mapping nConvBlockType (number as array index) to StepParamsCreator class object.
+ * Mapping nConvStageType (number as array index) to BlockParamsCreator class object.
  */
-Base.nConvBlockType_to_StepParamsCreator_ClassArray = [
-  StepParamsCreator.MobileNetV1,                         // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1 (0)
-  StepParamsCreator.MobileNetV1_padValid,                // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID (1)
-  StepParamsCreator.MobileNetV2_Thin,                    // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN (2)
-  StepParamsCreator.MobileNetV2,                         // ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2 (3)
-  StepParamsCreator.ShuffleNetV2,                        // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2 (4)
-  StepParamsCreator.ShuffleNetV2_ByPointwise22,          // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22 (5)
-  StepParamsCreator.ShuffleNetV2_ByMobileNetV1,          // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (6)
-  StepParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid, // ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (7)
+Base.nConvStageType_to_BlockParamsCreator_ClassArray = [
+  BlockParamsCreator.MobileNetV1,                         // ValueDesc.ConvStageType.Ids.MOBILE_NET_V1 (0)
+  BlockParamsCreator.MobileNetV1_padValid,                // ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID (1)
+  BlockParamsCreator.MobileNetV2_Thin,                    // ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN (2)
+  BlockParamsCreator.MobileNetV2,                         // ValueDesc.ConvStageType.Ids.MOBILE_NET_V2 (3)
+  BlockParamsCreator.ShuffleNetV2,                        // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2 (4)
+  BlockParamsCreator.ShuffleNetV2_ByPointwise22,          // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22 (5)
+  BlockParamsCreator.ShuffleNetV2_ByMobileNetV1,          // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (6)
+  BlockParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid, // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (7)
 ];
