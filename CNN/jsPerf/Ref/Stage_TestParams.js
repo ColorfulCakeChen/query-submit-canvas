@@ -7,7 +7,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as ValueRange from "../../Unpacker/ValueRange.js";
 import * as TestParams from "./TestParams.js";
 import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js";
-import * as Block from "../../Conv/Block.js";
+import * as Stage from "../../Conv/Stage.js";
 
 /**
  *
@@ -17,16 +17,16 @@ import * as Block from "../../Conv/Block.js";
  *   The numeric identifier of this testing parameter combination.
  *
  * @member {object} in
- *   The "in" sub-object's data members represent every parameters of the Block.Params's constructor. That is,
+ *   The "in" sub-object's data members represent every parameters of the Stage.Params's constructor. That is,
  * it has the following data members: sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested,
- * pointwise1ChannelCountRate, depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel,
+ * pointwise1ChannelCountRate, depthwiseFilterHeight, nActivationId, nActivationIdAtStageEnd, nWhetherShuffleChannel,
  * bKeepInputTensor. It also has the following properties:
  *   - paramsNumberArrayObject
  *   - inputFloat32Array
  *   - byteOffsetBegin
  *
  * @member {object} out
- *   The "out" sub-object's data members represent the "should-be" result of Block.Params's extract(). That is, it has
+ *   The "out" sub-object's data members represent the "should-be" result of Stage.Params's extract(). That is, it has
  * the above data members (with outputHeight, outputWidth) except paramsNumberArrayObject, inputFloat32Array, byteOffsetBegin.
  *
  * @member {object[]} stepsArray
@@ -54,13 +54,13 @@ class Base extends TestParams.Base {
   set_By_ParamsScattered(
     sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth, nActivationId,
-    bPointwise2ActivatedAtBlockEnd, nConvBlockType, bKeepInputTensor
+    bPointwise2ActivatedAtStageEnd, nConvStageType, bKeepInputTensor
   ) {
     this.in.paramsNumberArrayObject = {};
     this.out = {
       sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, bPointwise1,
       depthwiseFilterHeight, depthwiseFilterWidth, nActivationId,
-      bPointwise2ActivatedAtBlockEnd, nConvBlockType, bKeepInputTensor
+      bPointwise2ActivatedAtStageEnd, nConvStageType, bKeepInputTensor
     };
 
     Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
@@ -82,7 +82,7 @@ class Base extends TestParams.Base {
    *
    * @param {object} this.out
    *   An object which has the following data members: sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested,
-   * bPointwise1, depthwiseFilterHeight, depthwiseFilterWidth, nActivationId, bPointwise2ActivatedAtBlockEnd, nConvBlockType,
+   * bPointwise1, depthwiseFilterHeight, depthwiseFilterWidth, nActivationId, bPointwise2ActivatedAtStageEnd, nConvStageType,
    * bKeepInputTensor, outputHeight, outputWidth.
    *
    * @param {number} weightsElementOffsetBegin
@@ -93,13 +93,13 @@ class Base extends TestParams.Base {
    *   Return this object self.
    */
   set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
-    let blockParams = this.out;
+    let stageParams = this.out;
 
     // Fill in outputHeight, outputWidth.
-    Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call(
-      blockParams, blockParams.sourceHeight, blockParams.sourceWidth );
+    Stage.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call(
+      stageParams, stageParams.sourceHeight, stageParams.sourceWidth );
 
-    let stepParamsCreator = Block.Base.create_StepParamsCreator_byBlockParams( blockParams );
+    let stepParamsCreator = Stage.Base.create_StepParamsCreator_byStageParams( stageParams );
     stepParamsCreator.determine_stepCount_depthwiseFilterHeightWidth_Default_Last();
 
     this.stepsArray.length = stepParamsCreator.stepCount;
@@ -148,7 +148,7 @@ class Base extends TestParams.Base {
       }
     }
 
-    // Here (i.e. in Block_TestParams), the channelShuffler is not used. Just release it for avoiding memory leak.
+    // Here (i.e. in Stage_TestParams), the channelShuffler is not used. Just release it for avoiding memory leak.
     if ( channelShuffler ) {
       channelShuffler.disposeTensors();
       channelShuffler = null;
@@ -215,19 +215,19 @@ class Base extends TestParams.Base {
       sourceChannelCount: [ 4, 4 ],
 
       stepCountRequested: [
-        Block.Params.stepCountRequested.valueDesc.range.min,
-        Block.Params.stepCountRequested.valueDesc.range.min + 5
+        Stage.Params.stepCountRequested.valueDesc.range.min,
+        Stage.Params.stepCountRequested.valueDesc.range.min + 5
       ],
 
 //      bPointwise1: undefined,
       bPointwise1: [
-        Block.Params.bPointwise1.valueDesc.range.min,
-        Block.Params.bPointwise1.valueDesc.range.max
+        Stage.Params.bPointwise1.valueDesc.range.min,
+        Stage.Params.bPointwise1.valueDesc.range.max
       ],
 
       // (2022/05/05) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
-      depthwiseFilterHeight: [ Block.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
-      depthwiseFilterWidth: [ Block.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
+      depthwiseFilterHeight: [ Stage.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
+      depthwiseFilterWidth: [ Stage.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
 
       // Beware of NONE and RELU. They easily result in infinity value because they do not have upper bound.
       //
@@ -237,21 +237,21 @@ class Base extends TestParams.Base {
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3 ],
 
-      bPointwise2ActivatedAtBlockEnd: [
-        Block.Params.bPointwise2ActivatedAtBlockEnd.valueDesc.range.min,
-        Block.Params.bPointwise2ActivatedAtBlockEnd.valueDesc.range.max
+      bPointwise2ActivatedAtStageEnd: [
+        Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.min,
+        Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.max
       ],
 
-//      nConvBlockType: undefined,
-      nConvBlockType: [
-        Block.Params.nConvBlockType.valueDesc.range.min,
-        Block.Params.nConvBlockType.valueDesc.range.max
+//      nConvStageType: undefined,
+      nConvStageType: [
+        Stage.Params.nConvStageType.valueDesc.range.min,
+        Stage.Params.nConvStageType.valueDesc.range.max
       ],
 
 //      bKeepInputTensor: undefined,
       bKeepInputTensor: [
-        Block.Params.bKeepInputTensor.valueDesc.range.min,
-        Block.Params.bKeepInputTensor.valueDesc.range.max
+        Stage.Params.bKeepInputTensor.valueDesc.range.min,
+        Stage.Params.bKeepInputTensor.valueDesc.range.max
       ],
     };
 
@@ -259,17 +259,17 @@ class Base extends TestParams.Base {
     //
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
-      new TestParams.ParamDescConfig( Block.Params.sourceHeight,                   this.valueOutMinMax.sourceHeight ),
-      new TestParams.ParamDescConfig( Block.Params.sourceWidth,                    this.valueOutMinMax.sourceWidth ),
-      new TestParams.ParamDescConfig( Block.Params.sourceChannelCount,             this.valueOutMinMax.sourceChannelCount ),
-      new TestParams.ParamDescConfig( Block.Params.stepCountRequested,             this.valueOutMinMax.stepCountRequested ),
-      new TestParams.ParamDescConfig( Block.Params.bPointwise1,                    this.valueOutMinMax.bPointwise1 ),
-      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,          this.valueOutMinMax.depthwiseFilterHeight ),
-      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterWidth,           this.valueOutMinMax.depthwiseFilterWidth ),
-      new TestParams.ParamDescConfig( Block.Params.nActivationId,                  this.valueOutMinMax.nActivationId ),
-      new TestParams.ParamDescConfig( Block.Params.bPointwise2ActivatedAtBlockEnd, this.valueOutMinMax.bPointwise2ActivatedAtBlockEnd ),
-      new TestParams.ParamDescConfig( Block.Params.nConvBlockType,                 this.valueOutMinMax.nConvBlockType ),
-      new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,               this.valueOutMinMax.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( Stage.Params.sourceHeight,                   this.valueOutMinMax.sourceHeight ),
+      new TestParams.ParamDescConfig( Stage.Params.sourceWidth,                    this.valueOutMinMax.sourceWidth ),
+      new TestParams.ParamDescConfig( Stage.Params.sourceChannelCount,             this.valueOutMinMax.sourceChannelCount ),
+      new TestParams.ParamDescConfig( Stage.Params.stepCountRequested,             this.valueOutMinMax.stepCountRequested ),
+      new TestParams.ParamDescConfig( Stage.Params.bPointwise1,                    this.valueOutMinMax.bPointwise1 ),
+      new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterHeight,          this.valueOutMinMax.depthwiseFilterHeight ),
+      new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterWidth,           this.valueOutMinMax.depthwiseFilterWidth ),
+      new TestParams.ParamDescConfig( Stage.Params.nActivationId,                  this.valueOutMinMax.nActivationId ),
+      new TestParams.ParamDescConfig( Stage.Params.bPointwise2ActivatedAtStageEnd, this.valueOutMinMax.bPointwise2ActivatedAtStageEnd ),
+      new TestParams.ParamDescConfig( Stage.Params.nConvStageType,                 this.valueOutMinMax.nConvStageType ),
+      new TestParams.ParamDescConfig( Stage.Params.bKeepInputTensor,               this.valueOutMinMax.bKeepInputTensor ),
     ];
 
     yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
@@ -281,18 +281,18 @@ class Base extends TestParams.Base {
 /**
  * The order when generate weightsFloat32Array[].
  *
- * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Block.initer().
+ * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Stage.initer().
  */
 Base.paramsNameOrderArray_Basic = [
-  Block.Params.sourceHeight.paramName,
-  Block.Params.sourceWidth.paramName,
-  Block.Params.sourceChannelCount.paramName,
-  Block.Params.stepCountRequested.paramName,
-  Block.Params.bPointwise1.paramName,
-  Block.Params.depthwiseFilterHeight.paramName,
-  Block.Params.depthwiseFilterWidth.paramName,
-  Block.Params.nActivationId.paramName,
-  Block.Params.bPointwise2ActivatedAtBlockEnd.paramName,
-  Block.Params.nConvBlockType.paramName,
-  Block.Params.bKeepInputTensor.paramName,
+  Stage.Params.sourceHeight.paramName,
+  Stage.Params.sourceWidth.paramName,
+  Stage.Params.sourceChannelCount.paramName,
+  Stage.Params.stepCountRequested.paramName,
+  Stage.Params.bPointwise1.paramName,
+  Stage.Params.depthwiseFilterHeight.paramName,
+  Stage.Params.depthwiseFilterWidth.paramName,
+  Stage.Params.nActivationId.paramName,
+  Stage.Params.bPointwise2ActivatedAtStageEnd.paramName,
+  Stage.Params.nConvStageType.paramName,
+  Stage.Params.bKeepInputTensor.paramName,
 ];
