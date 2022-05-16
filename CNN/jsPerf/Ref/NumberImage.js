@@ -455,7 +455,7 @@ class Base {
    * @param {NumberImage.Base} this        The first image to be used for adding. It must have the same size as another.
    * @param {NumberImage.Base} another     The second image to be used for adding. It must have the same size as this.
    *
-   * @param {string} addName               A string for debug message of this addding operation.
+   * @param {string} addName               A string for debug message of this adding operation.
    * @param {string} parametersDesc        A string for debug message of this point-depth-point.
    *
    * @return {NumberImage.Base}
@@ -493,12 +493,66 @@ class Base {
       new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, undefined, this.depth )
     );
 
-    // Calculate value bounds of every output channels (i.e. .afterActivation; .output).
+    // Calculate value bounds of every output channels.
     imageOutNew.boundsArraySet.output0.set_all_byScaleBoundsArray_add(
       imageOutNew.boundsArraySet.input0, another.boundsArraySet.output0 );
 
     return imageOutNew;
   }
+
+  /**
+   * @param {NumberImage.Base} this        The first image to be used for multiplying. It must have the same size as another.
+   * @param {NumberImage.Base} another     The second image to be used for multiplying. It must have the same size as this.
+   *
+   * @param {string} multiplyName          A string for debug message of this multiplying operation.
+   * @param {string} parametersDesc        A string for debug message of this point-depth-point.
+   *
+   * @return {NumberImage.Base}
+   *   Return a newly created object which is the result of multiplying this and another.
+   */
+  cloneBy_multiply( another, multiplyName, parametersDesc ) {
+
+//!!! ...unfinished... (2022/05/16) should support broadcast (multiply a scalar value).
+
+    // If the output dimensions ( height, width, depth ) is not the same as input, it is impossible to multiply.
+    {
+      tf.util.assert( ( another.height == this.height ),
+        `${multiplyName}: another.height ( ${another.height} ) `
+          + `should match this.height ( ${this.height} ). (${parametersDesc})`);
+
+      tf.util.assert( ( another.width == this.width ),
+        `${multiplyName}: another.width ( ${another.width} ) `
+          + `should match this.width ( ${this.width} ). (${parametersDesc})`);
+
+      tf.util.assert( ( another.depth == this.depth ),
+        `${multiplyName}: another.depth ( ${another.depth} ) `
+          + `should match this.depth ( ${this.depth} ). (${parametersDesc})`);
+    }
+
+    let resultArray = new Float32Array( this.dataArray.length );
+    for ( let i = 0; i < this.dataArray.length; ++i ) {
+      resultArray[ i ] = this.dataArray[ i ] * another.dataArray[ i ];
+    }
+
+    // Q: Why not just modify this directly?
+    // A: The this might be the original input array which should not be modified at all. (because they might be used in another test.)
+    let imageOutNew = new Base(
+      this.height,
+      this.width,
+      this.depth,
+      resultArray,
+      new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, undefined, this.depth )
+    );
+
+//!!! ...unfinished... (2022/05/16) multiply
+
+    // Calculate value bounds of every output channels.
+    imageOutNew.boundsArraySet.output0.set_all_byScaleBoundsArray_add(
+      imageOutNew.boundsArraySet.input0, another.boundsArraySet.output0 );
+
+    return imageOutNew;
+  }
+
 
   /**
    * @param {NumberImage.Base} imageIn  The source image to be processed.
