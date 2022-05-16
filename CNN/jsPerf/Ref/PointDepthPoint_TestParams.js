@@ -344,7 +344,7 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise1 convolution, bias and activation.
    */
   use_pointwise1( inputImage, pointwise1ChannelCount, pointwiseName, parametersDesc ) {
-    let result = inputImage.cloneBy_pointwise( pointwise1ChannelCount,
+    let result = inputImage.cloneBy_pointwise_SameWhenPassThrough( pointwise1ChannelCount,
       this.in.paramsNumberArrayObject.pointwise1Filters, this.out.bPointwise1Bias,
       this.in.paramsNumberArrayObject.pointwise1Biases, this.out.pointwise1ActivationId, false, pointwiseName, parametersDesc );
     return result;
@@ -362,7 +362,7 @@ class Base extends TestParams.Base {
     let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
       inputImage.depth, pointwise1ChannelCount, 0, this.out.bPointwise1Bias, 1, 0 );
 
-    let result = inputImage.cloneBy_pointwise( pointwise1ChannelCount,
+    let result = inputImage.cloneBy_pointwise_SameWhenPassThrough( pointwise1ChannelCount,
       pointwisePassThrough.filtersArray, this.out.bPointwise1Bias,
       pointwisePassThrough.biasesArray, this.out.pointwise1ActivationId, true, pointwiseName, parametersDesc );
     return result;
@@ -376,7 +376,7 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise1 convolution, bias and activation.
    */
   use_depthwise1( inputImage, depthwiseName, parametersDesc ) {
-    let result = inputImage.cloneBy_depthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+    let result = inputImage.cloneBy_depthwise_SameWhenPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.in.paramsNumberArrayObject.depthwise1Filters, this.out.bDepthwiseBias,
       this.in.paramsNumberArrayObject.depthwise1Biases, this.out.depthwiseActivationId, false, depthwiseName, parametersDesc );
@@ -397,7 +397,7 @@ class Base extends TestParams.Base {
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.out.bDepthwiseBias, 1, 0 );
 
-    let result = inputImage.cloneBy_depthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+    let result = inputImage.cloneBy_depthwise_SameWhenPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       depthwisePassThrough.filtersArray, this.out.bDepthwiseBias,
       depthwisePassThrough.biasesArray, this.out.depthwiseActivationId, true, depthwiseName, parametersDesc );
@@ -412,7 +412,7 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise2 convolution, bias and activation.
    */
   use_depthwise2( inputImage, depthwiseName, parametersDesc ) {
-    let result = inputImage.cloneBy_depthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+    let result = inputImage.cloneBy_depthwise_SameWhenPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.in.paramsNumberArrayObject.depthwise2Filters, this.out.bDepthwiseBias,
       this.in.paramsNumberArrayObject.depthwise2Biases, this.out.depthwiseActivationId, false, depthwiseName, parametersDesc );
@@ -428,7 +428,7 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise21 convolution, bias and activation.
    */
   use_pointwise21( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
-    let result = inputImage.cloneBy_pointwise( pointwise21ChannelCount,
+    let result = inputImage.cloneBy_pointwise_SameWhenPassThrough( pointwise21ChannelCount,
       this.in.paramsNumberArrayObject.pointwise21Filters, this.out.bPointwise21Bias,
       this.in.paramsNumberArrayObject.pointwise21Biases, this.out.pointwise21ActivationId, false, pointwiseName, parametersDesc );
     return result;
@@ -446,7 +446,7 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise212 convolution, bias and activation.
    */
   use_pointwise212( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
-    let result = inputImage.cloneBy_pointwise( pointwise21ChannelCount,
+    let result = inputImage.cloneBy_pointwise_SameWhenPassThrough( pointwise21ChannelCount,
       this.in.paramsNumberArrayObject.pointwise212Filters, this.out.bPointwise21Bias,
       this.in.paramsNumberArrayObject.pointwise212Biases, this.out.pointwise21ActivationId, false, pointwiseName, parametersDesc );
     return result;
@@ -464,7 +464,7 @@ class Base extends TestParams.Base {
     let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
       inputImage.depth, pointwise21ChannelCount, 0, this.out.bPointwise21Bias, 1, 0 );
 
-    let result = inputImage.cloneBy_pointwise( pointwise21ChannelCount,
+    let result = inputImage.cloneBy_pointwise_SameWhenPassThrough( pointwise21ChannelCount,
       pointwisePassThrough.filtersArray, this.out.bPointwise21Bias,
       pointwisePassThrough.biasesArray, this.out.pointwise21ActivationId, true, pointwiseName, parametersDesc );
     return result;
@@ -479,7 +479,7 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise22 convolution, bias and activation.
    */
   use_pointwise22( inputImage, pointwise22ChannelCount, pointwiseName, parametersDesc ) {
-    let result = inputImage.cloneBy_pointwise( pointwise22ChannelCount,
+    let result = inputImage.cloneBy_pointwise_SameWhenPassThrough( pointwise22ChannelCount,
       this.in.paramsNumberArrayObject.pointwise22Filters, this.out.bPointwise21Bias, // (Note: Not bPointwise22Bias)
       this.in.paramsNumberArrayObject.pointwise22Biases, this.out.pointwise21ActivationId, // (Note: Not pointwise22ActivationId)
       false, pointwiseName, parametersDesc );
@@ -498,7 +498,7 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise222 convolution, bias and activation.
    */
   use_pointwise222( inputImage, pointwise22ChannelCount, pointwiseName, parametersDesc ) {
-    let result = inputImage.cloneBy_pointwise( pointwise22ChannelCount,
+    let result = inputImage.cloneBy_pointwise_SameWhenPassThrough( pointwise22ChannelCount,
       this.in.paramsNumberArrayObject.pointwise222Filters, this.out.bPointwise21Bias, // (Note: Not bPointwise22Bias)
       this.in.paramsNumberArrayObject.pointwise222Biases, this.out.pointwise21ActivationId, // (Note: Not pointwise22ActivationId)
       false, pointwiseName, parametersDesc );
