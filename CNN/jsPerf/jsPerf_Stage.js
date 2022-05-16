@@ -6,14 +6,14 @@ export { init, testCorrectness, disposeTensors };
 //import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as BatchIdCalculator from "./BatchIdCalculator.js";
-import * as Block from "../Conv/Block.js";
-import * as Block_Reference from "./Ref/Block_Reference.js";
-import * as Block_TestParams from "./Ref/Block_TestParams.js"; 
+import * as Stage from "../Conv/Stage.js";
+import * as Stage_Reference from "./Ref/Stage_Reference.js";
+import * as Stage_TestParams from "./Ref/Stage_TestParams.js"; 
 import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
 import * as NumberImage from "./Ref/NumberImage.js"; 
 
 /**
- * Test CNN Block.
+ * Test CNN Stage.
  *
  * @see {@link https://www.measurethat.net/Benchmarks/Show/15055/90/colorfulcakechen-cnn-block-a4bc81be0a8974ea17d20da05fdf}
  */
@@ -80,8 +80,8 @@ class HeightWidthDepth {
     let stepCountRequested = 10;
 
     // sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, bPointwise1,
-    // depthwiseFilterHeight, depthwiseFilterWidth, nActivationId, bPointwise2ActivatedAtBlockEnd,
-    // nConvBlockType, bKeepInputTensor
+    // depthwiseFilterHeight, depthwiseFilterWidth, nActivationId, bPointwise2ActivatedAtStageEnd,
+    // nConvStageType, bKeepInputTensor
     //
     //
     // The block performance testing should:
@@ -92,86 +92,86 @@ class HeightWidthDepth {
 
     // Test Case 1: (MobileNetV1, ( bPointwise1 == true ))
     this.testCaseMap.set( "MobileNetV1_bPointwise1_true", { testParams: 
-      ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
         this.height, this.width, this.depth, stepCountRequested, true,
         3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
-        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1,
+        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
         true
       ) } );
 
     // Test Case 2: (MobileNetV1_padValid, ( bPointwise1 == true ))
     this.testCaseMap.set( "MobileNetV1_padValid_bPointwise1_true", { testParams: 
-      ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
         this.height, this.width, this.depth, stepCountRequested, true,
         3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
-        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
+        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
         true
       ) } );
 
     // Test Case 3: (MobileNetV2_Thin, ( bPointwise1 == true ))
     this.testCaseMap.set( "MobileNetV2_Thin_bPointwise1_true", { testParams: 
-      ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
         this.height, this.width, this.depth, stepCountRequested, true,
         3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
-        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_THIN,
+        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
         true
       ) } );
 
     // Test Case 4: (MobileNetV2, ( bPointwise1 == true ))
     this.testCaseMap.set( "MobileNetV2_bPointwise1_true", { testParams: 
-      ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
         this.height, this.width, this.depth, stepCountRequested, true,
         3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
-        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2,
+        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
         true
       ) } );
 
     // Test Case 5: (ShuffleNetV2, ( bPointwise1 == true ))
     this.testCaseMap.set( "ShuffleV2_bPointwise1_true", { testParams: 
-      ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
         this.height, this.width, this.depth, stepCountRequested, true,
         3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
-        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2,
+        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
         true
       ) } );
 
     // Test Case 6: (ShuffleNetV2_byPointwise22, ( bPointwise1 == true ))
     this.testCaseMap.set( "ShuffleV2_byPointwise22_bPointwise1_true", { testParams: 
-      ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
         this.height, this.width, this.depth, stepCountRequested, true,
         3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
-        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE22,
+        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE22,
         true
       ) } );
 
     // Test Case 7: (ShuffleNetV2_byMobileNetV1, ( bPointwise1 == true ))
     this.testCaseMap.set( "ShuffleNetV2_byMobileNetV1_bPointwise1_true", { testParams: 
-      ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
         this.height, this.width, this.depth, stepCountRequested, true,
         3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
-        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
+        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
         true
       ) } );
 
     // Test Case 8: (ShuffleNetV2_byMobileNetV1_padValid, ( bPointwise1 == true ))
     this.testCaseMap.set( "ShuffleNetV2_byMobileNetV1_padValid_bPointwise1_true", { testParams: 
-      ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
         this.height, this.width, this.depth, stepCountRequested, true,
         3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
-        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
+        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
         true
       ) } );
 
 
-    // Create the different Block objects for performance testing.
+    // Create the different Stage objects for performance testing.
     for ( let name_testCase of this.testCaseMap.entries() ) {
       let name = name_testCase[ 0 ];
       let testCase = name_testCase[ 1 ];
       if ( !testCase.block ) {
-        testCase.block = Block_Reference.Base.Block_create( testCase.testParams );
+        testCase.block = Stage_Reference.Base.Stage_create( testCase.testParams );
       }
 
-      console.log( `Block.${name}: tensorWeightCount = { Extracted: ${testCase.block.tensorWeightCountExtracted}, ` 
+      console.log( `Stage.${name}: tensorWeightCount = { Extracted: ${testCase.block.tensorWeightCountExtracted}, ` 
         + `Total: ${testCase.block.tensorWeightCountTotal} }` );
     }
 
@@ -191,7 +191,7 @@ class HeightWidthDepth {
   }
 
   /** Test apply by Xxx */
-  testBlock_ByName( testCaseName ) {
+  testStage_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
     let block = testCase.block;
     let outputTensor3d = block.apply( this.dataTensor3dArray[ 0 ] );
@@ -210,9 +210,9 @@ class HeightWidthDepth {
         //       dynamically created in them.
         let imageSourceBag = new ImageSourceBag.Base();
 
-        let testParams = new Block_TestParams.Base();
+        let testParams = new Stage_TestParams.Base();
         let testParamsGenerator = testParams.ParamsGenerator();
-        let testReference = new Block_Reference.Base();
+        let testReference = new Stage_Reference.Base();
 
         let batchIdCalculator = new BatchIdCalculator.Base( 50 * 1000 );
 
@@ -224,8 +224,8 @@ class HeightWidthDepth {
 
         } catch ( e ) {
           let backendName = tf.getBackend();
-          console.log( `jsPerf_Block.js: testCorrectness(): backendName=${backendName}, `
-            + `Block testParams.id == ${testParams.id}` );
+          console.log( `jsPerf_Stage.js: testCorrectness(): backendName=${backendName}, `
+            + `Stage testParams.id == ${testParams.id}` );
           throw e;
         }
 
@@ -241,7 +241,7 @@ class HeightWidthDepth {
           + `` );
     });
 
-    // After correctness testing done, create all Block for performance testing.
+    // After correctness testing done, create all Stage for performance testing.
     this.block_PerformanceTest_init();
   }
 
@@ -249,7 +249,7 @@ class HeightWidthDepth {
 
 
 function init() {
-  //console.log("jsPerf_Block.js, init()");
+  //console.log("jsPerf_Stage.js, init()");
 
   disposeTensors();
 
