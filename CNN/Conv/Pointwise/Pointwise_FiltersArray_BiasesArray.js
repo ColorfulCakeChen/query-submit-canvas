@@ -479,6 +479,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
   set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
     sourceFloat32Array, inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
 
+    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( this.nPassThroughStyleId );
     let tBounds = new FloatValue.Bounds( 0, 0 );
 
     // Init
@@ -508,6 +509,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
 
           let undoPreviousEscapingScale = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ];
+          let filterValuePassThrough = thePassThroughStyleInfo.filterValue * undoPreviousEscapingScale;
           let outChannel = outChannelBegin;
 
           InChannelPartIndexLoop:
@@ -521,15 +523,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
               // Note: The .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
 
-
-
-//!!! ...unfinished... (2022/05/15) nPassThroughStyleId
-
               if ( ( inChannelToPartBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
                 if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                   if ( inChannelToPartBegin == outChannelSub ) { // The only one filter position (in the pass-through part) has non-zero value.
-                    this.filtersArray[ filterIndex ] = undoPreviousEscapingScale;
-                    tBounds.set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel );
+                    this.filtersArray[ filterIndex ] = filterValuePassThrough;
+
+                    tBounds
+                      .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+                      .multiply_byN( thePassThroughStyleInfo.filterValue );
 
                   } else {
                     this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
@@ -538,13 +539,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
                 } else { // Non-pass-through half channels.
                   let sourceWeight = sourceFloat32Array[ sourceIndex ];
+                  ++sourceIndex;
+
                   this.filtersArray[ filterIndex ] = sourceWeight * undoPreviousEscapingScale;
                   
                   tBounds
                     .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
                     .multiply_byN( sourceWeight );
-
-                  ++sourceIndex;
                 }
 
                 // Determine .afterFilter
@@ -568,6 +569,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
 
       if ( this.biasesArray ) {
+        let biasValue;
         let outChannel = outChannelBegin;
 
         InChannelPartIndexLoop:
@@ -580,20 +582,18 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
             // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
 
-//!!! ...unfinished... (2022/05/15) nPassThroughStyleId
-
             if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-              // Do nothing because pass-through needs no bias.
+              biasValue = thePassThroughStyleInfo.biasValue;
 
             } else { // Non-pass-through half channels.
-              let biasValue = sourceFloat32Array[ sourceIndex ];
-
-              this.biasesArray[ biasIndex ] += biasValue; // Note: Use adding instead of assignment.
+              biasValue = sourceFloat32Array[ sourceIndex ];
               ++sourceIndex;
-
-              // Determine .afterBias
-              this.boundsArraySet.afterBias.add_one_byN( outChannel, biasValue ); // Shift the value bounds by the bias.
             }
+
+            this.biasesArray[ biasIndex ] += biasValue; // Note: Use adding instead of assignment.
+
+            // Determine .afterBias
+            this.boundsArraySet.afterBias.add_one_byN( outChannel, biasValue ); // Shift the value bounds by the bias.
 
             ++biasIndex;
 
