@@ -1,7 +1,7 @@
 export { ShuffleNetV2_ByMobileNetV1 };
 
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
-import { Params } from "../Block_Params.js";
+import { Params } from "../Stage_Params.js";
 import { ShuffleNetV2 } from "./ShuffleNetV2.js";
 
 /*
@@ -34,21 +34,21 @@ import { ShuffleNetV2 } from "./ShuffleNetV2.js";
  */
 class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 
-  constructor( blockParams ) {
-    super( blockParams );
+  constructor( stageParams ) {
+    super( stageParams );
   }
 
   /** @override */
-  configTo_beforeStep0() {
-    super.configTo_beforeStep0(); // Use same input0 (height, width, channel count), bias, activation, depthwise filter size (as ShuffleNetV2).
+  configTo_beforeBlock0() {
+    super.configTo_beforeBlock0(); // Use same input0 (height, width, channel count), bias, activation, depthwise filter size (as ShuffleNetV2).
 
-    let blockParams = this.blockParams;
+    let stageParams = this.stageParams;
 
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1; // (-4)
 
-    if ( blockParams.bPointwise1 == false ) {
+    if ( stageParams.bPointwise1 == false ) {
 
-      // In ShuffleNetV2_ByMobileNetV1's head, if ( blockParams.bPointwise1 == false ), pointwise1ChannelCount is also 0.
+      // In ShuffleNetV2_ByMobileNetV1's head, if ( stageParams.bPointwise1 == false ), pointwise1ChannelCount is also 0.
       //
       // But, in this case, pointwise1 will still be created by PointDepthPoint intrinsically and output double of input0.
       //
@@ -59,7 +59,7 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 
     } else {
 
-      // In ShuffleNetV2_ByMobileNetV1's head, if ( blockParams.bPointwise1 == true ), pointwise1ChannelCount is always the same as
+      // In ShuffleNetV2_ByMobileNetV1's head, if ( stageParams.bPointwise1 == true ), pointwise1ChannelCount is always the same as
       // input0's channel count.
       //
       // But, in this case, pointwise1 will still and output double of input0 intrinsically.
@@ -67,7 +67,7 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
       // The input0 will be processed by pointwise1's lower half.
       // The input0 will be copied as pointwise1's higher half.
       //
-      this.pointwise1ChannelCount = blockParams.sourceChannelCount; // (Intrinsically, Double of input0. (Same as pointwise21.))
+      this.pointwise1ChannelCount = stageParams.sourceChannelCount; // (Intrinsically, Double of input0. (Same as pointwise21.))
     }
 
     // In ShuffleNetV2_ByMobileNetV1's head, depthwise always output the same channel count of pointwise1 real output channel count
@@ -77,33 +77,33 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 
     // In ShuffleNetV2_ByMobileNetV1's head, pointwise21ChannelCount is always twice of input0's channel count.
     //
-    this.pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
+    this.pointwise21ChannelCount = stageParams.sourceChannelCount * 2;
 
     // In ShuffleNetV2_ByMobileNetV1, there is always only output0 (i.e. no output1).
     this.bOutput1Requested = false;
 
-    // In ShuffleNetV2_ByMobileNetV1's head, all steps have only output0 (with same depth as pointwise21 result) and no output1.
+    // In ShuffleNetV2_ByMobileNetV1's head, all blocks have only output0 (with same depth as pointwise21 result) and no output1.
     this.outChannels0 = this.pointwise21ChannelCount;
     this.outChannels1 = 0;
   }
 
   /** @override */
-  configTo_afterStep0() {
-    super.configTo_afterStep0(); // Step1, 2, 3, ... are almost the same as ShuffleNetV2.
+  configTo_afterBlock0() {
+    super.configTo_afterBlock0(); // Block1, 2, 3, ... are almost the same as ShuffleNetV2.
 
-    let blockParams = this.blockParams;
+    let stageParams = this.stageParams;
 
     // Except that ShuffleNetV2_ByMobileNetV1 does not have channel shuffler. The pointwise21 will do channel shuffling.
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH; // (-5)
 
-    // In ShuffleNetV2_ByMobileNetV1's body/tail, if ( blockParams.bPointwise1 == false ), pointwise1ChannelCount is also 0.
-    // In this case, pointwise1 will not be created by PointDepthPoint (i.e. different from step0).
+    // In ShuffleNetV2_ByMobileNetV1's body/tail, if ( stageParams.bPointwise1 == false ), pointwise1ChannelCount is also 0.
+    // In this case, pointwise1 will not be created by PointDepthPoint (i.e. different from block0).
     //
-    if ( blockParams.bPointwise1 == false ) {
+    if ( stageParams.bPointwise1 == false ) {
       this.pointwise1ChannelCount = 0; // (Intrinsically, zero, too.)
 
-    // In ShuffleNetV2_ByMobileNetV1's body/tail, if ( blockParams.bPointwise1 == true ), pointwise1ChannelCount is always the
-    // same as pointwise21 output channel count (which is already doubled as twice of step0's input0).
+    // In ShuffleNetV2_ByMobileNetV1's body/tail, if ( stageParams.bPointwise1 == true ), pointwise1ChannelCount is always the
+    // same as pointwise21 output channel count (which is already doubled as twice of block0's input0).
     //
     // The input0's lower half will be processed by pointwise1's lower half.
     // The input0's higher half will be pass-through as pointwise1's higher half.
@@ -119,8 +119,8 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
   }
 
   /** @override */
-  configTo_beforeStepLast() {
-    super.configTo_beforeStepLast(); // StepLast is the same as ShuffleNetV2.
+  configTo_beforeBlockLast() {
+    super.configTo_beforeBlockLast(); // BlockLast is the same as ShuffleNetV2.
   }
 }
 
