@@ -199,6 +199,11 @@ class ConvBiasActivation extends InputsOutputs {
     let doEscapingScale;
     for ( let outChannel = 0; outChannel < this.afterBias.length; ++outChannel ) {
 
+      let bPassThrough_bActivationEscaping = (
+           ( this.bPassThrough[ outChannel ] )             // For pass-through half channels.
+        && ( thePassThroughStyleInfo.bActivationEscaping ) // And specified pass-through style requires to escape activation.
+      );
+
       // 1. Determine (activationEscaping) .scaleArraySet (of .output0)
       {
         // 1.1 Determine .do
@@ -211,9 +216,7 @@ class ConvBiasActivation extends InputsOutputs {
 
         } else {
 
-          if (   ( this.bPassThrough[ outChannel ] ) // For pass-through half channels.
-              && ( thePassThroughStyleInfo.bActivationEscaping == true ) // And specified pass-through style needs escape activation.
-             ) {
+          if ( bPassThrough_bActivationEscaping ) { // For channels will be activation-escaping.
 
             // If value bounds is [ 0, 0 ], adjust it to a range which includes zero.
             //
@@ -236,14 +239,14 @@ class ConvBiasActivation extends InputsOutputs {
             doEscapingScale = this.output0.scaleArraySet.do.scales[ outChannel ];
             tf.util.assert( ( Number.isNaN( doEscapingScale ) == false ),
               `BoundsArraySet.ConvBiasActivation.`
-                + `set_output0_by_afterBias_bPassThrough_nActivationId( `
+                + `adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId( `
                   + ` ${ValueDesc.ActivationFunction.Singleton.getStringOf( nActivationId )}(${nActivationId}) ): `
                 + `this.output0.scaleArraySet.do.scales[ ${outChannel} ] ( ${doEscapingScale} ) `
                 + `should not be NaN. `
                 + `Please use activation function (e.g. clipByValue(), tanh()) which has both negative and positive parts near origin point.`
             );
 
-          } else { // Non pass-through half channels. (Or pass-through style is no activation escaping.)
+          } else { // For channels will not be activation-escaping.
             this.output0.scaleArraySet.do.set_one_byN( outChannel, 1 ); // No need to escape. (i.e. scale = 1 for no scale)
             doEscapingScale = 1;
           }
@@ -273,13 +276,10 @@ class ConvBiasActivation extends InputsOutputs {
         //        handled for the follow-up processing.
         } else {
 
-
-//!!! ...unfinished... (2022/05/15) thePassThroughStyleInfo
-
-          if ( this.bPassThrough[ outChannel ] ) { // For pass-through half channels, it will be the output range for inputDomainLinear.
+          if ( bPassThrough_bActivationEscaping ) { // For activation-escaping, it will be the output range for inputDomainLinear.
             this.output0.boundsArray.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
 
-          } else { // Non pass-through half channels, it will be the output range for the whole input domain.
+          } else { // For non-activation-escaping, it will be the output range for the whole input domain.
             this.output0.boundsArray.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
           }
 
