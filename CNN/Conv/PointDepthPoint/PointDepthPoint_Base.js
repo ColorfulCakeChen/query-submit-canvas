@@ -475,7 +475,7 @@ class Base extends ReturnOrClone.Base {
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
     }
 
-    this.pointwise1 = new Pointwise.SameWhenPassthrough(
+    this.pointwise1 = new Pointwise.SameWhenPassThrough(
       this.channelCount0_pointwise1Before,
       this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
       nHigherHalfDifferent_pointwise1,
@@ -530,7 +530,7 @@ class Base extends ReturnOrClone.Base {
       }
     }
 
-    this.depthwise1 = new Depthwise.SameWhenPassthrough(
+    this.depthwise1 = new Depthwise.SameWhenPassThrough(
       this.inputHeight0, this.inputWidth0, this.channelCount_pointwise1After_depthwise1Before,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
       this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
@@ -563,7 +563,7 @@ class Base extends ReturnOrClone.Base {
       // Q: Why does depthwise2 use the same configuration as depthwise1?
       // A: To ensure both result have the same ( height, width ) so that could be inputted to concatenator). This is especially
       //    true for StridesPad.
-      this.depthwise2 = new Depthwise.SameWhenPassthrough(
+      this.depthwise2 = new Depthwise.SameWhenPassThrough(
         this.inputHeight0, this.inputWidth0,
 
         // The depthwise2 processes the inputTensors[ 0 ] directly (i.e. not the pointwise1 result of inputTensors[ 0 ], and
@@ -676,7 +676,7 @@ class Base extends ReturnOrClone.Base {
     //       the pointwise21 will exist (i.e. ( pointwise21.bExisted == true ) ). Otherwise, the output channels could not be shuffled.
     //       In this case, it will pass through all input to output, but the output will be channel shuffled.
     //
-    this.pointwise21 = new Pointwise.SameWhenPassthrough(
+    this.pointwise21 = new Pointwise.SameWhenPassThrough(
       this.channelCount_concat1After_pointwise2Before,
       this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
       nHigherHalfDifferent_pointwise2,
@@ -701,7 +701,7 @@ class Base extends ReturnOrClone.Base {
     // 5.2 Pointwise22
     if ( this.pointwise22ChannelCount > 0 ) {
 
-      this.pointwise22 = new Pointwise.SameWhenPassthrough(
+      this.pointwise22 = new Pointwise.SameWhenPassThrough(
         this.channelCount_concat1After_pointwise2Before,
         this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
         nHigherHalfDifferent_pointwise2,
