@@ -486,10 +486,7 @@ class Base {
     // Q: Why not just modify this directly?
     // A: The this might be the original input array which should not be modified at all. (because they might be used in another test.)
     let imageOutNew = new Base(
-      this.height,
-      this.width,
-      this.depth,
-      resultArray,
+      this.height, this.width, this.depth, resultArray,
       new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, undefined, this.depth )
     );
 
@@ -512,7 +509,7 @@ class Base {
    */
   cloneBy_multiply( another, multiplyName, parametersDesc ) {
 
-//!!! ...unfinished... (2022/05/16) should support broadcast (multiply a scalar value).
+//!!! ...unfinished... (2022/05/16) Perhaps, should support broadcast (multiply a scalar value).
 
     // If the output dimensions ( height, width, depth ) is not the same as input, it is impossible to multiply.
     {
@@ -537,14 +534,9 @@ class Base {
     // Q: Why not just modify this directly?
     // A: The this might be the original input array which should not be modified at all. (because they might be used in another test.)
     let imageOutNew = new Base(
-      this.height,
-      this.width,
-      this.depth,
-      resultArray,
+      this.height, this.width, this.depth, resultArray,
       new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, undefined, this.depth )
     );
-
-//!!! ...unfinished... (2022/05/16) multiply
 
     // Calculate value bounds of every output channels.
     imageOutNew.boundsArraySet.output0.set_all_byScaleBoundsArray_multiply(
@@ -552,7 +544,6 @@ class Base {
 
     return imageOutNew;
   }
-
 
   /**
    * @param {NumberImage.Base} imageIn  The source image to be processed.
