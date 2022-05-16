@@ -7,12 +7,12 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ImageSourceBag from "./ImageSourceBag.js"; 
 import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js"; 
 import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js"; 
-import * as Block_TestParams from "./Block_TestParams.js"; 
-import * as Block from "../../Conv/Block.js";
+import * as Stage_TestParams from "./Stage_TestParams.js"; 
+import * as Stage from "../../Conv/Stage.js";
 import * as BoundsArraySet_Asserter from "./BoundsArraySet_Asserter.js";
 
 /**
- * Reference computation of class Block.Base.
+ * Reference computation of class Stage.Base.
  */
 class Base {
 
@@ -31,8 +31,8 @@ class Base {
    * @param {ImageSourceBag.Base} imageSourceBag
    *   The provider of image and tensor of variable specification for testing.
    *
-   * @param {Block_TestParams.Base} testParams
-   *   The test parameters. It is the value of Block_TestParams.Base.ParamsGenerator()'s result.
+   * @param {Stage_TestParams.Base} testParams
+   *   The test parameters. It is the value of Stage_TestParams.Base.ParamsGenerator()'s result.
    *
    */
   testCorrectness( imageSourceBag, testParams ) {
@@ -47,19 +47,19 @@ class Base {
       let depthwiseFilterHeight = this.testParams.out.depthwiseFilterHeight;
       let depthwiseFilterWidth = this.testParams.out.depthwiseFilterWidth;
       let nActivationId = this.testParams.out.nActivationId;
-      let bPointwise2BiasAtBlockEnd = this.testParams.out.bPointwise2BiasAtBlockEnd;
-      let nConvBlockType = this.testParams.out.nConvBlockType;
+      let bPointwise2BiasAtStageEnd = this.testParams.out.bPointwise2BiasAtStageEnd;
+      let nConvStageType = this.testParams.out.nConvStageType;
       let bKeepInputTensor = this.testParams.out.bKeepInputTensor;
 
       let referredParams = {};
       let outputHeight, outputWidth, outputChannelCount;
       {
-        Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( referredParams, sourceHeight, sourceWidth );
+        Stage.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( referredParams, sourceHeight, sourceWidth );
 
         outputHeight = referredParams.outputHeight;
         outputWidth = referredParams.outputWidth;
 
-        outputChannelCount = sourceChannelCount * 2; // In current Block's design, the output channel always is twice as input.
+        outputChannelCount = sourceChannelCount * 2; // In current Stage's design, the output channel always is twice as input.
       }
 
       let strNote;
@@ -70,7 +70,7 @@ class Base {
 
       let inputTensor3d = imageSourceBag.getTensor3d_by( sourceChannelCount );
 
-      let inputTensorDestroyCount; // How many input tensors will be destroyed by Block.apply().
+      let inputTensorDestroyCount; // How many input tensors will be destroyed by Stage.apply().
       if ( bKeepInputTensor ) {
         inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
 
@@ -80,37 +80,37 @@ class Base {
       }
 
       let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
-      let block = Base.Block_create( testParams );
+      let stage = Base.Stage_create( testParams );
 
-      let parametersDescription = block.parametersDescription;
+      let parametersDescription = stage.parametersDescription;
       strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
 
-      Base.AssertTwoEqualValues( "outputHeight", block.outputHeight, outputHeight, strNote );
-      Base.AssertTwoEqualValues( "outputWidth", block.outputWidth, outputWidth, strNote );
-      Base.AssertTwoEqualValues( "outputChannelCount", block.outputChannelCount, outputChannelCount, strNote );
+      Base.AssertTwoEqualValues( "outputHeight", stage.outputHeight, outputHeight, strNote );
+      Base.AssertTwoEqualValues( "outputWidth", stage.outputWidth, outputWidth, strNote );
+      Base.AssertTwoEqualValues( "outputChannelCount", stage.outputChannelCount, outputChannelCount, strNote );
 
-      Base.AssertTwoEqualValues( "stepCount", block.stepCount, testParams.stepsArray.length, strNote );
+      Base.AssertTwoEqualValues( "stepCount", stage.stepCount, testParams.stepsArray.length, strNote );
 
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
-      let block_outputTensorCount = 1;
-      let tensorNumDifference_apply_before_after = block_outputTensorCount - inputTensorDestroyCount;
+      let stage_outputTensorCount = 1;
+      let tensorNumDifference_apply_before_after = stage_outputTensorCount - inputTensorDestroyCount;
 
-      let memoryInfo_apply_before = tf.memory(); // Test memory leakage of Block.apply.
-      let outputTensor3d = block.apply( inputTensor3d );
+      let memoryInfo_apply_before = tf.memory(); // Test memory leakage of Stage.apply.
+      let outputTensor3d = stage.apply( inputTensor3d );
       let memoryInfo_apply_after = tf.memory();
 
       tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
-        `Block.apply() memory leak. `
+        `Stage.apply() memory leak. `
           + `result tensor count (${memoryInfo_apply_after.numTensors}) `
           + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
           + `${strNote}` );
 
       tf.util.assert( inputTensor3d,
-        `Block inputTensor3d should not be null. ${strNote}`); // But may be disposed.
+        `Stage inputTensor3d should not be null. ${strNote}`); // But may be disposed.
 
       tf.util.assert( outputTensor3d,
-        `Block outputTensor3d should not be null. ${strNote}`);
+        `Stage outputTensor3d should not be null. ${strNote}`);
 
       { // Test output channel count.
         const CHANNEL_AXIS_ID = 2; // Axis id 2 is depth (i.e. channel) dimension.
@@ -120,20 +120,20 @@ class Base {
           outputTensorChannelCount = outputTensor3d.shape[ CHANNEL_AXIS_ID ];
 
         // The real channel count of the output tensor should be the same as predicted output channel count.
-        Base.AssertTwoEqualValues( "outChannels", block.outputChannelCount, outputTensorChannelCount, strNote );
+        Base.AssertTwoEqualValues( "outChannels", stage.outputChannelCount, outputTensorChannelCount, strNote );
       }
 
-      // Test correctness of Block BoundsArraySet.
-      this.assert_imageOut_BoundsArraySet( block.boundsArraySet, imageOutReference, parametersDescription );
+      // Test correctness of Stage BoundsArraySet.
+      this.assert_imageOut_BoundsArraySet( stage.boundsArraySet, imageOutReference, parametersDescription );
 
-      // Test correctness of Block.apply.
+      // Test correctness of Stage.apply.
       this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, imageOutReference, parametersDescription );
 
-      block.disposeTensors();
+      stage.disposeTensors();
       let memoryInfo_afterDispose = tf.memory();
 
       tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
-        `Block create/dispose memory leak. `
+        `Stage create/dispose memory leak. `
           + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
           + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
           + `${strNote}` );
@@ -142,29 +142,29 @@ class Base {
 
     } catch ( e ) {
       let backendName = tf.getBackend();
-      console.log( `Block_Reference.js: testCorrectness(): backendName=${backendName}, `
-        + `Block this.testParams.id == ${this.testParams.id}` );
+      console.log( `Stage_Reference.js: testCorrectness(): backendName=${backendName}, `
+        + `Stage this.testParams.id == ${this.testParams.id}` );
       throw e;
     }
 
   }
 
   /**
-   * Check the Block's output's BoundsArraySet.
+   * Check the Stage's output's BoundsArraySet.
    *
-   * @param {BoundsArraySet} aBoundsArraySet      The bounds array set of the Block.
-   * @param {NumberImage.Base} imageOutReference  Refernece output Image data of the Block_Reference's calcResult().
+   * @param {BoundsArraySet} aBoundsArraySet      The bounds array set of the Stage.
+   * @param {NumberImage.Base} imageOutReference  Refernece output Image data of the Stage_Reference's calcResult().
    */
   assert_imageOut_BoundsArraySet( aBoundsArraySet, imageOutReference, parametersDescription ) {
     BoundsArraySet_Asserter.assert_BoundsArraySet_Outputs( this.asserter_Equal,
-      aBoundsArraySet, [ imageOutReference ], `Block`, parametersDescription );
+      aBoundsArraySet, [ imageOutReference ], `Stage`, parametersDescription );
   }
 
   /**
-   * Check the Block's output according to input (for correctness testing).
+   * Check the Stage's output according to input (for correctness testing).
    *
-   * @param {tf.tensor3d} outputTensor            The output tensor of the Block's apply().
-   * @param {NumberImage.Base} imageOutReference  Refernece output Image data of the Block_Reference's calcResult().
+   * @param {tf.tensor3d} outputTensor            The output tensor of the Stage's apply().
+   * @param {NumberImage.Base} imageOutReference  Refernece output Image data of the Stage_Reference's calcResult().
    */
   assert_imageOut_Tensors_byNumberArrays( outputTensor, imageOutReference, parametersDescription ) {
     let outputArrayRef;
@@ -177,44 +177,44 @@ class Base {
 
     this.asserter_Equal.assert(
       outputTensor, outputArrayRef,
-      "Block", `outputTensor`, `outputRef`, parametersDescription
+      "Stage", `outputTensor`, `outputRef`, parametersDescription
     );
   }
 
   /**
-   * @param {Block_TestParams.Base} testParams
-   *   The test parameters. It is the value of Block_TestParams.Base.ParamsGenerator()'s result.
+   * @param {Stage_TestParams.Base} testParams
+   *   The test parameters. It is the value of Stage_TestParams.Base.ParamsGenerator()'s result.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
-   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Block value bounds
+   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Stage value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
    *
-   * @return {Block.Base} The created Block object.
+   * @return {Stage.Base} The created Stage object.
    */
-  static Block_create( testParams, inputScaleBoundsArray0 ) {
+  static Stage_create( testParams, inputScaleBoundsArray0 ) {
 
-    let block = new Block.Base();
+    let stage = new Stage.Base();
 
     let progress = new ValueMax.Percentage.Aggregate();
 
     // Initialize successfully or failed.
-    let extractedParams = new Block.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
+    let extractedParams = new Stage.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
       testParams.in.sourceHeight, testParams.in.sourceWidth, testParams.in.sourceChannelCount,
       testParams.in.stepCountRequested,
       testParams.in.bPointwise1,
       testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
       testParams.in.nActivationId,
-      testParams.in.bPointwise2BiasAtBlockEnd,
-      testParams.in.nConvBlockType,
+      testParams.in.bPointwise2BiasAtStageEnd,
+      testParams.in.nConvStageType,
       testParams.in.bKeepInputTensor
     );
 
-    let bInitOk = block.init( progress, extractedParams, inputScaleBoundsArray0, this.arrayTemp_forInterleave_asGrouptTwo );
+    let bInitOk = stage.init( progress, extractedParams, inputScaleBoundsArray0, this.arrayTemp_forInterleave_asGrouptTwo );
 
-    let parametersDescription = `( ${block.parametersDescription} )`;
+    let parametersDescription = `( ${stage.parametersDescription} )`;
 
-    tf.util.assert( ( block.bInitOk == bInitOk ),
-      `Block validation state (${block.bInitOk}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
+    tf.util.assert( ( stage.bInitOk == bInitOk ),
+      `Stage validation state (${stage.bInitOk}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
 
     if ( !bInitOk ) { //!!! For Debug.
       console.log( "testParams =", testParams );
@@ -222,89 +222,89 @@ class Base {
     }
 
     tf.util.assert( ( true == bInitOk ),
-      `Failed to initialize block object. ${parametersDescription}`);
+      `Failed to initialize stage object. ${parametersDescription}`);
 
     tf.util.assert( ( 100 == progress.valuePercentage ),
       `Progress (${progress.valuePercentage}) should be 100 when initializing pointDepthPoint object successfully. ${parametersDescription}`);
 
-    if ( block.byteOffsetEnd != testParams.in.inputFloat32Array.byteLength ) { //!!! For Debug. (parsing ending position)
+    if ( stage.byteOffsetEnd != testParams.in.inputFloat32Array.byteLength ) { //!!! For Debug. (parsing ending position)
       debugger;
     }
 
     Base.AssertTwoEqualValues( "parsing beginning position",
-      block.byteOffsetBegin, testParams.in.byteOffsetBegin, parametersDescription );
+      stage.byteOffsetBegin, testParams.in.byteOffsetBegin, parametersDescription );
 
     Base.AssertTwoEqualValues( "parsing ending position",
-      block.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, parametersDescription );
+      stage.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, parametersDescription );
 
     // parameters.
-    Base.AssertTwoEqualValues( "sourceHeight", block.sourceHeight, testParams.out.sourceHeight, parametersDescription );
-    Base.AssertTwoEqualValues( "sourceWidth", block.sourceWidth, testParams.out.sourceWidth, parametersDescription );
-    Base.AssertTwoEqualValues( "sourceChannelCount", block.sourceChannelCount, testParams.out.sourceChannelCount, parametersDescription );
-    Base.AssertTwoEqualValues( "stepCountRequested", block.stepCountRequested, testParams.out.stepCountRequested, parametersDescription );
+    Base.AssertTwoEqualValues( "sourceHeight", stage.sourceHeight, testParams.out.sourceHeight, parametersDescription );
+    Base.AssertTwoEqualValues( "sourceWidth", stage.sourceWidth, testParams.out.sourceWidth, parametersDescription );
+    Base.AssertTwoEqualValues( "sourceChannelCount", stage.sourceChannelCount, testParams.out.sourceChannelCount, parametersDescription );
+    Base.AssertTwoEqualValues( "stepCountRequested", stage.stepCountRequested, testParams.out.stepCountRequested, parametersDescription );
 
-    Base.AssertTwoEqualValues( "bPointwise1", block.bPointwise1, testParams.out.bPointwise1, parametersDescription );
+    Base.AssertTwoEqualValues( "bPointwise1", stage.bPointwise1, testParams.out.bPointwise1, parametersDescription );
 
     Base.AssertTwoEqualValues( "depthwiseFilterHeight",
-      block.depthwiseFilterHeight, testParams.out.depthwiseFilterHeight, parametersDescription );
+      stage.depthwiseFilterHeight, testParams.out.depthwiseFilterHeight, parametersDescription );
 
     Base.AssertTwoEqualValues( "depthwiseFilterWidth",
-      block.depthwiseFilterWidth, testParams.out.depthwiseFilterWidth, parametersDescription );
+      stage.depthwiseFilterWidth, testParams.out.depthwiseFilterWidth, parametersDescription );
 
-    Base.AssertTwoEqualValues( "nActivationId", block.nActivationId, testParams.out.nActivationId, parametersDescription );
+    Base.AssertTwoEqualValues( "nActivationId", stage.nActivationId, testParams.out.nActivationId, parametersDescription );
 
-    Base.AssertTwoEqualValues( "bPointwise2ActivatedAtBlockEnd",
-      block.bPointwise2ActivatedAtBlockEnd, testParams.out.bPointwise2ActivatedAtBlockEnd, parametersDescription );
+    Base.AssertTwoEqualValues( "bPointwise2ActivatedAtStageEnd",
+      stage.bPointwise2ActivatedAtStageEnd, testParams.out.bPointwise2ActivatedAtStageEnd, parametersDescription );
 
-    Base.AssertTwoEqualValues( "nConvBlockType", block.nConvBlockType, testParams.out.nConvBlockType, parametersDescription );
+    Base.AssertTwoEqualValues( "nConvStageType", stage.nConvStageType, testParams.out.nConvStageType, parametersDescription );
 
     // Referred parameters.
-    Base.AssertTwoEqualValues( "outputHeight", block.outputHeight, testParams.out.outputHeight, parametersDescription );
-    Base.AssertTwoEqualValues( "outputWidth", block.outputWidth, testParams.out.outputWidth, parametersDescription );
+    Base.AssertTwoEqualValues( "outputHeight", stage.outputHeight, testParams.out.outputHeight, parametersDescription );
+    Base.AssertTwoEqualValues( "outputWidth", stage.outputWidth, testParams.out.outputWidth, parametersDescription );
 
     // Other parameters.
-    Base.AssertTwoEqualValues( "bKeepInputTensor", block.bKeepInputTensor, testParams.out.bKeepInputTensor, parametersDescription );
+    Base.AssertTwoEqualValues( "bKeepInputTensor", stage.bKeepInputTensor, testParams.out.bKeepInputTensor, parametersDescription );
 
-    Base.AssertParameters_Block_steps( block, parametersDescription ); // Test every step's parameters.
+    Base.AssertParameters_Stage_steps( stage, parametersDescription ); // Test every step's parameters.
 
-    return block;
+    return stage;
   }
 
   /** */
   static AssertTwoEqualValues( valueName, value1, value2, parametersDescription ) {
     tf.util.assert( ( value1 == value2 ),
-      `Block ${valueName} (${value1}) should be (${value2}). ${parametersDescription}`);
+      `Stage ${valueName} (${value1}) should be (${value2}). ${parametersDescription}`);
   }
 
   /**
    * Test every step's parameters.
    *
-   * @param {Block.Base[]|Block_TestParams.Base[]} blockParams
-   *   The block to be checked. It parameters will be checked.
+   * @param {Stage.Base[]|Stage_TestParams.Base[]} stageParams
+   *   The stage to be checked. It parameters will be checked.
    *
    */
-  static AssertParameters_Block_steps( blockParams, parametersDescription ) {
-    let stepParamsArray = blockParams.stepsArray; // No matter Block.Base or Block_TestParams.Base
+  static AssertParameters_Stage_steps( stageParams, parametersDescription ) {
+    let stepParamsArray = stageParams.stepsArray; // No matter Stage.Base or Stage_TestParams.Base
 
-    if ( blockParams instanceof Block_TestParams.Base ) {
-      blockParams = blockParams.out;
-    } else { // Block.Base
+    if ( stageParams instanceof Stage_TestParams.Base ) {
+      stageParams = stageParams.out;
+    } else { // Stage.Base
     }
 
-    let stepCountRequested = blockParams.stepCountRequested;
-    let nConvBlockType = blockParams.nConvBlockType;
+    let stepCountRequested = stageParams.stepCountRequested;
+    let nConvStageType = stageParams.nConvStageType;
 
-    let single_Step0Input0ChannelCount = blockParams.sourceChannelCount;        // Single of step0's input0 channel count.
+    let single_Step0Input0ChannelCount = stageParams.sourceChannelCount;        // Single of step0's input0 channel count.
     let double_Step0Input0ChannelCount = double_Step0Input0ChannelCount * 2;    // Double of step0's input0 channel count.
-    let quadruple_Step0Input0ChannelCount = blockParams.sourceChannelCount * 4; // Quadruple of step0's input0 channel count.
+    let quadruple_Step0Input0ChannelCount = stageParams.sourceChannelCount * 4; // Quadruple of step0's input0 channel count.
 
     let stepCount = stepParamsArray.length;
 
     tf.util.assert( ( stepCount > 0 ),
-      `Block stepCount (${stepCount}) should be larger than 0. ${parametersDescription}`);
+      `Stage stepCount (${stepCount}) should be larger than 0. ${parametersDescription}`);
 
     tf.util.assert( ( stepCount >= 2 ),
-      `Block stepCount (${stepCount}) should be >= 2. ${parametersDescription}`);
+      `Stage stepCount (${stepCount}) should be >= 2. ${parametersDescription}`);
 
     let stepName, stepParams, pointwise1ChannelCount;
     for ( let stepIndex = 0; stepIndex < stepCount; ++stepIndex ) {
@@ -318,59 +318,59 @@ class Base {
         }
       }
 
-      let asserter = new ObjectPropertyAsserter.Base( `Block.${stepName}`, stepParams, parametersDescription );
+      let asserter = new ObjectPropertyAsserter.Base( `Stage.${stepName}`, stepParams, parametersDescription );
 
-      let strUnknownConvBlockType = `Block_Reference.Base.AssertParameters_Block_steps(): `
-            `unknown nConvBlockType ( ${nConvBlockType} ) value. ${asserter.contextDescription}`;
+      let strUnknownConvStageType = `Stage_Reference.Base.AssertParameters_Stage_steps(): `
+            `unknown nConvStageType ( ${nConvStageType} ) value. ${asserter.contextDescription}`;
 
       // inputHeight0, inputWidth0
       if ( 0 == stepIndex ) { // step0
-        asserter.propertyValue( "inputHeight0", blockParams.sourceHeight );
-        asserter.propertyValue( "inputWidth0", blockParams.sourceWidth );
+        asserter.propertyValue( "inputHeight0", stageParams.sourceHeight );
+        asserter.propertyValue( "inputWidth0", stageParams.sourceWidth );
       } else { // step1, 2, 3, ...
-        asserter.propertyValue( "inputHeight0", blockParams.outputHeight );
-        asserter.propertyValue( "inputWidth0", blockParams.outputWidth );
+        asserter.propertyValue( "inputHeight0", stageParams.outputHeight );
+        asserter.propertyValue( "inputWidth0", stageParams.outputWidth );
       }
 
       // channelCount0_pointwise1Before
       if ( 0 == stepIndex ) { // step0
         asserter.propertyValue( "channelCount0_pointwise1Before", single_Step0Input0ChannelCount );
       } else { // step1, 2, 3, ...
-        switch ( nConvBlockType ) {
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
+        switch ( nConvStageType ) {
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
             asserter.propertyValue( "channelCount0_pointwise1Before", double_Step0Input0ChannelCount );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
             asserter.propertyValue( "channelCount0_pointwise1Before", single_Step0Input0ChannelCount );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
             asserter.propertyValue( "channelCount0_pointwise1Before", double_Step0Input0ChannelCount );
             break;
 
-          default: tf.util.assert( false, strUnknownConvBlockType ); break;
+          default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
       }
 
       // channelCount1_pointwise1Before
       if ( 0 == stepIndex ) { // step0
-        switch ( nConvBlockType ) {
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
+        switch ( nConvStageType ) {
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
             asserter.propertyValue( "channelCount1_pointwise1Before", ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-            if ( blockParams.bPointwise1 == false ) {
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+            if ( stageParams.bPointwise1 == false ) {
               asserter.propertyValue( "channelCount1_pointwise1Before", ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
             } else {
               asserter.propertyValue( "channelCount1_pointwise1Before",
@@ -378,77 +378,77 @@ class Base {
             }
             break;
 
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
             asserter.propertyValue( "channelCount1_pointwise1Before",
               ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 );
             break;
 
-          default: tf.util.assert( false, strUnknownConvBlockType ); break;
+          default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
 
       } else { // step1, 2, 3, ...
-        switch ( nConvBlockType ) {
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+        switch ( nConvStageType ) {
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
             asserter.propertyValue( "channelCount1_pointwise1Before", ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
             asserter.propertyValue( "channelCount1_pointwise1Before",
               ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
             asserter.propertyValue( "channelCount1_pointwise1Before",
               ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
             asserter.propertyValue( "channelCount1_pointwise1Before", single_Step0Input0ChannelCount ); // TWO_INPUTS
             break;
 
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
             asserter.propertyValue( "channelCount1_pointwise1Before",
               ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH );
             break;
 
-          default: tf.util.assert( false, strUnknownConvBlockType ); break;
+          default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
       }
 
       // pointwise1ChannelCount
       if ( 0 == stepIndex ) { // step0
-        switch ( nConvBlockType ) {
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
-            if ( blockParams.bPointwise1 == false )
+        switch ( nConvStageType ) {
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
+            if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
               asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
-            if ( blockParams.bPointwise1 == false )
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
+            if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
               asserter.propertyValue( "pointwise1ChannelCount", quadruple_Step0Input0ChannelCount );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-            if ( blockParams.bPointwise1 == false )
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+            if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
               asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
-            if ( blockParams.bPointwise1 == false ) {
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+            if ( stageParams.bPointwise1 == false ) {
               if ( stepParams instanceof PointDepthPoint_TestParams.Base ) {
                 asserter.propertyValue( "pointwise1ChannelCount", 0 ); // Zero in parameters.
               } else { // PointDepthPoint.Base
@@ -463,142 +463,142 @@ class Base {
             }
             break;
 
-          default: tf.util.assert( false, strUnknownConvBlockType ); break;
+          default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
 
       } else { // step1, 2, 3, ...
-        switch ( nConvBlockType ) {
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
-            if ( blockParams.bPointwise1 == false )
+        switch ( nConvStageType ) {
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+            if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
               asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
-            if ( blockParams.bPointwise1 == false )
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
+            if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
               asserter.propertyValue( "pointwise1ChannelCount", quadruple_Step0Input0ChannelCount );
             break;
 
-          default: tf.util.assert( false, strUnknownConvBlockType ); break;
+          default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
       }
 
       asserter.propertyValue( "bPointwise1Bias", true );
-      asserter.propertyValue( "pointwise1ActivationId", blockParams.nActivationId );
+      asserter.propertyValue( "pointwise1ActivationId", stageParams.nActivationId );
 
-      asserter.propertyValue( "depthwiseFilterHeight", blockParams.depthwiseFilterHeight );
-      asserter.propertyValue( "depthwiseFilterWidth", blockParams.depthwiseFilterWidth );
+      asserter.propertyValue( "depthwiseFilterHeight", stageParams.depthwiseFilterHeight );
+      asserter.propertyValue( "depthwiseFilterWidth", stageParams.depthwiseFilterWidth );
 
       // depthwise_AvgMax_Or_ChannelMultiplier
       if ( 0 == stepIndex ) { // step0
-        switch ( nConvBlockType ) {
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
-            if ( blockParams.bPointwise1 == false )
+        switch ( nConvStageType ) {
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
+            if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
             else
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
-            if ( blockParams.bPointwise1 == false )
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
+            if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 4 );
             else
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-            if ( blockParams.bPointwise1 == false )
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+            if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
             else
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
             asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
-          default: tf.util.assert( false, strUnknownConvBlockType ); break;
+          default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
 
       } else { // step1, 2, 3, ...
-        switch ( nConvBlockType ) {
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+        switch ( nConvStageType ) {
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
             asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
-            if ( blockParams.bPointwise1 == false )
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
+            if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
             else
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
-          default: tf.util.assert( false, strUnknownConvBlockType ); break;
+          default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
       }
 
       // depthwiseStridesPad
       if ( 0 == stepIndex ) { // step0
-        switch ( nConvBlockType ) {
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+        switch ( nConvStageType ) {
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
             asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
             asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID );
             break;
 
-          default: tf.util.assert( false, strUnknownConvBlockType ); break;
+          default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
 
       } else { // step1, 2, 3, ...
-        switch ( nConvBlockType ) {
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+        switch ( nConvStageType ) {
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
             asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
             asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID );
             break;
 
-          default: tf.util.assert( false, strUnknownConvBlockType ); break;
+          default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
       }
 
-      if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
+      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
         asserter.propertyValue( "bDepthwiseBias", true );
-        asserter.propertyValue( "depthwiseActivationId", blockParams.nActivationId );
+        asserter.propertyValue( "depthwiseActivationId", stageParams.nActivationId );
       } else {
         asserter.propertyValue( "bDepthwiseBias", false );
         asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
@@ -606,24 +606,24 @@ class Base {
 
       // pointwise21ChannelCount
       { // step0, 1, 2, 3, ...
-        switch ( nConvBlockType ) {
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+        switch ( nConvStageType ) {
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
             asserter.propertyValue( "pointwise21ChannelCount", double_Step0Input0ChannelCount );
             asserter.propertyValue( "pointwise22ChannelCount", 0 );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
             asserter.propertyValue( "pointwise21ChannelCount", single_Step0Input0ChannelCount );
             asserter.propertyValue( "pointwise22ChannelCount", single_Step0Input0ChannelCount );
             break;
 
-          default: tf.util.assert( false, strUnknownConvBlockType ); break;
+          default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
       }
 
@@ -631,41 +631,41 @@ class Base {
 
       // pointwise21ActivationId
       if ( ( stepCount - 1 ) > stepIndex ) { // step0, 1, 2, 3, ..., ( stepCount - 2 )
-        if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
+        if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
           asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
         } else {
-          asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
+          asserter.propertyValue( "pointwise21ActivationId", stageParams.nActivationId );
         }
       } else { // stepLast
-        if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
+        if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
           asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
         } else {
-          if ( blockParams.bPointwise2ActivatedAtBlockEnd == false ) {
+          if ( stageParams.bPointwise2ActivatedAtStageEnd == false ) {
             asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
           } else {
-            asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
+            asserter.propertyValue( "pointwise21ActivationId", stageParams.nActivationId );
           }
         }
       }
 
       // bOutput1Requested
       if ( ( stepCount - 1 ) > stepIndex ) { // step0, 1, 2, 3, ..., ( stepCount - 2 )
-        switch ( nConvBlockType ) {
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+        switch ( nConvStageType ) {
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
             asserter.propertyValue( "bOutput1Requested", false );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
             asserter.propertyValue( "bOutput1Requested", true );
             break;
 
-          default: tf.util.assert( false, strUnknownConvBlockType ); break;
+          default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
 
       } else { // stepLast
@@ -674,24 +674,24 @@ class Base {
 
       // outChannels0, outChannels1
       if ( ( stepCount - 1 ) > stepIndex ) { // step0, 1, 2, 3, ..., ( stepCount - 2 )
-        switch ( nConvBlockType ) {
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvBlockType.Ids.MOBILE_NET_V2: // (3)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+        switch ( nConvStageType ) {
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
             asserter.propertyValue( "outChannels0", double_Step0Input0ChannelCount );
             asserter.propertyValue( "outChannels1", 0 );
             break;
 
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvBlockType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
             asserter.propertyValue( "outChannels0", single_Step0Input0ChannelCount );
             asserter.propertyValue( "outChannels1", single_Step0Input0ChannelCount );
             break;
 
-          default: tf.util.assert( false, strUnknownConvBlockType ); break;
+          default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
 
       } else { // stepLast
@@ -703,7 +703,7 @@ class Base {
       if ( stepParams instanceof PointDepthPoint.Base ) {
 
         // addInput0ToPointwise21
-        if ( ValueDesc.ConvBlockType.isMobileNetV2( blockParams.nConvBlockType ) ) {
+        if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
           asserter.propertyValueNE( "addInput0ToPointwise21", null ); // Only MobileNetV2_Xxx has add-input-to-output.
         } else {
           asserter.propertyValue( "addInput0ToPointwise21", null );
@@ -715,7 +715,7 @@ class Base {
 
       // bKeepInputTensor
       if ( 0 == stepIndex ) {
-        asserter.propertyValue( "bKeepInputTensor", blockParams.bKeepInputTensor );
+        asserter.propertyValue( "bKeepInputTensor", stageParams.bKeepInputTensor );
       } else {
         asserter.propertyValue( "bKeepInputTensor", false );
       }
@@ -743,7 +743,7 @@ class Base {
 
     {
       let referredParams = {};
-      Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( referredParams,
+      Stage.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( referredParams,
         testParams.out.sourceHeight, testParams.out.sourceWidth );
 
       // In ShuffleNetV2, channel shuffler always has half ( height, width ) and twice channel count of original input0.
@@ -761,10 +761,10 @@ class Base {
         + `nActivationIdName=${ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.nActivationId )}`
           + `(${testParams.out.nActivationId}), `
 
-        + `bPointwise2BiasAtBlockEnd=${testParams.out.bPointwise2BiasAtBlockEnd}, `
+        + `bPointwise2BiasAtStageEnd=${testParams.out.bPointwise2BiasAtStageEnd}, `
 
-        + `nConvBlockType=${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockType )}`
-          + `(${testParams.out.nConvBlockType}), `
+        + `nConvStageType=${ValueDesc.ConvStageType.Singleton.getStringOf( testParams.out.nConvStageType )}`
+          + `(${testParams.out.nConvStageType}), `
 
         + `outputHeight=${referredParams.outputHeight}, outputWidth=${referredParams.outputWidth}, `
 //        + `outputChannelCount=${???.outputChannelCount}, `
@@ -772,7 +772,7 @@ class Base {
       ;
     }
 
-    Base.AssertParameters_Block_steps( testParams, this.paramsOutDescription ); // Test every step's parameters.
+    Base.AssertParameters_Stage_steps( testParams, this.paramsOutDescription ); // Test every step's parameters.
 
     // Calculate every steps in sequence.
 
