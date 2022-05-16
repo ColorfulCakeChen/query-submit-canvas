@@ -199,8 +199,6 @@ class ConvBiasActivation extends InputsOutputs {
     let doEscapingScale;
     for ( let outChannel = 0; outChannel < this.afterBias.length; ++outChannel ) {
 
-//!!! ...unfinished... (2022/05/15) thePassThroughStyleInfo
-
       // 1. Determine (activationEscaping) .scaleArraySet (of .output0)
       {
         // 1.1 Determine .do
@@ -213,7 +211,9 @@ class ConvBiasActivation extends InputsOutputs {
 
         } else {
 
-          if ( this.bPassThrough[ outChannel ] ) { // For pass-through half channels.
+          if (   ( this.bPassThrough[ outChannel ] ) // For pass-through half channels.
+              && ( thePassThroughStyleInfo.bActivationEscaping == true ) // And specified pass-through style needs escape activation.
+             ) {
 
             // If value bounds is [ 0, 0 ], adjust it to a range which includes zero.
             //
@@ -243,9 +243,8 @@ class ConvBiasActivation extends InputsOutputs {
                 + `Please use activation function (e.g. clipByValue(), tanh()) which has both negative and positive parts near origin point.`
             );
 
-          } else { // Non pass-through half channels.
-            // Since non-pass-through, no need to escape. (i.e. scale = 1 for no scale)
-            this.output0.scaleArraySet.do.set_one_byN( outChannel, 1 );
+          } else { // Non pass-through half channels. (Or pass-through style is no activation escaping.)
+            this.output0.scaleArraySet.do.set_one_byN( outChannel, 1 ); // No need to escape. (i.e. scale = 1 for no scale)
             doEscapingScale = 1;
           }
         }
@@ -273,6 +272,9 @@ class ConvBiasActivation extends InputsOutputs {
         //        [ 0, +Infinity ]). The reason is that the result's bounds becomes a bounds with Infinity which is difficult to be
         //        handled for the follow-up processing.
         } else {
+
+
+//!!! ...unfinished... (2022/05/15) thePassThroughStyleInfo
 
           if ( this.bPassThrough[ outChannel ] ) { // For pass-through half channels, it will be the output range for inputDomainLinear.
             this.output0.boundsArray.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
