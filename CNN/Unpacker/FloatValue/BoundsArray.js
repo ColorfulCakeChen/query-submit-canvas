@@ -1,7 +1,5 @@
 export { BoundsArray };
 
-//!!! (2022/04/25 Remarked) circular reference.
-//import * as ValueDesc from "../ValueDesc.js";
 import { Bounds } from "./Bounds.js";
 import { ScaleTranslateArray } from "./ScaleTranslateArray.js";
 import { ArrayInterleaver } from "./ArrayInterleaver.js";
