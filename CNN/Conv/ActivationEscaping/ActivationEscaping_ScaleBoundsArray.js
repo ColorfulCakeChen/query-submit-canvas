@@ -129,7 +129,7 @@ class ScaleBoundsArray {
     return this;
   }
 
-// //!!! ...unfinished... (2022/05/16) Replace by add_Xxx() and multiply_Xxx()
+//!!! (2022/05/16 Remarked) Replace by add_Xxx() and multiply_Xxx()
 //   /**
 //    * The aScaleBoundsArray0.scaleArraySet and aScaleBoundsArray1.scaleArraySet must have the same length and values.
 //    *
