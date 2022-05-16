@@ -61,7 +61,8 @@ class PassThroughStyle extends Int {
  * non-linear part when pass-through is necessary.
  */
 PassThroughStyle.Info = class {
-  constructor( filterValue, biasValue, bActivationEscaping ) {
+  constructor( nPassThroughStyleId, filterValue, biasValue, bActivationEscaping ) {
+    this.nPassThroughStyleId = nPassThroughStyleId;
     this.filterValue = filterValue;
     this.biasValue = biasValue;
     this.bActivationEscaping = bActivationEscaping;
