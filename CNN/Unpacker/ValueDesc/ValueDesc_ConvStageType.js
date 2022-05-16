@@ -1,10 +1,10 @@
-export { ConvBlockType };
+export { ConvStageType };
 
 import { Int } from "./ValueDesc_Base.js";
 
-/** Describe id, range, name of ConvBlockType (Convolution Block Type).
+/** Describe id, range, name of ConvStageType (Convolution Stage Type).
  *
- * Convert number value into integer between [ 0, 6 ] representing operation:
+ * Convert number value into integer between [ 0, 7 ] representing operation:
  *   - 0: MOBILE_NET_V1                             (i.e. no-add-inut-to-output, pointwise1 is same size of pointwise21)
  *   - 1: MOBILE_NET_V1_PAD_VALID                   (i.e. no-add-inut-to-output, pointwise1 is same size of pointwise21, depthwise1 with ( pad = "valid" ))
  *   - 2: MOBILE_NET_V2_THIN                        (i.e. add-inut-to-output, pointwise1 is same size of pointwise21)
@@ -14,7 +14,7 @@ import { Int } from "./ValueDesc_Base.js";
  *   - 6: SHUFFLE_NET_V2_BY_MOBILE_NET_V1           (i.e. by integrated pointwise1, depthwise1, pointwise21)
  *   - 7: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (i.e. by depthwise1 with ( pad = "valid" ) )
  */
-class ConvBlockType extends Int {
+class ConvStageType extends Int {
 
   constructor() {
     super( 0, 7, [
@@ -30,15 +30,15 @@ class ConvBlockType extends Int {
   }
 
   /**
-   * @param {number} nConvBlockType  The numeric identifier of ConvBlockType. (ConvBlockType.Singleton.Ids.Xxx)
+   * @param {number} nConvStageType  The numeric identifier of ConvStageType. (ConvStageType.Singleton.Ids.Xxx)
    * @return {boolean} Return true, if it is MOBILE_NET_Xxx.
    */
-  static isMobileNet( nConvBlockType ) {
-    switch ( nConvBlockType ) {
-      case ConvBlockType.Singleton.Ids.MOBILE_NET_V1: // (0)
-      case ConvBlockType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-      case ConvBlockType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
-      case ConvBlockType.Singleton.Ids.MOBILE_NET_V2: // (3)
+  static isMobileNet( nConvStageType ) {
+    switch ( nConvStageType ) {
+      case ConvStageType.Singleton.Ids.MOBILE_NET_V1: // (0)
+      case ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+      case ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
+      case ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
         return true;
       default:
         return false;
@@ -46,13 +46,13 @@ class ConvBlockType extends Int {
   }
 
   /**
-   * @param {number} nConvBlockType  The numeric identifier of ConvBlockType. (ConvBlockType.Singleton.Ids.Xxx)
+   * @param {number} nConvStageType  The numeric identifier of ConvStageType. (ConvStageType.Singleton.Ids.Xxx)
    * @return {boolean} Return true, if it is MOBILE_NET_V2_Xxx.
    */
-  static isMobileNetV2( nConvBlockType ) {
-    switch ( nConvBlockType ) {
-      case ConvBlockType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
-      case ConvBlockType.Singleton.Ids.MOBILE_NET_V2: // (3)
+  static isMobileNetV2( nConvStageType ) {
+    switch ( nConvStageType ) {
+      case ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
+      case ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
         return true;
       default:
         return false;
@@ -60,15 +60,15 @@ class ConvBlockType extends Int {
   }
 
   /**
-   * @param {number} nConvBlockType  The numeric identifier of ConvBlockType. (ConvBlockType.Singleton.Ids.Xxx)
+   * @param {number} nConvStageType  The numeric identifier of ConvStageType. (ConvStageType.Singleton.Ids.Xxx)
    * @return {boolean} Return true, if it is SHUFFLE_NET_Xxx.
    */
-  static isShuffleNet( nConvBlockType ) {
-    switch ( nConvBlockType ) {
-      case ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
-      case ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-      case ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-      case ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+  static isShuffleNet( nConvStageType ) {
+    switch ( nConvStageType ) {
+      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
+      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
+      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
+      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
         return true;
       default:
         return false;
@@ -76,13 +76,13 @@ class ConvBlockType extends Int {
   }
 
   /**
-   * @param {number} nConvBlockType  The numeric identifier of ConvBlockType. (ConvBlockType.Singleton.Ids.Xxx)
+   * @param {number} nConvStageType  The numeric identifier of ConvStageType. (ConvStageType.Singleton.Ids.Xxx)
    * @return {boolean} Return true, if it is Xxx_PAD_VALID.
    */
   static  isPadValid() {
-    switch ( nConvBlockType ) {
-      case ConvBlockType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-      case ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+    switch ( nConvStageType ) {
+      case ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
         return true;
       default:
         return false;
@@ -91,5 +91,5 @@ class ConvBlockType extends Int {
 
 }
 
-/** The only one ValueDesc.ConvBlockType instance. */
-ConvBlockType.Singleton = new ConvBlockType;
+/** The only one ValueDesc.ConvStageType instance. */
+ConvStageType.Singleton = new ConvStageType;
