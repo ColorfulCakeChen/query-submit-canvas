@@ -151,6 +151,31 @@ class ScaleBoundsArray {
   }
 
   /**
+   * The aScaleBoundsArray0.scaleArraySet and aScaleBoundsArray1.scaleArraySet must have the same length and values.
+   *
+   * @param {ScaleBoundsArray} aScaleBoundsArray0  The ScaleBoundsArray of the 1st input.
+   * @param {ScaleBoundsArray} aScaleBoundsArray1  The ScaleBoundsArray of the 2nd input.
+   *
+   * @return {ScaleBoundsArray} Return this (modified) object.
+   */
+  set_all_byScaleBoundsArray_multiply( aScaleBoundsArray0, aScaleBoundsArray1 ) {
+
+    // Multiply both activation escaping scales.
+    //
+    // Note: This is diffferent from .set_all_byScaleBoundsArray_add() which can not handle different source scales.
+    //
+    this.scaleArraySet
+      .set_all_byScaleArraySet( aScaleBoundsArray0.scaleArraySet )
+      .multiply_all_byScaleArraySet( aScaleBoundsArray1.scaleArraySet );
+
+    this.boundsArray
+      .set_all_byBoundsArray( aScaleBoundsArray0.boundsArray )
+      .multiply_all_byBoundsArray( aScaleBoundsArray1.boundsArray );
+    return this;
+  }
+
+
+  /**
    * The this.length will be modified.
    *
    * @param {ScaleBoundsArray} inputScaleBoundsArray0  The ScaleBoundsArray of the 1st input.
