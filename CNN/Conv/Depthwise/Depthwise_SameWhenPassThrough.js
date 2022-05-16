@@ -1,14 +1,16 @@
-export { NonSqueezeExcitation };
+export { SameWhenPassThrough };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import { Base } from "./Depthwise_Base.js";
 
 /**
- * Depthwise with
- * ( nPassThroughStyleId == ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING ) (0).
+ * Depthwise convolution whose output will be the same as input when pass-through.
+ *
+ * It has the following properties:
+ *   - ( nPassThroughStyleId == ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING ) (0).
  *
  */
-class NonSqueezeExcitation extends Base {
+class SameWhenPassThrough extends Base {
 
 //!!! ...unfinished... (2022/05/16)
 
