@@ -5,7 +5,7 @@ import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 
 /**
- * Convolution block parameters.
+ * Convolution stage parameters.
  *
  * @member {number} outputHeight
  *   The height of output image. It is half of the input height (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
@@ -34,25 +34,25 @@ class Params extends Weights.Params {
    * inputFloat32Array (i.e. by evolution).
    *
    * @param {number} sourceChannelCount
-   *   The depth (channel count) of the source image. It may be the output channel count of the previous convolution block, so
+   *   The depth (channel count) of the source image. It may be the output channel count of the previous convolution stage, so
    * it could be large. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
-   * @param {number} stepCountRequested
-   *   How many steps inside this block are wanted.
+   * @param {number} blockCountRequested
+   *   How many blocks inside this stage are wanted.
    *   - If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
-   *   - If one (== 1), the step count will be automatically calculated so that the block's output has half of source's
+   *   - If one (== 1), the block count will be automatically calculated so that the stage's output has half of source's
    *     ( height, width ) and double channel count (depth).
-   *       - Every step will use depthwise convolution ( strides = 1, pad = "valid" ) and pointwise21. So every step will
+   *       - Every block will use depthwise convolution ( strides = 1, pad = "valid" ) and pointwise21. So every block will
    *         shrink the input a little.
-   *       - The step0's depthwise convolution will also use channel multiplier 2 to double the channel count.
-   *       - The stepLast may use a smaller depthwise filter so that it could just make output's ( height, width ) as half of source.
+   *       - The block0's depthwise convolution will also use channel multiplier 2 to double the channel count.
+   *       - The blockLast may use a smaller depthwise filter so that it could just make output's ( height, width ) as half of source.
    *       - If ( depthwiseFilterHeight == 1 ), the depthwiseFilterHeight will become 2 forcibly. Otherwise, the source size
    *         could not be shrinked.
    *
-   *   - If ( stepCountRequested >= 2 ), this block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
-   *       (i.e. to halve height x width) and use ( stepCountRequested - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" )
-   *       until the block end. (This can not be achieved by only one step. So there is at least two steps.)
+   *   - If ( blockCountRequested >= 2 ), this stage will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
+   *       (i.e. to halve height x width) and use ( blockCountRequested - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" )
+   *       until the stage end. (This can not be achieved by only one block. So there is at least two blocks.)
    *
    * @param {number} pointwise1ChannelCountRate
    *   The first 1x1 pointwise convolution output channel count over of the second 1x1 pointwise convolution output channel count.
@@ -74,11 +74,11 @@ class Params extends Weights.Params {
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be
    * extracted from inputFloat32Array (i.e. by evolution).
    *
-   * @param {string} nActivationIdAtBlockEnd
+   * @param {string} nActivationIdAtStageEnd
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution of the last PointDepthPoint's
-   * pointwise2ActivationId of this block. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If the output of
-   * this block needs to be any arbitrary value, it is recommended not to use activation at the end of this block
-   * (i.e. nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that it will not be restricted by the range
+   * pointwise2ActivationId of this stage. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If the output of
+   * this stage needs to be any arbitrary value, it is recommended not to use activation at the end of this stage
+   * (i.e. nActivationIdAtStageEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that it will not be restricted by the range
    * of the activation function.
    *
    * @param {boolean} nWhetherShuffleChannel
@@ -86,20 +86,20 @@ class Params extends Weights.Params {
    *
    *   - If ( nWhetherShuffleChannel == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
    *
-   *   - If ( stepCountRequested <= 1 ), this flag will be ignored.
-   *       This block will be NotShuffleNet_NotMobileNet. There will be no channel shuffler.
+   *   - If ( blockCountRequested <= 1 ), this flag will be ignored.
+   *       This stage will be NotShuffleNet_NotMobileNet. There will be no channel shuffler.
    *
    *   - If ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.NONE ), (0),
-   *       this block will be MobileNetV1 or MobileNetV2 (i.e. with add-input-to-output, no channel shuffler).
+   *       this stage will be MobileNetV1 or MobileNetV2 (i.e. with add-input-to-output, no channel shuffler).
    *
    *   - If ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFFLER ), (1),
-   *       this block will be ShuffleNetV2. There is a channel shuffler by concat-shuffle-split.
+   *       this stage will be ShuffleNetV2. There is a channel shuffler by concat-shuffle-split.
    *
    *   - If ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22 ), (2),
-   *       this block will be ShuffleNetV2_ByPointwise22. There is a channel shuffler by pointwise22.
+   *       this stage will be ShuffleNetV2_ByPointwise22. There is a channel shuffler by pointwise22.
    *
    *   - If ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_MOBILE_NET_V1 ), (3),
-   *       this block will be ShuffleNetV2_ByMobileNetV1. There is a channel shuffler integrated inside pointwise21.
+   *       this stage will be ShuffleNetV2_ByMobileNetV1. There is a channel shuffler integrated inside pointwise21.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply() will not dispose inputTensor (i.e. will be kept). If null, it will be extracted from
@@ -112,22 +112,22 @@ class Params extends Weights.Params {
    */
   constructor( inputFloat32Array, byteOffsetBegin,
     sourceHeight, sourceWidth, sourceChannelCount,
-    stepCountRequested,
+    blockCountRequested,
     pointwise1ChannelCountRate,
     depthwiseFilterHeight, depthwiseFilterWidth,
-    nActivationId, nActivationIdAtBlockEnd,
+    nActivationId, nActivationIdAtStageEnd,
     nWhetherShuffleChannel,
     bKeepInputTensor
   ) {
 
-    // Q: Why the depthwiseChannelMultiplierStep0 is not listed as a parameter?
+    // Q: Why the depthwiseChannelMultiplierBlock0 is not listed as a parameter?
     // A: After considering the following reasons, it is worth to drop this parameter.
     //
-    //   - In reality, it is almost no reason to use only avg/max pooling to compose a block because it keep too little information
-    //     for the next block.
+    //   - In reality, it is almost no reason to use only avg/max pooling to compose a stage because it keep too little information
+    //     for the next stage.
     //
-    //   - If depthwiseChannelMultiplierStep0 is specified as Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.NONE (0), the input
-    //     image will not be shrinked a little (for ( stepCountRequested <= 1 )) or will not be halven (for ( stepCountRequested >= 2 ).
+    //   - If depthwiseChannelMultiplierBlock0 is specified as Params.depthwiseChannelMultiplierBlock0.valueDesc.Ids.NONE (0), the input
+    //     image will not be shrinked a little (for ( blockCountRequested <= 1 )) or will not be halven (for ( blockCountRequested >= 2 ).
     //     If it is still a parameter it should be forced to 1 at least (always needs depthwise operation) in this case.
     //
 
@@ -135,12 +135,12 @@ class Params extends Weights.Params {
       [ Params.sourceHeight,               sourceHeight ],
       [ Params.sourceWidth,                sourceWidth ],
       [ Params.sourceChannelCount,         sourceChannelCount ],
-      [ Params.stepCountRequested,         stepCountRequested ],
+      [ Params.blockCountRequested,         blockCountRequested ],
       [ Params.pointwise1ChannelCountRate, pointwise1ChannelCountRate ],
       [ Params.depthwiseFilterHeight,      depthwiseFilterHeight ],
       [ Params.depthwiseFilterWidth,       depthwiseFilterWidth ],
       [ Params.nActivationId,              nActivationId ],
-      [ Params.nActivationIdAtBlockEnd,    nActivationIdAtBlockEnd ],
+      [ Params.nActivationIdAtStageEnd,    nActivationIdAtStageEnd ],
       [ Params.nWhetherShuffleChannel,     nWhetherShuffleChannel ],
       [ Params.bKeepInputTensor,           bKeepInputTensor ],
     ] );
@@ -190,7 +190,7 @@ class Params extends Weights.Params {
   get sourceWidth()                 { return this.parameterMapModified.get( Params.sourceWidth ); }
   get sourceChannelCount()          { return this.parameterMapModified.get( Params.sourceChannelCount ); }
 
-  get stepCountRequested()          { return this.parameterMapModified.get( Params.stepCountRequested ); }
+  get blockCountRequested()          { return this.parameterMapModified.get( Params.blockCountRequested ); }
   get pointwise1ChannelCountRate()  { return this.parameterMapModified.get( Params.pointwise1ChannelCountRate ); }
 
   get depthwiseFilterHeight()       { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
@@ -198,8 +198,8 @@ class Params extends Weights.Params {
 
   get nActivationId()               { return this.parameterMapModified.get( Params.nActivationId ); }
   get nActivationIdName()           { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
-  get nActivationIdAtBlockEnd()     { return this.parameterMapModified.get( Params.nActivationIdAtBlockEnd ); }
-  get nActivationIdAtBlockEndName() { return Params.nActivationIdAtBlockEnd.getStringOfValue( this.nActivationIdAtBlockEnd ); }
+  get nActivationIdAtStageEnd()     { return this.parameterMapModified.get( Params.nActivationIdAtStageEnd ); }
+  get nActivationIdAtStageEndName() { return Params.nActivationIdAtStageEnd.getStringOfValue( this.nActivationIdAtStageEnd ); }
 
   get nWhetherShuffleChannel()      { return this.parameterMapModified.get( Params.nWhetherShuffleChannel ); }
   get nWhetherShuffleChannelName()  { return Params.nWhetherShuffleChannel.getStringOfValue( this.nWhetherShuffleChannel ); }
@@ -212,12 +212,12 @@ class Params extends Weights.Params {
 Params.sourceHeight =               new ParamDesc.Int(                   "sourceHeight",               1, ( 10 * 1024 ) );
 Params.sourceWidth =                new ParamDesc.Int(                   "sourceWidth",                1, ( 10 * 1024 ) );
 Params.sourceChannelCount =         new ParamDesc.Int(                   "sourceChannelCount",         1, ( 10 * 1024 ) );
-Params.stepCountRequested =         new ParamDesc.Int(                   "stepCountRequested",         1, (  1 * 1024 ) );
+Params.blockCountRequested =         new ParamDesc.Int(                   "blockCountRequested",         1, (  1 * 1024 ) );
 Params.pointwise1ChannelCountRate = new ParamDesc.Int(                   "pointwise1ChannelCountRate", 0,             2 );
 Params.depthwiseFilterHeight =      new ParamDesc.Int(                   "depthwiseFilterHeight",      1, ( 10 * 1024 ) );
 Params.depthwiseFilterWidth =       new ParamDesc.Int(                   "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
 Params.nActivationId =              new ParamDesc.ActivationFunction(    "nActivationId" );
-Params.nActivationIdAtBlockEnd =    new ParamDesc.ActivationFunction(    "nActivationIdAtBlockEnd" );
+Params.nActivationIdAtStageEnd =    new ParamDesc.ActivationFunction(    "nActivationIdAtStageEnd" );
 Params.nWhetherShuffleChannel =     new ParamDesc.WhetherShuffleChannel( "nWhetherShuffleChannel" );
 Params.bKeepInputTensor =           new ParamDesc.Bool(                  "bKeepInputTensor" );
 
