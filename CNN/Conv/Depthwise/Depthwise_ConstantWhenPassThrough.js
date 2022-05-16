@@ -12,7 +12,7 @@ import { Base } from "./Pointwise_Base.js";
  * Usually, this is used for squeeze-and-excitaion depthwise.
  *
  */
-class SameWhenPassThrough extends Base {
+class ConstantWhenPassThrough extends Base {
 
   /**
    */
