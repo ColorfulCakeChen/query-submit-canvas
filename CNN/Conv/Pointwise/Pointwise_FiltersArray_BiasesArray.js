@@ -527,7 +527,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
                 if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                   if ( inChannelToPartBegin == outChannelSub ) { // The only one filter position (in the pass-through part) may have non-zero value.
                     this.filtersArray[ filterIndex ] = filterValuePassThrough;
-
                     tBounds
                       .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
                       .multiply_byN( thePassThroughStyleInfo.filterValue );
@@ -542,7 +541,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
                   ++sourceIndex;
 
                   this.filtersArray[ filterIndex ] = sourceWeight * undoPreviousEscapingScale;
-                  
                   tBounds
                     .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
                     .multiply_byN( sourceWeight );
