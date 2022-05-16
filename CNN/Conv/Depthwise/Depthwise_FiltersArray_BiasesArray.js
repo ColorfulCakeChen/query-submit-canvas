@@ -30,9 +30,9 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *   The width of input image. When ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
  * it will be used to create the higher-half-pass-through depthwise filters.
  *
- * @member {number} inputChannelCount_lowerHalf
- *   The lower half channel count of input image. When ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ),
- * it will be used and must be a positive integer.
+ * @member {number} nPassThroughStyleId
+ *   The pass-through style id (ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) of this convolution. It only affect the channels
+ * which need to be pass-through from input to output.
  *
  * @member {ValueDesc.Depthwise_HigherHalfDifferent} nHigherHalfDifferent
  *   - If ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal depthwise convolution.
@@ -58,6 +58,10 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *         (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail),
  *         the filters for the input channels between ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) will just pass
  *         through the input to output.
+ *
+ * @member {number} inputChannelCount_lowerHalf
+ *   The lower half channel count of input image. When ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ),
+ * it will be used and must be a positive integer.
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
@@ -87,13 +91,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
    */
   constructor(
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
-    bBias, nActivationId,
+    bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf ) {
 
     super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
 
     this.bBias = bBias;
     this.nActivationId = nActivationId;
+    this.nPassThroughStyleId = nPassThroughStyleId;
     this.nHigherHalfDifferent = nHigherHalfDifferent;
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
 
@@ -351,11 +356,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
         this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray );
         this.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId(
-          this.nActivationId,
-
-          // For depthwise (i.e. not squeeze-and-excitaion pointwise), pass-through style should be
-          // ( filterValue = 1, biasValue = 0, with activation escaping).
-          ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING
+          this.nActivationId, this.nPassThroughStyleId
         );
       }
 
@@ -393,6 +394,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
   set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
     sourceFloat32Array, inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
 
+    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( this.nPassThroughStyleId );
     let tBounds = new FloatValue.Bounds( 0, 0 );
 
     // Init
@@ -404,17 +406,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         this.biasesArray.fill( 0 );
       }
     }
-
-//!!! ...unfinished... (2022/04/05) aFiltersBiasesPartInfoArray
-  //!!! ...unfinished... (2022/04/05) The filter weights filling order might be wrong!
-  // Perhaps, source weights [ -99, 40, -2, -83 ] (two filters [ -99, 40 ] and [ -2, -83 ] with shape = [ 1, 2, 1, 1 ])
-  // might be filled as [ -99, -2, 40, -83 ] (filtersTensor4d.shape = [ 1, 2, 2, 1 ]).
-  //
-  // Especially for HIGHER_HALF_DEPTHWISE2 (1).
-  //
-  // may need a leap for filterIndex.
-  //
-
 
     // Extracting weights of filters and biases. (Including extra scale.)
     let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
@@ -453,6 +444,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                       break InChannelPartIndexLoop; // Never exceeds the total input channel count.
 
                     let undoPreviousEscapingScale = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ];
+                    let filterValuePassThrough = thePassThroughStyleInfo.filterValue * undoPreviousEscapingScale;
+
+//!!! ...unfinished... (2022/05/15) thePassThroughStyleInfo
 
                     for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
@@ -460,8 +454,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
                       if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                         if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
-                          this.filtersArray[ filterIndex ] = undoPreviousEscapingScale; // The only one filter position (in the pass-through part) has non-zero value.
-                          tBounds.set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel );
+
+                          this.filtersArray[ filterIndex ] = filterValuePassThrough; // The only one filter position (in the pass-through part) may have non-zero value.
+                          tBounds
+                            .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+                            .multiply_byN( thePassThroughStyleInfo.filterValue );
 
                         } else {
                           this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
@@ -470,13 +467,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
                       } else { // Non-pass-through half channels.
                         let sourceWeight = sourceFloat32Array[ sourceIndex ];
-                        this.filtersArray[ filterIndex ] = sourceWeight * undoPreviousEscapingScale;
+                        ++sourceIndex;
 
+                        this.filtersArray[ filterIndex ] = sourceWeight * undoPreviousEscapingScale;
                         tBounds
                           .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
                           .multiply_byN( sourceWeight );
-
-                        ++sourceIndex;
                       }
 
                       // Determine .afterFilter
@@ -515,6 +511,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 
       if ( this.biasesArray ) {
+        let biasValue;
         let inChannel = inChannelBegin;
         let outChannel = outChannelBegin;
 
@@ -531,17 +528,17 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
               // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
 
               if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-                // Do nothing because pass-through needs no bias.
+                biasValue = thePassThroughStyleInfo.biasValue;
 
               } else { // Non-pass-through half channels.
-                let biasValue = sourceFloat32Array[ sourceIndex ];
-
-                this.biasesArray[ biasIndex ] += biasValue; // Note: Use adding instead of assignment.
+                biasValue = sourceFloat32Array[ sourceIndex ];
                 ++sourceIndex;
-
-                // Determine .afterBias
-                this.boundsArraySet.afterBias.add_one_byN( outChannel, biasValue ); // Shift the value bounds by the bias.
               }
+
+              this.biasesArray[ biasIndex ] += biasValue; // Note: Use adding instead of assignment.
+
+              // Determine .afterBias
+              this.boundsArraySet.afterBias.add_one_byN( outChannel, biasValue ); // Shift the value bounds by the bias.
 
               ++biasIndex;
 
