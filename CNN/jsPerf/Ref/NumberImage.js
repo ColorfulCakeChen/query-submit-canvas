@@ -46,6 +46,54 @@ class Base {
   }
 
   /**
+   * Pointwise convolution whose output will be the same as input when pass-through.
+   *
+   * @param {NumberImage.Base} this      The source image to be processed.
+   * @param {boolean}  bBias             Whether add bias.
+   * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
+   * @param {string}   pointwiseName     A string for debug message of this convolution.
+   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   *
+   * @return {NumberImage.Base}
+   *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
+   */
+  cloneBy_pointwise_SameWhenPassThrough(
+    pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
+    nPassThroughStyleId, bPassThrough,
+    pointwiseName, parametersDesc ) {
+
+    return this.cloneBy_pointwise(
+      pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
+      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING,
+      bPassThrough,
+      pointwiseName, parametersDesc );
+  }
+
+  /**
+   * Pointwise convolution whose output will be constant value (no matter what input) when pass-through.
+   *
+   * @param {NumberImage.Base} this      The source image to be processed.
+   * @param {boolean}  bBias             Whether add bias.
+   * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
+   * @param {string}   pointwiseName     A string for debug message of this convolution.
+   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   *
+   * @return {NumberImage.Base}
+   *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
+   */
+  cloneBy_pointwise_ConstantWhenPassThrough(
+    pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
+    nPassThroughStyleId, bPassThrough,
+    pointwiseName, parametersDesc ) {
+
+    return this.cloneBy_pointwise(
+      pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
+      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING,
+      bPassThrough,
+      pointwiseName, parametersDesc );
+  }
+
+  /**
    * @param {NumberImage.Base} this      The source image to be processed.
    * @param {boolean}  bBias             Whether add bias.
    * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
@@ -57,7 +105,7 @@ class Base {
    */
   cloneBy_pointwise(
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-    bPassThrough,
+    nPassThroughStyleId, bPassThrough,
     pointwiseName, parametersDesc ) {
 
     let imageIn = this;
@@ -135,7 +183,8 @@ class Base {
     {
       // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
       // by .afterBias, bPassThrough and activation function's output range.
-      imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( pointwiseActivationId );
+      imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId(
+        pointwiseActivationId, nPassThroughStyleId );
 
       // Before activation function, scale every element according to its channel.
       imageOut.scale_byChannel( imageOut.boundsArraySet.output0.scaleArraySet.do, pointwiseName + " activation escaping scale", parametersDesc );
@@ -145,6 +194,58 @@ class Base {
     imageOut.modifyByActivation( pointwiseActivationId, parametersDesc );
 
     return imageOut;
+  }
+
+  /**
+   * Depthwise convolution whose output will be the same as input when pass-through.
+   *
+   * @param {NumberImage.Base} this      The source image to be processed.
+   * @param {boolean}  bBias             Whether add bias.
+   * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
+   * @param {string}   depthwiseName     A string for debug message of this convolution.
+   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   *
+   * @return {NumberImage.Base}
+   *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
+   */
+  cloneBy_depthwise_SameWhenPassThrough(
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+    nPassThroughStyleId, bPassThrough,
+    depthwiseName, parametersDesc ) {
+
+    return this.cloneBy_depthwise(
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING,
+      bPassThrough,
+      depthwiseName, parametersDesc );
+  }
+
+  /**
+   * Depthwise convolution whose output will be constant value (no matter what input) when pass-through.
+   *
+   * @param {NumberImage.Base} this      The source image to be processed.
+   * @param {boolean}  bBias             Whether add bias.
+   * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
+   * @param {string}   depthwiseName     A string for debug message of this convolution.
+   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   *
+   * @return {NumberImage.Base}
+   *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
+   */
+  cloneBy_depthwise_ConstantWhenPassThrough(
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+    nPassThroughStyleId, bPassThrough,
+    depthwiseName, parametersDesc ) {
+
+    return this.cloneBy_depthwise(
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING,
+      bPassThrough,
+      depthwiseName, parametersDesc );
   }
 
   /**
@@ -160,7 +261,7 @@ class Base {
   cloneBy_depthwise(
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-    bPassThrough,
+    nPassThroughStyleId, bPassThrough,
     depthwiseName, parametersDesc ) {
 
     let imageIn = this;
@@ -326,7 +427,8 @@ class Base {
     {
       // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
       // by .afterBias, bPassThrough and activation function's output range.
-      imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
+      imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId(
+        depthwiseActivationId, nPassThroughStyleId );
 
       // Before activation function, scale every element according to its channel.
       imageOut.scale_byChannel( imageOut.boundsArraySet.output0.scaleArraySet.do, depthwiseName + " activation escaping scale", parametersDesc );
