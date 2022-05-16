@@ -167,8 +167,8 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
   /**
-   * Determine .output0.boundsArray (i.e. .afterActivation) and .output0.scaleArraySet by .afterBias and .bPassThrough and nActivationId.
-   * Also adjust .afterFilter and .afterBias by .output0.scaleArraySet.
+   * Determine .output0.boundsArray (i.e. .afterActivation) and .output0.scaleArraySet by .afterBias and .bPassThrough and nActivationId
+   * and nPassThroughStyleId. Also adjust .afterFilter and .afterBias by .output0.scaleArraySet.
    *
    * The following properties will be used:
    *   - this.afterBias
@@ -184,7 +184,8 @@ class ConvBiasActivation extends InputsOutputs {
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of this convolution.
    *
    * @param {number} nPassThroughStyleId
-   *   The pass-through style id (ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) of this convolution.
+   *   The pass-through style id (ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) of this convolution. It is used for
+   * ( this.bPassThrough[ i ] == true ).
    *
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
