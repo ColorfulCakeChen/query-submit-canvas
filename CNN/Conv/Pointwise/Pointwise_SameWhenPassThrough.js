@@ -9,6 +9,8 @@ import { Base } from "./Pointwise_Base.js";
  * It has the following properties:
  *   - ( nPassThroughStyleId == ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING ) (0).
  *
+ * Usually, this is used for non-squeeze-and-excitaion pointwise.
+ *
  */
 class SameWhenPassThrough extends Base {
 
@@ -20,10 +22,7 @@ class SameWhenPassThrough extends Base {
 
     super(
       inputChannelCount, outputChannelCount, bBias, nActivationId,
-
-      // For non-squeeze-and-excitaion pointwise, pass-through style should be ( filterValue = 1, biasValue = 0, with activation escaping).
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING,
-
       nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
   }
 
