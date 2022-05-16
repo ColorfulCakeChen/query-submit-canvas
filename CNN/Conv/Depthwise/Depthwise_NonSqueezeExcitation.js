@@ -22,7 +22,11 @@ class NonSqueezeExcitation extends Base {
     super(
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId,
+
+      // For depthwise (i.e. not squeeze-and-excitaion pointwise), pass-through style should be
+      // ( filterValue = 1, biasValue = 0, with activation escaping).
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING,
+
       nHigherHalfDifferent, inputChannelCount_lowerHalf );
 
   }
