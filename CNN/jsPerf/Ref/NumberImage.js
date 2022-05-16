@@ -384,7 +384,7 @@ class Base {
   }
 
   /**
-   * Note: This method does not adjust any BoundsArray.
+   * Note: This method does not adjust any BoundsArraySet.
    *
    * @param {NumberImage.Base} this            The source image to be processed.
    * @param {FloatValue.ScaleArray} scaleArray The scales for every channel.
@@ -491,9 +491,15 @@ class Base {
     );
 
     // Calculate value bounds of every output channels.
-    imageOutNew.boundsArraySet.output0.set_all_byScaleBoundsArray_add(
-      imageOutNew.boundsArraySet.input0, another.boundsArraySet.output0 );
 
+//!!! (2022/05/16 Remarked)
+//     imageOutNew.boundsArraySet.output0.set_all_byScaleBoundsArray_add(
+//       imageOutNew.boundsArraySet.input0, another.boundsArraySet.output0 );
+
+    imageOutNew.boundsArraySet.output0
+      .set_all_byScaleBoundsArray( imageOutNew.boundsArraySet.input0 )
+      .add_all_byScaleBoundsArray( another.boundsArraySet.output0 );
+  
     return imageOutNew;
   }
 
@@ -539,8 +545,14 @@ class Base {
     );
 
     // Calculate value bounds of every output channels.
-    imageOutNew.boundsArraySet.output0.set_all_byScaleBoundsArray_multiply(
-      imageOutNew.boundsArraySet.input0, another.boundsArraySet.output0 );
+
+//!!! (2022/05/16 Remarked)
+//     imageOutNew.boundsArraySet.output0.set_all_byScaleBoundsArray_multiply(
+//       imageOutNew.boundsArraySet.input0, another.boundsArraySet.output0 );
+
+    imageOutNew.boundsArraySet.output0
+      .set_all_byScaleBoundsArray( imageOutNew.boundsArraySet.input0 )
+      .multiply_all_byScaleBoundsArray( another.boundsArraySet.output0 );
 
     return imageOutNew;
   }
