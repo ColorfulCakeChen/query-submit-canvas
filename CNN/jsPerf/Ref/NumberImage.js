@@ -59,7 +59,7 @@ class Base {
    */
   cloneBy_pointwise_SameWhenPassThrough(
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-    nPassThroughStyleId, bPassThrough,
+    bPassThrough,
     pointwiseName, parametersDesc ) {
 
     return this.cloneBy_pointwise(
@@ -83,7 +83,7 @@ class Base {
    */
   cloneBy_pointwise_ConstantWhenPassThrough(
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-    nPassThroughStyleId, bPassThrough,
+    bPassThrough,
     pointwiseName, parametersDesc ) {
 
     return this.cloneBy_pointwise(
@@ -121,6 +121,8 @@ class Base {
     let imageOut = new Base(
       imageIn.height, imageIn.width, pointwiseChannelCount, new Float32Array( imageOutLength ),
       new BoundsArraySet.Pointwise( imageIn.boundsArraySet.output0, pointwiseChannelCount ) );
+
+    // Note: In fact, nPassThroughStyleId is not used by NumberImage directly. But used by underlie BoundsArraySet.
 
     imageOut.boundsArraySet.set_bPassThrough_all( bPassThrough );
 
@@ -211,7 +213,7 @@ class Base {
   cloneBy_depthwise_SameWhenPassThrough(
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-    nPassThroughStyleId, bPassThrough,
+    bPassThrough,
     depthwiseName, parametersDesc ) {
 
     return this.cloneBy_depthwise(
@@ -237,7 +239,7 @@ class Base {
   cloneBy_depthwise_ConstantWhenPassThrough(
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-    nPassThroughStyleId, bPassThrough,
+    bPassThrough,
     depthwiseName, parametersDesc ) {
 
     return this.cloneBy_depthwise(
@@ -294,6 +296,8 @@ class Base {
     let imageOut = new Base(
       outputHeight, outputWidth, outputChannelCount, new Float32Array( outputElementCount ),
       new BoundsArraySet.Depthwise( imageIn.boundsArraySet.output0, outputChannelCount ) );
+
+    // Note: In fact, nPassThroughStyleId is not used by NumberImage directly. But used by underlie BoundsArraySet.
 
     imageOut.boundsArraySet.set_bPassThrough_all( bPassThrough );
 
