@@ -5,7 +5,7 @@ import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 
 /**
- * Convolution block parameters.
+ * Convolution stage parameters.
  *
  * @member {number} outputHeight
  *   The height of output image. It is half of the input height (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
@@ -34,15 +34,15 @@ class Params extends Weights.Params {
    * inputFloat32Array (i.e. by evolution).
    *
    * @param {number} sourceChannelCount
-   *   The depth (channel count) of the source image. It may be the output channel count of the previous convolution block, so
+   *   The depth (channel count) of the source image. It may be the output channel count of the previous convolution stage, so
    * it could be large. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
-   * @param {number} stepCountRequested
-   *   How many steps inside this block are wanted.
+   * @param {number} blockCountRequested
+   *   How many blocks inside this stage are wanted.
    *   - If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   *   - It must be ( >= 2 ). Because this block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
-   *       (i.e. to halve height x width) and use ( stepCountRequested - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" )
-   *       until the block end. These can not be achieved by only one step. So there is at least two steps.
+   *   - It must be ( >= 2 ). Because this stage will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
+   *       (i.e. to halve height x width) and use ( blockCountRequested - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" )
+   *       until the stage end. These can not be achieved by only one block. So there is at least two blocks.
    *
    * @param {boolean} bPointwise1
    *   If false, there will be no pointwise1 (i.e. the 1st pointwise convolution).If null, it will be extracted from inputFloat32Array
@@ -60,19 +60,19 @@ class Params extends Weights.Params {
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be
    * extracted from inputFloat32Array (i.e. by evolution).
    *
-   * @param {boolean} bPointwise2ActivatedAtBlockEnd
-   *   If true, the stepLast's pointwise2 will have activation function. If false, the stepLast's pointwise2 will have no activation
+   * @param {boolean} bPointwise2ActivatedAtStageEnd
+   *   If true, the blockLast's pointwise2 will have activation function. If false, the blockLast's pointwise2 will have no activation
    * function. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
-   *   - If there will be next block after this block, it usually should be true (i.e. has activation function). The reason is that
-   *       this block's stepLast's pointwise2 (if has no activation function) and the next block's step0's pointwise1 are essentially
+   *   - If there will be next stage after this stage, it usually should be true (i.e. has activation function). The reason is that
+   *       this stage's blockLast's pointwise2 (if has no activation function) and the next stage's block0's pointwise1 are essentially
    *       just one pointwise convolution. (Multiple affine transformations can always be combined into just one affine transformation.)
    *
    *     - There is one exception: for MobileNetV2_Xxx, its pointwise2 always has no activation function no matter whether
-   *         bPointwise2ActivatedAtBlockEnd is true or false. The Reason is that it has add-input-to-output to modify pointwise2
-   *         output. So, even if its block output is not affine transformation (even it has no activation function).
+   *         bPointwise2ActivatedAtStageEnd is true or false. The Reason is that it has add-input-to-output to modify pointwise2
+   *         output. So, even if its stage output is not affine transformation (even it has no activation function).
    *
-   *   - Only when this block is the last block of a neural network, it should be false (i.e. has no activation function). There are
+   *   - Only when this stage is the last stage of a neural network, it should be false (i.e. has no activation function). There are
    *       two reasons:
    *
    *     - For ShuffleNetV2_ByMobileNetV1, let it undo activation escaping scales.
@@ -81,12 +81,12 @@ class Params extends Weights.Params {
    *         (i.e. different from ShuffleNetV2). In order to resolve this issue, the last operation (i.e. pointwise2) should have
    *         no activation (so it will not scale its convolution filters for escaping the activation function's non-linear parts).
    *
-   *     - Even if not ShuffleNetV2_ByMobileNetV1 (i.e. for other ConvBlockType), it does have practical advantage in fact. The
+   *     - Even if not ShuffleNetV2_ByMobileNetV1 (i.e. for other ConvStageType), it does have practical advantage in fact. The
    *         output could have any value (i.e. the whole number line). If the last operation (i.e. pointwise2) has activation
    *         function, the output value will be restricted by the activation function (e.g. [ -1, +1 ] for tanh()).
    *
-   * @param {number} nConvBlockType
-   *   The convolution block type (ValueDesc.ConvBlockType.Singleton.Ids.Xxx). If null, it will be extracted from inputFloat32Array
+   * @param {number} nConvStageType
+   *   The convolution stage type (ValueDesc.ConvStageType.Singleton.Ids.Xxx). If null, it will be extracted from inputFloat32Array
    * (i.e. by evolution).
    *
    * @param {boolean} bKeepInputTensor
@@ -100,23 +100,23 @@ class Params extends Weights.Params {
    */
   constructor( inputFloat32Array, byteOffsetBegin,
     sourceHeight, sourceWidth, sourceChannelCount,
-    stepCountRequested,
+    blockCountRequested,
     bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth,
     nActivationId,
-    bPointwise2ActivatedAtBlockEnd,
-    nConvBlockType,
+    bPointwise2ActivatedAtStageEnd,
+    nConvStageType,
     bKeepInputTensor
   ) {
 
-    // Q: Why the depthwiseChannelMultiplierStep0 is not listed as a parameter?
+    // Q: Why the depthwiseChannelMultiplierBlock0 is not listed as a parameter?
     // A: After considering the following reasons, it is worth to drop this parameter.
     //
-    //   - In reality, it is almost no reason to use only avg/max pooling to compose a block because it keep too little information
-    //     for the next block.
+    //   - In reality, it is almost no reason to use only avg/max pooling to compose a stage because it keep too little information
+    //     for the next stage.
     //
-    //   - If depthwiseChannelMultiplierStep0 is specified as Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.NONE (0), the input
-    //     image will not be shrinked a little (for ( stepCountRequested <= 1 )) or will not be halven (for ( stepCountRequested >= 2 ).
+    //   - If depthwiseChannelMultiplierBlock0 is specified as Params.depthwiseChannelMultiplierBlock0.valueDesc.Ids.NONE (0), the input
+    //     image will not be shrinked a little (for ( blockCountRequested <= 1 )) or will not be halven (for ( blockCountRequested >= 2 ).
     //     If it is still a parameter it should be forced to 1 at least (always needs depthwise operation) in this case.
     //
 
@@ -124,13 +124,13 @@ class Params extends Weights.Params {
       [ Params.sourceHeight,                   sourceHeight ],
       [ Params.sourceWidth,                    sourceWidth ],
       [ Params.sourceChannelCount,             sourceChannelCount ],
-      [ Params.stepCountRequested,             stepCountRequested ],
+      [ Params.blockCountRequested,             blockCountRequested ],
       [ Params.bPointwise1,                    bPointwise1 ],
       [ Params.depthwiseFilterHeight,          depthwiseFilterHeight ],
       [ Params.depthwiseFilterWidth,           depthwiseFilterWidth ],
       [ Params.nActivationId,                  nActivationId ],
-      [ Params.bPointwise2ActivatedAtBlockEnd, bPointwise2ActivatedAtBlockEnd ],
-      [ Params.nConvBlockType,                 nConvBlockType ],
+      [ Params.bPointwise2ActivatedAtStageEnd, bPointwise2ActivatedAtStageEnd ],
+      [ Params.nConvStageType,                 nConvStageType ],
       [ Params.bKeepInputTensor,               bKeepInputTensor ],
     ] );
 
@@ -179,7 +179,7 @@ class Params extends Weights.Params {
   get sourceWidth()                    { return this.parameterMapModified.get( Params.sourceWidth ); }
   get sourceChannelCount()             { return this.parameterMapModified.get( Params.sourceChannelCount ); }
 
-  get stepCountRequested()             { return this.parameterMapModified.get( Params.stepCountRequested ); }
+  get blockCountRequested()             { return this.parameterMapModified.get( Params.blockCountRequested ); }
   get bPointwise1()                    { return this.parameterMapModified.get( Params.bPointwise1 ); }
 
   get depthwiseFilterHeight()          { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
@@ -188,10 +188,10 @@ class Params extends Weights.Params {
   get nActivationId()                  { return this.parameterMapModified.get( Params.nActivationId ); }
   get nActivationIdName()              { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
 
-  get bPointwise2ActivatedAtBlockEnd() { return this.parameterMapModified.get( Params.bPointwise2ActivatedAtBlockEnd ); }
+  get bPointwise2ActivatedAtStageEnd() { return this.parameterMapModified.get( Params.bPointwise2ActivatedAtStageEnd ); }
 
-  get nConvBlockType()                 { return this.parameterMapModified.get( Params.nConvBlockType ); }
-  get nConvBlockTypeName()             { return Params.nConvBlockType.getStringOfValue( this.nConvBlockType ); }
+  get nConvStageType()                 { return this.parameterMapModified.get( Params.nConvStageType ); }
+  get nConvStageTypeName()             { return Params.nConvStageType.getStringOfValue( this.nConvStageType ); }
 
   get bKeepInputTensor()               { return this.parameterMapModified.get( Params.bKeepInputTensor ); }
 }
@@ -201,12 +201,12 @@ class Params extends Weights.Params {
 Params.sourceHeight =                   new ParamDesc.Int(                "sourceHeight",               1, ( 10 * 1024 ) );
 Params.sourceWidth =                    new ParamDesc.Int(                "sourceWidth",                1, ( 10 * 1024 ) );
 Params.sourceChannelCount =             new ParamDesc.Int(                "sourceChannelCount",         1, ( 10 * 1024 ) );
-Params.stepCountRequested =             new ParamDesc.Int(                "stepCountRequested",         2, (  1 * 1024 ) );
+Params.blockCountRequested =             new ParamDesc.Int(                "blockCountRequested",         2, (  1 * 1024 ) );
 Params.bPointwise1 =                    new ParamDesc.Bool(               "bPointwise1" );
 Params.depthwiseFilterHeight =          new ParamDesc.Int(                "depthwiseFilterHeight",      1, ( 10 * 1024 ) );
 Params.depthwiseFilterWidth =           new ParamDesc.Int(                "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
 Params.nActivationId =                  new ParamDesc.ActivationFunction( "nActivationId" );
-Params.bPointwise2ActivatedAtBlockEnd = new ParamDesc.Bool(               "bPointwise2ActivatedAtBlockEnd" );
-Params.nConvBlockType =                 new ParamDesc.ConvBlockType(      "nConvBlockType" );
+Params.bPointwise2ActivatedAtStageEnd = new ParamDesc.Bool(               "bPointwise2ActivatedAtStageEnd" );
+Params.nConvStageType =                 new ParamDesc.ConvStageType(      "nConvStageType" );
 Params.bKeepInputTensor =               new ParamDesc.Bool(               "bKeepInputTensor" );
 
