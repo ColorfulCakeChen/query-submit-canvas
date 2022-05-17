@@ -2,8 +2,6 @@ export { Base };
 
 import * as BoundsArraySet from "./BoundsArraySet.js";
 
-//!!! ...unfinished... (2021/05/30) may inherit from Pointwise?
-
 /**
  * Add two tensor3d. They should have the same dimensions ( height x width x channel ). It could destroy one or two of the input tensors.
  *
@@ -40,22 +38,6 @@ class Base {
     Base.adjust_pfnAdd.call( this );
     Base.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1 );
   }
-
-
-//!!! ...unfinished... (2021/06/08) What if pointwise22 could be add-input-to-output but pointwise21 could not?
-// Perhaps, AddTwoTensors should be able to handle no-op (no add but just return input).
-//
-//   /**
-//    *
-//    */
-//   init() {
-//
-// //!!! ...unfinished... (2021/06/08) What if pointwise22 could be add-input-to-output but pointwise21 could not?
-// // Perhaps, AddTwoTensors should be able to handle no-op (no add but just return input).
-//
-// //!!! ...unfinished... (2021/06/08)
-//     this.pfnOperation = this.pfnAdd = Base.return_input_directly;    
-////   }
 
   /**
    * Adjust this.pfnAdd so that this.pfnAdd() will or will not dispose its inputTensors.
@@ -116,9 +98,6 @@ class Base {
       .set_all_byScaleBoundsArray( inputScaleBoundsArray0 )
       .add_all_byScaleBoundsArray_all( inputScaleBoundsArray1 );
   }
-
-//!!! ...unfinished... (2021/06/08) What if pointwise22 could be add-input-to-output but pointwise21 could not?
-// Perhaps, AddTwoTensors should be able to handle no-op (no add but just return input).
 
   /** Add. (Both the inputTensor0 and inputTensor1 will not be disposed. */
   static Add_and_keep0_keep1( inputTensor0, inputTensor1 ) {
