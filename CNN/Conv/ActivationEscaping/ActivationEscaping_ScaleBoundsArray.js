@@ -129,53 +129,6 @@ class ScaleBoundsArray {
     return this;
   }
 
-//!!! (2022/05/16 Remarked) Replace by add_Xxx() and multiply_Xxx()
-//   /**
-//    * The aScaleBoundsArray0.scaleArraySet and aScaleBoundsArray1.scaleArraySet must have the same length and values.
-//    *
-//    * @param {ScaleBoundsArray} aScaleBoundsArray0  The ScaleBoundsArray of the 1st input.
-//    * @param {ScaleBoundsArray} aScaleBoundsArray1  The ScaleBoundsArray of the 2nd input.
-//    *
-//    * @return {ScaleBoundsArray} Return this (modified) object.
-//    */
-//   set_all_byScaleBoundsArray_add( aScaleBoundsArray0, aScaleBoundsArray1 ) {
-//
-//     // The two added source should have the same activation escaping scales. Otherwise, they can not be added together.
-//     aScaleBoundsArray0.scaleArraySet.assert_all_byScaleArraySet_equal( aScaleBoundsArray1.scaleArraySet );
-//
-//     this.scaleArraySet.set_all_byScaleArraySet( aScaleBoundsArray0.scaleArraySet ); // Keep same activation escaping scales.
-//
-//     this.boundsArray
-//       .set_all_byBoundsArray( aScaleBoundsArray0.boundsArray )
-//       .add_all_byBoundsArray( aScaleBoundsArray1.boundsArray );
-//     return this;
-//   }
-//
-//   /**
-//    * The aScaleBoundsArray0.scaleArraySet and aScaleBoundsArray1.scaleArraySet must have the same length and values.
-//    *
-//    * @param {ScaleBoundsArray} aScaleBoundsArray0  The ScaleBoundsArray of the 1st input.
-//    * @param {ScaleBoundsArray} aScaleBoundsArray1  The ScaleBoundsArray of the 2nd input.
-//    *
-//    * @return {ScaleBoundsArray} Return this (modified) object.
-//    */
-//   set_all_byScaleBoundsArray_multiply( aScaleBoundsArray0, aScaleBoundsArray1 ) {
-//
-//     // Multiply both activation escaping scales.
-//     //
-//     // Note: This is diffferent from .set_all_byScaleBoundsArray_add() which can not handle different source scales.
-//     //
-//     this.scaleArraySet
-//       .set_all_byScaleArraySet( aScaleBoundsArray0.scaleArraySet )
-//       .multiply_all_byScaleArraySet( aScaleBoundsArray1.scaleArraySet );
-//
-//     this.boundsArray
-//       .set_all_byBoundsArray( aScaleBoundsArray0.boundsArray )
-//       .multiply_all_byBoundsArray( aScaleBoundsArray1.boundsArray );
-//     return this;
-//   }
-
-
   /**
    * The this.length will be modified.
    *
@@ -216,12 +169,34 @@ class ScaleBoundsArray {
    *
    * @return {ScaleBoundsArray} Return this (modified) object.
    */
-  add_all_byScaleBoundsArray( aScaleBoundsArray ) {
+  add_all_byScaleBoundsArray_all( aScaleBoundsArray ) {
 
     // The two added source should have the same activation escaping scales. Otherwise, they can not be added together.
-    this.scaleArraySet.assert_all_byScaleArraySet_equal( aScaleBoundsArray.scaleArraySet );
+    this.scaleArraySet.assert_all_byScaleArraySet_all_equal( aScaleBoundsArray.scaleArraySet );
 
     this.boundsArray.add_all_byBoundsArray( aScaleBoundsArray.boundsArray );
+    return this;
+  }
+
+  /**
+   * The this.scaleArraySet all must have the same value as aScaleBoundsArray.scaleArraySet.do.scales[ aIndex ] and
+   * aScaleBoundsArray.scaleArraySet.undo.scales[ aIndex ].
+   *
+   * @param {ScaleBoundsArray} aScaleBoundsArray
+   *   The aScaleBoundsArray.boundsArray.lowers[ aIndex ] and aScaleBoundsArray.boundsArray.uppers[ aIndex ] will be used to add.
+   *
+   * @param {number} aIndex
+   *   The array index of aScaleBoundsArray.
+   *
+   * @return {ScaleBoundsArray} Return this (modified) object.
+   */
+  add_all_byScaleBoundsArray_one( aScaleBoundsArray, aIndex ) {
+
+    // The two added source should have the same activation escaping scales. Otherwise, they can not be added together.
+    this.scaleArraySet.assert_all_byScaleArraySet_one_equal( aScaleBoundsArray.scaleArraySet, aIndex );
+
+    this.boundsArray.add_all_byLowerUpper(
+      aScaleBoundsArray.boundsArray.lowers[ aIndex ], aScaleBoundsArray.boundsArray.uppers[ aIndex ]  );
     return this;
   }
 
@@ -241,6 +216,8 @@ class ScaleBoundsArray {
     this.boundsArray.multiply_all_byBoundsArray( aScaleBoundsArray.boundsArray );
     return this;
   }
+
+//!!!
 
 
   /**
