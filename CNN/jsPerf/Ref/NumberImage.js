@@ -189,7 +189,8 @@ class Base {
         pointwiseActivationId, nPassThroughStyleId );
 
       // Before activation function, scale every element according to its channel.
-      imageOut.scale_byChannel( imageOut.boundsArraySet.output0.scaleArraySet.do, pointwiseName + " activation escaping scale", parametersDesc );
+      Base.scale_byChannel( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
+        pointwiseName + " activation escaping scale", parametersDesc );
     }
 
     // Activation
@@ -435,7 +436,8 @@ class Base {
         depthwiseActivationId, nPassThroughStyleId );
 
       // Before activation function, scale every element according to its channel.
-      imageOut.scale_byChannel( imageOut.boundsArraySet.output0.scaleArraySet.do, depthwiseName + " activation escaping scale", parametersDesc );
+      Base.scale_byChannel( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
+        depthwiseName + " activation escaping scale", parametersDesc );
     }
 
     // Activation
@@ -492,16 +494,16 @@ class Base {
   /**
    * Note: This method does not adjust any BoundsArraySet.
    *
-   * @param {NumberImage.Base} this            The source image to be processed.
-   * @param {FloatValue.ScaleArray} scaleArray The scales for every channel.
-   * @param {string}   scaleName               A string for debug message of this scaling.
-   * @param {string}   parametersDesc          A string for debug message of this point-depth-point.
+   * @param {NumberImage.Base} thisImage        The thisImage.dataArray[] will be multiplied by scaleArray in place.
+   * @param {FloatValue.ScaleArray} scaleArray  The scales for every channel.
+   * @param {string}   scaleName                A string for debug message of this scaling.
+   * @param {string}   parametersDesc           A string for debug message of this point-depth-point.
    *
    * @return {NumberImage.Base}
-   *   Return this (modified) image whose every element is scaled according to its channel.
+   *   Return the (modified) image whose every element is scaled according to its channel.
    */
-  scale_byChannel( scaleArray, scaleName, parametersDesc ) {
-    let imageIn = this;
+  static scale_byChannel( thisImage, scaleArray, scaleName, parametersDesc ) {
+    let imageIn = thisImage;
 
     tf.util.assert( ( scaleArray != null ),
       `${scaleName} scaleArray (${scaleArray}) `
