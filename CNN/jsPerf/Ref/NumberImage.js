@@ -558,8 +558,11 @@ class Base {
   }
 
   /**
-   * @param {NumberImage.Base} this        The first image to be used for adding. It must have the same size as another.
-   * @param {NumberImage.Base} another     The second image to be used for adding. It must have the same size as this.
+   * Two input dimensions ( height, width, depth ) should be the same, or one should be a scalar ( 1 * 1 * 1 ) value
+   * (i.e. boradcast is supported).
+   *
+   * @param {NumberImage.Base} this        The first image to be used for adding.
+   * @param {NumberImage.Base} another     The second image to be used for adding.
    *
    * @param {string} addName               A string for debug message of this adding operation.
    * @param {string} parametersDesc        A string for debug message of this point-depth-point.
@@ -569,13 +572,8 @@ class Base {
    */
   cloneBy_add( another, addName, parametersDesc ) {
 
-//!!! ...unfinished... (2022/05/17) Perhaps, should support broadcast (add a scalar value).
-    
-    let rHeight, rWidth, rDepth;
-    let rBoundsArraySet = BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
+    let rHeight, rWidth, rDepth, rBoundsArraySet;
     let resultArray;
-
-    // Two input dimensions ( height, width, depth ) should be the same, or one should be a scalar ( 1 * 1 * 1 )value.
 
     if ( ( another.height == this.height ) && ( another.width == this.width ) && ( another.depth == this.depth ) ) { // Same size.
 
@@ -624,9 +622,9 @@ class Base {
 
     } else {
       tf.util.assert( false,
-        `${addName}: another ( height * width * depth ) = ( ${another.height} * ${another.width} * ${this.depth} ) `
-          + `and this ( height * width * depth ) = ( ${this.height} * ${this.width} * ${this.depth} ) `
-          + `should be either totally the same or at least one is ( 1 * 1 * 1 ).`
+        `${addName}: another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${this.depth} ) `
+          + `and this ( height, width, depth ) = ( ${this.height}, ${this.width}, ${this.depth} ) `
+          + `should be either totally the same or at least one is ( 1, 1, 1 ).`
           + `(${parametersDesc})`);
     }
 
@@ -638,8 +636,11 @@ class Base {
   }
 
   /**
-   * @param {NumberImage.Base} this        The first image to be used for multiplying. It must have the same size as another.
-   * @param {NumberImage.Base} another     The second image to be used for multiplying. It must have the same size as this.
+   * Two input dimensions ( height, width, depth ) should be the same, or one should be a scalar ( 1 * 1 * 1 ) value
+   * (i.e. boradcast is supported).
+   *
+   * @param {NumberImage.Base} this        The first image to be used for multiplying.
+   * @param {NumberImage.Base} another     The second image to be used for multiplying.
    *
    * @param {string} multiplyName          A string for debug message of this multiplying operation.
    * @param {string} parametersDesc        A string for debug message of this point-depth-point.
@@ -649,44 +650,65 @@ class Base {
    */
   cloneBy_multiply( another, multiplyName, parametersDesc ) {
 
-//!!! ...unfinished... (2022/05/16) Perhaps, should support broadcast (multiply a scalar value).
+    let rHeight, rWidth, rDepth, rBoundsArraySet;
+    let resultArray;
 
-    // If the output dimensions ( height, width, depth ) is not the same as input, it is impossible to multiply.
-    {
-      tf.util.assert( ( another.height == this.height ),
-        `${multiplyName}: another.height ( ${another.height} ) `
-          + `should match this.height ( ${this.height} ). (${parametersDesc})`);
+    if ( ( another.height == this.height ) && ( another.width == this.width ) && ( another.depth == this.depth ) ) { // Same size.
 
-      tf.util.assert( ( another.width == this.width ),
-        `${multiplyName}: another.width ( ${another.width} ) `
-          + `should match this.width ( ${this.width} ). (${parametersDesc})`);
+      rHeight = this.height; rWidth = this.width; rDepth = this.depth;
+      rBoundsArraySet = BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
+      rBoundsArraySet.output0
+        .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
+        .multiply_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
 
-      tf.util.assert( ( another.depth == this.depth ),
-        `${multiplyName}: another.depth ( ${another.depth} ) `
-          + `should match this.depth ( ${this.depth} ). (${parametersDesc})`);
-    }
+      resultArray = new Float32Array( this.dataArray.length );
+      for ( let i = 0; i < this.dataArray.length; ++i ) {
+        resultArray[ i ] = this.dataArray[ i ] * another.dataArray[ i ];
+      }
 
-    let resultArray = new Float32Array( this.dataArray.length );
-    for ( let i = 0; i < this.dataArray.length; ++i ) {
-      resultArray[ i ] = this.dataArray[ i ] * another.dataArray[ i ];
+    } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == 1 ) ) { // Broadcast another to this.
+
+      let anotherIndex = 0; // Only the first (also the only one) channel and element is used for the scalar source.
+      let anotherValue = another.dataArray[ anotherIndex ];
+
+      rHeight = this.height; rWidth = this.width; rDepth = this.depth;
+      rBoundsArraySet = BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
+      rBoundsArraySet.output0
+        .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
+        .multiply_all_byScaleBoundsArray_one( another.boundsArraySet.output0, anotherIndex );
+
+      resultArray = new Float32Array( this.dataArray.length );
+      for ( let i = 0; i < this.dataArray.length; ++i ) {
+        resultArray[ i ] = this.dataArray[ i ] * anotherValue;
+      }
+
+    } else if ( ( this.height == 1 ) && ( this.width == 1 ) && ( this.depth == 1 ) ) { // Broadcast this to another.
+
+      let thisIndex = 0; // Only the first (also the only one) channel and element is used for the scalar source.
+      let thisValue = this.dataArray[ thisIndex ];
+
+      rHeight = another.height; rWidth = another.width; rDepth = another.depth;
+      rBoundsArraySet = BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
+      rBoundsArraySet.output0
+        .set_all_byScaleBoundsArray( another.boundsArraySet.output0 )
+        .multiply_all_byScaleBoundsArray_one( this.boundsArraySet.output0, thisIndex );
+
+      resultArray = new Float32Array( another.dataArray.length );
+      for ( let i = 0; i < this.dataArray.length; ++i ) {
+        resultArray[ i ] = thisValue * another.dataArray[ i ];
+      }
+
+    } else {
+      tf.util.assert( false,
+        `${multiplyName}: another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${this.depth} ) `
+          + `and this ( height, width, depth ) = ( ${this.height}, ${this.width}, ${this.depth} ) `
+          + `should be either totally the same or at least one is ( 1, 1, 1 ).`
+          + `(${parametersDesc})`);
     }
 
     // Q: Why not just modify this directly?
     // A: The this might be the original input array which should not be modified at all. (because they might be used in another test.)
-    let imageOutNew = new Base(
-      this.height, this.width, this.depth, resultArray,
-      new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, undefined, this.depth )
-    );
-
-    // Calculate value bounds of every output channels.
-
-//!!! (2022/05/16 Remarked)
-//     imageOutNew.boundsArraySet.output0.set_all_byScaleBoundsArray_multiply(
-//       imageOutNew.boundsArraySet.input0, another.boundsArraySet.output0 );
-
-    imageOutNew.boundsArraySet.output0
-      .set_all_byScaleBoundsArray( imageOutNew.boundsArraySet.input0 )
-      .multiply_all_byScaleBoundsArray( another.boundsArraySet.output0 );
+    let imageOutNew = new Base( rHeight, rWidth, rDepth, resultArray, rBoundsArraySet );
 
     return imageOutNew;
   }
