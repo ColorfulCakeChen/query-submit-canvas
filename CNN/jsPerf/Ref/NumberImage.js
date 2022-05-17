@@ -580,7 +580,7 @@ class Base {
     if ( ( another.height == this.height ) && ( another.width == this.width ) && ( another.depth == this.depth ) ) { // Same size.
 
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      rBoundsArraySet = BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
+      rBoundsArraySet = new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
       rBoundsArraySet.output0
         .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
         .add_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
@@ -596,7 +596,7 @@ class Base {
       let anotherValue = another.dataArray[ anotherIndex ];
 
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      rBoundsArraySet = BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
+      rBoundsArraySet = new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
       rBoundsArraySet.output0
         .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
         .add_all_byScaleBoundsArray_one( another.boundsArraySet.output0, anotherIndex );
@@ -612,7 +612,7 @@ class Base {
       let thisValue = this.dataArray[ thisIndex ];
 
       rHeight = another.height; rWidth = another.width; rDepth = another.depth;
-      rBoundsArraySet = BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
+      rBoundsArraySet = new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
       rBoundsArraySet.output0
         .set_all_byScaleBoundsArray( another.boundsArraySet.output0 )
         .add_all_byScaleBoundsArray_one( this.boundsArraySet.output0, thisIndex );
@@ -658,7 +658,7 @@ class Base {
     if ( ( another.height == this.height ) && ( another.width == this.width ) && ( another.depth == this.depth ) ) { // Same size.
 
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      rBoundsArraySet = BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
+      rBoundsArraySet = new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
       rBoundsArraySet.output0
         .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
         .multiply_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
@@ -674,7 +674,7 @@ class Base {
       let anotherValue = another.dataArray[ anotherIndex ];
 
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      rBoundsArraySet = BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
+      rBoundsArraySet = new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
       rBoundsArraySet.output0
         .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
         .multiply_all_byScaleBoundsArray_one( another.boundsArraySet.output0, anotherIndex );
@@ -690,7 +690,7 @@ class Base {
       let thisValue = this.dataArray[ thisIndex ];
 
       rHeight = another.height; rWidth = another.width; rDepth = another.depth;
-      rBoundsArraySet = BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
+      rBoundsArraySet = new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
       rBoundsArraySet.output0
         .set_all_byScaleBoundsArray( another.boundsArraySet.output0 )
         .multiply_all_byScaleBoundsArray_one( this.boundsArraySet.output0, thisIndex );
