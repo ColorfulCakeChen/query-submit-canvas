@@ -13,7 +13,7 @@ import * as AddTwoTensors from "../AddTwoTensors.js";
 import * as ConcatAlongAxisId2 from "../ConcatAlongAxisId2.js";
 import * as ConcatShuffleSplit from "../ConcatShuffleSplit.js";
 import * as TensorOpCounter from "../TensorOpCounter.js";
-import { Params } from "./PointDepthPoint_Params.js";
+import { Params } from "./Block_Params.js";
 
 
 //!!! ...unfinished... (2021/08/18)
@@ -255,7 +255,7 @@ import { Params } from "./PointDepthPoint_Params.js";
  *     - If both ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it will be channelCount_concat1After_pointwise2Before.
  *
  * @member {BoundsArraySet.InputsOutputs} boundsArraySet
- *   The element value bounds of this PointDepthPoint's input/output.
+ *   The element value bounds of this Block's input/output.
  *
  * @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
  *   The channelShuffler. It must be implemented by ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ).
@@ -306,11 +306,11 @@ class Base extends ReturnOrClone.Base {
    *   A Params object. The params.extract() will be called to extract parameters.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
-   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous PointDepthPoint value bounds
+   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Block value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray1
-   *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous PointDepthPoint value bounds
+   *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous Block value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
    *
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
@@ -754,7 +754,7 @@ class Base extends ReturnOrClone.Base {
     }      
 
     tf.util.assert( this.inChannels1 == params.input1ChannelCount,
-      `PointDepthPoint.Base.initer(): this.inChannels1 ( ${this.inChannels1} ) `
+      `Block.Base.initer(): this.inChannels1 ( ${this.inChannels1} ) `
         + `should be the same as params.input1ChannelCount ( ${params.input1ChannelCount} ).`
     );
 
@@ -765,7 +765,7 @@ class Base extends ReturnOrClone.Base {
     // 6. Add-input-to-output
 
     // Because addInput0ToPointwise21 and addInput0ToPointwise21 may not exist, track it by local variable (which will be used by
-    // concat2ShuffleSplit and this PointDepthPoint final bounds arrray set).
+    // concat2ShuffleSplit and this Block final bounds arrray set).
     //
     let addInput0ToPointwise21_boundsArraySet_output0 = this.pointwise21.boundsArraySet.output0;
     let addInput0ToPointwise22_boundsArraySet_output0 = this.pointwise22?.boundsArraySet.output0;
@@ -870,7 +870,7 @@ class Base extends ReturnOrClone.Base {
 
         default:
           tf.util.assert( ( ( this.outputTensorCount == 1 ) || ( this.outputTensorCount == 2 ) ),
-            `PointDepthPoint.Base.initer(): When concat2-shuffle-split, `
+            `Block.Base.initer(): When concat2-shuffle-split, `
               + `output channel count ( ${this.outputTensorCount} ) must be either 1 or 2.`
           );
           break;
@@ -1047,7 +1047,7 @@ class Base extends ReturnOrClone.Base {
    *
    * This could reduce memory footprint.
    *
-   * (Note: This PointDepthPoint's BoundsArraySet is kept.)
+   * (Note: This Block's BoundsArraySet is kept.)
    */
   dispose_all_sub_BoundsArraySet() {
     delete this.pointwise1?.boundsArraySet;
@@ -1078,7 +1078,7 @@ class Base extends ReturnOrClone.Base {
       case Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: // (-3) (ShuffleNetV2's body/tail)
         
         tf.util.assert( ( this.bConcat2ShuffleSplitRequested == true ),
-            `PointDepthPoint.Base.Determine_apply(): When concat2-shuffle-split, `
+            `Block.Base.Determine_apply(): When concat2-shuffle-split, `
               + `bConcat2ShuffleSplitRequested ( ${this.bConcat2ShuffleSplitRequested} ) should be true `
               + `when channelCount1_pointwise1Before ( ${this.channelCount1_pointwise1Before} ) is TWO_INPUTS_CONCAT_POINTWISE21_INPUT1.`
           );
@@ -1140,7 +1140,7 @@ class Base extends ReturnOrClone.Base {
 
                   // It should not execute to here.
                   tf.util.assert( false,
-                    `PointDepthPoint.Base.Determine_apply(), this.bShouldAddInputToOutput (${this.bShouldAddInputToOutput}) `
+                    `Block.Base.Determine_apply(), this.bShouldAddInputToOutput (${this.bShouldAddInputToOutput}) `
                       + `should equal this.bShould_addInput0ToPointwise21 (${this.bShould_addInput0ToPointwise21}) `
                       + ` or this.bShould_addInput0ToPointwise22 (${this.bShould_addInput0ToPointwise22}). ${this.parametersDescription}`);
 
