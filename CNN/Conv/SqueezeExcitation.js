@@ -57,8 +57,12 @@ import * as Pointwise from "./Pointwise.js"; //_ConstantWhenPassThrough
 
 /**
  *
+ * @member {ValueDesc.Pointwise_HigherHalfDifferent} nHigherHalfDifferent
+ *   The HigherHalfDifferent type for pointwise convolution in squeeze-and-excitation.
+ *
+ *
  */
-class Pointwise_SqueezeExcitation extends Pointwise_Base {
+class Base extends {
 
 //!!! ...unfinished... (2022/05/08)
 
