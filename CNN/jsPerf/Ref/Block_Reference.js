@@ -12,8 +12,8 @@ import * as Pointwise from "../../Conv/Pointwise.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
 import * as ChannelShuffler from "../../Conv/ChannelShuffler.js";
 import * as ChannelShufflerPool from "../../Conv/ChannelShufflerPool.js";
-import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
-import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js"; 
+import * as Block from "../../Conv/Block.js";
+import * as Block_TestParams from "./Block_TestParams.js"; 
 import * as NumberImage from "./NumberImage.js";
 import * as ImageSourceBag from "./ImageSourceBag.js";
 import * as BoundsArraySet_Asserter from "./BoundsArraySet_Asserter.js";
@@ -51,9 +51,9 @@ class TestCorrectnessInfo {
     let bTwoInputs, input1ChannelCount;
     {
       // The input tensor count is determined by channelCount1_pointwise1Before totally.
-      PointDepthPoint.Params.set_inputTensorCount_by.call( referredParams, channelCount1_pointwise1Before );
+      Block.Params.set_inputTensorCount_by.call( referredParams, channelCount1_pointwise1Before );
 
-      PointDepthPoint.Params.set_input1ChannelCount_by.call( referredParams,
+      Block.Params.set_input1ChannelCount_by.call( referredParams,
         channelCount0_pointwise1Before, channelCount1_pointwise1Before,
         pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
 
@@ -84,7 +84,7 @@ class TestCorrectnessInfo {
       }
 
       tf.util.assert( imageInArraySelected.length == 2,
-        `PointDepthPoint imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ${strNote}`);
+        `Block imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ${strNote}`);
 
       // Prepare channel shuffler.
       switch ( channelCount1_pointwise1Before ) {
@@ -119,7 +119,7 @@ class TestCorrectnessInfo {
 
               // Note: pointwise21ChannelCount is always positive (never zero or negative).
 
-              // Because PointDepthPoint_TestParams.generate_Filters_Biases() will double pointwise21ChannelCount, it must be an even number
+              // Because Block_TestParams.generate_Filters_Biases() will double pointwise21ChannelCount, it must be an even number
               // which could be splitted (into two groups).
               concatenatedDepth = pointwise21ChannelCount;
             }
@@ -162,7 +162,7 @@ class TestCorrectnessInfo {
         depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
     }
 
-    let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
+    let inputTensorDestroyCount; // How many input tensors will be destroyed by Block.apply().
     if ( bKeepInputTensor ) {
       inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
 
@@ -186,7 +186,7 @@ class TestCorrectnessInfo {
 
 
 /**
- * Reference computation of class PointDepthPoint.Base.
+ * Reference computation of class Block.Base.
  */
 class Base {
 
@@ -208,8 +208,8 @@ class Base {
    * @param {ImageSourceBag.Base} imageSourceBag
    *   The provider of image and tensor of variable specification for testing.
    *
-   * @param {PointDepthPoint_TestParams.Base} testParams
-   *   The test parameters. It is the value of PointDepthPoint_TestParams.Base.ParamsGenerator()'s result.
+   * @param {Block_TestParams.Base} testParams
+   *   The test parameters. It is the value of Block_TestParams.Base.ParamsGenerator()'s result.
    *
    * @param {ChannelShufflerPool.Base} channelShufflerPool
    *   The channelShufflers provider. It must be initialized with ChannelShuffler.ConcatPointwiseConv as parameter channelShufflerClass.
@@ -242,41 +242,41 @@ class Base {
         imageOutReferenceArray = this.calcResult( imageInArraySelected, channelShuffler_ConcatPointwiseConv );
 
         tf.util.assert( imageOutReferenceArray.length == 2,
-          `PointDepthPoint imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
+          `Block imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
       }
 
-      let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
+      let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
 
-      let pointDepthPoint = Base.pointDepthPoint_create( testParams,
+      let block = Base.block_create( testParams,
         imageInArraySelected[ 0 ].boundsArraySet.output0,
         imageInArraySelected[ 1 ]?.boundsArraySet.output0,
         channelShuffler_ConcatPointwiseConv, this.arrayTemp_forInterleave_asGrouptTwo );
 
-      let parametersDescription = pointDepthPoint.parametersDescription;
+      let parametersDescription = block.parametersDescription;
       strNote = `( testParams.id=${testParams.id}, ${parametersDescription} )`;
 
       // Test input channel count.
-      Base.AssertTwoEqualValues( "inChannels1", pointDepthPoint.inChannels1, input1ChannelCount, strNote );
+      Base.AssertTwoEqualValues( "inChannels1", block.inChannels1, input1ChannelCount, strNote );
 
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
-      let tensorNumDifference_apply_before_after = pointDepthPoint.outputTensorCount - inputTensorDestroyCount;
+      let tensorNumDifference_apply_before_after = block.outputTensorCount - inputTensorDestroyCount;
 
-      let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
-      pointDepthPoint.apply( inputTensor3dArray, outputTensor3dArray );
+      let memoryInfo_apply_before = tf.memory(); // Test memory leakage of block apply.
+      block.apply( inputTensor3dArray, outputTensor3dArray );
       let memoryInfo_apply_after = tf.memory();
 
       tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
-        `PointDepthPoint.apply() memory leak. `
+        `Block.apply() memory leak. `
           + `result tensor count ( ${memoryInfo_apply_after.numTensors} ) `
           + `should be ( ${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } ) `
           + `${strNote}` );
 
       tf.util.assert( inputTensor3dArray.length == 2,
-        `PointDepthPoint inputTensor3dArray.length ( ${inputTensor3dArray.length} ) should be 2. ${strNote}`);
+        `Block inputTensor3dArray.length ( ${inputTensor3dArray.length} ) should be 2. ${strNote}`);
 
       tf.util.assert( outputTensor3dArray.length == 2,
-        `PointDepthPoint outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${strNote}`);
+        `Block outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${strNote}`);
 
       { // Test output channel count.
         const CHANNEL_AXIS_ID = 2; // Axis id 2 is depth (i.e. channel) dimension.
@@ -290,9 +290,9 @@ class Base {
 
         let outChannelsAll = outChannels0 + outChannels1;
 
-        Base.AssertTwoEqualValues( "outChannels0", pointDepthPoint.outChannels0, outChannels0, strNote );
-        Base.AssertTwoEqualValues( "outChannels1", pointDepthPoint.outChannels1, outChannels1, strNote );
-        Base.AssertTwoEqualValues( "outChannelsAll", pointDepthPoint.outChannelsAll, outChannelsAll, strNote );
+        Base.AssertTwoEqualValues( "outChannels0", block.outChannels0, outChannels0, strNote );
+        Base.AssertTwoEqualValues( "outChannels1", block.outChannels1, outChannels1, strNote );
+        Base.AssertTwoEqualValues( "outChannelsAll", block.outChannelsAll, outChannelsAll, strNote );
       }
 
       { // Test output tensor count.
@@ -304,20 +304,20 @@ class Base {
         if ( outputTensor3dArray[ 1 ] )
           ++outputTensorCount;
 
-        Base.AssertTwoEqualValues( "outputTensorCount", pointDepthPoint.outputTensorCount, outputTensorCount, strNote );
+        Base.AssertTwoEqualValues( "outputTensorCount", block.outputTensorCount, outputTensorCount, strNote );
       }
 
-      // Test correctness of pointDepthPoint BoundsArraySet.
-      this.assert_imageOut_BoundsArraySet( pointDepthPoint.boundsArraySet, imageOutReferenceArray, strNote );
+      // Test correctness of block BoundsArraySet.
+      this.assert_imageOut_BoundsArraySet( block.boundsArraySet, imageOutReferenceArray, strNote );
 
-      // Test correctness of pointDepthPoint apply.
+      // Test correctness of block apply.
       this.assert_imageOut_Tensors_byNumberArrays( outputTensor3dArray, imageOutReferenceArray, strNote );
 
-      pointDepthPoint.disposeTensors();
+      block.disposeTensors();
       let memoryInfo_afterDispose = tf.memory();
 
       tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
-        `PointDepthPoint create/dispose memory leak. `
+        `Block create/dispose memory leak. `
           + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
           + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
           + `${strNote}` );
@@ -326,8 +326,8 @@ class Base {
 
     } catch ( e ) {
       let backendName = tf.getBackend();
-      let msg = `PointDepthPoint_Reference.js: testCorrectness(): backendName=${backendName}, `
-        + `PointDepthPoint, (yieldCount == ${testParams.yieldCount}), testParams.id == ${testParams.id}`;
+      let msg = `Block_Reference.js: testCorrectness(): backendName=${backendName}, `
+        + `Block, (yieldCount == ${testParams.yieldCount}), testParams.id == ${testParams.id}`;
 
       console.log( msg );
       alert( `${msg}\n${e}` );
@@ -337,21 +337,21 @@ class Base {
   }
 
   /**
-   * Check the PointDepthPoint's output's BoundsArraySet.
+   * Check the Block's output's BoundsArraySet.
    *
-   * @param {BoundsArraySet} aBoundsArraySet             The bounds array set of the PointDepthPoint.
-   * @param {NumberImage.Base[]} imageOutReferenceArray  Refernece output Image data of the PointDepthPoint_Reference's calcResult().
+   * @param {BoundsArraySet} aBoundsArraySet             The bounds array set of the Block.
+   * @param {NumberImage.Base[]} imageOutReferenceArray  Refernece output Image data of the Block_Reference's calcResult().
    */
   assert_imageOut_BoundsArraySet( aBoundsArraySet, imageOutReferenceArray, parametersDescription ) {
     BoundsArraySet_Asserter.assert_BoundsArraySet_Outputs( this.asserter_Equal,
-      aBoundsArraySet, imageOutReferenceArray, `PointDepthPoint`, parametersDescription );
+      aBoundsArraySet, imageOutReferenceArray, `Block`, parametersDescription );
   }
 
   /**
-   * Check the PointDepthPoint's output according to input (for correctness testing).
+   * Check the Block's output according to input (for correctness testing).
    *
-   * @param {tf.tensor3d[]} outputTensors                The output array of the PointDepthPoint's apply_and_destroy_or_keep().
-   * @param {NumberImage.Base[]} imageOutReferenceArray  Refernece output Image data of the PointDepthPoint_Reference's calcResult().
+   * @param {tf.tensor3d[]} outputTensors                The output array of the Block's apply_and_destroy_or_keep().
+   * @param {NumberImage.Base[]} imageOutReferenceArray  Refernece output Image data of the Block_Reference's calcResult().
    */
   assert_imageOut_Tensors_byNumberArrays( outputTensors, imageOutReferenceArray, parametersDescription ) {
 
@@ -369,39 +369,39 @@ class Base {
 
       this.asserter_Equal.assert_Tensor_NumberArray(
         outputTensor, outputArrayRef,
-        "PointDepthPoint", `output${i}`, `outputRef${i}`, parametersDescription
+        "Block", `output${i}`, `outputRef${i}`, parametersDescription
       );
     }
   }
 
   /**
-   * @param {PointDepthPoint_TestParams.Base} testParams
-   *   The test parameters. It is the value of PointDepthPoint_TestParams.Base.ParamsGenerator()'s result.
+   * @param {Block_TestParams.Base} testParams
+   *   The test parameters. It is the value of Block_TestParams.Base.ParamsGenerator()'s result.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
-   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous PointDepthPoint value bounds
+   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Block value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray1
-   *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous PointDepthPoint value bounds
+   *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous Block value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
    *
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
    *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
    *
-   * @return {PointDepthPoint.Base} The created pointDepthPoint object.
+   * @return {Block.Base} The created block object.
    */
-  static pointDepthPoint_create(
+  static block_create(
     testParams, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
     arrayTemp_forInterleave_asGrouptTwo ) {
 
-    let pointDepthPoint = new PointDepthPoint.Base();
+    let block = new Block.Base();
 
     let progress = new ValueMax.Percentage.Aggregate();
 
     // Initialize successfully or failed.
-    let extractedParams = new PointDepthPoint.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
+    let extractedParams = new Block.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
       testParams.in.inputHeight0, testParams.in.inputWidth0,
       testParams.in.channelCount0_pointwise1Before, testParams.in.channelCount1_pointwise1Before,
       testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
@@ -412,11 +412,11 @@ class Base {
       testParams.in.bKeepInputTensor
     );
 
-    let bInitOk = pointDepthPoint.init( progress, extractedParams, inputScaleBoundsArray0, inputScaleBoundsArray1,
+    let bInitOk = block.init( progress, extractedParams, inputScaleBoundsArray0, inputScaleBoundsArray1,
       channelShuffler_ConcatPointwiseConv, arrayTemp_forInterleave_asGrouptTwo );
 
     let flags = {};
-    PointDepthPoint.Params.setFlags_by.call( flags,
+    Block.Params.setFlags_by.call( flags,
       testParams.out.channelCount0_pointwise1Before, testParams.out.channelCount1_pointwise1Before,
       testParams.out.pointwise1ChannelCount,
       testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
@@ -428,29 +428,29 @@ class Base {
       debugger;
     }
 
-    let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
+    let parametersDescription = `( ${block.parametersDescription} )`;
 
-    tf.util.assert( ( pointDepthPoint.bInitOk == bInitOk ),
-      `PointDepthPoint validation state (${pointDepthPoint.bInitOk}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
+    tf.util.assert( ( block.bInitOk == bInitOk ),
+      `Block validation state (${block.bInitOk}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
 
     tf.util.assert( ( true == bInitOk ),
-      `Failed to initialize pointDepthPoint object. ${parametersDescription}`);
+      `Failed to initialize block object. ${parametersDescription}`);
 
     tf.util.assert( ( 100 == progress.valuePercentage ),
-      `Progress (${progress.valuePercentage}) should be 100 when initializing pointDepthPoint object successfully. ${parametersDescription}`);
+      `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${parametersDescription}`);
 
 
-    if ( pointDepthPoint.byteOffsetEnd != testParams.in.inputFloat32Array.byteLength ) { //!!! For Debug. (parsing ending position)
+    if ( block.byteOffsetEnd != testParams.in.inputFloat32Array.byteLength ) { //!!! For Debug. (parsing ending position)
       debugger;
     }
 
-    let asserter = new ObjectPropertyAsserter.Base( `PointDepthPoint`, pointDepthPoint, parametersDescription );
+    let asserter = new ObjectPropertyAsserter.Base( `Block`, block, parametersDescription );
 
     Base.AssertTwoEqualValues( "parsing beginning position",
-      pointDepthPoint.byteOffsetBegin, testParams.in.byteOffsetBegin, parametersDescription );
+      block.byteOffsetBegin, testParams.in.byteOffsetBegin, parametersDescription );
 
     Base.AssertTwoEqualValues( "parsing ending position",
-      pointDepthPoint.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, parametersDescription );
+      block.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, parametersDescription );
 
     // input tensor parameters.
     asserter.propertyValue( "inputHeight0", testParams.out.inputHeight0 );
@@ -467,10 +467,10 @@ class Base {
     asserter.propertyValue( "bAddInputToOutputRequested", flags.bAddInputToOutputRequested );
     asserter.propertyValue( "bConcat2ShuffleSplitRequested", flags.bConcat2ShuffleSplitRequested );
 
-    // The ( pointDepthPoint.bConcat2ShuffleSplitRequested == true ) only if:
+    // The ( block.bConcat2ShuffleSplitRequested == true ) only if:
     //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) (-3)
     //
-    if ( pointDepthPoint.bConcat2ShuffleSplitRequested ) {
+    if ( block.bConcat2ShuffleSplitRequested ) {
       Base.AssertTwoEqualValues( "bConcat2ShuffleSplitRequested",
         testParams.out.channelCount1_pointwise1Before,
         ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1, parametersDescription );
@@ -489,7 +489,7 @@ class Base {
                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
        ) {
 
-      tf.util.assert( channelShuffler_ConcatPointwiseConv != null, `PointDepthPoint_Reference.Base.pointDepthPoint_create(): `
+      tf.util.assert( channelShuffler_ConcatPointwiseConv != null, `Block_Reference.Base.block_create(): `
         + `channelShuffler must NOT null when `
         + `channelCount1_pointwise1Before=`
         + `${ValueDesc.channelCount1_pointwise1Before.Singleton.getStringOf( testParams.out.channelCount1_pointwise1Before )}`
@@ -508,7 +508,7 @@ class Base {
     // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
     // (i.e. (ShuffleNetV2_ByMobileNetV1's head) )
     //
-    if ( ( pointDepthPoint.bHigherHalfDifferent == true ) && ( pointDepthPoint.bHigherHalfDepthwise2 == true ) ) {
+    if ( ( block.bHigherHalfDifferent == true ) && ( block.bHigherHalfDepthwise2 == true ) ) {
 
       // In this case (i.e. bHigherHalfCopyLowerHalf), enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count )
       // so that depthwise1 could include depthwise2.
@@ -570,11 +570,11 @@ class Base {
       // In (-3) (ShuffleNetV2's body/tail), (-4) (ShuffleNetV2_ByMobileNetV1's head), (-5) (ShuffleNetV2_ByMobileNetV1's body/tail),
       // there is always no pointwise22.
       if (   ( testParams.out.channelCount1_pointwise1Before
-                 == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
+                 == Block.Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
           || ( testParams.out.channelCount1_pointwise1Before
-                 == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) // (-4)
+                 == Block.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) // (-4)
           || ( testParams.out.channelCount1_pointwise1Before
-                 == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+                 == Block.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
          ) {
         asserter.propertyValue( "pointwise22ChannelCount", 0 );
 
@@ -601,13 +601,13 @@ class Base {
     // Other parameters.
     asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
 
-    return pointDepthPoint;
+    return block;
   }
 
 
   static AssertTwoEqualValues( valueName, value1, value2, parametersDescription ) {
     tf.util.assert( ( value1 == value2 ),
-      `PointDepthPoint ${valueName} (${value1}) should be (${value2}). ${parametersDescription}`);
+      `Block ${valueName} (${value1}) should be (${value2}). ${parametersDescription}`);
   }
 
   /** According to imageInArray and this.testParams.in.paramsNumberArrayObject, calculate imageOutArray.
@@ -637,7 +637,7 @@ class Base {
         || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
        ) {
 
-      tf.util.assert( channelShuffler != null, `PointDepthPoint_Reference.Base.calcResult(): `
+      tf.util.assert( channelShuffler != null, `Block_Reference.Base.calcResult(): `
         + `channelShuffler must NOT null when `
         + `channelCount1_pointwise1Before=`
         + `${ValueDesc.channelCount1_pointwise1Before.Singleton.getStringOf( testParams.out.channelCount1_pointwise1Before )}`
@@ -665,7 +665,7 @@ class Base {
 
     // (-4) (ShuffleNetV2_ByMobileNetV1's head)
     //
-    // Note: PointDepthPoint_TestParams.Base.generate_Filters_Biases() double pointwise21ChannelCount. So, halve them here.
+    // Note: Block_TestParams.Base.generate_Filters_Biases() double pointwise21ChannelCount. So, halve them here.
     //
     if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
       pointwise21ChannelCount = Math.ceil( testParams.out.pointwise21ChannelCount / 2 );
@@ -676,7 +676,7 @@ class Base {
     // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we use the logic of
     // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
     //
-    // Note: PointDepthPoint_TestParams.Base.generate_Filters_Biases() double channelCount0_pointwise1Before,
+    // Note: Block_TestParams.Base.generate_Filters_Biases() double channelCount0_pointwise1Before,
     // pointwise21ChannelCount. So, halve them here.
     //
     } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
@@ -728,7 +728,7 @@ class Base {
 
       if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
 
-        tf.util.assert( imageIn1 == null, `PointDepthPoint_Reference.Base.calcResult(): `
+        tf.util.assert( imageIn1 == null, `Block_Reference.Base.calcResult(): `
           + `imageIn1 must be null when `
           + `channelCount1_pointwise1Before=`
           + `${ValueDesc.channelCount1_pointwise1Before.Singleton.getStringOf( testParams.out.channelCount1_pointwise1Before )}`
@@ -899,7 +899,7 @@ class Base {
                 || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
 
       tf.util.assert( ( !imageOutArray[ 1 ] ),
-        `PointDepthPoint imageOutArray[ 1 ] ( ${imageOutArray[ 1 ]} ) `
+        `Block imageOutArray[ 1 ] ( ${imageOutArray[ 1 ]} ) `
           + `should be null, since there is no pointwise22. ${this.paramsOutDescription}`);
 
       let imageConcat2InArray = Array.from( imageOutArray );
@@ -930,7 +930,7 @@ class Base {
 
     } else {
       tf.util.assert( false,
-        `PointDepthPoint testParams.out.channelCount1_pointwise1Before ( ${testParams.out.channelCount1_pointwise1Before} ) `
+        `Block testParams.out.channelCount1_pointwise1Before ( ${testParams.out.channelCount1_pointwise1Before} ) `
           + `is unknown value. ${this.paramsOutDescription}`);
     }
 
@@ -1061,7 +1061,7 @@ class Base {
   }
 
   /**
-   * @param {PointDepthPoint_TestParams.Base} testParams
+   * @param {Block_TestParams.Base} testParams
    *   The test parameters for creating description.
    *
    * @return {string}
@@ -1070,7 +1070,7 @@ class Base {
   static TestParams_Out_createDescription( testParams ) {
 
     let flags = {};
-    PointDepthPoint.Params.setFlags_by.call( flags,
+    Block.Params.setFlags_by.call( flags,
       testParams.out.channelCount0_pointwise1Before, testParams.out.channelCount1_pointwise1Before,
       testParams.out.pointwise1ChannelCount,
       testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
@@ -1084,7 +1084,7 @@ class Base {
       + `inChannels0=${testParams.out.channelCount0_pointwise1Before}, inChannels1=${flags.input1ChannelCount}, `
 
       + `channelCount1_pointwise1Before_Name=`
-      + `${PointDepthPoint.Params.channelCount1_pointwise1Before.getStringOfValue( testParams.out.channelCount1_pointwise1Before )}`
+      + `${Block.Params.channelCount1_pointwise1Before.getStringOfValue( testParams.out.channelCount1_pointwise1Before )}`
       + `(${testParams.out.channelCount1_pointwise1Before}), `
 
       + `bHigherHalfDifferent=${flags.bHigherHalfDifferent}, `
@@ -1092,7 +1092,7 @@ class Base {
 
       + `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `
       + `pointwise1ActivationName=`
-        + `${PointDepthPoint.Params.pointwise1ActivationId.getStringOfValue( testParams.out.pointwise1ActivationId )}`
+        + `${Block.Params.pointwise1ActivationId.getStringOfValue( testParams.out.pointwise1ActivationId )}`
         + `(${testParams.out.pointwise1ActivationId}), `
 
       + `bDepthwise2Requested=${flags.bDepthwise2Requested}, `
@@ -1105,14 +1105,14 @@ class Base {
         + `(${testParams.out.depthwiseStridesPad}), `
       + `bDepthwiseBias=${testParams.out.bDepthwiseBias}, `
       + `depthwiseActivationName=`
-        + `${PointDepthPoint.Params.depthwiseActivationId.getStringOfValue( testParams.out.depthwiseActivationId )}`
+        + `${Block.Params.depthwiseActivationId.getStringOfValue( testParams.out.depthwiseActivationId )}`
         + `(${testParams.out.depthwiseActivationId}), `
 
       + `bConcat1Requested=${flags.bConcat1Requested}, `
 
       + `pointwise21ChannelCount=${testParams.out.pointwise21ChannelCount}, bPointwise21Bias=${testParams.out.bPointwise21Bias}, `
       + `pointwise21ActivationName=`
-        + `${PointDepthPoint.Params.pointwise21ActivationId.getStringOfValue( testParams.out.pointwise21ActivationId )}`
+        + `${Block.Params.pointwise21ActivationId.getStringOfValue( testParams.out.pointwise21ActivationId )}`
         + `(${testParams.out.pointwise21ActivationId}), `
 
       + `bOutput1Requested=${testParams.out.bOutput1Requested}, `
