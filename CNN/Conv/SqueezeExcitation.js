@@ -4,7 +4,8 @@ export { Base };
 //import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as Weights from "../../Unpacker/Weights.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
-import { Base } from "./Pointwise_Base.js";
+import * as Depthwise from "./Depthwise.js"; //avg pooling
+import * as Pointwise from "./Pointwise.js"; //_ConstantWhenPassThrough
 
 
 //!!! ...unfinished... (2022/05/14)
