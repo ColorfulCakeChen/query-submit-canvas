@@ -569,43 +569,71 @@ class Base {
    */
   cloneBy_add( another, addName, parametersDesc ) {
 
-    // If the output dimensions ( height, width, depth ) is not the same as input, it is impossible to add-input-to-output.
-    {
-      tf.util.assert( ( another.height == this.height ),
-        `${addName}: another.height ( ${another.height} ) `
-          + `should match this.height ( ${this.height} ). (${parametersDesc})`);
+//!!! ...unfinished... (2022/05/17) Perhaps, should support broadcast (add a scalar value).
+    
+    let rHeight, rWidth, rDepth;
+    let rBoundsArraySet = BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
+    let resultArray;
 
-      tf.util.assert( ( another.width == this.width ),
-        `${addName}: another.width ( ${another.width} ) `
-          + `should match this.width ( ${this.width} ). (${parametersDesc})`);
+    // Two input dimensions ( height, width, depth ) should be the same, or one should be a scalar ( 1 * 1 * 1 )value.
 
-      tf.util.assert( ( another.depth == this.depth ),
-        `${addName}: another.depth ( ${another.depth} ) `
-          + `should match this.depth ( ${this.depth} ). (${parametersDesc})`);
-    }
+    if ( ( another.height == this.height ) && ( another.width == this.width ) && ( another.depth == this.depth ) ) { // Same size.
 
-    let resultArray = new Float32Array( this.dataArray.length );
-    for ( let i = 0; i < this.dataArray.length; ++i ) {
-      resultArray[ i ] = this.dataArray[ i ] + another.dataArray[ i ];
+      rHeight = this.height; rWidth = this.width; rDepth = this.depth;
+      rBoundsArraySet = BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
+      rBoundsArraySet.output0
+        .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
+        .add_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
+
+      resultArray = new Float32Array( this.dataArray.length );
+      for ( let i = 0; i < this.dataArray.length; ++i ) {
+        resultArray[ i ] = this.dataArray[ i ] + another.dataArray[ i ];
+      }
+
+    } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == 1 ) ) { // Broadcast another to this.
+
+      let anotherIndex = 0; // Only the first (also the only one) channel and element is used for the scalar source.
+      let anotherValue = another.dataArray[ anotherIndex ];
+
+      rHeight = this.height; rWidth = this.width; rDepth = this.depth;
+      rBoundsArraySet = BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
+      rBoundsArraySet.output0
+        .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
+        .add_all_byScaleBoundsArray_one( another.boundsArraySet.output0, anotherIndex );
+
+      resultArray = new Float32Array( this.dataArray.length );
+      for ( let i = 0; i < this.dataArray.length; ++i ) {
+        resultArray[ i ] = this.dataArray[ i ] + anotherValue;
+      }
+
+    } else if ( ( this.height == 1 ) && ( this.width == 1 ) && ( this.depth == 1 ) ) { // Broadcast this to another.
+
+      let thisIndex = 0; // Only the first (also the only one) channel and element is used for the scalar source.
+      let thisValue = this.dataArray[ thisIndex ];
+
+      rHeight = another.height; rWidth = another.width; rDepth = another.depth;
+      rBoundsArraySet = BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
+      rBoundsArraySet.output0
+        .set_all_byScaleBoundsArray( another.boundsArraySet.output0 )
+        .add_all_byScaleBoundsArray_one( this.boundsArraySet.output0, thisIndex );
+
+      resultArray = new Float32Array( another.dataArray.length );
+      for ( let i = 0; i < this.dataArray.length; ++i ) {
+        resultArray[ i ] = thisValue + another.dataArray[ i ];
+      }
+
+    } else {
+      tf.util.assert( false,
+        `${addName}: another ( height * width * depth ) = ( ${another.height} * ${another.width} * ${this.depth} ) `
+          + `and this ( height * width * depth ) = ( ${this.height} * ${this.width} * ${this.depth} ) `
+          + `should be either totally the same or at least one is ( 1 * 1 * 1 ).`
+          + `(${parametersDesc})`);
     }
 
     // Q: Why not just modify this directly?
     // A: The this might be the original input array which should not be modified at all. (because they might be used in another test.)
-    let imageOutNew = new Base(
-      this.height, this.width, this.depth, resultArray,
-      new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, undefined, this.depth )
-    );
+    let imageOutNew = new Base( rHeight, rWidth, rDepth, resultArray, rBoundsArraySet );
 
-    // Calculate value bounds of every output channels.
-
-//!!! (2022/05/16 Remarked)
-//     imageOutNew.boundsArraySet.output0.set_all_byScaleBoundsArray_add(
-//       imageOutNew.boundsArraySet.input0, another.boundsArraySet.output0 );
-
-    imageOutNew.boundsArraySet.output0
-      .set_all_byScaleBoundsArray( imageOutNew.boundsArraySet.input0 )
-      .add_all_byScaleBoundsArray( another.boundsArraySet.output0 );
-  
     return imageOutNew;
   }
 
