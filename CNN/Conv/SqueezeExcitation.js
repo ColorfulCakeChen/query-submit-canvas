@@ -1,9 +1,9 @@
 export { Base };
 
-//import * as FloatValue from "../../Unpacker/FloatValue.js";
-//import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-//import * as Weights from "../../Unpacker/Weights.js";
-import * as BoundsArraySet from "../BoundsArraySet.js";
+//import * as FloatValue from "../Unpacker/FloatValue.js";
+//import * as ValueDesc from "../Unpacker/ValueDesc.js";
+//import * as Weights from "../Unpacker/Weights.js";
+import * as BoundsArraySet from "./BoundsArraySet.js";
 import * as Depthwise from "./Depthwise.js"; //avg pooling
 import * as Pointwise from "./Pointwise.js"; //_ConstantWhenPassThrough
 
