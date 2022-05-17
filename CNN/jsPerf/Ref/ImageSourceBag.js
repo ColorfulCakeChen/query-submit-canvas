@@ -4,7 +4,6 @@ import * as MapTools from "../../util/MapTools.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as NumberImage from "./NumberImage.js";
-import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
 
 /**
  * Dynamically create random image data with specified channelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
@@ -42,11 +41,11 @@ class Base {
    *
    * @param {number} depthwiseFilterHeight
    *   An integer represents the returned image should be the original image processed by depthwise convolution filter of this height.
-   * Its should be in the range of PointDepthPoint.Params.depthwiseFilterHeight.valueDesc.range.
+   * Its should be in the range of Block.Params.depthwiseFilterHeight.valueDesc.range.
    *
    * @param {number} depthwiseFilterWidth
    *   An integer represents the returned image should be the original image processed by depthwise convolution filter of this width.
-   * Its should be in the range of PointDepthPoint.Params.depthwiseFilterWidth.valueDesc.range.
+   * Its should be in the range of Block.Params.depthwiseFilterWidth.valueDesc.range.
    *
    * @param {number} depthwiseStridesPad
    *   An integer represents the returned image should be the original image processed by depthwise convolution of this strides and pad.
