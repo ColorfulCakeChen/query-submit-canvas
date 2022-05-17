@@ -9,7 +9,7 @@ import * as TestParams from "./TestParams.js";
 import * as NumberImage from "./NumberImage.js";
 import * as Pointwise from "../../Conv/Pointwise.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
-import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
+import * as Block from "../../Conv/Block.js";
 
 /**
  *
@@ -19,7 +19,7 @@ import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
  *   The numeric identifier of this testing parameter combination.
  *
  * @member {object} in
- *   The "in" sub-object's data members represent every parameters of the PointDepthPoint.Params's constructor. That is,
+ *   The "in" sub-object's data members represent every parameters of the Block.Params's constructor. That is,
  * it has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, pointwise1ChannelCount,
  * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth,
  * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
@@ -33,7 +33,7 @@ import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
  * Base.paramsNameOrderArray[] elements.
  *
  * @member {object} out
- *   The "out" sub-object's data members represent the "should-be" result of PointDepthPoint.Params's extract().
+ *   The "out" sub-object's data members represent the "should-be" result of Block.Params's extract().
  * That is, it has the above data members except paramsNumberArrayObject, inputFloat32Array, byteOffsetBegin.
  *
  */
@@ -250,8 +250,8 @@ class Base extends TestParams.Base {
       inputWidth0: [ 4, 5 ],
 
       channelCount0_pointwise1Before: [
-        PointDepthPoint.Params.channelCount0_pointwise1Before.valueDesc.range.min,
-        PointDepthPoint.Params.channelCount0_pointwise1Before.valueDesc.range.min + 4 - 1
+        Block.Params.channelCount0_pointwise1Before.valueDesc.range.min,
+        Block.Params.channelCount0_pointwise1Before.valueDesc.range.min + 4 - 1
       ],
 
       // Test all named values plus two more un-named values.
@@ -267,8 +267,8 @@ class Base extends TestParams.Base {
       ],
 
       // (2021/10/06) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
-      depthwiseFilterHeight: [ PointDepthPoint.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
-      depthwiseFilterWidth: [ PointDepthPoint.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
+      depthwiseFilterHeight: [ Block.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
+      depthwiseFilterWidth: [ Block.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
 
       // (2022/05/02) Note: The right-most pixel of depthwise convolution seems wrong when ( strides = 1, pad = "same" ) in backend
       // WebGL of some platforms (e.g. mobile phone Moto e40). But the issue does not exist when ( strides = 2, pad = "same" ) or
@@ -277,8 +277,8 @@ class Base extends TestParams.Base {
 //      depthwiseStridesPad: undefined,
 //!!! (2022/05/01 Temp Remarked) For debug (mobile phone).
       depthwiseStridesPad: [
-        PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min,
-        PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max
+        Block.Params.depthwiseStridesPad.valueDesc.range.min,
+        Block.Params.depthwiseStridesPad.valueDesc.range.max
       ],
 //       depthwiseStridesPad: [
 // //        ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME, // (1)
@@ -300,36 +300,36 @@ class Base extends TestParams.Base {
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.inputHeight0,            this.valueOutMinMax.inputHeight0 ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.inputWidth0,             this.valueOutMinMax.inputWidth0 ),
+      new TestParams.ParamDescConfig( Block.Params.inputHeight0,            this.valueOutMinMax.inputHeight0 ),
+      new TestParams.ParamDescConfig( Block.Params.inputWidth0,             this.valueOutMinMax.inputWidth0 ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ChannelCount, this.valueOutMinMax.pointwise21ChannelCount ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise21Bias,        this.valueOutMinMax.Bias ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ActivationId, this.valueOutMinMax.ActivationId ),
+      new TestParams.ParamDescConfig( Block.Params.pointwise21ChannelCount, this.valueOutMinMax.pointwise21ChannelCount ),
+      new TestParams.ParamDescConfig( Block.Params.bPointwise21Bias,        this.valueOutMinMax.Bias ),
+      new TestParams.ParamDescConfig( Block.Params.pointwise21ActivationId, this.valueOutMinMax.ActivationId ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.bOutput1Requested,       this.valueOutMinMax.bOutput1Requested ),
+      new TestParams.ParamDescConfig( Block.Params.bOutput1Requested,       this.valueOutMinMax.bOutput1Requested ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise1Bias,         this.valueOutMinMax.Bias ),
+      new TestParams.ParamDescConfig( Block.Params.bPointwise1Bias,         this.valueOutMinMax.Bias ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount0_pointwise1Before,
+      new TestParams.ParamDescConfig( Block.Params.channelCount0_pointwise1Before,
                                                                                       this.valueOutMinMax.channelCount0_pointwise1Before ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount1_pointwise1Before,
+      new TestParams.ParamDescConfig( Block.Params.channelCount1_pointwise1Before,
                                                                                       this.valueOutMinMax.channelCount1_pointwise1Before ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier,
+      new TestParams.ParamDescConfig( Block.Params.depthwise_AvgMax_Or_ChannelMultiplier,
                                                                                       this.valueOutMinMax.depthwise_AvgMax_Or_ChannelMultiplier ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseFilterHeight,   this.valueOutMinMax.depthwiseFilterHeight ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseFilterWidth,    this.valueOutMinMax.depthwiseFilterWidth ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseStridesPad,     this.valueOutMinMax.depthwiseStridesPad ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.bDepthwiseBias,          this.valueOutMinMax.Bias ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,   this.valueOutMinMax.ActivationId ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,   this.valueOutMinMax.depthwiseFilterHeight ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterWidth,    this.valueOutMinMax.depthwiseFilterWidth ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseStridesPad,     this.valueOutMinMax.depthwiseStridesPad ),
+      new TestParams.ParamDescConfig( Block.Params.bDepthwiseBias,          this.valueOutMinMax.Bias ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseActivationId,   this.valueOutMinMax.ActivationId ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ActivationId,  this.valueOutMinMax.ActivationId ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.valueOutMinMax.pointwise1ChannelCount ),
+      new TestParams.ParamDescConfig( Block.Params.pointwise1ActivationId,  this.valueOutMinMax.ActivationId ),
+      new TestParams.ParamDescConfig( Block.Params.pointwise1ChannelCount,  this.valueOutMinMax.pointwise1ChannelCount ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.bKeepInputTensor,        this.valueOutMinMax.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,        this.valueOutMinMax.bKeepInputTensor ),
     ];
 
     yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
@@ -678,7 +678,7 @@ class Base extends TestParams.Base {
 
   /**
    *
-   * @param {PointDepthPoint_TestParams.Base} this
+   * @param {Block_TestParams.Base} this
    *   The TestParam object to be referenced (and modified).
    *
    */
@@ -706,10 +706,10 @@ class Base extends TestParams.Base {
     //   - Use original the above parameters twice to generate filters and biases weights.
     //     - pointwise21 and pointwise212
     //
-    // The reason is that PointDepthPoint will only extract filters and biases weights of the above parameters twice in this case.
+    // The reason is that Block will only extract filters and biases weights of the above parameters twice in this case.
     //
     if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-      this.doubleParamValue( PointDepthPoint.Params.pointwise21ChannelCount );
+      this.doubleParamValue( Block.Params.pointwise21ChannelCount );
 
     // In ShuffleNetV2_ByMobileNetV1's body/tail:
     //   - channelCount0_pointwise1Before, pointwise21ChannelCount.
@@ -718,10 +718,10 @@ class Base extends TestParams.Base {
     //     - Adjust it in paramsAll and io_paramsNumberArrayObject (if existed).
     //   - But use original the above parameters to generate filters weights.
     //
-    // The reason is that PointDepthPoint will only extract filters weights of half the above parameters in this case.
+    // The reason is that Block will only extract filters weights of half the above parameters in this case.
     //
     } else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-      this.doubleParamValue( PointDepthPoint.Params.channelCount0_pointwise1Before );
+      this.doubleParamValue( Block.Params.channelCount0_pointwise1Before );
 
       if ( pointwise1ChannelCount_original == 0 ) {
         // When the output channel count is not specified, keep it zero.
@@ -733,10 +733,10 @@ class Base extends TestParams.Base {
         let inputChannelCount_higherHalf_pointwise1 = channelCount0_pointwise1Before_original;
 
         let pointwise1ChannelCount_enlarged = outputChannelCount_lowerHalf_pointwise1 + inputChannelCount_higherHalf_pointwise1;
-        this.modifyParamValue( PointDepthPoint.Params.pointwise1ChannelCount, pointwise1ChannelCount_enlarged );
+        this.modifyParamValue( Block.Params.pointwise1ChannelCount, pointwise1ChannelCount_enlarged );
       }
 
-      this.doubleParamValue( PointDepthPoint.Params.pointwise21ChannelCount );
+      this.doubleParamValue( Block.Params.pointwise21ChannelCount );
     }
 
     // Pointwise1
@@ -883,28 +883,28 @@ class Base extends TestParams.Base {
 /**
  * The order when generate weightsFloat32Array[].
  *
- * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of PointDepthPoint.initer().
+ * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Block.initer().
  */
 Base.paramsNameOrderArray = [
-  PointDepthPoint.Params.inputHeight0.paramName,
-  PointDepthPoint.Params.inputWidth0.paramName,
-  PointDepthPoint.Params.channelCount0_pointwise1Before.paramName,
-  PointDepthPoint.Params.channelCount1_pointwise1Before.paramName,
-  PointDepthPoint.Params.pointwise1ChannelCount.paramName,
-  PointDepthPoint.Params.bPointwise1Bias.paramName,
-  PointDepthPoint.Params.pointwise1ActivationId.paramName,
-  PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.paramName,
-  PointDepthPoint.Params.depthwiseFilterHeight.paramName,
-  PointDepthPoint.Params.depthwiseFilterWidth.paramName,
-  PointDepthPoint.Params.depthwiseStridesPad.paramName,
-  PointDepthPoint.Params.bDepthwiseBias.paramName,
-  PointDepthPoint.Params.depthwiseActivationId.paramName,
-  PointDepthPoint.Params.pointwise21ChannelCount.paramName,
-  PointDepthPoint.Params.bPointwise21Bias.paramName,
-  PointDepthPoint.Params.pointwise21ActivationId.paramName,
-  PointDepthPoint.Params.bOutput1Requested.paramName,
+  Block.Params.inputHeight0.paramName,
+  Block.Params.inputWidth0.paramName,
+  Block.Params.channelCount0_pointwise1Before.paramName,
+  Block.Params.channelCount1_pointwise1Before.paramName,
+  Block.Params.pointwise1ChannelCount.paramName,
+  Block.Params.bPointwise1Bias.paramName,
+  Block.Params.pointwise1ActivationId.paramName,
+  Block.Params.depthwise_AvgMax_Or_ChannelMultiplier.paramName,
+  Block.Params.depthwiseFilterHeight.paramName,
+  Block.Params.depthwiseFilterWidth.paramName,
+  Block.Params.depthwiseStridesPad.paramName,
+  Block.Params.bDepthwiseBias.paramName,
+  Block.Params.depthwiseActivationId.paramName,
+  Block.Params.pointwise21ChannelCount.paramName,
+  Block.Params.bPointwise21Bias.paramName,
+  Block.Params.pointwise21ActivationId.paramName,
+  Block.Params.bOutput1Requested.paramName,
 
-  PointDepthPoint.Params.bKeepInputTensor.paramName,
+  Block.Params.bKeepInputTensor.paramName,
   
   "pointwise1Filters",
   "pointwise1Biases",
