@@ -206,18 +206,37 @@ class ScaleBoundsArray {
    *
    * @return {ScaleBoundsArray} Return this (modified) object.
    */
-  multiply_all_byScaleBoundsArray_multiply( aScaleBoundsArray ) {
+  multiply_all_byScaleBoundsArray_all( aScaleBoundsArray ) {
 
     // Multiply both activation escaping scales.
     //
-    // Note: This is diffferent from .set_all_byScaleBoundsArray_add() which can not handle different source scales.
+    // Note: This is diffferent from .add_all_byScaleBoundsArray_all() which can not handle different source scales.
     //
-    this.scaleArraySet.multiply_all_byScaleArraySet( aScaleBoundsArray.scaleArraySet );
+    this.scaleArraySet.multiply_all_byScaleArraySet_all( aScaleBoundsArray.scaleArraySet );
     this.boundsArray.multiply_all_byBoundsArray( aScaleBoundsArray.boundsArray );
     return this;
   }
 
-//!!!
+  /**
+   * @param {ScaleBoundsArray} aScaleBoundsArray
+   *   The aScaleBoundsArray[ aIndex ] will be used to multiply.
+   *
+   * @param {number} aIndex
+   *   The array index of aScaleBoundsArray.
+   *
+   * @return {ScaleBoundsArray} Return this (modified) object.
+   */
+  multiply_all_byScaleBoundsArray_one( aScaleBoundsArray, aIndex ) {
+
+    // Multiply both activation escaping scales.
+    //
+    // Note: This is diffferent from .add_all_byScaleBoundsArray_one() which can not handle different source scales.
+    //
+    this.scaleArraySet.multiply_all_byScaleArraySet_one( aScaleBoundsArray.scaleArraySet, aIndex );
+    this.boundsArray.multiply_all_byLowerUpper(
+      aScaleBoundsArray.boundsArray.lowers[ aIndex ], aScaleBoundsArray.boundsArray.uppers[ aIndex ] );
+    return this;
+  }
 
 
   /**
