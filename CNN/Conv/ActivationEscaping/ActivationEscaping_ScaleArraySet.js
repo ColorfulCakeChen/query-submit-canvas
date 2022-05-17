@@ -131,6 +131,7 @@ class ScaleArraySet {
     return result;
   }
 
+
   /**
    * Assert this and aScaleArraySet have the same length and values.
    *
@@ -138,7 +139,7 @@ class ScaleArraySet {
    *
    * @return {ScaleArraySet} Return this (un-modified) object.
    */
-  assert_all_byScaleArraySet_equal( aScaleArraySet ) {
+  assert_all_byScaleArraySet_all_equal( aScaleArraySet ) {
 
     tf.util.assert( ( this.length == aScaleArraySet.length ),
       `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
@@ -164,6 +165,40 @@ class ScaleArraySet {
 
     return this;
   }
+
+  /**
+   * Assert this all have the same value as aScaleArraySet.do.scales[ aIndex ] and aScaleArraySet.undo.scales[ aIndex ].
+   *
+   * @param {ScaleArraySet} aScaleArraySet
+   *   The aScaleArraySet.do.scales[ aIndex ] and aScaleArraySet.undo.scales[ aIndex ] will be used to compare.
+   *
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.do.scales[] and aBoundsArray.undo.scales[].
+   *
+   * @return {ScaleArraySet}
+   *   Return this (un-modified) object.
+   */
+  assert_all_byScaleArraySet_one_equal( aScaleArraySet, aIndex ) {
+
+    for ( let i = 0; i < this.do.length; ++i ) {
+      tf.util.assert( ( this.do.scales[ i ] == aScaleArraySet.do.scales[ aIndex ] ),
+        `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
+          + `this.do.scales[ ${i} ] ( ${this.do.scales[ i ]} ) should be the same as `
+          + `aScaleArraySet.do.scales[ ${aIndex} ] ( ${aScaleArraySet.do.scales[ aIndex ]} ).`
+      );
+    }
+
+    for ( let i = 0; i < this.undo.length; ++i ) {
+      tf.util.assert( ( this.undo[ i ] == aScaleArraySet.undo[ aIndex ] ),
+        `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
+          + `this.undo.scales[ ${i} ] ( ${this.undo.scales[ i ]} ) should be the same as `
+          + `aScaleArraySet.undo.scales[ ${aIndex} ] ( ${aScaleArraySet.undo.scales[ aIndex ]} ).`
+      );
+    }
+
+    return this;
+  }
+
 
   /**
    * @param {number} N  Set all scales[] by ( N ). Default are ( N = 1 ) (i.e. no scale).
@@ -234,9 +269,24 @@ class ScaleArraySet {
    *
    * @return {ScaleArraySet} Return this (modified) object.
    */
-  multiply_all_byScaleArraySet( aScaleArraySet ) {
+  multiply_all_byScaleArraySet_all( aScaleArraySet ) {
     this.do.multiply_all_byScaleArray( aScaleArraySet.do );
     this.undo.multiply_all_byScaleArray( aScaleArraySet.undo );
+    return this;
+  }
+
+  /**
+   * @param {ScaleArraySet} aScaleArraySet
+   *   The aScaleArraySet.do.scales[ aIndex ] and aScaleArraySet.undo.scales[ aIndex ] will be used to multiply.
+   *
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.do.scales[] and aBoundsArray.undo.scales[].
+   *
+   * @return {ScaleArraySet} Return this (modified) object.
+   */
+  multiply_all_byScaleArraySet_one( aScaleArraySet, aIndex ) {
+    this.do.multiply_all_byN( aScaleArraySet.do.scales[ aIndex ] );
+    this.undo.multiply_all_byN( aScaleArraySet.undo.scales[ aIndex ] );
     return this;
   }
 
