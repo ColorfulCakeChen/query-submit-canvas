@@ -218,7 +218,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
    * set of this pointwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
    *
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
-   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
    *
    * @return {boolean} Return true, if succeeded.
@@ -660,7 +660,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
    *   - The output channel count must be even (i.e. divisible by 2).
    *
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
-   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
    */
   set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo ) {
