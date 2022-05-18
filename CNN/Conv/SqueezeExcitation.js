@@ -108,7 +108,14 @@ class Base {
 
     this.intermediateChannelCount = inputChannelCount / intermediateChannelCountDivisor;
 
-//!!! 
+//!!! ...unfinished... (2022/05/18) when ( this.intermediatePointwise.bHigherHalfDifferent == true ), 
+//  - inputChannelCount_lowerHalf
+//  - outputChannelCount_lowerHalf
+//  - inputChannelCount_higherHalf
+//  - outputChannelCount_higherHalf
+//
+// should also be divisible by intermediateChannelCountDivisor.
+      
 // Could it be restored to inputChannelCount_lowerHalf and outputChannelCount_lowerHalf at excitationPointwise?
     this.intermediate ??? inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
     this.intermediate ??? outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
