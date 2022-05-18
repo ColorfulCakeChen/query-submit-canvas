@@ -602,12 +602,6 @@ class Base {
     asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
 
     {
-      // Exclude parameters weights, all the others should be the extracted weight count.
-      let tensorWeightCountExtracted
-        = ( testParams.in.inputFloat32Array.byteLength - extractedParams.defaultByteOffsetEnd ) / Float32Array.BYTES_PER_ELEMENT;
-
-      asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
-
 
 //!!! ...unfinished... (2022/05/18) What about squeeze-and-excitation?
 
@@ -618,6 +612,13 @@ class Base {
       tensorWeightCountTotal += block.pointwise21.bExisted ? block.pointwise21.tensorWeightCountTotal : 0;
       tensorWeightCountTotal += block.pointwise22?.bExisted ? block.pointwise22.tensorWeightCountTotal : 0;
       asserter.propertyValue( "tensorWeightCountTotal", tensorWeightCountTotal );
+
+      // Exclude parameters weights, all the others should be the extracted weight count.
+      let tensorWeightCountExtracted
+        = ( testParams.in.inputFloat32Array.byteLength - extractedParams.defaultByteOffsetEnd ) / Float32Array.BYTES_PER_ELEMENT;
+
+      asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
+      asserter.propertyValueLE( "tensorWeightCountExtracted", tensorWeightCountTotal );
     }
 
     return block;
