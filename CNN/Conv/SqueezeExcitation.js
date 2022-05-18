@@ -267,9 +267,26 @@ class Base {
    * Adjust this.pfnSqueezeExcitation_and_destroy_or_keep so that it is either:
    *   - the same as this.pfnSqueezeExcitation_and_keep which will not dispose inputTensor. or,
    *   - pointer to Base.operation_and_destroy() which will dispose inputTensor.
+   *
+   * The sub operations' setKeepInputTensor() will also be called.
+   *
    */
   setKeepInputTensor( bKeepInputTensor ) {
     this.bKeepInputTensor = bKeepInputTensor;
+
+//!!! ...unfinished... (2022/05/18) should also call sub operations' setKeepInputTensor().
+//     if ( this.squeezeDepthwise ) {
+//       this.squeezeDepthwise.setKeepInputTensor();
+//     }
+//
+//     if ( this.intermediatePointwise ) {
+//       this.intermediatePointwise.setKeepInputTensor();
+//     }
+//
+//     if ( this.excitationPointwise ) {
+//       this.excitationPointwise.setKeepInputTensor();
+//     }
+
 
     if ( bKeepInputTensor ) {
       this.pfnSqueezeExcitation_and_destroy_or_keep = this.pfnSqueezeExcitation_and_keep;
