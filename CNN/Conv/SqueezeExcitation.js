@@ -215,8 +215,13 @@ class Base {
     }
 
 //!!! ...unfinished... (2022/05/18)
+    {
 //       this.tensorWeightCountTotal += ???this.pointwise1.tensorWeightCountTotal;
 //       this.tensorWeightCountExtracted += ???this.pointwise1.tensorWeightCountExtracted;
+    }
+
+    this.bInitOk = true;
+    return this.bInitOk;
   }
 
 //!!! ...unfinished... (2022/05/15) should deletel sub pointwise.boundsArraySet
@@ -224,31 +229,19 @@ class Base {
 
   /** Release all tensors. */
   disposeTensors() {
-
-//!!! ...unfinished... (2022/05/18)
-
-    if ( this.pointwise1 ) {
-      this.pointwise1.disposeTensors();
-      this.pointwise1 = null;
+    if ( this.squeezeDepthwise ) {
+      this.squeezeDepthwise.disposeTensors();
+      this.squeezeDepthwise = null;
     }
 
-    if ( this.depthwise1 ) {
-      this.depthwise1.disposeTensors();
-      this.depthwise1 = null;
+    if ( this.intermediatePointwise ) {
+      this.intermediatePointwise.disposeTensors();
+      this.intermediatePointwise = null;
     }
 
-    if ( this.depthwise2 ) {
-      this.depthwise2.disposeTensors();
-      this.depthwise2 = null;
-    }
-
-    if ( this.pointwise21 ) {
-      this.pointwise21.disposeTensors();
-      this.pointwise21 = null;
-    }
-
-    if ( this.addInput0ToPointwise22 ) {
-      this.addInputToPointwise22Output = null;
+    if ( this.excitationPointwise ) {
+      this.excitationPointwise.disposeTensors();
+      this.excitationPointwise = null;
     }
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
@@ -258,11 +251,7 @@ class Base {
   }
 
   /**
-
-//!!! ...unfinished... (2022/05/18)
-
-   * Release all BoundsArraySet of pointwise1, depthwise1, depthwise2, pointwise21, pointwise22,
-   * concat1, addInput0ToPointwise21, addInput0ToPointwise22, concat2ShuffleSplit.
+   * Release all BoundsArraySet of squeezeDepthwise, intermediatePointwise, excitationPointwise.
    *
    * This could reduce memory footprint.
    *
@@ -274,7 +263,6 @@ class Base {
     delete this.excitationPointwise.boundsArraySet;
   }
 
-//!!! ...unfinished... (2022/05/18)
   /**
    * Adjust this.pfnSqueezeExcitation_and_destroy_or_keep so that it is either:
    *   - the same as this.pfnSqueezeExcitation_and_keep which will not dispose inputTensor. or,
@@ -291,82 +279,63 @@ class Base {
   }
 
 
-//!!! ...unfinished... (2022/05/18)
-
   /** Determine this.pfnSqueezeExcitation_and_keep data members.
    *
    * @param {Base} this
    *   The Base object to be determined and modified.
    */
   static setup_pfnSqueezeExcitation_and_keep() {
-
-
     if ( this.squeezeDepthwise ) {
-    }
-
-//!!! ...unfinished... (2022/05/18)
-
-    if ( this.intermediatePointwise ) {
-    }
-
-//!!! ...unfinished... (2022/05/18)
-
-    this.excitationPointwise
-
-
-//!!! ...unfinished... (2022/05/18)
-    // Determine whether pointwise operation should exist.
-    if ( this.outputChannelCount > 0 ) {
-      this.bPointwise = true;
-
-    } else {  // ( outputChannelCount <= 0 )
-      if ( this.channelShuffler_outputGroupCount > 0 ) {
-        this.bPointwise = true; // all-pass-through-and-channel-shuffling mode. (Otherwise, no way to do channel shuffling.)
-        this.bBias = false; // In this case, there is always no biases (no matter how original bBias is).
-
+      if ( this.intermediatePointwise ) {
+        this.pfnSqueezeExcitation_and_keep = Base.squeeze_intermediate_excitation_and_keep;
       } else {
-        this.bPointwise = false;
+        this.pfnSqueezeExcitation_and_keep = Base.squeeze_excitation_and_keep;
       }
-    }
-
-    this.pfnActivation = Base.ActivationFunction_getById( this.nActivationId );
-
-    if ( !this.bPointwise ) {
-      // Since there is no operation at all, let pfnConvBiasActivation ignore pfnConv completely.
-      this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
-      return true;
-    }
-
-    this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
-
-    if ( this.bBias ) {
-      if ( this.pfnActivation )
-        this.pfnConvBiasActivation = Base.ConvBiasActivation_and_destroy_or_keep;
-      else
-        this.pfnConvBiasActivation = Base.ConvBias_and_destroy_or_keep;
     } else {
-      if ( this.pfnActivation )
-        this.pfnConvBiasActivation = Base.ConvActivation_and_destroy_or_keep;
-       else
-        this.pfnConvBiasActivation = Base.Conv_and_destroy_or_keep;
+      if ( this.intermediatePointwise ) {
+        this.pfnSqueezeExcitation_and_keep = Base.intermediate_excitation_and_keep;
+      } else {
+        this.pfnSqueezeExcitation_and_keep = Base.excitation_and_keep;
+      }
     }
   }
 
+
   /** */
-  static squeeze_pointwise_excitation_and_keep( inputTensor ) {
+  static squeeze_intermediate_excitation_and_keep( inputTensor ) {
     let t0, t1;
-
-//!!! ...unfinished... (2022/05/18)
     t0 = this.squeezeDepthwise( inputTensor );
-
-    t1 = this.intermediatePointwise( t0 );  t0.dispose();
-    t0 = this.excitationPointwise( t1 );    t1.dispose();
-    t1 = tf.mul( inputTensor, t0 );         t0.dispose();
-
+    t1 = this.intermediatePointwise( t0 );     t0.dispose();
+    t0 = this.excitationPointwise( t1 );       t1.dispose();
+    t1 = tf.mul( inputTensor, t0 );            t0.dispose();
     return t1;
   }
 
-//!!! ...unfinished... (2022/05/18)
+  /** */
+  static squeeze_excitation_and_keep( inputTensor ) {
+    let t0, t1;
+    t0 = this.squeezeDepthwise( inputTensor );
+    t1 = this.excitationPointwise( t0 );       t0.dispose();
+    t0 = tf.mul( inputTensor, t1 );            t1.dispose();
+    return t0;
+  }
+
+  /** */
+  static intermediate_excitation_and_keep( inputTensor ) {
+    let t0, t1;
+    t0 = this.intermediatePointwise( inputTensor );
+    t1 = this.excitationPointwise( t0 );            t0.dispose();
+    t0 = tf.mul( inputTensor, t1 );                 t1.dispose();
+    return t0;
+  }
+
+  /** */
+  static excitation_and_keep( inputTensor ) {
+    let t0, t1;
+    t0 = this.excitationPointwise( inputTensor );
+    t1 = tf.mul( inputTensor, t0 );               t0.dispose();
+    return t1;
+  }
 
 
   /** Call this.pfnOperation_and_keep() and then dispose inputTensor. */
