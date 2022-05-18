@@ -5,8 +5,8 @@ import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ImageSourceBag from "./ImageSourceBag.js"; 
-import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js"; 
-import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js"; 
+import * as Block_TestParams from "./Block_TestParams.js"; 
+import * as Block_Reference from "./Block_Reference.js"; 
 import * as Stage_TestParams from "./Stage_TestParams.js"; 
 import * as Stage from "../../Conv/Stage.js";
 import * as BoundsArraySet_Asserter from "./BoundsArraySet_Asserter.js";
@@ -17,7 +17,7 @@ import * as BoundsArraySet_Asserter from "./BoundsArraySet_Asserter.js";
 class Base {
 
   constructor() {
-    this.PointDepthPoint_Reference = new PointDepthPoint_Reference.Base();
+    this.Block_Reference = new Block_Reference.Base();
     this.asserter_Equal = new TensorTools.Asserter_Equal( 0.4, 0.001 );
 
     // For reducing memory allocation.
@@ -79,7 +79,7 @@ class Base {
         inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
       }
 
-      let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
+      let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
       let stage = Base.Stage_create( testParams );
 
       let parametersDescription = stage.parametersDescription;
@@ -225,7 +225,7 @@ class Base {
       `Failed to initialize stage object. ${parametersDescription}`);
 
     tf.util.assert( ( 100 == progress.valuePercentage ),
-      `Progress (${progress.valuePercentage}) should be 100 when initializing pointDepthPoint object successfully. ${parametersDescription}`);
+      `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${parametersDescription}`);
 
     if ( stage.byteOffsetEnd != testParams.in.inputFloat32Array.byteLength ) { //!!! For Debug. (parsing ending position)
       debugger;
@@ -327,9 +327,9 @@ class Base {
 
       {
         blockParams = blockParamsArray[ blockIndex ];
-        if ( blockParams instanceof PointDepthPoint_TestParams.Base ) {
+        if ( blockParams instanceof Block_TestParams.Base ) {
           blockParams = blockParams.out;
-        } else { // PointDepthPoint.Base
+        } else { // Block.Base
         }
       }
 
@@ -464,15 +464,15 @@ class Base {
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
             if ( stageParams.bPointwise1 == false ) {
-              if ( blockParams instanceof PointDepthPoint_TestParams.Base ) {
+              if ( blockParams instanceof Block_TestParams.Base ) {
                 asserter.propertyValue( "pointwise1ChannelCount", 0 ); // Zero in parameters.
-              } else { // PointDepthPoint.Base
+              } else { // Block.Base
                 asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount ); // Double in reality internally.
               }
             } else {
-              if ( blockParams instanceof PointDepthPoint_TestParams.Base ) {
+              if ( blockParams instanceof Block_TestParams.Base ) {
                 asserter.propertyValue( "pointwise1ChannelCount", single_Block0Input0ChannelCount ); // Single in parameters.
-              } else { // PointDepthPoint.Base
+              } else { // Block.Base
                 asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount ); // Double in reality internally.
               }
             }
@@ -715,7 +715,7 @@ class Base {
       }
 
       // .addInput0ToPointwise21, .addInput0ToPointwise22
-      if ( blockParams instanceof PointDepthPoint.Base ) {
+      if ( blockParams instanceof Block.Base ) {
 
         // addInput0ToPointwise21
         if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
@@ -791,7 +791,7 @@ class Base {
 
     // Calculate every blocks in sequence.
 
-    let pointDepthPointRef = this.PointDepthPoint_Reference;
+    let blockRef = this.Block_Reference;
 
     this.imageInArray[ 0 ] = imageIn;
     this.imageInArray[ 1 ] = null;
@@ -799,8 +799,8 @@ class Base {
     let imageOutArray = this.imageInArray;
     let blockCount = testParams.blocksArray.length;
     for ( let blockIndex = 0; blockIndex < blockCount; ++blockIndex ) {
-      pointDepthPointRef.testParams = testParams.blocksArray[ blockIndex ];
-      imageOutArray = pointDepthPointRef.calcResult( imageOutArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
+      blockRef.testParams = testParams.blocksArray[ blockIndex ];
+      imageOutArray = blockRef.calcResult( imageOutArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
     }
 
     let imageOut = imageOutArray[ 0 ]; // The blockLast should have only input0.
