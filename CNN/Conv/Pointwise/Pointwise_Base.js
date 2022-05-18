@@ -117,7 +117,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     this.pfnConvBiasActivation = this.pfnConv = this.pfnActivation = null;
 
     this.bPointwise = false;
-    this.byteOffsetEnd = -1;
+    this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bKeepInputTensor = false;  // Default will dispose input tensor.
     this.bInitOk = false;
   }
