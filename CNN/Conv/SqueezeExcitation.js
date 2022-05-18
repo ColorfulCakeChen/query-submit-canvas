@@ -57,8 +57,16 @@ import * as Pointwise from "./Pointwise.js";
 
 /**
  *
+ * @member {number} byteOffsetBegin
+ *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by init(). This is relative to the
+ * inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
+ *
+ * @member {number} byteOffsetEnd
+ *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
+ * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
+ *
  * @member {number} inputChannelCount
- *   The channel count of the input tensor.
+ *   The channel count of the input tensor. It must be greater than zero (> 0).
  *
  * @member {number} intermediateChannelCount
  *   The channel count between squeeze and excitation.
@@ -81,8 +89,18 @@ import * as Pointwise from "./Pointwise.js";
  *   The wieght count extracted from inputFloat32Array and used in tensors. Not including inferenced weights (even if they are
  * used in tensors), because they are not extracted from inputFloat32Array.
  *
+ * @member {function} pfnSqueezeExcitation_and_keep
+ *   A method accepts one parameter inputTensor (tf.tensor3d) and return an outputTensor (tf.tensor3d). All intermediate tensors
+ * will be disposed. The inputTensor will NOT be disposed (i.e. will be kept). In fact, this method calls one of Base.Xxx_and_keep()
+ * according to the parameters.
+ *
+ * @member {function} pfnSqueezeExcitation_and_destroy_or_keep
+ *   A method accepts one parameter inputTensor (tf.tensor3d) and return an outputTensor (tf.tensor3d). All intermediate tensors
+ * will be disposed. This method calls this.pfnSqueezeExcitation_and_keep(), and then may or may not dispose inputTensor according to
+ * setKeepInputTensor().
+ *
  */
-class Base extends {
+class Base {
 
 //!!! ...unfinished... (2022/05/18)
 
@@ -93,23 +111,30 @@ class Base extends {
     inputChannelCount, intermediateChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf ) {
 
+    tf.util.assert( ( inputChannelCount > 0 ),
+      `SqueezeExcitation.constructor(): `
+        + `inputChannelCount ( ${inputChannelCount} ) should be greater than zero (> 0).`
+    );
+
     // Note: Inside squeeze-and-excitation, all depthwsie and pointwise convolutions are constnat-when-pass-through.
     //       So that the result for pass-through parts will not affect input when multiply to input.
     //
 
 
+
 //!!! ...unfinished... (2022/05/18) squeeze?
-    this.squeezeDepthwise = new Depthwise.ConstantWhenPassThrough(
+    if (  ) {
+      this.squeezeDepthwise = new Depthwise.ConstantWhenPassThrough(
 
-//!!! ...unfinished... (2022/05/18)
-      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth,
+  //!!! ...unfinished... (2022/05/18)
+        inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth,
 
-      ???ValueDesc.StridesPad.Singleton.STRIDES_1_PAD_SAME, // (stridesPad)
+        ???ValueDesc.StridesPad.Singleton.STRIDES_1_PAD_SAME, // (stridesPad)
 
-      bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf
-    );
-
+        bBias, nActivationId, nPassThroughStyleId,
+        nHigherHalfDifferent, inputChannelCount_lowerHalf
+      );
+    }
 
     this.intermediateChannelCount = intermediateChannelCount;
     if ( intermediateChannelCount > 0 ) {
@@ -149,8 +174,45 @@ class Base extends {
 
 //!!! ...unfinished... (2022/05/18)
 
+    this.disposeTensors();
 
-//!!! ...unfinished... (2022/05/18) boundsArraySet. dispose
+    this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
+
+    // 1.
+
+    // 1.1    
+    Base.adjust_pfnSqueezeExcitation_and_keep.call( this );
+
+//!!! ...unfinished... (2022/05/18)
+
+    if ( !this.squeezeDepthwise.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
+      return false;  // e.g. input array does not have enough data.
+    this.byteOffsetEnd = this.squeezeDepthwise.byteOffsetEnd;
+
+
+//!!! ...unfinished... (2022/05/18)
+
+    if ( this.intermediatePointwise ) {
+      if ( !this.intermediatePointwise.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
+        return false;  // e.g. input array does not have enough data.
+      this.byteOffsetEnd = this.intermediatePointwise.byteOffsetEnd;
+
+//!!! ...unfinished... (2022/05/18)
+    }
+
+//!!! ...unfinished... (2022/05/18)
+
+    if ( !this.excitationPointwise.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
+      return false;  // e.g. input array does not have enough data.
+    this.byteOffsetEnd = this.excitationPointwise.byteOffsetEnd;
+
+
+    {
+//!!! ...unfinished... (2022/05/18) build self boundsArraySet.
+//      this.boundsArraySet = ???;
+
+      this.dispose_all_sub_BoundsArraySet();
+    }
 
 //!!! ...unfinished... (2022/05/18)
 //       this.tensorWeightCountTotal += ???this.pointwise1.tensorWeightCountTotal;
@@ -191,6 +253,7 @@ class Base extends {
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
+    this.bKeepInputTensor = false;  // Default will dispose input tensor.
     this.bInitOk = false;
   }
 
@@ -206,14 +269,111 @@ class Base extends {
    * (Note: This SqueezeExcitation's BoundsArraySet is kept.)
    */
   dispose_all_sub_BoundsArraySet() {
+    delete this.squeezeDepthwise?.boundsArraySet;
+    delete this.intermediatePointwise?.boundsArraySet;
+    delete this.excitationPointwise.boundsArraySet;
+  }
+
+//!!! ...unfinished... (2022/05/18)
+  /**
+   * Adjust this.pfnSqueezeExcitation_and_destroy_or_keep so that it is either:
+   *   - the same as this.pfnSqueezeExcitation_and_keep which will not dispose inputTensor. or,
+   *   - pointer to Base.operation_and_destroy() which will dispose inputTensor.
+   */
+  setKeepInputTensor( bKeepInputTensor ) {
+    this.bKeepInputTensor = bKeepInputTensor;
+
+    if ( bKeepInputTensor ) {
+      this.pfnSqueezeExcitation_and_destroy_or_keep = this.pfnSqueezeExcitation_and_keep;
+    } else {
+      this.pfnSqueezeExcitation_and_destroy_or_keep = Base.operation_and_destroy;
+    }
+  }
+
 
 //!!! ...unfinished... (2022/05/18)
 
-    delete this.pointwise1?.boundsArraySet;
-    delete this.depthwise1?.boundsArraySet;
-    delete this.depthwise2?.boundsArraySet;
-    delete this.pointwise21?.boundsArraySet;
-    delete this.pointwise22?.boundsArraySet;
+  /** Determine this.pfnSqueezeExcitation_and_keep data members.
+   *
+   * @param {Base} this
+   *   The Base object to be determined and modified.
+   */
+  static setup_pfnSqueezeExcitation_and_keep() {
+
+
+    if ( this.squeezeDepthwise ) {
+    }
+
+//!!! ...unfinished... (2022/05/18)
+
+    if ( this.intermediatePointwise ) {
+    }
+
+//!!! ...unfinished... (2022/05/18)
+
+    this.excitationPointwise
+
+
+//!!! ...unfinished... (2022/05/18)
+    // Determine whether pointwise operation should exist.
+    if ( this.outputChannelCount > 0 ) {
+      this.bPointwise = true;
+
+    } else {  // ( outputChannelCount <= 0 )
+      if ( this.channelShuffler_outputGroupCount > 0 ) {
+        this.bPointwise = true; // all-pass-through-and-channel-shuffling mode. (Otherwise, no way to do channel shuffling.)
+        this.bBias = false; // In this case, there is always no biases (no matter how original bBias is).
+
+      } else {
+        this.bPointwise = false;
+      }
+    }
+
+    this.pfnActivation = Base.ActivationFunction_getById( this.nActivationId );
+
+    if ( !this.bPointwise ) {
+      // Since there is no operation at all, let pfnConvBiasActivation ignore pfnConv completely.
+      this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
+      return true;
+    }
+
+    this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
+
+    if ( this.bBias ) {
+      if ( this.pfnActivation )
+        this.pfnConvBiasActivation = Base.ConvBiasActivation_and_destroy_or_keep;
+      else
+        this.pfnConvBiasActivation = Base.ConvBias_and_destroy_or_keep;
+    } else {
+      if ( this.pfnActivation )
+        this.pfnConvBiasActivation = Base.ConvActivation_and_destroy_or_keep;
+       else
+        this.pfnConvBiasActivation = Base.Conv_and_destroy_or_keep;
+    }
+  }
+
+  /** */
+  static squeeze_pointwise_excitation_and_keep( inputTensor ) {
+    let t0, t1;
+
+//!!! ...unfinished... (2022/05/18)
+    t0 = this.squeezeDepthwise( inputTensor );
+
+    t1 = this.intermediatePointwise( t0 );  t0.dispose();
+    t0 = this.excitationPointwise( t1 );    t1.dispose();
+    t1 = tf.mul( inputTensor, t0 );         t0.dispose();
+
+    return t1;
+  }
+
+//!!! ...unfinished... (2022/05/18)
+
+
+  /** Call this.pfnOperation_and_keep() and then dispose inputTensor. */
+  static operation_and_destroy( inputTensor ) {
+    let t0 = this.pfnSqueezeExcitation_and_keep( inputTensor );
+    inputTensor.dispose();
+    return t0;
   }
 
 }
