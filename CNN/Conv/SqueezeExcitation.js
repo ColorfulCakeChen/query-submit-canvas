@@ -80,55 +80,21 @@ class Base {
     inputChannelCount, intermediateChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf ) {
 
+    this.inputChannelCount = inputChannelCount;
+    this.intermediateChannelCount = intermediateChannelCount;
+    this.bBias = bBias;
+    this.nActivationId = nActivationId;
+
+    this.nHigherHalfDifferent = nHigherHalfDifferent;
+    this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
+    this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
+
     tf.util.assert( ( inputChannelCount > 0 ),
-      `SqueezeExcitation.constructor(): `
+      `SqueezeExcitation.Base.constructor(): `
         + `inputChannelCount ( ${inputChannelCount} ) should be greater than zero (> 0).`
     );
 
-    // Note: Inside squeeze-and-excitation, all depthwsie and pointwise convolutions are constnat-when-pass-through.
-    //       So that the result for pass-through parts will not affect input when multiply to input.
-    //
-
-
-//!!! ...unfinished... (2022/05/18) bBias?
-//  If no activation, it is enough to let the only last operation have ( bBias == true ).
-//
-
-
-//!!! ...unfinished... (2022/05/18) squeeze?
-    if (  ) {
-      this.squeezeDepthwise = new Depthwise.ConstantWhenPassThrough(
-
-  //!!! ...unfinished... (2022/05/18)
-        inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth,
-
-        ???ValueDesc.StridesPad.Singleton.STRIDES_1_PAD_SAME, // (stridesPad)
-
-        bBias, nActivationId, nPassThroughStyleId,
-        nHigherHalfDifferent, inputChannelCount_lowerHalf
-      );
-    }
-
-    this.intermediateChannelCount = intermediateChannelCount;
-    if ( intermediateChannelCount > 0 ) {
-      this.intermediatePointwise = new Pointwise.ConstantWhenPassThrough(
-        inputChannelCount,
-        intermediateChannelCount,
-        bBias, nActivationId,
-        nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
-        0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
-      );
-    }
-
-    this.excitationPointwise = new Pointwise.ConstantWhenPassThrough(
-      intermediateChannelCount,
-      inputChannelCount, // For squeeze-and-excitation, output channel count always the same as input.
-      bBias, nActivationId,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
-      0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
-    );
-
-
+    this.outputChannelCount = this.inputChannelCount, // For squeeze-and-excitation, output channel count is always the same as input.
   }
 
   /**
@@ -150,11 +116,34 @@ class Base {
     // 1. Determine operation functions.
     Base.setup_pfnSqueezeExcitation.call( this );
 
+
+//!!! ...unfinished... (2022/05/18) bBias?
+//  If no activation, it is enough to let the only last operation have ( bBias == true ).
+//
+
+
     // 2. Initialize sub-operations.
+
+    // Note: Inside squeeze-and-excitation, all depthwsie and pointwise convolutions are constant-when-pass-through.
+    //       So that the result for pass-through parts will not affect input when multiply to input.
+    //
+
+//!!! ...unfinished... (2022/05/18) squeeze?
 
     // 2.1
     let squeezeDepthwise_boundsArraySet_output0;
-    if ( this.squeezeDepthwise ) {
+    if (  ) {
+      this.squeezeDepthwise = new Depthwise.ConstantWhenPassThrough(
+
+  //!!! ...unfinished... (2022/05/18)
+        inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth,
+
+        ???ValueDesc.StridesPad.Singleton.STRIDES_1_PAD_SAME, // (stridesPad)
+
+        bBias, nActivationId, nPassThroughStyleId,
+        nHigherHalfDifferent, inputChannelCount_lowerHalf
+      );
+
       if ( !this.squeezeDepthwise.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = this.squeezeDepthwise.byteOffsetEnd;
@@ -169,7 +158,19 @@ class Base {
 
     // 2.2
     let intermediatePointwise_boundsArraySet_output0;
-    if ( this.intermediatePointwise ) {
+    if ( this.intermediateChannelCount > 0 ) {
+      this.intermediatePointwise = new Pointwise.ConstantWhenPassThrough(
+        squeezeDepthwise_boundsArraySet_output0.channelCount,
+        this.intermediateChannelCount,
+        this.bBias, this.nActivationId,
+        this.nHigherHalfDifferent,
+
+//!!! ...unfinished... (2022/05/18) should half of intermediateChannelCount.
+        this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,
+
+        0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
+      );
+
       if ( !this.intermediatePointwise.init( inputFloat32Array, this.byteOffsetEnd, squeezeDepthwise_boundsArraySet_output0 ) )
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = this.intermediatePointwise.byteOffsetEnd;
@@ -184,6 +185,20 @@ class Base {
 
     // 2.3
     {
+      this.excitationPointwise = new Pointwise.ConstantWhenPassThrough(
+        intermediatePointwise_boundsArraySet_output0.channelCount,
+        this.outputChannelCount,
+        this.bBias, this.nActivationId,
+        this.nHigherHalfDifferent,
+
+
+//!!! ...unfinished... (2022/05/18) should half of intermediateChannelCount.
+        this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,
+        0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
+      );
+
+
+
       if ( !this.excitationPointwise.init( inputFloat32Array, this.byteOffsetEnd, intermediatePointwise_boundsArraySet_output0 ) )
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = this.excitationPointwise.byteOffsetEnd;
