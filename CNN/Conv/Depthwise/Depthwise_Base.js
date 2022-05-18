@@ -94,7 +94,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
       this.boundsArraySet = new BoundsArraySet.Depthwise( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
       this.boundsArraySet.output0.set_all_byScaleBoundsArray( inputScaleBoundsArray ); // Bypass previous to next.
 
-    } else {
+    } else { // 3.
 
       bExtractOk = super.init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray );
       if ( bExtractOk ) {
