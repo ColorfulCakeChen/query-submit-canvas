@@ -144,12 +144,10 @@ class Base {
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
-    // 1.
-
-    // 1.1    
+    // 1. Determine operation functions.
     Base.setup_pfnSqueezeExcitation.call( this );
 
-    // 2.
+    // 2. Initialize sub-operations.
 
     // 2.1
     let squeezeDepthwise_boundsArraySet_output0;
