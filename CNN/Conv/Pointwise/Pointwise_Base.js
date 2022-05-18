@@ -129,6 +129,9 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
    * dispose its inputTensor.
    */
   setKeepInputTensor( bKeepInputTensor ) {
+    if ( bKeepInputTensor == this.bKeepInputTensor )
+      return;
+
     this.bKeepInputTensor = bKeepInputTensor;
 
     if ( this.bExisted ) {
