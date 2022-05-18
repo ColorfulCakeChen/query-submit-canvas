@@ -73,8 +73,6 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     this.disposeTensors();
 
     // 1.
-
-    // 1.1    
     Base.Setup_bPointwise_pfn.call( this );
 
     let bExtractOk;
