@@ -1,7 +1,7 @@
 export { Base };
 
 //import * as FloatValue from "../Unpacker/FloatValue.js";
-//import * as ValueDesc from "../Unpacker/ValueDesc.js";
+import * as ValueDesc from "../Unpacker/ValueDesc.js";
 //import * as Weights from "../Unpacker/Weights.js";
 import * as BoundsArraySet from "./BoundsArraySet.js";
 import * as Depthwise from "./Depthwise.js";
@@ -78,8 +78,7 @@ import * as Pointwise from "./Pointwise.js";
  */
 class Base extends {
 
-//!!! ...unfinished... (2022/05/08)
-
+//!!! ...unfinished... (2022/05/18)
 
   /**
    *
@@ -88,11 +87,23 @@ class Base extends {
     inputChannelCount, intermediateChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf ) {
 
-//!!! ...unfinished... (2022/05/18) squeeze?
-
-    // Note: Inside squeeze-and-excitation, all pointwise convolutions are constnat-when-pass-through. The reason is that
-    //       the result will not affect input when multiply to input.
+    // Note: Inside squeeze-and-excitation, all depthwsie and pointwise convolutions are constnat-when-pass-through.
+    //       So that the result for pass-through parts will not affect input when multiply to input.
     //
+
+
+//!!! ...unfinished... (2022/05/18) squeeze?
+    this.squeezeDepthwise = new Depthwise.ConstantWhenPassThrough(
+
+//!!! ...unfinished... (2022/05/18)
+      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth,
+
+      ???ValueDesc.StridesPad.Singleton.STRIDES_1_PAD_SAME, // (stridesPad)
+
+      bBias, nActivationId, nPassThroughStyleId,
+      nHigherHalfDifferent, inputChannelCount_lowerHalf
+    );
+
 
     this.intermediateChannelCount = intermediateChannelCount;
     if ( intermediateChannelCount > 0 ) {
@@ -116,6 +127,8 @@ class Base extends {
 
   }
 
+//!!! ...unfinished... (2022/05/18)
+
   /**
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
@@ -124,13 +137,9 @@ class Base extends {
    *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
    * set of this pointwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
    *
-   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
-   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
-   * and improve performance when doing Interleave_asGrouptTwo.
-   *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo ) {
+  init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray ) {
 
 //!!! ...unfinished... (2022/05/08)
 
