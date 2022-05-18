@@ -42,7 +42,7 @@ class Base {
       let sourceHeight = this.testParams.out.sourceHeight;
       let sourceWidth = this.testParams.out.sourceWidth;
       let sourceChannelCount = this.testParams.out.sourceChannelCount;
-      let stepCountRequested = this.testParams.out.stepCountRequested;
+      let blockCountRequested = this.testParams.out.blockCountRequested;
       let bPointwise1 = this.testParams.out.bPointwise1;
       let depthwiseFilterHeight = this.testParams.out.depthwiseFilterHeight;
       let depthwiseFilterWidth = this.testParams.out.depthwiseFilterWidth;
@@ -89,7 +89,7 @@ class Base {
       Base.AssertTwoEqualValues( "outputWidth", stage.outputWidth, outputWidth, strNote );
       Base.AssertTwoEqualValues( "outputChannelCount", stage.outputChannelCount, outputChannelCount, strNote );
 
-      Base.AssertTwoEqualValues( "stepCount", stage.stepCount, testParams.stepsArray.length, strNote );
+      Base.AssertTwoEqualValues( "blockCount", stage.blockCount, testParams.blocksArray.length, strNote );
 
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
@@ -200,7 +200,7 @@ class Base {
     // Initialize successfully or failed.
     let extractedParams = new Stage.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
       testParams.in.sourceHeight, testParams.in.sourceWidth, testParams.in.sourceChannelCount,
-      testParams.in.stepCountRequested,
+      testParams.in.blockCountRequested,
       testParams.in.bPointwise1,
       testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
       testParams.in.nActivationId,
@@ -231,6 +231,8 @@ class Base {
       debugger;
     }
 
+    let asserter = new ObjectPropertyAsserter.Base( `Stage`, stage, parametersDescription );
+
     Base.AssertTwoEqualValues( "parsing beginning position",
       stage.byteOffsetBegin, testParams.in.byteOffsetBegin, parametersDescription );
 
@@ -238,34 +240,28 @@ class Base {
       stage.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, parametersDescription );
 
     // parameters.
-    Base.AssertTwoEqualValues( "sourceHeight", stage.sourceHeight, testParams.out.sourceHeight, parametersDescription );
-    Base.AssertTwoEqualValues( "sourceWidth", stage.sourceWidth, testParams.out.sourceWidth, parametersDescription );
-    Base.AssertTwoEqualValues( "sourceChannelCount", stage.sourceChannelCount, testParams.out.sourceChannelCount, parametersDescription );
-    Base.AssertTwoEqualValues( "stepCountRequested", stage.stepCountRequested, testParams.out.stepCountRequested, parametersDescription );
+    asserter.propertyValue( "sourceHeight", testParams.out.sourceHeight );
+    asserter.propertyValue( "sourceWidth", testParams.out.sourceWidth );
+    asserter.propertyValue( "sourceChannelCount", testParams.out.sourceChannelCount );
+    asserter.propertyValue( "blockCountRequested", testParams.out.blockCountRequested );
 
-    Base.AssertTwoEqualValues( "bPointwise1", stage.bPointwise1, testParams.out.bPointwise1, parametersDescription );
+    asserter.propertyValue( "bPointwise1", testParams.out.bPointwise1 );
 
-    Base.AssertTwoEqualValues( "depthwiseFilterHeight",
-      stage.depthwiseFilterHeight, testParams.out.depthwiseFilterHeight, parametersDescription );
+    asserter.propertyValue( "depthwiseFilterHeight", testParams.out.depthwiseFilterHeight );
+    asserter.propertyValue( "depthwiseFilterWidth", testParams.out.depthwiseFilterWidth );
 
-    Base.AssertTwoEqualValues( "depthwiseFilterWidth",
-      stage.depthwiseFilterWidth, testParams.out.depthwiseFilterWidth, parametersDescription );
-
-    Base.AssertTwoEqualValues( "nActivationId", stage.nActivationId, testParams.out.nActivationId, parametersDescription );
-
-    Base.AssertTwoEqualValues( "bPointwise2ActivatedAtStageEnd",
-      stage.bPointwise2ActivatedAtStageEnd, testParams.out.bPointwise2ActivatedAtStageEnd, parametersDescription );
-
-    Base.AssertTwoEqualValues( "nConvStageType", stage.nConvStageType, testParams.out.nConvStageType, parametersDescription );
+    asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
+    asserter.propertyValue( "bPointwise2ActivatedAtStageEnd", testParams.out.bPointwise2ActivatedAtStageEnd );
+    asserter.propertyValue( "nConvStageType", testParams.out.nConvStageType );
 
     // Referred parameters.
-    Base.AssertTwoEqualValues( "outputHeight", stage.outputHeight, testParams.out.outputHeight, parametersDescription );
-    Base.AssertTwoEqualValues( "outputWidth", stage.outputWidth, testParams.out.outputWidth, parametersDescription );
+    asserter.propertyValue( "outputHeight", testParams.out.outputHeight );
+    asserter.propertyValue( "outputWidth", testParams.out.outputWidth );
 
     // Other parameters.
-    Base.AssertTwoEqualValues( "bKeepInputTensor", stage.bKeepInputTensor, testParams.out.bKeepInputTensor, parametersDescription );
+    asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
 
-    Base.AssertParameters_Stage_steps( stage, parametersDescription ); // Test every step's parameters.
+    Base.AssertParameters_Stage_blocks( stage, parametersDescription ); // Test every block's parameters.
 
     {
       let tensorWeightCountTotal = 0;
@@ -296,81 +292,81 @@ class Base {
   }
 
   /**
-   * Test every step's parameters.
+   * Test every block's parameters.
    *
    * @param {Stage.Base[]|Stage_TestParams.Base[]} stageParams
    *   The stage to be checked. It parameters will be checked.
    *
    */
-  static AssertParameters_Stage_steps( stageParams, parametersDescription ) {
-    let stepParamsArray = stageParams.stepsArray; // No matter Stage.Base or Stage_TestParams.Base
+  static AssertParameters_Stage_blocks( stageParams, parametersDescription ) {
+    let blockParamsArray = stageParams.blocksArray; // No matter Stage.Base or Stage_TestParams.Base
 
     if ( stageParams instanceof Stage_TestParams.Base ) {
       stageParams = stageParams.out;
     } else { // Stage.Base
     }
 
-    let stepCountRequested = stageParams.stepCountRequested;
+    let blockCountRequested = stageParams.blockCountRequested;
     let nConvStageType = stageParams.nConvStageType;
 
-    let single_Step0Input0ChannelCount = stageParams.sourceChannelCount;        // Single of step0's input0 channel count.
-    let double_Step0Input0ChannelCount = double_Step0Input0ChannelCount * 2;    // Double of step0's input0 channel count.
-    let quadruple_Step0Input0ChannelCount = stageParams.sourceChannelCount * 4; // Quadruple of step0's input0 channel count.
+    let single_Block0Input0ChannelCount = stageParams.sourceChannelCount;        // Single of block0's input0 channel count.
+    let double_Block0Input0ChannelCount = double_Block0Input0ChannelCount * 2;    // Double of block0's input0 channel count.
+    let quadruple_Block0Input0ChannelCount = stageParams.sourceChannelCount * 4; // Quadruple of block0's input0 channel count.
 
-    let stepCount = stepParamsArray.length;
+    let blockCount = blockParamsArray.length;
 
-    tf.util.assert( ( stepCount > 0 ),
-      `Stage stepCount (${stepCount}) should be larger than 0. ${parametersDescription}`);
+    tf.util.assert( ( blockCount > 0 ),
+      `Stage blockCount (${blockCount}) should be larger than 0. ${parametersDescription}`);
 
-    tf.util.assert( ( stepCount >= 2 ),
-      `Stage stepCount (${stepCount}) should be >= 2. ${parametersDescription}`);
+    tf.util.assert( ( blockCount >= 2 ),
+      `Stage blockCount (${blockCount}) should be >= 2. ${parametersDescription}`);
 
-    let stepName, stepParams, pointwise1ChannelCount;
-    for ( let stepIndex = 0; stepIndex < stepCount; ++stepIndex ) {
-      stepName = `step${stepIndex}`;
+    let blockName, blockParams, pointwise1ChannelCount;
+    for ( let blockIndex = 0; blockIndex < blockCount; ++blockIndex ) {
+      blockName = `block${blockIndex}`;
 
       {
-        stepParams = stepParamsArray[ stepIndex ];
-        if ( stepParams instanceof PointDepthPoint_TestParams.Base ) {
-          stepParams = stepParams.out;
+        blockParams = blockParamsArray[ blockIndex ];
+        if ( blockParams instanceof PointDepthPoint_TestParams.Base ) {
+          blockParams = blockParams.out;
         } else { // PointDepthPoint.Base
         }
       }
 
-      let asserter = new ObjectPropertyAsserter.Base( `Stage.${stepName}`, stepParams, parametersDescription );
+      let asserter = new ObjectPropertyAsserter.Base( `Stage.${blockName}`, blockParams, parametersDescription );
 
-      let strUnknownConvStageType = `Stage_Reference.Base.AssertParameters_Stage_steps(): `
+      let strUnknownConvStageType = `Stage_Reference.Base.AssertParameters_Stage_blocks(): `
             `unknown nConvStageType ( ${nConvStageType} ) value. ${asserter.contextDescription}`;
 
       // inputHeight0, inputWidth0
-      if ( 0 == stepIndex ) { // step0
+      if ( 0 == blockIndex ) { // block0
         asserter.propertyValue( "inputHeight0", stageParams.sourceHeight );
         asserter.propertyValue( "inputWidth0", stageParams.sourceWidth );
-      } else { // step1, 2, 3, ...
+      } else { // block1, 2, 3, ...
         asserter.propertyValue( "inputHeight0", stageParams.outputHeight );
         asserter.propertyValue( "inputWidth0", stageParams.outputWidth );
       }
 
       // channelCount0_pointwise1Before
-      if ( 0 == stepIndex ) { // step0
-        asserter.propertyValue( "channelCount0_pointwise1Before", single_Step0Input0ChannelCount );
-      } else { // step1, 2, 3, ...
+      if ( 0 == blockIndex ) { // block0
+        asserter.propertyValue( "channelCount0_pointwise1Before", single_Block0Input0ChannelCount );
+      } else { // block1, 2, 3, ...
         switch ( nConvStageType ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
-            asserter.propertyValue( "channelCount0_pointwise1Before", double_Step0Input0ChannelCount );
+            asserter.propertyValue( "channelCount0_pointwise1Before", double_Block0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-            asserter.propertyValue( "channelCount0_pointwise1Before", single_Step0Input0ChannelCount );
+            asserter.propertyValue( "channelCount0_pointwise1Before", single_Block0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
-            asserter.propertyValue( "channelCount0_pointwise1Before", double_Step0Input0ChannelCount );
+            asserter.propertyValue( "channelCount0_pointwise1Before", double_Block0Input0ChannelCount );
             break;
 
           default: tf.util.assert( false, strUnknownConvStageType ); break;
@@ -378,7 +374,7 @@ class Base {
       }
 
       // channelCount1_pointwise1Before
-      if ( 0 == stepIndex ) { // step0
+      if ( 0 == blockIndex ) { // block0
         switch ( nConvStageType ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -406,7 +402,7 @@ class Base {
           default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
 
-      } else { // step1, 2, 3, ...
+      } else { // block1, 2, 3, ...
         switch ( nConvStageType ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -425,7 +421,7 @@ class Base {
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-            asserter.propertyValue( "channelCount1_pointwise1Before", single_Step0Input0ChannelCount ); // TWO_INPUTS
+            asserter.propertyValue( "channelCount1_pointwise1Before", single_Block0Input0ChannelCount ); // TWO_INPUTS
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
@@ -439,7 +435,7 @@ class Base {
       }
 
       // pointwise1ChannelCount
-      if ( 0 == stepIndex ) { // step0
+      if ( 0 == blockIndex ) { // block0
         switch ( nConvStageType ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -447,14 +443,14 @@ class Base {
             if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount );
+              asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
             if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", quadruple_Step0Input0ChannelCount );
+              asserter.propertyValue( "pointwise1ChannelCount", quadruple_Block0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
@@ -462,22 +458,22 @@ class Base {
             if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount );
+              asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
             if ( stageParams.bPointwise1 == false ) {
-              if ( stepParams instanceof PointDepthPoint_TestParams.Base ) {
+              if ( blockParams instanceof PointDepthPoint_TestParams.Base ) {
                 asserter.propertyValue( "pointwise1ChannelCount", 0 ); // Zero in parameters.
               } else { // PointDepthPoint.Base
-                asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount ); // Double in reality internally.
+                asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount ); // Double in reality internally.
               }
             } else {
-              if ( stepParams instanceof PointDepthPoint_TestParams.Base ) {
-                asserter.propertyValue( "pointwise1ChannelCount", single_Step0Input0ChannelCount ); // Single in parameters.
+              if ( blockParams instanceof PointDepthPoint_TestParams.Base ) {
+                asserter.propertyValue( "pointwise1ChannelCount", single_Block0Input0ChannelCount ); // Single in parameters.
               } else { // PointDepthPoint.Base
-                asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount ); // Double in reality internally.
+                asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount ); // Double in reality internally.
               }
             }
             break;
@@ -485,7 +481,7 @@ class Base {
           default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
 
-      } else { // step1, 2, 3, ...
+      } else { // block1, 2, 3, ...
         switch ( nConvStageType ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -497,14 +493,14 @@ class Base {
             if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", double_Step0Input0ChannelCount );
+              asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
             if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", quadruple_Step0Input0ChannelCount );
+              asserter.propertyValue( "pointwise1ChannelCount", quadruple_Block0Input0ChannelCount );
             break;
 
           default: tf.util.assert( false, strUnknownConvStageType ); break;
@@ -518,7 +514,7 @@ class Base {
       asserter.propertyValue( "depthwiseFilterWidth", stageParams.depthwiseFilterWidth );
 
       // depthwise_AvgMax_Or_ChannelMultiplier
-      if ( 0 == stepIndex ) { // step0
+      if ( 0 == blockIndex ) { // block0
         switch ( nConvStageType ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -552,7 +548,7 @@ class Base {
           default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
 
-      } else { // step1, 2, 3, ...
+      } else { // block1, 2, 3, ...
         switch ( nConvStageType ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -576,7 +572,7 @@ class Base {
       }
 
       // depthwiseStridesPad
-      if ( 0 == stepIndex ) { // step0
+      if ( 0 == blockIndex ) { // block0
         switch ( nConvStageType ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
@@ -595,7 +591,7 @@ class Base {
           default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
 
-      } else { // step1, 2, 3, ...
+      } else { // block1, 2, 3, ...
         switch ( nConvStageType ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
@@ -624,7 +620,7 @@ class Base {
       }
 
       // pointwise21ChannelCount
-      { // step0, 1, 2, 3, ...
+      { // block0, 1, 2, 3, ...
         switch ( nConvStageType ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -632,14 +628,14 @@ class Base {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
-            asserter.propertyValue( "pointwise21ChannelCount", double_Step0Input0ChannelCount );
+            asserter.propertyValue( "pointwise21ChannelCount", double_Block0Input0ChannelCount );
             asserter.propertyValue( "pointwise22ChannelCount", 0 );
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-            asserter.propertyValue( "pointwise21ChannelCount", single_Step0Input0ChannelCount );
-            asserter.propertyValue( "pointwise22ChannelCount", single_Step0Input0ChannelCount );
+            asserter.propertyValue( "pointwise21ChannelCount", single_Block0Input0ChannelCount );
+            asserter.propertyValue( "pointwise22ChannelCount", single_Block0Input0ChannelCount );
             break;
 
           default: tf.util.assert( false, strUnknownConvStageType ); break;
@@ -649,13 +645,13 @@ class Base {
       asserter.propertyValue( "bPointwise21Bias", true );
 
       // pointwise21ActivationId
-      if ( ( stepCount - 1 ) > stepIndex ) { // step0, 1, 2, 3, ..., ( stepCount - 2 )
+      if ( ( blockCount - 1 ) > blockIndex ) { // block0, 1, 2, 3, ..., ( blockCount - 2 )
         if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
           asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
         } else {
           asserter.propertyValue( "pointwise21ActivationId", stageParams.nActivationId );
         }
-      } else { // stepLast
+      } else { // blockLast
         if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
           asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
         } else {
@@ -668,7 +664,7 @@ class Base {
       }
 
       // bOutput1Requested
-      if ( ( stepCount - 1 ) > stepIndex ) { // step0, 1, 2, 3, ..., ( stepCount - 2 )
+      if ( ( blockCount - 1 ) > blockIndex ) { // block0, 1, 2, 3, ..., ( blockCount - 2 )
         switch ( nConvStageType ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -687,12 +683,12 @@ class Base {
           default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
 
-      } else { // stepLast
+      } else { // blockLast
         asserter.propertyValue( "bOutput1Requested", false );
       }
 
       // outChannels0, outChannels1
-      if ( ( stepCount - 1 ) > stepIndex ) { // step0, 1, 2, 3, ..., ( stepCount - 2 )
+      if ( ( blockCount - 1 ) > blockIndex ) { // block0, 1, 2, 3, ..., ( blockCount - 2 )
         switch ( nConvStageType ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -700,26 +696,26 @@ class Base {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
-            asserter.propertyValue( "outChannels0", double_Step0Input0ChannelCount );
+            asserter.propertyValue( "outChannels0", double_Block0Input0ChannelCount );
             asserter.propertyValue( "outChannels1", 0 );
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-            asserter.propertyValue( "outChannels0", single_Step0Input0ChannelCount );
-            asserter.propertyValue( "outChannels1", single_Step0Input0ChannelCount );
+            asserter.propertyValue( "outChannels0", single_Block0Input0ChannelCount );
+            asserter.propertyValue( "outChannels1", single_Block0Input0ChannelCount );
             break;
 
           default: tf.util.assert( false, strUnknownConvStageType ); break;
         }
 
-      } else { // stepLast
-        asserter.propertyValue( "outChannels0", double_Step0Input0ChannelCount );
+      } else { // blockLast
+        asserter.propertyValue( "outChannels0", double_Block0Input0ChannelCount );
         asserter.propertyValue( "outChannels1", 0 );
       }
 
       // .addInput0ToPointwise21, .addInput0ToPointwise22
-      if ( stepParams instanceof PointDepthPoint.Base ) {
+      if ( blockParams instanceof PointDepthPoint.Base ) {
 
         // addInput0ToPointwise21
         if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
@@ -733,7 +729,7 @@ class Base {
       }
 
       // bKeepInputTensor
-      if ( 0 == stepIndex ) {
+      if ( 0 == blockIndex ) {
         asserter.propertyValue( "bKeepInputTensor", stageParams.bKeepInputTensor );
       } else {
         asserter.propertyValue( "bKeepInputTensor", false );
@@ -773,7 +769,7 @@ class Base {
 
           `sourceHeight=${testParams.out.sourceHeight}, sourceWidth=${testParams.out.sourceWidth}, `
         + `sourceChannelCount=${testParams.out.sourceChannelCount}, `
-        + `stepCountRequested=${testParams.out.stepCountRequested}, `
+        + `blockCountRequested=${testParams.out.blockCountRequested}, `
         + `bPointwise1=${testParams.out.bPointwise1}, `
         + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, depthwiseFilterWidth=${testParams.out.depthwiseFilterWidth}, `
 
@@ -791,9 +787,9 @@ class Base {
       ;
     }
 
-    Base.AssertParameters_Stage_steps( testParams, this.paramsOutDescription ); // Test every step's parameters.
+    Base.AssertParameters_Stage_blocks( testParams, this.paramsOutDescription ); // Test every block's parameters.
 
-    // Calculate every steps in sequence.
+    // Calculate every blocks in sequence.
 
     let pointDepthPointRef = this.PointDepthPoint_Reference;
 
@@ -801,13 +797,13 @@ class Base {
     this.imageInArray[ 1 ] = null;
 
     let imageOutArray = this.imageInArray;
-    let stepCount = testParams.stepsArray.length;
-    for ( let stepIndex = 0; stepIndex < stepCount; ++stepIndex ) {
-      pointDepthPointRef.testParams = testParams.stepsArray[ stepIndex ];
+    let blockCount = testParams.blocksArray.length;
+    for ( let blockIndex = 0; blockIndex < blockCount; ++blockIndex ) {
+      pointDepthPointRef.testParams = testParams.blocksArray[ blockIndex ];
       imageOutArray = pointDepthPointRef.calcResult( imageOutArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
     }
 
-    let imageOut = imageOutArray[ 0 ]; // The stepLast should have only input0.
+    let imageOut = imageOutArray[ 0 ]; // The blockLast should have only input0.
     return imageOut;
   }
 
