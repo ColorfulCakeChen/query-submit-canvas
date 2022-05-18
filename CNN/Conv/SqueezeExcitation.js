@@ -41,13 +41,17 @@ import * as Pointwise from "./Pointwise.js";
  * @member {number} inputChannelCount
  *   The channel count of the input tensor. It must be greater than zero (> 0).
  *
+ * @member {number} intermediateChannelCountDivisor
+ *   An integer which is the channel count divisor for intermediate pointwise convolution channel count. The inputChannelCount
+ * must be divisible by intermediateChannelCountDivisor.
+ *
+ *     - If ( intermediateChannelCountDivisor <= 0 ), there will be only one pointwise convolution (i.e. excitation pointwise convolution). 
+ *
+ *     - If ( intermediateChannelCountDivisor > 0 ), there will be two pointwise convolutions (i.e. intermediate pointwise convolution
+ *         and excitation pointwise convolution).
+ *
  * @member {number} intermediateChannelCount
- *   The channel count between squeeze and excitation.
- *
- *     - If ( intermediateChannelCount <= 0 ), there will be only one pointwise convolution (i.e. excitation pointwise convolution). 
- *
- *     - If ( intermediateChannelCount > 0 ), there will be two pointwise convolutions (i.e. pointwise convolution before
- *         excitation, and excitation pointwise convolution).
+ *   The channel count of intermediate pointwise convolution. (= inputChannelCount / intermediateChannelCountDivisor )
  *
  * @member {number} outputChannelCount
  *   Always the same as inputChannelCount.
@@ -77,11 +81,11 @@ class Base {
    *
    */
   constructor(
-    inputChannelCount, intermediateChannelCount, bBias, nActivationId,
+    inputChannelCount, intermediateChannelCountDivisor, bBias, nActivationId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf ) {
 
     this.inputChannelCount = inputChannelCount;
-    this.intermediateChannelCount = intermediateChannelCount;
+    this.intermediateChannelCountDivisor = intermediateChannelCountDivisor;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
 
@@ -94,7 +98,22 @@ class Base {
         + `inputChannelCount ( ${inputChannelCount} ) should be greater than zero (> 0).`
     );
 
-    this.outputChannelCount = this.inputChannelCount, // For squeeze-and-excitation, output channel count is always the same as input.
+    let intermediateChannelCountRemainder = inputChannelCount % intermediateChannelCountDivisor;
+    tf.util.assert( ( intermediateChannelCountRemainder == 0 ),
+      `SqueezeExcitation.Base.constructor(): `
+        + `inputChannelCount ( ${inputChannelCount} ) must be divisilbe by `
+        + `intermediateChannelCountDivisor ( ${intermediateChannelCountDivisor} ). `
+        + `( inputChannelCount % intermediateChannelCountDivisor ) = ( ${intermediateChannelCountRemainder} ) should be zero (== 0).`
+    );
+
+    this.intermediateChannelCount = inputChannelCount / intermediateChannelCountDivisor;
+
+//!!! 
+// Could it be restored to inputChannelCount_lowerHalf and outputChannelCount_lowerHalf at excitationPointwise?
+    this.intermediate ??? inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
+    this.intermediate ??? outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
+
+    this.outputChannelCount = inputChannelCount, // For squeeze-and-excitation, output channel count is always the same as input.
   }
 
   /**
