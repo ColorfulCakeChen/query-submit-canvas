@@ -71,7 +71,7 @@ import * as Pointwise from "./Pointwise.js";
 class Base {
 
 //!!! ...unfinished... (2022/05/18)
-// Perhaps, rename excitationPointwise to excitationPointwise2, and intermediatePointwise to excitationPointwise1.
+// Perhaps, rename excitationPointwise to excitation2Pointwise, and intermediatePointwise to excitation1Pointwise.
 
   /**
    *
