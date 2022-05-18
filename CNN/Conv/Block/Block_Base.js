@@ -667,6 +667,9 @@ class Base extends ReturnOrClone.Base {
       }
     }
 
+
+//!!! ...unfinished... (2022/05/18) squeeze-and-excitation
+
     // 5.1 Pointwise21
     //
     // Note:
@@ -697,6 +700,9 @@ class Base extends ReturnOrClone.Base {
     } else {
       this.channelCount_pointwise21After_concat2Before = 0;  // No first pointwise2 convolution.
     }
+
+
+//!!! ...unfinished... (2022/05/18) squeeze-and-excitation
 
     // 5.2 Pointwise22
     if ( this.pointwise22ChannelCount > 0 ) {
@@ -926,6 +932,9 @@ class Base extends ReturnOrClone.Base {
         alwaysKeepSet = new Set( [ TensorOpCounters.input0, TensorOpCounters.input1 ] );
       }
 
+
+//!!! ...unfinished... (2022/05/18) squeeze-and-excitation
+
       // Using Set (instead of Array) so that duplicated TensorOpCounter will only be analyzed once.
       // Note: When an operation does not exist, its output TensorOpCounter will be just its input TensorOpCounter (so duplicated).
       let TensorOpCounterSet = new Set( [
@@ -998,6 +1007,9 @@ class Base extends ReturnOrClone.Base {
       this.concat1 = null;
     }
 
+
+//!!! ...unfinished... (2022/05/18) squeeze-and-excitation
+
     if ( this.pointwise21 ) {
       this.pointwise21.disposeTensors();
       this.pointwise21 = null;
@@ -1053,6 +1065,9 @@ class Base extends ReturnOrClone.Base {
     delete this.pointwise1?.boundsArraySet;
     delete this.depthwise1?.boundsArraySet;
     delete this.depthwise2?.boundsArraySet;
+
+//!!! ...unfinished... (2022/05/18) squeeze-and-excitation
+
     delete this.pointwise21?.boundsArraySet;
     delete this.pointwise22?.boundsArraySet;
     delete this.concat1?.boundsArraySet;
@@ -1220,6 +1235,9 @@ class Base extends ReturnOrClone.Base {
         break;
     }
   }
+
+
+//!!! ...unfinished... (2022/05/18) squeeze-and-excitation
 
   /**
    * The inputTensors[ 1 ] will be concatenated with pointwise21. If only outputTensors[ 0 ]. it is the result.
@@ -1523,6 +1541,9 @@ class Base extends ReturnOrClone.Base {
       + `depthwiseActivationName=${this.depthwiseActivationName}(${this.depthwiseActivationId}), `
 
       + `bConcat1Requested=${this.bConcat1Requested}, `
+
+
+//!!! ...unfinished... (2022/05/18) squeeze-and-excitation
 
       + `pointwise21ChannelCount=${this.pointwise21ChannelCount}, `
       + `bPointwise21Bias=${this.bPointwise21Bias}, `
