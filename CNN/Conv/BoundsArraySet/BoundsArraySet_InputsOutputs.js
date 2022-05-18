@@ -201,7 +201,7 @@ class InputsOutputs {
    * (i.e. divisible by 2).
    *
    * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance.
    *
    * @return {InputsOutputs}
