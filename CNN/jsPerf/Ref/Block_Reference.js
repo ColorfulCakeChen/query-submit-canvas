@@ -601,6 +601,18 @@ class Base {
     // Other parameters.
     asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
 
+    {
+      // Exclude parameters weights, all the others should be the extracted weight count.
+      let tensorWeightCountExtracted = testParams.in.inputFloat32Array.byteLength - extractedParams.defaultByteOffsetEnd;
+      asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
+
+ //    ( block.byteOffsetEnd !=  )
+
+//!!! ...unfinished... (2022/05/18)
+      asserter.propertyValueNE( "tensorWeightCountTotal", ??? );
+
+    }
+
     return block;
   }
 
