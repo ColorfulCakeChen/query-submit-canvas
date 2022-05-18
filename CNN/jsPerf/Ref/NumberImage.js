@@ -636,7 +636,6 @@ class Base {
     // Q: Why not just modify this directly?
     // A: The this might be the original input array which should not be modified at all. (because they might be used in another test.)
     let imageOutNew = new Base( rHeight, rWidth, rDepth, resultArray, rBoundsArraySet );
-
     return imageOutNew;
   }
 
@@ -717,8 +716,15 @@ class Base {
     // Q: Why not just modify this directly?
     // A: The this might be the original input array which should not be modified at all. (because they might be used in another test.)
     let imageOutNew = new Base( rHeight, rWidth, rDepth, resultArray, rBoundsArraySet );
-
     return imageOutNew;
+  }
+
+//!!! ...unfinished... (2022/05/18)
+  /**
+   *
+   */
+  cloneBy_SqueezeExcitation(
+  ) {
   }
 
   /**
