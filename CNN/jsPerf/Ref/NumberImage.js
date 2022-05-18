@@ -591,7 +591,7 @@ class Base {
 
       let i = 0;
       for ( let y = 0; y < rHeight; ++y ) {
-        for ( let x = 0; x < rWidth; ++y ) {
+        for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
             resultArray[ i ] = this.dataArray[ i ] + another.dataArray[ c ];
           }
@@ -605,7 +605,7 @@ class Base {
 
       let i = 0;
       for ( let y = 0; y < rHeight; ++y ) {
-        for ( let x = 0; x < rWidth; ++y ) {
+        for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
             resultArray[ i ] = this.dataArray[ c ] + another.dataArray[ i ];
           }
@@ -672,7 +672,7 @@ class Base {
 
       let i = 0;
       for ( let y = 0; y < rHeight; ++y ) {
-        for ( let x = 0; x < rWidth; ++y ) {
+        for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
             resultArray[ i ] = this.dataArray[ i ] * another.dataArray[ c ];
           }
@@ -686,7 +686,7 @@ class Base {
 
       let i = 0;
       for ( let y = 0; y < rHeight; ++y ) {
-        for ( let x = 0; x < rWidth; ++y ) {
+        for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
             resultArray[ i ] = this.dataArray[ c ] * another.dataArray[ i ];
           }
