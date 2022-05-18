@@ -267,6 +267,25 @@ class Base {
 
     Base.AssertParameters_Stage_steps( stage, parametersDescription ); // Test every step's parameters.
 
+    {
+      let tensorWeightCountTotal = 0;
+      let tensorWeightCountExtracted = 0;
+
+      for ( let i = 0; i < stage.blocksArray.length; ++i ) {
+        let block = stage.blocksArray[ i ];
+        tensorWeightCountTotal += block.tensorWeightCountTotal;
+        tensorWeightCountExtracted += block.tensorWeightCountExtracted;
+      }
+
+      if ( stage.channelShuffler ) {
+        tensorWeightCountTotal += stage.channelShuffler.tensorWeightCountTotal;
+        tensorWeightCountExtracted += stage.channelShuffler.tensorWeightCountExtracted;
+      }
+
+      asserter.propertyValue( "tensorWeightCountTotal", tensorWeightCountTotal );
+      asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
+    }
+
     return stage;
   }
 
