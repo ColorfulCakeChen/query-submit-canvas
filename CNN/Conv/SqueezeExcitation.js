@@ -1,8 +1,6 @@
 export { Base };
 
-//import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
-//import * as Weights from "../Unpacker/Weights.js";
 import * as BoundsArraySet from "./BoundsArraySet.js";
 import * as Depthwise from "./Depthwise.js";
 import * as Pointwise from "./Pointwise.js";
@@ -97,8 +95,6 @@ import * as Pointwise from "./Pointwise.js";
  */
 class Base {
 
-//!!! ...unfinished... (2022/05/18)
-
   /**
    *
    */
@@ -115,6 +111,10 @@ class Base {
     //       So that the result for pass-through parts will not affect input when multiply to input.
     //
 
+
+//!!! ...unfinished... (2022/05/18) bBias?
+//  If no activation, it is enough to let the only last operation have ( bBias == true ).
+//
 
 
 //!!! ...unfinished... (2022/05/18) squeeze?
@@ -153,21 +153,17 @@ class Base {
 
   }
 
-//!!! ...unfinished... (2022/05/18)
-
   /**
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
-   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
-   * set of this pointwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
+   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous operation value bounds set
+   * of this operation. It will be kept (not cloned) directly. So caller should not modify them.
    *
    * @return {boolean} Return true, if succeeded.
    */
   init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray ) {
-
-//!!! ...unfinished... (2022/05/18)
 
     this.disposeTensors();
 
@@ -181,6 +177,7 @@ class Base {
     // 2.
 
     // 2.1
+    let squeezeDepthwise_boundsArraySet_output0;
     if ( this.squeezeDepthwise ) {
       if ( !this.squeezeDepthwise.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
         return false;  // e.g. input array does not have enough data.
@@ -188,32 +185,59 @@ class Base {
 
       this.tensorWeightCountTotal += this.squeezeDepthwise.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += this.squeezeDepthwise.tensorWeightCountExtracted;
+
+      squeezeDepthwise_boundsArraySet_output0 = this.squeezeDepthwise.boundsArraySet.output0;
+    } else {
+      squeezeDepthwise_boundsArraySet_output0 = inputScaleBoundsArray;
     }
 
     // 2.2
+    let intermediatePointwise_boundsArraySet_output0;
     if ( this.intermediatePointwise ) {
-      if ( !this.intermediatePointwise.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
+      if ( !this.intermediatePointwise.init( inputFloat32Array, this.byteOffsetEnd, squeezeDepthwise_boundsArraySet_output0 ) )
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = this.intermediatePointwise.byteOffsetEnd;
 
       this.tensorWeightCountTotal += this.intermediatePointwise.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += this.intermediatePointwise.tensorWeightCountExtracted;
+
+      intermediatePointwise_boundsArraySet_output0 = this.intermediatePointwise.boundsArraySet.output0;
+    } else {
+      intermediatePointwise_boundsArraySet_output0 = squeezeDepthwise_boundsArraySet_output0;
     }
 
     // 2.3
+    let excitationPointwise_boundsArraySet_output0;
     {
-      if ( !this.excitationPointwise.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
+      if ( !this.excitationPointwise.init( inputFloat32Array, this.byteOffsetEnd, intermediatePointwise_boundsArraySet_output0 ) )
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = this.excitationPointwise.byteOffsetEnd;
 
       this.tensorWeightCountTotal += this.excitationPointwise.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += this.excitationPointwise.tensorWeightCountExtracted;
+
+      excitationPointwise_boundsArraySet_output0 = this.excitationPointwise.boundsArraySet.output0;
     }
 
     // 3.
     {
-//!!! ...unfinished... (2022/05/18) build self boundsArraySet.
-//      this.boundsArraySet = ???;
+
+//!!! ...unfinished... (2022/05/18) What about the tf.mul()'s BoundsArraySet?
+
+      { // Build self BoundsArraySet.
+        this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, null,
+          excitationPointwise_boundsArraySet_output0.channelCount, 0 );
+
+        this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.excitationPointwise.boundsArraySet );
+        
+//!!! ...unfinished... (2022/05/18)
+// What about the activation escaping scale of inputScaleBoundsArray and this.excitationPointwise.boundsArraySet.output0?
+
+        // The BoundsArraySet for tf.mul()
+        this.boundsArraySet.output0.multiply_???(
+        );
+
+      }
 
       this.dispose_all_sub_BoundsArraySet();
     }
@@ -221,9 +245,6 @@ class Base {
     this.bInitOk = true;
     return this.bInitOk;
   }
-
-//!!! ...unfinished... (2022/05/15) should deletel sub pointwise.boundsArraySet
-
 
   /** Release all tensors. */
   disposeTensors() {
