@@ -178,41 +178,44 @@ class Base {
     // 1.1    
     Base.setup_pfnSqueezeExcitation.call( this );
 
-//!!! ...unfinished... (2022/05/18)
+    // 2.
 
-    if ( !this.squeezeDepthwise.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
-      return false;  // e.g. input array does not have enough data.
-    this.byteOffsetEnd = this.squeezeDepthwise.byteOffsetEnd;
+    // 2.1
+    if ( this.squeezeDepthwise ) {
+      if ( !this.squeezeDepthwise.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
+        return false;  // e.g. input array does not have enough data.
+      this.byteOffsetEnd = this.squeezeDepthwise.byteOffsetEnd;
 
+      this.tensorWeightCountTotal += this.squeezeDepthwise.tensorWeightCountTotal;
+      this.tensorWeightCountExtracted += this.squeezeDepthwise.tensorWeightCountExtracted;
+    }
 
-//!!! ...unfinished... (2022/05/18)
-
+    // 2.2
     if ( this.intermediatePointwise ) {
       if ( !this.intermediatePointwise.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = this.intermediatePointwise.byteOffsetEnd;
 
-//!!! ...unfinished... (2022/05/18)
+      this.tensorWeightCountTotal += this.intermediatePointwise.tensorWeightCountTotal;
+      this.tensorWeightCountExtracted += this.intermediatePointwise.tensorWeightCountExtracted;
     }
 
-//!!! ...unfinished... (2022/05/18)
+    // 2.3
+    {
+      if ( !this.excitationPointwise.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
+        return false;  // e.g. input array does not have enough data.
+      this.byteOffsetEnd = this.excitationPointwise.byteOffsetEnd;
 
-    if ( !this.excitationPointwise.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
-      return false;  // e.g. input array does not have enough data.
-    this.byteOffsetEnd = this.excitationPointwise.byteOffsetEnd;
+      this.tensorWeightCountTotal += this.excitationPointwise.tensorWeightCountTotal;
+      this.tensorWeightCountExtracted += this.excitationPointwise.tensorWeightCountExtracted;
+    }
 
-
+    // 3.
     {
 //!!! ...unfinished... (2022/05/18) build self boundsArraySet.
 //      this.boundsArraySet = ???;
 
       this.dispose_all_sub_BoundsArraySet();
-    }
-
-//!!! ...unfinished... (2022/05/18)
-    {
-//       this.tensorWeightCountTotal += ???this.pointwise1.tensorWeightCountTotal;
-//       this.tensorWeightCountExtracted += ???this.pointwise1.tensorWeightCountExtracted;
     }
 
     this.bInitOk = true;
