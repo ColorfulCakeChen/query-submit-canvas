@@ -560,8 +560,8 @@ class Base {
   }
 
   /**
-   * Two input dimensions ( height, width, depth ) should be the same, or one should be a scalar ( 1 * 1 * 1 ) value
-   * (i.e. boradcast is supported).
+   * Two input dimensions ( height, width, depth ) should be the same, or one should be a scalar ( 1, 1, depth ) value
+   * (i.e. boradcast in the same channel (i.e. not across channels) is supported).
    *
    * @param {NumberImage.Base} this        The first image to be used for adding.
    * @param {NumberImage.Base} another     The second image to be used for adding.
@@ -590,7 +590,9 @@ class Base {
         resultArray[ i ] = this.dataArray[ i ] + another.dataArray[ i ];
       }
 
-    } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == 1 ) ) { // Broadcast another to this.
+    } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == this.depth ) ) { // Broadcast another to this.
+
+//!!! ...unfinished... (2022/05/18) broadcast in the same channel (i.e. not across channels)
 
       let anotherIndex = 0; // Only the first (also the only one) channel and element is used for the scalar source.
       let anotherValue = another.dataArray[ anotherIndex ];
@@ -606,7 +608,9 @@ class Base {
         resultArray[ i ] = this.dataArray[ i ] + anotherValue;
       }
 
-    } else if ( ( this.height == 1 ) && ( this.width == 1 ) && ( this.depth == 1 ) ) { // Broadcast this to another.
+    } else if ( ( this.height == 1 ) && ( this.width == 1 ) && ( this.depth == another.depth ) ) { // Broadcast this to another.
+
+//!!! ...unfinished... (2022/05/18) broadcast in the same channel (i.e. not across channels)
 
       let thisIndex = 0; // Only the first (also the only one) channel and element is used for the scalar source.
       let thisValue = this.dataArray[ thisIndex ];
@@ -638,8 +642,8 @@ class Base {
   }
 
   /**
-   * Two input dimensions ( height, width, depth ) should be the same, or one should be a scalar ( 1 * 1 * 1 ) value
-   * (i.e. boradcast is supported).
+   * Two input dimensions ( height, width, depth ) should be the same, or one should be a scalar ( 1, 1, depth ) value
+   * (i.e. boradcast in the same channel (i.e. not across channels) is supported).
    *
    * @param {NumberImage.Base} this        The first image to be used for multiplying.
    * @param {NumberImage.Base} another     The second image to be used for multiplying.
@@ -668,7 +672,9 @@ class Base {
         resultArray[ i ] = this.dataArray[ i ] * another.dataArray[ i ];
       }
 
-    } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == 1 ) ) { // Broadcast another to this.
+    } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == this.depth ) ) { // Broadcast another to this.
+
+//!!! ...unfinished... (2022/05/18) broadcast in the same channel (i.e. not across channels)
 
       let anotherIndex = 0; // Only the first (also the only one) channel and element is used for the scalar source.
       let anotherValue = another.dataArray[ anotherIndex ];
@@ -684,7 +690,9 @@ class Base {
         resultArray[ i ] = this.dataArray[ i ] * anotherValue;
       }
 
-    } else if ( ( this.height == 1 ) && ( this.width == 1 ) && ( this.depth == 1 ) ) { // Broadcast this to another.
+    } else if ( ( this.height == 1 ) && ( this.width == 1 ) && ( this.depth == another.depth ) ) { // Broadcast this to another.
+
+//!!! ...unfinished... (2022/05/18) broadcast in the same channel (i.e. not across channels)
 
       let thisIndex = 0; // Only the first (also the only one) channel and element is used for the scalar source.
       let thisValue = this.dataArray[ thisIndex ];
