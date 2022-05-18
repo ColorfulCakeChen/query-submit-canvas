@@ -606,6 +606,9 @@ class Base {
       let tensorWeightCountExtracted = testParams.in.inputFloat32Array.byteLength - extractedParams.defaultByteOffsetEnd;
       asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
 
+
+//!!! ...unfinished... (2022/05/18) What about squeeze-and-excitation?
+
       let tensorWeightCountTotal = 0;
       tensorWeightCountTotal += block.pointwise1.bExisted ? block.pointwise1.tensorWeightCountTotal : 0;
       tensorWeightCountTotal += block.depthwise1.bExisted ? block.depthwise1.tensorWeightCountTotal : 0;
