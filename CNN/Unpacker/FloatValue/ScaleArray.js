@@ -212,7 +212,7 @@ class ScaleArray {
    * Rearrange scales by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
    *
    * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance.
    *
    * @return {ScaleArray} Return this (modified) object.
