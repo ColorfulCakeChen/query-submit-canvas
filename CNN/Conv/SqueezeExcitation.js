@@ -89,15 +89,10 @@ import * as Pointwise from "./Pointwise.js";
  *   The wieght count extracted from inputFloat32Array and used in tensors. Not including inferenced weights (even if they are
  * used in tensors), because they are not extracted from inputFloat32Array.
  *
- * @member {function} pfnSqueezeExcitation_and_keep
+ * @member {function} pfnSqueezeExcitation
  *   A method accepts one parameter inputTensor (tf.tensor3d) and return an outputTensor (tf.tensor3d). All intermediate tensors
- * will be disposed. The inputTensor will NOT be disposed (i.e. will be kept). In fact, this method calls one of Base.Xxx_and_keep()
- * according to the parameters.
- *
- * @member {function} pfnSqueezeExcitation_and_destroy_or_keep
- *   A method accepts one parameter inputTensor (tf.tensor3d) and return an outputTensor (tf.tensor3d). All intermediate tensors
- * will be disposed. This method calls this.pfnSqueezeExcitation_and_keep(), and then may or may not dispose inputTensor according to
- * setKeepInputTensor().
+ * will be disposed. The inputTensor may or may not be disposed (according to setKeepInputTensor()). In fact, this method calls one
+ * of Base.Xxx_and_keep() according to the parameters.
  *
  */
 class Base {
@@ -181,7 +176,7 @@ class Base {
     // 1.
 
     // 1.1    
-    Base.adjust_pfnSqueezeExcitation_and_keep.call( this );
+    Base.setup_pfnSqueezeExcitation.call( this );
 
 //!!! ...unfinished... (2022/05/18)
 
@@ -272,94 +267,107 @@ class Base {
    *
    */
   setKeepInputTensor( bKeepInputTensor ) {
+    if ( bKeepInputTensor == this.bKeepInputTensor )
+      return;
+
     this.bKeepInputTensor = bKeepInputTensor;
-
-//!!! ...unfinished... (2022/05/18) should also call sub operations' setKeepInputTensor().
-//     if ( this.squeezeDepthwise ) {
-//       this.squeezeDepthwise.setKeepInputTensor();
-//     }
-//
-//     if ( this.intermediatePointwise ) {
-//       this.intermediatePointwise.setKeepInputTensor();
-//     }
-//
-//     if ( this.excitationPointwise ) {
-//       this.excitationPointwise.setKeepInputTensor();
-//     }
-
-
     if ( bKeepInputTensor ) {
-      this.pfnSqueezeExcitation_and_destroy_or_keep = this.pfnSqueezeExcitation_and_keep;
+
+      // Note: The first operation is responsible for keep inputTensor. All other operations should always destroy inputTensor.
+      if ( this.squeezeDepthwise ) {
+        this.squeezeDepthwise.setKeepInputTensor( true );
+        this.intermediatePointwise.setKeepInputTensor( false );
+        this.excitationPointwise.setKeepInputTensor( false );
+      } else {
+        if ( this.intermediatePointwise ) {
+          this.intermediatePointwise.setKeepInputTensor( true );
+          this.excitationPointwise.setKeepInputTensor( false );
+        } else {
+          this.excitationPointwise.setKeepInputTensor( true );
+        }
+      }
+
     } else {
-      this.pfnSqueezeExcitation_and_destroy_or_keep = Base.operation_and_destroy;
+      this.squeezeDepthwise?.setKeepInputTensor( false );
+      this.intermediatePointwise?.setKeepInputTensor( false );
+      this.excitationPointwise.setKeepInputTensor( false );
     }
   }
 
 
-  /** Determine this.pfnSqueezeExcitation_and_keep data members.
+  /** Determine data member this.pfnSqueezeExcitation.
    *
    * @param {Base} this
    *   The Base object to be determined and modified.
    */
-  static setup_pfnSqueezeExcitation_and_keep() {
+  static setup_pfnSqueezeExcitation() {
     if ( this.squeezeDepthwise ) {
       if ( this.intermediatePointwise ) {
-        this.pfnSqueezeExcitation_and_keep = Base.squeeze_intermediate_excitation_and_keep;
+        this.pfnSqueezeExcitation = Base.squeeze_intermediate_excitation;
       } else {
-        this.pfnSqueezeExcitation_and_keep = Base.squeeze_excitation_and_keep;
+        this.pfnSqueezeExcitation = Base.squeeze_excitation;
       }
     } else {
       if ( this.intermediatePointwise ) {
-        this.pfnSqueezeExcitation_and_keep = Base.intermediate_excitation_and_keep;
+        this.pfnSqueezeExcitation = Base.intermediate_excitation;
       } else {
-        this.pfnSqueezeExcitation_and_keep = Base.excitation_and_keep;
+        this.pfnSqueezeExcitation = Base.excitation;
       }
     }
   }
 
 
   /** */
-  static squeeze_intermediate_excitation_and_keep( inputTensor ) {
+  static squeeze_intermediate_excitation( inputTensor ) {
     let t0, t1;
-    t0 = this.squeezeDepthwise( inputTensor );
-    t1 = this.intermediatePointwise( t0 );     t0.dispose();
-    t0 = this.excitationPointwise( t1 );       t1.dispose();
-    t1 = tf.mul( inputTensor, t0 );            t0.dispose();
+    t0 = this.squeezeDepthwise.pfnOperationBiasActivation( inputTensor );
+    t1 = this.intermediatePointwise.pfnConvBiasActivation( t0 );
+    t0 = this.excitationPointwise.pfnConvBiasActivation( t1 );
+
+    t1 = tf.mul( inputTensor, t0 );
+    t0.dispose();
     return t1;
   }
 
   /** */
   static squeeze_excitation_and_keep( inputTensor ) {
     let t0, t1;
-    t0 = this.squeezeDepthwise( inputTensor );
-    t1 = this.excitationPointwise( t0 );       t0.dispose();
-    t0 = tf.mul( inputTensor, t1 );            t1.dispose();
+    t0 = this.squeezeDepthwise.pfnOperationBiasActivation( inputTensor );
+    t1 = this.excitationPointwise.pfnConvBiasActivation( t0 );
+
+    t0 = tf.mul( inputTensor, t1 );
+    t1.dispose();
     return t0;
   }
 
   /** */
   static intermediate_excitation_and_keep( inputTensor ) {
     let t0, t1;
-    t0 = this.intermediatePointwise( inputTensor );
-    t1 = this.excitationPointwise( t0 );            t0.dispose();
-    t0 = tf.mul( inputTensor, t1 );                 t1.dispose();
+    t0 = this.intermediatePointwise.pfnConvBiasActivation( inputTensor );
+    t1 = this.excitationPointwise.pfnConvBiasActivation( t0 );
+
+    t0 = tf.mul( inputTensor, t1 );
+    t1.dispose();
     return t0;
   }
 
   /** */
   static excitation_and_keep( inputTensor ) {
     let t0, t1;
-    t0 = this.excitationPointwise( inputTensor );
-    t1 = tf.mul( inputTensor, t0 );               t0.dispose();
+    t0 = this.excitationPointwise.pfnConvBiasActivation( inputTensor );
+
+    t1 = tf.mul( inputTensor, t0 );
+    t0.dispose();
     return t1;
   }
 
 
-  /** Call this.pfnOperation_and_keep() and then dispose inputTensor. */
-  static operation_and_destroy( inputTensor ) {
-    let t0 = this.pfnSqueezeExcitation_and_keep( inputTensor );
-    inputTensor.dispose();
-    return t0;
-  }
+//!!! (2022/05/18 Remarked) should use sub operations' setKeepInputTensor() instead.
+//   /** Call this.pfnOperation_and_keep() and then dispose inputTensor. */
+//   static operation_and_destroy( inputTensor ) {
+//     let t0 = this.pfnSqueezeExcitation_and_keep( inputTensor );
+//     inputTensor.dispose();
+//     return t0;
+//   }
 
 }
