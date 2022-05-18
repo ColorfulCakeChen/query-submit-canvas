@@ -4,8 +4,8 @@ export { Base };
 //import * as ValueDesc from "../Unpacker/ValueDesc.js";
 //import * as Weights from "../Unpacker/Weights.js";
 import * as BoundsArraySet from "./BoundsArraySet.js";
-import * as Depthwise from "./Depthwise.js"; //avg pooling
-import * as Pointwise from "./Pointwise.js"; //_ConstantWhenPassThrough
+import * as Depthwise from "./Depthwise.js";
+import * as Pointwise from "./Pointwise.js";
 
 
 //!!! ...unfinished... (2022/05/14)
@@ -57,6 +57,20 @@ import * as Pointwise from "./Pointwise.js"; //_ConstantWhenPassThrough
 
 /**
  *
+ * @member {number} inputChannelCount
+ *   The channel count of the input tensor.
+ *
+ * @member {number} intermediateChannelCount
+ *   The channel count between squeeze and excitation.
+ *
+ *     - If ( intermediateChannelCount <= 0 ), there will be only one pointwise convolution (i.e. excitation pointwise convolution). 
+ *
+ *     - If ( intermediateChannelCount > 0 ), there will be two pointwise convolutions (i.e. pointwise convolution before
+ *         excitation, and excitation pointwise convolution).
+ *
+ * @member {number} outputChannelCount
+ *   Always the same as inputChannelCount.
+ *
  * @member {ValueDesc.Pointwise_HigherHalfDifferent} nHigherHalfDifferent
  *   The HigherHalfDifferent type for pointwise convolution in squeeze-and-excitation.
  *
@@ -68,19 +82,38 @@ class Base extends {
 
 
   /**
+   *
    */
   constructor(
-    inputChannelCount, outputChannelCount, bBias, nActivationId,
-    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount,
+    inputChannelCount, intermediateChannelCount, bBias, nActivationId,
+    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf ) {
 
-//!!! ...unfinished... (2022/05/08) squeeze channel count? ratio?
+//!!! ...unfinished... (2022/05/18) squeeze?
+
+    // Note: Inside squeeze-and-excitation, all pointwise convolutions are constnat-when-pass-through. The reason is that
+    //       the result will not affect input when multiply to input.
+    //
+
+    this.intermediateChannelCount = intermediateChannelCount;
+    if ( intermediateChannelCount > 0 ) {
+      this.intermediatePointwise = new Pointwise.ConstantWhenPassThrough(
+        inputChannelCount,
+        intermediateChannelCount,
+        bBias, nActivationId,
+        nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
+        0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
+      );
+    }
+
+    this.excitationPointwise = new Pointwise.ConstantWhenPassThrough(
+      intermediateChannelCount,
+      inputChannelCount, // For squeeze-and-excitation, output channel count always the same as input.
+      bBias, nActivationId,
+      nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
+      0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
+    );
 
 
-    ) {
-
-    super(
-      inputChannelCount, outputChannelCount, bBias, nActivationId,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
   }
 
   /**
