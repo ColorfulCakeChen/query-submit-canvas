@@ -79,9 +79,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
 
     this.disposeTensors();
 
-    // 1.
-
-    // 1.1 Determine operation functions.
+    // 1. Determine operation functions.
     Base.Setup_bDepthwise_pfn.call( this );
 
     let bExtractOk;
