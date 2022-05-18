@@ -154,13 +154,13 @@ import { Params } from "./Stage_Params.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by initer(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
- * @member {PointDepthPoint.Base[]} blocksArray
+ * @member {Block.Base[]} blocksArray
  *   All computation blocks of this stage.
  *
- * @member {PointDepthPoint.Base} block0
+ * @member {Block.Base} block0
  *   The first computation block of this stage.
  *
- * @member {PointDepthPoint.Base} blockLast
+ * @member {Block.Base} blockLast
  *   The last computation block of this stage. It may be the same as this.block0 when there is only one block inside this stage.
  *
  * @member {number} outputHeight
@@ -208,7 +208,7 @@ class Base {
    *   Yield ( value = true ) when ( done = true ) successfully.
    *   Yield ( value = false ) when ( done = true ) failed.
    *
-   * @see PointDepthPoint.Base.initer()
+   * @see Block.Base.initer()
    */
   * initer( progressParent, params, inputScaleBoundsArray0, arrayTemp_forInterleave_asGrouptTwo ) {
 
@@ -328,7 +328,7 @@ class Base {
       }
 
       // Create current block.
-      blockParams = blockParamsCreator.create_PointDepthPointParams( params.defaultInput, this.byteOffsetEnd );
+      blockParams = blockParamsCreator.create_BlockParams( params.defaultInput, this.byteOffsetEnd );
 
       if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
 
@@ -352,7 +352,7 @@ class Base {
       // If channelShuffler has ever got, never change it.
       }
 
-      block = this.blocksArray[ i ] = new PointDepthPoint.Base();
+      block = this.blocksArray[ i ] = new Block.Base();
       blockIniter = block.initer( progressForBlocks.children[ i ], blockParams,
         inputScaleBoundsArray, null,
         this.channelShuffler, arrayTemp_forInterleave_asGrouptTwo );
@@ -407,7 +407,7 @@ class Base {
    *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
    *
-   * @see PointDepthPoint.Base.init()
+   * @see Block.Base.init()
    */
   init( progressParent, params, arrayTemp_forInterleave_asGrouptTwo ) {
 
@@ -467,11 +467,11 @@ class Base {
   /**
    * Assert image size.
    *
-   * @param {Params_to_PointDepthPointParams.Base} blockParamsCreator
-   *   The maker which will produce current block (PointDepthPoint.Base) object.
+   * @param {Params_to_BlockParams.Base} blockParamsCreator
+   *   The maker which will produce current block (Block.Base) object.
    *
-   * @param {PointDepthPoint.Base} previousBlock
-   *   The previous block (PointDepthPoint.Base) object.
+   * @param {Block.Base} previousBlock
+   *   The previous block (Block.Base) object.
    */
   assert_ImageSize_BetweenBlock( blockParamsCreator, previousBlock ) {
 
