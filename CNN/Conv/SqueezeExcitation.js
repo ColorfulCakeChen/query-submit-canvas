@@ -165,7 +165,9 @@ class Base {
         this.bBias, this.nActivationId,
         this.nHigherHalfDifferent,
 
-//!!! ...unfinished... (2022/05/18) should half of intermediateChannelCount.
+//!!! ...unfinished... (2022/05/18) should half of intermediateChannelCount?
+// Could it be restored to inputChannelCount_lowerHalf and outputChannelCount_lowerHalf at excitationPointwise?
+
         this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,
 
         0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
