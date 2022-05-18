@@ -1,6 +1,7 @@
 export { Base };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
+import * as ActivationEscaping from "./ActivationEscaping.js";
 import * as BoundsArraySet from "./BoundsArraySet.js";
 import * as Depthwise from "./Depthwise.js";
 import * as Pointwise from "./Pointwise.js";
@@ -207,7 +208,6 @@ class Base {
     }
 
     // 2.3
-    let excitationPointwise_boundsArraySet_output0;
     {
       if ( !this.excitationPointwise.init( inputFloat32Array, this.byteOffsetEnd, intermediatePointwise_boundsArraySet_output0 ) )
         return false;  // e.g. input array does not have enough data.
@@ -215,31 +215,25 @@ class Base {
 
       this.tensorWeightCountTotal += this.excitationPointwise.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += this.excitationPointwise.tensorWeightCountExtracted;
-
-      excitationPointwise_boundsArraySet_output0 = this.excitationPointwise.boundsArraySet.output0;
     }
 
-    // 3.
+    // 3. BoundsArraySet
     {
-
-//!!! ...unfinished... (2022/05/18) What about the tf.mul()'s BoundsArraySet?
-
       { // Build self BoundsArraySet.
         this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, null,
-          excitationPointwise_boundsArraySet_output0.channelCount, 0 );
+          this.excitationPointwise.boundsArraySet.output0.channelCount, 0 );
 
         this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.excitationPointwise.boundsArraySet );
-        
-//!!! ...unfinished... (2022/05/18)
-// What about the activation escaping scale of inputScaleBoundsArray and this.excitationPointwise.boundsArraySet.output0?
 
-        // The BoundsArraySet for tf.mul()
-        this.boundsArraySet.output0.multiply_???(
-        );
-
+        // The BoundsArraySet for tf.mul() input by excitation.
+        //
+        // Note: Not multiply_all_byScaleBoundsArray_one(). The reason is that it is supported to broadcast in the same channel
+        // (i.e. not across channels).
+        //
+        this.boundsArraySet.output0.multiply_all_byScaleBoundsArray_all( inputScaleBoundsArray );
       }
 
-      this.dispose_all_sub_BoundsArraySet();
+      this.dispose_all_sub_BoundsArraySet(); // For reduce memory footprint.
     }
 
     this.bInitOk = true;
@@ -384,14 +378,5 @@ class Base {
     t0.dispose();
     return t1;
   }
-
-
-//!!! (2022/05/18 Remarked) should use sub operations' setKeepInputTensor() instead.
-//   /** Call this.pfnOperation_and_keep() and then dispose inputTensor. */
-//   static operation_and_destroy( inputTensor ) {
-//     let t0 = this.pfnSqueezeExcitation_and_keep( inputTensor );
-//     inputTensor.dispose();
-//     return t0;
-//   }
 
 }
