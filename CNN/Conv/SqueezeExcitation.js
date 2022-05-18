@@ -74,6 +74,12 @@ import * as Pointwise from "./Pointwise.js";
  * @member {ValueDesc.Pointwise_HigherHalfDifferent} nHigherHalfDifferent
  *   The HigherHalfDifferent type for pointwise convolution in squeeze-and-excitation.
  *
+ * @member {number} tensorWeightCountTotal
+ *   The total wieght count used in tensors. Including inferenced weights, if they are used in tensors.
+ *
+ * @member {number} tensorWeightCountExtracted
+ *   The wieght count extracted from inputFloat32Array and used in tensors. Not including inferenced weights (even if they are
+ * used in tensors), because they are not extracted from inputFloat32Array.
  *
  */
 class Base extends {
@@ -141,11 +147,73 @@ class Base extends {
    */
   init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray ) {
 
-//!!! ...unfinished... (2022/05/08)
+//!!! ...unfinished... (2022/05/18)
 
 
+//!!! ...unfinished... (2022/05/18) boundsArraySet. dispose
+
+//!!! ...unfinished... (2022/05/18)
+//       this.tensorWeightCountTotal += ???this.pointwise1.tensorWeightCountTotal;
+//       this.tensorWeightCountExtracted += ???this.pointwise1.tensorWeightCountExtracted;
   }
 
 //!!! ...unfinished... (2022/05/15) should deletel sub pointwise.boundsArraySet
+
+
+  /** Release all tensors. */
+  disposeTensors() {
+
+//!!! ...unfinished... (2022/05/18)
+
+    if ( this.pointwise1 ) {
+      this.pointwise1.disposeTensors();
+      this.pointwise1 = null;
+    }
+
+    if ( this.depthwise1 ) {
+      this.depthwise1.disposeTensors();
+      this.depthwise1 = null;
+    }
+
+    if ( this.depthwise2 ) {
+      this.depthwise2.disposeTensors();
+      this.depthwise2 = null;
+    }
+
+    if ( this.pointwise21 ) {
+      this.pointwise21.disposeTensors();
+      this.pointwise21 = null;
+    }
+
+    if ( this.addInput0ToPointwise22 ) {
+      this.addInputToPointwise22Output = null;
+    }
+
+    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
+    this.byteOffsetBegin = this.byteOffsetEnd = -1;
+    this.bInitOk = false;
+  }
+
+  /**
+
+//!!! ...unfinished... (2022/05/18)
+
+   * Release all BoundsArraySet of pointwise1, depthwise1, depthwise2, pointwise21, pointwise22,
+   * concat1, addInput0ToPointwise21, addInput0ToPointwise22, concat2ShuffleSplit.
+   *
+   * This could reduce memory footprint.
+   *
+   * (Note: This SqueezeExcitation's BoundsArraySet is kept.)
+   */
+  dispose_all_sub_BoundsArraySet() {
+
+//!!! ...unfinished... (2022/05/18)
+
+    delete this.pointwise1?.boundsArraySet;
+    delete this.depthwise1?.boundsArraySet;
+    delete this.depthwise2?.boundsArraySet;
+    delete this.pointwise21?.boundsArraySet;
+    delete this.pointwise22?.boundsArraySet;
+  }
 
 }
