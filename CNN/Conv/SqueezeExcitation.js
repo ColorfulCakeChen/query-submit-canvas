@@ -113,13 +113,11 @@ class Base {
 // //  - outputChannelCount_higherHalf
 // //
 // // should also be divisible by intermediateChannelCountDivisor.
-      
+
 
     this.intermediateChannelCount = Math.ceil( inputChannelCount / intermediateChannelCountDivisor );
-
-// Could it be restored to inputChannelCount_lowerHalf and outputChannelCount_lowerHalf at excitationPointwise?
-    this.intermediate ??? inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
-    this.intermediate ??? outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
+    this.intermediate_inputChannelCount_lowerHalf = Math.ceil( inputChannelCount_lowerHalf / intermediateChannelCountDivisor );
+    this.intermediate_outputChannelCount_lowerHalf = Math.ceil( outputChannelCount_lowerHalf / intermediateChannelCountDivisor );
 
     this.outputChannelCount = inputChannelCount, // For squeeze-and-excitation, output channel count is always the same as input.
   }
@@ -191,12 +189,7 @@ class Base {
         this.intermediateChannelCount,
         this.bBias, this.nActivationId,
         this.nHigherHalfDifferent,
-
-//!!! ...unfinished... (2022/05/18) should half of intermediateChannelCount?
-// Could it be restored to inputChannelCount_lowerHalf and outputChannelCount_lowerHalf at excitationPointwise?
-
-        this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,
-
+        this.intermediate_inputChannelCount_lowerHalf, this.intermediate_outputChannelCount_lowerHalf,
         0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
       );
 
@@ -219,9 +212,6 @@ class Base {
         this.outputChannelCount,
         this.bBias, this.nActivationId,
         this.nHigherHalfDifferent,
-
-
-//!!! ...unfinished... (2022/05/18) should half of intermediateChannelCount.
         this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,
         0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
       );
