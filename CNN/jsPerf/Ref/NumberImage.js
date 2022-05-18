@@ -573,18 +573,12 @@ class Base {
    *   Return a newly created object which is the result of adding this and another.
    */
   cloneBy_add( another, addName, parametersDesc ) {
-
     let rHeight, rWidth, rDepth, rBoundsArraySet;
     let resultArray;
 
     if ( ( another.height == this.height ) && ( another.width == this.width ) && ( another.depth == this.depth ) ) { // Same size.
 
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      rBoundsArraySet = new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
-      rBoundsArraySet.output0
-        .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
-        .add_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
-
       resultArray = new Float32Array( this.dataArray.length );
       for ( let i = 0; i < this.dataArray.length; ++i ) {
         resultArray[ i ] = this.dataArray[ i ] + another.dataArray[ i ];
@@ -592,46 +586,51 @@ class Base {
 
     } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == this.depth ) ) { // Broadcast another to this.
 
-//!!! ...unfinished... (2022/05/18) broadcast in the same channel (i.e. not across channels)
-
-      let anotherIndex = 0; // Only the first (also the only one) channel and element is used for the scalar source.
-      let anotherValue = another.dataArray[ anotherIndex ];
-
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      rBoundsArraySet = new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
-      rBoundsArraySet.output0
-        .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
-        .add_all_byScaleBoundsArray_one( another.boundsArraySet.output0, anotherIndex );
-
       resultArray = new Float32Array( this.dataArray.length );
-      for ( let i = 0; i < this.dataArray.length; ++i ) {
-        resultArray[ i ] = this.dataArray[ i ] + anotherValue;
+
+      let i = 0;
+      for ( let y = 0; y < rHeight; ++y ) {
+        for ( let x = 0; x < rWidth; ++y ) {
+          for ( let c = 0; c < rDepth; ++c, ++i ) {
+            resultArray[ i ] = this.dataArray[ i ] + another.dataArray[ c ];
+          }
+        }
       }
 
     } else if ( ( this.height == 1 ) && ( this.width == 1 ) && ( this.depth == another.depth ) ) { // Broadcast this to another.
 
-//!!! ...unfinished... (2022/05/18) broadcast in the same channel (i.e. not across channels)
-
-      let thisIndex = 0; // Only the first (also the only one) channel and element is used for the scalar source.
-      let thisValue = this.dataArray[ thisIndex ];
-
       rHeight = another.height; rWidth = another.width; rDepth = another.depth;
-      rBoundsArraySet = new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
-      rBoundsArraySet.output0
-        .set_all_byScaleBoundsArray( another.boundsArraySet.output0 )
-        .add_all_byScaleBoundsArray_one( this.boundsArraySet.output0, thisIndex );
-
       resultArray = new Float32Array( another.dataArray.length );
-      for ( let i = 0; i < this.dataArray.length; ++i ) {
-        resultArray[ i ] = thisValue + another.dataArray[ i ];
+
+      let i = 0;
+      for ( let y = 0; y < rHeight; ++y ) {
+        for ( let x = 0; x < rWidth; ++y ) {
+          for ( let c = 0; c < rDepth; ++c, ++i ) {
+            resultArray[ i ] = this.dataArray[ c ] + another.dataArray[ i ];
+          }
+        }
       }
 
     } else {
       tf.util.assert( false,
-        `${addName}: another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${this.depth} ) `
-          + `and this ( height, width, depth ) = ( ${this.height}, ${this.width}, ${this.depth} ) `
-          + `should be either totally the same or at least one is ( 1, 1, 1 ).`
+        `${addName}: another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${another.depth} ) `
+          + `this ( height, width, depth ) = ( ${this.height}, ${this.width}, ${this.depth} ) `
+          + `and `
+          + `another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${another.depth} ) `
+          + `should be either totally the same or one is ( 1, 1, N ). `
           + `(${parametersDesc})`);
+    }
+
+    {
+      rBoundsArraySet = new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
+      rBoundsArraySet.output0
+        .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
+
+         // Note: Not add_all_byScaleBoundsArray_one(). The reason is that it is supported to broadcast in the same channel
+         // (i.e. not across channels).
+         //
+        .add_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
     }
 
     // Q: Why not just modify this directly?
@@ -655,18 +654,12 @@ class Base {
    *   Return a newly created object which is the result of multiplying this and another.
    */
   cloneBy_multiply( another, multiplyName, parametersDesc ) {
-
     let rHeight, rWidth, rDepth, rBoundsArraySet;
     let resultArray;
 
     if ( ( another.height == this.height ) && ( another.width == this.width ) && ( another.depth == this.depth ) ) { // Same size.
 
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      rBoundsArraySet = new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
-      rBoundsArraySet.output0
-        .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
-        .multiply_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
-
       resultArray = new Float32Array( this.dataArray.length );
       for ( let i = 0; i < this.dataArray.length; ++i ) {
         resultArray[ i ] = this.dataArray[ i ] * another.dataArray[ i ];
@@ -674,46 +667,51 @@ class Base {
 
     } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == this.depth ) ) { // Broadcast another to this.
 
-//!!! ...unfinished... (2022/05/18) broadcast in the same channel (i.e. not across channels)
-
-      let anotherIndex = 0; // Only the first (also the only one) channel and element is used for the scalar source.
-      let anotherValue = another.dataArray[ anotherIndex ];
-
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      rBoundsArraySet = new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
-      rBoundsArraySet.output0
-        .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
-        .multiply_all_byScaleBoundsArray_one( another.boundsArraySet.output0, anotherIndex );
-
       resultArray = new Float32Array( this.dataArray.length );
-      for ( let i = 0; i < this.dataArray.length; ++i ) {
-        resultArray[ i ] = this.dataArray[ i ] * anotherValue;
+
+      let i = 0;
+      for ( let y = 0; y < rHeight; ++y ) {
+        for ( let x = 0; x < rWidth; ++y ) {
+          for ( let c = 0; c < rDepth; ++c, ++i ) {
+            resultArray[ i ] = this.dataArray[ i ] * another.dataArray[ c ];
+          }
+        }
       }
 
     } else if ( ( this.height == 1 ) && ( this.width == 1 ) && ( this.depth == another.depth ) ) { // Broadcast this to another.
 
-//!!! ...unfinished... (2022/05/18) broadcast in the same channel (i.e. not across channels)
-
-      let thisIndex = 0; // Only the first (also the only one) channel and element is used for the scalar source.
-      let thisValue = this.dataArray[ thisIndex ];
-
       rHeight = another.height; rWidth = another.width; rDepth = another.depth;
-      rBoundsArraySet = new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
-      rBoundsArraySet.output0
-        .set_all_byScaleBoundsArray( another.boundsArraySet.output0 )
-        .multiply_all_byScaleBoundsArray_one( this.boundsArraySet.output0, thisIndex );
-
       resultArray = new Float32Array( another.dataArray.length );
-      for ( let i = 0; i < this.dataArray.length; ++i ) {
-        resultArray[ i ] = thisValue * another.dataArray[ i ];
+
+      let i = 0;
+      for ( let y = 0; y < rHeight; ++y ) {
+        for ( let x = 0; x < rWidth; ++y ) {
+          for ( let c = 0; c < rDepth; ++c, ++i ) {
+            resultArray[ i ] = this.dataArray[ c ] * another.dataArray[ i ];
+          }
+        }
       }
 
     } else {
       tf.util.assert( false,
-        `${multiplyName}: another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${this.depth} ) `
-          + `and this ( height, width, depth ) = ( ${this.height}, ${this.width}, ${this.depth} ) `
-          + `should be either totally the same or at least one is ( 1, 1, 1 ).`
+        `${multiplyName}: `
+          + `this ( height, width, depth ) = ( ${this.height}, ${this.width}, ${this.depth} ) `
+          + `and `
+          + `another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${another.depth} ) `
+          + `should be either totally the same or one is ( 1, 1, N ). `
           + `(${parametersDesc})`);
+    }
+
+    {
+      rBoundsArraySet = new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
+      rBoundsArraySet.output0
+        .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
+
+         // Note: Not multiply_all_byScaleBoundsArray_one(). The reason is that it is supported to broadcast in the same channel
+         // (i.e. not across channels).
+         //
+        .multiply_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
     }
 
     // Q: Why not just modify this directly?
