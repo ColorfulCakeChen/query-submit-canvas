@@ -77,12 +77,7 @@ class Base {
    * @return {boolean} Return false, if extraction failed.
    */ 
   extract() {
-
     this.weights = null;   // So that ( isValid() == false ) if re-extraction failed.
-
-    //let weightCount = ( this.shape ) ? this.shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue ) : 0;
-//!!! (2022/02/22 Remarked)
-//    let weightCount = ( this.shape ) ? tf.util.sizeFromShape( this.shape ) : 0; // It can handle ( 0 == shape.length ) (i.e. scalar).
 
     let weightCount;
     {
