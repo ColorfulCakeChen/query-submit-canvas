@@ -603,7 +603,9 @@ class Base {
 
     {
       // Exclude parameters weights, all the others should be the extracted weight count.
-      let tensorWeightCountExtracted = testParams.in.inputFloat32Array.byteLength - extractedParams.defaultByteOffsetEnd;
+      let tensorWeightCountExtracted
+        = ( testParams.in.inputFloat32Array.byteLength - extractedParams.defaultByteOffsetEnd ) / Float32Array.BYTES_PER_ELEMENT;
+
       asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
 
 
