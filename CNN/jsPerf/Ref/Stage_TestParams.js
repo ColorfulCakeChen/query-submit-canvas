@@ -6,7 +6,7 @@ import * as NameNumberArrayObject_To_Float32Array from "../../util/NameNumberArr
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as ValueRange from "../../Unpacker/ValueRange.js";
 import * as TestParams from "./TestParams.js";
-import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js";
+import * as Block_TestParams from "./Block_TestParams.js";
 import * as Stage from "../../Conv/Stage.js";
 
 /**
@@ -18,7 +18,7 @@ import * as Stage from "../../Conv/Stage.js";
  *
  * @member {object} in
  *   The "in" sub-object's data members represent every parameters of the Stage.Params's constructor. That is,
- * it has the following data members: sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested,
+ * it has the following data members: sourceHeight, sourceWidth, sourceChannelCount, blockCountRequested,
  * pointwise1ChannelCountRate, depthwiseFilterHeight, nActivationId, nActivationIdAtStageEnd, nWhetherShuffleChannel,
  * bKeepInputTensor. It also has the following properties:
  *   - paramsNumberArrayObject
@@ -29,8 +29,8 @@ import * as Stage from "../../Conv/Stage.js";
  *   The "out" sub-object's data members represent the "should-be" result of Stage.Params's extract(). That is, it has
  * the above data members (with outputHeight, outputWidth) except paramsNumberArrayObject, inputFloat32Array, byteOffsetBegin.
  *
- * @member {object[]} stepsArray
- *   Every element is an PointDepthPoint_TestParams object for the parameters of the step.
+ * @member {object[]} blocksArray
+ *   Every element is an Block_TestParams object for the parameters of the block.
  */
 class Base extends TestParams.Base {
 
@@ -39,7 +39,7 @@ class Base extends TestParams.Base {
    */
   constructor() {
     super();
-    this.stepsArray = new Array();
+    this.blocksArray = new Array();
   }
 
   /**
@@ -52,13 +52,13 @@ class Base extends TestParams.Base {
    *   Return this object self.
    */
   set_By_ParamsScattered(
-    sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, bPointwise1,
+    sourceHeight, sourceWidth, sourceChannelCount, blockCountRequested, bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth, nActivationId,
     bPointwise2ActivatedAtStageEnd, nConvStageType, bKeepInputTensor
   ) {
     this.in.paramsNumberArrayObject = {};
     this.out = {
-      sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, bPointwise1,
+      sourceHeight, sourceWidth, sourceChannelCount, blockCountRequested, bPointwise1,
       depthwiseFilterHeight, depthwiseFilterWidth, nActivationId,
       bPointwise2ActivatedAtStageEnd, nConvStageType, bKeepInputTensor
     };
@@ -81,7 +81,7 @@ class Base extends TestParams.Base {
    * The name should be one of Base.paramsNameOrderArray[] elements.
    *
    * @param {object} this.out
-   *   An object which has the following data members: sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested,
+   *   An object which has the following data members: sourceHeight, sourceWidth, sourceChannelCount, blockCountRequested,
    * bPointwise1, depthwiseFilterHeight, depthwiseFilterWidth, nActivationId, bPointwise2ActivatedAtStageEnd, nConvStageType,
    * bKeepInputTensor, outputHeight, outputWidth.
    *
@@ -99,52 +99,52 @@ class Base extends TestParams.Base {
     Stage.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call(
       stageParams, stageParams.sourceHeight, stageParams.sourceWidth );
 
-    let stepParamsCreator = Stage.Base.create_StepParamsCreator_byStageParams( stageParams );
-    stepParamsCreator.determine_stepCount_depthwiseFilterHeightWidth_Default_Last();
+    let blockParamsCreator = Stage.Base.create_BlockParamsCreator_byStageParams( stageParams );
+    blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last();
 
-    this.stepsArray.length = stepParamsCreator.stepCount;
+    this.blocksArray.length = blockParamsCreator.blockCount;
     let paramsNameOrderArray = Base.paramsNameOrderArray_Basic.slice(); // Shallow copy.
 
     let paramsNumberArrayObject = {};
     Object.assign( paramsNumberArrayObject, this.in.paramsNumberArrayObject ); // Shallow copy.
 
     let channelShuffler;
-    for ( let i = 0; i < stepParamsCreator.stepCount; ++i ) { // Step0, 1, 2, 3, ..., StepLast.
+    for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
 
-      if ( 0 == i ) { // Step0.
-        stepParamsCreator.configTo_beforeStep0();
+      if ( 0 == i ) { // Block0.
+        blockParamsCreator.configTo_beforeBlock0();
       }
 
-      if ( ( this.stepsArray.length - 1 ) == i ) { // StepLast. (Note: Step0 may also be StepLast.)
-        stepParamsCreator.configTo_beforeStepLast();
+      if ( ( this.blocksArray.length - 1 ) == i ) { // BlockLast. (Note: Block0 may also be BlockLast.)
+        blockParamsCreator.configTo_beforeBlockLast();
       }
 
       // If channelShuffler is not null, keep it so that its tensors could be released.
-      if ( stepParamsCreator.channelShuffler ) {
-        channelShuffler = stepParamsCreator.channelShuffler;
+      if ( blockParamsCreator.channelShuffler ) {
+        channelShuffler = blockParamsCreator.channelShuffler;
       }
 
-      let stepName = `step${i}`;
-      paramsNameOrderArray.push( stepName ); // Place every step's parameters in sequence.
+      let blockName = `block${i}`;
+      paramsNameOrderArray.push( blockName ); // Place every block's parameters in sequence.
 
-      let stepTestParams = new PointDepthPoint_TestParams.Base( this.id );
-      stepTestParams.set_By_ParamsScattered(
-        stepParamsCreator.channelCount0_pointwise1Before,
-        stepParamsCreator.channelCount1_pointwise1Before,
-        stepParamsCreator.pointwise1ChannelCount, stepParamsCreator.bPointwise1Bias, stepParamsCreator.pointwise1ActivationId,
-        stepParamsCreator.depthwise_AvgMax_Or_ChannelMultiplier,
-        stepParamsCreator.depthwiseFilterHeight, stepParamsCreator.depthwiseFilterWidth, stepParamsCreator.depthwiseStridesPad,
-        stepParamsCreator.bDepthwiseBias, stepParamsCreator.depthwiseActivationId,
-        stepParamsCreator.pointwise21ChannelCount, stepParamsCreator.bPointwise21Bias, stepParamsCreator.pointwise21ActivationId,
-        stepParamsCreator.bOutput1Requested,
-        stepParamsCreator.bKeepInputTensor
+      let blockTestParams = new Block_TestParams.Base( this.id );
+      blockTestParams.set_By_ParamsScattered(
+        blockParamsCreator.channelCount0_pointwise1Before,
+        blockParamsCreator.channelCount1_pointwise1Before,
+        blockParamsCreator.pointwise1ChannelCount, blockParamsCreator.bPointwise1Bias, blockParamsCreator.pointwise1ActivationId,
+        blockParamsCreator.depthwise_AvgMax_Or_ChannelMultiplier,
+        blockParamsCreator.depthwiseFilterHeight, blockParamsCreator.depthwiseFilterWidth, blockParamsCreator.depthwiseStridesPad,
+        blockParamsCreator.bDepthwiseBias, blockParamsCreator.depthwiseActivationId,
+        blockParamsCreator.pointwise21ChannelCount, blockParamsCreator.bPointwise21Bias, blockParamsCreator.pointwise21ActivationId,
+        blockParamsCreator.bOutput1Requested,
+        blockParamsCreator.bKeepInputTensor
       );
 
-      this.stepsArray[ i ] = stepTestParams;
-      paramsNumberArrayObject[ stepName ] = stepTestParams.in.inputFloat32Array;
+      this.blocksArray[ i ] = blockTestParams;
+      paramsNumberArrayObject[ blockName ] = blockTestParams.in.inputFloat32Array;
 
-      if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
-        stepParamsCreator.configTo_afterStep0();
+      if ( 0 == i ) { // After block0 (i.e. for block1, 2, 3, ...)
+        blockParamsCreator.configTo_afterBlock0();
       }
     }
 
@@ -185,7 +185,7 @@ class Base extends TestParams.Base {
    * @override
    */
   onYield_after() {
-    this.stepsArray.length = 0; // Clear steps' parameters.
+    this.blocksArray.length = 0; // Clear blocks' parameters.
   }
 
   /**
@@ -214,9 +214,9 @@ class Base extends TestParams.Base {
       sourceWidth:  [ 4, 5 ], // Test different input image width (even and odd).
       sourceChannelCount: [ 4, 4 ],
 
-      stepCountRequested: [
-        Stage.Params.stepCountRequested.valueDesc.range.min,
-        Stage.Params.stepCountRequested.valueDesc.range.min + 5
+      blockCountRequested: [
+        Stage.Params.blockCountRequested.valueDesc.range.min,
+        Stage.Params.blockCountRequested.valueDesc.range.min + 5
       ],
 
 //      bPointwise1: undefined,
@@ -262,7 +262,7 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Stage.Params.sourceHeight,                   this.valueOutMinMax.sourceHeight ),
       new TestParams.ParamDescConfig( Stage.Params.sourceWidth,                    this.valueOutMinMax.sourceWidth ),
       new TestParams.ParamDescConfig( Stage.Params.sourceChannelCount,             this.valueOutMinMax.sourceChannelCount ),
-      new TestParams.ParamDescConfig( Stage.Params.stepCountRequested,             this.valueOutMinMax.stepCountRequested ),
+      new TestParams.ParamDescConfig( Stage.Params.blockCountRequested,             this.valueOutMinMax.blockCountRequested ),
       new TestParams.ParamDescConfig( Stage.Params.bPointwise1,                    this.valueOutMinMax.bPointwise1 ),
       new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterHeight,          this.valueOutMinMax.depthwiseFilterHeight ),
       new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterWidth,           this.valueOutMinMax.depthwiseFilterWidth ),
@@ -287,7 +287,7 @@ Base.paramsNameOrderArray_Basic = [
   Stage.Params.sourceHeight.paramName,
   Stage.Params.sourceWidth.paramName,
   Stage.Params.sourceChannelCount.paramName,
-  Stage.Params.stepCountRequested.paramName,
+  Stage.Params.blockCountRequested.paramName,
   Stage.Params.bPointwise1.paramName,
   Stage.Params.depthwiseFilterHeight.paramName,
   Stage.Params.depthwiseFilterWidth.paramName,
