@@ -19,8 +19,8 @@ class ArrayInterleaver {
    *   How many elements (begin at indexBegin) will be interleaved. It must be even (i.e. divisible by 2).
    *
    * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements (from arrayIn) temporarily. Provide this array could reduce memory re-allocation
-   * and improve performance.
+   *   A temporary array for placing the original elements (from arrayIn) temporarily. Providing this array could reduce memory
+   * re-allocation and improve performance.
    *
    * @return {Array}
    *   Retrun the (modified) arrayIn itself.
