@@ -42,8 +42,7 @@ import * as Pointwise from "./Pointwise.js";
  *   The channel count of the input tensor. It must be greater than zero (> 0).
  *
  * @member {number} intermediateChannelCountDivisor
- *   An integer which is the channel count divisor for intermediate pointwise convolution channel count. The inputChannelCount
- * must be divisible by intermediateChannelCountDivisor.
+ *   An integer which is the channel count divisor for intermediate pointwise convolution channel count.
  *
  *     - If ( intermediateChannelCountDivisor <= 0 ), there will be only one pointwise convolution (i.e. excitation pointwise convolution). 
  *
@@ -51,7 +50,7 @@ import * as Pointwise from "./Pointwise.js";
  *         and excitation pointwise convolution).
  *
  * @member {number} intermediateChannelCount
- *   The channel count of intermediate pointwise convolution. (= inputChannelCount / intermediateChannelCountDivisor )
+ *   The channel count of intermediate pointwise convolution. (= Math.ceil( inputChannelCount / intermediateChannelCountDivisor ) )
  *
  * @member {number} outputChannelCount
  *   Always the same as inputChannelCount.
@@ -98,24 +97,26 @@ class Base {
         + `inputChannelCount ( ${inputChannelCount} ) should be greater than zero (> 0).`
     );
 
-    let intermediateChannelCountRemainder = inputChannelCount % intermediateChannelCountDivisor;
-    tf.util.assert( ( intermediateChannelCountRemainder == 0 ),
-      `SqueezeExcitation.Base.constructor(): `
-        + `inputChannelCount ( ${inputChannelCount} ) must be divisilbe by `
-        + `intermediateChannelCountDivisor ( ${intermediateChannelCountDivisor} ). `
-        + `( inputChannelCount % intermediateChannelCountDivisor ) = ( ${intermediateChannelCountRemainder} ) should be zero (== 0).`
-    );
-
-    this.intermediateChannelCount = inputChannelCount / intermediateChannelCountDivisor;
-
-//!!! ...unfinished... (2022/05/18) when ( this.intermediatePointwise.bHigherHalfDifferent == true ), 
-//  - inputChannelCount_lowerHalf
-//  - outputChannelCount_lowerHalf
-//  - inputChannelCount_higherHalf
-//  - outputChannelCount_higherHalf
+//!!! (2022/05/18 Remaeked) seems no problem even if not divisible.
+//     let intermediateChannelCountRemainder = inputChannelCount % intermediateChannelCountDivisor;
+//     tf.util.assert( ( intermediateChannelCountRemainder == 0 ),
+//       `SqueezeExcitation.Base.constructor(): `
+//         + `inputChannelCount ( ${inputChannelCount} ) must be divisilbe by `
+//         + `intermediateChannelCountDivisor ( ${intermediateChannelCountDivisor} ). `
+//         + `( inputChannelCount % intermediateChannelCountDivisor ) = ( ${intermediateChannelCountRemainder} ) should be zero (== 0).`
+//     );
 //
-// should also be divisible by intermediateChannelCountDivisor.
+// //!!! ...unfinished... (2022/05/18) when ( this.intermediatePointwise.bHigherHalfDifferent == true ), 
+// //  - inputChannelCount_lowerHalf
+// //  - outputChannelCount_lowerHalf
+// //  - inputChannelCount_higherHalf
+// //  - outputChannelCount_higherHalf
+// //
+// // should also be divisible by intermediateChannelCountDivisor.
       
+
+    this.intermediateChannelCount = Math.ceil( inputChannelCount / intermediateChannelCountDivisor );
+
 // Could it be restored to inputChannelCount_lowerHalf and outputChannelCount_lowerHalf at excitationPointwise?
     this.intermediate ??? inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
     this.intermediate ??? outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
