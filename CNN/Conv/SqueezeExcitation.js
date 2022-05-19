@@ -149,8 +149,6 @@ class Base {
     //       So that the result for pass-through parts will not affect input when multiply to input.
     //
 
-//!!! ...unfinished... (2022/05/18) squeeze?
-
     // 2.1
     let squeezeDepthwise_boundsArraySet_output0;
     if ( this.bSqueeze ) {
@@ -288,11 +286,8 @@ class Base {
   }
 
   /**
-   * Adjust this.pfnSqueezeExcitation_and_destroy_or_keep so that it is either:
-   *   - the same as this.pfnSqueezeExcitation_and_keep which will not dispose inputTensor. or,
-   *   - pointer to Base.operation_and_destroy() which will dispose inputTensor.
-   *
-   * The sub operations' setKeepInputTensor() will also be called.
+   * The sub operations' setKeepInputTensor() will be called so that only the first operation is responsible for keeping inputTensor.
+   * All other operations should always destroy inputTensor..
    *
    */
   setKeepInputTensor( bKeepInputTensor ) {
