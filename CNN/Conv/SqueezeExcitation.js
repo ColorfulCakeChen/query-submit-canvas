@@ -110,24 +110,6 @@ class Base {
         + `inputChannelCount ( ${inputChannelCount} ) should be greater than zero (> 0).`
     );
 
-//!!! (2022/05/18 Remaeked) seems no problem even if not divisible.
-//     let intermediateChannelCountRemainder = inputChannelCount % intermediateChannelCountDivisor;
-//     tf.util.assert( ( intermediateChannelCountRemainder == 0 ),
-//       `SqueezeExcitation.Base.constructor(): `
-//         + `inputChannelCount ( ${inputChannelCount} ) must be divisilbe by `
-//         + `intermediateChannelCountDivisor ( ${intermediateChannelCountDivisor} ). `
-//         + `( inputChannelCount % intermediateChannelCountDivisor ) = ( ${intermediateChannelCountRemainder} ) should be zero (== 0).`
-//     );
-//
-// //!!! ...unfinished... (2022/05/18) when ( this.intermediatePointwise.bHigherHalfDifferent == true ), 
-// //  - inputChannelCount_lowerHalf
-// //  - outputChannelCount_lowerHalf
-// //  - inputChannelCount_higherHalf
-// //  - outputChannelCount_higherHalf
-// //
-// // should also be divisible by intermediateChannelCountDivisor.
-
-
     this.intermediateChannelCount = Math.ceil( inputChannelCount / intermediateChannelCountDivisor );
     this.intermediate_inputChannelCount_lowerHalf = Math.ceil( inputChannelCount_lowerHalf / intermediateChannelCountDivisor );
     this.intermediate_outputChannelCount_lowerHalf = Math.ceil( outputChannelCount_lowerHalf / intermediateChannelCountDivisor );
@@ -174,14 +156,12 @@ class Base {
     if ( this.bSqueeze ) {
       this.squeezeDepthwise = new Depthwise.ConstantWhenPassThrough(
         this.inputHeight, this.inputWidth, this.inputChannelCount,
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.AVG, // global average pooling.
-        this.inputHeight, this.inputWidth,                   // ( filterSize == inputImageSize ) means global pooling.
-        ValueDesc.StridesPad.Singleton.STRIDES_1_PAD_VALID,  // For shrinking to ( 1 x 1 ) image, pad should be "valid" (i.e. not "same").
-
-  //!!! ...unfinished... (2022/05/19)
-        bBias, nActivationId,
-
-        ValueDesc.Depthwise_HigherHalfDifferent.Singleton.NONE, // (global) average pooling must be no higher-half-different.
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,    // global average pooling.
+        this.inputHeight, this.inputWidth,                          // ( filterSize == inputImageSize ) means global pooling.
+        ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID,     // To shrink to ( 1 x 1 ) image, pad should be "valid" (i.e. not "same").
+        false,                                                      // (bBias) squeeze has no bias (since it also has no activation).
+        ValueDesc.ActivationFunction.Singleton.Ids.NONE,            // (nActivationId) squeeze has no activation.
+        ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE, // (global) average pooling must be no higher-half-different.
         -1 // (inputChannelCount_lowerHalf) Used since ValueDesc.Depthwise_HigherHalfDifferent.Singleton.NONE
       );
 
@@ -203,6 +183,9 @@ class Base {
       this.intermediatePointwise = new Pointwise.ConstantWhenPassThrough(
         squeezeDepthwise_boundsArraySet_output0.channelCount,
         this.intermediateChannelCount,
+
+//!!! ...unfinished... (2022/05/19) should have bias if has activation
+
         this.bBias, this.nActivationId,
         this.nPointwise_HigherHalfDifferent,
         this.intermediate_inputChannelCount_lowerHalf, this.intermediate_outputChannelCount_lowerHalf,
@@ -226,6 +209,9 @@ class Base {
       this.excitationPointwise = new Pointwise.ConstantWhenPassThrough(
         intermediatePointwise_boundsArraySet_output0.channelCount,
         this.outputChannelCount,
+
+//!!! ...unfinished... (2022/05/19) should have bias if has activation
+
         this.bBias, this.nActivationId,
         this.nPointwise_HigherHalfDifferent,
         this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,
