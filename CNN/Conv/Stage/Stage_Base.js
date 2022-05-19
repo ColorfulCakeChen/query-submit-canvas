@@ -59,7 +59,7 @@ import { Params } from "./Stage_Params.js";
  *
  *   - depthwise:  NO bias, NO activation.
  *     - In ShuffleNetV2's original design, depthwise always has bias.
- *     - We drop depthwise's bias because it could be achieved by pointwise2's bias.
+ *     - We drop depthwise's bias because it could be achieved by (squeeze-and-excitation's and) pointwise2's bias.
  *
  *   - pointwise2:
  *     - non-blockLast: bias, activation.
@@ -120,7 +120,7 @@ import { Params } from "./Stage_Params.js";
  * 3.3.1 Combined affine transformation
  *
  * In non-MobileNetV2_Xxx, the depthwise does not have activation function so it is affine transformation. Since the depthwise's
- * next operation (i.e. pointwise2) always has bias, it is not necessary to have bias in the depthwise.
+ * next operation (i.e. (squeeze-and-excitation and) pointwise2) always has bias, it is not necessary to have bias in the depthwise.
  *
  *
  * 3.3.2 Note the assumption's detail
@@ -137,6 +137,9 @@ import { Params } from "./Stage_Params.js";
  *
  * On the other hand, the depthwise convolution with ( pad = "valid" ) does not pad any value. The per channel (fixed)
  * bias is sufficient to remedy the previous affine transformation's no-bias.
+ *
+ * Note: The squeeze (of squeeze-and-excitation) is depthwise (globale average) convolution with ( pad = "valid" ). The
+ * excitation (of squeeze-and-excitation) is pointwise convolution. So they also meet these criterion.
  *
  *
  * 3.4 Note: tf.batchNorm()
