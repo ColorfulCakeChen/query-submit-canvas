@@ -337,9 +337,9 @@ class Base {
   /** */
   static squeeze_intermediate_excitation( inputTensor ) {
     let t0, t1;
-    t0 = this.squeezeDepthwise.pfnOperationBiasActivation( inputTensor );
-    t1 = this.intermediatePointwise.pfnConvBiasActivation( t0 );
-    t0 = this.excitationPointwise.pfnConvBiasActivation( t1 );
+    t0 = this.squeezeDepthwise.apply( inputTensor );
+    t1 = this.intermediatePointwise.apply( t0 );
+    t0 = this.excitationPointwise.apply( t1 );
 
     t1 = tf.mul( inputTensor, t0 );
     t0.dispose();
@@ -349,8 +349,8 @@ class Base {
   /** */
   static squeeze_excitation_and_keep( inputTensor ) {
     let t0, t1;
-    t0 = this.squeezeDepthwise.pfnOperationBiasActivation( inputTensor );
-    t1 = this.excitationPointwise.pfnConvBiasActivation( t0 );
+    t0 = this.squeezeDepthwise.apply( inputTensor );
+    t1 = this.excitationPointwise.apply( t0 );
 
     t0 = tf.mul( inputTensor, t1 );
     t1.dispose();
@@ -360,8 +360,8 @@ class Base {
   /** */
   static intermediate_excitation_and_keep( inputTensor ) {
     let t0, t1;
-    t0 = this.intermediatePointwise.pfnConvBiasActivation( inputTensor );
-    t1 = this.excitationPointwise.pfnConvBiasActivation( t0 );
+    t0 = this.intermediatePointwise.apply( inputTensor );
+    t1 = this.excitationPointwise.apply( t0 );
 
     t0 = tf.mul( inputTensor, t1 );
     t1.dispose();
@@ -371,7 +371,7 @@ class Base {
   /** */
   static excitation_and_keep( inputTensor ) {
     let t0, t1;
-    t0 = this.excitationPointwise.pfnConvBiasActivation( inputTensor );
+    t0 = this.excitationPointwise.apply( inputTensor );
 
     t1 = tf.mul( inputTensor, t0 );
     t0.dispose();
