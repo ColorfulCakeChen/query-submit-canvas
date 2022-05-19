@@ -106,10 +106,10 @@ import { Params } from "./Stage_Params.js";
  *
  * 3.3 non-MobileNetV2_Xxx's depthwise
  *
- * The reason why non-MobileNetV2_Xxx's depthwise does not have bias is for affine transformation:
+ * The reason why non-MobileNetV2_Xxx's depthwise does not have bias is the following characteristic of affine transformation:
  *
- *   "If an operation has no activation function, it can also have no bias too because the next operation's bias can
- *    achieve the same result. (Multiple affine transformations can be combined into one affine transformation.)"
+ *   "If an operation has no activation function (i.e. it is affine transformation), it can also have no bias because the next
+ *    operation's bias can achieve the same result. (Multiple affine transformations can be combined into one affine transformation.)"
  *
  *
  * 3.3.1 Combined affine transformation
