@@ -1,7 +1,7 @@
 export { Base };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
-import * as ActivationEscaping from "./ActivationEscaping.js";
+//import * as ActivationEscaping from "./ActivationEscaping.js";
 import * as BoundsArraySet from "./BoundsArraySet.js";
 import * as Depthwise from "./Depthwise.js";
 import * as Pointwise from "./Pointwise.js";
@@ -101,7 +101,6 @@ class Base {
     this.intermediateChannelCountDivisor = intermediateChannelCountDivisor;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
-
     this.nHigherHalfDifferent = nHigherHalfDifferent;
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
     this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
