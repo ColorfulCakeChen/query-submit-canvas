@@ -286,7 +286,7 @@ class Params extends Weights.Params {
       [ Params.depthwiseStridesPad,                   depthwiseStridesPad ],
       [ Params.bDepthwiseBias,                        bDepthwiseBias ],
       [ Params.depthwiseActivationId,                 depthwiseActivationId ],
-      [ Params.SqueezeExcitationChannelCountDivisor,  nSqueezeExcitationChannelCountDivisor ],
+      [ Params.nSqueezeExcitationChannelCountDivisor, nSqueezeExcitationChannelCountDivisor ],
       [ Params.pointwise21ChannelCount,               pointwise21ChannelCount ],
       [ Params.bPointwise21Bias,                      bPointwise21Bias ],
       [ Params.pointwise21ActivationId,               pointwise21ActivationId ],
@@ -523,7 +523,7 @@ class Params extends Weights.Params {
 
   get nSqueezeExcitationChannelCountDivisor()     { return this.parameterMapModified.get( Params.SqueezeExcitationChannelCountDivisor ); }
   get nSqueezeExcitationChannelCountDivisorName() {
-    return Params.SqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
+    return Params.nSqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
   }
 
   get pointwise21ChannelCount()   { return this.parameterMapModified.get( Params.pointwise21ChannelCount ); }
@@ -623,7 +623,7 @@ Params.depthwiseStridesPad =     new ParamDesc.StridesPad(              "depthwi
 Params.bDepthwiseBias =          new ParamDesc.Bool(                    "bDepthwiseBias" );
 Params.depthwiseActivationId =   new ParamDesc.ActivationFunction(      "depthwiseActivationId" );
 
-Params.SqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
+Params.nSqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
 
 // Note: Force pointwise21ChannelCount always not zero. So that channelCount0_pointwise1Before_higherHalf could be determined
 // when ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5).
