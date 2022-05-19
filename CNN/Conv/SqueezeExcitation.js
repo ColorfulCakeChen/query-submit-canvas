@@ -1,7 +1,6 @@
 export { Base };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
-//import * as ActivationEscaping from "./ActivationEscaping.js";
 import * as BoundsArraySet from "./BoundsArraySet.js";
 import * as Depthwise from "./Depthwise.js";
 import * as Pointwise from "./Pointwise.js";
@@ -137,19 +136,14 @@ class Base {
     // 1. Determine operation functions.
     Base.setup_pfnSqueezeExcitation.call( this );
 
-
-//!!! ...unfinished... (2022/05/18) bBias?
-//  If no activation, it is enough to let the only last operation have ( bBias == true ).
-//
-
-
     // 2. Initialize sub-operations.
 
     // Note: Inside squeeze-and-excitation, all depthwsie and pointwise convolutions are constant-when-pass-through.
     //       So that the result for pass-through parts will not affect input when multiply to input.
     //
 
-    // 2.1
+    // 2.1 squeezeDepthwise
+
     let squeezeDepthwise_boundsArraySet_output0;
     if ( this.bSqueeze ) {
       this.squeezeDepthwise = new Depthwise.ConstantWhenPassThrough(
@@ -175,16 +169,22 @@ class Base {
       squeezeDepthwise_boundsArraySet_output0 = inputScaleBoundsArray;
     }
 
-    // 2.2
+    // 2.2 intermediatePointwise
     let intermediatePointwise_boundsArraySet_output0;
     if ( this.intermediateChannelCount > 0 ) {
+
+      // If it has no activation, it could be no bias because the next operation's (i.e. excitationPointwise) bias will achieve it.
+      let bBias_intermediatePointwise;
+      if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
+        bBias_intermediatePointwise = false;
+      else
+        bBias_intermediatePointwise = true;
+
       this.intermediatePointwise = new Pointwise.ConstantWhenPassThrough(
         squeezeDepthwise_boundsArraySet_output0.channelCount,
         this.intermediateChannelCount,
-
-//!!! ...unfinished... (2022/05/19) should have bias if has activation
-
-        this.bBias, this.nActivationId,
+        bBias_intermediatePointwise,
+        this.nActivationId,
         this.nPointwise_HigherHalfDifferent,
         this.intermediate_inputChannelCount_lowerHalf, this.intermediate_outputChannelCount_lowerHalf,
         0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
@@ -202,21 +202,17 @@ class Base {
       intermediatePointwise_boundsArraySet_output0 = squeezeDepthwise_boundsArraySet_output0;
     }
 
-    // 2.3
+    // 2.3 excitationPointwise
     {
       this.excitationPointwise = new Pointwise.ConstantWhenPassThrough(
         intermediatePointwise_boundsArraySet_output0.channelCount,
         this.outputChannelCount,
-
-//!!! ...unfinished... (2022/05/19) should have bias if has activation
-
-        this.bBias, this.nActivationId,
+        true, // (bBias) the final operation should always have bias (even if no activation).
+        this.nActivationId,
         this.nPointwise_HigherHalfDifferent,
         this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,
         0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
       );
-
-
 
       if ( !this.excitationPointwise.init( inputFloat32Array, this.byteOffsetEnd, intermediatePointwise_boundsArraySet_output0 ) )
         return false;  // e.g. input array does not have enough data.
