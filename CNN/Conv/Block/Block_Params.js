@@ -188,10 +188,10 @@ class Params extends Weights.Params {
 
 //!!! ...unfinished... (2022/05/19) Replaced by:
 //
-//  *   - -2: NONE                                       (no squeeze, no excitation)
-//  *   - -1: NO_SQUEEZE__ONE_EXCITATION                 (no squeeze, no intermediate excitation)
-//  *   -  0: SQUEEZE__ONE_EXCITATION                    (has squeeze, no intermediate excitation)
-//  *   - [ 1, 64 ]: SQUEEZE__TWO_EXCITATIONS__DIVISOR_N (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
+//  *   - -2: NONE                                    (no squeeze, no excitation)
+//  *   - -1: EXCITATION_1                            (no squeeze, no intermediate excitation)
+//  *   -  0: SQUEEZE__EXCITATION_1                   (has squeeze, no intermediate excitation)
+//  *   - [ 1, 64 ]: SQUEEZE__EXCITATION_2__DIVISOR_N (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
 
 
    * @param {number} nSqueezeExcitationChannelCountDivisor
