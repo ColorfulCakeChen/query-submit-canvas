@@ -37,6 +37,15 @@ import * as Pointwise from "./Pointwise.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
+ * @member {number} intermediateChannelCountDivisor
+ *   An integer which is the channel count divisor for intermediate pointwise convolution channel count.
+ *
+ *     - If ( intermediateChannelCountDivisor <= 0 ), there will be only one pointwise convolution (i.e. excitation
+ *         pointwise convolution). 
+ *
+ *     - If ( intermediateChannelCountDivisor > 0 ), there will be two pointwise convolutions (i.e. intermediate pointwise
+ *         convolution, and excitation pointwise convolution).
+ *
  * @member {number} inputHeight
  *   The height of the input tensor. If one of inputHeight and inputWidth is not positive (<= 0), there will be no squeeze step
  * (i.e. no global average pooling).
@@ -48,20 +57,13 @@ import * as Pointwise from "./Pointwise.js";
  * @member {number} inputChannelCount
  *   The channel count of the input tensor. It must be greater than zero (> 0).
  *
- * @member {number} intermediateChannelCountDivisor
- *   An integer which is the channel count divisor for intermediate pointwise convolution channel count.
- *
- *     - If ( intermediateChannelCountDivisor <= 0 ), there will be only one pointwise convolution (i.e. excitation
- *         pointwise convolution). 
- *
- *     - If ( intermediateChannelCountDivisor > 0 ), there will be two pointwise convolutions (i.e. intermediate pointwise
- *         convolution, and excitation pointwise convolution).
- *
- * @member {number} intermediateChannelCount
- *   The channel count of intermediate pointwise convolution. (= Math.ceil( inputChannelCount / intermediateChannelCountDivisor ) )
- *
  * @member {ValueDesc.Pointwise_HigherHalfDifferent} nPointwise_HigherHalfDifferent
  *   The HigherHalfDifferent type for pointwise convolution in squeeze-and-excitation.
+ *
+ * @member {number} intermediateChannelCount
+ *   The channel count of intermediate pointwise convolution.
+ *     - If ( intermediateChannelCountDivisor <= 0 ), it will be 0 (i.e. no intermediate pointwise convolution).
+ *     - If ( intermediateChannelCountDivisor > 0 ), it will be Math.ceil( inputChannelCount / intermediateChannelCountDivisor ).
  *
  * @member {number} outputChannelCount
  *   Always the same as inputChannelCount.
@@ -89,13 +91,14 @@ class Base {
    *
    */
   constructor(
-    inputHeight, inputWidth, inputChannelCount, intermediateChannelCountDivisor, nActivationId,
+    intermediateChannelCountDivisor, inputHeight, inputWidth,
+    inputChannelCount, nActivationId,
     nPointwise_HigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf ) {
 
+    this.intermediateChannelCountDivisor = intermediateChannelCountDivisor;
     this.inputHeight = inputHeight;
     this.inputWidth = inputWidth;
     this.inputChannelCount = inputChannelCount;
-    this.intermediateChannelCountDivisor = intermediateChannelCountDivisor;
     this.nActivationId = nActivationId;
     this.nPointwise_HigherHalfDifferent = nPointwise_HigherHalfDifferent;
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
@@ -106,9 +109,13 @@ class Base {
         + `inputChannelCount ( ${inputChannelCount} ) should be greater than zero (> 0).`
     );
 
-    this.intermediateChannelCount = Math.ceil( inputChannelCount / intermediateChannelCountDivisor );
-    this.intermediate_inputChannelCount_lowerHalf = Math.ceil( inputChannelCount_lowerHalf / intermediateChannelCountDivisor );
-    this.intermediate_outputChannelCount_lowerHalf = Math.ceil( outputChannelCount_lowerHalf / intermediateChannelCountDivisor );
+    if ( intermediateChannelCountDivisor <= 0 ) {
+      this.intermediateChannelCount = this.intermediate_inputChannelCount_lowerHalf = this.intermediate_outputChannelCount_lowerHalf = 0;
+    } else {
+      this.intermediateChannelCount = Math.ceil( inputChannelCount / intermediateChannelCountDivisor );
+      this.intermediate_inputChannelCount_lowerHalf = Math.ceil( inputChannelCount_lowerHalf / intermediateChannelCountDivisor );
+      this.intermediate_outputChannelCount_lowerHalf = Math.ceil( outputChannelCount_lowerHalf / intermediateChannelCountDivisor );
+    }
 
     this.outputChannelCount = inputChannelCount, // For squeeze-and-excitation, output channel count is always the same as input.
     this.bSqueeze = ( inputHeight > 0 ) && ( inputWidth > 0 );
