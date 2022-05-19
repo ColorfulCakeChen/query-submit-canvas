@@ -80,9 +80,6 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  * @member {ValueDesc.Pointwise_HigherHalfDifferent} nHigherHalfDifferent
  *   The HigherHalfDifferent type for pointwise convolution.
  *
-
-//!!! ...unfinished... (2022/05/19)
-
  * @member {boolean} bSqueezeExcitation
  *   Whether squeeze-and-excitation exists. It will be true if ( nSqueezeExcitationChannelCountDivisor >= 0 ).
  *
@@ -100,6 +97,9 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  * @member {function} apply
  *   A method accepts one parameter inputTensor (tf.tensor3d) and return an outputTensor (tf.tensor3d). All intermediate tensors
  * will be disposed. The inputTensor may or may not be disposed (according to setKeepInputTensor()). In fact, this method calls one
+
+//!!! ...unfinished... (2022/05/19)
+
  * of Base.???() according to the parameters.
  *
  * @see SqueezeExcitation.Base
@@ -129,11 +129,11 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
     this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
     this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
 
-
+    // ( nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-1)      
+    this.bSqueezeExcitation = ( nSqueezeExcitationChannelCountDivisor >= 0 );
+    this.bSqueeze = ( this.bSqueezeExcitation ) && ( inputHeight > 0 ) && ( inputWidth > 0);
   }
 
-
-//!!! ...unfinished... (2022/05/19)
   /**
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
@@ -153,33 +153,51 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
     // 1. Determine operation functions.
     Base.setup_pfn.call( this );
 
-    // 2.
+    // 2. Initialize sub-operations.
 
-    if ( nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-1)
-      new SqueezeExcitation.Base(
-        nSqueezeExcitationChannelCountDivisor, inputHeight, inputWidth,
-        inputChannelCount, nActivationId,
-        nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf );
+    // 2.1 squeezeExcitation
+    let squeezeExcitation_boundsArraySet_output0;
+    if ( this.bSqueezeExcitation ) {
+      this.squeezeExcitation = new SqueezeExcitation.Base(
+        this.nSqueezeExcitationChannelCountDivisor, this.inputHeight, this.inputWidth,
+        this.inputChannelCount, this.nActivationId,
+        this.nHigherHalfDifferent, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf );
+
+      if ( !this.squeezeExcitation.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
+        return false;  // e.g. input array does not have enough data.
+      this.byteOffsetEnd = this.squeezeExcitation.byteOffsetEnd;
+
+      this.tensorWeightCountTotal += this.squeezeExcitation.tensorWeightCountTotal;
+      this.tensorWeightCountExtracted += this.squeezeExcitation.tensorWeightCountExtracted;
+
+      squeezeExcitation_boundsArraySet_output0 = this.squeezeExcitation.boundsArraySet.output0;
+    } else {
+      squeezeExcitation_boundsArraySet_output0 = inputScaleBoundsArray;
     }
 
-    new SameWhenPassThrough(
-      inputChannelCount, outputChannelCount, bBias, nActivationId,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
+    // 2.2 pointwise
+    {
+      this.pointwise = new SameWhenPassThrough(
+        this.inputChannelCount, this.outputChannelCount, this.bBias, this.nActivationId,
+        this.nHigherHalfDifferent,
+        this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,
+        this.channelShuffler_outputGroupCount );
+
+      if ( !this.pointwise.init( inputFloat32Array, this.byteOffsetEnd, squeezeExcitation_boundsArraySet_output0 ) )
+        return false;  // e.g. input array does not have enough data.
+      this.byteOffsetEnd = this.excitationPointwise.byteOffsetEnd;
+
+      this.tensorWeightCountTotal += this.pointwise.tensorWeightCountTotal;
+      this.tensorWeightCountExtracted += this.pointwise.tensorWeightCountExtracted;
+    }
 
     // 3. BoundsArraySet
     {
       { // Build self BoundsArraySet.
         this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, null,
-          this.excitationPointwise.boundsArraySet.output0.channelCount, 0 );
+          this.pointwise.boundsArraySet.output0.channelCount, 0 );
 
-        this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.excitationPointwise.boundsArraySet );
-
-        // The BoundsArraySet for tf.mul() input by excitation.
-        //
-        // Note: Not multiply_all_byScaleBoundsArray_one(). The reason is that it is supported to broadcast in the same channel
-        // (i.e. not across channels).
-        //
-        this.boundsArraySet.output0.multiply_all_byScaleBoundsArray_all( inputScaleBoundsArray );
+        this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.pointwise.boundsArraySet );
       }
 
       this.dispose_all_sub_BoundsArraySet(); // For reduce memory footprint.
@@ -191,22 +209,14 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
 
   /** Release all tensors. */
   disposeTensors() {
-
-//!!! ...unfinished... (2022/05/19)
-
-    if ( this.squeezeDepthwise ) {
-      this.squeezeDepthwise.disposeTensors();
-      this.squeezeDepthwise = null;
+    if ( this.squeezeExcitation ) {
+      this.squeezeExcitation.disposeTensors();
+      this.squeezeExcitation = null;
     }
 
-    if ( this.intermediatePointwise ) {
-      this.intermediatePointwise.disposeTensors();
-      this.intermediatePointwise = null;
-    }
-
-    if ( this.excitationPointwise ) {
-      this.excitationPointwise.disposeTensors();
-      this.excitationPointwise = null;
+    if ( this.pointwise ) {
+      this.pointwise.disposeTensors();
+      this.pointwise = null;
     }
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
@@ -215,23 +225,16 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
     this.bInitOk = false;
   }
 
-
-//!!! ...unfinished... (2022/05/19)
-
   /**
-   * Release all BoundsArraySet of squeezeDepthwise, intermediatePointwise, excitationPointwise.
+   * Release all BoundsArraySet of squeezeExcitation, pointwise.
    *
    * This could reduce memory footprint.
    *
-   * (Note: This SqueezeExcitation's BoundsArraySet is kept.)
+   * (Note: This Pointwise.SameWhenPassThrough_PrefixSqueezeExcitation's BoundsArraySet is kept.)
    */
   dispose_all_sub_BoundsArraySet() {
-
-//!!! ...unfinished... (2022/05/19)
-
-    delete this.squeezeDepthwise?.boundsArraySet;
-    delete this.intermediatePointwise?.boundsArraySet;
-    delete this.excitationPointwise.boundsArraySet;
+    delete this.squeezeExcitation?.boundsArraySet;
+    delete this.pointwise.boundsArraySet;
   }
 
 
