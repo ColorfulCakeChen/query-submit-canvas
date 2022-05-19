@@ -86,7 +86,8 @@ import * as Pointwise from "./Pointwise.js";
  * @member {function} apply
  *   A method accepts one parameter inputTensor (tf.tensor3d) and return an outputTensor (tf.tensor3d). All intermediate tensors
  * will be disposed. The inputTensor may or may not be disposed (according to setKeepInputTensor()). In fact, this method calls one
- * of Base.Xxx_and_keep() according to the parameters.
+ * of Base.squeeze_intermediate_excitation(), Base.squeeze_excitation(), Base.intermediate_excitation(), Base.excitation(),
+ * according to the parameters.
  *
  */
 class Base {
@@ -328,14 +329,14 @@ class Base {
    *   The Base object to be determined and modified.
    */
   static setup_pfn() {
-    if ( this.squeezeDepthwise ) {
-      if ( this.intermediatePointwise ) {
+    if ( this.bSqueeze ) {
+      if ( this.intermediateChannelCount > 0 ) {
         this.apply = Base.squeeze_intermediate_excitation;
       } else {
         this.apply = Base.squeeze_excitation;
       }
     } else {
-      if ( this.intermediatePointwise ) {
+      if ( this.intermediateChannelCount > 0 ) {
         this.apply = Base.intermediate_excitation;
       } else {
         this.apply = Base.excitation;
@@ -357,7 +358,7 @@ class Base {
   }
 
   /** */
-  static squeeze_excitation_and_keep( inputTensor ) {
+  static squeeze_excitation( inputTensor ) {
     let t0, t1;
     t0 = this.squeezeDepthwise.apply( inputTensor );
     t1 = this.excitationPointwise.apply( t0 );
@@ -368,7 +369,7 @@ class Base {
   }
 
   /** */
-  static intermediate_excitation_and_keep( inputTensor ) {
+  static intermediate_excitation( inputTensor ) {
     let t0, t1;
     t0 = this.intermediatePointwise.apply( inputTensor );
     t1 = this.excitationPointwise.apply( t0 );
@@ -379,7 +380,7 @@ class Base {
   }
 
   /** */
-  static excitation_and_keep( inputTensor ) {
+  static excitation( inputTensor ) {
     let t0, t1;
     t0 = this.excitationPointwise.apply( inputTensor );
 
