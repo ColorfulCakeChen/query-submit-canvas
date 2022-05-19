@@ -48,28 +48,28 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
 //!!! ...unfinished... (2022/05/19) ValueDesc.SqueezeExcitationReductionRatio.Singleton.Ids.Xxx
 
 
- * @member {number} excitationChannelCountReductionRatio
+ * @member {number} excitationChannelCountDivisor
  *   An integer which is the channel count divisor for intermediate pointwise convolution channel count.
 
 //!!! ...unfinished... (2022/05/19)
 
  *
- *     - If ( excitationChannelCountReductionRatio < 0 ), there will be no squeeze-and-excitation. 
+ *     - If ( excitationChannelCountDivisor < 0 ), there will be no squeeze-and-excitation. 
  *
- *     - If ( excitationChannelCountReductionRatio == 0 ), there will be squeeze-and-excitation with only one pointwise convolution
+ *     - If ( excitationChannelCountDivisor == 0 ), there will be squeeze-and-excitation with only one pointwise convolution
  *         (i.e. excitation pointwise convolution). 
  *
- *     - If ( excitationChannelCountReductionRatio > 0 ), there will be squeeze-and-excitation with two pointwise convolutions
+ *     - If ( excitationChannelCountDivisor > 0 ), there will be squeeze-and-excitation with two pointwise convolutions
  *         (i.e. intermediate pointwise convolution, and excitation pointwise convolution).
  *
  * @member {number} inputHeight
  *   The height of the input tensor. If one of inputHeight and inputWidth is not positive (<= 0), there will be no squeeze step
- * (i.e. no global average pooling). This is only used when ( excitationChannelCountReductionRatio >= 0 ) (i.e. has
+ * (i.e. no global average pooling). This is only used when ( excitationChannelCountDivisor >= 0 ) (i.e. has
  * squeeze-and-excitation).
  *
  * @member {number} inputWidth
  *   The width of the input tensor. If one of inputHeight and inputWidth is not positive (<= 0), there will be no squeeze step
- * (i.e. no global average pooling). This is only used when ( excitationChannelCountReductionRatio >= 0 ) (i.e. has
+ * (i.e. no global average pooling). This is only used when ( excitationChannelCountDivisor >= 0 ) (i.e. has
  * squeeze-and-excitation).
  *
  * @member {number} inputChannelCount
@@ -85,10 +85,10 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
 //!!! ...unfinished... (2022/05/19)
 
  * @member {boolean} bSqueezeExcitation
- *   Whether squeeze-and-excitation exists. It will be true if ( excitationChannelCountReductionRatio >= 0 ).
+ *   Whether squeeze-and-excitation exists. It will be true if ( excitationChannelCountDivisor >= 0 ).
  *
  * @member {boolean} bSqueeze
- *   Whether squeeze-and-excitation has squeeze. It will be true if ( excitationChannelCountReductionRatio >= 0 ) and ( inputHeight > 0 )
+ *   Whether squeeze-and-excitation has squeeze. It will be true if ( excitationChannelCountDivisor >= 0 ) and ( inputHeight > 0 )
  * and ( inputWidth > 0). It is only meaningful when ( bSqueezeExcitation == true ).
  *
  * @member {number} tensorWeightCountTotal
@@ -103,6 +103,9 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  * will be disposed. The inputTensor may or may not be disposed (according to setKeepInputTensor()). In fact, this method calls one
  * of Base.Xxx_and_keep() according to the parameters.
  *
+ * @see SqueezeExcitation.Base
+ * @see Pointwise.SameWhenPassThrough
+ *
  */
 class SameWhenPassThrough_PrefixSqueezeExcitation {
 
@@ -111,20 +114,29 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
   /**
    */
   constructor(
-    inputHeight, inputWidth, excitationChannelCountReductionRatio,
-
+    excitationChannelCountDivisor, inputHeight, inputWidth,
     inputChannelCount, outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
+    this.excitationChannelCountDivisor = excitationChannelCountDivisor;
+    this.inputHeight = inputHeight;
+    this.inputWidth = inputWidth;
+    this.inputChannelCount = inputChannelCount;
+    this.outputChannelCount = outputChannelCount;
+    this.bBias = bBias;
+    this.nActivationId = nActivationId;
+    this.nHigherHalfDifferent = nHigherHalfDifferent;
+    this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
+    this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
+    this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
 
-    super(
-      inputChannelCount, outputChannelCount, bBias, nActivationId,
-      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
+
   }
 
 
 //!!! new SqueezeExcitation.Base()
-// new SameWhenPassThrough()
+    new SameWhenPassThrough(
+      inputChannelCount, outputChannelCount, bBias, nActivationId,
+      nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
 
 }
