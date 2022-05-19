@@ -185,6 +185,15 @@ class Params extends Weights.Params {
    * extracted from inputFloat32Array (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this activation function
    * will also be ignored.
    *
+
+//!!! ...unfinished... (2022/05/19) Replaced by:
+//
+//  *   - -2: NONE                                       (no squeeze, no excitation)
+//  *   - -1: NO_SQUEEZE__ONE_EXCITATION                 (no squeeze, no intermediate excitation)
+//  *   -  0: SQUEEZE__ONE_EXCITATION                    (has squeeze, no intermediate excitation)
+//  *   - [ 1, 64 ]: SQUEEZE__TWO_EXCITATIONS__DIVISOR_N (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
+
+
    * @param {number} nSqueezeExcitationChannelCountDivisor
    *   An integer which is the channel count divisor for intermediate pointwise convolution channel count.
    *
