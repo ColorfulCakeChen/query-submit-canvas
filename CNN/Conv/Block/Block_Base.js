@@ -383,6 +383,11 @@ class Base extends ReturnOrClone.Base {
     this.depthwiseActivationId = params.depthwiseActivationId;
     this.depthwiseActivationName = params.depthwiseActivationName;
 
+
+//!!! ...unfinished... (2022/05/19) nSqueezeExcitationChannelCountDivisor
+//Params.SqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
+
+
     this.pointwise21ChannelCount = params.pointwise21ChannelCount;
     this.bPointwise21Bias = params.bPointwise21Bias;
     this.pointwise21ActivationId = params.pointwise21ActivationId;
@@ -1552,8 +1557,8 @@ class Base extends ReturnOrClone.Base {
 
       + `bConcat1Requested=${this.bConcat1Requested}, `
 
-
-//!!! ...unfinished... (2022/05/18) squeeze-and-excitation
+      + `nSqueezeExcitationChannelCountDivisorName=${this.nSqueezeExcitationChannelCountDivisorName}`
+        + `(${this.nSqueezeExcitationChannelCountDivisor}), `
 
       + `pointwise21ChannelCount=${this.pointwise21ChannelCount}, `
       + `bPointwise21Bias=${this.bPointwise21Bias}, `
