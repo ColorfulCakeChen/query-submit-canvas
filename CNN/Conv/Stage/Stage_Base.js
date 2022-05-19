@@ -104,6 +104,11 @@ import { Params } from "./Stage_Params.js";
  * the output value will always be restricted by the activation function (e.g. [ -1, +1 ] for tanh()).
  *
  *
+
+
+//!!! ...unfinished... (2022/05/19)
+// What if the next operation is squeeze-and-excitation? Does the no bias is still feasible?
+
  * 3.3 non-MobileNetV2_Xxx's depthwise
  *
  * The reason why non-MobileNetV2_Xxx's depthwise does not have bias is the following characteristic of affine transformation:
