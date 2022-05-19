@@ -553,6 +553,10 @@ class Base {
     let depthwiseActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( testParams.out.depthwiseActivationId );
     asserter.propertyValue( "depthwiseActivationName", depthwiseActivationName );
 
+
+//!!! ...unfinished... (2022/05/19) nSqueezeExcitationChannelCountDivisor, ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx
+
+
     // pointwise21 parameters.
     asserter.propertyValue( "pointwise21ChannelCount", testParams.out.pointwise21ChannelCount );
 
@@ -646,6 +650,9 @@ class Base {
   calcResult( imageInArray, channelShuffler ) {
 
     let testParams = this.testParams;
+
+//!!! ...unfinished... (2022/05/19) nSqueezeExcitationChannelCountDivisor, ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx
+
 
     // The channelShuffler must not null when:
     //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) (-3)
@@ -1129,6 +1136,10 @@ class Base {
         + `(${testParams.out.depthwiseActivationId}), `
 
       + `bConcat1Requested=${flags.bConcat1Requested}, `
+
+      + `nSqueezeExcitationChannelCountDivisorName=`
+        + `${Block.Params.SqueezeExcitationChannelCountDivisor.getStringOfValue( testParams.out.nSqueezeExcitationChannelCountDivisorName )}`
+        + `(${testParams.out.nSqueezeExcitationChannelCountDivisorName}), `
 
       + `pointwise21ChannelCount=${testParams.out.pointwise21ChannelCount}, bPointwise21Bias=${testParams.out.bPointwise21Bias}, `
       + `pointwise21ActivationName=`
