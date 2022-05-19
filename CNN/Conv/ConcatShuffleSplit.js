@@ -1,6 +1,5 @@
 export { Base };
 
-//import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as BoundsArraySet from "./BoundsArraySet.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
 
@@ -44,7 +43,7 @@ import * as ChannelShuffler from "./ChannelShuffler.js";
  * @member {BoundsArraySet.InputsOutputs} boundsArraySet
  *   The element value bounds (per channel) of this concatenation operation.
  *
- * @member {function} pfnConcatShuffleSplit
+ * @member {function} apply
  *   This is a method. It has two parameters inputTensors[] and outputTensors[]. The inputTensors[] (tf.tensor3d[]) represents
  * all the images ( height x width x channel ) which will be concatenated, shuffle, split. They should have the same ( height x width )
  * but could have different channel count. The outputTensors[] (tf.tensor3d[]) represents the result The inputTensor may or may
@@ -75,54 +74,54 @@ class Base {
    */
   setShuffleSplit( bShuffleSplit ) {
     this.bShuffleSplit = bShuffleSplit;
-    Base.adjust_pfnShuffleSplit.call( this );
+    Base.adjust_pfn.call( this );
   }
 
   /**
-   * Set this.bKeepInputTensor0 and adjust this.pfnConcatShuffleSplit so that inputTensors[ 0 ] will or will not be disposed.
+   * Set this.bKeepInputTensor0 and adjust this.apply so that inputTensors[ 0 ] will or will not be disposed.
    */
   setKeepInputTensor0( bKeepInputTensor0 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
-    Base.adjust_pfnConcatShuffleSplit.call( this );
+    Base.adjust_apply.call( this );
   }
 
   /**
-   * Set this.bKeepInputTensor1 and adjust this.pfnConcatShuffleSplit so that inputTensors[ 1 ] will or will not be disposed.
+   * Set this.bKeepInputTensor1 and adjust this.apply so that inputTensors[ 1 ] will or will not be disposed.
    */
   setKeepInputTensor1( bKeepInputTensor1 ) {
     this.bKeepInputTensor1 = bKeepInputTensor1;
-    Base.adjust_pfnConcatShuffleSplit.call( this );
+    Base.adjust_apply.call( this );
   }
 
   /**
-   * Set this.bKeepInputTensor0 and this.bKeepInputTensor1, and adjust this.pfnConcatShuffleSplit so that inputTensors[ 0 ]
+   * Set this.bKeepInputTensor0 and this.bKeepInputTensor1, and adjust this.apply so that inputTensors[ 0 ]
    * and inputTensors[ 1 ] will or will not be disposed.
    */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
-    Base.adjust_pfnConcatShuffleSplit.call( this );
+    Base.adjust_apply.call( this );
   }
 
   /** 
    * Set this.bShuffleSplit, this.bKeepInputTensor0, this.bKeepInputTensor1, and then adjust this.pfnShuffleSplit and
-   * this.pfnConcatShuffleSplit.
+   * this.apply.
    */
   setShuffleSplit_KeepInputTensor( bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 ) {
     this.bShuffleSplit = bShuffleSplit;
-    Base.adjust_pfnShuffleSplit.call( this );
+    Base.adjust_pfn.call( this );
 
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
-    Base.adjust_pfnConcatShuffleSplit.call( this );
+    Base.adjust_apply.call( this );
   }
 
   /** Set this.pfnShuffleSplit according to this.bShuffleSplit, this.channelShuffler. */
-  static adjust_pfnShuffleSplit() {
+  static adjust_pfn() {
     if ( ( this.bShuffleSplit ) && ( this.channelShuffler ) ) {
 
       tf.util.assert( ( this.channelShuffler instanceof ChannelShuffler.ConcatPointwiseConv ),
-        `ConcatShuffleSplit.Base.adjust_pfnShuffleSplit(): `
+        `ConcatShuffleSplit.Base.adjust_pfn(): `
           + `channelShuffler must be an instance of class ChannelShuffler.ConcatPointwiseConv.`
       );
 
@@ -132,19 +131,19 @@ class Base {
     }
   }
 
-  /** Set this.pfnConcatShuffleSplit according to this.bShuffleSplit, this.channelShuffler, this.bKeepInputTensor0 and this.bKeepInputTensor1. */
-  static adjust_pfnConcatShuffleSplit() {
+  /** Set this.apply according to this.bShuffleSplit, this.channelShuffler, this.bKeepInputTensor0 and this.bKeepInputTensor1. */
+  static adjust_apply() {
     if ( this.bKeepInputTensor0 ) {
       if ( this.bKeepInputTensor1 ) {
-        this.pfnConcatShuffleSplit = Base.ConcatShuffleSplit_and_keep0_keep1;
+        this.apply = Base.ConcatShuffleSplit_and_keep0_keep1;
       } else {
-        this.pfnConcatShuffleSplit = Base.ConcatShuffleSplit_and_keep0_destroy1;
+        this.apply = Base.ConcatShuffleSplit_and_keep0_destroy1;
       }
     } else {
       if ( this.bKeepInputTensor1 ) {
-        this.pfnConcatShuffleSplit = Base.ConcatShuffleSplit_and_destroy0_keep1;
+        this.apply = Base.ConcatShuffleSplit_and_destroy0_keep1;
       } else {
-        this.pfnConcatShuffleSplit = Base.ConcatShuffleSplit_and_destroy0_destroy1;
+        this.apply = Base.ConcatShuffleSplit_and_destroy0_destroy1;
       }
     }
   }
