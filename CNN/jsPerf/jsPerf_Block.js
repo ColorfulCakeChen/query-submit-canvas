@@ -195,6 +195,10 @@ class HeightWidthDepth {
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
     //
 
+
+//!!! ...unfinished... (2022/05/19) nSqueezeExcitationChannelCountDivisor, ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx
+
+
     // Test Case: (pointwise1 (bias, COS), depthwise (channelMultiplier = 1, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     let testCase_pointwise1_4to8_bias_COS_depthwise_8to8_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput =
     new Block_TestParams.Base().set_By_ParamsScattered(
