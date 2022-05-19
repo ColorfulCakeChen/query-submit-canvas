@@ -60,7 +60,7 @@ import * as Pointwise from "./Pointwise.js";
  * @member {number} intermediateChannelCount
  *   The channel count of intermediate pointwise convolution. (= Math.ceil( inputChannelCount / intermediateChannelCountDivisor ) )
  *
- * @member {ValueDesc.Pointwise_HigherHalfDifferent} nHigherHalfDifferent
+ * @member {ValueDesc.Pointwise_HigherHalfDifferent} nPointwise_HigherHalfDifferent
  *   The HigherHalfDifferent type for pointwise convolution in squeeze-and-excitation.
  *
  * @member {number} outputChannelCount
@@ -93,7 +93,7 @@ class Base {
    */
   constructor(
     inputHeight, inputWidth, inputChannelCount, intermediateChannelCountDivisor, bBias, nActivationId,
-    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf ) {
+    nPointwise_HigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf ) {
 
     this.inputHeight = inputHeight;
     this.inputWidth = inputWidth;
@@ -101,7 +101,7 @@ class Base {
     this.intermediateChannelCountDivisor = intermediateChannelCountDivisor;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
-    this.nHigherHalfDifferent = nHigherHalfDifferent;
+    this.nPointwise_HigherHalfDifferent = nPointwise_HigherHalfDifferent;
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
     this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
 
@@ -179,8 +179,10 @@ class Base {
         ValueDesc.StridesPad.Singleton.STRIDES_1_PAD_VALID,  // For shrinking to ( 1 x 1 ) image, pad should be "valid" (i.e. not "same").
 
   //!!! ...unfinished... (2022/05/19)
-        bBias, nActivationId, nPassThroughStyleId,
-        nHigherHalfDifferent, inputChannelCount_lowerHalf
+        bBias, nActivationId,
+
+        ValueDesc.Depthwise_HigherHalfDifferent.Singleton.NONE, // (global) average pooling must be no higher-half-different.
+        -1 // (inputChannelCount_lowerHalf) Used since ValueDesc.Depthwise_HigherHalfDifferent.Singleton.NONE
       );
 
       if ( !this.squeezeDepthwise.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
@@ -202,7 +204,7 @@ class Base {
         squeezeDepthwise_boundsArraySet_output0.channelCount,
         this.intermediateChannelCount,
         this.bBias, this.nActivationId,
-        this.nHigherHalfDifferent,
+        this.nPointwise_HigherHalfDifferent,
         this.intermediate_inputChannelCount_lowerHalf, this.intermediate_outputChannelCount_lowerHalf,
         0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
       );
@@ -225,7 +227,7 @@ class Base {
         intermediatePointwise_boundsArraySet_output0.channelCount,
         this.outputChannelCount,
         this.bBias, this.nActivationId,
-        this.nHigherHalfDifferent,
+        this.nPointwise_HigherHalfDifferent,
         this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,
         0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
       );
