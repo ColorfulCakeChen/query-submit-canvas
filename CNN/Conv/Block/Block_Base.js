@@ -1263,13 +1263,13 @@ class Base extends ReturnOrClone.Base {
   static apply_2_Concat2_pointwise21_input1_ShuffleSplit( inputTensors, outputTensors ) {
     let t0, t1;
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
-    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
+    t0 = this.pointwise1.apply( inputTensors[ 0 ] );
+    t1 = this.depthwise1.apply( t0 );
 
-    this.intermediateTensorsArray[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
+    this.intermediateTensorsArray[ 0 ] = this.pointwise21.apply( t1 );
     this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
 
-    this.concat2ShuffleSplit.pfnConcatShuffleSplit( this.intermediateTensorsArray, outputTensors );
+    this.concat2ShuffleSplit.apply( this.intermediateTensorsArray, outputTensors );
   }
 
 
@@ -1279,14 +1279,14 @@ class Base extends ReturnOrClone.Base {
 
     let inputTensor = inputTensors[ 0 ];
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
+    t0 = this.pointwise1.apply( inputTensor );
 
-    this.intermediateTensorsArray[ 0 ] = this.depthwise1.pfnOperationBiasActivation( t0 );
-    this.intermediateTensorsArray[ 1 ] = this.depthwise2.pfnOperationBiasActivation( inputTensor );
+    this.intermediateTensorsArray[ 0 ] = this.depthwise1.apply( t0 );
+    this.intermediateTensorsArray[ 1 ] = this.depthwise2.apply( inputTensor );
 
-    t1 = this.concat1.pfnConcat( this.intermediateTensorsArray );
+    t1 = this.concat1.apply( this.intermediateTensorsArray );
 
-    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
+    outputTensors[ 0 ] = this.pointwise21.apply( t1 );
     outputTensors[ 1 ] = null;
   }
 
@@ -1296,15 +1296,15 @@ class Base extends ReturnOrClone.Base {
 
     let inputTensor = inputTensors[ 0 ];
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
+    t0 = this.pointwise1.apply( inputTensor );
 
-    this.intermediateTensorsArray[ 0 ] = this.depthwise1.pfnOperationBiasActivation( t0 );
-    this.intermediateTensorsArray[ 1 ] = this.depthwise2.pfnOperationBiasActivation( inputTensor );
+    this.intermediateTensorsArray[ 0 ] = this.depthwise1.apply( t0 );
+    this.intermediateTensorsArray[ 1 ] = this.depthwise2.apply( inputTensor );
 
-    t1 = this.concat1.pfnConcat( this.intermediateTensorsArray );
+    t1 = this.concat1.apply( this.intermediateTensorsArray );
 
     outputTensors[ 0 ] = null;
-    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
+    outputTensors[ 1 ] = this.pointwise22.apply( t1 );
   }
 
   /**
@@ -1316,15 +1316,15 @@ class Base extends ReturnOrClone.Base {
 
     let inputTensor = inputTensors[ 0 ];
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
+    t0 = this.pointwise1.apply( inputTensor );
 
-    this.intermediateTensorsArray[ 0 ] = this.depthwise1.pfnOperationBiasActivation( t0 );
-    this.intermediateTensorsArray[ 1 ] = this.depthwise2.pfnOperationBiasActivation( inputTensor );
+    this.intermediateTensorsArray[ 0 ] = this.depthwise1.apply( t0 );
+    this.intermediateTensorsArray[ 1 ] = this.depthwise2.apply( inputTensor );
 
-    t1 = this.concat1.pfnConcat( this.intermediateTensorsArray );
+    t1 = this.concat1.apply( this.intermediateTensorsArray );
 
-    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
-    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
+    outputTensors[ 0 ] = this.pointwise21.apply( t1 );
+    outputTensors[ 1 ] = this.pointwise22.apply( t1 );
   }
 
 
@@ -1334,12 +1334,12 @@ class Base extends ReturnOrClone.Base {
 
     let inputTensor = inputTensors[ 0 ];
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
-    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
+    t0 = this.pointwise1.apply( inputTensor );
+    t1 = this.depthwise1.apply( t0 );
 
-    t0 = this.pointwise21.pfnConvBiasActivation( t1 );
+    t0 = this.pointwise21.apply( t1 );
 
-    outputTensors[ 0 ] = this.addInput0ToPointwise21.pfnAdd( inputTensor, t0 );
+    outputTensors[ 0 ] = this.addInput0ToPointwise21.apply( inputTensor, t0 );
     outputTensors[ 1 ] = null;
   }
 
@@ -1349,13 +1349,13 @@ class Base extends ReturnOrClone.Base {
 
     let inputTensor = inputTensors[ 0 ];
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
-    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
+    t0 = this.pointwise1.apply( inputTensor );
+    t1 = this.depthwise1.apply( t0 );
 
-    t0 = this.pointwise22.pfnConvBiasActivation( t1 );
+    t0 = this.pointwise22.apply( t1 );
 
     outputTensors[ 0 ] = null;
-    outputTensors[ 1 ] = this.addInput0ToPointwise22.pfnAdd( inputTensor, t0 );
+    outputTensors[ 1 ] = this.addInput0ToPointwise22.apply( inputTensor, t0 );
   }
 
 
@@ -1367,14 +1367,14 @@ class Base extends ReturnOrClone.Base {
 
     let inputTensor = inputTensors[ 0 ];
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
-    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
+    t0 = this.pointwise1.apply( inputTensor );
+    t1 = this.depthwise1.apply( t0 );
 
-    t0 = this.pointwise21.pfnConvBiasActivation( t1 );
-    outputTensors[ 0 ] = this.addInput0ToPointwise21.pfnAdd( inputTensor, t0 );
+    t0 = this.pointwise21.apply( t1 );
+    outputTensors[ 0 ] = this.addInput0ToPointwise21.apply( inputTensor, t0 );
 
-    t0 = this.pointwise22.pfnConvBiasActivation( t1 );
-    outputTensors[ 1 ] = this.addInput0ToPointwise22.pfnAdd( inputTensor, t0 );
+    t0 = this.pointwise22.apply( t1 );
+    outputTensors[ 1 ] = this.addInput0ToPointwise22.apply( inputTensor, t0 );
   }
 
   /** Both outputTensors[ 0 ] and outputTensors[ 1 ] exist. The inputTensors[ 0 ] will be added to only outputTensors[ 0 ].
@@ -1385,13 +1385,13 @@ class Base extends ReturnOrClone.Base {
 
     let inputTensor = inputTensors[ 0 ];
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
-    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
+    t0 = this.pointwise1.apply( inputTensor );
+    t1 = this.depthwise1.apply( t0 );
 
-    t0 = this.pointwise21.pfnConvBiasActivation( t1 );
-    outputTensors[ 0 ] = this.addInput0ToPointwise21.pfnAdd( inputTensor, t0 );
+    t0 = this.pointwise21.apply( t1 );
+    outputTensors[ 0 ] = this.addInput0ToPointwise21.apply( inputTensor, t0 );
 
-    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
+    outputTensors[ 1 ] = this.pointwise22.apply( t1 );
   }
 
   /** Both outputTensors[ 0 ] and outputTensors[ 1 ] exist. The inputTensors[ 0 ] will be added to only outputTensors[ 1 ].
@@ -1402,13 +1402,13 @@ class Base extends ReturnOrClone.Base {
 
     let inputTensor = inputTensors[ 0 ];
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
-    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
+    t0 = this.pointwise1.apply( inputTensor );
+    t1 = this.depthwise1.apply( t0 );
 
-    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
+    outputTensors[ 0 ] = this.pointwise21.apply( t1 );
 
-    t0 = this.pointwise22.pfnConvBiasActivation( t1 );
-    outputTensors[ 1 ] = this.addInput0ToPointwise22.pfnAdd( inputTensor, t0 );
+    t0 = this.pointwise22.apply( t1 );
+    outputTensors[ 1 ] = this.addInput0ToPointwise22.apply( inputTensor, t0 );
   }
 
 
@@ -1416,10 +1416,10 @@ class Base extends ReturnOrClone.Base {
   static apply_1_21_NoSkipConnection( inputTensors, outputTensors ) {
     let t0, t1;
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
-    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
+    t0 = this.pointwise1.apply( inputTensors[ 0 ] );
+    t1 = this.depthwise1.apply( t0 );
 
-    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 ); // may destroy t1.
+    outputTensors[ 0 ] = this.pointwise21.apply( t1 ); // may destroy t1.
     outputTensors[ 1 ] = null;
   }
 
@@ -1427,22 +1427,22 @@ class Base extends ReturnOrClone.Base {
   static apply_1_22_NoSkipConnection( inputTensors, outputTensors ) {
     let t0, t1;
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
-    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
+    t0 = this.pointwise1.apply( inputTensors[ 0 ] );
+    t1 = this.depthwise1.apply( t0 );
 
     outputTensors[ 0 ] = null;
-    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
+    outputTensors[ 1 ] = this.pointwise22.apply( t1 ); // may destroy t1.
   }
 
   /** One input to two output (pointwise21 and pointwise22) (i.e. no residual connection). The input tensors may or may not be disposed. */
   static apply_1_2_NoSkipConnection( inputTensors, outputTensors ) {
     let t0, t1;
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
-    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
+    t0 = this.pointwise1.apply( inputTensors[ 0 ] );
+    t1 = this.depthwise1.apply( t0 );
 
-    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
-    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
+    outputTensors[ 0 ] = this.pointwise21.apply( t1 );
+    outputTensors[ 1 ] = this.pointwise22.apply( t1 ); // may destroy t1.
   }
 
 
@@ -1450,14 +1450,14 @@ class Base extends ReturnOrClone.Base {
   static apply_2_21_Concat1_depthwise1_input1( inputTensors, outputTensors ) {
     let t0, t1;
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+    t0 = this.pointwise1.apply( inputTensors[ 0 ] );
 
-    this.intermediateTensorsArray[ 0 ] = this.depthwise1.pfnOperationBiasActivation( t0 );
+    this.intermediateTensorsArray[ 0 ] = this.depthwise1.apply( t0 );
     this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
 
-    t1 = this.concat1.pfnConcat( this.intermediateTensorsArray );
+    t1 = this.concat1.apply( this.intermediateTensorsArray );
 
-    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
+    outputTensors[ 0 ] = this.pointwise21.apply( t1 );
     outputTensors[ 1 ] = null;
   }
 
@@ -1465,15 +1465,15 @@ class Base extends ReturnOrClone.Base {
   static apply_2_22_Concat1_depthwise1_input1( inputTensors, outputTensors ) {
     let t0, t1;
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+    t0 = this.pointwise1.apply( inputTensors[ 0 ] );
 
-    this.intermediateTensorsArray[ 0 ] = this.depthwise1.pfnOperationBiasActivation( t0 );
+    this.intermediateTensorsArray[ 0 ] = this.depthwise1.apply( t0 );
     this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
 
-    t1 = this.concat1.pfnConcat( this.intermediateTensorsArray );
+    t1 = this.concat1.apply( this.intermediateTensorsArray );
 
     outputTensors[ 0 ] = null;
-    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
+    outputTensors[ 1 ] = this.pointwise22.apply( t1 );
   }
 
   /**
@@ -1491,16 +1491,17 @@ class Base extends ReturnOrClone.Base {
   static apply_2_2_Concat1_depthwise1_input1( inputTensors, outputTensors ) {
     let t0, t1;
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+    t0 = this.pointwise1.apply( inputTensors[ 0 ] );
 
-    this.intermediateTensorsArray[ 0 ] = this.depthwise1.pfnOperationBiasActivation( t0 );
+    this.intermediateTensorsArray[ 0 ] = this.depthwise1.apply( t0 );
     this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
 
-    t1 = this.concat1.pfnConcat( this.intermediateTensorsArray );
+    t1 = this.concat1.apply( this.intermediateTensorsArray );
 
-    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
-    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
+    outputTensors[ 0 ] = this.pointwise21.apply( t1 );
+    outputTensors[ 1 ] = this.pointwise22.apply( t1 );
   }
+
 
   get outputHeight() {
     return this.depthwise1.outputHeight; // Even if ( this.depthwise1.bExisted == false ), it should still work.
