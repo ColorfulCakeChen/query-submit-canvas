@@ -407,6 +407,7 @@ class Base {
       testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
       testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
       testParams.in.depthwiseStridesPad, testParams.in.bDepthwiseBias, testParams.in.depthwiseActivationId,
+      testParams.in.nSqueezeExcitationChannelCountDivisor,
       testParams.in.pointwise21ChannelCount, testParams.in.bPointwise21Bias, testParams.in.pointwise21ActivationId,
       testParams.in.bOutput1Requested,
       testParams.in.bKeepInputTensor
@@ -553,9 +554,8 @@ class Base {
     let depthwiseActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( testParams.out.depthwiseActivationId );
     asserter.propertyValue( "depthwiseActivationName", depthwiseActivationName );
 
-
-//!!! ...unfinished... (2022/05/19) nSqueezeExcitationChannelCountDivisor, ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx
-
+    // squeeze-and-excitation parameters.
+    asserter.propertyValue( "pointwise21ChannelCount", testParams.out.nSqueezeExcitationChannelCountDivisor );
 
     // pointwise21 parameters.
     asserter.propertyValue( "pointwise21ChannelCount", testParams.out.pointwise21ChannelCount );
@@ -608,6 +608,7 @@ class Base {
     {
 
 //!!! ...unfinished... (2022/05/18) What about squeeze-and-excitation?
+//!!! ...unfinished... (2022/05/19) nSqueezeExcitationChannelCountDivisor, ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx
 
       let tensorWeightCountTotal = 0;
       tensorWeightCountTotal += block.pointwise1.bExisted ? block.pointwise1.tensorWeightCountTotal : 0;
@@ -1138,8 +1139,8 @@ class Base {
       + `bConcat1Requested=${flags.bConcat1Requested}, `
 
       + `nSqueezeExcitationChannelCountDivisorName=`
-        + `${Block.Params.SqueezeExcitationChannelCountDivisor.getStringOfValue( testParams.out.nSqueezeExcitationChannelCountDivisorName )}`
-        + `(${testParams.out.nSqueezeExcitationChannelCountDivisorName}), `
+        + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getStringOf( testParams.out.nSqueezeExcitationChannelCountDivisor )}`
+        + `(${testParams.out.nSqueezeExcitationChannelCountDivisor}), `
 
       + `pointwise21ChannelCount=${testParams.out.pointwise21ChannelCount}, bPointwise21Bias=${testParams.out.bPointwise21Bias}, `
       + `pointwise21ActivationName=`
