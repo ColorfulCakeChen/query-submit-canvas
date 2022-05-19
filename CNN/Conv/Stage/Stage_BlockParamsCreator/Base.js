@@ -145,7 +145,7 @@ class Base {
       // MobileNetV2_Xxx's pointwise2 always does not have activation function.
       //
       // The reason is that MobileNetV2_Xxx's pointwise2 has add-input-to-output so its block's output is not affine transformation
-      // (even if no activation function). It and the next block's pointwise1 is not continusous multiple affine transformation
+      // (even if no activation function). It and the next block's pointwise1 is not continuous multiple affine transformation
       // and will not become just one affine transformation.
       //
       if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
