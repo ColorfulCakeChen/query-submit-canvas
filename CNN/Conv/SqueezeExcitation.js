@@ -92,14 +92,13 @@ class Base {
    *
    */
   constructor(
-    inputHeight, inputWidth, inputChannelCount, intermediateChannelCountReductionRatio, bBias, nActivationId,
+    inputHeight, inputWidth, inputChannelCount, intermediateChannelCountReductionRatio, nActivationId,
     nPointwise_HigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf ) {
 
     this.inputHeight = inputHeight;
     this.inputWidth = inputWidth;
     this.inputChannelCount = inputChannelCount;
     this.intermediateChannelCountReductionRatio = intermediateChannelCountReductionRatio;
-    this.bBias = bBias;
     this.nActivationId = nActivationId;
     this.nPointwise_HigherHalfDifferent = nPointwise_HigherHalfDifferent;
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
