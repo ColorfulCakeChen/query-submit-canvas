@@ -34,7 +34,7 @@ import { FiltersArray_BiasesArray } from "./Depthwise_FiltersArray_BiasesArray.j
  * Base.return_input_directly(), Base.keep_input_return_copy(), Avg_and_destroy(), Avg_and_keep(), Max_and_destroy(), Max_and_keep(),
  * Conv_and_destroy(), Conv_and_keep() according to the parameters.
  *
- * @member {function} pfnOperationBiasActivation
+ * @member {function} apply
  *   This is a method. It has one parameter inputTensor and return a outputTensor. The inputTensor (tf.tensor3d) represents the image
  * ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d) represents the result.
  * All intermediate tensors will be disposed. The inputTensors may or may not be disposed. In fact, this method calls one of
@@ -123,7 +123,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
   disposeTensors() {
     super.disposeTensors(); // Release filtersTensor4d and biasesTensor3d.
 
-    this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
+    this.apply = this.pfnOperation = this.pfnActivation = null;
 
     // If these properties does not exist, assigning value (even undefined) to them will create them. Avoid it.
     {
@@ -144,7 +144,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
   }
 
   /**
-   * Adjust this.pfnOperation (and this.pfnOperationBiasActivation if need) so that this.pfnOperation() and this.pfnOperationBiasActivation()
+   * Adjust this.pfnOperation (and this.apply if need) so that this.pfnOperation() and this.apply()
    * will or will not dispose its inputTensor.
    */
   setKeepInputTensor( bKeepInputTensor ) {
@@ -157,7 +157,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
       switch ( this.pfnOperation ) {
 
         // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
-        // Note: pfnOperationBiasActivation should not be changed here because there might be bias and activation.
+        // Note: apply should not be changed here because there might be bias and activation.
         case Base.return_input_directly: this.pfnOperation = Base.keep_input_return_copy; break;
 
         case Base.Avg_and_destroy:       this.pfnOperation = Base.Avg_and_keep;  break;
@@ -165,8 +165,8 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
         case Base.Conv_and_destroy:      this.pfnOperation = Base.Conv_and_keep; break;
 
         // Just clone input if unknown depthwise operation.
-        // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
-        default:                         this.pfnOperation = this.pfnOperationBiasActivation = Base.keep_input_return_copy;
+        // Since there is no operation at all, let apply ignore pfnOperation completely.
+        default:                         this.pfnOperation = this.apply = Base.keep_input_return_copy;
           tf.util.assert( false, `Unknown depthwise operation. (${this.pfnOperation}) when setKeepInputTensor( ${bKeepInputTensor} )` );
           break;
       }
@@ -176,7 +176,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
       switch ( this.pfnOperation ) {
 
         // Just return input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
-        // Note: pfnOperationBiasActivation should not be changed here because there might be bias and activation.
+        // Note: apply should not be changed here because there might be bias and activation.
         case Base.keep_input_return_copy: this.pfnOperation = Base.return_input_directly; break;
 
         case Base.Avg_and_keep:           this.pfnOperation = Base.Avg_and_destroy;  break;
@@ -184,8 +184,8 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
         case Base.Conv_and_keep:          this.pfnOperation = Base.Conv_and_destroy; break;
 
         // Just return input if unknown depthwise operation.
-        // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
-        default:                          this.pfnOperation = this.pfnOperationBiasActivation = Base.return_input_directly;
+        // Since there is no operation at all, let apply ignore pfnOperation completely.
+        default:                          this.pfnOperation = this.apply = Base.return_input_directly;
           tf.util.assert( false, `Unknown depthwise operation. (${this.pfnOperation}) when setKeepInputTensor( ${bKeepInputTensor} )` );
           break;
       }
@@ -248,18 +248,18 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     if ( this.bDepthwise ) {
       if ( this.bBias ) {
         if ( this.pfnActivation )
-          this.pfnOperationBiasActivation = Base.OperationBiasActivation_and_destroy_or_keep;
+          this.apply = Base.OperationBiasActivation_and_destroy_or_keep;
         else
-          this.pfnOperationBiasActivation = Base.OperationBias_and_destroy_or_keep;
+          this.apply = Base.OperationBias_and_destroy_or_keep;
       } else {
         if ( this.pfnActivation )
-          this.pfnOperationBiasActivation = Base.OperationActivation_and_destroy_or_keep;
+          this.apply = Base.OperationActivation_and_destroy_or_keep;
          else
-          this.pfnOperationBiasActivation = Base.Operation_and_destroy_or_keep;
+          this.apply = Base.Operation_and_destroy_or_keep;
       }
     } else {
-      // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
-      this.pfnOperationBiasActivation = this.pfnOperation = Base.return_input_directly;
+      // Since there is no operation at all, let apply ignore pfnOperation completely.
+      this.apply = this.pfnOperation = Base.return_input_directly;
     }
   }
 
