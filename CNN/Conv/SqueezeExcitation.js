@@ -37,6 +37,14 @@ import * as Pointwise from "./Pointwise.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
+
+//!!! ...unfinished... (2022/05/19) Replaced by:
+//
+//  *   - -2: NONE                                       (no squeeze, no excitation)
+//  *   - -1: NO_SQUEEZE__ONE_EXCITATION                 (no squeeze, no intermediate excitation)
+//  *   -  0: SQUEEZE__ONE_EXCITATION                    (has squeeze, no intermediate excitation)
+//  *   - [ 1, 64 ]: SQUEEZE__TWO_EXCITATIONS__DIVISOR_N (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
+
  * @member {number} intermediateChannelCountDivisor
  *   An integer which is the channel count divisor for intermediate pointwise convolution channel count.
  * (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx could be used directly, although
@@ -50,6 +58,14 @@ import * as Pointwise from "./Pointwise.js";
  *     - If ( intermediateChannelCountDivisor > 0 ), there will be two pointwise convolutions (i.e. intermediate pointwise
  *         convolution, and excitation pointwise convolution).
  *
+
+//!!! ...unfinished... (2022/05/19) Replaced by:
+//
+//  *   - -2: NONE                                       (no squeeze, no excitation)
+//  *   - -1: NO_SQUEEZE__ONE_EXCITATION                 (no squeeze, no intermediate excitation)
+//  *   -  0: SQUEEZE__ONE_EXCITATION                    (has squeeze, no intermediate excitation)
+//  *   - [ 1, 64 ]: SQUEEZE__TWO_EXCITATIONS__DIVISOR_N (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
+
  * @member {number} inputHeight
  *   The height of the input tensor. If one of inputHeight and inputWidth is not positive (<= 0), there will be no squeeze step
  * (i.e. no global average pooling).
@@ -113,6 +129,15 @@ class Base {
       `SqueezeExcitation.Base.constructor(): `
         + `inputChannelCount ( ${inputChannelCount} ) should be greater than zero (> 0).`
     );
+
+
+//!!! ...unfinished... (2022/05/19) Replaced by:
+//
+//  *   - -2: NONE                                       (no squeeze, no excitation)
+//  *   - -1: NO_SQUEEZE__ONE_EXCITATION                 (no squeeze, no intermediate excitation)
+//  *   -  0: SQUEEZE__ONE_EXCITATION                    (has squeeze, no intermediate excitation)
+//  *   - [ 1, 64 ]: SQUEEZE__TWO_EXCITATIONS__DIVISOR_N (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
+
 
     if ( intermediateChannelCountDivisor <= 0 ) {
       this.intermediateChannelCount = this.intermediate_inputChannelCount_lowerHalf = this.intermediate_outputChannelCount_lowerHalf = 0;
