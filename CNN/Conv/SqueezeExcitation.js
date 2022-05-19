@@ -131,7 +131,7 @@ class Base {
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
     // 1. Determine operation functions.
-    Base.setup_apply.call( this );
+    Base.setup_pfn.call( this );
 
     // 2. Initialize sub-operations.
 
@@ -317,7 +317,7 @@ class Base {
    * @param {Base} this
    *   The Base object to be determined and modified.
    */
-  static setup_apply() {
+  static setup_pfn() {
     if ( this.squeezeDepthwise ) {
       if ( this.intermediatePointwise ) {
         this.apply = Base.squeeze_intermediate_excitation;
