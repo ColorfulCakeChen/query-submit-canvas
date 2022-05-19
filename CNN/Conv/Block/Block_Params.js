@@ -192,6 +192,19 @@ class Params extends Weights.Params {
    * extracted from inputFloat32Array (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this activation function
    * will also be ignored.
    *
+   * @param {number} nSqueezeExcitationChannelCountDivisor
+   *   An integer which is the channel count divisor for intermediate pointwise convolution channel count.
+   *
+   *     - If ( nSqueezeExcitationChannelCountDivisor < 0 ), there will be no squeeze-and-excitation.
+   *         (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.NONE (-1))
+   *
+   *     - If ( nSqueezeExcitationChannelCountDivisor == 0 ), there will be squeeze-and-excitation with only one pointwise convolution
+   *         (i.e. excitation pointwise convolution). 
+   *         (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.ONE_EXCITATION (0)) 
+   *
+   *     - If ( nSqueezeExcitationChannelCountDivisor > 0 ), there will be squeeze-and-excitation with two pointwise convolutions
+   *         (i.e. intermediate pointwise convolution, and excitation pointwise convolution).
+   *
    * @param {number} pointwise21ChannelCount
    *   The output channel count of the first pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    * If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution after depthwise convolution.
@@ -251,14 +264,13 @@ class Params extends Weights.Params {
     channelCount0_pointwise1Before,
     channelCount1_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    bDepthwiseBias, depthwiseActivationId,
+    nSqueezeExcitationChannelCountDivisor,
     pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
     bOutput1Requested,
     bKeepInputTensor
   ) {
-
-//!!! ...unfinished...
-// squeeze-and-excitation ?
 
     let parameterMap = new Map( [
       [ Params.inputHeight0,                          inputHeight0 ],
@@ -274,6 +286,7 @@ class Params extends Weights.Params {
       [ Params.depthwiseStridesPad,                   depthwiseStridesPad ],
       [ Params.bDepthwiseBias,                        bDepthwiseBias ],
       [ Params.depthwiseActivationId,                 depthwiseActivationId ],
+      [ Params.SqueezeExcitationChannelCountDivisor,  nSqueezeExcitationChannelCountDivisor ],
       [ Params.pointwise21ChannelCount,               pointwise21ChannelCount ],
       [ Params.bPointwise21Bias,                      bPointwise21Bias ],
       [ Params.pointwise21ActivationId,               pointwise21ActivationId ],
@@ -508,6 +521,11 @@ class Params extends Weights.Params {
   get depthwiseActivationId()     { return this.parameterMapModified.get( Params.depthwiseActivationId ); }
   get depthwiseActivationName()   { return Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId ); }
 
+  get nSqueezeExcitationChannelCountDivisor()     { return this.parameterMapModified.get( Params.SqueezeExcitationChannelCountDivisor ); }
+  get nSqueezeExcitationChannelCountDivisorName() {
+    return Params.SqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
+  }
+
   get pointwise21ChannelCount()   { return this.parameterMapModified.get( Params.pointwise21ChannelCount ); }
   get bPointwise21Bias()          { return this.parameterMapModified.get( Params.bPointwise21Bias ); }
   get pointwise21ActivationId()   { return this.parameterMapModified.get( Params.pointwise21ActivationId ); }
@@ -604,6 +622,8 @@ Params.depthwiseFilterWidth =    new ParamDesc.Int(                     "depthwi
 Params.depthwiseStridesPad =     new ParamDesc.StridesPad(              "depthwiseStridesPad" );
 Params.bDepthwiseBias =          new ParamDesc.Bool(                    "bDepthwiseBias" );
 Params.depthwiseActivationId =   new ParamDesc.ActivationFunction(      "depthwiseActivationId" );
+
+Params.SqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
 
 // Note: Force pointwise21ChannelCount always not zero. So that channelCount0_pointwise1Before_higherHalf could be determined
 // when ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5).
