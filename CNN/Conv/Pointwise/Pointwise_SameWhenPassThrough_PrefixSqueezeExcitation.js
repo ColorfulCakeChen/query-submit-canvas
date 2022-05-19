@@ -45,31 +45,31 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
 
-//!!! ...unfinished... (2022/05/19) ValueDesc.SqueezeExcitationReductionRatio.Singleton.Ids.Xxx
+//!!! ...unfinished... (2022/05/19) ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx
 
 
- * @member {number} excitationChannelCountDivisor
+ * @member {number} nSqueezeExcitationChannelCountDivisor
  *   An integer which is the channel count divisor for intermediate pointwise convolution channel count.
 
 //!!! ...unfinished... (2022/05/19)
 
  *
- *     - If ( excitationChannelCountDivisor < 0 ), there will be no squeeze-and-excitation. 
+ *     - If ( nSqueezeExcitationChannelCountDivisor < 0 ), there will be no squeeze-and-excitation. 
  *
- *     - If ( excitationChannelCountDivisor == 0 ), there will be squeeze-and-excitation with only one pointwise convolution
+ *     - If ( nSqueezeExcitationChannelCountDivisor == 0 ), there will be squeeze-and-excitation with only one pointwise convolution
  *         (i.e. excitation pointwise convolution). 
  *
- *     - If ( excitationChannelCountDivisor > 0 ), there will be squeeze-and-excitation with two pointwise convolutions
+ *     - If ( nSqueezeExcitationChannelCountDivisor > 0 ), there will be squeeze-and-excitation with two pointwise convolutions
  *         (i.e. intermediate pointwise convolution, and excitation pointwise convolution).
  *
  * @member {number} inputHeight
  *   The height of the input tensor. If one of inputHeight and inputWidth is not positive (<= 0), there will be no squeeze step
- * (i.e. no global average pooling). This is only used when ( excitationChannelCountDivisor >= 0 ) (i.e. has
+ * (i.e. no global average pooling). This is only used when ( nSqueezeExcitationChannelCountDivisor >= 0 ) (i.e. has
  * squeeze-and-excitation).
  *
  * @member {number} inputWidth
  *   The width of the input tensor. If one of inputHeight and inputWidth is not positive (<= 0), there will be no squeeze step
- * (i.e. no global average pooling). This is only used when ( excitationChannelCountDivisor >= 0 ) (i.e. has
+ * (i.e. no global average pooling). This is only used when ( nSqueezeExcitationChannelCountDivisor >= 0 ) (i.e. has
  * squeeze-and-excitation).
  *
  * @member {number} inputChannelCount
@@ -85,10 +85,10 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
 //!!! ...unfinished... (2022/05/19)
 
  * @member {boolean} bSqueezeExcitation
- *   Whether squeeze-and-excitation exists. It will be true if ( excitationChannelCountDivisor >= 0 ).
+ *   Whether squeeze-and-excitation exists. It will be true if ( nSqueezeExcitationChannelCountDivisor >= 0 ).
  *
  * @member {boolean} bSqueeze
- *   Whether squeeze-and-excitation has squeeze. It will be true if ( excitationChannelCountDivisor >= 0 ) and ( inputHeight > 0 )
+ *   Whether squeeze-and-excitation has squeeze. It will be true if ( nSqueezeExcitationChannelCountDivisor >= 0 ) and ( inputHeight > 0 )
  * and ( inputWidth > 0). It is only meaningful when ( bSqueezeExcitation == true ).
  *
  * @member {number} tensorWeightCountTotal
@@ -114,11 +114,11 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
   /**
    */
   constructor(
-    excitationChannelCountDivisor, inputHeight, inputWidth,
+    nSqueezeExcitationChannelCountDivisor, inputHeight, inputWidth,
     inputChannelCount, outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
-    this.excitationChannelCountDivisor = excitationChannelCountDivisor;
+    this.nSqueezeExcitationChannelCountDivisor = nSqueezeExcitationChannelCountDivisor;
     this.inputHeight = inputHeight;
     this.inputWidth = inputWidth;
     this.inputChannelCount = inputChannelCount;
