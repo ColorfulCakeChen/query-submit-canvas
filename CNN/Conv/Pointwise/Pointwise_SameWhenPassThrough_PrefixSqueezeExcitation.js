@@ -50,14 +50,13 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
 
  * @member {number} nSqueezeExcitationChannelCountDivisor
  *   An integer which is the channel count divisor for intermediate pointwise convolution channel count.
-
-//!!! ...unfinished... (2022/05/19)
-
  *
- *     - If ( nSqueezeExcitationChannelCountDivisor < 0 ), there will be no squeeze-and-excitation. 
+ *     - If ( nSqueezeExcitationChannelCountDivisor < 0 ), there will be no squeeze-and-excitation.
+ *         (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.NONE (-1))
  *
  *     - If ( nSqueezeExcitationChannelCountDivisor == 0 ), there will be squeeze-and-excitation with only one pointwise convolution
  *         (i.e. excitation pointwise convolution). 
+ *         (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.ONE_EXCITATION (0)) 
  *
  *     - If ( nSqueezeExcitationChannelCountDivisor > 0 ), there will be squeeze-and-excitation with two pointwise convolutions
  *         (i.e. intermediate pointwise convolution, and excitation pointwise convolution).
