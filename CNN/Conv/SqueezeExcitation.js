@@ -38,6 +38,14 @@ import * as Pointwise from "./Pointwise.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
+ * @member {number} inputHeight
+ *   The height of the input tensor. If one of inputHeight and inputWidth is not positive (<= 0), there will be no squeeze step
+ * (i.e. no global average pooling).
+ *
+ * @member {number} inputWidth
+ *   The width of the input tensor. If one of inputHeight and inputWidth is not positive (<= 0), there will be no squeeze step
+ * (i.e. no global average pooling).
+ *
  * @member {number} inputChannelCount
  *   The channel count of the input tensor. It must be greater than zero (> 0).
  *
@@ -52,11 +60,15 @@ import * as Pointwise from "./Pointwise.js";
  * @member {number} intermediateChannelCount
  *   The channel count of intermediate pointwise convolution. (= Math.ceil( inputChannelCount / intermediateChannelCountDivisor ) )
  *
+ * @member {ValueDesc.Pointwise_HigherHalfDifferent} nHigherHalfDifferent
+ *   The HigherHalfDifferent type for pointwise convolution in squeeze-and-excitation.
+ *
  * @member {number} outputChannelCount
  *   Always the same as inputChannelCount.
  *
- * @member {ValueDesc.Pointwise_HigherHalfDifferent} nHigherHalfDifferent
- *   The HigherHalfDifferent type for pointwise convolution in squeeze-and-excitation.
+ * @member {boolean} bSqueeze
+ *   Whether squeeze step is necessary. If one of inputHeight and inputWidth is not positive (<= 0), bSqueeze will be false
+ * (i.e. no squeeze step (i.e. no global average pooling)).
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Including inferenced weights, if they are used in tensors.
@@ -80,9 +92,11 @@ class Base {
    *
    */
   constructor(
-    inputChannelCount, intermediateChannelCountDivisor, bBias, nActivationId,
+    inputHeight, inputWidth, inputChannelCount, intermediateChannelCountDivisor, bBias, nActivationId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf ) {
 
+    this.inputHeight = inputHeight;
+    this.inputWidth = inputWidth;
     this.inputChannelCount = inputChannelCount;
     this.intermediateChannelCountDivisor = intermediateChannelCountDivisor;
     this.bBias = bBias;
@@ -120,6 +134,7 @@ class Base {
     this.intermediate_outputChannelCount_lowerHalf = Math.ceil( outputChannelCount_lowerHalf / intermediateChannelCountDivisor );
 
     this.outputChannelCount = inputChannelCount, // For squeeze-and-excitation, output channel count is always the same as input.
+    this.bSqueeze = ( inputHeight > 0 ) && ( inputWidth > 0 );
   }
 
   /**
@@ -157,14 +172,14 @@ class Base {
 
     // 2.1
     let squeezeDepthwise_boundsArraySet_output0;
-    if (  ) {
+    if ( this.bSqueeze ) {
       this.squeezeDepthwise = new Depthwise.ConstantWhenPassThrough(
+        this.inputHeight, this.inputWidth, this.inputChannelCount,
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.AVG, // global average pooling.
+        this.inputHeight, this.inputWidth,                   // ( filterSize == inputImageSize ) means global pooling.
+        ValueDesc.StridesPad.Singleton.STRIDES_1_PAD_VALID,  // For shrinking to ( 1 x 1 ) image, pad should be "valid" (i.e. not "same").
 
-  //!!! ...unfinished... (2022/05/18)
-        inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth,
-
-        ???ValueDesc.StridesPad.Singleton.STRIDES_1_PAD_SAME, // (stridesPad)
-
+  //!!! ...unfinished... (2022/05/19)
         bBias, nActivationId, nPassThroughStyleId,
         nHigherHalfDifferent, inputChannelCount_lowerHalf
       );
