@@ -48,17 +48,17 @@ import * as Pointwise from "./Pointwise.js";
  * @member {number} inputChannelCount
  *   The channel count of the input tensor. It must be greater than zero (> 0).
  *
- * @member {number} intermediateChannelCountReductionRatio
+ * @member {number} intermediateChannelCountDivisor
  *   An integer which is the channel count divisor for intermediate pointwise convolution channel count.
  *
- *     - If ( intermediateChannelCountReductionRatio <= 0 ), there will be only one pointwise convolution (i.e. excitation
+ *     - If ( intermediateChannelCountDivisor <= 0 ), there will be only one pointwise convolution (i.e. excitation
  *         pointwise convolution). 
  *
- *     - If ( intermediateChannelCountReductionRatio > 0 ), there will be two pointwise convolutions (i.e. intermediate pointwise
- *         convolution and excitation pointwise convolution).
+ *     - If ( intermediateChannelCountDivisor > 0 ), there will be two pointwise convolutions (i.e. intermediate pointwise
+ *         convolution, and excitation pointwise convolution).
  *
  * @member {number} intermediateChannelCount
- *   The channel count of intermediate pointwise convolution. (= Math.ceil( inputChannelCount / intermediateChannelCountReductionRatio ) )
+ *   The channel count of intermediate pointwise convolution. (= Math.ceil( inputChannelCount / intermediateChannelCountDivisor ) )
  *
  * @member {ValueDesc.Pointwise_HigherHalfDifferent} nPointwise_HigherHalfDifferent
  *   The HigherHalfDifferent type for pointwise convolution in squeeze-and-excitation.
@@ -89,13 +89,13 @@ class Base {
    *
    */
   constructor(
-    inputHeight, inputWidth, inputChannelCount, intermediateChannelCountReductionRatio, nActivationId,
+    inputHeight, inputWidth, inputChannelCount, intermediateChannelCountDivisor, nActivationId,
     nPointwise_HigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf ) {
 
     this.inputHeight = inputHeight;
     this.inputWidth = inputWidth;
     this.inputChannelCount = inputChannelCount;
-    this.intermediateChannelCountReductionRatio = intermediateChannelCountReductionRatio;
+    this.intermediateChannelCountDivisor = intermediateChannelCountDivisor;
     this.nActivationId = nActivationId;
     this.nPointwise_HigherHalfDifferent = nPointwise_HigherHalfDifferent;
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
@@ -106,9 +106,9 @@ class Base {
         + `inputChannelCount ( ${inputChannelCount} ) should be greater than zero (> 0).`
     );
 
-    this.intermediateChannelCount = Math.ceil( inputChannelCount / intermediateChannelCountReductionRatio );
-    this.intermediate_inputChannelCount_lowerHalf = Math.ceil( inputChannelCount_lowerHalf / intermediateChannelCountReductionRatio );
-    this.intermediate_outputChannelCount_lowerHalf = Math.ceil( outputChannelCount_lowerHalf / intermediateChannelCountReductionRatio );
+    this.intermediateChannelCount = Math.ceil( inputChannelCount / intermediateChannelCountDivisor );
+    this.intermediate_inputChannelCount_lowerHalf = Math.ceil( inputChannelCount_lowerHalf / intermediateChannelCountDivisor );
+    this.intermediate_outputChannelCount_lowerHalf = Math.ceil( outputChannelCount_lowerHalf / intermediateChannelCountDivisor );
 
     this.outputChannelCount = inputChannelCount, // For squeeze-and-excitation, output channel count is always the same as input.
     this.bSqueeze = ( inputHeight > 0 ) && ( inputWidth > 0 );
