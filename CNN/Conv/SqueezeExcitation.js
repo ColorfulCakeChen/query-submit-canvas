@@ -140,7 +140,6 @@ class Base {
     //
 
     // 2.1 squeezeDepthwise
-
     let squeezeDepthwise_boundsArraySet_output0;
     if ( this.bSqueeze ) {
       this.squeezeDepthwise = new Depthwise.ConstantWhenPassThrough(
