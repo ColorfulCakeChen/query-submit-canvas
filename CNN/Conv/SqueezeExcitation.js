@@ -49,7 +49,6 @@ import * as Pointwise from "./Pointwise.js";
  *
  *     - If ( intermediateChannelCountDivisor > 0 ), there will be two pointwise convolutions (i.e. intermediate pointwise
  *         convolution, and excitation pointwise convolution).
- *         - (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.TWO_EXCITATIONS_x) 
  *
  * @member {number} inputHeight
  *   The height of the input tensor. If one of inputHeight and inputWidth is not positive (<= 0), there will be no squeeze step
