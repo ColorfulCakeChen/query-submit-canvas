@@ -56,11 +56,11 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  *
  *     - If ( excitationChannelCountReductionRatio < 0 ), there will be no squeeze-and-excitation. 
  *
- *     - If ( excitationChannelCountReductionRatio == 0 ), there will be only one pointwise convolution (i.e. excitation
- *         pointwise convolution). 
+ *     - If ( excitationChannelCountReductionRatio == 0 ), there will be squeeze-and-excitation with only one pointwise convolution
+ *         (i.e. excitation pointwise convolution). 
  *
- *     - If ( excitationChannelCountReductionRatio > 0 ), there will be two pointwise convolutions (i.e. intermediate pointwise
- *         convolution and excitation pointwise convolution).
+ *     - If ( excitationChannelCountReductionRatio > 0 ), there will be squeeze-and-excitation with two pointwise convolutions
+ *         (i.e. intermediate pointwise convolution, and excitation pointwise convolution).
  *
  * @member {number} inputHeight
  *   The height of the input tensor. If one of inputHeight and inputWidth is not positive (<= 0), there will be no squeeze step
@@ -84,9 +84,12 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
 
 //!!! ...unfinished... (2022/05/19)
 
+ * @member {boolean} bSqueezeExcitation
+ *   Whether squeeze-and-excitation exists. It will be true if ( excitationChannelCountReductionRatio >= 0 ).
+ *
  * @member {boolean} bSqueeze
- *   Whether squeeze step is necessary. If one of inputHeight and inputWidth is not positive (<= 0), bSqueeze will be false
- * (i.e. no squeeze step (i.e. no global average pooling)).
+ *   Whether squeeze-and-excitation has squeeze. It will be true if ( excitationChannelCountReductionRatio >= 0 ) and ( inputHeight > 0 )
+ * and ( inputWidth > 0). It is only meaningful when ( bSqueezeExcitation == true ).
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Including inferenced weights, if they are used in tensors.
