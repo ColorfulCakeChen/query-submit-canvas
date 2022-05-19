@@ -22,7 +22,7 @@ import * as BoundsArraySet from "./BoundsArraySet.js";
  * @member {BoundsArraySet.InputsOutputs} boundsArraySet
  *   The element value bounds (per channel) of this concatenation operation.
  *
- * @member {function} pfnAdd
+ * @member {function} apply
  *   This is a method. It has two parameter ( inputTensor0, inputTensor1 ) and return a outputTensor. Both the inputTensor0 and
  * inputTensor1 are tf.tensor3d and represents an images ( height x width x channel ) which will be added. They should have the same
  * ( height x width x channel ). The outputTensor (tf.tensor3d) represents the result of adding the two inputs. The inputTensor may
@@ -35,48 +35,48 @@ class Base {
   constructor( bKeepInputTensor0, bKeepInputTensor1, inputScaleBoundsArray0, inputScaleBoundsArray1 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
-    Base.adjust_pfnAdd.call( this );
+    Base.adjust_pfn.call( this );
     Base.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1 );
   }
 
   /**
-   * Adjust this.pfnAdd so that this.pfnAdd() will or will not dispose its inputTensors.
+   * Adjust this.apply so that this.apply() will or will not dispose its inputTensors.
    */
   setKeepInputTensor0( bKeepInputTensor0 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
-    Base.adjust_pfnAdd.call( this );
+    Base.adjust_pfn.call( this );
   }
 
   /**
-   * Adjust this.pfnAdd so that this.pfnAdd() will or will not dispose its inputTensors.
+   * Adjust this.apply so that this.apply() will or will not dispose its inputTensors.
    */
   setKeepInputTensor1( bKeepInputTensor1 ) {
     this.bKeepInputTensor1 = bKeepInputTensor1;
-    Base.adjust_pfnAdd.call( this );
+    Base.adjust_pfn.call( this );
   }
 
   /**
-   * Adjust this.pfnAdd so that this.pfnAdd() will or will not dispose its inputTensors.
+   * Adjust this.apply so that this.apply() will or will not dispose its inputTensors.
    */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
-    Base.adjust_pfnAdd.call( this );
+    Base.adjust_pfn.call( this );
   }
 
-  /** Set this.pfnAdd according to this.bKeepInputTensor0 and this.bKeepInputTensor1. */
-  static adjust_pfnAdd() {
+  /** Set this.apply according to this.bKeepInputTensor0 and this.bKeepInputTensor1. */
+  static adjust_pfn() {
     if ( this.bKeepInputTensor0 ) {
       if ( this.bKeepInputTensor1 ) {
-        this.pfnAdd = Base.Add_and_keep0_keep1;
+        this.apply = Base.Add_and_keep0_keep1;
       } else {
-        this.pfnAdd = Base.Add_and_keep0_destroy1;
+        this.apply = Base.Add_and_keep0_destroy1;
       }
     } else {
       if ( this.bKeepInputTensor1 ) {
-        this.pfnAdd = Base.Add_and_destroy0_keep1;
+        this.apply = Base.Add_and_destroy0_keep1;
       } else {
-        this.pfnAdd = Base.Add_and_destroy0_destroy1;
+        this.apply = Base.Add_and_destroy0_destroy1;
       }
     }
   }
