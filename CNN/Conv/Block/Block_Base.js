@@ -670,7 +670,7 @@ class Base extends ReturnOrClone.Base {
 //!!! ...unfinished... (2022/05/19)
     // Prepare image height and width for squeeze-and-excitation if global-average-pooling is required.
     //
-    // Note1: Even if ( this.depthwise1.bExisted == false ), it should still work. 
+    // Note1: Image height and width are determined by depthwise1. Even if ( this.depthwise1.bExisted == false ), it still works.
     // Note2: depthwise2 will have the same height and width as depthwise1.
     //
     let inputHeight_SqueezeExcitation = this.depthwise1.outputHeight;
@@ -1503,7 +1503,7 @@ class Base extends ReturnOrClone.Base {
   }
 
   get outputHeight() {
-    return this.depthwise1.outputHeight; // Even if ( this.depthwise1.bExisted == false ), it should still work. 
+    return this.depthwise1.outputHeight; // Even if ( this.depthwise1.bExisted == false ), it should still work.
   }
 
   get outputWidth() {
