@@ -130,10 +130,8 @@ class Base {
         this.bDepthwiseBias = true;
         this.depthwiseActivationId = stageParams.nActivationId;
 
-//!!! ...unfinished... (2022/05/19)
-// What if the next operation is squeeze-and-excitation? Does the no bias is still feasible?
-
-      // non-MobileNetV2_Xxx's depthwise have no bias and no activation. (since they will be done at pointwise2.)
+      // non-MobileNetV2_Xxx's depthwise have no bias and no activation. (since they will be done at (squeeze-and-excitation
+      // and) pointwise2.)
       //
       } else {
         this.bDepthwiseBias = false;
