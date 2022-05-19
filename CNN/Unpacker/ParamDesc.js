@@ -2,6 +2,7 @@ export { Base, Same, Bool, Int };
 export { ActivationFunction };
 export { channelCount1_pointwise1Before };
 export { AvgMax_Or_ChannelMultiplier };
+export { SqueezeExcitationChannelCountDivisor };
 export { StridesPad };
 export { ConvBlockType };
 
@@ -58,7 +59,6 @@ class Base {
  *   The range of the parameter's all possible values. It is a ValueDesc.Same object.
  */
 class Same extends Base {
-
   constructor( paramName ) {
     super( paramName, ValueDesc.Same.Singleton );
   }
@@ -72,7 +72,6 @@ class Same extends Base {
  *   The boolean range of the parameter's all possible values. It is a ValueDesc.Bool object.
  */
 class Bool extends Base {
-
   constructor( paramName ) {
     super( paramName, ValueDesc.Bool.Singleton );
   }
@@ -86,7 +85,6 @@ class Bool extends Base {
  *   The integer range of the parameter's all possible values. It is a ValueDesc.Bool object.
  */
 class Int extends Base {
-
   constructor( paramName, valueIntegerMin, valueIntegerMax, valueNames = [], valueObjects = [] ) {
     super( paramName, new ValueDesc.Int( valueIntegerMin, valueIntegerMax, valueNames, valueObjects ) );
   }
@@ -100,7 +98,6 @@ class Int extends Base {
  *   The range of the parameter's all possible values. It is a ValueDesc.ActivationFunction object.
  */
 class ActivationFunction extends Base {
-
   constructor( paramName ) {
     super( paramName, ValueDesc.ActivationFunction.Singleton );
   }
@@ -114,7 +111,6 @@ class ActivationFunction extends Base {
  *   The range of the parameter's all possible values. It is a ValueDesc.channelCount1_pointwise1Before object.
  */
 class channelCount1_pointwise1Before extends Base {
-
   constructor( paramName ) {
     super( paramName, ValueDesc.channelCount1_pointwise1Before.Singleton );
   }
@@ -128,9 +124,21 @@ class channelCount1_pointwise1Before extends Base {
  *   The range of the parameter's all possible values. It is a ValueDesc.AvgMax_Or_ChannelMultiplier object.
  */
 class AvgMax_Or_ChannelMultiplier extends Base {
-
   constructor( paramName ) {
     super( paramName, ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton );
+  }
+}
+
+
+/**
+ * Describe some properties of an squeeze-and-excitation channel count divisor parameter.
+ *
+ * @member {ValueDesc.AvgMax_Or_ChannelMultiplier} valueDesc
+ *   The range of the parameter's all possible values. It is a ValueDesc.AvgMax_Or_ChannelMultiplier object.
+ */
+class SqueezeExcitationChannelCountDivisor extends Base {
+  constructor( paramName ) {
+    super( paramName, ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton );
   }
 }
 
@@ -142,7 +150,6 @@ class AvgMax_Or_ChannelMultiplier extends Base {
  *   The range of the parameter's all possible values. It is a ValueDesc.StridesPad object.
  */
 class StridesPad extends Base {
-
   constructor( paramName ) {
     super( paramName, ValueDesc.StridesPad.Singleton );
   }
@@ -156,7 +163,6 @@ class StridesPad extends Base {
  *   The range of the parameter's all possible values. It is a ValueDesc.ConvBlockType object.
  */
 class ConvBlockType extends Base {
-
   constructor( paramName ) {
     super( paramName, ValueDesc.ConvBlockType.Singleton );
   }
