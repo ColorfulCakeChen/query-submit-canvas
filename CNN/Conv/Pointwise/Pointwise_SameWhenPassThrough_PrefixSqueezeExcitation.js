@@ -100,7 +100,7 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  * @member {function} apply
  *   A method accepts one parameter inputTensor (tf.tensor3d) and return an outputTensor (tf.tensor3d). All intermediate tensors
  * will be disposed. The inputTensor may or may not be disposed (according to setKeepInputTensor()). In fact, this method calls one
- * of Base.Xxx_and_keep() according to the parameters.
+ * of Base.???() according to the parameters.
  *
  * @see SqueezeExcitation.Base
  * @see Pointwise.SameWhenPassThrough
@@ -133,9 +133,191 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
   }
 
 
-//!!! new SqueezeExcitation.Base()
+//!!! ...unfinished... (2022/05/19)
+  /**
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpreted as weights.
+   *
+   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
+   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous operation value bounds set
+   * of this operation. It will be kept (not cloned) directly. So caller should not modify them.
+   *
+   * @return {boolean} Return true, if succeeded.
+   */
+  init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray ) {
+
+    this.disposeTensors();
+
+    this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
+
+    // 1. Determine operation functions.
+    Base.setup_pfn.call( this );
+
+    // 2.
+
+    if ( nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-1)
+      new SqueezeExcitation.Base(
+        nSqueezeExcitationChannelCountDivisor, inputHeight, inputWidth,
+        inputChannelCount, nActivationId,
+        nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf );
+    }
+
     new SameWhenPassThrough(
       inputChannelCount, outputChannelCount, bBias, nActivationId,
       nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
+
+    // 3. BoundsArraySet
+    {
+      { // Build self BoundsArraySet.
+        this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, null,
+          this.excitationPointwise.boundsArraySet.output0.channelCount, 0 );
+
+        this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.excitationPointwise.boundsArraySet );
+
+        // The BoundsArraySet for tf.mul() input by excitation.
+        //
+        // Note: Not multiply_all_byScaleBoundsArray_one(). The reason is that it is supported to broadcast in the same channel
+        // (i.e. not across channels).
+        //
+        this.boundsArraySet.output0.multiply_all_byScaleBoundsArray_all( inputScaleBoundsArray );
+      }
+
+      this.dispose_all_sub_BoundsArraySet(); // For reduce memory footprint.
+    }
+
+    this.bInitOk = true;
+    return this.bInitOk;
+  }
+
+  /** Release all tensors. */
+  disposeTensors() {
+
+//!!! ...unfinished... (2022/05/19)
+
+    if ( this.squeezeDepthwise ) {
+      this.squeezeDepthwise.disposeTensors();
+      this.squeezeDepthwise = null;
+    }
+
+    if ( this.intermediatePointwise ) {
+      this.intermediatePointwise.disposeTensors();
+      this.intermediatePointwise = null;
+    }
+
+    if ( this.excitationPointwise ) {
+      this.excitationPointwise.disposeTensors();
+      this.excitationPointwise = null;
+    }
+
+    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
+    this.byteOffsetBegin = this.byteOffsetEnd = -1;
+    this.bKeepInputTensor = false;  // Default will dispose input tensor.
+    this.bInitOk = false;
+  }
+
+
+//!!! ...unfinished... (2022/05/19)
+
+  /**
+   * Release all BoundsArraySet of squeezeDepthwise, intermediatePointwise, excitationPointwise.
+   *
+   * This could reduce memory footprint.
+   *
+   * (Note: This SqueezeExcitation's BoundsArraySet is kept.)
+   */
+  dispose_all_sub_BoundsArraySet() {
+
+//!!! ...unfinished... (2022/05/19)
+
+    delete this.squeezeDepthwise?.boundsArraySet;
+    delete this.intermediatePointwise?.boundsArraySet;
+    delete this.excitationPointwise.boundsArraySet;
+  }
+
+
+//!!! ...unfinished... (2022/05/19)
+
+  /**
+   * The sub operations' setKeepInputTensor() will be called so that only the first operation is responsible for keeping inputTensor.
+   * All other operations should always destroy inputTensor..
+   *
+   */
+  setKeepInputTensor( bKeepInputTensor ) {
+    if ( bKeepInputTensor == this.bKeepInputTensor )
+      return;
+
+    this.bKeepInputTensor = bKeepInputTensor;
+    if ( bKeepInputTensor ) {
+
+
+//!!! ...unfinished... (2022/05/19)
+
+      // Note: The first operation is responsible for keep inputTensor. All other operations should always destroy inputTensor.
+      if ( this.squeezeDepthwise ) {
+        this.squeezeDepthwise.setKeepInputTensor( true );
+        this.intermediatePointwise.setKeepInputTensor( false );
+        this.excitationPointwise.setKeepInputTensor( false );
+      } else {
+        if ( this.intermediatePointwise ) {
+          this.intermediatePointwise.setKeepInputTensor( true );
+          this.excitationPointwise.setKeepInputTensor( false );
+        } else {
+          this.excitationPointwise.setKeepInputTensor( true );
+        }
+      }
+
+    } else {
+      this.squeezeDepthwise?.setKeepInputTensor( false );
+      this.intermediatePointwise?.setKeepInputTensor( false );
+      this.excitationPointwise.setKeepInputTensor( false );
+    }
+  }
+
+
+
+//!!! ...unfinished... (2022/05/19)
+
+  /** Determine data member this.apply.
+   *
+   * @param {Base} this
+   *   The Base object to be determined and modified.
+   */
+  static setup_pfn() {
+
+//!!! ...unfinished... (2022/05/19)
+
+    if ( this.squeezeDepthwise ) {
+      if ( this.intermediatePointwise ) {
+        this.apply = Base.squeeze_intermediate_excitation;
+      } else {
+        this.apply = Base.squeeze_excitation;
+      }
+    } else {
+      if ( this.intermediatePointwise ) {
+        this.apply = Base.intermediate_excitation;
+      } else {
+        this.apply = Base.excitation;
+      }
+    }
+  }
+
+
+
+//!!! ...unfinished... (2022/05/19)
+
+  /** */
+  static squeeze_intermediate_excitation( inputTensor ) {
+
+//!!! ...unfinished... (2022/05/19)
+
+    let t0, t1;
+    t0 = this.squeezeDepthwise.apply( inputTensor );
+    t1 = this.intermediatePointwise.apply( t0 );
+    t0 = this.excitationPointwise.apply( t1 );
+
+    t1 = tf.mul( inputTensor, t0 );
+    t0.dispose();
+    return t1;
+  }
 
 }
