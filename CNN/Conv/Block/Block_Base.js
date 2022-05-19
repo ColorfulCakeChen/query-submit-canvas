@@ -667,6 +667,9 @@ class Base extends ReturnOrClone.Base {
       }
     }
 
+//!!! ...unfinished... (2022/05/19)
+// get depthwise1_outputHeight, depthwise1_outputWidth, depthwise2_outputHeight, depthwise2_outputWidth
+// for squeeze-and-excitation if global-average-pooling is required.
 
 //!!! ...unfinished... (2022/05/18) squeeze-and-excitation
 
