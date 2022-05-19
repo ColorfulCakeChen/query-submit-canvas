@@ -60,7 +60,9 @@ class Base extends TestParams.Base {
     channelCount0_pointwise1Before,
     channelCount1_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    bDepthwiseBias, depthwiseActivationId,
+    nSqueezeExcitationChannelCountDivisor,
     pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
     bOutput1Requested,
     bKeepInputTensor
@@ -71,7 +73,9 @@ class Base extends TestParams.Base {
       channelCount0_pointwise1Before,
       channelCount1_pointwise1Before,
       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      bDepthwiseBias, depthwiseActivationId,
+      nSqueezeExcitationChannelCountDivisor,
       pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
       bOutput1Requested,
       bKeepInputTensor
@@ -287,6 +291,13 @@ class Base extends TestParams.Base {
 // //        ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID,  // (3)
 //       ],
 
+      nSqueezeExcitationChannelCountDivisor: [
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+        4
+        //ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min + 7 - 1
+        //ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.max
+      ],
+
       bOutput1Requested: undefined,
 //      bOutput1Requested: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min + 0 ],
 //      bOutput1Requested: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
@@ -303,6 +314,9 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.inputHeight0,            this.valueOutMinMax.inputHeight0 ),
       new TestParams.ParamDescConfig( Block.Params.inputWidth0,             this.valueOutMinMax.inputWidth0 ),
 
+      new TestParams.ParamDescConfig( Block.Params.nSqueezeExcitationChannelCountDivisor,
+                                                                            this.valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
+
       new TestParams.ParamDescConfig( Block.Params.pointwise21ChannelCount, this.valueOutMinMax.pointwise21ChannelCount ),
       new TestParams.ParamDescConfig( Block.Params.bPointwise21Bias,        this.valueOutMinMax.Bias ),
       new TestParams.ParamDescConfig( Block.Params.pointwise21ActivationId, this.valueOutMinMax.ActivationId ),
@@ -312,13 +326,13 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.bPointwise1Bias,         this.valueOutMinMax.Bias ),
 
       new TestParams.ParamDescConfig( Block.Params.channelCount0_pointwise1Before,
-                                                                                      this.valueOutMinMax.channelCount0_pointwise1Before ),
+                                                                            this.valueOutMinMax.channelCount0_pointwise1Before ),
 
       new TestParams.ParamDescConfig( Block.Params.channelCount1_pointwise1Before,
-                                                                                      this.valueOutMinMax.channelCount1_pointwise1Before ),
+                                                                            this.valueOutMinMax.channelCount1_pointwise1Before ),
 
       new TestParams.ParamDescConfig( Block.Params.depthwise_AvgMax_Or_ChannelMultiplier,
-                                                                                      this.valueOutMinMax.depthwise_AvgMax_Or_ChannelMultiplier ),
+                                                                            this.valueOutMinMax.depthwise_AvgMax_Or_ChannelMultiplier ),
 
       new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,   this.valueOutMinMax.depthwiseFilterHeight ),
       new TestParams.ParamDescConfig( Block.Params.depthwiseFilterWidth,    this.valueOutMinMax.depthwiseFilterWidth ),
@@ -803,6 +817,10 @@ class Base extends TestParams.Base {
       }
     }
 
+
+//!!! ...unfinished... (2022/05/19) nSqueezeExcitationChannelCountDivisor, ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx
+
+
     // Pointwise21
     {    
       let pointwise21 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
@@ -899,6 +917,7 @@ Base.paramsNameOrderArray = [
   Block.Params.depthwiseStridesPad.paramName,
   Block.Params.bDepthwiseBias.paramName,
   Block.Params.depthwiseActivationId.paramName,
+  Block.Params.nSqueezeExcitationChannelCountDivisor.paramName,
   Block.Params.pointwise21ChannelCount.paramName,
   Block.Params.bPointwise21Bias.paramName,
   Block.Params.pointwise21ActivationId.paramName,
