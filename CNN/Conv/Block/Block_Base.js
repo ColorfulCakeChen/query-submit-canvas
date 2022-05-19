@@ -383,10 +383,8 @@ class Base extends ReturnOrClone.Base {
     this.depthwiseActivationId = params.depthwiseActivationId;
     this.depthwiseActivationName = params.depthwiseActivationName;
 
-
-//!!! ...unfinished... (2022/05/19) nSqueezeExcitationChannelCountDivisor
-//Params.SqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
-
+    this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
+    this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
 
     this.pointwise21ChannelCount = params.pointwise21ChannelCount;
     this.bPointwise21Bias = params.bPointwise21Bias;
@@ -681,8 +679,7 @@ class Base extends ReturnOrClone.Base {
     let inputHeight_SqueezeExcitation = this.depthwise1.outputHeight;
     let inputWidth_SqueezeExcitation = this.depthwise1.outputHeight;
 
-
-//!!! ...unfinished... (2022/05/18) squeeze-and-excitation
+//!!! ...unfinished... (2022/05/19) squeeze-and-excitation, nSqueezeExcitationChannelCountDivisor
 
     // 5.1 Pointwise21
     //
