@@ -4,13 +4,6 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 
-
-//!!! ...unfinished... (2021/08/18)
-// tf.batchNorm() is faster than tf.add() when with broadcasting by CPU.
-// Whether batchNorm could be used as bias? even activation function?
-//
-
-
 /**
  * Pointwise-depthwise-pointwise convolution layer parameters.
  *
@@ -196,11 +189,11 @@ class Params extends Weights.Params {
    *   An integer which is the channel count divisor for intermediate pointwise convolution channel count.
    *
    *     - If ( nSqueezeExcitationChannelCountDivisor < 0 ), there will be no squeeze-and-excitation.
-   *         (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.NONE (-1))
+   *         (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-1))
    *
    *     - If ( nSqueezeExcitationChannelCountDivisor == 0 ), there will be squeeze-and-excitation with only one pointwise convolution
    *         (i.e. excitation pointwise convolution). 
-   *         (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.ONE_EXCITATION (0)) 
+   *         (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.ONE_EXCITATION (0)) 
    *
    *     - If ( nSqueezeExcitationChannelCountDivisor > 0 ), there will be squeeze-and-excitation with two pointwise convolutions
    *         (i.e. intermediate pointwise convolution, and excitation pointwise convolution).
