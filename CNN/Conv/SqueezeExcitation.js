@@ -77,16 +77,13 @@ import * as Pointwise from "./Pointwise.js";
  *   The wieght count extracted from inputFloat32Array and used in tensors. Not including inferenced weights (even if they are
  * used in tensors), because they are not extracted from inputFloat32Array.
  *
- * @member {function} pfnSqueezeExcitation
+ * @member {function} apply
  *   A method accepts one parameter inputTensor (tf.tensor3d) and return an outputTensor (tf.tensor3d). All intermediate tensors
  * will be disposed. The inputTensor may or may not be disposed (according to setKeepInputTensor()). In fact, this method calls one
  * of Base.Xxx_and_keep() according to the parameters.
  *
  */
 class Base {
-
-//!!! ...unfinished... (2022/05/18)
-// Perhaps, rename excitationPointwise to excitation2Pointwise, and intermediatePointwise to excitation1Pointwise.
 
   /**
    *
@@ -134,7 +131,7 @@ class Base {
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
     // 1. Determine operation functions.
-    Base.setup_pfnSqueezeExcitation.call( this );
+    Base.setup_apply.call( this );
 
     // 2. Initialize sub-operations.
 
@@ -315,23 +312,23 @@ class Base {
   }
 
 
-  /** Determine data member this.pfnSqueezeExcitation.
+  /** Determine data member this.apply.
    *
    * @param {Base} this
    *   The Base object to be determined and modified.
    */
-  static setup_pfnSqueezeExcitation() {
+  static setup_apply() {
     if ( this.squeezeDepthwise ) {
       if ( this.intermediatePointwise ) {
-        this.pfnSqueezeExcitation = Base.squeeze_intermediate_excitation;
+        this.apply = Base.squeeze_intermediate_excitation;
       } else {
-        this.pfnSqueezeExcitation = Base.squeeze_excitation;
+        this.apply = Base.squeeze_excitation;
       }
     } else {
       if ( this.intermediatePointwise ) {
-        this.pfnSqueezeExcitation = Base.intermediate_excitation;
+        this.apply = Base.intermediate_excitation;
       } else {
-        this.pfnSqueezeExcitation = Base.excitation;
+        this.apply = Base.excitation;
       }
     }
   }
