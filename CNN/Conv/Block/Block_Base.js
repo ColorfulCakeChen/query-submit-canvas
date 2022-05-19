@@ -668,8 +668,14 @@ class Base extends ReturnOrClone.Base {
     }
 
 //!!! ...unfinished... (2022/05/19)
-// get depthwise1_outputHeight, depthwise1_outputWidth, depthwise2_outputHeight, depthwise2_outputWidth
-// for squeeze-and-excitation if global-average-pooling is required.
+    // Prepare image height and width for squeeze-and-excitation if global-average-pooling is required.
+    //
+    // Note1: Even if ( this.depthwise1.bExisted == false ), it should still work. 
+    // Note2: depthwise2 will have the same height and width as depthwise1.
+    //
+    let inputHeight_SqueezeExcitation = this.depthwise1.outputHeight;
+    let inputWidth_SqueezeExcitation = this.depthwise1.outputHeight;
+
 
 //!!! ...unfinished... (2022/05/18) squeeze-and-excitation
 
