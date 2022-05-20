@@ -118,24 +118,24 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
 /** Describe squeeze-and-excitation channel count divisor's id, range, name.
  *
  * Convert number value into integer between [ -2, 64 ] representing depthwise operation:
- *   - -2: NONE                                    (no squeeze, no excitation)
- *   - -1: EXCITATION_1                            (no squeeze, no intermediate excitation)
- *   -  0: SQUEEZE__EXCITATION_1                   (has squeeze, no intermediate excitation)
- *   - [ 1, 64 ]: SQUEEZE__EXCITATION_2__DIVISOR_N (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
+ *   - -2: NONE                                  (no squeeze, no excitation, no multiply)
+ *   - -1: EXCITATION_1                          (no squeeze, no intermediate excitation)
+ *   -  0: SQUEEZE_EXCITATION_1                  (has squeeze, no intermediate excitation)
+ *   - [ 1, 64 ]: SQUEEZE_EXCITATION_2_DIVISOR_N (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
  */
 class SqueezeExcitationChannelCountDivisor extends Int {
 
   constructor() {
     super( -2, 64, [
-      "NONE",                  // (-2)
-      "EXCITATION_1",          // (-1)
-      "SQUEEZE__EXCITATION_1", // ( 0)
+      "NONE",                 // (-2)
+      "EXCITATION_1",         // (-1)
+      "SQUEEZE_EXCITATION_1", // ( 0)
 
-      // "SQUEEZE__EXCITATION_2__DIVISOR_1", "SQUEEZE__EXCITATION_2__DIVISOR_2", ..., "SQUEEZE__EXCITATION_2__DIVISOR_64".
+      // "SQUEEZE_EXCITATION_2_DIVISOR_1", "SQUEEZE_EXCITATION_2_DIVISOR_2", ..., "SQUEEZE_EXCITATION_2_DIVISOR_64".
       //
       // (2022/05/19 Remarked) Do not define these names because they will occupy too many memory.
       //
-      //... [ ... new Array( 64 ).keys() ].map( x => "SQUEEZE__EXCITATION_2__DIVISOR_" + ( x + 1 ) )
+      //... [ ... new Array( 64 ).keys() ].map( x => "SQUEEZE_EXCITATION_2_DIVISOR_" + ( x + 1 ) )
     ] );
   }
 
