@@ -157,6 +157,7 @@ class Base extends ReturnOrClone.Base {
     this.disposeTensors();
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
+    this.tensorWeightCountExtracted = this.tensorWeightCountTotal = 0;
 
     // 1. Determine operation functions.
     Base.setup_bExisted.call( this );
@@ -165,108 +166,115 @@ class Base extends ReturnOrClone.Base {
     Base.setup_bSqueeze.call( this );
     Base.setup_pfn.call( this );
 
-    // 2. Initialize sub-operations.
+    if ( !this.bExisted ) { // 2. no operation at all.
+      this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, null, inputScaleBoundsArray.channelCount );
+      this.boundsArraySet.output0.set_all_byScaleBoundsArray( inputScaleBoundsArray ); // Bypass previous to next.
 
-    // Note: Inside squeeze-and-excitation, all depthwsie and pointwise convolutions are constant-when-pass-through.
-    //       So that the result for pass-through parts will not affect input when multiply to input.
-    //
+    } else { // 3.
 
-    // 2.1 squeezeDepthwise
-    let squeezeDepthwise_boundsArraySet_output0;
-    if ( this.bSqueeze ) {
-      this.squeezeDepthwise = new Depthwise.ConstantWhenPassThrough(
-        this.inputHeight, this.inputWidth, this.inputChannelCount,
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,    // global average pooling.
-        this.inputHeight, this.inputWidth,                          // ( filterSize == inputImageSize ) means global pooling.
-        ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID,     // To shrink to ( 1 x 1 ) image, pad should be "valid" (i.e. not "same").
-        false,                                                      // (bBias) squeeze has no bias (since it also has no activation).
-        ValueDesc.ActivationFunction.Singleton.Ids.NONE,            // (nActivationId) squeeze has no activation.
-        ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE, // (global) average pooling must be no higher-half-different.
-        -1 // (inputChannelCount_lowerHalf) Used since ValueDesc.Depthwise_HigherHalfDifferent.Singleton.NONE
-      );
+      // 3.1 Initialize sub-operations.
 
-      if ( !this.squeezeDepthwise.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
-        return false;  // e.g. input array does not have enough data.
-      this.byteOffsetEnd = this.squeezeDepthwise.byteOffsetEnd;
+      // Note: Inside squeeze-and-excitation, all depthwsie and pointwise convolutions are constant-when-pass-through.
+      //       So that the result for pass-through parts will not affect input when multiply to input.
+      //
 
-      this.tensorWeightCountTotal += this.squeezeDepthwise.tensorWeightCountTotal;
-      this.tensorWeightCountExtracted += this.squeezeDepthwise.tensorWeightCountExtracted;
+      // 3.1.1 squeezeDepthwise
+      let squeezeDepthwise_boundsArraySet_output0;
+      if ( this.bSqueeze ) {
+        this.squeezeDepthwise = new Depthwise.ConstantWhenPassThrough(
+          this.inputHeight, this.inputWidth, this.inputChannelCount,
+          ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,    // global average pooling.
+          this.inputHeight, this.inputWidth,                          // ( filterSize == inputImageSize ) means global pooling.
+          ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID,     // To shrink to ( 1 x 1 ) image, pad should be "valid" (i.e. not "same").
+          false,                                                      // (bBias) squeeze has no bias (since it also has no activation).
+          ValueDesc.ActivationFunction.Singleton.Ids.NONE,            // (nActivationId) squeeze has no activation.
+          ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE, // (global) average pooling must be no higher-half-different.
+          -1 // (inputChannelCount_lowerHalf) Used since ValueDesc.Depthwise_HigherHalfDifferent.Singleton.NONE
+        );
 
-      squeezeDepthwise_boundsArraySet_output0 = this.squeezeDepthwise.boundsArraySet.output0;
-    } else {
-      squeezeDepthwise_boundsArraySet_output0 = inputScaleBoundsArray;
-    }
+        if ( !this.squeezeDepthwise.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
+          return false;  // e.g. input array does not have enough data.
+        this.byteOffsetEnd = this.squeezeDepthwise.byteOffsetEnd;
 
-    // 2.2 intermediatePointwise
-    let intermediatePointwise_boundsArraySet_output0;
-    if ( this.intermediateChannelCount > 0 ) {
+        this.tensorWeightCountTotal += this.squeezeDepthwise.tensorWeightCountTotal;
+        this.tensorWeightCountExtracted += this.squeezeDepthwise.tensorWeightCountExtracted;
 
-      // If it has no activation, it could be no bias because the next operation's (i.e. excitationPointwise) bias will achieve it.
-      let bBias_intermediatePointwise;
-      if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
-        bBias_intermediatePointwise = false;
-      else
-        bBias_intermediatePointwise = true;
-
-      this.intermediatePointwise = new Pointwise.ConstantWhenPassThrough(
-        squeezeDepthwise_boundsArraySet_output0.channelCount,
-        this.intermediateChannelCount,
-        bBias_intermediatePointwise,
-        this.nActivationId,
-        this.nPointwise_HigherHalfDifferent,
-        this.intermediate_inputChannelCount_lowerHalf, this.intermediate_outputChannelCount_lowerHalf,
-        0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
-      );
-
-      if ( !this.intermediatePointwise.init( inputFloat32Array, this.byteOffsetEnd, squeezeDepthwise_boundsArraySet_output0 ) )
-        return false;  // e.g. input array does not have enough data.
-      this.byteOffsetEnd = this.intermediatePointwise.byteOffsetEnd;
-
-      this.tensorWeightCountTotal += this.intermediatePointwise.tensorWeightCountTotal;
-      this.tensorWeightCountExtracted += this.intermediatePointwise.tensorWeightCountExtracted;
-
-      intermediatePointwise_boundsArraySet_output0 = this.intermediatePointwise.boundsArraySet.output0;
-    } else {
-      intermediatePointwise_boundsArraySet_output0 = squeezeDepthwise_boundsArraySet_output0;
-    }
-
-    // 2.3 excitationPointwise
-    {
-      this.excitationPointwise = new Pointwise.ConstantWhenPassThrough(
-        intermediatePointwise_boundsArraySet_output0.channelCount,
-        this.outputChannelCount,
-        true, // (bBias) the final operation should always have bias (even if no activation).
-        this.nActivationId,
-        this.nPointwise_HigherHalfDifferent,
-        this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,
-        0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
-      );
-
-      if ( !this.excitationPointwise.init( inputFloat32Array, this.byteOffsetEnd, intermediatePointwise_boundsArraySet_output0 ) )
-        return false;  // e.g. input array does not have enough data.
-      this.byteOffsetEnd = this.excitationPointwise.byteOffsetEnd;
-
-      this.tensorWeightCountTotal += this.excitationPointwise.tensorWeightCountTotal;
-      this.tensorWeightCountExtracted += this.excitationPointwise.tensorWeightCountExtracted;
-    }
-
-    // 3. BoundsArraySet
-    {
-      { // Build self BoundsArraySet.
-        this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, null,
-          this.excitationPointwise.boundsArraySet.output0.channelCount, 0 );
-
-        this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.excitationPointwise.boundsArraySet );
-
-        // The BoundsArraySet for tf.mul() input by excitation.
-        //
-        // Note: Not multiply_all_byScaleBoundsArray_one(). The reason is that it is supported to broadcast in the same channel
-        // (i.e. not across channels).
-        //
-        this.boundsArraySet.output0.multiply_all_byScaleBoundsArray_all( inputScaleBoundsArray );
+        squeezeDepthwise_boundsArraySet_output0 = this.squeezeDepthwise.boundsArraySet.output0;
+      } else {
+        squeezeDepthwise_boundsArraySet_output0 = inputScaleBoundsArray;
       }
 
-      this.dispose_all_sub_BoundsArraySet(); // For reduce memory footprint.
+      // 3.1.2 intermediatePointwise
+      let intermediatePointwise_boundsArraySet_output0;
+      if ( this.intermediateChannelCount > 0 ) {
+
+        // If it has no activation, it could be no bias because the next operation's (i.e. excitationPointwise) bias will achieve it.
+        let bBias_intermediatePointwise;
+        if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
+          bBias_intermediatePointwise = false;
+        else
+          bBias_intermediatePointwise = true;
+
+        this.intermediatePointwise = new Pointwise.ConstantWhenPassThrough(
+          squeezeDepthwise_boundsArraySet_output0.channelCount,
+          this.intermediateChannelCount,
+          bBias_intermediatePointwise,
+          this.nActivationId,
+          this.nPointwise_HigherHalfDifferent,
+          this.intermediate_inputChannelCount_lowerHalf, this.intermediate_outputChannelCount_lowerHalf,
+          0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
+        );
+
+        if ( !this.intermediatePointwise.init( inputFloat32Array, this.byteOffsetEnd, squeezeDepthwise_boundsArraySet_output0 ) )
+          return false;  // e.g. input array does not have enough data.
+        this.byteOffsetEnd = this.intermediatePointwise.byteOffsetEnd;
+
+        this.tensorWeightCountTotal += this.intermediatePointwise.tensorWeightCountTotal;
+        this.tensorWeightCountExtracted += this.intermediatePointwise.tensorWeightCountExtracted;
+
+        intermediatePointwise_boundsArraySet_output0 = this.intermediatePointwise.boundsArraySet.output0;
+      } else {
+        intermediatePointwise_boundsArraySet_output0 = squeezeDepthwise_boundsArraySet_output0;
+      }
+
+      // 3.1.3 excitationPointwise
+      {
+        this.excitationPointwise = new Pointwise.ConstantWhenPassThrough(
+          intermediatePointwise_boundsArraySet_output0.channelCount,
+          this.outputChannelCount,
+          true, // (bBias) the final operation should always have bias (even if no activation).
+          this.nActivationId,
+          this.nPointwise_HigherHalfDifferent,
+          this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,
+          0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
+        );
+
+        if ( !this.excitationPointwise.init( inputFloat32Array, this.byteOffsetEnd, intermediatePointwise_boundsArraySet_output0 ) )
+          return false;  // e.g. input array does not have enough data.
+        this.byteOffsetEnd = this.excitationPointwise.byteOffsetEnd;
+
+        this.tensorWeightCountTotal += this.excitationPointwise.tensorWeightCountTotal;
+        this.tensorWeightCountExtracted += this.excitationPointwise.tensorWeightCountExtracted;
+      }
+
+      // 3.2 BoundsArraySet
+      {
+        { // Build self BoundsArraySet.
+          this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, null,
+            this.excitationPointwise.boundsArraySet.output0.channelCount, 0 );
+
+          this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.excitationPointwise.boundsArraySet );
+
+          // The BoundsArraySet for tf.mul() input by excitation.
+          //
+          // Note: Not multiply_all_byScaleBoundsArray_one(). The reason is that it is supported to broadcast in the same channel
+          // (i.e. not across channels).
+          //
+          this.boundsArraySet.output0.multiply_all_byScaleBoundsArray_all( inputScaleBoundsArray );
+        }
+
+        this.dispose_all_sub_BoundsArraySet(); // For reduce memory footprint.
+      }
     }
 
     this.bInitOk = true;
