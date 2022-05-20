@@ -82,8 +82,8 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
 //!!! ...unfinished... (2022/05/20) should return the SqueezeExcitation.Base.bSqueeze if ( bSqueezeExcitation == true ).
 
  * @member {boolean} bSqueeze
- *   Whether squeeze-and-excitation has squeeze. It will be true if ( nSqueezeExcitationChannelCountDivisor >= 0 ) and ( inputHeight > 0 )
- * and ( inputWidth > 0). It is only meaningful when ( bSqueezeExcitation == true ).
+ *   Whether squeeze-and-excitation has squeeze. It is only meaningful when ( bSqueezeExcitation == true ). It is always false
+ * if ( bSqueezeExcitation == false ). (Please see also SqueezeExcitation.Base.bSqueeze explanation.)
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Including inferenced weights, if they are used in tensors.
@@ -127,9 +127,9 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
     this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
     this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
 
+!!!
     // ( nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-1)      
     this.bSqueezeExcitation = ( nSqueezeExcitationChannelCountDivisor >= 0 );
-    this.bSqueeze = ( this.bSqueezeExcitation ) && ( inputHeight > 0 ) && ( inputWidth > 0);
   }
 
   /**
@@ -319,6 +319,12 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
     t1 = tf.mul( inputTensor, t0 );
     t0.dispose();
     return t1;
+  }
+
+  get bSqueeze() {
+    if ( !this.squeezeExcitation )
+      return false; // Since no squeeze-and-excitation, there will be no squeeze.
+    return this.squeezeExcitation.bSqueeze;
   }
 
 }
