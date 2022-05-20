@@ -159,7 +159,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
    */
   static Setup_bPointwise_pfn() {
 
-    // Determine whether pointwise operation should exist.
+    // 0. Determine whether pointwise operation should exist.
     if ( this.outputChannelCount > 0 ) {
       this.bPointwise = true;
 
@@ -173,26 +173,28 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
       }
     }
 
-    this.pfnActivation = Base.ActivationFunction_getById( this.nActivationId );
-
-    if ( !this.bPointwise ) {
-      // Since there is no operation at all, let apply ignore pfnConv completely.
-      this.apply = this.pfnConv = Base.return_input_directly;
-      return true;
-    }
-
+    // 1.
     this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
 
-    if ( this.bBias ) {
-      if ( this.pfnActivation )
-        this.apply = Base.ConvBiasActivation_and_destroy_or_keep;
-      else
-        this.apply = Base.ConvBias_and_destroy_or_keep;
+    // 2.
+    this.pfnActivation = Base.ActivationFunction_getById( this.nActivationId );
+
+    // 3.
+    if ( this.bPointwise ) {
+      if ( this.bBias ) {
+        if ( this.pfnActivation )
+          this.apply = Base.ConvBiasActivation_and_destroy_or_keep;
+        else
+          this.apply = Base.ConvBias_and_destroy_or_keep;
+      } else {
+        if ( this.pfnActivation )
+          this.apply = Base.ConvActivation_and_destroy_or_keep;
+         else
+          this.apply = Base.Conv_and_destroy_or_keep;
+      }
     } else {
-      if ( this.pfnActivation )
-        this.apply = Base.ConvActivation_and_destroy_or_keep;
-       else
-        this.apply = Base.Conv_and_destroy_or_keep;
+      // Since there is no operation at all, let apply ignore pfnConv completely.
+      this.apply = this.pfnConv = Base.return_input_directly;
     }
   }
 
