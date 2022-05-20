@@ -305,6 +305,9 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
    */
   static setup_pfn() {
 
+//!!! ...unfinished... (2022/05/20) bExisted
+// If ( bExisted == false ) (after pointwise is created), the squeezeExcitation should also be skipped.
+
 //!!! ...unfinished... (2022/05/19)
 
     if ( this.squeezeDepthwise ) {
