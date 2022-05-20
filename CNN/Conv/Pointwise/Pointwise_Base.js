@@ -167,7 +167,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
       if ( this.channelShuffler_outputGroupCount > 0 ) {
 
 //!!! ...unfinished... (2022/05/20)
-        // Perhaps, deprecate this speciall case. Since pointwise2 always exists now.
+        // Perhaps, deprecate this special case. Since pointwise2 always exists now.
         // So assert if executed here.
         tf.util.assert( false,
           `Pointwise.Base.setup_bPointwise_pfn(): `
