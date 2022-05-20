@@ -45,9 +45,6 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
-
-//!!! ...unfinished... (2022/05/19) ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx
-
  * @member {number} nSqueezeExcitationChannelCountDivisor
  *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
  * (Please see also SqueezeExcitation.Base.nSqueezeExcitationChannelCountDivisor explanation.)
@@ -57,7 +54,7 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  *
  * @member {number} inputWidth
  *   The width of the input tensor. (Please see also SqueezeExcitation.Base.bSqueeze explanation.)
- * *
+ *
  * @member {number} inputChannelCount
  *   The channel count of the input tensor. It must be greater than zero (> 0).
  *
@@ -79,9 +76,6 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  *     - ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-2)
  *       - no squeeze, no excitation, no multiply.
  *
-
-//!!! ...unfinished... (2022/05/20) should return the SqueezeExcitation.Base.bSqueeze if ( bSqueezeExcitation == true ).
-
  * @member {boolean} bSqueeze
  *   Whether squeeze-and-excitation has squeeze. It is only meaningful when ( bSqueezeExcitation == true ). It is always false
  * if ( bSqueezeExcitation == false ). (Please see also SqueezeExcitation.Base.bSqueeze explanation.)
@@ -96,10 +90,7 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  * @member {function} apply
  *   A method accepts one parameter inputTensor (tf.tensor3d) and return an outputTensor (tf.tensor3d). All intermediate tensors
  * will be disposed. The inputTensor may or may not be disposed (according to setKeepInputTensor()). In fact, this method calls one
-
-//!!! ...unfinished... (2022/05/19)
-
- * of Base.???() according to the parameters.
+ * of Base.squeezeExcitation_pointwise(), Base.pointwise() according to the parameters.
  *
  * @see SqueezeExcitation.Base
  * @see Pointwise.SameWhenPassThrough
@@ -107,7 +98,6 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  */
 class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
 
-//!!! ...unfinished... (2022/05/20)
 
   /**
    */
@@ -155,7 +145,7 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
     Base.setup_pfn.call( this );
 
     if ( !this.bExisted ) { // 2. no operation at all.
-      this.boundsArraySet = new BoundsArraySet.Pointwise( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
+      this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
       this.boundsArraySet.output0.set_all_byScaleBoundsArray( inputScaleBoundsArray ); // Bypass previous to next.
 
     } else { // 3.
@@ -245,7 +235,7 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
    */
   dispose_all_sub_BoundsArraySet() {
     delete this.squeezeExcitation?.boundsArraySet;
-    delete this.pointwise.boundsArraySet;
+    delete this.pointwise?.boundsArraySet;
   }
 
   /**
@@ -351,16 +341,16 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
 
 
   /** */
-  static pointwise( inputTensor ) {
-    return this.pointwise.apply( inputTensor );
-  }
-
-  /** */
   static squeezeExcitation_pointwise( inputTensor ) {
     let t0, t1;
     t0 = this.squeezeExcitation.apply( inputTensor );
     t1 = this.pointwise.apply( t0 );
     return t1;
+  }
+
+  /** */
+  static pointwise( inputTensor ) {
+    return this.pointwise.apply( inputTensor );
   }
 
 }
