@@ -95,7 +95,7 @@ import * as Pointwise from "./Pointwise.js";
  *       - squeeze can not be done.
  *
  *     - ( inputHeight == 1 ) and ( inputWidth == 1 )
- *       - squeeze is not necessary.
+ *       - squeeze is not necessary. (already squeezed.)
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Including inferenced weights, if they are used in tensors.
@@ -135,7 +135,13 @@ class Base {
         + `inputChannelCount ( ${inputChannelCount} ) should be greater than zero (> 0).`
     );
 
-//!!! ...unfinished... (2022/05/20) bExisted
+    // Determine bExisted
+    if ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
+      this.bExisted = false;
+    } else {
+      this.bExisted = true;
+    }
+
 
 //!!! ...unfinished... (2022/05/19) Replaced by:
 //
@@ -158,17 +164,23 @@ class Base {
 //!!! ...unfinished... (2022/05/20) bExisted
 
 //!!! ...unfinished... (2022/05/20)
-//
-// If ( SqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-2),
-// (no squeeze, no excitation)
-//
-// If ( SqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 ) (-1),
-// (no squeeze, no intermediate excitation)
-//
-// If ( inputHeight <= 0 ) or ( inputWidth <= 0 ), can not squeeze.
-// If ( inputHeight == 1 ) and ( inputWidth == 1 ), it is not necessary to squeeze.
 
-    this.bSqueeze = ( inputHeight > 0 ) && ( inputWidth > 0 );
+    // Determine whether squeeze is needed.
+    if (
+            // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2), no-op
+            // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1), squeeze is not required
+            //
+            ( nSqueezeExcitationChannelCountDivisor < 0 )
+
+         || ( ( inputHeight <= 0 ) || ( inputWidth <= 0 ) ) // squeeze can not be done.
+         || ( ( inputHeight == 1 ) && ( inputWidth == 1 ) ) // squeeze is not necessary. (already squeezed.)
+       ) {
+
+      this.bSqueeze = false;
+    } else {
+      this.bSqueeze = true;
+    }
+
   }
 
   /**
