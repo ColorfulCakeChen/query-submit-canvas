@@ -37,6 +37,9 @@ import * as Pointwise from "./Pointwise.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
+ * @member {boolean} bExisted
+ *   If true, this squeeze-and-excitation exists.
+ *
 
 //!!! ...unfinished... (2022/05/19) Replaced by:
 //
@@ -59,12 +62,24 @@ import * as Pointwise from "./Pointwise.js";
  *         convolution, and excitation pointwise convolution).
  *
 
-//!!! ...unfinished... (2022/05/19) Replaced by:
+//!!! ...unfinished... (2022/05/19) Replaced by: ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx
 //
 //  *   - -2: NONE                                    (no squeeze, no excitation)
 //  *   - -1: EXCITATION_1                            (no squeeze, no intermediate excitation)
 //  *   -  0: SQUEEZE__EXCITATION_1                   (has squeeze, no intermediate excitation)
 //  *   - [ 1, 64 ]: SQUEEZE__EXCITATION_2__DIVISOR_N (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
+
+
+//!!! ...unfinished... (2022/05/20)
+//
+// If ( SqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-2),
+// (no squeeze, no excitation)
+//
+// If ( SqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 ) (-1),
+// (no squeeze, no intermediate excitation)
+//
+// If ( inputHeight <= 0 ) or ( inputWidth <= 0 ), can not squeeze.
+// If ( inputHeight == 1 ) and ( inputWidth == 1 ), it is not necessary to squeeze.
 
  * @member {number} inputHeight
  *   The height of the input tensor. If one of inputHeight and inputWidth is not positive (<= 0), there will be no squeeze step
@@ -130,6 +145,7 @@ class Base {
         + `inputChannelCount ( ${inputChannelCount} ) should be greater than zero (> 0).`
     );
 
+//!!! ...unfinished... (2022/05/20) bExisted
 
 //!!! ...unfinished... (2022/05/19) Replaced by:
 //
@@ -148,6 +164,20 @@ class Base {
     }
 
     this.outputChannelCount = inputChannelCount, // For squeeze-and-excitation, output channel count is always the same as input.
+
+//!!! ...unfinished... (2022/05/20) bExisted
+
+//!!! ...unfinished... (2022/05/20)
+//
+// If ( SqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-2),
+// (no squeeze, no excitation)
+//
+// If ( SqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 ) (-1),
+// (no squeeze, no intermediate excitation)
+//
+// If ( inputHeight <= 0 ) or ( inputWidth <= 0 ), can not squeeze.
+// If ( inputHeight == 1 ) and ( inputWidth == 1 ), it is not necessary to squeeze.
+
     this.bSqueeze = ( inputHeight > 0 ) && ( inputWidth > 0 );
   }
 
