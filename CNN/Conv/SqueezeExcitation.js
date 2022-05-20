@@ -175,7 +175,6 @@ class Base extends ReturnOrClone.Base {
     } else {
       this.bSqueeze = true;
     }
-
   }
 
   /**
@@ -350,36 +349,36 @@ class Base extends ReturnOrClone.Base {
     if ( bKeepInputTensor == this.bKeepInputTensor )
       return;
 
-//!!! ...unfinished... (2022/05/20) if (-2) NONE (no squeeze, no excitation), 
-//       // Since there is no operation at all, let apply ignore pfnConv completely.
-//       if ( bKeepInputTensor ) {
-//         this.apply = this.pfnConv = Base.keep_input_return_copy;
-//       } else {
-//         this.apply = this.pfnConv = Base.return_input_directly;
-//       }
-
-
     this.bKeepInputTensor = bKeepInputTensor;
-    if ( bKeepInputTensor ) {
+
+    if ( this.bExisted ) {
 
       // Note: The first operation is responsible for keep inputTensor. All other operations should always destroy inputTensor.
-      if ( this.squeezeDepthwise ) {
-        this.squeezeDepthwise.setKeepInputTensor( true );
-        this.intermediatePointwise.setKeepInputTensor( false );
-        this.excitationPointwise.setKeepInputTensor( false );
-      } else {
-        if ( this.intermediatePointwise ) {
-          this.intermediatePointwise.setKeepInputTensor( true );
+      if ( bKeepInputTensor ) {
+        if ( this.squeezeDepthwise ) {
+          this.squeezeDepthwise.setKeepInputTensor( true );
+          this.intermediatePointwise.setKeepInputTensor( false );
           this.excitationPointwise.setKeepInputTensor( false );
         } else {
-          this.excitationPointwise.setKeepInputTensor( true );
+          if ( this.intermediatePointwise ) {
+            this.intermediatePointwise.setKeepInputTensor( true );
+            this.excitationPointwise.setKeepInputTensor( false );
+          } else {
+            this.excitationPointwise.setKeepInputTensor( true );
+          }
         }
+      } else {
+        this.squeezeDepthwise?.setKeepInputTensor( false );
+        this.intermediatePointwise?.setKeepInputTensor( false );
+        this.excitationPointwise.setKeepInputTensor( false );
       }
 
-    } else {
-      this.squeezeDepthwise?.setKeepInputTensor( false );
-      this.intermediatePointwise?.setKeepInputTensor( false );
-      this.excitationPointwise.setKeepInputTensor( false );
+    } else { // There is no operation at all.
+      if ( bKeepInputTensor ) {
+        this.apply = Base.keep_input_return_copy;
+      } else {
+        this.apply = Base.return_input_directly;
+      }
     }
   }
 
