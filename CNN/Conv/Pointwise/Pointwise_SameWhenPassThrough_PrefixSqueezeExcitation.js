@@ -47,15 +47,6 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
 
 //!!! ...unfinished... (2022/05/19) ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx
 
-//!!! ...unfinished... (2022/05/19) Replaced by:
-//
-//  *   - -2: NONE                                    (no squeeze, no excitation)
-//  *   - -1: EXCITATION_1                            (no squeeze, no intermediate excitation)
-//  *   -  0: SQUEEZE__EXCITATION_1                   (has squeeze, no intermediate excitation)
-//  *   - [ 1, 64 ]: SQUEEZE__EXCITATION_2__DIVISOR_N (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
-
-
-
  * @member {number} nSqueezeExcitationChannelCountDivisor
  *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
  * (Please see also SqueezeExcitation.Base.nSqueezeExcitationChannelCountDivisor explanation.)
@@ -75,8 +66,15 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  * @member {ValueDesc.Pointwise_HigherHalfDifferent} nHigherHalfDifferent
  *   The HigherHalfDifferent type for pointwise convolution.
  *
+ * @member {boolean} bExisted
+ *   If true, this operation exists. If false, this object is a no-op (i.e. no squeeze-and-excitation, no pointwise).
+ *
  * @member {boolean} bSqueezeExcitation
- *   Whether squeeze-and-excitation exists. It will be true if ( nSqueezeExcitationChannelCountDivisor >= 0 ).
+ *   If true, the squeeze-and-excitation exists. It will be false in the following cases:
+ *
+ *     - ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-2)
+ *       - no squeeze, no excitation, no multiply.
+ *       - This object is just a no-op.
  *
 
 //!!! ...unfinished... (2022/05/20) should return the SqueezeExcitation.Base.bSqueeze if ( bSqueezeExcitation == true ).
@@ -106,7 +104,7 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  */
 class SameWhenPassThrough_PrefixSqueezeExcitation {
 
-//!!! ...unfinished... (2022/05/19)
+//!!! ...unfinished... (2022/05/20)
 
   /**
    */
@@ -126,6 +124,9 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
     this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
     this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
+
+//!!! ...unfinished... (2022/05/20) bExisted
+// If ( outputChannelCount <= 0 ), no squeeze-and-excitation and no pointwise.
 
 !!!
     // ( nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-1)      
@@ -275,6 +276,20 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
   }
 
 
+  get bExisted() {
+
+//!!! ...unfinished... (2022/05/20) bExisted
+// If ( outputChannelCount <= 0 ), no squeeze-and-excitation and no pointwise.
+
+    return this.pointwise.bExisted;
+  }
+
+  get bSqueeze() {
+    if ( !this.squeezeExcitation )
+      return false; // Since no squeeze-and-excitation, there will be no squeeze.
+    return this.squeezeExcitation.bSqueeze;
+  }
+
 
 //!!! ...unfinished... (2022/05/19)
 
@@ -319,12 +334,6 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
     t1 = tf.mul( inputTensor, t0 );
     t0.dispose();
     return t1;
-  }
-
-  get bSqueeze() {
-    if ( !this.squeezeExcitation )
-      return false; // Since no squeeze-and-excitation, there will be no squeeze.
-    return this.squeezeExcitation.bSqueeze;
   }
 
 }
