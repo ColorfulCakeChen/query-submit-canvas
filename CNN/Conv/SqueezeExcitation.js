@@ -140,41 +140,6 @@ class Base extends ReturnOrClone.Base {
       `SqueezeExcitation.Base.constructor(): `
         + `inputChannelCount ( ${inputChannelCount} ) should be greater than zero (> 0).`
     );
-
-    // Determine bExisted
-    if ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
-      this.bExisted = false;
-    } else {
-      this.bExisted = true;
-    }
-
-    // Determine intermediateChannelCount
-    if ( nSqueezeExcitationChannelCountDivisor <= 0 ) {
-      this.intermediateChannelCount = this.intermediate_inputChannelCount_lowerHalf = this.intermediate_outputChannelCount_lowerHalf = 0;
-    } else {
-      this.intermediateChannelCount = Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor );
-      this.intermediate_inputChannelCount_lowerHalf = Math.ceil( inputChannelCount_lowerHalf / nSqueezeExcitationChannelCountDivisor );
-      this.intermediate_outputChannelCount_lowerHalf = Math.ceil( outputChannelCount_lowerHalf / nSqueezeExcitationChannelCountDivisor );
-    }
-
-    // Determine outputChannelCount
-    this.outputChannelCount = inputChannelCount; // For squeeze-and-excitation, output channel count is always the same as input.
-
-    // Determine bSqueeze
-    if (
-            // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2), no-op
-            // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1), squeeze is not required
-            //
-            ( nSqueezeExcitationChannelCountDivisor < 0 )
-
-         || ( ( inputHeight <= 0 ) || ( inputWidth <= 0 ) ) // squeeze can not be done.
-         || ( ( inputHeight == 1 ) && ( inputWidth == 1 ) ) // squeeze is not necessary. (already squeezed.)
-       ) {
-
-      this.bSqueeze = false;
-    } else {
-      this.bSqueeze = true;
-    }
   }
 
   /**
@@ -194,6 +159,10 @@ class Base extends ReturnOrClone.Base {
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
     // 1. Determine operation functions.
+    Base.setup_bExisted.call( this );
+    Base.setup_intermediateChannelCount.call( this );
+    Base.setup_outputChannelCount.call( this );
+    Base.setup_bSqueeze.call( this );
     Base.setup_pfn.call( this );
 
     // 2. Initialize sub-operations.
@@ -383,34 +352,86 @@ class Base extends ReturnOrClone.Base {
   }
 
 
+  /** Determine data member this.bExisted
+   *
+   * @param {Base} this  The Base object to be determined and modified.
+   */
+  static setup_bExisted() {
+    if ( this.nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
+      this.bExisted = false;
+    } else {
+      this.bExisted = true;
+    }
+  }
+
+  /** Determine data member this.intermediateChannelCount
+   *
+   * @param {Base} this  The Base object to be determined and modified.
+   */
+  static setup_intermediateChannelCount() {
+    if ( this.nSqueezeExcitationChannelCountDivisor <= 0 ) {
+      this.intermediateChannelCount = this.intermediate_inputChannelCount_lowerHalf = this.intermediate_outputChannelCount_lowerHalf = 0;
+    } else {
+      this.intermediateChannelCount
+        = Math.ceil( this.inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
+      this.intermediate_inputChannelCount_lowerHalf
+        = Math.ceil( this.inputChannelCount_lowerHalf / this.nSqueezeExcitationChannelCountDivisor );
+      this.intermediate_outputChannelCount_lowerHalf
+        = Math.ceil( this.outputChannelCount_lowerHalf / this.nSqueezeExcitationChannelCountDivisor );
+    }
+  }
+
+  /** Determine data member this.outputChannelCount
+   *
+   * @param {Base} this  The Base object to be determined and modified.
+   */
+  static setup_outputChannelCount() {
+    this.outputChannelCount = this.inputChannelCount; // For squeeze-and-excitation, output channel count is always the same as input.
+  }
+
+  /** Determine data member this.bSqueeze
+   *
+   * @param {Base} this  The Base object to be determined and modified.
+   */
+  static setup_outputChannelCount() {
+    if (
+            // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2), no-op
+            // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1), squeeze is not required
+            //
+            ( this.nSqueezeExcitationChannelCountDivisor < 0 )
+
+         || ( ( this.inputHeight <= 0 ) || ( this.inputWidth <= 0 ) ) // squeeze can not be done.
+         || ( ( this.inputHeight == 1 ) && ( this.inputWidth == 1 ) ) // squeeze is not necessary. (already squeezed.)
+       ) {
+
+      this.bSqueeze = false;
+    } else {
+      this.bSqueeze = true;
+    }
+  }
+
   /** Determine data member this.apply.
    *
    * @param {Base} this
    *   The Base object to be determined and modified.
    */
   static setup_pfn() {
-
-//!!! ...unfinished... (2022/05/20) if (-2) NONE (no squeeze, no excitation), 
-//       // Since there is no operation at all, let apply ignore pfnConv completely.
-//       if ( bKeepInputTensor ) {
-//         this.apply = this.pfnConv = Base.keep_input_return_copy;
-//       } else {
-//         this.apply = this.pfnConv = Base.return_input_directly;
-//       }
-
-
-    if ( this.bSqueeze ) {
-      if ( this.intermediateChannelCount > 0 ) {
-        this.apply = Base.squeeze_intermediate_excitation;
+    if ( this.bExisted ) {
+      if ( this.bSqueeze ) {
+        if ( this.intermediateChannelCount > 0 ) {
+          this.apply = Base.squeeze_intermediate_excitation;
+        } else {
+          this.apply = Base.squeeze_excitation;
+        }
       } else {
-        this.apply = Base.squeeze_excitation;
+        if ( this.intermediateChannelCount > 0 ) {
+          this.apply = Base.intermediate_excitation;
+        } else {
+          this.apply = Base.excitation;
+        }
       }
-    } else {
-      if ( this.intermediateChannelCount > 0 ) {
-        this.apply = Base.intermediate_excitation;
-      } else {
-        this.apply = Base.excitation;
-      }
+    } else { // There is no operation at all.
+      this.apply = Base.return_input_directly;
     }
   }
 
