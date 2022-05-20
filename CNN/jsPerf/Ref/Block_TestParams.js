@@ -819,6 +819,19 @@ class Base extends TestParams.Base {
 
 
 //!!! ...unfinished... (2022/05/19) nSqueezeExcitationChannelCountDivisor, ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx
+//   "pointwise21Excitation1Filters", // pointwise21's squeeze-and-excitation's excitation1
+//   "pointwise21Excitation1Biases",
+//
+//   "pointwise21Excitation2Filters", // pointwise21's squeeze-and-excitation's excitation2
+//   "pointwise21Excitation2Biases",
+//
+//
+//   "pointwise22Excitation1Filters", // pointwise22's squeeze-and-excitation's excitation1
+//   "pointwise22Excitation1Biases",
+//
+//   "pointwise22Excitation2Filters", // pointwise22's squeeze-and-excitation's excitation2
+//   "pointwise22Excitation2Biases",
+
 
 
     // Pointwise21
@@ -934,11 +947,23 @@ Base.paramsNameOrderArray = [
   "depthwise2Filters",
   "depthwise2Biases",
 
+  "pointwise21Excitation1Filters", // pointwise21's squeeze-and-excitation's excitation1
+  "pointwise21Excitation1Biases",
+
+  "pointwise21Excitation2Filters", // pointwise21's squeeze-and-excitation's excitation2
+  "pointwise21Excitation2Biases",
+
   "pointwise21Filters",
   "pointwise21Biases",
 
   "pointwise212Filters",
   "pointwise212Biases",
+
+  "pointwise22Excitation1Filters", // pointwise22's squeeze-and-excitation's excitation1
+  "pointwise22Excitation1Biases",
+
+  "pointwise22Excitation2Filters", // pointwise22's squeeze-and-excitation's excitation2
+  "pointwise22Excitation2Biases",
 
   "pointwise22Filters",
   "pointwise22Biases",
