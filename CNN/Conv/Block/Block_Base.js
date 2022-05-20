@@ -15,13 +15,6 @@ import * as ConcatShuffleSplit from "../ConcatShuffleSplit.js";
 import * as TensorOpCounter from "../TensorOpCounter.js";
 import { Params } from "./Block_Params.js";
 
-
-//!!! ...unfinished... (2021/08/18)
-// tf.batchNorm() is faster than tf.add() when with broadcasting by CPU.
-// Whether batchNorm could be used as bias? even activation function?
-//
-
-
 /**
  * One step of one block of convolution neural network. There are at most three convolutions inside this object.
  *   - 1x1 pointwise convolution: change channel count. (exapnd)
@@ -679,8 +672,6 @@ class Base extends ReturnOrClone.Base {
     let inputHeight_SqueezeExcitation = this.depthwise1.outputHeight;
     let inputWidth_SqueezeExcitation = this.depthwise1.outputHeight;
 
-//!!! ...unfinished... (2022/05/19) squeeze-and-excitation, nSqueezeExcitationChannelCountDivisor
-
     // 5.1 Pointwise21
     //
     // Note:
@@ -690,7 +681,20 @@ class Base extends ReturnOrClone.Base {
     //       the pointwise21 will exist (i.e. ( pointwise21.bExisted == true ) ). Otherwise, the output channels could not be shuffled.
     //       In this case, it will pass through all input to output, but the output will be channel shuffled.
     //
-    this.pointwise21 = new Pointwise.SameWhenPassThrough(
+
+//!!! (2022/05/20 Remarked) Replaced by Pointwise.SameWhenPassThrough_PrefixSqueezeExcitation
+//    this.pointwise21 = new Pointwise.SameWhenPassThrough(
+//       this.channelCount_concat1After_pointwise2Before,
+//       this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
+//       nHigherHalfDifferent_pointwise2,
+//       inputChannelCount_lowerHalf_pointwise2, outputChannelCount_lowerHalf_pointwise2,
+//       channelShuffler_outputGroupCount_pointwise2
+//     );
+
+//!!! ...unfinished... (2022/05/19) squeeze-and-excitation, nSqueezeExcitationChannelCountDivisor
+
+    this.pointwise21 = new Pointwise.SameWhenPassThrough_PrefixSqueezeExcitation(
+      this.nSqueezeExcitationChannelCountDivisor, inputHeight_SqueezeExcitation, inputWidth_SqueezeExcitation,
       this.channelCount_concat1After_pointwise2Before,
       this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
       nHigherHalfDifferent_pointwise2,
@@ -712,13 +716,22 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_pointwise21After_concat2Before = 0;  // No first pointwise2 convolution.
     }
 
-
-//!!! ...unfinished... (2022/05/18) squeeze-and-excitation
-
     // 5.2 Pointwise22
     if ( this.pointwise22ChannelCount > 0 ) {
 
-      this.pointwise22 = new Pointwise.SameWhenPassThrough(
+//!!! (2022/05/20 Remarked) Replaced by Pointwise.SameWhenPassThrough_PrefixSqueezeExcitation
+//       this.pointwise22 = new Pointwise.SameWhenPassThrough(
+//         this.channelCount_concat1After_pointwise2Before,
+//         this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
+//         nHigherHalfDifferent_pointwise2,
+//         inputChannelCount_lowerHalf_pointwise2, outputChannelCount_lowerHalf_pointwise2,
+//         channelShuffler_outputGroupCount_pointwise2
+//       );
+
+//!!! ...unfinished... (2022/05/18) squeeze-and-excitation
+
+      this.pointwise22 = new Pointwise.SameWhenPassThrough_PrefixSqueezeExcitation(
+        this.nSqueezeExcitationChannelCountDivisor, inputHeight_SqueezeExcitation, inputWidth_SqueezeExcitation,
         this.channelCount_concat1After_pointwise2Before,
         this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
         nHigherHalfDifferent_pointwise2,
