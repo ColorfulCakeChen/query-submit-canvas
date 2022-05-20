@@ -2,6 +2,7 @@ export { Base };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as BoundsArraySet from "./BoundsArraySet.js";
+import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as Depthwise from "./Depthwise.js";
 import * as Pointwise from "./Pointwise.js";
 
@@ -37,9 +38,6 @@ import * as Pointwise from "./Pointwise.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
- * @member {boolean} bExisted
- *   If true, this squeeze-and-excitation exists. If false, this object is a no-op (i.e. no squeeze, no excitation, no multiply).
- *
  * @member {number} nSqueezeExcitationChannelCountDivisor
  *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
  *
@@ -74,9 +72,17 @@ import * as Pointwise from "./Pointwise.js";
  * @member {ValueDesc.Pointwise_HigherHalfDifferent} nPointwise_HigherHalfDifferent
  *   The HigherHalfDifferent type for pointwise convolution in squeeze-and-excitation.
  *
+ * @member {boolean} bExisted
+ *   If true, this squeeze-and-excitation exists. If false, this object is a no-op (i.e. no squeeze, no excitation, no multiply).
+ *
  * @member {number} intermediateChannelCount
  *   The channel count of intermediate pointwise convolution.
+ *
  *     - If ( nSqueezeExcitationChannelCountDivisor <= 0 ), it will be 0 (i.e. no intermediate pointwise convolution).
+ *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2)
+ *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1)
+ *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION_1 (0)
+ *
  *     - If ( nSqueezeExcitationChannelCountDivisor > 0 ), it will be Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor ).
  *
  * @member {number} outputChannelCount
@@ -111,7 +117,7 @@ import * as Pointwise from "./Pointwise.js";
  * according to the parameters.
  *
  */
-class Base {
+class Base extends ReturnOrClone.Base {
 
   /**
    *
@@ -142,15 +148,7 @@ class Base {
       this.bExisted = true;
     }
 
-
-//!!! ...unfinished... (2022/05/19) Replaced by:
-//
-//  *   - -2: NONE                                    (no squeeze, no excitation)
-//  *   - -1: EXCITATION_1                            (no squeeze, no intermediate excitation)
-//  *   -  0: SQUEEZE__EXCITATION_1                   (has squeeze, no intermediate excitation)
-//  *   - [ 1, 64 ]: SQUEEZE__EXCITATION_2__DIVISOR_N (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
-
-
+    // Determine intermediateChannelCount
     if ( nSqueezeExcitationChannelCountDivisor <= 0 ) {
       this.intermediateChannelCount = this.intermediate_inputChannelCount_lowerHalf = this.intermediate_outputChannelCount_lowerHalf = 0;
     } else {
@@ -159,13 +157,10 @@ class Base {
       this.intermediate_outputChannelCount_lowerHalf = Math.ceil( outputChannelCount_lowerHalf / nSqueezeExcitationChannelCountDivisor );
     }
 
-    this.outputChannelCount = inputChannelCount, // For squeeze-and-excitation, output channel count is always the same as input.
+    // Determine outputChannelCount
+    this.outputChannelCount = inputChannelCount; // For squeeze-and-excitation, output channel count is always the same as input.
 
-//!!! ...unfinished... (2022/05/20) bExisted
-
-//!!! ...unfinished... (2022/05/20)
-
-    // Determine whether squeeze is needed.
+    // Determine bSqueeze
     if (
             // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2), no-op
             // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1), squeeze is not required
