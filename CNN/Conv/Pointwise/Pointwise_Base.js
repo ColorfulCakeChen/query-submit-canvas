@@ -73,7 +73,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     this.disposeTensors();
 
     // 1. Determine operation functions.
-    Base.Setup_bPointwise_pfn.call( this );
+    Base.setup_bPointwise_pfn.call( this );
 
     let bExtractOk;
     if ( !this.bPointwise ) {
@@ -157,7 +157,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
    * @param {Base} this
    *   The Base object to be determined and modified.
    */
-  static Setup_bPointwise_pfn() {
+  static setup_bPointwise_pfn() {
 
     // 0. Determine whether pointwise operation should exist.
     if ( this.outputChannelCount > 0 ) {
