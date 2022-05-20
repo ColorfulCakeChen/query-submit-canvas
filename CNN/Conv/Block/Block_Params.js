@@ -185,27 +185,9 @@ class Params extends Weights.Params {
    * extracted from inputFloat32Array (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this activation function
    * will also be ignored.
    *
-
-//!!! ...unfinished... (2022/05/19) Replaced by:
-//
-//  *   - -2: NONE                                    (no squeeze, no excitation)
-//  *   - -1: EXCITATION_1                            (no squeeze, no intermediate excitation)
-//  *   -  0: SQUEEZE__EXCITATION_1                   (has squeeze, no intermediate excitation)
-//  *   - [ 1, 64 ]: SQUEEZE__EXCITATION_2__DIVISOR_N (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
-
-
    * @param {number} nSqueezeExcitationChannelCountDivisor
-   *   An integer which is the channel count divisor for intermediate pointwise convolution channel count.
-   *
-   *     - If ( nSqueezeExcitationChannelCountDivisor < 0 ), there will be no squeeze-and-excitation.
-   *         (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-1))
-   *
-   *     - If ( nSqueezeExcitationChannelCountDivisor == 0 ), there will be squeeze-and-excitation with only one pointwise convolution
-   *         (i.e. excitation pointwise convolution). 
-   *         (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.ONE_EXCITATION (0)) 
-   *
-   *     - If ( nSqueezeExcitationChannelCountDivisor > 0 ), there will be squeeze-and-excitation with two pointwise convolutions
-   *         (i.e. intermediate pointwise convolution, and excitation pointwise convolution).
+   *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
+   * (Please see also SqueezeExcitation.Base.nSqueezeExcitationChannelCountDivisor explanation.)
    *
    * @param {number} pointwise21ChannelCount
    *   The output channel count of the first pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
