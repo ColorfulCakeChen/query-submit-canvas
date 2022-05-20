@@ -72,9 +72,11 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  * @member {boolean} bSqueezeExcitation
  *   If true, the squeeze-and-excitation exists. It will be false in the following cases:
  *
+ *     - ( this.bExisted == false )
+ *       - no squeeze, no excitation, no multiply, no pointwise.
+ *
  *     - ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-2)
  *       - no squeeze, no excitation, no multiply.
- *       - This object is just a no-op.
  *
 
 //!!! ...unfinished... (2022/05/20) should return the SqueezeExcitation.Base.bSqueeze if ( bSqueezeExcitation == true ).
@@ -124,18 +126,6 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
     this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
     this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
-
-//!!! ...unfinished... (2022/05/20) bExisted
-// If ( outputChannelCount <= 0 ), no squeeze-and-excitation and no pointwise.
-//
-// Problem: ( outputChannelCount <= 0 ) but ( channelShuffler_outputGroupCount > 0 ),
-//          the pointwise still exists (all-pass-through-and-channel-shuffling).
-//
-//
-
-!!!
-    // ( nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-1)      
-    this.bSqueezeExcitation = ( nSqueezeExcitationChannelCountDivisor >= 0 );
   }
 
   /**
@@ -155,56 +145,62 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
     // 1. Determine operation functions.
+    Base.setup_bExisted.call( this );
+    Base.setup_bSqueezeExcitation.call( this );
     Base.setup_pfn.call( this );
 
-    // 2. Initialize sub-operations.
+//!!!
+    if ( this.bExisted ) {
 
-    // 2.1 squeezeExcitation
-    let squeezeExcitation_boundsArraySet_output0;
-    if ( this.bSqueezeExcitation ) {
-      this.squeezeExcitation = new SqueezeExcitation.Base(
-        this.nSqueezeExcitationChannelCountDivisor, this.inputHeight, this.inputWidth,
-        this.inputChannelCount, this.nActivationId,
-        this.nHigherHalfDifferent, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf );
+      // 2. Initialize sub-operations.
 
-      if ( !this.squeezeExcitation.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
-        return false;  // e.g. input array does not have enough data.
-      this.byteOffsetEnd = this.squeezeExcitation.byteOffsetEnd;
+      // 2.1 squeezeExcitation
+      let squeezeExcitation_boundsArraySet_output0;
+      if ( this.bSqueezeExcitation ) {
+        this.squeezeExcitation = new SqueezeExcitation.Base(
+          this.nSqueezeExcitationChannelCountDivisor, this.inputHeight, this.inputWidth,
+          this.inputChannelCount, this.nActivationId,
+          this.nHigherHalfDifferent, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf );
 
-      this.tensorWeightCountTotal += this.squeezeExcitation.tensorWeightCountTotal;
-      this.tensorWeightCountExtracted += this.squeezeExcitation.tensorWeightCountExtracted;
+        if ( !this.squeezeExcitation.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
+          return false;  // e.g. input array does not have enough data.
+        this.byteOffsetEnd = this.squeezeExcitation.byteOffsetEnd;
 
-      squeezeExcitation_boundsArraySet_output0 = this.squeezeExcitation.boundsArraySet.output0;
-    } else {
-      squeezeExcitation_boundsArraySet_output0 = inputScaleBoundsArray;
-    }
+        this.tensorWeightCountTotal += this.squeezeExcitation.tensorWeightCountTotal;
+        this.tensorWeightCountExtracted += this.squeezeExcitation.tensorWeightCountExtracted;
 
-    // 2.2 pointwise
-    {
-      this.pointwise = new SameWhenPassThrough(
-        this.inputChannelCount, this.outputChannelCount, this.bBias, this.nActivationId,
-        this.nHigherHalfDifferent,
-        this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,
-        this.channelShuffler_outputGroupCount );
-
-      if ( !this.pointwise.init( inputFloat32Array, this.byteOffsetEnd, squeezeExcitation_boundsArraySet_output0 ) )
-        return false;  // e.g. input array does not have enough data.
-      this.byteOffsetEnd = this.excitationPointwise.byteOffsetEnd;
-
-      this.tensorWeightCountTotal += this.pointwise.tensorWeightCountTotal;
-      this.tensorWeightCountExtracted += this.pointwise.tensorWeightCountExtracted;
-    }
-
-    // 3. BoundsArraySet
-    {
-      { // Build self BoundsArraySet.
-        this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, null,
-          this.pointwise.boundsArraySet.output0.channelCount, 0 );
-
-        this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.pointwise.boundsArraySet );
+        squeezeExcitation_boundsArraySet_output0 = this.squeezeExcitation.boundsArraySet.output0;
+      } else {
+        squeezeExcitation_boundsArraySet_output0 = inputScaleBoundsArray;
       }
 
-      this.dispose_all_sub_BoundsArraySet(); // For reduce memory footprint.
+      // 2.2 pointwise
+      {
+        this.pointwise = new SameWhenPassThrough(
+          this.inputChannelCount, this.outputChannelCount, this.bBias, this.nActivationId,
+          this.nHigherHalfDifferent,
+          this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,
+          this.channelShuffler_outputGroupCount );
+
+        if ( !this.pointwise.init( inputFloat32Array, this.byteOffsetEnd, squeezeExcitation_boundsArraySet_output0 ) )
+          return false;  // e.g. input array does not have enough data.
+        this.byteOffsetEnd = this.excitationPointwise.byteOffsetEnd;
+
+        this.tensorWeightCountTotal += this.pointwise.tensorWeightCountTotal;
+        this.tensorWeightCountExtracted += this.pointwise.tensorWeightCountExtracted;
+      }
+
+      // 3. BoundsArraySet
+      {
+        { // Build self BoundsArraySet.
+          this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, null,
+            this.pointwise.boundsArraySet.output0.channelCount, 0 );
+
+          this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.pointwise.boundsArraySet );
+        }
+
+        this.dispose_all_sub_BoundsArraySet(); // For reduce memory footprint.
+      }
     }
 
     this.bInitOk = true;
@@ -281,14 +277,6 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
   }
 
 
-  get bExisted() {
-
-//!!! ...unfinished... (2022/05/20) bExisted
-// If ( outputChannelCount <= 0 ), no squeeze-and-excitation and no pointwise.
-
-    return this.pointwise.bExisted;
-  }
-
   get bSqueeze() {
     if ( !this.squeezeExcitation )
       return false; // Since no squeeze-and-excitation, there will be no squeeze.
@@ -296,7 +284,45 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
   }
 
 
-//!!! ...unfinished... (2022/05/19)
+  /** Determine data member this.bExisted
+   *
+   * @param {Base} this  The Base object to be determined and modified.
+   */
+  static setup_bExisted() {
+
+//!!! ...unfinished... (2022/05/20) bExisted
+// If ( outputChannelCount <= 0 ), no squeeze-and-excitation and no pointwise.
+//
+// Problem: ( outputChannelCount <= 0 ) but ( channelShuffler_outputGroupCount > 0 ),
+//          the pointwise still exists (all-pass-through-and-channel-shuffling).
+//
+//
+
+    if ( this.outputChannelCount <= 0 ) {
+      this.bExisted = false;
+    } else {
+      this.bExisted = true;
+    }
+  }
+
+  /** Determine data member this.bSqueezeExcitation
+   *
+   * @param {Base} this  The Base object to be determined and modified.
+   */
+  static setup_bSqueezeExcitation() {
+    if ( this.bExisted == false ) {
+      this.bSqueezeExcitation = false;
+    } else {
+      if ( this.nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
+        this.bSqueezeExcitation = false;
+      } else {
+        this.bSqueezeExcitation = true;
+      }
+    }
+  }
+
+
+  //!!! ...unfinished... (2022/05/19)
 
   /** Determine data member this.apply.
    *
