@@ -38,7 +38,7 @@ import * as Pointwise from "./Pointwise.js";
  * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
  * @member {boolean} bExisted
- *   If true, this squeeze-and-excitation exists.
+ *   If true, this squeeze-and-excitation exists. If false, this object is a no-op (i.e. no squeeze, no excitation, no multiply).
  *
 
 //!!! ...unfinished... (2022/05/19) Replaced by:
