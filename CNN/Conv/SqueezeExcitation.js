@@ -323,6 +323,15 @@ class Base {
     if ( bKeepInputTensor == this.bKeepInputTensor )
       return;
 
+//!!! ...unfinished... (2022/05/20) if (-2) NONE (no squeeze, no excitation), 
+//       // Since there is no operation at all, let apply ignore pfnConv completely.
+//       if ( bKeepInputTensor ) {
+//         this.apply = this.pfnConv = Base.keep_input_return_copy;
+//       } else {
+//         this.apply = this.pfnConv = Base.return_input_directly;
+//       }
+
+
     this.bKeepInputTensor = bKeepInputTensor;
     if ( bKeepInputTensor ) {
 
@@ -354,6 +363,16 @@ class Base {
    *   The Base object to be determined and modified.
    */
   static setup_pfn() {
+
+//!!! ...unfinished... (2022/05/20) if (-2) NONE (no squeeze, no excitation), 
+//       // Since there is no operation at all, let apply ignore pfnConv completely.
+//       if ( bKeepInputTensor ) {
+//         this.apply = this.pfnConv = Base.keep_input_return_copy;
+//       } else {
+//         this.apply = this.pfnConv = Base.return_input_directly;
+//       }
+
+
     if ( this.bSqueeze ) {
       if ( this.intermediateChannelCount > 0 ) {
         this.apply = Base.squeeze_intermediate_excitation;
