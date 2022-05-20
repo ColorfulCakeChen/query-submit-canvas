@@ -322,9 +322,6 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
     }
   }
 
-
-  //!!! ...unfinished... (2022/05/19)
-
   /** Determine data member this.apply.
    *
    * @param {Base} this
@@ -335,21 +332,11 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
 //!!! ...unfinished... (2022/05/20) bExisted
 // If ( bExisted == false ) (after pointwise is created), the squeezeExcitation should also be skipped.
 
-//!!! ...unfinished... (2022/05/19)
-
     if ( this.bExisted ) {
-      if ( this.bSqueeze ) {
-        if ( this.intermediateChannelCount > 0 ) {
-          this.apply = Base.squeeze_intermediate_excitation;
-        } else {
-          this.apply = Base.squeeze_excitation;
-        }
+      if ( this.bSqueezeExcitation ) {
+        this.apply = Base.squeezeExcitation_pointwise;
       } else {
-        if ( this.intermediateChannelCount > 0 ) {
-          this.apply = Base.intermediate_excitation;
-        } else {
-          this.apply = Base.excitation;
-        }
+        this.apply = Base.pointwise;
       }
     } else { // There is no operation at all.
       this.apply = Base.return_input_directly;
@@ -357,21 +344,16 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
   }
 
 
-
-//!!! ...unfinished... (2022/05/19)
+  /** */
+  static pointwise( inputTensor ) {
+    return this.pointwise.apply( inputTensor );
+  }
 
   /** */
-  static squeeze_intermediate_excitation( inputTensor ) {
-
-//!!! ...unfinished... (2022/05/19)
-
+  static squeezeExcitation_pointwise( inputTensor ) {
     let t0, t1;
-    t0 = this.squeezeDepthwise.apply( inputTensor );
-    t1 = this.intermediatePointwise.apply( t0 );
-    t0 = this.excitationPointwise.apply( t1 );
-
-    t1 = tf.mul( inputTensor, t0 );
-    t0.dispose();
+    t0 = this.squeezeExcitation.apply( inputTensor );
+    t1 = this.pointwise.apply( t0 );
     return t1;
   }
 
