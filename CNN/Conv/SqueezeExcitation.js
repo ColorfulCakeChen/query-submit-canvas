@@ -157,7 +157,6 @@ class Base extends ReturnOrClone.Base {
     this.disposeTensors();
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
-    this.tensorWeightCountExtracted = this.tensorWeightCountTotal = 0;
 
     // 1. Determine operation functions.
     Base.setup_bExisted.call( this );
