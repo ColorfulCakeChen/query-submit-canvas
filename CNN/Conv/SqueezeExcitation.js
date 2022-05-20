@@ -322,7 +322,7 @@ class Base extends ReturnOrClone.Base {
 
     if ( this.bExisted ) {
 
-      // Note: The first operation is responsible for keep inputTensor. All other operations should always destroy inputTensor.
+      // Note: The first operation is responsible for keeping inputTensor. All other operations should always destroy inputTensor.
       if ( bKeepInputTensor ) {
         if ( this.squeezeDepthwise ) {
           this.squeezeDepthwise.setKeepInputTensor( true );
