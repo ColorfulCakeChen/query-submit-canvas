@@ -88,6 +88,9 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  *          (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *          The output channels will be arranged just like applying channel shuffler on them.
  *
+
+//!!! ...unfinished... (2022/05/20) Perhaps, deprecate this special case. Since pointwise2 always exists now.
+
  *    - 4.2 If ( outputChannelCount <= 0 ), the filters will just pass through all input channels to output. In this case,
  *        the ( bPointwise == bExisted == true ) (not false), although the specified outputChannelCount is zero. And, it
  *        will always have no biases (no matter how bBias is).
@@ -340,7 +343,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           } else { // ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
 
 //!!! ...unfinished... (2022/05/20)
-            // Perhaps, deprecate this speciall case. Since pointwise2 always exists now.
+            // Perhaps, deprecate this special case. Since pointwise2 always exists now.
             // So assert if executed here.
             tf.util.assert( false,
               `Pointwise.FiltersArray_BiasesArray.init(): `
@@ -397,7 +400,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     // filters and bias: weights and value bounds.
     //
     // It should be better to calculate per channel value bounds by real filter and bias value (i.e. not by an estimated value bounds).
-    // This is especially important for ActivationEscaping. Because inputDomainLinear of activation function is not wide, using looser
+    // This is especialy important for ActivationEscaping. Because inputDomainLinear of activation function is not wide, using looser
     // value bounds estimation has higher possibility to lost information.
     //
     // Two-rounds processing is used:
