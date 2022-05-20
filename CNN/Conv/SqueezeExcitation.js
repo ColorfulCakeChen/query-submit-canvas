@@ -41,7 +41,7 @@ import * as Pointwise from "./Pointwise.js";
  *   If true, this squeeze-and-excitation exists. If false, this object is a no-op (i.e. no squeeze, no excitation, no multiply).
  *
  * @member {number} nSqueezeExcitationChannelCountDivisor
- *   An integer which is the channel count divisor for intermediate pointwise convolution channel count.
+ *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
  *
  *     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2)
  *       - no squeeze, no excitation, no multiply.
