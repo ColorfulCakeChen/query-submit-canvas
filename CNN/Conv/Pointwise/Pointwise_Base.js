@@ -56,7 +56,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
    * set of this pointwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
    *
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
-   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
    *
    * @return {boolean} Return true, if succeeded.
