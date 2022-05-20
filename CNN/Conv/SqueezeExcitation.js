@@ -82,26 +82,20 @@ import * as Pointwise from "./Pointwise.js";
  * @member {number} outputChannelCount
  *   Always the same as inputChannelCount.
  *
-//!!! ...unfinished... (2022/05/20)
-//
-// If ( SqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-2),
-// (no squeeze, no excitation)
-//
-// If ( SqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 ) (-1),
-// (no squeeze, no intermediate excitation)
-//
-// If ( inputHeight <= 0 ) or ( inputWidth <= 0 ), can not squeeze.
-// If ( inputHeight == 1 ) and ( inputWidth == 1 ), it is not necessary to squeeze.
-
  * @member {boolean} bSqueeze
- *   Whether squeeze step is necessary. If one of inputHeight and inputWidth is not positive (<= 0), bSqueeze will be false
- * (i.e. no squeeze step (i.e. no global average pooling)).
+ *   Whether squeeze (i.e. global average pooling) exists. It will be false in the following cases:
  *
- *     - If ( inputHeight <= 0 ) or ( inputWidth <= 0 ), there will be no squeeze (i.e. no global average pooling) because
- *         it can not be done.
+ *     - ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-2)
+ *       - since this object is just a no-op.
  *
- *     - If ( inputHeight == 1 ) and ( inputWidth == 1 ), there will be no squeeze (i.e. no global average pooling) because
- *         it is not necessary.
+ *     - ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 ) (-1)
+ *       - squeeze is not required.
+ *
+ *     - ( inputHeight <= 0 ) or ( inputWidth <= 0 )
+ *       - squeeze can not be done.
+ *
+ *     - ( inputHeight == 1 ) and ( inputWidth == 1 )
+ *       - squeeze is not necessary.
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Including inferenced weights, if they are used in tensors.
