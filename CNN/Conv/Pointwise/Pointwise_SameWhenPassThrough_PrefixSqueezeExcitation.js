@@ -137,9 +137,13 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
    *   The element value bounds (per channel) of input. Usually, it is The .output of the previous operation value bounds set
    * of this operation. It will be kept (not cloned) directly. So caller should not modify them.
    *
+   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
+   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
+   * and improve performance when doing Interleave_asGrouptTwo.
+   *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray ) {
+  init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo ) {
 
     this.disposeTensors();
 
@@ -183,7 +187,8 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
           this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,
           this.channelShuffler_outputGroupCount );
 
-        if ( !this.pointwise.init( inputFloat32Array, this.byteOffsetEnd, squeezeExcitation_boundsArraySet_output0 ) )
+        if ( !this.pointwise.init(
+                inputFloat32Array, this.byteOffsetEnd, squeezeExcitation_boundsArraySet_output0, arrayTemp_forInterleave_asGrouptTwo ) )
           return false;  // e.g. input array does not have enough data.
         this.byteOffsetEnd = this.excitationPointwise.byteOffsetEnd;
 
