@@ -1,6 +1,7 @@
 export { SameWhenPassThrough_PrefixSqueezeExcitation };
 
 import * as BoundsArraySet from "../BoundsArraySet.js";
+import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as SqueezeExcitation from "../SqueezeExcitation.js";
 import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
 
@@ -104,7 +105,7 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  * @see Pointwise.SameWhenPassThrough
  *
  */
-class SameWhenPassThrough_PrefixSqueezeExcitation {
+class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
 
 //!!! ...unfinished... (2022/05/20)
 
@@ -336,18 +337,22 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
 
 //!!! ...unfinished... (2022/05/19)
 
-    if ( this.squeezeDepthwise ) {
-      if ( this.intermediatePointwise ) {
-        this.apply = Base.squeeze_intermediate_excitation;
+    if ( this.bExisted ) {
+      if ( this.bSqueeze ) {
+        if ( this.intermediateChannelCount > 0 ) {
+          this.apply = Base.squeeze_intermediate_excitation;
+        } else {
+          this.apply = Base.squeeze_excitation;
+        }
       } else {
-        this.apply = Base.squeeze_excitation;
+        if ( this.intermediateChannelCount > 0 ) {
+          this.apply = Base.intermediate_excitation;
+        } else {
+          this.apply = Base.excitation;
+        }
       }
-    } else {
-      if ( this.intermediatePointwise ) {
-        this.apply = Base.intermediate_excitation;
-      } else {
-        this.apply = Base.excitation;
-      }
+    } else { // There is no operation at all.
+      this.apply = Base.return_input_directly;
     }
   }
 
