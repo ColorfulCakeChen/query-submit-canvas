@@ -338,6 +338,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             // the bAllPassThrough will be false.
 
           } else { // ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
+
+//!!! ...unfinished... (2022/05/20)
+            // Perhaps, deprecate this speciall case. Since pointwise2 always exists now.
+            // So assert if executed here.
+            tf.util.assert( false,
+              `Pointwise.FiltersArray_BiasesArray.init(): `
+                + `outputChannelCount ( ${this.outputChannelCount} ) shoulde be positive.`
+            );
+
             this.bAllPassThrough = true; // Marked for this special case.
             this.outputChannelCount_Real = this.inputChannelCount; // (Note: In this case, this.outputChannelCount is zero. So use inputChannelCount.)
             this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
