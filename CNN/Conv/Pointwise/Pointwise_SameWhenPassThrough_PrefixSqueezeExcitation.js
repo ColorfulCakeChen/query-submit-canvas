@@ -154,12 +154,15 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
     Base.setup_bSqueezeExcitation.call( this );
     Base.setup_pfn.call( this );
 
-//!!!
-    if ( this.bExisted ) {
+    if ( !this.bExisted ) { // 2. no operation at all.
+      this.boundsArraySet = new BoundsArraySet.Pointwise( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
+      this.boundsArraySet.output0.set_all_byScaleBoundsArray( inputScaleBoundsArray ); // Bypass previous to next.
 
-      // 2. Initialize sub-operations.
+    } else { // 3.
 
-      // 2.1 squeezeExcitation
+      // 3.1 Initialize sub-operations.
+
+      // 3.1.1 squeezeExcitation
       let squeezeExcitation_boundsArraySet_output0;
       if ( this.bSqueezeExcitation ) {
         this.squeezeExcitation = new SqueezeExcitation.Base(
@@ -179,7 +182,9 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
         squeezeExcitation_boundsArraySet_output0 = inputScaleBoundsArray;
       }
 
-      // 2.2 pointwise
+      // 3.1.2 pointwise
+      //
+      // Note: Even if ( this.bExisted == false ), the this.pointwise will still be created.
       {
         this.pointwise = new SameWhenPassThrough(
           this.inputChannelCount, this.outputChannelCount, this.bBias, this.nActivationId,
@@ -196,7 +201,7 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
         this.tensorWeightCountExtracted += this.pointwise.tensorWeightCountExtracted;
       }
 
-      // 3. BoundsArraySet
+      // 3.2 BoundsArraySet
       {
         { // Build self BoundsArraySet.
           this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, null,
@@ -243,9 +248,6 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
     delete this.pointwise.boundsArraySet;
   }
 
-
-//!!! ...unfinished... (2022/05/19)
-
   /**
    * The sub operations' setKeepInputTensor() will be called so that only the first operation is responsible for keeping inputTensor.
    * All other operations should always destroy inputTensor..
@@ -256,29 +258,28 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
       return;
 
     this.bKeepInputTensor = bKeepInputTensor;
-    if ( bKeepInputTensor ) {
 
+    if ( this.bExisted ) {
 
-//!!! ...unfinished... (2022/05/19)
-
-      // Note: The first operation is responsible for keep inputTensor. All other operations should always destroy inputTensor.
-      if ( this.squeezeDepthwise ) {
-        this.squeezeDepthwise.setKeepInputTensor( true );
-        this.intermediatePointwise.setKeepInputTensor( false );
-        this.excitationPointwise.setKeepInputTensor( false );
-      } else {
-        if ( this.intermediatePointwise ) {
-          this.intermediatePointwise.setKeepInputTensor( true );
-          this.excitationPointwise.setKeepInputTensor( false );
+      // Note: The first operation is responsible for keeping inputTensor. All other operations should always destroy inputTensor.
+      if ( bKeepInputTensor ) {
+        if ( this.squeezeExcitation ) {
+          this.squeezeExcitation.setKeepInputTensor( true );
+          this.pointwise.setKeepInputTensor( false );
         } else {
-          this.excitationPointwise.setKeepInputTensor( true );
+          this.pointwise.setKeepInputTensor( true );
         }
+      } else {
+        this.squeezeExcitation?.setKeepInputTensor( false );
+        this.pointwise.setKeepInputTensor( false );
       }
 
-    } else {
-      this.squeezeDepthwise?.setKeepInputTensor( false );
-      this.intermediatePointwise?.setKeepInputTensor( false );
-      this.excitationPointwise.setKeepInputTensor( false );
+    } else { // There is no operation at all.
+      if ( bKeepInputTensor ) {
+        this.apply = Base.keep_input_return_copy;
+      } else {
+        this.apply = Base.return_input_directly;
+      }
     }
   }
 
