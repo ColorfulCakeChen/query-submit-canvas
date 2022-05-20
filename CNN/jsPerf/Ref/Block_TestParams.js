@@ -609,6 +609,51 @@ class Base extends TestParams.Base {
   }
 
   /**
+   * @member {number} nSqueezeExcitationChannelCountDivisor
+   *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
+   * (Please see also SqueezeExcitation.Base.nSqueezeExcitationChannelCountDivisor explanation.)
+   *
+   * @param {number} inputChannelCount
+   *   The channel count of the squeeze-and-excitation's input.
+   *
+   * @param {number} nActivationId
+   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of the squeeze-and-excitation.
+   *
+   * @param {string} resultPrefixName
+   *   The name prefix of the result object. For example, if ( resultPrefixName == "xxx" ), the key names of returned object's
+   * numberArrayMap will be "xxxExcitation1Filters", "xxxExcitation1Biases", "xxxExcitation2Filters", "xxxExcitation2Biases".
+   *
+//!!! ...unfinished... (2022/05/20)
+
+   * @return {object}
+   *   Return an object { outputChannelCount, numberArrayObject }. The outputChannelCount is the channel count of this
+   * squeeze-and-excitation operation. The numberArrayObject is an object. Its every property is a number array. At most,
+   * numberArrayObject will contain four properties: "xxxExcitation1Filters", "xxxExcitation1Biases", "xxxExcitation2Filters",
+   * "xxxExcitation2Biases". (The "xxx" is the resultPrefixName.) It may also be no property (i.e. an empty object).
+   */
+  static generate_squeezeExcitation_filters_biases(
+    nSqueezeExcitationChannelCountDivisor, inputChannelCount, nActivationId,
+    resultPrefixName
+  ) {
+
+//!!! ...unfinished... (2022/05/20) squeeze-and-excitation's pointwise
+
+
+    let outputChannelCount = inputChannelCount;
+
+    // If intermediatePointwise has no activation, it could be no bias because the next operation's (i.e. excitationPointwise)
+    // bias will achieve it.
+    let bBias_intermediatePointwise;
+    if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
+      bBias_intermediatePointwise = false;
+    else
+      bBias_intermediatePointwise = true;
+
+//!!! ...unfinished... (2022/05/20) squeeze-and-excitation's pointwise
+
+  }
+
+  /**
    * @param {number} inputChannelCount
    *   The channel count of the pointwise convolution's input.
    *
