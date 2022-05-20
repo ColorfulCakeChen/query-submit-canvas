@@ -16,7 +16,7 @@ import * as Pointwise from "./Pointwise.js";
 //
 //
 //
-// o should undo previous activation escaping scale
+// o should undo previous activation  escaping scale
 // o when pass-through, filter = 0, bias = 1 (not: filter 1, bias 0)
 // o even if there is pass-through, it is not necessary to activation escaping scale.
 // o The bounds array set of output (which is input multiplied by squeeze-and-excitation) should include squeeze-and-excitation.
@@ -40,36 +40,48 @@ import * as Pointwise from "./Pointwise.js";
  * @member {boolean} bExisted
  *   If true, this squeeze-and-excitation exists. If false, this object is a no-op (i.e. no squeeze, no excitation, no multiply).
  *
-
-//!!! ...unfinished... (2022/05/19) Replaced by:
-//
-//  *   - -2: NONE                                    (no squeeze, no excitation)
-//  *   - -1: EXCITATION_1                            (no squeeze, no intermediate excitation)
-//  *   -  0: SQUEEZE__EXCITATION_1                   (has squeeze, no intermediate excitation)
-//  *   - [ 1, 64 ]: SQUEEZE__EXCITATION_2__DIVISOR_N (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
-
- * @member {number} intermediateChannelCountDivisor
+ * @member {number} nSqueezeExcitationChannelCountDivisor
  *   An integer which is the channel count divisor for intermediate pointwise convolution channel count.
- * (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx could be used directly, although
- * ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-1) looks a little strange.)
  *
- *     - If ( intermediateChannelCountDivisor <= 0 ), there will be only one pointwise convolution (i.e. excitation
- *         pointwise convolution). 
- *         - (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-1))
- *         - (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.ONE_EXCITATION (0)) 
+ *     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2)
+ *       - no squeeze, no excitation, no multiply.
+ *       - This object is just a no-op.
  *
- *     - If ( intermediateChannelCountDivisor > 0 ), there will be two pointwise convolutions (i.e. intermediate pointwise
- *         convolution, and excitation pointwise convolution).
+ *     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1)
+ *       - no squeeze.
+ *       - no intermediate excitation. ( intermediateChannelCount = 0 )
+ *       - has only one pointwise convolution (i.e. excitation pointwise convolution). 
  *
-
-//!!! ...unfinished... (2022/05/19) Replaced by: ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx
-//
-//  *   - -2: NONE                                    (no squeeze, no excitation)
-//  *   - -1: EXCITATION_1                            (no squeeze, no intermediate excitation)
-//  *   -  0: SQUEEZE__EXCITATION_1                   (has squeeze, no intermediate excitation)
-//  *   - [ 1, 64 ]: SQUEEZE__EXCITATION_2__DIVISOR_N (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
-
-
+ *     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION_1 (0)
+ *       - has squeeze. 
+ *       - no intermediate excitation. ( intermediateChannelCount = 0 )
+ *       - has only one pointwise convolution (i.e. excitation pointwise convolution). 
+ *
+ *     - ( nSqueezeExcitationChannelCountDivisor > 0 )
+ *       - has squeeze. 
+ *       - has intermediate excitation. ( intermediateChannelCount = Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor ) )
+ *       - has two pointwise convolutions (i.e. intermediate pointwise convolution, and excitation pointwise convolution).
+ *
+ * @member {number} inputHeight
+ *   The height of the input tensor. (Please see also bSqueeze explanation.)
+ *
+ * @member {number} inputWidth
+ *   The width of the input tensor. (Please see also bSqueeze explanation.)
+ *
+ * @member {number} inputChannelCount
+ *   The channel count of the input tensor. It must be greater than zero (> 0).
+ *
+ * @member {ValueDesc.Pointwise_HigherHalfDifferent} nPointwise_HigherHalfDifferent
+ *   The HigherHalfDifferent type for pointwise convolution in squeeze-and-excitation.
+ *
+ * @member {number} intermediateChannelCount
+ *   The channel count of intermediate pointwise convolution.
+ *     - If ( nSqueezeExcitationChannelCountDivisor <= 0 ), it will be 0 (i.e. no intermediate pointwise convolution).
+ *     - If ( nSqueezeExcitationChannelCountDivisor > 0 ), it will be Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor ).
+ *
+ * @member {number} outputChannelCount
+ *   Always the same as inputChannelCount.
+ *
 //!!! ...unfinished... (2022/05/20)
 //
 // If ( SqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-2),
@@ -81,31 +93,15 @@ import * as Pointwise from "./Pointwise.js";
 // If ( inputHeight <= 0 ) or ( inputWidth <= 0 ), can not squeeze.
 // If ( inputHeight == 1 ) and ( inputWidth == 1 ), it is not necessary to squeeze.
 
- * @member {number} inputHeight
- *   The height of the input tensor. If one of inputHeight and inputWidth is not positive (<= 0), there will be no squeeze step
- * (i.e. no global average pooling).
- *
- * @member {number} inputWidth
- *   The width of the input tensor. If one of inputHeight and inputWidth is not positive (<= 0), there will be no squeeze step
- * (i.e. no global average pooling).
- *
- * @member {number} inputChannelCount
- *   The channel count of the input tensor. It must be greater than zero (> 0).
- *
- * @member {ValueDesc.Pointwise_HigherHalfDifferent} nPointwise_HigherHalfDifferent
- *   The HigherHalfDifferent type for pointwise convolution in squeeze-and-excitation.
- *
- * @member {number} intermediateChannelCount
- *   The channel count of intermediate pointwise convolution.
- *     - If ( intermediateChannelCountDivisor <= 0 ), it will be 0 (i.e. no intermediate pointwise convolution).
- *     - If ( intermediateChannelCountDivisor > 0 ), it will be Math.ceil( inputChannelCount / intermediateChannelCountDivisor ).
- *
- * @member {number} outputChannelCount
- *   Always the same as inputChannelCount.
- *
  * @member {boolean} bSqueeze
  *   Whether squeeze step is necessary. If one of inputHeight and inputWidth is not positive (<= 0), bSqueeze will be false
  * (i.e. no squeeze step (i.e. no global average pooling)).
+ *
+ *     - If ( inputHeight <= 0 ) or ( inputWidth <= 0 ), there will be no squeeze (i.e. no global average pooling) because
+ *         it can not be done.
+ *
+ *     - If ( inputHeight == 1 ) and ( inputWidth == 1 ), there will be no squeeze (i.e. no global average pooling) because
+ *         it is not necessary.
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Including inferenced weights, if they are used in tensors.
@@ -127,11 +123,11 @@ class Base {
    *
    */
   constructor(
-    intermediateChannelCountDivisor, inputHeight, inputWidth,
+    nSqueezeExcitationChannelCountDivisor, inputHeight, inputWidth,
     inputChannelCount, nActivationId,
     nPointwise_HigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf ) {
 
-    this.intermediateChannelCountDivisor = intermediateChannelCountDivisor;
+    this.nSqueezeExcitationChannelCountDivisor = nSqueezeExcitationChannelCountDivisor;
     this.inputHeight = inputHeight;
     this.inputWidth = inputWidth;
     this.inputChannelCount = inputChannelCount;
@@ -155,12 +151,12 @@ class Base {
 //  *   - [ 1, 64 ]: SQUEEZE__EXCITATION_2__DIVISOR_N (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
 
 
-    if ( intermediateChannelCountDivisor <= 0 ) {
+    if ( nSqueezeExcitationChannelCountDivisor <= 0 ) {
       this.intermediateChannelCount = this.intermediate_inputChannelCount_lowerHalf = this.intermediate_outputChannelCount_lowerHalf = 0;
     } else {
-      this.intermediateChannelCount = Math.ceil( inputChannelCount / intermediateChannelCountDivisor );
-      this.intermediate_inputChannelCount_lowerHalf = Math.ceil( inputChannelCount_lowerHalf / intermediateChannelCountDivisor );
-      this.intermediate_outputChannelCount_lowerHalf = Math.ceil( outputChannelCount_lowerHalf / intermediateChannelCountDivisor );
+      this.intermediateChannelCount = Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor );
+      this.intermediate_inputChannelCount_lowerHalf = Math.ceil( inputChannelCount_lowerHalf / nSqueezeExcitationChannelCountDivisor );
+      this.intermediate_outputChannelCount_lowerHalf = Math.ceil( outputChannelCount_lowerHalf / nSqueezeExcitationChannelCountDivisor );
     }
 
     this.outputChannelCount = inputChannelCount, // For squeeze-and-excitation, output channel count is always the same as input.
