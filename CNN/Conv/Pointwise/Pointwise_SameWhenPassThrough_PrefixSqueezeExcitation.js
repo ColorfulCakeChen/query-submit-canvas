@@ -57,28 +57,15 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
 
 
  * @member {number} nSqueezeExcitationChannelCountDivisor
- *   An integer which is the channel count divisor for intermediate pointwise convolution channel count.
- *
- *     - If ( nSqueezeExcitationChannelCountDivisor < 0 ), there will be no squeeze-and-excitation.
- *         (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-1))
- *
- *     - If ( nSqueezeExcitationChannelCountDivisor == 0 ), there will be squeeze-and-excitation with only one pointwise convolution
- *         (i.e. excitation pointwise convolution). 
- *         (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.ONE_EXCITATION (0)) 
- *
- *     - If ( nSqueezeExcitationChannelCountDivisor > 0 ), there will be squeeze-and-excitation with two pointwise convolutions
- *         (i.e. intermediate pointwise convolution, and excitation pointwise convolution).
+ *   An integer which is the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
+ * (Please see also SqueezeExcitation.Base.nSqueezeExcitationChannelCountDivisor explanation.)
  *
  * @member {number} inputHeight
- *   The height of the input tensor. If one of inputHeight and inputWidth is not positive (<= 0), there will be no squeeze step
- * (i.e. no global average pooling). This is only used when ( nSqueezeExcitationChannelCountDivisor >= 0 ) (i.e. has
- * squeeze-and-excitation).
+ *   The height of the input tensor. (Please see also SqueezeExcitation.Base.bSqueeze explanation.)
  *
  * @member {number} inputWidth
- *   The width of the input tensor. If one of inputHeight and inputWidth is not positive (<= 0), there will be no squeeze step
- * (i.e. no global average pooling). This is only used when ( nSqueezeExcitationChannelCountDivisor >= 0 ) (i.e. has
- * squeeze-and-excitation).
- *
+ *   The width of the input tensor. (Please see also SqueezeExcitation.Base.bSqueeze explanation.)
+ * *
  * @member {number} inputChannelCount
  *   The channel count of the input tensor. It must be greater than zero (> 0).
  *
@@ -91,6 +78,9 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  * @member {boolean} bSqueezeExcitation
  *   Whether squeeze-and-excitation exists. It will be true if ( nSqueezeExcitationChannelCountDivisor >= 0 ).
  *
+
+//!!! ...unfinished... (2022/05/20) should return the SqueezeExcitation.Base.bSqueeze if ( bSqueezeExcitation == true ).
+
  * @member {boolean} bSqueeze
  *   Whether squeeze-and-excitation has squeeze. It will be true if ( nSqueezeExcitationChannelCountDivisor >= 0 ) and ( inputHeight > 0 )
  * and ( inputWidth > 0). It is only meaningful when ( bSqueezeExcitation == true ).
