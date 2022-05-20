@@ -603,6 +603,10 @@ class Base extends TestParams.Base {
    *   Return a number array.
    */
   static generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax ) {
+
+//!!! ...unfinished... (2022/05/20)
+// Perhaps, pool these numberArray. Re-use them if same ( elementCount, randomOffsetMin, randomOffsetMax ).
+
 //!!! (2021/07/20 Temp Remarked) Fixed to non-random to simplify debug.
     return RandTools.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax );
 //    return RandTools.generate_numberArray( elementCount, 0, 0 );
@@ -682,15 +686,15 @@ class Base extends TestParams.Base {
     if ( outputChannelCount > 0 ) {
       result_outputChannelCount = outputChannelCount;
 
-      let filtersWeightsRandomOffset = { min: -100, max: +100 };
       let filtersWeightsCount = inputChannelCount * outputChannelCount;
-      let filtersArray = Base.generate_numberArray( filtersWeightsCount, filtersWeightsRandomOffset.min, filtersWeightsRandomOffset.max );
+      let filtersArray = Base.generate_numberArray(
+        filtersWeightsCount, Base.filtersWeightsRandomOffset.min, Base.filtersWeightsRandomOffset.max );
       o_numberArrayObject[ `${propertyNamePrefix}Filters` ] = filtersArray;
 
       if ( bBias ) {
-        let biasesWeightsRandomOffset = { min: -100, max: +100 };
-        let biasesWeightsCount = result.outputChannelCount;
-        let biasesArray = Base.generate_numberArray( biasesWeightsCount, biasesWeightsRandomOffset.min, biasesWeightsRandomOffset.max );
+        let biasesWeightsCount = result_outputChannelCount;
+        let biasesArray = Base.generate_numberArray(
+          biasesWeightsCount, Base.biasesWeightsRandomOffset.min, Base.biasesWeightsRandomOffset.max );
         o_numberArrayObject[ `${propertyNamePrefix}Biases` ] = biasesArray;
       }
     }
@@ -727,9 +731,9 @@ class Base extends TestParams.Base {
     if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
       result_outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
 
-      let filtersWeightsRandomOffset = { min: -100, max: +100 };
       let filtersWeightsCount = result.outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
-      let filtersArray = Base.generate_numberArray( filtersWeightsCount, filtersWeightsRandomOffset.min, filtersWeightsRandomOffset.max );
+      let filtersArray = Base.generate_numberArray(
+        filtersWeightsCount, Base.filtersWeightsRandomOffset.min, Base.filtersWeightsRandomOffset.max );
 
       // Note: if AVG or MAX pooling, this property will be undefined.
       o_numberArrayObject[ `${propertyNamePrefix}Filters` ] = filtersArray;
@@ -737,9 +741,9 @@ class Base extends TestParams.Base {
 
     if ( depthwise_AvgMax_Or_ChannelMultiplier != 0 ) { // Include avgerage pooling, maximum pooling, convolution.
       if ( bBias ) {
-        let biasesWeightsRandomOffset = { min: -100, max: +100 };
         let biasesWeightsCount = result.outputChannelCount;
-        let biasesArray = Base.generate_numberArray( biasesWeightsCount, biasesWeightsRandomOffset.min, biasesWeightsRandomOffset.max );
+        let biasesArray = Base.generate_numberArray(
+          biasesWeightsCount, Base.biasesWeightsRandomOffset.min, Base.biasesWeightsRandomOffset.max );
         o_numberArrayObject[ `${propertyNamePrefix}Biases` ] = biasesArray;
       }
     }
@@ -945,6 +949,11 @@ class Base extends TestParams.Base {
   }
 
 }
+
+
+Base.filtersWeightsRandomOffset = { min: -100, max: +100 };
+Base.biasesWeightsRandomOffset = { min: -100, max: +100 };
+
 
 /**
  * The order when generate weightsFloat32Array[].
