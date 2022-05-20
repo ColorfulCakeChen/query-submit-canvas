@@ -165,8 +165,20 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
 
     } else {  // ( outputChannelCount <= 0 )
       if ( this.channelShuffler_outputGroupCount > 0 ) {
+
+//!!! ...unfinished... (2022/05/20)
+        // Perhaps, deprecate this speciall case. Since pointwise2 always exists now.
+        // So assert if executed here.
+        tf.util.assert( false,
+          `Pointwise.Base.setup_bPointwise_pfn(): `
+            + `When outputChannelCount ( ${this.outputChannelCount} ) is not positive, `
+            + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) should not be positive.`
+        );
+
         this.bPointwise = true; // all-pass-through-and-channel-shuffling mode. (Otherwise, no way to do channel shuffling.)
         this.bBias = false; // In this case, there is always no biases (no matter how original bBias is).
+
+//!!! ...unfinished... (2022/05/20) What about nActivationId?
 
       } else {
         this.bPointwise = false;
