@@ -80,7 +80,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     this.disposeTensors();
 
     // 1. Determine operation functions.
-    Base.Setup_bDepthwise_pfn.call( this );
+    Base.setup_bDepthwise_pfn.call( this );
 
     let bExtractOk;
     if ( !this.bDepthwise ) {
@@ -202,7 +202,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
    * @param {Base} this
    *   The Base object to be determined and modified.
    */
-  static Setup_bDepthwise_pfn() {
+  static setup_bDepthwise_pfn() {
 
     // 1.
     if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
