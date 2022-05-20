@@ -57,7 +57,7 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
 
 
  * @member {number} nSqueezeExcitationChannelCountDivisor
- *   An integer which is the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
+ *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
  * (Please see also SqueezeExcitation.Base.nSqueezeExcitationChannelCountDivisor explanation.)
  *
  * @member {number} inputHeight
