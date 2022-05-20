@@ -127,6 +127,11 @@ class SameWhenPassThrough_PrefixSqueezeExcitation {
 
 //!!! ...unfinished... (2022/05/20) bExisted
 // If ( outputChannelCount <= 0 ), no squeeze-and-excitation and no pointwise.
+//
+// Problem: ( outputChannelCount <= 0 ) but ( channelShuffler_outputGroupCount > 0 ),
+//          the pointwise still exists (all-pass-through-and-channel-shuffling).
+//
+//
 
 !!!
     // ( nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-1)      
