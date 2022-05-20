@@ -628,18 +628,17 @@ class Base extends TestParams.Base {
    * four properties may be set: "xxxExcitation1Filters", "xxxExcitation1Biases", "xxxExcitation2Filters",
    * "xxxExcitation2Biases". The "xxx" is the propertyNamePrefix.
    *
-   * @return {object}
-   *   Return an object { outputChannelCount }. The outputChannelCount is the channel count of this squeeze-and-excitation operation.
+   * @return {number}
+   *   Return the outputChannelCount of this squeeze-and-excitation operation.
    */
   static generate_squeezeExcitation_filters_biases(
-    nSqueezeExcitationChannelCountDivisor, inputChannelCount, nActivationId,
-    resultPrefixName
-  ) {
+    nSqueezeExcitationChannelCountDivisor, inputChannelCount, nActivationId, propertyNamePrefix, o_numberArrayObject ) {
 
 //!!! ...unfinished... (2022/05/20) squeeze-and-excitation's pointwise
 
 
-    let outputChannelCount = inputChannelCount;
+    // squeeze-and-excitation's outputChannelCount is always the same as inputChannelCount.
+    let result_outputChannelCount = inputChannelCount;
 
     // If intermediatePointwise has no activation, it could be no bias because the next operation's (i.e. excitationPointwise)
     // bias will achieve it.
@@ -651,6 +650,7 @@ class Base extends TestParams.Base {
 
 //!!! ...unfinished... (2022/05/20) squeeze-and-excitation's pointwise
 
+    return result_outputChannelCount;
   }
 
   /**
@@ -671,17 +671,16 @@ class Base extends TestParams.Base {
    *   The object will be filled in result data. Every result number array will be set as a property of the object. At most,
    * two properties may be set: "xxxFilters", "xxxBiases". The "xxx" is the propertyNamePrefix.
    *
-   * @return {object}
-   *   Return an object { outputChannelCount }. The outputChannelCount is the channel count of this pointwise operation.
+   * @return {number}
+   *   Return the outputChannelCount of this pointwise operation.
    */
   static generate_pointwise_filters_biases( inputChannelCount, outputChannelCount, bBias, propertyNamePrefix, o_numberArrayObject ) {
-    let result = {
-      // If this pointwise operation does not exist, default outputChannelCount will be inputChannelCount.
-      outputChannelCount: inputChannelCount,
-    };
+
+    // If this pointwise operation does not exist, default outputChannelCount will be inputChannelCount.
+    let result_outputChannelCount = inputChannelCount;
 
     if ( outputChannelCount > 0 ) {
-      result.outputChannelCount = outputChannelCount;
+      result_outputChannelCount = outputChannelCount;
 
       let filtersWeightsRandomOffset = { min: -100, max: +100 };
       let filtersWeightsCount = inputChannelCount * outputChannelCount;
@@ -696,7 +695,7 @@ class Base extends TestParams.Base {
       }
     }
 
-    return result;
+    return result_outputChannelCount;
   }
 
   /**
@@ -715,20 +714,18 @@ class Base extends TestParams.Base {
    *   The object will be filled in result data. Every result number array will be set as a property of the object. At most,
    * two properties may be set: "xxxFilters", "xxxBiases". The "xxx" is the propertyNamePrefix.
    *
-   * @return {object}
-   *   Return an object { outputChannelCount }. The outputChannelCount is the channel count of this depthwise operation.
+   * @return {number}
+   *   Return the outputChannelCount of this depthwise operation.
    */
   static generate_depthwise_filters_biases(
     inputChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bBias,
     propertyNamePrefix, o_numberArrayObject ) {
 
-    let result = {
-      // If this depthwise operation does not exist, default outputChannelCount will be inputChannelCount.
-      outputChannelCount: inputChannelCount,
-    };
+    // If this depthwise operation does not exist, default outputChannelCount will be inputChannelCount.
+    let result_outputChannelCount = inputChannelCount;
 
     if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-      result.outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
+      result_outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
 
       let filtersWeightsRandomOffset = { min: -100, max: +100 };
       let filtersWeightsCount = result.outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
@@ -747,7 +744,7 @@ class Base extends TestParams.Base {
       }
     }
 
-    return result;
+    return result_outputChannelCount;
   }
 
   /**
@@ -814,16 +811,16 @@ class Base extends TestParams.Base {
     }
 
     // Pointwise1
-    let pointwise1 = Base.generate_pointwise_filters_biases( channelCount0_pointwise1Before_original,
+    let pointwise1_resultOutputChannelCount = Base.generate_pointwise_filters_biases( channelCount0_pointwise1Before_original,
       pointwise1ChannelCount_original, paramsAll.bPointwise1Bias, "pointwise1", io_paramsNumberArrayObject );
 
     // Depthwise1
-    let depthwise1 = Base.generate_depthwise_filters_biases( pointwise1.outputChannelCount,
+    let depthwise1_resultOutputChannelCount = Base.generate_depthwise_filters_biases( pointwise1_resultOutputChannelCount,
       paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
       paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias, "depthwise1", io_paramsNumberArrayObject );
 
     // Depthwise2
-    let depthwise2;
+    let depthwise2_resultOutputChannelCount;
     {
       // In ShuffleNetV2's head.
       if (   ( this.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2) (ShuffleNetV2's head (simplified))
@@ -840,10 +837,10 @@ class Base extends TestParams.Base {
         // Use pointwise1.outputChannelCount as input1ChannelCount so that it has the same structure of depthwise1 and pointwise21.
         //
         } else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
-          depthwise2_inputChannelCount = pointwise1.outputChannelCount;
+          depthwise2_inputChannelCount = pointwise1_resultOutputChannelCount;
         }
 
-        depthwise2 = Base.generate_depthwise_filters_biases( depthwise2_inputChannelCount,
+        depthwise2_resultOutputChannelCount = Base.generate_depthwise_filters_biases( depthwise2_inputChannelCount,
           paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
           paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias, "depthwise2", io_paramsNumberArrayObject );
 
@@ -854,13 +851,12 @@ class Base extends TestParams.Base {
     }
 
     // Concat
-    let pointwise2_inputChannelCount = depthwise1.outputChannelCount;
+    let pointwise2_inputChannelCount = depthwise1_resultOutputChannelCount;
     {
       if (   ( this.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2) (ShuffleNetV2's head (simplified))
           || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
          ) {
-        pointwise2_inputChannelCount += depthwise2.outputChannelCount; // Add the channel count of the branch of the first input image.
-
+        pointwise2_inputChannelCount += depthwise2_resultOutputChannelCount; // Add the channel count of the branch of the first input image.
 
       // (> 0) Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX  (simplified ShuffleNetV2's tail)
       } else if ( paramsAll.channelCount1_pointwise1Before > 0 ) {
@@ -887,11 +883,11 @@ class Base extends TestParams.Base {
 
     // Pointwise21
     {    
-      let pointwise21 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+      let pointwise21_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
         pointwise21ChannelCount_original, paramsAll.bPointwise21Bias, "pointwise21", io_paramsNumberArrayObject );
 
       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-        let pointwise212 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+        let pointwise212_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
           pointwise21ChannelCount_original, paramsAll.bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
 
       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
@@ -918,11 +914,11 @@ class Base extends TestParams.Base {
 
       let bPointwise22Bias = paramsAll.bPointwise21Bias; // pointwise22's bias flag should always be the same as pointwise21's.
 
-      let pointwise22 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+      let pointwise22_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
         pointwise22ChannelCount, bPointwise22Bias, "pointwise22", io_paramsNumberArrayObject );
 
       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-        let pointwise222 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+        let pointwise222_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
           pointwise22ChannelCount, bPointwise22Bias, "pointwise222", io_paramsNumberArrayObject );
 
       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
