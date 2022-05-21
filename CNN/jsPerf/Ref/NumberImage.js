@@ -45,53 +45,54 @@ class Base {
     return result;
   }
 
-  /**
-   * Pointwise convolution whose output will be the same as input when pass-through.
-   *
-   * @param {NumberImage.Base} this      The source image to be processed.
-   * @param {boolean}  bBias             Whether add bias.
-   * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
-   * @param {string}   pointwiseName     A string for debug message of this convolution.
-   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
-   *
-   * @return {NumberImage.Base}
-   *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
-   */
-  cloneBy_pointwise_SameWhenPassThrough(
-    pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-    bPassThrough,
-    pointwiseName, parametersDesc ) {
-
-    return this.cloneBy_pointwise(
-      pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
-      bPassThrough,
-      pointwiseName, parametersDesc );
-  }
-
-  /**
-   * Pointwise convolution whose output will be constant value (no matter what input) when pass-through.
-   *
-   * @param {NumberImage.Base} this      The source image to be processed.
-   * @param {boolean}  bBias             Whether add bias.
-   * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
-   * @param {string}   pointwiseName     A string for debug message of this convolution.
-   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
-   *
-   * @return {NumberImage.Base}
-   *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
-   */
-  cloneBy_pointwise_ConstantWhenPassThrough(
-    pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-    bPassThrough,
-    pointwiseName, parametersDesc ) {
-
-    return this.cloneBy_pointwise(
-      pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
-      bPassThrough,
-      pointwiseName, parametersDesc );
-  }
+//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
+//   /**
+//    * Pointwise convolution whose output will be the same as input when pass-through.
+//    *
+//    * @param {NumberImage.Base} this      The source image to be processed.
+//    * @param {boolean}  bBias             Whether add bias.
+//    * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
+//    * @param {string}   pointwiseName     A string for debug message of this convolution.
+//    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+//    *
+//    * @return {NumberImage.Base}
+//    *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
+//    */
+//   cloneBy_pointwise_SameWhenPassThrough(
+//     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
+//     bPassThrough,
+//     pointwiseName, parametersDesc ) {
+//
+//     return this.cloneBy_pointwise(
+//       pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
+//       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
+//       bPassThrough,
+//       pointwiseName, parametersDesc );
+//   }
+//
+//   /**
+//    * Pointwise convolution whose output will be constant value (no matter what input) when pass-through.
+//    *
+//    * @param {NumberImage.Base} this      The source image to be processed.
+//    * @param {boolean}  bBias             Whether add bias.
+//    * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
+//    * @param {string}   pointwiseName     A string for debug message of this convolution.
+//    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+//    *
+//    * @return {NumberImage.Base}
+//    *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
+//    */
+//   cloneBy_pointwise_ConstantWhenPassThrough(
+//     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
+//     bPassThrough,
+//     pointwiseName, parametersDesc ) {
+//
+//     return this.cloneBy_pointwise(
+//       pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
+//       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
+//       bPassThrough,
+//       pointwiseName, parametersDesc );
+//   }
 
   /**
    * @param {NumberImage.Base} this      The source image to be processed.
@@ -208,57 +209,58 @@ class Base {
     return imageOut;
   }
 
-  /**
-   * Depthwise convolution whose output will be the same as input when pass-through.
-   *
-   * @param {NumberImage.Base} this      The source image to be processed.
-   * @param {boolean}  bBias             Whether add bias.
-   * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
-   * @param {string}   depthwiseName     A string for debug message of this convolution.
-   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
-   *
-   * @return {NumberImage.Base}
-   *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
-   */
-  cloneBy_depthwise_SameWhenPassThrough(
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-    depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-    bPassThrough,
-    depthwiseName, parametersDesc ) {
-
-    return this.cloneBy_depthwise(
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-      depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
-      bPassThrough,
-      depthwiseName, parametersDesc );
-  }
-
-  /**
-   * Depthwise convolution whose output will be constant value (no matter what input) when pass-through.
-   *
-   * @param {NumberImage.Base} this      The source image to be processed.
-   * @param {boolean}  bBias             Whether add bias.
-   * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
-   * @param {string}   depthwiseName     A string for debug message of this convolution.
-   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
-   *
-   * @return {NumberImage.Base}
-   *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
-   */
-  cloneBy_depthwise_ConstantWhenPassThrough(
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-    depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-    bPassThrough,
-    depthwiseName, parametersDesc ) {
-
-    return this.cloneBy_depthwise(
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-      depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
-      bPassThrough,
-      depthwiseName, parametersDesc );
-  }
+//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
+//   /**
+//    * Depthwise convolution whose output will be the same as input when pass-through.
+//    *
+//    * @param {NumberImage.Base} this      The source image to be processed.
+//    * @param {boolean}  bBias             Whether add bias.
+//    * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
+//    * @param {string}   depthwiseName     A string for debug message of this convolution.
+//    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+//    *
+//    * @return {NumberImage.Base}
+//    *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
+//    */
+//   cloneBy_depthwise_SameWhenPassThrough(
+//     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+//     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+//     bPassThrough,
+//     depthwiseName, parametersDesc ) {
+//
+//     return this.cloneBy_depthwise(
+//       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+//       depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+//       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
+//       bPassThrough,
+//       depthwiseName, parametersDesc );
+//   }
+//
+//   /**
+//    * Depthwise convolution whose output will be constant value (no matter what input) when pass-through.
+//    *
+//    * @param {NumberImage.Base} this      The source image to be processed.
+//    * @param {boolean}  bBias             Whether add bias.
+//    * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
+//    * @param {string}   depthwiseName     A string for debug message of this convolution.
+//    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+//    *
+//    * @return {NumberImage.Base}
+//    *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
+//    */
+//   cloneBy_depthwise_ConstantWhenPassThrough(
+//     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+//     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+//     bPassThrough,
+//     depthwiseName, parametersDesc ) {
+//
+//     return this.cloneBy_depthwise(
+//       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+//       depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+//       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
+//       bPassThrough,
+//       depthwiseName, parametersDesc );
+//   }
 
   /**
    * @param {NumberImage.Base} this      The source image to be processed.
