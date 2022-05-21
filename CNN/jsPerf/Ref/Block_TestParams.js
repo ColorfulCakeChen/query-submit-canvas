@@ -113,6 +113,9 @@ class Base extends TestParams.Base {
 
     this.generate_Filters_Biases();
 
+//!!! ...unfinished... (2022/05/21)
+// Perhaps, re-use a pre-allocated ArrayBuffer which could be re-allocated when needed to get Float32Array.
+
     let Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
     Float32Array_ByteOffsetBegin.setByConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
 
