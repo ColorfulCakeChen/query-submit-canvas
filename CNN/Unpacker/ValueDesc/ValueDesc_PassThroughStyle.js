@@ -17,6 +17,8 @@ class PassThroughStyle extends Int {
     super( 0, 1,
       [
         "PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING",
+      
+!!! ...unfinished... (2022/05/21) seems still need activation escaping.
         "PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING",
       ],
 
