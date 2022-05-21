@@ -7,7 +7,7 @@ import { Base } from "./Pointwise_Base.js";
  * Pointwise convolution whose output will be constant value (no matter what input) when pass-through.
  *
  * It has the following properties:
- *   - ( nPassThroughStyleId == ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING ) (1).
+ *   - ( nPassThroughStyleId == ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1 ) (1).
  *
  * Usually, this is used for squeeze-and-excitaion pointwise.
  *
@@ -22,7 +22,7 @@ class ConstantWhenPassThrough extends Base {
 
     super(
       inputChannelCount, outputChannelCount, bBias, nActivationId,
-      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING,
+      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
       nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
   }
 
