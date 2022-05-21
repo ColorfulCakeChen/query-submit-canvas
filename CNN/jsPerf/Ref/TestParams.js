@@ -206,21 +206,27 @@ class Base {
 
 
   /**
+   * Ensure io_object[ propertyName ] exists as a number array with specified length. It will be filled with random number
+   * as ( sequence_nunmer + random_number_offset )
+   *
    * @param {object} io_object        The object to be checked and modified.
    * @param {string} propertyName     The property io_object[ propertyName ] will be ensured as a number array.
    * @param {number} elementCount     The property io_object[ propertyName ].length will be ensured as elementCount.
    * @param {number} randomOffsetMin  The random number offet lower bound.
    * @param {number} randomOffsetMax  The random number offet upperer bound.
    */
-  static ensure_object_property_numberArray_length_filled(
-    io_object, propertyName, length, randomOffsetMin, randomOffsetMax ) {
+  static ensure_object_property_numberArray_length_filled( io_object, propertyName, elementCount, randomOffsetMin, randomOffsetMax ) {
 
-//!!! ...unfinished... (2022/05/21) RandTools.fill_numberArray()
-// Perhaps, pool these numberArray. Re-use them if same ( elementCount, randomOffsetMin, randomOffsetMax ).
+    if (   ( io_object[ propertyName ] == undefined )          // The property does not exist.
+        || ( !( io_object[ propertyName ] instanceof Array ) ) // The property exists but is not an array.
+       ) {
+      io_object[ propertyName ] = new Array( elementCount );   // Ensure array with specified length.
 
-//!!! (2021/07/20 Temp Remarked) Fixed to non-random to simplify debug.
-    return RandTools.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax );
-//    return RandTools.generate_numberArray( elementCount, 0, 0 );
+    } else {                                                   // The property exists and is an array.
+      io_object[ propertyName ].length = elementCount;         // Ensure it with specified length.
+    }
+
+    RandTools.fill_numberArray( io_object[ propertyName ], elementCount, randomOffsetMin, randomOffsetMax );
   }
 
 
