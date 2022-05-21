@@ -648,35 +648,65 @@ class Base extends TestParams.Base {
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of the squeeze-and-excitation.
    *
    * @param {string} propertyNamePrefix
-   *   The name prefix of the result object. For example, if ( resultPrefixName == "xxx" ), the key names of returned object's
-   * numberArrayMap will be "xxxExcitation1Filters", "xxxExcitation1Biases", "xxxExcitation2Filters", "xxxExcitation2Biases".
+   *   The name prefix of the result property in the o_numberArrayObject.
    *
-   * @param {object} o_numberArrayObject
+   * @param {object} io_numberArrayObject
    *   The object will be filled in result data. Every result number array will be set as a property of the object. At most,
-   * four properties may be set: "xxxExcitation1Filters", "xxxExcitation1Biases", "xxxExcitation2Filters",
-   * "xxxExcitation2Biases". The "xxx" is the propertyNamePrefix.
+   * four properties may be set: "xxxSEIntermediateFilters", "xxxSEIntermediateBiases", "xxxSEExcitationFilters",
+   * "xxxSEExcitationBiases". The "xxx" is the propertyNamePrefix.
    *
    * @return {number}
    *   Return the outputChannelCount of this squeeze-and-excitation operation.
    */
   static generate_squeezeExcitation_filters_biases(
-    nSqueezeExcitationChannelCountDivisor, inputChannelCount, nActivationId, propertyNamePrefix, o_numberArrayObject ) {
-
-//!!! ...unfinished... (2022/05/20) squeeze-and-excitation's pointwise
-
+    nSqueezeExcitationChannelCountDivisor, inputChannelCount, nActivationId, propertyNamePrefix, io_numberArrayObject ) {
 
     // squeeze-and-excitation's outputChannelCount is always the same as inputChannelCount.
     let result_outputChannelCount = inputChannelCount;
 
-    // If intermediatePointwise has no activation, it could be no bias because the next operation's (i.e. excitationPointwise)
-    // bias will achieve it.
-    let bBias_intermediatePointwise;
-    if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
-      bBias_intermediatePointwise = false;
-    else
-      bBias_intermediatePointwise = true;
+    // 1. intermediate pointwise convolution.
+    let intermediateOutputChannelCount;
+    {
+      const SEIntermediatePropertyNamePrefix = `${propertyNamePrefix}SEIntermediate`;
 
-//!!! ...unfinished... (2022/05/20) squeeze-and-excitation's pointwise
+      let intermediateChannelCount;
+      let bBias_intermediatePointwise;
+
+      if ( nSqueezeExcitationChannelCountDivisor <= 0 ) {
+        intermediateChannelCount = 0; // (no intermediate pointwise convolution).
+        bBias_intermediatePointwise = false;
+        intermediateOutputChannelCount = inputChannelCount;
+
+      } else {
+        intermediateChannelCount = Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor );
+        intermediateOutputChannelCount = intermediateChannelCount;
+
+        // If intermediatePointwise has no activation, it could be no bias because the next operation's (i.e. excitationPointwise)
+        // bias will achieve it.
+        if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
+          bBias_intermediatePointwise = false;
+        else
+          bBias_intermediatePointwise = true;
+      }
+
+      Base.generate_pointwise_filters_biases(
+        inputChannelCount,
+        inputChannelCount, // (outputChannelCount same as inputChannelCount)
+        bBias_intermediatePointwise,
+        SEIntermediatePropertyNamePrefix, io_numberArrayObject );
+    }
+
+    // 2. excitation pointwise convolution.
+    if ( nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
+
+      const SEExcitationPropertyNamePrefix = `${propertyNamePrefix}SEExcitation`;
+
+      Base.generate_pointwise_filters_biases(
+        intermediateOutputChannelCount,
+        result_outputChannelCount,
+        true, // Always bBias
+        SEExcitationPropertyNamePrefix, io_numberArrayObject );
+    }
 
     return result_outputChannelCount;
   }
@@ -695,30 +725,39 @@ class Base extends TestParams.Base {
    *   The name prefix of the result object. For example, if ( resultPrefixName == "xxx" ), the key names of returned object's
    * numberArrayMap will be "xxxFilters", "xxxBiases".
    *
-   * @param {object} o_numberArrayObject
+   * @param {object} io_numberArrayObject
    *   The object will be filled in result data. Every result number array will be set as a property of the object. At most,
    * two properties may be set: "xxxFilters", "xxxBiases". The "xxx" is the propertyNamePrefix.
    *
    * @return {number}
    *   Return the outputChannelCount of this pointwise operation.
    */
-  static generate_pointwise_filters_biases( inputChannelCount, outputChannelCount, bBias, propertyNamePrefix, o_numberArrayObject ) {
+  static generate_pointwise_filters_biases( inputChannelCount, outputChannelCount, bBias, propertyNamePrefix, io_numberArrayObject ) {
 
     // If this pointwise operation does not exist, default outputChannelCount will be inputChannelCount.
     let result_outputChannelCount = inputChannelCount;
+
+    const filtersPropertyName = `${propertyNamePrefix}Filters`;
+    const biasesPropertyName = `${propertyNamePrefix}Biases`;
 
     if ( outputChannelCount > 0 ) {
       result_outputChannelCount = outputChannelCount;
 
       let filtersWeightsCount = inputChannelCount * outputChannelCount;
-      Base.ensure_object_property_numberArray_length_filled( o_numberArrayObject,
-        `${propertyNamePrefix}Filters`, filtersWeightsCount, Base.filtersWeightsRandomOffset.min, Base.filtersWeightsRandomOffset.max );
+      Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject,
+        filtersPropertyName, filtersWeightsCount, Base.filtersWeightsRandomOffset.min, Base.filtersWeightsRandomOffset.max );
 
       if ( bBias ) {
         let biasesWeightsCount = result_outputChannelCount;
-        Base.ensure_object_property_numberArray_length_filled( o_numberArrayObject,
-          `${propertyNamePrefix}Biases`, biasesWeightsCount, Base.biasesWeightsRandomOffset.min, Base.biasesWeightsRandomOffset.max );
+        Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject,
+          biasesPropertyName, biasesWeightsCount, Base.biasesWeightsRandomOffset.min, Base.biasesWeightsRandomOffset.max );
+      } else {
+        Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject, biasesPropertyName, 0 );
       }
+
+    } else { // No pointwise convolution.
+      Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject, filtersPropertyName, 0 );
+      Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject, biasesPropertyName, 0 );
     }
 
     return result_outputChannelCount;
@@ -736,7 +775,7 @@ class Base extends TestParams.Base {
    *   The name prefix of the result object. For example, if ( resultPrefixName == "xxx" ), the key names of returned object's
    * numberArrayMap will be "xxxFilters", "xxxBiases".
    *
-   * @param {object} o_numberArrayObject
+   * @param {object} io_numberArrayObject
    *   The object will be filled in result data. Every result number array will be set as a property of the object. At most,
    * two properties may be set: "xxxFilters", "xxxBiases". The "xxx" is the propertyNamePrefix.
    *
@@ -745,27 +784,36 @@ class Base extends TestParams.Base {
    */
   static generate_depthwise_filters_biases(
     inputChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bBias,
-    propertyNamePrefix, o_numberArrayObject ) {
+    propertyNamePrefix, io_numberArrayObject ) {
 
     // If this depthwise operation does not exist, default outputChannelCount will be inputChannelCount.
     let result_outputChannelCount = inputChannelCount;
+
+    const filtersPropertyName = `${propertyNamePrefix}Filters`;
+    const biasesPropertyName = `${propertyNamePrefix}Biases`;
 
     if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
       result_outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
 
       let filtersWeightsCount = result.outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
+      Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject,
+        filtersPropertyName, filtersWeightsCount, Base.filtersWeightsRandomOffset.min, Base.filtersWeightsRandomOffset.max );
 
-      // Note: if AVG or MAX pooling, this property will be undefined.
-      Base.ensure_object_property_numberArray_length_filled( o_numberArrayObject,
-        `${propertyNamePrefix}Filters`, filtersWeightsCount, Base.filtersWeightsRandomOffset.min, Base.filtersWeightsRandomOffset.max );
+    } else {
+      // Note: if AVG or MAX pooling, this property will be empty array.
+      Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject, filtersPropertyName, 0 );
     }
 
     if ( depthwise_AvgMax_Or_ChannelMultiplier != 0 ) { // Include avgerage pooling, maximum pooling, convolution.
       if ( bBias ) {
         let biasesWeightsCount = result_outputChannelCount;
-        Base.ensure_object_property_numberArray_length_filled( o_numberArrayObject,
-          `${propertyNamePrefix}Biases`, biasesWeightsCount, Base.biasesWeightsRandomOffset.min, Base.biasesWeightsRandomOffset.max );
+        Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject,
+          biasesPropertyName, biasesWeightsCount, Base.biasesWeightsRandomOffset.min, Base.biasesWeightsRandomOffset.max );
+      } else { // No bias.
+        Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject, biasesPropertyName, 0 );
       }
+    } else { // No depthwise convolution, no avg pooling, no max pooling.
+      Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject, biasesPropertyName, 0 );
     }
 
     return result_outputChannelCount;
@@ -904,10 +952,24 @@ class Base extends TestParams.Base {
 //   "pointwise22Excitation2Filters", // pointwise22's squeeze-and-excitation's excitation2
 //   "pointwise22Excitation2Biases",
 
+//!!! ...unfinished... (2022/05/20) squeeze-and-excitation's pointwise
+//  *     - If ( nSqueezeExcitationChannelCountDivisor <= 0 ), it will be 0 (i.e. no intermediate pointwise convolution).
+//  *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2)
+//  *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1)
+//  *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION_1 (0)
+//  *     - If ( nSqueezeExcitationChannelCountDivisor > 0 ), it will be Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor ).
 
 
     // Pointwise21
-    {    
+    {
+
+//!!! ...unfinished... (2022/05/21) squeeze-and-excitation's pointwise
+      Base.generate_squeezeExcitation_filters_biases(
+        paramsAll.nSqueezeExcitationChannelCountDivisor,
+        ??? inputChannelCount,
+        paramsAll.pointwise21ActivationId, "pointwise21", io_paramsNumberArrayObject );
+
+
       let pointwise21_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
         pointwise21ChannelCount_original, paramsAll.bPointwise21Bias, "pointwise21", io_paramsNumberArrayObject );
 
@@ -939,6 +1001,9 @@ class Base extends TestParams.Base {
       }
 
       let bPointwise22Bias = paramsAll.bPointwise21Bias; // pointwise22's bias flag should always be the same as pointwise21's.
+
+//!!! ...unfinished... (2022/05/21) squeeze-and-excitation's pointwise
+
 
       let pointwise22_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
         pointwise22ChannelCount, bPointwise22Bias, "pointwise22", io_paramsNumberArrayObject );
@@ -1018,11 +1083,11 @@ Base.paramsNameOrderArray = [
   "depthwise2Filters",
   "depthwise2Biases",
 
-  "pointwise21Excitation1Filters", // pointwise21's squeeze-and-excitation's excitation1
-  "pointwise21Excitation1Biases",
+  "pointwise21SEIntermediateFilters", // pointwise21's squeeze-and-excitation's intermediate pointwise
+  "pointwise21SEIntermediateBiases",
 
-  "pointwise21Excitation2Filters", // pointwise21's squeeze-and-excitation's excitation2
-  "pointwise21Excitation2Biases",
+  "pointwise21SEExcitationFilters", // pointwise21's squeeze-and-excitation's excitation pointwise
+  "pointwise21SEExcitationBiases",
 
   "pointwise21Filters",
   "pointwise21Biases",
@@ -1030,11 +1095,11 @@ Base.paramsNameOrderArray = [
   "pointwise212Filters",
   "pointwise212Biases",
 
-  "pointwise22Excitation1Filters", // pointwise22's squeeze-and-excitation's excitation1
-  "pointwise22Excitation1Biases",
+  "pointwise22SEIntermediateFilters", // pointwise22's squeeze-and-excitation's intermediate pointwise
+  "pointwise22SEIntermediateBiases",
 
-  "pointwise22Excitation2Filters", // pointwise22's squeeze-and-excitation's excitation2
-  "pointwise22Excitation2Biases",
+  "pointwise22SEExcitationFilters",   // pointwise22's squeeze-and-excitation's excitation pointwise
+  "pointwise22SEExcitationBiases",
 
   "pointwise22Filters",
   "pointwise22Biases",
