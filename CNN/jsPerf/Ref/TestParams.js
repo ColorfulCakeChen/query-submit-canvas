@@ -204,6 +204,26 @@ class Base {
     this.modifyParamValueHistory.length = 0; // Clear history.
   }
 
+
+  /**
+   * @param {object} io_object        The object to be checked and modified.
+   * @param {string} propertyName     The property io_object[ propertyName ] will be ensured as a number array.
+   * @param {number} elementCount     The property io_object[ propertyName ].length will be ensured as elementCount.
+   * @param {number} randomOffsetMin  The random number offet lower bound.
+   * @param {number} randomOffsetMax  The random number offet upperer bound.
+   */
+  static ensure_object_property_numberArray_length_filled(
+    io_object, propertyName, length, randomOffsetMin, randomOffsetMax ) {
+
+//!!! ...unfinished... (2022/05/21) RandTools.fill_numberArray()
+// Perhaps, pool these numberArray. Re-use them if same ( elementCount, randomOffsetMin, randomOffsetMax ).
+
+//!!! (2021/07/20 Temp Remarked) Fixed to non-random to simplify debug.
+    return RandTools.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax );
+//    return RandTools.generate_numberArray( elementCount, 0, 0 );
+  }
+
+
   /**
    * Responsible for generating testing paramters combinations.
    *
