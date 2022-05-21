@@ -601,19 +601,20 @@ class Base extends TestParams.Base {
     return false;
   }
 
-  /**
-   * @return {number[]}
-   *   Return a number array.
-   */
-  static generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax ) {
-
-//!!! ...unfinished... (2022/05/21) RandTools.fill_numberArray()
-// Perhaps, pool these numberArray. Re-use them if same ( elementCount, randomOffsetMin, randomOffsetMax ).
-
-//!!! (2021/07/20 Temp Remarked) Fixed to non-random to simplify debug.
-    return RandTools.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax );
-//    return RandTools.generate_numberArray( elementCount, 0, 0 );
-  }
+//!!! (2022/05/21 Remarked) replaced by Base.ensure_object_property_numberArray_length_filled().
+//   /**
+//    * @return {number[]}
+//    *   Return a number array.
+//    */
+//   static generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax ) {
+//
+// //!!! ...unfinished... (2022/05/21) RandTools.fill_numberArray()
+// // Perhaps, pool these numberArray. Re-use them if same ( elementCount, randomOffsetMin, randomOffsetMax ).
+//
+// //!!! (2021/07/20 Temp Remarked) Fixed to non-random to simplify debug.
+//     return RandTools.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax );
+// //    return RandTools.generate_numberArray( elementCount, 0, 0 );
+//   }
 
   /**
    * @member {number} nSqueezeExcitationChannelCountDivisor
@@ -686,21 +687,17 @@ class Base extends TestParams.Base {
     // If this pointwise operation does not exist, default outputChannelCount will be inputChannelCount.
     let result_outputChannelCount = inputChannelCount;
 
-//!!! ...unfinished... (2022/05/21) If the property exists, re-use the Array (RandTools.fill_numberArray()).
-
     if ( outputChannelCount > 0 ) {
       result_outputChannelCount = outputChannelCount;
 
       let filtersWeightsCount = inputChannelCount * outputChannelCount;
-      let filtersArray = Base.generate_numberArray(
-        filtersWeightsCount, Base.filtersWeightsRandomOffset.min, Base.filtersWeightsRandomOffset.max );
-      o_numberArrayObject[ `${propertyNamePrefix}Filters` ] = filtersArray;
+      Base.ensure_object_property_numberArray_length_filled( o_numberArrayObject,
+        `${propertyNamePrefix}Filters`, filtersWeightsCount, Base.filtersWeightsRandomOffset.min, Base.filtersWeightsRandomOffset.max );
 
       if ( bBias ) {
         let biasesWeightsCount = result_outputChannelCount;
-        let biasesArray = Base.generate_numberArray(
-          biasesWeightsCount, Base.biasesWeightsRandomOffset.min, Base.biasesWeightsRandomOffset.max );
-        o_numberArrayObject[ `${propertyNamePrefix}Biases` ] = biasesArray;
+        Base.ensure_object_property_numberArray_length_filled( o_numberArrayObject,
+          `${propertyNamePrefix}Biases`, biasesWeightsCount, Base.biasesWeightsRandomOffset.min, Base.biasesWeightsRandomOffset.max );
       }
     }
 
@@ -733,25 +730,21 @@ class Base extends TestParams.Base {
     // If this depthwise operation does not exist, default outputChannelCount will be inputChannelCount.
     let result_outputChannelCount = inputChannelCount;
 
-//!!! ...unfinished... (2022/05/21) If the property exists, re-use the Array (RandTools.fill_numberArray()).
-
     if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
       result_outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
 
       let filtersWeightsCount = result.outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
-      let filtersArray = Base.generate_numberArray(
-        filtersWeightsCount, Base.filtersWeightsRandomOffset.min, Base.filtersWeightsRandomOffset.max );
 
       // Note: if AVG or MAX pooling, this property will be undefined.
-      o_numberArrayObject[ `${propertyNamePrefix}Filters` ] = filtersArray;
+      Base.ensure_object_property_numberArray_length_filled( o_numberArrayObject,
+        `${propertyNamePrefix}Filters`, filtersWeightsCount, Base.filtersWeightsRandomOffset.min, Base.filtersWeightsRandomOffset.max );
     }
 
     if ( depthwise_AvgMax_Or_ChannelMultiplier != 0 ) { // Include avgerage pooling, maximum pooling, convolution.
       if ( bBias ) {
-        let biasesWeightsCount = result.outputChannelCount;
-        let biasesArray = Base.generate_numberArray(
-          biasesWeightsCount, Base.biasesWeightsRandomOffset.min, Base.biasesWeightsRandomOffset.max );
-        o_numberArrayObject[ `${propertyNamePrefix}Biases` ] = biasesArray;
+        let biasesWeightsCount = result_outputChannelCount;
+        Base.ensure_object_property_numberArray_length_filled( o_numberArrayObject,
+          `${propertyNamePrefix}Biases`, biasesWeightsCount, Base.biasesWeightsRandomOffset.min, Base.biasesWeightsRandomOffset.max );
       }
     }
 
@@ -958,8 +951,12 @@ class Base extends TestParams.Base {
 }
 
 
+//!!! (2021/07/20 Temp Remarked) Fixed to non-random to simplify debug.
 Base.filtersWeightsRandomOffset = { min: -100, max: +100 };
 Base.biasesWeightsRandomOffset = { min: -100, max: +100 };
+
+// Base.filtersWeightsRandomOffset = { min: -0, max: +0 };
+// Base.biasesWeightsRandomOffset = { min: -0, max: +0 };
 
 
 /**
