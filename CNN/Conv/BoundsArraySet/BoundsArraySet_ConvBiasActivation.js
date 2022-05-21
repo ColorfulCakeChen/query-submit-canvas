@@ -193,6 +193,8 @@ class ConvBiasActivation extends InputsOutputs {
   adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId(
     nActivationId, nPassThroughStyleId ) {
 
+!!! ...unfinished... (2022/05/21) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
+
     const theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
 
