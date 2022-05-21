@@ -7,7 +7,7 @@ import { Base } from "./Depthwise_Base.js";
  * Depthwise convolution whose output will be the same as input when pass-through.
  *
  * It has the following properties:
- *   - ( nPassThroughStyleId == ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING ) (0).
+ *   - ( nPassThroughStyleId == ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0 ) (0).
  *
  * Usually, this is used for non-squeeze-and-excitaion depthwise.
  *
@@ -24,7 +24,7 @@ class SameWhenPassThrough extends Base {
     super(
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId,
-      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING,
+      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
       nHigherHalfDifferent, inputChannelCount_lowerHalf );
 
   }
