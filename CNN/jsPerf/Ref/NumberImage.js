@@ -64,7 +64,7 @@ class Base {
 
     return this.cloneBy_pointwise(
       pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING,
+      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
       bPassThrough,
       pointwiseName, parametersDesc );
   }
@@ -88,7 +88,7 @@ class Base {
 
     return this.cloneBy_pointwise(
       pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING,
+      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
       bPassThrough,
       pointwiseName, parametersDesc );
   }
@@ -105,7 +105,11 @@ class Base {
    */
   cloneBy_pointwise(
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-    nPassThroughStyleId, bPassThrough,
+     
+//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
+//    nPassThroughStyleId, bPassThrough,
+    bPassThrough,
+
     pointwiseName, parametersDesc ) {
 
     let imageIn = this;
@@ -122,7 +126,8 @@ class Base {
       imageIn.height, imageIn.width, pointwiseChannelCount, new Float32Array( imageOutLength ),
       new BoundsArraySet.Pointwise( imageIn.boundsArraySet.output0, pointwiseChannelCount ) );
 
-    // Note: In fact, nPassThroughStyleId is not used by NumberImage directly. But used by underlie BoundsArraySet.
+//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
+//    // Note: In fact, nPassThroughStyleId is not used by NumberImage directly. But used by underlie BoundsArraySet.
 
     imageOut.boundsArraySet.set_bPassThrough_all( bPassThrough );
 
@@ -185,8 +190,12 @@ class Base {
     {
       // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
       // by .afterBias, bPassThrough and activation function's output range.
-      imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId(
-        pointwiseActivationId, nPassThroughStyleId );
+
+//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
+//       imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId(
+//         pointwiseActivationId, nPassThroughStyleId );
+
+      imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( pointwiseActivationId );
 
       // Before activation function, scale every element according to its channel.
       Base.scale_byChannel( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
@@ -220,7 +229,7 @@ class Base {
     return this.cloneBy_depthwise(
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0_ACTIVATION_ESCAPING,
+      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
       bPassThrough,
       depthwiseName, parametersDesc );
   }
@@ -246,7 +255,7 @@ class Base {
     return this.cloneBy_depthwise(
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING,
+      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
       bPassThrough,
       depthwiseName, parametersDesc );
   }
@@ -264,7 +273,11 @@ class Base {
   cloneBy_depthwise(
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-    nPassThroughStyleId, bPassThrough,
+
+//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
+//    nPassThroughStyleId, bPassThrough,
+    bPassThrough,
+
     depthwiseName, parametersDesc ) {
 
     let imageIn = this;
@@ -298,7 +311,8 @@ class Base {
       outputHeight, outputWidth, outputChannelCount, new Float32Array( outputElementCount ),
       new BoundsArraySet.Depthwise( imageIn.boundsArraySet.output0, outputChannelCount ) );
 
-    // Note: In fact, nPassThroughStyleId is not used by NumberImage directly. But used by underlie BoundsArraySet.
+//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
+//    // Note: In fact, nPassThroughStyleId is not used by NumberImage directly. But used by underlie BoundsArraySet.
 
     imageOut.boundsArraySet.set_bPassThrough_all( bPassThrough );
 
@@ -432,8 +446,12 @@ class Base {
     {
       // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
       // by .afterBias, bPassThrough and activation function's output range.
-      imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId(
-        depthwiseActivationId, nPassThroughStyleId );
+
+//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
+//       imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId(
+//         depthwiseActivationId, nPassThroughStyleId );
+
+      imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
 
       // Before activation function, scale every element according to its channel.
       Base.scale_byChannel( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
