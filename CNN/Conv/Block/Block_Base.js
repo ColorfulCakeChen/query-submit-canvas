@@ -663,7 +663,12 @@ class Base extends ReturnOrClone.Base {
       }
     }
 
-//!!! ...unfinished... (2022/05/19)
+
+//!!! ...unfinished... (2022/05/21)
+// It seems that all squeeze-and-excitation (of pointwise21 and pointwise22) should be extracted, and then pointwise21 and pointwise22
+// should be extracted. ?? So that the weights arranged the same between ShuffleNetV2_byPointwise22 and ShuffleNetV2_byMobileNetV1??
+//
+
     // Prepare image height and width for squeeze-and-excitation if global-average-pooling is required.
     //
     // Note1: Image height and width are determined by depthwise1. Even if ( this.depthwise1.bExisted == false ), it still works.
