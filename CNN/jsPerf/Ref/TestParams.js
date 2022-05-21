@@ -215,7 +215,7 @@ class Base {
    * @param {number} randomOffsetMin  The random number offet lower bound.
    * @param {number} randomOffsetMax  The random number offet upperer bound.
    */
-  static ensure_object_property_numberArray_length_filled( io_object, propertyName, elementCount, randomOffsetMin, randomOffsetMax ) {
+  static ensure_object_property_numberArray_length_filled( io_object, propertyName, elementCount, randomOffsetMin = 0, randomOffsetMax = 0 ) {
 
     if (   ( io_object[ propertyName ] == undefined )          // The property does not exist.
         || ( !( io_object[ propertyName ] instanceof Array ) ) // The property exists but is not an array.
