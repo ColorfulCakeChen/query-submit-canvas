@@ -266,8 +266,8 @@ class Base extends ReturnOrClone.Base {
 
           // The BoundsArraySet for tf.mul() input by excitation.
           //
-          // Note: Not multiply_all_byScaleBoundsArray_one(). The reason is that it is supported to broadcast in the same channel
-          // (i.e. not across channels).
+          // Note: Not multiply_all_byScaleBoundsArray_one() which handles broadcasting across channels. The
+          // multiply_all_byScaleBoundsArray_all() already can handle broadcasting in the same channel.
           //
           this.boundsArraySet.output0.multiply_all_byScaleBoundsArray_all( inputScaleBoundsArray );
         }
