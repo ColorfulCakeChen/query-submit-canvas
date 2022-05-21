@@ -957,9 +957,11 @@ class Base extends TestParams.Base {
           pointwise21ChannelCount_original, paramsAll.bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
 
       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
-!!!
-        io_paramsNumberArrayObject.pointwise212Filters?.length = 0; // (Keep the number array for reducing memory re-allocation.)
-        io_paramsNumberArrayObject.pointwise212Biases?.length = 0;
+        Base.generate_squeezeExcitation_filters_biases( ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE,
+          0, paramsAll.pointwise21ActivationId, "pointwise212", io_paramsNumberArrayObject );
+
+        let pointwise222_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+          0, paramsAll.bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
       }
     }
 
@@ -998,8 +1000,11 @@ class Base extends TestParams.Base {
           pointwise22ChannelCount, bPointwise22Bias, "pointwise222", io_paramsNumberArrayObject );
 
       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
-        io_paramsNumberArrayObject.pointwise222Filters?.length = 0; // (Keep the number array for reducing memory re-allocation.)
-        io_paramsNumberArrayObject.pointwise222Biases?.length = 0;
+        Base.generate_squeezeExcitation_filters_biases( ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE,
+          0, nPointwise22ActivationId, "pointwise222", io_paramsNumberArrayObject );
+
+        let pointwise222_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+          0, bPointwise22Bias, "pointwise222", io_paramsNumberArrayObject );
       }
 
     }
