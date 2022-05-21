@@ -661,9 +661,6 @@ class Base extends TestParams.Base {
   static generate_squeezeExcitation_filters_biases(
     nSqueezeExcitationChannelCountDivisor, inputChannelCount, nActivationId, propertyNamePrefix, io_numberArrayObject ) {
 
-    // squeeze-and-excitation's outputChannelCount is always the same as inputChannelCount.
-    let result_outputChannelCount = inputChannelCount;
-
     // 1. intermediate pointwise convolution.
     let intermediateOutputChannelCount;
     {
@@ -690,20 +687,27 @@ class Base extends TestParams.Base {
       }
 
       Base.generate_pointwise_filters_biases(
-        inputChannelCount,
-        inputChannelCount, // (outputChannelCount same as inputChannelCount)
+        inputChannelCount, intermediateChannelCount,
         bBias_intermediatePointwise,
         SEIntermediatePropertyNamePrefix, io_numberArrayObject );
     }
 
-    // 2. excitation pointwise convolution.
-    if ( nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
+    let result_outputChannelCount;
 
+    // 2. excitation pointwise convolution.
+    {
       const SEExcitationPropertyNamePrefix = `${propertyNamePrefix}SEExcitation`;
 
+      if ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
+        result_outputChannelCount = 0; // no squeeze-and-excitation.
+
+      } else {
+        // When squeeze-and-excitation exists, its outputChannelCount is the same as inputChannelCount.
+        result_outputChannelCount = inputChannelCount;
+      }
+
       Base.generate_pointwise_filters_biases(
-        intermediateOutputChannelCount,
-        result_outputChannelCount,
+        intermediateOutputChannelCount, result_outputChannelCount,
         true, // Always bBias
         SEExcitationPropertyNamePrefix, io_numberArrayObject );
     }
@@ -939,22 +943,21 @@ class Base extends TestParams.Base {
 
     // Pointwise21
     {
-      if ( paramsAll.pointwise21ChannelCount > 0 ) { // pointwise21's squeeze-and-excitation.
-        Base.generate_squeezeExcitation_filters_biases(
-          paramsAll.nSqueezeExcitationChannelCountDivisor,
-          paramsAll.pointwise21ChannelCount, // (not pointwise21ChannelCount_original)
-          paramsAll.pointwise21ActivationId,
-          "pointwise21", io_paramsNumberArrayObject );
-      }
+      Base.generate_squeezeExcitation_filters_biases( paramsAll.nSqueezeExcitationChannelCountDivisor,
+        pointwise21ChannelCount_original, paramsAll.pointwise21ActivationId, "pointwise21", io_paramsNumberArrayObject );
 
       let pointwise21_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
         pointwise21ChannelCount_original, paramsAll.bPointwise21Bias, "pointwise21", io_paramsNumberArrayObject );
 
       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+        Base.generate_squeezeExcitation_filters_biases( paramsAll.nSqueezeExcitationChannelCountDivisor,
+          pointwise21ChannelCount_original, paramsAll.pointwise21ActivationId, "pointwise212", io_paramsNumberArrayObject );
+
         let pointwise212_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
           pointwise21ChannelCount_original, paramsAll.bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
 
       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
+!!!
         io_paramsNumberArrayObject.pointwise212Filters?.length = 0; // (Keep the number array for reducing memory re-allocation.)
         io_paramsNumberArrayObject.pointwise212Biases?.length = 0;
       }
@@ -977,20 +980,20 @@ class Base extends TestParams.Base {
         pointwise22ChannelCount = pointwise21ChannelCount_original;
       }
 
-      if ( pointwise22ChannelCount > 0 ) { // pointwise22's squeeze-and-excitation.
-        Base.generate_squeezeExcitation_filters_biases(
-          paramsAll.nSqueezeExcitationChannelCountDivisor,
-          pointwise22ChannelCount,
-          paramsAll.pointwise21ActivationId, // pointwise22's activation function should always be the same as pointwise21's.
-          "pointwise22", io_paramsNumberArrayObject );
-      }
+      // pointwise22's bias flag and activation function should always be the same as pointwise21's.
+      let bPointwise22Bias = paramsAll.bPointwise21Bias;
+      let nPointwise22ActivationId = paramsAll.pointwise21ActivationId; // pointwise22's activation function should always be the same as pointwise21's.
 
-      let bPointwise22Bias = paramsAll.bPointwise21Bias; // pointwise22's bias flag should always be the same as pointwise21's.
+      Base.generate_squeezeExcitation_filters_biases( paramsAll.nSqueezeExcitationChannelCountDivisor,
+        pointwise22ChannelCount, nPointwise22ActivationId, "pointwise22", io_paramsNumberArrayObject );
 
       let pointwise22_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
         pointwise22ChannelCount, bPointwise22Bias, "pointwise22", io_paramsNumberArrayObject );
 
       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+        Base.generate_squeezeExcitation_filters_biases( paramsAll.nSqueezeExcitationChannelCountDivisor,
+          pointwise22ChannelCount, nPointwise22ActivationId, "pointwise222", io_paramsNumberArrayObject );
+
         let pointwise222_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
           pointwise22ChannelCount, bPointwise22Bias, "pointwise222", io_paramsNumberArrayObject );
 
@@ -1067,24 +1070,32 @@ Base.paramsNameOrderArray = [
 
   "pointwise21SEIntermediateFilters", // pointwise21's squeeze-and-excitation's intermediate pointwise
   "pointwise21SEIntermediateBiases",
-
-  "pointwise21SEExcitationFilters", // pointwise21's squeeze-and-excitation's excitation pointwise
+  "pointwise21SEExcitationFilters",   // pointwise21's squeeze-and-excitation's excitation pointwise
   "pointwise21SEExcitationBiases",
 
   "pointwise21Filters",
   "pointwise21Biases",
+
+  "pointwise212SEIntermediateFilters", // pointwise212's squeeze-and-excitation's intermediate pointwise
+  "pointwise212SEIntermediateBiases",
+  "pointwise212SEExcitationFilters",   // pointwise212's squeeze-and-excitation's excitation pointwise
+  "pointwise212SEExcitationBiases",
 
   "pointwise212Filters",
   "pointwise212Biases",
 
   "pointwise22SEIntermediateFilters", // pointwise22's squeeze-and-excitation's intermediate pointwise
   "pointwise22SEIntermediateBiases",
-
   "pointwise22SEExcitationFilters",   // pointwise22's squeeze-and-excitation's excitation pointwise
   "pointwise22SEExcitationBiases",
 
   "pointwise22Filters",
   "pointwise22Biases",
+
+  "pointwise222SEIntermediateFilters", // pointwise222's squeeze-and-excitation's intermediate pointwise
+  "pointwise222SEIntermediateBiases",
+  "pointwise222SEExcitationFilters",   // pointwise222's squeeze-and-excitation's excitation pointwise
+  "pointwise222SEExcitationBiases",
 
   "pointwise222Filters",
   "pointwise222Biases",
