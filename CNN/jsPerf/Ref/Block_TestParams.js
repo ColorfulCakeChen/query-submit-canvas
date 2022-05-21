@@ -850,7 +850,8 @@ class Base extends TestParams.Base {
 
       // no depthwise2.
       } else {
-        io_paramsNumberArrayObject.depthwise2Filters = io_paramsNumberArrayObject.depthwise2Biases = undefined;
+        io_paramsNumberArrayObject.depthwise2Filters?.length = 0; // (Keep the number array for reducing memory re-allocation.)
+        io_paramsNumberArrayObject.depthwise2Biases?.length = 0;
       }
     }
 
@@ -895,7 +896,8 @@ class Base extends TestParams.Base {
           pointwise21ChannelCount_original, paramsAll.bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
 
       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
-        io_paramsNumberArrayObject.pointwise212Filters = io_paramsNumberArrayObject.pointwise212Biases = undefined;
+        io_paramsNumberArrayObject.pointwise212Filters?.length = 0; // (Keep the number array for reducing memory re-allocation.)
+        io_paramsNumberArrayObject.pointwise212Biases?.length = 0;
       }
     }
 
@@ -926,7 +928,8 @@ class Base extends TestParams.Base {
           pointwise22ChannelCount, bPointwise22Bias, "pointwise222", io_paramsNumberArrayObject );
 
       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
-        io_paramsNumberArrayObject.pointwise222Filters = io_paramsNumberArrayObject.pointwise222Biases = undefined;
+        io_paramsNumberArrayObject.pointwise222Filters?.length = 0; // (Keep the number array for reducing memory re-allocation.)
+        io_paramsNumberArrayObject.pointwise222Biases?.length = 0;
       }
 
     }
