@@ -668,6 +668,7 @@ class Base extends ReturnOrClone.Base {
 // It seems that all squeeze-and-excitation (of pointwise21 and pointwise22) should be extracted, and then pointwise21 and pointwise22
 // should be extracted. ?? So that the weights arranged the same between ShuffleNetV2_byPointwise22 and ShuffleNetV2_byMobileNetV1??
 //
+// No. This problem seems not existed because Block_TestParams already arrange them properly.
 
     // Prepare image height and width for squeeze-and-excitation if global-average-pooling is required.
     //
