@@ -57,8 +57,8 @@ class Base {
    * according to the element order of this nameOrderArray[].
    *
    * @param {object} nameNumberArrayObject
-   *   An object whose all properties are number array. It is a map from a string name to a number array. The names should be found
-   * in nameOrderArray[].
+   *   An object whose all properties are number or number array. It is a map from a string name to a number or number array. The names
+   * should be found in nameOrderArray[].
    *
    * @param {number} weightsElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
@@ -73,18 +73,15 @@ class Base {
     let weightsTotalLength = weightsElementOffsetBegin;
     for ( let i = 0; i < nameOrderArray.length; ++i ) {
       let name = nameOrderArray[ i ];
-      let numberArray = nameNumberArrayObject[ name ];
-      if ( numberArray ) {
-        weightsTotalLength += numberArray.length;
+      let number_or_numberArray = nameNumberArrayObject[ name ];
+      if ( number_or_numberArray != undefined ) {
+        if ( number_or_numberArray instanceof Array ) {
+          weightsTotalLength += number_or_numberArray.length; // Assume number array.
+        } else {
+          weightsTotalLength += 1; // Assume number.
+        }
       }
     }
-
-
-//!!! (2022/05/21 Remarked)
-// Perhaps, re-use a pre-allocated ArrayBuffer which could be re-allocated when needed to get Float32Array.
-//
-//     // Concatenate all number array into a Float32Array.
-//     this.weightsFloat32Array = new Float32Array( weightsTotalLength );
 
     // Concatenate all number array into a (re-used) Float32Array.
     this.prepare_weightsFloat32Array( weightsTotalLength );
@@ -96,10 +93,15 @@ class Base {
       let offset = weightsElementOffsetBegin;
       for ( let i = 0; i < nameOrderArray.length; ++i ) { // Concatenate all number array into a Float32Array.
       let name = nameOrderArray[ i ];
-      let numberArray = nameNumberArrayObject[ name ];
-        if ( numberArray ) {
-          this.weightsFloat32Array.set( numberArray, offset );
-          offset += numberArray.length;
+      let number_or_numberArray = nameNumberArrayObject[ name ];
+
+      if ( number_or_numberArray != undefined ) {
+        if ( number_or_numberArray instanceof Array ) {
+          this.weightsFloat32Array.set( number_or_numberArray, offset ); // Assume number array.
+          offset += number_or_numberArray.length;
+        } else {
+          this.weightsFloat32Array[ offset ] = number_or_numberArray; // Assume number.
+          offset += 1;
         }
       }
     }
