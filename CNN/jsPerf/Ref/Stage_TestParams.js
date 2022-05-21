@@ -40,6 +40,9 @@ class Base extends TestParams.Base {
   constructor() {
     super();
     this.blocksArray = new Array();
+
+    // A pre-allocated ArrayBuffer which could be re-allocated when needed to get Float32Array. (For reducing memory re-allocation.)
+    this.Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
   }
 
   /**
@@ -154,11 +157,11 @@ class Base extends TestParams.Base {
       channelShuffler = null;
     }
 
-    let Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
-    Float32Array_ByteOffsetBegin.setByConcat( paramsNameOrderArray, paramsNumberArrayObject, weightsElementOffsetBegin );
+    // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) Float32Array.
+    this.Float32Array_ByteOffsetBegin.setByConcat( paramsNameOrderArray, paramsNumberArrayObject, weightsElementOffsetBegin );
 
-    this.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
-    this.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
+    this.in.inputFloat32Array = this.Float32Array_ByteOffsetBegin.weightsFloat32Array;
+    this.in.byteOffsetBegin = this.Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
 
     return this;
   }
