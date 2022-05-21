@@ -167,8 +167,8 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
   /**
-   * Determine .output0.boundsArray (i.e. .afterActivation) and .output0.scaleArraySet by .afterBias and .bPassThrough and nActivationId
-   * and nPassThroughStyleId. Also adjust .afterFilter and .afterBias by .output0.scaleArraySet.
+   * Determine .output0.boundsArray (i.e. .afterActivation) and .output0.scaleArraySet by .afterBias and .bPassThrough and nActivationId.
+   * Also adjust .afterFilter and .afterBias by .output0.scaleArraySet.
    *
    * The following properties will be used:
    *   - this.afterBias
@@ -183,28 +183,36 @@ class ConvBiasActivation extends InputsOutputs {
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of this convolution.
    *
-   * @param {number} nPassThroughStyleId
-   *   The pass-through style id (ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) of this convolution. It is used for
-   * ( this.bPassThrough[ i ] == true ).
+
+//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
+//    * @param {number} nPassThroughStyleId
+//    *   The pass-through style id (ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) of this convolution. It is used for
+//    * ( this.bPassThrough[ i ] == true ).
+
    *
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
-  adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId(
-    nActivationId, nPassThroughStyleId ) {
+//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
+//   adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId(
+//     nActivationId, nPassThroughStyleId ) {
 
-!!! ...unfinished... (2022/05/21) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
+  adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( nActivationId ) {
 
     const theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
-    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
+
+//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
+//    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
 
     let doEscapingScale;
     for ( let outChannel = 0; outChannel < this.afterBias.length; ++outChannel ) {
 
-      let bPassThrough_bActivationEscaping = (
-           ( this.bPassThrough[ outChannel ] )             // For pass-through half channels.
-        && ( thePassThroughStyleInfo.bActivationEscaping ) // And specified pass-through style requires to escape activation.
-      );
+//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
+//       let bPassThrough_bActivationEscaping = (
+//            ( this.bPassThrough[ outChannel ] )             // For pass-through half channels.
+//         && ( thePassThroughStyleInfo.bActivationEscaping ) // And specified pass-through style requires to escape activation.
+//       );
+      let bPassThrough = this.bPassThrough[ outChannel ]; // For pass-through half channels.
 
       // 1. Determine (activationEscaping) .scaleArraySet (of .output0)
       {
@@ -218,7 +226,9 @@ class ConvBiasActivation extends InputsOutputs {
 
         } else {
 
-          if ( bPassThrough_bActivationEscaping ) { // For channels will be activation-escaping.
+//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
+//          if ( bPassThrough_bActivationEscaping ) { // For channels will be activation-escaping.
+          if ( bPassThrough ) { // For channels will be activation-escaping.
 
             // If value bounds is [ 0, 0 ], adjust it to a range which includes zero.
             //
@@ -278,7 +288,9 @@ class ConvBiasActivation extends InputsOutputs {
         //        handled for the follow-up processing.
         } else {
 
-          if ( bPassThrough_bActivationEscaping ) { // For activation-escaping, it will be the output range for inputDomainLinear.
+//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
+//          if ( bPassThrough_bActivationEscaping ) { // For activation-escaping, it will be the output range for inputDomainLinear.
+          if ( bPassThrough ) { // For activation-escaping, it will be the output range for inputDomainLinear.
             this.output0.boundsArray.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
 
           } else { // For non-activation-escaping, it will be the output range for the whole input domain.
