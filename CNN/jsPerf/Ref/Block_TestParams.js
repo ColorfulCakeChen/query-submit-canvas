@@ -607,7 +607,7 @@ class Base extends TestParams.Base {
    */
   static generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax ) {
 
-//!!! ...unfinished... (2022/05/20)
+//!!! ...unfinished... (2022/05/21) RandTools.fill_numberArray()
 // Perhaps, pool these numberArray. Re-use them if same ( elementCount, randomOffsetMin, randomOffsetMax ).
 
 //!!! (2021/07/20 Temp Remarked) Fixed to non-random to simplify debug.
@@ -686,6 +686,8 @@ class Base extends TestParams.Base {
     // If this pointwise operation does not exist, default outputChannelCount will be inputChannelCount.
     let result_outputChannelCount = inputChannelCount;
 
+//!!! ...unfinished... (2022/05/21) If the property exists, re-use the Array (RandTools.fill_numberArray()).
+
     if ( outputChannelCount > 0 ) {
       result_outputChannelCount = outputChannelCount;
 
@@ -730,6 +732,8 @@ class Base extends TestParams.Base {
 
     // If this depthwise operation does not exist, default outputChannelCount will be inputChannelCount.
     let result_outputChannelCount = inputChannelCount;
+
+//!!! ...unfinished... (2022/05/21) If the property exists, re-use the Array (RandTools.fill_numberArray()).
 
     if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
       result_outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
