@@ -275,7 +275,7 @@ class Base {
       } else {
         // Try parameter value assigned from inputFloat32Array (i.e. by evolution).
         this.in[ paramDesc.paramName ] = null;
-        this.in.paramsNumberArrayObject[ paramDesc.paramName ] = [ pair.valueInput ];
+        this.in.paramsNumberArrayObject[ paramDesc.paramName ] = pair.valueInput; // (number or number array)
         yield *Base.permuteParamRecursively.call( this, nextParamDescConfigIndex );
 
         this.in.paramsNumberArrayObject[ paramDesc.paramName ] = undefined; // So that it could be re-tried as by-specifying when backtracking.
