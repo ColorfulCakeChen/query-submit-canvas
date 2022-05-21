@@ -941,34 +941,39 @@ class Base extends TestParams.Base {
       }
     }
 
-    // Pointwise21
+    // Pointwise21's squeeze-and-excitation
     {
       Base.generate_squeezeExcitation_filters_biases( paramsAll.nSqueezeExcitationChannelCountDivisor,
         pointwise21ChannelCount_original, paramsAll.pointwise21ActivationId, "pointwise21", io_paramsNumberArrayObject );
-
-      let pointwise21_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-        pointwise21ChannelCount_original, paramsAll.bPointwise21Bias, "pointwise21", io_paramsNumberArrayObject );
 
       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         Base.generate_squeezeExcitation_filters_biases( paramsAll.nSqueezeExcitationChannelCountDivisor,
           pointwise21ChannelCount_original, paramsAll.pointwise21ActivationId, "pointwise212", io_paramsNumberArrayObject );
 
+      } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
+        Base.generate_squeezeExcitation_filters_biases( ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE,
+          0, paramsAll.pointwise21ActivationId, "pointwise212", io_paramsNumberArrayObject );
+      }
+    }
+
+    // Pointwise21
+    {
+      let pointwise21_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+        pointwise21ChannelCount_original, paramsAll.bPointwise21Bias, "pointwise21", io_paramsNumberArrayObject );
+
+      if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         let pointwise212_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
           pointwise21ChannelCount_original, paramsAll.bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
 
       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
-        Base.generate_squeezeExcitation_filters_biases( ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE,
-          0, paramsAll.pointwise21ActivationId, "pointwise212", io_paramsNumberArrayObject );
-
         let pointwise222_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
           0, paramsAll.bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
       }
     }
 
-    // Pointwise22
+    // Pointwise22's Preparation.
+    let pointwise22ChannelCount, bPointwise22Bias, nPointwise22ActivationId;
     {
-      let pointwise22ChannelCount;
-
       // In (-3) (ShuffleNetV2's body/tail) and (-4) (-5) (ShuffleNetV2_ByMobileNetV1), there is always no pointwise22.
       if (   ( this.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE21_INPUT1() ) // (-3) (ShuffleNetV2's body/tail)
           || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
@@ -983,31 +988,40 @@ class Base extends TestParams.Base {
       }
 
       // pointwise22's bias flag and activation function should always be the same as pointwise21's.
-      let bPointwise22Bias = paramsAll.bPointwise21Bias;
-      let nPointwise22ActivationId = paramsAll.pointwise21ActivationId; // pointwise22's activation function should always be the same as pointwise21's.
+      bPointwise22Bias = paramsAll.bPointwise21Bias;
+      nPointwise22ActivationId = paramsAll.pointwise21ActivationId; // pointwise22's activation function should always be the same as pointwise21's.
+    }
 
+    // Pointwise22's squeeze-and-excitation
+    {
       Base.generate_squeezeExcitation_filters_biases( paramsAll.nSqueezeExcitationChannelCountDivisor,
         pointwise22ChannelCount, nPointwise22ActivationId, "pointwise22", io_paramsNumberArrayObject );
-
-      let pointwise22_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-        pointwise22ChannelCount, bPointwise22Bias, "pointwise22", io_paramsNumberArrayObject );
 
       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         Base.generate_squeezeExcitation_filters_biases( paramsAll.nSqueezeExcitationChannelCountDivisor,
           pointwise22ChannelCount, nPointwise22ActivationId, "pointwise222", io_paramsNumberArrayObject );
 
+      } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
+        Base.generate_squeezeExcitation_filters_biases( ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE,
+          0, nPointwise22ActivationId, "pointwise222", io_paramsNumberArrayObject );
+      }
+    }
+
+    // Pointwise22
+    {
+      let pointwise22_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+        pointwise22ChannelCount, bPointwise22Bias, "pointwise22", io_paramsNumberArrayObject );
+
+      if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         let pointwise222_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
           pointwise22ChannelCount, bPointwise22Bias, "pointwise222", io_paramsNumberArrayObject );
 
       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
-        Base.generate_squeezeExcitation_filters_biases( ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE,
-          0, nPointwise22ActivationId, "pointwise222", io_paramsNumberArrayObject );
-
         let pointwise222_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
           0, bPointwise22Bias, "pointwise222", io_paramsNumberArrayObject );
       }
-
     }
+
   }
 
   /**
