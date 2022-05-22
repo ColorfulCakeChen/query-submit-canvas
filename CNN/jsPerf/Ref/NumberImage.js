@@ -749,8 +749,6 @@ class Base {
    *
    * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
    *
-   * @param {boolean}  bBias             Whether add bias.
-   *
    * @param {string}   squeezeExcitationName  A string for debug message of this squeeze-and-excitation.
    * @param {string}   parametersDesc    A string for debug message of this block.
    *
@@ -761,18 +759,32 @@ class Base {
     nSqueezeExcitationChannelCountDivisor,
     bPassThrough,
     nActivationId,
-
     intermediateFiltersArray, intermediateBiasesArray,
     excitationFiltersArray, excitationBiasesArray,
-
     squeezeExcitationName, parametersDesc ) {
 
-    //let imageIn = this;
-
-//!!! ...unfinished... (2022/05/21) squeeze
-
     // 1. squeezeDepthwise
-    {
+    let squeezeOut;
+    if (
+            // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2), no-op.
+            // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1), squeeze is not required.
+            //
+            ( nSqueezeExcitationChannelCountDivisor < 0 )
+
+         || ( ( this.height <= 0 ) || ( this.width <= 0 ) ) // squeeze can not be done.
+         || ( ( this.height == 1 ) && ( this.width == 1 ) ) // squeeze is not necessary. (already squeezed.)
+       ) {
+
+      // No squeeze. Do nothing.
+      squeezeOut = this;
+
+    } else {
+      squeezeOut = this.cloneBy_depthwise(
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG, this.height, this.width, // Global average pooling.
+        ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID, // So that image size could be shrinked to ( 1 * 1 )
+        null, false, null, ValueDesc.ActivationFunction.Singleton.Ids.NONE, // squeeze has no filters weights, no bias, no activation).
+        false, // average pooling can not pass-through. (only convolution could do pass-through.)
+        `${squeezeExcitationName}_squeezeDepthwise, parametersDesc );
     }
 
     // 2. intermediatePointwise
