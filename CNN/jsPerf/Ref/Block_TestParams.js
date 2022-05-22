@@ -680,10 +680,11 @@ class Base extends TestParams.Base {
 
         // If intermediatePointwise has no activation, it could be no bias because the next operation's (i.e. excitationPointwise)
         // bias will achieve it.
-        if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
+        if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
           bBias_intermediatePointwise = false;
-        else
+        } else {
           bBias_intermediatePointwise = true;
+        }
       }
 
       Base.generate_pointwise_filters_biases(
