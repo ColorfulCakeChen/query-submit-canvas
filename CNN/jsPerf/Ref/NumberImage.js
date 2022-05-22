@@ -784,10 +784,11 @@ class Base {
         ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID, // So that image size could be shrinked to ( 1 * 1 )
         null, false, null, ValueDesc.ActivationFunction.Singleton.Ids.NONE, // squeeze has no filters weights, no bias, no activation).
         false, // average pooling can not pass-through. (only convolution could do pass-through.)
-        `${squeezeExcitationName}_squeezeDepthwise, parametersDesc );
+        `${squeezeExcitationName}_squeezeDepthwise`, parametersDesc );
     }
 
     // 2. intermediatePointwise
+    let intermediateOut;
     {
       let intermediateChannelCount;
       if ( nSqueezeExcitationChannelCountDivisor <= 0 ) {
@@ -804,10 +805,18 @@ class Base {
           bBias_intermediatePointwise = false;
         else
           bBias_intermediatePointwise = true;
-      }
 
 //!!! ...unfinished... (2022/05/21)
 
+        intermediateOut = squeezeOut.cloneBy_pointwise(
+          pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
+          bPassThrough,
+
+          `${squeezeExcitationName}_intermediatePointwise`, parametersDesc );
+
+      } else { // No intermediate pointwise convolution.
+        intermediateOut = squeezeOut;
+      }
     }
 
     // 3. excitationPointwise
