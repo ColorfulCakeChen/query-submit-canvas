@@ -402,8 +402,8 @@ class Base extends ReturnOrClone.Base {
    */
   static setup_bSqueeze() {
     if (
-            // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2), no-op
-            // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1), squeeze is not required
+            // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2), no-op.
+            // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1), squeeze is not required.
             //
             ( this.nSqueezeExcitationChannelCountDivisor < 0 )
 
