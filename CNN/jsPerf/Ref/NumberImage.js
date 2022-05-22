@@ -53,7 +53,7 @@ class Base {
 //    * @param {boolean}  bBias             Whether add bias.
 //    * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
 //    * @param {string}   pointwiseName     A string for debug message of this convolution.
-//    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+//    * @param {string}   parametersDesc    A string for debug message of this block.
 //    *
 //    * @return {NumberImage.Base}
 //    *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
@@ -77,7 +77,7 @@ class Base {
 //    * @param {boolean}  bBias             Whether add bias.
 //    * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
 //    * @param {string}   pointwiseName     A string for debug message of this convolution.
-//    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+//    * @param {string}   parametersDesc    A string for debug message of this block.
 //    *
 //    * @return {NumberImage.Base}
 //    *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
@@ -99,7 +99,7 @@ class Base {
    * @param {boolean}  bBias             Whether add bias.
    * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
    * @param {string}   pointwiseName     A string for debug message of this convolution.
-   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   * @param {string}   parametersDesc    A string for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
@@ -217,7 +217,7 @@ class Base {
 //    * @param {boolean}  bBias             Whether add bias.
 //    * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
 //    * @param {string}   depthwiseName     A string for debug message of this convolution.
-//    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+//    * @param {string}   parametersDesc    A string for debug message of this block.
 //    *
 //    * @return {NumberImage.Base}
 //    *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
@@ -243,7 +243,7 @@ class Base {
 //    * @param {boolean}  bBias             Whether add bias.
 //    * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
 //    * @param {string}   depthwiseName     A string for debug message of this convolution.
-//    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+//    * @param {string}   parametersDesc    A string for debug message of this block.
 //    *
 //    * @return {NumberImage.Base}
 //    *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
@@ -267,7 +267,7 @@ class Base {
    * @param {boolean}  bBias             Whether add bias.
    * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
    * @param {string}   depthwiseName     A string for debug message of this convolution.
-   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   * @param {string}   parametersDesc    A string for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
@@ -473,7 +473,7 @@ class Base {
    * @param {boolean}  bBias             Whether add bias.
    * @param {number[]} biasesArray       The bias values.
    * @param {string}   biasName          A string for debug message of this bias.
-   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   * @param {string}   parametersDesc    A string for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return this which may or may not be added bias (according to bBias).
@@ -517,7 +517,7 @@ class Base {
    * @param {NumberImage.Base} thisImage        The thisImage.dataArray[] will be multiplied by scaleArray in place.
    * @param {FloatValue.ScaleArray} scaleArray  The scales for every channel.
    * @param {string}   scaleName                A string for debug message of this scaling.
-   * @param {string}   parametersDesc           A string for debug message of this point-depth-point.
+   * @param {string}   parametersDesc           A string for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return the (modified) image whose every element is scaled according to its channel.
@@ -552,7 +552,7 @@ class Base {
    * @param {NumberImage.Base} this      The source image to be processed.
    * @param {string}   nActivationId     The name string of this activation function.
    *
-   * @param {string}   parametersDesc A string for debug message of this point-depth-point.
+   * @param {string}   parametersDesc A string for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return this which may or may not be modified by activation function (according to nActivationId). The this.dataArray may be
@@ -587,7 +587,7 @@ class Base {
    * @param {NumberImage.Base} another     The second image to be used for adding.
    *
    * @param {string} addName               A string for debug message of this adding operation.
-   * @param {string} parametersDesc        A string for debug message of this point-depth-point.
+   * @param {string} parametersDesc        A string for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of adding this and another.
@@ -667,7 +667,7 @@ class Base {
    * @param {NumberImage.Base} another     The second image to be used for multiplying.
    *
    * @param {string} multiplyName          A string for debug message of this multiplying operation.
-   * @param {string} parametersDesc        A string for debug message of this point-depth-point.
+   * @param {string} parametersDesc        A string for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of multiplying this and another.
@@ -739,18 +739,81 @@ class Base {
     return imageOutNew;
   }
 
-//!!! ...unfinished... (2022/05/18)
+//!!! ...unfinished... (2022/05/21)
   /**
+   * @param {NumberImage.Base} this      The source image to be processed.
    *
+   * @param {number} nSqueezeExcitationChannelCountDivisor
+   *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
+   * (Please see also SqueezeExcitation.Base.nSqueezeExcitationChannelCountDivisor explanation.)
+   *
+   * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
+   *
+   * @param {boolean}  bBias             Whether add bias.
+   *
+   * @param {string}   squeezeExcitationName  A string for debug message of this squeeze-and-excitation.
+   * @param {string}   parametersDesc    A string for debug message of this block.
+   *
+   * @return {NumberImage.Base}
+   *   Return a newly created object which is the result of the squeeze-and-excitation.
    */
-  cloneBy_SqueezeExcitation(
-  ) {
+  cloneBy_squeezeExcitation(
+    nSqueezeExcitationChannelCountDivisor,
+    bPassThrough,
+    nActivationId,
+
+    intermediateFiltersArray, intermediateBiasesArray,
+    excitationFiltersArray, excitationBiasesArray,
+
+    squeezeExcitationName, parametersDesc ) {
+
+    //let imageIn = this;
+
+//!!! ...unfinished... (2022/05/21) squeeze
+
+    // 1. squeezeDepthwise
+    {
+    }
+
+    // 2. intermediatePointwise
+    {
+      let intermediateChannelCount;
+      if ( nSqueezeExcitationChannelCountDivisor <= 0 ) {
+        intermediateChannelCount = 0;
+      } else {
+        this.intermediateChannelCount = Math.ceil( this.depth / nSqueezeExcitationChannelCountDivisor );
+      }
+
+      if ( intermediateChannelCount > 0 ) {
+
+        // If it has no activation, it could be no bias because the next operation's (i.e. excitationPointwise) bias will achieve it.
+        let bBias_intermediatePointwise;
+        if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
+          bBias_intermediatePointwise = false;
+        else
+          bBias_intermediatePointwise = true;
+      }
+
+//!!! ...unfinished... (2022/05/21)
+
+    }
+
+    // 3. excitationPointwise
+    {
+//!!! ...unfinished... (2022/05/21) squeeze
+
+      let excitationChannelCount = this.depth;
+    }
+
+    // 4. multiply
+    {
+    }
   }
 
   /**
    * @param {NumberImage.Base} imageIn  The source image to be processed.
    * @param {string} splitName          A string for debug message of this splitting.
-   * @param {string} parametersDesc     A string for debug message of this point-depth-point.
+   * @param {string} parametersDesc     A string for debug message of this block.
    *
    * @return {NumberImage.Base[]}
    *   Return splitted images [ imageOut1, imageOut2 ] along the axis id 2. If imageIn is null, return [ null, null ].
@@ -818,7 +881,7 @@ class Base {
    * @param {NumberImage.Base} imageIn1   The source image1 to be processed.
    * @param {NumberImage.Base} imageIn2   The source image2 to be processed.
    * @param {string} concatName           A string for debug message of this concatenation.
-   * @param {string} parametersDesc       A string for debug message of this point-depth-point.
+   * @param {string} parametersDesc       A string for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return concatenated image along the axis id 2. If imageIn1 is null, return imageIn2. If imageIn2 is null, return imageIn1.
