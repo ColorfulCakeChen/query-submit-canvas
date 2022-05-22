@@ -474,6 +474,9 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise21 convolution, bias and activation.
    */
   use_pointwise21( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
+
+//!!! ...unfinished... (2022/05/22) squeeze-and-excitation
+
 //!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
 //    let result = inputImage.cloneBy_pointwise_SameWhenPassThrough( pointwise21ChannelCount,
     let result = inputImage.cloneBy_pointwise( pointwise21ChannelCount,
@@ -494,6 +497,9 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise212 convolution, bias and activation.
    */
   use_pointwise212( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
+
+//!!! ...unfinished... (2022/05/22) squeeze-and-excitation
+
 //!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
 //    let result = inputImage.cloneBy_pointwise_SameWhenPassThrough( pointwise21ChannelCount,
     let result = inputImage.cloneBy_pointwise( pointwise21ChannelCount,
@@ -511,6 +517,9 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise21 pass-through convolution and bias.
    */
   use_pointwise21_PassThrough( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
+
+//!!! ...unfinished... (2022/05/22) squeeze-and-excitation
+
 
     // SameWhenPassThrough.
     let nPassThroughStyleId = ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0;
@@ -541,6 +550,9 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise22 convolution, bias and activation.
    */
   use_pointwise22( inputImage, pointwise22ChannelCount, pointwiseName, parametersDesc ) {
+
+//!!! ...unfinished... (2022/05/22) squeeze-and-excitation
+
 //!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
 //    let result = inputImage.cloneBy_pointwise_SameWhenPassThrough( pointwise22ChannelCount,
     let result = inputImage.cloneBy_pointwise( pointwise22ChannelCount,
@@ -562,6 +574,9 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise222 convolution, bias and activation.
    */
   use_pointwise222( inputImage, pointwise22ChannelCount, pointwiseName, parametersDesc ) {
+
+//!!! ...unfinished... (2022/05/22) squeeze-and-excitation
+
 //!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
 //    let result = inputImage.cloneBy_pointwise_SameWhenPassThrough( pointwise22ChannelCount,
     let result = inputImage.cloneBy_pointwise( pointwise22ChannelCount,
