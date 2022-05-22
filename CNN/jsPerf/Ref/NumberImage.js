@@ -801,17 +801,15 @@ class Base {
 
         // If it has no activation, it could be no bias because the next operation's (i.e. excitationPointwise) bias will achieve it.
         let bBias_intermediatePointwise;
-        if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
+        if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
           bBias_intermediatePointwise = false;
-        else
+        } else {
           bBias_intermediatePointwise = true;
-
-//!!! ...unfinished... (2022/05/21)
+        }
 
         intermediateOut = squeezeOut.cloneBy_pointwise(
-          pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
+          intermediateChannelCount, intermediateFiltersArray, bBias_intermediatePointwise, intermediateBiasesArray, nActivationId,
           bPassThrough,
-
           `${squeezeExcitationName}_intermediatePointwise`, parametersDesc );
 
       } else { // No intermediate pointwise convolution.
@@ -821,9 +819,10 @@ class Base {
 
     // 3. excitationPointwise
     {
-//!!! ...unfinished... (2022/05/21) squeeze
+//!!! ...unfinished... (2022/05/21)
 
       let excitationChannelCount = this.depth;
+//    excitationFiltersArray, excitationBiasesArray,
     }
 
     // 4. multiply
