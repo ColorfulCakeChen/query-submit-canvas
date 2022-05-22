@@ -400,7 +400,7 @@ class Base extends ReturnOrClone.Base {
    *
    * @param {Base} this  The Base object to be determined and modified.
    */
-  static setup_outputChannelCount() {
+  static setup_bSqueeze() {
     if (
             // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2), no-op
             // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1), squeeze is not required
