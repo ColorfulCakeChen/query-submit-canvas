@@ -761,6 +761,17 @@ class Base {
     excitationFiltersArray, excitationBiasesArray,
     squeezeExcitationName, parametersDesc ) {
 
+    tf.util.assert( this.nSqueezeExcitationChannelCountDivisor >= ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE,
+      `${squeezeExcitationName}: `
+        + `nSqueezeExcitationChannelCountDivisor ( ${this.nSqueezeExcitationChannelCountDivisor} ) `
+        + `should be >= `
+        + `ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE `
+          + `( ${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE} ) `
+        + `(${parametersDesc})`);
+
+    if ( this.nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
+      return this.clone(); // No squeeze-and-excitation operation.
+
     // 1. squeezeDepthwise
     let squeezeOut;
     if (
@@ -816,15 +827,21 @@ class Base {
     }
 
     // 3. excitationPointwise
+    let excitationOut;
     {
-//!!! ...unfinished... (2022/05/21)
-
-      let excitationChannelCount = this.depth;
-//    excitationFiltersArray, excitationBiasesArray,
+      excitationOut = squeezeOut.clone_byPointwise(
+        this.depth, // excitation output input channel count is the same as original input channel count.
+        excitationFiltersArray,
+        true, // excitation always has bias.
+        excitationBiasesArray,
+        nActivationId,
+        bPassThrough,
+        `${squeezeExcitationName}_excitationPointwise`, parametersDesc );
     }
 
     // 4. multiply
     {
+//!!! ...unfinished... (2022/05/23)
     }
   }
 
