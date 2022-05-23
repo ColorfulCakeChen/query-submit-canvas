@@ -76,11 +76,16 @@ class Base {
    *   A function to be called for every leaf object. Note that leaf object's value may be undefined.
    */
   visit_all_and_call( pfn ) {
-    if ( this.map ) {
-      for ( let leafObject of MapTools.values_recursively( this.map ) ) {
-        pfn( leafObject );
-      }
+    for ( let leafObject of MapTools.values_recursively( this.map ) ) {
+      pfn( leafObject );
     }
+  }
+
+  /**
+   * Removes all elements (including all sub-map and all leaf object).
+   */
+  clear() {
+    this.map.clear();
   }
 
 }
