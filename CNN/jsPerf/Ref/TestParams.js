@@ -1,6 +1,6 @@
 export { ParamDescConfig, Base };
 
-import * as SequenceRandomArray from "./SequenceRandomArray.js";
+import * as SequenceRandom_NumberArray from "./SequenceRandom_NumberArray.js";
 
 /**
  * Describe which parameter and how many combination for the parameter.
@@ -89,7 +89,7 @@ class Base {
     this.out = {};
     this.modifyParamValueHistory = [];
 
-    this.SequenceRandomArrayBag = new SequenceRandomArray.Bag(); // For reducing same weights array re-generating.
+    this.SequenceRandom_NumberArray_Bag = new SequenceRandom_NumberArray.Bag(); // For reducing same weights array re-generating.
   }
 
   /**
@@ -246,7 +246,7 @@ class Base {
    * @param {number} randomOffsetMax  The random number offet upperer bound.
    */
   ensure_object_property_numberArray_length_existed( io_object, propertyName, elementCount, randomOffsetMin = 0, randomOffsetMax = 0 ) {
-    io_object[ propertyName ] = this.SequenceRandomArrayBag.get_by_elementCount_randomOffsetMin_randomOffsetMax(
+    io_object[ propertyName ] = this.SequenceRandom_NumberArray_Bag.get_by_elementCount_randomOffsetMin_randomOffsetMax(
       elementCount, randomOffsetMin, randomOffsetMax );
   }
 
