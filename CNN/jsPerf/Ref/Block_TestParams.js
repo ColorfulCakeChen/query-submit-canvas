@@ -385,7 +385,7 @@ class Base extends TestParams.Base {
     let nPassThroughStyleId = ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0;
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
 
-    let pointwisePassThrough = new ( () )(
+    let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
       inputImage.depth, pointwise1ChannelCount, 0, this.out.bPointwise1Bias,
       thePassThroughStyleInfo.filterValue, thePassThroughStyleInfo.biasValue
     );
