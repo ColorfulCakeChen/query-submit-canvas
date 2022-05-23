@@ -1,21 +1,37 @@
-export { PassThrough_FiltersArray_BiasesArray_Bag };
+export { Base };
 
-import * as MapTools from "../../util/MapTools.js";
-import { PassThrough_FiltersArray_BiasesArray } from "./PassThrough.js";
+import * as MapTools from "./util/MapTools.js";
 
 /**
- * A pool for PassThrough_FiltersArray_BiasesArray with various parameters. It could reduce re-create them of same parameters again
- * and again to improve performance.
+ * A map whose value is also a map (except the most leaf node.
  *
  */
-class PassThrough_FiltersArray_BiasesArray_Bag {
+class Base {
 
 //!!! ...unfinished... (2022/05/23)
   constructor() {
-    this.by_inputChannelCount_outputChannelCount_inputChannelIndexStart_bBias_filterValue_biasValue = new Map();
+    this.map = new Map();
   }
 
-  get_by_nPassThroughStyleId( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, nPassThroughStyleId ) {
+  /**
+   *
+   *
+   * @param {function} pfnCreate
+   *   This parameter (i.e. arguments[ 0 ]) should be a function. When specified keys (i.e. arguments[] except arguments[ 0 ]) is
+   * not found, this function will be called with these parameters. The function pfnCreate() should return a object which will
+   * be recorded as the keys' corresponding value.
+   *
+   * @return {any}
+   *   All parameters ( arguments[ 1 ], arguments[ 2 ], ..., arguments[ arguments.length - 1 ] ) will be used as keys of every map
+   * layer.
+   *
+   *   - If a object is found, it will be returned.
+   *
+   *   - Otherwise, the function (pfnCreate)() will be called with all these same parameters to create a new object. The newly
+   *     created object will be recorded into the leaf map and returned.
+   *
+   */
+  static get_or_create_by_arguments1_etc( pfnCreate ) {
 
 //!!! ...unfinished... (2022/05/23)
 //     let nPassThroughStyleId = ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0;
