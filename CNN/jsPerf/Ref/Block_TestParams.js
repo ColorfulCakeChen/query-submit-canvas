@@ -482,7 +482,7 @@ class Base extends TestParams.Base {
       this.in.paramsNumberArrayObject.pointwise21SEIntermediateBiasesArray,
       this.in.paramsNumberArrayObject.pointwise21SEExcitationFiltersArray,
       this.in.paramsNumberArrayObject.pointwise21SEExcitationBiasesArray,
-      `${pointwiseName}_squeezeExcitation_squeezeDepthwise`, parametersDesc );
+      `${pointwiseName}_squeezeExcitation`, parametersDesc );
 
     let result = squeezeExcitationOut.clone_byPointwise( pointwise21ChannelCount,
       this.in.paramsNumberArrayObject.pointwise21Filters, this.out.bPointwise21Bias,
@@ -502,23 +502,17 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise212 convolution, bias and activation.
    */
   use_pointwise212( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
-
-//!!! ...unfinished... (2022/05/23) squeeze-and-excitation
-???
     let squeezeExcitationOut = inputImage.clone_bySqueezeExcitation(
       this.out.nSqueezeExcitationChannelCountDivisor,
       false, // (bPassThrough)
       this.out.pointwise21ActivationId,
-      this.in.paramsNumberArrayObject.pointwise21SEIntermediateFiltersArray,
-      this.in.paramsNumberArrayObject.pointwise21SEIntermediateBiasesArray,
-      this.in.paramsNumberArrayObject.pointwise21SEExcitationFiltersArray,
-      this.in.paramsNumberArrayObject.pointwise21SEExcitationBiasesArray,
-      `${pointwiseName}_squeezeExcitation_squeezeDepthwise`, parametersDesc );
+      this.in.paramsNumberArrayObject.pointwise212SEIntermediateFiltersArray,
+      this.in.paramsNumberArrayObject.pointwise212SEIntermediateBiasesArray,
+      this.in.paramsNumberArrayObject.pointwise212SEExcitationFiltersArray,
+      this.in.paramsNumberArrayObject.pointwise212SEExcitationBiasesArray,
+      `${pointwiseName}_squeezeExcitation`, parametersDesc );
 
-
-//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    let result = inputImage.clone_byPointwise_SameWhenPassThrough( pointwise21ChannelCount,
-    let result = inputImage.clone_byPointwise( pointwise21ChannelCount,
+    let result = squeezeExcitationOut.clone_byPointwise( pointwise21ChannelCount,
       this.in.paramsNumberArrayObject.pointwise212Filters, this.out.bPointwise21Bias,
       this.in.paramsNumberArrayObject.pointwise212Biases, this.out.pointwise21ActivationId, false, pointwiseName, parametersDesc );
     return result;
@@ -534,7 +528,17 @@ class Base extends TestParams.Base {
    */
   use_pointwise21_PassThrough( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
 
-//!!! ...unfinished... (2022/05/22) squeeze-and-excitation
+//!!! ...unfinished... (2022/05/23) squeeze-and-excitation
+???    let squeezeExcitationOut = inputImage.clone_bySqueezeExcitation(
+      this.out.nSqueezeExcitationChannelCountDivisor,
+      false, // (bPassThrough)
+      this.out.pointwise21ActivationId,
+      this.in.paramsNumberArrayObject.pointwise21SEIntermediateFiltersArray,
+      this.in.paramsNumberArrayObject.pointwise21SEIntermediateBiasesArray,
+      this.in.paramsNumberArrayObject.pointwise21SEExcitationFiltersArray,
+      this.in.paramsNumberArrayObject.pointwise21SEExcitationBiasesArray,
+      `${pointwiseName}_squeezeExcitation`, parametersDesc );
+
 
 
     // SameWhenPassThrough.
