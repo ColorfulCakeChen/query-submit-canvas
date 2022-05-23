@@ -124,7 +124,7 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Bag {
   /**
    *
    */
-  get_by_nPassThroughStyleId( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, nPassThroughStyleId ) {
+  get_by_PassThroughStyleId( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, nPassThroughStyleId ) {
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
     return this.get_by_filterValue_biasValue( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias,
       thePassThroughStyleInfo.filterValue, thePassThroughStyleInfo.biasValue );
