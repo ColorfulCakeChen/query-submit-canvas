@@ -788,12 +788,20 @@ class Base {
       squeezeOut = this;
 
     } else {
+      const squeezeAvgMax_Or_ChannelMultiplier =  ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG;
+      const squeezeFilterHeight = this.height;
+      const squeezeFilterWidth = this.width; // Global average pooling.
+      const squeezeStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID; // So that image size could be shrinked to ( 1 * 1 )
+      const squeezeFiltersArray = null;
+      const squeezeBias = false;
+      const squeezeBiasesArray = null;
+      const squeezeActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE; // squeeze has no filters weights, no bias, no activation).
+      const squeezebPassThrough = false; // average pooling can not pass-through. (only convolution could do pass-through.)
+
       squeezeOut = this.clone_byDepthwise(
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG, this.height, this.width, // Global average pooling.
-        ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID, // So that image size could be shrinked to ( 1 * 1 )
-        null, false, null, ValueDesc.ActivationFunction.Singleton.Ids.NONE, // squeeze has no filters weights, no bias, no activation).
-        false, // average pooling can not pass-through. (only convolution could do pass-through.)
-        `${squeezeExcitationName}_squeezeDepthwise`, parametersDesc );
+        squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
+        squeezeFiltersArray, squeezeBias, squeezeBiasesArray, squeezeActivationId,
+        squeezebPassThrough, `${squeezeExcitationName}_squeezeDepthwise`, parametersDesc );
     }
 
     // 2. intermediatePointwise
@@ -818,8 +826,7 @@ class Base {
 
         intermediateOut = squeezeOut.clone_byPointwise(
           intermediateChannelCount, intermediateFiltersArray, bBias_intermediatePointwise, intermediateBiasesArray, nActivationId,
-          bPassThrough,
-          `${squeezeExcitationName}_intermediatePointwise`, parametersDesc );
+          bPassThrough, `${squeezeExcitationName}_intermediatePointwise`, parametersDesc );
 
       } else { // No intermediate pointwise convolution.
         intermediateOut = squeezeOut;
@@ -829,14 +836,12 @@ class Base {
     // 3. excitationPointwise
     let excitationOut;
     {
+      const excitationChannelCount = this.depth; // excitation output input channel count is the same as original input channel count.
+      const bBias_excitationPointwise = true; // excitation always has bias.
+
       excitationOut = squeezeOut.clone_byPointwise(
-        this.depth, // excitation output input channel count is the same as original input channel count.
-        excitationFiltersArray,
-        true, // excitation always has bias.
-        excitationBiasesArray,
-        nActivationId,
-        bPassThrough,
-        `${squeezeExcitationName}_excitationPointwise`, parametersDesc );
+        excitationChannelCount, excitationFiltersArray, bBias_excitationPointwise, excitationBiasesArray, nActivationId,
+        bPassThrough, `${squeezeExcitationName}_excitationPointwise`, parametersDesc );
     }
 
     // 4. multiply
