@@ -246,8 +246,7 @@ class Base {
    * @param {number} randomOffsetMax  The random number offet upperer bound.
    */
   ensure_object_property_numberArray_length_existed( io_object, propertyName, elementCount, randomOffsetMin = 0, randomOffsetMax = 0 ) {
-    io_object[ propertyName ] = this.SequenceRandomArrayBag.get_or_create_by_arguments1_etc(
-      RandTools.generate_numberArray,
+    io_object[ propertyName ] = this.SequenceRandomArrayBag.get_by_elementCount_randomOffsetMin_randomOffsetMax(
       elementCount, randomOffsetMin, randomOffsetMax );
   }
 
