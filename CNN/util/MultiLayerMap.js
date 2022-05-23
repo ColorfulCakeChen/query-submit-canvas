@@ -3,7 +3,8 @@ export { Base };
 import * as MapTools from "./util/MapTools.js";
 
 /**
- * A map whose value is also a map (except the most leaf node.
+ * A map whose value is also a map (except the most leaf node). The most leaf node's value is any object which caller could
+ * creates.
  *
  */
 class Base {
@@ -68,21 +69,17 @@ class Base {
     return resultObject;
   }
 
-//!!! ...unfinished... (2022/05/23)
-
-
-//!!! ...unfinished... (2022/05/23)
-  /** Release all tensors. */
-  disposeTensors() {
-    if ( this.tensorsBy_originalHeight_originalWidth_channelCount_filterHeight_filterWidth_stridesPad ) {
-
-      for ( let tensor
-        of MapTools.values_recursively( this.tensorsBy_originalHeight_originalWidth_channelCount_filterHeight_filterWidth_stridesPad ) ) {
-
-        tensor.dispose();
+  /**
+   * Visit all leaf objects.
+   *
+   * @param {function} pfn
+   *   A function to be called for every leaf object. Note that leaf object's value may be undefined.
+   */
+  visit_all_and_call( pfn ) {
+    if ( this.map ) {
+      for ( let leafObject of MapTools.values_recursively( this.map ) ) {
+        pfn( leafObject );
       }
-
-      this.tensorsBy_originalHeight_originalWidth_channelCount_filterHeight_filterWidth_stridesPad.clear();
     }
   }
 
