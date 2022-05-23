@@ -760,7 +760,10 @@ class Base {
     excitationFiltersArray, excitationBiasesArray,
     squeezeExcitationName, parametersDesc ) {
 
-    tf.util.assert( this.nSqueezeExcitationChannelCountDivisor >= ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE,
+    tf.util.assert(
+      (   ( this.nSqueezeExcitationChannelCountDivisor != undefined )
+       && ( this.nSqueezeExcitationChannelCountDivisor >= ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE )
+      ),
       `${squeezeExcitationName}: `
         + `nSqueezeExcitationChannelCountDivisor ( ${this.nSqueezeExcitationChannelCountDivisor} ) `
         + `should be >= `
