@@ -737,7 +737,6 @@ class Base {
     return imageOutNew;
   }
 
-//!!! ...unfinished... (2022/05/21)
   /**
    * @param {NumberImage.Base} this      The source image to be processed.
    *
@@ -845,11 +844,9 @@ class Base {
     }
 
     // 4. multiply
-    let multiplyOut;
-    {
-      multiplyOut = excitationOut.
-//!!! ...unfinished... (2022/05/23)
-    }
+    let multiplyOut = this.clone_byMultiply( excitationOut, `${squeezeExcitationName}_multiply`, parametersDesc );
+
+    return multiplyOut;
   }
 
   /**
