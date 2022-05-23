@@ -560,6 +560,9 @@ class Base {
    */
   static modify_byActivation_withoutAffect_BoundsArraySet( imageIn, nActivationId, parametersDesc ) {
 
+//!!! ...unfinished... (2022/05/23) Perhaps, re-implement without tensor.
+
+
     let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
     if ( !theActivationFunctionInfo )
       return imageIn;
