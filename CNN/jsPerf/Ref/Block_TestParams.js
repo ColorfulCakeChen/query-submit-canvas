@@ -670,20 +670,28 @@ class Base extends TestParams.Base {
     return false;
   }
 
-//!!! (2022/05/21 Remarked) replaced by Base.ensure_object_property_numberArray_length_filled().
-//   /**
-//    * @return {number[]}
-//    *   Return a number array.
-//    */
-//   static generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax ) {
-//
-// //!!! ...unfinished... (2022/05/21) RandTools.fill_numberArray()
-// // Perhaps, pool these numberArray. Re-use them if same ( elementCount, randomOffsetMin, randomOffsetMax ).
-//
-// //!!! (2021/07/20 Temp Remarked) Fixed to non-random to simplify debug.
-//     return RandTools.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax );
-// //    return RandTools.generate_numberArray( elementCount, 0, 0 );
-//   }
+  /**
+   * Fill an object's property as a number array.
+   * Similar to Base.ensure_object_property_numberArray_length_filled(). But the property will be a shared number array. Its value
+   * may be shared with other caller.
+   *
+   * This may have better performance because of number array re-using (instead of re-generating).
+   *
+   *
+   * @param {object} io_object     The object to be checked and modified.
+   * @param {string} propertyName  The property io_object[ propertyName ] will be ensured as a number array.
+   * @param {number} elementCount  The property io_object[ propertyName ].length will be ensured as elementCount.
+   * @param {boolean} bRegen       If true, generate new value. If false, a shared number array will be used (better performance).
+   */
+  fill_object_property_numberArray( io_object, propertyName, elementCount, bRegen ) {
+    if ( bRegen ) {
+      Base.ensure_object_property_numberArray_length_filled( io_object,
+        propertyName, elementCount, Base.weightsRandomOffset.min, Base.weightsRandomOffset.max );
+    } else {
+      super.ensure_object_property_numberArray_length_existed( io_object,
+        propertyName, elementCount, Base.weightsRandomOffset.min, Base.weightsRandomOffset.max );
+    }
+  }
 
   /**
    * @member {number} nSqueezeExcitationChannelCountDivisor
@@ -798,20 +806,18 @@ class Base extends TestParams.Base {
       result_outputChannelCount = outputChannelCount;
 
       let filtersWeightsCount = inputChannelCount * outputChannelCount;
-      Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject,
-        filtersPropertyName, filtersWeightsCount, Base.filtersWeightsRandomOffset.min, Base.filtersWeightsRandomOffset.max );
+      this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, filtersWeightsCount );
 
       if ( bBias ) {
         let biasesWeightsCount = result_outputChannelCount;
-        Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject,
-          biasesPropertyName, biasesWeightsCount, Base.biasesWeightsRandomOffset.min, Base.biasesWeightsRandomOffset.max );
+        this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, biasesWeightsCount );
       } else {
-        Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject, biasesPropertyName, 0 );
+        this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, 0 );
       }
 
     } else { // No pointwise convolution.
-      Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject, filtersPropertyName, 0 );
-      Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject, biasesPropertyName, 0 );
+      this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, 0 );
+      this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, 0 );
     }
 
     return result_outputChannelCount;
@@ -850,24 +856,22 @@ class Base extends TestParams.Base {
       result_outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
 
       let filtersWeightsCount = result.outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
-      Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject,
-        filtersPropertyName, filtersWeightsCount, Base.filtersWeightsRandomOffset.min, Base.filtersWeightsRandomOffset.max );
+      this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, filtersWeightsCount );
 
     } else {
       // Note: if AVG or MAX pooling, this property will be empty array.
-      Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject, filtersPropertyName, 0 );
+      this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, 0 );
     }
 
     if ( depthwise_AvgMax_Or_ChannelMultiplier != 0 ) { // Include avgerage pooling, maximum pooling, convolution.
       if ( bBias ) {
         let biasesWeightsCount = result_outputChannelCount;
-        Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject,
-          biasesPropertyName, biasesWeightsCount, Base.biasesWeightsRandomOffset.min, Base.biasesWeightsRandomOffset.max );
+        this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, biasesWeightsCount );
       } else { // No bias.
-        Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject, biasesPropertyName, 0 );
+        this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, 0 );
       }
     } else { // No depthwise convolution, no avg pooling, no max pooling.
-      Base.ensure_object_property_numberArray_length_filled( io_numberArrayObject, biasesPropertyName, 0 );
+      this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, 0 );
     }
 
     return result_outputChannelCount;
@@ -1094,11 +1098,8 @@ class Base extends TestParams.Base {
 
 
 //!!! (2021/07/20 Temp Remarked) Fixed to non-random to simplify debug.
-Base.filtersWeightsRandomOffset = { min: -100, max: +100 };
-Base.biasesWeightsRandomOffset = { min: -100, max: +100 };
-
-// Base.filtersWeightsRandomOffset = { min: -0, max: +0 };
-// Base.biasesWeightsRandomOffset = { min: -0, max: +0 };
+Base.weightsRandomOffset = { min: -100, max: +100 };
+// Base.weightsRandomOffset = { min: -0, max: +0 };
 
 
 /**
