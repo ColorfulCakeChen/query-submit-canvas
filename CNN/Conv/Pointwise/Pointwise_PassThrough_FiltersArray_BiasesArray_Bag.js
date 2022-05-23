@@ -15,7 +15,15 @@ class PassThrough_FiltersArray_BiasesArray_Bag {
     this.by_inputChannelCount_outputChannelCount_inputChannelIndexStart_bBias_filterValue_biasValue = new Map();
   }
 
-  get_by( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
+  get_by_nPassThroughStyleId( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, nPassThroughStyleId ) {
+
+//!!! ...unfinished... (2022/05/23)
+//     let nPassThroughStyleId = ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0;
+//     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
+
+  }
+
+  get_by_filterValue_biasValue( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
 
 //!!! ...unfinished... (2022/05/23)
     let by_outputChannelCount_inputChannelIndexStart_bBias_filterValue_biasValue
