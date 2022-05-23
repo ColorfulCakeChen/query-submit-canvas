@@ -1,4 +1,7 @@
-export { PassThrough_FiltersArray_BiasesArray, PassThrough, AllZeros };
+export { PassThrough_FiltersArray_BiasesArray };
+export { PassThrough_FiltersArray_BiasesArray_Bag };
+export { PassThrough };
+export { AllZeros };
 
 import * as TwoTensors from "../../util/TwoTensors.js";
 import * as MultiLayerMap from "../../util/MultiLayerMap.js";
