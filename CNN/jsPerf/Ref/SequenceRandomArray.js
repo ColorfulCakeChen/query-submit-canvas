@@ -1,19 +1,19 @@
 export { Bag };
 
-import * as MapTools from "../../util/MapTools.js";
+import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 import * as RandTools from "../../util/RandTools.js";
 
 /**
- * A pool for number array which is created with sequence and randomized offset. It could reduce re-create them of same parameters again
- * and again to improve performance.
+ * A pool for number array which is created with sequence and randomized offset. It could reduce re-creating them of same parameters
+ * again and again to improve performance.
  *
  */
-class Bag {
+class Bag extends MultiLayerMap.Base {
 
 //!!! ...unfinished... (2022/05/23)
-  constructor() {
-    this.by_inputChannelCount_outputChannelCount_inputChannelIndexStart_bBias_filterValue_biasValue = new Map();
-  }
+//   constructor() {
+//     super();
+//   }
 
   get_by_nPassThroughStyleId( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, nPassThroughStyleId ) {
 
