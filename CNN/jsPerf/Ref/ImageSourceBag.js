@@ -258,12 +258,21 @@ class Base {
 //     }
 
 
+//!!! (2022/05/23 Remarked) Replaced by values().
+//     if ( this.tensors ) {
+//       this.tensors.visit_all_and_call( tensor => {
+//         tensor.dispose();
+//       } );
+//       this.tensors.clear();
+//     }
+
     if ( this.tensors ) {
-      this.tensors.visit_all_and_call( tensor => {
+      for ( let tensor of this.values() ) {
         tensor.dispose();
-      } );
+      }
       this.tensors.clear();
     }
+
   }
 
 }
