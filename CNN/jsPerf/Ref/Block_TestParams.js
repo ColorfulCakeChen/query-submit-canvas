@@ -468,15 +468,20 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise21 convolution, bias and activation.
    */
   use_pointwise21( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
-    let squeezeExcitationOut = inputImage.clone_bySqueezeExcitation(
-      this.out.nSqueezeExcitationChannelCountDivisor,
-      false, // (bPassThrough)
-      this.out.pointwise21ActivationId,
-      this.in.paramsNumberArrayObject.pointwise21SEIntermediateFiltersArray,
-      this.in.paramsNumberArrayObject.pointwise21SEIntermediateBiasesArray,
-      this.in.paramsNumberArrayObject.pointwise21SEExcitationFiltersArray,
-      this.in.paramsNumberArrayObject.pointwise21SEExcitationBiasesArray,
-      `${pointwiseName}_squeezeExcitation`, parametersDesc );
+    let squeezeExcitationOut = inputImage;
+    if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
+      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation(
+        this.out.nSqueezeExcitationChannelCountDivisor,
+        false, // (bPassThrough)
+        this.out.pointwise21ActivationId,
+        this.in.paramsNumberArrayObject.pointwise21SEIntermediateFiltersArray,
+        this.in.paramsNumberArrayObject.pointwise21SEIntermediateBiasesArray,
+        this.in.paramsNumberArrayObject.pointwise21SEExcitationFiltersArray,
+        this.in.paramsNumberArrayObject.pointwise21SEExcitationBiasesArray,
+        `${pointwiseName}_squeezeExcitation`, parametersDesc );
+
+    // Without clone to improve performance.
+    }
 
     let result = squeezeExcitationOut.clone_byPointwise( pointwise21ChannelCount,
       this.in.paramsNumberArrayObject.pointwise21Filters, this.out.bPointwise21Bias,
@@ -496,15 +501,20 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise212 convolution, bias and activation.
    */
   use_pointwise212( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
-    let squeezeExcitationOut = inputImage.clone_bySqueezeExcitation(
-      this.out.nSqueezeExcitationChannelCountDivisor,
-      false, // (bPassThrough)
-      this.out.pointwise21ActivationId,
-      this.in.paramsNumberArrayObject.pointwise212SEIntermediateFiltersArray,
-      this.in.paramsNumberArrayObject.pointwise212SEIntermediateBiasesArray,
-      this.in.paramsNumberArrayObject.pointwise212SEExcitationFiltersArray,
-      this.in.paramsNumberArrayObject.pointwise212SEExcitationBiasesArray,
-      `${pointwiseName}_squeezeExcitation`, parametersDesc );
+    let squeezeExcitationOut = inputImage;
+    if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
+      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation(
+        this.out.nSqueezeExcitationChannelCountDivisor,
+        false, // (bPassThrough)
+        this.out.pointwise21ActivationId,
+        this.in.paramsNumberArrayObject.pointwise212SEIntermediateFiltersArray,
+        this.in.paramsNumberArrayObject.pointwise212SEIntermediateBiasesArray,
+        this.in.paramsNumberArrayObject.pointwise212SEExcitationFiltersArray,
+        this.in.paramsNumberArrayObject.pointwise212SEExcitationBiasesArray,
+        `${pointwiseName}_squeezeExcitation`, parametersDesc );
+
+    // Without clone to improve performance.
+    }
 
     let result = squeezeExcitationOut.clone_byPointwise( pointwise21ChannelCount,
       this.in.paramsNumberArrayObject.pointwise212Filters, this.out.bPointwise21Bias,
@@ -527,15 +537,21 @@ class Base extends TestParams.Base {
 // of the same parameters. Re-use them instead of re-create them evey time.
 
 //!!! ...unfinished... (2022/05/23) squeeze-and-excitation
+    let squeezeExcitationOut = inputImage;
+    if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
 ???    let squeezeExcitationOut = inputImage.clone_bySqueezeExcitation(
-      this.out.nSqueezeExcitationChannelCountDivisor,
-      false, // (bPassThrough)
-      this.out.pointwise21ActivationId,
-      this.in.paramsNumberArrayObject.pointwise21SEIntermediateFiltersArray,
-      this.in.paramsNumberArrayObject.pointwise21SEIntermediateBiasesArray,
-      this.in.paramsNumberArrayObject.pointwise21SEExcitationFiltersArray,
-      this.in.paramsNumberArrayObject.pointwise21SEExcitationBiasesArray,
-      `${pointwiseName}_squeezeExcitation`, parametersDesc );
+        this.out.nSqueezeExcitationChannelCountDivisor,
+        false, // (bPassThrough)
+        this.out.pointwise21ActivationId,
+        this.in.paramsNumberArrayObject.pointwise21SEIntermediateFiltersArray,
+        this.in.paramsNumberArrayObject.pointwise21SEIntermediateBiasesArray,
+        this.in.paramsNumberArrayObject.pointwise21SEExcitationFiltersArray,
+        this.in.paramsNumberArrayObject.pointwise21SEExcitationBiasesArray,
+        `${pointwiseName}_squeezeExcitation`, parametersDesc );
+
+    // Without clone to improve performance.
+    }
+
 
 
 
