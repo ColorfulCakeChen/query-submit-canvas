@@ -23,66 +23,53 @@ class Base {
    * not found, this function will be called with these parameters. The function pfnCreate() should return a object which will
    * be recorded as the keys' corresponding value.
    *
-   * @param {any} key1
-   *   The 1st key (i.e. arguments[ 1 ]) to find object. It must be provided. All other keys (i.e. arguments[ 2 ], ...,
-   * arguments[ arguments.length - 1 ] ) are optional.
+   * @param {any} keys
+   *   All parameters except arguments[ 0 ] (i.e. ( arguments[ 1 ], arguments[ 2 ], ..., arguments[ arguments.length - 1 ] ) )
+   * will be used as keys of every map layer. At least, one key parameter (i.e. arguments[ 1 ]) should be provided. All other keys
+   * (i.e. arguments[ 2 ], ..., arguments[ arguments.length - 1 ] ) are optional.
    *
    * @return {any}
-   *   All parameters except arguments[ 0 ] (i.e. ( arguments[ 1 ], arguments[ 2 ], ..., arguments[ arguments.length - 1 ] ) )
-   * will be used as keys of every map layer.
+   *   All keys except the last key (i.e. arguments[ arguments.length - 1 ] ) will be used to search next layer map. The last
+   * key's corresponding value:
    *
-   *   - If a object is found, it will be returned.
+   *   - If exists (i.e. not undefined), it will be returned.
    *
    *   - Otherwise, the function (pfnCreate)() will be called with all these same parameters to create a new object. The newly
-   *     created object will be recorded into the leaf map and returned.
+   *     created object will be recorded as the leaf object of the keys. And it will be returned.
    *
    */
-  get_or_create_by_arguments1_etc( pfnCreate, key1 ) {
+  get_or_create_by_arguments1_etc( pfnCreate, ...keys ) {
 
     tf.util.assert( ( arguments.length >= 2 ),
       `MultiLayerMap.Base.get_or_create_by_arguments1_etc(): `
         + `arguments.length ${arguments.length} must >= 2. `
         + `At least, pfnCreate and key1 should be provided.` );
 
-    if ( arguments.length < 2 )
+    if ( keys.length <= 0 )
       return undefined; // This operation can not work.
 
+    let lastKeyIndex = keys.length - 1;
+
+    // Search the last container.
     let container = this.map;
-    let lastKeyIndex = arguments.length - 1;
-
-    //
-    let node;
-    for ( let i = 1; i < lastKeyIndex; ++i ) {
-      let key = arguments[ i ];
-      node = MapTools.get_or_create( container, key, Map );
+    for ( let i = 0; i < lastKeyIndex; ++i ) {
+      let key = keys[ i ];
+      container = MapTools.get_or_create( container, key, Map );
     }
 
-    let lastKey = arguments[ lastKeyIndex ];
-    let resultObject = node.get( lastKey );
+    // Confirm the leaf value.
+    let lastKey = keys[ lastKeyIndex ];
+    let resultObject = container.get( lastKey );
     if ( resultObject == undefined ) {
-
-      // Create new tensor of specified specification.
-      resultObject = pfnCreate.apply(
-        null, // no this.
-        ???
-      );
-
-      node.set( lastKey, resultObject ); // Record it.
+      resultObject = pfnCreate.apply( null, keys ); // Create new object (without this but) with all specified keys.
+      container.set( lastKey, resultObject ); // Record it.
     }
-
-//!!! ...unfinished... (2022/05/23)
 
     return resultObject;
   }
 
-  get_by_filterValue_biasValue( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
-
 //!!! ...unfinished... (2022/05/23)
-    let by_outputChannelCount_inputChannelIndexStart_bBias_filterValue_biasValue
-      = MapTools.get_or_create(
-          this.by_inputChannelCount_outputChannelCount_inputChannelIndexStart_bBias_filterValue_biasValue, inputChannelCount );
 
-  }
 
 //!!! ...unfinished... (2022/05/23)
   /** Release all tensors. */
