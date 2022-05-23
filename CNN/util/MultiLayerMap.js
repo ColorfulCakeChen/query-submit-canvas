@@ -21,9 +21,13 @@ class Base {
    * not found, this function will be called with these parameters. The function pfnCreate() should return a object which will
    * be recorded as the keys' corresponding value.
    *
+   * @param {any} key1
+   *   The 1st key (i.e. arguments[ 1 ]) to find object. It must be provided. All other keys (i.e. arguments[ 2 ], ...,
+   * arguments[ arguments.length - 1 ] ) are optional.
+   *
    * @return {any}
-   *   All parameters ( arguments[ 1 ], arguments[ 2 ], ..., arguments[ arguments.length - 1 ] ) will be used as keys of every map
-   * layer.
+   *   All parameters except arguments[ 0 ] (i.e. ( arguments[ 1 ], arguments[ 2 ], ..., arguments[ arguments.length - 1 ] ) )
+   * will be used as keys of every map layer.
    *
    *   - If a object is found, it will be returned.
    *
@@ -31,11 +35,29 @@ class Base {
    *     created object will be recorded into the leaf map and returned.
    *
    */
-  static get_or_create_by_arguments1_etc( pfnCreate ) {
+  get_or_create_by_arguments1_etc( pfnCreate, key1 ) {
 
+    tf.util.assert( ( arguments.length >= 2 ),
+      `MultiLayerMap.Base.get_or_create_by_arguments1_etc(): `
+        + `arguments.length ${arguments.length} must >= 2. `
+        + `At least, pfnCreate and key1 should be provided.` );
+
+    if ( arguments.length < 2 )
+      return undefined; // This operation can not work.
+
+    let container = this.map;
+    let lastKeyIndex = arguments.length - 1;
+
+    //
+    let node;
+    for ( let i = 1; i < lastKeyIndex; ++i ) {
+      let key = arguments[ i ];
+      node = MapTools.get_or_create( container, key, Map );
+    }
+
+    let lastKey = arguments[ lastKeyIndex ];
+    node.get( 
 //!!! ...unfinished... (2022/05/23)
-//     let nPassThroughStyleId = ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0;
-//     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
 
   }
 
