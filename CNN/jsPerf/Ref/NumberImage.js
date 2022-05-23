@@ -845,7 +845,9 @@ class Base {
     }
 
     // 4. multiply
+    let multiplyOut;
     {
+      multiplyOut = excitationOut.
 //!!! ...unfinished... (2022/05/23)
     }
   }
