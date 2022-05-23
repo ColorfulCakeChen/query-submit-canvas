@@ -45,6 +45,9 @@ class Base extends TestParams.Base {
   constructor() {
    super();
 
+   this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag = Pointwise.PassThrough_FiltersArray_BiasesArray_Bag();
+   this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag = Depthwise.PassThrough_FiltersArray_BiasesArray_Bag();
+
    // A pre-allocated ArrayBuffer which could be re-allocated when needed to get Float32Array. (For reducing memory re-allocation.)
    this.Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
   }
@@ -377,17 +380,10 @@ class Base extends TestParams.Base {
    */
   use_pointwise1_PassThrough( inputImage, pointwise1ChannelCount, pointwiseName, parametersDesc ) {
 
-//!!! ...unfinished... (2022/05/23)
-// Perhaps, pooling all Pointwise.PassThrough_FiltersArray_BiasesArray and Depthwise.PassThrough_FiltersArray_BiasesArray
-// of the same parameters. Re-use them instead of re-create them evey time.
-
     // SameWhenPassThrough.
-    let nPassThroughStyleId = ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0;
-    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
-
-    let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
+    let pointwisePassThrough = this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag.get_by_PassThroughStyleId(
       inputImage.depth, pointwise1ChannelCount, 0, this.out.bPointwise1Bias,
-      thePassThroughStyleInfo.filterValue, thePassThroughStyleInfo.biasValue
+      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0
     );
 
     let result = inputImage.clone_byPointwise( pointwise1ChannelCount,
@@ -421,19 +417,13 @@ class Base extends TestParams.Base {
    */
   use_depthwise1_PassThrough( inputImage, depthwiseName, parametersDesc ) {
 
-//!!! ...unfinished... (2022/05/23)
-// Perhaps, pooling all Pointwise.PassThrough_FiltersArray_BiasesArray and Depthwise.PassThrough_FiltersArray_BiasesArray
-// of the same parameters. Re-use them instead of re-create them evey time.
-
     // SameWhenPassThrough.
-    let nPassThroughStyleId = ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0;
-    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
-
-    let depthwisePassThrough = new ( Depthwise.PassThrough_FiltersArray_BiasesArray() )( inputImage.height, inputImage.width, inputImage.depth,
+    let depthwisePassThrough = this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag.get_by_PassThroughStyleId(
+      inputImage.height, inputImage.width, inputImage.depth,
       this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.out.bDepthwiseBias,
-      thePassThroughStyleInfo.filterValue, thePassThroughStyleInfo.biasValue
+      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0
     );
 
     let result = inputImage.clone_byDepthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
@@ -556,12 +546,9 @@ class Base extends TestParams.Base {
 
 
     // SameWhenPassThrough.
-    let nPassThroughStyleId = ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0;
-    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
-
-    let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
+    let pointwisePassThrough = this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag.get_by_PassThroughStyleId(
       inputImage.depth, pointwise21ChannelCount, 0, this.out.bPointwise21Bias,
-      thePassThroughStyleInfo.filterValue, thePassThroughStyleInfo.biasValue
+      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0
     );
 
     let result = inputImage.clone_byPointwise( pointwise21ChannelCount,
