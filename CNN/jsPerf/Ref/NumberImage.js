@@ -58,12 +58,12 @@ class Base {
 //    * @return {NumberImage.Base}
 //    *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
 //    */
-//   cloneBy_pointwise_SameWhenPassThrough(
+//   clone_byPointwise_SameWhenPassThrough(
 //     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
 //     bPassThrough,
 //     pointwiseName, parametersDesc ) {
 //
-//     return this.cloneBy_pointwise(
+//     return this.clone_byPointwise(
 //       pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
 //       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
 //       bPassThrough,
@@ -82,12 +82,12 @@ class Base {
 //    * @return {NumberImage.Base}
 //    *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
 //    */
-//   cloneBy_pointwise_ConstantWhenPassThrough(
+//   clone_byPointwise_ConstantWhenPassThrough(
 //     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
 //     bPassThrough,
 //     pointwiseName, parametersDesc ) {
 //
-//     return this.cloneBy_pointwise(
+//     return this.clone_byPointwise(
 //       pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
 //       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
 //       bPassThrough,
@@ -104,7 +104,7 @@ class Base {
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
    */
-  cloneBy_pointwise(
+  clone_byPointwise(
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
      
 //!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
@@ -222,13 +222,13 @@ class Base {
 //    * @return {NumberImage.Base}
 //    *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
 //    */
-//   cloneBy_depthwise_SameWhenPassThrough(
+//   clone_byDepthwise_SameWhenPassThrough(
 //     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
 //     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
 //     bPassThrough,
 //     depthwiseName, parametersDesc ) {
 //
-//     return this.cloneBy_depthwise(
+//     return this.clone_byDepthwise(
 //       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
 //       depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
 //       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
@@ -248,13 +248,13 @@ class Base {
 //    * @return {NumberImage.Base}
 //    *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
 //    */
-//   cloneBy_depthwise_ConstantWhenPassThrough(
+//   clone_byDepthwise_ConstantWhenPassThrough(
 //     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
 //     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
 //     bPassThrough,
 //     depthwiseName, parametersDesc ) {
 //
-//     return this.cloneBy_depthwise(
+//     return this.clone_byDepthwise(
 //       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
 //       depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
 //       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
@@ -272,7 +272,7 @@ class Base {
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
    */
-  cloneBy_depthwise(
+  clone_byDepthwise(
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
 
@@ -590,7 +590,7 @@ class Base {
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of adding this and another.
    */
-  cloneBy_add( another, addName, parametersDesc ) {
+  clone_byAdd( another, addName, parametersDesc ) {
     let rHeight, rWidth, rDepth, rBoundsArraySet;
     let resultArray;
 
@@ -670,7 +670,7 @@ class Base {
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of multiplying this and another.
    */
-  cloneBy_multiply( another, multiplyName, parametersDesc ) {
+  clone_byMultiply( another, multiplyName, parametersDesc ) {
     let rHeight, rWidth, rDepth, rBoundsArraySet;
     let resultArray;
 
@@ -753,7 +753,7 @@ class Base {
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the squeeze-and-excitation.
    */
-  cloneBy_squeezeExcitation(
+  clone_bySqueezeExcitation(
     nSqueezeExcitationChannelCountDivisor,
     bPassThrough,
     nActivationId,
@@ -777,7 +777,7 @@ class Base {
       squeezeOut = this;
 
     } else {
-      squeezeOut = this.cloneBy_depthwise(
+      squeezeOut = this.clone_byDepthwise(
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG, this.height, this.width, // Global average pooling.
         ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID, // So that image size could be shrinked to ( 1 * 1 )
         null, false, null, ValueDesc.ActivationFunction.Singleton.Ids.NONE, // squeeze has no filters weights, no bias, no activation).
@@ -805,7 +805,7 @@ class Base {
           bBias_intermediatePointwise = true;
         }
 
-        intermediateOut = squeezeOut.cloneBy_pointwise(
+        intermediateOut = squeezeOut.clone_byPointwise(
           intermediateChannelCount, intermediateFiltersArray, bBias_intermediatePointwise, intermediateBiasesArray, nActivationId,
           bPassThrough,
           `${squeezeExcitationName}_intermediatePointwise`, parametersDesc );
