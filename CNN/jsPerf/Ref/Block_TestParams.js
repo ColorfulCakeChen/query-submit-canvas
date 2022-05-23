@@ -58,7 +58,7 @@ class Base extends TestParams.Base {
    * @return {Base}
    *   Return this object self.
    */
-  set_By_ParamsScattered(
+  set_byParamsScattered(
     inputHeight0, inputWidth0,
     channelCount0_pointwise1Before,
     channelCount1_pointwise1Before,
@@ -87,7 +87,7 @@ class Base extends TestParams.Base {
     Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
 
     let weightsElementOffsetBegin = 0;
-    return this.set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin );
+    return this.set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin );
   }
  
   /**
@@ -112,7 +112,7 @@ class Base extends TestParams.Base {
    * @return {Base}
    *   Return this object self.
    */
-  set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
+  set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
 
     this.generate_Filters_Biases();
 
@@ -213,7 +213,7 @@ class Base extends TestParams.Base {
     // For testing not start at the offset 0.
     let weightsElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
 
-    this.set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin );
+    this.set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin );
   }
 
   /**
