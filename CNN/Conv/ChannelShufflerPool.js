@@ -1,7 +1,10 @@
 export { Base };
 
-import * as MapTools from "../util/MapTools.js";
+//import * as MapTools from "../util/MapTools.js";
+import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
+
+//!!! ...unfinished... (2022/05/23) Re-implement by MultiLayerMap.
 
 /**
  * A container which provides shared channel shufflers. This could simplify memory management.
