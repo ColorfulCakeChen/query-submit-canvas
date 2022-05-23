@@ -685,11 +685,11 @@ class Base extends TestParams.Base {
    */
   fill_object_property_numberArray( io_object, propertyName, elementCount, bRegen ) {
     if ( bRegen ) {
-      Base.ensure_object_property_numberArray_length_filled( io_object,
-        propertyName, elementCount, Base.weightsRandomOffset.min, Base.weightsRandomOffset.max );
+      Base.ensure_object_property_numberArray_length_filled( io_object, propertyName,
+        elementCount, Base.weightsRandomOffset.min, Base.weightsRandomOffset.max );
     } else {
-      super.ensure_object_property_numberArray_length_existed( io_object,
-        propertyName, elementCount, Base.weightsRandomOffset.min, Base.weightsRandomOffset.max );
+      super.ensure_object_property_numberArray_length_existed( io_object, propertyName,
+        elementCount, Base.weightsRandomOffset.min, Base.weightsRandomOffset.max );
     }
   }
 
