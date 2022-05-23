@@ -8,7 +8,9 @@ import * as MapTools from "./util/MapTools.js";
  */
 class Base {
 
-//!!! ...unfinished... (2022/05/23)
+  /**
+   *
+   */
   constructor() {
     this.map = new Map();
   }
@@ -56,9 +58,21 @@ class Base {
     }
 
     let lastKey = arguments[ lastKeyIndex ];
-    node.get( 
+    let resultObject = node.get( lastKey );
+    if ( resultObject == undefined ) {
+
+      // Create new tensor of specified specification.
+      resultObject = pfnCreate.apply(
+        null, // no this.
+        ???
+      );
+
+      node.set( lastKey, resultObject ); // Record it.
+    }
+
 //!!! ...unfinished... (2022/05/23)
 
+    return resultObject;
   }
 
   get_by_filterValue_biasValue( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
