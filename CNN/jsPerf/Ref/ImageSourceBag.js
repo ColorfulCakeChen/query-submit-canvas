@@ -260,7 +260,7 @@ class Base {
 
     if ( this.tensors ) {
       this.tensors.visit_all_and_call( tensor => {
-        tensor.dispose()
+        tensor.dispose();
       } );
       this.tensors.clear();
     }
