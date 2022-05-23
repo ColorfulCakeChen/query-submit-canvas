@@ -84,7 +84,7 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Bag {
   /**
    *
    */
-  get_by_nPassThroughStyleId(
+  get_by_PassThroughStyleId(
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     nPassThroughStyleId ) {
 
