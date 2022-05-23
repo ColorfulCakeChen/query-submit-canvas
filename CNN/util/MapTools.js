@@ -27,6 +27,9 @@ function get_or_create( containerMap, key, newObjectClass = Map ) {
  *   An object which may be a container or not. If container has method values(), it will be assumed to return an iterator. This
  * function will visit every element by the iterator. If the element still has method values(), they will be visit recursively.
  * If the element does not have method values(), the element will be yielded by this generator.
+ *
+ * @return {iterator)
+ *   Return an iterator object that contains all values of all containers (recursively).
  */
 function* values_recursively( container ) {
   if ( container.values instanceof Function ) {
