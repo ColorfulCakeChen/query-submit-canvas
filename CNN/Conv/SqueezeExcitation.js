@@ -28,6 +28,13 @@ import * as Pointwise from "./Pointwise.js";
 // PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING
 
 
+
+//!!! ...unfinished... (2022/05/23)
+// Since multiply is useful in squeeze-and-excitation, what about divide.
+// e.g. tf.mul( input, x ) replaced by tf.div( input, tf.abs( x ) + 1 )
+//
+
+
 /**
  *
  * @member {number} byteOffsetBegin
