@@ -93,9 +93,15 @@ class Base extends MultiLayerMap.Base {
 //     }
 
 
-    this.visit_all_and_call( channelShuffler => {
-      channelShuffler.disposeTensors();
-    } );
+//!!! (2022/05/23 Remarked) Replaced by values().
+//     this.visit_all_and_call( channelShuffler => {
+//       channelShuffler.disposeTensors();
+//     } );
+//     this.clear();
+    
+    for ( let channelShuffler of this.values() ) {
+      channelShuffler.dispose();
+    }
     this.clear();
   }
 
