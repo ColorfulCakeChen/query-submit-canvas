@@ -1,11 +1,9 @@
-export { PassThrough_FiltersArray_BiasesArray, PassThrough };
+export { PassThrough_FiltersArray_BiasesArray };
+export { PassThrough_FiltersArray_BiasesArray_Bag };
+export { PassThrough };
 
 import * as TwoTensors from "../../util/TwoTensors.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
-
-
-//!!! ...unfinished... (2021/12/03) perhaps, provide a pool for DepthwisePassThrough of various size so that needs not regenerate again and again.
-
 
 /**
  * A depthwise convolution and bias which just pass the input to output.
@@ -67,6 +65,55 @@ let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Pa
       this.biasesArray.fill( biasValue );
     }
 
+  }
+
+}
+
+
+/**
+ * A pool for PassThrough_FiltersArray_BiasesArray with various parameters. It could reduce re-creating them of same parameters again
+ * and again to improve performance.
+ *
+ */
+class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Bag {
+
+  //constructor() {
+  //  super();
+  //}
+
+  /**
+   *
+   */
+  get_by_nPassThroughStyleId(
+    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    nPassThroughStyleId ) {
+
+    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
+    return this.get_by_filterValue_biasValue(
+      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      thePassThroughStyleInfo.filterValue, thePassThroughStyleInfo.biasValue );
+  }
+
+  /**
+   *
+   */
+  get_by_filterValue_biasValue(
+    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    bBias, filterValue = 1, biasValue = 0 ) {
+
+    return this.get_or_create_by_arguments1_etc( PassThrough_FiltersArray_BiasesArray_Bag.create_by,
+      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      bBias, filterValue, biasValue );
+  }
+
+  /** */
+  static create_by(
+    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    bBias, filterValue, biasValue ) {
+
+    return new ( Depthwise.PassThrough_FiltersArray_BiasesArray() )(
+      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      bBias, filterValue, biasValue );
   }
 
 }
