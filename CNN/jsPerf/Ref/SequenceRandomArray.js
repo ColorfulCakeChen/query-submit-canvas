@@ -10,41 +10,23 @@ import * as RandTools from "../../util/RandTools.js";
  */
 class Bag extends MultiLayerMap.Base {
 
-//!!! ...unfinished... (2022/05/23)
-//   constructor() {
-//     super();
-//   }
-
-  get_by_nPassThroughStyleId( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, nPassThroughStyleId ) {
-
-//!!! ...unfinished... (2022/05/23)
-//     let nPassThroughStyleId = ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0;
-//     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
-
-  }
-
-  get_by_filterValue_biasValue( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
-
-//!!! ...unfinished... (2022/05/23)
-    let by_outputChannelCount_inputChannelIndexStart_bBias_filterValue_biasValue
-      = MapTools.get_or_create(
-          this.by_inputChannelCount_outputChannelCount_inputChannelIndexStart_bBias_filterValue_biasValue, inputChannelCount );
-
-  }
-
-//!!! ...unfinished... (2022/05/23)
-  /** Release all tensors. */
-  disposeTensors() {
-    if ( this.tensorsBy_originalHeight_originalWidth_channelCount_filterHeight_filterWidth_stridesPad ) {
-
-      for ( let tensor
-        of MapTools.values_recursively( this.tensorsBy_originalHeight_originalWidth_channelCount_filterHeight_filterWidth_stridesPad ) ) {
-
-        tensor.dispose();
-      }
-
-      this.tensorsBy_originalHeight_originalWidth_channelCount_filterHeight_filterWidth_stridesPad.clear();
-    }
+  /**
+   * Similar to Base.ensure_object_property_numberArray_length_filled(). But the property will be a shared number array. Its value
+   * may be shared with other caller.
+   *
+   * This may have better performance because of number array re-using (instead of re-generating).
+   *
+   *
+   * @param {object} io_object        The object to be checked and modified.
+   * @param {string} propertyName     The property io_object[ propertyName ] will be ensured as a number array.
+   * @param {number} elementCount     The property io_object[ propertyName ].length will be ensured as elementCount.
+   * @param {number} randomOffsetMin  The random number offet lower bound.
+   * @param {number} randomOffsetMax  The random number offet upperer bound.
+   */
+  get_by_elementCount_randomOffsetMin_randomOffsetMax( elementCount, randomOffsetMin = 0, randomOffsetMax = 0 ) {
+    return this.get_or_create_by_arguments1_etc(
+      RandTools.generate_numberArray,
+      elementCount, randomOffsetMin, randomOffsetMax );
   }
 
 }
