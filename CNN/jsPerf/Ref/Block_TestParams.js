@@ -668,16 +668,15 @@ class Base extends TestParams.Base {
    * @param {object} io_object     The object to be checked and modified.
    * @param {string} propertyName  The property io_object[ propertyName ] will be ensured as a number array.
    * @param {number} elementCount  The property io_object[ propertyName ].length will be ensured as elementCount.
-   * @param {boolean} bRegen       If true, generate new value. If false, a shared number array will be used (better performance).
    */
-  fill_object_property_numberArray( io_object, propertyName, elementCount, bRegen ) {
-    if ( bRegen ) {
-      Base.ensure_object_property_numberArray_length_filled( io_object, propertyName,
-        elementCount, Base.weightsRandomOffset.min, Base.weightsRandomOffset.max );
-    } else {
-      super.ensure_object_property_numberArray_length_existed( io_object, propertyName,
-        elementCount, Base.weightsRandomOffset.min, Base.weightsRandomOffset.max );
-    }
+  fill_object_property_numberArray( io_object, propertyName, elementCount ) {
+
+    //!!! (2022/05/23 Remarked)
+    //Base.ensure_object_property_numberArray_length_filled( io_object, propertyName,
+    //  elementCount, Base.weightsRandomOffset.min, Base.weightsRandomOffset.max );
+
+    super.ensure_object_property_numberArray_length_existed( io_object, propertyName,
+      elementCount, Base.weightsRandomOffset.min, Base.weightsRandomOffset.max );
   }
 
   /**
