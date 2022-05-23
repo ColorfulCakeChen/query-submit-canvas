@@ -1021,6 +1021,8 @@ class Base {
         + `(${parametersDesc})`
     );
 
+//!!! ...unfinished... (2022/05/23) Perhaps, re-implement by Interleave_asGrouptTwo.
+
     let channelShuffler_ShuffleInfo;
     {
       channelShuffler_ShuffleInfo = this.channelShufflerPool.getChannelShuffler_by(
