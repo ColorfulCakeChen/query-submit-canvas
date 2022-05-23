@@ -361,8 +361,6 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise1 convolution, bias and activation.
    */
   use_pointwise1( inputImage, pointwise1ChannelCount, pointwiseName, parametersDesc ) {
-//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    let result = inputImage.clone_byPointwise_SameWhenPassThrough( pointwise1ChannelCount,
     let result = inputImage.clone_byPointwise( pointwise1ChannelCount,
       this.in.paramsNumberArrayObject.pointwise1Filters, this.out.bPointwise1Bias,
       this.in.paramsNumberArrayObject.pointwise1Biases, this.out.pointwise1ActivationId, false, pointwiseName, parametersDesc );
@@ -379,11 +377,15 @@ class Base extends TestParams.Base {
    */
   use_pointwise1_PassThrough( inputImage, pointwise1ChannelCount, pointwiseName, parametersDesc ) {
 
+//!!! ...unfinished... (2022/05/23)
+// Perhaps, pooling all Pointwise.PassThrough_FiltersArray_BiasesArray and Depthwise.PassThrough_FiltersArray_BiasesArray
+// of the same parameters. Re-use them instead of re-create them evey time.
+
     // SameWhenPassThrough.
     let nPassThroughStyleId = ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0;
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
 
-    let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
+    let pointwisePassThrough = new ( () )(
       inputImage.depth, pointwise1ChannelCount, 0, this.out.bPointwise1Bias,
       thePassThroughStyleInfo.filterValue, thePassThroughStyleInfo.biasValue
     );
@@ -391,10 +393,6 @@ class Base extends TestParams.Base {
     let result = inputImage.clone_byPointwise( pointwise1ChannelCount,
       pointwisePassThrough.filtersArray, this.out.bPointwise1Bias,
       pointwisePassThrough.biasesArray, this.out.pointwise1ActivationId,
-
-//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//      nPassThroughStyleId,
-
       true, pointwiseName, parametersDesc );
     return result;
   }
@@ -407,8 +405,6 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise1 convolution, bias and activation.
    */
   use_depthwise1( inputImage, depthwiseName, parametersDesc ) {
-//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    let result = inputImage.clone_byDepthwise_SameWhenPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
     let result = inputImage.clone_byDepthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.in.paramsNumberArrayObject.depthwise1Filters, this.out.bDepthwiseBias,
@@ -425,6 +421,10 @@ class Base extends TestParams.Base {
    */
   use_depthwise1_PassThrough( inputImage, depthwiseName, parametersDesc ) {
 
+//!!! ...unfinished... (2022/05/23)
+// Perhaps, pooling all Pointwise.PassThrough_FiltersArray_BiasesArray and Depthwise.PassThrough_FiltersArray_BiasesArray
+// of the same parameters. Re-use them instead of re-create them evey time.
+
     // SameWhenPassThrough.
     let nPassThroughStyleId = ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0;
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
@@ -440,10 +440,6 @@ class Base extends TestParams.Base {
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       depthwisePassThrough.filtersArray, this.out.bDepthwiseBias,
       depthwisePassThrough.biasesArray, this.out.depthwiseActivationId,
-
-//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//      nPassThroughStyleId,
-
       true, depthwiseName, parametersDesc );
     return result;
   }
@@ -456,8 +452,6 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise2 convolution, bias and activation.
    */
   use_depthwise2( inputImage, depthwiseName, parametersDesc ) {
-//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    let result = inputImage.clone_byDepthwise_SameWhenPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
     let result = inputImage.clone_byDepthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.in.paramsNumberArrayObject.depthwise2Filters, this.out.bDepthwiseBias,
@@ -527,6 +521,10 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise21 pass-through convolution and bias.
    */
   use_pointwise21_PassThrough( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
+
+//!!! ...unfinished... (2022/05/23)
+// Perhaps, pooling all Pointwise.PassThrough_FiltersArray_BiasesArray and Depthwise.PassThrough_FiltersArray_BiasesArray
+// of the same parameters. Re-use them instead of re-create them evey time.
 
 //!!! ...unfinished... (2022/05/23) squeeze-and-excitation
 ???    let squeezeExcitationOut = inputImage.clone_bySqueezeExcitation(
