@@ -9,7 +9,7 @@ import { PassThrough_FiltersArray_BiasesArray } from "./PassThrough.js";
  *
  */
 class PassThrough_FiltersArray_BiasesArray_Bag {
-  
+
 //!!! ...unfinished... (2022/05/23)
   constructor() {
     this.by_inputChannelCount_outputChannelCount_inputChannelIndexStart_bBias_filterValue_biasValue = new Map();
