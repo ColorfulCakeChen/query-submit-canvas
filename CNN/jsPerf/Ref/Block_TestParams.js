@@ -362,8 +362,8 @@ class Base extends TestParams.Base {
    */
   use_pointwise1( inputImage, pointwise1ChannelCount, pointwiseName, parametersDesc ) {
 //!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    let result = inputImage.cloneBy_pointwise_SameWhenPassThrough( pointwise1ChannelCount,
-    let result = inputImage.cloneBy_pointwise( pointwise1ChannelCount,
+//    let result = inputImage.clone_byPointwise_SameWhenPassThrough( pointwise1ChannelCount,
+    let result = inputImage.clone_byPointwise( pointwise1ChannelCount,
       this.in.paramsNumberArrayObject.pointwise1Filters, this.out.bPointwise1Bias,
       this.in.paramsNumberArrayObject.pointwise1Biases, this.out.pointwise1ActivationId, false, pointwiseName, parametersDesc );
     return result;
@@ -388,7 +388,7 @@ class Base extends TestParams.Base {
       thePassThroughStyleInfo.filterValue, thePassThroughStyleInfo.biasValue
     );
 
-    let result = inputImage.cloneBy_pointwise( pointwise1ChannelCount,
+    let result = inputImage.clone_byPointwise( pointwise1ChannelCount,
       pointwisePassThrough.filtersArray, this.out.bPointwise1Bias,
       pointwisePassThrough.biasesArray, this.out.pointwise1ActivationId,
 
@@ -408,8 +408,8 @@ class Base extends TestParams.Base {
    */
   use_depthwise1( inputImage, depthwiseName, parametersDesc ) {
 //!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    let result = inputImage.cloneBy_depthwise_SameWhenPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
-    let result = inputImage.cloneBy_depthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+//    let result = inputImage.clone_byDepthwise_SameWhenPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+    let result = inputImage.clone_byDepthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.in.paramsNumberArrayObject.depthwise1Filters, this.out.bDepthwiseBias,
       this.in.paramsNumberArrayObject.depthwise1Biases, this.out.depthwiseActivationId, false, depthwiseName, parametersDesc );
@@ -436,7 +436,7 @@ class Base extends TestParams.Base {
       thePassThroughStyleInfo.filterValue, thePassThroughStyleInfo.biasValue
     );
 
-    let result = inputImage.cloneBy_depthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+    let result = inputImage.clone_byDepthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       depthwisePassThrough.filtersArray, this.out.bDepthwiseBias,
       depthwisePassThrough.biasesArray, this.out.depthwiseActivationId,
@@ -457,8 +457,8 @@ class Base extends TestParams.Base {
    */
   use_depthwise2( inputImage, depthwiseName, parametersDesc ) {
 //!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    let result = inputImage.cloneBy_depthwise_SameWhenPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
-    let result = inputImage.cloneBy_depthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+//    let result = inputImage.clone_byDepthwise_SameWhenPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+    let result = inputImage.clone_byDepthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.in.paramsNumberArrayObject.depthwise2Filters, this.out.bDepthwiseBias,
       this.in.paramsNumberArrayObject.depthwise2Biases, this.out.depthwiseActivationId, false, depthwiseName, parametersDesc );
@@ -478,8 +478,8 @@ class Base extends TestParams.Base {
 //!!! ...unfinished... (2022/05/22) squeeze-and-excitation
 
 //!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    let result = inputImage.cloneBy_pointwise_SameWhenPassThrough( pointwise21ChannelCount,
-    let result = inputImage.cloneBy_pointwise( pointwise21ChannelCount,
+//    let result = inputImage.clone_byPointwise_SameWhenPassThrough( pointwise21ChannelCount,
+    let result = inputImage.clone_byPointwise( pointwise21ChannelCount,
       this.in.paramsNumberArrayObject.pointwise21Filters, this.out.bPointwise21Bias,
       this.in.paramsNumberArrayObject.pointwise21Biases, this.out.pointwise21ActivationId, false, pointwiseName, parametersDesc );
     return result;
@@ -501,8 +501,8 @@ class Base extends TestParams.Base {
 //!!! ...unfinished... (2022/05/22) squeeze-and-excitation
 
 //!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    let result = inputImage.cloneBy_pointwise_SameWhenPassThrough( pointwise21ChannelCount,
-    let result = inputImage.cloneBy_pointwise( pointwise21ChannelCount,
+//    let result = inputImage.clone_byPointwise_SameWhenPassThrough( pointwise21ChannelCount,
+    let result = inputImage.clone_byPointwise( pointwise21ChannelCount,
       this.in.paramsNumberArrayObject.pointwise212Filters, this.out.bPointwise21Bias,
       this.in.paramsNumberArrayObject.pointwise212Biases, this.out.pointwise21ActivationId, false, pointwiseName, parametersDesc );
     return result;
@@ -530,7 +530,7 @@ class Base extends TestParams.Base {
       thePassThroughStyleInfo.filterValue, thePassThroughStyleInfo.biasValue
     );
 
-    let result = inputImage.cloneBy_pointwise( pointwise21ChannelCount,
+    let result = inputImage.clone_byPointwise( pointwise21ChannelCount,
       pointwisePassThrough.filtersArray, this.out.bPointwise21Bias,
       pointwisePassThrough.biasesArray, this.out.pointwise21ActivationId,
 
@@ -554,8 +554,8 @@ class Base extends TestParams.Base {
 //!!! ...unfinished... (2022/05/22) squeeze-and-excitation
 
 //!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    let result = inputImage.cloneBy_pointwise_SameWhenPassThrough( pointwise22ChannelCount,
-    let result = inputImage.cloneBy_pointwise( pointwise22ChannelCount,
+//    let result = inputImage.clone_byPointwise_SameWhenPassThrough( pointwise22ChannelCount,
+    let result = inputImage.clone_byPointwise( pointwise22ChannelCount,
       this.in.paramsNumberArrayObject.pointwise22Filters, this.out.bPointwise21Bias, // (Note: Not bPointwise22Bias)
       this.in.paramsNumberArrayObject.pointwise22Biases, this.out.pointwise21ActivationId, // (Note: Not pointwise22ActivationId)
       false, pointwiseName, parametersDesc );
@@ -578,8 +578,8 @@ class Base extends TestParams.Base {
 //!!! ...unfinished... (2022/05/22) squeeze-and-excitation
 
 //!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    let result = inputImage.cloneBy_pointwise_SameWhenPassThrough( pointwise22ChannelCount,
-    let result = inputImage.cloneBy_pointwise( pointwise22ChannelCount,
+//    let result = inputImage.clone_byPointwise_SameWhenPassThrough( pointwise22ChannelCount,
+    let result = inputImage.clone_byPointwise( pointwise22ChannelCount,
       this.in.paramsNumberArrayObject.pointwise222Filters, this.out.bPointwise21Bias, // (Note: Not bPointwise22Bias)
       this.in.paramsNumberArrayObject.pointwise222Biases, this.out.pointwise21ActivationId, // (Note: Not pointwise22ActivationId)
       false, pointwiseName, parametersDesc );
