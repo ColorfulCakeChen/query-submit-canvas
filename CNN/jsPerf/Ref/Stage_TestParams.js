@@ -54,7 +54,7 @@ class Base extends TestParams.Base {
    * @return {Base}
    *   Return this object self.
    */
-  set_By_ParamsScattered(
+  set_byParamsScattered(
     sourceHeight, sourceWidth, sourceChannelCount, blockCountRequested, bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth, nActivationId,
     bPointwise2ActivatedAtStageEnd, nConvStageType, bKeepInputTensor
@@ -69,7 +69,7 @@ class Base extends TestParams.Base {
     Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
 
     let weightsElementOffsetBegin = 0;
-    return this.set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin );
+    return this.set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin );
   }
  
   /**
@@ -95,7 +95,7 @@ class Base extends TestParams.Base {
    * @return {Base}
    *   Return this object self.
    */
-  set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
+  set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
     let stageParams = this.out;
 
     // Fill in outputHeight, outputWidth.
@@ -131,13 +131,14 @@ class Base extends TestParams.Base {
       paramsNameOrderArray.push( blockName ); // Place every block's parameters in sequence.
 
       let blockTestParams = new Block_TestParams.Base( this.id );
-      blockTestParams.set_By_ParamsScattered(
+      blockTestParams.set_byParamsScattered(
         blockParamsCreator.channelCount0_pointwise1Before,
         blockParamsCreator.channelCount1_pointwise1Before,
         blockParamsCreator.pointwise1ChannelCount, blockParamsCreator.bPointwise1Bias, blockParamsCreator.pointwise1ActivationId,
         blockParamsCreator.depthwise_AvgMax_Or_ChannelMultiplier,
         blockParamsCreator.depthwiseFilterHeight, blockParamsCreator.depthwiseFilterWidth, blockParamsCreator.depthwiseStridesPad,
         blockParamsCreator.bDepthwiseBias, blockParamsCreator.depthwiseActivationId,
+        blockParamsCreator.nSqueezeExcitationChannelCountDivisor,
         blockParamsCreator.pointwise21ChannelCount, blockParamsCreator.bPointwise21Bias, blockParamsCreator.pointwise21ActivationId,
         blockParamsCreator.bOutput1Requested,
         blockParamsCreator.bKeepInputTensor
@@ -181,7 +182,7 @@ class Base extends TestParams.Base {
     // For testing not start at the offset 0.
     let weightsElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
 
-    this.set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin );
+    this.set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin );
   }
 
   /**
