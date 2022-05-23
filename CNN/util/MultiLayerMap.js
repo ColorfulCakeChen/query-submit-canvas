@@ -81,10 +81,10 @@ class Base {
    * Visit all leaf objects.
    *
    * @param {function} pfn
-   *   A function to be called for every leaf object. Note that leaf object's value may be undefined.
+   *   A function to be called for every leaf value.
    */
   visit_all_and_call( pfn ) {
-    for ( let leafObject of values() ) {
+    for ( let leafObject of this.values() ) {
       pfn( leafObject );
     }
   }
