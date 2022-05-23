@@ -70,13 +70,21 @@ class Base {
   }
 
   /**
+   * @return {iterator)
+   *   Return an iterator object that contains all values of all layer maps.
+   */
+  * values() {
+    return MapTools.values_recursively( this.map ) );
+  }
+
+  /**
    * Visit all leaf objects.
    *
    * @param {function} pfn
    *   A function to be called for every leaf object. Note that leaf object's value may be undefined.
    */
   visit_all_and_call( pfn ) {
-    for ( let leafObject of MapTools.values_recursively( this.map ) ) {
+    for ( let leafObject of values() ) {
       pfn( leafObject );
     }
   }
