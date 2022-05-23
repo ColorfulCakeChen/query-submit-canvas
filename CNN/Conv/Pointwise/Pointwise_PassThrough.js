@@ -1,6 +1,7 @@
 export { PassThrough_FiltersArray_BiasesArray, PassThrough, AllZeros };
 
 import * as TwoTensors from "../../util/TwoTensors.js";
+import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 
 /**
  * A pointwise convolution and bias which just pass the input to output.
@@ -107,15 +108,15 @@ let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Ba
 
 
 /**
- * A pool for PassThrough_FiltersArray_BiasesArray with various parameters. It could reduce re-create them of same parameters again
+ * A pool for PassThrough_FiltersArray_BiasesArray with various parameters. It could reduce re-creating them of same parameters again
  * and again to improve performance.
  *
  */
-class PassThrough_FiltersArray_BiasesArray_Bag {
+class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Bag {
 
-  constructor() {
-    this.map = new MultiLayerMap();
-  }
+  //constructor() {
+  //  super();
+  //}
 
   get_by_nPassThroughStyleId( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, nPassThroughStyleId ) {
 
