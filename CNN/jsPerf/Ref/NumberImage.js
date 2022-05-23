@@ -185,7 +185,7 @@ class Base {
     }
 
     // Bias
-    imageOut.modifyByBias( bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
+    imageOut.modify_byBias( bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
 
     // Activation Escaping.
     {
@@ -199,12 +199,12 @@ class Base {
       imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( pointwiseActivationId );
 
       // Before activation function, scale every element according to its channel.
-      Base.scale_byChannel( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
+      Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
         pointwiseName + " activation escaping scale", parametersDesc );
     }
 
     // Activation
-    imageOut.modifyByActivation( pointwiseActivationId, parametersDesc );
+    Base.modify_byActivation_withoutAffect_BoundsArraySet( imageOut, pointwiseActivationId, parametersDesc );
 
     return imageOut;
   }
@@ -442,7 +442,7 @@ class Base {
     }
 
     // Bias
-    imageOut.modifyByBias( bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
+    imageOut.modify_byBias( bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
 
     // Activation Escaping.
     {
@@ -456,18 +456,18 @@ class Base {
       imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
 
       // Before activation function, scale every element according to its channel.
-      Base.scale_byChannel( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
+      Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
         depthwiseName + " activation escaping scale", parametersDesc );
     }
 
     // Activation
-    imageOut.modifyByActivation( depthwiseActivationId, parametersDesc );
+    Base.modify_byActivation_withoutAffect_BoundsArraySet( imageOut, depthwiseActivationId, parametersDesc );
 
     return imageOut;
   }
 
   /**
-   * Note: This method will set .afterBias BoundsArray.
+   * Note: This method will also set .boundsArraySet.afterBias.
    *
    * @param {NumberImage.Base} this     The source image to be processed.
    * @param {boolean}  bBias             Whether add bias.
@@ -478,7 +478,7 @@ class Base {
    * @return {NumberImage.Base}
    *   Return this which may or may not be added bias (according to bBias).
    */
-  modifyByBias( bBias, biasesArray, biasName, parametersDesc ) {
+  modify_byBias( bBias, biasesArray, biasName, parametersDesc ) {
     let imageIn = this;
 
     imageIn.boundsArraySet.afterBias.set_all_byBoundsArray( imageIn.boundsArraySet.afterFilter );
@@ -514,7 +514,7 @@ class Base {
   /**
    * Note: This method does not adjust any BoundsArraySet.
    *
-   * @param {NumberImage.Base} thisImage        The thisImage.dataArray[] will be multiplied by scaleArray in place.
+   * @param {NumberImage.Base} imageIn          The imageIn.dataArray[] will be multiplied by scaleArray in place.
    * @param {FloatValue.ScaleArray} scaleArray  The scales for every channel.
    * @param {string}   scaleName                A string for debug message of this scaling.
    * @param {string}   parametersDesc           A string for debug message of this block.
@@ -522,8 +522,7 @@ class Base {
    * @return {NumberImage.Base}
    *   Return the (modified) image whose every element is scaled according to its channel.
    */
-  static scale_byChannel( thisImage, scaleArray, scaleName, parametersDesc ) {
-    let imageIn = thisImage;
+  static scale_byChannel_withoutAffect_BoundsArraySet( imageIn, scaleArray, scaleName, parametersDesc ) {
 
     tf.util.assert( ( scaleArray != null ),
       `${scaleName} scaleArray (${scaleArray}) `
@@ -547,9 +546,9 @@ class Base {
   }
 
   /**
-   * Note: This method does not adjust any BoundsArray.
+   * Note: This method does not adjust any BoundsArraySet.
    *
-   * @param {NumberImage.Base} this      The source image to be processed.
+   * @param {NumberImage.Base} imageIn   The source image to be processed.
    * @param {string}   nActivationId     The name string of this activation function.
    *
    * @param {string}   parametersDesc A string for debug message of this block.
@@ -559,8 +558,7 @@ class Base {
    * just the original this.dataArray directly (when no activation function). Or, it may be a new Float32Array (when having activation
    * function).
    */
-  modifyByActivation( nActivationId, parametersDesc ) {
-    let imageIn = this;
+  static modify_byActivation_withoutAffect_BoundsArraySet( imageIn, nActivationId, parametersDesc ) {
 
     let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
     if ( !theActivationFunctionInfo )
