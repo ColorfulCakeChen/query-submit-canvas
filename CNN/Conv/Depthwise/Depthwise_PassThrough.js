@@ -88,12 +88,12 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Base {
    */
   get_by_PassThroughStyleId(
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
-    nPassThroughStyleId ) {
+    bBias, nPassThroughStyleId ) {
 
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
     return this.get_by_filterValue_biasValue(
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
-      thePassThroughStyleInfo.filterValue, thePassThroughStyleInfo.biasValue );
+      bBias, thePassThroughStyleInfo.filterValue, thePassThroughStyleInfo.biasValue );
   }
 
   /**
