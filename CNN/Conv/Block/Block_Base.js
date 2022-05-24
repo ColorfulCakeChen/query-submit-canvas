@@ -485,7 +485,9 @@ class Base extends ReturnOrClone.Base {
 
     this.bPointwise1 = this.pointwise1.bExisted;
     if ( this.bPointwise1 ) {
-      this.channelCount_pointwise1After_depthwise1Before = this.pointwise1.outputChannelCount_Real;
+//!!! (2022/05/24 Remarked) No long support ( outputChannelCount == 0 ).
+//      this.channelCount_pointwise1After_depthwise1Before = this.pointwise1.outputChannelCount_Real;
+      this.channelCount_pointwise1After_depthwise1Before = this.pointwise1.outputChannelCount;
       this.tensorWeightCountTotal += this.pointwise1.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += this.pointwise1.tensorWeightCountExtracted;
       TensorOpCounters.pointwise1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_pointwise1", this.pointwise1, TensorOpCounters.input0 );
@@ -687,18 +689,6 @@ class Base extends ReturnOrClone.Base {
     //       the pointwise21 will exist (i.e. ( pointwise21.bExisted == true ) ). Otherwise, the output channels could not be shuffled.
     //       In this case, it will pass through all input to output, but the output will be channel shuffled.
     //
-
-//!!! (2022/05/20 Remarked) Replaced by Pointwise.SameWhenPassThrough_PrefixSqueezeExcitation
-//    this.pointwise21 = new Pointwise.SameWhenPassThrough(
-//       this.channelCount_concat1After_pointwise2Before,
-//       this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
-//       nHigherHalfDifferent_pointwise2,
-//       inputChannelCount_lowerHalf_pointwise2, outputChannelCount_lowerHalf_pointwise2,
-//       channelShuffler_outputGroupCount_pointwise2
-//     );
-
-//!!! ...unfinished... (2022/05/19) squeeze-and-excitation, nSqueezeExcitationChannelCountDivisor
-
     this.pointwise21 = new Pointwise.SameWhenPassThrough_PrefixSqueezeExcitation(
       this.nSqueezeExcitationChannelCountDivisor, inputHeight_SqueezeExcitation, inputWidth_SqueezeExcitation,
       this.channelCount_concat1After_pointwise2Before,
@@ -715,7 +705,9 @@ class Base extends ReturnOrClone.Base {
 
     this.bPointwise21 = this.pointwise21.bExisted;
     if ( this.bPointwise21 ) {
-      this.channelCount_pointwise21After_concat2Before = this.pointwise21.outputChannelCount_Real;
+//!!! (2022/05/24 Remarked) No long support ( outputChannelCount == 0 ).
+//      this.channelCount_pointwise21After_concat2Before = this.pointwise21.outputChannelCount_Real;
+      this.channelCount_pointwise21After_concat2Before = this.pointwise21.outputChannelCount;
       this.tensorWeightCountTotal += this.pointwise21.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += this.pointwise21.tensorWeightCountExtracted;
     } else {
@@ -724,18 +716,6 @@ class Base extends ReturnOrClone.Base {
 
     // 5.2 Pointwise22
     if ( this.pointwise22ChannelCount > 0 ) {
-
-//!!! (2022/05/20 Remarked) Replaced by Pointwise.SameWhenPassThrough_PrefixSqueezeExcitation
-//       this.pointwise22 = new Pointwise.SameWhenPassThrough(
-//         this.channelCount_concat1After_pointwise2Before,
-//         this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
-//         nHigherHalfDifferent_pointwise2,
-//         inputChannelCount_lowerHalf_pointwise2, outputChannelCount_lowerHalf_pointwise2,
-//         channelShuffler_outputGroupCount_pointwise2
-//       );
-
-//!!! ...unfinished... (2022/05/18) squeeze-and-excitation
-
       this.pointwise22 = new Pointwise.SameWhenPassThrough_PrefixSqueezeExcitation(
         this.nSqueezeExcitationChannelCountDivisor, inputHeight_SqueezeExcitation, inputWidth_SqueezeExcitation,
         this.channelCount_concat1After_pointwise2Before,
@@ -760,7 +740,9 @@ class Base extends ReturnOrClone.Base {
     }
 
     if ( this.bPointwise22 ) {
-      this.channelCount_pointwise22After_concat2Before = this.pointwise22.outputChannelCount_Real;
+//!!! (2022/05/24 Remarked) No long support ( outputChannelCount == 0 ).
+//      this.channelCount_pointwise22After_concat2Before = this.pointwise22.outputChannelCount_Real;
+      this.channelCount_pointwise22After_concat2Before = this.pointwise22.outputChannelCount;
       this.tensorWeightCountTotal += this.pointwise22.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += this.pointwise22.tensorWeightCountExtracted;
     } else {
