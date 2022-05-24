@@ -801,12 +801,12 @@ class Base {
       const squeezeBias = false;
       const squeezeBiasesArray = null;
       const squeezeActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE; // squeeze has no filters weights, no bias, no activation).
-      const squeezebPassThrough = false; // average pooling can not pass-through. (only convolution could do pass-through.)
+      const squeezePassThrough = false; // average pooling can not pass-through. (only convolution could do pass-through.)
 
       squeezeOut = this.clone_byDepthwise(
         squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
         squeezeFiltersArray, squeezeBias, squeezeBiasesArray, squeezeActivationId,
-        squeezebPassThrough, `${squeezeExcitationName}_squeezeDepthwise`, parametersDesc );
+        squeezePassThrough, `${squeezeExcitationName}_squeezeDepthwise`, parametersDesc );
     }
 
     // 2. intermediatePointwise
