@@ -43,8 +43,8 @@ import * as Pointwise from "./Pointwise.js";
  *
  * Effects:
  *  - depthwise separates neighbor pixels into different channels (of same pixel).
- *  - ( depthwise * excitationPointwise1 ) provides proportional to neighbor pixels.
- *  - ( ( depthwise * excitationPointwise1 ) / excitationPointwise2 ) provides inversely proportional to neighbor pixels.
+ *  - ( depthwise * excitationPointwise1 ) provides proportional by neighbor pixels.
+ *  - ( ( depthwise * excitationPointwise1 ) / excitationPointwise2 ) provides inversely proportional by neighbor pixels.
  *  - pointwise provides summation to neighbor pixels.
  *
  * To avoid dividing by zero, the division may use tf.div( input, tf.abs( excitationPointwise2 ) + 1 ) instead of
@@ -57,8 +57,8 @@ import * as Pointwise from "./Pointwise.js";
  *
  * Effects:
  *  - depthwise separates neighbor pixels into different channels (of same pixel).
- *  - Can't proportional to neighbor pixels.
- *  - Can't inversely proportional to neighbor pixels.
+ *  - Can't proportional by neighbor pixels.
+ *  - Can't inversely proportional by neighbor pixels.
  *  - pointwise provides summation to neighbor pixels.
  *
  *
@@ -70,7 +70,7 @@ import * as Pointwise from "./Pointwise.js";
  * Effects:
  *  - depthwise separates neighbor pixels into different channels (of same pixel).
  *  - ( depthwise * excitation2 ) provides proportional to neighbor pixels.
- *  - Can't inversely proportional to neighbor pixels.
+ *  - Can't inversely proportional by neighbor pixels.
  *  - pointwise provides summation to neighbor pixels.
  *
  *
@@ -175,6 +175,8 @@ class Base extends ReturnOrClone.Base {
     nSqueezeExcitationChannelCountDivisor, inputHeight, inputWidth,
     inputChannelCount, nActivationId,
     nPointwise_HigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf ) {
+
+    super();
 
     this.nSqueezeExcitationChannelCountDivisor = nSqueezeExcitationChannelCountDivisor;
     this.inputHeight = inputHeight;
