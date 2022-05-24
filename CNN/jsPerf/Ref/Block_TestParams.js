@@ -759,7 +759,7 @@ class Base extends TestParams.Base {
    * @return {number}
    *   Return the outputChannelCount of this pointwise operation.
    */
-  static generate_pointwise_filters_biases( inputChannelCount, outputChannelCount, bBias, propertyNamePrefix, io_numberArrayObject ) {
+  generate_pointwise_filters_biases( inputChannelCount, outputChannelCount, bBias, propertyNamePrefix, io_numberArrayObject ) {
 
     // If this pointwise operation does not exist, default outputChannelCount will be inputChannelCount.
     let result_outputChannelCount = inputChannelCount;
