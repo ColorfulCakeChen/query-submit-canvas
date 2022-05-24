@@ -321,7 +321,7 @@ class Base extends ReturnOrClone.Base {
           //
           this.boundsArraySet.output0
             .set_all_byScaleBoundsArray( inputScaleBoundsArray )
-            .multiply_all_byScaleBoundsArray_all( this.excitationPointwise.boundsArraySet );
+            .multiply_all_byScaleBoundsArray_all( this.excitationPointwise.boundsArraySet.output0 );
         }
 
         this.dispose_all_sub_BoundsArraySet(); // For reduce memory footprint.
