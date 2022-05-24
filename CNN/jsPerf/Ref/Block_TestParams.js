@@ -941,8 +941,7 @@ class Base extends TestParams.Base {
 
       // no depthwise2.
       } else {
-        io_paramsNumberArrayObject.depthwise2Filters?.length = 0; // (Keep the number array for reducing memory re-allocation.)
-        io_paramsNumberArrayObject.depthwise2Biases?.length = 0;
+        Base.generate_depthwise_filters_biases( null, 0, null, null, null, null, "depthwise2", io_paramsNumberArrayObject );
       }
     }
 
