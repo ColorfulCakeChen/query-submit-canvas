@@ -804,8 +804,9 @@ class Base {
     if ( this.nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
       return this.clone(); // No squeeze-and-excitation operation.
 
-    // For squeeze-and-excitation, if pass-through is required, the pass-through style is always ( filter = 0, bias = 1 ).
-    // So that the final multiplication will not affect input.
+    // For squeeze-and-excitation, if pass-through is required, the pass-through style is always ( filter = 0, bias = 1 )
+    // (i.e. ConstantWhenPassThrough). So that the final multiplication will not destroy input.
+    //
     const nPassThroughStyleId = ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1;
 
     // 1. squeezeDepthwise
