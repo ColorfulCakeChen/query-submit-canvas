@@ -160,7 +160,7 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
         if ( !this.pointwise.init(
                 inputFloat32Array, this.byteOffsetEnd, squeezeExcitation_boundsArraySet_output0, arrayTemp_forInterleave_asGrouptTwo ) )
           return false;  // e.g. input array does not have enough data.
-        this.byteOffsetEnd = this.excitationPointwise.byteOffsetEnd;
+        this.byteOffsetEnd = this.pointwise.byteOffsetEnd;
 
         this.tensorWeightCountTotal += this.pointwise.tensorWeightCountTotal;
         this.tensorWeightCountExtracted += this.pointwise.tensorWeightCountExtracted;
