@@ -45,54 +45,40 @@ class Base {
     return result;
   }
 
-//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//   /**
-//    * Pointwise convolution whose output will be the same as input when pass-through.
-//    *
-//    * @param {NumberImage.Base} this      The source image to be processed.
-//    * @param {boolean}  bBias             Whether add bias.
-//    * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
-//    * @param {string}   pointwiseName     A string for debug message of this convolution.
-//    * @param {string}   parametersDesc    A string for debug message of this block.
-//    *
-//    * @return {NumberImage.Base}
-//    *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
-//    */
-//   clone_byPointwise_SameWhenPassThrough(
-//     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-//     bPassThrough,
-//     pointwiseName, parametersDesc ) {
-//
-//     return this.clone_byPointwise(
-//       pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-//       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
-//       bPassThrough,
-//       pointwiseName, parametersDesc );
-//   }
-//
-//   /**
-//    * Pointwise convolution whose output will be constant value (no matter what input) when pass-through.
-//    *
-//    * @param {NumberImage.Base} this      The source image to be processed.
-//    * @param {boolean}  bBias             Whether add bias.
-//    * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
-//    * @param {string}   pointwiseName     A string for debug message of this convolution.
-//    * @param {string}   parametersDesc    A string for debug message of this block.
-//    *
-//    * @return {NumberImage.Base}
-//    *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
-//    */
-//   clone_byPointwise_ConstantWhenPassThrough(
-//     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-//     bPassThrough,
-//     pointwiseName, parametersDesc ) {
-//
-//     return this.clone_byPointwise(
-//       pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-//       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
-//       bPassThrough,
-//       pointwiseName, parametersDesc );
-//   }
+  /**
+   * Call this.clone_byPointwise() with ( bPassThrough == true ).
+   *
+   * @param {number} nPassThroughStyleId
+   *   What kinds of pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx).
+   *
+   * @param {Pointwise.PassThrough_FiltersArray_BiasesArray_Bag} aPointwise_PassThrough_FiltersArray_BiasesArray_Bag
+   *   A bag for generating pass-through pointwise convolution filters and biases.
+   */
+  clone_byPointwise_PassThrough(
+    pointwiseChannelCount, bPointwiseBias, pointwiseActivationId,
+    nPassThroughStyleId, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
+    pointwiseName, parametersDesc ) {
+
+    let inputChannelIndexStart = 0; // Pass-through all channels (beginning from channel index 0).
+    let pointwisePassThrough = aPointwise_PassThrough_FiltersArray_BiasesArray_Bag.get_by_PassThroughStyleId(
+      this.depth, pointwiseChannelCount, inputChannelIndexStart, bPointwiseBias, nPassThroughStyleId );
+
+    return this.clone_byPointwise(
+      pointwiseChannelCount, pointwisePassThrough.filtersArray, bPointwiseBias, pointwisePassThrough.biasesArray, pointwiseActivationId,
+      true, // (bPassThrough)
+      pointwiseName, parametersDesc );
+  }
+
+  /** Call this.clone_byPointwise() with ( bPassThrough == false ). */
+  clone_byPointwise_NonPassThrough(
+    pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
+    pointwiseName, parametersDesc ) {
+      
+    return this.clone_byPointwise(
+      pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
+      false, // (bPassThrough)
+      pointwiseName, parametersDesc );
+  }
 
   /**
    * @param {NumberImage.Base} this      The source image to be processed.
@@ -106,11 +92,7 @@ class Base {
    */
   clone_byPointwise(
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-     
-//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    nPassThroughStyleId, bPassThrough,
     bPassThrough,
-
     pointwiseName, parametersDesc ) {
 
     let imageIn = this;
@@ -261,6 +243,8 @@ class Base {
 //       bPassThrough,
 //       depthwiseName, parametersDesc );
 //   }
+
+//!!! ...unfinished... (2022/05/24)
 
   /**
    * @param {NumberImage.Base} this      The source image to be processed.
