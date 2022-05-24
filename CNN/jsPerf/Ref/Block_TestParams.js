@@ -364,9 +364,9 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise1 convolution, bias and activation.
    */
   use_pointwise1( inputImage, pointwise1ChannelCount, pointwiseName, parametersDesc ) {
-    let result = inputImage.clone_byPointwise( pointwise1ChannelCount,
+    let result = inputImage.clone_byPointwise_NonPassThrough( pointwise1ChannelCount,
       this.in.paramsNumberArrayObject.pointwise1Filters, this.out.bPointwise1Bias,
-      this.in.paramsNumberArrayObject.pointwise1Biases, this.out.pointwise1ActivationId, false, pointwiseName, parametersDesc );
+      this.in.paramsNumberArrayObject.pointwise1Biases, this.out.pointwise1ActivationId, pointwiseName, parametersDesc );
     return result;
   }
 
@@ -401,10 +401,10 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise1 convolution, bias and activation.
    */
   use_depthwise1( inputImage, depthwiseName, parametersDesc ) {
-    let result = inputImage.clone_byDepthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+    let result = inputImage.clone_byDepthwise_NonPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.in.paramsNumberArrayObject.depthwise1Filters, this.out.bDepthwiseBias,
-      this.in.paramsNumberArrayObject.depthwise1Biases, this.out.depthwiseActivationId, false, depthwiseName, parametersDesc );
+      this.in.paramsNumberArrayObject.depthwise1Biases, this.out.depthwiseActivationId, depthwiseName, parametersDesc );
     return result;
   }
 
@@ -442,10 +442,10 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise2 convolution, bias and activation.
    */
   use_depthwise2( inputImage, depthwiseName, parametersDesc ) {
-    let result = inputImage.clone_byDepthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+    let result = inputImage.clone_byDepthwise_NonPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.in.paramsNumberArrayObject.depthwise2Filters, this.out.bDepthwiseBias,
-      this.in.paramsNumberArrayObject.depthwise2Biases, this.out.depthwiseActivationId, false, depthwiseName, parametersDesc );
+      this.in.paramsNumberArrayObject.depthwise2Biases, this.out.depthwiseActivationId, depthwiseName, parametersDesc );
     return result;
   }
 
@@ -460,22 +460,21 @@ class Base extends TestParams.Base {
   use_pointwise21( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
     let squeezeExcitationOut = inputImage;
     if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
-      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation(
+      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
         this.out.nSqueezeExcitationChannelCountDivisor,
-        false, // (bPassThrough)
-        this.out.pointwise21ActivationId,
         this.in.paramsNumberArrayObject.pointwise21SEIntermediateFiltersArray,
         this.in.paramsNumberArrayObject.pointwise21SEIntermediateBiasesArray,
         this.in.paramsNumberArrayObject.pointwise21SEExcitationFiltersArray,
         this.in.paramsNumberArrayObject.pointwise21SEExcitationBiasesArray,
+        this.out.pointwise21ActivationId,
         `${pointwiseName}_squeezeExcitation`, parametersDesc );
 
     // Without clone to improve performance.
     }
 
-    let result = squeezeExcitationOut.clone_byPointwise( pointwise21ChannelCount,
+    let result = squeezeExcitationOut.clone_byPointwise_NonPassThrough( pointwise21ChannelCount,
       this.in.paramsNumberArrayObject.pointwise21Filters, this.out.bPointwise21Bias,
-      this.in.paramsNumberArrayObject.pointwise21Biases, this.out.pointwise21ActivationId, false, pointwiseName, parametersDesc );
+      this.in.paramsNumberArrayObject.pointwise21Biases, this.out.pointwise21ActivationId, pointwiseName, parametersDesc );
     return result;
   }
 
@@ -493,22 +492,21 @@ class Base extends TestParams.Base {
   use_pointwise212( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
     let squeezeExcitationOut = inputImage;
     if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
-      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation(
+      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
         this.out.nSqueezeExcitationChannelCountDivisor,
-        false, // (bPassThrough)
-        this.out.pointwise21ActivationId,
         this.in.paramsNumberArrayObject.pointwise212SEIntermediateFiltersArray,
         this.in.paramsNumberArrayObject.pointwise212SEIntermediateBiasesArray,
         this.in.paramsNumberArrayObject.pointwise212SEExcitationFiltersArray,
         this.in.paramsNumberArrayObject.pointwise212SEExcitationBiasesArray,
+        this.out.pointwise21ActivationId,
         `${pointwiseName}_squeezeExcitation`, parametersDesc );
 
     // Without clone to improve performance.
     }
 
-    let result = squeezeExcitationOut.clone_byPointwise( pointwise21ChannelCount,
+    let result = squeezeExcitationOut.clone_byPointwise_NonPassThrough( pointwise21ChannelCount,
       this.in.paramsNumberArrayObject.pointwise212Filters, this.out.bPointwise21Bias,
-      this.in.paramsNumberArrayObject.pointwise212Biases, this.out.pointwise21ActivationId, false, pointwiseName, parametersDesc );
+      this.in.paramsNumberArrayObject.pointwise212Biases, this.out.pointwise21ActivationId, pointwiseName, parametersDesc );
     return result;
   }
 
@@ -529,6 +527,15 @@ class Base extends TestParams.Base {
 //!!! ...unfinished... (2022/05/23) squeeze-and-excitation
     let squeezeExcitationOut = inputImage;
     if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
+
+//!!! ...unfinished... (2022/05/24)
+      // ConstantWhenPassThrough.
+      let pointwisePassThrough = this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag.get_by_PassThroughStyleId(
+        inputImage.depth, pointwise21ChannelCount, 0, this.out.bPointwise21Bias,
+        ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1
+      );
+
+
 ???    let squeezeExcitationOut = inputImage.clone_bySqueezeExcitation(
         this.out.nSqueezeExcitationChannelCountDivisor,
         false, // (bPassThrough)
@@ -574,12 +581,10 @@ class Base extends TestParams.Base {
 
 //!!! ...unfinished... (2022/05/22) squeeze-and-excitation
 
-//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    let result = inputImage.clone_byPointwise_SameWhenPassThrough( pointwise22ChannelCount,
-    let result = inputImage.clone_byPointwise( pointwise22ChannelCount,
+    let result = inputImage.clone_byPointwise_NonPassThrough( pointwise22ChannelCount,
       this.in.paramsNumberArrayObject.pointwise22Filters, this.out.bPointwise21Bias, // (Note: Not bPointwise22Bias)
       this.in.paramsNumberArrayObject.pointwise22Biases, this.out.pointwise21ActivationId, // (Note: Not pointwise22ActivationId)
-      false, pointwiseName, parametersDesc );
+      pointwiseName, parametersDesc );
     return result;
   }
 
@@ -598,12 +603,10 @@ class Base extends TestParams.Base {
 
 //!!! ...unfinished... (2022/05/22) squeeze-and-excitation
 
-//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    let result = inputImage.clone_byPointwise_SameWhenPassThrough( pointwise22ChannelCount,
-    let result = inputImage.clone_byPointwise( pointwise22ChannelCount,
+    let result = inputImage.clone_byPointwise_NonPassThrough( pointwise22ChannelCount,
       this.in.paramsNumberArrayObject.pointwise222Filters, this.out.bPointwise21Bias, // (Note: Not bPointwise22Bias)
       this.in.paramsNumberArrayObject.pointwise222Biases, this.out.pointwise21ActivationId, // (Note: Not pointwise22ActivationId)
-      false, pointwiseName, parametersDesc );
+      pointwiseName, parametersDesc );
     return result;
   }
 
