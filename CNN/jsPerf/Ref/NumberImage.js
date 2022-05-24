@@ -791,17 +791,17 @@ class Base {
     squeezeExcitationName, parametersDesc ) {
 
     tf.util.assert(
-      (   ( this.nSqueezeExcitationChannelCountDivisor != undefined )
-       && ( this.nSqueezeExcitationChannelCountDivisor >= ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE )
+      (   ( nSqueezeExcitationChannelCountDivisor != undefined )
+       && ( nSqueezeExcitationChannelCountDivisor >= ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE )
       ),
       `${squeezeExcitationName}: `
-        + `nSqueezeExcitationChannelCountDivisor ( ${this.nSqueezeExcitationChannelCountDivisor} ) `
+        + `nSqueezeExcitationChannelCountDivisor ( ${nSqueezeExcitationChannelCountDivisor} ) `
         + `should be >= `
         + `ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE `
           + `( ${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE} ) `
         + `(${parametersDesc})`);
 
-    if ( this.nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
+    if ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
       return this.clone(); // No squeeze-and-excitation operation.
 
     // For squeeze-and-excitation, if pass-through is required, the pass-through style is always ( filter = 0, bias = 1 )
