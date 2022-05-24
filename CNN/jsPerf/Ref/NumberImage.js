@@ -78,9 +78,10 @@ class Base {
 
   /**
    * @param {NumberImage.Base} this           The source image to be processed.
+   *
    * @param {number[]} pointwiseFiltersArray  The pointwise convolution filter weights. Only used when ( bPassThrough == false ).
    * @param {boolean}  bPointwiseBias         Whether add bias.
-   * @param {number[]} pointwiseBiasesArray   The bias weights. Only used when ( bPassThrough == false ) and ( bPointwiseBias ==true ).
+   * @param {number[]} pointwiseBiasesArray   The bias weights. Only used when ( bPassThrough == false ) and ( bPointwiseBias == true ).
    * @param {number}   pointwiseActivationId  The activation function id (i.e. ValueDesc.ActivationFunction.Singleton.Ids.Xxx).
    *
    * @param {boolean}  bPassThrough
@@ -245,7 +246,7 @@ class Base {
    *
    * @param {number[]} pointwiseFiltersArray  The depthwise convolution filter weights. Only used when ( bPassThrough == false ).
    * @param {boolean}  bDepthwiseBias         Whether add bias.
-   * @param {number[]} depthwiseBiasesArray   The bias weights. Only used when ( bPassThrough == false ) and ( bDepthwiseBias ==true ).
+   * @param {number[]} depthwiseBiasesArray   The bias weights. Only used when ( bPassThrough == false ) and ( bDepthwiseBias == true ).
    * @param {number}   depthwiseActivationId  The activation function id (i.e. ValueDesc.ActivationFunction.Singleton.Ids.Xxx).
    *
    * @param {boolean}  bPassThrough
@@ -738,18 +739,7 @@ class Base {
   }
 
 //!!! ...unfinished... (2022/05/24)
-  /**
-   * Call this.clone_bySqueezeExcitation() with ( bPassThrough == true ).
-   *
-   * @param {Depthwise.PassThrough_FiltersArray_BiasesArray_Bag} aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag
-   *   A bag for generating pass-through depthwise convolution filters and biases.
-   *
-   * @param {Pointwise.PassThrough_FiltersArray_BiasesArray_Bag} aPointwise_PassThrough_FiltersArray_BiasesArray_Bag
-   *   A bag for generating pass-through pointwise convolution filters and biases.
-   *
-   * @param {number} nPassThroughStyleId
-   *   What kinds of pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx).
-   */
+  /** Call this.clone_bySqueezeExcitation() with ( bPassThrough == true ). */
   clone_bySqueezeExcitation_NonPassThrough(
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
@@ -793,7 +783,25 @@ class Base {
    *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
    * (Please see also SqueezeExcitation.Base.nSqueezeExcitationChannelCountDivisor explanation.)
    *
-   * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
+   * @param {number[]} intermediateFiltersArray  The intermediate pointwise convolution filter weights. Only used if ( bPassThrough == false ).
+   * @param {number[]} intermediateBiasesArray   The intermediate bias weights. Only used if ( bPassThrough == false ).
+   * @param {number[]} excitationFiltersArray    The excitation pointwise convolution filter weights. Only used if ( bPassThrough == false ).
+   * @param {number[]} excitationBiasesArray     The excitation bias weights. Only used if ( bPassThrough == false ).
+   * @param {number}   nActivationId  The activation function id (i.e. ValueDesc.ActivationFunction.Singleton.Ids.Xxx).
+   *
+   * @param {boolean}  bPassThrough
+   *   If true, pass-through filters and biases will be used (i.e. intermediateFiltersArray, intermediateBiasesArray,
+   * excitationFiltersArray, excitationBiasesArray will be ignored). And the output image will be scaled for pass-through
+   * activation function (i.e. scale to the linear part).
+   *
+   * @param {Depthwise.PassThrough_FiltersArray_BiasesArray_Bag} aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag
+   *   A bag for generating pass-through depthwise convolution filters and biases. Only used when ( bPassThrough == true ).
+   *
+   * @param {Pointwise.PassThrough_FiltersArray_BiasesArray_Bag} aPointwise_PassThrough_FiltersArray_BiasesArray_Bag
+   *   A bag for generating pass-through pointwise convolution filters and biases. Only used when ( bPassThrough == true ).
+   *
+   * @param {number} nPassThroughStyleId
+   *   The pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) when ( bPassThrough == true ).
    *
    * @param {string}   squeezeExcitationName  A string for debug message of this squeeze-and-excitation.
    * @param {string}   parametersDesc    A string for debug message of this block.
@@ -807,6 +815,7 @@ class Base {
     excitationFiltersArray, excitationBiasesArray,
     nActivationId,
     bPassThrough,
+    aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
     squeezeExcitationName, parametersDesc ) {
 
     tf.util.assert(
@@ -847,12 +856,11 @@ class Base {
       const squeezeBias = false;
       const squeezeBiasesArray = null;
       const squeezeActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE; // squeeze has no filters weights, no bias, no activation).
-      const squeezePassThrough = false; // average pooling can not pass-through. (only convolution could do pass-through.)
 
-      squeezeOut = this.clone_byDepthwise(
+      squeezeOut = this.clone_byDepthwise_NonPassThrough( // average pooling can not pass-through. (only convolution could do pass-through.)
         squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
         squeezeFiltersArray, squeezeBias, squeezeBiasesArray, squeezeActivationId,
-        squeezePassThrough, `${squeezeExcitationName}_squeezeDepthwise`, parametersDesc );
+        `${squeezeExcitationName}_squeezeDepthwise`, parametersDesc );
     }
 
     // 2. intermediatePointwise
@@ -877,7 +885,8 @@ class Base {
 
         intermediateOut = squeezeOut.clone_byPointwise(
           intermediateChannelCount, intermediateFiltersArray, bBias_intermediatePointwise, intermediateBiasesArray, nActivationId,
-          bPassThrough, `${squeezeExcitationName}_intermediatePointwise`, parametersDesc );
+          bPassThrough, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
+          `${squeezeExcitationName}_intermediatePointwise`, parametersDesc );
 
       } else { // No intermediate pointwise convolution.
         intermediateOut = squeezeOut;
@@ -892,7 +901,8 @@ class Base {
 
       excitationOut = squeezeOut.clone_byPointwise(
         excitationChannelCount, excitationFiltersArray, bBias_excitationPointwise, excitationBiasesArray, nActivationId,
-        bPassThrough, `${squeezeExcitationName}_excitationPointwise`, parametersDesc );
+        bPassThrough, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
+        `${squeezeExcitationName}_excitationPointwise`, parametersDesc );
     }
 
     // 4. multiply
