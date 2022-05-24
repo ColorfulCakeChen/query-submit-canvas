@@ -320,7 +320,7 @@ class Base extends ReturnOrClone.Base {
           // multiply_all_byScaleBoundsArray_all() already can handle broadcasting in the same channel.
           //
           this.boundsArraySet.output0
-            .set_outputs_all_byScaleBoundsArray( inputScaleBoundsArray )
+            .set_all_byScaleBoundsArray( inputScaleBoundsArray )
             .multiply_all_byScaleBoundsArray_all( this.excitationPointwise.boundsArraySet );
         }
 
