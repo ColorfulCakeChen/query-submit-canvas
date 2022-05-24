@@ -140,7 +140,7 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Base {
 
   /** */
   static create_by( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue ) {
-    return new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
+    return new ( PassThrough_FiltersArray_BiasesArray() )(
       inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue );
   }
 
