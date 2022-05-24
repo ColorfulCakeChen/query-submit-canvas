@@ -1,6 +1,6 @@
 export { Base };
 
-import * as RandTools from "../../util/RandTools.js";
+//import * as RandTools from "../../util/RandTools.js";
 import * as NameNumberArrayObject_To_Float32Array from "../../util/NameNumberArrayObject_To_Float32Array.js";
 //import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
@@ -532,8 +532,19 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise22 convolution, bias and activation.
    */
   use_pointwise22( inputImage, pointwise22ChannelCount, pointwiseName, parametersDesc ) {
+    let squeezeExcitationOut = inputImage;
+    if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
+      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
+        this.out.nSqueezeExcitationChannelCountDivisor,
+        this.in.paramsNumberArrayObject.pointwise22SEIntermediateFiltersArray,
+        this.in.paramsNumberArrayObject.pointwise22SEIntermediateBiasesArray,
+        this.in.paramsNumberArrayObject.pointwise22SEExcitationFiltersArray,
+        this.in.paramsNumberArrayObject.pointwise22SEExcitationBiasesArray,
+        this.out.pointwise21ActivationId, // (Note: Not pointwise22ActivationId)
+        `${pointwiseName}_squeezeExcitation`, parametersDesc );
 
-//!!! ...unfinished... (2022/05/22) squeeze-and-excitation
+    // Without clone to improve performance.
+    }
 
     let result = inputImage.clone_byPointwise_NonPassThrough( pointwise22ChannelCount,
       this.in.paramsNumberArrayObject.pointwise22Filters, this.out.bPointwise21Bias, // (Note: Not bPointwise22Bias)
@@ -554,8 +565,19 @@ class Base extends TestParams.Base {
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise222 convolution, bias and activation.
    */
   use_pointwise222( inputImage, pointwise22ChannelCount, pointwiseName, parametersDesc ) {
+    let squeezeExcitationOut = inputImage;
+    if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
+      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
+        this.out.nSqueezeExcitationChannelCountDivisor,
+        this.in.paramsNumberArrayObject.pointwise222SEIntermediateFiltersArray,
+        this.in.paramsNumberArrayObject.pointwise222SEIntermediateBiasesArray,
+        this.in.paramsNumberArrayObject.pointwise222SEExcitationFiltersArray,
+        this.in.paramsNumberArrayObject.pointwise222SEExcitationBiasesArray,
+        this.out.pointwise21ActivationId, // (Note: Not pointwise22ActivationId)
+        `${pointwiseName}_squeezeExcitation`, parametersDesc );
 
-//!!! ...unfinished... (2022/05/22) squeeze-and-excitation
+    // Without clone to improve performance.
+    }
 
     let result = inputImage.clone_byPointwise_NonPassThrough( pointwise22ChannelCount,
       this.in.paramsNumberArrayObject.pointwise222Filters, this.out.bPointwise21Bias, // (Note: Not bPointwise22Bias)
