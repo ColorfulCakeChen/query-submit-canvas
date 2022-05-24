@@ -820,7 +820,7 @@ class Base extends TestParams.Base {
     if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
       result_outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
 
-      let filtersWeightsCount = result.outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
+      let filtersWeightsCount = result_outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
       this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, filtersWeightsCount );
 
     } else {
