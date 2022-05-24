@@ -385,7 +385,7 @@ class Base extends ReturnOrClone.Base {
       if ( bKeepInputTensor ) {
         if ( this.squeezeDepthwise ) {
           this.squeezeDepthwise.setKeepInputTensor( true );
-          this.intermediatePointwise.setKeepInputTensor( false );
+          this.intermediatePointwise?.setKeepInputTensor( false );
           this.excitationPointwise.setKeepInputTensor( false );
         } else {
           if ( this.intermediatePointwise ) {
