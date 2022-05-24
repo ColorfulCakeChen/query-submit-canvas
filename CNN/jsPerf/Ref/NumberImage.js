@@ -48,15 +48,15 @@ class Base {
   /**
    * Call this.clone_byPointwise() with ( bPassThrough == true ).
    *
-   * @param {number} nPassThroughStyleId
-   *   What kinds of pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx).
-   *
    * @param {Pointwise.PassThrough_FiltersArray_BiasesArray_Bag} aPointwise_PassThrough_FiltersArray_BiasesArray_Bag
    *   A bag for generating pass-through pointwise convolution filters and biases.
+   *
+   * @param {number} nPassThroughStyleId
+   *   What kinds of pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx).
    */
   clone_byPointwise_PassThrough(
     pointwiseChannelCount, bPointwiseBias, pointwiseActivationId,
-    nPassThroughStyleId, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
+    aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
     pointwiseName, parametersDesc ) {
 
     let inputChannelIndexStart = 0; // Pass-through all channels (beginning from channel index 0).
@@ -108,9 +108,6 @@ class Base {
     let imageOut = new Base(
       imageIn.height, imageIn.width, pointwiseChannelCount, new Float32Array( imageOutLength ),
       new BoundsArraySet.Pointwise( imageIn.boundsArraySet.output0, pointwiseChannelCount ) );
-
-//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    // Note: In fact, nPassThroughStyleId is not used by NumberImage directly. But used by underlie BoundsArraySet.
 
     imageOut.boundsArraySet.set_bPassThrough_all( bPassThrough );
 
@@ -173,11 +170,6 @@ class Base {
     {
       // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
       // by .afterBias, bPassThrough and activation function's output range.
-
-//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//       imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId(
-//         pointwiseActivationId, nPassThroughStyleId );
-
       imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( pointwiseActivationId );
 
       // Before activation function, scale every element according to its channel.
@@ -191,60 +183,46 @@ class Base {
     return imageOut;
   }
 
-//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//   /**
-//    * Depthwise convolution whose output will be the same as input when pass-through.
-//    *
-//    * @param {NumberImage.Base} this      The source image to be processed.
-//    * @param {boolean}  bBias             Whether add bias.
-//    * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
-//    * @param {string}   depthwiseName     A string for debug message of this convolution.
-//    * @param {string}   parametersDesc    A string for debug message of this block.
-//    *
-//    * @return {NumberImage.Base}
-//    *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
-//    */
-//   clone_byDepthwise_SameWhenPassThrough(
-//     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-//     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-//     bPassThrough,
-//     depthwiseName, parametersDesc ) {
-//
-//     return this.clone_byDepthwise(
-//       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-//       depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-//       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
-//       bPassThrough,
-//       depthwiseName, parametersDesc );
-//   }
-//
-//   /**
-//    * Depthwise convolution whose output will be constant value (no matter what input) when pass-through.
-//    *
-//    * @param {NumberImage.Base} this      The source image to be processed.
-//    * @param {boolean}  bBias             Whether add bias.
-//    * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
-//    * @param {string}   depthwiseName     A string for debug message of this convolution.
-//    * @param {string}   parametersDesc    A string for debug message of this block.
-//    *
-//    * @return {NumberImage.Base}
-//    *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
-//    */
-//   clone_byDepthwise_ConstantWhenPassThrough(
-//     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-//     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-//     bPassThrough,
-//     depthwiseName, parametersDesc ) {
-//
-//     return this.clone_byDepthwise(
-//       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-//       depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-//       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
-//       bPassThrough,
-//       depthwiseName, parametersDesc );
-//   }
+  /**
+   * Call this.clone_byDepthwise() with ( bPassThrough == true ).
+   *
+   * @param {Depthwise.PassThrough_FiltersArray_BiasesArray_Bag} aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag
+   *   A bag for generating pass-through depthwise convolution filters and biases.
+   *
+   * @param {number} nPassThroughStyleId
+   *   What kinds of pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx).
+   */
+  clone_byDepthwise_PassThrough(
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    bDepthwiseBias, depthwiseActivationId,
+    aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
+    depthwiseName, parametersDesc ) {
 
-//!!! ...unfinished... (2022/05/24)
+    let depthwisePassThrough = aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag.get_by_PassThroughStyleId(
+      this.height, this.width, this.depth,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias,
+      nPassThroughStyleId
+    );
+
+    return this.clone_byDepthwise(
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwisePassThrough.filtersArray, bDepthwiseBias, depthwisePassThrough.biasesArray, depthwiseActivationId,
+      true, // (bPassThrough)
+      depthwiseName, parametersDesc );
+  }
+
+  /** Call this.clone_byPointwise() with ( bPassThrough == false ). */
+  clone_byDepthwise_NonPassThrough(
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+    depthwiseName, parametersDesc ) {
+
+    return this.clone_byDepthwise(
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+      false, // (bPassThrough)
+      depthwiseName, parametersDesc );
+  }
 
   /**
    * @param {NumberImage.Base} this      The source image to be processed.
@@ -259,11 +237,7 @@ class Base {
   clone_byDepthwise(
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-
-//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    nPassThroughStyleId, bPassThrough,
     bPassThrough,
-
     depthwiseName, parametersDesc ) {
 
     let imageIn = this;
@@ -296,9 +270,6 @@ class Base {
     let imageOut = new Base(
       outputHeight, outputWidth, outputChannelCount, new Float32Array( outputElementCount ),
       new BoundsArraySet.Depthwise( imageIn.boundsArraySet.output0, outputChannelCount ) );
-
-//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//    // Note: In fact, nPassThroughStyleId is not used by NumberImage directly. But used by underlie BoundsArraySet.
 
     imageOut.boundsArraySet.set_bPassThrough_all( bPassThrough );
 
@@ -432,11 +403,6 @@ class Base {
     {
       // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
       // by .afterBias, bPassThrough and activation function's output range.
-
-//!!! (2022/05/21 Remarked) PASS_THROUGH_STYLE_FILTER_0_BIAS_1_ACTIVATION_NO_ESCAPING seems still need activation escaping.
-//       imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId(
-//         depthwiseActivationId, nPassThroughStyleId );
-
       imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
 
       // Before activation function, scale every element according to its channel.
