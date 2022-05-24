@@ -505,7 +505,7 @@ class Params extends Weights.Params {
   get depthwiseActivationId()     { return this.parameterMapModified.get( Params.depthwiseActivationId ); }
   get depthwiseActivationName()   { return Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId ); }
 
-  get nSqueezeExcitationChannelCountDivisor()     { return this.parameterMapModified.get( Params.SqueezeExcitationChannelCountDivisor ); }
+  get nSqueezeExcitationChannelCountDivisor()     { return this.parameterMapModified.get( Params.nSqueezeExcitationChannelCountDivisor ); }
   get nSqueezeExcitationChannelCountDivisorName() {
     return Params.nSqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
   }
