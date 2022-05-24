@@ -314,14 +314,14 @@ class Base extends ReturnOrClone.Base {
           this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, null,
             this.excitationPointwise.boundsArraySet.output0.channelCount, 0 );
 
-          this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( inputScaleBoundsArray );
-
           // The BoundsArraySet for tf.mul() input by excitation.
           //
           // Note: Not multiply_all_byScaleBoundsArray_one() which handles broadcasting across channels. The
           // multiply_all_byScaleBoundsArray_all() already can handle broadcasting in the same channel.
           //
-          this.boundsArraySet.output0.multiply_all_byScaleBoundsArray_all( this.excitationPointwise.boundsArraySet );
+          this.boundsArraySet.output0
+            .set_outputs_all_byScaleBoundsArray( inputScaleBoundsArray )
+            .multiply_all_byScaleBoundsArray_all( this.excitationPointwise.boundsArraySet );
         }
 
         this.dispose_all_sub_BoundsArraySet(); // For reduce memory footprint.
