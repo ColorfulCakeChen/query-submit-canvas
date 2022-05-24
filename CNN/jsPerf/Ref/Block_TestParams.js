@@ -448,10 +448,10 @@ class Base extends TestParams.Base {
     if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
       squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
         this.out.nSqueezeExcitationChannelCountDivisor,
-        this.in.paramsNumberArrayObject.pointwise21SEIntermediateFiltersArray,
-        this.in.paramsNumberArrayObject.pointwise21SEIntermediateBiasesArray,
-        this.in.paramsNumberArrayObject.pointwise21SEExcitationFiltersArray,
-        this.in.paramsNumberArrayObject.pointwise21SEExcitationBiasesArray,
+        this.in.paramsNumberArrayObject.pointwise21SEIntermediateFilters,
+        this.in.paramsNumberArrayObject.pointwise21SEIntermediateBiases,
+        this.in.paramsNumberArrayObject.pointwise21SEExcitationFilters,
+        this.in.paramsNumberArrayObject.pointwise21SEExcitationBiases,
         this.out.pointwise21ActivationId,
         `${pointwiseName}_squeezeExcitation`, parametersDesc );
 
@@ -480,10 +480,10 @@ class Base extends TestParams.Base {
     if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
       squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
         this.out.nSqueezeExcitationChannelCountDivisor,
-        this.in.paramsNumberArrayObject.pointwise212SEIntermediateFiltersArray,
-        this.in.paramsNumberArrayObject.pointwise212SEIntermediateBiasesArray,
-        this.in.paramsNumberArrayObject.pointwise212SEExcitationFiltersArray,
-        this.in.paramsNumberArrayObject.pointwise212SEExcitationBiasesArray,
+        this.in.paramsNumberArrayObject.pointwise212SEIntermediateFilters,
+        this.in.paramsNumberArrayObject.pointwise212SEIntermediateBiases,
+        this.in.paramsNumberArrayObject.pointwise212SEExcitationFilters,
+        this.in.paramsNumberArrayObject.pointwise212SEExcitationBiases,
         this.out.pointwise21ActivationId,
         `${pointwiseName}_squeezeExcitation`, parametersDesc );
 
@@ -537,10 +537,10 @@ class Base extends TestParams.Base {
     if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
       squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
         this.out.nSqueezeExcitationChannelCountDivisor,
-        this.in.paramsNumberArrayObject.pointwise22SEIntermediateFiltersArray,
-        this.in.paramsNumberArrayObject.pointwise22SEIntermediateBiasesArray,
-        this.in.paramsNumberArrayObject.pointwise22SEExcitationFiltersArray,
-        this.in.paramsNumberArrayObject.pointwise22SEExcitationBiasesArray,
+        this.in.paramsNumberArrayObject.pointwise22SEIntermediateFilters,
+        this.in.paramsNumberArrayObject.pointwise22SEIntermediateBiases,
+        this.in.paramsNumberArrayObject.pointwise22SEExcitationFilters,
+        this.in.paramsNumberArrayObject.pointwise22SEExcitationBiases,
         this.out.pointwise21ActivationId, // (Note: Not pointwise22ActivationId)
         `${pointwiseName}_squeezeExcitation`, parametersDesc );
 
@@ -570,10 +570,10 @@ class Base extends TestParams.Base {
     if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
       squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
         this.out.nSqueezeExcitationChannelCountDivisor,
-        this.in.paramsNumberArrayObject.pointwise222SEIntermediateFiltersArray,
-        this.in.paramsNumberArrayObject.pointwise222SEIntermediateBiasesArray,
-        this.in.paramsNumberArrayObject.pointwise222SEExcitationFiltersArray,
-        this.in.paramsNumberArrayObject.pointwise222SEExcitationBiasesArray,
+        this.in.paramsNumberArrayObject.pointwise222SEIntermediateFilters,
+        this.in.paramsNumberArrayObject.pointwise222SEIntermediateBiases,
+        this.in.paramsNumberArrayObject.pointwise222SEExcitationFilters,
+        this.in.paramsNumberArrayObject.pointwise222SEExcitationBiases,
         this.out.pointwise21ActivationId, // (Note: Not pointwise22ActivationId)
         `${pointwiseName}_squeezeExcitation`, parametersDesc );
 
