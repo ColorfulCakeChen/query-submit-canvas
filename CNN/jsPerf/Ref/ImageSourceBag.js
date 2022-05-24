@@ -190,7 +190,20 @@ class Base {
 //     return tensor;
 
 
-    return this.tensors.get_or_create_by_arguments1_etc( Base.tensor_create_by,
+//!!! (2022/05/24 Remarked) Using arrow function for this pointer.
+//    return this.tensors.get_or_create_by_arguments1_etc( Base.tensor_create_by,
+
+    return this.tensors.get_or_create_by_arguments1_etc(
+      ( originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad ) => {
+
+        let image = Base.internal_getImage_by.call( this,
+          originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+
+        let shape = [ image.height, image.width, image.depth ];
+        let tensor = tf.tensor3d( image.dataArray, shape ); // Create new tensor of specified specification.
+        return tensor;
+      },
+
       originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
   }
 
@@ -230,17 +243,18 @@ class Base {
     return image;
   }
 
-  /** Create new tensor according to its corresponding image. */
-  static tensor_create_by(
-    originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad ) {
-
-    let image = Base.internal_getImage_by.call( this,
-      originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
-
-    let shape = [ image.height, image.width, image.depth ];
-    let tensor = tf.tensor3d( image.dataArray, shape ); // Create new tensor of specified specification.
-    return tensor;
-  }
+//!!! (2022/05/24 Remarked) Using arrow function for this pointer.
+//   /** Create new tensor according to its corresponding image. */
+//   static tensor_create_by(
+//     originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad ) {
+//
+//     let image = Base.internal_getImage_by.call( this,
+//       originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+//
+//     let shape = [ image.height, image.width, image.depth ];
+//     let tensor = tf.tensor3d( image.dataArray, shape ); // Create new tensor of specified specification.
+//     return tensor;
+//   }
 
   /** Release all tensors. */
   disposeTensors() {
