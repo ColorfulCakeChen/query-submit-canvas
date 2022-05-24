@@ -680,7 +680,7 @@ class Base extends TestParams.Base {
    * @return {number}
    *   Return the outputChannelCount of this squeeze-and-excitation operation.
    */
-  static generate_squeezeExcitation_filters_biases(
+  generate_squeezeExcitation_filters_biases(
     nSqueezeExcitationChannelCountDivisor, inputChannelCount, nActivationId, propertyNamePrefix, io_numberArrayObject ) {
 
     // 1. intermediate pointwise convolution.
@@ -709,7 +709,7 @@ class Base extends TestParams.Base {
         }
       }
 
-      Base.generate_pointwise_filters_biases(
+      this.generate_pointwise_filters_biases(
         inputChannelCount, intermediateChannelCount,
         bBias_intermediatePointwise,
         SEIntermediatePropertyNamePrefix, io_numberArrayObject );
@@ -729,7 +729,7 @@ class Base extends TestParams.Base {
         result_outputChannelCount = inputChannelCount;
       }
 
-      Base.generate_pointwise_filters_biases(
+      this.generate_pointwise_filters_biases(
         intermediateOutputChannelCount, result_outputChannelCount,
         true, // Always bBias
         SEExcitationPropertyNamePrefix, io_numberArrayObject );
@@ -807,7 +807,7 @@ class Base extends TestParams.Base {
    * @return {number}
    *   Return the outputChannelCount of this depthwise operation.
    */
-  static generate_depthwise_filters_biases(
+  generate_depthwise_filters_biases(
     inputChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bBias,
     propertyNamePrefix, io_numberArrayObject ) {
 
@@ -906,11 +906,11 @@ class Base extends TestParams.Base {
     }
 
     // Pointwise1
-    let pointwise1_resultOutputChannelCount = Base.generate_pointwise_filters_biases( channelCount0_pointwise1Before_original,
+    let pointwise1_resultOutputChannelCount = this.generate_pointwise_filters_biases( channelCount0_pointwise1Before_original,
       pointwise1ChannelCount_original, paramsAll.bPointwise1Bias, "pointwise1", io_paramsNumberArrayObject );
 
     // Depthwise1
-    let depthwise1_resultOutputChannelCount = Base.generate_depthwise_filters_biases( pointwise1_resultOutputChannelCount,
+    let depthwise1_resultOutputChannelCount = this.generate_depthwise_filters_biases( pointwise1_resultOutputChannelCount,
       paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
       paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias, "depthwise1", io_paramsNumberArrayObject );
 
@@ -935,13 +935,13 @@ class Base extends TestParams.Base {
           depthwise2_inputChannelCount = pointwise1_resultOutputChannelCount;
         }
 
-        depthwise2_resultOutputChannelCount = Base.generate_depthwise_filters_biases( depthwise2_inputChannelCount,
+        depthwise2_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise2_inputChannelCount,
           paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
           paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias, "depthwise2", io_paramsNumberArrayObject );
 
       // no depthwise2.
       } else {
-        Base.generate_depthwise_filters_biases( null, 0, null, null, null, null, "depthwise2", io_paramsNumberArrayObject );
+        this.generate_depthwise_filters_biases( null, 0, null, null, null, null, "depthwise2", io_paramsNumberArrayObject );
       }
     }
 
@@ -976,15 +976,15 @@ class Base extends TestParams.Base {
 
     // Pointwise21
     {
-      let pointwise21_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+      let pointwise21_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
         pointwise21ChannelCount_original, paramsAll.bPointwise21Bias, "pointwise21", io_paramsNumberArrayObject );
 
       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-        let pointwise212_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+        let pointwise212_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
           pointwise21ChannelCount_original, paramsAll.bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
 
       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
-        let pointwise222_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+        let pointwise222_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
           0, paramsAll.bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
       }
     }
@@ -1027,15 +1027,15 @@ class Base extends TestParams.Base {
 
     // Pointwise22
     {
-      let pointwise22_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+      let pointwise22_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
         pointwise22ChannelCount, bPointwise22Bias, "pointwise22", io_paramsNumberArrayObject );
 
       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-        let pointwise222_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+        let pointwise222_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
           pointwise22ChannelCount, bPointwise22Bias, "pointwise222", io_paramsNumberArrayObject );
 
       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
-        let pointwise222_resultOutputChannelCount = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+        let pointwise222_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
           0, bPointwise22Bias, "pointwise222", io_paramsNumberArrayObject );
       }
     }
