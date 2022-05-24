@@ -961,15 +961,15 @@ class Base extends TestParams.Base {
 
     // Pointwise21's squeeze-and-excitation
     {
-      Base.generate_squeezeExcitation_filters_biases( paramsAll.nSqueezeExcitationChannelCountDivisor,
+      this.generate_squeezeExcitation_filters_biases( paramsAll.nSqueezeExcitationChannelCountDivisor,
         pointwise21ChannelCount_original, paramsAll.pointwise21ActivationId, "pointwise21", io_paramsNumberArrayObject );
 
       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-        Base.generate_squeezeExcitation_filters_biases( paramsAll.nSqueezeExcitationChannelCountDivisor,
+        this.generate_squeezeExcitation_filters_biases( paramsAll.nSqueezeExcitationChannelCountDivisor,
           pointwise21ChannelCount_original, paramsAll.pointwise21ActivationId, "pointwise212", io_paramsNumberArrayObject );
 
       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
-        Base.generate_squeezeExcitation_filters_biases( ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE,
+        this.generate_squeezeExcitation_filters_biases( ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE,
           0, paramsAll.pointwise21ActivationId, "pointwise212", io_paramsNumberArrayObject );
       }
     }
@@ -1012,15 +1012,15 @@ class Base extends TestParams.Base {
 
     // Pointwise22's squeeze-and-excitation
     {
-      Base.generate_squeezeExcitation_filters_biases( paramsAll.nSqueezeExcitationChannelCountDivisor,
+      this.generate_squeezeExcitation_filters_biases( paramsAll.nSqueezeExcitationChannelCountDivisor,
         pointwise22ChannelCount, nPointwise22ActivationId, "pointwise22", io_paramsNumberArrayObject );
 
       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-        Base.generate_squeezeExcitation_filters_biases( paramsAll.nSqueezeExcitationChannelCountDivisor,
+        this.generate_squeezeExcitation_filters_biases( paramsAll.nSqueezeExcitationChannelCountDivisor,
           pointwise22ChannelCount, nPointwise22ActivationId, "pointwise222", io_paramsNumberArrayObject );
 
       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
-        Base.generate_squeezeExcitation_filters_biases( ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE,
+        this.generate_squeezeExcitation_filters_biases( ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE,
           0, nPointwise22ActivationId, "pointwise222", io_paramsNumberArrayObject );
       }
     }
