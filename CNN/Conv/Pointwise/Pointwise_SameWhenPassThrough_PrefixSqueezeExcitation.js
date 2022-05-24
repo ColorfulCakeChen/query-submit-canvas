@@ -1,5 +1,6 @@
 export { SameWhenPassThrough_PrefixSqueezeExcitation };
 
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as SqueezeExcitation from "../SqueezeExcitation.js";
