@@ -59,13 +59,9 @@ class Base {
     aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
     pointwiseName, parametersDesc ) {
 
-    let inputChannelIndexStart = 0; // Pass-through all channels (beginning from channel index 0).
-    let pointwisePassThrough = aPointwise_PassThrough_FiltersArray_BiasesArray_Bag.get_by_PassThroughStyleId(
-      this.depth, pointwiseChannelCount, inputChannelIndexStart, bPointwiseBias, nPassThroughStyleId );
-
     return this.clone_byPointwise(
-      pointwiseChannelCount, pointwisePassThrough.filtersArray, bPointwiseBias, pointwisePassThrough.biasesArray, pointwiseActivationId,
-      true, // (bPassThrough)
+      pointwiseChannelCount, null, bPointwiseBias, null, pointwiseActivationId,
+      true, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId, // (bPassThrough)
       pointwiseName, parametersDesc );
   }
 
@@ -76,7 +72,7 @@ class Base {
       
     return this.clone_byPointwise(
       pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-      false, // (bPassThrough)
+      false, null, null, // (bPassThrough)
       pointwiseName, parametersDesc );
   }
 
@@ -114,9 +110,21 @@ class Base {
     if ( pointwiseChannelCount <= 0 )
       return imageIn.clone(); // No pointwise operation.
 
-    tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == imageIn.depth ),
-      `${pointwiseName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
-        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
+    let pointwisePassThrough;
+    if ( bPassThrough ) { // Generate pass-through filters and biases.
+
+      let inputChannelIndexStart = 0; // Pass-through all channels (beginning from channel index 0).
+      pointwisePassThrough = aPointwise_PassThrough_FiltersArray_BiasesArray_Bag.get_by_PassThroughStyleId(
+        imageIn.depth, pointwiseChannelCount, inputChannelIndexStart, bPointwiseBias, nPassThroughStyleId );
+
+      pointwiseFiltersArray = pointwisePassThrough.filtersArray;
+      pointwiseBiasesArray = pointwisePassThrough.biasesArray;
+
+    } else {
+      tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == imageIn.depth ),
+        `${pointwiseName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
+          + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
+    }        
 
     let imageOutLength = ( imageIn.height * imageIn.width * pointwiseChannelCount );
     let imageOut = new Base(
@@ -212,16 +220,10 @@ class Base {
     aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
     depthwiseName, parametersDesc ) {
 
-    let depthwisePassThrough = aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag.get_by_PassThroughStyleId(
-      this.height, this.width, this.depth,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias,
-      nPassThroughStyleId
-    );
-
     return this.clone_byDepthwise(
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-      depthwisePassThrough.filtersArray, bDepthwiseBias, depthwisePassThrough.biasesArray, depthwiseActivationId,
-      true, // (bPassThrough)
+      null, bDepthwiseBias, null, depthwiseActivationId,
+      true, aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId, // (bPassThrough)
       depthwiseName, parametersDesc );
   }
 
@@ -234,14 +236,28 @@ class Base {
     return this.clone_byDepthwise(
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-      false, // (bPassThrough)
+      false, null, null, // (bPassThrough)
       depthwiseName, parametersDesc );
   }
 
   /**
    * @param {NumberImage.Base} this      The source image to be processed.
-   * @param {boolean}  bBias             Whether add bias.
-   * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
+   *
+   * @param {number[]} pointwiseFiltersArray  The depthwise convolution filter weights. Only used when ( bPassThrough == false ).
+   * @param {boolean}  bDepthwiseBias         Whether add bias.
+   * @param {number[]} depthwiseBiasesArray   The bias weights. Only used when ( bPassThrough == false ) and ( bDepthwiseBias ==true ).
+   * @param {number}   depthwiseActivationId  The activation function id (i.e. ValueDesc.ActivationFunction.Singleton.Ids.Xxx).
+   *
+   * @param {boolean}  bPassThrough
+   *   If true, pass-through filters and biases will be used (i.e. pointwiseFiltersArray and pointwiseBiasesArray will be ignored).
+   * And the output image will be scaled for pass-through activation function (i.e. scale to the linear part).
+   *
+   * @param {Depthwise.PassThrough_FiltersArray_BiasesArray_Bag} aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag
+   *   A bag for generating pass-through depthwise convolution filters and biases. Only used when ( bPassThrough == true ).
+   *
+   * @param {number} nPassThroughStyleId
+   *   The pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) when ( bPassThrough == true ).
+   *
    * @param {string}   depthwiseName     A string for debug message of this convolution.
    * @param {string}   parametersDesc    A string for debug message of this block.
    *
@@ -252,12 +268,29 @@ class Base {
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
     bPassThrough,
+    aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
     depthwiseName, parametersDesc ) {
 
     let imageIn = this;
 
     if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
       return imageIn.clone(); // No depthwise operation.
+
+    let depthwisePassThrough;
+    if ( bPassThrough ) { // Generate pass-through filters and biases.
+
+      depthwisePassThrough = aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag.get_by_PassThroughStyleId(
+        this.height, this.width, this.depth,
+        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias,
+        nPassThroughStyleId
+      );
+
+      depthwiseFiltersArray = depthwisePassThrough.filtersArray;
+      depthwiseBiasesArray = depthwisePassThrough.biasesArray;
+
+    } else {
+      // Not pass-through.
+    }
 
 //!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 ) or ( depthwiseFilterWidth <= 0 )?
 
