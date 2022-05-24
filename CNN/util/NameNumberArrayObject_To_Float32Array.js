@@ -92,20 +92,20 @@ class Base {
 
       let offset = weightsElementOffsetBegin;
       for ( let i = 0; i < nameOrderArray.length; ++i ) { // Concatenate all number array into a Float32Array.
-      let name = nameOrderArray[ i ];
-      let number_or_numberArray = nameNumberArrayObject[ name ];
+        let name = nameOrderArray[ i ];
+        let number_or_numberArray = nameNumberArrayObject[ name ];
 
-      if ( number_or_numberArray != undefined ) {
-        if ( number_or_numberArray instanceof Array ) {
-          this.weightsFloat32Array.set( number_or_numberArray, offset ); // Assume number array.
-          offset += number_or_numberArray.length;
-        } else {
-          this.weightsFloat32Array[ offset ] = number_or_numberArray; // Assume number.
-          offset += 1;
+        if ( number_or_numberArray != undefined ) {
+          if ( number_or_numberArray instanceof Array ) {
+            this.weightsFloat32Array.set( number_or_numberArray, offset ); // Assume number array.
+            offset += number_or_numberArray.length;
+          } else {
+            this.weightsFloat32Array[ offset ] = number_or_numberArray; // Assume number.
+            offset += 1;
+          }
         }
       }
     }
-
   }
 
 }
