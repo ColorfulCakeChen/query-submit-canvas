@@ -47,7 +47,8 @@ import * as Pointwise from "./Pointwise.js";
  *  - ( ( depthwise * excitationPointwise1 ) / excitationPointwise2 ) provides inversely proportional to neighbor pixels.
  *  - pointwise provides summation to neighbor pixels.
  *
- * To avoid dividing by zero, the division may use tf.div( input, tf.abs( x ) + 1 ) instead of tf.div() only.
+ * To avoid dividing by zero, the division may use tf.div( input, tf.abs( excitationPointwise2 ) + 1 ) instead of
+ * tf.div( input, excitationPointwise2 ) directly.
  *
  *
  * 2. separable convolution original
