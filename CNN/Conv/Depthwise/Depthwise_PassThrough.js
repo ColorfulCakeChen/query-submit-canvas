@@ -112,7 +112,7 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Base {
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, filterValue, biasValue ) {
 
-    return new ( Depthwise.PassThrough_FiltersArray_BiasesArray() )(
+    return new ( PassThrough_FiltersArray_BiasesArray() )(
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, filterValue, biasValue );
   }
