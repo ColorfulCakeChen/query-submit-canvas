@@ -1,4 +1,4 @@
-export { getRandomIntInclusive, generate_numberArray };
+export { getRandomIntInclusive, fill_numberArray, generate_numberArray };
 
 import * as FloatValue from "../Unpacker/FloatValue.js";
 
@@ -46,7 +46,7 @@ function fill_numberArray( io_numberArray, randomOffsetMin = 0, randomOffsetMax 
     oBounds.add_byLowerUpper( randomOffsetMin, randomOffsetMax ); // Plus the random range.
   }
 
-  return io_numberArray.length;
+  return io_numberArray;
 }
 
 /**
