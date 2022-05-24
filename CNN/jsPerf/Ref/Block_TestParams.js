@@ -1,6 +1,6 @@
 export { Base };
 
-//import * as RandTools from "../../util/RandTools.js";
+import * as RandTools from "../../util/RandTools.js";
 import * as NameNumberArrayObject_To_Float32Array from "../../util/NameNumberArrayObject_To_Float32Array.js";
 //import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
