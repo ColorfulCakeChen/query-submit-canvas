@@ -81,9 +81,22 @@ class Base {
   }
 
   /**
-   * @param {NumberImage.Base} this      The source image to be processed.
-   * @param {boolean}  bBias             Whether add bias.
-   * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
+   * @param {NumberImage.Base} this           The source image to be processed.
+   * @param {number[]} pointwiseFiltersArray  The pointwise convolution filter weights. Only used when ( bPassThrough == false ).
+   * @param {boolean}  bPointwiseBias         Whether add bias.
+   * @param {number[]} pointwiseBiasesArray   The bias weights. Only used when ( bPassThrough == false ) and ( bPointwiseBias ==true ).
+   * @param {number}   pointwiseActivationId  The activation function id (i.e. ValueDesc.ActivationFunction.Singleton.Ids.Xxx).
+   *
+   * @param {boolean}  bPassThrough
+   *   If true, pass-through filters and biases will be used (i.e. pointwiseFiltersArray and pointwiseBiasesArray will be ignored).
+   * And the output image will be scaled for pass-through activation function (i.e. scale to the linear part).
+   *
+   * @param {Pointwise.PassThrough_FiltersArray_BiasesArray_Bag} aPointwise_PassThrough_FiltersArray_BiasesArray_Bag
+   *   A bag for generating pass-through pointwise convolution filters and biases. Only used when ( bPassThrough == true ).
+   *
+   * @param {number} nPassThroughStyleId
+   *   The pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) when ( bPassThrough == true ).
+   *
    * @param {string}   pointwiseName     A string for debug message of this convolution.
    * @param {string}   parametersDesc    A string for debug message of this block.
    *
@@ -93,6 +106,7 @@ class Base {
   clone_byPointwise(
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
     bPassThrough,
+    aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
     pointwiseName, parametersDesc ) {
 
     let imageIn = this;
@@ -690,6 +704,55 @@ class Base {
     return imageOutNew;
   }
 
+//!!! ...unfinished... (2022/05/24)
+  /**
+   * Call this.clone_bySqueezeExcitation() with ( bPassThrough == true ).
+   *
+   * @param {Depthwise.PassThrough_FiltersArray_BiasesArray_Bag} aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag
+   *   A bag for generating pass-through depthwise convolution filters and biases.
+   *
+   * @param {Pointwise.PassThrough_FiltersArray_BiasesArray_Bag} aPointwise_PassThrough_FiltersArray_BiasesArray_Bag
+   *   A bag for generating pass-through pointwise convolution filters and biases.
+   *
+   * @param {number} nPassThroughStyleId
+   *   What kinds of pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx).
+   */
+  clone_bySqueezeExcitation_NonPassThrough(
+    nSqueezeExcitationChannelCountDivisor,
+    nActivationId,
+    nPassThroughStyleId, aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
+    squeezeExcitationName, parametersDesc ) {
+
+      intermediateFiltersArray, intermediateBiasesArray,
+      excitationFiltersArray, excitationBiasesArray,
+
+    return this.clone_bySqueezeExcitation(
+      nSqueezeExcitationChannelCountDivisor,
+      nActivationId,
+      intermediateFiltersArray, intermediateBiasesArray,
+      excitationFiltersArray, excitationBiasesArray,
+      false, // (bPassThrough)
+      squeezeExcitationName, parametersDesc );
+  }
+
+  /** Call this.clone_bySqueezeExcitation() with ( bPassThrough == false ). */
+  clone_bySqueezeExcitation_NonPassThrough(
+    nSqueezeExcitationChannelCountDivisor,
+    intermediateFiltersArray, intermediateBiasesArray,
+    excitationFiltersArray, excitationBiasesArray,
+    nActivationId,
+    squeezeExcitationName, parametersDesc ) {
+
+    return this.clone_bySqueezeExcitation(
+      nSqueezeExcitationChannelCountDivisor,
+      intermediateFiltersArray, intermediateBiasesArray,
+      excitationFiltersArray, excitationBiasesArray,
+      nActivationId,
+      false, // (bPassThrough)
+      squeezeExcitationName, parametersDesc );
+  }
+
+
   /**
    * @param {NumberImage.Base} this      The source image to be processed.
    *
@@ -707,10 +770,10 @@ class Base {
    */
   clone_bySqueezeExcitation(
     nSqueezeExcitationChannelCountDivisor,
-    bPassThrough,
-    nActivationId,
     intermediateFiltersArray, intermediateBiasesArray,
     excitationFiltersArray, excitationBiasesArray,
+    nActivationId,
+    bPassThrough,
     squeezeExcitationName, parametersDesc ) {
 
     tf.util.assert(
