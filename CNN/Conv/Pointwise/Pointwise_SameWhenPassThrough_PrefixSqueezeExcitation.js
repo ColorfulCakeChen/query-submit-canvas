@@ -78,6 +78,8 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
     inputChannelCount, outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
+    super();
+
     this.nSqueezeExcitationChannelCountDivisor = nSqueezeExcitationChannelCountDivisor;
     this.inputHeight = inputHeight;
     this.inputWidth = inputWidth;
