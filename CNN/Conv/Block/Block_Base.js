@@ -672,13 +672,14 @@ class Base extends ReturnOrClone.Base {
 //
 // No. This problem seems not existed because Block_TestParams already arrange them properly.
 
+
     // Prepare image height and width for squeeze-and-excitation if global-average-pooling is required.
     //
     // Note1: Image height and width are determined by depthwise1. Even if ( this.depthwise1.bExisted == false ), it still works.
     // Note2: depthwise2 will have the same height and width as depthwise1.
     //
     let inputHeight_SqueezeExcitation = this.depthwise1.outputHeight;
-    let inputWidth_SqueezeExcitation = this.depthwise1.outputHeight;
+    let inputWidth_SqueezeExcitation = this.depthwise1.outputWidth;
 
     // 5.1 Pointwise21
     //
