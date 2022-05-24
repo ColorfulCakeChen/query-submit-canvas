@@ -29,11 +29,41 @@ import * as Pointwise from "./Pointwise.js";
 
 
 
-//!!! ...unfinished... (2022/05/23)
-// Since multiply is useful in squeeze-and-excitation, what about divide.
-// e.g. tf.mul( input, x ) replaced by tf.div( input, tf.abs( x ) + 1 )
-//
-
+//!!! ...unfinished... (2022/05/24)
+/*
+ * Since multiply is useful in squeeze-and-excitation, what about divide.
+ * e.g. tf.mul( input, x ) replaced by tf.div( input, tf.abs( x ) + 1 )
+ *
+ *
+ * 1.
+ *
+ * squeeze-and-excitation with multiplication and division:
+ *   depthwise - excitation1 - multiply - excitation2 - divide - pointwise
+ *             \-------------/          \-------------/
+ *
+ * Effects:
+ *  - depthwise separates neighbor pixels into different channels (of same pixel).
+ *  - ( depthwise * excitation1 ) let neighbor pixels multiply each other. (proportional to neighbor pixels)
+ *  - ( depthwise / excitation2 ) let neighbor pixels divide each other. (inversely proportional to neighbor pixels)
+ *  - pointwise adds neighbor pixels.
+ *
+ * To avoid dividing by zero, the division may use tf.div( input, tf.abs( x ) + 1 ) instead of tf.div() only.
+ *
+ *
+ * 2.
+ *
+ * squeeze-and-excitation original:
+ *   depthwise - excitation1 - excitation2 - multiply - pointwise
+ *             \---------------------------/
+ *
+ * Effects:
+ *  - depthwise separates neighbor pixels into different channels (of same pixel).
+ *  - ( depthwise * excitation2 ) let neighbor pixels multiply each other. (proportional to neighbor pixels)
+ *  - pointwise adds neighbor pixels.
+ *
+ *
+ *
+ */
 
 /**
  *
