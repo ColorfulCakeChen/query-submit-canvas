@@ -92,6 +92,8 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
     this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
     this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
+
+    this.outputChannelCount_Real = outputChannelCount; // For simulate class SameWhenPassThrough's property.
   }
 
   /**
