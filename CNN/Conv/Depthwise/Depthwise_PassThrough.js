@@ -75,7 +75,7 @@ let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Pa
  * and again to improve performance.
  *
  */
-class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Bag {
+class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Base {
 
   //constructor() {
   //  super();
