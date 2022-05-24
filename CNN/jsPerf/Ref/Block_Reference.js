@@ -555,7 +555,7 @@ class Base {
     asserter.propertyValue( "depthwiseActivationName", depthwiseActivationName );
 
     // squeeze-and-excitation parameters.
-    asserter.propertyValue( "pointwise21ChannelCount", testParams.out.nSqueezeExcitationChannelCountDivisor );
+    asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", testParams.out.nSqueezeExcitationChannelCountDivisor );
 
     // pointwise21 parameters.
     asserter.propertyValue( "pointwise21ChannelCount", testParams.out.pointwise21ChannelCount );
