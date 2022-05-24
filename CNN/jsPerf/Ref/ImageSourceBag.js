@@ -175,8 +175,8 @@ class Base {
           // Use original image to create shrinked image.
           let originalImage = Base.internal_getImage_by.call( this, originalHeight, originalWidth, channelCount );
 
-          // Borrow the calcDepthwise() function to create an input image which is shrinked by specified filter size and strides and pad.
-          image = originalImage.cloneBy_depthwise(
+          // Borrow the clone_byDepthwise() function to create an input image which is shrinked by specified filter size and strides and pad.
+          image = originalImage.clone_byDepthwise_NonPassThrough(
             ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX, // Max Pooling is faster and without filter weights.
             depthwiseFilterHeight, depthwiseFilterWidth,
             depthwiseStridesPad,
