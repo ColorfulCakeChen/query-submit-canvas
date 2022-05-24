@@ -2,6 +2,7 @@ export { PassThrough_FiltersArray_BiasesArray };
 export { PassThrough_FiltersArray_BiasesArray_Bag };
 export { PassThrough };
 
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
 import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
