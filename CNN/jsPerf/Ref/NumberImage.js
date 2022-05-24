@@ -45,15 +45,7 @@ class Base {
     return result;
   }
 
-  /**
-   * Call this.clone_byPointwise() with ( bPassThrough == true ).
-   *
-   * @param {Pointwise.PassThrough_FiltersArray_BiasesArray_Bag} aPointwise_PassThrough_FiltersArray_BiasesArray_Bag
-   *   A bag for generating pass-through pointwise convolution filters and biases.
-   *
-   * @param {number} nPassThroughStyleId
-   *   What kinds of pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx).
-   */
+  /** Call this.clone_byPointwise() with ( bPassThrough == true ). */
   clone_byPointwise_PassThrough(
     pointwiseChannelCount, bPointwiseBias, pointwiseActivationId,
     aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
@@ -206,15 +198,7 @@ class Base {
     return imageOut;
   }
 
-  /**
-   * Call this.clone_byDepthwise() with ( bPassThrough == true ).
-   *
-   * @param {Depthwise.PassThrough_FiltersArray_BiasesArray_Bag} aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag
-   *   A bag for generating pass-through depthwise convolution filters and biases.
-   *
-   * @param {number} nPassThroughStyleId
-   *   What kinds of pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx).
-   */
+  /** Call this.clone_byDepthwise() with ( bPassThrough == true ). */
   clone_byDepthwise_PassThrough(
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
@@ -738,23 +722,18 @@ class Base {
     return imageOutNew;
   }
 
-//!!! ...unfinished... (2022/05/24)
   /** Call this.clone_bySqueezeExcitation() with ( bPassThrough == true ). */
-  clone_bySqueezeExcitation_NonPassThrough(
+  clone_bySqueezeExcitation_PassThrough(
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
-    nPassThroughStyleId, aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
+    aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
     squeezeExcitationName, parametersDesc ) {
-
-      intermediateFiltersArray, intermediateBiasesArray,
-      excitationFiltersArray, excitationBiasesArray,
 
     return this.clone_bySqueezeExcitation(
       nSqueezeExcitationChannelCountDivisor,
+      null, null, null, null,
       nActivationId,
-      intermediateFiltersArray, intermediateBiasesArray,
-      excitationFiltersArray, excitationBiasesArray,
-      false, // (bPassThrough)
+      false, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId, // (bPassThrough)
       squeezeExcitationName, parametersDesc );
   }
 
@@ -771,10 +750,9 @@ class Base {
       intermediateFiltersArray, intermediateBiasesArray,
       excitationFiltersArray, excitationBiasesArray,
       nActivationId,
-      false, // (bPassThrough)
+      false, null, null, // (bPassThrough)
       squeezeExcitationName, parametersDesc );
   }
-
 
   /**
    * @param {NumberImage.Base} this      The source image to be processed.
@@ -794,9 +772,6 @@ class Base {
    * excitationFiltersArray, excitationBiasesArray will be ignored). And the output image will be scaled for pass-through
    * activation function (i.e. scale to the linear part).
    *
-   * @param {Depthwise.PassThrough_FiltersArray_BiasesArray_Bag} aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag
-   *   A bag for generating pass-through depthwise convolution filters and biases. Only used when ( bPassThrough == true ).
-   *
    * @param {Pointwise.PassThrough_FiltersArray_BiasesArray_Bag} aPointwise_PassThrough_FiltersArray_BiasesArray_Bag
    *   A bag for generating pass-through pointwise convolution filters and biases. Only used when ( bPassThrough == true ).
    *
@@ -815,7 +790,7 @@ class Base {
     excitationFiltersArray, excitationBiasesArray,
     nActivationId,
     bPassThrough,
-    aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
+    aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
     squeezeExcitationName, parametersDesc ) {
 
     tf.util.assert(
