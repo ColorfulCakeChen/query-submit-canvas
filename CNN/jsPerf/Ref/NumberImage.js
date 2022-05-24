@@ -726,14 +726,14 @@ class Base {
   clone_bySqueezeExcitation_PassThrough(
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
-    aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
+    aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
     squeezeExcitationName, parametersDesc ) {
 
     return this.clone_bySqueezeExcitation(
       nSqueezeExcitationChannelCountDivisor,
       null, null, null, null,
       nActivationId,
-      false, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId, // (bPassThrough)
+      false, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, // (bPassThrough)
       squeezeExcitationName, parametersDesc );
   }
 
@@ -750,7 +750,7 @@ class Base {
       intermediateFiltersArray, intermediateBiasesArray,
       excitationFiltersArray, excitationBiasesArray,
       nActivationId,
-      false, null, null, // (bPassThrough)
+      false, null, // (bPassThrough)
       squeezeExcitationName, parametersDesc );
   }
 
@@ -775,9 +775,6 @@ class Base {
    * @param {Pointwise.PassThrough_FiltersArray_BiasesArray_Bag} aPointwise_PassThrough_FiltersArray_BiasesArray_Bag
    *   A bag for generating pass-through pointwise convolution filters and biases. Only used when ( bPassThrough == true ).
    *
-   * @param {number} nPassThroughStyleId
-   *   The pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) when ( bPassThrough == true ).
-   *
    * @param {string}   squeezeExcitationName  A string for debug message of this squeeze-and-excitation.
    * @param {string}   parametersDesc    A string for debug message of this block.
    *
@@ -790,7 +787,7 @@ class Base {
     excitationFiltersArray, excitationBiasesArray,
     nActivationId,
     bPassThrough,
-    aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
+    aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
     squeezeExcitationName, parametersDesc ) {
 
     tf.util.assert(
@@ -806,6 +803,10 @@ class Base {
 
     if ( this.nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
       return this.clone(); // No squeeze-and-excitation operation.
+
+    // For squeeze-and-excitation, if pass-through is required, the pass-through style is always ( filter = 0, bias = 1 ).
+    // So that the final multiplication will not affect input.
+    const nPassThroughStyleId = ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1;
 
     // 1. squeezeDepthwise
     let squeezeOut;
