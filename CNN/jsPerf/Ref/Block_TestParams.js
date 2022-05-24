@@ -45,8 +45,8 @@ class Base extends TestParams.Base {
   constructor() {
    super();
 
-   this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag = Pointwise.PassThrough_FiltersArray_BiasesArray_Bag();
-   this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag = Depthwise.PassThrough_FiltersArray_BiasesArray_Bag();
+   this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag = new Pointwise.PassThrough_FiltersArray_BiasesArray_Bag();
+   this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag = new Depthwise.PassThrough_FiltersArray_BiasesArray_Bag();
 
    // A pre-allocated ArrayBuffer which could be re-allocated when needed to get Float32Array. (For reducing memory re-allocation.)
    this.Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
