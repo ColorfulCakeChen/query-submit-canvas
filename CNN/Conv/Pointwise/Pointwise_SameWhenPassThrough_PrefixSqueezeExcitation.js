@@ -148,8 +148,6 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
       }
 
       // 3.1.2 pointwise
-      //
-      // Note: Even if ( this.bExisted == false ), the this.pointwise will still be created.
       {
         this.pointwise = new SameWhenPassThrough(
           this.inputChannelCount, this.outputChannelCount, this.bBias, this.nActivationId,
