@@ -2,7 +2,7 @@ export { Base };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as BoundsArraySet from "./BoundsArraySet.js";
-import * as ReturnOrClone from "../ReturnOrClone.js";
+import * as ReturnOrClone from "./ReturnOrClone.js";
 import * as Depthwise from "./Depthwise.js";
 import * as Pointwise from "./Pointwise.js";
 
