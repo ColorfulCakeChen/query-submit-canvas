@@ -9,6 +9,10 @@ import * as BoundsArraySet from "../../Conv/BoundsArraySet.js";
 //import * as Pointwise from "../../Conv/Pointwise.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
 
+
+//!!! ...unfinished... (2022/05/24)
+// Perhaps, provides NumberImagePool to create and recycle NumberImage for reducing memory re-allocation.
+
 /**
  * Image composed from numbers. For testing.
  *
