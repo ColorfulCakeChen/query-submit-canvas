@@ -870,7 +870,7 @@ class Base {
       // Residual Connection.
       if ( bAddInputToOutputRequested )
         if ( pointwise21Result.depth == testParams.out.channelCount0_pointwise1Before ) // add-input-to-output is possible if same channel count.
-          pointwise21Result = pointwise21Result.cloneBy_add( imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
+          pointwise21Result = pointwise21Result.clone_byAdd( imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
     }
 
     let imageOutArray = [ pointwise21Result, null ]; // Assume no pointwise22.
@@ -913,7 +913,7 @@ class Base {
         // Always using input0 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
         if ( bAddInputToOutputRequested )
           if ( pointwise22Result.depth == testParams.out.channelCount0_pointwise1Before ) // add-input-to-output is possible if same channel count.
-            pointwise22Result = pointwise22Result.cloneBy_add( imageIn0, "Pointwise22_AddInputToOutput", this.paramsOutDescription );
+            pointwise22Result = pointwise22Result.clone_byAdd( imageIn0, "Pointwise22_AddInputToOutput", this.paramsOutDescription );
       }
 
       // Integrate pointwise21 and pointwise22 into pointwise2.
