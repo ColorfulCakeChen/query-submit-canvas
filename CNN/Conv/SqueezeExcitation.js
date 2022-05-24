@@ -31,35 +31,47 @@ import * as Pointwise from "./Pointwise.js";
 
 //!!! ...unfinished... (2022/05/24)
 /*
- * Since multiply is useful in squeeze-and-excitation, what about divide.
+ * Since multiplication is useful in squeeze-and-excitation, what about division?
  * e.g. tf.mul( input, x ) replaced by tf.div( input, tf.abs( x ) + 1 )
  *
  *
- * 1.
+ * 1. squeeze-and-excitation with multiplication and division:
  *
- * squeeze-and-excitation with multiplication and division:
- *   depthwise - excitation1 - multiply - excitation2 - divide - pointwise
- *             \-------------/          \-------------/
+ *   depthwise -- excitation1 - multiply -- pointwise
+ *             \- excitation2 - divide ---/
+ *              \------------------------/
  *
  * Effects:
  *  - depthwise separates neighbor pixels into different channels (of same pixel).
  *  - ( depthwise * excitation1 ) let neighbor pixels multiply each other. (proportional to neighbor pixels)
- *  - ( depthwise / excitation2 ) let neighbor pixels divide each other. (inversely proportional to neighbor pixels)
- *  - pointwise adds neighbor pixels.
+ *  - ( ( depthwise * excitation1 ) / excitation2 ) let neighbor pixels divide each other. (inversely proportional to neighbor pixels)
+ *  - pointwise let neighbor pixels sum together.
  *
  * To avoid dividing by zero, the division may use tf.div( input, tf.abs( x ) + 1 ) instead of tf.div() only.
  *
  *
- * 2.
+ * 2. separable convolution original
  *
- * squeeze-and-excitation original:
+ *   depthwise - pointwise
+ *
+ * Effects:
+ *  - depthwise separates neighbor pixels into different channels (of same pixel).
+ *  - Can't proportional to neighbor pixels.
+ *  - Can't inversely proportional to neighbor pixels.
+ *  - pointwise let neighbor pixels sum together.
+ *
+ *
+ *
+ * 3. squeeze-and-excitation original
+ *
  *   depthwise - excitation1 - excitation2 - multiply - pointwise
  *             \---------------------------/
  *
  * Effects:
  *  - depthwise separates neighbor pixels into different channels (of same pixel).
  *  - ( depthwise * excitation2 ) let neighbor pixels multiply each other. (proportional to neighbor pixels)
- *  - pointwise adds neighbor pixels.
+ *  - Can't inversely proportional to neighbor pixels.
+ *  - pointwise let neighbor pixels sum together.
  *
  *
  *
