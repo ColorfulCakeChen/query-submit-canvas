@@ -320,9 +320,6 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.inputHeight0,            this.valueOutMinMax.inputHeight0 ),
       new TestParams.ParamDescConfig( Block.Params.inputWidth0,             this.valueOutMinMax.inputWidth0 ),
 
-      new TestParams.ParamDescConfig( Block.Params.nSqueezeExcitationChannelCountDivisor,
-                                                                            this.valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
-
       new TestParams.ParamDescConfig( Block.Params.pointwise21ChannelCount, this.valueOutMinMax.pointwise21ChannelCount ),
       new TestParams.ParamDescConfig( Block.Params.bPointwise21Bias,        this.valueOutMinMax.Bias ),
       new TestParams.ParamDescConfig( Block.Params.pointwise21ActivationId, this.valueOutMinMax.ActivationId ),
@@ -350,6 +347,10 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.pointwise1ChannelCount,  this.valueOutMinMax.pointwise1ChannelCount ),
 
       new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,        this.valueOutMinMax.bKeepInputTensor ),
+
+      new TestParams.ParamDescConfig( Block.Params.nSqueezeExcitationChannelCountDivisor,
+                                                                            this.valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
+
     ];
 
     yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
