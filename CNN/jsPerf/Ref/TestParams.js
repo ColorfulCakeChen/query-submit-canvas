@@ -175,8 +175,13 @@ class Base {
       }
 
       if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) { // Note: If the element exists, it must be an array.
-        inValue_original = this.in.paramsNumberArrayObject[ paramName ][ 0 ];
-        this.in.paramsNumberArrayObject[ paramName ][ 0 ] = inValue_new; // The value is always at the element 0.
+
+//!!! (2022/05/24 Remarked) Now is number (not number array)
+//         inValue_original = this.in.paramsNumberArrayObject[ paramName ][ 0 ];
+//         this.in.paramsNumberArrayObject[ paramName ][ 0 ] = inValue_new; // The value is always at the element 0.
+
+        inValue_original = this.in.paramsNumberArrayObject[ paramName ]; // (should be a number (not number array)).
+        this.in.paramsNumberArrayObject[ paramName ] = inValue_new;
       }
     }
 
@@ -200,7 +205,11 @@ class Base {
       }
 
       if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) { // Note: If the element exists, it must be an array.
-        this.in.paramsNumberArrayObject[ paramName ][ 0 ] = changeRecord.inValue_original; // The value is always at the element 0.
+
+//!!! (2022/05/24 Remarked) Now is number (not number array)
+//      this.in.paramsNumberArrayObject[ paramName ][ 0 ] = changeRecord.inValue_original; // The value is always at the element 0.
+
+        this.in.paramsNumberArrayObject[ paramName ] = changeRecord.inValue_original; // (should be a number (not number array)).
       }
     }
     
