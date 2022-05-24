@@ -737,7 +737,7 @@ class Base {
       nSqueezeExcitationChannelCountDivisor,
       null, null, null, null,
       nActivationId,
-      false, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, // (bPassThrough)
+      true, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, // (bPassThrough)
       squeezeExcitationName, parametersDesc );
   }
 
