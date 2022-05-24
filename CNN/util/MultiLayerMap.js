@@ -1,6 +1,6 @@
 export { Base };
 
-import * as MapTools from "./util/MapTools.js";
+import * as MapTools from "./MapTools.js";
 
 /**
  * A map whose value is also a map (except the most leaf node). The most leaf node's value is any object which caller could
