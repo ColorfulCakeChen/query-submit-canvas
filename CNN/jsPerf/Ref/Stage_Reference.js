@@ -142,8 +142,12 @@ class Base {
 
     } catch ( e ) {
       let backendName = tf.getBackend();
-      console.log( `Stage_Reference.js: testCorrectness(): backendName=${backendName}, `
-        + `Stage this.testParams.id == ${this.testParams.id}` );
+      let msg = `Stage_Reference.js: testCorrectness(): backendName=${backendName}, `
+        + `Stage, (yieldCount == ${testParams.yieldCount}), this.testParams.id == ${testParams.id}`;
+
+      console.log( msg );
+      alert( `${msg}\n${e}` );
+
       throw e;
     }
 
