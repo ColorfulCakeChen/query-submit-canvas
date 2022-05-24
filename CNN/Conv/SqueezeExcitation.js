@@ -37,15 +37,15 @@ import * as Pointwise from "./Pointwise.js";
  *
  * 1. squeeze-and-excitation with multiplication and division:
  *
- *   depthwise -- excitation1 - multiply -- pointwise
- *             \- excitation2 - divide ---/
- *              \------------------------/
+ *   depthwise ---- excitationPointwise1 - multiply ---- pointwise
+ *              \-----------------------------------/ /
+ *               \- excitationPointwise2 - divide ---/
  *
  * Effects:
  *  - depthwise separates neighbor pixels into different channels (of same pixel).
- *  - ( depthwise * excitation1 ) let neighbor pixels multiply each other. (proportional to neighbor pixels)
- *  - ( ( depthwise * excitation1 ) / excitation2 ) let neighbor pixels divide each other. (inversely proportional to neighbor pixels)
- *  - pointwise let neighbor pixels sum together.
+ *  - ( depthwise * excitationPointwise1 ) provides proportional to neighbor pixels.
+ *  - ( ( depthwise * excitationPointwise1 ) / excitationPointwise2 ) provides inversely proportional to neighbor pixels.
+ *  - pointwise provides summation to neighbor pixels.
  *
  * To avoid dividing by zero, the division may use tf.div( input, tf.abs( x ) + 1 ) instead of tf.div() only.
  *
@@ -58,8 +58,7 @@ import * as Pointwise from "./Pointwise.js";
  *  - depthwise separates neighbor pixels into different channels (of same pixel).
  *  - Can't proportional to neighbor pixels.
  *  - Can't inversely proportional to neighbor pixels.
- *  - pointwise let neighbor pixels sum together.
- *
+ *  - pointwise provides summation to neighbor pixels.
  *
  *
  * 3. squeeze-and-excitation original
@@ -69,9 +68,9 @@ import * as Pointwise from "./Pointwise.js";
  *
  * Effects:
  *  - depthwise separates neighbor pixels into different channels (of same pixel).
- *  - ( depthwise * excitation2 ) let neighbor pixels multiply each other. (proportional to neighbor pixels)
+ *  - ( depthwise * excitation2 ) provides proportional to neighbor pixels.
  *  - Can't inversely proportional to neighbor pixels.
- *  - pointwise let neighbor pixels sum together.
+ *  - pointwise provides summation to neighbor pixels.
  *
  *
  *
