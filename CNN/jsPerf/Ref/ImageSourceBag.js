@@ -17,8 +17,8 @@ class Base {
   constructor() {
 
     // Images indexed by [ originalHeight, originalWidth, channelCount, filterHeight, filterWidth, stridesPad ].
-    this.images = new MultiLayerMap();
-    this.tensors = new MultiLayerMap();
+    this.images = new MultiLayerMap.Base();
+    this.tensors = new MultiLayerMap.Base();
   }
 
   /**
