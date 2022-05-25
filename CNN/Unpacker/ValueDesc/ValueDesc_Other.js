@@ -7,6 +7,9 @@ export { SqueezeExcitationChannelCountDivisor };
 import { Int } from "./ValueDesc_Base.js";
 
 
+//!!! ...unfinished... (2022/05/25)
+// Perhaps, rename channelCount1_pointwise1Before to BlockInputChannelCount1?
+
 /** Describe id, range, name of channelCount1_pointwise1Before.
  *
  * Convert number value into integer between [ -5, ( 10 * 1024 ) ] representing operation:
