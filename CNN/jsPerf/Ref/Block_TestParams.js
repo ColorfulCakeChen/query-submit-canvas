@@ -1024,12 +1024,12 @@ class Base extends TestParams.Base {
 
       let pointwise22_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
         paramsAll.nSqueezeExcitationChannelCountDivisor,
-        pointwise2_inputChannelCount, nPointwise22ActivationId, "pointwise22", io_paramsNumberArrayObject );
+        pointwise22_squeezeExcitation_inputChannelCount, nPointwise22ActivationId, "pointwise22", io_paramsNumberArrayObject );
 
       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         let pointwise222_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
           paramsAll.nSqueezeExcitationChannelCountDivisor,
-          pointwise2_inputChannelCount, nPointwise22ActivationId, "pointwise222", io_paramsNumberArrayObject );
+          pointwise22_squeezeExcitation_inputChannelCount, nPointwise22ActivationId, "pointwise222", io_paramsNumberArrayObject );
 
       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
         let pointwise222_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
