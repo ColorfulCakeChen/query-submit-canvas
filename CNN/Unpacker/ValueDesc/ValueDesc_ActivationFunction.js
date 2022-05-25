@@ -4,11 +4,6 @@ import { Int } from "./ValueDesc_Base.js";
 import * as Weights from "../Weights.js";
 import * as FloatValue from "../FloatValue.js";
 
-//!!! ...unfinished... (2022/05/25)
-// Since activation by clip() is enough, using saturated integer for convolution seems good too.
-// Because saturated integer could achieve clip automatically without activation function (i.e. less computation time).
-//
-
 /**
  * Describe activation function parameter's id, range, name.
  *
@@ -53,6 +48,9 @@ import * as FloatValue from "../FloatValue.js";
  *
  *      - It may not be saturated (i.e. activated) by bias. When the input value is the minimum value (e.g. -255), adding a
  *         bias (even if adding the maximum value 255) can not saturate it to maximum value (e.g. +255).
+ *
+ * On the other hand, floating-point number has already been similar to a kind of saturated number (i.e. maximum is saturated to
+ * +Infinity, and minimum is saturated to -Infinity).
  *
  */
 class ActivationFunction extends Int {
