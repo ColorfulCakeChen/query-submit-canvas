@@ -3,11 +3,6 @@ export { Bag };
 import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 import * as RandTools from "../../util/RandTools.js";
 
-
-//!!! ...unfinished... (2022/05/25)
-// Perhaps, let the same specification have several different result number array (and randomly select them).
-
-
 /**
  * A pool for number array which is created with sequence and randomized offset. It could reduce re-creating them of same parameters
  * again and again to improve performance.
@@ -29,9 +24,14 @@ class Bag extends MultiLayerMap.Base {
    * @param {number} randomOffsetMax  The random number offet upperer bound.
    */
   get_by_elementCount_randomOffsetMin_randomOffsetMax( elementCount, randomOffsetMin = 0, randomOffsetMax = 0 ) {
+
+    // For the same specification, provide several different result number array (and randomly select them).
+    const nRandSpecIdMin = 0, nRandSpecIdMax = 5;
+    let nRandSpecId = RandTools.getRandomIntInclusive( nRandSpecIdMin, nRandSpecIdMax );
+
     return this.get_or_create_by_arguments1_etc(
       RandTools.generate_numberArray,
-      elementCount, randomOffsetMin, randomOffsetMax );
+      elementCount, randomOffsetMin, randomOffsetMax, nRandSpecId );
   }
 
 }
