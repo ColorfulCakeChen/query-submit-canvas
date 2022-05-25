@@ -852,7 +852,7 @@ class Base {
       if ( nSqueezeExcitationChannelCountDivisor <= 0 ) {
         intermediateChannelCount = 0;
       } else {
-        this.intermediateChannelCount = Math.ceil( this.depth / nSqueezeExcitationChannelCountDivisor );
+        intermediateChannelCount = Math.ceil( this.depth / nSqueezeExcitationChannelCountDivisor );
       }
 
       if ( intermediateChannelCount > 0 ) {
