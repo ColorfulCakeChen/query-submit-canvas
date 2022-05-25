@@ -3,6 +3,11 @@ export { Bag };
 import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 import * as RandTools from "../../util/RandTools.js";
 
+
+//!!! ...unfinished... (2022/05/25)
+// Perhaps, let the same specification have several different result number array (and randomly select them).
+
+
 /**
  * A pool for number array which is created with sequence and randomized offset. It could reduce re-creating them of same parameters
  * again and again to improve performance.
