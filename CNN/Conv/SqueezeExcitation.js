@@ -96,17 +96,17 @@ import * as Pointwise from "./Pointwise.js";
  *
  *     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1)
  *       - no squeeze.
- *       - no intermediate excitation. ( intermediateChannelCount = 0 )
+ *       - no intermediate excitation. ( intermediate_outputChannelCount = 0 )
  *       - has only one pointwise convolution (i.e. excitation pointwise convolution). 
  *
  *     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION_1 (0)
  *       - has squeeze. 
- *       - no intermediate excitation. ( intermediateChannelCount = 0 )
+ *       - no intermediate excitation. ( intermediate_outputChannelCount = 0 )
  *       - has only one pointwise convolution (i.e. excitation pointwise convolution). 
  *
  *     - ( nSqueezeExcitationChannelCountDivisor > 0 )
  *       - has squeeze. 
- *       - has intermediate excitation. ( intermediateChannelCount = Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor ) )
+ *       - has intermediate excitation. ( intermediate_outputChannelCount = Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor ) )
  *       - has two pointwise convolutions (i.e. intermediate pointwise convolution, and excitation pointwise convolution).
  *
  * @member {number} inputHeight
@@ -124,7 +124,7 @@ import * as Pointwise from "./Pointwise.js";
  * @member {boolean} bExisted
  *   If true, this squeeze-and-excitation exists. If false, this object is a no-op (i.e. no squeeze, no excitation, no multiply).
  *
- * @member {number} intermediateChannelCount
+ * @member {number} intermediate_outputChannelCount
  *   The channel count of intermediate pointwise convolution.
  *
  *     - If ( nSqueezeExcitationChannelCountDivisor <= 0 ), it will be 0 (i.e. no intermediate pointwise convolution).
@@ -214,7 +214,7 @@ class Base extends ReturnOrClone.Base {
 
     // 1. Determine operation functions.
     Base.setup_bExisted.call( this );
-    Base.setup_intermediateChannelCount.call( this );
+    Base.setup_intermediate_outputChannelCount.call( this );
     Base.setup_outputChannelCount.call( this );
     Base.setup_bSqueeze.call( this );
     Base.setup_pfn.call( this );
@@ -235,7 +235,7 @@ class Base extends ReturnOrClone.Base {
       let squeezeDepthwise_boundsArraySet_output0;
       if ( this.bSqueeze ) {
         this.squeezeDepthwise = new Depthwise.ConstantWhenPassThrough(
-          this.inputHeight, this.inputWidth, this.inputChannelCount,
+          this.inputHeight, this.inputWidth, this.squeeze_inputChannelCount,
           ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,    // global average pooling.
           this.inputHeight, this.inputWidth,                          // ( filterSize == inputImageSize ) means global pooling.
           ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID,     // To shrink to ( 1 x 1 ) image, pad should be "valid" (i.e. not "same").
@@ -259,7 +259,7 @@ class Base extends ReturnOrClone.Base {
 
       // 3.1.2 intermediatePointwise
       let intermediatePointwise_boundsArraySet_output0;
-      if ( this.intermediateChannelCount > 0 ) {
+      if ( this.intermediate_outputChannelCount > 0 ) {
 
         // If it has no activation, it could be no bias because the next operation's (i.e. excitationPointwise) bias will achieve it.
         let bBias_intermediatePointwise;
@@ -270,8 +270,11 @@ class Base extends ReturnOrClone.Base {
         }
 
         this.intermediatePointwise = new Pointwise.ConstantWhenPassThrough(
-          squeezeDepthwise_boundsArraySet_output0.channelCount,
-          this.intermediateChannelCount,
+
+//!!! (2022/05/25 Remarked)
+//          squeezeDepthwise_boundsArraySet_output0.channelCount,
+
+          this.intermediate_inputChannelCount, this.intermediate_outputChannelCount,
           bBias_intermediatePointwise,
           this.nActivationId,
           this.nPointwise_HigherHalfDifferent,
@@ -294,12 +297,16 @@ class Base extends ReturnOrClone.Base {
       // 3.1.3 excitationPointwise
       {
         this.excitationPointwise = new Pointwise.ConstantWhenPassThrough(
-          intermediatePointwise_boundsArraySet_output0.channelCount,
-          this.outputChannelCount,
+//!!! (2022/05/25 Remarked)
+//           intermediatePointwise_boundsArraySet_output0.channelCount,
+//           this.outputChannelCount,
+
+          this.excitation_inputChannelCount, this.excitation_outputChannelCount,
+
           true, // (bBias) the final operation should always have bias (even if no activation).
           this.nActivationId,
           this.nPointwise_HigherHalfDifferent,
-          this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,
+          this.excitation_inputChannelCount_lowerHalf, this.excitation_outputChannelCount_lowerHalf,
           0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
         );
 
@@ -429,21 +436,41 @@ class Base extends ReturnOrClone.Base {
     }
   }
 
-  /** Determine data member this.intermediateChannelCount
+  /** Determine data member this.intermediate_outputChannelCount
    *
    * @param {Base} this  The Base object to be determined and modified.
    */
-  static setup_intermediateChannelCount() {
-    if ( this.nSqueezeExcitationChannelCountDivisor <= 0 ) {
-      this.intermediateChannelCount = this.intermediate_inputChannelCount_lowerHalf = this.intermediate_outputChannelCount_lowerHalf = 0;
+  static setup_intermediate_outputChannelCount() {
+    this.squeeze_inputChannelCount = this.inputChannelCount;
+    this.squeeze_inputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf;
+    this.squeeze_outputChannelCount = this.squeeze_inputChannelCount; // average pooling is ( channelMultiplier == 1 ).
+    this.squeeze_outputChannelCount_lowerHalf = this.squeeze_inputChannelCount_lowerHalf; // (Note: Not this.outputChannelCount_lowerHalf)
+
+    if ( this.nSqueezeExcitationChannelCountDivisor <= 0 ) { // No intermediate pointwise.
+      this.intermediate_inputChannelCount =
+      this.intermediate_inputChannelCount_lowerHalf =
+      this.intermediate_outputChannelCount =
+      this.intermediate_outputChannelCount_lowerHalf = 0;
+
+      this.excitation_inputChannelCount = this.squeeze_outputChannelCount;
+      this.excitation_inputChannelCount_lowerHalf = this.squeeze_outputChannelCount_lowerHalf;
+
     } else {
-      this.intermediateChannelCount
+      this.intermediate_inputChannelCount = this.squeeze_outputChannelCount;
+      this.intermediate_inputChannelCount_lowerHalf = this.squeeze_outputChannelCount_lowerHalf;
+
+      // Note: Using itself input channel count as dividend.
+      this.intermediate_outputChannelCount
         = Math.ceil( this.inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
-      this.intermediate_inputChannelCount_lowerHalf
-        = Math.ceil( this.inputChannelCount_lowerHalf / this.nSqueezeExcitationChannelCountDivisor );
       this.intermediate_outputChannelCount_lowerHalf
-        = Math.ceil( this.outputChannelCount_lowerHalf / this.nSqueezeExcitationChannelCountDivisor );
+        = Math.ceil( this.intermediate_inputChannelCount_lowerHalf / this.nSqueezeExcitationChannelCountDivisor );
+      
+      this.excitation_inputChannelCount = this.intermediate_outputChannelCount;
+      this.excitation_inputChannelCount_lowerHalf = this.intermediate_outputChannelCount_lowerHalf;
     }
+
+    this.excitation_outputChannelCount = this.outputChannelCount;
+    this.excitation_outputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf;
   }
 
   /** Determine data member this.outputChannelCount
@@ -484,13 +511,13 @@ class Base extends ReturnOrClone.Base {
     if ( this.bExisted ) {
       this.pfnMultiply = Base.multiply_and_destroy0_destroy1;  // Default will dispose input tensor.
       if ( this.bSqueeze ) {
-        if ( this.intermediateChannelCount > 0 ) {
+        if ( this.intermediate_outputChannelCount > 0 ) {
           this.apply = Base.squeeze_intermediate_excitation;
         } else {
           this.apply = Base.squeeze_excitation;
         }
       } else {
-        if ( this.intermediateChannelCount > 0 ) {
+        if ( this.intermediate_outputChannelCount > 0 ) {
           this.apply = Base.intermediate_excitation;
         } else {
           this.apply = Base.excitation;
