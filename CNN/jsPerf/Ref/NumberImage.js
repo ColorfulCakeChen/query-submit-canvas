@@ -12,6 +12,7 @@ import * as Depthwise from "../../Conv/Depthwise.js";
 
 //!!! ...unfinished... (2022/05/24)
 // Perhaps, provides NumberImagePool to create and recycle NumberImage for reducing memory re-allocation.
+// Pool by Map( length, Set( number_array ), at least recycle .dataArray
 
 /**
  * Image composed from numbers. For testing.
