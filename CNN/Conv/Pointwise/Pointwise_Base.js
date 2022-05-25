@@ -92,12 +92,12 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
         try {
           if ( this.filtersShape && this.filtersArray ) {
             this.filtersTensor4d = tf.tensor( this.filtersArray, this.filtersShape );
-            this.filtersArray = null; // Release for reducing memory usage.
+            this.filtersShape = this.filtersArray = null; // Release for reducing memory usage.
           }
 
           if ( this.biasesShape && this.biasesArray ) {
             this.biasesTensor3d = tf.tensor( this.biasesArray, this.biasesShape );
-            this.biasesArray = null; // Release for reducing memory usage.
+            this.biasesShape = this.biasesArray = null; // Release for reducing memory usage.
           }
 
         } catch ( e ) {  // If failed (e.g. memory not enough), return false.      
