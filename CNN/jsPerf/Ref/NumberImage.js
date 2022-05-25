@@ -881,7 +881,7 @@ class Base {
       const excitationChannelCount = this.depth; // excitation output input channel count is the same as original input channel count.
       const bBias_excitationPointwise = true; // excitation always has bias.
 
-      excitationOut = squeezeOut.clone_byPointwise(
+      excitationOut = intermediateOut.clone_byPointwise(
         excitationChannelCount, excitationFiltersArray, bBias_excitationPointwise, excitationBiasesArray, nActivationId,
         bPassThrough, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
         `${squeezeExcitationName}_excitationPointwise`, parametersDesc );
