@@ -15,6 +15,12 @@ export { Base };
 // iteration.
 //
 
+
+//!!! ...unfinished... (2022/05/25)
+// Using SharedArrayBuffer to pass input image between different web worker.
+//
+
+
 /**
  * There are many neural networks inside. The apply() feeds the same input to the these different neural networks.
  *
