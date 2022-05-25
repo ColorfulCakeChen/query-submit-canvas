@@ -461,10 +461,10 @@ class Base extends ReturnOrClone.Base {
 
       // Note: Using itself input channel count as dividend.
       this.intermediate_outputChannelCount
-        = Math.ceil( this.inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
+        = Math.ceil( this.intermediate_inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
       this.intermediate_outputChannelCount_lowerHalf
         = Math.ceil( this.intermediate_inputChannelCount_lowerHalf / this.nSqueezeExcitationChannelCountDivisor );
-      
+
       this.excitation_inputChannelCount = this.intermediate_outputChannelCount;
       this.excitation_inputChannelCount_lowerHalf = this.intermediate_outputChannelCount_lowerHalf;
     }
