@@ -30,7 +30,10 @@ class Bag extends MultiLayerMap.Base {
     let nRandSpecId = RandTools.getRandomIntInclusive( nRandSpecIdMin, nRandSpecIdMax );
 
     return this.get_or_create_by_arguments1_etc(
-      RandTools.generate_numberArray,
+      ( elementCount, randomOffsetMin, randomOffsetMax, nRandSpecId ) => {
+        // Note: nRandSpecId is not used when generating number array.
+        return RandTools.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax );
+      },
       elementCount, randomOffsetMin, randomOffsetMax, nRandSpecId );
   }
 
