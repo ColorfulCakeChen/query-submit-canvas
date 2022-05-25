@@ -4,6 +4,11 @@ import { Int } from "./ValueDesc_Base.js";
 import * as Weights from "../Weights.js";
 import * as FloatValue from "../FloatValue.js";
 
+//!!! ...unfinished... (2022/05/25)
+// Since activation by clip() is enough, using saturated integer for convolution seems good too.
+// Because saturated integer could achieve clip automatically without activation function (i.e. less computation time).
+//
+
 /**
  * Describe activation function parameter's id, range, name.
  *
