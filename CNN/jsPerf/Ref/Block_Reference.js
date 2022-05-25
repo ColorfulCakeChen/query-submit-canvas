@@ -652,9 +652,6 @@ class Base {
 
     let testParams = this.testParams;
 
-//!!! ...unfinished... (2022/05/19) nSqueezeExcitationChannelCountDivisor, ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx
-
-
     // The channelShuffler must not null when:
     //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) (-3)
     //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
