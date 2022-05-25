@@ -459,6 +459,9 @@ class Base extends ReturnOrClone.Base {
       this.intermediate_inputChannelCount = this.squeeze_outputChannelCount;
       this.intermediate_inputChannelCount_lowerHalf = this.squeeze_outputChannelCount_lowerHalf;
 
+
+//!!! ...unfinished... (2022/05/25) What if ( intermediate_outputChannelCount == intermediate_outputChannelCount_lowerHalf )?
+
       // Note: Using itself input channel count as dividend.
       this.intermediate_outputChannelCount
         = Math.ceil( this.intermediate_inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
