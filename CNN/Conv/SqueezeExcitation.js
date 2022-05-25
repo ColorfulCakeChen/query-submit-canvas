@@ -124,15 +124,18 @@ import * as Pointwise from "./Pointwise.js";
  * @member {boolean} bExisted
  *   If true, this squeeze-and-excitation exists. If false, this object is a no-op (i.e. no squeeze, no excitation, no multiply).
  *
- * @member {number} intermediate_outputChannelCount
- *   The channel count of intermediate pointwise convolution.
- *
- *     - If ( nSqueezeExcitationChannelCountDivisor <= 0 ), it will be 0 (i.e. no intermediate pointwise convolution).
- *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2)
- *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1)
- *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION_1 (0)
- *
- *     - If ( nSqueezeExcitationChannelCountDivisor > 0 ), it will be Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor ).
+
+!!! (2022/05/25 Remarked)
+//  * @member {number} intermediate_outputChannelCount
+//  *   The channel count of intermediate pointwise convolution.
+//  *
+//  *     - If ( nSqueezeExcitationChannelCountDivisor <= 0 ), it will be 0 (i.e. no intermediate pointwise convolution).
+//  *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2)
+//  *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1)
+//  *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION_1 (0)
+//  *
+//  *     - If ( nSqueezeExcitationChannelCountDivisor > 0 ), it will be Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor ).
+
  *
  * @member {number} outputChannelCount
  *   Always the same as inputChannelCount.
@@ -151,6 +154,16 @@ import * as Pointwise from "./Pointwise.js";
  *
  *     - ( inputHeight == 1 ) and ( inputWidth == 1 )
  *       - squeeze is not necessary. (already squeezed.)
+ *
+ * @member {boolean} bIntermediate
+ *   Whether intermediate pointwise convolution exists.
+ *
+ *     - If ( nSqueezeExcitationChannelCountDivisor <= 0 ), it will be false (i.e. no intermediate pointwise convolution).
+ *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2)
+ *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1)
+ *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION_1 (0)
+ *
+ *     - If ( nSqueezeExcitationChannelCountDivisor > 0 ), it will be true.
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Including inferenced weights, if they are used in tensors.
@@ -214,9 +227,13 @@ class Base extends ReturnOrClone.Base {
 
     // 1. Determine operation functions.
     Base.setup_bExisted.call( this );
-    Base.setup_squeeze_intermediate_excitation_ChannelCount.call( this );
+
+//!!! (2022/05/25 Remarked)
+//    Base.setup_squeeze_intermediate_excitation_ChannelCount.call( this );
+
     Base.setup_outputChannelCount.call( this );
     Base.setup_bSqueeze.call( this );
+    Base.setup_bIntermediate.call( this );
     Base.setup_pfn.call( this );
 
     if ( !this.bExisted ) { // 2. no operation at all.
@@ -505,6 +522,23 @@ class Base extends ReturnOrClone.Base {
     }
   }
 
+  /** Determine data member this.bIntermediate
+   *
+   * @param {Base} this  The Base object to be determined and modified.
+   */
+  static setup_bIntermediate() {
+
+    // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2), no-op.
+    // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1)
+    // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION_1 (0)
+    //
+    if ( this.nSqueezeExcitationChannelCountDivisor <= 0 ) {
+      this.bIntermediate = false;
+    } else {
+      this.bIntermediate = true;
+    }
+  }
+  
   /** Determine data member this.apply.
    *
    * @param {Base} this
@@ -514,13 +548,13 @@ class Base extends ReturnOrClone.Base {
     if ( this.bExisted ) {
       this.pfnMultiply = Base.multiply_and_destroy0_destroy1;  // Default will dispose input tensor.
       if ( this.bSqueeze ) {
-        if ( this.intermediate_outputChannelCount > 0 ) {
+        if ( this.bIntermediate ) {
           this.apply = Base.squeeze_intermediate_excitation;
         } else {
           this.apply = Base.squeeze_excitation;
         }
       } else {
-        if ( this.intermediate_outputChannelCount > 0 ) {
+        if ( this.bIntermediate ) {
           this.apply = Base.intermediate_excitation;
         } else {
           this.apply = Base.excitation;
