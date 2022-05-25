@@ -159,6 +159,9 @@ import * as Pointwise from "./Pointwise.js";
  *   The wieght count extracted from inputFloat32Array and used in tensors. Not including inferenced weights (even if they are
  * used in tensors), because they are not extracted from inputFloat32Array.
  *
+ * @member {function} pfnMultiply
+ *   A function pointer to multiply_and_destroy0_destroy1() or multiply_and_keep0_destroy1() according to setKeepInputTensor().
+ *
  * @member {function} apply
  *   A method accepts one parameter inputTensor (tf.tensor3d) and return an outputTensor (tf.tensor3d). All intermediate tensors
  * will be disposed. The inputTensor may or may not be disposed (according to setKeepInputTensor()). In fact, this method calls one
@@ -326,6 +329,22 @@ class Base extends ReturnOrClone.Base {
 
         this.dispose_all_sub_BoundsArraySet(); // For reduce memory footprint.
       }
+
+      // 3.3 Confirm the first operation will keep inputTensor (because the final multiplication needs it).
+      {
+        if ( this.squeezeDepthwise ) {
+          this.squeezeDepthwise.setKeepInputTensor( true );
+          this.intermediatePointwise?.setKeepInputTensor( false );
+          this.excitationPointwise.setKeepInputTensor( false );
+        } else {
+          if ( this.intermediatePointwise ) {
+            this.intermediatePointwise.setKeepInputTensor( true );
+            this.excitationPointwise.setKeepInputTensor( false );
+          } else {
+            this.excitationPointwise.setKeepInputTensor( true );
+          }
+        }
+      }
     }
 
     this.bInitOk = true;
@@ -368,9 +387,6 @@ class Base extends ReturnOrClone.Base {
     delete this.excitationPointwise.boundsArraySet;
   }
 
-//!!! ...unfinished... (2022/05/25)
-// The first operation should always ( bKeepInputTensor == true ), otherwise the final multiplication does not have inputTensor to use.
-
   /**
    * The sub operations' setKeepInputTensor() will be called so that only the first operation is responsible for keeping inputTensor.
    * All other operations should always destroy inputTensor..
@@ -384,24 +400,11 @@ class Base extends ReturnOrClone.Base {
 
     if ( this.bExisted ) {
 
-      // Note: The first operation is responsible for keeping inputTensor. All other operations should always destroy inputTensor.
+      // Note: The final multiplication is responsible for keeping inputTensor.
       if ( bKeepInputTensor ) {
-        if ( this.squeezeDepthwise ) {
-          this.squeezeDepthwise.setKeepInputTensor( true );
-          this.intermediatePointwise?.setKeepInputTensor( false );
-          this.excitationPointwise.setKeepInputTensor( false );
-        } else {
-          if ( this.intermediatePointwise ) {
-            this.intermediatePointwise.setKeepInputTensor( true );
-            this.excitationPointwise.setKeepInputTensor( false );
-          } else {
-            this.excitationPointwise.setKeepInputTensor( true );
-          }
-        }
+        this.pfnMultiply = Base.multiply_and_keep0_destroy1;
       } else {
-        this.squeezeDepthwise?.setKeepInputTensor( false );
-        this.intermediatePointwise?.setKeepInputTensor( false );
-        this.excitationPointwise.setKeepInputTensor( false );
+        this.pfnMultiply = Base.multiply_and_destroy0_destroy1;
       }
 
     } else { // There is no operation at all.
@@ -479,6 +482,7 @@ class Base extends ReturnOrClone.Base {
    */
   static setup_pfn() {
     if ( this.bExisted ) {
+      this.pfnMultiply = Base.multiply_and_destroy0_destroy1;  // Default will dispose input tensor.
       if ( this.bSqueeze ) {
         if ( this.intermediateChannelCount > 0 ) {
           this.apply = Base.squeeze_intermediate_excitation;
@@ -493,8 +497,39 @@ class Base extends ReturnOrClone.Base {
         }
       }
     } else { // There is no operation at all.
+      this.pfnMultiply = null;
       this.apply = Base.return_input_directly;
     }
+  }
+
+
+  /**
+   * Multiply input0 and input1. Destroy input0. Destroy input1. Return the multiplication result.
+   *
+   * @param {tf.tensor) input0  The 1st tensor to be multiplied.
+   * @param {tf.tensor) input1  The 2nd tensor to be multiplied.
+   *
+   * @return {tf.tensor} Reurn the result of multiplication of input0 and input1.
+   */
+  static multiply_and_destroy0_destroy1( input0, input1 ) {
+    let r = tf.mul( input0, input1 );
+    input0.dispose();
+    input1.dispose();
+    return r;
+  }
+
+  /**
+   * Multiply input0 and input1. Keep input0. Destroy input1. Return the multiplication result.
+   *
+   * @param {tf.tensor) input0  The 1st tensor to be multiplied.
+   * @param {tf.tensor) input1  The 2nd tensor to be multiplied.
+   *
+   * @return {tf.tensor} Reurn the result of multiplication of input0 and input1.
+   */
+  static multiply_and_keep0_destroy1( input0, input1 ) {
+    let r = tf.mul( input0, input1 );
+    input1.dispose();
+    return r;
   }
 
 
@@ -504,9 +539,7 @@ class Base extends ReturnOrClone.Base {
     t0 = this.squeezeDepthwise.apply( inputTensor );
     t1 = this.intermediatePointwise.apply( t0 );
     t0 = this.excitationPointwise.apply( t1 );
-
-    t1 = tf.mul( inputTensor, t0 );
-    t0.dispose();
+    t1 = this.pfnMultiply( inputTensor, t0 );
     return t1;
   }
 
@@ -515,9 +548,7 @@ class Base extends ReturnOrClone.Base {
     let t0, t1;
     t0 = this.squeezeDepthwise.apply( inputTensor );
     t1 = this.excitationPointwise.apply( t0 );
-
-    t0 = tf.mul( inputTensor, t1 );
-    t1.dispose();
+    t0 = this.pfnMultiply( inputTensor, t1 );
     return t0;
   }
 
@@ -526,9 +557,7 @@ class Base extends ReturnOrClone.Base {
     let t0, t1;
     t0 = this.intermediatePointwise.apply( inputTensor );
     t1 = this.excitationPointwise.apply( t0 );
-
-    t0 = tf.mul( inputTensor, t1 );
-    t1.dispose();
+    t0 = this.pfnMultiply( inputTensor, t1 );
     return t0;
   }
 
@@ -536,10 +565,25 @@ class Base extends ReturnOrClone.Base {
   static excitation( inputTensor ) {
     let t0, t1;
     t0 = this.excitationPointwise.apply( inputTensor );
-
-    t1 = tf.mul( inputTensor, t0 );
-    t0.dispose();
+    t1 = this.pfnMultiply( inputTensor, t0 );
     return t1;
   }
+
+
+//!!! (2022/05/25 Remarked) Using multiply_and_destroy0_destroy1() and multiply_and_keep0_destroy1() instead.
+//   /**
+//    * Call pfn( inputTensor ), and then destroy the inputTensor before return the result.
+//    *
+//    * @param {function) pfn
+//    *   A function to be called. It should accept a tf.tensor and return a tf.tensor.
+//    *
+//    * @return {tf.tensor}
+//    *   Reurn the result of pfn( inputTensor ).
+//    */
+//   static operation_and_destroy( pfn, inputTensor ) {
+//     let t0 = pfn( inputTensor );
+//     inputTensor.dispose();
+//     return t0;
+//   }
 
 }
