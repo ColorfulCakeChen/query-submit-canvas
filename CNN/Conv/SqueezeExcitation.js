@@ -214,7 +214,7 @@ class Base extends ReturnOrClone.Base {
 
     // 1. Determine operation functions.
     Base.setup_bExisted.call( this );
-    Base.setup_intermediate_outputChannelCount.call( this );
+    Base.setup_squeeze_intermediate_excitation_ChannelCount.call( this );
     Base.setup_outputChannelCount.call( this );
     Base.setup_bSqueeze.call( this );
     Base.setup_pfn.call( this );
@@ -440,7 +440,7 @@ class Base extends ReturnOrClone.Base {
    *
    * @param {Base} this  The Base object to be determined and modified.
    */
-  static setup_intermediate_outputChannelCount() {
+  static setup_squeeze_intermediate_excitation_ChannelCount() {
     this.squeeze_inputChannelCount = this.inputChannelCount;
     this.squeeze_inputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf;
     this.squeeze_outputChannelCount = this.squeeze_inputChannelCount; // average pooling is ( channelMultiplier == 1 ).
