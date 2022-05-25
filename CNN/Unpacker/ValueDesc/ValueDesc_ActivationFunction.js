@@ -42,6 +42,18 @@ import * as FloatValue from "../FloatValue.js";
  *       range of them includes both negative value and positive value near the origin point. (On the other hand, RELU, RELU6 are
  *       not good for this purpose.)
  *
+ *
+ *
+ * Q: Since activation by clipByValue() is enough, why not just using saturated integer for convolution?
+ * A: Although saturated integer could achieve clipByValue automatically without activation function (i.e. less computation time).
+ *    It has some disadvantages:
+ *
+ *      - It can not escape saturation (i.e. escape activation) by scaling. The reason is that needs multiply a number less
+ *         than one which can not be represented by integer (i.e. floatig-point number is required).
+ *
+ *      - It may not be saturated (i.e. activated) by bias. When the input value is the minimum value (e.g. -255), adding a
+ *         bias (even if adding the maximum value 255) can not saturate it to maximum value (e.g. +255).
+ *
  */
 class ActivationFunction extends Int {
 
