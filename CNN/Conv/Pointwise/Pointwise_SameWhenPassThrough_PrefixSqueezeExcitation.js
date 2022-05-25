@@ -133,10 +133,14 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
       // 3.1.1 squeezeExcitation
       let squeezeExcitation_boundsArraySet_output0;
       if ( this.bSqueezeExcitation ) {
+
+        // (Note: Not this.outputChannelCount_lowerHalf. Because it will be the input of the final pointwise.)
+        const squeezeExcitation_outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf;
+
         this.squeezeExcitation = new SqueezeExcitation.Base(
           this.nSqueezeExcitationChannelCountDivisor, this.inputHeight, this.inputWidth,
           this.inputChannelCount, this.nActivationId,
-          this.nHigherHalfDifferent, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf );
+          this.nHigherHalfDifferent, this.inputChannelCount_lowerHalf, squeezeExcitation_outputChannelCount_lowerHalf );
 
         if ( !this.squeezeExcitation.init( inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ) )
           return false;  // e.g. input array does not have enough data.
