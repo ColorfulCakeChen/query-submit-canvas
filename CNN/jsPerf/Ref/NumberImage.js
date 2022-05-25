@@ -859,7 +859,7 @@ class Base {
 
         // If it has no activation, it could be no bias because the next operation's (i.e. excitationPointwise) bias will achieve it.
         let bBias_intermediatePointwise;
-        if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
+        if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
           bBias_intermediatePointwise = false;
         } else {
           bBias_intermediatePointwise = true;
