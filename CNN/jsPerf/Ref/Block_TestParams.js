@@ -689,17 +689,16 @@ class Base extends TestParams.Base {
     {
       const SEIntermediatePropertyNamePrefix = `${propertyNamePrefix}SEIntermediate`;
 
-      let intermediateChannelCount;
+//      let intermediateChannelCount;
       let bBias_intermediatePointwise;
 
       if ( nSqueezeExcitationChannelCountDivisor <= 0 ) {
-        intermediateChannelCount = 0; // (no intermediate pointwise convolution).
+        intermediateOutputChannelCount = 0; // (no intermediate pointwise convolution).
         bBias_intermediatePointwise = false;
         intermediateOutputChannelCount = inputChannelCount;
 
       } else {
-        intermediateChannelCount = Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor );
-        intermediateOutputChannelCount = intermediateChannelCount;
+        intermediateOutputChannelCount = Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor );
 
         // If intermediatePointwise has no activation, it could be no bias because the next operation's (i.e. excitationPointwise)
         // bias will achieve it.
@@ -711,7 +710,7 @@ class Base extends TestParams.Base {
       }
 
       this.generate_pointwise_filters_biases(
-        inputChannelCount, intermediateChannelCount,
+        inputChannelCount, intermediateOutputChannelCount,
         bBias_intermediatePointwise,
         SEIntermediatePropertyNamePrefix, io_numberArrayObject );
     }
