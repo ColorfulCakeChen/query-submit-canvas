@@ -368,6 +368,9 @@ class Base extends ReturnOrClone.Base {
     delete this.excitationPointwise.boundsArraySet;
   }
 
+//!!! ...unfinished... (2022/05/25)
+// The first operation should always ( bKeepInputTensor == true ), otherwise the final multiplication does not have inputTensor to use.
+
   /**
    * The sub operations' setKeepInputTensor() will be called so that only the first operation is responsible for keeping inputTensor.
    * All other operations should always destroy inputTensor..
