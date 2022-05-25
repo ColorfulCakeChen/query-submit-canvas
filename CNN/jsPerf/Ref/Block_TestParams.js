@@ -1016,6 +1016,12 @@ class Base extends TestParams.Base {
 
     // Pointwise22's squeeze-and-excitation
     {
+      let pointwise22_squeezeExcitation_inputChannelCount;
+      if ( pointwise22ChannelCount > 0 ) // Only if pointwise22 exists, its squeeze-and-excitation exists.
+        pointwise22_squeezeExcitation_inputChannelCount = pointwise22ChannelCount;
+      else
+        pointwise22_squeezeExcitation_inputChannelCount = 0; // So that related filters and biases array will be cleared.
+
       let pointwise22_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
         paramsAll.nSqueezeExcitationChannelCountDivisor,
         pointwise2_inputChannelCount, nPointwise22ActivationId, "pointwise22", io_paramsNumberArrayObject );
