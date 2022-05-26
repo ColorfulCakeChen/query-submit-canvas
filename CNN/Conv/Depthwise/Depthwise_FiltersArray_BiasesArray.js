@@ -353,14 +353,25 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         this.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
           sourceWeights.weights, inputScaleBoundsArray, aFiltersBiasesPartInfoArray );
 
-        // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
         this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray );
 
-        // For avg/max pooling, the value bounds does not change (i.e. should be the same as input).
-        if ( this.AvgMax_Or_ChannelMultiplier < 0 ) {
-          this.boundsArraySet.set_outputs_all_by_input0();
-        } else {
-          this.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( this.nActivationId );
+        // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
+        {
+          if (   ( this.AvgMax_Or_ChannelMultiplier < 0 )
+              && (   ( this.bBias == false )
+                  && ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
+                 )
+             ) {
+
+            // For avg/max pooling, if it has no bias and no activation), the value bounds does not change (i.e. should be the same as input).
+            //
+            // In this case, the previous activation-escaping needs not be undo (so undoPreviousEscapingScale could be not 1). Using them
+            // as this avg/max pooling's activation-escaping is enough.
+            //
+            this.boundsArraySet.set_outputs_all_by_input0();
+          } else {
+            this.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( this.nActivationId );
+          }
         }
       }
 
