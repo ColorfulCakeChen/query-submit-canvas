@@ -149,8 +149,9 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
    * will have the same effect as average pooling.
    *
    *
-   * @param {number} centerFilterValue
-   *   The filter value used for the center input pixel of the depthwise convolution. For pass-through, it is usually 1.
+   * @param {number} effectFilterValue
+   *   The filter value used for the effect input pixel of the depthwise convolution. For pass-through, it is usually 1.
+   * Note: It is not always just at center of filter according to the filter shape and paddding.
    *
    * @param {number} surroundingFilterValue
    *   The filter value used for the surrounding input pixel of the depthwise convolution. For pass-through, it is usually 0.
@@ -158,7 +159,7 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
    * @return {number[]} 
    *   Return the depthwise convolution filters which could pass the input to output unchangely.
    */
-  generate_PassThrough_FiltersArray( centerFilterValue, surroundingFilterValue ) {
+  generate_PassThrough_FiltersArray( effectFilterValue, surroundingFilterValue ) {
 
     if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === this.AvgMax_Or_ChannelMultiplier )
         || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === this.AvgMax_Or_ChannelMultiplier ) ) {
@@ -168,10 +169,8 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
     // Make up a depthwise convolution filter.
     let depthwiseFiltersArray = new Array( this.filterHeight * this.filterWidth * this.inputChannelCount * this.channelMultiplier );
 
-    // There is only one position (inside the effect depthwise filter) uses centerFilterValue.
+    // There is only one position (inside the effect depthwise filter) uses effectFilterValue.
     // All other positions of the filter should be surroundingFilterValue.
-    //
-    // Note: It is not always just at center of filter according to the filter shape.
     //
     let oneEffectFilterY = this.padHeightTop;
     let oneEffectFilterX = this.padWidthLeft;
@@ -212,7 +211,7 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
 //                let filterIndex = filterIndexBaseSubC + outChannelSub;
 
                 if ( ( effectFilterY == oneEffectFilterY ) && ( effectFilterX == oneEffectFilterX ) ) {
-                  depthwiseFiltersArray[ filterIndex ] = centerFilterValue;
+                  depthwiseFiltersArray[ filterIndex ] = effectFilterValue;
                 } else {
                   depthwiseFiltersArray[ filterIndex ] = surroundingFilterValue;
                 }
