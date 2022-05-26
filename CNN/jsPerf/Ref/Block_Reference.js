@@ -597,7 +597,13 @@ class Base {
     asserter.propertyValue( "pointwise22ActivationId", testParams.out.pointwise21ActivationId ); // Always same as pointwise21.
     asserter.propertyValue( "pointwise22ActivationName", pointwise21ActivationName ); // Always same as pointwise21.
 
-    {
+    // If depthwise does not exist, the output ( height, width ) should be the same as input.
+    if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) { // (0)
+      asserter.propertyValue( "outputHeight", testParams.out.inputHeight0 );
+      asserter.propertyValue( "outputWidth", testParams.out.inputWidth0 );
+
+    // Otherwise, depthwise determines output ( height, width ).
+    } else {
       asserter.propertyValue( "outputHeight", testParams.out.depthwisePadInfo.outputHeight );
       asserter.propertyValue( "outputWidth", testParams.out.depthwisePadInfo.outputWidth );
     }
