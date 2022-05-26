@@ -366,7 +366,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             // For avg/max pooling, if it has no bias and no activation), the value bounds does not change (i.e. should be the same as input).
             //
             // In this case, the previous activation-escaping needs not be undo (so undoPreviousEscapingScale could be not 1). Using them
-            // as this avg/max pooling's activation-escaping is enough.
+            // as this avg/max pooling's activation-escaping since they can not be calculated in fact.
             //
             this.boundsArraySet.set_outputs_all_by_input0();
           } else {
