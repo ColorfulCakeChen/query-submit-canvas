@@ -292,16 +292,16 @@ class Base extends ReturnOrClone.Base {
       if ( this.bIntermediate ) {
 
         // If it has no activation, it could be no bias because the next operation's (i.e. excitationPointwise) bias will achieve it.
-        let bBias_intermediatePointwise;
+        let intermediate_bBias;
         if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
-          bBias_intermediatePointwise = false;
+          intermediate_bBias = false;
         } else {
-          bBias_intermediatePointwise = true;
+          intermediate_bBias = true;
         }
 
         this.intermediatePointwise = new Pointwise.ConstantWhenPassThrough(
           intermediate_inputChannelCount, intermediate_outputChannelCount,
-          bBias_intermediatePointwise,
+          intermediate_bBias,
           this.nActivationId,
           this.nPointwise_HigherHalfDifferent,
           intermediate_inputChannelCount_lowerHalf, intermediate_outputChannelCount_lowerHalf,
