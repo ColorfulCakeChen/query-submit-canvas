@@ -145,6 +145,14 @@ class Base extends TestParams.Base {
    */
   onYield_isLegal() {
 
+    let pointwise2_inputWidth;
+    {
+      if ( this.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) // (0)
+        pointwise2_inputWidth = this.out.inputWidth0;
+      else
+        pointwise2_inputWidth = this.out.depthwisePadInfo.outputWidth;
+    }
+
     // (-4) (ShuffleNetV2_ByMobileNetV1's head)
     if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
 
@@ -189,6 +197,9 @@ class Base extends TestParams.Base {
             break;
         }
     }
+!!!
+    ( this.out.depthwisePadInfo.outputWidth == 1 )
+ && ( ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.hasSqueeze( this.out.nSqueezeExcitationChannelCountDivisor ) )
 
     // (2021/07/20)
     // Note: In backend WASM, when filter width is 1 (note: filter height does not have this issue and could be 1), it seems that
@@ -198,11 +209,21 @@ class Base extends TestParams.Base {
     // (2022/05/01)
     // The tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
     // ourselves testing procedure.
-    if ( this.out.depthwise_AvgMax_Or_ChannelMultiplier != 0 ) {
-      if ( this.out.depthwiseFilterWidth == 1 ) {
-        if ( tf.getBackend() == "wasm" )
-          return false;
-      }
+    if ( tf.getBackend() == "wasm" ) {
+
+      // For depthwise1/depthwis2.
+      if (   ( this.out.depthwise_AvgMax_Or_ChannelMultiplier != ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) // (0)
+          && ( this.out.depthwiseFilterWidth == 1 )
+         )
+        return false;
+
+      // For squeeze-and-excitation.
+      //
+      // (squeeze is an average pooling. Its filter width is the same as inputWidth (i.e. pointwise2_inputWidth).)
+      if (   ( pointwise2_inputWidth == 1 )
+          && ( ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.hasSqueeze( this.out.nSqueezeExcitationChannelCountDivisor ) )
+         )
+        return false;
     }
 
     // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
