@@ -145,13 +145,20 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
   }
 
   /**
-   * @param {number} filterValue
-   *   The (non-zero) value used in the pass-through depthwise convolution filter. Default is 1.
+   * If both effectFilterValue and otherFilterValue are the same as ( 1 / ( filterHeight * filter Width ) ), the result filter
+   * will have the same effect as average pooling.
+   *
+   *
+   * @param {number} centerFilterValue
+   *   The filter value used for the center input pixel of the depthwise convolution. For pass-through, it is usually 1.
+   *
+   * @param {number} surroundingFilterValue
+   *   The filter value used for the surrounding input pixel of the depthwise convolution. For pass-through, it is usually 0.
    *
    * @return {number[]} 
    *   Return the depthwise convolution filters which could pass the input to output unchangely.
    */
-  generate_PassThrough_FiltersArray( filterValue = 1 ) {
+  generate_PassThrough_FiltersArray( centerFilterValue, surroundingFilterValue ) {
 
     if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === this.AvgMax_Or_ChannelMultiplier )
         || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === this.AvgMax_Or_ChannelMultiplier ) ) {
@@ -161,7 +168,11 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
     // Make up a depthwise convolution filter.
     let depthwiseFiltersArray = new Array( this.filterHeight * this.filterWidth * this.inputChannelCount * this.channelMultiplier );
 
-    // There is only one position (inside the effect depthwise filter) with value one. All other positions of the filter should be zero.
+    // There is only one position (inside the effect depthwise filter) uses centerFilterValue.
+    // All other positions of the filter should be surroundingFilterValue.
+    //
+    // Note: It is not always just at center of filter according to the filter shape.
+    //
     let oneEffectFilterY = this.padHeightTop;
     let oneEffectFilterX = this.padWidthLeft;
 
@@ -172,12 +183,13 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
 //!!! ...unfinished... (2021/12/26) Since these for-loop are in correct order, the filterIndex could just begin at zero and then
 // be increased one by one (i.e. without using multiplication).
 //
-//    let filterIndex = 0; // The index in the filter weights array.
+    let filterIndex = 0; // The index in the filter weights array.
 
     for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
       for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
 
-        let filterIndexBaseX = ( filterY * this.filterWidth );
+//!!! (2022/05/26 Remarked) Replaced by filterIndex increment.
+//        let filterIndexBaseX = ( filterY * this.filterWidth );
 
         for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
           for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
@@ -186,19 +198,26 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
             if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
               continue;
 
-            let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
+//!!! (2022/05/26 Remarked) Replaced by filterIndex increment.
+//            let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
 
             for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
-              let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
+
+//!!! (2022/05/26 Remarked) Replaced by filterIndex increment.
+//              let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
               for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
-                let filterIndex = filterIndexBaseSubC + outChannelSub;
+
+//!!! (2022/05/26 Remarked) Replaced by filterIndex increment.
+//                let filterIndex = filterIndexBaseSubC + outChannelSub;
 
                 if ( ( effectFilterY == oneEffectFilterY ) && ( effectFilterX == oneEffectFilterX ) ) {
-                  depthwiseFiltersArray[ filterIndex ] = filterValue; // The only one position with value non-zero.
+                  depthwiseFiltersArray[ filterIndex ] = centerFilterValue;
                 } else {
-                  depthwiseFiltersArray[ filterIndex ] = 0; // All other positions of the filter are value zero.
+                  depthwiseFiltersArray[ filterIndex ] = surroundingFilterValue;
                 }
+
+                ++filterIndex;
               }
             }
           }
