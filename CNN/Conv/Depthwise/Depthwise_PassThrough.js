@@ -59,7 +59,7 @@ let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Pa
     this.biasValue = biasValue;
 
     this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.channelMultiplier ];
-    this.filtersArray = this.generate_PassThrough_FiltersArray( filterValue );
+    this.filtersArray = this.generate_PassThrough_FiltersArray( filterValue, 0 );
 
     if ( this.bBias ) {
       this.biasesShape =  [ 1, 1, this.outputChannelCount ];
