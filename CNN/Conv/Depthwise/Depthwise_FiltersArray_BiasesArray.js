@@ -504,7 +504,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         for ( ; inChannelEnd < this.inputChannelCount; ++inChannelEnd ) {
           let undoPreviousEscapingScale = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannelEnd ];
 
-          // Confirm no need to undo previous activaction-escaping, because avg/max pooling can not that.
+          // Confirm no need to undo previous activaction-escaping, because avg/max pooling can not do that.
           tf.util.assert( ( undoPreviousEscapingScale == 1 ),
             `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
               + `undoPreviousEscapingScale[ ${inChannelEnd} ] ( ${undoPreviousEscapingScale} ) must be 1 for avg/max pooling.` );
