@@ -94,12 +94,12 @@ import * as Pointwise from "./Pointwise.js";
  *       - no squeeze, no excitation, no multiply.
  *       - This object is just a no-op.
  *
- *     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1)
+ *     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION (-1)
  *       - no squeeze.
  *       - no intermediate excitation. ( intermediate_outputChannelCount = 0 )
  *       - has only one pointwise convolution (i.e. excitation pointwise convolution). 
  *
- *     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION_1 (0)
+ *     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION (0)
  *       - has squeeze. 
  *       - no intermediate excitation. ( intermediate_outputChannelCount = 0 )
  *       - has only one pointwise convolution (i.e. excitation pointwise convolution). 
@@ -131,8 +131,8 @@ import * as Pointwise from "./Pointwise.js";
 //  *
 //  *     - If ( nSqueezeExcitationChannelCountDivisor <= 0 ), it will be 0 (i.e. no intermediate pointwise convolution).
 //  *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2)
-//  *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1)
-//  *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION_1 (0)
+//  *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION (-1)
+//  *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION (0)
 //  *
 //  *     - If ( nSqueezeExcitationChannelCountDivisor > 0 ), it will be Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor ).
 
@@ -146,7 +146,7 @@ import * as Pointwise from "./Pointwise.js";
  *     - ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-2)
  *       - since this object is just a no-op.
  *
- *     - ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 ) (-1)
+ *     - ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION ) (-1)
  *       - squeeze is not required.
  *
  *     - ( inputHeight <= 0 ) or ( inputWidth <= 0 )
@@ -160,8 +160,8 @@ import * as Pointwise from "./Pointwise.js";
  *
  *     - If ( nSqueezeExcitationChannelCountDivisor <= 0 ), it will be false (i.e. no intermediate pointwise convolution).
  *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2)
- *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1)
- *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION_1 (0)
+ *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION (-1)
+ *       - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION (0)
  *
  *     - If ( nSqueezeExcitationChannelCountDivisor > 0 ), it will be true.
  *
@@ -470,7 +470,7 @@ class Base extends ReturnOrClone.Base {
   static setup_bSqueeze() {
     if (
             // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2), no-op.
-            // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1), squeeze is not required.
+            // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION (-1), squeeze is not required.
             //
             ( this.nSqueezeExcitationChannelCountDivisor < 0 )
 
@@ -491,8 +491,8 @@ class Base extends ReturnOrClone.Base {
   static setup_bIntermediate() {
 
     // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2), no-op.
-    // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1 (-1)
-    // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION_1 (0)
+    // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION (-1)
+    // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION (0)
     //
     if ( this.nSqueezeExcitationChannelCountDivisor <= 0 ) {
       this.bIntermediate = false;
