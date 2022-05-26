@@ -174,7 +174,17 @@ class Base extends TestParams.Base {
         switch ( this.out.channelCount1_pointwise1Before ) { // bHigherHalfDifferent
           case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4) (ShuffleNetV2_ByMobileNetV1's head)
           case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-            return false;
+
+//!!! (2022/05/26 Remarked)
+//            return false;
+
+            if (   ( this.out.bDepthwiseBias != false )
+                || ( this.out.depthwiseActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // (0)
+               ) {
+              return false;
+
+            // Only if no bias and no activation, avg/max pooling is possible because undo/do activation-escaping could be ignored.
+            }
             break;
         }
     }
