@@ -12,17 +12,25 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *
  * It is usually used in passing the higher half channels of the input to output (for achieving ShuffleNetV2_ByMopbileNetV1's body/tail).
  *
- * Note: Although depthwise (and pointwise) convolution could be past-through, the activation function will destroy the past-through
+ * Note1: Although depthwise (and pointwise) convolution could be past-through, the activation function will destroy the past-through
  * result. Using Pointwise_FiltersArray_BiasesArray may be better to handle this issue.
  *
+ * Note2: If both centerFilterValue and surroundingFilterValue are the same as ( 1 / ( filterHeight * filter Width ) ), the result filter
+ * will have the same effect as average pooling.
  *
- * @member {number} filterValue
- *   The value used as the pass-through depthwise convolution filter. Default is 1. If there will be no activation function after this
- * pass-through operation, value 1 is enough. However, if there wiil be an activation function, this past-through result might be
- * destroyed by the activation function. In order to alleviate this issue, a non-one filter value should be used. For example, if
- * every input value's range is [ 0,255 ] and RELU6 will be used as activation function, using 0.015625 (= 1 / 64 ) as filterValue is
- * appropriate because input values will be shrinked from [ 0, 255 ] into [ 0, 3.984375 ] which will still be kept linear by RELU6.
  *
+ *
+ * @member {number} centerFilterValue
+ *   The value used as the center value of the pass-through depthwise convolution filter. Default is 1. If there will be no activation
+ * function after this pass-through operation, value 1 is enough. However, if there wiil be an activation function, this past-through
+ * result might be destroyed by the activation function. In order to alleviate this issue, a non-one filter value should be used. For
+ * example, if every input value's range is [ 0,255 ] and RELU6 will be used as activation function, using 0.015625 (= 1 / 64 ) as
+ * filterValue is appropriate because input values will be shrinked from [ 0, 255 ] into [ 0, 3.984375 ] which will still be kept
+ * linear by RELU6.
+ *
+ * @member {number} surroundingFilterValue
+ *   The value used as the surrounding value of the pass-through depthwise convolution filter. Default is 0. 
+ * 
  * @member {number} biasValue
  *   The value used as the pass-through bias (used only if ( bBias == true ) ). Default is 0. If there will be no activation function
  * after this pass-through operation, value 0 is enough. However, if there wiil be an activation function, this past-through result
@@ -50,16 +58,17 @@ let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Pa
    */
   constructor(
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
-    bBias, filterValue = 1, biasValue = 0 ) {
+    bBias, centerFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
 
     super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
 
     this.bBias = bBias;
-    this.filterValue = filterValue;
+    this.centerFilterValue = centerFilterValue;
+    this.surroundingFilterValue = surroundingFilterValue;
     this.biasValue = biasValue;
 
     this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.channelMultiplier ];
-    this.filtersArray = this.generate_PassThrough_FiltersArray( filterValue, 0 );
+    this.filtersArray = this.generate_PassThrough_FiltersArray( centerFilterValue, surroundingFilterValue );
 
     if ( this.bBias ) {
       this.biasesShape =  [ 1, 1, this.outputChannelCount ];
@@ -90,32 +99,34 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Base {
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nPassThroughStyleId ) {
 
+//centerFilterValue, surroundingFilterValue ???
+
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
-    return this.get_by_filterValue_biasValue(
+    return this.get_by_centerFilterValue_surroundingFilterValue_biasValue(
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
-      bBias, thePassThroughStyleInfo.filterValue, thePassThroughStyleInfo.biasValue );
+      bBias, thePassThroughStyleInfo.filterValue, 0, thePassThroughStyleInfo.biasValue );
   }
 
   /**
    *
    */
-  get_by_filterValue_biasValue(
+  get_by_centerFilterValue_surroundingFilterValue_biasValue(
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
-    bBias, filterValue = 1, biasValue = 0 ) {
+    bBias, centerFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
 
     return this.get_or_create_by_arguments1_etc( PassThrough_FiltersArray_BiasesArray_Bag.create_by,
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
-      bBias, filterValue, biasValue );
+      bBias, centerFilterValue, surroundingFilterValue, biasValue );
   }
 
   /** */
   static create_by(
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
-    bBias, filterValue, biasValue ) {
+    bBias, centerFilterValue, surroundingFilterValue, biasValue ) {
 
     return new ( PassThrough_FiltersArray_BiasesArray() )(
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
-      bBias, filterValue, biasValue );
+      bBias, centerFilterValue, surroundingFilterValue, biasValue );
   }
 
 }
@@ -137,10 +148,10 @@ class PassThrough extends PassThrough_FiltersArray_BiasesArray( PadInfoCalculato
    */
   constructor(
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
-    bBias, filterValue = 1, biasValue = 0 ) {
+    bBias, centerFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
 
     super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
-      bBias, filterValue, biasValue );
+      bBias, centerFilterValue, surroundingFilterValue, biasValue );
 
     this.filtersTensor4d = tf.tensor4d( this.filtersArray, this.filtersShape );
 
