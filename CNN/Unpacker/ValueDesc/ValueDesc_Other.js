@@ -121,10 +121,10 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
 /** Describe squeeze-and-excitation channel count divisor's id, range, name.
  *
  * Convert number value into integer between [ -2, 64 ] representing depthwise operation:
- *   - -2: NONE                                  (no squeeze, no excitation, no multiply)
- *   - -1: EXCITATION_1                          (no squeeze, no intermediate excitation)
- *   -  0: SQUEEZE_EXCITATION_1                  (has squeeze, no intermediate excitation)
- *   - [ 1, 64 ]: SQUEEZE_EXCITATION_2_DIVISOR_N (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
+ *   - -2: NONE                                             (no squeeze, no excitation, no multiply)
+ *   - -1: EXCITATION                                       (no squeeze, no intermediate excitation)
+ *   -  0: SQUEEZE_EXCITATION                               (has squeeze, no intermediate excitation)
+ *   - [ 1, 64 ]: SQUEEZE_INTERMEDIATE_DIVISOR_N_EXCITATION (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
  */
 class SqueezeExcitationChannelCountDivisor extends Int {
 
@@ -134,11 +134,12 @@ class SqueezeExcitationChannelCountDivisor extends Int {
       "EXCITATION_1",         // (-1)
       "SQUEEZE_EXCITATION_1", // ( 0)
 
-      // "SQUEEZE_EXCITATION_2_DIVISOR_1", "SQUEEZE_EXCITATION_2_DIVISOR_2", ..., "SQUEEZE_EXCITATION_2_DIVISOR_64".
+      // "SQUEEZE_INTERMEDIATE_DIVISOR_1_EXCITATION", "SQUEEZE_INTERMEDIATE_DIVISOR_2_EXCITATION",
+      // ..., "SQUEEZE_INTERMEDIATE_DIVISOR_64_EXCITATION".
       //
-      // (2022/05/19 Remarked) Do not define these names because they will occupy too many memory.
+      // (2022/05/26 Remarked) Do not define these names because they will occupy too many memory.
       //
-      //... [ ... new Array( 64 ).keys() ].map( x => "SQUEEZE_EXCITATION_2_DIVISOR_" + ( x + 1 ) )
+      //... [ ... new Array( 64 ).keys() ].map( x => `SQUEEZE_INTERMEDIATE_DIVISOR_${( x + 1 )}_EXCITATION` )
     ] );
   }
 
