@@ -511,13 +511,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         // For avg/max pooling, the value bounds does not change.
         this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
 
-        // Confirm no need to undo previous activaction-escaping (when has bias or has activation), because
-        // avg/max pooling can not do that in these situations.
-        //
-        if (   ( this.bBias != false )
-            || ( this.nActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ) {
+        for ( ; inChannelEnd < this.inputChannelCount; ++inChannelEnd ) {
 
-          for ( ; inChannelEnd < this.inputChannelCount; ++inChannelEnd ) {
+          // Confirm no need to undo previous activaction-escaping (when has bias or has activation), because
+          // avg/max pooling can not do that in these situations.
+          //
+          if (   ( this.bBias != false )
+              || ( this.nActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ) {
+
             let undoPreviousEscapingScale = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannelEnd ];
 
             tf.util.assert( ( undoPreviousEscapingScale == 1 ),
