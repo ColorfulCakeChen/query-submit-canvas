@@ -449,8 +449,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     let undoPreviousEscapingScale = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ];
                     let filterValuePassThrough = thePassThroughStyleInfo.filterValue * undoPreviousEscapingScale;
 
-//!!! ...unfinished... (2022/05/15) thePassThroughStyleInfo
-
                     for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
                       // Note: The .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
