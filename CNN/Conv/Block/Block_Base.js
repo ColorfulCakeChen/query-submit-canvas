@@ -15,9 +15,6 @@ import * as ConcatShuffleSplit from "../ConcatShuffleSplit.js";
 import * as TensorOpCounter from "../TensorOpCounter.js";
 import { Params } from "./Block_Params.js";
 
-//!!! ...unfinished... (2022/05/25)
-// Perhaps, let all this.channelCount_Xxx become local variables.
-
 /**
  * One block of a stage of convolution neural network. Basically, there are three convolutions inside this object.
  *   - 1x1 pointwise convolution: change channel count. (exapnd)
