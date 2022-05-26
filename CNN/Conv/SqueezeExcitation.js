@@ -281,18 +281,22 @@ class Base extends ReturnOrClone.Base {
       let intermediate_inputChannelCount = squeeze_outputChannelCount;
       let intermediate_inputChannelCount_lowerHalf = squeeze_outputChannelCount_lowerHalf;
 
-//!!! ...unfinished... (2022/05/25) What if ( intermediate_outputChannelCount == intermediate_outputChannelCount_lowerHalf )?
-
-      // Note: Using itself input channel count as dividend.
-      let intermediate_outputChannelCount = Math.ceil( intermediate_inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
-      let intermediate_outputChannelCount_lowerHalf
-        = Math.ceil( intermediate_inputChannelCount_lowerHalf / this.nSqueezeExcitationChannelCountDivisor );
+      let intermediate_outputChannelCount;
+      let intermediate_outputChannelCount_lowerHalf;
+      let intermediate_bBias;
 
       let intermediatePointwise_boundsArraySet_output0;
       if ( this.bIntermediate ) {
 
+//!!! ...unfinished... (2022/05/25) What if ( intermediate_outputChannelCount == intermediate_outputChannelCount_lowerHalf )?
+
+        // Note: Using itself input channel count as dividend.
+        intermediate_outputChannelCount = Math.ceil( intermediate_inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
+        intermediate_outputChannelCount_lowerHalf
+          = Math.ceil( intermediate_inputChannelCount_lowerHalf / this.nSqueezeExcitationChannelCountDivisor );
+
         // If it has no activation, it could be no bias because the next operation's (i.e. excitationPointwise) bias will achieve it.
-        let intermediate_bBias;
+        intermediate_bBias;
         if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
           intermediate_bBias = false;
         } else {
@@ -316,7 +320,11 @@ class Base extends ReturnOrClone.Base {
         this.tensorWeightCountExtracted += this.intermediatePointwise.tensorWeightCountExtracted;
 
         intermediatePointwise_boundsArraySet_output0 = this.intermediatePointwise.boundsArraySet.output0;
+
       } else {
+        intermediate_outputChannelCount = squeeze_outputChannelCount;
+        intermediate_outputChannelCount_lowerHalf = squeeze_outputChannelCount_lowerHalf;
+        intermediate_bBias = false;
         intermediatePointwise_boundsArraySet_output0 = squeezeDepthwise_boundsArraySet_output0;
       }
 
