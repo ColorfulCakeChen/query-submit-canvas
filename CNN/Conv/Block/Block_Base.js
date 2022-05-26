@@ -195,10 +195,12 @@ import { Params } from "./Block_Params.js";
  *     - Otherwise, inChannels1 will be zero.
  *
  * @member {number} outputHeight
- *   The height of the output image.
+ *   The height of the output image. If depthwise does not exist, it will be the same as inputHeight0. Otherwise, depthwise
+ * determines outputHeight.
  *
  * @member {number} outputWidth
- *   The width of the output image.
+ *   The width of the output image. If depthwise does not exist, it will be the same as inputWidth0. Otherwise, depthwise
+ * determines outputWidth.
  *
  * @member {number} outChannels0
  *   The channel count of the outputTensor[ 0 ]. Even if ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ),
@@ -678,11 +680,21 @@ class Base extends ReturnOrClone.Base {
 
     // Prepare image height and width for squeeze-and-excitation if global-average-pooling is required.
     //
-    // Note1: Image height and width are determined by depthwise1. Even if ( this.depthwise1.bExisted == false ), it still works.
-    // Note2: depthwise2 will have the same height and width as depthwise1.
+    // Note: depthwise2 will have the same height and width as depthwise1.
     //
-    let inputHeight_SqueezeExcitation = this.depthwise1.outputHeight;
-    let inputWidth_SqueezeExcitation = this.depthwise1.outputWidth;
+    let inputHeight_SqueezeExcitation, inputWidth_SqueezeExcitation;
+    {
+      // If depthwise does not exist, the output ( height, width ) should be the same as input.
+      if ( this.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) { // (0)
+        inputHeight_SqueezeExcitation = this.inputHeight0;
+        inputWidth_SqueezeExcitation = this.inputWidth0;
+
+      // Otherwise, depthwise determines output ( height, width ).
+      } else {
+        inputHeight_SqueezeExcitation = this.depthwise1.outputHeight;
+        inputWidth_SqueezeExcitation = this.depthwise1.outputWidth;
+      }
+    }
 
     // 5.1 Pointwise21
     //
@@ -948,9 +960,6 @@ class Base extends ReturnOrClone.Base {
         alwaysKeepSet = new Set( [ TensorOpCounters.input0, TensorOpCounters.input1 ] );
       }
 
-
-//!!! ...unfinished... (2022/05/18) squeeze-and-excitation
-
       // Using Set (instead of Array) so that duplicated TensorOpCounter will only be analyzed once.
       // Note: When an operation does not exist, its output TensorOpCounter will be just its input TensorOpCounter (so duplicated).
       let TensorOpCounterSet = new Set( [
@@ -1023,9 +1032,6 @@ class Base extends ReturnOrClone.Base {
       this.concat1 = null;
     }
 
-
-//!!! ...unfinished... (2022/05/18) squeeze-and-excitation
-
     if ( this.pointwise21 ) {
       this.pointwise21.disposeTensors();
       this.pointwise21 = null;
@@ -1081,9 +1087,6 @@ class Base extends ReturnOrClone.Base {
     delete this.pointwise1?.boundsArraySet;
     delete this.depthwise1?.boundsArraySet;
     delete this.depthwise2?.boundsArraySet;
-
-//!!! ...unfinished... (2022/05/18) squeeze-and-excitation
-
     delete this.pointwise21?.boundsArraySet;
     delete this.pointwise22?.boundsArraySet;
     delete this.concat1?.boundsArraySet;
@@ -1252,8 +1255,6 @@ class Base extends ReturnOrClone.Base {
     }
   }
 
-
-//!!! ...unfinished... (2022/05/18) squeeze-and-excitation
 
   /**
    * The inputTensors[ 1 ] will be concatenated with pointwise21. If only outputTensors[ 0 ]. it is the result.
@@ -1509,13 +1510,22 @@ class Base extends ReturnOrClone.Base {
     outputTensors[ 1 ] = this.pointwise22.apply( t1 );
   }
 
-
   get outputHeight() {
-    return this.depthwise1.outputHeight; // Even if ( this.depthwise1.bExisted == false ), it should still work.
+    // If depthwise does not exist, the output ( height, width ) should be the same as input.
+    if ( this.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) { // (0)
+      return this.inputHeight0;
+    } else { // Otherwise, depthwise determines output ( height, width ).
+      return this.depthwise1.outputHeight;
+    }
   }
 
   get outputWidth() {
-    return this.depthwise1.outputWidth; // Even if ( this.depthwise1.bExisted == false ), it should still work.
+    // If depthwise does not exist, the output ( height, width ) should be the same as input.
+    if ( this.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) { // (0)
+      return this.inputWidth0;
+    } else { // Otherwise, depthwise determines output ( height, width ).
+      return this.depthwise1.outputWidth;
+    }
   }
 
   /** @return {number} The channel count of the first input tensor (i.e. inputTensors[ 0 ]). */
