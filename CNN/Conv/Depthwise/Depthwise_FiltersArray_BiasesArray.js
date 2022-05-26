@@ -356,12 +356,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
         this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray );
 
-!!!
-        // Because avg/max pooling can not undo previous activaction-escaping and can not do self activaction-escaping,
-        // its previous activaction-escaping must 1 and self  .
-        // However, if it has no bias and no activation, avg/max pooling is possible because undo/do activation-escaping could be ignored.
-
-        if () {
+        // For avg/max pooling, the value bounds does not change (i.e. should be the same as input).
+        if ( this.AvgMax_Or_ChannelMultiplier < 0 ) {
           this.boundsArraySet.set_outputs_all_by_input0();
         } else {
           this.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( this.nActivationId );
@@ -504,16 +500,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         // For avg/max pooling, the value bounds does not change.
         this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
 
-
+        // Confirm no need to undo previous activaction-escaping (when has bias or has activation), because
+        // avg/max pooling can not do that in these situations.
+        //
         if (   ( this.bBias != false )
             || ( this.nActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ) {
 
           for ( ; inChannelEnd < this.inputChannelCount; ++inChannelEnd ) {
             let undoPreviousEscapingScale = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannelEnd ];
 
-            // Confirm no need to undo previous activaction-escaping (when has bias or has activation), because
-            // avg/max pooling can not do that in these situations.
-            //
             tf.util.assert( ( undoPreviousEscapingScale == 1 ),
               `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
                 + `For avg/max pooling, `
