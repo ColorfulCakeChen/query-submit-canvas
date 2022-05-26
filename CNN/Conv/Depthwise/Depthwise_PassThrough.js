@@ -99,7 +99,7 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Base {
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nPassThroughStyleId ) {
 
-//centerFilterValue, surroundingFilterValue ???
+//!!! ...unfinished... (2022/05/26) centerFilterValue, surroundingFilterValue ???
 
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
     return this.get_by_centerFilterValue_surroundingFilterValue_biasValue(
