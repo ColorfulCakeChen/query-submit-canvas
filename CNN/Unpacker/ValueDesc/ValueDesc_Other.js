@@ -130,9 +130,9 @@ class SqueezeExcitationChannelCountDivisor extends Int {
 
   constructor() {
     super( -2, 64, [
-      "NONE",                 // (-2)
-      "EXCITATION_1",         // (-1)
-      "SQUEEZE_EXCITATION_1", // ( 0)
+      "NONE",               // (-2)
+      "EXCITATION",         // (-1)
+      "SQUEEZE_EXCITATION", // ( 0)
 
       // "SQUEEZE_INTERMEDIATE_DIVISOR_1_EXCITATION", "SQUEEZE_INTERMEDIATE_DIVISOR_2_EXCITATION",
       // ..., "SQUEEZE_INTERMEDIATE_DIVISOR_64_EXCITATION".
