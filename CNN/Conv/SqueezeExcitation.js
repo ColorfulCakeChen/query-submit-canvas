@@ -297,9 +297,10 @@ class Base extends ReturnOrClone.Base {
 //!!! ...untested... (2022/05/27)
         if ( this.nPointwise_HigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ) { // (4)
 
-          // Because intermediate pointiwse always uses ConstantWhenPassThrough (i.e. filterValue = 0, biasValue = 1 ), the pass-through
-          // higher half will always be destroyed totally. Since that, discarding all the pass-through higher half does not lose any
-          // information because the later excitation pointwise always could re-build them completely.
+          // Because intermediate (and excitation) pointwise always uses ConstantWhenPassThrough (i.e. filterValue = 0, biasValue = 1 ),
+          // the pass-through higher half will always be destroyed totally. Since that, discarding all the pass-through higher half in
+          // intermediate pointwise does not lose any information because the later excitation pointwise always could re-build them
+          // completely.
           //
           // For this reason, let ( intermediate_outputChannelCount = intermediate_outputChannelCount_lowerHalf )
           // (i.e. let ( intermediate_outputChannelCount_higherHalf == 0 ) to improve some performance.
