@@ -305,6 +305,7 @@ class Base extends ReturnOrClone.Base {
           // (i.e. let ( intermediate_outputChannelCount_higherHalf == 0 ) to improve some performance.
           //
           intermediate_outputChannelCount = intermediate_outputChannelCount_lowerHalf;
+
         } else {
           intermediate_outputChannelCount = Math.ceil( intermediate_inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
         }
