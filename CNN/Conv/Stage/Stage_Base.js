@@ -109,6 +109,19 @@ import { Params } from "./Stage_Params.js";
 //!!! ...unfinished... (2022/05/19)
 // What if the next operation is squeeze-and-excitation? Does the no bias is still feasible?
 
+
+//!!! ...unfinished... (2022/05/28)
+ * If squeeze-and-excitation is prefix the pointwise2 convolution (i.e. just after the depthwise convolution), the depthwise
+ * convolution should have bias (and even activation). The squeeze-and-excitation is a non-linear operation. (Just like the
+ * activation function is a non-linear operation.) If a non-linear operation will be applied, a bias should be applied (to
+ * achieve affine transformation) before the non-linearity operration.
+ *
+ * Another possible choice is let squeeze-and-excitation is postfix (not prefix) the pointwise2 convolution. Then, the depthwise
+ * could still has no bias and no activation.
+ *
+
+
+
  * 3.3 non-MobileNetV2_Xxx's depthwise
  *
  * The reason why non-MobileNetV2_Xxx's depthwise does not have bias is the following characteristic of affine transformation:
