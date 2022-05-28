@@ -112,12 +112,12 @@ class HeightWidthDepth {
     this.dataTensor3dArray = new Array( 2 );
 
     this.inputImage = this.dataTensor3dArray[ 0 ] = tf.tensor(
-      RandTools.generate_numberArray( tf.util.sizeFromShape( this.this.inputShape ), randomOffsetMin, randomOffsetMax ),
-      this.this.inputShape );
+      RandTools.generate_numberArray( tf.util.sizeFromShape( this.inputShape ), randomOffsetMin, randomOffsetMax ),
+      this.inputShape );
 
     this.inputWithBiasImage = this.dataTensor3dArray[ 1 ] = tf.tensor(
-      RandTools.generate_numberArray( tf.util.sizeFromShape( this.this.inputWithBiasShape ), randomOffsetMin, randomOffsetMax ),
-      this.this.inputWithBiasShape );
+      RandTools.generate_numberArray( tf.util.sizeFromShape( this.inputWithBiasShape ), randomOffsetMin, randomOffsetMax ),
+      this.inputWithBiasShape );
   }
 
   fusedConv_PerformanceTest_release() {
