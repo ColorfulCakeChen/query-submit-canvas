@@ -6,6 +6,11 @@ import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as SqueezeExcitation from "../SqueezeExcitation.js";
 import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
 
+
+//!!! ...unfinished... (2022/05/28)
+// Add parameter for SqueezeExcitation prefix of posfix the Pointwise_SameWhenPassThrough.
+
+
 /**
  * A Pointwise_SameWhenPassThrough with a SqueezeExcitation in front of it.
  *
