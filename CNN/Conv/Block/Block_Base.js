@@ -34,10 +34,10 @@ import { Params } from "./Block_Params.js";
 
 
 //!!! ...unfinished... (2022/05/28)
-// Test: combining depthwise-pointwise into one conv2d. Compare these two architecture's performance in GPU (WebGL).
+// Test: combining depthwise-pointwise-bias into one conv2d. Compare these two architecture's performance in GPU (WebGL).
 // Is combined faster in GPU?
 //
-// Perhaps, in backend WebGL (GPU), automatically combining depthwise-pointwise into one conv2d to improve performance.
+// Perhaps, in backend WebGL (GPU), automatically combining depthwise-pointwise-bias into one conv2d to improve performance.
 //
 
 
