@@ -29,8 +29,8 @@ class HeightWidthDepth {
     this.width = width;
     this.depth = depth;
 
-//     this.valueCount = height * width * depth;
-//     this.concatenatedShape = [ height, width, depth ];
+    this.inputShape = [ this.height, this.width, this.depth ];
+    this.inputWithBiasShape = [ this.height, this.width, ( this.depth + 1 ) ]; // extra channel as bias.
 
     this.inputChannelCount = depth;
     this.outputChannelCount = depth;
@@ -50,6 +50,9 @@ class HeightWidthDepth {
 
     this.fusedConvFiltersShape = [ this.depthwiseFilterHeight, this.depthwiseFilterWidth, this.inputChannelCount, this.outputChannelCount ];
     this.fusedConvBiasesShape = [ this.outputChannelCount ];
+
+    this.fusedConvWithBiasFiltersShape = [ // extra channel as bias.
+      this.depthwiseFilterHeight, this.depthwiseFilterWidth, ( this.inputChannelCount + 1 ), ( this.outputChannelCount + 1 ) ];
   }
 
   disposeTensors() {
@@ -69,7 +72,7 @@ class HeightWidthDepth {
     const randomOffsetMin = -10;
     const randomOffsetMax = +10;
 
-    this.filters_list = new Array( 3 );
+    this.filters_list = new Array( 4 );
     this.biases_list = new Array( 3 );
 
 
@@ -100,27 +103,21 @@ class HeightWidthDepth {
       this.fusedConvBiasesShape );
 
 
+    this.fusedConvWithBiasFilters = this.filters_list[ 3 ] = tf.tensor(
+      RandTools.generate_numberArray( tf.util.sizeFromShape( this.fusedConvWithBiasFiltersShape ), randomOffsetMin, randomOffsetMax ),
+      this.fusedConvWithBiasFiltersShape );
+
+
     // Larger input image for performance testing.
-    let inputTensorCount = 1;
-    this.testPerformance_NumberImageArray = new Array( inputTensorCount );
-    this.dataTensor3dArray = tf.tidy( () => {
-      let dataTensor3dArray = new Array( inputTensorCount );
+    this.dataTensor3dArray = new Array( 2 );
 
-      let shape = [ this.height, this.width, this.depth ];
-      let length = tf.util.sizeFromShape( shape );
+    this.inputImage = this.dataTensor3dArray[ 0 ] = tf.tensor(
+      RandTools.generate_numberArray( tf.util.sizeFromShape( this.this.inputShape ), randomOffsetMin, randomOffsetMax ),
+      this.this.inputShape );
 
-      for ( let i = 0; i < dataTensor3dArray.length; ++i ) {
-        let numberBegin = ( i * length );
-        let numberEnd = numberBegin + length;
-
-        let t = tf.range( numberBegin, numberEnd, 1 );
-        let dataTensor3d = tf.reshape( t, shape );
-        dataTensor3dArray[ i ] = dataTensor3d;
-      }
-
-      return dataTensor3dArray;
-    });
-
+    this.inputWithBiasImage = this.dataTensor3dArray[ 1 ] = tf.tensor(
+      RandTools.generate_numberArray( tf.util.sizeFromShape( this.this.inputWithBiasShape ), randomOffsetMin, randomOffsetMax ),
+      this.this.inputWithBiasShape );
   }
 
   fusedConv_PerformanceTest_release() {
@@ -139,53 +136,31 @@ class HeightWidthDepth {
 //!!! ...unfinished...
   test_depthwise_bias_pointwise_bias() {
     let t0, t1;
-    t0 = tf.depthwiseConv2d( this.dataTensor3dArray[ 0 ], this.depthwiseFilters, this.strids, this.pad );
+    t0 = tf.depthwiseConv2d( this.inputImage, this.depthwiseFilters, this.strids, this.pad );
     t1 = tf.add( t0, this.depthwiseBiases ); t0.dispose();
     t0 = tf.conv2d( t1, this.pointwiseFilters, this.strids, this.pad ); t1.dispose();
     t1 = tf.add( t0, this.pointwiseBiases ); t0.dispose();
     t1.dispose();
   }
 
-  test_Avg_bias_COS_AddInputToOutput() {
-    let outputTensor3dArray = [];
-    this.block_Avg_bias_COS_AddInputToOutput.apply( this.dataTensor3dArray, outputTensor3dArray );
-    tf.dispose( outputTensor3dArray );
+  test_depthwise_pointwise_bias() {
+    let t0, t1;
+    t0 = tf.depthwiseConv2d( this.inputImage, this.depthwiseFilters, this.strids, this.pad );
+    t1 = tf.conv2d( t1, this.pointwiseFilters, this.strids, this.pad ); t0.dispose();
+    t0 = tf.add( t0, this.pointwiseBiases ); t1.dispose();
+    t0.dispose();
   }
 
-  test_Max_bias_COS_AddInputToOutput() {
-    let outputTensor3dArray = [];
-    this.block_Max_bias_COS_AddInputToOutput.apply( this.dataTensor3dArray, outputTensor3dArray );
-    tf.dispose( outputTensor3dArray );
+  test_fusedConv_bias() {
+    let t0, t1;
+    t0 = tf.conv2d( this.inputImage, this.fusedConvFilters, this.strids, this.pad );
+    t1 = tf.add( t0, this.fusedConvBiases ); t0.dispose();
+    t1.dispose();
   }
 
-  test_DConv_2_bias_COS_AddInputToOutput() {
-    let outputTensor3dArray = [];
-    this.block_DConv_2_bias_COS_AddInputToOutput.apply( this.dataTensor3dArray, outputTensor3dArray );
-    tf.dispose( outputTensor3dArray );
-  }
-
-  test_DConv_2_COS_AddInputToOutput() {
-    let outputTensor3dArray = [];
-    this.block_DConv_2_COS_AddInputToOutput.apply( this.dataTensor3dArray, outputTensor3dArray );
-    tf.dispose( outputTensor3dArray );
-  }
-
-  test_DConv_2_COS() {
-    let outputTensor3dArray = [];
-    this.block_DConv_2_COS.apply( this.dataTensor3dArray, outputTensor3dArray );
-    tf.dispose( outputTensor3dArray );
-  }
-
-  test_DConv_32_bias_COS_P128_bias() {
-    let outputTensor3dArray = [];
-    this.block_DConv_32_bias_COS_P128_bias.apply( this.dataTensor3dArray, outputTensor3dArray );
-    tf.dispose( outputTensor3dArray );
-  }
-
-  test_P128_bias_COS_P128_bias() {
-    let outputTensor3dArray = [];
-    this.block_P128_bias_COS_P128_bias.apply( this.dataTensor3dArray, outputTensor3dArray );
-    tf.dispose( outputTensor3dArray );
+  test_fusedConvWithBias() {
+    let t0 = tf.conv2d( this.inputWithBiasImage, this.fusedConvWithBiasFilters, this.strids, this.pad );
+    t0.dispose();
   }
 
 
