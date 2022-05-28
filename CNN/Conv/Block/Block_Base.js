@@ -15,6 +15,19 @@ import * as ConcatShuffleSplit from "../ConcatShuffleSplit.js";
 import * as TensorOpCounter from "../TensorOpCounter.js";
 import { Params } from "./Block_Params.js";
 
+
+//!!! ...unfinished... (2022/05/28)
+// Perhaps, checking the BoundsArraySet of every step. If a step's all channels' BoundsArraySet will not activated by the
+// activation function (suppose using CLIP_BY_VALUE_XXX), automatically drop the activation function call and combine the
+// bias to the next opeartion.
+//
+// For example, if pointwise1 does not activated (according to its BoundsArraySet.afterBias), the pointwise1's bias could
+// be combined into the next step (i.e. depthwise) and never call pointwise1's activation function.
+//
+// This is an automatical optimization according to static weights (i.e. this does not work for squeeze-and-excitation
+// which is dynamic weights).
+
+
 /**
  * One block of a stage of convolution neural network. Basically, there are three convolutions inside this object.
  *   - 1x1 pointwise convolution: change channel count. (exapnd)
