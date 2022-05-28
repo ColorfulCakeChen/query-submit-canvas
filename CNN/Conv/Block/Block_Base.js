@@ -33,12 +33,13 @@ import { Params } from "./Block_Params.js";
 // which is dynamic weights).
 
 
-//!!! ...unfinished... (2022/05/28)
+//!!! ...unfinished... (2022/05/28) (Deprecated)
 // Test: combining depthwise-pointwise-bias into one conv2d. Compare these two architecture's performance in GPU (WebGL).
 // Is combined faster in GPU?
 //
 // Perhaps, in backend WebGL (GPU), automatically combining depthwise-pointwise-bias into one conv2d to improve performance.
 //
+// No. Fused conv2d is slower than depthwise-pointwise-bias in WebGL.
 
 
 /**
