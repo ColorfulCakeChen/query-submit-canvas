@@ -33,6 +33,11 @@ import { Params } from "./Block_Params.js";
 // which is dynamic weights).
 
 
+//!!! ...unfinished... (2022/05/28)
+// Test: combining depthwise-pointwise into one conv2d. Compare these two architecture's performance in GPU (WebGL).
+// Is combined faster in GPU?
+
+
 /**
  * One block of a stage of convolution neural network. Basically, there are three convolutions inside this object.
  *   - 1x1 pointwise convolution: change channel count. (exapnd)
