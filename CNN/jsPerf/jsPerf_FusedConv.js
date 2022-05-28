@@ -146,8 +146,8 @@ class HeightWidthDepth {
   test_depthwise_pointwise_bias() {
     let t0, t1;
     t0 = tf.depthwiseConv2d( this.inputImage, this.depthwiseFilters, this.strids, this.pad );
-    t1 = tf.conv2d( t1, this.pointwiseFilters, this.strids, this.pad ); t0.dispose();
-    t0 = tf.add( t0, this.pointwiseBiases ); t1.dispose();
+    t1 = tf.conv2d( t0, this.pointwiseFilters, this.strids, this.pad ); t0.dispose();
+    t0 = tf.add( t1, this.pointwiseBiases ); t1.dispose();
     t0.dispose();
   }
 
