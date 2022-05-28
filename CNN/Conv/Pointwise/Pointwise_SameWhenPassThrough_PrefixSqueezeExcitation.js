@@ -13,6 +13,11 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
 // Rename SameWhenPassThrough_PrefixSqueezeExcitation to SameWhenPassThrough_withSqueezeExcitation
 //
 
+
+//!!! ...unfinished... (2022/05/28)
+// Become to class Operation_withSqueezeExcitation. The operation could be Pointwise_Xxx or FusedDepthwisePointwiseBias.
+
+
 /**
  * A Pointwise_SameWhenPassThrough with a SqueezeExcitation in front of it.
  *
