@@ -24,6 +24,11 @@ import { Params } from "./Block_Params.js";
 // For example, if pointwise1 does not activated (according to its BoundsArraySet.afterBias), the pointwise1's bias could
 // be combined into the next step (i.e. depthwise) and never call pointwise1's activation function.
 //
+// Note: The next step should be either pointwise or depthwise with pad="valid" ( can not be depthwise with pad="same" ).
+//
+//
+//
+//
 // This is an automatical optimization according to static weights (i.e. this does not work for squeeze-and-excitation
 // which is dynamic weights).
 
