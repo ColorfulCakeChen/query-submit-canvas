@@ -4,6 +4,15 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 
+
+//!!! ...unfinished... (2022/05/28)
+// Add parameter nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix.
+//
+// Add parameter bPointwise2SqueezeExcitationAtStageEnd control whether this stage's final block's pointwise2 should have
+// squeeze-and-excitation.
+//
+
+
 /**
  * Convolution stage parameters.
  *
