@@ -8,8 +8,10 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
 
 
 //!!! ...unfinished... (2022/05/28)
-// Add parameter for SqueezeExcitation prefix of posfix the Pointwise_SameWhenPassThrough.
-
+// Add parameter for SqueezeExcitation prefix of posfix the Pointwise_SameWhenPassThrough. (bSqueezeExcitationPrefix)
+//
+// Rename SameWhenPassThrough_PrefixSqueezeExcitation to SameWhenPassThrough_withSqueezeExcitation
+//
 
 /**
  * A Pointwise_SameWhenPassThrough with a SqueezeExcitation in front of it.
