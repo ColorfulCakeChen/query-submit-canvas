@@ -77,6 +77,12 @@ import * as Pointwise from "./Pointwise.js";
  *
  */
 
+
+//!!! ...unfinished... (2022/05/28)
+// If depthwise-pointwise-bias can be combined into a faster conv2d (in GPU), squeeze-and-excitation will be just one conv2d
+// (if no intermediate convolution).
+
+
 /**
  *
  * @member {number} byteOffsetBegin
