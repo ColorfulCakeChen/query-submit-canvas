@@ -133,7 +133,6 @@ class HeightWidthDepth {
   }
 
 
-//!!! ...unfinished...
   test_depthwise_bias_pointwise_bias() {
     let t0, t1;
     t0 = tf.depthwiseConv2d( this.inputImage, this.depthwiseFilters, this.strids, this.pad );
@@ -173,11 +172,11 @@ class HeightWidthDepth {
 }
 
 function init() {
-  //console.log("jsPerf_Block.js, init()");
+  //console.log("jsPerf_FusedConv.js, init()");
 
   disposeTensors();
 
-  let depth = 4;
+  let depth = 8; //4;
 
   // Using mobile phone's resolution ( 2160 * 1080 ) will crash the computer.
   // Using ( 1 / 10 ) of computer screen ( 1920 * 1080 ).
