@@ -26,6 +26,11 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
 // prefix or postfix pointwise2, the SqueezeExcitation21 and SqueezeExcitation212 should be extracted in sequence (i.e. both before
 // or both after pointwise2 together).
 //
+// Perhaps:
+//   - pack squeeze21 and squeeze22 into one class.
+//   - pack intermediatePointwise21 and intermediatePointwise22 into one class.
+//   - pack excitationPointwise21 and excitationPointwise22 into one class.
+//   - pack pointwise21 and pointwise22 into one class.
 
 
 /**
