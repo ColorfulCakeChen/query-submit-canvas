@@ -407,6 +407,7 @@ class Base extends ReturnOrClone.Base {
 
     this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
     this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
+    this.bSqueezeExcitationPrefix = params.bSqueezeExcitationPrefix;
 
     this.pointwise21ChannelCount = params.pointwise21ChannelCount;
     this.bPointwise21Bias = params.bPointwise21Bias;
@@ -1595,6 +1596,7 @@ class Base extends ReturnOrClone.Base {
 
       + `nSqueezeExcitationChannelCountDivisorName=${this.nSqueezeExcitationChannelCountDivisorName}`
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
+      + `bSqueezeExcitationPrefix=${this.bSqueezeExcitationPrefix}, `
 
       + `pointwise21ChannelCount=${this.pointwise21ChannelCount}, `
       + `bPointwise21Bias=${this.bPointwise21Bias}, `
