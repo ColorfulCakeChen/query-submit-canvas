@@ -191,9 +191,15 @@ class Params extends Weights.Params {
    *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
    * (Please see also SqueezeExcitation.Base.nSqueezeExcitationChannelCountDivisor explanation.)
    *
+   * @param {boolean} bSqueezeExcitationPrefix
+   *   If true, the squeeze-and-excitation will be before pointwise2. If false, the squeeze-and-excitation will be after pointwise2.
+   * If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * Only used if ( nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2) ).
+   *
    * @param {number} pointwise21ChannelCount
    *   The output channel count of the first pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution after depthwise convolution.
+   * If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution after depthwise
+   * convolution.
    *
    * @param {boolean} bPointwise21Bias
    *   If true, there will be a bias after the first pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by
@@ -253,6 +259,7 @@ class Params extends Weights.Params {
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
     nSqueezeExcitationChannelCountDivisor,
+    bSqueezeExcitationPrefix,                
     pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
     bOutput1Requested,
     bKeepInputTensor
@@ -273,6 +280,7 @@ class Params extends Weights.Params {
       [ Params.bDepthwiseBias,                        bDepthwiseBias ],
       [ Params.depthwiseActivationId,                 depthwiseActivationId ],
       [ Params.nSqueezeExcitationChannelCountDivisor, nSqueezeExcitationChannelCountDivisor ],
+      [ Params.bSqueezeExcitationPrefix,              bSqueezeExcitationPrefix ],
       [ Params.pointwise21ChannelCount,               pointwise21ChannelCount ],
       [ Params.bPointwise21Bias,                      bPointwise21Bias ],
       [ Params.pointwise21ActivationId,               pointwise21ActivationId ],
@@ -512,6 +520,8 @@ class Params extends Weights.Params {
     return Params.nSqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
   }
 
+  get bSqueezeExcitationPrefix()  { return this.parameterMapModified.get( Params.bSqueezeExcitationPrefix ); }
+
   get pointwise21ChannelCount()   { return this.parameterMapModified.get( Params.pointwise21ChannelCount ); }
   get bPointwise21Bias()          { return this.parameterMapModified.get( Params.bPointwise21Bias ); }
   get pointwise21ActivationId()   { return this.parameterMapModified.get( Params.pointwise21ActivationId ); }
@@ -610,6 +620,7 @@ Params.bDepthwiseBias =          new ParamDesc.Bool(                    "bDepthw
 Params.depthwiseActivationId =   new ParamDesc.ActivationFunction(      "depthwiseActivationId" );
 
 Params.nSqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
+Params.bSqueezeExcitationPrefix = new ParamDesc.Bool(                   "bSqueezeExcitationPrefix" );
 
 // Note: Force pointwise21ChannelCount always not zero. So that channelCount0_pointwise1Before_higherHalf could be determined
 // when ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5).
