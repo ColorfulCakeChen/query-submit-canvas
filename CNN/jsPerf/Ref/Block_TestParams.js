@@ -225,7 +225,7 @@ class Base extends TestParams.Base {
       //
       // (squeeze is an average pooling. Its filter width is the same as inputWidth (i.e. pointwise2_inputWidth).)
       if (   ( pointwise2_inputWidth == 1 )
-          && ( ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.hasSqueeze( this.out.nSqueezeExcitationChannelCountDivisor ) )
+          && ( ValueDesc.SqueezeExcitationChannelCountDivisor.hasSqueeze( this.out.nSqueezeExcitationChannelCountDivisor ) )
          )
         return false;
     }
