@@ -718,7 +718,13 @@ class Base extends TestParams.Base {
    *   Return the outputChannelCount of this squeeze-and-excitation operation.
    */
   generate_squeezeExcitation_filters_biases(
-    nSqueezeExcitationChannelCountDivisor, inputChannelCount, nActivationId, propertyNamePrefix, io_numberArrayObject ) {
+    nSqueezeExcitationChannelCountDivisor,
+
+//!!! (2022/05/29 Remarked)
+//    inputChannelCount, outputChannelCount, nActivationId, propertyNamePrefix, io_numberArrayObject ) {
+
+//!!! ...unfinished... (2022/05/29)
+    inputChannelCount, inputChannelCount_lowerHalf, nActivationId, propertyNamePrefix, io_numberArrayObject ) {
 
     // 0.
     let bSqueeze, bIntermediate, bExcitation;
@@ -749,8 +755,12 @@ class Base extends TestParams.Base {
     let squeeze_inputChannelCount = inputChannelCount;
     let squeeze_outputChannelCount = inputChannelCount;
 
+//!!! ...unfinished... (2022/05/29)
+// should generate lower half and highe half intermediate pointwise convolution in sequence.
+// and then generate lower half and highe half excitation pointwise convolution in sequence.
+
     // 2. intermediate pointwise convolution.
-    let intermediate_inputChannelCount = squeeze_inputChannelCount;
+    let intermediate_inputChannelCount = squeeze_outputChannelCount;
     let intermediate_outputChannelCount;
     let intermediate_bBias;
     {
