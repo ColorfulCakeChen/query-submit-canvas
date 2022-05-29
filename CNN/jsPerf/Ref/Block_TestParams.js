@@ -333,6 +333,10 @@ class Base extends TestParams.Base {
 // //        ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID,  // (3)
 //       ],
 
+//      bSqueezeExcitationPrefix: undefined,
+//      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min + 0 ],
+      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
+
       nSqueezeExcitationChannelCountDivisor: [
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
         4
@@ -383,6 +387,10 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.pointwise1ChannelCount,  this.valueOutMinMax.pointwise1ChannelCount ),
 
       new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,        this.valueOutMinMax.bKeepInputTensor ),
+
+  
+      new TestParams.ParamDescConfig( Block.Params.bSqueezeExcitationPrefix,
+                                                                            this.valueOutMinMax.bSqueezeExcitationPrefix ),
 
       new TestParams.ParamDescConfig( Block.Params.nSqueezeExcitationChannelCountDivisor,
                                                                             this.valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
@@ -1182,6 +1190,7 @@ Base.paramsNameOrderArray = [
   Block.Params.bDepthwiseBias.paramName,
   Block.Params.depthwiseActivationId.paramName,
   Block.Params.nSqueezeExcitationChannelCountDivisor.paramName,
+  Block.Params.bSqueezeExcitationPrefix.paramName,
   Block.Params.pointwise21ChannelCount.paramName,
   Block.Params.bPointwise21Bias.paramName,
   Block.Params.pointwise21ActivationId.paramName,
