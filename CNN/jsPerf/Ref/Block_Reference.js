@@ -556,6 +556,7 @@ class Base {
 
     // squeeze-and-excitation parameters.
     asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", testParams.out.nSqueezeExcitationChannelCountDivisor );
+    asserter.propertyValue( "bSqueezeExcitationPrefix", testParams.out.bSqueezeExcitationPrefix );
 
     // pointwise21 parameters.
     asserter.propertyValue( "pointwise21ChannelCount", testParams.out.pointwise21ChannelCount );
