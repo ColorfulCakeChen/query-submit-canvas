@@ -1040,6 +1040,10 @@ class Base extends TestParams.Base {
 //
 // Problem: In ShuffleNetV2 and ShuffleNetV2_byMobileNetV1, the squeeze-and-excitation and pointwise2 are extracted in different order.
 //
+// Possible Solution: Separate class Pointwise_SameWhenPassThrough_PrefixSqueezeExcitation. No matter squeeze-and-excitation is
+// prefix or postfix pointwise2, the SqueezeExcitation21 and SqueezeExcitation212 should be extracted in sequence (i.e. both before
+// or both after pointwise2 together).
+//
 
       let pointwise21_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
         paramsAll.nSqueezeExcitationChannelCountDivisor,
