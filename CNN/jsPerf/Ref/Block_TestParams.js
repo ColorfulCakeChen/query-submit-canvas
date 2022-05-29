@@ -724,7 +724,10 @@ class Base extends TestParams.Base {
 //    inputChannelCount, outputChannelCount, nActivationId, propertyNamePrefix, io_numberArrayObject ) {
 
 //!!! ...unfinished... (2022/05/29)
-    inputChannelCount, inputChannelCount_lowerHalf, nActivationId, propertyNamePrefix, io_numberArrayObject ) {
+    inputChannelCount,
+    outputChannelCount_lowerHalf, outputChannelCount_higherHalf,
+    nActivationId,
+    propertyNamePrefix_lowerHalf, propertyNamePrefix_higherHalf, io_numberArrayObject ) {
 
     // 0.
     let bSqueeze, bIntermediate, bExcitation;
@@ -756,6 +759,7 @@ class Base extends TestParams.Base {
     let squeeze_outputChannelCount = inputChannelCount;
 
 //!!! ...unfinished... (2022/05/29)
+// if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
 // should generate lower half and highe half intermediate pointwise convolution in sequence.
 // and then generate lower half and highe half excitation pointwise convolution in sequence.
 
@@ -1032,6 +1036,11 @@ class Base extends TestParams.Base {
 
     // Pointwise21's squeeze-and-excitation
     {
+//!!! ...unfinished... (2022/05/29) lower half and higher half
+//
+// Problem: In ShuffleNetV2 and ShuffleNetV2_byMobileNetV1, the squeeze-and-excitation and pointwise2 are extracted in different order.
+//
+
       let pointwise21_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
         paramsAll.nSqueezeExcitationChannelCountDivisor,
         pointwise2_inputChannelCount, paramsAll.pointwise21ActivationId, "pointwise21", io_paramsNumberArrayObject );
