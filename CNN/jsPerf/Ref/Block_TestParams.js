@@ -1044,7 +1044,7 @@ class Base extends TestParams.Base {
 
     // Pointwise21's squeeze-and-excitation
     {
-//!!! ...unfinished... (2022/05/29) lower half and higher half
+//!!! ...unfinished... (2022/05/29) lower half and higher half, bSqueezeExcitationPrefix
 //
 // Problem: In ShuffleNetV2 and ShuffleNetV2_byMobileNetV1, the squeeze-and-excitation and pointwise2 are extracted in different order.
 //
