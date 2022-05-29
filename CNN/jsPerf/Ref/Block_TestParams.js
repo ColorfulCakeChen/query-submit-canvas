@@ -117,6 +117,7 @@ class Base extends TestParams.Base {
    */
   set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
 
+    this.generate_depthwisePadInfo();
     this.generate_Filters_Biases();
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) Float32Array.
@@ -125,6 +126,12 @@ class Base extends TestParams.Base {
     this.in.inputFloat32Array = this.Float32Array_ByteOffsetBegin.weightsFloat32Array;
     this.in.byteOffsetBegin = this.Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
 
+    return this;
+  }
+
+  /**
+   */
+  generate_depthwisePadInfo() {
     if ( !this.out.depthwisePadInfo ) {
       this.out.depthwisePadInfo = new ( Depthwise.PadInfoCalculator() )(
         this.out.inputHeight0, this.out.inputWidth0, this.out.channelCount0_pointwise1Before, 
@@ -136,22 +143,12 @@ class Base extends TestParams.Base {
         this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
         this.out.depthwiseStridesPad );
     }
-
-    return this;
   }
 
   /**
    * @override
    */
   onYield_isLegal() {
-
-    let pointwise2_inputWidth;
-    {
-      if ( this.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) // (0)
-        pointwise2_inputWidth = this.out.inputWidth0;
-      else
-        pointwise2_inputWidth = this.out.depthwisePadInfo.outputWidth;
-    }
 
     // (-4) (ShuffleNetV2_ByMobileNetV1's head)
     if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
@@ -197,9 +194,6 @@ class Base extends TestParams.Base {
             break;
         }
     }
-!!!
-    ( this.out.depthwisePadInfo.outputWidth == 1 )
- && ( ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.hasSqueeze( this.out.nSqueezeExcitationChannelCountDivisor ) )
 
     // (2021/07/20)
     // Note: In backend WASM, when filter width is 1 (note: filter height does not have this issue and could be 1), it seems that
@@ -216,6 +210,16 @@ class Base extends TestParams.Base {
           && ( this.out.depthwiseFilterWidth == 1 )
          )
         return false;
+
+      let pointwise2_inputWidth;
+      {
+        if ( this.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) { // (0)
+          pointwise2_inputWidth = this.out.inputWidth0;
+        } else {
+          this.generate_depthwisePadInfo(); // So that this.out.depthwisePadInfo is usable.
+          pointwise2_inputWidth = this.out.depthwisePadInfo.outputWidth;
+        }
+      }
 
       // For squeeze-and-excitation.
       //
