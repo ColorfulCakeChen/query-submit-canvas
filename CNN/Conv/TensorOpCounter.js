@@ -11,6 +11,10 @@ export { Base };
  *   - setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 )
  *   - pfnOperation( inputTensor0, inputTensor1 )
  *
+
+
+!!! ...unfinished... (2022/05/30) What if the previous operation has two outputs? (e.g. ConcatShuffleSplit)
+
  * @member {Base} input0
  *   The TensorOpCounter.Base object which represents this operation's first input.
  *
