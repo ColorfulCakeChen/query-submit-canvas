@@ -1,13 +1,38 @@
 export { Base };
 
+//!!! ...unfinished... (2022/05/30) Used by Operation.apply()
+class OperationApplyArgs {
+  
+//   constructor() {
+//     this.blockInput0 =
+//     this.blockInput1 =
+//
+//     this.operationInput0 =
+//     this.operationInput1 =
+//     this.operationOutput0 =
+//     this.operationOutput1 =;
+  }
+
+}
+
+//!!! ...unfinished... (2022/05/30) 
+class TensorPlaceholderSet {
+  
+  constructor() {
+    this.input0 = new TensorPlaceholder();
+    this.input1 = new TensorPlaceholder();
+    this.output0 = new TensorPlaceholder();
+    this.output1 = new TensorPlaceholder();
+  }
+
+}
+
+
 //!!! ...unfinished... (2022/05/30) should create objects representing this operation's output(s).
 class Operation {
   
   constructor() {
-    this.TensorPlaceholder.input0;
-    this.TensorPlaceholder.input1;
-    this.TensorPlaceholder.output0;
-    this.TensorPlaceholder.output1;
+    this.tensorPlaceholderSet = new TensorPlaceholderSet();
   }
 
 }
