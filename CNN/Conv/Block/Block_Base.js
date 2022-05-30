@@ -41,6 +41,42 @@ import { Params } from "./Block_Params.js";
 //
 // No. Fused conv2d is slower than depthwise-pointwise-bias in WebGL.
 
+/*!!! ...unfinished... (2022/05/30)
+
+AppendOperation( blockInputs[], blockInputScaleBoundsArray[], operationInputs[], operationInputScaleBoundsArray[], operationOutputs[], operationOutputScaleBoundsArray[], TensorOpCounter, bTwoParallelOperation, 
+operation_input_output_position_descriptor,
+OperationClass, constructorArgs[], initArgs[] )
+
+AppendOperation() AppendOperationParallelTwo()
+
+CallOperation( tensorsArrayObject, bTwoParallelOperation, OperationClass, ...parameters )
+
+tensorsArrayObject = {
+ blockInputs[], operationInputs[], operationOutputs[],
+};
+
+blockInputs[] mainly for add-input-to-output.
+
+ bTwoParallelOperation determines one or two parallel operations are appended.
+
+
+operations[].parallel0, operations[].parallel1
+
+operation_input_output_position_descriptor
+BLOCK_INPUT_0
+BLOCK_INPUT_1
+OPERATION_PARALLEL_0_INPUT_0
+OPERATION_PARALLEL_0_INPUT_1
+OPERATION_PARALLEL_0_OUTPUT_0
+OPERATION_PARALLEL_0_OUTPUT_1
+OPERATION_PARALLEL_1_INPUT_0
+OPERATION_PARALLEL_1_INPUT_1
+OPERATION_PARALLEL_1_OUTPUT_0
+OPERATION_PARALLEL_1_OUTPUT_1
+
+How to describe no input at some position?
+*/
+
 
 /**
  * One block of a stage of convolution neural network. Basically, there are three convolutions inside this object.
