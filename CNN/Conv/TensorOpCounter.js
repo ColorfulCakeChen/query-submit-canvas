@@ -1,5 +1,10 @@
 export { Base };
 
+//!!! ...unfinished... (2022/05/30) should create objects representing this operation's output(s).
+class Operation {
+}
+
+
 /**
  * Count there are how many operations using this operation's output tensor.
  *
@@ -33,6 +38,8 @@ export { Base };
  *
  */
 class Base {
+
+//!!! ...unfinished... (2022/05/30) should create objects representing this operation's output(s).
 
   constructor( tensorId, operationObject, input0, input1 ) {
     this.tensorId = tensorId;
@@ -89,7 +96,7 @@ class Base {
       if ( input.nextOperationArray[ input.nextOperationArray.length - 1 ] == this )
         input_dispose_Map.set( input, i );
 
-      // This operation uses the input tensor. There are, however, other operations still need use the same input tensor.
+      // Otherwise, This operation uses the input tensor. There are, however, other operations still need use the same input tensor.
       // So the input tensor should not be disposed (i.e. should be kept) by this operation.
     }
 
