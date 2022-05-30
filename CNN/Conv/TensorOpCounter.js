@@ -1,7 +1,7 @@
 export { Base };
 
 //!!! ...unfinished... (2022/05/30) should create objects representing this operation's output(s).
-class OperationPlaceholder {
+class Operation {
 }
 
 
