@@ -2,6 +2,14 @@ export { Base };
 
 //!!! ...unfinished... (2022/05/30) should create objects representing this operation's output(s).
 class Operation {
+  
+  constructor() {
+    this.TensorPlaceholder.input0;
+    this.TensorPlaceholder.input1;
+    this.TensorPlaceholder.output0;
+    this.TensorPlaceholder.output1;
+  }
+
 }
 
 
