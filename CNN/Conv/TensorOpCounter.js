@@ -1,9 +1,12 @@
 export { Base };
 
 //!!! ...unfinished... (2022/05/30) should create objects representing this operation's output(s).
-class Operation {
+class OperationPlaceholder {
 }
 
+
+
+//!!! ...unfinished... (2022/05/30) Rename Base to TensorPlaceholder.
 
 /**
  * Count there are how many operations using this operation's output tensor.
