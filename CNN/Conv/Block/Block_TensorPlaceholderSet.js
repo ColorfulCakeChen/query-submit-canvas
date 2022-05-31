@@ -19,15 +19,6 @@ import { TensorPlaceholder } from "./Block_TensorPlaceholder.js";
 //
 // }
 //
-//
-// //!!! ...unfinished... (2022/05/30) should create objects representing this operation's output(s).
-// class Operation {
-//
-//   constructor() {
-//     this.tensorPlaceholderSet = new TensorPlaceholderSet();
-//   }
-//
-// }
 
 
 /**
@@ -53,31 +44,36 @@ import { TensorPlaceholder } from "./Block_TensorPlaceholder.js";
  *   How many input tensor placeholders.
  * 
  * @member {Block.TensorPlaceholder} output0
- *   The TensorPlaceholder object which represents this operation's first output. It is always be created by constructor.
+ *   The TensorPlaceholder object which represents this operation's first output. It will be created by constructor if
+ * outputTensorCount (of constructor) is >= 1.
  *
  * @member {Block.TensorPlaceholder} output1
- *   The TensorOpCounter.Base object which represents this operation's second output. It is only be created by constructor if
- * outputTensorCount (of constructor) is 2.
+ *   The TensorOpCounter object which represents this operation's second output. It is only created by constructor if
+ * outputTensorCount (of constructor) is >= 2.
  *
  * @param {number} outputTensorCount
- *   How many output tensor placeholders.
- * 
+ *   How many output tensor placeholders. It's value is between [ 0, 2 ].
+ *
  */
 class TensorPlaceholderSet {
 
   /**
    * @param {number} outputTensorCount
-   *   If 1, only the this.output0 will be created. If 2, the this.output0 and this.output1 will be created.
+   *   If 0, no this.outputX will be created. If 1, only the this.output0 will be created. If 2, both the this.output0 and this.output1
+   * will be created.
    */
-  constructor( input0, input1, outputTensorCount = 1 ) {
+  constructor( input0, input1, outputTensorCount ) {
     this.input0 = input0;
     this.input1 = input1;
 
 //!!! ...unfinished... (2022/05/30) Register as the input TensorPlaceholder's final user.
 
-    this.output0 = new TensorPlaceholder();
-    if ( outputTensorCount >= 2 ) {
-      this.output1 = new TensorPlaceholder();
+    if ( outputTensorCount >= 1 ) {
+      this.output0 = new TensorPlaceholder();
+
+      if ( outputTensorCount >= 2 ) {
+        this.output1 = new TensorPlaceholder();
+      }
     }
   }
 
@@ -104,7 +100,7 @@ class TensorPlaceholderSet {
       if ( this.output1 )
         return 1;
       else
-        return 0; // (should not happen)
+        return 0;
   }
 
 }
