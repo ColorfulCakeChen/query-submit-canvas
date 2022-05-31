@@ -77,7 +77,7 @@ OPERATION_PARALLEL_1_OUTPUT_1
 How to describe no input at some position?
 */
 
-//!!! ...unfinished... (2022/05/31) needs a currentTensorPlaceholderSet
+//!!! ...unfinished... (2022/05/31) needs a currentTensorPlaceholderSet which is an object of class TensorPlaceholderSet.InputsOutput
 
 
 /**
