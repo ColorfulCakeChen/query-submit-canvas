@@ -54,7 +54,7 @@ import * as MultiLayerMap from "../../util/MultiLayerMap.js";
  * @member {number[]} biasesArray
  *   The pass-through biases array.
  */
-let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
+let PassThrough_FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentClass {
 
   /**
    */
