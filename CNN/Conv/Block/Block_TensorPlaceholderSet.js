@@ -69,6 +69,8 @@ class TensorPlaceholderSet {
     this.input0 = input0;
     this.input1 = input1;
 
+//!!! ...unfinished... (2022/05/30) Register as the input TensorPlaceholder's final user.
+
     this.output0 = new TensorPlaceholder();
     if ( outputTensorCount >= 2 ) {
       this.output1 = new TensorPlaceholder();
