@@ -137,7 +137,7 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  *   The pointwise convolution biases array.
  *
  */
-let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
+let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentClass {
 
   /**
    */
