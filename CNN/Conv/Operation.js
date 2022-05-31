@@ -1,6 +1,6 @@
-export { Operation };
+export { Base };
 
-import { TensorPlaceholder } from "./Block_TensorPlaceholder.js";
+import { TensorPlaceholder } from "./TensorPlaceholder.js";
 
 
 
@@ -158,13 +158,15 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
   }
 
 
-//!!! ...unfinished... (2022/05/31)
   /**
+   * Sub-class should override this method.
+   *
+   * This method should:
+   *   - Use this.input0.realTensor (and this.input1.realTensor) to compute.
+   *   - Place the result in this.output0.realTensor (and this.output1.realTensor)
    *
    */
   apply() {
-
-//!!! ...unfinished... (2022/05/31)
   }
 
 
