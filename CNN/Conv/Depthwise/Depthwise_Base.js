@@ -246,7 +246,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     }
 
     // 2.
-    this.pfnActivation = ValueDesc.ActivationFunction.Singleton.getInfoById( this.nActivationId );
+    this.pfnActivation = ValueDesc.ActivationFunction.Singleton.getInfoById( this.nActivationId )?.pfn;
 
     // 3.
     if ( this.bDepthwise ) {
