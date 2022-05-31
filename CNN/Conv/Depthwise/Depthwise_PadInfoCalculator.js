@@ -40,7 +40,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  * @member {number} outputChannelCount    Output image channel count.
  * @member {number} outputElementCount    Output image elements count (= ( outputHeight * outputWidth * outputChannelCount ) ).
  */
-let PadInfoCalculator = ( Base = Object ) => class extends Base {
+let PadInfoCalculator = ( ParentClass = Object ) => class extends ParentClass {
 
   constructor( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
     super();
