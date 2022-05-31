@@ -8,21 +8,25 @@ export { TensorPlaceholder };
  *   - In Block.apply(), it is used for transferring tensor to the next operation.
  *
  *
- * @member {Block.TensorPlaceholderSet} finalUser
- *   The final user of this tensor. If null, this tensor is not used by other operation.
+
+//!!! ...unfinished... (2022/05/31 Remarked)
+// * @member {Block.TensorPlaceholderSet} finalOperation
+ * @member {object} finalOperation
+ *   This tensor's final operation which should be responsible for destroying this tensor. If null, this tensor is not used by other
+ * operation.
  *
  * @member {tf.tensor} realTensor
- *   The real tensor represented by this placeholder. It is filled dynamically in operation's apply() method.
+ *   The real tensor represented by this placeholder. It is filled dynamically in an operation's apply() method.
  *
  */
 class TensorPlaceholder {
 
   constructor() {
-    this.finalUser = null;
+    this.finalOperation = null;
     this.realTensor = null;
   }
 
-//!!! ...unfinished... (2022/05/31)
+//!!! ...unfinished... (2022/05/31) should be moved to Block.Base
 
   /**
    * Call the this.operationObject.setKeepInputTensor() according to：
