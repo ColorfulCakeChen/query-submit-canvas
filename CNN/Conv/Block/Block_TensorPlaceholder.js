@@ -8,7 +8,7 @@ export { TensorPlaceholder };
  *   - In Block.apply(), it is used for transferring tensor to the next operation.
  *
  *
- * @member {object} lastOperation
+ * @member {Block.Operation.Base} lastOperation
  *   The operation uses this tensor at last. The last operation should be responsible for destroying this tensor. If null, this tensor is
  * not used by any operation.
  *
