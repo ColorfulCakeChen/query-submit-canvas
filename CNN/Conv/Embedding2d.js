@@ -23,14 +23,7 @@ class Params extends Weights.Params {
    *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
    * embedding channels. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    */
-  constructor(
-
-//!!! ...unfinished... (2022/05/21)
-    inputTensorPlaceholder0,
-    
-    inputFloat32Array, byteOffsetBegin, channelMultiplier ) {
-
-    super( inputTensorPlaceholder0, null, 1 );
+  constructor( inputFloat32Array, byteOffsetBegin, channelMultiplier ) {
 
 //!!! ...unfinished...
 // squeeze-and-excitation ?
@@ -127,7 +120,19 @@ Params.channelMultiplier = new ParamDesc.Int( "channelMultiplier", 1, 32 );
  * so that they can be used as tf.gather()'s indices. If ( this.bKeepInputTensor == false ), the inputTensor3d
  * will be disposed. If ( this.bKeepInputTensor == true ), the inputTensor3d will be kept.
  */
-class Base extends ReturnOrClone.Base {
+class Base extends Operation.Base() {
+
+  constructor(
+//!!! ...unfinished... (2022/05/21)
+    inputTensorPlaceholder0,
+    inputScaleBoundsArray0 ) {
+
+    super( inputTensorPlaceholder0, null, 1 );
+
+//!!! ...unfinished... (2022/05/21)
+    Base.adjust_pfn.call( this );
+    Base.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1 );
+  }
 
   /**
    * Generator for initializing this object.
