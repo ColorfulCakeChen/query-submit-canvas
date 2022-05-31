@@ -1,4 +1,4 @@
-export { TensorPlaceholder };
+export { Base };
 
 //!!! ...unfinished... (2022/05/30) Perhaps, add height, width, channelCount info.
 
@@ -16,7 +16,7 @@ export { TensorPlaceholder };
  *   The real tensor represented by this placeholder. It is filled dynamically in an operation's apply() method.
  *
  */
-class TensorPlaceholder {
+class Base {
 
   constructor() {
     this.lastOperation = null;
