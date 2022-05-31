@@ -1,5 +1,6 @@
 export { Base };
 
+import * as Operation from "./Operation.js";
 import * as BoundsArraySet from "./BoundsArraySet.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
 
@@ -51,7 +52,7 @@ import * as ChannelShuffler from "./ChannelShuffler.js";
  * ConcatShuffleSplit_and_destroy0_keep1(), ConcatShuffleSplit_and_destroy0_destroy1() according to the parameters.
  *
  */
-class Base {
+class Base extends Operation.Base() {
 
   /**
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
@@ -60,9 +61,13 @@ class Base {
    *
    */
   constructor(
+//!!! ...unfinished... (2022/05/21)
+    inputTensorPlaceholder0, inputTensorPlaceholder1,
     channelShuffler, bShuffleSplit = true, bKeepInputTensor0, bKeepInputTensor1,
     inputScaleBoundsArray0, inputScaleBoundsArray1,
     arrayTemp_forInterleave_asGrouptTwo ) {
+
+    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 2 );
 
     this.channelShuffler = channelShuffler;
     this.setShuffleSplit_KeepInputTensor( bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 );
