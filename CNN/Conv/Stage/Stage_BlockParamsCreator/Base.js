@@ -136,6 +136,12 @@ class Base {
       } else {
         this.bDepthwiseBias = false;
         this.depthwiseActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+
+
+//!!! ...unfinished... (2022/05/31)
+// In this case, if depthwise input ( height, width ) is ( 1, 1 ), the depthwise may be discarded (since no bias and no activation)
+// to improve performance.
+
       }
     }
 
