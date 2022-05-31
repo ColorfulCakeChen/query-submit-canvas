@@ -52,7 +52,7 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *
  * @see PadInfoCalculator
  */
-let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalculator( Base ) {
+let PassThrough_FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfoCalculator( ParentClass ) {
 
   /**
    */
