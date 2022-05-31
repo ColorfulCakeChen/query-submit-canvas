@@ -193,7 +193,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
 
     // 2.
-    this.pfnActivation = ValueDesc.ActivationFunction.Singleton.getInfoById( this.nActivationId );
+    this.pfnActivation = ValueDesc.ActivationFunction.Singleton.getInfoById( this.nActivationId )?.pfn;
 
     // 3.
     if ( this.bPointwise ) {
