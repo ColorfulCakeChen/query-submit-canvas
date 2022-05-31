@@ -9,8 +9,8 @@ export { TensorPlaceholder };
  *
  *
  * @member {object} lastOperation
- *   The operation uses this tensor at last. The operation should be responsible for destroying this tensor. If null, this tensor is not
- * used by any operation.
+ *   The operation uses this tensor at last. The last operation should be responsible for destroying this tensor. If null, this tensor is
+ * not used by any operation.
  *
  * @member {tf.tensor} realTensor
  *   The real tensor represented by this placeholder. It is filled dynamically in an operation's apply() method.
