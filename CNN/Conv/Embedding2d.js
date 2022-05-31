@@ -3,7 +3,8 @@ export { Params, Base };
 import * as ValueMax from "../ValueMax.js";
 import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
-import * as ReturnOrClone from "./ReturnOrClone.js";
+import * as Operation from "./Operation.js";
+//import * as ReturnOrClone from "./ReturnOrClone.js";
 
 /**
  * Embedding (2d) layer parameters.
@@ -22,7 +23,14 @@ class Params extends Weights.Params {
    *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
    * embedding channels. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    */
-  constructor( inputFloat32Array, byteOffsetBegin, channelMultiplier ) {
+  constructor(
+
+//!!! ...unfinished... (2022/05/21)
+    inputTensorPlaceholder0,
+    
+    inputFloat32Array, byteOffsetBegin, channelMultiplier ) {
+
+    super( inputTensorPlaceholder0, null, 1 );
 
 //!!! ...unfinished...
 // squeeze-and-excitation ?
