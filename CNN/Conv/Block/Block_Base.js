@@ -77,6 +77,8 @@ OPERATION_PARALLEL_1_OUTPUT_1
 How to describe no input at some position?
 */
 
+//!!! ...unfinished... (2022/05/31) needs a currentTensorPlaceholderSet
+
 
 /**
  * One block of a stage of convolution neural network. Basically, there are three convolutions inside this object.
