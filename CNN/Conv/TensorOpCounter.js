@@ -82,6 +82,9 @@ class Base {
     this.tensorId = tensorId;
     this.operationObject = operationObject;
     this.inputArray = [ input0, input1 ];
+    
+//!!! ...unfinished... (2022/05/31)
+// It seems that recording the final operation is enough. It is not necessary to record an array.
     this.nextOperationArray = [];
 
     // Record this operation is one of the input's operations.
