@@ -35,7 +35,7 @@ class HeightWidthDepth {
     this.inputChannelCount = depth;
     this.outputChannelCount = depth;
     this.channelMultiplier = 1;
-    this.strids = 1;
+    this.strides = 1;
     this.pad = "same";
 
     this.depthwiseFilterHeight = 3;
@@ -135,30 +135,30 @@ class HeightWidthDepth {
 
   test_depthwise_bias_pointwise_bias() {
     let t0, t1;
-    t0 = tf.depthwiseConv2d( this.inputImage, this.depthwiseFilters, this.strids, this.pad );
+    t0 = tf.depthwiseConv2d( this.inputImage, this.depthwiseFilters, this.strides, this.pad );
     t1 = tf.add( t0, this.depthwiseBiases ); t0.dispose();
-    t0 = tf.conv2d( t1, this.pointwiseFilters, this.strids, this.pad ); t1.dispose();
+    t0 = tf.conv2d( t1, this.pointwiseFilters, this.strides, this.pad ); t1.dispose();
     t1 = tf.add( t0, this.pointwiseBiases ); t0.dispose();
     t1.dispose();
   }
 
   test_depthwise_pointwise_bias() {
     let t0, t1;
-    t0 = tf.depthwiseConv2d( this.inputImage, this.depthwiseFilters, this.strids, this.pad );
-    t1 = tf.conv2d( t0, this.pointwiseFilters, this.strids, this.pad ); t0.dispose();
+    t0 = tf.depthwiseConv2d( this.inputImage, this.depthwiseFilters, this.strides, this.pad );
+    t1 = tf.conv2d( t0, this.pointwiseFilters, this.strides, this.pad ); t0.dispose();
     t0 = tf.add( t1, this.pointwiseBiases ); t1.dispose();
     t0.dispose();
   }
 
   test_fusedConv_bias() {
     let t0, t1;
-    t0 = tf.conv2d( this.inputImage, this.fusedConvFilters, this.strids, this.pad );
+    t0 = tf.conv2d( this.inputImage, this.fusedConvFilters, this.strides, this.pad );
     t1 = tf.add( t0, this.fusedConvBiases ); t0.dispose();
     t1.dispose();
   }
 
   test_fusedConvWithBias() {
-    let t0 = tf.conv2d( this.inputWithBiasImage, this.fusedConvWithBiasFilters, this.strids, this.pad );
+    let t0 = tf.conv2d( this.inputWithBiasImage, this.fusedConvWithBiasFilters, this.strides, this.pad );
     t0.dispose();
   }
 
@@ -176,7 +176,7 @@ function init() {
 
   disposeTensors();
 
-  let depth = 1 * 1024; //8; //4;
+  let depth = 512; //8; //4;
 
   // Using mobile phone's resolution ( 2160 * 1080 ) will crash the computer.
   // Using ( 1 / 10 ) of computer screen ( 1920 * 1080 ).
