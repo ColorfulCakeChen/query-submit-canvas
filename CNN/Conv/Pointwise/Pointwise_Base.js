@@ -46,10 +46,12 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
   /**
    */
   constructor(
+    inputTensorPlaceholder0,
     inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
     super(
+      inputTensorPlaceholder0, null, 1,
       inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
   }
@@ -227,6 +229,9 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     inputTensor.dispose();
     return t;
   }
+
+  
+//!!! ...unfinished... (2022/05/31) use this.input0 and put to this.output0
 
   /** Pointwise Convolution, Bias and Activation. */
   static Conv_and_destroy_or_keep( inputTensor ) {
