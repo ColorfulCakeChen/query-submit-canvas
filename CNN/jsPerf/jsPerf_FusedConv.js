@@ -176,7 +176,7 @@ function init() {
 
   disposeTensors();
 
-  let depth = 10 * 1024; //8; //4;
+  let depth = 5 * 1024; //8; //4;
 
   // Using mobile phone's resolution ( 2160 * 1080 ) will crash the computer.
   // Using ( 1 / 10 ) of computer screen ( 1920 * 1080 ).
