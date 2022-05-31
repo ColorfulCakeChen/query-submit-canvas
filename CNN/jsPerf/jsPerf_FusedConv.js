@@ -181,7 +181,7 @@ function init() {
   // Using mobile phone's resolution ( 2160 * 1080 ) will crash the computer.
   // Using ( 1 / 10 ) of computer screen ( 1920 * 1080 ).
 //  globalThis.testSet = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
-  globalThis.testSet = new HeightWidthDepth( 1, 1, depth ); // height, width, depth
+  globalThis.testSet = new HeightWidthDepth( 2, 2, depth ); // height, width, depth
 
   globalThis.testSet_All = [
     globalThis.testSet
