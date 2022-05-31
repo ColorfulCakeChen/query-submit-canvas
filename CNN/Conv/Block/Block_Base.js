@@ -373,6 +373,14 @@ class Base extends ReturnOrClone.Base {
    *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous Block value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
    *
+   * @param {Block.TensorPlaceholder} inputTensorPlaceholder0
+   *   The tensor placeholder of input0. Usually, it is The .output0 of the previous Block tensor placeholder. It will be kept
+   * (not cloned) directly. So caller should not modify them.
+   *
+   * @param {Block.TensorPlaceholder} inputTensorPlaceholder1
+   *   The tensor placeholder of input1. Usually, it is The .output1 of the previous Block tensor placeholder. It will be kept
+   * (not cloned) directly. So caller should not modify them.
+   *
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
@@ -385,7 +393,10 @@ class Base extends ReturnOrClone.Base {
    *   Yield ( value = false ) when ( done = true ) failed.
    */
   * initer(
-    progressParent, params, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
+    progressParent, params,
+    inputScaleBoundsArray0, inputScaleBoundsArray1,
+    inputTensorPlaceholder0, inputTensorPlaceholder1,
+    channelShuffler_ConcatPointwiseConv,
     arrayTemp_forInterleave_asGrouptTwo ) {
 
     // 0. Prepare
@@ -482,7 +493,10 @@ class Base extends ReturnOrClone.Base {
 
 
 //!!! ...unfinished... (2022/05/31)
-//    this.tensorPlaceholderSet = new TensorPlaceholderSet( ??, ??, ?? );
+// this.tensorPlaceholderSet.output0, this.tensorPlaceholderSet.output1 should be set when the last operation is created.
+    this.tensorPlaceholderSet = new TensorPlaceholderSet( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
+
+//!!! ...unfinished... (2022/05/31)
     this.operationArray = new Array( 1 );
     this.operationParallel1Array = new Array( 1 );
 
