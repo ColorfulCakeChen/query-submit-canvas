@@ -1,5 +1,6 @@
 export { Base };
 
+import * as Operation from "./Operation.js";
 import * as BoundsArraySet from "./BoundsArraySet.js";
 
 /**
@@ -32,10 +33,15 @@ import * as BoundsArraySet from "./BoundsArraySet.js";
  * according to the parameters.
  *
  */
-class Base {
+class Base extends Operation.Base() {
 
   constructor(
+//!!! ...unfinished... (2022/05/21)
+    inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1, inputScaleBoundsArray0, inputScaleBoundsArray1 ) {
+
+    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
 
