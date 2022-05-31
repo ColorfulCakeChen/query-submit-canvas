@@ -23,7 +23,7 @@ import { TensorPlaceholder } from "./Block_TensorPlaceholder.js";
 
 
 /**
- * A set of TensorPlaceholder.
+ * An object operates several TensorPlaceholder.
  *
  * In Block.init(), it is used for tracking the current tensor placeholders. It could simply the decision of what tensor placeholders
  * should be used as the next operation's input.
@@ -31,9 +31,6 @@ import { TensorPlaceholder } from "./Block_TensorPlaceholder.js";
  * In operation (e.g. Pointwise.Base), it is used for tracking the tensor placeholders of the operation. It is used to get input tensor(s)
  * and output tensor(s) in Operation.apply().
  *
- *
- * @member {object} operationObject
- *   The operation owning this tensor placeholder set.
  *
  * @member {Block.TensorPlaceholder} input0
  *   The TensorPlaceholder object which represents this operation's first input. It (from constructor) will be kept (not cloned)
@@ -61,30 +58,45 @@ import { TensorPlaceholder } from "./Block_TensorPlaceholder.js";
 let Operation = ( Base = Object ) => class extends Base {
 
   /**
+   * This constructor will register this operation as the input TensorHolder's last operation. So the construction order is important
+   * because the last constructed Operation object will become the real last operation of the inputs.
+   *
+   *
    * @param {number} outputTensorCount
    *   If 0, no this.outputX will be created. If 1, only the this.output0 will be created. If 2, both the this.output0 and this.output1
    * will be created.
    */
-  constructor( operationObject, input0, input1, outputTensorCount ) {
+  constructor( input0, input1, outputTensorCount ) {
     this.input0 = input0;
     this.input1 = input1;
 
-//!!! ...unfinished... (2022/05/30) Register as the input TensorPlaceholder's final user.
+    // Register as the input TensorPlaceholder's final user.
+    {
+      if ( this.input0 )
+        this.input0.lastOperation = this;
 
-    if ( outputTensorCount >= 1 ) {
-      this.output0 = new TensorPlaceholder();
+      if ( this.input1 )
+        this.input1.lastOperation = this;
+    }
 
-      if ( outputTensorCount >= 2 ) {
-        this.output1 = new TensorPlaceholder();
+    // Create outpiut TensorPlaceholder.
+    {
+      if ( outputTensorCount >= 1 ) {
+        this.output0 = new TensorPlaceholder();
+
+        if ( outputTensorCount >= 2 ) {
+          this.output1 = new TensorPlaceholder();
+        }
       }
     }
   }
 
-//!!! ...unfinished... (2022/05/31)
 
   /**
-   * Adjust this.apply so that this.apply() will or will not dispose its inputTensors.
    * Sub-class should override this method.
+   *
+   * The this.setKeepInputTensor_IfNotLastOperation_Or_In() will call this method. This method should adjust
+   * this.apply so that this.apply() will or will not dispose its inputTensors.
    *
    * @param {boolean} bKeepInputTensor0
    *   Whether the 1st input tensor should be destroyed by this operation.
@@ -96,7 +108,6 @@ let Operation = ( Base = Object ) => class extends Base {
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
   }
 
-//!!! ...unfinished... (2022/05/31) Perhaps, should be moved to Block.Base
 
   /**
    * This method will call this.setKeepInputTensor() according to：
