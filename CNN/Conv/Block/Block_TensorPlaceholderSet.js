@@ -1,25 +1,6 @@
 export { TensorPlaceholderSet };
 
 import { TensorPlaceholder } from "./Block_TensorPlaceholder.js";
-//import { Operation } from "./Block_Operation.js";
-
-
-//!!! ...unfinished... (2022/05/30) Used by Operation.apply()
-// class OperationApplyArgs {
-//
-// //   constructor() {
-// //     this.blockInput0 =
-// //     this.blockInput1 =
-// //
-// //     this.operationInput0 =
-// //     this.operationInput1 =
-// //     this.operationOutput0 =
-// //     this.operationOutput1 =;
-//   }
-//
-// }
-//
-
 
 /**
  * A set of TensorPlaceholder.
