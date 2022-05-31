@@ -12,7 +12,8 @@ import * as Depthwise from "../Depthwise.js";
 import * as AddTwoTensors from "../AddTwoTensors.js";
 import * as ConcatAlongAxisId2 from "../ConcatAlongAxisId2.js";
 import * as ConcatShuffleSplit from "../ConcatShuffleSplit.js";
-import { TensorPlaceholderSet } from "./Block_TensorPlaceholderSet.js";
+import { TensorPlaceholder } from "./Block_TensorPlaceholder.js";
+import * as Operation from "./Block_Operation.js";
 import { Params } from "./Block_Params.js";
 
 
@@ -373,13 +374,17 @@ class Base extends ReturnOrClone.Base {
    *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous Block value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
    *
-   * @param {Block.TensorPlaceholder} inputTensorPlaceholder0
-   *   The tensor placeholder of input0. Usually, it is The .output0 of the previous Block tensor placeholder. It will be kept
-   * (not cloned) directly. So caller should not modify them.
-   *
-   * @param {Block.TensorPlaceholder} inputTensorPlaceholder1
-   *   The tensor placeholder of input1. Usually, it is The .output1 of the previous Block tensor placeholder. It will be kept
-   * (not cloned) directly. So caller should not modify them.
+   
+//!!! ...unfinished... (2022/05/31) should be created by Block.Base internally.
+//
+//    * @param {Block.TensorPlaceholder} inputTensorPlaceholder0
+//    *   The tensor placeholder of input0. Usually, it is The .output0 of the previous Block tensor placeholder. It will be kept
+//    * (not cloned) directly. So caller should not modify them.
+//    *
+//    * @param {Block.TensorPlaceholder} inputTensorPlaceholder1
+//    *   The tensor placeholder of input1. Usually, it is The .output1 of the previous Block tensor placeholder. It will be kept
+//    * (not cloned) directly. So caller should not modify them.
+
    *
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
@@ -395,7 +400,10 @@ class Base extends ReturnOrClone.Base {
   * initer(
     progressParent, params,
     inputScaleBoundsArray0, inputScaleBoundsArray1,
-    inputTensorPlaceholder0, inputTensorPlaceholder1,
+
+//!!! ...unfinished... (2022/05/31) should be created by Block.Base internally.
+//    inputTensorPlaceholder0, inputTensorPlaceholder1,
+
     channelShuffler_ConcatPointwiseConv,
     arrayTemp_forInterleave_asGrouptTwo ) {
 
@@ -493,9 +501,14 @@ class Base extends ReturnOrClone.Base {
 
 
 //!!! ...unfinished... (2022/05/31)
-// this.tensorPlaceholderSet.output0, this.tensorPlaceholderSet.output1 should be set when the last operation is created.
-    this.tensorPlaceholderSet = new TensorPlaceholderSet( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
+// this.operationBegin, this.tensorPlaceholderSet.output1 should be set when the last operation is created.
+//     this.operationBegin = ???; new Operation.???( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
+//     this.operationEnd = ???; new Operation.???( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
 
+//!!! ...unfinished... (2022/05/31) will be used inside apply().
+    this.inputTensorPlaceholder0 = new TensorPlaceholder();
+    this.inputTensorPlaceholder1 = new TensorPlaceholder();
+ 
 //!!! ...unfinished... (2022/05/31)
     this.operationArray = new Array( 1 );
     this.operationParallel1Array = new Array( 1 );
