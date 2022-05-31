@@ -12,6 +12,8 @@ import { TensorPlaceholder } from "./Block_TensorPlaceholder.js";
  * and output tensor(s) in Operation.apply().
  *
  *
+ * @member {object} operationObject
+ *   The operation owing this tensor placeholder set.
  *
  * @member {Block.TensorPlaceholder} input0
  *   The TensorPlaceholder object which represents this operation's first input. It (from constructor) will be kept (not cloned)
@@ -43,7 +45,7 @@ class TensorPlaceholderSet {
    *   If 0, no this.outputX will be created. If 1, only the this.output0 will be created. If 2, both the this.output0 and this.output1
    * will be created.
    */
-  constructor( input0, input1, outputTensorCount ) {
+  constructor( operationObject, input0, input1, outputTensorCount ) {
     this.input0 = input0;
     this.input1 = input1;
 
@@ -82,6 +84,59 @@ class TensorPlaceholderSet {
         return 1;
       else
         return 0;
+  }
+
+//!!! ...unfinished... (2022/05/31) Perhaps, should be moved to Block.Base
+
+  /**
+   * Call the this.operationObject.setKeepInputTensor() according to：
+   *   - whether the operation is the last operation of the this.input0 / this.input1.
+   *   - whether the this.input0 / this.input1 is in alwaysKeepSet.
+   *
+   * @param {Set<Block.TensorPlaceholder>} alwaysKeepSet
+   *   A set object. Its every element is Block.TensorPlaceholder object. They represent tensors never be disposed. The this.input0
+   * and this.input1 will be compared with them.
+   */
+  operationObject_setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet ) {
+  
+    if ( !this.operationObject )
+      return; // Since there is no operation, there is no need to set up its keep-input flags.
+
+    // Note: If an input appears multiple times (i.e. ( this.input0 == this.input1 ); multiple inputs of this operation are the same),
+    //       the input will be disposed multiple times.
+    //
+    tf.util.assert( ( this.input0 != this.input1 ),
+      `Block.TensorPlaceholderSet.operationObject_setKeepInputTensor_IfNotLastOperation_Or_In(): `
+        + `input0 ( ${this.input0} ) should be different from `
+        + `input1 ( ${this.input1} ).`
+    );
+
+    // If this operation is the last operation of the input tensor, this operation is responsible for disposing it.
+
+    let input0_bNeedDispose;
+    if (   ( this.input0 )
+        && ( !alwaysKeepSet?.has( this.input0 ) ) // The input in alwaysKeepSet should always be kept (always not to be disposed).
+        && ( this.input0.lastOperation == this.operationObject )
+       ) {
+      input0_bNeedDispose = true;
+
+    } else {
+      input0_bNeedDispose = false;
+    }
+
+    let input1_bNeedDispose;
+    if (   ( this.input1 )
+        && ( !alwaysKeepSet?.has( this.input1 ) ) // The input in alwaysKeepSet should always be kept (always not to be disposed).
+        && ( this.input1.lastOperation == this.operationObject )
+       ) {
+      input1_bNeedDispose = true;
+
+    } else {
+      input1_bNeedDispose = false;
+    }
+
+    // Configure the operation to keep or dispose its inputs.
+    this.operationObject.setKeepInputTensor( input0_bNeedDispose, input1_bNeedDispose );
   }
 
 }
