@@ -55,7 +55,7 @@ import { TensorPlaceholder } from "./Block_TensorPlaceholder.js";
  *   How many output tensor placeholders. It's value is between [ 0, 2 ].
  *
  */
-let Operation = ( Base = Object ) => class extends Base {
+let Base = ( ParentClass = Object ) => class extends ParentClass {
 
   /**
    * This constructor will register this operation as the input TensorHolder's last operation. So the construction order is important
@@ -124,7 +124,7 @@ let Operation = ( Base = Object ) => class extends Base {
     //       the input will be disposed multiple times.
     //
     tf.util.assert( ( this.input0 != this.input1 ),
-      `Block.Operation.setKeepInputTensor_IfNotLastOperation_Or_In(): `
+      `Block.Operation.Base.setKeepInputTensor_IfNotLastOperation_Or_In(): `
         + `input0 ( ${this.input0} ) should be different from `
         + `input1 ( ${this.input1} ).`
     );
