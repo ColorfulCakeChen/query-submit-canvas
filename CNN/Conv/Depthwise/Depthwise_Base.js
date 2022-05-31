@@ -305,6 +305,10 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     return t;
   }
 
+  
+//!!! ...unfinished... (2022/05/31) use this.input0 and put to this.output0
+
+
   /** Depthwise Operation, Bias and Activation. */
   static Operation_and_destroy_or_keep( inputTensor ) {
     return this.pfnOperation( inputTensor ); // may destroy or keep.
