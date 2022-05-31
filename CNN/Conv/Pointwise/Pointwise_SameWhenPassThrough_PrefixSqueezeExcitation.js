@@ -102,6 +102,8 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
   /**
    */
   constructor(
+//!!! ...unfinished... (2022/05/21)
+    inputTensorPlaceholder0,
     nSqueezeExcitationChannelCountDivisor, inputHeight, inputWidth,
     inputChannelCount, outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
@@ -165,6 +167,8 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
         const squeezeExcitation_outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf;
 
         this.squeezeExcitation = new SqueezeExcitation.Base(
+//!!! ...unfinished... (2022/05/21)
+          ???inputTensorPlaceholder0,
           this.nSqueezeExcitationChannelCountDivisor, this.inputHeight, this.inputWidth,
           this.inputChannelCount, this.nActivationId,
           this.nHigherHalfDifferent, this.inputChannelCount_lowerHalf, squeezeExcitation_outputChannelCount_lowerHalf );
@@ -184,6 +188,8 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
       // 3.1.2 pointwise
       {
         this.pointwise = new SameWhenPassThrough(
+//!!! ...unfinished... (2022/05/21)
+          ???inputTensorPlaceholder0,
           this.inputChannelCount, this.outputChannelCount, this.bBias, this.nActivationId,
           this.nHigherHalfDifferent,
           this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,
