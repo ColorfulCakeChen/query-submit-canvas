@@ -1,6 +1,6 @@
 export { Base };
 
-import { TensorPlaceholder } from "./TensorPlaceholder.js";
+import * as TensorPlaceholder from "./TensorPlaceholder.js";
 
 
 
@@ -23,7 +23,7 @@ import { TensorPlaceholder } from "./TensorPlaceholder.js";
 
 
 /**
- * An object operates several TensorPlaceholder.
+ * An object operates several TensorPlaceholder.Base.
  *
  * In Block.init(), it is used for tracking the current tensor placeholders. It could simply the decision of what tensor placeholders
  * should be used as the next operation's input.
@@ -32,22 +32,22 @@ import { TensorPlaceholder } from "./TensorPlaceholder.js";
  * and output tensor(s) in Operation.apply().
  *
  *
- * @member {Block.TensorPlaceholder} input0
+ * @member {TensorPlaceholder.Base} input0
  *   The TensorPlaceholder object which represents this operation's first input. It (from constructor) will be kept (not cloned)
  * directly. So caller should not modify them.
  *
- * @member {Block.TensorPlaceholder} input1
+ * @member {TensorPlaceholder.Base} input1
  *   The TensorPlaceholder object which represents this operation's second input. It could be null which means this operation
  * does not have second input tensor. It (from constructor) will be kept (not cloned) directly. So caller should not modify them.
  *
  * @param {number} inputTensorCount
  *   How many input tensor placeholders.
  * 
- * @member {Block.TensorPlaceholder} output0
+ * @member {TensorPlaceholder.Base} output0
  *   The TensorPlaceholder object which represents this operation's first output. It will be created by constructor if
  * outputTensorCount (of constructor) is >= 1.
  *
- * @member {Block.TensorPlaceholder} output1
+ * @member {TensorPlaceholder.Base} output1
  *   The TensorOpCounter object which represents this operation's second output. It is only created by constructor if
  * outputTensorCount (of constructor) is >= 2.
  *
@@ -82,10 +82,10 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
     // Create outpiut TensorPlaceholder.
     {
       if ( outputTensorCount >= 1 ) {
-        this.output0 = new TensorPlaceholder();
+        this.output0 = new TensorPlaceholder.Base();
 
         if ( outputTensorCount >= 2 ) {
-          this.output1 = new TensorPlaceholder();
+          this.output1 = new TensorPlaceholder.Base();
         }
       }
     }
@@ -114,8 +114,8 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    *   - whether the operation is the last operation of the this.input0 / this.input1.
    *   - whether the this.input0 / this.input1 is in alwaysKeepSet.
    *
-   * @param {Set<Block.TensorPlaceholder>} alwaysKeepSet
-   *   A set object. Its every element is Block.TensorPlaceholder object. They represent tensors never be disposed. The this.input0
+   * @param {Set<TensorPlaceholder.Base>} alwaysKeepSet
+   *   A set object. Its every element is TensorPlaceholder.Base object. They represent tensors never be disposed. The this.input0
    * and this.input1 will be compared with them.
    */
   setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet ) {
