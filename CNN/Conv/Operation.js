@@ -32,22 +32,22 @@ import * as TensorPlaceholder from "./TensorPlaceholder.js";
  * and output tensor(s) in Operation.apply().
  *
  *
- * @member {TensorPlaceholder.Base} input0
+ * @member {TensorPlaceholder.Base} inputTensorPlaceholder0
  *   The TensorPlaceholder object which represents this operation's first input. It (from constructor) will be kept (not cloned)
  * directly. So caller should not modify them.
  *
- * @member {TensorPlaceholder.Base} input1
+ * @member {TensorPlaceholder.Base} inputTensorPlaceholder1
  *   The TensorPlaceholder object which represents this operation's second input. It could be null which means this operation
  * does not have second input tensor. It (from constructor) will be kept (not cloned) directly. So caller should not modify them.
  *
  * @param {number} inputTensorCount
  *   How many input tensor placeholders.
  * 
- * @member {TensorPlaceholder.Base} output0
+ * @member {TensorPlaceholder.Base} outputTensorPlaceholder0
  *   The TensorPlaceholder object which represents this operation's first output. It will be created by constructor if
  * outputTensorCount (of constructor) is >= 1.
  *
- * @member {TensorPlaceholder.Base} output1
+ * @member {TensorPlaceholder.Base} outputTensorPlaceholder1
  *   The TensorOpCounter object which represents this operation's second output. It is only created by constructor if
  * outputTensorCount (of constructor) is >= 2.
  *
@@ -66,9 +66,9 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    *   If 0, no this.outputX will be created. If 1, only the this.output0 will be created. If 2, both the this.output0 and this.output1
    * will be created.
    */
-  constructor( input0, input1, outputTensorCount ) {
-    this.input0 = input0;
-    this.input1 = input1;
+  constructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount ) {
+    this.inputTensorPlaceholder0 = inputTensorPlaceholder0;
+    this.inputTensorPlaceholder1 = inputTensorPlaceholder1;
 
     // Register as the input TensorPlaceholder's final user.
     {
@@ -82,10 +82,10 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
     // Create outpiut TensorPlaceholder.
     {
       if ( outputTensorCount >= 1 ) {
-        this.output0 = new TensorPlaceholder.Base();
+        this.outputTensorPlaceholder0 = new TensorPlaceholder.Base();
 
         if ( outputTensorCount >= 2 ) {
-          this.output1 = new TensorPlaceholder.Base();
+          this.outputTensorPlaceholder1 = new TensorPlaceholder.Base();
         }
       }
     }
@@ -123,18 +123,18 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
     // Note: If an input appears multiple times (i.e. ( this.input0 == this.input1 ); multiple inputs of this operation are the same),
     //       the input will be disposed multiple times.
     //
-    tf.util.assert( ( this.input0 != this.input1 ),
+    tf.util.assert( ( this.inputTensorPlaceholder0 != this.inputTensorPlaceholder1 ),
       `Block.Operation.Base.setKeepInputTensor_IfNotLastOperation_Or_In(): `
-        + `input0 ( ${this.input0} ) should be different from `
-        + `input1 ( ${this.input1} ).`
+        + `inputTensorPlaceholder0 ( ${this.inputTensorPlaceholder0} ) should be different from `
+        + `inputTensorPlaceholder1 ( ${this.inputTensorPlaceholder1} ).`
     );
 
     // If this operation is the last operation of the input tensor, this operation is responsible for disposing it.
 
     let input0_bNeedDispose;
-    if (   ( this.input0 )
-        && ( !alwaysKeepSet?.has( this.input0 ) ) // The input in alwaysKeepSet should always be kept (always not to be disposed).
-        && ( this.input0.lastOperation == this )
+    if (   ( this.inputTensorPlaceholder0 )
+        && ( !alwaysKeepSet?.has( this.inputTensorPlaceholder0 ) ) // input in alwaysKeepSet should always be kept (always not to be disposed).
+        && ( this.inputTensorPlaceholder0.lastOperation == this )
        ) {
       input0_bNeedDispose = true;
 
@@ -143,9 +143,9 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
     }
 
     let input1_bNeedDispose;
-    if (   ( this.input1 )
-        && ( !alwaysKeepSet?.has( this.input1 ) ) // The input in alwaysKeepSet should always be kept (always not to be disposed).
-        && ( this.input1.lastOperation == this )
+    if (   ( this.inputTensorPlaceholder1 )
+        && ( !alwaysKeepSet?.has( this.inputTensorPlaceholder1 ) ) // input in alwaysKeepSet should always be kept (always not to be disposed).
+        && ( this.inputTensorPlaceholder1.lastOperation == this )
        ) {
       input1_bNeedDispose = true;
 
@@ -171,26 +171,26 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
 
 
   get inputTensorCount() {
-    if ( this.input0 )
-      if ( this.input1 )
+    if ( this.inputTensorPlaceholder0 )
+      if ( this.inputTensorPlaceholder1 )
         return 2;
       else
         return 1;
     else
-      if ( this.input1 )
+      if ( this.inputTensorPlaceholder1 )
         return 1;
       else
         return 0; // (should not happen)
   }
 
   get outputTensorCount() {
-    if ( this.output0 )
-      if ( this.output1 )
+    if ( this.outputTensorPlaceholder0 )
+      if ( this.outputTensorPlaceholder1 )
         return 2;
       else
         return 1;
     else
-      if ( this.output1 )
+      if ( this.outputTensorPlaceholder1 )
         return 1;
       else
         return 0;
