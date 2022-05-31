@@ -2,10 +2,7 @@ export { Base };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
-
-//!!! (2022/05/31 Remarked)
-//import * as ReturnOrClone_Activation from "../ReturnOrClone_Activation.js";
-
+import * as ReturnOrClone from "../ReturnOrClone.js";
 //import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as Operation from "../Operation.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
@@ -39,9 +36,7 @@ import { FiltersArray_BiasesArray } from "./Pointwise_FiltersArray_BiasesArray.j
  *
  * @see FiltersArray_BiasesArray
  */
-//!!! (2022/05/31 Remarked)
-//class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Activation.Base ) ) {
-class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( Operation.Base() ) ) {
+class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( Operation.Base( ReturnOrClone.Base ) ) ) {
 
   /**
    */
