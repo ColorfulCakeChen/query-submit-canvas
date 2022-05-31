@@ -176,11 +176,12 @@ function init() {
 
   disposeTensors();
 
-  let depth = 8; //4;
+  let depth = 20 * 1024; //8; //4;
 
   // Using mobile phone's resolution ( 2160 * 1080 ) will crash the computer.
   // Using ( 1 / 10 ) of computer screen ( 1920 * 1080 ).
-  globalThis.testSet = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
+//  globalThis.testSet = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
+  globalThis.testSet = new HeightWidthDepth( 1, 1, depth ); // height, width, depth
 
   globalThis.testSet_All = [
     globalThis.testSet
