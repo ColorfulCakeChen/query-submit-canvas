@@ -1,5 +1,8 @@
 export { TensorPlaceholderSet };
 
+import { TensorPlaceholder } from "./Block_TensorPlaceholder.js";
+
+
 //!!! ...unfinished... (2022/05/30) Used by Operation.apply()
 // class OperationApplyArgs {
 //
