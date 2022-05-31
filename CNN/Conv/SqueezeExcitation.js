@@ -194,6 +194,8 @@ class Base extends ReturnOrClone.Base {
    *
    */
   constructor(
+//!!! ...unfinished... (2022/05/21)
+    inputTensorPlaceholder0,
     nSqueezeExcitationChannelCountDivisor, inputHeight, inputWidth,
     inputChannelCount, nActivationId,
     nPointwise_HigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf ) {
@@ -260,6 +262,8 @@ class Base extends ReturnOrClone.Base {
       let squeezeDepthwise_boundsArraySet_output0;
       if ( this.bSqueeze ) {
         this.squeezeDepthwise = new Depthwise.ConstantWhenPassThrough(
+//!!! ...unfinished... (2022/05/21)
+          ???inputTensorPlaceholder0,
           this.inputHeight, this.inputWidth, squeeze_inputChannelCount,
           ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,    // global average pooling.
           this.inputHeight, this.inputWidth,                          // ( filterSize == inputImageSize ) means global pooling.
@@ -326,6 +330,8 @@ class Base extends ReturnOrClone.Base {
         }
 
         this.intermediatePointwise = new Pointwise.ConstantWhenPassThrough(
+//!!! ...unfinished... (2022/05/21)
+          ???inputTensorPlaceholder0,
           intermediate_inputChannelCount, intermediate_outputChannelCount,
           intermediate_bBias,
           this.nActivationId,
@@ -360,6 +366,8 @@ class Base extends ReturnOrClone.Base {
 
       {
         this.excitationPointwise = new Pointwise.ConstantWhenPassThrough(
+//!!! ...unfinished... (2022/05/21)
+          ???inputTensorPlaceholder0,
           excitation_inputChannelCount, excitation_outputChannelCount,
           true, // (bBias) the final operation should always have bias (even if no activation).
           this.nActivationId,
