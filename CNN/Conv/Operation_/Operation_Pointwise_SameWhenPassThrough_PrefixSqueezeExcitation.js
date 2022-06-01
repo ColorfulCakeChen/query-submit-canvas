@@ -1,10 +1,13 @@
-export { SameWhenPassThrough_PrefixSqueezeExcitation };
+export { Pointwise_SameWhenPassThrough_PrefixSqueezeExcitation };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as SqueezeExcitation from "../SqueezeExcitation.js";
 import { Pointwise_SameWhenPassThrough } from "./Operation_Pointwise_SameWhenPassThrough.js";
+
+
+//!!! ...unfinished... (2022/06/01) should be destructured to be able to contain twin parallel opeartions.
 
 
 //!!! ...unfinished... (2022/05/28)
