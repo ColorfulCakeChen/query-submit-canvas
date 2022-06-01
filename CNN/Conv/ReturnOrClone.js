@@ -101,7 +101,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    */
   static ActivationFunction_getById( nActivationId ) {
     let info = Base.ActivationFunction_getInfoById( nActivationId );
-    let pfn = info.pfn;
+    let pfn = info?.pfn;
     return pfn;
   }
 
