@@ -1,7 +1,7 @@
 export { Base };
 
 /**
- * Shared common base class for Embedding2d and PointDepthPoint.
+ * Provide return_input_directly() and keep_input_return_copy.
  *
  */
 class Base {
