@@ -148,6 +148,17 @@ class ConcatShuffleSplit extends Base() {
 //   }
 
 
+  /** @return {number} Always return 0. */
+  get tensorWeightCountExtracted() {
+    return 0;
+  }
+
+  /** @return {number} Always return 0. */
+  get tensorWeightCountTotal() {
+    return 0;
+  }
+
+
   /** Set this.pfnShuffleSplit according to this.bShuffleSplit, this.channelShuffler. */
   static adjust_pfn() {
     if ( this.bShouldShuffleSplit ) {
