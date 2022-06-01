@@ -496,12 +496,13 @@ class Base extends ReturnOrClone.Base {
 //!!! ...unfinished... (2022/05/31) will be used inside apply().
     this.inputTensorPlaceholder0 = new TensorPlaceholder.Base();
     this.inputTensorPlaceholder1 = new TensorPlaceholder.Base();
- 
-    // Traking the current tensor placeholders for next operation's input.
-    this.currentTensorPlaceholder0 = this.inputTensorPlaceholder0;
-    this.currentTensorPlaceholder1 = this.inputTensorPlaceholder1;
 
-    this.operationArray = new Array();
+//!!! (2022/06/01 Remarked) using Operation.TwinArray instead.
+//     // Traking the current tensor placeholders for next operation's input.
+//     this.currentTensorPlaceholder0 = this.inputTensorPlaceholder0;
+//     this.currentTensorPlaceholder1 = this.inputTensorPlaceholder1;
+
+    this.operationArray = new ( Operation.TwinArray() )( this.inputTensorPlaceholder0, this.inputTensorPlaceholder1 );
 
     // 2. The pointwise1 convolution.
     if ( !this.operation_append_pointwise1( params.defaultInput, inputScaleBoundsArray0 ) )
@@ -1025,9 +1026,13 @@ class Base extends ReturnOrClone.Base {
   /** Release all tensors. */
   disposeTensors() {
 
+    if ( this.operationArray ) {
+      this.operationArray.disposeTensors();
+      this.operationArray = null;
+    }
+
+
 //!!! ...unfinished... (2022/06/01)
-
-
     if ( this.pointwise1 ) {
       this.pointwise1.disposeTensors();
       this.pointwise1 = null;
@@ -1273,142 +1278,142 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-//!!!
-  /**
-   * @param {Base} this
-   *   The Block.Base object whose .byteOffsetEnd might be updated.
-   *
-   * @param {Class} operationClass
-   *   What kind of operation TO be created.
-   *
-   * @param {Array} constructorArgs
-   *   The arguments to be passed to the constructor of operationClass. If null, the constructor will be called without any argument.
-   *
-   * @param {Array} initArgs
-   *   The arguments to be passed to the init() method of operation object.
-   *   - If null, the operation object's init() will not be called. Usually, this means the operation object needs not extract any weights.
-   *   - If the .init() is called and returns false, this method will failed and return null.
-   *   - If the .init() is called and returns true, this method will update this.byteOffsetEnd.
-   *
-   * @return {object} If success, return the created operation object. If failed, return null.
-   */
-  static operation_create__update_byteOffsetEnd_if_init( operationClass, constructorArgs, initArgs ) {
-    let operationObject;
-
-    // Construct.
-    if ( constructorArgs != undefined ) {
-      operationObject = new operationClass( ...constructorArgs );
-    } else {
-      operationObject = new operationClass();
-    }
-
-    // Intialize.
-    if ( initArgs ) {
-      if ( !operationObject.init( ...initArgs ) )
-        return null;  // e.g. input array does not have enough data.
-
-      this.byteOffsetEnd = operationObject.byteOffsetEnd;
-
-    // Otherwise (i.e. no initArgs), do not call operationObject.init() and do not update this.byteOffsetEnd
-    }
-
-    return operationObject;
-  }
-
-  /**
-   *
-   *
-   * @param {boolean} bParallelTwin
-   *   Whether create and append two parallel operations.
-   *
-   *   - If false, only one operation object (operationObject0) will be created and appended into this.operationArray[].
-   *
-   *     - this.currentTensorPlaceholder0 will be pointered to operationObject0.output0
-   *
-   *     - this.currentTensorPlaceholder1:
-   *
-   *       - will not be modified, if operationObject0 has no output1.
-   *           (i.e. could be viewed as passing through from previous operation output to this operation output).
-   *
-   *       - will be pointered to operationObject0.output1, if operationObject0 has output1.
-   *
-   *   - If true, two operation objects (operationObject0 and operationObject1) will be created (with the same operationClass,
-   *       constructorArgs, initArgs) and appended into this.operationArray[].
-   *
-   *     - this.currentTensorPlaceholder0 will be pointered to operationObject0.output0
-   *         (i.e. operationObject0.output1 will be ignored even if it exists)
-   *
-   *     - this.currentTensorPlaceholder1 will be pointered to operationObject1.output0
-   *         (i.e. operationObject1.output1 will be ignored even if it exists)
-   *
-   * @param {Class} operationClass
-   *   What kind of operation TO be created and appended into this.operationArray[].
-   *
-   * @param {Array} constructorArgs
-   *   The arguments to be passed to the constructor of operationClass. If null, the constructor will be called without any argument.
-   *
-   * @param {Array} initArgs
-   *   The arguments to be passed to the init() method of operation object.
-   *   - If null, the operation object's init() will not be called. Usually, this means the operation object needs not extract any weights.
-   *   - If the .init() is called and returns false, this operation_append() will failed and return false.
-   *   - If the .init() is called and returns true, this operation_append() will update this.byteOffsetEnd.
-   *
-   * @return {boolean}
-   *   Return true, if success.
-   */
-  operation_append( bParallelTwin, operationClass, constructorArgs, initArgs ) {
-
-    // 1. Create and initialize.
-
-    // 1.1 1st operation object.
-    let operationObject0 = Base.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass, constructorArgs, initArgs );
-    if ( !operationObject0 )
-      return false;  // e.g. input array does not have enough data.
-
-    // 1.2 2nd operation object.
-    let operationObject1;
-    if ( bParallelTwin ) {    
-      operationObject1 = Base.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass, constructorArgs, initArgs );
-      if ( !operationObject1 )
-        return false;  // e.g. input array does not have enough data.
-    }
-
-    // 2. Put into queue.
-    this.operationArray.push( operationObject0 );
-    this.operationArray.push( operationObject1 );
-
-    // 3. Traking the current tensor placeholders for next operation's input.
-
-    // 3.1 Only one operation.
-    if ( !bParallelTwin ) {    
-
-      this.currentTensorPlaceholder0 = operationObject0.output0;
-      
-      // If the (first) only operation has two outputs, pointer to the second output of the (first) only operation.
-      if ( operationObject0.output1 ) {
-        this.currentTensorPlaceholder1 = operationObject0.output1;
-
-      // Otherwise, keep this.currentTensorPlaceholder1 the same (i.e. bypass previous output to this output).
-      }
-
-    // 3.2 Two parallel operations.
-    } else {
-      
-      // When there two parallel operations, they should not have output1 (i.e. should only have output0).
-      tf.util.assert( ( operationObject0.output1 == undefined ) && ( operationObject1.output1 == undefined ),
-        `Block.Base.operation_append(): `
-          + `When ( bParallelTwin == true ), `
-          + `operationObject0.output1 ( ${operationObject0.output1} ) and `
-          + `operationObject1.output1 ( ${operationObject1.output1} ) `
-          + `should all be undefined.`
-      );
-
-      this.currentTensorPlaceholder0 = operationObject0.output0;
-      this.currentTensorPlaceholder1 = operationObject1.output0;
-    }
-
-    return true;
-  }
+//!!! (2022/06/01 Remarked) using Operation.TwinArray instead.
+//   /**
+//    * @param {Base} this
+//    *   The Block.Base object whose .byteOffsetEnd might be updated.
+//    *
+//    * @param {Class} operationClass
+//    *   What kind of operation TO be created.
+//    *
+//    * @param {Array} constructorArgs
+//    *   The arguments to be passed to the constructor of operationClass. If null, the constructor will be called without any argument.
+//    *
+//    * @param {Array} initArgs
+//    *   The arguments to be passed to the init() method of operation object.
+//    *   - If null, the operation object's init() will not be called. Usually, this means the operation object needs not extract any weights.
+//    *   - If the .init() is called and returns false, this method will failed and return null.
+//    *   - If the .init() is called and returns true, this method will update this.byteOffsetEnd.
+//    *
+//    * @return {object} If success, return the created operation object. If failed, return null.
+//    */
+//   static operation_create__update_byteOffsetEnd_if_init( operationClass, constructorArgs, initArgs ) {
+//     let operationObject;
+//
+//     // Construct.
+//     if ( constructorArgs != undefined ) {
+//       operationObject = new operationClass( ...constructorArgs );
+//     } else {
+//       operationObject = new operationClass();
+//     }
+//
+//     // Intialize.
+//     if ( initArgs ) {
+//       if ( !operationObject.init( ...initArgs ) )
+//         return null;  // e.g. input array does not have enough data.
+//
+//       this.byteOffsetEnd = operationObject.byteOffsetEnd;
+//
+//     // Otherwise (i.e. no initArgs), do not call operationObject.init() and do not update this.byteOffsetEnd
+//     }
+//
+//     return operationObject;
+//   }
+//
+//   /**
+//    *
+//    *
+//    * @param {boolean} bParallelTwin
+//    *   Whether create and append two parallel operations.
+//    *
+//    *   - If false, only one operation object (operationObject0) will be created and appended into this.operationArray[].
+//    *
+//    *     - this.currentTensorPlaceholder0 will be pointered to operationObject0.output0
+//    *
+//    *     - this.currentTensorPlaceholder1:
+//    *
+//    *       - will not be modified, if operationObject0 has no output1.
+//    *           (i.e. could be viewed as passing through from previous operation output to this operation output).
+//    *
+//    *       - will be pointered to operationObject0.output1, if operationObject0 has output1.
+//    *
+//    *   - If true, two operation objects (operationObject0 and operationObject1) will be created (with the same operationClass,
+//    *       constructorArgs, initArgs) and appended into this.operationArray[].
+//    *
+//    *     - this.currentTensorPlaceholder0 will be pointered to operationObject0.output0
+//    *         (i.e. operationObject0.output1 will be ignored even if it exists)
+//    *
+//    *     - this.currentTensorPlaceholder1 will be pointered to operationObject1.output0
+//    *         (i.e. operationObject1.output1 will be ignored even if it exists)
+//    *
+//    * @param {Class} operationClass
+//    *   What kind of operation TO be created and appended into this.operationArray[].
+//    *
+//    * @param {Array} constructorArgs
+//    *   The arguments to be passed to the constructor of operationClass. If null, the constructor will be called without any argument.
+//    *
+//    * @param {Array} initArgs
+//    *   The arguments to be passed to the init() method of operation object.
+//    *   - If null, the operation object's init() will not be called. Usually, this means the operation object needs not extract any weights.
+//    *   - If the .init() is called and returns false, this operation_append() will failed and return false.
+//    *   - If the .init() is called and returns true, this operation_append() will update this.byteOffsetEnd.
+//    *
+//    * @return {boolean}
+//    *   Return true, if success.
+//    */
+//   operation_append( bParallelTwin, operationClass, constructorArgs, initArgs ) {
+//
+//     // 1. Create and initialize.
+//
+//     // 1.1 1st operation object.
+//     let operationObject0 = Base.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass, constructorArgs, initArgs );
+//     if ( !operationObject0 )
+//       return false;  // e.g. input array does not have enough data.
+//
+//     // 1.2 2nd operation object.
+//     let operationObject1;
+//     if ( bParallelTwin ) {    
+//       operationObject1 = Base.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass, constructorArgs, initArgs );
+//       if ( !operationObject1 )
+//         return false;  // e.g. input array does not have enough data.
+//     }
+//
+//     // 2. Put into queue.
+//     this.operationArray.push( operationObject0 );
+//     this.operationArray.push( operationObject1 );
+//
+//     // 3. Traking the current tensor placeholders for next operation's input.
+//
+//     // 3.1 Only one operation.
+//     if ( !bParallelTwin ) {    
+//
+//       this.currentTensorPlaceholder0 = operationObject0.output0;
+//    
+//       // If the (first) only operation has two outputs, pointer to the second output of the (first) only operation.
+//       if ( operationObject0.output1 ) {
+//         this.currentTensorPlaceholder1 = operationObject0.output1;
+//
+//       // Otherwise, keep this.currentTensorPlaceholder1 the same (i.e. bypass previous output to this output).
+//       }
+//
+//     // 3.2 Two parallel operations.
+//     } else {
+//    
+//       // When there two parallel operations, they should not have output1 (i.e. should only have output0).
+//       tf.util.assert( ( operationObject0.output1 == undefined ) && ( operationObject1.output1 == undefined ),
+//         `Block.Base.operation_append(): `
+//           + `When ( bParallelTwin == true ), `
+//           + `operationObject0.output1 ( ${operationObject0.output1} ) and `
+//           + `operationObject1.output1 ( ${operationObject1.output1} ) `
+//           + `should all be undefined.`
+//       );
+//
+//       this.currentTensorPlaceholder0 = operationObject0.output0;
+//       this.currentTensorPlaceholder1 = operationObject1.output0;
+//     }
+//
+//     return true;
+//   }
 
   /**
    * Append pointwise1 convolution operation.
