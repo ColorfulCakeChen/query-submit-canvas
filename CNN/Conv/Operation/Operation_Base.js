@@ -1,6 +1,6 @@
 export { Base };
 
-import * as TensorPlaceholder from "./TensorPlaceholder.js";
+import * as TensorPlaceholder from "../TensorPlaceholder.js";
 
 
 
