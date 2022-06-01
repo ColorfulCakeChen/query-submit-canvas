@@ -107,7 +107,23 @@ class ConcatAlongAxisId2 extends Base() {
     this.boundsArraySet.set_outputs_all_by_concat_input0_input1(); // The outputChannelCount0 will be adjusted.
   }
 
-//!!!
+  /** Setup this.output0. */
+  static setup_output0_TensorPlaceholder() {
+
+    tf.util.assert( ( this.input0.height == this.input1.height ) && ( this.input0.width == this.input1.width ),
+      `Operation.ConcatAlongAxisId2.setup_output0_TensorPlaceholder(): `
+        + `input0 ( height, width ) = ( ${this.input0.height}, ${this.input0.width} ) and `
+        + `input1 ( height, width ) = ( ${this.input1.height}, ${this.input1.width} ) `
+        + `should be the same.`
+    );
+
+    this.output0.height = this.input0.height;
+    this.output0.width = this.input0.width;
+    this.output0.channelCount = this.input0.channelCount + this.input1.channelCount;
+
+    // Note: This operation's lower half and higher half channel count information will be lost.
+  }
+
 
   /** Concatenate along axis id 2. (Both the input0 and input1 will not be disposed. */
   static Concat_and_keep0_keep1() {
