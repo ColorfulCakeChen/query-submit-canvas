@@ -1359,7 +1359,7 @@ class Base extends ReturnOrClone.Base {
   /**
    *
    *
-   * @param {boolean} bTwin
+   * @param {boolean} bParallelTwin
    *   Whether create and append two parallel operations.
    *
    *   - If false, only one operation object (operationObject0) will be created and appended into this.operationArray[].
@@ -1377,8 +1377,10 @@ class Base extends ReturnOrClone.Base {
    *       constructorArgs, initArgs) and appended into this.operationArray[].
    *
    *     - this.currentTensorPlaceholder0 will be pointered to operationObject0.output0
+   *         (i.e. operationObject0.output1 will be ignored even if it exists)
    *
    *     - this.currentTensorPlaceholder1 will be pointered to operationObject1.output0
+   *         (i.e. operationObject1.output1 will be ignored even if it exists)
    *
    * @param {Class} operationClass
    *   What kind of operation TO be created and appended into this.operationArray[].
@@ -1398,12 +1400,12 @@ class Base extends ReturnOrClone.Base {
    * @return {boolean}
    *   Return true, if success.
    */
-  operation_append( bTwin, operationClass, constructorArgs, initArgs ) {
+  operation_append( bParallelTwin, operationClass, constructorArgs, initArgs ) {
 
     // 1. 1st operation object.
+    let operationObject0;
     {
       // Construct.
-      let operationObject0;
       if ( constructorArgs != undefined ) {
         operationObject0 = new operationClass( ...constructorArgs );
       } else {
@@ -1432,15 +1434,28 @@ class Base extends ReturnOrClone.Base {
       }
         this.currentTensorPlaceholder1 = ;
     }
-  }
+
 
 //!!! ...unfinished... (2022/06/01)
     // 2. 2nd operation object.
     let operationObject1;
-    if ( constructorArgs != undefined ) {
-      operationObject1 = new operationClass( ...constructorArgs );
-    } else {
-      operationObject1 = new operationClass();
+    if ( bParallelTwin ) {    
+      if ( constructorArgs != undefined ) {
+        operationObject1 = new operationClass( ...constructorArgs );
+      } else {
+        operationObject1 = new operationClass();
+      }
+
+
+      // When there two parallel operations, they should not have output1 (i.e. should only have output0).
+      tf.util.assert( ( operationObject0.output1 == undefined ) && ( operationObject1.output1 == undefined ),
+        `Block.Base.operation_append(): `
+          + `When ( bParallelTwin == true ), `
+          + `operationObject0.output1 ( ${operationObject0.output1} ) and `
+          + `operationObject1.output1 ( ${operationObject1.output1} ) `
+          + `should all be undefined.`
+      );
+
     }
 
     return true;
