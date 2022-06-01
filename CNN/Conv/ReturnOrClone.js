@@ -72,4 +72,37 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
     }
   }
 
+
+  /**
+   * Convert activation function id to information object.
+   *
+   * @param {number} nActivationId
+   *   It should be one of ValueDesc.ActivationFunction.Singleton.Ids.Xxx. (e.g. ValueDesc.ActivationFunction.Singleton.Ids.NONE,
+   * ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.COS, ...)
+   *
+   * @return {ValueDesc.ActivationFunction.Info}
+   *   It should be one of ValueDesc.ActivationFunction.Singleton.integerToObjectMap according to the nActivationId.
+   */
+  static ActivationFunction_getInfoById( nActivationId ) {
+    let info = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
+    return info;
+  }
+
+  /**
+   * Convert activation function id to function object.
+   *
+   * @param {number} nActivationId
+   *   It should be one of ValueDesc.ActivationFunction.Singleton.Ids.Xxx. (e.g. ValueDesc.ActivationFunction.Singleton.Ids.NONE,
+   * ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.COS, ...)
+   *
+   * @return {function}
+   *   It should be pfn of ValueDesc.ActivationFunction.Singleton.integerToObjectMap according to the nActivationId. (e.g. null,
+   * tf.relu6, tf.cos, ...)
+   */
+  static ActivationFunction_getById( nActivationId ) {
+    let info = Base.ActivationFunction_getInfoById( nActivationId );
+    let pfn = info.pfn;
+    return pfn;
+  }
+
 }
