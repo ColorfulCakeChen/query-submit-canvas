@@ -1,12 +1,12 @@
-export { Base };
+export { Pointwise };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
-import * as Operation from "../Operation.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
-import { FiltersArray_BiasesArray } from "./Pointwise_FiltersArray_BiasesArray.js";
+import { FiltersArray_BiasesArray } from "../Pointwise/Pointwise_FiltersArray_BiasesArray.js";
+import { Base } from "./Operation_Base.js";
 
 /**
  * Handle pointwise convolution (1x1 conv2d), bias and activation.
@@ -35,9 +35,9 @@ import { FiltersArray_BiasesArray } from "./Pointwise_FiltersArray_BiasesArray.j
  * ConvBiasActivation_and_destroy_or_keep() according to the parameters.
  *
  * @see Operration.Base
- * @see FiltersArray_BiasesArray
+ * @see Pointwise.FiltersArray_BiasesArray
  */
-class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( Operation.Base( ReturnOrClone.Base() ) ) ) {
+class Pointwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( Base( ReturnOrClone.Base() ) ) ) {
 
   /**
    */
@@ -90,11 +90,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
       this.boundsArraySet = new BoundsArraySet.Pointwise( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
       this.boundsArraySet.output0.set_all_byScaleBoundsArray( inputScaleBoundsArray ); // Bypass previous to next.
 
-      this.output0.height = this.input0.height;
-      this.output0.width = this.input0.width;
-      this.output0.channelCount = this.input0.channelCount;
-      this.output0.channelCount_lowerHalf = this.input0.outputChannelCount_lowerHalf;   // (may be undefined)
-      this.output0.channelCount_higherHalf = this.input0.outputChannelCount_higherHalf; // (may be undefined)
+      this.output0 = this.input0; // Bypass previous to next.
 
     } else { // 3.
 
@@ -111,11 +107,17 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
             this.biasesShape = this.biasesArray = null; // Release for reducing memory usage.
           }
 
-          this.output0.height = this.input0.height; // (Pointwise convolution does not change height and width.)
-          this.output0.width = this.input0.width;
-          this.output0.channelCount = this.outputChannelCount;
-          this.output0.channelCount_lowerHalf = this.outputChannelCount_lowerHalf;   // (may be undefined)
-          this.output0.channelCount_higherHalf = this.outputChannelCount_higherHalf; // (may be undefined)
+          {
+            this.output0.height = this.input0.height; // (Pointwise convolution does not change height.)
+            this.output0.width = this.input0.width;   // (Pointwise convolution does not change width.)
+            this.output0.channelCount = this.outputChannelCount;
+
+            if ( this.outputChannelCount_lowerHalf != undefined )
+              this.output0.channelCount_lowerHalf = this.outputChannelCount_lowerHalf;
+
+            if ( this.outputChannelCount_higherHalf != undefined )
+              this.output0.channelCount_higherHalf = this.outputChannelCount_higherHalf;
+          }
 
         } catch ( e ) {  // If failed (e.g. memory not enough), return false.      
           bExtractOk = false;
