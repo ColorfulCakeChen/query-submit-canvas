@@ -1076,17 +1076,16 @@ class Base extends ReturnOrClone.Base {
 //!!! (2022/06/01 Remarked)
 //    this.intermediateTensorsArray = null;
 
-//!!! ...unfinished... (2022/06/01)
-
-    this.inputTensorCount
-      = this.bPointwise1
-      = this.bDepthwise1 = this.bDepthwise2 = this.bDepthwise2Requested
-      = this.bConcat1Requested
-      = this.bPointwise21 = this.bPointwise22 = this.bOutput1Requested = this.bAddInputToOutputRequested
-      = this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 = this.bShould_addInput0ToPointwise22
-      = this.bConcat2ShuffleSplitRequested
-      = this.outputTensorCount
-      = undefined;
+//!!! (2022/06/01 Remarked)
+//     this.inputTensorCount
+//       = this.bPointwise1
+//       = this.bDepthwise1 = this.bDepthwise2 = this.bDepthwise2Requested
+//       = this.bConcat1Requested
+//       = this.bPointwise21 = this.bPointwise22 = this.bOutput1Requested = this.bAddInputToOutputRequested
+//       = this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 = this.bShould_addInput0ToPointwise22
+//       = this.bConcat2ShuffleSplitRequested
+//       = this.outputTensorCount
+//       = undefined;
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
@@ -1468,21 +1467,30 @@ class Base extends ReturnOrClone.Base {
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
     }
 
-    //this.pointwise1
-    let bAppendOk = this.operation_append( false,
-      Pointwise.SameWhenPassThrough, [
-        this.currentTensorPlaceholder0,
-        this.channelCount0_pointwise1Before,
-        this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
-        nHigherHalfDifferent_pointwise1,
-        inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
-        0 // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
-      ],
+   
+    let bAppendOk;
+    if ( this.pointwise1ChannelCount > 0 ) {
 
-      [ inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ]
-    );
+      bAppendOk = this.operation_append( false,
+        Pointwise.SameWhenPassThrough, [
+          this.currentTensorPlaceholder0,
+          this.channelCount0_pointwise1Before,
+          this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
+          nHigherHalfDifferent_pointwise1,
+          inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
+          0 // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
+        ],
 
-//!!! ...unfinished... (2022/06/01) How to assign this.bPointwise1?
+        [ inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ]
+      );
+
+//!!! ...unfinished... (2022/06/01) How to assign this.pointwise1 and this.bPointwise1?
+
+    } else { // There is no pointwise1.
+//      this.bPointwise1 = false;
+      bAppendOk = true;
+    }
+
 
 //!!! (2022/05/24 Remarked) No long support ( Pointwise.outputChannelCount == 0 ).
 
