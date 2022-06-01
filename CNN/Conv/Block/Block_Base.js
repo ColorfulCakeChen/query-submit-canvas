@@ -1365,13 +1365,19 @@ class Base extends ReturnOrClone.Base {
    *   - If false, only one operation object (operationObject0) will be created and appended into this.operationArray[].
    *
    *     - this.currentTensorPlaceholder0 will be pointered to operationObject0.output0
-   *     - this.currentTensorPlaceholder1 will not be modified (i.e. could be viewed as passing through from previous operation
-   *         output to this operation output).
+   *
+   *     - this.currentTensorPlaceholder1:
+   *
+   *       - will not be modified, if operationObject0 has no output1.
+   *           (i.e. could be viewed as passing through from previous operation output to this operation output).
+   *
+   *       - will be pointered to operationObject0.output1, if operationObject0 has output1.
    *
    *   - If true, two operation objects (operationObject0 and operationObject1) will be created (with the same operationClass,
    *       constructorArgs, initArgs) and appended into this.operationArray[].
    *
    *     - this.currentTensorPlaceholder0 will be pointered to operationObject0.output0
+   *
    *     - this.currentTensorPlaceholder1 will be pointered to operationObject1.output0
    *
    * @param {Class} operationClass
@@ -1394,32 +1400,48 @@ class Base extends ReturnOrClone.Base {
    */
   operation_append( bTwin, operationClass, constructorArgs, initArgs ) {
 
-    let operationObject = new operationClass( ...constructorArgs );
-    
-    if ( initArgs ) {
-      if ( !operationObject.init( ...initArgs ) )
-        return false;  // e.g. input array does not have enough data.
+    // 1. 1st operation object.
+    {
+      // Construct.
+      let operationObject0;
+      if ( constructorArgs != undefined ) {
+        operationObject0 = new operationClass( ...constructorArgs );
+      } else {
+        operationObject0 = new operationClass();
+      }
 
-      this.byteOffsetEnd = operationObject.byteOffsetEnd;
+      if ( initArgs ) {
+        if ( !operationObject0.init( ...initArgs ) )
+          return false;  // e.g. input array does not have enough data.
+
+        this.byteOffsetEnd = operationObject0.byteOffsetEnd;
+      }
+
+      this.operationArray.push( operationObject );
+
+      // Traking the current tensor placeholders for next operation's input.
+      this.currentTensorPlaceholder0 = operationObject.output0;
+
+  //!!! ...unfinished... (2022/06/01)
+
+      // If the operation 
+      if ( operationObject.output1 ) {
+        this.currentTensorPlaceholder1 = operationObject.output1;
+
+      // Otherwise,
+      }
+        this.currentTensorPlaceholder1 = ;
     }
-
-    this.operationArray.push( operationObject );
-
-    // Traking the current tensor placeholders for next operation's input.
-    this.currentTensorPlaceholder0 = operationObject.output0;
+  }
 
 //!!! ...unfinished... (2022/06/01)
-
-    // If the operation 
-    if ( operationObject.output1 ) {
-      this.currentTensorPlaceholder1 = operationObject.output1;
-
-    // Otherwise,
+    // 2. 2nd operation object.
+    let operationObject1;
+    if ( constructorArgs != undefined ) {
+      operationObject1 = new operationClass( ...constructorArgs );
+    } else {
+      operationObject1 = new operationClass();
     }
-      this.currentTensorPlaceholder1 = ;
-    }
-
-//!!! ...unfinished... (2022/06/01)
 
     return true;
   }
