@@ -100,6 +100,8 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
       this.output0.height = this.input0.height;
       this.output0.width = this.input0.width;
       this.output0.channelCount = this.input0.channelCount;
+      this.output0.channelCount_lowerHalf = this.input0.outputChannelCount_lowerHalf;   // (may be undefined)
+      this.output0.channelCount_higherHalf = this.input0.outputChannelCount_higherHalf; // (may be undefined)
 
     } else { // 3.
 
@@ -119,6 +121,8 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
           this.output0.height = this.outputHeight;
           this.output0.width = this.outputWidth;
           this.output0.channelCount = this.outputChannelCount;
+          this.output0.channelCount_lowerHalf = this.outputChannelCount_lowerHalf;   // (may be undefined)
+          this.output0.channelCount_higherHalf = this.outputChannelCount_higherHalf; // (may be undefined)
 
         } catch ( e ) {  // If failed (e.g. memory not enough), return false.      
           bExtractOk = false;
