@@ -1355,6 +1355,47 @@ class Base extends ReturnOrClone.Base {
   }
 
 
+//!!!
+  /**
+   * @param {Base} this
+   *   The Block.Base object whose .byteOffsetEnd might be updated.
+   *
+   * @param {Class} operationClass
+   *   What kind of operation TO be created.
+   *
+   * @param {Array} constructorArgs
+   *   The arguments to be passed to the constructor of operationClass. If null, the constructor will be called without any argument.
+   *
+   * @param {Array} initArgs
+   *   The arguments to be passed to the init() method of operation object.
+   *   - If null, the operation object's init() will not be called. Usually, this means the operation object needs not extract any weights.
+   *   - If the .init() is called and returns false, this method will failed and return null.
+   *   - If the .init() is called and returns true, this method will update this.byteOffsetEnd.
+   *
+   * @return {object} If success, return the created operation object. If failed, return null.
+   */
+  static operation_create__update_byteOffsetEnd_if_init( operationClass, constructorArgs, initArgs ) {
+    let operationObject;
+
+    // Construct.
+    if ( constructorArgs != undefined ) {
+      operationObject = new operationClass( ...constructorArgs );
+    } else {
+      operationObject = new operationClass();
+    }
+
+    // Intialize.
+    if ( initArgs ) {
+      if ( !operationObject.init( ...initArgs ) )
+        return null;  // e.g. input array does not have enough data.
+
+      this.byteOffsetEnd = operationObject.byteOffsetEnd;
+
+    // Otherwise (i.e. no initArgs), do not call operationObject.init() and do not update this.byteOffsetEnd
+    }
+
+    return operationObject;
+  }
 
   /**
    *
@@ -1390,11 +1431,8 @@ class Base extends ReturnOrClone.Base {
    *
    * @param {Array} initArgs
    *   The arguments to be passed to the init() method of operation object.
-   *
    *   - If null, the operation object's init() will not be called. Usually, this means the operation object needs not extract any weights.
-   *
-   *   - If the .init() is called and returns false, this operation_append() will failed and return false too.
-   *
+   *   - If the .init() is called and returns false, this operation_append() will failed and return false.
    *   - If the .init() is called and returns true, this operation_append() will update this.byteOffsetEnd.
    *
    * @return {boolean}
@@ -1405,21 +1443,11 @@ class Base extends ReturnOrClone.Base {
     // 1. 1st operation object.
     let operationObject0;
     {
-      // Construct.
-      if ( constructorArgs != undefined ) {
-        operationObject0 = new operationClass( ...constructorArgs );
-      } else {
-        operationObject0 = new operationClass();
-      }
+      operationObject0 = Base.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass, constructorArgs, initArgs );
+      if ( !operationObject0 )
+        return false;  // e.g. input array does not have enough data.
 
-      if ( initArgs ) {
-        if ( !operationObject0.init( ...initArgs ) )
-          return false;  // e.g. input array does not have enough data.
-
-        this.byteOffsetEnd = operationObject0.byteOffsetEnd;
-      }
-
-      this.operationArray.push( operationObject );
+      this.operationArray.push( operationObject0 );
 
       // Traking the current tensor placeholders for next operation's input.
       this.currentTensorPlaceholder0 = operationObject.output0;
@@ -1440,11 +1468,9 @@ class Base extends ReturnOrClone.Base {
     // 2. 2nd operation object.
     let operationObject1;
     if ( bParallelTwin ) {    
-      if ( constructorArgs != undefined ) {
-        operationObject1 = new operationClass( ...constructorArgs );
-      } else {
-        operationObject1 = new operationClass();
-      }
+      operationObject1 = Base.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass, constructorArgs, initArgs );
+      if ( !operationObject1 )
+        return false;  // e.g. input array does not have enough data.
 
 
       // When there two parallel operations, they should not have output1 (i.e. should only have output0).
