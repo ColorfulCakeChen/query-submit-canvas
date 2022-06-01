@@ -2,7 +2,8 @@ export { Base };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
-//import * as TensorPlaceholder from "../TensorPlaceholder.js";
+import * as ReturnOrClone from "../ReturnOrClone.js";
+import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as Operation from "../Operation.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import { FiltersArray_BiasesArray } from "./Depthwise_FiltersArray_BiasesArray.js";
@@ -36,15 +37,16 @@ import { FiltersArray_BiasesArray } from "./Depthwise_FiltersArray_BiasesArray.j
  * Conv_and_destroy(), Conv_and_keep() according to the parameters.
  *
  * @member {function} apply
- *   This is a method. It has one parameter inputTensor and return a outputTensor. The inputTensor (tf.tensor3d) represents the image
- * ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d) represents the result.
- * All intermediate tensors will be disposed. The inputTensors may or may not be disposed. In fact, this method calls one of
- * Base.return_input_directly(), Base.keep_input_return_copy(), Operation_and_destroy_or_keep(), OperationBias_and_destroy_or_keep(),
- * OperationActivation_and_destroy_or_keep(), OperationBiasActivation_and_destroy_or_keep() according to the parameters.
+ *   This is a method. It processes this.input0.realTensor as inputTensor and put to this.output0.realTensor as outputTensor. The
+ * inputTensor (tf.tensor3d) represents the image ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d)
+ * represents the result. All intermediate tensors will be disposed. The inputTensor may or may not be disposed. In fact, this method 
+ * calls one of Operation_and_destroy_or_keep(), OperationBias_and_destroy_or_keep(), OperationActivation_and_destroy_or_keep(),
+ * OperationBiasActivation_and_destroy_or_keep() according to the parameters.
  *
+ * @see Operration.Base
  * @see FiltersArray_BiasesArray
  */
-class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( Operation.Base() ) ) {
+class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( Operation.Base( ReturnOrClone.Base() ) ) ) {
 
   /**
    */
@@ -95,6 +97,10 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
       this.boundsArraySet = new BoundsArraySet.Depthwise( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
       this.boundsArraySet.output0.set_all_byScaleBoundsArray( inputScaleBoundsArray ); // Bypass previous to next.
 
+      this.output0.height = this.input0.height;
+      this.output0.width = this.input0.width;
+      this.output0.channelCount = this.input0.channelCount;
+
     } else { // 3.
 
       bExtractOk = super.init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray );
@@ -110,6 +116,10 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
             this.biasesShape = this.biasesArray = null; // Release for reducing memory usage.
           }
 
+          this.output0.height = this.outputHeight;
+          this.output0.width = this.outputWidth;
+          this.output0.channelCount = this.outputChannelCount;
+
         } catch ( e ) {  // If failed (e.g. memory not enough), return false.      
           bExtractOk = false;
         }
@@ -121,8 +131,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     return this.bInitOk;
   }
 
-  /** Release tensors.
-   */
+  /** Release tensors. */
   disposeTensors() {
     super.disposeTensors(); // Release filtersTensor4d and biasesTensor3d.
 
@@ -169,8 +178,10 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
 
         // Just clone input if unknown depthwise operation.
         // Since there is no operation at all, let apply ignore pfnOperation completely.
-        default:                         this.pfnOperation = this.apply = Base.keep_input_return_copy;
+        default:
           tf.util.assert( false, `Unknown depthwise operation. (${this.pfnOperation}) when setKeepInputTensor( ${bKeepInputTensor} )` );
+          this.pfnOperation = Base.keep_input_return_copy;
+          this.apply = Base.output0_return_input0_cloned;
           break;
       }
 
@@ -188,8 +199,10 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
 
         // Just return input if unknown depthwise operation.
         // Since there is no operation at all, let apply ignore pfnOperation completely.
-        default:                          this.pfnOperation = this.apply = Base.return_input_directly;
+        default:
           tf.util.assert( false, `Unknown depthwise operation. (${this.pfnOperation}) when setKeepInputTensor( ${bKeepInputTensor} )` );
+          this.pfnOperation = Base.return_input_directly;
+          this.apply = Base.output0_return_input0_directly;
           break;
       }
 
@@ -262,7 +275,8 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
       }
     } else {
       // Since there is no operation at all, let apply ignore pfnOperation completely.
-      this.apply = this.pfnOperation = Base.return_input_directly;
+      this.apply = Base.output0_return_input0_directly;
+      this.pfnOperation = Base.return_input_directly;
     }
   }
 
@@ -302,32 +316,35 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
   
 //!!! ...unfinished... (2022/05/31) use this.input0 and put to this.output0
 
+//!!! ...unfinished... (2022/06/01) TensorPlaceholder
+
+
 
   /** Depthwise Operation, Bias and Activation. */
-  static Operation_and_destroy_or_keep( inputTensor ) {
-    return this.pfnOperation( inputTensor ); // may destroy or keep.
+  static Operation_and_destroy_or_keep() {
+    this.output0.realTensor = this.pfnOperation( this.input0.realTensor ); // may destroy or keep.
   }
 
-  static OperationBias_and_destroy_or_keep( inputTensor ) {
-    let t0 = this.pfnOperation( inputTensor ); // may destroy or keep.
+  static OperationBias_and_destroy_or_keep() {
+    let t0 = this.pfnOperation( this.input0.realTensor ); // may destroy or keep.
 
     let t1 = tf.add( t0, this.biasesTensor3d );
     t0.dispose();
 
-    return t1;
+    this.output0.realTensor = t1;
   }
 
-  static OperationActivation_and_destroy_or_keep( inputTensor ) {
-    let t0 = this.pfnOperation( inputTensor ); // may destroy or keep.
+  static OperationActivation_and_destroy_or_keep() {
+    let t0 = this.pfnOperation( this.input0.realTensor ); // may destroy or keep.
 
     let t1 = this.pfnActivation( t0 );
     t0.dispose();
 
-    return t1;
+    this.output0.realTensor = t1;
   }
 
-  static OperationBiasActivation_and_destroy_or_keep( inputTensor ) {
-    let t0 = this.pfnOperation( inputTensor ); // may destroy or keep.
+  static OperationBiasActivation_and_destroy_or_keep() {
+    let t0 = this.pfnOperation( this.input0.realTensor ); // may destroy or keep.
 
     let t1 = tf.add( t0, this.biasesTensor3d );
     t0.dispose();
@@ -335,7 +352,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     t0 = this.pfnActivation( t1 );
     t1.dispose();
 
-    return t0;
+    this.output0.realTensor = t0;
   }
 
 }
