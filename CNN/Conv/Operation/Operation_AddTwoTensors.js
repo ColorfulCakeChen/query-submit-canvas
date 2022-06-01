@@ -5,7 +5,8 @@ import * as BoundsArraySet from "../BoundsArraySet.js";
 import { Base } from "./Operation_Base.js";
 
 /**
- * Add two tensor3d. They should have the same dimensions ( height x width x channel ). It could destroy one or two of the input tensors.
+ * Add two tensor3d. They should have the same channel count. Their ( height x width ) should be either the same or one is ( 1 x 1 ).
+ * It could destroy one or two of the input tensors.
  *
  * @member {boolean} bKeepInputTensor0
  *   If false, the first input tensor will be disposed after adding. If true, the first input tensor will be kept after adding.
@@ -189,7 +190,7 @@ class AddTwoTensors extends Base() {
   }
 
   /** Add. (Both the inputTensor0 and inputTensor1 will be disposed. */
-  static Add_and_destroy0_destroy1( inputTensor0, inputTensor1 ) {
+  static Add_and_destroy0_destroy1() {
     this.output0.realTensor = = tf.add( this.input0.realTensor, this.input1.realTensor );
     this.input0.realTensor.dispose();
     this.input1.realTensor.dispose();
