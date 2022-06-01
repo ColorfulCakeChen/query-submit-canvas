@@ -281,10 +281,9 @@ class ConcatShuffleSplit extends Base() {
     inputTensor.dispose();
   }
 
-  /** Just return inputTensor at this.output0.realTensor ( this.output1.realTensor will be null). */
+  /** Just return inputTensor at this.output0.realTensor. */
   static ShuffleSplit_return_input_directly( inputTensor ) {
     this.output0.realTensor = inputTensor;
-    this.output1?.realTensor = null;
 
     // Do not call inputTensor.dispose(). In fact, because inputTensor is returned directly, it is the same as been disposed already.
   }
