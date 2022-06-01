@@ -1,7 +1,7 @@
-export { ConstantWhenPassThrough };
+export { Pointwise_ConstantWhenPassThrough };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-import { Base } from "./Pointwise_Base.js";
+import { Pointwise } from "./Operation_Pointwise.js";
 
 /**
  * Pointwise convolution whose output will be constant value (no matter what input) when pass-through.
@@ -12,7 +12,7 @@ import { Base } from "./Pointwise_Base.js";
  * Usually, this is used for squeeze-and-excitaion pointwise.
  *
  */
-class ConstantWhenPassThrough extends Base {
+class Pointwise_ConstantWhenPassThrough extends Pointwise {
 
   /**
    */
