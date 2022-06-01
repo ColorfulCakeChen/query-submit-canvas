@@ -1,4 +1,4 @@
-export { Operation_TwinArray };
+export { TwinArray };
 
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 //import * as BoundsArraySet from "../BoundsArraySet.js";
@@ -18,7 +18,7 @@ import { Base } from "./Operation_Base.js";
 
  *
  */
-class TwinArray extends Base() {
+let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
   /**
    *
