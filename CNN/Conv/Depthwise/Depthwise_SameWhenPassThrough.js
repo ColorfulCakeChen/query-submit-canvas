@@ -1,7 +1,7 @@
-export { SameWhenPassThrough };
+export { Depthwise_SameWhenPassThrough };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-import { Base } from "./Depthwise_Base.js";
+import { Depthwise } from "./Operation_Depthwise.js";
 
 /**
  * Depthwise convolution whose output will be the same as input when pass-through.
@@ -12,7 +12,7 @@ import { Base } from "./Depthwise_Base.js";
  * Usually, this is used for non-squeeze-and-excitaion depthwise.
  *
  */
-class SameWhenPassThrough extends Base {
+class Depthwise_SameWhenPassThrough extends Depthwise {
 
   /**
    */
