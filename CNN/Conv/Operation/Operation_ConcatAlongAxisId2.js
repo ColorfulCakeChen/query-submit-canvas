@@ -138,7 +138,6 @@ class ConcatAlongAxisId2 extends Base() {
     this.inputTensors[ 1 ] = this.input1.realTensor;
     this.output0.realTensor = tf.concat( this.inputTensors, 2 ); // AxisId = 2
     this.input1.realTensor.dispose();
-    return t;
   }
 
   /** Concatenate along axis id 2. (The input0 will be disposed. The input1 will not be disposed. */
@@ -147,7 +146,6 @@ class ConcatAlongAxisId2 extends Base() {
     this.inputTensors[ 1 ] = this.input1.realTensor;
     this.output0.realTensor = tf.concat( this.inputTensors, 2 ); // AxisId = 2
     this.input0.realTensor.dispose();
-    return t;
   }
 
   /** Concatenate along axis id 2. (Both the input0 and input1 will be disposed. */
@@ -157,7 +155,6 @@ class ConcatAlongAxisId2 extends Base() {
     this.output0.realTensor = tf.concat( this.inputTensors, 2 ); // AxisId = 2
     this.input0.realTensor.dispose();
     this.input1.realTensor.dispose();
-    return t;
   }
 
 }
