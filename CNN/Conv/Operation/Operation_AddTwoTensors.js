@@ -2,7 +2,7 @@ export { AddTwoTensors };
 
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
-import * as Base from "./Operation_Base.js";
+import { Base } from "./Operation_Base.js";
 
 /**
  * Add two tensor3d. They should have the same dimensions ( height x width x channel ). It could destroy one or two of the input tensors.
