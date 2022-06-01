@@ -79,6 +79,18 @@ class AddTwoTensors extends Base() {
     Base.adjust_pfn.call( this );
   }
 
+
+  /** @return {number} Always return 0. */
+  get tensorWeightCountExtracted() {
+    return 0;
+  }
+
+  /** @return {number} Always return 0. */
+  get tensorWeightCountTotal() {
+    return 0;
+  }
+
+
   /** Set this.apply according to this.bKeepInputTensor0 and this.bKeepInputTensor1. */
   static adjust_pfn() {
     if ( this.bKeepInputTensor0 ) {
