@@ -11,5 +11,6 @@ export { Pointwise_SameWhenPassThrough_PrefixSqueezeExcitation }
 export { Pointwise_ConstantWhenPassThrough } from "./Operation/Operation_Pointwise_ConstantWhenPassThrough.js";
 
 export { AddTwoTensors } from "./Operation/Operation_AddTwoTensors.js";
+export { MultiplyTwoTensors } from "./Operation/Operation_MultiplyTwoTensors.js";
 export { ConcatShuffleSplit } from "./Operation/Operation_ConcatShuffleSplit.js";
 export { ConcatAlongAxisId2 } from "./Operation/Operation_ConcatAlongAxisId2.js";
