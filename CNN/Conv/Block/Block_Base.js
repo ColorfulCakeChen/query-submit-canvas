@@ -481,7 +481,8 @@ class Base extends ReturnOrClone.Base {
     // No matter whether the channel shuffler is used, it is always recorded in data member.
     this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
 
-    this.intermediateTensorsArray = new Array( 2 ); // Pre-allocate array to place intermediate 2 tensors. This could reduce memory re-allocation.
+//!!! (2022/06/01 Remarked) Using tensor placehoder instead.
+//    this.intermediateTensorsArray = new Array( 2 ); // Pre-allocate array to place intermediate 2 tensors. This could reduce memory re-allocation.
 
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
@@ -502,8 +503,6 @@ class Base extends ReturnOrClone.Base {
 
     this.operationArray = new Array();
 
-//!!! ...unfinished... (2022/06/01)
-
 
 //!!! (2022/06/01 Remarked)
 //     // For analyzing every tensor processed by how many operations. These will be used to determine whether
@@ -514,9 +513,15 @@ class Base extends ReturnOrClone.Base {
 //       input1: new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_input1", null, null ),
 //     };
 
-//!!! ...unfinished... (2022/06/01)
+
     // 2. The pointwise1 convolution.
 
+//!!! ...unfinished... (2022/06/01)
+    if ( !this.operation_append_pointwise1() )
+      return false;
+
+
+//!!! ...unfinished... (2022/06/01)
     // Assume not higher-half-different.     
     let nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
     let inputChannelCount_lowerHalf_pointwise1 = undefined, outputChannelCount_lowerHalf_pointwise1 = undefined;
@@ -1348,6 +1353,119 @@ class Base extends ReturnOrClone.Base {
         break;
     }
   }
+
+
+
+ /**
+  *
+  * @param {Operation.Base} operationObject
+  *   The operation object to be appended into this.operationArray[].
+  *
+  * @return {boolean} Return true, if success.
+  */
+ operation_append( operationObject ) {
+
+  this.operationArray.push( operationObject );
+
+  // Traking the current tensor placeholders for next operation's input.
+  this.currentTensorPlaceholder0 = operationObject.output0;
+
+//!!! ...unfinished... (2022/06/01)
+  this.currentTensorPlaceholder1 = operationObject.output1;
+
+//!!! ...unfinished... (2022/06/01)
+
+  return true;
+ }
+
+//!!! ...unfinished... (2022/06/01)
+ /**
+  * Append pointwise1 convolution.
+  *
+  * @return {boolean} Return true, if success.
+  */
+ operation_append_pointwise1() {
+
+   // Assume not higher-half-different.     
+   let nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
+   let inputChannelCount_lowerHalf_pointwise1 = undefined, outputChannelCount_lowerHalf_pointwise1 = undefined;
+
+//!!! ...unfinished... (2021/11/15) What if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
+
+   if ( this.bHigherHalfDifferent == true ) {
+
+     // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
+     // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's head)
+     if ( this.bHigherHalfDepthwise2 == true ) {
+
+       inputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
+
+       if ( this.pointwise1ChannelCount > 0 ) {
+         nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF;
+         outputChannelCount_lowerHalf_pointwise1 = this.pointwise1ChannelCount; // For depthwise1 (by specified channel count)
+
+       } else {
+         nHigherHalfDifferent_pointwise1
+           = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH;
+
+         // Since this is an almost copy operation, bias and activation is not necessary.
+         this.bPointwise1Bias = false;
+         this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+
+         outputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before; // For depthwise1 (by pass-through-input-to-output)
+       }
+
+       // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
+       this.pointwise1ChannelCount
+         = (  outputChannelCount_lowerHalf_pointwise1 // For depthwise1.
+            + this.channelCount0_pointwise1Before     // For depthwise2 (by depthwise1).
+           );
+
+     } else { // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
+
+       // So that bHigherHalfPassThrough (or bAllPassThrough).
+       nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
+
+       let pointwise1_higherHalfPassThrough = new ChannelCountCalculator.HigherHalfPassThrough(
+         this.channelCount0_pointwise1Before, this.pointwise1ChannelCount );
+
+       inputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.inputChannelCount_lowerHalf;
+       outputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
+     }
+
+   // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
+   }
+
+   this.pointwise1 = new Pointwise.SameWhenPassThrough(
+     this.channelCount0_pointwise1Before,
+     this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
+     nHigherHalfDifferent_pointwise1,
+     inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
+     0 // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
+   );
+
+   if ( !this.pointwise1.init( params.defaultInput, this.byteOffsetEnd, inputScaleBoundsArray0 ) )
+     return false;  // e.g. input array does not have enough data.
+   this.byteOffsetEnd = this.pointwise1.byteOffsetEnd;
+
+   this.bPointwise1 = this.pointwise1.bExisted;
+   if ( this.bPointwise1 ) {
+//!!! (2022/05/24 Remarked) No long support ( outputChannelCount == 0 ).
+//      this.channelCount_pointwise1After_depthwise1Before = this.pointwise1.outputChannelCount_Real;
+     this.channelCount_pointwise1After_depthwise1Before = this.pointwise1.outputChannelCount;
+     this.tensorWeightCountTotal += this.pointwise1.tensorWeightCountTotal;
+     this.tensorWeightCountExtracted += this.pointwise1.tensorWeightCountExtracted;
+     TensorOpCounters.pointwise1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_pointwise1", this.pointwise1, TensorOpCounters.input0 );
+
+   } else {
+     this.channelCount_pointwise1After_depthwise1Before = this.channelCount0_pointwise1Before;  // No pointwise1 convolution.
+     TensorOpCounters.pointwise1 = TensorOpCounters.input0; // Its output is just its input tensor.
+   }
+  
+   return true;
+ }
+
+
 
 
   /**
