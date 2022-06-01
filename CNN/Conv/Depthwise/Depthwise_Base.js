@@ -284,6 +284,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     }
   }
 
+
   /** Depthwise Average Pooling. */
   static Avg_and_keep( inputTensor ) {
     return tf.pool( inputTensor, this.poolWindowShape, "avg", this.pad, 1, this.strides ); // dilations = 1
@@ -316,12 +317,6 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     inputTensor.dispose();
     return t;
   }
-
-  
-//!!! ...unfinished... (2022/05/31) use this.input0 and put to this.output0
-
-//!!! ...unfinished... (2022/06/01) TensorPlaceholder
-
 
 
   /** Depthwise Operation, Bias and Activation. */
