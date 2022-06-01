@@ -5,8 +5,11 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import { Base } from "./Operation_Base.js";
 
 /**
- * An array of operations. Its output0 and output1 are pointer to the last operation's output0 and output1.
- * Every time appending operation, one or parallel twin operations could be appended.
+ * An array of operations. Every time appending operation, one or parallel twin operations could be appended.
+ *
+ * Its .output0 and .output1 (tensor placeholder) are pointer to the last operation's output0 and output1. This could simply the
+ * decision of what tensor placeholders should be used as the next operation's input.
+ *
  *
  *
  * @member {function} apply
@@ -15,7 +18,7 @@ import { Base } from "./Operation_Base.js";
 
  *
  */
-class Operation_TwinArray extends Base() {
+class TwinArray extends Base() {
 
   /**
    *
@@ -23,6 +26,7 @@ class Operation_TwinArray extends Base() {
   constructor( inputTensorPlaceholder0, inputTensorPlaceholder1 ) {
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
     this.operationArray = new Array();
+    this.disposeTensors();
   }
 
 
@@ -52,18 +56,6 @@ class Operation_TwinArray extends Base() {
 // call setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet ) for every operation?
 
   }
-
-
-  /**
-   *
-   */
-  clear() {
-    
-//!!! ...unfinished... (2022/06/01)
-
-    this.disposeTensors();
-  }
-
 
 
 //!!! ...unfinished... (2022/06/01)
