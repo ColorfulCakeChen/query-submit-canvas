@@ -28,7 +28,7 @@ import { Base } from "./Operation_Base.js";
  * Base.return_input_directly(), Base.keep_input_return_copy(), Conv_and_destroy(), Conv_and_keep() according to the parameters.
  *
  * @member {function} apply
- *   This is a method. It processes this.input0.realTensor as inputTensor and put to this.output0.realTensor as outputTensor. The
+ *   This is a method. It processes this.input0.realTensor as inputTensor and puts to this.output0.realTensor as outputTensor. The
  * inputTensor (tf.tensor3d) represents the image ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d)
  * represents the result. All intermediate tensors will be disposed. The inputTensor may or may not be disposed. In fact, this method 
  * calls one of Conv_and_destroy_or_keep(), ConvBias_and_destroy_or_keep(), ConvActivation_and_destroy_or_keep(),
