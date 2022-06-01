@@ -4,7 +4,7 @@ export { Base };
  * Provide return_input_directly() and keep_input_return_copy.
  *
  */
-class Base {
+let Base = ( ParentClass = Object ) => class extends ParentClass {
 
   /**
    * Return the input (as output) directly. Used for ( bKeepInputTensor == false ).
