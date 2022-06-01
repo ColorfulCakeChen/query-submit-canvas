@@ -7,13 +7,16 @@ import * as Weights from "../../Unpacker/Weights.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import * as ChannelCountCalculator from "../ChannelCountCalculator.js";
-import * as Pointwise from "../Pointwise.js";
-import * as Depthwise from "../Depthwise.js";
-import * as AddTwoTensors from "../AddTwoTensors.js";
-import * as ConcatAlongAxisId2 from "../ConcatAlongAxisId2.js";
-import * as ConcatShuffleSplit from "../ConcatShuffleSplit.js";
-import { TensorPlaceholder } from "./Block_TensorPlaceholder.js";
-import * as Operation from "./Block_Operation.js";
+
+//!!! (2022/06/01 Remarked) Included in Operation.Xxx
+// import * as Pointwise from "../Pointwise.js";
+// import * as Depthwise from "../Depthwise.js";
+// import * as AddTwoTensors from "../AddTwoTensors.js";
+// import * as ConcatAlongAxisId2 from "../ConcatAlongAxisId2.js";
+// import * as ConcatShuffleSplit from "../ConcatShuffleSplit.js";
+
+import * as TensorPlaceholder from "../TensorPlaceholder.js";
+import * as Operation from "../Operation.js";
 import { Params } from "./Block_Params.js";
 
 
@@ -374,18 +377,6 @@ class Base extends ReturnOrClone.Base {
    *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous Block value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
    *
-   
-//!!! ...unfinished... (2022/05/31) should be created by Block.Base internally.
-//
-//    * @param {Block.TensorPlaceholder} inputTensorPlaceholder0
-//    *   The tensor placeholder of input0. Usually, it is The .output0 of the previous Block tensor placeholder. It will be kept
-//    * (not cloned) directly. So caller should not modify them.
-//    *
-//    * @param {Block.TensorPlaceholder} inputTensorPlaceholder1
-//    *   The tensor placeholder of input1. Usually, it is The .output1 of the previous Block tensor placeholder. It will be kept
-//    * (not cloned) directly. So caller should not modify them.
-
-   *
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
@@ -400,10 +391,6 @@ class Base extends ReturnOrClone.Base {
   * initer(
     progressParent, params,
     inputScaleBoundsArray0, inputScaleBoundsArray1,
-
-//!!! ...unfinished... (2022/05/31) should be created by Block.Base internally.
-//    inputTensorPlaceholder0, inputTensorPlaceholder1,
-
     channelShuffler_ConcatPointwiseConv,
     arrayTemp_forInterleave_asGrouptTwo ) {
 
@@ -506,29 +493,33 @@ class Base extends ReturnOrClone.Base {
 //     this.operationEnd = ???; new Operation.???( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
 
 //!!! ...unfinished... (2022/05/31) will be used inside apply().
-    this.inputTensorPlaceholder0 = new TensorPlaceholder();
-    this.inputTensorPlaceholder1 = new TensorPlaceholder();
+    this.inputTensorPlaceholder0 = new TensorPlaceholder.Base();
+    this.inputTensorPlaceholder1 = new TensorPlaceholder.Base();
  
-//!!! ...unfinished... (2022/05/31)
-    this.operationArray = new Array( 1 );
-    this.operationParallel1Array = new Array( 1 );
+    // Traking the current tensor placeholders for next operation's input.
+    this.currentTensorPlaceholder0 = this.inputTensorPlaceholder0;
+    this.currentTensorPlaceholder1 = this.inputTensorPlaceholder1;
+
+    this.operationArray = new Array();
+
+//!!! ...unfinished... (2022/06/01)
 
 
+//!!! (2022/06/01 Remarked)
+//     // For analyzing every tensor processed by how many operations. These will be used to determine whether
+//     // the operation should dispose its input tensor.
+//     let TensorOpCounterId = -1;
+//     let TensorOpCounters = {
+//       input0: new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_input0", null, null ),
+//       input1: new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_input1", null, null ),
+//     };
 
-//!!! ...unfinished... (2022/05/31)
-
-    // For analyzing every tensor processed by how many operations. These will be used to determine whether
-    // the operation should dispose its input tensor.
-    let TensorOpCounterId = -1;
-    let TensorOpCounters = {
-      input0: new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_input0", null, null ),
-      input1: new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_input1", null, null ),
-    };
-
+//!!! ...unfinished... (2022/06/01)
     // 2. The pointwise1 convolution.
 
+    // Assume not higher-half-different.     
     let nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
-    let inputChannelCount_lowerHalf_pointwise1 = -1, outputChannelCount_lowerHalf_pointwise1 = -1; // Assume not higher-half-different.
+    let inputChannelCount_lowerHalf_pointwise1 = undefined, outputChannelCount_lowerHalf_pointwise1 = undefined;
 
 //!!! ...unfinished... (2021/11/15) What if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
 
@@ -612,7 +603,7 @@ class Base extends ReturnOrClone.Base {
     // 3.1 The depthwise1 operation.
 
     let nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE;
-    let inputChannelCount_lowerHalf_depthwise1 = -1; // In general case, depthwise1 needs not them.
+    let inputChannelCount_lowerHalf_depthwise1 = undefined; // In general case, depthwise1 needs not them.
 
     if ( this.bHigherHalfDifferent == true ) {
       
@@ -736,8 +727,9 @@ class Base extends ReturnOrClone.Base {
 
     // 5. The pointwise2 convolution.
 
+    // Assume not higher-half-different.
     let nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
-    let inputChannelCount_lowerHalf_pointwise2 = -1, outputChannelCount_lowerHalf_pointwise2 = -1; // Assume not higher-half-different.
+    let inputChannelCount_lowerHalf_pointwise2 = undefined, outputChannelCount_lowerHalf_pointwise2 = undefined;
     let channelShuffler_outputGroupCount_pointwise2 = 0;
 
     if ( this.bHigherHalfDifferent == true ) {
@@ -1073,6 +1065,8 @@ class Base extends ReturnOrClone.Base {
         TensorOpCounter.setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet );
       }
     }
+
+//!!! ...unfinished... (2022/06/01) this.tensorWeightCountTotal, this.tensorWeightCountExtracted
 
     // 8.3
     ++progressToAdvance.value;
