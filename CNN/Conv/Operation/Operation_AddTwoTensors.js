@@ -112,50 +112,62 @@ class AddTwoTensors extends Base() {
       .add_all_byScaleBoundsArray_all( inputScaleBoundsArray1 );
   }
 
-//!!! ...unfinished... (2022/06/01) TensorPlaceholder
   /** Setup this.output0. */
   static setup_output0_TensorPlaceholder() {
 
-    // 1. Adding two same dimension tensors. The result dimension is the same of any one.
-    if (   ( this.input0.height == this.input1.height )
-        && ( this.input0.width == this.input1.width )
-        && ( this.input0.channelCount == this.input1.channelCount ) ) {
+    // 1. Only same channel count adding is supported.
+    if ( this.input0.channelCount == this.input1.channelCount ) {
 
-      this.output0.height = this.input0.height;
-      this.output0.width = this.input0.width;
-      this.output0.channelCount = this.input0.channelCount;
+      this.output0.channelCount = this.input0.channelCount; // Result always has the same channel count.
 
-    // 2. Adding by broadcasting input0 to input1. The result dimension is the same as input1 (the larger one).
-    } else if ( ( this.input0.height == 1 ) && ( this.input0.width == 1 ) && ( this.input0.channelCount == this.input1.channelCount ) ) {
+      // 1.1 Adding two same dimension tensors. The result dimension is the same of any one.
+      if ( ( this.input0.height == this.input1.height ) && ( this.input0.width == this.input1.width ) ) {
+        this.output0.height = this.input0.height;
+        this.output0.width = this.input0.width;
 
-      this.output0.height = this.input1.height;
-      this.output0.width = this.input1.width;
-      this.output0.channelCount = this.input1.channelCount;
+      // 1.2 Adding by broadcasting input0 to input1. The result dimension is the same as input1 (the larger one).
+      } else if ( ( this.input0.height == 1 ) && ( this.input0.width == 1 ) ) {
+        this.output0.height = this.input1.height;
+        this.output0.width = this.input1.width;
 
-    // 3. Adding by broadcasting input1 to input0. The result dimension is the same as input0 (the larger one).
-    } else if ( ( this.input1.height == 1 ) && ( this.input1.width == 1 ) && ( this.input1.channelCount == this.input0.channelCount ) ) {
+      // 1.3 Adding by broadcasting input1 to input0. The result dimension is the same as input0 (the larger one).
+      } else if ( ( this.input1.height == 1 ) && ( this.input1.width == 1 ) ) {
+        this.output0.height = this.input0.height;
+        this.output0.width = this.input0.width;
 
-      this.output0.height = this.input0.height;
-      this.output0.width = this.input0.width;
-      this.output0.channelCount = this.input0.channelCount;
+      // 1.4 Unsupported adding (height and width).
+      } else {
+        tf.util.assert( false,
+          `Operation.AddTwoTensors.setup_output0_TensorPlaceholder(): `
+            + `input0 ( height, width ) = ( ${this.input0.height}, ${this.input0.width} ) and `
+            + `input1 ( height, width ) = ( ${this.input1.height}, ${this.input1.width} ) `
+            + `should be either the same or one is ( 1, 1 ) for broadcating.`
+        );
+      }
 
-    // 4. Unsupported adding.
+      // Only if both inputs' lower half and higher half channel count are the same, they are passed through to output.
+      // Otherwise, absent them in the output.
+      {
+        if ( this.input0.channelCount_lowerHalf == this.input1.channelCount_lowerHalf ) {
+          if ( this.input0.channelCount_lowerHalf != undefined )
+            this.output0.channelCount_lowerHalf = this.this.input0.channelCount_lowerHalf;
+        }
+
+        if ( this.input0.channelCount_higherHalf == this.input1.channelCount_higherHalf ) {
+          if ( this.input0.channelCount_higherHalf != undefined )
+            this.output0.channelCount_higherHalf = this.this.input0.channelCount_higherHalf;
+        }
+      }
+
+    // 2. Unsupported adding (different channel count).
     } else {
       tf.util.assert( false,
         `Operation.AddTwoTensors.setup_output0_TensorPlaceholder(): `
-          + `input0 ( ${this.input0.height}, ${this.input0.width}, ${this.input0.channelCount} ) `
-          + `input1 ( ${this.input1.height}, ${this.input1.width}, ${this.input1.channelCount} ) `
-          + `should be either the same or one is ( 1, 1, N ) for broadcating.`
+          + `input0 channel count ( ${this.input0.channelCount} ) and `
+          + `input1 channel count ( ${this.input1.channelCount} ) `
+          + `should be the same.`
       );
     }
-
-!!!
-    if ( this.outputChannelCount_lowerHalf != undefined )
-      this.output0.channelCount_lowerHalf = this.outputChannelCount_lowerHalf;
-
-    if ( this.outputChannelCount_higherHalf != undefined )
-      this.output0.channelCount_higherHalf = this.outputChannelCount_higherHalf;
-
   }
 
 
