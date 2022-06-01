@@ -44,7 +44,7 @@ import { Base } from "./Operation_Base.js";
  * OperationBiasActivation_and_destroy_or_keep() according to the parameters.
  *
  * @see Operration.Base
- * @see FiltersArray_BiasesArray
+ * @see Depthwise.FiltersArray_BiasesArray
  */
 class Depthwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( Base( ReturnOrClone.Base() ) ) ) {
 
