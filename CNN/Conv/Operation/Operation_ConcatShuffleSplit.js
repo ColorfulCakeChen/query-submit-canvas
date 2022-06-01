@@ -70,24 +70,40 @@ class ConcatShuffleSplit extends Base() {
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
-    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 2 );
+    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
 
     this.channelShuffler = channelShuffler;
 
     this.inputTensors = new Array( 2 ); // For reducing memory re-allocation.
 
-    this.setShuffleSplit_KeepInputTensor( bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 );
+//!!! (2022/06/01 Remaked)
+// When bShuffleSplit is changed, the BoundsArraySet and outputs' TensorPlacehoder will also be changed.
+//    this.setShuffleSplit_KeepInputTensor( bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 );
+
+    // Note: If bShuffleSplit is changed, the BoundsArraySet and outputs' TensorPlacehoder will also be changed.
+    //       Then the inputScaleBoundsArray0, inputScaleBoundsArray1, arrayTemp_forInterleave_asGrouptTwo will be
+    //       required again. That is difficult. So forbid to change bShuffleSplit.
+    //
+    this.bShuffleSplit = bShuffleSplit;
+    this.bShouldShuffleSplit = ( ( this.bShuffleSplit ) && ( this.channelShuffler ) ); // Want and could do channel shuffling and splitting.
+
+    Base.adjust_pfn.call( this );
     Base.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1, arrayTemp_forInterleave_asGrouptTwo );
-    Base.setup_output0_TensorPlaceholder.call( this );
+    Base.setup_outputs_TensorPlaceholder.call( this );
   }
 
-  /**
-   * Set this.bShuffleSplit and adjust this.pfnShuffleSplit.
-   */
-  setShuffleSplit( bShuffleSplit ) {
-    this.bShuffleSplit = bShuffleSplit;
-    Base.adjust_pfn.call( this );
-  }
+//!!! (2022/06/01 Remaked)
+// When bShuffleSplit is changed, the BoundsArraySet and outputs' TensorPlacehoder will also be changed.
+//   /**
+//    * Set this.bShuffleSplit and adjust this.pfnShuffleSplit.
+//    */
+//   setShuffleSplit( bShuffleSplit, arrayTemp_forInterleave_asGrouptTwo ) {
+//     this.bShuffleSplit = bShuffleSplit;
+//     this.bShouldShuffleSplit = ( ( this.bShuffleSplit ) && ( this.channelShuffler ) ); // Want and could do channel shuffling and splitting.
+//     Base.adjust_pfn.call( this );
+//     Base.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1, arrayTemp_forInterleave_asGrouptTwo );
+//     Base.setup_output0_TensorPlaceholder.call( this );
+//   }
 
   /**
    * Set this.bKeepInputTensor0 and adjust this.apply so that inputTensors[ 0 ] will or will not be disposed.
@@ -115,22 +131,25 @@ class ConcatShuffleSplit extends Base() {
     Base.adjust_apply.call( this );
   }
 
-  /** 
-   * Set this.bShuffleSplit, this.bKeepInputTensor0, this.bKeepInputTensor1, and then adjust this.pfnShuffleSplit and
-   * this.apply.
-   */
-  setShuffleSplit_KeepInputTensor( bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 ) {
-    this.bShuffleSplit = bShuffleSplit;
-    Base.adjust_pfn.call( this );
 
-    this.bKeepInputTensor0 = bKeepInputTensor0;
-    this.bKeepInputTensor1 = bKeepInputTensor1;
-    Base.adjust_apply.call( this );
-  }
+//!!! (2022/06/01 Remaked)
+// When bShuffleSplit is changed, the BoundsArraySet and outputs' TensorPlacehoder will also be changed.
+//   /** 
+//    * Set this.bShuffleSplit, this.bKeepInputTensor0, this.bKeepInputTensor1, and then adjust this.pfnShuffleSplit and
+//    * this.apply.
+//    */
+//   setShuffleSplit_KeepInputTensor( bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 ) {
+//     this.setShuffleSplit( bShuffleSplit, arrayTemp_forInterleave_asGrouptTwo );
+//
+//     this.bKeepInputTensor0 = bKeepInputTensor0;
+//     this.bKeepInputTensor1 = bKeepInputTensor1;
+//     Base.adjust_apply.call( this );
+//   }
+
 
   /** Set this.pfnShuffleSplit according to this.bShuffleSplit, this.channelShuffler. */
   static adjust_pfn() {
-    if ( ( this.bShuffleSplit ) && ( this.channelShuffler ) ) {
+    if ( this.bShouldShuffleSplit ) {
 
       tf.util.assert( ( this.channelShuffler instanceof ChannelShuffler.ConcatPointwiseConv ),
         `Operation.ConcatShuffleSplit.adjust_pfn(): `
@@ -143,7 +162,7 @@ class ConcatShuffleSplit extends Base() {
     }
   }
 
-  /** Set this.apply according to this.bShuffleSplit, this.channelShuffler, this.bKeepInputTensor0 and this.bKeepInputTensor1. */
+  /** Set this.apply according to this.bKeepInputTensor0 and this.bKeepInputTensor1. */
   static adjust_apply() {
     if ( this.bKeepInputTensor0 ) {
       if ( this.bKeepInputTensor1 ) {
@@ -173,7 +192,7 @@ class ConcatShuffleSplit extends Base() {
       concatBoundsArraySet.set_outputs_all_by_concat_input0_input1(); // The outputChannelCount0 will be adjusted.
     }
 
-    if ( ( this.bShuffleSplit ) && ( this.channelShuffler ) ) { // Want and could do channel shuffling and splitting.
+    if ( this.bShouldShuffleSplit ) { // Want and could do channel shuffling and splitting.
 
       tf.util.assert( ( this.channelShuffler.outputGroupCount == 2 ),
         `ConcatShuffleSplit.Base.setup_BoundsArraySet(): `
@@ -208,8 +227,23 @@ class ConcatShuffleSplit extends Base() {
     }
   }
 
+  /** Setup this.output0 and this.output1. */
+  static setup_outputs_TensorPlaceholder() {
+
+    this.output0 = new TensorPlaceholder.Base();
+
+    if ( this.bShouldShuffleSplit ) { // If splitting is required, the output1 does exist.
+      this.output1 = new TensorPlaceholder.Base();
+    }
 
 //!!! ...unfinished... (2022/06/01)
+
+    this.output0.height = this.input0.height;
+    this.output0.width = this.input0.width;
+    this.output0.channelCount = this.input0.channelCount + this.input1.channelCount;
+
+    // Note: This operation's lower half and higher half channel count information will be lost.
+  }
 
 
   /**
@@ -233,7 +267,7 @@ class ConcatShuffleSplit extends Base() {
   /** Just return inputTensor at this.output0.realTensor ( this.output1.realTensor will be null). */
   static ShuffleSplit_return_input_directly( inputTensor ) {
     this.output0.realTensor = inputTensor;
-    this.output1.realTensor = null;
+    this.output1?.realTensor = null;
 
     // Do not call inputTensor.dispose(). In fact, because inputTensor is returned directly, it is the same as been disposed already.
   }
