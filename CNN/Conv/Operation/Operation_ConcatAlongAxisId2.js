@@ -1,7 +1,7 @@
 export { ConcatAlongAxisId2 };
 
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
-import * as BoundsArraySet from "./BoundsArraySet.js";
+import * as BoundsArraySet from "../BoundsArraySet.js";
 import { Base } from "./Operation_Base.js";
 
 /**
