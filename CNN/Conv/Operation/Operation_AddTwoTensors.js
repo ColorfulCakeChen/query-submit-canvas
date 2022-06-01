@@ -27,9 +27,9 @@ import { Base } from "./Operation_Base.js";
  * @member {function} apply
  *   This is a method. It processes this.input0.realTensor and this.input1.realTensor as inputTensors. It put to this.output0.realTensor
  * as outputTensor. Both inputTensors are tf.tensor3d and represents an images ( height x width x channel ) which will be added. They
- * should have the same ( height x width x channel ). The outputTensor (tf.tensor3d) represents the result of adding the two inputs.
- * The inputTensors may or may not be disposed. In fact, this method calls one of Add_and_keep0_keep1(), Add_and_keep0_destroy1(),
- * Add_and_destroy0_keep1(), Add_and_destroy0_destroy1() according to the parameters.
+ * should have the same channel count. Their ( height x width ) should be either the same or one is ( 1 x 1 ). The outputTensor
+ * (tf.tensor3d) represents the result of adding the two inputs. The inputTensors may or may not be disposed. In fact, this method
+ * calls one of Add_and_keep0_keep1(), Add_and_keep0_destroy1(), Add_and_destroy0_keep1(), Add_and_destroy0_destroy1() according to the parameters.
  *
  */
 class AddTwoTensors extends Base() {
