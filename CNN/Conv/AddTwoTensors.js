@@ -1,5 +1,6 @@
 export { Base };
 
+import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as Operation from "./Operation.js";
 import * as BoundsArraySet from "./BoundsArraySet.js";
 
@@ -33,6 +34,12 @@ import * as BoundsArraySet from "./BoundsArraySet.js";
  */
 class Base extends Operation.Base() {
 
+
+//!!! ...unfinished... (2022/06/01) TensorPlaceholder
+
+  /**
+   *
+   */
   constructor(
 //!!! ...unfinished... (2022/05/21)
     inputTensorPlaceholder0, inputTensorPlaceholder1,
