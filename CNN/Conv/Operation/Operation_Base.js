@@ -25,12 +25,6 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
 /**
  * An object operates several TensorPlaceholder.Base.
  *
- * In Block.init(), it is used for tracking the current tensor placeholders. It could simply the decision of what tensor placeholders
- * should be used as the next operation's input.
- *
- * In operation (e.g. Pointwise.Base), it is used for tracking the tensor placeholders of the operation. It is used to get input tensor(s)
- * and output tensor(s) in Operation.apply().
- *
  *
  * @member {TensorPlaceholder.Base} input0
  *   The TensorPlaceholder object which represents this operation's first input. It (from constructor) will be kept (not cloned)
@@ -40,9 +34,6 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
  *   The TensorPlaceholder object which represents this operation's second input. It could be null which means this operation
  * does not have second input tensor. It (from constructor) will be kept (not cloned) directly. So caller should not modify them.
  *
- * @param {number} inputTensorCount
- *   How many input tensor placeholders.
- * 
  * @member {TensorPlaceholder.Base} output0
  *   The TensorPlaceholder object which represents this operation's first output. It will be created by constructor if
  * outputTensorCount (of constructor) is >= 1.
@@ -50,9 +41,6 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
  * @member {TensorPlaceholder.Base} output1
  *   The TensorOpCounter object which represents this operation's second output. It is only created by constructor if
  * outputTensorCount (of constructor) is >= 2.
- *
- * @param {number} outputTensorCount
- *   How many output tensor placeholders. It's value is between [ 0, 2 ].
  *
  */
 let Base = ( ParentClass = Object ) => class extends ParentClass {
@@ -91,6 +79,13 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
     }
   }
 
+  /**
+   * Sub-class should override this method.
+   *
+   * Release all tensors.
+   */
+  disposeTensors() {
+  }
 
   /**
    * Sub-class should override this method.
@@ -107,7 +102,6 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
   }
-
 
   /**
    * This method will call this.setKeepInputTensor() according to：
@@ -157,7 +151,6 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
     this.setKeepInputTensor( input0_bNeedDispose, input1_bNeedDispose );
   }
 
-
   /**
    * Sub-class should override this method.
    *
@@ -168,7 +161,6 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    */
   apply() {
   }
-
 
   /**
    * Pass the input0 as output0 directly. Used for ( bKeepInputTensor == false ).
@@ -193,6 +185,33 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
   }
 
 
+  /**
+   * Sub-class should override this property.
+   *
+   * @return {number}
+   *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
+   * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+   */
+  get tensorWeightCountExtracted() {
+    return 0;
+  }
+
+  /**
+   * Sub-class should override this property.
+   *
+   * @return {number}
+   *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
+   * weights, if they are used in tensors.
+   */
+  get tensorWeightCountTotal() {
+    return 0;
+  }
+
+
+  /**
+   * @return {number} inputTensorCount
+   *   How many input tensor placeholders.
+   */
   get inputTensorCount() {
     if ( this.input0 )
       if ( this.input1 )
@@ -206,6 +225,10 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
         return 0; // (should not happen)
   }
 
+  /**
+   * @return {number}
+   *   How many output tensor placeholders. It's value is between [ 0, 2 ].
+   */
   get outputTensorCount() {
     if ( this.output0 )
       if ( this.output1 )
