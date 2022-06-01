@@ -4,7 +4,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as SqueezeExcitation from "../SqueezeExcitation.js";
-import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
+import { Pointwise_SameWhenPassThrough } from "./Operation_Pointwise_SameWhenPassThrough.js";
 
 
 //!!! ...unfinished... (2022/05/28)
@@ -97,7 +97,7 @@ import { SameWhenPassThrough } from "./Pointwise_SameWhenPassThrough.js";
  * @see Pointwise.SameWhenPassThrough
  *
  */
-class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
+class Pointwise_SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
 
   /**
    */
@@ -147,9 +147,9 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
     // 1. Determine operation functions.
-    SameWhenPassThrough_PrefixSqueezeExcitation.setup_bExisted.call( this );
-    SameWhenPassThrough_PrefixSqueezeExcitation.setup_bSqueezeExcitation.call( this );
-    SameWhenPassThrough_PrefixSqueezeExcitation.setup_pfn.call( this );
+    Pointwise_SameWhenPassThrough_PrefixSqueezeExcitation.setup_bExisted.call( this );
+    Pointwise_SameWhenPassThrough_PrefixSqueezeExcitation.setup_bSqueezeExcitation.call( this );
+    Pointwise_SameWhenPassThrough_PrefixSqueezeExcitation.setup_pfn.call( this );
 
     if ( !this.bExisted ) { // 2. no operation at all.
       this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
@@ -187,7 +187,7 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
 
       // 3.1.2 pointwise
       {
-        this.pointwise = new SameWhenPassThrough(
+        this.pointwise = new Pointwise_SameWhenPassThrough(
 //!!! ...unfinished... (2022/05/21)
           ???inputTensorPlaceholder0,
           this.inputChannelCount, this.outputChannelCount, this.bBias, this.nActivationId,
@@ -279,9 +279,9 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
 
     } else { // There is no operation at all.
       if ( bKeepInputTensor ) {
-        this.apply = SameWhenPassThrough_PrefixSqueezeExcitation.keep_input_return_copy;
+        this.apply = Pointwise_SameWhenPassThrough_PrefixSqueezeExcitation.keep_input_return_copy;
       } else {
-        this.apply = SameWhenPassThrough_PrefixSqueezeExcitation.return_input_directly;
+        this.apply = Pointwise_SameWhenPassThrough_PrefixSqueezeExcitation.return_input_directly;
       }
     }
   }
@@ -343,15 +343,17 @@ class SameWhenPassThrough_PrefixSqueezeExcitation extends ReturnOrClone.Base {
 
     if ( this.bExisted ) {
       if ( this.bSqueezeExcitation ) {
-        this.apply = SameWhenPassThrough_PrefixSqueezeExcitation.squeezeExcitation_pointwise;
+        this.apply = Pointwise_SameWhenPassThrough_PrefixSqueezeExcitation.squeezeExcitation_pointwise;
       } else {
-        this.apply = SameWhenPassThrough_PrefixSqueezeExcitation.pointwise;
+        this.apply = Pointwise_SameWhenPassThrough_PrefixSqueezeExcitation.pointwise;
       }
     } else { // There is no operation at all.
-      this.apply = SameWhenPassThrough_PrefixSqueezeExcitation.return_input_directly;
+      this.apply = Pointwise_SameWhenPassThrough_PrefixSqueezeExcitation.return_input_directly;
     }
   }
 
+
+//!!! ...unfinished... (2022/06/01) TensorPlaceholder
 
   /** */
   static squeezeExcitation_pointwise( inputTensor ) {
