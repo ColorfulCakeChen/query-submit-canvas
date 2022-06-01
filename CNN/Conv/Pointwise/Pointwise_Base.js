@@ -2,7 +2,7 @@ export { Base };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
-//import * as TensorPlaceholder from "../TensorPlaceholder.js";
+import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as Operation from "../Operation.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import { FiltersArray_BiasesArray } from "./Pointwise_FiltersArray_BiasesArray.js";
@@ -88,6 +88,8 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
       this.boundsArraySet = new BoundsArraySet.Pointwise( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
       this.boundsArraySet.output0.set_all_byScaleBoundsArray( inputScaleBoundsArray ); // Bypass previous to next.
 
+//!!! ...unfinished... (2022/06/01) TensorPlaceholder
+
     } else { // 3.
 
       bExtractOk = super.init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
@@ -102,6 +104,9 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
             this.biasesTensor3d = tf.tensor( this.biasesArray, this.biasesShape );
             this.biasesShape = this.biasesArray = null; // Release for reducing memory usage.
           }
+
+//!!! ...unfinished... (2022/06/01) TensorPlaceholder
+
 
         } catch ( e ) {  // If failed (e.g. memory not enough), return false.      
           bExtractOk = false;
@@ -135,6 +140,9 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
 
     this.bKeepInputTensor = bKeepInputTensor;
 
+
+//!!! ...unfinished... (2022/06/01) TensorPlaceholder
+
     if ( this.bExisted ) {
       if ( bKeepInputTensor ) {
         this.pfnConv = Base.Conv_and_keep;
@@ -161,6 +169,9 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
    *   The Base object to be determined and modified.
    */
   static setup_bPointwise_pfn() {
+
+
+//!!! ...unfinished... (2022/06/01) TensorPlaceholder
 
     // 0. Determine whether pointwise operation should exist.
     if ( this.outputChannelCount > 0 ) {
@@ -226,6 +237,9 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
 
   
 //!!! ...unfinished... (2022/05/31) use this.input0 and put to this.output0
+
+//!!! ...unfinished... (2022/06/01) TensorPlaceholder
+
 
   /** Pointwise Convolution, Bias and Activation. */
   static Conv_and_destroy_or_keep( inputTensor ) {
