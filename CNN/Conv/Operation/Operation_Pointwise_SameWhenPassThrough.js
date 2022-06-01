@@ -1,7 +1,7 @@
-export { SameWhenPassThrough };
+export { Pointwise_SameWhenPassThrough };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-import { Base } from "./Pointwise_Base.js";
+import { Pointwise } from "./Operation_Pointwise.js";
 
 /**
  * Pointwise convolution whose output will be the same as input when pass-through.
@@ -12,7 +12,7 @@ import { Base } from "./Pointwise_Base.js";
  * Usually, this is used for non-squeeze-and-excitaion pointwise.
  *
  */
-class SameWhenPassThrough extends Base {
+class Pointwise_SameWhenPassThrough extends Pointwise {
 
   /**
    */
