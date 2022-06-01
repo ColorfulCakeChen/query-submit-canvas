@@ -14,3 +14,5 @@ export { AddTwoTensors } from "./Operation/Operation_AddTwoTensors.js";
 export { MultiplyTwoTensors } from "./Operation/Operation_MultiplyTwoTensors.js";
 export { ConcatShuffleSplit } from "./Operation/Operation_ConcatShuffleSplit.js";
 export { ConcatAlongAxisId2 } from "./Operation/Operation_ConcatAlongAxisId2.js";
+
+export { TwinArray } from "./Operation/Operation_TwinArray.js";
