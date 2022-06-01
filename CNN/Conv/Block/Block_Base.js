@@ -1357,15 +1357,22 @@ class Base extends ReturnOrClone.Base {
 
 
   /**
+   *
+   *
    * @param {boolean} bTwin
    *   Whether create and append two parallel operations.
    *
-   *   - If false, only one operation object will be created and appended into this.operationArray[].
+   *   - If false, only one operation object (operationObject0) will be created and appended into this.operationArray[].
    *
-   *   - If two, two operation objects will be created (with the same operationClass, constructorArgs, initArgs) and appended
-   *       into this.operationArray[].
+   *     - this.currentTensorPlaceholder0 will be pointered to operationObject0.output0
+   *     - this.currentTensorPlaceholder1 will not be modified (i.e. could be viewed as passing through from previous operation
+   *         output to this operation output).
    *
+   *   - If true, two operation objects (operationObject0 and operationObject1) will be created (with the same operationClass,
+   *       constructorArgs, initArgs) and appended into this.operationArray[].
    *
+   *     - this.currentTensorPlaceholder0 will be pointered to operationObject0.output0
+   *     - this.currentTensorPlaceholder1 will be pointered to operationObject1.output0
    *
    * @param {Class} operationClass
    *   What kind of operation TO be created and appended into this.operationArray[].
@@ -1380,12 +1387,10 @@ class Base extends ReturnOrClone.Base {
    *
    *   - If the .init() is called and returns false, this operation_append() will failed and return false too.
    *
-   *   - If the .init() is called and returns true, this operation_append() will update this.byteOffsetEnd, this.currentTensorPlaceholder0,
-   *       this.currentTensorPlaceholder1.
+   *   - If the .init() is called and returns true, this operation_append() will update this.byteOffsetEnd.
    *
-   *
-   *
-   * @return {boolean} Return true, if success.
+   * @return {boolean}
+   *   Return true, if success.
    */
   operation_append( bTwin, operationClass, constructorArgs, initArgs ) {
 
