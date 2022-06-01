@@ -178,9 +178,6 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
    */
   static setup_bPointwise_pfn() {
 
-
-//!!! ...unfinished... (2022/06/01) TensorPlaceholder
-
     // 0. Determine whether pointwise operation should exist.
     if ( this.outputChannelCount > 0 ) {
       this.bPointwise = true;
