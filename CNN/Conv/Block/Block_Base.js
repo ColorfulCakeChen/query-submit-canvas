@@ -1440,39 +1440,42 @@ class Base extends ReturnOrClone.Base {
    */
   operation_append( bParallelTwin, operationClass, constructorArgs, initArgs ) {
 
-    // 1. 1st operation object.
-    let operationObject0;
-    {
-      operationObject0 = Base.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass, constructorArgs, initArgs );
-      if ( !operationObject0 )
-        return false;  // e.g. input array does not have enough data.
+    // 1. Create and initialize.
 
-      this.operationArray.push( operationObject0 );
+    // 1.1 1st operation object.
+    let operationObject0 = Base.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass, constructorArgs, initArgs );
+    if ( !operationObject0 )
+      return false;  // e.g. input array does not have enough data.
 
-      // Traking the current tensor placeholders for next operation's input.
-      this.currentTensorPlaceholder0 = operationObject.output0;
-
-  //!!! ...unfinished... (2022/06/01)
-
-      // If the operation 
-      if ( operationObject.output1 ) {
-        this.currentTensorPlaceholder1 = operationObject.output1;
-
-      // Otherwise,
-      }
-        this.currentTensorPlaceholder1 = ;
-    }
-
-
-//!!! ...unfinished... (2022/06/01)
-    // 2. 2nd operation object.
+    // 1.2 2nd operation object.
     let operationObject1;
     if ( bParallelTwin ) {    
       operationObject1 = Base.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass, constructorArgs, initArgs );
       if ( !operationObject1 )
         return false;  // e.g. input array does not have enough data.
+    }
 
+    // 2. Put into queue.
+    this.operationArray.push( operationObject0 );
+    this.operationArray.push( operationObject1 );
 
+    // 3. Traking the current tensor placeholders for next operation's input.
+
+    // 3.1 Only one operation.
+    if ( !bParallelTwin ) {    
+
+      this.currentTensorPlaceholder0 = operationObject0.output0;
+      
+      // If the (first) only operation has two outputs, pointer to the second output of the (first) only operation.
+      if ( operationObject0.output1 ) {
+        this.currentTensorPlaceholder1 = operationObject0.output1;
+
+      // Otherwise, keep this.currentTensorPlaceholder1 the same (i.e. bypass previous output to this output).
+      }
+
+    // 3.2 Two parallel operations.
+    } else {
+      
       // When there two parallel operations, they should not have output1 (i.e. should only have output0).
       tf.util.assert( ( operationObject0.output1 == undefined ) && ( operationObject1.output1 == undefined ),
         `Block.Base.operation_append(): `
@@ -1482,13 +1485,11 @@ class Base extends ReturnOrClone.Base {
           + `should all be undefined.`
       );
 
+      this.currentTensorPlaceholder0 = operationObject0.output0;
+      this.currentTensorPlaceholder1 = operationObject1.output0;
     }
 
     return true;
-  }
-
-//!!! ...unfinished... (2022/06/01)
-  operation_append_twin( operationObject ) {
   }
 
 //!!! ...unfinished... (2022/06/01)
