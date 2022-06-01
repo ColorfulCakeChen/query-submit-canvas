@@ -179,19 +179,19 @@ class AddTwoTensors extends Base() {
 
   /** Add. (The inputTensors0 will not be disposed. The inputTensor1 will be disposed. */
   static Add_and_keep0_destroy1() {
-    this.output0.realTensor = = tf.add( this.input0.realTensor, this.input1.realTensor );
+    this.output0.realTensor = tf.add( this.input0.realTensor, this.input1.realTensor );
     this.input1.realTensor.dispose();
   }
 
   /** Add. (The inputTensor0 will be disposed. The inputTensor1 will not be disposed. */
   static Add_and_destroy0_keep1() {
-    this.output0.realTensor = = tf.add( this.input0.realTensor, this.input1.realTensor );
+    this.output0.realTensor = tf.add( this.input0.realTensor, this.input1.realTensor );
     this.input0.realTensor.dispose();
   }
 
   /** Add. (Both the inputTensor0 and inputTensor1 will be disposed. */
   static Add_and_destroy0_destroy1() {
-    this.output0.realTensor = = tf.add( this.input0.realTensor, this.input1.realTensor );
+    this.output0.realTensor = tf.add( this.input0.realTensor, this.input1.realTensor );
     this.input0.realTensor.dispose();
     this.input1.realTensor.dispose();
   }
