@@ -26,7 +26,7 @@ import { Base } from "./Operation_Base.js";
  *   The element value bounds (per channel) of this concatenation operation.
  *
  * @member {function} apply
- *   This is a method. It processes this.input0.realTensor and this.input1.realTensor as inputTensors. It put to this.output0.realTensor
+ *   This is a method. It processes this.input0.realTensor and this.input1.realTensor as inputTensors. It puts to this.output0.realTensor
  * as outputTensor. Both inputTensors are tf.tensor3d and represents an images ( height x width x channel ) which will be concatenated.
  * They should have the same ( height x width ) but could have different channel count. The outputTensor (tf.tensor3d) represents
  * the result of concatenating the inputs along the last axis (i.e. the channel axis ( axisId = 2 ) ). The inputTensor may or may not
