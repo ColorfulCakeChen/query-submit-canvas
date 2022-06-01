@@ -46,7 +46,7 @@ import { Base } from "./Operation_Base.js";
  * @see Operration.Base
  * @see FiltersArray_BiasesArray
  */
-class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( Base( ReturnOrClone.Base() ) ) ) {
+class Depthwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( Base( ReturnOrClone.Base() ) ) ) {
 
   /**
    */
