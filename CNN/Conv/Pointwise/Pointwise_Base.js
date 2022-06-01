@@ -2,6 +2,7 @@ export { Base };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
+import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as Operation from "../Operation.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
@@ -27,15 +28,16 @@ import { FiltersArray_BiasesArray } from "./Pointwise_FiltersArray_BiasesArray.j
  * Base.return_input_directly(), Base.keep_input_return_copy(), Conv_and_destroy(), Conv_and_keep() according to the parameters.
  *
  * @member {function} apply
- *   This is a method. It has one parameter inputTensor and return a outputTensor. The inputTensor (tf.tensor3d) represents the image
- * ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d) represents the result.
- * All intermediate tensors will be disposed. The inputTensors may or may not be disposed. In fact, this method calls one of
- * Base.return_input_directly(), Base.keep_input_return_copy(), Conv_and_destroy_or_keep(), ConvBias_and_destroy_or_keep(),
- * ConvActivation_and_destroy_or_keep(), ConvBiasActivation_and_destroy_or_keep() according to the parameters.
+ *   This is a method. It processes this.input0.realTensor as inputTensor and put to this.output0.realTensor as outputTensor. The
+ * inputTensor (tf.tensor3d) represents the image ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d)
+ * represents the result. All intermediate tensors will be disposed. The inputTensor may or may not be disposed. In fact, this method 
+ * calls one of Conv_and_destroy_or_keep(), ConvBias_and_destroy_or_keep(), ConvActivation_and_destroy_or_keep(),
+ * ConvBiasActivation_and_destroy_or_keep() according to the parameters.
  *
+ * @see Operration.Base
  * @see FiltersArray_BiasesArray
  */
-class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( Operation.Base() ) ) {
+class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( Operation.Base( ReturnOrClone.Base() ) ) ) {
 
   /**
    */
@@ -88,7 +90,11 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
       this.boundsArraySet = new BoundsArraySet.Pointwise( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
       this.boundsArraySet.output0.set_all_byScaleBoundsArray( inputScaleBoundsArray ); // Bypass previous to next.
 
-//!!! ...unfinished... (2022/06/01) TensorPlaceholder
+      this.output0.height = this.input0.height;
+      this.output0.width = this.input0.width;
+      this.output0.channelCount = this.input0.channelCount;
+      this.output0.channelCount_lowerHalf = this.input0.outputChannelCount_lowerHalf;   // (may be undefined)
+      this.output0.channelCount_higherHalf = this.input0.outputChannelCount_higherHalf; // (may be undefined)
 
     } else { // 3.
 
@@ -105,8 +111,11 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
             this.biasesShape = this.biasesArray = null; // Release for reducing memory usage.
           }
 
-//!!! ...unfinished... (2022/06/01) TensorPlaceholder
-
+          this.output0.height = this.input0.height; // (Pointwise convolution does not change height and width.)
+          this.output0.width = this.input0.width;
+          this.output0.channelCount = this.outputChannelCount;
+          this.output0.channelCount_lowerHalf = this.outputChannelCount_lowerHalf;   // (may be undefined)
+          this.output0.channelCount_higherHalf = this.outputChannelCount_higherHalf; // (may be undefined)
 
         } catch ( e ) {  // If failed (e.g. memory not enough), return false.      
           bExtractOk = false;
@@ -140,9 +149,6 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
 
     this.bKeepInputTensor = bKeepInputTensor;
 
-
-//!!! ...unfinished... (2022/06/01) TensorPlaceholder
-
     if ( this.bExisted ) {
       if ( bKeepInputTensor ) {
         this.pfnConv = Base.Conv_and_keep;
@@ -152,9 +158,11 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     } else {
       // Since there is no operation at all, let apply ignore pfnConv completely.
       if ( bKeepInputTensor ) {
-        this.apply = this.pfnConv = Base.keep_input_return_copy;
+        this.pfnConv = Base.keep_input_return_copy;
+        this.apply = Base.output0_return_input0_cloned;
       } else {
-        this.apply = this.pfnConv = Base.return_input_directly;
+        this.pfnConv = Base.return_input_directly;
+        this.apply = Base.output0_return_input0_directly;
       }
     }
   }
@@ -203,7 +211,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
 
     // 2.
-    this.pfnActivation = ValueDesc.ActivationFunction.Singleton.getInfoById( this.nActivationId )?.pfn;
+    this.pfnActivation = Base.ActivationFunction_getById( this.nActivationId );
 
     // 3.
     if ( this.bPointwise ) {
@@ -220,9 +228,11 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
       }
     } else {
       // Since there is no operation at all, let apply ignore pfnConv completely.
-      this.apply = this.pfnConv = Base.return_input_directly;
+      this.pfnConv = Base.return_input_directly;
+      this.apply = Base.output0_return_input0_directly;
     }
   }
+
 
   /** Pointwise Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
   static Conv_and_keep( inputTensor ) {
@@ -236,36 +246,31 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
   }
 
   
-//!!! ...unfinished... (2022/05/31) use this.input0 and put to this.output0
-
-//!!! ...unfinished... (2022/06/01) TensorPlaceholder
-
-
   /** Pointwise Convolution, Bias and Activation. */
-  static Conv_and_destroy_or_keep( inputTensor ) {
-    return this.pfnConv( inputTensor );
+  static Conv_and_destroy_or_keep() {
+    this.output0.realTensor = this.pfnConv( this.input0.realTensor );
   }
 
-  static ConvBias_and_destroy_or_keep( inputTensor ) {
-    let t0 = this.pfnConv( inputTensor );
+  static ConvBias_and_destroy_or_keep() {
+    let t0 = this.pfnConv( this.input0.realTensor );
 
     let t1 = tf.add( t0, this.biasesTensor3d );
     t0.dispose();
 
-    return t1;
+    this.output0.realTensor = t1;
   }
 
-  static ConvActivation_and_destroy_or_keep( inputTensor ) {
-    let t0 = this.pfnConv( inputTensor );
+  static ConvActivation_and_destroy_or_keep() {
+    let t0 = this.pfnConv( this.input0.realTensor );
 
     let t1 = this.pfnActivation( t0 );
     t0.dispose();
 
-    return t1;
+    this.output0.realTensor = t1;
   }
 
-  static ConvBiasActivation_and_destroy_or_keep( inputTensor ) {
-    let t0 = this.pfnConv( inputTensor );
+  static ConvBiasActivation_and_destroy_or_keep() {
+    let t0 = this.pfnConv( this.input0.realTensor );
 
     let t1 = tf.add( t0, this.biasesTensor3d );
     t0.dispose();
@@ -273,7 +278,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     t0 = this.pfnActivation( t1 );
     t1.dispose();
 
-    return t0;
+    this.output0.realTensor = t0;
   }
 
 }
