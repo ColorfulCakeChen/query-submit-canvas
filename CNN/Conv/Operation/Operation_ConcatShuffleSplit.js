@@ -1,8 +1,8 @@
 export { ConcatShuffleSplit };
 
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
-import * as BoundsArraySet from "./BoundsArraySet.js";
-import * as ChannelShuffler from "./ChannelShuffler.js";
+import * as BoundsArraySet from "../BoundsArraySet.js";
+import * as ChannelShuffler from "../ChannelShuffler.js";
 import { Base } from "./Operation_Base.js";
 
 /**
