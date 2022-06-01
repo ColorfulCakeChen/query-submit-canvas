@@ -38,9 +38,10 @@ class AddTwoTensors extends Base() {
    *
    */
   constructor(
-//!!! ...unfinished... (2022/05/21)
     inputTensorPlaceholder0, inputTensorPlaceholder1,
-    bKeepInputTensor0, bKeepInputTensor1, inputScaleBoundsArray0, inputScaleBoundsArray1 ) {
+    inputScaleBoundsArray0, inputScaleBoundsArray1,
+    bKeepInputTensor0, bKeepInputTensor1
+  ) {
 
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
 
@@ -48,6 +49,7 @@ class AddTwoTensors extends Base() {
     this.bKeepInputTensor1 = bKeepInputTensor1;
     Base.adjust_pfn.call( this );
     Base.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1 );
+    Base.setup_output0_TensorPlaceholder.call( this );
   }
 
   /**
@@ -113,6 +115,46 @@ class AddTwoTensors extends Base() {
 //!!! ...unfinished... (2022/06/01) TensorPlaceholder
   /** Setup this.output0. */
   static setup_output0_TensorPlaceholder() {
+
+    // 1. Adding two same dimension tensors. The result dimension is the same of any one.
+    if (   ( this.input0.height == this.input1.height )
+        && ( this.input0.width == this.input1.width )
+        && ( this.input0.channelCount == this.input1.channelCount ) ) {
+
+      this.output0.height = this.input0.height;
+      this.output0.width = this.input0.width;
+      this.output0.channelCount = this.input0.channelCount;
+
+    // 2. Adding by broadcasting input0 to input1. The result dimension is the same as input1 (the larger one).
+    } else if ( ( this.input0.height == 1 ) && ( this.input0.width == 1 ) && ( this.input0.channelCount == this.input1.channelCount ) ) {
+
+      this.output0.height = this.input1.height;
+      this.output0.width = this.input1.width;
+      this.output0.channelCount = this.input1.channelCount;
+
+    // 3. Adding by broadcasting input1 to input0. The result dimension is the same as input0 (the larger one).
+    } else if ( ( this.input1.height == 1 ) && ( this.input1.width == 1 ) && ( this.input1.channelCount == this.input0.channelCount ) ) {
+
+      this.output0.height = this.input0.height;
+      this.output0.width = this.input0.width;
+      this.output0.channelCount = this.input0.channelCount;
+
+    // 4. Unsupported adding.
+    } else {
+      tf.util.assert( false,
+        `Operation.AddTwoTensors.setup_output0_TensorPlaceholder(): `
+          + `input0 ( ${this.input0.height}, ${this.input0.width}, ${this.input0.channelCount} ) `
+          + `input1 ( ${this.input1.height}, ${this.input1.width}, ${this.input1.channelCount} ) `
+          + `should be either the same or one is ( 1, 1, N ) for broadcating.`
+      );
+    }
+
+!!!
+    if ( this.outputChannelCount_lowerHalf != undefined )
+      this.output0.channelCount_lowerHalf = this.outputChannelCount_lowerHalf;
+
+    if ( this.outputChannelCount_higherHalf != undefined )
+      this.output0.channelCount_higherHalf = this.outputChannelCount_higherHalf;
 
   }
 
