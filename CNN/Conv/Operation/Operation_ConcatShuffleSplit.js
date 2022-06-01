@@ -70,6 +70,7 @@ class ConcatShuffleSplit extends Base() {
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
+    // Note: outputs' TensorPlaceholder will be created later (in setup_outputs_TensorPlaceholder()).
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
 
     this.channelShuffler = channelShuffler;
@@ -195,7 +196,7 @@ class ConcatShuffleSplit extends Base() {
     if ( this.bShouldShuffleSplit ) { // Want and could do channel shuffling and splitting.
 
       tf.util.assert( ( this.channelShuffler.outputGroupCount == 2 ),
-        `ConcatShuffleSplit.Base.setup_BoundsArraySet(): `
+        `Operation.ConcatShuffleSplit.setup_BoundsArraySet(): `
           + `channelShuffler.outputGroupCount ( ${this.channelShuffler.outputGroupCount} ) must be 2 `
           + `( other outputGroupCount does not supperted ).`
       );
@@ -231,18 +232,23 @@ class ConcatShuffleSplit extends Base() {
   static setup_outputs_TensorPlaceholder() {
 
     this.output0 = new TensorPlaceholder.Base();
-
-    if ( this.bShouldShuffleSplit ) { // If splitting is required, the output1 does exist.
-      this.output1 = new TensorPlaceholder.Base();
-    }
-
-//!!! ...unfinished... (2022/06/01)
-
     this.output0.height = this.input0.height;
     this.output0.width = this.input0.width;
-    this.output0.channelCount = this.input0.channelCount + this.input1.channelCount;
 
-    // Note: This operation's lower half and higher half channel count information will be lost.
+    if ( this.bShouldShuffleSplit ) { // Only if splitting is required, the output1 does exist.
+      this.output1 = new TensorPlaceholder.Base();
+      this.output1.height = this.input0.height;
+      this.output1.width = this.input0.width;
+
+      // Because only tensor3d and ChannelShuffler.ConcatPointwiseConv and ( outputGroupCount == 2 ) are supported,
+      // using the pointwise convolution filters' shape for output channel count.
+      const outputChannelCount_filterAxisId = 3;
+      this.output0.channelCount = this.channelShuffler.filtersTensor4dArray[ 0 ].shape[ outputChannelCount_filterAxisId ];
+      this.output1.channelCount = this.channelShuffler.filtersTensor4dArray[ 1 ].shape[ outputChannelCount_filterAxisId ];
+
+    } else { // Only concatenation.
+      this.output0.channelCount = this.input0.channelCount + this.input1.channelCount;
+    }
   }
 
 
