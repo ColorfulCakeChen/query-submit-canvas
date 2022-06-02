@@ -26,17 +26,29 @@ class Base {
 
   /**
    *
+   * @param {ActivationEscaping.ScaleBoundsArray} scaleBoundsArray  The tensor placeholder's ScaleBoundsArray.
+   */
+  set_height_width_channelCount_scaleBoundsArray(
+    height, width, channelCount, channelCount_lowerHalf, channelCount_higherHalf, scaleBoundsArray ) {
+    this.height = height;
+    this.width = width;
+    this.channelCount = channelCount;
+    this.channelCount_lowerHalf = channelCount_lowerHalf;
+    this.channelCount_higherHalf = channelCount_higherHalf;
+    this.scaleBoundsArray = scaleBoundsArray;
+  }
+
+  /**
+   *
    * @param {TensorPlaceholder} aTensorPlaceholder
    *   The tensor placeholder's height, width, channelCount, scaleBoundsArray will be used directly (i.e. not cloned) by this
    * tensor placeholder. Note: The .lastOperation and .realTensor are not used.
    */
   set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( aTensorPlaceholder ) {
-    this.height = aTensorPlaceholder.height;
-    this.width = aTensorPlaceholder.width;
-    this.channelCount = aTensorPlaceholder.channelCount;
-    this.channelCount_lowerHalf = aTensorPlaceholder.channelCount_lowerHalf;
-    this.channelCount_higherHalf = aTensorPlaceholder.channelCount_higherHalf;
-    this.scaleBoundsArray = aTensorPlaceholder.scaleBoundsArray; // ActivationEscaping.ScaleBoundsArray
+    this.set_height_width_channelCount_scaleBoundsArray(
+      aTensorPlaceholder.height, aTensorPlaceholder.width,
+      aTensorPlaceholder.channelCount, aTensorPlaceholder.channelCount_lowerHalf, aTensorPlaceholder.channelCount_higherHalf,
+      aTensorPlaceholder.scaleBoundsArray );
   }
 
 }
