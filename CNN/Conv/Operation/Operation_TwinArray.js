@@ -35,11 +35,15 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    */
   disposeTensors() {
 
-//!!! ...unfinished... (2022/06/01)
-// call disposeTensors( alwaysKeepSet ) for every operation.
+    if ( this.operationArray ) {
+      for ( let i = 0; i < this.operationArray.length; ++i ) {
+        let operation = this.operationArray[ i ];
+        operation.disposeTensors();
+      }
+      this.operationArray.length = 0;
+    }
 
-    this.operationArray.length = 0;
-
+//!!! ...unfinished... (2022/06/02) ???
     this.output0 = this.input0;
     this.output1 = this.input1;
 
@@ -52,9 +56,29 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
 
+    // TensorPlaceholders requested to keep their tensors.
+    let alwaysKeepSet;
+    {
+      if ( bKeepInputTensor0 || bKeepInputTensor1 ) {
+        alwaysKeepSet = new Set();
+
+        if ( bKeepInputTensor0 )
+          alwaysKeepSet.add( this.input0 );
+
+        if ( bKeepInputTensor1 )
+          alwaysKeepSet.add( this.input1 );
+      }
+    }
+
+    for ( let i = 0; i < this.operationArray.length; ++i ) {
+    }
+//!!!
+
 //!!! ...unfinished... (2022/06/01)
 // call setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet ) for every operation?
-
+  setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet )
+  
+    // Note: If an 
   }
 
 
