@@ -7,6 +7,9 @@ import { Base } from "./Operation_Base.js";
 /**
  * An array of operations. Every time appending operation, one or parallel twin operations could be appended.
  *
+
+//!!! ...unfinished... (2022/06/02)
+
  * Its .output0 and .output1 (tensor placeholder) are pointer to the last operation's output0 and output1. This could simply the
  * decision of what tensor placeholders should be used as the next operation's input.
  *
@@ -14,7 +17,7 @@ import { Base } from "./Operation_Base.js";
  *
  * @member {function} apply
 
-//!!! ...unfinished... (2022/06/01)
+//!!! ...unfinished... (2022/06/02)
 
  *
  */
@@ -70,15 +73,17 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       }
     }
 
+    // Every input tensors' last operation should be responsible for releasing the tensor. Except the input tensors are requested
+    // to be kept (i.e. inside alwaysKeepSet).
+    //
     for ( let i = 0; i < this.operationArray.length; ++i ) {
+      let operation = this.operationArray[ i ];
+      operation.setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet );
     }
-//!!!
 
-//!!! ...unfinished... (2022/06/01)
-// call setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet ) for every operation?
-  setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet )
+
+//!!! ...unfinished... (2022/06/02) What if .operationArray[] is empty ?
   
-    // Note: If an 
   }
 
 
