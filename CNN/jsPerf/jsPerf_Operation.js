@@ -72,22 +72,27 @@ function testCorrectness() {
 /
 //   ];
 
+  let caseId = -1;
   let bInput0, bInput1, outputTensorCount, bKeepInputTensor0, bKeepInputTensor1;
-  let caseId = 0;
+
   for ( let nInput0 = 0; nInput0 <= 1; ++nInput0 ) {
     for ( let nInput1 = 0; nInput1 <= 1; ++nInput1 ) {
       for ( let outputTensorCount = 0; outputTensorCount <= 2; ++outputTensorCount ) {
         for ( let nKeepInputTensor0 = 0; nKeepInputTensor0 <= 1; ++nKeepInputTensor0 ) {
           for ( let nKeepInputTensor1 = 0; nKeepInputTensor1 <= 1; ++nKeepInputTensor1 ) {
 
+            ++caseId;
+
             bInput0 = ( nInput0 != 0 );
             bInput1 = ( nInput1 != 0 );
+
+            if ( !bInput0 && !bInput1 )
+              continue; // Operation should have at least one input.
+
             bKeepInputTensor0 = ( nKeepInputTensor0 != 0 );
             bKeepInputTensor1 = ( nKeepInputTensor1 != 0 );
 
             let testCase = new Case( caseId, bInput0, bInput1, outputTensorCount, bKeepInputTensor0, bKeepInputTensor1 );
-
-            ++caseId;
           }
         }
       }
