@@ -68,7 +68,13 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
 
-    // TensorPlaceholders requested to keep their tensors.
+    // 0. If there is no sub operation, the behavior should be the same as an no-op operation.
+    if ( !this.operationArray || ( this.operationArray.length <= 0 ) ) {
+      super.setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 );
+      return;
+    }
+
+    // 1. TensorPlaceholders requested to keep their tensors.
     let alwaysKeepSet;
     {
       if ( bKeepInputTensor0 || bKeepInputTensor1 ) {
@@ -82,8 +88,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       }
     }
 
-    // Every input tensors' last operation is responsible for releasing the tensor (except the input tensors which are requested
-    // to be kept (i.e. inside alwaysKeepSet)).
+    // 2. Every input tensors' last operation is responsible for releasing the tensor (except the input tensors which are requested
+    //    to be kept (i.e. inside alwaysKeepSet)).
     //
     for ( let i = 0; i < this.operationArray.length; ++i ) {
       let operation = this.operationArray[ i ];
