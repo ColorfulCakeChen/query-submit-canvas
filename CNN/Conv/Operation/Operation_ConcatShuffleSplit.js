@@ -228,12 +228,15 @@ class ConcatShuffleSplit extends Base() {
     }
   }
 
-  /** Setup this.output0 and this.output1. */
+  /** Setup this.output0 and this.output1.
+   * This method should be called after setup_BoundsArraySet() because it uses BoundsArrarySet.
+   */  
   static setup_outputs_TensorPlaceholder() {
 
     this.output0 = new TensorPlaceholder.Base();
     this.output0.height = this.input0.height;
     this.output0.width = this.input0.width;
+    this.output0.scaleBoundsArray = this.boundsArraySet.output0;
 
     if ( this.bShouldShuffleSplit ) { // Only if splitting is required, the output1 does exist.
       this.output1 = new TensorPlaceholder.Base();
@@ -245,6 +248,8 @@ class ConcatShuffleSplit extends Base() {
       const outputChannelCount_filterAxisId = 3;
       this.output0.channelCount = this.channelShuffler.filtersTensor4dArray[ 0 ].shape[ outputChannelCount_filterAxisId ];
       this.output1.channelCount = this.channelShuffler.filtersTensor4dArray[ 1 ].shape[ outputChannelCount_filterAxisId ];
+
+      this.output1.scaleBoundsArray = this.boundsArraySet.output1;
 
     } else { // Only concatenation.
       this.output0.channelCount = this.input0.channelCount + this.input1.channelCount;
