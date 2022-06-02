@@ -20,14 +20,21 @@ import { Base } from "./Operation_Base.js";
 //!!! ...unfinished... (2022/06/02)
 
  *
+ *
+ * @see Operation.Base
  */
 let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
   /**
+
+//!!! ...unfinished... (2022/06/02)
+
+   * Note: The outputTensorCount is determined when constructor is called. No matter what kind of operation is appended,
+   * the outputTensorCount will not be changed.
    *
    */
-  constructor( inputTensorPlaceholder0, inputTensorPlaceholder1 ) {
-    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
+  constructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount ) {
+    super( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
     this.operationArray = new Array();
     this.disposeTensors();
   }
