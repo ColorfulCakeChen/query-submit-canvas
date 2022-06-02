@@ -128,7 +128,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
     //       the input will be disposed multiple times.
     //
     tf.util.assert( ( this.input0 != this.input1 ),
-      `Block.Operation.Base.setKeepInputTensor_IfNotLastOperation_Or_In(): `
+      `Operation.Base.setKeepInputTensor_IfNotLastOperation_Or_In(): `
         + `input0 ( ${this.input0} ) should be different from `
         + `input1 ( ${this.input1} ).`
     );
@@ -230,7 +230,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
         return 0;
   }
 
-  
+
 
 //!!! ...unfinished... (2022/06/02)
   /** Determine this.apply data members according to whether .inputX and .outputX exist.
@@ -280,17 +280,12 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
           }
         }
 
-      } else {
+      } else { // no input0, no input1. Not supported.
 
-        if ( this.output0 ) {
-          if ( this.output1 ) { // (  ) => ( .output0, .output1 )
-          } else {              // (  ) => ( .output0 )
-          }
-        } else {
-          if ( this.output1 ) { // (  ) => ( , .output1 )
-          } else {              // ( ) => (  )
-          }
-        }
+        tf.util.assert( ( this.input0 != this.input1 ),
+          `Operation.Base.setup_apply(): `
+            + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should at least one is non-null.`
+        );
 
       }
 
