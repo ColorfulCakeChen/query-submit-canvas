@@ -363,11 +363,14 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
             }
           }
         }
-      } else { // 13. no input0, no input1. Not supported.
-        tf.util.assert( ( this.input0 != this.input1 ),
-          `Operation.Base.setup_apply(): `
-            + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should at least one is non-null.`
-        );
+      } else { // 13. no input0, no input1.
+        this.apply = () => {}
+
+        //!!! (2022/06/02 Remarked) It can be supported. Just do nothing should be enough.
+        //tf.util.assert( ( this.input0 != this.input1 ),
+        //  `Operation.Base.setup_apply(): `
+        //    + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should at least one is non-null.`
+        //);
       }
     }
   }
