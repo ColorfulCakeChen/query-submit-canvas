@@ -87,6 +87,8 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
         }
       }
     }
+
+    Base.setup_apply.call( this, false, false ); // Default is destroy0 and destroy1.
   }
 
   /**
