@@ -48,15 +48,18 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 //!!! ...unfinished... (2022/06/02) endingDummyOperation
 // What if has sub operation, but only input0 is used by the sub operation (i.e. the input1 not handled by any sub ooeration)? Perhaps, always push a dummy operation at the end if operationArray[].
     {
-      this.endingDummyInput0 = inputTensorPlaceholder0;
+      this.lastOperationOutput0 = inputTensorPlaceholder0;
       if ( inputTensorPlaceholder1 )
-        this.endingDummyInput1 = inputTensorPlaceholder1;
+        this.lastOperationOutput1 = inputTensorPlaceholder1;
 
-      this.endingDummyOperation = new Base( this.endingDummyInput0, this.endingDummyInput1, outputTensorCount );
+      this.endingDummyOperation = new Base( this.lastOperationOutput0, this.lastOperationOutput1, outputTensorCount );
 
       this.output0 = this.endingDummyOperation.output0;
       if ( this.endingDummyOperation.output1 )
         this.output1 = this.endingDummyOperation.output1;
+
+//!!! ...unfinished... (2022/06/02) endingDummyOperation
+//      TwinArray.set_lastOperationOutput0_lastOperationOutput0.call( this );
     }
 
     this.bKeepInputTensor0 = false;
@@ -141,6 +144,28 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     }
 
 //!!! ...unfinished... (2022/06/02) endingDummyOperation
+
+  }
+
+
+  /**
+   * This method will also update this.endingDummyOperation's input0 and input1.
+   *
+   *
+   * @param {TensorPlaceholder.Base} aTensorPlaceholder0  The this.lastOperationOutput0 will be set as aTensorPlaceholder0.
+   * @param {TensorPlaceholder.Base} aTensorPlaceholder1  The this.lastOperationOutput1 will be set as aTensorPlaceholder1.
+   */
+  static set_lastOperationOutput0_lastOperationOutput0( aTensorPlaceholder0, aTensorPlaceholder1 ) {
+
+    this.lastOperationOutput0 = aTensorPlaceholder0;
+    this.lastOperationOutput1 = aTensorPlaceholder1;
+
+    this.endingDummyOperation.input0 = aTensorPlaceholder0;
+    this.endingDummyOperation.input1 = aTensorPlaceholder1;
+
+//!!! ...unfinished... (2022/06/02) Perhaps, called when this.setKeepInputTensor() called.
+//    Base.setup_apply_dummy.call( this.endingDummyOperation, ???, ??? );
+    this.endingDummyOperation.setKeepInputTensor( ???, ??? );
 
   }
 
