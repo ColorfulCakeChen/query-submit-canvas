@@ -333,9 +333,16 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
         } else {
           if ( this.output1 ) { //  7. ( .input0 ) => ( , .output1 )
 
-//!!! ...unfinished... (2022/06/02)
+            if ( bKeepInputTensor0 ) {
+              this.apply = () => { this.output1.realTensor = this.input0.realTensor.clone(); }
+            } else {
+              this.apply = () => { this.output1.realTensor = this.input0.realTensor; }
+            }
 
           } else {              //  8. ( .input0 ) => (  )
+
+//!!! ...unfinished... (2022/06/02)
+
           }
         }
 
