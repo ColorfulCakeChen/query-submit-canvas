@@ -16,6 +16,8 @@ class Case {
   constructor( caseId, bInput0, bInput1, outputTensorCount, bKeepInputTensor0, bKeepInputTensor1 ) {
     this.caseId = caseId;
 
+    this.assertPrefix = `jsPerf_Operation.Case( this.caseId == ${this.caseId} )`;
+
     let input0;
     if ( bInput0 )
       input0 = new TensorPlaceholder.Base();
@@ -45,20 +47,45 @@ class Case {
       this.operation.apply();
 
 //!!! ...unfinished... (2022/06/02)
+      if ( !bInput0 && !bInput1 ) { // If no inputs, outputs should always be null.
+        if ( this.operation.output0 )
+          this.assert_property_equal( "operation", "output0", "realTensor", null );
+        if ( this.operation.output1 )
+          this.assert_property_equal( "operation", "output1", "realTensor", null );
+      }
 
       let memoryInfo_apply_after = tf.memory();
 
       let numTensors_result = ( memoryInfo_apply_before.numTensors + numTensors_delta );
       tf.util.assert( ( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + numTensors_delta ) ),
-        `jsPerf_Operation.Case() memory leak. `
-          + `( this.caseId == ${this.caseId} ). `
+        `${this.assertPrefix}: memory leak. `
           + `result tensor count (${memoryInfo_apply_after.numTensors}) `
           + `should be ( ${numTensors_result} ) = ( ${memoryInfo_apply_before.numTensors} + ${numTensors_delta} ).`
-       );
+      );
     });
 
+  }
 
 //!!! ...unfinished... (2022/06/02)
+
+  assert_property_equal( strPropertyName0, strPropertyName1, strPropertyName2, rhsValue ) {
+    let strWholeName = `Case( caseId = ${this.caseId} ).${strPropertyName0}`;
+
+    let thisValue = this[ strPropertyName0 ];
+
+    if ( strPropertyName1 != undefined ) {
+      thisValue = thisValue[ strPropertyName1 ];
+      strWholeName += strPropertyName1;
+    }
+
+    if ( strPropertyName2 != undefined ) {
+      thisValue = thisValue[ strPropertyName2 ];
+      strWholeName += strPropertyName2;
+    }
+
+    tf.util.assert( thisValue == rhsValue, `jsPerf_Operation.`
+      + `${strWholeName} ( ${thisValue} ) should be ( ${rhsValue} ).` );
+  }
 }
 
 Case.testTensorShape = [ 1 ];
@@ -86,7 +113,7 @@ function testCorrectness() {
             bInput0 = ( nInput0 != 0 );
             bInput1 = ( nInput1 != 0 );
 
-            //!!! (2022/06/02 Remarked) It could be supported. Just do nothing.
+            //!!! (2022/06/02 Remarked) It could be supported. Just get null as result.
             //if ( !bInput0 && !bInput1 )
             //  continue; // Operation should have at least one input.
 
