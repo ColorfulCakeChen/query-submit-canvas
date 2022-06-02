@@ -245,15 +245,67 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
   static setup_apply( bKeepInputTensor0, bKeepInputTensor1 ) {
 
     if ( this.input0 ) {
-      if ( this.input1 ) {
+      if ( this.input1 ) {      // 1. ( .input0, .input1 )
 
         if ( this.output0 ) {
           if ( this.output1 ) { // ( .input0, .input1 ) => ( .output0, .output1 )
+
+            if ( bKeepInputTensor0 ) {
+              if ( bKeepInputTensor1 )
+                this.apply = Base.input0_to_output0_keep0__input1_to_output1_keep1;
+              else
+                this.apply = Base.input0_to_output0_keep0__input1_to_output1_destroy1;
+            } else {
+              if ( bKeepInputTensor1 )
+                this.apply = Base.input0_to_output0_destroy0__input1_to_output1_keep1;
+              else
+                this.apply = Base.input0_to_output0_destroy0__input1_to_output1_destroy1;
+            }
+
           } else {              // ( .input0, .input1 ) => ( .output0 )
+
+            if ( bKeepInputTensor0 ) {
+              if ( bKeepInputTensor1 )
+                this.apply = Base.input0_to_output0_keep0__input1_keep1;
+              else
+                this.apply = Base.input0_to_output0_keep0__input1_destroy1;
+            } else {
+              if ( bKeepInputTensor1 )
+                this.apply = Base.input0_to_output0_destroy0__input1_keep1;
+              else
+                this.apply = Base.input0_to_output0_destroy0__input1_destroy1;
+            }
+
           }
         } else {
           if ( this.output1 ) { // ( .input0, .input1 ) => ( , .output1 )
+            
+            if ( bKeepInputTensor0 ) {
+              if ( bKeepInputTensor1 )
+                this.apply = Base.input0_keep0__input1_to_output1_keep1;
+              else
+                this.apply = Base.input0_keep0__input1_to_output1_destroy1;
+            } else {
+              if ( bKeepInputTensor1 )
+                this.apply = Base.input0_destroy0__input1_to_output1_keep1;
+              else
+                this.apply = Base.input0_destroy0__input1_to_output1_destroy1;
+            }
+
           } else {              // ( .input0, .input1 ) => (  )
+
+            if ( bKeepInputTensor0 ) {
+              if ( bKeepInputTensor1 )
+                this.apply = Base.input0_keep0__input1__keep1;
+              else
+                this.apply = Base.input0_keep0__input1_destroy1;
+            } else {
+              if ( bKeepInputTensor1 )
+                this.apply = Base.input0_destroy0__input1_keep1;
+              else
+                this.apply = Base.input0_destroy0__input1_destroy1;
+            }
+
           }
         }
 
