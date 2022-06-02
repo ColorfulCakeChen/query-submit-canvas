@@ -115,6 +115,9 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 //!!! ...unfinished... (2022/06/02)
 // Is it possible to reconfigure faster (i.e. without traverse all sub operations)?
 // So that it can be reconfigured every time operation_append_xxx() is called.
+//
+// Or, let operation_append_xxx() could append in batch.
+//
 
   /**
    * Call every sub operation's and endingDummyOperation's setKeepInputTensor().
