@@ -11,17 +11,19 @@ import { Base } from "./Operation_Base.js";
 //!!! ...unfinished... (2022/06/02) endingDummyOperation
 
 
- * Its .output0 and .output1 (tensor placeholder) are pointer to the last operation's output0 and output1. This could simply the
- * decision of what tensor placeholders should be used as the next operation's input.
+ * No matter how many sub operations (even no sub operation) are appended, this TwinArray's .output0 and .output1 (tensor
+ * placeholder) are always .endingDummyOperation.output0 and .endingDummyOperation.output1 in fact. The .lastOperationOutput0
+ * and lastOperationOutput1 are always .endingDummyOperation.input0 and .endingDummyOperation.input1 in fact. This could
+ * simplify the decision of what tensor placeholders should be used as the next (appended) operation's input.
  *
  *
  *
  *
  * @member {TensorPlaceholder.Base} lastOperationOutput0
- *   The last sub operation's output0 (also .endingDummyOperation.input0). It could be used as input of newly appended sub operation.
+ *   The last sub operation's output0 (also .endingDummyOperation.input0). It could be used as input of next appended sub operation.
  *
  * @member {TensorPlaceholder.Base} lastOperationOutput1
- *   The last sub operation's output1 (also .endingDummyOperation.input1). It could be used as input of newly appended sub operation.
+ *   The last sub operation's output1 (also .endingDummyOperation.input1). It could be used as input of next appended sub operation.
  *
  * @member {number} tensorWeightCountExtracted
  *   The sum of all sub operations' tensorWeightCountExtracted.
