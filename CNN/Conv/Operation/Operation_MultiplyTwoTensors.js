@@ -115,7 +115,9 @@ class MultiplyTwoTensors extends Base() {
       .multiply_all_byScaleBoundsArray_all( inputScaleBoundsArray1 );
   }
 
-  /** Setup this.output0. */
+  /** Setup this.output0.
+   * This method should be called after setup_BoundsArraySet() because it uses BoundsArrarySet.
+   */
   static setup_output0_TensorPlaceholder() {
 
     // 1. Only same channel count multiplying is supported.
@@ -152,15 +154,19 @@ class MultiplyTwoTensors extends Base() {
       // Otherwise, absent them in the output.
       {
         if ( this.input0.channelCount_lowerHalf == this.input1.channelCount_lowerHalf ) {
-          if ( this.input0.channelCount_lowerHalf != undefined )
-            this.output0.channelCount_lowerHalf = this.this.input0.channelCount_lowerHalf;
+          this.output0.channelCount_lowerHalf = this.input0.channelCount_lowerHalf;
+        } else {
+          this.output0.channelCount_lowerHalf = undefined;
         }
 
         if ( this.input0.channelCount_higherHalf == this.input1.channelCount_higherHalf ) {
-          if ( this.input0.channelCount_higherHalf != undefined )
-            this.output0.channelCount_higherHalf = this.this.input0.channelCount_higherHalf;
+          this.output0.channelCount_higherHalf = this.input0.channelCount_higherHalf;
+        } else {
+          this.output0.channelCount_higherHalf = undefined;
         }
       }
+
+      this.output0.scaleBoundsArray = this.boundsArraySet.output0;
 
     // 2. Unsupported multiplying (different channel count).
     } else {
