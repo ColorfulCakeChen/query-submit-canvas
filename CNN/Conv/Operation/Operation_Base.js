@@ -42,6 +42,16 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
  *   The TensorOpCounter object which represents this operation's second output. It is only created by constructor if
  * outputTensorCount (of constructor) is >= 2.
  *
+
+//!!! ...unfinished... (2022/06/02)
+
+ * @member {function} apply
+ *   This is a method. It processes this.input0.realTensor and this.input1.realTensor as inputTensors. It puts to this.output0.realTensor
+ * as outputTensor. Both inputTensors are tf.tensor3d and represents an images ( height x width x channel ) which will be added. They
+ * should have the same channel count. Their ( height x width ) should be either the same or one is ( 1 x 1 ). The outputTensor
+ * (tf.tensor3d) represents the result of adding the two inputs. The inputTensors may or may not be disposed. In fact, this method
+ * calls one of Add_and_keep0_keep1(), Add_and_keep0_destroy1(), Add_and_destroy0_keep1(), Add_and_destroy0_destroy1() according to
+ * the parameters.
  */
 let Base = ( ParentClass = Object ) => class extends ParentClass {
 
@@ -162,28 +172,6 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
   apply() {
   }
 
-  /**
-   * Pass the input0 as output0 directly. Used for ( bKeepInputTensor == false ).
-   *
-   * @param {Base} this
-   *   The this.input0.realTensor should be viewed as already disposed by this method. However, in fact, it is returned as
-   * this.output0.realTensor directly.
-   */
-  static output0_return_input0_directly() {
-    this.output0.realTensor = this.input0.realTensor;
-  }
-
-  /**
-   * Pass the cloned input0 as output0. Used for ( bKeepInputTensor == true ).
-   *
-   * @param {Base} this
-   *   The this.input0.realTensor should be viewed as kept (i.e. not disposed) by this method. However, in fact, it is cloned
-   * and returned as this.output0.realTensor.
-   */
-  static output0_return_input0_cloned() {
-    this.output0.realTensor = this.input0.realTensor.clone();
-  }
-
 
   /**
    * Sub-class should override this property.
@@ -241,5 +229,100 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
       else
         return 0;
   }
+
+  
+
+//!!! ...unfinished... (2022/06/02)
+  /** Determine this.apply data members according to whether .inputX and .outputX exist.
+   *
+   * @param {Base} this  The Base object to be determined and modified.
+   */
+  static setup_apply() {
+
+    if ( this.input0 ) {
+      if ( this.input1 ) {
+
+        if ( this.output0 ) {
+          if ( this.output1 ) { // ( .input0, .input1 ) => ( .output0, .output1 )
+          } else {              // ( .input0, .input1 ) => ( .output0 )
+          }
+        } else {
+          if ( this.output1 ) { // ( .input0, .input1 ) => ( , .output1 )
+          } else {              // ( .input0, .input1 ) => (  )
+          }
+        }
+
+      } else {
+
+        if ( this.output0 ) {
+          if ( this.output1 ) { // ( .input0 ) => ( .output0, .output1 )
+          } else {              // ( .input0 ) => ( .output0 )
+          }
+        } else {
+          if ( this.output1 ) { // ( .input0 ) => ( , .output1 )
+          } else {              // ( .input0 ) => (  )
+          }
+        }
+
+      }
+
+    } else {
+
+      if ( this.input1 ) {
+
+        if ( this.output0 ) {
+          if ( this.output1 ) { // ( , .input1 ) => ( .output0, .output1 )
+          } else {              // ( , .input1 ) => ( .output0 )
+          }
+        } else {
+          if ( this.output1 ) { // ( , .input1 ) => ( , .output1 )
+          } else {              // ( , .input1 ) => (  )
+          }
+        }
+
+      } else {
+
+        if ( this.output0 ) {
+          if ( this.output1 ) { // (  ) => ( .output0, .output1 )
+          } else {              // (  ) => ( .output0 )
+          }
+        } else {
+          if ( this.output1 ) { // (  ) => ( , .output1 )
+          } else {              // ( ) => (  )
+          }
+        }
+
+      }
+
+//!!! ...unfinished... (2022/06/02)
+    }
+  }
+
+
+  /**
+   * Pass the input0 as output0 directly. Used for ( bKeepInputTensor == false ).
+   *
+   * @param {Base} this
+   *   The this.input0.realTensor should be viewed as already disposed by this method. However, in fact, it is returned as
+   * this.output0.realTensor directly.
+   */
+  static output0_return_input0_directly() {
+    this.output0.realTensor = this.input0.realTensor;
+  }
+
+  /**
+   * Pass the cloned input0 as output0. Used for ( bKeepInputTensor == true ).
+   *
+   * @param {Base} this
+   *   The this.input0.realTensor should be viewed as kept (i.e. not disposed) by this method. However, in fact, it is cloned
+   * and returned as this.output0.realTensor.
+   */
+  static output0_return_input0_cloned() {
+    this.output0.realTensor = this.input0.realTensor.clone();
+  }
+
+
+//!!! ...unfinished... (2022/06/02)
+
 
 }
