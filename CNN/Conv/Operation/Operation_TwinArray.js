@@ -73,8 +73,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       }
     }
 
-    // Every input tensors' last operation should be responsible for releasing the tensor. Except the input tensors are requested
-    // to be kept (i.e. inside alwaysKeepSet).
+    // Every input tensors' last operation is responsible for releasing the tensor (except the input tensors which are requested
+    // to be kept (i.e. inside alwaysKeepSet)).
     //
     for ( let i = 0; i < this.operationArray.length; ++i ) {
       let operation = this.operationArray[ i ];
