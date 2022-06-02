@@ -265,22 +265,26 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
   }
 
-  
 
 
   /** @return {number} Sum of operations' tensorWeightCountExtracted. */
   get tensorWeightCountExtracted() {
-//!!! ...unfinished... (2022/06/01)
-    return 0;
+    let sum = 0;
+    for ( let i = 0; i < this.operationArray.length; ++i ) {
+      let operation = this.operationArray[ i ];
+      sum += operation.tensorWeightCountExtracted;
+    }
+    return sum;
   }
-
 
   /** @return {number} Sum of operations' tensorWeightCountTotal. */
   get tensorWeightCountTotal() {
-//!!! ...unfinished... (2022/06/01)
-    return 0;
+    let sum = 0;
+    for ( let i = 0; i < this.operationArray.length; ++i ) {
+      let operation = this.operationArray[ i ];
+      sum += operation.tensorWeightCountTotal;
+    }
+    return sum;
   }
-
-
 
 }
