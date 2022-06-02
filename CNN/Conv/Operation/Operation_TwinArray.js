@@ -276,18 +276,6 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
   }
 
 
-  /**
-   * @override
-   */
-  apply() {
-
-//!!! ...unfinished... (2022/06/02)
-// What if not operation at all when needs or needs not keep-input?
-
-  }
-
-
-
   /** @return {number} Sum of operations' tensorWeightCountExtracted. */
   get tensorWeightCountExtracted() {
     let sum = 0;
@@ -321,14 +309,28 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     }
 
 //!!! ...unfinished... (2022/06/02) 
+    this.apply = TwinArray.operationArray_apply;
 
 
 
 //!!! ...unfinished... (2022/06/02) 
-    // Reconfigure .apply when operation array changed between empty and non-empty.
-    this.setKeepInputTensor( this.bKeepInputTensor0, this.bKeepInputTensor1 );
+// What if not operation at all when needs or needs not keep-input?
+
+  }
+
+
+  /**
+   * Calling every sub operations' .apply()
+   */
+  static operationArray_apply() {
 
 //!!! ...unfinished... (2022/06/02) 
+// What if not operation at all when needs or needs not keep-input?
+
+    for ( let i = 0; i < this.operationArray.length; ++i ) {
+      let operation = this.operationArray[ i ];
+      operation.apply();
+    }
   }
 
 }
