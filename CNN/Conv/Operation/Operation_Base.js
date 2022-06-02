@@ -364,9 +364,21 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
           }
         }
       } else { // 13. no input0, no input1.
-        this.apply = () => {}
+        if ( this.output0 ) {
+          if ( this.output1 ) { // 13.1 (  ) => ( .output0, .output1 )
+            this.apply = () => { this.output0.realTensor = null; this.output1.realTensor = null; }
+          } else {              // 13.2 (  ) => ( .output0 )
+            this.apply = () => { this.output0.realTensor = null; }
+          }
+        } else {
+          if ( this.output1 ) { // 13.3 (  ) => ( , .output1 )
+            this.apply = () => { this.output1.realTensor = null; }
+          } else {              // 13.4 (  ) => (  )
+            this.apply = () => {}
+          }
+        }
 
-        //!!! (2022/06/02 Remarked) It can be supported. Just do nothing should be enough.
+        //!!! (2022/06/02 Remarked) It can be supported. Just put null to output should be enough.
         //tf.util.assert( ( this.input0 != this.input1 ),
         //  `Operation.Base.setup_apply(): `
         //    + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should at least one is non-null.`
