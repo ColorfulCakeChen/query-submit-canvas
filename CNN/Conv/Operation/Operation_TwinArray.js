@@ -68,17 +68,14 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       this.output0 = this.endingDummyOperation.output0;
       if ( this.endingDummyOperation.output1 )
         this.output1 = this.endingDummyOperation.output1;
-
-//!!! ...unfinished... (2022/06/02) endingDummyOperation
-//      TwinArray.set_lastSubOperationOutput0_lastSubOperationOutput0.call( this );
     }
 
-    this.bKeepInputTensor0 = false;
+    this.bKeepInputTensor0 = false; // Default is destroy0 and destroy1;
     this.bKeepInputTensor1 = false;
-
-//!!!
     TwinArray.alwaysKeepSet_collect.call( this ); // Re-collect TensorPlaceholders which are requested to keep their tensors.
-    this.reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed(); // Adjust .apply and sub operations.
+
+    TwinArray.setKeepInputTensor_by_bKeepInputTensor0_bKeepInputTensor1_alwaysKeepSet();
+    TwinArray.setup_apply_loop.call( this );
   }
 
 
@@ -98,7 +95,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     this.endingDummyOperation.input0 = this.input0; // Since there is no sub operation, short-circuit to the original inputs.
     this.endingDummyOperation.input1 = this.input1;
 
-    this.reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed(); // Adjust .apply and sub operations.
+    TwinArray.setKeepInputTensor_by_bKeepInputTensor0_bKeepInputTensor1_alwaysKeepSet();
 
     super.disposeTensors();
   }
@@ -115,8 +112,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
 
-    TwinArray.alwaysKeepSet_collect.call( this ); // Re-collect TensorPlaceholders which are requested to keep their tensors.
-    this.reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed(); // Adjust .apply and sub operations.
+    TwinArray.alwaysKeepSet_collect.call( this );
+    TwinArray.setKeepInputTensor_by_bKeepInputTensor0_bKeepInputTensor1_alwaysKeepSet();
   }
 
 
@@ -125,12 +122,12 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 // So that it can be reconfigured every time operation_append_xxx() is called.
 
   /**
-   * Reconfigure .apply data member, and calling every sub operation's setKeepInputTensor().
+   * Call every sub operation's and endingDummyOperation's setKeepInputTensor().
    *
-   * Every time .operationArray or .bKeepInputTensor0 or .bKeepInputTensor1 is changed, this method should be called.
+   * Every time .operationArray or .bKeepInputTensor0 or .bKeepInputTensor1 or .alwaysKeepSet is changed, this method should be called.
    *
    */
-  reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed() {
+  static setKeepInputTensor_by_bKeepInputTensor0_bKeepInputTensor1_alwaysKeepSet() {
 
     // 1. Every input tensors' last operation is responsible for releasing the tensor (except the input tensors which are requested
     //    to be kept (i.e. inside alwaysKeepSet)).
@@ -240,9 +237,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       }
     }
 
-    // Note: The endingDummyOperation does not configured properly until its Base.setup_apply_dummy.call() or setKeepInputTensor()
-    //       is called. So it is important to call .reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed()
-    //       after all sub operations are appended (and before calling .apply()).
+    // Note: The endingDummyOperation is not configured properly until .reconfigure_by_bKeepInputTensor0_bKeepInputTensor1_alwaysKeepSet()
+    //       is called. So do not forget to call it after all sub operations are appended (and before calling .apply()).
 
     return true;
   }
@@ -311,9 +307,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       this.endingDummyOperation.input1 = operationObject1.output0;
     }
 
-    // Note: The endingDummyOperation does not configured properly until its Base.setup_apply_dummy.call() or setKeepInputTensor()
-    //       is called. So it is important to call .reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed()
-    //       after all sub operations are appended (and before calling .apply()).
+    // Note: The endingDummyOperation is not configured properly until .reconfigure_by_bKeepInputTensor0_bKeepInputTensor1_alwaysKeepSet()
+    //       is called. So do not forget to call it after all sub operations are appended (and before calling .apply()).
 
     return true;
   }
@@ -378,29 +373,13 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     }
   }
 
+
   /**
-   * Adjust .apply data member according to .operationArray, .bKeepInputTensor0, .bKeepInputTensor1
+   * Adjust .apply data member according to calling .operationArray_apply().
    */
-  static setup_apply_dummy_or_loop() {
-
-
-//!!! ...unfinished... (2022/06/02) calling parent class is no longer necessary. But it needs handling endingDummyOperation.
-
-
-
-    // 0. If there is no sub operation, the behavior should be the same as an no-op operation.
-    if ( !this.operationArray || ( this.operationArray.length <= 0 ) ) {
-      TwinArray.setup_apply_dummy.call( this, this.bKeepInputTensor0, this.bKeepInputTensor1 );
-      return;
-    }
-
-    // 1. Otherwise, handle sub operations by loop.
+  static setup_apply_loop() {
     this.apply = TwinArray.operationArray_apply;
-
-//!!! ...unfinished... (2022/06/02) endingDummyOperation
-
   }
-
 
   /**
    * Calling every sub operations' and .endingDummyOperation's .apply()
