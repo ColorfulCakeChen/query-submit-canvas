@@ -51,24 +51,22 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    */
   constructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount ) {
 
-//!!! ...unfinished... (2022/06/02)
-//    super( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
-    
-    // The real output TensorPlacehoder will be created later as final operation outputs.
+    // Note: The real output TensorPlacehoder will be created later as final operation outputs.
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
 
-    this.operationArray = new Array();
-
-
-//!!! ...unfinished... (2022/06/02) endingDummyOperation
-// What if has sub operation, but only input0 is used by the sub operation (i.e. the input1 not handled by any sub ooeration)? Perhaps, always push a dummy operation at the end if operationArray[].
+    // In order to handle keep-input-flag correctly (even if no sub operation at all), a ending dummy operation is used.
     {
       this.endingDummyOperation = new Base( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
-      this.output0 = this.endingDummyOperation.output0;
-      if ( this.endingDummyOperation.output1 )
-        this.output1 = this.endingDummyOperation.output1;
+      // Its output will be the output of this operation array.
+      {
+        this.output0 = this.endingDummyOperation.output0;
+        if ( this.endingDummyOperation.output1 )
+          this.output1 = this.endingDummyOperation.output1;
+      }
     }
+
+    this.operationArray = new Array();
 
     this.bKeepInputTensor0 = false; // Default is destroy0 and destroy1;
     this.bKeepInputTensor1 = false;
