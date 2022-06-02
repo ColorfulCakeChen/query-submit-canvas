@@ -2,26 +2,6 @@ export { Base };
 
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 
-
-
-//!!! ...unfinished... (2022/05/30) Used by Operation.apply()
-// class OperationApplyArgs {
-//
-// //   constructor() {
-// //     this.blockInput0 =
-// //     this.blockInput1 =
-// //
-// //     this.operationInput0 =
-// //     this.operationInput1 =
-// //     this.operationOutput0 =
-// //     this.operationOutput1 =;
-//   }
-//
-// }
-//
-
-
-
 /**
  * An object operates several TensorPlaceholder.Base.
  *
@@ -42,9 +22,6 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
  *   The TensorOpCounter object which represents this operation's second output. It is only created by constructor if
  * outputTensorCount (of constructor) is >= 2.
  *
-
-//!!! ...unfinished... (2022/06/02)
-
  * @member {function} apply
  *   This is a data member which is a pointer to a function. The function processes .input0.realTensor (and .input1.realTensor) as
  * inputTensor(s). It puts to .output0.realTensor as outputTensor. They are tf.tensor3d and just be passed from input to output.
@@ -91,18 +68,23 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
   }
 
   /**
-   * Sub-class should override this method.
-   *
    * Release all tensors.
+   *
+   * Usually, this method is not responsible for releasing tensors inside input/output TensorPlaceholder. They should be handled
+   * by the caller of apply().
+   *
+   * Sub-class should override this method.
    */
   disposeTensors() {
   }
 
   /**
-   * Sub-class should override this method.
+   * Adjust according to specified keep-input-tensor flag(s). So that calling .apply() will generate correct result without memory leakage.
    *
    * The this.setKeepInputTensor_IfNotLastOperation_Or_In() will call this method. This method should adjust
    * this.apply so that this.apply() will or will not dispose its inputTensors.
+   *
+   * Sub-class should override this method.
    *
    * @param {boolean} bKeepInputTensor0
    *   Whether the .input0's tensor should be destroyed by this operation. It is ignored if .input0 does not exist.
