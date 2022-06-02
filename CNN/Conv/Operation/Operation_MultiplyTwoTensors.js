@@ -49,9 +49,9 @@ class MultiplyTwoTensors extends Base() {
 
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
-    Base.adjust_pfn.call( this );
-    Base.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1 );
-    Base.setup_output0_TensorPlaceholder.call( this );
+    MultiplyTwoTensors.adjust_pfn.call( this );
+    MultiplyTwoTensors.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1 );
+    MultiplyTwoTensors.setup_output0_TensorPlaceholder.call( this );
   }
 
   /**
@@ -59,7 +59,7 @@ class MultiplyTwoTensors extends Base() {
    */
   setKeepInputTensor0( bKeepInputTensor0 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
-    Base.adjust_pfn.call( this );
+    MultiplyTwoTensors.adjust_pfn.call( this );
   }
 
   /**
@@ -67,7 +67,7 @@ class MultiplyTwoTensors extends Base() {
    */
   setKeepInputTensor1( bKeepInputTensor1 ) {
     this.bKeepInputTensor1 = bKeepInputTensor1;
-    Base.adjust_pfn.call( this );
+    MultiplyTwoTensors.adjust_pfn.call( this );
   }
 
   /**
@@ -76,7 +76,7 @@ class MultiplyTwoTensors extends Base() {
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
-    Base.adjust_pfn.call( this );
+    MultiplyTwoTensors.adjust_pfn.call( this );
   }
 
 
@@ -84,15 +84,15 @@ class MultiplyTwoTensors extends Base() {
   static adjust_pfn() {
     if ( this.bKeepInputTensor0 ) {
       if ( this.bKeepInputTensor1 ) {
-        this.apply = Base.Multiply_and_keep0_keep1;
+        this.apply = MultiplyTwoTensors.Multiply_and_keep0_keep1;
       } else {
-        this.apply = Base.Multiply_and_keep0_destroy1;
+        this.apply = MultiplyTwoTensors.Multiply_and_keep0_destroy1;
       }
     } else {
       if ( this.bKeepInputTensor1 ) {
-        this.apply = Base.Multiply_and_destroy0_keep1;
+        this.apply = MultiplyTwoTensors.Multiply_and_destroy0_keep1;
       } else {
-        this.apply = Base.Multiply_and_destroy0_destroy1;
+        this.apply = MultiplyTwoTensors.Multiply_and_destroy0_destroy1;
       }
     }
   }
