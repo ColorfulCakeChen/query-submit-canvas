@@ -77,7 +77,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
         this.input1.lastOperation = this;
     }
 
-    // Create outpiut TensorPlaceholder.
+    // Create output TensorPlaceholder.
     {
       if ( outputTensorCount >= 1 ) {
         this.output0 = new TensorPlaceholder.Base();
@@ -104,13 +104,13 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    * this.apply so that this.apply() will or will not dispose its inputTensors.
    *
    * @param {boolean} bKeepInputTensor0
-   *   Whether the 1st input tensor should be destroyed by this operation.
+   *   Whether the .input0's tensor should be destroyed by this operation. It is ignored if .input0 does not exist.
    *
    * @param {boolean} bKeepInputTensor1
-   *   Whether the 2nd input tensor should be destroyed by this operation. It could be null (or undefined) if this operation have only
-   * input tensor (i.e. does not have 2nd input tensor).
+   *   Whether the .input1's tensor should be destroyed by this operation. It is ignored if .input1 does not exist.
    */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
+    Base.setup_apply.call( this, bKeepInputTensor0, bKeepInputTensor1 );
   }
 
   /**
@@ -129,8 +129,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
     //
     tf.util.assert( ( this.input0 != this.input1 ),
       `Operation.Base.setKeepInputTensor_IfNotLastOperation_Or_In(): `
-        + `input0 ( ${this.input0} ) should be different from `
-        + `input1 ( ${this.input1} ).`
+        + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should be different objects.`
     );
 
     // If this operation is the last operation of the input tensor, this operation is responsible for disposing it.
