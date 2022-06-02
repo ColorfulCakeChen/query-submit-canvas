@@ -93,7 +93,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       this.operationArray.length = 0;
     }
 
-//!!! ...unfinished... (2022/06/02) endingDummyOperation
+    this.endingDummyOperation.input0 = this.input0; // Since there is no sub operation, short-circuit to the original inputs.
+    this.endingDummyOperation.input1 = this.input1;
 
     this.reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed(); // Adjust .apply and sub operations.
 
@@ -121,6 +122,10 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    *
    */
   reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed() {
+
+
+//!!! ...unfinished... (2022/06/02) calling parent class is no longer necessary. But it needs handling endingDummyOperation.
+
 
     // Every time .operationArray or .bKeepInputTensor0 or .bKeepInputTensor1 is changed, the .apply data member should be adjusted.
     TwinArray.setup_apply_dummy_or_loop.call( this );
@@ -390,6 +395,11 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    */
   static setup_apply_dummy_or_loop() {
 
+
+//!!! ...unfinished... (2022/06/02) calling parent class is no longer necessary. But it needs handling endingDummyOperation.
+
+
+
     // 0. If there is no sub operation, the behavior should be the same as an no-op operation.
     if ( !this.operationArray || ( this.operationArray.length <= 0 ) ) {
       TwinArray.setup_apply_dummy.call( this, this.bKeepInputTensor0, this.bKeepInputTensor1 );
@@ -405,16 +415,14 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
 
   /**
-   * Calling every sub operations' .apply()
+   * Calling every sub operations' and .endingDummyOperation's .apply()
    */
   static operationArray_apply() {
     for ( let i = 0; i < this.operationArray.length; ++i ) {
       let operation = this.operationArray[ i ];
       operation.apply();
     }
-
-//!!! ...unfinished... (2022/06/02) endingDummyOperation
-
+    this.endingDummyOperation.apply();
   }
 
 }
