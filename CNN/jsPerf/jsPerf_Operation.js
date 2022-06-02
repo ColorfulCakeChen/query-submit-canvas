@@ -37,11 +37,17 @@ class Case {
       if ( input0 ) {
         input0.realTensor = tf.randomNormal( Case.testTensorShape );
         ++numTensors_delta;
+
+        if ( bKeepInputTensor0 )
+          ++numTensors_delta;
       }
 
       if ( input1 ) {
         input1.realTensor = tf.randomNormal( Case.testTensorShape );
         ++numTensors_delta;
+
+          if ( bKeepInputTensor1 )
+            ++numTensors_delta;
       }
 
       this.operation.apply();
@@ -55,29 +61,20 @@ class Case {
 
       } else {
         numTensors_delta += outputTensorCount;
-
-//!!! ...unfinished... (2022/06/02)
-
-        if ( bInput0 && bKeepInputTensor0 )
-          ++numTensors_delta;
-
-        if ( bInput1 && bKeepInputTensor1 )
-          ++numTensors_delta;
       }
 
       let memoryInfo_apply_after = tf.memory();
 
-      let numTensors_result = ( memoryInfo_apply_before.numTensors + numTensors_delta );
+      let numTensors_predicted = ( memoryInfo_apply_before.numTensors + numTensors_delta );
       tf.util.assert( ( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + numTensors_delta ) ),
         `${this.assertPrefix}: memory leak. `
           + `result tensor count (${memoryInfo_apply_after.numTensors}) `
-          + `should be ( ${numTensors_result} ) = ( ${memoryInfo_apply_before.numTensors} + ${numTensors_delta} ).`
+          + `should be ( ${numTensors_predicted} ) = ( ${memoryInfo_apply_before.numTensors} + ${numTensors_delta} ).`
       );
     });
 
   }
 
-//!!! ...unfinished... (2022/06/02)
 
   assert_property_equal( strPropertyName0, strPropertyName1, strPropertyName2, rhsValue ) {
     let strWholeName = `Case( caseId = ${this.caseId} ).${strPropertyName0}`;
@@ -103,12 +100,6 @@ Case.testTensorShape = [ 1 ];
 
 
 function testCorrectness() {
-
-//!!! ...unfinished... (2022/06/02)
-//   let casesArray = [
-//     new Case(  0, [  1,  2 ], [  3,  4 ],  5, [  3,  3 ], [  4,  6 ], [  3,  8 ], [   5,  10 ] ),
-/
-//   ];
 
   let caseId = -1;
   let bInput0, bInput1, outputTensorCount, bKeepInputTensor0, bKeepInputTensor1;
