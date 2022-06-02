@@ -17,6 +17,7 @@ import * as ImageSourceBag from "./Ref/ImageSourceBag.js";
 import * as NumberImage from "./Ref/NumberImage.js"; 
 import * as jsPerf_FloatValue_ScaleTranslate from "./jsPerf_FloatValue_ScaleTranslate.js";
 import * as jsPerf_FloatValue_Bounds from "./jsPerf_FloatValue_Bounds.js";
+import * as jsPerf_Operation from "./jsPerf_Operation.js";
 
 /**
  * Test CNN Block.
@@ -534,11 +535,16 @@ class HeightWidthDepth {
     }
   }
 
+  test_Operation() {
+    jsPerf_Operation.testCorrectness();
+  }
+
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
     this.test_FloatValue();
     this.test_Weights_Float32Array_RestrictedClone();
     this.test_ValueRange_valueInputOutputGenerator();
+    this.test_Operation();
 
     tf.tidy( () => {
 
