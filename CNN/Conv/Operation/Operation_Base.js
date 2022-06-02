@@ -244,13 +244,10 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    *   Whether the .input1's tensor should be destroyed by this operation. It is ignored if .input1 does not exist.
    */
   static setup_apply( bKeepInputTensor0, bKeepInputTensor1 ) {
-
     if ( this.input0 ) {
       if ( this.input1 ) {
-
         if ( this.output0 ) {
           if ( this.output1 ) { //  1. ( .input0, .input1 ) => ( .output0, .output1 )
-
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
                 this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); this.output1.realTensor = this.input1.realTensor.clone(); }
@@ -262,9 +259,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
               else
                 this.apply = () => { this.output0.realTensor = this.input0.realTensor; this.output1.realTensor = this.input1.realTensor; }
             }
-
           } else {              //  2. ( .input0, .input1 ) => ( .output0 )
-
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
                 this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); }
@@ -276,11 +271,9 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
               else
                 this.apply = () => { this.output0.realTensor = this.input0.realTensor; this.input1.realTensor.dispose(); }
             }
-
           }
         } else {
           if ( this.output1 ) { //  3. ( .input0, .input1 ) => ( , .output1 )
-
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
                 this.apply = () => { this.output1.realTensor = this.input1.realTensor.clone(); }
@@ -292,9 +285,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
               else
                 this.apply = () => { this.input0.realTensor.dispose(); this.output1.realTensor = this.input1.realTensor; }
             }
-
           } else {              //  4. ( .input0, .input1 ) => (  )
-
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
                 this.apply = () => {}
@@ -306,103 +297,76 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
               else
                 this.apply = () => { this.input0.realTensor.dispose(); this.input1.realTensor.dispose(); }
             }
-
           }
         }
-
       } else {
-
         if ( this.output0 ) {
           if ( this.output1 ) { //  5. ( .input0 ) => ( .output0, .output1 )
-
             if ( bKeepInputTensor0 ) {
               this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); this.output1.realTensor = this.input0.realTensor.clone(); }
             } else {
               this.apply = () => { this.output0.realTensor = this.input0.realTensor; this.output1.realTensor = this.input0.realTensor.clone(); }
             }
-
           } else {              //  6. ( .input0 ) => ( .output0 )
-
             if ( bKeepInputTensor0 ) {
               this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); }
             } else {
               this.apply = () => { this.output0.realTensor = this.input0.realTensor; }
             }
-
           }
         } else {
           if ( this.output1 ) { //  7. ( .input0 ) => ( , .output1 )
-
             if ( bKeepInputTensor0 ) {
               this.apply = () => { this.output1.realTensor = this.input0.realTensor.clone(); }
             } else {
               this.apply = () => { this.output1.realTensor = this.input0.realTensor; }
             }
-
           } else {              //  8. ( .input0 ) => (  )
-
             if ( bKeepInputTensor0 ) {
               this.apply = () => {}
             } else {
               this.apply = () => { this.input0.realTensor.dispose(); }
             }
-
           }
         }
-
       }
-
     } else {
-
       if ( this.input1 ) {
-
         if ( this.output0 ) {
           if ( this.output1 ) { //  9. ( , .input1 ) => ( .output0, .output1 )
-
             if ( bKeepInputTensor1 ) {
               this.apply = () => { this.output0.realTensor = this.input1.realTensor.clone(); this.output1.realTensor = this.input1.realTensor.clone(); }
             } else {
               this.apply = () => { this.output0.realTensor = this.input1.realTensor; this.output1.realTensor = this.input1.realTensor.clone(); }
             }
-
           } else {              // 10. ( , .input1 ) => ( .output0 )
-
             if ( bKeepInputTensor1 ) {
               this.apply = () => { this.output0.realTensor = this.input1.realTensor.clone(); }
             } else {
               this.apply = () => { this.output0.realTensor = this.input1.realTensor; }
             }
-
           }
         } else {
           if ( this.output1 ) { // 11. ( , .input1 ) => ( , .output1 )
-
             if ( bKeepInputTensor1 ) {
               this.apply = () => { this.output1.realTensor = this.input1.realTensor.clone(); }
             } else {
               this.apply = () => { this.output1.realTensor = this.input1.realTensor; }
             }
-
           } else {              // 12. ( , .input1 ) => (  )
-
             if ( bKeepInputTensor1 ) {
               this.apply = () => {}
             } else {
               this.apply = () => { this.input1.realTensor.dispose(); }
             }
-
           }
         }
-
       } else { // 13. no input0, no input1. Not supported.
-
         tf.util.assert( ( this.input0 != this.input1 ),
           `Operation.Base.setup_apply(): `
             + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should at least one is non-null.`
         );
-
       }
-
     }
   }
 
