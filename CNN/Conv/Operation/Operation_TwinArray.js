@@ -55,6 +55,10 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       this.operationArray.length = 0;
     }
 
+//!!! ...unfinished... (2022/06/02) Perhaps, call setup_apply()?
+    // Reconfigure .apply when operation array changed between empty and non-empty.
+    this.setKeepInputTensor( this.bKeepInputTensor0, this.bKeepInputTensor1 );
+
 //!!! ...unfinished... (2022/06/02) ??? should adjust by setKeepInputTensor( ???, ??? )
 //     this.output0 = this.input0;
 //     this.output1 = this.input1;
@@ -67,6 +71,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    * @override
    */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
+    this.bKeepInputTensor0 = bKeepInputTensor0;
+    this.bKeepInputTensor1 = bKeepInputTensor1;
 
     // 0. If there is no sub operation, the behavior should be the same as an no-op operation.
     if ( !this.operationArray || ( this.operationArray.length <= 0 ) ) {
@@ -156,6 +162,12 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    *
    *     - will be pointered to operationObject0.output1, if operationObject0 has output1.
    *
+   *   
+
+//!!! ...unfinished... (2022/06/02) Perhaps, call setup_apply()?
+
+   * Note: After all operations are appended, .setKeepInputTensor() should called to reconfigure .apply data member.
+   *
    *
    * @param {Class} operationClass
    *   What kind of operation to be created and appended into this.operationArray[].
@@ -207,6 +219,12 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    *
    *   - this.output1 will be pointered to operationObject1.output0
    *       (i.e. operationObject1.output1 will be ignored even if it exists)
+   *
+   *
+
+//!!! ...unfinished... (2022/06/02) Perhaps, call setup_apply()?
+
+   * Note: After all operations are appended, .setKeepInputTensor() should called to reconfigure .apply data member.
    *
    *
    * @param {Class} operationClass0   The 1st operation class.
