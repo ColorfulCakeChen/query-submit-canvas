@@ -236,8 +236,14 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
   /** Determine this.apply data members according to whether .inputX and .outputX exist.
    *
    * @param {Base} this  The Base object to be determined and modified.
+   *
+   * @param {boolean} bKeepInputTensor0
+   *   Whether the .input0's tensor should be destroyed by this operation. It is ignored if .input0 does not exist.
+   *
+   * @param {boolean} bKeepInputTensor1
+   *   Whether the .input1's tensor should be destroyed by this operation. It is ignored if .input1 does not exist.
    */
-  static setup_apply() {
+  static setup_apply( bKeepInputTensor0, bKeepInputTensor1 ) {
 
     if ( this.input0 ) {
       if ( this.input1 ) {
