@@ -1,7 +1,6 @@
 export { TwinArray };
 
-import * as TensorPlaceholder from "../TensorPlaceholder.js";
-//import * as BoundsArraySet from "../BoundsArraySet.js";
+//import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import { Base } from "./Operation_Base.js";
 
 /**
@@ -16,6 +15,9 @@ import { Base } from "./Operation_Base.js";
  * and lastSubOperationOutput1 are always .endingDummyOperation.input0 and .endingDummyOperation.input1 in fact. This could
  * simplify the decision of what tensor placeholders should be used as the next (appended) operation's input.
  *
+ *
+ * Note: The .outputTensorCount is determined when constructor is called. No matter what kind of operation is appended
+ * (even if the is no operation is appended), the outputTensorCount will not be changed.
  *
  *
  *
@@ -42,11 +44,6 @@ import { Base } from "./Operation_Base.js";
 let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
   /**
-
-//!!! ...unfinished... (2022/06/02)
-
-   * Note: The outputTensorCount is determined when constructor is called. No matter what kind of operation is appended,
-   * the outputTensorCount will not be changed.
    *
    */
   constructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount ) {
