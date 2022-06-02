@@ -272,36 +272,34 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
                 this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); }
-                //Base.input0_to_output0_keep0__input1_keep1;
               else
                 this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); this.input1.realTensor.dispose(); }
-                //Base.input0_to_output0_keep0__input1_destroy1;
             } else {
               if ( bKeepInputTensor1 )
                 this.apply = () => { this.output0.realTensor = this.input0.realTensor; }
-                //Base.input0_to_output0_destroy0__input1_keep1;
               else
                 this.apply = () => { this.output0.realTensor = this.input0.realTensor; this.input1.realTensor.dispose(); }
-                //Base.input0_to_output0_destroy0__input1_destroy1;
             }
 
           }
         } else {
           if ( this.output1 ) { //  3. ( .input0, .input1 ) => ( , .output1 )
-            
+
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
-                this.apply = Base.input0_keep0__input1_to_output1_keep1;
+                this.apply = () => { this.output1.realTensor = this.input1.realTensor.clone(); }
               else
-                this.apply = Base.input0_keep0__input1_to_output1_destroy1;
+                this.apply = () => { this.output1.realTensor = this.input1.realTensor; }
             } else {
               if ( bKeepInputTensor1 )
-                this.apply = Base.input0_destroy0__input1_to_output1_keep1;
+                this.apply = () => { this.input0.realTensor.dispose(); this.output1.realTensor = this.input1.realTensor.clone(); }
               else
-                this.apply = Base.input0_destroy0__input1_to_output1_destroy1;
+                this.apply = () => { this.input0.realTensor.dispose(); this.output1.realTensor = this.input1.realTensor; }
             }
 
           } else {              //  4. ( .input0, .input1 ) => (  )
+
+//!!! ...unfinished... (2022/06/02)
 
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
