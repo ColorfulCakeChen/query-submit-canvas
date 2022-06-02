@@ -115,7 +115,9 @@ class AddTwoTensors extends Base() {
       .add_all_byScaleBoundsArray_all( inputScaleBoundsArray1 );
   }
 
-  /** Setup this.output0. */
+  /** Setup this.output0.
+   * This method should be called after setup_BoundsArraySet() because it uses BoundsArrarySet.
+   */
   static setup_output0_TensorPlaceholder() {
 
     // 1. Only same channel count adding is supported.
@@ -161,6 +163,8 @@ class AddTwoTensors extends Base() {
             this.output0.channelCount_higherHalf = this.this.input0.channelCount_higherHalf;
         }
       }
+
+      this.output0.scaleBoundsArray = this.boundsArraySet.output0;
 
     // 2. Unsupported adding (different channel count).
     } else {
