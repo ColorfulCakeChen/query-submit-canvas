@@ -236,6 +236,8 @@ class ConcatShuffleSplit extends Base() {
     this.output0 = new TensorPlaceholder.Base();
     this.output0.height = this.input0.height;
     this.output0.width = this.input0.width;
+    this.output0.channelCount_lowerHalf = undefined;  // Note: After concatenation operation, the half channel information will be lost.
+    this.output0.channelCount_higherHalf = undefined;
     this.output0.scaleBoundsArray = this.boundsArraySet.output0;
 
     if ( this.bShouldShuffleSplit ) { // Only if splitting is required, the output1 does exist.
@@ -249,11 +251,15 @@ class ConcatShuffleSplit extends Base() {
       this.output0.channelCount = this.channelShuffler.filtersTensor4dArray[ 0 ].shape[ outputChannelCount_filterAxisId ];
       this.output1.channelCount = this.channelShuffler.filtersTensor4dArray[ 1 ].shape[ outputChannelCount_filterAxisId ];
 
+      this.output1.channelCount_lowerHalf = undefined;  // Note: After concatenation operation, the half channel information will be lost.
+      this.output1.channelCount_higherHalf = undefined;
+
       this.output1.scaleBoundsArray = this.boundsArraySet.output1;
 
     } else { // Only concatenation.
       this.output0.channelCount = this.input0.channelCount + this.input1.channelCount;
     }
+
   }
 
 
