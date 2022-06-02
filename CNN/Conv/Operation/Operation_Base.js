@@ -232,10 +232,10 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
 
 
   
-//!!! ...unfinished... (2022/06/02)
-  /** Determine this.apply data members according to whether .inputX and .outputX exist.
+  /** Determine this.apply data members according to whether .inputX and .outputX exist and whether they are required to be kept.
    *
-   * @param {Base} this  The Base object to be determined and modified.
+   * @param {Base} this
+   *   The Base object to be determined and modified.
    *
    * @param {boolean} bKeepInputTensor0
    *   Whether the .input0's tensor should be destroyed by this operation. It is ignored if .input0 does not exist.
@@ -254,17 +254,13 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
                 this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); this.output1.realTensor = this.input1.realTensor.clone(); }
-                //Base.input0_to_output0_keep0__input1_to_output1_keep1;
               else
                 this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); this.output1.realTensor = this.input1.realTensor; }
-                //Base.input0_to_output0_keep0__input1_to_output1_destroy1;
             } else {
               if ( bKeepInputTensor1 )
                 this.apply = () => { this.output0.realTensor = this.input0.realTensor; this.output1.realTensor = this.input1.realTensor.clone(); }
-                //Base.input0_to_output0_destroy0__input1_to_output1_keep1;
               else
                 this.apply = () => { this.output0.realTensor = this.input0.realTensor; this.output1.realTensor = this.input1.realTensor; }
-                //Base.input0_to_output0_destroy0__input1_to_output1_destroy1;
             }
 
           } else {              //  2. ( .input0, .input1 ) => ( .output0 )
@@ -319,18 +315,26 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
         if ( this.output0 ) {
           if ( this.output1 ) { //  5. ( .input0 ) => ( .output0, .output1 )
 
-//!!! ...unfinished... (2022/06/02)
-
             if ( bKeepInputTensor0 ) {
-              this.apply = Base.input0_to_output0_keep0__input0_to_output1_keep0;
+              this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); this.output1.realTensor = this.input0.realTensor.clone(); }
             } else {
-              this.apply = Base.input0_to_output0_keep0__input0_to_output1_destroy0;
+              this.apply = () => { this.output0.realTensor = this.input0.realTensor; this.output1.realTensor = this.input0.realTensor.clone(); }
             }
 
           } else {              //  6. ( .input0 ) => ( .output0 )
+
+            if ( bKeepInputTensor0 ) {
+              this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); }
+            } else {
+              this.apply = () => { this.output0.realTensor = this.input0.realTensor; }
+            }
+
           }
         } else {
           if ( this.output1 ) { //  7. ( .input0 ) => ( , .output1 )
+
+//!!! ...unfinished... (2022/06/02)
+
           } else {              //  8. ( .input0 ) => (  )
           }
         }
