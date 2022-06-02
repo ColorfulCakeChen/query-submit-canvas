@@ -36,7 +36,9 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
   constructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount ) {
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
     this.operationArray = new Array();
-    this.disposeTensors();
+
+//!!! ...unfinished... (2022/06/02) ???
+//    this.disposeTensors();
   }
 
 
@@ -54,8 +56,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     }
 
 //!!! ...unfinished... (2022/06/02) ???
-    this.output0 = this.input0;
-    this.output1 = this.input1;
+//     this.output0 = this.input0;
+//     this.output1 = this.input1;
 
     super.disposeTensors();
   }
