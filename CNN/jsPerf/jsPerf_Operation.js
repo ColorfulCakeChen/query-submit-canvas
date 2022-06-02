@@ -29,13 +29,18 @@ class Case {
 
     tf.tidy( () => {
 
-      let memoryInfo_apply_before = tf.memory(); // Test memory leakage of imageSourceBag and channelShufflerPool.
+      let memoryInfo_apply_before = tf.memory(); // Test memory leakage of .apply.
 
-      if ( input0 )
+      let numTensors_delta = 0;
+      if ( input0 ) {
         input0.realTensor = tf.randomNormal( Case.testTensorShape );
+        ++numTensors_delta;
+      }
 
-      if ( input1 )
+      if ( input1 ) {
         input1.realTensor = tf.randomNormal( Case.testTensorShape );
+        ++numTensors_delta;
+      }
 
       this.operation.apply();
 
@@ -43,11 +48,12 @@ class Case {
 
       let memoryInfo_apply_after = tf.memory();
 
-      tf.util.assert( ( memoryInfo_apply_after.numTensors == memoryInfo_apply_before.numTensors ),
+      let numTensors_result = ( memoryInfo_apply_before.numTensors + numTensors_delta );
+      tf.util.assert( ( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + numTensors_delta ) ),
         `jsPerf_Operation.Case() memory leak. `
           + `( this.caseId == ${this.caseId} ). `
           + `result tensor count (${memoryInfo_apply_after.numTensors}) `
-          + `should be (${memoryInfo_apply_before.numTensors} `
+          + `should be ( ${numTensors_result} ) = ( ${memoryInfo_apply_before.numTensors} + ${numTensors_delta} ).`
        );
     });
 
