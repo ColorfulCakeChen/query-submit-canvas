@@ -46,12 +46,11 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
 //!!! ...unfinished... (2022/06/02)
 
  * @member {function} apply
- *   This is a method. It processes this.input0.realTensor and this.input1.realTensor as inputTensors. It puts to this.output0.realTensor
- * as outputTensor. Both inputTensors are tf.tensor3d and represents an images ( height x width x channel ) which will be added. They
- * should have the same channel count. Their ( height x width ) should be either the same or one is ( 1 x 1 ). The outputTensor
- * (tf.tensor3d) represents the result of adding the two inputs. The inputTensors may or may not be disposed. In fact, this method
- * calls one of Add_and_keep0_keep1(), Add_and_keep0_destroy1(), Add_and_destroy0_keep1(), Add_and_destroy0_destroy1() according to
- * the parameters.
+ *   This is a data member which is a pointer to a function. The function processes .input0.realTensor (and .input1.realTensor) as
+ * inputTensor(s). It puts to .output0.realTensor as outputTensor. They are tf.tensor3d and just be passed from input to output.
+ * The inputTensors may or may not be disposed according to setKeepInputTensor(). Default is setKeepInputTensor( false, false )
+ * which will destroy all inputs. Usually, sub-class should override this data member.
+ *
  */
 let Base = ( ParentClass = Object ) => class extends ParentClass {
 
@@ -162,17 +161,6 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
     this.setKeepInputTensor( input0_bNeedDispose, input1_bNeedDispose );
   }
 
-  /**
-   * Sub-class should override this method.
-   *
-   * This method should:
-   *   - Use this.input0.realTensor (and this.input1.realTensor) to compute.
-   *   - Place the result in this.output0.realTensor (and this.output1.realTensor)
-   *
-   */
-  apply() {
-  }
-
 
   /**
    * Sub-class should override this property.
@@ -230,8 +218,6 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
       else
         return 0;
   }
-
-
 
   
   /** Determine this.apply data members according to whether .inputX and .outputX exist and whether they are required to be kept.
@@ -409,9 +395,5 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
   static output0_return_input0_cloned() {
     this.output0.realTensor = this.input0.realTensor.clone();
   }
-
-
-//!!! ...unfinished... (2022/06/02)
-
 
 }
