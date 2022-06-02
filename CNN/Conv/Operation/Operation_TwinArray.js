@@ -37,9 +37,10 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
     this.operationArray = new Array();
 
-//!!! ...unfinished... (2022/06/02) Perhaps, call setup_apply()?
-    // Reconfigure .apply when operation array changed between empty and non-empty.
-    this.setKeepInputTensor( this.bKeepInputTensor0, this.bKeepInputTensor1 );
+    this.bKeepInputTensor0 = false;
+    this.bKeepInputTensor1 = false;
+
+    this.reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed(); // Adjust .apply and sub operations.
   }
 
 
@@ -56,9 +57,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       this.operationArray.length = 0;
     }
 
-//!!! ...unfinished... (2022/06/02) Perhaps, call setup_apply()?
-    // Reconfigure .apply when operation array changed between empty and non-empty.
-    this.setKeepInputTensor( this.bKeepInputTensor0, this.bKeepInputTensor1 );
+    this.reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed(); // Adjust .apply and sub operations.
 
     super.disposeTensors();
   }
@@ -70,42 +69,53 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
+    this.reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed(); // Adjust .apply and sub operations.
+  }
 
-    // 0. If there is no sub operation, the behavior should be the same as an no-op operation.
+  /**
+   * Reconfigure .apply data member, and calling every sub operation's setKeepInputTensor().
+   *
+   * Every time .operationArray or .bKeepInputTensor0 or .bKeepInputTensor1 is changed, this method should be called.
+   *
+   */
+  reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed() {
+
+    // Every time .operationArray or .bKeepInputTensor0 or .bKeepInputTensor1 is changed, the .apply data member should be adjusted.
+    TwinArray.setup_apply_dummy_or_loop.call( this );
+
+    // 1. If there is no sub operation, the behavior should be the same as an no-op operation.
     if ( !this.operationArray || ( this.operationArray.length <= 0 ) ) {
-      super.setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 );
-      return;
-    }
+      super.setKeepInputTensor( this.bKeepInputTensor0, this.bKeepInputTensor1 );
+      
+    } else { // 2.
 
-    // 1. TensorPlaceholders requested to keep their tensors.
-    let alwaysKeepSet;
-    {
-      if ( bKeepInputTensor0 || bKeepInputTensor1 ) {
-        alwaysKeepSet = new Set();
+      // 2.1 TensorPlaceholders requested to keep their tensors.
+      let alwaysKeepSet;
+      {
+        if ( this.bKeepInputTensor0 || this.bKeepInputTensor1 ) {
+          alwaysKeepSet = new Set();
 
-        if ( bKeepInputTensor0 )
-          alwaysKeepSet.add( this.input0 );
+          if ( this.bKeepInputTensor0 )
+            alwaysKeepSet.add( this.input0 );
 
-        if ( bKeepInputTensor1 )
-          alwaysKeepSet.add( this.input1 );
+          if ( this.bKeepInputTensor1 )
+            alwaysKeepSet.add( this.input1 );
+        }
+      }
+
+      // 2.2 Every input tensors' last operation is responsible for releasing the tensor (except the input tensors which are requested
+      //     to be kept (i.e. inside alwaysKeepSet)).
+      //
+      for ( let i = 0; i < this.operationArray.length; ++i ) {
+        let operation = this.operationArray[ i ];
+        operation.setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet );
       }
     }
 
-    // 2. Every input tensors' last operation is responsible for releasing the tensor (except the input tensors which are requested
-    //    to be kept (i.e. inside alwaysKeepSet)).
-    //
-    for ( let i = 0; i < this.operationArray.length; ++i ) {
-      let operation = this.operationArray[ i ];
-      operation.setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet );
-    }
-
-
-//!!! ...unfinished... (2022/06/02) What if .operationArray[] is empty ?
-  
   }
 
 
-//!!! ...unfinished... (2022/06/01)
+//!!! ...unfinished... (2022/06/02)
   /**
    * @param {Base} this
    *   The Block.Base object whose .byteOffsetEnd might be updated.
@@ -160,10 +170,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    *     - will be pointered to operationObject0.output1, if operationObject0 has output1.
    *
    *   
-
-//!!! ...unfinished... (2022/06/02) Perhaps, call setup_apply()?
-
-   * Note: After all operations are appended, .setKeepInputTensor() should called to reconfigure .apply data member.
+   * Note: After all operations are appended, .reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed()
+   *       should called to reconfigure .apply data member.
    *
    *
    * @param {Class} operationClass
@@ -184,7 +192,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
   operation_append_one( operationClass, constructorArgs, initArgs ) {
 
     // 1. Create and initialize.
-    let operationObject0 = Base.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass, constructorArgs, initArgs );
+    let operationObject0 = TwinArray.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass, constructorArgs, initArgs );
     if ( !operationObject0 )
       return false;  // e.g. input array does not have enough data.
 
@@ -218,10 +226,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    *       (i.e. operationObject1.output1 will be ignored even if it exists)
    *
    *
-
-//!!! ...unfinished... (2022/06/02) Perhaps, call setup_apply()?
-
-   * Note: After all operations are appended, .setKeepInputTensor() should called to reconfigure .apply data member.
+   * Note: After all operations are appended, .reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed()
+   *       should called to reconfigure .apply data member.
    *
    *
    * @param {Class} operationClass0   The 1st operation class.
@@ -244,12 +250,12 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     // 1. Create and initialize.
 
     // 1.1 1st operation object.
-    let operationObject0 = Base.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass0, constructorArgs0, initArgs0 );
+    let operationObject0 = TwinArray.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass0, constructorArgs0, initArgs0 );
     if ( !operationObject0 )
       return false;  // e.g. input array does not have enough data.
 
     // 1.2 2nd operation object.
-    let operationObject1 = Base.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass1, constructorArgs1, initArgs1 );
+    let operationObject1 = TwinArray.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass1, constructorArgs1, initArgs1 );
     if ( !operationObject1 )
       return false;  // e.g. input array does not have enough data.
 
@@ -300,22 +306,16 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
   /**
    * Adjust .apply data member according to .operationArray, .bKeepInputTensor0, .bKeepInputTensor1
    */
-  static setup_apply() {
+  static setup_apply_dummy_or_loop() {
 
     // 0. If there is no sub operation, the behavior should be the same as an no-op operation.
     if ( !this.operationArray || ( this.operationArray.length <= 0 ) ) {
-      Base.setup_apply.call( this, this.bKeepInputTensor0, this.bKeepInputTensor1 );
+      TwinArray.setup_apply_dummy.call( this, this.bKeepInputTensor0, this.bKeepInputTensor1 );
       return;
     }
 
-//!!! ...unfinished... (2022/06/02) 
+    // 1. Otherwise, handle sub operations by loop.
     this.apply = TwinArray.operationArray_apply;
-
-
-
-//!!! ...unfinished... (2022/06/02) 
-// What if not operation at all when needs or needs not keep-input?
-
   }
 
 
@@ -323,10 +323,6 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    * Calling every sub operations' .apply()
    */
   static operationArray_apply() {
-
-//!!! ...unfinished... (2022/06/02) 
-// What if not operation at all when needs or needs not keep-input?
-
     for ( let i = 0; i < this.operationArray.length; ++i ) {
       let operation = this.operationArray[ i ];
       operation.apply();
