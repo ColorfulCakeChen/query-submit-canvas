@@ -70,10 +70,6 @@ class ConcatShuffleSplit extends Base() {
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
-//!!! (2022/06/02 Remaked) constructor should confirm output tensor count.
-//     // Note: outputs' TensorPlaceholder will be created later (in setup_outputs_TensorPlaceholder()).
-//     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
-
     let bShouldShuffleSplit = ( ( bShuffleSplit ) && ( channelShuffler ) ); // Want and could do channel shuffling and splitting.
 
     let outputTensorCount;
@@ -86,10 +82,6 @@ class ConcatShuffleSplit extends Base() {
 
     this.channelShuffler = channelShuffler;
 
-//!!! (2022/06/01 Remaked)
-// When bShuffleSplit is changed, the BoundsArraySet and outputs' TensorPlacehoder will also be changed.
-//    this.setShuffleSplit_KeepInputTensor( bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 );
-
     // Note: If bShuffleSplit is changed, the BoundsArraySet and outputs' TensorPlacehoder will also be changed.
     //       Then the inputScaleBoundsArray0, inputScaleBoundsArray1, arrayTemp_forInterleave_asGrouptTwo will be
     //       required again. That is difficult. So forbid to change bShuffleSplit.
@@ -99,32 +91,19 @@ class ConcatShuffleSplit extends Base() {
 
     this.inputTensors = new Array( 2 ); // For reducing memory re-allocation to improve performance.
 
-    Base.adjust_pfn.call( this );
-    Base.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1, arrayTemp_forInterleave_asGrouptTwo );
-    Base.setup_outputs_TensorPlaceholder.call( this );
+    ConcatShuffleSplit.adjust_pfn.call( this );
+    ConcatShuffleSplit.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1, arrayTemp_forInterleave_asGrouptTwo );
+    ConcatShuffleSplit.setup_outputs_TensorPlaceholder.call( this );
 
     this.setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 );
   }
-
-//!!! (2022/06/01 Remaked)
-// When bShuffleSplit is changed, the BoundsArraySet and outputs' TensorPlacehoder will also be changed.
-//   /**
-//    * Set this.bShuffleSplit and adjust this.pfnShuffleSplit.
-//    */
-//   setShuffleSplit( bShuffleSplit, arrayTemp_forInterleave_asGrouptTwo ) {
-//     this.bShuffleSplit = bShuffleSplit;
-//     this.bShouldShuffleSplit = ( ( this.bShuffleSplit ) && ( this.channelShuffler ) ); // Want and could do channel shuffling and splitting.
-//     Base.adjust_pfn.call( this );
-//     Base.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1, arrayTemp_forInterleave_asGrouptTwo );
-//     Base.setup_output0_TensorPlaceholder.call( this );
-//   }
 
   /**
    * Set this.bKeepInputTensor0 and adjust this.apply so that inputTensors[ 0 ] will or will not be disposed.
    */
   setKeepInputTensor0( bKeepInputTensor0 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
-    Base.adjust_apply.call( this );
+    ConcatShuffleSplit.adjust_apply.call( this );
   }
 
   /**
@@ -132,7 +111,7 @@ class ConcatShuffleSplit extends Base() {
    */
   setKeepInputTensor1( bKeepInputTensor1 ) {
     this.bKeepInputTensor1 = bKeepInputTensor1;
-    Base.adjust_apply.call( this );
+    ConcatShuffleSplit.adjust_apply.call( this );
   }
 
   /**
@@ -142,23 +121,8 @@ class ConcatShuffleSplit extends Base() {
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
-    Base.adjust_apply.call( this );
+    ConcatShuffleSplit.adjust_apply.call( this );
   }
-
-
-//!!! (2022/06/01 Remaked)
-// When bShuffleSplit is changed, the BoundsArraySet and outputs' TensorPlacehoder will also be changed.
-//   /** 
-//    * Set this.bShuffleSplit, this.bKeepInputTensor0, this.bKeepInputTensor1, and then adjust this.pfnShuffleSplit and
-//    * this.apply.
-//    */
-//   setShuffleSplit_KeepInputTensor( bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 ) {
-//     this.setShuffleSplit( bShuffleSplit, arrayTemp_forInterleave_asGrouptTwo );
-//
-//     this.bKeepInputTensor0 = bKeepInputTensor0;
-//     this.bKeepInputTensor1 = bKeepInputTensor1;
-//     Base.adjust_apply.call( this );
-//   }
 
 
   /** Set this.pfnShuffleSplit according to this.bShuffleSplit, this.channelShuffler. */
@@ -170,9 +134,9 @@ class ConcatShuffleSplit extends Base() {
           + `channelShuffler must be an instance of class ChannelShuffler.ConcatPointwiseConv.`
       );
 
-      this.pfnShuffleSplit = Base.ShuffleSplit_do; // Want and could do channel shuffling and splitting.
+      this.pfnShuffleSplit = ConcatShuffleSplit.ShuffleSplit_do; // Want and could do channel shuffling and splitting.
     } else {
-      this.pfnShuffleSplit = Base.ShuffleSplit_return_input_directly;
+      this.pfnShuffleSplit = ConcatShuffleSplit.ShuffleSplit_return_input_directly;
     }
   }
 
@@ -180,15 +144,15 @@ class ConcatShuffleSplit extends Base() {
   static adjust_apply() {
     if ( this.bKeepInputTensor0 ) {
       if ( this.bKeepInputTensor1 ) {
-        this.apply = Base.ConcatShuffleSplit_and_keep0_keep1;
+        this.apply = ConcatShuffleSplit.ConcatShuffleSplit_and_keep0_keep1;
       } else {
-        this.apply = Base.ConcatShuffleSplit_and_keep0_destroy1;
+        this.apply = ConcatShuffleSplit.ConcatShuffleSplit_and_keep0_destroy1;
       }
     } else {
       if ( this.bKeepInputTensor1 ) {
-        this.apply = Base.ConcatShuffleSplit_and_destroy0_keep1;
+        this.apply = ConcatShuffleSplit.ConcatShuffleSplit_and_destroy0_keep1;
       } else {
-        this.apply = Base.ConcatShuffleSplit_and_destroy0_destroy1;
+        this.apply = ConcatShuffleSplit.ConcatShuffleSplit_and_destroy0_destroy1;
       }
     }
   }
