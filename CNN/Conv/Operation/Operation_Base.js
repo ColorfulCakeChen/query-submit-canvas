@@ -377,9 +377,20 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
         } else {
           if ( this.output1 ) { // 11. ( , .input1 ) => ( , .output1 )
 
-//!!! ...unfinished... (2022/06/02)
+            if ( bKeepInputTensor1 ) {
+              this.apply = () => { this.output1.realTensor = this.input1.realTensor.clone(); }
+            } else {
+              this.apply = () => { this.output1.realTensor = this.input1.realTensor; }
+            }
 
           } else {              // 12. ( , .input1 ) => (  )
+
+            if ( bKeepInputTensor1 ) {
+              this.apply = () => {}
+            } else {
+              this.apply = () => { this.input1.realTensor.dispose(); }
+            }
+
           }
         }
 
@@ -392,7 +403,6 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
 
       }
 
-//!!! ...unfinished... (2022/06/02)
     }
   }
 
