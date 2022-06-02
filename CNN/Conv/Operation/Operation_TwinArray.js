@@ -37,8 +37,9 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
     this.operationArray = new Array();
 
-//!!! ...unfinished... (2022/06/02) ???
-//    this.disposeTensors();
+//!!! ...unfinished... (2022/06/02) Perhaps, call setup_apply()?
+    // Reconfigure .apply when operation array changed between empty and non-empty.
+    this.setKeepInputTensor( this.bKeepInputTensor0, this.bKeepInputTensor1 );
   }
 
 
@@ -58,10 +59,6 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 //!!! ...unfinished... (2022/06/02) Perhaps, call setup_apply()?
     // Reconfigure .apply when operation array changed between empty and non-empty.
     this.setKeepInputTensor( this.bKeepInputTensor0, this.bKeepInputTensor1 );
-
-//!!! ...unfinished... (2022/06/02) ??? should adjust by setKeepInputTensor( ???, ??? )
-//     this.output0 = this.input0;
-//     this.output1 = this.input1;
 
     super.disposeTensors();
   }
@@ -284,7 +281,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    */
   apply() {
 
-//!!! ...unfinished... (2022/06/01)
+//!!! ...unfinished... (2022/06/02)
 // What if not operation at all when needs or needs not keep-input?
 
   }
@@ -309,6 +306,29 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       sum += operation.tensorWeightCountTotal;
     }
     return sum;
+  }
+
+
+  /**
+   * Adjust .apply data member according to .operationArray, .bKeepInputTensor0, .bKeepInputTensor1
+   */
+  static setup_apply() {
+
+    // 0. If there is no sub operation, the behavior should be the same as an no-op operation.
+    if ( !this.operationArray || ( this.operationArray.length <= 0 ) ) {
+      Base.setup_apply.call( this, this.bKeepInputTensor0, this.bKeepInputTensor1 );
+      return;
+    }
+
+//!!! ...unfinished... (2022/06/02) 
+
+
+
+//!!! ...unfinished... (2022/06/02) 
+    // Reconfigure .apply when operation array changed between empty and non-empty.
+    this.setKeepInputTensor( this.bKeepInputTensor0, this.bKeepInputTensor1 );
+
+//!!! ...unfinished... (2022/06/02) 
   }
 
 }
