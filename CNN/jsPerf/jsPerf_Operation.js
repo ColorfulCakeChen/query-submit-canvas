@@ -46,12 +46,23 @@ class Case {
 
       this.operation.apply();
 
-//!!! ...unfinished... (2022/06/02)
       if ( !bInput0 && !bInput1 ) { // If no inputs, outputs should always be null.
+
         if ( this.operation.output0 )
           this.assert_property_equal( "operation", "output0", "realTensor", null );
         if ( this.operation.output1 )
           this.assert_property_equal( "operation", "output1", "realTensor", null );
+
+      } else {
+        numTensors_delta += outputTensorCount;
+
+//!!! ...unfinished... (2022/06/02)
+
+        if ( bInput0 && bKeepInputTensor0 )
+          ++numTensors_delta;
+
+        if ( bInput1 && bKeepInputTensor1 )
+          ++numTensors_delta;
       }
 
       let memoryInfo_apply_after = tf.memory();
