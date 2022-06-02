@@ -8,7 +8,7 @@ import { Base } from "./Operation_Base.js";
  * An array of operations. Every time appending operation, one or parallel twin operations could be appended.
  *
 
-//!!! ...unfinished... (2022/06/02) finalOperation
+//!!! ...unfinished... (2022/06/02) endingDummyOperation
 
 
  * Its .output0 and .output1 (tensor placeholder) are pointer to the last operation's output0 and output1. This could simply the
@@ -45,18 +45,18 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     this.operationArray = new Array();
 
 
-//!!! ...unfinished... (2022/06/02) finalOperation
+//!!! ...unfinished... (2022/06/02) endingDummyOperation
 // What if has sub operation, but only input0 is used by the sub operation (i.e. the input1 not handled by any sub ooeration)? Perhaps, always push a dummy operation at the end if operationArray[].
     {
-      this.finalInput0 = inputTensorPlaceholder0;
+      this.endingDummyInput0 = inputTensorPlaceholder0;
       if ( inputTensorPlaceholder1 )
-        this.finalInput1 = inputTensorPlaceholder1;
+        this.endingDummyInput1 = inputTensorPlaceholder1;
 
-      this.finalOperation = new Base( this.finalInput0, this.finalInput1, outputTensorCount );
+      this.endingDummyOperation = new Base( this.endingDummyInput0, this.endingDummyInput1, outputTensorCount );
 
-      this.output0 = this.finalOperation.output0;
-      if ( this.finalOperation.output1 )
-        this.output1 = this.finalOperation.output1;
+      this.output0 = this.endingDummyOperation.output0;
+      if ( this.endingDummyOperation.output1 )
+        this.output1 = this.endingDummyOperation.output1;
     }
 
     this.bKeepInputTensor0 = false;
@@ -79,7 +79,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       this.operationArray.length = 0;
     }
 
-//!!! ...unfinished... (2022/06/02) finalOperation
+//!!! ...unfinished... (2022/06/02) endingDummyOperation
 
     this.reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed(); // Adjust .apply and sub operations.
 
@@ -140,7 +140,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       }
     }
 
-//!!! ...unfinished... (2022/06/02) finalOperation
+//!!! ...unfinished... (2022/06/02) endingDummyOperation
 
   }
 
@@ -241,7 +241,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       }
     }
 
-//!!! ...unfinished... (2022/06/02) finalOperation
+//!!! ...unfinished... (2022/06/02) endingDummyOperation
 
     return true;
   }
@@ -310,7 +310,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       this.output1 = operationObject1.output0;
     }
 
-//!!! ...unfinished... (2022/06/02) finalOperation
+//!!! ...unfinished... (2022/06/02) endingDummyOperation
 
     return true;
   }
@@ -351,7 +351,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     // 1. Otherwise, handle sub operations by loop.
     this.apply = TwinArray.operationArray_apply;
 
-//!!! ...unfinished... (2022/06/02) finalOperation
+//!!! ...unfinished... (2022/06/02) endingDummyOperation
 
   }
 
@@ -365,7 +365,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       operation.apply();
     }
 
-//!!! ...unfinished... (2022/06/02) finalOperation
+//!!! ...unfinished... (2022/06/02) endingDummyOperation
 
   }
 
