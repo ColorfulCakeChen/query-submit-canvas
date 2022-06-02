@@ -41,6 +41,8 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    * will be created.
    */
   constructor( input0, input1, outputTensorCount ) {
+    super();
+
     this.input0 = input0;
     this.input1 = input1;
 
