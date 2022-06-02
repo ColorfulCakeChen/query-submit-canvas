@@ -50,9 +50,9 @@ class ConcatAlongAxisId2 extends Base() {
 
     this.inputTensors = new Array( 2 ); // For reducing memory re-allocation.
 
-    Base.adjust_pfn.call( this );
-    Base.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1 );
-    Base.setup_output0_TensorPlaceholder.call( this );
+    ConcatAlongAxisId2.adjust_pfn.call( this );
+    ConcatAlongAxisId2.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1 );
+    ConcatAlongAxisId2.setup_output0_TensorPlaceholder.call( this );
   }
 
   /**
@@ -60,7 +60,7 @@ class ConcatAlongAxisId2 extends Base() {
    */
   setKeepInputTensor0( bKeepInputTensor0 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
-    Base.adjust_pfn.call( this );
+    ConcatAlongAxisId2.adjust_pfn.call( this );
   }
 
   /**
@@ -68,7 +68,7 @@ class ConcatAlongAxisId2 extends Base() {
    */
   setKeepInputTensor1( bKeepInputTensor1 ) {
     this.bKeepInputTensor1 = bKeepInputTensor1;
-    Base.adjust_pfn.call( this );
+    ConcatAlongAxisId2.adjust_pfn.call( this );
   }
 
   /**
@@ -77,7 +77,7 @@ class ConcatAlongAxisId2 extends Base() {
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
-    Base.adjust_pfn.call( this );
+    ConcatAlongAxisId2.adjust_pfn.call( this );
   }
 
 
@@ -85,15 +85,15 @@ class ConcatAlongAxisId2 extends Base() {
   static adjust_pfn() {
     if ( this.bKeepInputTensor0 ) {
       if ( this.bKeepInputTensor1 ) {
-        this.apply = Base.Concat_and_keep0_keep1;
+        this.apply = ConcatAlongAxisId2.Concat_and_keep0_keep1;
       } else {
-        this.apply = Base.Concat_and_keep0_destroy1;
+        this.apply = ConcatAlongAxisId2.Concat_and_keep0_destroy1;
       }
     } else {
       if ( this.bKeepInputTensor1 ) {
-        this.apply = Base.Concat_and_destroy0_keep1;
+        this.apply = ConcatAlongAxisId2.Concat_and_destroy0_keep1;
       } else {
-        this.apply = Base.Concat_and_destroy0_destroy1;
+        this.apply = ConcatAlongAxisId2.Concat_and_destroy0_destroy1;
       }
     }
   }
