@@ -299,18 +299,16 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
 
           } else {              //  4. ( .input0, .input1 ) => (  )
 
-//!!! ...unfinished... (2022/06/02)
-
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
-                this.apply = Base.input0_keep0__input1__keep1;
+                this.apply = () => {}
               else
-                this.apply = Base.input0_keep0__input1_destroy1;
+                this.apply = () => { this.input1.realTensor.dispose(); }
             } else {
               if ( bKeepInputTensor1 )
-                this.apply = Base.input0_destroy0__input1_keep1;
+                this.apply = () => { this.input0.realTensor.dispose(); }
               else
-                this.apply = Base.input0_destroy0__input1_destroy1;
+                this.apply = () => { this.input0.realTensor.dispose(); this.input1.realTensor.dispose(); }
             }
 
           }
@@ -320,6 +318,8 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
 
         if ( this.output0 ) {
           if ( this.output1 ) { //  5. ( .input0 ) => ( .output0, .output1 )
+
+//!!! ...unfinished... (2022/06/02)
 
             if ( bKeepInputTensor0 ) {
               this.apply = Base.input0_to_output0_keep0__input0_to_output1_keep0;
