@@ -154,13 +154,15 @@ class AddTwoTensors extends Base() {
       // Otherwise, absent them in the output.
       {
         if ( this.input0.channelCount_lowerHalf == this.input1.channelCount_lowerHalf ) {
-          if ( this.input0.channelCount_lowerHalf != undefined )
-            this.output0.channelCount_lowerHalf = this.this.input0.channelCount_lowerHalf;
+          this.output0.channelCount_lowerHalf = this.input0.channelCount_lowerHalf;
+        } else {
+          this.output0.channelCount_lowerHalf = undefined;
         }
 
         if ( this.input0.channelCount_higherHalf == this.input1.channelCount_higherHalf ) {
-          if ( this.input0.channelCount_higherHalf != undefined )
-            this.output0.channelCount_higherHalf = this.this.input0.channelCount_higherHalf;
+          this.output0.channelCount_higherHalf = this.input0.channelCount_higherHalf;
+        } else {
+          this.output0.channelCount_higherHalf = undefined;
         }
       }
 
