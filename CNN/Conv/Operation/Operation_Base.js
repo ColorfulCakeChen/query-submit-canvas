@@ -341,7 +341,11 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
 
           } else {              //  8. ( .input0 ) => (  )
 
-//!!! ...unfinished... (2022/06/02)
+            if ( bKeepInputTensor0 ) {
+              this.apply = () => {}
+            } else {
+              this.apply = () => { this.input0.realTensor.dispose(); }
+            }
 
           }
         }
@@ -354,10 +358,27 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
 
         if ( this.output0 ) {
           if ( this.output1 ) { //  9. ( , .input1 ) => ( .output0, .output1 )
+
+            if ( bKeepInputTensor1 ) {
+              this.apply = () => { this.output0.realTensor = this.input1.realTensor.clone(); this.output1.realTensor = this.input1.realTensor.clone(); }
+            } else {
+              this.apply = () => { this.output0.realTensor = this.input1.realTensor; this.output1.realTensor = this.input1.realTensor.clone(); }
+            }
+
           } else {              // 10. ( , .input1 ) => ( .output0 )
+
+            if ( bKeepInputTensor1 ) {
+              this.apply = () => { this.output0.realTensor = this.input1.realTensor.clone(); }
+            } else {
+              this.apply = () => { this.output0.realTensor = this.input1.realTensor; }
+            }
+
           }
         } else {
           if ( this.output1 ) { // 11. ( , .input1 ) => ( , .output1 )
+
+//!!! ...unfinished... (2022/06/02)
+
           } else {              // 12. ( , .input1 ) => (  )
           }
         }
