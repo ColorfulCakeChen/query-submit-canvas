@@ -108,7 +108,9 @@ class ConcatAlongAxisId2 extends Base() {
     this.boundsArraySet.set_outputs_all_by_concat_input0_input1(); // The outputChannelCount0 will be adjusted.
   }
 
-  /** Setup this.output0. */
+  /** Setup this.output0.
+   * This method should be called after setup_BoundsArraySet() because it uses BoundsArrarySet.
+   */
   static setup_output0_TensorPlaceholder() {
 
     tf.util.assert( ( this.input0.height == this.input1.height ) && ( this.input0.width == this.input1.width ),
@@ -118,11 +120,11 @@ class ConcatAlongAxisId2 extends Base() {
         + `should be the same.`
     );
 
+    // Note: This operation's lower half and higher half channel count information will be lost.
     this.output0.height = this.input0.height;
     this.output0.width = this.input0.width;
     this.output0.channelCount = this.input0.channelCount + this.input1.channelCount;
-
-    // Note: This operation's lower half and higher half channel count information will be lost.
+    this.output0.scaleBoundsArray = this.boundsArraySet.output0;
   }
 
 
