@@ -43,16 +43,17 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
   constructor( input0, input1, outputTensorCount ) {
     super();
 
-    this.input0 = input0;
-    this.input1 = input1;
-
     // Register as the input TensorPlaceholder's final user.
     {
-      if ( this.input0 )
+      if ( input0 != undefined ) {
+        this.input0 = input0;
         this.input0.lastOperation = this;
+      }
 
-      if ( this.input1 )
+      if ( input1 != undefined ) {
+        this.input1 = input1;
         this.input1.lastOperation = this;
+      }
     }
 
     // Create output TensorPlaceholder.
