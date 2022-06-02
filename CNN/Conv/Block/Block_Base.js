@@ -494,8 +494,18 @@ class Base extends ReturnOrClone.Base {
 //     this.operationEnd = ???; new Operation.???( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
 
 //!!! ...unfinished... (2022/05/31) will be used inside apply().
-    this.inputTensorPlaceholder0 = new TensorPlaceholder.Base();
-    this.inputTensorPlaceholder1 = new TensorPlaceholder.Base();
+    // Initialize inputs tensor placeholders.
+    {
+      this.inputTensorPlaceholder0 = new TensorPlaceholder.Base();
+      this.inputTensorPlaceholder0.set_height_width_channelCount_scaleBoundsArray(
+        this.inputHeight0, this.inputWidth0, this.channelCount0_pointwise1Before, inputScaleBoundsArray0 );
+
+      if ( this.inputTensorCount > 1 ) {
+        this.inputTensorPlaceholder1 = new TensorPlaceholder.Base();
+        this.inputTensorPlaceholder1.set_height_width_channelCount_scaleBoundsArray(
+          this.inputHeight0, this.inputWidth0, params.input1ChannelCount, inputScaleBoundsArray1 );
+      }
+    }
 
 //!!! (2022/06/01 Remarked) using Operation.TwinArray instead.
 //     // Traking the current tensor placeholders for next operation's input.
