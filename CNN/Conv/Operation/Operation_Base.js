@@ -67,7 +67,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
       }
     }
 
-    Base.setup_apply.call( this, false, false ); // Default is destroy0 and destroy1.
+    Base.setup_apply_dummy.call( this, false, false ); // Default is destroy0 and destroy1.
   }
 
   /**
@@ -96,7 +96,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    *   Whether the .input1's tensor should be destroyed by this operation. It is ignored if .input1 does not exist.
    */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
-    Base.setup_apply.call( this, bKeepInputTensor0, bKeepInputTensor1 );
+    Base.setup_apply_dummy.call( this, bKeepInputTensor0, bKeepInputTensor1 );
   }
 
   /**
@@ -206,6 +206,8 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
 
   
   /** Determine this.apply data members according to whether .inputX and .outputX exist and whether they are required to be kept.
+   * The .apply will just pass through from input to output (but handle keep-input-tensor flag correctly).
+   *
    *
    * @param {Base} this
    *   The Base object to be determined and modified.
@@ -216,7 +218,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    * @param {boolean} bKeepInputTensor1
    *   Whether the .input1's tensor should be destroyed by this operation. It is ignored if .input1 does not exist.
    */
-  static setup_apply( bKeepInputTensor0, bKeepInputTensor1 ) {
+  static setup_apply_dummy( bKeepInputTensor0, bKeepInputTensor1 ) {
     if ( this.input0 ) {
       if ( this.input1 ) {
         if ( this.output0 ) {
@@ -351,7 +353,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
 
         //!!! (2022/06/02 Remarked) It can be supported. Just put null to output should be enough.
         //tf.util.assert( ( this.input0 != this.input1 ),
-        //  `Operation.Base.setup_apply(): `
+        //  `Operation.Base.setup_apply_dummy(): `
         //    + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should at least one is non-null.`
         //);
       }
