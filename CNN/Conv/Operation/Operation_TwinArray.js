@@ -76,6 +76,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     this.bKeepInputTensor0 = false;
     this.bKeepInputTensor1 = false;
 
+//!!!
+    TwinArray.alwaysKeepSet_collect.call( this ); // Re-collect TensorPlaceholders which are requested to keep their tensors.
     this.reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed(); // Adjust .apply and sub operations.
   }
 
@@ -112,8 +114,15 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
+
+    TwinArray.alwaysKeepSet_collect.call( this ); // Re-collect TensorPlaceholders which are requested to keep their tensors.
     this.reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed(); // Adjust .apply and sub operations.
   }
+
+
+//!!! ...unfinished... (2022/06/02)
+// Is it possible to reconfigure faster (i.e. without traverse all sub operations)?
+// So that it can be reconfigured every time operation_append_xxx() is called.
 
   /**
    * Reconfigure .apply data member, and calling every sub operation's setKeepInputTensor().
@@ -123,71 +132,19 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    */
   reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed() {
 
-
-//!!! ...unfinished... (2022/06/02) calling parent class is no longer necessary. But it needs handling endingDummyOperation.
-
-
-    // Every time .operationArray or .bKeepInputTensor0 or .bKeepInputTensor1 is changed, the .apply data member should be adjusted.
-    TwinArray.setup_apply_dummy_or_loop.call( this );
-
-    // 1. If there is no sub operation, the behavior should be the same as an no-op operation.
-    if ( !this.operationArray || ( this.operationArray.length <= 0 ) ) {
-      super.setKeepInputTensor( this.bKeepInputTensor0, this.bKeepInputTensor1 );
-      
-    } else { // 2.
-
-      // 2.1 TensorPlaceholders requested to keep their tensors.
-      let alwaysKeepSet;
-      {
-        if ( this.bKeepInputTensor0 || this.bKeepInputTensor1 ) {
-          alwaysKeepSet = new Set();
-
-          if ( this.bKeepInputTensor0 )
-            alwaysKeepSet.add( this.input0 );
-
-          if ( this.bKeepInputTensor1 )
-            alwaysKeepSet.add( this.input1 );
-        }
-      }
-
-      // 2.2 Every input tensors' last operation is responsible for releasing the tensor (except the input tensors which are requested
-      //     to be kept (i.e. inside alwaysKeepSet)).
-      //
-      for ( let i = 0; i < this.operationArray.length; ++i ) {
-        let operation = this.operationArray[ i ];
-        operation.setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet );
-      }
+    // 1. Every input tensors' last operation is responsible for releasing the tensor (except the input tensors which are requested
+    //    to be kept (i.e. inside alwaysKeepSet)).
+    //
+    for ( let i = 0; i < this.operationArray.length; ++i ) {
+      let operation = this.operationArray[ i ];
+      operation.setKeepInputTensor_IfNotLastOperation_Or_In( this.alwaysKeepSet );
     }
 
-//!!! ...unfinished... (2022/06/02) endingDummyOperation
-
+    // 2.
+    this.endingDummyOperation.setKeepInputTensor_IfNotLastOperation_Or_In( this.alwaysKeepSet );
   }
 
 
-//!!! ...unfinished... (2022/06/02) Perhaps, called when this.setKeepInputTensor() called.
-//   /**
-//    * This method will also update this.endingDummyOperation's input0 and input1.
-//    *
-//    *
-//    * @param {TensorPlaceholder.Base} aTensorPlaceholder0  The this.lastSubOperationOutput0 will be set as aTensorPlaceholder0.
-//    * @param {TensorPlaceholder.Base} aTensorPlaceholder1  The this.lastSubOperationOutput1 will be set as aTensorPlaceholder1.
-//    */
-//   static set_lastSubOperationOutput0_lastSubOperationOutput0( aTensorPlaceholder0, aTensorPlaceholder1 ) {
-//
-//     this.lastSubOperationOutput0 = aTensorPlaceholder0;
-//     this.lastSubOperationOutput1 = aTensorPlaceholder1;
-//
-//     this.endingDummyOperation.input0 = aTensorPlaceholder0;
-//     this.endingDummyOperation.input1 = aTensorPlaceholder1;
-//
-// //!!! ...unfinished... (2022/06/02) Perhaps, called when this.setKeepInputTensor() called.
-// //    Base.setup_apply_dummy.call( this.endingDummyOperation, ???, ??? );
-//     this.endingDummyOperation.setKeepInputTensor( ???, ??? );
-//
-//   }
-
-
-//!!! ...unfinished... (2022/06/02)
   /**
    * @param {Base} this
    *   The Block.Base object whose .byteOffsetEnd might be updated.
@@ -389,6 +346,37 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     return sum;
   }
 
+
+  /** Re-collect TensorPlaceholders into this.alwaysKeepSet if some input tensors are requested to be kept after .apply().
+   */
+  static alwaysKeepSet_collect() {
+    let bShouldbKeepInputTensor0 = ( this.input0 && this.bKeepInputTensor0 );
+    let bShouldbKeepInputTensor1 = ( this.input1 && this.bKeepInputTensor1 );
+    let bShouldbKeepInputTensor = ( bShouldbKeepInputTensor0 || bShouldbKeepInputTensor1 );
+
+    if ( bShouldbKeepInputTensor ) { // 1. Some inputs should be kept.
+
+      // 1.1
+      if ( this.alwaysKeepSet )
+        this.alwaysKeepSet.clear();
+      else
+        this.alwaysKeepSet = new Set(); // Create container only if it is indeed necessary.
+
+      if ( bShouldbKeepInputTensor0 ) // 1.2
+        this.alwaysKeepSet.add( this.input0 );
+
+      if ( bShouldbKeepInputTensor1 ) // 1.3
+        this.alwaysKeepSet.add( this.input1 );
+
+    } else { // 2. No inputs should be kept.
+
+      // 2.1 Empty the container if the container exists.
+      if ( this.alwaysKeepSet )
+        this.alwaysKeepSet.clear();
+
+      // 2.2 If the container does not exist, do nothing instead.
+    }
+  }
 
   /**
    * Adjust .apply data member according to .operationArray, .bKeepInputTensor0, .bKeepInputTensor1
