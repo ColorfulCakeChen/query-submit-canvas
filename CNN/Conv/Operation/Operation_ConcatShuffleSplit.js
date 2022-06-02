@@ -70,12 +70,21 @@ class ConcatShuffleSplit extends Base() {
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
-    // Note: outputs' TensorPlaceholder will be created later (in setup_outputs_TensorPlaceholder()).
-    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
+//!!! (2022/06/02 Remaked) constructor should confirm output tensor count.
+//     // Note: outputs' TensorPlaceholder will be created later (in setup_outputs_TensorPlaceholder()).
+//     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
+
+    let bShouldShuffleSplit = ( ( bShuffleSplit ) && ( channelShuffler ) ); // Want and could do channel shuffling and splitting.
+
+    let outputTensorCount;
+    if ( bShouldShuffleSplit )
+      outputTensorCount = 2; // Only if splitting is required (and possible), the output1 does exist.
+    else
+      outputTensorCount = 1;
+
+    super( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
     this.channelShuffler = channelShuffler;
-
-    this.inputTensors = new Array( 2 ); // For reducing memory re-allocation.
 
 //!!! (2022/06/01 Remaked)
 // When bShuffleSplit is changed, the BoundsArraySet and outputs' TensorPlacehoder will also be changed.
@@ -86,11 +95,15 @@ class ConcatShuffleSplit extends Base() {
     //       required again. That is difficult. So forbid to change bShuffleSplit.
     //
     this.bShuffleSplit = bShuffleSplit;
-    this.bShouldShuffleSplit = ( ( this.bShuffleSplit ) && ( this.channelShuffler ) ); // Want and could do channel shuffling and splitting.
+    this.bShouldShuffleSplit = bShouldShuffleSplit;
+
+    this.inputTensors = new Array( 2 ); // For reducing memory re-allocation to improve performance.
 
     Base.adjust_pfn.call( this );
     Base.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1, arrayTemp_forInterleave_asGrouptTwo );
     Base.setup_outputs_TensorPlaceholder.call( this );
+
+    this.setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 );
   }
 
 //!!! (2022/06/01 Remaked)
@@ -233,15 +246,13 @@ class ConcatShuffleSplit extends Base() {
    */  
   static setup_outputs_TensorPlaceholder() {
 
-    this.output0 = new TensorPlaceholder.Base();
     this.output0.height = this.input0.height;
     this.output0.width = this.input0.width;
-    this.output0.channelCount_lowerHalf = undefined;  // Note: After concatenation operation, the half channel information will be lost.
+    this.output0.channelCount_lowerHalf = undefined;  // Note: After concatenation operation, the half channel information are always lost.
     this.output0.channelCount_higherHalf = undefined;
     this.output0.scaleBoundsArray = this.boundsArraySet.output0;
 
     if ( this.bShouldShuffleSplit ) { // Only if splitting is required, the output1 does exist.
-      this.output1 = new TensorPlaceholder.Base();
       this.output1.height = this.input0.height;
       this.output1.width = this.input0.width;
 
@@ -251,7 +262,7 @@ class ConcatShuffleSplit extends Base() {
       this.output0.channelCount = this.channelShuffler.filtersTensor4dArray[ 0 ].shape[ outputChannelCount_filterAxisId ];
       this.output1.channelCount = this.channelShuffler.filtersTensor4dArray[ 1 ].shape[ outputChannelCount_filterAxisId ];
 
-      this.output1.channelCount_lowerHalf = undefined;  // Note: After concatenation operation, the half channel information will be lost.
+      this.output1.channelCount_lowerHalf = undefined;  // Note: After concatenation operation, the half channel information are always lost.
       this.output1.channelCount_higherHalf = undefined;
 
       this.output1.scaleBoundsArray = this.boundsArraySet.output1;
