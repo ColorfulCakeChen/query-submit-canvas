@@ -1,7 +1,5 @@
 export { Base };
 
-//!!! ...unfinished... (2022/05/30) Perhaps, add height, width, channelCount info.
-
 /**
  * A placeholder for tensor.
  *   - In Block.init(), it is used for tracking a tensor's final operation which should be responsible for destroy the tensor.
@@ -18,9 +16,27 @@ export { Base };
  */
 class Base {
 
+  /**
+   *
+   */
   constructor() {
     this.lastOperation = null;
     this.realTensor = null;
+  }
+
+  /**
+   *
+   * @param {TensorPlaceholder} aTensorPlaceholder
+   *   The tensor placeholder's height, width, channelCount, scaleBoundsArray will be used directly (i.e. not cloned) by this
+   * tensor placeholder. Note: The .lastOperation and .realTensor are not used.
+   */
+  set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( aTensorPlaceholder ) {
+    this.height = aTensorPlaceholder.height;
+    this.width = aTensorPlaceholder.width;
+    this.channelCount = aTensorPlaceholder.channelCount;
+    this.channelCount_lowerHalf = aTensorPlaceholder.channelCount_lowerHalf;
+    this.channelCount_higherHalf = aTensorPlaceholder.channelCount_higherHalf;
+    this.scaleBoundsArray = aTensorPlaceholder.scaleBoundsArray; // ActivationEscaping.ScaleBoundsArray
   }
 
 }
