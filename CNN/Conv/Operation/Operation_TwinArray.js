@@ -55,7 +55,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       this.operationArray.length = 0;
     }
 
-//!!! ...unfinished... (2022/06/02) ???
+//!!! ...unfinished... (2022/06/02) ??? should adjust by setKeepInputTensor( ???, ??? )
 //     this.output0 = this.input0;
 //     this.output1 = this.input1;
 
