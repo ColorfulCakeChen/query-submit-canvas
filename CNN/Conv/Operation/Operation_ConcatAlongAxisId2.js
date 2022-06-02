@@ -124,6 +124,8 @@ class ConcatAlongAxisId2 extends Base() {
     this.output0.height = this.input0.height;
     this.output0.width = this.input0.width;
     this.output0.channelCount = this.input0.channelCount + this.input1.channelCount;
+    this.output0.channelCount_lowerHalf = undefined;  // Note: After concatenation operation, the half channel information will be lost.
+    this.output0.channelCount_higherHalf = undefined;
     this.output0.scaleBoundsArray = this.boundsArraySet.output0;
   }
 
