@@ -33,15 +33,16 @@ import { Base } from "./Operation_Base.js";
  *   This is a method. It has one parameter inputTensor and return a outputTensor. The inputTensor (tf.tensor3d) represents the image
  * ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d) represents the result.
  * All intermediate tensors will be disposed. The inputTensor may or may not be disposed. In fact, this method calls one of
- * Base.return_input_directly(), Base.keep_input_return_copy(), Avg_and_destroy(), Avg_and_keep(), Max_and_destroy(), Max_and_keep(),
+ * return_input_directly(), keep_input_return_copy(), Avg_and_destroy(), Avg_and_keep(), Max_and_destroy(), Max_and_keep(),
  * Conv_and_destroy(), Conv_and_keep() according to the parameters.
  *
  * @member {function} apply
  *   This is a method. It processes this.input0.realTensor as inputTensor and puts to this.output0.realTensor as outputTensor. The
  * inputTensor (tf.tensor3d) represents the image ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d)
  * represents the result. All intermediate tensors will be disposed. The inputTensor may or may not be disposed. In fact, this method 
- * calls one of Operation_and_destroy_or_keep(), OperationBias_and_destroy_or_keep(), OperationActivation_and_destroy_or_keep(),
- * OperationBiasActivation_and_destroy_or_keep() according to the parameters.
+ * calls one of output0_return_input0_directly(), output0_return_input0_cloned(), Operation_and_destroy_or_keep(),
+ * OperationBias_and_destroy_or_keep(), OperationActivation_and_destroy_or_keep(), OperationBiasActivation_and_destroy_or_keep()
+ * according to the parameters.
  *
  * @see Operration.Base
  * @see Depthwise.FiltersArray_BiasesArray
@@ -85,7 +86,7 @@ class Depthwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
     this.disposeTensors();
 
     // 1. Determine operation functions.
-    Base.setup_bDepthwise_pfn.call( this );
+    Depthwise.setup_bDepthwise_pfn.call( this );
 
     let bExtractOk;
     if ( !this.bDepthwise ) {
@@ -181,18 +182,18 @@ class Depthwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
 
         // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
         // Note: apply should not be changed here because there might be bias and activation.
-        case Base.return_input_directly: this.pfnOperation = Base.keep_input_return_copy; break;
+        case Depthwise.return_input_directly: this.pfnOperation = Depthwise.keep_input_return_copy; break;
 
-        case Base.Avg_and_destroy:       this.pfnOperation = Base.Avg_and_keep;  break;
-        case Base.Max_and_destroy:       this.pfnOperation = Base.Max_and_keep;  break;
-        case Base.Conv_and_destroy:      this.pfnOperation = Base.Conv_and_keep; break;
+        case Depthwise.Avg_and_destroy:       this.pfnOperation = Depthwise.Avg_and_keep;  break;
+        case Depthwise.Max_and_destroy:       this.pfnOperation = Depthwise.Max_and_keep;  break;
+        case Depthwise.Conv_and_destroy:      this.pfnOperation = Depthwise.Conv_and_keep; break;
 
         // Just clone input if unknown depthwise operation.
         // Since there is no operation at all, let apply ignore pfnOperation completely.
         default:
           tf.util.assert( false, `Unknown depthwise operation. (${this.pfnOperation}) when setKeepInputTensor( ${bKeepInputTensor} )` );
-          this.pfnOperation = Base.keep_input_return_copy;
-          this.apply = Base.output0_return_input0_cloned;
+          this.pfnOperation = Depthwise.keep_input_return_copy;
+          this.apply = Depthwise.output0_return_input0_cloned;
           break;
       }
 
@@ -202,18 +203,18 @@ class Depthwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
 
         // Just return input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
         // Note: apply should not be changed here because there might be bias and activation.
-        case Base.keep_input_return_copy: this.pfnOperation = Base.return_input_directly; break;
+        case Depthwise.keep_input_return_copy: this.pfnOperation = Depthwise.return_input_directly; break;
 
-        case Base.Avg_and_keep:           this.pfnOperation = Base.Avg_and_destroy;  break;
-        case Base.Max_and_keep:           this.pfnOperation = Base.Max_and_destroy;  break;
-        case Base.Conv_and_keep:          this.pfnOperation = Base.Conv_and_destroy; break;
+        case Depthwise.Avg_and_keep:           this.pfnOperation = Depthwise.Avg_and_destroy;  break;
+        case Depthwise.Max_and_keep:           this.pfnOperation = Depthwise.Max_and_destroy;  break;
+        case Depthwise.Conv_and_keep:          this.pfnOperation = Depthwise.Conv_and_destroy; break;
 
         // Just return input if unknown depthwise operation.
         // Since there is no operation at all, let apply ignore pfnOperation completely.
         default:
           tf.util.assert( false, `Unknown depthwise operation. (${this.pfnOperation}) when setKeepInputTensor( ${bKeepInputTensor} )` );
-          this.pfnOperation = Base.return_input_directly;
-          this.apply = Base.output0_return_input0_directly;
+          this.pfnOperation = Depthwise.return_input_directly;
+          this.apply = Depthwise.output0_return_input0_directly;
           break;
       }
 
@@ -236,7 +237,7 @@ class Depthwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
 
       // if 1x1 AVG pooling ( and strides is 1 ), or 1x1 MAX pooling ( and strides is 1 ), or illegal pooling type (i.e. not AVG, not MAX):
       //   - As no depthwise operation (i.e. ( this.bDepthwise == false ) )
-      //   - Just return input (i.e. ( this.pfnOperation == Base.return_input_directly ) )
+      //   - Just return input (i.e. ( this.pfnOperation == Depthwise.return_input_directly ) )
 
       // When 1x1 AVG or MAX pooling (and strides is 1), the result of depthwise operation (not include bias and activation) is the same as input.
       let bOperationResultSameAsInput = ( ( 1 == this.filterHeight ) && ( 1 == this.filterWidth ) && ( 1 == this.strides ) );
@@ -245,49 +246,49 @@ class Depthwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
         case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG:
           this.bDepthwise = this.bDepthwiseAvg = true;
           if ( bOperationResultSameAsInput )
-            this.pfnOperation = Base.return_input_directly; // For speeding up performance. (Note: It might still has bias and/or activation.)
+            this.pfnOperation = Depthwise.return_input_directly; // For speeding up performance. (Note: It might still has bias and/or activation.)
           else
-            this.pfnOperation = Base.Avg_and_destroy;
+            this.pfnOperation = Depthwise.Avg_and_destroy;
           break;
 
         case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX:
           this.bDepthwise = this.bDepthwiseMax = true;
           if ( bOperationResultSameAsInput )
-            this.pfnOperation = Base.return_input_directly; // For speeding up performance. (Note: It might still has bias and/or activation.)
+            this.pfnOperation = Depthwise.return_input_directly; // For speeding up performance. (Note: It might still has bias and/or activation.)
           else
-            this.pfnOperation = Base.Max_and_destroy;
+            this.pfnOperation = Depthwise.Max_and_destroy;
           break;
       }
 
     } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
       this.bDepthwise = this.bDepthwiseConv = true;
 
-      this.pfnOperation = Base.Conv_and_destroy; // will dispose inputTensor.
+      this.pfnOperation = Depthwise.Conv_and_destroy; // will dispose inputTensor.
 
     } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
       this.bDepthwise = false;
     }
 
     // 2.
-    this.pfnActivation = Base.ActivationFunction_getById( this.nActivationId );
+    this.pfnActivation = Depthwise.ActivationFunction_getById( this.nActivationId );
 
     // 3.
     if ( this.bDepthwise ) {
       if ( this.bBias ) {
         if ( this.pfnActivation )
-          this.apply = Base.OperationBiasActivation_and_destroy_or_keep;
+          this.apply = Depthwise.OperationBiasActivation_and_destroy_or_keep;
         else
-          this.apply = Base.OperationBias_and_destroy_or_keep;
+          this.apply = Depthwise.OperationBias_and_destroy_or_keep;
       } else {
         if ( this.pfnActivation )
-          this.apply = Base.OperationActivation_and_destroy_or_keep;
+          this.apply = Depthwise.OperationActivation_and_destroy_or_keep;
          else
-          this.apply = Base.Operation_and_destroy_or_keep;
+          this.apply = Depthwise.Operation_and_destroy_or_keep;
       }
     } else {
       // Since there is no operation at all, let apply ignore pfnOperation completely.
-      this.apply = Base.output0_return_input0_directly;
-      this.pfnOperation = Base.return_input_directly;
+      this.apply = Depthwise.output0_return_input0_directly;
+      this.pfnOperation = Depthwise.return_input_directly;
     }
   }
 
