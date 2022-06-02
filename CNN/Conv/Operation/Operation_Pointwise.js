@@ -25,14 +25,15 @@ import { Base } from "./Operation_Base.js";
  *   This is a method. It has one parameter inputTensor and return a outputTensor. The inputTensor (tf.tensor3d) represents the image
  * ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d) represents the result.
  * All intermediate tensors will be disposed. The inputTensor may or may not be disposed. In fact, this method calls one of
- * Base.return_input_directly(), Base.keep_input_return_copy(), Conv_and_destroy(), Conv_and_keep() according to the parameters.
+ * return_input_directly(), keep_input_return_copy(), Conv_and_destroy(), Conv_and_keep() according to the parameters.
  *
  * @member {function} apply
  *   This is a method. It processes this.input0.realTensor as inputTensor and puts to this.output0.realTensor as outputTensor. The
  * inputTensor (tf.tensor3d) represents the image ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d)
  * represents the result. All intermediate tensors will be disposed. The inputTensor may or may not be disposed. In fact, this method 
- * calls one of Conv_and_destroy_or_keep(), ConvBias_and_destroy_or_keep(), ConvActivation_and_destroy_or_keep(),
- * ConvBiasActivation_and_destroy_or_keep() according to the parameters.
+ * calls one of output0_return_input0_directly(), output0_return_input0_cloned(), Conv_and_destroy_or_keep(),
+ * ConvBias_and_destroy_or_keep(), ConvActivation_and_destroy_or_keep(), ConvBiasActivation_and_destroy_or_keep()
+ * according to the parameters.
  *
  * @see Operration.Base
  * @see Pointwise.FiltersArray_BiasesArray
@@ -78,7 +79,7 @@ class Pointwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
     this.disposeTensors();
 
     // 1. Determine operation functions.
-    Base.setup_bPointwise_pfn.call( this );
+    Pointwise.setup_bPointwise_pfn.call( this );
 
     let bExtractOk;
     if ( !this.bPointwise ) {
@@ -158,18 +159,18 @@ class Pointwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
 
     if ( this.bExisted ) {
       if ( bKeepInputTensor ) {
-        this.pfnConv = Base.Conv_and_keep;
+        this.pfnConv = Pointwise.Conv_and_keep;
       } else {
-        this.pfnConv = Base.Conv_and_destroy;
+        this.pfnConv = Pointwise.Conv_and_destroy;
       }
     } else {
       // Since there is no operation at all, let apply ignore pfnConv completely.
       if ( bKeepInputTensor ) {
-        this.pfnConv = Base.keep_input_return_copy;
-        this.apply = Base.output0_return_input0_cloned;
+        this.pfnConv = Pointwise.keep_input_return_copy;
+        this.apply = Pointwise.output0_return_input0_cloned;
       } else {
-        this.pfnConv = Base.return_input_directly;
-        this.apply = Base.output0_return_input0_directly;
+        this.pfnConv = Pointwise.return_input_directly;
+        this.apply = Pointwise.output0_return_input0_directly;
       }
     }
   }
@@ -196,7 +197,7 @@ class Pointwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
         // Perhaps, deprecate this special case. Since pointwise2 always exists now.
         // So assert if executed here.
         tf.util.assert( false,
-          `Pointwise.Base.setup_bPointwise_pfn(): `
+          `Operation.Pointwise.setup_bPointwise_pfn(): `
             + `When outputChannelCount ( ${this.outputChannelCount} ) is not positive, `
             + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) should not be positive.`
         );
@@ -212,28 +213,28 @@ class Pointwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
     }
 
     // 1.
-    this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
+    this.pfnConv = Pointwise.Conv_and_destroy; // will dispose inputTensor.
 
     // 2.
-    this.pfnActivation = Base.ActivationFunction_getById( this.nActivationId );
+    this.pfnActivation = Pointwise.ActivationFunction_getById( this.nActivationId );
 
     // 3.
     if ( this.bPointwise ) {
       if ( this.bBias ) {
         if ( this.pfnActivation )
-          this.apply = Base.ConvBiasActivation_and_destroy_or_keep;
+          this.apply = Pointwise.ConvBiasActivation_and_destroy_or_keep;
         else
-          this.apply = Base.ConvBias_and_destroy_or_keep;
+          this.apply = Pointwise.ConvBias_and_destroy_or_keep;
       } else {
         if ( this.pfnActivation )
-          this.apply = Base.ConvActivation_and_destroy_or_keep;
+          this.apply = Pointwise.ConvActivation_and_destroy_or_keep;
          else
-          this.apply = Base.Conv_and_destroy_or_keep;
+          this.apply = Pointwise.Conv_and_destroy_or_keep;
       }
     } else {
       // Since there is no operation at all, let apply ignore pfnConv completely.
-      this.pfnConv = Base.return_input_directly;
-      this.apply = Base.output0_return_input0_directly;
+      this.pfnConv = Pointwise.return_input_directly;
+      this.apply = Pointwise.output0_return_input0_directly;
     }
   }
 
