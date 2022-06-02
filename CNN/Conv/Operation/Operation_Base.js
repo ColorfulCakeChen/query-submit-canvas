@@ -231,6 +231,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
 
 
 
+  
 //!!! ...unfinished... (2022/06/02)
   /** Determine this.apply data members according to whether .inputX and .outputX exist.
    *
@@ -245,40 +246,48 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
   static setup_apply( bKeepInputTensor0, bKeepInputTensor1 ) {
 
     if ( this.input0 ) {
-      if ( this.input1 ) {      // 1. ( .input0, .input1 )
+      if ( this.input1 ) {
 
         if ( this.output0 ) {
-          if ( this.output1 ) { // ( .input0, .input1 ) => ( .output0, .output1 )
+          if ( this.output1 ) { //  1. ( .input0, .input1 ) => ( .output0, .output1 )
 
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
-                this.apply = Base.input0_to_output0_keep0__input1_to_output1_keep1;
+                this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); this.output1.realTensor = this.input1.realTensor.clone(); }
+                //Base.input0_to_output0_keep0__input1_to_output1_keep1;
               else
-                this.apply = Base.input0_to_output0_keep0__input1_to_output1_destroy1;
+                this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); this.output1.realTensor = this.input1.realTensor; }
+                //Base.input0_to_output0_keep0__input1_to_output1_destroy1;
             } else {
               if ( bKeepInputTensor1 )
-                this.apply = Base.input0_to_output0_destroy0__input1_to_output1_keep1;
+                this.apply = () => { this.output0.realTensor = this.input0.realTensor; this.output1.realTensor = this.input1.realTensor.clone(); }
+                //Base.input0_to_output0_destroy0__input1_to_output1_keep1;
               else
-                this.apply = Base.input0_to_output0_destroy0__input1_to_output1_destroy1;
+                this.apply = () => { this.output0.realTensor = this.input0.realTensor; this.output1.realTensor = this.input1.realTensor; }
+                //Base.input0_to_output0_destroy0__input1_to_output1_destroy1;
             }
 
-          } else {              // ( .input0, .input1 ) => ( .output0 )
+          } else {              //  2. ( .input0, .input1 ) => ( .output0 )
 
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
-                this.apply = Base.input0_to_output0_keep0__input1_keep1;
+                this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); }
+                //Base.input0_to_output0_keep0__input1_keep1;
               else
-                this.apply = Base.input0_to_output0_keep0__input1_destroy1;
+                this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); this.input1.realTensor.dispose(); }
+                //Base.input0_to_output0_keep0__input1_destroy1;
             } else {
               if ( bKeepInputTensor1 )
-                this.apply = Base.input0_to_output0_destroy0__input1_keep1;
+                this.apply = () => { this.output0.realTensor = this.input0.realTensor; }
+                //Base.input0_to_output0_destroy0__input1_keep1;
               else
-                this.apply = Base.input0_to_output0_destroy0__input1_destroy1;
+                this.apply = () => { this.output0.realTensor = this.input0.realTensor; this.input1.realTensor.dispose(); }
+                //Base.input0_to_output0_destroy0__input1_destroy1;
             }
 
           }
         } else {
-          if ( this.output1 ) { // ( .input0, .input1 ) => ( , .output1 )
+          if ( this.output1 ) { //  3. ( .input0, .input1 ) => ( , .output1 )
             
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
@@ -292,7 +301,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
                 this.apply = Base.input0_destroy0__input1_to_output1_destroy1;
             }
 
-          } else {              // ( .input0, .input1 ) => (  )
+          } else {              //  4. ( .input0, .input1 ) => (  )
 
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
@@ -312,12 +321,19 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
       } else {
 
         if ( this.output0 ) {
-          if ( this.output1 ) { // ( .input0 ) => ( .output0, .output1 )
-          } else {              // ( .input0 ) => ( .output0 )
+          if ( this.output1 ) { //  5. ( .input0 ) => ( .output0, .output1 )
+
+            if ( bKeepInputTensor0 ) {
+              this.apply = Base.input0_to_output0_keep0__input0_to_output1_keep0;
+            } else {
+              this.apply = Base.input0_to_output0_keep0__input0_to_output1_destroy0;
+            }
+
+          } else {              //  6. ( .input0 ) => ( .output0 )
           }
         } else {
-          if ( this.output1 ) { // ( .input0 ) => ( , .output1 )
-          } else {              // ( .input0 ) => (  )
+          if ( this.output1 ) { //  7. ( .input0 ) => ( , .output1 )
+          } else {              //  8. ( .input0 ) => (  )
           }
         }
 
@@ -328,16 +344,16 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
       if ( this.input1 ) {
 
         if ( this.output0 ) {
-          if ( this.output1 ) { // ( , .input1 ) => ( .output0, .output1 )
-          } else {              // ( , .input1 ) => ( .output0 )
+          if ( this.output1 ) { //  9. ( , .input1 ) => ( .output0, .output1 )
+          } else {              // 10. ( , .input1 ) => ( .output0 )
           }
         } else {
-          if ( this.output1 ) { // ( , .input1 ) => ( , .output1 )
-          } else {              // ( , .input1 ) => (  )
+          if ( this.output1 ) { // 11. ( , .input1 ) => ( , .output1 )
+          } else {              // 12. ( , .input1 ) => (  )
           }
         }
 
-      } else { // no input0, no input1. Not supported.
+      } else { // 13. no input0, no input1. Not supported.
 
         tf.util.assert( ( this.input0 != this.input1 ),
           `Operation.Base.setup_apply(): `
