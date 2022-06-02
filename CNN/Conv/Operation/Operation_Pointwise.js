@@ -90,7 +90,16 @@ class Pointwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
       this.boundsArraySet = new BoundsArraySet.Pointwise( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
       this.boundsArraySet.output0.set_all_byScaleBoundsArray( inputScaleBoundsArray ); // Bypass previous to next.
 
-      this.output0 = this.input0; // Bypass previous to next.
+//!!! (2022/06/02 Remarked)
+// Note: The .outputX and .inputX should always be different object (but can have the same content).
+//       Otherwise, the apply() will destroy the content of .inputX (especially when keep-input-tensor).
+//      this.output0 = this.input0; // Bypass previous to next.
+
+      // Bypass previous to next.
+      //
+      // Note: The .outputX and .inputX should always be different object (but can have the same content).
+      //       Otherwise, the apply() will destroy the content of .inputX (especially when keep-input-tensor).
+      this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
 
     } else { // 3.
 
@@ -111,12 +120,8 @@ class Pointwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
             this.output0.height = this.input0.height; // (Pointwise convolution does not change height.)
             this.output0.width = this.input0.width;   // (Pointwise convolution does not change width.)
             this.output0.channelCount = this.outputChannelCount;
-
-            if ( this.outputChannelCount_lowerHalf != undefined )
-              this.output0.channelCount_lowerHalf = this.outputChannelCount_lowerHalf;
-
-            if ( this.outputChannelCount_higherHalf != undefined )
-              this.output0.channelCount_higherHalf = this.outputChannelCount_higherHalf;
+            this.output0.channelCount_lowerHalf = this.outputChannelCount_lowerHalf;
+            this.output0.channelCount_higherHalf = this.outputChannelCount_higherHalf;
           }
 
         } catch ( e ) {  // If failed (e.g. memory not enough), return false.      
