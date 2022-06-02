@@ -86,8 +86,9 @@ function testCorrectness() {
             bInput0 = ( nInput0 != 0 );
             bInput1 = ( nInput1 != 0 );
 
-            if ( !bInput0 && !bInput1 )
-              continue; // Operation should have at least one input.
+            //!!! (2022/06/02 Remarked) It could be supported. Just do nothing.
+            //if ( !bInput0 && !bInput1 )
+            //  continue; // Operation should have at least one input.
 
             bKeepInputTensor0 = ( nKeepInputTensor0 != 0 );
             bKeepInputTensor1 = ( nKeepInputTensor1 != 0 );
