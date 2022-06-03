@@ -233,31 +233,42 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    * Note: Because changing input tensor placeholder may cause complex effect, this method should be used carefully.
    *
    * @param {Operation.Base} this            The operation to be modified.
-   * @param {TensorPlaceholder.Base} input0  The TensorPlaceholder object which will become this operation's 1st input.
-   * @return {boolean}                       Return true, if this.input0 has been changed. Return false, if nothing changed.
+   *
+   * @param {TensorPlaceholder.Base} oldTensorPlaceholder  The TensorPlaceholder object which want to be set as newTensorPlaceholder.
+   * @param {TensorPlaceholder.Base} newTensorPlaceholder  The TensorPlaceholder object which want to replace oldTensorPlaceholder.
+   *
+   * @return {aTensorPlaceholder}                       Return true, if this.input0 has been changed. Return false, if nothing changed.
    */
-  static set_inputTensorPlaceholder0( input0 ) {
-    if ( input0 == undefined ) {
-      if ( this.input0 == undefined ) {
-        return false; // Do nothing. Since it has already been cleared.
+  static TensorPlaceholder__get_original_or_modified_for_set( oldTensorPlaceholder, newTensorPlaceholder ) {
+
+    let result;
+    if ( newTensorPlaceholder == undefined ) {
+      if ( oldTensorPlaceholder == undefined ) {
+        result = undefined; // Do nothing. Since it has already been cleared.
       } else {
-        this.input0 = undefined; // Clear to no input.
+//!!!
+        if ( oldTensorPlaceholder.finalOperation == this ) {
+          oldTensorPlaceholder.finalOperationOld = oldTensorPlaceholder.finalOperation;
+          oldTensorPlaceholder.finalOperation = null;
+        }
+
+        result = undefined; // Clear to no input.
 
 //!!! ...unfinished... (2022/06/03)
 //??? What about this.input0.finalOperationOld and this.input0.finalOperation?
 
       }
     } else {
-      if ( this.input0 == input0 ) {
-        return false; // Do nothing. Because it has already been the input.
+      if ( oldTensorPlaceholder == newTensorPlaceholder ) {
+        result = oldTensorPlaceholder; // Do nothing. Because it has already been the input.
       } else {
-        this.input0 = input0;
-        input0.finalOperationOld = input0.finalOperation;
-        input0.finalOperation = this;
+        result = newTensorPlaceholder;
+        result.finalOperationOld = result.finalOperation;
+        result.finalOperation = this;
       }
     }
 
-    return true;
+    return result;
   }
 
 
@@ -280,6 +291,12 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
       if ( this.input0 == undefined ) {
         // Do nothing. Since it has already been cleared.
       } else {
+//!!!
+        if ( this.input0.finalOperation == this ) {
+          this.input0.finalOperationOld = this.input0.finalOperation;
+          this.input0.finalOperation = null;
+        }
+
         this.input0 = undefined; // Clear to no input.
 
 //!!! ...unfinished... (2022/06/03)
