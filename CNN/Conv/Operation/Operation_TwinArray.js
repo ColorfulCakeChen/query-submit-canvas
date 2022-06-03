@@ -69,7 +69,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     this.bKeepInputTensor1 = false;
     TwinArray.alwaysKeepSet_collect.call( this ); // Re-collect TensorPlaceholders which are requested to keep their tensors.
 
-    TwinArray.setKeepInputTensor_by_bKeepInputTensor0_bKeepInputTensor1_alwaysKeepSet.call( this );
+    TwinArray.setKeepInputTensor_by_this_alwaysKeepSet.call( this );
     TwinArray.setup_apply_loop.call( this );
   }
 
@@ -90,7 +90,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     this.endingDummyOperation.input0 = this.input0; // Since there is no sub operation, short-circuit to the original inputs.
     this.endingDummyOperation.input1 = this.input1;
 
-    TwinArray.setKeepInputTensor_by_bKeepInputTensor0_bKeepInputTensor1_alwaysKeepSet.call( this );
+    TwinArray.setKeepInputTensor_by_this_alwaysKeepSet.call( this );
 
     super.disposeTensors();
   }
@@ -108,7 +108,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     this.bKeepInputTensor1 = bKeepInputTensor1;
 
     TwinArray.alwaysKeepSet_collect.call( this );
-    TwinArray.setKeepInputTensor_by_bKeepInputTensor0_bKeepInputTensor1_alwaysKeepSet.call( this );
+    TwinArray.setKeepInputTensor_by_this_alwaysKeepSet.call( this );
   }
 
 
@@ -120,12 +120,17 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 //
 
   /**
-   * Call every sub operation's and endingDummyOperation's setKeepInputTensor().
+   * Call every sub operation's and endingDummyOperation's setKeepInputTensor_IfNotLastOperation_Or_In() with this.alwaysKeepSet.
    *
-   * Every time .operationArray or .bKeepInputTensor0 or .bKeepInputTensor1 or .alwaysKeepSet is changed, this method should be called.
+   * Every time this.operationArray or this.alwaysKeepSet is changed, this method should be called.
+   
+//!!! (2022/06/03 Remarked)
+//    * Every time this.operationArray or this.bKeepInputTensor0 or this.bKeepInputTensor1 or this.alwaysKeepSet is changed, this method
+//    * should be called.
+
    *
    */
-  static setKeepInputTensor_by_bKeepInputTensor0_bKeepInputTensor1_alwaysKeepSet() {
+  static setKeepInputTensor_by_this_alwaysKeepSet() {
 
     // 1. Every input tensors' last operation is responsible for releasing the tensor (except the input tensors which are requested
     //    to be kept (i.e. inside alwaysKeepSet)).
@@ -248,7 +253,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 //    //       is called. So do not forget to call it after all sub operations are appended (and before calling .apply()).
 
 //!!! ...unfinished... (2022/06/02) This may be time consuming.
-    TwinArray.setKeepInputTensor_by_bKeepInputTensor0_bKeepInputTensor1_alwaysKeepSet.call( this );
+    TwinArray.setKeepInputTensor_by_this_alwaysKeepSet.call( this );
 
     return true;
   }
@@ -329,7 +334,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 //    //       is called. So do not forget to call it after all sub operations are appended (and before calling .apply()).
 
 //!!! ...unfinished... (2022/06/02) This may be time consuming.
-    TwinArray.setKeepInputTensor_by_bKeepInputTensor0_bKeepInputTensor1_alwaysKeepSet.call( this );
+    TwinArray.setKeepInputTensor_by_this_alwaysKeepSet.call( this );
 
     return true;
   }
