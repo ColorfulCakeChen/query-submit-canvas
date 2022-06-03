@@ -2,13 +2,20 @@ export { Base };
 
 /**
  * A placeholder for tensor.
- *   - In Block.init(), it is used for tracking a tensor's final operation which should be responsible for destroy the tensor.
- *   - In Block.apply(), it is used for transferring tensor to the next operation.
+ *
+ *   - In Operation.TwinArray.operation_append_Xxx(), it is used for tracking a tensor's final operation which should be responsible
+ *       for destroying the tensor.
+ *
+ *   - In operation's .apply(), it is used for transferring tensor to the next sub operation.
  *
  *
- * @member {Block.Operation.Base} lastOperation
- *   The operation uses this tensor at last. The last operation should be responsible for destroying this tensor. If null, this tensor is
+ * @member {Operation.Base} finalOperation
+ *   The operation uses this tensor at final. It should be responsible for destroying this tensor. If null, this tensor is
  * not used by any operation.
+ *
+ * @member {Operation.Base} finalOperationOld
+ *   The previous finalOperation. When new finalOperation is set, the finalOperationOld.setKeepInputTensor_IfNotLastOperation_Or_In()
+ * usually should be called to adjust tensor destroying behavior (since it is no longer the final operation of the tensor).
  *
  * @member {tf.tensor} realTensor
  *   The real tensor represented by this placeholder. It is filled dynamically in an operation's apply() method.
@@ -20,7 +27,8 @@ class Base {
    *
    */
   constructor() {
-    this.lastOperation = null;
+    this.finalOperation = null;
+    this.finalOperationOld = null;
     this.realTensor = null;
   }
 
@@ -42,7 +50,7 @@ class Base {
    *
    * @param {TensorPlaceholder} aTensorPlaceholder
    *   The tensor placeholder's height, width, channelCount, scaleBoundsArray will be used directly (i.e. not cloned) by this
-   * tensor placeholder. Note: The .lastOperation and .realTensor are not used.
+   * tensor placeholder. Note: The .finalOperation, finalOperationOld and .realTensor are not used.
    */
   set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( aTensorPlaceholder ) {
     this.set_height_width_channelCount_scaleBoundsArray(
