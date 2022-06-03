@@ -100,8 +100,11 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    */
   setKeepInputTensor_IfNotFinalOperation_Or_In( alwaysKeepSet ) {
 
-    // Note: If an input appears multiple times (i.e. ( this.input0 == this.input1 ); multiple inputs of this operation are the same),
-    //       the input will be disposed multiple times.
+    // Note1: If an input appears multiple times (i.e. ( this.input0 == this.input1 ); multiple inputs of this operation are the same),
+    //        the input will be disposed multiple times.
+    //
+    // Note2: If ( this.input0 != this.input1 ) but ( this.input0.realTensor == this.input1.realTensor ), that will br also a
+    //        problem. But it can not be detected here because .realTensor is only known when .apply() is called (i.e. not here).
     //
     tf.util.assert( ( this.input0 != this.input1 ),
       `Operation.Base.setKeepInputTensor_IfNotFinalOperation_Or_In(): `
@@ -136,6 +139,26 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
     this.setKeepInputTensor( input0_bNeedDispose, input1_bNeedDispose );
   }
 
+  /**
+   * Call .setKeepInputTensor_IfNotFinalOperation_Or_In() of all inputs' old (i.e. this.input0.finalOperationOld and
+   * this.input1.finalOperationOld) and new (i.e. this operation object) finalOperation.
+   *
+   * When an operation changes its input tensor placeholder (e.g. a new operation is created, or an existed operation is
+   * set with different input), this method could be used to adjust keep-input-tensor flags of these related operations.
+   */
+  inputs_old_new_finalOperation__setKeepInputTensor_IfNotFinalOperation_Or_In( alwaysKeepSet ) {
+
+    // The previous final operation (of input tensor placeholders) is no longer its final operation.
+
+    if ( this.input0 )
+      this.input0.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+
+    if ( this.input1 )
+      this.input1.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+
+    // This operation becomes the (new) final operation of its input.
+    this.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+  }
 
   /**
    * Sub-class should override this property.
