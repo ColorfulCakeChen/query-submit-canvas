@@ -32,8 +32,8 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
 let Base = ( ParentClass = Object ) => class extends ParentClass {
 
   /**
-   * This constructor will register this operation as the input TensorHolder's last operation. So the construction order is important
-   * because the last constructed Operation object will become the real last operation of the inputs.
+   * This constructor will register this operation as the input TensorPlaceholder's final operation. So the construction order is
+   * important because the final constructed Operation object will become the real final operation of the inputs.
    *
    *
    * @param {number} outputTensorCount
@@ -43,18 +43,8 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
   constructor( input0, input1, outputTensorCount ) {
     super();
 
-    // Register as the input TensorPlaceholder's final user.
-    {
-      if ( input0 != undefined ) {
-        this.input0 = input0;
-        this.input0.lastOperation = this;
-      }
-
-      if ( input1 != undefined ) {
-        this.input1 = input1;
-        this.input1.lastOperation = this;
-      }
-    }
+    // Set and register as the input TensorPlaceholder's final user.
+    Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this, input0, input1 );
 
     // Create output TensorPlaceholder.
     {
@@ -84,7 +74,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
   /**
    * Adjust according to specified keep-input-tensor flag(s). So that calling .apply() will generate correct result without memory leakage.
    *
-   * The this.setKeepInputTensor_IfNotLastOperation_Or_In() will call this method. This method should adjust
+   * The this.setKeepInputTensor_IfNotFinalOperation_Or_In() will call this method. This method should adjust
    * this.apply so that this.apply() will or will not dispose its inputTensors.
    *
    * Sub-class should override this method.
@@ -101,29 +91,29 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
 
   /**
    * This method will call this.setKeepInputTensor() according to：
-   *   - whether the operation is the last operation of the this.input0 / this.input1.
+   *   - whether the operation is the final operation of the this.input0 / this.input1.
    *   - whether the this.input0 / this.input1 is in alwaysKeepSet.
    *
    * @param {Set<TensorPlaceholder.Base>} alwaysKeepSet
    *   A set object. Its every element is TensorPlaceholder.Base object. They represent tensors never be disposed. The this.input0
    * and this.input1 will be compared with them.
    */
-  setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet ) {
-  
+  setKeepInputTensor_IfNotFinalOperation_Or_In( alwaysKeepSet ) {
+
     // Note: If an input appears multiple times (i.e. ( this.input0 == this.input1 ); multiple inputs of this operation are the same),
     //       the input will be disposed multiple times.
     //
     tf.util.assert( ( this.input0 != this.input1 ),
-      `Operation.Base.setKeepInputTensor_IfNotLastOperation_Or_In(): `
+      `Operation.Base.setKeepInputTensor_IfNotFinalOperation_Or_In(): `
         + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should be different objects.`
     );
 
-    // If this operation is the last operation of the input tensor, this operation is responsible for disposing it.
+    // If this operation is the final operation of the input tensor, this operation is responsible for disposing it.
 
     let input0_bNeedDispose;
     if (   ( this.input0 )
         && ( !alwaysKeepSet?.has( this.input0 ) ) // input in alwaysKeepSet should always be kept (always not to be disposed).
-        && ( this.input0.lastOperation == this )
+        && ( this.input0.finalOperation == this )
        ) {
       input0_bNeedDispose = true;
 
@@ -134,7 +124,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
     let input1_bNeedDispose;
     if (   ( this.input1 )
         && ( !alwaysKeepSet?.has( this.input1 ) ) // input in alwaysKeepSet should always be kept (always not to be disposed).
-        && ( this.input1.lastOperation == this )
+        && ( this.input1.finalOperation == this )
        ) {
       input1_bNeedDispose = true;
 
@@ -204,7 +194,57 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
         return 0;
   }
 
-  
+
+  /**
+   * Change this operation's input tensor placeholder. Also, register as the new input TensorPlaceholder's final user.
+   * If the new input tensor placeholder is undefined (or null), the corresponding this.input will be cleared to no input
+   * tensor placeholder.
+   *
+   * Note: Because changing input tensor placeholder may cause complex effect, this method should be used carefully.
+   *
+   *
+   * @param {Operation.Base} this            The operation to be modified.
+   * @param {TensorPlaceholder.Base} input0  The TensorPlaceholder object which will become this operation's 1st input.
+   * @param {TensorPlaceholder.Base} input1  The TensorPlaceholder object which will become this operation's 2nd input.
+   */
+  static set_inputTensorPlaceholder0_inputTensorPlaceholder1( input0, input1 ) {
+
+    // 0.
+    if ( input0 == undefined ) {
+      if ( this.input0 == undefined ) {
+        // Do nothing. Since it has already been cleared.
+      } else {
+        this.input0 = undefined; // Clear to no input.
+      }
+    } else {
+      if ( this.input0 == input0 ) {
+        // Do nothing. Because it has already been the input.
+      } else {
+        this.input0 = input0;
+        input0.finalOperationOld = input0.finalOperation;
+        input0.finalOperation = this;
+      }
+    }
+
+    // 1.
+    if ( input1 == undefined ) {
+      if ( this.input1 == undefined ) {
+        // Do nothing. Since it has already been cleared.
+      } else {
+        this.input1 = undefined; // Clear to no input.
+      }
+    } else {
+      if ( this.input1 == input1 ) {
+        // Do nothing. Because it has already been the input.
+      } else {
+        this.input1 = input1;
+        input1.finalOperationOld = input1.finalOperation;
+        input1.finalOperation = this;
+      }
+    }
+  }
+
+
   /** Determine this.apply data members according to whether .inputX and .outputX exist and whether they are required to be kept.
    * The .apply will just pass through from input to output (but handle keep-input-tensor flag correctly).
    *
