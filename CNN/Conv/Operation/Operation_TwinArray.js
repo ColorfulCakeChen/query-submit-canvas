@@ -201,10 +201,6 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    *
    *     - will be pointered to operationObject0.output1, if operationObject0 has output1.
    *
-   *   
-   * Note: After all operations are appended, .reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed()
-   *       should called to reconfigure .apply data member.
-   *
    *
    * @param {Class} operationClass
    *   What kind of operation to be created and appended into this.operationArray[].
@@ -287,10 +283,6 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    *
    *   - this.output1 will be pointered to operationObject1.output0
    *       (i.e. operationObject1.output1 will be ignored even if it exists)
-   *
-   *
-   * Note: After all operations are appended, .reconfigure_for_operationArray_bKeepInputTensor0_bKeepInputTensor1_changed()
-   *       should called to reconfigure .apply data member.
    *
    *
    * @param {Class} operationClass0   The 1st operation class.
@@ -441,23 +433,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    * @param {TensorPlaceholder.Base} endingInput1  The tensor placeholder to become .endingDummyOperation.input1.
    */
   static set_endingInput0_endingInput1( endingInput0, endingInput1 ) {
-
-//!!! ...unfinished... (2022/06/03)
-// For example, in concat operation ?
-
-//!!! ...unfinished... (2022/06/03)
-//       // Set and register as the input TensorPlaceholder's final user.
-
     Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this.endingDummyOperation, endingInput0, endingInput1 );
-
-//!!! ...unfinished... (2022/06/03) What if the input tensor placeholder does not changed? should not always adjust.
-
-    // 2. Adjust keep-input-tensor flags.
-    //
-    // The previous final operation (of input tensor placeholders) is no longer its final operation.
-    // The newly created operation becomes the final operation of its input.
     this.endingDummyOperation.inputs_old_new_finalOperation__setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-
   }
 
 
