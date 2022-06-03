@@ -187,15 +187,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     //
     // The previous final operation (of input tensor placeholders) is no longer its final operation.
     // The newly created operation becomes the final operation of its input.
-    {
-      if ( operationObject.input0 )
-        operationObject.input0.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-
-      if ( operationObject.input1 )
-        operationObject.input1.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-
-      operationObject.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-    }
+    //
+    operationObject.inputs_old_new_finalOperation__setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
 
     return operationObject;
   }
@@ -452,6 +445,31 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    * @param {TensorPlaceholder.Base} endingInput1  The tensor placeholder to become .endingDummyOperation.input1.
    */
   static set_endingInput0_endingInput1( endingInput0, endingInput1 ) {
+
+
+    {
+      if ( operationObject.input0 )
+        operationObject.input0.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+
+      if ( operationObject.input1 )
+        operationObject.input1.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+
+      operationObject.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+    }
+
+//!!! ...unfinished... (2022/06/03)
+//       // Set and register as the input TensorPlaceholder's final user.
+
+    Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this.endingDummyOperation, endingInput0, endingInput1 );
+
+//!!! ...unfinished... (2022/06/03) What if the input tensor placeholder does not changed? should not always adjust.
+
+    // 2. Adjust keep-input-tensor flags.
+    //
+    // The previous final operation (of input tensor placeholders) is no longer its final operation.
+    // The newly created operation becomes the final operation of its input.
+    this.endingDummyOperation.inputs_old_new_finalOperation__setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+
   }
 
 
