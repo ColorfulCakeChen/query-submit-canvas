@@ -9,13 +9,13 @@ export { Base };
  *   - In operation's .apply(), it is used for transferring tensor to the next sub operation.
  *
  *
- * @member {Operation.Base} finalOperation
- *   The operation uses this tensor at final. It should be responsible for destroying this tensor. If null, this tensor is
- * not used by any operation.
- *
  * @member {Operation.Base} finalOperationOld
  *   The previous finalOperation. When new finalOperation is set, the finalOperationOld.setKeepInputTensor_IfNotLastOperation_Or_In()
  * usually should be called to adjust tensor destroying behavior (since it is no longer the final operation of the tensor).
+ *
+ * @member {Operation.Base} finalOperation
+ *   The operation uses this tensor at final. It should be responsible for destroying this tensor. If null, this tensor is
+ * not used by any operation.
  *
  * @member {tf.tensor} realTensor
  *   The real tensor represented by this placeholder. It is filled dynamically in an operation's apply() method.
@@ -27,8 +27,8 @@ class Base {
    *
    */
   constructor() {
-    this.finalOperation = null;
     this.finalOperationOld = null;
+    this.finalOperation = null;
     this.realTensor = null;
   }
 
@@ -50,7 +50,7 @@ class Base {
    *
    * @param {TensorPlaceholder} aTensorPlaceholder
    *   The tensor placeholder's height, width, channelCount, scaleBoundsArray will be used directly (i.e. not cloned) by this
-   * tensor placeholder. Note: The .finalOperation, finalOperationOld and .realTensor are not used.
+   * tensor placeholder. Note: The .finalOperationOld, finalOperation and .realTensor are not used.
    */
   set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( aTensorPlaceholder ) {
     this.set_height_width_channelCount_scaleBoundsArray(
