@@ -166,14 +166,14 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
   static operation_create__update_byteOffsetEnd_if_init( operationClass, constructorArgs, initArgs ) {
     let operationObject;
 
-    // Construct.
+    // 1. Construct.
     if ( constructorArgs != undefined ) {
       operationObject = new operationClass( ...constructorArgs );
     } else {
       operationObject = new operationClass();
     }
 
-    // Intialize.
+    // 2. Intialize.
     if ( initArgs ) {
       if ( !operationObject.init( ...initArgs ) )
         return null;  // e.g. input array does not have enough data.
@@ -181,6 +181,20 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       this.byteOffsetEnd = operationObject.byteOffsetEnd;
 
     // Otherwise (i.e. no initArgs), do not call operationObject.init() and do not update this.byteOffsetEnd
+    }
+
+    // 3. Adjust keep-input-tensor flags.
+    //
+    // The previous final operation (of input tensor placeholders) is no longer its final operation.
+    // The newly created operation becomes the final operation of its input.
+    {
+      if ( operationObject.input0 )
+        operationObject.input0.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+
+      if ( operationObject.input1 )
+        operationObject.input1.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+
+      operationObject.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
     }
 
     return operationObject;
