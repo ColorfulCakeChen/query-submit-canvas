@@ -11,8 +11,8 @@ import { Base } from "./Operation_Base.js";
 
 
  * No matter how many sub operations (even no sub operation) are appended, this TwinArray's .output0 and .output1 (tensor
- * placeholder) are always .endingDummyOperation.output0 and .endingDummyOperation.output1 in fact. The .lastSubOperationOutput0
- * and lastSubOperationOutput1 are always .endingDummyOperation.input0 and .endingDummyOperation.input1 in fact. This could
+ * placeholder) are always .endingDummyOperation.output0 and .endingDummyOperation.output1 in fact. The .endingInput0
+ * and endingInput1 are always .endingDummyOperation.input0 and .endingDummyOperation.input1 in fact. This could
  * simplify the decision of what tensor placeholders should be used as the next (appended) operation's input.
  *
  *
@@ -21,10 +21,10 @@ import { Base } from "./Operation_Base.js";
  *
  *
  *
- * @member {TensorPlaceholder.Base} lastSubOperationOutput0
+ * @member {TensorPlaceholder.Base} endingInput0
  *   The last sub operation's output0 (also .endingDummyOperation.input0). It could be used as input of next appended sub operation.
  *
- * @member {TensorPlaceholder.Base} lastSubOperationOutput1
+ * @member {TensorPlaceholder.Base} endingInput1
  *   The last sub operation's output1 (also .endingDummyOperation.input1). It could be used as input of next appended sub operation.
  *
  * @member {number} tensorWeightCountExtracted
@@ -224,7 +224,14 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     this.operationArray.push( operationObject0 );
 
     // 3. Tracking the current output tensor placeholders for next operation's input.
-    {    
+    {
+
+//!!! ...unfinished... (2022/06/03)
+// - needs be registered as lastOperation of the tennsor placeholder.
+// - needs call appended operation's input tensor placeholder's .lastOperationOld's .setKeepInputTensor_IfNotLastOperation_Or_In().
+// - needs call appended operation's (input tensor placeholder's .lastOperation's) .setKeepInputTensor_IfNotLastOperation_Or_In().
+// - needs endingDummyOperation's .setKeepInputTensor_IfNotLastOperation_Or_In().
+
       this.endingDummyOperation.input0 = operationObject0.output0;
       
       // If the (first) only operation has two outputs, pointer to the second output of the (first) only operation.
@@ -305,6 +312,13 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
           + `should all be undefined.`
       );
 
+//!!! ...unfinished... (2022/06/03)
+// - needs be registered as lastOperation of the tennsor placeholder.
+// - needs call appended operation's input tensor placeholder's .lastOperationOld's .setKeepInputTensor_IfNotLastOperation_Or_In().
+// - needs call appended operation's (input tensor placeholder's .lastOperation's) .setKeepInputTensor_IfNotLastOperation_Or_In().
+// - needs endingDummyOperation's .setKeepInputTensor_IfNotLastOperation_Or_In().
+
+
       this.endingDummyOperation.input0 = operationObject0.output0;
       this.endingDummyOperation.input1 = operationObject1.output0;
     }
@@ -321,11 +335,11 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
   }
 
 
-  get lastSubOperationOutput0() {
+  get endingInput0() {
     return this.endingDummyOperation.input0;
   }
 
-  get lastSubOperationOutput1() {
+  get endingInput1() {
     return this.endingDummyOperation.input1;
   }
 
