@@ -446,16 +446,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    */
   static set_endingInput0_endingInput1( endingInput0, endingInput1 ) {
 
-
-    {
-      if ( operationObject.input0 )
-        operationObject.input0.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-
-      if ( operationObject.input1 )
-        operationObject.input1.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-
-      operationObject.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-    }
+//!!! ...unfinished... (2022/06/03)
+// For example, in concat operation ?
 
 //!!! ...unfinished... (2022/06/03)
 //       // Set and register as the input TensorPlaceholder's final user.
