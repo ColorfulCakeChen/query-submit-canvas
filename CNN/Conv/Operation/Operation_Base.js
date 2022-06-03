@@ -226,20 +226,30 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
 
 
   /**
-   * Change this operation's input tensor placeholder. Also, register as the new input TensorPlaceholder's final user.
-   * If the new input tensor placeholder is undefined (or null), the corresponding this.input will be cleared to no input
-   * tensor placeholder.
+   * Modify oldTensorPlaceholder and newTensorPlaceholder, and get a TensorPlaceholder (may be undefined or oldTensorPlaceholder
+   * or newTensorPlaceholder) which should be used as oldTensorPlaceholder's new value.
+   *
+   * No matter what is returned (even if undefined is returned), the oldTensorPlaceholder and newTensorPlaceholder always may be
+   * modifed by this method.
+   *
+   * The mehod is used for setting oldTensorPlaceholder (which must be one of this operation object's input tensor placeholder property,
+   * e.g. this.input0) as newTensorPlaceholder. It will register this operation as the new input TensorPlaceholder's final operation.
+   *
+   * If the new input tensor placeholder is undefined (or null), the returned value (will be undefined too) could be used to cleared to
+   * no input tensor placeholder. The original input tensor placeholder's final operation will be updated (if it is this operation).
+   *
    *
    * Note: Because changing input tensor placeholder may cause complex effect, this method should be used carefully.
    *
-   * @param {Operation.Base} this            The operation to be modified.
+   *
+   * @param {Operation.Base} this The operation to be modified.
    *
    * @param {TensorPlaceholder.Base} oldTensorPlaceholder  The TensorPlaceholder object which want to be set as newTensorPlaceholder.
    * @param {TensorPlaceholder.Base} newTensorPlaceholder  The TensorPlaceholder object which want to replace oldTensorPlaceholder.
    *
-   * @return {aTensorPlaceholder}                       Return true, if this.input0 has been changed. Return false, if nothing changed.
+   * @return {aTensorPlaceholder} Return undefined or oldTensorPlaceholder or newTensorPlaceholder.
    */
-  static TensorPlaceholder__get_original_or_modified_for_set( oldTensorPlaceholder, newTensorPlaceholder ) {
+  static TensorPlaceholder__get_modified_for_set_input_from_old_to_new( oldTensorPlaceholder, newTensorPlaceholder ) {
 
     let result;
     if ( newTensorPlaceholder == undefined ) {
@@ -286,53 +296,15 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    */
   static set_inputTensorPlaceholder0_inputTensorPlaceholder1( input0, input1 ) {
 
-    // 0.
-    if ( input0 == undefined ) {
-      if ( this.input0 == undefined ) {
-        // Do nothing. Since it has already been cleared.
-      } else {
-//!!!
-        if ( this.input0.finalOperation == this ) {
-          this.input0.finalOperationOld = this.input0.finalOperation;
-          this.input0.finalOperation = null;
-        }
+    // Note: If original does not exist and new result is undefined, the original property will be kept as not existed.
 
-        this.input0 = undefined; // Clear to no input.
+    let newInput0 = Base.TensorPlaceholder__get_modified_for_set_input_from_old_to_new.call( this, this.input0, input0 );
+    if ( this.input0 != newInput0 )
+      this.input0 = newInput0;
 
-//!!! ...unfinished... (2022/06/03)
-//??? What about this.input0.finalOperationOld and this.input0.finalOperation?
-
-      }
-    } else {
-      if ( this.input0 == input0 ) {
-        // Do nothing. Because it has already been the input.
-      } else {
-        this.input0 = input0;
-        input0.finalOperationOld = input0.finalOperation;
-        input0.finalOperation = this;
-      }
-    }
-
-    // 1.
-    if ( input1 == undefined ) {
-      if ( this.input1 == undefined ) {
-        // Do nothing. Since it has already been cleared.
-      } else {
-        this.input1 = undefined; // Clear to no input.
-
-//!!! ...unfinished... (2022/06/03)
-//??? What about this.input0.finalOperationOld and this.input0.finalOperation?
-
-      }
-    } else {
-      if ( this.input1 == input1 ) {
-        // Do nothing. Because it has already been the input.
-      } else {
-        this.input1 = input1;
-        input1.finalOperationOld = input1.finalOperation;
-        input1.finalOperation = this;
-      }
-    }
+    let newInput1 = Base.TensorPlaceholder__get_modified_for_set_input_from_old_to_new.call( this, this.input1, input1 );
+    if ( this.input1 != newInput1 )
+      this.input1 = newInput1;
   }
 
 
