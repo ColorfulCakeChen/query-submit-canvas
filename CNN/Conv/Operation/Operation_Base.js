@@ -225,6 +225,42 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    *
    * Note: Because changing input tensor placeholder may cause complex effect, this method should be used carefully.
    *
+   * @param {Operation.Base} this            The operation to be modified.
+   * @param {TensorPlaceholder.Base} input0  The TensorPlaceholder object which will become this operation's 1st input.
+   * @return {boolean}                       Return true, if this.input0 has been changed. Return false, if nothing changed.
+   */
+  static set_inputTensorPlaceholder0( input0 ) {
+    if ( input0 == undefined ) {
+      if ( this.input0 == undefined ) {
+        return false; // Do nothing. Since it has already been cleared.
+      } else {
+        this.input0 = undefined; // Clear to no input.
+
+//!!! ...unfinished... (2022/06/03)
+//??? What about input0.finalOperationOld and input0.finalOperation?
+
+      }
+    } else {
+      if ( this.input0 == input0 ) {
+        return false; // Do nothing. Because it has already been the input.
+      } else {
+        this.input0 = input0;
+        input0.finalOperationOld = input0.finalOperation;
+        input0.finalOperation = this;
+      }
+    }
+
+    return true;
+  }
+
+
+  /**
+   * Change this operation's input tensor placeholder. Also, register as the new input TensorPlaceholder's final user.
+   * If the new input tensor placeholder is undefined (or null), the corresponding this.input will be cleared to no input
+   * tensor placeholder.
+   *
+   * Note: Because changing input tensor placeholder may cause complex effect, this method should be used carefully.
+   *
    *
    * @param {Operation.Base} this            The operation to be modified.
    * @param {TensorPlaceholder.Base} input0  The TensorPlaceholder object which will become this operation's 1st input.
@@ -238,6 +274,10 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
         // Do nothing. Since it has already been cleared.
       } else {
         this.input0 = undefined; // Clear to no input.
+
+//!!! ...unfinished... (2022/06/03)
+//??? What about input0.finalOperationOld and input0.finalOperation?
+
       }
     } else {
       if ( this.input0 == input0 ) {
@@ -255,6 +295,10 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
         // Do nothing. Since it has already been cleared.
       } else {
         this.input1 = undefined; // Clear to no input.
+
+//!!! ...unfinished... (2022/06/03)
+//??? What about input0.finalOperationOld and input0.finalOperation?
+
       }
     } else {
       if ( this.input1 == input1 ) {
