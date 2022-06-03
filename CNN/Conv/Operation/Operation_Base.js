@@ -305,14 +305,12 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    */
   static set_inputTensorPlaceholder0_inputTensorPlaceholder1( input0, input1 ) {
 
-    // Note: If original does not exist and new result is undefined, the original property will be kept as not existed.
-
     let newInput0 = Base.TensorPlaceholder_get_modified_for_set_input_from_old_to_new.call( this, this.input0, input0 );
-    if ( this.input0 != newInput0 )
+    if ( this.input0 != newInput0 ) // So that it could keep not existed if original does not existed.
       this.input0 = newInput0;
 
     let newInput1 = Base.TensorPlaceholder_get_modified_for_set_input_from_old_to_new.call( this, this.input1, input1 );
-    if ( this.input1 != newInput1 )
+    if ( this.input1 != newInput1 ) // So that it could keep not existed if original does not existed.
       this.input1 = newInput1;
   }
 
