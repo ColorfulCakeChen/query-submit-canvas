@@ -237,7 +237,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
         this.input0 = undefined; // Clear to no input.
 
 //!!! ...unfinished... (2022/06/03)
-//??? What about input0.finalOperationOld and input0.finalOperation?
+//??? What about this.input0.finalOperationOld and this.input0.finalOperation?
 
       }
     } else {
@@ -276,7 +276,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
         this.input0 = undefined; // Clear to no input.
 
 //!!! ...unfinished... (2022/06/03)
-//??? What about input0.finalOperationOld and input0.finalOperation?
+//??? What about this.input0.finalOperationOld and this.input0.finalOperation?
 
       }
     } else {
@@ -297,7 +297,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
         this.input1 = undefined; // Clear to no input.
 
 //!!! ...unfinished... (2022/06/03)
-//??? What about input0.finalOperationOld and input0.finalOperation?
+//??? What about this.input0.finalOperationOld and this.input0.finalOperation?
 
       }
     } else {
