@@ -163,7 +163,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     let operationObject;
 
     // 1. Construct.
-    if ( constructorArgs != undefined ) {
+    if ( constructorArgs ) {
       operationObject = new operationClass( ...constructorArgs );
     } else {
       operationObject = new operationClass();
@@ -171,7 +171,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
     // 2. Intialize.
     if ( initArgs ) {
-      if ( !operationObject.init( ...initArgs ) )
+      if ( !operationObject.init.apply( operationObject, initArgs ) )
         return null;  // e.g. input array does not have enough data.
 
       this.byteOffsetEnd = operationObject.byteOffsetEnd;
