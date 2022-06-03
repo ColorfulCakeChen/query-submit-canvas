@@ -256,9 +256,10 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     {
 
 //!!! ...unfinished... (2022/06/03)
-// - needs be registered as finalOperation of the tensor placeholder.
 // - needs call appended operation's input tensor placeholder's .finalOperationOld's .setKeepInputTensor_IfNotFinalOperation_Or_In().
 // - needs call appended operation's (input tensor placeholder's .finalOperation's) .setKeepInputTensor_IfNotFinalOperation_Or_In().
+
+// - needs be registered as finalOperation of the tensor placeholder.
 // - needs endingDummyOperation's .setKeepInputTensor_IfNotFinalOperation_Or_In().
 
 
@@ -442,6 +443,15 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
       // 2.2 If the container does not exist, do nothing instead.
     }
+  }
+
+
+  /**
+   *
+   * @param {TensorPlaceholder.Base} endingInput0  The tensor placeholder to become .endingDummyOperation.input0.
+   * @param {TensorPlaceholder.Base} endingInput1  The tensor placeholder to become .endingDummyOperation.input1.
+   */
+  static set_endingInput0_endingInput1( endingInput0, endingInput1 ) {
   }
 
 
