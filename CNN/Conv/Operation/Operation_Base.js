@@ -151,10 +151,12 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
     // The previous final operation (of input tensor placeholders) is no longer its final operation.
 
     if ( this.input0 )
-      this.input0.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+      if ( this.input0.finalOperationOld != this ) // Note: If previous final operation is this, it will be called in the following later.
+        this.input0.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
 
     if ( this.input1 )
-      this.input1.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+      if ( this.input1.finalOperationOld != this ) // Note: If previous final operation is this, it will be called in the following later.
+        this.input1.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
 
     // This operation becomes the (new) final operation of its input.
     this.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
