@@ -1,6 +1,6 @@
 export { TwinArray };
 
-//import * as TensorPlaceholder from "../TensorPlaceholder.js";
+import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import { Base } from "./Operation_Base.js";
 
 /**
@@ -68,8 +68,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     this.bKeepInputTensor0 = false; // Default is destroy0 and destroy1;
     this.bKeepInputTensor1 = false;
     TwinArray.alwaysKeepSet_collect.call( this ); // Re-collect TensorPlaceholders which are requested to keep their tensors.
+    TwinArray.setKeepInputTensor_by_this_operationArray_alwaysKeepSet.call( this );
 
-    TwinArray.setKeepInputTensor_by_this_alwaysKeepSet.call( this );
     TwinArray.setup_apply_loop.call( this );
   }
 
@@ -90,7 +90,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     this.endingDummyOperation.input0 = this.input0; // Since there is no sub operation, short-circuit to the original inputs.
     this.endingDummyOperation.input1 = this.input1;
 
-    TwinArray.setKeepInputTensor_by_this_alwaysKeepSet.call( this );
+    TwinArray.setKeepInputTensor_by_this_operationArray_alwaysKeepSet.call( this );
 
     super.disposeTensors();
   }
@@ -106,9 +106,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
-
     TwinArray.alwaysKeepSet_collect.call( this );
-    TwinArray.setKeepInputTensor_by_this_alwaysKeepSet.call( this );
+    TwinArray.setKeepInputTensor_by_this_operationArray_alwaysKeepSet.call( this );
   }
 
 
@@ -123,14 +122,15 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    * Call every sub operation's and endingDummyOperation's setKeepInputTensor_IfNotLastOperation_Or_In() with this.alwaysKeepSet.
    *
    * Every time this.operationArray or this.alwaysKeepSet is changed, this method should be called.
-   
+   *
+
 //!!! (2022/06/03 Remarked)
 //    * Every time this.operationArray or this.bKeepInputTensor0 or this.bKeepInputTensor1 or this.alwaysKeepSet is changed, this method
 //    * should be called.
 
    *
    */
-  static setKeepInputTensor_by_this_alwaysKeepSet() {
+  static setKeepInputTensor_by_this_operationArray_alwaysKeepSet() {
 
     // 1. Every input tensors' last operation is responsible for releasing the tensor (except the input tensors which are requested
     //    to be kept (i.e. inside alwaysKeepSet)).
@@ -228,6 +228,16 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     // 2. Put into queue.
     this.operationArray.push( operationObject0 );
 
+
+//!!! ...unfinished... (2022/06/03)
+// after append one operation, should use output0 or output1? Perhaps, only if .outputX not null, it will be used.
+// However, considering concat or concat-split operation, it seems that caller should specify which output should be used as
+// endingDummyOperation input.
+//
+// Or, uses specific operation appending method (e.g. appendConcatOp())?
+//
+
+
     // 3. Tracking the current output tensor placeholders for next operation's input.
     {
 
@@ -253,7 +263,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 //    //       is called. So do not forget to call it after all sub operations are appended (and before calling .apply()).
 
 //!!! ...unfinished... (2022/06/02) This may be time consuming.
-    TwinArray.setKeepInputTensor_by_this_alwaysKeepSet.call( this );
+    TwinArray.setKeepInputTensor_by_this_operationArray_alwaysKeepSet.call( this );
 
     return true;
   }
@@ -306,6 +316,16 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     this.operationArray.push( operationObject0 );
     this.operationArray.push( operationObject1 );
 
+
+//!!! ...unfinished... (2022/06/03)
+// after append one operation, should use output0 or output1? Perhaps, only if .outputX not null, it will be used.
+// However, considering concat or concat-split operation, it seems that caller should specify which output should be used as
+// endingDummyOperation input.
+//
+// Or, uses specific operation appending method (e.g. appendConcatOp())?
+//
+
+
     // 3. Tracking the current output tensor placeholders for next operation's input.
     {
       // When there two parallel operations, they should not have output1 (i.e. should only have output0).
@@ -334,7 +354,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 //    //       is called. So do not forget to call it after all sub operations are appended (and before calling .apply()).
 
 //!!! ...unfinished... (2022/06/02) This may be time consuming.
-    TwinArray.setKeepInputTensor_by_this_alwaysKeepSet.call( this );
+    TwinArray.setKeepInputTensor_by_this_operationArray_alwaysKeepSet.call( this );
 
     return true;
   }
