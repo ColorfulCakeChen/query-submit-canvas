@@ -268,7 +268,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
       if ( oldTensorPlaceholder == newTensorPlaceholder ) {
         result = oldTensorPlaceholder; // 2.1 Already the same input.
 
-      } else { // 2.2
+      } else { // 2.2 Different input.
 
         // 2.2.0 If this operation is the old tensor placeholder's final operation, it has no final operation now.
         if ( oldTensorPlaceholder.finalOperation == this ) {
