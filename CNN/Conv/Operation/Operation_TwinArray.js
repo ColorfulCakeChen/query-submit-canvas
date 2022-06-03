@@ -119,7 +119,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 //
 
   /**
-   * Call every sub operation's and endingDummyOperation's setKeepInputTensor_IfNotLastOperation_Or_In() with this.alwaysKeepSet.
+   * Call every sub operation's and endingDummyOperation's setKeepInputTensor_IfNotFinalOperation_Or_In() with this.alwaysKeepSet.
    *
    * Every time this.operationArray or this.alwaysKeepSet is changed, this method should be called.
    *
@@ -132,16 +132,16 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    */
   static setKeepInputTensor_by_this_operationArray_alwaysKeepSet() {
 
-    // 1. Every input tensors' last operation is responsible for releasing the tensor (except the input tensors which are requested
+    // 1. Every input tensors' final operation is responsible for releasing the tensor (except the input tensors which are requested
     //    to be kept (i.e. inside alwaysKeepSet)).
     //
     for ( let i = 0; i < this.operationArray.length; ++i ) {
       let operation = this.operationArray[ i ];
-      operation.setKeepInputTensor_IfNotLastOperation_Or_In( this.alwaysKeepSet );
+      operation.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
     }
 
     // 2.
-    this.endingDummyOperation.setKeepInputTensor_IfNotLastOperation_Or_In( this.alwaysKeepSet );
+    this.endingDummyOperation.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
   }
 
 
@@ -242,10 +242,16 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     {
 
 //!!! ...unfinished... (2022/06/03)
-// - needs be registered as lastOperation of the tennsor placeholder.
-// - needs call appended operation's input tensor placeholder's .lastOperationOld's .setKeepInputTensor_IfNotLastOperation_Or_In().
-// - needs call appended operation's (input tensor placeholder's .lastOperation's) .setKeepInputTensor_IfNotLastOperation_Or_In().
-// - needs endingDummyOperation's .setKeepInputTensor_IfNotLastOperation_Or_In().
+// - needs be registered as finalOperation of the tensor placeholder.
+// - needs call appended operation's input tensor placeholder's .finalOperationOld's .setKeepInputTensor_IfNotFinalOperation_Or_In().
+// - needs call appended operation's (input tensor placeholder's .finalOperation's) .setKeepInputTensor_IfNotFinalOperation_Or_In().
+// - needs endingDummyOperation's .setKeepInputTensor_IfNotFinalOperation_Or_In().
+
+
+//!!! ...unfinished... (2022/06/03)
+//       // Set and register as the input TensorPlaceholder's final user.
+//       Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this.endingDummyOperation, ??? input0, ??? input1 );
+
 
       this.endingDummyOperation.input0 = operationObject0.output0;
       
@@ -338,10 +344,15 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       );
 
 //!!! ...unfinished... (2022/06/03)
-// - needs be registered as lastOperation of the tennsor placeholder.
-// - needs call appended operation's input tensor placeholder's .lastOperationOld's .setKeepInputTensor_IfNotLastOperation_Or_In().
-// - needs call appended operation's (input tensor placeholder's .lastOperation's) .setKeepInputTensor_IfNotLastOperation_Or_In().
-// - needs endingDummyOperation's .setKeepInputTensor_IfNotLastOperation_Or_In().
+// - needs be registered as finalOperation of the tennsor placeholder.
+// - needs call appended operation's input tensor placeholder's .finalOperationOld's .setKeepInputTensor_IfNotFinalOperation_Or_In().
+// - needs call appended operation's (input tensor placeholder's .finalOperation's) .setKeepInputTensor_IfNotFinalOperation_Or_In().
+// - needs endingDummyOperation's .setKeepInputTensor_IfNotFinalOperation_Or_In().
+
+
+//!!! ...unfinished... (2022/06/03)
+//       // Set and register as the input TensorPlaceholder's final user.
+//       Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this.endingDummyOperation, ??? input0, ??? input1 );
 
 
       this.endingDummyOperation.input0 = operationObject0.output0;
