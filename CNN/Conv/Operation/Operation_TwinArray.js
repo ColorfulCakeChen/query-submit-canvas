@@ -228,7 +228,12 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     this.operationArray.push( operationObject0 );
 
 
-//!!! ...unfinished... (2022/06/03)
+//!!! ...unfinished... (2022/06/04) needs to specify what .endingInputY should be used if new operation only .outputX.
+// should keep the same .endingInputY or clear to null?
+//
+// consider concat - pointwise21
+//                 \ pointwise22
+//
 // after append one operation, should use output0 or output1? Perhaps, only if .outputX not null, it will be used.
 // However, considering concat or concat-split operation, it seems that caller should specify which output should be used as
 // endingDummyOperation input.
