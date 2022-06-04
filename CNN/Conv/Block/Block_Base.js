@@ -1116,6 +1116,10 @@ class Base extends ReturnOrClone.Base {
    * (Note: This Block's BoundsArraySet is kept.)
    */
   dispose_all_sub_BoundsArraySet() {
+   
+//!!! ...unfinished... (2022/06/04) However, some information (i.e. ScaleBoundsArray) is still kept in every TensorPlaceholder.
+// Perhaps, remove those ScaleBoundsArray all except in the first input and last output TensorPlaceholder.
+
     delete this.pointwise1?.boundsArraySet;
     delete this.depthwise1?.boundsArraySet;
     delete this.depthwise2?.boundsArraySet;
