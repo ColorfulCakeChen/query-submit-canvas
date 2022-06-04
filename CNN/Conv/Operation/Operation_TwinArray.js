@@ -360,6 +360,10 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
     // 3. Tracking the current output tensor placeholders for next operation's input.
     {
+
+//!!! ...unfinished... (2022/06/04)
+// Perhapse, not always accept .output0. But operationObjectX should have only one output indeed.
+
       // When there two parallel operations, they should not have output1 (i.e. should only have output0).
       tf.util.assert( ( operationObject0.output1 == undefined ) && ( operationObject1.output1 == undefined ),
         `Operation.TwinArray.operation_append_twin(): `
