@@ -133,7 +133,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
             this.boundsArraySet.output0
           );
 
-          this.boundsArraySet = null; // Release for reducing memory usage.
+          this.boundsArraySet = null; // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
 
         } catch ( e ) {  // If failed (e.g. memory not enough), return false.      
           bExtractOk = false;
