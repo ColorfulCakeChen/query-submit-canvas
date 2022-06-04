@@ -38,7 +38,7 @@ import { Base } from "./Operation_Base.js";
  * @see Operration.Base
  * @see Pointwise.FiltersArray_BiasesArray
  */
-class Pointwise extends Base( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone.Base() ) ) {
+class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone.Base() ) ) ) {
 
 //!!! (2022/06/04 Remarked) inputTensorPlaceholder0 has input info.
 //   /**
@@ -61,9 +61,8 @@ class Pointwise extends Base( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnO
     outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
-    super( inputTensorPlaceholder0, null, 1 );
-
-    this.theFiltersArray_BiasesArray = new FiltersArray_BiasesArray(
+    super(
+      inputTensorPlaceholder0, null, 1,
       inputTensorPlaceholder0.channelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
   }
@@ -112,35 +111,29 @@ class Pointwise extends Base( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnO
 
     } else { // 3.
 
-      bExtractOk = this.theFiltersArray_BiasesArray.init(
-        inputFloat32Array, byteOffsetBegin, this.input0.scaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
-
+      bExtractOk = this.init( inputFloat32Array, byteOffsetBegin, this.input0.scaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
       if ( bExtractOk ) {
         try {
-          if ( this.theFiltersArray_BiasesArray.filtersShape && this.theFiltersArray_BiasesArray.filtersArray ) {
-            this.filtersTensor4d = tf.tensor( this.theFiltersArray_BiasesArray.filtersArray, this.theFiltersArray_BiasesArray.filtersShape );
-
-//!!! (2022/06/04 Remarked) Release all theFiltersArray_BiasesArray instead.
-//            this.filtersShape = this.filtersArray = null; // Release for reducing memory usage.
+          if ( this.filtersShape && this.filtersArray ) {
+            this.filtersTensor4d = tf.tensor( this.filtersArray, this.filtersShape );
+            this.filtersShape = this.filtersArray = null; // Release for reducing memory usage.
           }
 
-          if ( this.theFiltersArray_BiasesArray.biasesShape && this.theFiltersArray_BiasesArray.biasesArray ) {
-            this.biasesTensor3d = tf.tensor( this.theFiltersArray_BiasesArray.biasesArray, this.theFiltersArray_BiasesArray.biasesShape );
-
-//!!! (2022/06/04 Remarked) Release all theFiltersArray_BiasesArray instead.
-//            this.biasesShape = this.biasesArray = null; // Release for reducing memory usage.
+          if ( this.biasesShape && this.biasesArray ) {
+            this.biasesTensor3d = tf.tensor( this.biasesArray, this.biasesShape );
+            this.biasesShape = this.biasesArray = null; // Release for reducing memory usage.
           }
 
           this.output0.set_height_width_channelCount_scaleBoundsArray(
             this.input0.height, // (Pointwise convolution does not change height.)
-            this.input0.width,   // (Pointwise convolution does not change width.)
-            this.theFiltersArray_BiasesArray.outputChannelCount,
-            this.theFiltersArray_BiasesArray.outputChannelCount_lowerHalf,
-            this.theFiltersArray_BiasesArray.outputChannelCount_higherHalf,
-            this.theFiltersArray_BiasesArray.boundsArraySet.output0
+            this.input0.width,  // (Pointwise convolution does not change width.)
+            this.outputChannelCount,
+            this.outputChannelCount_lowerHalf,
+            this.outputChannelCount_higherHalf,
+            this.boundsArraySet.output0
           );
 
-          this.theFiltersArray_BiasesArray.filtersShape = null; // Release for reducing memory usage.
+          this.boundsArraySet = null; // Release for reducing memory usage.
 
         } catch ( e ) {  // If failed (e.g. memory not enough), return false.      
           bExtractOk = false;
