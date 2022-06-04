@@ -71,6 +71,13 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     TwinArray.setKeepInputTensor_by_this_operationArray_alwaysKeepSet.call( this );
 
     TwinArray.setup_apply_loop.call( this );
+    
+    // For reducing memory re-allocation.
+    //
+    // When one or twin operations are appended, the newly appende operations' output tensor placeholders will be collected here
+    // temporarily. And then they will be assigned as endingDummyOperation's input tensor placeholder.
+    //
+    this.tempLastOutputTensorPlaceholderArray = new Array();
   }
 
 
@@ -190,44 +197,66 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
   }
 
   /**
-   * Only one operation object (operationObject0) will be created and appended into this.operationArray[].
+   * If ( operationClass1 == null ), only one operation object (operationObject0) will be created and appended into this.operationArray[].
+   * If ( operationClass1 != null ), two operation objects (operationObject0 and operationObject1) will be created  and appended
+   * into this.operationArray[].
    *
-   *   - this.output0 will be pointered to operationObject0.output0
+   * All of the newly appended operations' .outputX TensorPlaceholders will be assigned as .endingDummyOperation.inputX (i.e.
+   * .endingInputX) with some rules:
    *
-   *   - this.output1:
+   *   - If a .endingDummyOperation is no longer the final operation of .endingDummyOperation.inputX, the .endingDummyOperation.inputX
+   *       will be viewed as empty solt which could be assigned by newly appended operations' .outputX.
    *
-   *     - will not be modified, if operationObject0 has no output1.
-   *         (i.e. could be viewed as passing through from previous operation output to this operation output).
+   *   - However, because there are only two slots (i.e. .endingDummyOperation.input0 and .endingDummyOperation.input1) at most,
+   *       there are only two operationObjectX.outputY could be assigned to them.
    *
-   *     - will be pointered to operationObject0.output1, if operationObject0 has output1.
+   *   - If there too many operationObjectX.outputY needs to be handled, it will be asserted failed.
    *
    *
-   * @param {Class} operationClass
-   *   What kind of operation to be created and appended into this.operationArray[].
+   * @param {Class} operationClass0
+   *   What kind of 1st operation to be created and appended into this.operationArray[].
    *
-   * @param {Array} constructorArgs
-   *   The arguments to be passed to the constructor of operationClass. If null, the constructor will be called without any argument.
+   * @param {Array} constructorArgs0
+   *   The arguments to be passed to the constructor of operationClass0. If null, the constructor will be called without any argument.
    *
-   * @param {Array} initArgs
-   *   The arguments to be passed to the .init() method of operation object.
+   * @param {Array} initArgs0
+   *   The arguments to be passed to the .init() method of the 1st operation object.
    *   - If null, the operation object's init() will not be called. Usually, this means the operation object needs not extract any weights.
    *   - If the .init() is called and returns false, this method will failed and return false.
    *   - If the .init() is called and returns true, this method will update this.byteOffsetEnd.
    *
+   * @param {Class} operationClass1   The 2nd operation class. If null, there will be no 2nd operation.
+   * @param {Array} constructorArgs1  The 2nd operation constructor's arguments. Used only if ( operationClass1 != null ).
+   * @param {Array} initArgs1         The 2nd operation .init()'s arguments. Used only if ( operationClass1 != null ).
+   *
    * @return {boolean}
    *   Return true, if success.
    */
-  operation_append_one( operationClass, constructorArgs, initArgs ) {
+  operation_append(
+    operationClass0, constructorArgs0, initArgs0,
+    operationClass1, constructorArgs1, initArgs1 ) {
 
-    // 1. Create and initialize.
-    let operationObject0 = TwinArray.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass, constructorArgs, initArgs );
+    this.tempLastOutputTensorPlaceholderArray.length = 0;
+
+    // 1.1 1st operation object.
+    let operationObject0 = TwinArray.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass0, constructorArgs0, initArgs0 );
     if ( !operationObject0 )
+      return false;  // e.g. input array does not have enough data.
+
+    // 1.2 2nd operation object.
+    let operationObject1 = TwinArray.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass1, constructorArgs1, initArgs1 );
+    if ( !operationObject1 )
       return false;  // e.g. input array does not have enough data.
 
     // 2. Put into queue.
     this.operationArray.push( operationObject0 );
+    this.operationArray.push( operationObject1 );
 
 
+//!!! ...unfinished... (2022/06/04)
+
+    this.tempLastOutputTensorPlaceholderArray.push( 
+    
 //!!! ...unfinished... (2022/06/04)
     // Determine whether give up or keep current .endingInputX
     //
