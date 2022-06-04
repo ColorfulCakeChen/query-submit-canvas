@@ -228,6 +228,31 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     this.operationArray.push( operationObject0 );
 
 
+//!!! ...unfinished... (2022/06/04)
+    // Determine whether give up or keep current .endingInputX
+    //
+    // If endingDummyOperation is no longer its input tensor placeholder's final operation (i.e. the newly created and appended
+    // operation becomes its final operation), give up it by default (so that endingDummyOperation will not use a disposed tensor).
+    let endingInput0_new, endingInput1_new;
+    {
+      if ( this.endingDummyOperation.input0 ) {
+        if ( this.endingDummyOperation.input0.finalOperation != this.endingDummyOperation ) {
+          endingInput0_new = null;
+        } else {
+          endingInput0_new = this.endingDummyOperation.input0;
+        }
+      }
+
+      if ( this.endingDummyOperation.input1 ) {
+        if ( this.endingDummyOperation.input1.finalOperation != this.endingDummyOperation ) {
+          endingInput1_new = null;
+        } else {
+          endingInput1_new = this.endingDummyOperation.input0;
+        }
+      }
+    }
+
+
 //!!! ...unfinished... (2022/06/04) needs to specify what .endingInputY should be used if new operation only .outputX.
 // should keep the same .endingInputY or clear to null?
 //
