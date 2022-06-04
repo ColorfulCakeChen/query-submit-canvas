@@ -337,6 +337,8 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
       if ( this.input1 ) {
         if ( this.output0 ) {
           if ( this.output1 ) { //  1. ( .input0, .input1 ) => ( .output0, .output1 )
+            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
+            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
                 this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); this.output1.realTensor = this.input1.realTensor.clone(); }
@@ -349,6 +351,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
                 this.apply = () => { this.output0.realTensor = this.input0.realTensor; this.output1.realTensor = this.input1.realTensor; }
             }
           } else {              //  2. ( .input0, .input1 ) => ( .output0 )
+            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
                 this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); }
@@ -363,6 +366,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
           }
         } else {
           if ( this.output1 ) { //  3. ( .input0, .input1 ) => ( , .output1 )
+            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
                 this.apply = () => { this.output1.realTensor = this.input1.realTensor.clone(); }
@@ -391,12 +395,15 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
       } else {
         if ( this.output0 ) {
           if ( this.output1 ) { //  5. ( .input0 ) => ( .output0, .output1 )
+            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
+            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
             if ( bKeepInputTensor0 ) {
               this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); this.output1.realTensor = this.input0.realTensor.clone(); }
             } else {
               this.apply = () => { this.output0.realTensor = this.input0.realTensor; this.output1.realTensor = this.input0.realTensor.clone(); }
             }
           } else {              //  6. ( .input0 ) => ( .output0 )
+            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
             if ( bKeepInputTensor0 ) {
               this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); }
             } else {
@@ -405,6 +412,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
           }
         } else {
           if ( this.output1 ) { //  7. ( .input0 ) => ( , .output1 )
+            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
             if ( bKeepInputTensor0 ) {
               this.apply = () => { this.output1.realTensor = this.input0.realTensor.clone(); }
             } else {
@@ -423,12 +431,15 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
       if ( this.input1 ) {
         if ( this.output0 ) {
           if ( this.output1 ) { //  9. ( , .input1 ) => ( .output0, .output1 )
+            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
+            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
             if ( bKeepInputTensor1 ) {
               this.apply = () => { this.output0.realTensor = this.input1.realTensor.clone(); this.output1.realTensor = this.input1.realTensor.clone(); }
             } else {
               this.apply = () => { this.output0.realTensor = this.input1.realTensor; this.output1.realTensor = this.input1.realTensor.clone(); }
             }
           } else {              // 10. ( , .input1 ) => ( .output0 )
+            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
             if ( bKeepInputTensor1 ) {
               this.apply = () => { this.output0.realTensor = this.input1.realTensor.clone(); }
             } else {
@@ -437,6 +448,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
           }
         } else {
           if ( this.output1 ) { // 11. ( , .input1 ) => ( , .output1 )
+            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
             if ( bKeepInputTensor1 ) {
               this.apply = () => { this.output1.realTensor = this.input1.realTensor.clone(); }
             } else {
@@ -450,17 +462,21 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
             }
           }
         }
-      } else { // 13. no input0, no input1.
+      } else { // no input0, no input1.
         if ( this.output0 ) {
-          if ( this.output1 ) { // 13.1 (  ) => ( .output0, .output1 )
+          if ( this.output1 ) { // 13. (  ) => ( .output0, .output1 )
+            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
+            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
             this.apply = () => { this.output0.realTensor = null; this.output1.realTensor = null; }
-          } else {              // 13.2 (  ) => ( .output0 )
+          } else {              // 14. (  ) => ( .output0 )
+            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
             this.apply = () => { this.output0.realTensor = null; }
           }
         } else {
-          if ( this.output1 ) { // 13.3 (  ) => ( , .output1 )
+          if ( this.output1 ) { // 15. (  ) => ( , .output1 )
+            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
             this.apply = () => { this.output1.realTensor = null; }
-          } else {              // 13.4 (  ) => (  )
+          } else {              // 16. (  ) => (  )
             this.apply = () => {}
           }
         }
