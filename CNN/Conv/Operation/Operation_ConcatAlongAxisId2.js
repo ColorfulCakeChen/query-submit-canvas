@@ -39,7 +39,6 @@ class ConcatAlongAxisId2 extends Base() {
 
   constructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
-    inputScaleBoundsArray0, inputScaleBoundsArray1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
@@ -51,8 +50,10 @@ class ConcatAlongAxisId2 extends Base() {
     this.inputTensors = new Array( 2 ); // For reducing memory re-allocation.
 
     ConcatAlongAxisId2.adjust_pfn.call( this );
-    ConcatAlongAxisId2.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1 );
+    ConcatAlongAxisId2.setup_BoundsArraySet.call( this, inputTensorPlaceholder0.scaleBoundsArray, inputTensorPlaceholder0.scaleBoundsArray );
     ConcatAlongAxisId2.setup_output0_TensorPlaceholder.call( this );
+
+    this.boundsArraySet = null; // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
   }
 
   /**
