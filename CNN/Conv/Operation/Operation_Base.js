@@ -40,8 +40,8 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    *   If 0, no this.outputX will be created. If 1, only the this.output0 will be created. If 2, both the this.output0 and this.output1
    * will be created.
    */
-  constructor( input0, input1, outputTensorCount ) {
-    super();
+  constructor( input0, input1, outputTensorCount, ...restArgs ) {
+    super( ...restArgs ); // All other arguments passed to parent class's constructor.
 
     // Set and register as the input TensorPlaceholder's final user.
     Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this, input0, input1 );
