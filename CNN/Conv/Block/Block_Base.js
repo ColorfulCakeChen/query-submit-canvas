@@ -396,7 +396,7 @@ class Base extends ReturnOrClone.Base {
 
     // 0. Prepare
 
-    // Estimate the maximum value of progress.
+    // 0.1 Estimate the maximum value of progress.
     let progressMax =
       1    // for extracting parameters from inputFloat32Array.
       + 1  // for extracting pointwise1 filters (and biases) from inputFloat32Array and building tensors.
@@ -413,7 +413,7 @@ class Base extends ReturnOrClone.Base {
 
     this.disposeTensors();  // Also initialize some member function pointers to no_operation().
 
-    // 1. Extract parameters.
+    // 0.2 Extract parameters.
     if ( !params )
       return false;
 
@@ -488,41 +488,113 @@ class Base extends ReturnOrClone.Base {
     yield progressRoot;  // Parameters extracted. Report progress.
 
 
-//!!! ...unfinished... (2022/05/31)
-// this.operationBegin, this.tensorPlaceholderSet.output1 should be set when the last operation is created.
-//     this.operationBegin = ???; new Operation.???( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
-//     this.operationEnd = ???; new Operation.???( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
+    // 1. Prepare Input TensorPlaceholder and Operation Array.
 
-//!!! ...unfinished... (2022/05/31) will be used inside apply().
-    // Initialize inputs tensor placeholders.
+    // 1.1 Prepare partial pointwise1 arguments.
+
+    // Assume not higher-half-different.
+    let nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
+    let inputChannelCount_lowerHalf_pointwise1 = undefined;
+    let outputChannelCount_lowerHalf_pointwise1 = undefined;
+
+//!!! ...unfinished... (2021/11/15) What if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
+
+    if ( this.bHigherHalfDifferent == true ) {
+
+      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
+      // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's head)
+      if ( this.bHigherHalfDepthwise2 == true ) {
+
+        inputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
+
+        if ( this.pointwise1ChannelCount > 0 ) {
+          nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF;
+          outputChannelCount_lowerHalf_pointwise1 = this.pointwise1ChannelCount; // For depthwise1 (by specified channel count)
+
+        } else {
+          nHigherHalfDifferent_pointwise1
+            = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH;
+
+          // Since this is an almost copy operation, bias and activation is not necessary.
+          this.bPointwise1Bias = false;
+          this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+
+          outputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before; // For depthwise1 (by pass-through-input-to-output)
+        }
+
+        // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
+        this.pointwise1ChannelCount
+          = (  outputChannelCount_lowerHalf_pointwise1 // For depthwise1.
+             + this.channelCount0_pointwise1Before     // For depthwise2 (by depthwise1).
+            );
+
+      } else { // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
+
+        // So that bHigherHalfPassThrough (or bAllPassThrough).
+        nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
+
+        let pointwise1_higherHalfPassThrough = new ChannelCountCalculator.HigherHalfPassThrough(
+          this.channelCount0_pointwise1Before, this.pointwise1ChannelCount );
+
+        inputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.inputChannelCount_lowerHalf;
+        outputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
+      }
+
+    // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
+    }
+
+    // 1.2 Initialize inputs tensor placeholders.
     {
       this.inputTensorPlaceholder0 = new TensorPlaceholder.Base();
       this.inputTensorPlaceholder0.set_height_width_channelCount_scaleBoundsArray(
-        this.inputHeight0, this.inputWidth0, this.channelCount0_pointwise1Before, inputScaleBoundsArray0 );
+        this.inputHeight0, this.inputWidth0,
+        this.channelCount0_pointwise1Before, inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
+        inputScaleBoundsArray0 );
 
       if ( this.inputTensorCount > 1 ) {
         this.inputTensorPlaceholder1 = new TensorPlaceholder.Base();
         this.inputTensorPlaceholder1.set_height_width_channelCount_scaleBoundsArray(
-          this.inputHeight0, this.inputWidth0, params.input1ChannelCount, inputScaleBoundsArray1 );
+          this.inputHeight0, this.inputWidth0, params.input1ChannelCount,
+          undefined, undefined, // channelCount_lowerHalf, channelCount_higherHalf
+          inputScaleBoundsArray1 );
       }
     }
 
-//!!! (2022/06/01 Remarked) using Operation.TwinArray instead.
-//     // Traking the current tensor placeholders for next operation's input.
-//     this.currentTensorPlaceholder0 = this.inputTensorPlaceholder0;
-//     this.currentTensorPlaceholder1 = this.inputTensorPlaceholder1;
-
+    // 1.3 Sub Operation Array.
     this.operationArray = new ( Operation.TwinArray() )( this.inputTensorPlaceholder0, this.inputTensorPlaceholder1 );
 
+
     // 2. The pointwise1 convolution.
-    if ( !this.operation_append_pointwise1( params.defaultInput, inputScaleBoundsArray0 ) )
-      return false;
+    if ( this.pointwise1ChannelCount > 0 ) {
 
+      this.bPointwise1 = this.operation_append(
+        new Pointwise.SameWhenPassThrough(
+          this.currentTensorPlaceholder0,
+          this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
+          nHigherHalfDifferent_pointwise1,
+          outputChannelCount_lowerHalf_pointwise1,
+          0 // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
+        ),
 
-//!!! ...unfinished... (2022/06/01)
+        [ params.defaultInput, this.byteOffsetEnd ]
+      );
+
+//!!! ...unfinished... (2022/06/01) How to assign this.pointwise1 and this.bPointwise1?
+
+    } else { // There is no pointwise1.
+      this.bPointwise1 = false;
+
+//!!! (2022/05/24 Remarked) No longer support ( Pointwise.outputChannelCount == 0 ).
+    }
 
     ++progressToAdvance.value;
     yield progressRoot;  // pointwise1 filters was ready. Report progress.
+
+
+      
+      
+
+//!!! ...unfinished... (2022/06/04)
 
     // 3. The depthwise operation.
     //
@@ -1107,6 +1179,7 @@ class Base extends ReturnOrClone.Base {
     this.bInitOk = false;
   }
 
+
   /**
    * Release all BoundsArraySet of pointwise1, depthwise1, depthwise2, pointwise21, pointwise22,
    * concat1, addInput0ToPointwise21, addInput0ToPointwise22, concat2ShuffleSplit.
@@ -1116,19 +1189,22 @@ class Base extends ReturnOrClone.Base {
    * (Note: This Block's BoundsArraySet is kept.)
    */
   dispose_all_sub_BoundsArraySet() {
-   
+
 //!!! ...unfinished... (2022/06/04) However, some information (i.e. ScaleBoundsArray) is still kept in every TensorPlaceholder.
 // Perhaps, remove those ScaleBoundsArray all except in the first input and last output TensorPlaceholder.
 
-    delete this.pointwise1?.boundsArraySet;
-    delete this.depthwise1?.boundsArraySet;
-    delete this.depthwise2?.boundsArraySet;
-    delete this.pointwise21?.boundsArraySet;
-    delete this.pointwise22?.boundsArraySet;
-    delete this.concat1?.boundsArraySet;
-    delete this.addInput0ToPointwise21?.boundsArraySet;
-    delete this.addInput0ToPointwise22?.boundsArraySet;
-    delete this.concat2ShuffleSplit?.boundsArraySet;
+
+
+//!!! (2022/06/04 Remakred) The sub operation already release them.
+//     delete this.pointwise1?.boundsArraySet;
+//     delete this.depthwise1?.boundsArraySet;
+//     delete this.depthwise2?.boundsArraySet;
+//     delete this.pointwise21?.boundsArraySet;
+//     delete this.pointwise22?.boundsArraySet;
+//     delete this.concat1?.boundsArraySet;
+//     delete this.addInput0ToPointwise21?.boundsArraySet;
+//     delete this.addInput0ToPointwise22?.boundsArraySet;
+//     delete this.concat2ShuffleSplit?.boundsArraySet;
   }
 
   /** Determine which apply_Xxx() function should be used.
@@ -1292,240 +1368,27 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-//!!! (2022/06/01 Remarked) using Operation.TwinArray instead.
-//   /**
-//    * @param {Base} this
-//    *   The Block.Base object whose .byteOffsetEnd might be updated.
-//    *
-//    * @param {Class} operationClass
-//    *   What kind of operation TO be created.
-//    *
-//    * @param {Array} constructorArgs
-//    *   The arguments to be passed to the constructor of operationClass. If null, the constructor will be called without any argument.
-//    *
-//    * @param {Array} initArgs
-//    *   The arguments to be passed to the init() method of operation object.
-//    *   - If null, the operation object's init() will not be called. Usually, this means the operation object needs not extract any weights.
-//    *   - If the .init() is called and returns false, this method will failed and return null.
-//    *   - If the .init() is called and returns true, this method will update this.byteOffsetEnd.
-//    *
-//    * @return {object} If success, return the created operation object. If failed, return null.
-//    */
-//   static operation_create__update_byteOffsetEnd_if_init( operationClass, constructorArgs, initArgs ) {
-//     let operationObject;
-//
-//     // Construct.
-//     if ( constructorArgs != undefined ) {
-//       operationObject = new operationClass( ...constructorArgs );
-//     } else {
-//       operationObject = new operationClass();
-//     }
-//
-//     // Intialize.
-//     if ( initArgs ) {
-//       if ( !operationObject.init( ...initArgs ) )
-//         return null;  // e.g. input array does not have enough data.
-//
-//       this.byteOffsetEnd = operationObject.byteOffsetEnd;
-//
-//     // Otherwise (i.e. no initArgs), do not call operationObject.init() and do not update this.byteOffsetEnd
-//     }
-//
-//     return operationObject;
-//   }
-//
-//   /**
-//    *
-//    *
-//    * @param {boolean} bParallelTwin
-//    *   Whether create and append two parallel operations.
-//    *
-//    *   - If false, only one operation object (operationObject0) will be created and appended into this.operationArray[].
-//    *
-//    *     - this.currentTensorPlaceholder0 will be pointered to operationObject0.output0
-//    *
-//    *     - this.currentTensorPlaceholder1:
-//    *
-//    *       - will not be modified, if operationObject0 has no output1.
-//    *           (i.e. could be viewed as passing through from previous operation output to this operation output).
-//    *
-//    *       - will be pointered to operationObject0.output1, if operationObject0 has output1.
-//    *
-//    *   - If true, two operation objects (operationObject0 and operationObject1) will be created (with the same operationClass,
-//    *       constructorArgs, initArgs) and appended into this.operationArray[].
-//    *
-//    *     - this.currentTensorPlaceholder0 will be pointered to operationObject0.output0
-//    *         (i.e. operationObject0.output1 will be ignored even if it exists)
-//    *
-//    *     - this.currentTensorPlaceholder1 will be pointered to operationObject1.output0
-//    *         (i.e. operationObject1.output1 will be ignored even if it exists)
-//    *
-//    * @param {Class} operationClass
-//    *   What kind of operation TO be created and appended into this.operationArray[].
-//    *
-//    * @param {Array} constructorArgs
-//    *   The arguments to be passed to the constructor of operationClass. If null, the constructor will be called without any argument.
-//    *
-//    * @param {Array} initArgs
-//    *   The arguments to be passed to the init() method of operation object.
-//    *   - If null, the operation object's init() will not be called. Usually, this means the operation object needs not extract any weights.
-//    *   - If the .init() is called and returns false, this operation_append() will failed and return false.
-//    *   - If the .init() is called and returns true, this operation_append() will update this.byteOffsetEnd.
-//    *
-//    * @return {boolean}
-//    *   Return true, if success.
-//    */
-//   operation_append( bParallelTwin, operationClass, constructorArgs, initArgs ) {
-//
-//     // 1. Create and initialize.
-//
-//     // 1.1 1st operation object.
-//     let operationObject0 = Base.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass, constructorArgs, initArgs );
-//     if ( !operationObject0 )
-//       return false;  // e.g. input array does not have enough data.
-//
-//     // 1.2 2nd operation object.
-//     let operationObject1;
-//     if ( bParallelTwin ) {    
-//       operationObject1 = Base.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass, constructorArgs, initArgs );
-//       if ( !operationObject1 )
-//         return false;  // e.g. input array does not have enough data.
-//     }
-//
-//     // 2. Put into queue.
-//     this.operationArray.push( operationObject0 );
-//     this.operationArray.push( operationObject1 );
-//
-//     // 3. Traking the current tensor placeholders for next operation's input.
-//
-//     // 3.1 Only one operation.
-//     if ( !bParallelTwin ) {    
-//
-//       this.currentTensorPlaceholder0 = operationObject0.output0;
-//    
-//       // If the (first) only operation has two outputs, pointer to the second output of the (first) only operation.
-//       if ( operationObject0.output1 ) {
-//         this.currentTensorPlaceholder1 = operationObject0.output1;
-//
-//       // Otherwise, keep this.currentTensorPlaceholder1 the same (i.e. bypass previous output to this output).
-//       }
-//
-//     // 3.2 Two parallel operations.
-//     } else {
-//    
-//       // When there two parallel operations, they should not have output1 (i.e. should only have output0).
-//       tf.util.assert( ( operationObject0.output1 == undefined ) && ( operationObject1.output1 == undefined ),
-//         `Block.Base.operation_append(): `
-//           + `When ( bParallelTwin == true ), `
-//           + `operationObject0.output1 ( ${operationObject0.output1} ) and `
-//           + `operationObject1.output1 ( ${operationObject1.output1} ) `
-//           + `should all be undefined.`
-//       );
-//
-//       this.currentTensorPlaceholder0 = operationObject0.output0;
-//       this.currentTensorPlaceholder1 = operationObject1.output0;
-//     }
-//
-//     return true;
-//   }
 
-  /**
-   * Append pointwise1 convolution operation.
-   *
-   * @return {boolean} Return true, if success.
-   */
-  operation_append_pointwise1( inputFloat32Array, inputScaleBoundsArray ) {
-
-    // Assume not higher-half-different.     
-    let nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
-    let inputChannelCount_lowerHalf_pointwise1 = undefined, outputChannelCount_lowerHalf_pointwise1 = undefined;
-
-//!!! ...unfinished... (2021/11/15) What if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
-
-    if ( this.bHigherHalfDifferent == true ) {
-
-      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
-      // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's head)
-      if ( this.bHigherHalfDepthwise2 == true ) {
-
-        inputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
-
-        if ( this.pointwise1ChannelCount > 0 ) {
-          nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF;
-          outputChannelCount_lowerHalf_pointwise1 = this.pointwise1ChannelCount; // For depthwise1 (by specified channel count)
-
-        } else {
-          nHigherHalfDifferent_pointwise1
-            = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH;
-
-          // Since this is an almost copy operation, bias and activation is not necessary.
-          this.bPointwise1Bias = false;
-          this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-
-          outputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before; // For depthwise1 (by pass-through-input-to-output)
-        }
-
-        // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
-        this.pointwise1ChannelCount
-          = (  outputChannelCount_lowerHalf_pointwise1 // For depthwise1.
-             + this.channelCount0_pointwise1Before     // For depthwise2 (by depthwise1).
-            );
-
-      } else { // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
-
-        // So that bHigherHalfPassThrough (or bAllPassThrough).
-        nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
-
-        let pointwise1_higherHalfPassThrough = new ChannelCountCalculator.HigherHalfPassThrough(
-          this.channelCount0_pointwise1Before, this.pointwise1ChannelCount );
-
-        inputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.inputChannelCount_lowerHalf;
-        outputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
-      }
-
-    // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
-    }
-
-   
-    let bAppendOk;
-    if ( this.pointwise1ChannelCount > 0 ) {
-
-      bAppendOk = this.operation_append(
-        new Pointwise.SameWhenPassThrough(
-          this.currentTensorPlaceholder0,
-
-//!!! ...unfinished... (2022/06/04) Perhaps, already in input tensor holder?
-          this.channelCount0_pointwise1Before,
-
-          this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
-          nHigherHalfDifferent_pointwise1,
-
-//!!! ...unfinished... (2022/06/04) Perhaps, already in input tensor holder?
-          inputChannelCount_lowerHalf_pointwise1,
-
-          outputChannelCount_lowerHalf_pointwise1,
-
-          0 // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
-        ),
-
-        [ inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ]
-      );
-
-//!!! ...unfinished... (2022/06/01) How to assign this.pointwise1 and this.bPointwise1?
-
-    } else { // There is no pointwise1.
-//      this.bPointwise1 = false;
-      bAppendOk = true;
-    }
-
-
-//!!! (2022/05/24 Remarked) No long support ( Pointwise.outputChannelCount == 0 ).
-
-    return bAppendOk;
-  }
 
 //!!! ...unfinished... (2022/06/01)
+  /**
+   *
+   */
+  static apply_input0( inputTensors, outputTensors ) {
 
+//    this. this.inputTensors[ 0 ]
+
+//!!! ...unfinished... (2022/06/04)
+
+  }
+
+  /**
+   *
+   */
+  static apply_input0_input1( inputTensors, outputTensors ) {
+//!!! ...unfinished... (2022/06/04)
+
+  }
 
 
   /**
