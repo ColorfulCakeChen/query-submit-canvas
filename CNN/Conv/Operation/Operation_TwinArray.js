@@ -282,34 +282,10 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     this.operationArray.push( operation0 );
     this.operationArray.push( operation1 );
 
-    // 3. Collect output tensor placeholders in reverse order (so that they will be popped in forward order).
-    {
-      if ( operation1 ) {
-        if ( operation1.output1 )
-          this.tempLastOutputTensorPlaceholderArray.push( operation1.output1 );
-        if ( operation1.output0 )
-          this.tempLastOutputTensorPlaceholderArray.push( operation1.output0 );
-      }
-
-      {
-        if ( operation0.output1 )
-          this.tempLastOutputTensorPlaceholderArray.push( operation0.output1 );
-        if ( operation0.output0 )
-          this.tempLastOutputTensorPlaceholderArray.push( operation0.output0 );
-      }
-    }
-
-
-
-//!!! ...unfinished... (2022/06/04)
-
-//    this.tempLastOutputTensorPlaceholderArray.pop() 
-
-//!!! ...unfinished... (2022/06/04)
-    // Determine whether give up or keep current .endingInputX
+    // 3. Determine whether give up or keep current .endingInputX
     //
     // No matter ( .endingInputX does not exist ) or ( .endingInputX exists but .endingDummyOperation is no longer its final
-    // operation ), .endingInputX will become an empty slot which could handle newly generated output tensor placeholder from
+    // operation ), .endingInputX will become an empty slot which could handle newly generated output tensor placeholders from
     // newly appended operations.
     //
     // Q: Why .endingDummyOperation should give it up when .endingDummyOperation is no longer its input tensor placeholder's
@@ -331,182 +307,43 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       }
     }
 
-    {
-      if ( this.tempLastOutputTensorPlaceholderArray.length > 0 ) {
-        if (   ( this.endingDummyOperation.input0 )
-            && ( this.endingDummyOperation.input0.finalOperation == this.endingDummyOperation ) ) {
-            endingInput0_new = this.endingDummyOperation.input0; // Continue to handle it Since it still is its final operation.
+    // 4. Adjust .endingInputX
 
-          } else {
-            // No matter ( .endingInput0 does not exist ) or ( .endingInput0 exists but endingDummyOperation is no longer its final
-            // operation ), let .endingInput0 handle new output.
-            endingInput0_new = this.tempLastOutputTensorPlaceholderArray.pop();
-          }
-        }
+    // 4.1 Collect output tensor placeholders in reverse order (so that they will be popped in forward order).
+    {
+      if ( operation1 ) {
+        if ( operation1.output1 )
+          this.tempLastOutputTensorPlaceholderArray.push( operation1.output1 );
+        if ( operation1.output0 )
+          this.tempLastOutputTensorPlaceholderArray.push( operation1.output0 );
       }
 
-
-    // At most, two outputs could be handled.
-    tf.util.assert( ( this.tempLastOutputTensorPlaceholderArray.length == 0 ),
-      `Operation.TwinArray.operation_append(): `
-        + `The appended operations have too many output TensorPlaceholders. There are not enough .endingInputX could be used.`
-    );
-  }
-
-    
-
-//!!! ...unfinished... (2022/06/04)
-// Assign non-null's operationObject0.output0, operationObject0.output1, operationObject1.output0, operationObject1.outpu1
-// to non-null's endingInput0_new, endingInput1_new.
-//
-// If not enougn slots, assert failed.
-//
-
-
-//!!! ...unfinished... (2022/06/04) needs to specify what .endingInputY should be used if new operation only .outputX.
-// should keep the same .endingInputY or clear to null?
-//
-// consider concat - pointwise21
-//                 \ pointwise22
-//
-// after append one operation, should use output0 or output1? Perhaps, only if .outputX not null, it will be used.
-// However, considering concat or concat-split operation, it seems that caller should specify which output should be used as
-// endingDummyOperation input.
-//
-// Or, uses specific operation appending method (e.g. appendConcatOp())?
-//
-
-
-    // 3. Tracking the current output tensor placeholders for next operation's input.
-    {
-
-//!!! ...unfinished... (2022/06/03)
-// - needs call appended operation's input tensor placeholder's .finalOperationOld's .setKeepInputTensor_IfNotFinalOperation_Or_In().
-// - needs call appended operation's (input tensor placeholder's .finalOperation's) .setKeepInputTensor_IfNotFinalOperation_Or_In().
-
-// - needs be registered as finalOperation of the tensor placeholder.
-// - needs endingDummyOperation's .setKeepInputTensor_IfNotFinalOperation_Or_In().
-
-
-//!!! ...unfinished... (2022/06/03)
-//      Base.set_endingInput0_endingInput1.call( this, endingInput0, endingInput1 );
-
-
-      this.endingDummyOperation.input0 = operationObject0.output0;
-      
-      // If the (first) only operation has two outputs, pointer to the second output of the (first) only operation.
-      if ( operationObject0.output1 ) {
-        this.endingDummyOperation.input1 = operationObject0.output1;
-
-      // Otherwise, keep this.output1 the same (i.e. bypass from previous output to this output).
+      {
+        if ( operation0.output1 )
+          this.tempLastOutputTensorPlaceholderArray.push( operation0.output1 );
+        if ( operation0.output0 )
+          this.tempLastOutputTensorPlaceholderArray.push( operation0.output0 );
       }
     }
 
-//!!! (2022/06/03 Remarked) inputs_old_new_finalOperation__setKeepInputTensor_IfNotFinalOperation_Or_In() should already do it efficiently.
-// //!!! (2022/06/02 Remarked) Call it right now.
-// //
-// //    // Note: The endingDummyOperation is not configured properly until .reconfigure_by_bKeepInputTensor0_bKeepInputTensor1_alwaysKeepSet()
-// //    //       is called. So do not forget to call it after all sub operations are appended (and before calling .apply()).
-//
-// //!!! ...unfinished... (2022/06/02) This may be time consuming.
-//     TwinArray.setKeepInputTensor_by_this_operationArray_alwaysKeepSet.call( this );
-
-    return true;
-  }
-
-  /**
-   * Two operation objects (operationObject0 and operationObject1) will be created (with the same operationClass,
-   *       constructorArgs, initArgs) and appended into this.operationArray[].
-   *
-   *   - this.output0 will be pointered to operationObject0.output0
-   *       (i.e. operationObject0.output1 will be ignored even if it exists)
-   *
-   *   - this.output1 will be pointered to operationObject1.output0
-   *       (i.e. operationObject1.output1 will be ignored even if it exists)
-   *
-   *
-   * @param {Class} operationClass0   The 1st operation class.
-   * @param {Array} constructorArgs0  The 1st operation constructor's arguments.
-   * @param {Array} initArgs0         The 1st operation .init()'s arguments.
-   *
-   * @param {Class} operationClass1   The 2nd operation class.
-   * @param {Array} constructorArgs1  The 2nd operation constructor's arguments.
-   * @param {Array} initArgs1         The 2nd operation .init()'s arguments.
-   *
-   * @return {boolean}
-   *   Return true, if success.
-   *
-   * @see operation_append_one()
-   */
-  operation_append_twin(
-    operationClass0, constructorArgs0, initArgs0,
-    operationClass1, constructorArgs1, initArgs1 ) {
-
-    // 1. Create and initialize.
-
-    // 1.1 1st operation object.
-    let operationObject0 = TwinArray.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass0, constructorArgs0, initArgs0 );
-    if ( !operationObject0 )
-      return false;  // e.g. input array does not have enough data.
-
-    // 1.2 2nd operation object.
-    let operationObject1 = TwinArray.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass1, constructorArgs1, initArgs1 );
-    if ( !operationObject1 )
-      return false;  // e.g. input array does not have enough data.
-
-    // 2. Put into queue.
-    this.operationArray.push( operationObject0 );
-    this.operationArray.push( operationObject1 );
-
-
-//!!! ...unfinished... (2022/06/03)
-// after append one operation, should use output0 or output1? Perhaps, only if .outputX not null, it will be used.
-// However, considering concat or concat-split operation, it seems that caller should specify which output should be used as
-// endingDummyOperation input.
-//
-// Or, uses specific operation appending method (e.g. appendConcatOp())?
-//
-
-
-    // 3. Tracking the current output tensor placeholders for next operation's input.
+    // 4.2 Assign newly generated output tensor placeholders (from newly appended operations) to empty input slot of .endingDummyOperation.
     {
+      if ( ( this.tempLastOutputTensorPlaceholderArray.length > 0 ) && ( endingInput0_new == null ) )
+        endingInput0_new = this.tempLastOutputTensorPlaceholderArray.pop();
 
-//!!! ...unfinished... (2022/06/04)
-// Perhapse, not always accept .output0. But operationObjectX should have only one output indeed.
+      if ( ( this.tempLastOutputTensorPlaceholderArray.length > 0 ) && ( endingInput1_new == null ) )
+        endingInput1_new = this.tempLastOutputTensorPlaceholderArray.pop();
 
-      // When there two parallel operations, they should not have output1 (i.e. should only have output0).
-      tf.util.assert( ( operationObject0.output1 == undefined ) && ( operationObject1.output1 == undefined ),
-        `Operation.TwinArray.operation_append_twin(): `
-          + `Both `
-          + `operationObject0.output1 ( ${operationObject0.output1} ) and `
-          + `operationObject1.output1 ( ${operationObject1.output1} ) `
-          + `should all be undefined.`
+      // At most, two outputs could be handled.
+      tf.util.assert( ( this.tempLastOutputTensorPlaceholderArray.length == 0 ),
+        `Operation.TwinArray.operation_append(): `
+          + `The appended operations have too many output TensorPlaceholders. There are not enough .endingInputX could be used.`
       );
-
-//!!! ...unfinished... (2022/06/03)
-// - needs be registered as finalOperation of the tennsor placeholder.
-// - needs call appended operation's input tensor placeholder's .finalOperationOld's .setKeepInputTensor_IfNotFinalOperation_Or_In().
-// - needs call appended operation's (input tensor placeholder's .finalOperation's) .setKeepInputTensor_IfNotFinalOperation_Or_In().
-// - needs endingDummyOperation's .setKeepInputTensor_IfNotFinalOperation_Or_In().
-
-
-//!!! ...unfinished... (2022/06/03)
-//      Base.set_endingInput0_endingInput1.call( this, endingInput0, endingInput1 );
-
-
-      this.endingDummyOperation.input0 = operationObject0.output0;
-      this.endingDummyOperation.input1 = operationObject1.output0;
     }
 
-//!!! (2022/06/03 Remarked) inputs_old_new_finalOperation__setKeepInputTensor_IfNotFinalOperation_Or_In() should already do it efficiently.
-// //!!! (2022/06/02 Remarked) Call it right now.
-// //
-// //    // Note: The endingDummyOperation is not configured properly until .reconfigure_by_bKeepInputTensor0_bKeepInputTensor1_alwaysKeepSet()
-// //    //       is called. So do not forget to call it after all sub operations are appended (and before calling .apply()).
-//
-// //!!! ...unfinished... (2022/06/02) This may be time consuming.
-//     TwinArray.setKeepInputTensor_by_this_operationArray_alwaysKeepSet.call( this );
-
+    // 4.3
+    Base.set_endingInput0_endingInput1.call( this, endingInput0_new, endingInput1_new );
+    
     return true;
   }
 
