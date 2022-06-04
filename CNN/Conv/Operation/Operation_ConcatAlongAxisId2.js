@@ -14,17 +14,6 @@ import { Base } from "./Operation_Base.js";
  * @member {boolean} bKeepInputTensor1
  *   If false, the second input tensor will be disposed after concatenating. If true, the second input tensor will be kept after concatenating.
  *
- * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
- *   The element value bounds (per channel) of this concatenation operation's input0. It will be kept (not cloned) directly. So caller
- * should not modify them.
- *
- * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray1
- *   The element value bounds (per channel) of this concatenation operation's input1. It will be kept (not cloned) directly. So caller
- * should not modify them.
- *
- * @member {BoundsArraySet.InputsOutputs} boundsArraySet
- *   The element value bounds (per channel) of this concatenation operation.
- *
  * @member {function} apply
  *   This is a method. It processes this.input0.realTensor and this.input1.realTensor as inputTensors. It puts to this.output0.realTensor
  * as outputTensor. Both inputTensors are tf.tensor3d and represents an images ( height x width x channel ) which will be concatenated.
@@ -50,7 +39,7 @@ class ConcatAlongAxisId2 extends Base() {
     this.inputTensors = new Array( 2 ); // For reducing memory re-allocation.
 
     ConcatAlongAxisId2.adjust_pfn.call( this );
-    ConcatAlongAxisId2.setup_BoundsArraySet.call( this, inputTensorPlaceholder0.scaleBoundsArray, inputTensorPlaceholder0.scaleBoundsArray );
+    ConcatAlongAxisId2.setup_BoundsArraySet.call( this );
     ConcatAlongAxisId2.setup_output0_TensorPlaceholder.call( this );
 
     this.boundsArraySet = null; // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
@@ -100,7 +89,9 @@ class ConcatAlongAxisId2 extends Base() {
   }
 
   /** Create this.boundsArraySet. */
-  static setup_BoundsArraySet( inputScaleBoundsArray0, inputScaleBoundsArray1 ) {
+  static setup_BoundsArraySet() {
+    let inputScaleBoundsArray0 = this.input0.scaleBoundsArray;
+    let inputScaleBoundsArray1 = this.input1.scaleBoundsArray;
 
     this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
       1 // Arbitrarily set a legal (but temporary) outputChannelCount0. It will be adjusted later.
