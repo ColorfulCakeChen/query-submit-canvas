@@ -20,6 +20,10 @@ export { Base };
  * @member {tf.tensor} realTensor
  *   The real tensor represented by this placeholder. It is filled dynamically in an operation's apply() method.
  *
+ * @member {ActivationEscaping.ScaleBoundsArray} scaleBoundsArray
+ *   The element value bounds (per channel) of the tensor. Usually, it is from the output of the previous operation's value bounds
+ * set. It will be kept (not cloned) directly. So caller should use them carefully.
+ *
  */
 class Base {
 
