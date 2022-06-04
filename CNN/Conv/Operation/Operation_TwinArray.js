@@ -6,10 +6,6 @@ import { Base } from "./Operation_Base.js";
 /**
  * An array of operations. Every time appending operation, one or parallel twin operations could be appended.
  *
-
-//!!! ...unfinished... (2022/06/02) endingDummyOperation
-
-
  * No matter how many sub operations (even no sub operation) are appended, this TwinArray's .output0 and .output1 (tensor
  * placeholder) are always .endingDummyOperation.output0 and .endingDummyOperation.output1 in fact. The .endingInput0
  * and endingInput1 are always .endingDummyOperation.input0 and .endingDummyOperation.input1 in fact. This could
@@ -51,13 +47,14 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     // Note: The real output TensorPlacehoder will be created later as final operation outputs.
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
 
-    // In order to handle keep-input-flag correctly (even if no sub operation at all), a ending dummy operation is used.
+    // In order to handle keep-input-flag correctly (even if no sub operation at all), an ending dummy operation is used.
     {
       this.endingDummyOperation = new Base( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
-      // Its output will be the output of this operation array.
+      // The ending dummy operation's output will be the output of this operation array.
       {
-        this.output0 = this.endingDummyOperation.output0;
+        if ( this.endingDummyOperation.output0 )
+          this.output0 = this.endingDummyOperation.output0;
         if ( this.endingDummyOperation.output1 )
           this.output1 = this.endingDummyOperation.output1;
       }
@@ -94,10 +91,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       this.operationArray.length = 0;
     }
 
-    this.endingDummyOperation.input0 = this.input0; // Since there is no sub operation, short-circuit to the original inputs.
-    this.endingDummyOperation.input1 = this.input1;
-
-    TwinArray.setKeepInputTensor_by_this_operationArray_alwaysKeepSet.call( this );
+    // Since there is no sub operation, short-circuit to the original inputs.
+    Base.set_endingInput0_endingInput1.call( this, this.input0, this.input1 );
 
     super.disposeTensors();
   }
@@ -120,18 +115,6 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
   /**
    * Call every sub operation's and endingDummyOperation's setKeepInputTensor_IfNotFinalOperation_Or_In() with this.alwaysKeepSet.
-   *
-
-//!!! (2022/06/03 Remarked) inputs_old_new_finalOperation__setKeepInputTensor_IfNotFinalOperation_Or_In() should already do it efficiently.
-////!!! ...unfinished... (2022/06/02)
-//// Is it possible to reconfigure faster (i.e. without traverse all sub operations)?
-//// So that it can be reconfigured every time operation_append_xxx() is called.
-////
-//// Or, let operation_append_xxx() could append in batch.
-////
-//   * Every time this.operationArray or this.alwaysKeepSet is changed, this method should be called.
-
-   *
    */
   static setKeepInputTensor_by_this_operationArray_alwaysKeepSet() {
 
@@ -148,7 +131,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
   }
 
 
-//!!! (2022/06/04 Remarked) No longer responsible fro creating them.
+//!!! (2022/06/04 Remarked) No longer responsible for creating them.
 //   /**
 //    * @param {Base} this
 //    *   The Block.Base object whose .byteOffsetEnd might be updated.
@@ -196,6 +179,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 //
 //     return operationObject;
 //   }
+
 
   /**
    * @param {Base} this
@@ -343,7 +327,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
     // 4.3
     Base.set_endingInput0_endingInput1.call( this, endingInput0_new, endingInput1_new );
-    
+
     return true;
   }
 
