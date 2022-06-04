@@ -329,6 +329,10 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    *   Whether the .input1's tensor should be destroyed by this operation. It is ignored if .input1 does not exist.
    */
   static setup_apply_dummy( bKeepInputTensor0, bKeepInputTensor1 ) {
+    
+//!!! ...unfinished... (2022/06/04) set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( aTensorPlaceholder )
+
+
     if ( this.input0 ) {
       if ( this.input1 ) {
         if ( this.output0 ) {
