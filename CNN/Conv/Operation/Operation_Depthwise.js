@@ -142,7 +142,7 @@ class Depthwise extends Base( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnO
             this.boundsArraySet.output0
           );
 
-          this.boundsArraySet = null; // Release for reducing memory usage. (Since it is inside output tensor placeholder.)
+          this.boundsArraySet = null; // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
 
         } catch ( e ) {  // If failed (e.g. memory not enough), return false.      
           bExtractOk = false;
