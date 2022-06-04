@@ -71,6 +71,12 @@ class Case {
           + `result tensor count (${memoryInfo_apply_after.numTensors}) `
           + `should be ( ${numTensors_predicted} ) = ( ${memoryInfo_apply_before.numTensors} + ${numTensors_delta} ).`
       );
+
+//!!! ...unfinished... (2022/06/04)
+// aTensorPlaceholder.height, aTensorPlaceholder.width,
+//         aTensorPlaceholder.channelCount, aTensorPlaceholder.channelCount_lowerHalf, aTensorPlaceholder.channelCount_higherHalf,
+//         aTensorPlaceholder.scaleBoundsArray
+
     });
 
   }
