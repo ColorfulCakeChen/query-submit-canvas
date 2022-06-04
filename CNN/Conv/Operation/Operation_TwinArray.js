@@ -252,6 +252,13 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       }
     }
 
+//!!! ...unfinished... (2022/06/04)
+// Assign non-null's operationObject0.output0, operationObject0.output1, operationObject1.output0, operationObject1.outpu1
+// to non-null's endingInput0_new, endingInput1_new.
+//
+// If not enougn slots, assert failed.
+//
+
 
 //!!! ...unfinished... (2022/06/04) needs to specify what .endingInputY should be used if new operation only .outputX.
 // should keep the same .endingInputY or clear to null?
