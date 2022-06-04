@@ -148,15 +148,61 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
   }
 
 
+//!!! (2022/06/04 Remarked) No longer responsible fro creating them.
+//   /**
+//    * @param {Base} this
+//    *   The Block.Base object whose .byteOffsetEnd might be updated.
+//    *
+//    * @param {Class} operationClass
+//    *   What kind of operation TO be created.
+//    *
+//    * @param {Array} constructorArgs
+//    *   The arguments to be passed to the constructor of operationClass. If null, the constructor will be called without any argument.
+//    *
+//    * @param {Array} initArgs
+//    *   The arguments to be passed to the init() method of operation object.
+//    *   - If null, the operation object's init() will not be called. Usually, this means the operation object needs not extract any weights.
+//    *   - If the .init() is called and returns false, this method will failed and return null.
+//    *   - If the .init() is called and returns true, this method will update this.byteOffsetEnd.
+//    *
+//    * @return {object} If success, return the created operation object. If failed, return null.
+//    */
+//   static operation_create__update_byteOffsetEnd_if_init( operationClass, constructorArgs, initArgs ) {
+//     let operationObject;
+
+//     // 1. Construct.
+//     if ( constructorArgs ) {
+//       operationObject = new operationClass( ...constructorArgs );
+//     } else {
+//       operationObject = new operationClass();
+//     }
+//
+//     // 2. Intialize.
+//     if ( initArgs ) {
+//       if ( !operationObject.init.apply( operationObject, initArgs ) )
+//         return null;  // e.g. input array does not have enough data.
+//
+//       this.byteOffsetEnd = operationObject.byteOffsetEnd;
+//
+//     // Otherwise (i.e. no initArgs), do not call operationObject.init() and do not update this.byteOffsetEnd
+//     }
+//
+//     // 3. Adjust keep-input-tensor flags.
+//     //
+//     // The previous final operation (of input tensor placeholders) is no longer its final operation.
+//     // The newly created operation becomes the final operation of its input.
+//     //
+//     operationObject.inputs_old_new_finalOperation__setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+//
+//     return operationObject;
+//   }
+
   /**
    * @param {Base} this
    *   The Block.Base object whose .byteOffsetEnd might be updated.
    *
-   * @param {Class} operationClass
-   *   What kind of operation TO be created.
-   *
-   * @param {Array} constructorArgs
-   *   The arguments to be passed to the constructor of operationClass. If null, the constructor will be called without any argument.
+   * @param {Operation.Base} operationObject
+   *   The operation object to be initialized.
    *
    * @param {Array} initArgs
    *   The arguments to be passed to the init() method of operation object.
@@ -164,42 +210,31 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    *   - If the .init() is called and returns false, this method will failed and return null.
    *   - If the .init() is called and returns true, this method will update this.byteOffsetEnd.
    *
-   * @return {object} If success, return the created operation object. If failed, return null.
+   * @return {boolean} If success, return true. If failed, return false.
    */
-  static operation_create__update_byteOffsetEnd_if_init( operationClass, constructorArgs, initArgs ) {
-    let operationObject;
+  static operation__update_byteOffsetEnd_if_init( operationObject, initArgs ) {
 
-    // 1. Construct.
-    if ( constructorArgs ) {
-      operationObject = new operationClass( ...constructorArgs );
-    } else {
-      operationObject = new operationClass();
-    }
-
-    // 2. Intialize.
+    // 1. Intialize.
     if ( initArgs ) {
       if ( !operationObject.init.apply( operationObject, initArgs ) )
-        return null;  // e.g. input array does not have enough data.
+        return false;  // e.g. input array does not have enough data.
 
       this.byteOffsetEnd = operationObject.byteOffsetEnd;
 
     // Otherwise (i.e. no initArgs), do not call operationObject.init() and do not update this.byteOffsetEnd
     }
 
-    // 3. Adjust keep-input-tensor flags.
+    // 2. Adjust keep-input-tensor flags.
     //
     // The previous final operation (of input tensor placeholders) is no longer its final operation.
     // The newly created operation becomes the final operation of its input.
     //
     operationObject.inputs_old_new_finalOperation__setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-
-    return operationObject;
+    return true;
   }
 
   /**
-   * If ( operationClass1 == null ), only one operation object (operationObject0) will be created and appended into this.operationArray[].
-   * If ( operationClass1 != null ), two operation objects (operationObject0 and operationObject1) will be created  and appended
-   * into this.operationArray[].
+   * Append one or twin (i.e. two operation in parallel) operation(s) into this.operationArray[].
    *
    * All of the newly appended operations' .outputX TensorPlaceholders will be assigned as .endingDummyOperation.inputX (i.e.
    * .endingInputX) with some rules:
@@ -208,16 +243,13 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    *       will be viewed as empty solt which could be assigned by newly appended operations' .outputX.
    *
    *   - However, because there are only two slots (i.e. .endingDummyOperation.input0 and .endingDummyOperation.input1) at most,
-   *       there are only two operationObjectX.outputY could be assigned to them.
+   *       there are only two operationX.outputY could be assigned to them.
    *
-   *   - If there too many operationObjectX.outputY needs to be handled, it will be asserted failed.
+   *   - If there too many operationX.outputY needs to be handled, it will be asserted failed.
    *
    *
-   * @param {Class} operationClass0
-   *   What kind of 1st operation to be created and appended into this.operationArray[].
-   *
-   * @param {Array} constructorArgs0
-   *   The arguments to be passed to the constructor of operationClass0. If null, the constructor will be called without any argument.
+   * @param {Operation.Base} operation0
+   *   The 1st operation object to be appended into this.operationArray[].
    *
    * @param {Array} initArgs0
    *   The arguments to be passed to the .init() method of the 1st operation object.
@@ -225,32 +257,48 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    *   - If the .init() is called and returns false, this method will failed and return false.
    *   - If the .init() is called and returns true, this method will update this.byteOffsetEnd.
    *
-   * @param {Class} operationClass1   The 2nd operation class. If null, there will be no 2nd operation.
-   * @param {Array} constructorArgs1  The 2nd operation constructor's arguments. Used only if ( operationClass1 != null ).
-   * @param {Array} initArgs1         The 2nd operation .init()'s arguments. Used only if ( operationClass1 != null ).
+   * @param {Operation.Base} operation1  The 2nd operation object. If null, there will be no 2nd operation.
+   * @param {Array} initArgs1            The 2nd operation .init()'s arguments. Used only if ( operation1 != null ).
    *
    * @return {boolean}
    *   Return true, if success.
    */
-  operation_append(
-    operationClass0, constructorArgs0, initArgs0,
-    operationClass1, constructorArgs1, initArgs1 ) {
+  operation_append( operation0, initArgs0, operation1, initArgs1 ) {
 
     this.tempLastOutputTensorPlaceholderArray.length = 0;
 
+    // 1. Initialize.
+
     // 1.1 1st operation object.
-    let operationObject0 = TwinArray.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass0, constructorArgs0, initArgs0 );
-    if ( !operationObject0 )
+    if ( !TwinArray.operation__update_byteOffsetEnd_if_init.call( this, operation0, initArgs0 ) )
       return false;  // e.g. input array does not have enough data.
 
     // 1.2 2nd operation object.
-    let operationObject1 = TwinArray.operation_create__update_byteOffsetEnd_if_init.call( this, operationClass1, constructorArgs1, initArgs1 );
-    if ( !operationObject1 )
-      return false;  // e.g. input array does not have enough data.
+    if ( operation1 )
+      if ( !TwinArray.operation__update_byteOffsetEnd_if_init.call( this, operation1, initArgs1 ) )
+        return false;  // e.g. input array does not have enough data.
 
     // 2. Put into queue.
-    this.operationArray.push( operationObject0 );
-    this.operationArray.push( operationObject1 );
+    this.operationArray.push( operation0 );
+    this.operationArray.push( operation1 );
+
+    // 3. Collect output tensor placeholders in reverse order (so that they will be used in forward order).
+    {
+      if ( operation1 ) {
+        if ( operation1.output1 )
+          this.tempLastOutputTensorPlaceholderArray.push( operation1.output1 );
+        if ( operation1.output0 )
+          this.tempLastOutputTensorPlaceholderArray.push( operation1.output0 );
+      }
+
+      {
+        if ( operation0.output1 )
+          this.tempLastOutputTensorPlaceholderArray.push( operation0.output1 );
+        if ( operation0.output0 )
+          this.tempLastOutputTensorPlaceholderArray.push( operation0.output0 );
+      }
+    }
+    
 
 
 //!!! ...unfinished... (2022/06/04)
