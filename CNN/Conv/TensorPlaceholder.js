@@ -47,16 +47,24 @@ class Base {
   }
 
   /**
+   * Note: The .finalOperationOld, finalOperation and .realTensor are not modified by this method.
    *
    * @param {TensorPlaceholder} aTensorPlaceholder
    *   The tensor placeholder's height, width, channelCount, scaleBoundsArray will be used directly (i.e. not cloned) by this
-   * tensor placeholder. Note: The .finalOperationOld, finalOperation and .realTensor are not used.
+   * tensor placeholder. If null, these properties will be set to null too.
    */
   set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( aTensorPlaceholder ) {
-    this.set_height_width_channelCount_scaleBoundsArray(
-      aTensorPlaceholder.height, aTensorPlaceholder.width,
-      aTensorPlaceholder.channelCount, aTensorPlaceholder.channelCount_lowerHalf, aTensorPlaceholder.channelCount_higherHalf,
-      aTensorPlaceholder.scaleBoundsArray );
+    if ( aTensorPlaceholder ) {
+      this.set_height_width_channelCount_scaleBoundsArray(
+        aTensorPlaceholder.height, aTensorPlaceholder.width,
+        aTensorPlaceholder.channelCount, aTensorPlaceholder.channelCount_lowerHalf, aTensorPlaceholder.channelCount_higherHalf,
+        aTensorPlaceholder.scaleBoundsArray );
+    } else {
+      this.set_height_width_channelCount_scaleBoundsArray(
+        null, null,
+        null, null, null,
+        null );
+    }
   }
 
 }
