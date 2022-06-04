@@ -42,10 +42,10 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
   /**
    *
    */
-  constructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount ) {
+  constructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount, ...restArgs ) {
 
     // Note: The real output TensorPlacehoder will be created later as final operation outputs.
-    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 );
+    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
 
     // In order to handle keep-input-flag correctly (even if no sub operation at all), an ending dummy operation is used.
     {
