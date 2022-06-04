@@ -47,35 +47,48 @@ import { Base } from "./Operation_Base.js";
  * @see Operration.Base
  * @see Depthwise.FiltersArray_BiasesArray
  */
-class Depthwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( Base( ReturnOrClone.Base() ) ) ) {
+class Depthwise extends Base( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone.Base() ) ) {
+
+//!!! (2022/06/04 Remarked) inputTensorPlaceholder0 has input info.
+//   /**
+//    */
+//   constructor(
+//     inputTensorPlaceholder0,
+//     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+//     bBias, nActivationId, nPassThroughStyleId,
+//     nHigherHalfDifferent, inputChannelCount_lowerHalf ) {
+//
+//     super(
+//       inputTensorPlaceholder0, null, 1,
+//       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+//       bBias, nActivationId, nPassThroughStyleId,
+//       nHigherHalfDifferent, inputChannelCount_lowerHalf );
+//
+//   }
 
   /**
    */
   constructor(
     inputTensorPlaceholder0,
-    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent, inputChannelCount_lowerHalf ) {
+    nHigherHalfDifferent ) {
 
     super(
       inputTensorPlaceholder0, null, 1,
-      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      inputTensorPlaceholder0.height, inputTensorPlaceholder0.width, inputTensorPlaceholder0.channelCount,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf );
-
+      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf );
   }
 
   /**
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
-   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
-   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
-   * set of this depthwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
-   *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray ) {
+  init( inputFloat32Array, byteOffsetBegin ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -95,13 +108,9 @@ class Depthwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
       this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
       this.tensorWeightCountExtracted = this.tensorWeightCountTotal = 0;
 
-      this.boundsArraySet = new BoundsArraySet.Depthwise( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
-      this.boundsArraySet.output0.set_all_byScaleBoundsArray( inputScaleBoundsArray ); // Bypass previous to next.
-
-//!!! (2022/06/02 Remarked)
-// Note: The .outputX and .inputX should always be different object (but can have the same content).
-//       Otherwise, the apply() will destroy the content of .inputX (especially when keep-input-tensor).
-//      this.output0 = this.input0; // Bypass previous to next.
+//!!! (2022/06/04 Remarked) Already in TensorPlaceholder
+//       this.boundsArraySet = new BoundsArraySet.Depthwise( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
+//       this.boundsArraySet.output0.set_all_byScaleBoundsArray( inputScaleBoundsArray ); // Bypass previous to next.
 
       // Bypass previous to next.
       //
@@ -111,7 +120,7 @@ class Depthwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
 
     } else { // 3.
 
-      bExtractOk = super.init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray );
+      bExtractOk = this.init( inputFloat32Array, byteOffsetBegin, this.input0.scaleBoundsArray );
       if ( bExtractOk ) {
         try {
           if ( this.filtersShape && this.filtersArray ) {
@@ -124,13 +133,16 @@ class Depthwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
             this.biasesShape = this.biasesArray = null; // Release for reducing memory usage.
           }
 
-          {
-            this.output0.height = this.outputHeight;
-            this.output0.width = this.outputWidth;
-            this.output0.channelCount = this.outputChannelCount;
-            this.output0.channelCount_lowerHalf = this.outputChannelCount_lowerHalf;
-            this.output0.channelCount_higherHalf = this.outputChannelCount_higherHalf;
-          }
+          this.output0.set_height_width_channelCount_scaleBoundsArray(
+            this.outputHeight,
+            this.outputWidth,
+            this.outputChannelCount,
+            this.outputChannelCount_lowerHalf,
+            this.outputChannelCount_higherHalf,
+            this.boundsArraySet.output0
+          );
+
+          this.boundsArraySet = null; // Release for reducing memory usage.
 
         } catch ( e ) {  // If failed (e.g. memory not enough), return false.      
           bExtractOk = false;
