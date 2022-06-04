@@ -18,16 +18,16 @@ class Depthwise_ConstantWhenPassThrough extends Depthwise {
    */
   constructor(
     inputTensorPlaceholder0,
-    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId,
-    nHigherHalfDifferent, inputChannelCount_lowerHalf ) {
+    nHigherHalfDifferent ) {
 
     super(
       inputTensorPlaceholder0,
-      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf );
+      nHigherHalfDifferent );
 
   }
 
