@@ -41,7 +41,6 @@ class AddTwoTensors extends Base() {
    */
   constructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
-    inputScaleBoundsArray0, inputScaleBoundsArray1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
@@ -50,8 +49,10 @@ class AddTwoTensors extends Base() {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
     AddTwoTensors.adjust_pfn.call( this );
-    AddTwoTensors.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1 );
+    AddTwoTensors.setup_BoundsArraySet.call( this, inputTensorPlaceholder0.scaleBoundsArray, inputTensorPlaceholder1.scaleBoundsArray );
     AddTwoTensors.setup_output0_TensorPlaceholder.call( this );
+
+    this.boundsArraySet = null; // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
   }
 
   /**
