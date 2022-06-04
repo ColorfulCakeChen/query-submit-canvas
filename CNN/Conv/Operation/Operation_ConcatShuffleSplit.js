@@ -34,17 +34,6 @@ import { Base } from "./Operation_Base.js";
  * @member {boolean} bKeepInputTensor1
  *   If false, the second input tensor will be disposed after concatenating. If true, the second input tensor will be kept after concatenating.
  *
- * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
- *   The element value bounds (per channel) of this concatenation operation's input0. It will be kept (not cloned) directly. So caller
- * should not modify them.
- *
- * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray1
- *   The element value bounds (per channel) of this concatenation operation's input1. It will be kept (not cloned) directly. So caller
- * should not modify them.
- *
- * @member {BoundsArraySet.InputsOutputs} boundsArraySet
- *   The element value bounds (per channel) of this concatenation operation.
- *
  * @member {function} apply
  *   This is a method. It processes this.input0.realTensor and this.input1.realTensor as inputTensors. It puts to this.output0.realTensor
  * as outputTensor. Both inputTensors are tf.tensor3d and represents an images ( height x width x channel ) which will be concatenated,
@@ -65,7 +54,6 @@ class ConcatShuffleSplit extends Base() {
   constructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     channelShuffler, bShuffleSplit = true,
-    inputScaleBoundsArray0, inputScaleBoundsArray1,
     arrayTemp_forInterleave_asGrouptTwo,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
@@ -92,10 +80,12 @@ class ConcatShuffleSplit extends Base() {
     this.inputTensors = new Array( 2 ); // For reducing memory re-allocation to improve performance.
 
     ConcatShuffleSplit.adjust_pfn.call( this );
-    ConcatShuffleSplit.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1, arrayTemp_forInterleave_asGrouptTwo );
+    ConcatShuffleSplit.setup_BoundsArraySet.call( this, arrayTemp_forInterleave_asGrouptTwo );
     ConcatShuffleSplit.setup_outputs_TensorPlaceholder.call( this );
 
     this.setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 );
+
+    this.boundsArraySet = null; // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
   }
 
   /**
@@ -158,7 +148,9 @@ class ConcatShuffleSplit extends Base() {
   }
 
   /** Create this.boundsArraySet. */
-  static setup_BoundsArraySet( inputScaleBoundsArray0, inputScaleBoundsArray1, arrayTemp_forInterleave_asGrouptTwo ) {
+  static setup_BoundsArraySet( arrayTemp_forInterleave_asGrouptTwo ) {
+    let inputScaleBoundsArray0 = this.input0.scaleBoundsArray;
+    let inputScaleBoundsArray1 = this.input1.scaleBoundsArray;
 
     // Concatenated value bounds array set.
     let concatBoundsArraySet;
