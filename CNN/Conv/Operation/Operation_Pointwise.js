@@ -38,28 +38,40 @@ import { Base } from "./Operation_Base.js";
  * @see Operration.Base
  * @see Pointwise.FiltersArray_BiasesArray
  */
-class Pointwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( Base( ReturnOrClone.Base() ) ) ) {
+class Pointwise extends Base( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone.Base() ) ) {
+
+//!!! (2022/06/04 Remarked) inputTensorPlaceholder0 has input info.
+//   /**
+//    */
+//   constructor(
+//     inputTensorPlaceholder0,
+//     inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
+//     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
+//
+//     super(
+//       inputTensorPlaceholder0, null, 1,
+//       inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
+//       nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
+//   }
 
   /**
    */
   constructor(
     inputTensorPlaceholder0,
-    inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
+    outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
+    nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
-    super(
-      inputTensorPlaceholder0, null, 1,
-      inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
+    super( inputTensorPlaceholder0, null, 1 );
+
+    this.theFiltersArray_BiasesArray = new FiltersArray_BiasesArray(
+      inputTensorPlaceholder0.channelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
+      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
   }
+
 
   /**
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
-   *
-   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
-   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
-   * set of this pointwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
    *
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
@@ -67,7 +79,7 @@ class Pointwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
    *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo ) {
+  init( inputFloat32Array, byteOffsetBegin, arrayTemp_forInterleave_asGrouptTwo ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -88,13 +100,9 @@ class Pointwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
       this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
       this.tensorWeightCountExtracted = this.tensorWeightCountTotal = 0;
 
-      this.boundsArraySet = new BoundsArraySet.Pointwise( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
-      this.boundsArraySet.output0.set_all_byScaleBoundsArray( inputScaleBoundsArray ); // Bypass previous to next.
-
-//!!! (2022/06/02 Remarked)
-// Note: The .outputX and .inputX should always be different object (but can have the same content).
-//       Otherwise, the apply() will destroy the content of .inputX (especially when keep-input-tensor).
-//      this.output0 = this.input0; // Bypass previous to next.
+//!!! (2022/06/04 Remarked) Already in TensorPlaceholder
+//       this.boundsArraySet = new BoundsArraySet.Pointwise( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
+//       this.boundsArraySet.output0.set_all_byScaleBoundsArray( inputScaleBoundsArray ); // Bypass previous to next.
 
       // Bypass previous to next.
       //
@@ -104,26 +112,35 @@ class Pointwise extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_bia
 
     } else { // 3.
 
-      bExtractOk = super.init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
+      bExtractOk = this.theFiltersArray_BiasesArray.init(
+        inputFloat32Array, byteOffsetBegin, this.input0.scaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
+
       if ( bExtractOk ) {
         try {
-          if ( this.filtersShape && this.filtersArray ) {
-            this.filtersTensor4d = tf.tensor( this.filtersArray, this.filtersShape );
-            this.filtersShape = this.filtersArray = null; // Release for reducing memory usage.
+          if ( this.theFiltersArray_BiasesArray.filtersShape && this.theFiltersArray_BiasesArray.filtersArray ) {
+            this.filtersTensor4d = tf.tensor( this.theFiltersArray_BiasesArray.filtersArray, this.theFiltersArray_BiasesArray.filtersShape );
+
+//!!! (2022/06/04 Remarked) Release all theFiltersArray_BiasesArray instead.
+//            this.filtersShape = this.filtersArray = null; // Release for reducing memory usage.
           }
 
-          if ( this.biasesShape && this.biasesArray ) {
-            this.biasesTensor3d = tf.tensor( this.biasesArray, this.biasesShape );
-            this.biasesShape = this.biasesArray = null; // Release for reducing memory usage.
+          if ( this.theFiltersArray_BiasesArray.biasesShape && this.theFiltersArray_BiasesArray.biasesArray ) {
+            this.biasesTensor3d = tf.tensor( this.theFiltersArray_BiasesArray.biasesArray, this.theFiltersArray_BiasesArray.biasesShape );
+
+//!!! (2022/06/04 Remarked) Release all theFiltersArray_BiasesArray instead.
+//            this.biasesShape = this.biasesArray = null; // Release for reducing memory usage.
           }
 
-          {
-            this.output0.height = this.input0.height; // (Pointwise convolution does not change height.)
-            this.output0.width = this.input0.width;   // (Pointwise convolution does not change width.)
-            this.output0.channelCount = this.outputChannelCount;
-            this.output0.channelCount_lowerHalf = this.outputChannelCount_lowerHalf;
-            this.output0.channelCount_higherHalf = this.outputChannelCount_higherHalf;
-          }
+          this.output0.set_height_width_channelCount_scaleBoundsArray(
+            this.input0.height, // (Pointwise convolution does not change height.)
+            this.input0.width,   // (Pointwise convolution does not change width.)
+            this.theFiltersArray_BiasesArray.outputChannelCount,
+            this.theFiltersArray_BiasesArray.outputChannelCount_lowerHalf,
+            this.theFiltersArray_BiasesArray.outputChannelCount_higherHalf,
+            this.theFiltersArray_BiasesArray.boundsArraySet.output0
+          );
+
+          this.theFiltersArray_BiasesArray.filtersShape = null; // Release for reducing memory usage.
 
         } catch ( e ) {  // If failed (e.g. memory not enough), return false.      
           bExtractOk = false;
