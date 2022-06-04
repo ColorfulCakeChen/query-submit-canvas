@@ -1490,15 +1490,23 @@ class Base extends ReturnOrClone.Base {
     let bAppendOk;
     if ( this.pointwise1ChannelCount > 0 ) {
 
-      bAppendOk = this.operation_append( false,
-        Pointwise.SameWhenPassThrough, [
+      bAppendOk = this.operation_append(
+        new Pointwise.SameWhenPassThrough(
           this.currentTensorPlaceholder0,
+
+//!!! ...unfinished... (2022/06/04) Perhaps, already in input tensor holder?
           this.channelCount0_pointwise1Before,
+
           this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
           nHigherHalfDifferent_pointwise1,
-          inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
+
+//!!! ...unfinished... (2022/06/04) Perhaps, already in input tensor holder?
+          inputChannelCount_lowerHalf_pointwise1,
+
+          outputChannelCount_lowerHalf_pointwise1,
+
           0 // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
-        ],
+        ),
 
         [ inputFloat32Array, this.byteOffsetEnd, inputScaleBoundsArray ]
       );
