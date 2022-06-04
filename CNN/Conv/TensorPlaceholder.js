@@ -51,7 +51,7 @@ class Base {
    *
    * @param {TensorPlaceholder} aTensorPlaceholder
    *   The tensor placeholder's height, width, channelCount, scaleBoundsArray will be used directly (i.e. not cloned) by this
-   * tensor placeholder. If null, these properties will be set to null too.
+   * tensor placeholder. If null, these properties will be set to undefined.
    */
   set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( aTensorPlaceholder ) {
     if ( aTensorPlaceholder ) {
@@ -61,9 +61,9 @@ class Base {
         aTensorPlaceholder.scaleBoundsArray );
     } else {
       this.set_height_width_channelCount_scaleBoundsArray(
-        null, null,
-        null, null, null,
-        null );
+        undefined, undefined,
+        undefined, undefined, undefined,
+        undefined );
     }
   }
 
