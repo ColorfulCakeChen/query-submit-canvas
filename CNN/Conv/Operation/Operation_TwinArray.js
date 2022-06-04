@@ -169,7 +169,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 //    */
 //   static operation_create__update_byteOffsetEnd_if_init( operationClass, constructorArgs, initArgs ) {
 //     let operationObject;
-
+//
 //     // 1. Construct.
 //     if ( constructorArgs ) {
 //       operationObject = new operationClass( ...constructorArgs );
@@ -212,7 +212,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    *
    * @return {boolean} If success, return true. If failed, return false.
    */
-  static operation__update_byteOffsetEnd_if_init( operationObject, initArgs ) {
+  static operation__update_byteOffsetEnd_if_init_ok( operationObject, initArgs ) {
 
     // 1. Intialize.
     if ( initArgs ) {
@@ -270,19 +270,19 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     // 1. Initialize.
 
     // 1.1 1st operation object.
-    if ( !TwinArray.operation__update_byteOffsetEnd_if_init.call( this, operation0, initArgs0 ) )
+    if ( !TwinArray.operation__update_byteOffsetEnd_if_init_ok.call( this, operation0, initArgs0 ) )
       return false;  // e.g. input array does not have enough data.
 
     // 1.2 2nd operation object.
     if ( operation1 )
-      if ( !TwinArray.operation__update_byteOffsetEnd_if_init.call( this, operation1, initArgs1 ) )
+      if ( !TwinArray.operation__update_byteOffsetEnd_if_init_ok.call( this, operation1, initArgs1 ) )
         return false;  // e.g. input array does not have enough data.
 
     // 2. Put into queue.
     this.operationArray.push( operation0 );
     this.operationArray.push( operation1 );
 
-    // 3. Collect output tensor placeholders in reverse order (so that they will be used in forward order).
+    // 3. Collect output tensor placeholders in reverse order (so that they will be popped in forward order).
     {
       if ( operation1 ) {
         if ( operation1.output1 )
@@ -298,36 +298,62 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
           this.tempLastOutputTensorPlaceholderArray.push( operation0.output0 );
       }
     }
-    
+
 
 
 //!!! ...unfinished... (2022/06/04)
 
-    this.tempLastOutputTensorPlaceholderArray.push( 
-    
+//    this.tempLastOutputTensorPlaceholderArray.pop() 
+
 //!!! ...unfinished... (2022/06/04)
     // Determine whether give up or keep current .endingInputX
     //
-    // If endingDummyOperation is no longer its input tensor placeholder's final operation (i.e. the newly created and appended
-    // operation becomes its final operation), give up it by default (so that endingDummyOperation will not use a disposed tensor).
+    // No matter ( .endingInputX does not exist ) or ( .endingInputX exists but .endingDummyOperation is no longer its final
+    // operation ), .endingInputX will become an empty slot which could handle newly generated output tensor placeholder from
+    // newly appended operations.
+    //
+    // Q: Why .endingDummyOperation should give it up when .endingDummyOperation is no longer its input tensor placeholder's
+    //    final operation (i.e. the newly created and appended operation becomes its final operation)?
+    // A: So that .endingDummyOperation will not use a disposed tensor.
+    //
     let endingInput0_new, endingInput1_new;
     {
-      if ( this.endingDummyOperation.input0 ) {
-        if ( this.endingDummyOperation.input0.finalOperation != this.endingDummyOperation ) {
-          endingInput0_new = null;
-        } else {
-          endingInput0_new = this.endingDummyOperation.input0;
+      if ( this.endingDummyOperation.input0?.finalOperation == this.endingDummyOperation ) {
+        endingInput0_new = this.endingDummyOperation.input0; // Continue to handle it Since it still is its final operation.
+      } else {
+        endingInput0_new = null;
+      }
+
+      if ( this.endingDummyOperation.input1?.finalOperation == this.endingDummyOperation ) {
+        endingInput1_new = this.endingDummyOperation.input0; // Continue to handle it Since it still is its final operation.
+      } else {
+        endingInput1_new = null;
+      }
+    }
+
+    {
+      if ( this.tempLastOutputTensorPlaceholderArray.length > 0 ) {
+        if (   ( this.endingDummyOperation.input0 )
+            && ( this.endingDummyOperation.input0.finalOperation == this.endingDummyOperation ) ) {
+            endingInput0_new = this.endingDummyOperation.input0; // Continue to handle it Since it still is its final operation.
+
+          } else {
+            // No matter ( .endingInput0 does not exist ) or ( .endingInput0 exists but endingDummyOperation is no longer its final
+            // operation ), let .endingInput0 handle new output.
+            endingInput0_new = this.tempLastOutputTensorPlaceholderArray.pop();
+          }
         }
       }
 
-      if ( this.endingDummyOperation.input1 ) {
-        if ( this.endingDummyOperation.input1.finalOperation != this.endingDummyOperation ) {
-          endingInput1_new = null;
-        } else {
-          endingInput1_new = this.endingDummyOperation.input0;
-        }
-      }
-    }
+
+    // At most, two outputs could be handled.
+    tf.util.assert( ( this.tempLastOutputTensorPlaceholderArray.length == 0 ),
+      `Operation.TwinArray.operation_append(): `
+        + `The appended operations have too many output TensorPlaceholders. There are not enough .endingInputX could be used.`
+    );
+  }
+
+    
 
 //!!! ...unfinished... (2022/06/04)
 // Assign non-null's operationObject0.output0, operationObject0.output1, operationObject1.output0, operationObject1.outpu1
