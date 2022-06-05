@@ -1015,27 +1015,7 @@ class Base extends ReturnOrClone.Base {
     Base.setup_apply_block().call( this );
 
     // 8.2 Adjust the destroy-or-keep behavior of every tensor according to whether the operation is the first operation or last operation.
-    {
-      let alwaysKeepSet;
-      if ( this.bKeepInputTensor ) { // User requests to keep input tensors.
-        alwaysKeepSet = new Set( [ TensorOpCounters.input0, TensorOpCounters.input1 ] );
-      }
-
-      // Using Set (instead of Array) so that duplicated TensorOpCounter will only be analyzed once.
-      // Note: When an operation does not exist, its output TensorOpCounter will be just its input TensorOpCounter (so duplicated).
-      let TensorOpCounterSet = new Set( [
-        TensorOpCounters.pointwise1,  TensorOpCounters.depthwise1, TensorOpCounters.depthwise2, TensorOpCounters.concat1,
-        TensorOpCounters.pointwise21, TensorOpCounters.addInput0ToPointwise21,
-        TensorOpCounters.pointwise22, TensorOpCounters.addInput0ToPointwise22,
-        TensorOpCounters.concat2ShuffleSplit
-      ] );
-
-      for ( let TensorOpCounter of TensorOpCounterSet ) {
-        TensorOpCounter.setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet );
-      }
-    }
-
-//!!! ...unfinished... (2022/06/01) this.tensorWeightCountTotal, this.tensorWeightCountExtracted
+    this.operationArray.setKeepInputTensor( this.bKeepInputTensor, this.bKeepInputTensor ); // User requests to keep input tensors.
 
     // 8.3
     ++progressToAdvance.value;
@@ -1259,6 +1239,15 @@ class Base extends ReturnOrClone.Base {
 
   get outChannelsAll() {
      return ( this.outChannels0 + this.outChannels1 );
+  }
+
+
+  get tensorWeightCountExtracted() {
+    return this.operationArray.tensorWeightCountExtracted;
+  }
+
+  get tensorWeightCountTotal() {
+    return this.operationArray.tensorWeightCountTotal;
   }
 
 
