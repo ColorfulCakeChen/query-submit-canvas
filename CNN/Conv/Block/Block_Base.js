@@ -1184,7 +1184,7 @@ class Base extends ReturnOrClone.Base {
    *
    * @param {tf.tensor[]} outputTensors
    *   An array for returning the result (output) tensors.
-   *     - If ( this.outputTensorCount == 1 ), the outputTensors[ 0 ] will be the result.
+   *     - If ( this.outputTensorCount == 1 ), the outputTensors[ 0 ] will be the result and outputTensors[ 1 ] will be undefined.
    *     - If ( this.outputTensorCount == 2 ), the outputTensors[ 0 ] and outputTensors[ 1 ] will be the result.
    */
   apply( inputTensors, outputTensors ) {
@@ -1199,8 +1199,7 @@ class Base extends ReturnOrClone.Base {
 
     // 3. Put output tensor(s).
     outputTensors[ 0 ] = this.operationArray.output0.realTensor;
-    if ( this.operationArray.output1 )
-      outputTensors[ 1 ] = this.operationArray.output1.realTensor;
+    outputTensors[ 1 ] = this.operationArray.output1?.realTensor;
   }
 
 
