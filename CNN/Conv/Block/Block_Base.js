@@ -213,7 +213,8 @@ import { Params } from "./Block_Params.js";
  * It is only meaningful if ( pointwise22ChannelCount > 0 ) (i.e. ( bPointwise22 == true ) and ( pointwise21ChannelCount > 0 ) ).
  *
  * @member {number} inChannels0
- *   The channel count of the first input tensor (i.e. inputTensors[ 0 ]). This is the same as this.channelCount0_pointwise1Before (from initer()).
+ *   The channel count of the first input tensor (i.e. inputTensors[ 0 ]). This is the same as this.channelCount0_pointwise1Before
+ * (from initer()).
  *
  * @member {number} inChannels1
  *   The channel count of the second input tensor (i.e. inputTensors[ 1 ]). It is zero or positive (never negative).
@@ -237,51 +238,62 @@ import { Params } from "./Block_Params.js";
  * @member {number} outChannels1
  *   The channel count of the outputTensor[ 1 ]. If ( pointwise22ChannelCount == 0 ), this will be zero.
  *
- * @member {number} channelCount_pointwise1After_depthwise1Before
- *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals pointwise1ChannelCount.
- * If ( pointwise1ChannelCount == 0 ), it equals inChannels0.
+ * @member {number} outChannelsAll
+ *   The channel count of all output tensors (i.e. both outputTensor[ 0 ] and outputTensor[ 1 ]).
  *
- * @member {number} channelCount_depthwise1After_concat1Before
- *   The channel count after the first depthwise convolution which applies to the result of pointwise1.
- *   - If depthwise1 exists, it will be the channel count of depthwise1's output.
- *     - When ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ), it equals
- *         ( channelCount_pointwise1After_depthwise1Before * depthwise_AvgMax_Or_ChannelMultiplier ).
- *     - When ( depthwise_AvgMax_Or_ChannelMultiplier == Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG  ) (i.e. -2)
- *         or ( depthwise_AvgMax_Or_ChannelMultiplier == Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX  ) (i.e. -1)
- *         or ( depthwise_AvgMax_Or_ChannelMultiplier == Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE ) (i.e.  0),
- *         it equals channelCount_pointwise1After_depthwise1Before.
- *   - If depthwise1 does not exist, it will be the channel count of previous operation (i.e. pointwise1)
- *       which is channelCount_pointwise1After_depthwise1Before.
- *
- * @member {number} channelCount_depthwise2After_concat1Before
- *   The channel count after the second depthwise convolution which applies to input0 or input1. If depthwise2 does not exist,
- * this will be the same as Math.max( 0, channelCount1_pointwise1Before ) (i.e. the depthwise2 will be viewed as short circuit
- * to input1).
- *
- * @member {number} channelCount_concat1After_pointwise2Before
- *   The channel count before pointwise2. It is may be the concatenated result of input0 (with depthwise1, with/without depthwise2)
- * with/without input1 (without depthwise2).
- *
- * @member {number} channelCount_pointwise21After_concat2Before
- *   The channel count after the pointwise21 convolution.
- *     - If ( pointwise21ChannelCount > 0 ), it equals pointwise21ChannelCount.
- *     - If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount != 0 ), it will be 0.
- *     - If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it equals channelCount_concat1After_pointwise2Before.
- *
- * @member {number} channelCount_pointwise22After_concat2Before
- *   The channel count after the pointwise22 convolution. If ( pointwise22ChannelCount > 0 ), it equals pointwise22ChannelCount.
- * If ( pointwise22ChannelCount == 0 ), it will be 0.
- *
- * @member {number} channelCount_pointwise2After_concat2Before
- *   The channel count after all pointwise2 convolution.
- *
- *     - Basically, it will be ( channelCount_pointwise21After_concat2Before + channelCount_pointwise22After_concat2Before )
- *         if at least one pointwise2 convolution existed.
- *
- *     - If both ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it will be channelCount_concat1After_pointwise2Before.
- *
+
+//!!! ...unfinished... (2022/06/05)
+//
+//  * @member {number} channelCount_pointwise1After_depthwise1Before
+//  *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals pointwise1ChannelCount.
+//  * If ( pointwise1ChannelCount == 0 ), it equals inChannels0.
+//  *
+//  * @member {number} channelCount_depthwise1After_concat1Before
+//  *   The channel count after the first depthwise convolution which applies to the result of pointwise1.
+//  *   - If depthwise1 exists, it will be the channel count of depthwise1's output.
+//  *     - When ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ), it equals
+//  *         ( channelCount_pointwise1After_depthwise1Before * depthwise_AvgMax_Or_ChannelMultiplier ).
+//  *     - When ( depthwise_AvgMax_Or_ChannelMultiplier == Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG  ) (i.e. -2)
+//  *         or ( depthwise_AvgMax_Or_ChannelMultiplier == Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX  ) (i.e. -1)
+//  *         or ( depthwise_AvgMax_Or_ChannelMultiplier == Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE ) (i.e.  0),
+//  *         it equals channelCount_pointwise1After_depthwise1Before.
+//  *   - If depthwise1 does not exist, it will be the channel count of previous operation (i.e. pointwise1)
+//  *       which is channelCount_pointwise1After_depthwise1Before.
+//  *
+//  * @member {number} channelCount_depthwise2After_concat1Before
+//  *   The channel count after the second depthwise convolution which applies to input0 or input1. If depthwise2 does not exist,
+//  * this will be the same as Math.max( 0, channelCount1_pointwise1Before ) (i.e. the depthwise2 will be viewed as short circuit
+//  * to input1).
+//  *
+//  * @member {number} channelCount_concat1After_pointwise2Before
+//  *   The channel count before pointwise2. It is may be the concatenated result of input0 (with depthwise1, with/without depthwise2)
+//  * with/without input1 (without depthwise2).
+//  *
+//  * @member {number} channelCount_pointwise21After_concat2Before
+//  *   The channel count after the pointwise21 convolution.
+//  *     - If ( pointwise21ChannelCount > 0 ), it equals pointwise21ChannelCount.
+//  *     - If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount != 0 ), it will be 0.
+//  *     - If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it equals channelCount_concat1After_pointwise2Before.
+//  *
+//  * @member {number} channelCount_pointwise22After_concat2Before
+//  *   The channel count after the pointwise22 convolution. If ( pointwise22ChannelCount > 0 ), it equals pointwise22ChannelCount.
+//  * If ( pointwise22ChannelCount == 0 ), it will be 0.
+//  *
+//  * @member {number} channelCount_pointwise2After_concat2Before
+//  *   The channel count after all pointwise2 convolution.
+//  *
+//  *     - Basically, it will be ( channelCount_pointwise21After_concat2Before + channelCount_pointwise22After_concat2Before )
+//  *         if at least one pointwise2 convolution existed.
+//  *
+//  *     - If both ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it will be channelCount_concat1After_pointwise2Before.
+//  *
+
+
+//!!! ...unfinished... (2022/06/05) Perhaps, output TensorPlaceholders are enough?
+
  * @member {BoundsArraySet.InputsOutputs} boundsArraySet
  *   The element value bounds of this Block's input/output.
+
  *
  * @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
  *   The channelShuffler. It must be implemented by ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ).
@@ -435,9 +447,6 @@ class Base extends ReturnOrClone.Base {
 
     // No matter whether the channel shuffler is used, it is always recorded in data member.
     this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
-
-//!!! (2022/06/01 Remarked) Using tensor placehoder instead.
-//    this.intermediateTensorsArray = new Array( 2 ); // Pre-allocate array to place intermediate 2 tensors. This could reduce memory re-allocation.
 
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
@@ -1195,36 +1204,29 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-//!!! ...unfinished... (2022/06/05)
-
   get outputHeight() {
-    // If depthwise does not exist, the output ( height, width ) should be the same as input.
-    if ( this.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) { // (0)
-      return this.inputHeight0;
-    } else { // Otherwise, depthwise determines output ( height, width ).
-      return this.depthwise1.outputHeight;
-    }
+    return this.operationArray.output0.height;
   }
 
   get outputWidth() {
-    // If depthwise does not exist, the output ( height, width ) should be the same as input.
-    if ( this.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) { // (0)
-      return this.inputWidth0;
-    } else { // Otherwise, depthwise determines output ( height, width ).
-      return this.depthwise1.outputWidth;
-    }
+    return this.operationArray.output0.width;
   }
 
-  /** @return {number} The channel count of the first input tensor (i.e. inputTensors[ 0 ]). */
-  get inChannels0()    { return this.channelCount0_pointwise1Before; }
 
-  /**
-   * @member {number} outChannelsAll
-   *   The channel count of all output tensors (i.e. both outputTensor[ 0 ] and outputTensor[ 1 ]).
-   */
+  get inChannels0() {
+    return this.operationArray.input0.channelCount;
+  }
+
+  get inChannels1() {
+    if ( this.operationArray.input1 )
+      return this.operationArray.input1.channelCount;
+    return 0;
+  }
+
   get outChannelsAll() {
      return ( this.outChannels0 + this.outChannels1 );
   }
+
 
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
   get parametersDescription() {
