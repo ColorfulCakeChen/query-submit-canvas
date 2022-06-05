@@ -1371,6 +1371,61 @@ class Base extends ReturnOrClone.Base {
 
 
 
+//!!! ...unfinished... (2022/06/04)
+  /** Setup .apply.
+   *
+   * @param {Base} this  The Base object to be determined and modified.
+   */
+  static setup_apply_block() {
+    if ( this.operationArray.input0 )
+      if ( this.operationArray.input1 )
+        if ( this.operationArray.output0 ) {
+          if ( this.operationArray.output1 ) { //  1. ( .input0, .input1 ) => ( .output0, .output1 )
+          } else {              //  2. ( .input0, .input1 ) => ( .output0 )
+          }
+        } else {
+          if ( this.operationArray.output1 ) { //  3. ( .input0, .input1 ) => ( , .output1 )
+          } else {              //  4. ( .input0, .input1 ) => (  )
+          }
+        }
+      } else {
+        if ( this.operationArray.output0 ) {
+          if ( this.operationArray.output1 ) { //  5. ( .input0 ) => ( .output0, .output1 )
+          } else {              //  6. ( .input0 ) => ( .output0 )
+          }
+        } else {
+          if ( this.operationArray.output1 ) { //  7. ( .input0 ) => ( , .output1 )
+          } else {              //  8. ( .input0 ) => (  )
+          }
+        }
+      }
+    } else {
+      if ( this.operationArray.input1 ) {
+        if ( this.operationArray.output0 ) {
+          if ( this.operationArray.output1 ) { //  9. ( , .input1 ) => ( .output0, .output1 )
+          } else {              // 10. ( , .input1 ) => ( .output0 )
+          }
+        } else {
+          if ( this.operationArray.output1 ) { // 11. ( , .input1 ) => ( , .output1 )
+          } else {              // 12. ( , .input1 ) => (  )
+          }
+        }
+      } else { // no input0, no input1.
+        if ( this.operationArray.output0 ) {
+          if ( this.operationArray.output1 ) { // 13. (  ) => ( .output0, .output1 )
+          } else {              // 14. (  ) => ( .output0 )
+          }
+        } else {
+          if ( this.operationArray.output1 ) { // 15. (  ) => ( , .output1 )
+          } else {              // 16. (  ) => (  )
+            this.apply = () => {}
+          }
+        }
+      }
+    }
+  }
+
+ 
 //!!! ...unfinished... (2022/06/01)
   /**
    *
