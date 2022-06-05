@@ -323,6 +323,13 @@ import { Params } from "./Block_Params.js";
  * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
  * (Not including channelShuffler.)
  *
+ * @member {function} apply
+ *   A data member pointer to a function accepts two parameters ( inputTensors, outputTensors ). The inputTensors (tf.tensor3d[])
+ * represents the images ( height x width x channel ) which will be processed. The outputTensors (tf.tensor3d[]) will be placed
+ * one or two tf.tensor3d as the result. All intermediate tensors will be disposed. The inputTensors may or may not be disposed.
+ * In fact, this method calls one of apply__input0_input1__output0_output1(), apply__input0_input1__output0(),
+ * apply__input0__output0_output1(), apply__input0__output0() according to the initer()'s parameters.
+ *
  */
 class Base extends ReturnOrClone.Base {
 
@@ -1005,10 +1012,7 @@ class Base extends ReturnOrClone.Base {
     // 8. Configure correct function pointers according to whether keeping or destroying input tensor.
 
     // 8.1 Determine which apply_Xxx() function should be used.
-    //
-    // This should be done before adjusting the first operation from "Xxx_destroy" to "Xxx_keep",
-    // because the adjustment might also need to select different apply_Xxx() function.
-    this.apply = Base.Determine_apply.call( this );
+    Base.setup_apply_block().call( this );
 
     // 8.2 Adjust the destroy-or-keep behavior of every tensor according to whether the operation is the first operation or last operation.
     {
@@ -1174,32 +1178,63 @@ class Base extends ReturnOrClone.Base {
 
  
   /**
-   * The inputTensors[ 1 ] will be concatenated with depthwise1 before outputTensors[ 0 ] and outputTensors[ 1 ].
+   * Setup .apply according .inputTensorCount and .outputTensorCount.
+   *   - If ( this.inputTensorCount == 1 ), the inputTensors[ 0 ] will be used.
+   *   - If ( this.inputTensorCount == 2 ), the inputTensors[ 0 ] and inputTensors[ 1 ] will be used.
+   *   - If ( this.outputTensorCount == 1 ), the outputTensors[ 0 ] will be the result and outputTensors[ 1 ] will be undefined.
+   *   - If ( this.outputTensorCount == 2 ), the outputTensors[ 0 ] and outputTensors[ 1 ] will be the result.
+   *
    * The input tensors may or may not be disposed.
    *
-   * @param {tf.tensor[]} inputTensors
-   *   An array of input tensors.
-   *     - If ( this.inputTensorCount == 1 ), the inputTensors[ 0 ] will be used.
-   *     - If ( this.inputTensorCount == 2 ), the inputTensors[ 0 ] and inputTensors[ 1 ] will be used.
-   *
-   * @param {tf.tensor[]} outputTensors
-   *   An array for returning the result (output) tensors.
-   *     - If ( this.outputTensorCount == 1 ), the outputTensors[ 0 ] will be the result and outputTensors[ 1 ] will be undefined.
-   *     - If ( this.outputTensorCount == 2 ), the outputTensors[ 0 ] and outputTensors[ 1 ] will be the result.
    */
-  apply( inputTensors, outputTensors ) {
+  static setup_apply_block() {
+    if ( this.inputTensorCount >= 2 ) {
+      if ( this.outputTensorCount >= 2 ) {
+        this.apply = Base.apply__input0_input1__output0_output1;
+      } else {
+        this.apply = Base.apply__input0_input1__output0;
+      }
+    } else {
+      if ( this.outputTensorCount >= 2 ) {
+        this.apply = Base.apply__input0__output0_output1;
+      } else {
+        this.apply = Base.apply__input0__output0;
+      }
+    }
+  }
 
-    // 1. Get input tensor(s).
+  /** Use inputTensors[ 0 ] and inputTensors[ 1 ]. Generate outputTensors[ 0 ] and outputTensors[ 1 ]. */
+  static apply__input0_input1__output0_output1( inputTensors, outputTensors ) {
     this.operationArray.input0.realTensor = inputTensors[ 0 ];
-    if ( this.operationArray.input1 )
-      this.operationArray.input1.realTensor = inputTensors[ 1 ];
-
-    // 2. Processing.
+    this.operationArray.input1.realTensor = inputTensors[ 1 ];
     this.operationArray.apply();
-
-    // 3. Put output tensor(s).
     outputTensors[ 0 ] = this.operationArray.output0.realTensor;
-    outputTensors[ 1 ] = this.operationArray.output1?.realTensor;
+    outputTensors[ 1 ] = this.operationArray.output1.realTensor;
+  }
+
+  /** Use inputTensors[ 0 ] and inputTensors[ 1 ]. Generate outputTensors[ 0 ] only (i.e. outputTensors[ 1 ] always null). */
+  static apply__input0_input1__output0( inputTensors, outputTensors ) {
+    this.operationArray.input0.realTensor = inputTensors[ 0 ];
+    this.operationArray.input1.realTensor = inputTensors[ 1 ];
+    this.operationArray.apply();
+    outputTensors[ 0 ] = this.operationArray.output0.realTensor;
+    outputTensors[ 1 ] = null;
+  }
+
+  /** Use inputTensors[ 0 ] only (i.e. ignore inputTensors[ 1 ]). Generate outputTensors[ 0 ] and outputTensors[ 1 ]. */
+  static apply__input0__output0_output1( inputTensors, outputTensors ) {
+    this.operationArray.input0.realTensor = inputTensors[ 0 ];
+    this.operationArray.apply();
+    outputTensors[ 0 ] = this.operationArray.output0.realTensor;
+    outputTensors[ 1 ] = this.operationArray.output1.realTensor;
+  }
+
+  /** Use inputTensors[ 0 ] only (i.e. ignore inputTensors[ 1 ]). Generate outputTensors[ 0 ] only (i.e. outputTensors[ 1 ] always null). */
+  static apply__input0__output0( inputTensors, outputTensors ) {
+    this.operationArray.input0.realTensor = inputTensors[ 0 ];
+    this.operationArray.apply();
+    outputTensors[ 0 ] = this.operationArray.output0.realTensor;
+    outputTensors[ 1 ] = null;
   }
 
 
