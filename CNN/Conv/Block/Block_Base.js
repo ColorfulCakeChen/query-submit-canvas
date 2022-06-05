@@ -543,25 +543,26 @@ class Base extends ReturnOrClone.Base {
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
     }
 
-    // 1.2 Initialize inputs tensor placeholders.
+    // 1.2 Create inputs tensor placeholders and sub operation array.
     {
-      this.inputTensorPlaceholder0 = new TensorPlaceholder.Base();
-      this.inputTensorPlaceholder0.set_height_width_channelCount_scaleBoundsArray(
+      let inputTensorPlaceholder0, inputTensorPlaceholder1;
+
+      inputTensorPlaceholder0 = new TensorPlaceholder.Base();
+      inputTensorPlaceholder0.set_height_width_channelCount_scaleBoundsArray(
         this.inputHeight0, this.inputWidth0,
         this.channelCount0_pointwise1Before, inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
         inputScaleBoundsArray0 );
 
       if ( this.inputTensorCount > 1 ) {
-        this.inputTensorPlaceholder1 = new TensorPlaceholder.Base();
-        this.inputTensorPlaceholder1.set_height_width_channelCount_scaleBoundsArray(
+        inputTensorPlaceholder1 = new TensorPlaceholder.Base();
+        inputTensorPlaceholder1.set_height_width_channelCount_scaleBoundsArray(
           this.inputHeight0, this.inputWidth0, params.input1ChannelCount,
           undefined, undefined, // channelCount_lowerHalf, channelCount_higherHalf
           inputScaleBoundsArray1 );
       }
-    }
 
-    // 1.3 Sub Operation Array.
-    this.operationArray = new ( Operation.TwinArray() )( this.inputTensorPlaceholder0, this.inputTensorPlaceholder1 );
+      this.operationArray = new ( Operation.TwinArray() )( inputTensorPlaceholder0, inputTensorPlaceholder1 );
+    }
 
 
     // 2. The pointwise1 convolution.
@@ -569,7 +570,7 @@ class Base extends ReturnOrClone.Base {
 
       this.bPointwise1 = this.operation_append(
         new Pointwise.SameWhenPassThrough(
-          this.currentTensorPlaceholder0,
+          this.operationArray.endingInput0,
           this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
           nHigherHalfDifferent_pointwise1,
           outputChannelCount_lowerHalf_pointwise1,
@@ -1377,6 +1378,7 @@ class Base extends ReturnOrClone.Base {
   static apply_input0( inputTensors, outputTensors ) {
 
 //    this. this.inputTensors[ 0 ]
+// this.operationArray.input0, this.operationArray.input1
 
 //!!! ...unfinished... (2022/06/04)
 
