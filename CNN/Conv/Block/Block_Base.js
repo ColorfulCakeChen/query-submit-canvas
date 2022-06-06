@@ -595,78 +595,81 @@ class Base extends ReturnOrClone.Base {
       }
     }
 
-    this.depthwise1 = new Depthwise.SameWhenPassThrough(
-      this.inputHeight0, this.inputWidth0, this.channelCount_pointwise1After_depthwise1Before,
-      this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
-      this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
-      nHigherHalfDifferent_depthwise1, inputChannelCount_lowerHalf_depthwise1
-    );
+    if ( this.AvgMax_Or_ChannelMultiplier != 0 ) {
 
-    if ( !this.depthwise1.init( params.defaultInput, this.byteOffsetEnd, this.pointwise1.boundsArraySet.output0 ) )
-      return false;  // e.g. input array does not have enough data.
-    this.byteOffsetEnd = this.depthwise1.byteOffsetEnd;
-
-    this.bDepthwise1 = this.depthwise1.bExisted;
-    if ( this.bDepthwise1 ) {
-      this.channelCount_depthwise1After_concat1Before = this.depthwise1.outputChannelCount;
-      this.tensorWeightCountTotal += this.depthwise1.tensorWeightCountTotal;
-      this.tensorWeightCountExtracted += this.depthwise1.tensorWeightCountExtracted;
-      TensorOpCounters.depthwise1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_depthwise1", this.depthwise1, TensorOpCounters.pointwise1 );
-
-    } else {
-      this.channelCount_depthwise1After_concat1Before = this.channelCount_pointwise1After_depthwise1Before;  // No depthwise1 operation.
-      TensorOpCounters.depthwise1 = TensorOpCounters.pointwise1; // Its output is just its input tensor.
-    }
-
-    // 3.2 The depthwise2 operation.
-
-    let depthwise2_boundsArraySet_output0; // Because depthwise2 may not exist, track it by local variable (which will be used by concat1).
-
-    this.bDepthwise2 = false;
-    if ( this.bDepthwise2Requested ) {
-
-      // Q: Why does depthwise2 use the same configuration as depthwise1?
-      // A: To ensure both result have the same ( height, width ) so that could be inputted to concatenator). This is especially
-      //    true for StridesPad.
-      this.depthwise2 = new Depthwise.SameWhenPassThrough(
-        this.inputHeight0, this.inputWidth0,
-
-        // The depthwise2 processes the inputTensors[ 0 ] directly (i.e. not the pointwise1 result of inputTensors[ 0 ], and
-        // not inputTensors[ 1 ]).
-        this.channelCount0_pointwise1Before,
-
+      this.depthwise1 = new Depthwise.SameWhenPassThrough(
+        this.inputHeight0, this.inputWidth0, this.channelCount_pointwise1After_depthwise1Before,
         this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
         this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
-
-        ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE, -1 // depthwise2 never has higher-half-different.
+        nHigherHalfDifferent_depthwise1, inputChannelCount_lowerHalf_depthwise1
       );
 
-      if ( !this.depthwise2.init( params.defaultInput, this.byteOffsetEnd, inputScaleBoundsArray0 ) )
+      if ( !this.depthwise1.init( params.defaultInput, this.byteOffsetEnd, this.pointwise1.boundsArraySet.output0 ) )
         return false;  // e.g. input array does not have enough data.
-      this.byteOffsetEnd = this.depthwise2.byteOffsetEnd;
+      this.byteOffsetEnd = this.depthwise1.byteOffsetEnd;
 
-      this.bDepthwise2 = this.depthwise2.bExisted;
-      if ( this.bDepthwise2 ) {
-        // The depthwise2 is requested and created. It means ONE_INPUT_TWO_DEPTHWISE.
-        this.channelCount_depthwise2After_concat1Before = this.depthwise2.outputChannelCount;
-        this.tensorWeightCountTotal += this.depthwise2.tensorWeightCountTotal;
-        this.tensorWeightCountExtracted += this.depthwise2.tensorWeightCountExtracted;
-        TensorOpCounters.depthwise2 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_depthwise2", this.depthwise2, TensorOpCounters.input0 );
+      this.bDepthwise1 = this.depthwise1.bExisted;
+      if ( this.bDepthwise1 ) {
+        this.channelCount_depthwise1After_concat1Before = this.depthwise1.outputChannelCount;
+        this.tensorWeightCountTotal += this.depthwise1.tensorWeightCountTotal;
+        this.tensorWeightCountExtracted += this.depthwise1.tensorWeightCountExtracted;
+        TensorOpCounters.depthwise1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_depthwise1", this.depthwise1, TensorOpCounters.pointwise1 );
 
       } else {
-        // The depthwise2 is requested but not created. It means no depthwise operation (i.e. ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ).
-        // In this case, the depthwise2 should be short circuit to inputTensor[ 0 ] (i.e. not inputTensor[ 1 ]).
-        this.channelCount_depthwise2After_concat1Before = this.channelCount0_pointwise1Before;
-        TensorOpCounters.depthwise2 = TensorOpCounters.input0;
+        this.channelCount_depthwise1After_concat1Before = this.channelCount_pointwise1After_depthwise1Before;  // No depthwise1 operation.
+        TensorOpCounters.depthwise1 = TensorOpCounters.pointwise1; // Its output is just its input tensor.
       }
 
-      depthwise2_boundsArraySet_output0 = this.depthwise2.boundsArraySet.output0;
+      // 3.2 The depthwise2 operation.
 
-    } else {
-      // Since the depthwise2 is not requested, it is always short circuit to input1 (i.e. not input0).
-      this.channelCount_depthwise2After_concat1Before = Math.max( 0, this.channelCount1_pointwise1Before ); // At least 0. Avoid negative.
-      depthwise2_boundsArraySet_output0 = inputScaleBoundsArray1;
-      TensorOpCounters.depthwise2 = TensorOpCounters.input1;
+      let depthwise2_boundsArraySet_output0; // Because depthwise2 may not exist, track it by local variable (which will be used by concat1).
+
+      this.bDepthwise2 = false;
+      if ( this.bDepthwise2Requested ) {
+
+        // Q: Why does depthwise2 use the same configuration as depthwise1?
+        // A: To ensure both result have the same ( height, width ) so that could be inputted to concatenator). This is especially
+        //    true for StridesPad.
+        this.depthwise2 = new Depthwise.SameWhenPassThrough(
+          this.inputHeight0, this.inputWidth0,
+
+          // The depthwise2 processes the inputTensors[ 0 ] directly (i.e. not the pointwise1 result of inputTensors[ 0 ], and
+          // not inputTensors[ 1 ]).
+          this.channelCount0_pointwise1Before,
+
+          this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
+          this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
+
+          ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE, -1 // depthwise2 never has higher-half-different.
+        );
+
+        if ( !this.depthwise2.init( params.defaultInput, this.byteOffsetEnd, inputScaleBoundsArray0 ) )
+          return false;  // e.g. input array does not have enough data.
+        this.byteOffsetEnd = this.depthwise2.byteOffsetEnd;
+
+        this.bDepthwise2 = this.depthwise2.bExisted;
+        if ( this.bDepthwise2 ) {
+          // The depthwise2 is requested and created. It means ONE_INPUT_TWO_DEPTHWISE.
+          this.channelCount_depthwise2After_concat1Before = this.depthwise2.outputChannelCount;
+          this.tensorWeightCountTotal += this.depthwise2.tensorWeightCountTotal;
+          this.tensorWeightCountExtracted += this.depthwise2.tensorWeightCountExtracted;
+          TensorOpCounters.depthwise2 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_depthwise2", this.depthwise2, TensorOpCounters.input0 );
+
+        } else {
+          // The depthwise2 is requested but not created. It means no depthwise operation (i.e. ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ).
+          // In this case, the depthwise2 should be short circuit to inputTensor[ 0 ] (i.e. not inputTensor[ 1 ]).
+          this.channelCount_depthwise2After_concat1Before = this.channelCount0_pointwise1Before;
+          TensorOpCounters.depthwise2 = TensorOpCounters.input0;
+        }
+
+        depthwise2_boundsArraySet_output0 = this.depthwise2.boundsArraySet.output0;
+
+      } else {
+        // Since the depthwise2 is not requested, it is always short circuit to input1 (i.e. not input0).
+        this.channelCount_depthwise2After_concat1Before = Math.max( 0, this.channelCount1_pointwise1Before ); // At least 0. Avoid negative.
+        depthwise2_boundsArraySet_output0 = inputScaleBoundsArray1;
+        TensorOpCounters.depthwise2 = TensorOpCounters.input1;
+      }
     }
 
     ++progressToAdvance.value;
