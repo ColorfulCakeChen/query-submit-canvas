@@ -550,9 +550,12 @@ class Base extends ReturnOrClone.Base {
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = this.pointwise1.byteOffsetEnd;
 
-      let bPointwise1 = pointwise1.bExisted;
-      if ( bPointwise1 )
-        this.operation_append( this.pointwise1 );
+      //let bPointwise1 = pointwise1.bExisted;
+
+      // Note: Once pointwise1 operation is created (even if ( pointwise1.bExisted == false ), it should be appended to queue.
+      //       The reason is that a created operation has already registered as the finalOperation of .endingInputX. Unless
+      //       un-register it, otherwise it should always be put into queue.
+      this.operation_append( this.pointwise1 );
     }
 
     ++progressToAdvance.value;
