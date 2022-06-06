@@ -571,44 +571,43 @@ class Base extends ReturnOrClone.Base {
     //
     // Note: When ( pad == valid ), it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
 
-    // 3.1 The depthwise1 operation.
-
-    let nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE;
-    let inputChannelCount_lowerHalf_depthwise1 = undefined; // In general case, depthwise1 needs not them.
-
-    if ( this.bHigherHalfDifferent == true ) {
-      
-      // The lower half of depthwise1 input is just the lower half of pointwise1 output.
-      inputChannelCount_lowerHalf_depthwise1 = outputChannelCount_lowerHalf_pointwise1;
-
-      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
-      // (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
-      if ( this.bHigherHalfDepthwise2 == true ) {
-        nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2;
-
-      // If depthwise1's higher half is responsible for achieving pass-through, it needs height and width of input image.
-      //
-      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
-      // (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
-      } else {
-        nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
-      }
-    }
-
+    // Only if depthwise operation is specified, creating them.
     if ( this.AvgMax_Or_ChannelMultiplier != 0 ) {
 
-      let depthwise1 = new Depthwise.SameWhenPassThrough(
-        this.operationArray.endingInput0,
-        this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
-        this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
-        nHigherHalfDifferent_depthwise1
-      );
+      // 3.1 The depthwise1 operation.
+      let depthwise1;
+      {
+        let nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE;
 
-      if ( !depthwise1.init( params.defaultInput, this.byteOffsetEnd ) )
-        return false;  // e.g. input array does not have enough data.
-      this.byteOffsetEnd = depthwise1.byteOffsetEnd;
+        if ( this.bHigherHalfDifferent == true ) {
 
-      //this.bDepthwise1 = depthwise1.bExisted;
+          // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
+          // (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
+          if ( this.bHigherHalfDepthwise2 == true ) {
+            nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2;
+
+          // If depthwise1's higher half is responsible for achieving pass-through, it needs height and width of input image.
+          //
+          // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
+          // (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
+          } else {
+            nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
+          }
+        }
+
+        depthwise1 = new Depthwise.SameWhenPassThrough(
+          this.operationArray.endingInput0,
+          this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
+          this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
+          nHigherHalfDifferent_depthwise1
+        );
+
+        if ( !depthwise1.init( params.defaultInput, this.byteOffsetEnd ) )
+          return false;  // e.g. input array does not have enough data.
+        this.byteOffsetEnd = depthwise1.byteOffsetEnd;
+
+        //this.bDepthwise1 = depthwise1.bExisted;
+      }
 
       // 3.2 The depthwise2 operation.
 
