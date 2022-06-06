@@ -537,27 +537,21 @@ class Base extends ReturnOrClone.Base {
 
 
     // 2. The pointwise1 convolution.
-    if ( this.pointwise1ChannelCount > 0 ) {
+    this.pointwise1 = new Pointwise.SameWhenPassThrough(
+      this.operationArray.endingInput0,
+      this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
+      nHigherHalfDifferent_pointwise1,
+      outputChannelCount_lowerHalf_pointwise1,
+      0 // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
+    );
 
-      this.bPointwise1 = this.operation_append(
-        new Pointwise.SameWhenPassThrough(
-          this.operationArray.endingInput0,
-          this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
-          nHigherHalfDifferent_pointwise1,
-          outputChannelCount_lowerHalf_pointwise1,
-          0 // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
-        ),
+    if ( !this.pointwise1.init( params.defaultInput, this.byteOffsetEnd ) )
+      return false;  // e.g. input array does not have enough data.
+    this.byteOffsetEnd = this.pointwise1.byteOffsetEnd;
 
-        [ params.defaultInput, this.byteOffsetEnd ]
-      );
-
-//!!! ...unfinished... (2022/06/01) How to assign this.pointwise1 and this.bPointwise1?
-
-    } else { // There is no pointwise1.
-      this.bPointwise1 = false;
-
-//!!! (2022/05/24 Remarked) No longer support ( Pointwise.outputChannelCount == 0 ).
-    }
+    this.bPointwise1 = this.pointwise1.bExisted;
+    if ( this.bPointwise1 ) {
+      this.operation_append( this.pointwise1 );
 
     ++progressToAdvance.value;
     yield progressRoot;  // pointwise1 filters was ready. Report progress.
