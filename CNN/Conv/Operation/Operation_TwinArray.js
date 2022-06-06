@@ -207,9 +207,9 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 //    *   Return true, if success.
 
    */
-  operation_append( operation0, initArgs0, operation1, initArgs1 ) {
-
-    this.tempLastOutputTensorPlaceholderArray.length = 0;
+//!!! (2022/06/06 Remarked) .init() should be done by caller (not by TwinArray).
+//  operation_append( operation0, initArgs0, operation1, initArgs1 ) {
+  operation_append( operation0, operation1 ) {
 
 //!!! (2022/06/06 Remarked) .init() should be done by caller (not by TwinArray).
 //     // 1. Initialize.
@@ -269,6 +269,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
     // 4.1 Collect output tensor placeholders in reverse order (so that they will be popped in forward order).
     {
+      this.tempLastOutputTensorPlaceholderArray.length = 0;
+
       if ( operation1 ) {
         if ( operation1.output1 )
           this.tempLastOutputTensorPlaceholderArray.push( operation1.output1 );
