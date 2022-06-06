@@ -537,21 +537,23 @@ class Base extends ReturnOrClone.Base {
 
 
     // 2. The pointwise1 convolution.
-    this.pointwise1 = new Pointwise.SameWhenPassThrough(
-      this.operationArray.endingInput0,
-      this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
-      nHigherHalfDifferent_pointwise1,
-      outputChannelCount_lowerHalf_pointwise1,
-      0 // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
-    );
+    {
+      let pointwise1 = new Pointwise.SameWhenPassThrough(
+        this.operationArray.endingInput0,
+        this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
+        nHigherHalfDifferent_pointwise1,
+        outputChannelCount_lowerHalf_pointwise1,
+        0 // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
+      );
 
-    if ( !this.pointwise1.init( params.defaultInput, this.byteOffsetEnd ) )
-      return false;  // e.g. input array does not have enough data.
-    this.byteOffsetEnd = this.pointwise1.byteOffsetEnd;
+      if ( !pointwise1.init( params.defaultInput, this.byteOffsetEnd ) )
+        return false;  // e.g. input array does not have enough data.
+      this.byteOffsetEnd = this.pointwise1.byteOffsetEnd;
 
-    this.bPointwise1 = this.pointwise1.bExisted;
-    if ( this.bPointwise1 ) {
-      this.operation_append( this.pointwise1 );
+      let bPointwise1 = pointwise1.bExisted;
+      if ( bPointwise1 )
+        this.operation_append( this.pointwise1 );
+    }
 
     ++progressToAdvance.value;
     yield progressRoot;  // pointwise1 filters was ready. Report progress.
