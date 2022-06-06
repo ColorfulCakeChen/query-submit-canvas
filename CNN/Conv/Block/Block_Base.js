@@ -537,7 +537,7 @@ class Base extends ReturnOrClone.Base {
 
 
     // 2. The pointwise1 convolution.
-    {
+    if ( this.pointwise1ChannelCount > 0 ) {
       let pointwise1 = new Pointwise.SameWhenPassThrough(
         this.operationArray.endingInput0,
         this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
