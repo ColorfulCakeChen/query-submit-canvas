@@ -82,7 +82,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    */
   disposeTensors() {
 
-    if ( this.operationArray ) {
+    {
       for ( let i = 0; i < this.operationArray.length; ++i ) {
         let operation = this.operationArray[ i ];
         operation.disposeTensors();
@@ -98,54 +98,21 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
 
   /**
-   * Release all ScaleBoundsArray (inside tensor placeholder) except .inputX. endingInputX, .outputX.
+   * Release all ScaleBoundsArray (inside tensor placeholder) except this.inputX and this.outputX
    *
    * This could reduce memory footprint by releasing unused scale bounds array.
    */
   dispose_intermediate_ScaleBoundsArray() {
-
-    if ( !this.operationArray )
-      return;
-
-    // 1. Collect all tensor placeholder inside this operation array.
-    let aTensorPlaceholderSet = new Set();
     for ( let i = 0; i < this.operationArray.length; ++i ) {
       let operation = this.operationArray[ i ];
-      if ( operation.input0 )
-        aTensorPlaceholderSet.add( operation.input0 );
-      if ( operation.input1 )
-        aTensorPlaceholderSet.add( operation.input1 );
-      if ( operation.output0 )
-        aTensorPlaceholderSet.add( operation.output0 );
-      if ( operation.output1 )
-        aTensorPlaceholderSet.add( operation.output1 );
-    }
-
-    if ( aTensorPlaceholderSet.size <= 0 )
-      return; // Nothing needs to be realsed.
-
-    // 2. Prepare tensor placeholder for not releasing its ScaleBoundsArray.
-    let keepSet = new Set();
-    {
-      if ( this.input0 )
-        keepSet.add( this.input0 );
-      if ( this.input1 )
-        keepSet.add( this.input1 );
-      if ( this.endingInput0 )
-        keepSet.add( this.endingInput0 );
-      if ( this.endingInput1 )
-        keepSet.add( this.endingInput1 );
-      if ( this.output0 )
-        keepSet.add( this.output0 );
-      if ( this.output1 )
-        keepSet.add( this.output1 );
-    }
-
-    // 3. Releasing all ScaleBoundsArray execpt inside keep set.
-    for ( let tensorPlaceholder of aTensorPlaceholderSet ) {
-      if ( keepSet.has( tensorPlaceholder ) )
-          continue;
-      tensorPlaceholder.scaleBoundsArray = null;
+      if ( !this.is_inputs_outputs_byTensorPlaceholder( operation.input0 ) )
+        operation.input0.scaleBoundsArray = null;
+      if ( !this.is_inputs_outputs_byTensorPlaceholder( operation.input1 ) )
+        operation.input1.scaleBoundsArray = null;
+      if ( !this.is_inputs_outputs_byTensorPlaceholder( operation.output0 ) )
+        operation.output0.scaleBoundsArray = null;
+      if ( !this.is_inputs_outputs_byTensorPlaceholder( operation.output1 ) )
+        operation.output1.scaleBoundsArray = null;
     }
   }
 
