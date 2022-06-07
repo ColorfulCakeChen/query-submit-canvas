@@ -5,7 +5,10 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
-import * as BoundsArraySet from "../BoundsArraySet.js";
+
+//!!! (2022/06/07 Remarked) seems not necessary because already has TensorPlaceholder.
+//import * as BoundsArraySet from "../BoundsArraySet.js";
+
 import * as ChannelCountCalculator from "../ChannelCountCalculator.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as Operation from "../Operation.js";
@@ -257,8 +260,9 @@ import { Params } from "./Block_Params.js";
 
 //!!! ...unfinished... (2022/06/05) Perhaps, output TensorPlaceholders are enough?
 
- * @member {BoundsArraySet.InputsOutputs} boundsArraySet
- *   The element value bounds of this Block's input/output.
+//!!! (2022/06/07 Remarked) seems not necessary because already has TensorPlaceholder.
+//  * @member {BoundsArraySet.InputsOutputs} boundsArraySet
+//  *   The element value bounds of this Block's input/output.
 
  *
  * @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
@@ -721,7 +725,7 @@ class Base extends ReturnOrClone.Base {
         );
 
         // Note: Strictly speaking, sometimes pointwise22 is dependent on depthwise2. But it does not matter for BoundsArraySet
-        // because depthwise1 and depthwise2 should have the same output value bounds. And so concat1_boundsArraySet_output0.
+        // because depthwise1 and depthwise2 should have the same output value bounds.
         //
         if ( !pointwise22.init( params.defaultInput, this.byteOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
           return false;  // e.g. input array does not have enough data.
@@ -827,38 +831,8 @@ class Base extends ReturnOrClone.Base {
 
       this.operationArray.operation_append( concat2ShuffleSplit );
 
-
-//!!! ...unfinished... (2022/06/07)
-
-      {
-        this.boundsArraySet = new BoundsArraySet.InputsOutputs(
-          this.operationArray.endingInput0.scaleBoundsArray, this.operationArray.endingInput1.scaleBoundsArray,
-???
-          this.concat2ShuffleSplit.boundsArraySet.output0.channelCount, this.concat2ShuffleSplit.boundsArraySet.output1?.channelCount );
-
-        this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.concat2ShuffleSplit.boundsArraySet );
-      }
-
-      // In theory, concat2 use the result of add-input0-to-pointwise21 as first parameter. In reality, it usually uses the result
-      // of pointwise21 (without add-input0-to-output) as first parameter.
-      TensorOpCounters.concat2ShuffleSplit = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + TensorOpCounters_NamePostfix,
-        this.concat2ShuffleSplit, TensorOpCounters.addInput0ToPointwise21, TensorOpCounters.input1 );
-
     } else {
       // Since no concat2(-shuffle-split), the final output come from pointwise2 (and add-input-to-output) directly.
-      this.outChannels0 = this.channelCount_pointwise21After_concat2Before;
-      this.outChannels1 = this.channelCount_pointwise22After_concat2Before;
-
-      {
-        this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
-          addInput0ToPointwise21_boundsArraySet_output0.channelCount, addInput0ToPointwise22_boundsArraySet_output0?.channelCount );
-
-        this.boundsArraySet.output0.set_all_byScaleBoundsArray( addInput0ToPointwise21_boundsArraySet_output0 );
-        this.boundsArraySet.output1?.set_all_byScaleBoundsArray( addInput0ToPointwise22_boundsArraySet_output0 );
-      }
-
-      // Note: It should also be okay to set to TensorOpCounters.addInput0ToPointwise22).
-      TensorOpCounters.concat2ShuffleSplit = TensorOpCounters.addInput0ToPointwise21;
     }
 
     ++progressToAdvance.value;
@@ -867,10 +841,13 @@ class Base extends ReturnOrClone.Base {
     // 10. Configure correct function pointers according to whether keeping or destroying input tensor.
 
     // 10.1 Determine which apply_Xxx() function should be used.
-    Base.setup_apply_block().call( this );
+    Base.setup_apply_block.call( this );
 
-    // 10.2 Adjust the destroy-or-keep behavior of every tensor according to whether the operation is the first operation or last operation.
-    this.operationArray.setKeepInputTensor( this.bKeepInputTensor, this.bKeepInputTensor ); // User requests to keep input tensors.
+    // 10.2 Adjust the destroy-or-keep behavior of every tensor according to whether the operation is the final operation of the tensor.
+    //
+    // When caller requests to keep input tensor, all input tensors should be kept.
+    //
+    this.operationArray.setKeepInputTensor( this.bKeepInputTensor, this.bKeepInputTensor )
 
     // 10.3
     ++progressToAdvance.value;
