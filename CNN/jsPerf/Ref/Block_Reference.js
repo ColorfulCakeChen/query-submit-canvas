@@ -408,6 +408,7 @@ class Base {
       testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
       testParams.in.depthwiseStridesPad, testParams.in.bDepthwiseBias, testParams.in.depthwiseActivationId,
       testParams.in.nSqueezeExcitationChannelCountDivisor,
+      testParams.in.bSqueezeExcitationPrefix,
       testParams.in.pointwise21ChannelCount, testParams.in.bPointwise21Bias, testParams.in.pointwise21ActivationId,
       testParams.in.bOutput1Requested,
       testParams.in.bKeepInputTensor
