@@ -259,7 +259,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       }
 
       if ( this.endingDummyOperation.input1?.finalOperation == this.endingDummyOperation ) {
-        endingInput1_new = this.endingDummyOperation.input0; // Continue to handle it Since it still is its final operation.
+        endingInput1_new = this.endingDummyOperation.input1; // Continue to handle it Since it still is its final operation.
       } else {
         endingInput1_new = null;
       }
