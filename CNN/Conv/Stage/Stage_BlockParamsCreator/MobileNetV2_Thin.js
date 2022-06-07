@@ -5,7 +5,7 @@ import { Params } from "../Stage_Params.js";
 import { MobileNetV1 } from "./MobileNetV1.js";
 
 /**
- * Provide parameters for MobileNetV2_Thin (i.e. add-inut-to-output, pointwise1 is same size of pointwise21).
+ * Provide parameters for MobileNetV2_Thin (i.e. add-inut-to-output, pointwise1 is same size of pointwise20).
  *
  *
  */
@@ -32,7 +32,7 @@ class MobileNetV2_Thin extends MobileNetV1 {
 
   /** @override */
   configTo_beforeBlockLast() {
-    super.configTo_beforeBlockLast(); // blockLast's pointwise21 bias.
+    super.configTo_beforeBlockLast(); // blockLast's pointwise20 bias.
   }
 
 }
