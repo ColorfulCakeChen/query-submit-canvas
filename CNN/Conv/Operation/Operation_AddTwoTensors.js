@@ -14,17 +14,6 @@ import { Base } from "./Operation_Base.js";
  * @member {boolean} bKeepInputTensor1
  *   If false, the second input tensor will be disposed after adding. If true, the second input tensor will be kept after adding.
  *
- * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
- *   The element value bounds (per channel) of this add-two-tensors operation's input0. It will be kept (not cloned) directly. So caller
- * should not modify them.
- *
- * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray1
- *   The element value bounds (per channel) of this add-two-tensors operation's input1. It will be kept (not cloned) directly. So caller
- * should not modify them.
- *
- * @member {BoundsArraySet.InputsOutputs} boundsArraySet
- *   The element value bounds (per channel) of this concatenation operation.
- *
  * @member {function} apply
  *   This is a method. It processes this.input0.realTensor and this.input1.realTensor as inputTensors. It puts to this.output0.realTensor
  * as outputTensor. Both inputTensors are tf.tensor3d and represents an images ( height x width x channel ) which will be added. They
