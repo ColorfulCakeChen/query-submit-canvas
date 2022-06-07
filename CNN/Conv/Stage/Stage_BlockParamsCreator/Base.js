@@ -29,7 +29,7 @@ class Base {
     this.pointwise1ChannelCount = this.bPointwise1Bias = this.pointwise1ActivationId =
     this.depthwise_AvgMax_Or_ChannelMultiplier = this.depthwiseFilterHeight = this.depthwiseFilterWidth =
     this.depthwiseStridesPad = this.bDepthwiseBias = this.depthwiseActivationId =
-    this.pointwise21ChannelCount = this.bPointwise21Bias = this.pointwise21ActivationId =
+    this.pointwise20ChannelCount = this.bPointwise20Bias = this.pointwise20ActivationId =
     this.bOutput1Requested = this.bKeepInputTensor = undefined;
 
     this.blockCount = // How many block should be in the stage.
@@ -147,7 +147,7 @@ class Base {
 
     // pointwise2
     {
-      this.bPointwise21Bias = true; // All blocks' outputs needs bias (even if MobileNetV2_Xxx).
+      this.bPointwise20Bias = true; // All blocks' outputs needs bias (even if MobileNetV2_Xxx).
 
       // MobileNetV2_Xxx's pointwise2 always does not have activation function.
       //
@@ -156,12 +156,12 @@ class Base {
       // and will not become just one affine transformation.
       //
       if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
-        this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+        this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
       // For all other ConvStageType, all non-blockLast's pointwise2 must have activation function (to become non-affine transformation).
       // The reason is to avoid the previous block's pointwise2 and the next block's pointwis1 become just one affine transformation.
       } else {
-        this.pointwise21ActivationId = stageParams.nActivationId;
+        this.pointwise20ActivationId = stageParams.nActivationId;
       }
     }
   }
@@ -181,14 +181,14 @@ class Base {
       // and will not become just one affine transformation.
       //
       if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
-        this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+        this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
       // For all other ConvStageType, whether blockLast's pointwise2 has activation function is according to the specified flag.
       } else {
         if ( stageParams.bPointwise2ActivatedAtStageEnd == false ) {
-          this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+          this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
         } else {
-          this.pointwise21ActivationId = stageParams.nActivationId;
+          this.pointwise20ActivationId = stageParams.nActivationId;
         }
       }
     }
@@ -215,7 +215,7 @@ class Base {
       this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
       this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
-      this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
+      this.pointwise20ChannelCount, this.bPointwise20Bias, this.pointwise20ActivationId,
       this.bOutput1Requested,
       this.bKeepInputTensor
     );
