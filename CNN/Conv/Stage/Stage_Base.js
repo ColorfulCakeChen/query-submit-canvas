@@ -490,8 +490,17 @@ class Base {
     if ( !this.blocksArray )
       return;
 
+    { // 1. Release block0's outputs' ScaleBoundsArray.
+      this.block0.output0.scaleBoundsArray = null;
+
+      if ( this.block0.output1 )
+        this.block0.output1.scaleBoundsArray = null;
+    }
+
+    // 2. Release intermediate blocks' inputs' and outputs' ScaleBoundsArray.
     for ( let i = 1; i < ( this.blocksArray.length - 1 ); ++i ) {
       let block = this.blocksArray[ i ];
+
       block.input0.scaleBoundsArray = null;
 
       if ( block.input1 )
@@ -501,6 +510,13 @@ class Base {
 
       if ( block.output1 )
         block.output1.scaleBoundsArray = null;
+    }
+
+    { // 3. Release blockLast's outputs' ScaleBoundsArray.
+      this.blockLast.intput0.scaleBoundsArray = null;
+
+      if ( this.blockLast.intput1 )
+        this.blockLast.intput1.scaleBoundsArray = null;
     }
   }
 
