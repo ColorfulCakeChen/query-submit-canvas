@@ -373,7 +373,7 @@ class Base extends ReturnOrClone.Base {
 
     // 0.1 Estimate the maximum value of progress.
     let progressMax =
-      1    // for extracting parameters from inputFloat32Array.
+        1  // for extracting parameters from inputFloat32Array.
       + 1  // for extracting pointwise1 filters (and biases) from inputFloat32Array and building tensors.
       + 1  // for extracting depthwise filters (and biases) from inputFloat32Array and building tensors.
       + 1  // for concat1.
@@ -774,16 +774,14 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // squeeze-and-excitation (postfix pointwise2) was ready. Report progress.
 
-
-//!!! ...unfinished... (2022/06/07)
-
     // 8. Add-input-to-output
 
-    // Because addInput0ToPointwise21 and addInput0ToPointwise21 may not exist, track it by local variable (which will be used by
-    // concat2ShuffleSplit and this Block final bounds arrray set).
-    //
-    let addInput0ToPointwise21_boundsArraySet_output0 = this.pointwise21.boundsArraySet.output0;
-    let addInput0ToPointwise22_boundsArraySet_output0 = this.pointwise22?.boundsArraySet.output0;
+//!!! (2022/06/07 Remarked)
+//     // Because addInput0ToPointwise21 and addInput0ToPointwise21 may not exist, track it by local variable (which will be used by
+//     // concat2ShuffleSplit and this Block final bounds arrray set).
+//     //
+//     let addInput0ToPointwise21_boundsArraySet_output0 = this.pointwise21.boundsArraySet.output0;
+//     let addInput0ToPointwise22_boundsArraySet_output0 = this.pointwise22?.boundsArraySet.output0;
 
     // 8.1
     //
@@ -796,10 +794,15 @@ class Base extends ReturnOrClone.Base {
     // Only if output channel is equals to input channel, the dimension 2 (channel) of the output will be the same as input.
     //
     // For example:
-    //   - if MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
-    //   - However, even if MobileNetV2, only if not setp 0 (whose strides == ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME (2))
-    //        of a block can add input to output.
-    if ( ( this.bAddInputToOutputRequested ) && ( this.depthwise1.is_Output_Same_HeightWidth_As_Input() ) ) {
+    //   - if MobileNetV2 and not stage's block0, should not destroy input tensor so that can add input to output.
+    //   - However, even if MobileNetV2, only if not block0 (whose strides == ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME (2))
+    //       of a stage, the add-input-to-output can be done.
+    //
+    if (   ( this.bAddInputToOutputRequested )
+        && ( this.operationArray.endingInput0.is_height_width_channelCount_same_byTensorPlaceholder( this.operationArray.input0 ) )
+       ) {
+
+//!!! ...unfinished... (2022/06/07)
 
       // Note:
       //
