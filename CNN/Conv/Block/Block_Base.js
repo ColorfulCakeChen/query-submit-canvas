@@ -55,40 +55,40 @@ import { Params } from "./Block_Params.js";
  *     - ( channelCount1_pointwise1Before == -5 ): ONE_INPUT_HALF_THROUGH: (ShuffleNetV2_ByMobileNetV1's body/tail)
  *     - ( channelCount1_pointwise1Before == -4 ): ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: (ShuffleNetV2_ByMobileNetV1's head)
  * <pre>
- * input0 - pointwise1 - depthwise1 - (squeezeExcitation) - pointwise21 (include pointwise211 and pointwise212)
+ * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise21 (include pointwise211 and pointwise212) - (squeezeExcitationPostfix)
  * </pre>
  *
  *
  *   - When ( channelCount1_pointwise1Before == -3 ) and ( bOutput1Requested == true ): TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: TWO_OUTPUT:
  * (ShuffleNetV2's body)
  * <pre>
- * input0 - pointwise1 - depthwise1 - (squeezeExcitation) - pointwise21 - concat2ShuffleSplit - output0
- * input1 --------------------------------------------------------------/                     \ output1
+ * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix) - concat2ShuffleSplit - output0
+ * input1 -------------------------------------------------------------------------------------------------/                     \ output1
  * </pre>
  *
  *
  *   - When ( channelCount1_pointwise1Before == -3 ) and ( bOutput1Requested == false ): TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: ONE_OUTPUT:
  * (ShuffleNetV2's tail)
  * <pre>
- * input0 - pointwise1 - depthwise1 - (squeezeExcitation) - pointwise21 - concat2(ShuffleSplit) - output0
- * input1 --------------------------------------------------------------/
+ * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix) - concat2(ShuffleSplit) - output0
+ * input1 -------------------------------------------------------------------------------------------------/
  * </pre>
  *
  *
  *   - When ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE:
  * (simplified ShuffleNetV2's head with ( pointwise1ChannelCount >= 1 ) )
  * <pre>
- * input0 - pointwise1 - depthwise1 - concat1 - (squeezeExcitation) - pointwise21
- *        \------------- depthwise2 /         \ (squeezeExcitation) - pointwise22
+ * input0 - pointwise1 - depthwise1 - concat1 - (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix)
+ *        \------------- depthwise2 /         \ (squeezeExcitationPrefix) - pointwise22 - (squeezeExcitationPostfix)
  * </pre>
  *
  *
  *   - When ( channelCount1_pointwise1Before == -1 ): ONE_INPUT_ADD_TO_OUTPUT: (MobileNetV2's body and tail)
  * <pre>
- *        /----------------------------------------------------------------------------\
- * input0 - pointwise1 - depthwise1 ---------------- (squeezeExcitation) - pointwise21 - addInput0ToPointwise21
- *        \                                        \ (squeezeExcitation) - pointwise22 - addInput0ToPointwise22
- *         \---------------------------------------------------------------------------/
+ *        /------------------------------------------------------------------------------------------------\
+ * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix) - addInput0ToPointwise21
+ *        \                         \ (squeezeExcitationPrefix) - pointwise22 - (squeezeExcitationPostfix) - addInput0ToPointwise22
+ *         \-----------------------------------------------------------------------------------------------/
  * </pre>
  *
  *
@@ -96,15 +96,15 @@ import { Params } from "./Block_Params.js";
  *     - ( channelCount1_pointwise1Before == 0 ): ONE_INPUT:
  *       (MobileNetV1 or MobileNetV2's head or simplified ShuffleNetV2(_ByPointwise22)'s head with ( blockParams.bPointwise1 == false ) )
  * <pre>
- * input0 - pointwise1 - depthwise1 ---------------- (squeezeExcitation) - pointwise21
- *                                                 \ (squeezeExcitation) - pointwise22
+ * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix)
+ *                                  \ (squeezeExcitationPrefix) - pointwise22 - (squeezeExcitationPostfix)
  * </pre>
  *
  *
  *   - When ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (ShuffleNetV2_ByPointwise22's body and tail)
  * <pre>
- * input0 - pointwise1 - depthwise1 - concat1 - (squeezeExcitation) - pointwise21
- * input1 --------------------------/         \ (squeezeExcitation) - pointwise22
+ * input0 - pointwise1 - depthwise1 - concat1 - (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix)
+ * input1 --------------------------/         \ (squeezeExcitationPrefix) - pointwise22 - (squeezeExcitationPostfix)
  * </pre>
  *
  *
@@ -142,7 +142,7 @@ import { Params } from "./Block_Params.js";
  * Only meaningful when ( this.bInitOk == true ).
  *
  * @member {number} inputTensorCount
- *   How many input tensors will be past into apply() as parameter inputTensors[].
+ *   How many input tensors will be passed into apply() as parameter inputTensors[].
  *
  * @member {boolean} bHigherHalfDifferent
  *   Only if ( channelShuffler != null ), this is meaningful. If true, the higher half input channels are processed differently.
