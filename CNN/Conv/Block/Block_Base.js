@@ -560,7 +560,9 @@ class Base extends ReturnOrClone.Base {
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = pointwise1.byteOffsetEnd;
 
+//!!! (2022/06/07 Remarked)
       //this.bPointwise1 = pointwise1.bExisted;
+
       this.operationArray.operation_append( pointwise1 );
     }
 
@@ -606,6 +608,7 @@ class Base extends ReturnOrClone.Base {
           return false;  // e.g. input array does not have enough data.
         this.byteOffsetEnd = depthwise1.byteOffsetEnd;
 
+//!!! (2022/06/07 Remarked)
         //this.bDepthwise1 = depthwise1.bExisted;
       }
 
@@ -631,8 +634,10 @@ class Base extends ReturnOrClone.Base {
           return false;  // e.g. input array does not have enough data.
         this.byteOffsetEnd = depthwise2.byteOffsetEnd;
 
+//!!! (2022/06/07 Remarked)
         //this.bDepthwise2 = depthwise2.bExisted;
-        //
+
+
         // Note:
         //   - If ( depthwise2.bExisted == true ), the depthwise2 is requested and created. It means ONE_INPUT_TWO_DEPTHWISE.
         //
@@ -642,6 +647,8 @@ class Base extends ReturnOrClone.Base {
 
       } else {
         // Since the depthwise2 is not requested, it is always short circuit to input1 (i.e. not input0).
+
+//!!! (2022/06/07 Remarked)
         //this.bDepthwise2 = false;
       }
 
@@ -736,6 +743,7 @@ class Base extends ReturnOrClone.Base {
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = pointwise21.byteOffsetEnd;
 
+//!!! (2022/06/07 Remarked)
       //this.bPointwise21 = pointwise21.bExisted;
 
       // 6.2 Pointwise22
@@ -754,6 +762,7 @@ class Base extends ReturnOrClone.Base {
           return false;  // e.g. input array does not have enough data.
         this.byteOffsetEnd = pointwise22.byteOffsetEnd;
 
+//!!! (2022/06/07 Remarked)
         //this.bPointwise22 = pointwise22.bExisted;
 
       } else { // Since pointwise22 is not requested (i.e. channel count is not positive), do not create the object for saving memory.
@@ -761,6 +770,7 @@ class Base extends ReturnOrClone.Base {
       }
 
       // 6.3 Pointwise2 (= Pointwise21 + Pointwise22 )
+//!!! (2022/06/07 Remarked)
       //this.bPointwise2 = ( this.bPointwise21 || this.bPointwise22 );
 
       this.operationArray.operation_append( pointwise21, pointwise22 );
@@ -801,77 +811,45 @@ class Base extends ReturnOrClone.Base {
     //   - However, even if MobileNetV2, only if not block0 (whose strides == ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME (2))
     //       of a stage, the add-input-to-output can be done.
     //
-    if (   ( this.bAddInputToOutputRequested )
-        && ( this.operationArray.endingInput0.is_height_width_channelCount_same_byTensorPlaceholder( this.operationArray.input0 ) )
-       ) {
-
-//!!! ...unfinished... (2022/06/07)
+    if ( this.bAddInputToOutputRequested ) {
 
       // Note:
       //
       // Usually, if no pointwise21, then no addInput0ToPointwise21.
       // Usually, if no pointwise22, then no addInput0ToPointwise22.
       //
-      // However, there is one exception: When both no pointwise21 and no pointwise22, there might be addInput0ToPointwise21
-      // if channelCount_concat1After_pointwise2Before (which is already assigned to channelCount_pointwise21After_concat2Before
-      // in this case) has the same dimension as inputTensors[ 0 ].
+      // However, there is one exception: When both no pointwise21 and no pointwise22, there might be addInput0ToPointwise21.
+      // Fortunately, now pointwise21ChannelCount is always not zero. So this situation will not happen.
+      //
 
-      if ( this.channelCount0_pointwise1Before == this.channelCount_pointwise21After_concat2Before ) {
-        this.bShould_addInput0ToPointwise21 = true;
-        this.addInput0ToPointwise21 = new AddTwoTensors.Base( false, false, inputScaleBoundsArray0, this.pointwise21.boundsArraySet.output0 );
-        addInput0ToPointwise21_boundsArraySet_output0 = this.addInput0ToPointwise21.boundsArraySet.output0;
+      let addInput0ToPointwise21;
+      if ( this.operationArray.endingInput0?.is_height_width_channelCount_same_byTensorPlaceholder( this.operationArray.input0 ) ) {
+//!!! (2022/06/07 Remarked)
+        //this.bShould_addInput0ToPointwise21 = true;
+        addInput0ToPointwise21 = new Operation.AddTwoTensors( this.operationArray.input0, this.operationArray.endingInput0 );
       }
 
-      // Only inputTensors[ 0 ] will be used to add to output. So still check against channelCount0_pointwise1Before
-      // (not channelCount1_pointwise1Before).
-      if ( this.channelCount0_pointwise1Before == this.channelCount_pointwise22After_concat2Before ) {
-        this.bShould_addInput0ToPointwise22 = true;
-        this.addInput0ToPointwise22 = new AddTwoTensors.Base( false, false, inputScaleBoundsArray0, this.pointwise22.boundsArraySet.output0 );
-        addInput0ToPointwise22_boundsArraySet_output0 = this.addInput0ToPointwise22.boundsArraySet.output0;
+      // Note: Only input0 (not input1) will be used to add to output.
+      let addInput0ToPointwise22;
+      if ( this.operationArray.endingInput1?.is_height_width_channelCount_same_byTensorPlaceholder( this.operationArray.input0 ) ) {
+//!!! (2022/06/07 Remarked)
+        //this.bShould_addInput0ToPointwise22 = true;
+        addInput0ToPointwise22 = new Operation.AddTwoTensors( this.operationArray.input0, this.operationArray.endingInput1 );
       }
 
-      this.operationArray.operation_append( ???21, ???22 );
-
+      // Note: If none of them exist, it is not necessary to append into queue.
+      if ( addInput0ToPointwise21 || addInput0ToPointwise22 )
+        this.operationArray.operation_append( addInput0ToPointwise21, addInput0ToPointwise22 );
     }
 
-    this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
+//!!! (2022/06/07 Remarked)
+    //this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
 
     // 8.2
-    //
-    // Q: Why not create TensorOpCounter in the above codes?
-    // A: The reason is that let addInput0ToPointwise21 in front of pointwise22.
-    //    This is because apply_X_X_AddInputToOutput_X() does them in this order.
-    {
-      if ( this.bPointwise21 )
-        TensorOpCounters.pointwise21 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_pointwise21",
-          this.pointwise21, TensorOpCounters.concat1 );
-      else
-        TensorOpCounters.pointwise21 = TensorOpCounters.concat1; // Its output is just its input tensor.
-
-      // Note: This should be before pointwise22.
-      if ( this.bShould_addInput0ToPointwise21 )
-        TensorOpCounters.addInput0ToPointwise21 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_addInput0ToPointwise21",
-          this.addInput0ToPointwise21, TensorOpCounters.input0, TensorOpCounters.pointwise21 );
-      else
-        TensorOpCounters.addInput0ToPointwise21 = TensorOpCounters.pointwise21;
-
-      if ( this.bPointwise22 )
-        TensorOpCounters.pointwise22 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_pointwise22",
-          this.pointwise22, TensorOpCounters.concat1 );
-      else
-        TensorOpCounters.pointwise22 = TensorOpCounters.concat1; // Its output is just its input tensor.
-
-      // Only inputTensors[ 0 ] will be used to add to output. So still use TensorOpCounters.input0 (not TensorOpCounters.input1) as input.
-      if ( this.bShould_addInput0ToPointwise22 )
-        TensorOpCounters.addInput0ToPointwise22 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_addInput0ToPointwise22",
-          this.addInput0ToPointwise22, TensorOpCounters.input0, TensorOpCounters.pointwise22 );
-      else
-        TensorOpCounters.addInput0ToPointwise22 = TensorOpCounters.pointwise22;
-    }
-
-    // 8.3
     ++progressToAdvance.value;
     yield progressRoot;  // add-input-to-output was ready. Report progress.
+
+//!!! ...unfinished... (2022/06/07)
 
     // 9. Concat2-Shuffle-Split
     if ( this.bConcat2ShuffleSplitRequested ) {
