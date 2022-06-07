@@ -849,7 +849,10 @@ class Base extends ReturnOrClone.Base {
     //
     this.operationArray.setKeepInputTensor( this.bKeepInputTensor, this.bKeepInputTensor )
 
-    // 10.3
+    // 10.3 Reduce memory footprint by releasing unused (intermediate) bounds array set.
+    this.dispose_intermediate_ScaleBoundsArray();
+
+    // 10.4
     ++progressToAdvance.value;
     yield progressRoot;  // All pointwise1-depthwise-pointwise2 filters was ready. Report progress.
 
