@@ -189,7 +189,25 @@ class Params extends Weights.Params {
    *
    * @param {number} nSqueezeExcitationChannelCountDivisor
    *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
-   * (Please see also SqueezeExcitation.Base.nSqueezeExcitationChannelCountDivisor explanation.)
+   *
+   *     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2)
+   *       - no squeeze, no excitation, no multiply.
+   *       - This object is just a no-op.
+   *
+   *     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION (-1)
+   *       - no squeeze.
+   *       - no intermediate excitation. ( intermediate_outputChannelCount = 0 )
+   *       - has only one pointwise convolution (i.e. excitation pointwise convolution). 
+   *
+   *     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION (0)
+   *       - has squeeze. 
+   *       - no intermediate excitation. ( intermediate_outputChannelCount = 0 )
+   *       - has only one pointwise convolution (i.e. excitation pointwise convolution). 
+   *
+   *     - ( nSqueezeExcitationChannelCountDivisor > 0 )
+   *       - has squeeze. 
+   *       - has intermediate excitation. ( intermediate_outputChannelCount = Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor ) )
+   *       - has two pointwise convolutions (i.e. intermediate pointwise convolution, and excitation pointwise convolution).
    *
    * @param {boolean} bSqueezeExcitationPrefix
    *   If true, the squeeze-and-excitation will be before pointwise2. If false, the squeeze-and-excitation will be after pointwise2.
