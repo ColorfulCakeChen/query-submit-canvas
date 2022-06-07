@@ -837,9 +837,7 @@ class Base extends ReturnOrClone.Base {
         addInput0ToPointwise22 = new Operation.AddTwoTensors( this.operationArray.input0, this.operationArray.endingInput1 );
       }
 
-      // Note: If none of them exist, it is not necessary to append into queue.
-      if ( addInput0ToPointwise21 || addInput0ToPointwise22 )
-        this.operationArray.operation_append( addInput0ToPointwise21, addInput0ToPointwise22 );
+      this.operationArray.operation_append( addInput0ToPointwise21, addInput0ToPointwise22 );
     }
 
 //!!! (2022/06/07 Remarked)
