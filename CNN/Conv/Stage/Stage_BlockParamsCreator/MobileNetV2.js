@@ -5,7 +5,7 @@ import { Params } from "../Stage_Params.js";
 import { MobileNetV2_Thin } from "./MobileNetV2_Thin.js";
 
 /**
- * Provide parameters for MobileNetV2 (i.e. add-inut-to-output, pointwise1 is tiwce size of pointwise21).
+ * Provide parameters for MobileNetV2 (i.e. add-inut-to-output, pointwise1 is tiwce size of pointwise20).
  *
  *
  */
@@ -23,10 +23,10 @@ class MobileNetV2 extends MobileNetV2_Thin {
 
     if ( stageParams.bPointwise1 == false ) {
       this.pointwise1ChannelCount = 0;                                  // NoPointwise1.
-      this.depthwise_AvgMax_Or_ChannelMultiplier = 4;                   // Quadruple of input0. (Double of pointwise21.)
+      this.depthwise_AvgMax_Or_ChannelMultiplier = 4;                   // Quadruple of input0. (Double of pointwise20.)
 
     } else {
-      this.pointwise1ChannelCount = stageParams.sourceChannelCount * 4; // Quadruple of input0. (Double of pointwise21.)
+      this.pointwise1ChannelCount = stageParams.sourceChannelCount * 4; // Quadruple of input0. (Double of pointwise20.)
       this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     }
   }
@@ -40,10 +40,10 @@ class MobileNetV2 extends MobileNetV2_Thin {
     // Except
     if ( stageParams.bPointwise1 == false ) {
       this.pointwise1ChannelCount = 0;                                       // NoPointwise1.
-      this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                        // Double of pointwise21. (Quadruple of block0's input0.)
+      this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                        // Double of pointwise20. (Quadruple of block0's input0.)
 
     } else {
-      this.pointwise1ChannelCount = this.channelCount0_pointwise1Before * 2; // Double of pointwise21. (Quadruple of block0's input0.)
+      this.pointwise1ChannelCount = this.channelCount0_pointwise1Before * 2; // Double of pointwise20. (Quadruple of block0's input0.)
       this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     }
   }
