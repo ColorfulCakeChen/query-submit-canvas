@@ -2,7 +2,10 @@ export { Base };
 
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-import * as BoundsArraySet from "../BoundsArraySet.js";
+
+//!!! (2022/06/07 Remarked) seems not necessary because already has TensorPlaceholder.
+//import * as BoundsArraySet from "../BoundsArraySet.js";
+
 import * as Block from "../Block.js";
 import * as ChannelShuffler from "../ChannelShuffler.js";
 import * as BlockParamsCreator from "./Stage_BlockParamsCreator.js";
@@ -184,6 +187,9 @@ import { Params } from "./Stage_Params.js";
  * @member {Block.Base} blockLast
  *   The last computation block of this stage. It may be the same as this.block0 when there is only one block inside this stage.
  *
+ * @member {TensorPlaceholder.Base} input0
+ *   The TensorPlaceholder object which represents this stage's input.
+ *
  * @member {number} outputHeight
  *   The output image height of this stage's last block.
  *
@@ -192,6 +198,9 @@ import { Params } from "./Stage_Params.js";
  *
  * @member {number} outputChannelCount
  *   The output channel count of this stage's last block.
+ *
+ * @member {TensorPlaceholder.Base} output0
+ *   The TensorPlaceholder object which represents this stage's output.
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
@@ -390,7 +399,7 @@ class Base {
 
       if ( 0 == i ) { // After block0 (i.e. for block1, 2, 3, ...)
         blockParamsCreator.configTo_afterBlock0();
-        inputScaleBoundsArray = block.boundsArraySet.output0;
+        inputScaleBoundsArray = block.output0.scaleBoundsArray;
       }
     }
 
@@ -399,14 +408,15 @@ class Base {
 
     this.outputChannelCount = this.blockLast.outChannelsAll;
 
-    {
-      this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, null,
-        this.blockLast.boundsArraySet.output0.channelCount, 0 );
-
-      this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.blockLast.boundsArraySet );
-
-      this.dispose_all_sub_BoundsArraySet(); // Release all blocks' bounds array set for reducing memory footprint.
-    }
+//!!! (2022/06/07 Remarked) seems not necessary because already has TensorPlaceholder.
+//     {
+//       this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, null,
+//         this.blockLast.boundsArraySet.output0.channelCount, 0 );
+//
+//       this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.blockLast.boundsArraySet );
+//
+//       this.dispose_all_sub_BoundsArraySet(); // Release all blocks' bounds array set for reducing memory footprint.
+//     }
 
     // In our Stage design, no matter which configuration, the outputChannelCount always is twice as sourceChannelCount.
     tf.util.assert( ( this.outputChannelCount == ( this.sourceChannelCount * 2 ) ),
@@ -470,20 +480,21 @@ class Base {
     this.bInitOk = false;
   }
 
-  /**
-   * Release all blocks' BoundsArraySet. This could reduce memory footprint.
-   *
-   * (Note: This stage's BoundsArraySet is kept.)
-   */
-  dispose_all_sub_BoundsArraySet() {
-    if ( !this.blocksArray )
-      return;
-
-    for ( let i = 0; i < this.blocksArray.length; ++i ) {
-      let block = this.blocksArray[ i ];
-      delete block.boundsArraySet;
-    }
-  }
+//!!! (2022/06/07 Remarked) seems not necessary because already has TensorPlaceholder.
+//   /**
+//    * Release all blocks' BoundsArraySet. This could reduce memory footprint.
+//    *
+//    * (Note: This stage's BoundsArraySet is kept.)
+//    */
+//   dispose_all_sub_BoundsArraySet() {
+//     if ( !this.blocksArray )
+//       return;
+//
+//     for ( let i = 0; i < this.blocksArray.length; ++i ) {
+//       let block = this.blocksArray[ i ];
+//       delete block.boundsArraySet;
+//     }
+//   }
 
   /**
    * Assert image size.
@@ -556,6 +567,14 @@ class Base {
   /** How many blocks inside this stage are created. (may different from this.blockCountRequested.) */
   get blockCount() {
     return this.blocksArray.length;
+  }
+
+  get input0() {
+    return this.block0.input0;
+  }
+
+  get output0() {
+    return this.blockLast.output0;
   }
 
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
