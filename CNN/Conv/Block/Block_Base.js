@@ -902,34 +902,14 @@ class Base extends ReturnOrClone.Base {
     this.bInitOk = false;
   }
 
-
   /**
-   * Release all BoundsArraySet of pointwise1, depthwise1, depthwise2, pointwise21, pointwise22,
-   * concat1, addInput0ToPointwise21, addInput0ToPointwise22, concat2ShuffleSplit.
+   * Release all ScaleBoundsArray (inside tensor placeholder) except .inputX. and .outputX.
    *
-   * This could reduce memory footprint.
-   *
-   * (Note: This Block's BoundsArraySet is kept.)
+   * This could reduce memory footprint by releasing unused scale bounds array.
    */
-  dispose_all_sub_BoundsArraySet() {
-
-//!!! ...unfinished... (2022/06/04) However, some information (i.e. ScaleBoundsArray) is still kept in every TensorPlaceholder.
-// Perhaps, remove those ScaleBoundsArray all except in the first input and last output TensorPlaceholder.
-
-
-
-//!!! (2022/06/04 Remakred) The sub operation already release them.
-//     delete this.pointwise1?.boundsArraySet;
-//     delete this.depthwise1?.boundsArraySet;
-//     delete this.depthwise2?.boundsArraySet;
-//     delete this.pointwise21?.boundsArraySet;
-//     delete this.pointwise22?.boundsArraySet;
-//     delete this.concat1?.boundsArraySet;
-//     delete this.addInput0ToPointwise21?.boundsArraySet;
-//     delete this.addInput0ToPointwise22?.boundsArraySet;
-//     delete this.concat2ShuffleSplit?.boundsArraySet;
+  dispose_intermediate_ScaleBoundsArray() {
+    this.operationArray.dispose_intermediate_ScaleBoundsArray();
   }
-
  
   /**
    * Setup .apply according .inputTensorCount and .outputTensorCount.
