@@ -670,7 +670,8 @@ class Base extends ReturnOrClone.Base {
 
     // 5.2 The squeeze-and-excitation prefix pointwise2
     if ( this.bSqueezeExcitationPrefix )
-      Base.operationArray_append_SqueezeExcitation.call( this, nHigherHalfDifferent_pointwise2 );
+      if ( !Base.operationArray_append_SqueezeExcitation.call( this, nHigherHalfDifferent_pointwise2, params.defaultInput ) )
+        return false;  // e.g. input array does not have enough data.
 
     // 5.3
     ++progressToAdvance.value;
@@ -743,8 +744,9 @@ class Base extends ReturnOrClone.Base {
     // 7. The squeeze-and-excitation postfix pointwise2
       
     // 7.1
-    if ( !this.bSqueezeExcitationPrefix )
-      Base.operationArray_append_SqueezeExcitation.call( this, nHigherHalfDifferent_pointwise2 );
+    if ( !this.bSqueezeExcitationPrefix ) // (i.e. postfix)
+      if ( !Base.operationArray_append_SqueezeExcitation.call( this, nHigherHalfDifferent_pointwise2, params.defaultInput ) )
+        return false;  // e.g. input array does not have enough data.
 
     // 7.2
     ++progressToAdvance.value;
@@ -960,13 +962,23 @@ class Base extends ReturnOrClone.Base {
    *
    * @param {ValueDesc.Pointwise_HigherHalfDifferent} nPointwise_HigherHalfDifferent
    *   The HigherHalfDifferent type for squeeze-and-excitation.
+   *
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpreted as weights.
+   *
+   * @return {boolean} Return true, if succeeded.   
    */
-  static operationArray_append_SqueezeExcitation( nPointwise_HigherHalfDifferent ) {
+  static operationArray_append_SqueezeExcitation( nPointwise_HigherHalfDifferent, inputFloat32Array ) {
 
+    // Note: Inside squeeze-and-excitation, all depthwsie and pointwise convolutions are constant-when-pass-through
+    //       so that the result for pass-through parts will not affect input when multiply to input.
+    //
+
+    // 0.
     let inputHeight = this.operationArray.endingInput0.height;
     let inputWidth = this.operationArray.endingInput0.width;
 
-    // Whether squeeze (i.e. global average pooling) exists. It will be false in the following cases:
+    // 0.1 Whether squeeze (i.e. global average pooling) exists. It will be false in the following cases:
     //
     //   - ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-2)
     //     - since this object is just a no-op.
@@ -996,7 +1008,7 @@ class Base extends ReturnOrClone.Base {
       bSqueeze = true;
     }
  
-    // Whether intermediate pointwise convolution exists.
+    // 0.2 Whether intermediate pointwise convolution exists.
     //
     //   - If ( nSqueezeExcitationChannelCountDivisor <= 0 ), it will be false (i.e. no intermediate pointwise convolution).
     //     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2)
@@ -1012,11 +1024,54 @@ class Base extends ReturnOrClone.Base {
       bIntermediate = true;
     }
 
+    // 1. squeezeDepthwise
+    if ( bSqueeze ) {
+      let squeezeDepthwise1;
+      {
+        squeezeDepthwise1 = new Operation.Depthwise_ConstantWhenPassThrough(
+          this.operationArray.endingInput0,
+          ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,    // global average pooling.
+          inputHeight, inputWidth,                                    // ( filterSize == inputImageSize ) means global pooling.
+          ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID,     // To shrink to ( 1 x 1 ) image, pad should be "valid" (i.e. not "same").
+          false,                                                      // (bBias) squeeze has no bias (since it also has no activation).
+          ValueDesc.ActivationFunction.Singleton.Ids.NONE,            // (nActivationId) squeeze has no activation.
+          ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE  // (global) average pooling must be no higher-half-different.
+        );
+
+        if ( !squeezeDepthwise1.init( inputFloat32Array, this.byteOffsetEnd ) )
+          return false;  // e.g. input array does not have enough data.
+        this.byteOffsetEnd = squeezeDepthwise1.byteOffsetEnd;
+      }
+
+      let squeezeDepthwise2;
+      if ( this.pointwise22ChannelCount > 0 ) {
+        squeezeDepthwise2 = new Operation.Depthwise_ConstantWhenPassThrough(
+          this.operationArray.endingInput0,
+          ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,    // global average pooling.
+          inputHeight, inputWidth,                                    // ( filterSize == inputImageSize ) means global pooling.
+          ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID,     // To shrink to ( 1 x 1 ) image, pad should be "valid" (i.e. not "same").
+          false,                                                      // (bBias) squeeze has no bias (since it also has no activation).
+          ValueDesc.ActivationFunction.Singleton.Ids.NONE,            // (nActivationId) squeeze has no activation.
+          ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE  // (global) average pooling must be no higher-half-different.
+        );
+
+        if ( !squeezeDepthwise2.init( inputFloat32Array, this.byteOffsetEnd ) )
+          return false;  // e.g. input array does not have enough data.
+        this.byteOffsetEnd = squeezeDepthwise2.byteOffsetEnd;
+      }
+
+      this.operationArray.operation_append( squeezeDepthwise1, squeezeDepthwise2 );
+    }
+
+//!!! ...unfinished... (2022/06/07)
+//    let outputChannelCount = this.inputChannelCount; // For squeeze-and-excitation, output channel count is always the same as input.
+ 
 //!!! ...unfinished... (2022/06/07)
     this.nSqueezeExcitationChannelCountDivisor;
 
     //this.bSqueezeExcitationPrefix
-    
+
+    return true;
   }
 
   /**
