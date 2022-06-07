@@ -1060,19 +1060,19 @@ class Base extends ReturnOrClone.Base {
     }
 
     // 2. intermediatePointwise
-    if ( this.bIntermediate ) {
+    if ( bIntermediate ) {
 
       let intermediatePointwise1 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
-        this.operationArray.endingInput0,
-        this.pointwise21ActivationId, nPointwise_HigherHalfDifferent,
-        inputFloat32Array );
+        this.operationArray.endingInput0, this.pointwise21ActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array );
+      if ( !intermediatePointwise1 )
+        return false;  // e.g. input array does not have enough data.
 
       let intermediatePointwise2;
       if ( this.pointwise22ChannelCount > 0 ) {
         intermediatePointwise2 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
-          this.operationArray.endingInput1,
-          this.pointwise22ActivationId, nPointwise_HigherHalfDifferent,
-          inputFloat32Array );
+          this.operationArray.endingInput1, this.pointwise22ActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array );
+        if ( !intermediatePointwise2 )
+          return false;  // e.g. input array does not have enough data.
       }
 
       this.operationArray.operation_append( intermediatePointwise1, intermediatePointwise2 );
@@ -1106,9 +1106,7 @@ class Base extends ReturnOrClone.Base {
    *   Return the created (and initialized) intermediate pointwise of squeeze-and-excitation, if succeeded. Return null, if failed.
    */
   static SequeezeExcitation_intermediatePointwise_create_init(
-    inputTensorPlaceholder,
-    nActivationId, nPointwise_HigherHalfDifferent,
-    inputFloat32Array ) {
+    inputTensorPlaceholder, nActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array ) {
 
     const intermediate_inputChannelCount = inputTensorPlaceholder.channelCount;
     const intermediate_inputChannelCount_lowerHalf = inputTensorPlaceholder.channelCount_lowerHalf;
