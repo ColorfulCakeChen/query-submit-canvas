@@ -6,7 +6,7 @@ import { ShuffleNetV2 } from "./ShuffleNetV2.js";
 
 /*
  * Provide parameters for ShuffleNetV2_ByMobileNetV1 (i.e. concatenate, shuffle channel, split by integrated pointwise1, depthwise1,
- * pointwise21).
+ * pointwise20).
  *
  *
  * 1. Motivation
@@ -20,7 +20,7 @@ import { ShuffleNetV2 } from "./ShuffleNetV2.js";
  *
  *   - Use MobileNetV1 structure (i.e. no add-input-to-output) but pointwise1 already exists.
  *
- *   - Manipulate the filter weights of pointwise1, depthwise1, pointwise21 so that they achieve the same effect of shuffling
+ *   - Manipulate the filter weights of pointwise1, depthwise1, pointwise20 so that they achieve the same effect of shuffling
  *       but without concatenation and splitting.
  *
  * This may become a faster ShuffleNetV2 in backend WASM and WEBGL (but a slower ShuffleNetV2 in backend CPU due to more
@@ -55,7 +55,7 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
       // The input0 will just be pass-through as pointwise1's lower half.
       // The input0 will also be copied as pointwise1's higher half.
       //
-      this.pointwise1ChannelCount = 0;                             // NoPointwise1. (Intrinsically, Double of input0. (Same as pointwise21.))
+      this.pointwise1ChannelCount = 0;                             // NoPointwise1. (Intrinsically, Double of input0. (Same as pointwise20.))
 
     } else {
 
@@ -67,7 +67,7 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
       // The input0 will be processed by pointwise1's lower half.
       // The input0 will be copied as pointwise1's higher half.
       //
-      this.pointwise1ChannelCount = stageParams.sourceChannelCount; // (Intrinsically, Double of input0. (Same as pointwise21.))
+      this.pointwise1ChannelCount = stageParams.sourceChannelCount; // (Intrinsically, Double of input0. (Same as pointwise20.))
     }
 
     // In ShuffleNetV2_ByMobileNetV1's head, depthwise always output the same channel count of pointwise1 real output channel count
@@ -75,15 +75,15 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
     //
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
 
-    // In ShuffleNetV2_ByMobileNetV1's head, pointwise21ChannelCount is always twice of input0's channel count.
+    // In ShuffleNetV2_ByMobileNetV1's head, pointwise20ChannelCount is always twice of input0's channel count.
     //
-    this.pointwise21ChannelCount = stageParams.sourceChannelCount * 2;
+    this.pointwise20ChannelCount = stageParams.sourceChannelCount * 2;
 
     // In ShuffleNetV2_ByMobileNetV1, there is always only output0 (i.e. no output1).
     this.bOutput1Requested = false;
 
-    // In ShuffleNetV2_ByMobileNetV1's head, all blocks have only output0 (with same depth as pointwise21 result) and no output1.
-    this.outChannels0 = this.pointwise21ChannelCount;
+    // In ShuffleNetV2_ByMobileNetV1's head, all blocks have only output0 (with same depth as pointwise20 result) and no output1.
+    this.outChannels0 = this.pointwise20ChannelCount;
     this.outChannels1 = 0;
   }
 
@@ -93,7 +93,7 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 
     let stageParams = this.stageParams;
 
-    // Except that ShuffleNetV2_ByMobileNetV1 does not have channel shuffler. The pointwise21 will do channel shuffling.
+    // Except that ShuffleNetV2_ByMobileNetV1 does not have channel shuffler. The pointwise20 will do channel shuffling.
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH; // (-5)
 
     // In ShuffleNetV2_ByMobileNetV1's body/tail, if ( stageParams.bPointwise1 == false ), pointwise1ChannelCount is also 0.
@@ -103,19 +103,19 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
       this.pointwise1ChannelCount = 0; // (Intrinsically, zero, too.)
 
     // In ShuffleNetV2_ByMobileNetV1's body/tail, if ( stageParams.bPointwise1 == true ), pointwise1ChannelCount is always the
-    // same as pointwise21 output channel count (which is already doubled as twice of block0's input0).
+    // same as pointwise20 output channel count (which is already doubled as twice of block0's input0).
     //
     // The input0's lower half will be processed by pointwise1's lower half.
     // The input0's higher half will be pass-through as pointwise1's higher half.
     //
     } else {
-      this.pointwise1ChannelCount = this.pointwise21ChannelCount;
+      this.pointwise1ChannelCount = this.pointwise20ChannelCount;
     }
   }
 
   /** @override */
   channelShuffler_init() {
-    // Do nothing. Because pointwise21 has done channel shuffling.
+    // Do nothing. Because pointwise20 has done channel shuffling.
   }
 
   /** @override */
