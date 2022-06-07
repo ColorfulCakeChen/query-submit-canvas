@@ -146,7 +146,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    * When an operation changes its input tensor placeholder (e.g. a new operation is created, or an existed operation is
    * set with different input), this method could be used to adjust keep-input-tensor flags of these related operations.
    */
-  inputs_old_new_finalOperation__setKeepInputTensor_IfNotFinalOperation_Or_In( alwaysKeepSet ) {
+  setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( alwaysKeepSet ) {
 
     // The previous final operation (of input tensor placeholders) is no longer its final operation.
 
