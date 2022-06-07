@@ -960,7 +960,7 @@ class Base extends ReturnOrClone.Base {
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
-   * @return {boolean} Return true, if succeeded.   
+   * @return {boolean} Return true, if succeeded.
    */
   static operationArray_append_SqueezeExcitation( nPointwise_HigherHalfDifferent, inputFloat32Array ) {
 
@@ -1153,6 +1153,61 @@ class Base extends ReturnOrClone.Base {
     //this.bSqueezeExcitationPrefix
 
     return true;
+  }
+
+  /**
+   * @param {Block.Base} this
+   *   The object to be modified.
+   *
+   * @param {TensorPlaceholder.Base} inputTensorPlaceholder
+   *   The input tensor placeholder of this intermediate pointwise.
+   *
+   * @param {ValueDesc.Pointwise_HigherHalfDifferent} nPointwise_HigherHalfDifferent
+   *   The HigherHalfDifferent type for squeeze-and-excitation.
+   *
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpreted as weights.
+   *
+   * @return {Operation.Pointwise}
+   *   Return the created (and initialized) intermediate pointwise of squeeze-and-excitation, if succeeded. Return null, if failed.
+   */
+  static SequeezeExcitation_intermediatePointwise_create_init(
+    inputTensorPlaceholder,
+    nActivationId, nPointwise_HigherHalfDifferent,
+    inputFloat32Array ) {
+
+    const intermediate_inputChannelCount = inputTensorPlaceholder.channelCount;
+    const intermediate_inputChannelCount_lowerHalf = inputTensorPlaceholder.channelCount_lowerHalf;
+
+    const intermediate_outputChannelCount_lowerHalf // Note: Using itself input channel count as dividend.
+      = Math.ceil( intermediate_inputChannelCount_lowerHalf / this.nSqueezeExcitationChannelCountDivisor );
+
+    let intermediate_outputChannelCount;
+
+    if ( nPointwise_HigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ) // (4)
+      intermediate_outputChannelCount = intermediate_outputChannelCount_lowerHalf;
+    else
+      intermediate_outputChannelCount = Math.ceil( intermediate_inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
+
+    const intermediate_nActivationId = nActivationId;
+
+    // If it has no activation, it could be no bias because the next operation's (i.e. excitationPointwise) bias will achieve it.
+    const intermediate_bBias = ( intermediate_nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ? false : true;
+
+    const intermediate_nHigherHalfDifferent = nPointwise_HigherHalfDifferent;
+
+    let intermediatePointwise = new Pointwise.ConstantWhenPassThrough(
+      this.operationArray.endingInput1,
+      intermediate_outputChannelCount, intermediate_bBias, intermediate_nActivationId,
+      intermediate_nHigherHalfDifferent, intermediate_outputChannelCount_lowerHalf,
+      0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
+    );
+
+    if ( !intermediatePointwise.init( inputFloat32Array, this.byteOffsetEnd ) )
+      return null;  // e.g. input array does not have enough data.
+    this.byteOffsetEnd = intermediatePointwise.byteOffsetEnd;
+
+    return intermediatePointwise;
   }
 
   /**
