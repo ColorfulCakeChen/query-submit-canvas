@@ -963,6 +963,9 @@ class Base extends ReturnOrClone.Base {
    */
   static operationArray_append_SqueezeExcitation( nPointwise_HigherHalfDifferent ) {
 
+    let inputHeight = this.operationArray.endingInput0.height;
+    let inputWidth = this.operationArray.endingInput0.width;
+
     // Whether squeeze (i.e. global average pooling) exists. It will be false in the following cases:
     //
     //   - ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-2)
@@ -978,6 +981,20 @@ class Base extends ReturnOrClone.Base {
     //     - squeeze is not necessary. (already squeezed.)
     //
     let bSqueeze;
+    if (
+            // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2), no-op.
+            // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION (-1), squeeze is not required.
+            //
+            ( this.nSqueezeExcitationChannelCountDivisor < 0 )
+
+         || ( ( inputHeight <= 0 ) || ( inputWidth <= 0 ) ) // squeeze can not be done.
+         || ( ( inputHeight == 1 ) && ( inputWidth == 1 ) ) // squeeze is not necessary. (already squeezed.)
+       ) {
+
+      bSqueeze = false;
+    } else {
+      bSqueeze = true;
+    }
  
     // Whether intermediate pointwise convolution exists.
     //
@@ -989,7 +1006,12 @@ class Base extends ReturnOrClone.Base {
     //   - If ( nSqueezeExcitationChannelCountDivisor > 0 ), it will be true.
     //
     let bIntermediate;
- 
+    if ( this.nSqueezeExcitationChannelCountDivisor <= 0 ) {
+      bIntermediate = false;
+    } else {
+      bIntermediate = true;
+    }
+
 //!!! ...unfinished... (2022/06/07)
     this.nSqueezeExcitationChannelCountDivisor;
 
