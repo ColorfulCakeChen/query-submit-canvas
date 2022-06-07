@@ -19,5 +19,6 @@ export { Pointwise_SameWhenPassThrough } from "./Operation/Operation_Pointwise_S
 
 export { Pointwise_ConstantWhenPassThrough } from "./Operation/Operation_Pointwise_ConstantWhenPassThrough.js";
 
-export { SqueezeExcitation } from "./Operation/Operation_SqueezeExcitation.js";
+//!!! (2022/06/07 Remarked) seems part of Block.Base.
+//export { SqueezeExcitation } from "./Operation/Operation_SqueezeExcitation.js";
 
