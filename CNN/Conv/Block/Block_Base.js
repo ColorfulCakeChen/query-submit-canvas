@@ -636,57 +636,48 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // concat1 was ready. Report progress.
 
-
-//!!! ...unfinished... (2022/06/07)
     // 5. The squeeze-and-excitation prefix pointwise2
 
-//     this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
-//     this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
-//     this.bSqueezeExcitationPrefix = params.bSqueezeExcitationPrefix;
+    // 5.1 Determine Pointwise_HigherHalfDifferent. (Both squeeze-and-excitation and pointwise2 needs it.)
 
+    // Assume not higher-half-different.
+    let nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
+    let outputChannelCount_lowerHalf_pointwise2 = undefined;
+    let channelShuffler_outputGroupCount_pointwise2 = 0;
+
+    if ( this.bHigherHalfDifferent == true ) {
+
+      // In this case, it should be according to half of pointwise21ChannelCount (just like pointwise1).
+      // Note: Unlike pointwise1ChannelCount (which may be zero), pointwise21ChannelCount is always positive.
+      outputChannelCount_lowerHalf_pointwise2 = Math.ceil( this.pointwise21ChannelCount / 2 );
+
+      // For bHigherHalfAnotherPointwise (i.e. ( pointwise21ChannelCount > 0 ) ) or bAllPassThrough (i.e. ( pointwise21ChannelCount == 0 ) ).
+      //
+      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
+      // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's head)
+      if ( this.bHigherHalfDepthwise2 == true ) {
+        nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE;
+
+      // For bHigherHalfPassThroughShuffle (i.e. ( pointwise21ChannelCount > 0 ) ) or bAllPassThroughShuffle (i.e. ( pointwise21ChannelCount == 0 ) ).
+      //
+      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
+      // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
+      } else {
+        nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
+        channelShuffler_outputGroupCount_pointwise2 = channelShuffler_ConcatPointwiseConv.outputGroupCount; // positive value.
+      }
+    }
+
+    // 5.2 The squeeze-and-excitation prefix pointwise2
+    if ( this.bSqueezeExcitationPrefix )
+      Base.operationArray_append_SqueezeExcitation.call( this, nHigherHalfDifferent_pointwise2 );
+
+    // 5.3
     ++progressToAdvance.value;
     yield progressRoot;  // squeeze-and-excitation (prefix pointwise2) was ready. Report progress.
 
-
-//!!! ...unfinished... (2022/06/07)
-
-//!!! ...unfinished... (2022/05/21)
-// It seems that all squeeze-and-excitation (of pointwise21 and pointwise22) should be extracted, and then pointwise21 and pointwise22
-// should be extracted. ?? So that the weights arranged the same between ShuffleNetV2_byPointwise22 and ShuffleNetV2_byMobileNetV1??
-//
-// No. This problem seems not existed because Block_TestParams already arrange them properly.
-
-
     // 6. The pointwise2 convolution.
     {
-      // Assume not higher-half-different.
-      let nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
-      let outputChannelCount_lowerHalf_pointwise2 = undefined;
-      let channelShuffler_outputGroupCount_pointwise2 = 0;
-
-      if ( this.bHigherHalfDifferent == true ) {
-
-        // In this case, it should be according to half of pointwise21ChannelCount (just like pointwise1).
-        // Note: Unlike pointwise1ChannelCount (which may be zero), pointwise21ChannelCount is always positive.
-        outputChannelCount_lowerHalf_pointwise2 = Math.ceil( this.pointwise21ChannelCount / 2 );
-
-        // For bHigherHalfAnotherPointwise (i.e. ( pointwise21ChannelCount > 0 ) ) or bAllPassThrough (i.e. ( pointwise21ChannelCount == 0 ) ).
-        //
-        // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
-        // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's head)
-        if ( this.bHigherHalfDepthwise2 == true ) {
-          nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE;
-
-        // For bHigherHalfPassThroughShuffle (i.e. ( pointwise21ChannelCount > 0 ) ) or bAllPassThroughShuffle (i.e. ( pointwise21ChannelCount == 0 ) ).
-        //
-        // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
-        // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
-        } else {
-          nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
-          channelShuffler_outputGroupCount_pointwise2 = channelShuffler_ConcatPointwiseConv.outputGroupCount; // positive value.
-        }
-      }
-
       // 6.1 Pointwise21
       //
       // Note:
@@ -749,10 +740,13 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // pointwise2 filters was ready. Report progress.
 
-
-//!!! ...unfinished... (2022/06/07)
     // 7. The squeeze-and-excitation postfix pointwise2
+      
+    // 7.1
+    if ( !this.bSqueezeExcitationPrefix )
+      Base.operationArray_append_SqueezeExcitation.call( this, nHigherHalfDifferent_pointwise2 );
 
+    // 7.2
     ++progressToAdvance.value;
     yield progressRoot;  // squeeze-and-excitation (postfix pointwise2) was ready. Report progress.
 
@@ -914,6 +908,23 @@ class Base extends ReturnOrClone.Base {
     this.operationArray.dispose_intermediate_ScaleBoundsArray();
   }
  
+  /**
+   * Append a sequence operations to achieve squeeze-and-excitation.
+   *
+   * @param {Block.Base} this  The object to be modified.
+   *
+   * @param {ValueDesc.Pointwise_HigherHalfDifferent} nPointwise_HigherHalfDifferent
+   *   The HigherHalfDifferent type for squeeze-and-excitation.
+   */
+  static operationArray_append_SqueezeExcitation( nPointwise_HigherHalfDifferent ) {
+
+//!!! ...unfinished... (2022/06/07)
+    this.nSqueezeExcitationChannelCountDivisor;
+
+    //this.bSqueezeExcitationPrefix
+    
+  }
+
   /**
    * Setup .apply according .inputTensorCount and .outputTensorCount.
    *   - If ( this.inputTensorCount == 1 ), the inputTensors[ 0 ] will be used.
