@@ -5,10 +5,6 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
-
-//!!! (2022/06/07 Remarked) seems not necessary because already has TensorPlaceholder.
-//import * as BoundsArraySet from "../BoundsArraySet.js";
-
 import * as ChannelCountCalculator from "../ChannelCountCalculator.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as Operation from "../Operation.js";
@@ -257,8 +253,6 @@ import { Params } from "./Block_Params.js";
  * @member {TensorPlaceholder.Base} output1
  *   The TensorPlaceholder object which represents this operation's 2nd output. It exists only if ( this.outputTensorCount >= 2 ).
  *
-
-//!!! ...unfinished... (2022/06/05) Perhaps, output TensorPlaceholders are enough?
 
 //!!! (2022/06/07 Remarked) seems not necessary because already has TensorPlaceholder.
 //  * @member {BoundsArraySet.InputsOutputs} boundsArraySet
@@ -1063,6 +1057,60 @@ class Base extends ReturnOrClone.Base {
       }
 
       this.operationArray.operation_append( squeezeDepthwise1, squeezeDepthwise2 );
+    }
+
+    // 2. intermediatePointwise
+    if ( this.bIntermediate ) {
+
+      const intermediate1_inputChannelCount = this.operationArray.endingInput0.channelCount;
+      const intermediate1_inputChannelCount_lowerHalf = this.operationArray.endingInput0.channelCount_lowerHalf;
+
+      // Note: Using itself input channel count as dividend.
+      const intermediate1_outputChannelCount_lowerHalf
+        = Math.ceil( intermediate1_inputChannelCount_lowerHalf / this.nSqueezeExcitationChannelCountDivisor );
+
+      let intermediate1_outputChannelCount;
+
+//!!! ...untested... (2022/05/27)
+      if ( nPointwise_HigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ) { // (4)
+
+        // Because intermediate (and excitation) pointwise always uses ConstantWhenPassThrough (i.e. filterValue = 0, biasValue = 1 ),
+        // the pass-through higher half will always be destroyed totally. Since that, discarding all the pass-through higher half in
+        // intermediate pointwise does not lose any information because the later excitation pointwise always could re-build them
+        // completely.
+        //
+        // For this reason, let ( intermediate_outputChannelCount = intermediate1_outputChannelCount_lowerHalf )
+        // (i.e. let ( intermediate_outputChannelCount_higherHalf == 0 ) to improve some performance.
+        //
+        intermediate1_outputChannelCount = intermediate1_outputChannelCount_lowerHalf;
+
+      } else {
+        intermediate1_outputChannelCount = Math.ceil( intermediate1_inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
+      }
+
+      // If it has no activation, it could be no bias because the next operation's (i.e. excitationPointwise) bias will achieve it.
+      let intermediate1_bBias;
+      if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
+        intermediate1_bBias = false;
+      } else {
+        intermediate1_bBias = true;
+      }
+
+      const intermediate1_nActivationId = this.pointwise21ActivationId;
+      const intermediate1_nHigherHalfDifferent = nPointwise_HigherHalfDifferent;
+
+      let intermediatePointwise1 = new Pointwise.ConstantWhenPassThrough(
+        this.operationArray.endingInput0,
+        intermediate1_outputChannelCount, intermediate1_bBias, intermediate1_nActivationId,
+        intermediate1_nHigherHalfDifferent, intermediate1_outputChannelCount_lowerHalf,
+        0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
+      );
+
+      if ( !intermediatePointwise1.init( inputFloat32Array, this.byteOffsetEnd ) )
+        return false;  // e.g. input array does not have enough data.
+      this.byteOffsetEnd = intermediatePointwise1.byteOffsetEnd;
+
+//!!! ...unfinished... (2022/06/07)
     }
 
 //!!! ...unfinished... (2022/06/07)
