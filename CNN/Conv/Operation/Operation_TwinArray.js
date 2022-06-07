@@ -163,7 +163,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 //     // The previous final operation (of input tensor placeholders) is no longer its final operation.
 //     // The newly created operation becomes the final operation of its input.
 //     //
-//     operationObject.inputs_old_new_finalOperation__setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+//     operationObject.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
 //     return true;
 //   }
 
@@ -229,10 +229,10 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     // The previous final operation (of input tensor placeholders) is no longer its final operation.
     // The newly created operation becomes the final operation of its input.
     //
-    operation0.inputs_old_new_finalOperation__setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+    operation0.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
 
     if ( operation1 )
-      operation1.inputs_old_new_finalOperation__setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+      operation1.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
 
     // 2. Put into queue.
     this.operationArray.push( operation0 );
@@ -376,7 +376,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    */
   static set_endingInput0_endingInput1( endingInput0, endingInput1 ) {
     Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this.endingDummyOperation, endingInput0, endingInput1 );
-    this.endingDummyOperation.inputs_old_new_finalOperation__setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+    this.endingDummyOperation.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
   }
 
 
