@@ -168,6 +168,30 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
   }
 
   /**
+   *
+   * @param {TensorPlaceholder.Base} aTensorPlaceholder
+   *   The tensor placeholder to be compared to .inputX and .outputX. If null, always return false.
+   *
+   * @return {boolean}
+   *   If the aTensorPlaceholder is .input0 or .input1 or .output0 or .output1, return true. If a .inputX and .outputX is undefined,
+   * it will be skipped (i.e. not be compared).
+   */
+  is_inputs_outputs_byTensorPlaceholder( aTensorPlaceholder ) {
+    if ( !aTensorPlaceholder )
+      return false;
+    if ( ( this.input0 ) && ( aTensorPlaceholder == this.input0 ) )
+      return true;
+    if ( ( this.input1 ) && ( aTensorPlaceholder == this.input1 ) )
+      return true;
+    if ( ( this.output0 ) && ( aTensorPlaceholder == this.output0 ) )
+      return true;
+    if ( ( this.output1 ) && ( aTensorPlaceholder == this.output1 ) )
+      return true;
+    return false;
+  }
+
+
+  /**
    * Sub-class should override this property.
    *
    * @return {number}
