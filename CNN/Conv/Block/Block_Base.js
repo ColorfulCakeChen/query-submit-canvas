@@ -7,14 +7,6 @@ import * as Weights from "../../Unpacker/Weights.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import * as ChannelCountCalculator from "../ChannelCountCalculator.js";
-
-//!!! (2022/06/01 Remarked) Included in Operation.Xxx
-// import * as Pointwise from "../Pointwise.js";
-// import * as Depthwise from "../Depthwise.js";
-// import * as AddTwoTensors from "../AddTwoTensors.js";
-// import * as ConcatAlongAxisId2 from "../ConcatAlongAxisId2.js";
-// import * as ConcatShuffleSplit from "../ConcatShuffleSplit.js";
-
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as Operation from "../Operation.js";
 import { Params } from "./Block_Params.js";
@@ -178,17 +170,23 @@ import { Params } from "./Block_Params.js";
  *   How many output tensors will be returned by the parameter outputTensors of apply(). At least 1. At most 2. It is
  * determined by channelCount1_pointwise1Before and pointwise22ChannelCount.
  *
- * @member {boolean} bPointwise1
- *   If true, the pointwise1 convolution exists.
+
+//!!! (2022/06/07 Remarrked) No longer recorded.
+//  * @member {boolean} bPointwise1
+//  *   If true, the pointwise1 convolution exists.
+
  *
  * @member {string} pointwise1ActivationName
  *   The activation function id (Params.pointwise1ActivationId.valueDesc.Ids.Xxx) after the first pointwise convolution.
  *
- * @member {boolean} bDepthwise1
- *   If true, the first depthwise convolution (or average pooling, or maximum pooling) exists.
- *
- * @member {boolean} bDepthwise2
- *   If true, the second depthwise convolution (or average pooling, or maximum pooling) exists.
+
+//!!! (2022/06/07 Remarrked) No longer recorded.
+//  * @member {boolean} bDepthwise1
+//  *   If true, the first depthwise convolution (or average pooling, or maximum pooling) exists.
+//  *
+//  * @member {boolean} bDepthwise2
+//  *   If true, the second depthwise convolution (or average pooling, or maximum pooling) exists.
+ 
  *
  * @member {string} depthwise_AvgMax_Or_ChannelMultiplier_Name
  *   Depthwise operation name.
@@ -196,14 +194,17 @@ import { Params } from "./Block_Params.js";
  * @member {string} depthwiseActivationName
  *   The activation function name (Params.depthwiseActivationId.valueDesc.Ids.Xxx) after depthwise convolution.
  *
- * @member {boolean} bPointwise2
- *   If true, the pointwise2 (i.e. pointwise21 or/and pointwise22) convolution exists.
- *
- * @member {boolean} bPointwise21
- *   If true, the first pointwise2 convolution exists.
- *
- * @member {boolean} bPointwise22
- *   If true, the second pointwise2 convolution exists.
+
+//!!! (2022/06/07 Remarrked) No longer recorded.
+//  * @member {boolean} bPointwise2
+//  *   If true, the pointwise2 (i.e. pointwise21 or/and pointwise22) convolution exists.
+//  *
+//  * @member {boolean} bPointwise21
+//  *   If true, the first pointwise2 convolution exists.
+//  *
+//  * @member {boolean} bPointwise22
+//  *   If true, the second pointwise2 convolution exists.
+
  *
  * @member {string} pointwise21ActivationName
  *   The activation function id (Params.pointwise21ActivationId.valueDesc.Ids.Xxx) after the first pointwise2 convolution.
@@ -376,7 +377,9 @@ class Base extends ReturnOrClone.Base {
       + 1  // for extracting pointwise1 filters (and biases) from inputFloat32Array and building tensors.
       + 1  // for extracting depthwise filters (and biases) from inputFloat32Array and building tensors.
       + 1  // for concat1.
+      + 1  // for extracting squeeze-and-excitation prefix pointwise2.
       + 1  // for extracting pointwise2 filters (and biases) from inputFloat32Array and building tensors.
+      + 1  // for extracting squeeze-and-excitation postfix pointwise2.
       + 1  // for add-input-to-output.
       + 1  // for concat2-shuffle-split.
       + 1  // for all pointwise1-depthwise-pointwise2 filters (and biases) ready.
@@ -387,7 +390,7 @@ class Base extends ReturnOrClone.Base {
 
     this.disposeTensors();  // Also initialize some member function pointers to no_operation().
 
-    // 0.2 Extract parameters.
+    // 1. Extract parameters.
     if ( !params )
       return false;
 
@@ -459,9 +462,11 @@ class Base extends ReturnOrClone.Base {
     yield progressRoot;  // Parameters extracted. Report progress.
 
 
-    // 1. Prepare Input TensorPlaceholder and Operation Array.
+    // 2. pointwise1
 
-    // 1.1 Prepare partial pointwise1 arguments.
+    // 2.1 Prepare Input TensorPlaceholder and Operation Array.
+
+    // 2.1.1 Prepare partial pointwise1 arguments.
 
     // Assume not higher-half-different.
     let nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
@@ -514,7 +519,7 @@ class Base extends ReturnOrClone.Base {
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
     }
 
-    // 1.2 Create inputs tensor placeholders and sub operation array.
+    // 2.1.2 Create inputs tensor placeholders and sub operation array.
     {
       let inputTensorPlaceholder0, inputTensorPlaceholder1;
 
@@ -540,7 +545,7 @@ class Base extends ReturnOrClone.Base {
     //       of .endingInputX. Unless it could be un-registered, otherwise it should always be put into queue.
 
 
-    // 2. The pointwise1 convolution.
+    // 2.2 The pointwise1 convolution.
     if ( this.pointwise1ChannelCount > 0 ) {
 
       let pointwise1 = new Pointwise.SameWhenPassThrough(
@@ -561,11 +566,6 @@ class Base extends ReturnOrClone.Base {
 
     ++progressToAdvance.value;
     yield progressRoot;  // pointwise1 filters was ready. Report progress.
-
-
-      
-
-//!!! ...unfinished... (2022/06/04)
 
     // 3. The depthwise operation.
     //
@@ -610,11 +610,6 @@ class Base extends ReturnOrClone.Base {
       }
 
       // 3.2 The depthwise2 operation.
-
-//!!! (2022/06/06 Remarked)
-//      let depthwise2_boundsArraySet_output0; // Because depthwise2 may not exist, track it by local variable (which will be used by concat1).
-
-      //this.bDepthwise2 = false;
       let depthwise2;
       if ( this.bDepthwise2Requested ) {
 
@@ -637,26 +632,19 @@ class Base extends ReturnOrClone.Base {
         this.byteOffsetEnd = depthwise2.byteOffsetEnd;
 
         //this.bDepthwise2 = this.depthwise2.bExisted;
-        //if ( this.bDepthwise2 ) {
-        //  // The depthwise2 is requested and created. It means ONE_INPUT_TWO_DEPTHWISE.
         //
-        //} else {
-        //  // The depthwise2 is requested but not created. It means no depthwise operation (i.e. ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ).
-        //  // In this case, the depthwise2 should be short circuit to inputTensor[ 0 ] (i.e. not inputTensor[ 1 ]).
-        //}
-
-//!!! (2022/06/06 Remarked)
-//        depthwise2_boundsArraySet_output0 = this.depthwise2.boundsArraySet.output0;
+        // Note:
+        //   - If ( depthwise2.bExisted == true ), the depthwise2 is requested and created. It means ONE_INPUT_TWO_DEPTHWISE.
+        //
+        //   - If ( depthwise2.bExisted == false ), the depthwise2 is requested but not created. It means no depthwise operation
+        //     (i.e. ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ). In this case, the depthwise2 should be short circuit to
+        //     inputTensor[ 0 ] (i.e. not inputTensor[ 1 ]).
 
       } else {
         // Since the depthwise2 is not requested, it is always short circuit to input1 (i.e. not input0).
-
-//!!! (2022/06/06 Remarked)
-//         this.channelCount_depthwise2After_concat1Before = Math.max( 0, this.channelCount1_pointwise1Before ); // At least 0. Avoid negative.
-//         depthwise2_boundsArraySet_output0 = inputScaleBoundsArray1;
-//         TensorOpCounters.depthwise2 = TensorOpCounters.input1;
+        //this.bDepthwise2 = false;
       }
-      
+
       this.operation_append( depthwise1, depthwise2 );
     }
 
@@ -664,30 +652,29 @@ class Base extends ReturnOrClone.Base {
     yield progressRoot;  // depthwise filters was ready. Report progress.
 
     // 4. Concat1
-
-    let concat1_boundsArraySet_output0; // Because concat1 may not exist, track it by local variable (which will be used by pointwise21).
-
     if ( this.bConcat1Requested ) {
-      
-      this.channelCount_concat1After_pointwise2Before
-        = this.channelCount_depthwise1After_concat1Before + this.channelCount_depthwise2After_concat1Before;
-
-      this.concat1 = new ConcatAlongAxisId2.Base( false, false, this.depthwise1.boundsArraySet.output0, depthwise2_boundsArraySet_output0 );
-      concat1_boundsArraySet_output0 = this.concat1.boundsArraySet.output0;
-
-      TensorOpCounters.concat1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_concat1",
-        this.concat1, TensorOpCounters.depthwise1, TensorOpCounters.depthwise2 );
-
-    } else {
-      this.channelCount_concat1After_pointwise2Before = this.channelCount_depthwise1After_concat1Before;
-      concat1_boundsArraySet_output0 = this.depthwise1.boundsArraySet.output0;
-      TensorOpCounters.concat1 = TensorOpCounters.depthwise1;
+      let concat1 = new ConcatAlongAxisId2.Base( this.operationArray.endingInput0, this.operationArray.endingInput1 );
+      this.operation_append( concat1 );
     }
 
     ++progressToAdvance.value;
     yield progressRoot;  // concat1 was ready. Report progress.
 
-    // 5. The pointwise2 convolution.
+
+//!!! ...unfinished... (2022/06/07)
+    // 5. The squeeze-and-excitation prefix pointwise2
+
+    this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
+    this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
+    this.bSqueezeExcitationPrefix = params.bSqueezeExcitationPrefix;
+
+    ++progressToAdvance.value;
+    yield progressRoot;  // squeeze-and-excitation (prefix pointwise2) was ready. Report progress.
+
+
+//!!! ...unfinished... (2022/06/07)
+
+    // 6. The pointwise2 convolution.
 
     // Assume not higher-half-different.
     let nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
@@ -750,7 +737,7 @@ class Base extends ReturnOrClone.Base {
       }
     }
 
-    // 5.1 Pointwise21
+    // 6.1 Pointwise21
     //
     // Note:
     //   - When ( bHigherHalfDifferent == true ) and ( channelShuffler_outputGroupCount > 0 ), it means output channels will be shuffled.
@@ -784,7 +771,7 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_pointwise21After_concat2Before = 0;  // No first pointwise2 convolution.
     }
 
-    // 5.2 Pointwise22
+    // 6.2 Pointwise22
     if ( this.pointwise22ChannelCount > 0 ) {
       this.pointwise22 = new Pointwise.SameWhenPassThrough_PrefixSqueezeExcitation(
         this.nSqueezeExcitationChannelCountDivisor, inputHeight_SqueezeExcitation, inputWidth_SqueezeExcitation,
@@ -819,7 +806,7 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_pointwise22After_concat2Before = 0;  // No second pointwise2 convolution.
     }
 
-    // 5.3 Pointwise2 (= Pointwise21 + Pointwise22 )
+    // 6.3 Pointwise2 (= Pointwise21 + Pointwise22 )
     this.bPointwise2 = ( this.bPointwise21 || this.bPointwise22 );
     this.channelCount_pointwise2After_concat2Before
       = this.channelCount_pointwise21After_concat2Before + this.channelCount_pointwise22After_concat2Before;
@@ -846,11 +833,21 @@ class Base extends ReturnOrClone.Base {
         + `should be the same as params.input1ChannelCount ( ${params.input1ChannelCount} ).`
     );
 
-    // 5.4
+    // 6.4
     ++progressToAdvance.value;
     yield progressRoot;  // pointwise2 filters was ready. Report progress.
 
-    // 6. Add-input-to-output
+
+//!!! ...unfinished... (2022/06/07)
+    // 7. The squeeze-and-excitation postfix pointwise2
+
+    ++progressToAdvance.value;
+    yield progressRoot;  // squeeze-and-excitation (postfix pointwise2) was ready. Report progress.
+
+
+//!!! ...unfinished... (2022/06/07)
+
+    // 8. Add-input-to-output
 
     // Because addInput0ToPointwise21 and addInput0ToPointwise21 may not exist, track it by local variable (which will be used by
     // concat2ShuffleSplit and this Block final bounds arrray set).
@@ -858,7 +855,7 @@ class Base extends ReturnOrClone.Base {
     let addInput0ToPointwise21_boundsArraySet_output0 = this.pointwise21.boundsArraySet.output0;
     let addInput0ToPointwise22_boundsArraySet_output0 = this.pointwise22?.boundsArraySet.output0;
 
-    // 6.1
+    // 8.1
     //
     // Although caller could request add-input-to-output, it may or may not doable.
     // Only if the dimension of output is the same as the dimension of input, it is possible to add-input-to-output.
@@ -900,7 +897,7 @@ class Base extends ReturnOrClone.Base {
 
     this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
 
-    // 6.2
+    // 8.2
     //
     // Q: Why not create TensorOpCounter in the above codes?
     // A: The reason is that let addInput0ToPointwise21 in front of pointwise22.
@@ -933,11 +930,11 @@ class Base extends ReturnOrClone.Base {
         TensorOpCounters.addInput0ToPointwise22 = TensorOpCounters.pointwise22;
     }
 
-    // 6.3
+    // 8.3
     ++progressToAdvance.value;
     yield progressRoot;  // add-input-to-output was ready. Report progress.
 
-    // 7. Concat2-Shuffle-Split
+    // 9. Concat2-Shuffle-Split
     if ( this.bConcat2ShuffleSplitRequested ) {
 
       let bShuffleSplit, TensorOpCounters_NamePostfix;
@@ -999,15 +996,15 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // concat2-Shuffle-Split was ready. Report progress.
 
-    // 8. Configure correct function pointers according to whether keeping or destroying input tensor.
+    // 10. Configure correct function pointers according to whether keeping or destroying input tensor.
 
-    // 8.1 Determine which apply_Xxx() function should be used.
+    // 10.1 Determine which apply_Xxx() function should be used.
     Base.setup_apply_block().call( this );
 
-    // 8.2 Adjust the destroy-or-keep behavior of every tensor according to whether the operation is the first operation or last operation.
+    // 10.2 Adjust the destroy-or-keep behavior of every tensor according to whether the operation is the first operation or last operation.
     this.operationArray.setKeepInputTensor( this.bKeepInputTensor, this.bKeepInputTensor ); // User requests to keep input tensors.
 
-    // 8.3
+    // 10.3
     ++progressToAdvance.value;
     yield progressRoot;  // All pointwise1-depthwise-pointwise2 filters was ready. Report progress.
 
