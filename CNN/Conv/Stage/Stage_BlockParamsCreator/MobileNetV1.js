@@ -5,7 +5,7 @@ import { Params } from "../Stage_Params.js";
 import { Base } from "./Base.js";
 
 /**
- * Provide parameters for MobileNetV1 (i.e. no-add-inut-to-output, pointwise1 is same size of pointwise21).
+ * Provide parameters for MobileNetV1 (i.e. no-add-inut-to-output, pointwise1 is same size of pointwise20).
  *
  * Although this the simplest pointwise1-depthwise-pointwise2 architecture, it may be the most efficient neural network if
  * using CLIP_BY_VALUE_N3_P3 (instead of RELU) as activation function.
@@ -42,10 +42,10 @@ class MobileNetV1 extends Base {
 
     if ( stageParams.bPointwise1 == false ) {
       this.pointwise1ChannelCount = 0;                                  // NoPointwise1.
-      this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                   // Double of input0. (Same as pointwise21.)
+      this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                   // Double of input0. (Same as pointwise20.)
 
     } else {
-      this.pointwise1ChannelCount = stageParams.sourceChannelCount * 2; // Double of input0. (Same as pointwise21.)
+      this.pointwise1ChannelCount = stageParams.sourceChannelCount * 2; // Double of input0. (Same as pointwise20.)
       this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     }
 
@@ -53,11 +53,11 @@ class MobileNetV1 extends Base {
     //
     // Note: In original MobileNet(V2) design, it is not always "twice". We choose "twice" just for comparing with ShuffleNetV2.
     //
-    this.pointwise21ChannelCount = stageParams.sourceChannelCount * 2;
+    this.pointwise20ChannelCount = stageParams.sourceChannelCount * 2;
 
     this.bOutput1Requested = false; // In MobileNet, all blocks do not have output1.
 
-    this.outChannels0 = this.pointwise21ChannelCount;
+    this.outChannels0 = this.pointwise20ChannelCount;
     this.outChannels1 = 0;
   }
 
@@ -74,7 +74,7 @@ class MobileNetV1 extends Base {
 
   /** @override */
   configTo_beforeBlockLast() {
-    super.configTo_beforeBlockLast(); // blockLast's pointwise21 bias.
+    super.configTo_beforeBlockLast(); // blockLast's pointwise20 bias.
   }
 
 }
