@@ -182,65 +182,27 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    *   - If there too many operationX.outputY needs to be handled, it will be asserted failed.
    *
    *
-   * @param {Operation.Base} operation0
-   *   The 1st operation object to be appended into this.operationArray[].
-   *
-
-//!!! (2022/06/06 Remarked) .init() should be done by caller (not by TwinArray).
-//    * @param {Array} initArgs0
-//    *   The arguments to be passed to the .init() method of the 1st operation object.
-//    *   - If null, the operation object's init() will not be called. Usually, this means the operation object needs not extract any weights.
-//    *   - If the .init() is called and returns false, this method will failed and return false.
-//    *   - If the .init() is called and returns true, this method will update this.byteOffsetEnd.
-
-   *
+   * @param {Operation.Base} operation0  The 1st operation object to be appended into this.operationArray[].
    * @param {Operation.Base} operation1  The 2nd operation object. If null, there will be no 2nd operation.
-
-//!!! (2022/06/06 Remarked) .init() should be done by caller (not by TwinArray).
-//   * @param {Array} initArgs1            The 2nd operation .init()'s arguments. Used only if ( operation1 != null ).
-
-
-   *
-
-//!!! (2022/06/06 Remarked) never failed
-//    * @return {boolean}
-//    *   Return true, if success.
-
    */
-//!!! (2022/06/06 Remarked) .init() should be done by caller (not by TwinArray).
-//  operation_append( operation0, initArgs0, operation1, initArgs1 ) {
   operation_append( operation0, operation1 ) {
 
-//!!! (2022/06/06 Remarked) .init() should be done by caller (not by TwinArray).
-//     // 1. Initialize.
-//
-//     // 1.1 1st operation object.
-//     if ( !TwinArray.operation__update_byteOffsetEnd_if_init_ok.call( this, operation0, initArgs0 ) )
-//       return false;  // e.g. input array does not have enough data.
-//
-//     // 1.2 2nd operation object.
-//     if ( operation1 )
-//       if ( !TwinArray.operation__update_byteOffsetEnd_if_init_ok.call( this, operation1, initArgs1 ) )
-//         return false;  // e.g. input array does not have enough data.
-
-
-    // 1. Adjust keep-input-tensor flags.
+    // 1. Adjust keep-input-tensor flags, and put into queue.
     //
     // The previous final operation (of input tensor placeholders) is no longer its final operation.
     // The newly created operation becomes the final operation of its input.
     //
-    operation0.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+    if ( operation0 ) {
+      operation0.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+      this.operationArray.push( operation0 );
+    }
 
-    if ( operation1 )
+    if ( operation1 ) {
       operation1.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-
-    // 2. Put into queue.
-    this.operationArray.push( operation0 );
-
-    if ( operation1 )
       this.operationArray.push( operation1 );
+    }
 
-    // 3. Determine whether give up or keep current .endingInputX
+    // 2. Determine whether give up or keep current .endingInputX
     //
     // No matter ( .endingInputX does not exist ) or ( .endingInputX exists but .endingDummyOperation is no longer its final
     // operation ), .endingInputX will become an empty slot which could handle newly generated output tensor placeholders from
@@ -252,22 +214,20 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
     //
     let endingInput0_new, endingInput1_new;
     {
-      if ( this.endingDummyOperation.input0?.finalOperation == this.endingDummyOperation ) {
+      if ( this.endingDummyOperation.input0?.finalOperation == this.endingDummyOperation )
         endingInput0_new = this.endingDummyOperation.input0; // Continue to handle it Since it still is its final operation.
-      } else {
+      else
         endingInput0_new = null;
-      }
 
-      if ( this.endingDummyOperation.input1?.finalOperation == this.endingDummyOperation ) {
+      if ( this.endingDummyOperation.input1?.finalOperation == this.endingDummyOperation )
         endingInput1_new = this.endingDummyOperation.input1; // Continue to handle it Since it still is its final operation.
-      } else {
+      else
         endingInput1_new = null;
-      }
     }
 
-    // 4. Adjust .endingInputX
+    // 3. Adjust .endingInputX
 
-    // 4.1 Collect output tensor placeholders in reverse order (so that they will be popped in forward order).
+    // 3.1 Collect output tensor placeholders in reverse order (so that they will be popped in forward order).
     {
       this.tempLastOutputTensorPlaceholderArray.length = 0;
 
@@ -278,7 +238,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
           this.tempLastOutputTensorPlaceholderArray.push( operation1.output0 );
       }
 
-      {
+      if ( operation0 ) {
         if ( operation0.output1 )
           this.tempLastOutputTensorPlaceholderArray.push( operation0.output1 );
         if ( operation0.output0 )
@@ -286,7 +246,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       }
     }
 
-    // 4.2 Assign newly generated output tensor placeholders (from newly appended operations) to empty input slot of .endingDummyOperation.
+    // 3.2 Assign newly generated output tensor placeholders (from newly appended operations) to empty input slot of .endingDummyOperation.
     {
       if ( ( this.tempLastOutputTensorPlaceholderArray.length > 0 ) && ( endingInput0_new == null ) )
         endingInput0_new = this.tempLastOutputTensorPlaceholderArray.pop();
@@ -301,11 +261,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
       );
     }
 
-    // 4.3
+    // 3.3 Confirm the new endingInputX.
     Base.set_endingInput0_endingInput1.call( this, endingInput0_new, endingInput1_new );
-
-//!!! (2022/06/06 Remarked) never failed
-//    return true;
   }
 
 
