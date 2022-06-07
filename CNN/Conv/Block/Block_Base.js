@@ -759,34 +759,8 @@ class Base extends ReturnOrClone.Base {
         //this.bPointwise22 = false;
       }
 
-//!!! ...unfinished... (2022/06/07)
-
       // 6.3 Pointwise2 (= Pointwise21 + Pointwise22 )
-      this.bPointwise2 = ( this.bPointwise21 || this.bPointwise22 );
-      this.channelCount_pointwise2After_concat2Before
-        = this.channelCount_pointwise21After_concat2Before + this.channelCount_pointwise22After_concat2Before;
-
-      if ( !this.bPointwise2 ) {
-        // If there is not any pointwise2 convolution, the result channel count will not be zero. It should be the channel count after
-        // depthwise1 operation together with the input1 channel count (if existed). And it should be at the first output tensor
-        // (i.e. outputTensors[ 0 ]).
-        this.channelCount_pointwise2After_concat2Before = this.channelCount_pointwise21After_concat2Before
-          = this.channelCount_concat1After_pointwise2Before;
-      }
-
-      // Determine inChannels1.
-      if ( this.channelCount1_pointwise1Before
-             == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
-        this.inChannels1 = this.channelCount_pointwise21After_concat2Before; // The channel count of pointwise21's result.
-
-      } else {
-        this.inChannels1 = Math.max( 0, this.channelCount1_pointwise1Before );
-      }      
-
-      tf.util.assert( this.inChannels1 == params.input1ChannelCount,
-        `Block.Base.initer(): this.inChannels1 ( ${this.inChannels1} ) `
-          + `should be the same as params.input1ChannelCount ( ${params.input1ChannelCount} ).`
-      );
+      //this.bPointwise2 = ( this.bPointwise21 || this.bPointwise22 );
     }
 
     // 6.4
@@ -1005,68 +979,10 @@ class Base extends ReturnOrClone.Base {
       this.operationArray = null;
     }
 
-
-//!!! ...unfinished... (2022/06/01)
-    if ( this.pointwise1 ) {
-      this.pointwise1.disposeTensors();
-      this.pointwise1 = null;
-    }
-
-    if ( this.depthwise1 ) {
-      this.depthwise1.disposeTensors();
-      this.depthwise1 = null;
-    }
-
-    if ( this.depthwise2 ) {
-      this.depthwise2.disposeTensors();
-      this.depthwise2 = null;
-    }
-
-    if ( this.concat1 ) {
-      this.concat1 = null;
-    }
-
-    if ( this.pointwise21 ) {
-      this.pointwise21.disposeTensors();
-      this.pointwise21 = null;
-    }
-
-    if ( this.pointwise22 ) {
-      this.pointwise22.disposeTensors();
-      this.pointwise22 = null;
-    }
-
-    if ( this.addInput0ToPointwise21 ) {
-      this.addInputToPointwise21Output = null;
-    }
-
-    if ( this.addInput0ToPointwise22 ) {
-      this.addInputToPointwise22Output = null;
-    }
-
-    if ( this.concat2ShuffleSplit ) {
-      this.concat2ShuffleSplit = null;
-    }
-
     if ( this.channelShuffler_ConcatPointwiseConv ) {
       this.channelShuffler_ConcatPointwiseConv = null; // Note: Do not dispose the channel shuffler here.
     }
 
-//!!! (2022/06/01 Remarked)
-//    this.intermediateTensorsArray = null;
-
-//!!! (2022/06/01 Remarked)
-//     this.inputTensorCount
-//       = this.bPointwise1
-//       = this.bDepthwise1 = this.bDepthwise2 = this.bDepthwise2Requested
-//       = this.bConcat1Requested
-//       = this.bPointwise21 = this.bPointwise22 = this.bOutput1Requested = this.bAddInputToOutputRequested
-//       = this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 = this.bShould_addInput0ToPointwise22
-//       = this.bConcat2ShuffleSplitRequested
-//       = this.outputTensorCount
-//       = undefined;
-
-    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
   }
