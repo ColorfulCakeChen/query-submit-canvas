@@ -561,7 +561,7 @@ class Base extends ReturnOrClone.Base {
       this.byteOffsetEnd = pointwise1.byteOffsetEnd;
 
       //this.bPointwise1 = pointwise1.bExisted;
-      this.operation_append( this.pointwise1 );
+      this.operationArray.operation_append( pointwise1 );
     }
 
     ++progressToAdvance.value;
@@ -645,7 +645,7 @@ class Base extends ReturnOrClone.Base {
         //this.bDepthwise2 = false;
       }
 
-      this.operation_append( depthwise1, depthwise2 );
+      this.operationArray.operation_append( depthwise1, depthwise2 );
     }
 
     ++progressToAdvance.value;
@@ -654,7 +654,7 @@ class Base extends ReturnOrClone.Base {
     // 4. Concat1
     if ( this.bConcat1Requested ) {
       let concat1 = new Operation.ConcatAlongAxisId2( this.operationArray.endingInput0, this.operationArray.endingInput1 );
-      this.operation_append( concat1 );
+      this.operationArray.operation_append( concat1 );
     }
 
     ++progressToAdvance.value;
@@ -739,8 +739,9 @@ class Base extends ReturnOrClone.Base {
       //this.bPointwise21 = pointwise21.bExisted;
 
       // 6.2 Pointwise22
+      let pointwise22;
       if ( this.pointwise22ChannelCount > 0 ) {
-        let pointwise22 = new Operation.Pointwise_SameWhenPassThrough(
+        pointwise22 = new Operation.Pointwise_SameWhenPassThrough(
           this.operationArray.endingInput0, // Note: the same as pointwise21's input (i.e. not .endingInput1).
           this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
           nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2, channelShuffler_outputGroupCount_pointwise2
@@ -761,6 +762,8 @@ class Base extends ReturnOrClone.Base {
 
       // 6.3 Pointwise2 (= Pointwise21 + Pointwise22 )
       //this.bPointwise2 = ( this.bPointwise21 || this.bPointwise22 );
+
+      this.operationArray.operation_append( pointwise21, pointwise22 );
     }
 
     // 6.4
@@ -826,6 +829,9 @@ class Base extends ReturnOrClone.Base {
         this.addInput0ToPointwise22 = new AddTwoTensors.Base( false, false, inputScaleBoundsArray0, this.pointwise22.boundsArraySet.output0 );
         addInput0ToPointwise22_boundsArraySet_output0 = this.addInput0ToPointwise22.boundsArraySet.output0;
       }
+
+      this.operationArray.operation_append( ???21, ???22 );
+
     }
 
     this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
