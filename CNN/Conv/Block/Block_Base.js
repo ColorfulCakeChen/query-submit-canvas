@@ -906,7 +906,7 @@ class Base extends ReturnOrClone.Base {
   }
 
   /**
-   * Release all ScaleBoundsArray (inside tensor placeholder) except .inputX. and .outputX.
+   * Release all ScaleBoundsArray (inside tensor placeholder) except this.inputX and this.outputX
    *
    * This could reduce memory footprint by releasing unused scale bounds array.
    */
