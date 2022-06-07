@@ -109,7 +109,7 @@ class ShuffleNetV2 extends Base {
     // The channel count of input1 must be the same as pointwise21's result. The result of pointwise21 (which operates on input0)
     // will be concatenated with input1.
     //
-    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1;
+    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1;
 
     this.channelShuffler_init(); // In ShuffleNetV2, all blocks (except block0) uses channel shuffler (with two convolution groups).
   }
