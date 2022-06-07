@@ -41,7 +41,7 @@ import { Params } from "./Stage_Params.js";
  *     - ( bPointwise1 == false ), depthwise1 double ( channelMultiplier == 2 ) of input0. pointwis21 double of input0.
  *     - ( bPointwise1 == true ), pointwise1 double of input0. pointwis21 double of input0.
  *
- *   - ShuffleNetV2 (3), ShuffleNetV2_ByPointwise22 (4)
+ *   - ShuffleNetV2 (3), ShuffleNetV2_ByPointwise21 (4)
  *     - ( bPointwise1 == false ), depthwise1 double ( channelMultiplier == 2 ) of input0.
  *     - ( bPointwise1 == true ), concatenate depthwise1 and depthwise2.
  *
@@ -673,7 +673,7 @@ Base.nConvStageType_to_BlockParamsCreator_ClassArray = [
   BlockParamsCreator.MobileNetV2_Thin,                    // ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN (2)
   BlockParamsCreator.MobileNetV2,                         // ValueDesc.ConvStageType.Ids.MOBILE_NET_V2 (3)
   BlockParamsCreator.ShuffleNetV2,                        // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2 (4)
-  BlockParamsCreator.ShuffleNetV2_ByPointwise22,          // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22 (5)
+  BlockParamsCreator.ShuffleNetV2_ByPointwise21,          // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21 (5)
   BlockParamsCreator.ShuffleNetV2_ByMobileNetV1,          // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (6)
   BlockParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid, // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (7)
 ];
