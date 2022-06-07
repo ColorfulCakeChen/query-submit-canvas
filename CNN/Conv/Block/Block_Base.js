@@ -975,6 +975,8 @@ class Base extends ReturnOrClone.Base {
     //
 
     // 0.
+   
+    // Assume .endingInput0 and endingInput1 have the same height and width. So, checking .endingInput0 should be enough.
     let inputHeight = this.operationArray.endingInput0.height;
     let inputWidth = this.operationArray.endingInput0.width;
 
@@ -1026,16 +1028,20 @@ class Base extends ReturnOrClone.Base {
 
     // 1. squeezeDepthwise
     if ( bSqueeze ) {
+      const squeezeAvgMax_Or_ChannelMultiplier = ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG;    // global average pooling.
+      const squeezeFilterHeight = inputHeight; // ( filterSize == inputImageSize ) means global pooling.
+      const squeezeFilterWidth = inputWidth;
+      const squeezeStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID; // To shrink to ( 1 x 1 ) image, pad should be "valid" (i.e. not "same").
+      const squeezeBias = false; // squeeze has no bias (since it also has no activation).
+      const squeezeActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE; // squeeze has no activation.
+      const squeezeHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE  // (global) average pooling must be no higher-half-different.
+
       let squeezeDepthwise1;
       {
         squeezeDepthwise1 = new Operation.Depthwise_ConstantWhenPassThrough(
           this.operationArray.endingInput0,
-          ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,    // global average pooling.
-          inputHeight, inputWidth,                                    // ( filterSize == inputImageSize ) means global pooling.
-          ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID,     // To shrink to ( 1 x 1 ) image, pad should be "valid" (i.e. not "same").
-          false,                                                      // (bBias) squeeze has no bias (since it also has no activation).
-          ValueDesc.ActivationFunction.Singleton.Ids.NONE,            // (nActivationId) squeeze has no activation.
-          ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE  // (global) average pooling must be no higher-half-different.
+          squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
+          squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent
         );
 
         if ( !squeezeDepthwise1.init( inputFloat32Array, this.byteOffsetEnd ) )
@@ -1046,13 +1052,9 @@ class Base extends ReturnOrClone.Base {
       let squeezeDepthwise2;
       if ( this.pointwise22ChannelCount > 0 ) {
         squeezeDepthwise2 = new Operation.Depthwise_ConstantWhenPassThrough(
-          this.operationArray.endingInput0,
-          ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,    // global average pooling.
-          inputHeight, inputWidth,                                    // ( filterSize == inputImageSize ) means global pooling.
-          ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID,     // To shrink to ( 1 x 1 ) image, pad should be "valid" (i.e. not "same").
-          false,                                                      // (bBias) squeeze has no bias (since it also has no activation).
-          ValueDesc.ActivationFunction.Singleton.Ids.NONE,            // (nActivationId) squeeze has no activation.
-          ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE  // (global) average pooling must be no higher-half-different.
+          this.operationArray.endingInput1,
+          squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
+          squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent
         );
 
         if ( !squeezeDepthwise2.init( inputFloat32Array, this.byteOffsetEnd ) )
