@@ -188,7 +188,7 @@ class Params extends Weights.Params {
   get sourceWidth()                    { return this.parameterMapModified.get( Params.sourceWidth ); }
   get sourceChannelCount()             { return this.parameterMapModified.get( Params.sourceChannelCount ); }
 
-  get blockCountRequested()             { return this.parameterMapModified.get( Params.blockCountRequested ); }
+  get blockCountRequested()            { return this.parameterMapModified.get( Params.blockCountRequested ); }
   get bPointwise1()                    { return this.parameterMapModified.get( Params.bPointwise1 ); }
 
   get depthwiseFilterHeight()          { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
@@ -210,7 +210,7 @@ class Params extends Weights.Params {
 Params.sourceHeight =                   new ParamDesc.Int(                "sourceHeight",               1, ( 10 * 1024 ) );
 Params.sourceWidth =                    new ParamDesc.Int(                "sourceWidth",                1, ( 10 * 1024 ) );
 Params.sourceChannelCount =             new ParamDesc.Int(                "sourceChannelCount",         1, ( 10 * 1024 ) );
-Params.blockCountRequested =             new ParamDesc.Int(                "blockCountRequested",         2, (  1 * 1024 ) );
+Params.blockCountRequested =            new ParamDesc.Int(                "blockCountRequested",        2, (  1 * 1024 ) );
 Params.bPointwise1 =                    new ParamDesc.Bool(               "bPointwise1" );
 Params.depthwiseFilterHeight =          new ParamDesc.Int(                "depthwiseFilterHeight",      1, ( 10 * 1024 ) );
 Params.depthwiseFilterWidth =           new ParamDesc.Int(                "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
