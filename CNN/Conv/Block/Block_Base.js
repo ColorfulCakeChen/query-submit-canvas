@@ -969,10 +969,13 @@ class Base extends ReturnOrClone.Base {
     //
 
     // 0.
-   
+
+    let input0 = this.operationArray.endingInput0; // will be used for output because output dimension should be the same as input.
+    let input1 = this.operationArray.endingInput1;
+
     // Assume .endingInput0 and endingInput1 have the same height and width. So, checking .endingInput0 should be enough.
-    let inputHeight = this.operationArray.endingInput0.height;
-    let inputWidth = this.operationArray.endingInput0.width;
+    let inputHeight = input0.height;
+    let inputWidth = input0.width;
 
     // 0.1 Whether squeeze (i.e. global average pooling) exists. It will be false in the following cases:
     //
@@ -1030,10 +1033,23 @@ class Base extends ReturnOrClone.Base {
       const squeezeActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE; // squeeze has no activation.
       const squeezeHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE  // (global) average pooling must be no higher-half-different.
 
-      let squeezeDepthwise1;
+      let squeezeDepthwise0;
       {
-        squeezeDepthwise1 = new Operation.Depthwise_ConstantWhenPassThrough(
+        squeezeDepthwise0 = new Operation.Depthwise_ConstantWhenPassThrough(
           this.operationArray.endingInput0,
+          squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
+          squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent
+        );
+
+        if ( !squeezeDepthwise0.init( inputFloat32Array, this.byteOffsetEnd ) )
+          return false;  // e.g. input array does not have enough data.
+        this.byteOffsetEnd = squeezeDepthwise0.byteOffsetEnd;
+      }
+
+      let squeezeDepthwise1;
+      if ( this.pointwise22ChannelCount > 0 ) {
+        squeezeDepthwise1 = new Operation.Depthwise_ConstantWhenPassThrough(
+          this.operationArray.endingInput1,
           squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
           squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent
         );
@@ -1043,40 +1059,80 @@ class Base extends ReturnOrClone.Base {
         this.byteOffsetEnd = squeezeDepthwise1.byteOffsetEnd;
       }
 
-      let squeezeDepthwise2;
-      if ( this.pointwise22ChannelCount > 0 ) {
-        squeezeDepthwise2 = new Operation.Depthwise_ConstantWhenPassThrough(
-          this.operationArray.endingInput1,
-          squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
-          squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent
-        );
-
-        if ( !squeezeDepthwise2.init( inputFloat32Array, this.byteOffsetEnd ) )
-          return false;  // e.g. input array does not have enough data.
-        this.byteOffsetEnd = squeezeDepthwise2.byteOffsetEnd;
-      }
-
-      this.operationArray.operation_append( squeezeDepthwise1, squeezeDepthwise2 );
+      this.operationArray.operation_append( squeezeDepthwise0, squeezeDepthwise1 );
     }
 
     // 2. intermediatePointwise
     if ( bIntermediate ) {
 
-      let intermediatePointwise1 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
-        this.operationArray.endingInput0, this.pointwise21ActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array );
-      if ( !intermediatePointwise1 )
-        return false;  // e.g. input array does not have enough data.
-
-      let intermediatePointwise2;
-      if ( this.pointwise22ChannelCount > 0 ) {
-        intermediatePointwise2 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
-          this.operationArray.endingInput1, this.pointwise22ActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array );
-        if ( !intermediatePointwise2 )
+      let intermediatePointwise0;
+      {
+        intermediatePointwise0 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
+          this.operationArray.endingInput0, this.pointwise21ActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array );
+        if ( !intermediatePointwise0 )
           return false;  // e.g. input array does not have enough data.
       }
 
-      this.operationArray.operation_append( intermediatePointwise1, intermediatePointwise2 );
+      let intermediatePointwise1;
+      if ( this.pointwise22ChannelCount > 0 ) {
+        intermediatePointwise1 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
+          this.operationArray.endingInput1, this.pointwise22ActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array );
+        if ( !intermediatePointwise1 )
+          return false;  // e.g. input array does not have enough data.
+      }
+
+      this.operationArray.operation_append( intermediatePointwise0, intermediatePointwise1 );
     }
+
+    // 3. excitationPointwise
+    {
+      const excitationPointwise_channelShuffler_outputGroupCount = 0; // Inside squeeze-and-excitation, never shuffle channels.
+      const excitationPointwise_bBias = true; // the ending of squeeze-and-excitation should always have bias (even if no activation).
+
+      let excitationPointwise0;
+      {
+        const excitationPointwise0_outputChannelCount = input0.channelCount; // excitation's output should have same channel count as input.
+        const excitationPointwise0_outputChannelCount_lowerHalf = input0.channelCount_lowerHalf;
+        const excitationPointwise0_nActivationId = this.pointwise21ActivationId;
+
+        excitationPointwise0 = new Operation.Pointwise_ConstantWhenPassThrough(
+          this.operationArray.endingInput0,
+          excitationPointwise0_outputChannelCount, excitationPointwise_bBias, excitationPointwise0_nActivationId,
+          nPointwise_HigherHalfDifferent, excitationPointwise0_outputChannelCount_lowerHalf,
+          excitationPointwise_channelShuffler_outputGroupCount
+        );
+
+        if ( !excitationPointwise0.init( inputFloat32Array, this.byteOffsetEnd ) )
+          return false;  // e.g. input array does not have enough data.
+        this.byteOffsetEnd = excitationPointwise0.byteOffsetEnd;
+      }
+
+      let excitationPointwise1;
+      if ( this.pointwise22ChannelCount > 0 ) {
+        const excitationPointwise1_outputChannelCount = input1.channelCount;
+        const excitationPointwise1_outputChannelCount_lowerHalf = input1.channelCount_lowerHalf;
+        const excitationPointwise1_nActivationId = this.pointwise22ActivationId;
+
+        excitationPointwise1 = new Operation.Pointwise_ConstantWhenPassThrough(
+          this.operationArray.endingInput1,
+          excitationPointwise1_outputChannelCount, excitationPointwise_bBias, excitationPointwise1_nActivationId,
+          nPointwise_HigherHalfDifferent, excitationPointwise1_outputChannelCount_lowerHalf,
+          excitationPointwise_channelShuffler_outputGroupCount
+        );
+
+        if ( !excitationPointwise1.init( inputFloat32Array, this.byteOffsetEnd ) )
+          return false;  // e.g. input array does not have enough data.
+        this.byteOffsetEnd = excitationPointwise1.byteOffsetEnd;
+      }
+
+      this.operationArray.operation_append( excitationPointwise0, excitationPointwise1 );
+    }
+
+//!!! ...unfinished... (2022/06/07)
+    // 4. Mutiply
+    {
+    }
+
 
 //!!! ...unfinished... (2022/06/07)
 //    let outputChannelCount = this.inputChannelCount; // For squeeze-and-excitation, output channel count is always the same as input.
