@@ -242,6 +242,12 @@ import { Params } from "./Block_Params.js";
  * @member {number} outChannelsAll
  *   The channel count of all output tensors (i.e. both outputTensor[ 0 ] and outputTensor[ 1 ]).
  *
+ * @member {TensorPlaceholder.Base} output0
+ *   The TensorPlaceholder object which represents this operation's 1st output.
+ *
+ * @member {TensorPlaceholder.Base} output1
+ *   The TensorPlaceholder object which represents this operation's 2nd output. It exists only if ( this.outputTensorCount >= 2 ).
+ *
 
 //!!! ...unfinished... (2022/06/05) Perhaps, output TensorPlaceholders are enough?
 
@@ -819,7 +825,9 @@ class Base extends ReturnOrClone.Base {
 //!!! ...unfinished... (2022/06/07)
 
       {
-        this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
+        this.boundsArraySet = new BoundsArraySet.InputsOutputs(
+          this.operationArray.endingInput0.scaleBoundsArray, this.operationArray.endingInput1.scaleBoundsArray,
+???
           this.concat2ShuffleSplit.boundsArraySet.output0.channelCount, this.concat2ShuffleSplit.boundsArraySet.output1?.channelCount );
 
         this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.concat2ShuffleSplit.boundsArraySet );
@@ -1012,13 +1020,8 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-  get outputHeight() {
-    return this.operationArray.output0.height;
-  }
-
-  get outputWidth() {
-    return this.operationArray.output0.width;
-  }
+  get outputHeight() { return this.operationArray.output0.height; }
+  get outputWidth() { return this.operationArray.output0.width; }
 
 
   get outChannels0() {
@@ -1036,13 +1039,12 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-  get tensorWeightCountExtracted() {
-    return this.operationArray.tensorWeightCountExtracted;
-  }
+  get output0() { return this.operationArray.output0; }
+  get output1() { return this.operationArray.output1; }
 
-  get tensorWeightCountTotal() {
-    return this.operationArray.tensorWeightCountTotal;
-  }
+
+  get tensorWeightCountExtracted() { return this.operationArray.tensorWeightCountExtracted; }
+  get tensorWeightCountTotal()     { return this.operationArray.tensorWeightCountTotal; }
 
 
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
