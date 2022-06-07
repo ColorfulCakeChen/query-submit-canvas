@@ -627,11 +627,11 @@ class Base extends ReturnOrClone.Base {
           ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE // depthwise2 never has higher-half-different.
         );
 
-        if ( !depthwise2.init( params.defaultInput, this.byteOffsetEnd, inputScaleBoundsArray0 ) )
+        if ( !depthwise2.init( params.defaultInput, this.byteOffsetEnd ) )
           return false;  // e.g. input array does not have enough data.
         this.byteOffsetEnd = depthwise2.byteOffsetEnd;
 
-        //this.bDepthwise2 = this.depthwise2.bExisted;
+        //this.bDepthwise2 = depthwise2.bExisted;
         //
         // Note:
         //   - If ( depthwise2.bExisted == true ), the depthwise2 is requested and created. It means ONE_INPUT_TWO_DEPTHWISE.
@@ -681,8 +681,6 @@ class Base extends ReturnOrClone.Base {
 // No. This problem seems not existed because Block_TestParams already arrange them properly.
 
 
-//!!! ...unfinished... (2022/06/07)
-
     // 6. The pointwise2 convolution.
     {
       // Assume not higher-half-different.
@@ -728,65 +726,40 @@ class Base extends ReturnOrClone.Base {
       //       - However, this situation is difficult to be handled. We re-design Params so that the pointwise21ChannelCount is always
       //           not zero.
       //
-      this.pointwise21 = new Operation.Pointwise_SameWhenPassThrough(
-        this.nSqueezeExcitationChannelCountDivisor, inputHeight_SqueezeExcitation, inputWidth_SqueezeExcitation,
-        this.channelCount_concat1After_pointwise2Before,
+      let pointwise21 = new Operation.Pointwise_SameWhenPassThrough(
+        this.operationArray.endingInput0,
         this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
-        nHigherHalfDifferent_pointwise2,
-        inputChannelCount_lowerHalf_pointwise2, outputChannelCount_lowerHalf_pointwise2,
-        channelShuffler_outputGroupCount_pointwise2
+        nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2, channelShuffler_outputGroupCount_pointwise2
       );
 
-      if ( !this.pointwise21.init(
-             params.defaultInput, this.byteOffsetEnd, concat1_boundsArraySet_output0, arrayTemp_forInterleave_asGrouptTwo ) )
+      if ( !pointwise21.init( params.defaultInput, this.byteOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
         return false;  // e.g. input array does not have enough data.
-      this.byteOffsetEnd = this.pointwise21.byteOffsetEnd;
+      this.byteOffsetEnd = pointwise21.byteOffsetEnd;
 
-      this.bPointwise21 = this.pointwise21.bExisted;
-      if ( this.bPointwise21 ) {
-  //!!! (2022/05/24 Remarked) No long support ( outputChannelCount == 0 ).
-  //      this.channelCount_pointwise21After_concat2Before = this.pointwise21.outputChannelCount_Real;
-        this.channelCount_pointwise21After_concat2Before = this.pointwise21.outputChannelCount;
-        this.tensorWeightCountTotal += this.pointwise21.tensorWeightCountTotal;
-        this.tensorWeightCountExtracted += this.pointwise21.tensorWeightCountExtracted;
-      } else {
-        this.channelCount_pointwise21After_concat2Before = 0;  // No first pointwise2 convolution.
-      }
+      //this.bPointwise21 = pointwise21.bExisted;
 
       // 6.2 Pointwise22
       if ( this.pointwise22ChannelCount > 0 ) {
-        this.pointwise22 = new Pointwise.SameWhenPassThrough_PrefixSqueezeExcitation(
-          this.nSqueezeExcitationChannelCountDivisor, inputHeight_SqueezeExcitation, inputWidth_SqueezeExcitation,
-          this.channelCount_concat1After_pointwise2Before,
+        let pointwise22 = new Operation.Pointwise_SameWhenPassThrough(
+          this.operationArray.endingInput0, // Note: the same as pointwise21's input (i.e. not .endingInput1).
           this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
-          nHigherHalfDifferent_pointwise2,
-          inputChannelCount_lowerHalf_pointwise2, outputChannelCount_lowerHalf_pointwise2,
-          channelShuffler_outputGroupCount_pointwise2
+          nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2, channelShuffler_outputGroupCount_pointwise2
         );
 
         // Note: Strictly speaking, sometimes pointwise22 is dependent on depthwise2. But it does not matter for BoundsArraySet
         // because depthwise1 and depthwise2 should have the same output value bounds. And so concat1_boundsArraySet_output0.
         //
-        if ( !this.pointwise22.init(
-               params.defaultInput, this.byteOffsetEnd, concat1_boundsArraySet_output0, arrayTemp_forInterleave_asGrouptTwo ) )
+        if ( !pointwise22.init( params.defaultInput, this.byteOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
           return false;  // e.g. input array does not have enough data.
-        this.byteOffsetEnd = this.pointwise22.byteOffsetEnd;
+        this.byteOffsetEnd = pointwise22.byteOffsetEnd;
 
-        this.bPointwise22 = this.pointwise22.bExisted;
+        //this.bPointwise22 = pointwise22.bExisted;
 
       } else { // Since pointwise22 is not requested (i.e. channel count is not positive), do not create the object for saving memory.
-        this.bPointwise22 = false;
+        //this.bPointwise22 = false;
       }
 
-      if ( this.bPointwise22 ) {
-  //!!! (2022/05/24 Remarked) No long support ( outputChannelCount == 0 ).
-  //      this.channelCount_pointwise22After_concat2Before = this.pointwise22.outputChannelCount_Real;
-        this.channelCount_pointwise22After_concat2Before = this.pointwise22.outputChannelCount;
-        this.tensorWeightCountTotal += this.pointwise22.tensorWeightCountTotal;
-        this.tensorWeightCountExtracted += this.pointwise22.tensorWeightCountExtracted;
-      } else {
-        this.channelCount_pointwise22After_concat2Before = 0;  // No second pointwise2 convolution.
-      }
+//!!! ...unfinished... (2022/06/07)
 
       // 6.3 Pointwise2 (= Pointwise21 + Pointwise22 )
       this.bPointwise2 = ( this.bPointwise21 || this.bPointwise22 );
