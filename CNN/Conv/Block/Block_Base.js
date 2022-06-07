@@ -1062,83 +1062,17 @@ class Base extends ReturnOrClone.Base {
     // 2. intermediatePointwise
     if ( this.bIntermediate ) {
 
-      let intermediatePointwise1;
-      {
-        const intermediate1_inputChannelCount = this.operationArray.endingInput0.channelCount;
-        const intermediate1_inputChannelCount_lowerHalf = this.operationArray.endingInput0.channelCount_lowerHalf;
+      let intermediatePointwise1 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
+        this.operationArray.endingInput0,
+        this.pointwise21ActivationId, nPointwise_HigherHalfDifferent,
+        inputFloat32Array );
 
-        const intermediate1_outputChannelCount_lowerHalf // Note: Using itself input channel count as dividend.
-          = Math.ceil( intermediate1_inputChannelCount_lowerHalf / this.nSqueezeExcitationChannelCountDivisor );
-
-        let intermediate1_outputChannelCount;
-
-        // Because intermediate (and excitation) pointwise always uses ConstantWhenPassThrough (i.e. filterValue = 0, biasValue = 1 ),
-        // the pass-through higher half will always be destroyed totally. Since that, discarding all the pass-through higher half in
-        // intermediate pointwise does not lose any information because the later excitation pointwise always could re-build them
-        // completely.
-        //
-        // For this reason, let ( intermediate_outputChannelCount = intermediate1_outputChannelCount_lowerHalf )
-        // (i.e. let ( intermediate_outputChannelCount_higherHalf == 0 ) to improve some performance.
-        //
-        if ( nPointwise_HigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ) // (4)
-//!!! ...untested... (2022/05/27)
-          intermediate1_outputChannelCount = intermediate1_outputChannelCount_lowerHalf;
-        else
-          intermediate1_outputChannelCount = Math.ceil( intermediate1_inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
-
-        const intermediate1_nActivationId = this.pointwise21ActivationId;
-
-        // If it has no activation, it could be no bias because the next operation's (i.e. excitationPointwise) bias will achieve it.
-        const intermediate1_bBias = ( intermediate1_nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ? false : true;
-
-        const intermediate1_nHigherHalfDifferent = nPointwise_HigherHalfDifferent;
-
-        intermediatePointwise1 = new Pointwise.ConstantWhenPassThrough(
-          this.operationArray.endingInput0,
-          intermediate1_outputChannelCount, intermediate1_bBias, intermediate1_nActivationId,
-          intermediate1_nHigherHalfDifferent, intermediate1_outputChannelCount_lowerHalf,
-          0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
-        );
-
-        if ( !intermediatePointwise1.init( inputFloat32Array, this.byteOffsetEnd ) )
-          return false;  // e.g. input array does not have enough data.
-        this.byteOffsetEnd = intermediatePointwise1.byteOffsetEnd;
-      }
-
-//!!! ...unfinished... (2022/06/07)
       let intermediatePointwise2;
       if ( this.pointwise22ChannelCount > 0 ) {
-
-        const intermediate2_inputChannelCount = this.operationArray.endingInput1.channelCount;
-        const intermediate2_inputChannelCount_lowerHalf = this.operationArray.endingInput1.channelCount_lowerHalf;
-
-        const intermediate2_outputChannelCount_lowerHalf // Note: Using itself input channel count as dividend.
-          = Math.ceil( intermediate2_inputChannelCount_lowerHalf / this.nSqueezeExcitationChannelCountDivisor );
-
-        let intermediate2_outputChannelCount;
-
-        if ( nPointwise_HigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ) // (4)
-          intermediate2_outputChannelCount = intermediate2_outputChannelCount_lowerHalf;
-        else
-          intermediate2_outputChannelCount = Math.ceil( intermediate2_inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
-
-        const intermediate2_nActivationId = this.pointwise22ActivationId;
-
-        // If it has no activation, it could be no bias because the next operation's (i.e. excitationPointwise) bias will achieve it.
-        const intermediate2_bBias = ( intermediate2_nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ? false : true;
-
-        const intermediate2_nHigherHalfDifferent = nPointwise_HigherHalfDifferent;
-
-        intermediatePointwise2 = new Pointwise.ConstantWhenPassThrough(
+        intermediatePointwise2 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
           this.operationArray.endingInput1,
-          intermediate2_outputChannelCount, intermediate2_bBias, intermediate2_nActivationId,
-          intermediate2_nHigherHalfDifferent, intermediate2_outputChannelCount_lowerHalf,
-          0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
-        );
-
-        if ( !intermediatePointwise2.init( inputFloat32Array, this.byteOffsetEnd ) )
-          return false;  // e.g. input array does not have enough data.
-        this.byteOffsetEnd = intermediatePointwise1.byteOffsetEnd;
+          this.pointwise22ActivationId, nPointwise_HigherHalfDifferent,
+          inputFloat32Array );
       }
 
       this.operationArray.operation_append( intermediatePointwise1, intermediatePointwise2 );
