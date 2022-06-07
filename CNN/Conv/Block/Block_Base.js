@@ -54,22 +54,22 @@ import { Params } from "./Block_Params.js";
  *     - ( channelCount1_pointwise1Before == -5 ): ONE_INPUT_HALF_THROUGH: (ShuffleNetV2_ByMobileNetV1's body/tail)
  *     - ( channelCount1_pointwise1Before == -4 ): ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: (ShuffleNetV2_ByMobileNetV1's head)
  * <pre>
- * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise21 (include pointwise211 and pointwise212) - (squeezeExcitationPostfix)
+ * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise20 (include pointwise201 and pointwise202) - (squeezeExcitationPostfix)
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before == -3 ) and ( bOutput1Requested == true ): TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: TWO_OUTPUT:
+ *   - When ( channelCount1_pointwise1Before == -3 ) and ( bOutput1Requested == true ): TWO_INPUTS_CONCAT_POINTWISE20_INPUT1: TWO_OUTPUT:
  * (ShuffleNetV2's body)
  * <pre>
- * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix) - concat2ShuffleSplit - output0
+ * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix) - concat2ShuffleSplit - output0
  * input1 -------------------------------------------------------------------------------------------------/                     \ output1
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before == -3 ) and ( bOutput1Requested == false ): TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: ONE_OUTPUT:
+ *   - When ( channelCount1_pointwise1Before == -3 ) and ( bOutput1Requested == false ): TWO_INPUTS_CONCAT_POINTWISE20_INPUT1: ONE_OUTPUT:
  * (ShuffleNetV2's tail)
  * <pre>
- * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix) - concat2(ShuffleSplit) - output0
+ * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix) - concat2(ShuffleSplit) - output0
  * input1 -------------------------------------------------------------------------------------------------/
  * </pre>
  *
@@ -77,33 +77,33 @@ import { Params } from "./Block_Params.js";
  *   - When ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE:
  * (simplified ShuffleNetV2's head with ( pointwise1ChannelCount >= 1 ) )
  * <pre>
- * input0 - pointwise1 - depthwise1 - concat1 - (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix)
- *        \------------- depthwise2 /         \ (squeezeExcitationPrefix) - pointwise22 - (squeezeExcitationPostfix)
+ * input0 - pointwise1 - depthwise1 - concat1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix)
+ *        \------------- depthwise2 /         \ (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix)
  * </pre>
  *
  *
  *   - When ( channelCount1_pointwise1Before == -1 ): ONE_INPUT_ADD_TO_OUTPUT: (MobileNetV2's body and tail)
  * <pre>
  *        /------------------------------------------------------------------------------------------------\
- * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix) - addInput0ToPointwise21
- *        \                         \ (squeezeExcitationPrefix) - pointwise22 - (squeezeExcitationPostfix) - addInput0ToPointwise22
+ * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix) - addInput0ToPointwise20
+ *        \                         \ (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix) - addInput0ToPointwise21
  *         \-----------------------------------------------------------------------------------------------/
  * </pre>
  *
  *
  *   - When
  *     - ( channelCount1_pointwise1Before == 0 ): ONE_INPUT:
- *       (MobileNetV1 or MobileNetV2's head or simplified ShuffleNetV2(_ByPointwise22)'s head with ( blockParams.bPointwise1 == false ) )
+ *       (MobileNetV1 or MobileNetV2's head or simplified ShuffleNetV2(_ByPointwise21)'s head with ( blockParams.bPointwise1 == false ) )
  * <pre>
- * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix)
- *                                  \ (squeezeExcitationPrefix) - pointwise22 - (squeezeExcitationPostfix)
+ * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix)
+ *                                  \ (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix)
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (ShuffleNetV2_ByPointwise22's body and tail)
+ *   - When ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (ShuffleNetV2_ByPointwise21's body and tail)
  * <pre>
- * input0 - pointwise1 - depthwise1 - concat1 - (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix)
- * input1 --------------------------/         \ (squeezeExcitationPrefix) - pointwise22 - (squeezeExcitationPostfix)
+ * input0 - pointwise1 - depthwise1 - concat1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix)
+ * input1 --------------------------/         \ (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix)
  * </pre>
  *
  *
@@ -112,13 +112,13 @@ import { Params } from "./Block_Params.js";
  *
  * (original ShuffleNetV2's head)
  * <pre>
- * input0 - pointwise1 - depthwise1 - pointwise21 - concat2 - channelShuffler
- *        \------------- depthwise2 - pointwise22 /
+ * input0 - pointwise1 - depthwise1 - pointwise20 - concat2 - channelShuffler
+ *        \------------- depthwise2 - pointwise21 /
  * </pre>
  *
  * (original ShuffleNetV2's tail)
  * <pre>
- * input0 - channelSplitter - pointwise1 - depthwise1 - pointwise21 - concat2 - channelShuffler
+ * input0 - channelSplitter - pointwise1 - depthwise1 - pointwise20 - concat2 - channelShuffler
  *                          \---------------------------------------/
  * </pre>
  *
@@ -167,7 +167,7 @@ import { Params } from "./Block_Params.js";
  *
  * @member {number} outputTensorCount
  *   How many output tensors will be returned by the parameter outputTensors of apply(). At least 1. At most 2. It is
- * determined by channelCount1_pointwise1Before and pointwise22ChannelCount.
+ * determined by channelCount1_pointwise1Before and pointwise21ChannelCount.
  *
 
 //!!! (2022/06/07 Remarrked) No longer recorded.
@@ -196,21 +196,21 @@ import { Params } from "./Block_Params.js";
 
 //!!! (2022/06/07 Remarrked) No longer recorded.
 //  * @member {boolean} bPointwise2
-//  *   If true, the pointwise2 (i.e. pointwise21 or/and pointwise22) convolution exists.
+//  *   If true, the pointwise2 (i.e. pointwise20 or/and pointwise21) convolution exists.
 //  *
-//  * @member {boolean} bPointwise21
+//  * @member {boolean} bPointwise20
 //  *   If true, the first pointwise2 convolution exists.
 //  *
-//  * @member {boolean} bPointwise22
+//  * @member {boolean} bPointwise21
 //  *   If true, the second pointwise2 convolution exists.
 
  *
- * @member {string} pointwise21ActivationName
- *   The activation function id (Params.pointwise21ActivationId.valueDesc.Ids.Xxx) after the first pointwise2 convolution.
+ * @member {string} pointwise20ActivationName
+ *   The activation function id (Params.pointwise20ActivationId.valueDesc.Ids.Xxx) after the first pointwise2 convolution.
  *
- * @member {string} pointwise22ActivationName
+ * @member {string} pointwise21ActivationName
  *   The name of activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the second pointwise2 convolution.
- * It is only meaningful if ( pointwise22ChannelCount > 0 ) (i.e. ( bPointwise22 == true ) and ( pointwise21ChannelCount > 0 ) ).
+ * It is only meaningful if ( pointwise21ChannelCount > 0 ) (i.e. ( bPointwise21 == true ) and ( pointwise20ChannelCount > 0 ) ).
  *
  * @member {number} inChannels0
  *   The channel count of the first input tensor (i.e. inputTensors[ 0 ]). This is the same as this.channelCount0_pointwise1Before
@@ -219,8 +219,8 @@ import { Params } from "./Block_Params.js";
  * @member {number} inChannels1
  *   The channel count of the second input tensor (i.e. inputTensors[ 1 ]). It is zero or positive (never negative).
  *     - If ( this.channelCount1_pointwise1Before >= 0 ), inChannels1 is the same as this.channelCount1_pointwise1Before.
- *     - If ( this.channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ),
- *         (-3), inChannels1 will be the same as channelCount_pointwise21After_concat2Before.
+ *     - If ( this.channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ),
+ *         (-3), inChannels1 will be the same as channelCount_pointwise20After_concat2Before.
  *     - Otherwise, inChannels1 will be zero.
  *
  * @member {TensorPlaceholder.Base} input0
@@ -238,11 +238,11 @@ import { Params } from "./Block_Params.js";
  * determines outputWidth.
  *
  * @member {number} outChannels0
- *   The channel count of the outputTensor[ 0 ]. In theory, even if ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ),
- * this will still be non-zero. However, now the pointwise21ChannelCount should always be not zero. 
+ *   The channel count of the outputTensor[ 0 ]. In theory, even if ( pointwise20ChannelCount == 0 ) and ( pointwise21ChannelCount == 0 ),
+ * this will still be non-zero. However, now the pointwise20ChannelCount should always be not zero. 
  *
  * @member {number} outChannels1
- *   The channel count of the outputTensor[ 1 ]. If ( pointwise22ChannelCount == 0 ), this will be zero.
+ *   The channel count of the outputTensor[ 1 ]. If ( pointwise21ChannelCount == 0 ), this will be zero.
  *
  * @member {number} outChannelsAll
  *   The channel count of all output tensors (i.e. both outputTensor[ 0 ] and outputTensor[ 1 ]).
@@ -267,10 +267,10 @@ import { Params } from "./Block_Params.js";
  *     - The channelShuffler's outputGroupCount must be 2 (i.e. split into two groups after channel-shuffling).
  *
  *     - It is used when:
- *       - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
- *           (-3) (ShuffleNetV2's body/tail) (i.e. channel shuffle the concatenated pointwise21 and input1).
+ *       - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 )
+ *           (-3) (ShuffleNetV2's body/tail) (i.e. channel shuffle the concatenated pointwise20 and input1).
  *         - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
- *             of pointwise21 and input1.
+ *             of pointwise20 and input1.
  *
  *       - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
  *           (-4) (ShuffleNetV2_ByMobileNetV1's head)
@@ -393,16 +393,16 @@ class Base extends ReturnOrClone.Base {
     this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
     this.bSqueezeExcitationPrefix = params.bSqueezeExcitationPrefix;
 
+    this.pointwise20ChannelCount = params.pointwise20ChannelCount;
+    this.bPointwise20Bias = params.bPointwise20Bias;
+    this.pointwise20ActivationId = params.pointwise20ActivationId;
+    this.pointwise20ActivationName = params.pointwise20ActivationName;
+
+    this.bOutput1Requested = params.bOutput1Requested;
     this.pointwise21ChannelCount = params.pointwise21ChannelCount;
     this.bPointwise21Bias = params.bPointwise21Bias;
     this.pointwise21ActivationId = params.pointwise21ActivationId;
     this.pointwise21ActivationName = params.pointwise21ActivationName;
-
-    this.bOutput1Requested = params.bOutput1Requested;
-    this.pointwise22ChannelCount = params.pointwise22ChannelCount;
-    this.bPointwise22Bias = params.bPointwise22Bias;
-    this.pointwise22ActivationId = params.pointwise22ActivationId;
-    this.pointwise22ActivationName = params.pointwise22ActivationName;
 
     this.bKeepInputTensor = params.bKeepInputTensor;
 
@@ -641,18 +641,18 @@ class Base extends ReturnOrClone.Base {
 
     if ( this.bHigherHalfDifferent == true ) {
 
-      // In this case, it should be according to half of pointwise21ChannelCount (just like pointwise1).
-      // Note: Unlike pointwise1ChannelCount (which may be zero), pointwise21ChannelCount is always positive.
-      outputChannelCount_lowerHalf_pointwise2 = Math.ceil( this.pointwise21ChannelCount / 2 );
+      // In this case, it should be according to half of pointwise20ChannelCount (just like pointwise1).
+      // Note: Unlike pointwise1ChannelCount (which may be zero), pointwise20ChannelCount is always positive.
+      outputChannelCount_lowerHalf_pointwise2 = Math.ceil( this.pointwise20ChannelCount / 2 );
 
-      // For bHigherHalfAnotherPointwise (i.e. ( pointwise21ChannelCount > 0 ) ) or bAllPassThrough (i.e. ( pointwise21ChannelCount == 0 ) ).
+      // For bHigherHalfAnotherPointwise (i.e. ( pointwise20ChannelCount > 0 ) ) or bAllPassThrough (i.e. ( pointwise20ChannelCount == 0 ) ).
       //
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
       // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's head)
       if ( this.bHigherHalfDepthwise2 == true ) {
         nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE;
 
-      // For bHigherHalfPassThroughShuffle (i.e. ( pointwise21ChannelCount > 0 ) ) or bAllPassThroughShuffle (i.e. ( pointwise21ChannelCount == 0 ) ).
+      // For bHigherHalfPassThroughShuffle (i.e. ( pointwise20ChannelCount > 0 ) ) or bAllPassThroughShuffle (i.e. ( pointwise20ChannelCount == 0 ) ).
       //
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
       // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
@@ -673,62 +673,62 @@ class Base extends ReturnOrClone.Base {
 
     // 6. The pointwise2 convolution.
     {
-      // 6.1 Pointwise21
+      // 6.1 Pointwise20
       //
       // Note:
       //   - When ( bHigherHalfDifferent == true ) and ( channelShuffler_outputGroupCount > 0 ), it means output channels will be shuffled.
       //
-      //   - When ( pointwise21ChannelCount == 0 ), it usually means no pointwise21 (i.e. ( pointwise21.bExisted == false ) ).
+      //   - When ( pointwise20ChannelCount == 0 ), it usually means no pointwise20 (i.e. ( pointwise20.bExisted == false ) ).
       //
-      //   - When both ( pointwise21ChannelCount == 0 ) and ( bHigherHalfDifferent == true )
-      //       and ( channelShuffler_outputGroupCount > 0 ), the pointwise21 will exist (i.e. ( pointwise21.bExisted == true ) ).
+      //   - When both ( pointwise20ChannelCount == 0 ) and ( bHigherHalfDifferent == true )
+      //       and ( channelShuffler_outputGroupCount > 0 ), the pointwise20 will exist (i.e. ( pointwise20.bExisted == true ) ).
       //       Otherwise, the output channels could not be shuffled. In this case, it will pass through all input to output,
       //       but the output will be channel shuffled.
       //
-      //       - However, this situation is difficult to be handled. We re-design Params so that the pointwise21ChannelCount is always
+      //       - However, this situation is difficult to be handled. We re-design Params so that the pointwise20ChannelCount is always
       //           not zero.
       //
-      let pointwise21 = new Operation.Pointwise_SameWhenPassThrough(
+      let pointwise20 = new Operation.Pointwise_SameWhenPassThrough(
         this.operationArray.endingInput0,
-        this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
+        this.pointwise20ChannelCount, this.bPointwise20Bias, this.pointwise20ActivationId,
         nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2, channelShuffler_outputGroupCount_pointwise2
       );
 
-      if ( !pointwise21.init( params.defaultInput, this.byteOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
+      if ( !pointwise20.init( params.defaultInput, this.byteOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
         return false;  // e.g. input array does not have enough data.
-      this.byteOffsetEnd = pointwise21.byteOffsetEnd;
+      this.byteOffsetEnd = pointwise20.byteOffsetEnd;
 
 //!!! (2022/06/07 Remarked)
-      //this.bPointwise21 = pointwise21.bExisted;
+      //this.bPointwise20 = pointwise20.bExisted;
 
-      // 6.2 Pointwise22
-      let pointwise22;
-      if ( this.pointwise22ChannelCount > 0 ) {
-        pointwise22 = new Operation.Pointwise_SameWhenPassThrough(
-          this.operationArray.endingInput0, // Note: the same as pointwise21's input (i.e. not .endingInput1).
-          this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
+      // 6.2 Pointwise21
+      let pointwise21;
+      if ( this.pointwise21ChannelCount > 0 ) {
+        pointwise21 = new Operation.Pointwise_SameWhenPassThrough(
+          this.operationArray.endingInput0, // Note: the same as pointwise20's input (i.e. not .endingInput1).
+          this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
           nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2, channelShuffler_outputGroupCount_pointwise2
         );
 
-        // Note: Strictly speaking, sometimes pointwise22 is dependent on depthwise2. But it does not matter for BoundsArraySet
+        // Note: Strictly speaking, sometimes pointwise21 is dependent on depthwise2. But it does not matter for BoundsArraySet
         // because depthwise1 and depthwise2 should have the same output value bounds.
         //
-        if ( !pointwise22.init( params.defaultInput, this.byteOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
+        if ( !pointwise21.init( params.defaultInput, this.byteOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
           return false;  // e.g. input array does not have enough data.
-        this.byteOffsetEnd = pointwise22.byteOffsetEnd;
+        this.byteOffsetEnd = pointwise21.byteOffsetEnd;
 
 //!!! (2022/06/07 Remarked)
-        //this.bPointwise22 = pointwise22.bExisted;
+        //this.bPointwise21 = pointwise21.bExisted;
 
-      } else { // Since pointwise22 is not requested (i.e. channel count is not positive), do not create the object for saving memory.
-        //this.bPointwise22 = false;
+      } else { // Since pointwise21 is not requested (i.e. channel count is not positive), do not create the object for saving memory.
+        //this.bPointwise21 = false;
       }
 
-      // 6.3 Pointwise2 (= Pointwise21 + Pointwise22 )
+      // 6.3 Pointwise2 (= Pointwise20 + Pointwise21 )
 //!!! (2022/06/07 Remarked)
-      //this.bPointwise2 = ( this.bPointwise21 || this.bPointwise22 );
+      //this.bPointwise2 = ( this.bPointwise20 || this.bPointwise21 );
 
-      this.operationArray.operation_append( pointwise21, pointwise22 );
+      this.operationArray.operation_append( pointwise20, pointwise21 );
     }
 
     // 6.4
@@ -767,33 +767,33 @@ class Base extends ReturnOrClone.Base {
 
       // Note:
       //
+      // Usually, if no pointwise20, then no addInput0ToPointwise20.
       // Usually, if no pointwise21, then no addInput0ToPointwise21.
-      // Usually, if no pointwise22, then no addInput0ToPointwise22.
       //
-      // However, there is one exception: When both no pointwise21 and no pointwise22, there might be addInput0ToPointwise21.
-      // Fortunately, now pointwise21ChannelCount is always not zero. So this situation will not happen.
+      // However, there is one exception: When both no pointwise20 and no pointwise21, there might be addInput0ToPointwise20.
+      // Fortunately, now pointwise20ChannelCount is always not zero. So this situation will not happen.
       //
 
-      let addInput0ToPointwise21;
+      let addInput0ToPointwise20;
       if ( this.operationArray.endingInput0?.is_height_width_channelCount_same_byTensorPlaceholder( this.operationArray.input0 ) ) {
 //!!! (2022/06/07 Remarked)
-        //this.bShould_addInput0ToPointwise21 = true;
-        addInput0ToPointwise21 = new Operation.AddTwoTensors( this.operationArray.input0, this.operationArray.endingInput0 );
+        //this.bShould_addInput0ToPointwise20 = true;
+        addInput0ToPointwise20 = new Operation.AddTwoTensors( this.operationArray.input0, this.operationArray.endingInput0 );
       }
 
       // Note: Only input0 (not input1) will be used to add to output.
-      let addInput0ToPointwise22;
+      let addInput0ToPointwise21;
       if ( this.operationArray.endingInput1?.is_height_width_channelCount_same_byTensorPlaceholder( this.operationArray.input0 ) ) {
 //!!! (2022/06/07 Remarked)
-        //this.bShould_addInput0ToPointwise22 = true;
-        addInput0ToPointwise22 = new Operation.AddTwoTensors( this.operationArray.input0, this.operationArray.endingInput1 );
+        //this.bShould_addInput0ToPointwise21 = true;
+        addInput0ToPointwise21 = new Operation.AddTwoTensors( this.operationArray.input0, this.operationArray.endingInput1 );
       }
 
-      this.operationArray.operation_append( addInput0ToPointwise21, addInput0ToPointwise22 );
+      this.operationArray.operation_append( addInput0ToPointwise20, addInput0ToPointwise21 );
     }
 
 //!!! (2022/06/07 Remarked)
-    //this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
+    //this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise20 || this.bShould_addInput0ToPointwise21;
 
     // 8.2
     ++progressToAdvance.value;
@@ -1047,7 +1047,7 @@ class Base extends ReturnOrClone.Base {
       }
 
       let squeezeDepthwise1;
-      if ( this.pointwise22ChannelCount > 0 ) {
+      if ( this.pointwise21ChannelCount > 0 ) {
         squeezeDepthwise1 = new Operation.Depthwise_ConstantWhenPassThrough(
           this.operationArray.endingInput1,
           squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
@@ -1068,15 +1068,15 @@ class Base extends ReturnOrClone.Base {
       let intermediatePointwise0;
       {
         intermediatePointwise0 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
-          this.operationArray.endingInput0, this.pointwise21ActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array );
+          this.operationArray.endingInput0, this.pointwise20ActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array );
         if ( !intermediatePointwise0 )
           return false;  // e.g. input array does not have enough data.
       }
 
       let intermediatePointwise1;
-      if ( this.pointwise22ChannelCount > 0 ) {
+      if ( this.pointwise21ChannelCount > 0 ) {
         intermediatePointwise1 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
-          this.operationArray.endingInput1, this.pointwise22ActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array );
+          this.operationArray.endingInput1, this.pointwise21ActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array );
         if ( !intermediatePointwise1 )
           return false;  // e.g. input array does not have enough data.
       }
@@ -1093,7 +1093,7 @@ class Base extends ReturnOrClone.Base {
       {
         const excitationPointwise0_outputChannelCount = input0.channelCount; // excitation's output should have same channel count as input.
         const excitationPointwise0_outputChannelCount_lowerHalf = input0.channelCount_lowerHalf;
-        const excitationPointwise0_nActivationId = this.pointwise21ActivationId;
+        const excitationPointwise0_nActivationId = this.pointwise20ActivationId;
 
         excitationPointwise0 = new Operation.Pointwise_ConstantWhenPassThrough(
           this.operationArray.endingInput0,
@@ -1108,10 +1108,10 @@ class Base extends ReturnOrClone.Base {
       }
 
       let excitationPointwise1;
-      if ( this.pointwise22ChannelCount > 0 ) {
+      if ( this.pointwise21ChannelCount > 0 ) {
         const excitationPointwise1_outputChannelCount = input1.channelCount;
         const excitationPointwise1_outputChannelCount_lowerHalf = input1.channelCount_lowerHalf;
-        const excitationPointwise1_nActivationId = this.pointwise22ActivationId;
+        const excitationPointwise1_nActivationId = this.pointwise21ActivationId;
 
         excitationPointwise1 = new Operation.Pointwise_ConstantWhenPassThrough(
           this.operationArray.endingInput1,
@@ -1334,14 +1334,14 @@ class Base extends ReturnOrClone.Base {
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
       + `bSqueezeExcitationPrefix=${this.bSqueezeExcitationPrefix}, `
 
+      + `pointwise20ChannelCount=${this.pointwise20ChannelCount}, `
+      + `bPointwise20Bias=${this.bPointwise20Bias}, `
+      + `pointwise20ActivationName=${this.pointwise20ActivationName}(${this.pointwise20ActivationId}), `
+
+      + `bOutput1Requested=${this.bOutput1Requested}, `
       + `pointwise21ChannelCount=${this.pointwise21ChannelCount}, `
       + `bPointwise21Bias=${this.bPointwise21Bias}, `
       + `pointwise21ActivationName=${this.pointwise21ActivationName}(${this.pointwise21ActivationId}), `
-
-      + `bOutput1Requested=${this.bOutput1Requested}, `
-      + `pointwise22ChannelCount=${this.pointwise22ChannelCount}, `
-      + `bPointwise22Bias=${this.bPointwise22Bias}, `
-      + `pointwise22ActivationName=${this.pointwise22ActivationName}(${this.pointwise22ActivationId}), `
 
       + `bAddInputToOutputRequested=${this.bAddInputToOutputRequested}, `
       + `bConcat2ShuffleSplitRequested=${this.bConcat2ShuffleSplitRequested}, `
