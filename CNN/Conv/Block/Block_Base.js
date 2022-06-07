@@ -233,8 +233,8 @@ import { Params } from "./Block_Params.js";
  * determines outputWidth.
  *
  * @member {number} outChannels0
- *   The channel count of the outputTensor[ 0 ]. Even if ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ),
- * this will still be non-zero.
+ *   The channel count of the outputTensor[ 0 ]. In theory, even if ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ),
+ * this will still be non-zero. However, now the pointwise21ChannelCount should always be not zero. 
  *
  * @member {number} outChannels1
  *   The channel count of the outputTensor[ 1 ]. If ( pointwise22ChannelCount == 0 ), this will be zero.
@@ -242,53 +242,6 @@ import { Params } from "./Block_Params.js";
  * @member {number} outChannelsAll
  *   The channel count of all output tensors (i.e. both outputTensor[ 0 ] and outputTensor[ 1 ]).
  *
-
-//!!! ...unfinished... (2022/06/05)
-//
-//  * @member {number} channelCount_pointwise1After_depthwise1Before
-//  *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals pointwise1ChannelCount.
-//  * If ( pointwise1ChannelCount == 0 ), it equals inChannels0.
-//  *
-//  * @member {number} channelCount_depthwise1After_concat1Before
-//  *   The channel count after the first depthwise convolution which applies to the result of pointwise1.
-//  *   - If depthwise1 exists, it will be the channel count of depthwise1's output.
-//  *     - When ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ), it equals
-//  *         ( channelCount_pointwise1After_depthwise1Before * depthwise_AvgMax_Or_ChannelMultiplier ).
-//  *     - When ( depthwise_AvgMax_Or_ChannelMultiplier == Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG  ) (i.e. -2)
-//  *         or ( depthwise_AvgMax_Or_ChannelMultiplier == Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX  ) (i.e. -1)
-//  *         or ( depthwise_AvgMax_Or_ChannelMultiplier == Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE ) (i.e.  0),
-//  *         it equals channelCount_pointwise1After_depthwise1Before.
-//  *   - If depthwise1 does not exist, it will be the channel count of previous operation (i.e. pointwise1)
-//  *       which is channelCount_pointwise1After_depthwise1Before.
-//  *
-//  * @member {number} channelCount_depthwise2After_concat1Before
-//  *   The channel count after the second depthwise convolution which applies to input0 or input1. If depthwise2 does not exist,
-//  * this will be the same as Math.max( 0, channelCount1_pointwise1Before ) (i.e. the depthwise2 will be viewed as short circuit
-//  * to input1).
-//  *
-//  * @member {number} channelCount_concat1After_pointwise2Before
-//  *   The channel count before pointwise2. It is may be the concatenated result of input0 (with depthwise1, with/without depthwise2)
-//  * with/without input1 (without depthwise2).
-//  *
-//  * @member {number} channelCount_pointwise21After_concat2Before
-//  *   The channel count after the pointwise21 convolution.
-//  *     - If ( pointwise21ChannelCount > 0 ), it equals pointwise21ChannelCount.
-//  *     - If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount != 0 ), it will be 0.
-//  *     - If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it equals channelCount_concat1After_pointwise2Before.
-//  *
-//  * @member {number} channelCount_pointwise22After_concat2Before
-//  *   The channel count after the pointwise22 convolution. If ( pointwise22ChannelCount > 0 ), it equals pointwise22ChannelCount.
-//  * If ( pointwise22ChannelCount == 0 ), it will be 0.
-//  *
-//  * @member {number} channelCount_pointwise2After_concat2Before
-//  *   The channel count after all pointwise2 convolution.
-//  *
-//  *     - Basically, it will be ( channelCount_pointwise21After_concat2Before + channelCount_pointwise22After_concat2Before )
-//  *         if at least one pointwise2 convolution existed.
-//  *
-//  *     - If both ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it will be channelCount_concat1After_pointwise2Before.
-//  *
-
 
 //!!! ...unfinished... (2022/06/05) Perhaps, output TensorPlaceholders are enough?
 
@@ -789,13 +742,6 @@ class Base extends ReturnOrClone.Base {
 
     // 8. Add-input-to-output
 
-//!!! (2022/06/07 Remarked)
-//     // Because addInput0ToPointwise21 and addInput0ToPointwise21 may not exist, track it by local variable (which will be used by
-//     // concat2ShuffleSplit and this Block final bounds arrray set).
-//     //
-//     let addInput0ToPointwise21_boundsArraySet_output0 = this.pointwise21.boundsArraySet.output0;
-//     let addInput0ToPointwise22_boundsArraySet_output0 = this.pointwise22?.boundsArraySet.output0;
-
     // 8.1
     //
     // Although caller could request add-input-to-output, it may or may not doable.
@@ -847,26 +793,13 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // add-input-to-output was ready. Report progress.
 
-//!!! ...unfinished... (2022/06/07)
-
     // 9. Concat2-Shuffle-Split
     if ( this.bConcat2ShuffleSplitRequested ) {
 
-      let bShuffleSplit, TensorOpCounters_NamePostfix;
+      let bShuffleSplit;
       switch ( this.outputTensorCount ) {
-        case 1:
-          bShuffleSplit = false;
-          TensorOpCounters_NamePostfix = "_concat2"; // only concat2, no shuffle, no split.
-          this.outChannels0 = ( this.channelCount_pointwise21After_concat2Before * 2 ); // Twice of pointwise21.
-          this.outChannels1 = 0;
-          break;
-
-        case 2:
-          bShuffleSplit = true;
-          TensorOpCounters_NamePostfix = "_concat2ShuffleSplit";
-          this.outChannels0 =
-          this.outChannels1 = this.channelCount_pointwise21After_concat2Before; // Both output0 and output1 will have the same channel count.
-          break;
+        case 1: bShuffleSplit = false; break;
+        case 2: bShuffleSplit = true;  break;
 
         default:
           tf.util.assert( ( ( this.outputTensorCount == 1 ) || ( this.outputTensorCount == 2 ) ),
@@ -876,8 +809,14 @@ class Base extends ReturnOrClone.Base {
           break;
       }
 
-      this.concat2ShuffleSplit = new ConcatShuffleSplit.Base( channelShuffler_ConcatPointwiseConv, bShuffleSplit, false, false,
-        addInput0ToPointwise21_boundsArraySet_output0, inputScaleBoundsArray1, arrayTemp_forInterleave_asGrouptTwo );
+      let concat2ShuffleSplit = new Operation.ConcatShuffleSplit(
+        this.operationArray.endingInput0, this.operationArray.input1,
+        channelShuffler_ConcatPointwiseConv, bShuffleSplit, arrayTemp_forInterleave_asGrouptTwo );
+
+      this.operationArray.operation_append( concat2ShuffleSplit );
+
+
+//!!! ...unfinished... (2022/06/07)
 
       {
         this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
@@ -1062,6 +1001,17 @@ class Base extends ReturnOrClone.Base {
   }
 
 
+  get inChannels0() {
+    return this.operationArray.input0.channelCount;
+  }
+
+  get inChannels1() {
+    if ( this.operationArray.input1 )
+      return this.operationArray.input1.channelCount;
+    return 0;
+  }
+
+
   get outputHeight() {
     return this.operationArray.output0.height;
   }
@@ -1071,13 +1021,13 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-  get inChannels0() {
-    return this.operationArray.input0.channelCount;
+  get outChannels0() {
+    return this.operationArray.output0.channelCount;
   }
 
-  get inChannels1() {
-    if ( this.operationArray.input1 )
-      return this.operationArray.input1.channelCount;
+  get outChannels1() {
+    if ( this.operationArray.output1 )
+      return this.operationArray.output1.channelCount;
     return 0;
   }
 
