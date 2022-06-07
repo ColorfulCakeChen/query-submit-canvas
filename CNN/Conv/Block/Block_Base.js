@@ -952,7 +952,7 @@ class Base extends ReturnOrClone.Base {
    *
    *
    * @param {Block.Base} this
-   *   The object to be modified.
+   *   The object to be modified. The .operationAyyay and .byteOffsetEnd will be modified.
    *
    * @param {ValueDesc.Pointwise_HigherHalfDifferent} nPointwise_HigherHalfDifferent
    *   The HigherHalfDifferent type for squeeze-and-excitation.
@@ -1091,7 +1091,7 @@ class Base extends ReturnOrClone.Base {
 
   /**
    * @param {Block.Base} this
-   *   The object to be modified.
+   *   The object to be modified. The .byteOffsetEnd will be modified.
    *
    * @param {TensorPlaceholder.Base} inputTensorPlaceholder
    *   The input tensor placeholder of this intermediate pointwise.
@@ -1131,7 +1131,7 @@ class Base extends ReturnOrClone.Base {
     const intermediate_nHigherHalfDifferent = nPointwise_HigherHalfDifferent;
 
     let intermediatePointwise = new Pointwise.ConstantWhenPassThrough(
-      this.operationArray.endingInput1,
+      inputTensorPlaceholder,
       intermediate_outputChannelCount, intermediate_bBias, intermediate_nActivationId,
       intermediate_nHigherHalfDifferent, intermediate_outputChannelCount_lowerHalf,
       0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
