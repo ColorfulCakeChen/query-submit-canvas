@@ -224,6 +224,12 @@ import { Params } from "./Block_Params.js";
  *         (-3), inChannels1 will be the same as channelCount_pointwise21After_concat2Before.
  *     - Otherwise, inChannels1 will be zero.
  *
+ * @member {TensorPlaceholder.Base} input0
+ *   The TensorPlaceholder object which represents this operation's 1st input.
+ *
+ * @member {TensorPlaceholder.Base} input1
+ *   The TensorPlaceholder object which represents this operation's 2nd input. It exists only if ( this.inputTensorCount > 1 ).
+ *
  * @member {number} outputHeight
  *   The height of the output image. If depthwise does not exist, it will be the same as inputHeight0. Otherwise, depthwise
  * determines outputHeight.
@@ -1018,6 +1024,9 @@ class Base extends ReturnOrClone.Base {
       return this.operationArray.input1.channelCount;
     return 0;
   }
+
+  get input0() { return this.operationArray.input0; }
+  get input1() { return this.operationArray.input1; }
 
 
   get outputHeight() { return this.operationArray.output0.height; }
