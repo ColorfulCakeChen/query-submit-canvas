@@ -22,7 +22,7 @@ import * as Block from "../../Conv/Block.js";
  *   The "in" sub-object's data members represent every parameters of the Block.Params's constructor. That is,
  * it has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, pointwise1ChannelCount,
  * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth,
- * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+ * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
  * bOutput1Requested, bKeepInputTensor. It also has the following properties:
  *   - paramsNumberArrayObject
  *   - inputFloat32Array
@@ -69,7 +69,7 @@ class Base extends TestParams.Base {
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
     nSqueezeExcitationChannelCountDivisor,
-    pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+    pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
     bOutput1Requested,
     bKeepInputTensor
   ) {
@@ -82,7 +82,7 @@ class Base extends TestParams.Base {
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       bDepthwiseBias, depthwiseActivationId,
       nSqueezeExcitationChannelCountDivisor,
-      pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+      pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
       bOutput1Requested,
       bKeepInputTensor
     };
@@ -105,7 +105,7 @@ class Base extends TestParams.Base {
    * @param {object} this.out
    *   An object which has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, pointwise1ChannelCount,
    * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth,
-   * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+   * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
    * bOutput1Requested, bKeepInputTensor. And depthwisePadInfo.
    *
    * @param {number} weightsElementOffsetBegin
@@ -167,7 +167,7 @@ class Base extends TestParams.Base {
     } else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) {
 
       // The input and output channel count must be the same. Otherwise, the concat2-split-shuffle could not operate properly.
-      if ( this.out.channelCount0_pointwise1Before != this.out.pointwise21ChannelCount )
+      if ( this.out.channelCount0_pointwise1Before != this.out.pointwise20ChannelCount )
         return false;
     }
 
@@ -280,7 +280,7 @@ class Base extends TestParams.Base {
 //      pointwise1ChannelCount: [ 2, 0 + 3 - 1 ],
       pointwise1ChannelCount: [ 0, 0 + 3 - 1 ],
 
-      pointwise21ChannelCount: [ 1, 1 + 3 - 1 ],
+      pointwise20ChannelCount: [ 1, 1 + 3 - 1 ],
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( undefined )) for speeding up testing.
@@ -360,9 +360,9 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.inputHeight0,            this.valueOutMinMax.inputHeight0 ),
       new TestParams.ParamDescConfig( Block.Params.inputWidth0,             this.valueOutMinMax.inputWidth0 ),
 
-      new TestParams.ParamDescConfig( Block.Params.pointwise21ChannelCount, this.valueOutMinMax.pointwise21ChannelCount ),
-      new TestParams.ParamDescConfig( Block.Params.bPointwise21Bias,        this.valueOutMinMax.Bias ),
-      new TestParams.ParamDescConfig( Block.Params.pointwise21ActivationId, this.valueOutMinMax.ActivationId ),
+      new TestParams.ParamDescConfig( Block.Params.pointwise20ChannelCount, this.valueOutMinMax.pointwise20ChannelCount ),
+      new TestParams.ParamDescConfig( Block.Params.bPointwise20Bias,        this.valueOutMinMax.Bias ),
+      new TestParams.ParamDescConfig( Block.Params.pointwise20ActivationId, this.valueOutMinMax.ActivationId ),
 
       new TestParams.ParamDescConfig( Block.Params.bOutput1Requested,       this.valueOutMinMax.bOutput1Requested ),
 
@@ -481,6 +481,95 @@ class Base extends TestParams.Base {
 
   /**
    * @param {NumberImage.Base} inputImage    The source image to be processed.
+   * @param {number} pointwise20ChannelCount The output channel count of the pointwise20 convolution.
+   * @param {string} pointwiseName           A string for debug message of the pointwise20 convolution.
+   * @param {string} parametersDesc          A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise20 convolution, bias and activation.
+   */
+  use_pointwise20( inputImage, pointwise20ChannelCount, pointwiseName, parametersDesc ) {
+    let squeezeExcitationOut = inputImage;
+    if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
+      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
+        this.out.nSqueezeExcitationChannelCountDivisor,
+        this.in.paramsNumberArrayObject.pointwise20SEIntermediateFilters,
+        this.in.paramsNumberArrayObject.pointwise20SEIntermediateBiases,
+        this.in.paramsNumberArrayObject.pointwise20SEExcitationFilters,
+        this.in.paramsNumberArrayObject.pointwise20SEExcitationBiases,
+        this.out.pointwise20ActivationId,
+        `${pointwiseName}_squeezeExcitation`, parametersDesc );
+
+    // Without clone to improve performance.
+    }
+
+    let result = squeezeExcitationOut.clone_byPointwise_NonPassThrough( pointwise20ChannelCount,
+      this.in.paramsNumberArrayObject.pointwise20Filters, this.out.bPointwise20Bias,
+      this.in.paramsNumberArrayObject.pointwise20Biases, this.out.pointwise20ActivationId, pointwiseName, parametersDesc );
+    return result;
+  }
+
+  /**
+   * Pointwise202 uses the same channel count, bias flag and activation function as Pointwise20 (i.e. pointwise20ChannelCount, bPointwise20Bias
+   * and pointwise20ActivationId), but uses different filters and biases weights (i.e. pointwise202Filters and pointwise202Biases)
+   *
+   * @param {NumberImage.Base} inputImage    The source image to be processed.
+   * @param {number} pointwise20ChannelCount The output channel count of the pointwise202 convolution.
+   * @param {string} pointwiseName           A string for debug message of the pointwise202 convolution.
+   * @param {string} parametersDesc          A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise202 convolution, bias and activation.
+   */
+  use_pointwise202( inputImage, pointwise20ChannelCount, pointwiseName, parametersDesc ) {
+    let squeezeExcitationOut = inputImage;
+    if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
+      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
+        this.out.nSqueezeExcitationChannelCountDivisor,
+        this.in.paramsNumberArrayObject.pointwise202SEIntermediateFilters,
+        this.in.paramsNumberArrayObject.pointwise202SEIntermediateBiases,
+        this.in.paramsNumberArrayObject.pointwise202SEExcitationFilters,
+        this.in.paramsNumberArrayObject.pointwise202SEExcitationBiases,
+        this.out.pointwise20ActivationId,
+        `${pointwiseName}_squeezeExcitation`, parametersDesc );
+
+    // Without clone to improve performance.
+    }
+
+    let result = squeezeExcitationOut.clone_byPointwise_NonPassThrough( pointwise20ChannelCount,
+      this.in.paramsNumberArrayObject.pointwise202Filters, this.out.bPointwise20Bias,
+      this.in.paramsNumberArrayObject.pointwise202Biases, this.out.pointwise20ActivationId, pointwiseName, parametersDesc );
+    return result;
+  }
+
+  /**
+   * @param {NumberImage.Base} inputImage    The source image to be processed.
+   * @param {number} pointwise20ChannelCount The output channel count of this pointwise20 pass-through convolution.
+   * @param {string} pointwiseName           A string for debug message of the pointwise1 convolution.
+   * @param {string} parametersDesc          A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise20 pass-through convolution and bias.
+   */
+  use_pointwise20_PassThrough( inputImage, pointwise20ChannelCount, pointwiseName, parametersDesc ) {
+    let squeezeExcitationOut = inputImage;
+    if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
+      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_PassThrough(
+        this.out.nSqueezeExcitationChannelCountDivisor,
+        this.out.pointwise20ActivationId,
+        this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag,
+        `${pointwiseName}_squeezeExcitation`, parametersDesc );
+
+    // Without clone to improve performance.
+    }
+
+    let result = inputImage.clone_byPointwise_PassThrough( pointwise20ChannelCount,
+      this.out.bPointwise20Bias, this.out.pointwise20ActivationId,
+      this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag,
+      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0, // SameWhenPassThrough.
+      pointwiseName, parametersDesc );
+    return result;
+  }
+
+  /**
+   * @param {NumberImage.Base} inputImage    The source image to be processed.
    * @param {number} pointwise21ChannelCount The output channel count of the pointwise21 convolution.
    * @param {string} pointwiseName           A string for debug message of the pointwise21 convolution.
    * @param {string} parametersDesc          A string for debug message of the point-depth-point.
@@ -496,15 +585,16 @@ class Base extends TestParams.Base {
         this.in.paramsNumberArrayObject.pointwise21SEIntermediateBiases,
         this.in.paramsNumberArrayObject.pointwise21SEExcitationFilters,
         this.in.paramsNumberArrayObject.pointwise21SEExcitationBiases,
-        this.out.pointwise21ActivationId,
+        this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
         `${pointwiseName}_squeezeExcitation`, parametersDesc );
 
     // Without clone to improve performance.
     }
 
-    let result = squeezeExcitationOut.clone_byPointwise_NonPassThrough( pointwise21ChannelCount,
-      this.in.paramsNumberArrayObject.pointwise21Filters, this.out.bPointwise21Bias,
-      this.in.paramsNumberArrayObject.pointwise21Biases, this.out.pointwise21ActivationId, pointwiseName, parametersDesc );
+    let result = inputImage.clone_byPointwise_NonPassThrough( pointwise21ChannelCount,
+      this.in.paramsNumberArrayObject.pointwise21Filters, this.out.bPointwise20Bias, // (Note: Not bPointwise21Bias)
+      this.in.paramsNumberArrayObject.pointwise21Biases, this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
+      pointwiseName, parametersDesc );
     return result;
   }
 
@@ -528,105 +618,15 @@ class Base extends TestParams.Base {
         this.in.paramsNumberArrayObject.pointwise212SEIntermediateBiases,
         this.in.paramsNumberArrayObject.pointwise212SEExcitationFilters,
         this.in.paramsNumberArrayObject.pointwise212SEExcitationBiases,
-        this.out.pointwise21ActivationId,
+        this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
         `${pointwiseName}_squeezeExcitation`, parametersDesc );
 
     // Without clone to improve performance.
     }
 
-    let result = squeezeExcitationOut.clone_byPointwise_NonPassThrough( pointwise21ChannelCount,
-      this.in.paramsNumberArrayObject.pointwise212Filters, this.out.bPointwise21Bias,
-      this.in.paramsNumberArrayObject.pointwise212Biases, this.out.pointwise21ActivationId, pointwiseName, parametersDesc );
-    return result;
-  }
-
-  /**
-   * @param {NumberImage.Base} inputImage    The source image to be processed.
-   * @param {number} pointwise21ChannelCount The output channel count of this pointwise21 pass-through convolution.
-   * @param {string} pointwiseName           A string for debug message of the pointwise1 convolution.
-   * @param {string} parametersDesc          A string for debug message of the point-depth-point.
-   *
-   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise21 pass-through convolution and bias.
-   */
-  use_pointwise21_PassThrough( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
-    let squeezeExcitationOut = inputImage;
-    if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
-      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_PassThrough(
-        this.out.nSqueezeExcitationChannelCountDivisor,
-        this.out.pointwise21ActivationId,
-        this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag,
-        `${pointwiseName}_squeezeExcitation`, parametersDesc );
-
-    // Without clone to improve performance.
-    }
-
-    let result = inputImage.clone_byPointwise_PassThrough( pointwise21ChannelCount,
-      this.out.bPointwise21Bias, this.out.pointwise21ActivationId,
-      this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag,
-      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0, // SameWhenPassThrough.
-      pointwiseName, parametersDesc );
-    return result;
-  }
-
-  /**
-   * @param {NumberImage.Base} inputImage    The source image to be processed.
-   * @param {number} pointwise22ChannelCount The output channel count of the pointwise22 convolution.
-   * @param {string} pointwiseName           A string for debug message of the pointwise22 convolution.
-   * @param {string} parametersDesc          A string for debug message of the point-depth-point.
-   *
-   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise22 convolution, bias and activation.
-   */
-  use_pointwise22( inputImage, pointwise22ChannelCount, pointwiseName, parametersDesc ) {
-    let squeezeExcitationOut = inputImage;
-    if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
-      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
-        this.out.nSqueezeExcitationChannelCountDivisor,
-        this.in.paramsNumberArrayObject.pointwise22SEIntermediateFilters,
-        this.in.paramsNumberArrayObject.pointwise22SEIntermediateBiases,
-        this.in.paramsNumberArrayObject.pointwise22SEExcitationFilters,
-        this.in.paramsNumberArrayObject.pointwise22SEExcitationBiases,
-        this.out.pointwise21ActivationId, // (Note: Not pointwise22ActivationId)
-        `${pointwiseName}_squeezeExcitation`, parametersDesc );
-
-    // Without clone to improve performance.
-    }
-
-    let result = inputImage.clone_byPointwise_NonPassThrough( pointwise22ChannelCount,
-      this.in.paramsNumberArrayObject.pointwise22Filters, this.out.bPointwise21Bias, // (Note: Not bPointwise22Bias)
-      this.in.paramsNumberArrayObject.pointwise22Biases, this.out.pointwise21ActivationId, // (Note: Not pointwise22ActivationId)
-      pointwiseName, parametersDesc );
-    return result;
-  }
-
-  /**
-   * Pointwise222 uses the same channel count, bias flag and activation function as Pointwise22 (i.e. pointwise22ChannelCount, bPointwise22Bias
-   * and pointwise22ActivationId), but uses different filters and biases weights (i.e. pointwise222Filters and pointwise222Biases)
-   *
-   * @param {NumberImage.Base} inputImage    The source image to be processed.
-   * @param {number} pointwise22ChannelCount The output channel count of the pointwise222 convolution.
-   * @param {string} pointwiseName           A string for debug message of the pointwise222 convolution.
-   * @param {string} parametersDesc          A string for debug message of the point-depth-point.
-   *
-   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise222 convolution, bias and activation.
-   */
-  use_pointwise222( inputImage, pointwise22ChannelCount, pointwiseName, parametersDesc ) {
-    let squeezeExcitationOut = inputImage;
-    if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
-      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
-        this.out.nSqueezeExcitationChannelCountDivisor,
-        this.in.paramsNumberArrayObject.pointwise222SEIntermediateFilters,
-        this.in.paramsNumberArrayObject.pointwise222SEIntermediateBiases,
-        this.in.paramsNumberArrayObject.pointwise222SEExcitationFilters,
-        this.in.paramsNumberArrayObject.pointwise222SEExcitationBiases,
-        this.out.pointwise21ActivationId, // (Note: Not pointwise22ActivationId)
-        `${pointwiseName}_squeezeExcitation`, parametersDesc );
-
-    // Without clone to improve performance.
-    }
-
-    let result = inputImage.clone_byPointwise_NonPassThrough( pointwise22ChannelCount,
-      this.in.paramsNumberArrayObject.pointwise222Filters, this.out.bPointwise21Bias, // (Note: Not bPointwise22Bias)
-      this.in.paramsNumberArrayObject.pointwise222Biases, this.out.pointwise21ActivationId, // (Note: Not pointwise22ActivationId)
+    let result = inputImage.clone_byPointwise_NonPassThrough( pointwise21ChannelCount,
+      this.in.paramsNumberArrayObject.pointwise212Filters, this.out.bPointwise20Bias, // (Note: Not bPointwise21Bias)
+      this.in.paramsNumberArrayObject.pointwise212Biases, this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
       pointwiseName, parametersDesc );
     return result;
   }
@@ -646,13 +646,13 @@ class Base extends TestParams.Base {
   }
 
   /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (-3) (ShuffleNetV2's body/tail). */
-  channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE21_INPUT1() {
-    if ( this.out.channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
+  channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE20_INPUT1() {
+    if ( this.out.channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head)
+  /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise21's head)
    * (simplified)). */
   channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() {
     if ( this.out.channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE )
@@ -938,30 +938,30 @@ class Base extends TestParams.Base {
 
     // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use similar calculation logic:
     //    ONE_INPUT_HALF_THROUGH                   // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-    //    TWO_INPUTS_CONCAT_POINTWISE21_INPUT1     // (-3) (ShuffleNetV2's body/tail)
+    //    TWO_INPUTS_CONCAT_POINTWISE20_INPUT1     // (-3) (ShuffleNetV2's body/tail)
     //
     // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use similar calculation logic:
     //    ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-    //    ONE_INPUT_TWO_DEPTHWISE                  // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
+    //    ONE_INPUT_TWO_DEPTHWISE                  // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise21's head) (simplified))
 
 
     let channelCount0_pointwise1Before_original = paramsAll.channelCount0_pointwise1Before;
     let pointwise1ChannelCount_original = paramsAll.pointwise1ChannelCount;
-    let pointwise21ChannelCount_original = paramsAll.pointwise21ChannelCount;
+    let pointwise20ChannelCount_original = paramsAll.pointwise20ChannelCount;
 
     // In ShuffleNetV2_ByMobileNetV1's head:
-    //   - pointwise21ChannelCount.
+    //   - pointwise20ChannelCount.
     //     - Double it in paramsAll and io_paramsNumberArrayObject (if existed).
     //   - Use original the above parameters twice to generate filters and biases weights.
-    //     - pointwise21 and pointwise212
+    //     - pointwise20 and pointwise202
     //
     // The reason is that Block will only extract filters and biases weights of the above parameters twice in this case.
     //
     if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-      this.doubleParamValue( Block.Params.pointwise21ChannelCount );
+      this.doubleParamValue( Block.Params.pointwise20ChannelCount );
 
     // In ShuffleNetV2_ByMobileNetV1's body/tail:
-    //   - channelCount0_pointwise1Before, pointwise21ChannelCount.
+    //   - channelCount0_pointwise1Before, pointwise20ChannelCount.
     //     - Double them in paramsAll and io_paramsNumberArrayObject (if existed).
     //   -  pointwise1ChannelCount.
     //     - Adjust it in paramsAll and io_paramsNumberArrayObject (if existed).
@@ -985,7 +985,7 @@ class Base extends TestParams.Base {
         this.modifyParamValue( Block.Params.pointwise1ChannelCount, pointwise1ChannelCount_enlarged );
       }
 
-      this.doubleParamValue( Block.Params.pointwise21ChannelCount );
+      this.doubleParamValue( Block.Params.pointwise20ChannelCount );
     }
 
     // Pointwise1
@@ -1012,7 +1012,7 @@ class Base extends TestParams.Base {
 
         // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         //
-        // Use pointwise1.outputChannelCount as input1ChannelCount so that it has the same structure of depthwise1 and pointwise21.
+        // Use pointwise1.outputChannelCount as input1ChannelCount so that it has the same structure of depthwise1 and pointwise20.
         //
         } else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
           depthwise2_inputChannelCount = pointwise1_resultOutputChannelCount;
@@ -1042,7 +1042,7 @@ class Base extends TestParams.Base {
       }
     }
 
-    // Pointwise21's squeeze-and-excitation
+    // Pointwise20's squeeze-and-excitation
     {
 //!!! ...unfinished... (2022/05/29) lower half and higher half, bSqueezeExcitationPrefix
 //
@@ -1053,94 +1053,94 @@ class Base extends TestParams.Base {
 // or both after pointwise2 together).
 //
 
+      let pointwise20_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
+        paramsAll.nSqueezeExcitationChannelCountDivisor,
+        pointwise2_inputChannelCount, paramsAll.pointwise20ActivationId, "pointwise20", io_paramsNumberArrayObject );
+
+      if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+        let pointwise202_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
+          paramsAll.nSqueezeExcitationChannelCountDivisor,
+          pointwise2_inputChannelCount, paramsAll.pointwise20ActivationId, "pointwise202", io_paramsNumberArrayObject );
+
+      } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
+        let pointwise202_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
+          ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE,
+          0, paramsAll.pointwise20ActivationId, "pointwise202", io_paramsNumberArrayObject );
+      }
+    }
+
+    // Pointwise20
+    {
+      let pointwise20_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+        pointwise20ChannelCount_original, paramsAll.bPointwise20Bias, "pointwise20", io_paramsNumberArrayObject );
+
+      if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+        let pointwise202_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+          pointwise20ChannelCount_original, paramsAll.bPointwise20Bias, "pointwise202", io_paramsNumberArrayObject );
+
+      } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
+        let pointwise202_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+          0, paramsAll.bPointwise20Bias, "pointwise202", io_paramsNumberArrayObject );
+      }
+    }
+
+    // Pointwise21's Preparation.
+    let pointwise21ChannelCount, bPointwise21Bias, nPointwise21ActivationId;
+    {
+      // In (-3) (ShuffleNetV2's body/tail) and (-4) (-5) (ShuffleNetV2_ByMobileNetV1), there is always no pointwise21.
+      if (   ( this.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE20_INPUT1() ) // (-3) (ShuffleNetV2's body/tail)
+          || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+          || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+         ) {
+        pointwise21ChannelCount = 0;
+
+      // Otherwise, if output1 is requested, pointwise21's output channel count is the same as pointwise20's.
+      } else if ( paramsAll.bOutput1Requested ) {
+
+        pointwise21ChannelCount = pointwise20ChannelCount_original;
+      }
+
+      // pointwise21's bias flag and activation function should always be the same as pointwise20's.
+      bPointwise21Bias = paramsAll.bPointwise20Bias;
+      nPointwise21ActivationId = paramsAll.pointwise20ActivationId; // pointwise21's activation function should always be the same as pointwise20's.
+    }
+
+    // Pointwise21's squeeze-and-excitation
+    {
+      let pointwise21_squeezeExcitation_inputChannelCount;
+      if ( pointwise21ChannelCount > 0 ) // Only if pointwise21 exists, its squeeze-and-excitation exists.
+        pointwise21_squeezeExcitation_inputChannelCount = pointwise21ChannelCount;
+      else
+        pointwise21_squeezeExcitation_inputChannelCount = 0; // So that related filters and biases array will be cleared.
+
       let pointwise21_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
         paramsAll.nSqueezeExcitationChannelCountDivisor,
-        pointwise2_inputChannelCount, paramsAll.pointwise21ActivationId, "pointwise21", io_paramsNumberArrayObject );
+        pointwise21_squeezeExcitation_inputChannelCount, nPointwise21ActivationId, "pointwise21", io_paramsNumberArrayObject );
 
       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         let pointwise212_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
           paramsAll.nSqueezeExcitationChannelCountDivisor,
-          pointwise2_inputChannelCount, paramsAll.pointwise21ActivationId, "pointwise212", io_paramsNumberArrayObject );
+          pointwise21_squeezeExcitation_inputChannelCount, nPointwise21ActivationId, "pointwise212", io_paramsNumberArrayObject );
 
       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
         let pointwise212_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
           ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE,
-          0, paramsAll.pointwise21ActivationId, "pointwise212", io_paramsNumberArrayObject );
+          0, nPointwise21ActivationId, "pointwise212", io_paramsNumberArrayObject );
       }
     }
 
     // Pointwise21
     {
       let pointwise21_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-        pointwise21ChannelCount_original, paramsAll.bPointwise21Bias, "pointwise21", io_paramsNumberArrayObject );
+        pointwise21ChannelCount, bPointwise21Bias, "pointwise21", io_paramsNumberArrayObject );
 
       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         let pointwise212_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-          pointwise21ChannelCount_original, paramsAll.bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
+          pointwise21ChannelCount, bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
 
       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
         let pointwise212_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-          0, paramsAll.bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
-      }
-    }
-
-    // Pointwise22's Preparation.
-    let pointwise22ChannelCount, bPointwise22Bias, nPointwise22ActivationId;
-    {
-      // In (-3) (ShuffleNetV2's body/tail) and (-4) (-5) (ShuffleNetV2_ByMobileNetV1), there is always no pointwise22.
-      if (   ( this.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE21_INPUT1() ) // (-3) (ShuffleNetV2's body/tail)
-          || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-          || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-         ) {
-        pointwise22ChannelCount = 0;
-
-      // Otherwise, if output1 is requested, pointwise22's output channel count is the same as pointwise21's.
-      } else if ( paramsAll.bOutput1Requested ) {
-
-        pointwise22ChannelCount = pointwise21ChannelCount_original;
-      }
-
-      // pointwise22's bias flag and activation function should always be the same as pointwise21's.
-      bPointwise22Bias = paramsAll.bPointwise21Bias;
-      nPointwise22ActivationId = paramsAll.pointwise21ActivationId; // pointwise22's activation function should always be the same as pointwise21's.
-    }
-
-    // Pointwise22's squeeze-and-excitation
-    {
-      let pointwise22_squeezeExcitation_inputChannelCount;
-      if ( pointwise22ChannelCount > 0 ) // Only if pointwise22 exists, its squeeze-and-excitation exists.
-        pointwise22_squeezeExcitation_inputChannelCount = pointwise22ChannelCount;
-      else
-        pointwise22_squeezeExcitation_inputChannelCount = 0; // So that related filters and biases array will be cleared.
-
-      let pointwise22_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
-        paramsAll.nSqueezeExcitationChannelCountDivisor,
-        pointwise22_squeezeExcitation_inputChannelCount, nPointwise22ActivationId, "pointwise22", io_paramsNumberArrayObject );
-
-      if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-        let pointwise222_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
-          paramsAll.nSqueezeExcitationChannelCountDivisor,
-          pointwise22_squeezeExcitation_inputChannelCount, nPointwise22ActivationId, "pointwise222", io_paramsNumberArrayObject );
-
-      } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
-        let pointwise222_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
-          ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE,
-          0, nPointwise22ActivationId, "pointwise222", io_paramsNumberArrayObject );
-      }
-    }
-
-    // Pointwise22
-    {
-      let pointwise22_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-        pointwise22ChannelCount, bPointwise22Bias, "pointwise22", io_paramsNumberArrayObject );
-
-      if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-        let pointwise222_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-          pointwise22ChannelCount, bPointwise22Bias, "pointwise222", io_paramsNumberArrayObject );
-
-      } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
-        let pointwise222_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-          0, bPointwise22Bias, "pointwise222", io_paramsNumberArrayObject );
+          0, bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
       }
     }
 
@@ -1191,9 +1191,9 @@ Base.paramsNameOrderArray = [
   Block.Params.depthwiseActivationId.paramName,
   Block.Params.nSqueezeExcitationChannelCountDivisor.paramName,
   Block.Params.bSqueezeExcitationPrefix.paramName,
-  Block.Params.pointwise21ChannelCount.paramName,
-  Block.Params.bPointwise21Bias.paramName,
-  Block.Params.pointwise21ActivationId.paramName,
+  Block.Params.pointwise20ChannelCount.paramName,
+  Block.Params.bPointwise20Bias.paramName,
+  Block.Params.pointwise20ActivationId.paramName,
   Block.Params.bOutput1Requested.paramName,
 
   Block.Params.bKeepInputTensor.paramName,
@@ -1206,6 +1206,22 @@ Base.paramsNameOrderArray = [
 
   "depthwise2Filters",
   "depthwise2Biases",
+
+  "pointwise20SEIntermediateFilters", // pointwise20's squeeze-and-excitation's intermediate pointwise
+  "pointwise20SEIntermediateBiases",
+  "pointwise20SEExcitationFilters",   // pointwise20's squeeze-and-excitation's excitation pointwise
+  "pointwise20SEExcitationBiases",
+
+  "pointwise20Filters",
+  "pointwise20Biases",
+
+  "pointwise202SEIntermediateFilters", // pointwise202's squeeze-and-excitation's intermediate pointwise
+  "pointwise202SEIntermediateBiases",
+  "pointwise202SEExcitationFilters",   // pointwise202's squeeze-and-excitation's excitation pointwise
+  "pointwise202SEExcitationBiases",
+
+  "pointwise202Filters",
+  "pointwise202Biases",
 
   "pointwise21SEIntermediateFilters", // pointwise21's squeeze-and-excitation's intermediate pointwise
   "pointwise21SEIntermediateBiases",
@@ -1222,20 +1238,4 @@ Base.paramsNameOrderArray = [
 
   "pointwise212Filters",
   "pointwise212Biases",
-
-  "pointwise22SEIntermediateFilters", // pointwise22's squeeze-and-excitation's intermediate pointwise
-  "pointwise22SEIntermediateBiases",
-  "pointwise22SEExcitationFilters",   // pointwise22's squeeze-and-excitation's excitation pointwise
-  "pointwise22SEExcitationBiases",
-
-  "pointwise22Filters",
-  "pointwise22Biases",
-
-  "pointwise222SEIntermediateFilters", // pointwise222's squeeze-and-excitation's intermediate pointwise
-  "pointwise222SEIntermediateBiases",
-  "pointwise222SEExcitationFilters",   // pointwise222's squeeze-and-excitation's excitation pointwise
-  "pointwise222SEExcitationBiases",
-
-  "pointwise222Filters",
-  "pointwise222Biases",
 ];
