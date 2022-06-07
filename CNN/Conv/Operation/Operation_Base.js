@@ -19,7 +19,7 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
  * outputTensorCount (of constructor) is >= 1.
  *
  * @member {TensorPlaceholder.Base} output1
- *   The TensorOpCounter object which represents this operation's second output. It is only created by constructor if
+ *   The TensorPlaceholder object which represents this operation's second output. It is only created by constructor if
  * outputTensorCount (of constructor) is >= 2.
  *
  * @member {function} apply
