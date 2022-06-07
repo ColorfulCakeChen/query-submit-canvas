@@ -911,13 +911,85 @@ class Base extends ReturnOrClone.Base {
   /**
    * Append a sequence operations to achieve squeeze-and-excitation.
    *
-   * @param {Block.Base} this  The object to be modified.
+   * Since multiplication is useful in squeeze-and-excitation, what about division?
+   * e.g. tf.mul( input, x ) replaced by tf.div( input, tf.abs( x ) + 1 )
+   *
+   *
+   * 1. squeeze-and-excitation with multiplication and division:
+   *
+   *   depthwise ---- excitationPointwise1 - multiply ---- pointwise
+   *              \-----------------------------------/ /
+   *               \- excitationPointwise2 - divide ---/
+   *
+   * Effects:
+   *  - depthwise separates neighbor pixels into different channels (of same pixel).
+   *  - ( depthwise * excitationPointwise1 ) provides proportional by neighbor pixels.
+   *  - ( ( depthwise * excitationPointwise1 ) / excitationPointwise2 ) provides inversely proportional by neighbor pixels.
+   *  - pointwise provides summation to neighbor pixels.
+   *
+   * To avoid dividing by zero, the division may use tf.div( input, tf.abs( excitationPointwise2 ) + 1 ) instead of
+   * tf.div( input, excitationPointwise2 ) directly.
+   *
+   *
+   * 2. separable convolution original
+   *
+   *   depthwise - pointwise
+   *
+   * Effects:
+   *  - depthwise separates neighbor pixels into different channels (of same pixel).
+   *  - Can't proportional by neighbor pixels.
+   *  - Can't inversely proportional by neighbor pixels.
+   *  - pointwise provides summation to neighbor pixels.
+   *
+   *
+   * 3. squeeze-and-excitation original
+   *
+   *   depthwise - excitation1 - excitation2 - multiply - pointwise
+   *             \---------------------------/
+   *
+   * Effects:
+   *  - depthwise separates neighbor pixels into different channels (of same pixel).
+   *  - ( depthwise * excitation2 ) provides proportional to neighbor pixels.
+   *  - Can't inversely proportional by neighbor pixels.
+   *  - pointwise provides summation to neighbor pixels.
+   *
+   *
+   *
+   * @param {Block.Base} this
+   *   The object to be modified.
    *
    * @param {ValueDesc.Pointwise_HigherHalfDifferent} nPointwise_HigherHalfDifferent
    *   The HigherHalfDifferent type for squeeze-and-excitation.
    */
   static operationArray_append_SqueezeExcitation( nPointwise_HigherHalfDifferent ) {
 
+    // Whether squeeze (i.e. global average pooling) exists. It will be false in the following cases:
+    //
+    //   - ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-2)
+    //     - since this object is just a no-op.
+    //
+    //   - ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION ) (-1)
+    //     - squeeze is not required.
+    //
+    //   - ( inputHeight <= 0 ) or ( inputWidth <= 0 )
+    //     - squeeze can not be done.
+    //
+    //   - ( inputHeight == 1 ) and ( inputWidth == 1 )
+    //     - squeeze is not necessary. (already squeezed.)
+    //
+    let bSqueeze;
+ 
+    // Whether intermediate pointwise convolution exists.
+    //
+    //   - If ( nSqueezeExcitationChannelCountDivisor <= 0 ), it will be false (i.e. no intermediate pointwise convolution).
+    //     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2)
+    //     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION (-1)
+    //     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION (0)
+    //
+    //   - If ( nSqueezeExcitationChannelCountDivisor > 0 ), it will be true.
+    //
+    let bIntermediate;
+ 
 //!!! ...unfinished... (2022/06/07)
     this.nSqueezeExcitationChannelCountDivisor;
 
