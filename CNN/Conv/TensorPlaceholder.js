@@ -71,4 +71,25 @@ class Base {
     }
   }
 
+  /**
+   *
+   * @param {TensorPlaceholder} aTensorPlaceholder  The tensor placeholder to be comapred.
+   *
+   * @return {boolean}
+   *   Return true, if this tensor placeholder's height, width, channelCount are the same as aTensorPlaceholder. Note: the
+   * .channelCount_lowerHalf and .channelCount_higherHalf are not compared.
+   */
+  is_height_width_channelCount_same_byTensorPlaceholder( aTensorPlaceholder ) {
+    if (   ( this.height != aTensorPlaceholder.height )
+        || ( this.width != aTensorPlaceholder.width )
+        || ( this.channelCount != aTensorPlaceholder.channelCount )
+
+        //|| ( this.channelCount_lowerHalf != aTensorPlaceholder.channelCount_lowerHalf )
+        //|| ( this.channelCount_higherHalf != aTensorPlaceholder.channelCount_higherHalf )
+       )
+      return false;
+
+    return true;
+  }
+
 }
