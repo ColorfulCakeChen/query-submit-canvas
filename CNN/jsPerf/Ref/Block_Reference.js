@@ -37,7 +37,7 @@ class TestCorrectnessInfo {
       inputHeight0, inputWidth0, channelCount0_pointwise1Before, channelCount1_pointwise1Before,
       pointwise1ChannelCount,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-      pointwise21ChannelCount,
+      pointwise20ChannelCount,
       bKeepInputTensor
     } = testParams.out;
 
@@ -55,7 +55,7 @@ class TestCorrectnessInfo {
 
       Block.Params.set_input1ChannelCount_by.call( referredParams,
         channelCount0_pointwise1Before, channelCount1_pointwise1Before,
-        pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
+        pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise20ChannelCount );
 
       bTwoInputs = ( referredParams.inputTensorCount == 2 );
       input1ChannelCount = referredParams.input1ChannelCount;
@@ -88,14 +88,14 @@ class TestCorrectnessInfo {
 
       // Prepare channel shuffler.
       switch ( channelCount1_pointwise1Before ) {
-        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: // (-3)
+        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1: // (-3)
         case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
         case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
         {
           let outputGroupCount = 2; // Only use two convolution groups.
 
           let concatenatedDepth;
-          if ( input1ChannelCount > 0 ) { // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: // (-3)
+          if ( input1ChannelCount > 0 ) { // TWO_INPUTS_CONCAT_POINTWISE20_INPUT1: // (-3)
             concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
 
           } else { // ( input1ChannelCount == 0 )
@@ -117,11 +117,11 @@ class TestCorrectnessInfo {
                      == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
                ) {
 
-              // Note: pointwise21ChannelCount is always positive (never zero or negative).
+              // Note: pointwise20ChannelCount is always positive (never zero or negative).
 
-              // Because Block_TestParams.generate_Filters_Biases() will double pointwise21ChannelCount, it must be an even number
+              // Because Block_TestParams.generate_Filters_Biases() will double pointwise20ChannelCount, it must be an even number
               // which could be splitted (into two groups).
-              concatenatedDepth = pointwise21ChannelCount;
+              concatenatedDepth = pointwise20ChannelCount;
             }
           }
 
@@ -215,8 +215,8 @@ class Base {
    *   The channelShufflers provider. It must be initialized with ChannelShuffler.ConcatPointwiseConv as parameter channelShufflerClass.
    *
    *     - It is only used when
-   *         - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
-   *           (-3) (i.e. channel shuffle the concatenated pointwise21 and input1).
+   *         - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 )
+   *           (-3) (i.e. channel shuffle the concatenated pointwise20 and input1).
    *
    *         - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
    *           (-4) (ShuffleNetV2_ByMobileNetV1's head)
@@ -409,7 +409,7 @@ class Base {
       testParams.in.depthwiseStridesPad, testParams.in.bDepthwiseBias, testParams.in.depthwiseActivationId,
       testParams.in.nSqueezeExcitationChannelCountDivisor,
       testParams.in.bSqueezeExcitationPrefix,
-      testParams.in.pointwise21ChannelCount, testParams.in.bPointwise21Bias, testParams.in.pointwise21ActivationId,
+      testParams.in.pointwise20ChannelCount, testParams.in.bPointwise20Bias, testParams.in.pointwise20ActivationId,
       testParams.in.bOutput1Requested,
       testParams.in.bKeepInputTensor
     );
@@ -422,7 +422,7 @@ class Base {
       testParams.out.channelCount0_pointwise1Before, testParams.out.channelCount1_pointwise1Before,
       testParams.out.pointwise1ChannelCount,
       testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
-      testParams.out.pointwise21ChannelCount,
+      testParams.out.pointwise20ChannelCount,
       testParams.out.bOutput1Requested );
 
     if ( !bInitOk ) { //!!! For Debug.
@@ -470,21 +470,21 @@ class Base {
     asserter.propertyValue( "bConcat2ShuffleSplitRequested", flags.bConcat2ShuffleSplitRequested );
 
     // The ( block.bConcat2ShuffleSplitRequested == true ) only if:
-    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) (-3)
+    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) (-3)
     //
     if ( block.bConcat2ShuffleSplitRequested ) {
       Base.AssertTwoEqualValues( "bConcat2ShuffleSplitRequested",
         testParams.out.channelCount1_pointwise1Before,
-        ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1, parametersDescription );
+        ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1, parametersDescription );
     }
 
     // The channelShuffler must not null when:
-    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) (-3)
+    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) (-3)
     //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
     //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) (-5)
     //
     if (   ( testParams.out.channelCount1_pointwise1Before
-               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) // (-3)
         || ( testParams.out.channelCount1_pointwise1Before
                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) // (-4)
         || ( testParams.out.channelCount1_pointwise1Before
@@ -559,45 +559,45 @@ class Base {
     asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", testParams.out.nSqueezeExcitationChannelCountDivisor );
     asserter.propertyValue( "bSqueezeExcitationPrefix", testParams.out.bSqueezeExcitationPrefix );
 
+    // pointwise20 parameters.
+    asserter.propertyValue( "pointwise20ChannelCount", testParams.out.pointwise20ChannelCount );
+
+    asserter.propertyValue( "bPointwise20Bias", testParams.out.bPointwise20Bias );
+    asserter.propertyValue( "pointwise20ActivationId", testParams.out.pointwise20ActivationId );
+
+    let pointwise20ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( testParams.out.pointwise20ActivationId );
+    asserter.propertyValue( "pointwise20ActivationName", pointwise20ActivationName );
+
     // pointwise21 parameters.
-    asserter.propertyValue( "pointwise21ChannelCount", testParams.out.pointwise21ChannelCount );
-
-    asserter.propertyValue( "bPointwise21Bias", testParams.out.bPointwise21Bias );
-    asserter.propertyValue( "pointwise21ActivationId", testParams.out.pointwise21ActivationId );
-
-    let pointwise21ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( testParams.out.pointwise21ActivationId );
-    asserter.propertyValue( "pointwise21ActivationName", pointwise21ActivationName );
-
-    // pointwise22 parameters.
     asserter.propertyValue( "bOutput1Requested", testParams.out.bOutput1Requested );
 
-    { // Test pointwise22ChannelCount.
+    { // Test pointwise21ChannelCount.
 
       // In (-3) (ShuffleNetV2's body/tail), (-4) (ShuffleNetV2_ByMobileNetV1's head), (-5) (ShuffleNetV2_ByMobileNetV1's body/tail),
-      // there is always no pointwise22.
+      // there is always no pointwise21.
       if (   ( testParams.out.channelCount1_pointwise1Before
-                 == Block.Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
+                 == Block.Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) // (-3)
           || ( testParams.out.channelCount1_pointwise1Before
                  == Block.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) // (-4)
           || ( testParams.out.channelCount1_pointwise1Before
                  == Block.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
          ) {
-        asserter.propertyValue( "pointwise22ChannelCount", 0 );
+        asserter.propertyValue( "pointwise21ChannelCount", 0 );
 
-      // Otherwise, pointwise22 is output1 directly. It is determined by both bOutput1Requested and pointwise21ChannelCount.
+      // Otherwise, pointwise21 is output1 directly. It is determined by both bOutput1Requested and pointwise20ChannelCount.
       } else {
         if ( testParams.out.bOutput1Requested ) {
-          // Either same as pointwise21 (if requested). (Still may be 0.)
-          asserter.propertyValue( "pointwise22ChannelCount", testParams.out.pointwise21ChannelCount );
+          // Either same as pointwise20 (if requested). (Still may be 0.)
+          asserter.propertyValue( "pointwise21ChannelCount", testParams.out.pointwise20ChannelCount );
         } else {
-          asserter.propertyValue( "pointwise22ChannelCount", 0 ); // or 0 (if not requested).
+          asserter.propertyValue( "pointwise21ChannelCount", 0 ); // or 0 (if not requested).
         }
       }
     }
 
-    asserter.propertyValue( "bPointwise22Bias", testParams.out.bPointwise21Bias ); // Always same as pointwise21.
-    asserter.propertyValue( "pointwise22ActivationId", testParams.out.pointwise21ActivationId ); // Always same as pointwise21.
-    asserter.propertyValue( "pointwise22ActivationName", pointwise21ActivationName ); // Always same as pointwise21.
+    asserter.propertyValue( "bPointwise21Bias", testParams.out.bPointwise20Bias ); // Always same as pointwise20.
+    asserter.propertyValue( "pointwise21ActivationId", testParams.out.pointwise20ActivationId ); // Always same as pointwise20.
+    asserter.propertyValue( "pointwise21ActivationName", pointwise20ActivationName ); // Always same as pointwise20.
 
     // If depthwise does not exist, the output ( height, width ) should be the same as input.
     if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) { // (0)
@@ -622,8 +622,8 @@ class Base {
       tensorWeightCountTotal += block.pointwise1.bExisted ? block.pointwise1.tensorWeightCountTotal : 0;
       tensorWeightCountTotal += block.depthwise1.bExisted ? block.depthwise1.tensorWeightCountTotal : 0;
       tensorWeightCountTotal += block.depthwise2?.bExisted ? block.depthwise2.tensorWeightCountTotal : 0;
-      tensorWeightCountTotal += block.pointwise21.bExisted ? block.pointwise21.tensorWeightCountTotal : 0;
-      tensorWeightCountTotal += block.pointwise22?.bExisted ? block.pointwise22.tensorWeightCountTotal : 0;
+      tensorWeightCountTotal += block.pointwise20.bExisted ? block.pointwise20.tensorWeightCountTotal : 0;
+      tensorWeightCountTotal += block.pointwise21?.bExisted ? block.pointwise21.tensorWeightCountTotal : 0;
       asserter.propertyValue( "tensorWeightCountTotal", tensorWeightCountTotal );
 
       // Exclude parameters weights, all the others should be the extracted weight count.
@@ -661,11 +661,11 @@ class Base {
     let testParams = this.testParams;
 
     // The channelShuffler must not null when:
-    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) (-3)
+    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) (-3)
     //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
     //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) (-5)
     //
-    if (   ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE21_INPUT1() ) // (-3)
+    if (   ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE20_INPUT1() ) // (-3)
         || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
        ) {
@@ -682,11 +682,11 @@ class Base {
 
     // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use same calculation logic:
     //    ONE_INPUT_HALF_THROUGH                   // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-    //    TWO_INPUTS_CONCAT_POINTWISE21_INPUT1     // (-3) (ShuffleNetV2's body/tail)
+    //    TWO_INPUTS_CONCAT_POINTWISE20_INPUT1     // (-3) (ShuffleNetV2's body/tail)
     //
     // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use same calculation logic:
     //    ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-    //    ONE_INPUT_TWO_DEPTHWISE                  // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
+    //    ONE_INPUT_TWO_DEPTHWISE                  // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise21's head) (simplified))
 
 
     let imageIn0, imageIn1;
@@ -694,23 +694,23 @@ class Base {
     // 0.
 
     let pointwise1ChannelCount = testParams.out.pointwise1ChannelCount;;
-    let pointwise21ChannelCount;
+    let pointwise20ChannelCount;
 
     // (-4) (ShuffleNetV2_ByMobileNetV1's head)
     //
-    // Note: Block_TestParams.Base.generate_Filters_Biases() double pointwise21ChannelCount. So, halve them here.
+    // Note: Block_TestParams.Base.generate_Filters_Biases() double pointwise20ChannelCount. So, halve them here.
     //
     if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
-      pointwise21ChannelCount = Math.ceil( testParams.out.pointwise21ChannelCount / 2 );
+      pointwise20ChannelCount = Math.ceil( testParams.out.pointwise20ChannelCount / 2 );
 
       imageIn0 = imageInArray[ 0 ];
       imageIn1 = imageInArray[ 1 ];
 
     // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we use the logic of
-    // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
+    // TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
     //
     // Note: Block_TestParams.Base.generate_Filters_Biases() double channelCount0_pointwise1Before,
-    // pointwise21ChannelCount. So, halve them here.
+    // pointwise20ChannelCount. So, halve them here.
     //
     } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
 
@@ -730,12 +730,12 @@ class Base {
         pointwise1ChannelCount = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
       }
 
-      pointwise21ChannelCount = Math.ceil( testParams.out.pointwise21ChannelCount / 2 );
+      pointwise20ChannelCount = Math.ceil( testParams.out.pointwise20ChannelCount / 2 );
 
     } else {
       imageIn0 = imageInArray[ 0 ];
       imageIn1 = imageInArray[ 1 ];
-      pointwise21ChannelCount = testParams.out.pointwise21ChannelCount;
+      pointwise20ChannelCount = testParams.out.pointwise20ChannelCount;
     }
 
     // 1. Pointwise1
@@ -747,12 +747,12 @@ class Base {
 
       if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn0_beforePointwise1, // copy input0 (not input1).
-          pointwise1ChannelCount, // So that it could be processed by depthwise2 and pointwise22 (with same structure of depthwise1 and pointwise21).
+          pointwise1ChannelCount, // So that it could be processed by depthwise2 and pointwise21 (with same structure of depthwise1 and pointwise20).
           "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", this.paramsOutDescription );
 
       } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
-          imageIn1_beforePointwise1.depth, // No need same as pointwise1ChannelCount because depthwise2 and pointwise22 just pass-through it.
+          imageIn1_beforePointwise1.depth, // No need same as pointwise1ChannelCount because depthwise2 and pointwise21 just pass-through it.
           "Pointwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
       }
 
@@ -781,7 +781,7 @@ class Base {
       depthwise1Result = testParams.use_depthwise1( pointwise1Result, "Depthwise1", this.paramsOutDescription );
 
       // When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be shrinked by depthwise1. Otherwise, its size may
-      // be different from pointwise21Result and can not be concatenated together.
+      // be different from pointwise20Result and can not be concatenated together.
       if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
         imageIn1 = testParams.use_depthwise1_PassThrough( imageIn1_beforeDepthwise1, // pass-through input1 (not input0).
           "Depthwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
@@ -794,7 +794,7 @@ class Base {
     // 2.2 Depthwise2
     let depthwise2Result;
 
-    // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
+    // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise21's head) (simplified))
     if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) {
 
       if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
@@ -819,14 +819,14 @@ class Base {
     // 3. Concat1 (along image depth)
     let concat1Result = depthwise1Result; // If no concat1, the same as depthwise1.
 
-    // TWO_INPUTS (> 0) (ShuffleNetV2's (and ShuffleNetV2_ByPointwise22's) body/tail)
+    // TWO_INPUTS (> 0) (ShuffleNetV2's (and ShuffleNetV2_ByPointwise21's) body/tail)
     if ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS() ) {
 
       // Concatenate depthwise1's result and input1. (i.e. concat1)
       concat1Result = NumberImage.Base.calcConcatAlongAxisId2( depthwise1Result, imageIn1,
         "Concat1_depthwise1_input1 (TWO_INPUTS)", this.paramsOutDescription );
 
-    // ONE_INPUT_TWO_DEPTHWISE                  (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
+    // ONE_INPUT_TWO_DEPTHWISE                  (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise21's head) (simplified))
     // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) (ShuffleNetV2_ByMobileNetV1's head)
     } else if (   ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2)
                || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4)
@@ -847,40 +847,40 @@ class Base {
       }
     }
 
-    // 4.1 Pointwise21
-    let imageIn1_beforePointwise21 = imageIn1;
-    let pointwise21Result, pointwise21Result_beforeConcatWith_pointwise212;
+    // 4.1 Pointwise20
+    let imageIn1_beforePointwise20 = imageIn1;
+    let pointwise20Result, pointwise20Result_beforeConcatWith_pointwise202;
     {
-      if ( pointwise21ChannelCount > 0 ) {
-        pointwise21Result = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
+      if ( pointwise20ChannelCount > 0 ) {
+        pointwise20Result = testParams.use_pointwise20( concat1Result, pointwise20ChannelCount, "Pointwise20", this.paramsOutDescription );
 
         // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
-          let pointwise212Result = testParams.use_pointwise212( concat1Result, pointwise21ChannelCount, "Pointwise212", this.paramsOutDescription );
+          let pointwise202Result = testParams.use_pointwise202( concat1Result, pointwise20ChannelCount, "Pointwise202", this.paramsOutDescription );
 
-          pointwise21Result_beforeConcatWith_pointwise212 = pointwise21Result;
-          pointwise21Result = NumberImage.Base.calcConcatAlongAxisId2( pointwise21Result, pointwise212Result,
-            "Concat_pointwise21_pointwise212 (ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4))", this.paramsOutDescription );
+          pointwise20Result_beforeConcatWith_pointwise202 = pointwise20Result;
+          pointwise20Result = NumberImage.Base.calcConcatAlongAxisId2( pointwise20Result, pointwise202Result,
+            "Concat_pointwise20_pointwise202 (ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4))", this.paramsOutDescription );
 
         } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-          imageIn1 = testParams.use_pointwise21_PassThrough( imageIn1_beforePointwise21, // pass-through input1 (which is past-through by depthwise1).
-            pointwise21ChannelCount, // So that it could be concatenated with pointwise21Result.
-            "Pointwise21_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
+          imageIn1 = testParams.use_pointwise20_PassThrough( imageIn1_beforePointwise20, // pass-through input1 (which is past-through by depthwise1).
+            pointwise20ChannelCount, // So that it could be concatenated with pointwise20Result.
+            "Pointwise20_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
         }
 
       } else {
-        pointwise21Result = concat1Result;
+        pointwise20Result = concat1Result;
       }
 
       // Residual Connection.
       if ( bAddInputToOutputRequested )
-        if ( pointwise21Result.depth == testParams.out.channelCount0_pointwise1Before ) // add-input-to-output is possible if same channel count.
-          pointwise21Result = pointwise21Result.clone_byAdd( imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
+        if ( pointwise20Result.depth == testParams.out.channelCount0_pointwise1Before ) // add-input-to-output is possible if same channel count.
+          pointwise20Result = pointwise20Result.clone_byAdd( imageIn0, "Pointwise20_AddInputToOutput", this.paramsOutDescription );
     }
 
-    let imageOutArray = [ pointwise21Result, null ]; // Assume no pointwise22.
+    let imageOutArray = [ pointwise20Result, null ]; // Assume no pointwise21.
 
-    // 4.2 Pointwise22
+    // 4.2 Pointwise21
     //
     // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) or ONE_INPUT_TWO_DEPTHWISE (-2) or
     // ONE_INPUT_ADD_TO_OUTPUT (-1) or ONE_INPUT (0) or TWO_INPUTS (> 0).
@@ -890,55 +890,55 @@ class Base {
         || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2) (ShuffleNetV2's head (simplified))
         || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_ADD_TO_OUTPUT() ) // (-1) (MobileNetV2)
         || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT() )  // (  0) (MobileNetV1 (General Pointwise1-Depthwise1-Pointwise2))
-        || ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS() ) // (> 0) (ShuffleNetV2's (and ShuffleNetV2_ByPointwise22's) body/tail)
+        || ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS() ) // (> 0) (ShuffleNetV2's (and ShuffleNetV2_ByPointwise21's) body/tail)
        ) {
 
-      // If output1 is requested and possible, the pointwise22 will have the same output channel count as pointwise21.
-      let pointwise22ChannelCount;
+      // If output1 is requested and possible, the pointwise21 will have the same output channel count as pointwise20.
+      let pointwise21ChannelCount;
 
       if (   ( testParams.out.bOutput1Requested )
 
           // Note: (-4) (ShuffleNetV2_ByMobileNetV1's head) always does not have output1.
           && ( !testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
          ) {
-        pointwise22ChannelCount = pointwise21ChannelCount;
+        pointwise21ChannelCount = pointwise20ChannelCount;
       } else {
-        pointwise22ChannelCount = 0;
+        pointwise21ChannelCount = 0;
       }
 
-      let bPointwise22Bias = testParams.out.bPointwise21Bias; // pointwise22's bias flag is the same as pointwise21.
-      let pointwise22ActivationId = testParams.out.pointwise21ActivationId; // pointwise22's activation function is the same as pointwise21.
+      let bPointwise21Bias = testParams.out.bPointwise20Bias; // pointwise21's bias flag is the same as pointwise20.
+      let pointwise21ActivationId = testParams.out.pointwise20ActivationId; // pointwise21's activation function is the same as pointwise20.
 
-      let pointwise22Result, pointwise22Result_beforeConcatWith_pointwise222;
-      if ( pointwise22ChannelCount > 0 ) {
-        pointwise22Result = testParams.use_pointwise22( concat1Result, pointwise22ChannelCount, "Pointwise22", this.paramsOutDescription );
+      let pointwise21Result, pointwise21Result_beforeConcatWith_pointwise212;
+      if ( pointwise21ChannelCount > 0 ) {
+        pointwise21Result = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
 
         // Residual Connection.
         //
         // Always using input0 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
         if ( bAddInputToOutputRequested )
-          if ( pointwise22Result.depth == testParams.out.channelCount0_pointwise1Before ) // add-input-to-output is possible if same channel count.
-            pointwise22Result = pointwise22Result.clone_byAdd( imageIn0, "Pointwise22_AddInputToOutput", this.paramsOutDescription );
+          if ( pointwise21Result.depth == testParams.out.channelCount0_pointwise1Before ) // add-input-to-output is possible if same channel count.
+            pointwise21Result = pointwise21Result.clone_byAdd( imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
       }
 
-      // Integrate pointwise21 and pointwise22 into pointwise2.
-      imageOutArray[ 1 ] = pointwise22Result;
+      // Integrate pointwise20 and pointwise21 into pointwise2.
+      imageOutArray[ 1 ] = pointwise21Result;
 
     // 5. Concat2 (along image depth), shuffle, split.
     //
-    // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) (ShuffleNetV2's body/tail)
+    // TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3) (ShuffleNetV2's body/tail)
     // ONE_INPUT_HALF_THROUGH               (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-    } else if (    ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE21_INPUT1() ) // (-3)
+    } else if (    ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE20_INPUT1() ) // (-3)
                 || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
 
       tf.util.assert( ( !imageOutArray[ 1 ] ),
         `Block imageOutArray[ 1 ] ( ${imageOutArray[ 1 ]} ) `
-          + `should be null, since there is no pointwise22. ${this.paramsOutDescription}`);
+          + `should be null, since there is no pointwise21. ${this.paramsOutDescription}`);
 
       let imageConcat2InArray = Array.from( imageOutArray );
 
       // Note: When ONE_INPUT_HALF_THROUGH (-5) (ShuffleNetV2_ByMobileNetV1's body/tail), input1 has already been past-through by pointwise1,
-      //       depthwise1 and pointwise21.
+      //       depthwise1 and pointwise20.
       //
       imageConcat2InArray[ 1 ] = imageIn1; // i.e. input1.
 
@@ -953,12 +953,12 @@ class Base {
         let channelShuffler_concatenatedShape = channelShuffler.concatenatedShape;
         let channelShuffler_outputGroupCount = channelShuffler.outputGroupCount;
         this.calcConcatShuffleSplit( channelShuffler_concatenatedShape, channelShuffler_outputGroupCount,
-          imageConcat2InArray, imageOutArray, "Concat2_pointwise21_input1_ShuffleSplit", this.paramsOutDescription );
+          imageConcat2InArray, imageOutArray, "Concat2_pointwise20_input1_ShuffleSplit", this.paramsOutDescription );
 
       // 5.2 Concat2 only.
       } else { // ( bOutput1Requested == false ), (ShuffleNetV2's tail)
         imageOutArray[ 0 ] = NumberImage.Base.calcConcatAlongAxisId2(
-          imageConcat2InArray[ 0 ], imageConcat2InArray[ 1 ], "Concat2_pointwise21_input1", this.paramsOutDescription );
+          imageConcat2InArray[ 0 ], imageConcat2InArray[ 1 ], "Concat2_pointwise20_input1", this.paramsOutDescription );
       }
 
     } else {
@@ -970,7 +970,7 @@ class Base {
     // 6.
 
     // The imageOutArray[ 0 ] and imageOutArray[ 1 ] should be concatenated into imageOutArray[ 0 ], because we use the logic of
-    // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) and ONE_INPUT_TWO_DEPTHWISE (-2) to handle ONE_INPUT_HALF_THROUGH (-5) and
+    // TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3) and ONE_INPUT_TWO_DEPTHWISE (-2) to handle ONE_INPUT_HALF_THROUGH (-5) and
     // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4).
     if (   ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
         || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
@@ -1109,7 +1109,7 @@ class Base {
       testParams.out.channelCount0_pointwise1Before, testParams.out.channelCount1_pointwise1Before,
       testParams.out.pointwise1ChannelCount,
       testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
-      testParams.out.pointwise21ChannelCount,
+      testParams.out.pointwise20ChannelCount,
       testParams.out.bOutput1Requested );
 
     let paramsOutDescription =
@@ -1149,10 +1149,10 @@ class Base {
         + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getStringOf( testParams.out.nSqueezeExcitationChannelCountDivisor )}`
         + `(${testParams.out.nSqueezeExcitationChannelCountDivisor}), `
 
-      + `pointwise21ChannelCount=${testParams.out.pointwise21ChannelCount}, bPointwise21Bias=${testParams.out.bPointwise21Bias}, `
-      + `pointwise21ActivationName=`
-        + `${Block.Params.pointwise21ActivationId.getStringOfValue( testParams.out.pointwise21ActivationId )}`
-        + `(${testParams.out.pointwise21ActivationId}), `
+      + `pointwise20ChannelCount=${testParams.out.pointwise20ChannelCount}, bPointwise20Bias=${testParams.out.bPointwise20Bias}, `
+      + `pointwise20ActivationName=`
+        + `${Block.Params.pointwise20ActivationId.getStringOfValue( testParams.out.pointwise20ActivationId )}`
+        + `(${testParams.out.pointwise20ActivationId}), `
 
       + `bOutput1Requested=${testParams.out.bOutput1Requested}, `
 
