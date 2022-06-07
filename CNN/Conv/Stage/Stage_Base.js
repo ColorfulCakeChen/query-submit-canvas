@@ -395,8 +395,6 @@ class Base {
       this.tensorWeightCountTotal += block.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += block.tensorWeightCountExtracted;
 
-      block.dispose_all_sub_BoundsArraySet(); // Reduce memory footprint by release unused bounds array set.
-
       if ( 0 == i ) { // After block0 (i.e. for block1, 2, 3, ...)
         blockParamsCreator.configTo_afterBlock0();
         inputScaleBoundsArray = block.output0.scaleBoundsArray;
@@ -417,6 +415,8 @@ class Base {
 //
 //       this.dispose_all_sub_BoundsArraySet(); // Release all blocks' bounds array set for reducing memory footprint.
 //     }
+
+    this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
 
     // In our Stage design, no matter which configuration, the outputChannelCount always is twice as sourceChannelCount.
     tf.util.assert( ( this.outputChannelCount == ( this.sourceChannelCount * 2 ) ),
@@ -478,6 +478,30 @@ class Base {
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
+  }
+
+  /**
+   * Release all ScaleBoundsArray (inside tensor placeholder) except .block0.input0 and .blockLast.output0
+   *
+   * This could reduce memory footprint by releasing unused scale bounds array.
+   */
+  dispose_intermediate_ScaleBoundsArray() {
+
+    if ( !this.blocksArray )
+      return;
+
+    for ( let i = 1; i < ( this.blocksArray.length - 1 ); ++i ) {
+      let block = this.blocksArray[ i ];
+      block.input0.scaleBoundsArray = null;
+
+      if ( block.input1 )
+        block.input1.scaleBoundsArray = null;
+
+      block.output0.scaleBoundsArray = null;
+
+      if ( block.output1 )
+        block.output1.scaleBoundsArray = null;
+    }
   }
 
 //!!! (2022/06/07 Remarked) seems not necessary because already has TensorPlaceholder.
