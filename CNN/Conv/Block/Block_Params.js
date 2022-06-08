@@ -398,6 +398,48 @@ class Params extends Weights.Params {
     }
   }
 
+//!!! ...unfinished... (2022/06/08)
+// If (
+//        ( ( inputHeight == 1 ) && ( inputWidth == 1 ) )
+//     && ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ) // i.e. avg or max or none or ( channelMultiplier == 1 ).
+//     && ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // i.e. depthwise is linear.
+//     && (   ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2), no squeeze-and-excitation (i.e. depthwise is linear)
+//         || ( bSqueezeExcitationPrefix == false ) ) // or, has squeeze-and-excitation, but after pointwise2. (i.e. depthwise is still linear)
+//        )
+//    )
+//
+// Then, the depthwise should be discarded to improve performance.
+// Perhaps, this automatical optimization could be done in Block.Base (i.e. not in Stage).
+//
+  static set_bDepthwiseRequestedAndNeeded(
+    inputHeight, inputWidth,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseActivationId,
+    nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix
+  ) {
+    if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE )
+      return false; // depthwise is not requested.
+
+    if (   ( inputHeight == 1 ) && ( inputWidth == 1 ) && ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ) // i.e. depthwise does nothing.
+
+        && ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // i.e. depthwise is linear.
+
+            // no squeeze-and-excitation (i.e. depthwise is linear)        
+        && (   ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
+
+            // or, has squeeze-and-excitation, but after pointwise2. (i.e. depthwise is still linear)
+            || ( bSqueezeExcitationPrefix == false )
+           )
+       )
+
+      // depthwise is requested, but is not necessary.
+      //
+      // Even if its has bias, this is still correct because its bias could be combined into the bias of the next
+      // operation (i.e. pointwise2).
+      return false;
+
+    return true;
+  }
+
   /**
    * Determine the following properties:
    *   - this.inputTensorCount
