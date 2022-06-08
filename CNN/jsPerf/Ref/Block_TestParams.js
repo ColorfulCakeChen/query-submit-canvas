@@ -522,7 +522,7 @@ class Base extends TestParams.Base {
           this.in.paramsNumberArrayObject.pointwise20SEExcitationFilters,
           this.in.paramsNumberArrayObject.pointwise20SEExcitationBiases,
           this.out.pointwise20ActivationId,
-          `${pointwiseName}_squeezeExcitation`, parametersDesc );
+          `${pointwiseName}_squeezeExcitationPrefix`, parametersDesc );
       } // Otherwise, do not clone to improve performance.
     }
 
@@ -540,7 +540,7 @@ class Base extends TestParams.Base {
           this.in.paramsNumberArrayObject.pointwise20SEExcitationFilters,
           this.in.paramsNumberArrayObject.pointwise20SEExcitationBiases,
           this.out.pointwise20ActivationId,
-          `${pointwiseName}_squeezeExcitation`, parametersDesc );
+          `${pointwiseName}_squeezeExcitationPostfix`, parametersDesc );
       } // Otherwise, do not clone to improve performance.
     }
 
@@ -560,29 +560,39 @@ class Base extends TestParams.Base {
    */
   use_pointwise202( inputImage, pointwise20ChannelCount, pointwiseName, parametersDesc ) {
 
-//!!! ... unfinished... (2022/06/08) squeeze-and-excitation prefix pointwise202
-
-    let squeezeExcitationOut = inputImage;
-    if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
-      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
-        this.out.nSqueezeExcitationChannelCountDivisor,
-        this.in.paramsNumberArrayObject.pointwise202SEIntermediateFilters,
-        this.in.paramsNumberArrayObject.pointwise202SEIntermediateBiases,
-        this.in.paramsNumberArrayObject.pointwise202SEExcitationFilters,
-        this.in.paramsNumberArrayObject.pointwise202SEExcitationBiases,
-        this.out.pointwise20ActivationId,
-        `${pointwiseName}_squeezeExcitation`, parametersDesc );
-
-    // Without clone to improve performance.
+    let squeezeExcitationPrefixOut = inputImage;
+    if ( this.out.bSqueezeExcitationPrefix ) {
+      if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
+        squeezeExcitationPrefixOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
+          this.out.nSqueezeExcitationChannelCountDivisor,
+          this.in.paramsNumberArrayObject.pointwise202SEIntermediateFilters,
+          this.in.paramsNumberArrayObject.pointwise202SEIntermediateBiases,
+          this.in.paramsNumberArrayObject.pointwise202SEExcitationFilters,
+          this.in.paramsNumberArrayObject.pointwise202SEExcitationBiases,
+          this.out.pointwise20ActivationId,
+          `${pointwiseName}_squeezeExcitationPrefix`, parametersDesc );
+      } // Otherwise, do not clone to improve performance.
     }
 
-    let result = squeezeExcitationOut.clone_byPointwise_NonPassThrough( pointwise20ChannelCount,
+    let pointwiseOut = squeezeExcitationPrefixOut.clone_byPointwise_NonPassThrough( pointwise20ChannelCount,
       this.in.paramsNumberArrayObject.pointwise202Filters, this.out.bPointwise20Bias,
       this.in.paramsNumberArrayObject.pointwise202Biases, this.out.pointwise20ActivationId, pointwiseName, parametersDesc );
 
-//!!! ... unfinished... (2022/06/08) squeeze-and-excitation postfix pointwise202
+    let squeezeExcitationPostfixOut = pointwiseOut;
+    if ( this.out.bSqueezeExcitationPrefix ) {
+      if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
+        squeezeExcitationPostfixOut = pointwiseOut.clone_bySqueezeExcitation_NonPassThrough(
+          this.out.nSqueezeExcitationChannelCountDivisor,
+          this.in.paramsNumberArrayObject.pointwise202SEIntermediateFilters,
+          this.in.paramsNumberArrayObject.pointwise202SEIntermediateBiases,
+          this.in.paramsNumberArrayObject.pointwise202SEExcitationFilters,
+          this.in.paramsNumberArrayObject.pointwise202SEExcitationBiases,
+          this.out.pointwise20ActivationId,
+          `${pointwiseName}_squeezeExcitationPostfix`, parametersDesc );
+      } // Otherwise, do not clone to improve performance.
+    }
 
-    return result;
+    return squeezeExcitationPostfixOut;
   }
 
   /**
