@@ -8,11 +8,16 @@ import * as RandTools from "../util/RandTools.js";
 /**
  * Test depthwise-pointwise-bias and fused convolution.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/19042/5/colorfulcakechen-cnn-fusedconv-3f0e5262d8d8ce216b0e9d5c}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/19042/16/colorfulcakechen-cnn-fusedconv-8c93424e25f12bcc64ef725c}
  */
 
 /**
  * A test set.
+ *
+ *
+ * (2022/06/08) In summary, fused convolution is a lot slower than depthwise-pointwise convolution.
+ *
+ *
  */
 class HeightWidthDepth {
 
@@ -36,8 +41,8 @@ class HeightWidthDepth {
     this.outputChannelCount = depth;
     this.channelMultiplier = 1;
     this.strides = 1;
-    this.pad = "same";
-    //this.pad = "valid";
+    //this.pad = "same";
+    this.pad = "valid";
 
     this.depthwiseFilterHeight = 3;
     this.depthwiseFilterWidth = 3;
@@ -134,6 +139,16 @@ class HeightWidthDepth {
   }
 
 
+//!!! (2022/06/08 Remarked)
+//   test_depthwise_bias_pointwise_bias_pad_valid() {
+//     HeightWidthDepth.test_depthwise_bias_pointwise_bias.call( this, "valid" );
+//   }
+//
+//   test_depthwise_bias_pointwise_bias_pad_same() {
+//     HeightWidthDepth.test_depthwise_bias_pointwise_bias.call( this, "same" );
+//   }
+
+
   test_depthwise_bias_pointwise_bias() {
     let t0, t1;
     t0 = tf.depthwiseConv2d( this.inputImage, this.depthwiseFilters, this.strides, this.pad );
@@ -182,7 +197,8 @@ function init() {
   // Using mobile phone's resolution ( 2160 * 1080 ) will crash the computer.
   // Using ( 1 / 10 ) of computer screen ( 1920 * 1080 ).
 //  globalThis.testSet = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
-  globalThis.testSet = new HeightWidthDepth( 3, 3, depth ); // height, width, depth
+//  globalThis.testSet = new HeightWidthDepth( 3, 3, depth ); // height, width, depth
+  globalThis.testSet = new HeightWidthDepth( 5, 5, depth ); // height, width, depth
 
   globalThis.testSet_All = [
     globalThis.testSet
