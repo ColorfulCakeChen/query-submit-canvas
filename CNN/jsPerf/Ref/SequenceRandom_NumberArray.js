@@ -11,6 +11,16 @@ import * as RandTools from "../../util/RandTools.js";
 class Bag extends MultiLayerMap.Base {
 
   /**
+   *
+   * @param {number} nCountPerSameSpec
+   *   For the same specification, provide how many different result number array (and randomly select them).
+   */
+  constructor( nCountPerSameSpec = 10 ) {
+    this.nRandSpecIdMin = 0;
+    this.nRandSpecIdMax = Math.max( 0, nCountPerSameSpec - 1 );
+  }
+
+  /**
    * Similar to Base.ensure_object_property_numberArray_length_filled(). But the property will be a shared number array. Its value
    * may be shared with other caller.
    *
@@ -25,9 +35,7 @@ class Bag extends MultiLayerMap.Base {
    */
   get_by_elementCount_randomOffsetMin_randomOffsetMax( elementCount, randomOffsetMin = 0, randomOffsetMax = 0 ) {
 
-    // For the same specification, provide several different result number array (and randomly select them).
-    const nRandSpecIdMin = 0, nRandSpecIdMax = 5;
-    let nRandSpecId = RandTools.getRandomIntInclusive( nRandSpecIdMin, nRandSpecIdMax );
+    let nRandSpecId = RandTools.getRandomIntInclusive( this.nRandSpecIdMin, this.nRandSpecIdMax );
 
     return this.get_or_create_by_arguments1_etc(
       ( elementCount, randomOffsetMin, randomOffsetMax, nRandSpecId ) => {
