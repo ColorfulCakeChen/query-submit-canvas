@@ -411,6 +411,7 @@ class Base extends ReturnOrClone.Base {
       this.inputTensorCount = params.inputTensorCount;
       this.bHigherHalfDifferent = params.bHigherHalfDifferent;
       this.bHigherHalfDepthwise2 = params.bHigherHalfDepthwise2;
+      this.bDepthwiseRequestedAndNeeded = params.bDepthwiseRequestedAndNeeded;
       this.bDepthwise2Requested = params.bDepthwise2Requested;
       this.bConcat1Requested = params.bConcat1Requested;
       this.bAddInputToOutputRequested = params.bAddInputToOutputRequested;
@@ -536,8 +537,12 @@ class Base extends ReturnOrClone.Base {
     //
     // Note: When ( pad == valid ), it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
 
-    // Only if depthwise operation is specified, creating them.
-    if ( this.AvgMax_Or_ChannelMultiplier != 0 ) {
+//!!! (2022/06/08 Remarked)
+//     // Only if depthwise operation is specified, creating them.
+//     if ( this.AvgMax_Or_ChannelMultiplier != 0 ) {
+
+    // Only if depthwise operation is requested and necessary, create them.
+    if ( this.bDepthwiseRequestedAndNeeded ) {
 
       // 3.1 The depthwise1 operation.
       let depthwise1;
@@ -1320,6 +1325,7 @@ class Base extends ReturnOrClone.Base {
       + `bPointwise1Bias=${this.bPointwise1Bias}, `
       + `pointwise1ActivationName=${this.pointwise1ActivationName}(${this.pointwise1ActivationId}), `
 
+      + `bDepthwiseRequestedAndNeeded=${this.bDepthwiseRequestedAndNeeded}, `
       + `bDepthwise2Requested=${this.bDepthwise2Requested}, `
 
       + `depthwise_AvgMax_Or_ChannelMultiplier=${this.depthwise_AvgMax_Or_ChannelMultiplier_Name}, `
