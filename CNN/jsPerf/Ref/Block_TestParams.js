@@ -579,7 +579,7 @@ class Base extends TestParams.Base {
       this.in.paramsNumberArrayObject.pointwise202Biases, this.out.pointwise20ActivationId, pointwiseName, parametersDesc );
 
     let squeezeExcitationPostfixOut = pointwiseOut;
-    if ( this.out.bSqueezeExcitationPrefix ) {
+    if ( !this.out.bSqueezeExcitationPrefix ) { // i.e. postfix
       if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
         squeezeExcitationPostfixOut = pointwiseOut.clone_bySqueezeExcitation_NonPassThrough(
           this.out.nSqueezeExcitationChannelCountDivisor,
@@ -617,6 +617,8 @@ class Base extends TestParams.Base {
 //     // Without clone to improve performance.
 //     }
 
+    // Note: Since pass-through, the squeeze-and-excitation is not necessary here.
+
     let result = inputImage.clone_byPointwise_PassThrough( pointwise20ChannelCount,
       this.out.bPointwise20Bias, this.out.pointwise20ActivationId,
       this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag,
@@ -635,30 +637,40 @@ class Base extends TestParams.Base {
    */
   use_pointwise21( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
     
-//!!! ... unfinished... (2022/06/08) squeeze-and-excitation prefix pointwise21
-
-    let squeezeExcitationOut = inputImage;
-    if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
-      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
-        this.out.nSqueezeExcitationChannelCountDivisor,
-        this.in.paramsNumberArrayObject.pointwise21SEIntermediateFilters,
-        this.in.paramsNumberArrayObject.pointwise21SEIntermediateBiases,
-        this.in.paramsNumberArrayObject.pointwise21SEExcitationFilters,
-        this.in.paramsNumberArrayObject.pointwise21SEExcitationBiases,
-        this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
-        `${pointwiseName}_squeezeExcitation`, parametersDesc );
-
-    // Without clone to improve performance.
+    let squeezeExcitationPrefixOut = inputImage;
+    if ( this.out.bSqueezeExcitationPrefix ) {
+      if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
+        squeezeExcitationPrefixOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
+          this.out.nSqueezeExcitationChannelCountDivisor,
+          this.in.paramsNumberArrayObject.pointwise21SEIntermediateFilters,
+          this.in.paramsNumberArrayObject.pointwise21SEIntermediateBiases,
+          this.in.paramsNumberArrayObject.pointwise21SEExcitationFilters,
+          this.in.paramsNumberArrayObject.pointwise21SEExcitationBiases,
+          this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
+          `${pointwiseName}_squeezeExcitationPrefix`, parametersDesc );
+      } // Otherwise, do not clone to improve performance.
     }
 
-    let result = inputImage.clone_byPointwise_NonPassThrough( pointwise21ChannelCount,
+    let pointwiseOut = squeezeExcitationPrefixOut.clone_byPointwise_NonPassThrough( pointwise21ChannelCount,
       this.in.paramsNumberArrayObject.pointwise21Filters, this.out.bPointwise20Bias, // (Note: Not bPointwise21Bias)
       this.in.paramsNumberArrayObject.pointwise21Biases, this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
       pointwiseName, parametersDesc );
 
-//!!! ... unfinished... (2022/06/08) squeeze-and-excitation postfix pointwise21
+    let squeezeExcitationPostfixOut = pointwiseOut;
+    if ( !this.out.bSqueezeExcitationPrefix ) { // i.e. postfix
+      if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
+        squeezeExcitationPostfixOut = pointwiseOut.clone_bySqueezeExcitation_NonPassThrough(
+          this.out.nSqueezeExcitationChannelCountDivisor,
+          this.in.paramsNumberArrayObject.pointwise21SEIntermediateFilters,
+          this.in.paramsNumberArrayObject.pointwise21SEIntermediateBiases,
+          this.in.paramsNumberArrayObject.pointwise21SEExcitationFilters,
+          this.in.paramsNumberArrayObject.pointwise21SEExcitationBiases,
+          this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
+          `${pointwiseName}_squeezeExcitationPostfix`, parametersDesc );
+      } // Otherwise, do not clone to improve performance.
+    }
 
-    return result;
+    return squeezeExcitationPostfixOut;
   }
 
 //!!! (2022/06/08 Remarked) seems not used.
