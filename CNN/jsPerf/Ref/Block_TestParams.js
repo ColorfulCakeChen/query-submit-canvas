@@ -1144,20 +1144,20 @@ class Base extends TestParams.Base {
 
     // 4. Pointwise2's prefix squeeze-and-excitation
 
-//!!! ...unfinished... (2022/06/08) bSqueezeExcitationPrefix
-
     if ( paramsAll.bSqueezeExcitationPrefix ) {
 
       // 4.1 Pointwise20's prefix squeeze-and-excitation
       {
-  //!!! ...unfinished... (2022/05/29) lower half and higher half, bSqueezeExcitationPrefix
-  //
-  // Problem: In ShuffleNetV2 and ShuffleNetV2_byMobileNetV1, the squeeze-and-excitation and pointwise2 are extracted in different order.
-  //
-  // Possible Solution: Separate class Pointwise_SameWhenPassThrough_PrefixSqueezeExcitation. No matter squeeze-and-excitation is
-  // prefix or postfix pointwise2, the SqueezeExcitation21 and SqueezeExcitation212 should be extracted in sequence (i.e. both before
-  // or both after pointwise2 together).
-  //
+//!!! ...unfinished... (2022/05/29) lower half and higher half, bSqueezeExcitationPrefix
+//
+// Problem: In ShuffleNetV2 and ShuffleNetV2_byMobileNetV1, the squeeze-and-excitation and pointwise2 are extracted in different order.
+//
+// Possible Solution: Separate class Pointwise_SameWhenPassThrough_PrefixSqueezeExcitation. No matter squeeze-and-excitation is
+// prefix or postfix pointwise2, the SqueezeExcitation21 and SqueezeExcitation212 should be extracted in sequence (i.e. both before
+// or both after pointwise2 together).
+//
+
+//!!! ...unfinished... (2022/06/08) lower and higher
 
         let pointwise20_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
           paramsAll.nSqueezeExcitationChannelCountDivisor,
