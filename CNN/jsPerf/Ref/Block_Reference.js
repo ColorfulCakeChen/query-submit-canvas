@@ -419,11 +419,12 @@ class Base {
 
     let flags = {};
     Block.Params.setFlags_by.call( flags,
+      testParams.out.inputHeight0, testParams.out.inputWidth0,
       testParams.out.channelCount0_pointwise1Before, testParams.out.channelCount1_pointwise1Before,
       testParams.out.pointwise1ChannelCount,
-      testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
-      testParams.out.pointwise20ChannelCount,
-      testParams.out.bOutput1Requested );
+      testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseActivationId,
+      testParams.out.nSqueezeExcitationChannelCountDivisor, testParams.out.bSqueezeExcitationPrefix,
+      testParams.out.pointwise20ChannelCount, testParams.out.bOutput1Requested );
 
     if ( !bInitOk ) { //!!! For Debug.
       console.log( "testParams =", testParams );
@@ -464,6 +465,7 @@ class Base {
     asserter.propertyValue( "inputTensorCount", flags.inputTensorCount );
     asserter.propertyValue( "bHigherHalfDifferent", flags.bHigherHalfDifferent );
     asserter.propertyValue( "bHigherHalfDepthwise2", flags.bHigherHalfDepthwise2 );
+    asserter.propertyValue( "bDepthwiseRequestedAndNeeded", flags.bDepthwiseRequestedAndNeeded );
     asserter.propertyValue( "bDepthwise2Requested", flags.bDepthwise2Requested );
     asserter.propertyValue( "bConcat1Requested", flags.bConcat1Requested );
     asserter.propertyValue( "bAddInputToOutputRequested", flags.bAddInputToOutputRequested );
@@ -773,6 +775,13 @@ class Base {
     }
 
     // 2. Depthwise
+
+
+//!!! ...unfinished... (2022/06/08)
+//     // Only if depthwise operation is requested and necessary, create them.
+//     if ( ???.bDepthwiseRequestedAndNeeded ) {
+
+
 
     // 2.1 Depthwise1
     let imageIn1_beforeDepthwise1 = imageIn1;
@@ -1106,11 +1115,12 @@ class Base {
 
     let flags = {};
     Block.Params.setFlags_by.call( flags,
+      testParams.out.inputHeight0, testParams.out.inputWidth0,
       testParams.out.channelCount0_pointwise1Before, testParams.out.channelCount1_pointwise1Before,
       testParams.out.pointwise1ChannelCount,
-      testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
-      testParams.out.pointwise20ChannelCount,
-      testParams.out.bOutput1Requested );
+      testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseActivationId,
+      testParams.out.nSqueezeExcitationChannelCountDivisor, testParams.out.bSqueezeExcitationPrefix,
+      testParams.out.pointwise20ChannelCount, testParams.out.bOutput1Requested );
 
     let paramsOutDescription =
         `inputTensorCount=${flags.inputTensorCount}, `
@@ -1130,6 +1140,7 @@ class Base {
         + `${Block.Params.pointwise1ActivationId.getStringOfValue( testParams.out.pointwise1ActivationId )}`
         + `(${testParams.out.pointwise1ActivationId}), `
 
+      + `bDepthwiseRequestedAndNeeded=${flags.bDepthwiseRequestedAndNeeded}, `
       + `bDepthwise2Requested=${flags.bDepthwise2Requested}, `
 
       + `depthwise_AvgMax_Or_ChannelMultiplier=`
