@@ -78,6 +78,21 @@ class Base {
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
 
     this.bKeepInputTensor = stageParams.bKeepInputTensor; // block0 may or may not keep input tensor according to caller's necessary.
+
+//!!! ...unfinished... (2022/06/08)
+// If (
+//        ( ( inputHeight == 1 ) && ( inputWidth == 1 ) )
+//     && ( this.depthwise_AvgMax_Or_ChannelMultiplier <= 1 ) // i.e. avg or max or none or ( channelMultiplier == 1 ).
+//     && ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // i.e. depthwise is linear.
+//     && (   ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2), no squeeze-and-excitation (i.e. depthwise is linear)
+//         || ( bSqueezeExcitationPrefix == false ) ) // or, has squeeze-and-excitation, but after pointwise2. (i.e. depthwise is still linear)
+//        )
+//    )
+//
+// Then, the depthwise should be discarded to improve performance.
+// Perhaps, this automatical optimization could be done in Block.Base (i.e. not in Stage).
+//
+
   }
 
   /**
