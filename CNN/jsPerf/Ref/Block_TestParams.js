@@ -1146,18 +1146,49 @@ class Base extends TestParams.Base {
 
     if ( paramsAll.bSqueezeExcitationPrefix ) {
 
-      // 4.1 Pointwise20's prefix squeeze-and-excitation
-      {
-//!!! ...unfinished... (2022/05/29) lower half and higher half, bSqueezeExcitationPrefix
-//
-// Problem: In ShuffleNetV2 and ShuffleNetV2_byMobileNetV1, the squeeze-and-excitation and pointwise2 are extracted in different order.
-//
-// Possible Solution: Separate class Pointwise_SameWhenPassThrough_PrefixSqueezeExcitation. No matter squeeze-and-excitation is
-// prefix or postfix pointwise2, the SqueezeExcitation21 and SqueezeExcitation212 should be extracted in sequence (i.e. both before
-// or both after pointwise2 together).
-//
+//!!! ...unfinished... (2022/06/08) could be combined into triple generator?
 
-//!!! ...unfinished... (2022/06/08) lower and higher
+      // 4.1 Pointwise20's and Pointwise202's prefix squeeze-and-excitation. (Then, never has pointwise21.)
+      if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+
+        this.generate_squeezeExcitation_filters_biases(
+          paramsAll.nSqueezeExcitationChannelCountDivisor,
+          pointwise2_inputChannelCount, pointwise2_inputChannelCount,
+          paramsAll.pointwise20ActivationId,
+          "pointwise20", "pointwise202", io_paramsNumberArrayObject );
+
+        this.generate_squeezeExcitation_filters_biases( // Clear Pointwise21's prefix squeeze-and-excitation. 
+          ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE, 0, 0, null,
+          "pointwise21", "", io_paramsNumberArrayObject );
+
+      // 4.2 Pointwise20's and Pointwise21's prefix squeeze-and-excitation. (Then, never has pointwise202.)
+      } else if ( pointwise21ChannelCount > 0 ) { // Only if pointwise21 exists, its squeeze-and-excitation exists.
+
+        this.generate_squeezeExcitation_filters_biases(
+          paramsAll.nSqueezeExcitationChannelCountDivisor,
+          pointwise2_inputChannelCount, pointwise2_inputChannelCount,
+          nPointwise21ActivationId,
+          "pointwise20", "pointwise21", io_paramsNumberArrayObject );
+
+        this.generate_squeezeExcitation_filters_biases( // Clear Pointwise202's prefix squeeze-and-excitation. 
+          ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE, 0, 0, null,
+          "pointwise202", "", io_paramsNumberArrayObject );
+
+      // 4.3 Pointwise20's prefix squeeze-and-excitation only.
+      } else {
+
+        this.generate_squeezeExcitation_filters_biases(
+          paramsAll.nSqueezeExcitationChannelCountDivisor,
+          pointwise2_inputChannelCount, 0,
+          paramsAll.pointwise20ActivationId,
+          "pointwise20", "", io_paramsNumberArrayObject );
+
+        this.generate_squeezeExcitation_filters_biases( // Clear Pointwise202's and Pointwise21's prefix squeeze-and-excitation. 
+          ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE, 0, 0, null,
+          "pointwise202", "pointwise21", io_paramsNumberArrayObject );
+      }
+
+//!!! ...unfinished... (2022/06/08) Old. lower and higher
 
         let pointwise20_squeezeExcitation_resultOutputChannelCount = this.generate_squeezeExcitation_filters_biases(
           paramsAll.nSqueezeExcitationChannelCountDivisor,
