@@ -1137,19 +1137,17 @@ class Base extends ReturnOrClone.Base {
       this.operationArray.operation_append( excitationPointwise0, excitationPointwise1 );
     }
 
-//!!! ...unfinished... (2022/06/07)
     // 4. Mutiply
     {
+      let multiply0 = new Operation.MultiplyTwoTensors( input0, this.operationArray.endingInput0 );
+
+      let multiply1;
+      if ( this.pointwise21ChannelCount > 0 ) {
+        multiply1 = new Operation.MultiplyTwoTensors( input1, this.operationArray.endingInput1 );
+      }
+
+      this.operationArray.operation_append( multiply0, multiply1 );
     }
-
-
-//!!! ...unfinished... (2022/06/07)
-//    let outputChannelCount = this.inputChannelCount; // For squeeze-and-excitation, output channel count is always the same as input.
- 
-//!!! ...unfinished... (2022/06/07)
-    this.nSqueezeExcitationChannelCountDivisor;
-
-    //this.bSqueezeExcitationPrefix
 
     return true;
   }
