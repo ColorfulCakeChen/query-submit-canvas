@@ -11,9 +11,10 @@ import * as Operation from "../Conv/Operation.js";
 class Case {
 
   /**
-   * @param {number} caseId  The id of this test case.
+   * @param {number} caseId      The id of this test case.
+   * @param {Class} classTested  Operation.Base or Operation.TwinArray
    */
-  constructor( caseId, bInput0, bInput1, outputTensorCount, bKeepInputTensor0, bKeepInputTensor1 ) {
+  constructor( caseId, classTested, bInput0, bInput1, outputTensorCount, bKeepInputTensor0, bKeepInputTensor1 ) {
     this.caseId = caseId;
 
     this.assertPrefix = `jsPerf_Operation.Case( this.caseId == ${this.caseId} )`;
@@ -26,7 +27,7 @@ class Case {
     if ( bInput1 )
       input1 = new TensorPlaceholder.Base();
 
-    this.operation = new Operation.Base( input0, input1, outputTensorCount );
+    this.operation = new classTested( input0, input1, outputTensorCount );
     this.operation.setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 );
 
     tf.tidy( () => {
@@ -107,28 +108,36 @@ Case.testTensorShape = [ 1 ];
 
 function testCorrectness() {
 
+  let classOperationBase = ( Operation.Base() );
+  let classOperationTwinArray = ( Operation.TwinArray() );
+  let classTestedArray = [ classOperationBase, classOperationTwinArray ];
+
   let caseId = -1;
   let bInput0, bInput1, outputTensorCount, bKeepInputTensor0, bKeepInputTensor1;
 
-  for ( let nInput0 = 0; nInput0 <= 1; ++nInput0 ) {
-    for ( let nInput1 = 0; nInput1 <= 1; ++nInput1 ) {
-      for ( let outputTensorCount = 0; outputTensorCount <= 2; ++outputTensorCount ) {
-        for ( let nKeepInputTensor0 = 0; nKeepInputTensor0 <= 1; ++nKeepInputTensor0 ) {
-          for ( let nKeepInputTensor1 = 0; nKeepInputTensor1 <= 1; ++nKeepInputTensor1 ) {
+  for ( let classIndex = 0; classIndex < classTestedArray.length; ++classIndex ) {
+    let classTested = classTestedArray[ classIndex ];
 
-            ++caseId;
+    for ( let nInput0 = 0; nInput0 <= 1; ++nInput0 ) {
+      for ( let nInput1 = 0; nInput1 <= 1; ++nInput1 ) {
+        for ( let outputTensorCount = 0; outputTensorCount <= 2; ++outputTensorCount ) {
+          for ( let nKeepInputTensor0 = 0; nKeepInputTensor0 <= 1; ++nKeepInputTensor0 ) {
+            for ( let nKeepInputTensor1 = 0; nKeepInputTensor1 <= 1; ++nKeepInputTensor1 ) {
 
-            bInput0 = ( nInput0 != 0 );
-            bInput1 = ( nInput1 != 0 );
+              ++caseId;
 
-            //!!! (2022/06/02 Remarked) It could be supported. Just get null as result.
-            //if ( !bInput0 && !bInput1 )
-            //  continue; // Operation should have at least one input.
+              bInput0 = ( nInput0 != 0 );
+              bInput1 = ( nInput1 != 0 );
 
-            bKeepInputTensor0 = ( nKeepInputTensor0 != 0 );
-            bKeepInputTensor1 = ( nKeepInputTensor1 != 0 );
+              //!!! (2022/06/02 Remarked) It could be supported. Just get null as result.
+              //if ( !bInput0 && !bInput1 )
+              //  continue; // Operation should have at least one input.
 
-            let testCase = new Case( caseId, bInput0, bInput1, outputTensorCount, bKeepInputTensor0, bKeepInputTensor1 );
+              bKeepInputTensor0 = ( nKeepInputTensor0 != 0 );
+              bKeepInputTensor1 = ( nKeepInputTensor1 != 0 );
+
+              let testCase = new Case( caseId, classTested, bInput0, bInput1, outputTensorCount, bKeepInputTensor0, bKeepInputTensor1 );
+            }
           }
         }
       }
