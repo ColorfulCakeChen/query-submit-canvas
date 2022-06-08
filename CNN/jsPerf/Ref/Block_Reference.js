@@ -864,11 +864,21 @@ class Base {
     let pointwise20Result, pointwise20Result_beforeConcatWith_pointwise202;
     {
       if ( pointwise20ChannelCount > 0 ) {
+
+//!!! ... unfinished... (2022/06/08) squeeze-and-excitation prefix pointwise20
+
         pointwise20Result = testParams.use_pointwise20( concat1Result, pointwise20ChannelCount, "Pointwise20", this.paramsOutDescription );
+
+//!!! ... unfinished... (2022/06/08) squeeze-and-excitation postfix pointwise20
 
         // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
+
+//!!! ... unfinished... (2022/06/08) squeeze-and-excitation prefix pointwise202
+
           let pointwise202Result = testParams.use_pointwise202( concat1Result, pointwise20ChannelCount, "Pointwise202", this.paramsOutDescription );
+
+//!!! ... unfinished... (2022/06/08) squeeze-and-excitation postfix pointwise202
 
           pointwise20Result_beforeConcatWith_pointwise202 = pointwise20Result;
           pointwise20Result = NumberImage.Base.calcConcatAlongAxisId2( pointwise20Result, pointwise202Result,
@@ -923,7 +933,12 @@ class Base {
 
       let pointwise21Result, pointwise21Result_beforeConcatWith_pointwise212;
       if ( pointwise21ChannelCount > 0 ) {
+
+//!!! ... unfinished... (2022/06/08) squeeze-and-excitation prefix pointwise21
+
         pointwise21Result = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
+
+//!!! ... unfinished... (2022/06/08) squeeze-and-excitation postfix pointwise21
 
         // Residual Connection.
         //
