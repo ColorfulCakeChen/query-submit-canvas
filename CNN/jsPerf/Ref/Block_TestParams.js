@@ -2,9 +2,7 @@ export { Base };
 
 import * as RandTools from "../../util/RandTools.js";
 import * as NameNumberArrayObject_To_Float32Array from "../../util/NameNumberArrayObject_To_Float32Array.js";
-//import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-//import * as ValueRange from "../../Unpacker/ValueRange.js";
 import * as TestParams from "./TestParams.js";
 import * as NumberImage from "./NumberImage.js";
 import * as Pointwise from "../../Conv/Pointwise.js";
@@ -514,29 +512,39 @@ class Base extends TestParams.Base {
    */
   use_pointwise20( inputImage, pointwise20ChannelCount, pointwiseName, parametersDesc ) {
 
-//!!! ... unfinished... (2022/06/08) squeeze-and-excitation prefix pointwise20
-
-    let squeezeExcitationOut = inputImage;
-    if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
-      squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
-        this.out.nSqueezeExcitationChannelCountDivisor,
-        this.in.paramsNumberArrayObject.pointwise20SEIntermediateFilters,
-        this.in.paramsNumberArrayObject.pointwise20SEIntermediateBiases,
-        this.in.paramsNumberArrayObject.pointwise20SEExcitationFilters,
-        this.in.paramsNumberArrayObject.pointwise20SEExcitationBiases,
-        this.out.pointwise20ActivationId,
-        `${pointwiseName}_squeezeExcitation`, parametersDesc );
-
-    // Without clone to improve performance.
+    let squeezeExcitationPrefixOut = inputImage;
+    if ( this.out.bSqueezeExcitationPrefix ) {
+      if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
+        squeezeExcitationPrefixOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
+          this.out.nSqueezeExcitationChannelCountDivisor,
+          this.in.paramsNumberArrayObject.pointwise20SEIntermediateFilters,
+          this.in.paramsNumberArrayObject.pointwise20SEIntermediateBiases,
+          this.in.paramsNumberArrayObject.pointwise20SEExcitationFilters,
+          this.in.paramsNumberArrayObject.pointwise20SEExcitationBiases,
+          this.out.pointwise20ActivationId,
+          `${pointwiseName}_squeezeExcitation`, parametersDesc );
+      } // Otherwise, do not clone to improve performance.
     }
 
-    let result = squeezeExcitationOut.clone_byPointwise_NonPassThrough( pointwise20ChannelCount,
+    let pointwiseOut = squeezeExcitationPrefixOut.clone_byPointwise_NonPassThrough( pointwise20ChannelCount,
       this.in.paramsNumberArrayObject.pointwise20Filters, this.out.bPointwise20Bias,
       this.in.paramsNumberArrayObject.pointwise20Biases, this.out.pointwise20ActivationId, pointwiseName, parametersDesc );
 
-//!!! ... unfinished... (2022/06/08) squeeze-and-excitation postfix pointwise20
+    let squeezeExcitationPostfixOut = pointwiseOut;
+    if ( !this.out.bSqueezeExcitationPrefix ) { // i.e. postfix
+      if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
+        squeezeExcitationPostfixOut = pointwiseOut.clone_bySqueezeExcitation_NonPassThrough(
+          this.out.nSqueezeExcitationChannelCountDivisor,
+          this.in.paramsNumberArrayObject.pointwise20SEIntermediateFilters,
+          this.in.paramsNumberArrayObject.pointwise20SEIntermediateBiases,
+          this.in.paramsNumberArrayObject.pointwise20SEExcitationFilters,
+          this.in.paramsNumberArrayObject.pointwise20SEExcitationBiases,
+          this.out.pointwise20ActivationId,
+          `${pointwiseName}_squeezeExcitation`, parametersDesc );
+      } // Otherwise, do not clone to improve performance.
+    }
 
-    return result;
+    return squeezeExcitationPostfixOut;
   }
 
   /**
