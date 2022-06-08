@@ -187,8 +187,8 @@ class HeightWidthDepth {
     // channelCount0_pointwise1Before, channelCount1_pointwise1Before,
     // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     // depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-    // pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-    // bPointwise22,
+    // pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
+    // bPointwise21,
     // bKeepInputTensor
     //
 
@@ -208,7 +208,7 @@ class HeightWidthDepth {
           8,  true, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           1,     3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1,
-          4,  true, Block.Params.pointwise21ActivationId.valueDesc.Ids.COS,
+          4,  true, Block.Params.pointwise20ActivationId.valueDesc.Ids.COS,
       false,
        true
     );
@@ -222,7 +222,7 @@ class HeightWidthDepth {
         Block.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,
                  3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1,
-          4,  true, Block.Params.pointwise21ActivationId.valueDesc.Ids.COS,
+          4,  true, Block.Params.pointwise20ActivationId.valueDesc.Ids.COS,
       false,
        true
     );
@@ -236,7 +236,7 @@ class HeightWidthDepth {
         Block.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,
                  3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1,
-          4,  true, Block.Params.pointwise21ActivationId.valueDesc.Ids.COS,
+          4,  true, Block.Params.pointwise20ActivationId.valueDesc.Ids.COS,
       false,
        true
     );
@@ -249,7 +249,7 @@ class HeightWidthDepth {
           8,  true, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1,
-          4,  true, Block.Params.pointwise21ActivationId.valueDesc.Ids.COS,
+          4,  true, Block.Params.pointwise20ActivationId.valueDesc.Ids.COS,
       false,
        true
     );
@@ -262,7 +262,7 @@ class HeightWidthDepth {
           8, false, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3, 3, 1, false, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1,
-          4, false, Block.Params.pointwise21ActivationId.valueDesc.Ids.COS,
+          4, false, Block.Params.pointwise20ActivationId.valueDesc.Ids.COS,
       false,
        true
     );
@@ -275,7 +275,7 @@ class HeightWidthDepth {
           8, false, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3, 3, 1, false, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1,
-          4, false, Block.Params.pointwise21ActivationId.valueDesc.Ids.COS,
+          4, false, Block.Params.pointwise20ActivationId.valueDesc.Ids.COS,
       false,
        true
     );
@@ -288,7 +288,7 @@ class HeightWidthDepth {
           0,  true, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
          32,     3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1,
-        128,  true, Block.Params.pointwise21ActivationId.valueDesc.Ids.NONE,
+        128,  true, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
       false,
        true
     );
@@ -301,7 +301,7 @@ class HeightWidthDepth {
         128,  true, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           0,     3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1,
-        128,  true, Block.Params.pointwise21ActivationId.valueDesc.Ids.NONE,
+        128,  true, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
       false,
        true
     );
@@ -521,7 +521,7 @@ class HeightWidthDepth {
 
     // Test ValueRange.Int().valueInputOutputGenerator().
     {
-      let paramDesc = Block.Params.pointwise21ChannelCount;
+      let paramDesc = Block.Params.pointwise20ChannelCount;
 
       for ( let offsetMultiplier = -10; offsetMultiplier <= +10; ++offsetMultiplier ) {
         for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( offsetMultiplier ) ) {
