@@ -11,6 +11,9 @@ import * as Weights from "../../Unpacker/Weights.js";
  *   The channel count of the second input (i.e. input1). This is referred (estimated) from other parameters. The inputTensors[ 1 ]'s
  * channel count of Block.apply() should match this value. The Block.inChannels1 should also the same this value.
  *
+ * @member {boolean} bDepthwiseRequestedAndNeeded
+ *   Whether depthwise operation is requested and necessary.
+ *
  * @member {number} pointwise21ChannelCount
  *   The output channel count of the second pointwise2 convolution. If ( pointwise20ChannelCount == 0 ) and
  * ( pointwise21ChannelCount == 0 ), there will be no pointwise convolution after depthwise convolution. The pointwise21
