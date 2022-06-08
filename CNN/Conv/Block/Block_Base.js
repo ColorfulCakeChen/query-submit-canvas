@@ -621,6 +621,10 @@ class Base extends ReturnOrClone.Base {
       }
 
       this.operationArray.operation_append( depthwise1, depthwise2 );
+
+    } else {
+      // Otherwise, the depthwise operation is either ( not requested ) or ( requested but not necessary ).
+      // The later case could improve performance. 
     }
 
     ++progressToAdvance.value;
