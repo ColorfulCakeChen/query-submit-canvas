@@ -750,14 +750,14 @@ class Base extends TestParams.Base {
    *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
    * (Please see also SqueezeExcitation.Base.nSqueezeExcitationChannelCountDivisor explanation.)
    *
-   * @param {number} inputChannelCount
-   *   The channel count of the squeeze-and-excitation's input.
-   *
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of the squeeze-and-excitation.
    *
-   * @param {string} propertyNamePrefix
-   *   The name prefix of the result property in the o_numberArrayObject.
+   * @param {number} inputChannelCount_A
+   *   The channel count of the squeeze-and-excitation's input.
+   *
+   * @param {string} propertyNamePrefix_A
+   *   The name prefix of the result property in the o_numberArrayObject. If null, it will not be filled.
    *
    * @param {object} io_numberArrayObject
    *   The object will be filled in result data. Every result number array will be set as a property of the object. At most,
@@ -773,10 +773,9 @@ class Base extends TestParams.Base {
 //!!! (2022/05/29 Remarked)
 //    inputChannelCount, outputChannelCount, nActivationId, propertyNamePrefix, io_numberArrayObject ) {
 
-    inputChannelCount_lowerHalf, //outputChannelCount_lowerHalf,
-    inputChannelCount_higherHalf, //outputChannelCount_higherHalf,
     nActivationId,
-    propertyNamePrefix_lowerHalf, propertyNamePrefix_higherHalf,
+    inputChannelCount_A, inputChannelCount_B, inputChannelCount_C,
+    propertyNamePrefix_A, propertyNamePrefix_B, propertyNamePrefix_C,
     io_numberArrayObject ) {
 
     // 0.
@@ -805,29 +804,35 @@ class Base extends TestParams.Base {
     }
 
     // 1. squeeze depthwise convolution.
-    let squeeze_inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
-    let squeeze_outputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
+    let squeeze_inputChannelCount_A = inputChannelCount_A;
+    let squeeze_outputChannelCount_A = inputChannelCount_A;
 
-    let squeeze_inputChannelCount_higherHalf = inputChannelCount_higherHalf;
-    let squeeze_outputChannelCount_higherHalf = inputChannelCount_higherHalf;
+    let squeeze_inputChannelCount_B = inputChannelCount_B;
+    let squeeze_outputChannelCount_B = inputChannelCount_B;
+
+    let squeeze_inputChannelCount_C = inputChannelCount_C;
+    let squeeze_outputChannelCount_C = inputChannelCount_C;
 
     // 2. intermediate pointwise convolution.
-    let intermediate_inputChannelCount_lowerHalf = squeeze_outputChannelCount_lowerHalf;
-    let intermediate_outputChannelCount_lowerHalf;
+    let intermediate_inputChannelCount_A = squeeze_outputChannelCount_A;
+    let intermediate_outputChannelCount_A;
 
-    let intermediate_inputChannelCount_higherHalf = squeeze_outputChannelCount_higherHalf;
-    let intermediate_outputChannelCount_higherHalf;
+    let intermediate_inputChannelCount_B = squeeze_outputChannelCount_B;
+    let intermediate_outputChannelCount_B;
+
+    let intermediate_inputChannelCount_C = squeeze_outputChannelCount_C;
+    let intermediate_outputChannelCount_C;
 
     let intermediate_bBias;
     {
-      const SEIntermediatePropertyNamePrefix_lowerHalf = `${propertyNamePrefix_lowerHalf}SEIntermediate`;
-      const SEIntermediatePropertyNamePrefix_higherHalf = `${propertyNamePrefix_higherHalf}SEIntermediate`;
+      const SEIntermediatePropertyNamePrefix_A = ( propertyNamePrefix_A ) ? ( `${propertyNamePrefix_A}SEIntermediate` ) : null;
+      const SEIntermediatePropertyNamePrefix_B = ( propertyNamePrefix_B ) ? ( `${propertyNamePrefix_B}SEIntermediate` ) : null;
+      const SEIntermediatePropertyNamePrefix_C = ( propertyNamePrefix_C ) ? ( `${propertyNamePrefix_C}SEIntermediate` ) : null;
 
       if ( bIntermediate ) {
-        intermediate_outputChannelCount_lowerHalf
-          = Math.ceil( intermediate_inputChannelCount_lowerHalf / nSqueezeExcitationChannelCountDivisor );
-        intermediate_outputChannelCount_higherHalf
-          = Math.ceil( intermediate_inputChannelCount_higherHalf / nSqueezeExcitationChannelCountDivisor );
+        intermediate_outputChannelCount_A = Math.ceil( intermediate_inputChannelCount_A / nSqueezeExcitationChannelCountDivisor );
+        intermediate_outputChannelCount_B = Math.ceil( intermediate_inputChannelCount_B / nSqueezeExcitationChannelCountDivisor );
+        intermediate_outputChannelCount_C = Math.ceil( intermediate_inputChannelCount_C / nSqueezeExcitationChannelCountDivisor );
 
         // If intermediatePointwise has no activation, it could be no bias because the next operation's (i.e. excitationPointwise)
         // bias will achieve it.
@@ -837,55 +842,53 @@ class Base extends TestParams.Base {
           intermediate_bBias = true;
         }
       } else {
-        intermediate_outputChannelCount_lowerHalf = intermediate_inputChannelCount_lowerHalf;
-        intermediate_outputChannelCount_higherHalf = intermediate_inputChannelCount_higherHalf;
+        intermediate_outputChannelCount_A = intermediate_inputChannelCount_A;
+        intermediate_outputChannelCount_B = intermediate_inputChannelCount_B;
+        intermediate_outputChannelCount_C = intermediate_inputChannelCount_C;
         intermediate_bBias = false;
       }
 
       this.generate_pointwise_filters_biases(
-        intermediate_inputChannelCount_lowerHalf,
-        ( bIntermediate ) ? intermediate_outputChannelCount_lowerHalf : 0,
-        intermediate_bBias,
-        SEIntermediatePropertyNamePrefix_lowerHalf, io_numberArrayObject );
+        intermediate_inputChannelCount_A, ( ( bIntermediate ) ? intermediate_outputChannelCount_A : 0 ),
+        intermediate_bBias, SEIntermediatePropertyNamePrefix_A, io_numberArrayObject );
 
       this.generate_pointwise_filters_biases(
-        intermediate_inputChannelCount_higherHalf,
-        ( bIntermediate ) ? intermediate_outputChannelCount_higherHalf : 0,
-        intermediate_bBias,
-        SEIntermediatePropertyNamePrefix_higherHalf, io_numberArrayObject );
+        intermediate_inputChannelCount_B, ( ( bIntermediate ) ? intermediate_outputChannelCount_B : 0 ),
+        intermediate_bBias, SEIntermediatePropertyNamePrefix_B, io_numberArrayObject );
+
+      this.generate_pointwise_filters_biases(
+        intermediate_inputChannelCount_C, ( ( bIntermediate ) ? intermediate_outputChannelCount_C : 0 ),
+        intermediate_bBias, SEIntermediatePropertyNamePrefix_C, io_numberArrayObject );
     }
 
     // 3. excitation pointwise convolution.
-    let excitation_inputChannelCount_lowerHalf = intermediate_outputChannelCount_lowerHalf;
-    let excitation_inputChannelCount_higherHalf = intermediate_outputChannelCount_higherHalf;
+    let excitation_inputChannelCount_A = intermediate_outputChannelCount_A;
+    let excitation_outputChannelCount_A = inputChannelCount_A;
 
-    let excitation_outputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
-    let excitation_outputChannelCount_higherHalf = inputChannelCount_higherHalf;
+    let excitation_inputChannelCount_B = intermediate_outputChannelCount_B;
+    let excitation_outputChannelCount_B = inputChannelCount_B;
+
+    let excitation_inputChannelCount_C = intermediate_outputChannelCount_C;
+    let excitation_outputChannelCount_C = inputChannelCount_C;
 
     let excitation_bBias = true; // Always bBias
     {
-      const SEExcitationPropertyNamePrefix_lowerHalf = `${propertyNamePrefix_lowerHalf}SEExcitation`;
-      const SEExcitationPropertyNamePrefix_higherHalf = `${propertyNamePrefix_higherHalf}SEExcitation`;
+      const SEExcitationPropertyNamePrefix_A = ( propertyNamePrefix_A ) ? ( `${propertyNamePrefix_A}SEExcitation` ) : null;
+      const SEExcitationPropertyNamePrefix_B = ( propertyNamePrefix_B ) ? ( `${propertyNamePrefix_B}SEExcitation` ) : null;
+      const SEExcitationPropertyNamePrefix_C = ( propertyNamePrefix_C ) ? ( `${propertyNamePrefix_C}SEExcitation` ) : null;
 
       this.generate_pointwise_filters_biases(
-        excitation_inputChannelCount_lowerHalf,
-        ( bExcitation ) ? excitation_outputChannelCount_lowerHalf : 0,
-        excitation_bBias,
-        SEExcitationPropertyNamePrefix_lowerHalf, io_numberArrayObject );
+        excitation_inputChannelCount_A, ( ( bExcitation ) ? excitation_outputChannelCount_A : 0 ),
+        excitation_bBias, SEExcitationPropertyNamePrefix_A, io_numberArrayObject );
 
       this.generate_pointwise_filters_biases(
-        excitation_inputChannelCount_higherHalf,
-        ( bExcitation ) ? excitation_outputChannelCount_higherHalf : 0,
-        excitation_bBias,
-        SEExcitationPropertyNamePrefix_higherHalf, io_numberArrayObject );
+        excitation_inputChannelCount_B, ( ( bExcitation ) ? excitation_outputChannelCount_B : 0 ),
+        excitation_bBias, SEExcitationPropertyNamePrefix_B, io_numberArrayObject );
+
+      this.generate_pointwise_filters_biases(
+        excitation_inputChannelCount_C, ( ( bExcitation ) ? excitation_outputChannelCount_C : 0 ),
+        excitation_bBias, SEExcitationPropertyNamePrefix_C, io_numberArrayObject );
     }
-
-//!!! (2022/06/08 Remarked) No longer return anythig.
-//     // 4.
-//     if ( bExcitation )
-//       return excitation_outputChannelCount;
-//     else
-//       return 0; // no squeeze-and-excitation.
   }
 
   /**
@@ -900,7 +903,7 @@ class Base extends TestParams.Base {
    *
    * @param {string} propertyNamePrefix
    *   The name prefix of the result object. For example, if ( resultPrefixName == "xxx" ), the key names of returned object's
-   * numberArrayMap will be "xxxFilters", "xxxBiases".
+   * numberArrayMap will be "xxxFilters", "xxxBiases". If null, nothing will be filled.
    *
    * @param {object} io_numberArrayObject
    *   The object will be filled in result data. Every result number array will be set as a property of the object. At most,
@@ -914,25 +917,27 @@ class Base extends TestParams.Base {
     // If this pointwise operation does not exist, default outputChannelCount will be inputChannelCount.
     let result_outputChannelCount = inputChannelCount;
 
-    const filtersPropertyName = `${propertyNamePrefix}Filters`;
-    const biasesPropertyName = `${propertyNamePrefix}Biases`;
+    if ( propertyNamePrefix ) {
+      const filtersPropertyName = `${propertyNamePrefix}Filters`;
+      const biasesPropertyName = `${propertyNamePrefix}Biases`;
 
-    if ( outputChannelCount > 0 ) {
-      result_outputChannelCount = outputChannelCount;
+      if ( outputChannelCount > 0 ) {
+        result_outputChannelCount = outputChannelCount;
 
-      let filtersWeightsCount = inputChannelCount * outputChannelCount;
-      this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, filtersWeightsCount );
+        let filtersWeightsCount = inputChannelCount * outputChannelCount;
+        this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, filtersWeightsCount );
 
-      if ( bBias ) {
-        let biasesWeightsCount = result_outputChannelCount;
-        this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, biasesWeightsCount );
-      } else {
+        if ( bBias ) {
+          let biasesWeightsCount = result_outputChannelCount;
+          this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, biasesWeightsCount );
+        } else {
+          this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, 0 );
+        }
+
+      } else { // No pointwise convolution.
+        this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, 0 );
         this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, 0 );
       }
-
-    } else { // No pointwise convolution.
-      this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, 0 );
-      this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, 0 );
     }
 
     return result_outputChannelCount;
@@ -948,7 +953,7 @@ class Base extends TestParams.Base {
    *
    * @param {string} propertyNamePrefix
    *   The name prefix of the result object. For example, if ( resultPrefixName == "xxx" ), the key names of returned object's
-   * numberArrayMap will be "xxxFilters", "xxxBiases".
+   * numberArrayMap will be "xxxFilters", "xxxBiases". If null, nothing will be filled.
    *
    * @param {object} io_numberArrayObject
    *   The object will be filled in result data. Every result number array will be set as a property of the object. At most,
@@ -964,29 +969,31 @@ class Base extends TestParams.Base {
     // If this depthwise operation does not exist, default outputChannelCount will be inputChannelCount.
     let result_outputChannelCount = inputChannelCount;
 
-    const filtersPropertyName = `${propertyNamePrefix}Filters`;
-    const biasesPropertyName = `${propertyNamePrefix}Biases`;
+    if ( propertyNamePrefix ) {
+      const filtersPropertyName = `${propertyNamePrefix}Filters`;
+      const biasesPropertyName = `${propertyNamePrefix}Biases`;
 
-    if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-      result_outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
+      if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
+        result_outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
 
-      let filtersWeightsCount = result_outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
-      this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, filtersWeightsCount );
+        let filtersWeightsCount = result_outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
+        this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, filtersWeightsCount );
 
-    } else {
-      // Note: if AVG or MAX pooling, this property will be empty array.
-      this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, 0 );
-    }
+      } else {
+        // Note: if AVG or MAX pooling, this property will be empty array.
+        this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, 0 );
+      }
 
-    if ( depthwise_AvgMax_Or_ChannelMultiplier != 0 ) { // Include avgerage pooling, maximum pooling, convolution.
-      if ( bBias ) {
-        let biasesWeightsCount = result_outputChannelCount;
-        this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, biasesWeightsCount );
-      } else { // No bias.
+      if ( depthwise_AvgMax_Or_ChannelMultiplier != 0 ) { // Include avgerage pooling, maximum pooling, convolution.
+        if ( bBias ) {
+          let biasesWeightsCount = result_outputChannelCount;
+          this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, biasesWeightsCount );
+        } else { // No bias.
+          this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, 0 );
+        }
+      } else { // No depthwise convolution, no avg pooling, no max pooling.
         this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, 0 );
       }
-    } else { // No depthwise convolution, no avg pooling, no max pooling.
-      this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, 0 );
     }
 
     return result_outputChannelCount;
