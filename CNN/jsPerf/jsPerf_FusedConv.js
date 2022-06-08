@@ -36,7 +36,8 @@ class HeightWidthDepth {
     this.outputChannelCount = depth;
     this.channelMultiplier = 1;
     this.strides = 1;
-    this.pad = "same";
+    //this.pad = "same";
+    this.pad = "valid";
 
     this.depthwiseFilterHeight = 3;
     this.depthwiseFilterWidth = 3;
@@ -181,7 +182,7 @@ function init() {
   // Using mobile phone's resolution ( 2160 * 1080 ) will crash the computer.
   // Using ( 1 / 10 ) of computer screen ( 1920 * 1080 ).
 //  globalThis.testSet = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
-  globalThis.testSet = new HeightWidthDepth( 2, 2, depth ); // height, width, depth
+  globalThis.testSet = new HeightWidthDepth( 3, 3, depth ); // height, width, depth
 
   globalThis.testSet_All = [
     globalThis.testSet
