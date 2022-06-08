@@ -768,12 +768,11 @@ class Base extends TestParams.Base {
    *   Does not return anything.
    */
   generate_squeezeExcitation_filters_biases(
-    nSqueezeExcitationChannelCountDivisor,
+    nSqueezeExcitationChannelCountDivisor, nActivationId,
 
 //!!! (2022/05/29 Remarked)
 //    inputChannelCount, outputChannelCount, nActivationId, propertyNamePrefix, io_numberArrayObject ) {
 
-    nActivationId,
     inputChannelCount_A, inputChannelCount_B, inputChannelCount_C,
     propertyNamePrefix_A, propertyNamePrefix_B, propertyNamePrefix_C,
     io_numberArrayObject ) {
@@ -1156,28 +1155,25 @@ class Base extends TestParams.Base {
       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
 
         this.generate_squeezeExcitation_filters_biases(
-          paramsAll.nSqueezeExcitationChannelCountDivisor,
-          paramsAll.pointwise20ActivationId,
+          paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
           pointwise2_inputChannelCount, pointwise2_inputChannelCount, 0,
-          "pointwise20", "pointwise202", "pointwise21", io_paramsNumberArrayObject );
+          "pointwise20Prefix", "pointwise202Prefix", "pointwise21Prefix", io_paramsNumberArrayObject );
 
       // 4.2 Pointwise20's and Pointwise21's prefix squeeze-and-excitation. (Then, never has pointwise202.)
       } else if ( pointwise21ChannelCount > 0 ) { // Only if pointwise21 exists, its squeeze-and-excitation exists.
 
         this.generate_squeezeExcitation_filters_biases(
-          paramsAll.nSqueezeExcitationChannelCountDivisor,
+          paramsAll.nSqueezeExcitationChannelCountDivisor, nPointwise21ActivationId,
           pointwise2_inputChannelCount, 0, pointwise2_inputChannelCount,
-          nPointwise21ActivationId,
-          "pointwise20", "pointwise202", "pointwise21", io_paramsNumberArrayObject );
+          "pointwise20Prefix", "pointwise202Prefix", "pointwise21Prefix", io_paramsNumberArrayObject );
 
       // 4.3 Pointwise20's prefix squeeze-and-excitation only.
       } else {
 
         this.generate_squeezeExcitation_filters_biases(
-          paramsAll.nSqueezeExcitationChannelCountDivisor,
+          paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
           pointwise2_inputChannelCount, 0, 0,
-          paramsAll.pointwise20ActivationId,
-          "pointwise20", "pointwise202", "pointwise21", io_paramsNumberArrayObject );
+          "pointwise20Prefix", "pointwise202Prefix", "pointwise21Prefix", io_paramsNumberArrayObject );
       }
     }
 
@@ -1215,15 +1211,31 @@ class Base extends TestParams.Base {
 
     // 6. Pointwise2's postfix squeeze-and-excitation
 
-//!!! ...unfinished... (2022/06/08) bSqueezeExcitationPrefix
     if ( !paramsAll.bSqueezeExcitationPrefix ) { // i.e. postfix
 
-      // 6.1 Pointwise20's postfix squeeze-and-excitation
-      {
-      }
+      // 6.1 Pointwise20's and Pointwise202's postfix squeeze-and-excitation. (Then, never has pointwise21.)
+      if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
 
-      // 6.2 Pointwise21's postfix squeeze-and-excitation
-      {
+        this.generate_squeezeExcitation_filters_biases(
+          paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
+          pointwise20ChannelCount_original, pointwise20ChannelCount_original, 0,
+          "pointwise20Postfix", "pointwise202Postfix", "pointwise21Postfix", io_paramsNumberArrayObject );
+
+      // 6.2 Pointwise20's and Pointwise21's postfix squeeze-and-excitation. (Then, never has pointwise202.)
+      } else if ( pointwise21ChannelCount > 0 ) { // Only if pointwise21 exists, its squeeze-and-excitation exists.
+
+        this.generate_squeezeExcitation_filters_biases(
+          paramsAll.nSqueezeExcitationChannelCountDivisor, nPointwise21ActivationId,
+          pointwise20ChannelCount_original, 0, pointwise21ChannelCount,
+          "pointwise20Postfix", "pointwise202Postfix", "pointwise21Postfix", io_paramsNumberArrayObject );
+
+      // 6.3 Pointwise20's postfix squeeze-and-excitation only.
+      } else {
+
+        this.generate_squeezeExcitation_filters_biases(
+          paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
+          pointwise20ChannelCount_original, 0, 0,
+          "pointwise20Postfix", "pointwise202Postfix", "pointwise21Postfix", io_paramsNumberArrayObject );
       }
     }
   }
