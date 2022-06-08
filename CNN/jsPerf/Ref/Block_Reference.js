@@ -626,16 +626,14 @@ class Base {
     asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
 
     {
-
-//!!! ...unfinished... (2022/05/18) What about squeeze-and-excitation?
-//!!! ...unfinished... (2022/05/19) nSqueezeExcitationChannelCountDivisor, ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx
-
-      let tensorWeightCountTotal = 0;
-      tensorWeightCountTotal += block.pointwise1.bExisted ? block.pointwise1.tensorWeightCountTotal : 0;
-      tensorWeightCountTotal += block.depthwise1.bExisted ? block.depthwise1.tensorWeightCountTotal : 0;
-      tensorWeightCountTotal += block.depthwise2?.bExisted ? block.depthwise2.tensorWeightCountTotal : 0;
-      tensorWeightCountTotal += block.pointwise20.bExisted ? block.pointwise20.tensorWeightCountTotal : 0;
-      tensorWeightCountTotal += block.pointwise21?.bExisted ? block.pointwise21.tensorWeightCountTotal : 0;
+      let tensorWeightCountTotal = 0;  // Not include channel shuffler.
+      for ( let i = 0; i < block.operationArray.length; ++i ) {
+        let operation = block.operationArray[ i ];
+        if ( operation.filtersTensor4d )
+           tensorWeightCountTotal += operation.filtersTensor4d.size;
+        if ( operation.biasesTensor3d )
+           tensorWeightCountTotal += operation.biasesTensor3d.size;
+      }
       asserter.propertyValue( "tensorWeightCountTotal", tensorWeightCountTotal );
 
       // Exclude parameters weights, all the others should be the extracted weight count.
