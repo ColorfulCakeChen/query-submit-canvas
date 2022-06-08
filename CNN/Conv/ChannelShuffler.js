@@ -303,7 +303,9 @@ class ConcatGather {
       for ( let i = 0; i < this.shuffledChannelIndicesTensor1dArray.length; ++i ) {
         let shuffledChannelIndicesTensor1d = this.shuffledChannelIndicesTensor1dArray[ i ];
         if ( shuffledChannelIndicesTensor1d ) {
-          this.tensorWeightCountTotal += tf.util.sizeFromShape( shuffledChannelIndicesTensor1d.shape );
+//!!! (2022/06/08 Remarked) Use .size instead.
+//          this.tensorWeightCountTotal += tf.util.sizeFromShape( shuffledChannelIndicesTensor1d.shape );
+          this.tensorWeightCountTotal += shuffledChannelIndicesTensor1d.size;
         }
       }
 
@@ -647,7 +649,9 @@ class ConcatPointwiseConv {
         for ( let i = 0; i < this.filtersTensor4dArray.length; ++i ) {
           let filtersTensor4d = this.filtersTensor4dArray[ i ];
           if ( filtersTensor4d ) {
-            this.tensorWeightCountTotal += tf.util.sizeFromShape( filtersTensor4d.shape );
+//!!! (2022/06/08 Remarked) Use .size instead.
+//            this.tensorWeightCountTotal += tf.util.sizeFromShape( filtersTensor4d.shape );
+            this.tensorWeightCountTotal += filtersTensor4d.size;
           }
         }
       }
