@@ -417,14 +417,17 @@ class Base {
     let bInitOk = block.init( progress, extractedParams, inputScaleBoundsArray0, inputScaleBoundsArray1,
       channelShuffler_ConcatPointwiseConv, arrayTemp_forInterleave_asGrouptTwo );
 
-    let flags = {};
-    Block.Params.setFlags_by.call( flags,
-      testParams.out.inputHeight0, testParams.out.inputWidth0,
-      testParams.out.channelCount0_pointwise1Before, testParams.out.channelCount1_pointwise1Before,
-      testParams.out.pointwise1ChannelCount,
-      testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseActivationId,
-      testParams.out.nSqueezeExcitationChannelCountDivisor, testParams.out.bSqueezeExcitationPrefix,
-      testParams.out.pointwise20ChannelCount, testParams.out.bOutput1Requested );
+//!!! (2022/06/08 Remarked) Use testParams.out.flags directly.
+//     let flags = {};
+//     Block.Params.setFlags_by.call( flags,
+//       testParams.out.inputHeight0, testParams.out.inputWidth0,
+//       testParams.out.channelCount0_pointwise1Before, testParams.out.channelCount1_pointwise1Before,
+//       testParams.out.pointwise1ChannelCount,
+//       testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseActivationId,
+//       testParams.out.nSqueezeExcitationChannelCountDivisor, testParams.out.bSqueezeExcitationPrefix,
+//       testParams.out.pointwise20ChannelCount, testParams.out.bOutput1Requested );
+
+    let flags = testParams.out.flags;
 
     if ( !bInitOk ) { //!!! For Debug.
       console.log( "testParams =", testParams );
@@ -680,8 +683,7 @@ class Base {
     }
 
     // Create description for debug easily.
-    let flags = {};
-    this.paramsOutDescription = Base.TestParams_Out_createDescription( testParams, flags );
+    this.paramsOutDescription = Base.TestParams_Out_createDescription( testParams );
 
     // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use same calculation logic:
     //    ONE_INPUT_HALF_THROUGH                   // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
@@ -696,7 +698,7 @@ class Base {
 
     // 0.
 
-    let pointwise1ChannelCount = testParams.out.pointwise1ChannelCount;;
+    let pointwise1ChannelCount = testParams.out.pointwise1ChannelCount;
     let pointwise20ChannelCount;
 
     // (-4) (ShuffleNetV2_ByMobileNetV1's head)
@@ -777,20 +779,13 @@ class Base {
 
     // 2. Depthwise
 
-
-//!!! ...unfinished... (2022/06/08)
-//     // Only if depthwise operation is requested and necessary, create them.
-//     if ( flags.bDepthwiseRequestedAndNeeded ) {
-
-
-
     // 2.1 Depthwise1
     let imageIn1_beforeDepthwise1 = imageIn1;
     let depthwise1Result;
 
 //!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
 //    if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
-    if ( flags.bDepthwiseRequestedAndNeeded ) {
+    if ( testParams.out.flags.bDepthwiseRequestedAndNeeded ) {
       depthwise1Result = testParams.use_depthwise1( pointwise1Result, "Depthwise1", this.paramsOutDescription );
 
       // When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be shrinked by depthwise1. Otherwise, its size may
@@ -812,7 +807,7 @@ class Base {
 
 //!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
 //      if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
-      if ( flags.bDepthwiseRequestedAndNeeded ) {
+      if ( testParams.out.flags.bDepthwiseRequestedAndNeeded ) {
         depthwise2Result = testParams.use_depthwise2( imageIn0, "Depthwise2_for_input0", this.paramsOutDescription ); // depthwise2 apply to input0 (not input1).
       } else {
         depthwise2Result = imageIn0; // Since depthwise2 is just no-op, its result is just the same as its input (i.e. input0 (not input1)).
@@ -823,7 +818,7 @@ class Base {
 
 //!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
 //      if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
-      if ( flags.bDepthwiseRequestedAndNeeded ) {
+      if ( testParams.out.flags.bDepthwiseRequestedAndNeeded ) {
 
         // depthwise2 apply to input1 which higher-half-copy-lower-half from input0 (not original input0, not original input1).
         depthwise2Result = testParams.use_depthwise2( imageIn1, "Depthwise2_for_input1", this.paramsOutDescription );
@@ -1116,22 +1111,21 @@ class Base {
    * @param {Block_TestParams.Base} testParams
    *   The test parameters for creating description.
    *
-   * @param {Object} o_flags
-   *   Return the generated flags about the parameters.
-   *
    * @return {string}
    *   The description of the testParams.out.
    */
-  static TestParams_Out_createDescription( testParams, o_flags = {} ) {
+  static TestParams_Out_createDescription( testParams ) {
 
-    let flags = o_flags;
-    Block.Params.setFlags_by.call( flags,
-      testParams.out.inputHeight0, testParams.out.inputWidth0,
-      testParams.out.channelCount0_pointwise1Before, testParams.out.channelCount1_pointwise1Before,
-      testParams.out.pointwise1ChannelCount,
-      testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseActivationId,
-      testParams.out.nSqueezeExcitationChannelCountDivisor, testParams.out.bSqueezeExcitationPrefix,
-      testParams.out.pointwise20ChannelCount, testParams.out.bOutput1Requested );
+//!!! (2022/06/08 Remarked) Use testParams.out.flags directly.
+//     let flags = o_flags;
+//     Block.Params.setFlags_by.call( flags,
+//       testParams.out.inputHeight0, testParams.out.inputWidth0,
+//       testParams.out.channelCount0_pointwise1Before, testParams.out.channelCount1_pointwise1Before,
+//       testParams.out.pointwise1ChannelCount,
+//       testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseActivationId,
+//       testParams.out.nSqueezeExcitationChannelCountDivisor, testParams.out.bSqueezeExcitationPrefix,
+//       testParams.out.pointwise20ChannelCount, testParams.out.bOutput1Requested );
+    let flags = testParams.out.flags;
 
     let paramsOutDescription =
         `inputTensorCount=${flags.inputTensorCount}, `
