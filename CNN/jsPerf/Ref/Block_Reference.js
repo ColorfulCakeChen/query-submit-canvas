@@ -680,7 +680,8 @@ class Base {
     }
 
     // Create description for debug easily.
-    this.paramsOutDescription = Base.TestParams_Out_createDescription( testParams );
+    let flags = {};
+    this.paramsOutDescription = Base.TestParams_Out_createDescription( testParams, flags );
 
     // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use same calculation logic:
     //    ONE_INPUT_HALF_THROUGH                   // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
@@ -779,14 +780,17 @@ class Base {
 
 //!!! ...unfinished... (2022/06/08)
 //     // Only if depthwise operation is requested and necessary, create them.
-//     if ( ???.bDepthwiseRequestedAndNeeded ) {
+//     if ( flags.bDepthwiseRequestedAndNeeded ) {
 
 
 
     // 2.1 Depthwise1
     let imageIn1_beforeDepthwise1 = imageIn1;
     let depthwise1Result;
-    if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
+
+//!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
+//    if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
+    if ( flags.bDepthwiseRequestedAndNeeded ) {
       depthwise1Result = testParams.use_depthwise1( pointwise1Result, "Depthwise1", this.paramsOutDescription );
 
       // When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be shrinked by depthwise1. Otherwise, its size may
@@ -806,7 +810,9 @@ class Base {
     // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise21's head) (simplified))
     if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) {
 
-      if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
+//!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
+//      if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
+      if ( flags.bDepthwiseRequestedAndNeeded ) {
         depthwise2Result = testParams.use_depthwise2( imageIn0, "Depthwise2_for_input0", this.paramsOutDescription ); // depthwise2 apply to input0 (not input1).
       } else {
         depthwise2Result = imageIn0; // Since depthwise2 is just no-op, its result is just the same as its input (i.e. input0 (not input1)).
@@ -815,7 +821,9 @@ class Base {
     // (-4) (ShuffleNetV2_ByMobileNetV1's head)
     } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
 
-      if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
+//!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
+//      if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
+      if ( flags.bDepthwiseRequestedAndNeeded ) {
 
         // depthwise2 apply to input1 which higher-half-copy-lower-half from input0 (not original input0, not original input1).
         depthwise2Result = testParams.use_depthwise2( imageIn1, "Depthwise2_for_input1", this.paramsOutDescription );
@@ -1108,12 +1116,15 @@ class Base {
    * @param {Block_TestParams.Base} testParams
    *   The test parameters for creating description.
    *
+   * @param {Object} o_flags
+   *   Return the generated flags about the parameters.
+   *
    * @return {string}
    *   The description of the testParams.out.
    */
-  static TestParams_Out_createDescription( testParams ) {
+  static TestParams_Out_createDescription( testParams, o_flags = {} ) {
 
-    let flags = {};
+    let flags = o_flags;
     Block.Params.setFlags_by.call( flags,
       testParams.out.inputHeight0, testParams.out.inputWidth0,
       testParams.out.channelCount0_pointwise1Before, testParams.out.channelCount1_pointwise1Before,
