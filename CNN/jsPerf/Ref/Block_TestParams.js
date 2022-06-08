@@ -764,8 +764,8 @@ class Base extends TestParams.Base {
    * four properties may be set: "xxxSEIntermediateFilters", "xxxSEIntermediateBiases", "xxxSEExcitationFilters",
    * "xxxSEExcitationBiases". The "xxx" is the propertyNamePrefix.
    *
-   * @return {number}
-   *   Return the outputChannelCount of this squeeze-and-excitation operation.
+   * @return {undefined}
+   *   Does not return anything.
    */
   generate_squeezeExcitation_filters_biases(
     nSqueezeExcitationChannelCountDivisor,
@@ -773,10 +773,8 @@ class Base extends TestParams.Base {
 //!!! (2022/05/29 Remarked)
 //    inputChannelCount, outputChannelCount, nActivationId, propertyNamePrefix, io_numberArrayObject ) {
 
-//!!! ...unfinished... (2022/06/08)
-
-    inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
-    inputChannelCount_higherHalf, outputChannelCount_higherHalf,
+    inputChannelCount_lowerHalf, //outputChannelCount_lowerHalf,
+    inputChannelCount_higherHalf, //outputChannelCount_higherHalf,
     nActivationId,
     propertyNamePrefix_lowerHalf, propertyNamePrefix_higherHalf,
     io_numberArrayObject ) {
@@ -813,11 +811,6 @@ class Base extends TestParams.Base {
     let squeeze_inputChannelCount_higherHalf = inputChannelCount_higherHalf;
     let squeeze_outputChannelCount_higherHalf = inputChannelCount_higherHalf;
 
-//!!! ...unfinished... (2022/05/29)
-// if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-// should generate lower half and highe half intermediate pointwise convolution in sequence.
-// and then generate lower half and highe half excitation pointwise convolution in sequence.
-
     // 2. intermediate pointwise convolution.
     let intermediate_inputChannelCount_lowerHalf = squeeze_outputChannelCount_lowerHalf;
     let intermediate_outputChannelCount_lowerHalf;
@@ -849,33 +842,50 @@ class Base extends TestParams.Base {
         intermediate_bBias = false;
       }
 
-//!!! ...unfinished... (2022/06/08)
       this.generate_pointwise_filters_biases(
-        inputChannelCount,
-        ( bIntermediate ) ? intermediate_outputChannelCount : 0,
+        intermediate_inputChannelCount_lowerHalf,
+        ( bIntermediate ) ? intermediate_outputChannelCount_lowerHalf : 0,
         intermediate_bBias,
-        SEIntermediatePropertyNamePrefix, io_numberArrayObject );
+        SEIntermediatePropertyNamePrefix_lowerHalf, io_numberArrayObject );
+
+      this.generate_pointwise_filters_biases(
+        intermediate_inputChannelCount_higherHalf,
+        ( bIntermediate ) ? intermediate_outputChannelCount_higherHalf : 0,
+        intermediate_bBias,
+        SEIntermediatePropertyNamePrefix_higherHalf, io_numberArrayObject );
     }
 
     // 3. excitation pointwise convolution.
-    let excitation_inputChannelCount = intermediate_outputChannelCount;
-    let excitation_outputChannelCount = inputChannelCount;
+    let excitation_inputChannelCount_lowerHalf = intermediate_outputChannelCount_lowerHalf;
+    let excitation_inputChannelCount_higherHalf = intermediate_outputChannelCount_higherHalf;
+
+    let excitation_outputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
+    let excitation_outputChannelCount_higherHalf = inputChannelCount_higherHalf;
+
     let excitation_bBias = true; // Always bBias
     {
-      const SEExcitationPropertyNamePrefix = `${propertyNamePrefix}SEExcitation`;
+      const SEExcitationPropertyNamePrefix_lowerHalf = `${propertyNamePrefix_lowerHalf}SEExcitation`;
+      const SEExcitationPropertyNamePrefix_higherHalf = `${propertyNamePrefix_higherHalf}SEExcitation`;
 
       this.generate_pointwise_filters_biases(
-        intermediate_outputChannelCount,
-        ( bExcitation ) ? excitation_outputChannelCount : 0,
+        excitation_inputChannelCount_lowerHalf,
+        ( bExcitation ) ? excitation_outputChannelCount_lowerHalf : 0,
         excitation_bBias,
-        SEExcitationPropertyNamePrefix, io_numberArrayObject );
+        SEExcitationPropertyNamePrefix_lowerHalf, io_numberArrayObject );
+
+      this.generate_pointwise_filters_biases(
+        excitation_inputChannelCount_higherHalf,
+        ( bExcitation ) ? excitation_outputChannelCount_higherHalf : 0,
+        excitation_bBias,
+        SEExcitationPropertyNamePrefix_higherHalf, io_numberArrayObject );
     }
 
-    // 4.
-    if ( bExcitation )
-      return excitation_outputChannelCount;
-    else
-      return 0; // no squeeze-and-excitation.
+//!!! (2022/06/08 Remarked) No longer return anythig.
+//     // 4.
+//     if ( bExcitation )
+//       return excitation_outputChannelCount;
+//     else
+//       return 0; // no squeeze-and-excitation.
   }
 
   /**
