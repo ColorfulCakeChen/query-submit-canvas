@@ -36,8 +36,8 @@ class HeightWidthDepth {
     this.outputChannelCount = depth;
     this.channelMultiplier = 1;
     this.strides = 1;
-    //this.pad = "same";
-    this.pad = "valid";
+    this.pad = "same";
+    //this.pad = "valid";
 
     this.depthwiseFilterHeight = 3;
     this.depthwiseFilterWidth = 3;
