@@ -308,7 +308,9 @@ class Base {
       }
 
       // Test correctness of block BoundsArraySet.
-      this.assert_imageOut_BoundsArraySet( block.boundsArraySet, imageOutReferenceArray, strNote );
+//!!! (2022/06/08) Use TensorPlaceholder instead.
+//      this.assert_imageOut_BoundsArraySet( block.boundsArraySet, imageOutReferenceArray, strNote );
+      this.assert_imageOut_BoundsArraySet( block, imageOutReferenceArray, strNote );
 
       // Test correctness of block apply.
       this.assert_imageOut_Tensors_byNumberArrays( outputTensor3dArray, imageOutReferenceArray, strNote );
@@ -339,12 +341,17 @@ class Base {
   /**
    * Check the Block's output's BoundsArraySet.
    *
-   * @param {BoundsArraySet} aBoundsArraySet             The bounds array set of the Block.
+   * @param {Block.Base} block                 The block to be checked.
    * @param {NumberImage.Base[]} imageOutReferenceArray  Refernece output Image data of the Block_Reference's calcResult().
    */
-  assert_imageOut_BoundsArraySet( aBoundsArraySet, imageOutReferenceArray, parametersDescription ) {
-    BoundsArraySet_Asserter.assert_BoundsArraySet_Outputs( this.asserter_Equal,
-      aBoundsArraySet, imageOutReferenceArray, `Block`, parametersDescription );
+  assert_imageOut_BoundsArraySet( block, imageOutReferenceArray, parametersDescription ) {
+
+//!!! (2022/06/08) Use TensorPlaceholder instead.
+//     BoundsArraySet_Asserter.assert_BoundsArraySet_Outputs( this.asserter_Equal,
+//       block.boundsArraySet, imageOutReferenceArray, `Block`, parametersDescription );
+
+    BoundsArraySet_Asserter.assert_ScaleBoundsArray_ScaleBoundsArray(
+      block.output0.scaleBoundsArray, block.output1.scaleBoundsArray, imageOutReferenceArray, `Block`, parametersDescription );
   }
 
   /**
