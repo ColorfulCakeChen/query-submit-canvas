@@ -117,7 +117,8 @@ class Base extends TestParams.Base {
    */
   set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
 
-    this.generate_depthwisePadInfo();
+    this.generate_out_depthwisePadInfo();
+    this.generate_out_flags();
     this.generate_Filters_Biases();
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) Float32Array.
@@ -129,9 +130,9 @@ class Base extends TestParams.Base {
     return this;
   }
 
-  /**
+  /** Fill this.out.depthwisePadInfo to this.out
    */
-  generate_depthwisePadInfo() {
+  generate_out_depthwisePadInfo() {
     if ( !this.out.depthwisePadInfo ) {
       this.out.depthwisePadInfo = new ( Depthwise.PadInfoCalculator() )(
         this.out.inputHeight0, this.out.inputWidth0, this.out.channelCount0_pointwise1Before, 
@@ -143,6 +144,21 @@ class Base extends TestParams.Base {
         this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
         this.out.depthwiseStridesPad );
     }
+  }
+
+  /** Fill this.out.flag according to this.out
+   */
+  generate_out_flags() {
+    if ( !this.out.flag ) {
+      this.out.flag = {};
+    }
+    Block.Params.setFlags_by.call( this.out.flags,
+      this.out.inputHeight0, this.out.inputWidth0,
+      this.out.channelCount0_pointwise1Before, this.out.channelCount1_pointwise1Before,
+      this.out.pointwise1ChannelCount,
+      this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseActivationId,
+      this.out.nSqueezeExcitationChannelCountDivisor, this.out.bSqueezeExcitationPrefix,
+      this.out.pointwise20ChannelCount, this.out.bOutput1Requested );
   }
 
   /**
@@ -216,7 +232,7 @@ class Base extends TestParams.Base {
         if ( this.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) { // (0)
           pointwise2_inputWidth = this.out.inputWidth0;
         } else {
-          this.generate_depthwisePadInfo(); // So that this.out.depthwisePadInfo is usable.
+          this.generate_out_depthwisePadInfo(); // So that this.out.depthwisePadInfo is usable.
           pointwise2_inputWidth = this.out.depthwisePadInfo.outputWidth;
         }
       }
