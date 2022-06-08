@@ -44,7 +44,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
     super( ...restArgs ); // All other arguments passed to parent class's constructor.
 
     // Set and register as the input TensorPlaceholder's final user.
-    Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this, input0, input1 );
+    Base().set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this, input0, input1 );
 
     // Create output TensorPlaceholder.
     {
@@ -57,7 +57,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
       }
     }
 
-    Base.setup_apply_dummy.call( this, false, false ); // Default is destroy0 and destroy1.
+    Base().setup_apply_dummy.call( this, false, false ); // Default is destroy0 and destroy1.
   }
 
   /**
@@ -86,7 +86,7 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    *   Whether the .input1's tensor should be destroyed by this operation. It is ignored if .input1 does not exist.
    */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
-    Base.setup_apply_dummy.call( this, bKeepInputTensor0, bKeepInputTensor1 );
+    Base().setup_apply_dummy.call( this, bKeepInputTensor0, bKeepInputTensor1 );
   }
 
   /**
@@ -329,11 +329,11 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
    */
   static set_inputTensorPlaceholder0_inputTensorPlaceholder1( input0, input1 ) {
 
-    let newInput0 = Base.TensorPlaceholder_get_modified_for_set_input_from_old_to_new.call( this, this.input0, input0 );
+    let newInput0 = Base().TensorPlaceholder_get_modified_for_set_input_from_old_to_new.call( this, this.input0, input0 );
     if ( this.input0 != newInput0 ) // So that it could keep not existed if original does not existed.
       this.input0 = newInput0;
 
-    let newInput1 = Base.TensorPlaceholder_get_modified_for_set_input_from_old_to_new.call( this, this.input1, input1 );
+    let newInput1 = Base().TensorPlaceholder_get_modified_for_set_input_from_old_to_new.call( this, this.input1, input1 );
     if ( this.input1 != newInput1 ) // So that it could keep not existed if original does not existed.
       this.input1 = newInput1;
   }
