@@ -5,7 +5,7 @@ import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 
 /**
- * Pointwise-depthwise-pointwise convolution layer parameters.
+ * Pointwise-depthwise-pointwise convolution block parameters.
  *
  * @member {number} input1ChannelCount
  *   The channel count of the second input (i.e. input1). This is referred (estimated) from other parameters. The inputTensors[ 1 ]'s
@@ -170,11 +170,13 @@ class Params extends Weights.Params {
    *
    * @param {number} depthwiseStridesPad
    *   The strides and padding of depthwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this depthwiseStridesPad will also be ignored. It has three possible value:
-   *   - 0: means ( depthwiseStrides == 1 ) and ( depthwisePad == "valid" )
-   *   - 1: means ( depthwiseStrides == 1 ) and ( depthwisePad == "same" )
-   *   - 2: means ( depthwiseStrides == 2 ) and ( depthwisePad == "same" )
-   * Default is 1 because ( depthwiseStrides == 1 ) and ( depthwisePad == "same" ) is a pre-condition for ( bAddInputToOutputRequested == true ).
+   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this depthwiseStridesPad will be ignored. It could be one of:
+   *   - ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID (0) (strides = 1, pad = "valid")
+   *   - ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME  (1) (strides = 1, pad = "same")
+   *   - ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME  (2) (strides = 2, pad = "same")
+   *   - ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID (3) (strides = 2, pad = "valid")
+   * Default is ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME (1) because ( depthwiseStrides == 1 ) and ( depthwisePad == "same" )
+   * is a pre-condition for ( bAddInputToOutputRequested == true ).
    *
    * @param {boolean} bDepthwiseBias
    *   If null, it will be extracted from inputFloat32Array (i.e. by evolution). If true, there will be a bias after depthwise convolution.
@@ -398,26 +400,22 @@ class Params extends Weights.Params {
     }
   }
 
-//!!! ...unfinished... (2022/06/08)
-// If (
-//        ( ( inputHeight == 1 ) && ( inputWidth == 1 ) )
-//     && ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ) // i.e. avg or max or none or ( channelMultiplier == 1 ).
-//     && ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // i.e. depthwise is linear.
-//     && (   ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2), no squeeze-and-excitation (i.e. depthwise is linear)
-//         || ( bSqueezeExcitationPrefix == false ) ) // or, has squeeze-and-excitation, but after pointwise2. (i.e. depthwise is still linear)
-//        )
-//    )
-//
-// Then, the depthwise should be discarded to improve performance.
-// Perhaps, this automatical optimization could be done in Block.Base (i.e. not in Stage).
-//
-  static set_bDepthwiseRequestedAndNeeded(
+  /**
+   * Determine the following properties:
+   *   - this.bDepthwiseRequestedAndNeeded
+   *
+   * When got false, the depthwise could be discarded to improve performance.
+   */
+  static set_bDepthwiseRequestedAndNeeded_by(
     inputHeight, inputWidth,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix
   ) {
-    if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE )
-      return false; // depthwise is not requested.
+
+    if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
+      this.bDepthwiseRequestedAndNeeded = false; // depthwise is not requested.
+      return;
+    }
 
     if (   ( inputHeight == 1 ) && ( inputWidth == 1 ) && ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ) // i.e. depthwise does nothing.
 
@@ -435,9 +433,9 @@ class Params extends Weights.Params {
       //
       // Even if its has bias, this is still correct because its bias could be combined into the bias of the next
       // operation (i.e. pointwise2).
-      return false;
+      this.bDepthwiseRequestedAndNeeded = false;
 
-    return true;
+    this.bDepthwiseRequestedAndNeeded = true;
   }
 
   /**
@@ -446,6 +444,7 @@ class Params extends Weights.Params {
    *   - this.input1ChannelCount
    *   - this.bHigherHalfDifferent
    *   - this.bHigherHalfDepthwise2
+   *   - this.bDepthwiseRequestedAndNeeded
    *   - this.bDepthwise2Requested
    *   - this.bConcat1Requested
    *   - this.bAddInputToOutputRequested
@@ -461,8 +460,12 @@ class Params extends Weights.Params {
    *
    */
   static setFlags_by(
+    inputHeight, inputWidth,
     channelCount0_pointwise1Before, channelCount1_pointwise1Before,
-    pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise20ChannelCount, bOutput1Requested
+    pointwise1ChannelCount,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseActivationId,
+    nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+    pointwise20ChannelCount, bOutput1Requested
   ) {
 
     // 0. Prepare.
@@ -478,7 +481,14 @@ class Params extends Weights.Params {
       channelCount0_pointwise1Before, channelCount1_pointwise1Before,
       pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise20ChannelCount );
 
-    // 0.4 Whether manipulate the higher half channel of convolution.
+    // 0.4 Whether depthwise is requested and necessary.
+    Params.set_bDepthwiseRequestedAndNeeded_by.call( this,
+      inputHeight, inputWidth,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseActivationId,
+      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix
+    );
+
+    // 0.5 Whether manipulate the higher half channel of convolution.
     this.bHigherHalfDifferent = this.bHigherHalfDepthwise2 = false;
     switch ( channelCount1_pointwise1Before ) {
       case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
