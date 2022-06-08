@@ -295,7 +295,7 @@ import { Params } from "./Block_Params.js";
  * apply__input0__output0_output1(), apply__input0__output0() according to the initer()'s parameters.
  *
  */
-class Base extends ReturnOrClone.Base {
+class Base extends ReturnOrClone.Base() {
 
   /**
    * Generator for initializing this object.
