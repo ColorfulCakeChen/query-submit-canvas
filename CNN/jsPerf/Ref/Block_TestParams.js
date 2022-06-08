@@ -673,40 +673,6 @@ class Base extends TestParams.Base {
     return squeezeExcitationPostfixOut;
   }
 
-//!!! (2022/06/08 Remarked) seems not used.
-//   /**
-//    * Pointwise212 uses the same channel count, bias flag and activation function as Pointwise21 (i.e. pointwise21ChannelCount, bPointwise21Bias
-//    * and pointwise21ActivationId), but uses different filters and biases weights (i.e. pointwise212Filters and pointwise212Biases)
-//    *
-//    * @param {NumberImage.Base} inputImage    The source image to be processed.
-//    * @param {number} pointwise21ChannelCount The output channel count of the pointwise212 convolution.
-//    * @param {string} pointwiseName           A string for debug message of the pointwise212 convolution.
-//    * @param {string} parametersDesc          A string for debug message of the point-depth-point.
-//    *
-//    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise212 convolution, bias and activation.
-//    */
-//   use_pointwise212( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
-//     let squeezeExcitationOut = inputImage;
-//     if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
-//       squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
-//         this.out.nSqueezeExcitationChannelCountDivisor,
-//         this.in.paramsNumberArrayObject.pointwise212SEIntermediateFilters,
-//         this.in.paramsNumberArrayObject.pointwise212SEIntermediateBiases,
-//         this.in.paramsNumberArrayObject.pointwise212SEExcitationFilters,
-//         this.in.paramsNumberArrayObject.pointwise212SEExcitationBiases,
-//         this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
-//         `${pointwiseName}_squeezeExcitation`, parametersDesc );
-//
-//     // Without clone to improve performance.
-//     }
-//
-//     let result = inputImage.clone_byPointwise_NonPassThrough( pointwise21ChannelCount,
-//       this.in.paramsNumberArrayObject.pointwise212Filters, this.out.bPointwise20Bias, // (Note: Not bPointwise21Bias)
-//       this.in.paramsNumberArrayObject.pointwise212Biases, this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
-//       pointwiseName, parametersDesc );
-//     return result;
-//   }
-
   /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (-4) (ShuffleNetV2_ByMobileNetV1's head). */
   channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() {
     if ( this.out.channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
@@ -807,11 +773,13 @@ class Base extends TestParams.Base {
 //!!! (2022/05/29 Remarked)
 //    inputChannelCount, outputChannelCount, nActivationId, propertyNamePrefix, io_numberArrayObject ) {
 
-//!!! ...unfinished... (2022/05/29)
-    inputChannelCount,
-    outputChannelCount_lowerHalf, outputChannelCount_higherHalf,
+//!!! ...unfinished... (2022/06/08)
+
+    inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
+    inputChannelCount_higherHalf, outputChannelCount_higherHalf,
     nActivationId,
-    propertyNamePrefix_lowerHalf, propertyNamePrefix_higherHalf, io_numberArrayObject ) {
+    propertyNamePrefix_lowerHalf, propertyNamePrefix_higherHalf,
+    io_numberArrayObject ) {
 
     // 0.
     let bSqueeze, bIntermediate, bExcitation;
@@ -839,8 +807,11 @@ class Base extends TestParams.Base {
     }
 
     // 1. squeeze depthwise convolution.
-    let squeeze_inputChannelCount = inputChannelCount;
-    let squeeze_outputChannelCount = inputChannelCount;
+    let squeeze_inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
+    let squeeze_outputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
+
+    let squeeze_inputChannelCount_higherHalf = inputChannelCount_higherHalf;
+    let squeeze_outputChannelCount_higherHalf = inputChannelCount_higherHalf;
 
 //!!! ...unfinished... (2022/05/29)
 // if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
@@ -848,14 +819,22 @@ class Base extends TestParams.Base {
 // and then generate lower half and highe half excitation pointwise convolution in sequence.
 
     // 2. intermediate pointwise convolution.
-    let intermediate_inputChannelCount = squeeze_outputChannelCount;
-    let intermediate_outputChannelCount;
+    let intermediate_inputChannelCount_lowerHalf = squeeze_outputChannelCount_lowerHalf;
+    let intermediate_outputChannelCount_lowerHalf;
+
+    let intermediate_inputChannelCount_higherHalf = squeeze_outputChannelCount_higherHalf;
+    let intermediate_outputChannelCount_higherHalf;
+
     let intermediate_bBias;
     {
-      const SEIntermediatePropertyNamePrefix = `${propertyNamePrefix}SEIntermediate`;
+      const SEIntermediatePropertyNamePrefix_lowerHalf = `${propertyNamePrefix_lowerHalf}SEIntermediate`;
+      const SEIntermediatePropertyNamePrefix_higherHalf = `${propertyNamePrefix_higherHalf}SEIntermediate`;
 
       if ( bIntermediate ) {
-        intermediate_outputChannelCount = Math.ceil( intermediate_inputChannelCount / nSqueezeExcitationChannelCountDivisor );
+        intermediate_outputChannelCount_lowerHalf
+          = Math.ceil( intermediate_inputChannelCount_lowerHalf / nSqueezeExcitationChannelCountDivisor );
+        intermediate_outputChannelCount_higherHalf
+          = Math.ceil( intermediate_inputChannelCount_higherHalf / nSqueezeExcitationChannelCountDivisor );
 
         // If intermediatePointwise has no activation, it could be no bias because the next operation's (i.e. excitationPointwise)
         // bias will achieve it.
@@ -865,10 +844,12 @@ class Base extends TestParams.Base {
           intermediate_bBias = true;
         }
       } else {
-        intermediate_outputChannelCount = intermediate_inputChannelCount;
+        intermediate_outputChannelCount_lowerHalf = intermediate_inputChannelCount_lowerHalf;
+        intermediate_outputChannelCount_higherHalf = intermediate_inputChannelCount_higherHalf;
         intermediate_bBias = false;
       }
 
+//!!! ...unfinished... (2022/06/08)
       this.generate_pointwise_filters_biases(
         inputChannelCount,
         ( bIntermediate ) ? intermediate_outputChannelCount : 0,
