@@ -221,29 +221,38 @@ class Base extends TestParams.Base {
     // ourselves testing procedure.
     if ( tf.getBackend() == "wasm" ) {
 
-      // For depthwise1/depthwis2.
-      if (   ( this.out.depthwise_AvgMax_Or_ChannelMultiplier != ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) // (0)
-          && ( this.out.depthwiseFilterWidth == 1 )
-         )
-        return false;
+      this.generate_out_flags(); // So that this.out.flags is usable.
+      if ( this.out.flags.bDepthwiseRequestedAndNeeded ) {
 
-      let pointwise2_inputWidth;
-      {
-        if ( this.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) { // (0)
-          pointwise2_inputWidth = this.out.inputWidth0;
-        } else {
+        // For depthwise1/depthwis2.
+//!!! (2022/06/08 Remarked) since .bDepthwiseRequestedAndNeeded implies depthwise existed.
+//         if (   ( this.out.depthwise_AvgMax_Or_ChannelMultiplier != ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) // (0)
+//             && ( this.out.depthwiseFilterWidth == 1 )
+//            )
+        if ( this.out.depthwiseFilterWidth == 1 )
+          return false;
+
+        let pointwise2_inputWidth;
+        {
+//!!! (2022/06/08 Remarked) since .bDepthwiseRequestedAndNeeded implies depthwise existed.
+//           if ( this.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) { // (0)
+//             pointwise2_inputWidth = this.out.inputWidth0;
+//           } else {
+//             this.generate_out_depthwisePadInfo(); // So that this.out.depthwisePadInfo is usable.
+//             pointwise2_inputWidth = this.out.depthwisePadInfo.outputWidth;
+//           }
           this.generate_out_depthwisePadInfo(); // So that this.out.depthwisePadInfo is usable.
           pointwise2_inputWidth = this.out.depthwisePadInfo.outputWidth;
         }
-      }
 
-      // For squeeze-and-excitation.
-      //
-      // (squeeze is an average pooling. Its filter width is the same as inputWidth (i.e. pointwise2_inputWidth).)
-      if (   ( pointwise2_inputWidth == 1 )
-          && ( ValueDesc.SqueezeExcitationChannelCountDivisor.hasSqueeze( this.out.nSqueezeExcitationChannelCountDivisor ) )
-         )
-        return false;
+        // For squeeze-and-excitation.
+        //
+        // (squeeze is an average pooling. Its filter width is the same as inputWidth (i.e. pointwise2_inputWidth).)
+        if (   ( pointwise2_inputWidth == 1 )
+            && ( ValueDesc.SqueezeExcitationChannelCountDivisor.hasSqueeze( this.out.nSqueezeExcitationChannelCountDivisor ) )
+           )
+          return false;
+      }
     }
 
     // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
