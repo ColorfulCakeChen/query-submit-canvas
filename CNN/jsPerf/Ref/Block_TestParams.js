@@ -992,6 +992,12 @@ class Base extends TestParams.Base {
     let pointwise1_resultOutputChannelCount = this.generate_pointwise_filters_biases( channelCount0_pointwise1Before_original,
       pointwise1ChannelCount_original, paramsAll.bPointwise1Bias, "pointwise1", io_paramsNumberArrayObject );
 
+
+//!!! ...unfinished... (2022/06/08)
+//     // Only if depthwise operation is requested and necessary, create them.
+//     if ( ???.bDepthwiseRequestedAndNeeded ) {
+
+
     // Depthwise1
     let depthwise1_resultOutputChannelCount = this.generate_depthwise_filters_biases( pointwise1_resultOutputChannelCount,
       paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
