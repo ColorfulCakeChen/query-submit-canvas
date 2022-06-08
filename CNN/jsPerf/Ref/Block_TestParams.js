@@ -1317,35 +1317,48 @@ Base.paramsNameOrderArray = [
   "depthwise2Filters",
   "depthwise2Biases",
 
-  "pointwise20SEIntermediateFilters", // pointwise20's squeeze-and-excitation's intermediate pointwise
-  "pointwise20SEIntermediateBiases",
-  "pointwise20SEExcitationFilters",   // pointwise20's squeeze-and-excitation's excitation pointwise
-  "pointwise20SEExcitationBiases",
+  "pointwise20PrefixSEIntermediateFilters",  // pointwise20's prefix squeeze-and-excitation's intermediate pointwise
+  "pointwise20PrefixSEIntermediateBiases",
+
+  "pointwise202PrefixSEIntermediateFilters", // pointwise202's prefix squeeze-and-excitation's intermediate pointwise
+  "pointwise202PrefixSEIntermediateBiases",
+
+  "pointwise21PrefixSEIntermediateFilters",  // pointwise21's prefix squeeze-and-excitation's intermediate pointwise
+  "pointwise21PrefixSEIntermediateBiases",
+
+  "pointwise20PrefixSEExcitationFilters",    // pointwise20's prefix squeeze-and-excitation's excitation pointwise
+  "pointwise20PrefixSEExcitationBiases",
+
+  "pointwise202PrefixSEExcitationFilters",   // pointwise202's prefix squeeze-and-excitation's excitation pointwise
+  "pointwise202PrefixSEExcitationBiases",
+
+  "pointwise21PrefixSEExcitationFilters",    // pointwise21's prefix squeeze-and-excitation's excitation pointwise
+  "pointwise21PrefixSEExcitationBiases",
 
   "pointwise20Filters",
   "pointwise20Biases",
 
-  "pointwise202SEIntermediateFilters", // pointwise202's squeeze-and-excitation's intermediate pointwise
-  "pointwise202SEIntermediateBiases",
-  "pointwise202SEExcitationFilters",   // pointwise202's squeeze-and-excitation's excitation pointwise
-  "pointwise202SEExcitationBiases",
-
   "pointwise202Filters",
   "pointwise202Biases",
-
-  "pointwise21SEIntermediateFilters", // pointwise21's squeeze-and-excitation's intermediate pointwise
-  "pointwise21SEIntermediateBiases",
-  "pointwise21SEExcitationFilters",   // pointwise21's squeeze-and-excitation's excitation pointwise
-  "pointwise21SEExcitationBiases",
 
   "pointwise21Filters",
   "pointwise21Biases",
 
-  "pointwise212SEIntermediateFilters", // pointwise212's squeeze-and-excitation's intermediate pointwise
-  "pointwise212SEIntermediateBiases",
-  "pointwise212SEExcitationFilters",   // pointwise212's squeeze-and-excitation's excitation pointwise
-  "pointwise212SEExcitationBiases",
+  "pointwise20PostfixSEIntermediateFilters",  // pointwise20's postfix squeeze-and-excitation's intermediate pointwise
+  "pointwise20PostfixSEIntermediateBiases",
 
-  "pointwise212Filters",
-  "pointwise212Biases",
+  "pointwise202PostfixSEIntermediateFilters", // pointwise202's postfix squeeze-and-excitation's intermediate pointwise
+  "pointwise202PostfixSEIntermediateBiases",
+
+  "pointwise21PostfixSEIntermediateFilters",  // pointwise21's postfix squeeze-and-excitation's intermediate pointwise
+  "pointwise21PostfixSEIntermediateBiases",
+
+  "pointwise20PostfixSEExcitationFilters",    // pointwise20's postfix squeeze-and-excitation's excitation pointwise
+  "pointwise20PostfixSEExcitationBiases",
+
+  "pointwise202PostfixSEExcitationFilters",   // pointwise202's postfix squeeze-and-excitation's excitation pointwise
+  "pointwise202PostfixSEExcitationBiases",
+
+  "pointwise21PostfixSEExcitationFilters",    // pointwise21's postfix squeeze-and-excitation's excitation pointwise
+  "pointwise21PostfixSEExcitationBiases",
 ];
