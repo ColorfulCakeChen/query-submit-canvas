@@ -921,8 +921,9 @@ class Base {
 //!!! (2022/06/08 Remarked) seems not used.
 //      let bPointwise21Bias = testParams.out.bPointwise20Bias; // pointwise21's bias flag is the same as pointwise20.
 //      let pointwise21ActivationId = testParams.out.pointwise20ActivationId; // pointwise21's activation function is the same as pointwise20.
+//      let pointwise21Result_beforeConcatWith_pointwise212;
 
-      let pointwise21Result, pointwise21Result_beforeConcatWith_pointwise212;
+      let pointwise21Result;
       if ( pointwise21ChannelCount > 0 ) {
         pointwise21Result = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
 
