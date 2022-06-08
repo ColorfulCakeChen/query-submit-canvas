@@ -419,9 +419,9 @@ class Params extends Weights.Params {
    *
    */
   static setFlags_by(
-           channelCount0_pointwise1Before, channelCount1_pointwise1Before,
-           pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise20ChannelCount, bOutput1Requested,
-           channelShuffler ) {
+    channelCount0_pointwise1Before, channelCount1_pointwise1Before,
+    pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise20ChannelCount, bOutput1Requested
+  ) {
 
     // 0. Prepare.
 
