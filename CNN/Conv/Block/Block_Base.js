@@ -1080,6 +1080,9 @@ class Base {
     }
 
 //!!! ...unfinished... (2022/06/09)
+// squeeze should not destroy channelCount_lowerHalf and channelCount_higherHalf.
+
+//!!! ...unfinished... (2022/06/09)
 // the .channelCount_lowerHalf and .channelCount_higherHalf are lost after squeeze.
 // But intermediatePointwise and excitationPointwise needs them.
 
