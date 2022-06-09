@@ -184,6 +184,20 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     return this.bPointwise;
   }
 
+  /**
+   * @override
+   */
+  get tensorWeightCountExtracted() {
+    return this.tensorWeightCountExtracted_internal;
+  }
+
+  /**
+   * @override
+   */
+  get tensorWeightCountTotal() {
+    return this.tensorWeightCountTotal_internal;
+  }
+
   /** Determine this.bPointwise and this.pfnXxx data members.
    *
    * @param {Base} this
