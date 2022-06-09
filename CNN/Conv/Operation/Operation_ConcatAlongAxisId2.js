@@ -2,7 +2,7 @@ export { ConcatAlongAxisId2 };
 
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
-import { Base } from "./Operation_Base.js";
+import { Root } from "./Operation_Base.js";
 
 /**
  * Concatenate two tensor3d ( height x width x channel ) always along the last axis (i.e. axisId = 2, along the channel axis). It could
@@ -24,7 +24,7 @@ import { Base } from "./Operation_Base.js";
  * according to the parameters.
  *
  */
-class ConcatAlongAxisId2 extends Base() {
+class ConcatAlongAxisId2 extends Root {
 
   constructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
