@@ -114,30 +114,26 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
     // If this operation is the final operation of the input tensor, this operation is responsible for disposing it.
 
-    let input0_bNeedDispose;
+    let input0_bKeep;
     if (   ( this.input0 )
-        && ( !alwaysKeepSet?.has( this.input0 ) ) // input in alwaysKeepSet should always be kept (always not to be disposed).
-        && ( this.input0.finalOperation == this )
-       ) {
-      input0_bNeedDispose = true;
+        && ( this.input0.finalOperation == this ) // Only if final operation, the input might be kept.
+        && ( alwaysKeepSet?.has( this.input0 ) )  // input in alwaysKeepSet should always be kept (always not to be disposed).
+       )
+      input0_bKeep = true;
+    else
+      input0_bKeep = false;
 
-    } else {
-      input0_bNeedDispose = false;
-    }
-
-    let input1_bNeedDispose;
+    let input1_bKeep;
     if (   ( this.input1 )
-        && ( !alwaysKeepSet?.has( this.input1 ) ) // input in alwaysKeepSet should always be kept (always not to be disposed).
-        && ( this.input1.finalOperation == this )
-       ) {
-      input1_bNeedDispose = true;
-
-    } else {
-      input1_bNeedDispose = false;
-    }
+        && ( this.input1.finalOperation == this ) // Only if final operation, the input might be kept.
+        && ( alwaysKeepSet?.has( this.input1 ) )  // input in alwaysKeepSet should always be kept (always not to be disposed).
+       )
+      input1_bKeep = true;
+    else
+      input1_bKeep = false;
 
     // Configure the operation to keep or dispose its inputs.
-    this.setKeepInputTensor( input0_bNeedDispose, input1_bNeedDispose );
+    this.setKeepInputTensor( input0_bKeep, input1_bKeep );
   }
 
   /**
