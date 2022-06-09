@@ -142,14 +142,14 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   }
 
   disposeTensors() {
-    super.disposeTensors(); // Release filtersTensor4d and biasesTensor3d.
-
     this.apply = this.pfnConv = this.pfnActivation = null;
 
     this.bPointwise = false;
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bKeepInputTensor = false;  // Default will dispose input tensor.
     this.bInitOk = false;
+
+    super.disposeTensors(); // Release filtersTensor4d and biasesTensor3d.
   }
 
   /**
