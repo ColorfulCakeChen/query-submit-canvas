@@ -200,6 +200,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
+
 //!!! ...unfinished... (2022/01/11) What about ( bDepthwise == false )?
 
 //!!! ...unfinished... (2022/01/09)
@@ -209,6 +210,17 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
 //!!! (2022/01/09 Remarked) Wrong!
 //     if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE )
 //       return true; // Nothing needs to be extracted.
+
+
+    // Calculate lower half and higher half channel count.
+    //
+    // Even if avg/max pooling or ( bHigherHalfDifferent == false ), these are still correct.
+    //
+    if ( this.inputChannelCount_lowerHalf != undefined ) {
+      this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+      this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.channelMultiplier;
+      this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+    }
 
     // Determine shape of the filters, biases, channels.
     let aFiltersBiasesPartInfoArray;
@@ -251,10 +263,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
                 + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
             );
 
-            this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
-
-            this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
-            this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+//!!! (2022/06/09 Remarked) Moved to outer, commonly calculated.
+//             this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+//
+//             this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
+//             this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
             // Extract filters and biases for the specified channel count, but in different sequence.
             this.inputChannelCount_toBeExtracted = this.inputChannelCount;
@@ -275,10 +288,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
                 + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
             );
 
-            this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
-
-            this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
-            this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+//!!! (2022/06/09 Remarked) Moved to outer, commonly calculated.
+//             this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+//
+//             this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
+//             this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
             // Just extract filters and biases for half of the specified channel count.
             this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
