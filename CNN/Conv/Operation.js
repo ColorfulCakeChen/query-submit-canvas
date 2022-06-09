@@ -1,4 +1,4 @@
-export { Base } from "./Operation/Operation_Base.js";
+export { Base, Root } from "./Operation/Operation_Base.js";
 export { TwinArray } from "./Operation/Operation_TwinArray.js";
 
 export { AddTwoTensors } from "./Operation/Operation_AddTwoTensors.js";
