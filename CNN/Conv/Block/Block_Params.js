@@ -326,8 +326,13 @@ class Params extends Weights.Params {
 
     // Determine input tensor count and whether request add-input-to-output.
     Params.setFlags_by.call( this,
+      this.inputHeight0, this.inputWidth0,
       this.channelCount0_pointwise1Before, this.channelCount1_pointwise1Before,
-      this.pointwise1ChannelCount, this.depthwise_AvgMax_Or_ChannelMultiplier, this.pointwise20ChannelCount, this.bOutput1Requested );
+      this.pointwise1ChannelCount,
+      this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseActivationId,
+      this.nSqueezeExcitationChannelCountDivisor, this.bSqueezeExcitationPrefix,
+      this.pointwise20ChannelCount, this.bOutput1Requested
+    );
 
     return bExtractOk;
   }
