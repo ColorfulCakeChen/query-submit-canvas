@@ -143,9 +143,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
    */
   constructor(
     inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
+    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount,
+    ...restArgs ) {
 
-    super();
+    super( ...restArgs );
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
