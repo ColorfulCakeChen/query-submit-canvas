@@ -4,7 +4,10 @@ import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
-import * as ReturnOrClone from "../ReturnOrClone.js";
+
+//!!! (2022/06/08 Remarked) seems not necessary
+//import * as ReturnOrClone from "../ReturnOrClone.js";
+
 import * as ChannelCountCalculator from "../ChannelCountCalculator.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as Operation from "../Operation.js";
@@ -295,7 +298,9 @@ import { Params } from "./Block_Params.js";
  * apply__input0__output0_output1(), apply__input0__output0() according to the initer()'s parameters.
  *
  */
-class Base extends ReturnOrClone.Base() {
+//!!! (2022/06/08 Remarked) seems not necessary
+//class Base extends ReturnOrClone.Root {
+class Base {
 
   /**
    * Generator for initializing this object.
