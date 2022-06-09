@@ -115,7 +115,7 @@ class Depthwise extends Base( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnO
 
     } else { // 3.
 
-      bExtractOk = this.init( inputFloat32Array, byteOffsetBegin, this.input0.scaleBoundsArray );
+      bExtractOk = super.init( inputFloat32Array, byteOffsetBegin, this.input0.scaleBoundsArray );
       if ( bExtractOk ) {
         try {
           if ( this.filtersShape && this.filtersArray ) {
