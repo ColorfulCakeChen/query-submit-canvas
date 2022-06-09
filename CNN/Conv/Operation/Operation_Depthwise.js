@@ -134,18 +134,17 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 
   /** Release tensors. */
   disposeTensors() {
-
     this.apply = this.pfnOperation = this.pfnActivation = null;
 
     // If these properties does not exist, assigning value (even undefined) to them will create them. Avoid it.
     {
-      if ( this.bDepthwiseAvg )
+      if ( this.bDepthwiseAvg != undefined )
         this.bDepthwiseAvg = undefined;
 
-      if ( this.bDepthwiseMax )
+      if ( this.bDepthwiseMax != undefined )
         this.bDepthwiseMax = undefined;
 
-      if ( this.bDepthwiseConv )
+      if ( this.bDepthwiseConv != undefined )
         this.bDepthwiseConv = undefined;
     }
 
@@ -162,6 +161,15 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    * will or will not dispose its inputTensor.
    */
   setKeepInputTensor( bKeepInputTensor ) {
+
+    // So that do nothing if disposeTensors() has been called (i.e. .pfnOperation has been cleared).
+    //
+    // This could happen when Operation.TwinArray.disposeTensors() which cause TensorPlaceholder.finalOperationOld.setKeepInputTensor()
+    // called.
+    //
+    if ( !this.bInitOk )
+      return;
+
     if ( bKeepInputTensor == this.bKeepInputTensor )
       return;
 
