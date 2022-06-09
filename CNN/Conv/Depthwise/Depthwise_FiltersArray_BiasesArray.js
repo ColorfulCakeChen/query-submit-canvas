@@ -66,11 +66,11 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *   The lower half channel count of input image. When ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ),
  * it will be used and must be a positive integer.
  *
- * @member {number} tensorWeightCountTotal
+ * @member {number} tensorWeightCountTotal_internal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
  * weights, if they are used in tensors.
  *
- * @member {number} tensorWeightCountExtracted
+ * @member {number} tensorWeightCountExtracted_internal
  *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
  * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
  *
@@ -660,21 +660,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
 
   get bHigherHalfDifferent() {
     return ( this.nHigherHalfDifferent ) && ( this.nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE );
-  }
-
-
-  /**
-   * @override
-   */
-  get tensorWeightCountExtracted() {
-    return this.tensorWeightCountExtracted_internal;
-  }
-
-  /**
-   * @override
-   */
-  get tensorWeightCountTotal() {
-    return this.tensorWeightCountTotal_internal;
   }
 
 }
