@@ -47,7 +47,7 @@ import { Base } from "./Operation_Base.js";
  * @see Operration.Base
  * @see Depthwise.FiltersArray_BiasesArray
  */
-class Depthwise extends Base( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone.Base() ) ) {
+class Depthwise extends Base( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone.Root ) ) {
 
 //!!! (2022/06/04 Remarked) inputTensorPlaceholder0 has input info.
 //   /**
