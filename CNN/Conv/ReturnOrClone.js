@@ -9,6 +9,13 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
   /**
+   *
+   */
+  constructor( ...restArgs ) {
+    super( ...restArgs );
+  }
+
+  /**
    * Return the input (as output) directly. Used for ( bKeepInputTensor == false ).
    *
    * @param {tf.tensor} inputTensor
