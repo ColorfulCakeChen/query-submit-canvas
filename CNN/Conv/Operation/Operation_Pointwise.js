@@ -38,7 +38,7 @@ import { Base } from "./Operation_Base.js";
  * @see Operration.Base
  * @see Pointwise.FiltersArray_BiasesArray
  */
-class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone.Base() ) ) ) {
+class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone.Root ) ) ) {
 
 //!!! (2022/06/04 Remarked) inputTensorPlaceholder0 has input info.
 //   /**
