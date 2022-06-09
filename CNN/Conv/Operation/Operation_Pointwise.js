@@ -4,7 +4,10 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
-import * as BoundsArraySet from "../BoundsArraySet.js";
+
+//!!! (2022/06/09 Remarked)
+//import * as BoundsArraySet from "../BoundsArraySet.js";
+
 import { FiltersArray_BiasesArray } from "../Pointwise/Pointwise_FiltersArray_BiasesArray.js";
 import { Base } from "./Operation_Base.js";
 
