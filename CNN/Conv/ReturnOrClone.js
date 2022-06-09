@@ -1,10 +1,10 @@
-export { Base };
+export { Base, Root };
 
 /**
  * Provide return_input_directly() and keep_input_return_copy.
  *
  */
-let Base = ( ParentClass = Object ) => class extends ParentClass {
+let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
   /**
    * Return the input (as output) directly. Used for ( bKeepInputTensor == false ).
@@ -106,3 +106,12 @@ let Base = ( ParentClass = Object ) => class extends ParentClass {
   }
 
 }
+
+
+/**
+ * Almost the same as ReturnOrClone.Base class except its parent class is fixed to Object. In other words, caller can not specify the
+ * parent class of ReturnOrClone.Root (so it is named "Root" which can not have parent class).
+ */
+class Root extends Base() {
+}
+
