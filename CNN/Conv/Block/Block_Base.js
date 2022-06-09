@@ -978,6 +978,9 @@ class Base {
    */
   static operationArray_append_SqueezeExcitation( nPointwise_HigherHalfDifferent, inputFloat32Array ) {
 
+    if ( this.nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
+      return true; // No sequeeze-and-excitation.
+
     // Note: Inside squeeze-and-excitation, all depthwsie and pointwise convolutions are constant-when-pass-through
     //       so that the result for pass-through parts will not affect input when multiply to input.
     //
