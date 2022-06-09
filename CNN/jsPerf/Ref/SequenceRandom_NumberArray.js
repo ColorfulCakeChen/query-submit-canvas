@@ -16,6 +16,7 @@ class Bag extends MultiLayerMap.Base {
    *   For the same specification, provide how many different result number array (and randomly select them).
    */
   constructor( nCountPerSameSpec = 10 ) {
+    super();
     this.nRandSpecIdMin = 0;
     this.nRandSpecIdMax = Math.max( 0, nCountPerSameSpec - 1 );
   }
