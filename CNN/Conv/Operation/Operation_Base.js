@@ -66,9 +66,12 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    * Usually, this method is not responsible for releasing tensors inside input/output TensorPlaceholder. They should be handled
    * by the caller of apply().
    *
-   * Sub-class should override this method.
+   * Sub-class should override this method (and call super.disposeTensors() at final).
    */
   disposeTensors() {
+    if ( super.disposeTensors instanceof Function ) { // If parent class has the same method, call it.
+      super.disposeTensors();
+    }
   }
 
   /**
