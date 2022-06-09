@@ -106,7 +106,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 
     } else { // 3.
 
-      bExtractOk = this.init( inputFloat32Array, byteOffsetBegin, this.input0.scaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
+      bExtractOk = super.init( inputFloat32Array, byteOffsetBegin, this.input0.scaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
       if ( bExtractOk ) {
         try {
           if ( this.filtersShape && this.filtersArray ) {
