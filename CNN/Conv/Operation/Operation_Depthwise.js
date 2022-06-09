@@ -106,11 +106,6 @@ class Depthwise extends Base( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnO
       bExtractOk = true; // 2. no operation at all. No depthwise (e.g. zero or negative number) (so no channel multiplier, too).
 
       this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
-      this.tensorWeightCountExtracted = this.tensorWeightCountTotal = 0;
-
-//!!! (2022/06/04 Remarked) Already in TensorPlaceholder
-//       this.boundsArraySet = new BoundsArraySet.Depthwise( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
-//       this.boundsArraySet.output0.set_all_byScaleBoundsArray( inputScaleBoundsArray ); // Bypass previous to next.
 
       // Bypass previous to next.
       //
