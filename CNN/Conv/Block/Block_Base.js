@@ -4,10 +4,6 @@ import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
-
-//!!! (2022/06/08 Remarked) seems not necessary
-//import * as ReturnOrClone from "../ReturnOrClone.js";
-
 import * as ChannelCountCalculator from "../ChannelCountCalculator.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as Operation from "../Operation.js";
@@ -1211,7 +1207,7 @@ class Base {
 
     const intermediate_nHigherHalfDifferent = nPointwise_HigherHalfDifferent;
 
-    let intermediatePointwise = new Pointwise.ConstantWhenPassThrough(
+    let intermediatePointwise = new Operation.Pointwise_ConstantWhenPassThrough(
       inputTensorPlaceholder,
       intermediate_outputChannelCount, intermediate_bBias, intermediate_nActivationId,
       intermediate_nHigherHalfDifferent, intermediate_outputChannelCount_lowerHalf,
