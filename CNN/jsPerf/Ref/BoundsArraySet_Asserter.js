@@ -1,3 +1,5 @@
+export { assert_ScaleBoundsArray };
+export { assert_ScaleBoundsArray_output0_output1 };
 export { assert_BoundsArraySet_Outputs };
 
 /**
@@ -65,7 +67,7 @@ function assert_ScaleBoundsArray( asserter_Equal, aScaleBoundsArray, refScaleBou
  * @param {string} postfixMsg
  *   The text to be displayed at the tail when comparison failed.
  */
-function assert_ScaleBoundsArray_ScaleBoundsArray( asserter_Equal,
+function assert_ScaleBoundsArray_output0_output1( asserter_Equal,
   output0_scaleBoundsArray, output1_scaleBoundsArray, imageOutReferenceArray, prefixMsg, postfixMsg ) {
 
   assert_ScaleBoundsArray( output0_scaleBoundsArray, imageOutReferenceArray[ 0 ].boundsArraySet.output0,
