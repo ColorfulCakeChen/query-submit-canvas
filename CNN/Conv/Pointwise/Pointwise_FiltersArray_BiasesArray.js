@@ -122,11 +122,11 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  *   The output group count of the channel shuffler. Usually, it is used when
  * ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ).
  *
- * @member {number} tensorWeightCountTotal
+ * @member {number} tensorWeightCountTotal_internal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
  * weights, if they are used in tensors.
  *
- * @member {number} tensorWeightCountExtracted
+ * @member {number} tensorWeightCountExtracted_internal
  *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
  * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
  *
@@ -720,21 +720,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
 
   get bHigherHalfDifferent() {
     return ( this.nHigherHalfDifferent ) && ( this.nHigherHalfDifferent != ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE );
-  }
-
-
-  /**
-   * @override
-   */
-  get tensorWeightCountExtracted() {
-    return this.tensorWeightCountExtracted_internal;
-  }
-
-  /**
-   * @override
-   */
-  get tensorWeightCountTotal() {
-    return this.tensorWeightCountTotal_internal;
   }
 
 }
