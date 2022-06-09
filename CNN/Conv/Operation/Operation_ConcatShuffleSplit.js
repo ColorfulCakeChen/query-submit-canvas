@@ -3,7 +3,7 @@ export { ConcatShuffleSplit };
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import * as ChannelShuffler from "../ChannelShuffler.js";
-import { Base } from "./Operation_Base.js";
+import { Root } from "./Operation_Base.js";
 
 /**
  * Concatenate two tensor3d along depth (i.e. axis id 2) and then channel shuffling and splitting.
@@ -43,7 +43,7 @@ import { Base } from "./Operation_Base.js";
  * to the parameters.
  *
  */
-class ConcatShuffleSplit extends Base() {
+class ConcatShuffleSplit extends Root {
 
   /**
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
