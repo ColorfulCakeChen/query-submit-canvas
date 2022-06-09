@@ -108,9 +108,9 @@ Case.testTensorShape = [ 1 ];
 
 function testCorrectness() {
 
-  let classOperationBase = Operation.Root;
+  let classOperationRoot = Operation.Root;
   let classOperationTwinArray = Operation.TwinArray;
-  let classTestedArray = [ classOperationBase, classOperationTwinArray ];
+  let classTestedArray = [ classOperationRoot, classOperationTwinArray ];
 
   let caseId = -1;
   let bInput0, bInput1, outputTensorCount, bKeepInputTensor0, bKeepInputTensor1;
