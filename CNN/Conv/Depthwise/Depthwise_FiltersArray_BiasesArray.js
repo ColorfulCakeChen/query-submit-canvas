@@ -59,6 +59,9 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *         the filters for the input channels between ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) will just pass
  *         through the input to output.
  *
+ * @member {boolean} bHigherHalfDifferent
+ *   It will be false, if ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ).
+ *
  * @member {number} inputChannelCount_lowerHalf
  *   The lower half channel count of input image. When ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ),
  * it will be used and must be a positive integer.
@@ -102,6 +105,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
     this.nHigherHalfDifferent = nHigherHalfDifferent;
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
 
+    this.bHigherHalfDifferent = ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE );
+
+    this.tensorWeightCountExtracted_internal = 0;
+    this.tensorWeightCountTotal_internal = 0;
+
     // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
     if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
         || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier ) ) {
@@ -134,14 +142,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
       }
     }
 
-    tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
-      `Depthwise.FiltersArray_BiasesArray.constructor(): `
-        + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
-        + `inputChannelCount ( ${this.inputChannelCount} ).`
-    );
-
-    this.tensorWeightCountExtracted_internal = 0;
-    this.tensorWeightCountTotal_internal = 0;
+    if ( this.bHigherHalfDifferent ) {
+      tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
+        `Depthwise.FiltersArray_BiasesArray.constructor(): `
+          + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
+          + `inputChannelCount ( ${this.inputChannelCount} ).`
+      );
+    }
   }
 
   /**
