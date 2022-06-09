@@ -425,6 +425,11 @@ class Params extends Weights.Params {
       return;
     }
 
+//!!! ...unfinished... (2022/06/09)
+// ( 1 == depthwiseFilterHeight ) && ( 1 == depthwiseFilterWidth ) && ( 1 == depthwiseStrides ) && ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ) 
+// seems that depthwise also does nothing.
+//
+
     if (   ( inputHeight == 1 ) && ( inputWidth == 1 ) && ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ) // i.e. depthwise does nothing.
 
         && ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // i.e. depthwise is linear.
