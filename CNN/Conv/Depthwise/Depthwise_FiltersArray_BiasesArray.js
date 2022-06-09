@@ -139,6 +139,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
         + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
         + `inputChannelCount ( ${this.inputChannelCount} ).`
     );
+
+    this.tensorWeightCountExtracted_internal = 0;
+    this.tensorWeightCountTotal_internal = 0;
   }
 
   /**
