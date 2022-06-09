@@ -106,8 +106,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
     this.nHigherHalfDifferent = nHigherHalfDifferent;
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
 
-    this.bHigherHalfDifferent = ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE );
-
     this.tensorWeightCountExtracted_internal = 0;
     this.tensorWeightCountTotal_internal = 0;
 
@@ -657,6 +655,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
     } else { // ( !this.biasesArray ).
       // Do nothing. No biases array to be doEscapingScale.
     }
+  }
+
+
+  get bHigherHalfDifferent() {
+    return ( this.nHigherHalfDifferent ) && ( this.nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE );
   }
 
 
