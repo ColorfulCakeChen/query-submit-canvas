@@ -232,6 +232,20 @@ class Depthwise extends Base( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnO
     return this.bDepthwise;
   }
 
+  /**
+   * @override
+   */
+  get tensorWeightCountExtracted() {
+    return this.tensorWeightCountExtracted_internal;
+  }
+
+  /**
+   * @override
+   */
+  get tensorWeightCountTotal() {
+    return this.tensorWeightCountTotal_internal;
+  }
+
   /** Determine this.bDepthwiseXxx and this.pfnXxx data members.
    *
    * @param {Base} this
