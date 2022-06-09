@@ -39,16 +39,16 @@ class Case {
         input0.realTensor = tf.randomNormal( Case.testTensorShape );
         ++numTensors_delta;
 
-        if ( bKeepInputTensor0 )
-          ++numTensors_delta;
+        if ( !bKeepInputTensor0 )
+          --numTensors_delta;
       }
 
       if ( input1 ) {
         input1.realTensor = tf.randomNormal( Case.testTensorShape );
         ++numTensors_delta;
 
-          if ( bKeepInputTensor1 )
-            ++numTensors_delta;
+        if ( !bKeepInputTensor1 )
+          --numTensors_delta;
       }
 
       this.operation.apply();
