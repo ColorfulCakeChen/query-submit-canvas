@@ -351,7 +351,7 @@ class Base {
 //       block.boundsArraySet, imageOutReferenceArray, `Block`, parametersDescription );
 
     BoundsArraySet_Asserter.assert_ScaleBoundsArray_ScaleBoundsArray(
-      block.output0.scaleBoundsArray, block.output1.scaleBoundsArray, imageOutReferenceArray, `Block`, parametersDescription );
+      block.output0?.scaleBoundsArray, block.output1?.scaleBoundsArray, imageOutReferenceArray, `Block`, parametersDescription );
   }
 
   /**
