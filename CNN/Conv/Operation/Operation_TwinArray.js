@@ -36,7 +36,7 @@ import { Base } from "./Operation_Base.js";
  *
  * @see Operation.Base
  */
-let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
+class TwinArray extends Base() {
 
   /**
    *
@@ -63,10 +63,10 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
     this.bKeepInputTensor0 = false; // Default is destroy0 and destroy1;
     this.bKeepInputTensor1 = false;
-    TwinArray().alwaysKeepSet_collect.call( this ); // Re-collect TensorPlaceholders which are requested to keep their tensors.
-    TwinArray().setKeepInputTensor_by_this_operationArray_endingDummyOperation_alwaysKeepSet.call( this );
+    TwinArray.alwaysKeepSet_collect.call( this ); // Re-collect TensorPlaceholders which are requested to keep their tensors.
+    TwinArray.setKeepInputTensor_by_this_operationArray_endingDummyOperation_alwaysKeepSet.call( this );
 
-    TwinArray().setup_apply_loop.call( this );
+    TwinArray.setup_apply_loop.call( this );
     
     // For reducing memory re-allocation.
     //
@@ -127,8 +127,8 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
-    TwinArray().alwaysKeepSet_collect.call( this );
-    TwinArray().setKeepInputTensor_by_this_operationArray_endingDummyOperation_alwaysKeepSet.call( this );
+    TwinArray.alwaysKeepSet_collect.call( this );
+    TwinArray.setKeepInputTensor_by_this_operationArray_endingDummyOperation_alwaysKeepSet.call( this );
   }
 
 
@@ -276,7 +276,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
 
       // At most, two outputs could be handled.
       tf.util.assert( ( this.tempLastOutputTensorPlaceholderArray.length == 0 ),
-        `Operation.TwinArray().operation_append(): `
+        `Operation.TwinArray.operation_append(): `
           + `The appended operations have too many output TensorPlaceholders. There are not enough .endingInputX could be used.`
       );
     }
@@ -361,7 +361,7 @@ let TwinArray = ( ParentClass = Object ) => class extends Base( ParentClass ) {
    * Adjust .apply data member according to calling .apply_operationArray_endingDummyOperation().
    */
   static setup_apply_loop() {
-    this.apply = TwinArray().apply_operationArray_endingDummyOperation;
+    this.apply = TwinArray.apply_operationArray_endingDummyOperation;
   }
 
   /**
