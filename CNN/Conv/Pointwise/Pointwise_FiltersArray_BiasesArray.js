@@ -204,8 +204,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
    * The following properties will be modified:
    *   - this.byteOffsetBegin
    *   - this.byteOffsetEnd
-   *   - this.tensorWeightCountExtracted
-   *   - this.tensorWeightCountTotal
+   *   - this.tensorWeightCountExtracted_internal
+   *   - this.tensorWeightCountTotal_internal
    *   - this.boundsArraySet
    *   - this.filtersShape
    *   - this.filtersArray
@@ -395,7 +395,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
     if ( !sourceWeights.extract() )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = sourceWeights.defaultByteOffsetEnd;
-    this.tensorWeightCountExtracted = weightsCount_extracted;
+    this.tensorWeightCountExtracted_internal = weightsCount_extracted;
 
     // filters and bias: weights and value bounds.
     //
@@ -462,13 +462,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
     }
 
     {
-      this.tensorWeightCountTotal = 0;
+      this.tensorWeightCountTotal_internal = 0;
 
       if ( this.filtersShape )
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersShape );
+        this.tensorWeightCountTotal_internal += tf.util.sizeFromShape( this.filtersShape );
 
       if ( this.biasesShape )
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesShape );
+        this.tensorWeightCountTotal_internal += tf.util.sizeFromShape( this.biasesShape );
     }
 
     return true;
@@ -702,6 +702,21 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
 
     this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo(
       arrayTemp_forInterleave_asGrouptTwo ); // Shuffle bounds array set of output.
+  }
+
+
+  /**
+   * @override
+   */
+  get tensorWeightCountExtracted() {
+    return this.tensorWeightCountExtracted_internal;
+  }
+
+  /**
+   * @override
+   */
+  get tensorWeightCountTotal() {
+    return this.tensorWeightCountTotal_internal;
   }
 
 }
