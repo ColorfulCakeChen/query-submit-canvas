@@ -627,8 +627,9 @@ class Base {
 
     {
       let tensorWeightCountTotal = 0;  // Not include channel shuffler.
-      for ( let i = 0; i < block.operationArray.length; ++i ) {
-        let operation = block.operationArray[ i ];
+      let operationArray = block.operationArray.operationArray;
+      for ( let i = 0; i < operationArray.length; ++i ) {
+        let operation = operationArray[ i ];
         if ( operation.filtersTensor4d )
            tensorWeightCountTotal += operation.filtersTensor4d.size;
         if ( operation.biasesTensor3d )
