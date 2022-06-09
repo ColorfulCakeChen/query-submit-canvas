@@ -102,9 +102,15 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  *          (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *          The output channels will be arranged just like applying channel shuffler on them.
  *
+
+//!!! (2022/06/09 Remarked) the inputChannelCount_lowerHalf and outputChannelCount_lowerHalf will never be checked.
+//  * @member {boolean} bHigherHalfDifferent
+//  *   It will be false, if ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE )
+//  * or ( outputChannelCount <= 0 ) or ( inputChannelCount_lowerHalf <= 0 ) or ( outputChannelCount_lowerHalf <= 0 ).
+
+ *
  * @member {boolean} bHigherHalfDifferent
- *   It will be false, if ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE )
- * or ( outputChannelCount <= 0 ) or ( inputChannelCount_lowerHalf <= 0 ) or ( outputChannelCount_lowerHalf <= 0 ).
+ *   It will be false, if ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ).
  *
  * @member {number} inputChannelCount_lowerHalf
  *   The lower half input channel count when ( bHigherHalfDifferent == true ). It is ignored when ( bHigherHalfDifferent == false ).
@@ -158,11 +164,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
     this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
     this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
 
-    this.bHigherHalfDifferent
-      =    ( nHigherHalfDifferent != ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE )
-        && ( outputChannelCount > 0 )
-        && ( inputChannelCount_lowerHalf > 0 )
-        && ( outputChannelCount_lowerHalf > 0 );
+//!!! (2022/06/09 Remarked) the inputChannelCount_lowerHalf and outputChannelCount_lowerHalf will never be checked.
+//     this.bHigherHalfDifferent
+//       =    ( nHigherHalfDifferent != ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE )
+//         && ( outputChannelCount > 0 )
+//         && ( inputChannelCount_lowerHalf > 0 )
+//         && ( outputChannelCount_lowerHalf > 0 );
 
     this.tensorWeightCountExtracted_internal = 0;
     this.tensorWeightCountTotal_internal = 0;
@@ -708,6 +715,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
 
     this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo(
       arrayTemp_forInterleave_asGrouptTwo ); // Shuffle bounds array set of output.
+  }
+
+
+  get bHigherHalfDifferent() {
+    return ( this.nHigherHalfDifferent ) && ( this.nHigherHalfDifferent != ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE );
   }
 
 
