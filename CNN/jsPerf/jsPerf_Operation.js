@@ -109,7 +109,7 @@ Case.testTensorShape = [ 1 ];
 function testCorrectness() {
 
   let classOperationBase = ( Operation.Base() );
-  let classOperationTwinArray = ( Operation.TwinArray() );
+  let classOperationTwinArray = Operation.TwinArray;
   let classTestedArray = [ classOperationBase, classOperationTwinArray ];
 
   let caseId = -1;
