@@ -91,7 +91,7 @@ class TwinArray extends Base() {
     }
 
     // Since there is no sub operation, short-circuit to the original inputs.
-    Base.set_endingInput0_endingInput1.call( this, this.input0, this.input1 );
+    TwinArray.set_endingInput0_endingInput1.call( this, this.input0, this.input1 );
 
     super.disposeTensors();
   }
@@ -282,7 +282,7 @@ class TwinArray extends Base() {
     }
 
     // 3.3 Confirm the new endingInputX.
-    Base.set_endingInput0_endingInput1.call( this, endingInput0_new, endingInput1_new );
+    TwinArray.set_endingInput0_endingInput1.call( this, endingInput0_new, endingInput1_new );
   }
 
 
@@ -352,7 +352,7 @@ class TwinArray extends Base() {
    * @param {TensorPlaceholder.Base} endingInput1  The tensor placeholder to become .endingDummyOperation.input1.
    */
   static set_endingInput0_endingInput1( endingInput0, endingInput1 ) {
-    Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this.endingDummyOperation, endingInput0, endingInput1 );
+    TwinArray.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this.endingDummyOperation, endingInput0, endingInput1 );
     this.endingDummyOperation.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
   }
 
