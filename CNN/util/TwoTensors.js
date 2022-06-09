@@ -12,6 +12,13 @@ export { filtersTensor4d_biasesTensor3d };
 let filtersTensor4d_biasesTensor3d = ( ParentClass = Object )  => class extends ParentClass {
 
   /**
+   *
+   */
+  constructor( ...restArgs ) {
+    super( ...restArgs );
+  }
+
+  /**
    * Release the tensors.
    */
   disposeTensors() {
