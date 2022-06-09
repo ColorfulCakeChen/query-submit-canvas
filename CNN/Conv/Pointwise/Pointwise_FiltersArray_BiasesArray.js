@@ -163,42 +163,44 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
         && ( inputChannelCount_lowerHalf > 0 )
         && ( outputChannelCount_lowerHalf > 0 );
 
+    this.tensorWeightCountExtracted_internal = 0;
+    this.tensorWeightCountTotal_internal = 0;
+
     tf.util.assert( ( inputChannelCount > 0 ),
       `Pointwise.FiltersArray_BiasesArray.constructor(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) must be positive integer.`
     );
 
-    tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
-      `Pointwise.FiltersArray_BiasesArray.constructor(): `
-        + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
-        + `inputChannelCount ( ${this.inputChannelCount} ).`
-    );
-
-    if ( this.outputChannelCount > 0 ) {
-      tf.util.assert( ( this.outputChannelCount_lowerHalf <= outputChannelCount ),
+    if ( this.bHigherHalfDifferent ) {
+      tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
         `Pointwise.FiltersArray_BiasesArray.constructor(): `
-          + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
-          + `outputChannelCount ( ${this.outputChannelCount} ).`
+          + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
+          + `inputChannelCount ( ${this.inputChannelCount} ).`
       );
 
-    } else { // ( this.outputChannelCount <= 0 ), the outputChannelCount_Real will be inputChannelCount.
-      tf.util.assert( ( this.outputChannelCount_lowerHalf <= inputChannelCount ),
+      if ( this.outputChannelCount > 0 ) {
+        tf.util.assert( ( this.outputChannelCount_lowerHalf <= outputChannelCount ),
+          `Pointwise.FiltersArray_BiasesArray.constructor(): `
+            + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
+            + `outputChannelCount ( ${this.outputChannelCount} ).`
+        );
+
+      } else { // ( this.outputChannelCount <= 0 ), the outputChannelCount_Real will be inputChannelCount.
+        tf.util.assert( ( this.outputChannelCount_lowerHalf <= inputChannelCount ),
+          `Pointwise.FiltersArray_BiasesArray.constructor(): `
+            + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
+            + `inputChannelCount ( ${this.inputChannelCount} ) when `
+            + `outputChannelCount ( ${this.outputChannelCount} ) is zero or negative.`
+        );
+      }
+
+      tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ) == ( this.outputChannelCount_lowerHalf > 0 ),
         `Pointwise.FiltersArray_BiasesArray.constructor(): `
-          + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
-          + `inputChannelCount ( ${this.inputChannelCount} ) when `
-          + `outputChannelCount ( ${this.outputChannelCount} ) is zero or negative.`
+          + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) and `
+          + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) `
+          + `should be both positive or both not.`
       );
     }
-
-    tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ) == ( this.outputChannelCount_lowerHalf > 0 ),
-      `Pointwise.FiltersArray_BiasesArray.constructor(): `
-        + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) and `
-        + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) `
-        + `should be both positive or both not.`
-    );
-
-    this.tensorWeightCountExtracted_internal = 0;
-    this.tensorWeightCountTotal_internal = 0;
   }
 
   /**
