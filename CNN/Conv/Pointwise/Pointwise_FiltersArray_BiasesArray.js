@@ -268,6 +268,15 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
+    // Calculate lower half and higher half channel count. (Even if ( bHigherHalfDifferent == false ), these are still correct.)
+    {
+      if ( this.inputChannelCount_lowerHalf != undefined )
+        this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+
+      if ( this.outputChannelCount_lowerHalf != undefined )
+        this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+    }
+
     // Determine shape of the filters, biases, channels.
     let aFiltersBiasesPartInfoArray;
     let filtersShape_extracted, biasesShape_extracted;
@@ -290,8 +299,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH: // (1)
           this.outputChannelCount_Real = this.outputChannelCount;
           this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
-          //this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf; // Not used in this case.
-          this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+
+//!!! (2022/06/09 Remarked) Moved to outer, commonly calculated.
+//           //this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf; // Not used in this case.
+//           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+
           aFiltersBiasesPartInfoArray = [
             new FiltersBiasesPartInfo( [
               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  true ),
@@ -304,8 +316,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
           this.outputChannelCount_Real = this.outputChannelCount;
           this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
           this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
-          this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
-          this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+
+//!!! (2022/06/09 Remarked) Moved to outer, commonly calculated.
+//           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+//           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+
           aFiltersBiasesPartInfoArray = [
             new FiltersBiasesPartInfo( [
               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf, false ),
@@ -320,8 +335,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
           this.inputChannelCount_toBeExtracted = this.inputChannelCount;   // Extract all weights as specified input/output channels.
           this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (like a normal pointwise convolution, but with a different arrangement.)
 
-          this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
-          this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+//!!! (2022/06/09 Remarked) Moved to outer, commonly calculated.
+//           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+//           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
           aFiltersBiasesPartInfoArray = [
             new FiltersBiasesPartInfo( [
@@ -341,8 +357,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
             this.outputChannelCount_Real = this.outputChannelCount;
             this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
             this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
-            this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
-            this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+
+//!!! (2022/06/09 Remarked) Moved to outer, commonly calculated.
+//             this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+//             this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+
             aFiltersBiasesPartInfoArray = [
               new FiltersBiasesPartInfo( [
                 new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
