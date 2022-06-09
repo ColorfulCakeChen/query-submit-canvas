@@ -769,10 +769,6 @@ class Base extends TestParams.Base {
    */
   generate_squeezeExcitation_filters_biases(
     nSqueezeExcitationChannelCountDivisor, nActivationId,
-
-//!!! (2022/05/29 Remarked)
-//    inputChannelCount, outputChannelCount, nActivationId, propertyNamePrefix, io_numberArrayObject ) {
-
     inputChannelCount_A, inputChannelCount_B, inputChannelCount_C,
     propertyNamePrefix_A, propertyNamePrefix_B, propertyNamePrefix_C,
     io_numberArrayObject ) {
