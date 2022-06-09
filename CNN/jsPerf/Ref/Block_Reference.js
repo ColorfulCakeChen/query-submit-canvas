@@ -350,7 +350,7 @@ class Base {
 //     BoundsArraySet_Asserter.assert_BoundsArraySet_Outputs( this.asserter_Equal,
 //       block.boundsArraySet, imageOutReferenceArray, `Block`, parametersDescription );
 
-    BoundsArraySet_Asserter.assert_ScaleBoundsArray_output0_output1(
+    BoundsArraySet_Asserter.assert_ScaleBoundsArray_output0_output1( this.asserter_Equal,
       block.output0?.scaleBoundsArray, block.output1?.scaleBoundsArray, imageOutReferenceArray, `Block`, parametersDescription );
   }
 
