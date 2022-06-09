@@ -152,7 +152,6 @@ class Depthwise extends Base( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnO
 
   /** Release tensors. */
   disposeTensors() {
-    super.disposeTensors(); // Release filtersTensor4d and biasesTensor3d.
 
     this.apply = this.pfnOperation = this.pfnActivation = null;
 
@@ -172,6 +171,8 @@ class Depthwise extends Base( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnO
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bKeepInputTensor = false;  // Default will dispose input tensor.
     this.bInitOk = false;
+
+    super.disposeTensors(); // Release filtersTensor4d and biasesTensor3d.
   }
 
   /**
