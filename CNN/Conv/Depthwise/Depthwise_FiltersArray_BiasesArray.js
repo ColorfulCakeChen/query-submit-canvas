@@ -95,9 +95,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
   constructor(
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent, inputChannelCount_lowerHalf ) {
+    nHigherHalfDifferent, inputChannelCount_lowerHalf,
+    ...restArgs ) {
 
-    super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+    super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs );
 
     this.bBias = bBias;
     this.nActivationId = nActivationId;
