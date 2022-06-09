@@ -2,7 +2,7 @@ export { AddTwoTensors };
 
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
-import { Base } from "./Operation_Base.js";
+import { Root } from "./Operation_Base.js";
 
 /**
  * Add two tensor3d. They should have the same channel count. Their ( height x width ) should be either the same or one is ( 1 x 1 ).
@@ -23,7 +23,7 @@ import { Base } from "./Operation_Base.js";
  * the parameters.
  *
  */
-class AddTwoTensors extends Base() {
+class AddTwoTensors extends Root {
 
   /**
    *
