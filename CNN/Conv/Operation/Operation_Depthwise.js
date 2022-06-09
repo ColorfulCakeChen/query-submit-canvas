@@ -4,7 +4,10 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
-import * as BoundsArraySet from "../BoundsArraySet.js";
+
+//!!! (2022/06/09 Remarked)
+//import * as BoundsArraySet from "../BoundsArraySet.js";
+
 import { FiltersArray_BiasesArray } from "../Depthwise/Depthwise_FiltersArray_BiasesArray.js";
 import { Base } from "./Operation_Base.js";
 
@@ -47,7 +50,7 @@ import { Base } from "./Operation_Base.js";
  * @see Operration.Base
  * @see Depthwise.FiltersArray_BiasesArray
  */
-class Depthwise extends Base( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone.Root ) ) {
+class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone.Root ) ) ) {
 
 //!!! (2022/06/04 Remarked) inputTensorPlaceholder0 has input info.
 //   /**
