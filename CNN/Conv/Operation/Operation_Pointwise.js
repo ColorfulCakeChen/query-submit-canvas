@@ -97,11 +97,6 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
       bExtractOk = true; // 2. no operation at all.
 
       this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
-      this.tensorWeightCountExtracted = this.tensorWeightCountTotal = 0;
-
-//!!! (2022/06/04 Remarked) Already in TensorPlaceholder
-//       this.boundsArraySet = new BoundsArraySet.Pointwise( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
-//       this.boundsArraySet.output0.set_all_byScaleBoundsArray( inputScaleBoundsArray ); // Bypass previous to next.
 
       // Bypass previous to next.
       //
