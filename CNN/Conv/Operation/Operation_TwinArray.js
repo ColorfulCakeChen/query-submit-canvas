@@ -1,7 +1,7 @@
 export { TwinArray };
 
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
-import { Base } from "./Operation_Base.js";
+import { Root } from "./Operation_Base.js";
 
 /**
  * An array of operations. Every time appending operation, one or parallel twin operations could be appended.
@@ -34,9 +34,9 @@ import { Base } from "./Operation_Base.js";
  * puts to this.output0.realTensor (and this.output1.realTensor) as outputTensor. In fact, its calls .apply of every sub operation
  * and .endingDummyOperation.
  *
- * @see Operation.Base
+ * @see Operation.Root
  */
-class TwinArray extends Base() {
+class TwinArray extends Root {
 
   /**
    *
@@ -48,7 +48,7 @@ class TwinArray extends Base() {
 
     // In order to handle keep-input-flag correctly (even if no sub operation at all), an ending dummy operation is used.
     {
-      this.endingDummyOperation = new ( Base() )( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
+      this.endingDummyOperation = new Root( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
       // The ending dummy operation's output will be the output of this operation array.
       {
