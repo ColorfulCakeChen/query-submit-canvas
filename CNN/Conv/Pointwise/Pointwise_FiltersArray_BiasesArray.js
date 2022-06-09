@@ -196,6 +196,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
         + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) `
         + `should be both positive or both not.`
     );
+
+    this.tensorWeightCountExtracted_internal = 0;
+    this.tensorWeightCountTotal_internal = 0;
   }
 
   /**
