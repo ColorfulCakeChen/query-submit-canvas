@@ -100,15 +100,16 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    */
   setKeepInputTensor_IfNotFinalOperation_Or_In( alwaysKeepSet ) {
 
-    // Note1: If an input appears multiple times (i.e. ( this.input0 == this.input1 ); multiple inputs of this operation are the same),
-    //        the input will be disposed multiple times.
+    // Note1: If an input is not null, it can not appear multiple times (i.e. ( this.input0 == this.input1 ), multiple inputs of
+    //        this operation are the same). The reason is that the input will be disposed multiple times.
     //
-    // Note2: If ( this.input0 != this.input1 ) but ( this.input0.realTensor == this.input1.realTensor ), that will br also a
+    // Note2: If ( this.input0 != this.input1 ) but ( this.input0.realTensor == this.input1.realTensor ), that will be also a
     //        problem. But it can not be detected here because .realTensor is only known when .apply() is called (i.e. not here).
     //
-    tf.util.assert( ( this.input0 != this.input1 ),
+    tf.util.assert( ( !this.input0 && !this.input1 ) || ( this.input0 != this.input1 ),
       `Operation.Base.setKeepInputTensor_IfNotFinalOperation_Or_In(): `
-        + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should be different objects.`
+        + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should be different objects `
+        + `(except they are both null).`
     );
 
     // If this operation is the final operation of the input tensor, this operation is responsible for disposing it.
