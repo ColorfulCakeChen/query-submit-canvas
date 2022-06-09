@@ -4,10 +4,6 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
-
-//!!! (2022/06/09 Remarked)
-//import * as BoundsArraySet from "../BoundsArraySet.js";
-
 import { FiltersArray_BiasesArray } from "../Pointwise/Pointwise_FiltersArray_BiasesArray.js";
 import { Base } from "./Operation_Base.js";
 
@@ -42,20 +38,6 @@ import { Base } from "./Operation_Base.js";
  * @see Pointwise.FiltersArray_BiasesArray
  */
 class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone.Root ) ) ) {
-
-//!!! (2022/06/04 Remarked) inputTensorPlaceholder0 has input info.
-//   /**
-//    */
-//   constructor(
-//     inputTensorPlaceholder0,
-//     inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-//     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
-//
-//     super(
-//       inputTensorPlaceholder0, null, 1,
-//       inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-//       nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
-//   }
 
   /**
    */
