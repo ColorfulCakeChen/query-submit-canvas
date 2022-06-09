@@ -501,7 +501,7 @@ class Base extends ReturnOrClone.Base() {
           inputScaleBoundsArray1 );
       }
 
-      this.operationArray = new ( Operation.TwinArray() )( inputTensorPlaceholder0, inputTensorPlaceholder1 );
+      this.operationArray = new Operation.TwinArray( inputTensorPlaceholder0, inputTensorPlaceholder1, this.outputTensorCount );
     }
 
     // Note: Once an operation is created (even if it just do nothing (e.g. ( pointwise1.bExisted == false ) ), it should always
