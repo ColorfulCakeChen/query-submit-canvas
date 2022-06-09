@@ -1079,6 +1079,10 @@ class Base {
       this.operationArray.operation_append( squeezeDepthwise0, squeezeDepthwise1 );
     }
 
+//!!! ...unfinished... (2022/06/09)
+// the .channelCount_lowerHalf and .channelCount_higherHalf are lost after squeeze.
+// But intermediatePointwise and excitationPointwise needs them.
+
     // 2. intermediatePointwise
     if ( bIntermediate ) {
 
@@ -1100,6 +1104,11 @@ class Base {
 
       this.operationArray.operation_append( intermediatePointwise0, intermediatePointwise1 );
     }
+
+
+//!!! ...unfinished... (2022/06/09)
+// the .channelCount_lowerHalf and .channelCount_higherHalf are lost after squeeze.
+// But intermediatePointwise and excitationPointwise needs them.
 
     // 3. excitationPointwise
     {
