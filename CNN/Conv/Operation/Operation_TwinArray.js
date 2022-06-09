@@ -98,20 +98,20 @@ class TwinArray extends Root {
 
 
   /**
-   * Release all ScaleBoundsArray (inside tensor placeholder) except this.inputX and this.outputX
+   * Release all ScaleBoundsArray (inside tensor placeholder) except this.input0, this.input1, this.output0, this.output1
    *
    * This could reduce memory footprint by releasing unused scale bounds array.
    */
   dispose_intermediate_ScaleBoundsArray() {
     for ( let i = 0; i < this.operationArray.length; ++i ) {
       let operation = this.operationArray[ i ];
-      if ( !this.is_inputs_outputs_byTensorPlaceholder( operation.input0 ) )
+      if ( ( operation.input0 ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.input0 ) ) )
         operation.input0.scaleBoundsArray = null;
-      if ( !this.is_inputs_outputs_byTensorPlaceholder( operation.input1 ) )
+      if ( ( operation.input1 ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.input1 ) ) )
         operation.input1.scaleBoundsArray = null;
-      if ( !this.is_inputs_outputs_byTensorPlaceholder( operation.output0 ) )
+      if ( ( operation.output0 ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.output0 ) ) )
         operation.output0.scaleBoundsArray = null;
-      if ( !this.is_inputs_outputs_byTensorPlaceholder( operation.output1 ) )
+      if ( ( operation.output1 ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.output1 ) ) )
         operation.output1.scaleBoundsArray = null;
     }
   }
