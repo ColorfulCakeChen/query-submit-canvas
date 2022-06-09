@@ -147,8 +147,8 @@ class Base extends TestParams.Base {
   /** Fill this.out.flag according to this.out
    */
   generate_out_flags() {
-    if ( !this.out.flag ) {
-      this.out.flag = {};
+    if ( !this.out.flags ) {
+      this.out.flags = {};
     }
     Block.Params.setFlags_by.call( this.out.flags,
       this.out.inputHeight0, this.out.inputWidth0,
