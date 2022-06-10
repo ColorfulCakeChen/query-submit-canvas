@@ -425,6 +425,8 @@ class Params extends Weights.Params {
       return;
     }
 
+    let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( depthwiseStridesPad );
+
     let depthwise_bLinearOrAffine =
          ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // i.e. depthwise is linear or affine.
 
@@ -445,11 +447,13 @@ class Params extends Weights.Params {
 
     let bChannelCountSame = ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ); // e.g. avg poolimg, or max pooling, or ( channelMultipler == 1 ).
 
-    let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( depthwiseStridesPad );
-
     let bHeightWidthSame =
          ( ( inputHeight == 1 ) && ( inputWidth == 1 ) )
-      || ( stridesPadInfo.strides == 1 )
+      || ( stridesPadInfo.pad_isSame() && ( stridesPadInfo.strides == 1 ) )
+
+    let bNoNeighborAnalysis =
+         ( ( inputHeight == 1 ) && ( inputWidth == 1 ) )
+      || ( ( 1 == depthwiseFilterHeight ) && ( 1 == depthwiseFilterWidth ) );
 
 
 
