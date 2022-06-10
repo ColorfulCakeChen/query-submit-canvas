@@ -61,10 +61,11 @@ class TwinArray extends Root {
 
     this.operationArray = new Array();
 
-    this.bKeepInputTensor0 = false; // Default is destroy0 and destroy1;
-    this.bKeepInputTensor1 = false;
-    TwinArray.alwaysKeepSet_collect.call( this ); // Re-collect TensorPlaceholders which are requested to keep their tensors.
-    TwinArray.setKeepInputTensor_by_this_operationArray_endingDummyOperation_alwaysKeepSet.call( this );
+//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
+//     this.bKeepInputTensor0 = false; // Default is destroy0 and destroy1;
+//     this.bKeepInputTensor1 = false;
+//     TwinArray.alwaysKeepSet_collect.call( this ); // Re-collect TensorPlaceholders which are requested to keep their tensors.
+//     TwinArray.setKeepInputTensor_by_this_operationArray_endingDummyOperation_alwaysKeepSet.call( this );
 
     TwinArray.setup_apply_loop.call( this );
     
@@ -118,16 +119,25 @@ class TwinArray extends Root {
 
 
   /**
+   * Call every sub operation's and endingDummyOperation's setKeepInputTensor_IfNotFinalOperation_Or_In() according to
+   * bKeepInputTensor0 and bKeepInputTensor1.
+   *
    * @override
    */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
 
-    if ( ( this.bKeepInputTensor0 == bKeepInputTensor0 ) && ( this.bKeepInputTensor1 == bKeepInputTensor1 ) )
-      return; // Do nothing because no changed.
+//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
+//     if ( ( this.bKeepInputTensor0 == bKeepInputTensor0 ) && ( this.bKeepInputTensor1 == bKeepInputTensor1 ) )
+//       return; // Do nothing because no changed.
+//
+//     this.bKeepInputTensor0 = bKeepInputTensor0;
+//     this.bKeepInputTensor1 = bKeepInputTensor1;
 
-    this.bKeepInputTensor0 = bKeepInputTensor0;
-    this.bKeepInputTensor1 = bKeepInputTensor1;
-    TwinArray.alwaysKeepSet_collect.call( this );
+    // Q: Why not recorded bKeepInputTensor0 and bKeepInputTensor1 as data members.
+    // A: The operation appending is complex so that the keep-input state will be changed in complicated way. Recording
+    //    them is not helpful.
+
+    TwinArray.alwaysKeepSet_collect.call( this, bKeepInputTensor0, bKeepInputTensor1 );
     TwinArray.setKeepInputTensor_by_this_operationArray_endingDummyOperation_alwaysKeepSet.call( this );
   }
 
@@ -150,43 +160,6 @@ class TwinArray extends Root {
   }
 
 
-//!!! (2022/06/06 Remarked) .init() should be done by caller (not by TwinArray).
-//   /**
-//    * @param {Base} this
-//    *   The Block.Base object whose .byteOffsetEnd might be updated.
-//    *
-//    * @param {Operation.Base} operationObject
-//    *   The operation object to be initialized.
-//    *
-//    * @param {Array} initArgs
-//    *   The arguments to be passed to the init() method of operation object.
-//    *   - If null, the operation object's init() will not be called. Usually, this means the operation object needs not extract any weights.
-//    *   - If the .init() is called and returns false, this method will failed and return null.
-//    *   - If the .init() is called and returns true, this method will update this.byteOffsetEnd.
-//    *
-//    * @return {boolean} If success, return true. If failed, return false.
-//    */
-//   static operation__update_byteOffsetEnd_if_init_ok( operationObject, initArgs ) {
-//
-//     // 1. Intialize.
-//     if ( initArgs ) {
-//       if ( !operationObject.init.apply( operationObject, initArgs ) )
-//         return false;  // e.g. input array does not have enough data.
-//
-//       this.byteOffsetEnd = operationObject.byteOffsetEnd;
-//
-//     // Otherwise (i.e. no initArgs), do not call operationObject.init() and do not update this.byteOffsetEnd
-//     }
-//
-//     // 2. Adjust keep-input-tensor flags.
-//     //
-//     // The previous final operation (of input tensor placeholders) is no longer its final operation.
-//     // The newly created operation becomes the final operation of its input.
-//     //
-//     operationObject.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-//     return true;
-//   }
-
   /**
    * Append one or twin (i.e. two operation in parallel) operation(s) into this.operationArray[].
    *
@@ -200,6 +173,10 @@ class TwinArray extends Root {
    *       there are only two operationX.outputY could be assigned to them.
    *
    *   - If there too many operationX.outputY needs to be handled, it will be asserted failed.
+   *
+   *
+   * Note: After all .operation_append() are called, the .setKeepInputTensor() should be called to configure correctly before
+   *       .apply() is called.
    *
    *
    * @param {Operation.Base} operation0  The 1st operation object to be appended into this.operationArray[].
@@ -282,7 +259,11 @@ class TwinArray extends Root {
     }
 
     // 3.3 Confirm the new endingInputX.
-    TwinArray.set_endingInput0_endingInput1.call( this, endingInput0_new, endingInput1_new );
+
+//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
+//    TwinArray.set_endingInput0_endingInput1.call( this, endingInput0_new, endingInput1_new );
+
+    TwinArray.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this.endingDummyOperation, endingInput0_new, endingInput1_new );
   }
 
 
@@ -314,11 +295,10 @@ class TwinArray extends Root {
   }
 
 
-  /** Re-collect TensorPlaceholders into this.alwaysKeepSet if some input tensors are requested to be kept after .apply().
-   */
-  static alwaysKeepSet_collect() {
-    let bShouldbKeepInputTensor0 = ( this.input0 && this.bKeepInputTensor0 );
-    let bShouldbKeepInputTensor1 = ( this.input1 && this.bKeepInputTensor1 );
+  /** Re-collect TensorPlaceholders into this.alwaysKeepSet if some input tensors are requested to be kept after .apply(). */
+  static alwaysKeepSet_collect( bKeepInputTensor0, bKeepInputTensor1 ) {
+    let bShouldbKeepInputTensor0 = ( this.input0 && bKeepInputTensor0 );
+    let bShouldbKeepInputTensor1 = ( this.input1 && bKeepInputTensor1 );
     let bShouldbKeepInputTensor = ( bShouldbKeepInputTensor0 || bShouldbKeepInputTensor1 );
 
     if ( bShouldbKeepInputTensor ) { // 1. Some inputs should be kept.
@@ -346,15 +326,16 @@ class TwinArray extends Root {
   }
 
 
-  /**
-   *
-   * @param {TensorPlaceholder.Base} endingInput0  The tensor placeholder to become .endingDummyOperation.input0.
-   * @param {TensorPlaceholder.Base} endingInput1  The tensor placeholder to become .endingDummyOperation.input1.
-   */
-  static set_endingInput0_endingInput1( endingInput0, endingInput1 ) {
-    TwinArray.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this.endingDummyOperation, endingInput0, endingInput1 );
-    this.endingDummyOperation.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-  }
+//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
+//   /**
+//    *
+//    * @param {TensorPlaceholder.Base} endingInput0  The tensor placeholder to become .endingDummyOperation.input0.
+//    * @param {TensorPlaceholder.Base} endingInput1  The tensor placeholder to become .endingDummyOperation.input1.
+//    */
+//   static set_endingInput0_endingInput1( endingInput0, endingInput1 ) {
+//     TwinArray.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this.endingDummyOperation, endingInput0, endingInput1 );
+// //    this.endingDummyOperation.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+//   }
 
 
   /**
