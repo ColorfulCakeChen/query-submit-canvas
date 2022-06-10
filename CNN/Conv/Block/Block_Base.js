@@ -591,7 +591,7 @@ class Base {
         depthwise2 = new Operation.Depthwise_SameWhenPassThrough(
 
           // The depthwise2 processes the input0 directly (i.e. not the pointwise1 result of input0, and not input1).
-          this.operationArray.endingInput0,
+          this.operationArray.input0, // (Note: Not .endingInput0, Not .input1)
 
           this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
           this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
