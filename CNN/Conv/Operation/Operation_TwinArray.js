@@ -100,7 +100,7 @@ class TwinArray extends Root {
     }
 
     // Since there is no sub operation, short-circuit to the original inputs.
-    TwinArray.set_endingInput0_endingInput1.call( this, this.input0, this.input1 );
+    TwinArray.set_endingInput0_endingInput1.call( this, this.beginningDummyOperation.output0, this.beginningDummyOperation.output1 );
 
     super.disposeTensors();
   }
@@ -127,8 +127,8 @@ class TwinArray extends Root {
 
 
   /**
-   * Call every sub operation's and endingDummyOperation's setKeepInputTensor_IfNotFinalOperation_Or_In() according to
-   * bKeepInputTensor0 and bKeepInputTensor1.
+   * Call .beginningDummyOperation's, every sub operation's, and endingDummyOperation's setKeepInputTensor_IfNotFinalOperation_Or_In()
+   * according to bKeepInputTensor0 and bKeepInputTensor1.
    *
    * Note: After all .operation_append() are called and  before .apply() is called, this .setKeepInputTensor() should be called to
    *       configure all sub operation's .apply correctly.
@@ -149,16 +149,20 @@ class TwinArray extends Root {
     //    them is not helpful.
 
     TwinArray.alwaysKeepSet_collect.call( this, bKeepInputTensor0, bKeepInputTensor1 );
-    TwinArray.setKeepInputTensor_by_this_operationArray_endingDummyOperation_alwaysKeepSet.call( this );
+    TwinArray.setKeepInputTensor_by_beginningDummyOperation_operationArray_endingDummyOperation_alwaysKeepSet.call( this );
   }
 
 
   /**
-   * Call every sub operation's and endingDummyOperation's setKeepInputTensor_IfNotFinalOperation_Or_In() with this.alwaysKeepSet.
+   * Call .beginningDummyOperation's, every sub operation's, and endingDummyOperation's setKeepInputTensor_IfNotFinalOperation_Or_In()
+   * according to this.alwaysKeepSet.
    */
-  static setKeepInputTensor_by_this_operationArray_endingDummyOperation_alwaysKeepSet() {
+  static setKeepInputTensor_by_beginningDummyOperation_operationArray_endingDummyOperation_alwaysKeepSet() {
 
-    // 1. Every input tensors' final operation is responsible for releasing the tensor (except the input tensors which are requested
+    // 1.
+    this.beginningDummyOperation.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+
+    // 2. Every input tensors' final operation is responsible for releasing the tensor (except the input tensors which are requested
     //    to be kept (i.e. inside alwaysKeepSet)).
     //
     for ( let i = 0; i < this.operationArray.length; ++i ) {
@@ -166,7 +170,7 @@ class TwinArray extends Root {
       operation.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
     }
 
-    // 2.
+    // 3.
     this.endingDummyOperation.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
   }
 
@@ -360,13 +364,14 @@ class TwinArray extends Root {
    * Adjust .apply data member according to calling .apply_operationArray_endingDummyOperation().
    */
   static setup_apply_loop() {
-    this.apply = TwinArray.apply_operationArray_endingDummyOperation;
+    this.apply = TwinArray.apply_beginningDummyOperation_operationArray_endingDummyOperation;
   }
 
   /**
-   * Calling every sub operations' and .endingDummyOperation's .apply()
+   * Calling .beginningDummyOperation's, every sub operations', and .endingDummyOperation's .apply()
    */
-  static apply_operationArray_endingDummyOperation() {
+  static apply_beginningDummyOperation_operationArray_endingDummyOperation() {
+    this.beginningDummyOperation.apply();
     for ( let i = 0; i < this.operationArray.length; ++i ) {
       let operation = this.operationArray[ i ];
       operation.apply();
