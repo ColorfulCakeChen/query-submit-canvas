@@ -46,14 +46,17 @@ class TwinArray extends Root {
     // Note: The real output TensorPlacehoder will be created later as final operation outputs.
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
 
-//!!! ...unfinished... (2022/06/10)
-// Perhaps, needs .beginningDummyOperation as inputs' first operation.
-// When ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE but depthwise does not exist,
-// the concat1 will not got an undefined .endInput1
+//!!! ...untested... (2022/06/10)
+    // When ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE but depthwise does not exist,
+    // in order to handle concat1 operation correctly (i.e. avoid got an undefined .endInput1), an beginning dummy operation
+    // is necessary.
+    {
+      this.beginningDummyOperation = new Root( inputTensorPlaceholder0, inputTensorPlaceholder1, 2 ); // Always has .output0 and .output1
+    }
 
     // In order to handle keep-input-flag correctly (even if no sub operation at all), an ending dummy operation is used.
     {
-      this.endingDummyOperation = new Root( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
+      this.endingDummyOperation = new Root( this.beginningDummyOperation.output0, this.beginningDummyOperation.output1, outputTensorCount );
 
       // The ending dummy operation's output will be the output of this operation array.
       {
