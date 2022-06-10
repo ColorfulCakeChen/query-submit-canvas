@@ -3,6 +3,7 @@ export { Params };
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
+import * as Depthwise from "../Depthwise.js";
 
 /**
  * Pointwise-depthwise-pointwise convolution block parameters.
@@ -445,20 +446,16 @@ class Params extends Weights.Params {
           || ( ( bDepthwiseBias == true ) && ( bPointwise20Bias == true ) )
          );
 
-    let bChannelCountSame = ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ); // e.g. avg poolimg, or max pooling, or ( channelMultipler == 1 ).
+    // The channel count of the depthwise operation's output is the same as its input.
+    let bChannelCountSame = Depthwise.PadInfoCalculator.output_channelCount_is_same_as_input.call( depthwise_AvgMax_Or_ChannelMultiplier );
 
-    let bHeightWidthSame =
-         ( ( inputHeight == 1 ) && ( inputWidth == 1 ) )
-      || (   ( stridesPadInfo.strides == 1 )
-          && (   ( stridesPadInfo.pad_isSame() )
-              || ( stridesPadInfo.pad_isValid() && ( 1 == depthwiseFilterHeight ) && ( 1 == depthwiseFilterWidth ) )
-             )
-         );
+    // The ( height, width ) of the depthwise operation's output is the same as its input.
+    let bHeightWidthSame = Depthwise.PadInfoCalculator.output_height_width_is_same_as_input( inputHeight, inputWidth,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, stridesPadInfo );
 
-    let bNoNeighborAnalysis =
-         ( ( inputHeight == 1 ) && ( inputWidth == 1 ) )
-      || ( ( 1 == depthwiseFilterHeight ) && ( 1 == depthwiseFilterWidth ) );
-
+    // The depthwise operation does not analyze the neighbor in the direction of height and width.
+    let bNoNeighborAnalysis = Depthwise.PadInfoCalculator.output_height_width_is_no_neighbor_analysis( inputHeight, inputWidth,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth );
 
 
     let depthwise_bDoesNothing = depthwise_bLinear
