@@ -567,7 +567,17 @@ class HeightWidthDepth {
             batchIdCalculator.checkAndDisplay( testParams.id );
             testReference.testCorrectness( imageSourceBag, testParams, channelShufflerPool );
           }
+
+        // Q: Why not catch exception inside Block_Reference.testCorrectness()?
+        // A: To catch testParamsGenerator's exception.
         } catch ( e ) {
+          let backendName = tf.getBackend();
+          let msg = `jsPerf_Block.js: testCorrectness(): backendName=${backendName}, `
+            + `Block, (yieldCount == ${testParams.yieldCount}), testParams.id == ${testParams.id}`;
+
+          console.log( msg );
+          alert( `${msg}\n${e}` );
+
           //debugger;
           throw e;
         }
