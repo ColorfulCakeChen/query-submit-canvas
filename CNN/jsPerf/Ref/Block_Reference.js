@@ -227,7 +227,9 @@ class Base {
   testCorrectness( imageSourceBag, testParams, channelShufflerPool ) {
     this.testParams = testParams;
 
-    try {
+//!!! (2022/06/10 Remarked) Moved to outter jsPerf_Block to also catch testParamsGenerator's exception.
+//    try {
+    {
       this.testCorrectnessInfo.prepareBy( imageSourceBag, testParams, channelShufflerPool );
 
       let {
@@ -326,15 +328,16 @@ class Base {
 
       tf.dispose( outputTensor3dArray );
 
-    } catch ( e ) {
-      let backendName = tf.getBackend();
-      let msg = `Block_Reference.js: testCorrectness(): backendName=${backendName}, `
-        + `Block, (yieldCount == ${testParams.yieldCount}), testParams.id == ${testParams.id}`;
-
-      console.log( msg );
-      alert( `${msg}\n${e}` );
-
-      throw e;
+//!!! (2022/06/10 Remarked) Moved to outter jsPerf_Block to also catch testParamsGenerator's exception.
+//     } catch ( e ) {
+//       let backendName = tf.getBackend();
+//       let msg = `Block_Reference.js: testCorrectness(): backendName=${backendName}, `
+//         + `Block, (yieldCount == ${testParams.yieldCount}), testParams.id == ${testParams.id}`;
+//
+//       console.log( msg );
+//       alert( `${msg}\n${e}` );
+//
+//       throw e;
     }
   }
 
