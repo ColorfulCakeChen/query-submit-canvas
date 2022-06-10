@@ -308,11 +308,12 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
         // 2.2.0 If this operation is the old tensor placeholder's final operation, it has no final operation now.
         if ( oldTensorPlaceholder.finalOperation == this ) {
 
-          // A tensor placeholder without final operation might imply dangling tensor (i.e. a tensor forgetton to be disposed).
-          tf.util.assert( false,
-            `Operation.Base.TensorPlaceholder_get_modified_for_set_input_from_old_to_new(): `
-              + `Dangling tensor ${oldTensorPlaceholder}.`
-          );
+          // (2022/06/10 Remarked) This could happen when TwinArray.disposeTensors().
+          //// A tensor placeholder without final operation might imply dangling tensor (i.e. a tensor forgetton to be disposed).
+          //tf.util.assert( false,
+          //  `Operation.Base.TensorPlaceholder_get_modified_for_set_input_from_old_to_new(): `
+          //    + `Dangling tensor ${oldTensorPlaceholder}.`
+          //);
 
 //!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
 //          oldTensorPlaceholder.finalOperationOld = oldTensorPlaceholder.finalOperation;
