@@ -280,8 +280,7 @@ class Params extends Weights.Params {
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
-    nSqueezeExcitationChannelCountDivisor,
-    bSqueezeExcitationPrefix,                
+    nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
     bOutput1Requested,
     bKeepInputTensor
@@ -330,9 +329,11 @@ class Params extends Weights.Params {
       this.inputHeight0, this.inputWidth0,
       this.channelCount0_pointwise1Before, this.channelCount1_pointwise1Before,
       this.pointwise1ChannelCount,
-      this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseActivationId,
+      this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth, this.depthwiseStridesPad,
+      this.bDepthwiseBias, this.depthwiseActivationId,
       this.nSqueezeExcitationChannelCountDivisor, this.bSqueezeExcitationPrefix,
-      this.pointwise20ChannelCount, this.bOutput1Requested
+      this.pointwise20ChannelCount, this.bPointwise20Bias,
+      this.bOutput1Requested
     );
 
     return bExtractOk;
@@ -417,8 +418,11 @@ class Params extends Weights.Params {
    */
   static set_bDepthwiseRequestedAndNeeded_by(
     inputHeight, inputWidth,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseActivationId,
-    nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    bDepthwiseBias, depthwiseActivationId,
+    nSqueezeExcitationChannelCountDivisor,
+    bSqueezeExcitationPrefix,
+    bPointwise20Bias
   ) {
 
     if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
@@ -496,9 +500,11 @@ class Params extends Weights.Params {
     inputHeight, inputWidth,
     channelCount0_pointwise1Before, channelCount1_pointwise1Before,
     pointwise1ChannelCount,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseActivationId,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    bDepthwiseBias, depthwiseActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
-    pointwise20ChannelCount, bOutput1Requested
+    pointwise20ChannelCount, bPointwise20Bias,
+    bOutput1Requested
   ) {
 
     // 0. Prepare.
@@ -517,8 +523,11 @@ class Params extends Weights.Params {
     // 0.4 Whether depthwise is requested and necessary.
     Params.set_bDepthwiseRequestedAndNeeded_by.call( this,
       inputHeight, inputWidth,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseActivationId,
-      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      bDepthwiseBias, depthwiseActivationId,
+      nSqueezeExcitationChannelCountDivisor,
+      bSqueezeExcitationPrefix,
+      bPointwise20Bias
     );
 
     // 0.5 Whether manipulate the higher half channel of convolution.
