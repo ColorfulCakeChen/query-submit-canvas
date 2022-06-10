@@ -361,8 +361,8 @@ class Base extends TestParams.Base {
 
 //      bSqueezeExcitationPrefix: undefined,
 //      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
-//      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min ],
-      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
+      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min ],
+//      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
 
       nSqueezeExcitationChannelCountDivisor: [
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
