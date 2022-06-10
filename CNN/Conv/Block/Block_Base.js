@@ -590,9 +590,8 @@ class Base {
         //    true for StridesPad.
         depthwise2 = new Operation.Depthwise_SameWhenPassThrough(
 
-          // The depthwise2 processes the inputTensors[ 0 ] directly (i.e. not the pointwise1 result of inputTensors[ 0 ], and
-          // not inputTensors[ 1 ]).
-          this.operationArray.endingInput1,
+          // The depthwise2 processes the input0 directly (i.e. not the pointwise1 result of input0, and not input1).
+          this.operationArray.endingInput0,
 
           this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
           this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
