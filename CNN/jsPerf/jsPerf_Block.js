@@ -568,7 +568,8 @@ class HeightWidthDepth {
             testReference.testCorrectness( imageSourceBag, testParams, channelShufflerPool );
           }
         } catch ( e ) {
-          debugger;
+          //debugger;
+          throw e;
         }
 
         batchIdCalculator.checkAndDisplay( testParams.id );
