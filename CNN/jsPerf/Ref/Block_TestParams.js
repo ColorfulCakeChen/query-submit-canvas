@@ -360,19 +360,26 @@ class Base extends TestParams.Base {
 //       ],
 
 //      bSqueezeExcitationPrefix: undefined,
-//      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min + 0 ],
-      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
+//      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
+//      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min ],
+      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
 
       nSqueezeExcitationChannelCountDivisor: [
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
-        4
-        //ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min + 7 - 1
-        //ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.max
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
       ],
+//!!! (2022/06/10 Temp Remarked) For speed up debug.
+//       nSqueezeExcitationChannelCountDivisor: [
+//         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+//         4
+//         //ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min + 7 - 1
+//         //ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.max
+//       ],
 
 //      bOutput1Requested: undefined,
-//      bOutput1Requested: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min + 0 ],
-      bOutput1Requested: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
+//      bOutput1Requested: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
+      bOutput1Requested: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min ],
+//      bOutput1Requested: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
 
 //      bKeepInputTensor: undefined,
       bKeepInputTensor: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
