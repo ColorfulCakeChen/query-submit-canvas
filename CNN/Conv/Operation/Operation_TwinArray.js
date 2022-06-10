@@ -122,6 +122,9 @@ class TwinArray extends Root {
    * Call every sub operation's and endingDummyOperation's setKeepInputTensor_IfNotFinalOperation_Or_In() according to
    * bKeepInputTensor0 and bKeepInputTensor1.
    *
+   * Note: After all .operation_append() are called and  before .apply() is called, this .setKeepInputTensor() should be called to
+   *       configure all sub operation's .apply correctly.
+   *
    * @override
    */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
