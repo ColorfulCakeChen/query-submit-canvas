@@ -1066,49 +1066,58 @@ class Base extends TestParams.Base {
       pointwise1ChannelCount_original, paramsAll.bPointwise1Bias, "pointwise1", io_paramsNumberArrayObject );
 
     // 2. Depthwise
-    let depthwise1_resultOutputChannelCount = pointwise1_resultOutputChannelCount;
+    let depthwise1_resultOutputChannelCount;
     let depthwise2_resultOutputChannelCount;
 
-    // Only if depthwise operation is requested and necessary, create them.
-    if ( paramsAll.flags.bDepthwiseRequestedAndNeeded ) {
+    // Depthwise1
+    {
+      let depthwise1_inputChannelCount = pointwise1_resultOutputChannelCount;
 
-      // Depthwise1
-      depthwise1_resultOutputChannelCount = this.generate_depthwise_filters_biases( pointwise1_resultOutputChannelCount,
-        paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
-        paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias, "depthwise1", io_paramsNumberArrayObject );
+      // Only if depthwise operation is requested and necessary, create them.
+      if ( paramsAll.flags.bDepthwiseRequestedAndNeeded ) {
+        depthwise1_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise1_inputChannelCount,
+          paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
+          paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias, "depthwise1", io_paramsNumberArrayObject );
+      } else {
+        depthwise1_resultOutputChannelCount = depthwise1_inputChannelCount;
+        this.generate_depthwise_filters_biases( null, 0, null, null, null, null, "depthwise1", io_paramsNumberArrayObject );
+      }
+    }
 
-      // Depthwise2
-      {
-        // In ShuffleNetV2's head.
-        if (   ( this.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2) (ShuffleNetV2's head (simplified))
-            || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-           ) {
+    // Depthwise2
+    {
+      // In ShuffleNetV2's head.
+      if (   ( this.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2) (ShuffleNetV2's head (simplified))
+          || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+         ) {
 
-          let depthwise2_inputChannelCount;
+        let depthwise2_inputChannelCount;
 
-          if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) { // (-2) (ShuffleNetV2's head (simplified))
-            depthwise2_inputChannelCount = paramsAll.channelCount0_pointwise1Before; // Use input0.
+        if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) { // (-2) (ShuffleNetV2's head (simplified))
+          depthwise2_inputChannelCount = paramsAll.channelCount0_pointwise1Before; // Use input0.
 
-          // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-          //
-          // Use pointwise1.outputChannelCount as input1ChannelCount so that it has the same structure of depthwise1 and pointwise20.
-          //
-          } else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
-            depthwise2_inputChannelCount = pointwise1_resultOutputChannelCount;
-          }
+        // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+        //
+        // Use pointwise1.outputChannelCount as input1ChannelCount so that it has the same structure of depthwise1 and pointwise20.
+        //
+        } else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
+          depthwise2_inputChannelCount = pointwise1_resultOutputChannelCount;
+        }
 
+        // Only if depthwise operation is requested and necessary, create them.
+        if ( paramsAll.flags.bDepthwiseRequestedAndNeeded ) {
           depthwise2_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise2_inputChannelCount,
             paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
             paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias, "depthwise2", io_paramsNumberArrayObject );
-
-        // no depthwise2.
         } else {
+          depthwise2_resultOutputChannelCount = depthwise2_inputChannelCount;
           this.generate_depthwise_filters_biases( null, 0, null, null, null, null, "depthwise2", io_paramsNumberArrayObject );
         }
+
+      // no depthwise2.
+      } else {
+        this.generate_depthwise_filters_biases( null, 0, null, null, null, null, "depthwise2", io_paramsNumberArrayObject );
       }
-    } else {
-      this.generate_depthwise_filters_biases( null, 0, null, null, null, null, "depthwise1", io_paramsNumberArrayObject );
-      this.generate_depthwise_filters_biases( null, 0, null, null, null, null, "depthwise2", io_paramsNumberArrayObject );
     }
 
     // 3. Concat
