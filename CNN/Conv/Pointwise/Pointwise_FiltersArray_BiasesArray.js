@@ -279,7 +279,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
 
     // Determine shape of the filters, biases, channels.
     let aFiltersBiasesPartInfoArray;
-    let filtersShape_extracted, biasesShape_extracted;
+    let filtersWeightCount_extracted, biasesWeightCount_extracted;
 
     // Set up aFiltersBiasesPartInfoArray and filtersShape and biasesShape.
     {
@@ -287,8 +287,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
         // 3.0 Normal pointwise convolution and bias.
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
           this.outputChannelCount_Real = this.outputChannelCount;
-          this.inputChannelCount_toBeExtracted = this.inputChannelCount; // Extract all weights as specified input/output channels.
-          this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+
+          // Extract all weights as specified input/output channels.          
+          filtersWeightCount_extracted = this.inputChannelCount * this.outputChannelCount;
+          biasesWeightCount_extracted = this.outputChannelCount;
+
           aFiltersBiasesPartInfoArray = [
             new FiltersBiasesPartInfo( [
               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount, false ) ] )
@@ -298,7 +301,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
         // 3.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH: // (1)
           this.outputChannelCount_Real = this.outputChannelCount;
-          this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
+          filtersWeightCount_extracted = biasesWeightCount_extracted = 0; // Does not extract any weights.
 
 //!!! (2022/06/09 Remarked) Moved to outer, commonly calculated.
 //           //this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf; // Not used in this case.
@@ -314,8 +317,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
         // 3.2 bHigherHalfCopyLowerHalf
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF: // (2)
           this.outputChannelCount_Real = this.outputChannelCount;
-          this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
-          this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
+
+          filtersWeightCount_extracted = this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf;
+          biasesWeightCount_extracted = this.outputChannelCount_lowerHalf;
 
 //!!! (2022/06/09 Remarked) Moved to outer, commonly calculated.
 //           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
@@ -332,8 +336,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE: // (3)
           this.outputChannelCount_Real = this.outputChannelCount;
 
-          this.inputChannelCount_toBeExtracted = this.inputChannelCount;   // Extract all weights as specified input/output channels.
-          this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (like a normal pointwise convolution, but with a different arrangement.)
+          // Extract all weights as specified input/output channels.
+          // (like a normal pointwise convolution, but with a different arrangement.)
+          filtersWeightCount_extracted = this.inputChannelCount * this.outputChannelCount;
+          biasesWeightCount_extracted = this.outputChannelCount;
 
 //!!! (2022/06/09 Remarked) Moved to outer, commonly calculated.
 //           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
@@ -351,6 +357,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
 //               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ) ] )
 //             ] )
 //           ];
+//
+//           filtersWeightCount_extracted =
+//               ( this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf )
+//             + ( this.inputChannelCount_higherHalf * this.outputChannelCount_higherHalf );
+//
+//           biasesWeightCount_extracted = this.outputChannelCount;
 //
 // But how to specify inputChannelCount_toBeExtracted and outputChannelCount_toBeExtracted?
 //
@@ -372,8 +384,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
 
           if ( this.outputChannelCount > 0 ) { // 3.4.1.1 bHigherHalfPassThrough
             this.outputChannelCount_Real = this.outputChannelCount;
-            this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
-            this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
+
+            filtersWeightCount_extracted = this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf;
+            biasesWeightCount_extracted = this.outputChannelCount_lowerHalf;
 
 //!!! (2022/06/09 Remarked) Moved to outer, commonly calculated.
 //             this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
@@ -401,7 +414,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
 
             this.bAllPassThrough = true; // Marked for this special case.
             this.outputChannelCount_Real = this.inputChannelCount; // (Note: In this case, this.outputChannelCount is zero. So use inputChannelCount.)
-            this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
+            filtersWeightCount_extracted = biasesWeightCount_extracted = 0; // Does not extract any weights.
             aFiltersBiasesPartInfoArray = [
               new FiltersBiasesPartInfo( [
                 new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_Real, true ) ] )
@@ -418,11 +431,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
       }
 
       this.filtersShape = [ 1, 1, this.inputChannelCount, this.outputChannelCount_Real ];
-      filtersShape_extracted = [ 1, 1, this.inputChannelCount_toBeExtracted, this.outputChannelCount_toBeExtracted  ];
 
       if ( this.bBias ) {
         this.biasesShape = [ this.outputChannelCount_Real ];
-        biasesShape_extracted = [ this.outputChannelCount_toBeExtracted ];
       }
     }
 
@@ -434,10 +445,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
 
     // Calculate weights count of filters and biases to be extracted.
     let weightsCount_extracted = 0;
-    if ( filtersShape_extracted )
-      weightsCount_extracted += tf.util.sizeFromShape( filtersShape_extracted );
-    if ( biasesShape_extracted )
-      weightsCount_extracted += tf.util.sizeFromShape( biasesShape_extracted );
+    if ( filtersWeightCount_extracted )
+      weightsCount_extracted += filtersWeightCount_extracted;
+    if ( biasesWeightCount_extracted )
+      weightsCount_extracted += biasesWeightCount_extracted;
 
     // Prepare source weights to be extracted.
     let sourceWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, weightsCount_extracted );
