@@ -154,9 +154,12 @@ class Base extends TestParams.Base {
       this.out.inputHeight0, this.out.inputWidth0,
       this.out.channelCount0_pointwise1Before, this.out.channelCount1_pointwise1Before,
       this.out.pointwise1ChannelCount,
-      this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseActivationId,
+      this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
+      this.out.bDepthwiseBias, this.out.depthwiseActivationId,
       this.out.nSqueezeExcitationChannelCountDivisor, this.out.bSqueezeExcitationPrefix,
-      this.out.pointwise20ChannelCount, this.out.bOutput1Requested );
+      this.out.pointwise20ChannelCount, this.out.bPointwise20Bias,
+      this.out.bOutput1Requested
+    );
   }
 
   /**
