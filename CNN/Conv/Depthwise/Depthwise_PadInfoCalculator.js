@@ -70,12 +70,24 @@ let PadInfoCalculator = ( ParentClass = Object ) => class extends ParentClass {
     this.filterSize = this.filterHeight * this.filterWidth;
 
     // Strides and Padding.
-    switch ( stridesPad ) {
-      case ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID: this.strides = 1; this.pad = "valid"; break; // (0)
-      default:
-      case ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME:  this.strides = 1; this.pad = "same";  break; // (1)
-      case ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME:  this.strides = 2; this.pad = "same";  break; // (2)
-      case ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID: this.strides = 2; this.pad = "valid"; break; // (3)
+    let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( stridesPad );
+    {
+//!!! (2022/06/10 Remarked) Use StridesPad.Info instead.
+//       switch ( stridesPad ) {
+//         case ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID: this.strides = 1; this.pad = "valid"; break; // (0)
+//         default:
+//         case ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME:  this.strides = 1; this.pad = "same";  break; // (1)
+//         case ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME:  this.strides = 2; this.pad = "same";  break; // (2)
+//         case ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID: this.strides = 2; this.pad = "valid"; break; // (3)
+//       }
+
+      stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( stridesPad );
+      if ( !stridesPadInfo ) { // If not found, using default which could let add-input-to-output possible.
+        stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME );
+      }
+
+      this.strides = stridesPadInfo.strides;
+      this.pad = stridesPadInfo.pad;
     }
 
     // Assume strides width equals strides height.
@@ -95,14 +107,14 @@ let PadInfoCalculator = ( ParentClass = Object ) => class extends ParentClass {
     // https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts)
     {
       // Determine output image height and width without padding.
-      if ( this.pad == "valid" ) {
+      if ( stridesPadInfo.pad_isValid() ) {
         this.outputHeight = Math.ceil( ( inputHeight - this.effectFilterHeight + 1 ) / this.stridesHeight );
         this.outputWidth =  Math.ceil( ( inputWidth  - this.effectFilterWidth  + 1 ) / this.stridesWidth  );
 
         this.padHeight = this.padHeightTop = this.padHeightBottom = this.padWidth = this.padWidthLeft = this.padWidthRight = 0;
 
       // Determine output image height and width with padding around the input image height and width.
-      } else if ( this.pad == "same" ) {
+      } else if ( stridesPadInfo.pad_isSame() ) {
         this.outputHeight = Math.ceil( inputHeight / this.stridesHeight );
         this.outputWidth =  Math.ceil( inputWidth  / this.stridesWidth  );
 
@@ -113,6 +125,12 @@ let PadInfoCalculator = ( ParentClass = Object ) => class extends ParentClass {
         this.padHeightBottom = this.padHeight - this.padHeightTop;
         this.padWidthLeft =    Math.floor( this.padWidth /  2 );
         this.padWidthRight =   this.padWidth  - this.padWidthLeft;
+
+      } else {
+        tf.util.assert( false,
+          `Depthwise.PadInfoCalculator.set(): `
+            + `stridesPadInfo.pad ( ${stridesPadInfo.pad} ) is unknown value.`
+        );
       }
     }
 
