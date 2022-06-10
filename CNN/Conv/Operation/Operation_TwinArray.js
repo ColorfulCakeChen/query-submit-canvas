@@ -105,7 +105,7 @@ class TwinArray extends Root {
     // Since there is no sub operation, short-circuit to the original inputs.
 //!!! (2022/06/10 Remarked) Not so good solution.
 //    TwinArray.set_endingInput0_endingInput1.call( this, this.beginningDummyOperation.output0, this.beginningDummyOperation.output1 );
-    TwinArray.set_endingInput0_endingInput1.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1 );
+    TwinArray.set_endingInput0_endingInput1.call( this, this.input0, this.input1 );
 
     super.disposeTensors();
   }
