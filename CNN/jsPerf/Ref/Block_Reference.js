@@ -863,7 +863,7 @@ class Base {
     // 4. Pointwise2
     let bAddInputToOutputRequested = false;
     if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_ADD_TO_OUTPUT() ) { // (-1) MobileNetV2
-      if ( testParams.out.depthwisePadInfo.is_Output_Same_HeightWidth_As_Input() ) { // add-input-to-output is possible if same ( height, width ).
+      if ( testParams.out.depthwisePadInfo.output_height_width_is_same_as_input() ) { // add-input-to-output is possible if same ( height, width ).
         bAddInputToOutputRequested = true;
       }
     }
