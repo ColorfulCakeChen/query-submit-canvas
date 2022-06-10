@@ -428,7 +428,17 @@ class Params extends Weights.Params {
 
     let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( depthwiseStridesPad );
 
-    let depthwise_bLinearOrAffine =
+    let bChannelCountSame = Depthwise.PadInfoCalculatorRoot.output_channelCount_is_same_as_input.call( depthwise_AvgMax_Or_ChannelMultiplier );
+
+    let bHeightWidthSame = Depthwise.PadInfoCalculatorRoot.output_height_width_is_same_as_input( inputHeight, inputWidth,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, stridesPadInfo );
+
+    let bNoNeighborAnalysis = Depthwise.PadInfoCalculatorRoot.output_height_width_is_no_neighbor_analysis( inputHeight, inputWidth,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth );
+
+    let depthwise_bLinearOrAffine;
+    {
+      depthwise_bLinearOrAffine =
          ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // i.e. depthwise is linear or affine.
 
           // no squeeze-and-excitation (i.e. between depthwise and pointwise2 is linear or affine)
@@ -437,54 +447,28 @@ class Params extends Weights.Params {
           // or, has squeeze-and-excitation, but after pointwise2. (i.e. between depthwise and pointwise2 is still linear or affine)
           || ( bSqueezeExcitationPrefix == false )
          );
+    }
 
-    let depthwise_bLinear = depthwise_bLinearOrAffine
-      && (    ( bDepthwiseBias == false ) // It has no bias. (i.e. depthwise is linear)
+    let depthwise_bLinear;
+    {
+      depthwise_bLinear = depthwise_bLinearOrAffine
+        && (    ( bDepthwiseBias == false ) // It has no bias. (i.e. depthwise is linear)
 
-          // Or, its has bias, but its next operation (i.e. pointwise2) has bias (so its bias could be combined into the next operation's
-          // bias). Then it could be viewed as linear.
-          || ( ( bDepthwiseBias == true ) && ( bPointwise20Bias == true ) )
-         );
+            // Or, its has bias, but its next operation (i.e. pointwise2) has bias (so its bias could be combined into the next operation's
+            // bias). Then it could be viewed as linear.
+            || ( ( bDepthwiseBias == true ) && ( bPointwise20Bias == true ) )
+           );
+    }
 
-    // The channel count of the depthwise operation's output is the same as its input.
-    let bChannelCountSame = Depthwise.PadInfoCalculator.output_channelCount_is_same_as_input.call( depthwise_AvgMax_Or_ChannelMultiplier );
+    // If a depthwise operation does not change output's ( height, width, channelCount ), does not analyze ( height, width ) neightbors,
+    // does not non-linear, then it is equivalent to do nothing.
+    //
+    let depthwise_bDoesNothing = ( bChannelCountSame && bHeightWidthSame && bNoNeighborAnalysis && depthwise_bLinear );
 
-    // The ( height, width ) of the depthwise operation's output is the same as its input.
-    let bHeightWidthSame = Depthwise.PadInfoCalculator.output_height_width_is_same_as_input( inputHeight, inputWidth,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, stridesPadInfo );
-
-    // The depthwise operation does not analyze the neighbor in the direction of height and width.
-    let bNoNeighborAnalysis = Depthwise.PadInfoCalculator.output_height_width_is_no_neighbor_analysis( inputHeight, inputWidth,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth );
-
-
-    let depthwise_bDoesNothing = depthwise_bLinear
-      && ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ) // e.g. avg poolimg, max pooling, ( channelMultipler == 1 ).
-
-//!!! ...unfinished... (2022/06/09)
-// ( 1 == depthwiseFilterHeight ) && ( 1 == depthwiseFilterWidth ) && ( 1 == depthwiseStrides ) && ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ) 
-// seems that depthwise also does nothing.
-//
-
-    if (   ( inputHeight == 1 ) && ( inputWidth == 1 ) && ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ) // i.e. depthwise does nothing.
-
-        && ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // i.e. depthwise is linear.
-
-            // no squeeze-and-excitation (i.e. depthwise is linear)        
-        && (   ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
-
-            // or, has squeeze-and-excitation, but after pointwise2. (i.e. depthwise is still linear)
-            || ( bSqueezeExcitationPrefix == false )
-           )
-       )
-
-      // depthwise is requested, but is not necessary.
-      //
-      // Even if its has bias, this is still correct because its bias could be combined into the bias of the next
-      // operation (i.e. pointwise2).
-      this.bDepthwiseRequestedAndNeeded = false;
-
-    this.bDepthwiseRequestedAndNeeded = true;
+    if ( depthwise_bDoesNothing )
+      this.bDepthwiseRequestedAndNeeded = false; // depthwise is requested, but is not necessary.
+    else
+      this.bDepthwiseRequestedAndNeeded = true; // depthwise is requested and is necessary.
   }
 
   /**
