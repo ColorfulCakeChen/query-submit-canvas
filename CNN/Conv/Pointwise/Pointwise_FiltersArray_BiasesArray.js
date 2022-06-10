@@ -339,6 +339,23 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
 //           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
 //           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
+
+//!!! ...unfinished... (2022/06/10)
+// seems should be:
+//
+//           aFiltersBiasesPartInfoArray = [
+//             new FiltersBiasesPartInfo( [
+//               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
+//             ] ),
+//             new FiltersBiasesPartInfo( [
+//               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ) ] )
+//             ] )
+//           ];
+//
+// But how to specify inputChannelCount_toBeExtracted and outputChannelCount_toBeExtracted?
+//
+
+
           aFiltersBiasesPartInfoArray = [
             new FiltersBiasesPartInfo( [
               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_lowerHalf,  false ),
