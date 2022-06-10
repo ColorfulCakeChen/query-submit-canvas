@@ -9,9 +9,12 @@ export { Base };
  *   - In operation's .apply(), it is used for transferring tensor to the next sub operation.
  *
  *
- * @member {Operation.Base} finalOperationOld
- *   The previous finalOperation. When new finalOperation is set, the finalOperationOld.setKeepInputTensor_IfNotLastOperation_Or_In()
- * usually should be called to adjust tensor destroying behavior (since it is no longer the final operation of the tensor).
+
+//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
+//  * @member {Operation.Base} finalOperationOld
+//  *   The previous finalOperation. When new finalOperation is set, the finalOperationOld.setKeepInputTensor_IfNotLastOperation_Or_In()
+//  * usually should be called to adjust tensor destroying behavior (since it is no longer the final operation of the tensor).
+
  *
  * @member {Operation.Base} finalOperation
  *   The operation uses this tensor at final. It should be responsible for destroying this tensor. If null, this tensor is
@@ -31,7 +34,10 @@ class Base {
    *
    */
   constructor() {
-    this.finalOperationOld = null;
+
+//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
+//    this.finalOperationOld = null;
+
     this.finalOperation = null;
     this.realTensor = null;
   }
@@ -51,7 +57,7 @@ class Base {
   }
 
   /**
-   * Note: The .finalOperationOld, finalOperation and .realTensor are not modified by this method.
+   * Note: The .finalOperation and .realTensor are not modified by this method.
    *
    * @param {TensorPlaceholder} aTensorPlaceholder
    *   The tensor placeholder's height, width, channelCount, scaleBoundsArray will be used directly (i.e. not cloned) by this
