@@ -152,7 +152,9 @@ import { Params } from "./Block_Params.js";
  * the depthwise2. If false, the depthwise1's higher half channels just pass through the input to output.
  *
  * @member {boolean} bDepthwise2Requested
- *   It will be true only when ( channelCount1_pointwise1Before == -2 ). If true, it means a second depthwise might be needed.
+ *   It will be true only when
+ * ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE (-2) ). If true,
+ * it means a second depthwise might be needed.
  *
  * @member {boolean} bConcat1Requested
  *   If true, the concat1 (after depthwise and before pointwise2) is needed.
@@ -624,7 +626,11 @@ class Base {
 
     } else {
       // Otherwise, the depthwise operation is either ( not requested ) or ( requested but not necessary ).
-      // The later case could improve performance. 
+      // The later case could improve performance.
+
+      if ( this.bDepthwise2Requested ) {
+//!!! ...unfinished... (2022/06/10) needs .endingInput1 for the concat1 to operate on.
+      }
     }
 
     ++progressToAdvance.value;
