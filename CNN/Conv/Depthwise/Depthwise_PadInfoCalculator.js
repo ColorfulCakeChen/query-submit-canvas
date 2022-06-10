@@ -162,6 +162,39 @@ let PadInfoCalculator = ( ParentClass = Object ) => class extends ParentClass {
     return false;
   }
 
+//!!! ...unfinished... (2022/06/10)
+  /**
+   *
+   */
+  static output_is_same_channelCount_as_input( depthwise_AvgMax_Or_ChannelMultiplier ) {
+    return ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ); // e.g. avg pooling, or max pooling, or none, or ( channelMultipler == 1 ).
+  }
+
+//!!! ...unfinished... (2022/06/10)
+  /**
+   * @return {boolean}
+   *   If the ( height, width ) of the depthwise operation's output is the same as its input, return true.
+   */
+  static output_is_same_height_width_as_input(
+    inputHeight, inputWidth,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPadInfo
+  ) {
+    return
+         ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) // (0), no-op
+      || ( ( 1 == inputHeight ) && ( 1 == inputWidth ) )  // input height and width can not be shrinked any more.
+      || (   ( 1 == depthwiseStridesPadInfo.strides )     // Not shrinked by strides.
+          && (   ( depthwiseStridesPadInfo.pad_isSame() ) // Not shrinked by filters for ( pad is "same" ).
+              || ( depthwiseStridesPadInfo.pad_isValid() && ( 1 == depthwiseFilterHeight ) && ( 1 == depthwiseFilterWidth ) ) // Not shrinked by filters for ( pad is "valid" ). (i.e. ( filter size is 1x1 ) )
+             )
+         );
+  }
+
+
+    let bNoNeighborAnalysis =
+         ( ( inputHeight == 1 ) && ( inputWidth == 1 ) )
+      || ( ( 1 == depthwiseFilterHeight ) && ( 1 == depthwiseFilterWidth ) );
+
+
   /**
    * If both effectFilterValue and otherFilterValue are the same as ( 1 / ( filterHeight * filter Width ) ), the result filter
    * will have the same effect as average pooling.
