@@ -42,7 +42,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  * @member {number} outputChannelCount    Output image channel count.
  * @member {number} outputElementCount    Output image elements count (= ( outputHeight * outputWidth * outputChannelCount ) ).
  */
-let PadInfoCalculator = ( ParentClass = Object ) => class extends ParentClass {
+let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator extends ParentClass {
 
   constructor( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs ) {
     super( ...restArgs );
@@ -139,32 +139,52 @@ let PadInfoCalculator = ( ParentClass = Object ) => class extends ParentClass {
     this.outputElementCount = ( this.outputHeight * this.outputWidth * this.outputChannelCount );
   }
 
-  /**
-   * @return {boolean}
-   *   If the ( height, width ) of this depthwise operation output is the same as its input, return true.
-   */
-  is_Output_Same_HeightWidth_As_Input() {
 
-    // If this depthwise operation does not existed, the output will have the same ( height, width ) as input.
-    // In fact, they are the same one in this case.
-    if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE )
-      return true;
+//!!! (2022/06/10 Remarked) Replaced by output_height_width_is_same_as_input().
+//   /**
+//    * @return {boolean}
+//    *   If the ( height, width ) of this depthwise operation output is the same as its input, return true.
+//    */
+//   is_Output_Same_HeightWidth_As_Input() {
+//
+//     // If this depthwise operation does not existed, the output will have the same ( height, width ) as input.
+//     // In fact, they are the same one in this case.
+//     if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE )
+//       return true;
+//
+//     if ( this.strides != 1 )
+//       return false; // If strides is not 1, it is impossible to output same ( height, width ) as input.
+//
+//     if ( this.stridesPadInfo.pad_isSame() )
+//       return true; // If ( strides is 1 ) and ( pad is "same" ), the output will have the same ( height, width ) as input.
+//
+//     // Or, although ( strides is 1 ) and ( pad is "valid" ) but ( filter size is 1x1 ), the output will have the same
+//     // ( height, width ) as input.
+//     if ( ( this.stridesPadInfo.pad_isValid() ) && ( this.filterHeight == 1 ) && ( this.filterWidth == 1 ) )
+//       return true;
+//
+//     return false;
+//   }
 
-    if ( this.strides != 1 )
-      return false; // If strides is not 1, it is impossible to output same ( height, width ) as input.
 
-    if ( this.stridesPadInfo.pad_isSame() )
-      return true; // If ( strides is 1 ) and ( pad is "same" ), the output will have the same ( height, width ) as input.
-
-    // Or, although ( strides is 1 ) and ( pad is "valid" ) but ( filter size is 1x1 ), the output will have the same
-    // ( height, width ) as input.
-    if ( ( this.stridesPadInfo.pad_isValid() ) && ( this.filterHeight == 1 ) && ( this.filterWidth == 1 ) )
-      return true;
-
-    return false;
+  /** @return {boolean} If the channel count of this depthwise operation's output is the same as its input, return true. */
+  output_channelCount_is_same_as_input() {
+    return PadInfoCalculator.output_channelCount_is_same_as_input.call( this.AvgMax_Or_ChannelMultiplier );
   }
 
-//!!! ...unfinished... (2022/06/10)
+  /** @return {boolean} If the ( height, width ) of this depthwise operation's output is the same as its input, return true. */
+  output_height_width_is_same_as_input() {
+    return PadInfoCalculator.output_height_width_is_same_as_input( this.inputHeight, this.inputWidth,
+    this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.filterWidth, this.stridesPadInfo );
+  }
+
+  /** @return {boolean} If this depthwise operation does not analyze the neighbor in the direction of height and width, return true. */
+  output_height_width_is_no_neighbor_analysis() {
+    return PadInfoCalculator.output_height_width_is_no_neighbor_analysis( this.inputHeight, this.inputWidth,
+      this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.filterWidth );
+  }
+
+
   /**
    * @param {number} depthwise_AvgMax_Or_ChannelMultiplier  Depthwise operation. (ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.Xxx)
    *
