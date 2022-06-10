@@ -269,11 +269,7 @@ class TwinArray extends Root {
     }
 
     // 3.3 Confirm the new endingInputX.
-
-//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
-//    TwinArray.set_endingInput0_endingInput1.call( this, endingInput0_new, endingInput1_new );
-
-    TwinArray.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this.endingDummyOperation, endingInput0_new, endingInput1_new );
+    TwinArray.set_endingInput0_endingInput1.call( this, endingInput0_new, endingInput1_new );
   }
 
 
@@ -336,16 +332,17 @@ class TwinArray extends Root {
   }
 
 
-//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
-//   /**
-//    *
-//    * @param {TensorPlaceholder.Base} endingInput0  The tensor placeholder to become .endingDummyOperation.input0.
-//    * @param {TensorPlaceholder.Base} endingInput1  The tensor placeholder to become .endingDummyOperation.input1.
-//    */
-//   static set_endingInput0_endingInput1( endingInput0, endingInput1 ) {
-//     TwinArray.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this.endingDummyOperation, endingInput0, endingInput1 );
-// //    this.endingDummyOperation.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-//   }
+  /**
+   *
+   * @param {TensorPlaceholder.Base} endingInput0  The tensor placeholder to become .endingDummyOperation.input0.
+   * @param {TensorPlaceholder.Base} endingInput1  The tensor placeholder to become .endingDummyOperation.input1.
+   */
+  static set_endingInput0_endingInput1( endingInput0, endingInput1 ) {
+    TwinArray.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this.endingDummyOperation, endingInput0, endingInput1 );
+
+//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_append() done.
+//    this.endingDummyOperation.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+  }
 
 
   /**
