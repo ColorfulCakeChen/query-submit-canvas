@@ -449,7 +449,11 @@ class Params extends Weights.Params {
 
     let bHeightWidthSame =
          ( ( inputHeight == 1 ) && ( inputWidth == 1 ) )
-      || ( stridesPadInfo.pad_isSame() && ( stridesPadInfo.strides == 1 ) )
+      || (   ( stridesPadInfo.strides == 1 )
+          && (   ( stridesPadInfo.pad_isSame() )
+              || ( stridesPadInfo.pad_isValid() && ( 1 == depthwiseFilterHeight ) && ( 1 == depthwiseFilterWidth ) )
+             )
+         );
 
     let bNoNeighborAnalysis =
          ( ( inputHeight == 1 ) && ( inputWidth == 1 ) )
