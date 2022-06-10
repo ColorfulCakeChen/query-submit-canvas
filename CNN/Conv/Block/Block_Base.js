@@ -254,12 +254,6 @@ import { Params } from "./Block_Params.js";
  * @member {TensorPlaceholder.Base} output1
  *   The TensorPlaceholder object which represents this operation's 2nd output. It exists only if ( this.outputTensorCount >= 2 ).
  *
-
-//!!! (2022/06/07 Remarked) seems not necessary because already has TensorPlaceholder.
-//  * @member {BoundsArraySet.InputsOutputs} boundsArraySet
-//  *   The element value bounds of this Block's input/output.
-
- *
  * @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
  *   The channelShuffler. It must be implemented by ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ).
  *
@@ -544,6 +538,9 @@ class Base {
 //     // Only if depthwise operation is specified, creating them.
 //     if ( this.AvgMax_Or_ChannelMultiplier != 0 ) {
 
+    // The depthwise2 processes the input0 directly (i.e. not the pointwise1 result of input0, and not input1).
+    let depthwise2_input0 = this.operationArray.input0; // (Note: Not .endingInput0, Not .input1)
+
     // Only if depthwise operation is requested and necessary, create them.
     if ( this.bDepthwiseRequestedAndNeeded ) {
 
@@ -584,6 +581,9 @@ class Base {
       }
 
       // 3.2 The depthwise2 operation.
+      //
+      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE (-2) )
+      // (i.e. ShuffleNetV2's head (and ShuffleNetV2_ByPointwise21's head) (simplified))
       let depthwise2;
       if ( this.bDepthwise2Requested ) {
 
@@ -591,10 +591,7 @@ class Base {
         // A: To ensure both result have the same ( height, width ) so that could be inputted to concatenator). This is especially
         //    true for StridesPad.
         depthwise2 = new Operation.Depthwise_SameWhenPassThrough(
-
-          // The depthwise2 processes the input0 directly (i.e. not the pointwise1 result of input0, and not input1).
-          this.operationArray.input0, // (Note: Not .endingInput0, Not .input1)
-
+          depthwise2_input0,
           this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
           this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
           ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE // depthwise2 never has higher-half-different.
@@ -624,12 +621,17 @@ class Base {
 
       this.operationArray.operation_append( depthwise1, depthwise2 );
 
+    // Otherwise, the depthwise operation is either ( not requested ) or ( requested but not necessary ).
+    // The later case could improve performance.
     } else {
-      // Otherwise, the depthwise operation is either ( not requested ) or ( requested but not necessary ).
-      // The later case could improve performance.
 
+      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE (-2) )
+      // (i.e. ShuffleNetV2's head (and ShuffleNetV2_ByPointwise21's head) (simplified))
+      //
+      // Even if no depthwise, however, a .endingInput1 is necessary for concat1 to operate on. So create a dummy one.
       if ( this.bDepthwise2Requested ) {
-//!!! ...unfinished... (2022/06/10) needs .endingInput1 for the concat1 to operate on.
+        let depthwise2Dummy = new Operation.Root( depthwise2_input0, null, 1 );
+        this.operationArray.operation_append( null, depthwise2Dummy );
       }
     }
 
