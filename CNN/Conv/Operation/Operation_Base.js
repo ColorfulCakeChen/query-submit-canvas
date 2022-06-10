@@ -145,33 +145,35 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     this.setKeepInputTensor( input0_bKeep, input1_bKeep );
   }
 
-  /**
-   * Call .setKeepInputTensor_IfNotFinalOperation_Or_In() of all inputs' old (i.e. this.input0.finalOperationOld and
-   * this.input1.finalOperationOld) and new (i.e. this operation object) finalOperation.
-   *
-   * When an operation changes its input tensor placeholder (e.g. a new operation is created, or an existed operation is
-   * set with different input), this method could be used to adjust keep-input-tensor flags of these related operations.
-   */
-  setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( alwaysKeepSet ) {
 
-    // The previous final operation (of input tensor placeholders) is no longer its final operation.
-
-    if (   ( this.input0 )
-        && ( this.input0.finalOperationOld )
-        && ( this.input0.finalOperationOld != this ) // Note: If previous final operation is this, it will be called in the following later.
-       )
-      this.input0.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-
-    if (   ( this.input1 )
-        && ( this.input1.finalOperationOld )
-        && ( this.input1.finalOperationOld != this ) // Note: If previous final operation is this, it will be called in the following later.
-        && ( this.input1.finalOperationOld != this.input0?.finalOperationOld ) // Note: If same, it has been called in the above.
-       )
-      this.input1.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-
-    // This operation becomes the (new) final operation of its input.
-    this.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-  }
+//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
+//   /**
+//    * Call .setKeepInputTensor_IfNotFinalOperation_Or_In() of all inputs' old (i.e. this.input0.finalOperationOld and
+//    * this.input1.finalOperationOld) and new (i.e. this operation object) finalOperation.
+//    *
+//    * When an operation changes its input tensor placeholder (e.g. a new operation is created, or an existed operation is
+//    * set with different input), this method could be used to adjust keep-input-tensor flags of these related operations.
+//    */
+//   setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( alwaysKeepSet ) {
+//
+//     // The previous final operation (of input tensor placeholders) is no longer its final operation.
+//
+//     if (   ( this.input0 )
+//         && ( this.input0.finalOperationOld )
+//         && ( this.input0.finalOperationOld != this ) // Note: If previous final operation is this, it will be called in the following later.
+//        )
+//       this.input0.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+//
+//     if (   ( this.input1 )
+//         && ( this.input1.finalOperationOld )
+//         && ( this.input1.finalOperationOld != this ) // Note: If previous final operation is this, it will be called in the following later.
+//         && ( this.input1.finalOperationOld != this.input0?.finalOperationOld ) // Note: If same, it has been called in the above.
+//        )
+//       this.input1.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+//
+//     // This operation becomes the (new) final operation of its input.
+//     this.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+//   }
 
   /**
    *
@@ -288,7 +290,10 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
         result = undefined; // 1.1 Keep no input.
 
       } else { // 1.2 Change no input to new input.
-        newTensorPlaceholder.finalOperationOld = newTensorPlaceholder.finalOperation;
+
+//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
+//        newTensorPlaceholder.finalOperationOld = newTensorPlaceholder.finalOperation;
+
         newTensorPlaceholder.finalOperation = this;
         result = newTensorPlaceholder;
       }
@@ -302,7 +307,10 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
         // 2.2.0 If this operation is the old tensor placeholder's final operation, it has no final operation now.
         if ( oldTensorPlaceholder.finalOperation == this ) {
-          oldTensorPlaceholder.finalOperationOld = oldTensorPlaceholder.finalOperation;
+
+//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
+//          oldTensorPlaceholder.finalOperationOld = oldTensorPlaceholder.finalOperation;
+
           oldTensorPlaceholder.finalOperation = null;
         }
 
@@ -310,7 +318,10 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
           result = undefined; // 2.2.1 Clear original input to no input.
 
         } else { // 2.2.2 Change original input to new input.
-          newTensorPlaceholder.finalOperationOld = newTensorPlaceholder.finalOperation;
+
+//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
+//          newTensorPlaceholder.finalOperationOld = newTensorPlaceholder.finalOperation;
+
           newTensorPlaceholder.finalOperation = this;
           result = newTensorPlaceholder;
         }
