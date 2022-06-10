@@ -70,7 +70,7 @@ let PadInfoCalculator = ( ParentClass = Object ) => class extends ParentClass {
     this.filterSize = this.filterHeight * this.filterWidth;
 
     // Strides and Padding.
-    let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( stridesPad );
+    this.stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( stridesPad );
     {
 //!!! (2022/06/10 Remarked) Use StridesPad.Info instead.
 //       switch ( stridesPad ) {
@@ -81,13 +81,12 @@ let PadInfoCalculator = ( ParentClass = Object ) => class extends ParentClass {
 //         case ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID: this.strides = 2; this.pad = "valid"; break; // (3)
 //       }
 
-      stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( stridesPad );
-      if ( !stridesPadInfo ) { // If not found, using default which could let add-input-to-output possible.
-        stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME );
+      if ( !this.stridesPadInfo ) { // If not found, using default which could let add-input-to-output possible.
+        this.stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME );
       }
 
-      this.strides = stridesPadInfo.strides;
-      this.pad = stridesPadInfo.pad;
+      this.strides = this.stridesPadInfo.strides;
+      this.pad = this.stridesPadInfo.pad;
     }
 
     // Assume strides width equals strides height.
@@ -107,14 +106,14 @@ let PadInfoCalculator = ( ParentClass = Object ) => class extends ParentClass {
     // https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts)
     {
       // Determine output image height and width without padding.
-      if ( stridesPadInfo.pad_isValid() ) {
+      if ( this.stridesPadInfo.pad_isValid() ) {
         this.outputHeight = Math.ceil( ( inputHeight - this.effectFilterHeight + 1 ) / this.stridesHeight );
         this.outputWidth =  Math.ceil( ( inputWidth  - this.effectFilterWidth  + 1 ) / this.stridesWidth  );
 
         this.padHeight = this.padHeightTop = this.padHeightBottom = this.padWidth = this.padWidthLeft = this.padWidthRight = 0;
 
       // Determine output image height and width with padding around the input image height and width.
-      } else if ( stridesPadInfo.pad_isSame() ) {
+      } else if ( this.stridesPadInfo.pad_isSame() ) {
         this.outputHeight = Math.ceil( inputHeight / this.stridesHeight );
         this.outputWidth =  Math.ceil( inputWidth  / this.stridesWidth  );
 
@@ -129,7 +128,7 @@ let PadInfoCalculator = ( ParentClass = Object ) => class extends ParentClass {
       } else {
         tf.util.assert( false,
           `Depthwise.PadInfoCalculator.set(): `
-            + `stridesPadInfo.pad ( ${stridesPadInfo.pad} ) is unknown value.`
+            + `stridesPadInfo.pad ( ${this.stridesPadInfo.pad} ) is unknown value.`
         );
       }
     }
@@ -146,17 +145,18 @@ let PadInfoCalculator = ( ParentClass = Object ) => class extends ParentClass {
 
     // If this depthwise operation does not existed, the output will have the same ( height, width ) as input.
     // In fact, they are the same one in this case.
-    if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE === this.AvgMax_Or_ChannelMultiplier )
+    if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE )
       return true;
 
     if ( this.strides != 1 )
       return false; // If strides is not 1, it is impossible to output same ( height, width ) as input.
 
-    if ( this.pad == "same" )
+    if ( this.stridesPadInfo.pad_isSame() )
       return true; // If ( strides is 1 ) and ( pad is "same" ), the output will have the same ( height, width ) as input.
 
-    // Or, although ( strides is 1 ) and ( pad is "valid" ) but ( filter size is 1x1 ), the output will have the same ( height, width ) as input.
-    if ( ( this.pad == "valid" ) && ( this.filterHeight == 1 ) && ( this.filterWidth == 1 ) )
+    // Or, although ( strides is 1 ) and ( pad is "valid" ) but ( filter size is 1x1 ), the output will have the same
+    // ( height, width ) as input.
+    if ( ( this.stridesPadInfo.pad_isValid() ) && ( this.filterHeight == 1 ) && ( this.filterWidth == 1 ) )
       return true;
 
     return false;
