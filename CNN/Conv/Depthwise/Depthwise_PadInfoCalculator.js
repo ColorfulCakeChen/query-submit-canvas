@@ -1,4 +1,5 @@
 export { PadInfoCalculator };
+export { PadInfoCalculatorRoot };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 
@@ -313,5 +314,13 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
     return depthwiseFiltersArray;
   }
 
+}
+
+
+/**
+ * Almost the same as Depthwise.PadInfoCalculator class except its parent class is fixed to Object. In other words, caller can not
+ * specify the parent class of Operation.Root (so it is named "Root" which can not have parent class).
+ */
+class PadInfoCalculatorRoot extends PadInfoCalculator() {
 }
 
