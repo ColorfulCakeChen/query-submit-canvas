@@ -61,7 +61,7 @@ class TwinArray extends Root {
 
     this.operationArray = new Array();
 
-//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
+//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_append() done.
 //     this.bKeepInputTensor0 = false; // Default is destroy0 and destroy1;
 //     this.bKeepInputTensor1 = false;
 //     TwinArray.alwaysKeepSet_collect.call( this ); // Re-collect TensorPlaceholders which are requested to keep their tensors.
@@ -184,18 +184,28 @@ class TwinArray extends Root {
    */
   operation_append( operation0, operation1 ) {
 
-    // 1. Adjust keep-input-tensor flags, and put into queue.
-    //
-    // The previous final operation (of input tensor placeholders) is no longer its final operation.
-    // The newly created operation becomes the final operation of its input.
-    //
+//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_append() done.
+//     // 1. Adjust keep-input-tensor flags, and put into queue.
+//     //
+//     // The previous final operation (of input tensor placeholders) is no longer its final operation.
+//     // The newly created operation becomes the final operation of its input.
+//     //
+//     if ( operation0 ) {
+//       operation0.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+//       this.operationArray.push( operation0 );
+//     }
+//
+//     if ( operation1 ) {
+//       operation1.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+//       this.operationArray.push( operation1 );
+//     }
+
+    // 1. Put into queue.
     if ( operation0 ) {
-      operation0.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
       this.operationArray.push( operation0 );
     }
 
     if ( operation1 ) {
-      operation1.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
       this.operationArray.push( operation1 );
     }
 
