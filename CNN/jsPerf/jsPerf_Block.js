@@ -561,9 +561,15 @@ class HeightWidthDepth {
         let testReference = new Block_Reference.Base();
 
         let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
-        for ( let testParams of testParamsGenerator ) {
-          batchIdCalculator.checkAndDisplay( testParams.id );
-          testReference.testCorrectness( imageSourceBag, testParams, channelShufflerPool );
+
+        let testParams;
+        try {
+          for ( testParams of testParamsGenerator ) {
+            batchIdCalculator.checkAndDisplay( testParams.id );
+            testReference.testCorrectness( imageSourceBag, testParams, channelShufflerPool );
+          }
+        } catch ( e ) {
+          debugger;
         }
 
         batchIdCalculator.checkAndDisplay( testParams.id );
