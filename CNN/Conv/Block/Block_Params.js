@@ -443,6 +443,18 @@ class Params extends Weights.Params {
           || ( ( bDepthwiseBias == true ) && ( bPointwise20Bias == true ) )
          );
 
+    let bChannelCountSame = ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ); // e.g. avg poolimg, or max pooling, or ( channelMultipler == 1 ).
+
+    let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( depthwiseStridesPad );
+
+    let bHeightWidthSame =
+         ( ( inputHeight == 1 ) && ( inputWidth == 1 ) )
+      || ( stridesPadInfo.strides == 1 )
+
+
+
+    let depthwise_bDoesNothing = depthwise_bLinear
+      && ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ) // e.g. avg poolimg, max pooling, ( channelMultipler == 1 ).
 
 //!!! ...unfinished... (2022/06/09)
 // ( 1 == depthwiseFilterHeight ) && ( 1 == depthwiseFilterWidth ) && ( 1 == depthwiseStrides ) && ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ) 
