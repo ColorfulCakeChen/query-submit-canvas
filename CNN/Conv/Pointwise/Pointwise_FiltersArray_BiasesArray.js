@@ -434,6 +434,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
 
       if ( this.bBias ) {
         this.biasesShape = [ this.outputChannelCount_Real ];
+      } else {
+        biasesWeightCount_extracted = 0;
       }
     }
 
