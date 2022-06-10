@@ -425,6 +425,25 @@ class Params extends Weights.Params {
       return;
     }
 
+    let depthwise_bLinearOrAffine =
+         ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // i.e. depthwise is linear or affine.
+
+          // no squeeze-and-excitation (i.e. between depthwise and pointwise2 is linear or affine)
+      && (   ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
+
+          // or, has squeeze-and-excitation, but after pointwise2. (i.e. between depthwise and pointwise2 is still linear or affine)
+          || ( bSqueezeExcitationPrefix == false )
+         );
+
+    let depthwise_bLinear = depthwise_bLinearOrAffine
+      && (    ( bDepthwiseBias == false ) // It has no bias. (i.e. depthwise is linear)
+
+          // Or, its has bias, but its next operation (i.e. pointwise2) has bias (so its bias could be combined into the next operation's
+          // bias). Then it could be viewed as linear.
+          || ( ( bDepthwiseBias == true ) && ( bPointwise20Bias == true ) )
+         );
+
+
 //!!! ...unfinished... (2022/06/09)
 // ( 1 == depthwiseFilterHeight ) && ( 1 == depthwiseFilterWidth ) && ( 1 == depthwiseStrides ) && ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ) 
 // seems that depthwise also does nothing.
