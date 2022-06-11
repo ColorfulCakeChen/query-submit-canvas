@@ -493,7 +493,10 @@ class Base {
       if ( this.inputTensorCount > 1 ) {
         inputTensorPlaceholder1 = new TensorPlaceholder.Base();
         inputTensorPlaceholder1.set_height_width_channelCount_scaleBoundsArray(
+
+//!!! ...unfinished... (2022/06/11) Where to get inputHeight1 and inputWidth1 ?
           this.inputHeight0, this.inputWidth0, params.input1ChannelCount,
+
           undefined, undefined, // channelCount_lowerHalf, channelCount_higherHalf
           inputScaleBoundsArray1 );
       }
