@@ -630,9 +630,15 @@ class Base {
       //
       // Even if no depthwise, however, a .endingInput1 is necessary for concat1 to operate on. So create a dummy one.
       if ( this.bDepthwise2Requested ) {
-        let depthwise1Dummy = new Operation.Root( this.operationArray.endingInput0, null, 1 );
-        let depthwise2Dummy = new Operation.Root( depthwise2_input0, null, 1 );
-        this.operationArray.operation_append( depthwise1Dummy, depthwise2Dummy );
+
+//!!! (2022/06/11 Remarked) Using one dummy instead.
+//         let depthwise1Dummy = new Operation.Root( this.operationArray.endingInput0, null, 1 );
+//         let depthwise2Dummy = new Operation.Root( depthwise2_input0, null, 1 );
+//         this.operationArray.operation_append( depthwise1Dummy, depthwise2Dummy );
+
+        // Note: The two inputs of depthwise12Dummy might be the same one in fact.
+        let depthwise12Dummy = new Operation.Root( this.operationArray.endingInput0, depthwise2_input0, 2 );
+        this.operationArray.operation_append( depthwise12Dummy );
       }
     }
 
