@@ -401,11 +401,14 @@ class Base extends TestParams.Base {
 
       new TestParams.ParamDescConfig( Block.Params.bPointwise1Bias,         this.valueOutMinMax.Bias ),
 
+      new TestParams.ParamDescConfig( Block.Params.bSqueezeExcitationPrefix,
+                                                                            this.valueOutMinMax.bSqueezeExcitationPrefix ),
+
+      new TestParams.ParamDescConfig( Block.Params.nSqueezeExcitationChannelCountDivisor,
+                                                                            this.valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
+
       new TestParams.ParamDescConfig( Block.Params.channelCount0_pointwise1Before,
                                                                             this.valueOutMinMax.channelCount0_pointwise1Before ),
-
-      new TestParams.ParamDescConfig( Block.Params.channelCount1_pointwise1Before,
-                                                                            this.valueOutMinMax.channelCount1_pointwise1Before ),
 
       new TestParams.ParamDescConfig( Block.Params.depthwise_AvgMax_Or_ChannelMultiplier,
                                                                             this.valueOutMinMax.depthwise_AvgMax_Or_ChannelMultiplier ),
@@ -422,11 +425,8 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,        this.valueOutMinMax.bKeepInputTensor ),
 
   
-      new TestParams.ParamDescConfig( Block.Params.bSqueezeExcitationPrefix,
-                                                                            this.valueOutMinMax.bSqueezeExcitationPrefix ),
-
-      new TestParams.ParamDescConfig( Block.Params.nSqueezeExcitationChannelCountDivisor,
-                                                                            this.valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
+      new TestParams.ParamDescConfig( Block.Params.channelCount1_pointwise1Before,
+                                                                            this.valueOutMinMax.channelCount1_pointwise1Before ),
 
     ];
 
