@@ -154,8 +154,8 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     //    + `(except they are both null).`
     //);
 
-    let input0_bKeep = Base.TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In( this.input0, alwaysKeepSet );
-    let input1_bKeep = Base.TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In( this.input1, alwaysKeepSet );
+    let input0_bKeep = Base.TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In.call( this, this.input0, alwaysKeepSet );
+    let input1_bKeep = Base.TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In.call( this, this.input1, alwaysKeepSet );
 
     // If two inputs are not null and they are the same one tensor placeholder (i.e. it appears multiple times, i.e.
     // ( this.input0 == this.input1 ) ), the conatined tensor will be disposed multiple times. In order to alleviate this
