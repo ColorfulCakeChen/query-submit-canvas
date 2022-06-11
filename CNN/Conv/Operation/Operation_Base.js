@@ -103,46 +103,116 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    */
   setKeepInputTensor_IfNotFinalOperation_Or_In( alwaysKeepSet ) {
 
-    // Note1: If an input is not null, it can not appear multiple times (i.e. ( this.input0 == this.input1 ), multiple inputs of
-    //        this operation are the same). The reason is that the input will be disposed multiple times.
-    //
-    // Note2: If ( this.input0 != this.input1 ) but ( this.input0.realTensor == this.input1.realTensor ), that will be also a
-    //        problem. But it can not be detected here because .realTensor is only known when .apply() is called (i.e. not here).
-    //
-    tf.util.assert( ( !this.input0 && !this.input1 ) || ( this.input0 != this.input1 ),
-      `Operation.Base.setKeepInputTensor_IfNotFinalOperation_Or_In(): `
-        + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should be different objects `
-        + `(except they are both null).`
-    );
+//!!! ...unfinished... (2022/06/11) Old Codes.
+// It seems that ( this.input0 == this.input1 ) could be handled.
+//
+//     // Note1: If an input is not null, it can not appear multiple times (i.e. ( this.input0 == this.input1 ), multiple inputs of
+//     //        this operation are the same). The reason is that the input will be disposed multiple times.
+//     //
+//     // Note2: If ( this.input0 != this.input1 ) but ( this.input0.realTensor == this.input1.realTensor ), that will be also a
+//     //        problem. But it can not be detected here because .realTensor is only known when .apply() is called (i.e. not here).
+//     //
+//     tf.util.assert( ( !this.input0 && !this.input1 ) || ( this.input0 != this.input1 ),
+//       `Operation.Base.setKeepInputTensor_IfNotFinalOperation_Or_In(): `
+//         + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should be different objects `
+//         + `(except they are both null).`
+//     );
+//
+//!!! (2022/06/11 Remarked) Use TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In() instead.
+//    // If this operation is the final operation of the input tensor, this operation is responsible for disposing it.
+//
+//     let input0_bKeep;
+//     if ( this.input0 ) {
+//       if ( this.input0.finalOperation == this ) { // Only if final operation, the input might be destroyed.
+//         if ( alwaysKeepSet?.has( this.input0 ) )  // input in alwaysKeepSet should always be kept (always not to be disposed).
+//           input0_bKeep = true;
+//         else
+//           input0_bKeep = false;
+//       } else {
+//         input0_bKeep = true; // Not final operation, the input always should be kept.
+//       }
+//     }
+//
+//     let input1_bKeep;
+//     if ( this.input1 ) {
+//       if ( this.input1.finalOperation == this ) { // Only if final operation, the input might be destroyed.
+//         if ( alwaysKeepSet?.has( this.input1 ) )  // input in alwaysKeepSet should always be kept (always not to be disposed).
+//           input1_bKeep = true;
+//         else
+//           input1_bKeep = false;
+//       } else {
+//         input1_bKeep = true; // Not final operation, the input always should be kept.
+//       }
+//     }
 
-    // If this operation is the final operation of the input tensor, this operation is responsible for disposing it.
 
-    let input0_bKeep;
-    if ( this.input0 ) {
-      if ( this.input0.finalOperation == this ) { // Only if final operation, the input might be destroyed.
-        if ( alwaysKeepSet?.has( this.input0 ) )  // input in alwaysKeepSet should always be kept (always not to be disposed).
-          input0_bKeep = true;
-        else
-          input0_bKeep = false;
-      } else {
-        input0_bKeep = true; // Not final operation, the input always should be kept.
-      }
+
+    //!!! (2022/06/11 Remarked) Now, it might be ok in this situation.
+    //tf.util.assert( ( !this.input0 && !this.input1 ) || ( this.input0 != this.input1 ),
+    //  `Operation.Base.setKeepInputTensor_IfNotFinalOperation_Or_In(): `
+    //    + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should be different objects `
+    //    + `(except they are both null).`
+    //);
+
+    let input0_bKeep = Base.TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In( this.input0, alwaysKeepSet );
+    let input1_bKeep = Base.TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In( this.input1, alwaysKeepSet );
+
+    // If two inputs are not null and they are the same one tensor placeholder (i.e. it appears multiple times, i.e.
+    // ( this.input0 == this.input1 ) ), the conatined tensor will be disposed multiple times. In order to alleviate this
+    // problem, here will do some adjust to let .input0 do not dispose it.
+    // 
+    // Note: If ( this.input0 != this.input1 ) but ( this.input0.realTensor == this.input1.realTensor ), that will be also a
+    //       problem. But it can not be detected here because .realTensor is only known when .apply() is called (i.e. not here).
+    //
+    if (   ( this.input0 == this.input1 )         // If both inputs are the same tensor placeholder (so the same tensor).
+        && ( this.input0 ) && ( this.input1 )     // And they both existed (so has tensor).
+        && ( !input0_bKeep ) && ( !input1_bKeep ) // And they both should be disposed (i.e. not be kept).
+       ) {
+
+      // Let one of them do not dispose the tensor to avoid dispose the (same one) tensor before the operation.apply() done the
+      // computation.
+      //
+      // We assume the .input0 might be used before .input1, so choose .input0 to be kept.
+      //
+      // Note: This assumption is not always correct. If the .input1 is used (and will be disposed) before .input0, then a
+      //       disposed might be used by this operation.
+      // 
+      input0_bKeep = true;
     }
 
-    let input1_bKeep;
-    if ( this.input1 ) {
-      if ( this.input1.finalOperation == this ) { // Only if final operation, the input might be destroyed.
-        if ( alwaysKeepSet?.has( this.input1 ) )  // input in alwaysKeepSet should always be kept (always not to be disposed).
-          input1_bKeep = true;
-        else
-          input1_bKeep = false;
-      } else {
-        input1_bKeep = true; // Not final operation, the input always should be kept.
-      }
-    }
+    this.setKeepInputTensor( input0_bKeep, input1_bKeep ); // Configure the operation to keep or dispose its inputs.
+  }
 
-    // Configure the operation to keep or dispose its inputs.
-    this.setKeepInputTensor( input0_bKeep, input1_bKeep );
+  /**
+   *
+   * @param {Base} this
+   *   The operation owns the aTensorPlaceholder as its input tensor placeholder.
+   *
+   * @param {TensorPlaceholder.Base} aTensorPlaceholder
+   *   The tensor placeholder to be determined whether its contained tensor should be kept (i.e. not be disposed) by this operation.
+   * If this operation is the final operation of aTensorPlaceholder, this operation is responsible for disposing its contained tensor.
+   *
+   * @param {Set<TensorPlaceholder.Base>} alwaysKeepSet
+   *   A set object. Its every element is TensorPlaceholder.Base object. They represent tensors never be disposed. The
+   * aTensorPlaceholder will be compared with them. If ( alwaysKeepSet == null ), it is viewed as empty set.
+   *
+   * @retuen {boolean}
+   *   If this operation is the tensor's final operation and the tensor is not in alwaysKeepSet, return false (i.e. do not keep it and
+   * should dispose it).
+   */
+  static TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In( aTensorPlaceholder, alwaysKeepSet ) {
+    if ( !aTensorPlaceholder )
+      return false; // No need to keep non-existed tensor.
+
+    if ( aTensorPlaceholder.finalOperation != this )
+      return true; // Not final operation, the tensor always be kept.
+
+    // Only if final operation, the input might be destroyed.
+
+    if ( alwaysKeepSet?.has( aTensorPlaceholder ) )
+      return true; // tensor placeholder in alwaysKeepSet should always be kept (always not to be disposed).
+
+    return false;
   }
 
 
