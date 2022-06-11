@@ -15,6 +15,7 @@ import { Int } from "./ValueDesc_Base.js";
  *   - -1: ONE_INPUT_ADD_TO_OUTPUT                  (MobileNetV2)
  *   -  0: ONE_INPUT                                (MobileNetV1 (General Pointwise1-Depthwise1-Pointwise2)
  *   - [ 1, ( 10 * 1024 ) ]: TWO_INPUTS with the second input channel count between 1 and 10240 (inclusive). (without names defined.)
+ *                                                  (ShuffleNetV2_ByPointwise21's body/tail)
  */
 class channelCount1_pointwise1Before extends Int {
 
