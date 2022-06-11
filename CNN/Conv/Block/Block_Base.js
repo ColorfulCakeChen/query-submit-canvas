@@ -490,13 +490,25 @@ class Base {
         this.channelCount0_pointwise1Before, inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
         inputScaleBoundsArray0 );
 
+      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3) )
+      // (i.e. ShuffleNetV2's body/tail)
+      //
+      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_Xxx (>0) )
+      // (i.e. ShuffleNetV2_ByMobileNetV1's body/tail)
+      //
       if ( this.inputTensorCount > 1 ) {
+
+        // In fact, the input1's height and width is known. So keep them undefined. The concat1 has been designed to handle this
+        // situation.
+        //
+        // Note: In theory, they should be the same height and width as depthwise1's result. But this can not be known in advance.
+        //
+        const inputHeight1 = undefined;
+        const inputWidth1 = undefined;
+
         inputTensorPlaceholder1 = new TensorPlaceholder.Base();
         inputTensorPlaceholder1.set_height_width_channelCount_scaleBoundsArray(
-
-//!!! ...unfinished... (2022/06/11) Where to get inputHeight1 and inputWidth1 ?
-          this.inputHeight0, this.inputWidth0, params.input1ChannelCount,
-
+          inputHeight1, inputWidth1, params.input1ChannelCount,
           undefined, undefined, // channelCount_lowerHalf, channelCount_higherHalf
           inputScaleBoundsArray1 );
       }
