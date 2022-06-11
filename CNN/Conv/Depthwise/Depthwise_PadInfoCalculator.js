@@ -170,18 +170,18 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
 
   /** @return {boolean} If the channel count of this depthwise operation's output is the same as its input, return true. */
   output_channelCount_is_same_as_input() {
-    return PadInfoCalculator.output_channelCount_is_same_as_input.call( this.AvgMax_Or_ChannelMultiplier );
+    return PadInfoCalculator.output_channelCount_is_same_as_input.call( this, this.AvgMax_Or_ChannelMultiplier );
   }
 
   /** @return {boolean} If the ( height, width ) of this depthwise operation's output is the same as its input, return true. */
   output_height_width_is_same_as_input() {
-    return PadInfoCalculator.output_height_width_is_same_as_input.call( this.inputHeight, this.inputWidth,
-    this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.filterWidth, this.stridesPadInfo );
+    return PadInfoCalculator.output_height_width_is_same_as_input.call( this, this.inputHeight, this.inputWidth,
+      this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.filterWidth, this.stridesPadInfo );
   }
 
   /** @return {boolean} If this depthwise operation does not analyze the neighbor in the direction of height and width, return true. */
   output_height_width_is_no_neighbor_analysis() {
-    return PadInfoCalculator.output_height_width_is_no_neighbor_analysis.call( this.inputHeight, this.inputWidth,
+    return PadInfoCalculator.output_height_width_is_no_neighbor_analysis.call( this, this.inputHeight, this.inputWidth,
       this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.filterWidth );
   }
 
