@@ -73,6 +73,11 @@ import { Params } from "./Block_Params.js";
  * </pre>
  *
  *
+
+//!!! ...unfinished... (2022/06/12)
+// Perhaps, should abandon ShuffleNetV2's head simplified and ShuffleNetV2_ByPointwise21.
+// Create original ShuffleNetV2. And then, compare it with ShuffleNetV2_ByMobileNetV1 for identical and performance.
+
  *   - When ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE:
  * (ShuffleNetV2's head simplified with ( pointwise1ChannelCount >= 1 ), or
  * (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ) )
