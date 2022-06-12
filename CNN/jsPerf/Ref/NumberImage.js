@@ -118,11 +118,30 @@ class Base {
       pointwiseFiltersArray = pointwisePassThrough.filtersArray;
       pointwiseBiasesArray = pointwisePassThrough.biasesArray;
 
-    } else {
-      tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == imageIn.depth ),
-        `${pointwiseName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
-          + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
+//!!! (2022/06/12 Remarked) No matter whether is pass-through, these check always should be done.
+//     } else {
+//       tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == imageIn.depth ),
+//         `${pointwiseName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
+//           + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
     }        
+
+    {
+      let filtersWeightCount = imageIn.depth * pointwiseChannelCount;
+
+      tf.util.assert( ( pointwiseFiltersArray.length == filtersWeightCount ),
+        `${pointwiseName}: filters weight count ( ${pointwiseFiltersArray.length} ) `
+          + `should be ( ${filtersWeightCount} ). (${parametersDesc})`);
+
+      let biasesWeightCount;
+      if ( bPointwiseBias )
+        biasesWeightCount = pointwiseChannelCount;
+      else
+        biasesWeightCount = 0;
+
+      tf.util.assert( ( pointwiseBiasesArray.length == biasesWeightCount ),
+        `${pointwiseName}: biases weight count ( ${pointwiseBiasesArray.length} ) `
+          + `should be ( ${biasesWeightCount} ). (${parametersDesc})`);
+    }
 
     let imageOutLength = ( imageIn.height * imageIn.width * pointwiseChannelCount );
     let imageOut = new Base(
@@ -298,10 +317,30 @@ class Base {
 
     // If not AVG, MAX, NONE, the filters shape should match input image channel count.
     if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-      tf.util.assert( ( ( depthwiseFiltersArray.length / ( depthwiseFilterHeight * depthwiseFilterWidth * channelMultiplier ) ) == imageIn.depth ),
-        `${depthwiseName} filters shape `
-          + `( ${depthwiseFiltersArray.length} / ( ${depthwiseFilterHeight} * ${depthwiseFilterWidth} * ${channelMultiplier} ) ) `
-          + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
+
+//!!! (2022/06/13 Remarked)
+//       tf.util.assert( ( ( depthwiseFiltersArray.length / ( depthwiseFilterHeight * depthwiseFilterWidth * channelMultiplier ) ) == imageIn.depth ),
+//         `${depthwiseName} filters shape `
+//           + `( ${depthwiseFiltersArray.length} / ( ${depthwiseFilterHeight} * ${depthwiseFilterWidth} * ${channelMultiplier} ) ) `
+//           + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
+
+      let filtersWeightCount = depthwiseFilterHeight * depthwiseFilterWidth * imageIn.depth * channelMultiplier ;
+
+      tf.util.assert( ( depthwiseFiltersArray.length == filtersWeightCount ),
+        `${depthwiseName}: filters weight count ( ${depthwiseFiltersArray.length} ) `
+          + `should be ( ${filtersWeightCount} ). (${parametersDesc})`);
+    }
+
+    {
+      let biasesWeightCount;
+      if ( bDepthwiseBias )
+        biasesWeightCount = imageIn.depth * channelMultiplier;
+      else
+        biasesWeightCount = 0;
+
+      tf.util.assert( ( depthwiseBiasesArray.length == biasesWeightCount ),
+        `${depthwiseName}: biases weight count ( ${depthwiseBiasesArray.length} ) `
+          + `should be ( ${biasesWeightCount} ). (${parametersDesc})`);
     }
 
     let imageOut = new Base(
