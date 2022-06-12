@@ -66,7 +66,7 @@ class Base extends TestParams.Base {
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
-    nSqueezeExcitationChannelCountDivisor,
+    nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
     bOutput1Requested,
     bKeepInputTensor
@@ -79,7 +79,7 @@ class Base extends TestParams.Base {
       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       bDepthwiseBias, depthwiseActivationId,
-      nSqueezeExcitationChannelCountDivisor,
+      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
       bOutput1Requested,
       bKeepInputTensor
