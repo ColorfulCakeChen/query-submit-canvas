@@ -2,6 +2,9 @@ export { SqueezeExcitationChannelCountDivisor };
 
 import { Int } from "./ValueDesc_Base.js";
 
+//!!! ...unfinished... (2022/06/12)
+// Perhaps, combine prefix_postfix into this enumeration.
+// divisor from 0, 1, 2, 4, 8, 16, 32, 64 (i.e. by 2's power)
 
 /** Describe squeeze-and-excitation channel count divisor's id, range, name.
  *
