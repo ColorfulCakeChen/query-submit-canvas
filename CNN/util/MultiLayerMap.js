@@ -74,7 +74,7 @@ class Base {
    *   Return an iterator object that contains all values of all layer maps.
    */
   * values() {
-    return MapTools.values_recursively( this.map );
+    yield* MapTools.values_recursively( this.map );
   }
 
   /**
