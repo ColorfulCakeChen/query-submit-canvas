@@ -5,6 +5,9 @@ export { AvgMax_Or_ChannelMultiplier };
 
 import { Int } from "./ValueDesc_Base.js";
 
+//!!! ...unfinished... (2022/06/12)
+// Perhaps, integrated bOutput1Requested into this enumeration.
+
 /** Describe id, range, name of channelCount1_pointwise1Before.
  *
  * Convert number value into integer between [ -5, ( 10 * 1024 ) ] representing operation:
