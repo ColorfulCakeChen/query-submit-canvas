@@ -132,15 +132,18 @@ class Base {
         `${pointwiseName}: filters weight count ( ${pointwiseFiltersArray.length} ) `
           + `should be ( ${filtersWeightCount} ). (${parametersDesc})`);
 
-      let biasesWeightCount;
-      if ( bPointwiseBias )
-        biasesWeightCount = pointwiseChannelCount;
-      else
-        biasesWeightCount = 0;
+      let biasesWeightCountShouldBe, biasesWeightCountInFact;
+      if ( bPointwiseBias ) {
+        biasesWeightCountShouldBe = pointwiseChannelCount;
+        biasesWeightCountInFact = pointwiseBiasesArray.length;
+      } else {
+        biasesWeightCountShouldBe = 0;
+        biasesWeightCountInFact = ( pointwiseBiasesArray ) ? pointwiseBiasesArray.length : 0;
+      }
 
-      tf.util.assert( ( pointwiseBiasesArray.length == biasesWeightCount ),
-        `${pointwiseName}: biases weight count ( ${pointwiseBiasesArray.length} ) `
-          + `should be ( ${biasesWeightCount} ). (${parametersDesc})`);
+      tf.util.assert( ( biasesWeightCountInFact == biasesWeightCountShouldBe )
+        `${pointwiseName}: biases weight count ( ${biasesWeightCountInFact} ) `
+          + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})`);
     }
 
     let imageOutLength = ( imageIn.height * imageIn.width * pointwiseChannelCount );
@@ -332,15 +335,18 @@ class Base {
     }
 
     {
-      let biasesWeightCount;
-      if ( bDepthwiseBias )
-        biasesWeightCount = imageIn.depth * channelMultiplier;
-      else
-        biasesWeightCount = 0;
+      let biasesWeightCountShouldBe, biasesWeightCountInFact;
+      if ( bDepthwiseBias ) {
+        biasesWeightCountShouldBe = imageIn.depth * channelMultiplier;
+        biasesWeightCountInFact = depthwiseBiasesArray.length;
+      } else {
+        biasesWeightCountShouldBe = 0;
+        biasesWeightCountInFact = ( depthwiseBiasesArray ) ? depthwiseBiasesArray.length : 0;
+      }
 
-      tf.util.assert( ( depthwiseBiasesArray.length == biasesWeightCount ),
-        `${depthwiseName}: biases weight count ( ${depthwiseBiasesArray.length} ) `
-          + `should be ( ${biasesWeightCount} ). (${parametersDesc})`);
+      tf.util.assert( ( biasesWeightCountInFact == biasesWeightCountShouldBe )
+        `${depthwiseName}: biases weight count ( ${biasesWeightCountInFact} ) `
+          + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})`);
     }
 
     let imageOut = new Base(
