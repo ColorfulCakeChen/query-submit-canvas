@@ -74,7 +74,7 @@ import { Params } from "./Block_Params.js";
  *
  *
  *   - When ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE:
- * (simplified ShuffleNetV2's head with ( pointwise1ChannelCount >= 1 ) )
+ * (simplified ShuffleNetV2(_ByPointwise21)'s head with ( pointwise1ChannelCount >= 1 ) )
  * <pre>
  * input0 - pointwise1 - depthwise1 - concat1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix)
  *        \------------- depthwise2 /         \ (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix)
