@@ -141,7 +141,7 @@ class Base {
         biasesWeightCountInFact = ( pointwiseBiasesArray ) ? pointwiseBiasesArray.length : 0;
       }
 
-      tf.util.assert( ( biasesWeightCountInFact == biasesWeightCountShouldBe )
+      tf.util.assert( ( biasesWeightCountInFact == biasesWeightCountShouldBe ),
         `${pointwiseName}: biases weight count ( ${biasesWeightCountInFact} ) `
           + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})`);
     }
@@ -344,7 +344,7 @@ class Base {
         biasesWeightCountInFact = ( depthwiseBiasesArray ) ? depthwiseBiasesArray.length : 0;
       }
 
-      tf.util.assert( ( biasesWeightCountInFact == biasesWeightCountShouldBe )
+      tf.util.assert( ( biasesWeightCountInFact == biasesWeightCountShouldBe ),
         `${depthwiseName}: biases weight count ( ${biasesWeightCountInFact} ) `
           + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})`);
     }
