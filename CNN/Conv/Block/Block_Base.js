@@ -75,7 +75,7 @@ import { Params } from "./Block_Params.js";
  *
 
 //!!! ...unfinished... (2022/06/12)
-// Perhaps, should abandon ShuffleNetV2's head simplified and ShuffleNetV2_ByPointwise21.
+// Perhaps, should abandon ShuffleNetV2's head simplified (but ShuffleNetV2_ByPointwise21 still remained).
 // Create original ShuffleNetV2. And then, compare it with ShuffleNetV2_ByMobileNetV1 for identical and performance.
 //
 // The reason is that the ShuffleNetV2's head simplified needs extract more pointwise2 weights than original ShuffleNetV2
