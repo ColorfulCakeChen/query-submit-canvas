@@ -578,7 +578,7 @@ class HeightWidthDepth {
           console.log( msg );
           alert( `${msg}\n${e}` );
 
-          //debugger;
+          debugger;
           throw e;
         }
 
