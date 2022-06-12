@@ -95,8 +95,8 @@ import { Params } from "./Block_Params.js";
  *     - ( channelCount1_pointwise1Before == 0 ): ONE_INPUT:
  *       (MobileNetV1 or
  *        MobileNetV2's head or
- *        ShuffleNetV2's head simplified with ( pointwise1ChannelCount <= 0 ) or
- *        ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount <= 0 )
+ *        ShuffleNetV2's head simplified with ( pointwise1ChannelCount == 0 ) or
+ *        ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount == 0 )
  *       )
  * <pre>
  * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix)
