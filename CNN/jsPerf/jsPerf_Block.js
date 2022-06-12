@@ -592,8 +592,8 @@ class HeightWidthDepth {
 
       tf.util.assert( ( memoryInfo_testCorrectness_after.numTensors == memoryInfo_testCorrectness_before.numTensors ),
         `testCorrectness() memory leak. `
-          + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
-          + `should be (${memoryInfo_testCorrectness_before.numTensors} `
+          + `result tensor count ( ${memoryInfo_testCorrectness_after.numTensors} ) `
+          + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ) `
           + `` );
     });
 
