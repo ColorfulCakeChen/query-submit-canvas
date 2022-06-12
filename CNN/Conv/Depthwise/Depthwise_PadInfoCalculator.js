@@ -205,14 +205,15 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
     inputHeight, inputWidth,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPadInfo
   ) {
-    return
+    return (
          ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) // (0), no-op
       || ( ( 1 == inputHeight ) && ( 1 == inputWidth ) )  // input's height and width can not be shrinked any more.
       || (   ( 1 == depthwiseStridesPadInfo.strides )     // Not shrinked by strides.
           && (   ( depthwiseStridesPadInfo.pad_isSame() ) // Not shrinked by filters for ( pad is "same" ).
               || ( depthwiseStridesPadInfo.pad_isValid() && ( 1 == depthwiseFilterHeight ) && ( 1 == depthwiseFilterWidth ) ) // Not shrinked by filters for ( pad is "valid" ). (i.e. ( filter size is 1x1 ) )
              )
-         );
+         )
+    );
   }
 
   /**
@@ -224,10 +225,11 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
     inputHeight, inputWidth,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth
   ) {
-    return
+    return (
          ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) // (0), no-op
       || ( ( 1 == inputHeight ) && ( 1 == inputWidth ) )  // input's height and width do not have neighbor to be analyzed.
-      || ( ( 1 == depthwiseFilterHeight ) && ( 1 == depthwiseFilterWidth ) ); // The filters do not analyze any neighbor.
+      || ( ( 1 == depthwiseFilterHeight ) && ( 1 == depthwiseFilterWidth ) ) // The filters do not analyze any neighbor.
+    );
   }
 
 
