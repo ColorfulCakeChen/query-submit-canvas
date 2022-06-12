@@ -11,9 +11,16 @@ import { Int } from "./ValueDesc_Base.js";
  *   - -5: ONE_INPUT_HALF_THROUGH                   (ShuffleNetV2_ByMobileNetV1's body/tail)
  *   - -4: ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (ShuffleNetV2_ByMobileNetV1's head)
  *   - -3: TWO_INPUTS_CONCAT_POINTWISE20_INPUT1     (ShuffleNetV2's body/tail)
- *   - -2: ONE_INPUT_TWO_DEPTHWISE                  (ShuffleNetV2's head (and ShuffleNetV2_ByPointwise21's head) (simplified))
+ *   - -2: ONE_INPUT_TWO_DEPTHWISE                  (ShuffleNetV2's head simplified with ( pointwise1ChannelCount >= 1 ) or
+ *                                                   ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
+ *
  *   - -1: ONE_INPUT_ADD_TO_OUTPUT                  (MobileNetV2)
- *   -  0: ONE_INPUT                                (MobileNetV1 (General Pointwise1-Depthwise1-Pointwise2)
+ *   -  0: ONE_INPUT                                (General Pointwise1-Depthwise1-Pointwise2)
+ *                                                  (MobileNetV1 or
+ *                                                   MobileNetV2's head or
+ *                                                   ShuffleNetV2's head simplified with ( pointwise1ChannelCount == 0 ) or
+ *                                                   ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount == 0 ))
+ *
  *   - [ 1, ( 10 * 1024 ) ]: TWO_INPUTS with the second input channel count between 1 and 10240 (inclusive). (without names defined.)
  *                                                  (ShuffleNetV2_ByPointwise21's body/tail)
  */
