@@ -77,6 +77,9 @@ import { Params } from "./Block_Params.js";
 //!!! ...unfinished... (2022/06/12)
 // Perhaps, should abandon ShuffleNetV2's head simplified and ShuffleNetV2_ByPointwise21.
 // Create original ShuffleNetV2. And then, compare it with ShuffleNetV2_ByMobileNetV1 for identical and performance.
+//
+// The reason is that the ShuffleNetV2's head simplified needs extract more pointwise2 weights than original ShuffleNetV2
+// although its performance may be faster than original.
 
  *   - When ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE:
  * (ShuffleNetV2's head simplified with ( pointwise1ChannelCount >= 1 ), or
