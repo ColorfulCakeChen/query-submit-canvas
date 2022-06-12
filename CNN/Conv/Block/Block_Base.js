@@ -74,7 +74,8 @@ import { Params } from "./Block_Params.js";
  *
  *
  *   - When ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE:
- * (simplified ShuffleNetV2(_ByPointwise21)'s head with ( pointwise1ChannelCount >= 1 ) )
+ * (ShuffleNetV2's head simplified with ( pointwise1ChannelCount >= 1 ), or
+ * (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ) )
  * <pre>
  * input0 - pointwise1 - depthwise1 - concat1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix)
  *        \------------- depthwise2 /         \ (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix)
@@ -92,7 +93,11 @@ import { Params } from "./Block_Params.js";
  *
  *   - When
  *     - ( channelCount1_pointwise1Before == 0 ): ONE_INPUT:
- *       (MobileNetV1 or MobileNetV2's head or simplified ShuffleNetV2(_ByPointwise21)'s head with ( blockParams.bPointwise1 == false ) )
+ *       (MobileNetV1 or
+ *        MobileNetV2's head or
+ *        ShuffleNetV2's head simplified with ( pointwise1ChannelCount <= 0 ) or
+ *        ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount <= 0 )
+ *       )
  * <pre>
  * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix)
  *                                  \ (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix)
