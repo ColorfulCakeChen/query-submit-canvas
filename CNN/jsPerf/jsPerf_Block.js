@@ -207,7 +207,7 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].depth, this.testPerformance_NumberImageArray[ 1 ].depth,
           8,  true, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           1,     3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
-      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1, false,
+      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
           4,  true, Block.Params.pointwise20ActivationId.valueDesc.Ids.COS,
       false,
        true
@@ -221,7 +221,7 @@ class HeightWidthDepth {
           8,  true, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
         Block.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,
                  3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
-      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1, false,
+      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
           4,  true, Block.Params.pointwise20ActivationId.valueDesc.Ids.COS,
       false,
        true
@@ -235,7 +235,7 @@ class HeightWidthDepth {
           8,  true, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
         Block.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,
                  3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
-      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1, false,
+      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
           4,  true, Block.Params.pointwise20ActivationId.valueDesc.Ids.COS,
       false,
        true
@@ -248,7 +248,7 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].depth, this.testPerformance_NumberImageArray[ 1 ].depth,
           8,  true, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
-      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1, false,
+      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
           4,  true, Block.Params.pointwise20ActivationId.valueDesc.Ids.COS,
       false,
        true
@@ -261,7 +261,7 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].depth, this.testPerformance_NumberImageArray[ 1 ].depth,
           8, false, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3, 3, 1, false, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
-      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1, false,
+      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
           4, false, Block.Params.pointwise20ActivationId.valueDesc.Ids.COS,
       false,
        true
@@ -274,7 +274,7 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].depth, this.testPerformance_NumberImageArray[ 1 ].depth,
           8, false, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3, 3, 1, false, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
-      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1, false,
+      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
           4, false, Block.Params.pointwise20ActivationId.valueDesc.Ids.COS,
       false,
        true
@@ -287,7 +287,7 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].depth, this.testPerformance_NumberImageArray[ 1 ].depth,
           0,  true, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
          32,     3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
-      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1, false,
+      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
         128,  true, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
       false,
        true
@@ -300,7 +300,7 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].depth, this.testPerformance_NumberImageArray[ 1 ].depth,
         128,  true, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           0,     3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
-      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION_1, false,
+      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
         128,  true, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
       false,
        true
