@@ -42,9 +42,9 @@ class Bag extends MultiLayerMap.Base {
       ( elementCount, randomOffsetMin, randomOffsetMax, nRandSpecId ) => {
 
         // For debug.
-        if ( Number.isNaN( elementCount ) ) {
-          debugger;
-        }
+        //if ( Number.isNaN( elementCount ) ) {
+        //  debugger;
+        //}
 
         // Note: nRandSpecId is not used when generating number array.
         return RandTools.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax );
