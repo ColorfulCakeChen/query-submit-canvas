@@ -1,6 +1,5 @@
 export { Base };
 
-//import * as MapTools from "../util/MapTools.js";
 import * as MultiLayerMap from "../util/MultiLayerMap.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
 
@@ -21,10 +20,6 @@ class Base extends MultiLayerMap.Base {
     super();
 
     this.channelShufflerClass = channelShufflerClass;
-
-//!!! (2022/05/23 Remarked) Replaced by MultiLayerMap.
-//     // channel shufflers indexed by [ concatenatedHeight, concatenatedWidth, concatenatedDepth, outputGroupCount ].
-//     this.channelShufflersBy_height_width_depth_group = new Map();
 
     this.concatenatedShape = [ null, null, null ]; // A re-used shared array for reducing memory allocation.
   }
@@ -47,27 +42,6 @@ class Base extends MultiLayerMap.Base {
    *   A shared channel shuffler which could process the specific concatenatedShape and outputGroupCount.
    */
   getChannelShuffler_by( concatenatedHeight, concatenatedWidth, concatenatedDepth, outputGroupCount ) {
-
-//!!! (2022/05/23 Remarked) Replaced by MultiLayerMap.
-//
-//     let channelShufflersBy_width_depth_group = MapTools.get_or_create( this.channelShufflersBy_height_width_depth_group, concatenatedHeight );
-//     let channelShufflersBy_depth_group = MapTools.get_or_create( channelShufflersBy_width_depth_group, concatenatedWidth );
-//     let channelShufflersBy_group = MapTools.get_or_create( channelShufflersBy_depth_group, concatenatedDepth );
-//
-//     let channelShuffler = channelShufflersBy_group.get( outputGroupCount );
-//
-//     if ( channelShuffler )
-//       return channelShuffler; // 1. The requested channel shufffler has already been created. Re-use it. Return it directly.
-//
-//     // 2. The requested channel shufffler has not yet existed. It should be created newly.
-//     this.concatenatedShape[ 0 ] = concatenatedHeight;
-//     this.concatenatedShape[ 1 ] = concatenatedWidth;
-//     this.concatenatedShape[ 2 ] = concatenatedDepth;
-//     channelShuffler = new (this.channelShufflerClass)( this.concatenatedShape, outputGroupCount );
-//
-//     channelShufflersBy_group.set( outputGroupCount, channelShuffler ); // Cache it.
-//     return channelShuffler;
-
     return this.get_or_create_by_arguments1_etc( ( concatenatedHeight, concatenatedWidth, concatenatedDepth, outputGroupCount ) => {
         this.concatenatedShape[ 0 ] = concatenatedHeight;
         this.concatenatedShape[ 1 ] = concatenatedWidth;
@@ -78,29 +52,10 @@ class Base extends MultiLayerMap.Base {
       concatenatedHeight, concatenatedWidth, concatenatedDepth, outputGroupCount );
   }
 
-
   /** Release all channel shufflers and their tf.tensor. */
   disposeTensors() {
-
-//!!! (2022/05/23 Remarked) Replaced by MultiLayerMap.
-//
-//     if ( this.channelShufflersBy_height_width_depth_group ) {
-//       for ( let channelShuffler of MapTools.values_recursively( this.channelShufflersBy_height_width_depth_group ) ) {
-//         channelShuffler.disposeTensors();
-//       }
-//
-//       this.channelShufflersBy_height_width_depth_group.clear();
-//     }
-
-
-//!!! (2022/05/23 Remarked) Replaced by values().
-//     this.visit_all_and_call( channelShuffler => {
-//       channelShuffler.disposeTensors();
-//     } );
-//     this.clear();
-    
     for ( let channelShuffler of this.values() ) {
-      channelShuffler.dispose();
+      channelShuffler.disposeTensors();
     }
     this.clear();
   }
