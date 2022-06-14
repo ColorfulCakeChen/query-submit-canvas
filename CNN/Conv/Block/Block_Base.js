@@ -392,7 +392,9 @@ class Base {
     this.inputWidth0 = params.inputWidth0;
     this.channelCount0_pointwise1Before = params.channelCount0_pointwise1Before;
     this.channelCount1_pointwise1Before = params.channelCount1_pointwise1Before;
-    this.channelCount1_pointwise1Before_Name = params.channelCount1_pointwise1Before_Name;
+
+    this.nConvBlockTypeId = params.nConvBlockTypeId;
+    this.nConvBlockTypeIdName = params.nConvBlockTypeIdName;
 
     this.pointwise1ChannelCount = params.pointwise1ChannelCount;
     this.bPointwise1Bias = params.bPointwise1Bias;
@@ -513,6 +515,11 @@ class Base {
         this.channelCount0_pointwise1Before, inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
         inputScaleBoundsArray0 );
 
+      tf.util.assert( ( this.channelCount1_pointwise1Before == params.input1ChannelCount ),
+        `Block.Base.initer(): `
+          + `input1's channel count ( ${this.channelCount1_pointwise1Before} ) should be ( ${params.input1ChannelCount} ).`
+      );
+
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3) )
       // (i.e. ShuffleNetV2's body/tail)
       //
@@ -531,7 +538,7 @@ class Base {
 
         inputTensorPlaceholder1 = new TensorPlaceholder.Base();
         inputTensorPlaceholder1.set_height_width_channelCount_scaleBoundsArray(
-          inputHeight1, inputWidth1, params.input1ChannelCount,
+          inputHeight1, inputWidth1, this.channelCount1_pointwise1Before,
           undefined, undefined, // channelCount_lowerHalf, channelCount_higherHalf
           inputScaleBoundsArray1 );
       }
