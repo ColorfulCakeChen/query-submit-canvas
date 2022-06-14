@@ -38,16 +38,16 @@ class ConvBlockType extends Int {
       ],
 
       [
-         new ConvBlockType.Info( 0, 1, 1 ),
-         new ConvBlockType.Info( 1, 1, 1 ),
-         new ConvBlockType.Info( 2, 1, 2 ),
-         new ConvBlockType.Info( 3, 2, 2 ),
-         new ConvBlockType.Info( 4, 2, 1 ),
-         new ConvBlockType.Info( 5, 1, 2 ),
-         new ConvBlockType.Info( 6, 2, 2 ),
-         new ConvBlockType.Info( 7, 2, 1 ),
-         new ConvBlockType.Info( 8, 1, 1 ),
-         new ConvBlockType.Info( 9, 1, 1 ),
+         new ConvBlockType.Info( 0, 1, 1, false, false,  ),
+         new ConvBlockType.Info( 1, 1, 1, false, false,  ),
+         new ConvBlockType.Info( 2, 1, 2, false, false,  ),
+         new ConvBlockType.Info( 3, 2, 2, false, false,  ),
+         new ConvBlockType.Info( 4, 2, 1, false, false,  ),
+         new ConvBlockType.Info( 5, 1, 2, false, false,  ),
+         new ConvBlockType.Info( 6, 2, 2, false, false,  ),
+         new ConvBlockType.Info( 7, 2, 1, false, false,  ),
+         new ConvBlockType.Info( 8, 1, 1,  true,  true,  ),
+         new ConvBlockType.Info( 9, 1, 1,  true, false,  ),
       ]
     );
   }
@@ -106,10 +106,26 @@ class ConvBlockType extends Int {
  */
 ConvBlockType.Info = class {
 
-  constructor( nConvBlockTypeId, inputTensorCount, outputTensorCount ) {
+  /**
+   *
+   * @param {boolean} bHigherHalfDifferent
+   *   Whether the higher half channels will be handled different. Usually true only if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_XXX.
+   *
+   * @param {boolean} bHigherHalfDepthwise2
+   *   Whether the higher half channels will be processed by depthwise2. Usually true only if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD.
+   *
+   *
+   */
+  constructor( nConvBlockTypeId, inputTensorCount, outputTensorCount,
+    bHigherHalfDifferent, bHigherHalfDepthwise2, 
+
+  ) {
     this.nConvBlockTypeId = nConvBlockTypeId;
     this.inputTensorCount = inputTensorCount;
     this.outputTensorCount = outputTensorCount;
+
+    this.bHigherHalfDifferent = bHigherHalfDifferent;
+    this.bHigherHalfDepthwise2 = bHigherHalfDepthwise2;
   }
 
 }
