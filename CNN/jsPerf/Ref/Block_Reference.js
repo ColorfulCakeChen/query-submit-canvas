@@ -35,6 +35,7 @@ class TestCorrectnessInfo {
 
     let {
       inputHeight0, inputWidth0, channelCount0_pointwise1Before, channelCount1_pointwise1Before,
+      nConvBlockType,
       pointwise1ChannelCount,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       pointwise20ChannelCount,
@@ -50,8 +51,12 @@ class TestCorrectnessInfo {
     let referredParams = {};
     let bTwoInputs, input1ChannelCount;
     {
-      // The input tensor count is determined by channelCount1_pointwise1Before totally.
-      Block.Params.set_inputTensorCount_by.call( referredParams, channelCount1_pointwise1Before );
+//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
+//      // The input tensor count is determined by channelCount1_pointwise1Before totally.
+//      Block.Params.set_inputTensorCount_by.call( referredParams, channelCount1_pointwise1Before );
+
+      // The input tensor count is determined by convolution block type totally.
+      Block.Params.set_inputTensorCount_by.call( referredParams, nConvBlockType );
 
       Block.Params.set_input1ChannelCount_by.call( referredParams,
         channelCount0_pointwise1Before, channelCount1_pointwise1Before,
