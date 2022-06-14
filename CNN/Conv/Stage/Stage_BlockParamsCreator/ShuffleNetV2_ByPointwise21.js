@@ -103,7 +103,7 @@ class ShuffleNetV2_ByPointwise21 extends ShuffleNetV2 {
       //
       // Just use once depthwise convolution (but with channel multipler 2) to double the channel count.
       this.channelCount1_pointwise1Before
-        = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT; // no concatenate, no add-input-to-output.
+        = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE; // no concatenate, no add-input-to-output.
       this.pointwise1ChannelCount = 0;                                  // NoPointwise1.
       this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                   // Double of input0. (Same as pointwise20.)
 
