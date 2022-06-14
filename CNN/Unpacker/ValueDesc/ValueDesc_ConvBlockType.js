@@ -38,16 +38,16 @@ class ConvBlockType extends Int {
       ],
 
       [
-         new ConvBlockType.Info( 0, 1, 1, false, false,  ),
-         new ConvBlockType.Info( 1, 1, 1, false, false,  ),
-         new ConvBlockType.Info( 2, 1, 2, false, false,  ),
-         new ConvBlockType.Info( 3, 2, 2, false, false,  ),
-         new ConvBlockType.Info( 4, 2, 1, false, false,  ),
-         new ConvBlockType.Info( 5, 1, 2, false, false,  ),
-         new ConvBlockType.Info( 6, 2, 2, false, false,  ),
-         new ConvBlockType.Info( 7, 2, 1, false, false,  ),
-         new ConvBlockType.Info( 8, 1, 1,  true,  true,  ),
-         new ConvBlockType.Info( 9, 1, 1,  true, false,  ),
+         new ConvBlockType.Info( 0, 1, 1, false, , , , false, false,  ),
+         new ConvBlockType.Info( 1, 1, 1, false, , , , false, false,  ),
+         new ConvBlockType.Info( 2, 1, 2,  true, , , , false, false,  ),
+         new ConvBlockType.Info( 3, 2, 2, false, , , , false, false,  ),
+         new ConvBlockType.Info( 4, 2, 1, false, , , , false, false,  ),
+         new ConvBlockType.Info( 5, 1, 2,  true, , , , false, false,  ),
+         new ConvBlockType.Info( 6, 2, 2, false, , , , false, false,  ),
+         new ConvBlockType.Info( 7, 2, 1, false, , , , false, false,  ),
+         new ConvBlockType.Info( 8, 1, 1, false, , , ,  true,  true,  ),
+         new ConvBlockType.Info( 9, 1, 1, false,  true, false,  ),
       ]
     );
   }
@@ -117,12 +117,17 @@ ConvBlockType.Info = class {
    *
    */
   constructor( nConvBlockTypeId, inputTensorCount, outputTensorCount,
-    bHigherHalfDifferent, bHigherHalfDepthwise2, 
-
+    bDepthwise2Requested, bConcat1Requested, bAddInputToOutputRequested, bConcat2ShuffleSplitRequested,
+    bHigherHalfDifferent, bHigherHalfDepthwise2
   ) {
     this.nConvBlockTypeId = nConvBlockTypeId;
     this.inputTensorCount = inputTensorCount;
     this.outputTensorCount = outputTensorCount;
+
+    this.bDepthwise2Requested = bDepthwise2Requested;
+    this.bConcat1Requested = bConcat1Requested;
+    this.bAddInputToOutputRequested = bAddInputToOutputRequested;
+    this.bConcat2ShuffleSplitRequested = bConcat2ShuffleSplitRequested;
 
     this.bHigherHalfDifferent = bHigherHalfDifferent;
     this.bHigherHalfDepthwise2 = bHigherHalfDepthwise2;
