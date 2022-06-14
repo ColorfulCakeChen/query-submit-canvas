@@ -165,6 +165,18 @@ import { Params } from "./Block_Params.js";
  * @member {number} inputTensorCount
  *   How many input tensors will be passed into apply() as parameter inputTensors[].
  *
+ * @member {boolean} bDepthwise2Requested
+ *   If true, the depthwise2 is needed.
+ *
+ * @member {boolean} bConcat1Requested
+ *   If true, the concat1 (after depthwise and before pointwise2) is needed.
+ *
+ * @member {boolean} bConcat2ShuffleSplitRequested
+ *   If true, the concat2 (after pointwise2) is needed. It may or may not follow channel shuffling and splitting.
+ *
+ * @member {boolean} bAddInputToOutputRequested
+ *   If true, the input (in this case, the main input (i.e. input0)) will be added to the output for achieving skip connection.
+ *
  * @member {boolean} bHigherHalfDifferent
  *   Only if ( channelShuffler != null ), this is meaningful. If true, the higher half input channels are processed differently.
  * For pointwise convolution, the higher half may copy lower half, or the higher half may just pass through the input to output.
@@ -174,60 +186,17 @@ import { Params } from "./Block_Params.js";
  *   Only if ( bHigherHalfDifferent == true ), this is meaningful. If true, the depthwise1 will use higher half channels to achieve
  * the depthwise2. If false, the depthwise1's higher half channels just pass through the input to output.
  *
- * @member {boolean} bDepthwise2Requested
- *   It will be true only when
- * ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE (-2) ). If true,
- * it means a second depthwise might be needed.
- *
- * @member {boolean} bConcat1Requested
- *   If true, the concat1 (after depthwise and before pointwise2) is needed.
- *
- * @member {boolean} bConcat2ShuffleSplitRequested
- *   If true, the concat2 (after pointwise2) is needed. It may or may not follow channel shuffling and splitting.
- *
- * @member {boolean} bAddInputToOutputRequested
- *   It will be true when ( this.channelCount1_pointwise1Before == -1 ). The input (in this case, the main input (i.e. inputTensorArray[ 0 ])
- * will be added to the output for achieving skip connection.
- *
  * @member {number} outputTensorCount
- *   How many output tensors will be returned by the parameter outputTensors of apply(). At least 1. At most 2. It is
- * determined by channelCount1_pointwise1Before and pointwise21ChannelCount.
- *
-
-//!!! (2022/06/07 Remarrked) No longer recorded.
-//  * @member {boolean} bPointwise1
-//  *   If true, the pointwise1 convolution exists.
-
+ *   How many output tensors will be returned by the parameter outputTensors of apply(). At least 1. At most 2.
  *
  * @member {string} pointwise1ActivationName
  *   The activation function id (Params.pointwise1ActivationId.valueDesc.Ids.Xxx) after the first pointwise convolution.
- *
-
-//!!! (2022/06/07 Remarrked) No longer recorded.
-//  * @member {boolean} bDepthwise1
-//  *   If true, the first depthwise convolution (or average pooling, or maximum pooling) exists.
-//  *
-//  * @member {boolean} bDepthwise2
-//  *   If true, the second depthwise convolution (or average pooling, or maximum pooling) exists.
- 
  *
  * @member {string} depthwise_AvgMax_Or_ChannelMultiplier_Name
  *   Depthwise operation name.
  *
  * @member {string} depthwiseActivationName
  *   The activation function name (Params.depthwiseActivationId.valueDesc.Ids.Xxx) after depthwise convolution.
- *
-
-//!!! (2022/06/07 Remarrked) No longer recorded.
-//  * @member {boolean} bPointwise2
-//  *   If true, the pointwise2 (i.e. pointwise20 or/and pointwise21) convolution exists.
-//  *
-//  * @member {boolean} bPointwise20
-//  *   If true, the first pointwise2 convolution exists.
-//  *
-//  * @member {boolean} bPointwise21
-//  *   If true, the second pointwise2 convolution exists.
-
  *
  * @member {string} pointwise20ActivationName
  *   The activation function id (Params.pointwise20ActivationId.valueDesc.Ids.Xxx) after the first pointwise2 convolution.
@@ -242,9 +211,15 @@ import { Params } from "./Block_Params.js";
  *
  * @member {number} inChannels1
  *   The channel count of the second input tensor (i.e. inputTensors[ 1 ]). It is zero or positive (never negative).
- *     - If ( this.channelCount1_pointwise1Before >= 0 ), inChannels1 is the same as this.channelCount1_pointwise1Before.
- *     - If ( this.channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ),
- *         (-3), inChannels1 will be the same as channelCount_pointwise20After_concat2Before.
+ *
+ *     - If ( this.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY ) or
+ *          ( this.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL ),
+ *         inChannels1 is the same as this.channelCount1_pointwise1Before.
+ *
+ *     - If ( this.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY ) or
+ *          ( this.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL ) ),
+ *         inChannels1 will be the same as pointwise20ChannelCount.
+ *
  *     - Otherwise, inChannels1 will be zero.
  *
  * @member {TensorPlaceholder.Base} input0
@@ -285,16 +260,16 @@ import { Params } from "./Block_Params.js";
  *     - The channelShuffler's outputGroupCount must be 2 (i.e. split into two groups after channel-shuffling).
  *
  *     - It is used when:
- *       - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 )
- *           (-3) (ShuffleNetV2's body/tail) (i.e. channel shuffle the concatenated pointwise20 and input1).
+ *       - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD )
+ *         ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY )
+ *         ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL )
+ *         - The channelShuffler_ConcatPointwiseConv will be used.
  *         - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
  *             of pointwise20 and input1.
  *
- *       - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
- *           (-4) (ShuffleNetV2_ByMobileNetV1's head)
- *
- *       - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
- *           (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+ *       - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD )
+ *         ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL )
+ *         - The channelShuffler_ConcatPointwiseConv.outputGroupCount will be used.
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
@@ -313,8 +288,6 @@ import { Params } from "./Block_Params.js";
  * apply__input0__output0_output1(), apply__input0__output0() according to the initer()'s parameters.
  *
  */
-//!!! (2022/06/08 Remarked) seems not necessary
-//class Base extends ReturnOrClone.Root {
 class Base {
 
   /**
@@ -469,7 +442,7 @@ class Base {
 
     if ( this.bHigherHalfDifferent == true ) {
 
-      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (8) )
       // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's head)
       if ( this.bHigherHalfDepthwise2 == true ) {
 
@@ -526,11 +499,10 @@ class Base {
           + `input1's channel count ( ${this.channelCount1_pointwise1Before} ) should be ( ${params.input1ChannelCount} ).`
       );
 
-      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3) )
-      // (i.e. ShuffleNetV2's body/tail)
-      //
-      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_Xxx (>0) )
-      // (i.e. ShuffleNetV2_ByMobileNetV1's body/tail)
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY (3) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL (4) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY (6) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL (7) )
       //
       if ( this.inputTensorCount > 1 ) {
 
@@ -572,9 +544,6 @@ class Base {
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = pointwise1.byteOffsetEnd;
 
-//!!! (2022/06/07 Remarked)
-      //this.bPointwise1 = pointwise1.bExisted;
-
       this.operationArray.operation_append( pointwise1 );
     }
 
@@ -584,10 +553,6 @@ class Base {
     // 3. The depthwise operation.
     //
     // Note: When ( pad == valid ), it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
-
-//!!! (2022/06/08 Remarked)
-//     // Only if depthwise operation is specified, creating them.
-//     if ( this.AvgMax_Or_ChannelMultiplier != 0 ) {
 
     // The depthwise2 processes the input0 directly (i.e. not the pointwise1 result of input0, and not input1).
     let depthwise2_input0 = this.operationArray.input0; // (Note: Not .endingInput0, Not .input1)
@@ -602,14 +567,14 @@ class Base {
 
         if ( this.bHigherHalfDifferent == true ) {
 
-          // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
+          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (8) )
           // (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
           if ( this.bHigherHalfDepthwise2 == true ) {
             nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2;
 
           // If depthwise1's higher half is responsible for achieving pass-through, it needs height and width of input image.
           //
-          // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
+          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (9) )
           // (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
           } else {
             nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
@@ -626,15 +591,15 @@ class Base {
         if ( !depthwise1.init( params.defaultInput, this.byteOffsetEnd ) )
           return false;  // e.g. input array does not have enough data.
         this.byteOffsetEnd = depthwise1.byteOffsetEnd;
-
-//!!! (2022/06/07 Remarked)
-        //this.bDepthwise1 = depthwise1.bExisted;
       }
 
       // 3.2 The depthwise2 operation.
       //
-      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE (-2) )
-      // (i.e. ShuffleNetV2's head (and ShuffleNetV2_ByPointwise21's head) (simplified))
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD (2) )
+      //
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (5) )
+      // (i.e. ShuffleNetV2_ByPointwise21's head)
+      //
       let depthwise2;
       if ( this.bDepthwise2Requested ) {
 
@@ -652,10 +617,6 @@ class Base {
           return false;  // e.g. input array does not have enough data.
         this.byteOffsetEnd = depthwise2.byteOffsetEnd;
 
-//!!! (2022/06/07 Remarked)
-        //this.bDepthwise2 = depthwise2.bExisted;
-
-
         // Note:
         //   - If ( depthwise2.bExisted == true ), the depthwise2 is requested and created. It means ONE_INPUT_TWO_DEPTHWISE.
         //
@@ -665,9 +626,6 @@ class Base {
 
       } else {
         // Since the depthwise2 is not requested, it is always short circuit to input1 (i.e. not input0).
-
-//!!! (2022/06/07 Remarked)
-        //this.bDepthwise2 = false;
       }
 
       this.operationArray.operation_append( depthwise1, depthwise2 );
@@ -676,17 +634,13 @@ class Base {
     // The later case could improve performance.
     } else {
 
-      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE (-2) )
-      // (i.e. ShuffleNetV2's head (and ShuffleNetV2_ByPointwise21's head) (simplified))
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD (2) )
+      //
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (5) )
+      // (i.e. ShuffleNetV2_ByPointwise21's head)
       //
       // Even if no depthwise, however, a .endingInput1 is necessary for concat1 to operate on. So create a dummy one.
       if ( this.bDepthwise2Requested ) {
-
-//!!! (2022/06/11 Remarked) Using one dummy instead.
-//         let depthwise1Dummy = new Operation.Root( this.operationArray.endingInput0, null, 1 );
-//         let depthwise2Dummy = new Operation.Root( depthwise2_input0, null, 1 );
-//         this.operationArray.operation_append( depthwise1Dummy, depthwise2Dummy );
-
         // Note: The two inputs of depthwise12Dummy might be the same one in fact.
         let depthwise12Dummy = new Operation.Root( this.operationArray.endingInput0, depthwise2_input0, 2 );
         this.operationArray.operation_append( depthwise12Dummy );
@@ -722,14 +676,14 @@ class Base {
 
       // For bHigherHalfAnotherPointwise (i.e. ( pointwise20ChannelCount > 0 ) ) or bAllPassThrough (i.e. ( pointwise20ChannelCount == 0 ) ).
       //
-      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (8) )
       // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's head)
       if ( this.bHigherHalfDepthwise2 == true ) {
         nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE;
 
       // For bHigherHalfPassThroughShuffle (i.e. ( pointwise20ChannelCount > 0 ) ) or bAllPassThroughShuffle (i.e. ( pointwise20ChannelCount == 0 ) ).
       //
-      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (9) )
       // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
       } else {
         nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
@@ -773,9 +727,6 @@ class Base {
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = pointwise20.byteOffsetEnd;
 
-//!!! (2022/06/07 Remarked)
-      //this.bPointwise20 = pointwise20.bExisted;
-
       // 6.2 Pointwise21
       let pointwise21;
       if ( this.pointwise21ChannelCount > 0 ) {
@@ -792,16 +743,10 @@ class Base {
           return false;  // e.g. input array does not have enough data.
         this.byteOffsetEnd = pointwise21.byteOffsetEnd;
 
-//!!! (2022/06/07 Remarked)
-        //this.bPointwise21 = pointwise21.bExisted;
-
       } else { // Since pointwise21 is not requested (i.e. channel count is not positive), do not create the object for saving memory.
-        //this.bPointwise21 = false;
       }
 
       // 6.3 Pointwise2 (= Pointwise20 + Pointwise21 )
-//!!! (2022/06/07 Remarked)
-      //this.bPointwise2 = ( this.bPointwise20 || this.bPointwise21 );
 
       this.operationArray.operation_append( pointwise20, pointwise21 );
     }
@@ -851,24 +796,17 @@ class Base {
 
       let addInput0ToPointwise20;
       if ( this.operationArray.endingInput0?.is_height_width_channelCount_same_byTensorPlaceholder( this.operationArray.input0 ) ) {
-//!!! (2022/06/07 Remarked)
-        //this.bShould_addInput0ToPointwise20 = true;
         addInput0ToPointwise20 = new Operation.AddTwoTensors( this.operationArray.input0, this.operationArray.endingInput0 );
       }
 
       // Note: Only input0 (not input1) will be used to add to output.
       let addInput0ToPointwise21;
       if ( this.operationArray.endingInput1?.is_height_width_channelCount_same_byTensorPlaceholder( this.operationArray.input0 ) ) {
-//!!! (2022/06/07 Remarked)
-        //this.bShould_addInput0ToPointwise21 = true;
         addInput0ToPointwise21 = new Operation.AddTwoTensors( this.operationArray.input0, this.operationArray.endingInput1 );
       }
 
       this.operationArray.operation_append( addInput0ToPointwise20, addInput0ToPointwise21 );
     }
-
-//!!! (2022/06/07 Remarked)
-    //this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise20 || this.bShould_addInput0ToPointwise21;
 
     // 8.2
     ++progressToAdvance.value;
