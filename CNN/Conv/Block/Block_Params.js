@@ -597,20 +597,12 @@ class Params extends Weights.Params {
   get inputHeight0()                        { return this.parameterMapModified.get( Params.inputHeight0 ); }
   get inputWidth0()                         { return this.parameterMapModified.get( Params.inputWidth0 ); }
   get channelCount0_pointwise1Before()      { return this.parameterMapModified.get( Params.channelCount0_pointwise1Before ); }
-
-  /** @return {number} The number version of channelCount1_pointwise1Before. */
   get channelCount1_pointwise1Before()      { return this.parameterMapModified.get( Params.channelCount1_pointwise1Before ); }
 
-//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
-  /** @return {string} The string version of channelCount1_pointwise1Before. */
-  get channelCount1_pointwise1Before_Name() {
-    return Params.channelCount1_pointwise1Before.getStringOfValue( this.channelCount1_pointwise1Before );
-  }
-
-  /** @return {number} The number version of channelCount1_pointwise1Before. */
+  /** @return {number} The number version of nConvBlockTypeId. */
   get nConvBlockTypeId()      { return this.parameterMapModified.get( Params.nConvBlockTypeId ); }
 
-  /** @return {string} The string version of channelCount1_pointwise1Before. */
+  /** @return {string} The string version of nConvBlockTypeId. */
   get nConvBlockTypeName() {
     return Params.nConvBlockTypeId.getStringOfValue( this.nConvBlockTypeId );
   }
@@ -653,11 +645,24 @@ class Params extends Weights.Params {
   get bOutput1Requested()         { return this.parameterMapModified.get( Params.bOutput1Requested ); }
 
   /**
-   * Determined by channelCount1_pointwise1Before, bOutput1Requested, pointwise20ChannelCount.
+   * Determined by nConvBlockTypeId, pointwise20ChannelCount.
    */
   get pointwise21ChannelCount()   {
 
-    switch ( this.channelCount1_pointwise1Before ) {
+//!!! (2022/06/14) WRONG
+//     let infoConvBlockType = ConvBlockType.Singleton.getInfoById( this.nConvBlockTypeId );
+// 
+//     if ( infoConvBlockType.outputTensorCount >= 2 ) {
+//       return this.pointwise20ChannelCount; // Still may be 0.
+//     else
+//       return 0; // No pointwise21. (because no 
+
+
+    // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
+
+//!!! ...unfinshed... (2022/06/14) Perhaps, should have flag ConvBlockType.Info.bPointwise21
+
+    switch ( this.nConvBlockTypeId ) {
       // In the following cases, there is always no pointwise21.
       //   - TWO_INPUTS_CONCAT_POINTWISE20_INPUT1    : (-3) (ShuffleNetV2's body/tail)
       //   - ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: (-4) (ShuffleNetV2_ByMobileNetV1's head)
