@@ -60,6 +60,7 @@ class TestCorrectnessInfo {
 
       Block.Params.set_input1ChannelCount_by.call( referredParams,
         channelCount0_pointwise1Before, channelCount1_pointwise1Before,
+        nConvBlockType,
         pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise20ChannelCount );
 
       bTwoInputs = ( referredParams.inputTensorCount == 2 );
