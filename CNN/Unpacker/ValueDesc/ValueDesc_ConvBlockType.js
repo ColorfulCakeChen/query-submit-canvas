@@ -23,7 +23,7 @@ import { Int } from "./ValueDesc_Base.js";
 class ConvBlockType extends Int {
 
   constructor() {
-    super( 0, 9,
+    super( 0, 10,
       [
         "MOBILE_NET_V1_HEAD_BODY_TAIL",                     // ( 0)
         "MOBILE_NET_V2_BODY_TAIL",                          // ( 1)
