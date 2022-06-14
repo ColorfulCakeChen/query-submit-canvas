@@ -1106,21 +1106,28 @@ class Base extends TestParams.Base {
     // Depthwise2
     {
       // In ShuffleNetV2's head.
-      if (   ( this.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2) (ShuffleNetV2's head (simplified))
-          || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+      if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
+          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (5)
+          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (8)
          ) {
 
         let depthwise2_inputChannelCount;
 
-        if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) { // (-2) (ShuffleNetV2's head (simplified))
+      if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
+          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (5)
+         ) {
           depthwise2_inputChannelCount = paramsAll.channelCount0_pointwise1Before; // Use input0.
 
-        // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+        // (8) (ShuffleNetV2_ByMobileNetV1's head)
         //
         // Use pointwise1.outputChannelCount as input1ChannelCount so that it has the same structure of depthwise1 and pointwise20.
         //
-        } else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
-          depthwise2_inputChannelCount = pointwise1_resultOutputChannelCount;
+        } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (8)
+
+//!!! ...unfinished... (2022/06/14) should also be paramsAll.channelCount0_pointwise1Before; // Use input0.
+//          depthwise2_inputChannelCount = pointwise1_resultOutputChannelCount;
+
+          depthwise2_inputChannelCount = paramsAll.channelCount0_pointwise1Before; // Use input0.
         }
 
         // Only if depthwise operation is requested and necessary, create them.
