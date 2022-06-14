@@ -1394,7 +1394,8 @@ class Base {
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
       + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels1}, outChannelsAll=${this.outChannelsAll}, `
 
-      + `channelCount1_pointwise1Before_Name=${this.channelCount1_pointwise1Before_Name}(${this.channelCount1_pointwise1Before}), `
+      + `channelCount1_pointwise1Before=${this.channelCount1_pointwise1Before}, `
+      + `nConvBlockTypeIdName=${this.nConvBlockTypeIdName}(${this.nConvBlockTypeId}), `
 
       + `bHigherHalfDifferent=${this.bHigherHalfDifferent}, `
       + `bHigherHalfDepthwise2=${this.bHigherHalfDepthwise2}, `
