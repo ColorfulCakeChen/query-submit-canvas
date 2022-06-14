@@ -131,13 +131,9 @@ ConvBlockType.Info = class {
    *   Whether the higher half channels will be processed by depthwise2. Usually true only if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD.
    *
    * @param {boolean} bPointwise21
-   *   Whether the 2nd pointwise2 existed. Usually true only if ??? SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD.
-   * Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
-   
-//!!! ...unfinshed... (2022/06/14) Perhaps, should have flag ConvBlockType.Info.bPointwise21
-    // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
-
-
+   *   Whether the 2nd pointwise2 existed. Usually true only if SHUFFLE_NET_V2_HEAD, SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE,
+   * SHUFFLE_NET_V2_BY_POINTWISE21_HEAD, SHUFFLE_NET_V2_BY_POINTWISE21_BODY. Note: Even if ( outputTensorCount == 2 ), it does not
+   * means pointwise21 existed.
    */
   constructor( nConvBlockTypeId, inputTensorCount, outputTensorCount,
     bDepthwise2Requested, bConcat1Requested, bAddInputToOutputRequested, bConcat2ShuffleSplitRequested,
