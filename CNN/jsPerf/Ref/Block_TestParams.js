@@ -18,10 +18,10 @@ import * as Block from "../../Conv/Block.js";
  *
  * @member {object} in
  *   The "in" sub-object's data members represent every parameters of the Block.Params's constructor. That is,
- * it has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, pointwise1ChannelCount,
- * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth,
- * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
- * bOutput1Requested, bKeepInputTensor. It also has the following properties:
+ * it has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, nConvBlockTypeId,
+ * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
+ * depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise20ChannelCount, bPointwise20Bias,
+ * pointwise20ActivationId, bKeepInputTensor. It also has the following properties:
  *   - paramsNumberArrayObject
  *   - inputFloat32Array
  *   - byteOffsetBegin
@@ -63,12 +63,12 @@ class Base extends TestParams.Base {
     inputHeight0, inputWidth0,
     channelCount0_pointwise1Before,
     channelCount1_pointwise1Before,
+    nConvBlockType,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
-    bOutput1Requested,
     bKeepInputTensor
   ) {
     this.in.paramsNumberArrayObject = {};
@@ -81,7 +81,6 @@ class Base extends TestParams.Base {
       bDepthwiseBias, depthwiseActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
-      bOutput1Requested,
       bKeepInputTensor
     };
 
@@ -101,10 +100,10 @@ class Base extends TestParams.Base {
    * The name should be one of Base.paramsNameOrderArray[] elements.
    *
    * @param {object} this.out
-   *   An object which has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, pointwise1ChannelCount,
-   * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth,
-   * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
-   * bOutput1Requested, bKeepInputTensor. And depthwisePadInfo.
+   *   An object which has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, nConvBlockType,
+   * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
+   * depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise20ChannelCount, bPointwise20Bias,
+   * pointwise20ActivationId, bKeepInputTensor. And depthwisePadInfo.
    *
    * @param {number} weightsElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
@@ -153,12 +152,12 @@ class Base extends TestParams.Base {
     Block.Params.setFlags_by.call( this.out.flags,
       this.out.inputHeight0, this.out.inputWidth0,
       this.out.channelCount0_pointwise1Before, this.out.channelCount1_pointwise1Before,
+      this.out.nConvBlockTypeId,
       this.out.pointwise1ChannelCount,
       this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.out.bDepthwiseBias, this.out.depthwiseActivationId,
       this.out.nSqueezeExcitationChannelCountDivisor, this.out.bSqueezeExcitationPrefix,
       this.out.pointwise20ChannelCount, this.out.bPointwise20Bias,
-      this.out.bOutput1Requested
     );
   }
 
@@ -330,8 +329,7 @@ class Base extends TestParams.Base {
       // Test all named values plus two more un-named values.
       channelCount1_pointwise1Before: [
         ValueDesc.channelCount1_pointwise1Before.Singleton.range.min,
-        ValueDesc.channelCount1_pointwise1Before.Singleton.range.min
-          + ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2 - 1
+        ValueDesc.channelCount1_pointwise1Before.Singleton.range.min + 4 - 1
       ],
 
       depthwise_AvgMax_Or_ChannelMultiplier: [
@@ -377,10 +375,10 @@ class Base extends TestParams.Base {
 //         //ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.max
 //       ],
 
-      bOutput1Requested: undefined,
-//      bOutput1Requested: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
-//      bOutput1Requested: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min ],
-//      bOutput1Requested: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
+      nConvBlockTypeId: [
+        Block.Params.nConvBlockTypeId.valueDesc.range.min,
+        Block.Params.nConvBlockTypeId.valueDesc.range.max
+      ],
 
       bKeepInputTensor: undefined,
 //      bKeepInputTensor: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
@@ -397,8 +395,6 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.pointwise20ChannelCount, this.valueOutMinMax.pointwise20ChannelCount ),
       new TestParams.ParamDescConfig( Block.Params.bPointwise20Bias,        this.valueOutMinMax.Bias ),
       new TestParams.ParamDescConfig( Block.Params.pointwise20ActivationId, this.valueOutMinMax.ActivationId ),
-
-      new TestParams.ParamDescConfig( Block.Params.bOutput1Requested,       this.valueOutMinMax.bOutput1Requested ),
 
       new TestParams.ParamDescConfig( Block.Params.bPointwise1Bias,         this.valueOutMinMax.Bias ),
 
@@ -425,9 +421,10 @@ class Base extends TestParams.Base {
 
       new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,        this.valueOutMinMax.bKeepInputTensor ),
 
-  
       new TestParams.ParamDescConfig( Block.Params.channelCount1_pointwise1Before,
                                                                             this.valueOutMinMax.channelCount1_pointwise1Before ),
+
+      new TestParams.ParamDescConfig( Block.Params.nConvBlockTypeId,        this.valueOutMinMax.nConvBlockTypeId ),
 
     ];
 
@@ -1016,6 +1013,9 @@ class Base extends TestParams.Base {
     let paramsAll = this.out;
     let io_paramsNumberArrayObject = this.in.paramsNumberArrayObject;
 
+    let infoConvBlockType = ConvBlockType.Singleton.getInfoById( paramsAll.nConvBlockTypeId );
+
+
     // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use similar calculation logic:
     //    ONE_INPUT_HALF_THROUGH                   // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
     //    TWO_INPUTS_CONCAT_POINTWISE20_INPUT1     // (-3) (ShuffleNetV2's body/tail)
@@ -1158,7 +1158,9 @@ class Base extends TestParams.Base {
         pointwise21ChannelCount = 0;
 
       // Otherwise, if output1 is requested, pointwise21's output channel count is the same as pointwise20's.
-      } else if ( paramsAll.bOutput1Requested ) {
+//!!! (2022/06/14 Remarked) Replaced by nConvBlockTypeId
+//      } else if ( paramsAll.bOutput1Requested ) {
+      } else if ( infoConvBlockType.outputTensorCount > 1 ) {
         pointwise21ChannelCount = pointwise20ChannelCount_original;
       }
 
@@ -1297,6 +1299,7 @@ Base.paramsNameOrderArray = [
   Block.Params.inputWidth0.paramName,
   Block.Params.channelCount0_pointwise1Before.paramName,
   Block.Params.channelCount1_pointwise1Before.paramName,
+  Block.Params.nConvBlockTypeId.paramName,
   Block.Params.pointwise1ChannelCount.paramName,
   Block.Params.bPointwise1Bias.paramName,
   Block.Params.pointwise1ActivationId.paramName,
@@ -1311,7 +1314,6 @@ Base.paramsNameOrderArray = [
   Block.Params.pointwise20ChannelCount.paramName,
   Block.Params.bPointwise20Bias.paramName,
   Block.Params.pointwise20ActivationId.paramName,
-  Block.Params.bOutput1Requested.paramName,
 
   Block.Params.bKeepInputTensor.paramName,
   
