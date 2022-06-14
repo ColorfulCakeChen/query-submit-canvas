@@ -570,6 +570,8 @@ class Params extends Weights.Params {
 
     // 0. Prepare.
 
+    let infoConvBlockType = ConvBlockType.Singleton.getInfoById( nConvBlockType );
+
     // 0.1 The input tensor count is totally determined by channelCount1_pointwise1Before.
     Params.set_inputTensorCount_by.call( this, nConvBlockType );
 
@@ -590,35 +592,27 @@ class Params extends Weights.Params {
     );
 
     // 0.5 Whether manipulate the higher half channel of convolution.
-    this.bHigherHalfDifferent = this.bHigherHalfDepthwise2 = false;
-    switch ( channelCount1_pointwise1Before ) {
-      case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
-        this.bHigherHalfDepthwise2 = true;
-        // No break. Falling-through.
-
-      case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
-        this.bHigherHalfDifferent = true;
-        break;
-    }
+    this.bHigherHalfDifferent = infoConvBlockType.bHigherHalfDifferent;
+    this.bHigherHalfDepthwise2 = infoConvBlockType.bHigherHalfDepthwise2;
 
     // 1. One input.
     if ( this.inputTensorCount == 1 ) {
 
       this.bConcat2ShuffleSplitRequested = false; // One input never uses concat2-shuffle-split.
 
-      switch ( channelCount1_pointwise1Before ) {
+      switch ( nConvBlockType ) {
         // 1.1
-        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT: // ( 0)
-        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
-        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
+        case ValueDesc.ConvBlockType.Singleton.Ids.ONE_INPUT: // ( 0)
+        case ValueDesc.ConvBlockType.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
+        case ValueDesc.ConvBlockType.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
           this.bDepthwise2Requested = this.bConcat1Requested = false; this.bAddInputToOutputRequested = false; break;
 
         // 1.2 The only case uses add-input-to-output. (MobileNetV2)
-        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1)
+        case ValueDesc.ConvBlockType.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1)
           this.bDepthwise2Requested = this.bConcat1Requested = false; this.bAddInputToOutputRequested =  true; break;
 
         // 1.3 The only case uses depthwise2. (simplified ShuffleNetV2's head)
-        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2)
+        case ValueDesc.ConvBlockType.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2)
           this.bDepthwise2Requested = this.bConcat1Requested =  true; this.bAddInputToOutputRequested = false; break;
       }
 
