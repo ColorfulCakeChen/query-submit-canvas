@@ -109,7 +109,7 @@ class ShuffleNetV2_ByPointwise21 extends ShuffleNetV2 {
 
     } else {
       this.channelCount1_pointwise1Before
-        = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE_CONCAT_TWO_POINTWISE_TWO_OUTPUT;
+        = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD;
       this.pointwise1ChannelCount = stageParams.sourceChannelCount * 2; // Double of input0. (Same as pointwise20.)
       this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     }
