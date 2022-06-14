@@ -76,6 +76,7 @@ class Base extends TestParams.Base {
       inputHeight0, inputWidth0,
       channelCount0_pointwise1Before,
       channelCount1_pointwise1Before,
+      nConvBlockType,
       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       bDepthwiseBias, depthwiseActivationId,
@@ -154,8 +155,8 @@ class Base extends TestParams.Base {
       this.out.channelCount0_pointwise1Before, this.out.channelCount1_pointwise1Before,
       this.out.nConvBlockTypeId,
       this.out.pointwise1ChannelCount,
-      this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
-      this.out.bDepthwiseBias, this.out.depthwiseActivationId,
+      this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
+      this.out.depthwiseStridesPad, this.out.bDepthwiseBias, this.out.depthwiseActivationId,
       this.out.nSqueezeExcitationChannelCountDivisor, this.out.bSqueezeExcitationPrefix,
       this.out.pointwise20ChannelCount, this.out.bPointwise20Bias,
     );
@@ -173,8 +174,8 @@ class Base extends TestParams.Base {
         return false;
     }
 
-    // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-    if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
+    // (8) (ShuffleNetV2_ByMobileNetV1's head)
+    if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) {
 
       if ( this.out.pointwise1ChannelCount > 0 ) {
 
@@ -186,8 +187,8 @@ class Base extends TestParams.Base {
       // For ( pointwise1ChannelCount > 0 ), pointwise1 result is just the input0 itself (i.e. always the same).
       }
 
-    // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-    } else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) {
+    // (9) (ShuffleNetV2_ByMobileNetV1's body/tail)
+    } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) {
 
       // The input and output channel count must be the same. Otherwise, the concat2-split-shuffle could not operate properly.
       if ( this.out.channelCount0_pointwise1Before != this.out.pointwise20ChannelCount )
@@ -199,9 +200,9 @@ class Base extends TestParams.Base {
       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG:
       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX:
 
-        switch ( this.out.channelCount1_pointwise1Before ) { // bHigherHalfDifferent
-          case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-          case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+        switch ( this.out.nConvBlockTypeId ) { // bHigherHalfDifferent
+          case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD: // (8) (ShuffleNetV2_ByMobileNetV1's head)
+          case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL: // (9) (ShuffleNetV2_ByMobileNetV1's body/tail)
 
             return false;
 
@@ -232,22 +233,11 @@ class Base extends TestParams.Base {
       if ( this.out.flags.bDepthwiseRequestedAndNeeded ) {
 
         // For depthwise1/depthwis2.
-//!!! (2022/06/08 Remarked) since .bDepthwiseRequestedAndNeeded implies depthwise existed.
-//         if (   ( this.out.depthwise_AvgMax_Or_ChannelMultiplier != ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) // (0)
-//             && ( this.out.depthwiseFilterWidth == 1 )
-//            )
         if ( this.out.depthwiseFilterWidth == 1 )
           return false;
 
         let pointwise2_inputWidth;
         {
-//!!! (2022/06/08 Remarked) since .bDepthwiseRequestedAndNeeded implies depthwise existed.
-//           if ( this.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) { // (0)
-//             pointwise2_inputWidth = this.out.inputWidth0;
-//           } else {
-//             this.generate_out_depthwisePadInfo(); // So that this.out.depthwisePadInfo is usable.
-//             pointwise2_inputWidth = this.out.depthwisePadInfo.outputWidth;
-//           }
           this.generate_out_depthwisePadInfo(); // So that this.out.depthwisePadInfo is usable.
           pointwise2_inputWidth = this.out.depthwisePadInfo.outputWidth;
         }
@@ -688,52 +678,62 @@ class Base extends TestParams.Base {
     return squeezeExcitationPostfixOut;
   }
 
-  /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (-4) (ShuffleNetV2_ByMobileNetV1's head). */
-  channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() {
-    if ( this.out.channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (0) (MobileNetV1 (General Pointwise1-Depthwise1-Pointwise2)). */
+  nConvBlockTypeId__is__ONE_INPUT() {
+    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (-5) (ShuffleNetV2_ByMobileNetV1's body/tail). */
-  channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() {
-    if ( this.out.channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (1) (MobileNetV2 body/tail). */
+  nConvBlockTypeId__is__MOBILE_NET_V2_BODY_TAIL() {
+    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (-3) (ShuffleNetV2's body/tail). */
-  channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE20_INPUT1() {
-    if ( this.out.channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 )
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (2) (ShuffleNetV2 head). */
+  nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() {
+    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise21's head)
-   * (simplified)). */
-  channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() {
-    if ( this.out.channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE )
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (3 or 4) (ShuffleNetV2's body/tail). */
+  nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY_or_TAIL() {
+    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY )
+      return true;
+    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (-1) (MobileNetV2). */
-  channelCount1_pointwise1Before__is__ONE_INPUT_ADD_TO_OUTPUT() {
-    if ( this.out.channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT )
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (5) (ShuffleNetV2_ByPointwise21's head). */
+  nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() {
+    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is ( 0) (MobileNetV1 (General Pointwise1-Depthwise1-Pointwise2)). */
-  channelCount1_pointwise1Before__is__ONE_INPUT() {
-    if ( this.out.channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT )
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (6 or 7) (ShuffleNetV2_ByPointwise21's body/tail). */
+  nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL() {
+    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY )
+      return true;
+    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (> 0) (TWO_INPUTS_XXX). */
-  channelCount1_pointwise1Before__is__TWO_INPUTS() {
-    if ( this.out.channelCount1_pointwise1Before > 0 )
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (8) (ShuffleNetV2_ByMobileNetV1's head). */
+  nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() {
+    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD )
+      return true;
+    return false;
+  }
+
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (9) (ShuffleNetV2_ByMobileNetV1's body/tail). */
+  nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() {
+    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL )
       return true;
     return false;
   }
@@ -1023,13 +1023,17 @@ class Base extends TestParams.Base {
     let infoConvBlockType = ConvBlockType.Singleton.getInfoById( paramsAll.nConvBlockTypeId );
 
 
-    // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use similar calculation logic:
-    //    ONE_INPUT_HALF_THROUGH                   // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-    //    TWO_INPUTS_CONCAT_POINTWISE20_INPUT1     // (-3) (ShuffleNetV2's body/tail)
+    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
+    //    SHUFFLE_NET_V2_BODY                        // (3) (ShuffleNetV2's body/tail)
+    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL  // (9) (ShuffleNetV2_ByMobileNetV1's body/tail)
     //
-    // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use similar calculation logic:
-    //    ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-    //    ONE_INPUT_TWO_DEPTHWISE                  // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise21's head) (simplified))
+    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
+    //    SHUFFLE_NET_V2_TAIL                        // (4) (ShuffleNetV2's body/tail)
+    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL  // (9) (ShuffleNetV2_ByMobileNetV1's body/tail)
+    //
+    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
+    //    SHUFFLE_NET_V2_HEAD                        // (2) (ShuffleNetV2's head)
+    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD       // (8) (ShuffleNetV2_ByMobileNetV1's head)
 
 
     // 0.
@@ -1045,7 +1049,7 @@ class Base extends TestParams.Base {
     //
     // The reason is that Block will only extract filters and biases weights of the above parameters twice in this case.
     //
-    if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+    if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (8) (ShuffleNetV2_ByMobileNetV1's head)
       this.doubleParamValue( Block.Params.pointwise20ChannelCount );
 
     // In ShuffleNetV2_ByMobileNetV1's body/tail:
@@ -1057,7 +1061,7 @@ class Base extends TestParams.Base {
     //
     // The reason is that Block will only extract filters weights of half the above parameters in this case.
     //
-    } else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+    } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) { // (9) (ShuffleNetV2_ByMobileNetV1's body/tail)
       this.doubleParamValue( Block.Params.channelCount0_pointwise1Before );
 
       if ( pointwise1ChannelCount_original == 0 ) {
