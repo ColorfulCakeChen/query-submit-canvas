@@ -38,16 +38,16 @@ class ConvBlockType extends Int {
       ],
 
       [
-         new ConvBlockType.Info( 0, 1, 1, false, false, false, , false, false,  ),
-         new ConvBlockType.Info( 1, 1, 1, false, false,  true, , false, false,  ),
-         new ConvBlockType.Info( 2, 1, 2,  true, false, false, , false, false,  ),
-         new ConvBlockType.Info( 3, 2, 2, false, false, false, , false, false,  ),
-         new ConvBlockType.Info( 4, 2, 1, false, false, false, , false, false,  ),
-         new ConvBlockType.Info( 5, 1, 2,  true,  true, false, , false, false,  ),
-         new ConvBlockType.Info( 6, 2, 2, false,  true, false, , false, false,  ),
-         new ConvBlockType.Info( 7, 2, 1, false,  true, false, , false, false,  ),
-         new ConvBlockType.Info( 8, 1, 1, false, false, false, ,  true,  true,  ),
-         new ConvBlockType.Info( 9, 1, 1, false, false, false, ,  true, false,  ),
+         new ConvBlockType.Info( 0, 1, 1, false, false, false, false, false, false ),
+         new ConvBlockType.Info( 1, 1, 1, false, false,  true, false, false, false ),
+         new ConvBlockType.Info( 2, 1, 2,  true, false, false,  true, false, false ),
+         new ConvBlockType.Info( 3, 2, 2, false, false, false,  true, false, false ),
+         new ConvBlockType.Info( 4, 2, 1, false, false, false,  true, false, false ),
+         new ConvBlockType.Info( 5, 1, 2,  true,  true, false, false, false, false ),
+         new ConvBlockType.Info( 6, 2, 2, false,  true, false, false, false, false ),
+         new ConvBlockType.Info( 7, 2, 1, false,  true, false, false, false, false ),
+         new ConvBlockType.Info( 8, 1, 1, false, false, false, false,  true,  true ),
+         new ConvBlockType.Info( 9, 1, 1, false, false, false, false,  true, false ),
       ]
     );
   }
@@ -109,11 +109,22 @@ ConvBlockType.Info = class {
   /**
    *
    * @param {boolean} bHigherHalfDifferent
-   *   Whether the higher half channels will be handled different. Usually true only if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_XXX.
+   *   Whether the higher half channels will be handled different. Usually true only if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_Xxx.
    *
    * @param {boolean} bHigherHalfDepthwise2
    *   Whether the higher half channels will be processed by depthwise2. Usually true only if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD.
    *
+   * @param {boolean} bDepthwise2Requested
+   *   Whether needs depthwise2. Usually true only if SHUFFLE_NET_V2_BY_HEAD and SHUFFLE_NET_V2_BY_POINTWISE21_HEAD.
+   *
+   * @param {boolean} bConcat1Requested
+   *   Whether needs concat1 (i.e. concat after depthwise). Usually true only if SHUFFLE_NET_V2_BY_POINTWISE21_Xxx.
+   *
+   * @param {boolean} bAddInputToOutputRequested
+   *   Whether needs add-input-to-output. Usually true only if MOBILE_NET_V2_BODY_TAIL.
+   *
+   * @param {boolean} bConcat2ShuffleSplitRequested
+   *   Whether needs add-input-to-output. Usually true only if SHUFFLE_NET_V2_HEAD, SHUFFLE_NET_V2_BODY, SHUFFLE_NET_V2_TAIL.
    *
    */
   constructor( nConvBlockTypeId, inputTensorCount, outputTensorCount,
