@@ -35,17 +35,6 @@ class StridesPad extends Int {
    * @return {number} Return the strides (1 or 2) of the StridesPad.Singleton.Ids.Xxx.
    */
   static strides_get( nStridesPadId ) {
-
-//!!! (2022/06/10 Remarked) Use StridesPad.Info instead.
-//     switch ( nStridesPadId ) {
-//       case StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID: return 1; // (0)
-//       case StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME:  return 1; // (1)
-//       case StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME:  return 2; // (2)
-//       case StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID: return 2; // (3)
-//       default:
-//         return NaN;
-//     }
-
     let info = StridesPad.Singleton.getInfoById( nStridesPadId );
     if ( info )
       return info.strides;
@@ -57,16 +46,6 @@ class StridesPad extends Int {
    * @return {boolean} Return true, if the pad of the StridesPad.Singleton.Ids.Xxx is "valid".
    */
   static pad_isValid( nStridesPadId ) {
-
-//!!! (2022/06/10 Remarked) Use StridesPad.Info instead.
-//     switch ( nStridesPadId ) {
-//       case StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID: // (0)
-//       case StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID: // (3)
-//         return true;
-//       default:
-//         return false;
-//     }
-
     let info = StridesPad.Singleton.getInfoById( nStridesPadId );
     if ( info )
       return info.pad_isValid();
@@ -78,16 +57,6 @@ class StridesPad extends Int {
    * @return {boolean} Return true, if the pad of the StridesPad.Singleton.Ids.Xxx is "same".
    */
   static pad_isSame( nStridesPadId ) {
-
-//!!! (2022/06/10 Remarked) Use StridesPad.Info instead.
-//     switch ( nStridesPadId ) {
-//       case StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME:  // (1)
-//       case StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME:  // (2)
-//         return true;
-//       default:
-//         return false;
-//     }
-
     let info = StridesPad.Singleton.getInfoById( nStridesPadId );
     if ( info )
       return info.pad_isSame();
@@ -95,7 +64,7 @@ class StridesPad extends Int {
   }
 
   /**
-   * Convert pass-through style id to information object.
+   * Convert strides-pad style id to information object.
    *
    * @param {number} nStridesPadId
    *   It should be one of ValueDesc.StridesPad.Singleton.Ids.Xxx.
