@@ -4,53 +4,52 @@ import { Int } from "./ValueDesc_Base.js";
 
 /** Describe id, range, name of ConvBlockType.
  *
- * Convert number value into integer between [ 0, 9 ] representing operation:
- *   - 0: MOBILE_NET_V1_HEAD_BODY_TAIL               (General Pointwise1-Depthwise1-Pointwise2)
- *                                                   (MobileNetV1 or
- *                                                    MobileNetV2's head or
-
-//!!! ...unfinished... (2022/06/14) needs two outputs.
- *                                                    ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount == 0 ))
-
+ * Convert number value into integer between [ 0, 10 ] representing operation:
+ *   -  0: MOBILE_NET_V1_HEAD_BODY_TAIL                     (General Pointwise1-Depthwise1-Pointwise2)
+ *                                                          (MobileNetV1 or
+ *                                                           MobileNetV2's head)
  *
- *   - 1: MOBILE_NET_V2_BODY_TAIL
- *   - 2: SHUFFLE_NET_V2_HEAD
- *   - 3: SHUFFLE_NET_V2_BODY
- *   - 4: SHUFFLE_NET_V2_TAIL
- *   - 5: SHUFFLE_NET_V2_BY_POINTWISE21_HEAD         (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
- *   - 6: SHUFFLE_NET_V2_BY_POINTWISE21_BODY
- *   - 7: SHUFFLE_NET_V2_BY_POINTWISE21_TAIL
- *   - 8: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD
- *   - 9: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL
+ *   -  1: MOBILE_NET_V2_BODY_TAIL
+ *   -  2: SHUFFLE_NET_V2_HEAD
+ *   -  3: SHUFFLE_NET_V2_BODY
+ *   -  4: SHUFFLE_NET_V2_TAIL
+ *   -  5: SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE  (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount == 0 ))
+ *   -  6: SHUFFLE_NET_V2_BY_POINTWISE21_HEAD               (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
+ *   -  7: SHUFFLE_NET_V2_BY_POINTWISE21_BODY
+ *   -  8: SHUFFLE_NET_V2_BY_POINTWISE21_TAIL
+ *   -  9: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD
+ *   - 10: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL
  */
 class ConvBlockType extends Int {
 
   constructor() {
     super( 0, 9,
       [
-        "MOBILE_NET_V1_HEAD_BODY_TAIL",               // ( 0)
-        "MOBILE_NET_V2_BODY_TAIL",                    // ( 1)
-        "SHUFFLE_NET_V2_HEAD",                        // ( 2)
-        "SHUFFLE_NET_V2_BODY",                        // ( 3)
-        "SHUFFLE_NET_V2_TAIL",                        // ( 4)
-        "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD",         // ( 5)
-        "SHUFFLE_NET_V2_BY_POINTWISE21_BODY",         // ( 6)
-        "SHUFFLE_NET_V2_BY_POINTWISE21_TAIL",         // ( 7)
-        "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD",       // ( 8)
-        "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL",  // ( 9)
+        "MOBILE_NET_V1_HEAD_BODY_TAIL",                     // ( 0)
+        "MOBILE_NET_V2_BODY_TAIL",                          // ( 1)
+        "SHUFFLE_NET_V2_HEAD",                              // ( 2)
+        "SHUFFLE_NET_V2_BODY",                              // ( 3)
+        "SHUFFLE_NET_V2_TAIL",                              // ( 4)
+        "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE",  // ( 5)
+        "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD",               // ( 6)
+        "SHUFFLE_NET_V2_BY_POINTWISE21_BODY",               // ( 7)
+        "SHUFFLE_NET_V2_BY_POINTWISE21_TAIL",               // ( 8)
+        "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD",             // ( 9)
+        "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL",        // (10)
       ],
 
       [
-         new ConvBlockType.Info( 0, 1, 1, false, false, false, false, false, false ),
-         new ConvBlockType.Info( 1, 1, 1, false, false,  true, false, false, false ),
-         new ConvBlockType.Info( 2, 1, 2,  true, false, false,  true, false, false ),
-         new ConvBlockType.Info( 3, 2, 2, false, false, false,  true, false, false ),
-         new ConvBlockType.Info( 4, 2, 1, false, false, false,  true, false, false ),
-         new ConvBlockType.Info( 5, 1, 2,  true,  true, false, false, false, false ),
-         new ConvBlockType.Info( 6, 2, 2, false,  true, false, false, false, false ),
-         new ConvBlockType.Info( 7, 2, 1, false,  true, false, false, false, false ),
-         new ConvBlockType.Info( 8, 1, 1, false, false, false, false,  true,  true ),
-         new ConvBlockType.Info( 9, 1, 1, false, false, false, false,  true, false ),
+         new ConvBlockType.Info(  0, 1, 1, false, false, false, false, false, false ),
+         new ConvBlockType.Info(  1, 1, 1, false, false,  true, false, false, false ),
+         new ConvBlockType.Info(  2, 1, 2,  true, false, false,  true, false, false ),
+         new ConvBlockType.Info(  3, 2, 2, false, false, false,  true, false, false ),
+         new ConvBlockType.Info(  4, 2, 1, false, false, false,  true, false, false ),
+         new ConvBlockType.Info(  5, 1, 2, false, false, false, false, false, false ),
+         new ConvBlockType.Info(  6, 1, 2,  true,  true, false, false, false, false ),
+         new ConvBlockType.Info(  7, 2, 2, false,  true, false, false, false, false ),
+         new ConvBlockType.Info(  8, 2, 1, false,  true, false, false, false, false ),
+         new ConvBlockType.Info(  9, 1, 1, false, false, false, false,  true,  true ),
+         new ConvBlockType.Info( 10, 1, 1, false, false, false, false,  true, false ),
       ]
     );
   }
@@ -112,10 +111,12 @@ ConvBlockType.Info = class {
   /**
    *
    * @param {boolean} bDepthwise2Requested
-   *   Whether needs depthwise2. Usually true only if SHUFFLE_NET_V2_BY_HEAD and SHUFFLE_NET_V2_BY_POINTWISE21_HEAD.
+   *   Whether needs depthwise2. Usually true only if SHUFFLE_NET_V2_BY_HEAD and SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (except
+   * SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE).
    *
    * @param {boolean} bConcat1Requested
-   *   Whether needs concat1 (i.e. concat after depthwise). Usually true only if SHUFFLE_NET_V2_BY_POINTWISE21_Xxx.
+   *   Whether needs concat1 (i.e. concat after depthwise). Usually true only if SHUFFLE_NET_V2_BY_POINTWISE21_Xxx (except
+   * SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE).
    *
    * @param {boolean} bAddInputToOutputRequested
    *   Whether needs add-input-to-output. Usually true only if MOBILE_NET_V2_BODY_TAIL.
