@@ -108,12 +108,6 @@ ConvBlockType.Info = class {
 
   /**
    *
-   * @param {boolean} bHigherHalfDifferent
-   *   Whether the higher half channels will be handled different. Usually true only if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_Xxx.
-   *
-   * @param {boolean} bHigherHalfDepthwise2
-   *   Whether the higher half channels will be processed by depthwise2. Usually true only if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD.
-   *
    * @param {boolean} bDepthwise2Requested
    *   Whether needs depthwise2. Usually true only if SHUFFLE_NET_V2_BY_HEAD and SHUFFLE_NET_V2_BY_POINTWISE21_HEAD.
    *
@@ -125,6 +119,12 @@ ConvBlockType.Info = class {
    *
    * @param {boolean} bConcat2ShuffleSplitRequested
    *   Whether needs add-input-to-output. Usually true only if SHUFFLE_NET_V2_HEAD, SHUFFLE_NET_V2_BODY, SHUFFLE_NET_V2_TAIL.
+   *
+   * @param {boolean} bHigherHalfDifferent
+   *   Whether the higher half channels will be handled different. Usually true only if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_Xxx.
+   *
+   * @param {boolean} bHigherHalfDepthwise2
+   *   Whether the higher half channels will be processed by depthwise2. Usually true only if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD.
    *
    */
   constructor( nConvBlockTypeId, inputTensorCount, outputTensorCount,
