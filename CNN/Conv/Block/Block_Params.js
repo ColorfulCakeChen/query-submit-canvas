@@ -15,26 +15,11 @@ import * as Depthwise from "../Depthwise.js";
  * @member {boolean} bDepthwiseRequestedAndNeeded
  *   Whether depthwise operation is requested and necessary.
  *
+ * @member {boolean} bPointwise21
+ *   Whether the 2nd pointwise2 existed.
+ *
  * @member {number} pointwise21ChannelCount
- *   The output channel count of the second pointwise2 convolution. If ( pointwise20ChannelCount == 0 ) and
- * ( pointwise21ChannelCount == 0 ), there will be no pointwise convolution after depthwise convolution. The pointwise21
- * convolution could achieve some kinds of channel shuffling of ShuffleNetV2_ByPointwise21.
- *
-
-!!!
- *     - If this.channelCount1_pointwise1Before is the following, pointwise21ChannelCount is always 0.
- *       - Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1
- *         (-3) (ShuffleNetV2's body/tail).
- *
- *       - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1
- *         (-4) (ShuffleNetV2_ByMobileNetV1's head).
- *
- *       - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH
- *         (-5) (ShuffleNetV2_ByMobileNetV1's body/tail).
- *
- *     - Otherwise,
- *         - If ( bOutput1Requested == false ), it will be 0.
- *         - If ( bOutput1Requested == true ), it will be the same as pointwise20ChannelCount (note: might also be 0).
+ *   The output channel count of the second pointwise2 convolution. If ( bPointwise21 == false ), then ( pointwise21ChannelCount == 0 ).
  *
  * @member {boolean} bPointwise21Bias
  *   If true, there will be a bias after pointwise21 (i.e. the second pointwise2 convolution). It is always the same as
