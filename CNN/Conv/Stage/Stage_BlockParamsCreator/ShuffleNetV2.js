@@ -69,24 +69,9 @@ class ShuffleNetV2 extends Base {
     let stageParams = this.stageParams;
 
     this.channelCount0_pointwise1Before = stageParams.sourceChannelCount; // Block0 uses the original input channel count (as input0).
+    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.SHUFFLE_NET_V2_HEAD;
 
-    if ( stageParams.bPointwise1 == false ) {
-
-      // NoPointwise1 ShuffleNetV2 (expanding by once depthwise).
-      //
-      // If block0 does not have pointwise1 convolution before depthwise convolution, the depthwise2 convolution (in original ShuffleNetV2)
-      // is not needed. Then, a simpler configuration could be used.
-      //
-      // Just use once depthwise convolution (but with channel multipler 2) to double the channel count.
-      this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT; // no concatenate, no add-input-to-output.
-      this.pointwise1ChannelCount = 0;                                  // NoPointwise1.
-      this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                   // Double of input0. (Same as pointwise20.)
-
-    } else {
-      this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE; // with concatenation.
-      this.pointwise1ChannelCount = stageParams.sourceChannelCount * 2; // Double of input0. (Same as pointwise20.)
-      this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
-    }
+    this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
 
     // In ShuffleNetV2, all blocks' (except blockLast) output0 is the same depth as source input0.
     this.pointwise20ChannelCount = stageParams.sourceChannelCount;
