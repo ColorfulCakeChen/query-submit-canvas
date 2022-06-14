@@ -70,77 +70,96 @@ class Params extends Weights.Params {
    *   The channel count of apply()'s second input image (i.e. inputTensors[ 1 ]; input1). If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
    *
-   *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
-   *       - The input1 will not be used at all (will be ignored completely).
-   *       - The input0 will be processed by pointwise1, depthwise1 operation, and pointwise2 convolution.
-   *       - ( bOutput1Requested is ignored. The output1 never esixts.)
-   *       - It uses the same procedure as Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT (0).
-   *       - The higher half of pointwise1, depthwise1, pointwise2 just pass through (i.e. do not change) the higher half of input0.
-   *       - The lower half of pointwise2's result will be shuffled with the higher half of pointwise2's result.
-   *       - Compared to TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3) (ShuffleNetV2's body/tail), it is slower in backend CPU because
-   *           of more computations. But strangely, it seems faster in backend WASM and WEBGL.
-   *
-   *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
-   *       - Almost the same as ONE_INPUT_HALF_THROUGH (-5).
-   *       - The pointwise1 will double channel count by copying input0 to higher half channels.
-   *       - The depthwise1 will process (not just pass through) the higher half channels.
-   *       - Compared to ONE_INPUT_TWO_DEPTHWISE (-2) (simplified ShuffleNetV2's head), it is slower in backend CPU because
-   *           of more computations. But strangely, it seems faster in backend WASM and WEBGL.
-   *
-   *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3): (ShuffleNetV2's body/tail)
-   *       - The input1 should exist. The channel count of input1 must be the same as pointwise20's result (i.e.
-   *           channelCount_pointwise20After_concat2Before) (Note: not pointwise20ChannelCount because pointwise20ChannelCount may
-   *           be zero). The result of pointwise20 (which operates on input0) will be concatenated with input1.
-   *
-   *       - If ( bOutput1Requested == true ): (ShuffleNetV2's body)
-   *           - The concatenated [ pointwise20, input1 ] will be channel-shuffled and splitted into [ output0, output1 ].
-   *           - The output0 and output1 will have the same channel count as pointwise20 result (i.e. channelCount_pointwise20After_concat2Before).
-   *
-   *       - If ( bOutput1Requested == false ): (ShuffleNetV2's tail)
-   *           - The concatenated [ pointwise20, input1 ] will become output0.
-   *           - The output0 will have twice channel count as pointwise20 result (i.e. ( channelCount_pointwise20After_concat2Before * 2 ) ).
-   *
-   *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE (-2): (simplified ShuffleNetV2's head).
-   *       - The input1 will not be used at all (will be ignored completely).
-   *       - The input0 will be processed by two pathes: one is by pointwise1 and depthwise1 operation, the other is by depthwise2
-   *           operation (without pointwise1).
-   *       - These two depthwise operations will have the same configurations (i.e. same depthwise_AvgMax_Or_ChannelMultiplier,
-   *           depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId) but have different
-   *           (filter and bias) weights.
-   *       - The two depthwise results will be concatenated. The concatenated result will be processed by pointwise2 convolution.
-   *       - This is the only one case which there will be depthwise2.
-   *
-   *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_ADD_TO_OUTPUT (-1): (MobileNetV2's body and tail).
-   *       - The input1 will not be used at all (will be ignored completely).
-   *       - The input0 will be processed by pointwise1, depthwise1 operation, and pointwise2 convolution.
-   *       - The input0 will be added to the result of pointwise2.
-   *       - This is the only one case which will do add-input-to-output.
-   *
-   *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT (0): (MobileNetV1 or MobileNetV2's head
-   *       or simplified ShuffleNetV2(_ByPointwise21)'s head with ( pointwise1ChannelCount == 0 ) ).
-   *       - The input1 will not be used at all (will be ignored completely).
-   *       - The input0 will be processed by pointwise1, depthwise1 operation, and pointwise2 convolution.
-   *
-   *   - ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (ShuffleNetV2_ByPointwise21's body/tail).
-   *       - It should be the channel count of input1.
-   *
-   *       - The input1 will not be processed by any pointwise1 and depthwise operation.
-   *
-   *       - The input1 will be concatenated with the result of depthwise operation of input0. The concatenated result will be
-   *           processed by pointwise2 convolution.
-   *
-   *       - The output0 will be the result of pointwise20.
-   *
-   *       - If ( bOutput1Requested == true ), the output1 will be the result of pointwise21.
-   *
+   * @param {number} nConvBlockType
+   *   The convolution type of the block (i.e. ValueDesc.ConvBlockType.Singleton.Ids.Xxx). If null, it will be extracted
+   * from inputFloat32Array (i.e. by evolution).
    *
 
-//!!! ...unfinished... (2021/07/27)
-// Perhaps, ( channelCount1_pointwise1Before == -6 ): ONE_INPUT_TWO_DEPTHWISE_ONE_MAX_POOLING
+//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
+//    * @param {number} channelCount1_pointwise1Before
+//    *   The channel count of apply()'s second input image (i.e. inputTensors[ 1 ]; input1). If null, it will be extracted
+//    * from inputFloat32Array (i.e. by evolution).
+//    *
+//    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.SHUFFLE_NET_V2_HEAD (-6): (ShuffleNetV2's head).
+//    *       - The input1 will not be used at all (will be ignored completely).
+//    *       - The input0 will be processed by two pathes: one is by pointwise1 and depthwise1 operation, the other is by depthwise2
+//    *           operation (without pointwise1).
+//    *       - These two depthwise operations will have the same configurations (i.e. same depthwise_AvgMax_Or_ChannelMultiplier,
+//    *           depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId) but have
+//    *           different (filter and bias) weights.
+//    *       - The two depthwise results will be processed by itself pointwise indidually.
+//    *       - The two pointwise results will be concatenated, shuffled, splitted.
+//    *
+//    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
+//    *       - The input1 will not be used at all (will be ignored completely).
+//    *       - The input0 will be processed by pointwise1, depthwise1 operation, and pointwise2 convolution.
+//    *       - ( bOutput1Requested is ignored. The output1 never esixts.)
+//    *       - It uses the same procedure as Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT (0).
+//    *       - The higher half of pointwise1, depthwise1, pointwise2 just pass through (i.e. do not change) the higher half of input0.
+//    *       - The lower half of pointwise2's result will be shuffled with the higher half of pointwise2's result.
+//    *       - Compared to TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3) (ShuffleNetV2's body/tail), it is slower in backend CPU because
+//    *           of more computations. But strangely, it seems faster in backend WASM and WEBGL.
+//    *
+//    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
+//    *       - Almost the same as ONE_INPUT_HALF_THROUGH (-5).
+//    *       - The pointwise1 will double channel count by copying input0 to higher half channels.
+//    *       - The depthwise1 will process (not just pass through) the higher half channels.
+//    *       - Compared to SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (-2) (simplified ShuffleNetV2's head), it is slower in backend CPU because
+//    *           of more computations. But strangely, it seems faster in backend WASM and WEBGL.
+//    *
+//    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3): (ShuffleNetV2's body/tail)
+//    *       - The input1 should exist. The channel count of input1 must be the same as pointwise20's result (i.e.
+//    *           channelCount_pointwise20After_concat2Before) (Note: not pointwise20ChannelCount because pointwise20ChannelCount may
+//    *           be zero). The result of pointwise20 (which operates on input0) will be concatenated with input1.
+//    *
+//    *       - If ( bOutput1Requested == true ): (ShuffleNetV2's body)
+//    *           - The concatenated [ pointwise20, input1 ] will be channel-shuffled and splitted into [ output0, output1 ].
+//    *           - The output0 and output1 will have the same channel count as pointwise20 result (i.e. channelCount_pointwise20After_concat2Before).
+//    *
+//    *       - If ( bOutput1Requested == false ): (ShuffleNetV2's tail)
+//    *           - The concatenated [ pointwise20, input1 ] will become output0.
+//    *           - The output0 will have twice channel count as pointwise20 result (i.e. ( channelCount_pointwise20After_concat2Before * 2 ) ).
+//    *
+//    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (-2): (ShuffleNetV2_ByPointwise21's head).
+//    *       - The input1 will not be used at all (will be ignored completely).
+//    *       - The input0 will be processed by two pathes: one is by pointwise1 and depthwise1 operation, the other is by depthwise2
+//    *           operation (without pointwise1).
+//    *       - These two depthwise operations will have the same configurations (i.e. same depthwise_AvgMax_Or_ChannelMultiplier,
+//    *           depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId) but have
+//    *           different (filter and bias) weights.
+//    *       - The two depthwise results will be concatenated. The concatenated result will be processed by pointwise2 convolution.
+//    *
+//    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_ADD_TO_OUTPUT (-1): (MobileNetV2's body and tail).
+//    *       - The input1 will not be used at all (will be ignored completely).
+//    *       - The input0 will be processed by pointwise1, depthwise1 operation, and pointwise2 convolution.
+//    *       - The input0 will be added to the result of pointwise2.
+//    *       - This is the only one case which will do add-input-to-output.
+//    *
+//    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT (0): (MobileNetV1 or MobileNetV2's head
+//    *       or ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount == 0 ) ).
+//    *       - The input1 will not be used at all (will be ignored completely).
+//    *       - The input0 will be processed by pointwise1, depthwise1 operation, and pointwise2 convolution.
+//    *
+//    *   - ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (ShuffleNetV2_ByPointwise21's body/tail).
+//    *       - It should be the channel count of input1.
+//    *
+//    *       - The input1 will not be processed by any pointwise1 and depthwise operation.
+//    *
+//    *       - The input1 will be concatenated with the result of depthwise operation of input0. The concatenated result will be
+//    *           processed by pointwise2 convolution.
+//    *
+//    *       - The output0 will be the result of pointwise20.
+//    *
+//    *       - If ( bOutput1Requested == true ), the output1 will be the result of pointwise21.
+//    *
+//    *
 //
-// A max pooling will be used as a branch of input0. The max pooling result of input0 should be concatenated with the
-// two depthwise convolutions' result of input0. The reason is that max pooling could provide information which is difficult achieved
-// by a depthwise convolution. (Thinks that for a while: how to calculate maximum value by linear combination (i.e. add-multiply).)
+// //!!! ...unfinished... (2021/07/27)
+// // Perhaps, ( channelCount1_pointwise1Before == -7 ): ONE_INPUT_TWO_DEPTHWISE_ONE_MAX_POOLING
+// //
+// // A max pooling will be used as a branch of input0. The max pooling result of input0 should be concatenated with the
+// // two depthwise convolutions' result of input0. The reason is that max pooling could provide information which is difficult achieved
+// // by a depthwise convolution. (Thinks that for a while: how to calculate maximum value by linear combination (i.e. add-multiply).)
 
 
    * @param {number} pointwise1ChannelCount
@@ -232,39 +251,42 @@ class Params extends Weights.Params {
    * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise20ChannelCount == 0 ), this activation function
    * will also be ignored.
    *
-   * @param {number} bOutput1Requested
-   *   Whether to generate output1. Sometimes, it also control whether to create pointwise21. The reason why not let caller specify
-   * pointwise21ChannelCount directly is for ensuring that the pointwise21ChannelCount is either 0 or the same as pointwise20's
-   * result (otherwise the concat-shuffle-split could not work). (Please see the explanation of channelCount1_pointwise1Before and
-   * pointwise21ChannelCount, too.)
-   *
-   *     - If ( bOutput1Requested == null ), it will be extracted from inputFloat32Array (i.e. by evolution). 
-   *
-   *     - If ( bOutput1Requested == false ), there is always no output1.
-   *
-   *     - If ( bOutput1Requested == true ):
-   *
-   *       - If ( this.channelCount1_pointwise1Before
-   *                == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 )
-   *           (-3) (ShuffleNetV2's body/tail),
-   *           the output1 will exist. Its channel count will be channelCount_pointwise20After_concat2Before.
-   *
-   *       - If ( this.channelCount1_pointwise1Before
-   *                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
-   *           (-4) (ShuffleNetV2_ByMobileNetV1's head),
-   *           the output1 never exists.
-   *
-   *       - If ( this.channelCount1_pointwise1Before
-   *                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
-   *           (-5) (ShuffleNetV2_ByMobileNetV1's body/tail),
-   *           the output1 never exists.
-   *
-   *       - Otherwise:
-   *
-   *         - If ( pointwise20ChannelCount > 0 ), then ( pointwise21ChannelCount > 0 ), the output1 will exist. Its channel
-   *             count will be pointwise21ChannelCount. Its bias flag and activation function will also be the same as pointwise20.
-   *
-   *         - If ( pointwise20ChannelCount <= 0 ), then ( pointwise21ChannelCount <= 0 ), there will be no output1.
+
+//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
+//    * @param {number} bOutput1Requested
+//    *   Whether to generate output1. Sometimes, it also control whether to create pointwise21. The reason why not let caller specify
+//    * pointwise21ChannelCount directly is for ensuring that the pointwise21ChannelCount is either 0 or the same as pointwise20's
+//    * result (otherwise the concat-shuffle-split could not work). (Please see the explanation of channelCount1_pointwise1Before and
+//    * pointwise21ChannelCount, too.)
+//    *
+//    *     - If ( bOutput1Requested == null ), it will be extracted from inputFloat32Array (i.e. by evolution). 
+//    *
+//    *     - If ( bOutput1Requested == false ), there is always no output1.
+//    *
+//    *     - If ( bOutput1Requested == true ):
+//    *
+//    *       - If ( this.channelCount1_pointwise1Before
+//    *                == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 )
+//    *           (-3) (ShuffleNetV2's body/tail),
+//    *           the output1 will exist. Its channel count will be channelCount_pointwise20After_concat2Before.
+//    *
+//    *       - If ( this.channelCount1_pointwise1Before
+//    *                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
+//    *           (-4) (ShuffleNetV2_ByMobileNetV1's head),
+//    *           the output1 never exists.
+//    *
+//    *       - If ( this.channelCount1_pointwise1Before
+//    *                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
+//    *           (-5) (ShuffleNetV2_ByMobileNetV1's body/tail),
+//    *           the output1 never exists.
+//    *
+//    *       - Otherwise:
+//    *
+//    *         - If ( pointwise20ChannelCount > 0 ), then ( pointwise21ChannelCount > 0 ), the output1 will exist. Its channel
+//    *             count will be pointwise21ChannelCount. Its bias flag and activation function will also be the same as pointwise20.
+//    *
+//    *         - If ( pointwise20ChannelCount <= 0 ), then ( pointwise21ChannelCount <= 0 ), there will be no output1.
+
    *
    *
    * @param {boolean} bKeepInputTensor
@@ -277,12 +299,16 @@ class Params extends Weights.Params {
     inputHeight0, inputWidth0,
     channelCount0_pointwise1Before,
     channelCount1_pointwise1Before,
+    nConvBlockType,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
-    bOutput1Requested,
+
+//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
+//    bOutput1Requested,
+
     bKeepInputTensor
   ) {
 
@@ -291,6 +317,7 @@ class Params extends Weights.Params {
       [ Params.inputWidth0,                           inputWidth0 ],
       [ Params.channelCount0_pointwise1Before,        channelCount0_pointwise1Before ],
       [ Params.channelCount1_pointwise1Before,        channelCount1_pointwise1Before ],
+      [ Params.nConvBlockType,                        nConvBlockType ],
       [ Params.pointwise1ChannelCount,                pointwise1ChannelCount ],
       [ Params.bPointwise1Bias,                       bPointwise1Bias ],
       [ Params.pointwise1ActivationId,                pointwise1ActivationId ],
@@ -305,7 +332,10 @@ class Params extends Weights.Params {
       [ Params.pointwise20ChannelCount,               pointwise20ChannelCount ],
       [ Params.bPointwise20Bias,                      bPointwise20Bias ],
       [ Params.pointwise20ActivationId,               pointwise20ActivationId ],
-      [ Params.bOutput1Requested,                     bOutput1Requested ],
+
+//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
+//      [ Params.bOutput1Requested,                     bOutput1Requested ],
+
       [ Params.bKeepInputTensor,                      bKeepInputTensor ],
     ] );
 
@@ -328,12 +358,15 @@ class Params extends Weights.Params {
     Params.setFlags_by.call( this,
       this.inputHeight0, this.inputWidth0,
       this.channelCount0_pointwise1Before, this.channelCount1_pointwise1Before,
+      this.nConvBlockType,
       this.pointwise1ChannelCount,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth, this.depthwiseStridesPad,
       this.bDepthwiseBias, this.depthwiseActivationId,
       this.nSqueezeExcitationChannelCountDivisor, this.bSqueezeExcitationPrefix,
       this.pointwise20ChannelCount, this.bPointwise20Bias,
-      this.bOutput1Requested
+
+//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
+//      this.bOutput1Requested
     );
 
     return bExtractOk;
@@ -343,50 +376,58 @@ class Params extends Weights.Params {
    * Determine the following properties:
    *   - this.inputTensorCount
    */
-  static set_inputTensorCount_by( channelCount1_pointwise1Before ) {
+//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
+//   static set_inputTensorCount_by( channelCount1_pointwise1Before ) {
+//
+//     // The input tensor count is totally determined by channelCount1_pointwise1Before.
+//     if (   ( channelCount1_pointwise1Before > 0 )
+//         || ( channelCount1_pointwise1Before
+//                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) // (-3)
+//        )
+//       this.inputTensorCount = 2; // Two inputs.
+//     else
+//       this.inputTensorCount = 1; // One input.
 
-    // The input tensor count is totally determined by channelCount1_pointwise1Before.
-    if (   ( channelCount1_pointwise1Before > 0 )
-        || ( channelCount1_pointwise1Before
-               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) // (-3)
-       )
-      this.inputTensorCount = 2; // Two inputs.
-    else
-      this.inputTensorCount = 1; // One input.
+  static set_inputTensorCount_by( nConvBlockType ) {
+    this.inputTensorCount = ValueDesc.ConvBlockType.Singleton.inputTensorCount_get( nConvBlockType );
   }
 
   /**
    * Determine the following properties:
    *   - this.outputTensorCount
    */
-  static set_outputTensorCount_by( channelCount1_pointwise1Before, pointwise20ChannelCount, bOutput1Requested ) {
+//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
+//   static set_outputTensorCount_by( channelCount1_pointwise1Before, pointwise20ChannelCount, bOutput1Requested ) {
+//
+//     // 1.
+//     if ( bOutput1Requested == true )
+//       this.outputTensorCount = 2; // Two outputs.
+//     else
+//       this.outputTensorCount = 1; // One output.
+//
+//     // 2.1 In (-3) (ShuffleNetV2's body/tail), The output tensor count is totally determined by bOutput1Requested.
+//     if ( channelCount1_pointwise1Before
+//            == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) { // (-3)
+//       // Do nothing.
+//
+//     // 2.2 In (-4) (ShuffleNetV2_ByMobileNetV1's head) and (-5) (ShuffleNetV2_ByMobileNetV1's body/tail), The output tensor count is always 1.
+//     } else if (   ( channelCount1_pointwise1Before
+//                      == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) // (-4)
+//                || ( channelCount1_pointwise1Before
+//                      == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+//               ) {
+//       this.outputTensorCount = 1; // One output.
+//
+//     // 2.3 Otherwise, pointwise21 is output1 directly. The pointwise21ChannelCount (which is determined by pointwise20ChannelCount)
+//     //     determines it.
+//     } else {
+//       if ( pointwise20ChannelCount == 0 ) { // No pointwise20, then no pointwise21. So only one output.
+//         this.outputTensorCount = 1; // One output.
+//       }
+//     }
 
-    // 1.
-    if ( bOutput1Requested == true )
-      this.outputTensorCount = 2; // Two outputs.
-    else
-      this.outputTensorCount = 1; // One output.
-
-    // 2.1 In (-3) (ShuffleNetV2's body/tail), The output tensor count is totally determined by bOutput1Requested.
-    if ( channelCount1_pointwise1Before
-           == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) { // (-3)
-      // Do nothing.
-
-    // 2.2 In (-4) (ShuffleNetV2_ByMobileNetV1's head) and (-5) (ShuffleNetV2_ByMobileNetV1's body/tail), The output tensor count is always 1.
-    } else if (   ( channelCount1_pointwise1Before
-                     == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) // (-4)
-               || ( channelCount1_pointwise1Before
-                     == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
-              ) {
-      this.outputTensorCount = 1; // One output.
-
-    // 2.3 Otherwise, pointwise21 is output1 directly. The pointwise21ChannelCount (which is determined by pointwise20ChannelCount)
-    //     determines it.
-    } else {
-      if ( pointwise20ChannelCount == 0 ) { // No pointwise20, then no pointwise21. So only one output.
-        this.outputTensorCount = 1; // One output.
-      }
-    }
+  static set_outputTensorCount_by( nConvBlockType ) {
+    this.inputTensorCount = ValueDesc.ConvBlockType.Singleton.outputTensorCount_get( nConvBlockType );
   }
 
   /**
@@ -685,7 +726,12 @@ Params.inputWidth0 =             new ParamDesc.Int(                     "inputWi
 
 /** At least, there should be 1 input channel. */
 Params.channelCount0_pointwise1Before =  new ParamDesc.Int(             "channelCount0_pointwise1Before", 1, ( 10 * 1024 ) );
-Params.channelCount1_pointwise1Before =  new ParamDesc.channelCount1_pointwise1Before( "channelCount1_pointwise1Before" );
+
+//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
+//Params.channelCount1_pointwise1Before =  new ParamDesc.channelCount1_pointwise1Before( "channelCount1_pointwise1Before" );
+Params.channelCount1_pointwise1Before =  new ParamDesc.Int(             "channelCount1_pointwise1Before", 0, ( 10 * 1024 ) );
+
+Params.nConvBlockType =                  new ParamDesc.ConvBlockType(   "nConvBlockType" );
 
 Params.pointwise1ChannelCount =  new ParamDesc.Int(                     "pointwise1ChannelCount",         0, ( 10 * 1024 ) );
 Params.bPointwise1Bias =         new ParamDesc.Bool(                    "bPointwise1Bias" );
@@ -738,7 +784,8 @@ Params.pointwise20ChannelCount = new ParamDesc.Int(                     "pointwi
 Params.bPointwise20Bias =        new ParamDesc.Bool(                    "bPointwise20Bias" );
 Params.pointwise20ActivationId = new ParamDesc.ActivationFunction(      "pointwise20ActivationId" );
 
-Params.bOutput1Requested =       new ParamDesc.Bool(                    "bOutput1Requested" );
+//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
+//Params.bOutput1Requested =       new ParamDesc.Bool(                    "bOutput1Requested" );
 
 Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepInputTensor" );
 
