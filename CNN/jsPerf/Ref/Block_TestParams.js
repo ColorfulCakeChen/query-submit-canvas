@@ -708,14 +708,21 @@ class Base extends TestParams.Base {
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (5) (ShuffleNetV2_ByPointwise21's head). */
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (5) (ShuffleNetV2_ByPointwise21's head without pointwise1). */
+  nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE() {
+    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE )
+      return true;
+    return false;
+  }
+
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (6) (ShuffleNetV2_ByPointwise21's head). */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() {
     if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (6 or 7) (ShuffleNetV2_ByPointwise21's body/tail). */
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (7 or 8) (ShuffleNetV2_ByPointwise21's body/tail). */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL() {
     if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY )
       return true;
@@ -724,14 +731,14 @@ class Base extends TestParams.Base {
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (8) (ShuffleNetV2_ByMobileNetV1's head). */
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (9) (ShuffleNetV2_ByMobileNetV1's head). */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() {
     if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (9) (ShuffleNetV2_ByMobileNetV1's body/tail). */
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (10) (ShuffleNetV2_ByMobileNetV1's body/tail). */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() {
     if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL )
       return true;
