@@ -454,6 +454,12 @@ class Base {
 
     // 2.1.1 Prepare partial pointwise1 arguments.
 
+//!!! ...unfinished... (2022/06/14)
+// Perhaps, moved to Block.Params.set_Xxx_by()
+// inputHeight1, inputWidth1, 
+// inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1
+
+
     // Assume not higher-half-different.
     let nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
     let inputChannelCount_lowerHalf_pointwise1 = undefined;
