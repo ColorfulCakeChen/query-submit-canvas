@@ -70,8 +70,8 @@ class Params extends Weights.Params {
    *   The channel count of apply()'s second input image (i.e. inputTensors[ 1 ]; input1). If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
    *
-   * @param {number} nConvBlockType
-   *   The convolution type of the block (i.e. ValueDesc.ConvBlockType.Singleton.Ids.Xxx). If null, it will be extracted
+   * @param {number} nConvBlockTypeId
+   *   The convolution type id of the block (i.e. ValueDesc.ConvBlockType.Singleton.Ids.Xxx). If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
    *
 
@@ -299,7 +299,7 @@ class Params extends Weights.Params {
     inputHeight0, inputWidth0,
     channelCount0_pointwise1Before,
     channelCount1_pointwise1Before,
-    nConvBlockType,
+    nConvBlockTypeId,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
@@ -317,7 +317,7 @@ class Params extends Weights.Params {
       [ Params.inputWidth0,                           inputWidth0 ],
       [ Params.channelCount0_pointwise1Before,        channelCount0_pointwise1Before ],
       [ Params.channelCount1_pointwise1Before,        channelCount1_pointwise1Before ],
-      [ Params.nConvBlockType,                        nConvBlockType ],
+      [ Params.nConvBlockTypeId,                      nConvBlockTypeId ],
       [ Params.pointwise1ChannelCount,                pointwise1ChannelCount ],
       [ Params.bPointwise1Bias,                       bPointwise1Bias ],
       [ Params.pointwise1ActivationId,                pointwise1ActivationId ],
@@ -358,7 +358,7 @@ class Params extends Weights.Params {
     Params.setFlags_by.call( this,
       this.inputHeight0, this.inputWidth0,
       this.channelCount0_pointwise1Before, this.channelCount1_pointwise1Before,
-      this.nConvBlockType,
+      this.nConvBlockTypeId,
       this.pointwise1ChannelCount,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth, this.depthwiseStridesPad,
       this.bDepthwiseBias, this.depthwiseActivationId,
@@ -388,8 +388,8 @@ class Params extends Weights.Params {
 //     else
 //       this.inputTensorCount = 1; // One input.
 
-  static set_inputTensorCount_by( nConvBlockType ) {
-    this.inputTensorCount = ValueDesc.ConvBlockType.Singleton.inputTensorCount_get( nConvBlockType );
+  static set_inputTensorCount_by( nConvBlockTypeId ) {
+    this.inputTensorCount = ValueDesc.ConvBlockType.Singleton.inputTensorCount_get( nConvBlockTypeId );
   }
 
   /**
@@ -426,8 +426,8 @@ class Params extends Weights.Params {
 //       }
 //     }
 
-  static set_outputTensorCount_by( nConvBlockType ) {
-    this.inputTensorCount = ValueDesc.ConvBlockType.Singleton.outputTensorCount_get( nConvBlockType );
+  static set_outputTensorCount_by( nConvBlockTypeId ) {
+    this.inputTensorCount = ValueDesc.ConvBlockType.Singleton.outputTensorCount_get( nConvBlockTypeId );
   }
 
   /**
@@ -436,7 +436,7 @@ class Params extends Weights.Params {
    */
   static set_input1ChannelCount_by(
            channelCount1_pointwise1Before,
-           nConvBlockType,
+           nConvBlockTypeId,
            pointwise1ChannelCount, pointwise20ChannelCount ) {
 
 //!!! (2022/06/14 Remarked) replaced by ConvBlockType.
@@ -452,8 +452,8 @@ class Params extends Weights.Params {
 //       this.input1ChannelCount = 0;
 //     }
 
-    let inputTensorCount = ValueDesc.ConvBlockType.Singleton.inputTensorCount_get( nConvBlockType );
-    switch ( nConvBlockType ) {
+    let inputTensorCount = ValueDesc.ConvBlockType.Singleton.inputTensorCount_get( nConvBlockTypeId );
+    switch ( nConvBlockTypeId ) {
       case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY:
       case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL:
         this.input1ChannelCount = pointwise20ChannelCount;
@@ -539,27 +539,20 @@ class Params extends Weights.Params {
    * Determine the following properties:
    *   - this.inputTensorCount
    *   - this.input1ChannelCount
-   *   - this.bHigherHalfDifferent
-   *   - this.bHigherHalfDepthwise2
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.bDepthwise2Requested
    *   - this.bConcat1Requested
    *   - this.bAddInputToOutputRequested
    *   - this.bConcat2ShuffleSplitRequested
+   *   - this.bHigherHalfDifferent
+   *   - this.bHigherHalfDepthwise2
    *   - this.outputTensorCount
-   *
-   * @param {number} channelCount0_pointwise1Before
-   * @param {number} channelCount1_pointwise1Before
-   * @param {number} pointwise1ChannelCount
-   * @param {number} depthwise_AvgMax_Or_ChannelMultiplier
-   * @param {number} pointwise20ChannelCount
-   * @param {boolean} bOutput1Requested
    *
    */
   static setFlags_by(
     inputHeight, inputWidth,
     channelCount0_pointwise1Before, channelCount1_pointwise1Before,
-    nConvBlockType,
+    nConvBlockTypeId,
     pointwise1ChannelCount,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
@@ -570,13 +563,13 @@ class Params extends Weights.Params {
 
     // 0. Prepare.
 
-    let infoConvBlockType = ConvBlockType.Singleton.getInfoById( nConvBlockType );
+    let infoConvBlockType = ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
 
     // 0.1 The input tensor count is totally determined by channelCount1_pointwise1Before.
-    Params.set_inputTensorCount_by.call( this, nConvBlockType );
+    Params.set_inputTensorCount_by.call( this, nConvBlockTypeId );
 
     // 0.2 The output tensor count.
-    Params.set_outputTensorCount_by.call( this, nConvBlockType );
+    Params.set_outputTensorCount_by.call( this, nConvBlockTypeId );
 
     // 0.3 The (estimated) input1 channel count.
     Params.set_input1ChannelCount_by.call( this, channelCount1_pointwise1Before, pointwise1ChannelCount, pointwise20ChannelCount );
@@ -591,56 +584,15 @@ class Params extends Weights.Params {
       bPointwise20Bias
     );
 
-    // 0.5 Whether manipulate the higher half channel of convolution.
+    // 1.
+    this.bDepthwise2Requested = infoConvBlockType.bDepthwise2Requested;
+    this.bConcat1Requested = infoConvBlockType.bConcat1Requested;
+    this.bAddInputToOutputRequested = infoConvBlockType.bAddInputToOutputRequested;
+    this.bConcat2ShuffleSplitRequested = infoConvBlockType.bConcat2ShuffleSplitRequested;
+
+    // 2. Whether manipulate the higher half channel of convolution.
     this.bHigherHalfDifferent = infoConvBlockType.bHigherHalfDifferent;
     this.bHigherHalfDepthwise2 = infoConvBlockType.bHigherHalfDepthwise2;
-
-    // 1. One input.
-    if ( this.inputTensorCount == 1 ) {
-
-      this.bConcat2ShuffleSplitRequested = false; // One input never uses concat2-shuffle-split.
-
-      switch ( nConvBlockType ) {
-        // 1.1
-        case ValueDesc.ConvBlockType.Singleton.Ids.ONE_INPUT: // ( 0)
-        case ValueDesc.ConvBlockType.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
-        case ValueDesc.ConvBlockType.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
-          this.bDepthwise2Requested = this.bConcat1Requested = false; this.bAddInputToOutputRequested = false; break;
-
-        // 1.2 The only case uses add-input-to-output. (MobileNetV2)
-        case ValueDesc.ConvBlockType.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1)
-          this.bDepthwise2Requested = this.bConcat1Requested = false; this.bAddInputToOutputRequested =  true; break;
-
-        // 1.3 The only case uses depthwise2. (simplified ShuffleNetV2's head)
-        case ValueDesc.ConvBlockType.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2)
-          this.bDepthwise2Requested = this.bConcat1Requested =  true; this.bAddInputToOutputRequested = false; break;
-      }
-
-    } else { // 2. Two inputs. //( this.inputTensorCount == 2 )
-
-      this.bDepthwise2Requested = false; // Two inputs never use depthwise2.
-      this.bAddInputToOutputRequested = false; // Two inputs never do add-input-to-output. (It always use concatenation.)
-
-      if ( channelCount1_pointwise1Before > 0 ) { // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_XXX)
-
-        // According to ( this.outputTensorCount ), it could be:
-        //
-        // 2.1 Two-inputs-one-output: by concat1. (ShuffleNetV2_ByPointwise21's tail)
-        // 2.2 Two-inputs-two-outputs: by concat1. (ShuffleNetV2_ByPointwise21's body)
-        //
-        this.bConcat1Requested =  true; this.bConcat2ShuffleSplitRequested = false;
-              
-      } else { // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3) )
-
-        // According to ( this.outputTensorCount ), it could be:
-        //
-        // 2.3 Two-inputs-one-output: by concat2(-shuffle-split). (ShuffleNetV2's tail)
-        // 2.4 Two-inputs-two-outputs: by concat2-shuffle-split. (ShuffleNetV2's body)
-        //
-        this.bConcat1Requested = false; this.bConcat2ShuffleSplitRequested =  true;
-      }
-
-    }
   }
 
   get inputHeight0()                        { return this.parameterMapModified.get( Params.inputHeight0 ); }
@@ -650,9 +602,18 @@ class Params extends Weights.Params {
   /** @return {number} The number version of channelCount1_pointwise1Before. */
   get channelCount1_pointwise1Before()      { return this.parameterMapModified.get( Params.channelCount1_pointwise1Before ); }
 
+//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
   /** @return {string} The string version of channelCount1_pointwise1Before. */
   get channelCount1_pointwise1Before_Name() {
     return Params.channelCount1_pointwise1Before.getStringOfValue( this.channelCount1_pointwise1Before );
+  }
+
+  /** @return {number} The number version of channelCount1_pointwise1Before. */
+  get nConvBlockTypeId()      { return this.parameterMapModified.get( Params.nConvBlockTypeId ); }
+
+  /** @return {string} The string version of channelCount1_pointwise1Before. */
+  get nConvBlockTypeName() {
+    return Params.nConvBlockTypeId.getStringOfValue( this.nConvBlockTypeId );
   }
 
   get pointwise1ChannelCount()    { return this.parameterMapModified.get( Params.pointwise1ChannelCount ); }
@@ -743,7 +704,7 @@ Params.channelCount0_pointwise1Before =  new ParamDesc.Int(             "channel
 //Params.channelCount1_pointwise1Before =  new ParamDesc.channelCount1_pointwise1Before( "channelCount1_pointwise1Before" );
 Params.channelCount1_pointwise1Before =  new ParamDesc.Int(             "channelCount1_pointwise1Before", 0, ( 10 * 1024 ) );
 
-Params.nConvBlockType =                  new ParamDesc.ConvBlockType(   "nConvBlockType" );
+Params.nConvBlockTypeId =                new ParamDesc.ConvBlockType(   "nConvBlockTypeId" );
 
 Params.pointwise1ChannelCount =  new ParamDesc.Int(                     "pointwise1ChannelCount",         0, ( 10 * 1024 ) );
 Params.bPointwise1Bias =         new ParamDesc.Bool(                    "bPointwise1Bias" );
