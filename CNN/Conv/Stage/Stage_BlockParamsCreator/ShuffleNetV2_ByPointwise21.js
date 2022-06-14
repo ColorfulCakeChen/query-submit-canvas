@@ -90,7 +90,29 @@ class ShuffleNetV2_ByPointwise21 extends ShuffleNetV2 {
 
   /** @override */
   configTo_beforeBlock0() {
-    super.configTo_beforeBlock0(); // Block0 is the same as ShuffleNetV2.
+    super.configTo_beforeBlock0(); // Block0 is a little similar to ShuffleNetV2.
+
+    let stageParams = this.stageParams;
+
+    if ( stageParams.bPointwise1 == false ) {
+
+      // NoPointwise1 ShuffleNetV2 (expanding by once depthwise).
+      //
+      // If block0 does not have pointwise1 convolution before depthwise convolution, the depthwise2 convolution (in original ShuffleNetV2)
+      // is not needed. Then, a simpler configuration could be used.
+      //
+      // Just use once depthwise convolution (but with channel multipler 2) to double the channel count.
+      this.channelCount1_pointwise1Before
+        = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT; // no concatenate, no add-input-to-output.
+      this.pointwise1ChannelCount = 0;                                  // NoPointwise1.
+      this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                   // Double of input0. (Same as pointwise20.)
+
+    } else {
+      this.channelCount1_pointwise1Before
+        = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE_CONCAT_TWO_POINTWISE_TWO_OUTPUT;
+      this.pointwise1ChannelCount = stageParams.sourceChannelCount * 2; // Double of input0. (Same as pointwise20.)
+      this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
+    }
   }
 
   /** @override */
