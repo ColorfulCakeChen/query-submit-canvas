@@ -697,13 +697,17 @@ class Base {
     // Create description for debug easily.
     this.paramsOutDescription = Base.TestParams_Out_createDescription( testParams );
 
-    // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use same calculation logic:
-    //    ONE_INPUT_HALF_THROUGH                   // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-    //    TWO_INPUTS_CONCAT_POINTWISE20_INPUT1     // (-3) (ShuffleNetV2's body/tail)
+    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
+    //    SHUFFLE_NET_V2_BODY                        // (3) (ShuffleNetV2's body/tail)
+    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL  // (9) (ShuffleNetV2_ByMobileNetV1's body/tail)
     //
-    // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use same calculation logic:
-    //    ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-    //    ONE_INPUT_TWO_DEPTHWISE                  // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise21's head) (simplified))
+    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
+    //    SHUFFLE_NET_V2_TAIL                        // (4) (ShuffleNetV2's body/tail)
+    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL  // (9) (ShuffleNetV2_ByMobileNetV1's body/tail)
+    //
+    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
+    //    SHUFFLE_NET_V2_HEAD                        // (2) (ShuffleNetV2's head)
+    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD       // (8) (ShuffleNetV2_ByMobileNetV1's head)
 
 
     let imageIn0, imageIn1;
