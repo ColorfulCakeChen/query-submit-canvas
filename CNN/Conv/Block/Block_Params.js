@@ -461,6 +461,11 @@ class Params extends Weights.Params {
 
       case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY:
       case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL:
+        
+//!!! ...unfinished... (2022/06/14)
+// Perhaps, deprecate channelCount1_pointwise1Before since it should be the same as channelCount0_pointwise1Before in this case.
+// It could be inferenced totally. (input1_height, input1_width, input1_channelCount)
+
         this.input1ChannelCount = channelCount1_pointwise1Before; // The second input's channel count as specifying.
         break;
 
