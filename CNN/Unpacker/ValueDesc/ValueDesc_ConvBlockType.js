@@ -13,12 +13,12 @@ import { Int } from "./ValueDesc_Base.js";
  *   -  2: SHUFFLE_NET_V2_HEAD
  *   -  3: SHUFFLE_NET_V2_BODY
  *   -  4: SHUFFLE_NET_V2_TAIL
- *   -  5: SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE  (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount == 0 ))
- *   -  6: SHUFFLE_NET_V2_BY_POINTWISE21_HEAD               (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
- *   -  7: SHUFFLE_NET_V2_BY_POINTWISE21_BODY
- *   -  8: SHUFFLE_NET_V2_BY_POINTWISE21_TAIL
- *   -  9: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD
- *   - 10: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL
+ *   -  5: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD
+ *   -  6: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL
+ *   -  7: SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE  (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount == 0 ))
+ *   -  8: SHUFFLE_NET_V2_BY_POINTWISE21_HEAD               (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
+ *   -  9: SHUFFLE_NET_V2_BY_POINTWISE21_BODY
+ *   - 10: SHUFFLE_NET_V2_BY_POINTWISE21_TAIL
  */
 class ConvBlockType extends Int {
 
@@ -30,12 +30,12 @@ class ConvBlockType extends Int {
         "SHUFFLE_NET_V2_HEAD",                              // ( 2)
         "SHUFFLE_NET_V2_BODY",                              // ( 3)
         "SHUFFLE_NET_V2_TAIL",                              // ( 4)
-        "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE",  // ( 5)
-        "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD",               // ( 6)
-        "SHUFFLE_NET_V2_BY_POINTWISE21_BODY",               // ( 7)
-        "SHUFFLE_NET_V2_BY_POINTWISE21_TAIL",               // ( 8)
-        "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD",             // ( 9)
-        "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL",        // (10)
+        "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD",             // ( 5)
+        "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL",        // ( 6)
+        "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE",  // ( 7)
+        "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD",               // ( 8)
+        "SHUFFLE_NET_V2_BY_POINTWISE21_BODY",               // ( 9)
+        "SHUFFLE_NET_V2_BY_POINTWISE21_TAIL",               // (10)
       ],
 
       [
@@ -44,12 +44,12 @@ class ConvBlockType extends Int {
          new ConvBlockType.Info(  2, 1, 2,  true, false, false,  true, false, false ),
          new ConvBlockType.Info(  3, 2, 2, false, false, false,  true, false, false ),
          new ConvBlockType.Info(  4, 2, 1, false, false, false,  true, false, false ),
-         new ConvBlockType.Info(  5, 1, 2, false, false, false, false, false, false ),
-         new ConvBlockType.Info(  6, 1, 2,  true,  true, false, false, false, false ),
-         new ConvBlockType.Info(  7, 2, 2, false,  true, false, false, false, false ),
-         new ConvBlockType.Info(  8, 2, 1, false,  true, false, false, false, false ),
-         new ConvBlockType.Info(  9, 1, 1, false, false, false, false,  true,  true ),
-         new ConvBlockType.Info( 10, 1, 1, false, false, false, false,  true, false ),
+         new ConvBlockType.Info(  5, 1, 1, false, false, false, false,  true,  true ),
+         new ConvBlockType.Info(  6, 1, 1, false, false, false, false,  true, false ),
+         new ConvBlockType.Info(  7, 1, 2, false, false, false, false, false, false ),
+         new ConvBlockType.Info(  8, 1, 2,  true,  true, false, false, false, false ),
+         new ConvBlockType.Info(  9, 2, 2, false,  true, false, false, false, false ),
+         new ConvBlockType.Info( 10, 2, 1, false,  true, false, false, false, false ),
       ]
     );
   }
