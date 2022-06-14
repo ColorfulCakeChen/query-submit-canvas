@@ -4,7 +4,7 @@ import { Int } from "./ValueDesc_Base.js";
 
 /** Describe id, range, name of ConvBlockType.
  *
- * Convert number value into integer between [ -6, ( 10 * 1024 ) ] representing operation:
+ * Convert number value into integer between [ 0, 9 ] representing operation:
  *   - 0: MOBILE_NET_V1_HEAD_BODY_TAIL               (General Pointwise1-Depthwise1-Pointwise2)
  *                                                   (MobileNetV1 or
  *                                                    MobileNetV2's head or
