@@ -166,6 +166,13 @@ class Base extends TestParams.Base {
    */
   onYield_isLegal() {
 
+    let infoConvBlockType = ConvBlockType.Singleton.getInfoById( this.out.nConvBlockTypeId );
+
+    if ( infoConvBlockType.inputTensorCount <= 1 ) {     // If only one input is necessary,
+      if ( this.out.channelCount1_pointwise1Before > 0 ) // all test cases which has input1's channel count are skipped.
+        return false;
+    }
+
     // (-4) (ShuffleNetV2_ByMobileNetV1's head)
     if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
 
