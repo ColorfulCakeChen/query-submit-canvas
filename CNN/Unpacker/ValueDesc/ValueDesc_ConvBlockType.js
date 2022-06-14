@@ -39,17 +39,17 @@ class ConvBlockType extends Int {
       ],
 
       [
-         new ConvBlockType.Info(  0, 1, 1, false, false, false, false, false, false ),
-         new ConvBlockType.Info(  1, 1, 1, false, false,  true, false, false, false ),
-         new ConvBlockType.Info(  2, 1, 2,  true, false, false,  true, false, false ),
-         new ConvBlockType.Info(  3, 2, 2, false, false, false,  true, false, false ),
-         new ConvBlockType.Info(  4, 2, 1, false, false, false,  true, false, false ),
-         new ConvBlockType.Info(  5, 1, 1, false, false, false, false,  true,  true ),
-         new ConvBlockType.Info(  6, 1, 1, false, false, false, false,  true, false ),
-         new ConvBlockType.Info(  7, 1, 2, false, false, false, false, false, false ),
-         new ConvBlockType.Info(  8, 1, 2,  true,  true, false, false, false, false ),
-         new ConvBlockType.Info(  9, 2, 2, false,  true, false, false, false, false ),
-         new ConvBlockType.Info( 10, 2, 1, false,  true, false, false, false, false ),
+         new ConvBlockType.Info(  0, 1, 1, false, false, false, false, false, false, false ),
+         new ConvBlockType.Info(  1, 1, 1, false, false,  true, false, false, false, false ),
+         new ConvBlockType.Info(  2, 1, 2,  true, false, false,  true, false, false,  true ),
+         new ConvBlockType.Info(  3, 2, 2, false, false, false,  true, false, false, false ),
+         new ConvBlockType.Info(  4, 2, 1, false, false, false,  true, false, false, false ),
+         new ConvBlockType.Info(  5, 1, 1, false, false, false, false,  true,  true, false ),
+         new ConvBlockType.Info(  6, 1, 1, false, false, false, false,  true, false, false ),
+         new ConvBlockType.Info(  7, 1, 2, false, false, false, false, false, false,  true ),
+         new ConvBlockType.Info(  8, 1, 2,  true,  true, false, false, false, false,  true ),
+         new ConvBlockType.Info(  9, 2, 2, false,  true, false, false, false, false,  true ),
+         new ConvBlockType.Info( 10, 2, 1, false,  true, false, false, false, false, false ),
       ]
     );
   }
@@ -141,7 +141,8 @@ ConvBlockType.Info = class {
    */
   constructor( nConvBlockTypeId, inputTensorCount, outputTensorCount,
     bDepthwise2Requested, bConcat1Requested, bAddInputToOutputRequested, bConcat2ShuffleSplitRequested,
-    bHigherHalfDifferent, bHigherHalfDepthwise2
+    bHigherHalfDifferent, bHigherHalfDepthwise2,
+    bPointwise21
   ) {
     this.nConvBlockTypeId = nConvBlockTypeId;
     this.inputTensorCount = inputTensorCount;
@@ -154,6 +155,8 @@ ConvBlockType.Info = class {
 
     this.bHigherHalfDifferent = bHigherHalfDifferent;
     this.bHigherHalfDepthwise2 = bHigherHalfDepthwise2;
+
+    this.bPointwise21 = bPointwise21;
   }
 
 }
