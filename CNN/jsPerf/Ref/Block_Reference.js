@@ -35,7 +35,7 @@ class TestCorrectnessInfo {
 
     let {
       inputHeight0, inputWidth0, channelCount0_pointwise1Before, channelCount1_pointwise1Before,
-      nConvBlockType,
+      nConvBlockTypeId,
       pointwise1ChannelCount,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       pointwise20ChannelCount,
@@ -56,11 +56,11 @@ class TestCorrectnessInfo {
 //      Block.Params.set_inputTensorCount_by.call( referredParams, channelCount1_pointwise1Before );
 
       // The input tensor count is determined by convolution block type totally.
-      Block.Params.set_inputTensorCount_by.call( referredParams, nConvBlockType );
+      Block.Params.set_inputTensorCount_by.call( referredParams, nConvBlockTypeId );
 
       Block.Params.set_input1ChannelCount_by.call( referredParams,
         channelCount1_pointwise1Before,
-        nConvBlockType,
+        nConvBlockTypeId,
         pointwise1ChannelCount, pointwise20ChannelCount );
 
       bTwoInputs = ( referredParams.inputTensorCount == 2 );
@@ -420,28 +420,22 @@ class Base {
     let extractedParams = new Block.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
       testParams.in.inputHeight0, testParams.in.inputWidth0,
       testParams.in.channelCount0_pointwise1Before, testParams.in.channelCount1_pointwise1Before,
+      testParams.in.nConvBlockType,
       testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
       testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
       testParams.in.depthwiseStridesPad, testParams.in.bDepthwiseBias, testParams.in.depthwiseActivationId,
       testParams.in.nSqueezeExcitationChannelCountDivisor,
       testParams.in.bSqueezeExcitationPrefix,
       testParams.in.pointwise20ChannelCount, testParams.in.bPointwise20Bias, testParams.in.pointwise20ActivationId,
-      testParams.in.bOutput1Requested,
+
+//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
+//      testParams.in.bOutput1Requested,
+
       testParams.in.bKeepInputTensor
     );
 
     let bInitOk = block.init( progress, extractedParams, inputScaleBoundsArray0, inputScaleBoundsArray1,
       channelShuffler_ConcatPointwiseConv, arrayTemp_forInterleave_asGrouptTwo );
-
-//!!! (2022/06/08 Remarked) Use testParams.out.flags directly.
-//     let flags = {};
-//     Block.Params.setFlags_by.call( flags,
-//       testParams.out.inputHeight0, testParams.out.inputWidth0,
-//       testParams.out.channelCount0_pointwise1Before, testParams.out.channelCount1_pointwise1Before,
-//       testParams.out.pointwise1ChannelCount,
-//       testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseActivationId,
-//       testParams.out.nSqueezeExcitationChannelCountDivisor, testParams.out.bSqueezeExcitationPrefix,
-//       testParams.out.pointwise20ChannelCount, testParams.out.bOutput1Requested );
 
     let flags = testParams.out.flags;
 
@@ -480,6 +474,7 @@ class Base {
 
     asserter.propertyValue( "inChannels0", testParams.out.channelCount0_pointwise1Before );
     asserter.propertyValue( "channelCount1_pointwise1Before", testParams.out.channelCount1_pointwise1Before );
+    asserter.propertyValue( "nConvBlockId", testParams.out.nConvBlockId );
 
     asserter.propertyValue( "inputTensorCount", flags.inputTensorCount );
     asserter.propertyValue( "bHigherHalfDifferent", flags.bHigherHalfDifferent );
@@ -590,7 +585,9 @@ class Base {
     asserter.propertyValue( "pointwise20ActivationName", pointwise20ActivationName );
 
     // pointwise21 parameters.
-    asserter.propertyValue( "bOutput1Requested", testParams.out.bOutput1Requested );
+
+//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
+//    asserter.propertyValue( "bOutput1Requested", testParams.out.bOutput1Requested );
 
     { // Test pointwise21ChannelCount.
 
