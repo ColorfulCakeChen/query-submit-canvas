@@ -50,6 +50,14 @@ import { Params } from "./Block_Params.js";
  *
  *
  *   - When
+ *     - ( channelCount1_pointwise1Before == -6 ): SHUFFLE_NET_V2_HEAD: (ShuffleNetV2's head)
+ * <pre>
+ * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix) - concat2ShuffleSplit - output0
+ *        \------------- depthwise2 - (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix) /                     \ output1
+ * </pre>
+ *
+ *
+ *   - When
  *     - ( channelCount1_pointwise1Before == -5 ): ONE_INPUT_HALF_THROUGH: (ShuffleNetV2_ByMobileNetV1's body/tail)
  *     - ( channelCount1_pointwise1Before == -4 ): ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: (ShuffleNetV2_ByMobileNetV1's head)
  * <pre>
@@ -81,8 +89,7 @@ import { Params } from "./Block_Params.js";
 // The reason is that the ShuffleNetV2's head simplified needs extract more pointwise2 weights than original ShuffleNetV2
 // although its performance may be faster than original.
 
- *   - When ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE:
- * (ShuffleNetV2's head simplified with ( pointwise1ChannelCount >= 1 ), or
+ *   - When ( channelCount1_pointwise1Before == -2 ): SHUFFLE_NET_V2_BY_POINTWISE21_HEAD:
  * (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ) )
  * <pre>
  * input0 - pointwise1 - depthwise1 - concat1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix)
@@ -103,7 +110,10 @@ import { Params } from "./Block_Params.js";
  *     - ( channelCount1_pointwise1Before == 0 ): ONE_INPUT:
  *       (MobileNetV1 or
  *        MobileNetV2's head or
- *        ShuffleNetV2's head simplified with ( pointwise1ChannelCount == 0 ) or
+
+//!!! (2022/06/14 Remarked) Deprecated.
+// *        ShuffleNetV2's head simplified with ( pointwise1ChannelCount == 0 ) or
+
  *        ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount == 0 )
  *       )
  * <pre>
