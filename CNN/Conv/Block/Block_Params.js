@@ -557,8 +557,7 @@ class Params extends Weights.Params {
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
-    pointwise20ChannelCount, bPointwise20Bias,
-    bOutput1Requested
+    pointwise20ChannelCount, bPointwise20Bias
   ) {
 
     // 0. Prepare.
