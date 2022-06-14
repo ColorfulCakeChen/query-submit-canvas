@@ -1130,15 +1130,6 @@ class Base {
    */
   static TestParams_Out_createDescription( testParams ) {
 
-//!!! (2022/06/08 Remarked) Use testParams.out.flags directly.
-//     let flags = o_flags;
-//     Block.Params.setFlags_by.call( flags,
-//       testParams.out.inputHeight0, testParams.out.inputWidth0,
-//       testParams.out.channelCount0_pointwise1Before, testParams.out.channelCount1_pointwise1Before,
-//       testParams.out.pointwise1ChannelCount,
-//       testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseActivationId,
-//       testParams.out.nSqueezeExcitationChannelCountDivisor, testParams.out.bSqueezeExcitationPrefix,
-//       testParams.out.pointwise20ChannelCount, testParams.out.bOutput1Requested );
     let flags = testParams.out.flags;
 
     let paramsOutDescription =
@@ -1147,9 +1138,16 @@ class Base {
       + `inputHeight0=${testParams.out.inputHeight0}, inputWidth0=${testParams.out.inputWidth0}, `
       + `inChannels0=${testParams.out.channelCount0_pointwise1Before}, inChannels1=${flags.input1ChannelCount}, `
 
-      + `channelCount1_pointwise1Before_Name=`
-      + `${Block.Params.channelCount1_pointwise1Before.getStringOfValue( testParams.out.channelCount1_pointwise1Before )}`
-      + `(${testParams.out.channelCount1_pointwise1Before}), `
+//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
+//       + `channelCount1_pointwise1Before_Name=`
+//       + `${Block.Params.channelCount1_pointwise1Before.getStringOfValue( testParams.out.channelCount1_pointwise1Before )}`
+//       + `(${testParams.out.channelCount1_pointwise1Before}), `
+
+      + `channelCount1_pointwise1Before=${testParams.out.channelCount1_pointwise1Before}, `
+
+      + `nConvBlockTypeIdName=`
+      + `${Block.Params.nConvBlockTypeId.getStringOfValue( testParams.out.nConvBlockTypeId )}`
+      + `(${testParams.out.nConvBlockTypeId}), `
 
       + `bHigherHalfDifferent=${flags.bHigherHalfDifferent}, `
       + `bHigherHalfDepthwise2=${flags.bHigherHalfDepthwise2}, `
