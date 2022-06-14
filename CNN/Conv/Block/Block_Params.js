@@ -20,6 +20,8 @@ import * as Depthwise from "../Depthwise.js";
  * ( pointwise21ChannelCount == 0 ), there will be no pointwise convolution after depthwise convolution. The pointwise21
  * convolution could achieve some kinds of channel shuffling of ShuffleNetV2_ByPointwise21.
  *
+
+!!!
  *     - If this.channelCount1_pointwise1Before is the following, pointwise21ChannelCount is always 0.
  *       - Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1
  *         (-3) (ShuffleNetV2's body/tail).
@@ -542,6 +544,25 @@ class Params extends Weights.Params {
 
   /**
    * Determine the following properties:
+   *   - this.bPointwise21
+   *   - this.pointwise21ChannelCount
+   */
+  static set_bPointwise21_pointwise21ChannelCount_by( nConvBlockTypeId ) {
+
+    // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
+    let infoConvBlockType = ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
+
+    this.bPointwise21 = infoConvBlockType.bPointwise21;
+
+    let infoConvBlockType = ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
+    if ( infoConvBlockType.bPointwise21 )
+      this.pointwise21ChannelCount = this.pointwise20ChannelCount; // Still may be 0.
+    else
+      this.pointwise21ChannelCount = 0; // No pointwise21.
+  }
+
+  /**
+   * Determine the following properties:
    *   - this.inputTensorCount
    *   - this.input1ChannelCount
    *   - this.bDepthwiseRequestedAndNeeded
@@ -551,6 +572,8 @@ class Params extends Weights.Params {
    *   - this.bConcat2ShuffleSplitRequested
    *   - this.bHigherHalfDifferent
    *   - this.bHigherHalfDepthwise2
+   *   - this.bPointwise21
+   *   - this.pointwise21ChannelCount
    *   - this.outputTensorCount
    *
    */
@@ -597,6 +620,11 @@ class Params extends Weights.Params {
     // 2. Whether manipulate the higher half channel of convolution.
     this.bHigherHalfDifferent = infoConvBlockType.bHigherHalfDifferent;
     this.bHigherHalfDepthwise2 = infoConvBlockType.bHigherHalfDepthwise2;
+
+    // 3. Pointwise21
+    //
+    // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
+    Params.set_bPointwise21_pointwise21ChannelCount_by.call( this, nConvBlockTypeId );
   }
 
   get inputHeight0()                        { return this.parameterMapModified.get( Params.inputHeight0 ); }
@@ -647,52 +675,10 @@ class Params extends Weights.Params {
   get pointwise20ActivationId()   { return this.parameterMapModified.get( Params.pointwise20ActivationId ); }
   get pointwise20ActivationName() { return Params.pointwise20ActivationId.getStringOfValue( this.pointwise20ActivationId ); }
 
-  get bOutput1Requested()         { return this.parameterMapModified.get( Params.bOutput1Requested ); }
-
-  /**
-   * Determined by nConvBlockTypeId, pointwise20ChannelCount.
-   */
-  get pointwise21ChannelCount()   {
-
-//!!! (2022/06/14) WRONG
-//     let infoConvBlockType = ConvBlockType.Singleton.getInfoById( this.nConvBlockTypeId );
-// 
-//     if ( infoConvBlockType.outputTensorCount >= 2 ) {
-//       return this.pointwise20ChannelCount; // Still may be 0.
-//     else
-//       return 0; // No pointwise21. (because no 
-
-
-    // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
-
-//!!! ...unfinshed... (2022/06/14) Perhaps, should have flag ConvBlockType.Info.bPointwise21
-
-    switch ( this.nConvBlockTypeId ) {
-      // In the following cases, there is always no pointwise21.
-      //   - TWO_INPUTS_CONCAT_POINTWISE20_INPUT1    : (-3) (ShuffleNetV2's body/tail)
-      //   - ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: (-4) (ShuffleNetV2_ByMobileNetV1's head)
-      //   - ONE_INPUT_HALF_THROUGH                  : (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-      //
-      // Note: TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3) (ShuffleNetV2's body/tail) does not have pointwise21, but could have output1.
-      //
-      case Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1:  // (-3) (ShuffleNetV2's body/tail)
-      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH:  // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-        return 0;
-        break;
-
-      // Otherwise, pointwise21 is output1 directly. It is determined by both bOutput1Requested and pointwise20ChannelCount.
-      default:
-        if ( this.bOutput1Requested )
-          return this.pointwise20ChannelCount; // Still may be 0.
-        else
-          return 0; // No pointwisw22.
-        break;
-    }
-  }
+//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
+//  get bOutput1Requested()         { return this.parameterMapModified.get( Params.bOutput1Requested ); }
 
   // Note: pointwise21 use bias flag and activation id of pointwise20.
-
   get bPointwise21Bias()          { return this.bPointwise20Bias; }
   get pointwise21ActivationId()   { return this.pointwise20ActivationId; }
   get pointwise21ActivationName() { return this.pointwise20ActivationName; }
