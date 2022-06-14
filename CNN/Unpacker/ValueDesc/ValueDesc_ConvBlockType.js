@@ -8,7 +8,10 @@ import { Int } from "./ValueDesc_Base.js";
  *   - 0: MOBILE_NET_V1_HEAD_BODY_TAIL               (General Pointwise1-Depthwise1-Pointwise2)
  *                                                   (MobileNetV1 or
  *                                                    MobileNetV2's head or
+
+//!!! ...unfinished... (2022/06/14) needs two outputs.
  *                                                    ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount == 0 ))
+
  *
  *   - 1: MOBILE_NET_V2_BODY_TAIL
  *   - 2: SHUFFLE_NET_V2_HEAD
