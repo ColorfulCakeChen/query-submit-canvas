@@ -126,6 +126,11 @@ ConvBlockType.Info = class {
    * @param {boolean} bHigherHalfDepthwise2
    *   Whether the higher half channels will be processed by depthwise2. Usually true only if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD.
    *
+   
+//!!! ...unfinshed... (2022/06/14) Perhaps, should have flag ConvBlockType.Info.bPointwise21
+    // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
+
+
    */
   constructor( nConvBlockTypeId, inputTensorCount, outputTensorCount,
     bDepthwise2Requested, bConcat1Requested, bAddInputToOutputRequested, bConcat2ShuffleSplitRequested,
