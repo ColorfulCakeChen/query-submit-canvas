@@ -5,62 +5,64 @@ export { AvgMax_Or_ChannelMultiplier };
 
 import { Int } from "./ValueDesc_Base.js";
 
-//!!! ...unfinished... (2022/06/12)
-// Perhaps, integrated bOutput1Requested into this enumeration.
-
-/** Describe id, range, name of channelCount1_pointwise1Before.
- *
- * Convert number value into integer between [ -6, ( 10 * 1024 ) ] representing operation:
- *   - -6: SHUFFLE_NET_V2_HEAD                      (ShuffleNetV2's head)
- *   - -5: ONE_INPUT_HALF_THROUGH                   (ShuffleNetV2_ByMobileNetV1's body/tail)
- *   - -4: ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (ShuffleNetV2_ByMobileNetV1's head)
- *   - -3: TWO_INPUTS_CONCAT_POINTWISE20_INPUT1     (ShuffleNetV2's body/tail)
- *   - -2: SHUFFLE_NET_V2_BY_POINTWISE21_HEAD       (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
- 
-//!!! (2022/06/14 Remarked)
-// *   - -2: ONE_INPUT_TWO_DEPTHWISE                  (ShuffleNetV2's head simplified with ( pointwise1ChannelCount >= 1 ) or
-// *                                                   ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
-
- *
- *   - -1: ONE_INPUT_ADD_TO_OUTPUT                  (MobileNetV2)
- *   -  0: ONE_INPUT                                (General Pointwise1-Depthwise1-Pointwise2)
- *                                                  (MobileNetV1 or
- *                                                   MobileNetV2's head or
-
-//!!! (2022/06/14 Remarked)
-// *                                                   ShuffleNetV2's head simplified with ( pointwise1ChannelCount == 0 ) or
-
- *                                                   ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount == 0 ))
- *
- *   - [ 1, ( 10 * 1024 ) ]: TWO_INPUTS with the second input channel count between 1 and 10240 (inclusive). (without names defined.)
- *                                                  (ShuffleNetV2_ByPointwise21's body/tail)
- */
-class channelCount1_pointwise1Before extends Int {
-
-  constructor() {
-    super( -6, ( 10 * 1024 ), [
-      "SHUFFLE_NET_V2_HEAD",                      // (-6)
-      "ONE_INPUT_HALF_THROUGH",                   // (-5)
-      "ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1", // (-4)
-      "TWO_INPUTS_CONCAT_POINTWISE20_INPUT1",     // (-3)
-      "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD",       // (-2)
-      "ONE_INPUT_ADD_TO_OUTPUT",                  // (-1)
-      "ONE_INPUT",                                // ( 0)
-
-      // "TWO_INPUTS_1", "TWO_INPUTS_2", ..., "TWO_INPUTS_10240".
-      //
-      // ShuffleNetV2's (and ShuffleNetV2_ByPointwise21's) body/tail
-      //
-      // (2021/07/13 Remarked) Do not define these names because they will occupy too many memory.
-      //
-      //... [ ... new Array( 10 * 1024 ).keys() ].map( x => "TWO_INPUTS_" + ( x + 1 ) )
-    ] );
-  }
-
-}
-
-/** The only one ValueDesc.channelCount1_pointwise1Before instance. */
-channelCount1_pointwise1Before.Singleton = new channelCount1_pointwise1Before;
+//!!! (2022/06/14 Remarked) Replaced by ConvBlockType.
+//
+// //!!! ...unfinished... (2022/06/12)
+// // Perhaps, integrated bOutput1Requested into this enumeration.
+//
+// /** Describe id, range, name of channelCount1_pointwise1Before.
+//  *
+//  * Convert number value into integer between [ -6, ( 10 * 1024 ) ] representing operation:
+//  *   - -6: SHUFFLE_NET_V2_HEAD                      (ShuffleNetV2's head)
+//  *   - -5: ONE_INPUT_HALF_THROUGH                   (ShuffleNetV2_ByMobileNetV1's body/tail)
+//  *   - -4: ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (ShuffleNetV2_ByMobileNetV1's head)
+//  *   - -3: TWO_INPUTS_CONCAT_POINTWISE20_INPUT1     (ShuffleNetV2's body/tail)
+//  *   - -2: SHUFFLE_NET_V2_BY_POINTWISE21_HEAD       (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
+//
+// //!!! (2022/06/14 Remarked)
+// // *   - -2: ONE_INPUT_TWO_DEPTHWISE                  (ShuffleNetV2's head simplified with ( pointwise1ChannelCount >= 1 ) or
+// // *                                                   ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
+//
+//  *
+//  *   - -1: ONE_INPUT_ADD_TO_OUTPUT                  (MobileNetV2)
+//  *   -  0: ONE_INPUT                                (General Pointwise1-Depthwise1-Pointwise2)
+//  *                                                  (MobileNetV1 or
+//  *                                                   MobileNetV2's head or
+//
+// //!!! (2022/06/14 Remarked)
+// // *                                                   ShuffleNetV2's head simplified with ( pointwise1ChannelCount == 0 ) or
+//
+//  *                                                   ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount == 0 ))
+//  *
+//  *   - [ 1, ( 10 * 1024 ) ]: TWO_INPUTS with the second input channel count between 1 and 10240 (inclusive). (without names defined.)
+//  *                                                  (ShuffleNetV2_ByPointwise21's body/tail)
+//  */
+// class channelCount1_pointwise1Before extends Int {
+//
+//   constructor() {
+//     super( -6, ( 10 * 1024 ), [
+//       "SHUFFLE_NET_V2_HEAD",                      // (-6)
+//       "ONE_INPUT_HALF_THROUGH",                   // (-5)
+//       "ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1", // (-4)
+//       "TWO_INPUTS_CONCAT_POINTWISE20_INPUT1",     // (-3)
+//       "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD",       // (-2)
+//       "ONE_INPUT_ADD_TO_OUTPUT",                  // (-1)
+//       "ONE_INPUT",                                // ( 0)
+//
+//       // "TWO_INPUTS_1", "TWO_INPUTS_2", ..., "TWO_INPUTS_10240".
+//       //
+//       // ShuffleNetV2's (and ShuffleNetV2_ByPointwise21's) body/tail
+//       //
+//       // (2021/07/13 Remarked) Do not define these names because they will occupy too many memory.
+//       //
+//       //... [ ... new Array( 10 * 1024 ).keys() ].map( x => "TWO_INPUTS_" + ( x + 1 ) )
+//     ] );
+//   }
+//
+// }
+//
+// /** The only one ValueDesc.channelCount1_pointwise1Before instance. */
+// channelCount1_pointwise1Before.Singleton = new channelCount1_pointwise1Before;
 
 
 /** Describe id, range, name of the processing mode of pointwise convolution's higher half channels.
