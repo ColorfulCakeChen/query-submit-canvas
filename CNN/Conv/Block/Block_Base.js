@@ -177,6 +177,12 @@ import { Params } from "./Block_Params.js";
  *   Only if ( bHigherHalfDifferent == true ), this is meaningful. If true, the depthwise1 will use higher half channels to achieve
  * the depthwise2. If false, the depthwise1's higher half channels just pass through the input to output.
  *
+ * @member {boolean} bPointwise21
+ *   Whether the 2nd pointwise2 existed.
+ *
+ * @member {number} pointwise21ChannelCount
+ *   The output channel count of the second pointwise2 convolution. If ( bPointwise21 == false ), then ( pointwise21ChannelCount == 0 ).
+ *
  * @member {number} outputTensorCount
  *   How many output tensors will be returned by the parameter outputTensors of apply(). At least 1. At most 2.
  *
@@ -384,24 +390,25 @@ class Base {
     this.pointwise20ActivationId = params.pointwise20ActivationId;
     this.pointwise20ActivationName = params.pointwise20ActivationName;
 
-    this.bOutput1Requested = params.bOutput1Requested;
-    this.pointwise21ChannelCount = params.pointwise21ChannelCount;
-    this.bPointwise21Bias = params.bPointwise21Bias;
-    this.pointwise21ActivationId = params.pointwise21ActivationId;
-    this.pointwise21ActivationName = params.pointwise21ActivationName;
-
     this.bKeepInputTensor = params.bKeepInputTensor;
 
     // The parameters which are determined (inferenced) from the above parameters.
     {
       this.inputTensorCount = params.inputTensorCount;
-      this.bHigherHalfDifferent = params.bHigherHalfDifferent;
-      this.bHigherHalfDepthwise2 = params.bHigherHalfDepthwise2;
       this.bDepthwiseRequestedAndNeeded = params.bDepthwiseRequestedAndNeeded;
       this.bDepthwise2Requested = params.bDepthwise2Requested;
       this.bConcat1Requested = params.bConcat1Requested;
       this.bAddInputToOutputRequested = params.bAddInputToOutputRequested;
       this.bConcat2ShuffleSplitRequested = params.bConcat2ShuffleSplitRequested;
+      this.bHigherHalfDifferent = params.bHigherHalfDifferent;
+      this.bHigherHalfDepthwise2 = params.bHigherHalfDepthwise2;
+
+      this.bPointwise21 = params.bPointwise21;
+      this.pointwise21ChannelCount = params.pointwise21ChannelCount;
+      this.bPointwise21Bias = params.bPointwise21Bias;
+      this.pointwise21ActivationId = params.pointwise21ActivationId;
+      this.pointwise21ActivationName = params.pointwise21ActivationName;
+
       this.outputTensorCount = params.outputTensorCount;
     }
 
