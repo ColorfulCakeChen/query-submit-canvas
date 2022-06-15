@@ -433,7 +433,7 @@ class Base {
     let bInitOk = block.init( progress, extractedParams, inputScaleBoundsArray0, inputScaleBoundsArray1,
       channelShuffler_ConcatPointwiseConv, arrayTemp_forInterleave_asGrouptTwo );
 
-    let flags = testParams.out.flags;
+    let inferencedParams = testParams.out.inferencedParams;
 
     if ( !bInitOk ) { //!!! For Debug.
       console.log( "testParams =", testParams );
@@ -472,14 +472,14 @@ class Base {
     asserter.propertyValue( "channelCount1_pointwise1Before", testParams.out.channelCount1_pointwise1Before );
     asserter.propertyValue( "nConvBlockId", testParams.out.nConvBlockId );
 
-    asserter.propertyValue( "inputTensorCount", flags.inputTensorCount );
-    asserter.propertyValue( "bHigherHalfDifferent", flags.bHigherHalfDifferent );
-    asserter.propertyValue( "bHigherHalfDepthwise2", flags.bHigherHalfDepthwise2 );
-    asserter.propertyValue( "bDepthwiseRequestedAndNeeded", flags.bDepthwiseRequestedAndNeeded );
-    asserter.propertyValue( "bDepthwise2Requested", flags.bDepthwise2Requested );
-    asserter.propertyValue( "bConcat1Requested", flags.bConcat1Requested );
-    asserter.propertyValue( "bAddInputToOutputRequested", flags.bAddInputToOutputRequested );
-    asserter.propertyValue( "bConcat2ShuffleSplitRequested", flags.bConcat2ShuffleSplitRequested );
+    asserter.propertyValue( "inputTensorCount", inferencedParams.inputTensorCount );
+    asserter.propertyValue( "bHigherHalfDifferent", inferencedParams.bHigherHalfDifferent );
+    asserter.propertyValue( "bHigherHalfDepthwise2", inferencedParams.bHigherHalfDepthwise2 );
+    asserter.propertyValue( "bDepthwiseRequestedAndNeeded", inferencedParams.bDepthwiseRequestedAndNeeded );
+    asserter.propertyValue( "bDepthwise2Requested", inferencedParams.bDepthwise2Requested );
+    asserter.propertyValue( "bConcat1Requested", inferencedParams.bConcat1Requested );
+    asserter.propertyValue( "bAddInputToOutputRequested", inferencedParams.bAddInputToOutputRequested );
+    asserter.propertyValue( "bConcat2ShuffleSplitRequested", inferencedParams.bConcat2ShuffleSplitRequested );
 
     // The ( block.bConcat2ShuffleSplitRequested == true ) only if:
     //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) (-3)
@@ -797,7 +797,7 @@ class Base {
 
 //!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
 //    if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
-    if ( testParams.out.flags.bDepthwiseRequestedAndNeeded ) {
+    if ( testParams.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
       depthwise1Result = testParams.use_depthwise1( pointwise1Result, "Depthwise1", this.paramsOutDescription );
 
       // When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be shrinked by depthwise1. Otherwise, its size may
@@ -819,7 +819,7 @@ class Base {
 
 //!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
 //      if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
-      if ( testParams.out.flags.bDepthwiseRequestedAndNeeded ) {
+      if ( testParams.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
         depthwise2Result = testParams.use_depthwise2( imageIn0, "Depthwise2_for_input0", this.paramsOutDescription ); // depthwise2 apply to input0 (not input1).
       } else {
         depthwise2Result = imageIn0; // Since depthwise2 is just no-op, its result is just the same as its input (i.e. input0 (not input1)).
@@ -830,7 +830,7 @@ class Base {
 
 //!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
 //      if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
-      if ( testParams.out.flags.bDepthwiseRequestedAndNeeded ) {
+      if ( testParams.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
 
         // depthwise2 apply to input1 which higher-half-copy-lower-half from input0 (not original input0, not original input1).
         depthwise2Result = testParams.use_depthwise2( imageIn1, "Depthwise2_for_input1", this.paramsOutDescription );
@@ -1130,13 +1130,13 @@ class Base {
    */
   static TestParams_Out_createDescription( testParams ) {
 
-    let flags = testParams.out.flags;
+    let inferencedParams = testParams.out.inferencedParams;
 
     let paramsOutDescription =
-        `inputTensorCount=${flags.inputTensorCount}, `
+        `inputTensorCount=${inferencedParams.inputTensorCount}, `
 
       + `input0_height=${testParams.out.input0_height}, input0_width=${testParams.out.input0_width}, `
-      + `inChannels0=${testParams.out.input0_channelCount}, inChannels1=${flags.input1_channelCount}, `
+      + `inChannels0=${testParams.out.input0_channelCount}, inChannels1=${inferencedParams.input1_channelCount}, `
 
 //!!! (2022/06/14 Remarked) replaced by ConvBlockType.
 //       + `channelCount1_pointwise1Before_Name=`
@@ -1149,16 +1149,16 @@ class Base {
       + `${Block.Params.nConvBlockTypeId.getStringOfValue( testParams.out.nConvBlockTypeId )}`
       + `(${testParams.out.nConvBlockTypeId}), `
 
-      + `bHigherHalfDifferent=${flags.bHigherHalfDifferent}, `
-      + `bHigherHalfDepthwise2=${flags.bHigherHalfDepthwise2}, `
+      + `bHigherHalfDifferent=${inferencedParams.bHigherHalfDifferent}, `
+      + `bHigherHalfDepthwise2=${inferencedParams.bHigherHalfDepthwise2}, `
 
       + `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `
       + `pointwise1ActivationName=`
         + `${Block.Params.pointwise1ActivationId.getStringOfValue( testParams.out.pointwise1ActivationId )}`
         + `(${testParams.out.pointwise1ActivationId}), `
 
-      + `bDepthwiseRequestedAndNeeded=${flags.bDepthwiseRequestedAndNeeded}, `
-      + `bDepthwise2Requested=${flags.bDepthwise2Requested}, `
+      + `bDepthwiseRequestedAndNeeded=${inferencedParams.bDepthwiseRequestedAndNeeded}, `
+      + `bDepthwise2Requested=${inferencedParams.bDepthwise2Requested}, `
 
       + `depthwise_AvgMax_Or_ChannelMultiplier=`
         + `${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getStringOf( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier )}, `
@@ -1171,7 +1171,7 @@ class Base {
         + `${Block.Params.depthwiseActivationId.getStringOfValue( testParams.out.depthwiseActivationId )}`
         + `(${testParams.out.depthwiseActivationId}), `
 
-      + `bConcat1Requested=${flags.bConcat1Requested}, `
+      + `bConcat1Requested=${inferencedParams.bConcat1Requested}, `
 
       + `nSqueezeExcitationChannelCountDivisorName=`
         + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getStringOf( testParams.out.nSqueezeExcitationChannelCountDivisor )}`
@@ -1184,9 +1184,9 @@ class Base {
 
       + `bOutput1Requested=${testParams.out.bOutput1Requested}, `
 
-      + `bAddInputToOutputRequested=${flags.bAddInputToOutputRequested}, `
-      + `bConcat2ShuffleSplitRequested=${flags.bConcat2ShuffleSplitRequested}, `
-      + `outputTensorCount=${flags.outputTensorCount}, `
+      + `bAddInputToOutputRequested=${inferencedParams.bAddInputToOutputRequested}, `
+      + `bConcat2ShuffleSplitRequested=${inferencedParams.bConcat2ShuffleSplitRequested}, `
+      + `outputTensorCount=${inferencedParams.outputTensorCount}, `
 
       + `bKeepInputTensor=${testParams.out.bKeepInputTensor}`
     ;
