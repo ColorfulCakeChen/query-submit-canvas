@@ -156,6 +156,24 @@ import { Params } from "./Block_Params.js";
  * @member {number} inputTensorCount
  *   How many input tensors will be passed into apply() as parameter inputTensors[].
  *
+ * @member {number} input1_height
+ *   The height of the second input (i.e. input1). If there is no input1, it will be 0. This is inferenced from other parameters.
+ * The input1's height of Block.apply() should match this value.
+ *
+ * @member {number} input1_width
+ *   The width of the second input (i.e. input1). If there is no input1, it will be 0. This is inferenced from other parameters.
+ * The input1's width of Block.apply() should match this value.
+ *
+ * @member {number} input1_channelCount
+ *   The channel count of the second input (i.e. input1). If there is no input1, it will be 0. This is inferenced from other parameters.
+ * The input1's channel count of Block.apply() should match this value. The Block.inChannels1 should also the same this value.
+ *
+ * @member {boolean} bDepthwiseRequestedAndNeeded
+ *   Whether depthwise operation is requested and necessary.
+ *
+ * @member {Depthwise.PadInfoCalculatorRoot} depthwisePadInfo
+ *   If ( bDepthwiseRequestedAndNeeded == true ), this info will be set.
+ *
  * @member {boolean} bDepthwise2Requested
  *   If true, the depthwise2 is needed.
  *
@@ -177,11 +195,9 @@ import { Params } from "./Block_Params.js";
  *   Only if ( bHigherHalfDifferent == true ), this is meaningful. If true, the depthwise1 will use higher half channels to achieve
  * the depthwise2. If false, the depthwise1's higher half channels just pass through the input to output.
  *
- * @member {boolean} bPointwise21
- *   Whether the 2nd pointwise2 existed.
- *
  * @member {number} pointwise21ChannelCount
- *   The output channel count of the second pointwise2 convolution. If ( bPointwise21 == false ), then ( pointwise21ChannelCount == 0 ).
+ *   The output channel count of the second pointwise2 convolution. If ( pointwise21ChannelCount == 0 ), it means pointwise21 does
+ * not existed.
  *
  * @member {number} outputTensorCount
  *   How many output tensors will be returned by the parameter outputTensors of apply(). At least 1. At most 2.
@@ -208,16 +224,6 @@ import { Params } from "./Block_Params.js";
  *
  * @member {number} inChannels1
  *   The channel count of the second input tensor (i.e. inputTensors[ 1 ]). It is zero or positive (never negative).
- *
- *     - If ( this.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY ) or
- *          ( this.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL ),
- *         inChannels1 is the same as this.channelCount1_pointwise1Before.
- *
- *     - If ( this.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY ) or
- *          ( this.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL ) ),
- *         inChannels1 will be the same as pointwise20ChannelCount.
- *
- *     - Otherwise, inChannels1 will be zero.
  *
  * @member {TensorPlaceholder.Base} input0
  *   The TensorPlaceholder object which represents this operation's 1st input.
@@ -361,7 +367,6 @@ class Base {
     this.input0_height = params.input0_height;
     this.input0_width = params.input0_width;
     this.input0_channelCount = params.input0_channelCount;
-    this.channelCount1_pointwise1Before = params.channelCount1_pointwise1Before;
 
     this.nConvBlockTypeId = params.nConvBlockTypeId;
     this.nConvBlockTypeIdName = params.nConvBlockTypeIdName;
@@ -392,10 +397,16 @@ class Base {
 
     this.bKeepInputTensor = params.bKeepInputTensor;
 
-    // The parameters which are determined (inferenced) from the above parameters.
+    // The parameters which are inferenced from the above parameters.
     {
       this.inputTensorCount = params.inputTensorCount;
+      this.input1_height = params.input1_height;
+      this.input1_width = params.input1_width;
+      this.input1_channelCount = params.input1_channelCount;
+
       this.bDepthwiseRequestedAndNeeded = params.bDepthwiseRequestedAndNeeded;
+      this.depthwisePadInfo = params.depthwisePadInfo;
+
       this.bDepthwise2Requested = params.bDepthwise2Requested;
       this.bConcat1Requested = params.bConcat1Requested;
       this.bAddInputToOutputRequested = params.bAddInputToOutputRequested;
@@ -403,7 +414,6 @@ class Base {
       this.bHigherHalfDifferent = params.bHigherHalfDifferent;
       this.bHigherHalfDepthwise2 = params.bHigherHalfDepthwise2;
 
-      this.bPointwise21 = params.bPointwise21;
       this.pointwise21ChannelCount = params.pointwise21ChannelCount;
       this.bPointwise21Bias = params.bPointwise21Bias;
       this.pointwise21ActivationId = params.pointwise21ActivationId;
