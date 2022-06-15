@@ -18,7 +18,7 @@ import * as Block from "../../Conv/Block.js";
  *
  * @member {object} in
  *   The "in" sub-object's data members represent every parameters of the Block.Params's constructor. That is,
- * it has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, nConvBlockTypeId,
+ * it has the following data members: input0_channelCount, channelCount1_pointwise1Before, nConvBlockTypeId,
  * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
  * depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise20ChannelCount, bPointwise20Bias,
  * pointwise20ActivationId, bKeepInputTensor. It also has the following properties:
@@ -60,8 +60,8 @@ class Base extends TestParams.Base {
    *   Return this object self.
    */
   set_byParamsScattered(
-    inputHeight0, inputWidth0,
-    channelCount0_pointwise1Before,
+    input0_height, input0_width,
+    input0_channelCount,
     channelCount1_pointwise1Before,
     nConvBlockType,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
@@ -73,8 +73,8 @@ class Base extends TestParams.Base {
   ) {
     this.in.paramsNumberArrayObject = {};
     this.out = {
-      inputHeight0, inputWidth0,
-      channelCount0_pointwise1Before,
+      input0_height, input0_width,
+      input0_channelCount,
       channelCount1_pointwise1Before,
       nConvBlockType,
       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
@@ -101,7 +101,7 @@ class Base extends TestParams.Base {
    * The name should be one of Base.paramsNameOrderArray[] elements.
    *
    * @param {object} this.out
-   *   An object which has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, nConvBlockType,
+   *   An object which has the following data members: input0_channelCount, channelCount1_pointwise1Before, nConvBlockType,
    * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
    * depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise20ChannelCount, bPointwise20Bias,
    * pointwise20ActivationId, bKeepInputTensor. And depthwisePadInfo.
@@ -133,12 +133,12 @@ class Base extends TestParams.Base {
   generate_out_depthwisePadInfo() {
     if ( !this.out.depthwisePadInfo ) {
       this.out.depthwisePadInfo = new ( Depthwise.PadInfoCalculator() )(
-        this.out.inputHeight0, this.out.inputWidth0, this.out.channelCount0_pointwise1Before, 
+        this.out.input0_height, this.out.input0_width, this.out.input0_channelCount, 
         this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
         this.out.depthwiseStridesPad );
     } else { // Re-using (instead of re-creating) may improve runtime speed.
       this.out.depthwisePadInfo.set(
-        this.out.inputHeight0, this.out.inputWidth0, this.out.channelCount0_pointwise1Before, 
+        this.out.input0_height, this.out.input0_width, this.out.input0_channelCount, 
         this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
         this.out.depthwiseStridesPad );
     }
@@ -151,8 +151,8 @@ class Base extends TestParams.Base {
       this.out.flags = {};
     }
     Block.Params.setFlags_by.call( this.out.flags,
-      this.out.inputHeight0, this.out.inputWidth0,
-      this.out.channelCount0_pointwise1Before, this.out.channelCount1_pointwise1Before,
+      this.out.input0_height, this.out.input0_width,
+      this.out.input0_channelCount, this.out.channelCount1_pointwise1Before,
       this.out.nConvBlockTypeId,
       this.out.pointwise1ChannelCount,
       this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
@@ -181,7 +181,7 @@ class Base extends TestParams.Base {
 
         // depthwise2 (processing input0) must have the same input channel count as depthwise1 (processing pointwise1 result).
         // So that the results of depthwise1 and depthwise2 both have the same output channel count.
-        if ( this.out.channelCount0_pointwise1Before != this.out.pointwise1ChannelCount )
+        if ( this.out.input0_channelCount != this.out.pointwise1ChannelCount )
           return false;
 
       // For ( pointwise1ChannelCount > 0 ), pointwise1 result is just the input0 itself (i.e. always the same).
@@ -191,7 +191,7 @@ class Base extends TestParams.Base {
     } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) {
 
       // The input and output channel count must be the same. Otherwise, the concat2-split-shuffle could not operate properly.
-      if ( this.out.channelCount0_pointwise1Before != this.out.pointwise20ChannelCount )
+      if ( this.out.input0_channelCount != this.out.pointwise20ChannelCount )
         return false;
     }
 
@@ -257,8 +257,8 @@ class Base extends TestParams.Base {
     // Note: When pad is "same", this restriction does not exist.
     if ( ValueDesc.StridesPad.pad_isValid( this.out.depthwiseStridesPad ) ) {
 
-      if (   ( this.out.depthwiseFilterHeight > this.out.inputHeight0 )
-          || ( this.out.depthwiseFilterWidth  > this.out.inputWidth0  ) )
+      if (   ( this.out.depthwiseFilterHeight > this.out.input0_height )
+          || ( this.out.depthwiseFilterWidth  > this.out.input0_width  ) )
         return false;
 
     // Otherwise, when pad is "same", it should test more filter size.
@@ -315,12 +315,12 @@ class Base extends TestParams.Base {
 //       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
        ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
-      inputHeight0: [ 3, 3 ],
-      inputWidth0: [ 4, 5 ],
+      input0_height: [ 3, 3 ],
+      input0_width: [ 4, 5 ],
 
-      channelCount0_pointwise1Before: [
-        Block.Params.channelCount0_pointwise1Before.valueDesc.range.min,
-        Block.Params.channelCount0_pointwise1Before.valueDesc.range.min + 4 - 1
+      input0_channelCount: [
+        Block.Params.input0_channelCount.valueDesc.range.min,
+        Block.Params.input0_channelCount.valueDesc.range.min + 4 - 1
       ],
 
       // Test all named values plus two more un-named values.
@@ -386,8 +386,8 @@ class Base extends TestParams.Base {
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
 
-      new TestParams.ParamDescConfig( Block.Params.inputHeight0,            this.valueOutMinMax.inputHeight0 ),
-      new TestParams.ParamDescConfig( Block.Params.inputWidth0,             this.valueOutMinMax.inputWidth0 ),
+      new TestParams.ParamDescConfig( Block.Params.input0_height,            this.valueOutMinMax.input0_height ),
+      new TestParams.ParamDescConfig( Block.Params.input0_width,             this.valueOutMinMax.input0_width ),
 
       new TestParams.ParamDescConfig( Block.Params.pointwise20ChannelCount, this.valueOutMinMax.pointwise20ChannelCount ),
       new TestParams.ParamDescConfig( Block.Params.bPointwise20Bias,        this.valueOutMinMax.Bias ),
@@ -401,8 +401,8 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.nSqueezeExcitationChannelCountDivisor,
                                                                             this.valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
 
-      new TestParams.ParamDescConfig( Block.Params.channelCount0_pointwise1Before,
-                                                                            this.valueOutMinMax.channelCount0_pointwise1Before ),
+      new TestParams.ParamDescConfig( Block.Params.input0_channelCount,
+                                                                            this.valueOutMinMax.input0_channelCount ),
 
       new TestParams.ParamDescConfig( Block.Params.depthwise_AvgMax_Or_ChannelMultiplier,
                                                                             this.valueOutMinMax.depthwise_AvgMax_Or_ChannelMultiplier ),
@@ -1044,7 +1044,7 @@ class Base extends TestParams.Base {
 
 
     // 0.
-    let channelCount0_pointwise1Before_original = paramsAll.channelCount0_pointwise1Before;
+    let input0_channelCount_original = paramsAll.input0_channelCount;
     let pointwise1ChannelCount_original = paramsAll.pointwise1ChannelCount;
     let pointwise20ChannelCount_original = paramsAll.pointwise20ChannelCount;
 
@@ -1060,7 +1060,7 @@ class Base extends TestParams.Base {
       this.doubleParamValue( Block.Params.pointwise20ChannelCount );
 
     // In ShuffleNetV2_ByMobileNetV1's body/tail:
-    //   - channelCount0_pointwise1Before, pointwise20ChannelCount.
+    //   - input0_channelCount, pointwise20ChannelCount.
     //     - Double them in paramsAll and io_paramsNumberArrayObject (if existed).
     //   -  pointwise1ChannelCount.
     //     - Adjust it in paramsAll and io_paramsNumberArrayObject (if existed).
@@ -1069,7 +1069,7 @@ class Base extends TestParams.Base {
     // The reason is that Block will only extract filters weights of half the above parameters in this case.
     //
     } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) { // (9) (ShuffleNetV2_ByMobileNetV1's body/tail)
-      this.doubleParamValue( Block.Params.channelCount0_pointwise1Before );
+      this.doubleParamValue( Block.Params.input0_channelCount );
 
       if ( pointwise1ChannelCount_original == 0 ) {
         // When the output channel count is not specified, keep it zero.
@@ -1078,7 +1078,7 @@ class Base extends TestParams.Base {
         let outputChannelCount_lowerHalf_pointwise1 = pointwise1ChannelCount_original;
 
         // Because input0's channel count has been doubled (in the above), the higher half is just the same as the original input0's channel count.
-        let inputChannelCount_higherHalf_pointwise1 = channelCount0_pointwise1Before_original;
+        let inputChannelCount_higherHalf_pointwise1 = input0_channelCount_original;
 
         let pointwise1ChannelCount_enlarged = outputChannelCount_lowerHalf_pointwise1 + inputChannelCount_higherHalf_pointwise1;
         this.modifyParamValue( Block.Params.pointwise1ChannelCount, pointwise1ChannelCount_enlarged );
@@ -1088,7 +1088,7 @@ class Base extends TestParams.Base {
     }
 
     // 1. Pointwise1
-    let pointwise1_resultOutputChannelCount = this.generate_pointwise_filters_biases( channelCount0_pointwise1Before_original,
+    let pointwise1_resultOutputChannelCount = this.generate_pointwise_filters_biases( input0_channelCount_original,
       pointwise1ChannelCount_original, paramsAll.bPointwise1Bias, "pointwise1", io_paramsNumberArrayObject );
 
     // 2. Depthwise
@@ -1123,7 +1123,7 @@ class Base extends TestParams.Base {
       if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
           || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (5)
          ) {
-          depthwise2_inputChannelCount = paramsAll.channelCount0_pointwise1Before; // Use input0.
+          depthwise2_inputChannelCount = paramsAll.input0_channelCount; // Use input0.
 
         // (8) (ShuffleNetV2_ByMobileNetV1's head)
         //
@@ -1131,10 +1131,10 @@ class Base extends TestParams.Base {
         //
         } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (8)
 
-//!!! ...unfinished... (2022/06/14) should also be paramsAll.channelCount0_pointwise1Before; // Use input0.
+//!!! ...unfinished... (2022/06/14) should also be paramsAll.input0_channelCount; // Use input0.
 //          depthwise2_inputChannelCount = pointwise1_resultOutputChannelCount;
 
-          depthwise2_inputChannelCount = paramsAll.channelCount0_pointwise1Before; // Use input0.
+          depthwise2_inputChannelCount = paramsAll.input0_channelCount; // Use input0.
         }
 
         // Only if depthwise operation is requested and necessary, create them.
@@ -1320,9 +1320,9 @@ Base.weightsRandomOffset = { min: -100, max: +100 };
  * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Block.initer().
  */
 Base.paramsNameOrderArray = [
-  Block.Params.inputHeight0.paramName,
-  Block.Params.inputWidth0.paramName,
-  Block.Params.channelCount0_pointwise1Before.paramName,
+  Block.Params.input0_height.paramName,
+  Block.Params.input0_width.paramName,
+  Block.Params.input0_channelCount.paramName,
   Block.Params.channelCount1_pointwise1Before.paramName,
   Block.Params.nConvBlockTypeId.paramName,
   Block.Params.pointwise1ChannelCount.paramName,
