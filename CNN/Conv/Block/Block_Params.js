@@ -298,15 +298,9 @@ class Params extends Weights.Params {
    *
    */
   static set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by(
-
-//!!! (2022/06/15 Remarked) become inferenced.
-//    channelCount1_pointwise1Before,
-
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
-
     pointwise1ChannelCount,
-
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -343,7 +337,7 @@ class Params extends Weights.Params {
 
     // 3. input1 ( height, width, channelCount )
 
-    if ( this.inputTensorCount <= 1 ) { // 3.1 No input1 (i.e. only input0).
+    if ( this.inputTensorCount <= 1 ) { // 3.1 No input1 (i.e. one input; only input0).
       this.input1_height = 0;
       this.input1_width = 0;
       this.input1_channelCount = 0;
@@ -363,13 +357,13 @@ class Params extends Weights.Params {
       switch ( nConvBlockTypeId ) {
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY:
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL:
-          this.input1_channelCount = pointwise20ChannelCount;
+          this.input1_channelCount = pointwise20ChannelCount; // (Note: pointwise20 always exists.)
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY:
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL:
           if ( this.bDepthwiseRequestedAndNeeded ) {
-            this.input1_channelCount = this.depthwisePadInfo.outputChannelCount;
+            this.input1_channelCount = this.depthwisePadInfo.outputChannelCount; // i.e. the same as depthwise1's output channel count.
           } else {
             if ( pointwise1ChannelCount > 0 ) {
               this.input1_channelCount = pointwise1ChannelCount;
@@ -393,9 +387,7 @@ class Params extends Weights.Params {
           );
           break;
       }
-
     }
-
   }
 
   /**
@@ -415,8 +407,11 @@ class Params extends Weights.Params {
   /**
    * Determine the following properties:
    *   - this.inputTensorCount
+   *   - this.input1_height
+   *   - this.input1_width
    *   - this.input1_channelCount
    *   - this.bDepthwiseRequestedAndNeeded
+   *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
    *   - this.bDepthwise2Requested
    *   - this.bConcat1Requested
    *   - this.bAddInputToOutputRequested
@@ -429,7 +424,6 @@ class Params extends Weights.Params {
    */
   static set_inferencedParams_by(
     input0_height, input0_width, input0_channelCount,
-    channelCount1_pointwise1Before,
     nConvBlockTypeId,
     pointwise1ChannelCount,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
@@ -439,41 +433,33 @@ class Params extends Weights.Params {
   ) {
 
     // 0. Prepare.
-
     let infoConvBlockType = ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
 
-//!!! (2022/06/15 Remarked) Already included in later.
-//     // 0.1 The input tensor count is totally determined by channelCount1_pointwise1Before.
-//     Params.set_inputTensorCount_by.call( this, nConvBlockTypeId );
+    // 1. The input1 channel count.
+    Params.set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by.call( this,
+      input0_height, input0_width, input0_channelCount,
+      nConvBlockTypeId,
+      pointwise1ChannelCount,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      bDepthwiseBias, depthwiseActivationId,
+      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+      pointwise20ChannelCount, bPointwise20Bias
+    );
 
-    // 0.2 The output tensor count.
+    // 2. The output tensor count.
     this.outputTensorCount = infoConvBlockType.outputTensorCount;
 
-    // 0.3 The (estimated) input1 channel count.
-    Params.set_input1_channelCount_by.call( this, channelCount1_pointwise1Before, pointwise1ChannelCount, pointwise20ChannelCount );
-
-//!!! (2022/06/15 Remarked) Already included in previous.
-//     // 0.4 Whether depthwise is requested and necessary.
-//     Params.set_bDepthwiseRequestedAndNeeded_by.call( this,
-//       input0_height, input0_width,
-//       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-//       bDepthwiseBias, depthwiseActivationId,
-//       nSqueezeExcitationChannelCountDivisor,
-//       bSqueezeExcitationPrefix,
-//       bPointwise20Bias
-//     );
-
-    // 1.
+    // 3.
     this.bDepthwise2Requested = infoConvBlockType.bDepthwise2Requested;
     this.bConcat1Requested = infoConvBlockType.bConcat1Requested;
     this.bAddInputToOutputRequested = infoConvBlockType.bAddInputToOutputRequested;
     this.bConcat2ShuffleSplitRequested = infoConvBlockType.bConcat2ShuffleSplitRequested;
 
-    // 2. Whether manipulate the higher half channel of convolution.
+    // 4. Whether manipulate the higher half channel of convolution.
     this.bHigherHalfDifferent = infoConvBlockType.bHigherHalfDifferent;
     this.bHigherHalfDepthwise2 = infoConvBlockType.bHigherHalfDepthwise2;
 
-    // 3. Pointwise21
+    // 5. Pointwise21
     //
     // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
     Params.set_pointwise21ChannelCount_by.call( this, nConvBlockTypeId, pointwise20ChannelCount );
