@@ -708,10 +708,10 @@ class Base {
 
     // The channelShuffler must not null in these cases.
     if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
-        || ( testParams.nConvBlockTypeId__is__.SHUFFLE_NET_V2_BODY ) // (3)
-        || ( testParams.nConvBlockTypeId__is__.SHUFFLE_NET_V2_TAIL ) // (4)
-        || ( testParams.nConvBlockTypeId__is__.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD ) // (5)
-        || ( testParams.nConvBlockTypeId__is__.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL ) // (6)
+        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY() ) // (3)
+        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_TAIL() ) // (4)
+        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
+        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) // (6)
        ) {
       tf.util.assert( channelShuffler != null, `Block_Reference.Base.calcResult(): `
         + `channelShuffler must NOT null when `
@@ -742,11 +742,9 @@ class Base {
     let pointwise1ChannelCount = testParams.out.pointwise1ChannelCount;
     let pointwise20ChannelCount;
 
-    // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-    //
     // Note: Block_TestParams.Base.generate_Filters_Biases() double pointwise20ChannelCount. So, halve them here.
     //
-    if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
+    if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
       pointwise20ChannelCount = Math.ceil( testParams.out.pointwise20ChannelCount / 2 );
 
       imageIn0 = imageInArray[ 0 ];
@@ -758,7 +756,7 @@ class Base {
     // Note: Block_TestParams.Base.generate_Filters_Biases() double input0_channelCount,
     // pointwise20ChannelCount. So, halve them here.
     //
-    } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+    } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) { // (6)
 
       let imageInArray_Fake = NumberImage.Base.calcSplitAlongAxisId2(
         imageInArray[ 0 ], "Split_imageIn_to_imageInArray_0_1", this.paramsOutDescription );
@@ -791,12 +789,12 @@ class Base {
     if ( pointwise1ChannelCount > 0 ) {
       pointwise1Result = testParams.use_pointwise1( imageIn0, pointwise1ChannelCount, "Pointwise1", this.paramsOutDescription );
 
-      if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+      if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn0_beforePointwise1, // copy input0 (not input1).
           pointwise1ChannelCount, // So that it could be processed by depthwise2 and pointwise21 (with same structure of depthwise1 and pointwise20).
           "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", this.paramsOutDescription );
 
-      } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+      } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) { // (6)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
           imageIn1_beforePointwise1.depth, // No need same as pointwise1ChannelCount because depthwise2 and pointwise21 just pass-through it.
           "Pointwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
@@ -805,13 +803,13 @@ class Base {
     } else {
       pointwise1Result = imageIn0;
 
-      if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+      if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
 
         tf.util.assert( imageIn1 == null, `Block_Reference.Base.calcResult(): `
           + `imageIn1 must be null when `
-          + `channelCount1_pointwise1Before=`
-          + `${ValueDesc.channelCount1_pointwise1Before.Singleton.getStringOf( testParams.out.channelCount1_pointwise1Before )}`
-          + `(${testParams.out.channelCount1_pointwise1Before}). `
+          + `nConvBlockTypeId=`
+          + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
+          + `(${testParams.out.nConvBlockTypeId}). `
           + `${this.paramsOutDescription}` );
 
         imageIn1 = imageIn0; // Not input1 but input0.
@@ -831,7 +829,7 @@ class Base {
 
       // When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be shrinked by depthwise1. Otherwise, its size may
       // be different from pointwise20Result and can not be concatenated together.
-      if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+      if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) { // (6)
         imageIn1 = testParams.use_depthwise1_PassThrough( imageIn1_beforeDepthwise1, // pass-through input1 (not input0).
           "Depthwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
       }
