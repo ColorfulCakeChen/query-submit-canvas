@@ -703,37 +703,36 @@ class Base {
     let inferencedParams = testParams.out.inferencedParams;
     let depthwisePadInfo = inferencedParams.depthwisePadInfo;
 
-    // The channelShuffler must not null when:
-    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) (-3)
-    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
-    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) (-5)
-    //
-    if (   ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE20_INPUT1() ) // (-3)
-        || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-        || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-       ) {
-
-      tf.util.assert( channelShuffler != null, `Block_Reference.Base.calcResult(): `
-        + `channelShuffler must NOT null when `
-        + `channelCount1_pointwise1Before=`
-        + `${ValueDesc.channelCount1_pointwise1Before.Singleton.getStringOf( testParams.out.channelCount1_pointwise1Before )}`
-        + `(${testParams.out.channelCount1_pointwise1Before})` );
-    }
-
     // Create description for debug easily.
     this.paramsOutDescription = Base.TestParams_Out_createDescription( testParams );
 
+    // The channelShuffler must not null in these cases.
+    if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
+        || ( testParams.nConvBlockTypeId__is__.SHUFFLE_NET_V2_BODY ) // (3)
+        || ( testParams.nConvBlockTypeId__is__.SHUFFLE_NET_V2_TAIL ) // (4)
+        || ( testParams.nConvBlockTypeId__is__.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD ) // (5)
+        || ( testParams.nConvBlockTypeId__is__.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL ) // (6)
+       ) {
+      tf.util.assert( channelShuffler != null, `Block_Reference.Base.calcResult(): `
+        + `channelShuffler must NOT null when `
+        + `nConvBlockTypeId=`
+        + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
+        + `(${testParams.out.nConvBlockTypeId}). `
+        + `${this.paramsOutDescription}` );
+    }
+
+
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
     //    SHUFFLE_NET_V2_BODY                        // (3) (ShuffleNetV2's body/tail)
-    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL  // (9) (ShuffleNetV2_ByMobileNetV1's body/tail)
+    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL  // (6) (ShuffleNetV2_ByMobileNetV1's body/tail)
     //
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
     //    SHUFFLE_NET_V2_TAIL                        // (4) (ShuffleNetV2's body/tail)
-    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL  // (9) (ShuffleNetV2_ByMobileNetV1's body/tail)
+    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL  // (6) (ShuffleNetV2_ByMobileNetV1's body/tail)
     //
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
     //    SHUFFLE_NET_V2_HEAD                        // (2) (ShuffleNetV2's head)
-    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD       // (8) (ShuffleNetV2_ByMobileNetV1's head)
+    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD       // (5) (ShuffleNetV2_ByMobileNetV1's head)
 
 
     let imageIn0, imageIn1;
