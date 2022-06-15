@@ -76,17 +76,25 @@ class TestCorrectnessInfo {
       if ( bTwoInputs ) { // Pass two input images according to parameters.
         imageInArraySelected[ 1 ] = imageIn1;
 
-        tf.util.assert( ( imageIn1.height == inferencedParams.input1_height ),
+        tf.util.assert( (
+             ( imageIn1.height == inferencedParams.input1_height )
+          && ( imageIn1.width == inferencedParams.input1_width )
+          && ( imageIn1.depth == inferencedParams.input1_channelCount ) ),
           `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-            + `input image1's height ( ${imageIn1.height} ) should be ( ${inferencedParams.input1_height} ). ${strNote}`);
-
-        tf.util.assert( ( imageIn1.width == inferencedParams.input1_width ),
+            + `input image1's ( height, width, depth ) = ( ${imageIn1.height}, ${imageIn1.width}, ${imageIn1.depth} ) should be `
+            + `( ${inferencedParams.input1_height}, ${inferencedParams.input1_width}, ${inferencedParams.input1_channelCount} ). `
+            + `${strNote}`
+        );
+      } else {
+        tf.util.assert( (
+             ( 0 == inferencedParams.input1_height )
+          && ( 0 == inferencedParams.input1_width )
+          && ( 0 == inferencedParams.input1_channelCount ) ),
           `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-            + `input image1's height ( ${imageIn1.width} ) should be ( ${inferencedParams.input1_width} ). ${strNote}`);
-
-        tf.util.assert( ( imageIn1.depth == inferencedParams.input1_channelCount ),
-          `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-            + `input image1's height ( ${imageIn1.depth} ) should be ( ${inferencedParams.input1_channelCount} ). ${strNote}`);
+            + `inferenced input1's ( height, width, depth ) = `
+            + `( ${inferencedParams.input1_height}, ${inferencedParams.input1_width}, ${inferencedParams.input1_channelCount} ) `
+            + `should be ( 0, 0, 0 ). ${strNote}`
+        );
       }
 
       tf.util.assert( imageInArraySelected.length == 2,
