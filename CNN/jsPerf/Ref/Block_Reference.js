@@ -841,8 +841,9 @@ class Base {
     // 2.2 Depthwise2
     let depthwise2Result;
 
-    // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise21's head) (simplified))
-    if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) {
+    if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
+        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (8)
+       ) {
 
 //!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
 //      if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
@@ -852,8 +853,7 @@ class Base {
         depthwise2Result = imageIn0; // Since depthwise2 is just no-op, its result is just the same as its input (i.e. input0 (not input1)).
       }
 
-    // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-    } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
+    } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
 
 //!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
 //      if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
@@ -870,25 +870,27 @@ class Base {
     // 3. Concat1 (along image depth)
     let concat1Result = depthwise1Result; // If no concat1, the same as depthwise1.
 
-    // TWO_INPUTS (> 0) (ShuffleNetV2's (and ShuffleNetV2_ByPointwise21's) body/tail)
-    if ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS() ) {
+    if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL() ) { // (9 or 10)
 
       // Concatenate depthwise1's result and input1. (i.e. concat1)
       concat1Result = NumberImage.Base.calcConcatAlongAxisId2( depthwise1Result, imageIn1,
-        "Concat1_depthwise1_input1 (TWO_INPUTS)", this.paramsOutDescription );
+        "Concat1_depthwise1_input1 (SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL)", this.paramsOutDescription );
 
-    // ONE_INPUT_TWO_DEPTHWISE                  (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise21's head) (simplified))
-    // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) (ShuffleNetV2_ByMobileNetV1's head)
-    } else if (   ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2)
-               || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4)
+    } else if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (8)
+               || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
               ) {
 
       // Concatenate depthwise1's result and depthwise2's result.
       concat1Result = NumberImage.Base.calcConcatAlongAxisId2(
         depthwise1Result, depthwise2Result,
-        "Concat1_depthwise1_depthwise2 (ONE_INPUT_TWO_DEPTHWISE or ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1)",
+        "Concat1_depthwise1_depthwise2 (SHUFFLE_NET_V2_BY_POINTWISE21_HEAD or SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD)",
         this.paramsOutDescription );
     }
+
+
+//!!! ...unfinished... (2022/06/15) needs concatShuffleSplit
+// ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY_or_TAIL() ) // (3 or 4)
+
 
     // 4. Pointwise2
     let bAddInputToOutputRequested = false;
