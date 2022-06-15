@@ -496,35 +496,34 @@ class Base {
     {
       let inputTensorPlaceholder0, inputTensorPlaceholder1;
 
+      tf.util.assert( ( inputScaleBoundsArray0.length == this.input0_channelCount ),
+        `Block.Base.initer(): `
+          + `inputScaleBoundsArray0's length ( ${inputScaleBoundsArray0.length} ) should be the same as `
+          + `input0's channel count ( ${this.input0_channelCount} ).`
+      );
+
       inputTensorPlaceholder0 = new TensorPlaceholder.Base();
       inputTensorPlaceholder0.set_height_width_channelCount_scaleBoundsArray(
         this.input0_height, this.input0_width,
         this.input0_channelCount, inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
         inputScaleBoundsArray0 );
 
-      tf.util.assert( ( this.channelCount1_pointwise1Before == params.input1ChannelCount ),
-        `Block.Base.initer(): `
-          + `input1's channel count ( ${this.channelCount1_pointwise1Before} ) should be ( ${params.input1ChannelCount} ).`
-      );
-
       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY (3) )
       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL (4) )
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY (6) )
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL (7) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY (9) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL (10) )
       //
       if ( this.inputTensorCount > 1 ) {
 
-        // In fact, the input1's height and width is known. So keep them undefined. The concat1 has been designed to handle this
-        // situation.
-        //
-        // Note: In theory, they should be the same height and width as depthwise1's result. But this can not be known in advance.
-        //
-        const input1_height = undefined;
-        const input1_width = undefined;
+        tf.util.assert( ( inputScaleBoundsArray1.length == this.input1_channelCount ),
+          `Block.Base.initer(): `
+            + `inputScaleBoundsArray1's length ( ${inputScaleBoundsArray1.length} ) should be the same as `
+            + `input1's channel count ( ${this.input1_channelCount} ).`
+        );
 
         inputTensorPlaceholder1 = new TensorPlaceholder.Base();
         inputTensorPlaceholder1.set_height_width_channelCount_scaleBoundsArray(
-          input1_height, input1_width, this.channelCount1_pointwise1Before,
+          this.input1_height, this.input1_width, this.input1_channelCount,
           undefined, undefined, // channelCount_lowerHalf, channelCount_higherHalf
           inputScaleBoundsArray1 );
       }
@@ -682,16 +681,16 @@ class Base {
       // Note: Unlike pointwise1ChannelCount (which may be zero), pointwise20ChannelCount is always positive.
       outputChannelCount_lowerHalf_pointwise2 = Math.ceil( this.pointwise20ChannelCount / 2 );
 
-      // For bHigherHalfAnotherPointwise (i.e. ( pointwise20ChannelCount > 0 ) ) or bAllPassThrough (i.e. ( pointwise20ChannelCount == 0 ) ).
+      // For bHigherHalfAnotherPointwise (i.e. ( pointwise20ChannelCount > 0 ) ).
       //
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (8) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
       // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's head)
       if ( this.bHigherHalfDepthwise2 == true ) {
         nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE;
 
-      // For bHigherHalfPassThroughShuffle (i.e. ( pointwise20ChannelCount > 0 ) ) or bAllPassThroughShuffle (i.e. ( pointwise20ChannelCount == 0 ) ).
+      // For bHigherHalfPassThroughShuffle (i.e. ( pointwise20ChannelCount > 0 ) ).
       //
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (9) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6) )
       // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
       } else {
         nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
