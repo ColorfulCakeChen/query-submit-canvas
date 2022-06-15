@@ -702,6 +702,20 @@ class Base extends TestParams.Base {
     return false;
   }
 
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (9) (ShuffleNetV2_ByPointwise21's body). */
+  nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY() {
+    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY )
+      return true;
+    return false;
+  }
+
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (10) (ShuffleNetV2_ByPointwise21's tail). */
+  nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_TAIL() {
+    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL )
+      return true;
+    return false;
+  }
+
   /** @return {boolean} Return true if this.out.nConvBlockTypeId is (9 or 10) (ShuffleNetV2_ByPointwise21's body/tail). */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL() {
     if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY )
