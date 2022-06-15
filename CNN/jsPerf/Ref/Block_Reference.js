@@ -624,25 +624,15 @@ class Base {
 
     { // Test pointwise21ChannelCount.
 
-      // In (-3) (ShuffleNetV2's body/tail), (-4) (ShuffleNetV2_ByMobileNetV1's head), (-5) (ShuffleNetV2_ByMobileNetV1's body/tail),
-      // there is always no pointwise21.
-      if (   ( testParams.out.channelCount1_pointwise1Before
-                 == Block.Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) // (-3)
-          || ( testParams.out.channelCount1_pointwise1Before
-                 == Block.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) // (-4)
-          || ( testParams.out.channelCount1_pointwise1Before
-                 == Block.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+      if (   ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD ) // (2)
+          || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE ) // (7)
+          || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD ) // (8)
+          || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY ) // (9)
          ) {
-        asserter.propertyValue( "pointwise21ChannelCount", 0 );
+        asserter.propertyValue( "pointwise21ChannelCount", testParams.out.pointwise20ChannelCount ); // the same as pointwise20.
 
-      // Otherwise, pointwise21 is output1 directly. It is determined by both bOutput1Requested and pointwise20ChannelCount.
-      } else {
-        if ( testParams.out.bOutput1Requested ) {
-          // Either same as pointwise20 (if requested). (Still may be 0.)
-          asserter.propertyValue( "pointwise21ChannelCount", testParams.out.pointwise20ChannelCount );
-        } else {
-          asserter.propertyValue( "pointwise21ChannelCount", 0 ); // or 0 (if not requested).
-        }
+      } else { // Otherwise, should be 0.
+        asserter.propertyValue( "pointwise21ChannelCount", 0 );
       }
     }
 
@@ -657,8 +647,9 @@ class Base {
 
     // Otherwise, depthwise determines output ( height, width ).
     } else {
-      asserter.propertyValue( "outputHeight", testParams.out.depthwisePadInfo.outputHeight );
-      asserter.propertyValue( "outputWidth", testParams.out.depthwisePadInfo.outputWidth );
+      let depthwisePadInfo = inferencedParams.depthwisePadInfo;
+      asserter.propertyValue( "outputHeight", depthwisePadInfo.outputHeight );
+      asserter.propertyValue( "outputWidth", depthwisePadInfo.outputWidth );
     }
 
     // Other parameters.
@@ -709,6 +700,8 @@ class Base {
   calcResult( imageInArray, channelShuffler ) {
 
     let testParams = this.testParams;
+    let inferencedParams = testParams.out.inferencedParams;
+    let depthwisePadInfo = inferencedParams.depthwisePadInfo;
 
     // The channelShuffler must not null when:
     //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) (-3)
@@ -903,7 +896,7 @@ class Base {
     // 4. Pointwise2
     let bAddInputToOutputRequested = false;
     if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_ADD_TO_OUTPUT() ) { // (-1) MobileNetV2
-      if ( testParams.out.depthwisePadInfo.output_height_width_is_same_as_input() ) { // add-input-to-output is possible if same ( height, width ).
+      if ( depthwisePadInfo.output_height_width_is_same_as_input() ) { // add-input-to-output is possible if same ( height, width ).
         bAddInputToOutputRequested = true;
       }
     }
@@ -1181,13 +1174,6 @@ class Base {
 
       + `input0_height=${testParams.out.input0_height}, input0_width=${testParams.out.input0_width}, `
       + `inChannels0=${testParams.out.input0_channelCount}, inChannels1=${inferencedParams.input1_channelCount}, `
-
-//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
-//       + `channelCount1_pointwise1Before_Name=`
-//       + `${Block.Params.channelCount1_pointwise1Before.getStringOfValue( testParams.out.channelCount1_pointwise1Before )}`
-//       + `(${testParams.out.channelCount1_pointwise1Before}), `
-
-      + `channelCount1_pointwise1Before=${testParams.out.channelCount1_pointwise1Before}, `
 
       + `nConvBlockTypeIdName=`
       + `${Block.Params.nConvBlockTypeId.getStringOfValue( testParams.out.nConvBlockTypeId )}`
