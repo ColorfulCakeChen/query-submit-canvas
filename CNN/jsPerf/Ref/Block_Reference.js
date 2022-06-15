@@ -280,14 +280,12 @@ class Base {
    *   The channelShufflers provider. It must be initialized with ChannelShuffler.ConcatPointwiseConv as parameter channelShufflerClass.
    *
    *     - It is only used when
-   *         - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 )
-   *           (-3) (i.e. channel shuffle the concatenated pointwise20 and input1).
+   *         - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD (2) )
+   *         - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY (3) )
+   *         - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL (4) )
+   *         - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
+   *         - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6) )
    *
-   *         - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
-   *           (-4) (ShuffleNetV2_ByMobileNetV1's head)
-   *
-   *         - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
-   *           (-5) (i.e. ShuffleNetV2_ByMobileNetV1's body/tail).
    */
   testCorrectness( imageSourceBag, testParams, channelShufflerPool ) {
     this.testParams = testParams;
@@ -375,8 +373,6 @@ class Base {
       }
 
       // Test correctness of block BoundsArraySet.
-//!!! (2022/06/08) Use TensorPlaceholder instead.
-//      this.assert_imageOut_BoundsArraySet( block.boundsArraySet, imageOutReferenceArray, strNote );
       this.assert_imageOut_BoundsArraySet( block, imageOutReferenceArray, strNote );
 
       // Test correctness of block apply.
@@ -413,11 +409,6 @@ class Base {
    * @param {NumberImage.Base[]} imageOutReferenceArray  Refernece output Image data of the Block_Reference's calcResult().
    */
   assert_imageOut_BoundsArraySet( block, imageOutReferenceArray, parametersDescription ) {
-
-//!!! (2022/06/08) Use TensorPlaceholder instead.
-//     BoundsArraySet_Asserter.assert_BoundsArraySet_Outputs( this.asserter_Equal,
-//       block.boundsArraySet, imageOutReferenceArray, `Block`, parametersDescription );
-
     BoundsArraySet_Asserter.assert_ScaleBoundsArray_output0_output1( this.asserter_Equal,
       block.output0?.scaleBoundsArray, block.output1?.scaleBoundsArray, imageOutReferenceArray, `Block`, parametersDescription );
   }
@@ -429,7 +420,6 @@ class Base {
    * @param {NumberImage.Base[]} imageOutReferenceArray  Refernece output Image data of the Block_Reference's calcResult().
    */
   assert_imageOut_Tensors_byNumberArrays( outputTensors, imageOutReferenceArray, parametersDescription ) {
-
     let outputArrayRef;
     for ( let i = 0; i < imageOutReferenceArray.length; ++i ) {
 
@@ -477,19 +467,13 @@ class Base {
 
     // Initialize successfully or failed.
     let extractedParams = new Block.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
-      testParams.in.input0_height, testParams.in.input0_width,
-      testParams.in.input0_channelCount, testParams.in.channelCount1_pointwise1Before,
+      testParams.in.input0_height, testParams.in.input0_width, testParams.in.input0_channelCount,
       testParams.in.nConvBlockType,
       testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
       testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
       testParams.in.depthwiseStridesPad, testParams.in.bDepthwiseBias, testParams.in.depthwiseActivationId,
-      testParams.in.nSqueezeExcitationChannelCountDivisor,
-      testParams.in.bSqueezeExcitationPrefix,
+      testParams.in.nSqueezeExcitationChannelCountDivisor, testParams.in.bSqueezeExcitationPrefix,
       testParams.in.pointwise20ChannelCount, testParams.in.bPointwise20Bias, testParams.in.pointwise20ActivationId,
-
-//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
-//      testParams.in.bOutput1Requested,
-
       testParams.in.bKeepInputTensor
     );
 
@@ -530,27 +514,26 @@ class Base {
     // input tensor parameters.
     asserter.propertyValue( "input0_height", testParams.out.input0_height );
     asserter.propertyValue( "input0_width", testParams.out.input0_width );
-
     asserter.propertyValue( "inChannels0", testParams.out.input0_channelCount );
-    asserter.propertyValue( "channelCount1_pointwise1Before", testParams.out.channelCount1_pointwise1Before );
     asserter.propertyValue( "nConvBlockId", testParams.out.nConvBlockId );
 
     asserter.propertyValue( "inputTensorCount", inferencedParams.inputTensorCount );
-    asserter.propertyValue( "bHigherHalfDifferent", inferencedParams.bHigherHalfDifferent );
-    asserter.propertyValue( "bHigherHalfDepthwise2", inferencedParams.bHigherHalfDepthwise2 );
     asserter.propertyValue( "bDepthwiseRequestedAndNeeded", inferencedParams.bDepthwiseRequestedAndNeeded );
     asserter.propertyValue( "bDepthwise2Requested", inferencedParams.bDepthwise2Requested );
     asserter.propertyValue( "bConcat1Requested", inferencedParams.bConcat1Requested );
     asserter.propertyValue( "bAddInputToOutputRequested", inferencedParams.bAddInputToOutputRequested );
     asserter.propertyValue( "bConcat2ShuffleSplitRequested", inferencedParams.bConcat2ShuffleSplitRequested );
+    asserter.propertyValue( "bHigherHalfDifferent", inferencedParams.bHigherHalfDifferent );
+    asserter.propertyValue( "bHigherHalfDepthwise2", inferencedParams.bHigherHalfDepthwise2 );
 
-    // The ( block.bConcat2ShuffleSplitRequested == true ) only if:
-    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) (-3)
-    //
+    // The ( block.bConcat2ShuffleSplitRequested == true ) only if ShuffleNetV2.
     if ( block.bConcat2ShuffleSplitRequested ) {
-      Base.AssertTwoEqualValues( "bConcat2ShuffleSplitRequested",
-        testParams.out.channelCount1_pointwise1Before,
-        ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1, parametersDescription );
+      let bShuffleNetV2 =
+           ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD ) // (2)
+        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY ) // (3)
+        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL ) // (4)
+      ;
+      asserter.propertyValue( "bConcat2ShuffleSplitRequested", bShuffleNetV2 );
     }
 
     // The channelShuffler must not null when:
