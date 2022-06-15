@@ -651,14 +651,14 @@ class Base extends TestParams.Base {
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (1) (MobileNetV2 body/tail). */
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (1) (MobileNetV2's body/tail). */
   nConvBlockTypeId__is__MOBILE_NET_V2_BODY_TAIL() {
     if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (2) (ShuffleNetV2 head). */
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (2) (ShuffleNetV2's head). */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() {
     if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD )
       return true;
