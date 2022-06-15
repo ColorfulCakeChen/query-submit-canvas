@@ -15,11 +15,12 @@ import * as Depthwise from "../Depthwise.js";
  * @member {boolean} bDepthwiseRequestedAndNeeded
  *   Whether depthwise operation is requested and necessary.
  *
- * @member {boolean} bPointwise21
- *   Whether the 2nd pointwise2 existed.
+ * @member {Depthwise.PadInfoCalculatorRoot} depthwisePadInfo
+ *   If ( bDepthwiseRequestedAndNeeded == true ), this info will be set.
  *
  * @member {number} pointwise21ChannelCount
- *   The output channel count of the second pointwise2 convolution. If ( bPointwise21 == false ), then ( pointwise21ChannelCount == 0 ).
+ *   The output channel count of the second pointwise2 convolution. If ( pointwise21ChannelCount == 0 ), it means pointwise21 does
+ * not existed.
  *
  * @member {boolean} bPointwise21Bias
  *   If true, there will be a bias after pointwise21 (i.e. the second pointwise2 convolution). It is always the same as
@@ -317,7 +318,7 @@ class Params extends Weights.Params {
 //!!! (2022/06/15 Remarked) become inferenced.
 //    channelCount1_pointwise1Before,
 
-    input0_height, input0_width,
+    input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
 
 //!!! ...unfinished... (2022/06/15)
@@ -339,13 +340,11 @@ class Params extends Weights.Params {
       bPointwise20Bias
     );
 
-//!!! ...unfinished... (2022/06/15)
     if ( this.bDepthwiseRequestedAndNeeded ) { // If depthwise operation is necessary, infer its information.
       if ( !this.depthwisePadInfo ) {
         this.depthwisePadInfo = new Depthwise.PadInfoCalculatorRoot(
           input0_height, input0_width, input0_channelCount, 
           depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
-
       } else { // Re-using (instead of re-creating) may improve runtime speed.
         this.depthwisePadInfo.set(
           input0_height, input0_width, input0_channelCount, 
@@ -353,6 +352,8 @@ class Params extends Weights.Params {
       }
     }
 
+
+//!!! ...unfinished... (2022/06/15)
 
 //             Depthwise.
     let inputTensorCount = ValueDesc.ConvBlockType.Singleton.inputTensorCount_get( nConvBlockTypeId );
@@ -408,8 +409,8 @@ class Params extends Weights.Params {
    *
    */
   static set_inferencedParams_by(
-    input0_height, input0_width,
-    input0_channelCount, channelCount1_pointwise1Before,
+    input0_height, input0_width, input0_channelCount,
+    channelCount1_pointwise1Before,
     nConvBlockTypeId,
     pointwise1ChannelCount,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
