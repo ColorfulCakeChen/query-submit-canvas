@@ -350,7 +350,7 @@ class Params extends Weights.Params {
 
     } else { // 3.2 Has input1 (i.e. two inputs).
 
-//!!! ...unfinished... (2022/06/15)
+      // 3.2.1 input1's height and width.
       if ( this.bDepthwiseRequestedAndNeeded ) { // When depthwise operation existed, it dominates height and width.
         this.input1_height = this.depthwisePadInfo.outputHeight;
         this.input1_width = this.depthwisePadInfo.outputWidth;
@@ -359,6 +359,7 @@ class Params extends Weights.Params {
         this.input1_width = input0_width;
       }
 
+      // 3.2.2 input1's channel count
       switch ( nConvBlockTypeId ) {
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY:
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL:
@@ -372,18 +373,18 @@ class Params extends Weights.Params {
           } else {
             if ( pointwise1ChannelCount > 0 ) {
               this.input1_channelCount = pointwise1ChannelCount;
-//!!!
             } else {
               this.input1_channelCount = input0_channelCount;
             }
-//!!!
           }
           break;
 
-        default: // One input.
+        default: // No input1 (i.e. one input; only input0). It should not execute to here.
+          this.input1_height = 0;
+          this.input1_width = 0;
           this.input1_channelCount = 0;
 
-          tf.util.assert( false,
+          tf.util.assert( ( this.inputTensorCount <= 1 ),
             `Block.Params.set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by(): `
               + `When ( nConvBlockTypeId == `
               + `${ValueDesc.ConvBlockType.Singleton.getStringOf( nConvBlockTypeId )}`
