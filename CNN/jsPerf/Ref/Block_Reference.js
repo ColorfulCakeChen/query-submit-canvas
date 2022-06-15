@@ -1146,7 +1146,7 @@ class Base {
       // Using different channel shuffler implementation for comparsion correctness.
       let tensorOutArray = channelShuffler_ShuffleInfo.concatReshapeTransposeReshapeSplit( tensorInArray );
 
-      // Converty output tensors to images.
+      // Convert output tensors to images.
       for ( let i = 0; i < imageOutArray.length; ++i ) {
         let t = tensorOutArray[ i ];
         let imageHeight = t.shape[ 0 ];
