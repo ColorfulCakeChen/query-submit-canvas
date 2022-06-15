@@ -9,16 +9,16 @@ import * as Depthwise from "../Depthwise.js";
  * Pointwise-depthwise-pointwise convolution block parameters.
  *
  * @member {number} input1_height
- *   The height of the second input (i.e. input1). This is inferenced from other parameters. The input1's height of Block.apply()
- * should match this value.
+ *   The height of the second input (i.e. input1). If there is no input1, it will be 0. This is inferenced from other parameters.
+ * The input1's height of Block.apply() should match this value.
  *
  * @member {number} input1_width
- *   The width of the second input (i.e. input1). This is inferenced from other parameters. The input1's width of Block.apply()
- * should match this value.
+ *   The width of the second input (i.e. input1). If there is no input1, it will be 0. This is inferenced from other parameters.
+ * The input1's width of Block.apply() should match this value.
  *
  * @member {number} input1_channelCount
- *   The channel count of the second input (i.e. input1). This is inferenced from other parameters. The input1's channel count
- * of Block.apply() should match this value. The Block.inChannels1 should also the same this value.
+ *   The channel count of the second input (i.e. input1). If there is no input1, it will be 0. This is inferenced from other parameters.
+ * The input1's channel count of Block.apply() should match this value. The Block.inChannels1 should also the same this value.
  *
  * @member {boolean} bDepthwiseRequestedAndNeeded
  *   Whether depthwise operation is requested and necessary.
