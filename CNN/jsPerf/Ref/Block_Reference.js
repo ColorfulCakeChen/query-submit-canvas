@@ -1059,7 +1059,6 @@ class Base {
     concatenatedShape, outputGroupCount, imageInArray, imageOutArray, concatShuffleSplitName, parametersDesc ) {
 
     tf.util.assert( ( imageInArray.length == 2 ),
-
       `${concatShuffleSplitName}: `
         + `The length of imageInArray[] ( ${imageInArray.length} ) must be 2. `
         + `(${parametersDesc})`
@@ -1084,11 +1083,7 @@ class Base {
     let channelShuffler_ShuffleInfo;
     {
       channelShuffler_ShuffleInfo = this.channelShufflerPool.getChannelShuffler_by(
-        concatenatedShape[ 0 ],
-        concatenatedShape[ 1 ],
-        concatenatedShape[ 2 ],
-        outputGroupCount
-      );
+        concatenatedShape[ 0 ], concatenatedShape[ 1 ], concatenatedShape[ 2 ], outputGroupCount );
 
       for ( let i = 0; i < 2; ++i ) {
         tf.util.assert(
@@ -1108,6 +1103,18 @@ class Base {
           + `outputGroupCount ( ${outputGroupCount} ) `
           + `${parametersDesc}`);
     }
+
+    let depthSum = imageInArray[ 0 ].depth + imageInArray[ 1 ].depth;
+    tf.util.assert( (
+          ( channelShuffler_ShuffleInfo.concatenatedShape[ 0 ] == imageInArray[ 0 ].height )
+       && ( channelShuffler_ShuffleInfo.concatenatedShape[ 1 ] == imageInArray[ 0 ].width )
+       && ( channelShuffler_ShuffleInfo.concatenatedShape[ 2 ] == depthSum ) ),
+      `${concatShuffleSplitName}: `
+        + `channelShuffler_ShuffleInfo.concatenatedShape ( ${channelShuffler_ShuffleInfo.concatenatedShape[ 0 ]}, `
+        + `${channelShuffler_ShuffleInfo.concatenatedShape[ 1 ]}, ${channelShuffler_ShuffleInfo.concatenatedShape[ 2 ]} ) `
+        + `should be `
+        + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${depthSum} ) `
+        + `${parametersDesc}`);
 
     // Convert input images to tensors.
     let tensorInArray = new Array( imageInArray.length );
