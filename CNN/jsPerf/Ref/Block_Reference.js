@@ -48,17 +48,9 @@ class TestCorrectnessInfo {
 
     let strNote;
 
-    let inferencedParams = {};
+    let inferencedParams = testParams.out.inferencedParams;
     let bTwoInputs, input1_channelCount;
     {
-      // The input tensor count is determined by convolution block type totally.
-      Block.Params.set_inputTensorCount_by.call( inferencedParams, nConvBlockTypeId );
-
-      Block.Params.set_input1_channelCount_by.call( inferencedParams,
-        channelCount1_pointwise1Before,
-        nConvBlockTypeId,
-        pointwise1ChannelCount, pointwise20ChannelCount );
-
       bTwoInputs = ( inferencedParams.inputTensorCount == 2 );
       input1_channelCount = inferencedParams.input1_channelCount;
     }
