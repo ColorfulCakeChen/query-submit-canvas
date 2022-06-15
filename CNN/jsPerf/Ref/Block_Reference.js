@@ -876,9 +876,7 @@ class Base {
       concat1Result = NumberImage.Base.calcConcatAlongAxisId2( depthwise1Result, imageIn1,
         "Concat1_depthwise1_input1 (SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL)", this.paramsOutDescription );
 
-    } else if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (8)
-               || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
-              ) {
+    } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) { // (8)
 
       // Concatenate depthwise1's result and depthwise2's result.
       concat1Result = NumberImage.Base.calcConcatAlongAxisId2(
@@ -887,14 +885,9 @@ class Base {
         this.paramsOutDescription );
     }
 
-
-//!!! ...unfinished... (2022/06/15) needs concatShuffleSplit
-// ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY_or_TAIL() ) // (3 or 4)
-
-
     // 4. Pointwise2
     let bAddInputToOutputRequested = false;
-    if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_ADD_TO_OUTPUT() ) { // (-1) MobileNetV2
+    if ( testParams.nConvBlockTypeId__is__MOBILE_NET_V2_BODY_TAIL() ) { // (1)
       if ( depthwisePadInfo.output_height_width_is_same_as_input() ) { // add-input-to-output is possible if same ( height, width ).
         bAddInputToOutputRequested = true;
       }
@@ -907,15 +900,14 @@ class Base {
       if ( pointwise20ChannelCount > 0 ) {
         pointwise20Result = testParams.use_pointwise20( concat1Result, pointwise20ChannelCount, "Pointwise20", this.paramsOutDescription );
 
-        // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-        if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
+        if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
           let pointwise202Result = testParams.use_pointwise202( concat1Result, pointwise20ChannelCount, "Pointwise202", this.paramsOutDescription );
 
           pointwise20Result_beforeConcatWith_pointwise202 = pointwise20Result;
           pointwise20Result = NumberImage.Base.calcConcatAlongAxisId2( pointwise20Result, pointwise202Result,
-            "Concat_pointwise20_pointwise202 (ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4))", this.paramsOutDescription );
+            "Concat_pointwise20_pointwise202 (SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5))", this.paramsOutDescription );
 
-        } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+        } else if ( testParams.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) { // (6)
           imageIn1 = testParams.use_pointwise20_PassThrough( imageIn1_beforePointwise20, // pass-through input1 (which is past-through by depthwise1).
             pointwise20ChannelCount, // So that it could be concatenated with pointwise20Result.
             "Pointwise20_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
@@ -932,6 +924,12 @@ class Base {
     }
 
     let imageOutArray = [ pointwise20Result, null ]; // Assume no pointwise21.
+
+
+//!!! ...unfinished... (2022/06/15) needs concatShuffleSplit
+//    ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY_or_TAIL() ) // (3 or 4)
+// || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
+
 
     // 4.2 Pointwise21
     //
