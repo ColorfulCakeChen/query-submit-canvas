@@ -115,7 +115,8 @@ class Base extends TestParams.Base {
    */
   set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
 
-    this.generate_out_depthwisePadInfo();
+//!!! (2022/06/15 Remarked) already included in inferencedParams.
+//    this.generate_out_depthwisePadInfo();
     this.generate_out_inferencedParams();
     this.generate_Filters_Biases();
 
@@ -128,21 +129,22 @@ class Base extends TestParams.Base {
     return this;
   }
 
-  /** Fill this.out.depthwisePadInfo to this.out
-   */
-  generate_out_depthwisePadInfo() {
-    if ( !this.out.depthwisePadInfo ) {
-      this.out.depthwisePadInfo = new Depthwise.PadInfoCalculatorRoot(
-        this.out.input0_height, this.out.input0_width, this.out.input0_channelCount, 
-        this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
-        this.out.depthwiseStridesPad );
-    } else { // Re-using (instead of re-creating) may improve runtime speed.
-      this.out.depthwisePadInfo.set(
-        this.out.input0_height, this.out.input0_width, this.out.input0_channelCount, 
-        this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
-        this.out.depthwiseStridesPad );
-    }
-  }
+//!!! (2022/06/15 Remarked) already included in inferencedParams.
+//   /** Fill this.out.depthwisePadInfo to this.out
+//    */
+//   generate_out_depthwisePadInfo() {
+//     if ( !this.out.depthwisePadInfo ) {
+//       this.out.depthwisePadInfo = new Depthwise.PadInfoCalculatorRoot(
+//         this.out.input0_height, this.out.input0_width, this.out.input0_channelCount, 
+//         this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
+//         this.out.depthwiseStridesPad );
+//     } else { // Re-using (instead of re-creating) may improve runtime speed.
+//       this.out.depthwisePadInfo.set(
+//         this.out.input0_height, this.out.input0_width, this.out.input0_channelCount, 
+//         this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
+//         this.out.depthwiseStridesPad );
+//     }
+//   }
 
   /** Fill this.out.flag according to this.out
    */
@@ -150,7 +152,7 @@ class Base extends TestParams.Base {
     if ( !this.out.inferencedParams ) {
       this.out.inferencedParams = {};
     }
-    Block.Params.setinferencedParams_by.call( this.out.inferencedParams,
+    Block.Params.set_inferencedParams_by.call( this.out.inferencedParams,
       this.out.input0_height, this.out.input0_width,
       this.out.input0_channelCount, this.out.channelCount1_pointwise1Before,
       this.out.nConvBlockTypeId,
@@ -229,7 +231,7 @@ class Base extends TestParams.Base {
     // ourselves testing procedure.
     if ( tf.getBackend() == "wasm" ) {
 
-      this.generate_out_inferencedParams(); // So that this.out.inferencedParams is usable.
+      this.generate_out_inferencedParams(); // So that this.out.inferencedParams and .depthwisePadInfo is usable.
       if ( this.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
 
         // For depthwise1/depthwis2.
@@ -238,7 +240,8 @@ class Base extends TestParams.Base {
 
         let pointwise2_inputWidth;
         {
-          this.generate_out_depthwisePadInfo(); // So that this.out.depthwisePadInfo is usable.
+//!!! (2022/06/15 Remarked) already included in inferencedParams.
+//          this.generate_out_depthwisePadInfo(); // So that this.out.depthwisePadInfo is usable.
           pointwise2_inputWidth = this.out.depthwisePadInfo.outputWidth;
         }
 
