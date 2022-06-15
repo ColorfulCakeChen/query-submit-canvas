@@ -421,7 +421,7 @@ class Params extends Weights.Params {
    * Determine the following properties:
    *   - this.input1ChannelCount
    */
-  static set_input1ChannelCount_by(
+  static set_input1_channelCount_by(
            channelCount1_pointwise1Before,
            nConvBlockTypeId,
            pointwise1ChannelCount, pointwise20ChannelCount ) {
@@ -579,7 +579,7 @@ class Params extends Weights.Params {
     Params.set_outputTensorCount_by.call( this, nConvBlockTypeId );
 
     // 0.3 The (estimated) input1 channel count.
-    Params.set_input1ChannelCount_by.call( this, channelCount1_pointwise1Before, pointwise1ChannelCount, pointwise20ChannelCount );
+    Params.set_input1_channelCount_by.call( this, channelCount1_pointwise1Before, pointwise1ChannelCount, pointwise20ChannelCount );
 
     // 0.4 Whether depthwise is requested and necessary.
     Params.set_bDepthwiseRequestedAndNeeded_by.call( this,
