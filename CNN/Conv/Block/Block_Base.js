@@ -203,7 +203,7 @@ import { Params } from "./Block_Params.js";
  * It is only meaningful if ( pointwise21ChannelCount > 0 ) (i.e. ( bPointwise21 == true ) and ( pointwise20ChannelCount > 0 ) ).
  *
  * @member {number} inChannels0
- *   The channel count of the first input tensor (i.e. inputTensors[ 0 ]). This is the same as this.channelCount0_pointwise1Before
+ *   The channel count of the first input tensor (i.e. inputTensors[ 0 ]). This is the same as this.input0_channelCount
  * (from initer()).
  *
  * @member {number} inChannels1
@@ -226,11 +226,11 @@ import { Params } from "./Block_Params.js";
  *   The TensorPlaceholder object which represents this operation's 2nd input. It exists only if ( this.inputTensorCount > 1 ).
  *
  * @member {number} outputHeight
- *   The height of the output image. If depthwise does not exist, it will be the same as inputHeight0. Otherwise, depthwise
+ *   The height of the output image. If depthwise does not exist, it will be the same as input0_height. Otherwise, depthwise
  * determines outputHeight.
  *
  * @member {number} outputWidth
- *   The width of the output image. If depthwise does not exist, it will be the same as inputWidth0. Otherwise, depthwise
+ *   The width of the output image. If depthwise does not exist, it will be the same as input0_width. Otherwise, depthwise
  * determines outputWidth.
  *
  * @member {number} outChannels0
@@ -358,9 +358,9 @@ class Base {
     // Get parameters' real (adjusted) values.
     //
     // Do not keep params in this.params so that the inputFloat32Array could be released.
-    this.inputHeight0 = params.inputHeight0;
-    this.inputWidth0 = params.inputWidth0;
-    this.channelCount0_pointwise1Before = params.channelCount0_pointwise1Before;
+    this.input0_height = params.input0_height;
+    this.input0_width = params.input0_width;
+    this.input0_channelCount = params.input0_channelCount;
     this.channelCount1_pointwise1Before = params.channelCount1_pointwise1Before;
 
     this.nConvBlockTypeId = params.nConvBlockTypeId;
@@ -444,7 +444,7 @@ class Base {
       // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's head)
       if ( this.bHigherHalfDepthwise2 == true ) {
 
-        inputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
+        inputChannelCount_lowerHalf_pointwise1 = this.input0_channelCount;
 
         if ( this.pointwise1ChannelCount > 0 ) {
           nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF;
@@ -458,13 +458,13 @@ class Base {
           this.bPointwise1Bias = false;
           this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
-          outputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before; // For depthwise1 (by pass-through-input-to-output)
+          outputChannelCount_lowerHalf_pointwise1 = this.input0_channelCount; // For depthwise1 (by pass-through-input-to-output)
         }
 
         // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
         this.pointwise1ChannelCount
           = (  outputChannelCount_lowerHalf_pointwise1 // For depthwise1.
-             + this.channelCount0_pointwise1Before     // For depthwise2 (by depthwise1).
+             + this.input0_channelCount     // For depthwise2 (by depthwise1).
             );
 
       } else { // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
@@ -473,7 +473,7 @@ class Base {
         nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
 
         let pointwise1_higherHalfPassThrough = new ChannelCountCalculator.HigherHalfPassThrough(
-          this.channelCount0_pointwise1Before, this.pointwise1ChannelCount );
+          this.input0_channelCount, this.pointwise1ChannelCount );
 
         inputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.inputChannelCount_lowerHalf;
         outputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
@@ -488,8 +488,8 @@ class Base {
 
       inputTensorPlaceholder0 = new TensorPlaceholder.Base();
       inputTensorPlaceholder0.set_height_width_channelCount_scaleBoundsArray(
-        this.inputHeight0, this.inputWidth0,
-        this.channelCount0_pointwise1Before, inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
+        this.input0_height, this.input0_width,
+        this.input0_channelCount, inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
         inputScaleBoundsArray0 );
 
       tf.util.assert( ( this.channelCount1_pointwise1Before == params.input1ChannelCount ),
@@ -509,12 +509,12 @@ class Base {
         //
         // Note: In theory, they should be the same height and width as depthwise1's result. But this can not be known in advance.
         //
-        const inputHeight1 = undefined;
-        const inputWidth1 = undefined;
+        const input1_height = undefined;
+        const input1_width = undefined;
 
         inputTensorPlaceholder1 = new TensorPlaceholder.Base();
         inputTensorPlaceholder1.set_height_width_channelCount_scaleBoundsArray(
-          inputHeight1, inputWidth1, this.channelCount1_pointwise1Before,
+          input1_height, input1_width, this.channelCount1_pointwise1Before,
           undefined, undefined, // channelCount_lowerHalf, channelCount_higherHalf
           inputScaleBoundsArray1 );
       }
@@ -1330,7 +1330,7 @@ class Base {
     let str = ``
       + `inputTensorCount=${this.inputTensorCount}, `
 
-      + `inputHeight0=${this.inputHeight0}, inputWidth0=${this.inputWidth0}, `
+      + `input0_height=${this.input0_height}, input0_width=${this.input0_width}, `
       + `inChannels0=${this.inChannels0}, inChannels1=${this.inChannels1}, `
 
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
