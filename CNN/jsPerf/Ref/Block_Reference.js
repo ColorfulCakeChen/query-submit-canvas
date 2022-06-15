@@ -536,24 +536,19 @@ class Base {
       asserter.propertyValue( "bConcat2ShuffleSplitRequested", bShuffleNetV2 );
     }
 
-    // The channelShuffler must not null when:
-    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) (-3)
-    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
-    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) (-5)
-    //
-    if (   ( testParams.out.channelCount1_pointwise1Before
-               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) // (-3)
-        || ( testParams.out.channelCount1_pointwise1Before
-               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) // (-4)
-        || ( testParams.out.channelCount1_pointwise1Before
-               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+    // The channelShuffler must not null in these cases.
+    if (   ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD ) // (2)
+        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY ) // (3)
+        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL ) // (4)
+        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD ) // (5)
+        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL ) // (6)
        ) {
 
       tf.util.assert( channelShuffler_ConcatPointwiseConv != null, `Block_Reference.Base.block_create(): `
         + `channelShuffler must NOT null when `
-        + `channelCount1_pointwise1Before=`
-        + `${ValueDesc.channelCount1_pointwise1Before.Singleton.getStringOf( testParams.out.channelCount1_pointwise1Before )}`
-        + `(${testParams.out.channelCount1_pointwise1Before})` );
+        + `nConvBlockTypeId=`
+        + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
+        + `(${testParams.out.nConvBlockTypeId})` );
 
       asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", channelShuffler_ConcatPointwiseConv );
 
@@ -565,8 +560,7 @@ class Base {
     let bPointwise1Bias_shouldBe = testParams.out.bPointwise1Bias;
     let pointwise1ActivationId_shouldBe = testParams.out.pointwise1ActivationId;
 
-    // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
-    // (i.e. (ShuffleNetV2_ByMobileNetV1's head) )
+    // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
     //
     if ( ( block.bHigherHalfDifferent == true ) && ( block.bHigherHalfDepthwise2 == true ) ) {
 
@@ -627,9 +621,6 @@ class Base {
     asserter.propertyValue( "pointwise20ActivationName", pointwise20ActivationName );
 
     // pointwise21 parameters.
-
-//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
-//    asserter.propertyValue( "bOutput1Requested", testParams.out.bOutput1Requested );
 
     { // Test pointwise21ChannelCount.
 
