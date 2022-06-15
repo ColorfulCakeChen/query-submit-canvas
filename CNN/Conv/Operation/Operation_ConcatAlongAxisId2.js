@@ -105,17 +105,6 @@ class ConcatAlongAxisId2 extends Root {
    */
   static setup_output0_TensorPlaceholder() {
 
-    // Because the input1's height and width is known in the following cases:
-    //
-    //   - ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3)
-    //       (i.e. ShuffleNetV2's body/tail)
-    //
-    //   - ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_Xxx (>0)
-    //       (i.e. ShuffleNetV2_ByMobileNetV1's body/tail)
-    //
-    // Here handles these situations.
-    //
-
     // 1. Determine output0.height
     if ( this.input0.height != undefined ) {
       if ( this.input1.height != undefined ) {
