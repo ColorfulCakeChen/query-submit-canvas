@@ -75,10 +75,23 @@ class TestCorrectnessInfo {
 
       if ( bTwoInputs ) { // Pass two input images according to parameters.
         imageInArraySelected[ 1 ] = imageIn1;
+
+        tf.util.assert( ( imageIn1.height == inferencedParams.input1_height ),
+          `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+            + `input image1's height ( ${imageIn1.height} ) should be ( ${inferencedParams.input1_height} ). ${strNote}`);
+
+        tf.util.assert( ( imageIn1.width == inferencedParams.input1_width ),
+          `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+            + `input image1's height ( ${imageIn1.width} ) should be ( ${inferencedParams.input1_width} ). ${strNote}`);
+
+        tf.util.assert( ( imageIn1.depth == inferencedParams.input1_channelCount ),
+          `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+            + `input image1's height ( ${imageIn1.depth} ) should be ( ${inferencedParams.input1_channelCount} ). ${strNote}`);
       }
 
       tf.util.assert( imageInArraySelected.length == 2,
-        `Block imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ${strNote}`);
+        `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+          + `imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ${strNote}`);
 
       // Prepare channel shuffler.
       switch ( nConvBlockTypeId ) {
@@ -88,7 +101,6 @@ class TestCorrectnessInfo {
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD: // (5)
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL: // (6)
         {
-//!!! ...unfinished... (2022/06/15) 
           let outputGroupCount = 2; // Only use two convolution groups.
 
           let concatenatedDepth;
@@ -132,19 +144,23 @@ class TestCorrectnessInfo {
             imageIn1.height, imageIn1.width, concatenatedDepth, outputGroupCount );
 
           tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ] == imageIn1.height,
-            `ChannelShuffler concatenatedShape[ 0 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ]} ) `
+            `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+              + `ChannelShuffler concatenatedShape[ 0 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ]} ) `
               + `should be the same as image height ( ${imageIn1.height} ). ${strNote}`);
 
           tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ] == imageIn1.width,
-            `ChannelShuffler concatenatedShape[ 1 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ]} ) `
+            `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+              + `ChannelShuffler concatenatedShape[ 1 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ]} ) `
               + `should be the same as image width ( ${imageIn1.width} ). ${strNote}`);
 
           tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ] == concatenatedDepth,
-            `ChannelShuffler concatenatedShape[ 2 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ]} ) `
+            `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+              + `ChannelShuffler concatenatedShape[ 2 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ]} ) `
               + `should be the same as image concatenatedDepth ( ${concatenatedDepth} ). ${strNote}`);
 
           tf.util.assert( channelShuffler_ConcatPointwiseConv.outputGroupCount == outputGroupCount,
-            `ChannelShuffler outputGroupCount ( ${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
+            `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+              + `ChannelShuffler outputGroupCount ( ${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
               + `should be the same as image outputGroupCount ( ${outputGroupCount} ). ${strNote}`);
 
           channelShuffler_concatenatedShape = channelShuffler_ConcatPointwiseConv.concatenatedShape;
@@ -157,6 +173,8 @@ class TestCorrectnessInfo {
 
     outputTensor3dArray.fill( undefined );
     inputTensor3dArray.fill( undefined );
+
+//!!! ...unfinished... (2022/06/15) 
 
     inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( input0_height, input0_width, input0_channelCount );
     if ( bTwoInputs ) { // Pass two input tensors according to parameters.
