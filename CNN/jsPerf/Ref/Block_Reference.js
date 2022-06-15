@@ -305,7 +305,9 @@ class Base {
       let imageOutReferenceArray = this.imageOutReferenceArray;
       {
         // Output is an array with two elements.
-        this.calcResult( imageInArraySelected, imageOutReferenceArray, channelShuffler_ConcatPointwiseConv );
+//!!! (2022/06/15 Remrked) No longer needs channelShuffler.
+//        this.calcResult( imageInArraySelected, imageOutReferenceArray, channelShuffler_ConcatPointwiseConv );
+        this.calcResult( imageInArraySelected, imageOutReferenceArray );
 
         tf.util.assert( imageOutReferenceArray.length == 2,
           `Block imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
@@ -406,7 +408,7 @@ class Base {
   /**
    * Check the Block's output's BoundsArraySet.
    *
-   * @param {Block.Base} block                 The block to be checked.
+   * @param {Block.Base} block                           The block to be checked.
    * @param {NumberImage.Base[]} imageOutReferenceArray  Refernece output Image data of the Block_Reference's calcResult().
    */
   assert_imageOut_BoundsArraySet( block, imageOutReferenceArray, parametersDescription ) {
@@ -697,11 +699,16 @@ class Base {
    *     - imageOutArray[ 0 ]: output0
    *     - imageOutArray[ 1 ]: output1
    *
-   * @param {ChannelShuffler.Xxx} channelShuffler
-   *   The channel shuffler. Used when concat-shuffle-split.
+
+//!!! (2022/06/15 Remrked) No longer needs channelShuffler.
+//    * @param {ChannelShuffler.Xxx} channelShuffler
+//    *   The channel shuffler. Used when concat-shuffle-split.
+
    *
    */ 
-  calcResult( imageInArray, imageOutArray, channelShuffler ) {
+//!!! (2022/06/15 Remrked) No longer needs channelShuffler.
+//  calcResult( imageInArray, imageOutArray, channelShuffler ) {
+  calcResult( imageInArray, imageOutArray ) {
 
     let testParams = this.testParams;
     let inferencedParams = testParams.out.inferencedParams;
@@ -710,20 +717,21 @@ class Base {
     // Create description for debug easily.
     this.paramsOutDescription = Base.TestParams_Out_createDescription( testParams );
 
-    // The channelShuffler must not null in these cases.
-    if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
-        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY() ) // (3)
-        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_TAIL() ) // (4)
-        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
-        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) // (6)
-       ) {
-      tf.util.assert( channelShuffler != null, `Block_Reference.Base.calcResult(): `
-        + `channelShuffler must NOT null when `
-        + `nConvBlockTypeId=`
-        + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
-        + `(${testParams.out.nConvBlockTypeId}). `
-        + `${this.paramsOutDescription}` );
-    }
+//!!! (2022/06/15 Remrked) No longer needs channelShuffler.
+//     // The channelShuffler must not null in these cases.
+//     if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
+//         || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY() ) // (3)
+//         || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_TAIL() ) // (4)
+//         || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
+//         || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) // (6)
+//        ) {
+//       tf.util.assert( channelShuffler != null, `Block_Reference.Base.calcResult(): `
+//         + `channelShuffler must NOT null when `
+//         + `nConvBlockTypeId=`
+//         + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
+//         + `(${testParams.out.nConvBlockTypeId}). `
+//         + `${this.paramsOutDescription}` );
+//     }
 
 
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
