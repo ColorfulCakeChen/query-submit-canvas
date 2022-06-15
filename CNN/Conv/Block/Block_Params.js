@@ -8,7 +8,7 @@ import * as Depthwise from "../Depthwise.js";
 /**
  * Pointwise-depthwise-pointwise convolution block parameters.
  *
- * @member {number} input1ChannelCount
+ * @member {number} input1_channelCount
  *   The channel count of the second input (i.e. input1). This is referred (estimated) from other parameters. The inputTensors[ 1 ]'s
  * channel count of Block.apply() should match this value. The Block.inChannels1 should also the same this value.
  *
@@ -419,7 +419,7 @@ class Params extends Weights.Params {
 
   /**
    * Determine the following properties:
-   *   - this.input1ChannelCount
+   *   - this.input1_channelCount
    */
   static set_input1_channelCount_by(
            channelCount1_pointwise1Before,
@@ -428,22 +428,22 @@ class Params extends Weights.Params {
 
 //!!! (2022/06/14 Remarked) replaced by ConvBlockType.
 //     if ( channelCount1_pointwise1Before > 0 ) { // Two inputs.
-//       this.input1ChannelCount = channelCount1_pointwise1Before; // The second input's channel count as specifying.
+//       this.input1_channelCount = channelCount1_pointwise1Before; // The second input's channel count as specifying.
 //
 //     } else if ( channelCount1_pointwise1Before
 //                   == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 ) { // (-3) Two inputs.
 //
-//       this.input1ChannelCount = pointwise20ChannelCount;
+//       this.input1_channelCount = pointwise20ChannelCount;
 //
 //     } else { // One input.
-//       this.input1ChannelCount = 0;
+//       this.input1_channelCount = 0;
 //     }
 
     let inputTensorCount = ValueDesc.ConvBlockType.Singleton.inputTensorCount_get( nConvBlockTypeId );
     switch ( nConvBlockTypeId ) {
       case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY:
       case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL:
-        this.input1ChannelCount = pointwise20ChannelCount;
+        this.input1_channelCount = pointwise20ChannelCount;
         break;
 
       case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY:
@@ -453,11 +453,11 @@ class Params extends Weights.Params {
 // Perhaps, deprecate channelCount1_pointwise1Before since it should be the same as channelCount0_pointwise1Before in this case.
 // It could be inferenced totally. (input1_height, input1_width, input1_channelCount)
 
-        this.input1ChannelCount = channelCount1_pointwise1Before; // The second input's channel count as specifying.
+        this.input1_channelCount = channelCount1_pointwise1Before; // The second input's channel count as specifying.
         break;
 
       default: // One input.
-        this.input1ChannelCount = 0;
+        this.input1_channelCount = 0;
         break;
     }
   }
@@ -544,7 +544,7 @@ class Params extends Weights.Params {
   /**
    * Determine the following properties:
    *   - this.inputTensorCount
-   *   - this.input1ChannelCount
+   *   - this.input1_channelCount
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.bDepthwise2Requested
    *   - this.bConcat1Requested
