@@ -450,7 +450,7 @@ class Base {
 
     if ( this.bHigherHalfDifferent == true ) {
 
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (8) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
       // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's head)
       if ( this.bHigherHalfDepthwise2 == true ) {
 
@@ -477,7 +477,9 @@ class Base {
              + this.input0_channelCount     // For depthwise2 (by depthwise1).
             );
 
-      } else { // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6) )
+      // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
+      } else {
 
         // So that bHigherHalfPassThrough (or bAllPassThrough).
         nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
