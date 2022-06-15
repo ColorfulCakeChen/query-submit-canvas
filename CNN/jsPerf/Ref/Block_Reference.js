@@ -1039,7 +1039,8 @@ class Base {
 
       let concatResult = NumberImage.Base.calcConcatAlongAxisId2(
         imageOutArray[ 0 ], imageOutArray[ 1 ],
-        "Concat_imageOutArray_0_1_to_imageOutArray_0 (ONE_INPUT_HALF_THROUGH or ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1)",
+        "Concat_imageOutArray_0_1_to_imageOutArray_0 (SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) or "
+          + "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6) )",
         this.paramsOutDescription );
 
       imageOutArray[ 0 ] = concatResult;
