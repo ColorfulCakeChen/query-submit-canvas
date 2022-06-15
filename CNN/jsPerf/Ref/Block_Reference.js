@@ -977,12 +977,21 @@ class Base {
       // Integrate pointwise20 and pointwise21 into pointwise2.
       imageOutArray[ 1 ] = pointwise21Result;
 
+
     // 5. Concat2 (along image depth), shuffle, split.
     //
     // TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3) (ShuffleNetV2's body/tail)
     // ONE_INPUT_HALF_THROUGH               (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
     } else if (    ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE20_INPUT1() ) // (-3)
                 || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+
+
+//!!! ...unfinished... (2022/06/15) also needs concatShuffleSplit
+//    ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
+// || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY_or_TAIL() ) // (3 or 4)
+// || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
+// || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) // (6)
+
 
       tf.util.assert( ( !imageOutArray[ 1 ] ),
         `Block imageOutArray[ 1 ] ( ${imageOutArray[ 1 ]} ) `
