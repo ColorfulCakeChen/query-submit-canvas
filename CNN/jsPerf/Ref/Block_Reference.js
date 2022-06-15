@@ -82,6 +82,7 @@ class TestCorrectnessInfo {
 
       // Prepare channel shuffler.
       switch ( nConvBlockTypeId ) {
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD: // (2)
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY: // (3)
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL: // (4)
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD: // (5)
@@ -91,14 +92,22 @@ class TestCorrectnessInfo {
           let outputGroupCount = 2; // Only use two convolution groups.
 
           let concatenatedDepth;
-          if ( input1_channelCount > 0 ) { // TWO_INPUTS_CONCAT_POINTWISE20_INPUT1: // (-3)
+          
+          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY (3))
+          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL (4))
+          //
+          if ( input1_channelCount > 0 ) {
             concatenatedDepth = ( input1_channelCount * outputGroupCount ); // Always twice as input1's channel count.
 
-          } else { // ( input1_channelCount == 0 )
-            // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
-            // ONE_INPUT_HALF_THROUGH: // (-5)
+          // ( input1_channelCount == 0 )
+          //
+          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD (2))
+          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5))
+          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6))
+          //
+          } else {
             //
-            // In these two cases:
+            // In these cases:
             //   - The input1 does not exist.
             //   - Fortunately, the concatenatedDepth of channel shuffler is not so important here.
             //     - Only ( imageInHeight, imageInWidth, outputGroupCount ) of channel shuffler will be used.
@@ -106,12 +115,10 @@ class TestCorrectnessInfo {
             //
             concatenatedDepth = ( 1 * outputGroupCount );
 
-//!!! ...unfinished... (2021/11/26) What about ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) ?
+//!!! ...unfinished... (2021/11/26) What about SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) ?
 
             // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
-            if ( ( channelCount1_pointwise1Before
-                     == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
-               ) {
+            if ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL ) { // (6)
 
               // Note: pointwise20ChannelCount is always positive (never zero or negative).
 
