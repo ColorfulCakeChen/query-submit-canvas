@@ -116,7 +116,7 @@ class Base extends TestParams.Base {
   set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
 
     this.generate_out_depthwisePadInfo();
-    this.generate_out_flags();
+    this.generate_out_inferencedParams();
     this.generate_Filters_Biases();
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) Float32Array.
@@ -146,11 +146,11 @@ class Base extends TestParams.Base {
 
   /** Fill this.out.flag according to this.out
    */
-  generate_out_flags() {
-    if ( !this.out.flags ) {
-      this.out.flags = {};
+  generate_out_inferencedParams() {
+    if ( !this.out.inferencedParams ) {
+      this.out.inferencedParams = {};
     }
-    Block.Params.setFlags_by.call( this.out.flags,
+    Block.Params.setinferencedParams_by.call( this.out.inferencedParams,
       this.out.input0_height, this.out.input0_width,
       this.out.input0_channelCount, this.out.channelCount1_pointwise1Before,
       this.out.nConvBlockTypeId,
@@ -229,8 +229,8 @@ class Base extends TestParams.Base {
     // ourselves testing procedure.
     if ( tf.getBackend() == "wasm" ) {
 
-      this.generate_out_flags(); // So that this.out.flags is usable.
-      if ( this.out.flags.bDepthwiseRequestedAndNeeded ) {
+      this.generate_out_inferencedParams(); // So that this.out.inferencedParams is usable.
+      if ( this.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
 
         // For depthwise1/depthwis2.
         if ( this.out.depthwiseFilterWidth == 1 )
@@ -1100,7 +1100,7 @@ class Base extends TestParams.Base {
       let depthwise1_inputChannelCount = pointwise1_resultOutputChannelCount;
 
       // Only if depthwise operation is requested and necessary, create them.
-      if ( paramsAll.flags.bDepthwiseRequestedAndNeeded ) {
+      if ( paramsAll.inferencedParams.bDepthwiseRequestedAndNeeded ) {
         depthwise1_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise1_inputChannelCount,
           paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
           paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias, "depthwise1", io_paramsNumberArrayObject );
@@ -1138,7 +1138,7 @@ class Base extends TestParams.Base {
         }
 
         // Only if depthwise operation is requested and necessary, create them.
-        if ( paramsAll.flags.bDepthwiseRequestedAndNeeded ) {
+        if ( paramsAll.inferencedParams.bDepthwiseRequestedAndNeeded ) {
           depthwise2_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise2_inputChannelCount,
             paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
             paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias, "depthwise2", io_paramsNumberArrayObject );
