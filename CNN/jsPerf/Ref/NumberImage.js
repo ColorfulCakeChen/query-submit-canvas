@@ -6,7 +6,6 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ActivationEscaping from "../../Conv/ActivationEscaping.js";
 import * as BoundsArraySet from "../../Conv/BoundsArraySet.js";
-//import * as Pointwise from "../../Conv/Pointwise.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
 
 
@@ -938,7 +937,6 @@ class Base {
     return multiplyOut;
   }
 
-//!!!
   /**
    * Note: This method will also set .boundsArraySet.afterBias.
    *
@@ -960,7 +958,7 @@ class Base {
    * @param {string} parametersDesc  A string for debug message of this block.
    *
    * @return {NumberImage.Base}
-   *   Return this which modifed in place.
+   *   Return this object which has been modifed in place.
    */
   modify_byInterleave_asGrouptTwo( interleaveName, arrayTemp_forInterleave_asGrouptTwo, parametersDesc ) {
 
@@ -975,14 +973,8 @@ class Base {
         this.dataArray, indexBegin, this.depth, arrayTemp_forInterleave_asGrouptTwo );
     }
 
-//!!! ...unfinished... (2022/06/15)
-    // Shuffle BoundsArray.
-//    let tScaleBoundsArray = new ActivationEscaping.ScaleBoundsArray( 0 );
-    {
-      this.boundsArraySet.???.set_all_byInterleave_asGrouptTwo( this.arrayTemp_forInterleave_asGrouptTwo ); // Bounds Shuffle
-      tScaleBoundsArray.split_to_lowerHalf_higherHalf(
-        imageOutArray[ 0 ].boundsArraySet.output0, imageOutArray[ 1 ].boundsArraySet.output0 ); // Bounds Split
-    }
+    // Shuffle BoundsArraySet.
+    this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo );
 
     return this;
   }
