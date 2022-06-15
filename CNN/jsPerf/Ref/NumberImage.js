@@ -1135,6 +1135,7 @@ class Base {
 
 //!!! ...unfinished... (2022/06/15)
 // Perhaps, using bShuffleSplit instead of bSplit. (Just like Operation.ConcatShuffleSplit)
+// How does Operation.Pointwise do higher half shuffle?
 
    * @param {boolean} bSplit
    *   If true, the result will be splitted into imageOutArray[ 0 ] and imageOutArray[ 1 ]. If false, the result will be placed in
