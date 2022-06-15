@@ -938,6 +938,55 @@ class Base {
     return multiplyOut;
   }
 
+//!!!
+  /**
+   * Note: This method will also set .boundsArraySet.afterBias.
+   *
+   * Shuffle (.dataArray, .biasesArray, .boundsArraySet) by interleaving.
+   *   - Only ( outputGroupCount == 2 ) is supported.
+   *   - The channel count must be even (i.e. divisible by 2).
+   *
+   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
+   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
+   * and improve performance when doing Interleave_asGrouptTwo.
+   *
+   * @param {NumberImage.Base} this  The source image to be processed.
+   * @param {string} interleaveName  A string for debug message of this interleaving.
+   *
+   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
+   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
+   * and improve performance when doing Interleave_asGrouptTwo.
+   *
+   * @param {string} parametersDesc  A string for debug message of this block.
+   *
+   * @return {NumberImage.Base}
+   *   Return this which modifed in place.
+   */
+  modify_byInterleave_asGrouptTwo( interleaveName, arrayTemp_forInterleave_asGrouptTwo, parametersDesc ) {
+
+    tf.util.assert( ( ( this.depth % 2 ) == 0 ),
+      `NumberImage.Base.modify_byInterleave_asGrouptTwo(): `
+        + `channel count ( ${this.depth} ) must be even (i.e. divisible by 2).`
+    );
+
+    // Shuffle data.
+    for ( let indexBegin = 0; indexBegin < this.dataArray.length; indexBegin += this.depth ) {
+      FloatValue.ArrayInterleaver.interleave_asGrouptTwo(
+        this.dataArray, indexBegin, this.depth, arrayTemp_forInterleave_asGrouptTwo );
+    }
+
+//!!! ...unfinished... (2022/06/15)
+    // Shuffle BoundsArray.
+//    let tScaleBoundsArray = new ActivationEscaping.ScaleBoundsArray( 0 );
+    {
+      this.boundsArraySet.???.set_all_byInterleave_asGrouptTwo( this.arrayTemp_forInterleave_asGrouptTwo ); // Bounds Shuffle
+      tScaleBoundsArray.split_to_lowerHalf_higherHalf(
+        imageOutArray[ 0 ].boundsArraySet.output0, imageOutArray[ 1 ].boundsArraySet.output0 ); // Bounds Split
+    }
+
+    return this;
+  }
+
   /**
    * @param {NumberImage.Base} imageIn  The source image to be processed.
    * @param {string} splitName          A string for debug message of this splitting.
