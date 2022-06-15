@@ -1050,135 +1050,136 @@ class Base {
     return imageOutArray;
   }
 
-  /**
-   *
-   * @param {number[]} concatenatedShape           The concatenatedShape of channel shuffler.
-   * @param {number}   outputGroupCount            The outputGroupCount of channel shuffler.
-   *
-   * @param {boolean} bSplit
-   *   If true, the result will be splitted into imageOutArray[ 0 ] and imageOutArray[ 1 ]. If false, the result will be placed in
-   * imageOutArray[ 0 ] and imageOutArray[ 1 ] will be null.
-   *
-   * @param {NumberImage.Base} imageInArray[ 0 ]   The first input image to be processed.
-   * @param {NumberImage.Base} imageInArray[ 1 ]   The second input image to be processed.
-   *
-   * @param {NumberImage.Base} imageOutArray[ 0 ]   The first output image.
-   * @param {NumberImage.Base} imageOutArray[ 1 ]   The second output image.
-   *
-   * @param {string}   concatShuffleSplitName       A string for debug message of this concatenation-shuffle-split.
-   * @param {string}   parametersDesc               A string for debug message of this point-depth-point.
-   */
-  calcConcatShuffleSplit(
-    concatenatedShape, outputGroupCount, bSplit,
-    imageInArray, imageOutArray, concatShuffleSplitName, parametersDesc ) {
-
-    tf.util.assert( ( imageInArray.length == 2 ),
-      `${concatShuffleSplitName}: `
-        + `The length of imageInArray[] ( ${imageInArray.length} ) must be 2. `
-        + `(${parametersDesc})`
-    );
-
-    // Note: Although different depth is wierd, it might still work. So, allow it.
-    tf.util.assert(
-      (   ( imageInArray[ 0 ].height == imageInArray[ 1 ].height )
-       && ( imageInArray[ 0 ].width ==  imageInArray[ 1 ].width )
-       //&& ( imageInArray[ 0 ].depth ==  imageInArray[ 1 ].depth )
-      ),
-
-      `${concatShuffleSplitName}: The first input image's shape ( height, width, depth ) = `
-        + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${imageInArray[ 0 ].depth} ) `
-        + `should be the same as the second input image's shape `
-        + `( ${imageInArray[ 1 ].height}, ${imageInArray[ 1 ].width}, ${imageInArray[ 1 ].depth} ). `
-        + `(${parametersDesc})`
-    );
-
-//!!! ...unfinished... (2022/05/23) Perhaps, re-implement by Interleave_asGrouptTwo.
-
-    let channelShuffler_ShuffleInfo;
-    {
-      channelShuffler_ShuffleInfo = this.channelShufflerPool.getChannelShuffler_by(
-        concatenatedShape[ 0 ], concatenatedShape[ 1 ], concatenatedShape[ 2 ], outputGroupCount );
-
-      for ( let i = 0; i < 2; ++i ) {
-        tf.util.assert(
-          channelShuffler_ShuffleInfo.concatenatedShape[ i ] == concatenatedShape[ i ],
-          `${concatShuffleSplitName}: `
-            + `channelShuffler_ShuffleInfo.concatenatedShape[ ${i} ] ( ${channelShuffler_ShuffleInfo.concatenatedShape[ i ]} ) `
-            + `should be the same as `
-            + `concatenatedShape[ ${i} ] ( ${concatenatedShape[ i ]} ) `
-            + `${parametersDesc}`);
-      }
-
-      tf.util.assert(
-        channelShuffler_ShuffleInfo.outputGroupCount == outputGroupCount,
-        `${concatShuffleSplitName}: `
-          + `channelShuffler_ShuffleInfo.outputGroupCount ( ${channelShuffler_ShuffleInfo.outputGroupCount} ) `
-          + `should be the same as `
-          + `outputGroupCount ( ${outputGroupCount} ) `
-          + `${parametersDesc}`);
-    }
-
-    let depthSum = imageInArray[ 0 ].depth + imageInArray[ 1 ].depth;
-    tf.util.assert( (
-          ( channelShuffler_ShuffleInfo.concatenatedShape[ 0 ] == imageInArray[ 0 ].height )
-       && ( channelShuffler_ShuffleInfo.concatenatedShape[ 1 ] == imageInArray[ 0 ].width )
-       && ( channelShuffler_ShuffleInfo.concatenatedShape[ 2 ] == depthSum ) ),
-      `${concatShuffleSplitName}: `
-        + `channelShuffler_ShuffleInfo.concatenatedShape ( ${channelShuffler_ShuffleInfo.concatenatedShape[ 0 ]}, `
-        + `${channelShuffler_ShuffleInfo.concatenatedShape[ 1 ]}, ${channelShuffler_ShuffleInfo.concatenatedShape[ 2 ]} ) `
-        + `should be `
-        + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${depthSum} ) `
-        + `${parametersDesc}`);
-
-    // Convert input images to tensors.
-    let tensorInArray = new Array( imageInArray.length );
-    for ( let i = 0; i < imageInArray.length; ++i ) {
-      let t = tf.tensor( imageInArray[ i ].dataArray, [ imageInArray[ i ].height, imageInArray[ i ].width, imageInArray[ i ].depth ] );
-      tensorInArray[ i ] = t;
-    }
-
-    let inputScaleBoundsArray0 = imageInArray[ 0 ].boundsArraySet.output0;
-    let inputScaleBoundsArray1 = imageInArray[ 1 ].boundsArraySet.output0;
-
-    if ( bSplit ) {
-      // Concat-shuffle-split.
-      // 
-      // Using different channel shuffler implementation for comparsion correctness.
-      let tensorOutArray = channelShuffler_ShuffleInfo.concatReshapeTransposeReshapeSplit( tensorInArray );
-
-      // Convert output tensors to images.
-      for ( let i = 0; i < imageOutArray.length; ++i ) {
-        let t = tensorOutArray[ i ];
-        let imageHeight = t.shape[ 0 ];
-        let imageWidth = t.shape[ 1 ];
-        let imageDepth = t.shape[ 2 ];
-
-        let rBoundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1, imageDepth );
-        imageOutArray[ i ] = new NumberImage.Base( imageHeight, imageWidth, imageDepth, t.dataSync(), rBoundsArraySet );
-      }
-
-      let tScaleBoundsArray = new ActivationEscaping.ScaleBoundsArray( 0 );
-      {
-        tScaleBoundsArray.set_all_byScaleBoundsArray_concat_input0_input1( inputScaleBoundsArray0, inputScaleBoundsArray1 ); // Bounds Concat
-        tScaleBoundsArray.set_all_byInterleave_asGrouptTwo( this.arrayTemp_forInterleave_asGrouptTwo ); // Bounds Shuffle
-        tScaleBoundsArray.split_to_lowerHalf_higherHalf(
-          imageOutArray[ 0 ].boundsArraySet.output0, imageOutArray[ 1 ].boundsArraySet.output0 ); // Bounds Split
-      }
-
-    } else {
-
-      // Concat-shuffle. (no split)
-      // 
-      // Using different channel shuffler implementation for comparsion correctness.
-      let tensorOut = channelShuffler_ShuffleInfo.concatReshapeTransposeReshape( tensorInArray );
-
-//!!! ...unfinished... (2022/06/15)
-    }
-
-    // Release temporary tensors.
-    tf.dispose( tensorInArray );
-    tf.dispose( tensorOutArray );
-  }
+//!!! (2022/06/15 Remarked) Old Codes. Replace by modify_byInterleave_asGrouptTwo()
+//   /**
+//    *
+//    * @param {number[]} concatenatedShape           The concatenatedShape of channel shuffler.
+//    * @param {number}   outputGroupCount            The outputGroupCount of channel shuffler.
+//    *
+//    * @param {boolean} bSplit
+//    *   If true, the result will be splitted into imageOutArray[ 0 ] and imageOutArray[ 1 ]. If false, the result will be placed in
+//    * imageOutArray[ 0 ] and imageOutArray[ 1 ] will be null.
+//    *
+//    * @param {NumberImage.Base} imageInArray[ 0 ]   The first input image to be processed.
+//    * @param {NumberImage.Base} imageInArray[ 1 ]   The second input image to be processed.
+//    *
+//    * @param {NumberImage.Base} imageOutArray[ 0 ]   The first output image.
+//    * @param {NumberImage.Base} imageOutArray[ 1 ]   The second output image.
+//    *
+//    * @param {string}   concatShuffleSplitName       A string for debug message of this concatenation-shuffle-split.
+//    * @param {string}   parametersDesc               A string for debug message of this point-depth-point.
+//    */
+//   calcConcatShuffleSplit(
+//     concatenatedShape, outputGroupCount, bSplit,
+//     imageInArray, imageOutArray, concatShuffleSplitName, parametersDesc ) {
+//
+//     tf.util.assert( ( imageInArray.length == 2 ),
+//       `${concatShuffleSplitName}: `
+//         + `The length of imageInArray[] ( ${imageInArray.length} ) must be 2. `
+//         + `(${parametersDesc})`
+//     );
+//
+//     // Note: Although different depth is wierd, it might still work. So, allow it.
+//     tf.util.assert(
+//       (   ( imageInArray[ 0 ].height == imageInArray[ 1 ].height )
+//        && ( imageInArray[ 0 ].width ==  imageInArray[ 1 ].width )
+//        //&& ( imageInArray[ 0 ].depth ==  imageInArray[ 1 ].depth )
+//       ),
+//
+//       `${concatShuffleSplitName}: The first input image's shape ( height, width, depth ) = `
+//         + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${imageInArray[ 0 ].depth} ) `
+//         + `should be the same as the second input image's shape `
+//         + `( ${imageInArray[ 1 ].height}, ${imageInArray[ 1 ].width}, ${imageInArray[ 1 ].depth} ). `
+//         + `(${parametersDesc})`
+//     );
+//
+// //!!! ...unfinished... (2022/05/23) Perhaps, re-implement by Interleave_asGrouptTwo.
+//
+//     let channelShuffler_ShuffleInfo;
+//     {
+//       channelShuffler_ShuffleInfo = this.channelShufflerPool.getChannelShuffler_by(
+//         concatenatedShape[ 0 ], concatenatedShape[ 1 ], concatenatedShape[ 2 ], outputGroupCount );
+//
+//       for ( let i = 0; i < 2; ++i ) {
+//         tf.util.assert(
+//           channelShuffler_ShuffleInfo.concatenatedShape[ i ] == concatenatedShape[ i ],
+//           `${concatShuffleSplitName}: `
+//             + `channelShuffler_ShuffleInfo.concatenatedShape[ ${i} ] ( ${channelShuffler_ShuffleInfo.concatenatedShape[ i ]} ) `
+//             + `should be the same as `
+//             + `concatenatedShape[ ${i} ] ( ${concatenatedShape[ i ]} ) `
+//             + `${parametersDesc}`);
+//       }
+//
+//       tf.util.assert(
+//         channelShuffler_ShuffleInfo.outputGroupCount == outputGroupCount,
+//         `${concatShuffleSplitName}: `
+//           + `channelShuffler_ShuffleInfo.outputGroupCount ( ${channelShuffler_ShuffleInfo.outputGroupCount} ) `
+//           + `should be the same as `
+//           + `outputGroupCount ( ${outputGroupCount} ) `
+//           + `${parametersDesc}`);
+//     }
+//
+//     let depthSum = imageInArray[ 0 ].depth + imageInArray[ 1 ].depth;
+//     tf.util.assert( (
+//           ( channelShuffler_ShuffleInfo.concatenatedShape[ 0 ] == imageInArray[ 0 ].height )
+//        && ( channelShuffler_ShuffleInfo.concatenatedShape[ 1 ] == imageInArray[ 0 ].width )
+//        && ( channelShuffler_ShuffleInfo.concatenatedShape[ 2 ] == depthSum ) ),
+//       `${concatShuffleSplitName}: `
+//         + `channelShuffler_ShuffleInfo.concatenatedShape ( ${channelShuffler_ShuffleInfo.concatenatedShape[ 0 ]}, `
+//         + `${channelShuffler_ShuffleInfo.concatenatedShape[ 1 ]}, ${channelShuffler_ShuffleInfo.concatenatedShape[ 2 ]} ) `
+//         + `should be `
+//         + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${depthSum} ) `
+//         + `${parametersDesc}`);
+//
+//     // Convert input images to tensors.
+//     let tensorInArray = new Array( imageInArray.length );
+//     for ( let i = 0; i < imageInArray.length; ++i ) {
+//       let t = tf.tensor( imageInArray[ i ].dataArray, [ imageInArray[ i ].height, imageInArray[ i ].width, imageInArray[ i ].depth ] );
+//       tensorInArray[ i ] = t;
+//     }
+//
+//     let inputScaleBoundsArray0 = imageInArray[ 0 ].boundsArraySet.output0;
+//     let inputScaleBoundsArray1 = imageInArray[ 1 ].boundsArraySet.output0;
+//
+//     if ( bSplit ) {
+//       // Concat-shuffle-split.
+//       // 
+//       // Using different channel shuffler implementation for comparsion correctness.
+//       let tensorOutArray = channelShuffler_ShuffleInfo.concatReshapeTransposeReshapeSplit( tensorInArray );
+//
+//       // Convert output tensors to images.
+//       for ( let i = 0; i < imageOutArray.length; ++i ) {
+//         let t = tensorOutArray[ i ];
+//         let imageHeight = t.shape[ 0 ];
+//         let imageWidth = t.shape[ 1 ];
+//         let imageDepth = t.shape[ 2 ];
+//
+//         let rBoundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1, imageDepth );
+//         imageOutArray[ i ] = new NumberImage.Base( imageHeight, imageWidth, imageDepth, t.dataSync(), rBoundsArraySet );
+//       }
+//
+//       let tScaleBoundsArray = new ActivationEscaping.ScaleBoundsArray( 0 );
+//       {
+//         tScaleBoundsArray.set_all_byScaleBoundsArray_concat_input0_input1( inputScaleBoundsArray0, inputScaleBoundsArray1 ); // Bounds Concat
+//         tScaleBoundsArray.set_all_byInterleave_asGrouptTwo( this.arrayTemp_forInterleave_asGrouptTwo ); // Bounds Shuffle
+//         tScaleBoundsArray.split_to_lowerHalf_higherHalf(
+//           imageOutArray[ 0 ].boundsArraySet.output0, imageOutArray[ 1 ].boundsArraySet.output0 ); // Bounds Split
+//       }
+//
+//     } else {
+//
+//       // Concat-shuffle. (no split)
+//       // 
+//       // Using different channel shuffler implementation for comparsion correctness.
+//       let tensorOut = channelShuffler_ShuffleInfo.concatReshapeTransposeReshape( tensorInArray );
+//
+// //!!! ...unfinished... (2022/06/15)
+//     }
+//
+//     // Release temporary tensors.
+//     tf.dispose( tensorInArray );
+//     tf.dispose( tensorOutArray );
+//   }
 
   /**
    * @param {Block_TestParams.Base} testParams
