@@ -301,10 +301,10 @@ class Base {
         strNote
       } = this.testCorrectnessInfo;
 
-      let imageOutReferenceArray;
+      let imageOutReferenceArray = [];
       {
         // Output is an array with two elements.
-        imageOutReferenceArray = this.calcResult( imageInArraySelected, channelShuffler_ConcatPointwiseConv );
+        this.calcResult( imageInArraySelected, imageOutReferenceArray, channelShuffler_ConcatPointwiseConv );
 
         tf.util.assert( imageOutReferenceArray.length == 2,
           `Block imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
@@ -691,13 +691,16 @@ class Base {
    *     - imageInArray[ 0 ]: input0
    *     - imageInArray[ 1 ]: input1
    *
+   * @param {NumberImage.Base[]} imageOutArray
+   *   The images to be returned are placed here.
+   *     - imageOutArray[ 0 ]: output0
+   *     - imageOutArray[ 1 ]: output1
+   *
    * @param {ChannelShuffler.Xxx} channelShuffler
    *   The channel shuffler. Used when concat-shuffle-split.
    *
-   * @return {NumberImage.Base[]}
-   *   Return output image objects array.
    */ 
-  calcResult( imageInArray, channelShuffler ) {
+  calcResult( imageInArray, imageOutArray, channelShuffler ) {
 
     let testParams = this.testParams;
     let inferencedParams = testParams.out.inferencedParams;
@@ -923,7 +926,9 @@ class Base {
           pointwise20Result = pointwise20Result.clone_byAdd( imageIn0, "Pointwise20_AddInputToOutput", this.paramsOutDescription );
     }
 
-    let imageOutArray = [ pointwise20Result, null ]; // Assume no pointwise21.
+    imageOutArray.length = 2;
+    imageOutArray[ 0 ] = pointwise20Result;
+    imageOutArray[ 1 ] = null; // Assume no pointwise21.
 
 
 //!!! ...unfinished... (2022/06/15) needs concatShuffleSplit
@@ -932,57 +937,36 @@ class Base {
 
 
     // 4.2 Pointwise21
-    //
-    // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) or ONE_INPUT_TWO_DEPTHWISE (-2) or
-    // ONE_INPUT_ADD_TO_OUTPUT (-1) or ONE_INPUT (0) or TWO_INPUTS (> 0).
-    //
-    // (i.e. Not (-3) (ShuffleNetV2's body/tail), Not (-5) (ShuffleNetV2_ByMobileNetV1's body/tail) )
-    if (   ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-        || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2) (ShuffleNetV2's head (simplified))
-        || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_ADD_TO_OUTPUT() ) // (-1) (MobileNetV2)
-        || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT() )  // (  0) (MobileNetV1 (General Pointwise1-Depthwise1-Pointwise2))
-        || ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS() ) // (> 0) (ShuffleNetV2's (and ShuffleNetV2_ByPointwise21's) body/tail)
+
+    let pointwise21Result;
+    if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
+        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
+        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE() ) // (7)
+        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (8)
+        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY() )  // (9)
        ) {
 
-      // If output1 is requested and possible, the pointwise21 will have the same output channel count as pointwise20.
-      let pointwise21ChannelCount;
+      let pointwise21ChannelCount = pointwise20ChannelCount;
 
-      if (   ( testParams.out.bOutput1Requested )
+      pointwise21Result = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
 
-          // Note: (-4) (ShuffleNetV2_ByMobileNetV1's head) always does not have output1.
-          && ( !testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-         ) {
-        pointwise21ChannelCount = pointwise20ChannelCount;
-      } else {
-        pointwise21ChannelCount = 0;
-      }
-
-//!!! (2022/06/08 Remarked) seems not used.
-//      let bPointwise21Bias = testParams.out.bPointwise20Bias; // pointwise21's bias flag is the same as pointwise20.
-//      let pointwise21ActivationId = testParams.out.pointwise20ActivationId; // pointwise21's activation function is the same as pointwise20.
-//      let pointwise21Result_beforeConcatWith_pointwise212;
-
-      let pointwise21Result;
-      if ( pointwise21ChannelCount > 0 ) {
-        pointwise21Result = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
-
-        // Residual Connection.
-        //
-        // Always using input0 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
-        if ( bAddInputToOutputRequested )
-          if ( pointwise21Result.depth == testParams.out.input0_channelCount ) // add-input-to-output is possible if same channel count.
-            pointwise21Result = pointwise21Result.clone_byAdd( imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
-      }
+      // Residual Connection.
+      //
+      // Always using input0 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
+      if ( bAddInputToOutputRequested )
+        if ( pointwise21Result.depth == testParams.out.input0_channelCount ) // add-input-to-output is possible if same channel count.
+          pointwise21Result = pointwise21Result.clone_byAdd( imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
 
       // Integrate pointwise20 and pointwise21 into pointwise2.
       imageOutArray[ 1 ] = pointwise21Result;
+    }
 
 
     // 5. Concat2 (along image depth), shuffle, split.
     //
     // TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3) (ShuffleNetV2's body/tail)
     // ONE_INPUT_HALF_THROUGH               (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-    } else if (    ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE20_INPUT1() ) // (-3)
+    if (    ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE20_INPUT1() ) // (-3)
                 || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
 
 
@@ -1023,6 +1007,7 @@ class Base {
           imageConcat2InArray[ 0 ], imageConcat2InArray[ 1 ], "Concat2_pointwise20_input1", this.paramsOutDescription );
       }
 
+//!!!
     } else {
       tf.util.assert( false,
         `Block testParams.out.channelCount1_pointwise1Before ( ${testParams.out.channelCount1_pointwise1Before} ) `
