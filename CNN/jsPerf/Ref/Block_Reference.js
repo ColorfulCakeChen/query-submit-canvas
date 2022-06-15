@@ -896,39 +896,50 @@ class Base {
       }
     }
 
+    imageOutArray.length = 2;
+    imageOutArray[ 0 ] = null;
+    imageOutArray[ 1 ] = null;
+
+    let c
     // 4.1 Pointwise20
     let imageIn1_beforePointwise20 = imageIn1;
-    let pointwise20Result, pointwise20Result_beforeConcatWith_pointwise202;
+
+//!!! (2022/06/15 Remarked) should be concatShufflerSplit
+//    let pointwise20Result, pointwise20Result_beforeConcatWith_pointwise202;
+
+    let pointwise20Result, pointwise202Result;
     {
       if ( pointwise20ChannelCount > 0 ) {
-        pointwise20Result = testParams.use_pointwise20( concat1Result, pointwise20ChannelCount, "Pointwise20", this.paramsOutDescription );
+        pointwise20Result = imageOutArray[ 0 ]
+          = testParams.use_pointwise20( concat1Result, pointwise20ChannelCount, "Pointwise20", this.paramsOutDescription );
 
         if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
-          let pointwise202Result = testParams.use_pointwise202( concat1Result, pointwise20ChannelCount, "Pointwise202", this.paramsOutDescription );
+          pointwise202Result = imageOutArray[ 1 ]
+            = testParams.use_pointwise202( concat1Result, pointwise20ChannelCount, "Pointwise202", this.paramsOutDescription );
 
-          pointwise20Result_beforeConcatWith_pointwise202 = pointwise20Result;
-          pointwise20Result = NumberImage.Base.calcConcatAlongAxisId2( pointwise20Result, pointwise202Result,
-            "Concat_pointwise20_pointwise202 (SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5))", this.paramsOutDescription );
+//!!! (2022/06/15 Remarked) should be concatShufflerSplit
+//           pointwise20Result_beforeConcatWith_pointwise202 = pointwise20Result;
+//           pointwise20Result = NumberImage.Base.calcConcatAlongAxisId2( pointwise20Result, pointwise202Result,
+//             "Concat_pointwise20_pointwise202 (SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5))", this.paramsOutDescription );
 
         } else if ( testParams.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) { // (6)
-          imageIn1 = testParams.use_pointwise20_PassThrough( imageIn1_beforePointwise20, // pass-through input1 (which is past-through by depthwise1).
-            pointwise20ChannelCount, // So that it could be concatenated with pointwise20Result.
-            "Pointwise20_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
+          imageIn1 = imageOutArray[ 1 ]
+            = testParams.use_pointwise20_PassThrough( imageIn1_beforePointwise20, // pass-through input1 (which is past-through by depthwise1).
+                pointwise20ChannelCount, // So that it could be concatenated with pointwise20Result.
+                "Pointwise20_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
         }
 
       } else {
-        pointwise20Result = concat1Result;
+        pointwise20Result = imageOutArray[ 0 ] = concat1Result;
       }
 
       // Residual Connection.
       if ( bAddInputToOutputRequested )
         if ( pointwise20Result.depth == testParams.out.input0_channelCount ) // add-input-to-output is possible if same channel count.
-          pointwise20Result = pointwise20Result.clone_byAdd( imageIn0, "Pointwise20_AddInputToOutput", this.paramsOutDescription );
+          pointwise20Result = imageOutArray[ 0 ]
+            = pointwise20Result.clone_byAdd( imageIn0, "Pointwise20_AddInputToOutput", this.paramsOutDescription );
     }
 
-    imageOutArray.length = 2;
-    imageOutArray[ 0 ] = pointwise20Result;
-    imageOutArray[ 1 ] = null; // Assume no pointwise21.
 
 
 //!!! ...unfinished... (2022/06/15) needs concatShuffleSplit
@@ -940,7 +951,10 @@ class Base {
 
     let pointwise21Result;
     if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
-        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
+
+//!!! (2022/06/15 Remarked) needs concatShuffleSplit
+//        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
+
         || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE() ) // (7)
         || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (8)
         || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY() )  // (9)
