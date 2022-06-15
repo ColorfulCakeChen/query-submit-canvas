@@ -41,11 +41,11 @@ class Params extends Weights.Params {
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
    *
-   * @param {number} inputHeight0
+   * @param {number} input0_height
    *   The height of apply()'s first input image (i.e. inputTensors[ 0 ]; input0). If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
    *
-   * @param {number} inputWidth0
+   * @param {number} input0_width
    *   The width of apply()'s first input image (i.e. inputTensors[ 0 ]; input0). If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
    *
@@ -283,7 +283,7 @@ class Params extends Weights.Params {
    *
    */
   constructor( inputFloat32Array, byteOffsetBegin,
-    inputHeight0, inputWidth0,
+    input0_height, input0_width,
     channelCount0_pointwise1Before,
     channelCount1_pointwise1Before,
     nConvBlockTypeId,
@@ -300,8 +300,8 @@ class Params extends Weights.Params {
   ) {
 
     let parameterMap = new Map( [
-      [ Params.inputHeight0,                          inputHeight0 ],
-      [ Params.inputWidth0,                           inputWidth0 ],
+      [ Params.input0_height,                          input0_height ],
+      [ Params.input0_width,                           input0_width ],
       [ Params.channelCount0_pointwise1Before,        channelCount0_pointwise1Before ],
       [ Params.channelCount1_pointwise1Before,        channelCount1_pointwise1Before ],
       [ Params.nConvBlockTypeId,                      nConvBlockTypeId ],
@@ -343,7 +343,7 @@ class Params extends Weights.Params {
 
     // Determine input tensor count and whether request add-input-to-output.
     Params.setFlags_by.call( this,
-      this.inputHeight0, this.inputWidth0,
+      this.input0_height, this.input0_width,
       this.channelCount0_pointwise1Before, this.channelCount1_pointwise1Before,
       this.nConvBlockTypeId,
       this.pointwise1ChannelCount,
@@ -607,8 +607,8 @@ class Params extends Weights.Params {
     Params.set_pointwise21ChannelCount_by.call( this, nConvBlockTypeId, pointwise20ChannelCount );
   }
 
-  get inputHeight0()                        { return this.parameterMapModified.get( Params.inputHeight0 ); }
-  get inputWidth0()                         { return this.parameterMapModified.get( Params.inputWidth0 ); }
+  get input0_height()                        { return this.parameterMapModified.get( Params.input0_height ); }
+  get input0_width()                         { return this.parameterMapModified.get( Params.input0_width ); }
   get channelCount0_pointwise1Before()      { return this.parameterMapModified.get( Params.channelCount0_pointwise1Before ); }
   get channelCount1_pointwise1Before()      { return this.parameterMapModified.get( Params.channelCount1_pointwise1Before ); }
 
@@ -669,8 +669,8 @@ class Params extends Weights.Params {
 
 // Define parameter descriptions.
 
-Params.inputHeight0 =            new ParamDesc.Int(                     "inputHeight0",                   1, ( 10 * 1024 ) );
-Params.inputWidth0 =             new ParamDesc.Int(                     "inputWidth0",                    1, ( 10 * 1024 ) );
+Params.input0_height =            new ParamDesc.Int(                     "input0_height",                   1, ( 10 * 1024 ) );
+Params.input0_width =             new ParamDesc.Int(                     "input0_width",                    1, ( 10 * 1024 ) );
 
 /** At least, there should be 1 input channel. */
 Params.channelCount0_pointwise1Before =  new ParamDesc.Int(             "channelCount0_pointwise1Before", 1, ( 10 * 1024 ) );
