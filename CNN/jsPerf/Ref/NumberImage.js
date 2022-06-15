@@ -1132,6 +1132,10 @@ class Base {
    * @param {NumberImage.Base} imageOutArray[ 0 ]   The first output image.
    * @param {NumberImage.Base} imageOutArray[ 1 ]   The second output image.
    *
+
+//!!! ...unfinished... (2022/06/15)
+// Perhaps, using bShuffleSplit instead of bSplit. (Just like Operation.ConcatShuffleSplit)
+
    * @param {boolean} bSplit
    *   If true, the result will be splitted into imageOutArray[ 0 ] and imageOutArray[ 1 ]. If false, the result will be placed in
    * imageOutArray[ 0 ] and imageOutArray[ 1 ] will be null.
@@ -1144,6 +1148,12 @@ class Base {
    * @param {string}   parametersDesc               A string for debug message of this block.
    */
   static calcConcatShuffleSplit(
+  
+
+//!!! ...unfinished... (2022/06/15)
+// Perhaps, using bShuffleSplit instead of bSplit. (Just like Operation.ConcatShuffleSplit)
+
+
     imageInArray, imageOutArray, bSplit,
     arrayTemp_forInterleave_asGrouptTwo,
     concatShuffleSplitName, parametersDesc ) {
