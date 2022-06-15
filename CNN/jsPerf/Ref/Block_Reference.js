@@ -102,87 +102,123 @@ class TestCorrectnessInfo {
           + `imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ${strNote}`);
 
       // Prepare channel shuffler.
+      const outputGroupCount = 2; // Only use two convolution groups.
+      let concatenatedDepth;
       switch ( nConvBlockTypeId ) {
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD: // (2)
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY: // (3)
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL: // (4)
+          concatenatedDepth = pointwise20ChannelCount * outputGroupCount;
+          break;
+
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD: // (5)
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL: // (6)
-        {
-          let outputGroupCount = 2; // Only use two convolution groups.
 
-          let concatenatedDepth;
-          
-          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY (3))
-          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL (4))
+          // Because Block_TestParams.generate_Filters_Biases() will double pointwise20ChannelCount, it must be an even number
+          // which could be splitted (into two groups).
           //
-          if ( input1_channelCount > 0 ) {
-            concatenatedDepth = ( input1_channelCount * outputGroupCount ); // Always twice as input1's channel count.
-
-          // ( input1_channelCount == 0 )
+          // Note: pointwise20ChannelCount is always positive (never zero or negative).
           //
-          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD (2))
-          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5))
-          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6))
-          //
-          } else {
-            //
-            // In these cases:
-            //   - The input1 does not exist.
-            //   - Fortunately, the concatenatedDepth of channel shuffler is not so important here.
-            //     - Only ( imageInHeight, imageInWidth, outputGroupCount ) of channel shuffler will be used.
-            //     - So a usable (non-zero) value is enough. 
-            //
-            concatenatedDepth = ( 1 * outputGroupCount );
-
-//!!! ...unfinished... (2021/11/26) What about SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) ?
-
-            // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
-            if ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL ) { // (6)
-
-              // Note: pointwise20ChannelCount is always positive (never zero or negative).
-
-              // Because Block_TestParams.generate_Filters_Biases() will double pointwise20ChannelCount, it must be an even number
-              // which could be splitted (into two groups).
-              concatenatedDepth = pointwise20ChannelCount;
-            }
-          }
-
-          channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
-            imageIn1.height, imageIn1.width, concatenatedDepth, outputGroupCount );
-
-          tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ] == imageIn1.height,
-            `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-              + `ChannelShuffler concatenatedShape[ 0 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ]} ) `
-              + `should be the same as image height ( ${imageIn1.height} ). ${strNote}`);
-
-          tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ] == imageIn1.width,
-            `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-              + `ChannelShuffler concatenatedShape[ 1 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ]} ) `
-              + `should be the same as image width ( ${imageIn1.width} ). ${strNote}`);
-
-          tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ] == concatenatedDepth,
-            `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-              + `ChannelShuffler concatenatedShape[ 2 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ]} ) `
-              + `should be the same as image concatenatedDepth ( ${concatenatedDepth} ). ${strNote}`);
-
-          tf.util.assert( channelShuffler_ConcatPointwiseConv.outputGroupCount == outputGroupCount,
-            `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-              + `ChannelShuffler outputGroupCount ( ${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
-              + `should be the same as image outputGroupCount ( ${outputGroupCount} ). ${strNote}`);
-
-          channelShuffler_concatenatedShape = channelShuffler_ConcatPointwiseConv.concatenatedShape;
-          channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
-        }
+          concatenatedDepth = pointwise20ChannelCount;
           break;
       }
+
+      if ( concatenatedDepth != undefined ) {
+        channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
+          imageIn1.height, imageIn1.width, concatenatedDepth, outputGroupCount );
+
+        tf.util.assert( (
+             ( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ] == imageIn1.height )
+          && ( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ] == imageIn1.width )
+          && ( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ] == concatenatedDepth ) ),
+          `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+            + `ChannelShuffler concatenatedShape ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ]}, `
+            + `${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ]}, `
+            + `${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ]} ) `
+            + `should be the same as input image1's ( height, width, concatenatedDepth ) = ( `
+            + `${imageIn1.height}, ${imageIn1.width}, ${concatenatedDepth} ). `
+            + `${strNote}` );
+
+        tf.util.assert( channelShuffler_ConcatPointwiseConv.outputGroupCount == outputGroupCount,
+          `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+            + `ChannelShuffler outputGroupCount ( ${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
+            + `should be the same as image outputGroupCount ( ${outputGroupCount} ). ${strNote}`);
+
+        channelShuffler_concatenatedShape = channelShuffler_ConcatPointwiseConv.concatenatedShape;
+        channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
+      }
+
+//!!! (2022/06/15 Remarked) input1_channelCount are inferenced now.
+//         {
+//
+//           // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY (3))
+//           // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL (4))
+//           //
+//           if ( input1_channelCount > 0 ) {
+//             concatenatedDepth = ( input1_channelCount * outputGroupCount ); // Always twice as input1's channel count.
+//
+//           // ( input1_channelCount == 0 )
+//           //
+//           // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD (2))
+//           // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5))
+//           // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6))
+//           //
+//           } else {
+//             //
+//             // In these cases:
+//             //   - The input1 does not exist.
+//             //   - Fortunately, the concatenatedDepth of channel shuffler is not so important here.
+//             //     - Only ( imageInHeight, imageInWidth, outputGroupCount ) of channel shuffler will be used.
+//             //     - So a usable (non-zero) value is enough. 
+//             //
+//             concatenatedDepth = ( 1 * outputGroupCount );
+//
+// //!!! ...unfinished... (2021/11/26) What about SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) ?
+//
+//             // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
+//             if ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL ) { // (6)
+//
+//               // Note: pointwise20ChannelCount is always positive (never zero or negative).
+//
+//               // Because Block_TestParams.generate_Filters_Biases() will double pointwise20ChannelCount, it must be an even number
+//               // which could be splitted (into two groups).
+//               concatenatedDepth = pointwise20ChannelCount;
+//             }
+//           }
+//
+//           channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
+//             imageIn1.height, imageIn1.width, concatenatedDepth, outputGroupCount );
+//
+//           tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ] == imageIn1.height,
+//             `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+//               + `ChannelShuffler concatenatedShape[ 0 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ]} ) `
+//               + `should be the same as image height ( ${imageIn1.height} ). ${strNote}`);
+//
+//           tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ] == imageIn1.width,
+//             `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+//               + `ChannelShuffler concatenatedShape[ 1 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ]} ) `
+//               + `should be the same as image width ( ${imageIn1.width} ). ${strNote}`);
+//
+//           tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ] == concatenatedDepth,
+//             `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+//               + `ChannelShuffler concatenatedShape[ 2 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ]} ) `
+//               + `should be the same as image concatenatedDepth ( ${concatenatedDepth} ). ${strNote}`);
+//
+//           tf.util.assert( channelShuffler_ConcatPointwiseConv.outputGroupCount == outputGroupCount,
+//             `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+//               + `ChannelShuffler outputGroupCount ( ${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
+//               + `should be the same as image outputGroupCount ( ${outputGroupCount} ). ${strNote}`);
+//
+//           channelShuffler_concatenatedShape = channelShuffler_ConcatPointwiseConv.concatenatedShape;
+//           channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
+//         }
+//           break;
+//       }
 
     }
 
     outputTensor3dArray.fill( undefined );
     inputTensor3dArray.fill( undefined );
-
-//!!! ...unfinished... (2022/06/15) 
 
     inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( input0_height, input0_width, input0_channelCount );
     if ( bTwoInputs ) { // Pass two input tensors according to parameters.
