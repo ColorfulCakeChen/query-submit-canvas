@@ -576,14 +576,14 @@ class Base {
 
         if ( this.bHigherHalfDifferent == true ) {
 
-          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (8) )
+          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
           // (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
           if ( this.bHigherHalfDepthwise2 == true ) {
             nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2;
 
           // If depthwise1's higher half is responsible for achieving pass-through, it needs height and width of input image.
           //
-          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (9) )
+          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6) )
           // (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
           } else {
             nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
@@ -606,8 +606,8 @@ class Base {
       //
       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD (2) )
       //
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (5) )
-      // (i.e. ShuffleNetV2_ByPointwise21's head)
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (8) )
+      // (i.e. ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
       //
       let depthwise2;
       if ( this.bDepthwise2Requested ) {
@@ -645,8 +645,8 @@ class Base {
 
       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD (2) )
       //
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (5) )
-      // (i.e. ShuffleNetV2_ByPointwise21's head)
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (8) )
+      // (i.e. ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
       //
       // Even if no depthwise, however, a .endingInput1 is necessary for concat1 to operate on. So create a dummy one.
       if ( this.bDepthwise2Requested ) {
