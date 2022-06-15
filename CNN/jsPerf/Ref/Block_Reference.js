@@ -48,23 +48,19 @@ class TestCorrectnessInfo {
 
     let strNote;
 
-    let referredParams = {};
+    let inferencedParams = {};
     let bTwoInputs, input1ChannelCount;
     {
-//!!! (2022/06/14 Remarked) replaced by ConvBlockType.
-//      // The input tensor count is determined by channelCount1_pointwise1Before totally.
-//      Block.Params.set_inputTensorCount_by.call( referredParams, channelCount1_pointwise1Before );
-
       // The input tensor count is determined by convolution block type totally.
-      Block.Params.set_inputTensorCount_by.call( referredParams, nConvBlockTypeId );
+      Block.Params.set_inputTensorCount_by.call( inferencedParams, nConvBlockTypeId );
 
-      Block.Params.set_input1ChannelCount_by.call( referredParams,
+      Block.Params.set_input1_channelCount_by.call( inferencedParams,
         channelCount1_pointwise1Before,
         nConvBlockTypeId,
         pointwise1ChannelCount, pointwise20ChannelCount );
 
-      bTwoInputs = ( referredParams.inputTensorCount == 2 );
-      input1ChannelCount = referredParams.input1ChannelCount;
+      bTwoInputs = ( inferencedParams.inputTensorCount == 2 );
+      input1ChannelCount = inferencedParams.input1ChannelCount;
     }
 
     let channelShuffler_ConcatPointwiseConv, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount;
