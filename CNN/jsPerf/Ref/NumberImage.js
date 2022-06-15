@@ -949,22 +949,24 @@ class Base {
    * and improve performance when doing Interleave_asGrouptTwo.
    *
    * @param {NumberImage.Base} this  The source image to be processed.
-   * @param {string} interleaveName  A string for debug message of this interleaving.
    *
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
    *
+   * @param {string} interleaveName  A string for debug message of this interleaving.
    * @param {string} parametersDesc  A string for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return this object which has been modifed in place.
    */
-  modify_byInterleave_asGrouptTwo( interleaveName, arrayTemp_forInterleave_asGrouptTwo, parametersDesc ) {
+  modify_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo, interleaveName, parametersDesc ) {
 
     tf.util.assert( ( ( this.depth % 2 ) == 0 ),
       `NumberImage.Base.modify_byInterleave_asGrouptTwo(): `
-        + `channel count ( ${this.depth} ) must be even (i.e. divisible by 2).`
+        + `${interleaveName}: `                   
+        + `channel count ( ${this.depth} ) must be even (i.e. divisible by 2). `
+        + `(${parametersDesc})`
     );
 
     // Shuffle data.
@@ -980,17 +982,25 @@ class Base {
   }
 
   /**
+   * Split image along the axis id 2 (i.e. depth) into imageOutArray as [ imageOut1, imageOut2 ]. If imageIn is null,
+   * return [ null, null ].
+   *
    * @param {NumberImage.Base} imageIn  The source image to be processed.
+   *
+   * @param {NumberImage.Base} imageOutArray[ 0 ]   The first output image.
+   * @param {NumberImage.Base} imageOutArray[ 1 ]   The second output image.
+   *
    * @param {string} splitName          A string for debug message of this splitting.
    * @param {string} parametersDesc     A string for debug message of this block.
-   *
-   * @return {NumberImage.Base[]}
-   *   Return splitted images [ imageOut1, imageOut2 ] along the axis id 2. If imageIn is null, return [ null, null ].
    */
-  static calcSplitAlongAxisId2( imageIn, splitName, parametersDesc ) {
+  static calcSplitAlongAxisId2( imageIn, imageOutArray, splitName, parametersDesc ) {
+
+    imageOutArray.length = 2;
+    imageOutArray[ 0 ] = null;
+    imageOutArray[ 1 ] = null;
 
     if ( null == imageIn )
-      return [ null, null ];
+      return;
 
     // Split value bounds array.
     let rScaleBoundsArray_lowerHalf = new ActivationEscaping.ScaleBoundsArray( 0 );
@@ -1004,15 +1014,13 @@ class Base {
     let imageOutLength_lowerHalf = ( imageIn.height * imageIn.width * imageOutDepth_lowerHalf );
     let imageOutLength_higherHalf = ( imageIn.height * imageIn.width * imageOutDepth_higherHalf );
 
-    let imageOutArray = [
-      new Base(
+    imageOutArray[ 0 ] = new Base(
         imageIn.height, imageIn.width, imageOutDepth_lowerHalf, new Float32Array( imageOutLength_lowerHalf ),
-        new BoundsArraySet.InputsOutputs( imageIn.boundsArraySet.output0, undefined, imageOutDepth_lowerHalf ) ),
+        new BoundsArraySet.InputsOutputs( imageIn.boundsArraySet.output0, undefined, imageOutDepth_lowerHalf ) );
 
-      new Base(
+    imageOutArray[ 1 ] = new Base(
         imageIn.height, imageIn.width, imageOutDepth_higherHalf, new Float32Array( imageOutLength_higherHalf ),
-        new BoundsArraySet.InputsOutputs( imageIn.boundsArraySet.output0, undefined, imageOutDepth_higherHalf ) )
-    ];
+        new BoundsArraySet.InputsOutputs( imageIn.boundsArraySet.output0, undefined, imageOutDepth_higherHalf ) );
 
     let imageOut0 = imageOutArray[ 0 ];
     let imageOut1 = imageOutArray[ 1 ];
@@ -1042,8 +1050,6 @@ class Base {
     // Setup value bounds array.
     imageOut0.boundsArraySet.set_outputs_all_byScaleBoundsArray( rScaleBoundsArray_lowerHalf );
     imageOut1.boundsArraySet.set_outputs_all_byScaleBoundsArray( rScaleBoundsArray_higherHalf );
-
-    return imageOutArray;
   }
 
   /**
@@ -1110,6 +1116,64 @@ class Base {
     imageOut.boundsArraySet.set_outputs_all_by_concat_input0_input1();
 
     return imageOut;
+  }
+
+  /**
+   *
+   * @param {NumberImage.Base} imageInArray[ 0 ]   The first input image to be processed.
+   * @param {NumberImage.Base} imageInArray[ 1 ]   The second input image to be processed.
+   *
+   * @param {NumberImage.Base} imageOutArray[ 0 ]   The first output image.
+   * @param {NumberImage.Base} imageOutArray[ 1 ]   The second output image.
+   *
+   * @param {boolean} bSplit
+   *   If true, the result will be splitted into imageOutArray[ 0 ] and imageOutArray[ 1 ]. If false, the result will be placed in
+   * imageOutArray[ 0 ] and imageOutArray[ 1 ] will be null.
+   *
+   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
+   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
+   * and improve performance when doing Interleave_asGrouptTwo.
+   *
+   * @param {string}   concatShuffleSplitName       A string for debug message of this concatenation-shuffle-split.
+   * @param {string}   parametersDesc               A string for debug message of this block.
+   */
+  static calcConcatShuffleSplit(
+    imageInArray, imageOutArray, bSplit,
+    arrayTemp_forInterleave_asGrouptTwo,
+    concatShuffleSplitName, parametersDesc ) {
+
+    tf.util.assert( ( imageInArray.length == 2 ),
+      `${concatShuffleSplitName}: `
+        + `The length of imageInArray[] ( ${imageInArray.length} ) must be 2. `
+        + `(${parametersDesc})`
+    );
+
+    // Note: Although different depth is wierd, it might still work. So, allow it.
+    tf.util.assert(
+      (   ( imageInArray[ 0 ].height == imageInArray[ 1 ].height )
+       && ( imageInArray[ 0 ].width ==  imageInArray[ 1 ].width )
+       //&& ( imageInArray[ 0 ].depth ==  imageInArray[ 1 ].depth )
+      ),
+
+      `${concatShuffleSplitName}: The first input image's shape ( height, width, depth ) = `
+        + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${imageInArray[ 0 ].depth} ) `
+        + `should be the same as the second input image's shape `
+        + `( ${imageInArray[ 1 ].height}, ${imageInArray[ 1 ].width}, ${imageInArray[ 1 ].depth} ). `
+        + `(${parametersDesc})`
+    );
+
+    let concatResult = NumberImage.Base.calcConcatAlongAxisId2( imageInArray[ 0 ], imageInArray[ 1 ],
+      `${concatShuffleSplitName}_concat`, parametersDesc );
+
+    let shuffleResult = concatResult.modify_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo,
+      `${concatShuffleSplitName}_interleave_asGrouptTwo`, parametersDesc );
+ 
+    if ( bSplit ) {
+      NumberImage.Base.calcSplitAlongAxisId2( shuffleResult, imageOutArray, `${concatShuffleSplitName}_split`, parametersDesc );
+    } else {
+      imageOutArray[ 0 ] = shuffleResult;
+      imageOutArray[ 1 ] = null;
+    }
   }
 
   /**
