@@ -34,12 +34,13 @@ class TestCorrectnessInfo {
   prepareBy( imageSourceBag, testParams, channelShufflerPool ) {
 
     let {
-      input0_height, input0_width, input0_channelCount, channelCount1_pointwise1Before,
+      input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       pointwise20ChannelCount,
-      bKeepInputTensor
+      bKeepInputTensor,
+      inferencedParams
     } = testParams.out;
 
     let imageInArraySelected = this.imageInArraySelected; // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
@@ -48,7 +49,6 @@ class TestCorrectnessInfo {
 
     let strNote;
 
-    let inferencedParams = testParams.out.inferencedParams;
     let bTwoInputs, input1_channelCount;
     {
       bTwoInputs = ( inferencedParams.inputTensorCount == 2 );
@@ -81,11 +81,13 @@ class TestCorrectnessInfo {
         `Block imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ${strNote}`);
 
       // Prepare channel shuffler.
-      switch ( channelCount1_pointwise1Before ) {
-        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1: // (-3)
-        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
-        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
+      switch ( nConvBlockTypeId ) {
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY: // (3)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL: // (4)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD: // (5)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL: // (6)
         {
+//!!! ...unfinished... (2022/06/15) 
           let outputGroupCount = 2; // Only use two convolution groups.
 
           let concatenatedDepth;
