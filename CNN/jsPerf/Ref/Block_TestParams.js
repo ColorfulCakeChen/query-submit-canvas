@@ -132,7 +132,7 @@ class Base extends TestParams.Base {
    */
   generate_out_depthwisePadInfo() {
     if ( !this.out.depthwisePadInfo ) {
-      this.out.depthwisePadInfo = new ( Depthwise.PadInfoCalculator() )(
+      this.out.depthwisePadInfo = new Depthwise.PadInfoCalculatorRoot(
         this.out.input0_height, this.out.input0_width, this.out.input0_channelCount, 
         this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
         this.out.depthwiseStridesPad );
