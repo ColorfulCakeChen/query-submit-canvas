@@ -176,8 +176,7 @@ class Params extends Weights.Params {
    *
    */
   constructor( inputFloat32Array, byteOffsetBegin,
-    input0_height, input0_width,
-    input0_channelCount,
+    input0_height, input0_width, input0_channelCount,
 
 //!!! (2022/06/15 Remarked) Replaced by inferenced input1_channelCount.
 //    channelCount1_pointwise1Before,
