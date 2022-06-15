@@ -202,15 +202,61 @@ class ConcatShuffleSplit extends Root {
    */  
   static setup_outputs_TensorPlaceholder() {
 
-    this.output0.height = this.input0.height;
-    this.output0.width = this.input0.width;
+    // 0.
+
+    // 0.1 Determine output0.height
+    if ( this.input0.height != undefined ) {
+      if ( this.input1.height != undefined ) {
+
+        // If both inputs' height are known, they should be the same.
+        tf.util.assert( ( this.input0.height == this.input1.height ),
+          `Operation.ConcatShuffleSplit.setup_outputs_TensorPlaceholder(): `
+            + `input0.height ( ${this.input0.height} ) and input1.height ( ${this.input1.height} ) should be the same.`
+        );
+
+        this.output0.height = this.input0.height;
+      } else {
+        this.output0.height = this.input0.height;
+      }
+    } else {
+      if ( this.input1.height != undefined ) {
+        this.output0.height = this.input1.height;
+      } else {
+        this.output0.height = undefined;
+      }
+    }
+
+    // 0.2 Determine output0.width
+    if ( this.input0.width != undefined ) {
+      if ( this.input1.width != undefined ) {
+
+        // If both inputs' width are known, they should be the same.
+        tf.util.assert( ( this.input0.width == this.input1.width ),
+          `Operation.ConcatShuffleSplit.setup_outputs_TensorPlaceholder(): `
+            + `input0.width ( ${this.input0.width} ) and input1.width ( ${this.input1.width} ) should be the same.`
+        );
+
+        this.output0.width = this.input0.width;
+      } else {
+        this.output0.width = this.input0.width;
+      }
+    } else {
+      if ( this.input1.height != undefined ) {
+        this.output0.width = this.input1.width;
+      } else {
+        this.output0.width = undefined;
+      }
+    }
+
+    // 1. 
     this.output0.channelCount_lowerHalf = undefined;  // Note: After concatenation operation, the half channel information are always lost.
     this.output0.channelCount_higherHalf = undefined;
     this.output0.scaleBoundsArray = this.boundsArraySet.output0;
 
+    // 2.
     if ( this.bShouldShuffleSplit ) { // Only if splitting is required, the output1 does exist.
-      this.output1.height = this.input0.height;
-      this.output1.width = this.input0.width;
+      this.output1.height = this.output0.height;
+      this.output1.width = this.output0.width;
 
       // Because only tensor3d and ChannelShuffler.ConcatPointwiseConv and ( outputGroupCount == 2 ) are supported,
       // using the pointwise convolution filters' shape for output channel count.
