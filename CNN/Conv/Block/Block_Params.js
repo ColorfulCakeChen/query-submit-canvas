@@ -529,19 +529,14 @@ class Params extends Weights.Params {
 
   /**
    * Determine the following properties:
-   *   - this.bPointwise21
    *   - this.pointwise21ChannelCount
    */
-  static set_bPointwise21_pointwise21ChannelCount_by( nConvBlockTypeId ) {
+  static set_pointwise21ChannelCount_by( nConvBlockTypeId, pointwise20ChannelCount ) {
 
     // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
     let infoConvBlockType = ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
-
-    this.bPointwise21 = infoConvBlockType.bPointwise21;
-
-    let infoConvBlockType = ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
     if ( infoConvBlockType.bPointwise21 )
-      this.pointwise21ChannelCount = this.pointwise20ChannelCount; // Still may be 0.
+      this.pointwise21ChannelCount = pointwise20ChannelCount; // Still may be 0.
     else
       this.pointwise21ChannelCount = 0; // No pointwise21.
   }
@@ -609,7 +604,7 @@ class Params extends Weights.Params {
     // 3. Pointwise21
     //
     // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
-    Params.set_bPointwise21_pointwise21ChannelCount_by.call( this, nConvBlockTypeId );
+    Params.set_pointwise21ChannelCount_by.call( this, nConvBlockTypeId, pointwise20ChannelCount );
   }
 
   get inputHeight0()                        { return this.parameterMapModified.get( Params.inputHeight0 ); }
