@@ -577,7 +577,7 @@ class Base {
   }
 
   /**
-   * Note: This method does not adjust any BoundsArraySet.
+   * Note: This method does NOT adjust any BoundsArraySet.
    *
    * @param {NumberImage.Base} imageIn   The source image to be processed.
    * @param {string}   nActivationId     The name string of this activation function.
@@ -591,22 +591,28 @@ class Base {
    */
   static modify_byActivation_withoutAffect_BoundsArraySet( imageIn, nActivationId, parametersDesc ) {
 
-//!!! ...unfinished... (2022/05/23) Perhaps, re-implement without tensor.
-
-
     let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
     if ( !theActivationFunctionInfo )
       return imageIn;
 
-    let pfnActivation = theActivationFunctionInfo.pfn;
+//!!! (2022/06/15 Remarked) Using CPU instead of tensor to improve performance.
+//     let pfnActivation = theActivationFunctionInfo.pfn;
+//     if ( !pfnActivation )
+//       return imageIn;
+//
+//     // Because pfnActivation is function of tensorflow.js, it process tf.tensor (i.e. not a single value).
+//     // Let it process the whole input (as an Array) directly.
+//     let tensorOut = pfnActivation( imageIn.dataArray )
+//     imageIn.dataArray = tensorOut.dataSync();
+//     tensorOut.dispose();
+
+    let pfnActivation = theActivationFunctionInfo.pfnReference;
     if ( !pfnActivation )
       return imageIn;
 
-    // Because pfnActivation is function of tensorflow.js, it process tf.tensor (i.e. not a single value).
-    // Let it process the whole input (as an Array) directly.
-    let tensorOut = pfnActivation( imageIn.dataArray )
-    imageIn.dataArray = tensorOut.dataSync();
-    tensorOut.dispose();
+    for ( let i = 0; i < imageIn.dataArray.length; ++i ) {
+      imageIn.dataArray[ i ] = pfnActivation( imageIn.dataArray[ i ] );
+    }
 
     return imageIn;
   }
