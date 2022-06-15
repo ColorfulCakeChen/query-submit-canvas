@@ -61,25 +61,27 @@ class ActivationFunction extends Int {
       [ "NONE",  "CLIP_BY_VALUE_N3_P3", "TANH",  "SIN", "RELU6",  "COS",  "SIGMOID", "RELU" ], //  "SOFTPLUS" ],
 
       [
-        new ActivationFunction.Info( 0, null, null, null, null ),
+        new ActivationFunction.Info( 0, null, null, null, null, null ),
 
-        new ActivationFunction.Info( 1, ActivationFunction.clipByValue_Negative3_Positive3, new FloatValue.Bounds( -3, +3 ),
-          new FloatValue.Bounds( -3, +3 ), new FloatValue.Bounds( -3, +3 ) ),
+        new ActivationFunction.Info( 1, ActivationFunction.clipByValue_Negative3_Positive3,
+          ActivationFunction.reference_clipByValue_Negative3_Positive3,
+          new FloatValue.Bounds( -3, +3 ), new FloatValue.Bounds( -3, +3 ), new FloatValue.Bounds( -3, +3 ) ),
 
-        new ActivationFunction.Info( 2, tf.tanh, new FloatValue.Bounds( -1, +1 ),
-          new FloatValue.Bounds( -0.005, +0.005 ), new FloatValue.Bounds( -0.005, +0.005 ) ),
+        new ActivationFunction.Info( 2, tf.tanh, ActivationFunction.reference_tanh,
+          new FloatValue.Bounds( -1, +1 ), new FloatValue.Bounds( -0.005, +0.005 ), new FloatValue.Bounds( -0.005, +0.005 ) ),
 
-        new ActivationFunction.Info( 3, tf.sin, new FloatValue.Bounds( -1, +1 ),
-          new FloatValue.Bounds( -0.005, +0.005 ), new FloatValue.Bounds( -0.005, +0.005 ) ),
+        new ActivationFunction.Info( 3, tf.sin, ActivationFunction.reference_sin,
+          new FloatValue.Bounds( -1, +1 ), new FloatValue.Bounds( -0.005, +0.005 ), new FloatValue.Bounds( -0.005, +0.005 ) ),
 
-        new ActivationFunction.Info( 4, tf.relu6, new FloatValue.Bounds( 0, 6 ),
-          new FloatValue.Bounds( 0, 6 ), new FloatValue.Bounds( 0, 6 ) ),
+        new ActivationFunction.Info( 4, tf.relu6, ActivationFunction.reference_relu6,
+          new FloatValue.Bounds( 0, 6 ), new FloatValue.Bounds( 0, 6 ), new FloatValue.Bounds( 0, 6 ) ),
 
-        new ActivationFunction.Info( 5, tf.cos, new FloatValue.Bounds( -1, +1 ),
+        new ActivationFunction.Info( 5, tf.cos, ActivationFunction.reference_cos,
+          new FloatValue.Bounds( -1, +1 ),
           new FloatValue.Bounds( -( ( Math.PI / 2 ) + 0.005 ), -( ( Math.PI / 2 ) - 0.005 ) ), new FloatValue.Bounds( -0.005, +0.005 ) ),
 
-        new ActivationFunction.Info( 6, tf.sigmoid, new FloatValue.Bounds( 0, 1 ),
-          new FloatValue.Bounds( -0.125, +0.125 ), new FloatValue.Bounds( +0.468, +0.532 ) ),
+        new ActivationFunction.Info( 6, tf.sigmoid, ActivationFunction.reference_sigmoid,
+          new FloatValue.Bounds( 0, 1 ), new FloatValue.Bounds( -0.125, +0.125 ), new FloatValue.Bounds( +0.468, +0.532 ) ),
 
         // (2021/12/09)
         // The input linear domain and output range of RELU are [ 0, +Infinity ]. However, it is not so friendly to interact with Infinity
@@ -89,10 +91,11 @@ class ActivationFunction extends Int {
         // (2022/01/11)
         // However, if the BoundsArraySet.afterActivation is calculate by .clamp_byXxx() (not by set_byXxx()), the Infinity bounds is
         // not a problem.
-        new ActivationFunction.Info( 7, tf.relu, new FloatValue.Bounds( 0, +Infinity ),
-         new FloatValue.Bounds( 0, +Infinity ), new FloatValue.Bounds( 0, +Infinity ) ),
+        new ActivationFunction.Info( 7, tf.relu, ActivationFunction.reference_relu,
+          new FloatValue.Bounds( 0, +Infinity ), new FloatValue.Bounds( 0, +Infinity ), new FloatValue.Bounds( 0, +Infinity ) ),
 
-        //new ActivationFunction.Info( 8, tf.softplus, new FloatValue.Bounds( 0, +Infinity ),
+        //new ActivationFunction.Info( 8, tf.softplus, ActivationFunction.reference_softplus,
+        //  new FloatValue.Bounds( 0, +Infinity ),
         //  new FloatValue.Bounds( +5, +Infinity ), new FloatValue.Bounds( +5, +Infinity ) ),
       ]
     );
@@ -104,6 +107,40 @@ class ActivationFunction extends Int {
    */
   static clipByValue_Negative3_Positive3( x ) {
     return tf.clipByValue( x, -3, +3 );
+  }
+
+  static reference_clipByValue_Negative3_Positive3( x ) {
+    if ( x <= -3 )
+      return -3;
+    else if ( x >= +3 )
+      return +3;
+    return x;
+  }
+
+  static reference_tanh( x ) { return Math.tanh( x ); }
+  static reference_sin( x )  { return Math.sin( x );  }
+  static reference_cos( x )  { return Math.cos( x );  }
+
+  static reference_relu6( x ) {
+    if ( x <= 0 )
+      return 0;
+    else if ( x >= +6 )
+      return +6;
+    return x;
+  }
+
+  static reference_relu( x ) {
+    if ( x <= 0 )
+      return 0;
+    return x;
+  }
+
+  static reference_sigmoid( x ) {
+    return ( 1 / ( 1 + Math.exp( -x ) ) );
+  }
+
+  static reference_softplus( x ) {
+    return Math.log( 1 + Math.exp( x ) );
   }
 
   /**
@@ -129,7 +166,10 @@ class ActivationFunction extends Int {
  *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx).
  *
  * @member {Function} pfn
- *   The activation function. (e.g. tf.relu6, tf.tanh, tf.sin, tf.cos, tf.sigmoid, tf.relu)
+ *   The activation function by tensorflow.js (e.g. tf.relu6, tf.tanh, tf.sin, tf.cos, tf.sigmoid, tf.relu).
+ *
+ * @member {Function} pfnReference
+ *   The activation function by CPU. It is used by NumberImage.Base for comparing correctness.
  *
  * @member {FloatValue.Bounds} outputRange
  *   The output value lower and upper bounds of the activation function for the whole input domain.
@@ -143,9 +183,10 @@ class ActivationFunction extends Int {
  *   The activattion function's output range when its input is in domain this.inputDomainLinear.
  */
 ActivationFunction.Info = class {
-  constructor( nActivationId, pfn, outputRange, inputDomainLinear, outputRangeLinear ) {
+  constructor( nActivationId, pfn, pfnReference, outputRange, inputDomainLinear, outputRangeLinear ) {
     this.nActivationId = nActivationId;
     this.pfn = pfn;
+    this.pfnReference = pfnReference;
     this.outputRange = outputRange;
     this.inputDomainLinear = inputDomainLinear;
     this.outputRangeLinear = outputRangeLinear;
