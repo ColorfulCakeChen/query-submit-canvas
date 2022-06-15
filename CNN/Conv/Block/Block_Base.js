@@ -46,7 +46,7 @@ import { Params } from "./Block_Params.js";
  * exists, it could have or have no bias and activation function.
  *
  *
- * There are ten main combinations:
+ * There are eleven main combinations:
  *
  *
  *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL (0) ):
