@@ -34,7 +34,7 @@ class TestCorrectnessInfo {
   prepareBy( imageSourceBag, testParams, channelShufflerPool ) {
 
     let {
-      inputHeight0, inputWidth0, channelCount0_pointwise1Before, channelCount1_pointwise1Before,
+      input0_height, input0_width, input0_channelCount, channelCount1_pointwise1Before,
       nConvBlockTypeId,
       pointwise1ChannelCount,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
@@ -49,7 +49,7 @@ class TestCorrectnessInfo {
     let strNote;
 
     let inferencedParams = {};
-    let bTwoInputs, input1ChannelCount;
+    let bTwoInputs, input1_channelCount;
     {
       // The input tensor count is determined by convolution block type totally.
       Block.Params.set_inputTensorCount_by.call( inferencedParams, nConvBlockTypeId );
@@ -60,7 +60,7 @@ class TestCorrectnessInfo {
         pointwise1ChannelCount, pointwise20ChannelCount );
 
       bTwoInputs = ( inferencedParams.inputTensorCount == 2 );
-      input1ChannelCount = inferencedParams.input1ChannelCount;
+      input1_channelCount = inferencedParams.input1_channelCount;
     }
 
     let channelShuffler_ConcatPointwiseConv, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount;
@@ -68,17 +68,17 @@ class TestCorrectnessInfo {
       strNote = `( testParams.id=${testParams.id} )`;
 
       imageInArraySelected.fill( undefined );
-      imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( inputHeight0, inputWidth0, channelCount0_pointwise1Before );
+      imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( input0_height, input0_width, input0_channelCount );
 
       // Although input1 is only needed when ( bTwoInputs == true ), it is always prepared for calculating the shape of channel shuffler.
       // 
       // The shape of input1 (not input0) determines the concatenatedShape of channel shuffler because the input0 might be shrinked
       // by depthwise convolution.
       //
-      // Note: input1ChannelCount may be zero.
+      // Note: input1_channelCount may be zero.
       //
       let imageIn1 = imageSourceBag.getImage_by(
-        inputHeight0, inputWidth0, input1ChannelCount,
+        input0_height, input0_width, input1_channelCount,
         depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
 
       if ( bTwoInputs ) { // Pass two input images according to parameters.
@@ -97,10 +97,10 @@ class TestCorrectnessInfo {
           let outputGroupCount = 2; // Only use two convolution groups.
 
           let concatenatedDepth;
-          if ( input1ChannelCount > 0 ) { // TWO_INPUTS_CONCAT_POINTWISE20_INPUT1: // (-3)
-            concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
+          if ( input1_channelCount > 0 ) { // TWO_INPUTS_CONCAT_POINTWISE20_INPUT1: // (-3)
+            concatenatedDepth = ( input1_channelCount * outputGroupCount ); // Always twice as input1's channel count.
 
-          } else { // ( input1ChannelCount == 0 )
+          } else { // ( input1_channelCount == 0 )
             // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
             // ONE_INPUT_HALF_THROUGH: // (-5)
             //
@@ -157,10 +157,10 @@ class TestCorrectnessInfo {
     outputTensor3dArray.fill( undefined );
     inputTensor3dArray.fill( undefined );
 
-    inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( inputHeight0, inputWidth0, channelCount0_pointwise1Before );
+    inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( input0_height, input0_width, input0_channelCount );
     if ( bTwoInputs ) { // Pass two input tensors according to parameters.
       inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by(
-        inputHeight0, inputWidth0, input1ChannelCount,
+        input0_height, input0_width, input1_channelCount,
         depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
     }
 
@@ -178,7 +178,7 @@ class TestCorrectnessInfo {
       }
     }
 
-    this.input1ChannelCount = input1ChannelCount;
+    this.input1_channelCount = input1_channelCount;
     this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
     this.inputTensorDestroyCount = inputTensorDestroyCount;
     this.strNote = strNote;
@@ -236,7 +236,7 @@ class Base {
 
       let {
         imageInArraySelected, inputTensor3dArray, outputTensor3dArray,
-        input1ChannelCount, channelShuffler_ConcatPointwiseConv, inputTensorDestroyCount,
+        input1_channelCount, channelShuffler_ConcatPointwiseConv, inputTensorDestroyCount,
         strNote
       } = this.testCorrectnessInfo;
 
@@ -260,7 +260,7 @@ class Base {
       strNote = `( testParams.id=${testParams.id}, ${parametersDescription} )`;
 
       // Test input channel count.
-      Base.AssertTwoEqualValues( "inChannels1", block.inChannels1, input1ChannelCount, strNote );
+      Base.AssertTwoEqualValues( "inChannels1", block.inChannels1, input1_channelCount, strNote );
 
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
@@ -414,8 +414,8 @@ class Base {
 
     // Initialize successfully or failed.
     let extractedParams = new Block.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
-      testParams.in.inputHeight0, testParams.in.inputWidth0,
-      testParams.in.channelCount0_pointwise1Before, testParams.in.channelCount1_pointwise1Before,
+      testParams.in.input0_height, testParams.in.input0_width,
+      testParams.in.input0_channelCount, testParams.in.channelCount1_pointwise1Before,
       testParams.in.nConvBlockType,
       testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
       testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
@@ -465,10 +465,10 @@ class Base {
       block.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, parametersDescription );
 
     // input tensor parameters.
-    asserter.propertyValue( "inputHeight0", testParams.out.inputHeight0 );
-    asserter.propertyValue( "inputWidth0", testParams.out.inputWidth0 );
+    asserter.propertyValue( "input0_height", testParams.out.input0_height );
+    asserter.propertyValue( "input0_width", testParams.out.input0_width );
 
-    asserter.propertyValue( "inChannels0", testParams.out.channelCount0_pointwise1Before );
+    asserter.propertyValue( "inChannels0", testParams.out.input0_channelCount );
     asserter.propertyValue( "channelCount1_pointwise1Before", testParams.out.channelCount1_pointwise1Before );
     asserter.propertyValue( "nConvBlockId", testParams.out.nConvBlockId );
 
@@ -528,7 +528,7 @@ class Base {
       // so that depthwise1 could include depthwise2.
       //
       if ( testParams.out.pointwise1ChannelCount > 0 ) {
-        let pointwise1ChannelCount = ( testParams.out.pointwise1ChannelCount + testParams.out.channelCount0_pointwise1Before );
+        let pointwise1ChannelCount = ( testParams.out.pointwise1ChannelCount + testParams.out.input0_channelCount );
         asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
 
       // However, if ( pointwise1ChannelCount == 0 ), Pointwise.Base can not handle ( pointwise1ChannelCount == 0 ) because
@@ -539,7 +539,7 @@ class Base {
       // no biases. Not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough. (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough)
       //
       } else { // ( 0 == testParams.out.pointwise1ChannelCount )
-        let pointwise1ChannelCount = ( testParams.out.channelCount0_pointwise1Before * 2 ); // As doubled input channel count.
+        let pointwise1ChannelCount = ( testParams.out.input0_channelCount * 2 ); // As doubled input channel count.
         asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
 
         bPointwise1Bias_shouldBe = false;
@@ -615,8 +615,8 @@ class Base {
 
     // If depthwise does not exist, the output ( height, width ) should be the same as input.
     if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) { // (0)
-      asserter.propertyValue( "outputHeight", testParams.out.inputHeight0 );
-      asserter.propertyValue( "outputWidth", testParams.out.inputWidth0 );
+      asserter.propertyValue( "outputHeight", testParams.out.input0_height );
+      asserter.propertyValue( "outputWidth", testParams.out.input0_width );
 
     // Otherwise, depthwise determines output ( height, width ).
     } else {
@@ -726,7 +726,7 @@ class Base {
     // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we use the logic of
     // TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
     //
-    // Note: Block_TestParams.Base.generate_Filters_Biases() double channelCount0_pointwise1Before,
+    // Note: Block_TestParams.Base.generate_Filters_Biases() double input0_channelCount,
     // pointwise20ChannelCount. So, halve them here.
     //
     } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
@@ -742,7 +742,7 @@ class Base {
 
       } else { // Otherwise, only the lower half should be processed by pointwise1 convolution.
         let pointwise1_higherHalfPassThrough = new ChannelCountCalculator.HigherHalfPassThrough(
-          testParams.out.channelCount0_pointwise1Before, testParams.out.pointwise1ChannelCount );
+          testParams.out.input0_channelCount, testParams.out.pointwise1ChannelCount );
 
         pointwise1ChannelCount = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
       }
@@ -898,7 +898,7 @@ class Base {
 
       // Residual Connection.
       if ( bAddInputToOutputRequested )
-        if ( pointwise20Result.depth == testParams.out.channelCount0_pointwise1Before ) // add-input-to-output is possible if same channel count.
+        if ( pointwise20Result.depth == testParams.out.input0_channelCount ) // add-input-to-output is possible if same channel count.
           pointwise20Result = pointwise20Result.clone_byAdd( imageIn0, "Pointwise20_AddInputToOutput", this.paramsOutDescription );
     }
 
@@ -943,7 +943,7 @@ class Base {
         //
         // Always using input0 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
         if ( bAddInputToOutputRequested )
-          if ( pointwise21Result.depth == testParams.out.channelCount0_pointwise1Before ) // add-input-to-output is possible if same channel count.
+          if ( pointwise21Result.depth == testParams.out.input0_channelCount ) // add-input-to-output is possible if same channel count.
             pointwise21Result = pointwise21Result.clone_byAdd( imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
       }
 
@@ -1135,8 +1135,8 @@ class Base {
     let paramsOutDescription =
         `inputTensorCount=${flags.inputTensorCount}, `
 
-      + `inputHeight0=${testParams.out.inputHeight0}, inputWidth0=${testParams.out.inputWidth0}, `
-      + `inChannels0=${testParams.out.channelCount0_pointwise1Before}, inChannels1=${flags.input1ChannelCount}, `
+      + `input0_height=${testParams.out.input0_height}, input0_width=${testParams.out.input0_width}, `
+      + `inChannels0=${testParams.out.input0_channelCount}, inChannels1=${flags.input1_channelCount}, `
 
 //!!! (2022/06/14 Remarked) replaced by ConvBlockType.
 //       + `channelCount1_pointwise1Before_Name=`
