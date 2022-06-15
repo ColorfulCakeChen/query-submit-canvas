@@ -1055,6 +1055,10 @@ class Base {
    * @param {number[]} concatenatedShape           The concatenatedShape of channel shuffler.
    * @param {number}   outputGroupCount            The outputGroupCount of channel shuffler.
    *
+   * @param {boolean} bSplit
+   *   If true, the result will be splitted into imageOutArray[ 0 ] and imageOutArray[ 1 ]. If false, the result will be placed in
+   * imageOutArray[ 0 ] and imageOutArray[ 1 ] will be null.
+   *
    * @param {NumberImage.Base} imageInArray[ 0 ]   The first input image to be processed.
    * @param {NumberImage.Base} imageInArray[ 1 ]   The second input image to be processed.
    *
@@ -1065,7 +1069,8 @@ class Base {
    * @param {string}   parametersDesc               A string for debug message of this point-depth-point.
    */
   calcConcatShuffleSplit(
-    concatenatedShape, outputGroupCount, imageInArray, imageOutArray, concatShuffleSplitName, parametersDesc ) {
+    concatenatedShape, outputGroupCount, bSplit,
+    imageInArray, imageOutArray, concatShuffleSplitName, parametersDesc ) {
 
     tf.util.assert( ( imageInArray.length == 2 ),
       `${concatShuffleSplitName}: `
@@ -1135,28 +1140,39 @@ class Base {
     let inputScaleBoundsArray0 = imageInArray[ 0 ].boundsArraySet.output0;
     let inputScaleBoundsArray1 = imageInArray[ 1 ].boundsArraySet.output0;
 
-    // Concat-shuffle-split.
-    // 
-    // Using different channel shuffler implementation for comparsion correctness.
-    let tensorOutArray = channelShuffler_ShuffleInfo.concatReshapeTransposeReshapeSplit( tensorInArray );
+    if ( bSplit ) {
+      // Concat-shuffle-split.
+      // 
+      // Using different channel shuffler implementation for comparsion correctness.
+      let tensorOutArray = channelShuffler_ShuffleInfo.concatReshapeTransposeReshapeSplit( tensorInArray );
 
-    // Converty output tensors to images.
-    for ( let i = 0; i < imageOutArray.length; ++i ) {
-      let t = tensorOutArray[ i ];
-      let imageHeight = t.shape[ 0 ];
-      let imageWidth = t.shape[ 1 ];
-      let imageDepth = t.shape[ 2 ];
+      // Converty output tensors to images.
+      for ( let i = 0; i < imageOutArray.length; ++i ) {
+        let t = tensorOutArray[ i ];
+        let imageHeight = t.shape[ 0 ];
+        let imageWidth = t.shape[ 1 ];
+        let imageDepth = t.shape[ 2 ];
 
-      let rBoundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1, imageDepth );
-      imageOutArray[ i ] = new NumberImage.Base( imageHeight, imageWidth, imageDepth, t.dataSync(), rBoundsArraySet );
-    }
+        let rBoundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1, imageDepth );
+        imageOutArray[ i ] = new NumberImage.Base( imageHeight, imageWidth, imageDepth, t.dataSync(), rBoundsArraySet );
+      }
 
-    let tScaleBoundsArray = new ActivationEscaping.ScaleBoundsArray( 0 );
-    {
-      tScaleBoundsArray.set_all_byScaleBoundsArray_concat_input0_input1( inputScaleBoundsArray0, inputScaleBoundsArray1 ); // Bounds Concat
-      tScaleBoundsArray.set_all_byInterleave_asGrouptTwo( this.arrayTemp_forInterleave_asGrouptTwo ); // Bounds Shuffle
-      tScaleBoundsArray.split_to_lowerHalf_higherHalf(
-        imageOutArray[ 0 ].boundsArraySet.output0, imageOutArray[ 1 ].boundsArraySet.output0 ); // Bounds Split
+      let tScaleBoundsArray = new ActivationEscaping.ScaleBoundsArray( 0 );
+      {
+        tScaleBoundsArray.set_all_byScaleBoundsArray_concat_input0_input1( inputScaleBoundsArray0, inputScaleBoundsArray1 ); // Bounds Concat
+        tScaleBoundsArray.set_all_byInterleave_asGrouptTwo( this.arrayTemp_forInterleave_asGrouptTwo ); // Bounds Shuffle
+        tScaleBoundsArray.split_to_lowerHalf_higherHalf(
+          imageOutArray[ 0 ].boundsArraySet.output0, imageOutArray[ 1 ].boundsArraySet.output0 ); // Bounds Split
+      }
+
+    } else {
+
+      // Concat-shuffle. (no split)
+      // 
+      // Using different channel shuffler implementation for comparsion correctness.
+      let tensorOut = channelShuffler_ShuffleInfo.concatReshapeTransposeReshape( tensorInArray );
+
+//!!! ...unfinished... (2022/06/15)
     }
 
     // Release temporary tensors.
