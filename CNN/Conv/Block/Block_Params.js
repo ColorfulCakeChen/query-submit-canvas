@@ -8,6 +8,9 @@ import * as Depthwise from "../Depthwise.js";
 /**
  * Pointwise-depthwise-pointwise convolution block parameters.
  *
+ * @member {number} inputTensorCount
+ *   How many input tensors should be passed into Block.apply() as parameter inputTensors[].
+ *
  * @member {number} input1_height
  *   The height of the second input (i.e. input1). If there is no input1, it will be 0. This is inferenced from other parameters.
  * The input1's height of Block.apply() should match this value.
@@ -37,6 +40,10 @@ import * as Depthwise from "../Depthwise.js";
  * @member {number} pointwise21ActivationId
  *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after pointwise21 (i.e. the second
  * pointwise2 convolution). It is always the same as pointwise20ActivationId. It is only meaningful if ( pointwise21ChannelCount > 0 ).
+ *
+ * @member {number} outputTensorCount
+ *   How many output tensors will be returned by the parameter outputTensors[] of Block.apply(). At least 1. At most 2.
+ *
  */
 class Params extends Weights.Params {
 
