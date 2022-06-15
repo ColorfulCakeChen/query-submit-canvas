@@ -263,6 +263,7 @@ class Base {
 
     // For reducing memory allocation.
     this.testCorrectnessInfo = new TestCorrectnessInfo();
+    this.imageOutReferenceArray = new Array( 2 );
     this.asserter_Equal = new TensorTools.Asserter_Equal( 0.4, 0.001 );
     this.arrayTemp_forInterleave_asGrouptTwo = []; // Used by calcConcatShuffleSplit().
   }
@@ -301,7 +302,7 @@ class Base {
         strNote
       } = this.testCorrectnessInfo;
 
-      let imageOutReferenceArray = [];
+      let imageOutReferenceArray = this.imageOutReferenceArray;
       {
         // Output is an array with two elements.
         this.calcResult( imageInArraySelected, imageOutReferenceArray, channelShuffler_ConcatPointwiseConv );
@@ -962,17 +963,16 @@ class Base {
 
       let pointwise21ChannelCount = pointwise20ChannelCount;
 
-      pointwise21Result = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
+      pointwise21Result = imageOutArray[ 1 ]
+        = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
 
       // Residual Connection.
       //
       // Always using input0 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
       if ( bAddInputToOutputRequested )
         if ( pointwise21Result.depth == testParams.out.input0_channelCount ) // add-input-to-output is possible if same channel count.
-          pointwise21Result = pointwise21Result.clone_byAdd( imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
-
-      // Integrate pointwise20 and pointwise21 into pointwise2.
-      imageOutArray[ 1 ] = pointwise21Result;
+          pointwise21Result = imageOutArray[ 1 ]
+            = pointwise21Result.clone_byAdd( imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
     }
 
 
@@ -1029,12 +1029,12 @@ class Base {
     }
 
     // 6.
-
-    // The imageOutArray[ 0 ] and imageOutArray[ 1 ] should be concatenated into imageOutArray[ 0 ], because we use the logic of
-    // TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3) and ONE_INPUT_TWO_DEPTHWISE (-2) to handle ONE_INPUT_HALF_THROUGH (-5) and
-    // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4).
-    if (   ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-        || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+    //
+    // The imageOutArray[ 0 ] and imageOutArray[ 1 ] should be concatenated into imageOutArray[ 0 ] for ShuffleNetV2_ByMobileNetV1,
+    // because it uses the logic of ShuffleNetV2.
+    //
+    if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
+        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) // (6)
        ) {
 
       let concatResult = NumberImage.Base.calcConcatAlongAxisId2(
