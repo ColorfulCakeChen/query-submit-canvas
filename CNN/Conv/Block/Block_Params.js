@@ -305,8 +305,7 @@ class Params extends Weights.Params {
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
 
-//!!! ...unfinished... (2022/06/15)
-//    pointwise1ChannelCount, 
+    pointwise1ChannelCount,
 
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
@@ -344,25 +343,20 @@ class Params extends Weights.Params {
 
     // 3. input1 ( height, width, channelCount )
 
-    if ( this.inputTensorCount <= 1 ) { // No input1 (i.e. only input0).
+    if ( this.inputTensorCount <= 1 ) { // 3.1 No input1 (i.e. only input0).
       this.input1_height = 0;
       this.input1_width = 0;
       this.input1_channelCount = 0;
 
-    } else {
+    } else { // 3.2 Has input1 (i.e. two inputs).
 
 //!!! ...unfinished... (2022/06/15)
-      if ( this.bDepthwiseRequestedAndNeeded ) {
-
-        // When depthwise operation existed, it dominates height and width.
+      if ( this.bDepthwiseRequestedAndNeeded ) { // When depthwise operation existed, it dominates height and width.
         this.input1_height = this.depthwisePadInfo.outputHeight;
         this.input1_width = this.depthwisePadInfo.outputWidth;
-        this.input1_channelCount = ;
-
       } else {
         this.input1_height = input0_height;
         this.input1_width = input0_width;
-        this.input1_channelCount = ;
       }
 
       switch ( nConvBlockTypeId ) {
@@ -373,16 +367,29 @@ class Params extends Weights.Params {
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY:
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL:
-
-  //!!! ...unfinished... (2022/06/14)
-  // Perhaps, deprecate channelCount1_pointwise1Before since it should be the same as input0_channelCount in this case.
-  // It could be inferenced totally. (input1_height, input1_width, input1_channelCount)
-
-          this.input1_channelCount = channelCount1_pointwise1Before; // The second input's channel count as specifying.
+          if ( this.bDepthwiseRequestedAndNeeded ) {
+            this.input1_channelCount = this.depthwisePadInfo.outputChannelCount;
+          } else {
+            if ( pointwise1ChannelCount > 0 ) {
+              this.input1_channelCount = pointwise1ChannelCount;
+//!!!
+            } else {
+              this.input1_channelCount = input0_channelCount;
+            }
+//!!!
+          }
           break;
 
         default: // One input.
           this.input1_channelCount = 0;
+
+          tf.util.assert( false,
+            `Block.Params.set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by(): `
+              + `When ( nConvBlockTypeId == `
+              + `${ValueDesc.ConvBlockType.Singleton.getStringOf( nConvBlockTypeId )}`
+              + `(${nConvBlockTypeId}) ), `
+              + `input tensor count ( ${this.inputTensorCount} ) should be one.`
+          );
           break;
       }
 
