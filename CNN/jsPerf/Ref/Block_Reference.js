@@ -971,7 +971,7 @@ class Base {
        ) {  
 
       let bShuffle, bSplit;
-      switch ( this.out.nConvBlockTypeId ) {
+      switch ( testParams.out.nConvBlockTypeId ) {
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD:                       // (2)
           concat2Name = "Concat2_pointwise20_pointwise21_ShuffleSplit";  bShuffle =  true; bSplit =  true; break;
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY:                       // (3)
