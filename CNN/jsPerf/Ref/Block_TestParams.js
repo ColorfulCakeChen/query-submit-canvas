@@ -1137,17 +1137,10 @@ class Base extends TestParams.Base {
 
     // 3. Concat
 
-    // 3.1 Pointwise20's Preparation.
+    // 3.1 Pointwise2 input/output channel count preparation.
     let pointwise20_inputChannelCount = 0, pointwise202_inputChannelCount = 0, pointwise21_inputChannelCount = 0;
     let pointwise20_outputChannelCount = 0, pointwise202_outputChannelCount = 0, pointwise21_outputChannelCount = 0;
-//    let pointwise21ChannelCount;
     {
-//       pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount;
-//       pointwise202_inputChannelCount = 0;
-//       pointwise21_inputChannelCount = 0;
-
-//!!! ...unfinished... (2022/06/16) should half input channel count
-
       switch ( paramsAll.nConvBlockTypeId ) {
         case ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL: // ( 0)
         case ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL: // ( 1)
@@ -1162,12 +1155,6 @@ class Base extends TestParams.Base {
           pointwise21_outputChannelCount = pointwise20ChannelCount_original;
           break;
 
-        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY: // ( 3)
-        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL: // ( 4)
-          pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount;
-          pointwise20_outputChannelCount = pointwise20ChannelCount_original;
-          break;
-
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD: // ( 5)
           pointwise20_inputChannelCount =  depthwise1_resultOutputChannelCount;
           pointwise202_inputChannelCount = depthwise2_resultOutputChannelCount;
@@ -1175,26 +1162,38 @@ class Base extends TestParams.Base {
           pointwise202_outputChannelCount = pointwise20ChannelCount_original;
           break;
 
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY: // ( 3)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL: // ( 4)
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY: // ( 6)
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL: // ( 7)
+          pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount;
+          pointwise20_outputChannelCount = pointwise20ChannelCount_original;
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1: // ( 8)
+          pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount;
+          pointwise21_inputChannelCount = depthwise1_resultOutputChannelCount;
+          pointwise20_outputChannelCount = pointwise20ChannelCount_original;
+          pointwise21_outputChannelCount = pointwise20ChannelCount_original;
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD: // ( 9)
           pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount + depthwise2_resultOutputChannelCount;
           pointwise21_inputChannelCount = pointwise20_inputChannelCount;
+          pointwise20_outputChannelCount = pointwise20ChannelCount_original;
+          pointwise21_outputChannelCount = pointwise20ChannelCount_original;
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY: // (10)
-          pointwise20_inputChannelCount += inferencedParams.input1_channelCount;
-          pointwise21_inputChannelCount = ???;
-          pointwise21ChannelCount = pointwise20ChannelCount_original;
+          pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount + inferencedParams.input1_channelCount;
+          pointwise21_inputChannelCount = pointwise20_inputChannelCount;
+          pointwise20_outputChannelCount = pointwise20ChannelCount_original;
+          pointwise21_outputChannelCount = pointwise20ChannelCount_original;
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL: // (11)
-          pointwise20_inputChannelCount += inferencedParams.input1_channelCount;
+          pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount + inferencedParams.input1_channelCount;
+          pointwise20_outputChannelCount = pointwise20ChannelCount_original;
           break;
 
         default:
@@ -1206,71 +1205,25 @@ class Base extends TestParams.Base {
             + `` );
           break;
       }
-
-!!!
-      if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
-          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
-          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
-         ) {
-        pointwise2_inputChannelCount += depthwise2_resultOutputChannelCount; // Add the channel count of the branch of the first input image.
-
-      } else if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY_or_TAIL() ) // (3 or 4)
-                 || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) // (6 or 7)
-                 || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL() ) // (10 or 11)
-                ) {
-        pointwise2_inputChannelCount += inferencedParams.input1_channelCount; // Add the channel count of the second input image.
-      }
     }
 
     // 3.2 Pointwise21's Preparation.
-
-//!!! (2022/06/16 Remarked)
-//    let pointwise21ChannelCount, bPointwise21Bias, nPointwise21ActivationId;
-
+    //
+    // pointwise21's bias flag and activation function should always be the same as pointwise20's.
     let bPointwise21Bias, nPointwise21ActivationId;
     {
-//!!! ...unfinished... (2022/06/16)
-
-      if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
-          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1() ) // (8)
-          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
-          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY() )  // (10)
-         ) {
-        pointwise21ChannelCount = pointwise20ChannelCount_original;
-      } else {
-        pointwise21ChannelCount = 0;
-      }
-
-      // pointwise21's bias flag and activation function should always be the same as pointwise20's.
       bPointwise21Bias = paramsAll.bPointwise20Bias;
       nPointwise21ActivationId = paramsAll.pointwise20ActivationId;
     }
 
     // 4. Pointwise2's prefix squeeze-and-excitation
-    if ( paramsAll.bSqueezeExcitationPrefix ) {
+    if ( paramsAll.bSqueezeExcitationPrefix ) { // 4.1 Pointwise20's, Pointwise202's, Pointwise21's prefix squeeze-and-excitation.
+      this.generate_squeezeExcitation_filters_biases(
+        paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
+        pointwise20_inputChannelCount, pointwise202_inputChannelCount, pointwise21_inputChannelCount,
+        "pointwise20Prefix", "pointwise202Prefix", "pointwise21Prefix", io_paramsNumberArrayObject );
 
-      // 4.1 Pointwise20's and Pointwise202's prefix squeeze-and-excitation. (Then, never has pointwise21.)
-      if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
-        this.generate_squeezeExcitation_filters_biases(
-          paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
-          pointwise2_inputChannelCount, pointwise2_inputChannelCount, 0,
-          "pointwise20Prefix", "pointwise202Prefix", "pointwise21Prefix", io_paramsNumberArrayObject );
-
-      // 4.2 Pointwise20's and Pointwise21's prefix squeeze-and-excitation. (Then, never has pointwise202.)
-      } else if ( pointwise21ChannelCount > 0 ) { // Only if pointwise21 exists, its squeeze-and-excitation exists.
-        this.generate_squeezeExcitation_filters_biases(
-          paramsAll.nSqueezeExcitationChannelCountDivisor, nPointwise21ActivationId,
-          pointwise2_inputChannelCount, 0, pointwise2_inputChannelCount,
-          "pointwise20Prefix", "pointwise202Prefix", "pointwise21Prefix", io_paramsNumberArrayObject );
-
-      // 4.3 Pointwise20's prefix squeeze-and-excitation only.
-      } else {
-        this.generate_squeezeExcitation_filters_biases(
-          paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
-          pointwise2_inputChannelCount, 0, 0,
-          "pointwise20Prefix", "pointwise202Prefix", "pointwise21Prefix", io_paramsNumberArrayObject );
-      }
-    } else { // 4.4 Clear all prefix squeeze-and-excitation.
+    } else { // 4.2 Clear all prefix squeeze-and-excitation.
       this.generate_squeezeExcitation_filters_biases(
         paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
         0, 0, 0,
@@ -1278,6 +1231,9 @@ class Base extends TestParams.Base {
     }
 
     // 5. Pointwise2
+
+//!!! ...unfinished... (2022/06/16) should half input channel count
+
 
     // 5.1 Pointwise20
     {
