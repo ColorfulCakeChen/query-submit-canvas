@@ -293,11 +293,11 @@ import { Params } from "./Block_Params.js";
  *             of pointwise20 and input1.
  *
 
-!!! ...unfinished... (2022/06/16) no needs channelShuffler_ConcatPointwiseConv
+//!!! (2022/06/16 Remarked) no needs channelShuffler_ConcatPointwiseConv
+//  *       - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD )
+//  *         ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL )
+//  *         - The channelShuffler_ConcatPointwiseConv.outputGroupCount will be used.
 
- *       - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD )
- *         ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL )
- *         - The channelShuffler_ConcatPointwiseConv.outputGroupCount will be used.
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
@@ -500,10 +500,11 @@ class Base {
         // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
         this.pointwise1ChannelCount
           = (  outputChannelCount_lowerHalf_pointwise1 // For depthwise1.
-             + this.input0_channelCount     // For depthwise2 (by depthwise1).
+             + this.input0_channelCount                // For depthwise2 (by depthwise1).
             );
 
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
       // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
       } else {
 
@@ -538,8 +539,8 @@ class Base {
 
       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY (3) )
       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL (4) )
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY (9) )
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL (10) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY (10) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL (11) )
       //
       if ( this.inputTensorCount > 1 ) {
 
@@ -609,7 +610,8 @@ class Base {
 
           // If depthwise1's higher half is responsible for achieving pass-through, it needs height and width of input image.
           //
-          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6) )
+          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
+          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
           // (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
           } else {
             nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
@@ -632,7 +634,7 @@ class Base {
       //
       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD (2) )
       //
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (8) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (9) )
       // (i.e. ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
       //
       let depthwise2;
@@ -671,7 +673,7 @@ class Base {
 
       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD (2) )
       //
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (8) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (9) )
       // (i.e. ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
       //
       // Even if no depthwise, however, a .endingInput1 is necessary for concat1 to operate on. So create a dummy one.
@@ -701,7 +703,7 @@ class Base {
     // Assume not higher-half-different.
     let nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
     let outputChannelCount_lowerHalf_pointwise2 = undefined;
-    let channelShuffler_outputGroupCount_pointwise2 = 0;
+    let channelShuffler_outputGroupCount_pointwise2 = this.channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
 
     if ( this.bHigherHalfDifferent == true ) {
 
@@ -709,30 +711,20 @@ class Base {
       // Note: Unlike pointwise1ChannelCount (which may be zero), pointwise20ChannelCount is always positive.
       outputChannelCount_lowerHalf_pointwise2 = Math.ceil( this.pointwise20ChannelCount / 2 );
 
-      // For bHigherHalfAnotherPointwise (i.e. ( pointwise20ChannelCount > 0 ) ).
+      // For bHigherHalfAnotherPointwise(Shuffle) (i.e. ( pointwise20ChannelCount > 0 ) ).
       //
       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
       // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's head)
       if ( this.bHigherHalfDepthwise2 == true ) {
         nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE;
 
-      // For bHigherHalfPassThroughShuffle (i.e. ( pointwise20ChannelCount > 0 ) ).
+      // For bHigherHalfPassThrough(Shuffle) (i.e. ( pointwise20ChannelCount > 0 ) ).
       //
       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
       // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
       } else {
         nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
-        
-!!! ...unfinished... (2022/06/16) how to distinguish?
-        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
-        // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's body)
-        if ( ??? ) {
-
-// !!! ...unfinished... (2022/06/16) no needs channelShuffler_ConcatPointwiseConv
-//         channelShuffler_outputGroupCount_pointwise2 = channelShuffler_ConcatPointwiseConv.outputGroupCount; // positive value.
-          channelShuffler_outputGroupCount_pointwise2 = this.channelShuffler_outputGroupCount;
-        }
       }
     }
 
