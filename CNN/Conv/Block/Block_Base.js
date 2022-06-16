@@ -1370,12 +1370,14 @@ class Base {
       + `inputTensorCount=${this.inputTensorCount}, `
 
       + `input0_height=${this.input0_height}, input0_width=${this.input0_width}, `
-      + `inChannels0=${this.inChannels0}, inChannels1=${this.inChannels1}, `
+      + `inChannels0=${this.inChannels0}, `
+
+      + `input1_height=${this.input1_height}, input1_width=${this.input1_width}, `
+      + `inChannels1=${this.inChannels1}, `
 
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
       + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels1}, outChannelsAll=${this.outChannelsAll}, `
 
-      + `channelCount1_pointwise1Before=${this.channelCount1_pointwise1Before}, `
       + `nConvBlockTypeName=${this.nConvBlockTypeName}(${this.nConvBlockTypeId}), `
 
       + `bHigherHalfDifferent=${this.bHigherHalfDifferent}, `
