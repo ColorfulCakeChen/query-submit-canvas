@@ -177,8 +177,10 @@ class Params extends Weights.Params {
 //   - if no pointwise1ActivationId, also no bPointwise1Bias automatically.
 //   - if has pointwise1ActivationId, also has bPointwise1Bias automatically.
 //
-// Or, deprecate bPointwise1Bias and pointwise1ActivationId.
-// Let pointwise1 always has bias and activation by default.
+// Or, deprecate bPointwise1Bias and pointwise1ActivationId to reduce quantity of parameters and test cases.
+// Let pointwise1ActivationId is the same as pointwise20ActivationId.
+//   - if no pointwise1ActivationId, also no bPointwise1Bias automatically.
+//   - if has pointwise1ActivationId, also has bPointwise1Bias automatically.
 //
 
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
@@ -194,10 +196,6 @@ class Params extends Weights.Params {
       [ Params.input0_height,                         input0_height ],
       [ Params.input0_width,                          input0_width ],
       [ Params.input0_channelCount,                   input0_channelCount ],
-
-//!!! (2022/06/15 Remarked) Replaced by inferenced input1_channelCount.
-//      [ Params.channelCount1_pointwise1Before,        channelCount1_pointwise1Before ],
-
       [ Params.nConvBlockTypeId,                      nConvBlockTypeId ],
       [ Params.pointwise1ChannelCount,                pointwise1ChannelCount ],
       [ Params.bPointwise1Bias,                       bPointwise1Bias ],
