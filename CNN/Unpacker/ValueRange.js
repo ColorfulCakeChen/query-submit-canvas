@@ -115,12 +115,12 @@ class Int extends Same {
     let valueInputFloat = valueInputInt + ( valueInputIntSign * randomFractionalPart );
 
     //!!! (2021/07/06 Temp Test) When the random fractional part is converted (from Float64) into Float32, it might shifted to different value.
-    //if ( this.adjust( new Float32Array( [ valueInputFloat ] )[ 0 ] ) != valueOutputInt )
-    //  debugger;
+    if ( this.adjust( new Float32Array( [ valueInputFloat ] )[ 0 ] ) != valueOutputInt )
+     debugger;
 
     //!!! (2022/06/16 Temp Test)
-    if ( this.adjust( valueInputFloat ) != valueOutputInt )
-     debugger;
+    //if ( this.adjust( valueInputFloat ) != valueOutputInt )
+    // debugger;
 
     return { valueInput: valueInputFloat, valueOutput: valueOutputInt };
   }
