@@ -520,7 +520,10 @@ class Base {
     asserter.propertyValue( "inChannels0", testParams.out.input0_channelCount );
     asserter.propertyValue( "nConvBlockId", testParams.out.nConvBlockId );
 
+//!!! ...unfinished... (2022/06/16) input1_height, input1_width, input1_channelCount
+
     asserter.propertyValue( "inputTensorCount", inferencedParams.inputTensorCount );
+    asserter.propertyValue( "outputTensorCount", inferencedParams.outputTensorCount );
     asserter.propertyValue( "bDepthwiseRequestedAndNeeded", inferencedParams.bDepthwiseRequestedAndNeeded );
     asserter.propertyValue( "bDepthwise2Requested", inferencedParams.bDepthwise2Requested );
     asserter.propertyValue( "bConcat1Requested", inferencedParams.bConcat1Requested );
@@ -528,6 +531,7 @@ class Base {
     asserter.propertyValue( "bConcat2ShuffleSplitRequested", inferencedParams.bConcat2ShuffleSplitRequested );
     asserter.propertyValue( "bHigherHalfDifferent", inferencedParams.bHigherHalfDifferent );
     asserter.propertyValue( "bHigherHalfDepthwise2", inferencedParams.bHigherHalfDepthwise2 );
+    asserter.propertyValue( "channelShuffler_outputGroupCount", inferencedParams.channelShuffler_outputGroupCount );
 
     // The ( block.bConcat2ShuffleSplitRequested == true ) only if ShuffleNetV2.
     if ( block.bConcat2ShuffleSplitRequested ) {
