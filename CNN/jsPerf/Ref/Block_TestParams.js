@@ -61,7 +61,7 @@ class Base extends TestParams.Base {
    */
   set_byParamsScattered(
     input0_height, input0_width, input0_channelCount,
-    nConvBlockType,
+    nConvBlockTypeId,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
@@ -72,7 +72,7 @@ class Base extends TestParams.Base {
     this.in.paramsNumberArrayObject = {};
     this.out = {
       input0_height, input0_width, input0_channelCount,
-      nConvBlockType,
+      nConvBlockTypeId,
       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       bDepthwiseBias, depthwiseActivationId,
@@ -97,7 +97,7 @@ class Base extends TestParams.Base {
    * The name should be one of Base.paramsNameOrderArray[] elements.
    *
    * @param {object} this.out
-   *   An object which has the following data members: input0_height, input0_width, input0_channelCount, nConvBlockType,
+   *   An object which has the following data members: input0_height, input0_width, input0_channelCount, nConvBlockTypeId,
    * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
    * depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise20ChannelCount, bPointwise20Bias,
    * pointwise20ActivationId, bKeepInputTensor. And depthwisePadInfo.
