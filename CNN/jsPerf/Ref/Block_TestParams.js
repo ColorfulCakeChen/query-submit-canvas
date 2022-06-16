@@ -1015,7 +1015,7 @@ class Base extends TestParams.Base {
 
     let io_paramsNumberArrayObject = this.in.paramsNumberArrayObject;
 
-    let infoConvBlockType = ConvBlockType.Singleton.getInfoById( paramsAll.nConvBlockTypeId );
+    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( paramsAll.nConvBlockTypeId );
 
 
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
