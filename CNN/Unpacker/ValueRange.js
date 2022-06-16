@@ -34,11 +34,13 @@ class Same {
    *   Every time yield an array with two number properties: { valueInput, valueOutput }. The valueOutput is a value from valueRangeMin to
    * valueRangeMax. The valueInput is a value which could be adjusted to valueOutput by this ValueRange object.
    */
-  * valueInputOutputGenerator( offsetMultiplier = RandTools.getRandomIntInclusive( -10, +10 ) ) {
+  * valueInputOutputGenerator( offsetMultiplier = Same.defaultOffsetMultiplier ) {
     yield { valueInput: offsetMultiplier, valueOutput: offsetMultiplier };
   }
 
 }
+
+Same.defaultOffsetMultiplier = RandTools.getRandomIntInclusive( -10, +10 );
 
 /** The only one ValueRange.Same instance. */
 Same.Singleton = new Same;
@@ -144,7 +146,7 @@ class Int extends Same {
    *
    * @override
    */
-  * valueInputOutputGenerator( offsetMultiplier = RandTools.getRandomIntInclusive( -10, +10 ), valueOutMinMax ) {
+  * valueInputOutputGenerator( offsetMultiplier = Int.defaultOffsetMultiplier, valueOutMinMax ) {
 
     // An integer which has the same remainder as offsetMultiplier when divided by this.kinds.
     let baseIntCongruence = Math.trunc( offsetMultiplier ) * this.kinds;
@@ -223,11 +225,13 @@ class Bool extends Int {
    *
    * @override
    */
-  * valueInputOutputGenerator( offsetMultiplier = RandTools.getRandomIntInclusive( -100, +100 ), valueOutMinMax ) {
+  * valueInputOutputGenerator( offsetMultiplier = Bool.defaultOffsetMultiplier, valueOutMinMax ) {
     yield* super.valueInputOutputGenerator( offsetMultiplier, valueOutMinMax );
   }
 
 }
+
+Bool.defaultOffsetMultiplier = RandTools.getRandomIntInclusive( -100, +100 );
 
 /** The only one ValueRange.Bool instance. */
 Bool.Singleton = new Bool;
