@@ -1105,21 +1105,15 @@ class Base extends TestParams.Base {
 
         let depthwise2_inputChannelCount;
 
-      if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
-          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
-         ) {
+        if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
+            || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
+           ) {
           depthwise2_inputChannelCount = paramsAll.input0_channelCount; // Use input0.
 
-        // (8) (ShuffleNetV2_ByMobileNetV1's head)
-        //
-        // Use pointwise1.outputChannelCount as input1ChannelCount so that it has the same structure of depthwise1 and pointwise20.
+        // Use pointwise1.outputChannelCount as input1_channelCount so that it has the same structure of depthwise1 and pointwise20.
         //
         } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
-
-//!!! ...unfinished... (2022/06/14) should also be paramsAll.input0_channelCount; // Use input0.
-//          depthwise2_inputChannelCount = pointwise1_resultOutputChannelCount;
-
-          depthwise2_inputChannelCount = paramsAll.input0_channelCount; // Use input0.
+          depthwise2_inputChannelCount = pointwise1_resultOutputChannelCount;
         }
 
         // Only if depthwise operation is requested and necessary, create them.
@@ -1138,6 +1132,7 @@ class Base extends TestParams.Base {
       }
     }
 
+//!!! ...unfinished... (2022/06/16)
     // 3. Concat
 
     // 3.1 Pointwise20's Preparation.
