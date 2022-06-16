@@ -1217,7 +1217,7 @@ class Base extends TestParams.Base {
     }
 
     // 4. Pointwise2's prefix squeeze-and-excitation
-    if (   ( paramsAll.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-2)
+    if (   ( paramsAll.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
         && ( paramsAll.bSqueezeExcitationPrefix )
        ) {
 
@@ -1255,7 +1255,7 @@ class Base extends TestParams.Base {
     }
 
     // 6. Pointwise2's postfix squeeze-and-excitation
-    if (   ( paramsAll.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-2)
+    if (   ( paramsAll.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
         && ( !paramsAll.bSqueezeExcitationPrefix )
        ) {
 
