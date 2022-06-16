@@ -270,6 +270,9 @@ import { Params } from "./Block_Params.js";
  *         - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
  *             of pointwise20 and input1.
  *
+
+!!! ...unfinished... (2022/06/16) no needs channelShuffler_ConcatPointwiseConv
+
  *       - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD )
  *         ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL )
  *         - The channelShuffler_ConcatPointwiseConv.outputGroupCount will be used.
@@ -692,11 +695,21 @@ class Base {
 
       // For bHigherHalfPassThroughShuffle (i.e. ( pointwise20ChannelCount > 0 ) ).
       //
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
+      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
       // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
       } else {
         nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
-        channelShuffler_outputGroupCount_pointwise2 = channelShuffler_ConcatPointwiseConv.outputGroupCount; // positive value.
+        
+!!! ...unfinished... (2022/06/16) how to distinguish?
+        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
+        // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's body)
+        if ( ??? ) {
+
+// !!! ...unfinished... (2022/06/16) no needs channelShuffler_ConcatPointwiseConv
+//         channelShuffler_outputGroupCount_pointwise2 = channelShuffler_ConcatPointwiseConv.outputGroupCount; // positive value.
+          channelShuffler_outputGroupCount_pointwise2 = 2; // Only group two is supported.
+        }
       }
     }
 
