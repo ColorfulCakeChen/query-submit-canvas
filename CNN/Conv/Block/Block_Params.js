@@ -416,7 +416,7 @@ class Params extends Weights.Params {
   static set_pointwise21ChannelCount_by( nConvBlockTypeId, pointwise20ChannelCount ) {
 
     // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
-    let infoConvBlockType = ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
+    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
     if ( infoConvBlockType.bPointwise21 )
       this.pointwise21ChannelCount = pointwise20ChannelCount; // Still may be 0.
     else
@@ -453,7 +453,7 @@ class Params extends Weights.Params {
   ) {
 
     // 0. Prepare.
-    let infoConvBlockType = ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
+    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
 
     // 1. The input1 channel count.
     Params.set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by.call( this,
@@ -545,20 +545,17 @@ class Params extends Weights.Params {
 
 // Define parameter descriptions.
 
-Params.input0_height =           new ParamDesc.Int(                     "input0_height",                   1, ( 10 * 1024 ) );
-Params.input0_width =            new ParamDesc.Int(                     "input0_width",                    1, ( 10 * 1024 ) );
+Params.input0_height =           new ParamDesc.Int(                 "input0_height",           1, ( 10 * 1024 ) );
+Params.input0_width =            new ParamDesc.Int(                 "input0_width",            1, ( 10 * 1024 ) );
 
 /** At least, there should be 1 input channel. */
-Params.input0_channelCount =     new ParamDesc.Int(                "input0_channelCount", 1, ( 10 * 1024 ) );
+Params.input0_channelCount =     new ParamDesc.Int(                 "input0_channelCount",     1, ( 10 * 1024 ) );
 
-//!!! (2022/06/15 Remarked) Replaced by inferenced input1_channelCount.
-//Params.channelCount1_pointwise1Before =  new ParamDesc.Int(             "channelCount1_pointwise1Before", 0, ( 10 * 1024 ) );
+Params.nConvBlockTypeId =        new ParamDesc.ConvBlockType(       "nConvBlockTypeId" );
 
-Params.nConvBlockTypeId =                new ParamDesc.ConvBlockType(   "nConvBlockTypeId" );
-
-Params.pointwise1ChannelCount =  new ParamDesc.Int(                     "pointwise1ChannelCount",         0, ( 10 * 1024 ) );
-Params.bPointwise1Bias =         new ParamDesc.Bool(                    "bPointwise1Bias" );
-Params.pointwise1ActivationId =  new ParamDesc.ActivationFunction(      "pointwise1ActivationId" );
+Params.pointwise1ChannelCount =  new ParamDesc.Int(                 "pointwise1ChannelCount",  0, ( 10 * 1024 ) );
+Params.bPointwise1Bias =         new ParamDesc.Bool(                "bPointwise1Bias" );
+Params.pointwise1ActivationId =  new ParamDesc.ActivationFunction(  "pointwise1ActivationId" );
 
 /** Define depthwise operation's id, range, name.
  *
@@ -591,24 +588,24 @@ Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_ChannelMu
  * not exist.
  *
  */
-Params.depthwiseFilterHeight =    new ParamDesc.Int(                     "depthwiseFilterHeight", 1, ( 10 * 1024 ) );
-Params.depthwiseFilterWidth =     new ParamDesc.Int(                     "depthwiseFilterWidth",  1, ( 10 * 1024 ) );
+Params.depthwiseFilterHeight =    new ParamDesc.Int(                "depthwiseFilterHeight",   1, ( 10 * 1024 ) );
+Params.depthwiseFilterWidth =     new ParamDesc.Int(                "depthwiseFilterWidth",    1, ( 10 * 1024 ) );
 
-Params.depthwiseStridesPad =      new ParamDesc.StridesPad(              "depthwiseStridesPad" );
-Params.bDepthwiseBias =           new ParamDesc.Bool(                    "bDepthwiseBias" );
-Params.depthwiseActivationId =    new ParamDesc.ActivationFunction(      "depthwiseActivationId" );
+Params.depthwiseStridesPad =      new ParamDesc.StridesPad(         "depthwiseStridesPad" );
+Params.bDepthwiseBias =           new ParamDesc.Bool(               "bDepthwiseBias" );
+Params.depthwiseActivationId =    new ParamDesc.ActivationFunction( "depthwiseActivationId" );
 
 Params.nSqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
-Params.bSqueezeExcitationPrefix = new ParamDesc.Bool(                   "bSqueezeExcitationPrefix" );
+Params.bSqueezeExcitationPrefix = new ParamDesc.Bool(               "bSqueezeExcitationPrefix" );
 
 // Note: Force pointwise20ChannelCount always not zero. So that input0_channelCount_higherHalf could be determined
 // when
 //   - ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5)
 //   - ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6)
 //
-Params.pointwise20ChannelCount =  new ParamDesc.Int(                     "pointwise20ChannelCount", 1, ( 10 * 1024 ) );
-Params.bPointwise20Bias =         new ParamDesc.Bool(                    "bPointwise20Bias" );
-Params.pointwise20ActivationId =  new ParamDesc.ActivationFunction(      "pointwise20ActivationId" );
+Params.pointwise20ChannelCount =  new ParamDesc.Int(                "pointwise20ChannelCount", 1, ( 10 * 1024 ) );
+Params.bPointwise20Bias =         new ParamDesc.Bool(               "bPointwise20Bias" );
+Params.pointwise20ActivationId =  new ParamDesc.ActivationFunction( "pointwise20ActivationId" );
 
-Params.bKeepInputTensor =         new ParamDesc.Bool(                    "bKeepInputTensor" );
+Params.bKeepInputTensor =         new ParamDesc.Bool(               "bKeepInputTensor" );
 
