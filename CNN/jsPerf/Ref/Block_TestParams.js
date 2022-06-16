@@ -1010,6 +1010,9 @@ class Base extends TestParams.Base {
   generate_Filters_Biases() {
 
     let paramsAll = this.out;
+    let inferencedParams = paramsAll.inferencedParams;
+    //let depthwisePadInfo = inferencedParams.depthwisePadInfo;
+
     let io_paramsNumberArrayObject = this.in.paramsNumberArrayObject;
 
     let infoConvBlockType = ConvBlockType.Singleton.getInfoById( paramsAll.nConvBlockTypeId );
@@ -1138,17 +1141,17 @@ class Base extends TestParams.Base {
     // 3.1 Pointwise20's Preparation.
     let pointwise2_inputChannelCount = depthwise1_resultOutputChannelCount;
     {
-      if (   ( this.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2) (ShuffleNetV2's head (simplified))
-
-//!!! (2022/06/12 Remarked) seems not necessary for ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4)
-          || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-
+      if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
+          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
+          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
          ) {
         pointwise2_inputChannelCount += depthwise2_resultOutputChannelCount; // Add the channel count of the branch of the first input image.
 
-      // (> 0) Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX  (simplified ShuffleNetV2's tail)
-      } else if ( paramsAll.channelCount1_pointwise1Before > 0 ) {
-        pointwise2_inputChannelCount += paramsAll.channelCount1_pointwise1Before; // Add the channel count of the second input image.
+      } else if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY_or_TAIL() ) // (3 or 4)
+                 || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) // (6 or 7)
+                 || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL() ) // (10 or 11)
+                ) {
+        pointwise2_inputChannelCount += inferencedParams.input1_channelCount; // Add the channel count of the second input image.
       }
     }
 
