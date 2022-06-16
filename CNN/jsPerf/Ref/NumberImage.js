@@ -1187,7 +1187,7 @@ class Base {
  
     // 3.
     if ( bSplit ) {
-      NumberImage.Base.calcSplitAlongAxisId2( shuffleResult, imageOutArray, `${concatShuffleSplitName}_split`, parametersDesc );
+      Base.calcSplitAlongAxisId2( shuffleResult, imageOutArray, `${concatShuffleSplitName}_split`, parametersDesc );
     } else {
       imageInArray.length = 2;
       imageOutArray[ 0 ] = shuffleResult;
