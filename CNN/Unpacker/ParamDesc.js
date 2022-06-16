@@ -1,10 +1,14 @@
 export { Base, Same, Bool, Int };
 export { ActivationFunction };
-export { channelCount1_pointwise1Before };
+
+//!!! (2022/06/16 Remarked) Replaced by ConvBlockType
+//export { channelCount1_pointwise1Before };
+export { ConvBlockType };
+
 export { AvgMax_Or_ChannelMultiplier };
 export { SqueezeExcitationChannelCountDivisor };
 export { StridesPad };
-export { ConvBlockType };
+export { ConvStageType };
 
 import * as ValueDesc from "./ValueDesc.js";
 
@@ -104,15 +108,29 @@ class ActivationFunction extends Base {
 }
 
 
+//!!! (2022/06/16 Remarked) Replaced by ConvBlockType
+// /**
+//  * Describe some properties of an channelCount1_pointwise1Before parameter.
+//  *
+//  * @member {ValueDesc.channelCount1_pointwise1Before} valueDesc
+//  *   The range of the parameter's all possible values. It is a ValueDesc.channelCount1_pointwise1Before object.
+//  */
+// class channelCount1_pointwise1Before extends Base {
+//   constructor( paramName ) {
+//     super( paramName, ValueDesc.channelCount1_pointwise1Before.Singleton );
+//   }
+// }
+
+
 /**
- * Describe some properties of an channelCount1_pointwise1Before parameter.
+ * Describe some properties of an ConvBlockType parameter.
  *
- * @member {ValueDesc.channelCount1_pointwise1Before} valueDesc
- *   The range of the parameter's all possible values. It is a ValueDesc.channelCount1_pointwise1Before object.
+ * @member {ValueDesc.ConvBlockType} valueDesc
+ *   The range of the parameter's all possible values. It is a ValueDesc.ConvBlockType object.
  */
-class channelCount1_pointwise1Before extends Base {
+class ConvBlockType extends Base {
   constructor( paramName ) {
-    super( paramName, ValueDesc.channelCount1_pointwise1Before.Singleton );
+    super( paramName, ValueDesc.ConvBlockType.Singleton );
   }
 }
 
@@ -157,13 +175,13 @@ class StridesPad extends Base {
 
 
 /**
- * Describe some properties of an ConvBlockType parameter.
+ * Describe some properties of an ConvStageType parameter.
  *
- * @member {ValueDesc.ConvBlockType} valueDesc
- *   The range of the parameter's all possible values. It is a ValueDesc.ConvBlockType object.
+ * @member {ValueDesc.ConvStageType} valueDesc
+ *   The range of the parameter's all possible values. It is a ValueDesc.ConvStageType object.
  */
-class ConvBlockType extends Base {
+class ConvStageType extends Base {
   constructor( paramName ) {
-    super( paramName, ValueDesc.ConvBlockType.Singleton );
+    super( paramName, ValueDesc.ConvStageType.Singleton );
   }
 }
