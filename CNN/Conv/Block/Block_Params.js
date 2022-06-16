@@ -176,6 +176,10 @@ class Params extends Weights.Params {
 // Perhaps, deprecate bPointwise1Bias to reduce quantity of parameters and test cases.
 //   - if no pointwise1ActivationId, also no bPointwise1Bias automatically.
 //   - if has pointwise1ActivationId, also has bPointwise1Bias automatically.
+//
+// Or, deprecate bPointwise1Bias and pointwise1ActivationId.
+// Let pointwise1 always has bias and activation by default.
+//
 
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
 
