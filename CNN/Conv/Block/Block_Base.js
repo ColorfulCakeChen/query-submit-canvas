@@ -195,6 +195,11 @@ import { Params } from "./Block_Params.js";
  *   Only if ( bHigherHalfDifferent == true ), this is meaningful. If true, the depthwise1 will use higher half channels to achieve
  * the depthwise2. If false, the depthwise1's higher half channels just pass through the input to output.
  *
+ * @member {number} channelShuffler_outputGroupCount
+ *   The output group count of the pointwise2's channel shuffler when
+ * ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ). Either 0 or 2.
+ * Usually 2 ony if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD or SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY.
+ *
  * @member {number} pointwise21ChannelCount
  *   The output channel count of the second pointwise2 convolution. If ( pointwise21ChannelCount == 0 ), it means pointwise21 does
  * not existed.
@@ -1390,13 +1395,13 @@ class Base {
       + `bPointwise20Bias=${this.bPointwise20Bias}, `
       + `pointwise20ActivationName=${this.pointwise20ActivationName}(${this.pointwise20ActivationId}), `
 
-      + `bOutput1Requested=${this.bOutput1Requested}, `
       + `pointwise21ChannelCount=${this.pointwise21ChannelCount}, `
       + `bPointwise21Bias=${this.bPointwise21Bias}, `
       + `pointwise21ActivationName=${this.pointwise21ActivationName}(${this.pointwise21ActivationId}), `
 
       + `bAddInputToOutputRequested=${this.bAddInputToOutputRequested}, `
       + `bConcat2ShuffleSplitRequested=${this.bConcat2ShuffleSplitRequested}, `
+      + `channelShuffler_outputGroupCount=${this.channelShuffler_outputGroupCount}, `
       + `outputTensorCount=${this.outputTensorCount}, `
 
       + `bKeepInputTensor=${this.bKeepInputTensor}`
