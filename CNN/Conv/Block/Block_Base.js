@@ -83,6 +83,22 @@ import { Params } from "./Block_Params.js";
  * </pre>
  *
  *
+
+!!!
+ *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
+ * <pre>
+ * input0 - pointwise1         - depthwise1    - (squeezeExcitationPrefix) - pointwise20     - (squeezeExcitationPostfix)
+ *          (higher_half)        (higher_half)                               (higher_half)
+ *          (_copy_lower_half)   (_depthwise2)                               (_pointwise202)
+ * </pre>
+ *
+ *
+ *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
+ * <pre>
+ * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise20 (include pointwise201 and pointwise202) - (squeezeExcitationPostfix)
+ * </pre>
+ *
+ *
  *   - When
  *     - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
  *     - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6) )
