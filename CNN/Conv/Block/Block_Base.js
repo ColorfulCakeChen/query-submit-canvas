@@ -46,7 +46,7 @@ import { Params } from "./Block_Params.js";
  * exists, it could have or have no bias and activation function.
  *
  *
- * There are eleven main combinations:
+ * There are twelve combinations:
  *
  *
  *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL (0) ):
@@ -78,41 +78,37 @@ import { Params } from "./Block_Params.js";
  *
  *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL (4) ):
  * <pre>
- * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix) - concat2(ShuffleSplit) - output0
- * input1 -------------------------------------------------------------------------------------------------/
+ * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix) - concat2             - output0
+ * input1 -------------------------------------------------------------------------------------------------/ (no_Shuffle
+ *                                                                                                            _no_Split)
  * </pre>
  *
  *
-
-!!! ...unfinished... (2022/06/16) where pointwise2's shuffle?
-
  *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
  * <pre>
- * input0 - pointwise1         - depthwise1      - (squeezeExcitationPrefix) - pointwise20             - (squeezeExcitationPostfix)
+ * input0 - pointwise1         - depthwise1      - (squeezeExcitationPrefix) - pointwise20                  - (squeezeExcitationPostfix)
  *          (higher_half         (higher_half                                  (higher_half
- *           _copy_lower_half)    _depthwise2)                                  _pointwise202)
+ *           _copy_lower_half)    _depthwise2)                                  _another_pointwise_shuffle)
  * </pre>
  *
  *
-
-!!!
  *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
  * <pre>
- * input0 - pointwise1         - depthwise1      - (squeezeExcitationPrefix) - pointwise20             - (squeezeExcitationPostfix)
+ * input0 - pointwise1         - depthwise1      - (squeezeExcitationPrefix) - pointwise20                  - (squeezeExcitationPostfix)
  *          (higher_half         (higher_half                                  (higher_half
  *           _pass_through)       _pass_through)                                _pass_through_shuffle)
  * </pre>
  *
  *
- *   - When
- *     - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
- *     - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6) )
+ *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
  * <pre>
- * input0 - pointwise1 - depthwise1 - (squeezeExcitationPrefix) - pointwise20 (include pointwise201 and pointwise202) - (squeezeExcitationPostfix)
+ * input0 - pointwise1         - depthwise1      - (squeezeExcitationPrefix) - pointwise20                  - (squeezeExcitationPostfix)
+ *          (higher_half         (higher_half                                  (higher_half
+ *           _pass_through)       _pass_through)                                _pass_through_no_shuffle)
  * </pre>
  *
  *
- *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE (7) ):
+ *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE (8) ):
  * (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount == 0 ) )
  * <pre>
  * input0 - (pointwise1) - depthwise1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix)
@@ -120,21 +116,21 @@ import { Params } from "./Block_Params.js";
  * </pre>
  *
  *
- *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (8) ):
+ *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (9) ):
  * (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ) )
  * <pre>
  * input0 - pointwise1 - depthwise1 - concat1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix)
  *        \------------- depthwise2 /         \ (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix)
  * </pre>
  *
- *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY (9) ):
+ *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY (10) ):
  * <pre>
  * input0 - pointwise1 - depthwise1 - concat1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix)
  * input1 --------------------------/         \ (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix)
  * </pre>
  *
  *
- *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL (10) ):
+ *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL (11) ):
  * <pre>
  * input0 - pointwise1 - depthwise1 - concat1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix)
  * input1 --------------------------/
