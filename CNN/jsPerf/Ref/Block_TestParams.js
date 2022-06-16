@@ -1169,15 +1169,14 @@ class Base extends TestParams.Base {
 
       // pointwise21's bias flag and activation function should always be the same as pointwise20's.
       bPointwise21Bias = paramsAll.bPointwise20Bias;
-      nPointwise21ActivationId = paramsAll.pointwise20ActivationId; // pointwise21's activation function should always be the same as pointwise20's.
+      nPointwise21ActivationId = paramsAll.pointwise20ActivationId;
     }
 
-//!!! ...unfinished... (2022/06/16)
     // 4. Pointwise2's prefix squeeze-and-excitation
     if ( paramsAll.bSqueezeExcitationPrefix ) {
 
       // 4.1 Pointwise20's and Pointwise202's prefix squeeze-and-excitation. (Then, never has pointwise21.)
-      if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+      if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
         this.generate_squeezeExcitation_filters_biases(
           paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
           pointwise2_inputChannelCount, pointwise2_inputChannelCount, 0,
@@ -1205,6 +1204,8 @@ class Base extends TestParams.Base {
     }
 
     // 5. Pointwise2
+
+//!!! ...unfinished... (2022/06/16)
 
     // 5.1 Pointwise20
     {
