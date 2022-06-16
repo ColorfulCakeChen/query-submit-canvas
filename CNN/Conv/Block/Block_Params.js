@@ -69,13 +69,6 @@ class Params extends Weights.Params {
    *   The channel count of apply()'s first input image (i.e. inputTensors[ 0 ]; input0). If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
    *
-
-//!!! (2022/06/15 Remarked) Replaced by inferenced input1_channelCount.
-//    * @param {number} channelCount1_pointwise1Before
-//    *   The channel count of apply()'s second input image (i.e. inputTensors[ 1 ]; input1). If null, it will be extracted
-//    * from inputFloat32Array (i.e. by evolution).
-
-   *
    * @param {number} nConvBlockTypeId
    *   The convolution type id of the block (i.e. ValueDesc.ConvBlockType.Singleton.Ids.Xxx). If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
@@ -177,12 +170,15 @@ class Params extends Weights.Params {
    */
   constructor( inputFloat32Array, byteOffsetBegin,
     input0_height, input0_width, input0_channelCount,
-
-//!!! (2022/06/15 Remarked) Replaced by inferenced input1_channelCount.
-//    channelCount1_pointwise1Before,
-
     nConvBlockTypeId,
+
+//!!! ...unfinished... (2022/06/16)
+// Perhaps, deprecate bPointwise1Bias to reduce quantity of parameters and test cases.
+//   - if no pointwise1ActivationId, also no bPointwise1Bias automatically.
+//   - if has pointwise1ActivationId, also has bPointwise1Bias automatically.
+
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
