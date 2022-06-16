@@ -145,7 +145,7 @@ class Base extends TestParams.Base {
    */
   onYield_isLegal() {
 
-    let infoConvBlockType = ConvBlockType.Singleton.getInfoById( this.out.nConvBlockTypeId );
+    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( this.out.nConvBlockTypeId );
 
 //!!! (2022/06/16 Remarked) Now, input1's dimension are inferenced parameters.
 //     // (5) (ShuffleNetV2_ByMobileNetV1's head)
