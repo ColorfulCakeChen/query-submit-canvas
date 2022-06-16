@@ -1205,14 +1205,12 @@ class Base extends TestParams.Base {
 
     // 5. Pointwise2
 
-//!!! ...unfinished... (2022/06/16)
-
     // 5.1 Pointwise20
     {
       let pointwise20_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
         pointwise20ChannelCount_original, paramsAll.bPointwise20Bias, "pointwise20", io_paramsNumberArrayObject );
 
-      if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+      if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
         let pointwise202_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
           pointwise20ChannelCount_original, paramsAll.bPointwise20Bias, "pointwise202", io_paramsNumberArrayObject );
 
@@ -1221,6 +1219,8 @@ class Base extends TestParams.Base {
           0, paramsAll.bPointwise20Bias, "pointwise202", io_paramsNumberArrayObject );
       }
     }
+
+//!!! ...unfinished... (2022/06/16)
 
     // 5.2 Pointwise21
     {
