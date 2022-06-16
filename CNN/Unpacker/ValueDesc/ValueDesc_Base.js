@@ -104,6 +104,16 @@ class Int {
     this.valueNames = valueNames;
     this.valueObjects = valueObjects;
 
+    tf.util.assert( ( valueNames.length <= this.range.kinds ),
+      `ValueDesc.Int.constructor(): Range violation: `
+        + `valueNames.length ( ${valueNames.length} ) <= range.kinds ( ${this.range.kinds} ).`
+    );
+
+    tf.util.assert( ( valueObjects.length <= this.range.kinds ),
+      `ValueDesc.Int.constructor(): Range violation: `
+        + `valueObjects.length ( ${valueObjects.length} ) <= range.kinds ( ${this.range.kinds} ).`
+    );
+
     this.Ids = {};
     this.integerToNameMap = new Map;
     this.nameToIntegerMap = new Map;
