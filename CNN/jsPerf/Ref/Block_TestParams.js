@@ -1041,7 +1041,7 @@ class Base extends TestParams.Base {
     //
     // The reason is that Block will only extract filters and biases weights of the above parameters twice in this case.
     //
-    if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (8) (ShuffleNetV2_ByMobileNetV1's head)
+    if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
       this.doubleParamValue( Block.Params.pointwise20ChannelCount );
 
     // In ShuffleNetV2_ByMobileNetV1's body/tail:
@@ -1053,7 +1053,7 @@ class Base extends TestParams.Base {
     //
     // The reason is that Block will only extract filters weights of half the above parameters in this case.
     //
-    } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) { // (9) (ShuffleNetV2_ByMobileNetV1's body/tail)
+    } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
       this.doubleParamValue( Block.Params.input0_channelCount );
 
       if ( pointwise1ChannelCount_original == 0 ) {
@@ -1099,14 +1099,14 @@ class Base extends TestParams.Base {
     {
       // In ShuffleNetV2's head.
       if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
-          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (5)
-          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (8)
+          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
+          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
          ) {
 
         let depthwise2_inputChannelCount;
 
       if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
-          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (5)
+          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
          ) {
           depthwise2_inputChannelCount = paramsAll.input0_channelCount; // Use input0.
 
@@ -1114,7 +1114,7 @@ class Base extends TestParams.Base {
         //
         // Use pointwise1.outputChannelCount as input1ChannelCount so that it has the same structure of depthwise1 and pointwise20.
         //
-        } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (8)
+        } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
 
 //!!! ...unfinished... (2022/06/14) should also be paramsAll.input0_channelCount; // Use input0.
 //          depthwise2_inputChannelCount = pointwise1_resultOutputChannelCount;
