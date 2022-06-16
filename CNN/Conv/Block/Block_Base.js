@@ -108,7 +108,7 @@ import { Params } from "./Block_Params.js";
  * </pre>
  *
  *
- *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE (8) ):
+ *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1 (8) ):
  * (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount == 0 ) )
  * <pre>
  * input0 - (pointwise1) - depthwise1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix)
