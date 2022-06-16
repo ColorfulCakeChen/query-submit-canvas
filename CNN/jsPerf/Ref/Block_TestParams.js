@@ -1135,7 +1135,6 @@ class Base extends TestParams.Base {
       }
     }
 
-//!!! ...unfinished... (2022/06/16)
     // 3. Concat
 
     // 3.1 Pointwise20's Preparation.
@@ -1158,18 +1157,14 @@ class Base extends TestParams.Base {
     // 3.2 Pointwise21's Preparation.
     let pointwise21ChannelCount, bPointwise21Bias, nPointwise21ActivationId;
     {
-      // In (-3) (ShuffleNetV2's body/tail) and (-4) (-5) (ShuffleNetV2_ByMobileNetV1), there is always no pointwise21.
-      if (   ( this.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE20_INPUT1() ) // (-3) (ShuffleNetV2's body/tail)
-          || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-          || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+      if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
+          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1() ) // (8)
+          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
+          || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY() )  // (10)
          ) {
-        pointwise21ChannelCount = 0;
-
-      // Otherwise, if output1 is requested, pointwise21's output channel count is the same as pointwise20's.
-//!!! (2022/06/14 Remarked) Replaced by nConvBlockTypeId
-//      } else if ( paramsAll.bOutput1Requested ) {
-      } else if ( infoConvBlockType.outputTensorCount > 1 ) {
         pointwise21ChannelCount = pointwise20ChannelCount_original;
+      } else {
+        pointwise21ChannelCount = 0;
       }
 
       // pointwise21's bias flag and activation function should always be the same as pointwise20's.
@@ -1177,6 +1172,7 @@ class Base extends TestParams.Base {
       nPointwise21ActivationId = paramsAll.pointwise20ActivationId; // pointwise21's activation function should always be the same as pointwise20's.
     }
 
+//!!! ...unfinished... (2022/06/16)
     // 4. Pointwise2's prefix squeeze-and-excitation
     if ( paramsAll.bSqueezeExcitationPrefix ) {
 
