@@ -1152,7 +1152,10 @@ class Base {
         `inputTensorCount=${inferencedParams.inputTensorCount}, `
 
       + `input0_height=${testParams.out.input0_height}, input0_width=${testParams.out.input0_width}, `
-      + `inChannels0=${testParams.out.input0_channelCount}, inChannels1=${inferencedParams.input1_channelCount}, `
+      + `inChannels0=${testParams.out.input0_channelCount}, `
+
+      + `input1_height=${inferencedParams.input1_height}, input1_width=${inferencedParams.input1_width}, `
+      + `inChannels1=${inferencedParams.input1_channelCount}, `
 
       + `nConvBlockTypeName=`
       + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
