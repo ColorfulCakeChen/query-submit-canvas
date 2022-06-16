@@ -981,18 +981,18 @@ class Base {
         || ( testParams.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) // (6)
        ) {  
 
-      let bSplit;
+      let bShuffle, bSplit;
       switch ( this.out.nConvBlockTypeId ) {
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD:                       // (2)
-          concat2Name = "Concat2_pointwise20_pointwise21_ShuffleSplit";  bSplit =  true; break;
+          concat2Name = "Concat2_pointwise20_pointwise21_ShuffleSplit";  bShuffle =  true; bSplit =  true; break;
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY:                       // (3)
-          concat2Name = "Concat2_pointwise20_input1_ShuffleSplit";       bSplit =  true; break;
+          concat2Name = "Concat2_pointwise20_input1_ShuffleSplit";       bShuffle =  true; bSplit =  true; break;
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL:                       // (4)
-          concat2Name = "Concat2_pointwise20_input1_Shuffle";            bSplit = false; break;
+          concat2Name = "Concat2_pointwise20_input1";                    bShuffle = false; bSplit = false; break;
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD:      // (5)
-          concat2Name = "Concat2_pointwise20_pointwise202_Shuffle";      bSplit = false; break;
+          concat2Name = "Concat2_pointwise20_pointwise202_Shuffle";      bShuffle =  true; bSplit = false; break;
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL: // (6)
-          concat2Name = "Concat2_pointwise20_input0_HigherHalf_Shuffle"; bSplit = false; break;
+          concat2Name = "Concat2_pointwise20_input0_HigherHalf_Shuffle"; bShuffle = ??? true; bSplit = false; break;
         default:
           tf.util.assert( false, `Block_Reference.Base.calcResult(): `
             + `Concat2ShuffleSplit: Unsupported `
@@ -1008,7 +1008,7 @@ class Base {
           + `should not be null. ${this.paramsOutDescription}`);
 
       NumberImage.Base.calcConcatShuffleSplit(
-        imageOutArray, imageOutArray, bSplit,
+        imageOutArray, imageOutArray, bShuffle, bSplit,
         this.arrayTemp_forInterleave_asGrouptTwo, "${concat2Name}_", this.paramsOutDescription );
     }
 
