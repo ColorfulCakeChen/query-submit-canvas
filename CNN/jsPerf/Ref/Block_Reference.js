@@ -743,16 +743,16 @@ class Base {
 
 
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
-    //    SHUFFLE_NET_V2_BODY                        // (3) (ShuffleNetV2's body/tail)
-    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL  // (6) (ShuffleNetV2_ByMobileNetV1's body/tail)
+    //    SHUFFLE_NET_V2_HEAD                    // (2) (ShuffleNetV2's head)
+    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD   // (5) (ShuffleNetV2_ByMobileNetV1's head)
     //
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
-    //    SHUFFLE_NET_V2_TAIL                        // (4) (ShuffleNetV2's body/tail)
-    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL  // (6) (ShuffleNetV2_ByMobileNetV1's body/tail)
+    //    SHUFFLE_NET_V2_BODY                    // (3) (ShuffleNetV2's body)
+    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY   // (6) (ShuffleNetV2_ByMobileNetV1's body)
     //
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
-    //    SHUFFLE_NET_V2_HEAD                        // (2) (ShuffleNetV2's head)
-    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD       // (5) (ShuffleNetV2_ByMobileNetV1's head)
+    //    SHUFFLE_NET_V2_TAIL                    // (4) (ShuffleNetV2's tail)
+    //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL   // (7) (ShuffleNetV2_ByMobileNetV1's tail)
 
 
     let imageIn0, imageIn1;
