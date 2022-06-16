@@ -1138,24 +1138,63 @@ class Base extends TestParams.Base {
     // 3. Concat
 
     // 3.1 Pointwise20's Preparation.
-    let pointwise2_inputChannelCount = depthwise1_resultOutputChannelCount;
-    let pointwise202_inputChannelCount;
+    let pointwise20_inputChannelCount = 0, pointwise202_inputChannelCount = 0, pointwise21_inputChannelCount = 0;
+    let pointwise20_outputChannelCount = 0, pointwise202_outputChannelCount = 0, pointwise21_outputChannelCount = 0;
+//    let pointwise21ChannelCount;
     {
+//       pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount;
+//       pointwise202_inputChannelCount = 0;
+//       pointwise21_inputChannelCount = 0;
+
 //!!! ...unfinished... (2022/06/16) should half input channel count
 
       switch ( paramsAll.nConvBlockTypeId ) {
         case ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL: // ( 0)
         case ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL: // ( 1)
+          pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount;
+          pointwise20_outputChannelCount = pointwise20ChannelCount_original;
+          break;
+
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD: // ( 2)
+          pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount;
+          pointwise21_inputChannelCount = depthwise2_resultOutputChannelCount;
+          pointwise20_outputChannelCount = pointwise20ChannelCount_original;
+          pointwise21_outputChannelCount = pointwise20ChannelCount_original;
+          break;
+
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY: // ( 3)
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL: // ( 4)
+          pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount;
+          pointwise20_outputChannelCount = pointwise20ChannelCount_original;
+          break;
+
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD: // ( 5)
+          pointwise20_inputChannelCount =  depthwise1_resultOutputChannelCount;
+          pointwise202_inputChannelCount = depthwise2_resultOutputChannelCount;
+          pointwise20_outputChannelCount =  pointwise20ChannelCount_original;
+          pointwise202_outputChannelCount = pointwise20ChannelCount_original;
+          break;
+
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY: // ( 6)
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL: // ( 7)
+          break;
+
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1: // ( 8)
+          break;
+
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD: // ( 9)
+          pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount + depthwise2_resultOutputChannelCount;
+          pointwise21_inputChannelCount = pointwise20_inputChannelCount;
+          break;
+
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY: // (10)
+          pointwise20_inputChannelCount += inferencedParams.input1_channelCount;
+          pointwise21_inputChannelCount = ???;
+          pointwise21ChannelCount = pointwise20ChannelCount_original;
+          break;
+
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL: // (11)
+          pointwise20_inputChannelCount += inferencedParams.input1_channelCount;
           break;
 
         default:
@@ -1167,7 +1206,7 @@ class Base extends TestParams.Base {
             + `` );
           break;
       }
-          
+
 !!!
       if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
           || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
@@ -1184,8 +1223,14 @@ class Base extends TestParams.Base {
     }
 
     // 3.2 Pointwise21's Preparation.
-    let pointwise21ChannelCount, bPointwise21Bias, nPointwise21ActivationId;
+
+//!!! (2022/06/16 Remarked)
+//    let pointwise21ChannelCount, bPointwise21Bias, nPointwise21ActivationId;
+
+    let bPointwise21Bias, nPointwise21ActivationId;
     {
+//!!! ...unfinished... (2022/06/16)
+
       if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
           || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1() ) // (8)
           || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
