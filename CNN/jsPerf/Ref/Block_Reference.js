@@ -111,8 +111,9 @@ class TestCorrectnessInfo {
           concatenatedDepth = pointwise20ChannelCount * outputGroupCount;
           break;
 
-        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD: // (5)
-        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL: // (6)
+//!!! (2022/06/16 Remarked) no needs channelShuffler_ConcatPointwiseConv
+//         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD: // (5)
+//         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL: // (6)
 
           // Because Block_TestParams.generate_Filters_Biases() will double pointwise20ChannelCount, it must be an even number
           // which could be splitted (into two groups).
@@ -123,7 +124,10 @@ class TestCorrectnessInfo {
           break;
       }
 
-      if ( concatenatedDepth != undefined ) {
+      if ( concatenatedDepth == undefined ) {
+        channelShuffler_ConcatPointwiseConv = null;
+
+      } else {
         channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
           imageIn1.height, imageIn1.width, concatenatedDepth, outputGroupCount );
 
