@@ -204,7 +204,7 @@ class Base extends TestParams.Base {
         if ( this.out.depthwiseFilterWidth == 1 )
           return false;
 
-        let pointwise2_inputWidth = this.out.depthwisePadInfo.outputWidth;
+        let pointwise2_inputWidth = this.out.inferencedParams.depthwisePadInfo.outputWidth;
 
         // For squeeze-and-excitation.
         //
