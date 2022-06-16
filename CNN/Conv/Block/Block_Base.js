@@ -394,7 +394,7 @@ class Base {
     this.input0_channelCount = params.input0_channelCount;
 
     this.nConvBlockTypeId = params.nConvBlockTypeId;
-    this.nConvBlockTypeIdName = params.nConvBlockTypeIdName;
+    this.nConvBlockTypeName = params.nConvBlockTypeName;
 
     this.pointwise1ChannelCount = params.pointwise1ChannelCount;
     this.bPointwise1Bias = params.bPointwise1Bias;
@@ -1376,7 +1376,7 @@ class Base {
       + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels1}, outChannelsAll=${this.outChannelsAll}, `
 
       + `channelCount1_pointwise1Before=${this.channelCount1_pointwise1Before}, `
-      + `nConvBlockTypeIdName=${this.nConvBlockTypeIdName}(${this.nConvBlockTypeId}), `
+      + `nConvBlockTypeName=${this.nConvBlockTypeName}(${this.nConvBlockTypeId}), `
 
       + `bHigherHalfDifferent=${this.bHigherHalfDifferent}, `
       + `bHigherHalfDepthwise2=${this.bHigherHalfDepthwise2}, `
