@@ -284,12 +284,10 @@ class Base {
    * @param {ChannelShufflerPool.Base} channelShufflerPool
    *   The channelShufflers provider. It must be initialized with ChannelShuffler.ConcatPointwiseConv as parameter channelShufflerClass.
    *
-   *     - It is only used when
+   *     - It is only used when:
    *         - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD (2) )
    *         - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY (3) )
    *         - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL (4) )
-   *         - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
-   *         - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6) )
    *
    */
   testCorrectness( imageSourceBag, testParams, channelShufflerPool ) {
@@ -551,8 +549,6 @@ class Base {
     if (   ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD ) // (2)
         || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY ) // (3)
         || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL ) // (4)
-        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD ) // (5)
-        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL ) // (6)
        ) {
 
       tf.util.assert( channelShuffler_ConcatPointwiseConv != null, `Block_Reference.Base.block_create(): `
@@ -636,9 +632,9 @@ class Base {
     { // Test pointwise21ChannelCount.
 
       if (   ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD ) // (2)
-          || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE ) // (7)
-          || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD ) // (8)
-          || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY ) // (9)
+          || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE ) // (8)
+          || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD ) // (9)
+          || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY ) // (10)
          ) {
         asserter.propertyValue( "pointwise21ChannelCount", testParams.out.pointwise20ChannelCount ); // the same as pointwise20.
 
@@ -707,15 +703,7 @@ class Base {
    *     - imageOutArray[ 0 ]: output0
    *     - imageOutArray[ 1 ]: output1
    *
-
-//!!! (2022/06/15 Remrked) No longer needs channelShuffler.
-//    * @param {ChannelShuffler.Xxx} channelShuffler
-//    *   The channel shuffler. Used when concat-shuffle-split.
-
-   *
    */ 
-//!!! (2022/06/15 Remrked) No longer needs channelShuffler.
-//  calcResult( imageInArray, imageOutArray, channelShuffler ) {
   calcResult( imageInArray, imageOutArray ) {
 
     let testParams = this.testParams;
@@ -770,13 +758,14 @@ class Base {
       imageIn0 = imageInArray[ 0 ];
       imageIn1 = imageInArray[ 1 ];
 
-    // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we use the logic of
-    // TWO_INPUTS_CONCAT_POINTWISE20_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
+    // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we:
+    //   - use the logic of SHUFFLE_NET_V2_BODY (3) to handle SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6)
+    //   - use the logic of SHUFFLE_NET_V2_TAIL (4) to handle SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7)
     //
     // Note: Block_TestParams.Base.generate_Filters_Biases() double input0_channelCount,
-    // pointwise20ChannelCount. So, halve them here.
+    //       pointwise20ChannelCount. So, halve them here.
     //
-    } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) { // (6)
+    } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
 
       let imageInArray_Fake = NumberImage.Base.calcSplitAlongAxisId2(
         imageInArray[ 0 ], "Split_imageIn_to_imageInArray_0_1", this.paramsOutDescription );
