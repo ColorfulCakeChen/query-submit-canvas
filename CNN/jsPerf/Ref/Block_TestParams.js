@@ -1236,43 +1236,22 @@ class Base extends TestParams.Base {
 
     // 5. Pointwise2
 
-//!!! ...unfinished... (2022/06/16) should half input channel count
-
-
     // 5.1 Pointwise20
+    //
+    // Note: Even if ( Xxx_outputChannelCount == 0 ), the .generate_pointwise_filters_biases() still needs to be called
+    //       to clear old them (because TestParams.Base.permuteParamRecursively() may not know them and may not clear them.
     {
-      let pointwise20_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-        pointwise20ChannelCount_original, paramsAll.bPointwise20Bias, "pointwise20", io_paramsNumberArrayObject );
+      let pointwise20_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise20_inputChannelCount,
+        pointwise20_outputChannelCount, paramsAll.bPointwise20Bias, "pointwise20", io_paramsNumberArrayObject );
 
-      if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
-
-//!!! ...unfinished... (2022/06/16) should half input channel count
-
-        let pointwise202_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-          pointwise20ChannelCount_original, paramsAll.bPointwise20Bias, "pointwise202", io_paramsNumberArrayObject );
-
-      } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
-        let pointwise202_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-          0, paramsAll.bPointwise20Bias, "pointwise202", io_paramsNumberArrayObject );
-      }
+      let pointwise202_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise202_inputChannelCount,
+        pointwise202_outputChannelCount, paramsAll.bPointwise20Bias, "pointwise202", io_paramsNumberArrayObject );
     }
-
-//!!! ...unfinished... (2022/06/16)
 
     // 5.2 Pointwise21
     {
-      let pointwise21_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-        pointwise21ChannelCount, bPointwise21Bias, "pointwise21", io_paramsNumberArrayObject );
-
-//!!! (2022/06/16 Remarked) There is no pointwise212.
-//       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-//         let pointwise212_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-//           pointwise21ChannelCount, bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
-//
-//       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
-//         let pointwise212_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-//           0, bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
-//       }
+      let pointwise21_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise21_inputChannelCount,
+        pointwise21_outputChannelCount, bPointwise21Bias, "pointwise21", io_paramsNumberArrayObject );
     }
 
     // 6. Pointwise2's postfix squeeze-and-excitation
