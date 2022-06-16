@@ -336,7 +336,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
             ] ),
             new FiltersBiasesPartInfo( [
-              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ) ] )
+              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ),
             ] )
           ];
 
