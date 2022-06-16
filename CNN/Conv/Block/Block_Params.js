@@ -439,6 +439,7 @@ class Params extends Weights.Params {
    *   - this.bConcat2ShuffleSplitRequested
    *   - this.bHigherHalfDifferent
    *   - this.bHigherHalfDepthwise2
+   *   - this.channelShuffler_outputGroupCount
    *   - this.pointwise21ChannelCount
    *   - this.outputTensorCount
    *
@@ -479,6 +480,7 @@ class Params extends Weights.Params {
     // 4. Whether manipulate the higher half channel of convolution.
     this.bHigherHalfDifferent = infoConvBlockType.bHigherHalfDifferent;
     this.bHigherHalfDepthwise2 = infoConvBlockType.bHigherHalfDepthwise2;
+    this.channelShuffler_outputGroupCount = infoConvBlockType.channelShuffler_outputGroupCount;
 
     // 5. Pointwise21
     //
