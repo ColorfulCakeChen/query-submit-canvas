@@ -1132,10 +1132,13 @@ class Base {
    * @param {NumberImage.Base} imageOutArray[ 0 ]   The first output image.
    * @param {NumberImage.Base} imageOutArray[ 1 ]   The second output image.
    *
-   * @param {boolean} bShuffleSplit
-   *   Whether shuffle channels and split them.
-   *     - If false, only concatenation will be done. The result will be placed in imageOutArray[ 0 ] and imageOutArray[ 1 ] will be null.
-   *     - If true, concatenate-shuffle-split will be done. the result will be placed in imageOutArray[ 0 ] and imageOutArray[ 1 ].
+   * @param {boolean} bShuffle
+   *   Whether shuffle channels (after concatenating before splitting).
+   *
+   * @param {boolean} bSplit
+   *   Whether split channels (after shuffleing).
+   *     - If false, channels will not be splitted. The result will be placed in imageOutArray[ 0 ] and imageOutArray[ 1 ] will be null.
+   *     - If true, channels will be splitted into imageOutArray[ 0 ] and imageOutArray[ 1 ].
    *
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
@@ -1145,7 +1148,7 @@ class Base {
    * @param {string}   parametersDesc               A string for debug message of this block.
    */
   static calcConcatShuffleSplit(
-    imageInArray, imageOutArray, bShuffleSplit,
+    imageInArray, imageOutArray, bShuffle, bSplit,
     arrayTemp_forInterleave_asGrouptTwo,
     concatShuffleSplitName, parametersDesc ) {
 
@@ -1169,18 +1172,25 @@ class Base {
         + `(${parametersDesc})`
     );
 
+    // 1.
     let concatResult = NumberImage.Base.calcConcatAlongAxisId2( imageInArray[ 0 ], imageInArray[ 1 ],
       `${concatShuffleSplitName}_concat`, parametersDesc );
 
-    if ( bShuffleSplit ) {
-      let shuffleResult = concatResult.modify_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo,
+    // 2.
+    let shuffleResult;
+    if ( bShuffle ) {
+      shuffleResult = concatResult.modify_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo,
         `${concatShuffleSplitName}_interleave_asGrouptTwo`, parametersDesc );
+    } else {
+      shuffleResult = concatResult;
+    }
  
+    // 3.
+    if ( bSplit ) {
       NumberImage.Base.calcSplitAlongAxisId2( shuffleResult, imageOutArray, `${concatShuffleSplitName}_split`, parametersDesc );
-
     } else {
       imageInArray.length = 2;
-      imageOutArray[ 0 ] = concatResult;
+      imageOutArray[ 0 ] = shuffleResult;
       imageOutArray[ 1 ] = null;
     }
   }
