@@ -911,9 +911,6 @@ class Base {
     // 4.1 Pointwise20
     let imageIn1_beforePointwise20 = imageIn1;
 
-//!!! (2022/06/15 Remarked) should be concatShufflerSplit
-//    let pointwise20Result, pointwise20Result_beforeConcatWith_pointwise202;
-
     let pointwise20Result, pointwise202Result;
     {
       if ( pointwise20ChannelCount > 0 ) {
@@ -924,12 +921,7 @@ class Base {
           pointwise202Result = imageOutArray[ 1 ]
             = testParams.use_pointwise202( concat1Result, pointwise20ChannelCount, "Pointwise202", this.paramsOutDescription );
 
-//!!! (2022/06/15 Remarked) should be concatShufflerSplit
-//           pointwise20Result_beforeConcatWith_pointwise202 = pointwise20Result;
-//           pointwise20Result = NumberImage.Base.calcConcatAlongAxisId2( pointwise20Result, pointwise202Result,
-//             "Concat_pointwise20_pointwise202 (SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5))", this.paramsOutDescription );
-
-        } else if ( testParams.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) { // (6)
+        } else if ( testParams.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
           imageIn1 = imageOutArray[ 1 ]
             = testParams.use_pointwise20_PassThrough( imageIn1_beforePointwise20, // pass-through input1 (which is past-through by depthwise1).
                 pointwise20ChannelCount, // So that it could be concatenated with pointwise20Result.
@@ -951,9 +943,9 @@ class Base {
 
     let pointwise21Result;
     if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
-        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE() ) // (7)
-        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (8)
-        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY() )  // (9)
+        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE() ) // (8)
+        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
+        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY() )  // (10)
        ) {
 
       let pointwise21ChannelCount = pointwise20ChannelCount;
@@ -975,7 +967,7 @@ class Base {
     if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
         || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY_or_TAIL() ) // (3 or 4)
         || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
-        || ( testParams.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) // (6)
+        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) // (6 or 7)
        ) {  
 
       let bShuffle, bSplit;
@@ -988,8 +980,10 @@ class Base {
           concat2Name = "Concat2_pointwise20_input1";                    bShuffle = false; bSplit = false; break;
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD:      // (5)
           concat2Name = "Concat2_pointwise20_pointwise202_Shuffle";      bShuffle =  true; bSplit = false; break;
-        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL: // (6)
-          concat2Name = "Concat2_pointwise20_input0_HigherHalf_Shuffle"; bShuffle = ??? true; bSplit = false; break;
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY:      // (6)
+          concat2Name = "Concat2_pointwise20_input0_HigherHalf_Shuffle"; bShuffle =  true; bSplit = false; break;
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL:      // (7)
+          concat2Name = "Concat2_pointwise20_input0_HigherHalf";         bShuffle = false; bSplit = false; break;
         default:
           tf.util.assert( false, `Block_Reference.Base.calcResult(): `
             + `Concat2ShuffleSplit: Unsupported `
