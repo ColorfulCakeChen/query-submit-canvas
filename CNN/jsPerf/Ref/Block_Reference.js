@@ -1154,7 +1154,7 @@ class Base {
       + `input0_height=${testParams.out.input0_height}, input0_width=${testParams.out.input0_width}, `
       + `inChannels0=${testParams.out.input0_channelCount}, inChannels1=${inferencedParams.input1_channelCount}, `
 
-      + `nConvBlockTypeIdName=`
+      + `nConvBlockTypeName=`
       + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
       + `(${testParams.out.nConvBlockTypeId}), `
 
