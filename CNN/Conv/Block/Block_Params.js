@@ -327,7 +327,7 @@ class Params extends Weights.Params {
   ) {
 
     // 1. input tensor count.
-    this.inputTensorCount = ValueDesc.ConvBlockType.Singleton.inputTensorCount_get( nConvBlockTypeId );
+    this.inputTensorCount = ValueDesc.ConvBlockType.inputTensorCount_get( nConvBlockTypeId );
 
     // 2. depthwise information.
 
