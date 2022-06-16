@@ -174,7 +174,7 @@ class Params extends Weights.Params {
 
 //!!! ...unfinished... (2022/06/16)
 // Perhaps, deprecate bPointwise1Bias to reduce quantity of parameters and test cases.
-//   - if no pointwise1ActivationId, also no bPointwise1Bias automatically.
+//   - if no pointwise1ActivationId (and no depthwise or depthwise pad=valid ??? squeeze excitation?), also no bPointwise1Bias automatically.
 //   - if has pointwise1ActivationId, also has bPointwise1Bias automatically.
 //
 // Or, deprecate bPointwise1Bias and pointwise1ActivationId to reduce quantity of parameters and test cases.
