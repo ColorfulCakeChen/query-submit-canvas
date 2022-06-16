@@ -332,7 +332,7 @@ class Params extends Weights.Params {
     // 2. depthwise information.
 
     // 2.1
-    this.bDepthwiseRequestedAndNeeded = Params.set_bDepthwiseRequestedAndNeeded_by.call( this,
+    Params.set_bDepthwiseRequestedAndNeeded_by.call( this,
       input0_height, input0_width,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       bDepthwiseBias, depthwiseActivationId,
