@@ -1139,7 +1139,36 @@ class Base extends TestParams.Base {
 
     // 3.1 Pointwise20's Preparation.
     let pointwise2_inputChannelCount = depthwise1_resultOutputChannelCount;
+    let pointwise202_inputChannelCount;
     {
+//!!! ...unfinished... (2022/06/16) should half input channel count
+
+      switch ( paramsAll.nConvBlockTypeId ) {
+        case ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL: // ( 0)
+        case ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL: // ( 1)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD: // ( 2)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY: // ( 3)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL: // ( 4)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD: // ( 5)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY: // ( 6)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL: // ( 7)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1: // ( 8)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD: // ( 9)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY: // (10)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL: // (11)
+          break;
+
+        default:
+          tf.util.assert( channelShuffler != null, `Block_Reference.Base.calcResult(): `
+            + `Block.TestParams.Base.generate_Filters_Biases(): Unknown `
+            + `nConvBlockTypeId=`
+            + `${ValueDesc.ConvBlockType.Singleton.getStringOf( paramsAll.nConvBlockTypeId )}`
+            + `(${paramsAll.nConvBlockTypeId}). `
+            + `` );
+          break;
+      }
+          
+!!!
       if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
           || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
           || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
@@ -1211,6 +1240,9 @@ class Base extends TestParams.Base {
         pointwise20ChannelCount_original, paramsAll.bPointwise20Bias, "pointwise20", io_paramsNumberArrayObject );
 
       if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
+
+//!!! ...unfinished... (2022/06/16) should half input channel count
+
         let pointwise202_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
           pointwise20ChannelCount_original, paramsAll.bPointwise20Bias, "pointwise202", io_paramsNumberArrayObject );
 
@@ -1227,14 +1259,15 @@ class Base extends TestParams.Base {
       let pointwise21_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
         pointwise21ChannelCount, bPointwise21Bias, "pointwise21", io_paramsNumberArrayObject );
 
-      if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-        let pointwise212_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-          pointwise21ChannelCount, bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
-
-      } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
-        let pointwise212_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-          0, bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
-      }
+//!!! (2022/06/16 Remarked) There is no pointwise212.
+//       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+//         let pointwise212_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+//           pointwise21ChannelCount, bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
+//
+//       } else { // Clear old them (because TestParams.Base.permuteParamRecursively() does not know them and will not clear them).
+//         let pointwise212_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+//           0, bPointwise21Bias, "pointwise212", io_paramsNumberArrayObject );
+//       }
     }
 
     // 6. Pointwise2's postfix squeeze-and-excitation
