@@ -1173,7 +1173,7 @@ class Base {
     );
 
     // 1.
-    let concatResult = NumberImage.Base.calcConcatAlongAxisId2( imageInArray[ 0 ], imageInArray[ 1 ],
+    let concatResult = Base.calcConcatAlongAxisId2( imageInArray[ 0 ], imageInArray[ 1 ],
       `${concatShuffleSplitName}_concat`, parametersDesc );
 
     // 2.
