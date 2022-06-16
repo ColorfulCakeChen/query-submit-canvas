@@ -118,6 +118,10 @@ class Int extends Same {
     //if ( this.adjust( new Float32Array( [ valueInputFloat ] )[ 0 ] ) != valueOutputInt )
     //  debugger;
 
+    //!!! (2022/06/16 Temp Test)
+    if ( this.adjust( valueInputFloat ) != valueOutputInt )
+     debugger;
+
     return { valueInput: valueInputFloat, valueOutput: valueOutputInt };
   }
 
