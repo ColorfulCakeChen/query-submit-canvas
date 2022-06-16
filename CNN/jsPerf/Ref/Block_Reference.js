@@ -803,7 +803,7 @@ class Base {
           pointwise1ChannelCount, // So that it could be processed by depthwise2 and pointwise21 (with same structure of depthwise1 and pointwise20).
           "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", this.paramsOutDescription );
 
-      } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) { // (6)
+      } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
           imageIn1_beforePointwise1.depth, // No need same as pointwise1ChannelCount because depthwise2 and pointwise21 just pass-through it.
           "Pointwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
@@ -836,9 +836,10 @@ class Base {
     if ( testParams.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
       depthwise1Result = testParams.use_depthwise1( pointwise1Result, "Depthwise1", this.paramsOutDescription );
 
-      // When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be shrinked by depthwise1. Otherwise, its size may
-      // be different from pointwise20Result and can not be concatenated together.
-      if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) { // (6)
+      // imageIn1 should be shrinked by depthwise1. Otherwise, its size may be different from pointwise20Result
+      // and can not be concatenated together.
+      //
+      if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
         imageIn1 = testParams.use_depthwise1_PassThrough( imageIn1_beforeDepthwise1, // pass-through input1 (not input0).
           "Depthwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
       }
@@ -851,7 +852,7 @@ class Base {
     let depthwise2Result;
 
     if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
-        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (8)
+        || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
        ) {
 
 //!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
@@ -879,19 +880,18 @@ class Base {
     // 3. Concat1 (along image depth)
     let concat1Result = depthwise1Result; // If no concat1, the same as depthwise1.
 
-    if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL() ) { // (9 or 10)
-
-      // Concatenate depthwise1's result and input1. (i.e. concat1)
-      concat1Result = NumberImage.Base.calcConcatAlongAxisId2( depthwise1Result, imageIn1,
-        "Concat1_depthwise1_input1 (SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL)", this.paramsOutDescription );
-
-    } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) { // (8)
+    if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) { // (9)
 
       // Concatenate depthwise1's result and depthwise2's result.
       concat1Result = NumberImage.Base.calcConcatAlongAxisId2(
         depthwise1Result, depthwise2Result,
-        "Concat1_depthwise1_depthwise2 (SHUFFLE_NET_V2_BY_POINTWISE21_HEAD or SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD)",
-        this.paramsOutDescription );
+        "Concat1_depthwise1_depthwise2 (SHUFFLE_NET_V2_BY_POINTWISE21_HEAD)", this.paramsOutDescription );
+
+    } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL() ) { // (10 or 11)
+
+      // Concatenate depthwise1's result and input1.
+      concat1Result = NumberImage.Base.calcConcatAlongAxisId2( depthwise1Result, imageIn1,
+        "Concat1_depthwise1_input1 (SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL)", this.paramsOutDescription );
     }
 
     // 4. Pointwise2
