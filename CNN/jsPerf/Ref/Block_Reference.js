@@ -921,7 +921,7 @@ class Base {
           pointwise202Result = imageOutArray[ 1 ]
             = testParams.use_pointwise202( concat1Result, pointwise20ChannelCount, "Pointwise202", this.paramsOutDescription );
 
-        } else if ( testParams.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
+        } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
           imageIn1 = imageOutArray[ 1 ]
             = testParams.use_pointwise20_PassThrough( imageIn1_beforePointwise20, // pass-through input1 (which is past-through by depthwise1).
                 pointwise20ChannelCount, // So that it could be concatenated with pointwise20Result.
