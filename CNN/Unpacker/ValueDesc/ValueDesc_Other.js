@@ -1,4 +1,5 @@
-export { channelCount1_pointwise1Before };
+//!!! (2022/06/14 Remarked) Replaced by ConvBlockType.
+//export { channelCount1_pointwise1Before };
 export { Pointwise_HigherHalfDifferent };
 export { Depthwise_HigherHalfDifferent };
 export { AvgMax_Or_ChannelMultiplier };
