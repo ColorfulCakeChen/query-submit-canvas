@@ -69,10 +69,10 @@ import { Int } from "./ValueDesc_Base.js";
  *
  * Convert number value into integer between [ 0, 4 ] representing:
  *   - 0: NONE                                                 (normal poitwise convolution. no higher half different.)
- *   - 1: HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH (pointwise1 of ShuffleNetV2_ByMopbileNetV1's head) ( pointwise1ChannelCount == 0 )
- *   - 2: HIGHER_HALF_COPY_LOWER_HALF                          (pointwise1 of ShuffleNetV2_ByMopbileNetV1's head) ( pointwise1ChannelCount > 0 )
- *   - 3: HIGHER_HALF_ANOTHER_POINTWISE                        (pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
- *   - 4: HIGHER_HALF_PASS_THROUGH                             (pointwise1/pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *   - 1: HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH (pointwise1 of ShuffleNetV2_ByMobileNetV1's head) ( pointwise1ChannelCount == 0 )
+ *   - 2: HIGHER_HALF_COPY_LOWER_HALF                          (pointwise1 of ShuffleNetV2_ByMobileNetV1's head) ( pointwise1ChannelCount > 0 )
+ *   - 3: HIGHER_HALF_ANOTHER_POINTWISE                        (pointwise2 of ShuffleNetV2_ByMobileNetV1's head)
+ *   - 4: HIGHER_HALF_PASS_THROUGH                             (pointwise1/pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
  */
 class Pointwise_HigherHalfDifferent extends Int {
 
@@ -96,8 +96,8 @@ Pointwise_HigherHalfDifferent.Singleton = new Pointwise_HigherHalfDifferent;
  *
  * Convert number value into integer between [ 0, 2 ] representing:
  *   - 0: NONE                     (normal depthwise convolution. no higher half different.)
- *   - 1: HIGHER_HALF_DEPTHWISE2   (depthwise1 of ShuffleNetV2_ByMopbileNetV1's head)
- *   - 2: HIGHER_HALF_PASS_THROUGH (depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *   - 1: HIGHER_HALF_DEPTHWISE2   (depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
+ *   - 2: HIGHER_HALF_PASS_THROUGH (depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
  */
 class Depthwise_HigherHalfDifferent extends Int {
 
