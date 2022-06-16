@@ -473,7 +473,7 @@ class Base {
     // Initialize successfully or failed.
     let extractedParams = new Block.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
       testParams.in.input0_height, testParams.in.input0_width, testParams.in.input0_channelCount,
-      testParams.in.nConvBlockType,
+      testParams.in.nConvBlockTypeId,
       testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
       testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
       testParams.in.depthwiseStridesPad, testParams.in.bDepthwiseBias, testParams.in.depthwiseActivationId,
