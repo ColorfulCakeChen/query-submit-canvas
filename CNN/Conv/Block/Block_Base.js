@@ -416,6 +416,7 @@ class Base {
       this.bConcat2ShuffleSplitRequested = params.bConcat2ShuffleSplitRequested;
       this.bHigherHalfDifferent = params.bHigherHalfDifferent;
       this.bHigherHalfDepthwise2 = params.bHigherHalfDepthwise2;
+      this.channelShuffler_outputGroupCount = params.channelShuffler_outputGroupCount;
 
       this.pointwise21ChannelCount = params.pointwise21ChannelCount;
       this.bPointwise21Bias = params.bPointwise21Bias;
@@ -708,7 +709,7 @@ class Base {
 
 // !!! ...unfinished... (2022/06/16) no needs channelShuffler_ConcatPointwiseConv
 //         channelShuffler_outputGroupCount_pointwise2 = channelShuffler_ConcatPointwiseConv.outputGroupCount; // positive value.
-          channelShuffler_outputGroupCount_pointwise2 = 2; // Only group two is supported.
+          channelShuffler_outputGroupCount_pointwise2 = this.channelShuffler_outputGroupCount;
         }
       }
     }
