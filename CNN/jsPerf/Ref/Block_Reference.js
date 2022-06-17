@@ -926,7 +926,7 @@ class Base {
 
         if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
           pointwise202Result = imageOutArray[ 1 ]
-            = testParams.use_pointwise202( concat1Result, pointwise20ChannelCount, "Pointwise202", this.paramsOutDescription );
+            = testParams.use_pointwise202( depthwise2Result, pointwise20ChannelCount, "Pointwise202", this.paramsOutDescription );
 
         } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
           imageIn1 = imageOutArray[ 1 ]
