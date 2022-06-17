@@ -311,12 +311,11 @@ class Base {
     {
       if ( !this.config.paramValuePairArray ) {
         this.config.paramValuePairArray = new Array( this.config.paramDescConfigArray.length );
+        for ( let i = 0; i < this.config.paramValuePairArray; ++i ) {
+          this.config.paramValuePairArray[ currentParamDescConfigIndex ] = {};
+        }
       }
-
       valuePair = this.config.paramValuePairArray[ currentParamDescConfigIndex ];
-      if ( !valuePair ) {
-        valuePair = this.config.paramValuePairArray[ currentParamDescConfigIndex ] = {};
-      }
     }
 
     let nextParamDescConfigIndex = currentParamDescConfigIndex + 1;
