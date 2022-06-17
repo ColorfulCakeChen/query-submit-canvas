@@ -1422,6 +1422,12 @@ class Base {
       + `bAddInputToOutputRequested=${this.bAddInputToOutputRequested}, `
       + `bConcat2ShuffleSplitRequested=${this.bConcat2ShuffleSplitRequested}, `
       + `channelShuffler_outputGroupCount=${this.channelShuffler_outputGroupCount}, `
+
+      + `channelShuffler_ConcatPointwiseConv=${this.channelShuffler_ConcatPointwiseConv} `
+        + `( outputGroupCount = `
+        + `${ this.channelShuffler_ConcatPointwiseConv ? this.channelShuffler_ConcatPointwiseConv.outputGroupCount : 0 } `
+        + `) `
+
       + `outputTensorCount=${this.outputTensorCount}, `
 
       + `bKeepInputTensor=${this.bKeepInputTensor}`
