@@ -1209,7 +1209,7 @@ class Base {
 
       + `bAddInputToOutputRequested=${inferencedParams.bAddInputToOutputRequested}, `
       + `bConcat2ShuffleSplitRequested=${inferencedParams.bConcat2ShuffleSplitRequested}, `
-      + `channelShuffler_outputGroupCount=${inferencedParams.channelShuffler_outputGroupCount}, `
+      + `pointwise20_channelShuffler_outputGroupCount=${this.pointwise20_channelShuffler_outputGroupCount}, `
       + `outputTensorCount=${inferencedParams.outputTensorCount}, `
 
       + `bKeepInputTensor=${testParams.out.bKeepInputTensor}`
