@@ -307,13 +307,10 @@ class Base {
 
       let imageOutReferenceArray = this.imageOutReferenceArray;
       {
-        // Output is an array with two elements.
-//!!! (2022/06/15 Remrked) No longer needs channelShuffler.
-//        this.calcResult( imageInArraySelected, imageOutReferenceArray, channelShuffler_ConcatPointwiseConv );
-        this.calcResult( imageInArraySelected, imageOutReferenceArray );
+        this.calcResult( imageInArraySelected, imageOutReferenceArray ); // Output is an array with two elements.
 
         tf.util.assert( imageOutReferenceArray.length == 2,
-          `Block imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
+          `Block_Reference.testCorrectness(): imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
       }
 
       let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
