@@ -29,6 +29,32 @@ import * as Depthwise from "../Depthwise.js";
  * @member {Depthwise.PadInfoCalculatorRoot} depthwisePadInfo
  *   If ( bDepthwiseRequestedAndNeeded == true ), this info will be set.
  *
+ * @member {boolean} bDepthwise2Requested
+ *   If true, the depthwise2 is needed.
+ *
+ * @member {boolean} bConcat1Requested
+ *   If true, the concat1 (after depthwise and before pointwise2) is needed.
+ *
+ * @member {boolean} bConcat2ShuffleSplitRequested
+ *   If true, the concat2 (after pointwise2) is needed. It may or may not follow channel shuffling and splitting.
+ *
+ * @member {boolean} bAddInputToOutputRequested
+ *   If true, the input (in this case, the main input (i.e. input0)) will be added to the output for achieving skip connection.
+ *
+ * @member {boolean} bHigherHalfDifferent
+ *   Only if ( channelShuffler != null ), this is meaningful. If true, the higher half input channels are processed differently.
+ * For pointwise convolution, the higher half may copy lower half, or the higher half may just pass through the input to output.
+ * For depthwise convolution, please see bHigherHalfDepthwise2.
+ *
+ * @member {boolean} bHigherHalfDepthwise2
+ *   Only if ( bHigherHalfDifferent == true ), this is meaningful. If true, the depthwise1 will use higher half channels to achieve
+ * the depthwise2. If false, the depthwise1's higher half channels just pass through the input to output.
+ *
+ * @member {number} pointwise20_channelShuffler_outputGroupCount
+ *   The output group count of the pointwise20's channel shuffler when
+ * ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ). Either 0 or 2.
+ * Usually 2 ony if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD or SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY.
+ *
  * @member {number} pointwise21ChannelCount
  *   The output channel count of the second pointwise2 convolution. If ( pointwise21ChannelCount == 0 ), it means pointwise21 does
  * not existed.
@@ -437,7 +463,7 @@ class Params extends Weights.Params {
    *   - this.bConcat2ShuffleSplitRequested
    *   - this.bHigherHalfDifferent
    *   - this.bHigherHalfDepthwise2
-   *   - this.channelShuffler_outputGroupCount
+   *   - this.pointwise20_channelShuffler_outputGroupCount
    *   - this.pointwise21ChannelCount
    *   - this.outputTensorCount
    *
@@ -478,7 +504,7 @@ class Params extends Weights.Params {
     // 4. Whether manipulate the higher half channel of convolution.
     this.bHigherHalfDifferent = infoConvBlockType.bHigherHalfDifferent;
     this.bHigherHalfDepthwise2 = infoConvBlockType.bHigherHalfDepthwise2;
-    this.channelShuffler_outputGroupCount = infoConvBlockType.channelShuffler_outputGroupCount;
+    this.pointwise20_channelShuffler_outputGroupCount = infoConvBlockType.pointwise20_channelShuffler_outputGroupCount;
 
     // 5. Pointwise21
     //
@@ -489,9 +515,6 @@ class Params extends Weights.Params {
   get input0_height()                        { return this.parameterMapModified.get( Params.input0_height ); }
   get input0_width()                         { return this.parameterMapModified.get( Params.input0_width ); }
   get input0_channelCount()                  { return this.parameterMapModified.get( Params.input0_channelCount ); }
-
-//!!! (2022/06/15 Remarked) Replaced by inferenced input1_channelCount.
-//  get channelCount1_pointwise1Before()       { return this.parameterMapModified.get( Params.channelCount1_pointwise1Before ); }
 
   /** @return {number} The number version of nConvBlockTypeId. */
   get nConvBlockTypeId()          { return this.parameterMapModified.get( Params.nConvBlockTypeId ); }
