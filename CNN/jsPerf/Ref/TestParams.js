@@ -306,11 +306,23 @@ class Base {
       return; // Stop this recusive. Back-track to another parameters combination.
     }
 
+    // Prepare an re-usable object for placing the value pair of current ParamDesc. (For reducing memory re-allocation.)
+    let valuePair;
+    {
+      if ( !this.config.paramValuePairArray ) {
+        this.config.paramValuePairArray = new Array( this.config.paramDescConfigArray.length );
+      }
+
+      valuePair = this.config.paramValuePairArray[ currentParamDescConfigIndex ];
+      if ( !valuePair )
+        valuePair = {};
+    }
+
     let nextParamDescConfigIndex = currentParamDescConfigIndex + 1;
 
     let paramDescConfig = this.config.paramDescConfigArray[ currentParamDescConfigIndex ];
     let paramDesc = paramDescConfig.paramDesc;
-    for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( undefined, paramDescConfig.valueOutMinMax ) ) {
+    for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( valuePair, undefined, paramDescConfig.valueOutMinMax ) ) {
 
       //!!! (2021/07/06 Temp Debug) Check the algorithm might be wrong.
       //if ( paramDesc.valueDesc.range.adjust( pair.valueInput ) != pair.valueOutput )
