@@ -111,24 +111,6 @@ import { Params } from "./Stage_Params.js";
  * the output value will always be restricted by the activation function (e.g. [ -1, +1 ] if tanh()).
  *
  *
-
-
-//!!! ...unfinished... (2022/05/19)
-// What if the next operation is squeeze-and-excitation? Does the no bias is still feasible?
-
-
-//!!! ...unfinished... (2022/05/28)
- * If squeeze-and-excitation is prefix the pointwise2 convolution (i.e. just after the depthwise convolution), the depthwise
- * convolution should have bias (and even activation). The squeeze-and-excitation is a non-linear operation. (Just like the
- * activation function is a non-linear operation.) If a non-linear operation will be applied, a bias should be applied (to
- * achieve affine transformation) before the non-linearity operration.
- *
- * Another possible choice is let squeeze-and-excitation is postfix (not prefix) the pointwise2 convolution. Then, the depthwise
- * could still has no bias and no activation.
- *
-
-
-
  * 3.3 non-MobileNetV2_Xxx's depthwise
  *
  * The reason why non-MobileNetV2_Xxx's depthwise does not have bias is the following characteristic of affine transformation:
@@ -139,8 +121,9 @@ import { Params } from "./Stage_Params.js";
  *
  * 3.3.1 Combined affine transformation
  *
- * In non-MobileNetV2_Xxx, the depthwise does not have activation function so it is affine transformation. Since the depthwise's
- * next operation (i.e. (squeeze-and-excitation and) pointwise2) always has bias, it is not necessary to have bias in the depthwise.
+ * In non-MobileNetV2_Xxx, the depthwise does not have activation function (and does not have squeeze-and-excitation following it) so
+ * it is affine transformation. Since the depthwise's next operation (i.e. pointwise2) always has bias, it is not necessary to have
+ * bias in the depthwise.
  *
  *
  * 3.3.2 Note the assumption's detail
@@ -160,6 +143,19 @@ import { Params } from "./Stage_Params.js";
  *
  * Note: The squeeze (of squeeze-and-excitation) is depthwise (globale average) convolution with ( pad = "valid" ). The
  * excitation (of squeeze-and-excitation) is pointwise convolution. So they also meet these criterion.
+ *
+ *
+ * 3.3.3 squeeze-and-excitation
+ *
+ * Because squeeze-and-excitation has activation function internally and will be multiplied to its input, it should be viewed
+ * as a non-linear operation (just like activation function is a non-linear operation).
+ *
+ * If squeeze-and-excitation is prefix the pointwise2 convolution (i.e. just after the depthwise convolution), the depthwise
+ * convolution should have bias (and even activation). Since squeeze-and-excitation is non-linear, if it is applied, a bias
+ * should be applied (to achieve affine transformation) before the non-linearity operation.
+ *
+ * For this reason, in non-MobileNetV2_Xxx, let squeeze-and-excitation is postfix (not prefix) the pointwise2 convolution. Then,
+ * the depthwise could still has no bias and no activation because it is still linear between depthwise and pointwise2.
  *
  *
  * 3.4 Note: tf.batchNorm()
