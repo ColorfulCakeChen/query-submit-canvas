@@ -767,11 +767,17 @@ class Base {
       // 6.2 Pointwise21
       let pointwise21;
       if ( this.pointwise21ChannelCount > 0 ) {
+
+        let pointwise21_input0;
+        {
+          if ( this.operationArray.endingInput1 )
+            pointwise21_input0 = this.operationArray.endingInput1; // If there is .endingInput1, use it as pointwise21's input.
+          else
+            pointwise21_input0 = this.operationArray.endingInput0;
+        }
+
         pointwise21 = new Operation.Pointwise_SameWhenPassThrough(
-
-//!!! ...unfinished... (2022/06/17) Really?
-          this.operationArray.endingInput0, // Note: the same as pointwise20's input (i.e. not .endingInput1).
-
+          pointwise21_input0,
           this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
           nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2, channelShuffler_outputGroupCount_pointwise2
         );
