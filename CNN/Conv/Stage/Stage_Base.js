@@ -62,7 +62,8 @@ import { Params } from "./Stage_Params.js";
  *
  *   - depthwise:  NO bias, NO activation.
  *     - In ShuffleNetV2's original design, depthwise always has bias.
- *     - We drop depthwise's bias because it could be achieved by (squeeze-and-excitation's and) pointwise2's bias.
+ *     - We drop depthwise's bias because it could be achieved by pointwise2's bias.
+ *         (Note: The squeeze-and-excitation is behind pointwise2 in these ConvStageTypes.)
  *
  *   - pointwise2:
  *     - non-blockLast: bias, activation.
