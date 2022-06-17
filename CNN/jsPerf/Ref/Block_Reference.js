@@ -899,18 +899,23 @@ class Base {
     }
 
     // 4. Pointwise2
+
+    // 4.0
+
+    // 4.0.1 add-input-to-output is possible if same ( height, width ).
     let bAddInputToOutputRequested = false;
     if ( testParams.nConvBlockTypeId__is__MOBILE_NET_V2_BODY_TAIL() ) { // (1)
-      if ( depthwisePadInfo.output_height_width_is_same_as_input() ) { // add-input-to-output is possible if same ( height, width ).
+      if (   ( inferencedParams.bDepthwiseRequestedAndNeeded == false )  // Either no depthwise (so output is same ( height, width ).
+          || ( depthwisePadInfo.output_height_width_is_same_as_input() ) // Or has depthwise and output is same ( height, width ).
+         ) { 
         bAddInputToOutputRequested = true;
       }
     }
 
+    // 4.0.2
     imageOutArray.length = 2;
     imageOutArray[ 0 ] = null;
     imageOutArray[ 1 ] = null;
-
-    let concat2Name;
 
     // 4.1 Pointwise20
     let imageIn1_beforePointwise20 = imageIn1;
@@ -970,6 +975,7 @@ class Base {
     }
 
     // 5. Concat2 (along image depth), shuffle, split.
+    let concat2Name;
 
     if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
         || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY_or_TAIL() ) // (3 or 4)
