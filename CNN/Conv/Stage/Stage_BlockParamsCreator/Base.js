@@ -153,9 +153,9 @@ class Base {
         this.depthwiseActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
 
-//!!! ...unfinished... (2022/05/31)
-// In this case, if depthwise input ( height, width ) is ( 1, 1 ), the depthwise may be discarded (since no bias and no activation)
-// to improve performance.
+//!!! ...unfinished... (2022/06/17)
+// If there is squeeze-and-excitation prefix pointwise2, the depthwise should be viewed as non-linear (even if depthwise activation
+// does not exist). In this case, depthwise's bias should be existed too.
 
       }
     }
