@@ -311,7 +311,7 @@ class Base {
     {
       if ( !this.config.paramValuePairArray ) {
         this.config.paramValuePairArray = new Array( this.config.paramDescConfigArray.length );
-        for ( let i = 0; i < this.config.paramValuePairArray; ++i ) {
+        for ( let i = 0; i < this.config.paramValuePairArray.length; ++i ) {
           this.config.paramValuePairArray[ currentParamDescConfigIndex ] = {};
         }
       }
