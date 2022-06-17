@@ -875,7 +875,7 @@ class Base {
       }
 
       let concat2ShuffleSplit = new Operation.ConcatShuffleSplit(
-        this.operationArray.endingInput0, this.operationArray.input1,
+        this.operationArray.endingInput0, this.operationArray.endingInput1,
         channelShuffler_ConcatPointwiseConv, bShuffleSplit, arrayTemp_forInterleave_asGrouptTwo );
 
       this.operationArray.operation_append( concat2ShuffleSplit );
