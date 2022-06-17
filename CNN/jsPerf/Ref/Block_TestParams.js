@@ -1106,24 +1106,27 @@ class Base extends TestParams.Base {
           || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
          ) {
 
-        let depthwise2_inputChannelCount;
+//!!! (2022/06/17 Remarked) all are the same as input0
+//         let depthwise2_inputChannelCount;
+//
+//         if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
+//             || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
+//            ) {
+//           depthwise2_inputChannelCount = paramsAll.input0_channelCount; // Use input0.
+//
+// //!!! (2022/06/17 Remarked) should be the same as input0
+// //        // Use pointwise1.outputChannelCount as input1_channelCount so that it has the same structure of depthwise1 and pointwise20.
+// //        //
+//         } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
+//
+// //!!! (2022/06/17 Remarked) should be the same as input0
+// //          depthwise2_inputChannelCount = pointwise1_resultOutputChannelCount;
+//
+// //!!! (2022/06/17 Added and Remarked)
+//           depthwise2_inputChannelCount = input0_channelCount_original;
+//         }
 
-        if (   ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
-            || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
-           ) {
-          depthwise2_inputChannelCount = paramsAll.input0_channelCount; // Use input0.
-
-//!!! (2022/06/17 Remarked) should be the same as input0
-//        // Use pointwise1.outputChannelCount as input1_channelCount so that it has the same structure of depthwise1 and pointwise20.
-//        //
-        } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
-
-//!!! (2022/06/17 Remarked) should be the same as input0
-//          depthwise2_inputChannelCount = pointwise1_resultOutputChannelCount;
-
-//!!! (2022/06/17 Added and Remarked)
-          depthwise2_inputChannelCount = input0_channelCount_original;
-        }
+        let depthwise2_inputChannelCount = paramsAll.input0_channelCount; // Use input0.
 
         // Only if depthwise operation is requested and necessary, create them.
         if ( paramsAll.inferencedParams.bDepthwiseRequestedAndNeeded ) {
