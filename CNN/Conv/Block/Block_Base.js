@@ -292,13 +292,6 @@ import { Params } from "./Block_Params.js";
  *         - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
  *             of pointwise20 and input1.
  *
-
-//!!! (2022/06/16 Remarked) no needs channelShuffler_ConcatPointwiseConv
-//  *       - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD )
-//  *         ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL )
-//  *         - The channelShuffler_ConcatPointwiseConv.outputGroupCount will be used.
-
- *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
  * weights, if they are used in tensors. (Not including channelShuffler.)
@@ -1421,7 +1414,7 @@ class Base {
 
       + `bAddInputToOutputRequested=${this.bAddInputToOutputRequested}, `
       + `bConcat2ShuffleSplitRequested=${this.bConcat2ShuffleSplitRequested}, `
-      + `channelShuffler_outputGroupCount=${this.channelShuffler_outputGroupCount}, `
+      + `pointwise20_channelShuffler_outputGroupCount=${this.pointwise20_channelShuffler_outputGroupCount}, `
 
       + `channelShuffler_ConcatPointwiseConv=${this.channelShuffler_ConcatPointwiseConv} `
         + `( outputGroupCount = `
