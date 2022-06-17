@@ -26,16 +26,21 @@ class Same {
    *
    * For ValueRange.Same, there is no meaningful testable value pair could be generated. The reason is that any value is legal for it.
    *
+   * @param {object} io_pair
+   *   An object which will be filled with two number properties: { valueInput, valueOutput }. It is also the object to be yielded
+   * every time. For ValueRange.Same, the valueOutput and valueInput are always the same as offsetMultiplier.
+   *
    * @param {number} offsetMultiplier
    *   An integer multiplier. The ( offsetMultiplier * this.kinds ) will be used as the first test value. The default value
    * is RandTools.getRandomIntInclusive( -10, +10 ). The -10 and +10 is just chosen arbitrarily.
    *
    * @yield {object}
-   *   Every time yield an array with two number properties: { valueInput, valueOutput }. The valueOutput is a value from valueRangeMin to
-   * valueRangeMax. The valueInput is a value which could be adjusted to valueOutput by this ValueRange object.
+   *   Yield the io_pair object.
    */
-  * valueInputOutputGenerator( offsetMultiplier = Same.defaultOffsetMultiplier ) {
-    yield { valueInput: offsetMultiplier, valueOutput: offsetMultiplier };
+  * valueInputOutputGenerator( io_pair, offsetMultiplier = Same.defaultOffsetMultiplier ) {
+    io_pair.valueInput = offsetMultiplier
+    io_pair.valueOutput = offsetMultiplier;
+    yield io_pair;
   }
 
 }
@@ -85,6 +90,11 @@ class Int extends Same {
   }
 
   /**
+   * @param {object} io_pair
+   *   An object which will be filled with two number properties: { valueInput, valueOutput }. It is also the object to be returned
+   * by this method. The valueInput is a floating-point value composed from baseIntCongruence, this.min and index. The valueOutput
+   * is an integer value. If calling this.adjust( valueInput ), the valueOutput will be returned.
+   *
    * @param {number} baseIntCongruence
    *   An integer which is divisible by this.kinds. This will be used to offset the index value to generate valueInput.
    *
@@ -92,10 +102,9 @@ class Int extends Same {
    *   An integer between [ 0, this.kinds ).
    *
    * @return {object}
-   *   Return an object { valueInput, valueOutput }. The valueInput is a floating-point value composed from baseIntCongruence, this.min
-   * and index. The valueOutput is an integer value. When call this.adjust( valueInput ) will return valueOutput.
+   *   Return the io_pair.
    */
-  get_valueInputOutput_byIndex( baseIntCongruence, index ) {
+  get_valueInputOutput_byIndex( io_pair, baseIntCongruence, index ) {
     let valueOutputInt = ( this.min + index );
 
     // An integer which could become valueOutputInt when adjusted by Int.adjust().
@@ -124,11 +133,18 @@ class Int extends Same {
     //if ( this.adjust( valueInputFloat ) != valueOutputInt )
     // debugger;
 
-    return { valueInput: valueInputFloat, valueOutput: valueOutputInt };
+    io_pair.valueInput = valueInputFloat;
+    io_pair.valueOutput = valueOutputInt;
+    return io_pair;
   }
 
   /**
    * For ValueRange.Int, this.kinds two-value pairs will be generated in sequence.
+   *
+   * @param {object} io_pair
+   *   An object which will be filled with two number properties: { valueInput, valueOutput }. It is also the object to be yielded
+   * every time. The valueInput is a floating-point value which could be adjusted to valueOutput by this.adjust(). The valueOutput
+   * is an integer value.
    *
    * @param {number} offsetMultiplier
    *   An integer multiplier. The ( offsetMultiplier * this.kinds ) will be used as the first test value. The default value
@@ -139,14 +155,12 @@ class Int extends Same {
    * [ this.min, this.max ] at most. When this.kinds is large, this parameter could lower the kinds to reduce test
    * cases quantity. If null or undefined, only one value (between [ this.min, this.max ] randomly) will be generated.
    *
-   *
-   * @return {object}
-   *   Return an object { valueInput, valueOutput }. The valueInput is a floating-point value. The valueOutput is an integer value.
-   * When call this.adjust( valueInput ) will return valueOutput.
+   * @yield {object}
+   *   Yield the io_pair object.
    *
    * @override
    */
-  * valueInputOutputGenerator( offsetMultiplier = Int.defaultOffsetMultiplier, valueOutMinMax ) {
+  * valueInputOutputGenerator( io_pair, offsetMultiplier = Int.defaultOffsetMultiplier, valueOutMinMax ) {
 
     // An integer which has the same remainder as offsetMultiplier when divided by this.kinds.
     let baseIntCongruence = Math.trunc( offsetMultiplier ) * this.kinds;
@@ -164,8 +178,8 @@ class Int extends Same {
       }
     } else {
       let index = RandTools.getRandomIntInclusive( 0, ( this.kinds - 1 ) );
-      let valueInputOutput = this.get_valueInputOutput_byIndex( baseIntCongruence, index );
-      yield valueInputOutput;
+      this.get_valueInputOutput_byIndex( io_pair, baseIntCongruence, index );
+      yield io_pair;
     }
   }
 
@@ -189,6 +203,11 @@ class Bool extends Int {
   }
 
   /**
+   * @param {object} io_pair
+   *   An object which will be filled with two number properties: { valueInput, valueOutput }. It is also the object to be returned
+   * by this method.  The valueInput is a floating-point value. The valueOutput is a boolean value. If calling this.adjust( valueInput ),
+   * the valueOutput will be returned.
+   *
    * @param {number} baseIntCongruence
    *   An integer which is divisible by this.kinds. This will be used to offset the index value to generate valueInput.
    *
@@ -196,19 +215,23 @@ class Bool extends Int {
    *   An integer between [ 0, this.kinds ).
    *
    * @return {object}
-   *   Return an object { valueInput, valueOutput }. The valueInput is a floating-point value. The valueOutput is a boolean value.
-   * When call this.adjust( valueInput ) will return valueOutput.
+   *   Return the io_pair.
    *
    * @override
    */
-  get_valueInputOutput_byIndex( baseIntCongruence, index ) {
-    let valueInputOutput = super.get_valueInputOutput_byIndex( baseIntCongruence, index );
-    valueInputOutput.valueOutput = ( valueInputOutput.valueOutput != 0 ); // Convert into boolean.
-    return valueInputOutput;
+  get_valueInputOutput_byIndex( io_pair, baseIntCongruence, index ) {
+    super.get_valueInputOutput_byIndex( io_pair, baseIntCongruence, index );
+    io_pair.valueOutput = ( io_pair.valueOutput != 0 ); // Convert into boolean.
+    return io_pair;
   }
 
   /**
    * For ValueRange.Bool, two two-value pairs will be generated in sequence.
+   *
+   * @param {object} io_pair
+   *   An object which will be filled with two number properties: { valueInput, valueOutput }. It is also the object to be yielded
+   * every time. The valueInput is a boolean value which could be adjusted to valueOutput by this.adjust(). The valueOutput
+   * is an integer value.
    *
    * @param {number} offsetMultiplier
    *   An integer multiplier. The ( offsetMultiplier * this.kinds ) will be used as the first test value. The default value
@@ -219,14 +242,13 @@ class Bool extends Int {
    * at most. When this.kinds is large, this parameter could lower the kinds to reduce test cases quantity. If null or undefined,
    * only one value (between [ this.min, this.max ] randomly) will be generated.
    *
-   * @return {object}
-   *   Return an object { valueInput, valueOutput }. The valueInput is a floating-point value. The valueOutput is a boolean value.
-   * When call this.adjust( valueInput ) will return valueOutput.
+   * @yield {object}
+   *   Yield the io_pair object.
    *
    * @override
    */
-  * valueInputOutputGenerator( offsetMultiplier = Bool.defaultOffsetMultiplier, valueOutMinMax ) {
-    yield* super.valueInputOutputGenerator( offsetMultiplier, valueOutMinMax );
+  * valueInputOutputGenerator( io_pair, offsetMultiplier = Bool.defaultOffsetMultiplier, valueOutMinMax ) {
+    yield* super.valueInputOutputGenerator( io_pair, offsetMultiplier, valueOutMinMax );
   }
 
 }
