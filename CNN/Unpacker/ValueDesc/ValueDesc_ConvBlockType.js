@@ -128,8 +128,8 @@ class ConvBlockType extends Int {
  * @member {boolean} bHigherHalfDepthwise2
  *   Whether the higher half channels will be processed by depthwise2. Usually true only if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD.
  *
- * @member {number} channelShuffler_outputGroupCount
- *   The output group count of the pointwise2's channel shuffler when
+ * @member {number} pointwise20_channelShuffler_outputGroupCount
+ *   The output group count of the pointwise20's channel shuffler when
  * ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ). Either 0 or 2.
  * Usually 2 ony if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD or SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY.
  *
@@ -146,7 +146,7 @@ ConvBlockType.Info = class {
    */
   constructor( nConvBlockTypeId, inputTensorCount, outputTensorCount,
     bDepthwise2Requested, bConcat1Requested, bAddInputToOutputRequested, bConcat2ShuffleSplitRequested,
-    bHigherHalfDifferent, bHigherHalfDepthwise2, channelShuffler_outputGroupCount,
+    bHigherHalfDifferent, bHigherHalfDepthwise2, pointwise20_channelShuffler_outputGroupCount,
     bPointwise21
   ) {
     this.nConvBlockTypeId = nConvBlockTypeId;
@@ -160,7 +160,7 @@ ConvBlockType.Info = class {
 
     this.bHigherHalfDifferent = bHigherHalfDifferent;
     this.bHigherHalfDepthwise2 = bHigherHalfDepthwise2;
-    this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
+    this.pointwise20_channelShuffler_outputGroupCount = pointwise20_channelShuffler_outputGroupCount;
 
     this.bPointwise21 = bPointwise21;
   }
