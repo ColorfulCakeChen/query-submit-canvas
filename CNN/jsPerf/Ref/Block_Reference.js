@@ -959,8 +959,18 @@ class Base {
 
       let pointwise21ChannelCount = pointwise20ChannelCount;
 
+      let pointwise21_input;
+      switch ( testParams.out.nConvBlockTypeId ) {
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD: // (2)
+          pointwise21_input = imageIn1; break;
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1: // (8)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD: // (9)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY: // (10)
+          pointwise21_input = concat1Result; break;
+      }
+
       pointwise21Result = imageOutArray[ 1 ]
-        = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
+        = testParams.use_pointwise21( pointwise21_input, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
 
       // Residual Connection.
       //
