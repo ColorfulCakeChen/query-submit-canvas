@@ -55,6 +55,7 @@ import { Params } from "./Stage_Params.js";
  * MobileNetV2_Xxx use the following (which is MobileNetV2's original design):
  *   - pointwise1: bias, activation.
  *   - depthwise:  bias, activation.
+ *   - squeeze-and-excitation.
  *   - pointwise2: bias, NO activation.
  *
  * All non-MobileNetV2_Xxx ConvStageType use the following (which is ShuffleNetV2's original design):
@@ -71,6 +72,8 @@ import { Params } from "./Stage_Params.js";
  *       - In ShuffleNetV2's original design, pointwise2 always has bias and activation. We adjust it according to
  *           stageParams.bPointwise2ActivatedAtStageEnd for ShuffleNetV2_ByMobileNetV1 to undo activation escaping
  *           scales.
+ *
+ *   - squeeze-and-excitation.
  *
  *
  * 3.1 MobileNetV2_Xxx's pointwise2: no activation
