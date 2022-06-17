@@ -90,6 +90,10 @@ class Base {
     this.modifyParamValueHistory = [];
 
     this.SequenceRandom_NumberArray_Bag = new SequenceRandom_NumberArray.Bag(); // For reducing same weights array re-generating.
+    
+    // For reducing array and object re-generating in .modifyParamValue()
+    this.modifyParamValue_singleMinMax = new Array( 2 );
+    this.modifyParamValue_valuePair = {};
   }
 
   /**
@@ -160,33 +164,41 @@ class Base {
 
     let outValue_new = valueRange.adjust( outValue_specified ); // Confirm the new value is legal.
 
+    // Modify output value.
     this.out[ paramName ] = outValue_new;
 
+    // Modify input value.
     let inValue_original, inValue_new;
+    {
+      // Only generate one new value.
+      this.modifyParamValue_singleMinMax[ 0 ] = outValue_new;
+      this.modifyParamValue_singleMinMax[ 1 ] = outValue_new;
 
-    let singleMinMax = [ outValue_new, outValue_new ]; // Only generate one new value.
-    for ( let pair of valueRange.valueInputOutputGenerator( undefined, singleMinMax ) ) {
+      let valueInputOutputGenerator = valueRange.valueInputOutputGenerator(
+        this.modifyParamValue_valuePair, undefined, this.modifyParamValue_singleMinMax );
 
-      inValue_new = pair.valueInput;
+      for ( let pair of valueInputOutputGenerator ) {
+        inValue_new = pair.valueInput;
 
-      if ( this.in[ paramName ] != undefined ) {
-        inValue_original = this.in[ paramName ];
-        this.in[ paramName ] = inValue_new;
-      }
+        if ( this.in[ paramName ] != undefined ) {
+          inValue_original = this.in[ paramName ];
+          this.in[ paramName ] = inValue_new;
+        }
 
-      if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) { // Note: If the element exists, it must be an array.
-
-//!!! (2022/05/24 Remarked) Now is number (not number array)
-//         inValue_original = this.in.paramsNumberArrayObject[ paramName ][ 0 ];
-//         this.in.paramsNumberArrayObject[ paramName ][ 0 ] = inValue_new; // The value is always at the element 0.
-
-        inValue_original = this.in.paramsNumberArrayObject[ paramName ]; // (should be a number (not number array)).
-        this.in.paramsNumberArrayObject[ paramName ] = inValue_new;
+        if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) {
+          inValue_original = this.in.paramsNumberArrayObject[ paramName ]; // (should be a number (can not be a number array)).
+          this.in.paramsNumberArrayObject[ paramName ] = inValue_new;
+        }
       }
     }
 
-    let changeRecord = new ParamValueChangeRecord( paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified );
-    this.modifyParamValueHistory.push( changeRecord );
+    // Record modification (for restoring in the future).
+    {
+      let changeRecord = new ParamValueChangeRecord(
+        paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified );
+
+      this.modifyParamValueHistory.push( changeRecord );
+    }
   }
 
   /**
@@ -204,12 +216,8 @@ class Base {
         this.in[ paramName ] = changeRecord.inValue_original;
       }
 
-      if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) { // Note: If the element exists, it must be an array.
-
-//!!! (2022/05/24 Remarked) Now is number (not number array)
-//      this.in.paramsNumberArrayObject[ paramName ][ 0 ] = changeRecord.inValue_original; // The value is always at the element 0.
-
-        this.in.paramsNumberArrayObject[ paramName ] = changeRecord.inValue_original; // (should be a number (not number array)).
+      if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) {
+        this.in.paramsNumberArrayObject[ paramName ] = changeRecord.inValue_original; // (should be a number (can not be a number array)).
       }
     }
     
