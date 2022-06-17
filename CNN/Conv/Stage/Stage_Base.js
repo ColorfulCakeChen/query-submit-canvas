@@ -108,7 +108,7 @@ import { Params } from "./Stage_Params.js";
  *
  * Although this design is mainly for solving ShuffleNetV2_ByMobileNetV1's issue, it does have practical advantage in fact. The
  * output could have any value (i.e. the whole number line). If the last operation (i.e. pointwise2) always has activation function,
- * the output value will always be restricted by the activation function (e.g. [ -1, +1 ] for tanh()).
+ * the output value will always be restricted by the activation function (e.g. [ -1, +1 ] if tanh()).
  *
  *
 
