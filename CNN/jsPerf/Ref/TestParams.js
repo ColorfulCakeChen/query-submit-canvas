@@ -312,7 +312,7 @@ class Base {
       if ( !this.config.paramValuePairArray ) {
         this.config.paramValuePairArray = new Array( this.config.paramDescConfigArray.length );
         for ( let i = 0; i < this.config.paramValuePairArray.length; ++i ) {
-          this.config.paramValuePairArray[ currentParamDescConfigIndex ] = {};
+          this.config.paramValuePairArray[ i ] = {};
         }
       }
       valuePair = this.config.paramValuePairArray[ currentParamDescConfigIndex ];
