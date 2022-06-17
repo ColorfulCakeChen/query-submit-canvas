@@ -216,6 +216,9 @@ Params.depthwiseFilterHeight =          new ParamDesc.Int(                "depth
 Params.depthwiseFilterWidth =           new ParamDesc.Int(                "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
 Params.nActivationId =                  new ParamDesc.ActivationFunction( "nActivationId" );
 Params.bPointwise2ActivatedAtStageEnd = new ParamDesc.Bool(               "bPointwise2ActivatedAtStageEnd" );
+
+//!!! ...unfinished... (2022/06/17) should be renamed to nConvStageTypeId and nConvStageTypeName
+
 Params.nConvStageType =                 new ParamDesc.ConvStageType(      "nConvStageType" );
 Params.bKeepInputTensor =               new ParamDesc.Bool(               "bKeepInputTensor" );
 
