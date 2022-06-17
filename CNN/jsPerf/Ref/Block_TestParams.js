@@ -1114,14 +1114,15 @@ class Base extends TestParams.Base {
           depthwise2_inputChannelCount = paramsAll.input0_channelCount; // Use input0.
 
 //!!! (2022/06/17 Remarked) should be the same as input0
-//        // Use pointwise1.outputChannelCount as input1_channelCount so that it has the same structure of depthwise1 and pointwise20.
-//        //
+        // Use pointwise1.outputChannelCount as input1_channelCount so that it has the same structure of depthwise1 and pointwise20.
+        //
         } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
 
 //!!! (2022/06/17 Remarked) should be the same as input0
-//          depthwise2_inputChannelCount = pointwise1_resultOutputChannelCount;
+          depthwise2_inputChannelCount = pointwise1_resultOutputChannelCount;
 
-          depthwise2_inputChannelCount = input0_channelCount_original;
+//!!! (2022/06/17 Added and Remarked)
+//          depthwise2_inputChannelCount = input0_channelCount_original;
         }
 
         // Only if depthwise operation is requested and necessary, create them.
