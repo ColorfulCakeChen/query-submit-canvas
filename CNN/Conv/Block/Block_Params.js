@@ -216,8 +216,8 @@ class Params extends Weights.Params {
 // If there is squeeze-and-excitation prefix pointwise2, the depthwise should be viewed as non-linear (even if depthwise activation
 // does not exist). In this case, depthwise's bias should be existed too.
 //
-// So bDepthwiseBias could be deprecated and inferenced from ( depthwiseActivationId and bSqueezeExcitationPrefix ).
-//
+// So bDepthwiseBias could be deprecated and inferenced from ( depthwiseActivationId and bSqueezeExcitationPrefix
+// and nSqueezeExcitationChannelCountDivisor).
 //
 
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
