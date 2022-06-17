@@ -960,6 +960,9 @@ class Base {
         if ( pointwise21Result.depth == testParams.out.input0_channelCount ) // add-input-to-output is possible if same channel count.
           pointwise21Result = imageOutArray[ 1 ]
             = pointwise21Result.clone_byAdd( imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
+
+    } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY_or_TAIL() ) { // (3 or 4)
+      imageOutArray[ 1 ] = imageIn1;
     }
 
     // 5. Concat2 (along image depth), shuffle, split.
@@ -1193,8 +1196,6 @@ class Base {
       + `pointwise20ActivationName=`
         + `${Block.Params.pointwise20ActivationId.getStringOfValue( testParams.out.pointwise20ActivationId )}`
         + `(${testParams.out.pointwise20ActivationId}), `
-
-      + `bOutput1Requested=${testParams.out.bOutput1Requested}, `
 
       + `bAddInputToOutputRequested=${inferencedParams.bAddInputToOutputRequested}, `
       + `bConcat2ShuffleSplitRequested=${inferencedParams.bConcat2ShuffleSplitRequested}, `
