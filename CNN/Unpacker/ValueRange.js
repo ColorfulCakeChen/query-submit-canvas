@@ -173,8 +173,8 @@ class Int extends Same {
       let indexUpper = valueOutMax - this.min;
 
       for ( let i = indexLower; i <= indexUpper; ++i ) {
-        let valueInputOutput = this.get_valueInputOutput_byIndex( baseIntCongruence, i );
-        yield valueInputOutput;
+        this.get_valueInputOutput_byIndex( io_pair, baseIntCongruence, i );
+        yield io_pair;
       }
     } else {
       let index = RandTools.getRandomIntInclusive( 0, ( this.kinds - 1 ) );
