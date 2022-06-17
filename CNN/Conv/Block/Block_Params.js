@@ -178,7 +178,7 @@ class Params extends Weights.Params {
 //   - if has pointwise1ActivationId, also has bPointwise1Bias automatically.
 //
 // Or, deprecate bPointwise1Bias and pointwise1ActivationId to reduce quantity of parameters and test cases.
-// Let pointwise1ActivationId is the same as pointwise20ActivationId. (!!! WRONG. because pointwise2 need consider the next block.)
+// Let pointwise1ActivationId is the same as depthwiseActivationId or pointwise20ActivationId. (Choose the non-null one among them.)
 //   - if no pointwise1ActivationId, also no bPointwise1Bias automatically.
 //   - if has pointwise1ActivationId, also has bPointwise1Bias automatically.
 //
