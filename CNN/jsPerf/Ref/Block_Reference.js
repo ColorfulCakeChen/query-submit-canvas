@@ -268,6 +268,7 @@ class Base {
     // For reducing memory allocation.
     this.testCorrectnessInfo = new TestCorrectnessInfo();
     this.imageOutReferenceArray = new Array( 2 );
+    this.imageInArray_Fake = new Array( 2 );
     this.asserter_Equal = new TensorTools.Asserter_Equal( 0.4, 0.001 );
     this.arrayTemp_forInterleave_asGrouptTwo = []; // Used by calcConcatShuffleSplit().
   }
@@ -771,11 +772,11 @@ class Base {
     //
     } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
 
-      let imageInArray_Fake = NumberImage.Base.calcSplitAlongAxisId2(
-        imageInArray[ 0 ], "Split_imageIn_to_imageInArray_0_1", this.paramsOutDescription );
+      NumberImage.Base.calcSplitAlongAxisId2(
+        imageInArray[ 0 ], this.imageInArray_Fake, "Split_imageIn_to_imageInArray_0_1", this.paramsOutDescription );
 
-      imageIn0 = imageInArray_Fake[ 0 ];
-      imageIn1 = imageInArray_Fake[ 1 ];
+      imageIn0 = this.imageInArray_Fake[ 0 ];
+      imageIn1 = this.imageInArray_Fake[ 1 ];
 
       if ( pointwise1ChannelCount <= 0 ) {
         // When no pointwise1, just keep it all-pass-through.
