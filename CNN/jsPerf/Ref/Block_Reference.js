@@ -802,7 +802,11 @@ class Base {
 
       if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn0_beforePointwise1, // copy input0 (not input1).
-          pointwise1ChannelCount, // So that it could be processed by depthwise2 and pointwise21 (with same structure of depthwise1 and pointwise20).
+
+//!!! (2022/06/17 Remarked)
+//          pointwise1ChannelCount, // So that it could be processed by depthwise2 and pointwise21 (with same structure of depthwise1 and pointwise20).
+          imageIn0_beforePointwise1.depth,
+
           "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", this.paramsOutDescription );
 
       } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
