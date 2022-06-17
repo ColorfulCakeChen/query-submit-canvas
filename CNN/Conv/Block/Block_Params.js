@@ -369,17 +369,23 @@ class Params extends Weights.Params {
 
     // 2.2
     if ( this.bDepthwiseRequestedAndNeeded ) { // When depthwise operation is necessary, infer its information.
-      if ( !this.depthwisePadInfo ) {
-        this.depthwisePadInfo = new Depthwise.PadInfoCalculatorRoot(
-          input0_height, input0_width, input0_channelCount, 
-          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
-      } else { // Re-using (instead of re-creating) may improve runtime speed.
+      if ( this.depthwisePadInfo ) { // Re-using (instead of re-creating) may improve runtime speed.
         this.depthwisePadInfo.set(
           input0_height, input0_width, input0_channelCount, 
           depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+      } else {
+        this.depthwisePadInfo = new Depthwise.PadInfoCalculatorRoot(
+          input0_height, input0_width, input0_channelCount, 
+          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+      }
+    } else {
+      if ( this.depthwisePadInfo ) { // Clear it.
+        this.depthwisePadInfo.set( 1, 1, 1, 0, 1, 1, 0 );
+      } else {
+        // Do nothing.
       }
     }
-
+  
     // 3. input1 ( height, width, channelCount )
 
     if ( this.inputTensorCount <= 1 ) { // 3.1 No input1 (i.e. one input; only input0).
