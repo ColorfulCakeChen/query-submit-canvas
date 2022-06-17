@@ -6,7 +6,7 @@ import * as ValueRange from "../Unpacker/ValueRange.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 //import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
-//import * as TensorTools from "../util/TensorTools.js";
+import * as RandTools from "../util/RandTools.js";
 import * as BatchIdCalculator from "./BatchIdCalculator.js";
 import * as Block from "../Conv/Block.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
@@ -533,7 +533,19 @@ class HeightWidthDepth {
       let paramDesc = Block.Params.pointwise20ChannelCount;
 
       for ( let offsetMultiplier = -10; offsetMultiplier <= +10; ++offsetMultiplier ) {
-        for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( valuePair, offsetMultiplier ) ) {
+        
+        let valueOutMinMax;
+        {
+          let dice = Math.random();
+          if ( dice < 0.5 ) {
+            valueOutMinMax = [
+              RandTools.getRandomIntInclusive( paramDesc.valueDesc.range.min, paramDesc.valueDesc.range.max ),
+              RandTools.getRandomIntInclusive( paramDesc.valueDesc.range.min, paramDesc.valueDesc.range.max ),
+            ];
+          }
+        }
+
+        for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( valuePair, offsetMultiplier, valueOutMinMax ) ) {
           let adjustedInput = paramDesc.valueDesc.range.adjust( pair.valueInput )
 
           tf.util.assert( adjustedInput == pair.valueOutput,
@@ -541,6 +553,7 @@ class HeightWidthDepth {
               + `this.adjust( ${pair.valueInput} ) return ( ${adjustedInput} ) should be ( ${pair.valueOutput} ).` );
         }
       }
+
     }
   }
 
