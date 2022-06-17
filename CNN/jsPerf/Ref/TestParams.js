@@ -314,8 +314,9 @@ class Base {
       }
 
       valuePair = this.config.paramValuePairArray[ currentParamDescConfigIndex ];
-      if ( !valuePair )
-        valuePair = {};
+      if ( !valuePair ) {
+        valuePair = this.config.paramValuePairArray[ currentParamDescConfigIndex ] = {};
+      }
     }
 
     let nextParamDescConfigIndex = currentParamDescConfigIndex + 1;
