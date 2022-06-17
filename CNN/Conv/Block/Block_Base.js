@@ -212,8 +212,8 @@ import { Params } from "./Block_Params.js";
  *   Only if ( bHigherHalfDifferent == true ), this is meaningful. If true, the depthwise1 will use higher half channels to achieve
  * the depthwise2. If false, the depthwise1's higher half channels just pass through the input to output.
  *
- * @member {number} channelShuffler_outputGroupCount
- *   The output group count of the pointwise2's channel shuffler when
+ * @member {number} pointwise20_channelShuffler_outputGroupCount
+ *   The output group count of the pointwise20's channel shuffler when
  * ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ). Either 0 or 2.
  * Usually 2 ony if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD or SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY.
  *
@@ -438,7 +438,7 @@ class Base {
       this.bConcat2ShuffleSplitRequested = params.bConcat2ShuffleSplitRequested;
       this.bHigherHalfDifferent = params.bHigherHalfDifferent;
       this.bHigherHalfDepthwise2 = params.bHigherHalfDepthwise2;
-      this.channelShuffler_outputGroupCount = params.channelShuffler_outputGroupCount;
+      this.pointwise20_channelShuffler_outputGroupCount = params.pointwise20_channelShuffler_outputGroupCount;
 
       this.pointwise21ChannelCount = params.pointwise21ChannelCount;
       this.bPointwise21Bias = params.bPointwise21Bias;
@@ -703,7 +703,7 @@ class Base {
     // Assume not higher-half-different.
     let nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
     let outputChannelCount_lowerHalf_pointwise2 = undefined;
-    let channelShuffler_outputGroupCount_pointwise2 = this.channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
+    let pointwise20_channelShuffler_outputGroupCount = this.pointwise20_channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
 
     if ( this.bHigherHalfDifferent == true ) {
 
@@ -757,7 +757,7 @@ class Base {
       let pointwise20 = new Operation.Pointwise_SameWhenPassThrough(
         this.operationArray.endingInput0,
         this.pointwise20ChannelCount, this.bPointwise20Bias, this.pointwise20ActivationId,
-        nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2, channelShuffler_outputGroupCount_pointwise2
+        nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2, pointwise20_channelShuffler_outputGroupCount
       );
 
       if ( !pointwise20.init( params.defaultInput, this.byteOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
@@ -779,7 +779,7 @@ class Base {
         pointwise21 = new Operation.Pointwise_SameWhenPassThrough(
           pointwise21_input0,
           this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
-          nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2, channelShuffler_outputGroupCount_pointwise2
+          nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2, pointwise20_channelShuffler_outputGroupCount
         );
 
         // Note: Strictly speaking, sometimes pointwise21 is dependent on depthwise2. But it does not matter for BoundsArraySet
