@@ -511,13 +511,14 @@ class HeightWidthDepth {
   }
 
   test_ValueRange_valueInputOutputGenerator() {
+    let valuePair = {};
 
     // Test ValueRange.Bool().valueInputOutputGenerator().
     {
       let paramDesc = Block.Params.bPointwise1Bias;
 
       for ( let offsetMultiplier = -100; offsetMultiplier <= +100; ++offsetMultiplier ) {
-        for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( offsetMultiplier ) ) {
+        for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( valuePair, offsetMultiplier ) ) {
           let adjustedInput = paramDesc.valueDesc.range.adjust( pair.valueInput )
 
           tf.util.assert( adjustedInput == pair.valueOutput,
@@ -532,7 +533,7 @@ class HeightWidthDepth {
       let paramDesc = Block.Params.pointwise20ChannelCount;
 
       for ( let offsetMultiplier = -10; offsetMultiplier <= +10; ++offsetMultiplier ) {
-        for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( offsetMultiplier ) ) {
+        for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( valuePair, offsetMultiplier ) ) {
           let adjustedInput = paramDesc.valueDesc.range.adjust( pair.valueInput )
 
           tf.util.assert( adjustedInput == pair.valueOutput,
