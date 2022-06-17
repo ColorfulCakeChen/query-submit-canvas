@@ -768,7 +768,10 @@ class Base {
       let pointwise21;
       if ( this.pointwise21ChannelCount > 0 ) {
         pointwise21 = new Operation.Pointwise_SameWhenPassThrough(
+
+//!!! ...unfinished... (2022/06/17) Really?
           this.operationArray.endingInput0, // Note: the same as pointwise20's input (i.e. not .endingInput1).
+
           this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
           nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2, channelShuffler_outputGroupCount_pointwise2
         );
