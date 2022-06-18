@@ -565,6 +565,7 @@ class Base {
 
     let bPointwise1Bias_shouldBe = testParams.out.inferencedParams.bPointwise1Bias;
     let pointwise1ActivationId_shouldBe = testParams.out.inferencedParams.pointwise1ActivationId;
+    let pointwise1ActivationName_shouldBe = testParams.out.inferencedParams.pointwise1ActivationName;
 
     // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
     //
@@ -598,9 +599,7 @@ class Base {
 
     asserter.propertyValue( "bPointwise1Bias", bPointwise1Bias_shouldBe );
     asserter.propertyValue( "pointwise1ActivationId", pointwise1ActivationId_shouldBe );
-
-    let pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( testParams.out.pointwise1ActivationId );
-    asserter.propertyValue( "pointwise1ActivationName", pointwise1ActivationName );
+    asserter.propertyValue( "pointwise1ActivationName", pointwise1ActivationName_shouldBe );
 
     // depthwise parameters.
     asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", testParams.out.depthwise_AvgMax_Or_ChannelMultiplier );
@@ -610,7 +609,7 @@ class Base {
     asserter.propertyValue( "bDepthwiseBias", testParams.out.bDepthwiseBias );
     asserter.propertyValue( "depthwiseActivationId", testParams.out.depthwiseActivationId );
 
-    let depthwiseActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( testParams.out.depthwiseActivationId );
+    let depthwiseActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.depthwiseActivationId );
     asserter.propertyValue( "depthwiseActivationName", depthwiseActivationName );
 
     // squeeze-and-excitation parameters.
@@ -623,7 +622,7 @@ class Base {
     asserter.propertyValue( "bPointwise20Bias", testParams.out.bPointwise20Bias );
     asserter.propertyValue( "pointwise20ActivationId", testParams.out.pointwise20ActivationId );
 
-    let pointwise20ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( testParams.out.pointwise20ActivationId );
+    let pointwise20ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.pointwise20ActivationId );
     asserter.propertyValue( "pointwise20ActivationName", pointwise20ActivationName );
 
     // pointwise21 parameters.
