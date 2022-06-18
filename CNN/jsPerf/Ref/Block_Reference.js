@@ -472,7 +472,7 @@ class Base {
     let extractedParams = new Block.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
       testParams.in.input0_height, testParams.in.input0_width, testParams.in.input0_channelCount,
       testParams.in.nConvBlockTypeId,
-      testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
+      testParams.in.pointwise1ChannelCount,
       testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
       testParams.in.depthwiseStridesPad, testParams.in.bDepthwiseBias, testParams.in.depthwiseActivationId,
       testParams.in.nSqueezeExcitationChannelCountDivisor, testParams.in.bSqueezeExcitationPrefix,
@@ -562,8 +562,9 @@ class Base {
     }
 
     // pointwise1 parameters.
-    let bPointwise1Bias_shouldBe = testParams.out.bPointwise1Bias;
-    let pointwise1ActivationId_shouldBe = testParams.out.pointwise1ActivationId;
+
+    let bPointwise1Bias_shouldBe = testParams.out.inferencedParams.bPointwise1Bias;
+    let pointwise1ActivationId_shouldBe = testParams.out.inferencedParams.pointwise1ActivationId;
 
     // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
     //
@@ -1190,10 +1191,11 @@ class Base {
       + `bHigherHalfDifferent=${inferencedParams.bHigherHalfDifferent}, `
       + `bHigherHalfDepthwise2=${inferencedParams.bHigherHalfDepthwise2}, `
 
-      + `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `
+      + `pointwise1ChannelCount=${testParams.out.inferencedParams.pointwise1ChannelCount}, `
+      + `bPointwise1Bias=${testParams.out.inferencedParams.bPointwise1Bias}, `
       + `pointwise1ActivationName=`
         + `${Block.Params.pointwise1ActivationId.getStringOfValue( testParams.out.pointwise1ActivationId )}`
-        + `(${testParams.out.pointwise1ActivationId}), `
+        + `(${testParams.out.inferencedParams.pointwise1ActivationId}), `
 
       + `bDepthwiseRequestedAndNeeded=${inferencedParams.bDepthwiseRequestedAndNeeded}, `
       + `bDepthwise2Requested=${inferencedParams.bDepthwise2Requested}, `
