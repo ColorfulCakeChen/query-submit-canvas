@@ -209,19 +209,10 @@ class Params extends Weights.Params {
   constructor( inputFloat32Array, byteOffsetBegin,
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
+    pointwise1ChannelCount,
 
-//!!! ...unfinished... (2022/06/16)
-// Perhaps, deprecate bPointwise1Bias to reduce quantity of parameters and test cases.
-//   - if no pointwise1ActivationId (and no depthwise or depthwise pad=valid ??? squeeze excitation?), also no bPointwise1Bias automatically.
-//   - if has pointwise1ActivationId, also has bPointwise1Bias automatically.
-//
-// Or, deprecate bPointwise1Bias and pointwise1ActivationId to reduce quantity of parameters and test cases.
-// Let pointwise1ActivationId is the same as depthwiseActivationId or pointwise20ActivationId. (Choose the non-null one among them.)
-//   - if no pointwise1ActivationId, also no bPointwise1Bias automatically.
-//   - if has pointwise1ActivationId, also has bPointwise1Bias automatically.
-//
-
-    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+//!!! (2022/06/18 Remarked) pointwise1 always bias and activation. Deprecate them to reduce quantity of test cases.
+//    bPointwise1Bias, pointwise1ActivationId,
 
 
 //!!! ...unfinished... (2022/06/17)
