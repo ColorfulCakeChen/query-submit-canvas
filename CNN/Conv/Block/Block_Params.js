@@ -226,7 +226,13 @@ class Params extends Weights.Params {
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+
+
+//!!! ...unfinished... (2022/06/18)
+// Perhaps, deprecate bPointwise20Bias since all blocks' outputs needs bias (even if MobileNetV2_Xxx).
+
     pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
+
     bKeepInputTensor
   ) {
 
