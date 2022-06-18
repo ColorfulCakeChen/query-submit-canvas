@@ -509,7 +509,7 @@ class HeightWidthDepth {
 
     // Test ValueRange.Bool().valueInputOutputGenerator().
     {
-      let paramDesc = Block.Params.bPointwise1Bias;
+      let paramDesc = Block.Params.bPointwise20Bias;
 
       for ( let offsetMultiplier = -100; offsetMultiplier <= +100; ++offsetMultiplier ) {
         for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( valuePair, offsetMultiplier ) ) {
