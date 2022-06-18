@@ -185,7 +185,7 @@ class HeightWidthDepth {
 
     // input0_height, input0_width, input0_channelCount,
     // nConvBlockTypeId,
-    // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+    // pointwise1ChannelCount
     // depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     // bDepthwiseBias, depthwiseActivationId,
     // nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -209,7 +209,7 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].height, this.testPerformance_NumberImageArray[ 0 ].width,
       this.testPerformance_NumberImageArray[ 0 ].depth,
       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
-          8,  true, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+          8,
           1,     3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
           4,  true, Block.Params.pointwise20ActivationId.valueDesc.Ids.COS,
@@ -222,7 +222,7 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].height, this.testPerformance_NumberImageArray[ 0 ].width,
       this.testPerformance_NumberImageArray[ 0 ].depth,
       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
-          8,  true, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+          8,
         Block.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,
                  3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
@@ -236,7 +236,7 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].height, this.testPerformance_NumberImageArray[ 0 ].width,
       this.testPerformance_NumberImageArray[ 0 ].depth,
       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
-          8,  true, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+          8,
         Block.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,
                  3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
@@ -250,7 +250,7 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].height, this.testPerformance_NumberImageArray[ 0 ].width,
       this.testPerformance_NumberImageArray[ 0 ].depth,
       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
-          8,  true, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+          8,
           2,     3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
           4,  true, Block.Params.pointwise20ActivationId.valueDesc.Ids.COS,
@@ -258,12 +258,12 @@ class HeightWidthDepth {
     );
 
     // Test Case: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS), AddInputToOutput)
-    let testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS_AddInputToOutput =
+    let testCase_pointwise1_4to8_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS_AddInputToOutput =
     new Block_TestParams.Base().set_byParamsScattered(
       this.testPerformance_NumberImageArray[ 0 ].height, this.testPerformance_NumberImageArray[ 0 ].width,
       this.testPerformance_NumberImageArray[ 0 ].depth,
       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
-          8, false, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+          8,
           2,     3, 3, 1, false, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
           4, false, Block.Params.pointwise20ActivationId.valueDesc.Ids.COS,
@@ -271,12 +271,12 @@ class HeightWidthDepth {
     );
 
     // Test Case: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS))
-    let testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS =
+    let testCase_pointwise1_4to8_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS =
     new Block_TestParams.Base().set_byParamsScattered(
       this.testPerformance_NumberImageArray[ 0 ].height, this.testPerformance_NumberImageArray[ 0 ].width,
       this.testPerformance_NumberImageArray[ 0 ].depth,
       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
-          8, false, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+          8,
           2,     3, 3, 1, false, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
           4, false, Block.Params.pointwise20ActivationId.valueDesc.Ids.COS,
@@ -289,7 +289,7 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].height, this.testPerformance_NumberImageArray[ 0 ].width,
       this.testPerformance_NumberImageArray[ 0 ].depth,
       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
-          0,  true, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+          0,
          32,     3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
         128,  true, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
@@ -302,7 +302,7 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].height, this.testPerformance_NumberImageArray[ 0 ].width,
       this.testPerformance_NumberImageArray[ 0 ].depth,
       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
-        128,  true, Block.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+        128,
           0,     3, 3, 1,  true, Block.Params.depthwiseActivationId.valueDesc.Ids.COS,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
         128,  true, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
@@ -349,14 +349,14 @@ class HeightWidthDepth {
 
       this.block_DConv_2_COS_AddInputToOutput
         = Block_Reference.Base.block_create(
-            testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS_AddInputToOutput,
+            testCase_pointwise1_4to8_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS_AddInputToOutput,
             inputScaleBoundsArray0, inputScaleBoundsArray1,
             null, //channelShuffler_ConcatPointwiseConv,
             arrayTemp_forInterleave_asGrouptTwo ),
 
       this.block_DConv_2_COS
         = Block_Reference.Base.block_create(
-            testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS,
+            testCase_pointwise1_4to8_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS,
             inputScaleBoundsArray0, inputScaleBoundsArray1,
             null, //channelShuffler_ConcatPointwiseConv,
             arrayTemp_forInterleave_asGrouptTwo ),
@@ -394,7 +394,6 @@ class HeightWidthDepth {
     }
   }
 
-//!!! ...unfinished...
   // Test apply by depthwise convolution.
   test_DConv_1_bias_COS_AddInputToOutput() {
     let outputTensor3dArray = [];
