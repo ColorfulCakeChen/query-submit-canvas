@@ -1194,7 +1194,7 @@ class Base {
       + `pointwise1ChannelCount=${testParams.out.inferencedParams.pointwise1ChannelCount}, `
       + `bPointwise1Bias=${testParams.out.inferencedParams.bPointwise1Bias}, `
       + `pointwise1ActivationName=`
-        + `${Block.Params.pointwise1ActivationId.getStringOfValue( testParams.out.pointwise1ActivationId )}`
+        + `${ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.inferencedParams.pointwise1ActivationId )}`
         + `(${testParams.out.inferencedParams.pointwise1ActivationId}), `
 
       + `bDepthwiseRequestedAndNeeded=${inferencedParams.bDepthwiseRequestedAndNeeded}, `
