@@ -69,8 +69,8 @@ class Base extends TestParams.Base {
 
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
-    nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
+    nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     nActivationId,
     bKeepInputTensor
   ) {
@@ -85,8 +85,8 @@ class Base extends TestParams.Base {
 
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       bDepthwiseBias, depthwiseActivationId,
-      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
+      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       nActivationId,
       bKeepInputTensor
     };
@@ -145,8 +145,8 @@ class Base extends TestParams.Base {
       this.out.pointwise1ChannelCount,
       this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
       this.out.depthwiseStridesPad, this.out.bDepthwiseBias, this.out.depthwiseActivationId,
-      this.out.nSqueezeExcitationChannelCountDivisor, this.out.bSqueezeExcitationPrefix,
       this.out.pointwise20ChannelCount, this.out.bPointwise20Bias,
+      this.out.nSqueezeExcitationChannelCountDivisor, this.out.bSqueezeExcitationPrefix,
       this.out.nActivationId
     );
   }
@@ -324,10 +324,10 @@ class Base extends TestParams.Base {
 // //        ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID,  // (3)
 //       ],
 
-//      bSqueezeExcitationPrefix: undefined,
-//      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
-      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min ],
-//      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
+      nConvBlockTypeId: [
+        Block.Params.nConvBlockTypeId.valueDesc.range.min,
+        Block.Params.nConvBlockTypeId.valueDesc.range.max
+      ],
 
       nSqueezeExcitationChannelCountDivisor: [
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
@@ -341,10 +341,10 @@ class Base extends TestParams.Base {
 //         //ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.max
 //       ],
 
-      nConvBlockTypeId: [
-        Block.Params.nConvBlockTypeId.valueDesc.range.min,
-        Block.Params.nConvBlockTypeId.valueDesc.range.max
-      ],
+//      bSqueezeExcitationPrefix: undefined,
+//      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
+      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min ],
+//      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
 
       bKeepInputTensor: undefined,
 //      bKeepInputTensor: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
@@ -1324,11 +1324,11 @@ Base.paramsNameOrderArray = [
   Block.Params.depthwiseStridesPad.paramName,
   Block.Params.bDepthwiseBias.paramName,
   Block.Params.depthwiseActivationId.paramName,
-  Block.Params.nSqueezeExcitationChannelCountDivisor.paramName,
-  Block.Params.bSqueezeExcitationPrefix.paramName,
   Block.Params.pointwise20ChannelCount.paramName,
   Block.Params.bPointwise20Bias.paramName,
   Block.Params.pointwise20ActivationId.paramName,
+  Block.Params.nSqueezeExcitationChannelCountDivisor.paramName,
+  Block.Params.bSqueezeExcitationPrefix.paramName,
   Block.Params.nActivationId.paramName,
 
   Block.Params.bKeepInputTensor.paramName,
