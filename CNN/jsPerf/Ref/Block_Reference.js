@@ -152,73 +152,6 @@ class TestCorrectnessInfo {
         channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
       }
 
-//!!! (2022/06/15 Remarked) input1_channelCount are inferenced now.
-//         {
-//
-//           // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY (3))
-//           // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL (4))
-//           //
-//           if ( input1_channelCount > 0 ) {
-//             concatenatedDepth = ( input1_channelCount * outputGroupCount ); // Always twice as input1's channel count.
-//
-//           // ( input1_channelCount == 0 )
-//           //
-//           // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD (2))
-//           // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5))
-//           // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6))
-//           //
-//           } else {
-//             //
-//             // In these cases:
-//             //   - The input1 does not exist.
-//             //   - Fortunately, the concatenatedDepth of channel shuffler is not so important here.
-//             //     - Only ( imageInHeight, imageInWidth, outputGroupCount ) of channel shuffler will be used.
-//             //     - So a usable (non-zero) value is enough. 
-//             //
-//             concatenatedDepth = ( 1 * outputGroupCount );
-//
-// //!!! ...unfinished... (2021/11/26) What about SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) ?
-//
-//             // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
-//             if ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL ) { // (6)
-//
-//               // Note: pointwise20ChannelCount is always positive (never zero or negative).
-//
-//               // Because Block_TestParams.generate_Filters_Biases() will double pointwise20ChannelCount, it must be an even number
-//               // which could be splitted (into two groups).
-//               concatenatedDepth = pointwise20ChannelCount;
-//             }
-//           }
-//
-//           channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
-//             imageIn1.height, imageIn1.width, concatenatedDepth, outputGroupCount );
-//
-//           tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ] == imageIn1.height,
-//             `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-//               + `ChannelShuffler concatenatedShape[ 0 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ]} ) `
-//               + `should be the same as image height ( ${imageIn1.height} ). ${strNote}`);
-//
-//           tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ] == imageIn1.width,
-//             `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-//               + `ChannelShuffler concatenatedShape[ 1 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ]} ) `
-//               + `should be the same as image width ( ${imageIn1.width} ). ${strNote}`);
-//
-//           tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ] == concatenatedDepth,
-//             `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-//               + `ChannelShuffler concatenatedShape[ 2 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ]} ) `
-//               + `should be the same as image concatenatedDepth ( ${concatenatedDepth} ). ${strNote}`);
-//
-//           tf.util.assert( channelShuffler_ConcatPointwiseConv.outputGroupCount == outputGroupCount,
-//             `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-//               + `ChannelShuffler outputGroupCount ( ${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
-//               + `should be the same as image outputGroupCount ( ${outputGroupCount} ). ${strNote}`);
-//
-//           channelShuffler_concatenatedShape = channelShuffler_ConcatPointwiseConv.concatenatedShape;
-//           channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
-//         }
-//           break;
-//       }
-
     }
 
     outputTensor3dArray.fill( undefined );
@@ -475,8 +408,9 @@ class Base {
       testParams.in.pointwise1ChannelCount,
       testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
       testParams.in.depthwiseStridesPad, testParams.in.bDepthwiseBias, testParams.in.depthwiseActivationId,
-      testParams.in.nSqueezeExcitationChannelCountDivisor, testParams.in.bSqueezeExcitationPrefix,
       testParams.in.pointwise20ChannelCount, testParams.in.bPointwise20Bias, testParams.in.pointwise20ActivationId,
+      testParams.in.nSqueezeExcitationChannelCountDivisor, testParams.in.bSqueezeExcitationPrefix,
+      testParams.in.nActivationId,
       testParams.in.bKeepInputTensor
     );
 
@@ -612,10 +546,6 @@ class Base {
     let depthwiseActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.depthwiseActivationId );
     asserter.propertyValue( "depthwiseActivationName", depthwiseActivationName );
 
-    // squeeze-and-excitation parameters.
-    asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", testParams.out.nSqueezeExcitationChannelCountDivisor );
-    asserter.propertyValue( "bSqueezeExcitationPrefix", testParams.out.bSqueezeExcitationPrefix );
-
     // pointwise20 parameters.
     asserter.propertyValue( "pointwise20ChannelCount", testParams.out.pointwise20ChannelCount );
 
@@ -645,8 +575,18 @@ class Base {
     asserter.propertyValue( "pointwise21ActivationId", testParams.out.pointwise20ActivationId ); // Always same as pointwise20.
     asserter.propertyValue( "pointwise21ActivationName", pointwise20ActivationName ); // Always same as pointwise20.
 
+    // squeeze-and-excitation parameters.
+    asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", testParams.out.nSqueezeExcitationChannelCountDivisor );
+    asserter.propertyValue( "bSqueezeExcitationPrefix", testParams.out.bSqueezeExcitationPrefix );
+
     asserter.propertyValue( "squeezeExcitationActivationId", testParams.out.inferencedParams.squeezeExcitationActivationId );
     asserter.propertyValue( "squeezeExcitationActivationName", testParams.out.inferencedParams.squeezeExcitationActivationName );
+
+    // Default activation
+    asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
+
+    let nActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.nActivationId );
+    asserter.propertyValue( "nActivationName", nActivationName );
 
     // If depthwise does not exist, the output ( height, width ) should be the same as input.
 
@@ -717,22 +657,6 @@ class Base {
 
     // Create description for debug easily.
     this.paramsOutDescription = Base.TestParams_Out_createDescription( testParams );
-
-//!!! (2022/06/15 Remrked) No longer needs channelShuffler.
-//     // The channelShuffler must not null in these cases.
-//     if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() ) // (2)
-//         || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY() ) // (3)
-//         || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_TAIL() ) // (4)
-//         || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
-//         || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL() ) // (6)
-//        ) {
-//       tf.util.assert( channelShuffler != null, `Block_Reference.Base.calcResult(): `
-//         + `channelShuffler must NOT null when `
-//         + `nConvBlockTypeId=`
-//         + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
-//         + `(${testParams.out.nConvBlockTypeId}). `
-//         + `${this.paramsOutDescription}` );
-//     }
 
 
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
@@ -1035,137 +959,6 @@ class Base {
     return imageOutArray;
   }
 
-//!!! (2022/06/15 Remarked) Old Codes. Replace by modify_byInterleave_asGrouptTwo()
-//   /**
-//    *
-//    * @param {number[]} concatenatedShape           The concatenatedShape of channel shuffler.
-//    * @param {number}   outputGroupCount            The outputGroupCount of channel shuffler.
-//    *
-//    * @param {boolean} bSplit
-//    *   If true, the result will be splitted into imageOutArray[ 0 ] and imageOutArray[ 1 ]. If false, the result will be placed in
-//    * imageOutArray[ 0 ] and imageOutArray[ 1 ] will be null.
-//    *
-//    * @param {NumberImage.Base} imageInArray[ 0 ]   The first input image to be processed.
-//    * @param {NumberImage.Base} imageInArray[ 1 ]   The second input image to be processed.
-//    *
-//    * @param {NumberImage.Base} imageOutArray[ 0 ]   The first output image.
-//    * @param {NumberImage.Base} imageOutArray[ 1 ]   The second output image.
-//    *
-//    * @param {string}   concatShuffleSplitName       A string for debug message of this concatenation-shuffle-split.
-//    * @param {string}   parametersDesc               A string for debug message of this point-depth-point.
-//    */
-//   calcConcatShuffleSplit(
-//     concatenatedShape, outputGroupCount, bSplit,
-//     imageInArray, imageOutArray, concatShuffleSplitName, parametersDesc ) {
-//
-//     tf.util.assert( ( imageInArray.length == 2 ),
-//       `${concatShuffleSplitName}: `
-//         + `The length of imageInArray[] ( ${imageInArray.length} ) must be 2. `
-//         + `(${parametersDesc})`
-//     );
-//
-//     // Note: Although different depth is wierd, it might still work. So, allow it.
-//     tf.util.assert(
-//       (   ( imageInArray[ 0 ].height == imageInArray[ 1 ].height )
-//        && ( imageInArray[ 0 ].width ==  imageInArray[ 1 ].width )
-//        //&& ( imageInArray[ 0 ].depth ==  imageInArray[ 1 ].depth )
-//       ),
-//
-//       `${concatShuffleSplitName}: The first input image's shape ( height, width, depth ) = `
-//         + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${imageInArray[ 0 ].depth} ) `
-//         + `should be the same as the second input image's shape `
-//         + `( ${imageInArray[ 1 ].height}, ${imageInArray[ 1 ].width}, ${imageInArray[ 1 ].depth} ). `
-//         + `(${parametersDesc})`
-//     );
-//
-// //!!! ...unfinished... (2022/05/23) Perhaps, re-implement by Interleave_asGrouptTwo.
-//
-//     let channelShuffler_ShuffleInfo;
-//     {
-//       channelShuffler_ShuffleInfo = this.channelShufflerPool.getChannelShuffler_by(
-//         concatenatedShape[ 0 ], concatenatedShape[ 1 ], concatenatedShape[ 2 ], outputGroupCount );
-//
-//       for ( let i = 0; i < 2; ++i ) {
-//         tf.util.assert(
-//           channelShuffler_ShuffleInfo.concatenatedShape[ i ] == concatenatedShape[ i ],
-//           `${concatShuffleSplitName}: `
-//             + `channelShuffler_ShuffleInfo.concatenatedShape[ ${i} ] ( ${channelShuffler_ShuffleInfo.concatenatedShape[ i ]} ) `
-//             + `should be the same as `
-//             + `concatenatedShape[ ${i} ] ( ${concatenatedShape[ i ]} ) `
-//             + `${parametersDesc}`);
-//       }
-//
-//       tf.util.assert(
-//         channelShuffler_ShuffleInfo.outputGroupCount == outputGroupCount,
-//         `${concatShuffleSplitName}: `
-//           + `channelShuffler_ShuffleInfo.outputGroupCount ( ${channelShuffler_ShuffleInfo.outputGroupCount} ) `
-//           + `should be the same as `
-//           + `outputGroupCount ( ${outputGroupCount} ) `
-//           + `${parametersDesc}`);
-//     }
-//
-//     let depthSum = imageInArray[ 0 ].depth + imageInArray[ 1 ].depth;
-//     tf.util.assert( (
-//           ( channelShuffler_ShuffleInfo.concatenatedShape[ 0 ] == imageInArray[ 0 ].height )
-//        && ( channelShuffler_ShuffleInfo.concatenatedShape[ 1 ] == imageInArray[ 0 ].width )
-//        && ( channelShuffler_ShuffleInfo.concatenatedShape[ 2 ] == depthSum ) ),
-//       `${concatShuffleSplitName}: `
-//         + `channelShuffler_ShuffleInfo.concatenatedShape ( ${channelShuffler_ShuffleInfo.concatenatedShape[ 0 ]}, `
-//         + `${channelShuffler_ShuffleInfo.concatenatedShape[ 1 ]}, ${channelShuffler_ShuffleInfo.concatenatedShape[ 2 ]} ) `
-//         + `should be `
-//         + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${depthSum} ) `
-//         + `${parametersDesc}`);
-//
-//     // Convert input images to tensors.
-//     let tensorInArray = new Array( imageInArray.length );
-//     for ( let i = 0; i < imageInArray.length; ++i ) {
-//       let t = tf.tensor( imageInArray[ i ].dataArray, [ imageInArray[ i ].height, imageInArray[ i ].width, imageInArray[ i ].depth ] );
-//       tensorInArray[ i ] = t;
-//     }
-//
-//     let inputScaleBoundsArray0 = imageInArray[ 0 ].boundsArraySet.output0;
-//     let inputScaleBoundsArray1 = imageInArray[ 1 ].boundsArraySet.output0;
-//
-//     if ( bSplit ) {
-//       // Concat-shuffle-split.
-//       // 
-//       // Using different channel shuffler implementation for comparsion correctness.
-//       let tensorOutArray = channelShuffler_ShuffleInfo.concatReshapeTransposeReshapeSplit( tensorInArray );
-//
-//       // Convert output tensors to images.
-//       for ( let i = 0; i < imageOutArray.length; ++i ) {
-//         let t = tensorOutArray[ i ];
-//         let imageHeight = t.shape[ 0 ];
-//         let imageWidth = t.shape[ 1 ];
-//         let imageDepth = t.shape[ 2 ];
-//
-//         let rBoundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1, imageDepth );
-//         imageOutArray[ i ] = new NumberImage.Base( imageHeight, imageWidth, imageDepth, t.dataSync(), rBoundsArraySet );
-//       }
-//
-//       let tScaleBoundsArray = new ActivationEscaping.ScaleBoundsArray( 0 );
-//       {
-//         tScaleBoundsArray.set_all_byScaleBoundsArray_concat_input0_input1( inputScaleBoundsArray0, inputScaleBoundsArray1 ); // Bounds Concat
-//         tScaleBoundsArray.set_all_byInterleave_asGrouptTwo( this.arrayTemp_forInterleave_asGrouptTwo ); // Bounds Shuffle
-//         tScaleBoundsArray.split_to_lowerHalf_higherHalf(
-//           imageOutArray[ 0 ].boundsArraySet.output0, imageOutArray[ 1 ].boundsArraySet.output0 ); // Bounds Split
-//       }
-//
-//     } else {
-//
-//       // Concat-shuffle. (no split)
-//       // 
-//       // Using different channel shuffler implementation for comparsion correctness.
-//       let tensorOut = channelShuffler_ShuffleInfo.concatReshapeTransposeReshape( tensorInArray );
-//
-// //!!! ...unfinished... (2022/06/15)
-//     }
-//
-//     // Release temporary tensors.
-//     tf.dispose( tensorInArray );
-//     tf.dispose( tensorOutArray );
-//   }
-
   /**
    * @param {Block_TestParams.Base} testParams
    *   The test parameters for creating description.
@@ -1215,6 +1008,11 @@ class Base {
 
       + `bConcat1Requested=${inferencedParams.bConcat1Requested}, `
 
+      + `pointwise20ChannelCount=${testParams.out.pointwise20ChannelCount}, bPointwise20Bias=${testParams.out.bPointwise20Bias}, `
+      + `pointwise20ActivationName=`
+        + `${Block.Params.pointwise20ActivationId.getStringOfValue( testParams.out.pointwise20ActivationId )}`
+        + `(${testParams.out.pointwise20ActivationId}), `
+
       + `nSqueezeExcitationChannelCountDivisorName=`
         + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getStringOf( testParams.out.nSqueezeExcitationChannelCountDivisor )}`
         + `(${testParams.out.nSqueezeExcitationChannelCountDivisor}), `
@@ -1222,11 +1020,6 @@ class Base {
       + `squeezeExcitationActivationName=`
         + `${ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.inferencedParams.squeezeExcitationActivationId )}`
         + `(${testParams.out.inferencedParams.squeezeExcitationActivationId}), `
-
-      + `pointwise20ChannelCount=${testParams.out.pointwise20ChannelCount}, bPointwise20Bias=${testParams.out.bPointwise20Bias}, `
-      + `pointwise20ActivationName=`
-        + `${Block.Params.pointwise20ActivationId.getStringOfValue( testParams.out.pointwise20ActivationId )}`
-        + `(${testParams.out.pointwise20ActivationId}), `
 
       + `bAddInputToOutputRequested=${inferencedParams.bAddInputToOutputRequested}, `
       + `bConcat2ShuffleSplitRequested=${inferencedParams.bConcat2ShuffleSplitRequested}, `
