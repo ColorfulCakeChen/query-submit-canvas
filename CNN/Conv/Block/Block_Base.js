@@ -439,6 +439,7 @@ class Base {
       this.pointwise21ActivationName = params.pointwise21ActivationName;
       
       this.squeezeExcitationActivationId = params.squeezeExcitationActivationId;
+      this.squeezeExcitationActivationName = params.squeezeExcitationActivationName;
 
       this.outputTensorCount = params.outputTensorCount;
     }
