@@ -404,14 +404,14 @@ class Base {
     this.depthwiseActivationId = params.depthwiseActivationId;
     this.depthwiseActivationName = params.depthwiseActivationName;
 
-    this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
-    this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
-    this.bSqueezeExcitationPrefix = params.bSqueezeExcitationPrefix;
-
     this.pointwise20ChannelCount = params.pointwise20ChannelCount;
     this.bPointwise20Bias = params.bPointwise20Bias;
     this.pointwise20ActivationId = params.pointwise20ActivationId;
     this.pointwise20ActivationName = params.pointwise20ActivationName;
+
+    this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
+    this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
+    this.bSqueezeExcitationPrefix = params.bSqueezeExcitationPrefix;
 
     this.nActivationId = params.nActivationId;
     this.nActivationName = params.nActivationName;
@@ -1406,11 +1406,6 @@ class Base {
 
       + `bConcat1Requested=${this.bConcat1Requested}, `
 
-      + `nSqueezeExcitationChannelCountDivisorName=${this.nSqueezeExcitationChannelCountDivisorName}`
-        + `(${this.nSqueezeExcitationChannelCountDivisor}), `
-      + `bSqueezeExcitationPrefix=${this.bSqueezeExcitationPrefix}, `
-      + `squeezeExcitationActivationId=${this.squeezeExcitationActivationName}(${this.squeezeExcitationActivationId}), `
-
       + `pointwise20ChannelCount=${this.pointwise20ChannelCount}, `
       + `bPointwise20Bias=${this.bPointwise20Bias}, `
       + `pointwise20ActivationName=${this.pointwise20ActivationName}(${this.pointwise20ActivationId}), `
@@ -1418,6 +1413,11 @@ class Base {
       + `pointwise21ChannelCount=${this.pointwise21ChannelCount}, `
       + `bPointwise21Bias=${this.bPointwise21Bias}, `
       + `pointwise21ActivationName=${this.pointwise21ActivationName}(${this.pointwise21ActivationId}), `
+
+      + `nSqueezeExcitationChannelCountDivisorName=${this.nSqueezeExcitationChannelCountDivisorName}`
+        + `(${this.nSqueezeExcitationChannelCountDivisor}), `
+      + `bSqueezeExcitationPrefix=${this.bSqueezeExcitationPrefix}, `
+      + `squeezeExcitationActivationId=${this.squeezeExcitationActivationName}(${this.squeezeExcitationActivationId}), `
 
       + `bAddInputToOutputRequested=${this.bAddInputToOutputRequested}, `
       + `bConcat2ShuffleSplitRequested=${this.bConcat2ShuffleSplitRequested}, `
