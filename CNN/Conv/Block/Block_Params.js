@@ -484,6 +484,10 @@ class Params extends Weights.Params {
 
     // 2. If pointwise1 exists, it always has bias.
     } else {
+      
+//!!! ...unfinished... (2022/06/19) 
+// If nActivationId == NONE and depthwise pad=valid, bPointwise1Bias could be false.
+
       this.bPointwise1Bias = true;
       this.pointwise1ActivationId = nActivationId;
 
