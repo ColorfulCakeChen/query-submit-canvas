@@ -21,7 +21,7 @@ import * as Block from "../../Conv/Block.js";
  * it has the following data members: input0_height, input0_width, input0_channelCount, nConvBlockTypeId,
  * pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
  * depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise20ChannelCount, bPointwise20Bias,
- * pointwise20ActivationId, bKeepInputTensor. It also has the following properties:
+ * pointwise20ActivationId, nActivationId, bKeepInputTensor. It also has the following properties:
  *   - paramsNumberArrayObject
  *   - inputFloat32Array
  *   - byteOffsetBegin
@@ -71,6 +71,7 @@ class Base extends TestParams.Base {
     bDepthwiseBias, depthwiseActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
+    nActivationId,
     bKeepInputTensor
   ) {
     this.in.paramsNumberArrayObject = {};
@@ -86,6 +87,7 @@ class Base extends TestParams.Base {
       bDepthwiseBias, depthwiseActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
+      nActivationId,
       bKeepInputTensor
     };
 
@@ -108,7 +110,7 @@ class Base extends TestParams.Base {
    *   An object which has the following data members: input0_height, input0_width, input0_channelCount, nConvBlockTypeId,
    * pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
    * depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise20ChannelCount, bPointwise20Bias,
-   * pointwise20ActivationId, bKeepInputTensor. And depthwisePadInfo.
+   * pointwise20ActivationId, nActivationId, bKeepInputTensor. And depthwisePadInfo.
    *
    * @param {number} weightsElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
@@ -144,7 +146,8 @@ class Base extends TestParams.Base {
       this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
       this.out.depthwiseStridesPad, this.out.bDepthwiseBias, this.out.depthwiseActivationId,
       this.out.nSqueezeExcitationChannelCountDivisor, this.out.bSqueezeExcitationPrefix,
-      this.out.pointwise20ChannelCount, this.out.bPointwise20Bias, this.out.pointwise20ActivationId
+      this.out.pointwise20ChannelCount, this.out.bPointwise20Bias,
+      this.out.nActivationId
     );
   }
 
@@ -358,6 +361,8 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.pointwise20ChannelCount, this.valueOutMinMax.pointwise20ChannelCount ),
       new TestParams.ParamDescConfig( Block.Params.bPointwise20Bias,        this.valueOutMinMax.Bias ),
       new TestParams.ParamDescConfig( Block.Params.pointwise20ActivationId, this.valueOutMinMax.ActivationId ),
+
+      new TestParams.ParamDescConfig( Block.Params.nActivationId,           this.valueOutMinMax.ActivationId ),
 
 //!!! (2022/06/18 Remarked) pointwise1 always bias and activation. Deprecate them to reduce quantity of test cases.
 //      new TestParams.ParamDescConfig( Block.Params.bPointwise1Bias,         this.valueOutMinMax.Bias ),
@@ -1324,6 +1329,7 @@ Base.paramsNameOrderArray = [
   Block.Params.pointwise20ChannelCount.paramName,
   Block.Params.bPointwise20Bias.paramName,
   Block.Params.pointwise20ActivationId.paramName,
+  Block.Params.nActivationId.paramName,
 
   Block.Params.bKeepInputTensor.paramName,
   
