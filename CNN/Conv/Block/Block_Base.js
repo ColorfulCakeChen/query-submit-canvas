@@ -413,6 +413,9 @@ class Base {
     this.pointwise20ActivationId = params.pointwise20ActivationId;
     this.pointwise20ActivationName = params.pointwise20ActivationName;
 
+    this.nActivationId = params.nActivationId;
+    this.nActivationName = params.nActivationName;
+
     this.bKeepInputTensor = params.bKeepInputTensor;
 
     // The parameters which are inferenced from the above parameters.
@@ -1406,6 +1409,7 @@ class Base {
       + `nSqueezeExcitationChannelCountDivisorName=${this.nSqueezeExcitationChannelCountDivisorName}`
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
       + `bSqueezeExcitationPrefix=${this.bSqueezeExcitationPrefix}, `
+      + `squeezeExcitationActivationId=${this.squeezeExcitationActivationName}(${this.squeezeExcitationActivationId}), `
 
       + `pointwise20ChannelCount=${this.pointwise20ChannelCount}, `
       + `bPointwise20Bias=${this.bPointwise20Bias}, `
