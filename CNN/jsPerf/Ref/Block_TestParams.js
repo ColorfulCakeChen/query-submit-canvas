@@ -492,7 +492,7 @@ class Base extends TestParams.Base {
           this.in.paramsNumberArrayObject.pointwise20PrefixSEIntermediateBiases,
           this.in.paramsNumberArrayObject.pointwise20PrefixSEExcitationFilters,
           this.in.paramsNumberArrayObject.pointwise20PrefixSEExcitationBiases,
-          this.out.pointwise20ActivationId,
+          this.out.inferencedParams.squeezeExcitationActivationId,
           `${pointwiseName}_squeezeExcitationPrefix`, parametersDesc );
       } // Otherwise, do not clone to improve performance.
     }
@@ -510,7 +510,7 @@ class Base extends TestParams.Base {
           this.in.paramsNumberArrayObject.pointwise20PostfixSEIntermediateBiases,
           this.in.paramsNumberArrayObject.pointwise20PostfixSEExcitationFilters,
           this.in.paramsNumberArrayObject.pointwise20PostfixSEExcitationBiases,
-          this.out.pointwise20ActivationId,
+          this.out.inferencedParams.squeezeExcitationActivationId,
           `${pointwiseName}_squeezeExcitationPostfix`, parametersDesc );
       } // Otherwise, do not clone to improve performance.
     }
@@ -540,7 +540,7 @@ class Base extends TestParams.Base {
           this.in.paramsNumberArrayObject.pointwise202PrefixSEIntermediateBiases,
           this.in.paramsNumberArrayObject.pointwise202PrefixSEExcitationFilters,
           this.in.paramsNumberArrayObject.pointwise202PrefixSEExcitationBiases,
-          this.out.pointwise20ActivationId,
+          this.out.inferencedParams.squeezeExcitationActivationId,
           `${pointwiseName}_squeezeExcitationPrefix`, parametersDesc );
       } // Otherwise, do not clone to improve performance.
     }
@@ -558,7 +558,7 @@ class Base extends TestParams.Base {
           this.in.paramsNumberArrayObject.pointwise202PostfixSEIntermediateBiases,
           this.in.paramsNumberArrayObject.pointwise202PostfixSEExcitationFilters,
           this.in.paramsNumberArrayObject.pointwise202PostfixSEExcitationBiases,
-          this.out.pointwise20ActivationId,
+          this.out.inferencedParams.squeezeExcitationActivationId,
           `${pointwiseName}_squeezeExcitationPostfix`, parametersDesc );
       } // Otherwise, do not clone to improve performance.
     }
@@ -617,7 +617,7 @@ class Base extends TestParams.Base {
           this.in.paramsNumberArrayObject.pointwise21PrefixSEIntermediateBiases,
           this.in.paramsNumberArrayObject.pointwise21PrefixSEExcitationFilters,
           this.in.paramsNumberArrayObject.pointwise21PrefixSEExcitationBiases,
-          this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
+          this.out.inferencedParams.squeezeExcitationActivationId, // (Note: Not pointwise21ActivationId)
           `${pointwiseName}_squeezeExcitationPrefix`, parametersDesc );
       } // Otherwise, do not clone to improve performance.
     }
@@ -636,7 +636,7 @@ class Base extends TestParams.Base {
           this.in.paramsNumberArrayObject.pointwise21PostfixSEIntermediateBiases,
           this.in.paramsNumberArrayObject.pointwise21PostfixSEExcitationFilters,
           this.in.paramsNumberArrayObject.pointwise21PostfixSEExcitationBiases,
-          this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
+          this.out.inferencedParams.squeezeExcitationActivationId, // (Note: Not pointwise21ActivationId)
           `${pointwiseName}_squeezeExcitationPostfix`, parametersDesc );
       } // Otherwise, do not clone to improve performance.
     }
