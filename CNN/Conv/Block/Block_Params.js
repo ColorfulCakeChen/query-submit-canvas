@@ -233,6 +233,12 @@ class Params extends Weights.Params {
 
     pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
 
+
+//!!! ...unfinished... (2022/06/19)
+// Default activation function id. Used by pointwise1 and squeeze-and-excitation.
+// pointwise1 and squeeze-and-excitation should have activvation even if depthwise and pointwise20 do not have.
+    nActivationId,
+
     bKeepInputTensor
   ) {
 
