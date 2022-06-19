@@ -645,6 +645,9 @@ class Base {
     asserter.propertyValue( "pointwise21ActivationId", testParams.out.pointwise20ActivationId ); // Always same as pointwise20.
     asserter.propertyValue( "pointwise21ActivationName", pointwise20ActivationName ); // Always same as pointwise20.
 
+    asserter.propertyValue( "squeezeExcitationActivationId", testParams.out.inferencedParams.squeezeExcitationActivationId );
+    asserter.propertyValue( "squeezeExcitationActivationName", testParams.out.inferencedParams.squeezeExcitationActivationName );
+
     // If depthwise does not exist, the output ( height, width ) should be the same as input.
 
 //!!! (2022/06/17 Remarked) Using bDepthwiseRequestedAndNeeded instead.
@@ -1215,6 +1218,10 @@ class Base {
       + `nSqueezeExcitationChannelCountDivisorName=`
         + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getStringOf( testParams.out.nSqueezeExcitationChannelCountDivisor )}`
         + `(${testParams.out.nSqueezeExcitationChannelCountDivisor}), `
+
+      + `squeezeExcitationActivationName=`
+        + `${ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.inferencedParams.squeezeExcitationActivationId )}`
+        + `(${testParams.out.inferencedParams.squeezeExcitationActivationId}), `
 
       + `pointwise20ChannelCount=${testParams.out.pointwise20ChannelCount}, bPointwise20Bias=${testParams.out.bPointwise20Bias}, `
       + `pointwise20ActivationName=`
