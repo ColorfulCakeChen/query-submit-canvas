@@ -437,6 +437,8 @@ class Base {
       this.bPointwise21Bias = params.bPointwise21Bias;
       this.pointwise21ActivationId = params.pointwise21ActivationId;
       this.pointwise21ActivationName = params.pointwise21ActivationName;
+      
+      this.squeezeExcitationActivationId = params.squeezeExcitationActivationId;
 
       this.outputTensorCount = params.outputTensorCount;
     }
@@ -1131,7 +1133,7 @@ class Base {
       let intermediatePointwise0;
       {
         intermediatePointwise0 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
-          this.operationArray.endingInput0, this.pointwise20ActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array );
+          this.operationArray.endingInput0, this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array );
         if ( !intermediatePointwise0 )
           return false;  // e.g. input array does not have enough data.
       }
@@ -1139,7 +1141,7 @@ class Base {
       let intermediatePointwise1;
       if ( this.pointwise21ChannelCount > 0 ) {
         intermediatePointwise1 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
-          this.operationArray.endingInput1, this.pointwise21ActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array );
+          this.operationArray.endingInput1, this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array );
         if ( !intermediatePointwise1 )
           return false;  // e.g. input array does not have enough data.
       }
@@ -1161,7 +1163,7 @@ class Base {
       {
         const excitationPointwise0_outputChannelCount = input0.channelCount; // excitation's output should have same channel count as input.
         const excitationPointwise0_outputChannelCount_lowerHalf = input0.channelCount_lowerHalf;
-        const excitationPointwise0_nActivationId = this.pointwise20ActivationId;
+        const excitationPointwise0_nActivationId = this.squeezeExcitationActivationId;
 
         excitationPointwise0 = new Operation.Pointwise_ConstantWhenPassThrough(
           this.operationArray.endingInput0,
@@ -1179,7 +1181,7 @@ class Base {
       if ( this.pointwise21ChannelCount > 0 ) {
         const excitationPointwise1_outputChannelCount = input1.channelCount;
         const excitationPointwise1_outputChannelCount_lowerHalf = input1.channelCount_lowerHalf;
-        const excitationPointwise1_nActivationId = this.pointwise21ActivationId;
+        const excitationPointwise1_nActivationId = this.squeezeExcitationActivationId;
 
         excitationPointwise1 = new Operation.Pointwise_ConstantWhenPassThrough(
           this.operationArray.endingInput1,
