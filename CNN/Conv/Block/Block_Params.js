@@ -28,18 +28,8 @@ import * as Depthwise from "../Depthwise.js";
  * if ( pointwise1ChannelCount == 0 ), this flag will be false.
  *
  * @member {number} pointwise1ActivationId
- *   The activation function id (Params.pointwise1ActivationId.valueDesc.Ids.Xxx) after the pointwise1 convolution. Usually, if
- * pointwise1 exists, it always has activation function.
- *
- *   - If ( pointwise1ChannelCount == 0 ), it will be ( ValueDesc.ActivationFunction.Singleton.Ids.NONE (0) ).
- *
- *   - Otherwise, if ( pointwise20ActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE (0) ), it will be the same as
- *       pointwise20ActivationId. (Note: pointwise20 convolution always exists.)
- *
- *   - Otherwise, if depthwise operation exists and ( depthwiseActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE (0) ),
- *       it will be the same as depthwiseActivationId. 
- *
- *   - Otherwise, it will be ( ValueDesc.ActivationFunction.Singleton.Ids.NONE (0) ).
+ *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the pointwise1 convolution. Usually, it is the
+ * default activation function (i.e. nActivationId).
  *
  * @member {string} pointwise1ActivationName
  *   The string name of pointwise1ActivationId.
@@ -87,6 +77,13 @@ import * as Depthwise from "../Depthwise.js";
  * @member {number} pointwise21ActivationId
  *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after pointwise21 (i.e. the second
  * pointwise2 convolution). It is always the same as pointwise20ActivationId. It is only meaningful if ( pointwise21ChannelCount > 0 ).
+ *
+ * @member {number} squeezeExcitationActivationId
+ *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of squeeze-and-excitation. Usually, it is the
+ * default activation function (i.e. nActivationId).
+ *
+ * @member {string} squeezeExcitationActivationName
+ *   The string name of squeezeExcitationActivationId.
  *
  * @member {number} outputTensorCount
  *   How many output tensors will be returned by the parameter outputTensors[] of Block.apply(). At least 1. At most 2.
@@ -200,6 +197,11 @@ class Params extends Weights.Params {
    * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise20ChannelCount == 0 ), this activation function
    * will also be ignored.
    *
+   * @param {number} nActivationId
+   *   The default activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx). If null, it will be extracted from
+   * inputFloat32Array (i.e. by evolution). It is used by pointwise1 and squeeze-and-excitation. pointwise1 and
+   * squeeze-and-excitation should have activvation even if depthwise and pointwise20 do not have.
+   *
    * @param {boolean} bKeepInputTensor
    *   If true, apply() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
    * For another example, the input image should be shared across many neural networks. If it is null, it will be extracted from
@@ -233,12 +235,7 @@ class Params extends Weights.Params {
 
     pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
 
-
-//!!! ...unfinished... (2022/06/19)
-// Default activation function id. Used by pointwise1 and squeeze-and-excitation.
-// pointwise1 and squeeze-and-excitation should have activvation even if depthwise and pointwise20 do not have.
     nActivationId,
-
     bKeepInputTensor
   ) {
 
@@ -264,6 +261,7 @@ class Params extends Weights.Params {
       [ Params.pointwise20ChannelCount,               pointwise20ChannelCount ],
       [ Params.bPointwise20Bias,                      bPointwise20Bias ],
       [ Params.pointwise20ActivationId,               pointwise20ActivationId ],
+      [ Params.nActivationId,                         nActivationId ],
       [ Params.bKeepInputTensor,                      bKeepInputTensor ],
     ] );
 
@@ -290,7 +288,8 @@ class Params extends Weights.Params {
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth, this.depthwiseStridesPad,
       this.bDepthwiseBias, this.depthwiseActivationId,
       this.nSqueezeExcitationChannelCountDivisor, this.bSqueezeExcitationPrefix,
-      this.pointwise20ChannelCount, this.bPointwise20Bias, this.pointwise20ActivationId,
+      this.pointwise20ChannelCount, this.bPointwise20Bias,
+      this.nActivationId,
     );
 
     return bExtractOk;
@@ -476,9 +475,7 @@ class Params extends Weights.Params {
    */
   static set_bPointwise1Bias_pointwise1ActivationId_pointwise1ActivationName_by(
     pointwise1ChannelCount,
-    bDepthwiseRequestedAndNeeded,
-    depthwiseActivationId,
-    pointwise20ActivationId
+    nActivationId,
   ) {
 
     // 1. If no pointwise1, there is no bias and no activation.
@@ -489,24 +486,36 @@ class Params extends Weights.Params {
     // 2. If pointwise1 exists, it always has bias.
     } else {
       this.bPointwise1Bias = true;
+      this.pointwise1ActivationId = nActivationId;
 
-      // 2.1 Prefer the same activation function as the always existed (pointwise20) convolution.
-      if ( pointwise20ActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
-        this.pointwise1ActivationId = pointwise20ActivationId;
-
-      // 2.2 Fall back to the other operation.
-      } else if (   ( bDepthwiseRequestedAndNeeded )
-                 && ( depthwiseActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ) { 
-        this.pointwise1ActivationId = depthwiseActivationId;
-
-      // 2.3 Since no operation has activation, the same as them.
-      } else {
-        this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-      }
+//!!! (2022/06/19 Remarked) Replaced by nActivationId.
+//       // 2.1 Prefer the same activation function as the always existed (pointwise20) convolution.
+//       if ( pointwise20ActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
+//         this.pointwise1ActivationId = pointwise20ActivationId;
+//
+//       // 2.2 Fall back to the other operation.
+//       } else if (   ( bDepthwiseRequestedAndNeeded )
+//                  && ( depthwiseActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ) { 
+//         this.pointwise1ActivationId = depthwiseActivationId;
+//
+//       // 2.3 Since no operation has activation, the same as them.
+//       } else {
+//         this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+//       }
     }
 
     // 3.
     this.pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.pointwise1ActivationId );
+  }
+
+  /**
+   * Determine the following properties:
+   *   - this.squeezeExcitationActivationId
+   *   - this.squeezeExcitationActivationName
+   */
+  static set_squeezeExcitationActivationId_squeezeExcitationActivationName_by( nActivationId ) {
+    this.squeezeExcitationActivationId = nActivationId;
+    this.squeezeExcitationActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.squeezeExcitationActivationId );
   }
 
   /**
@@ -542,6 +551,8 @@ class Params extends Weights.Params {
    *   - this.bHigherHalfDepthwise2
    *   - this.pointwise20_channelShuffler_outputGroupCount
    *   - this.pointwise21ChannelCount
+   *   - this.squeezeExcitationActivationId
+   *   - this.squeezeExcitationActivationName
    *   - this.outputTensorCount
    *
    */
@@ -552,7 +563,8 @@ class Params extends Weights.Params {
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
-    pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId
+    pointwise20ChannelCount, bPointwise20Bias,
+    nActivationId
   ) {
 
     // 0. Prepare.
@@ -584,17 +596,20 @@ class Params extends Weights.Params {
     this.pointwise20_channelShuffler_outputGroupCount = infoConvBlockType.pointwise20_channelShuffler_outputGroupCount;
 
     // 5. Pointwise1
-    Params.set_bPointwise1Bias_pointwise1ActivationId_pointwise1ActivationName_by.call( this,
+    Params.set_bPointwise1Bias_pointwise1ActivationId_pointwise1ActivationName.call( this,
       pointwise1ChannelCount,
-      this.bDepthwiseRequestedAndNeeded,
-      depthwiseActivationId,
-      pointwise20ActivationId
+      nActivationId
     );
 
     // 6. Pointwise21
     //
     // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
     Params.set_pointwise21ChannelCount_by.call( this, nConvBlockTypeId, pointwise20ChannelCount );
+
+    // 5. squeeze-and-excitation
+    Params.set_squeezeExcitationActivationId_squeezeExcitationActivationName_by.call( this,
+      nActivationId
+    );
   }
 
   get input0_height()                        { return this.parameterMapModified.get( Params.input0_height ); }
@@ -648,6 +663,9 @@ class Params extends Weights.Params {
   get bPointwise21Bias()          { return this.bPointwise20Bias; }
   get pointwise21ActivationId()   { return this.pointwise20ActivationId; }
   get pointwise21ActivationName() { return this.pointwise20ActivationName; }
+
+  get nActivationId()             { return this.parameterMapModified.get( Params.nActivationId ); }
+  get nActivationName()           { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
 
   get bKeepInputTensor()          { return this.parameterMapModified.get( Params.bKeepInputTensor ); }
 }
@@ -718,6 +736,8 @@ Params.bSqueezeExcitationPrefix = new ParamDesc.Bool(               "bSqueezeExc
 Params.pointwise20ChannelCount =  new ParamDesc.Int(                "pointwise20ChannelCount", 1, ( 10 * 1024 ) );
 Params.bPointwise20Bias =         new ParamDesc.Bool(               "bPointwise20Bias" );
 Params.pointwise20ActivationId =  new ParamDesc.ActivationFunction( "pointwise20ActivationId" );
+
+Params.nActivationId =            new ParamDesc.ActivationFunction(  "nActivationId" );
 
 Params.bKeepInputTensor =         new ParamDesc.Bool(               "bKeepInputTensor" );
 
