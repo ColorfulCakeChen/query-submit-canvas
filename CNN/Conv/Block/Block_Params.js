@@ -390,19 +390,28 @@ class Params extends Weights.Params {
 
   /**
    * Determine the following properties:
+   *   - this.bNonLinear_between_depthwise_and_pointwise2
+   *   - this.bDepthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
+   *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
    *
-   * When got false, the depthwise could be discarded to improve performance.
+   * When ( bDepthwiseRequestedAndNeeded == false ), the depthwise could be discarded to improve performance.
    */
-  static set_bDepthwiseRequestedAndNeeded_by(
-    input0_height, input0_width,
+  static set_depthwise_inferenced_by(
+    input0_height, input0_width, input0_channelCount,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-    bDepthwiseBias, depthwiseActivationId,
-    bPointwise20Bias,
+    depthwiseActivationId,
+
+//!!! ...unfinished... (2022/06/21) bDepthwiseBias and bPointwise20Bias should become inferenced.
+//     bDepthwiseBias, depthwiseActivationId,
+//     bPointwise20Bias,
+
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
   ) {
 
     if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
+      this.bNonLinear_between_depthwise_and_pointwise2 = false;
+      this.bDepthwiseBias = false;
       this.bDepthwiseRequestedAndNeeded = false; // depthwise is not requested.
       return;
     }
@@ -443,6 +452,11 @@ class Params extends Weights.Params {
          );
     }
 
+    if ( bNonLinear_between_depthwise_and_pointwise2 )
+      this.bDepthwiseBias = true;
+    else
+      this.bDepthwiseBias = false;
+        
     let depthwise_bLinear;
     {
       depthwise_bLinear = depthwise_bLinearOrAffine
@@ -462,43 +476,9 @@ class Params extends Weights.Params {
       this.bDepthwiseRequestedAndNeeded = false; // depthwise is requested, but is not necessary.
     else
       this.bDepthwiseRequestedAndNeeded = true; // depthwise is requested and is necessary.
-  }
 
-  /**
-   * Determine the following properties:
-   *   - this.inputTensorCount
-   *   - this.input1_height
-   *   - this.input1_width
-   *   - this.input1_channelCount
-   *   - this.bDepthwiseRequestedAndNeeded
-   *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
-   *
-   */
-  static set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by(
-    input0_height, input0_width, input0_channelCount,
-    nConvBlockTypeId,
-    pointwise1ChannelCount,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-    bDepthwiseBias, depthwiseActivationId,
-    pointwise20ChannelCount, bPointwise20Bias,
-    nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
-  ) {
 
-    // 1. input tensor count.
-    this.inputTensorCount = ValueDesc.ConvBlockType.inputTensorCount_get( nConvBlockTypeId );
-
-    // 2. depthwise information.
-
-    // 2.1
-    Params.set_bDepthwiseRequestedAndNeeded_by.call( this,
-      input0_height, input0_width,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-      bDepthwiseBias, depthwiseActivationId,
-      bPointwise20Bias,
-      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
-    );
-
-    // 2.2
+    // depthwisePadInfo
     if ( this.bDepthwiseRequestedAndNeeded ) { // When depthwise operation is necessary, infer its information.
       if ( this.depthwisePadInfo ) { // Re-using (instead of re-creating) may improve runtime speed.
         this.depthwisePadInfo.set(
@@ -516,6 +496,43 @@ class Params extends Weights.Params {
         // Do nothing.
       }
     }
+  
+
+  }
+
+  /**
+   * Determine the following properties:
+   *   - this.inputTensorCount
+   *   - this.input1_height
+   *   - this.input1_width
+   *   - this.input1_channelCount
+   *   - this.bNonLinear_between_depthwise_and_pointwise2
+   *   - this.bDepthwiseBias
+   *   - this.bDepthwiseRequestedAndNeeded
+   *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
+   *
+   */
+  static set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by(
+    input0_height, input0_width, input0_channelCount,
+    nConvBlockTypeId,
+    pointwise1ChannelCount,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    bDepthwiseBias, depthwiseActivationId,
+    pointwise20ChannelCount, bPointwise20Bias,
+    nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+  ) {
+
+    // 1. input tensor count.
+    this.inputTensorCount = ValueDesc.ConvBlockType.inputTensorCount_get( nConvBlockTypeId );
+
+    // 2. depthwise inferenced information.
+    Params.set_depthwise_inferenced_by.call( this,
+      input0_height, input0_width,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      bDepthwiseBias, depthwiseActivationId,
+      bPointwise20Bias,
+      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+    );
   
     // 3. input1 ( height, width, channelCount )
 
