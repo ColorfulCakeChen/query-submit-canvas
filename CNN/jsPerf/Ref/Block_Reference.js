@@ -596,12 +596,37 @@ class Base {
 
     // depthwise parameters.
 
+    let bDepthwiseRequestedAndNeeded;
+    let depthwisePadInfo;
+    {
+      if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
+        bDepthwiseRequestedAndNeeded = false;
+      } else {
+        depthwisePadInfo = inferencedParams.depthwisePadInfo;
+        if (   ( depthwisePadInfo.output_channelCount_is_same_as_input() )
+            && ( depthwisePadInfo.output_height_width_is_same_as_input() )
+            && ( depthwisePadInfo.output_height_width_is_no_neighbor_analysis() )
+            && ( bLinear_between_depthwise_and_pointwise2 )
+           )
+          bDepthwiseRequestedAndNeeded = false;
+        else
+          bDepthwiseRequestedAndNeeded = true;
+      }
+    }
+
     let bDepthwiseBias_shouldBe;
     {
-      if ( bLinear_between_depthwise_and_pointwise2 )
-        bDepthwiseBias_shouldBe = false;
-      else
-        bDepthwiseBias_shouldBe = true;
+//!!!
+      if ( !bDepthwiseRequestedAndNeeded ) {
+          bDepthwiseBias_shouldBe = false;
+
+      } else {
+
+        if ( bLinear_between_depthwise_and_pointwise2 )
+          bDepthwiseBias_shouldBe = false;
+        else
+          bDepthwiseBias_shouldBe = true;
+      }
     }
 
     asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", testParams.out.depthwise_AvgMax_Or_ChannelMultiplier );
@@ -610,6 +635,7 @@ class Base {
     asserter.propertyValue( "depthwiseStridesPad", testParams.out.depthwiseStridesPad );
     asserter.propertyValue( "bDepthwiseBias", testParams.out.inferencedParams.bDepthwiseBias );
     asserter.propertyValue( "bDepthwiseBias", bDepthwiseBias_shouldBe );
+    asserter.propertyValue( "bDepthwiseRequestedAndNeeded", bDepthwiseRequestedAndNeeded );
     asserter.propertyValue( "depthwiseActivationId", testParams.out.depthwiseActivationId );
 
     let depthwiseActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.depthwiseActivationId );
@@ -662,14 +688,12 @@ class Base {
 //!!! (2022/06/17 Remarked) Using bDepthwiseRequestedAndNeeded instead.
 //    if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) { // (0)
 
-    if ( !inferencedParams.bDepthwiseRequestedAndNeeded ) {
-      asserter.propertyValue( "bDepthwiseBias", false );
+    if ( !bDepthwiseRequestedAndNeeded ) {
       asserter.propertyValue( "outputHeight", testParams.out.input0_height );
       asserter.propertyValue( "outputWidth", testParams.out.input0_width );
 
     // Otherwise, depthwise determines output ( height, width ).
     } else {
-      asserter.propertyValue( "bDepthwiseBias", true );
       let depthwisePadInfo = inferencedParams.depthwisePadInfo;
       asserter.propertyValue( "outputHeight", depthwisePadInfo.outputHeight );
       asserter.propertyValue( "outputWidth", depthwisePadInfo.outputWidth );
