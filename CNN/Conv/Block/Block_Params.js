@@ -21,7 +21,7 @@ import * as Depthwise from "../Depthwise.js";
  *
  * The pointwise2 is an always existed operation of a block (i.e. a block may not have pointwise1, may not have depthwise, but always
  * has pointwise2). It is also the final chance to add bias (i.e. to achieve affine transformation) for a block. It is feasible to
- * always have bias (i.e. ( bPoint20Bias == true )).
+ * always have bias (i.e. ( bPointwise20Bias == true )).
  *
  *
  * 1.2 Affine Transformation Combination Rule
@@ -67,6 +67,19 @@ import * as Depthwise from "../Depthwise.js";
  *   - The final multiplication to input: non-linear operation.
  *
  * In summary, it is non-linear.
+ *
+ *
+ * 1.2.3 Along different directions
+ *
+ * Affine transformation along different directions can be combined, but can not be replaced by each other.
+ * 
+ *
+ *
+ *
+ *
+ *
+ *
+ *
  *
  *
  *
