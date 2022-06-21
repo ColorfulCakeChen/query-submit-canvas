@@ -601,11 +601,26 @@ class Base {
     {
       if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
         bDepthwiseRequestedAndNeeded = false;
+
       } else {
-        depthwisePadInfo = inferencedParams.depthwisePadInfo;
-        if (   ( depthwisePadInfo.output_channelCount_is_same_as_input() )
-            && ( depthwisePadInfo.output_height_width_is_same_as_input() )
-            && ( depthwisePadInfo.output_height_width_is_no_neighbor_analysis() )
+        let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( testParams.out.depthwiseStridesPad );
+
+        let bChannelCountSame = Depthwise.PadInfoCalculatorRoot.output_channelCount_is_same_as_input(
+          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier );
+
+        let bHeightWidthSame = Depthwise.PadInfoCalculatorRoot.output_height_width_is_same_as_input(
+          testParams.out.input0_height, testParams.out.input0_width,
+          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth,
+          stridesPadInfo );
+
+        let bNoNeighborAnalysis = Depthwise.PadInfoCalculatorRoot.output_height_width_is_no_neighbor_analysis(
+          testParams.out.input0_height, testParams.out.input0_width,
+          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth );
+
+
+        if (   ( bChannelCountSame )
+            && ( bHeightWidthSame )
+            && ( bNoNeighborAnalysis )
             && ( bLinear_between_depthwise_and_pointwise2 )
            )
           bDepthwiseRequestedAndNeeded = false;
