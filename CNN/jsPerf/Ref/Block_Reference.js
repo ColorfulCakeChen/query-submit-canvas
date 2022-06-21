@@ -580,19 +580,22 @@ class Base {
     // pointwise1 parameters.
 
     let bPointwise1Bias_shouldBe;
+    let pointwise1ActivationId_shouldBe;
     {
       if ( testParams.out.pointwise1ChannelCount > 0 ) {
         if ( bLinear_between_pointwise1_and_pointwise2 )
           bPointwise1Bias_shouldBe = false;
         else
           bPointwise1Bias_shouldBe = true;
+
+        pointwise1ActivationId_shouldBe = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
       } else {
         bPointwise1Bias_shouldBe = false;
+        pointwise1ActivationId_shouldBe = testParams.out.nActivationId;
       }
     }
 
-    let pointwise1ActivationId_shouldBe = testParams.out.inferencedParams.pointwise1ActivationId;
-    let pointwise1ActivationName_shouldBe = testParams.out.inferencedParams.pointwise1ActivationName;
+    let pointwise1ActivationName_shouldBe = ValueDesc.ActivationFunction.Singleton.Ids.getStringOf( pointwise1ActivationId_shouldBe );
       
     // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
     //
@@ -692,8 +695,12 @@ class Base {
     asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", testParams.out.nSqueezeExcitationChannelCountDivisor );
     asserter.propertyValue( "bSqueezeExcitationPrefix", testParams.out.bSqueezeExcitationPrefix );
 
-    asserter.propertyValue( "squeezeExcitationActivationId", testParams.out.inferencedParams.squeezeExcitationActivationId );
-    asserter.propertyValue( "squeezeExcitationActivationName", testParams.out.inferencedParams.squeezeExcitationActivationName );
+    let squeezeExcitationActivationId_shouldBe = testParams.out.nActivationId;
+    let squeezeExcitationActivationName_shouldBe
+      = ValueDesc.ActivationFunction.Singleton.Ids.getStringOf( squeezeExcitationActivationId_shouldBe );
+
+    asserter.propertyValue( "squeezeExcitationActivationId", squeezeExcitationActivationId_shouldBe );
+    asserter.propertyValue( "squeezeExcitationActivationName", squeezeExcitationActivationName_shouldBe );
 
     // Default activation
     asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
