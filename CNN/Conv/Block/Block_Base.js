@@ -1398,7 +1398,8 @@ class Base {
       + `bDepthwiseRequestedAndNeeded=${this.bDepthwiseRequestedAndNeeded}, `
       + `bDepthwise2Requested=${this.bDepthwise2Requested}, `
 
-      + `depthwise_AvgMax_Or_ChannelMultiplier=${this.depthwise_AvgMax_Or_ChannelMultiplier_Name}, `
+      + `depthwise_AvgMax_Or_ChannelMultiplier=${this.depthwise_AvgMax_Or_ChannelMultiplier_Name}`
+        + `(${this.depthwise_AvgMax_Or_ChannelMultiplier}), `
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
       + `depthwiseStridesPad=${this.depthwiseStridesPadName}(${this.depthwiseStridesPad}), `
       + `bDepthwiseBias=${this.bDepthwiseBias}, `
