@@ -25,6 +25,13 @@ class Base {
 
   /**
    *
+   */
+  get size() {
+    return this.recycledObjects.size;
+  }
+
+  /**
+   *
    * @return {object}
    *   An obeject which is an instance of this.ObjectClass. If it is newly created, all RestArgs will be passed into its constructor.
    * If it is re-used (i.e. from recycled) object, all RestArgs will be passed into its .pfnSetAsConstructor() method.
@@ -33,8 +40,9 @@ class Base {
     let returnedObject;
     if ( this.recycledObjects.size > 0 ) {
       let values = this.recycledObjects.values();
-      returnedObject = values.next().value; // Get the first object.
-      this.pfnSetAsConstructor.apply( returnedObject, RestArgs );
+      returnedObject = values.next().value;          // Get the first object.
+      this.recycledObjects.delete( returnedObject ); // Removed from list.
+      this.pfnSetAsConstructor.apply( returnedObject, restArgs );
     } else {
       returnedObject = new ( this.objectClass )( ...restArgs );
     }
@@ -47,6 +55,20 @@ class Base {
    */
   recycle( objectToBeRecycled ) {
     this.recycledObjects.add( objectToBeRecycled );
+  }
+
+  /**
+   *
+   */
+  clear() {
+    this.recycledObjects.clear();
+  }
+
+  /**
+   *
+   */
+  * values() {
+    yield* this.recycledObjects.values();
   }
 
 }
