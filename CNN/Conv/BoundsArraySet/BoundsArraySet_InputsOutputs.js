@@ -55,26 +55,91 @@ class InputsOutputs {
    */
   constructor( input0, input1, outputChannelCount0, outputChannelCount1 ) {
 
+    this.set_input0_input1_outputChannelCount0_outputChannelCount1( input0, input1, outputChannelCount0, outputChannelCount1 );
+
+//!!! (2022/06/21 Remarked) Moved into set_input0_input1_outputChannelCount0_outputChannelCount1().
+//     tf.util.assert( ( input0 instanceof ActivationEscaping.ScaleBoundsArray ),
+//       `BoundsArraySet.InputsOutputs.constructor(): `
+//         + `input0 ( ${input0} ) must exist and be an instance of class ActivationEscaping.ScaleBoundsArray.`
+//     );
+//
+//     this.input0 = input0;
+//
+//     if ( input1 )
+//       this.input1 = input1;
+//
+//     // Determine outputs.
+//     //
+//     // Note: The .output0 will always be created, even if it is zero channel count.
+//     if ( outputChannelCount0 >= 0 ) {
+//       this.output0 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount0 );
+//
+//       if ( outputChannelCount1 > 0 ) { // Two outputs.
+//         this.output1 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount1 );
+//
+//       // ( outputChannelCount1 <= 0 ), One output.
+//       }
+//
+//     } else { // ( outputChannelCount0 < 0 ), Illegal.
+//
+//       tf.util.assert( ( ( outputChannelCount0 < 0 ) && ( outputChannelCount1 <= 0 ) ),
+//         `BoundsArraySet.InputsOutputs.constructor(): `
+//           + `outputChannelCount0 ( ${outputChannelCount0} ) can not be negative (i.e. must >= 0).`
+//       );
+//     }
+  }
+
+  /**
+   *
+   * @param {number} outputChannelCount0
+   *   The channel count of 1st output. (MUST positive)
+   *
+   * @param {number} outputChannelCount1
+   *   The channel count of 2nd output. (If undefined or null or zero or negative, there will be no output1.)
+   */
+  set_input0_input1_outputChannelCount0_outputChannelCount1( input0, input1, outputChannelCount0, outputChannelCount1 ) {
+
     tf.util.assert( ( input0 instanceof ActivationEscaping.ScaleBoundsArray ),
-      `BoundsArraySet.InputsOutputs.constructor(): `
+      `BoundsArraySet.InputsOutputs.set_input0_input1_outputChannelCount0_outputChannelCount1(): `
         + `input0 ( ${input0} ) must exist and be an instance of class ActivationEscaping.ScaleBoundsArray.`
     );
 
     this.input0 = input0;
 
-    if ( input1 )
+    if ( input1 ) {
+
+      tf.util.assert( ( input1 instanceof ActivationEscaping.ScaleBoundsArray ),
+        `BoundsArraySet.InputsOutputs.set_input0_input1_outputChannelCount0_outputChannelCount1(): `
+          + `input1 ( ${input1} ) must exist and be an instance of class ActivationEscaping.ScaleBoundsArray.`
+      );
+
       this.input1 = input1;
+
+    } else {
+      if ( this.input1 )
+        this.input1 = undefined;
+    }
 
     // Determine outputs.
     //
     // Note: The .output0 will always be created, even if it is zero channel count.
     if ( outputChannelCount0 >= 0 ) {
-      this.output0 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount0 );
+      if ( this.output0 )
+        this.output0.length = outputChannelCount0;
+      else
+        this.output0 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount0 );
 
       if ( outputChannelCount1 > 0 ) { // Two outputs.
-        this.output1 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount1 );
+
+        if ( this.output1 )
+          this.output1.length = outputChannelCount1;
+        else
+          this.output1 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount1 );
 
       // ( outputChannelCount1 <= 0 ), One output.
+      } else {
+        if ( this.output1 )
+          this.output1.length = 0; // (Reduce memory re-allocation.)
       }
 
     } else { // ( outputChannelCount0 < 0 ), Illegal.
