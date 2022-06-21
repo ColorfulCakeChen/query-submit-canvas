@@ -536,9 +536,9 @@ class Base {
           bLinear_between_pointwise1_and_pointwise2 = false;
         }
 
-        asserter.propertyValue( "bLinear_between_depthwise_and_pointwise2", bLinear_between_depthwise_and_pointwise2 );
-        asserter.propertyValue( "bLinear_between_pointwise1_and_depthwise", bLinear_between_pointwise1_and_depthwise );
-        asserter.propertyValue( "bLinear_between_pointwise1_and_pointwise2", bLinear_between_pointwise1_and_pointwise2 );
+        //asserter.propertyValue( "???bLinear_between_depthwise_and_pointwise2", bLinear_between_depthwise_and_pointwise2 );
+        //asserter.propertyValue( "???bLinear_between_pointwise1_and_depthwise", bLinear_between_pointwise1_and_depthwise );
+        //asserter.propertyValue( "???bLinear_between_pointwise1_and_pointwise2", bLinear_between_pointwise1_and_pointwise2 );
       }
     }
 
