@@ -20,7 +20,7 @@ import * as Block from "../../Conv/Block.js";
  *   The "in" sub-object's data members represent every parameters of the Block.Params's constructor. That is,
  * it has the following data members: input0_height, input0_width, input0_channelCount, nConvBlockTypeId,
  * pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
- * depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise20ChannelCount, bPointwise20Bias,
+ * depthwiseFilterWidth, depthwiseStridesPad, depthwiseActivationId, pointwise20ChannelCount,
  * pointwise20ActivationId, nActivationId, bKeepInputTensor. It also has the following properties:
  *   - paramsNumberArrayObject
  *   - inputFloat32Array
@@ -63,13 +63,9 @@ class Base extends TestParams.Base {
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
-
-//!!! (2022/06/18 Remarked) pointwise1 always bias and activation. Deprecate them to reduce quantity of test cases.
-//    bPointwise1Bias, pointwise1ActivationId,
-
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-    bDepthwiseBias, depthwiseActivationId,
-    pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
+    depthwiseActivationId,
+    pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     nActivationId,
     bKeepInputTensor
@@ -79,13 +75,9 @@ class Base extends TestParams.Base {
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
-
-//!!! (2022/06/18 Remarked) pointwise1 always bias and activation. Deprecate them to reduce quantity of test cases.
-//      bPointwise1Bias, pointwise1ActivationId,
-
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-      bDepthwiseBias, depthwiseActivationId,
-      pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
+      depthwiseActivationId,
+      pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       nActivationId,
       bKeepInputTensor
@@ -109,7 +101,7 @@ class Base extends TestParams.Base {
    * @param {object} this.out
    *   An object which has the following data members: input0_height, input0_width, input0_channelCount, nConvBlockTypeId,
    * pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
-   * depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise20ChannelCount, bPointwise20Bias,
+   * depthwiseFilterWidth, depthwiseStridesPad, depthwiseActivationId, pointwise20ChannelCount,
    * pointwise20ActivationId, nActivationId, bKeepInputTensor. And depthwisePadInfo.
    *
    * @param {number} weightsElementOffsetBegin
@@ -144,8 +136,8 @@ class Base extends TestParams.Base {
       this.out.nConvBlockTypeId,
       this.out.pointwise1ChannelCount,
       this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
-      this.out.depthwiseStridesPad, this.out.bDepthwiseBias, this.out.depthwiseActivationId,
-      this.out.pointwise20ChannelCount, this.out.bPointwise20Bias,
+      this.out.depthwiseStridesPad, this.out.depthwiseActivationId,
+      this.out.pointwise20ChannelCount,
       this.out.nSqueezeExcitationChannelCountDivisor, this.out.bSqueezeExcitationPrefix,
       this.out.nActivationId
     );
@@ -157,28 +149,6 @@ class Base extends TestParams.Base {
   onYield_isLegal() {
 
     let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( this.out.nConvBlockTypeId );
-
-//!!! (2022/06/16 Remarked) Now, input1's dimension are inferenced parameters.
-//     // (5) (ShuffleNetV2_ByMobileNetV1's head)
-//     if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) {
-//
-//       if ( this.out.pointwise1ChannelCount > 0 ) {
-//
-//         // depthwise2 (processing input0) must have the same input channel count as depthwise1 (processing pointwise1 result).
-//         // So that the results of depthwise1 and depthwise2 both have the same output channel count.
-//         if ( this.out.input0_channelCount != this.out.pointwise1ChannelCount )
-//           return false;
-//
-//       // For ( pointwise1ChannelCount > 0 ), pointwise1 result is just the input0 itself (i.e. always the same).
-//       }
-//
-//     // (6 or 7) (ShuffleNetV2_ByMobileNetV1's body/tail)
-//     } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) {
-//
-//       // The input and output channel count must be the same. Otherwise, the concat2-shuffle-split could not operate properly.
-//       if ( this.out.input0_channelCount != this.out.pointwise20ChannelCount )
-//         return false;
-//     }
 
     // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
     switch ( this.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
@@ -281,9 +251,11 @@ class Base extends TestParams.Base {
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( undefined )) for speeding up testing.
-//      Bias: undefined,
-//      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min + 0 ],
-      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
+ 
+//!!! (2022/06/21 Remarked) bias are all inferenced now.
+// //      Bias: undefined,
+// //      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min + 0 ],
+//       Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
 
 //       ActivationId: undefined,
 //       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
@@ -359,13 +331,9 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.input0_width,            this.valueOutMinMax.input0_width ),
 
       new TestParams.ParamDescConfig( Block.Params.pointwise20ChannelCount, this.valueOutMinMax.pointwise20ChannelCount ),
-      new TestParams.ParamDescConfig( Block.Params.bPointwise20Bias,        this.valueOutMinMax.Bias ),
       new TestParams.ParamDescConfig( Block.Params.pointwise20ActivationId, this.valueOutMinMax.ActivationId ),
 
       new TestParams.ParamDescConfig( Block.Params.nActivationId,           this.valueOutMinMax.ActivationId ),
-
-//!!! (2022/06/18 Remarked) pointwise1 always bias and activation. Deprecate them to reduce quantity of test cases.
-//      new TestParams.ParamDescConfig( Block.Params.bPointwise1Bias,         this.valueOutMinMax.Bias ),
 
       new TestParams.ParamDescConfig( Block.Params.bSqueezeExcitationPrefix,
                                                                             this.valueOutMinMax.bSqueezeExcitationPrefix ),
@@ -382,11 +350,7 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,   this.valueOutMinMax.depthwiseFilterHeight ),
       new TestParams.ParamDescConfig( Block.Params.depthwiseFilterWidth,    this.valueOutMinMax.depthwiseFilterWidth ),
       new TestParams.ParamDescConfig( Block.Params.depthwiseStridesPad,     this.valueOutMinMax.depthwiseStridesPad ),
-      new TestParams.ParamDescConfig( Block.Params.bDepthwiseBias,          this.valueOutMinMax.Bias ),
       new TestParams.ParamDescConfig( Block.Params.depthwiseActivationId,   this.valueOutMinMax.ActivationId ),
-
-//!!! (2022/06/18 Remarked) pointwise1 always bias and activation. Deprecate them to reduce quantity of test cases.
-//      new TestParams.ParamDescConfig( Block.Params.pointwise1ActivationId,  this.valueOutMinMax.ActivationId ),
 
       new TestParams.ParamDescConfig( Block.Params.pointwise1ChannelCount,  this.valueOutMinMax.pointwise1ChannelCount ),
 
@@ -441,7 +405,7 @@ class Base extends TestParams.Base {
   use_depthwise1( inputImage, depthwiseName, parametersDesc ) {
     let result = inputImage.clone_byDepthwise_NonPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
-      this.in.paramsNumberArrayObject.depthwise1Filters, this.out.bDepthwiseBias,
+      this.in.paramsNumberArrayObject.depthwise1Filters, this.out.inferencedParams.bDepthwiseBias,
       this.in.paramsNumberArrayObject.depthwise1Biases, this.out.depthwiseActivationId, depthwiseName, parametersDesc );
     return result;
   }
@@ -456,7 +420,7 @@ class Base extends TestParams.Base {
   use_depthwise1_PassThrough( inputImage, depthwiseName, parametersDesc ) {
     let result = inputImage.clone_byDepthwise_PassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
-      this.out.bDepthwiseBias, this.out.depthwiseActivationId,
+      this.out.inferencedParams.bDepthwiseBias, this.out.depthwiseActivationId,
       this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0, // SameWhenPassThrough.
       depthwiseName, parametersDesc );
@@ -473,7 +437,7 @@ class Base extends TestParams.Base {
   use_depthwise2( inputImage, depthwiseName, parametersDesc ) {
     let result = inputImage.clone_byDepthwise_NonPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
-      this.in.paramsNumberArrayObject.depthwise2Filters, this.out.bDepthwiseBias,
+      this.in.paramsNumberArrayObject.depthwise2Filters, this.out.inferencedParams.bDepthwiseBias,
       this.in.paramsNumberArrayObject.depthwise2Biases, this.out.depthwiseActivationId, depthwiseName, parametersDesc );
     return result;
   }
@@ -503,7 +467,7 @@ class Base extends TestParams.Base {
     }
 
     let pointwiseOut = squeezeExcitationPrefixOut.clone_byPointwise_NonPassThrough( pointwise20ChannelCount,
-      this.in.paramsNumberArrayObject.pointwise20Filters, this.out.bPointwise20Bias,
+      this.in.paramsNumberArrayObject.pointwise20Filters, this.out.inferencedParams.bPointwise20Bias,
       this.in.paramsNumberArrayObject.pointwise20Biases, this.out.pointwise20ActivationId, pointwiseName, parametersDesc );
 
     let squeezeExcitationPostfixOut = pointwiseOut;
@@ -524,8 +488,9 @@ class Base extends TestParams.Base {
   }
 
   /**
-   * Pointwise202 uses the same channel count, bias flag and activation function as Pointwise20 (i.e. pointwise20ChannelCount, bPointwise20Bias
-   * and pointwise20ActivationId), but uses different filters and biases weights (i.e. pointwise202Filters and pointwise202Biases)
+   * Pointwise202 uses the same channel count, bias flag and activation function as Pointwise20 (i.e. pointwise20ChannelCount,
+   * bPointwise20Bias and pointwise20ActivationId), but uses different filters and biases weights (i.e. pointwise202Filters and
+   * pointwise202Biases)
    *
    * @param {NumberImage.Base} inputImage    The source image to be processed.
    * @param {number} pointwise20ChannelCount The output channel count of the pointwise202 convolution.
@@ -551,7 +516,7 @@ class Base extends TestParams.Base {
     }
 
     let pointwiseOut = squeezeExcitationPrefixOut.clone_byPointwise_NonPassThrough( pointwise20ChannelCount,
-      this.in.paramsNumberArrayObject.pointwise202Filters, this.out.bPointwise20Bias,
+      this.in.paramsNumberArrayObject.pointwise202Filters, this.out.inferencedParams.bPointwise20Bias,
       this.in.paramsNumberArrayObject.pointwise202Biases, this.out.pointwise20ActivationId, pointwiseName, parametersDesc );
 
     let squeezeExcitationPostfixOut = pointwiseOut;
@@ -596,7 +561,7 @@ class Base extends TestParams.Base {
     // Note: Since pass-through, the squeeze-and-excitation is not necessary here.
 
     let result = inputImage.clone_byPointwise_PassThrough( pointwise20ChannelCount,
-      this.out.bPointwise20Bias, this.out.pointwise20ActivationId,
+      this.out.inferencedParams.bPointwise20Bias, this.out.pointwise20ActivationId,
       this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0, // SameWhenPassThrough.
       pointwiseName, parametersDesc );
@@ -628,7 +593,7 @@ class Base extends TestParams.Base {
     }
 
     let pointwiseOut = squeezeExcitationPrefixOut.clone_byPointwise_NonPassThrough( pointwise21ChannelCount,
-      this.in.paramsNumberArrayObject.pointwise21Filters, this.out.bPointwise20Bias, // (Note: Not bPointwise21Bias)
+      this.in.paramsNumberArrayObject.pointwise21Filters, this.out.inferencedParams.bPointwise20Bias, // (Note: Not bPointwise21Bias)
       this.in.paramsNumberArrayObject.pointwise21Biases, this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
       pointwiseName, parametersDesc );
 
@@ -1107,7 +1072,7 @@ class Base extends TestParams.Base {
       if ( paramsAll.inferencedParams.bDepthwiseRequestedAndNeeded ) {
         depthwise1_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise1_inputChannelCount,
           paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
-          paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias, "depthwise1", io_paramsNumberArrayObject );
+          paramsAll.depthwiseStridesPad, paramsAll.inferencedParams.bDepthwiseBias, "depthwise1", io_paramsNumberArrayObject );
       } else {
         depthwise1_resultOutputChannelCount = depthwise1_inputChannelCount;
         this.generate_depthwise_filters_biases( null, 0, null, null, null, null, "depthwise1", io_paramsNumberArrayObject );
@@ -1128,7 +1093,7 @@ class Base extends TestParams.Base {
         if ( paramsAll.inferencedParams.bDepthwiseRequestedAndNeeded ) {
           depthwise2_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise2_inputChannelCount,
             paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
-            paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias, "depthwise2", io_paramsNumberArrayObject );
+            paramsAll.depthwiseStridesPad, paramsAll.inferencedParams.bDepthwiseBias, "depthwise2", io_paramsNumberArrayObject );
         } else {
           depthwise2_resultOutputChannelCount = depthwise2_inputChannelCount;
           this.generate_depthwise_filters_biases( null, 0, null, null, null, null, "depthwise2", io_paramsNumberArrayObject );
@@ -1217,7 +1182,7 @@ class Base extends TestParams.Base {
     // pointwise21's bias flag and activation function should always be the same as pointwise20's.
     let bPointwise21Bias, nPointwise21ActivationId;
     {
-      bPointwise21Bias = paramsAll.bPointwise20Bias;
+      bPointwise21Bias = paramsAll.inferencedParams.bPointwise20Bias;
       nPointwise21ActivationId = paramsAll.pointwise20ActivationId;
     }
 
@@ -1247,10 +1212,10 @@ class Base extends TestParams.Base {
     //       to clear old them (because TestParams.Base.permuteParamRecursively() may not know them and may not clear them.
     {
       let pointwise20_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise20_inputChannelCount,
-        pointwise20_outputChannelCount, paramsAll.bPointwise20Bias, "pointwise20", io_paramsNumberArrayObject );
+        pointwise20_outputChannelCount, paramsAll.inferencedParams.bPointwise20Bias, "pointwise20", io_paramsNumberArrayObject );
 
       let pointwise202_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise202_inputChannelCount,
-        pointwise202_outputChannelCount, paramsAll.bPointwise20Bias, "pointwise202", io_paramsNumberArrayObject );
+        pointwise202_outputChannelCount, paramsAll.inferencedParams.bPointwise20Bias, "pointwise202", io_paramsNumberArrayObject );
     }
 
     // 5.2 Pointwise21
@@ -1313,19 +1278,12 @@ Base.paramsNameOrderArray = [
   Block.Params.input0_channelCount.paramName,
   Block.Params.nConvBlockTypeId.paramName,
   Block.Params.pointwise1ChannelCount.paramName,
-
-//!!! (2022/06/18 Remarked) pointwise1 always bias and activation. Deprecate them to reduce quantity of test cases.
-//   Block.Params.bPointwise1Bias.paramName,
-//   Block.Params.pointwise1ActivationId.paramName,
-
   Block.Params.depthwise_AvgMax_Or_ChannelMultiplier.paramName,
   Block.Params.depthwiseFilterHeight.paramName,
   Block.Params.depthwiseFilterWidth.paramName,
   Block.Params.depthwiseStridesPad.paramName,
-  Block.Params.bDepthwiseBias.paramName,
   Block.Params.depthwiseActivationId.paramName,
   Block.Params.pointwise20ChannelCount.paramName,
-  Block.Params.bPointwise20Bias.paramName,
   Block.Params.pointwise20ActivationId.paramName,
   Block.Params.nSqueezeExcitationChannelCountDivisor.paramName,
   Block.Params.bSqueezeExcitationPrefix.paramName,
