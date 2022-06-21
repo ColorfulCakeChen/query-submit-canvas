@@ -80,16 +80,21 @@ import * as Depthwise from "../Depthwise.js";
  *       channels.
  *
  *
+ * 1.3 bias flag in summary
+ *
+ * After considering all above, the bias flags are determined by:
+ *
+ *   - The bPointwise20Bias (and so bPointwise21Bias) always is true.
+ *
+ *   - 
  *
  *
  *
  *
  *
  *
-
-
-
-
+ *
+ *
 
 
  *
