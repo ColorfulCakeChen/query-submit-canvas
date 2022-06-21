@@ -444,53 +444,6 @@ class Base {
     Base.AssertTwoEqualValues( "parsing ending position",
       block.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, parametersDescription );
 
-    // input tensor parameters.
-    asserter.propertyValue( "input0_height", testParams.out.input0_height );
-    asserter.propertyValue( "input0_width", testParams.out.input0_width );
-    asserter.propertyValue( "inChannels0", testParams.out.input0_channelCount );
-    asserter.propertyValue( "nConvBlockId", testParams.out.nConvBlockId );
-
-//!!! ...unfinished... (2022/06/16) input1_height, input1_width, input1_channelCount
-
-    asserter.propertyValue( "inputTensorCount", inferencedParams.inputTensorCount );
-    asserter.propertyValue( "outputTensorCount", inferencedParams.outputTensorCount );
-    asserter.propertyValue( "bDepthwiseRequestedAndNeeded", inferencedParams.bDepthwiseRequestedAndNeeded );
-    asserter.propertyValue( "bDepthwise2Requested", inferencedParams.bDepthwise2Requested );
-    asserter.propertyValue( "bConcat1Requested", inferencedParams.bConcat1Requested );
-    asserter.propertyValue( "bAddInputToOutputRequested", inferencedParams.bAddInputToOutputRequested );
-    asserter.propertyValue( "bConcat2ShuffleSplitRequested", inferencedParams.bConcat2ShuffleSplitRequested );
-    asserter.propertyValue( "bHigherHalfDifferent", inferencedParams.bHigherHalfDifferent );
-    asserter.propertyValue( "bHigherHalfDepthwise2", inferencedParams.bHigherHalfDepthwise2 );
-    asserter.propertyValue( "channelShuffler_outputGroupCount", inferencedParams.channelShuffler_outputGroupCount );
-
-    // The ( block.bConcat2ShuffleSplitRequested == true ) only if ShuffleNetV2.
-    if ( block.bConcat2ShuffleSplitRequested ) {
-      let bShuffleNetV2 =
-           ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD ) // (2)
-        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY ) // (3)
-        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL ) // (4)
-      ;
-      asserter.propertyValue( "bConcat2ShuffleSplitRequested", bShuffleNetV2 );
-    }
-
-    // The channelShuffler must not null in these cases.
-    if (   ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD ) // (2)
-        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY ) // (3)
-        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL ) // (4)
-       ) {
-
-      tf.util.assert( channelShuffler_ConcatPointwiseConv != null, `Block_Reference.Base.block_create(): `
-        + `channelShuffler must NOT null when `
-        + `nConvBlockTypeId=`
-        + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
-        + `(${testParams.out.nConvBlockTypeId})` );
-
-      asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", channelShuffler_ConcatPointwiseConv );
-
-    } else {
-      asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", null );
-    }
-
     // Linearity
     let bNoSqueezeExcitation_between_depthwise_and_pointwise2;
     let bLinear_between_pointwise1_and_depthwise;
@@ -540,6 +493,84 @@ class Base {
         //asserter.propertyValue( "???bLinear_between_pointwise1_and_depthwise", bLinear_between_pointwise1_and_depthwise );
         //asserter.propertyValue( "???bLinear_between_pointwise1_and_pointwise2", bLinear_between_pointwise1_and_pointwise2 );
       }
+    }
+
+    let bDepthwiseRequestedAndNeeded;
+    {
+      if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
+        bDepthwiseRequestedAndNeeded = false;
+
+      } else {
+        let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( testParams.out.depthwiseStridesPad );
+
+        let bChannelCountSame = Depthwise.PadInfoCalculatorRoot.output_channelCount_is_same_as_input(
+          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier );
+
+        let bHeightWidthSame = Depthwise.PadInfoCalculatorRoot.output_height_width_is_same_as_input(
+          testParams.out.input0_height, testParams.out.input0_width,
+          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth,
+          stridesPadInfo );
+
+        let bNoNeighborAnalysis = Depthwise.PadInfoCalculatorRoot.output_height_width_is_no_neighbor_analysis(
+          testParams.out.input0_height, testParams.out.input0_width,
+          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth );
+
+        if (   ( bChannelCountSame )
+            && ( bHeightWidthSame )
+            && ( bNoNeighborAnalysis )
+            && ( bLinear_between_depthwise_and_pointwise2 )
+           )
+          bDepthwiseRequestedAndNeeded = false;
+        else
+          bDepthwiseRequestedAndNeeded = true;
+      }
+    }
+
+    // input tensor parameters.
+    asserter.propertyValue( "input0_height", testParams.out.input0_height );
+    asserter.propertyValue( "input0_width", testParams.out.input0_width );
+    asserter.propertyValue( "inChannels0", testParams.out.input0_channelCount );
+    asserter.propertyValue( "nConvBlockId", testParams.out.nConvBlockId );
+
+//!!! ...unfinished... (2022/06/16) input1_height, input1_width, input1_channelCount
+
+    asserter.propertyValue( "inputTensorCount", inferencedParams.inputTensorCount );
+    asserter.propertyValue( "outputTensorCount", inferencedParams.outputTensorCount );
+    asserter.propertyValue( "bDepthwiseRequestedAndNeeded", bDepthwiseRequestedAndNeeded );
+    asserter.propertyValue( "bDepthwise2Requested", inferencedParams.bDepthwise2Requested );
+    asserter.propertyValue( "bConcat1Requested", inferencedParams.bConcat1Requested );
+    asserter.propertyValue( "bAddInputToOutputRequested", inferencedParams.bAddInputToOutputRequested );
+    asserter.propertyValue( "bConcat2ShuffleSplitRequested", inferencedParams.bConcat2ShuffleSplitRequested );
+    asserter.propertyValue( "bHigherHalfDifferent", inferencedParams.bHigherHalfDifferent );
+    asserter.propertyValue( "bHigherHalfDepthwise2", inferencedParams.bHigherHalfDepthwise2 );
+    asserter.propertyValue( "channelShuffler_outputGroupCount", inferencedParams.channelShuffler_outputGroupCount );
+
+    // The ( block.bConcat2ShuffleSplitRequested == true ) only if ShuffleNetV2.
+    if ( block.bConcat2ShuffleSplitRequested ) {
+      let bShuffleNetV2 =
+           ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD ) // (2)
+        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY ) // (3)
+        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL ) // (4)
+      ;
+      asserter.propertyValue( "bConcat2ShuffleSplitRequested", bShuffleNetV2 );
+    }
+
+    // The channelShuffler must not null in these cases.
+    if (   ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD ) // (2)
+        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY ) // (3)
+        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL ) // (4)
+       ) {
+
+      tf.util.assert( channelShuffler_ConcatPointwiseConv != null, `Block_Reference.Base.block_create(): `
+        + `channelShuffler must NOT null when `
+        + `nConvBlockTypeId=`
+        + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
+        + `(${testParams.out.nConvBlockTypeId})` );
+
+      asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", channelShuffler_ConcatPointwiseConv );
+
+    } else {
+      asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", null );
     }
 
     // pointwise1 parameters.
@@ -595,39 +626,6 @@ class Base {
     asserter.propertyValue( "pointwise1ActivationName", pointwise1ActivationName_shouldBe );
 
     // depthwise parameters.
-
-    let bDepthwiseRequestedAndNeeded;
-    let depthwisePadInfo;
-    {
-      if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
-        bDepthwiseRequestedAndNeeded = false;
-
-      } else {
-        let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( testParams.out.depthwiseStridesPad );
-
-        let bChannelCountSame = Depthwise.PadInfoCalculatorRoot.output_channelCount_is_same_as_input(
-          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier );
-
-        let bHeightWidthSame = Depthwise.PadInfoCalculatorRoot.output_height_width_is_same_as_input(
-          testParams.out.input0_height, testParams.out.input0_width,
-          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth,
-          stridesPadInfo );
-
-        let bNoNeighborAnalysis = Depthwise.PadInfoCalculatorRoot.output_height_width_is_no_neighbor_analysis(
-          testParams.out.input0_height, testParams.out.input0_width,
-          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth );
-
-
-        if (   ( bChannelCountSame )
-            && ( bHeightWidthSame )
-            && ( bNoNeighborAnalysis )
-            && ( bLinear_between_depthwise_and_pointwise2 )
-           )
-          bDepthwiseRequestedAndNeeded = false;
-        else
-          bDepthwiseRequestedAndNeeded = true;
-      }
-    }
 
     let bDepthwiseBias_shouldBe;
     {
