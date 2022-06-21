@@ -423,7 +423,7 @@ class Params extends Weights.Params {
 
     if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
 
-      // Note: since no depthwise, then no depthwise activation function.
+      // Note: Because no depthwise, there is no depthwise activation function necessary to be considered.
       this.bLinear_between_depthwise_and_pointwise2 = bNoSqueezeExcitation_between_depthwise_and_pointwise2;
 
       this.bDepthwiseBias = false;
