@@ -20,7 +20,8 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
     this.objectClass = objectClass;
     this.pfnSetAsConstructor = pfnSetAsConstructor;
 
-    this.recycledObjects = new Set(); // Using set for handling object be recycled multiple times.
+    this.objectArray = new Array(); // For fetching efficientlys.
+    this.objectSet = new Set(); // For checking object recycled multiple times.
   }
 
   /**
@@ -39,10 +40,9 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
    */
   get_or_create_by( ...restArgs ) {
     let returnedObject;
-    if ( this.recycledObjects.size > 0 ) {
-      let values = this.recycledObjects.values();
-      returnedObject = values.next().value;          // Get the first object.
-      this.recycledObjects.delete( returnedObject ); // Removed from list.
+    if ( this.objectArray.length > 0 ) {
+      returnedObject = this.objectArray.pop();
+      this.objectSet.delete( returnedObject ); // Removed from set.
       this.pfnSetAsConstructor.apply( returnedObject, restArgs );
     } else {
       returnedObject = new ( this.objectClass )( ...restArgs );
@@ -55,14 +55,18 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
    *   The object (which should be an instance of this.ObjectClass) to be recycled.
    */
   recycle( objectToBeRecycled ) {
-    this.recycledObjects.add( objectToBeRecycled );
+    if ( !this.objectSet.has( objectToBeRecycled ) ) { // Avoiding duplicately.
+      this.objectSet.add( objectToBeRecycled );
+      this.objectArray.push( objectToBeRecycled );
+    }
   }
 
   /**
    * Discard all recycled objects.
    */
   clear() {
-    this.recycledObjects.clear();
+    this.objectSet.clear();
+    this.objectArray.length = 0;
   }
 
   /**
