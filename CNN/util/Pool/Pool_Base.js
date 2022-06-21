@@ -20,6 +20,12 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
     this.objectClass = objectClass;
     this.pfn_SetAsConstructor_ReturnObject = pfn_SetAsConstructor_ReturnObject;
 
+//!!! ...unfinished... (2022/06/21)
+// should be a MultiLayerMap whose leaf node is an Array object.
+// All objects with the same specification will be recycled into the same Array.
+// This is more useful for Float32Array.
+//
+
     this.objectArray = new Array(); // For fetching efficientlys.
     this.objectSet = new Set(); // For checking object recycled multiple times.
   }
