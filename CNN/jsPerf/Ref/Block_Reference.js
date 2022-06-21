@@ -457,7 +457,7 @@ class Base {
 
       // Determine bLinear_between_depthwise_and_pointwise2
       if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE )
-        bLinear_between_depthwise_and_pointwise2 = true;
+        bLinear_between_depthwise_and_pointwise2 = bNoSqueezeExcitation_between_depthwise_and_pointwise2;
       else
         bLinear_between_depthwise_and_pointwise2 = (
              ( testParams.out.depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // depthwise has no activation function.
