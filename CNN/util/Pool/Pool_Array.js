@@ -18,9 +18,13 @@ class ArrayPool extends Root {
    *
    * @param {number} newLength
    *   The this.length to be set to newLength.
+   *
+   * @return {Array}
+   *   Return the this object.
    */
   static setAsConstructor_by_length( newLength ) {
     this.length = newLength;
+    return this;
   }
 
 }
