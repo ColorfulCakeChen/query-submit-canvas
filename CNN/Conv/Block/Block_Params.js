@@ -390,7 +390,7 @@ class Params extends Weights.Params {
 
   /**
    * Determine the following properties:
-   *   - this.bNonLinear_between_depthwise_and_pointwise2
+   *   - this.bLinear_between_depthwise_and_pointwise2
    *   - this.bDepthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
@@ -409,11 +409,42 @@ class Params extends Weights.Params {
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
   ) {
 
+    let bNoSqueezeExcitation_between_depthwise_and_pointwise2;
+    {
+      bNoSqueezeExcitation_between_depthwise_and_pointwise2 =
+
+          // no squeeze-and-excitation (so there is no squeeze-and-excitation between depthwise and pointwise2)
+      && (   ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
+
+          // or, has squeeze-and-excitation, but after pointwise2.
+          || ( bSqueezeExcitationPrefix == false )
+         );
+    }
+
     if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
-      this.bNonLinear_between_depthwise_and_pointwise2 = false;
+
+      // Note: since no depthwise, then no depthwise activation function.
+      this.bLinear_between_depthwise_and_pointwise2 = bNoSqueezeExcitation_between_depthwise_and_pointwise2;
+
       this.bDepthwiseBias = false;
       this.bDepthwiseRequestedAndNeeded = false; // depthwise is not requested.
       return;
+    }
+
+    let bLinear_between_depthwise_and_pointwise2;
+    {
+      bLinear_between_depthwise_and_pointwise2 = this.bLinear_between_depthwise_and_pointwise2 =
+         ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // depthwise has no activation function.
+      && ( bNoSqueezeExcitation_between_depthwise_and_pointwise2 ) // no squeeze-and-excitation between depthwise and pointwise2.
+      ;
+    }
+
+    let bDepthwiseBias;
+    {
+      if ( bLinear_between_depthwise_and_pointwise2 )
+        bDepthwiseBias = this.bDepthwiseBias = false; // Because its could be combined into the next operation's (i.e. pointwise2's) bias.
+      else
+        bDepthwiseBias = this.bDepthwiseBias = true;
     }
 
     let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( depthwiseStridesPad );
@@ -426,7 +457,7 @@ class Params extends Weights.Params {
     let bNoNeighborAnalysis = Depthwise.PadInfoCalculatorRoot.output_height_width_is_no_neighbor_analysis( input0_height, input0_width,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth );
 
-//!!! (2022/06/21 Remarked) Old Codes.
+//!!! (2022/06/21 Remarked) Old Codes. Replaced by bNonLinear_between_depthwise_and_pointwise2
 //     let depthwise_bLinearOrAffine;
 //     {
 //       depthwise_bLinearOrAffine =
@@ -439,47 +470,33 @@ class Params extends Weights.Params {
 //           || ( bSqueezeExcitationPrefix == false )
 //          );
 //     }
+//
+//     let depthwise_bLinear;
+//     {
+//       depthwise_bLinear = depthwise_bLinearOrAffine
+//         && (    ( bDepthwiseBias == false ) // It has no bias. (i.e. depthwise is linear)
+//
+//             // Or, its has bias, but its next operation (i.e. pointwise2) has bias (so its bias could be combined into the next operation's
+//             // bias). Then it could be viewed as linear.
+//             || ( ( bDepthwiseBias == true ) && ( bPointwise20Bias == true ) )
+//            );
+//     }
 
 //!!! ...unfinished... (2022/06/21)
-    let bNonLinear_between_depthwise_and_pointwise2;
-    {
-      bNonLinear_between_depthwise_and_pointwise2 = this.bNonLinear_between_depthwise_and_pointwise2 =
-         ( depthwiseActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // There is activation function.
-
-          // Or, there is squeeze-and-excitation between depthwise and pointwise2.
-      || (   ( bSqueezeExcitationPrefix == true )
-          && ( nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
-         );
-    }
-
-    if ( bNonLinear_between_depthwise_and_pointwise2 )
-      this.bDepthwiseBias = true;
-    else
-      this.bDepthwiseBias = false;
-        
-    let depthwise_bLinear;
-    {
-      depthwise_bLinear = depthwise_bLinearOrAffine
-        && (    ( bDepthwiseBias == false ) // It has no bias. (i.e. depthwise is linear)
-
-            // Or, its has bias, but its next operation (i.e. pointwise2) has bias (so its bias could be combined into the next operation's
-            // bias). Then it could be viewed as linear.
-            || ( ( bDepthwiseBias == true ) && ( bPointwise20Bias == true ) )
-           );
-    }
-
     // If a depthwise operation does not change output's ( height, width, channelCount ), does not analyze ( height, width ) neightbors,
     // does not non-linear, then it is equivalent to do nothing.
     //
-    let depthwise_bDoesNothing = ( bChannelCountSame && bHeightWidthSame && bNoNeighborAnalysis && depthwise_bLinear );
-    if ( depthwise_bDoesNothing )
-      this.bDepthwiseRequestedAndNeeded = false; // depthwise is requested, but is not necessary.
-    else
-      this.bDepthwiseRequestedAndNeeded = true; // depthwise is requested and is necessary.
-
+    let bDepthwiseRequestedAndNeeded;
+    {
+      let depthwise_bDoesNothing = ( bChannelCountSame && bHeightWidthSame && bNoNeighborAnalysis && bLinear_between_depthwise_and_pointwise2 );
+      if ( depthwise_bDoesNothing )
+        bDepthwiseRequestedAndNeeded = this.bDepthwiseRequestedAndNeeded = false; // depthwise is requested, but is not necessary.
+      else
+        bDepthwiseRequestedAndNeeded = this.bDepthwiseRequestedAndNeeded = true; // depthwise is requested and is necessary.
+    }
 
     // depthwisePadInfo
-    if ( this.bDepthwiseRequestedAndNeeded ) { // When depthwise operation is necessary, infer its information.
+    if ( bDepthwiseRequestedAndNeeded ) { // When depthwise operation is necessary, infer its information.
       if ( this.depthwisePadInfo ) { // Re-using (instead of re-creating) may improve runtime speed.
         this.depthwisePadInfo.set(
           input0_height, input0_width, input0_channelCount, 
@@ -496,8 +513,6 @@ class Params extends Weights.Params {
         // Do nothing.
       }
     }
-  
-
   }
 
   /**
