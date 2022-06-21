@@ -1,4 +1,4 @@
-export { Base };
+export { Base, Root };
 
 /**
  * A pool for recycling (re-using) objects.
@@ -6,7 +6,7 @@ export { Base };
  * It could be used to improve performance by reducing memory re-allocation.
  *
  */
-class Base {
+let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentClass {
   
   /**
    * @param {Class} objectClass
@@ -72,3 +72,12 @@ class Base {
   }
 
 }
+
+
+/**
+ * Almost the same as Base class except its parent class is fixed to Object. In other words, caller can not
+ * specify the parent class of ObjectPool.Root (so it is named "Root" which can not have parent class).
+ */
+class Root extends Base() {
+}
+
