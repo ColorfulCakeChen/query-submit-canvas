@@ -111,10 +111,6 @@ class TestCorrectnessInfo {
           concatenatedDepth = pointwise20ChannelCount * outputGroupCount;
           break;
 
-//!!! (2022/06/16 Remarked) no needs channelShuffler_ConcatPointwiseConv
-//         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD: // (5)
-//         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL: // (6)
-
           // Because Block_TestParams.generate_Filters_Biases() will double pointwise20ChannelCount, it must be an even number
           // which could be splitted (into two groups).
           //
@@ -407,8 +403,8 @@ class Base {
       testParams.in.nConvBlockTypeId,
       testParams.in.pointwise1ChannelCount,
       testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
-      testParams.in.depthwiseStridesPad, testParams.in.bDepthwiseBias, testParams.in.depthwiseActivationId,
-      testParams.in.pointwise20ChannelCount, testParams.in.bPointwise20Bias, testParams.in.pointwise20ActivationId,
+      testParams.in.depthwiseStridesPad, testParams.in.depthwiseActivationId,
+      testParams.in.pointwise20ChannelCount, testParams.in.pointwise20ActivationId,
       testParams.in.nSqueezeExcitationChannelCountDivisor, testParams.in.bSqueezeExcitationPrefix,
       testParams.in.nActivationId,
       testParams.in.bKeepInputTensor
@@ -497,6 +493,12 @@ class Base {
 
     // pointwise1 parameters.
 
+//!!! ...unfinished... (2022/06/21)
+// bLinear_between_pointwise1_and_depthwise
+// bLinear_between_pointwise1_and_pointwise2
+// bLinear_between_depthwise_and_pointwise2
+//
+
     let bPointwise1Bias_shouldBe = testParams.out.inferencedParams.bPointwise1Bias;
     let pointwise1ActivationId_shouldBe = testParams.out.inferencedParams.pointwise1ActivationId;
     let pointwise1ActivationName_shouldBe = testParams.out.inferencedParams.pointwise1ActivationName;
@@ -540,7 +542,7 @@ class Base {
     asserter.propertyValue( "depthwiseFilterHeight", testParams.out.depthwiseFilterHeight );
     asserter.propertyValue( "depthwiseFilterWidth", testParams.out.depthwiseFilterWidth );
     asserter.propertyValue( "depthwiseStridesPad", testParams.out.depthwiseStridesPad );
-    asserter.propertyValue( "bDepthwiseBias", testParams.out.bDepthwiseBias );
+    asserter.propertyValue( "bDepthwiseBias", testParams.out.inferencedParams.bDepthwiseBias );
     asserter.propertyValue( "depthwiseActivationId", testParams.out.depthwiseActivationId );
 
     let depthwiseActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.depthwiseActivationId );
@@ -549,7 +551,7 @@ class Base {
     // pointwise20 parameters.
     asserter.propertyValue( "pointwise20ChannelCount", testParams.out.pointwise20ChannelCount );
 
-    asserter.propertyValue( "bPointwise20Bias", testParams.out.bPointwise20Bias );
+    asserter.propertyValue( "bPointwise20Bias", testParams.out.inferencedParams.bPointwise20Bias );
     asserter.propertyValue( "pointwise20ActivationId", testParams.out.pointwise20ActivationId );
 
     let pointwise20ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.pointwise20ActivationId );
@@ -571,7 +573,7 @@ class Base {
       }
     }
 
-    asserter.propertyValue( "bPointwise21Bias", testParams.out.bPointwise20Bias ); // Always same as pointwise20.
+    asserter.propertyValue( "bPointwise21Bias", testParams.out.inferencedParams.bPointwise20Bias ); // Always same as pointwise20.
     asserter.propertyValue( "pointwise21ActivationId", testParams.out.pointwise20ActivationId ); // Always same as pointwise20.
     asserter.propertyValue( "pointwise21ActivationName", pointwise20ActivationName ); // Always same as pointwise20.
 
@@ -1001,14 +1003,15 @@ class Base {
       + `depthwiseStridesPad=`
         + `${ValueDesc.StridesPad.Singleton.getStringOf( testParams.out.depthwiseStridesPad )}`
         + `(${testParams.out.depthwiseStridesPad}), `
-      + `bDepthwiseBias=${testParams.out.bDepthwiseBias}, `
+      + `bDepthwiseBias=${testParams.out.inferencedParams.bDepthwiseBias}, `
       + `depthwiseActivationName=`
         + `${Block.Params.depthwiseActivationId.getStringOfValue( testParams.out.depthwiseActivationId )}`
         + `(${testParams.out.depthwiseActivationId}), `
 
       + `bConcat1Requested=${inferencedParams.bConcat1Requested}, `
 
-      + `pointwise20ChannelCount=${testParams.out.pointwise20ChannelCount}, bPointwise20Bias=${testParams.out.bPointwise20Bias}, `
+      + `pointwise20ChannelCount=${testParams.out.pointwise20ChannelCount}, `
+      + `bPointwise20Bias=${testParams.out.inferencedParams.bPointwise20Bias}, `
       + `pointwise20ActivationName=`
         + `${Block.Params.pointwise20ActivationId.getStringOfValue( testParams.out.pointwise20ActivationId )}`
         + `(${testParams.out.pointwise20ActivationId}), `
