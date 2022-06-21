@@ -455,10 +455,14 @@ class Base {
         || ( testParams.out.bSqueezeExcitationPrefix == false )
       );
 
-      bLinear_between_depthwise_and_pointwise2 = (
-           ( testParams.out.depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // depthwise has no activation function.
-        && ( bNoSqueezeExcitation_between_depthwise_and_pointwise2 ) // no squeeze-and-excitation between depthwise and pointwise2.
-      );
+      // Determine bLinear_between_depthwise_and_pointwise2
+      if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE )
+        bLinear_between_depthwise_and_pointwise2 = true;
+      else
+        bLinear_between_depthwise_and_pointwise2 = (
+             ( testParams.out.depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // depthwise has no activation function.
+          && ( bNoSqueezeExcitation_between_depthwise_and_pointwise2 ) // no squeeze-and-excitation between depthwise and pointwise2.
+        );
 
       // Determine bLinear_between_pointwise1_and_depthwise
       {
