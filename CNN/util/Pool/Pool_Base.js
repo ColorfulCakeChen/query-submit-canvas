@@ -7,18 +7,18 @@ export { Base, Root };
  *
  */
 let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentClass {
-  
+
   /**
    * @param {Class} objectClass
    *   The class for all newly created objects.
    *
-   * @param {function} pfnSetAsConstructor
-   *   A function works as its constructor. Before .get_or_create_by() returns a recycled object, its .pfnSetAsConstructor() method
-   * will be called to re-initilaize it.
+   * @param {function} pfn_SetAsConstructor_ReturnObject
+   *   A function set contents like its constructor and return an object. Before .get_or_create_by() returns a recycled object,
+   * its .pfnSetAsConstructor() method will be called to re-initilaize it. Its return value will be the final returned object.
    */
-  constructor( objectClass, pfnSetAsConstructor ) {
+  constructor( objectClass, pfn_SetAsConstructor_ReturnObject ) {
     this.objectClass = objectClass;
-    this.pfnSetAsConstructor = pfnSetAsConstructor;
+    this.pfn_SetAsConstructor_ReturnObject = pfn_SetAsConstructor_ReturnObject;
 
     this.objectArray = new Array(); // For fetching efficientlys.
     this.objectSet = new Set(); // For checking object recycled multiple times.
@@ -41,9 +41,9 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
   get_or_create_by( ...restArgs ) {
     let returnedObject;
     if ( this.objectArray.length > 0 ) {
-      returnedObject = this.objectArray.pop();
-      this.objectSet.delete( returnedObject ); // Removed from set.
-      this.pfnSetAsConstructor.apply( returnedObject, restArgs );
+      let candicatedObject = this.objectArray.pop();
+      this.objectSet.delete( candicatedObject ); // Removed from set.
+      returnedObject =this.pfn_SetAsConstructor_ReturnObject.apply( candicatedObject, restArgs );
     } else {
       returnedObject = new ( this.objectClass )( ...restArgs );
     }
