@@ -616,17 +616,18 @@ class Base {
 
     let bDepthwiseBias_shouldBe;
     {
-//!!!
-      if ( !bDepthwiseRequestedAndNeeded ) {
-          bDepthwiseBias_shouldBe = false;
-
-      } else {
+//!!! (2022/06/21 Added and Remarked)
+//       if ( !bDepthwiseRequestedAndNeeded ) {
+//           bDepthwiseBias_shouldBe = false;
+//
+//       } else {
 
         if ( bLinear_between_depthwise_and_pointwise2 )
           bDepthwiseBias_shouldBe = false;
         else
           bDepthwiseBias_shouldBe = true;
-      }
+
+//      }
     }
 
     asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", testParams.out.depthwise_AvgMax_Or_ChannelMultiplier );
