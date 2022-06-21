@@ -491,7 +491,6 @@ class Base {
       asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", null );
     }
 
-//!!! ...unfinished... (2022/06/21)
     // Linearity
     let bNoSqueezeExcitation_between_depthwise_and_pointwise2;
     let bLinear_between_pointwise1_and_depthwise;
@@ -541,14 +540,11 @@ class Base {
         asserter.propertyValue( "bLinear_between_pointwise1_and_depthwise", bLinear_between_pointwise1_and_depthwise );
         asserter.propertyValue( "bLinear_between_pointwise1_and_pointwise2", bLinear_between_pointwise1_and_pointwise2 );
       }
-
-//!!! ...unfinished... (2022/06/21)
-
     }
 
     // pointwise1 parameters.
 
-    let bPointwise1Bias_shouldBe = testParams.out.inferencedParams.bPointwise1Bias;
+    let bPointwise1Bias_shouldBe;
     let pointwise1ActivationId_shouldBe = testParams.out.inferencedParams.pointwise1ActivationId;
     let pointwise1ActivationName_shouldBe = testParams.out.inferencedParams.pointwise1ActivationName;
 
@@ -563,8 +559,10 @@ class Base {
         let pointwise1ChannelCount = ( testParams.out.pointwise1ChannelCount + testParams.out.input0_channelCount );
         asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
 
-//!!! ...unfinished... (2022/06/21)
-//        bPointwise1Bias_shouldBe = ???false;
+      if ( bLinear_between_pointwise1_and_pointwise2 )
+        bPointwise1Bias_shouldBe = false;
+      else
+        bPointwise1Bias_shouldBe = true;
 
       // However, if ( pointwise1ChannelCount == 0 ), Pointwise.Base can not handle ( pointwise1ChannelCount == 0 ) because
       // ( inputChannelCount < outputChannelCount == pointwise1ChannelCount == 0 ) is not possible. It will be wrongly recognized
@@ -585,27 +583,34 @@ class Base {
       asserter.propertyValue( "pointwise1ChannelCount", testParams.out.pointwise1ChannelCount );
     }
 
+    asserter.propertyValue( "bPointwise1Bias", testParams.out.inferencedParams.bPointwise1Bias );
     asserter.propertyValue( "bPointwise1Bias", bPointwise1Bias_shouldBe );
     asserter.propertyValue( "pointwise1ActivationId", pointwise1ActivationId_shouldBe );
     asserter.propertyValue( "pointwise1ActivationName", pointwise1ActivationName_shouldBe );
 
     // depthwise parameters.
+
+    let bDepthwiseBias_shouldBe;
+    {
+      if ( bLinear_between_depthwise_and_pointwise2 )
+        bDepthwiseBias_shouldBe = false;
+      else
+        bDepthwiseBias_shouldBe = true;
+    }
+
     asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", testParams.out.depthwise_AvgMax_Or_ChannelMultiplier );
     asserter.propertyValue( "depthwiseFilterHeight", testParams.out.depthwiseFilterHeight );
     asserter.propertyValue( "depthwiseFilterWidth", testParams.out.depthwiseFilterWidth );
     asserter.propertyValue( "depthwiseStridesPad", testParams.out.depthwiseStridesPad );
     asserter.propertyValue( "bDepthwiseBias", testParams.out.inferencedParams.bDepthwiseBias );
+    asserter.propertyValue( "bDepthwiseBias", bDepthwiseBias_shouldBe );
     asserter.propertyValue( "depthwiseActivationId", testParams.out.depthwiseActivationId );
-
-//!!! ...unfinished... (2022/06/21)
-//    asserter.propertyValue( "bDepthwiseBias", ??? );
 
     let depthwiseActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.depthwiseActivationId );
     asserter.propertyValue( "depthwiseActivationName", depthwiseActivationName );
 
     // pointwise20 parameters.
     asserter.propertyValue( "pointwise20ChannelCount", testParams.out.pointwise20ChannelCount );
-
     asserter.propertyValue( "bPointwise20Bias", testParams.out.inferencedParams.bPointwise20Bias );
     asserter.propertyValue( "bPointwise20Bias", true ); // pointwise2 should always has bias.
     asserter.propertyValue( "pointwise20ActivationId", testParams.out.pointwise20ActivationId );
