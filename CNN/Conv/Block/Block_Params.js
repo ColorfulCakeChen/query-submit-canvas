@@ -579,51 +579,43 @@ class Params extends Weights.Params {
    */
   static set_bPointwise1Bias_pointwise1ActivationId_pointwise1ActivationName_by(
     pointwise1ChannelCount,
-
-//!!! ...unfinished... (2022/06/21) 
     bLinear_between_depthwise_and_pointwise2,
     bDepthwiseRequestedAndNeeded,
     depthwisePadInfo, // Used if ( this.bDepthwiseRequestedAndNeeded == true ))
-
     nActivationId,
   ) {
-
-//!!! ...unfinished... (2022/06/21) 
-//
-//         - pointwise1 operation existed (i.e. ( pointwise1ChannelCount > 0 )), and
-//  *      - there are non-linear operations:
-//  *         - between pointwise1 and depthwise (if depthwise existed), or
-//  *         - between pointwise1 and pointwise2 (if depthwise does not exist).
-//  *     Then, ( bPointwise1Bias == true ).
-//
-// this.bLinear_between_pointwise1_and_depthwise
-// this.bLinear_between_pointwise1_and_pointwise2
 
     // 1. If no pointwise1, there is no bias and no activation.
     if ( pointwise1ChannelCount <= 0 ) {
       this.bPointwise1Bias = false;
       this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
-//!!! ...unfinished... (2022/06/21) What about depthwise pad=same?
-
       this.bLinear_between_pointwise1_and_depthwise = true;
+
+      if ( bDepthwiseRequestedAndNeeded ) {
+        if ( depthwisePadInfo.stridesPadInfo.pad_isValid() ) {
+          this.bLinear_between_pointwise1_and_pointwise2 = true;
+        } else {
+          this.bLinear_between_pointwise1_and_pointwise2 = false; // depthwise with ( pad = "same" ) should be viewed as non-linear.
+        }
+      } else { // no depthwise.
+        if ( bLinear_between_depthwise_and_pointwise2 ) {
+          this.bLinear_between_pointwise1_and_pointwise2 = true
+        } else {
+          this.bLinear_between_pointwise1_and_pointwise2 = false;
+        }
+      }
 
     // 2. If pointwise1 exists.
     } else {
 
-//!!! ...unfinished... (2022/06/19) 
-// If nActivationId == NONE and depthwise pad=valid, bPointwise1Bias could be false.
-
       this.pointwise1ActivationId = nActivationId;
-
-//!!! ...unfinished... (2022/06/21) What about depthwise pad=same?
 
       let bLinear_between_pointwise1_and_depthwise = this.bLinear_between_pointwise1_and_depthwise =
          ( this.pointwise1ActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ); // pointwise1 has no activation function.
 
       if ( bLinear_between_pointwise1_and_depthwise ) {
         if ( bDepthwiseRequestedAndNeeded ) {
-
           if ( depthwisePadInfo.stridesPadInfo.pad_isValid() ) {
             this.bPointwise1Bias = false;
             this.bLinear_between_pointwise1_and_pointwise2 = true;
@@ -631,25 +623,21 @@ class Params extends Weights.Params {
             this.bPointwise1Bias = true;
             this.bLinear_between_pointwise1_and_pointwise2 = false; // depthwise with ( pad = "same" ) should be viewed as non-linear.
           }
-        } else {
+        } else { // no depthwise.
           if ( bLinear_between_depthwise_and_pointwise2 ) {
             this.bPointwise1Bias = false;
-            this.bLinear_between_pointwise1_and_pointwise2 = ???;
+            this.bLinear_between_pointwise1_and_pointwise2 = true;
           } else {
             this.bPointwise1Bias = true;
-            this.bLinear_between_pointwise1_and_pointwise2 = ???;
+            this.bLinear_between_pointwise1_and_pointwise2 = false;
           }
         }
-
       } else {
         this.bPointwise1Bias = true;
+        this.bLinear_between_pointwise1_and_pointwise2 = false;
       }
 
     }
-
-//!!! ...unfinished... (2022/06/21) What about depthwise pad=same?
-//     this.bLinear_between_pointwise1_and_pointwise2
-//       = this.bLinear_between_pointwise1_and_depthwise && bLinear_between_depthwise_and_pointwise2;
 
     // 3.
     this.pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.pointwise1ActivationId );
@@ -750,9 +738,12 @@ class Params extends Weights.Params {
     this.pointwise20_channelShuffler_outputGroupCount = infoConvBlockType.pointwise20_channelShuffler_outputGroupCount;
 
     // 5. Pointwise1
-    Params.set_bPointwise1Bias_pointwise1ActivationId_pointwise1ActivationName.call( this,
+    Params.set_bPointwise1Bias_pointwise1ActivationId_pointwise1ActivationName_by.call( this,
       pointwise1ChannelCount,
-      nActivationId
+      this.bLinear_between_depthwise_and_pointwise2,
+      this.bDepthwiseRequestedAndNeeded,
+      this.depthwisePadInfo,
+      nActivationId,
     );
 
     // 6. Pointwise21
