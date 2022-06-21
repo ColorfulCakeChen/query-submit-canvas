@@ -624,16 +624,21 @@ class Params extends Weights.Params {
       if ( bLinear_between_pointwise1_and_depthwise ) {
         if ( bDepthwiseRequestedAndNeeded ) {
 
-          if ( depthwisePadInfo.stridesPadInfo.pad_isValid() )
+          if ( depthwisePadInfo.stridesPadInfo.pad_isValid() ) {
             this.bPointwise1Bias = false;
-          else
+            this.bLinear_between_pointwise1_and_pointwise2 = true;
+          } else {
             this.bPointwise1Bias = true;
-
+            this.bLinear_between_pointwise1_and_pointwise2 = false; // depthwise with ( pad = "same" ) should be viewed as non-linear.
+          }
         } else {
-          if ( bLinear_between_depthwise_and_pointwise2 )
+          if ( bLinear_between_depthwise_and_pointwise2 ) {
             this.bPointwise1Bias = false;
-          else
+            this.bLinear_between_pointwise1_and_pointwise2 = ???;
+          } else {
             this.bPointwise1Bias = true;
+            this.bLinear_between_pointwise1_and_pointwise2 = ???;
+          }
         }
 
       } else {
@@ -642,8 +647,9 @@ class Params extends Weights.Params {
 
     }
 
-    this.bLinear_between_pointwise1_and_pointwise2
-      = this.bLinear_between_pointwise1_and_depthwise && bLinear_between_depthwise_and_pointwise2;
+//!!! ...unfinished... (2022/06/21) What about depthwise pad=same?
+//     this.bLinear_between_pointwise1_and_pointwise2
+//       = this.bLinear_between_pointwise1_and_depthwise && bLinear_between_depthwise_and_pointwise2;
 
     // 3.
     this.pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.pointwise1ActivationId );
