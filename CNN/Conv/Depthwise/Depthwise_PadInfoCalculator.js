@@ -75,15 +75,6 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
     // Strides and Padding.
     this.stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( stridesPad );
     {
-//!!! (2022/06/10 Remarked) Use StridesPad.Info instead.
-//       switch ( stridesPad ) {
-//         case ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID: this.strides = 1; this.pad = "valid"; break; // (0)
-//         default:
-//         case ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME:  this.strides = 1; this.pad = "same";  break; // (1)
-//         case ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME:  this.strides = 2; this.pad = "same";  break; // (2)
-//         case ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID: this.strides = 2; this.pad = "valid"; break; // (3)
-//       }
-
       if ( !this.stridesPadInfo ) { // If not found, using default which could let add-input-to-output possible.
         this.stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME );
       }
@@ -139,33 +130,6 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
     this.outputChannelCount = inputChannelCount * this.channelMultiplier;
     this.outputElementCount = ( this.outputHeight * this.outputWidth * this.outputChannelCount );
   }
-
-
-//!!! (2022/06/10 Remarked) Replaced by output_height_width_is_same_as_input().
-//   /**
-//    * @return {boolean}
-//    *   If the ( height, width ) of this depthwise operation output is the same as its input, return true.
-//    */
-//   is_Output_Same_HeightWidth_As_Input() {
-//
-//     // If this depthwise operation does not existed, the output will have the same ( height, width ) as input.
-//     // In fact, they are the same one in this case.
-//     if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE )
-//       return true;
-//
-//     if ( this.strides != 1 )
-//       return false; // If strides is not 1, it is impossible to output same ( height, width ) as input.
-//
-//     if ( this.stridesPadInfo.pad_isSame() )
-//       return true; // If ( strides is 1 ) and ( pad is "same" ), the output will have the same ( height, width ) as input.
-//
-//     // Or, although ( strides is 1 ) and ( pad is "valid" ) but ( filter size is 1x1 ), the output will have the same
-//     // ( height, width ) as input.
-//     if ( ( this.stridesPadInfo.pad_isValid() ) && ( this.filterHeight == 1 ) && ( this.filterWidth == 1 ) )
-//       return true;
-//
-//     return false;
-//   }
 
 
   /** @return {boolean} If the channel count of this depthwise operation's output is the same as its input, return true. */
@@ -268,16 +232,10 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
     //       position which does not exist in a filter. So, only ( dilation == 1 ) is supported.
 
 
-//!!! ...unfinished... (2021/12/26) Since these for-loop are in correct order, the filterIndex could just begin at zero and then
-// be increased one by one (i.e. without using multiplication).
-//
     let filterIndex = 0; // The index in the filter weights array.
 
     for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
       for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
-
-//!!! (2022/05/26 Remarked) Replaced by filterIndex increment.
-//        let filterIndexBaseX = ( filterY * this.filterWidth );
 
         for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
           for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
@@ -286,18 +244,9 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
             if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
               continue;
 
-//!!! (2022/05/26 Remarked) Replaced by filterIndex increment.
-//            let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
-
             for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
 
-//!!! (2022/05/26 Remarked) Replaced by filterIndex increment.
-//              let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
-
               for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
-
-//!!! (2022/05/26 Remarked) Replaced by filterIndex increment.
-//                let filterIndex = filterIndexBaseSubC + outChannelSub;
 
                 if ( ( effectFilterY == oneEffectFilterY ) && ( effectFilterX == oneEffectFilterX ) ) {
                   depthwiseFiltersArray[ filterIndex ] = effectFilterValue;
