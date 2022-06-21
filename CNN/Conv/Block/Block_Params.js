@@ -12,10 +12,18 @@ import * as Depthwise from "../Depthwise.js";
  * 1. bias
  *
  * How the bias flags (i.e. bPointwise1Bias, bDepthwiseBias, bPointwise20Bias) are determined? Basically speaking, they are
- * deterimined by the affine transformation combination rule.
+ * deterimined by two rules:
+ *   - pointwise20 always has bias.
+ *   - affine transformation combination rule.
  *
  *
- * 1.0 Affine Transformation Combination Rule
+ * 1.1 pointwise2 always has bias
+ *
+ * The pointwise2 is an always existed operation of a block (i.e. a block may not have pointwise1, may not have depthwise, but always
+ * has pointwise2). It is also the final chance to add bias for a block. It is feasible to always have bias (i.e. ( bPoint20Bias == true )).
+ *
+ *
+ * 1.2 Affine Transformation Combination Rule
  *
  *   "For multiple affine transformations of the same direction, if there is no non-linear operation in between, they could be combined
  *    into one affine transformation."
@@ -35,7 +43,7 @@ import * as Depthwise from "../Depthwise.js";
  *   - squeeze-and-excitation
  *
  *
- * 1.0.1 Why depthwise convolution with ( pad = "same" ) is non-linear?
+ * 1.2.1 Why depthwise convolution with ( pad = "same" ) is non-linear?
  *
  * The reason is that the depthwise convolution with ( pad = "same" ) will pad zero for border pixels. The quantity of these padded
  * zero are different according to the input border pixel's position (e.g. at corner, or at edge). The varying zero quantity results
@@ -46,7 +54,7 @@ import * as Depthwise from "../Depthwise.js";
  * sufficient to remedy the previous affine transformation's no-bias.
  *
  *
- * 1.0.2 Why squeeze-and-excitation is non-linear?
+ * 1.2.2 Why squeeze-and-excitation is non-linear?
  *
  *   - The squeeze (of squeeze-and-excitation): linear because it is depthwise (globale average) convolution with ( pad = "valid" ).
  *
@@ -55,7 +63,7 @@ import * as Depthwise from "../Depthwise.js";
  *
  *   - The final multiplication to input: non-linear operation.
  *
- * In summary, it is non-linear,
+ * In summary, it is non-linear.
  *
  *
  *
@@ -66,9 +74,6 @@ import * as Depthwise from "../Depthwise.js";
 
 
 
- *
- * 1.1 pointwise2 always has bias
- *
  *
  *
  *
