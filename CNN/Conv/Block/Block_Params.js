@@ -101,21 +101,6 @@ import * as Depthwise from "../Depthwise.js";
  *
  *
  *
- *
- *
- *
-
-
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
  * @member {number} inputTensorCount
  *   How many input tensors should be passed into Block.apply() as parameter inputTensors[].
  *
@@ -432,16 +417,29 @@ class Params extends Weights.Params {
     let bNoNeighborAnalysis = Depthwise.PadInfoCalculatorRoot.output_height_width_is_no_neighbor_analysis( input0_height, input0_width,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth );
 
-    let depthwise_bLinearOrAffine;
+//!!! (2022/06/21 Remarked) Old Codes.
+//     let depthwise_bLinearOrAffine;
+//     {
+//       depthwise_bLinearOrAffine =
+//          ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // i.e. depthwise is linear or affine.
+//
+//           // no squeeze-and-excitation (i.e. between depthwise and pointwise2 is linear or affine)
+//       && (   ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
+//
+//           // or, has squeeze-and-excitation, but after pointwise2. (i.e. between depthwise and pointwise2 is still linear or affine)
+//           || ( bSqueezeExcitationPrefix == false )
+//          );
+//     }
+
+//!!! ...unfinished... (2022/06/21)
+    let bNonLinear_between_depthwise_and_pointwise2;
     {
-      depthwise_bLinearOrAffine =
-         ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // i.e. depthwise is linear or affine.
+      bNonLinear_between_depthwise_and_pointwise2 = this.bNonLinear_between_depthwise_and_pointwise2 =
+         ( depthwiseActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // There is activation function.
 
-          // no squeeze-and-excitation (i.e. between depthwise and pointwise2 is linear or affine)
-      && (   ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
-
-          // or, has squeeze-and-excitation, but after pointwise2. (i.e. between depthwise and pointwise2 is still linear or affine)
-          || ( bSqueezeExcitationPrefix == false )
+          // Or, there is squeeze-and-excitation between depthwise and pointwise2.
+      || (   ( bSqueezeExcitationPrefix == true )
+          && ( nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
          );
     }
 
