@@ -127,6 +127,9 @@ import * as Depthwise from "../Depthwise.js";
  * @member {string} pointwise1ActivationName
  *   The string name of pointwise1ActivationId.
  *
+ * @member {boolean} bDepthwiseBias
+ *   If true, there will be a bias after depthwise convolution. It is determined by operations between depthwise and pointwise2.
+ *
  * @member {boolean} bDepthwiseRequestedAndNeeded
  *   Whether depthwise operation is requested and necessary.
  *
@@ -153,6 +156,9 @@ import * as Depthwise from "../Depthwise.js";
  * @member {boolean} bHigherHalfDepthwise2
  *   Only if ( bHigherHalfDifferent == true ), this is meaningful. If true, the depthwise1 will use higher half channels to achieve
  * the depthwise2. If false, the depthwise1's higher half channels just pass through the input to output.
+ *
+ * @member {boolean} bPointwise20Bias
+ *   If true, there will be a bias after pointwise20 convolution. It is always true.
  *
  * @member {number} pointwise20_channelShuffler_outputGroupCount
  *   The output group count of the pointwise20's channel shuffler when
@@ -240,28 +246,20 @@ class Params extends Weights.Params {
    * Default is ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME (1) because ( depthwiseStrides == 1 ) and ( depthwisePad == "same" )
    * is a pre-condition for ( bAddInputToOutputRequested == true ).
    *
-   * @param {boolean} bDepthwiseBias
-   *   If null, it will be extracted from inputFloat32Array (i.e. by evolution). If true, there will be a bias after depthwise convolution.
-   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this bias will also be ignored.
-   *
    * @param {number} depthwiseActivationId
    *   The activation function id (Params.depthwiseActivationId.valueDesc.Ids.Xxx) after depthwise convolution. If null, it will be
    * extracted from inputFloat32Array (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this activation function
    * will also be ignored.
+   *
    * @param {number} pointwise20ChannelCount
    *   The output channel count of the first pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    * If ( pointwise20ChannelCount == 0 ) and ( pointwise21ChannelCount == 0 ), there will be no pointwise convolution after depthwise
    * convolution.
    *
-   * @param {boolean} bPointwise20Bias
-   *   If true, there will be a bias after the first pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by
-   * evolution). If ( pointwise20ChannelCount == 0 ), this bias will also be ignored.
-   *
    * @param {number} pointwise20ActivationId
    *   The activation function id (Params.pointwise20ActivationId.valueDesc.Ids.Xxx) after the first pointwise1 convolution. If null,
    * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise20ChannelCount == 0 ), this activation function
    * will also be ignored.
-   *
    *
    * @param {number} nSqueezeExcitationChannelCountDivisor
    *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
@@ -305,28 +303,9 @@ class Params extends Weights.Params {
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
-
-//!!! (2022/06/18 Remarked) pointwise1 always bias and activation. Deprecate them to reduce quantity of test cases.
-//    bPointwise1Bias, pointwise1ActivationId,
-
-
-//!!! ...unfinished... (2022/06/17)
-// If there is squeeze-and-excitation prefix pointwise2, the depthwise should be viewed as non-linear (even if depthwise activation
-// does not exist). In this case, depthwise's bias should be existed too.
-//
-// So bDepthwiseBias could be deprecated and inferenced from ( depthwiseActivationId and bSqueezeExcitationPrefix
-// and nSqueezeExcitationChannelCountDivisor).
-//
-
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-    bDepthwiseBias, depthwiseActivationId,
-
-
-//!!! ...unfinished... (2022/06/18)
-// Perhaps, deprecate bPointwise20Bias since all blocks' outputs needs bias (even if MobileNetV2_Xxx).
-
-    pointwise20ChannelCount, bPointwise20Bias, pointwise20ActivationId,
-
+    depthwiseActivationId,
+    pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     nActivationId,
     bKeepInputTensor
@@ -338,19 +317,12 @@ class Params extends Weights.Params {
       [ Params.input0_channelCount,                   input0_channelCount ],
       [ Params.nConvBlockTypeId,                      nConvBlockTypeId ],
       [ Params.pointwise1ChannelCount,                pointwise1ChannelCount ],
-      
-//!!! (2022/06/18 Remarked) pointwise1 always bias and activation. Deprecate them to reduce quantity of test cases.
-//       [ Params.bPointwise1Bias,                       bPointwise1Bias ],
-//       [ Params.pointwise1ActivationId,                pointwise1ActivationId ],
-
       [ Params.depthwise_AvgMax_Or_ChannelMultiplier, depthwise_AvgMax_Or_ChannelMultiplier ],
       [ Params.depthwiseFilterHeight,                 depthwiseFilterHeight ],
       [ Params.depthwiseFilterWidth,                  depthwiseFilterWidth ],
       [ Params.depthwiseStridesPad,                   depthwiseStridesPad ],
-      [ Params.bDepthwiseBias,                        bDepthwiseBias ],
       [ Params.depthwiseActivationId,                 depthwiseActivationId ],
       [ Params.pointwise20ChannelCount,               pointwise20ChannelCount ],
-      [ Params.bPointwise20Bias,                      bPointwise20Bias ],
       [ Params.pointwise20ActivationId,               pointwise20ActivationId ],
       [ Params.nSqueezeExcitationChannelCountDivisor, nSqueezeExcitationChannelCountDivisor ],
       [ Params.bSqueezeExcitationPrefix,              bSqueezeExcitationPrefix ],
@@ -379,8 +351,8 @@ class Params extends Weights.Params {
       this.nConvBlockTypeId,
       this.pointwise1ChannelCount,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth, this.depthwiseStridesPad,
-      this.bDepthwiseBias, this.depthwiseActivationId,
-      this.pointwise20ChannelCount, this.bPointwise20Bias,
+      this.depthwiseActivationId,
+      this.pointwise20ChannelCount,
       this.nSqueezeExcitationChannelCountDivisor, this.bSqueezeExcitationPrefix,
       this.nActivationId,
     );
@@ -401,11 +373,6 @@ class Params extends Weights.Params {
     input0_height, input0_width, input0_channelCount,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseActivationId,
-
-//!!! ...unfinished... (2022/06/21) bDepthwiseBias and bPointwise20Bias should become inferenced.
-//     bDepthwiseBias, depthwiseActivationId,
-//     bPointwise20Bias,
-
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
   ) {
 
@@ -482,7 +449,6 @@ class Params extends Weights.Params {
 //            );
 //     }
 
-//!!! ...unfinished... (2022/06/21)
     // If a depthwise operation does not change output's ( height, width, channelCount ), does not analyze ( height, width ) neightbors,
     // does not non-linear, then it is equivalent to do nothing.
     //
@@ -521,19 +487,19 @@ class Params extends Weights.Params {
    *   - this.input1_height
    *   - this.input1_width
    *   - this.input1_channelCount
-   *   - this.bNonLinear_between_depthwise_and_pointwise2
+   *   - this.bLinear_between_depthwise_and_pointwise2
    *   - this.bDepthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
    *
    */
-  static set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by(
+  static set_inputTensorCount_input1_height_width_channelCount_depthwise_inferenced_by(
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-    bDepthwiseBias, depthwiseActivationId,
-    pointwise20ChannelCount, bPointwise20Bias,
+    depthwiseActivationId,
+    pointwise20ChannelCount,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
   ) {
 
@@ -542,10 +508,9 @@ class Params extends Weights.Params {
 
     // 2. depthwise inferenced information.
     Params.set_depthwise_inferenced_by.call( this,
-      input0_height, input0_width,
+      input0_height, input0_width, input0_channelCount,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-      bDepthwiseBias, depthwiseActivationId,
-      bPointwise20Bias,
+      depthwiseActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     );
   
@@ -615,6 +580,8 @@ class Params extends Weights.Params {
     nActivationId,
   ) {
 
+//!!! ...unfinished... (2022/06/21) 
+
     // 1. If no pointwise1, there is no bias and no activation.
     if ( pointwise1ChannelCount <= 0 ) {
       this.bPointwise1Bias = false;
@@ -682,6 +649,8 @@ class Params extends Weights.Params {
    *   - this.bPointwise1Bias
    *   - this.pointwise1ActivationId
    *   - this.pointwise1ActivationName
+   *   - this.bLinear_between_depthwise_and_pointwise2
+   *   - this.bDepthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
    *   - this.bDepthwise2Requested
@@ -690,6 +659,7 @@ class Params extends Weights.Params {
    *   - this.bConcat2ShuffleSplitRequested
    *   - this.bHigherHalfDifferent
    *   - this.bHigherHalfDepthwise2
+   *   - this.bPointwise20Bias
    *   - this.pointwise20_channelShuffler_outputGroupCount
    *   - this.pointwise21ChannelCount
    *   - this.squeezeExcitationActivationId
@@ -702,8 +672,8 @@ class Params extends Weights.Params {
     nConvBlockTypeId,
     pointwise1ChannelCount,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-    bDepthwiseBias, depthwiseActivationId,
-    pointwise20ChannelCount, bPointwise20Bias,
+    depthwiseActivationId,
+    pointwise20ChannelCount,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     nActivationId
   ) {
@@ -711,14 +681,16 @@ class Params extends Weights.Params {
     // 0. Prepare.
     let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
 
+    this.bPointwise20Bias = true; // pointwise2 always has bias.
+
     // 1. The input1 channel count.
-    Params.set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by.call( this,
+    Params.set_inputTensorCount_input1_height_width_channelCount_depthwise_inferenced_by.call( this,
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-      bDepthwiseBias, depthwiseActivationId,
-      pointwise20ChannelCount, bPointwise20Bias,
+      depthwiseActivationId,
+      pointwise20ChannelCount,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     );
 
@@ -765,11 +737,6 @@ class Params extends Weights.Params {
 
   get pointwise1ChannelCount()    { return this.parameterMapModified.get( Params.pointwise1ChannelCount ); }
 
-//!!! (2022/06/18 Remarked) pointwise1 always bias and activation. Deprecate them to reduce quantity of test cases.
-//   get bPointwise1Bias()           { return this.parameterMapModified.get( Params.bPointwise1Bias ); }
-//   get pointwise1ActivationId()    { return this.parameterMapModified.get( Params.pointwise1ActivationId ); }
-//   get pointwise1ActivationName()  { return Params.pointwise1ActivationId.getStringOfValue( this.pointwise1ActivationId ); }
-
   /** @return {number} The number version of the depthwise opertion. */
   get depthwise_AvgMax_Or_ChannelMultiplier() { return this.parameterMapModified.get( Params.depthwise_AvgMax_Or_ChannelMultiplier ); }
 
@@ -784,12 +751,10 @@ class Params extends Weights.Params {
   get depthwiseStridesPad()       { return this.parameterMapModified.get( Params.depthwiseStridesPad ); }
   get depthwiseStridesPadName()   { return ValueDesc.StridesPad.Singleton.getStringOf( this.depthwiseStridesPad ); }
 
-  get bDepthwiseBias()            { return this.parameterMapModified.get( Params.bDepthwiseBias ); }
   get depthwiseActivationId()     { return this.parameterMapModified.get( Params.depthwiseActivationId ); }
   get depthwiseActivationName()   { return Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId ); }
 
   get pointwise20ChannelCount()   { return this.parameterMapModified.get( Params.pointwise20ChannelCount ); }
-  get bPointwise20Bias()          { return this.parameterMapModified.get( Params.bPointwise20Bias ); }
   get pointwise20ActivationId()   { return this.parameterMapModified.get( Params.pointwise20ActivationId ); }
   get pointwise20ActivationName() { return Params.pointwise20ActivationId.getStringOfValue( this.pointwise20ActivationId ); }
 
@@ -823,10 +788,6 @@ Params.input0_channelCount =     new ParamDesc.Int(                 "input0_chan
 Params.nConvBlockTypeId =        new ParamDesc.ConvBlockType(       "nConvBlockTypeId" );
 
 Params.pointwise1ChannelCount =  new ParamDesc.Int(                 "pointwise1ChannelCount",  0, ( 10 * 1024 ) );
-
-//!!! (2022/06/18 Remarked) pointwise1 always bias and activation. Deprecate them to reduce quantity of test cases.
-// Params.bPointwise1Bias =         new ParamDesc.Bool(                "bPointwise1Bias" );
-// Params.pointwise1ActivationId =  new ParamDesc.ActivationFunction(  "pointwise1ActivationId" );
 
 /** Define depthwise operation's id, range, name.
  *
@@ -863,7 +824,6 @@ Params.depthwiseFilterHeight =    new ParamDesc.Int(                "depthwiseFi
 Params.depthwiseFilterWidth =     new ParamDesc.Int(                "depthwiseFilterWidth",    1, ( 10 * 1024 ) );
 
 Params.depthwiseStridesPad =      new ParamDesc.StridesPad(         "depthwiseStridesPad" );
-Params.bDepthwiseBias =           new ParamDesc.Bool(               "bDepthwiseBias" );
 Params.depthwiseActivationId =    new ParamDesc.ActivationFunction( "depthwiseActivationId" );
 
 // Note: Force pointwise20ChannelCount always not zero. So that input0_channelCount_higherHalf could be determined
@@ -872,7 +832,6 @@ Params.depthwiseActivationId =    new ParamDesc.ActivationFunction( "depthwiseAc
 //   - ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6)
 //
 Params.pointwise20ChannelCount =  new ParamDesc.Int(                "pointwise20ChannelCount", 1, ( 10 * 1024 ) );
-Params.bPointwise20Bias =         new ParamDesc.Bool(               "bPointwise20Bias" );
 Params.pointwise20ActivationId =  new ParamDesc.ActivationFunction( "pointwise20ActivationId" );
 
 Params.nSqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
