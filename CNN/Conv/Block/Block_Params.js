@@ -380,12 +380,12 @@ class Params extends Weights.Params {
     {
       bNoSqueezeExcitation_between_depthwise_and_pointwise2 =
 
-        // no squeeze-and-excitation (so there is no squeeze-and-excitation between depthwise and pointwise2)
-       (   ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
+         // no squeeze-and-excitation (so there is no squeeze-and-excitation between depthwise and pointwise2)
+        (   ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
 
-        // or, has squeeze-and-excitation, but after pointwise2.
-        || ( bSqueezeExcitationPrefix == false )
-       );
+         // or, has squeeze-and-excitation, but after pointwise2.
+         || ( bSqueezeExcitationPrefix == false )
+        );
     }
 
     if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
