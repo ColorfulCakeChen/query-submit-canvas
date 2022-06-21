@@ -29,7 +29,7 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
    *   Return the quantity of recycled objects.
    */
   get size() {
-    return this.recycledObjects.size;
+    return this.objectSet.size;
   }
 
   /**
@@ -51,22 +51,27 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
   }
 
   /**
-   * @param {Object} 
+   * @param {Object} objectToBeRecycled
    *   The object (which should be an instance of this.ObjectClass) to be recycled.
+   *
+   * @return {boolean}
+   *   Return true, if the object is recycled. Return false, if the object has already been recycled.
    */
   recycle( objectToBeRecycled ) {
     if ( !this.objectSet.has( objectToBeRecycled ) ) { // Avoiding duplicately.
       this.objectSet.add( objectToBeRecycled );
       this.objectArray.push( objectToBeRecycled );
+      return true;
     }
+    return false;
   }
 
   /**
    * Discard all recycled objects.
    */
   clear() {
-    this.objectSet.clear();
     this.objectArray.length = 0;
+    this.objectSet.clear();
   }
 
   /**
@@ -74,7 +79,7 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
    *   Return an iterator object that contains all recycled objects.
    */
   * values() {
-    yield* this.recycledObjects.values();
+    yield* this.objectArray.values();
   }
 
 }
