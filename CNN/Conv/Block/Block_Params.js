@@ -571,45 +571,75 @@ class Params extends Weights.Params {
 
   /**
    * Determine the following properties:
+   *   - this.bLinear_between_pointwise1_and_depthwise
+   *   - this.bLinear_between_pointwise1_and_pointwise2
    *   - this.bPointwise1Bias
    *   - this.pointwise1ActivationId
    *   - this.pointwise1ActivationName
    */
   static set_bPointwise1Bias_pointwise1ActivationId_pointwise1ActivationName_by(
     pointwise1ChannelCount,
+
+//!!! ...unfinished... (2022/06/21) 
+    bLinear_between_depthwise_and_pointwise2,
+    bDepthwiseRequestedAndNeeded,
+    depthwisePadInfo, // Used if ( this.bDepthwiseRequestedAndNeeded == true ))
+
     nActivationId,
   ) {
 
 //!!! ...unfinished... (2022/06/21) 
+//
+//         - pointwise1 operation existed (i.e. ( pointwise1ChannelCount > 0 )), and
+//  *      - there are non-linear operations:
+//  *         - between pointwise1 and depthwise (if depthwise existed), or
+//  *         - between pointwise1 and pointwise2 (if depthwise does not exist).
+//  *     Then, ( bPointwise1Bias == true ).
+//
+// this.bLinear_between_pointwise1_and_depthwise
+// this.bLinear_between_pointwise1_and_pointwise2
 
     // 1. If no pointwise1, there is no bias and no activation.
     if ( pointwise1ChannelCount <= 0 ) {
       this.bPointwise1Bias = false;
       this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
-    // 2. If pointwise1 exists, it always has bias.
+//!!! ...unfinished... (2022/06/21) What about depthwise pad=same?
+
+      this.bLinear_between_pointwise1_and_depthwise = true;
+      this.bLinear_between_pointwise1_and_pointwise2
+        = this.bLinear_between_pointwise1_and_depthwise && bLinear_between_depthwise_and_pointwise2;
+
+    // 2. If pointwise1 exists.
     } else {
-      
+
 //!!! ...unfinished... (2022/06/19) 
 // If nActivationId == NONE and depthwise pad=valid, bPointwise1Bias could be false.
 
-      this.bPointwise1Bias = true;
       this.pointwise1ActivationId = nActivationId;
 
-//!!! (2022/06/19 Remarked) Replaced by nActivationId.
-//       // 2.1 Prefer the same activation function as the always existed (pointwise20) convolution.
-//       if ( pointwise20ActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
-//         this.pointwise1ActivationId = pointwise20ActivationId;
-//
-//       // 2.2 Fall back to the other operation.
-//       } else if (   ( bDepthwiseRequestedAndNeeded )
-//                  && ( depthwiseActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ) { 
-//         this.pointwise1ActivationId = depthwiseActivationId;
-//
-//       // 2.3 Since no operation has activation, the same as them.
-//       } else {
-//         this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-//       }
+//!!! ...unfinished... (2022/06/21) What about depthwise pad=same?
+
+      let bLinear_between_pointwise1_and_depthwise = this.bLinear_between_pointwise1_and_depthwise =
+         ( this.pointwise1ActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ); // pointwise1 has no activation function.
+
+      this.bLinear_between_pointwise1_and_pointwise2
+        = this.bLinear_between_pointwise1_and_depthwise && bLinear_between_depthwise_and_pointwise2;
+
+      if ( bDepthwiseRequestedAndNeeded ) {
+        if (  ( depthwisePadInfo.stridesPadInfo.pad_isValid() )
+            && ( bLinear_between_pointwise1_and_depthwise )
+           )
+          this.bPointwise1Bias = false;
+        else
+          this.bPointwise1Bias = true;
+      } else {
+        if ( bLinear_between_depthwise_and_pointwise2 )
+          this.bPointwise1Bias = false;
+        else
+          this.bPointwise1Bias = true;
+      }
+
     }
 
     // 3.
@@ -646,6 +676,8 @@ class Params extends Weights.Params {
    *   - this.input1_height
    *   - this.input1_width
    *   - this.input1_channelCount
+   *   - this.bLinear_between_pointwise1_and_depthwise
+   *   - this.bLinear_between_pointwise1_and_pointwise2
    *   - this.bPointwise1Bias
    *   - this.pointwise1ActivationId
    *   - this.pointwise1ActivationName
