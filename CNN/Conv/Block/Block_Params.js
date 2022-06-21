@@ -39,16 +39,18 @@ import * as Depthwise from "../Depthwise.js";
  *
  * What are non-linear operation here?
  *   - activation
- *   - depthwise convolution with ( pad = "same" ): linear for inner pixels, non-linear for border pixels.
+ *   - depthwise convolution with ( pad = "same" ): affine for inner pixels, non-affine for border pixels.
  *   - squeeze-and-excitation
  *
  *
- * 1.2.1 Why depthwise convolution with ( pad = "same" ) is non-linear?
+ * 1.2.1 Why depthwise convolution with ( pad = "same" ) is non-affine?
  *
  * The reason is that the depthwise convolution with ( pad = "same" ) will pad zero for border pixels. The quantity of these padded
- * zero are different according to the input border pixel's position (e.g. at corner, or at edge). The varying zero quantity results
- * in that varying bias is required. Varying bias is impossible to be achieved since data in the same channel could only have the
- * same bias.
+ * zero are different according to the input border pixel's position (e.g. at corner, or at edge).
+ *
+ * If a bias operation before depthwise want to be achieved by the bias operation after depthwise, the varying padded zero quantity
+ * results in that varying bias is required. However, varying bias is impossible to be achieved since data in the same channel could
+ * only have the same bias.
  *
  * On the other hand, the depthwise convolution with ( pad = "valid" ) does not pad any value. The per channel (fixed) bias is
  * sufficient to remedy the previous affine transformation's no-bias.
