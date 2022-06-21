@@ -25,18 +25,47 @@ import * as Depthwise from "../Depthwise.js";
  *   - pointwise convolution's direction is along channel axis.
  *
  * What are affine transformation here?
- *   - pointwise convolution
- *   - depthwise convolution with ( pad = "valid" )
- *   - bias
- *
- *
- *
+ *   - pointwise convolution: linear (also affine) along channel axis.
+ *   - depthwise convolution with ( pad = "valid" ): linear (also affine) along ( hieght, width ) plane.
+ *   - bias: affine along channel axis (no matter pointwise's bias or depthwise's bias).
  *
  * What are non-linear operation here?
- *   - depthwise convolution with ( pad = "same" )
  *   - activation
+ *   - depthwise convolution with ( pad = "same" ): linear for inner pixels, non-linear for border pixels.
  *   - squeeze-and-excitation
  *
+ *
+ * 1.0.1 Why depthwise convolution with ( pad = "same" ) is non-linear?
+ *
+ * The reason is that the depthwise convolution with ( pad = "same" ) will pad zero for border pixels. The quantity of these padded
+ * zero are different according to the input border pixel's position (e.g. at corner, or at edge). The varying zero quantity results
+ * in that varying bias is required. Varying bias is impossible to be achieved since data in the same channel could only have the
+ * same bias.
+ *
+ * On the other hand, the depthwise convolution with ( pad = "valid" ) does not pad any value. The per channel (fixed) bias is
+ * sufficient to remedy the previous affine transformation's no-bias.
+ *
+ *
+ * 1.0.2 Why squeeze-and-excitation is non-linear?
+ *
+ *   - The squeeze (of squeeze-and-excitation): linear because it is depthwise (globale average) convolution with ( pad = "valid" ).
+ *
+ *   - The intermediate and excitation (of squeeze-and-excitation): usually non-linear because they are pointwise convolution with
+ *       activation.
+ *
+ *   - The final multiplication to input: non-linear operation.
+ *
+ * In summary, it is non-linear,
+ *
+ *
+ *
+ *
+
+
+
+
+
+
  *
  * 1.1 pointwise2 always has bias
  *
