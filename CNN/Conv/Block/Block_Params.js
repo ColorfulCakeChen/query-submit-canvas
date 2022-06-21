@@ -395,6 +395,10 @@ class Params extends Weights.Params {
 
       this.bDepthwiseBias = false;
       this.bDepthwiseRequestedAndNeeded = false; // depthwise is not requested.
+
+      if ( this.depthwisePadInfo ) // Clear it.
+        this.depthwisePadInfo.set( 1, 1, 1, 0, 1, 1, 0 );
+
       return;
     }
 
