@@ -545,9 +545,20 @@ class Base {
     // pointwise1 parameters.
 
     let bPointwise1Bias_shouldBe;
+    {
+      if ( testParams.out.pointwise1ChannelCount > 0 ) {
+        if ( bLinear_between_pointwise1_and_pointwise2 )
+          bPointwise1Bias_shouldBe = false;
+        else
+          bPointwise1Bias_shouldBe = true;
+      } else {
+        bPointwise1Bias_shouldBe = false;
+      }
+    }
+
     let pointwise1ActivationId_shouldBe = testParams.out.inferencedParams.pointwise1ActivationId;
     let pointwise1ActivationName_shouldBe = testParams.out.inferencedParams.pointwise1ActivationName;
-
+      
     // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
     //
     if ( ( block.bHigherHalfDifferent == true ) && ( block.bHigherHalfDepthwise2 == true ) ) {
@@ -558,11 +569,6 @@ class Base {
       if ( testParams.out.pointwise1ChannelCount > 0 ) {
         let pointwise1ChannelCount = ( testParams.out.pointwise1ChannelCount + testParams.out.input0_channelCount );
         asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
-
-      if ( bLinear_between_pointwise1_and_pointwise2 )
-        bPointwise1Bias_shouldBe = false;
-      else
-        bPointwise1Bias_shouldBe = true;
 
       // However, if ( pointwise1ChannelCount == 0 ), Pointwise.Base can not handle ( pointwise1ChannelCount == 0 ) because
       // ( inputChannelCount < outputChannelCount == pointwise1ChannelCount == 0 ) is not possible. It will be wrongly recognized
