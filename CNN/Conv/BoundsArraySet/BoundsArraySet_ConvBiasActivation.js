@@ -44,13 +44,40 @@ class ConvBiasActivation extends InputsOutputs {
    */
   constructor( input0, outputChannelCount0 ) {
     super( input0, undefined, outputChannelCount0, undefined ); // .input0 and .output0
+    this.set_input0_outputChannelCount0( input0, outputChannelCount0 );
+  }
 
-    this.afterUndoPreviousActivationEscaping = new FloatValue.BoundsArray( input0.length ); // channel count same as input0.
+  /**
+   *   - The .input0 will be set as input0.
+   *   - The .afterUndoPreviousActivationEscaping will be set according to  input0 and input0.scaleArraySet.undo.scales.
+   *
+   * Difference from (parent class) InputsOutputs:
+   *   - Only input0 (always no input1), because convolution (no matter pointwise or depthwise) could handle one input tensor.
+   *   - Only output0 (always no output1), because convolution (no matter pointwise or depthwise) always generate one output tensor.
+   *
+   */
+  set_input0_outputChannelCount0( input0, outputChannelCount0 ) {
+    super.set_input0_input1_outputChannelCount0_outputChannelCount1( input0, undefined, outputChannelCount0, undefined ); // .input0 and .output0
 
-    this.afterFilter = new FloatValue.BoundsArray( outputChannelCount0 );
-    this.afterBias = new FloatValue.BoundsArray( outputChannelCount0 );
+    if ( this.afterUndoPreviousActivationEscaping )
+      this.afterUndoPreviousActivationEscaping.length = input0.length; // channel count same as input0.
+    else
+      this.afterUndoPreviousActivationEscaping = new FloatValue.BoundsArray( input0.length ); // channel count same as input0.
 
-    this.bPassThrough = new Array( outputChannelCount0 );
+    if ( this.afterFilter )
+      this.afterFilter.length = outputChannelCount0;
+    else
+      this.afterFilter = new FloatValue.BoundsArray( outputChannelCount0 );
+
+    if ( this.afterBias )
+      this.afterBias.length = outputChannelCount0;
+    else
+      this.afterBias = new FloatValue.BoundsArray( outputChannelCount0 );
+
+    if ( this.bPassThrough )
+      this.bPassThrough.length = outputChannelCount0;
+    else
+      this.bPassThrough = new Array( outputChannelCount0 );
 
     this.set_afterUndoPreviousActivationEscaping_by_input0_undoScales();
   }
