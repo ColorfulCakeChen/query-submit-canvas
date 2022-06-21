@@ -33,12 +33,12 @@ import * as Depthwise from "../Depthwise.js";
  *   - depthwise convolution's direction is along ( hieght, width ) plane.
  *   - pointwise convolution's direction is along channel axis.
  *
- * What are affine transformation here?
+ * What are affine transformations here?
  *   - pointwise convolution: linear (also affine) along channel axis.
  *   - depthwise convolution with ( pad = "valid" ): linear (also affine) along ( hieght, width ) plane.
  *   - bias: affine along channel axis (no matter pointwise's bias or depthwise's bias).
  *
- * What are non-linear operation here?
+ * What are non-linear operations here?
  *   - activation
  *   - depthwise convolution with ( pad = "same" ): affine for inner pixels, non-affine for border pixels.
  *   - squeeze-and-excitation
@@ -66,7 +66,7 @@ import * as Depthwise from "../Depthwise.js";
  *
  *   - The final multiplication to input: non-linear operation.
  *
- * In summary, it is non-linear.
+ * So, it is non-linear.
  *
  *
  * 1.2.3 For different directions
@@ -80,14 +80,23 @@ import * as Depthwise from "../Depthwise.js";
  *       channels.
  *
  *
- * 1.3 bias flag in summary
+ * 1.3 bias flags rules
  *
  * After considering all above, the bias flags are determined by:
  *
  *   - The bPointwise20Bias (and so bPointwise21Bias) always is true.
  *
- *   - 
+ *   - For depthwise operation's bias, if:
+ *      - depthwise operation existed (i.e. ( bDepthwiseRequestedAndNeeded == true )), and
+ *      - there are non-linear operations between depthwise and pointwise2.
+ *     Then, ( bDepthwiseBias == true ).
  *
+ *   - For pointwise1 operation's bias, if:
+ *      - pointwise1 operation existed (i.e. ( pointwise1ChannelCount > 0 )), and
+ *      - there are non-linear operations:
+ *         - between pointwise1 and depthwise (if depthwise existed), or
+ *         - between pointwise1 and pointwise2 (if depthwise does not exist).
+ *     Then, ( bPointwise1Bias == true ).
  *
  *
  *
