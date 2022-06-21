@@ -8,6 +8,48 @@ import * as Depthwise from "../Depthwise.js";
 /**
  * Pointwise-depthwise-pointwise convolution block parameters.
  *
+ *
+ * 1. bias
+ *
+ * How the bias flags (i.e. bPointwise1Bias, bDepthwiseBias, bPointwise20Bias) are determined? Basically speaking, they are
+ * deterimined by the affine transformation combination rule.
+ *
+ *
+ * 1.0 Affine Transformation Combination Rule
+ *
+ *   "For multiple affine transformations of the same direction, if there is no non-linear operation in between, they could be combined
+ *    into one affine transformation."
+ *
+ * So called "direction" here is operation direction. For example,
+ *   - depthwise convolution's direction is along ( hieght, width ) plane.
+ *   - pointwise convolution's direction is along channel axis.
+ *
+ * What are affine transformation here?
+ *   - pointwise convolution
+ *   - depthwise convolution with ( pad = "valid" )
+ *   - bias
+ *
+ *
+ *
+ *
+ * What are non-linear operation here?
+ *   - depthwise convolution with ( pad = "same" )
+ *   - activation
+ *   - squeeze-and-excitation
+ *
+ *
+ * 1.1 pointwise2 always has bias
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
  * @member {number} inputTensorCount
  *   How many input tensors should be passed into Block.apply() as parameter inputTensors[].
  *
