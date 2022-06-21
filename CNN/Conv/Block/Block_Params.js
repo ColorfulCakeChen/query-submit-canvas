@@ -69,13 +69,15 @@ import * as Depthwise from "../Depthwise.js";
  * In summary, it is non-linear.
  *
  *
- * 1.2.3 Along different directions
+ * 1.2.3 For different directions
  *
  * Affine transformation along different directions can be combined, but can not be replaced by each other.
- * 
  *
+ *   - The pointwise convolution can not replace depthwise convolution (and vice versa), because the former processes along depth
+ *       (i.e. channels) while the later processes along spatial (i.e. height and width).
  *
- *
+ *   - The bias of pointwise convolution and depthwise convolution can be replaced by each other, because they all process along
+ *       channels.
  *
  *
  *
