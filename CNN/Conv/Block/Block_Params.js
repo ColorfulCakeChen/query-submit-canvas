@@ -607,8 +607,6 @@ class Params extends Weights.Params {
 //!!! ...unfinished... (2022/06/21) What about depthwise pad=same?
 
       this.bLinear_between_pointwise1_and_depthwise = true;
-      this.bLinear_between_pointwise1_and_pointwise2
-        = this.bLinear_between_pointwise1_and_depthwise && bLinear_between_depthwise_and_pointwise2;
 
     // 2. If pointwise1 exists.
     } else {
@@ -623,24 +621,29 @@ class Params extends Weights.Params {
       let bLinear_between_pointwise1_and_depthwise = this.bLinear_between_pointwise1_and_depthwise =
          ( this.pointwise1ActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ); // pointwise1 has no activation function.
 
-      this.bLinear_between_pointwise1_and_pointwise2
-        = this.bLinear_between_pointwise1_and_depthwise && bLinear_between_depthwise_and_pointwise2;
+      if ( bLinear_between_pointwise1_and_depthwise ) {
+        if ( bDepthwiseRequestedAndNeeded ) {
 
-      if ( bDepthwiseRequestedAndNeeded ) {
-        if (  ( depthwisePadInfo.stridesPadInfo.pad_isValid() )
-            && ( bLinear_between_pointwise1_and_depthwise )
-           )
-          this.bPointwise1Bias = false;
-        else
-          this.bPointwise1Bias = true;
+          if ( depthwisePadInfo.stridesPadInfo.pad_isValid() )
+            this.bPointwise1Bias = false;
+          else
+            this.bPointwise1Bias = true;
+
+        } else {
+          if ( bLinear_between_depthwise_and_pointwise2 )
+            this.bPointwise1Bias = false;
+          else
+            this.bPointwise1Bias = true;
+        }
+
       } else {
-        if ( bLinear_between_depthwise_and_pointwise2 )
-          this.bPointwise1Bias = false;
-        else
-          this.bPointwise1Bias = true;
+        this.bPointwise1Bias = true;
       }
 
     }
+
+    this.bLinear_between_pointwise1_and_pointwise2
+      = this.bLinear_between_pointwise1_and_depthwise && bLinear_between_depthwise_and_pointwise2;
 
     // 3.
     this.pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.pointwise1ActivationId );
