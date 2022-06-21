@@ -24,7 +24,8 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
   }
 
   /**
-   *
+   * @return {number}
+   *   Return the quantity of recycled objects.
    */
   get size() {
     return this.recycledObjects.size;
@@ -58,14 +59,15 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
   }
 
   /**
-   *
+   * Discard all recycled objects.
    */
   clear() {
     this.recycledObjects.clear();
   }
 
   /**
-   *
+   * @return {iterator)
+   *   Return an iterator object that contains all recycled objects.
    */
   * values() {
     yield* this.recycledObjects.values();
