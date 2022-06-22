@@ -1,4 +1,6 @@
-export { Base, Root };
+export { Base };
+export { Root };
+export { RootPool };
 
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 
@@ -42,6 +44,25 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    */
   constructor( input0, input1, outputTensorCount, ...restArgs ) {
     super( ...restArgs ); // All other arguments passed to parent class's constructor.
+    this.setAsConstructor( input0, input1, outputTensorCount, ...restArgs );
+  }
+
+  /**
+   * This method will register this operation as the input TensorPlaceholder's final operation. So the construction order is
+   * important because the final constructed Operation object will become the real final operation of the inputs.
+   *
+   *
+   * @param {number} outputTensorCount
+   *   If 0, no this.outputX will be created. If 1, only the this.output0 will be created. If 2, both the this.output0 and this.output1
+   * will be created.
+   *
+   * @return {Root}
+   *   Return the this object.
+   */
+  setAsConstructor( input0, input1, outputTensorCount, ...restArgs ) {
+
+    if ( super.setAsConstructor instanceof Function )
+      super.setAsConstructor( ...restArgs ); // All other arguments passed to parent class.
 
     // Set and register as the input TensorPlaceholder's final user.
     Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this, input0, input1 );
@@ -62,6 +83,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     }
 
     Base.setup_apply_dummy.call( this, false, false ); // Default is destroy0 and destroy1.
+    return this;
   }
 
   /**
@@ -563,3 +585,35 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
  */
 class Root extends Base() {
 }
+
+
+/**
+ * Providing Operation.Root
+ *
+ */
+class RootPool extends Pool.Root {
+
+  constructor() {
+    super( Root, Root.setAsConstructor );
+  }
+
+//!!! (2022/06/22 Remarked) Base.setAsConstructor() should be enough.
+//   /**
+//    * @param {Root} this
+//    *   The Operation.Root object to be initialized.
+//    *
+//    * @return {Root}
+//    *   Return the this object.
+//    */
+//   static setAsConstructor() {
+//     this.setAsConstructor();
+//     return this;
+//   }
+
+}
+
+/**
+ * Used as default Operation.Root provider.
+ */
+RootPool.Singleton = new RootPool();
+
