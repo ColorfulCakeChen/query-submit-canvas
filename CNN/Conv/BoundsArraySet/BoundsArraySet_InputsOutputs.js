@@ -67,6 +67,9 @@ class InputsOutputs {
    *
    * @param {number} outputChannelCount1
    *   The channel count of 2nd output. (If undefined or null or zero or negative, there will be no output1.)
+   *
+   * @return {InputsOutputs}
+   *   Return the this object.
    */
   set_input0_input1_outputChannelCount0_outputChannelCount1( input0, input1, outputChannelCount0, outputChannelCount1 ) {
 
@@ -124,6 +127,8 @@ class InputsOutputs {
           + `outputChannelCount0 ( ${outputChannelCount0} ) can not be negative (i.e. must >= 0).`
       );
     }
+
+    return this;
   }
 
   /**
