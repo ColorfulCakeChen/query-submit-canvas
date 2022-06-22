@@ -119,7 +119,12 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
             this.boundsArraySet.output0
           );
 
-          this.boundsArraySet = null; // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
+          // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
+          {
+            this.boundsArraySet.output0 = null; // Because it has already been transferred to TensorPlaceholder this.output0
+            BoundsArraySet.DepthwisePool.Singleton.recycle( this.boundsArraySet );
+            this.boundsArraySet = null;
+          }
 
         } catch ( e ) {  // If failed (e.g. memory not enough), return false.      
           bExtractOk = false;
