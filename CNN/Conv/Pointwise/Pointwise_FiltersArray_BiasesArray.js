@@ -454,7 +454,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
       // Round 0
       {
         // Initialize element value bounds (per channel). Determine .input and .afterUndoPreviousActivationEscaping
-        this.boundsArraySet = new BoundsArraySet.Pointwise( inputScaleBoundsArray, this.outputChannelCount_Real );
+
+//!!! (2022/06/22 Remarked) Use pool instead.
+//        this.boundsArraySet = new BoundsArraySet.Pointwise( inputScaleBoundsArray, this.outputChannelCount_Real );
+
+        this.boundsArraySet = BoundsArraySet.PointwisePool.Singleton.get_or_create_by( inputScaleBoundsArray, this.outputChannelCount_Real );
       }
 
       // Round 1
