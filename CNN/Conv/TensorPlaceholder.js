@@ -1,6 +1,8 @@
 export { Base };
 export { BasePool };
 
+import * as ActivationEscaping from "./ActivationEscaping.js";
+
 /**
  * A placeholder for tensor.
  *
@@ -43,6 +45,16 @@ class Base {
     this.realTensor = null;
     this.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
     return this;
+  }
+
+  /**
+   * Release the .scaleBoundsArray
+   */
+  ScaleBoundsArray_dispose() {
+    if ( this.scaleBoundsArray ) {
+      ActivationEscaping.ScaleBoundsArrayPool.Singleton.recycle( this.scaleBoundsArray );
+      this.scaleBoundsArray = null;
+    }
   }
 
   /**
