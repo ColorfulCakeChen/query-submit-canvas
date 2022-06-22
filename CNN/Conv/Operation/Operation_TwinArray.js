@@ -1,8 +1,9 @@
 export { TwinArray };
 
+import * as Pool from "../../util/Pool.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
-import { Root } from "./Operation_Base.js";
+import { Root, RootPool } from "./Operation_Base.js";
 
 /**
  * An array of operations. Every time appending operation, one or parallel twin operations could be appended.
@@ -49,7 +50,9 @@ class TwinArray extends Root {
 
     // In order to handle keep-input-flag correctly (even if no sub operation at all), an ending dummy operation is used.
     {
-      this.endingDummyOperation = new Root( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
+//!!! ...unfinished... (2022/06/22) Replaced by pool.
+//      this.endingDummyOperation = new Root( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
+      this.endingDummyOperation = RootPool.Singleton.get_or_create_by( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
       // The ending dummy operation's output will be the output of this operation array.
       {
@@ -60,7 +63,7 @@ class TwinArray extends Root {
       }
     }
 
-    this.operationArray = new Array();
+    this.operationArray = Pool.Array.Singleton.get_or_create_by( 0 );
 
     TwinArray.setup_apply_loop.call( this );
   
@@ -69,57 +72,65 @@ class TwinArray extends Root {
     // When one or twin operations are appended, the newly appende operations' output tensor placeholders will be collected here
     // temporarily. And then they will be assigned as endingDummyOperation's input tensor placeholder.
     //
-    this.tempLastOutputTensorPlaceholderArray = new Array();
+    this.tempLastOutputTensorPlaceholderArray = Pool.Array.Singleton.get_or_create_by( 0 );
   }
 
   /**
    * @override
    */
-  disposeTensors() {
+  disposeResources() {
+
     {
-      for ( let i = 0; i < this.operationArray.length; ++i ) {
-        let operation = this.operationArray[ i ];
-        operation.disposeTensors();
-      }
-      this.operationArray.length = 0;
+      Pool.Array.Singleton.recycle( this.tempLastOutputTensorPlaceholderArray );
+      this.tempLastOutputTensorPlaceholderArray = null;
     }
 
-    // Since there is no sub operation, short-circuit to the original inputs.
-    TwinArray.set_endingInput0_endingInput1.call( this, this.input0, this.input1 );
-
-    super.disposeTensors();
-  }
-
-  /**
-   * Call .TensorPlaceholder_nullify_inputs_dispose_outputs() of all sub operations and .endingDummyOperation.
-   *
-   * @override
-   */
-  TensorPlaceholder_nullify_inputs_dispose_outputs() {
-
-    // Because inputs are not created by this operation, they should not be released by this operation.
+    // Because outputs are not created by this operation, they should not be released by this operation.
+    //
+    // Note: The this.output0 and this.output1 are created by .endingDummyOperation (i.e. not by this), they should be released
+    // by .endingDummyOperation.
     {
-      if ( this.input0 )
-        this.input0 = null;
+      if ( this.output1 )
+        this.output1 = null;
 
-      if ( this.input1 )
-        this.input1 = null;
-    }
-
-    {
-      for ( let i = 0; i < this.operationArray.length; ++i ) {
-        let operation = this.operationArray[ i ];
-        operation.TensorPlaceholder_nullify_inputs_dispose_outputs();
-      }
+      if ( this.output0 )
+        this.output0 = null;
     }
 
     // Because outputs are created by .endingDummyOperation, they should be released by it.
-    this.endingDummyOperation.TensorPlaceholder_nullify_inputs_dispose_outputs();
+    {
+      this.endingDummyOperation.disposeResources();
+      RootPool.Singleton.recycle( this.endingDummyOperation );
+      this.endingDummyOperation = null;
+    }
 
-    // Q: Why NOT call super.TensorPlaceholder_nullify_inputs_dispose_outputs() here?
-    // A: Because this.output0 and this.output1 are created by .endingDummyOperation (i.e. not by this), they should be released
-    //    by .endingDummyOperation.
+    // Release every sub operation in reverse order.
+    {
+      for ( let i = ( this.operationArray.length - 1 ); i >= 0; --i ) {
+        let operation = this.operationArray[ i ];
+        operation.disposeResources();
 
+//!!! ...unfinished... (2022/06/22) should recycle the operation object.
+      }
+
+      Pool.Array.Singleton.recycle( this.operationArray );
+      this.operationArray = null;
+    }
+
+//!!! (2022/06/22 Remarked) disposeResources() means clear all to an empty object (just like constructor is not called).
+//     // Since there is no sub operation, short-circuit to the original inputs.
+//     TwinArray.set_endingInput0_endingInput1.call( this, this.input0, this.input1 );
+
+    // Because inputs are not created by this operation, they should not be released by this operation.
+    {
+      if ( this.input1 )
+        this.input1 = null;
+
+      if ( this.input0 )
+        this.input0 = null;
+    }
+
+    super.disposeResources();
   }
 
   /**
