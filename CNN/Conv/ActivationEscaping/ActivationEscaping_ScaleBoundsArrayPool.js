@@ -29,3 +29,7 @@ class ScaleBoundsArrayPool extends Pool.Root {
 
 }
 
+/**
+ * Used as default ScaleBoundsArray provider.
+ */
+ScaleBoundsArrayPool.Singleton = new ScaleBoundsArrayPool();
