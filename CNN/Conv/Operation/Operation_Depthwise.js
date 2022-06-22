@@ -142,6 +142,12 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 
   /** Release tensors. */
   disposeTensors() {
+
+    if ( this.poolWindowShape ) {
+      Pool.Array.Singleton.recycle( this.poolWindowShape );
+      this.poolWindowShape = null;
+    }
+
     this.apply = this.pfnOperation = this.pfnActivation = null;
 
     // If these properties does not exist, assigning value (even undefined) to them will create them. Avoid it.
