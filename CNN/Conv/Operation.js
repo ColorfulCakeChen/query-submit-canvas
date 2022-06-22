@@ -3,6 +3,7 @@ export { Root } from "./Operation/Operation_Base.js";
 export { RootPool } from "./Operation/Operation_Base.js";
 
 export { TwinArray } from "./Operation/Operation_TwinArray.js";
+export { TwinArrayPool } from "./Operation/Operation_TwinArray.js";
 
 export { AddTwoTensors } from "./Operation/Operation_AddTwoTensors.js";
 export { MultiplyTwoTensors } from "./Operation/Operation_MultiplyTwoTensors.js";
