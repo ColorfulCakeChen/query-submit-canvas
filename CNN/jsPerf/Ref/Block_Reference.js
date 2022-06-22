@@ -321,6 +321,8 @@ class Base {
 
       tf.dispose( outputTensor3dArray );
 
+      block.TensorPlaceholder_dispose_inputs_dispose_outputs();
+
 //!!! (2022/06/10 Remarked) Moved to outter jsPerf_Block to also catch testParamsGenerator's exception.
 //     } catch ( e ) {
 //       let backendName = tf.getBackend();
