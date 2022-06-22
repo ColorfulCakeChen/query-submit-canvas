@@ -83,7 +83,7 @@ class FiltersBiasesPartInfo {
 
   /**
    *
-   * @return {ChannelPartInfo}
+   * @return {FiltersBiasesPartInfo}
    *   Return the this object.
    */
   setAsConstructor( aChannelPartInfoArray ) {
