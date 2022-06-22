@@ -1,4 +1,5 @@
 export { Base };
+export { BasePool };
 
 /**
  * A placeholder for tensor.
@@ -9,12 +10,6 @@ export { Base };
  *   - In operation's .apply(), it is used for transferring tensor to the next sub operation.
  *
  *
-
-//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
-//  * @member {Operation.Base} finalOperationOld
-//  *   The previous finalOperation. When new finalOperation is set, the finalOperationOld.setKeepInputTensor_IfNotLastOperation_Or_In()
-//  * usually should be called to adjust tensor destroying behavior (since it is no longer the final operation of the tensor).
-
  *
  * @member {Operation.Base} finalOperation
  *   The operation uses this tensor at final. It should be responsible for destroying this tensor. If null, this tensor is
@@ -34,12 +29,20 @@ class Base {
    *
    */
   constructor() {
+    this.setAsConstructor();
+  }
 
-//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
-//    this.finalOperationOld = null;
-
+  /**
+   * Initialize to empty.
+   *
+   * @return {Base}
+   *   Return the this object.
+   */
+  setAsConstructor() {
     this.finalOperation = null;
     this.realTensor = null;
+    this.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
+    return this;
   }
 
   /**
@@ -99,3 +102,35 @@ class Base {
   }
 
 }
+
+
+
+/**
+ * Providing TensorPlaceholder.Base
+ *
+ */
+class BasePool extends Pool.Root {
+
+  constructor() {
+    super( Base, Base.setAsConstructor );
+  }
+
+//!!! (2022/06/22 Remarked) Base.setAsConstructor() should be enough.
+//   /**
+//    * @param {Base} this
+//    *   The TensorPlaceholder.Base object to be initialized.
+//    *
+//    * @return {Base}
+//    *   Return the this object.
+//    */
+//   static setAsConstructor() {
+//     this.setAsConstructor();
+//     return this;
+//   }
+
+}
+
+/**
+ * Used as default TensorPlaceholder.Base provider.
+ */
+BasePool.Singleton = new BasePool();
