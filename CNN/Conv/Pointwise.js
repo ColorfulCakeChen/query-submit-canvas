@@ -1,4 +1,5 @@
 export { ChannelPartInfo, FiltersBiasesPartInfo } from "./Pointwise/Pointwise_ChannelPartInfo.js";
+export { ChannelPartInfoPool, FiltersBiasesPartInfoPool } from "./Pointwise/Pointwise_ChannelPartInfo.js";
 export { FiltersArray_BiasesArray } from "./Pointwise/Pointwise_FiltersArray_BiasesArray.js";
 export { PassThrough_FiltersArray_BiasesArray } from "./Pointwise/Pointwise_PassThrough.js";
 export { PassThrough_FiltersArray_BiasesArray_Bag } from "./Pointwise/Pointwise_PassThrough.js";
