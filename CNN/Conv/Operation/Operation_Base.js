@@ -73,6 +73,29 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    * Sub-class should override this method (and call super.disposeTensors() at final).
    */
   disposeTensors() {
+
+    // Because inputs are not created by this operation, they should not be released by this operation.
+    {
+      if ( this.input0 )
+        this.input0 = null;
+
+      if ( this.input1 )
+        this.input1 = null;
+    }
+
+    // Because outputs are created by this operation, they should be released by this operation.
+    {
+      if ( this.output0 ) {
+        TensorPlaceholder.BasePool.Singleton.recycle( this.output0 );
+        this.output0 = null;
+      }
+
+      if ( this.output1 ) {
+        TensorPlaceholder.BasePool.Singleton.recycle( this.output1 );
+        this.output1 = null;
+      }
+    }
+
     if ( super.disposeTensors instanceof Function ) { // If parent class has the same method, call it.
       super.disposeTensors();
     }
