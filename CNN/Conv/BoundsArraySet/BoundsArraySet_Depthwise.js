@@ -33,6 +33,9 @@ class Depthwise extends ConvBiasActivation {
    *
    * @param {Depthwise.FiltersBiasesPartInfo[]} aFiltersBiasesPartInfoArray
    *   The input channel range array which describe lower/higher half channels index range.
+   *
+   * @return {BoundsArraySet.Depthwise}
+   *   Return the this object.
    */
   set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray ) {
     
@@ -72,6 +75,7 @@ class Depthwise extends ConvBiasActivation {
 
     } // aFiltersBiasesPartIndex
 
+    return this;
   }
 
 }
