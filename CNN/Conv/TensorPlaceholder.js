@@ -122,7 +122,6 @@ class Base {
 }
 
 
-
 /**
  * Providing TensorPlaceholder.Base
  *
