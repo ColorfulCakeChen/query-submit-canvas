@@ -20,66 +20,84 @@ class Case {
     this.assertPrefix = `jsPerf_Operation.Case( this.caseId == ${this.caseId} )`;
 
     try {
-      let input0;
-      if ( bInput0 )
-        input0 = new TensorPlaceholder.Base();
 
-      let input1;
-      if ( bInput1 )
-        input1 = new TensorPlaceholder.Base();
+      TensorPlaceholder.BasePool.Singleton.sessionCall( () => {
 
-      this.operation = new classTested( input0, input1, outputTensorCount );
-      this.operation.setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 );
+        let input0;
+        if ( bInput0 )
+          input0 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
 
-      tf.tidy( () => {
+        let input1;
+        if ( bInput1 )
+          input1 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
 
-        let memoryInfo_apply_before = tf.memory(); // Test memory leakage of .apply.
+        let TensorPlaceholderPool_issuedCount_before = TensorPlaceholder.BasePool.Singleton.issuedCount;
 
-        let numTensors_delta = 0;
-        if ( input0 ) {
-          input0.realTensor = tf.randomNormal( Case.testTensorShape );
-          ++numTensors_delta;
+        this.operation = new classTested( input0, input1, outputTensorCount );
+        this.operation.setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 );
 
-          if ( !bKeepInputTensor0 )
-            --numTensors_delta;
-        }
+        tf.tidy( () => {
 
-        if ( input1 ) {
-          input1.realTensor = tf.randomNormal( Case.testTensorShape );
-          ++numTensors_delta;
+          let memoryInfo_apply_before = tf.memory(); // Test memory leakage of .apply.
 
-          if ( !bKeepInputTensor1 )
-            --numTensors_delta;
-        }
+          let numTensors_delta = 0;
+          if ( input0 ) {
+            input0.realTensor = tf.randomNormal( Case.testTensorShape );
+            ++numTensors_delta;
 
-        this.operation.apply();
+            if ( !bKeepInputTensor0 )
+              --numTensors_delta;
+          }
 
-        if ( !bInput0 && !bInput1 ) { // If no inputs, outputs should always be null.
+          if ( input1 ) {
+            input1.realTensor = tf.randomNormal( Case.testTensorShape );
+            ++numTensors_delta;
 
-          if ( this.operation.output0 )
-            this.assert_property_equal( "operation", "output0", "realTensor", null );
-          if ( this.operation.output1 )
-            this.assert_property_equal( "operation", "output1", "realTensor", null );
+            if ( !bKeepInputTensor1 )
+              --numTensors_delta;
+          }
 
-        } else {
-          numTensors_delta += outputTensorCount;
-        }
+          this.operation.apply();
 
-        let memoryInfo_apply_after = tf.memory();
+          if ( !bInput0 && !bInput1 ) { // If no inputs, outputs should always be null.
 
-        let numTensors_predicted = ( memoryInfo_apply_before.numTensors + numTensors_delta );
-        tf.util.assert( ( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + numTensors_delta ) ),
-          `${this.assertPrefix}: memory leak. `
-            + `result tensor count (${memoryInfo_apply_after.numTensors}) `
-            + `should be ( ${numTensors_predicted} ) = ( ${memoryInfo_apply_before.numTensors} + ${numTensors_delta} ).`
-        );
+            if ( this.operation.output0 )
+              this.assert_property_equal( "operation", "output0", "realTensor", null );
+            if ( this.operation.output1 )
+              this.assert_property_equal( "operation", "output1", "realTensor", null );
 
-  //!!! ...unfinished... (2022/06/04)
-  // aTensorPlaceholder.height, aTensorPlaceholder.width,
-  //         aTensorPlaceholder.channelCount, aTensorPlaceholder.channelCount_lowerHalf, aTensorPlaceholder.channelCount_higherHalf,
-  //         aTensorPlaceholder.scaleBoundsArray
+          } else {
+            numTensors_delta += outputTensorCount;
+          }
+
+          let memoryInfo_apply_after = tf.memory();
+
+          let numTensors_predicted = ( memoryInfo_apply_before.numTensors + numTensors_delta );
+          tf.util.assert( ( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + numTensors_delta ) ),
+            `${this.assertPrefix}: memory leak. `
+              + `result tensor count (${memoryInfo_apply_after.numTensors}) `
+              + `should be ( ${numTensors_predicted} ) = ( ${memoryInfo_apply_before.numTensors} + ${numTensors_delta} ).`
+          );
+
+          this.operation.disposeTensors();
+
+          let TensorPlaceholderPool_issuedCount_after = TensorPlaceholder.BasePool.Singleton.issuedCount;
+
+          tf.util.assert( ( TensorPlaceholderPool_issuedCount_after == TensorPlaceholderPool_issuedCount_before ),
+            `${this.assertPrefix}: memory leak. `
+              + `result issued TensorPlachodler count ( ${TensorPlaceholderPool_issuedCount_after} ) `
+              + `should be ( ${TensorPlaceholderPool_issuedCount_before} ).`
+          );
+
+    //!!! ...unfinished... (2022/06/04)
+    // aTensorPlaceholder.height, aTensorPlaceholder.width,
+    //         aTensorPlaceholder.channelCount, aTensorPlaceholder.channelCount_lowerHalf, aTensorPlaceholder.channelCount_higherHalf,
+    //         aTensorPlaceholder.scaleBoundsArray
+
+        });
 
       });
+
     } catch ( e ) {
       tf.util.assert( false,
         `${this.assertPrefix}: exception. `
