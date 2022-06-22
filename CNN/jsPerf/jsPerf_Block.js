@@ -7,10 +7,16 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 //import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as RandTools from "../util/RandTools.js";
+import * as Pool from "../util/Pool.js";
 import * as BatchIdCalculator from "./BatchIdCalculator.js";
 import * as Block from "../Conv/Block.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 import * as ChannelShufflerPool from "../Conv/ChannelShufflerPool.js";
+import * as TensorPlaceholder from "../Conv/TensorPlaceholder.js";
+import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
+import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
+import * as Depthwise from "../Conv/Depthwise.js";
+import * as Pointwise from "../Conv/Pointwise.js";
 import * as Block_Reference from "./Ref/Block_Reference.js";
 import * as Block_TestParams from "./Ref/Block_TestParams.js"; 
 import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
@@ -562,6 +568,11 @@ class HeightWidthDepth {
     this.test_ValueRange_valueInputOutputGenerator();
     this.test_Operation();
 
+    function assertPoolZero( pool ) {
+      tf.util.assert( ( pool.issuedCount() == 0 ),
+        `testCorrectness() memory leak: pool's issuedCount ( ${pool.issuedCount()} ) should be zero.` );
+    }
+
     tf.tidy( () => {
 
       let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag and channelShufflerPool.
@@ -612,18 +623,17 @@ class HeightWidthDepth {
           + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ) `
           + `` );
 
-//!!! ...unfinished... (2022/06/22) more pool should be checked.
-      tf.util.assert(
-           ( ActivationEscaping.TensorPlaceholder.BasePool.Singleton.issuedCount() == 0 )
-        && ( ActivationEscaping.ScaleBoundsArrayPool.Singleton.issuedCount() == 0 )
-        && ( BoundsArraySet.InputsOutputsPool.Singleton.issuedCount() == 0 )
-        && ( BoundsArraySet.ConvBiasActivationPool.Singleton.issuedCount() == 0 )
-        && ( BoundsArraySet.DepthwisePool.Singleton.issuedCount() == 0 )
-        && ( BoundsArraySet.PointwisePool.Singleton.issuedCount() == 0 )
-        ,
-        `testCorrectness() memory leak. `
-          + `` );
-
+      assertPoolZero( Pool.Array.Singleton );
+      assertPoolZero( TensorPlaceholder.BasePool.Singleton );
+      assertPoolZero( ActivationEscaping.ScaleBoundsArrayPool.Singleton );
+      assertPoolZero( BoundsArraySet.InputsOutputsPool.Singleton );
+      assertPoolZero( BoundsArraySet.ConvBiasActivationPool.Singleton );
+      assertPoolZero( BoundsArraySet.DepthwisePool.Singleton );
+      assertPoolZero( BoundsArraySet.PointwisePool.Singleton );
+      assertPoolZero( Depthwise.ChannelPartInfoPool.Singleton );
+      assertPoolZero( Depthwise.FiltersBiasesPartInfoPool.Singleton );
+      assertPoolZero( Pointwise.ChannelPartInfoPool.Singleton );
+      assertPoolZero( Pointwise.FiltersBiasesPartInfoPool.Singleton );
     });
 
     try {
