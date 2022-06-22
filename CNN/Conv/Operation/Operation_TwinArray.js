@@ -90,7 +90,6 @@ class TwinArray extends Root {
     super.disposeTensors();
   }
 
-
   /**
    * Call .TensorPlaceholder_nullify_inputs_dispose_outputs() of all sub operations and .endingDummyOperation.
    *
