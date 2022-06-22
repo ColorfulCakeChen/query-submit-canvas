@@ -225,10 +225,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
 
     // Determine shape of the filters, biases, channels.
     let aFiltersBiasesPartInfoArray;
-    let filtersShape_extracted, biasesShape_extracted;
+    let filtersWeightCount_extracted, biasesWeightCount_extracted;
 
-
-//!!! ...unfinished... (2022/06/22) Pooling FiltersBiasesPartInfo and ChannelPartInfo.
+//!!! ...unfinished... (2022/06/22) Pooling FiltersBiasesPartInfo and ChannelPartInfo and Array contain them.
 
 
     // Set up inChannelPartInfoArray and filtersShape and biasesShape.
@@ -306,12 +305,19 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
             break;
         }
 
-        this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.channelMultiplier ];
-        filtersShape_extracted = [ this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.channelMultiplier ];
+        this.filtersShape = Pool.Array.Singleton.get_or_create_by( 4 );
+        this.filtersShape[ 0 ] = this.filterHeight;
+        this.filtersShape[ 1 ] = this.filterWidth;
+        this.filtersShape[ 2 ] = this.inputChannelCount;
+        this.filtersShape[ 3 ] = this.channelMultiplier;
+
+        filtersWeightCount_extracted = this.filterHeight * this.filterWidth * this.inputChannelCount_toBeExtracted * this.channelMultiplier;
 
         if ( this.bBias ) {
-          this.biasesShape = [ this.outputChannelCount ];
-          biasesShape_extracted = [ this.outputChannelCount_toBeExtracted ];
+          this.biasesShape = Pool.Array.Singleton.get_or_create_by( 1 );
+          this.biasesShape[ 0 ] = this.outputChannelCount;
+
+          biasesWeightCount_extracted = this.outputChannelCount_toBeExtracted;
         }
 
       } else { // No depthwise (i.e. zero) (so no channel multiplier).
@@ -327,10 +333,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
 
     // Calculate weights count of filters and biases to be extracted.
     let weightsCount_extracted = 0;
-    if ( filtersShape_extracted )
-      weightsCount_extracted += tf.util.sizeFromShape( filtersShape_extracted );
-    if ( biasesShape_extracted )
-      weightsCount_extracted += tf.util.sizeFromShape( biasesShape_extracted );
+    if ( filtersWeightCount_extracted )
+      weightsCount_extracted += filtersWeightCount_extracted;
+    if ( biasesWeightCount_extracted )
+      weightsCount_extracted += biasesWeightCount_extracted
 
     // Prepare source weights to be extracted.
     let sourceWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, weightsCount_extracted );
