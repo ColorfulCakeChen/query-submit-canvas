@@ -100,7 +100,7 @@ class InputsOutputs {
       else
 //!!! (2022/06/22 Remarked) Use pool instead.
 //        this.output0 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount0 );
-        this.output0 = new ActivationEscaping.ScaleBoundsArrayPool.Singleton.get_or_create_by( outputChannelCount0 );
+        this.output0 = ActivationEscaping.ScaleBoundsArrayPool.Singleton.get_or_create_by( outputChannelCount0 );
 
       if ( outputChannelCount1 > 0 ) { // Two outputs.
 
@@ -109,7 +109,7 @@ class InputsOutputs {
         else
 //!!! (2022/06/22 Remarked) Use pool instead.
 //          this.output1 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount1 );
-          this.output1 = new ActivationEscaping.ScaleBoundsArrayPool.Singleton.get_or_create_by( outputChannelCount1 );
+          this.output1 = ActivationEscaping.ScaleBoundsArrayPool.Singleton.get_or_create_by( outputChannelCount1 );
 
       // ( outputChannelCount1 <= 0 ), One output.
       } else {
@@ -129,7 +129,7 @@ class InputsOutputs {
   /**
    * @return {InputsOutputs}
    *   Return a newly created InputsOutputs which is a copy of this InputsOutputs. The .input0 (, .input1) will just past
-   * to new InputsOutputs (i.e. NOT copied). But the .output0 (, .output1) will be copied.
+   * to the newly created InputsOutputs (i.e. NOT copied). But the .output0 (, .output1) will be copied.
    */
   clone() {
 //!!! (2022/06/22 Remarked) Use pool instead.
@@ -268,7 +268,7 @@ class InputsOutputs {
     if ( !this.output1 )
 //!!! (2022/06/22 Remarked) Use pool instead.
 //      this.output1 = new ActivationEscaping.ScaleBoundsArray( 0 ); // Use ( channelCount == 0 ) temporarily. It will be adjusted later.
-      this.output1 = new ActivationEscaping.ScaleBoundsArrayPool.Singleton.get_or_create_by(
+      this.output1 = ActivationEscaping.ScaleBoundsArrayPool.Singleton.get_or_create_by(
         0 ); // Use ( channelCount == 0 ) temporarily. It will be adjusted later.
 
     this.input0.split_to_lowerHalf_higherHalf( this.output0, this.output1 );
