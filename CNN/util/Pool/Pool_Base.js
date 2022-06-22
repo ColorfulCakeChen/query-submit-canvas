@@ -72,13 +72,23 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    */
   get_or_create_by( ...restArgs ) {
     let returnedObject;
+
+    // 1.
+
+    // 1.1 Get recycled object.
     if ( this.recycledObjectArray.length > 0 ) {
       let candicatedObject = this.recycledObjectArray.pop();
       this.recycledObjectSet.delete( candicatedObject ); // Removed from set.
-      returnedObject =this.pfn_SetAsConstructor_ReturnObject.apply( candicatedObject, restArgs );
+      returnedObject = this.pfn_SetAsConstructor_ReturnObject.apply( candicatedObject, restArgs );
+
+    // 1.2 Create new object.
     } else {
       returnedObject = new ( this.objectClass )( ...restArgs );
     }
+
+    // 2. Tracking the issued object for recycling automatically by session_pop().
+    this.issuedObjectArray.push( returnedObject );
+
     return returnedObject;
   }
 
