@@ -157,10 +157,25 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
         if ( keptObjectOrArray instanceof Array ) { // 1.1 An array of objects.
           for ( let i = 0; i < keptObjectOrArray.length; ++i ) {
             let keptObject = keptObjectOrArray[ i ];
-            if ( keptObject )
+            if ( keptObject ) {
+
+              tf.util.assert( ( !this.recycledObjectSet.has( keptObject ) ),
+                `Pool.Base.session_pop() `
+                  + `The object to be kept (i.e. not to be recycled) ( ${keptObject} ) `
+                  + `should not already be recycled (i.e. should not inside .recycledObjectSet).`
+              );
+
               this.sessionKeptObjectSet.add( keptObject );
+            }
           }
         } else if ( keptObjectOrArray instanceof Object ) { // 1.2 An single object.
+          
+          tf.util.assert( ( !this.recycledObjectSet.has( keptObjectOrArray ) ),
+            `Pool.Base.session_pop() `
+              + `The object to be kept (i.e. not to be recycled) ( ${keptObjectOrArray} ) `
+              + `should not already be recycled (i.e. should not inside .recycledObjectSet).`
+          );
+
           this.sessionKeptObjectSet.add( keptObjectOrArray );
         }
       }
