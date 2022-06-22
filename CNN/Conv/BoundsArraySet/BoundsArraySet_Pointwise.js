@@ -1,4 +1,5 @@
 export { Pointwise };
+export { PointwisePool };
 
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
@@ -29,6 +30,9 @@ class Pointwise extends ConvBiasActivation {
    *
    * @param {Pointwise.FiltersBiasesPartInfo[]} aFiltersBiasesPartInfoArray
    *   The input channel range array which describe lower/higher half channels index range.
+   *
+   * @return {BoundsArraySet.Pointwise}
+   *   Return the this object.
    */
   set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray ) {
 
@@ -62,7 +66,37 @@ class Pointwise extends ConvBiasActivation {
 
     } // aFiltersBiasesPartIndex
 
+    return this;
   }
 
 }
 
+
+/**
+ * Providing BoundsArraySet.Pointwise
+ *
+ */
+class PointwisePool extends Pool.Root {
+
+  constructor() {
+    super( Pointwise, PointwisePool.setAsConstructor );
+  }
+
+  /**
+   * @param {Depthwise} this
+   *   The Depthwise object to be initialized.
+   *
+   * @return {Depthwise}
+   *   Return the this object.
+   */
+  static setAsConstructor( input0, outputChannelCount0 ) {
+    this.set_input0_outputChannelCount0( input0, outputChannelCount0 );
+    return this;
+  }
+
+}
+
+/**
+ * Used as default BoundsArraySet.Pointwise provider.
+ */
+PointwisePool.Singleton = new PointwisePool();
