@@ -963,11 +963,13 @@ class Base {
     // Because inputs TensorPlaceholder are created by this, they should be released by this.
     {
       if ( this.input0 ) {
+        this.input0.ScaleBoundsArray_dispose();
         TensorPlaceholder.BasePool.Singleton.recycle( this.input0 );
         this.input0 = null;
       }
 
       if ( this.input1 ) {
+        this.input1.ScaleBoundsArray_dispose();
         TensorPlaceholder.BasePool.Singleton.recycle( this.input1 );
         this.input1 = null;
       }
