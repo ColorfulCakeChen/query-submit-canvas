@@ -89,7 +89,7 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *
  * @see PadInfoCalculator
  */
-let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfoCalculator( ParentClass ) {
+let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_BiasesArray extends PadInfoCalculator( ParentClass ) {
 
   /**
    */
@@ -174,9 +174,66 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
    *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
    * set of this depthwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
    *
+   * @param {Array} o_filtersShape_filtersArray_biasesShape_biasesArray_Array
+   *   Pass in an array. It will be filled four elements: [ filtersShape, filtersArray, biasesShape, biasesArray ]. It is mainly
+   * used for preventing these elements (also Array) been recycled by Pool.Array.
+   *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray ) {
+  init(
+    inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray,
+    o_filtersShape_filtersArray_biasesShape_biasesArray_Array
+  ) {
+
+    let bInitOk;
+
+    FiltersBiasesPartInfoPool.Singleton.sessionCall( () => {
+      ChannelPartInfoPool.Singleton.sessionCall( () => {
+        Pool.Array.Singleton.sessionCall( () => {
+
+          bInitOk = FiltersArray_BiasesArray.init_internal.call( this,
+            inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray );
+
+          o_filtersShape_filtersArray_biasesShape_biasesArray_Array.length = 4;
+          o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 0 ] = this.filtersShape;
+          o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 1 ] = this.filtersArray;
+          o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 2 ] = this.biasesShape;
+          o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 3 ] = this.biasesArray;
+
+          return o_filtersShape_filtersArray_biasesShape_biasesArray_Array;
+        } )
+      } )
+    } );
+
+    return bInitOk;
+  }
+
+  /**
+   * Extract depthwise filters and biases.
+   *
+   * The following properties will be modified:
+   *   - this.byteOffsetBegin
+   *   - this.byteOffsetEnd
+   *   - this.tensorWeightCountExtracted_internal
+   *   - this.tensorWeightCountTotal_internal
+   *   - this.boundsArraySet
+   *   - this.poolWindowShape ( if ( this.AvgMax_Or_ChannelMultiplier < 0 ) )
+   *   - this.filtersShape    ( if ( this.AvgMax_Or_ChannelMultiplier > 0 ) )
+   *   - this.filtersArray    ( if ( this.AvgMax_Or_ChannelMultiplier > 0 ) )
+   *   - this.biasesShape     ( if ( this.bBias == true ) )
+   *   - this.biasesArray     ( if ( this.bBias == true ) )
+   *
+   *
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpreted as weights.
+   *
+   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
+   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
+   * set of this depthwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
+   *
+   * @return {boolean} Return true, if succeeded.
+   */
+  static init_internal( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -224,13 +281,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
     }
 
     // Determine shape of the filters, biases, channels.
+    let aChannelPartInfoArray;
     let aFiltersBiasesPartInfoArray;
     let filtersWeightCount_extracted, biasesWeightCount_extracted;
 
-//!!! ...unfinished... (2022/06/22) Pooling FiltersBiasesPartInfo and ChannelPartInfo and Array contain them.
-
-
-    // Set up inChannelPartInfoArray and filtersShape and biasesShape.
+    // Set up aFiltersBiasesPartInfoArray and filtersShape and biasesShape.
     {
       if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
@@ -239,14 +294,29 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
         this.inputChannelCount_toBeExtracted = this.inputChannelCount;
         this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
-        this.poolWindowShape = [ this.filterHeight, this.filterWidth ]; // avg/max pooling do not have this.filtersShape to be extracted.
-        if ( this.bBias )
-          this.biasesShape = biasesShape_extracted = [ this.outputChannelCount ];
+        // Note: avg/max pooling do not have this.filtersShape to be extracted.
+        this.poolWindowShape = Pool.Array.Singleton.get_or_create_by( 2 );
+        this.poolWindowShape[ 0 ] = this.filterHeight;
+        this.poolWindowShape[ 1 ] = this.filterWidth;
 
-        aFiltersBiasesPartInfoArray = [
-          new FiltersBiasesPartInfo( [
-            new ChannelPartInfo( this.inputChannelCount ) ] )
-        ];
+        if ( this.bBias ) {
+          this.biasesShape = Pool.Array.Singleton.get_or_create_by( 1 );
+          this.biasesShape[ 0 ] = this.outputChannelCount;
+
+          biasesWeightCount_extracted = this.outputChannelCount;
+        }
+
+//!!! (2022/06/22 Remarked) Replaced by pool.
+//         aFiltersBiasesPartInfoArray = [
+//           new FiltersBiasesPartInfo( [
+//             new ChannelPartInfo( this.inputChannelCount ) ] )
+//         ];
+
+        aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
+        aChannelPartInfoArray[ 0 ] = ChannelPartInfoPool.Singleton.get_or_create_by( this.inputChannelCount );
+
+        aFiltersBiasesPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
+        aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
 
       } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
 
@@ -254,10 +324,18 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
             this.inputChannelCount_toBeExtracted = this.inputChannelCount;
             this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-            aFiltersBiasesPartInfoArray = [
-              new FiltersBiasesPartInfo( [
-                new ChannelPartInfo( this.inputChannelCount ) ] )
-            ];
+
+//!!! (2022/06/22 Remarked) Replaced by pool.
+//             aFiltersBiasesPartInfoArray = [
+//               new FiltersBiasesPartInfo( [
+//                 new ChannelPartInfo( this.inputChannelCount ) ] )
+//             ];
+
+            aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
+            aChannelPartInfoArray[ 0 ] = ChannelPartInfoPool.Singleton.get_or_create_by( this.inputChannelCount );
+
+            aFiltersBiasesPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
+            aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
@@ -271,12 +349,29 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
             this.inputChannelCount_toBeExtracted = this.inputChannelCount;
             this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
-            aFiltersBiasesPartInfoArray = [
-              new FiltersBiasesPartInfo( [
-                new ChannelPartInfo( this.inputChannelCount_lowerHalf  ) ] ),
-              new FiltersBiasesPartInfo( [
-                new ChannelPartInfo( this.inputChannelCount_higherHalf ) ] )
-            ];
+//!!! (2022/06/22 Remarked) Replaced by pool.
+//             aFiltersBiasesPartInfoArray = [
+//               new FiltersBiasesPartInfo( [
+//                 new ChannelPartInfo( this.inputChannelCount_lowerHalf  ) ] ),
+//               new FiltersBiasesPartInfo( [
+//                 new ChannelPartInfo( this.inputChannelCount_higherHalf ) ] )
+//             ];
+
+            aFiltersBiasesPartInfoArray = Pool.Array.Singleton.get_or_create_by( 2 );
+
+            {
+              aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
+              aChannelPartInfoArray[ 0 ] = ChannelPartInfoPool.Singleton.get_or_create_by( this.inputChannelCount_lowerHalf );
+
+              aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
+            }
+
+            {
+              aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
+              aChannelPartInfoArray[ 0 ] = ChannelPartInfoPool.Singleton.get_or_create_by( this.inputChannelCount_higherHalf );
+
+              aFiltersBiasesPartInfoArray[ 1 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
+            }
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
@@ -290,11 +385,21 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
             this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
             this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
 
-            aFiltersBiasesPartInfoArray = [
-              new FiltersBiasesPartInfo( [
-                new ChannelPartInfo( this.inputChannelCount_lowerHalf ),
-                new ChannelPartInfo( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft ) ] )
-            ];
+//!!! (2022/06/22 Remarked) Replaced by pool.
+//             aFiltersBiasesPartInfoArray = [
+//               new FiltersBiasesPartInfo( [
+//                 new ChannelPartInfo( this.inputChannelCount_lowerHalf ),
+//                 new ChannelPartInfo( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft ) ] )
+//             ];
+
+            aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 2 );
+            aChannelPartInfoArray[ 0 ]
+              = ChannelPartInfoPool.Singleton.get_or_create_by( this.inputChannelCount_lowerHalf );
+            aChannelPartInfoArray[ 1 ]
+              = ChannelPartInfoPool.Singleton.get_or_create_by( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft );
+
+            aFiltersBiasesPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
+            aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
             break;
 
           default:
@@ -321,7 +426,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
         }
 
       } else { // No depthwise (i.e. zero) (so no channel multiplier).
-        inChannelPartInfoArray = []; // Note: Even if ( this.bBias == true ), the biasesArray will still not be extracted.
+        aFiltersBiasesPartInfoArray = Pool.Array.Singleton.get_or_create_by( 0 );
+        // Note: In this case, even if ( this.bBias == true ), the biasesArray will still not be extracted.
       }
     }
 
