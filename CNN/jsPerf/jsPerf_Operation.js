@@ -85,7 +85,7 @@ class Case {
               + `should be ( ${numTensors_predicted} ) = ( ${memoryInfo_apply_before.numTensors} + ${numTensors_delta} ).`
           );
 
-          this.operation.disposeTensors();
+          this.operation.TensorPlaceholder_nullify_inputs_dispose_outputs();
 
           let TensorPlaceholderPool_issuedCount_after = TensorPlaceholder.BasePool.Singleton.issuedCount;
 
