@@ -8,7 +8,7 @@ export { Base, Root };
  * @member {object[]} issuedObjectArray
  *   All object returned by .get_or_create_by() will be recorded in this array.
  */
-let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentClass {
+let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
   /**
    * @param {Class} objectClass
@@ -96,8 +96,11 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
 
   /**
    * Start a auto-recycle session. This method will append a SESSION_BORDER_MARK to .issuedObjectArray
+   *
+   * @param {Base} this
+   *   The pool for handling the objects issuing/recycling.
    */
-  session_push() {
+  static session_push() {
     const SESSION_BORDER_MARK = this; // Use an object which is not possible be listed in the array as an session-border-mark.
     this.issuedObjectArray.push( SESSION_BORDER_MARK );
   }
@@ -110,20 +113,27 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
    *   - If the popped objects are listed in keptObjectArray, they will not be recycled and will become belonging to the parent
    *       session.
    *
-   * @param {object[]} keptObjectArray
-   *   The objects which will not be recycled.
+   * @param {Base} this
+   *   The pool for handling the objects issuing/recycling.
+   *
+   * @param {object|object[]} keptObjectOrArray
+   *   An object or an object array. If the object(s) is not null, they will be kept (i.e. not be recycled) and be moved to parent session.
    */
-  session_pop( keptObjectArray ) {
+  static session_pop( keptObjectOrArray ) {
     const SESSION_BORDER_MARK = this; // Use an object which is not possible be listed in the array as an session-border-mark.
 
     // 1. Prepare object list to be kept (i.e. not be recycled).
     {
       this.sessionKeptObjectSet.clear();
-      if ( keptObjectArray ) {
-        for ( let i = 0; i < keptObjectArray.length; ++i ) {
-          let keptObject = keptObjectArray[ i ];
-          if ( keptObject )
-            this.sessionKeptObjectSet.add( keptObject );
+      if ( keptObjectOrArray ) {
+        if ( keptObjectOrArray instanceof Array ) { // 1.1 An array of objects.
+          for ( let i = 0; i < keptObjectOrArray.length; ++i ) {
+            let keptObject = keptObjectOrArray[ i ];
+            if ( keptObject )
+              this.sessionKeptObjectSet.add( keptObject );
+          }
+        } else if ( keptObjectOrArray instanceof Object ) { // 1.2 An single object.
+          this.sessionKeptObjectSet.add( keptObjectOrArray );
         }
       }
     }
@@ -146,6 +156,28 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
     while ( this.movingObjectArray.length > 0 ) {
       let movingObject = this.movingObjectArray.pop();
       this.issuedObjectArray.push( movingObject ); // Moved (i.e. belonged) to parent session.
+    }
+  }
+
+  /**
+   * Create a session. Call th function. End the session and recycle all issued objects (except the returned objects of the function).
+   *
+   *
+   * @param {function} pfn
+   *   A function to be called. It is viewed as a session. All objects the function got by .get_or_create_by() will be recycled
+   * except the objects of the function's returned value (an object or an object array).
+   *
+   * @return {any}
+   *   Return anything which the pfn() returned. If the returned value is an object or an array of object, these objects (if they
+   * inside .issuedObjectArray) will be kept (i.e. not be recycled) and become belonging to the parent session.
+   */
+  sessionCall( pfn ) {
+    Base.session_push.call( this );
+    let returnedValue;
+    try {
+      returnedValue = pfn();
+    } finally {
+      Base.session_pop.call( this, returnedValue );
     }
   }
 
