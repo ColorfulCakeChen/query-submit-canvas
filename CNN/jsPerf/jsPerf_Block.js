@@ -569,8 +569,8 @@ class HeightWidthDepth {
     this.test_Operation();
 
     function assertPoolZero( pool ) {
-      tf.util.assert( ( pool.issuedCount() == 0 ),
-        `testCorrectness() memory leak: pool's issuedCount ( ${pool.issuedCount()} ) should be zero.` );
+      tf.util.assert( ( pool.issuedCount == 0 ),
+        `testCorrectness() memory leak: pool's issuedCount ( ${pool.issuedCount} ) should be zero.` );
     }
 
     tf.tidy( () => {
