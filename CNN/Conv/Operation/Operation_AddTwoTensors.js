@@ -40,8 +40,6 @@ class AddTwoTensors extends Root {
     AddTwoTensors.adjust_pfn.call( this );
     AddTwoTensors.setup_BoundsArraySet.call( this, inputTensorPlaceholder0.scaleBoundsArray, inputTensorPlaceholder1.scaleBoundsArray );
     AddTwoTensors.setup_output0_TensorPlaceholder.call( this );
-
-    this.boundsArraySet = null; // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
   }
 
   /**
@@ -96,7 +94,9 @@ class AddTwoTensors extends Root {
         + `input1 channel count ( ${inputScaleBoundsArray1.channelCount} ).`
     );
 
-    this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
+//!!! (2022/06/22 Remarked) Use pool instead.
+//    this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
+    this.boundsArraySet = BoundsArraySet.InputsOutputsPool.Singleton.get_or_create_by( inputScaleBoundsArray0, inputScaleBoundsArray1,
       inputScaleBoundsArray0.channelCount
     );
 
@@ -157,6 +157,13 @@ class AddTwoTensors extends Root {
       }
 
       this.output0.scaleBoundsArray = this.boundsArraySet.output0;
+
+      // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
+      {
+        this.boundsArraySet.output0 = null; // Because it has already been transferred to TensorPlaceholder this.output0
+        BoundsArraySet.InputsOutputsPool.Singleton.recycle( this.boundsArraySet );
+        this.boundsArraySet = null;
+      }
 
     // 2. Unsupported adding (different channel count).
     } else {
