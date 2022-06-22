@@ -437,7 +437,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
             aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
             aChannelPartInfoArray[ 0 ]
               = ChannelPartInfoPool.Singleton.get_or_create_by(
-                                                 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
+                                                 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false );
 
             aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
           }
@@ -446,7 +446,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
             aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
             aChannelPartInfoArray[ 0 ]
               = ChannelPartInfoPool.Singleton.get_or_create_by(
-                  this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ),
+                  this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false );
 
             aFiltersBiasesPartInfoArray[ 1 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
           }
