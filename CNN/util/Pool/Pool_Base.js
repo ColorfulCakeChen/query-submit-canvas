@@ -240,6 +240,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     } finally {
       Base.session_pop.call( this, returnedValue );
     }
+    return returnedValue;
   }
 
 }
