@@ -1,4 +1,5 @@
 export { Depthwise };
+export { DepthwisePool };
 
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
@@ -75,3 +76,32 @@ class Depthwise extends ConvBiasActivation {
 
 }
 
+
+/**
+ * Providing BoundsArraySet.Depthwise
+ *
+ */
+class DepthwisePool extends Pool.Root {
+
+  constructor() {
+    super( Depthwise, DepthwisePool.setAsConstructor );
+  }
+
+  /**
+   * @param {Depthwise} this
+   *   The Depthwise object to be initialized.
+   *
+   * @return {Depthwise}
+   *   Return the this object.
+   */
+  static setAsConstructor( input0, outputChannelCount0 ) {
+    this.set_input0_outputChannelCount0( input0, outputChannelCount0 );
+    return this;
+  }
+
+}
+
+/**
+ * Used as default BoundsArraySet.Depthwise provider.
+ */
+DepthwisePool.Singleton = new DepthwisePool();
