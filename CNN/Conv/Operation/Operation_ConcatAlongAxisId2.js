@@ -41,8 +41,6 @@ class ConcatAlongAxisId2 extends Root {
     ConcatAlongAxisId2.adjust_pfn.call( this );
     ConcatAlongAxisId2.setup_BoundsArraySet.call( this );
     ConcatAlongAxisId2.setup_output0_TensorPlaceholder.call( this );
-
-    this.boundsArraySet = null; // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
   }
 
   /**
@@ -93,7 +91,7 @@ class ConcatAlongAxisId2 extends Root {
     let inputScaleBoundsArray0 = this.input0.scaleBoundsArray;
     let inputScaleBoundsArray1 = this.input1.scaleBoundsArray;
 
-    this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
+    this.boundsArraySet = BoundsArraySet.InputsOutputsPool.Singleton.get_or_create_by( inputScaleBoundsArray0, inputScaleBoundsArray1,
       1 // Arbitrarily set a legal (but temporary) outputChannelCount0. It will be adjusted later.
     );
 
@@ -161,6 +159,13 @@ class ConcatAlongAxisId2 extends Root {
     this.output0.channelCount_lowerHalf = undefined;  // Note: After concatenation operation, the half channel information will be lost.
     this.output0.channelCount_higherHalf = undefined;
     this.output0.scaleBoundsArray = this.boundsArraySet.output0;
+
+    // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
+    {
+      this.boundsArraySet.output0 = null; // Because it has already been transferred to TensorPlaceholder this.output0
+      BoundsArraySet.InputsOutputsPool.Singleton.recycle( this.boundsArraySet );
+      this.boundsArraySet = null;
+    }
   }
 
 
