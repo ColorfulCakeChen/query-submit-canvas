@@ -97,7 +97,13 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     if ( !objectToBeRecycled )
       return false; // Can not recycle a null object.
 
-    if ( !this.recycledObjectSet.has( objectToBeRecycled ) ) { // Avoiding duplicately.
+    tf.util.assert( ( objectToBeRecycled instanceof this.objectClass ),
+      `Pool.Base.recycle() `
+        + `The object to be recycled ( ${objectToBeRecycled} ) `
+        + `should not an instance of class ( ${this.objectClass} ).`
+    );
+
+    if ( !this.recycledObjectSet.has( objectToBeRecycled ) ) { // Avoid recycling one object multiple times (i.e. duplicately).
       this.recycledObjectSet.add( objectToBeRecycled );
       this.recycledObjectArray.push( objectToBeRecycled );
       return true;
