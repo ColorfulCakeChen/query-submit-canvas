@@ -1,4 +1,5 @@
 export { TwinArray };
+export { TwinArrayPool };
 
 import * as Pool from "../../util/Pool.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
@@ -48,6 +49,20 @@ class TwinArray extends Root {
     // Note: The real output TensorPlacehoder will be created later as final operation outputs.
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
 
+    this.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount, ...restArgs );
+  }
+
+  /**
+   *
+   * @return {TwinArray}
+   *   Return the this object.
+   */
+  setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount, ...restArgs ) {
+
+    // Note: The real output TensorPlacehoder will be created later as final operation outputs.
+    if ( super.setAsConstructor instanceof Function )
+      super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
+
     // In order to handle keep-input-flag correctly (even if no sub operation at all), an ending dummy operation is used.
     {
 //!!! ...unfinished... (2022/06/22) Replaced by pool.
@@ -66,13 +81,14 @@ class TwinArray extends Root {
     this.operationArray = Pool.Array.Singleton.get_or_create_by( 0 );
 
     TwinArray.setup_apply_loop.call( this );
-  
+
     // For reducing memory re-allocation.
     //
     // When one or twin operations are appended, the newly appende operations' output tensor placeholders will be collected here
     // temporarily. And then they will be assigned as endingDummyOperation's input tensor placeholder.
     //
     this.tempLastOutputTensorPlaceholderArray = Pool.Array.Singleton.get_or_create_by( 0 );
+    return this;
   }
 
   /**
@@ -387,3 +403,35 @@ class TwinArray extends Root {
   }
 
 }
+
+
+/**
+ * Providing Operation.TwinArray
+ *
+ */
+class TwinArrayPool extends Pool.Root {
+
+  constructor() {
+    super( TwinArray, TwinArray.setAsConstructor );
+  }
+
+//!!! (2022/06/22 Remarked) TwinArray.setAsConstructor() should be enough.
+//   /**
+//    * @param {TwinArray} this
+//    *   The Operation.TwinArray object to be initialized.
+//    *
+//    * @return {TwinArray}
+//    *   Return the this object.
+//    */
+//   static setAsConstructor() {
+//     this.setAsConstructor();
+//     return this;
+//   }
+
+}
+
+/**
+ * Used as default Operation.TwinArray provider.
+ */
+TwinArrayPool.Singleton = new TwinArrayPool();
+
