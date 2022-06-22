@@ -49,12 +49,18 @@ class Base {
 
   /**
    * Release the .scaleBoundsArray
+   *
+   * Usually, this method is not responsible for releasing .finalOperation and .realTensor. They should be handled
+   * by the caller of apply().
    */
   disposeResources() {
     if ( this.scaleBoundsArray ) {
       ActivationEscaping.ScaleBoundsArrayPool.Singleton.recycle( this.scaleBoundsArray );
-      this.scaleBoundsArray = null;
     }
+
+    this.finalOperation = null;
+    this.realTensor = null;
+    this.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
   }
 
   /**
