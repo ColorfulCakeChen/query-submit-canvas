@@ -74,6 +74,20 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    */
   disposeTensors() {
 
+    // Q: Why not release TensorPlaceholder here?
+    // A: Some operations (e.g. Depthwise, Pointwise) will call .disposeTensors() before initialization. If here release output
+    //    TensorPlaceholder, the initialization will fail.
+
+    if ( super.disposeTensors instanceof Function ) { // If parent class has the same method, call it.
+      super.disposeTensors();
+    }
+  }
+
+  /**
+   * The .input0 and .input1 will be set to null. The .output0 and .output1 will be recycled and then set to null.
+   */
+  TensorPlaceholder_nullify_input_dispose_output() {
+
     // Because inputs are not created by this operation, they should not be released by this operation.
     {
       if ( this.input0 )
@@ -94,10 +108,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
         TensorPlaceholder.BasePool.Singleton.recycle( this.output1 );
         this.output1 = null;
       }
-    }
-
-    if ( super.disposeTensors instanceof Function ) { // If parent class has the same method, call it.
-      super.disposeTensors();
     }
   }
 
