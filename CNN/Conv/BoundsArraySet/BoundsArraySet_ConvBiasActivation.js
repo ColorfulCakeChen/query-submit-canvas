@@ -103,7 +103,10 @@ class ConvBiasActivation extends InputsOutputs {
    * to new ConvBiasActivation (i.e. NOT copied). But the other data members will be copied.
    */
   clone() {
-    let result = new ConvBiasActivation( this.input0, this.outputChannelCount0 );
+
+//!!! (2022/06/22 Remarked) Use pool instead.
+//    let result = new ConvBiasActivation( this.input0, this.outputChannelCount0 );
+    let result = ConvBiasActivationPool.Singleton.get_or_create_by( this.input0, this.outputChannelCount0 );
     result.set_all_byBoundsArraySet( this );
     return result;
   }
