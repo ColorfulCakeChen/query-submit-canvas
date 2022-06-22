@@ -30,6 +30,6 @@ class ArrayPool extends Root {
 }
 
 /**
- * Used as default Pool.Array provider.
+ * Used as default Array provider.
  */
 ArrayPool.Singleton = new ArrayPool();
