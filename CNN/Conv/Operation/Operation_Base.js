@@ -103,57 +103,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    */
   setKeepInputTensor_IfNotFinalOperation_Or_In( alwaysKeepSet ) {
 
-//!!! ...unfinished... (2022/06/11) Old Codes.
-// It seems that ( this.input0 == this.input1 ) could be handled.
-//
-//     // Note1: If an input is not null, it can not appear multiple times (i.e. ( this.input0 == this.input1 ), multiple inputs of
-//     //        this operation are the same). The reason is that the input will be disposed multiple times.
-//     //
-//     // Note2: If ( this.input0 != this.input1 ) but ( this.input0.realTensor == this.input1.realTensor ), that will be also a
-//     //        problem. But it can not be detected here because .realTensor is only known when .apply() is called (i.e. not here).
-//     //
-//     tf.util.assert( ( !this.input0 && !this.input1 ) || ( this.input0 != this.input1 ),
-//       `Operation.Base.setKeepInputTensor_IfNotFinalOperation_Or_In(): `
-//         + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should be different objects `
-//         + `(except they are both null).`
-//     );
-//
-//!!! (2022/06/11 Remarked) Use TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In() instead.
-//    // If this operation is the final operation of the input tensor, this operation is responsible for disposing it.
-//
-//     let input0_bKeep;
-//     if ( this.input0 ) {
-//       if ( this.input0.finalOperation == this ) { // Only if final operation, the input might be destroyed.
-//         if ( alwaysKeepSet?.has( this.input0 ) )  // input in alwaysKeepSet should always be kept (always not to be disposed).
-//           input0_bKeep = true;
-//         else
-//           input0_bKeep = false;
-//       } else {
-//         input0_bKeep = true; // Not final operation, the input always should be kept.
-//       }
-//     }
-//
-//     let input1_bKeep;
-//     if ( this.input1 ) {
-//       if ( this.input1.finalOperation == this ) { // Only if final operation, the input might be destroyed.
-//         if ( alwaysKeepSet?.has( this.input1 ) )  // input in alwaysKeepSet should always be kept (always not to be disposed).
-//           input1_bKeep = true;
-//         else
-//           input1_bKeep = false;
-//       } else {
-//         input1_bKeep = true; // Not final operation, the input always should be kept.
-//       }
-//     }
-
-
-
-    //!!! (2022/06/11 Remarked) Now, it might be ok in this situation.
-    //tf.util.assert( ( !this.input0 && !this.input1 ) || ( this.input0 != this.input1 ),
-    //  `Operation.Base.setKeepInputTensor_IfNotFinalOperation_Or_In(): `
-    //    + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should be different objects `
-    //    + `(except they are both null).`
-    //);
-
     let input0_bKeep = Base.TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In.call( this, this.input0, alwaysKeepSet );
     let input1_bKeep = Base.TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In.call( this, this.input1, alwaysKeepSet );
 
@@ -215,36 +164,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     return false;
   }
 
-
-//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
-//   /**
-//    * Call .setKeepInputTensor_IfNotFinalOperation_Or_In() of all inputs' old (i.e. this.input0.finalOperationOld and
-//    * this.input1.finalOperationOld) and new (i.e. this operation object) finalOperation.
-//    *
-//    * When an operation changes its input tensor placeholder (e.g. a new operation is created, or an existed operation is
-//    * set with different input), this method could be used to adjust keep-input-tensor flags of these related operations.
-//    */
-//   setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( alwaysKeepSet ) {
-//
-//     // The previous final operation (of input tensor placeholders) is no longer its final operation.
-//
-//     if (   ( this.input0 )
-//         && ( this.input0.finalOperationOld )
-//         && ( this.input0.finalOperationOld != this ) // Note: If previous final operation is this, it will be called in the following later.
-//        )
-//       this.input0.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-//
-//     if (   ( this.input1 )
-//         && ( this.input1.finalOperationOld )
-//         && ( this.input1.finalOperationOld != this ) // Note: If previous final operation is this, it will be called in the following later.
-//         && ( this.input1.finalOperationOld != this.input0?.finalOperationOld ) // Note: If same, it has been called in the above.
-//        )
-//       this.input1.finalOperationOld.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-//
-//     // This operation becomes the (new) final operation of its input.
-//     this.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-//   }
-
   /**
    *
    * @param {TensorPlaceholder.Base} aTensorPlaceholder
@@ -267,7 +186,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
       return true;
     return false;
   }
-
 
   /**
    * Sub-class should override this property.
@@ -326,7 +244,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
         return 0;
   }
 
-
   /**
    * Modify oldTensorPlaceholder and newTensorPlaceholder, and get a TensorPlaceholder (may be undefined or oldTensorPlaceholder
    * or newTensorPlaceholder) which should be used as oldTensorPlaceholder's new value.
@@ -360,10 +277,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
         result = undefined; // 1.1 Keep no input.
 
       } else { // 1.2 Change no input to new input.
-
-//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
-//        newTensorPlaceholder.finalOperationOld = newTensorPlaceholder.finalOperation;
-
         newTensorPlaceholder.finalOperation = this;
         result = newTensorPlaceholder;
       }
@@ -377,17 +290,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
         // 2.2.0 If this operation is the old tensor placeholder's final operation, it has no final operation now.
         if ( oldTensorPlaceholder.finalOperation == this ) {
-
-          // (2022/06/10 Remarked) This could happen when TwinArray.disposeTensors().
-          //// A tensor placeholder without final operation might imply dangling tensor (i.e. a tensor forgetton to be disposed).
-          //tf.util.assert( false,
-          //  `Operation.Base.TensorPlaceholder_get_modified_for_set_input_from_old_to_new(): `
-          //    + `Dangling tensor ${oldTensorPlaceholder}.`
-          //);
-
-//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
-//          oldTensorPlaceholder.finalOperationOld = oldTensorPlaceholder.finalOperation;
-
           oldTensorPlaceholder.finalOperation = null;
         }
 
@@ -395,10 +297,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
           result = undefined; // 2.2.1 Clear original input to no input.
 
         } else { // 2.2.2 Change original input to new input.
-
-//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
-//          newTensorPlaceholder.finalOperationOld = newTensorPlaceholder.finalOperation;
-
           newTensorPlaceholder.finalOperation = this;
           result = newTensorPlaceholder;
         }
@@ -407,7 +305,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
     return result;
   }
-
 
   /**
    * Change this operation's input tensor placeholder. Also, register as the new input TensorPlaceholder's final user.
@@ -431,7 +328,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     if ( this.input1 != newInput1 ) // So that it could keep not existed if original does not existed.
       this.input1 = newInput1;
   }
-
 
   /** Determine this.apply data members according to whether .inputX and .outputX exist and whether they are required to be kept.
    * The .apply will just pass through from input to output (but handle keep-input-tensor flag correctly).
@@ -603,7 +499,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
       }
     }
   }
-
 
   /**
    * Pass the input0 as output0 directly. Used for ( bKeepInputTensor == false ).
