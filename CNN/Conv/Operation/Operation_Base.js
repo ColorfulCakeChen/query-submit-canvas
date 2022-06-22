@@ -100,11 +100,13 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     // Because outputs are created by this operation, they should be released by this operation.
     {
       if ( this.output0 ) {
+        this.output0.ScaleBoundsArray_dispose();
         TensorPlaceholder.BasePool.Singleton.recycle( this.output0 );
         this.output0 = null;
       }
 
       if ( this.output1 ) {
+        this.output1.ScaleBoundsArray_dispose();
         TensorPlaceholder.BasePool.Singleton.recycle( this.output1 );
         this.output1 = null;
       }
