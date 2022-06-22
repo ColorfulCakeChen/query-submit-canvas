@@ -1,6 +1,7 @@
 export { Base };
 
 import * as ValueMax from "../../ValueMax.js";
+import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
@@ -348,6 +349,9 @@ class Base {
 
     // 0. Prepare
 
+    this.byteOffsetBegin = this.byteOffsetEnd = -1;
+    this.bInitOk = false;
+
     // 0.1 Estimate the maximum value of progress.
     let progressMax =
         1  // for extracting parameters from inputFloat32Array.
@@ -364,8 +368,6 @@ class Base {
 
     let progressRoot = progressParent.getRoot();
     let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( progressMax ) );
-
-    this.disposeTensors();  // Also initialize some member function pointers to no_operation().
 
     // 1. Extract parameters.
     if ( !params )
@@ -556,7 +558,9 @@ class Base {
           inputScaleBoundsArray1 );
       }
 
-      this.operationArray = new Operation.TwinArray( inputTensorPlaceholder0, inputTensorPlaceholder1, this.outputTensorCount );
+//!!! (2022/06/22 Remarked) Replaced by pool.
+//      this.operationArray = new Operation.TwinArray( inputTensorPlaceholder0, inputTensorPlaceholder1, this.outputTensorCount );
+      this.operationArray = Operation.TwinArrayPool.Singleton.get_or_create_by( inputTensorPlaceholder0, inputTensorPlaceholder1, this.outputTensorCount );
     }
 
     // Note: Once an operation is created (even if it just do nothing (e.g. ( pointwise1.bExisted == false ) ), it should always
@@ -939,26 +943,17 @@ class Base {
   }
 
   /** Release all tensors. */
-  disposeTensors() {
+  disposeResources() {
 
     if ( this.operationArray ) {
-      this.operationArray.disposeTensors();
+      this.operationArray.disposeResources();
+      Operation.TwinArrayPool.Singleton.recycle( this.operationArray );
       this.operationArray = null;
     }
 
     if ( this.channelShuffler_ConcatPointwiseConv ) {
       this.channelShuffler_ConcatPointwiseConv = null; // Note: Do not dispose the channel shuffler here.
     }
-
-    this.byteOffsetBegin = this.byteOffsetEnd = -1;
-    this.bInitOk = false;
-  }
-
-  /**
-   * Call .TensorPlaceholder_nullify_inputs_dispose_outputs() of all sub operations. And then, recycle this.input0 and this.input1
-   */
-  TensorPlaceholder_dispose_inputs_dispose_outputs() {
-    this.operationArray.TensorPlaceholder_nullify_inputs_dispose_outputs();
 
     // Because inputs TensorPlaceholder are created by this, they should be released by this.
     {
@@ -974,6 +969,9 @@ class Base {
         this.input1 = null;
       }
     }
+
+    this.byteOffsetBegin = this.byteOffsetEnd = -1;
+    this.bInitOk = false;
   }
 
   /**
