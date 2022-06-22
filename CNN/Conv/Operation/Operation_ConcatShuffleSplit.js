@@ -84,8 +84,6 @@ class ConcatShuffleSplit extends Root {
     ConcatShuffleSplit.setup_outputs_TensorPlaceholder.call( this );
 
     this.setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 );
-
-    this.boundsArraySet = null; // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
   }
 
   /**
@@ -149,52 +147,57 @@ class ConcatShuffleSplit extends Root {
 
   /** Create this.boundsArraySet. */
   static setup_BoundsArraySet( arrayTemp_forInterleave_asGrouptTwo ) {
-    let inputScaleBoundsArray0 = this.input0.scaleBoundsArray;
-    let inputScaleBoundsArray1 = this.input1.scaleBoundsArray;
 
-    // Concatenated value bounds array set.
-    let concatBoundsArraySet;
-    {
-      concatBoundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
-        1 // Arbitrarily set a legal (but temporary) outputChannelCount0. It will be adjusted later.
-      );
+    this.boundsArraySet = BoundsArraySet.InputsOutputsPool.Singleton.sessionCall( () => {
 
-      concatBoundsArraySet.set_outputs_all_by_concat_input0_input1(); // The outputChannelCount0 will be adjusted.
-    }
+      let inputScaleBoundsArray0 = this.input0.scaleBoundsArray;
+      let inputScaleBoundsArray1 = this.input1.scaleBoundsArray;
 
-    if ( this.bShouldShuffleSplit ) { // Want and could do channel shuffling and splitting.
-
-      tf.util.assert( ( this.channelShuffler.outputGroupCount == 2 ),
-        `Operation.ConcatShuffleSplit.setup_BoundsArraySet(): `
-          + `channelShuffler.outputGroupCount ( ${this.channelShuffler.outputGroupCount} ) must be 2 `
-          + `( other outputGroupCount does not supperted ).`
-      );
-
-      // Shuffled value bounds array set.
-      let shuffledBoundsArraySet;
+      // Concatenated value bounds array set.
+      let concatBoundsArraySet;
       {
-        shuffledBoundsArraySet = new BoundsArraySet.InputsOutputs( concatBoundsArraySet.output0, null,
-          concatBoundsArraySet.output0.channelCount );
-
-        shuffledBoundsArraySet.output0.set_all_byScaleBoundsArray( concatBoundsArraySet.output0 );
-        shuffledBoundsArraySet.set_outputs_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo );
-      }
-
-      // Splitted value bounds array set.
-      let splittedBoundsArraySet;
-      {
-        splittedBoundsArraySet = new BoundsArraySet.InputsOutputs( shuffledBoundsArraySet.output0, null,
-          1, 1  // Arbitrarily set a legal (but temporary) outputChannelCount0 and outputChannelCount1. It will be adjusted later.
+        concatBoundsArraySet = BoundsArraySet.InputsOutputsPool.Singleton.get_or_create_by( inputScaleBoundsArray0, inputScaleBoundsArray1,
+          1 // Arbitrarily set a legal (but temporary) outputChannelCount0. It will be adjusted later.
         );
 
-        splittedBoundsArraySet.set_outputs_all_byBoundsArray_split_input0();
+        concatBoundsArraySet.set_outputs_all_by_concat_input0_input1(); // The outputChannelCount0 will be adjusted.
       }
 
-      this.boundsArraySet = splittedBoundsArraySet;
+      if ( this.bShouldShuffleSplit ) { // Want and could do channel shuffling and splitting.
 
-    } else { // Only concatenation is needed.
-      this.boundsArraySet = concatBoundsArraySet;
-    }
+        tf.util.assert( ( this.channelShuffler.outputGroupCount == 2 ),
+          `Operation.ConcatShuffleSplit.setup_BoundsArraySet(): `
+            + `channelShuffler.outputGroupCount ( ${this.channelShuffler.outputGroupCount} ) must be 2 `
+            + `( other outputGroupCount does not supperted ).`
+        );
+
+        // Shuffled value bounds array set.
+        let shuffledBoundsArraySet;
+        {
+          shuffledBoundsArraySet = BoundsArraySet.InputsOutputsPool.Singleton.get_or_create_by( concatBoundsArraySet.output0, null,
+            concatBoundsArraySet.output0.channelCount );
+
+          shuffledBoundsArraySet.output0.set_all_byScaleBoundsArray( concatBoundsArraySet.output0 );
+          shuffledBoundsArraySet.set_outputs_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo );
+        }
+
+        // Splitted value bounds array set.
+        let splittedBoundsArraySet;
+        {
+          splittedBoundsArraySet = BoundsArraySet.InputsOutputsPool.Singleton.get_or_create_by( shuffledBoundsArraySet.output0, null,
+            1, 1  // Arbitrarily set a legal (but temporary) outputChannelCount0 and outputChannelCount1. It will be adjusted later.
+          );
+
+          splittedBoundsArraySet.set_outputs_all_byBoundsArray_split_input0();
+        }
+
+        return splittedBoundsArraySet;
+
+      } else { // Only concatenation is needed.
+        return concatBoundsArraySet;
+      }
+
+    } );
   }
 
   /** Setup this.output0 and this.output1.
@@ -273,6 +276,13 @@ class ConcatShuffleSplit extends Root {
       this.output0.channelCount = this.input0.channelCount + this.input1.channelCount;
     }
 
+    // 3. Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
+    {
+      this.boundsArraySet.output0 = null; // Because it has already been transferred to TensorPlaceholder this.output0
+      this.boundsArraySet.output1 = null;
+      BoundsArraySet.InputsOutputsPool.Singleton.recycle( this.boundsArraySet );
+      this.boundsArraySet = null;
+    }
   }
 
 
