@@ -50,9 +50,8 @@ class ScaleBoundsArray {
   }
 
   /**
-   * @return {InputsOutputs}
-   *   Return a newly created InputsOutputs which is a copy of this InputsOutputs. The this.inputs will just past
-   * to new InputsOutputs (i.e. NOT copied). But the this.outputs will be copied.
+   * @return {ScaleBoundsArray}
+   *   Return a newly created ScaleBoundsArray which is a copy of this ScaleBoundsArray.
    */
   clone() {
     let result = new ScaleBoundsArray( this.channelCount );
