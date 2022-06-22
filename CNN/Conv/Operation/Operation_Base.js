@@ -49,10 +49,14 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     // Create output TensorPlaceholder.
     {
       if ( outputTensorCount >= 1 ) {
-        this.output0 = new TensorPlaceholder.Base();
+//!!! (2022/06/22 Remarked) Use pool instead.
+//        this.output0 = new TensorPlaceholder.Base();
+        this.output0 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
 
         if ( outputTensorCount >= 2 ) {
-          this.output1 = new TensorPlaceholder.Base();
+//!!! (2022/06/22 Remarked) Use pool instead.
+//          this.output1 = new TensorPlaceholder.Base();
+          this.output1 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
         }
       }
     }
