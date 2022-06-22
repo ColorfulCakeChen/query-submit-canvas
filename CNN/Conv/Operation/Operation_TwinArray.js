@@ -63,7 +63,7 @@ class TwinArray extends Root {
     this.operationArray = new Array();
 
     TwinArray.setup_apply_loop.call( this );
-    
+  
     // For reducing memory re-allocation.
     //
     // When one or twin operations are appended, the newly appende operations' output tensor placeholders will be collected here
@@ -88,6 +88,39 @@ class TwinArray extends Root {
     TwinArray.set_endingInput0_endingInput1.call( this, this.input0, this.input1 );
 
     super.disposeTensors();
+  }
+
+
+  /**
+   * Call .TensorPlaceholder_nullify_inputs_dispose_outputs() of all sub operations and .endingDummyOperation.
+   *
+   * @override
+   */
+  TensorPlaceholder_nullify_inputs_dispose_outputs() {
+
+    // Because inputs are not created by this operation, they should not be released by this operation.
+    {
+      if ( this.input0 )
+        this.input0 = null;
+
+      if ( this.input1 )
+        this.input1 = null;
+    }
+
+    {
+      for ( let i = 0; i < this.operationArray.length; ++i ) {
+        let operation = this.operationArray[ i ];
+        operation.TensorPlaceholder_nullify_inputs_dispose_outputs();
+      }
+    }
+
+    // Because outputs are created by .endingDummyOperation, they should be released by it.
+    this.endingDummyOperation.TensorPlaceholder_nullify_inputs_dispose_outputs();
+
+    // Q: Why NOT call super.TensorPlaceholder_nullify_inputs_dispose_outputs() here?
+    // A: Because this.output0 and this.output1 are created by .endingDummyOperation (i.e. not by this), they should be released
+    //    by .endingDummyOperation.
+
   }
 
   /**
