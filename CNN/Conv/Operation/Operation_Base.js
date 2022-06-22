@@ -65,28 +65,17 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
   }
 
   /**
-   * Release all tensors.
-   *
-   * Usually, this method is not responsible for releasing tensors inside input/output TensorPlaceholder. They should be handled
-   * by the caller of apply().
-   *
-   * Sub-class should override this method (and call super.disposeTensors() at final).
-   */
-  disposeTensors() {
-
-    // Q: Why not release TensorPlaceholder here?
-    // A: Some operations (e.g. Depthwise, Pointwise) will call .disposeTensors() before initialization. If here release output
-    //    TensorPlaceholder, the initialization will fail.
-
-    if ( super.disposeTensors instanceof Function ) { // If parent class has the same method, call it.
-      super.disposeTensors();
-    }
-  }
-
-  /**
    * The .input0 and .input1 will be set to null. The .output0 and .output1 will be recycled and then set to null.
+   *
+   * Sub-class should override this method (and call super.disposeResources() before return).
    */
-  TensorPlaceholder_nullify_inputs_dispose_outputs() {
+  disposeResources() {
+
+//!!! (2022/06/22 Remarked) Old Codes.
+//    // Q: Why not release TensorPlaceholder here?
+//    // A: Some operations (e.g. Depthwise, Pointwise) will call .disposeTensors() before initialization. If here release output
+//    //    TensorPlaceholder, the initialization will fail.
+
 
     // Because inputs are not created by this operation, they should not be released by this operation.
     {
@@ -100,16 +89,20 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     // Because outputs are created by this operation, they should be released by this operation.
     {
       if ( this.output0 ) {
-        this.output0.ScaleBoundsArray_dispose();
+        this.output0.disposeResources();
         TensorPlaceholder.BasePool.Singleton.recycle( this.output0 );
         this.output0 = null;
       }
 
       if ( this.output1 ) {
-        this.output1.ScaleBoundsArray_dispose();
+        this.output1.disposeResources();
         TensorPlaceholder.BasePool.Singleton.recycle( this.output1 );
         this.output1 = null;
       }
+    }
+
+    if ( super.disposeResources instanceof Function ) { // If parent class has the same method, call it.
+      super.disposeResources();
     }
   }
 
