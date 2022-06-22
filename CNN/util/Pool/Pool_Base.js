@@ -93,6 +93,10 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
 //!!! ...unfinished... (2022/06/22)
 // What if the object to be recycled is inside .issuedObjectArray ?
+// seems ok.
+//
+// What if the object to be recycled is inside .sessionKeptObjectSet ?
+//  
 
     if ( !this.recycledObjectSet.has( objectToBeRecycled ) ) { // Avoiding duplicately.
       this.recycledObjectSet.add( objectToBeRecycled );
