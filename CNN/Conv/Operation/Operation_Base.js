@@ -86,7 +86,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
   /**
    * The .input0 and .input1 will be set to null. The .output0 and .output1 will be recycled and then set to null.
    */
-  TensorPlaceholder_nullify_input_dispose_output() {
+  TensorPlaceholder_nullify_inputs_dispose_outputs() {
 
     // Because inputs are not created by this operation, they should not be released by this operation.
     {
