@@ -46,19 +46,8 @@ class TwinArray extends Root {
     // Note: The real output TensorPlacehoder will be created later as final operation outputs.
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
 
-//!!! (2022/06/10 Remarked) Not so good solution.
-// //!!! ...untested... (2022/06/10)
-//     // When ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE but depthwise does not exist,
-//     // in order to handle concat1 operation correctly (i.e. avoid got an undefined .endInput1), an beginning dummy operation
-//     // is necessary.
-//     {
-//       this.beginningDummyOperation = new Root( inputTensorPlaceholder0, inputTensorPlaceholder1, 2 ); // Always has .output0 and .output1
-//     }
-
     // In order to handle keep-input-flag correctly (even if no sub operation at all), an ending dummy operation is used.
     {
-//!!! (2022/06/10 Remarked) Not so good solution.
-//      this.endingDummyOperation = new Root( this.beginningDummyOperation.output0, this.beginningDummyOperation.output1, outputTensorCount );
       this.endingDummyOperation = new Root( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
       // The ending dummy operation's output will be the output of this operation array.
@@ -72,12 +61,6 @@ class TwinArray extends Root {
 
     this.operationArray = new Array();
 
-//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_append() done.
-//     this.bKeepInputTensor0 = false; // Default is destroy0 and destroy1;
-//     this.bKeepInputTensor1 = false;
-//     TwinArray.alwaysKeepSet_collect.call( this ); // Re-collect TensorPlaceholders which are requested to keep their tensors.
-//     TwinArray.setKeepInputTensor_by_this_operationArray_endingDummyOperation_alwaysKeepSet.call( this );
-
     TwinArray.setup_apply_loop.call( this );
     
     // For reducing memory re-allocation.
@@ -88,12 +71,10 @@ class TwinArray extends Root {
     this.tempLastOutputTensorPlaceholderArray = new Array();
   }
 
-
   /**
    * @override
    */
   disposeTensors() {
-
     {
       for ( let i = 0; i < this.operationArray.length; ++i ) {
         let operation = this.operationArray[ i ];
@@ -103,13 +84,10 @@ class TwinArray extends Root {
     }
 
     // Since there is no sub operation, short-circuit to the original inputs.
-//!!! (2022/06/10 Remarked) Not so good solution.
-//    TwinArray.set_endingInput0_endingInput1.call( this, this.beginningDummyOperation.output0, this.beginningDummyOperation.output1 );
     TwinArray.set_endingInput0_endingInput1.call( this, this.input0, this.input1 );
 
     super.disposeTensors();
   }
-
 
   /**
    * Release all ScaleBoundsArray (inside tensor placeholder) except this.input0, this.input1, this.output0, this.output1
@@ -130,11 +108,7 @@ class TwinArray extends Root {
     }
   }
 
-
   /**
-//!!! (2022/06/10 Remarked) Not so good solution.
-//   * Call .beginningDummyOperation's, every sub operation's, and endingDummyOperation's setKeepInputTensor_IfNotFinalOperation_Or_In()
-
    * Call every sub operation's, and endingDummyOperation's setKeepInputTensor_IfNotFinalOperation_Or_In()
    * according to bKeepInputTensor0 and bKeepInputTensor1.
    *
@@ -145,40 +119,19 @@ class TwinArray extends Root {
    */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
 
-//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_add() done.
-//     if ( ( this.bKeepInputTensor0 == bKeepInputTensor0 ) && ( this.bKeepInputTensor1 == bKeepInputTensor1 ) )
-//       return; // Do nothing because no changed.
-//
-//     this.bKeepInputTensor0 = bKeepInputTensor0;
-//     this.bKeepInputTensor1 = bKeepInputTensor1;
-
     // Q: Why not recorded bKeepInputTensor0 and bKeepInputTensor1 as data members.
     // A: The operation appending is complex so that the keep-input state will be changed in complicated way. Recording
     //    them is not helpful.
 
     TwinArray.alwaysKeepSet_collect.call( this, bKeepInputTensor0, bKeepInputTensor1 );
-
-//!!! (2022/06/10 Remarked) Not so good solution.
-//    TwinArray.setKeepInputTensor_by_beginningDummyOperation_operationArray_endingDummyOperation_alwaysKeepSet.call( this );
-
     TwinArray.setKeepInputTensor_by_operationArray_endingDummyOperation_alwaysKeepSet.call( this );
   }
 
-
   /**
-//!!! (2022/06/10 Remarked) Not so good solution.
-//   * Call .beginningDummyOperation's, every sub operation's, and endingDummyOperation's setKeepInputTensor_IfNotFinalOperation_Or_In()
-
    * Call every sub operation's, and endingDummyOperation's setKeepInputTensor_IfNotFinalOperation_Or_In()
    * according to this.alwaysKeepSet.
    */
-//!!! (2022/06/10 Remarked) Not so good solution.
-//  static setKeepInputTensor_by_beginningDummyOperation_operationArray_endingDummyOperation_alwaysKeepSet() {
   static setKeepInputTensor_by_operationArray_endingDummyOperation_alwaysKeepSet() {
-
-//!!! (2022/06/10 Remarked) Not so good solution.
-//     // 1.
-//     this.beginningDummyOperation.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
 
     // 2. Every input tensors' final operation is responsible for releasing the tensor (except the input tensors which are requested
     //    to be kept (i.e. inside alwaysKeepSet)).
@@ -191,7 +144,6 @@ class TwinArray extends Root {
     // 3.
     this.endingDummyOperation.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
   }
-
 
   /**
    * Append one or twin (i.e. two operation in parallel) operation(s) into this.operationArray[].
@@ -216,22 +168,6 @@ class TwinArray extends Root {
    * @param {Operation.Base} operation1  The 2nd operation object. If null, there will be no 2nd operation.
    */
   operation_append( operation0, operation1 ) {
-
-//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_append() done.
-//     // 1. Adjust keep-input-tensor flags, and put into queue.
-//     //
-//     // The previous final operation (of input tensor placeholders) is no longer its final operation.
-//     // The newly created operation becomes the final operation of its input.
-//     //
-//     if ( operation0 ) {
-//       operation0.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-//       this.operationArray.push( operation0 );
-//     }
-//
-//     if ( operation1 ) {
-//       operation1.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
-//       this.operationArray.push( operation1 );
-//     }
 
     // 1. Put into queue.
     if ( operation0 ) {
@@ -372,9 +308,6 @@ class TwinArray extends Root {
    */
   static set_endingInput0_endingInput1( endingInput0, endingInput1 ) {
     TwinArray.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this.endingDummyOperation, endingInput0, endingInput1 );
-
-//!!! (2022/06/10 Remarked) Call TwinArray.setKeepInput() after all operation_append() done.
-//    this.endingDummyOperation.setKeepInputTensor__input0_finalOperationOld__input1_finalOperationOld__this__IfNotFinalOperation_Or_In( this.alwaysKeepSet );
   }
 
 
@@ -382,21 +315,12 @@ class TwinArray extends Root {
    * Adjust .apply data member according to calling .apply_operationArray_endingDummyOperation().
    */
   static setup_apply_loop() {
-//!!! (2022/06/10 Remarked) Not so good solution.
-//    this.apply = TwinArray.apply_beginningDummyOperation_operationArray_endingDummyOperation;
     this.apply = TwinArray.apply_operationArray_endingDummyOperation;
   }
 
   /**
-//!!! (2022/06/10 Remarked) Not so good solution.
-//   * Calling .beginningDummyOperation's, every sub operations', and .endingDummyOperation's .apply()
-
    * Calling every sub operations', and .endingDummyOperation's .apply()
    */
-//!!! (2022/06/10 Remarked) Not so good solution.
-//   static apply_beginningDummyOperation_operationArray_endingDummyOperation() {
-//     this.beginningDummyOperation.apply();
-
   static apply_operationArray_endingDummyOperation() {
     for ( let i = 0; i < this.operationArray.length; ++i ) {
       let operation = this.operationArray[ i ];
