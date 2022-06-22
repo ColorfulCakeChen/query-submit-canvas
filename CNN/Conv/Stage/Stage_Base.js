@@ -481,6 +481,18 @@ class Base {
   }
 
   /**
+   * Call .TensorPlaceholder_dispose_inputs_dispose_outputs() of all sub blocks.
+   */
+  TensorPlaceholder_dispose_inputs_dispose_outputs() {
+    if ( this.blocksArray ) {
+      for ( let i = 0; i < this.blocksArray.length; ++i ) {
+        let block = this.blocksArray[ i ];
+        block.TensorPlaceholder_dispose_inputs_dispose_outputs();
+      }
+    }
+  }
+
+  /**
    * Release all ScaleBoundsArray (inside tensor placeholder) except .block0.input0 and .blockLast.output0
    *
    * This could reduce memory footprint by releasing unused scale bounds array.
