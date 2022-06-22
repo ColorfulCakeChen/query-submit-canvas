@@ -99,9 +99,9 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
   }
 
   /**
-   * Discard all recycled objects.
+   * Discard all recycled objects. (Note: The issued objects list are not influenced.)
    */
-  clear() {
+  recycledClear() {
     this.recycledObjectArray.length = 0;
     this.recycledObjectSet.clear();
   }
@@ -110,7 +110,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    * @return {iterator)
    *   Return an iterator object that contains all recycled objects.
    */
-  * values() {
+  * recycledValues() {
     yield* this.recycledObjectArray.values();
   }
 
