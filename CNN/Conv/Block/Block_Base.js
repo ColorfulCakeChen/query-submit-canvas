@@ -955,6 +955,26 @@ class Base {
   }
 
   /**
+   * Call .TensorPlaceholder_nullify_inputs_dispose_outputs() of all sub operations. And then, recycle this.input0 and this.input1
+   */
+  TensorPlaceholder_nullify_inputs_dispose_outputs() {
+    this.operationArray.TensorPlaceholder_nullify_inputs_dispose_outputs();
+
+    // Because inputs TensorPlaceholder are created by this, they should be released by this.
+    {
+      if ( this.input0 ) {
+        TensorPlaceholder.BasePool.Singleton.recycle( this.input0 );
+        this.input0 = null;
+      }
+
+      if ( this.input1 ) {
+        TensorPlaceholder.BasePool.Singleton.recycle( this.input1 );
+        this.input1 = null;
+      }
+    }
+  }
+
+  /**
    * Release all ScaleBoundsArray (inside tensor placeholder) except this.inputX and this.outputX
    *
    * This could reduce memory footprint by releasing unused scale bounds array.
