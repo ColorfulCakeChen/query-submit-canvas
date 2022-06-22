@@ -21,6 +21,12 @@ class Case {
 
     try {
 
+      tf.util.assert( ( TensorPlaceholder.BasePool.Singleton.issuedCount == 0 ),
+        `${this.assertPrefix}: memory leak. `
+          + `beginning issued TensorPlachodler count ( ${TensorPlaceholder.BasePool.Singleton.issuedCount} ) `
+          + `should be 0.`
+      );
+
       TensorPlaceholder.BasePool.Singleton.sessionCall( () => {
 
         let input0;
