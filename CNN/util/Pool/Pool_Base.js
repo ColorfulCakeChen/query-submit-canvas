@@ -94,6 +94,9 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     // Note: If the object to be recycled has already inside .issuedObjectArray, it seems ok.
     //       But if it will be used for .sessionKeptObjectSet later, that might have problem.
 
+    if ( !objectToBeRecycled )
+      return false; // Can not recycle a null object.
+
     if ( !this.recycledObjectSet.has( objectToBeRecycled ) ) { // Avoiding duplicately.
       this.recycledObjectSet.add( objectToBeRecycled );
       this.recycledObjectArray.push( objectToBeRecycled );
