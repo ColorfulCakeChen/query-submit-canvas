@@ -1,6 +1,8 @@
 export { InputsOutputs };
+export { InputsOutputsPool };
 
 import * as ActivationEscaping from "../ActivationEscaping.js";
+import * as Pool from "../../util/Pool.js";
 
 /**
  * Element value bounds (per channel) for inputs and outputs of an operation.
@@ -54,39 +56,8 @@ class InputsOutputs {
    *   The channel count of 2nd output. (If undefined or null or zero or negative, there will be no output1.)
    */
   constructor( input0, input1, outputChannelCount0, outputChannelCount1 ) {
-
+    super();
     this.set_input0_input1_outputChannelCount0_outputChannelCount1( input0, input1, outputChannelCount0, outputChannelCount1 );
-
-//!!! (2022/06/21 Remarked) Moved into set_input0_input1_outputChannelCount0_outputChannelCount1().
-//     tf.util.assert( ( input0 instanceof ActivationEscaping.ScaleBoundsArray ),
-//       `BoundsArraySet.InputsOutputs.constructor(): `
-//         + `input0 ( ${input0} ) must exist and be an instance of class ActivationEscaping.ScaleBoundsArray.`
-//     );
-//
-//     this.input0 = input0;
-//
-//     if ( input1 )
-//       this.input1 = input1;
-//
-//     // Determine outputs.
-//     //
-//     // Note: The .output0 will always be created, even if it is zero channel count.
-//     if ( outputChannelCount0 >= 0 ) {
-//       this.output0 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount0 );
-//
-//       if ( outputChannelCount1 > 0 ) { // Two outputs.
-//         this.output1 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount1 );
-//
-//       // ( outputChannelCount1 <= 0 ), One output.
-//       }
-//
-//     } else { // ( outputChannelCount0 < 0 ), Illegal.
-//
-//       tf.util.assert( ( ( outputChannelCount0 < 0 ) && ( outputChannelCount1 <= 0 ) ),
-//         `BoundsArraySet.InputsOutputs.constructor(): `
-//           + `outputChannelCount0 ( ${outputChannelCount0} ) can not be negative (i.e. must >= 0).`
-//       );
-//     }
   }
 
   /**
@@ -127,14 +98,18 @@ class InputsOutputs {
       if ( this.output0 )
         this.output0.length = outputChannelCount0;
       else
-        this.output0 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount0 );
+//!!! (2022/06/22 Remarked) Use pool instead.
+//        this.output0 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount0 );
+        this.output0 = new ActivationEscaping.ScaleBoundsArrayPool.Singleton.get_or_create_by( outputChannelCount0 );
 
       if ( outputChannelCount1 > 0 ) { // Two outputs.
 
         if ( this.output1 )
           this.output1.length = outputChannelCount1;
         else
-          this.output1 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount1 );
+//!!! (2022/06/22 Remarked) Use pool instead.
+//          this.output1 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount1 );
+          this.output1 = new ActivationEscaping.ScaleBoundsArrayPool.Singleton.get_or_create_by( outputChannelCount1 );
 
       // ( outputChannelCount1 <= 0 ), One output.
       } else {
@@ -288,7 +263,10 @@ class InputsOutputs {
   set_outputs_all_byBoundsArray_split_input0() {
 
     if ( !this.output1 )
-      this.output1 = new ActivationEscaping.ScaleBoundsArray( 0 ); // Use ( channelCount == 0 ) temporarily. It will be adjusted later.
+//!!! (2022/06/22 Remarked) Use pool instead.
+//      this.output1 = new ActivationEscaping.ScaleBoundsArray( 0 ); // Use ( channelCount == 0 ) temporarily. It will be adjusted later.
+      this.output1 = new ActivationEscaping.ScaleBoundsArrayPool.Singleton.get_or_create_by(
+        0 ); // Use ( channelCount == 0 ) temporarily. It will be adjusted later.
 
     this.input0.split_to_lowerHalf_higherHalf( this.output0, this.output1 );
     return this;
@@ -329,4 +307,37 @@ class InputsOutputs {
   get outputChannelCount1() { return this.output1?.length ?? 0; }
 
 }
+
+
+/**
+ * Providing InputsOutputs.
+ *
+ */
+class InputsOutputsPool extends Pool.Root {
+
+  constructor() {
+    super( InputsOutputs, InputsOutputsPool.setAsConstructor );
+  }
+
+  /**
+   * @param {InputsOutputs} this
+   *   The ScaleBoundsArray object to be set length.
+   *
+   * @param {number} newLength
+   *   The this.length to be set to newLength.
+   *
+   * @return {InputsOutputs}
+   *   Return the this object.
+   */
+  static setAsConstructor( input0, input1, outputChannelCount0, outputChannelCount1 ) {
+    this.set_input0_input1_outputChannelCount0_outputChannelCount1( input0, input1, outputChannelCount0, outputChannelCount1 );
+    return this;
+  }
+
+}
+
+/**
+ * Used as default BoundsArraySet.InputsOutputs provider.
+ */
+InputsOutputsPool.Singleton = new InputsOutputsPool();
 
