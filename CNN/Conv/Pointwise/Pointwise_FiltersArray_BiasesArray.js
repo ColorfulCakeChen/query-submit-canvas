@@ -245,24 +245,25 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     o_filtersShape_filtersArray_biasesShape_biasesArray_Array
   ) {
 
-    let bInitOk =
-      FiltersBiasesPartInfoPool.Singleton.sessionCall( () => {
-        ChannelPartInfoPool.Singleton.sessionCall( () => {
-          Pool.Array.Singleton.sessionCall( () => {
+    let bInitOk;
 
-            FiltersArray_BiasesArray.init_internal.call( this,
-              inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
+    FiltersBiasesPartInfoPool.Singleton.sessionCall( () => {
+      ChannelPartInfoPool.Singleton.sessionCall( () => {
+        Pool.Array.Singleton.sessionCall( () => {
 
-            o_filtersShape_filtersArray_biasesShape_biasesArray_Array.length = 4;
-            o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 0 ] = this.filtersShape;
-            o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 1 ] = this.filtersArray;
-            o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 2 ] = this.biasesShape;
-            o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 3 ] = this.biasesArray;
+          bInitOk = FiltersArray_BiasesArray.init_internal.call( this,
+            inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
 
-            return o_filtersShape_filtersArray_biasesShape_biasesArray_Array;
-          } )
+          o_filtersShape_filtersArray_biasesShape_biasesArray_Array.length = 4;
+          o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 0 ] = this.filtersShape;
+          o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 1 ] = this.filtersArray;
+          o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 2 ] = this.biasesShape;
+          o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 3 ] = this.biasesArray;
+
+          return o_filtersShape_filtersArray_biasesShape_biasesArray_Array;
         } )
-      } );
+      } )
+    } );
 
     return bInitOk;
   }
@@ -334,10 +335,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     }
 
     // Determine shape of the filters, biases, channels.
+    let aChannelPartInfoArray;
     let aFiltersBiasesPartInfoArray;
     let filtersWeightCount_extracted, biasesWeightCount_extracted;
-
-//!!! ...unfinished... (2022/06/22) Pooling FiltersBiasesPartInfo and ChannelPartInfo and Array contain them.
 
     // Set up aFiltersBiasesPartInfoArray and filtersShape and biasesShape.
     {
@@ -350,10 +350,18 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
           filtersWeightCount_extracted = this.inputChannelCount * this.outputChannelCount;
           biasesWeightCount_extracted = this.outputChannelCount;
 
-          aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( [
-              new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount, false ) ] )
-          ];
+//!!! (2022/06/22 Remarked) Replaced by pool.
+//           aFiltersBiasesPartInfoArray = [
+//             new FiltersBiasesPartInfo(
+//               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount, false ) ] )
+//           ];
+
+          aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
+          aChannelPartInfoArray[ 0 ]
+            = ChannelPartInfoPool.Singleton.get_or_create_by( 0, this.inputChannelCount, this.outputChannelCount, false );
+
+          aFiltersBiasesPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
+          aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
           break;
 
         // 3.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
@@ -361,11 +369,21 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
           this.outputChannelCount_Real = this.outputChannelCount;
           filtersWeightCount_extracted = biasesWeightCount_extracted = 0; // Does not extract any weights.
 
-          aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( [
-              new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  true ),
-              new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ] )
-          ];
+//!!! (2022/06/22 Remarked) Replaced by pool.
+//           aFiltersBiasesPartInfoArray = [
+//             new FiltersBiasesPartInfo( [
+//               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  true ),
+//               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ] )
+//           ];
+
+          aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 2 );
+          aChannelPartInfoArray[ 0 ]
+            = ChannelPartInfoPool.Singleton.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  true );
+          aChannelPartInfoArray[ 1 ]
+            = ChannelPartInfoPool.Singleton.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true );
+
+          aFiltersBiasesPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
+          aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
           break;
 
         // 3.2 bHigherHalfCopyLowerHalf
@@ -375,18 +393,26 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
           filtersWeightCount_extracted = this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf;
           biasesWeightCount_extracted = this.outputChannelCount_lowerHalf;
 
-          aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( [
-              new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf, false ),
-              new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ] )
-          ];
+//!!! (2022/06/22 Remarked) Replaced by pool.
+//           aFiltersBiasesPartInfoArray = [
+//             new FiltersBiasesPartInfo( [
+//               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf, false ),
+//               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ] )
+//           ];
+
+          aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 2 );
+          aChannelPartInfoArray[ 0 ]
+            = ChannelPartInfoPool.Singleton.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf, false );
+          aChannelPartInfoArray[ 1 ]
+            = ChannelPartInfoPool.Singleton.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true );
+
+          aFiltersBiasesPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
+          aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
           break;
 
         // 3.3 bHigherHalfAnotherPointwise
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE: // (3)
           this.outputChannelCount_Real = this.outputChannelCount;
-
-//!!! ...untested... (2022/06/10)
 
           filtersWeightCount_extracted =
               ( this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf )
@@ -394,70 +420,93 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
           biasesWeightCount_extracted = this.outputChannelCount;
 
-          aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( [
-              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
-            ] ),
-            new FiltersBiasesPartInfo( [
-              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ),
-            ] )
-          ];
-
-
-//!!! (2022/06/16 Remarked) Old Wrong Codes.
-//           // Extract all weights as specified input/output channels.
-//           // (like a normal pointwise convolution, but with a different arrangement.)
-//           filtersWeightCount_extracted = this.inputChannelCount * this.outputChannelCount;
-//           biasesWeightCount_extracted = this.outputChannelCount;
-//
+//!!! (2022/06/22 Remarked) Replaced by pool.
 //           aFiltersBiasesPartInfoArray = [
 //             new FiltersBiasesPartInfo( [
-//               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_lowerHalf,  false ),
+//               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
 //             ] ),
 //             new FiltersBiasesPartInfo( [
-//               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_higherHalf, false ),
+//               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ),
 //             ] )
 //           ];
 
+
+          aFiltersBiasesPartInfoArray = Pool.Array.Singleton.get_or_create_by( 2 );
+
+          {
+            aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
+            aChannelPartInfoArray[ 0 ]
+              = ChannelPartInfoPool.Singleton.get_or_create_by(
+                                                 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
+
+            aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
+          }
+
+          {
+            aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
+            aChannelPartInfoArray[ 0 ]
+              = ChannelPartInfoPool.Singleton.get_or_create_by(
+                  this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ),
+
+            aFiltersBiasesPartInfoArray[ 1 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
+          }
           break;
 
-        // 3.4
+        // 3.4 bHigherHalfPassThrough
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
 
-          if ( this.outputChannelCount > 0 ) { // 3.4.1.1 bHigherHalfPassThrough
-            this.outputChannelCount_Real = this.outputChannelCount;
+//!!! (2022/06/22 Remarked) Deprecate ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
+//          if ( this.outputChannelCount > 0 ) { // 3.4.1.1 bHigherHalfPassThrough
 
-            filtersWeightCount_extracted = this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf;
-            biasesWeightCount_extracted = this.outputChannelCount_lowerHalf;
+          this.outputChannelCount_Real = this.outputChannelCount;
 
-            aFiltersBiasesPartInfoArray = [
-              new FiltersBiasesPartInfo( [
-                new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
-                new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf,  true ) ] )
-            ];
+          filtersWeightCount_extracted = this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf;
+          biasesWeightCount_extracted = this.outputChannelCount_lowerHalf;
 
-            // Note: If ( HIGHER_HALF_PASS_THROUGH ) with ( inputChannelCount_lowerHalf == 0 ) and ( outputChannelCount_lowerHalf == 0 ),
-            // the result should be the same as AllPassThrough without using special ( outputChannelCount <= 0 ). In that case, however,
-            // the bAllPassThrough will be false.
+//!!! (2022/06/22 Remarked) Replaced by pool.
+//           aFiltersBiasesPartInfoArray = [
+//             new FiltersBiasesPartInfo( [
+//               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
+//               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf,  true ) ] )
+//             ];
 
-          } else { // ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
+          aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 2 );
+          aChannelPartInfoArray[ 0 ]
+            = ChannelPartInfoPool.Singleton.get_or_create_by(
+                                               0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false );
 
-//!!! ...unfinished... (2022/05/20)
-            // Perhaps, deprecate this special case. Since pointwise2 always exists now.
-            // So assert if executed here.
-            tf.util.assert( false,
-              `Pointwise.FiltersArray_BiasesArray.init(): `
-                + `outputChannelCount ( ${this.outputChannelCount} ) shoulde be positive.`
-            );
+          aChannelPartInfoArray[ 1 ]
+            = ChannelPartInfoPool.Singleton.get_or_create_by(
+                this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf,  true );
 
-            this.bAllPassThrough = true; // Marked for this special case.
-            this.outputChannelCount_Real = this.inputChannelCount; // (Note: In this case, this.outputChannelCount is zero. So use inputChannelCount.)
-            filtersWeightCount_extracted = biasesWeightCount_extracted = 0; // Does not extract any weights.
-            aFiltersBiasesPartInfoArray = [
-              new FiltersBiasesPartInfo( [
-                new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_Real, true ) ] )
-            ];
-          }
+          aFiltersBiasesPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
+          aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
+
+
+          // Note: If ( HIGHER_HALF_PASS_THROUGH ) with ( inputChannelCount_lowerHalf == 0 ) and ( outputChannelCount_lowerHalf == 0 ),
+          // the result should be the same as AllPassThrough without using special ( outputChannelCount <= 0 ). In that case, however,
+          // the bAllPassThrough will be false.
+
+
+//!!! (2022/06/22 Remarked) Deprecate ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
+//           } else { // ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
+//
+// //!!! ...unfinished... (2022/05/20)
+//             // Perhaps, deprecate this special case. Since pointwise2 always exists now.
+//             // So assert if executed here.
+//             tf.util.assert( false,
+//               `Pointwise.FiltersArray_BiasesArray.init(): `
+//                 + `outputChannelCount ( ${this.outputChannelCount} ) shoulde be positive.`
+//             );
+//
+//             this.bAllPassThrough = true; // Marked for this special case.
+//             this.outputChannelCount_Real = this.inputChannelCount; // (Note: In this case, this.outputChannelCount is zero. So use inputChannelCount.)
+//             filtersWeightCount_extracted = biasesWeightCount_extracted = 0; // Does not extract any weights.
+//             aFiltersBiasesPartInfoArray = [
+//               new FiltersBiasesPartInfo( [
+//                 new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_Real, true ) ] )
+//             ];
+//          }
           break;
 
         default:
