@@ -21,7 +21,7 @@ let filtersTensor4d_biasesTensor3d = ( ParentClass = Object )  => class extends 
   /**
    * Release the tensors.
    */
-  disposeTensors() {
+  disposeResources() {
     if ( this.filtersTensor4d ) {
       this.filtersTensor4d.dispose();
       this.filtersTensor4d = null;
@@ -33,8 +33,8 @@ let filtersTensor4d_biasesTensor3d = ( ParentClass = Object )  => class extends 
     }
 
     // If parent class has the same method, call it.
-    if ( super.disposeTensors instanceof Function ) {
-      super.disposeTensors();
+    if ( super.disposeResources instanceof Function ) {
+      super.disposeResources();
     }
   }
 
