@@ -91,12 +91,8 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    */
   recycle( objectToBeRecycled ) {
 
-//!!! ...unfinished... (2022/06/22)
-// What if the object to be recycled is inside .issuedObjectArray ?
-// seems ok.
-//
-// What if the object to be recycled is inside .sessionKeptObjectSet ?
-//  
+    // Note: If the object to be recycled has already inside .issuedObjectArray, it seems ok.
+    //       But if it will be used for .sessionKeptObjectSet later, that might have problem.
 
     if ( !this.recycledObjectSet.has( objectToBeRecycled ) ) { // Avoiding duplicately.
       this.recycledObjectSet.add( objectToBeRecycled );
@@ -154,7 +150,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     {
       this.sessionKeptObjectSet.clear();
       if ( keptObjectOrArray ) {
-        if ( keptObjectOrArray instanceof Array ) { // 1.1 An array of objects.
+        if ( keptObjectOrArray instanceof Array ) { // 1.1 An array of objects to be kept.
           for ( let i = 0; i < keptObjectOrArray.length; ++i ) {
             let keptObject = keptObjectOrArray[ i ];
             if ( keptObject ) {
@@ -168,7 +164,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
               this.sessionKeptObjectSet.add( keptObject );
             }
           }
-        } else if ( keptObjectOrArray instanceof Object ) { // 1.2 An single object.
+        } else if ( keptObjectOrArray instanceof Object ) { // 1.2 A single object to be kept.
           
           tf.util.assert( ( !this.recycledObjectSet.has( keptObjectOrArray ) ),
             `Pool.Base.session_pop() `
