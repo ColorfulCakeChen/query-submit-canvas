@@ -1,6 +1,7 @@
 export { TwinArray };
 
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
+import * as ActivationEscaping from "../ActivationEscaping.js";
 import { Root } from "./Operation_Base.js";
 
 /**
@@ -97,14 +98,27 @@ class TwinArray extends Root {
   dispose_intermediate_ScaleBoundsArray() {
     for ( let i = 0; i < this.operationArray.length; ++i ) {
       let operation = this.operationArray[ i ];
-      if ( ( operation.input0 ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.input0 ) ) )
+
+      if ( ( operation.input0 ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.input0 ) ) ) {
+        ActivationEscaping.ScaleBoundsArrayPool.Singleton.recyle( operation.input0.scaleBoundsArray );
         operation.input0.scaleBoundsArray = null;
-      if ( ( operation.input1 ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.input1 ) ) )
+      }
+
+      if ( ( operation.input1 ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.input1 ) ) ) {
+        ActivationEscaping.ScaleBoundsArrayPool.Singleton.recyle( operation.input1.scaleBoundsArray );
         operation.input1.scaleBoundsArray = null;
-      if ( ( operation.output0 ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.output0 ) ) )
+      }
+
+      if ( ( operation.output0 ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.output0 ) ) ) {
+        ActivationEscaping.ScaleBoundsArrayPool.Singleton.recyle( operation.output0.scaleBoundsArray );
         operation.output0.scaleBoundsArray = null;
-      if ( ( operation.output1 ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.output1 ) ) )
+      }
+
+      if ( ( operation.output1 ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.output1 ) ) ) {
+        ActivationEscaping.ScaleBoundsArrayPool.Singleton.recyle( operation.output1.scaleBoundsArray );
         operation.output1.scaleBoundsArray = null;
+      }
+
     }
   }
 
