@@ -277,7 +277,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
     let aFiltersBiasesPartInfoArray;
     let filtersWeightCount_extracted, biasesWeightCount_extracted;
 
-//!!! ...unfinished... (2022/06/22) Pooling FiltersBiasesPartInfo and ChannelPartInfo.
+//!!! ...unfinished... (2022/06/22) Pooling FiltersBiasesPartInfo and ChannelPartInfo and Array contain them.
 
     // Set up aFiltersBiasesPartInfoArray and filtersShape and biasesShape.
     {
@@ -408,10 +408,15 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
           break;
       }
 
-      this.filtersShape = [ 1, 1, this.inputChannelCount, this.outputChannelCount_Real ];
+      this.filtersShape = Pool.Array.Singleton.get_or_create_by( 4 );
+      this.filtersShape[ 0 ] = 1;
+      this.filtersShape[ 1 ] = 1;
+      this.filtersShape[ 2 ] = this.inputChannelCount;
+      this.filtersShape[ 3 ] = this.outputChannelCount_Real;
 
       if ( this.bBias ) {
-        this.biasesShape = [ this.outputChannelCount_Real ];
+        this.biasesShape = Pool.Array.Singleton.get_or_create_by( 1 );
+        this.biasesShape[ 0 ] = this.outputChannelCount_Real;
       } else {
         biasesWeightCount_extracted = 0;
       }
