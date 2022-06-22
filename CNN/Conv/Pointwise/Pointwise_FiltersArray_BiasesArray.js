@@ -6,6 +6,7 @@ import * as Weights from "../../Unpacker/Weights.js";
 import * as Pool from "../../util/Pool.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPartInfo.js";
+import { ChannelPartInfoPool, FiltersBiasesPartInfoPool } from  "./Pointwise_ChannelPartInfo.js";
 
 /**
  * Extract pointwise convolution filters and biases.
@@ -146,7 +147,7 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  *   The pointwise convolution biases array.
  *
  */
-let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentClass {
+let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_BiasesArray extends ParentClass {
 
   /**
    */
@@ -233,9 +234,68 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
    *
+   * @param {Array} o_filtersShape_filtersArray_biasesShape_biasesArray_Array
+   *   Pass in an array. It will be filled four elements: [ filtersShape, filtersArray, biasesShape, biasesArray ]. It is mainly
+   * used for preventing these elements (also Array) been recycled by Pool.Array.
+   *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo ) {
+  init(
+    inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo,
+    o_filtersShape_filtersArray_biasesShape_biasesArray_Array
+  ) {
+
+    let bInitOk =
+      FiltersBiasesPartInfoPool.Singleton.sessionCall( () => {
+        ChannelPartInfoPool.Singleton.sessionCall( () => {
+          Pool.Array.Singleton.sessionCall( () => {
+
+            FiltersArray_BiasesArray.init_internal.call( this,
+              inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
+
+            o_filtersShape_filtersArray_biasesShape_biasesArray_Array.length = 4;
+            o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 0 ] = this.filtersShape;
+            o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 1 ] = this.filtersArray;
+            o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 2 ] = this.biasesShape;
+            o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 3 ] = this.biasesArray;
+
+            return o_filtersShape_filtersArray_biasesShape_biasesArray_Array;
+          } )
+        } )
+      } );
+
+    return bInitOk;
+  }
+
+  /**
+   * Extract pointwise filters and biases.
+   *
+   * The following properties will be modified:
+   *   - this.byteOffsetBegin
+   *   - this.byteOffsetEnd
+   *   - this.tensorWeightCountExtracted_internal
+   *   - this.tensorWeightCountTotal_internal
+   *   - this.boundsArraySet
+   *   - this.filtersShape
+   *   - this.filtersArray
+   *   - this.biasesShape     ( if ( this.bBias == true ) )
+   *   - this.biasesArray     ( if ( this.bBias == true ) )
+   *
+   *
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpreted as weights.
+   *
+   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
+   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
+   * set of this pointwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
+   *
+   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
+   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
+   * and improve performance when doing Interleave_asGrouptTwo.
+   *
+   * @return {boolean} Return true, if succeeded.
+   */
+  static init_internal( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
