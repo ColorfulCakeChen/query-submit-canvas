@@ -5,8 +5,22 @@ export { Base, Root };
  *
  * It could be used to improve performance by reducing memory re-allocation.
  *
+ *
  * @member {object[]} issuedObjectArray
- *   All object returned by .get_or_create_by() will be recorded in this array.
+ *   All objects returned by .get_or_create_by() will be recorded in this array.
+ *
+ * @member {Set} sessionKeptObjectSet
+ *   Temporary object list for speeding up searching of whether kept (i.e. not recycled) an object.
+ *
+ * @member {object[]} movingObjectArray
+ *   Temporary object list for moving kept (i.e. not recycled) objects to the parent session.
+ *
+ * @member {object[]} recycledObjectArray
+ *   All objects passed into .recycle() will be recorded in this array.
+ *
+ * @member {Set} recycledObjectSet
+ *   Same content as .recycledObjectArray for avoiding recycle object duplicately.
+ *
  */
 let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
@@ -37,11 +51,17 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
   }
 
   /**
-   * @return {number}
-   *   Return the quantity of recycled objects.
+   * @return {number} Return the quantity of issued objects.
    */
-  get size() {
-    return this.recycledObjectSet.size;
+  get issuedCount() {
+    return this.issuedObjectArray.length;
+  }
+
+  /**
+   * @return {number} Return the quantity of recycled objects.
+   */
+  get recycledCount() {
+    return this.recycledObjectSet.length;
   }
 
   /**
@@ -157,6 +177,9 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
       let movingObject = this.movingObjectArray.pop();
       this.issuedObjectArray.push( movingObject ); // Moved (i.e. belonged) to parent session.
     }
+
+    // 4. Reduce memory footprint.
+    this.sessionKeptObjectSet.clear();
   }
 
   /**
