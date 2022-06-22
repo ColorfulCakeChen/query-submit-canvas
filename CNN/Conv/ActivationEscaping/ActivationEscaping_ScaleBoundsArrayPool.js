@@ -7,7 +7,10 @@ import * as Pool from "../../util/Pool.js";
  *
  */
 class ScaleBoundsArrayPool extends Pool.Root {
-  
+
+  /**
+   *
+   */
   constructor() {
     super( ScaleBoundsArray, ScaleBoundsArrayPool.setAsConstructor_by_length );
   }
