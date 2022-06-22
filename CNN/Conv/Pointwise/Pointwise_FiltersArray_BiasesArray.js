@@ -3,6 +3,7 @@ export { FiltersArray_BiasesArray };
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
+import * as Pool from "../../util/Pool.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPartInfo.js";
 
@@ -276,6 +277,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
     let aFiltersBiasesPartInfoArray;
     let filtersWeightCount_extracted, biasesWeightCount_extracted;
 
+//!!! ...unfinished... (2022/06/22) Pooling FiltersBiasesPartInfo and ChannelPartInfo.
+
     // Set up aFiltersBiasesPartInfoArray and filtersShape and biasesShape.
     {
       switch ( this.nHigherHalfDifferent ) {
@@ -416,9 +419,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentC
 
     // Prepare result filters and biases array.
     if ( this.filtersShape )
-      this.filtersArray = new Array( tf.util.sizeFromShape( this.filtersShape ) );
+      this.filtersArray = Pool.Array.Singleton.get_or_create_by( tf.util.sizeFromShape( this.filtersShape ) );
     if ( this.biasesShape )
-      this.biasesArray = new Array( tf.util.sizeFromShape( this.biasesShape ) );
+      this.biasesArray = Pool.Array.Singleton.get_or_create_by( tf.util.sizeFromShape( this.biasesShape ) );
 
     // Calculate weights count of filters and biases to be extracted.
     let weightsCount_extracted = 0;
