@@ -1,4 +1,9 @@
-export { ChannelPartInfo, FiltersBiasesPartInfo };
+export { ChannelPartInfo };
+export { ChannelPartInfoPool };
+export { FiltersBiasesPartInfo };
+export { FiltersBiasesPartInfoPool };
+
+import * as Pool from "../../util/Pool.js";
 
 /**
  * Half channels information. Describe channel index range of lower half or higher half.
@@ -22,11 +27,20 @@ class ChannelPartInfo {
   /**
    */
   constructor( inputChannelCount, effectFilterY_passThrough = -1, effectFilterX_passThrough = -1 ) {
+    this.setAsConstructor( inputChannelCount, effectFilterY_passThrough, effectFilterX_passThrough );
+  }
+
+  /**
+   * @return {ChannelPartInfo}
+   *   Return the this object.
+   */
+  setAsConstructor( inputChannelCount, effectFilterY_passThrough = -1, effectFilterX_passThrough = -1 ) {
     this.inputChannelCount = inputChannelCount;
     this.effectFilterY_passThrough = effectFilterY_passThrough;
     this.effectFilterX_passThrough = effectFilterX_passThrough;
 
     this.bPassThrough = ( ( this.effectFilterY_passThrough >= 0 ) && ( this.effectFilterX_passThrough >= 0 ) );
+    return this;
   }
 
   /**
@@ -39,6 +53,23 @@ class ChannelPartInfo {
   }      
 }
 
+
+/**
+ * Providing ChannelPartInfo.
+ *
+ */
+class ChannelPartInfoPool extends Pool.Root {
+
+  constructor() {
+    super( ChannelPartInfo, ChannelPartInfo.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default Depthwise.ChannelPartInfo provider.
+ */
+ChannelPartInfoPool.Singleton = new ChannelPartInfoPool();
 
 
 /**
@@ -58,4 +89,33 @@ class FiltersBiasesPartInfo {
     this.aChannelPartInfoArray = aChannelPartInfoArray;
   }
 
+  /**
+   *
+   * @return {FiltersBiasesPartInfo}
+   *   Return the this object.
+   */
+  setAsConstructor( aChannelPartInfoArray ) {
+    this.aChannelPartInfoArray = aChannelPartInfoArray;
+    return this;
+  }
+
 }
+
+
+/**
+ * Providing FiltersBiasesPartInfo.
+ *
+ */
+class FiltersBiasesPartInfoPool extends Pool.Root {
+
+  constructor() {
+    super( FiltersBiasesPartInfo, FiltersBiasesPartInfo.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default Depthwise.FiltersBiasesPartInfo provider.
+ */
+FiltersBiasesPartInfoPool.Singleton = new FiltersBiasesPartInfoPool();
+
