@@ -96,12 +96,14 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
         try {
           if ( this.filtersShape && this.filtersArray ) {
             this.filtersTensor4d = tf.tensor( this.filtersArray, this.filtersShape );
-            this.filtersShape = this.filtersArray = null; // Release for reducing memory usage.
+            Pool.Array.Singleton.recycle( this.filtersShape ); this.filtersShape = null; // Release for reducing memory usage.
+            Pool.Array.Singleton.recycle( this.filtersArray ); this.filtersArray = null;
           }
 
           if ( this.biasesShape && this.biasesArray ) {
             this.biasesTensor3d = tf.tensor( this.biasesArray, this.biasesShape );
-            this.biasesShape = this.biasesArray = null; // Release for reducing memory usage.
+            Pool.Array.Singleton.recycle( this.biasesShape ); this.biasesShape = null; // Release for reducing memory usage.
+            Pool.Array.Singleton.recycle( this.biasesArray ); this.biasesArray = null;
           }
 
           this.output0.set_height_width_channelCount_scaleBoundsArray(
