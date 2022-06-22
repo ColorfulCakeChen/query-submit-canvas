@@ -23,7 +23,6 @@ import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
  * @member {FloatValue.BoundsArray} afterBias
  *   The element value bounds (per channel) after applying the convolution biases to this.afterFilter. (i.e. beforeActivationEscaping)
  *
- *
  * @member {FloatValue.BoundsArray} afterActivation
  *   The element value bounds (per channel) after applying activation function to this.afterBias. It is just
  * the this.output0.boundsArray (without this.output0.scaleArraySet).
