@@ -132,7 +132,10 @@ class InputsOutputs {
    * to new InputsOutputs (i.e. NOT copied). But the .output0 (, .output1) will be copied.
    */
   clone() {
-    let result = new InputsOutputs( this.input0, this.input1, this.outputChannelCount0, this.outputChannelCount1 );
+//!!! (2022/06/22 Remarked) Use pool instead.
+//    let result = new InputsOutputs( this.input0, this.input1, this.outputChannelCount0, this.outputChannelCount1 );
+    let result = InputsOutputsPool.Singleton.get_or_create_by( this.input0, this.input1, this.outputChannelCount0, this.outputChannelCount1 );
+
     result.set_outputs_all_byBoundsArraySet( this );
     return result;
   }
