@@ -530,7 +530,7 @@ class Base {
           + `input0's channel count ( ${this.input0_channelCount} ).`
       );
 
-      inputTensorPlaceholder0 = new TensorPlaceholder.Base();
+      inputTensorPlaceholder0 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
       inputTensorPlaceholder0.set_height_width_channelCount_scaleBoundsArray(
         this.input0_height, this.input0_width,
         this.input0_channelCount, inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
@@ -549,7 +549,7 @@ class Base {
             + `input1's channel count ( ${this.input1_channelCount} ).`
         );
 
-        inputTensorPlaceholder1 = new TensorPlaceholder.Base();
+        inputTensorPlaceholder1 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
         inputTensorPlaceholder1.set_height_width_channelCount_scaleBoundsArray(
           this.input1_height, this.input1_width, this.input1_channelCount,
           undefined, undefined, // channelCount_lowerHalf, channelCount_higherHalf
@@ -957,7 +957,7 @@ class Base {
   /**
    * Call .TensorPlaceholder_nullify_inputs_dispose_outputs() of all sub operations. And then, recycle this.input0 and this.input1
    */
-  TensorPlaceholder_nullify_inputs_dispose_outputs() {
+  TensorPlaceholder_dispose_inputs_dispose_outputs() {
     this.operationArray.TensorPlaceholder_nullify_inputs_dispose_outputs();
 
     // Because inputs TensorPlaceholder are created by this, they should be released by this.
