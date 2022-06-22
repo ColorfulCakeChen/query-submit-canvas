@@ -611,6 +611,19 @@ class HeightWidthDepth {
           + `result tensor count ( ${memoryInfo_testCorrectness_after.numTensors} ) `
           + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ) `
           + `` );
+
+//!!! ...unfinished... (2022/06/22) more pool should be checked.
+      tf.util.assert(
+           ( ActivationEscaping.TensorPlaceholder.BasePool.Singleton.issuedCount() == 0 )
+        && ( ActivationEscaping.ScaleBoundsArrayPool.Singleton.issuedCount() == 0 )
+        && ( BoundsArraySet.InputsOutputsPool.Singleton.issuedCount() == 0 )
+        && ( BoundsArraySet.ConvBiasActivationPool.Singleton.issuedCount() == 0 )
+        && ( BoundsArraySet.DepthwisePool.Singleton.issuedCount() == 0 )
+        && ( BoundsArraySet.PointwisePool.Singleton.issuedCount() == 0 )
+        ,
+        `testCorrectness() memory leak. `
+          + `` );
+
     });
 
     try {
