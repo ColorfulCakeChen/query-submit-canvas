@@ -24,6 +24,7 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
 
     this.issuedObjectArray = new Array();
     this.sessionKeptObjectSet = new Set(); // For reducing memory re-allocation.
+    this.movingObjectArray = new Array(); // For reducing memory re-allocation.
 
 //!!! ...unfinished... (2022/06/21)
 // should be a MultiLayerMap whose leaf node is an Array object.
@@ -121,16 +122,36 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
     // Prepare object list to be kept (i.e. not be recycled).
     {
       this.sessionKeptObjectSet.clear();
-      if ( keptObjectArray )
-      for ( let i = 0; i < keptObjectArray.length; ++i ) {
-        let keptObject = keptObjectArray[ i ];
-        if ( keptObject )
-          this.sessionKeptObjectSet.add( keptObject );
+      if ( keptObjectArray ) {
+        for ( let i = 0; i < keptObjectArray.length; ++i ) {
+          let keptObject = keptObjectArray[ i ];
+          if ( keptObject )
+            this.sessionKeptObjectSet.add( keptObject );
+        }
       }
     }
 
-    for ( let i = ( this.issuedObjectArray.length - 1 ); i >= 0; --i ) {
+    this.movingObjectArray.length = 0;
+
+    while ( this.issuedObjectArray.length > 0 ) {
+      let issuedObject = this.issuedObjectArray.pop();
+
+      if ( issuedObject == SESSION_BORDER_MARK )
+        break; // All objects of the last session have been popped.
+
+      if ( this.sessionKeptObjectSet.has( issuedObject ) ) { // Found an object which should not be recycled.
+        this.movingObjectArray.push( issuedObject ); // Collect it temporarily for moving it to parent session later.
+      } else {
+        this.recycle( issuedObject ); // Otherwise, recycle it.
+      }
     }
+
+    // 
+    while ( this.movingObjectArray.length > 0 ) {
+      let movingObject = this.movingObjectArray.pop();
+      this.issuedObjectArray.push( movingObject ); // Moved (i.e. belonged) to parent session.
+    }
+
   }
 
 }
