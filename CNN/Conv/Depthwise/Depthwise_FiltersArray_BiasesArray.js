@@ -3,6 +3,7 @@ export { FiltersArray_BiasesArray };
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
+import * as Pool from "../../util/Pool.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Depthwise_ChannelPartInfo.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
@@ -226,6 +227,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
     let aFiltersBiasesPartInfoArray;
     let filtersShape_extracted, biasesShape_extracted;
 
+
+//!!! ...unfinished... (2022/06/22) Pooling FiltersBiasesPartInfo and ChannelPartInfo.
+
+
     // Set up inChannelPartInfoArray and filtersShape and biasesShape.
     {
       if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
@@ -263,12 +268,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
                 + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
             );
 
-//!!! (2022/06/09 Remarked) Moved to outer, commonly calculated.
-//             this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
-//
-//             this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
-//             this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
-
             // Extract filters and biases for the specified channel count, but in different sequence.
             this.inputChannelCount_toBeExtracted = this.inputChannelCount;
             this.outputChannelCount_toBeExtracted = this.outputChannelCount;
@@ -287,12 +286,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
               `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfPassThrough(): `
                 + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
             );
-
-//!!! (2022/06/09 Remarked) Moved to outer, commonly calculated.
-//             this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
-//
-//             this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
-//             this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
             // Just extract filters and biases for half of the specified channel count.
             this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
@@ -328,9 +321,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfo
 
     // Prepare result filters and biases array.
     if ( this.filtersShape )
-      this.filtersArray = new Array( tf.util.sizeFromShape( this.filtersShape ) );
+      this.filtersArray = Pool.Array.Singleton.get_or_create_by( tf.util.sizeFromShape( this.filtersShape ) );
     if ( this.biasesShape )
-      this.biasesArray = new Array( tf.util.sizeFromShape( this.biasesShape ) );
+      this.biasesArray = Pool.Array.Singleton.get_or_create_by( tf.util.sizeFromShape( this.biasesShape ) );
 
     // Calculate weights count of filters and biases to be extracted.
     let weightsCount_extracted = 0;
