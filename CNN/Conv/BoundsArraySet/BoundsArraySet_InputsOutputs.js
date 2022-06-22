@@ -323,9 +323,6 @@ class InputsOutputsPool extends Pool.Root {
    * @param {InputsOutputs} this
    *   The ScaleBoundsArray object to be set length.
    *
-   * @param {number} newLength
-   *   The this.length to be set to newLength.
-   *
    * @return {InputsOutputs}
    *   Return the this object.
    */
