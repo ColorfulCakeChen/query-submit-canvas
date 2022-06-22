@@ -57,6 +57,9 @@ class ConvBiasActivation extends InputsOutputs {
    *   - Only input0 (always no input1), because convolution (no matter pointwise or depthwise) could handle one input tensor.
    *   - Only output0 (always no output1), because convolution (no matter pointwise or depthwise) always generate one output tensor.
    *
+   *
+   * @return {ConvBiasActivation}
+   *   Return the this object.
    */
   set_input0_outputChannelCount0( input0, outputChannelCount0 ) {
     super.set_input0_input1_outputChannelCount0_outputChannelCount1( input0, undefined, outputChannelCount0, undefined ); // .input0 and .output0
@@ -82,6 +85,7 @@ class ConvBiasActivation extends InputsOutputs {
       this.bPassThrough = new Array( outputChannelCount0 );
 
     this.set_afterUndoPreviousActivationEscaping_by_input0_undoScales();
+    return this;
   }
 
   /**
