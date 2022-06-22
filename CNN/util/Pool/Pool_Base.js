@@ -114,12 +114,9 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
    *   The objects which will not be recycled.
    */
   session_pop( keptObjectArray ) {
-    if ( this.issuedObjectArray.length <= 0 )
-      return;
-
     const SESSION_BORDER_MARK = this; // Use an object which is not possible be listed in the array as an session-border-mark.
 
-    // Prepare object list to be kept (i.e. not be recycled).
+    // 1. Prepare object list to be kept (i.e. not be recycled).
     {
       this.sessionKeptObjectSet.clear();
       if ( keptObjectArray ) {
@@ -131,11 +128,10 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
       }
     }
 
+    // 2. Recycle the last session's issued all objects (except objects should be kept).
     this.movingObjectArray.length = 0;
-
     while ( this.issuedObjectArray.length > 0 ) {
       let issuedObject = this.issuedObjectArray.pop();
-
       if ( issuedObject == SESSION_BORDER_MARK )
         break; // All objects of the last session have been popped.
 
@@ -146,12 +142,11 @@ let Base = ( ParentClass = Object ) => class PadInfoCalculator extends ParentCla
       }
     }
 
-    // 
+    // 3. Re-push the objects which should be kept to the parent session.
     while ( this.movingObjectArray.length > 0 ) {
       let movingObject = this.movingObjectArray.pop();
       this.issuedObjectArray.push( movingObject ); // Moved (i.e. belonged) to parent session.
     }
-
   }
 
 }
