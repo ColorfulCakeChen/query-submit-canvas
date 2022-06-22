@@ -49,3 +49,9 @@ class Float32ArrayPool extends Root {
   }
 
 }
+
+
+/**
+ * Used as default Float32Array provider.
+ */
+Float32ArrayPool.Singleton = new Float32ArrayPool();
