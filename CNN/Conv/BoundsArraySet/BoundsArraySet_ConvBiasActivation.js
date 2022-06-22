@@ -351,7 +351,7 @@ class ConvBiasActivationPool extends Pool.Root {
 
   /**
    * @param {ConvBiasActivation} this
-   *   The ScaleBoundsArray object to be set length.
+   *   The ScaleBoundsArray object to be initialized.
    *
    * @return {ConvBiasActivation}
    *   Return the this object.
