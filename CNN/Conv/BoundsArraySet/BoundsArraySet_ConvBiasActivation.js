@@ -1,7 +1,9 @@
 export { ConvBiasActivation };
+export { ConvBiasActivationPool };
 
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as Pool from "../../util/Pool.js";
 import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
 
 /**
@@ -335,4 +337,34 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
 }
+
+
+/**
+ * Providing ConvBiasActivation.
+ *
+ */
+class ConvBiasActivationPool extends Pool.Root {
+
+  constructor() {
+    super( ConvBiasActivation, ConvBiasActivationPool.setAsConstructor );
+  }
+
+  /**
+   * @param {ConvBiasActivation} this
+   *   The ScaleBoundsArray object to be set length.
+   *
+   * @return {ConvBiasActivation}
+   *   Return the this object.
+   */
+  static setAsConstructor( input0, outputChannelCount0 ) {
+    this.set_input0_outputChannelCount0( input0, outputChannelCount0 );
+    return this;
+  }
+
+}
+
+/**
+ * Used as default BoundsArraySet.ConvBiasActivation provider.
+ */
+ConvBiasActivationPool.Singleton = new ConvBiasActivationPool();
 
