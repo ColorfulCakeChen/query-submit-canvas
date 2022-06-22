@@ -1,7 +1,9 @@
-export { ChannelPartInfo, FiltersBiasesPartInfo };
+export { ChannelPartInfo };
+export { ChannelPartInfoPool };
+export { FiltersBiasesPartInfo };
+export { FiltersBiasesPartInfoPool };
 
-//!!! (2022/04/01 Remarked) Hard to implement it efficiently.
-//export { ChannelPart };
+import * as Pool from "../../util/Pool.js";
 
 /**
  * Half channels information. Describe channel index range of lower half or higher half.
@@ -25,67 +27,41 @@ class ChannelPartInfo {
   /**
    */
   constructor( inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough ) {
+    this.setAsConstructor( inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough );
+  }
+
+  /**
+   *
+   * @return {ChannelPartInfo}
+   *   Return the this object.
+   */
+  setAsConstructor( inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough ) {
     this.inChannelBegin = inChannelBegin;
     this.inChannelEnd = inChannelEnd;    
     this.outputChannelCount = outputChannelCount;
     this.bPassThrough = bPassThrough;
+    return this;
   }
 
 }
 
 
-//!!! (2022/04/01 Remarked) Hard to implement it efficiently.
-//
-// /**
-//  * The value of generator FiltersBiasesPartInfo.ChannelPartGenerator( this.outputChannelCount, inChannel ).next().
-//  */
-// class ChannelPart {
-//
-// //   ChannelPart.info (i.e. ChannelPartInfo)
-// //   ChannelPart.outChannelSub
-// //   ChannelPart.outChannel
-// //   ChannelPart.outChannelEnd
-// //   ChannelPart.inChannelToPartBegin
-//
-// //!!! ...unfifnished... (2022/04/01)
-//
-//   /**
-//    *
-//    */
-//   isOutChannelInRange() {
-//   }
-//
-// //!!! ...unfifnished... (2022/04/01)
-//
-//   /**
-//    *
-//    */
-//   isInChannelInRange() {
-//   }
-//
-// //!!! ...unfifnished... (2022/04/01)
-//
-//   /**
-//    *
-//    */
-//   isPassThrough() {
-//   }
-//
-// //!!! ...unfifnished... (2022/04/01)
-//
-//   /**
-//    *
-//    */
-//   isInChannelSameAsOutChannel() {
-//   }
-//
-//
-// //   if ( outChannel >= outChannelBegin ) {
-// //     if ( ( inChannelToPartBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
-// //       if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-// //         if ( inChannelToPartBegin == outChannelSub ) { // The only one filter position (in the pass-through part) has non-zero value.
-//
-// }
+/**
+ * Providing ChannelPartInfo.
+ *
+ */
+class ChannelPartInfoPool extends Pool.Root {
+
+  constructor() {
+    super( ChannelPartInfo, ChannelPartInfo.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default Pointwise.ChannelPartInfo provider.
+ */
+ChannelPartInfoPool.Singleton = new ChannelPartInfoPool();
 
 
 /**
@@ -105,41 +81,33 @@ class FiltersBiasesPartInfo {
     this.aChannelPartInfoArray = aChannelPartInfoArray;
   }
 
-//!!! (2022/04/01 Remarked) Hard to implement it efficiently.
-//
-//   /**
-//    *
-//    * @param {number} outChannelBegin
-//    *   The output channel index of the ChannelPart's beginning.
-//    *
-//    * @param {number} outputChannelCount
-//    *   The total output channel count which is used as the upper bounds of yielded ChannelPart.outChannel.
-//    *
-//    * @param {number} inChannel
-//    *   The current input channel index which is used to calculate ChannelPart.inChannelToPartBegin.
-//    *
-//    * @return {Generator}
-//    *   Return a generator whose .next().value will be a ChannelPart object.
-//    */
-//   * ChannelPartGenerator( outChannelBegin, outputChannelCount, inChannel ) {
-//
-// //!!! ...unfifnished... (2022/04/01)
-//
-//
-// //!!! ...unfifnished... (2022/04/01)
-// //            outChannelEnd = Math.min( outChannelEnd + inChannelPartInfo.outputChannelCount, this.outputChannelCount );
-//
-//   }
-//
-// //!!! ...unfifnished... (2022/04/01)
-//   * FiltersBiasesPartGenerator() {
-//   }
+  /**
+   *
+   * @return {ChannelPartInfo}
+   *   Return the this object.
+   */
+  setAsConstructor( aChannelPartInfoArray ) {
+    this.aChannelPartInfoArray = aChannelPartInfoArray;
+    return this;
+  }
 
-//!!! ...unfifnished... (2022/02/24)
-//   /**
-//    * @return {number}
-//    *   Total output channel count of this.aChannelPartInfoArray.
-//    */
-//   get outputChannelCountTotal() {
-//   }
 }
+
+
+/**
+ * Providing FiltersBiasesPartInfo.
+ *
+ */
+class FiltersBiasesPartInfoPool extends Pool.Root {
+
+  constructor() {
+    super( FiltersBiasesPartInfo, FiltersBiasesPartInfo.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default Pointwise.FiltersBiasesPartInfo provider.
+ */
+FiltersBiasesPartInfoPool.Singleton = new FiltersBiasesPartInfoPool();
+
