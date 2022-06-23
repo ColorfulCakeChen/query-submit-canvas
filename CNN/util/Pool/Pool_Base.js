@@ -101,6 +101,10 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    */
   recycle( objectToBeRecycled ) {
 
+//!!! ...unfinished... (2022/06/23)
+// If the object exists in .issuedObjectArray, it should be removed from .issuedObjectArray.
+// Otheriwse, .issuedObjectArray will become larger and larger.
+
     // Note: If the object to be recycled has already inside .issuedObjectArray, it seems ok.
     //       But if it will be used for .sessionKeptObjectSet later, that might have problem.
 
