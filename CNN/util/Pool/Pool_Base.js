@@ -4,24 +4,32 @@ export { Base, Root };
  * Collect all issued objects of Pool.Base.
  *
  *
- * @member {Set} NotInSessionSet
+ * @member {Set} notInSessionSet
  *   If an issued object is not belong to any session, it will be here.
  *
- * @member {Array} InSessionArray
+ * @member {Array} inSessionArray
  *   If an issued object is belong to a session, it will be here.
  *
- * @member {Map} ToInSessionArrayIndexMap
- *   Map every issued object to its array index in InSessionArray[].
- *   - If an issued objects is belong to a session, this map's value is the array index to .InSessionArray[].
- *   - If an issued objects is not belong to any session, this map's value is a negative value (e.g. -1) meaning it is inside .NotInSessionSet.
+ * @member {Map} toInSessionArrayIndexMap
+ *   Map every issued object to its array index in .inSessionArray[].
+ *   - If an issued objects is belong to a session, this map's value is the array index to .inSessionArray[].
+ *   - If an issued objects is not belong to any session, this map's value is a negative value (e.g. -1) meaning it is inside .notInSessionSet.
+ *
+ * @member {number} issuedCount
+ *   The total quantity of all issued objects.
  *
  */
 class IssuedObjects {
 
   constructor() {
-    this.NotInSessionSet = new Set();
-    this.InSessionArray = new Array();
-    this.ToInSessionArrayIndexMap = new Map();
+    this.notInSessionSet = new Set();
+    this.inSessionArray = new Array();
+    this.toInSessionArrayIndexMap = new Map();
+  }
+
+  get issuedCount() {
+    //return ( this.notInSessionSet.size + this.inSessionArray.length );
+    return this.toInSessionArrayIndexMap.size;
   }
 
 }
@@ -34,13 +42,41 @@ IssuedObjects.SESSION_BORDER_MARK = IssuedObjects;
 
 
 /**
+ * Collect all recycled (i.e. could be re-issued) objects of Pool.Base.
+ *
+ *
+ * @member {Array} array
+ *   For fetching object efficiently (without creating iterator).
+ *
+ * @member {Set} set
+ *   The same content as .array for checking object whether is recycled multiple times.
+ *
+ * @member {number} recycledCount
+ *   The quantity of recycled objects.
+ *
+ */
+class RecycledObjects {
+
+  constructor() {
+    this.array = new Array();
+    this.set = new Set();
+  }
+
+  get recycledCount() {
+    return this.array.length;
+  }
+
+}
+
+
+/**
  * A pool for recycling (re-using) objects.
  *
  * It could be used to improve performance by reducing memory re-allocation.
  *
  *
- * @member {object[]} issuedObjectArray
- *   All objects returned by .get_or_create_by() will be recorded in this array.
+ * @member {IssuedObjects} issuedObjects
+ *   All objects returned by .get_or_create_by() will be recorded here.
  *
  * @member {Set} sessionKeptObjectSet
  *   Temporary object list for speeding up searching of whether kept (i.e. not recycled) an object.
@@ -48,11 +84,14 @@ IssuedObjects.SESSION_BORDER_MARK = IssuedObjects;
  * @member {object[]} movingObjectArray
  *   Temporary object list for moving kept (i.e. not recycled) objects to the parent session.
  *
- * @member {object[]} recycledObjectArray
- *   All objects passed into .recycle() will be recorded in this array.
+ * @member {RecycledObjects} recycledObjects
+ *   All objects passed into .recycle() will be recorded here.
  *
- * @member {Set} recycledObjectSet
- *   Same content as .recycledObjectArray for avoiding recycle object duplicately.
+ * @member {number} issuedCount
+ *   The total quantity of all issued objects.
+ *
+ * @member {number} recycledCount
+ *   The quantity of recycled objects.
  *
  */
 let Base = ( ParentClass = Object ) => class Base extends ParentClass {
@@ -70,25 +109,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     this.pfn_SetAsConstructor_ReturnObject = pfn_SetAsConstructor_ReturnObject;
 
 //!!! ...unfinished... (2022/06/23)
-    this.issuedObjects = {
-
-      // If an issued objects is not belong to any session, it will be here.
-      NotInSessionSet: new Set(),
-
-      // If an issued objects is belong to a session, it will be here.
-      //
-      // Noe: Between sessions, an SESSION_BORDER_MARK is placed. The SESSION_BORDER_MARK is just this Pool.Base object because it is
-      //      impossible to be an issued object of itself.
-      //
-      InSessionArray: new Array(),
-
-      // If an issued objects is belong to a session, this map's value is the array index to .InSessionArray[].
-      // If an issued objects is not belong to any session, this map's value is a negative value (e.g. -1) meaning it inside .NotInSessionSet.
-      ToInSessionArrayIndexMap: new Map(),
-    };
-
-//!!! (2022/06/23 Remarked) Replaced by .issuedObjectInSessionArray
-//    this.issuedObjectArray = new Array();
+    this.issuedObjects = new IssuedObjects()
 
     this.sessionKeptObjectSet = new Set(); // For reducing memory re-allocation.
     this.movingObjectArray = new Array(); // For reducing memory re-allocation.
@@ -99,22 +120,15 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 // This is more useful for Float32Array because of reducing more memory re-allocation.
 //
 
-    this.recycledObjectArray = new Array(); // For fetching efficiently (without creating iterator).
-    this.recycledObjectSet = new Set(); // For checking object recycled multiple times.
+    this.recycledObjects = new RecycledObjects();
   }
 
-  /**
-   * @return {number} Return the quantity of issued objects.
-   */
   get issuedCount() {
-    return this.issuedObjectArray.length;
+    return this.issuedObjects.issuedCount;
   }
 
-  /**
-   * @return {number} Return the quantity of recycled objects.
-   */
   get recycledCount() {
-    return this.recycledObjectSet.length;
+    return this.recycledObjects.recycledCount;
   }
 
   /**
