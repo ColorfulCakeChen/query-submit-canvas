@@ -132,6 +132,14 @@ class RecycledObjects {
     return false;
   }
 
+  /**
+   *
+   */
+  removeAll() {
+    this.array.length = 0;
+    this.set.clear();
+  }
+
 }
 
 
@@ -251,15 +259,14 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     return bRecycleOk;
   }
 
-//!!! ...unfinished... (2022/06/23)
   /**
    * Discard all recycled objects. (Note: The issued objects list are not influenced.)
    */
   recycledClear() {
-    this.recycledObjectArray.length = 0;
-    this.recycledObjectSet.clear();
+    this.recycledObjects.removeAll();
   }
 
+//!!! ...unfinished... (2022/06/23)
   /**
    * @return {iterator)
    *   Return an iterator object that contains all recycled objects.
