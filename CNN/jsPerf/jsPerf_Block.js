@@ -624,6 +624,7 @@ class HeightWidthDepth {
           + `` );
 
       assertPoolZero( Pool.Array.Singleton );
+      assertPoolZero( ValueMax.Percentage.BasePool.Singleton );
       assertPoolZero( ValueMax.Percentage.ConcretePool.Singleton );
       assertPoolZero( ValueMax.Percentage.AggregatePool.Singleton );
       assertPoolZero( TensorPlaceholder.BasePool.Singleton );
