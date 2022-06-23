@@ -1,4 +1,4 @@
-export { init, testCorrectness, testDifferentDisposeStrategy_All, disposeTensors };
+export { init, testCorrectness, testDifferentDisposeStrategy_All, disposeResources };
 
 import * as ValueMax from "../ValueMax.js";
 import * as FloatValue from "../Unpacker/FloatValue.js";
@@ -11,7 +11,6 @@ import * as Pool from "../util/Pool.js";
 import * as BatchIdCalculator from "./BatchIdCalculator.js";
 import * as Block from "../Conv/Block.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
-import * as ChannelShufflerPool from "../Conv/ChannelShufflerPool.js";
 import * as TensorPlaceholder from "../Conv/TensorPlaceholder.js";
 import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
 import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
@@ -43,7 +42,7 @@ class HeightWidthDepth {
    */
   constructor( height, width, depth ) {
 
-    this.disposeTensors();
+    this.disposeResources();
 
     this.height = height;
     this.width = width;
@@ -54,7 +53,7 @@ class HeightWidthDepth {
     this.outputGroupCount = 2; // Only support two convolution groups.
   }
 
-  disposeTensors() {
+  disposeResources() {
     if ( this.dataTensor3dArray ) {
       tf.dispose( this.dataTensor3dArray );
       this.dataTensor3dArray = null;
@@ -157,7 +156,7 @@ class HeightWidthDepth {
     let pointwise_Xto128_BiasesArray =    [ ... new Array( 128 ).keys() ];       // outChannel
 
     // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
-    this.disposeTensors();
+    this.disposeResources();
 
     // Larger input image for performance testing.
     let inputTensorCount = 2;
@@ -389,13 +388,13 @@ class HeightWidthDepth {
     if ( this.block_list ) {
       for ( let i = 0; i < this.block_list.length; ++i ) {
         let block = this.block_list[ i ];
-        block.disposeTensors();
+        block.disposeResources();
       }
       this.block_list = null;
     }
 
     if ( this.channelShuffler_ConcatPointwiseConv ) { // Release shared ChannelShuffler.
-      this.channelShuffler_ConcatPointwiseConv.disposeTensors();
+      this.channelShuffler_ConcatPointwiseConv.disposeResources();
       this.channelShuffler_ConcatPointwiseConv = null;
     }
   }
@@ -575,13 +574,13 @@ class HeightWidthDepth {
 
     tf.tidy( () => {
 
-      let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag and channelShufflerPool.
+      let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag and channelShufflerBag.
 
       {
-        // Note: imageSourceBag and channelShufflerPool should not be created outside tidy() because tidy() will dispose tensors
+        // Note: imageSourceBag and channelShufflerBag should not be created outside tidy() because tidy() will dispose tensors
         //       dynamically created in them.
         let imageSourceBag = new ImageSourceBag.Base();
-        let channelShufflerPool = new ChannelShufflerPool.Base( ChannelShuffler.ConcatPointwiseConv );
+        let channelShufflerBag = new ChannelShuffler.Bag( ChannelShuffler.ConcatPointwiseConv );
 
         let testParams = new Block_TestParams.Base();
         let testParamsGenerator = testParams.ParamsGenerator();
@@ -592,7 +591,7 @@ class HeightWidthDepth {
         try {
           for ( let testParams of testParamsGenerator ) {
             batchIdCalculator.checkAndDisplay( testParams.id );
-            testReference.testCorrectness( imageSourceBag, testParams, channelShufflerPool );
+            testReference.testCorrectness( imageSourceBag, testParams, channelShufflerBag );
           }
 
         // Q: Why not catch exception inside Block_Reference.testCorrectness()?
@@ -611,8 +610,8 @@ class HeightWidthDepth {
 
         batchIdCalculator.checkAndDisplay( testParams.id );
 
-        channelShufflerPool.disposeTensors();
-        imageSourceBag.disposeTensors();
+        channelShufflerBag.disposeResources();
+        imageSourceBag.disposeResources();
       }
 
       let memoryInfo_testCorrectness_after = tf.memory();
@@ -649,6 +648,10 @@ class HeightWidthDepth {
       assertPoolZero( Operation.PointwisePool.Singleton );
       assertPoolZero( Operation.Pointwise_SameWhenPassThroughPool.Singleton );
       assertPoolZero( Operation.Pointwise_ConstantWhenPassThroughPool.Singleton );
+
+//!!! ...unfinished... (2022/06/23) ChannelShuffler.Xxx.Pool.Singleton???
+//      assertPoolZero( ChannelShuffler.Pool.Singleton );
+
       assertPoolZero( Block.Pool.Singleton );
       assertPoolZero( NumberImage.Pool.Singleton );
 
@@ -699,7 +702,7 @@ class HeightWidthDepth {
 function init() {
   //console.log("jsPerf_Block.js, init()");
 
-  disposeTensors();
+  disposeResources();
 
   let depth = 4;
 //  globalThis.testSet_110x120x4 = new HeightWidthDepth( 110, 120, depth ); // height, width, depth
@@ -727,12 +730,12 @@ function testDifferentDisposeStrategy_All() {
   }
 }
 
-function disposeTensors() {
+function disposeResources() {
   if ( globalThis.testSet_110x120x4_All ) {
     for ( let i = 0; i < globalThis.testSet_110x120x4_All.length; ++i ) {
       let testSet = globalThis.testSet_110x120x4_All[ i ];
       if ( testSet )
-        testSet.disposeTensors();
+        testSet.disposeResources();
     }
 
     globalThis.testSet_110x120x4_All = null;
