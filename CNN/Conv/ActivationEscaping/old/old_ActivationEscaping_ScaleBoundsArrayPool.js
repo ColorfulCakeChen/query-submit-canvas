@@ -2,6 +2,8 @@ export { ScaleBoundsArrayPool };
 
 import * as Pool from "../../util/Pool.js";
 
+//!!! (2022/06/23) Merged to ActivationEscaping_ScaleBoundsArray.js
+
 /**
  * Providing ScaleBoundsArray by specifying length.
  *
