@@ -161,11 +161,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   disposeResources() {
     this.apply = this.pfnConv = this.pfnActivation = null;
 
-    this.tensorWeightCountTotal_internal = 0;
-    this.tensorWeightCountExtracted_internal = 0;
-
     this.bPointwise = false;
-    this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bKeepInputTensor = false;  // Default will dispose input tensor.
     this.bInitOk = false;
 
