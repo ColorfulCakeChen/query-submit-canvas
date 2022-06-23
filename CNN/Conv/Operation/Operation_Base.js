@@ -129,6 +129,14 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
   }
 
   /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    RootPool.Singleton.recycle( this );
+  }
+
+  /**
    * Adjust according to specified keep-input-tensor flag(s). So that calling .apply() will generate correct result without memory leakage.
    *
    * The this.setKeepInputTensor_IfNotFinalOperation_Or_In() will call this method. This method should adjust
