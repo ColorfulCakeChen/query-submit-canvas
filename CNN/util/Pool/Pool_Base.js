@@ -18,6 +18,9 @@ export { Base, Root };
  * @member {number} issuedCount
  *   The total quantity of all issued objects.
  *
+ * @member {boolean} isInSession()
+ *   Whether current is in session.
+ *
  */
 class IssuedObjects {
 
@@ -30,6 +33,21 @@ class IssuedObjects {
   get issuedCount() {
     //return ( this.notInSessionSet.size + this.inSessionArray.length );
     return this.toInSessionArrayIndexMap.size;
+  }
+
+  get isInSession() {
+    // Note: If current is in session, the .inSessionArray will have a SESSION_BORDER_MARK at least.
+    if ( this.inSessionArray.length > 0 )
+      return true;
+    return false;
+  }
+
+  add( issuedObject ) {
+    if ( this.isInSession ) {
+      this.inSessionArray.push( issuedObject );
+    } else {
+      this.notInSessionSet.add( issuedObject );
+    }
   }
 
 }
@@ -152,15 +170,13 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
       returnedObject = new ( this.objectClass )( ...restArgs );
     }
 
-//!!! ...unfinished... (2022/06/23)
-// How to know whether is in session now?
-
     // 2. Tracking the issued object for recycling automatically by session_pop().
-    this.issuedObjects.??? Array.push( returnedObject );
+    this.issuedObjects.add( returnedObject );
 
     return returnedObject;
   }
 
+//!!! ...unfinished... (2022/06/23)
   /**
    * @param {Object} objectToBeRecycled
    *   The object (which should be an instance of this.ObjectClass) to be recycled.
