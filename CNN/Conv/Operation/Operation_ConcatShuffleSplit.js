@@ -1,5 +1,7 @@
 export { ConcatShuffleSplit };
+export { ConcatShuffleSplitPool };
 
+import * as Pool from "../../util/Pool.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import * as ChannelShuffler from "../ChannelShuffler.js";
@@ -58,6 +60,31 @@ class ConcatShuffleSplit extends Root {
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
+    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 ); // .outputX will be created later.
+
+    this.setAsConstructor(
+      inputTensorPlaceholder0, inputTensorPlaceholder1,
+      channelShuffler, bShuffleSplit,
+      arrayTemp_forInterleave_asGrouptTwo,
+      bKeepInputTensor0, bKeepInputTensor1
+    );
+  }
+
+  /**
+   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
+   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   * and improve performance when doing Interleave_asGrouptTwo.
+   *
+   * @return {ConcatAlongAxisId2}
+   *   Return the this object.
+   */
+  setAsConstructor(
+    inputTensorPlaceholder0, inputTensorPlaceholder1,
+    channelShuffler, bShuffleSplit = true,
+    arrayTemp_forInterleave_asGrouptTwo,
+    bKeepInputTensor0, bKeepInputTensor1
+  ) {
+
     let bShouldShuffleSplit = ( ( bShuffleSplit ) && ( channelShuffler ) ); // Want and could do channel shuffling and splitting.
 
     let outputTensorCount;
@@ -66,7 +93,7 @@ class ConcatShuffleSplit extends Root {
     else
       outputTensorCount = 1;
 
-    super( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
+    super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
     this.channelShuffler = channelShuffler;
 
@@ -77,13 +104,36 @@ class ConcatShuffleSplit extends Root {
     this.bShuffleSplit = bShuffleSplit;
     this.bShouldShuffleSplit = bShouldShuffleSplit;
 
-    this.inputTensors = new Array( 2 ); // For reducing memory re-allocation to improve performance.
+    this.inputTensors = Pool.Array.Singleton.get_or_create_by( 2 ); // For reducing memory re-allocation to improve performance.
 
     ConcatShuffleSplit.adjust_pfn.call( this );
     ConcatShuffleSplit.setup_BoundsArraySet.call( this, arrayTemp_forInterleave_asGrouptTwo );
     ConcatShuffleSplit.setup_outputs_TensorPlaceholder.call( this );
 
     this.setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 );
+    return this;
+  }
+
+  /**
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
+    if ( this.inputTensors ) {
+      for ( let i = 0; i < this.inputTensors.length; ++i ) {
+        this.inputTensors[ i ] = null;
+      }
+      Pool.Array.Singleton.recycle( this.inputTensors );
+      this.inputTensors = null;
+    }
+    super.disposeResources();
+  }
+
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    ConcatShuffleSplitPool.Singleton.recycle( this );
   }
 
   /**
@@ -353,3 +403,22 @@ class ConcatShuffleSplit extends Root {
   }
 
 }
+
+
+/**
+ * Providing Operation.ConcatShuffleSplit
+ *
+ */
+class ConcatShuffleSplitPool extends Pool.Root {
+
+  constructor() {
+    super( ConcatShuffleSplit, ConcatShuffleSplit.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default Operation.ConcatShuffleSplit provider.
+ */
+ConcatShuffleSplitPool.Singleton = new ConcatShuffleSplitPool();
+
