@@ -46,11 +46,6 @@ class Base {
     BasePool.Singleton.recycle( this );
   }
 
-//!!! (2020/12/12 Remarked) This object is tended to be created new every time. There is no need to reset.
-//   /** Dummy. Do nothing. Sub-class should override this method. */
-//   resetValue() {
-//   }
-
   /**
    * @return {Percentage.Base} The root Percentage.Base of the whole Percentage hierarchy. The root's valuePercentage represents the whole percentage.
    */
@@ -146,12 +141,6 @@ class Concrete extends Base {
     this.disposeResources();
     ConcretePool.Singleton.recycle( this );
   }
-
-//!!! (2020/12/12 Remarked) This object is tended to be created new every time. There is no need to reset.
-//   /** Reset this.value to 0. */
-//   resetValue() {
-//     this.value = 0;
-//   }
 
   /**
    * @return {number}
@@ -266,17 +255,6 @@ class Aggregate extends Base {
     child.parent = this;
     return child;
   }
-
-//!!! (2020/12/12 Remarked) This object is tended to be created new every time. There is no need to reset.
-//   /** Reset all children's this.value to 0. */
-//   resetValue() {
-//     for ( let i = 0; i < this.children.length; ++i ) {
-//       let child = this.children[ i ];
-//       if ( child ) {
-//         child.resetValue();
-//       }
-//     }
-//   }
 
   /**
    * @return {number} The sum of all children's ( valuePercentage / maxPercentage ) as number between [0, 100] inclusive.
