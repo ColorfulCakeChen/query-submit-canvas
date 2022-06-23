@@ -132,15 +132,20 @@ class InputsOutputs {
   }
 
   /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    //this.disposeResources();
+    InputsOutputsPool.Singleton.recycle( this );
+  }
+
+  /**
    * @return {InputsOutputs}
    *   Return a newly created InputsOutputs which is a copy of this InputsOutputs. The .input0 (, .input1) will just past
    * to the newly created InputsOutputs (i.e. NOT copied). But the .output0 (, .output1) will be copied.
    */
   clone() {
-//!!! (2022/06/22 Remarked) Use pool instead.
-//    let result = new InputsOutputs( this.input0, this.input1, this.outputChannelCount0, this.outputChannelCount1 );
     let result = InputsOutputsPool.Singleton.get_or_create_by( this.input0, this.input1, this.outputChannelCount0, this.outputChannelCount1 );
-
     result.set_outputs_all_byBoundsArraySet( this );
     return result;
   }
