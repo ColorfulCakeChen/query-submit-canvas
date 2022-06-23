@@ -42,6 +42,10 @@ class IssuedObjects {
     return false;
   }
 
+  /**
+   *
+   * @return {boolean} Always return true.
+   */
   add( issuedObject ) {
     if ( this.isInSession ) {
       let arrayIndex = this.inSessionArray.length;
@@ -51,6 +55,29 @@ class IssuedObjects {
       this.notInSessionSet.add( issuedObject );
       this.toInSessionArrayIndexMap.set( issuedObject, -1 );
     }
+    return true;
+  }
+
+  /**
+   *
+   * @return {boolean}
+   *   If the object is found and removed, return true. If the object is not found, return false.
+   */
+  remove( object ) {
+    let arrayIndex = this.toInSessionArrayIndexMap.get( object );
+    if ( arrayIndex == undefined )
+      return false; // 1. Not a (recorded) issued object.
+
+    if ( arrayIndex < 0 ) { // 2. The object is not belong to any session.
+      this.notInSessionSet.delete( arrayIndex );
+      this.toInSessionArrayIndexMap.delete( arrayIndex );
+
+    } else { // 3. The object is belong to a session.
+      this.inSessionArray[ arrayIndex ] = null;
+      this.toInSessionArrayIndexMap.delete( arrayIndex );
+    }
+
+    return true;
   }
 
 }
