@@ -104,7 +104,7 @@ class ConcatGather {
     }
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
-    super.disposeResources();
+    //super.disposeResources();
   }
 
   get concatenatedShape() {
