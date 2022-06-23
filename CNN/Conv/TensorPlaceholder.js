@@ -64,6 +64,14 @@ class Base {
   }
 
   /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    BasePool.Singleton.recycle( this );
+  }
+
+  /**
    *
    * @param {ActivationEscaping.ScaleBoundsArray} scaleBoundsArray  The tensor placeholder's ScaleBoundsArray.
    */
