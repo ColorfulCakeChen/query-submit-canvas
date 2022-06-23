@@ -1,4 +1,2 @@
-import * as Receiver from "./ValueMax/Receiver.js";
-import * as Percentage from "./ValueMax/Percentage.js";
-
-export {Receiver, Percentage};
+export * as Receiver from "./ValueMax/Receiver.js";
+export * as Percentage from "./ValueMax/Percentage.js";
