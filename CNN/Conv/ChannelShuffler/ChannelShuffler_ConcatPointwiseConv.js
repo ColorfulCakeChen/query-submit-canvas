@@ -36,7 +36,7 @@ import { ConcatGather } from "./ChannelShuffler_ConcatGather.js";
  *   The information calculated from concatenatedShape and outputGroupCount.
  *
  * @member {tf.tensor4d[]} filtersTensor4dArray
- *   The pointwise convolution filters. They are used to achieve shuffle-split, and will be released by calling disposeTensors().
+ *   The pointwise convolution filters. They are used to achieve shuffle-split, and will be released by calling disposeResources().
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
@@ -70,7 +70,7 @@ class ConcatPointwiseConv {
    */
   constructor( concatenatedShape, outputGroupCount ) {
 
-    this.disposeTensors(); // So that distinguishable if re-initialization failed.
+    this.disposeResources(); // So that distinguishable if re-initialization failed.
 
     let concatGather = new ConcatGather( concatenatedShape, outputGroupCount );
 
@@ -130,7 +130,7 @@ class ConcatPointwiseConv {
       throw e;
 
     } finally {
-      concatGather.disposeTensors(); // Always release the look up table (by tensor1d).
+      concatGather.disposeResources(); // Always release the look up table (by tensor1d).
     }
 
     this.gather = this.gather_loop;
