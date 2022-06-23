@@ -196,18 +196,16 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
    * set of this depthwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
    *
-   * @param {Array} o_filtersShape_filtersArray_biasesShape_biasesArray_Array
-   *   Pass in an array. It will be filled four elements: [ filtersShape, filtersArray, biasesShape, biasesArray ]. It is mainly
-   * used for preventing these elements (also Array) been recycled by Pool.Array.
-   *
    * @return {boolean} Return true, if succeeded.
    */
-  init(
-    inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray,
-    o_filtersShape_filtersArray_biasesShape_biasesArray_Array
-  ) {
+  init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray ) {
 
     let bInitOk;
+
+    // It will be filled with: [ boundsArraySet, poolWindowShape, filtersShape, filtersArray, biasesShape, biasesArray ].
+    // It is mainly used for preventing these elements been recycled by itself recycling pool.
+    //
+    let keptObjectArray = Pool.Array.Singleton.get_or_create_by( 6 );
 
     FiltersBiasesPartInfoPool.Singleton.sessionCall( () => {
       ChannelPartInfoPool.Singleton.sessionCall( () => {
@@ -216,16 +214,20 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
           bInitOk = FiltersArray_BiasesArray.init_internal.call( this,
             inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray );
 
-          o_filtersShape_filtersArray_biasesShape_biasesArray_Array.length = 4;
-          o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 0 ] = this.filtersShape;
-          o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 1 ] = this.filtersArray;
-          o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 2 ] = this.biasesShape;
-          o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 3 ] = this.biasesArray;
+          keptObjectArray[ 0 ] = this.boundsArraySet;
+          keptObjectArray[ 1 ] = this.poolWindowShape;
+          keptObjectArray[ 2 ] = this.filtersShape;
+          keptObjectArray[ 3 ] = this.filtersArray;
+          keptObjectArray[ 4 ] = this.biasesShape;
+          keptObjectArray[ 5 ] = this.biasesArray;
 
-          return o_filtersShape_filtersArray_biasesShape_biasesArray_Array;
+          return keptObjectArray;
         } )
       } )
     } );
+
+    Pool.Array.Singleton.recycle( keptObjectArray );
+    keptObjectArray = null;
 
     return bInitOk;
   }
