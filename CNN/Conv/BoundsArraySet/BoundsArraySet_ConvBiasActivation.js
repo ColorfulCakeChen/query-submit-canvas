@@ -99,16 +99,21 @@ class ConvBiasActivation extends InputsOutputs {
       .multiply_all_byNs( this.input0.scaleArraySet.undo.scales );
     return this;
   }
- 
+
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    //this.disposeResources();
+    ConvBiasActivationPool.Singleton.recycle( this );
+  }
+
   /**
    * @return {ConvBiasActivation}
    *   Return a newly created ConvBiasActivation which is a copy of this ConvBiasActivation. The this.inputs will just past
    * to new ConvBiasActivation (i.e. NOT copied). But the other data members will be copied.
    */
   clone() {
-
-//!!! (2022/06/22 Remarked) Use pool instead.
-//    let result = new ConvBiasActivation( this.input0, this.outputChannelCount0 );
     let result = ConvBiasActivationPool.Singleton.get_or_create_by( this.input0, this.outputChannelCount0 );
     result.set_all_byBoundsArraySet( this );
     return result;
