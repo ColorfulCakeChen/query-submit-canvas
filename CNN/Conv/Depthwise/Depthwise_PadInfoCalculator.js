@@ -45,9 +45,28 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  */
 let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator extends ParentClass {
 
+  /**
+   *
+   */
   constructor( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs ) {
     super( ...restArgs );
+
+    this.setAsConstructor(
+      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs );
+  }
+
+ /**
+   * @return {PadInfoCalculator}
+   *   Return the this object.
+   */
+  setAsConstructor(
+    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs ) {
+
+    if ( super.setAsConstructor instanceof Function )
+      super.setAsConstructor( ...restArgs ); // 0. All other arguments passed to parent class.
+
     this.set( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+    return this;
   }
 
   /**
