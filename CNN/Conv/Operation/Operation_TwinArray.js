@@ -150,6 +150,14 @@ class TwinArray extends Root {
   }
 
   /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    TwinArrayPool.Singleton.recycle( this );
+  }
+
+  /**
    * Release all ScaleBoundsArray (inside tensor placeholder) except this.input0, this.input1, this.output0, this.output1
    *
    * This could reduce memory footprint by releasing unused scale bounds array.
