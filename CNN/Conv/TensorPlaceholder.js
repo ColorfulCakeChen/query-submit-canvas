@@ -57,6 +57,7 @@ class Base {
   disposeResources() {
     if ( this.scaleBoundsArray ) {
       ActivationEscaping.ScaleBoundsArrayPool.Singleton.recycle( this.scaleBoundsArray );
+      this.scaleBoundsArray = null;
     }
 
     this.finalOperation = null;
