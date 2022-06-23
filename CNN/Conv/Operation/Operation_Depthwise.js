@@ -1,4 +1,5 @@
 export { Depthwise };
+export { DepthwisePool };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Pool from "../../util/Pool.js";
@@ -63,6 +64,32 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf );
+
+    this.setAsConstructor(
+      inputTensorPlaceholder0,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      bBias, nActivationId, nPassThroughStyleId,
+      nHigherHalfDifferent );
+  }
+
+  /**
+   * @return {Depthwise}
+   *   Return the this object.
+   */
+  setAsConstructor(
+    inputTensorPlaceholder0,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    bBias, nActivationId, nPassThroughStyleId,
+    nHigherHalfDifferent ) {
+
+    super.setAsConstructor(
+      inputTensorPlaceholder0, null, 1,
+      inputTensorPlaceholder0.height, inputTensorPlaceholder0.width, inputTensorPlaceholder0.channelCount,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      bBias, nActivationId, nPassThroughStyleId,
+      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf );
+
+    return this;
   }
 
   /**
@@ -79,7 +106,6 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     // Q2: Why are not filtersWeights and biasesWeights kept in this?
     // A2: So that inputFloat32Array could be released.
 
-    this.disposeTensors();
 
     // 1. Determine operation functions.
     Depthwise.setup_bDepthwise_pfn.call( this );
@@ -125,7 +151,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
           // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
           {
             this.boundsArraySet.output0 = null; // Because it has already been transferred to TensorPlaceholder this.output0
-            BoundsArraySet.DepthwisePool.Singleton.recycle( this.boundsArraySet );
+            this.boundsArraySet.disposeResources_and_recycleToPool();
             this.boundsArraySet = null;
           }
 
@@ -140,14 +166,10 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     return this.bInitOk;
   }
 
-  /** Release tensors. */
-  disposeTensors() {
-
-    if ( this.poolWindowShape ) {
-      Pool.Array.Singleton.recycle( this.poolWindowShape );
-      this.poolWindowShape = null;
-    }
-
+  /**
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
     this.apply = this.pfnOperation = this.pfnActivation = null;
 
     // If these properties does not exist, assigning value (even undefined) to them will create them. Avoid it.
@@ -163,11 +185,18 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     }
 
     this.bDepthwise = false;
-    this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bKeepInputTensor = false;  // Default will dispose input tensor.
     this.bInitOk = false;
 
-    super.disposeTensors(); // Release filtersTensor4d and biasesTensor3d.
+    super.disposeResources(); // Release filtersTensor4d and biasesTensor3d.
+  }
+
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    DepthwisePool.Singleton.recycle( this );
   }
 
   /**
@@ -176,7 +205,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    */
   setKeepInputTensor( bKeepInputTensor ) {
 
-    // So that do nothing if disposeTensors() has been called (i.e. .pfnOperation has been cleared).
+    // So that do nothing if disposeResources() has been called (i.e. .pfnOperation has been cleared).
     //
     // This could happen when Operation.TwinArray.disposeTensors() which cause TensorPlaceholder.finalOperationOld.setKeepInputTensor()
     // called.
@@ -389,3 +418,22 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   }
 
 }
+
+
+/**
+ * Providing Operation.Depthwise
+ *
+ */
+class DepthwisePool extends Pool.Root {
+
+  constructor() {
+    super( Depthwise, Depthwise.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default Operation.Depthwise provider.
+ */
+DepthwisePool.Singleton = new DepthwisePool();
+
