@@ -1,22 +1,20 @@
-export { Base };
+export { Bag };
 
-import * as MultiLayerMap from "../util/MultiLayerMap.js";
-import * as ChannelShuffler from "./ChannelShuffler.js";
-
-//!!! ...unfinished... (2022/05/23) Re-implement by MultiLayerMap.
+import * as MultiLayerMap from "../../util/MultiLayerMap.js";
+import { ConcatPointwiseConv } from "./ChannelShuffler_ConcatPointwiseConv.js";
 
 /**
  * A container which provides shared channel shufflers. This could simplify memory management.
  *
  */
-class Base extends MultiLayerMap.Base {
+class Bag extends MultiLayerMap.Base {
 
   /**
    * @param {object} channelShufflerClass
    *   The class object for creating new channel shuffler. It is one of ChannelShuffler.ShuffleInfo, ChannelShuffler.ConcatGather,
    * ChannelShuffler.SplitConcat, ChannelShuffler.ConcatPointwiseConv.
    */
-  constructor( channelShufflerClass = ChannelShuffler.ConcatPointwiseConv ) {
+  constructor( channelShufflerClass = ConcatPointwiseConv ) {
     super();
 
     this.channelShufflerClass = channelShufflerClass;
@@ -53,9 +51,9 @@ class Base extends MultiLayerMap.Base {
   }
 
   /** Release all channel shufflers and their tf.tensor. */
-  disposeTensors() {
+  disposeResources() {
     for ( let channelShuffler of this.values() ) {
-      channelShuffler.disposeTensors();
+      channelShuffler.disposeResources();
     }
     this.clear();
   }
