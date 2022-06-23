@@ -108,8 +108,8 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     this.objectClass = objectClass;
     this.pfn_SetAsConstructor_ReturnObject = pfn_SetAsConstructor_ReturnObject;
 
-//!!! ...unfinished... (2022/06/23)
     this.issuedObjects = new IssuedObjects()
+    this.recycledObjects = new RecycledObjects();
 
     this.sessionKeptObjectSet = new Set(); // For reducing memory re-allocation.
     this.movingObjectArray = new Array(); // For reducing memory re-allocation.
@@ -120,7 +120,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 // This is more useful for Float32Array because of reducing more memory re-allocation.
 //
 
-    this.recycledObjects = new RecycledObjects();
   }
 
   get issuedCount() {
@@ -143,9 +142,9 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     // 1.
 
     // 1.1 Get recycled object.
-    if ( this.recycledObjectArray.length > 0 ) {
-      let candicatedObject = this.recycledObjectArray.pop();
-      this.recycledObjectSet.delete( candicatedObject ); // Removed from set.
+    if ( this.recycledObjects.array.length > 0 ) {
+      let candicatedObject = this.recycledObjects.array.pop();
+      this.recycledObjects.set.delete( candicatedObject ); // Removed from set.
       returnedObject = this.pfn_SetAsConstructor_ReturnObject.apply( candicatedObject, restArgs );
 
     // 1.2 Create new object.
@@ -153,8 +152,11 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
       returnedObject = new ( this.objectClass )( ...restArgs );
     }
 
+//!!! ...unfinished... (2022/06/23)
+// How to know whether is in session now?
+
     // 2. Tracking the issued object for recycling automatically by session_pop().
-    this.issuedObjectArray.push( returnedObject );
+    this.issuedObjects.??? Array.push( returnedObject );
 
     return returnedObject;
   }
