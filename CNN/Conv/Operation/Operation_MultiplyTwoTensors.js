@@ -186,7 +186,7 @@ class MultiplyTwoTensors extends Root {
       // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
       {
         this.boundsArraySet.output0 = null; // Because it has already been transferred to TensorPlaceholder this.output0
-        BoundsArraySet.InputsOutputsPool.Singleton.recycle( this.boundsArraySet );
+        this.boundsArraySet.disposeResources_and_recycleToPool();
         this.boundsArraySet = null;
       }
 
