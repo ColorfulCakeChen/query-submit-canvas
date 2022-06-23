@@ -43,6 +43,8 @@ class IssuedObjects {
   }
 
   /**
+   * If current is in a session, the object will be recorded in .inSessionArray which could be visit in sequential when the session is ended.
+   * Otherwise, it will be recorded in .notInSessionSet which is fast for removing in the future.
    *
    * @return {boolean} Always return true.
    */
@@ -59,6 +61,14 @@ class IssuedObjects {
   }
 
   /**
+   * Removed from this issued object list. (Usually, for preparing to recycle it.)
+   *
+   * - If the object is recorded in a session, the object in .inSessionArray[] will be modified to null. So that it will not be recycled
+   *     (again) wrongly when the session is ended.
+   *
+   *     - Considering what will happen if it is re-issued again in the same session. If it is not marked as null, 
+   *
+   * Otherwise, it will be recorded in .notInSessionSet which is fast for removing in the future.
    *
    * @return {boolean}
    *   If the object is found and removed, return true. If the object is not found, return false.
@@ -70,11 +80,11 @@ class IssuedObjects {
 
     if ( arrayIndex < 0 ) { // 2. The object is not belong to any session.
       this.notInSessionSet.delete( arrayIndex );
-      this.toInSessionArrayIndexMap.delete( arrayIndex );
+      this.toInSessionArrayIndexMap.delete( object );
 
     } else { // 3. The object is belong to a session.
       this.inSessionArray[ arrayIndex ] = null;
-      this.toInSessionArrayIndexMap.delete( arrayIndex );
+      this.toInSessionArrayIndexMap.delete( object );
     }
     return true;
   }
