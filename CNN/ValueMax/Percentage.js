@@ -1,4 +1,5 @@
 export { Base };
+export { BasePool };
 export { Concrete };
 export { ConcretePool };
 export { Aggregate };
@@ -31,6 +32,20 @@ class Base {
     return this;
   }
 
+  /**
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
+  }
+
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    BasePool.Singleton.recycle( this );
+  }
+
 //!!! (2020/12/12 Remarked) This object is tended to be created new every time. There is no need to reset.
 //   /** Dummy. Do nothing. Sub-class should override this method. */
 //   resetValue() {
@@ -58,6 +73,24 @@ class Base {
     return 100;
   }
 }
+
+
+/**
+ * Providing ValueMax.Base
+ *
+ */
+class BasePool extends Pool.Root {
+
+  constructor() {
+    super( Base, Base.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default ValueMax.Base provider.
+ */
+BasePool.Singleton = new BasePool();
 
 
 /**
@@ -100,10 +133,17 @@ class Concrete extends Base {
   }
 
   /**
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
+    super.disposeResources();
+  }
+
+  /**
    * After calling this method, this object should be viewed as disposed and should not be operated again.
    */
   disposeResources_and_recycleToPool() {
-    //this.disposeResources();
+    this.disposeResources();
     ConcretePool.Singleton.recycle( this );
   }
 
@@ -160,12 +200,11 @@ class Aggregate extends Base {
    * @param {Percentage.Base[]} children
    *   An array of Percentage.Base which will be aggregated. Their parent will be set to this Percentage.Aggregate.
    */
-  constructor( children = [] ) {
+  constructor( children = Pool.Array.Singleton.get_or_create_by( 0 ) ) {
     super();
     this.setAsConstructor( children );
   }
 
-//!!! ...unfinished... (2022/06/23) should use Pool.Array
   /**
    * @param {Percentage.Base[]} children
    *   An array of Percentage.Base which will be aggregated. Their parent will be set to this Percentage.Aggregate.
@@ -173,7 +212,7 @@ class Aggregate extends Base {
    * @return {Aggregate}
    *   Return the this object.
    */
-  setAsConstructor( children = [] ) {
+  setAsConstructor( children = Pool.Array.Singleton.get_or_create_by( 0 ) ) {
     super.setAsConstructor();
 
     this.children = children;
@@ -190,9 +229,11 @@ class Aggregate extends Base {
    * Sub-class should override this method (and call super.disposeResources() before return).
    */
   disposeResources() {
-
-//!!! ...unfinished... (2022/06/23) should use Pool.Array to recycle.
-
+    if ( this.children ) {
+      Pool.Array.Singleton.recycle( this.children );
+      this.children = null;
+    }
+    super.disposeResources();
   }
 
   /**
