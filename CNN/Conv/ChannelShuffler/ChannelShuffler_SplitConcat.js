@@ -1,6 +1,6 @@
 export { SplitConcat };
 
-import { ShuffleInfo } from "./ChannelShuffler_ShuffleInfo.js";
+import { ConcatGather } from "./ChannelShuffler_ConcatGather.js";
 
 /**
  * Implement the channel shuffler by tf.split() and tf.concat().
@@ -83,14 +83,19 @@ class SplitConcat {
     this.splitConcat = this.splitConcat_loop;
   }
 
-  /** Release tf.tensor. */
-  disposeTensors() {
+  /**
+   * Release tf.tensor.
+   *
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
     if ( this.shuffleInfo ) {
       this.shuffleInfo.disposeTensors();
       this.shuffleInfo = null;
     }
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
+    //super.disposeResources();
   }
 
   get concatenatedShape() {
