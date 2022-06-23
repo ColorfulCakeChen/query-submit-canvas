@@ -101,10 +101,21 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
   /**
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
+
+    // For reducing memory re-allocation when this BoundsArraySet is recycled and re-issued, the .afterUndoPreviousActivationEscaping,
+    // .afterFilter, .afterBias, .bPassThrough are not disposed by here.
+
+    super.disposeResources();
+  }
+
+  /**
    * After calling this method, this object should be viewed as disposed and should not be operated again.
    */
   disposeResources_and_recycleToPool() {
-    //this.disposeResources();
+    this.disposeResources();
     ConvBiasActivationPool.Singleton.recycle( this );
   }
 
