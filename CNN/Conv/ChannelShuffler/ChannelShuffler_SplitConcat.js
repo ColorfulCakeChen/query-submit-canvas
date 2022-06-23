@@ -91,7 +91,7 @@ class SplitConcat {
    */
   disposeResources() {
     if ( this.shuffleInfo ) {
-      this.shuffleInfo.disposeTensors();
+      this.shuffleInfo.disposeResources();
       this.shuffleInfo = null;
     }
 
