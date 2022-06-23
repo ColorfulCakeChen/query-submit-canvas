@@ -397,7 +397,7 @@ class Base {
 
     let block = new Block.Base();
 
-    let progress = new ValueMax.Percentage.Aggregate();
+    let progress = ValueMax.Percentage.Aggregate.Singleton.get_or_create_by();
 
     // Initialize successfully or failed.
     let extractedParams = new Block.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
@@ -433,6 +433,8 @@ class Base {
     tf.util.assert( ( 100 == progress.valuePercentage ),
       `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${parametersDescription}`);
 
+    progress = ValueMax.Percentage.Aggregate.Singleton.recycle( progress );
+    progress = null;
 
     if ( block.byteOffsetEnd != testParams.in.inputFloat32Array.byteLength ) { //!!! For Debug. (parsing ending position)
       debugger;
