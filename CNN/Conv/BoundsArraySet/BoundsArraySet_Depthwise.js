@@ -29,6 +29,14 @@ class Depthwise extends ConvBiasActivation {
   }
 
   /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    //this.disposeResources();
+    DepthwisePool.Singleton.recycle( this );
+  }
+
+  /**
    * Set this.bPassThrough[] according to inChannelPartInfoArray.
    *
    * @param {Depthwise.FiltersBiasesPartInfo[]} aFiltersBiasesPartInfoArray
