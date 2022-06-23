@@ -1,6 +1,8 @@
 export { Depthwise_SameWhenPassThrough };
+export { Depthwise_SameWhenPassThroughPool };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as Pool from "../../util/Pool.js";
 import { Depthwise } from "./Operation_Depthwise.js";
 
 /**
@@ -29,6 +31,58 @@ class Depthwise_SameWhenPassThrough extends Depthwise {
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
       nHigherHalfDifferent );
 
+    this.setAsConstructor(
+      inputTensorPlaceholder0,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      bBias, nActivationId,
+      nHigherHalfDifferent );
+  }
+
+  /**
+   * @return {Depthwise_SameWhenPassThrough}
+   *   Return the this object.
+   */
+  setAsConstructor(
+    inputTensorPlaceholder0,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    bBias, nActivationId,
+    nHigherHalfDifferent ) {
+
+    super.setAsConstructor(
+      inputTensorPlaceholder0,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      bBias, nActivationId,
+      ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
+      nHigherHalfDifferent );
+
+    return this;
+  }
+
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    Depthwise_SameWhenPassThroughPool.Singleton.recycle( this );
   }
 
 }
+
+
+/**
+ * Providing Operation.Depthwise_SameWhenPassThrough
+ *
+ */
+class Depthwise_SameWhenPassThroughPool extends Pool.Root {
+
+  constructor() {
+    super( Depthwise_SameWhenPassThrough, Depthwise_SameWhenPassThrough.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default Operation.Depthwise_SameWhenPassThrough provider.
+ */
+Depthwise_SameWhenPassThroughPool.Singleton = new Depthwise_SameWhenPassThroughPool();
+
