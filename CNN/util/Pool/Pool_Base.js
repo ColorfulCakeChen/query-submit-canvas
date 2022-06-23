@@ -37,16 +37,26 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     this.pfn_SetAsConstructor_ReturnObject = pfn_SetAsConstructor_ReturnObject;
 
 //!!! ...unfinished... (2022/06/23)
-    // If an issued objects is not belong to any session, it will be here.
-    this.issuedObjectNotInSessionSet = new Set();
+    this.issuedObjects = {
 
-    // If an issued objects is belong to some session, its value is the array index to this.issuedObjectInSessionArrayp[].
-    // If an issued objects is not belong to any session, its value is negative value (e.g. -1) which means it is inside .issuedObjectNotInSessionSet.
-    this.issuedObjectToInSessionArrayIndexMap = new Map();
+      // If an issued objects is not belong to any session, it will be here.
+      NotInSessionSet: new Set(),
+
+      // If an issued objects is belong to a session, it will be here.
+      //
+      // Noe: Between sessions, an SESSION_BORDER_MARK is placed. The SESSION_BORDER_MARK is just this Pool.Base object because it is
+      //      impossible to be an issued object of itself.
+      //
+      InSessionArray: new Array(),
+
+      // If an issued objects is belong to a session, this map's value is the array index to .InSessionArray[].
+      // If an issued objects is not belong to any session, this map's value is a negative value (e.g. -1) meaning it inside .NotInSessionSet.
+      ToInSessionArrayIndexMap: new Map(),
+    };
 
 //!!! (2022/06/23 Remarked) Replaced by .issuedObjectInSessionArray
 //    this.issuedObjectArray = new Array();
-    this.issuedObjectInSessionArray = new Array();
+
     this.sessionKeptObjectSet = new Set(); // For reducing memory re-allocation.
     this.movingObjectArray = new Array(); // For reducing memory re-allocation.
 
