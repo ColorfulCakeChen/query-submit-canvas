@@ -119,8 +119,6 @@ class AddTwoTensors extends Root {
         + `input1 channel count ( ${inputScaleBoundsArray1.channelCount} ).`
     );
 
-//!!! (2022/06/22 Remarked) Use pool instead.
-//    this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
     this.boundsArraySet = BoundsArraySet.InputsOutputsPool.Singleton.get_or_create_by( inputScaleBoundsArray0, inputScaleBoundsArray1,
       inputScaleBoundsArray0.channelCount
     );
@@ -186,7 +184,7 @@ class AddTwoTensors extends Root {
       // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
       {
         this.boundsArraySet.output0 = null; // Because it has already been transferred to TensorPlaceholder this.output0
-        BoundsArraySet.InputsOutputsPool.Singleton.recycle( this.boundsArraySet );
+        this.boundsArraySet.disposeResources_and_recycleToPool();
         this.boundsArraySet = null;
       }
 
