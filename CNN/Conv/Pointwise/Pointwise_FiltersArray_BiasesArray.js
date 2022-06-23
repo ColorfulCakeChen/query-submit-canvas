@@ -286,6 +286,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
         } )
       } );
 
+      keptObjectArray.length = 0;
     } );
 
     return bInitOk;
