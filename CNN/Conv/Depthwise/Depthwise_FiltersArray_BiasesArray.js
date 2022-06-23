@@ -202,32 +202,34 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
     let bInitOk;
 
-    // It will be filled with: [ boundsArraySet, poolWindowShape, filtersShape, filtersArray, biasesShape, biasesArray ].
-    // It is mainly used for preventing these elements been recycled by itself recycling pool.
-    //
-    let keptObjectArray = Pool.Array.Singleton.get_or_create_by( 6 );
+    Pool.Array.Singleton.sessionCall( () => {
 
-    FiltersBiasesPartInfoPool.Singleton.sessionCall( () => {
-      ChannelPartInfoPool.Singleton.sessionCall( () => {
-        Pool.Array.Singleton.sessionCall( () => {
+      // It will be filled with: [ boundsArraySet, poolWindowShape, filtersShape, filtersArray, biasesShape, biasesArray ].
+      // It is mainly used for preventing these elements been recycled by itself recycling pool.
+      //
+      let keptObjectArray = Pool.Array.Singleton.get_or_create_by( 6 );
 
-          bInitOk = FiltersArray_BiasesArray.init_internal.call( this,
-            inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray );
+      FiltersBiasesPartInfoPool.Singleton.sessionCall( () => {
+        ChannelPartInfoPool.Singleton.sessionCall( () => {
+          Pool.Array.Singleton.sessionCall( () => {
 
-          keptObjectArray[ 0 ] = this.boundsArraySet;
-          keptObjectArray[ 1 ] = this.poolWindowShape;
-          keptObjectArray[ 2 ] = this.filtersShape;
-          keptObjectArray[ 3 ] = this.filtersArray;
-          keptObjectArray[ 4 ] = this.biasesShape;
-          keptObjectArray[ 5 ] = this.biasesArray;
+            bInitOk = FiltersArray_BiasesArray.init_internal.call( this,
+              inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray );
 
-          return keptObjectArray;
+            keptObjectArray[ 0 ] = this.boundsArraySet;
+            keptObjectArray[ 1 ] = this.poolWindowShape;
+            keptObjectArray[ 2 ] = this.filtersShape;
+            keptObjectArray[ 3 ] = this.filtersArray;
+            keptObjectArray[ 4 ] = this.biasesShape;
+            keptObjectArray[ 5 ] = this.biasesArray;
+
+            return keptObjectArray;
+          } )
         } )
-      } )
-    } );
+      } );
 
-    Pool.Array.Singleton.recycle( keptObjectArray );
-    keptObjectArray = null;
+      keptObjectArray.length = 0;
+    } );
 
     return bInitOk;
   }
