@@ -1,6 +1,6 @@
 export { init, testCorrectness, testDifferentDisposeStrategy_All, disposeTensors };
 
-//import * as ValueMax from "../ValueMax.js";
+import * as ValueMax from "../ValueMax.js";
 import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as ValueRange from "../Unpacker/ValueRange.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
@@ -624,6 +624,8 @@ class HeightWidthDepth {
           + `` );
 
       assertPoolZero( Pool.Array.Singleton );
+      assertPoolZero( ValueMax.Percentage.ConcretePool.Singleton );
+      assertPoolZero( ValueMax.Percentage.AggregatePool.Singleton );
       assertPoolZero( TensorPlaceholder.BasePool.Singleton );
       assertPoolZero( ActivationEscaping.ScaleBoundsArrayPool.Singleton );
       assertPoolZero( BoundsArraySet.InputsOutputsPool.Singleton );
