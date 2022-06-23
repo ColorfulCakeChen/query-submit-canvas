@@ -1,6 +1,7 @@
 export { MultiplyTwoTensors };
 export { MultiplyTwoTensorsPool };
 
+import * as Pool from "../../util/Pool.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import { Root } from "./Operation_Base.js";
