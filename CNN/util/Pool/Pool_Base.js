@@ -114,6 +114,24 @@ class RecycledObjects {
     return this.array.length;
   }
 
+  /**
+   *
+   * @param {Object} objectToBeRecycled
+   *   The object to be recorded as recycled.
+   *
+   * @return {boolean}
+   *   - Return true, if the object is recycled.
+   *   - Return false, if the object has already been a recycled object.
+   */
+  add( objectToBeRecycled ) {
+    if ( !this.set.has( objectToBeRecycled ) ) { // Avoid recycling one object multiple times (i.e. duplicately).
+      this.set.add( objectToBeRecycled );
+      this.array.push( objectToBeRecycled );
+      return true;
+    }
+    return false;
+  }
+
 }
 
 
@@ -206,7 +224,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     return returnedObject;
   }
 
-//!!! ...unfinished... (2022/06/23)
   /**
    * @param {Object} objectToBeRecycled
    *   The object (which should be an instance of this.ObjectClass) to be recycled.
@@ -216,15 +233,8 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    */
   recycle( objectToBeRecycled ) {
 
-//!!! ...unfinished... (2022/06/23)
-// If the object exists in .issuedObjectArray, it should be removed from .issuedObjectArray.
-// Otheriwse, .issuedObjectArray will become larger and larger.
-
-    // Note: If the object to be recycled has already inside .issuedObjectArray, it seems ok.
-    //       But if it will be used for .sessionKeptObjectSet later, that might have problem.
-
     if ( !objectToBeRecycled )
-      return false; // Can not recycle a null object.
+      return false; // 1. Can not recycle a null object.
 
     tf.util.assert( ( objectToBeRecycled instanceof this.objectClass ),
       `Pool.Base.recycle() `
@@ -232,14 +242,16 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
         + `should not an instance of class ( ${this.objectClass} ).`
     );
 
-    if ( !this.recycledObjectSet.has( objectToBeRecycled ) ) { // Avoid recycling one object multiple times (i.e. duplicately).
-      this.recycledObjectSet.add( objectToBeRecycled );
-      this.recycledObjectArray.push( objectToBeRecycled );
-      return true;
-    }
-    return false;
+    // 2. If the object is issued by this pool, it should be removed from issued object list. Otheriwse, the list will become larger
+    //    and larger.
+    this.issuedObjects.remove( objectToBeRecycled );
+
+    // 3. Recycle it.
+    let bRecycleOk = this.recycledObjects.add( objectToBeRecycled );
+    return bRecycleOk;
   }
 
+//!!! ...unfinished... (2022/06/23)
   /**
    * Discard all recycled objects. (Note: The issued objects list are not influenced.)
    */
