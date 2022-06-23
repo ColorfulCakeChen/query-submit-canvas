@@ -142,12 +142,21 @@ class RecycledObjects {
    *   - Return false, if the object has already been a recycled object.
    */
   add( objectToBeRecycled ) {
-    if ( !this.set.has( objectToBeRecycled ) ) { // Avoid recycling one object multiple times (i.e. duplicately).
+    if ( this.set.has( objectToBeRecycled ) ) { // Avoid recycling one object multiple times (i.e. duplicately).
+
+      tf.util.assert( false,
+        `Pool.RecycledObjects.add() `
+          + `An object ( ${objectToBeRecycled} ) is recycled multiple times. `
+          + `This may imply some problem (e.g. resource not transferred properly).`
+      );
+
+      return false;
+
+    } else { // Record it as recycled.
       this.set.add( objectToBeRecycled );
       this.array.push( objectToBeRecycled );
       return true;
     }
-    return false;
   }
 
   /**
