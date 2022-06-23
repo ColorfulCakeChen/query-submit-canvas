@@ -225,13 +225,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
     this.sessionKeptObjectSet = new Set(); // For reducing memory re-allocation.
     this.movingObjectArray = new Array(); // For reducing memory re-allocation.
-
-//!!! ...unfinished... (2022/06/21)
-// should be a MultiLayerMap whose leaf node is an Array object.
-// All objects with the same specification will be recycled into the same Array.
-// This is more useful for Float32Array because of reducing more memory re-allocation.
-//
-
   }
 
   get issuedCount() {
