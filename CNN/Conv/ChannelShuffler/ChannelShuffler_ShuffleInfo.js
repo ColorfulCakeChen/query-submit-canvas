@@ -68,7 +68,7 @@ class ShuffleInfo {
 
   constructor( concatenatedShape, outputGroupCount ) {
 
-    this.disposeTensors(); // So that distinguishable if re-initialization failed.
+    this.disposeResources(); // So that distinguishable if re-initialization failed.
 
     outputGroupCount = Math.trunc( outputGroupCount || 1 );
     if ( outputGroupCount < 1 )
