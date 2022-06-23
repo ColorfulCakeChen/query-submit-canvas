@@ -44,9 +44,12 @@ class IssuedObjects {
 
   add( issuedObject ) {
     if ( this.isInSession ) {
+      let arrayIndex = this.inSessionArray.length;
       this.inSessionArray.push( issuedObject );
+      this.toInSessionArrayIndexMap.set( issuedObject, arrayIndex );
     } else {
       this.notInSessionSet.add( issuedObject );
+      this.toInSessionArrayIndexMap.set( issuedObject, -1 );
     }
   }
 
