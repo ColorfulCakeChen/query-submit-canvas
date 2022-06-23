@@ -44,6 +44,14 @@ class ChannelPartInfo {
   }
 
   /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    //this.disposeResources();
+    ChannelPartInfoPool.Singleton.recycle( this );
+  }
+
+  /**
    * @return {boolean} Return true, if the specified position should be non-zero for pass-through input to output.
    */
   isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) {
@@ -97,6 +105,14 @@ class FiltersBiasesPartInfo {
   setAsConstructor( aChannelPartInfoArray ) {
     this.aChannelPartInfoArray = aChannelPartInfoArray;
     return this;
+  }
+
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    //this.disposeResources();
+    FiltersBiasesPartInfoPool.Singleton.recycle( this );
   }
 
 }
