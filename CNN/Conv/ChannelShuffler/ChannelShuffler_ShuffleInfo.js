@@ -118,6 +118,8 @@ class ShuffleInfo {
 
     this.transposePermutation = null;
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
+    
+    //super.disposeResources();
   }
 
   /** Not dispose the input. */
