@@ -22,7 +22,7 @@ import { ShuffleInfo } from "./ChannelShuffler_ShuffleInfo.js";
  *
  * @member {tf.tensor1d[]} shuffledChannelIndicesTensor1dArray
  *   The look up table for tf.gather()'s channel index. This table is composed of tensor1d so should be released
- * by calling disposeTensors().
+ * by calling disposeResources().
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
@@ -51,7 +51,7 @@ class ConcatGather {
    */
   constructor( concatenatedShape, outputGroupCount ) {
 
-    this.disposeTensors(); // So that distinguishable if re-initialization failed.
+    this.disposeResources(); // So that distinguishable if re-initialization failed.
 
     this.shuffleInfo = new ShuffleInfo( concatenatedShape, outputGroupCount );
 
