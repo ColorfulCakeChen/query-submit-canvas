@@ -367,7 +367,7 @@ class Base {
       ;
 
     let progressRoot = progressParent.getRoot();
-    let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( progressMax ) );
+    let progressToAdvance = progressParent.addChild( ValueMax.Percentage.Concrete.Singleton.get_or_create_by( progressMax ) );
 
     // 1. Extract parameters.
     if ( !params )
