@@ -1,4 +1,5 @@
 export { Base };
+export { BasePool };
 
 import * as ValueMax from "../../ValueMax.js";
 import * as Pool from "../../util/Pool.js";
@@ -311,6 +312,25 @@ import { Params } from "./Block_Params.js";
  *
  */
 class Base {
+
+  /**
+   */
+  constructor( ...restArgs ) {
+    super( ...restArgs );
+    this.setAsConstructor( ...restArgs );
+  }
+
+  /**
+   * @return {Base}
+   *   Return the this object.
+   */
+  setAsConstructor( ...restArgs ) {
+
+    if ( super.setAsConstructor instanceof Function )
+      super.setAsConstructor( ...restArgs ); // 0. All other arguments passed to parent class.
+
+    return this;
+  }
 
   /**
    * Generator for initializing this object.
@@ -942,12 +962,32 @@ class Base {
     return bInitOk;
   }
 
-  /** Release all tensors. */
+//!!!
+  /**
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
   disposeResources() {
 
+    // Because .outputX are not created by this block, they should not be released by this block.
+    //
+    // Note: Because .outputX are just read only property returning .operationArray.outputX, it needs not do anything for them.
+
+    // Because .inputX are created by this block, they should be released by this block.
+    //
+    // Note: Because .inputX are just read only property returning .operationArray.inputX, fetch them before disposing .operationArray.
+    //
+    let input0 = this.input0;
+    let input1 = this.input1;
+    {
+      if ( input1 )
+        input1.disposeResources_and_recycleToPool();
+ 
+      if ( input0 )
+        input0.disposeResources_and_recycleToPool();
+    }
+
     if ( this.operationArray ) {
-      this.operationArray.disposeResources();
-      Operation.TwinArrayPool.Singleton.recycle( this.operationArray );
+      this.operationArray.disposeResources_and_recycleToPool();
       this.operationArray = null;
     }
 
@@ -955,23 +995,20 @@ class Base {
       this.channelShuffler_ConcatPointwiseConv = null; // Note: Do not dispose the channel shuffler here.
     }
 
-    // Because inputs TensorPlaceholder are created by this, they should be released by this.
-    {
-      if ( this.input0 ) {
-        this.input0.ScaleBoundsArray_dispose();
-        TensorPlaceholder.BasePool.Singleton.recycle( this.input0 );
-        this.input0 = null;
-      }
-
-      if ( this.input1 ) {
-        this.input1.ScaleBoundsArray_dispose();
-        TensorPlaceholder.BasePool.Singleton.recycle( this.input1 );
-        this.input1 = null;
-      }
-    }
-
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
+
+    if ( super.disposeResources instanceof Function ) { // If parent class has the same method, call it.
+      super.disposeResources();
+    }
+  }
+
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    BasePool.Singleton.recycle( this );
   }
 
   /**
@@ -1455,3 +1492,22 @@ class Base {
   }
 
 }
+
+
+/**
+ * Providing Block.Base
+ *
+ */
+class BasePool extends Pool.Root {
+
+  constructor() {
+    super( Base, Base.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default Block.Base provider.
+ */
+BasePool.Singleton = new BasePool();
+
