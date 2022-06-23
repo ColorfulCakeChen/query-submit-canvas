@@ -62,26 +62,43 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
   setAsConstructor( input0, input1, outputTensorCount, ...restArgs ) {
 
     if ( super.setAsConstructor instanceof Function )
-      super.setAsConstructor( ...restArgs ); // All other arguments passed to parent class.
+      super.setAsConstructor( ...restArgs ); // 0. All other arguments passed to parent class.
 
-    // Set and register as the input TensorPlaceholder's final user.
+    // 1. Set and register as the input TensorPlaceholder's final user.
     Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this, input0, input1 );
 
-    // Create output TensorPlaceholder.
+    // 2. Prepare output TensorPlaceholder.
     {
+      // 2.1 .output0
       if ( outputTensorCount >= 1 ) {
-//!!! (2022/06/22 Remarked) Use pool instead.
-//        this.output0 = new TensorPlaceholder.Base();
-        this.output0 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
+        if ( this.output0 ) {
+          // Do nothing. Continue to use the existed .output0 TensorPlaceholder.
+        } else {
+          this.output0 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
+        }
+      } else {
+        if ( this.output0 ) { // Dispose it since not necessary.
+          this.output0.disposeResources_and_recycleToPool();
+          this.output0 = null;
+        }
+      }
 
-        if ( outputTensorCount >= 2 ) {
-//!!! (2022/06/22 Remarked) Use pool instead.
-//          this.output1 = new TensorPlaceholder.Base();
+      // 2.2 .output1
+      if ( outputTensorCount >= 2 ) {
+        if ( this.output1 ) {
+          // Do nothing. Continue to use the existed .output1 TensorPlaceholder.
+        } else {
           this.output1 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
+        }
+      } else { // Dispose it since not necessary.
+        if ( this.output1 ) {
+          this.output1.disposeResources_and_recycleToPool();
+          this.output1 = null;
         }
       }
     }
 
+    // 3.
     Base.setup_apply_dummy.call( this, false, false ); // Default is destroy0 and destroy1.
     return this;
   }
@@ -102,14 +119,12 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     // Because outputs are created by this operation, they should be released by this operation.
     {
       if ( this.output1 ) {
-        this.output1.disposeResources();
-        TensorPlaceholder.BasePool.Singleton.recycle( this.output1 );
+        this.output1.disposeResources_and_recycleToPool();
         this.output1 = null;
       }
 
       if ( this.output0 ) {
-        this.output0.disposeResources();
-        TensorPlaceholder.BasePool.Singleton.recycle( this.output0 );
+        this.output0.disposeResources_and_recycleToPool();
         this.output0 = null;
       }
     }
