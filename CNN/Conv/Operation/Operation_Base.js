@@ -2,6 +2,7 @@ export { Base };
 export { Root };
 export { RootPool };
 
+import * as Pool from "../../util/Pool.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 
 /**
