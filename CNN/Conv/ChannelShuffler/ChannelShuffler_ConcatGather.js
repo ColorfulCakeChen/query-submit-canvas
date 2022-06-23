@@ -99,7 +99,7 @@ class ConcatGather {
     }
 
     if ( this.shuffleInfo ) {
-      this.shuffleInfo.disposeTensors();
+      this.shuffleInfo.disposeResources();
       this.shuffleInfo = null;
     }
 
