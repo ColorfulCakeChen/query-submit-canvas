@@ -315,7 +315,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
   static session_pop( keptObjectOrArray ) {
     const SESSION_BORDER_MARK = IssuedObjects.SESSION_BORDER_MARK;
 
-//!!! ...unfinished... (2022/06/23)
     // 1. Prepare object list to be kept (i.e. not be recycled).
     {
       this.sessionKeptObjectSet.clear();
@@ -349,8 +348,8 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
     // 2. Recycle the last session's issued all objects (except objects should be kept).
     this.movingObjectArray.length = 0;
-    while ( this.issuedObjectArray.length > 0 ) {
-      let issuedObject = this.issuedObjectArray.pop();
+    while ( this.issuedObjects.array.length > 0 ) {
+      let issuedObject = this.issuedObjects.array.pop();
       if ( issuedObject == SESSION_BORDER_MARK )
         break; // All objects of the last session have been popped.
 
@@ -364,13 +363,14 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     // 3. Re-push the objects which should be kept to the parent session.
     while ( this.movingObjectArray.length > 0 ) {
       let movingObject = this.movingObjectArray.pop();
-      this.issuedObjectArray.push( movingObject ); // Moved (i.e. belonged) to parent session.
+      this.issuedObjects.add( movingObject ); // Moved (i.e. belonged) to parent session.
     }
 
     // 4. Reduce memory footprint.
     this.sessionKeptObjectSet.clear();
   }
 
+//!!! ...unfinished... (2022/06/23)
   /**
    * Create a session. Call th function. End the session and recycle all issued objects (except the returned objects of the function).
    *
