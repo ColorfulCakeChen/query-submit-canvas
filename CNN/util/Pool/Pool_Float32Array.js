@@ -7,6 +7,12 @@ import { Root } from "./Pool_Base.js";
  *
  * It will try to re-use Float32Array or its underlying ArrayBuffer as possible.
  *
+ *
+ * Note: This pool's performance may NOT be good enough. Because Float32Array's property can not be adjusted, it is almost necessary
+ *       to be re-created. This violates the basic principle (i.e. reducing memory re-allocation) of pool.
+ *
+ *
+ *
  */
 class Float32ArrayPool extends Root {
   
