@@ -54,8 +54,8 @@ class ScaleBoundsArray {
   /**
    * After calling this method, this object should be viewed as disposed and should not be operated again.
    */
-  recycltToPool() {
-    ScaleBoundsArrayPool.Singleton.cycle( this );
+  disposeResources_and_recycleToPool() {
+    ScaleBoundsArrayPool.Singleton.recycle( this );
   }
 
   /**
