@@ -237,6 +237,7 @@ class Aggregate extends Base {
           child.disposeResources_and_recycleToPool();
       }
 
+      this.children.length = 0;
       Pool.Array.Singleton.recycle( this.children );
       this.children = null;
     }
