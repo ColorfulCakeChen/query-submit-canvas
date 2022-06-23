@@ -1,9 +1,9 @@
 export { init, testResultSame, testDifferentDisposeStrategy_All, disposeTensors };
 
-//import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
-import * as ChannelShuffler from "../Conv/ChannelShuffler_PerformanceTest.js";
+import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
+//import * as ChannelShuffler from "../Conv/ChannelShuffler_PerformanceTest.js";
 import * as TensorTools from "../util/TensorTools.js";
-import * as PointDepthPoint_Reference from "../jsPerf/Ref/PointDepthPoint_Reference.js";
+//import * as PointDepthPoint_Reference from "../jsPerf/Ref/PointDepthPoint_Reference.js";
 
 /**
  * Test different channel shuffle implementation for CNN ShuffleNet.
@@ -59,10 +59,10 @@ class HeightWidthDepthGroup {
   shufflers_init() {
     this.shufflers_release();
 
-    this.shuffleInfo = new ChannelShuffler.ShuffleInfo( this.concatenatedShape, this.groupCount );
-    this.concatGatherUnsorted = new ChannelShuffler.ConcatGather( this.concatenatedShape, this.groupCount );
-    this.splitConcatSortedShared = new ChannelShuffler.SplitConcat( this.concatenatedShape, this.groupCount );
-    this.concatPointwiseConv = new ChannelShuffler.ConcatPointwiseConv( this.concatenatedShape, this.groupCount );
+    this.shuffleInfo = new ChannelShuffler.PerformanceTest.ShuffleInfo( this.concatenatedShape, this.groupCount );
+    this.concatGatherUnsorted = new ChannelShuffler.PerformanceTest.ConcatGather( this.concatenatedShape, this.groupCount );
+    this.splitConcatSortedShared = new ChannelShuffler.PerformanceTest.SplitConcat( this.concatenatedShape, this.groupCount );
+    this.concatPointwiseConv = new ChannelShuffler.PerformanceTest.ConcatPointwiseConv( this.concatenatedShape, this.groupCount );
   }
 
   shufflers_release() {
