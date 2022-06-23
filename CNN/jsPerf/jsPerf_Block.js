@@ -634,6 +634,21 @@ class HeightWidthDepth {
       assertPoolZero( Depthwise.FiltersBiasesPartInfoPool.Singleton );
       assertPoolZero( Pointwise.ChannelPartInfoPool.Singleton );
       assertPoolZero( Pointwise.FiltersBiasesPartInfoPool.Singleton );
+      assertPoolZero( Operation.RootPool.Singleton );
+      assertPoolZero( Operation.TwinArrayPool.Singleton );
+      assertPoolZero( Operation.AddTwoTensorsPool.Singleton );
+      assertPoolZero( Operation.MultiplyTwoTensorsPool.Singleton );
+      assertPoolZero( Operation.ConcatShuffleSplitPool.Singleton );
+      assertPoolZero( Operation.ConcatAlongAxisId2Pool.Singleton );
+      assertPoolZero( Operation.DepthwisePool.Singleton.Singleton );
+      assertPoolZero( Operation.Depthwise_SameWhenPassThroughPool.Singleton );
+      assertPoolZero( Operation.Depthwise_ConstantWhenPassThroughPool.Singleton );
+      assertPoolZero( Operation.PointwisePool.Singleton );
+      assertPoolZero( Operation.Pointwise_SameWhenPassThroughPool.Singleton );
+      assertPoolZero( Operation.Pointwise_ConstantWhenPassThroughPool.Singleton );
+      assertPoolZero( Block.Pool.Singleton );
+      assertPoolZero( NumberImage.Pool.Singleton );
+
     });
 
     try {
