@@ -139,11 +139,18 @@ class RecycledObjects {
   }
 
   /**
-   *
+   * Dicard all objects in this recycle bin.
    */
   removeAll() {
     this.array.length = 0;
     this.set.clear();
+  }
+
+  /**
+   * @return {boolean} Return true, if the object is recorded in this recycle bin.
+   */
+  has( object ) {
+    return this.set.has( object );
   }
 
 }
@@ -291,9 +298,8 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     this.issuedObjects.append_session_border_mark();
   }
 
-//!!! ...unfinished... (2022/06/23)
   /**
-   * End a auto-recycle session. This method will pop all objects from .issuedObjectArrayappend until encountering SESSION_BORDER_MARK.
+   * End a auto-recycling session. This method will pop all objects from .issuedObjects.array until encountering SESSION_BORDER_MARK.
    *
    *   - If the popped objects are not listed in keptObjectArray, they will be recycled.
    *
@@ -307,8 +313,9 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    *   An object or an object array. If the object(s) is not null, they will be kept (i.e. not be recycled) and be moved to parent session.
    */
   static session_pop( keptObjectOrArray ) {
-    const SESSION_BORDER_MARK = this; // Use an object which is not possible be listed in the array as an session-border-mark.
+    const SESSION_BORDER_MARK = IssuedObjects.SESSION_BORDER_MARK;
 
+//!!! ...unfinished... (2022/06/23)
     // 1. Prepare object list to be kept (i.e. not be recycled).
     {
       this.sessionKeptObjectSet.clear();
@@ -318,10 +325,10 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
             let keptObject = keptObjectOrArray[ i ];
             if ( keptObject ) {
 
-              tf.util.assert( ( !this.recycledObjectSet.has( keptObject ) ),
+              tf.util.assert( ( !this.recycledObjects.has( keptObject ) ),
                 `Pool.Base.session_pop() `
                   + `The object to be kept (i.e. not to be recycled) ( ${keptObject} ) `
-                  + `should not already be recycled (i.e. should not inside .recycledObjectSet).`
+                  + `should not already be recycled (i.e. should not be inside .recycledObjects).`
               );
 
               this.sessionKeptObjectSet.add( keptObject );
@@ -329,10 +336,10 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
           }
         } else if ( keptObjectOrArray instanceof Object ) { // 1.2 A single object to be kept.
           
-          tf.util.assert( ( !this.recycledObjectSet.has( keptObjectOrArray ) ),
+          tf.util.assert( ( !this.recycledObjects.has( keptObjectOrArray ) ),
             `Pool.Base.session_pop() `
               + `The object to be kept (i.e. not to be recycled) ( ${keptObjectOrArray} ) `
-              + `should not already be recycled (i.e. should not inside .recycledObjectSet).`
+              + `should not already be recycled (i.e. should not be inside .recycledObjects).`
           );
 
           this.sessionKeptObjectSet.add( keptObjectOrArray );
