@@ -26,6 +26,14 @@ class Pointwise extends ConvBiasActivation {
   }
 
   /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    //this.disposeResources();
+    PointwisePool.Singleton.recycle( this );
+  }
+
+  /**
    * Set this.bPassThrough[] according to inChannelPartInfoArray.
    *
    * @param {Pointwise.FiltersBiasesPartInfo[]} aFiltersBiasesPartInfoArray
