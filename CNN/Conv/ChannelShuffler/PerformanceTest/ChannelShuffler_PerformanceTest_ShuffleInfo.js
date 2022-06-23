@@ -1,12 +1,15 @@
 export { ShuffleInfo, ConcatGather, SplitConcat, ConcatPointwiseConv };
 
-import * as ChannelShuffler from "./ChannelShuffler.js";
+import { ShuffleInfo as ChannelShuffler_ShuffleInfo } from "../ChannelShuffler_ShuffleInfo.js";
+import { ConcatGather as ChannelShuffler_ConcatGather } from "../ChannelShuffler_ConcatGather.js";
+import { SplitConcat as ChannelShuffler_SplitConcat } from "../ChannelShuffler_SplitConcat.js";
+import { ConcatPointwiseConv as ChannelShuffler_ConcatPointwiseConv } from "../ChannelShuffler_ConcatPointwiseConv.js";
 
 
 /**
  *
  */
-class ShuffleInfo extends ChannelShuffler.ShuffleInfo {
+class ShuffleInfo extends ChannelShuffler_ShuffleInfo {
 
   constructor( concatenatedShape, outputGroupCount ) {
     super( concatenatedShape, outputGroupCount );
@@ -375,7 +378,7 @@ class ShuffleInfo extends ChannelShuffler.ShuffleInfo {
 /**
  *
  */
-class ConcatGather extends ChannelShuffler.ConcatGather {
+class ConcatGather extends ChannelShuffler_ConcatGather {
 
   init( concatenatedShape, outputGroupCount ) {
     return super.init( concatenatedShape, outputGroupCount );
@@ -504,7 +507,7 @@ class ConcatGather extends ChannelShuffler.ConcatGather {
 /**
  *
  */
-class SplitConcat extends ChannelShuffler.SplitConcat {
+class SplitConcat extends ChannelShuffler_SplitConcat {
 
   init( concatenatedShape, outputGroupCount ) {
     return super.init( concatenatedShape, outputGroupCount );
@@ -566,7 +569,7 @@ class SplitConcat extends ChannelShuffler.SplitConcat {
 /**
  *
  */
-class ConcatPointwiseConv extends ChannelShuffler.ConcatPointwiseConv {
+class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
 
   init( concatenatedShape, outputGroupCount ) {
     return super.init( concatenatedShape, outputGroupCount );
