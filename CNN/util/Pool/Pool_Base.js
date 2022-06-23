@@ -370,7 +370,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     this.sessionKeptObjectSet.clear();
   }
 
-//!!! ...unfinished... (2022/06/23)
   /**
    * Create a session. Call th function. End the session and recycle all issued objects (except the returned objects of the function).
    *
@@ -381,7 +380,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    *
    * @return {any}
    *   Return anything which the pfn() returned. If the returned value is an object or an array of object, these objects (if they
-   * inside .issuedObjectArray) will be kept (i.e. not be recycled) and become belonging to the parent session.
+   * inside .issuedObjects) will be kept (i.e. not be recycled) and become belonging to the parent session.
    */
   sessionCall( pfn ) {
     Base.session_push.call( this );
