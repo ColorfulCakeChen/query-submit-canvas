@@ -124,9 +124,8 @@ class TwinArray extends Root {
     {
       for ( let i = ( this.operationArray.length - 1 ); i >= 0; --i ) {
         let operation = this.operationArray[ i ];
-        operation.disposeResources();
-
-//!!! ...unfinished... (2022/06/22) should recycle the operation object.
+        operation.disposeResources_and_recycleToPool();
+        this.operationArray[ i ] = null; // Reduce memory footprint.
       }
 
       Pool.Array.Singleton.recycle( this.operationArray );
