@@ -11,7 +11,6 @@ import * as ChannelCountCalculator from "../../Conv/ChannelCountCalculator.js";
 import * as Pointwise from "../../Conv/Pointwise.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
 import * as ChannelShuffler from "../../Conv/ChannelShuffler.js";
-import * as ChannelShufflerPool from "../../Conv/ChannelShufflerPool.js";
 import * as Block from "../../Conv/Block.js";
 import * as Block_TestParams from "./Block_TestParams.js"; 
 import * as NumberImage from "./NumberImage.js";
@@ -31,7 +30,7 @@ class TestCorrectnessInfo {
     this.outputTensor3dArray = new Array( 2 );
   }
 
-  prepareBy( imageSourceBag, testParams, channelShufflerPool ) {
+  prepareBy( imageSourceBag, testParams, channelShufflerBag ) {
 
     let {
       input0_height, input0_width, input0_channelCount,
@@ -124,7 +123,7 @@ class TestCorrectnessInfo {
         channelShuffler_ConcatPointwiseConv = null;
 
       } else {
-        channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
+        channelShuffler_ConcatPointwiseConv = channelShufflerBag.getChannelShuffler_by(
           imageIn1.height, imageIn1.width, concatenatedDepth, outputGroupCount );
 
         tf.util.assert( (
@@ -192,7 +191,7 @@ class Base {
    *
    */
   constructor() {
-    this.channelShufflerPool = new ChannelShufflerPool.Base( ChannelShuffler.ShuffleInfo );
+    this.channelShufflerBag = new ChannelShuffler.Bag( ChannelShuffler.ShuffleInfo );
 
     // For reducing memory allocation.
     this.testCorrectnessInfo = new TestCorrectnessInfo();
@@ -211,7 +210,7 @@ class Base {
    * @param {Block_TestParams.Base} testParams
    *   The test parameters. It is the value of Block_TestParams.Base.ParamsGenerator()'s result.
    *
-   * @param {ChannelShufflerPool.Base} channelShufflerPool
+   * @param {ChannelShufflerPool.Base} channelShufflerBag
    *   The channelShufflers provider. It must be initialized with ChannelShuffler.ConcatPointwiseConv as parameter channelShufflerClass.
    *
    *     - It is only used when:
@@ -220,13 +219,13 @@ class Base {
    *         - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL (4) )
    *
    */
-  testCorrectness( imageSourceBag, testParams, channelShufflerPool ) {
+  testCorrectness( imageSourceBag, testParams, channelShufflerBag ) {
     this.testParams = testParams;
 
 //!!! (2022/06/10 Remarked) Moved to outter jsPerf_Block to also catch testParamsGenerator's exception.
 //    try {
     {
-      this.testCorrectnessInfo.prepareBy( imageSourceBag, testParams, channelShufflerPool );
+      this.testCorrectnessInfo.prepareBy( imageSourceBag, testParams, channelShufflerBag );
 
       let {
         imageInArraySelected, inputTensor3dArray, outputTensor3dArray,
