@@ -165,14 +165,14 @@ class RecycledObjects {
  * @member {IssuedObjects} issuedObjects
  *   All objects returned by .get_or_create_by() will be recorded here.
  *
+ * @member {RecycledObjects} recycledObjects
+ *   All objects passed into .recycle() will be recorded here.
+ *
  * @member {Set} sessionKeptObjectSet
  *   Temporary object list for speeding up searching of whether kept (i.e. not recycled) an object.
  *
  * @member {object[]} movingObjectArray
- *   Temporary object list for moving kept (i.e. not recycled) objects to the parent session.
- *
- * @member {RecycledObjects} recycledObjects
- *   All objects passed into .recycle() will be recorded here.
+ *   Temporary object list for moving kept (i.e. not recycled) objects to the parent session when a session is popped.
  *
  * @member {number} issuedCount
  *   The total quantity of all issued objects.
