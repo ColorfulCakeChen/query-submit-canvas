@@ -1,5 +1,6 @@
 export { ConcatPointwiseConv };
 
+import { ShuffleInfo } from "./ChannelShuffler_ShuffleInfo.js";
 import { ConcatGather } from "./ChannelShuffler_ConcatGather.js";
 
 /**
@@ -136,19 +137,24 @@ class ConcatPointwiseConv {
     this.concatGather = this.concatGather_dispose_finally_call_loop;
   }
 
-  /** Release tf.tensor. */
-  disposeTensors() {
+  /**
+   * Release tf.tensor.
+   *
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
     if ( this.filtersTensor4dArray ) {
       tf.dispose( this.filtersTensor4dArray );
       this.filtersTensor4dArray = null;
     }
 
     if ( this.shuffleInfo ) {
-      this.shuffleInfo.disposeTensors();
+      this.shuffleInfo.disposeResources();
       this.shuffleInfo = null;
     }
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
+    //super.disposeResources();
   }
 
   get concatenatedShape() {
