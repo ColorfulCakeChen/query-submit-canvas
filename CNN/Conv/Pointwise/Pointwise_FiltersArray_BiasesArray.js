@@ -157,6 +157,25 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     ...restArgs ) {
 
     super( ...restArgs );
+      
+    this.setAsConstructor(
+      inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
+      nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount,
+      ...restArgs );
+  }
+
+ /**
+   * @return {FiltersArray_BiasesArray}
+   *   Return the this object.
+   */
+  setAsConstructor(
+    inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
+    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount,
+    ...restArgs ) {
+
+    if ( super.setAsConstructor instanceof Function )
+      super.setAsConstructor( ...restArgs ); // 0. All other arguments passed to parent class.
+
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
@@ -172,27 +191,27 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     this.tensorWeightCountTotal_internal = 0;
 
     tf.util.assert( ( inputChannelCount > 0 ),
-      `Pointwise.FiltersArray_BiasesArray.constructor(): `
+      `Pointwise.FiltersArray_BiasesArray.setAsConstructor(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) must be positive integer.`
     );
 
     if ( this.bHigherHalfDifferent ) {
       tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
-        `Pointwise.FiltersArray_BiasesArray.constructor(): `
+        `Pointwise.FiltersArray_BiasesArray.setAsConstructor(): `
           + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
           + `inputChannelCount ( ${this.inputChannelCount} ).`
       );
 
       if ( this.outputChannelCount > 0 ) {
         tf.util.assert( ( this.outputChannelCount_lowerHalf <= outputChannelCount ),
-          `Pointwise.FiltersArray_BiasesArray.constructor(): `
+          `Pointwise.FiltersArray_BiasesArray.setAsConstructor(): `
             + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
             + `outputChannelCount ( ${this.outputChannelCount} ).`
         );
 
       } else { // ( this.outputChannelCount <= 0 ), the outputChannelCount_Real will be inputChannelCount.
         tf.util.assert( ( this.outputChannelCount_lowerHalf <= inputChannelCount ),
-          `Pointwise.FiltersArray_BiasesArray.constructor(): `
+          `Pointwise.FiltersArray_BiasesArray.setAsConstructor(): `
             + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
             + `inputChannelCount ( ${this.inputChannelCount} ) when `
             + `outputChannelCount ( ${this.outputChannelCount} ) is zero or negative.`
@@ -200,12 +219,14 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
       }
 
       tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ) == ( this.outputChannelCount_lowerHalf > 0 ),
-        `Pointwise.FiltersArray_BiasesArray.constructor(): `
+        `Pointwise.FiltersArray_BiasesArray.setAsConstructor(): `
           + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) and `
           + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) `
           + `should be both positive or both not.`
       );
     }
+
+    return this;
   }
 
   /**
