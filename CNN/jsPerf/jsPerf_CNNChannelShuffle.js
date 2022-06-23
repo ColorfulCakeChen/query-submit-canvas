@@ -1,14 +1,13 @@
 export { init, testResultSame, testDifferentDisposeStrategy_All, disposeResources };
 
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
-//import * as ChannelShuffler from "../Conv/ChannelShuffler_PerformanceTest.js";
 import * as TensorTools from "../util/TensorTools.js";
 //import * as PointDepthPoint_Reference from "../jsPerf/Ref/PointDepthPoint_Reference.js";
 
 /**
  * Test different channel shuffle implementation for CNN ShuffleNet.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/10945/51/colorfulcakechen-cnn-channel-shuffler-f8254cc07f40cc0fd}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/10945/60/colorfulcakechen-cnn-channel-shuffler-be3918c3f08f3f5e4}
  * @see {@link https://www.measurethat.net/Benchmarks/Show/10988/25/colorfulcakechen-cnn-channel-shuffler-concatreshapetran}
  * @see {@link https://www.measurethat.net/Benchmarks/Show/10978/11/colorfulcakechen-cnn-channel-shuffler-concatgatherunsor}
  * @see {@link https://www.measurethat.net/Benchmarks/Show/10973/20/colorfulcakechen-cnn-channel-shuffler-concatpointwiseco}
