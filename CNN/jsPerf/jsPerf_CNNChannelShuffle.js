@@ -36,7 +36,7 @@ class HeightWidthDepthGroup {
 
     this.concatenatedShape = [ height, width, depth ];
 
-    this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.3 );
+    this.asserter_Equal = new TensorTools.Asserter_Equal( 0.4, 0.001 );
 
     this.dataTensor3dArray = tf.tidy( () => {
       let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
@@ -217,7 +217,7 @@ class HeightWidthDepthGroup {
 //           imageInArray, imageOutArray, "PointDepthPoint_Reference.calcConcatShuffleSplit", "" );
 //
 //         for ( let i = 0; i < t1Array.length; ++i ) {
-//           this.asserter_Tensor_NumberArray.assert(
+//           this.asserter_Equal.assert_Tensor_NumberArray(
 //             t1Array[ i ], imageOutArray[ i ].dataArray,
 //             "ConcatShuffleSplit", `output${i}`, `outputRef${i}`, "PointDepthPoint_Reference.calcConcatShuffleSplit"
 //           );
