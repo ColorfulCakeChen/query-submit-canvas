@@ -1,4 +1,5 @@
 export { MultiplyTwoTensors };
+export { MultiplyTwoTensorsPool };
 
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
@@ -35,11 +36,34 @@ class MultiplyTwoTensors extends Root {
 
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
 
+    this.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
+  }
+
+  /**
+   * @return {AddTwoTensors}
+   *   Return the this object.
+   */
+  setAsConstructor(
+    inputTensorPlaceholder0, inputTensorPlaceholder1,
+    bKeepInputTensor0, bKeepInputTensor1
+  ) {
+
+    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
     MultiplyTwoTensors.adjust_pfn.call( this );
     MultiplyTwoTensors.setup_BoundsArraySet.call( this );
     MultiplyTwoTensors.setup_output0_TensorPlaceholder.call( this );
+    return this;
+  }
+
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    MultiplyTwoTensorsPool.Singleton.recycle( this );
   }
 
   /**
@@ -202,3 +226,22 @@ class MultiplyTwoTensors extends Root {
   }
 
 }
+
+
+/**
+ * Providing Operation.MultiplyTwoTensors
+ *
+ */
+class MultiplyTwoTensorsPool extends Pool.Root {
+
+  constructor() {
+    super( MultiplyTwoTensors, MultiplyTwoTensors.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default Operation.AddTwoTensors provider.
+ */
+MultiplyTwoTensorsPool.Singleton = new MultiplyTwoTensorsPool();
+
