@@ -309,7 +309,7 @@ class Base {
       // Test correctness of block apply.
       this.assert_imageOut_Tensors_byNumberArrays( outputTensor3dArray, imageOutReferenceArray, strNote );
 
-      block.disposeTensors();
+      block.disposeResources();
       let memoryInfo_afterDispose = tf.memory();
 
       tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
