@@ -97,12 +97,11 @@ class InputsOutputs {
     // Determine outputs.
     //
     // Note: The .output0 will always be created, even if it is zero channel count.
+    //
     if ( outputChannelCount0 >= 0 ) {
       if ( this.output0 )
         this.output0.length = outputChannelCount0;
       else
-//!!! (2022/06/22 Remarked) Use pool instead.
-//        this.output0 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount0 );
         this.output0 = ActivationEscaping.ScaleBoundsArrayPool.Singleton.get_or_create_by( outputChannelCount0 );
 
       if ( outputChannelCount1 > 0 ) { // Two outputs.
@@ -110,14 +109,14 @@ class InputsOutputs {
         if ( this.output1 )
           this.output1.length = outputChannelCount1;
         else
-//!!! (2022/06/22 Remarked) Use pool instead.
-//          this.output1 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount1 );
           this.output1 = ActivationEscaping.ScaleBoundsArrayPool.Singleton.get_or_create_by( outputChannelCount1 );
 
       // ( outputChannelCount1 <= 0 ), One output.
       } else {
-        if ( this.output1 )
-          this.output1.length = 0; // (Reduce memory re-allocation.)
+        if ( this.output1 ) {
+          this.output1.disposeResources_and_recycleToPool();
+          this.output1 = null;
+        }
       }
 
     } else { // ( outputChannelCount0 < 0 ), Illegal.
@@ -132,10 +131,42 @@ class InputsOutputs {
   }
 
   /**
+   * The .input0 and .input1 will be set to null. The .output0 and .output1 will be recycled and then set to null.
+   *
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
+
+    // Because outputs are created by this BoundsArraySet, they should be released by this BoundsArraySet.
+    {
+      if ( this.output1 ) {
+        this.output1.disposeResources_and_recycleToPool();
+        this.output1 = null;
+      }
+
+      if ( this.output0 ) {
+        this.output0.disposeResources_and_recycleToPool();
+        this.output0 = null;
+      }
+    }
+
+    // Because inputs are not created by this BoundsArraySet, they should not be released by this BoundsArraySet.
+    {
+      if ( this.input1 )
+        this.input1 = null;
+
+      if ( this.input0 )
+        this.input0 = null;
+    }
+
+    //super.disposeResources();
+  }
+
+  /**
    * After calling this method, this object should be viewed as disposed and should not be operated again.
    */
   disposeResources_and_recycleToPool() {
-    //this.disposeResources();
+    this.disposeResources();
     InputsOutputsPool.Singleton.recycle( this );
   }
 
