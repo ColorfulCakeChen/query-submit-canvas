@@ -1,4 +1,5 @@
 export { ConcatAlongAxisId2 };
+export { ConcatAlongAxisId2Pool };
 
 import * as Pool from "../../util/Pool.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
@@ -34,14 +35,51 @@ class ConcatAlongAxisId2 extends Root {
 
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
 
+    this.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
+  }
+
+  /**
+   * @return {ConcatAlongAxisId2}
+   *   Return the this object.
+   */
+  setAsConstructor(
+    inputTensorPlaceholder0, inputTensorPlaceholder1,
+    bKeepInputTensor0, bKeepInputTensor1
+  ) {
+
+    super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
 
-    this.inputTensors = new Array( 2 ); // For reducing memory re-allocation.
+    this.inputTensors = Pool.Array.Singleton.get_or_create_by( 2 ); // For reducing memory re-allocation.
 
     ConcatAlongAxisId2.adjust_pfn.call( this );
     ConcatAlongAxisId2.setup_BoundsArraySet.call( this );
     ConcatAlongAxisId2.setup_output0_TensorPlaceholder.call( this );
+    return this;
+  }
+
+  /**
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
+    if ( this.inputTensors ) {
+      for ( let i = 0; i < this.inputTensors.length; ++i ) {
+        this.inputTensors[ i ] = null;
+      }
+      Pool.Array.Singleton.recycle( this.inputTensors );
+      this.inputTensors = null;
+    }
+    super.disposeResources();
+  }
+
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    ConcatAlongAxisId2Pool.Singleton.recycle( this );
   }
 
   /**
@@ -203,3 +241,22 @@ class ConcatAlongAxisId2 extends Root {
   }
 
 }
+
+
+/**
+ * Providing Operation.ConcatAlongAxisId2
+ *
+ */
+class ConcatAlongAxisId2Pool extends Pool.Root {
+
+  constructor() {
+    super( ConcatAlongAxisId2, ConcatAlongAxisId2.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default Operation.ConcatAlongAxisId2 provider.
+ */
+ConcatAlongAxisId2Pool.Singleton = new ConcatAlongAxisId2Pool();
+
