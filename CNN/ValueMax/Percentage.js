@@ -1,4 +1,10 @@
-export { Base, Concrete, Aggregate };
+export { Base };
+export { Concrete };
+export { ConcretePool };
+export { Aggregate };
+export { AggregatePool };
+
+import * as Pool from "../util/Pool.js";
 
 /**
  * The base class for representing valuePercentage as number berween [0, 100] inclusive. Acceptable by Receiver.Base.
@@ -13,7 +19,16 @@ class Base {
    *
    */
   constructor() {
+    this.setAsConstructor();
+  }
+
+  /**
+   * @return {Base}
+   *   Return the this object.
+   */
+  setAsConstructor() {
     this.parent = null;
+    return this;
   }
 
 //!!! (2020/12/12 Remarked) This object is tended to be created new every time. There is no need to reset.
@@ -44,6 +59,7 @@ class Base {
   }
 }
 
+
 /**
  * Collect value and max and represents them as percentage.
  *
@@ -53,6 +69,7 @@ class Base {
  * @member {number} max   A positive number indicates the maximum value of this.value.
  */
 class Concrete extends Base {
+
   /**
    * @param {number} max
    *   The possible maximum value of this.value. If negative, indicates not initialized. This is different from maxPercentage.
@@ -62,8 +79,32 @@ class Concrete extends Base {
    */
   constructor( max = -1 ) {
     super();
+    this.setAsConstructor( max );
+  }
+
+  /**
+   * @param {number} max
+   *   The possible maximum value of this.value. If negative, indicates not initialized. This is different from maxPercentage.
+   * The maxPercentage is always 100. The this.max, however, could be zero or any positive value. If max is negative, the
+   * the valuePercentage will always be 0 (to avoid Aggregate.valuePercentage immediately 100). If max is zero, the
+   * valuePercentage will always be 100 (to avoid divide by zero and avoid Aggregate.valuePercentage never 100).
+   *
+   * @return {Concrete}
+   *   Return the this object.
+   */
+  setAsConstructor( max = -1 ) {
+    super.setAsConstructor();
     this.value = 0;
     this.max = max; // Negative indicates not initialized.
+    return this;
+  }
+
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    //this.disposeResources();
+    ConcretePool.Singleton.recycle( this );
   }
 
 //!!! (2020/12/12 Remarked) This object is tended to be created new every time. There is no need to reset.
@@ -91,16 +132,50 @@ class Concrete extends Base {
   }
 }
 
+
+/**
+ * Providing ValueMax.Concrete
+ *
+ */
+class ConcretePool extends Pool.Root {
+
+  constructor() {
+    super( Concrete, Concrete.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default ValueMax.Concrete provider.
+ */
+ConcretePool.Singleton = new ConcretePool();
+
+
 /**
  * Aggregate all children ( valuePercentage / maxPercentage ) and represents them as percentage.
  */
 class Aggregate extends Base {
+
   /**
    * @param {Percentage.Base[]} children
    *   An array of Percentage.Base which will be aggregated. Their parent will be set to this Percentage.Aggregate.
    */
   constructor( children = [] ) {
     super();
+    this.setAsConstructor( children );
+  }
+
+//!!! ...unfinished... (2022/06/23) should use Pool.Array
+  /**
+   * @param {Percentage.Base[]} children
+   *   An array of Percentage.Base which will be aggregated. Their parent will be set to this Percentage.Aggregate.
+   *
+   * @return {Aggregate}
+   *   Return the this object.
+   */
+  setAsConstructor( children = [] ) {
+    super.setAsConstructor();
+
     this.children = children;
 
     for ( let i = 0; i < this.children.length; ++i ) {
@@ -108,6 +183,24 @@ class Aggregate extends Base {
       if ( child )
         child.parent = this;
     }
+    return this;
+  }
+
+  /**
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
+
+//!!! ...unfinished... (2022/06/23) should use Pool.Array to recycle.
+
+  }
+
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    AggregatePool.Singleton.recycle( this );
   }
 
   /**
@@ -167,3 +260,22 @@ class Aggregate extends Base {
   }
 
 }
+
+
+/**
+ * Providing ValueMax.Aggregate
+ *
+ */
+class AggregatePool extends Pool.Root {
+
+  constructor() {
+    super( Aggregate, Aggregate.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default ValueMax.Aggregate provider.
+ */
+AggregatePool.Singleton = new AggregatePool();
+
