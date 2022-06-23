@@ -87,8 +87,12 @@ class ConcatGather {
     this.concatGather = this.concatGather_dispose_finally_call_loop;
   }
 
-  /** Release tf.tensor. */
-  disposeTensors() {
+  /**
+   * Release tf.tensor.
+   *
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
     if ( this.shuffledChannelIndicesTensor1dArray ) {
       tf.dispose( this.shuffledChannelIndicesTensor1dArray );
       this.shuffledChannelIndicesTensor1dArray = null;
@@ -100,6 +104,7 @@ class ConcatGather {
     }
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
+    super.disposeResources();
   }
 
   get concatenatedShape() {
