@@ -53,7 +53,7 @@ class SplitConcat {
    */
   constructor( concatenatedShape, outputGroupCount ) {
 
-    this.disposeTensors(); // So that distinguishable if re-initialization failed.
+    this.disposeResources(); // So that distinguishable if re-initialization failed.
 
     let concatGather = new ConcatGather( concatenatedShape, outputGroupCount );
 
@@ -78,7 +78,7 @@ class SplitConcat {
       throw e;
 
     } finally {
-      concatGather.disposeTensors(); // Always release the look up table (by tensor1d).
+      concatGather.disposeResources(); // Always release the look up table (by tensor1d).
     }
 
     this.splitConcat = this.splitConcat_loop;
