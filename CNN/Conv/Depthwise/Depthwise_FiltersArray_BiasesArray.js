@@ -101,6 +101,26 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
     super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs );
 
+    this.setAsConstructor(
+      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      bBias, nActivationId, nPassThroughStyleId,
+      nHigherHalfDifferent, inputChannelCount_lowerHalf,
+      ...restArgs );
+  }
+
+ /**
+   * @return {FiltersArray_BiasesArray}
+   *   Return the this object.
+   */
+  setAsConstructor(
+    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    bBias, nActivationId, nPassThroughStyleId,
+    nHigherHalfDifferent, inputChannelCount_lowerHalf,
+    ...restArgs ) {
+
+    super.setAsConstructor(
+      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs );
+
     this.bBias = bBias;
     this.nActivationId = nActivationId;
     this.nPassThroughStyleId = nPassThroughStyleId;
@@ -115,7 +135,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
         || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier ) ) {
 
       if ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ) {
-        let msg = `Depthwise.FiltersArray_BiasesArray.constructor(): `
+        let msg = `Depthwise.FiltersArray_BiasesArray.setAsConstructor(): `
           + `nHigherHalfDifferent ( ${ValueDesc.Depthwise_HigherHalfDifferent.Singleton.getStringOf( nHigherHalfDifferent )} ) `
           + `should be ( NONE ) when `
           + `AvgMax_Or_ChannelMultiplier is ( ${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getStringOf( AvgMax_Or_ChannelMultiplier )} )`
@@ -136,7 +156,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     if ( AvgMax_Or_ChannelMultiplier != 0 ) {
       if ( ( this.filterWidth == 1 ) && ( tf.getBackend() == "wasm" ) ) {
         tf.util.assert( false,
-          `Depthwise.FiltersArray_BiasesArray.constructor(): `
+          `Depthwise.FiltersArray_BiasesArray.setAsConstructor(): `
             + `In backend WASM, it seems that tf.pool() (both AVG and MAX) and tf.depthwiseConv2d() can not work with filterWidth = 1.`
         );
       }
@@ -144,11 +164,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
     if ( this.bHigherHalfDifferent ) {
       tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
-        `Depthwise.FiltersArray_BiasesArray.constructor(): `
+        `Depthwise.FiltersArray_BiasesArray.setAsConstructor(): `
           + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
           + `inputChannelCount ( ${this.inputChannelCount} ).`
       );
     }
+
+    return this;
   }
 
   /**
