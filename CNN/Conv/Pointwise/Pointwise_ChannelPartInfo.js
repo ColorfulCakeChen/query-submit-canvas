@@ -43,6 +43,14 @@ class ChannelPartInfo {
     return this;
   }
 
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    //this.disposeResources();
+    ChannelPartInfoPool.Singleton.recycle( this );
+  }
+
 }
 
 
@@ -89,6 +97,14 @@ class FiltersBiasesPartInfo {
   setAsConstructor( aChannelPartInfoArray ) {
     this.aChannelPartInfoArray = aChannelPartInfoArray;
     return this;
+  }
+
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    //this.disposeResources();
+    FiltersBiasesPartInfoPool.Singleton.recycle( this );
   }
 
 }
