@@ -255,35 +255,37 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
    *
-   * @param {Array} o_filtersShape_filtersArray_biasesShape_biasesArray_Array
-   *   Pass in an array. It will be filled four elements: [ filtersShape, filtersArray, biasesShape, biasesArray ]. It is mainly
-   * used for preventing these elements (also Array) been recycled by Pool.Array.
-   *
    * @return {boolean} Return true, if succeeded.
    */
-  init(
-    inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo,
-    o_filtersShape_filtersArray_biasesShape_biasesArray_Array
-  ) {
+  init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo ) {
 
     let bInitOk;
 
-    FiltersBiasesPartInfoPool.Singleton.sessionCall( () => {
-      ChannelPartInfoPool.Singleton.sessionCall( () => {
-        Pool.Array.Singleton.sessionCall( () => {
+    Pool.Array.Singleton.sessionCall( () => {
 
-          bInitOk = FiltersArray_BiasesArray.init_internal.call( this,
-            inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
+      // It will be filled with: [ boundsArraySet, filtersShape, filtersArray, biasesShape, biasesArray ].
+      // It is mainly used for preventing these elements been recycled by itself recycling pool.
+      //
+      let keptObjectArray = Pool.Array.Singleton.get_or_create_by( 5 );
 
-          o_filtersShape_filtersArray_biasesShape_biasesArray_Array.length = 4;
-          o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 0 ] = this.filtersShape;
-          o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 1 ] = this.filtersArray;
-          o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 2 ] = this.biasesShape;
-          o_filtersShape_filtersArray_biasesShape_biasesArray_Array[ 3 ] = this.biasesArray;
+      FiltersBiasesPartInfoPool.Singleton.sessionCall( () => {
+        ChannelPartInfoPool.Singleton.sessionCall( () => {
+          Pool.Array.Singleton.sessionCall( () => {
 
-          return o_filtersShape_filtersArray_biasesShape_biasesArray_Array;
+            bInitOk = FiltersArray_BiasesArray.init_internal.call( this,
+              inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
+
+            keptObjectArray[ 0 ] = this.boundsArraySet;
+            keptObjectArray[ 1 ] = this.filtersShape;
+            keptObjectArray[ 2 ] = this.filtersArray;
+            keptObjectArray[ 3 ] = this.biasesShape;
+            keptObjectArray[ 4 ] = this.biasesArray;
+
+            return keptObjectArray;
+          } )
         } )
-      } )
+      } );
+
     } );
 
     return bInitOk;
