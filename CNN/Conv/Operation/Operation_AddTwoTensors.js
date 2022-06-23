@@ -1,4 +1,5 @@
 export { AddTwoTensors };
+export { AddTwoTensorsPool };
 
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
@@ -35,11 +36,34 @@ class AddTwoTensors extends Root {
 
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
 
+    this.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
+  }
+
+  /**
+   * @return {AddTwoTensors}
+   *   Return the this object.
+   */
+  setAsConstructor(
+    inputTensorPlaceholder0, inputTensorPlaceholder1,
+    bKeepInputTensor0, bKeepInputTensor1
+  ) {
+
+    super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
     AddTwoTensors.adjust_pfn.call( this );
     AddTwoTensors.setup_BoundsArraySet.call( this, inputTensorPlaceholder0.scaleBoundsArray, inputTensorPlaceholder1.scaleBoundsArray );
     AddTwoTensors.setup_output0_TensorPlaceholder.call( this );
+    return this;
+  }
+
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    AddTwoTensorsPool.Singleton.recycle( this );
   }
 
   /**
@@ -202,3 +226,35 @@ class AddTwoTensors extends Root {
   }
 
 }
+
+
+/**
+ * Providing Operation.AddTwoTensors
+ *
+ */
+class AddTwoTensorsPool extends Pool.Root {
+
+  constructor() {
+    super( AddTwoTensors, AddTwoTensors.setAsConstructor );
+  }
+
+//!!! (2022/06/22 Remarked) AddTwoTensors.setAsConstructor() should be enough.
+//   /**
+//    * @param {AddTwoTensors} this
+//    *   The Operation.AddTwoTensors object to be initialized.
+//    *
+//    * @return {AddTwoTensors}
+//    *   Return the this object.
+//    */
+//   static setAsConstructor() {
+//     this.setAsConstructor();
+//     return this;
+//   }
+
+}
+
+/**
+ * Used as default Operation.AddTwoTensors provider.
+ */
+AddTwoTensorsPool.Singleton = new AddTwoTensorsPool();
+
