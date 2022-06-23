@@ -660,6 +660,46 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
   }
 
   /**
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
+
+    if ( this.boundsArraySet ) {
+      this.boundsArraySet.disposeResources_and_recycleToPool();
+      this.boundsArraySet = null;
+    }
+
+    if ( this.biasesArray ) {
+      Pool.Array.Singleton.recycle( this.biasesArray );
+      this.biasesArray = null;
+    }
+
+    if ( this.biasesShape ) {
+      Pool.Array.Singleton.recycle( this.biasesShape );
+      this.biasesShape = null;
+    }
+
+    if ( this.filtersArray ) {
+      Pool.Array.Singleton.recycle( this.filtersArray );
+      this.filtersArray = null;
+    }
+
+    if ( this.filtersShape ) {
+      Pool.Array.Singleton.recycle( this.filtersShape );
+      this.filtersShape = null;
+    }
+
+    this.tensorWeightCountTotal_internal = 0;
+    this.tensorWeightCountExtracted_internal = 0;
+
+    this.byteOffsetBegin = this.byteOffsetEnd = -1;
+
+    if ( super.disposeResources instanceof Function ) { // If parent class has the same method, call it.
+      super.disposeResources();
+    }
+  }
+
+  /**
    * Extract this.filtersArray and this.biasesArray from sourceFloat32Array and
    * apply inputScaleBoundsArray.scaleArraySet.undo.scales[]. Also set the .afterFilter and .afterBias.
    *
