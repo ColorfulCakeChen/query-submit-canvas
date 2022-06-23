@@ -233,11 +233,12 @@ class Aggregate extends Base {
 
       for ( let i = 0; i < this.children.length; ++i ) {
         let child = this.children[ i ];
-        if ( child )
+        if ( child ) {
           child.disposeResources_and_recycleToPool();
+          this.children[ i ] = null;
+        }
       }
 
-      this.children.length = 0;
       Pool.Array.Singleton.recycle( this.children );
       this.children = null;
     }
