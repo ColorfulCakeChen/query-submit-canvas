@@ -66,9 +66,11 @@ class IssuedObjects {
    * - If the object is recorded in a session, the object in .inSessionArray[] will be modified to null. So that it will not be recycled
    *     (again) wrongly when the session is ended.
    *
-   *     - Considering what will happen if it is re-issued again in the same session. If it is not marked as null, 
+   *     - Considering what will happen if it is re-issued again in the other session. If it is not marked as null, it might be recycled
+   *         wrongly when this session is ended.
    *
-   * Otherwise, it will be recorded in .notInSessionSet which is fast for removing in the future.
+   * - If the object is not recorded in a session (i.e. in .notInSessionSet), it will be remove from .notInSessionSet directly.
+   *
    *
    * @return {boolean}
    *   If the object is found and removed, return true. If the object is not found, return false.
@@ -78,12 +80,12 @@ class IssuedObjects {
     if ( arrayIndex == undefined )
       return false; // 1. Not a (recorded) issued object.
 
-    if ( arrayIndex < 0 ) { // 2. The object is not belong to any session.
-      this.notInSessionSet.delete( arrayIndex );
+    if ( arrayIndex >= 0 ) { // 2. The object is belong to a session.
+      this.inSessionArray[ arrayIndex ] = null;
       this.toInSessionArrayIndexMap.delete( object );
 
-    } else { // 3. The object is belong to a session.
-      this.inSessionArray[ arrayIndex ] = null;
+    } else { // 3. The object is not belong to any session.
+      this.notInSessionSet.delete( arrayIndex );
       this.toInSessionArrayIndexMap.delete( object );
     }
     return true;
@@ -146,6 +148,19 @@ class RecycledObjects {
       return true;
     }
     return false;
+  }
+
+  /**
+   *
+   * @return {Object}
+   *   Pop the last object and return it. It may be null, if there is no object in this recycle bin.
+   */
+  pop() {
+    let object = this.array.pop();
+    if ( object == undefined )
+      return null;
+    this.set.delete( object ); // Removed from set.
+    return object;
   }
 
   /**
@@ -239,9 +254,12 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     // 1.
 
     // 1.1 Get recycled object.
-    if ( this.recycledObjects.array.length > 0 ) {
-      let candicatedObject = this.recycledObjects.array.pop();
-      this.recycledObjects.set.delete( candicatedObject ); // Removed from set.
+    //
+    // Note: candicatedObject and returnedObject may not be the same one object. It is possible the pfn_SetAsConstructor_ReturnObject()
+    //       returns a different object.
+    //
+    let candicatedObject = this.recycledObjects.pop();
+    if ( candicatedObject != null ) {
       returnedObject = this.pfn_SetAsConstructor_ReturnObject.apply( candicatedObject, restArgs );
 
     // 1.2 Create new object.
