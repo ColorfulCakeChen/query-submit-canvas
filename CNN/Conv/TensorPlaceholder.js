@@ -1,6 +1,7 @@
 export { Base };
 export { BasePool };
 
+import * as Pool from "../util/Pool.js";
 import * as ActivationEscaping from "./ActivationEscaping.js";
 
 /**
