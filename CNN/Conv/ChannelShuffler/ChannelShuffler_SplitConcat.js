@@ -1,5 +1,6 @@
 export { SplitConcat };
 
+import { ShuffleInfo } from "./ChannelShuffler_ShuffleInfo.js";
 import { ConcatGather } from "./ChannelShuffler_ConcatGather.js";
 
 /**
