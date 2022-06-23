@@ -230,6 +230,13 @@ class Aggregate extends Base {
    */
   disposeResources() {
     if ( this.children ) {
+
+      for ( let i = 0; i < this.children.length; ++i ) {
+        let child = this.children[ i ];
+        if ( child )
+          child.disposeResources_and_recycleToPool();
+      }
+
       Pool.Array.Singleton.recycle( this.children );
       this.children = null;
     }
