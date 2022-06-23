@@ -76,8 +76,14 @@ class IssuedObjects {
       this.inSessionArray[ arrayIndex ] = null;
       this.toInSessionArrayIndexMap.delete( arrayIndex );
     }
-
     return true;
+  }
+
+  /**
+   * Append a SESSION_BORDER_MARK to .array
+   */
+  append_session_border_mark() {
+    this.inSessionArray.push( IssuedObjects.SESSION_BORDER_MARK );
   }
 
 }
@@ -266,26 +272,26 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     this.recycledObjects.removeAll();
   }
 
-//!!! ...unfinished... (2022/06/23)
-  /**
-   * @return {iterator)
-   *   Return an iterator object that contains all recycled objects.
-   */
-  * recycledValues() {
-    yield* this.recycledObjectArray.values();
-  }
+//!!! (2022/06/23 Remarked) seems not used.
+//   /**
+//    * @return {iterator)
+//    *   Return an iterator object that contains all recycled objects.
+//    */
+//   * recycledValues() {
+//     yield* this.recycledObjects.array.values();
+//   }
 
   /**
-   * Start a auto-recycle session. This method will append a SESSION_BORDER_MARK to .issuedObjectArray
+   * Start a auto-recycling session. This method will append a SESSION_BORDER_MARK to .issuedObjects.array
    *
    * @param {Base} this
    *   The pool for handling the objects issuing/recycling.
    */
   static session_push() {
-    const SESSION_BORDER_MARK = this; // Use an object which is not possible be listed in the array as an session-border-mark.
-    this.issuedObjectArray.push( SESSION_BORDER_MARK );
+    this.issuedObjects.append_session_border_mark();
   }
 
+//!!! ...unfinished... (2022/06/23)
   /**
    * End a auto-recycle session. This method will pop all objects from .issuedObjectArrayappend until encountering SESSION_BORDER_MARK.
    *
