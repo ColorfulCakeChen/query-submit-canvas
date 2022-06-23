@@ -1,4 +1,4 @@
-export { init, testResultSame, testDifferentDisposeStrategy_All, disposeTensors };
+export { init, testResultSame, testDifferentDisposeStrategy_All, disposeResources };
 
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 //import * as ChannelShuffler from "../Conv/ChannelShuffler_PerformanceTest.js";
@@ -47,7 +47,7 @@ class HeightWidthDepthGroup {
 
   }
 
-  disposeTensors() {
+  disposeResources() {
     if ( this.dataTensor3dArray ) {
       tf.dispose( this.dataTensor3dArray );
       this.dataTensor3dArray = null;
@@ -67,22 +67,22 @@ class HeightWidthDepthGroup {
 
   shufflers_release() {
     if ( this.shuffleInfo ) {
-      this.shuffleInfo.disposeTensors();
+      this.shuffleInfo.disposeResources();
       this.shuffleInfo = null;
     }
 
     if ( this.concatGatherUnsorted ) {
-      this.concatGatherUnsorted.disposeTensors();
+      this.concatGatherUnsorted.disposeResources();
       this.concatGatherUnsorted = null;
     }
 
     if ( this.splitConcatSortedShared ) {
-      this.splitConcatSortedShared.disposeTensors();
+      this.splitConcatSortedShared.disposeResources();
       this.splitConcatSortedShared = null;
     }
 
     if ( this.concatPointwiseConv ) {
-      this.concatPointwiseConv.disposeTensors();
+      this.concatPointwiseConv.disposeResources();
       this.concatPointwiseConv = null;
     }
   }
@@ -387,29 +387,29 @@ function testDifferentDisposeStrategy_All() {
   globalThis.testSet_110x110x24_g1.testDifferentDisposeStrategy_All();
 }
 
-function disposeTensors() {
+function disposeResources() {
   if ( globalThis.testSet_110x110x24_g8 ) {
-    globalThis.testSet_110x110x24_g8.disposeTensors();
+    globalThis.testSet_110x110x24_g8.disposeResources();
     globalThis.testSet_110x110x24_g8 = null;
   }
 
   if ( globalThis.testSet_110x110x24_g4 ) {
-    globalThis.testSet_110x110x24_g4.disposeTensors();
+    globalThis.testSet_110x110x24_g4.disposeResources();
     globalThis.testSet_110x110x24_g4 = null;
   }
 
   if ( globalThis.testSet_110x110x24_g3 ) {
-    globalThis.testSet_110x110x24_g3.disposeTensors();
+    globalThis.testSet_110x110x24_g3.disposeResources();
     globalThis.testSet_110x110x24_g3 = null;
   }
 
   if ( globalThis.testSet_110x110x24_g2 ) {
-    globalThis.testSet_110x110x24_g2.disposeTensors();
+    globalThis.testSet_110x110x24_g2.disposeResources();
     globalThis.testSet_110x110x24_g2 = null;
   }
 
   if ( globalThis.testSet_110x110x24_g1 ) {
-    globalThis.testSet_110x110x24_g1.disposeTensors();
+    globalThis.testSet_110x110x24_g1.disposeResources();
     globalThis.testSet_110x110x24_g1 = null;
   }
 }
