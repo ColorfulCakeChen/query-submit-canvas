@@ -330,7 +330,7 @@ class ConcatShuffleSplit extends Root {
     {
       this.boundsArraySet.output0 = null; // Because it has already been transferred to TensorPlaceholder this.output0
       this.boundsArraySet.output1 = null;
-      BoundsArraySet.InputsOutputsPool.Singleton.recycle( this.boundsArraySet );
+      this.boundsArraySet.disposeResources_and_recycleToPool();
       this.boundsArraySet = null;
     }
   }
