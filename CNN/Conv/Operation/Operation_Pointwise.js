@@ -1,4 +1,5 @@
 export { Pointwise };
+export { PointwisePool };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Pool from "../../util/Pool.js";
@@ -51,8 +52,29 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
       inputTensorPlaceholder0, null, 1,
       inputTensorPlaceholder0.channelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
+
+    this.setAsConstructor(
+      inputTensorPlaceholder0,
+      outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
+      nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
   }
 
+  /**
+   * @return {Pointwise}
+   *   Return the this object.
+   */
+  setAsConstructor(
+    inputTensorPlaceholder0,
+    outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
+    nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
+
+    super.setAsConstructor(
+      inputTensorPlaceholder0, null, 1,
+      inputTensorPlaceholder0.channelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
+      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
+
+    return this;
+  }
 
   /**
    * @param {Float32Array} inputFloat32Array
@@ -73,7 +95,6 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     // A2: Their underlying ArrayBuffer is inputFloat32Array.buffer. If this.filtersWeights and this.biasesWeights are kept,
     //     the inputFloat32Array.buffer could not be released by memory garbage collector.
 
-    this.disposeTensors();
 
     // 1. Determine operation functions.
     Pointwise.setup_bPointwise_pfn.call( this );
@@ -119,7 +140,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
           // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
           {
             this.boundsArraySet.output0 = null; // Because it has already been transferred to TensorPlaceholder this.output0
-            BoundsArraySet.PointwisePool.Singleton.recycle( this.boundsArraySet );
+            this.boundsArraySet.disposeResources_and_recycleToPool();
             this.boundsArraySet = null;
           }
 
@@ -134,15 +155,29 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     return this.bInitOk;
   }
 
-  disposeTensors() {
+  /**
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
     this.apply = this.pfnConv = this.pfnActivation = null;
+
+    this.tensorWeightCountTotal_internal = 0;
+    this.tensorWeightCountExtracted_internal = 0;
 
     this.bPointwise = false;
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bKeepInputTensor = false;  // Default will dispose input tensor.
     this.bInitOk = false;
 
-    super.disposeTensors(); // Release filtersTensor4d and biasesTensor3d.
+    super.disposeResources(); // Release filtersTensor4d and biasesTensor3d.
+  }
+
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    PointwisePool.Singleton.recycle( this );
   }
 
   /**
@@ -299,3 +334,22 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   }
 
 }
+
+
+/**
+ * Providing Operation.Pointwise
+ *
+ */
+class PointwisePool extends Pool.Root {
+
+  constructor() {
+    super( Pointwise, Pointwise.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default Operation.Pointwise provider.
+ */
+PointwisePool.Singleton = new PointwisePool();
+
