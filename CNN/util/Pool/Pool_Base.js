@@ -1,6 +1,46 @@
 export { Base, Root };
 
 /**
+ * Collect all issued objects of Pool.Base.
+ *
+ *
+ * @member {Set} NotInSessionSet
+ *   If an issued objects is not belong to any session, it will be here.
+ *
+ * @member {Array} InSessionArray
+ *   If an issued objects is belong to a session, it will be here.
+ *
+ * @member {Map} ToInSessionArrayIndexMap
+ *   Map every issued object to its array index in InSessionArray[].
+ *   - If an issued objects is belong to a session, this map's value is the array index to .InSessionArray[].
+ *   - If an issued objects is not belong to any session, this map's value is a negative value (e.g. -1) meaning it is inside .NotInSessionSet.
+ *
+ * @member {Object} SESSION_BORDER_MARK
+ *   In the .InSessionArray, this SESSION_BORDER_MARK will be placed between sessions. In fact, it is just this IssuedObjects object
+ * itself. The reason is that it is impossible to be an legal issued object of itself.
+ *
+ */
+class IssuedObjects {
+
+  constructor() {
+    // If an issued objects is not belong to any session, it will be here.
+    NotInSessionSet: new Set(),
+
+    // If an issued objects is belong to a session, it will be here.
+    //
+    // Noe: Between sessions, an SESSION_BORDER_MARK is placed. The SESSION_BORDER_MARK is just this Pool.Base object because it is
+    //      impossible to be an issued object of itself.
+    //
+    InSessionArray: new Array(),
+
+    // If an issued objects is belong to a session, this map's value is the array index to .InSessionArray[].
+    // If an issued objects is not belong to any session, this map's value is a negative value (e.g. -1) meaning it inside .NotInSessionSet.
+    ToInSessionArrayIndexMap: new Map(),
+  }
+}
+
+
+/**
  * A pool for recycling (re-using) objects.
  *
  * It could be used to improve performance by reducing memory re-allocation.
