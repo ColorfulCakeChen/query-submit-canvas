@@ -70,6 +70,20 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
   }
 
   /**
+   * The .input0 and .input1 will be set to null. The .output0 and .output1 will be recycled and then set to null.
+   *
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
+
+    this.stridesPadInfo = null;
+
+    if ( super.disposeResources instanceof Function ) { // If parent class has the same method, call it.
+      super.disposeResources();
+    }
+  }
+
+  /**
    *
    */
   set( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
