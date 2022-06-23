@@ -254,7 +254,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    */
   recycle( objectToBeRecycled ) {
 
-    if ( !objectToBeRecycled )
+    if ( objectToBeRecycled == null )
       return false; // 1. Can not recycle a null object.
 
     tf.util.assert( ( objectToBeRecycled instanceof this.objectClass ),
@@ -350,6 +350,9 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     this.movingObjectArray.length = 0;
     while ( this.issuedObjects.array.length > 0 ) {
       let issuedObject = this.issuedObjects.array.pop();
+      if ( issuedObject == null )
+        continue; // The object has been recycled (before this session end).
+
       if ( issuedObject == SESSION_BORDER_MARK )
         break; // All objects of the last session have been popped.
 
