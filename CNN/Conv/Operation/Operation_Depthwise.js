@@ -205,13 +205,14 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    */
   setKeepInputTensor( bKeepInputTensor ) {
 
-    // So that do nothing if disposeResources() has been called (i.e. .pfnOperation has been cleared).
-    //
-    // This could happen when Operation.TwinArray.disposeTensors() which cause TensorPlaceholder.finalOperationOld.setKeepInputTensor()
-    // called.
-    //
-    if ( !this.bInitOk )
-      return;
+//!!! (2022/06/23 Remarked) It seems no this problem now.
+//     // So that do nothing if disposeResources() has been called (i.e. .pfnOperation has been cleared).
+//     //
+//     // This could happen when Operation.TwinArray.disposeResources() which cause TensorPlaceholder.finalOperationOld.setKeepInputTensor()
+//     // called.
+//     //
+//     if ( !this.bInitOk )
+//       return;
 
     if ( bKeepInputTensor == this.bKeepInputTensor )
       return;
