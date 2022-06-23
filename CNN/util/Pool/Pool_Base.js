@@ -36,7 +36,17 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     this.objectClass = objectClass;
     this.pfn_SetAsConstructor_ReturnObject = pfn_SetAsConstructor_ReturnObject;
 
-    this.issuedObjectArray = new Array();
+//!!! ...unfinished... (2022/06/23)
+    // If an issued objects is not belong to any session, it will be here.
+    this.issuedObjectNotInSessionSet = new Set();
+
+    // If an issued objects is belong to some session, its value is the array index to this.issuedObjectInSessionArrayp[].
+    // If an issued objects is not belong to any session, its value is negative value (e.g. -1) which means it is inside .issuedObjectNotInSessionSet.
+    this.issuedObjectToInSessionArrayIndexMap = new Map();
+
+//!!! (2022/06/23 Remarked) Replaced by .issuedObjectInSessionArray
+//    this.issuedObjectArray = new Array();
+    this.issuedObjectInSessionArray = new Array();
     this.sessionKeptObjectSet = new Set(); // For reducing memory re-allocation.
     this.movingObjectArray = new Array(); // For reducing memory re-allocation.
 
