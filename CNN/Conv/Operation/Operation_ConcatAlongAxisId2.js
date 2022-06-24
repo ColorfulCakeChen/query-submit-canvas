@@ -150,12 +150,12 @@ class ConcatAlongAxisId2 extends Root {
       if ( this.input1.height != undefined ) {
 
         // If both inputs' height are known, they should be the same.
-        tf.util.assert( ( this.input0.height == this.input1.height ),
-          `Operation.ConcatAlongAxisId2.setup_output0_TensorPlaceholder(): `
+        if ( this.input0.height != this.input1.height )
+          throw Error( `Operation.ConcatAlongAxisId2.setup_output0_TensorPlaceholder(): `
             + `input0.height ( ${this.input0.height} ) and `
             + `input1.height ( ${this.input1.height} ) `
             + `should be the same.`
-        );
+          );
 
         this.output0.height = this.input0.height;
       } else {
@@ -174,12 +174,12 @@ class ConcatAlongAxisId2 extends Root {
       if ( this.input1.width != undefined ) {
 
         // If both inputs' width are known, they should be the same.
-        tf.util.assert( ( this.input0.width == this.input1.width ),
-          `Operation.ConcatAlongAxisId2.setup_output0_TensorPlaceholder(): `
+        if ( this.input0.width != this.input1.width )
+          throw Error( `Operation.ConcatAlongAxisId2.setup_output0_TensorPlaceholder(): `
             + `input0.width ( ${this.input0.width} ) and `
             + `input1.width ( ${this.input1.width} ) `
             + `should be the same.`
-        );
+          );
 
         this.output0.width = this.input0.width;
       } else {
