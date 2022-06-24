@@ -37,19 +37,22 @@ class MultiplyTwoTensors extends Root {
 
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
 
-    this.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
+    MultiplyTwoTensors.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
   }
 
   /**
-   * @return {AddTwoTensors}
+   * @param {MultiplyTwoTensors} this
+   *   The object to be initialized.
+   *
+   * @return {MultiplyTwoTensors}
    *   Return the this object.
    */
-  setAsConstructor(
+  static setAsConstructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
-    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+    super.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
 
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
