@@ -1,4 +1,4 @@
-export {Base, HTMLProgress};
+export { Base, HTMLProgress };
 
 /** Do nothing when receives value, max and done. */
 class Base {
