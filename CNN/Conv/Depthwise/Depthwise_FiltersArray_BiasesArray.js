@@ -155,7 +155,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     // ourselves testing procedure.
     if ( AvgMax_Or_ChannelMultiplier != 0 ) {
       if ( ( this.filterWidth == 1 ) && ( tf.getBackend() == "wasm" ) ) {
-        tf.util.assert( false,
+        throw Error(
           `Depthwise.FiltersArray_BiasesArray.setAsConstructor(): `
             + `In backend WASM, it seems that tf.pool() (both AVG and MAX) and tf.depthwiseConv2d() can not work with filterWidth = 1.`
         );
@@ -163,11 +163,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     }
 
     if ( this.bHigherHalfDifferent ) {
-      tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
-        `Depthwise.FiltersArray_BiasesArray.setAsConstructor(): `
+      if ( this.inputChannelCount_lowerHalf > inputChannelCount )
+        throw Error( `Depthwise.FiltersArray_BiasesArray.setAsConstructor(): `
           + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
           + `inputChannelCount ( ${this.inputChannelCount} ).`
-      );
+        );
     }
 
     return this;
@@ -268,18 +268,18 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     // A2: So that inputFloat32Array could be released.
 
 
-    tf.util.assert( ( this.inputChannelCount == inputScaleBoundsArray.length ),
-      `Depthwise.FiltersArray_BiasesArray.init(): `
+    if ( this.inputChannelCount != inputScaleBoundsArray.length )
+      throw Error( `Depthwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as `
         + `outputChannelCount of previous convolution-bias-activation ( ${inputScaleBoundsArray.length} ).`
-    );
+      );
 
-    tf.util.assert( ( this.inputChannelCount == inputScaleBoundsArray.scaleArraySet.undo.length ),
-      `Depthwise.FiltersArray_BiasesArray.init(): `
+    if ( this.inputChannelCount != inputScaleBoundsArray.scaleArraySet.undo.length )
+      throw Error( `Depthwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as the length of `
         + `.output.scaleArraySet.undo of previous convolution-bias-activation `
         + `( ${inputScaleBoundsArray.scaleArraySet.undo.length} ).`
-    );
+      );
 
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
@@ -366,10 +366,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
 
-            tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ),
-              `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfDepthwise2(): `
+            if ( this.inputChannelCount_lowerHalf <= 0 )
+              throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfDepthwise2(): `
                 + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
-            );
+              );
 
             // Extract filters and biases for the specified channel count, but in different sequence.
             this.inputChannelCount_toBeExtracted = this.inputChannelCount;
@@ -402,10 +402,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
 
-            tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ),
-              `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfPassThrough(): `
+            if ( this.inputChannelCount_lowerHalf <= 0 )
+              throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfPassThrough(): `
                 + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
-            );
+              );
 
             // Just extract filters and biases for half of the specified channel count.
             this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
@@ -429,7 +429,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
             break;
 
           default:
-            tf.util.assert( ( false ),
+            throw Error(
               `Depthwise.FiltersArray_BiasesArray.init(): `
                 + `nHigherHalfDifferent ( ${this.nHigherHalfDifferent} ) is unknown value.`
             );
@@ -722,14 +722,15 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
             let undoPreviousEscapingScale = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannelEnd ];
 
-            tf.util.assert( ( undoPreviousEscapingScale == 1 ),
-              `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+            if ( undoPreviousEscapingScale != 1 ),
+              throw Error(
+                  `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
                 + `For avg/max pooling, `
                 + `if ( bBias ( ${this.bBias} ) is not false ) or `
                 + `( nActivationId ( ${ValueDesc.ActivationFunction.Singleton.getStringOf( this.nActivationId )}(${this.nActivationId}) ) `
                   + `is not ValueDesc.ActivationFunction.Singleton.Ids.NONE(0) ), `
                 + `undoPreviousEscapingScale[ ${inChannelEnd} ] ( ${undoPreviousEscapingScale} ) must be 1 .`
-            );
+              );
           }
 
         } // inChannel
@@ -785,8 +786,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     //
     this.boundsArraySet.afterBias.add_all_byBoundsArray( this.boundsArraySet.afterFilter );
 
-    tf.util.assert( ( inChannelEnd == this.inputChannelCount ),
-      `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+    if ( inChannelEnd != this.inputChannelCount )
+      throw Error( `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
         + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total input channel count ( ${inChannelEnd} ) `
         +`should be ( ${this.inputChannelCount} ).` );
   }
