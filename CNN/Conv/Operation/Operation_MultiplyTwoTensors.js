@@ -236,7 +236,7 @@ class MultiplyTwoTensors extends Root {
 class MultiplyTwoTensorsPool extends Pool.Root {
 
   constructor() {
-    super( MultiplyTwoTensors, MultiplyTwoTensors.setAsConstructor );
+    super( "Operation.MultiplyTwoTensorsPool", MultiplyTwoTensors, MultiplyTwoTensors.setAsConstructor );
   }
 
 }
