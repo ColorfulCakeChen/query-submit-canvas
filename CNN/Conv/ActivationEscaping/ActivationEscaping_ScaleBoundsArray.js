@@ -275,7 +275,7 @@ class ScaleBoundsArrayPool extends Pool.Root {
    *
    */
   constructor() {
-    super( ScaleBoundsArray, ScaleBoundsArrayPool.setAsConstructor_by_length );
+    super( "ActivationEscaping.ScaleBoundsArrayPool", ScaleBoundsArray, ScaleBoundsArrayPool.setAsConstructor_by_length );
   }
 
   /**
@@ -296,6 +296,6 @@ class ScaleBoundsArrayPool extends Pool.Root {
 }
 
 /**
- * Used as default ScaleBoundsArray provider.
+ * Used as default ActivationEscaping.ScaleBoundsArray provider.
  */
 ScaleBoundsArrayPool.Singleton = new ScaleBoundsArrayPool();
