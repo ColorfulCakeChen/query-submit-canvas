@@ -153,7 +153,7 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
         this.padWidthRight =   this.padWidth  - this.padWidthLeft;
 
       } else {
-        tf.util.assert( false,
+        throw Error(
           `Depthwise.PadInfoCalculator.set(): `
             + `stridesPadInfo.pad ( ${this.stridesPadInfo.pad} ) is unknown value.`
         );
