@@ -280,14 +280,14 @@ class ConvBiasActivation extends InputsOutputs {
             );
 
             doEscapingScale = this.output0.scaleArraySet.do.scales[ outChannel ];
-            tf.util.assert( ( Number.isNaN( doEscapingScale ) == false ),
-              `BoundsArraySet.ConvBiasActivation.`
+            if ( Number.isNaN( doEscapingScale ) == true )
+              throw Error( `BoundsArraySet.ConvBiasActivation.`
                 + `adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId( `
                   + ` ${ValueDesc.ActivationFunction.Singleton.getStringOf( nActivationId )}(${nActivationId}) ): `
                 + `this.output0.scaleArraySet.do.scales[ ${outChannel} ] ( ${doEscapingScale} ) `
                 + `should not be NaN. `
                 + `Please use activation function (e.g. clipByValue(), tanh()) which has both negative and positive parts near origin point.`
-            );
+              );
 
           } else { // For channels will not be activation-escaping.
             this.output0.scaleArraySet.do.set_one_byN( outChannel, 1 ); // No need to escape. (i.e. scale = 1 for no scale)
