@@ -41,8 +41,8 @@ class Base {
    */
   get_or_create_by_arguments1_etc( pfnCreate, ...keys ) {
 
-    tf.util.assert( ( arguments.length >= 2 ),
-      `MultiLayerMap.Base.get_or_create_by_arguments1_etc(): `
+    if ( arguments.length < 2 )
+      throw Error( `MultiLayerMap.Base.get_or_create_by_arguments1_etc(): `
         + `arguments.length ${arguments.length} must >= 2. `
         + `At least, pfnCreate and key1 should be provided.` );
 
