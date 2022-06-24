@@ -1,5 +1,7 @@
 export { SplitConcat };
+export { SplitConcatPool };
 
+import * as Pool from "../../../util/Pool.js";
 import { SplitConcat as ChannelShuffler_SplitConcat } from "../ChannelShuffler_SplitConcat.js";
 
 /**
@@ -7,8 +9,8 @@ import { SplitConcat as ChannelShuffler_SplitConcat } from "../ChannelShuffler_S
  */
 class SplitConcat extends ChannelShuffler_SplitConcat {
 
-  init( concatenatedShape, outputGroupCount ) {
-    return super.init( concatenatedShape, outputGroupCount );
+  constructor( concatenatedShape, outputGroupCount ) {
+    super( concatenatedShape, outputGroupCount );
   }
 
   splitConcat_tidy( tensorArray ) {
@@ -62,4 +64,22 @@ class SplitConcat extends ChannelShuffler_SplitConcat {
   }
 
 }
+
+
+/**
+ * Providing ChannelShuffler.PerformanceTest.SplitConcat
+ *
+ */
+class SplitConcatPool extends Pool.Root {
+
+  constructor() {
+    super( "ChannelShuffler.PerformanceTest.SplitConcatPool", SplitConcat, SplitConcat.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default ChannelShuffler.PerformanceTest.SplitConcat provider.
+ */
+SplitConcatPool.Singleton = new SplitConcatPool();
 
