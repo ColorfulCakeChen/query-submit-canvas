@@ -30,7 +30,7 @@ function assert_Pool_issuedCount_same_after_as_before( prefixMsg, pfn ) {
     issuedCount_array_before = Pool.Array.Singleton.get_or_create_by( Pool.All.length );
     for ( let i = 0; i < Pool.All.length; ++i ) {
       let pool = Pool.All[ i ];
-      issuedCount_array_before = pool.issuedCount;
+      issuedCount_array_before[ i ] = pool.issuedCount;
     }
 
     pfn.call();
