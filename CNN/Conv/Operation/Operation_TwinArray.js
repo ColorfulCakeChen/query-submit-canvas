@@ -49,19 +49,22 @@ class TwinArray extends Root {
     // Note: The real output TensorPlacehoder will be created later as final operation outputs.
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
 
-    this.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount, ...restArgs );
+    TwinArray.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount, ...restArgs );
   }
 
   /**
    *
+   * @param {ShuffleInfo} this
+   *   The object to be initialized.
+   *
    * @return {TwinArray}
    *   Return the this object.
    */
-  setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount, ...restArgs ) {
+  static setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount, ...restArgs ) {
 
     // Note: The real output TensorPlacehoder will be created later as final operation outputs.
     if ( super.setAsConstructor instanceof Function )
-      super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
+      super.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
 
     // In order to handle keep-input-flag correctly (even if no sub operation at all), an ending dummy operation is used.
     {
@@ -150,6 +153,8 @@ class TwinArray extends Root {
 
   /**
    * After calling this method, this object should be viewed as disposed and should not be operated again.
+   *
+   * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
    */
   disposeResources_and_recycleToPool() {
     this.disposeResources();
