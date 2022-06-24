@@ -366,9 +366,9 @@ class Base {
         let channelShuffler = blockParamsCreator.channelShuffler;
         if ( channelShuffler ) {
 
-          tf.util.assert( ( !this.channelShuffler ) || ( this.channelShuffler == channelShuffler ),
-              `Stage.initer(): `
-                + `At most, only one (and same) channel shuffler could be used (and shared by all blocks of a stage).` );
+          if ( ( this.channelShuffler ) && ( this.channelShuffler != channelShuffler ) )
+            throw Error( `Stage.initer(): `
+              + `At most, only one (and same) channel shuffler could be used (and shared by all blocks of a stage).` );
 
           this.channelShuffler = channelShuffler;
 
@@ -419,10 +419,10 @@ class Base {
     this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
 
     // In our Stage design, no matter which configuration, the outputChannelCount always is twice as sourceChannelCount.
-    tf.util.assert( ( this.outputChannelCount == ( this.sourceChannelCount * 2 ) ),
-        `Stage.initer(): `
-          + `the outputChannelCount ( ${this.outputChannelCount} ) should always be twice as `
-          + `sourceChannelCount ( ${this.sourceChannelCount} ).` );
+    if ( this.outputChannelCount != ( this.sourceChannelCount * 2 ) )
+      throw Error( `Stage.initer(): `
+        + `the outputChannelCount ( ${this.outputChannelCount} ) should always be twice as `
+        + `sourceChannelCount ( ${this.sourceChannelCount} ).` );
 
     this.bInitOk = true;
     return this.bInitOk;
@@ -560,30 +560,30 @@ class Base {
   assert_ImageSize_BetweenBlock( blockParamsCreator, previousBlock ) {
 
     if ( 0 == i ) { // Block0.
-      tf.util.assert( ( blockParamsCreator.inputHeight == this.sourceHeight ),
-        `Stage.initer(): `
+      if ( blockParamsCreator.inputHeight != this.sourceHeight )
+        throw Error( `Stage.initer(): `
           + `block${i}'s input image height ( ${blockParamsCreator.inputHeight} ) should be the same as `
           + `stage's source image height ( ${this.sourceHeight} ).`
-      );
+        );
 
-      tf.util.assert( ( blockParamsCreator.inputWidth == this.sourceWidth ),
-        `Stage.initer(): `
+      if ( blockParamsCreator.inputWidth != this.sourceWidth )
+        throw Error( `Stage.initer(): `
           + `block${i}'s input image width ( ${blockParamsCreator.inputWidth} ) should be the same as `
           + `stage's source image width ( ${this.sourceWidth} ).`
-      );
+        );
 
     } else { // After Block0.
-      tf.util.assert( ( blockParamsCreator.inputHeight == previousBlock.outputHeight ),
-        `Stage.initer(): `
+      if ( blockParamsCreator.inputHeight != previousBlock.outputHeight )
+        throw Error( `Stage.initer(): `
           + `block${i}'s input image height ( ${blockParamsCreator.inputHeight} ) should be the same as `
           + `block${ i - 1 }'s output image height ( ${previousBlock.outputHeight} ).`
-      );
+       );
 
-      tf.util.assert( ( blockParamsCreator.inputWidth == previousBlock.outputWidth ),
-        `Stage.initer(): `
+      if ( blockParamsCreator.inputWidth != previousBlock.outputWidth )
+        throw Error( `Stage.initer(): `
           + `block${i}'s input image width ( ${blockParamsCreator.inputWidth} ) should be the same as `
           + `block${ i - 1 }'s output image width ( ${previousBlock.outputWidth} ).`
-      );
+        );
     }
   }
 
@@ -655,17 +655,17 @@ class Base {
    */
   static create_BlockParamsCreator_byStageParams( stageParams ) {
 
-    tf.util.assert( ( stageParams.blockCountRequested >= 2 ),
-      `Stage.BlockParamsCreator.Base.create_byStageParams(): `
+    if ( stageParams.blockCountRequested < 2 )
+      throw Error( `Stage.BlockParamsCreator.Base.create_byStageParams(): `
         + `stageParams.blockCountRequested ( ${stageParams.blockCountRequested} ) must be >= 2.` );
 
-    tf.util.assert(
-      (   ( stageParams.nConvStageType >= 0 )
-       && ( stageParams.nConvStageType < Base.nConvStageType_to_BlockParamsCreator_ClassArray.length )
-      ),
-      `Stage.Base.create_BlockParamsCreator_byStageParams(): `
+    if ( !(   ( stageParams.nConvStageType >= 0 )
+           && ( stageParams.nConvStageType < Base.nConvStageType_to_BlockParamsCreator_ClassArray.length )
+          ) 
+       )
+      throw Error( `Stage.Base.create_BlockParamsCreator_byStageParams(): `
         + `unknown stageParams.nConvStageType ( ${stageParams.nConvStageType} ) value.`
-    );
+      );
 
     let classBlockParamsCreator = Base.nConvStageType_to_BlockParamsCreator_ClassArray[ stageParams.nConvStageType ];
     let aBlockParamsCreator = new classBlockParamsCreator( stageParams );
