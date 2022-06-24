@@ -32,7 +32,7 @@ class Depthwise extends ConvBiasActivation {
    * After calling this method, this object should be viewed as disposed and should not be operated again.
    */
   disposeResources_and_recycleToPool() {
-    //this.disposeResources();
+    this.disposeResources();
     DepthwisePool.Singleton.recycle( this );
   }
 
