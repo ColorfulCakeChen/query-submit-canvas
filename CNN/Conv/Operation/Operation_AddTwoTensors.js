@@ -37,19 +37,22 @@ class AddTwoTensors extends Root {
 
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
 
-    this.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
+    AddTwoTensors.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
   }
 
   /**
+   * @param {AddTwoTensors} this
+   *   The object to be initialized.
+   *
    * @return {AddTwoTensors}
    *   Return the this object.
    */
-  setAsConstructor(
+  static setAsConstructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
-    super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+    super.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
 
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
@@ -59,8 +62,14 @@ class AddTwoTensors extends Root {
     return this;
   }
 
+//!!! ...unfinished... (2022/06/24)
+// Whether possible Pool.All knows which Pool.Xxx this object should be recycled to?
+// So there is not necessary override .disposeResources_and_recycleToPool() for every sub classes.
+
   /**
    * After calling this method, this object should be viewed as disposed and should not be operated again.
+   *
+   * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
    */
   disposeResources_and_recycleToPool() {
     this.disposeResources();
