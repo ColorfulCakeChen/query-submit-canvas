@@ -125,11 +125,15 @@ class SplitConcat {
     this.tensorWeightCountTotal = 0;
     this.tensorWeightCountExtracted = 0;
 
-    this.tensorArrayForOneGroup.fill( undefined );
+//!!! (2022/06/24 Remarked) empty it should be faster.
+//    this.tensorArrayForOneGroup.fill( undefined ); // Avoid dangling tensors.
+    this.tensorArrayForOneGroup.length = 0; // Avoid dangling tensors.
     Pool.Array.Singleton.recycle( this.tensorArrayForOneGroup );
     this.tensorArrayForOneGroup = null;
 
-    this.singleChannelTensorArray.fill( undefined );
+//!!! (2022/06/24 Remarked) empty it should be faster.
+//    this.singleChannelTensorArray.fill( undefined ); // Avoid dangling tensors.
+    this.singleChannelTensorArray.length = 0; // Avoid dangling tensors.
     Pool.Array.Singleton.recycle( this.singleChannelTensorArray );
     this.singleChannelTensorArray = null;
 
