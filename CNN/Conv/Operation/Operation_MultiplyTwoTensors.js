@@ -118,11 +118,11 @@ class MultiplyTwoTensors extends Root {
     let inputScaleBoundsArray0 = this.input0.scaleBoundsArray;
     let inputScaleBoundsArray1 = this.input1.scaleBoundsArray;
 
-    tf.util.assert( ( inputScaleBoundsArray0.channelCount == inputScaleBoundsArray1.channelCount ),
-      `MultiplyTwoTensors.setup_BoundsArraySet(): `
+    if ( inputScaleBoundsArray0.channelCount != inputScaleBoundsArray1.channelCount )
+      throw Error( `MultiplyTwoTensors.setup_BoundsArraySet(): `
         + `input0 channel count ( ${inputScaleBoundsArray0.channelCount} ) should be the same as `
         + `input1 channel count ( ${inputScaleBoundsArray1.channelCount} ).`
-    );
+      );
 
     this.boundsArraySet = BoundsArraySet.InputsOutputsPool.Singleton.get_or_create_by( inputScaleBoundsArray0, inputScaleBoundsArray1,
       inputScaleBoundsArray0.channelCount
@@ -160,7 +160,7 @@ class MultiplyTwoTensors extends Root {
 
       // 1.4 Unsupported multiplying (height and width).
       } else {
-        tf.util.assert( false,
+        throw Error(
           `Operation.MultiplyTwoTensors.setup_output0_TensorPlaceholder(): `
             + `input0 ( height, width ) = ( ${this.input0.height}, ${this.input0.width} ) and `
             + `input1 ( height, width ) = ( ${this.input1.height}, ${this.input1.width} ) `
@@ -195,7 +195,7 @@ class MultiplyTwoTensors extends Root {
 
     // 2. Unsupported multiplying (different channel count).
     } else {
-      tf.util.assert( false,
+      throw Error(
         `Operation.MultiplyTwoTensors.setup_output0_TensorPlaceholder(): `
           + `input0 channel count ( ${this.input0.channelCount} ) and `
           + `input1 channel count ( ${this.input1.channelCount} ) `
