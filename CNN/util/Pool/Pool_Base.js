@@ -100,6 +100,26 @@ class IssuedObjects {
   }
 
   /**
+   *
+   * @return {Object}
+   *   Pop the last issued object in session, return it.
+   *   - It may be null.
+   *   - It may be IssuedObjects.SESSION_BORDER_MARK.
+   *
+   */
+  inSessionArray_pop() {
+    let returnedObject = this.inSessionArray.pop();
+
+    if (   ( returnedObject != null )
+        && ( returnedObject != IssuedObjects.SESSION_BORDER_MARK )
+       ) {
+      this.remove( returnedObject );
+    }
+
+    return returnedObject;
+  }
+
+  /**
    * Append a SESSION_BORDER_MARK to .array
    */
   append_session_border_mark() {
@@ -397,8 +417,8 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
     // 2. Recycle the last session's issued all objects (except objects should be kept).
     this.movingObjectArray.length = 0;
-    while ( this.issuedObjects.array.length > 0 ) {
-      let issuedObject = this.issuedObjects.array.pop();
+    while ( this.issuedObjects.inSessionArray.length > 0 ) {
+      let issuedObject = this.issuedObjects.inSessionArray_pop();
       if ( issuedObject == null )
         continue; // The object has been recycled (before this session end).
 
