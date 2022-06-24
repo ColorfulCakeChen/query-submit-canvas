@@ -428,7 +428,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 class DepthwisePool extends Pool.Root {
 
   constructor() {
-    super( Depthwise, Depthwise.setAsConstructor );
+    super( "Operation.DepthwisePool", Depthwise, Depthwise.setAsConstructor );
   }
 
 }
