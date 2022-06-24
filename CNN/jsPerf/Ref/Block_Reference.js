@@ -75,30 +75,28 @@ class TestCorrectnessInfo {
       if ( bTwoInputs ) { // Pass two input images according to parameters.
         imageInArraySelected[ 1 ] = imageIn1;
 
-        tf.util.assert( (
-             ( imageIn1.height == inferencedParams.input1_height )
-          && ( imageIn1.width == inferencedParams.input1_width )
-          && ( imageIn1.depth == inferencedParams.input1_channelCount ) ),
-          `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+        if ( !(    ( imageIn1.height == inferencedParams.input1_height )
+                && ( imageIn1.width == inferencedParams.input1_width )
+                && ( imageIn1.depth == inferencedParams.input1_channelCount ) ) )
+          throw Error( `Block_Reference.TestCorrectnessInfo.prepareBy(): `
             + `input image1's ( height, width, depth ) = ( ${imageIn1.height}, ${imageIn1.width}, ${imageIn1.depth} ) should be `
             + `( ${inferencedParams.input1_height}, ${inferencedParams.input1_width}, ${inferencedParams.input1_channelCount} ). `
             + `${strNote}`
-        );
+          );
       } else {
-        tf.util.assert( (
-             ( 0 == inferencedParams.input1_height )
-          && ( 0 == inferencedParams.input1_width )
-          && ( 0 == inferencedParams.input1_channelCount ) ),
-          `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+        if ( !(   ( 0 == inferencedParams.input1_height )
+               && ( 0 == inferencedParams.input1_width )
+               && ( 0 == inferencedParams.input1_channelCount ) ) )
+          throw Error( `Block_Reference.TestCorrectnessInfo.prepareBy(): `
             + `inferenced input1's ( height, width, depth ) = `
             + `( ${inferencedParams.input1_height}, ${inferencedParams.input1_width}, ${inferencedParams.input1_channelCount} ) `
             + `should be ( 0, 0, 0 ). ${strNote}`
-        );
+          );
       }
 
-      tf.util.assert( imageInArraySelected.length == 2,
-        `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-          + `imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ${strNote}`);
+      if ( imageInArraySelected.length != 2 )
+        throw Error( `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+          + `imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ${strNote}` );
 
       // Prepare channel shuffler.
       const outputGroupCount = 2; // Only use two convolution groups.
@@ -126,11 +124,10 @@ class TestCorrectnessInfo {
         channelShuffler_ConcatPointwiseConv = channelShufflerBag.getChannelShuffler_by(
           imageIn1.height, imageIn1.width, concatenatedDepth, outputGroupCount );
 
-        tf.util.assert( (
-             ( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ] == imageIn1.height )
-          && ( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ] == imageIn1.width )
-          && ( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ] == concatenatedDepth ) ),
-          `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+        if( !(   ( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ] == imageIn1.height )
+              && ( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ] == imageIn1.width )
+              && ( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ] == concatenatedDepth ) ) )
+          throw Error( `Block_Reference.TestCorrectnessInfo.prepareBy(): `
             + `ChannelShuffler concatenatedShape ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ]}, `
             + `${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ]}, `
             + `${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ]} ) `
@@ -138,10 +135,10 @@ class TestCorrectnessInfo {
             + `${imageIn1.height}, ${imageIn1.width}, ${concatenatedDepth} ). `
             + `${strNote}` );
 
-        tf.util.assert( channelShuffler_ConcatPointwiseConv.outputGroupCount == outputGroupCount,
-          `Block_Reference.TestCorrectnessInfo.prepareBy(): `
+        if ( channelShuffler_ConcatPointwiseConv.outputGroupCount != outputGroupCount )
+          throw Error( `Block_Reference.TestCorrectnessInfo.prepareBy(): `
             + `ChannelShuffler outputGroupCount ( ${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
-            + `should be the same as image outputGroupCount ( ${outputGroupCount} ). ${strNote}`);
+            + `should be the same as image outputGroupCount ( ${outputGroupCount} ). ${strNote}` );
 
         channelShuffler_concatenatedShape = channelShuffler_ConcatPointwiseConv.concatenatedShape;
         channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
@@ -237,8 +234,10 @@ class Base {
       {
         this.calcResult( imageInArraySelected, imageOutReferenceArray ); // Output is an array with two elements.
 
-        tf.util.assert( imageOutReferenceArray.length == 2,
-          `Block_Reference.testCorrectness(): imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
+        if ( imageOutReferenceArray.length != 2 )
+          throw Error(
+            `Block_Reference.testCorrectness(): imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`
+          );
       }
 
       let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
@@ -262,17 +261,17 @@ class Base {
       block.apply( inputTensor3dArray, outputTensor3dArray );
       let memoryInfo_apply_after = tf.memory();
 
-      tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
-        `Block.apply() memory leak. `
+      if ( memoryInfo_apply_after.numTensors != ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) )
+        throw Error( `Block.apply() memory leak. `
           + `result tensor count ( ${memoryInfo_apply_after.numTensors} ) `
           + `should be ( ${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } ) `
           + `${strNote}` );
 
-      tf.util.assert( inputTensor3dArray.length == 2,
-        `Block inputTensor3dArray.length ( ${inputTensor3dArray.length} ) should be 2. ${strNote}`);
+      if ( inputTensor3dArray.length != 2 )
+        throw Error( `Block inputTensor3dArray.length ( ${inputTensor3dArray.length} ) should be 2. ${strNote}` );
 
-      tf.util.assert( outputTensor3dArray.length == 2,
-        `Block outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${strNote}`);
+      if ( outputTensor3dArray.length != 2 )
+        throw Error( `Block outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${strNote}` );
 
       { // Test output channel count.
         const CHANNEL_AXIS_ID = 2; // Axis id 2 is depth (i.e. channel) dimension.
@@ -312,8 +311,8 @@ class Base {
       block.disposeResources();
       let memoryInfo_afterDispose = tf.memory();
 
-      tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
-        `Block create/dispose memory leak. `
+      if ( memoryInfo_afterDispose.numTensors != ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) )
+        throw Error( `Block create/dispose memory leak. `
           + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
           + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
           + `${strNote}` );
@@ -423,14 +422,15 @@ class Base {
 
     let parametersDescription = `( ${block.parametersDescription} )`;
 
-    tf.util.assert( ( block.bInitOk == bInitOk ),
-      `Block validation state (${block.bInitOk}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
+    if ( block.bInitOk != bInitOk )
+      throw Error( `Block validation state (${block.bInitOk}) mismatches initer's result (${bInitOk}). ${parametersDescription}` );
 
-    tf.util.assert( ( true == bInitOk ),
-      `Failed to initialize block object. ${parametersDescription}`);
+    if ( false == bInitOk )
+      throw Error( `Failed to initialize block object. ${parametersDescription}` );
 
-    tf.util.assert( ( 100 == progress.valuePercentage ),
-      `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${parametersDescription}`);
+    if ( 100 != progress.valuePercentage )
+      throw Error(
+        `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${parametersDescription}`);
 
     progress = ValueMax.Percentage.Aggregate.Singleton.recycle( progress );
     progress = null;
@@ -568,11 +568,12 @@ class Base {
         || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL ) // (4)
        ) {
 
-      tf.util.assert( channelShuffler_ConcatPointwiseConv != null, `Block_Reference.Base.block_create(): `
-        + `channelShuffler must NOT null when `
-        + `nConvBlockTypeId=`
-        + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
-        + `(${testParams.out.nConvBlockTypeId})` );
+      if ( channelShuffler_ConcatPointwiseConv == null )
+        throw Error( `Block_Reference.Base.block_create(): `
+          + `channelShuffler must NOT null when `
+          + `nConvBlockTypeId=`
+          + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
+          + `(${testParams.out.nConvBlockTypeId})` );
 
       asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", channelShuffler_ConcatPointwiseConv );
 
@@ -755,8 +756,8 @@ class Base {
 
 
   static AssertTwoEqualValues( valueName, value1, value2, parametersDescription ) {
-    tf.util.assert( ( value1 == value2 ),
-      `Block ${valueName} (${value1}) should be (${value2}). ${parametersDescription}`);
+    if ( value1 != value2 )
+      throw Error( `Block ${valueName} (${value1}) should be (${value2}). ${parametersDescription}` );
   }
 
   /** According to imageInArray and this.testParams.in.paramsNumberArrayObject, calculate imageOutArray.
@@ -870,12 +871,13 @@ class Base {
 
       if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
 
-        tf.util.assert( imageIn1 == null, `Block_Reference.Base.calcResult(): `
-          + `imageIn1 must be null when `
-          + `nConvBlockTypeId=`
-          + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
-          + `(${testParams.out.nConvBlockTypeId}). `
-          + `${this.paramsOutDescription}` );
+        if ( imageIn1 != null )
+          throw Error( `Block_Reference.Base.calcResult(): `
+            + `imageIn1 must be null when `
+            + `nConvBlockTypeId=`
+            + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
+            + `(${testParams.out.nConvBlockTypeId}). `
+            + `${this.paramsOutDescription}` );
 
         imageIn1 = imageIn0; // Not input1 but input0.
       }
@@ -1061,7 +1063,7 @@ class Base {
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL:      // (7)
           concat2Name = "Concat2_pointwise20_input0_HigherHalf";         bShuffle = false; bSplit = false; break;
         default:
-          tf.util.assert( false, `Block_Reference.Base.calcResult(): `
+          throw Error( `Block_Reference.Base.calcResult(): `
             + `Concat2ShuffleSplit: Unsupported `
             + `nConvBlockTypeId=`
             + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
@@ -1070,9 +1072,10 @@ class Base {
           break;
       }
 
-      tf.util.assert( ( imageOutArray[ 1 ] ), `Block_Reference.Base.calcResult(): `
-        + `Concat2ShuffleSplit: imageOutArray[ 1 ] ( ${imageOutArray[ 1 ]} ) `
-          + `should not be null. ${this.paramsOutDescription}`);
+      if ( !imageOutArray[ 1 ] )
+        throw Error( `Block_Reference.Base.calcResult(): `
+          + `Concat2ShuffleSplit: imageOutArray[ 1 ] ( ${imageOutArray[ 1 ]} ) `
+            + `should not be null. ${this.paramsOutDescription}` );
 
       NumberImage.Base.calcConcatShuffleSplit(
         imageOutArray, imageOutArray, bShuffle, bSplit,
