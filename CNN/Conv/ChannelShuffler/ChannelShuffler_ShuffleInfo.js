@@ -73,15 +73,18 @@ class ShuffleInfo {
    *
    */
   constructor( concatenatedShape, outputGroupCount ) {
-    this.setAsConstructor( concatenatedShape, outputGroupCount );
+    ShuffleInfo.setAsConstructor.call( this, concatenatedShape, outputGroupCount );
   }
 
   /**
    *
+   * @param {ShuffleInfo} this
+   * The object to be initialized.
+   *
    * @return {ShuffleInfo}
    *   Return the this object.
    */
-  setAsConstructor( concatenatedShape, outputGroupCount ) {
+  static setAsConstructor( concatenatedShape, outputGroupCount ) {
 
     outputGroupCount = Math.trunc( outputGroupCount || 1 );
     if ( outputGroupCount < 1 )
