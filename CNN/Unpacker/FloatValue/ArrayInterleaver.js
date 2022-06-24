@@ -27,10 +27,10 @@ class ArrayInterleaver {
    */
   static interleave_asGrouptTwo( arrayIn, indexBegin, elementCount, arrayTemp = [] ) {
 
-    tf.util.assert( ( ( elementCount % 2 ) == 0 ),
-      `ArrayInterleaver.interleave_byGrouptTwo(): `
+    if ( ( elementCount % 2 ) != 0 )
+      throw Error( `ArrayInterleaver.interleave_byGrouptTwo(): `
         + `elementCount ( ${elementCount} ) must be even (i.e. divisible by 2).`
-    );
+      );
 
     // Copy the elements to be re-arrange.
     arrayTemp.length = elementCount;
