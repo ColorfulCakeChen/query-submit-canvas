@@ -13,6 +13,16 @@ class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
     super( concatenatedShape, outputGroupCount );
   }
 
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   *
+   * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    ConcatPointwiseConvPool.Singleton.recycle( this );
+  }
+
   gather_map( concatenatedTensor ) {
     // shuffle and split by pointwise convolution (one operation achieves two operations).
     return this.filtersTensor4dArray.map(
