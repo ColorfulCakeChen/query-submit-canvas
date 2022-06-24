@@ -532,11 +532,14 @@ class Base {
         // So that bHigherHalfPassThrough (or bAllPassThrough).
         nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
 
-        let pointwise1_higherHalfPassThrough = new ChannelCountCalculator.HigherHalfPassThrough(
+        let pointwise1_higherHalfPassThrough = ChannelCountCalculator.HigherHalfPassThroughPool.Singleton.get_or_create_by(
           this.input0_channelCount, this.pointwise1ChannelCount );
 
         inputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.inputChannelCount_lowerHalf;
         outputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
+
+        ChannelCountCalculator.HigherHalfPassThroughPool.Singleton.recycle( pointwise1_higherHalfPassThrough );
+        pointwise1_higherHalfPassThrough = null;
       }
 
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
