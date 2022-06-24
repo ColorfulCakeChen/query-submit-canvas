@@ -1,4 +1,5 @@
 export { HigherHalfPassThrough };
+export { HigherHalfPassThroughPool };
 
 /**
  * Calculate the channel count of lower half (of input and output) and higher half (of input and output) when the higher half of
@@ -32,7 +33,20 @@ export { HigherHalfPassThrough };
  */
 class HigherHalfPassThrough {
 
+  /**
+   *
+   */
   constructor( inputChannelCount_total, outputChannelCount_total ) {
+    this.setAsConstructor( inputChannelCount_total, outputChannelCount_total );
+  }
+
+  /**
+   *
+   * @return {HigherHalfPassThrough}
+   *   Return the this object.
+   */
+  setAsConstructor( inputChannelCount_total, outputChannelCount_total ) {
+
     this.inputChannelCount_total = inputChannelCount_total;
     this.outputChannelCount_total = outputChannelCount_total;
 
@@ -51,6 +65,27 @@ class HigherHalfPassThrough {
 
     // The non-past-through channel count equals the output channel count minus the fixed (past-through) channel count.
     this.outputChannelCount_lowerHalf = this.outputChannelCount_total_real - this.outputChannelCount_higherHalf;
+
+    return this;
   }
 
 }
+
+
+/**
+ * Providing ChannelCountCalculator.HigherHalfPassThrough
+ *
+ */
+class HigherHalfPassThroughPool extends Pool.Root {
+
+  constructor() {
+    super( "ChannelCountCalculator.HigherHalfPassThrough", HigherHalfPassThrough, HigherHalfPassThrough.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default ChannelCountCalculator.HigherHalfPassThrough provider.
+ */
+HigherHalfPassThroughPool.Singleton = new HigherHalfPassThroughPool();
+
