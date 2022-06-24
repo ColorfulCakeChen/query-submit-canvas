@@ -1,5 +1,7 @@
 export { ConcatPointwiseConv };
+export { ConcatPointwiseConvPool };
 
+import * as Pool from "../../../util/Pool.js";
 import { ConcatPointwiseConv as ChannelShuffler_ConcatPointwiseConv } from "../ChannelShuffler_ConcatPointwiseConv.js";
 
 /**
@@ -7,8 +9,8 @@ import { ConcatPointwiseConv as ChannelShuffler_ConcatPointwiseConv } from "../C
  */
 class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
 
-  init( concatenatedShape, outputGroupCount ) {
-    return super.init( concatenatedShape, outputGroupCount );
+  constructor( concatenatedShape, outputGroupCount ) {
+    super( concatenatedShape, outputGroupCount );
   }
 
   gather_map( concatenatedTensor ) {
@@ -124,4 +126,22 @@ class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
   }
 
 }
+
+
+/**
+ * Providing ChannelShuffler.PerformanceTest.ConcatPointwiseConv
+ *
+ */
+class ConcatPointwiseConvPool extends Pool.Root {
+
+  constructor() {
+    super( "ChannelShuffler.PerformanceTest.ConcatPointwiseConvPool", ConcatPointwiseConv, ConcatPointwiseConv.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default ChannelShuffler.PerformanceTest.ConcatPointwiseConv provider.
+ */
+ConcatPointwiseConvPool.Singleton = new ConcatPointwiseConvPool();
 
