@@ -133,15 +133,19 @@ class ShuffleInfo {
 
 //!!! (2022/06/24 Remarke) Old Codes
 //    let transposePermutation = this.transposePermutation = new Array( ...intermediateShape.keys() );
+//       let last1 = transposePermutation.pop();
+//       let last2 = transposePermutation.pop();
+//       transposePermutation.push( last1, last2 );
 
       transposePermutation = this.transposePermutation = Pool.Array.Singleton.get_or_create_by( intermediateShape.length );
       for ( let i = 0; i < transposePermutation.length; ++i ) {
         transposePermutation[ i ] = i;
       }
 
-      let last1 = transposePermutation.pop();
-      let last2 = transposePermutation.pop();
-      transposePermutation.push( last1, last2 );
+      let last1 = transposePermutation[ transposePermutation.length - 1 ];
+      let last2 = transposePermutation[ transposePermutation.length - 2 ];
+      transposePermutation[ transposePermutation.length - 2 ] = last1;
+      transposePermutation[ transposePermutation.length - 1 ] = last2;
     }
 
     this.tensorWeightCountTotal = 0;
