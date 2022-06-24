@@ -71,7 +71,8 @@ class Pointwise_ConstantWhenPassThrough extends Pointwise {
 class Pointwise_ConstantWhenPassThroughPool extends Pool.Root {
 
   constructor() {
-    super( Pointwise_ConstantWhenPassThrough, Pointwise_ConstantWhenPassThrough.setAsConstructor );
+    super( "Operation.Pointwise_ConstantWhenPassThroughPool",
+      Pointwise_ConstantWhenPassThrough, Pointwise_ConstantWhenPassThrough.setAsConstructor );
   }
 
 }
