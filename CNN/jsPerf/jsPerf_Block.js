@@ -483,30 +483,30 @@ class HeightWidthDepth {
 
     let outputArray = Weights.Base.ValueBounds.Float32Array_RestrictedClone( inputArray );
 
-    tf.util.assert( inputArray.length == outputArray.length,
-      `test_Weights_Float32Array_RestrictedClone(): `
+    if ( inputArray.length != outputArray.length )
+      throw Error( `test_Weights_Float32Array_RestrictedClone(): `
         + `inputArray.length ( ${inputArray.length} ) `
         + `should be the same as outputArray.length ( ${outputArray.length} ).`
-    );
+      );
 
     for ( let i = 0; i < inputArray.length; ++i ) {
       let inputElement = inputArray[ i ];
       let verifyElement = verifyArray[ i ];
       let outputElement = outputArray[ i ];
 
-      tf.util.assert( outputElement === verifyElement,
-        `test_Weights_Float32Array_RestrictedClone(): `
+      if ( outputElement !== verifyElement )
+        throw Error( `test_Weights_Float32Array_RestrictedClone(): `
           + `Weights.Base.ValueBounds.Float32Array_RestrictedClone( inputArray[ ${i} ] = ${inputElement} ) `
           + `should be ( ${verifyElement} ) but got ( ${outputElement} ).`
-      );
+        );
 
       let outputElementSingle = Weights.Base.ValueBounds.clamp_or_zeroIfNaN( inputElement );
 
-      tf.util.assert( outputElementSingle === verifyElement,
-        `test_Weights_Float32Array_RestrictedClone(): `
+      if ( outputElementSingle !== verifyElement )
+        throw Error( `test_Weights_Float32Array_RestrictedClone(): `
           + `Weights.Base.ValueBounds.clamp_or_zeroIfNaN( inputArray[ ${i} ] = ${inputElement} ) `
           + `should be ( ${verifyElement} ) but got ( ${outputElementSingle} ).`
-      );
+        );
     }
   }
 
@@ -521,8 +521,8 @@ class HeightWidthDepth {
         for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( valuePair, offsetMultiplier ) ) {
           let adjustedInput = paramDesc.valueDesc.range.adjust( pair.valueInput )
 
-          tf.util.assert( adjustedInput == pair.valueOutput,
-            `ValueRange.Bool().valueInputOutputGenerator( ${offsetMultiplier} ): `
+          if ( adjustedInput != pair.valueOutput )
+            throw Error( `ValueRange.Bool().valueInputOutputGenerator( ${offsetMultiplier} ): `
               + `this.adjust( ${pair.valueInput} ) return ( ${adjustedInput} ) should be ( ${pair.valueOutput} ).` );
         }
       }
@@ -548,8 +548,8 @@ class HeightWidthDepth {
         for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( valuePair, offsetMultiplier, valueOutMinMax ) ) {
           let adjustedInput = paramDesc.valueDesc.range.adjust( pair.valueInput )
 
-          tf.util.assert( adjustedInput == pair.valueOutput,
-            `ValueRange.Int( ${paramDesc.min}, ${paramDesc.max} ).valueInputOutputGenerator( ${offsetMultiplier} ): `
+          if ( adjustedInput != pair.valueOutput )
+            throw Error( `ValueRange.Int( ${paramDesc.min}, ${paramDesc.max} ).valueInputOutputGenerator( ${offsetMultiplier} ): `
               + `this.adjust( ${pair.valueInput} ) return ( ${adjustedInput} ) should be ( ${pair.valueOutput} ).` );
         }
       }
@@ -612,8 +612,8 @@ class HeightWidthDepth {
 
       let memoryInfo_testCorrectness_after = tf.memory();
 
-      tf.util.assert( ( memoryInfo_testCorrectness_after.numTensors == memoryInfo_testCorrectness_before.numTensors ),
-        `testCorrectness() memory leak. `
+      if ( memoryInfo_testCorrectness_after.numTensors != memoryInfo_testCorrectness_before.numTensors )
+        throw Error( `testCorrectness() memory leak. `
           + `result tensor count ( ${memoryInfo_testCorrectness_after.numTensors} ) `
           + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ) `
           + `` );
@@ -645,12 +645,12 @@ class HeightWidthDepth {
 //         let tArray = func.call( thisArg, this.dataTensor3dArray );
 //         let memoryInfo = tf.memory();
 //
-//         tf.util.assert( memoryInfo.numTensors == ( memoryInfoPrev.numTensors + tArray.length ), `${func.name}() memory leak`);
+//         if ( memoryInfo.numTensors != ( memoryInfoPrev.numTensors + tArray.length ) )
+//           throw Error( `${func.name}() memory leak` );
 //
 //         if ( tArrayPrev ) {
-//           tf.util.assert(
-//             TensorTools.Comparator.isTensorArrayEqual( tArrayPrev, tArray ),
-//             `${funcPrev.name}() != ${func.name}()`);
+//           if( !TensorTools.Comparator.isTensorArrayEqual( tArrayPrev, tArray ) )
+//             throw Error( `${funcPrev.name}() != ${func.name}()` );
 //         }
 //
 //         tf.dispose( tArrayPrev );
