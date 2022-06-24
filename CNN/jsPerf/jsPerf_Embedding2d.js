@@ -114,18 +114,21 @@ class HeightWidthDepth {
         + ` )`
     ;
 
-    tf.util.assert( ( embedding2d.isValid() == bInitOk ),
+    if ( embedding2d.isValid() != bInitOk )
+      throw Error(
         `Embedding2d validation state (${embedding2d.isValid()}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
 
-    tf.util.assert( ( true == bInitOk ),
-        `Failed to initialize embedding2d object. ${parametersDescription}`);
+    if ( false == bInitOk )
+      throw Error( `Failed to initialize embedding2d object. ${parametersDescription}` );
 
-    tf.util.assert( ( 100 == progress.valuePercentage ),
+    if ( 100 != progress.valuePercentage )
+      throw Error(
         `Progress (${progress.valuePercentage}) should be 100 when initializing embedding2d object successfully. ${parametersDescription}`);
 
 
-    tf.util.assert( ( embedding2d.byteOffsetBegin == this.weightsByteOffsetBegin ),
-      `Embedding2d parsing beginning position (${embedding2d.byteOffsetBegin}) should be (${this.weightsByteOffsetBegin}). ${parametersDescription}`);
+    if ( embedding2d.byteOffsetBegin != this.weightsByteOffsetBegin )
+      throw Error(
+        `Embedding2d parsing beginning position (${embedding2d.byteOffsetBegin}) should be (${this.weightsByteOffsetBegin}). ${parametersDescription}`);
 
     {
       let channelMultiplier_forExtract; // How many channels (of per input channel) are extracted from table raw data.
@@ -140,20 +143,22 @@ class HeightWidthDepth {
       let byteCountAllTables = byteCountPerTable * this.depth;
       let byteOffsetEnd = this.weightsByteOffsetBegin + byteCountAllTables;
 
-      tf.util.assert( ( embedding2d.byteOffsetEnd == byteOffsetEnd ),
-        `Embedding2d parsing ending position (${embedding2d.byteOffsetEnd}) should be (${byteOffsetEnd}). ${parametersDescription}`);
+      if ( embedding2d.byteOffsetEnd != byteOffsetEnd )
+        throw Error(
+          `Embedding2d parsing ending position (${embedding2d.byteOffsetEnd}) should be (${byteOffsetEnd}). ${parametersDescription}`);
     }
 
-    tf.util.assert( ( embedding2d.inChannels == this.depth ),
-      `Embedding2d inChannels (${embedding2d.outChannels}) should be (${this.depth}). ${parametersDescription}`);
+    if ( embedding2d.inChannels != this.depth )
+      throw Error( `Embedding2d inChannels (${embedding2d.outChannels}) should be (${this.depth}). ${parametersDescription}` );
 
     let channelMultiplierAdjusted = Embedding2d.Params.channelMultiplier.valueDesc.range.adjust( this.channelMultiplier );
-    tf.util.assert( ( embedding2d.channelMultiplier == channelMultiplierAdjusted ),
-      `Embedding2d channelMultiplier (${embedding2d.channelMultiplier}) should be (${channelMultiplierAdjusted}). ${parametersDescription}`);
+    if ( embedding2d.channelMultiplier != channelMultiplierAdjusted )
+      throw Error(
+        `Embedding2d channelMultiplier (${embedding2d.channelMultiplier}) should be (${channelMultiplierAdjusted}). ${parametersDescription}`);
 
     let outChannels = ( this.depth * channelMultiplierAdjusted );
-    tf.util.assert( ( embedding2d.outChannels == outChannels ),
-      `Embedding2d outChannels (${embedding2d.outChannels}) should be (${outChannels}). ${parametersDescription}`);
+    if ( embedding2d.outChannels != outChannels )
+      throw Error( `Embedding2d outChannels (${embedding2d.outChannels}) should be (${outChannels}). ${parametersDescription}` );
 
 
     return embedding2d;
@@ -227,8 +232,8 @@ class HeightWidthDepth {
       let inputRowArray = inputTensor3d.arraySync();
       let outputRowArray = outputTensor3d.arraySync();
 
-      tf.util.assert( outputRowArray.length == inputRowArray.length,
-          `Row count of embedding output and input should be the same. ( ${outputRowArray.length} != ${inputRowArray.length} )`);
+      if ( outputRowArray.length != inputRowArray.length )
+        throw Error( `Row count of embedding output and input should be the same. ( ${outputRowArray.length} != ${inputRowArray.length} )` );
 
       // The float32 count of an embedding vocabulary table of one input channel.
       let float32CountPerTable = channelMultiplier_forExtract * this.vocabularyCountPerInputChannel;
@@ -238,16 +243,17 @@ class HeightWidthDepth {
         let inputColumnArray = inputRowArray[ y ];
         let outputColumnArray = outputRowArray[ y ];
 
-        tf.util.assert( outputColumnArray.length == inputColumnArray.length,
-          `Column count of embedding output and input should be the same. ( ${outputColumnArray.length} != ${inputColumnArray.length} )`);
+        if ( outputColumnArray.length != inputColumnArray.length )
+          throw Error(
+            `Column count of embedding output and input should be the same. ( ${outputColumnArray.length} != ${inputColumnArray.length} )`);
 
         // Width
         for ( let x = 0; x < inputColumnArray.length; ++x ) {
           let inputChannelArray = inputColumnArray[ x ];
           let outputChannelArray = outputColumnArray[ x ];
 
-          tf.util.assert( outputChannelArray.length == ( inputChannelArray.length * embedding2d.channelMultiplier ),
-            `Channel count of embedding output and input should match. `
+          if ( outputChannelArray.length != ( inputChannelArray.length * embedding2d.channelMultiplier ) )
+            throw Error( `Channel count of embedding output and input should match. `
               + `( ${outputChannelArray.length} != ( ${inputChannelArray.length} * ${embedding2d.channelMultiplier} ) )`);
 
           // Input Channel
@@ -272,9 +278,9 @@ class HeightWidthDepth {
               if ( ( embedding2d.bEmbedVocabularyId ) && ( outputChannelIndexOffset == 0 ) ) {
                 // When ( bEmbedVocabularyId == true ), every embedding2d.channelMultiplier output channel should be auto-generated
                 // vocabulary id (i.e. should be the same as the input channel value).
-                tf.util.assert( outputChannelValueFromOutput == inputChannelValue,
-                  `Channel value of output should be vocabulary id. `
-                    + `( ${outputChannelValueFromOutput} != ${inputChannelValue} )`);
+                if ( outputChannelValueFromOutput != inputChannelValue )
+                  throw Error( `Channel value of output should be vocabulary id. `
+                    + `( ${outputChannelValueFromOutput} != ${inputChannelValue} )` );
 
               } else {
                 let lookUpAtElementOffset = vocabularyTableElementChannelOffsetBase + outputChannelIndexOffset;
@@ -287,12 +293,12 @@ class HeightWidthDepth {
 
                 let outputChannelValueFromTable = this.weightsFloat32Array[ lookUpAtElementOffset ]; // Float32
 
-                tf.util.assert( outputChannelValueFromOutput == outputChannelValueFromTable,
-                  `Channel value of output and table should match. `
+                if ( outputChannelValueFromOutput != outputChannelValueFromTable )
+                  throw Error( `Channel value of output and table should match. `
                     + `( ${outputChannelValueFromOutput} != ${outputChannelValueFromTable} ) `
                     + `at ( y, x, inputChannelIndex, outputChannelIndexOffset ) = (${y}, ${x}, ${inputChannelIndex}, ${outputChannelIndexOffset}) `
                     + `( channelMultiplier = ${embedding2d.channelMultiplier} )`
-                );
+                  );
               }
 
             }
@@ -331,7 +337,8 @@ class HeightWidthDepth {
       this.embedding2d_init();
       this.embedding2d_release();
       let memoryInfo = tf.memory();
-      tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors, `Embedding2d init/release memory leak.`);
+      if ( memoryInfoPre.numTensors != memoryInfo.numTensors )
+        throw Error( `Embedding2d init/release memory leak.` );
     });
 
     this.embedding2d_init();  // (Should outside tidy() for preventing from tensors being disposed.
@@ -352,7 +359,8 @@ class HeightWidthDepth {
         // Test memory leak of embedding apply.
         let outputTensor3d = embedding2d.apply_and_destroy_or_keep( inputTensor3d );
         let memoryInfo1 = tf.memory();
-        tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + 1 ), `Embedding2d.apply_and_destroy_or_keep() memory leak.`);
+        if ( memoryInfo1.numTensors != ( memoryInfo0.numTensors + 1 ) )
+          throw Error( `Embedding2d.apply_and_destroy_or_keep() memory leak.` );
 
         // Test correctness of embedding apply.
         this.check_Input_Output_WeightsTable( embedding2d, this.dataTensor3d, outputTensor3d );
@@ -361,9 +369,8 @@ class HeightWidthDepth {
       }
 
 //!!!
-//       tf.util.assert(
-//         TensorTools.Comparator.isTensorArrayEqual( t1Array, t2Array ),
-//         `ConcatReshapeTransposeReshapeSplit() != ConcatGatherUnsorted()`);
+//       if ( !TensorTools.Comparator.isTensorArrayEqual( t1Array, t2Array ) )
+//         throw Error( `ConcatReshapeTransposeReshapeSplit() != ConcatGatherUnsorted()` );
     });
   }
 
@@ -389,12 +396,12 @@ class HeightWidthDepth {
 //         let tArray = func.call( thisArg, this.dataTensor3dArray );
 //         let memoryInfo = tf.memory();
 //
-//         tf.util.assert( memoryInfo.numTensors == ( memoryInfoPrev.numTensors + tArray.length ), `${func.name}() memory leak`);
+//         if ( memoryInfo.numTensors != ( memoryInfoPrev.numTensors + tArray.length ) )
+//           throw Error( `${func.name}() memory leak` );
 //
 //         if ( tArrayPrev ) {
-//           tf.util.assert(
-//             TensorTools.Comparator.isTensorArrayEqual( tArrayPrev, tArray ),
-//             `${funcPrev.name}() != ${func.name}()`);
+//           if( !TensorTools.Comparator.isTensorArrayEqual( tArrayPrev, tArray ) )
+//             throw Error( `${funcPrev.name}() != ${func.name}()` );
 //         }
 //
 //         tf.dispose( tArrayPrev );
