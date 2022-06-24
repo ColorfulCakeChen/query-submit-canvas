@@ -1,5 +1,7 @@
 export { ConcatGather };
+export { ConcatGatherPool };
 
+import * as Pool from "../../../util/Pool.js";
 import { ConcatGather as ChannelShuffler_ConcatGather } from "../ChannelShuffler_ConcatGather.js";
 
 /**
@@ -129,3 +131,22 @@ class ConcatGather extends ChannelShuffler_ConcatGather {
   }
 
 }
+
+
+/**
+ * Providing ChannelShuffler.PerformanceTest.ConcatGather
+ *
+ */
+class ConcatGatherPool extends Pool.Root {
+
+  constructor() {
+    super( "ChannelShuffler.PerformanceTest.ConcatGatherPool", ConcatGather, ConcatGather.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default ChannelShuffler.PerformanceTest.ConcatGather provider.
+ */
+ConcatGatherPool.Singleton = new ConcatGatherPool();
+
