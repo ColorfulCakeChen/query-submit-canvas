@@ -339,7 +339,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 class PointwisePool extends Pool.Root {
 
   constructor() {
-    super( Pointwise, Pointwise.setAsConstructor );
+    super( "Operation.PointwisePool", Pointwise, Pointwise.setAsConstructor );
   }
 
 }
