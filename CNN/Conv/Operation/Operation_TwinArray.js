@@ -315,10 +315,10 @@ class TwinArray extends Root {
         endingInput1_new = this.tempLastOutputTensorPlaceholderArray.pop();
 
       // At most, two outputs could be handled.
-      tf.util.assert( ( this.tempLastOutputTensorPlaceholderArray.length == 0 ),
-        `Operation.TwinArray.operation_append(): `
+      if ( this.tempLastOutputTensorPlaceholderArray.length != 0 )
+        throw Error( `Operation.TwinArray.operation_append(): `
           + `The appended operations have too many output TensorPlaceholders. There are not enough .endingInputX could be used.`
-      );
+        );
     }
 
     // 3.3 Confirm the new endingInputX.
