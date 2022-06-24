@@ -13,6 +13,16 @@ class SplitConcat extends ChannelShuffler_SplitConcat {
     super( concatenatedShape, outputGroupCount );
   }
 
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   *
+   * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    SplitConcatPool.Singleton.recycle( this );
+  }
+
   splitConcat_tidy( tensorArray ) {
     return tf.tidy( "ChannelShuffler.SplitConcat.splitConcat", () => {
 
