@@ -40,13 +40,13 @@ import { ConcatGather, ConcatGatherPool } from "./ChannelShuffler_ConcatGather.j
  * @member {tf.tensor4d[]} filtersTensor4dArray
  *   The pointwise convolution filters. They are used to achieve shuffle-split, and will be released by calling disposeResources().
  *
- * @member {number} tensorWeightCountTotal
- *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
- * weights, if they are used in tensors.
- *
  * @member {number} tensorWeightCountExtracted
  *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
  * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+ *
+ * @member {number} tensorWeightCountTotal
+ *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
+ * weights, if they are used in tensors.
  *
  * @member {function} gather
  *   Permute and split the input tensor by gather. It is a function pointer to one of this.gather_XXX().
@@ -70,75 +70,9 @@ class ConcatPointwiseConv {
    * @see ConcatGather
    */
   constructor( concatenatedShape, outputGroupCount ) {
-
-    this.disposeResources(); // So that distinguishable if re-initialization failed.
-
-    let concatGather = new ConcatGather( concatenatedShape, outputGroupCount );
-
-    // Build 1x1 convolution filters for channel shuffling. (as an array of tf.tensor4d).
-    try {
-      let filterHeight = 1; // Pointwise convolution is convolution 2d with 1 x 1 filter.
-      let filterWidth = 1;
-      let inDepth = concatGather.shuffleInfo.totalChannelCount;
-      let outDepth = concatGather.shuffleInfo.channelCountPerGroup;
-
-      // Every filter is a tensor3d [ filterHeight, filterWidth, inDepth ].
-      // All filters composes a tensor4d.
-      let filtersShape = [ filterHeight, filterWidth, inDepth, outDepth ];
-
-      this.filtersTensor4dArray = tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray", () => {
-        return concatGather.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d ) => {
-          return tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray.shuffledChannelIndicesTensor1d", () => {
-
-            // Generate oneHotIndices (tensor2d, int32) by shuffledChannelIndices (tensor1d).
-            let filtersOfOneGroupTensor2d_int32 = tf.oneHot( shuffledChannelIndicesTensor1d, inDepth );
-
-            // Generate oneHotIndices (tensor2d, float32).
-            //
-            // The tf.oneHot() genetates tensor with ( dtype == "int32" ). However, in backend WASM, if tf.conv2d()
-            // input tensor ( dtype == "float32" ) and filter tensor ( dtype == "int32" ), the result will be wrong.
-            // This issue does not exist in backend CPU and WEBGL. For avoiding this problem, convert the filter
-            // tensor from ( dtype == "int32" ) into ( dtype == "float32" ).
-            //
-            let filtersOfOneGroupTensor2d = tf.cast( filtersOfOneGroupTensor2d_int32, "float32" );
-
-            // Transpose it so that the last axis is the outDepth (not inDepth) which conforms to the requirement
-            // of tf.conv2d()'s filters.
-            let filtersOfOneGroupTensor2d_transposed = filtersOfOneGroupTensor2d.transpose();
-
-            // Reinterpret the tensor2d to tensor4d so that it can be used as tf.conv2d()'s filters.
-            let filtersOfOneGroupTensor4d = filtersOfOneGroupTensor2d_transposed.reshape( filtersShape );
-            return filtersOfOneGroupTensor4d;
-          });
-        });
-      });
-
-      if ( this.filtersTensor4dArray ) {
-        for ( let i = 0; i < this.filtersTensor4dArray.length; ++i ) {
-          let filtersTensor4d = this.filtersTensor4dArray[ i ];
-          if ( filtersTensor4d ) {
-//!!! (2022/06/08 Remarked) Use .size instead.
-//            this.tensorWeightCountTotal += tf.util.sizeFromShape( filtersTensor4d.shape );
-            this.tensorWeightCountTotal += filtersTensor4d.size;
-          }
-        }
-      }
-
-      this.shuffleInfo = concatGather.shuffleInfo; // Need the shuffle info.
-
-    // Exception if failed (e.g. out of (GPU) memory).
-    } catch ( e ) {
-      throw e;
-
-    } finally {
-      concatGather.disposeResources(); // Always release the look up table (by tensor1d).
-    }
-
-    this.gather = this.gather_loop;
-    this.concatGather = this.concatGather_dispose_finally_call_loop;
+    this.setAsConstructor( concatenatedShape, outputGroupCount );
   }
 
-//!!!
   /**
    *
    * @param {number[]} concatenatedShape
@@ -246,7 +180,7 @@ class ConcatPointwiseConv {
 
         this.filtersTensor4dArray[ i ] = filtersTensor4d;
 
-        if ( filtersTensor4d ) {
+        if ( filtersTensor4d )
           this.tensorWeightCountTotal += filtersTensor4d.size;
       }
 
@@ -297,8 +231,6 @@ class ConcatPointwiseConv {
       Pool.Array.Singleton.recycle( this.filtersTensor4dArray );
       this.filtersTensor4dArray = null;
     }
-
-//!!! ...unfinished... (2022/06/24)
 
     //super.disposeResources();
   }
