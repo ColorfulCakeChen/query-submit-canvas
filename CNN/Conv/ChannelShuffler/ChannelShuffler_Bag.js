@@ -27,7 +27,7 @@ class Bag extends MultiLayerMap.Base {
   /**
    *
    * @param {ShuffleInfo} this
-   * The object to be initialized.
+   *   The object to be initialized.
    *
    * @return {Bag}
    *   Return the this object.
