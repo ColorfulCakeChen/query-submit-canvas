@@ -54,7 +54,7 @@ class TwinArray extends Root {
 
   /**
    *
-   * @param {ShuffleInfo} this
+   * @param {TwinArray} this
    *   The object to be initialized.
    *
    * @return {TwinArray}
