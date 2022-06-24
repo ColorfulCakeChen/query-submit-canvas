@@ -27,15 +27,18 @@ class ChannelPartInfo {
   /**
    */
   constructor( inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough ) {
-    this.setAsConstructor( inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough );
+    ChannelPartInfo.setAsConstructor.call( this, inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough );
   }
 
   /**
    *
+   * @param {ChannelPartInfo} this
+   *   The object to be initialized.
+   *
    * @return {ChannelPartInfo}
    *   Return the this object.
    */
-  setAsConstructor( inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough ) {
+  static setAsConstructor( inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough ) {
     this.inChannelBegin = inChannelBegin;
     this.inChannelEnd = inChannelEnd;    
     this.outputChannelCount = outputChannelCount;
@@ -44,10 +47,21 @@ class ChannelPartInfo {
   }
 
   /**
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
+    this.bPassThrough = undefined;
+    this.outputChannelCount = undefined;
+    this.inChannelEnd = undefined;    
+    this.inChannelBegin = undefined;
+    //super.disposeResources();
+  }
+
+  /**
    * After calling this method, this object should be viewed as disposed and should not be operated again.
    */
   disposeResources_and_recycleToPool() {
-    //this.disposeResources();
+    this.disposeResources();
     ChannelPartInfoPool.Singleton.recycle( this );
   }
 
@@ -91,19 +105,30 @@ class FiltersBiasesPartInfo {
 
   /**
    *
+   * @param {FiltersBiasesPartInfo} this
+   *   The object to be initialized.
+   *
    * @return {FiltersBiasesPartInfo}
    *   Return the this object.
    */
-  setAsConstructor( aChannelPartInfoArray ) {
+  static setAsConstructor( aChannelPartInfoArray ) {
     this.aChannelPartInfoArray = aChannelPartInfoArray;
     return this;
+  }
+
+  /**
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
+    this.aChannelPartInfoArray = null; // Because the array is not created by this FiltersBiasesPartInfo, do not recyclye it here.
+    //super.disposeResources();
   }
 
   /**
    * After calling this method, this object should be viewed as disposed and should not be operated again.
    */
   disposeResources_and_recycleToPool() {
-    //this.disposeResources();
+    this.disposeResources();
     FiltersBiasesPartInfoPool.Singleton.recycle( this );
   }
 
