@@ -87,7 +87,7 @@ class Pointwise extends ConvBiasActivation {
 class PointwisePool extends Pool.Root {
 
   constructor() {
-    super( Pointwise, PointwisePool.setAsConstructor );
+    super( "BoundsArraySet.PointwisePool", Pointwise, PointwisePool.setAsConstructor );
   }
 
   /**
