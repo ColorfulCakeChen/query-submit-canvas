@@ -170,10 +170,10 @@ class ConcatShuffleSplit extends Root {
   static adjust_pfn() {
     if ( this.bShouldShuffleSplit ) {
 
-      tf.util.assert( ( this.channelShuffler instanceof ChannelShuffler.ConcatPointwiseConv ),
-        `Operation.ConcatShuffleSplit.adjust_pfn(): `
+      if ( !( this.channelShuffler instanceof ChannelShuffler.ConcatPointwiseConv ) )
+        throw Error( `Operation.ConcatShuffleSplit.adjust_pfn(): `
           + `channelShuffler must be an instance of class ChannelShuffler.ConcatPointwiseConv.`
-      );
+        );
 
       this.pfnShuffleSplit = ConcatShuffleSplit.ShuffleSplit_do; // Want and could do channel shuffling and splitting.
     } else {
@@ -218,11 +218,11 @@ class ConcatShuffleSplit extends Root {
 
       if ( this.bShouldShuffleSplit ) { // Want and could do channel shuffling and splitting.
 
-        tf.util.assert( ( this.channelShuffler.outputGroupCount == 2 ),
-          `Operation.ConcatShuffleSplit.setup_BoundsArraySet(): `
+        if ( this.channelShuffler.outputGroupCount != 2 )
+          throw Error( `Operation.ConcatShuffleSplit.setup_BoundsArraySet(): `
             + `channelShuffler.outputGroupCount ( ${this.channelShuffler.outputGroupCount} ) must be 2 `
             + `( other outputGroupCount does not supperted ).`
-        );
+          );
 
         // Shuffled value bounds array set.
         let shuffledBoundsArraySet;
@@ -265,10 +265,10 @@ class ConcatShuffleSplit extends Root {
       if ( this.input1.height != undefined ) {
 
         // If both inputs' height are known, they should be the same.
-        tf.util.assert( ( this.input0.height == this.input1.height ),
-          `Operation.ConcatShuffleSplit.setup_outputs_TensorPlaceholder(): `
+        if ( this.input0.height != this.input1.height )
+          throw Error( `Operation.ConcatShuffleSplit.setup_outputs_TensorPlaceholder(): `
             + `input0.height ( ${this.input0.height} ) and input1.height ( ${this.input1.height} ) should be the same.`
-        );
+          );
 
         this.output0.height = this.input0.height;
       } else {
@@ -287,10 +287,10 @@ class ConcatShuffleSplit extends Root {
       if ( this.input1.width != undefined ) {
 
         // If both inputs' width are known, they should be the same.
-        tf.util.assert( ( this.input0.width == this.input1.width ),
-          `Operation.ConcatShuffleSplit.setup_outputs_TensorPlaceholder(): `
+        if ( this.input0.width != this.input1.width )
+          throw Error( `Operation.ConcatShuffleSplit.setup_outputs_TensorPlaceholder(): `
             + `input0.width ( ${this.input0.width} ) and input1.width ( ${this.input1.width} ) should be the same.`
-        );
+          );
 
         this.output0.width = this.input0.width;
       } else {
