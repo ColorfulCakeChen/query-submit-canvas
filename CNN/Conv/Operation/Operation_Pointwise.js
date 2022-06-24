@@ -53,22 +53,25 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
       inputTensorPlaceholder0.channelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
 
-    this.setAsConstructor(
+    Pointwise.setAsConstructor.call( this,
       inputTensorPlaceholder0,
       outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
   }
 
   /**
+   * @param {Pointwise} this
+   *   The object to be initialized.
+   *
    * @return {Pointwise}
    *   Return the this object.
    */
-  setAsConstructor(
+  static setAsConstructor(
     inputTensorPlaceholder0,
     outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
-    super.setAsConstructor(
+    super.setAsConstructor.call( this,
       inputTensorPlaceholder0, null, 1,
       inputTensorPlaceholder0.channelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
