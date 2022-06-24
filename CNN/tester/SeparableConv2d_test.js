@@ -44,62 +44,54 @@ function test() {
   .then(theEntities => {
     var entity = theEntities[ 0 ];
     var layer = entity[ 0 ];
-    tf.util.assert(
-      layer.params.filterHeight == intParams[0],
-      `layer.params.filterHeight ${layer.params.filterHeight} != ${intParams[0]}`);
+    if ( layer.params.filterHeight != intParams[0] )
+      throw Error( `layer.params.filterHeight ${layer.params.filterHeight} != ${intParams[0]}` );
 
-    tf.util.assert(
-      layer.params.filterWidth == intParams[1], `layer.params.filterWidth ${layer.params.filterWidth} != ${intParams[1]}`);
+    if ( layer.params.filterWidth != intParams[1] )
+      throw Error( `layer.params.filterWidth ${layer.params.filterWidth} != ${intParams[1]}` );
 
-    tf.util.assert(
-      layer.params.channelMultiplier == intParams[2], `layer.params.channelMultiplier ${layer.params.channelMultiplier} != ${intParams[2]}`);
+    if ( layer.params.channelMultiplier != intParams[2] )
+      throw Error( `layer.params.channelMultiplier ${layer.params.channelMultiplier} != ${intParams[2]}` );
 
-    tf.util.assert(
-      layer.params.dilationHeight == intParams[3], `layer.params.dilationHeight ${layer.params.dilationHeight} != ${intParams[3]}`);
+    if ( layer.params.dilationHeight != intParams[3] )
+      throw Error( `layer.params.dilationHeight ${layer.params.dilationHeight} != ${intParams[3]}` );
 
-    tf.util.assert(
-      layer.params.dilationWidth == intParams[4], `layer.params.dilationWidth ${layer.params.dilationWidth} != ${intParams[4]}`);
+    if ( layer.params.dilationWidth != intParams[4] )
+      throw Error( `layer.params.dilationWidth ${layer.params.dilationWidth} != ${intParams[4]}` );
 
-    tf.util.assert(
-      layer.params.outChannels == intParams[5], `layer.params.outChannels ${layer.params.outChannels} != ${intParams[5]}`);
+    if ( layer.params.outChannels != intParams[5] )
+      throw Error( `layer.params.outChannels ${layer.params.outChannels} != ${intParams[5]}` );
 
 
     var theDepthwiseShape = [intParams[0], intParams[1], inChannels, intParams[2]];
-    tf.util.assert(
-      tf.util.arraysEqual(layer.depthwise.shape, theDepthwiseShape),
-      `layer.depthwise.shape ${layer.depthwise.shape} != ${theDepthwiseShape}`);
+    if ( !tf.util.arraysEqual(layer.depthwise.shape, theDepthwiseShape) )
+      throw Error( `layer.depthwise.shape ${layer.depthwise.shape} != ${theDepthwiseShape}` );
 
-    tf.util.assert(
-      tf.util.arraysEqual(layer.depthwise.weights, intDepthwiseFilter),
-      `layer.depthwise.weights ${layer.depthwise.weights} != ${intDepthwiseFilter}`);
+    if ( !tf.util.arraysEqual(layer.depthwise.weights, intDepthwiseFilter) )
+      throw Error( `layer.depthwise.weights ${layer.depthwise.weights} != ${intDepthwiseFilter}` );
 
 
     var thePointwiseShape = [1, 1, inChannels * intParams[2], intParams[5]];
-    tf.util.assert(
-      tf.util.arraysEqual(layer.pointwise.shape, thePointwiseShape),
-      `layer.pointwise.shape ${layer.pointwise.shape} != ${thePointwiseShape}`);
+    if ( !tf.util.arraysEqual(layer.pointwise.shape, thePointwiseShape) )
+      throw Error(  `layer.pointwise.shape ${layer.pointwise.shape} != ${thePointwiseShape}` );
 
-    tf.util.assert(
-      tf.util.arraysEqual(layer.pointwise.weights, intPointwiseFilter),
-      `layer.pointwise.weights ${layer.pointwise.weights} != ${intPointwiseFilter}`);
+    if ( !tf.util.arraysEqual(layer.pointwise.weights, intPointwiseFilter) )
+      throw Error( `layer.pointwise.weights ${layer.pointwise.weights} != ${intPointwiseFilter}` );
 
 
     var theBiasShape = [1, 1, intParams[5]];
-    tf.util.assert(
-      tf.util.arraysEqual(layer.bias.shape, theBiasShape),
-      `layer.bias.shape ${layer.bias.shape} != ${theBiasShape}`);
+    if ( !tf.util.arraysEqual(layer.bias.shape, theBiasShape) )
+      throw Error(  `layer.bias.shape ${layer.bias.shape} != ${theBiasShape}` );
 
-    tf.util.assert(
-      tf.util.arraysEqual(layer.bias.weights, intBias),
-      `layer.bias.weights ${layer.bias.weights} != ${intBias}`);
+    if ( !tf.util.arraysEqual(layer.bias.weights, intBias) )
+      throw Error( `layer.bias.weights ${layer.bias.weights} != ${intBias}` );
   });
 
   {  // Test fixedParams.
     let intParams2 = intParams.map( v => v + 10 ); 
     let layerParams = new SeparableConv2d.Layer.Params( integerWeights, 0, intParams2, 0 );
-    tf.util.assert(
-      tf.util.arraysEqual(layerParams.weights, intParams2),
-      `layerParams.weights ${layerParams.weights} != ${intParams2}`);
+    if ( !tf.util.arraysEqual(layerParams.weights, intParams2) )
+      throw Error( `layerParams.weights ${layerParams.weights} != ${intParams2}` );
   }
 
   console.log("test() done.");
