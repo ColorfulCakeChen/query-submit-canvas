@@ -228,7 +228,8 @@ class RecycledObjects {
  *   The string name of this pool.
  *
  * @member {Class} objectClass
- *   The class for all newly created objects.
+ *   The class for all newly created objects. If the instance of this objectClass has a method .disposeResources(), it will be called
+ * when .sessionCall()'s ending (i.e. in .session_pop()) to release more resources.
  *
  * @member {function} pfn_SetAsConstructor_ReturnObject
  *   A function set contents like its constructor and return an object. Before .get_or_create_by() returns a recycled object,
@@ -420,15 +421,19 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     while ( this.issuedObjects.inSessionArray.length > 0 ) {
       let issuedObject = this.issuedObjects.inSessionArray_pop();
       if ( issuedObject == null )
-        continue; // The object has been recycled (before this session end).
+        continue; // 2.1 The object has been recycled (before this session end).
 
       if ( issuedObject == SESSION_BORDER_MARK )
-        break; // All objects of the last session have been popped.
+        break; // 2.2 All objects of the last session have been popped.
 
-      if ( this.sessionKeptObjectSet.has( issuedObject ) ) { // Found an object which should not be recycled.
+      if ( this.sessionKeptObjectSet.has( issuedObject ) ) { // 2.3 Found an object which should not be recycled.
         this.movingObjectArray.push( issuedObject ); // Collect it temporarily for moving it to parent session later.
-      } else {
-        this.recycle( issuedObject ); // Otherwise, recycle it.
+
+      } else { // 2.4 Otherwise, recycle it.
+        if ( issuedObject.disposeResources instanceof Function ) {
+          issuedObject.disposeResources(); // Dispose its resources before recycle it.
+        }
+        this.recycle( issuedObject );
       }
     }
 
