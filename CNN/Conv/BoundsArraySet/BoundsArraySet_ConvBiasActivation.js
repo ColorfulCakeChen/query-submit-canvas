@@ -368,7 +368,7 @@ class ConvBiasActivation extends InputsOutputs {
 class ConvBiasActivationPool extends Pool.Root {
 
   constructor() {
-    super( ConvBiasActivation, ConvBiasActivationPool.setAsConstructor );
+    super( "BoundsArraySet.ConvBiasActivationPool", ConvBiasActivation, ConvBiasActivationPool.setAsConstructor );
   }
 
   /**
