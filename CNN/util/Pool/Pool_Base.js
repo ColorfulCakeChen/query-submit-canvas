@@ -1,4 +1,12 @@
-export { Base, Root };
+export { All, Base, Root };
+
+/**
+ * Every instance of Pool.Base will automatically register itself in this list.
+ *
+ * This list will never be cleared.
+ */
+let All = [];
+
 
 /**
  * Collect all issued objects of Pool.Base.
@@ -218,6 +226,9 @@ class RecycledObjects {
 let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
   /**
+   * @param {string} poolName
+   *   The string name of this pool.
+   *
    * @param {Class} objectClass
    *   The class for all newly created objects.
    *
@@ -225,7 +236,10 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    *   A function set contents like its constructor and return an object. Before .get_or_create_by() returns a recycled object,
    * its .pfnSetAsConstructor() method will be called to re-initilaize it. Its return value will be the final returned object.
    */
-  constructor( objectClass, pfn_SetAsConstructor_ReturnObject ) {
+  constructor( poolName, objectClass, pfn_SetAsConstructor_ReturnObject ) {
+    All.push( this );
+
+    this.poolName = poolName;
     this.objectClass = objectClass;
     this.pfn_SetAsConstructor_ReturnObject = pfn_SetAsConstructor_ReturnObject;
 
