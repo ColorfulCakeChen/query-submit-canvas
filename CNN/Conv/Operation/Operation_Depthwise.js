@@ -65,7 +65,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
       bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf );
 
-    this.setAsConstructor(
+    Depthwise.setAsConstructor.call( this,
       inputTensorPlaceholder0,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
@@ -73,16 +73,19 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   }
 
   /**
+   * @param {Depthwise} this
+   *   The object to be initialized.
+   *
    * @return {Depthwise}
    *   Return the this object.
    */
-  setAsConstructor(
+  static setAsConstructor(
     inputTensorPlaceholder0,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent ) {
 
-    super.setAsConstructor(
+    super.setAsConstructor.call( this,
       inputTensorPlaceholder0, null, 1,
       inputTensorPlaceholder0.height, inputTensorPlaceholder0.width, inputTensorPlaceholder0.channelCount,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
