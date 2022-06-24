@@ -29,22 +29,25 @@ class Pointwise_ConstantWhenPassThrough extends Pointwise {
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
       nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
 
-    this.setAsConstructor(
+    Pointwise_ConstantWhenPassThrough.setAsConstructor.call( this,
       inputTensorPlaceholder0,
       outputChannelCount, bBias, nActivationId,
       nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
   }
 
   /**
+   * @param {Pointwise_ConstantWhenPassThrough} this
+   *   The object to be initialized.
+   *
    * @return {Pointwise_ConstantWhenPassThrough}
    *   Return the this object.
    */
-  setAsConstructor(
+  static setAsConstructor(
     inputTensorPlaceholder0,
     outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
-    super.setAsConstructor(
+    super.setAsConstructor.call( this,
       inputTensorPlaceholder0,
       outputChannelCount, bBias, nActivationId,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
