@@ -102,6 +102,7 @@ class SplitConcat {
 
     } finally {
       concatGather.disposeResources_and_recycleToPool(); // Always release the look up table (by tensor1d).
+      concatGather = null;
     }
 
     this.splitConcat = this.splitConcat_loop;
