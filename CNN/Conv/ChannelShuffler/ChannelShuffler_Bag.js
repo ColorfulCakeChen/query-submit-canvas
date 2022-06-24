@@ -63,14 +63,17 @@ class Bag extends MultiLayerMap.Base {
    *   A shared channel shuffler which could process the specific concatenatedShape and outputGroupCount.
    */
   getChannelShuffler_by( concatenatedHeight, concatenatedWidth, concatenatedDepth, outputGroupCount ) {
-    return this.get_or_create_by_arguments1_etc( ( concatenatedHeight, concatenatedWidth, concatenatedDepth, outputGroupCount ) => {
-        this.concatenatedShape[ 0 ] = concatenatedHeight;
-        this.concatenatedShape[ 1 ] = concatenatedWidth;
-        this.concatenatedShape[ 2 ] = concatenatedDepth;
-        let channelShuffler = channelShufflerPool.get_or_create_by( this.concatenatedShape, outputGroupCount );
-        return channelShuffler;
-      },
+    return this.get_or_create_by_arguments1_etc( Bag.create_by,
       concatenatedHeight, concatenatedWidth, concatenatedDepth, outputGroupCount );
+  }
+
+  /** */
+  static create_by( concatenatedHeight, concatenatedWidth, concatenatedDepth, outputGroupCount ) {
+    this.concatenatedShape[ 0 ] = concatenatedHeight;
+    this.concatenatedShape[ 1 ] = concatenatedWidth;
+    this.concatenatedShape[ 2 ] = concatenatedDepth;
+    let channelShuffler = channelShufflerPool.get_or_create_by( this.concatenatedShape, outputGroupCount );
+    return channelShuffler;
   }
 
   /** Release all channel shufflers and their tf.tensor. */
