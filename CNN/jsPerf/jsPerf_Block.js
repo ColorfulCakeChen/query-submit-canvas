@@ -618,7 +618,7 @@ class HeightWidthDepth {
           + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ) `
           + `` );
 
-      Pool_Asserter.assertAllPoolZero();
+      Pool_Asserter.assertAllPoolZero( "jsPerf_Block.testCorrectness()" );
     });
 
     try {
