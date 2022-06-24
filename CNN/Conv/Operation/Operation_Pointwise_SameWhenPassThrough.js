@@ -71,7 +71,8 @@ class Pointwise_SameWhenPassThrough extends Pointwise {
 class Pointwise_SameWhenPassThroughPool extends Pool.Root {
 
   constructor() {
-    super( Pointwise_SameWhenPassThrough, Pointwise_SameWhenPassThrough.setAsConstructor );
+    super( "Operation.Pointwise_SameWhenPassThroughPool",
+      Pointwise_SameWhenPassThrough, Pointwise_SameWhenPassThrough.setAsConstructor );
   }
 
 }
