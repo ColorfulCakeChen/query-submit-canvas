@@ -98,22 +98,19 @@ class ConcatPointwiseConv {
 
     let concatGather = ConcatGatherPool.Singleton.get_or_create_by( concatenatedShape, outputGroupCount );
 
-    let filtersShape;
-    {
-      let filterHeight = 1; // Pointwise convolution is convolution 2d with 1 x 1 filter.
-      let filterWidth = 1;
-      let inDepth = concatGather.shuffleInfo.totalChannelCount;
-      let outDepth = concatGather.shuffleInfo.channelCountPerGroup;
+    const filterHeight = 1; // Pointwise convolution is convolution 2d with 1 x 1 filter.
+    const filterWidth = 1;
+    const inDepth = concatGather.shuffleInfo.totalChannelCount;
+    const outDepth = concatGather.shuffleInfo.channelCountPerGroup;
 
-      // Every filter is a tensor3d [ filterHeight, filterWidth, inDepth ].
-      // All filters composes a tensor4d [ filterHeight, filterWidth, inDepth, outDepth ];
-      //
-      filtersShape = Pool.Array.Singleton.get_or_create_by( 4 );
-      filtersShape[ 0 ] = [ filterHeight ];
-      filtersShape[ 1 ] = [ filterWidth ];
-      filtersShape[ 2 ] = [ inDepth ];
-      filtersShape[ 3 ] = [ outDepth ];
-    }
+    // Every filter is a tensor3d [ filterHeight, filterWidth, inDepth ].
+    // All filters composes a tensor4d [ filterHeight, filterWidth, inDepth, outDepth ];
+    //
+    let filtersShape = Pool.Array.Singleton.get_or_create_by( 4 );
+    filtersShape[ 0 ] = [ filterHeight ];
+    filtersShape[ 1 ] = [ filterWidth ];
+    filtersShape[ 2 ] = [ inDepth ];
+    filtersShape[ 3 ] = [ outDepth ];
 
     // Build 1x1 convolution filters for channel shuffling. (as an array of tf.tensor4d).
     try {
