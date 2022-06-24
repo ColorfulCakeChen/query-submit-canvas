@@ -21,18 +21,21 @@ class Bag extends MultiLayerMap.Base {
    */
   constructor( channelShufflerPool, ...restArgs ) {
     super( ...restArgs );
-    this.setAsConstructor( channelShufflerPool, ...restArgs );
+    Bag.setAsConstructor.call( this, channelShufflerPool, ...restArgs );
   }
 
   /**
    *
+   * @param {ShuffleInfo} this
+   * The object to be initialized.
+   *
    * @return {Bag}
    *   Return the this object.
    */
-  setAsConstructor( channelShufflerPool = ConcatPointwiseConvPool.Singleton, ...restArgs ) {
+  static setAsConstructor( channelShufflerPool = ConcatPointwiseConvPool.Singleton, ...restArgs ) {
 
     if ( super.setAsConstructor instanceof Function )
-      super.setAsConstructor( ...restArgs );
+      super.setAsConstructor.apply( this, restArgs );
 
     this.channelShufflerPool = channelShufflerPool;
 
