@@ -52,10 +52,13 @@ class ConcatGather {
    * @see ShuffleInfo
    */
   constructor( concatenatedShape, outputGroupCount ) {
-    this.setAsConstructor( concatenatedShape, outputGroupCount );
+    ConcatGather.setAsConstructor.call( this, concatenatedShape, outputGroupCount );
   }
 
   /**
+   *
+   * @param {ShuffleInfo} this
+   *   The object to be initialized.
    *
    * @param {number[]} concatenatedShape  Used to calculate shuffleInfo.
    * @param {number}   outputGroupCount   Used to calculate shuffleInfo.
@@ -66,7 +69,7 @@ class ConcatGather {
    *
    * @see ShuffleInfo
    */
-  setAsConstructor( concatenatedShape, outputGroupCount ) {
+  static setAsConstructor( concatenatedShape, outputGroupCount ) {
 
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
