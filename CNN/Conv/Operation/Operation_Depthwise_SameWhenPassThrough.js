@@ -31,7 +31,7 @@ class Depthwise_SameWhenPassThrough extends Depthwise {
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
       nHigherHalfDifferent );
 
-    this.setAsConstructor(
+    Depthwise_SameWhenPassThrough.setAsConstructor.call( this,
       inputTensorPlaceholder0,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId,
@@ -39,16 +39,19 @@ class Depthwise_SameWhenPassThrough extends Depthwise {
   }
 
   /**
+   * @param {Depthwise_SameWhenPassThrough} this
+   *   The object to be initialized.
+   *
    * @return {Depthwise_SameWhenPassThrough}
    *   Return the this object.
    */
-  setAsConstructor(
+  static setAsConstructor(
     inputTensorPlaceholder0,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId,
     nHigherHalfDifferent ) {
 
-    super.setAsConstructor(
+    super.setAsConstructor.call( this,
       inputTensorPlaceholder0,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId,
