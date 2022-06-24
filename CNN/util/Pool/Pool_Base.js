@@ -330,7 +330,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     tf.util.assert( ( objectToBeRecycled instanceof this.objectClass ),
       `Pool.Base.recycle() `
         + `The object to be recycled ( ${objectToBeRecycled} ) `
-        + `should not an instance of class ( ${this.objectClass} ).`
+        + `should be an instance of class ( ${this.objectClass} ).`
     );
 
     // 2. If the object is issued by this pool, it should be removed from issued object list. Otheriwse, the list will become larger
