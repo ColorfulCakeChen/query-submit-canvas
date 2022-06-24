@@ -776,7 +776,7 @@ class Base extends TestParams.Base {
             bSqueeze = true; bIntermediate = false; bExcitation = true; break;
 
           default:
-            tf.util.assert( false,
+            throw Error(
               `Block_TestParams.Base.generate_squeezeExcitation_filters_biases(): `
                 + `unknown nSqueezeExcitationChannelCountDivisor ( ${nSqueezeExcitationChannelCountDivisor} ) value.` );
             break;
@@ -1167,12 +1167,13 @@ class Base extends TestParams.Base {
           break;
 
         default:
-          tf.util.assert( channelShuffler != null, `Block_Reference.Base.calcResult(): `
-            + `Block.TestParams.Base.generate_Filters_Biases(): Unknown `
-            + `nConvBlockTypeId=`
-            + `${ValueDesc.ConvBlockType.Singleton.getStringOf( paramsAll.nConvBlockTypeId )}`
-            + `(${paramsAll.nConvBlockTypeId}). `
-            + `` );
+          if ( channelShuffler == null )
+            throw Error( `Block_Reference.Base.calcResult(): `
+              + `Block.TestParams.Base.generate_Filters_Biases(): Unknown `
+              + `nConvBlockTypeId=`
+              + `${ValueDesc.ConvBlockType.Singleton.getStringOf( paramsAll.nConvBlockTypeId )}`
+              + `(${paramsAll.nConvBlockTypeId}). `
+              + `` );
           break;
       }
     }
