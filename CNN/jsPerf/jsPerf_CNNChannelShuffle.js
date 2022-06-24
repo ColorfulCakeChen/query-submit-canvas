@@ -176,15 +176,17 @@ class HeightWidthDepthGroup {
   // Testing whether the results of different implementation are the same.
   testResultSame() {
     tf.tidy( () => {
-      // Test memory leakage of channel shufflers.
-      let memoryInfoPre = tf.memory();
-      this.shufflers_init();
-      this.shufflers_release();
+
+      let memoryInfoPre = tf.memory(); // Test memory leakage of channel shufflers.
+      
+      Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_CNNChannelShuffle.testResultSame()", () => {
+        this.shufflers_init();
+        this.shufflers_release();
+      } );
+
       let memoryInfo = tf.memory();
 
       tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors, `Channel shufflers memory leak.`);
-
-      Pool_Asserter.assertAllPoolZero( "jsPerf_CNNChannelShuffle.testResultSame()" );
     });
 
     this.shufflers_init();  // (Should outside tidy() for preventing from tensors being disposed.
