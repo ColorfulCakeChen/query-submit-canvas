@@ -170,8 +170,8 @@ class ShuffleInfo {
     this.reshapeTransposeReshapeSplit = null;
     this.reshapeTransposeReshape = null;
 
-    this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
+    this.tensorWeightCountExtracted = 0;
 
     Pool.Array.Singleton.recycle( this.transposePermutation );
     this.transposePermutation = null;
