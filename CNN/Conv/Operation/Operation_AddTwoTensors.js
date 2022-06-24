@@ -234,21 +234,8 @@ class AddTwoTensors extends Root {
 class AddTwoTensorsPool extends Pool.Root {
 
   constructor() {
-    super( AddTwoTensors, AddTwoTensors.setAsConstructor );
+    super( "Operation.AddTwoTensorsPool", AddTwoTensors, AddTwoTensors.setAsConstructor );
   }
-
-//!!! (2022/06/22 Remarked) AddTwoTensors.setAsConstructor() should be enough.
-//   /**
-//    * @param {AddTwoTensors} this
-//    *   The Operation.AddTwoTensors object to be initialized.
-//    *
-//    * @return {AddTwoTensors}
-//    *   Return the this object.
-//    */
-//   static setAsConstructor() {
-//     this.setAsConstructor();
-//     return this;
-//   }
 
 }
 
