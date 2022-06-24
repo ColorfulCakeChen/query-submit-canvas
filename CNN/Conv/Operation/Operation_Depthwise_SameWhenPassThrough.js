@@ -76,7 +76,8 @@ class Depthwise_SameWhenPassThrough extends Depthwise {
 class Depthwise_SameWhenPassThroughPool extends Pool.Root {
 
   constructor() {
-    super( Depthwise_SameWhenPassThrough, Depthwise_SameWhenPassThrough.setAsConstructor );
+    super( "Operation.Depthwise_SameWhenPassThroughPool",
+      Depthwise_SameWhenPassThrough, Depthwise_SameWhenPassThrough.setAsConstructor );
   }
 
 }
