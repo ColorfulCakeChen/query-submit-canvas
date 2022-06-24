@@ -43,13 +43,13 @@ import * as Pool from "../../util/Pool.js";
  * transposePermutation (so that they are shuffled).
  *
  *
- * @member {number} tensorWeightCountTotal
- *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
- * weights, if they are used in tensors.
- *
  * @member {number} tensorWeightCountExtracted
  *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
  * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+ *
+ * @member {number} tensorWeightCountTotal
+ *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
+ * weights, if they are used in tensors.
  *
  *
  * @member {function} reshapeTransposeReshape
