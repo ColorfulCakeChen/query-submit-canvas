@@ -21,7 +21,7 @@ import { Root } from "./Pool_Base.js";
 class Float32ArrayPool extends Root {
   
   constructor() {
-    super( Float32Array, Float32ArrayPool.setAsConstructor_by_length );
+    super( "Pool.Float32Array", Float32Array, Float32ArrayPool.setAsConstructor_by_length );
   }
 
   /**
