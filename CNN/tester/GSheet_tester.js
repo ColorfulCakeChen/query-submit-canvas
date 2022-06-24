@@ -47,9 +47,8 @@ async function* tester( progressParent ) {
 
   // Compare results: should the same.
   {
-    tf.util.assert(
-      result1.toString() == result2.toString(),
-        ` ${result1} != ${result2}`);
+    if ( result1.toString() != result2.toString() )
+      throw Error( ` ${result1} != ${result2}` );
   }
 
   console.log("GSheet download testing... Done.");
