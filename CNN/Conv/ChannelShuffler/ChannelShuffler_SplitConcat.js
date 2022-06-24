@@ -90,7 +90,7 @@ class SplitConcat {
       }
 
       this.shuffleInfo = concatGather.shuffleInfo; // Need the shuffle info.
-      concatGather.shuffleInfo = null; // (Because transferred.)
+      concatGather.shuffleInfo = null; // (Because ownership has been transferred.)
 
       // Shared pre-allocate memory could speed up the process of splitting.
       this.singleChannelTensorArray = Pool.Array.Singleton.get_or_create_by( this.shuffleInfo.totalChannelCount );
