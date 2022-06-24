@@ -35,19 +35,22 @@ class ConcatAlongAxisId2 extends Root {
 
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
 
-    this.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
+    ConcatAlongAxisId2.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
   }
 
   /**
+   * @param {ConcatAlongAxisId2} this
+   *   The object to be initialized.
+   *
    * @return {ConcatAlongAxisId2}
    *   Return the this object.
    */
-  setAsConstructor(
+  static setAsConstructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
-    super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+    super.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
 
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
