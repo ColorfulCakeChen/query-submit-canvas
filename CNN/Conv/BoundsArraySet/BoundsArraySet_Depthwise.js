@@ -96,7 +96,7 @@ class Depthwise extends ConvBiasActivation {
 class DepthwisePool extends Pool.Root {
 
   constructor() {
-    super( Depthwise, DepthwisePool.setAsConstructor );
+    super( "BoundsArraySet.DepthwisePool", Depthwise, DepthwisePool.setAsConstructor );
   }
 
   /**
