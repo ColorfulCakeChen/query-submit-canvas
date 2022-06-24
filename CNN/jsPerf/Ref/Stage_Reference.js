@@ -100,17 +100,17 @@ class Base {
       let outputTensor3d = stage.apply( inputTensor3d );
       let memoryInfo_apply_after = tf.memory();
 
-      tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
-        `Stage.apply() memory leak. `
+      if ( memoryInfo_apply_after.numTensors != ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) )
+        throw Error( `Stage.apply() memory leak. `
           + `result tensor count (${memoryInfo_apply_after.numTensors}) `
           + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
           + `${strNote}` );
 
-      tf.util.assert( inputTensor3d,
-        `Stage inputTensor3d should not be null. ${strNote}`); // But may be disposed.
+      if ( !inputTensor3d )
+        throw Error( `Stage inputTensor3d should not be null. ${strNote}` ); // But may be disposed.
 
-      tf.util.assert( outputTensor3d,
-        `Stage outputTensor3d should not be null. ${strNote}`);
+      if ( !outputTensor3d )
+        throw Error( `Stage outputTensor3d should not be null. ${strNote}` );
 
       { // Test output channel count.
         const CHANNEL_AXIS_ID = 2; // Axis id 2 is depth (i.e. channel) dimension.
@@ -132,8 +132,8 @@ class Base {
       stage.disposeTensors();
       let memoryInfo_afterDispose = tf.memory();
 
-      tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
-        `Stage create/dispose memory leak. `
+      if ( memoryInfo_afterDispose.numTensors != ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) )
+        throw Error(  `Stage create/dispose memory leak. `
           + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
           + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
           + `${strNote}` );
@@ -217,19 +217,20 @@ class Base {
 
     let parametersDescription = `( ${stage.parametersDescription} )`;
 
-    tf.util.assert( ( stage.bInitOk == bInitOk ),
-      `Stage validation state (${stage.bInitOk}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
+    if ( stage.bInitOk != bInitOk ),
+      throw Error( `Stage validation state (${stage.bInitOk}) mismatches initer's result (${bInitOk}). ${parametersDescription}` );
 
     if ( !bInitOk ) { //!!! For Debug.
       console.log( "testParams =", testParams );
       debugger;
     }
 
-    tf.util.assert( ( true == bInitOk ),
-      `Failed to initialize stage object. ${parametersDescription}`);
+    if ( false == bInitOk )
+      throw Error(  `Failed to initialize stage object. ${parametersDescription}` );
 
-    tf.util.assert( ( 100 == progress.valuePercentage ),
-      `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${parametersDescription}`);
+    if ( 100 != progress.valuePercentage )
+      throw Error( 
+        `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${parametersDescription}`);
 
     if ( stage.byteOffsetEnd != testParams.in.inputFloat32Array.byteLength ) { //!!! For Debug. (parsing ending position)
       debugger;
@@ -291,8 +292,8 @@ class Base {
 
   /** */
   static AssertTwoEqualValues( valueName, value1, value2, parametersDescription ) {
-    tf.util.assert( ( value1 == value2 ),
-      `Stage ${valueName} (${value1}) should be (${value2}). ${parametersDescription}`);
+    if ( value1 != value2 )
+      throw Error(  `Stage ${valueName} (${value1}) should be (${value2}). ${parametersDescription}` );
   }
 
   /**
@@ -319,11 +320,11 @@ class Base {
 
     let blockCount = blockParamsArray.length;
 
-    tf.util.assert( ( blockCount > 0 ),
-      `Stage blockCount (${blockCount}) should be larger than 0. ${parametersDescription}`);
+    if ( blockCount <= 0 )
+      throw Error( `Stage blockCount (${blockCount}) should be larger than 0. ${parametersDescription}` );
 
-    tf.util.assert( ( blockCount >= 2 ),
-      `Stage blockCount (${blockCount}) should be >= 2. ${parametersDescription}`);
+    if ( blockCount < 2 ),
+      throw Error( `Stage blockCount (${blockCount}) should be >= 2. ${parametersDescription}` );
 
     let blockName, blockParams, pointwise1ChannelCount;
     for ( let blockIndex = 0; blockIndex < blockCount; ++blockIndex ) {
@@ -373,7 +374,7 @@ class Base {
             asserter.propertyValue( "channelCount0_pointwise1Before", double_Block0Input0ChannelCount );
             break;
 
-          default: tf.util.assert( false, strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageType ); break;
         }
       }
 
@@ -403,7 +404,7 @@ class Base {
               ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 );
             break;
 
-          default: tf.util.assert( false, strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageType ); break;
         }
 
       } else { // block1, 2, 3, ...
@@ -434,7 +435,7 @@ class Base {
               ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH );
             break;
 
-          default: tf.util.assert( false, strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageType ); break;
         }
       }
 
@@ -482,7 +483,7 @@ class Base {
             }
             break;
 
-          default: tf.util.assert( false, strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageType ); break;
         }
 
       } else { // block1, 2, 3, ...
@@ -507,7 +508,7 @@ class Base {
               asserter.propertyValue( "pointwise1ChannelCount", quadruple_Block0Input0ChannelCount );
             break;
 
-          default: tf.util.assert( false, strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageType ); break;
         }
       }
 
@@ -549,7 +550,7 @@ class Base {
             asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
-          default: tf.util.assert( false, strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageType ); break;
         }
 
       } else { // block1, 2, 3, ...
@@ -571,7 +572,7 @@ class Base {
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
-          default: tf.util.assert( false, strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageType ); break;
         }
       }
 
@@ -592,7 +593,7 @@ class Base {
             asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID );
             break;
 
-          default: tf.util.assert( false, strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageType ); break;
         }
 
       } else { // block1, 2, 3, ...
@@ -611,7 +612,7 @@ class Base {
             asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID );
             break;
 
-          default: tf.util.assert( false, strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageType ); break;
         }
       }
 
@@ -642,7 +643,7 @@ class Base {
             asserter.propertyValue( "pointwise22ChannelCount", single_Block0Input0ChannelCount );
             break;
 
-          default: tf.util.assert( false, strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageType ); break;
         }
       }
 
@@ -684,7 +685,7 @@ class Base {
             asserter.propertyValue( "bOutput1Requested", true );
             break;
 
-          default: tf.util.assert( false, strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageType ); break;
         }
 
       } else { // blockLast
@@ -710,7 +711,7 @@ class Base {
             asserter.propertyValue( "outChannels1", single_Block0Input0ChannelCount );
             break;
 
-          default: tf.util.assert( false, strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageType ); break;
         }
 
       } else { // blockLast
