@@ -561,13 +561,14 @@ class Params extends Weights.Params {
           this.input1_width = 0;
           this.input1_channelCount = 0;
 
-          tf.util.assert( ( this.inputTensorCount <= 1 ),
-            `Block.Params.set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by(): `
+          if ( this.inputTensorCount > 1 )
+            throw Error(
+              `Block.Params.set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by(): `
               + `When ( nConvBlockTypeId == `
               + `${ValueDesc.ConvBlockType.Singleton.getStringOf( nConvBlockTypeId )}`
               + `(${nConvBlockTypeId}) ), `
               + `input tensor count ( ${this.inputTensorCount} ) should be one.`
-          );
+            );
           break;
       }
     }
