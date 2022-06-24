@@ -9,10 +9,9 @@ import { ConcatGather as ChannelShuffler_ConcatGather } from "../ChannelShuffler
  */
 class ConcatGather extends ChannelShuffler_ConcatGather {
 
-  init( concatenatedShape, outputGroupCount ) {
-    return super.init( concatenatedShape, outputGroupCount );
+  constructor( concatenatedShape, outputGroupCount ) {
+    super( concatenatedShape, outputGroupCount );
   }
-
 
   gather_map( concatenatedTensor ) {
     // shuffle and split by gather (one operation achieves two operations).
