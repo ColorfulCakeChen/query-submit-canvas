@@ -17,7 +17,8 @@ class Base {
     let thisValue = this[ strThisPropertyName ][ strThisPropertyPropertyName ];
 
 //!!! (2021/12/31 Remarked)
-//     tf.util.assert( thisValue == rhsValue, `jsPerf_FloatValue_ScaleTranslate.testCorrectness(): `
+//     if ( thisValue != rhsValue )
+//       throw Error( `jsPerf_FloatValue_ScaleTranslate.testCorrectness(): `
 //       + `this.${strThisPropertyName}.${strThisPropertyPropertyName} ( ${thisValue} ) should be ( ${rhsValue} ).` );
 
     this.asserter_Equal.assert_Number_Number( thisValue, rhsValue,
