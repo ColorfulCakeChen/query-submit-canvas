@@ -419,21 +419,8 @@ class TwinArray extends Root {
 class TwinArrayPool extends Pool.Root {
 
   constructor() {
-    super( TwinArray, TwinArray.setAsConstructor );
+    super( "Operation.TwinArrayPool", TwinArray, TwinArray.setAsConstructor );
   }
-
-//!!! (2022/06/22 Remarked) TwinArray.setAsConstructor() should be enough.
-//   /**
-//    * @param {TwinArray} this
-//    *   The Operation.TwinArray object to be initialized.
-//    *
-//    * @return {TwinArray}
-//    *   Return the this object.
-//    */
-//   static setAsConstructor() {
-//     this.setAsConstructor();
-//     return this;
-//   }
 
 }
 
