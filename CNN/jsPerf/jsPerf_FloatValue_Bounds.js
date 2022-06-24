@@ -57,11 +57,12 @@ class Case {
 
       let clampedValue = this.aBounds.clamp_or_zeroIfNaN( randValue );
 
-      tf.util.assert( ( Number.isNaN( clampedValue ) == false ), `jsPerf_FloatValue_Bounds.Cases().one_clamp_or_zeroIfNaN(): `
-        + `clamp ( ${randValue} ) got ( ${clampedValue} ) should never be NaN.` );
+      if ( Number.isNaN( clampedValue ) == true )
+        throw Error( `jsPerf_FloatValue_Bounds.Cases().one_clamp_or_zeroIfNaN(): `
+          + `clamp ( ${randValue} ) got ( ${clampedValue} ) should never be NaN.` );
 
-      tf.util.assert( ( clampedValue >= this.aBounds.lower ) && ( clampedValue <= this.aBounds.upper ),
-        `jsPerf_FloatValue_Bounds.Cases().one_clamp_or_zeroIfNaN(): `
+      if ( ( clampedValue < this.aBounds.lower ) || ( clampedValue > this.aBounds.upper ) )
+        throw Error( `jsPerf_FloatValue_Bounds.Cases().one_clamp_or_zeroIfNaN(): `
           + `clamp ( ${randValue} ) got ( ${clampedValue} ) should between `
           + `[ ${this.aBounds.lower}, ${this.aBounds.upper} ].` );
     }
@@ -83,9 +84,10 @@ class Case {
 
   assert_lower_or_upper( strBoundsTestName, lower_or_upper_name, rhsArrayValue ) {
     let thisValue = this[ strBoundsTestName ][ lower_or_upper_name ];
-    tf.util.assert( thisValue == rhsArrayValue, `jsPerf_FloatValue_Bounds.testCorrectness(): `
-      + `Case( caseId = ${this.caseId} ).${strBoundsTestName}.${lower_or_upper_name} `
-      + `( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
+    if ( thisValue != rhsArrayValue )
+      throw Error( `jsPerf_FloatValue_Bounds.testCorrectness(): `
+        + `Case( caseId = ${this.caseId} ).${strBoundsTestName}.${lower_or_upper_name} `
+        + `( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
   }
 }
 
@@ -462,8 +464,9 @@ class Cases {
         let lhsValue = this.aBoundsArray.one_clamp_or_zeroIfNaN( i, randValue );
         let rhsValue = tBounds.set_byLowersUppers( this.aLowers, this.aUppers, i ).clamp_or_zeroIfNaN( randValue );
 
-        tf.util.assert( lhsValue == rhsValue, `jsPerf_FloatValue_Bounds.Cases().one_clamp_or_zeroIfNaN(): `
-          + `lhsValue ( ${lhsValue} ) should be rhsValue ( ${rhsValue} ).` );
+        if ( lhsValue != rhsValue )
+          throw Error( `jsPerf_FloatValue_Bounds.Cases().one_clamp_or_zeroIfNaN(): `
+            + `lhsValue ( ${lhsValue} ) should be rhsValue ( ${rhsValue} ).` );
       }
     }
   }
@@ -490,9 +493,10 @@ class Cases {
 
   assert_lowers_or_uppers( strBoundsArrayTestName, lowers_or_uppers_name, lhsArrayIndex, rhsArrayValue ) {
     let thisValue = this[ strBoundsArrayTestName ][ lowers_or_uppers_name ][ lhsArrayIndex ];
-    tf.util.assert( thisValue == rhsArrayValue, `jsPerf_FloatValue_Bounds.testCorrectness(): `
-      + `Cases( casesId = ${this.casesId} ).${strBoundsArrayTestName}.${lowers_or_uppers_name}[ ${lhsArrayIndex} ] `
-      + `( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
+    if ( thisValue != rhsArrayValue )
+      throw Error( `jsPerf_FloatValue_Bounds.testCorrectness(): `
+        + `Cases( casesId = ${this.casesId} ).${strBoundsArrayTestName}.${lowers_or_uppers_name}[ ${lhsArrayIndex} ] `
+        + `( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
   }
 
 }
