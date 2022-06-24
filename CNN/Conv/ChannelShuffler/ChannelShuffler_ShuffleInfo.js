@@ -148,8 +148,8 @@ class ShuffleInfo {
       transposePermutation[ transposePermutation.length - 1 ] = last2;
     }
 
-    this.tensorWeightCountTotal = 0;
     this.tensorWeightCountExtracted = 0;
+    this.tensorWeightCountTotal = 0;
 
     this.reshapeTransposeReshape = this.reshapeTransposeReshape_dispose_finally_calls;
     this.reshapeTransposeReshapeSplit = this.reshapeTransposeReshapeSplit_dispose_finally_calls;
