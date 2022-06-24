@@ -57,8 +57,8 @@ class ShuffleNetV2 extends Base {
 
     // ShuffleNetV2_Xxx must have at least 2 blocks because PointDepthPoint can not achieve the head/body/tail of
     // ShuffleNetV2 at the same time.
-    tf.util.assert( this.blockCount >= 2,
-      `Stage.BlockParamsCreator.ShuffleNetV2.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(): `
+    if ( this.blockCount < 2 )
+      throw Error( `Stage.BlockParamsCreator.ShuffleNetV2.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(): `
         + `blockCount ( ${this.blockCount} ) must be at least 2 in ShuffleNetV2_Xxx.` );
   }
 
