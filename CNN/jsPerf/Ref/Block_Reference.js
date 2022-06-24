@@ -1,8 +1,8 @@
 export { Base };
 
-import * as TensorTools from "../../util/TensorTools.js";
 import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
-import * as ValueMax from "../../ValueMax.js";
+import * as TensorTools from "../../util/TensorTools.js";
+import * as ValueMax from "../../util/ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ActivationEscaping from "../../Conv/ActivationEscaping.js";
