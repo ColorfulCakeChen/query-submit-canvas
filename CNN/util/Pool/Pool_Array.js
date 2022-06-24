@@ -9,7 +9,7 @@ import { Root } from "./Pool_Base.js";
 class ArrayPool extends Root {
   
   constructor() {
-    super( Array, ArrayPool.setAsConstructor_by_length );
+    super( "Pool.Array", Array, ArrayPool.setAsConstructor_by_length );
   }
 
   /**
