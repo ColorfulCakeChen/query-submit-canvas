@@ -69,7 +69,7 @@ class ChannelPartInfo {
 class ChannelPartInfoPool extends Pool.Root {
 
   constructor() {
-    super( ChannelPartInfo, ChannelPartInfo.setAsConstructor );
+    super( "Depthwise.ChannelPartInfoPool", ChannelPartInfo, ChannelPartInfo.setAsConstructor );
   }
 
 }
@@ -125,7 +125,7 @@ class FiltersBiasesPartInfo {
 class FiltersBiasesPartInfoPool extends Pool.Root {
 
   constructor() {
-    super( FiltersBiasesPartInfo, FiltersBiasesPartInfo.setAsConstructor );
+    super( "Depthwise.FiltersBiasesPartInfoPool", FiltersBiasesPartInfo, FiltersBiasesPartInfo.setAsConstructor );
   }
 
 }
