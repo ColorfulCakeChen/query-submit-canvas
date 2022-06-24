@@ -1,7 +1,7 @@
 export { assertAllPoolZero };
 
-import * as ValueMax from "../../ValueMax.js";
 import * as Pool from "../../util/Pool.js";
+import * as ValueMax from "../../util/ValueMax.js";
 import * as TensorPlaceholder from "../../Conv/TensorPlaceholder.js";
 import * as ActivationEscaping from "../../Conv/ActivationEscaping.js";
 import * as BoundsArraySet from "../../Conv/BoundsArraySet.js";
