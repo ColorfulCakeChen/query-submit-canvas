@@ -93,7 +93,7 @@ class IssuedObjects {
       this.toInSessionArrayIndexMap.delete( object );
 
     } else { // 3. The object is not belong to any session.
-      this.notInSessionSet.delete( arrayIndex );
+      this.notInSessionSet.delete( object );
       this.toInSessionArrayIndexMap.delete( object );
     }
     return true;
