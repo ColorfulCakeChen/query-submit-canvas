@@ -29,22 +29,25 @@ class Pointwise_SameWhenPassThrough extends Pointwise {
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
       nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
 
-    this.setAsConstructor(
+    Pointwise_SameWhenPassThrough.setAsConstructor.call( this,
       inputTensorPlaceholder0,
       outputChannelCount, bBias, nActivationId,
       nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
   }
 
   /**
+   * @param {Pointwise_SameWhenPassThrough} this
+   *   The object to be initialized.
+   *
    * @return {Pointwise_SameWhenPassThrough}
    *   Return the this object.
    */
-  setAsConstructor(
+  static setAsConstructor(
     inputTensorPlaceholder0,
     outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
-    super.setAsConstructor(
+    super.setAsConstructor.call( this,
       inputTensorPlaceholder0,
       outputChannelCount, bBias, nActivationId,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
