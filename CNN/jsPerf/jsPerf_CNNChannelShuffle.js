@@ -186,7 +186,8 @@ class HeightWidthDepthGroup {
 
       let memoryInfo = tf.memory();
 
-      tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors, `Channel shufflers memory leak.`);
+      if ( memoryInfoPre.numTensors != memoryInfo.numTensors )
+        throw Error( `Channel shufflers memory leak.` );
     });
 
     this.shufflers_init();  // (Should outside tidy() for preventing from tensors being disposed.
@@ -196,19 +197,23 @@ class HeightWidthDepthGroup {
 
       let t1Array = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
       let memoryInfo1 = tf.memory();
-      tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + t1Array.length ), `ConcatReshapeTransposeReshapeSplit() memory leak`);
+      if ( memoryInfo1.numTensors != ( memoryInfo0.numTensors + t1Array.length ) )
+        throw Error( `ConcatReshapeTransposeReshapeSplit() memory leak` );
 
       let t2Array = this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
       let memoryInfo2 = tf.memory();
-      tf.util.assert( memoryInfo2.numTensors == ( memoryInfo1.numTensors + t2Array.length ), `ConcatGatherUnsorted() memory leak`);
+      if ( memoryInfo2.numTensors != ( memoryInfo1.numTensors + t2Array.length ) )
+        throw Error( `ConcatGatherUnsorted() memory leak` );
 
       let t3Array = this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
       let memoryInfo3 = tf.memory();
-      tf.util.assert( memoryInfo3.numTensors == ( memoryInfo2.numTensors + t3Array.length ), `SplitConcatSortedShared() memory leak`);
+      if ( memoryInfo3.numTensors != ( memoryInfo2.numTensors + t3Array.length ) )
+        throw Error( `SplitConcatSortedShared() memory leak` );
 
       let t4Array = this.concatPointwiseConv.concatGather( this.dataTensor3dArray );
       let memoryInfo4 = tf.memory();
-      tf.util.assert( memoryInfo4.numTensors == ( memoryInfo3.numTensors + t4Array.length ), `PointwiseConv() memory leak`);
+      if ( memoryInfo4.numTensors != ( memoryInfo3.numTensors + t4Array.length ) )
+        throw Error( `PointwiseConv() memory leak` );
 
 //!!! (2021/10/11 Remarked)
 //       // Test reference shuffle-split.
@@ -235,14 +240,12 @@ class HeightWidthDepthGroup {
 //         }
 //       }
 
-      tf.util.assert(
-        TensorTools.Comparator.isTensorArrayEqual( t1Array, t2Array ),
-        `ConcatReshapeTransposeReshapeSplit() != ConcatGatherUnsorted()`);
+      if ( !TensorTools.Comparator.isTensorArrayEqual( t1Array, t2Array ) )
+        throw Error( `ConcatReshapeTransposeReshapeSplit() != ConcatGatherUnsorted()` );
 
 //!!! Sorted never equal to Unsorted. 
-//       tf.util.assert(
-//         ChannelShuffler.Layer.isTensorArrayEqual( t2Array, t3Array ),
-//         `ConcatGatherUnsorted() != SplitConcatSortedShared()`);
+//       if ( !ChannelShuffler.Layer.isTensorArrayEqual( t2Array, t3Array ) )
+//         throw Error( `ConcatGatherUnsorted() != SplitConcatSortedShared()` );
 
       // Because the sorted will never equal to unsorted, try to compare their sum.
       // (Using average may be have some floating-point error.)
@@ -253,14 +256,12 @@ class HeightWidthDepthGroup {
         let t2SumArray = t2Array.map( t => t.sum( lastAxisId ) );
         let t3SumArray = t3Array.map( t => t.sum( lastAxisId ) );
 
-        tf.util.assert(
-          TensorTools.Comparator.isTensorArrayEqual( t2SumArray, t3SumArray ),
-          `ConcatGatherUnsorted() != SplitConcatSortedShared()`);
+        if ( !TensorTools.Comparator.isTensorArrayEqual( t2SumArray, t3SumArray ) )
+          throw Error( `ConcatGatherUnsorted() != SplitConcatSortedShared()` );
       });
 
-      tf.util.assert(
-        TensorTools.Comparator.isTensorArrayEqual( t2Array, t4Array ),
-        `ConcatGatherUnsorted() != PointwiseConv()`);
+      if ( !TensorTools.Comparator.isTensorArrayEqual( t2Array, t4Array ) )
+        throw Error( `ConcatGatherUnsorted() != PointwiseConv()` );
     });
   }
 
@@ -348,12 +349,12 @@ class HeightWidthDepthGroup {
         let tArray = func.call( thisArg, this.dataTensor3dArray );
         let memoryInfo = tf.memory();
 
-        tf.util.assert( memoryInfo.numTensors == ( memoryInfoPrev.numTensors + tArray.length ), `${func.name}() memory leak`);
+        if ( memoryInfo.numTensors != ( memoryInfoPrev.numTensors + tArray.length ) )
+          throw Error( `${func.name}() memory leak` );
 
         if ( tArrayPrev ) {
-          tf.util.assert(
-            TensorTools.Comparator.isTensorArrayEqual( tArrayPrev, tArray ),
-            `${funcPrev.name}() != ${func.name}()`);
+          if ( !TensorTools.Comparator.isTensorArrayEqual( tArrayPrev, tArray ) )
+            throw Error( `${funcPrev.name}() != ${func.name}()` );
         }
 
         tf.dispose( tArrayPrev );
