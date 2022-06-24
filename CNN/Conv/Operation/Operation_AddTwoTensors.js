@@ -122,11 +122,11 @@ class AddTwoTensors extends Root {
   /** Create this.boundsArraySet. */
   static setup_BoundsArraySet( inputScaleBoundsArray0, inputScaleBoundsArray1 ) {
 
-    tf.util.assert( ( inputScaleBoundsArray0.channelCount == inputScaleBoundsArray1.channelCount ),
-      `AddTwoTensors.setup_BoundsArraySet(): `
+    if ( inputScaleBoundsArray0.channelCount != inputScaleBoundsArray1.channelCount )
+      throw Error( `AddTwoTensors.setup_BoundsArraySet(): `
         + `input0 channel count ( ${inputScaleBoundsArray0.channelCount} ) should be the same as `
         + `input1 channel count ( ${inputScaleBoundsArray1.channelCount} ).`
-    );
+      );
 
     this.boundsArraySet = BoundsArraySet.InputsOutputsPool.Singleton.get_or_create_by( inputScaleBoundsArray0, inputScaleBoundsArray1,
       inputScaleBoundsArray0.channelCount
@@ -164,7 +164,7 @@ class AddTwoTensors extends Root {
 
       // 1.4 Unsupported adding (height and width).
       } else {
-        tf.util.assert( false,
+        throw Error(
           `Operation.AddTwoTensors.setup_output0_TensorPlaceholder(): `
             + `input0 ( height, width ) = ( ${this.input0.height}, ${this.input0.width} ) and `
             + `input1 ( height, width ) = ( ${this.input1.height}, ${this.input1.width} ) `
@@ -199,7 +199,7 @@ class AddTwoTensors extends Root {
 
     // 2. Unsupported adding (different channel count).
     } else {
-      tf.util.assert( false,
+      throw Error(
         `Operation.AddTwoTensors.setup_output0_TensorPlaceholder(): `
           + `input0 channel count ( ${this.input0.channelCount} ) and `
           + `input1 channel count ( ${this.input1.channelCount} ) `
