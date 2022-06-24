@@ -2,6 +2,7 @@ export { init, testResultSame, testDifferentDisposeStrategy_All, disposeResource
 
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 import * as TensorTools from "../util/TensorTools.js";
+import * as Pool_Asserter from "./Ref/Pool_Asserter.js";
 //import * as PointDepthPoint_Reference from "../jsPerf/Ref/PointDepthPoint_Reference.js";
 
 /**
@@ -175,6 +176,8 @@ class HeightWidthDepthGroup {
       let memoryInfo = tf.memory();
 
       tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors, `Channel shufflers memory leak.`);
+
+      Pool_Asserter.assertAllPoolZero();
     });
 
     this.shufflers_init();  // (Should outside tidy() for preventing from tensors being disposed.
