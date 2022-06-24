@@ -618,21 +618,8 @@ class Root extends Base() {
 class RootPool extends Pool.Root {
 
   constructor() {
-    super( Root, Root.setAsConstructor );
+    super( "Operation.RootPool", Root, Root.setAsConstructor );
   }
-
-//!!! (2022/06/22 Remarked) Base.setAsConstructor() should be enough.
-//   /**
-//    * @param {Root} this
-//    *   The Operation.Root object to be initialized.
-//    *
-//    * @return {Root}
-//    *   Return the this object.
-//    */
-//   static setAsConstructor() {
-//     this.setAsConstructor();
-//     return this;
-//   }
 
 }
 
