@@ -426,6 +426,10 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    *   Whether the .input1's tensor should be destroyed by this operation. It is ignored if .input1 does not exist.
    */
   static setup_apply_dummy( bKeepInputTensor0, bKeepInputTensor1 ) {
+
+!!! ...unfinished... (2022/06/24)
+Do not use arrow function because they generate nre function object every time.
+
     if ( this.input0 ) {
       if ( this.input1 ) {
         if ( this.output0 ) {
