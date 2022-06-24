@@ -72,6 +72,6 @@ function assertPoolZero( prefixMsg, pool ) {
 function assertAllPoolZero( prefixMsg ) {
   for ( let i = 0; i < Pool.All.length; ++i ) {
     let pool = Pool.All[ i ];
-    assertPoolZero( pool );
+    assertPoolZero( prefixMsg, pool );
   }
 }
