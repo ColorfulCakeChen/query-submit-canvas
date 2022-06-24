@@ -73,19 +73,19 @@ class InputsOutputs {
    */
   set_input0_input1_outputChannelCount0_outputChannelCount1( input0, input1, outputChannelCount0, outputChannelCount1 ) {
 
-    tf.util.assert( ( input0 instanceof ActivationEscaping.ScaleBoundsArray ),
-      `BoundsArraySet.InputsOutputs.set_input0_input1_outputChannelCount0_outputChannelCount1(): `
+    if ( !( input0 instanceof ActivationEscaping.ScaleBoundsArray ) )
+      throw Error( `BoundsArraySet.InputsOutputs.set_input0_input1_outputChannelCount0_outputChannelCount1(): `
         + `input0 ( ${input0} ) must exist and be an instance of class ActivationEscaping.ScaleBoundsArray.`
-    );
+      );
 
     this.input0 = input0;
 
     if ( input1 ) {
 
-      tf.util.assert( ( input1 instanceof ActivationEscaping.ScaleBoundsArray ),
-        `BoundsArraySet.InputsOutputs.set_input0_input1_outputChannelCount0_outputChannelCount1(): `
+      if ( !( input1 instanceof ActivationEscaping.ScaleBoundsArray ) )
+        throw Error( `BoundsArraySet.InputsOutputs.set_input0_input1_outputChannelCount0_outputChannelCount1(): `
           + `input1 ( ${input1} ) must exist and be an instance of class ActivationEscaping.ScaleBoundsArray.`
-      );
+        );
 
       this.input1 = input1;
 
@@ -121,9 +121,8 @@ class InputsOutputs {
 
     } else { // ( outputChannelCount0 < 0 ), Illegal.
 
-      tf.util.assert( ( ( outputChannelCount0 < 0 ) && ( outputChannelCount1 <= 0 ) ),
-        `BoundsArraySet.InputsOutputs.constructor(): `
-          + `outputChannelCount0 ( ${outputChannelCount0} ) can not be negative (i.e. must >= 0).`
+      throw Error( `BoundsArraySet.InputsOutputs.constructor(): `
+        + `outputChannelCount0 ( ${outputChannelCount0} ) can not be negative (i.e. must >= 0).`
       );
     }
 
