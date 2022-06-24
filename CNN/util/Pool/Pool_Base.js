@@ -204,6 +204,16 @@ class RecycledObjects {
  * It could be used to improve performance by reducing memory re-allocation.
  *
  *
+ * @member {string} poolName
+ *   The string name of this pool.
+ *
+ * @member {Class} objectClass
+ *   The class for all newly created objects.
+ *
+ * @member {function} pfn_SetAsConstructor_ReturnObject
+ *   A function set contents like its constructor and return an object. Before .get_or_create_by() returns a recycled object,
+ * its .pfnSetAsConstructor() method will be called to re-initilaize it. Its return value will be the final returned object.
+ *
  * @member {IssuedObjects} issuedObjects
  *   All objects returned by .get_or_create_by() will be recorded here.
  *
@@ -226,18 +236,11 @@ class RecycledObjects {
 let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
   /**
-   * @param {string} poolName
-   *   The string name of this pool.
+   * This constructor will register this object to Pool.All[] list. And it will never be removed from the list.
    *
-   * @param {Class} objectClass
-   *   The class for all newly created objects.
-   *
-   * @param {function} pfn_SetAsConstructor_ReturnObject
-   *   A function set contents like its constructor and return an object. Before .get_or_create_by() returns a recycled object,
-   * its .pfnSetAsConstructor() method will be called to re-initilaize it. Its return value will be the final returned object.
    */
-  constructor( poolName, objectClass, pfn_SetAsConstructor_ReturnObject ) {
-    All.push( this );
+  constructor( poolName, objectClass, pfn_SetAsConstructor_ReturnObject, ...restArgs ) {
+    super( ...restArgs );
 
     this.poolName = poolName;
     this.objectClass = objectClass;
@@ -248,6 +251,8 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
     this.sessionKeptObjectSet = new Set(); // For reducing memory re-allocation.
     this.movingObjectArray = new Array(); // For reducing memory re-allocation.
+
+    All.push( this );
   }
 
   get issuedCount() {
