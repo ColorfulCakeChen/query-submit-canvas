@@ -73,47 +73,9 @@ class ShuffleInfo {
    *
    */
   constructor( concatenatedShape, outputGroupCount ) {
-
-    this.disposeResources(); // So that distinguishable if re-initialization failed.
-
-    outputGroupCount = Math.trunc( outputGroupCount || 1 );
-    if ( outputGroupCount < 1 )
-      outputGroupCount = 1; // At least one (means: no shuffle and split (i.e. just concatenate only)).
-
-    this.concatenatedShape = Array.from( concatenatedShape ); // Clone it (by shallow-copy) because the outside may modify it.
-    this.outputGroupCount = outputGroupCount;
-
-    this.shuffleInfo = this; // So that all ChannelShuffler.Xxx have property "shuffleInfo".
-
-    let lastAxisId = this.lastAxisId = concatenatedShape.length - 1;
-    let totalChannelCount = this.totalChannelCount = concatenatedShape[ lastAxisId ];
-
-    // The channel count of every output group. (It should be an integer.)
-    let channelCountPerGroup = this.channelCountPerGroup = totalChannelCount / outputGroupCount;
-
-    // The shape before transpose. For example, if concatenatedShape is [ h, w, c ], the intermediateShape will be
-    // [ h, w, outputGroupCount, channelCountPerGroup ]. The last dimension is splitted into two dimensions.
-    let intermediateShape = this.intermediateShape = concatenatedShape.slice( 0, lastAxisId );
-    intermediateShape.push( outputGroupCount, channelCountPerGroup );
-
-    // The axis permutation of transpose.
-    //
-    // For example, if the intermediateShape is [ h, w, outputGroupCount, channelCountPerGroup ]. Its
-    // axis permutation will be [ 0, 1, 3, 2 ] so that the last two dimensions will be swapped.
-    let transposePermutation = this.transposePermutation = new Array( ...intermediateShape.keys() );
-    {
-      let last1 = transposePermutation.pop();
-      let last2 = transposePermutation.pop();
-      transposePermutation.push( last1, last2 );
-    }
-
-    this.reshapeTransposeReshape = this.reshapeTransposeReshape_dispose_finally_calls;
-    this.reshapeTransposeReshapeSplit = this.reshapeTransposeReshapeSplit_dispose_finally_calls;
-    this.concatReshapeTransposeReshape = this.concatReshapeTransposeReshape_dispose_finally_calls;
-    this.concatReshapeTransposeReshapeSplit = this.concatReshapeTransposeReshapeSplit_dispose_finally_calls;
+    this.setAsConstructor( concatenatedShape, outputGroupCount );
   }
 
-//!!!
   /**
    *
    * @return {ShuffleInfo}
@@ -182,6 +144,9 @@ class ShuffleInfo {
       transposePermutation.push( last1, last2 );
     }
 
+    this.tensorWeightCountTotal = 0;
+    this.tensorWeightCountExtracted = 0;
+
     this.reshapeTransposeReshape = this.reshapeTransposeReshape_dispose_finally_calls;
     this.reshapeTransposeReshapeSplit = this.reshapeTransposeReshapeSplit_dispose_finally_calls;
     this.concatReshapeTransposeReshape = this.concatReshapeTransposeReshape_dispose_finally_calls;
@@ -190,21 +155,44 @@ class ShuffleInfo {
     return this;
   }
 
-//!!! ...unfinished... (2022/06/24)
-
   /**
    * Release tf.tensor. (In fact, no tensors needed to be disposed in this ShuffleInfo.)
    *
    * Sub-class should override this method (and call super.disposeResources() before return).
    */
   disposeResources() {
+    this.concatReshapeTransposeReshapeSplit = null;
+    this.concatReshapeTransposeReshape = null;
+    this.reshapeTransposeReshapeSplit = null;
+    this.reshapeTransposeReshape = null;
 
-    // No tensors need to be disposed.
+    this.tensorWeightCountExtracted = 0;
+    this.tensorWeightCountTotal = 0;
 
+    Pool.Array.Singleton.recycle( this.transposePermutation );
     this.transposePermutation = null;
-    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
+
+    Pool.Array.Singleton.recycle( this.intermediateShape );
+    this.intermediateShape = null;
+
+    this.channelCountPerGroup = 0;
+    this.totalChannelCount = 0;
+    this.lastAxisId = -1;
+    this.shuffleInfo = null;
+    this.outputGroupCount = 0;
+
+    Pool.Array.Singleton.recycle( this.concatenatedShape );
+    this.concatenatedShape = null;
 
     //super.disposeResources();
+  }
+
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    ShuffleInfoPool.Singleton.recycle( this );
   }
 
   /** Not dispose the input. */
