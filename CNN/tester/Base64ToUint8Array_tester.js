@@ -139,12 +139,11 @@ function* tester( progressParent ) {
 
     let r = yield* decoder;
    
-    tf.util.assert(
-      r.toString() == testCase.result.toString(),
-      `[${i}]`
+    if ( r.toString() != testCase.result.toString() )
+      throw Error( `[${i}]`
         + ` Skip ${testCase.skipLineCount} lines.`
         + ` suspendByteCount=${testCase.suspendByteCount}.`
-        + ` ${testCase.note} [${r}] != [${testCase.result}]`);
+        + ` ${testCase.note} [${r}] != [${testCase.result}]` );
   }
 
   console.log("Base64 decode testing... Done.");
@@ -171,12 +170,11 @@ function test( progressParent ) {
       delayMilliseconds
     ).then(r => {
       progressReceiver.informDone(r); // Inform UI progress done.
-      tf.util.assert(
-        r.toString() == testCase.result.toString(),
-        `[${i}]`
+      if ( r.toString() != testCase.result.toString() )
+        throw Error( `[${i}]`
           + ` Skip ${testCase.skipLineCount} lines.`
           + ` suspendByteCount=${testCase.suspendByteCount}.`
-          + ` ${testCase.note} [${r}] != [${testCase.result}]`);
+          + ` ${testCase.note} [${r}] != [${testCase.result}]` );
     });
 
     testPromiseAll.push( testPromise );
