@@ -107,10 +107,10 @@ class ConcatPointwiseConv {
     // All filters composes a tensor4d [ filterHeight, filterWidth, inDepth, outDepth ];
     //
     let filtersShape = Pool.Array.Singleton.get_or_create_by( 4 );
-    filtersShape[ 0 ] = [ filterHeight ];
-    filtersShape[ 1 ] = [ filterWidth ];
-    filtersShape[ 2 ] = [ inDepth ];
-    filtersShape[ 3 ] = [ outDepth ];
+    filtersShape[ 0 ] = filterHeight;
+    filtersShape[ 1 ] = filterWidth;
+    filtersShape[ 2 ] = inDepth;
+    filtersShape[ 3 ] = outDepth;
 
     // Build 1x1 convolution filters for channel shuffling. (as an array of tf.tensor4d).
     try {
