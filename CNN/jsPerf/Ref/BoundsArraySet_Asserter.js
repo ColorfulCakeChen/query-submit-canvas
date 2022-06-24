@@ -16,13 +16,12 @@ export { assert_BoundsArraySet_Outputs };
  */
 function assert_ScaleBoundsArray( asserter_Equal, aScaleBoundsArray, refScaleBoundsArray, lhsName, rhsName, prefixMsg, postfixMsg ) {
 
-  tf.util.assert(
-    (   ( ( aScaleBoundsArray == null ) && ( refScaleBoundsArray == null ) )
-     || ( ( aScaleBoundsArray != null ) && ( refScaleBoundsArray != null ) ) ),
-    `${prefixMsg}: BoundsArraySet_Asserter.assert_ScaleBoundsArray()( `
+  if ( !(   ( ( aScaleBoundsArray == null ) && ( refScaleBoundsArray == null ) )
+         || ( ( aScaleBoundsArray != null ) && ( refScaleBoundsArray != null ) ) ) )
+    throw Error( `${prefixMsg}: BoundsArraySet_Asserter.assert_ScaleBoundsArray()( `
       + `lhsName=${lhsName}, rhsName=${rhsName} ): `
       + `aScaleBoundsArray (${aScaleBoundsArray}) and refScaleBoundsArray (${refScaleBoundsArray}) `
-      + `must both null or both non-null. ${postfixMsg}`);
+      + `must both null or both non-null. ${postfixMsg}` );
 
   if ( ( aScaleBoundsArray == null ) || ( refScaleBoundsArray == null ) )
     return;
@@ -96,56 +95,6 @@ function assert_ScaleBoundsArray_output0_output1( asserter_Equal,
  *   The text to be displayed at the tail when comparison failed.
  */
 function assert_BoundsArraySet_Outputs( asserter_Equal, aBoundsArraySet, imageOutReferenceArray, prefixMsg, postfixMsg ) {
-
-//!!! (2022/06/08 Remarked) Use assert_ScaleBoundsArray instead.
-//   // Note: For using prefixMsg and prefixMsg, defined as an arrow function.
-//   let assert_byIndex = ( indexName, index, aScaleBoundsArray, refScaleBoundsArray ) => {
-//
-//     tf.util.assert(
-//       (   ( ( aScaleBoundsArray == null ) && ( refScaleBoundsArray == null ) )
-//        || ( ( aScaleBoundsArray != null ) && ( refScaleBoundsArray != null ) ) ),
-//       `${prefixMsg}: BoundsArraySet_Asserter.assert_BoundsArraySet_Outputs().assert_byIndex( `
-//         + `indexName=${indexName}, index=${index} ): `
-//         + `aScaleBoundsArray (${aScaleBoundsArray}) and refScaleBoundsArray (${refScaleBoundsArray}) `
-//         + `must both null or both non-null. ${postfixMsg}`);
-//
-//     if ( ( aScaleBoundsArray == null ) || ( refScaleBoundsArray == null ) )
-//       return;
-//
-//     asserter_Equal.assert_NumberArray_NumberArray(
-//       aScaleBoundsArray.boundsArray.lowers, refScaleBoundsArray.boundsArray.lowers,
-//       prefixMsg, `${indexName}${index}.boundsArray.lowers`, `${indexName}Ref${index}.boundsArray.lowers`, postfixMsg
-//     );
-//
-//     asserter_Equal.assert_NumberArray_NumberArray(
-//       aScaleBoundsArray.boundsArray.uppers, refScaleBoundsArray.boundsArray.uppers,
-//       prefixMsg, `${indexName}${index}.boundsArray.uppers`, `${indexName}Ref${index}.boundsArray.uppers`, postfixMsg
-//     );
-//
-//     asserter_Equal.assert_NumberArray_NumberArray(
-//       aScaleBoundsArray.scaleArraySet.do.scales, refScaleBoundsArray.scaleArraySet.do.scales,
-//       prefixMsg, `${indexName}${index}.scaleArraySet.do.scales`, `${indexName}Ref${index}.scaleArraySet.do.scales`, postfixMsg
-//     );
-//
-//     asserter_Equal.assert_NumberArray_NumberArray(
-//       aScaleBoundsArray.scaleArraySet.undo.scales, refScaleBoundsArray.scaleArraySet.undo.scales,
-//       prefixMsg, `${indexName}${index}.scaleArraySet.undo.scales`, `${indexName}Ref${index}.scaleArraySet.undo.scales`, postfixMsg
-//     );
-//   }
-
-//!!! (2022/06/08 Remarked)
-//   //!!! (2022/04/27 Remarked) input tensor count may be different.
-//   //assert_byIndex( "input", 0, aBoundsArraySet.input0, imageOutReferenceArray[ 0 ].boundsArraySet.input0 );
-//   //assert_byIndex( "input", 1, aBoundsArraySet.input1, imageOutReferenceArray[ 0 ].boundsArraySet.input1 );
-//   assert_byIndex( "output", 0, aBoundsArraySet.output0, imageOutReferenceArray[ 0 ].boundsArraySet.output0 );
-//
-//   if ( imageOutReferenceArray[ 1 ] ) {
-//     //!!! (2022/04/27 Remarked) input tensor count may be different.
-//     //assert_byIndex( "input", 0, aBoundsArraySet.input0, imageOutReferenceArray[ 1 ].boundsArraySet.input0 );
-//     //assert_byIndex( "input", 1, aBoundsArraySet.input1, imageOutReferenceArray[ 1 ].boundsArraySet.input1 );
-//     assert_byIndex( "output", 1, aBoundsArraySet.output1, imageOutReferenceArray[ 1 ].boundsArraySet.output0 );
-//   }
-
   assert_ScaleBoundsArray_ScaleBoundsArray(
     aBoundsArraySet.output0, aBoundsArraySet.output1, imageOutReferenceArray, prefixMsg, postfixMsg );
 }
