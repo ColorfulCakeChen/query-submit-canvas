@@ -13,6 +13,16 @@ class ConcatGather extends ChannelShuffler_ConcatGather {
     super( concatenatedShape, outputGroupCount );
   }
 
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   *
+   * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    ConcatGatherPool.Singleton.recycle( this );
+  }
+
   gather_map( concatenatedTensor ) {
     // shuffle and split by gather (one operation achieves two operations).
     return this.shuffledChannelIndicesTensor1dArray.map(
