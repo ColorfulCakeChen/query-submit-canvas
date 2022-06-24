@@ -76,7 +76,8 @@ class Depthwise_ConstantWhenPassThrough extends Depthwise {
 class Depthwise_ConstantWhenPassThroughPool extends Pool.Root {
 
   constructor() {
-    super( Depthwise_ConstantWhenPassThrough, Depthwise_ConstantWhenPassThrough.setAsConstructor );
+    super( "Operation.Depthwise_ConstantWhenPassThroughPool",
+      Depthwise_ConstantWhenPassThrough, Depthwise_ConstantWhenPassThrough.setAsConstructor );
   }
 
 }
