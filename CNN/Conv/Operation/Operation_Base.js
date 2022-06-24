@@ -45,7 +45,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    */
   constructor( input0, input1, outputTensorCount, ...restArgs ) {
     super( ...restArgs ); // All other arguments passed to parent class's constructor.
-    this.setAsConstructor( input0, input1, outputTensorCount, ...restArgs );
+    Base.setAsConstructor.call( this, input0, input1, outputTensorCount, ...restArgs );
   }
 
   /**
@@ -57,13 +57,16 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    *   If 0, no this.outputX will be created. If 1, only the this.output0 will be created. If 2, both the this.output0 and this.output1
    * will be created.
    *
+   * @param {Root} this
+   *   The object to be initialized.
+   *
    * @return {Root}
    *   Return the this object.
    */
-  setAsConstructor( input0, input1, outputTensorCount, ...restArgs ) {
+  static setAsConstructor( input0, input1, outputTensorCount, ...restArgs ) {
 
     if ( super.setAsConstructor instanceof Function )
-      super.setAsConstructor( ...restArgs ); // 0. All other arguments passed to parent class.
+      super.setAsConstructor.apply( this, restArgs ); // 0. All other arguments passed to parent class.
 
     // 1. Set and register as the input TensorPlaceholder's final user.
     Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this, input0, input1 );
@@ -146,6 +149,8 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
   /**
    * After calling this method, this object should be viewed as disposed and should not be operated again.
+   *
+   * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
    */
   disposeResources_and_recycleToPool() {
     this.disposeResources();
