@@ -12,8 +12,8 @@ import * as Pool from "../../util/Pool.js";
  *
  */
 function assert_Pool_issuedCount( prefixMsg, pool, issuedCount_shouldBe ) {
-  tf.util.assert( ( pool.issuedCount == issuedCount_shouldBe ),
-    `${prefixMsg}: memory leak: `
+  if ( pool.issuedCount != issuedCount_shouldBe )
+    throw Error( `${prefixMsg}: memory leak: `
       + `pool ( ${pool.poolName} )'s issuedCount ( ${pool.issuedCount} ) should be ( ${issuedCount_shouldBe} ).` );
 }
 
