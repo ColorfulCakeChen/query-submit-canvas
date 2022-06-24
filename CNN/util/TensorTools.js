@@ -87,24 +87,25 @@ class Asserter_Equal {
   assert_NumberArray_NumberArray( lhsNumberArray, rhsNumberArray, prefixMsg, lhsNumberArrayName, rhsNumberArrayName, postfixMsg ) {
 
     // Check both null or non-null.
-    tf.util.assert( ( lhsNumberArray == null ) == ( rhsNumberArray == null ),
-      `${prefixMsg} ${lhsNumberArrayName} ( ${lhsNumberArray} ) and ${rhsNumberArrayName} ( ${rhsNumberArray} ) `
+    if ( ( lhsNumberArray == null ) != ( rhsNumberArray == null ) )
+      throw Error( `${prefixMsg} ${lhsNumberArrayName} ( ${lhsNumberArray} ) and ${rhsNumberArrayName} ( ${rhsNumberArray} ) `
         + `should be both null or non-null. ${postfixMsg}` );
 
     if ( !lhsNumberArray )
       return; // Since null, no element need to be compared futher.
 
     // Check both length.
-    tf.util.assert( lhsNumberArray.length == rhsNumberArray.length,
-      `${prefixMsg} ${lhsNumberArrayName} length ( ${lhsNumberArray.length} ) should be ( ${rhsNumberArray.length} ). ${postfixMsg}` );
+    if ( lhsNumberArray.length != rhsNumberArray.length )
+      throw Error(
+        `${prefixMsg} ${lhsNumberArrayName} length ( ${lhsNumberArray.length} ) should be ( ${rhsNumberArray.length} ). ${postfixMsg}` );
 
     this.rhsNumberArray = rhsNumberArray; // For ElementComparator() to access.
 
     // Check both elements.
     //
     // Note: Array.every() seems faster than for-loop.
-    tf.util.assert( lhsNumberArray.every( this.comparator ),
-      `${prefixMsg} ${lhsNumberArrayName}[ ${this.elementIndex} ] `
+    if ( !lhsNumberArray.every( this.comparator ) )
+      throw Error( `${prefixMsg} ${lhsNumberArrayName}[ ${this.elementIndex} ] `
         + `( ${lhsNumberArray[ this.elementIndex ]} ) should be ( ${rhsNumberArray[ this.elementIndex ]} ). `
         + `( ${lhsNumberArray} ) should be ( ${rhsNumberArray} ). `
         + `${postfixMsg}` );
