@@ -412,7 +412,7 @@ class ConcatShuffleSplit extends Root {
 class ConcatShuffleSplitPool extends Pool.Root {
 
   constructor() {
-    super( ConcatShuffleSplit, ConcatShuffleSplit.setAsConstructor );
+    super( "Operation.ConcatShuffleSplitPool", ConcatShuffleSplit, ConcatShuffleSplit.setAsConstructor );
   }
 
 }
