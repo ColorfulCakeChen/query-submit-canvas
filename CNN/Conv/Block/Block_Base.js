@@ -1501,7 +1501,7 @@ class Base {
 class BasePool extends Pool.Root {
 
   constructor() {
-    super( Base, Base.setAsConstructor );
+    super( "Block.BasePool", Base, Base.setAsConstructor );
   }
 
 }
