@@ -26,8 +26,8 @@ class Base {
    */
   propertyValue( propertyName, value ) {
     let propertyValue = this.object[ propertyName ];
-    tf.util.assert( ( propertyValue == value ),
-      `${this.objectName}.${propertyName} (${propertyValue}) should be (${value}). ${this.contextDescription}`);
+    if ( propertyValue != value )
+      throw Error( `${this.objectName}.${propertyName} (${propertyValue}) should be (${value}). ${this.contextDescription}` );
   }
 
   /**
@@ -35,8 +35,8 @@ class Base {
    */
   propertyValueNE( propertyName, value ) {
     let propertyValue = this.object[ propertyName ];
-    tf.util.assert( ( propertyValue != value ),
-      `${this.objectName}.${propertyName} (${propertyValue}) should not be (${value}). ${this.contextDescription}`);
+    if ( propertyValue == value ),
+      throw Error( `${this.objectName}.${propertyName} (${propertyValue}) should not be (${value}). ${this.contextDescription}` );
   }
 
   /**
@@ -44,8 +44,8 @@ class Base {
    */
   propertyValueLE( propertyName, value ) {
     let propertyValue = this.object[ propertyName ];
-    tf.util.assert( ( propertyValue <= value ),
-      `${this.objectName}.${propertyName} (${propertyValue}) should be <= (${value}). ${this.contextDescription}`);
+    if ( propertyValue > value )
+      throw Error( `${this.objectName}.${propertyName} (${propertyValue}) should be <= (${value}). ${this.contextDescription}` );
   }
 
 }
