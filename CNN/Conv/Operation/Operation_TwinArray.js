@@ -63,8 +63,7 @@ class TwinArray extends Root {
   static setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount, ...restArgs ) {
 
     // Note: The real output TensorPlacehoder will be created later as final operation outputs.
-    if ( super.setAsConstructor instanceof Function )
-      super.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
+    super.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
 
     // In order to handle keep-input-flag correctly (even if no sub operation at all), an ending dummy operation is used.
     {
