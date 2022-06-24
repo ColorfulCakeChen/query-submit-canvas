@@ -141,26 +141,26 @@ class ScaleArraySet {
    */
   assert_all_byScaleArraySet_all_equal( aScaleArraySet ) {
 
-    tf.util.assert( ( this.length == aScaleArraySet.length ),
-      `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
+    if ( this.length != aScaleArraySet.length )
+      throw Error( `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
         + `length count of this ( ${this.length} ) should be the same as `
         + `length count of aScaleArraySet ( ${aScaleArraySet.length} ).`
-    );
+      );
 
     for ( let i = 0; i < this.do.length; ++i ) {
-      tf.util.assert( ( this.do.scales[ i ] == aScaleArraySet.do.scales[ i ] ),
-        `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
+      if ( this.do.scales[ i ] != aScaleArraySet.do.scales[ i ] )
+        throw Error( `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
           + `this.do.scales[ ${i} ] ( ${this.do.scales[ i ]} ) should be the same as `
           + `aScaleArraySet.do.scales[ ${i} ] ( ${aScaleArraySet.do.scales[ i ]} ).`
-      );
+        );
     }
 
     for ( let i = 0; i < this.undo.length; ++i ) {
-      tf.util.assert( ( this.undo[ i ] == aScaleArraySet.undo[ i ] ),
-        `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
+      if ( this.undo[ i ] != aScaleArraySet.undo[ i ] )
+        throw Error( `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
           + `this.undo.scales[ ${i} ] ( ${this.undo.scales[ i ]} ) should be the same as `
           + `aScaleArraySet.undo.scales[ ${i} ] ( ${aScaleArraySet.undo.scales[ i ]} ).`
-      );
+        );
     }
 
     return this;
@@ -181,19 +181,19 @@ class ScaleArraySet {
   assert_all_byScaleArraySet_one_equal( aScaleArraySet, aIndex ) {
 
     for ( let i = 0; i < this.do.length; ++i ) {
-      tf.util.assert( ( this.do.scales[ i ] == aScaleArraySet.do.scales[ aIndex ] ),
-        `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
+      if ( this.do.scales[ i ] != aScaleArraySet.do.scales[ aIndex ] )
+        throw Error( `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
           + `this.do.scales[ ${i} ] ( ${this.do.scales[ i ]} ) should be the same as `
           + `aScaleArraySet.do.scales[ ${aIndex} ] ( ${aScaleArraySet.do.scales[ aIndex ]} ).`
-      );
+        );
     }
 
     for ( let i = 0; i < this.undo.length; ++i ) {
-      tf.util.assert( ( this.undo[ i ] == aScaleArraySet.undo[ aIndex ] ),
-        `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
+      if ( this.undo[ i ] != aScaleArraySet.undo[ aIndex ] )
+        throw Error( `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
           + `this.undo.scales[ ${i} ] ( ${this.undo.scales[ i ]} ) should be the same as `
           + `aScaleArraySet.undo.scales[ ${aIndex} ] ( ${aScaleArraySet.undo.scales[ aIndex ]} ).`
-      );
+        );
     }
 
     return this;
