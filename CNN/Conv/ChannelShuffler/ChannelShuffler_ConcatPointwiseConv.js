@@ -1,7 +1,9 @@
 export { ConcatPointwiseConv };
+export { ConcatPointwiseConvPool };
 
-import { ShuffleInfo } from "./ChannelShuffler_ShuffleInfo.js";
-import { ConcatGather } from "./ChannelShuffler_ConcatGather.js";
+import * as Pool from "../../util/Pool.js";
+import { ShuffleInfo, ShuffleInfoPool } from "./ChannelShuffler_ShuffleInfo.js";
+import { ConcatGather, ConcatGatherPool } from "./ChannelShuffler_ConcatGather.js";
 
 /**
  * Implement the channel shuffler by 1x1 tf.Conv2D() (i.e. pointwise convolution).
@@ -63,8 +65,7 @@ class ConcatPointwiseConv {
    * @param {number} outputGroupCount
    *   Used to calculate shuffleInfo.
    *
-   * @return {boolean}
-   *   If failed (e.g. out of GPU memory), return false. Otherwise, return true.
+   * @exception {Object} If failed (e.g. out of GPU memory).
    *
    * @see ConcatGather
    */
@@ -137,24 +138,177 @@ class ConcatPointwiseConv {
     this.concatGather = this.concatGather_dispose_finally_call_loop;
   }
 
+//!!!
+  /**
+   *
+   * @param {number[]} concatenatedShape
+   *   Used to calculate shuffleInfo.
+   *
+   * @param {number} outputGroupCount
+   *   Used to calculate shuffleInfo.
+   *
+   * @exception {Object} If failed (e.g. out of GPU memory).
+   *
+   * @return {ConcatPointwiseConv}
+   *   Return the this object.
+   *
+   * @see ConcatGather
+   */
+  setAsConstructor( concatenatedShape, outputGroupCount ) {
+
+    this.tensorWeightCountExtracted = 0;
+    this.tensorWeightCountTotal = 0;
+
+    let concatGather = ConcatGatherPool.Singleton.get_or_create_by( concatenatedShape, outputGroupCount );
+
+    let filtersShape;
+    {
+      let filterHeight = 1; // Pointwise convolution is convolution 2d with 1 x 1 filter.
+      let filterWidth = 1;
+      let inDepth = concatGather.shuffleInfo.totalChannelCount;
+      let outDepth = concatGather.shuffleInfo.channelCountPerGroup;
+
+      // Every filter is a tensor3d [ filterHeight, filterWidth, inDepth ].
+      // All filters composes a tensor4d [ filterHeight, filterWidth, inDepth, outDepth ];
+      //
+      filtersShape = Pool.Array.Singleton.get_or_create_by( 4 );
+      filtersShape[ 0 ] = [ filterHeight ];
+      filtersShape[ 1 ] = [ filterWidth ];
+      filtersShape[ 2 ] = [ inDepth ];
+      filtersShape[ 3 ] = [ outDepth ];
+    }
+
+    // Build 1x1 convolution filters for channel shuffling. (as an array of tf.tensor4d).
+    try {
+
+//!!! (2022/06/24 Remarked) Old Codes. Use Pool.Array instead.
+//       this.filtersTensor4dArray = tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray", () => {
+//         return concatGather.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d ) => {
+//           return tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray.shuffledChannelIndicesTensor1d", () => {
+//
+//             // Generate oneHotIndices (tensor2d, int32) by shuffledChannelIndices (tensor1d).
+//             let filtersOfOneGroupTensor2d_int32 = tf.oneHot( shuffledChannelIndicesTensor1d, inDepth );
+//
+//             // Generate oneHotIndices (tensor2d, float32).
+//             //
+//             // The tf.oneHot() genetates tensor with ( dtype == "int32" ). However, in backend WASM, if tf.conv2d()
+//             // input tensor ( dtype == "float32" ) and filter tensor ( dtype == "int32" ), the result will be wrong.
+//             // This issue does not exist in backend CPU and WEBGL. For avoiding this problem, convert the filter
+//             // tensor from ( dtype == "int32" ) into ( dtype == "float32" ).
+//             //
+//             let filtersOfOneGroupTensor2d = tf.cast( filtersOfOneGroupTensor2d_int32, "float32" );
+//
+//             // Transpose it so that the last axis is the outDepth (not inDepth) which conforms to the requirement
+//             // of tf.conv2d()'s filters.
+//             let filtersOfOneGroupTensor2d_transposed = filtersOfOneGroupTensor2d.transpose();
+//
+//             // Reinterpret the tensor2d to tensor4d so that it can be used as tf.conv2d()'s filters.
+//             let filtersOfOneGroupTensor4d = filtersOfOneGroupTensor2d_transposed.reshape( filtersShape );
+//             return filtersOfOneGroupTensor4d;
+//           });
+//         });
+//       });
+//
+//       if ( this.filtersTensor4dArray ) {
+//         for ( let i = 0; i < this.filtersTensor4dArray.length; ++i ) {
+//           let filtersTensor4d = this.filtersTensor4dArray[ i ];
+//           if ( filtersTensor4d ) {
+//             this.tensorWeightCountTotal += filtersTensor4d.size;
+//           }
+//         }
+//       }
+
+      this.filtersTensor4dArray = Pool.Array.Singleton.get_or_create_by( concatGather.shuffledChannelIndicesTensor1dArray.length );
+      for ( let i = 0; i < concatGather.shuffledChannelIndicesTensor1dArray.length; ++i ) {
+        let shuffledChannelIndicesTensor1d = concatGather.shuffledChannelIndicesTensor1dArray[ i ];
+        let filtersTensor4d = tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray.shuffledChannelIndicesTensor1d", () => {
+
+          // Generate oneHotIndices (tensor2d, int32) by shuffledChannelIndices (tensor1d).
+          let filtersOfOneGroupTensor2d_int32 = tf.oneHot( shuffledChannelIndicesTensor1d, inDepth );
+
+          // Generate oneHotIndices (tensor2d, float32).
+          //
+          // The tf.oneHot() genetates tensor with ( dtype == "int32" ). However, in backend WASM, if tf.conv2d()
+          // input tensor ( dtype == "float32" ) and filter tensor ( dtype == "int32" ), the result will be wrong.
+          // This issue does not exist in backend CPU and WEBGL. For avoiding this problem, convert the filter
+          // tensor from ( dtype == "int32" ) into ( dtype == "float32" ).
+          //
+          let filtersOfOneGroupTensor2d = tf.cast( filtersOfOneGroupTensor2d_int32, "float32" );
+
+          // Transpose it so that the last axis is the outDepth (not inDepth) which conforms to the requirement
+          // of tf.conv2d()'s filters.
+          let filtersOfOneGroupTensor2d_transposed = filtersOfOneGroupTensor2d.transpose();
+
+          // Reinterpret the tensor2d to tensor4d so that it can be used as tf.conv2d()'s filters.
+          let filtersOfOneGroupTensor4d = filtersOfOneGroupTensor2d_transposed.reshape( filtersShape );
+          return filtersOfOneGroupTensor4d;
+        });
+
+        this.filtersTensor4dArray[ i ] = filtersTensor4d;
+
+        if ( filtersTensor4d ) {
+          this.tensorWeightCountTotal += filtersTensor4d.size;
+      }
+
+      this.shuffleInfo = concatGather.shuffleInfo; // Need the shuffle info.
+      concatGather.shuffleInfo = null; // (Because ownership has been transferred.)
+
+    // Exception if failed (e.g. out of (GPU) memory).
+    } catch ( e ) {
+      throw e;
+
+    } finally {
+      Pool.Array.Singleton.recycle( filtersShape );
+      filtersShape = null;
+
+      concatGather.disposeResources_and_recycleToPool(); // Always release the look up table (by tensor1d).
+      concatGather = null;
+    }
+
+    this.gather = this.gather_loop;
+    this.concatGather = this.concatGather_dispose_finally_call_loop;
+
+    return this;
+  }
+
   /**
    * Release tf.tensor.
    *
    * Sub-class should override this method (and call super.disposeResources() before return).
    */
   disposeResources() {
-    if ( this.filtersTensor4dArray ) {
-      tf.dispose( this.filtersTensor4dArray );
-      this.filtersTensor4dArray = null;
-    }
+
+    this.concatGather = null;
+    this.gather = null;
+
+    this.tensorWeightCountTotal = 0;
+    this.tensorWeightCountExtracted = 0;
 
     if ( this.shuffleInfo ) {
-      this.shuffleInfo.disposeResources();
+      this.shuffleInfo.disposeResources_and_recycleToPool();
       this.shuffleInfo = null;
     }
 
-    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
+    if ( this.filtersTensor4dArray ) {
+      for ( let i = 0; i < this.filtersTensor4dArray.length; ++i ) {
+        tf.dispose( this.filtersTensor4dArray[ i ] );
+        this.filtersTensor4dArray[ i ] = null;
+      }
+      Pool.Array.Singleton.recycle( this.filtersTensor4dArray );
+      this.filtersTensor4dArray = null;
+    }
+
+//!!! ...unfinished... (2022/06/24)
+
     //super.disposeResources();
+  }
+
+  /**
+   * After calling this method, this object should be viewed as disposed and should not be operated again.
+   */
+  disposeResources_and_recycleToPool() {
+    this.disposeResources();
+    ConcatPointwiseConvPool.Singleton.recycle( this );
   }
 
   get concatenatedShape() {
@@ -206,3 +360,22 @@ class ConcatPointwiseConv {
   }
 
 }
+
+
+/**
+ * Providing ChannelShuffler.ConcatPointwiseConv
+ *
+ */
+class ConcatPointwiseConvPool extends Pool.Root {
+
+  constructor() {
+    super( "ChannelShuffler.ConcatPointwiseConvPool", ConcatPointwiseConv, ConcatPointwiseConv.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default ChannelShuffler.ConcatPointwiseConv provider.
+ */
+ConcatPointwiseConvPool.Singleton = new ConcatPointwiseConvPool();
+
