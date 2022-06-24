@@ -360,7 +360,7 @@ class InputsOutputs {
 class InputsOutputsPool extends Pool.Root {
 
   constructor() {
-    super( InputsOutputs, InputsOutputsPool.setAsConstructor );
+    super( "BoundsArraySet.InputsOutputsPool", InputsOutputs, InputsOutputsPool.setAsConstructor );
   }
 
   /**
