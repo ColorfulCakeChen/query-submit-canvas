@@ -62,7 +62,7 @@ class ConcatShuffleSplit extends Root {
 
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0 ); // .outputX will be created later.
 
-    this.setAsConstructor(
+    ConcatShuffleSplit.setAsConstructor.call( this,
       inputTensorPlaceholder0, inputTensorPlaceholder1,
       channelShuffler, bShuffleSplit,
       arrayTemp_forInterleave_asGrouptTwo,
@@ -71,14 +71,17 @@ class ConcatShuffleSplit extends Root {
   }
 
   /**
+   * @param {TwinArray} this
+   *   The object to be initialized.
+   *
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
    *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
    *
-   * @return {ConcatAlongAxisId2}
+   * @return {ConcatShuffleSplit}
    *   Return the this object.
    */
-  setAsConstructor(
+  static setAsConstructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     channelShuffler, bShuffleSplit = true,
     arrayTemp_forInterleave_asGrouptTwo,
@@ -93,7 +96,7 @@ class ConcatShuffleSplit extends Root {
     else
       outputTensorCount = 1;
 
-    super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
+    super.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
     this.channelShuffler = channelShuffler;
 
