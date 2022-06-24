@@ -579,10 +579,10 @@ Do not use arrow function because they may generate new function object every ti
         }
 
         //!!! (2022/06/02 Remarked) It can be supported. Just put null to output should be enough.
-        //tf.util.assert( ( this.input0 != this.input1 ),
-        //  `Operation.Base.setup_apply_dummy(): `
+        //if ( this.input0 == this.input1 )
+        //  throw Error( `Operation.Base.setup_apply_dummy(): `
         //    + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should at least one is non-null.`
-        //);
+        //  );
       }
     }
   }
