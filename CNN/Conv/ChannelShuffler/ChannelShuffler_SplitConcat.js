@@ -53,10 +53,13 @@ class SplitConcat {
    * @see ConcatGather
    */
   constructor( concatenatedShape, outputGroupCount ) {
-    this.setAsConstructor( concatenatedShape, outputGroupCount );
+    SplitConcat.setAsConstructor.call( this, concatenatedShape, outputGroupCount );
   }
 
   /**
+   *
+   * @param {ShuffleInfo} this
+   *   The object to be initialized.
    *
    * @param {number[]} concatenatedShape
    *   Used to calculate shuffleInfo.
@@ -71,7 +74,7 @@ class SplitConcat {
    *
    * @see ConcatGather
    */
-  setAsConstructor( concatenatedShape, outputGroupCount ) {
+  static setAsConstructor( concatenatedShape, outputGroupCount ) {
 
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
