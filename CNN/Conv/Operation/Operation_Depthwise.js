@@ -236,7 +236,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
         // Just clone input if unknown depthwise operation.
         // Since there is no operation at all, let apply ignore pfnOperation completely.
         default:
-          tf.util.assert( false, `Unknown depthwise operation (${this.pfnOperation}) when setKeepInputTensor( ${bKeepInputTensor} )` );
+          throw Error( `Unknown depthwise operation (${this.pfnOperation}) when setKeepInputTensor( ${bKeepInputTensor} )` );
           this.pfnOperation = Depthwise.keep_input_return_copy;
           this.apply = Depthwise.output0_return_input0_cloned;
           break;
@@ -257,7 +257,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
         // Just return input if unknown depthwise operation.
         // Since there is no operation at all, let apply ignore pfnOperation completely.
         default:
-          tf.util.assert( false, `Unknown depthwise operation (${this.pfnOperation}) when setKeepInputTensor( ${bKeepInputTensor} )` );
+          throw Error( `Unknown depthwise operation (${this.pfnOperation}) when setKeepInputTensor( ${bKeepInputTensor} )` );
           this.pfnOperation = Depthwise.return_input_directly;
           this.apply = Depthwise.output0_return_input0_directly;
           break;
