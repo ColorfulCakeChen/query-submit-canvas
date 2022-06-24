@@ -317,17 +317,20 @@ class Base {
    */
   constructor( ...restArgs ) {
     super( ...restArgs );
-    this.setAsConstructor( ...restArgs );
+    Base.setAsConstructor.call( this, ...restArgs );
   }
 
   /**
+   * @param {Base} this
+   *   The object to be initialized.
+   *
    * @return {Base}
    *   Return the this object.
    */
-  setAsConstructor( ...restArgs ) {
+  static setAsConstructor( ...restArgs ) {
 
     if ( super.setAsConstructor instanceof Function )
-      super.setAsConstructor( ...restArgs ); // 0. All other arguments passed to parent class.
+      super.setAsConstructor.call( this, ...restArgs ); // 0. All other arguments passed to parent class.
 
     return this;
   }
