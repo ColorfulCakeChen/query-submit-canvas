@@ -20,6 +20,7 @@ import * as Block_Reference from "./Ref/Block_Reference.js";
 import * as Block_TestParams from "./Ref/Block_TestParams.js"; 
 import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
 import * as NumberImage from "./Ref/NumberImage.js"; 
+import * as Pool_Asserter from "./Ref/Pool_Asserter.js"; 
 import * as jsPerf_FloatValue_ScaleTranslate from "./jsPerf_FloatValue_ScaleTranslate.js";
 import * as jsPerf_FloatValue_Bounds from "./jsPerf_FloatValue_Bounds.js";
 import * as jsPerf_Operation from "./jsPerf_Operation.js";
@@ -567,11 +568,6 @@ class HeightWidthDepth {
     this.test_ValueRange_valueInputOutputGenerator();
     this.test_Operation();
 
-    function assertPoolZero( pool ) {
-      tf.util.assert( ( pool.issuedCount == 0 ),
-        `testCorrectness() memory leak: pool's issuedCount ( ${pool.issuedCount} ) should be zero.` );
-    }
-
     tf.tidy( () => {
 
       let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag and channelShufflerBag.
@@ -622,39 +618,7 @@ class HeightWidthDepth {
           + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ) `
           + `` );
 
-      assertPoolZero( Pool.Array.Singleton );
-      assertPoolZero( ValueMax.Percentage.BasePool.Singleton );
-      assertPoolZero( ValueMax.Percentage.ConcretePool.Singleton );
-      assertPoolZero( ValueMax.Percentage.AggregatePool.Singleton );
-      assertPoolZero( TensorPlaceholder.BasePool.Singleton );
-      assertPoolZero( ActivationEscaping.ScaleBoundsArrayPool.Singleton );
-      assertPoolZero( BoundsArraySet.InputsOutputsPool.Singleton );
-      assertPoolZero( BoundsArraySet.ConvBiasActivationPool.Singleton );
-      assertPoolZero( BoundsArraySet.DepthwisePool.Singleton );
-      assertPoolZero( BoundsArraySet.PointwisePool.Singleton );
-      assertPoolZero( Depthwise.ChannelPartInfoPool.Singleton );
-      assertPoolZero( Depthwise.FiltersBiasesPartInfoPool.Singleton );
-      assertPoolZero( Pointwise.ChannelPartInfoPool.Singleton );
-      assertPoolZero( Pointwise.FiltersBiasesPartInfoPool.Singleton );
-      assertPoolZero( Operation.RootPool.Singleton );
-      assertPoolZero( Operation.TwinArrayPool.Singleton );
-      assertPoolZero( Operation.AddTwoTensorsPool.Singleton );
-      assertPoolZero( Operation.MultiplyTwoTensorsPool.Singleton );
-      assertPoolZero( Operation.ConcatShuffleSplitPool.Singleton );
-      assertPoolZero( Operation.ConcatAlongAxisId2Pool.Singleton );
-      assertPoolZero( Operation.DepthwisePool.Singleton.Singleton );
-      assertPoolZero( Operation.Depthwise_SameWhenPassThroughPool.Singleton );
-      assertPoolZero( Operation.Depthwise_ConstantWhenPassThroughPool.Singleton );
-      assertPoolZero( Operation.PointwisePool.Singleton );
-      assertPoolZero( Operation.Pointwise_SameWhenPassThroughPool.Singleton );
-      assertPoolZero( Operation.Pointwise_ConstantWhenPassThroughPool.Singleton );
-
-//!!! ...unfinished... (2022/06/23) ChannelShuffler.Xxx.Pool.Singleton???
-//      assertPoolZero( ChannelShuffler.Pool.Singleton );
-
-      assertPoolZero( Block.Pool.Singleton );
-      assertPoolZero( NumberImage.Pool.Singleton );
-
+      Pool_Asserter.assertAllPoolZero();
     });
 
     try {
