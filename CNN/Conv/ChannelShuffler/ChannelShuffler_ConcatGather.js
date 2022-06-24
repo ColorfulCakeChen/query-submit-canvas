@@ -120,7 +120,11 @@ class ConcatGather {
     this.tensorWeightCountExtracted = 0;
 
     if ( this.shuffledChannelIndicesTensor1dArray ) {
-      tf.dispose( this.shuffledChannelIndicesTensor1dArray );
+      for ( let i = 0; i < this.shuffledChannelIndicesTensor1dArray.length; ++i ) {
+        tf.dispose( this.shuffledChannelIndicesTensor1dArray[ i ] );
+        this.shuffledChannelIndicesTensor1dArray[ i ] = null;
+      }
+      Pool.Array.Singleton.recycle( this.shuffledChannelIndicesTensor1dArray );
       this.shuffledChannelIndicesTensor1dArray = null;
     }
 
