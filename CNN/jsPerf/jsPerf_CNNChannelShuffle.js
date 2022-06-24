@@ -58,30 +58,30 @@ class HeightWidthDepthGroup {
   shufflers_init() {
     this.shufflers_release();
 
-    this.shuffleInfo = new ChannelShuffler.PerformanceTest.ShuffleInfo( this.concatenatedShape, this.groupCount );
-    this.concatGatherUnsorted = new ChannelShuffler.PerformanceTest.ConcatGather( this.concatenatedShape, this.groupCount );
-    this.splitConcatSortedShared = new ChannelShuffler.PerformanceTest.SplitConcat( this.concatenatedShape, this.groupCount );
-    this.concatPointwiseConv = new ChannelShuffler.PerformanceTest.ConcatPointwiseConv( this.concatenatedShape, this.groupCount );
+    this.shuffleInfo = ChannelShuffler.PerformanceTest.ShuffleInfo.Singleton.get_or_create_by( this.concatenatedShape, this.groupCount );
+    this.concatGatherUnsorted = ChannelShuffler.PerformanceTest.ConcatGather.Singleton.get_or_create_by( this.concatenatedShape, this.groupCount );
+    this.splitConcatSortedShared = ChannelShuffler.PerformanceTest.SplitConcat.Singleton.get_or_create_by( this.concatenatedShape, this.groupCount );
+    this.concatPointwiseConv = ChannelShuffler.PerformanceTest.ConcatPointwiseConv.Singleton.get_or_create_by( this.concatenatedShape, this.groupCount );
   }
 
   shufflers_release() {
     if ( this.shuffleInfo ) {
-      this.shuffleInfo.disposeResources();
+      this.shuffleInfo.disposeResources_and_recycleToPool();
       this.shuffleInfo = null;
     }
 
     if ( this.concatGatherUnsorted ) {
-      this.concatGatherUnsorted.disposeResources();
+      this.concatGatherUnsorted.disposeResources_and_recycleToPool();
       this.concatGatherUnsorted = null;
     }
 
     if ( this.splitConcatSortedShared ) {
-      this.splitConcatSortedShared.disposeResources();
+      this.splitConcatSortedShared.disposeResources_and_recycleToPool();
       this.splitConcatSortedShared = null;
     }
 
     if ( this.concatPointwiseConv ) {
-      this.concatPointwiseConv.disposeResources();
+      this.concatPointwiseConv.disposeResources_and_recycleToPool();
       this.concatPointwiseConv = null;
     }
   }
