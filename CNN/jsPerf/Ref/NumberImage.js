@@ -116,20 +116,14 @@ class Base {
 
       pointwiseFiltersArray = pointwisePassThrough.filtersArray;
       pointwiseBiasesArray = pointwisePassThrough.biasesArray;
-
-//!!! (2022/06/12 Remarked) No matter whether is pass-through, these check always should be done.
-//     } else {
-//       tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == imageIn.depth ),
-//         `${pointwiseName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
-//           + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
     }        
 
     {
       let filtersWeightCount = imageIn.depth * pointwiseChannelCount;
 
-      tf.util.assert( ( pointwiseFiltersArray.length == filtersWeightCount ),
-        `${pointwiseName}: filters weight count ( ${pointwiseFiltersArray.length} ) `
-          + `should be ( ${filtersWeightCount} ). (${parametersDesc})`);
+      if ( pointwiseFiltersArray.length != filtersWeightCount )
+        throw Error( `${pointwiseName}: filters weight count ( ${pointwiseFiltersArray.length} ) `
+          + `should be ( ${filtersWeightCount} ). (${parametersDesc})` );
 
       let biasesWeightCountShouldBe, biasesWeightCountInFact;
       if ( bPointwiseBias ) {
@@ -140,9 +134,9 @@ class Base {
         biasesWeightCountInFact = ( pointwiseBiasesArray ) ? pointwiseBiasesArray.length : 0;
       }
 
-      tf.util.assert( ( biasesWeightCountInFact == biasesWeightCountShouldBe ),
-        `${pointwiseName}: biases weight count ( ${biasesWeightCountInFact} ) `
-          + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})`);
+      if ( biasesWeightCountInFact != biasesWeightCountShouldBe )
+        throw Error( `${pointwiseName}: biases weight count ( ${biasesWeightCountInFact} ) `
+          + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})` );
     }
 
     let imageOutLength = ( imageIn.height * imageIn.width * pointwiseChannelCount );
@@ -319,18 +313,11 @@ class Base {
 
     // If not AVG, MAX, NONE, the filters shape should match input image channel count.
     if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-
-//!!! (2022/06/13 Remarked)
-//       tf.util.assert( ( ( depthwiseFiltersArray.length / ( depthwiseFilterHeight * depthwiseFilterWidth * channelMultiplier ) ) == imageIn.depth ),
-//         `${depthwiseName} filters shape `
-//           + `( ${depthwiseFiltersArray.length} / ( ${depthwiseFilterHeight} * ${depthwiseFilterWidth} * ${channelMultiplier} ) ) `
-//           + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
-
       let filtersWeightCount = depthwiseFilterHeight * depthwiseFilterWidth * imageIn.depth * channelMultiplier ;
 
-      tf.util.assert( ( depthwiseFiltersArray.length == filtersWeightCount ),
-        `${depthwiseName}: filters weight count ( ${depthwiseFiltersArray.length} ) `
-          + `should be ( ${filtersWeightCount} ). (${parametersDesc})`);
+      if ( depthwiseFiltersArray.length != filtersWeightCount )
+        throw Error( `${depthwiseName}: filters weight count ( ${depthwiseFiltersArray.length} ) `
+          + `should be ( ${filtersWeightCount} ). (${parametersDesc})` );
     }
 
     {
@@ -343,9 +330,9 @@ class Base {
         biasesWeightCountInFact = ( depthwiseBiasesArray ) ? depthwiseBiasesArray.length : 0;
       }
 
-      tf.util.assert( ( biasesWeightCountInFact == biasesWeightCountShouldBe ),
-        `${depthwiseName}: biases weight count ( ${biasesWeightCountInFact} ) `
-          + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})`);
+      if ( biasesWeightCountInFact != biasesWeightCountShouldBe )
+        throw Error( `${depthwiseName}: biases weight count ( ${biasesWeightCountInFact} ) `
+          + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})` );
     }
 
     let imageOut = new Base(
@@ -516,13 +503,13 @@ class Base {
     if ( !bBias )
       return imageIn;
 
-    tf.util.assert( ( biasesArray != null ),
-      `${biasName} biasesArray (${biasesArray}) `
-        + `should not be null. (${parametersDesc})`);
+    if ( biasesArray == null )
+      throw Error( `${biasName} biasesArray (${biasesArray}) `
+        + `should not be null. (${parametersDesc})` );
 
-    tf.util.assert( ( biasesArray.length == imageIn.depth ),
-      `${biasName} shape (${biasesArray.length}) `
-        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
+    if ( biasesArray.length != imageIn.depth )
+      throw Error( `${biasName} shape (${biasesArray.length}) `
+        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})` );
 
     let index = 0;
     for ( let y = 0; y < imageIn.height; ++y ) {
@@ -555,13 +542,13 @@ class Base {
    */
   static scale_byChannel_withoutAffect_BoundsArraySet( imageIn, scaleArray, scaleName, parametersDesc ) {
 
-    tf.util.assert( ( scaleArray != null ),
-      `${scaleName} scaleArray (${scaleArray}) `
-        + `should not be null. (${parametersDesc})`);
+    if ( scaleArray == null )
+      throw Error( `${scaleName} scaleArray (${scaleArray}) `
+        + `should not be null. (${parametersDesc})` );
 
-    tf.util.assert( ( scaleArray.length == imageIn.depth ),
-      `${scaleName} shape (${scaleArray.length}) `
-        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
+    if ( scaleArray.length != imageIn.depth )
+      throw Error( `${scaleName} shape (${scaleArray.length}) `
+        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})` );
 
     let index = 0;
     for ( let y = 0; y < imageIn.height; ++y ) {
@@ -671,13 +658,13 @@ class Base {
       }
 
     } else {
-      tf.util.assert( false,
+      throw Error(
         `${addName}: another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${another.depth} ) `
           + `this ( height, width, depth ) = ( ${this.height}, ${this.width}, ${this.depth} ) `
           + `and `
           + `another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${another.depth} ) `
           + `should be either totally the same or one is ( 1, 1, N ). `
-          + `(${parametersDesc})`);
+          + `(${parametersDesc})` );
     }
 
     {
@@ -751,13 +738,13 @@ class Base {
       }
 
     } else {
-      tf.util.assert( false,
+      throw Error(
         `${multiplyName}: `
           + `this ( height, width, depth ) = ( ${this.height}, ${this.width}, ${this.depth} ) `
           + `and `
           + `another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${another.depth} ) `
           + `should be either totally the same or one is ( 1, 1, N ). `
-          + `(${parametersDesc})`);
+          + `(${parametersDesc})` );
     }
 
     {
@@ -845,16 +832,15 @@ class Base {
     aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
     squeezeExcitationName, parametersDesc ) {
 
-    tf.util.assert(
-      (   ( nSqueezeExcitationChannelCountDivisor != undefined )
-       && ( nSqueezeExcitationChannelCountDivisor >= ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE )
-      ),
-      `${squeezeExcitationName}: `
+    if (   ( nSqueezeExcitationChannelCountDivisor == undefined )
+        || ( nSqueezeExcitationChannelCountDivisor < ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE )
+       )
+      throw Error( `${squeezeExcitationName}: `
         + `nSqueezeExcitationChannelCountDivisor ( ${nSqueezeExcitationChannelCountDivisor} ) `
         + `should be >= `
         + `ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE `
           + `( ${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE} ) `
-        + `(${parametersDesc})`);
+        + `(${parametersDesc})` );
 
     if ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
       return this.clone(); // No squeeze-and-excitation operation.
@@ -968,12 +954,12 @@ class Base {
    */
   modify_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo, interleaveName, parametersDesc ) {
 
-    tf.util.assert( ( ( this.depth % 2 ) == 0 ),
-      `NumberImage.Base.modify_byInterleave_asGrouptTwo(): `
+    if ( ( this.depth % 2 ) != 0 )
+      throw Error( `NumberImage.Base.modify_byInterleave_asGrouptTwo(): `
         + `${interleaveName}: `                   
         + `channel count ( ${this.depth} ) must be even (i.e. divisible by 2). `
         + `(${parametersDesc})`
-    );
+      );
 
     // Shuffle data.
     for ( let indexBegin = 0; indexBegin < this.dataArray.length; indexBegin += this.depth ) {
@@ -1082,13 +1068,13 @@ class Base {
         ; // Both input is not null. Do concatenate them in the following.
     }
 
-    tf.util.assert( ( imageIn1.height == imageIn2.height ),
-      `${concatName} shape imageIn1.height (${imageIn1.height}) `
-        + `should match imageIn2.height (${imageIn2.height}). (${parametersDesc})`);
+    if ( imageIn1.height != imageIn2.height ),
+      throw Error( `${concatName} shape imageIn1.height (${imageIn1.height}) `
+        + `should match imageIn2.height (${imageIn2.height}). (${parametersDesc})` );
 
-    tf.util.assert( ( imageIn1.width == imageIn2.width ),
-      `${concatName} shape imageIn1.width (${imageIn1.width}) `
-        + `should match imageIn2.width (${imageIn2.width}). (${parametersDesc})`);
+    if ( imageIn1.width != imageIn2.width ),
+      throw Error( `${concatName} shape imageIn1.width (${imageIn1.width}) `
+        + `should match imageIn2.width (${imageIn2.width}). (${parametersDesc})` );
 
     let imageOutLength = ( imageIn1.height * imageIn1.width * imageIn1.depth ) + ( imageIn2.height * imageIn2.width * imageIn2.depth );
     let imageOutDepth = imageIn1.depth + imageIn2.depth;
@@ -1152,25 +1138,23 @@ class Base {
     arrayTemp_forInterleave_asGrouptTwo,
     concatShuffleSplitName, parametersDesc ) {
 
-    tf.util.assert( ( imageInArray.length == 2 ),
-      `${concatShuffleSplitName}: `
+    if ( imageInArray.length != 2 )
+      throw Error( `${concatShuffleSplitName}: `
         + `The length of imageInArray[] ( ${imageInArray.length} ) must be 2. `
         + `(${parametersDesc})`
-    );
+      );
 
     // Note: Although different depth is wierd, it might still work. So, allow it.
-    tf.util.assert(
-      (   ( imageInArray[ 0 ].height == imageInArray[ 1 ].height )
-       && ( imageInArray[ 0 ].width ==  imageInArray[ 1 ].width )
-       //&& ( imageInArray[ 0 ].depth ==  imageInArray[ 1 ].depth )
-      ),
-
-      `${concatShuffleSplitName}: The first input image's shape ( height, width, depth ) = `
+    if (   ( imageInArray[ 0 ].height != imageInArray[ 1 ].height )
+         || ( imageInArray[ 0 ].width !=  imageInArray[ 1 ].width )
+         //|| ( imageInArray[ 0 ].depth !=  imageInArray[ 1 ].depth )
+       )
+      throw Error( `${concatShuffleSplitName}: The first input image's shape ( height, width, depth ) = `
         + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${imageInArray[ 0 ].depth} ) `
         + `should be the same as the second input image's shape `
         + `( ${imageInArray[ 1 ].height}, ${imageInArray[ 1 ].width}, ${imageInArray[ 1 ].depth} ). `
         + `(${parametersDesc})`
-    );
+      );
 
     // 1.
     let concatResult = Base.calcConcatAlongAxisId2( imageInArray[ 0 ], imageInArray[ 1 ],
