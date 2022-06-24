@@ -1,5 +1,7 @@
 export { ShuffleInfo };
+export { ShuffleInfoPool };
 
+import * as Pool from "../../../util/Pool.js";
 import { ShuffleInfo as ChannelShuffler_ShuffleInfo } from "../ChannelShuffler_ShuffleInfo.js";
 
 /**
@@ -369,4 +371,22 @@ class ShuffleInfo extends ChannelShuffler_ShuffleInfo {
   }
 
 }
+
+
+/**
+ * Providing ChannelShuffler.PerformanceTest.ShuffleInfo
+ *
+ */
+class ShuffleInfoPool extends Pool.Root {
+
+  constructor() {
+    super( "ChannelShuffler.PerformanceTest.ShuffleInfoPool", ShuffleInfo, ShuffleInfo.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default ChannelShuffler.PerformanceTest.ShuffleInfo provider.
+ */
+ShuffleInfoPool.Singleton = new ShuffleInfoPool();
 
