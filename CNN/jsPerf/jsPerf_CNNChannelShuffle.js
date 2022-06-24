@@ -184,7 +184,7 @@ class HeightWidthDepthGroup {
 
       tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors, `Channel shufflers memory leak.`);
 
-      Pool_Asserter.assertAllPoolZero();
+      Pool_Asserter.assertAllPoolZero( "jsPerf_CNNChannelShuffle.testResultSame()" );
     });
 
     this.shufflers_init();  // (Should outside tidy() for preventing from tensors being disposed.
