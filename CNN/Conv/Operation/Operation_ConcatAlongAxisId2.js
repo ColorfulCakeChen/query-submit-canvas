@@ -250,7 +250,7 @@ class ConcatAlongAxisId2 extends Root {
 class ConcatAlongAxisId2Pool extends Pool.Root {
 
   constructor() {
-    super( ConcatAlongAxisId2, ConcatAlongAxisId2.setAsConstructor );
+    super( "Operation.ConcatAlongAxisId2Pool", ConcatAlongAxisId2, ConcatAlongAxisId2.setAsConstructor );
   }
 
 }
