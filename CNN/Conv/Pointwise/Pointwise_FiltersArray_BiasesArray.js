@@ -190,40 +190,40 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     this.tensorWeightCountExtracted_internal = 0;
     this.tensorWeightCountTotal_internal = 0;
 
-    tf.util.assert( ( inputChannelCount > 0 ),
-      `Pointwise.FiltersArray_BiasesArray.setAsConstructor(): `
+    if ( inputChannelCount <= 0 )
+      throw Error( `Pointwise.FiltersArray_BiasesArray.setAsConstructor(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) must be positive integer.`
-    );
-
-    if ( this.bHigherHalfDifferent ) {
-      tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
-        `Pointwise.FiltersArray_BiasesArray.setAsConstructor(): `
-          + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
-          + `inputChannelCount ( ${this.inputChannelCount} ).`
       );
 
-      if ( this.outputChannelCount > 0 ) {
-        tf.util.assert( ( this.outputChannelCount_lowerHalf <= outputChannelCount ),
-          `Pointwise.FiltersArray_BiasesArray.setAsConstructor(): `
-            + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
-            + `outputChannelCount ( ${this.outputChannelCount} ).`
+    if ( this.bHigherHalfDifferent ) {
+      if ( this.inputChannelCount_lowerHalf > inputChannelCount )
+        throw Error( `Pointwise.FiltersArray_BiasesArray.setAsConstructor(): `
+          + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
+          + `inputChannelCount ( ${this.inputChannelCount} ).`
         );
 
+      if ( this.outputChannelCount > 0 ) {
+        if ( this.outputChannelCount_lowerHalf > outputChannelCount )
+          throw Error( `Pointwise.FiltersArray_BiasesArray.setAsConstructor(): `
+            + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
+            + `outputChannelCount ( ${this.outputChannelCount} ).`
+          );
+
       } else { // ( this.outputChannelCount <= 0 ), the outputChannelCount_Real will be inputChannelCount.
-        tf.util.assert( ( this.outputChannelCount_lowerHalf <= inputChannelCount ),
-          `Pointwise.FiltersArray_BiasesArray.setAsConstructor(): `
+        if ( this.outputChannelCount_lowerHalf > inputChannelCount )
+          throw Error( `Pointwise.FiltersArray_BiasesArray.setAsConstructor(): `
             + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
             + `inputChannelCount ( ${this.inputChannelCount} ) when `
             + `outputChannelCount ( ${this.outputChannelCount} ) is zero or negative.`
-        );
+          );
       }
 
-      tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ) == ( this.outputChannelCount_lowerHalf > 0 ),
-        `Pointwise.FiltersArray_BiasesArray.setAsConstructor(): `
+      if ( ( this.inputChannelCount_lowerHalf > 0 ) != ( this.outputChannelCount_lowerHalf > 0 ) )
+        throw Error( `Pointwise.FiltersArray_BiasesArray.setAsConstructor(): `
           + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) and `
           + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) `
           + `should be both positive or both not.`
-      );
+        );
     }
 
     return this;
@@ -329,18 +329,18 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     // A2: So that inputFloat32Array could be released.
 
 
-    tf.util.assert( ( this.inputChannelCount == inputScaleBoundsArray.length ),
-      `Pointwise.FiltersArray_BiasesArray.init(): `
+    if ( this.inputChannelCount != inputScaleBoundsArray.length )
+      throw Error( `Pointwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as `
         + `outputChannelCount of previous convolution-bias-activation ( ${inputScaleBoundsArray.length} ).`
-    );
+      );
 
-    tf.util.assert( ( this.inputChannelCount == inputScaleBoundsArray.scaleArraySet.undo.length ),
-      `Pointwise.FiltersArray_BiasesArray.init(): `
+    if ( this.inputChannelCount != inputScaleBoundsArray.scaleArraySet.undo.length )
+      throw Error( `Pointwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as the length of `
         + `.output.scaleArraySet.undo of previous convolution-bias-activation `
         + `( ${inputScaleBoundsArray.scaleArraySet.undo.length} ).`
-    );
+      );
 
     //
     // Note: Even if ( this.outputChannelCount <= 0 ), this function should work correctly as pass-through input to output.
@@ -518,7 +518,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 // //!!! ...unfinished... (2022/05/20)
 //             // Perhaps, deprecate this special case. Since pointwise2 always exists now.
 //             // So assert if executed here.
-//             tf.util.assert( false,
+//             throw Error(
 //               `Pointwise.FiltersArray_BiasesArray.init(): `
 //                 + `outputChannelCount ( ${this.outputChannelCount} ) shoulde be positive.`
 //             );
@@ -534,7 +534,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
           break;
 
         default:
-          tf.util.assert( ( false ),
+          throw Error(
             `Pointwise.FiltersArray_BiasesArray.init(): `
               + `nHigherHalfDifferent ( ${this.nHigherHalfDifferent} ) is unknown value.`
           );
@@ -634,7 +634,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
           break;
 
         default:
-          tf.util.assert( false,
+          throw Error(
             `Pointwise.FiltersArray_BiasesArray.init(): `
               + `channelShuffler_outputGroupCount (${this.channelShuffler_outputGroupCount}) should be zero when `
               + `nHigherHalfDifferent=`
@@ -848,10 +848,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     //
     this.boundsArraySet.afterBias.add_all_byBoundsArray( this.boundsArraySet.afterFilter );
 
-    tf.util.assert( ( outChannelEnd == this.outputChannelCount_Real ),
-      `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-        + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total output channel count ( ${outChannelEnd} ) `
-        + `should be ( ${this.outputChannelCount_Real} ).` );
+    if ( outChannelEnd != this.outputChannelCount_Real )
+      throw Error(
+        `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+          + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total output channel count ( ${outChannelEnd} ) `
+          + `should be ( ${this.outputChannelCount_Real} ).` );
   }
 
   /**
@@ -902,15 +903,15 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    */
   set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo ) {
 
-    tf.util.assert( ( this.channelShuffler_outputGroupCount == 2 ),
-      `Pointwise.FiltersArray_BiasesArray.interleave_byGrouptTwo(): `
+    if ( this.channelShuffler_outputGroupCount != 2 )
+      throw Error( `Pointwise.FiltersArray_BiasesArray.interleave_byGrouptTwo(): `
         + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) only 2 is supported.`
-    );
+      );
 
-    tf.util.assert( ( ( this.outputChannelCount % 2 ) == 0 ),
-      `Pointwise.FiltersArray_BiasesArray.interleave_byGrouptTwo(): `
+    if ( ( this.outputChannelCount % 2 ) != 0 )
+      throw Error( `Pointwise.FiltersArray_BiasesArray.interleave_byGrouptTwo(): `
         + `output channel count ( ${this.outputChannelCount} ) must be even (i.e. divisible by 2).`
-    );
+      );
 
     { // Shuffle filters.
       let filtersWeightsCount = this.inputChannelCount * this.outputChannelCount;
