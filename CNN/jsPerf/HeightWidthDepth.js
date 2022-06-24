@@ -208,21 +208,17 @@ class Base {
       tensor_FromPixels = this.test_FromPixels( true );
       yield* this.progressAdvanceYield();
 
-      tf.util.assert(
-        ( 3 == tensor_FromPixels.rank ),
-        `${tensor_FromPixels.rank} != 3`);  // tensor3d
+      if ( 3 != tensor_FromPixels.rank )
+        throw Error( `${tensor_FromPixels.rank} != 3` );  // tensor3d
 
-      tf.util.assert(
-        ( tensor_FromPixels.shape[ 0 ] == this.height ),
-        `fromPixels Height ${tensor_FromPixels.shape[ 0 ]} != ${this.height}`);
+      if ( tensor_FromPixels.shape[ 0 ] != this.height )
+        throw Error( `fromPixels Height ${tensor_FromPixels.shape[ 0 ]} != ${this.height}` );
 
-      tf.util.assert(
-        ( tensor_FromPixels.shape[ 1 ] == this.width ),
-        `fromPixels Width ${tensor_FromPixels.shape[ 1 ]} != ${this.width}`);
+      if ( tensor_FromPixels.shape[ 1 ] != this.width )
+        throw Error( `fromPixels Width ${tensor_FromPixels.shape[ 1 ]} != ${this.width}` );
 
-      tf.util.assert(
-        ( tensor_FromPixels.shape[ 2 ] == 4 ),
-        `fromPixels Depth ${tensor_FromPixels.shape[ 2 ]} != 4`);  // 4 channels.
+      if ( tensor_FromPixels.shape[ 2 ] != 4 ),
+        throw Error( `fromPixels Depth ${tensor_FromPixels.shape[ 2 ]} != 4` );  // 4 channels.
 
       tensor_FromPixels.dispose();
     }
@@ -236,17 +232,14 @@ class Base {
       tensor_ResizeBilinear =          this.test_ResizeBilinear( true );
       yield* this.progressAdvanceYield();
 
-//       tf.util.assert(
-//         tf.util.arraysEqual( quarterTensor_11x11.shape, quarterTensor_3x3_Stride2.shape ),
-//         `DepthwiseConv2d_11x11_MultiStep() != DepthwiseConv2d_3x3_Stride2()`);
+//       if ( !tf.util.arraysEqual( quarterTensor_11x11.shape, quarterTensor_3x3_Stride2.shape ) )
+//         throw Error( `DepthwiseConv2d_11x11_MultiStep() != DepthwiseConv2d_3x3_Stride2()` );
 //
-//       tf.util.assert(
-//         tf.util.arraysEqual( quarterTensor_3x3_Stride2.shape, quarterTensor_ResizeBilinear.shape ),
-//         `DepthwiseConv2d_3x3_Stride2() != ResizeBilinear()`);
+//       if ( !tf.util.arraysEqual( quarterTensor_3x3_Stride2.shape, quarterTensor_ResizeBilinear.shape ) )
+//         throw Error( `DepthwiseConv2d_3x3_Stride2() != ResizeBilinear()` );
 
-      tf.util.assert(
-        tf.util.arraysEqual( tensor_ResizeBilinear.shape, tensor_ResizeNearestNeighbor.shape ),
-        `ResizeBilinear() != ResizeNearestNeighbor()`);
+      if ( !tf.util.arraysEqual( tensor_ResizeBilinear.shape, tensor_ResizeNearestNeighbor.shape ) )
+        throw Error( `ResizeBilinear() != ResizeNearestNeighbor()` );
 
       tensor_ResizeNearestNeighbor.dispose();
       tensor_ResizeBilinear.dispose();
@@ -262,10 +255,9 @@ class Base {
 
       let originalChannelCount = ( t.shape[ 2 ] / testNeuralNets.neuralNetworkArray[ 0 ].totalChannelExpansionFactor );
 
-      tf.util.assert(
-        tf.util.arraysEqual(
-          [ t.shape[ 0 ], t.shape[ 1 ], originalChannelCount ], tensor_ResizeBilinear.shape ),
-        `Shape ${testNeuralNets.name}() != ResizeBilinear()`);
+      if ( !tf.util.arraysEqual(
+             [ t.shape[ 0 ], t.shape[ 1 ], originalChannelCount ], tensor_ResizeBilinear.shape ) )
+        throw Error( `Shape ${testNeuralNets.name}() != ResizeBilinear()` );
 
       t.dispose();
 
@@ -330,9 +322,9 @@ class Base {
     let tensorMemoryAfter = tf.memory();
 
     // Detect memory leak.
-    tf.util.assert(
-      ( tensorMemoryAfter.numBytes == tensorMemoryBefore.numBytes ),
-      `tensorMemoryAfter.numBytes (${tensorMemoryAfter.numBytes}) != tensorMemoryBefore.numBytes (${tensorMemoryBefore.numBytes})`);
+    if ( tensorMemoryAfter.numBytes != tensorMemoryBefore.numBytes )
+      throw Error(
+        `tensorMemoryAfter.numBytes (${tensorMemoryAfter.numBytes}) != tensorMemoryBefore.numBytes (${tensorMemoryBefore.numBytes})` );
 
     return resultProfiles;
   }
