@@ -552,11 +552,11 @@ class Base {
     {
       let inputTensorPlaceholder0, inputTensorPlaceholder1;
 
-      tf.util.assert( ( inputScaleBoundsArray0.length == this.input0_channelCount ),
-        `Block.Base.initer(): `
+      if ( inputScaleBoundsArray0.length != this.input0_channelCount )
+        throw Error( `Block.Base.initer(): `
           + `inputScaleBoundsArray0's length ( ${inputScaleBoundsArray0.length} ) should be the same as `
           + `input0's channel count ( ${this.input0_channelCount} ).`
-      );
+        );
 
       inputTensorPlaceholder0 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
       inputTensorPlaceholder0.set_height_width_channelCount_scaleBoundsArray(
@@ -571,11 +571,11 @@ class Base {
       //
       if ( this.inputTensorCount > 1 ) {
 
-        tf.util.assert( ( inputScaleBoundsArray1.length == this.input1_channelCount ),
-          `Block.Base.initer(): `
+        if ( inputScaleBoundsArray1.length != this.input1_channelCount )
+          throw Error( `Block.Base.initer(): `
             + `inputScaleBoundsArray1's length ( ${inputScaleBoundsArray1.length} ) should be the same as `
             + `input1's channel count ( ${this.input1_channelCount} ).`
-        );
+          );
 
         inputTensorPlaceholder1 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
         inputTensorPlaceholder1.set_height_width_channelCount_scaleBoundsArray(
@@ -896,7 +896,7 @@ class Base {
         case 2: bShuffleSplit = true;  break;
 
         default:
-          tf.util.assert( ( ( this.outputTensorCount == 1 ) || ( this.outputTensorCount == 2 ) ),
+          throw Error(
             `Block.Base.initer(): When concat2-shuffle-split, `
               + `output channel count ( ${this.outputTensorCount} ) must be either 1 or 2.`
           );
