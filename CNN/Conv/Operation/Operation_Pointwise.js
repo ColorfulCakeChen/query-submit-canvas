@@ -242,7 +242,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 //!!! ...unfinished... (2022/05/20)
         // Perhaps, deprecate this special case. Since pointwise2 always exists now.
         // So assert if executed here.
-        tf.util.assert( false,
+        throw Error(
           `Operation.Pointwise.setup_bPointwise_pfn(): `
             + `When outputChannelCount ( ${this.outputChannelCount} ) is not positive, `
             + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) should not be positive.`
