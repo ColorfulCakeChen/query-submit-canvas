@@ -1,4 +1,7 @@
 export { ShuffleInfo };
+export { ShuffleInfoPool };
+
+import * as Pool from "../../util/Pool.js";
 
 /**
  * The information for channel shuffler.
@@ -66,6 +69,9 @@ export { ShuffleInfo };
  */
 class ShuffleInfo {
 
+  /**
+   *
+   */
   constructor( concatenatedShape, outputGroupCount ) {
 
     this.disposeResources(); // So that distinguishable if re-initialization failed.
@@ -107,8 +113,87 @@ class ShuffleInfo {
     this.concatReshapeTransposeReshapeSplit = this.concatReshapeTransposeReshapeSplit_dispose_finally_calls;
   }
 
+//!!!
   /**
-   * Release tf.tensor. (In fact, no tensors needed to be disposed in ShuffleInfo.
+   *
+   * @return {ShuffleInfo}
+   *   Return the this object.
+   */
+  setAsConstructor( concatenatedShape, outputGroupCount ) {
+
+    outputGroupCount = Math.trunc( outputGroupCount || 1 );
+    if ( outputGroupCount < 1 )
+      outputGroupCount = 1; // At least one (means: no shuffle and split (i.e. just concatenate only)).
+
+    // Clone it (by shallow-copy) because the outside may modify it.
+    {
+      this.concatenatedShape = Pool.Array.Singleton.get_or_create_by( concatenatedShape.length );
+      for ( let i = 0; i < concatenatedShape.length; ++i ) {
+        this.concatenatedShape[ i ] = concatenatedShape[ i ];
+      }
+    }
+
+    this.outputGroupCount = outputGroupCount;
+
+    this.shuffleInfo = this; // So that all ChannelShuffler.Xxx have property "shuffleInfo".
+
+    let lastAxisId = this.lastAxisId = concatenatedShape.length - 1;
+    let totalChannelCount = this.totalChannelCount = concatenatedShape[ lastAxisId ];
+
+    // The channel count of every output group. (It should be an integer.)
+    let channelCountPerGroup = this.channelCountPerGroup = totalChannelCount / outputGroupCount;
+
+    // The shape before transpose. For example, if concatenatedShape is [ h, w, c ], the intermediateShape will be
+    // [ h, w, outputGroupCount, channelCountPerGroup ]. The last dimension is splitted into two dimensions.
+    //
+    let intermediateShape;
+    {
+      
+//!!! (2022/06/24 Remarke) Old Codes
+//     let intermediateShape = this.intermediateShape = concatenatedShape.slice( 0, lastAxisId );
+//     intermediateShape.push( outputGroupCount, channelCountPerGroup );
+
+      intermediateShape = this.intermediateShape = Pool.Array.Singleton.get_or_create_by( concatenatedShape.length + 1 );
+      for ( let i = 0; i < lastAxisId; ++i ) {
+        intermediateShape[ i ] = concatenatedShape[ i ];
+      }
+      intermediateShape[ lastAxisId     ] = outputGroupCount;
+      intermediateShape[ lastAxisId + 1 ] = channelCountPerGroup;
+    }
+
+    // The axis permutation of transpose.
+    //
+    // For example, if the intermediateShape is [ h, w, outputGroupCount, channelCountPerGroup ]. Its
+    // axis permutation will be [ 0, 1, 3, 2 ] so that the last two dimensions will be swapped.
+    //
+    let transposePermutation;
+    {
+
+//!!! (2022/06/24 Remarke) Old Codes
+//    let transposePermutation = this.transposePermutation = new Array( ...intermediateShape.keys() );
+
+      transposePermutation = this.transposePermutation = Pool.Array.Singleton.get_or_create_by( intermediateShape.length );
+      for ( let i = 0; i < transposePermutation.length; ++i ) {
+        transposePermutation[ i ] = i;
+      }
+
+      let last1 = transposePermutation.pop();
+      let last2 = transposePermutation.pop();
+      transposePermutation.push( last1, last2 );
+    }
+
+    this.reshapeTransposeReshape = this.reshapeTransposeReshape_dispose_finally_calls;
+    this.reshapeTransposeReshapeSplit = this.reshapeTransposeReshapeSplit_dispose_finally_calls;
+    this.concatReshapeTransposeReshape = this.concatReshapeTransposeReshape_dispose_finally_calls;
+    this.concatReshapeTransposeReshapeSplit = this.concatReshapeTransposeReshapeSplit_dispose_finally_calls;
+
+    return this;
+  }
+
+//!!! ...unfinished... (2022/06/24)
+
+  /**
+   * Release tf.tensor. (In fact, no tensors needed to be disposed in this ShuffleInfo.)
    *
    * Sub-class should override this method (and call super.disposeResources() before return).
    */
@@ -118,7 +203,7 @@ class ShuffleInfo {
 
     this.transposePermutation = null;
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
-    
+
     //super.disposeResources();
   }
 
@@ -236,4 +321,22 @@ class ShuffleInfo {
   }
 
 }
+
+
+/**
+ * Providing ChannelShuffler.ShuffleInfo
+ *
+ */
+class ShuffleInfoPool extends Pool.Root {
+
+  constructor() {
+    super( "ChannelShuffler.ShuffleInfoPool", ShuffleInfo, ShuffleInfo.setAsConstructor );
+  }
+
+}
+
+/**
+ * Used as default ChannelShuffler.ShuffleInfo provider.
+ */
+ShuffleInfoPool.Singleton = new ShuffleInfoPool();
 
