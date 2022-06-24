@@ -21,11 +21,11 @@ class Case {
 
     try {
 
-      tf.util.assert( ( TensorPlaceholder.BasePool.Singleton.issuedCount == 0 ),
-        `${this.assertPrefix}: memory leak. `
+      if ( TensorPlaceholder.BasePool.Singleton.issuedCount != 0 )
+        throw Error( `${this.assertPrefix}: memory leak. `
           + `beginning issued TensorPlachodler count ( ${TensorPlaceholder.BasePool.Singleton.issuedCount} ) `
           + `should be 0.`
-      );
+        );
 
       TensorPlaceholder.BasePool.Singleton.sessionCall( () => {
 
@@ -79,21 +79,21 @@ class Case {
           let memoryInfo_apply_after = tf.memory();
 
           let numTensors_predicted = ( memoryInfo_apply_before.numTensors + numTensors_delta );
-          tf.util.assert( ( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + numTensors_delta ) ),
-            `${this.assertPrefix}: memory leak. `
+          if ( memoryInfo_apply_after.numTensors != ( memoryInfo_apply_before.numTensors + numTensors_delta ) )
+            throw Error( `${this.assertPrefix}: memory leak. `
               + `result tensor count (${memoryInfo_apply_after.numTensors}) `
               + `should be ( ${numTensors_predicted} ) = ( ${memoryInfo_apply_before.numTensors} + ${numTensors_delta} ).`
-          );
+            );
 
           this.operation.TensorPlaceholder_nullify_inputs_dispose_outputs();
 
           let TensorPlaceholderPool_issuedCount_after = TensorPlaceholder.BasePool.Singleton.issuedCount;
 
-          tf.util.assert( ( TensorPlaceholderPool_issuedCount_after == TensorPlaceholderPool_issuedCount_before ),
-            `${this.assertPrefix}: memory leak. `
+          if ( TensorPlaceholderPool_issuedCount_after != TensorPlaceholderPool_issuedCount_before )
+            throw Error( `${this.assertPrefix}: memory leak. `
               + `result issued TensorPlachodler count ( ${TensorPlaceholderPool_issuedCount_after} ) `
               + `should be ( ${TensorPlaceholderPool_issuedCount_before} ).`
-          );
+            );
 
     //!!! ...unfinished... (2022/06/04)
     // aTensorPlaceholder.height, aTensorPlaceholder.width,
@@ -105,11 +105,9 @@ class Case {
       });
 
     } catch ( e ) {
-      tf.util.assert( false,
-        `${this.assertPrefix}: exception. `
-          + `${e}.`
+      throw Error( `${this.assertPrefix}: exception. `
+        + `${e}.`
       );
-      throw e;
     }
   }
 
@@ -129,8 +127,9 @@ class Case {
       strWholeName += strPropertyName2;
     }
 
-    tf.util.assert( thisValue == rhsValue, `jsPerf_Operation.`
-      + `${strWholeName} ( ${thisValue} ) should be ( ${rhsValue} ).` );
+    if ( thisValue != rhsValue )
+      throw Error( `jsPerf_Operation.`
+        + `${strWholeName} ( ${thisValue} ) should be ( ${rhsValue} ).` );
   }
 }
 
