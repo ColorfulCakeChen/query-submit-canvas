@@ -1,4 +1,5 @@
 export { IssuedObjects };
+export { All };
 
 
 //!!! ...unfinished... (2022/06/25)
@@ -13,25 +14,16 @@ export { IssuedObjects };
 
 
 /**
- * Collect all issued objects of Pool.Base.
+ * Collect all issued objects which can be recycled to a Pool.Base.
  *
  *
-
-//!!! (2022/06/25 Remarked) seems not needed because .toInSessionArrayIndexMap seems enough.
-//  * @member {Set} notInSessionSet
-//  *   If an issued object is not belong to any session, it will be here.
-
  *
  * @member {Object[]} inSessionArray
  *   If an issued object is belong to a session, it will be here.
  *
-
-//!!! ...unfinished... (2022/06/25)
-
  * @member {Pool.Base[]} inSessionRecyclePoolArray
  *   Every in-session issued objects' corresponding recycle pool.
  *
-
  * @member {Map} toInSessionArrayIndexMap
  *   Map every issued object to its array index in .inSessionArray[].
  *   - If an issued objects is belong to a session, this map's value is the array index to .inSessionArray[].
@@ -48,10 +40,7 @@ class IssuedObjects {
 
   constructor() {
 
-//!!! (2022/06/25 Remarked) seems not needed because .toInSessionArrayIndexMap seems enough.
-//    this.notInSessionSet = new Set();
-
-    // Q: Why not integrate inSession and inSessionRecyclePool into one extra object?
+    // Q: Why not integrate .inSession and .inSessionRecyclePool into one extra object?
     // A: In order to reduce memory allocation (for the extra object). Because memory allocation reducing is the main purpose
     //    of this recycling pool.
     //
@@ -101,10 +90,6 @@ class IssuedObjects {
       this.toInSessionArrayIndexMap.set( issuedObject, arrayIndex );
 
     } else {
-
-//!!! (2022/06/25 Remarked) seems not needed because .toInSessionArrayIndexMap seems enough.
-//      this.notInSessionSet.add( issuedObject );
-
       this.toInSessionArrayIndexMap.set( issuedObject, -1 );
     }
     return true;
@@ -119,10 +104,6 @@ class IssuedObjects {
    *     - Considering what will happen if it is re-issued again in the other session. If it is not marked as null, it might be recycled
    *         wrongly when this session is ended.
    *
-
-//!!! (2022/06/25 Remarked) seems not needed because .toInSessionArrayIndexMap seems enough.
-//   * - If the object is not recorded in a session (i.e. in .notInSessionSet), it will be remove from .notInSessionSet directly.
-
    *
    *
    * @return {boolean}
@@ -139,40 +120,11 @@ class IssuedObjects {
       this.toInSessionArrayIndexMap.delete( object );
 
     } else { // 3. The object is not belong to any session.
-
-//!!! (2022/06/25 Remarked) seems not needed because .toInSessionArrayIndexMap seems enough.
-//      this.notInSessionSet.delete( object );
-
       this.toInSessionArrayIndexMap.delete( object );
     }
+
     return true;
   }
-
-//!!! (2022/06/25 Remarked) integrated into session_pop()
-//   /**
-//    *
-//    * @return {Object}
-//    *   Pop the last issued object in session, return it.
-//    *   - It may be null.
-//    *   - It may be IssuedObjects.SESSION_BORDER_MARK.
-//    *
-//    */
-//   inSessionArray_pop() {
-//     let returnedObject = this.inSessionArray.pop();
-//
-// //!!! ...unfinished... (2022/06/25) How to return?
-// //    this.inSessionRecyclePoolArray.pop();
-//  
-//     if (   ( returnedObject != null )
-//         && ( returnedObject != IssuedObjects.SESSION_BORDER_MARK )
-//        ) {
-//       this.remove( returnedObject );
-//     }
-//
-//     return returnedObject;
-//   }
-
-
 
   /**
    * Create a session. Call th function. End the session and recycle all issued objects (except the returned objects of the function).
@@ -200,8 +152,8 @@ class IssuedObjects {
   /**
    * Start a auto-recycling session. This method will append a SESSION_BORDER_MARK to in-session array.
    *
-   * @param {Base} this
-   *   The pool for handling the objects issuing/recycling.
+   * @param {IssuedObjects} this
+   *   The list for handling the objects issuing/recycling.
    */
   static session_push() {
     this.inSessionArray.push( IssuedObjects.SESSION_BORDER_MARK );
@@ -216,17 +168,14 @@ class IssuedObjects {
    *   - If the popped objects are listed in keptObjectArray, they will not be recycled and will become belonging to the parent
    *       session.
    *
-   * @param {Base} this
-   *   The pool for handling the objects issuing/recycling.
+   * @param {IssuedObjects} this
+   *   The list for handling the objects issuing/recycling.
    *
    * @param {object|object[]} keptObjectOrArray
    *   An object or an object array. If the object(s) is not null, they will be kept (i.e. not be recycled) and be moved to parent session.
    */
   static session_pop( keptObjectOrArray ) {
     const SESSION_BORDER_MARK = IssuedObjects.SESSION_BORDER_MARK;
-
-//!!! ...unfinished... (2022/06/25)
-// should get the belonging recycle pool of the object (from IssuedObjects).
 
     // 1. Prepare object list to be kept (i.e. not be recycled).
     {
@@ -238,7 +187,7 @@ class IssuedObjects {
             if ( keptObject ) {
 
               if ( this.recycledObjects.has( keptObject ) )
-                throw Error( `Pool.Base.session_pop(): `
+                throw Error( `Pool.IssuedObjects.session_pop(): `
                   + `The object to be kept (i.e. not to be recycled) ( ${keptObject} ) `
                   + `should not already be recycled (i.e. should not be inside .recycledObjects).`
                 );
@@ -249,7 +198,7 @@ class IssuedObjects {
         } else if ( keptObjectOrArray instanceof Object ) { // 1.2 A single object to be kept.
           
           if ( this.recycledObjects.has( keptObjectOrArray ) )
-            throw Error( `Pool.Base.session_pop(): `
+            throw Error( `Pool.IssuedObjects.session_pop(): `
               + `The object to be kept (i.e. not to be recycled) ( ${keptObjectOrArray} ) `
               + `should not already be recycled (i.e. should not be inside .recycledObjects).`
             );
@@ -265,8 +214,6 @@ class IssuedObjects {
     this.movingObjectRecyclePoolArray.length = 0;
 
     while ( this.inSessionArray.length > 0 ) {
-      
-//!!! ...unfinished... (2022/06/25) How to get its belonging recycle pool?
 
       // 2.1
       let issuedObject = this.inSessionArray.pop();
@@ -307,8 +254,8 @@ class IssuedObjects {
 }
 
 /**
- * In the .InSessionArray, this SESSION_BORDER_MARK will be placed between sessions. In fact, it is just the IssuedObjects class object
- * itself. The reason is that it is impossible to be an legal issued object of itself.
+ * In the .inSessionArray and .inSessionRecyclePoolArray, this SESSION_BORDER_MARK will be placed between sessions. In fact, it
+ * is just the IssuedObjects class object itself. The reason is that it is impossible to be an legal issued object of itself.
  */
 IssuedObjects.SESSION_BORDER_MARK = IssuedObjects;
 
@@ -317,3 +264,7 @@ IssuedObjects.SESSION_BORDER_MARK = IssuedObjects;
  */
 IssuedObjects.Singleton = new IssuedObjects();
 
+/**
+ * An alias to the only one (global) list of all issued (recyclable) objects.
+ */
+let All = IssuedObjects.Singleton;
