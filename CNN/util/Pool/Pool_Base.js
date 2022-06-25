@@ -1,9 +1,14 @@
 export { All, Base, Root };
 
 
-//!!! ...unfinished... (2022/06/24)
+//!!! ...unfinished... (2022/06/25)
 // Whether possible Pool.All knows which Pool.Xxx this object should be recycled to?
 // So there is not necessary override .disposeResources_and_recycleToPool() for every (sub) classes of pooled object.
+
+//!!! ...unfinished... (2022/06/25)
+// Perhaps, every pool-able object's class has a static member Pool (instead of XxxPool.Singleton).
+// Use objectPointer.constructor.Pool could access itself pool.
+//
 
 /**
  * Every instance of Pool.Base will automatically register itself in this list.
