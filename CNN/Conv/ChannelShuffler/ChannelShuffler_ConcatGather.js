@@ -76,7 +76,7 @@ class ConcatGather extends Recyclable.Root {
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
 
-    this.shuffleInfo = ShuffleInfoPool.Singleton.get_or_create_by( concatenatedShape, outputGroupCount );
+    this.shuffleInfo = ShuffleInfo.Pool.get_or_create_by( concatenatedShape, outputGroupCount );
 
     // Build shuffled channel index table (as an array of tf.tensor1d).
     //
@@ -90,7 +90,7 @@ class ConcatGather extends Recyclable.Root {
         = tf.tidy( "ChannelShuffler.ConcatGather.init.shuffledChannelIndicesTensor1dArray", () => {
           let channelIndices = tf.range( 0, this.shuffleInfo.totalChannelCount, 1, "int32" );
           return Pool.All.sessionCall( () => {
-            let channelIndicesShuffleInfo = ShuffleInfoPool.Singleton.get_or_create_by( channelIndices.shape, outputGroupCount );
+            let channelIndicesShuffleInfo = ShuffleInfo.Pool.get_or_create_by( channelIndices.shape, outputGroupCount );
             return channelIndicesShuffleInfo.reshapeTransposeReshapeSplit( channelIndices );
           });
         });
