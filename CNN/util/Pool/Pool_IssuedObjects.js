@@ -1,7 +1,7 @@
 export { IssuedObjects };
 export { All };
 
-import { Base } from "./Pool_Base.js";
+//import { Base } from "./Pool_Base.js";
 
 /**
  * Collect all issued objects which can be recycled to a Pool.Base.
