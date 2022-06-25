@@ -73,7 +73,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     }
 
     // 2. Tracking the issued object for recycling automatically by session_pop().
-    IssuedObjects.issuedObject_add.call( IssuedObjects.Singleton, returnedObject, this );
+    IssuedObjects.issued_add.call( IssuedObjects.Singleton, returnedObject, this );
 
     return returnedObject;
   }
@@ -97,7 +97,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
       );
 
     // 2. Removed it from issued object list. Otheriwse, the list will become larger and larger.
-    IssuedObjects.issuedObject_remove.call( IssuedObjects.Singleton, objectToBeRecycled );
+    IssuedObjects.issued_remove.call( IssuedObjects.Singleton, objectToBeRecycled );
 
     // 3. Recycle it.
     let bRecycleOk = Base.recycled_add( this, objectToBeRecycled );
@@ -125,7 +125,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
 //!!!
 //     // 2. Removed it from issued object list. Otheriwse, the list will become larger and larger.
-//     IssuedObjects.issuedObject_remove.call( IssuedObjects.Singleton, objectToBeRecycled );
+//     IssuedObjects.issued_remove.call( IssuedObjects.Singleton, objectToBeRecycled );
 
     // 3. Recycle it.
     let bRecycleOk = Base.recycled_add( this, objectToBeRecycled );
