@@ -3,6 +3,7 @@ export { BagPool };
 
 import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import { ConcatPointwiseConvPool } from "./ChannelShuffler_ConcatPointwiseConv.js";
 
 /**
@@ -15,7 +16,7 @@ import { ConcatPointwiseConvPool } from "./ChannelShuffler_ConcatPointwiseConv.j
  *   - ChannelShuffler.SplitConcatPool.Singleton
  *   - ChannelShuffler.ConcatPointwiseConvPool.Singleton
  */
-class Bag extends MultiLayerMap.Base {
+class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
 
   /**
    */
@@ -40,7 +41,7 @@ class Bag extends MultiLayerMap.Base {
     this.channelShufflerPool = channelShufflerPool;
 
     // A re-used shared array for reducing memory allocation.
-    this.concatenatedShape = Pool.Array.Singleton.get_or_create_by( 3 );
+    this.concatenatedShape = Recyclable.Array.Pool.get_or_create_by( 3 );
 
     return this;
   }
@@ -72,14 +73,14 @@ class Bag extends MultiLayerMap.Base {
     this.concatenatedShape[ 0 ] = concatenatedHeight;
     this.concatenatedShape[ 1 ] = concatenatedWidth;
     this.concatenatedShape[ 2 ] = concatenatedDepth;
-    let channelShuffler = channelShufflerPool.get_or_create_by( this.concatenatedShape, outputGroupCount );
+    let channelShuffler = this.channelShufflerPool.get_or_create_by( this.concatenatedShape, outputGroupCount );
     return channelShuffler;
   }
 
   /** Release all channel shufflers and their tf.tensor. */
   disposeResources() {
     
-    Pool.Array.Singleton.recycle( this.concatenatedShape );
+    this.concatenatedShape.disposeResources_and_recycleToPool();
     this.concatenatedShape = null;
     
     this.channelShufflerPool = null;
@@ -120,3 +121,7 @@ class BagPool extends Pool.Root {
  */
 BagPool.Singleton = new BagPool();
 
+/**
+ * An alias to ChannelShuffler.BagPool.Singleton for conforming to Recyclable interface.
+ */
+Bag.Pool.Singleton = BagPool.Singleton;
