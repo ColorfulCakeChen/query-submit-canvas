@@ -18,6 +18,11 @@ export { All, Base, Root };
 //     this.constructor.Pool.recycle( this );
 //   }
 // }
+//
+// Safari may not support static property. Use the following instead:
+//
+// Base.Pool = new BasePool();
+//
 
 /**
  * Every instance of Pool.Base will automatically register itself in this list.
