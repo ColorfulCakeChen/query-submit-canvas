@@ -808,6 +808,10 @@ class Base extends TestParams.Base {
 
     let intermediate_bBias;
     {
+
+//!!! ...unfinished... (2022/06/25)
+// Try not to generate new (property name) string ever time for reducing memory re-allocation.
+
       const SEIntermediatePropertyNamePrefix_A = ( propertyNamePrefix_A ) ? ( `${propertyNamePrefix_A}SEIntermediate` ) : null;
       const SEIntermediatePropertyNamePrefix_B = ( propertyNamePrefix_B ) ? ( `${propertyNamePrefix_B}SEIntermediate` ) : null;
       const SEIntermediatePropertyNamePrefix_C = ( propertyNamePrefix_C ) ? ( `${propertyNamePrefix_C}SEIntermediate` ) : null;
@@ -901,6 +905,10 @@ class Base extends TestParams.Base {
     let result_outputChannelCount = inputChannelCount;
 
     if ( propertyNamePrefix ) {
+
+//!!! ...unfinished... (2022/06/25)
+// Try not to generate new (property name) string ever time for reducing memory re-allocation.
+
       const filtersPropertyName = `${propertyNamePrefix}Filters`;
       const biasesPropertyName = `${propertyNamePrefix}Biases`;
 
@@ -953,6 +961,10 @@ class Base extends TestParams.Base {
     let result_outputChannelCount = inputChannelCount;
 
     if ( propertyNamePrefix ) {
+
+//!!! ...unfinished... (2022/06/25)
+// Try not to generate new (property name) string ever time for reducing memory re-allocation.
+
       const filtersPropertyName = `${propertyNamePrefix}Filters`;
       const biasesPropertyName = `${propertyNamePrefix}Biases`;
 
