@@ -724,8 +724,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
       this.boundsArraySet.afterFilter.set_all_byN( 0 ); // Init .afterFilter
       this.boundsArraySet.afterBias.set_all_byN( 0 );   // Init .afterBias
 
-      this.filtersArray.fill( 0 );
-
+      // Because biases is fetched by adding, it should be initialized to zero. (Note: The .filtersArray is fetched by assigning, so
+      // it needs not be initialized.)
+      //
       if ( this.biasesArray ) {
         this.biasesArray.fill( 0 );
       }
