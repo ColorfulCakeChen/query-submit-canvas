@@ -1,5 +1,4 @@
 export { Base, Root };
-export { Recyclable_Array as Array };
 
 import * as Pool from "./Pool.js";
 
@@ -59,15 +58,5 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
  * parent class of Recyclable.Root (so it is named "Root" which can not have parent class).
  */
 class Root extends Base {
-}
-
-
-/**
- * Almost the same as class Array but combined with Recyclable.Base.
- */
-class Recyclable_Array extends Base( Array ) {
-  
-  static Pool = Pool.Array
-
 }
 
