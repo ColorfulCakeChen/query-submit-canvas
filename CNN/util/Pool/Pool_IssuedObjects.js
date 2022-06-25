@@ -62,7 +62,8 @@ class IssuedObjects {
     
     // For reducing memory re-allocation when handling objects automatic recycling between sessions.
     this.sessionKeptObjectSet = new Set();
-    this.movingObjectArray = new Array(); // For reducing memory re-allocation.
+    this.movingObjectArray = new Array();
+    this.movingObjectRecyclePoolArray = new Array();
   }
 
   get issuedCount() {
@@ -259,7 +260,10 @@ class IssuedObjects {
     }
 
     // 2. Recycle the last session's issued all objects (except objects should be kept).
+
     this.movingObjectArray.length = 0;
+    this.movingObjectRecyclePoolArray.length = 0;
+
     while ( this.inSessionArray.length > 0 ) {
       
 //!!! ...unfinished... (2022/06/25) How to get its belonging recycle pool?
@@ -267,7 +271,7 @@ class IssuedObjects {
       let issuedObject = this.inSessionArray.pop();
       let recyclePool = this.inSessionRecyclePoolArray.pop();
 
-      if ( object == null )
+      if ( issuedObject == null )
         continue; // 2.1 The object has been recycled (before this session end).
 
       if ( issuedObject == SESSION_BORDER_MARK )
@@ -275,6 +279,7 @@ class IssuedObjects {
 
       if ( this.sessionKeptObjectSet.has( issuedObject ) ) { // 2.3 Found an object which should not be recycled.
         this.movingObjectArray.push( issuedObject ); // Collect it temporarily for moving it to parent session later.
+        this.movingObjectRecyclePoolArray.push( recyclePool );
 
       } else { // 2.4 Otherwise, recycle it.
         if ( issuedObject.disposeResources instanceof Function ) {
@@ -287,7 +292,8 @@ class IssuedObjects {
     // 3. Re-push the objects which should be kept to the parent session.
     while ( this.movingObjectArray.length > 0 ) {
       let movingObject = this.movingObjectArray.pop();
-      this.add( movingObject ); // Moved (i.e. belonged) to parent session.
+      let recyclePool = this.movingObjectRecyclePoolArray.pop();
+      this.add( movingObject, recyclePool ); // Moved (i.e. belonged) to parent session.
     }
 
     // 4. Reduce memory footprint.
