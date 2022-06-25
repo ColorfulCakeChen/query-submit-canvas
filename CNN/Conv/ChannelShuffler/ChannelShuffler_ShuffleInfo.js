@@ -334,12 +334,8 @@ class ShuffleInfoPool extends Pool.Root {
 
 }
 
-/**
- * Used as default ChannelShuffler.ShuffleInfo provider.
- */
-ShuffleInfoPool.Singleton = new ShuffleInfoPool();
 
 /**
- * An alias to ChannelShuffler.ShuffleInfoPool.Singleton for conforming to Recyclable interface.
+ * Used as default ChannelShuffler.ShuffleInfo provider for conforming to Recyclable interface.
  */
-ShuffleInfo.Pool = ShuffleInfoPool.Singleton;
+ShuffleInfo.Pool = new ShuffleInfoPool();
