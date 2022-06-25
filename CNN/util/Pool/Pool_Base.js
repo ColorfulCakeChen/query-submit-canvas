@@ -24,7 +24,7 @@ import { IssuedObjects } from "./Pool_IssuedObjects.js"
  * @member {Set} recycledObjectSet
  *   The same content as .recycledObjectArray for checking object whether is recycled multiple times.
  *
- * @member {number} recycled_count
+ * @member {number} recycledCount
  *   The quantity of recycled objects.
  *
  */
@@ -97,7 +97,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     return bRecycleOk;
   }
 
-  get recycled_count() {
+  get recycledCount() {
     return this.recycledObjectArray.length;
   }
 
