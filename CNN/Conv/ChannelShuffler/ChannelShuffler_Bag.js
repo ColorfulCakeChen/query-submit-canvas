@@ -124,4 +124,4 @@ BagPool.Singleton = new BagPool();
 /**
  * An alias to ChannelShuffler.BagPool.Singleton for conforming to Recyclable interface.
  */
-Bag.Pool.Singleton = BagPool.Singleton;
+Bag.Pool = BagPool.Singleton;
