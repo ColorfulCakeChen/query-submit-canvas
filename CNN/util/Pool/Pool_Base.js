@@ -1,5 +1,7 @@
 export { All, Base, Root };
 
+import { IssuedObjects } from "./Pool_IssuedObjects.js"
+
 
 //!!! ...unfinished... (2022/06/25)
 // Whether possible Pool.All knows which Pool.Xxx this object should be recycled to?
@@ -120,9 +122,6 @@ class RecycledObjects {
  *   A function set contents like its constructor and return an object. Before .get_or_create_by() returns a recycled object,
  * its .pfnSetAsConstructor() method will be called to re-initilaize it. Its return value will be the final returned object.
  *
- * @member {IssuedObjects} issuedObjects
- *   All objects returned by .get_or_create_by() will be recorded here.
- *
  * @member {RecycledObjects} recycledObjects
  *   All objects passed into .recycle() will be recorded here.
  *
@@ -152,14 +151,13 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     this.objectClass = objectClass;
     this.pfn_SetAsConstructor_ReturnObject = pfn_SetAsConstructor_ReturnObject;
 
-    this.issuedObjects = new IssuedObjects()
     this.recycledObjects = new RecycledObjects();
 
     All.push( this );
   }
 
   get issuedCount() {
-    return this.issuedObjects.issuedCount;
+    return IssuedObjects.Singleton.issuedCount;
   }
 
   get recycledCount() {
@@ -192,7 +190,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     }
 
     // 2. Tracking the issued object for recycling automatically by session_pop().
-    this.issuedObjects.add( returnedObject );
+    IssuedObjects.Singleton.add( returnedObject );
 
     return returnedObject;
   }
@@ -215,9 +213,8 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
         + `should be an instance of class ( ${this.objectClass} ).`
       );
 
-    // 2. If the object is issued by this pool, it should be removed from issued object list. Otheriwse, the list will become larger
-    //    and larger.
-    this.issuedObjects.remove( objectToBeRecycled );
+    // 2. Removed it from issued object list. Otheriwse, the list will become larger and larger.
+    IssuedObjects.Singleton.remove( objectToBeRecycled );
 
     // 3. Recycle it.
     let bRecycleOk = this.recycledObjects.add( objectToBeRecycled );
