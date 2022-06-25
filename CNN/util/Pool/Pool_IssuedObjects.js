@@ -33,6 +33,17 @@ export { All };
  *   Every instance of Pool.Base will automatically register itself in this list. This list will never be cleared (i.e. a Pool.Base
  * is never be released).
  *
+ * @member {Set} sessionKeptObjectSet
+ *   Temporary object list for speeding up searching of whether kept (i.e. not recycled) an object. Internally used by .session_pop().
+ *
+ * @member {Object[]} movingObjectArray
+ *   Temporary object list for moving kept (i.e. not recycled) objects to the parent session when a session is popping. Internally
+ * used by .session_pop().
+ *
+ * @member {Pool.Base[]} movingObjectRecyclePoolArray
+ *   Temporary pool list for moving kept (i.e. not recycled) objects to the parent session when a session is popping. Internally
+ * used by .session_pop().
+ *
  * @member {number} issuedCount
  *   The total quantity of all issued objects.
  *
