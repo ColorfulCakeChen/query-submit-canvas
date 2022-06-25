@@ -156,10 +156,14 @@ class IssuedObjects {
 
 }
 
-
 /**
  * In the .InSessionArray, this SESSION_BORDER_MARK will be placed between sessions. In fact, it is just the IssuedObjects class object
  * itself. The reason is that it is impossible to be an legal issued object of itself.
  */
 IssuedObjects.SESSION_BORDER_MARK = IssuedObjects;
+
+/**
+ * The only one (global) list of all issued (recyclable) objects.
+ */
+IssuedObjects.Singleton = new IssuedObjects();
 
