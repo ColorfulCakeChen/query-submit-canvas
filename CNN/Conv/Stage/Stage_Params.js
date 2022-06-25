@@ -46,6 +46,11 @@ class Params extends Weights.Params {
    *   The depth (channel count) of the source image. It may be the output channel count of the previous convolution stage, so
    * it could be large. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
+   
+//!!! ...unfinished... (2022/06/25)
+// Perhaps, just like the ( height, width ) halving and channel count doubling by evey stage,
+// the block count could be doubled by evey stage.
+
    * @param {number} blockCountRequested
    *   How many blocks inside this stage are wanted.
    *   - If null, it will be extracted from inputFloat32Array (i.e. by evolution).
