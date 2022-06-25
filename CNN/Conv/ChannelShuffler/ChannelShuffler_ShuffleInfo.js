@@ -73,7 +73,8 @@ class ShuffleInfo extends Recyclable.Root {
   /**
    *
    */
-  constructor( concatenatedShape, outputGroupCount ) {
+  constructor( concatenatedShape, outputGroupCount, ...restArgs ) {
+    super( ...restArgs );
     ShuffleInfo.setAsConstructor.call( this, concatenatedShape, outputGroupCount );
   }
 
