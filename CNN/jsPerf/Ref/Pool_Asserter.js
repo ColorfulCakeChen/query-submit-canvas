@@ -3,6 +3,7 @@ export { assert_Pool_issuedCount_same_after_as_before };
 export { assert_Pool_issuedCount_zero };
 
 import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 
 /**
  *
@@ -27,7 +28,7 @@ function assert_Pool_issuedCount_same_after_as_before( prefixMsg, pfn ) {
 
   let issuedCount_array_before;
   try {
-    issuedCount_array_before = Pool.Array.Singleton.get_or_create_by( Pool.All.registeredPoolArray.length );
+    issuedCount_array_before = Recyclable.Array.Pool.get_or_create_by( Pool.All.registeredPoolArray.length );
     for ( let i = 0; i < Pool.All.registeredPoolArray.length; ++i ) {
       let pool = Pool.All.registeredPoolArray[ i ];
       issuedCount_array_before[ i ] = pool.issuedCount;
@@ -41,7 +42,7 @@ function assert_Pool_issuedCount_same_after_as_before( prefixMsg, pfn ) {
     }
 
   } finally {
-    Pool.Array.Singleton.recycle( issuedCount_array_before );
+    issuedCount_array_before.disposeResources_and_recycleToPool();
     issuedCount_array_before = null;
   }
 }
