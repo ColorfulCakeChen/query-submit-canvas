@@ -53,7 +53,8 @@ class SplitConcat extends Recyclable.Root {
    *
    * @see ConcatGather
    */
-  constructor( concatenatedShape, outputGroupCount ) {
+  constructor( concatenatedShape, outputGroupCount, ...restArgs ) {
+    super( ...restArgs );
     SplitConcat.setAsConstructor.call( this, concatenatedShape, outputGroupCount );
   }
 
