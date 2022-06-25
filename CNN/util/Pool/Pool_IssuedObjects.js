@@ -259,7 +259,7 @@ class IssuedObjects {
         // A: Because the issued object list has already been processed in the aboved codes, it is not necessary to re-process again.
         //    Calling .recycled_add() will be more efficient than .recycle().
         //
-        recyclePool.constructor.recycled_add( recyclePool, issuedObject );
+        recyclePool.constructor.recycled_add.call( recyclePool, issuedObject );
       }
     }
 
