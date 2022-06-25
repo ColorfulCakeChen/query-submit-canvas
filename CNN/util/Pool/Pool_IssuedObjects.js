@@ -8,10 +8,6 @@ export { All };
 //
 // Solution: Use Recyclable as base class.
 
-//!!! ...unfinished... (2022/06/25)
-// A global IssuedObjects seems enough. Multiple RecycledObjects for different recycle pool are necessary.
-
-
 
 /**
  * Collect all issued objects which can be recycled to a Pool.Base.
