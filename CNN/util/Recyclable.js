@@ -1,10 +1,7 @@
 export { Base, Root };
+export { Recyclable_Array as Array };
 
-//import * as Pool from "./Pool.js";
-
-//!!! ...unfinished... (2022/06/25)
-// What about Array objetc? How to become Recyclable?
-
+import * as Pool from "./Pool.js";
 
 /**
  * The base class representing a object could be recycled (i.e. disposed without release its main object memory for re-using in the
@@ -62,5 +59,15 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
  * parent class of Recyclable.Root (so it is named "Root" which can not have parent class).
  */
 class Root extends Base {
+}
+
+
+/**
+ * Almost the same as class Array but combined with Recyclable.Base.
+ */
+class Recyclable_Array extends Base( Array ) {
+  
+  static Pool = Pool.Array
+
 }
 
