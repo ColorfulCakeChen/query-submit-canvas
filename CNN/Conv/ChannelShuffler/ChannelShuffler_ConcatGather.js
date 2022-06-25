@@ -52,7 +52,8 @@ class ConcatGather extends Recyclable.Root {
    *
    * @see ShuffleInfo
    */
-  constructor( concatenatedShape, outputGroupCount ) {
+  constructor( concatenatedShape, outputGroupCount, ...restArgs ) {
+    super( ...restArgs );
     ConcatGather.setAsConstructor.call( this, concatenatedShape, outputGroupCount );
   }
 
