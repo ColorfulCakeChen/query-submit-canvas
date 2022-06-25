@@ -88,7 +88,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
   recycle( objectToBeRecycled ) {
 
     // 1. Recycle it.
-    let bRecycleOk = Base.recycled_add( this, objectToBeRecycled );
+    let bRecycleOk = Base.recycled_add.call( this, objectToBeRecycled );
 
     // 2. Removed it from issued object list. Otheriwse, the list will become larger and larger.
     if ( bRecycleOk )
