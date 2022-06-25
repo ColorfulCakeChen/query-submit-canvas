@@ -13,15 +13,16 @@ class ShuffleInfo extends ChannelShuffler_ShuffleInfo {
     super( concatenatedShape, outputGroupCount );
   }
 
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   *
-   * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    ShuffleInfoPool.Singleton.recycle( this );
-  }
+//!!! (2022/06/25 Remarked) Inherits from Recyclable.Base instead.
+//   /**
+//    * After calling this method, this object should be viewed as disposed and should not be operated again.
+//    *
+//    * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
+//    */
+//   disposeResources_and_recycleToPool() {
+//     this.disposeResources();
+//     ShuffleInfoPool.Singleton.recycle( this );
+//   }
 
   /**
    * Permute the input tensor by reshape-transpose-reshape.
@@ -396,7 +397,7 @@ class ShuffleInfoPool extends Pool.Root {
 }
 
 /**
- * Used as default ChannelShuffler.PerformanceTest.ShuffleInfo provider.
+ * Used as default ChannelShuffler.PerformanceTest.ShuffleInfo provider for conforming to Recyclable interface.
  */
-ShuffleInfoPool.Singleton = new ShuffleInfoPool();
+ShuffleInfo.Pool = new ShuffleInfoPool();
 
