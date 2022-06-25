@@ -247,6 +247,11 @@ class Base {
         imageInArraySelected[ 1 ]?.boundsArraySet.output0,
         channelShuffler_ConcatPointwiseConv, this.arrayTemp_forInterleave_asGrouptTwo );
 
+
+//!!! ...unfinished... (2022/06/25)
+// Try not to generate parameters description string in advance every time for reducing memory re-allocation.
+// Just generate them only if necessary.
+
       let parametersDescription = block.parametersDescription;
       strNote = `( testParams.id=${testParams.id}, ${parametersDescription} )`;
 
@@ -419,6 +424,11 @@ class Base {
       console.log( "testParams =", testParams );
       debugger;
     }
+
+
+//!!! ...unfinished... (2022/06/25)
+// Try not to generate parameters description string in advance every time for reducing memory re-allocation.
+// Just generate them only if necessary.
 
     let parametersDescription = `( ${block.parametersDescription} )`;
 
@@ -778,6 +788,11 @@ class Base {
     let testParams = this.testParams;
     let inferencedParams = testParams.out.inferencedParams;
     let depthwisePadInfo = inferencedParams.depthwisePadInfo;
+
+
+//!!! ...unfinished... (2022/06/25)
+// Try not to generate parameters description string in advance every time for reducing memory re-allocation.
+// Just generate them only if necessary.
 
     // Create description for debug easily.
     this.paramsOutDescription = Base.TestParams_Out_createDescription( testParams );
