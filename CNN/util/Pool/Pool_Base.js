@@ -29,9 +29,16 @@ let All = [];
 //  *   If an issued object is not belong to any session, it will be here.
 
  *
- * @member {Array} inSessionArray
+ * @member {Object[]} inSessionArray
  *   If an issued object is belong to a session, it will be here.
  *
+
+//!!! ...unfinished... (2022/06/25)
+
+ * @member {Pool.Base[]} inSessionRecyclePoolArray
+ *   Every in-session issued objects' corresponding recycle pool.
+ *
+
  * @member {Map} toInSessionArrayIndexMap
  *   Map every issued object to its array index in .inSessionArray[].
  *   - If an issued objects is belong to a session, this map's value is the array index to .inSessionArray[].
