@@ -204,6 +204,8 @@ class IssuedObjects {
             let keptObject = keptObjectOrArray[ i ];
             if ( keptObject ) {
 
+//!!! ...unfinished... (2022/06/25) Which recyclePool?
+
               if ( this.recycledObjects.has( keptObject ) )
                 throw Error( `Pool.IssuedObjects.session_pop(): `
                   + `The object to be kept (i.e. not to be recycled) ( ${keptObject} ) `
@@ -215,6 +217,9 @@ class IssuedObjects {
           }
         } else if ( keptObjectOrArray instanceof Object ) { // 1.2 A single object to be kept.
           
+
+//!!! ...unfinished... (2022/06/25) Which recyclePool?
+
           if ( this.recycledObjects.has( keptObjectOrArray ) )
             throw Error( `Pool.IssuedObjects.session_pop(): `
               + `The object to be kept (i.e. not to be recycled) ( ${keptObjectOrArray} ) `
