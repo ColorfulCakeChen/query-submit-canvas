@@ -70,7 +70,8 @@ class ConcatPointwiseConv extends Recyclable.Root {
    *
    * @see ConcatGather
    */
-  constructor( concatenatedShape, outputGroupCount ) {
+  constructor( concatenatedShape, outputGroupCount, ...restArgs ) {
+    super( ...restArgs );
     ConcatPointwiseConv.setAsConstructor.call( this, concatenatedShape, outputGroupCount );
   }
 
