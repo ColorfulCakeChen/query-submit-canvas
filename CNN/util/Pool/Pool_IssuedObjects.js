@@ -29,6 +29,10 @@ export { All };
  *   - If an issued objects is belong to a session, this map's value is the array index to .inSessionArray[].
  *   - If an issued objects is not belong to any session, this map's value is a negative value (e.g. -1).
  *
+ * @member {Pool.Base[]} registeredPoolArray
+ *   Every instance of Pool.Base will automatically register itself in this list. This list will never be cleared (i.e. a Pool.Base
+ * is never be released).
+ *
  * @member {number} issuedCount
  *   The total quantity of all issued objects.
  *
@@ -48,7 +52,9 @@ class IssuedObjects {
     this.inSessionArray = new Array();
     this.inSessionRecyclePoolArray = new Array();
     this.toInSessionArrayIndexMap = new Map();
-    
+
+    this.registeredPoolArray = new Array();
+
     // For reducing memory re-allocation when handling objects automatic recycling between sessions.
     this.sessionKeptObjectSet = new Set();
     this.movingObjectArray = new Array();
