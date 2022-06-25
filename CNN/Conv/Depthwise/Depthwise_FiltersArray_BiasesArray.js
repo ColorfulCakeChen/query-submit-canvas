@@ -613,12 +613,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( this.nPassThroughStyleId );
     let tBounds = new FloatValue.Bounds( 0, 0 );
 
-//!!! ...unfinished... (2022/06/25) Fill the filters and biases array with zero for initialization.
-
     // Init
     {
       this.boundsArraySet.afterFilter.set_all_byN( 0 ); // Init .afterFilter
       this.boundsArraySet.afterBias.set_all_byN( 0 );   // Init .afterBias
+
+      this.filtersArray.fill( 0 );
 
       if ( this.biasesArray ) {
         this.biasesArray.fill( 0 );
