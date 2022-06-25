@@ -98,7 +98,7 @@ class ConcatPointwiseConv extends Recyclable.Root {
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
 
-    let concatGather = ConcatGatherPool.Singleton.get_or_create_by( concatenatedShape, outputGroupCount );
+    let concatGather = ConcatGather.Pool.get_or_create_by( concatenatedShape, outputGroupCount );
 
     const filterHeight = 1; // Pointwise convolution is convolution 2d with 1 x 1 filter.
     const filterWidth = 1;
