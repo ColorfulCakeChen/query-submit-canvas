@@ -1,26 +1,6 @@
-export { All, Base, Root };
+export { Base, Root };
 
 import { IssuedObjects } from "./Pool_IssuedObjects.js"
-
-
-//!!! ...unfinished... (2022/06/25)
-// Whether possible Pool.All knows which Pool.Xxx this object should be recycled to?
-// So there is not necessary override .disposeResources_and_recycleToPool() for every (sub) classes of pooled object.
-//
-// Solution: Use Recyclable as base class.
-
-//!!! ...unfinished... (2022/06/25)
-// A global IssuedObjects seems enough. Multiple RecycledObjects for different recycle pool are necessary.
-
-
-/**
- * Every instance of Pool.Base will automatically register itself in this list.
- *
- * This list will never be cleared.
- */
-let All = [];
-
-
 
 /**
  * Collect all recycled (i.e. could be re-issued) objects of Pool.Base.
@@ -125,15 +105,6 @@ class RecycledObjects {
  * @member {RecycledObjects} recycledObjects
  *   All objects passed into .recycle() will be recorded here.
  *
- * @member {Set} sessionKeptObjectSet
- *   Temporary object list for speeding up searching of whether kept (i.e. not recycled) an object.
- *
- * @member {object[]} movingObjectArray
- *   Temporary object list for moving kept (i.e. not recycled) objects to the parent session when a session is popped.
- *
- * @member {number} issuedCount
- *   The total quantity of all issued objects.
- *
  * @member {number} recycledCount
  *   The quantity of recycled objects.
  *
@@ -141,7 +112,7 @@ class RecycledObjects {
 let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
   /**
-   * This constructor will register this object to Pool.All[] list. And it will never be removed from the list.
+   * This constructor will register this object to Pool.All.registeredPoolArray list. And it will never be removed from the list.
    *
    */
   constructor( poolName, objectClass, pfn_SetAsConstructor_ReturnObject, ...restArgs ) {
@@ -153,11 +124,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
     this.recycledObjects = new RecycledObjects();
 
-    All.push( this );
-  }
-
-  get issuedCount() {
-    return IssuedObjects.Singleton.issuedCount;
+    IssuedObjects.Singleton.registeredPoolArray.push( this ); // Register to the only one global All pool list.
   }
 
   get recycledCount() {
@@ -190,7 +157,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     }
 
     // 2. Tracking the issued object for recycling automatically by session_pop().
-    IssuedObjects.Singleton.add( returnedObject, this );
+    IssuedObjects.issuedObject_add.call( IssuedObjects.Singleton, returnedObject, this );
 
     return returnedObject;
   }
@@ -214,7 +181,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
       );
 
     // 2. Removed it from issued object list. Otheriwse, the list will become larger and larger.
-    IssuedObjects.Singleton.remove( objectToBeRecycled );
+    IssuedObjects.issuedObject_remove.call( IssuedObjects.Singleton, objectToBeRecycled );
 
     // 3. Recycle it.
     let bRecycleOk = this.recycledObjects.add( objectToBeRecycled );
