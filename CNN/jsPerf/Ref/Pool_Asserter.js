@@ -41,8 +41,12 @@ function assert_Pool_issuedCount_same_after_as_before( prefixMsg, pfn ) {
       assert_Pool_issuedCount( prefixMsg, pool, issuedCount_array_before[ i ] );
     }
 
+  } catch ( e ) {
+    throw e;
+
   } finally {
-    issuedCount_array_before.disposeResources_and_recycleToPool();
+    if ( issuedCount_array_before )
+      issuedCount_array_before.disposeResources_and_recycleToPool();
     issuedCount_array_before = null;
   }
 }
