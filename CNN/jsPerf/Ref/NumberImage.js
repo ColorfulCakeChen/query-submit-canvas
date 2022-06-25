@@ -27,8 +27,16 @@ import * as Depthwise from "../../Conv/Depthwise.js";
  */
 class Base {
 
+//!!! ...unfinished... (2022/06/25)
+// Instead of giving dataArray, specify what value to be filled in dataArray by default.
+
   /**
    *
+
+//!!! ...unfinished... (2022/06/25)
+   * @param {number} filledValue
+   *   Use this value to fill the created .dataArray[].
+
    */
   constructor( height, width, depth, dataArray, boundsArraySet ) {
     this.height = height;
@@ -145,6 +153,7 @@ class Base {
       new BoundsArraySet.Pointwise( imageIn.boundsArraySet.output0, pointwiseChannelCount ) );
 
 //!!! ...unfinished... (2022/06/25) Fill the array with zero for initialization.
+// Perhaps, NumberImage's .setAsConstructor() should do that.
 
     imageOut.boundsArraySet.set_bPassThrough_all( bPassThrough );
 
@@ -363,6 +372,7 @@ class Base {
     }
 
 //!!! ...unfinished... (2022/06/25) Fill the array with zero for initialization. for mon-max pooling.
+// Perhaps, NumberImage's .setAsConstructor() should do that.
 
     // Max pooling
     if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) {
