@@ -63,7 +63,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     // Note: candicatedObject and returnedObject may not be the same one object. It is possible the pfn_SetAsConstructor_ReturnObject()
     //       returns a different object.
     //
-    let candicatedObject = this.recycledObjectArray.pop();
+    let candicatedObject = Base.recycled_pop.call( this );
     if ( candicatedObject != null ) {
       returnedObject = this.pfn_SetAsConstructor_ReturnObject.apply( candicatedObject, restArgs );
 
@@ -174,8 +174,8 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
       );
 
     // 4. Record it as recycled.
-    this.recycledObjectSet.add( objectToBeRecycled );
     this.recycledObjectArray.push( objectToBeRecycled );
+    this.recycledObjectSet.add( objectToBeRecycled );
     return true;
   }
 
