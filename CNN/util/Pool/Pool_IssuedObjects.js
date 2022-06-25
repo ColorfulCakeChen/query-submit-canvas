@@ -34,7 +34,7 @@ export { All };
  *   Temporary pool list for moving kept (i.e. not recycled) objects to the parent session when a session is popping. Internally
  * used by .session_pop().
  *
- * @member {number} issued_count
+ * @member {number} issuedCount
  *   The total quantity of all issued objects.
  *
  * @member {boolean} isCurrentInSession
@@ -65,7 +65,7 @@ class IssuedObjects {
     this.movingObjectRecyclePoolArray = new Array();
   }
 
-  get issued_count() {
+  get issuedCount() {
     return this.toInSessionArrayIndexMap.size;
   }
 
