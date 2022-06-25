@@ -275,3 +275,6 @@ class IssuedObjects {
  */
 IssuedObjects.SESSION_BORDER_MARK = IssuedObjects;
 
+
+IssuedObjects.sessionKeptObjectSet = new Set(); // For reducing memory re-allocation.
+IssuedObjects.movingObjectArray = new Array(); // For reducing memory re-allocation.
