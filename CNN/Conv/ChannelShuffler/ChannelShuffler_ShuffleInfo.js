@@ -2,6 +2,7 @@ export { ShuffleInfo };
 export { ShuffleInfoPool };
 
 import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 
 /**
  * The information for channel shuffler.
@@ -67,7 +68,7 @@ import * as Pool from "../../util/Pool.js";
  *   Concatenate, permute and split the input tensor by concat-reshape-transpose-reshape-split. It is a function pointer to one of
  * this.concatReshapeTransposeReshapeSplit_XXX().
  */
-class ShuffleInfo {
+class ShuffleInfo extends Recyclable.Root {
 
   /**
    *
@@ -92,7 +93,7 @@ class ShuffleInfo {
 
     // Clone it (by shallow-copy) because the outside may modify it.
     {
-      this.concatenatedShape = Pool.Array.Singleton.get_or_create_by( concatenatedShape.length );
+      this.concatenatedShape = Recyclable.Array.Pool.get_or_create_by( concatenatedShape.length );
       for ( let i = 0; i < concatenatedShape.length; ++i ) {
         this.concatenatedShape[ i ] = concatenatedShape[ i ];
       }
@@ -118,7 +119,7 @@ class ShuffleInfo {
 //     let intermediateShape = this.intermediateShape = concatenatedShape.slice( 0, lastAxisId );
 //     intermediateShape.push( outputGroupCount, channelCountPerGroup );
 
-      intermediateShape = this.intermediateShape = Pool.Array.Singleton.get_or_create_by( concatenatedShape.length + 1 );
+      intermediateShape = this.intermediateShape = Recyclable.Array.Pool.get_or_create_by( concatenatedShape.length + 1 );
       for ( let i = 0; i < lastAxisId; ++i ) {
         intermediateShape[ i ] = concatenatedShape[ i ];
       }
@@ -140,7 +141,7 @@ class ShuffleInfo {
 //       let last2 = transposePermutation.pop();
 //       transposePermutation.push( last1, last2 );
 
-      transposePermutation = this.transposePermutation = Pool.Array.Singleton.get_or_create_by( intermediateShape.length );
+      transposePermutation = this.transposePermutation = Recyclable.Array.Pool.get_or_create_by( intermediateShape.length );
       for ( let i = 0; i < transposePermutation.length; ++i ) {
         transposePermutation[ i ] = i;
       }
@@ -176,10 +177,10 @@ class ShuffleInfo {
     this.tensorWeightCountTotal = 0;
     this.tensorWeightCountExtracted = 0;
 
-    Pool.Array.Singleton.recycle( this.transposePermutation );
+    this.transposePermutation.disposeResources_and_recycleToPool();
     this.transposePermutation = null;
 
-    Pool.Array.Singleton.recycle( this.intermediateShape );
+    this.intermediateShape.disposeResources_and_recycleToPool();
     this.intermediateShape = null;
 
     this.channelCountPerGroup = 0;
@@ -188,21 +189,22 @@ class ShuffleInfo {
     this.shuffleInfo = null;
     this.outputGroupCount = 0;
 
-    Pool.Array.Singleton.recycle( this.concatenatedShape );
+    this.concatenatedShape.disposeResources_and_recycleToPool();
     this.concatenatedShape = null;
 
     //super.disposeResources();
   }
 
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   *
-   * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    ShuffleInfoPool.Singleton.recycle( this );
-  }
+//!!! (2022/06/25 Remarked) Inherits from Recyclable.Base instead.
+//   /**
+//    * After calling this method, this object should be viewed as disposed and should not be operated again.
+//    *
+//    * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
+//    */
+//   disposeResources_and_recycleToPool() {
+//     this.disposeResources();
+//     ShuffleInfoPool.Singleton.recycle( this );
+//   }
 
   /** Not dispose the input. */
   reshape_to_intermediateShape_keep_input( t ) {
@@ -337,3 +339,7 @@ class ShuffleInfoPool extends Pool.Root {
  */
 ShuffleInfoPool.Singleton = new ShuffleInfoPool();
 
+/**
+ * An alias to ChannelShuffler.ShuffleInfoPool.Singleton for conforming to Recyclable interface.
+ */
+ShuffleInfo.Pool = ShuffleInfoPool.Singleton;
