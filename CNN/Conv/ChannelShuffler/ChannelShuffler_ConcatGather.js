@@ -88,7 +88,7 @@ class ConcatGather extends Recyclable.Root {
       this.shuffledChannelIndicesTensor1dArray
         = tf.tidy( "ChannelShuffler.ConcatGather.init.shuffledChannelIndicesTensor1dArray", () => {
           let channelIndices = tf.range( 0, this.shuffleInfo.totalChannelCount, 1, "int32" );
-          return ShuffleInfoPool.Singleton.sessionCall( () => {
+          return Pool.All.sessionCall( () => {
             let channelIndicesShuffleInfo = ShuffleInfoPool.Singleton.get_or_create_by( channelIndices.shape, outputGroupCount );
             return channelIndicesShuffleInfo.reshapeTransposeReshapeSplit( channelIndices );
           });
