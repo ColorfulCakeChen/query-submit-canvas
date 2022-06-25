@@ -1,6 +1,6 @@
 export { Base, Root };
 
-import * as Pool from "./Pool.js";
+import * as Pool from "../Pool.js";
 
 /**
  * The base class representing a object could be recycled (i.e. disposed without release its main object memory for re-using in the
