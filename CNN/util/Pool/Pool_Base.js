@@ -3,92 +3,8 @@ export { Base, Root };
 import { IssuedObjects } from "./Pool_IssuedObjects.js"
 
 /**
- * Collect all recycled (i.e. could be re-issued) objects of Pool.Base.
- *
- *
- * @member {Array} array
- *   For fetching object efficiently (without creating iterator).
- *
- * @member {Set} set
- *   The same content as .array for checking object whether is recycled multiple times.
- *
- * @member {number} recycledCount
- *   The quantity of recycled objects.
- *
- */
-class RecycledObjects {
-
-  constructor() {
-    this.array = new Array();
-    this.set = new Set();
-  }
-
-  get recycledCount() {
-    return this.array.length;
-  }
-
-  /**
-   *
-   * @param {Object} objectToBeRecycled
-   *   The object to be recorded as recycled.
-   *
-   * @return {boolean}
-   *   - Return true, if the object is recycled.
-   *   - Return false, if the object has already been a recycled object.
-   */
-  add( objectToBeRecycled ) {
-    if ( this.set.has( objectToBeRecycled ) ) { // Avoid recycling one object multiple times (i.e. duplicately).
-
-      throw Error(
-        `Pool.RecycledObjects.add(): `
-          + `An object ( ${objectToBeRecycled} ) is recycled multiple times. `
-          + `This may imply some problem (e.g. resource not transferred properly).`
-        );
-
-      return false;
-
-    } else { // Record it as recycled.
-      this.set.add( objectToBeRecycled );
-      this.array.push( objectToBeRecycled );
-      return true;
-    }
-  }
-
-  /**
-   *
-   * @return {Object}
-   *   Pop the last object and return it. It may be null, if there is no object in this recycle bin.
-   */
-  pop() {
-    let object = this.array.pop();
-    if ( object == undefined )
-      return null;
-    this.set.delete( object ); // Removed from set.
-    return object;
-  }
-
-  /**
-   * Dicard all objects in this recycle bin.
-   */
-  removeAll() {
-    this.array.length = 0;
-    this.set.clear();
-  }
-
-  /**
-   * @return {boolean} Return true, if the object is recorded in this recycle bin.
-   */
-  has( object ) {
-    return this.set.has( object );
-  }
-
-}
-
-
-/**
- * A pool for recycling (re-using) objects.
- *
- * It could be used to improve performance by reducing memory re-allocation.
+ * A pool for recycling (re-using) objects. It collects all recycled (i.e. could be re-issued) objects of Pool.Base.
+ * This could improve performance by reducing memory re-allocation.
  *
  *
  * @member {string} poolName
@@ -102,10 +18,13 @@ class RecycledObjects {
  *   A function set contents like its constructor and return an object. Before .get_or_create_by() returns a recycled object,
  * its .pfnSetAsConstructor() method will be called to re-initilaize it. Its return value will be the final returned object.
  *
- * @member {RecycledObjects} recycledObjects
- *   All objects passed into .recycle() will be recorded here.
+ * @member {Object} recycledObjectArray
+ *   For fetching object efficiently (without creating iterator).
  *
- * @member {number} recycledCount
+ * @member {Set} recycledObjectSet
+ *   The same content as .recycledObjectArray for checking object whether is recycled multiple times.
+ *
+ * @member {number} recycled_count
  *   The quantity of recycled objects.
  *
  */
@@ -122,13 +41,10 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     this.objectClass = objectClass;
     this.pfn_SetAsConstructor_ReturnObject = pfn_SetAsConstructor_ReturnObject;
 
-    this.recycledObjects = new RecycledObjects();
+    this.recycledObjectArray = new Array();
+    this.recycledObjectSet = new Set();
 
     IssuedObjects.Singleton.registeredPoolArray.push( this ); // Register to the only one global All pool list.
-  }
-
-  get recycledCount() {
-    return this.recycledObjects.recycledCount;
   }
 
   /**
@@ -184,16 +100,65 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     IssuedObjects.issuedObject_remove.call( IssuedObjects.Singleton, objectToBeRecycled );
 
     // 3. Recycle it.
-    let bRecycleOk = this.recycledObjects.add( objectToBeRecycled );
+    let bRecycleOk = Base.recycled_add( this, objectToBeRecycled );
     return bRecycleOk;
   }
 
+//!!!
   /**
-   * Discard all recycled objects. (Note: The issued objects list are not influenced.)
+   * @param {Object} objectToBeRecycled
+   *   The object (which should be an instance of this.ObjectClass) to be recycled.
+   *
+   * @return {boolean}
+   *   Return true, if the object is recycled. Return false, if the object has already been recycled.
    */
-  recycledClear() {
-    this.recycledObjects.removeAll();
+  static recycle_without_removeFrom_IssuedObjects( objectToBeRecycled ) {
+
+    if ( objectToBeRecycled == null )
+      return false; // 1. Can not recycle a null object.
+
+    if ( !( objectToBeRecycled instanceof this.objectClass ) )
+      throw Error( `Pool.Base.recycle(): `
+        + `The object to be recycled ( ${objectToBeRecycled} ) `
+        + `should be an instance of class ( ${this.objectClass} ).`
+      );
+
+//!!!
+//     // 2. Removed it from issued object list. Otheriwse, the list will become larger and larger.
+//     IssuedObjects.issuedObject_remove.call( IssuedObjects.Singleton, objectToBeRecycled );
+
+    // 3. Recycle it.
+    let bRecycleOk = Base.recycled_add( this, objectToBeRecycled );
+    return bRecycleOk;
   }
+
+
+
+  get recycled_count() {
+    return this.recycledObjectArray.length;
+  }
+
+  /**
+   * @param {Base}
+   *   The Pool.Base object for handling the recycled bojects.
+   *
+   * @return {boolean} Return true, if the object is recorded in this recycle bin.
+   */
+  recycled_has( object ) {
+    return this.recycledObjectSet.has( object );
+  }
+
+  /**
+   * Discard all recycled objects (in this Pool.Base). (Note: The issued objects list are not influenced.)
+   *
+   * @param {Base}
+   *   The Pool.Base object for handling the recycled bojects.
+   */
+  recycled_removeAll() {
+    this.recycledObjectArray.length = 0;
+    this.recycledObjectSet.clear();
+  }
+
 
 //!!! (2022/06/23 Remarked) seems not used.
 //   /**
@@ -204,6 +169,51 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 //     yield* this.recycledObjects.array.values();
 //   }
 
+  /**
+   *
+   * @param {Base}
+   *   The Pool.Base object for handling the recycled bojects.
+   *
+   * @param {Object} objectToBeRecycled
+   *   The object to be recorded as recycled.
+   *
+   * @return {boolean}
+   *   - Return true, if the object is recycled.
+   *   - Return false, if the object has already been a recycled object.
+   */
+  static recycled_add( objectToBeRecycled ) {
+    if ( this.recycledObjectSet.has( objectToBeRecycled ) ) { // Avoid recycling one object multiple times (i.e. duplicately).
+
+      throw Error(
+        `Pool.Base.recycled_add(): `
+          + `An object ( ${objectToBeRecycled} ) is recycled multiple times. `
+          + `This may imply some problem (e.g. resource not transferred properly).`
+        );
+
+      return false;
+
+    } else { // Record it as recycled.
+      this.recycledObjectSet.add( objectToBeRecycled );
+      this.recycledObjectArray.push( objectToBeRecycled );
+      return true;
+    }
+  }
+
+  /**
+   *
+   * @param {Base}
+   *   The Pool.Base object for handling the recycled bojects.
+   *
+   * @return {Object}
+   *   Pop the last object and return it. It may be null, if there is no object in this recycle bin.
+   */
+  static recycled_pop() {
+    let object = this.recycledObjectArray.pop();
+    if ( object == undefined )
+      return null;
+    this.recycledObjectSet.delete( object ); // Removed from set.
+    return object;
+  }
 
 }
 
