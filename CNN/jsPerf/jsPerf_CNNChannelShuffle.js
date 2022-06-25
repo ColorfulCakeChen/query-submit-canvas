@@ -59,16 +59,16 @@ class HeightWidthDepthGroup {
   shufflers_init() {
     this.shufflers_release();
 
-    this.shuffleInfo = ChannelShuffler.PerformanceTest.ShuffleInfoPool.Singleton.get_or_create_by(
+    this.shuffleInfo = ChannelShuffler.PerformanceTest.ShuffleInfo.Pool.get_or_create_by(
       this.concatenatedShape, this.groupCount );
 
-    this.concatGatherUnsorted = ChannelShuffler.PerformanceTest.ConcatGatherPool.Singleton.get_or_create_by(
+    this.concatGatherUnsorted = ChannelShuffler.PerformanceTest.ConcatGather.Pool.get_or_create_by(
       this.concatenatedShape, this.groupCount );
 
-    this.splitConcatSortedShared = ChannelShuffler.PerformanceTest.SplitConcatPool.Singleton.get_or_create_by(
+    this.splitConcatSortedShared = ChannelShuffler.PerformanceTest.SplitConcat.Pool.get_or_create_by(
       this.concatenatedShape, this.groupCount );
 
-    this.concatPointwiseConv = ChannelShuffler.PerformanceTest.ConcatPointwiseConvPool.Singleton.get_or_create_by(
+    this.concatPointwiseConv = ChannelShuffler.PerformanceTest.ConcatPointwiseConv.Pool.get_or_create_by(
       this.concatenatedShape, this.groupCount );
   }
 
