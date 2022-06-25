@@ -144,6 +144,8 @@ class Base {
       imageIn.height, imageIn.width, pointwiseChannelCount, new Float32Array( imageOutLength ),
       new BoundsArraySet.Pointwise( imageIn.boundsArraySet.output0, pointwiseChannelCount ) );
 
+//!!! ...unfinished... (2022/06/25) Fill the array with zero for initialization.
+
     imageOut.boundsArraySet.set_bPassThrough_all( bPassThrough );
 
     // Pointwise Convolution
@@ -359,6 +361,8 @@ class Base {
         tBounds = new FloatValue.Bounds( 0, 0 );
       }
     }
+
+//!!! ...unfinished... (2022/06/25) Fill the array with zero for initialization. for mon-max pooling.
 
     // Max pooling
     if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) {
