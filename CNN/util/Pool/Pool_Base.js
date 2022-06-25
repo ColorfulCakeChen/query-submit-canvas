@@ -12,8 +12,11 @@ let All = [];
  * Collect all issued objects of Pool.Base.
  *
  *
- * @member {Set} notInSessionSet
- *   If an issued object is not belong to any session, it will be here.
+
+//!!! (2022/06/25 Remarked) seems not needed because .toInSessionArrayIndexMap seems enough.
+//  * @member {Set} notInSessionSet
+//  *   If an issued object is not belong to any session, it will be here.
+
  *
  * @member {Array} inSessionArray
  *   If an issued object is belong to a session, it will be here.
@@ -21,7 +24,7 @@ let All = [];
  * @member {Map} toInSessionArrayIndexMap
  *   Map every issued object to its array index in .inSessionArray[].
  *   - If an issued objects is belong to a session, this map's value is the array index to .inSessionArray[].
- *   - If an issued objects is not belong to any session, this map's value is a negative value (e.g. -1) meaning it is inside .notInSessionSet.
+ *   - If an issued objects is not belong to any session, this map's value is a negative value (e.g. -1).
  *
  * @member {number} issuedCount
  *   The total quantity of all issued objects.
@@ -33,13 +36,15 @@ let All = [];
 class IssuedObjects {
 
   constructor() {
-    this.notInSessionSet = new Set();
+
+//!!! (2022/06/25 Remarked) seems not needed because .toInSessionArrayIndexMap seems enough.
+//    this.notInSessionSet = new Set();
+
     this.inSessionArray = new Array();
     this.toInSessionArrayIndexMap = new Map();
   }
 
   get issuedCount() {
-    //return ( this.notInSessionSet.size + this.inSessionArray.length );
     return this.toInSessionArrayIndexMap.size;
   }
 
@@ -51,8 +56,10 @@ class IssuedObjects {
   }
 
   /**
-   * If current is in a session, the object will be recorded in .inSessionArray which could be visit in sequential when the session is ended.
-   * Otherwise, it will be recorded in .notInSessionSet which is fast for removing in the future.
+   * Every object will be recorded in .toInSessionArrayIndexMap which is fast for removing in the future.
+   *
+   * If current is in a session, the object will also be recorded in .inSessionArray which could be visit in sequential when the
+   * session is ended.
    *
    * @return {boolean} Always return true.
    */
@@ -62,7 +69,10 @@ class IssuedObjects {
       this.inSessionArray.push( issuedObject );
       this.toInSessionArrayIndexMap.set( issuedObject, arrayIndex );
     } else {
-      this.notInSessionSet.add( issuedObject );
+
+//!!! (2022/06/25 Remarked) seems not needed because .toInSessionArrayIndexMap seems enough.
+//      this.notInSessionSet.add( issuedObject );
+
       this.toInSessionArrayIndexMap.set( issuedObject, -1 );
     }
     return true;
@@ -77,7 +87,10 @@ class IssuedObjects {
    *     - Considering what will happen if it is re-issued again in the other session. If it is not marked as null, it might be recycled
    *         wrongly when this session is ended.
    *
-   * - If the object is not recorded in a session (i.e. in .notInSessionSet), it will be remove from .notInSessionSet directly.
+
+//!!! (2022/06/25 Remarked) seems not needed because .toInSessionArrayIndexMap seems enough.
+//   * - If the object is not recorded in a session (i.e. in .notInSessionSet), it will be remove from .notInSessionSet directly.
+
    *
    *
    * @return {boolean}
@@ -93,7 +106,10 @@ class IssuedObjects {
       this.toInSessionArrayIndexMap.delete( object );
 
     } else { // 3. The object is not belong to any session.
-      this.notInSessionSet.delete( object );
+
+//!!! (2022/06/25 Remarked) seems not needed because .toInSessionArrayIndexMap seems enough.
+//      this.notInSessionSet.delete( object );
+
       this.toInSessionArrayIndexMap.delete( object );
     }
     return true;
