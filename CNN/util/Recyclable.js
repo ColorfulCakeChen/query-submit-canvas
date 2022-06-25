@@ -10,15 +10,26 @@ export { Base, Root };
  * The base class representing a object could be recycled (i.e. disposed without release its main object memory for re-using in the
  * future).
  *
- * Every sub-class of this Recyclable.Base MUST define a static propery named RecyclePool which is usually an instance of Pool.Base:
+ * Every sub-class of this Recyclable.Base MUST define a static propery named Pool which is usually an instance of Pool.Base:
  * <pre>
  * class SomeClass extends Recyclable.Base {
  *
- *   static RecyclePool = new XxxPool();
+ *   static Pool = new XxxPool();
  *
  * }
  * </pre>
  *
+ * Or,
+ * <pre>
+ * class SomeClass extends Recyclable.Base {
+ *
+ *   ...
+ *
+ * }
+ *
+ * SomeClass.Pool = new XxxPool();
+ *
+ * </pre>
  *
  *
  */
@@ -27,7 +38,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
   /**
    * This method will do the following in sequence:
    *   - call this.disposeResources() (if exists)
-   *   - call this.constructor.RecyclePool.recycle()
+   *   - call this.constructor.Pool.recycle()
    *
    * Sub-class should NEVER override this method (so NEVER call super.disposeResources_and_recycleToPool()).
    *
@@ -40,7 +51,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
       this.disposeResources();
     }
 
-    this.constructor.RecyclePool.recycle( this );
+    this.constructor.Pool.recycle( this );
   }
 
 }
