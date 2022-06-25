@@ -14,35 +14,10 @@ import { IssuedObjects } from "./IssuedObjects.js";
 
 
 /**
- * Collect all issued objects of Pool.Base.
+ * Handle objects automatic recycling between sessions.
  *
+ * It will operate on the only one global IssuedObjects.
  *
-
-//!!! (2022/06/25 Remarked) seems not needed because .toInSessionArrayIndexMap seems enough.
-//  * @member {Set} notInSessionSet
-//  *   If an issued object is not belong to any session, it will be here.
-
- *
- * @member {Object[]} inSessionArray
- *   If an issued object is belong to a session, it will be here.
- *
-
-//!!! ...unfinished... (2022/06/25)
-
- * @member {Pool.Base[]} inSessionRecyclePoolArray
- *   Every in-session issued objects' corresponding recycle pool.
- *
-
- * @member {Map} toInSessionArrayIndexMap
- *   Map every issued object to its array index in .inSessionArray[].
- *   - If an issued objects is belong to a session, this map's value is the array index to .inSessionArray[].
- *   - If an issued objects is not belong to any session, this map's value is a negative value (e.g. -1).
- *
- * @member {number} issuedCount
- *   The total quantity of all issued objects.
- *
- * @member {boolean} isInSession()
- *   Whether current is in session.
  *
  */
 class Session {
@@ -51,7 +26,6 @@ class Session {
    *
    */
   constructor() {
-
     this.sessionKeptObjectSet = new Set(); // For reducing memory re-allocation.
     this.movingObjectArray = new Array(); // For reducing memory re-allocation.
   }
@@ -105,6 +79,9 @@ class Session {
    */
   static session_pop( keptObjectOrArray ) {
     const SESSION_BORDER_MARK = IssuedObjects.SESSION_BORDER_MARK;
+
+//!!! ...unfinished... (2022/06/25)
+// should get the belonging recycle pool of the object (from IssuedObjects).
 
     // 1. Prepare object list to be kept (i.e. not be recycled).
     {
