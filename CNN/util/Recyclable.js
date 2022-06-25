@@ -2,6 +2,10 @@ export { Base, Root };
 
 //import * as Pool from "./Pool.js";
 
+//!!! ...unfinished... (2022/06/25)
+// What about Array objetc? How to become Recyclable?
+
+
 /**
  * The base class representing a object could be recycled (i.e. disposed without release its main object memory for re-using in the
  * future).
