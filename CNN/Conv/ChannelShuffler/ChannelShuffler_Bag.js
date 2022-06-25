@@ -117,12 +117,8 @@ class BagPool extends Pool.Root {
 
 }
 
-/**
- * Used as default ChannelShuffler.Bag provider.
- */
-BagPool.Singleton = new BagPool();
 
 /**
- * An alias to ChannelShuffler.BagPool.Singleton for conforming to Recyclable interface.
+ * Used as default ChannelShuffler.Bag provider for conforming to Recyclable interface.
  */
-Bag.Pool = BagPool.Singleton;
+Bag.Pool = new BagPool();
