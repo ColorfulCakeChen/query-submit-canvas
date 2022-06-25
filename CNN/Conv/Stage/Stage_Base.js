@@ -613,7 +613,15 @@ class Base {
       block.apply( inputTensors, outputTensors );
     }
 
-    return outputTensors[ 0 ]; // Note: The blockLast should only output one tensor.
+    let outputTensor = outputTensors[ 0 ]; // Note: The blockLast should only output one tensor.
+
+    // Avoid dangling tensors.
+    inputTensors[ 0 ] = null;
+    inputTensors[ 1 ] = null;
+    outputTensors[ 0 ] = null;
+    outputTensors[ 1 ] = null;
+
+    return outputTensor;
   }
 
   /** How many blocks inside this stage are created. (may different from this.blockCountRequested.) */
