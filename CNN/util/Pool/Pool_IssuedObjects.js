@@ -49,6 +49,9 @@ class IssuedObjects {
     // A: In order to reduce memory allocation (for the extra object). Because memory allocation reducing is the main purpose
     //    of this recycling pool.
     //
+    // The drawback is that only in-session issued objects' recycling pool could be known. For not-in-session issued objects,
+    // there is no way to know their belonging recycling pool.
+    //
 
     this.inSessionArray = new Array();
     this.inSessionRecyclePoolArray = new Array();
