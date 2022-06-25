@@ -40,13 +40,7 @@ class Recyclable_ArrayPool extends Pool.Root {
 }
 
 /**
- * Used as default Recyclable_Array provider.
+ * Used as default Recyclable.Array provider for conforming to Recyclable interface.
  */
-Recyclable_ArrayPool.Singleton = new Recyclable_ArrayPool();
-
-
-/**
- * An alias to Recyclable.ArrayPool.Singleton for conforming to Recyclable interface.
- */
-Recyclable_Array.Pool = Recyclable_ArrayPool.Singleton
+Recyclable_Array.Pool = new Recyclable_ArrayPool();
 
