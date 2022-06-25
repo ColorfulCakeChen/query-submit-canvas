@@ -190,7 +190,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     }
 
     // 2. Tracking the issued object for recycling automatically by session_pop().
-    IssuedObjects.Singleton.add( returnedObject );
+    IssuedObjects.Singleton.add( returnedObject, this );
 
     return returnedObject;
   }
