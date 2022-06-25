@@ -157,12 +157,12 @@ class IssuedObjects {
    * inside IssuedObjects) will be kept (i.e. not be recycled) and become belonging to the parent session.
    */
   sessionCall( pfn ) {
-    Session.session_push.call( this );
+    IssuedObjects.session_push.call( this );
     let returnedValue;
     try {
       returnedValue = pfn();
     } finally {
-      Session.session_pop.call( this, returnedValue );
+      IssuedObjects.session_pop.call( this, returnedValue );
     }
     return returnedValue;
   }
