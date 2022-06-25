@@ -117,6 +117,10 @@ class Session {
     // 2. Recycle the last session's issued all objects (except objects should be kept).
     this.movingObjectArray.length = 0;
     while ( IssuedObjects.Singleton.inSessionArray.length > 0 ) {
+      
+//!!! ...unfinished... (2022/06/25) How to get its belonging recycle pool?
+//    IssuedObjects.Singleton.inSessionRecyclePoolArray.pop();
+    
       let issuedObject = IssuedObjects.Singleton.inSessionArray_pop();
       if ( issuedObject == null )
         continue; // 2.1 The object has been recycled (before this session end).
