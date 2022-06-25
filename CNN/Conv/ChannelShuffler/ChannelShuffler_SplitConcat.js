@@ -81,7 +81,7 @@ class SplitConcat extends Recyclable.Root {
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
 
-    let concatGather = ConcatGatherPool.Singleton.get_or_create_by( concatenatedShape, outputGroupCount );
+    let concatGather = ConcatGather.Pool.get_or_create_by( concatenatedShape, outputGroupCount );
 
     try {
       // Shuffled channel indices (one dimension integers) for SplitConcat()
