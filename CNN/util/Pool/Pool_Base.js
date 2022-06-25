@@ -4,25 +4,12 @@ export { All, Base, Root };
 //!!! ...unfinished... (2022/06/25)
 // Whether possible Pool.All knows which Pool.Xxx this object should be recycled to?
 // So there is not necessary override .disposeResources_and_recycleToPool() for every (sub) classes of pooled object.
+//
+// Solution: Use Recyclable as base class.
 
 //!!! ...unfinished... (2022/06/25)
-// Perhaps, every pool-able object's class has a static member Pool (instead of XxxPool.Singleton).
-// Use objectPointer.constructor.Pool could access itself pool.
-//
-// class Base {
-//
-//   static Pool = new BasePool();
-//
-//   disposeResources_and_recycleToPool() {
-//     this.disposeResources();
-//     this.constructor.Pool.recycle( this );
-//   }
-// }
-//
-// Safari may not support static property. Use the following instead:
-//
-// Base.Pool = new BasePool();
-//
+// A global IssuedObjects seems enough. Multiple RecycledObjects for different recycle pool are necessary.
+
 
 /**
  * Every instance of Pool.Base will automatically register itself in this list.
