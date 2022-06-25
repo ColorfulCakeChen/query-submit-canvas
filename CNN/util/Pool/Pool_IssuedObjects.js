@@ -1,14 +1,6 @@
 export { IssuedObjects };
 export { All };
 
-
-//!!! ...unfinished... (2022/06/25)
-// Whether possible Pool.All knows which Pool.Xxx this object should be recycled to?
-// So there is not necessary override .disposeResources_and_recycleToPool() for every (sub) classes of pooled object.
-//
-// Solution: Use Recyclable as base class.
-
-
 /**
  * Collect all issued objects which can be recycled to a Pool.Base.
  *
