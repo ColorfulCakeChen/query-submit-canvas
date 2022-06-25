@@ -2,6 +2,7 @@ export { ConcatPointwiseConv };
 export { ConcatPointwiseConvPool };
 
 import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import { ShuffleInfo, ShuffleInfoPool } from "./ChannelShuffler_ShuffleInfo.js";
 import { ConcatGather, ConcatGatherPool } from "./ChannelShuffler_ConcatGather.js";
 
@@ -55,7 +56,7 @@ import { ConcatGather, ConcatGatherPool } from "./ChannelShuffler_ConcatGather.j
  *   Concatenate, permute and split the input tensor by concat-gather. It is a function pointer to one of
  * this.concatGather_XXX().
  */
-class ConcatPointwiseConv {
+class ConcatPointwiseConv extends Recyclable.Root {
 
   /**
    *
@@ -106,7 +107,7 @@ class ConcatPointwiseConv {
     // Every filter is a tensor3d [ filterHeight, filterWidth, inDepth ].
     // All filters composes a tensor4d [ filterHeight, filterWidth, inDepth, outDepth ];
     //
-    let filtersShape = Pool.Array.Singleton.get_or_create_by( 4 );
+    let filtersShape = Recyclable.Array.Pool.get_or_create_by( 4 );
     filtersShape[ 0 ] = filterHeight;
     filtersShape[ 1 ] = filterWidth;
     filtersShape[ 2 ] = inDepth;
@@ -115,7 +116,7 @@ class ConcatPointwiseConv {
     // Build 1x1 convolution filters for channel shuffling. (as an array of tf.tensor4d).
     try {
 
-//!!! (2022/06/24 Remarked) Old Codes. Use Pool.Array instead.
+//!!! (2022/06/24 Remarked) Old Codes. Use Recyclable.Array.Pool instead.
 //       this.filtersTensor4dArray = tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray", () => {
 //         return concatGather.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d ) => {
 //           return tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray.shuffledChannelIndicesTensor1d", () => {
@@ -152,7 +153,7 @@ class ConcatPointwiseConv {
 //         }
 //       }
 
-      this.filtersTensor4dArray = Pool.Array.Singleton.get_or_create_by( concatGather.shuffledChannelIndicesTensor1dArray.length );
+      this.filtersTensor4dArray = Recyclable.Array.Pool.get_or_create_by( concatGather.shuffledChannelIndicesTensor1dArray.length );
       for ( let i = 0; i < concatGather.shuffledChannelIndicesTensor1dArray.length; ++i ) {
         let shuffledChannelIndicesTensor1d = concatGather.shuffledChannelIndicesTensor1dArray[ i ];
         let filtersTensor4d = tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray.shuffledChannelIndicesTensor1d", () => {
@@ -192,7 +193,7 @@ class ConcatPointwiseConv {
       throw e;
 
     } finally {
-      Pool.Array.Singleton.recycle( filtersShape );
+      filtersShape.disposeResources_and_recycleToPool();
       filtersShape = null;
 
       concatGather.disposeResources_and_recycleToPool(); // Always release the look up table (by tensor1d).
@@ -228,22 +229,23 @@ class ConcatPointwiseConv {
         tf.dispose( this.filtersTensor4dArray[ i ] );
         this.filtersTensor4dArray[ i ] = null;
       }
-      Pool.Array.Singleton.recycle( this.filtersTensor4dArray );
+      this.filtersTensor4dArray.disposeResources_and_recycleToPool();
       this.filtersTensor4dArray = null;
     }
 
     //super.disposeResources();
   }
 
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   *
-   * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    ConcatPointwiseConvPool.Singleton.recycle( this );
-  }
+//!!! (2022/06/25 Remarked) Inherits from Recyclable.Base instead.
+//   /**
+//    * After calling this method, this object should be viewed as disposed and should not be operated again.
+//    *
+//    * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
+//    */
+//   disposeResources_and_recycleToPool() {
+//     this.disposeResources();
+//     ConcatPointwiseConvPool.Singleton.recycle( this );
+//   }
 
   get concatenatedShape() {
     return this.shuffleInfo.concatenatedShape;
@@ -308,8 +310,9 @@ class ConcatPointwiseConvPool extends Pool.Root {
 
 }
 
+
 /**
- * Used as default ChannelShuffler.ConcatPointwiseConv provider.
+ * Used as default ChannelShuffler.ConcatPointwiseConv provider for conforming to Recyclable interface.
  */
-ConcatPointwiseConvPool.Singleton = new ConcatPointwiseConvPool();
+ConcatPointwiseConv.Pool = new ConcatPointwiseConvPool();
 
