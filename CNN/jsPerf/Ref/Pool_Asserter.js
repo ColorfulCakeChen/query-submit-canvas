@@ -27,16 +27,16 @@ function assert_Pool_issuedCount_same_after_as_before( prefixMsg, pfn ) {
 
   let issuedCount_array_before;
   try {
-    issuedCount_array_before = Pool.Array.Singleton.get_or_create_by( Pool.All.length );
-    for ( let i = 0; i < Pool.All.length; ++i ) {
-      let pool = Pool.All[ i ];
+    issuedCount_array_before = Pool.Array.Singleton.get_or_create_by( Pool.All.registeredPoolArray.length );
+    for ( let i = 0; i < Pool.All.registeredPoolArray.length; ++i ) {
+      let pool = Pool.All.registeredPoolArray[ i ];
       issuedCount_array_before[ i ] = pool.issuedCount;
     }
 
     pfn.call();
 
-    for ( let i = 0; i < Pool.All.length; ++i ) {
-      let pool = Pool.All[ i ];
+    for ( let i = 0; i < Pool.All.registeredPoolArray.length; ++i ) {
+      let pool = Pool.All.registeredPoolArray[ i ];
       assert_Pool_issuedCount( prefixMsg, pool, issuedCount_array_before[ i ] );
     }
 
@@ -50,8 +50,8 @@ function assert_Pool_issuedCount_same_after_as_before( prefixMsg, pfn ) {
  *
  */
 function assert_Pool_issuedCount_zero( prefixMsg ) {
-  for ( let i = 0; i < Pool.All.length; ++i ) {
-    let pool = Pool.All[ i ];
+  for ( let i = 0; i < Pool.All.registeredPoolArray.length; ++i ) {
+    let pool = Pool.All.registeredPoolArray[ i ];
     assert_Pool_issuedCount( prefixMsg, pool, 0 );
   }
 }
