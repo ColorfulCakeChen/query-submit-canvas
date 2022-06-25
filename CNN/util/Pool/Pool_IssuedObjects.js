@@ -252,13 +252,14 @@ class IssuedObjects {
 
       } else { // 2.3 Otherwise, recycle it.
         if ( issuedObject.disposeResources instanceof Function ) {
-          issuedObject.disposeResources(); // Dispose its resources before recycle it.
+          issuedObject.disposeResources(); // Dispose its resources before recycle it, if necessary.
         }
 
-//!!! ...unfinished... (2022/06/25) should use special recycle method because the issued object list has already been processed.
-// It is not necessary to re-process again.
-
-        recyclePool.recycle( issuedObject );
+        // Q: Why not just call Pool.Base.recycle()?
+        // A: Because the issued object list has already been processed in the aboved codes, it is not necessary to re-process again.
+        //    Calling .recycled_add() will be more efficient than .recycle().
+        //
+        recyclePool.constructor.recycled_add( recyclePool, issuedObject );
       }
     }
 
