@@ -79,6 +79,9 @@ class IssuedObjects {
    * session is ended.
    *
    *
+   * @param {IssuedObjects} this
+   *   The container for managing issued objects.
+   *
    * @param {Object} issuedObject
    *   The object which will be recorded as issued.
    *
@@ -88,7 +91,7 @@ class IssuedObjects {
    *
    * @return {boolean} Always return true.
    */
-  add( issuedObject, recyclePool ) {
+  static issuedObject_add( issuedObject, recyclePool ) {
     if ( this.isCurrentInSession ) {
       let arrayIndex = this.inSessionArray.length;
       this.inSessionArray.push( issuedObject );
@@ -111,22 +114,27 @@ class IssuedObjects {
    *         wrongly when this session is ended.
    *
    *
+   * @param {IssuedObjects} this
+   *   The container for managing issued objects.
+   *
+   * @param {Object} issuedObject
+   *   The object which will be removed from this issued objects list.
    *
    * @return {boolean}
-   *   If the object is found and removed, return true. If the object is not found, return false.
+   *   Return true, if the object is found and removed. Return false, if the object is not found.
    */
-  remove( object ) {
-    let arrayIndex = this.toInSessionArrayIndexMap.get( object );
+  static issuedObject_remove( issuedObject ) {
+    let arrayIndex = this.toInSessionArrayIndexMap.get( issuedObject );
     if ( arrayIndex == undefined )
       return false; // 1. Not a (recorded) issued object.
 
     if ( arrayIndex >= 0 ) { // 2. The object is belong to a session.
       this.inSessionArray[ arrayIndex ] = null;
       this.inSessionRecyclePoolArray[ arrayIndex ] = null;
-      this.toInSessionArrayIndexMap.delete( object );
+      this.toInSessionArrayIndexMap.delete( issuedObject );
 
     } else { // 3. The object is not belong to any session.
-      this.toInSessionArrayIndexMap.delete( object );
+      this.toInSessionArrayIndexMap.delete( issuedObject );
     }
 
     return true;
