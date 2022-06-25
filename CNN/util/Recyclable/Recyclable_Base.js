@@ -57,6 +57,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
  * Almost the same as Recyclable.Base class except its parent class is fixed to Object. In other words, caller can not specify the
  * parent class of Recyclable.Root (so it is named "Root" which can not have parent class).
  */
-class Root extends Base {
+class Root extends Base() {
 }
 
