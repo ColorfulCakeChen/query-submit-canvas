@@ -87,52 +87,15 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    */
   recycle( objectToBeRecycled ) {
 
-    if ( objectToBeRecycled == null )
-      return false; // 1. Can not recycle a null object.
-
-    if ( !( objectToBeRecycled instanceof this.objectClass ) )
-      throw Error( `Pool.Base.recycle(): `
-        + `The object to be recycled ( ${objectToBeRecycled} ) `
-        + `should be an instance of class ( ${this.objectClass} ).`
-      );
+    // 1. Recycle it.
+    let bRecycleOk = Base.recycled_add( this, objectToBeRecycled );
 
     // 2. Removed it from issued object list. Otheriwse, the list will become larger and larger.
-    IssuedObjects.issued_remove.call( IssuedObjects.Singleton, objectToBeRecycled );
+    if ( bRecycleOk )
+      IssuedObjects.issued_remove.call( IssuedObjects.Singleton, objectToBeRecycled );
 
-    // 3. Recycle it.
-    let bRecycleOk = Base.recycled_add( this, objectToBeRecycled );
     return bRecycleOk;
   }
-
-//!!!
-  /**
-   * @param {Object} objectToBeRecycled
-   *   The object (which should be an instance of this.ObjectClass) to be recycled.
-   *
-   * @return {boolean}
-   *   Return true, if the object is recycled. Return false, if the object has already been recycled.
-   */
-  static recycle_without_removeFrom_IssuedObjects( objectToBeRecycled ) {
-
-    if ( objectToBeRecycled == null )
-      return false; // 1. Can not recycle a null object.
-
-    if ( !( objectToBeRecycled instanceof this.objectClass ) )
-      throw Error( `Pool.Base.recycle(): `
-        + `The object to be recycled ( ${objectToBeRecycled} ) `
-        + `should be an instance of class ( ${this.objectClass} ).`
-      );
-
-//!!!
-//     // 2. Removed it from issued object list. Otheriwse, the list will become larger and larger.
-//     IssuedObjects.issued_remove.call( IssuedObjects.Singleton, objectToBeRecycled );
-
-    // 3. Recycle it.
-    let bRecycleOk = Base.recycled_add( this, objectToBeRecycled );
-    return bRecycleOk;
-  }
-
-
 
   get recycled_count() {
     return this.recycledObjectArray.length;
@@ -179,10 +142,20 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    *
    * @return {boolean}
    *   - Return true, if the object is recycled.
-   *   - Return false, if the object has already been a recycled object.
+   *   - Return false, if the object is null, or has already been a recycled object.
+   *
+   * @throws {Error}
+   *   If the object has already been a recycled object.
+   * 
+   * @throws {Error}
+   *   If the object is not an instance of this.objectClass.
+   * 
    */
   static recycled_add( objectToBeRecycled ) {
-    if ( this.recycledObjectSet.has( objectToBeRecycled ) ) { // Avoid recycling one object multiple times (i.e. duplicately).
+    if ( objectToBeRecycled == null )
+      return false; // 1. Can not recycle a null object.
+
+    if ( this.recycledObjectSet.has( objectToBeRecycled ) ) { // 2. Avoid recycling one object multiple times (i.e. duplicately).
 
       throw Error(
         `Pool.Base.recycled_add(): `
@@ -191,12 +164,19 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
         );
 
       return false;
-
-    } else { // Record it as recycled.
-      this.recycledObjectSet.add( objectToBeRecycled );
-      this.recycledObjectArray.push( objectToBeRecycled );
-      return true;
     }
+
+    // 3. Only recycle objects of specific class.
+    if ( !( objectToBeRecycled instanceof this.objectClass ) )
+      throw Error( `Pool.Base.recycled_add(): `
+        + `The object to be recycled ( ${objectToBeRecycled} ) `
+        + `should be an instance of class ( ${this.objectClass} ).`
+      );
+
+    // 4. Record it as recycled.
+    this.recycledObjectSet.add( objectToBeRecycled );
+    this.recycledObjectArray.push( objectToBeRecycled );
+    return true;
   }
 
   /**
