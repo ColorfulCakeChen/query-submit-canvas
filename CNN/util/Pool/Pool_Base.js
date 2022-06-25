@@ -9,6 +9,15 @@ export { All, Base, Root };
 // Perhaps, every pool-able object's class has a static member Pool (instead of XxxPool.Singleton).
 // Use objectPointer.constructor.Pool could access itself pool.
 //
+// class Base {
+//
+//   static Pool = new BasePool();
+//
+//   disposeResources_and_recycleToPool() {
+//     this.disposeResources();
+//     this.constructor.Pool.recycle( this );
+//   }
+// }
 
 /**
  * Every instance of Pool.Base will automatically register itself in this list.
