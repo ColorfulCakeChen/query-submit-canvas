@@ -34,7 +34,7 @@ export { All };
  *   Temporary pool list for moving kept (i.e. not recycled) objects to the parent session when a session is popping. Internally
  * used by .session_pop().
  *
- * @member {number} issuedCount
+ * @member {number} issued_count
  *   The total quantity of all issued objects.
  *
  * @member {boolean} isCurrentInSession
@@ -65,7 +65,7 @@ class IssuedObjects {
     this.movingObjectRecyclePoolArray = new Array();
   }
 
-  get issuedCount() {
+  get issued_count() {
     return this.toInSessionArrayIndexMap.size;
   }
 
@@ -95,7 +95,7 @@ class IssuedObjects {
    *
    * @return {boolean} Always return true.
    */
-  static issuedObject_add( issuedObject, recyclePool ) {
+  static issued_add( issuedObject, recyclePool ) {
     if ( this.isCurrentInSession ) {
       let arrayIndex = this.inSessionArray.length;
       this.inSessionArray.push( issuedObject );
@@ -127,7 +127,7 @@ class IssuedObjects {
    * @return {boolean}
    *   Return true, if the object is found and removed. Return false, if the object is not found.
    */
-  static issuedObject_remove( issuedObject ) {
+  static issued_remove( issuedObject ) {
     let arrayIndex = this.toInSessionArrayIndexMap.get( issuedObject );
     if ( arrayIndex == undefined )
       return false; // 1. Not a (recorded) issued object.
