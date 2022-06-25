@@ -2,6 +2,7 @@ export { ConcatGather };
 export { ConcatGatherPool };
 
 import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import { ShuffleInfo, ShuffleInfoPool } from "./ChannelShuffler_ShuffleInfo.js";
 
 /**
@@ -41,7 +42,7 @@ import { ShuffleInfo, ShuffleInfoPool } from "./ChannelShuffler_ShuffleInfo.js";
  *   Concatenate, permute and split the input tensor by concat-gather. It is a function pointer to one of
  * this.concatGather_XXX().
  */
-class ConcatGather {
+class ConcatGather extends Recyclable.Root {
 
   /**
    *
@@ -143,15 +144,16 @@ class ConcatGather {
     //super.disposeResources();
   }
 
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   *
-   * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    ConcatGatherPool.Singleton.recycle( this );
-  }
+//!!! (2022/06/25 Remarked) Inherits from Recyclable.Base instead.
+//   /**
+//    * After calling this method, this object should be viewed as disposed and should not be operated again.
+//    *
+//    * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
+//    */
+//   disposeResources_and_recycleToPool() {
+//     this.disposeResources();
+//     ConcatGatherPool.Singleton.recycle( this );
+//   }
 
   get concatenatedShape() {
     return this.shuffleInfo.concatenatedShape;
@@ -215,8 +217,8 @@ class ConcatGatherPool extends Pool.Root {
 
 }
 
-/**
- * Used as default ChannelShuffler.ConcatGather provider.
- */
-ConcatGatherPool.Singleton = new ConcatGatherPool();
 
+/**
+ * Used as default ChannelShuffler.ConcatGather provider for conforming to Recyclable interface.
+ */
+ConcatGather.Pool = new ConcatGatherPool();
