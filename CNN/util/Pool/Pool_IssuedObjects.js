@@ -254,6 +254,10 @@ class IssuedObjects {
         if ( issuedObject.disposeResources instanceof Function ) {
           issuedObject.disposeResources(); // Dispose its resources before recycle it.
         }
+
+//!!! ...unfinished... (2022/06/25) should use special recycle method because the issued object list has already been processed.
+// It is not necessary to re-process again.
+
         recyclePool.recycle( issuedObject );
       }
     }
