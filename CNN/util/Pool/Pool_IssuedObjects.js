@@ -268,20 +268,24 @@ class IssuedObjects {
       
 //!!! ...unfinished... (2022/06/25) How to get its belonging recycle pool?
 
+      // 2.1
       let issuedObject = this.inSessionArray.pop();
       let recyclePool = this.inSessionRecyclePoolArray.pop();
+      {
+        if ( issuedObject == null )
+          continue; // 2.1.1 The object has been recycled (before this session end).
 
-      if ( issuedObject == null )
-        continue; // 2.1 The object has been recycled (before this session end).
+        if ( issuedObject == SESSION_BORDER_MARK )
+          break; // 2.1.2 All objects of the last session have been popped.
 
-      if ( issuedObject == SESSION_BORDER_MARK )
-        break; // 2.2 All objects of the last session have been popped.
+        this.toInSessionArrayIndexMap.delete( issuedObject ); // 2.1.3 No longer an issued object.
+      }
 
-      if ( this.sessionKeptObjectSet.has( issuedObject ) ) { // 2.3 Found an object which should not be recycled.
+      if ( this.sessionKeptObjectSet.has( issuedObject ) ) { // 2.2 Found an object which should not be recycled.
         this.movingObjectArray.push( issuedObject ); // Collect it temporarily for moving it to parent session later.
         this.movingObjectRecyclePoolArray.push( recyclePool );
 
-      } else { // 2.4 Otherwise, recycle it.
+      } else { // 2.3 Otherwise, recycle it.
         if ( issuedObject.disposeResources instanceof Function ) {
           issuedObject.disposeResources(); // Dispose its resources before recycle it.
         }
@@ -293,7 +297,7 @@ class IssuedObjects {
     while ( this.movingObjectArray.length > 0 ) {
       let movingObject = this.movingObjectArray.pop();
       let recyclePool = this.movingObjectRecyclePoolArray.pop();
-      this.add( movingObject, recyclePool ); // Moved (i.e. belonged) to parent session.
+      this.add( movingObject, recyclePool ); // Moved (i.e. belonged) to parent session. Become an issued object again.
     }
 
     // 4. Reduce memory footprint.
