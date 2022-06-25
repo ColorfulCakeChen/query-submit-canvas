@@ -204,27 +204,26 @@ class IssuedObjects {
             let keptObject = keptObjectOrArray[ i ];
             if ( keptObject ) {
 
-//!!! ...unfinished... (2022/06/25) Which recyclePool?
-
-              if ( this.recycledObjects.has( keptObject ) )
-                throw Error( `Pool.IssuedObjects.session_pop(): `
-                  + `The object to be kept (i.e. not to be recycled) ( ${keptObject} ) `
-                  + `should not already be recycled (i.e. should not be inside .recycledObjects).`
-                );
+//!!! (2022/06/25 Remarked) Do not know which recyclePool.
+// //!!! ...unfinished... (2022/06/25) Which recyclePool?
+//               if ( this.recycledObjects.has( keptObject ) )
+//                 throw Error( `Pool.IssuedObjects.session_pop(): `
+//                   + `The object to be kept (i.e. not to be recycled) ( ${keptObject} ) `
+//                   + `should not already be recycled (i.e. should not be inside .recycledObjects).`
+//                 );
 
               this.sessionKeptObjectSet.add( keptObject );
             }
           }
         } else if ( keptObjectOrArray instanceof Object ) { // 1.2 A single object to be kept.
           
-
-//!!! ...unfinished... (2022/06/25) Which recyclePool?
-
-          if ( this.recycledObjects.has( keptObjectOrArray ) )
-            throw Error( `Pool.IssuedObjects.session_pop(): `
-              + `The object to be kept (i.e. not to be recycled) ( ${keptObjectOrArray} ) `
-              + `should not already be recycled (i.e. should not be inside .recycledObjects).`
-            );
+//!!! (2022/06/25 Remarked) Do not know which recyclePool.
+// //!!! ...unfinished... (2022/06/25) Which recyclePool?
+//           if ( this.recycledObjects.has( keptObjectOrArray ) )
+//             throw Error( `Pool.IssuedObjects.session_pop(): `
+//               + `The object to be kept (i.e. not to be recycled) ( ${keptObjectOrArray} ) `
+//               + `should not already be recycled (i.e. should not be inside .recycledObjects).`
+//             );
 
           this.sessionKeptObjectSet.add( keptObjectOrArray );
         }
@@ -272,7 +271,9 @@ class IssuedObjects {
     while ( this.movingObjectArray.length > 0 ) {
       let movingObject = this.movingObjectArray.pop();
       let recyclePool = this.movingObjectRecyclePoolArray.pop();
-      this.add( movingObject, recyclePool ); // Moved (i.e. belonged) to parent session. Become an issued object again.
+
+      // Moved (i.e. belonged) to parent session. Become an issued object (of different session), again.
+      IssuedObjects.issued_add.call( this, movingObject, recyclePool );
     }
 
     // 4. Reduce memory footprint.
