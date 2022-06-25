@@ -1,5 +1,10 @@
 export { All, Base, Root };
 
+
+//!!! ...unfinished... (2022/06/24)
+// Whether possible Pool.All knows which Pool.Xxx this object should be recycled to?
+// So there is not necessary override .disposeResources_and_recycleToPool() for every (sub) classes of pooled object.
+
 /**
  * Every instance of Pool.Base will automatically register itself in this list.
  *
