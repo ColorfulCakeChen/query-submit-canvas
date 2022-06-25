@@ -13,15 +13,16 @@ class ConcatGather extends ChannelShuffler_ConcatGather {
     super( concatenatedShape, outputGroupCount );
   }
 
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   *
-   * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    ConcatGatherPool.Singleton.recycle( this );
-  }
+//!!! (2022/06/25 Remarked) Inherits from Recyclable.Base instead.
+//   /**
+//    * After calling this method, this object should be viewed as disposed and should not be operated again.
+//    *
+//    * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
+//    */
+//   disposeResources_and_recycleToPool() {
+//     this.disposeResources();
+//     ConcatGatherPool.Singleton.recycle( this );
+//   }
 
   gather_map( concatenatedTensor ) {
     // shuffle and split by gather (one operation achieves two operations).
@@ -154,8 +155,9 @@ class ConcatGatherPool extends Pool.Root {
 
 }
 
+
 /**
- * Used as default ChannelShuffler.PerformanceTest.ConcatGather provider.
+ * Used as default ChannelShuffler.PerformanceTest.ConcatGather provider for conforming to Recyclable interface.
  */
-ConcatGatherPool.Singleton = new ConcatGatherPool();
+ConcatGather.Pool = new ConcatGatherPool();
 
