@@ -428,7 +428,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
   static setup_apply_dummy( bKeepInputTensor0, bKeepInputTensor1 ) {
 
 !!! ...unfinished... (2022/06/24)
-Do not use arrow function because they may generate new function object every time.
+Do not use function declared in function because they may generate new function object every time.
 
     if ( this.input0 ) {
       if ( this.input1 ) {
