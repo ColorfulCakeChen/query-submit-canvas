@@ -809,7 +809,7 @@ class Base extends TestParams.Base {
     let intermediate_bBias;
     {
 
-//!!! ...unfinished... (2022/06/25)
+//!!! ...unfinished... (2022/06/25) StringBuffer?
 // Try not to generate new (property name) string every time for reducing memory re-allocation.
 
       const SEIntermediatePropertyNamePrefix_A = ( propertyNamePrefix_A ) ? ( `${propertyNamePrefix_A}SEIntermediate` ) : null;
@@ -906,7 +906,7 @@ class Base extends TestParams.Base {
 
     if ( propertyNamePrefix ) {
 
-//!!! ...unfinished... (2022/06/25)
+//!!! ...unfinished... (2022/06/25) StringBuffer?
 // Try not to generate new (property name) string every time for reducing memory re-allocation.
 
       const filtersPropertyName = `${propertyNamePrefix}Filters`;
@@ -962,7 +962,7 @@ class Base extends TestParams.Base {
 
     if ( propertyNamePrefix ) {
 
-//!!! ...unfinished... (2022/06/25)
+//!!! ...unfinished... (2022/06/25) StringBuffer?
 // Try not to generate new (property name) string every time for reducing memory re-allocation.
 
       const filtersPropertyName = `${propertyNamePrefix}Filters`;
