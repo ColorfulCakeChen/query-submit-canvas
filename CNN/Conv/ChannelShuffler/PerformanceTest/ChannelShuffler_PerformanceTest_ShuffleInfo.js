@@ -396,6 +396,7 @@ class ShuffleInfoPool extends Pool.Root {
 
 }
 
+
 /**
  * Used as default ChannelShuffler.PerformanceTest.ShuffleInfo provider for conforming to Recyclable interface.
  */
