@@ -40,7 +40,7 @@ export { IssuedObjects };
  * @member {number} issuedCount
  *   The total quantity of all issued objects.
  *
- * @member {boolean} isInSession()
+ * @member {boolean} isCurrentInSession
  *   Whether current is in session.
  *
  */
@@ -51,7 +51,13 @@ class IssuedObjects {
 //!!! (2022/06/25 Remarked) seems not needed because .toInSessionArrayIndexMap seems enough.
 //    this.notInSessionSet = new Set();
 
+    // Q: Why not integrate inSession and inSessionRecyclePool into one extra object?
+    // A: In order to reduce memory allocation (for the extra object). Because memory allocation reducing is the main purpose
+    //    of this recycling pool.
+    //
+
     this.inSessionArray = new Array();
+    this.inSessionRecyclePoolArray = new Array();
     this.toInSessionArrayIndexMap = new Map();
   }
 
@@ -59,7 +65,7 @@ class IssuedObjects {
     return this.toInSessionArrayIndexMap.size;
   }
 
-  get isInSession() {
+  get isCurrentInSession() {
     // Note: If current is in session, the .inSessionArray will have a SESSION_BORDER_MARK at least.
     if ( this.inSessionArray.length > 0 )
       return true;
@@ -72,13 +78,23 @@ class IssuedObjects {
    * If current is in a session, the object will also be recorded in .inSessionArray which could be visit in sequential when the
    * session is ended.
    *
+   *
+   * @param {Object} issuedObject
+   *   The object which will be recorded as issued.
+   *
+   * @param {Object} recyclePool
+   *   This recycle pool will be used when the issued object is recycled automatically. This will be recorded only if current is in
+   * session.
+   *
    * @return {boolean} Always return true.
    */
-  add( issuedObject ) {
-    if ( this.isInSession ) {
+  add( issuedObject, recyclePool ) {
+    if ( this.isCurrentInSession ) {
       let arrayIndex = this.inSessionArray.length;
       this.inSessionArray.push( issuedObject );
+      this.inSessionRecyclePoolArray.push( recyclePool );
       this.toInSessionArrayIndexMap.set( issuedObject, arrayIndex );
+
     } else {
 
 //!!! (2022/06/25 Remarked) seems not needed because .toInSessionArrayIndexMap seems enough.
@@ -114,6 +130,7 @@ class IssuedObjects {
 
     if ( arrayIndex >= 0 ) { // 2. The object is belong to a session.
       this.inSessionArray[ arrayIndex ] = null;
+      this.inSessionRecyclePoolArray[ arrayIndex ] = null;
       this.toInSessionArrayIndexMap.delete( object );
 
     } else { // 3. The object is not belong to any session.
@@ -137,6 +154,9 @@ class IssuedObjects {
   inSessionArray_pop() {
     let returnedObject = this.inSessionArray.pop();
 
+//!!! ...unfinished... (2022/06/25) How to return?
+//    this.inSessionRecyclePoolArray.pop();
+    
     if (   ( returnedObject != null )
         && ( returnedObject != IssuedObjects.SESSION_BORDER_MARK )
        ) {
@@ -147,12 +167,12 @@ class IssuedObjects {
   }
 
   /**
-   * Append a SESSION_BORDER_MARK to .array
+   * Append a SESSION_BORDER_MARK to in-session array.
    */
   append_session_border_mark() {
     this.inSessionArray.push( IssuedObjects.SESSION_BORDER_MARK );
+    this.inSessionRecyclePoolArray.push( IssuedObjects.SESSION_BORDER_MARK );
   }
-
 
 }
 
