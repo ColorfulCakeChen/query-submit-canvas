@@ -53,6 +53,13 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
   }
 
   /** @override */
+  static setAsConstructor( input0, input1, outputTensorCount, ...restArgs ) {
+    super.setAsConstructor.apply( this, restArgs );
+    Base.setAsConstructor_self.call( this, input0, input1, outputTensorCount, ...restArgs );
+    return this;
+  }
+
+  /** @override */
   static setAsConstructor_self( input0, input1, outputTensorCount, ...restArgs ) {
 
     // 1. Set and register as the input TensorPlaceholder's final user.
@@ -91,13 +98,6 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
 
     // 3.
     Base.setup_apply_dummy.call( this, false, false ); // Default is destroy0 and destroy1.
-  }
-
-  /** @override */
-  static setAsConstructor( input0, input1, outputTensorCount, ...restArgs ) {
-    super.setAsConstructor.apply( this, restArgs );
-    Base.setAsConstructor_self.call( this, input0, input1, outputTensorCount, ...restArgs );
-    return this;
   }
 
   /**
