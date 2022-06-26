@@ -41,13 +41,13 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
   }
 
   /**
-   * Setup recursively. This method simulates constructor's behavior.
+   * Setup recursively. This method mimics constructor's behavior.
    *
    * Sub-class should override this static method:
    *   - Call super.setAsConstructor( ... ) in the beginning of this method. And then,
    *   - Call SelfClassXxx.setAsConstructor_self.call( this, ... ).
    *
-   * Note: This method must return "this" because Pool.Base.get_or_create_by() needs it.
+   * Note: This method MUST return "this" because Pool.Base.get_or_create_by() needs it.
    *
    *
    * @param {Base} this
