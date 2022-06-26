@@ -326,15 +326,15 @@ class Base extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor_self() {
-    // Nothing to do here (for Block.Base).
-  }
-
-  /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
     Base.setAsConstructor_self.call( this );
     return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
+    // Nothing to do here (for Block.Base).
   }
 
   /**
