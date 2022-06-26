@@ -1,9 +1,8 @@
 export { ChannelPartInfo };
-export { ChannelPartInfoPool };
 export { FiltersBiasesPartInfo };
-export { FiltersBiasesPartInfoPool };
 
 import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../util/Recyclable.js";
 
 /**
  * Half channels information. Describe channel index range of lower half or higher half.
@@ -22,28 +21,33 @@ import * as Pool from "../../util/Pool.js";
  * Otherwise, this is a non-pass-through part and it will using filters and biases extracted from weights array to convolve input channel
  * index in [ inChannelBegin, inChannelEnd ) to output.
  */
-class ChannelPartInfo {
+class ChannelPartInfo extends Recyclable.Root {
+
+  /**
+   * Used as default Pointwise.ChannelPartInfo provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Pointwise.ChannelPartInfoPool", ChannelPartInfo, ChannelPartInfo.setAsConstructor );
 
   /**
    */
   constructor( inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough ) {
-    ChannelPartInfo.setAsConstructor.call( this, inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough );
+    super();
+    ChannelPartInfo.setAsConstructor_self.call( this, inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough );
   }
 
-  /**
-   *
-   * @param {ChannelPartInfo} this
-   *   The object to be initialized.
-   *
-   * @return {ChannelPartInfo}
-   *   Return the this object.
-   */
+  /** @override */
   static setAsConstructor( inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough ) {
+    super.setAsConstructor();
+    ChannelPartInfo.setAsConstructor_self.call( this, inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough ) {
     this.inChannelBegin = inChannelBegin;
     this.inChannelEnd = inChannelEnd;    
     this.outputChannelCount = outputChannelCount;
     this.bPassThrough = bPassThrough;
-    return this;
   }
 
   /**
@@ -54,36 +58,10 @@ class ChannelPartInfo {
     this.outputChannelCount = undefined;
     this.inChannelEnd = undefined;    
     this.inChannelBegin = undefined;
-    //super.disposeResources();
-  }
-
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    ChannelPartInfoPool.Singleton.recycle( this );
+    super.disposeResources();
   }
 
 }
-
-
-/**
- * Providing ChannelPartInfo.
- *
- */
-class ChannelPartInfoPool extends Pool.Root {
-
-  constructor() {
-    super( "Pointwise.ChannelPartInfoPool", ChannelPartInfo, ChannelPartInfo.setAsConstructor );
-  }
-
-}
-
-/**
- * Used as default Pointwise.ChannelPartInfo provider.
- */
-ChannelPartInfoPool.Singleton = new ChannelPartInfoPool();
 
 
 /**
@@ -94,26 +72,31 @@ ChannelPartInfoPool.Singleton = new ChannelPartInfoPool();
  *   Every input-output relationship of this parts.
  *
  */
-class FiltersBiasesPartInfo {
+class FiltersBiasesPartInfo extends Recyclable.Root {
+
+  /**
+   * Used as default Pointwise.FiltersBiasesPartInfo provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Pointwise.FiltersBiasesPartInfoPool", FiltersBiasesPartInfo, FiltersBiasesPartInfo.setAsConstructor );
 
   /**
    *
    */
   constructor( aChannelPartInfoArray ) {
-    this.aChannelPartInfoArray = aChannelPartInfoArray;
+    super();
+    FiltersBiasesPartInfo.setAsConstructor_self.call( this, aChannelPartInfoArray );
   }
 
-  /**
-   *
-   * @param {FiltersBiasesPartInfo} this
-   *   The object to be initialized.
-   *
-   * @return {FiltersBiasesPartInfo}
-   *   Return the this object.
-   */
+  /** @override */
   static setAsConstructor( aChannelPartInfoArray ) {
-    this.aChannelPartInfoArray = aChannelPartInfoArray;
+    super.setAsConstructor();
+    FiltersBiasesPartInfo.setAsConstructor_self.call( this, aChannelPartInfoArray );
     return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( aChannelPartInfoArray ) {
+    this.aChannelPartInfoArray = aChannelPartInfoArray;
   }
 
   /**
@@ -121,34 +104,8 @@ class FiltersBiasesPartInfo {
    */
   disposeResources() {
     this.aChannelPartInfoArray = null; // Because the array is not created by this FiltersBiasesPartInfo, do not recyclye it here.
-    //super.disposeResources();
-  }
-
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    FiltersBiasesPartInfoPool.Singleton.recycle( this );
+    super.disposeResources();
   }
 
 }
-
-
-/**
- * Providing FiltersBiasesPartInfo.
- *
- */
-class FiltersBiasesPartInfoPool extends Pool.Root {
-
-  constructor() {
-    super( "Pointwise.FiltersBiasesPartInfoPool", FiltersBiasesPartInfo, FiltersBiasesPartInfo.setAsConstructor );
-  }
-
-}
-
-/**
- * Used as default Pointwise.FiltersBiasesPartInfo provider.
- */
-FiltersBiasesPartInfoPool.Singleton = new FiltersBiasesPartInfoPool();
 
