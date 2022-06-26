@@ -1,5 +1,4 @@
 export { ConcatPointwiseConv };
-export { ConcatPointwiseConvPool };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -59,27 +58,12 @@ import { ConcatGather, ConcatGatherPool } from "./ChannelShuffler_ConcatGather.j
 class ConcatPointwiseConv extends Recyclable.Root {
 
   /**
-   *
-   * @param {number[]} concatenatedShape
-   *   Used to calculate shuffleInfo.
-   *
-   * @param {number} outputGroupCount
-   *   Used to calculate shuffleInfo.
-   *
-   * @exception {Object} If failed (e.g. out of GPU memory).
-   *
-   * @see ConcatGather
+   * Used as default ChannelShuffler.ConcatPointwiseConv provider for conforming to Recyclable interface.
    */
-  constructor( concatenatedShape, outputGroupCount, ...restArgs ) {
-    super( ...restArgs );
-    ConcatPointwiseConv.setAsConstructor.call( this, concatenatedShape, outputGroupCount );
-  }
+  static Pool = new Pool.Root( "ChannelShuffler.ConcatPointwiseConvPool", ConcatPointwiseConv, ConcatPointwiseConv.setAsConstructor );
 
   /**
    *
-   * @param {ShuffleInfo} this
-   *   The object to be initialized.
-   *
    * @param {number[]} concatenatedShape
    *   Used to calculate shuffleInfo.
    *
@@ -88,12 +72,15 @@ class ConcatPointwiseConv extends Recyclable.Root {
    *
    * @exception {Object} If failed (e.g. out of GPU memory).
    *
-   * @return {ConcatPointwiseConv}
-   *   Return the this object.
-   *
    * @see ConcatGather
    */
-  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+  constructor( concatenatedShape, outputGroupCount ) {
+    super();
+    ConcatPointwiseConv.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+  }
+
+  /** @override */
+  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
 
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
@@ -203,7 +190,12 @@ class ConcatPointwiseConv extends Recyclable.Root {
 
     this.gather = this.gather_loop;
     this.concatGather = this.concatGather_dispose_finally_call_loop;
+  }
 
+  /** @override */
+  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+    super.setAsConstructor();
+    ConcatPointwiseConv.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
     return this;
   }
 
@@ -211,9 +203,10 @@ class ConcatPointwiseConv extends Recyclable.Root {
    * Release tf.tensor.
    *
    * Sub-class should override this method (and call super.disposeResources() before return).
+   *
+   * @override
    */
   disposeResources() {
-
     this.concatGather = null;
     this.gather = null;
 
@@ -234,19 +227,8 @@ class ConcatPointwiseConv extends Recyclable.Root {
       this.filtersTensor4dArray = null;
     }
 
-    //super.disposeResources();
+    super.disposeResources();
   }
-
-//!!! (2022/06/25 Remarked) Inherits from Recyclable.Base instead.
-//   /**
-//    * After calling this method, this object should be viewed as disposed and should not be operated again.
-//    *
-//    * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-//    */
-//   disposeResources_and_recycleToPool() {
-//     this.disposeResources();
-//     ConcatPointwiseConvPool.Singleton.recycle( this );
-//   }
 
   get concatenatedShape() {
     return this.shuffleInfo.concatenatedShape;
@@ -297,23 +279,4 @@ class ConcatPointwiseConv extends Recyclable.Root {
   }
 
 }
-
-
-/**
- * Providing ChannelShuffler.ConcatPointwiseConv
- *
- */
-class ConcatPointwiseConvPool extends Pool.Root {
-
-  constructor() {
-    super( "ChannelShuffler.ConcatPointwiseConvPool", ConcatPointwiseConv, ConcatPointwiseConv.setAsConstructor );
-  }
-
-}
-
-
-/**
- * Used as default ChannelShuffler.ConcatPointwiseConv provider for conforming to Recyclable interface.
- */
-ConcatPointwiseConv.Pool = new ConcatPointwiseConvPool();
 
