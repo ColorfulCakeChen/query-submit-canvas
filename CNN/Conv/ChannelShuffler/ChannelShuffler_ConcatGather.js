@@ -1,9 +1,8 @@
 export { ConcatGather };
-export { ConcatGatherPool };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-import { ShuffleInfo, ShuffleInfoPool } from "./ChannelShuffler_ShuffleInfo.js";
+import { ShuffleInfo } from "./ChannelShuffler_ShuffleInfo.js";
 
 /**
  * Implement the channel shuffler by tf.concat() and tf.gather().
