@@ -1,5 +1,4 @@
 export { SplitConcat };
-export { SplitConcatPool };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -42,27 +41,12 @@ import { ConcatGather, ConcatGatherPool } from "./ChannelShuffler_ConcatGather.j
 class SplitConcat extends Recyclable.Root {
 
   /**
-   *
-   * @param {number[]} concatenatedShape
-   *   Used to calculate shuffleInfo.
-   *
-   * @param {number} outputGroupCount
-   *   Used to calculate shuffleInfo.
-   *
-   * @exception {Object} If failed (e.g. out of GPU memory).
-   *
-   * @see ConcatGather
+   * Used as default ChannelShuffler.SplitConcat provider provider for conforming to Recyclable interface.
    */
-  constructor( concatenatedShape, outputGroupCount, ...restArgs ) {
-    super( ...restArgs );
-    SplitConcat.setAsConstructor.call( this, concatenatedShape, outputGroupCount );
-  }
+  static Pool = new Pool.Root( "ChannelShuffler.SplitConcatPool", SplitConcat, SplitConcat.setAsConstructor );
 
   /**
    *
-   * @param {ShuffleInfo} this
-   *   The object to be initialized.
-   *
    * @param {number[]} concatenatedShape
    *   Used to calculate shuffleInfo.
    *
@@ -71,12 +55,15 @@ class SplitConcat extends Recyclable.Root {
    *
    * @exception {Object} If failed (e.g. out of GPU memory).
    *
-   * @return {SplitConcat}
-   *   Return the this object.
-   *
    * @see ConcatGather
    */
-  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+  constructor( concatenatedShape, outputGroupCount ) {
+    super();
+    SplitConcat.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+  }
+
+  /** @override */
+  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
 
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
@@ -111,15 +98,16 @@ class SplitConcat extends Recyclable.Root {
     }
 
     this.splitConcat = this.splitConcat_loop;
+  }
 
+  /** @override */
+  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+    super.setAsConstructor();
+    SplitConcat.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
     return this;
   }
 
-  /**
-   * Release tf.tensor.
-   *
-   * Sub-class should override this method (and call super.disposeResources() before return).
-   */
+  /** @override */
   disposeResources() {
 
     this.splitConcat = null;
@@ -162,19 +150,8 @@ class SplitConcat extends Recyclable.Root {
       this.shuffledChannelIndicesArray = null;
     }
 
-    //super.disposeResources();
+    super.disposeResources();
   }
-
-//!!! (2022/06/25 Remarked) Inherits from Recyclable.Base instead.
-//   /**
-//    * After calling this method, this object should be viewed as disposed and should not be operated again.
-//    *
-//    * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-//    */
-//   disposeResources_and_recycleToPool() {
-//     this.disposeResources();
-//     SplitConcatPool.Singleton.recycle( this );
-//   }
 
   get concatenatedShape() {
     return this.shuffleInfo.concatenatedShape;
@@ -238,23 +215,4 @@ class SplitConcat extends Recyclable.Root {
   }
 
 }
-
-
-/**
- * Providing ChannelShuffler.SplitConcat
- *
- */
-class SplitConcatPool extends Pool.Root {
-
-  constructor() {
-    super( "ChannelShuffler.SplitConcatPool", SplitConcat, SplitConcat.setAsConstructor );
-  }
-
-}
-
-
-/**
- * Used as default ChannelShuffler.SplitConcat provider provider for conforming to Recyclable interface.
- */
-SplitConcat.Pool = new SplitConcatPool();
 
