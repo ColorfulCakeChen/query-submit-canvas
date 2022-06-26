@@ -174,7 +174,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    *   The Pool.Base object for handling the recycled bojects.
    *
    * @return {Object}
-   *   Pop the last object and return it. It may be null, if there is no object in this recycle bin.
+   *   Pop the last object and return it. Return null, if there is no object in this recycle pool.
    */
   static recycled_pop() {
     let object = this.recycledObjectArray.pop();
