@@ -28,7 +28,7 @@ class Depthwise extends ConvBiasActivation {
    */
   constructor( input0, outputChannelCount0 ) {
     super( input0, outputChannelCount0 );
-    Depthwise.setAsConstructor_self.call( input0, outputChannelCount0 );
+    Depthwise.setAsConstructor_self.call( this, input0, outputChannelCount0 );
   }
 
   /** @override */
