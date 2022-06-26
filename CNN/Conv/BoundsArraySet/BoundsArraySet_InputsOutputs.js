@@ -1,8 +1,8 @@
 export { InputsOutputs };
-export { InputsOutputsPool };
 
-import * as ActivationEscaping from "../ActivationEscaping.js";
 import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
+import * as ActivationEscaping from "../ActivationEscaping.js";
 
 /**
  * Element value bounds (per channel) for inputs and outputs of an operation.
@@ -45,7 +45,12 @@ import * as Pool from "../../util/Pool.js";
  * @member {number} outputChannelCount1
  *   The channel count of 2nd output (i.e. this.output1.channelCount).
  */
-class InputsOutputs {
+class InputsOutputs extends Recyclable.Root {
+
+  /**
+   * Used as default BoundsArraySet.InputsOutputs provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "BoundsArraySet.InputsOutputsPool", InputsOutputs, InputsOutputs.setAsConstructor );
 
   /**
    *
@@ -55,26 +60,23 @@ class InputsOutputs {
    * @param {number} outputChannelCount1
    *   The channel count of 2nd output. (If undefined or null or zero or negative, there will be no output1.)
    */
-  constructor( input0, input1, outputChannelCount0, outputChannelCount1 ) {
+  constructor( input0, input1, outputChannelCount0, outputChannelCount1, ...restArgs ) {
     super();
-    this.set_input0_input1_outputChannelCount0_outputChannelCount1( input0, input1, outputChannelCount0, outputChannelCount1 );
+    InputsOutputs.setAsConstructor.call( this, input0, input1, outputChannelCount0, outputChannelCount1, ...restArgs );
   }
 
   /**
-   *
-   * @param {number} outputChannelCount0
-   *   The channel count of 1st output. (MUST positive)
-   *
-   * @param {number} outputChannelCount1
-   *   The channel count of 2nd output. (If undefined or null or zero or negative, there will be no output1.)
+   * @param {InputsOutputs} this
+   *   The ScaleBoundsArray object to be initialized.
    *
    * @return {InputsOutputs}
    *   Return the this object.
    */
-  set_input0_input1_outputChannelCount0_outputChannelCount1( input0, input1, outputChannelCount0, outputChannelCount1 ) {
+  static setAsConstructor( input0, input1, outputChannelCount0, outputChannelCount1, ...restArgs ) {
+    super.setAsConstructor.apply( this, restArgs );
 
     if ( !( input0 instanceof ActivationEscaping.ScaleBoundsArray ) )
-      throw Error( `BoundsArraySet.InputsOutputs.set_input0_input1_outputChannelCount0_outputChannelCount1(): `
+      throw Error( `BoundsArraySet.InputsOutputs.setAsConstructor(): `
         + `input0 ( ${input0} ) must exist and be an instance of class ActivationEscaping.ScaleBoundsArray.`
       );
 
@@ -83,7 +85,7 @@ class InputsOutputs {
     if ( input1 ) {
 
       if ( !( input1 instanceof ActivationEscaping.ScaleBoundsArray ) )
-        throw Error( `BoundsArraySet.InputsOutputs.set_input0_input1_outputChannelCount0_outputChannelCount1(): `
+        throw Error( `BoundsArraySet.InputsOutputs.setAsConstructor(): `
           + `input1 ( ${input1} ) must exist and be an instance of class ActivationEscaping.ScaleBoundsArray.`
         );
 
@@ -158,15 +160,7 @@ class InputsOutputs {
         this.input0 = null;
     }
 
-    //super.disposeResources();
-  }
-
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    InputsOutputsPool.Singleton.recycle( this );
+    super.disposeResources();
   }
 
   /**
@@ -350,34 +344,4 @@ class InputsOutputs {
   get outputChannelCount1() { return this.output1?.length ?? 0; }
 
 }
-
-
-/**
- * Providing InputsOutputs.
- *
- */
-class InputsOutputsPool extends Pool.Root {
-
-  constructor() {
-    super( "BoundsArraySet.InputsOutputsPool", InputsOutputs, InputsOutputsPool.setAsConstructor );
-  }
-
-  /**
-   * @param {InputsOutputs} this
-   *   The ScaleBoundsArray object to be initialized.
-   *
-   * @return {InputsOutputs}
-   *   Return the this object.
-   */
-  static setAsConstructor( input0, input1, outputChannelCount0, outputChannelCount1 ) {
-    this.set_input0_input1_outputChannelCount0_outputChannelCount1( input0, input1, outputChannelCount0, outputChannelCount1 );
-    return this;
-  }
-
-}
-
-/**
- * Used as default BoundsArraySet.InputsOutputs provider.
- */
-InputsOutputsPool.Singleton = new InputsOutputsPool();
 
