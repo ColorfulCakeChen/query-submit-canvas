@@ -79,7 +79,7 @@ class ChannelPartInfo extends Recyclable.Root {
  *   Every input-output relationship of this parts.
  *
  */
-class FiltersBiasesPartInfo {
+class FiltersBiasesPartInfo extends Recyclable.Root {
 
   /**
    * Used as default Depthwise.FiltersBiasesPartInfo provider for conforming to Recyclable interface.
