@@ -13,9 +13,7 @@ import * as Pool from "../Pool.js";
  *   static Pool = new Pool.Root( "SomeNamespace.SomeClass", SomeClass, SomeClass.setAsConstructor );
  *
  *   static setAsConstructor( ...restArgs ) {
- * 
- *     if ( super.setAsConstructor instanceof Function )
- *       super.setAsConstructor( ...restArgs ); // All other arguments passed to parent class.
+ *     super.setAsConstructor.apply( restArgs ); // All other arguments passed to parent class.
  *
  *       :
  *
@@ -29,7 +27,7 @@ import * as Pool from "../Pool.js";
  * <pre>
  * class SomeClass extends Recyclable.Base {
  *
- *   ...
+ *   ... (if static property definition is not supported by your web browser) ...
  *
  * }
  *
@@ -42,9 +40,30 @@ import * as Pool from "../Pool.js";
 let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
   /**
+   * Sub-class should override this static method (and call super.setAsConstructor() in the beginning of this method).
+   *
+   * @param {Base} this
+   *   The Recyclable.Base object to be initialized.
+   *
+   * @return {Base}
+   *   Return the this object.
+   */
+  static setAsConstructor( ...restArgs ) {
+
+    if ( super.setAsConstructor instanceof Function ) // If parent class has the same method, call it.
+      super.setAsConstructor.apply( this, restArgs );
+
+    // Nothing to do here (for Recyclable.Base).
+
+    return this;
+  }
+
+  /**
    * Sub-class should override this method (and call super.disposeResources() before return).
    */
   disposeResources() {
+
+    // Nothing to do here (for Recyclable.Base).
 
     if ( super.disposeResources instanceof Function ) // If parent class has the same method, call it.
       super.disposeResources();
