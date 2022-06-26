@@ -2,6 +2,7 @@ export { Base };
 export { BasePool };
 
 import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
@@ -311,7 +312,7 @@ import { Params } from "./Block_Params.js";
  * apply__input0__output0_output1(), apply__input0__output0() according to the initer()'s parameters.
  *
  */
-class Base {
+class Base extends Recyclable.Root {
 
   /**
    */
@@ -390,7 +391,7 @@ class Base {
       ;
 
     let progressRoot = progressParent.getRoot();
-    let progressToAdvance = progressParent.addChild( ValueMax.Percentage.Concrete.Singleton.get_or_create_by( progressMax ) );
+    let progressToAdvance = progressParent.addChild( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
     // 1. Extract parameters.
     if ( !params )
@@ -535,7 +536,7 @@ class Base {
         // So that bHigherHalfPassThrough (or bAllPassThrough).
         nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
 
-        let pointwise1_higherHalfPassThrough = ChannelCountCalculator.HigherHalfPassThroughPool.Singleton.get_or_create_by(
+        let pointwise1_higherHalfPassThrough = ChannelCountCalculator.HigherHalfPassThroughPool.Pool.get_or_create_by(
           this.input0_channelCount, this.pointwise1ChannelCount );
 
         inputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.inputChannelCount_lowerHalf;
@@ -558,7 +559,7 @@ class Base {
           + `input0's channel count ( ${this.input0_channelCount} ).`
         );
 
-      inputTensorPlaceholder0 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
+      inputTensorPlaceholder0 = TensorPlaceholder.Base.Pool.get_or_create_by();
       inputTensorPlaceholder0.set_height_width_channelCount_scaleBoundsArray(
         this.input0_height, this.input0_width,
         this.input0_channelCount, inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
@@ -577,16 +578,14 @@ class Base {
             + `input1's channel count ( ${this.input1_channelCount} ).`
           );
 
-        inputTensorPlaceholder1 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
+        inputTensorPlaceholder1 = TensorPlaceholder.Base.Pool.get_or_create_by();
         inputTensorPlaceholder1.set_height_width_channelCount_scaleBoundsArray(
           this.input1_height, this.input1_width, this.input1_channelCount,
           undefined, undefined, // channelCount_lowerHalf, channelCount_higherHalf
           inputScaleBoundsArray1 );
       }
 
-//!!! (2022/06/22 Remarked) Replaced by pool.
-//      this.operationArray = new Operation.TwinArray( inputTensorPlaceholder0, inputTensorPlaceholder1, this.outputTensorCount );
-      this.operationArray = Operation.TwinArrayPool.Singleton.get_or_create_by( inputTensorPlaceholder0, inputTensorPlaceholder1, this.outputTensorCount );
+      this.operationArray = Operation.TwinArray.Pool.get_or_create_by( inputTensorPlaceholder0, inputTensorPlaceholder1, this.outputTensorCount );
     }
 
     // Note: Once an operation is created (even if it just do nothing (e.g. ( pointwise1.bExisted == false ) ), it should always
@@ -968,7 +967,6 @@ class Base {
     return bInitOk;
   }
 
-//!!!
   /**
    * Sub-class should override this method (and call super.disposeResources() before return).
    */
@@ -1004,17 +1002,7 @@ class Base {
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
 
-    if ( super.disposeResources instanceof Function ) { // If parent class has the same method, call it.
-      super.disposeResources();
-    }
-  }
-
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    BasePool.Singleton.recycle( this );
+    super.disposeResources();
   }
 
   /**
@@ -1513,7 +1501,7 @@ class BasePool extends Pool.Root {
 }
 
 /**
- * Used as default Block.Base provider.
+ * Used as default Block.Base provider for conforming to Recyclable interface.
  */
-BasePool.Singleton = new BasePool();
+Base.Pool = new BasePool();
 
