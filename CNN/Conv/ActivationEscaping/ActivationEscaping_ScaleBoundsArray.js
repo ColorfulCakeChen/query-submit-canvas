@@ -68,7 +68,7 @@ class ScaleBoundsArray extends Recyclable.Root {
    *   Return the this object.
    */
   static setAsConstructor( newLength, ...restArgs ) {
-    super.setAsConstructor.apply( restArgs );
+    super.setAsConstructor.apply( this, restArgs );
     this.length = newLength;
     return this;
   }
