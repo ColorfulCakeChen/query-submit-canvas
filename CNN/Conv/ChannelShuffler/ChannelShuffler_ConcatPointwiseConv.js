@@ -104,50 +104,18 @@ class ConcatPointwiseConv extends Recyclable.Root {
     // Build 1x1 convolution filters for channel shuffling. (as an array of tf.tensor4d).
     try {
 
-//!!! (2022/06/24 Remarked) Old Codes. Use Recyclable.Array.Pool instead.
-//       this.filtersTensor4dArray = tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray", () => {
-//         return concatGather.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d ) => {
-//           return tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray.shuffledChannelIndicesTensor1d", () => {
-//
-//             // Generate oneHotIndices (tensor2d, int32) by shuffledChannelIndices (tensor1d).
-//             let filtersOfOneGroupTensor2d_int32 = tf.oneHot( shuffledChannelIndicesTensor1d, inDepth );
-//
-//             // Generate oneHotIndices (tensor2d, float32).
-//             //
-//             // The tf.oneHot() genetates tensor with ( dtype == "int32" ). However, in backend WASM, if tf.conv2d()
-//             // input tensor ( dtype == "float32" ) and filter tensor ( dtype == "int32" ), the result will be wrong.
-//             // This issue does not exist in backend CPU and WEBGL. For avoiding this problem, convert the filter
-//             // tensor from ( dtype == "int32" ) into ( dtype == "float32" ).
-//             //
-//             let filtersOfOneGroupTensor2d = tf.cast( filtersOfOneGroupTensor2d_int32, "float32" );
-//
-//             // Transpose it so that the last axis is the outDepth (not inDepth) which conforms to the requirement
-//             // of tf.conv2d()'s filters.
-//             let filtersOfOneGroupTensor2d_transposed = filtersOfOneGroupTensor2d.transpose();
-//
-//             // Reinterpret the tensor2d to tensor4d so that it can be used as tf.conv2d()'s filters.
-//             let filtersOfOneGroupTensor4d = filtersOfOneGroupTensor2d_transposed.reshape( filtersShape );
-//             return filtersOfOneGroupTensor4d;
-//           });
-//         });
-//       });
-//
-//       if ( this.filtersTensor4dArray ) {
-//         for ( let i = 0; i < this.filtersTensor4dArray.length; ++i ) {
-//           let filtersTensor4d = this.filtersTensor4dArray[ i ];
-//           if ( filtersTensor4d ) {
-//             this.tensorWeightCountTotal += filtersTensor4d.size;
-//           }
-//         }
-//       }
-
       this.filtersTensor4dArray = Recyclable.Array.Pool.get_or_create_by( concatGather.shuffledChannelIndicesTensor1dArray.length );
       for ( let i = 0; i < concatGather.shuffledChannelIndicesTensor1dArray.length; ++i ) {
         let shuffledChannelIndicesTensor1d = concatGather.shuffledChannelIndicesTensor1dArray[ i ];
-        let filtersTensor4d = tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray.shuffledChannelIndicesTensor1d", () => {
+
+        // filters of one group.
+        let filtersTensor2d_int32;
+        let filtersTensor2d;
+        let filtersTensor2d_transposed;
+        try {
 
           // Generate oneHotIndices (tensor2d, int32) by shuffledChannelIndices (tensor1d).
-          let filtersOfOneGroupTensor2d_int32 = tf.oneHot( shuffledChannelIndicesTensor1d, inDepth );
+          filtersTensor2d_int32 = tf.oneHot( shuffledChannelIndicesTensor1d, inDepth );
 
           // Generate oneHotIndices (tensor2d, float32).
           //
@@ -156,21 +124,31 @@ class ConcatPointwiseConv extends Recyclable.Root {
           // This issue does not exist in backend CPU and WEBGL. For avoiding this problem, convert the filter
           // tensor from ( dtype == "int32" ) into ( dtype == "float32" ).
           //
-          let filtersOfOneGroupTensor2d = tf.cast( filtersOfOneGroupTensor2d_int32, "float32" );
+          filtersTensor2d = tf.cast( filtersTensor2d_int32, "float32" );
 
           // Transpose it so that the last axis is the outDepth (not inDepth) which conforms to the requirement
           // of tf.conv2d()'s filters.
-          let filtersOfOneGroupTensor2d_transposed = filtersOfOneGroupTensor2d.transpose();
+          filtersTensor2d_transposed = filtersTensor2d.transpose();
 
           // Reinterpret the tensor2d to tensor4d so that it can be used as tf.conv2d()'s filters.
-          let filtersOfOneGroupTensor4d = filtersOfOneGroupTensor2d_transposed.reshape( filtersShape );
-          return filtersOfOneGroupTensor4d;
-        });
+          let filtersTensor4d = filtersTensor2d_transposed.reshape( filtersShape );
+          {
+            this.filtersTensor4dArray[ i ] = filtersTensor4d;
+            if ( filtersTensor4d )
+              this.tensorWeightCountTotal += filtersTensor4d.size;
+          }
 
-        this.filtersTensor4dArray[ i ] = filtersTensor4d;
+        } catch ( e ) {
+          throw e;
 
-        if ( filtersTensor4d )
-          this.tensorWeightCountTotal += filtersTensor4d.size;
+        } finally {
+          if ( filtersTensor2d_int32 )
+            filtersTensor2d_int32.dispose();
+          if ( filtersTensor2d )
+            filtersTensor2d.dispose();
+          if ( filtersTensor2d_transposed )
+            filtersTensor2d_transposed.dispose();
+        }
       }
 
       this.shuffleInfo = concatGather.shuffleInfo; // Need the shuffle info.
