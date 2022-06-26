@@ -50,6 +50,9 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
   /**
    * Sub-class should override this static method (and call super.setAsConstructor() in the beginning of this method).
    *
+   * Note: This method must return "this" because Pool.Base.get_or_create_by() needs it.
+   *
+   *
    * @param {Base} this
    *   The Recyclable.Base object to be initialized.
    *
