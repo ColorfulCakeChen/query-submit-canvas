@@ -2,8 +2,8 @@ export { SplitConcat };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-import { ShuffleInfo, ShuffleInfoPool } from "./ChannelShuffler_ShuffleInfo.js";
-import { ConcatGather, ConcatGatherPool } from "./ChannelShuffler_ConcatGather.js";
+import { ShuffleInfo } from "./ChannelShuffler_ShuffleInfo.js";
+import { ConcatGather } from "./ChannelShuffler_ConcatGather.js";
 
 /**
  * Implement the channel shuffler by tf.split() and tf.concat().
@@ -63,6 +63,13 @@ class SplitConcat extends Recyclable.Root {
   }
 
   /** @override */
+  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+    super.setAsConstructor();
+    SplitConcat.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+    return this;
+  }
+
+  /** @override */
   static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
 
     this.tensorWeightCountExtracted = 0;
@@ -98,13 +105,6 @@ class SplitConcat extends Recyclable.Root {
     }
 
     this.splitConcat = this.splitConcat_loop;
-  }
-
-  /** @override */
-  static setAsConstructor( concatenatedShape, outputGroupCount ) {
-    super.setAsConstructor();
-    SplitConcat.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
-    return this;
   }
 
   /** @override */
