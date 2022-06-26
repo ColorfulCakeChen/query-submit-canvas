@@ -80,6 +80,13 @@ class ConcatPointwiseConv extends Recyclable.Root {
   }
 
   /** @override */
+  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+    super.setAsConstructor();
+    ConcatPointwiseConv.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+    return this;
+  }
+
+  /** @override */
   static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
 
     this.tensorWeightCountExtracted = 0;
@@ -168,13 +175,6 @@ class ConcatPointwiseConv extends Recyclable.Root {
 
     this.gather = this.gather_loop;
     this.concatGather = this.concatGather_dispose_finally_call_loop;
-  }
-
-  /** @override */
-  static setAsConstructor( concatenatedShape, outputGroupCount ) {
-    super.setAsConstructor();
-    ConcatPointwiseConv.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
-    return this;
   }
 
   /**
