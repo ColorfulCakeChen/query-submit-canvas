@@ -1,5 +1,4 @@
 export { Base };
-export { BasePool };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
@@ -30,9 +29,15 @@ import * as ActivationEscaping from "./ActivationEscaping.js";
 class Base extends Recyclable.Root {
 
   /**
+   * Used as default TensorPlaceholder.Base provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "TensorPlaceholder.BasePool", Base, Base.setAsConstructor );
+
+  /**
    *
    */
   constructor() {
+    super();
     this.setAsConstructor();
   }
 
@@ -126,21 +131,3 @@ class Base extends Recyclable.Root {
 
 }
 
-
-/**
- * Providing TensorPlaceholder.Base
- *
- */
-class BasePool extends Pool.Root {
-
-  constructor() {
-    super( Base, Base.setAsConstructor );
-  }
-
-}
-
-
-/**
- * Used as default TensorPlaceholder.Base provider for conforming to Recyclable interface.
- */
-Base.Pool = new BasePool();
