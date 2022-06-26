@@ -38,16 +38,20 @@ class Base extends Recyclable.Root {
    */
   constructor() {
     super();
-    this.setAsConstructor();
+    Base.setAsConstructor.call( this );
   }
 
   /**
    * Initialize to empty.
    *
+   * @param {Base} this
+   *   The TensorPlaceholder.Base object to be set length.
+   *
    * @return {Base}
    *   Return the this object.
    */
-  setAsConstructor() {
+  static setAsConstructor() {
+    super.setAsConstructor();
     this.finalOperation = null;
     this.realTensor = null;
     this.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
