@@ -13,6 +13,8 @@ class SplitConcat extends ChannelShuffler_SplitConcat {
    */
   static Pool = new Pool.Root( "ChannelShuffler.PerformanceTest.SplitConcatPool", SplitConcat, SplitConcat.setAsConstructor );
 
+  /**
+   */
   constructor( concatenatedShape, outputGroupCount ) {
     super( concatenatedShape, outputGroupCount );
     SplitConcat.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
