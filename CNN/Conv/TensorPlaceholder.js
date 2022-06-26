@@ -2,6 +2,7 @@ export { Base };
 export { BasePool };
 
 import * as Pool from "../util/Pool.js";
+import * as Recyclable from "../util/Recyclable.js";
 import * as ActivationEscaping from "./ActivationEscaping.js";
 
 /**
@@ -26,7 +27,7 @@ import * as ActivationEscaping from "./ActivationEscaping.js";
  * set. It will be kept (not cloned) directly. So caller should use them carefully.
  *
  */
-class Base {
+class Base extends Recyclable.Root {
 
   /**
    *
@@ -56,21 +57,15 @@ class Base {
    */
   disposeResources() {
     if ( this.scaleBoundsArray ) {
-      ActivationEscaping.ScaleBoundsArrayPool.Singleton.recycle( this.scaleBoundsArray );
+      this.scaleBoundsArray.disposeResources_and_recycleToPool();
       this.scaleBoundsArray = null;
     }
 
     this.finalOperation = null;
     this.realTensor = null;
     this.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
-  }
 
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    BasePool.Singleton.recycle( this );
+    super.disposeResources();
   }
 
   /**
@@ -142,22 +137,10 @@ class BasePool extends Pool.Root {
     super( Base, Base.setAsConstructor );
   }
 
-//!!! (2022/06/22 Remarked) Base.setAsConstructor() should be enough.
-//   /**
-//    * @param {Base} this
-//    *   The TensorPlaceholder.Base object to be initialized.
-//    *
-//    * @return {Base}
-//    *   Return the this object.
-//    */
-//   static setAsConstructor() {
-//     this.setAsConstructor();
-//     return this;
-//   }
-
 }
 
+
 /**
- * Used as default TensorPlaceholder.Base provider.
+ * Used as default TensorPlaceholder.Base provider for conforming to Recyclable interface.
  */
-BasePool.Singleton = new BasePool();
+Base.Pool = new BasePool();
