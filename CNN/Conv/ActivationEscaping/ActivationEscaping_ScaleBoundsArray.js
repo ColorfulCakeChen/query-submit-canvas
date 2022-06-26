@@ -57,21 +57,22 @@ class ScaleBoundsArray extends Recyclable.Root {
     this.length = newChannelCount;
   }
 
-  /**
-   * @param {ScaleBoundsArray} this
-   *   The ActivationEscaping.ScaleBoundsArray object to be initialized.
-   *
-   * @param {number} newLength
-   *   The this.length to be set to newLength.
-   *
-   * @return {ScaleBoundsArray}
-   *   Return the this object.
-   */
-  static setAsConstructor( newLength, ...restArgs ) {
-    super.setAsConstructor.apply( this, restArgs );
+  /** @override */
+  static setAsConstructor_self( newLength ) {
     this.length = newLength;
+  }
+
+  /** @override */
+  static setAsConstructor( newLength ) {
+    super.setAsConstructor();
+    ScaleBoundsArray.setAsConstructor_self.call( this, newLength );
     return this;
   }
+
+  ///** @override */
+  //disposeResources() {
+  //  super.disposeResources();
+  //}
 
   /**
    * @return {ScaleBoundsArray}
