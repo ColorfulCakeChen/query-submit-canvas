@@ -28,15 +28,15 @@ class Base extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor_self() {
-    this.parent = null;
-  }
-
-  /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
     Base.setAsConstructor_self.call( this );
     return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
+    this.parent = null;
   }
 
   ///** @override */
@@ -96,16 +96,16 @@ class Concrete extends Base {
   }
 
   /** @override */
-  static setAsConstructor_self( max = -1 ) {
-    this.value = 0;
-    this.max = max; // Negative indicates not initialized.
-  }
-
-  /** @override */
   static setAsConstructor( max = -1 ) {
     super.setAsConstructor();
     Concrete.setAsConstructor_self.call( this, max );
     return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( max = -1 ) {
+    this.value = 0;
+    this.max = max; // Negative indicates not initialized.
   }
 
   ///** @override */
@@ -153,6 +153,13 @@ class Aggregate extends Base {
   }
 
   /** @override */
+  static setAsConstructor( children = Recyclable.Array.Pool.get_or_create_by( 0 ) ) {
+    super.setAsConstructor();
+    Aggregate.setAsConstructor_self.call( this, children );
+    return this;
+  }
+
+  /** @override */
   static setAsConstructor_self( children = Recyclable.Array.Pool.get_or_create_by( 0 ) ) {
     this.children = children;
     for ( let i = 0; i < this.children.length; ++i ) {
@@ -160,13 +167,6 @@ class Aggregate extends Base {
       if ( child )
         child.parent = this;
     }
-  }
-
-  /** @override */
-  static setAsConstructor( children = Recyclable.Array.Pool.get_or_create_by( 0 ) ) {
-    super.setAsConstructor();
-    Aggregate.setAsConstructor_self.call( this, children );
-    return this;
   }
 
   /** @override */
