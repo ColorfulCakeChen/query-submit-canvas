@@ -1,5 +1,4 @@
 export { ShuffleInfo };
-export { ShuffleInfoPool };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -71,22 +70,20 @@ import * as Recyclable from "../../util/Recyclable.js";
 class ShuffleInfo extends Recyclable.Root {
 
   /**
-   *
+   * Used as default ChannelShuffler.ShuffleInfo provider for conforming to Recyclable interface.
    */
-  constructor( concatenatedShape, outputGroupCount, ...restArgs ) {
-    super( ...restArgs );
-    ShuffleInfo.setAsConstructor.call( this, concatenatedShape, outputGroupCount );
-  }
+  static Pool = new Pool.Root( "ChannelShuffler.ShuffleInfoPool", ShuffleInfo, ShuffleInfo.setAsConstructor );
 
   /**
    *
-   * @param {ShuffleInfo} this
-   *   The object to be initialized.
-   *
-   * @return {ShuffleInfo}
-   *   Return the this object.
    */
-  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+  constructor( concatenatedShape, outputGroupCount ) {
+    super();
+    ShuffleInfo.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+  }
+
+  /** @override */
+  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
 
     outputGroupCount = Math.trunc( outputGroupCount || 1 );
     if ( outputGroupCount < 1 )
@@ -160,7 +157,12 @@ class ShuffleInfo extends Recyclable.Root {
     this.reshapeTransposeReshapeSplit = this.reshapeTransposeReshapeSplit_dispose_finally_calls;
     this.concatReshapeTransposeReshape = this.concatReshapeTransposeReshape_dispose_finally_calls;
     this.concatReshapeTransposeReshapeSplit = this.concatReshapeTransposeReshapeSplit_dispose_finally_calls;
+  }
 
+  /** @override */
+  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+    super.setAsConstructor();
+    ShuffleInfo.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
     return this;
   }
 
@@ -168,6 +170,8 @@ class ShuffleInfo extends Recyclable.Root {
    * Release tf.tensor. (In fact, no tensors needed to be disposed in this ShuffleInfo.)
    *
    * Sub-class should override this method (and call super.disposeResources() before return).
+   *
+   * @override
    */
   disposeResources() {
     this.concatReshapeTransposeReshapeSplit = null;
@@ -193,19 +197,8 @@ class ShuffleInfo extends Recyclable.Root {
     this.concatenatedShape.disposeResources_and_recycleToPool();
     this.concatenatedShape = null;
 
-    //super.disposeResources();
+    super.disposeResources();
   }
-
-//!!! (2022/06/25 Remarked) Inherits from Recyclable.Base instead.
-//   /**
-//    * After calling this method, this object should be viewed as disposed and should not be operated again.
-//    *
-//    * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-//    */
-//   disposeResources_and_recycleToPool() {
-//     this.disposeResources();
-//     ShuffleInfoPool.Singleton.recycle( this );
-//   }
 
   /** Not dispose the input. */
   reshape_to_intermediateShape_keep_input( t ) {
@@ -322,21 +315,3 @@ class ShuffleInfo extends Recyclable.Root {
 
 }
 
-
-/**
- * Providing ChannelShuffler.ShuffleInfo
- *
- */
-class ShuffleInfoPool extends Pool.Root {
-
-  constructor() {
-    super( "ChannelShuffler.ShuffleInfoPool", ShuffleInfo, ShuffleInfo.setAsConstructor );
-  }
-
-}
-
-
-/**
- * Used as default ChannelShuffler.ShuffleInfo provider for conforming to Recyclable interface.
- */
-ShuffleInfo.Pool = new ShuffleInfoPool();
