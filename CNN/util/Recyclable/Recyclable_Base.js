@@ -41,22 +41,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
   }
 
   /**
-   * Setup self only (i.e. NOT recursively).
-   *
-   * Sub-class should override this static method (and NEVER call super.setAsConstructor() in the beginning of this method).
-   *
-   * Note: This method needs NOT return "this".
-   *
-   *
-   * @param {Base} this
-   *   The Recyclable.Base object to be initialized.
-   */
-  static setAsConstructor_self() {
-    // Nothing to do here (for Recyclable.Base).
-  }
-
-  /**
-   * Setup recursively.
+   * Setup recursively. This method simulates constructor's behavior.
    *
    * Sub-class should override this static method:
    *   - Call super.setAsConstructor( ... ) in the beginning of this method. And then,
@@ -79,6 +64,21 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     Base.setAsConstructor_self.call( this );
 
     return this;
+  }
+
+  /**
+   * Setup self only (i.e. NOT recursively).
+   *
+   * Sub-class should override this static method (and NEVER call super.setAsConstructor() in the beginning of this method).
+   *
+   * Note: This method needs NOT return "this".
+   *
+   *
+   * @param {Base} this
+   *   The Recyclable.Base object to be initialized.
+   */
+  static setAsConstructor_self() {
+    // Nothing to do here (for Recyclable.Base).
   }
 
   /**
