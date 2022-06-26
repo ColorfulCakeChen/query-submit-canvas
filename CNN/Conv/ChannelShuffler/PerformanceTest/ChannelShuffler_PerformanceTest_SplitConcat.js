@@ -1,5 +1,4 @@
 export { SplitConcat };
-export { SplitConcatPool };
 
 import * as Pool from "../../../util/Pool.js";
 import { SplitConcat as ChannelShuffler_SplitConcat } from "../ChannelShuffler_SplitConcat.js";
@@ -9,20 +8,31 @@ import { SplitConcat as ChannelShuffler_SplitConcat } from "../ChannelShuffler_S
  */
 class SplitConcat extends ChannelShuffler_SplitConcat {
 
+  /**
+   * Used as default ChannelShuffler.PerformanceTest.SplitConcat provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "ChannelShuffler.PerformanceTest.SplitConcatPool", SplitConcat, SplitConcat.setAsConstructor );
+
   constructor( concatenatedShape, outputGroupCount ) {
     super( concatenatedShape, outputGroupCount );
+    SplitConcat.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
   }
 
-//!!! (2022/06/25 Remarked) Inherits from Recyclable.Base instead.
-//   /**
-//    * After calling this method, this object should be viewed as disposed and should not be operated again.
-//    *
-//    * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-//    */
-//   disposeResources_and_recycleToPool() {
-//     this.disposeResources();
-//     SplitConcatPool.Singleton.recycle( this );
-//   }
+  /** @override */
+  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
+  }
+
+  /** @override */
+  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+    super.setAsConstructor( concatenatedShape, outputGroupCount );
+    SplitConcat.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+    return this;
+  }
+
+  /** @override */
+  disposeResources() {
+   super.disposeResources();
+  }
 
   splitConcat_tidy( tensorArray ) {
     return tf.tidy( "ChannelShuffler.SplitConcat.splitConcat", () => {
@@ -75,23 +85,4 @@ class SplitConcat extends ChannelShuffler_SplitConcat {
   }
 
 }
-
-
-/**
- * Providing ChannelShuffler.PerformanceTest.SplitConcat
- *
- */
-class SplitConcatPool extends Pool.Root {
-
-  constructor() {
-    super( "ChannelShuffler.PerformanceTest.SplitConcatPool", SplitConcat, SplitConcat.setAsConstructor );
-  }
-
-}
-
-
-/**
- * Used as default ChannelShuffler.PerformanceTest.SplitConcat provider for conforming to Recyclable interface.
- */
-SplitConcat.Pool = new SplitConcatPool();
 
