@@ -13,13 +13,11 @@ class ShuffleInfo extends ChannelShuffler_ShuffleInfo {
    */
   static Pool = new Pool.Root( "ChannelShuffler.PerformanceTest.ShuffleInfoPool", ShuffleInfo, ShuffleInfo.setAsConstructor );
 
+  /**
+   */
   constructor( concatenatedShape, outputGroupCount ) {
     super( concatenatedShape, outputGroupCount );
     ShuffleInfo.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
-  }
-
-  /** @override */
-  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
   }
 
   /** @override */
@@ -27,6 +25,10 @@ class ShuffleInfo extends ChannelShuffler_ShuffleInfo {
     super.setAsConstructor( concatenatedShape, outputGroupCount );
     ShuffleInfo.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
     return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
   }
 
   /** @override */
