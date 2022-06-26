@@ -123,9 +123,9 @@ class InputsOutputs extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor() {
+  static setAsConstructor( input0, input1, outputChannelCount0, outputChannelCount1 ) {
     super.setAsConstructor();
-    InputsOutputs.setAsConstructor_self.call( this );
+    InputsOutputs.setAsConstructor_self.call( this, input0, input1, outputChannelCount0, outputChannelCount1 );
     return this;
   }
 
