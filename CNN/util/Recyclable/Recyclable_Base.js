@@ -67,8 +67,8 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    * Setup recursively.
    *
    * Sub-class should override this static method:
-   *   - Call super.setAsConstructor() in the beginning of this method. And then,
-   *   - Call SelfClassXxx.setAsConstructor_self().
+   *   - Call super.setAsConstructor.call( this, ... ) in the beginning of this method. And then,
+   *   - Call SelfClassXxx.setAsConstructor_self.call( this, ... ).
    *
    * Note: This method must return "this" because Pool.Base.get_or_create_by() needs it.
    *
@@ -84,7 +84,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     if ( super.setAsConstructor instanceof Function ) // If parent class has the same method, call it.
       super.setAsConstructor.apply( this, restArgs );
 
-    Base.setAsConstructor_self.apply( restArgs );
+    Base.setAsConstructor_self.call( this );
 
     return this;
   }
