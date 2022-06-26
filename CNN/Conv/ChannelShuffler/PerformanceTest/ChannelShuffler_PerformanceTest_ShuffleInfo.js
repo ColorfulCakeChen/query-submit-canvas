@@ -1,5 +1,4 @@
 export { ShuffleInfo };
-export { ShuffleInfoPool };
 
 import * as Pool from "../../../util/Pool.js";
 import { ShuffleInfo as ChannelShuffler_ShuffleInfo } from "../ChannelShuffler_ShuffleInfo.js";
@@ -9,20 +8,31 @@ import { ShuffleInfo as ChannelShuffler_ShuffleInfo } from "../ChannelShuffler_S
  */
 class ShuffleInfo extends ChannelShuffler_ShuffleInfo {
 
+  /**
+   * Used as default ChannelShuffler.PerformanceTest.ShuffleInfo provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "ChannelShuffler.PerformanceTest.ShuffleInfoPool", ShuffleInfo, ShuffleInfo.setAsConstructor );
+
   constructor( concatenatedShape, outputGroupCount ) {
     super( concatenatedShape, outputGroupCount );
+    ShuffleInfo.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
   }
 
-//!!! (2022/06/25 Remarked) Inherits from Recyclable.Base instead.
-//   /**
-//    * After calling this method, this object should be viewed as disposed and should not be operated again.
-//    *
-//    * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-//    */
-//   disposeResources_and_recycleToPool() {
-//     this.disposeResources();
-//     ShuffleInfoPool.Singleton.recycle( this );
-//   }
+  /** @override */
+  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
+  }
+
+  /** @override */
+  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+    super.setAsConstructor( concatenatedShape, outputGroupCount );
+    ShuffleInfo.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+    return this;
+  }
+
+  /** @override */
+  disposeResources() {
+   super.disposeResources();
+  }
 
   /**
    * Permute the input tensor by reshape-transpose-reshape.
@@ -382,23 +392,4 @@ class ShuffleInfo extends ChannelShuffler_ShuffleInfo {
   }
 
 }
-
-
-/**
- * Providing ChannelShuffler.PerformanceTest.ShuffleInfo
- *
- */
-class ShuffleInfoPool extends Pool.Root {
-
-  constructor() {
-    super( "ChannelShuffler.PerformanceTest.ShuffleInfoPool", ShuffleInfo, ShuffleInfo.setAsConstructor );
-  }
-
-}
-
-
-/**
- * Used as default ChannelShuffler.PerformanceTest.ShuffleInfo provider for conforming to Recyclable interface.
- */
-ShuffleInfo.Pool = new ShuffleInfoPool();
 
