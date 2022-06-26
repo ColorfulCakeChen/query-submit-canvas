@@ -10,7 +10,15 @@ import * as Pool from "../Pool.js";
  * <pre>
  * class SomeClass extends Recyclable.Base {
  *
- *   static Pool = new XxxPool();
+ *   setAsConstructor( children = Pool.Array.Singleton.get_or_create_by( 0 ) ) {
+ *     super.setAsConstructor();
+ *
+ *       :
+ *
+ *     return this;
+ *   }
+ *
+ *   static Pool = new Pool.Root( "SomeNamespace.SomeClass", SomeClass, SomeClass.setAsConstructor );
  *
  * }
  * </pre>
@@ -23,7 +31,7 @@ import * as Pool from "../Pool.js";
  *
  * }
  *
- * SomeClass.Pool = new XxxPool();
+ * SomeClass.Pool = new Pool.Root( "SomeNamespace.SomeClass", SomeClass, SomeClass.setAsConstructor );
  *
  * </pre>
  *
