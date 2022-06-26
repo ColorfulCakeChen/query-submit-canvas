@@ -3,6 +3,7 @@ export { Root };
 export { RootPool };
 
 import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 
 /**
@@ -32,7 +33,7 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
  * which will destroy all inputs. Usually, sub-class should override this data member.
  *
  */
-let Base = ( ParentClass = Object ) => class Base extends ParentClass {
+let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( ParentClass ) {
 
   /**
    * This constructor will register this operation as the input TensorPlaceholder's final operation. So the construction order is
@@ -142,19 +143,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
         this.input0 = null;
     }
 
-    if ( super.disposeResources instanceof Function ) { // If parent class has the same method, call it.
-      super.disposeResources();
-    }
-  }
-
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   *
-   * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    RootPool.Singleton.recycle( this );
+    super.disposeResources();
   }
 
   /**
@@ -632,8 +621,9 @@ class RootPool extends Pool.Root {
 
 }
 
+
 /**
- * Used as default Operation.Root provider.
+ * Used as default Operation.Root provider for conforming to Recyclable interface.
  */
-RootPool.Singleton = new RootPool();
+Root.Pool = new RootPool();
 
