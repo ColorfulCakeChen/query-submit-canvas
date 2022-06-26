@@ -14,13 +14,11 @@ class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
   static Pool = new Pool.Root(
     "ChannelShuffler.PerformanceTest.ConcatPointwiseConvPool", ConcatPointwiseConv, ConcatPointwiseConv.setAsConstructor );
 
+  /**
+   */
   constructor( concatenatedShape, outputGroupCount ) {
     super( concatenatedShape, outputGroupCount );
     ConcatPointwiseConv.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
-  }
-
-  /** @override */
-  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
   }
 
   /** @override */
@@ -28,6 +26,10 @@ class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
     super.setAsConstructor( concatenatedShape, outputGroupCount );
     ConcatPointwiseConv.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
     return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
   }
 
   /** @override */
