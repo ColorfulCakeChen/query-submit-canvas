@@ -23,25 +23,23 @@ class Base extends Recyclable.Root {
    *
    */
   constructor() {
-    Base.setAsConstructor.call( this );
+    super();
+    Base.setAsConstructor_self.call( this );
   }
 
-  /**
-   * @param {Base} this
-   *   The Percentage.Base object to be initialized.
-   *
-   * @return {Base}
-   *   Return the this object.
-   */
+  /** @override */
+  static setAsConstructor_self() {
+    this.parent = null;
+  }
+
+  /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    this.parent = null;
+    Base.setAsConstructor_self.call( this );
     return this;
   }
 
-  ///**
-  // * Sub-class should override this method (and call super.disposeResources() before return).
-  // */
+  ///** @override */
   //disposeResources() {
   //  super.disposeResources();
   //}
@@ -94,32 +92,23 @@ class Concrete extends Base {
    */
   constructor( max = -1 ) {
     super();
-    Base.setAsConstructor.call( this, max );
+    Concrete.setAsConstructor_self.call( this, max );
   }
 
-  /**
-   * @param {Concrete} this
-   *   The Percentage.Concrete object to be initialized.
-   *
-   * @param {number} max
-   *   The possible maximum value of this.value. If negative, indicates not initialized. This is different from maxPercentage.
-   * The maxPercentage is always 100. The this.max, however, could be zero or any positive value. If max is negative, the
-   * the valuePercentage will always be 0 (to avoid Aggregate.valuePercentage immediately 100). If max is zero, the
-   * valuePercentage will always be 100 (to avoid divide by zero and avoid Aggregate.valuePercentage never 100).
-   *
-   * @return {Concrete}
-   *   Return the this object.
-   */
-  static setAsConstructor( max = -1 ) {
-    super.setAsConstructor();
+  /** @override */
+  static setAsConstructor_self( max = -1 ) {
     this.value = 0;
     this.max = max; // Negative indicates not initialized.
+  }
+
+  /** @override */
+  static setAsConstructor( max = -1 ) {
+    super.setAsConstructor();
+    Concrete.setAsConstructor_self.call( this, max );
     return this;
   }
 
-  ///**
-  // * Sub-class should override this method (and call super.disposeResources() before return).
-  // */
+  ///** @override */
   //disposeResources() {
   //  super.disposeResources();
   //}
@@ -160,35 +149,27 @@ class Aggregate extends Base {
    */
   constructor( children = Pool.Array.Singleton.get_or_create_by( 0 ) ) {
     super();
-    Base.setAsConstructor.call( this, children );
+    Aggregate.setAsConstructor_self.call( this, children );
   }
 
-  /**
-   * @param {Aggregate} this
-   *   The Percentage.Aggregate object to be initialized.
-   *
-   * @param {Base[]} children
-   *   An array of Percentage.Base which will be aggregated. Their parent will be set to this Percentage.Aggregate.
-   *
-   * @return {Aggregate}
-   *   Return the this object.
-   */
-  static setAsConstructor( children = Pool.Array.Singleton.get_or_create_by( 0 ) ) {
-    super.setAsConstructor();
-
+  /** @override */
+  static setAsConstructor_self( children = Recyclable.Array.Pool.get_or_create_by( 0 ) ) {
     this.children = children;
-
     for ( let i = 0; i < this.children.length; ++i ) {
       let child = this.children[ i ];
       if ( child )
         child.parent = this;
     }
+  }
+
+  /** @override */
+  static setAsConstructor( children = Recyclable.Array.Pool.get_or_create_by( 0 ) ) {
+    super.setAsConstructor();
+    Aggregate.setAsConstructor_self.call( this, children );
     return this;
   }
 
-  /**
-   * Sub-class should override this method (and call super.disposeResources() before return).
-   */
+  /** @override */
   disposeResources() {
     if ( this.children ) {
 
@@ -200,7 +181,7 @@ class Aggregate extends Base {
         }
       }
 
-      Pool.Array.Singleton.recycle( this.children );
+      this.children.disposeResources_and_recycleToPool();
       this.children = null;
     }
     super.disposeResources();
