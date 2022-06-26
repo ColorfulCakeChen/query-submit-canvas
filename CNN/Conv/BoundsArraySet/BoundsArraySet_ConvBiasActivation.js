@@ -1,9 +1,9 @@
 export { ConvBiasActivation };
-export { ConvBiasActivationPool };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-import * as Pool from "../../util/Pool.js";
 import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
 
 /**
@@ -35,6 +35,11 @@ import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
 class ConvBiasActivation extends InputsOutputs {
 
   /**
+   * Used as default BoundsArraySet.ConvBiasActivation provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "BoundsArraySet.ConvBiasActivationPool", ConvBiasActivation, ConvBiasActivation.setAsConstructor );
+
+  /**
    *   - The .input0 will be set as input0.
    *   - The .afterUndoPreviousActivationEscaping will be set according to  input0 and input0.scaleArraySet.undo.scales.
    *
@@ -45,23 +50,18 @@ class ConvBiasActivation extends InputsOutputs {
    */
   constructor( input0, outputChannelCount0 ) {
     super( input0, undefined, outputChannelCount0, undefined ); // .input0 and .output0
-    this.set_input0_outputChannelCount0( input0, outputChannelCount0 );
+    ConvBiasActivation.setAsConstructor.call( this, input0, outputChannelCount0 );
   }
 
   /**
-   *   - The .input0 will be set as input0.
-   *   - The .afterUndoPreviousActivationEscaping will be set according to  input0 and input0.scaleArraySet.undo.scales.
-   *
-   * Difference from (parent class) InputsOutputs:
-   *   - Only input0 (always no input1), because convolution (no matter pointwise or depthwise) could handle one input tensor.
-   *   - Only output0 (always no output1), because convolution (no matter pointwise or depthwise) always generate one output tensor.
-   *
+   * @param {ConvBiasActivation} this
+   *   The BoundsArraySet.ConvBiasActivation object to be initialized.
    *
    * @return {ConvBiasActivation}
    *   Return the this object.
    */
-  set_input0_outputChannelCount0( input0, outputChannelCount0 ) {
-    super.set_input0_input1_outputChannelCount0_outputChannelCount1( input0, undefined, outputChannelCount0, undefined ); // .input0 and .output0
+  setAsConstructor( input0, outputChannelCount0 ) {
+    super.setAsConstructor( input0, undefined, outputChannelCount0, undefined ); // .input0 and .output0
 
     if ( this.afterUndoPreviousActivationEscaping )
       this.afterUndoPreviousActivationEscaping.length = input0.length; // channel count same as input0.
@@ -112,20 +112,12 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
   /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    ConvBiasActivationPool.Singleton.recycle( this );
-  }
-
-  /**
    * @return {ConvBiasActivation}
    *   Return a newly created ConvBiasActivation which is a copy of this ConvBiasActivation. The this.inputs will just past
    * to new ConvBiasActivation (i.e. NOT copied). But the other data members will be copied.
    */
   clone() {
-    let result = ConvBiasActivationPool.Singleton.get_or_create_by( this.input0, this.outputChannelCount0 );
+    let result = ConvBiasActivation.Pool.get_or_create_by( this.input0, this.outputChannelCount0 );
     result.set_all_byBoundsArraySet( this );
     return result;
   }
@@ -359,34 +351,4 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
 }
-
-
-/**
- * Providing ConvBiasActivation.
- *
- */
-class ConvBiasActivationPool extends Pool.Root {
-
-  constructor() {
-    super( "BoundsArraySet.ConvBiasActivationPool", ConvBiasActivation, ConvBiasActivationPool.setAsConstructor );
-  }
-
-  /**
-   * @param {ConvBiasActivation} this
-   *   The ConvBiasActivation object to be initialized.
-   *
-   * @return {ConvBiasActivation}
-   *   Return the this object.
-   */
-  static setAsConstructor( input0, outputChannelCount0 ) {
-    this.set_input0_outputChannelCount0( input0, outputChannelCount0 );
-    return this;
-  }
-
-}
-
-/**
- * Used as default BoundsArraySet.ConvBiasActivation provider.
- */
-ConvBiasActivationPool.Singleton = new ConvBiasActivationPool();
 
