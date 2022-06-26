@@ -19,14 +19,14 @@ class SplitConcat extends ChannelShuffler_SplitConcat {
   }
 
   /** @override */
-  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
-  }
-
-  /** @override */
   static setAsConstructor( concatenatedShape, outputGroupCount ) {
     super.setAsConstructor( concatenatedShape, outputGroupCount );
     SplitConcat.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
     return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
   }
 
   /** @override */
