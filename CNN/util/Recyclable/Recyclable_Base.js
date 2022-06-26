@@ -40,6 +40,14 @@ import * as Pool from "../Pool.js";
 let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
   /**
+   * Sub-class's constructor could call itself SubClassXxx.setAsConstructor() (i.e. not call Base.setAsConstructor() directly here).
+   */
+  constructor( ...restArgs ) {
+    super( ...restArgs );
+    Base.setAsConstructor.call( this );
+  }
+
+  /**
    * Sub-class should override this static method (and call super.setAsConstructor() in the beginning of this method).
    *
    * @param {Base} this
