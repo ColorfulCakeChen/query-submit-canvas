@@ -40,6 +40,23 @@ class ScaleBoundsArray extends Recyclable.Root {
     this.scaleArraySet = new ScaleArraySet( channelCount );
   }
 
+  /** @override */
+  static setAsConstructor( channelCount ) {
+    super.setAsConstructor();
+    ScaleBoundsArray.setAsConstructor_self.call( this, channelCount );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( channelCount ) {
+    this.length = channelCount;
+  }
+
+  ///** @override */
+  //disposeResources() {
+  //  super.disposeResources();
+  //}
+
   get length() {
     return this.boundsArray.length;
   }
@@ -56,23 +73,6 @@ class ScaleBoundsArray extends Recyclable.Root {
   set channelCount( newChannelCount ) {
     this.length = newChannelCount;
   }
-
-  /** @override */
-  static setAsConstructor_self( newLength ) {
-    this.length = newLength;
-  }
-
-  /** @override */
-  static setAsConstructor( newLength ) {
-    super.setAsConstructor();
-    ScaleBoundsArray.setAsConstructor_self.call( this, newLength );
-    return this;
-  }
-
-  ///** @override */
-  //disposeResources() {
-  //  super.disposeResources();
-  //}
 
   /**
    * @return {ScaleBoundsArray}
