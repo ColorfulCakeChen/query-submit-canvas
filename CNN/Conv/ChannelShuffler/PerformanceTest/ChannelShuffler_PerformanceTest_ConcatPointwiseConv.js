@@ -1,5 +1,4 @@
 export { ConcatPointwiseConv };
-export { ConcatPointwiseConvPool };
 
 import * as Pool from "../../../util/Pool.js";
 import { ConcatPointwiseConv as ChannelShuffler_ConcatPointwiseConv } from "../ChannelShuffler_ConcatPointwiseConv.js";
@@ -9,20 +8,32 @@ import { ConcatPointwiseConv as ChannelShuffler_ConcatPointwiseConv } from "../C
  */
 class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
 
+  /**
+   * Used as default ChannelShuffler.PerformanceTest.ConcatPointwiseConv provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root(
+    "ChannelShuffler.PerformanceTest.ConcatPointwiseConvPool", ConcatPointwiseConv, ConcatPointwiseConv.setAsConstructor );
+
   constructor( concatenatedShape, outputGroupCount ) {
     super( concatenatedShape, outputGroupCount );
+    ConcatPointwiseConv.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
   }
 
-//!!! (2022/06/25 Remarked) Inherits from Recyclable.Base instead.
-//   /**
-//    * After calling this method, this object should be viewed as disposed and should not be operated again.
-//    *
-//    * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-//    */
-//   disposeResources_and_recycleToPool() {
-//     this.disposeResources();
-//     ConcatPointwiseConvPool.Singleton.recycle( this );
-//   }
+  /** @override */
+  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
+  }
+
+  /** @override */
+  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+    super.setAsConstructor( concatenatedShape, outputGroupCount );
+    ConcatPointwiseConv.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+    return this;
+  }
+
+  /** @override */
+  disposeResources() {
+   super.disposeResources();
+  }
 
   gather_map( concatenatedTensor ) {
     // shuffle and split by pointwise convolution (one operation achieves two operations).
@@ -137,23 +148,4 @@ class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
   }
 
 }
-
-
-/**
- * Providing ChannelShuffler.PerformanceTest.ConcatPointwiseConv
- *
- */
-class ConcatPointwiseConvPool extends Pool.Root {
-
-  constructor() {
-    super( "ChannelShuffler.PerformanceTest.ConcatPointwiseConvPool", ConcatPointwiseConv, ConcatPointwiseConv.setAsConstructor );
-  }
-
-}
-
-
-/**
- * Used as default ChannelShuffler.PerformanceTest.ConcatPointwiseConv provider for conforming to Recyclable interface.
- */
-ConcatPointwiseConv.Pool = new ConcatPointwiseConvPool();
 
