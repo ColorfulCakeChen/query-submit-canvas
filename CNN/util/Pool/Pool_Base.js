@@ -178,9 +178,9 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    */
   static recycled_pop() {
     let object = this.recycledObjectArray.pop();
-    if ( object == undefined )
+    if ( object == undefined ) // (i.e. this recycled object list is empty.)
       return null;
-    this.recycledObjectSet.delete( object ); // Removed from set.
+    this.recycledObjectSet.delete( object ); // Removed from fast searching index.
     return object;
   }
 
