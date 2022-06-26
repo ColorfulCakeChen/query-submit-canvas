@@ -83,6 +83,13 @@ class ShuffleInfo extends Recyclable.Root {
   }
 
   /** @override */
+  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+    super.setAsConstructor();
+    ShuffleInfo.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+    return this;
+  }
+
+  /** @override */
   static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
 
     outputGroupCount = Math.trunc( outputGroupCount || 1 );
@@ -157,13 +164,6 @@ class ShuffleInfo extends Recyclable.Root {
     this.reshapeTransposeReshapeSplit = this.reshapeTransposeReshapeSplit_dispose_finally_calls;
     this.concatReshapeTransposeReshape = this.concatReshapeTransposeReshape_dispose_finally_calls;
     this.concatReshapeTransposeReshapeSplit = this.concatReshapeTransposeReshapeSplit_dispose_finally_calls;
-  }
-
-  /** @override */
-  static setAsConstructor( concatenatedShape, outputGroupCount ) {
-    super.setAsConstructor();
-    ShuffleInfo.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
-    return this;
   }
 
   /**
