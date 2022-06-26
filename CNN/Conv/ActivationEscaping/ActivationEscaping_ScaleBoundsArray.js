@@ -2,6 +2,7 @@ export { ScaleBoundsArray };
 export { ScaleBoundsArrayPool };
 
 import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import { ScaleArraySet } from "./ActivationEscaping_ScaleArraySet.js";
 
@@ -25,7 +26,7 @@ import { ScaleArraySet } from "./ActivationEscaping_ScaleArraySet.js";
  *   The scales for activation escaping. Its .do will move this.afterBias bounds into the linear domain of the activation function.
  * That is, for letting this.afterBias escape from activation function's non-linear domain. And its .undo could undo the scales.
  */
-class ScaleBoundsArray {
+class ScaleBoundsArray extends Recyclable.Root {
 
   /**
    */
@@ -52,18 +53,11 @@ class ScaleBoundsArray {
   }
 
   /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    ScaleBoundsArrayPool.Singleton.recycle( this );
-  }
-
-  /**
    * @return {ScaleBoundsArray}
    *   Return a newly created ScaleBoundsArray which is a copy of this ScaleBoundsArray.
    */
   clone() {
-    let result = ScaleBoundsArrayPool.Singleton.get_or_create_by( this.channelCount );
+    let result = ScaleBoundsArray.Pool.get_or_create_by( this.channelCount );
     result.set_all_byScaleBoundsArray( this );
     return result;
   }
@@ -295,7 +289,8 @@ class ScaleBoundsArrayPool extends Pool.Root {
 
 }
 
+
 /**
- * Used as default ActivationEscaping.ScaleBoundsArray provider.
+ * Used as default ActivationEscaping.ScaleBoundsArray provider for conforming to Recyclable interface.
  */
-ScaleBoundsArrayPool.Singleton = new ScaleBoundsArrayPool();
+ScaleBoundsArray.Pool = new ScaleBoundsArrayPool();
