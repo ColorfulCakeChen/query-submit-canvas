@@ -1,6 +1,4 @@
-export { Base };
-export { Root };
-export { RootPool };
+export { Base, Root };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -36,6 +34,11 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
 let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( ParentClass ) {
 
   /**
+   * Used as default Operation.Root provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Operation.RootPool", Base, Base.setAsConstructor );
+
+  /**
    * This constructor will register this operation as the input TensorPlaceholder's final operation. So the construction order is
    * important because the final constructed Operation object will become the real final operation of the inputs.
    *
@@ -46,28 +49,11 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
    */
   constructor( input0, input1, outputTensorCount, ...restArgs ) {
     super( ...restArgs ); // All other arguments passed to parent class's constructor.
-    Base.setAsConstructor.call( this, input0, input1, outputTensorCount, ...restArgs );
+    Base.setAsConstructor_self.call( this, input0, input1, outputTensorCount, ...restArgs );
   }
 
-  /**
-   * This method will register this operation as the input TensorPlaceholder's final operation. So the construction order is
-   * important because the final constructed Operation object will become the real final operation of the inputs.
-   *
-   *
-   * @param {number} outputTensorCount
-   *   If 0, no this.outputX will be created. If 1, only the this.output0 will be created. If 2, both the this.output0 and this.output1
-   * will be created.
-   *
-   * @param {Root} this
-   *   The object to be initialized.
-   *
-   * @return {Root}
-   *   Return the this object.
-   */
-  static setAsConstructor( input0, input1, outputTensorCount, ...restArgs ) {
-
-    if ( super.setAsConstructor instanceof Function )
-      super.setAsConstructor.apply( this, restArgs ); // 0. All other arguments passed to parent class.
+  /** @override */
+  static setAsConstructor_self( input0, input1, outputTensorCount, ...restArgs ) {
 
     // 1. Set and register as the input TensorPlaceholder's final user.
     Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this, input0, input1 );
@@ -79,7 +65,7 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
         if ( this.output0 ) {
           // Do nothing. Continue to use the existed .output0 TensorPlaceholder.
         } else {
-          this.output0 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
+          this.output0 = TensorPlaceholder.Base.Pool.get_or_create_by();
         }
       } else {
         if ( this.output0 ) { // Dispose it since not necessary.
@@ -93,7 +79,7 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
         if ( this.output1 ) {
           // Do nothing. Continue to use the existed .output1 TensorPlaceholder.
         } else {
-          this.output1 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
+          this.output1 = TensorPlaceholder.Base.Pool.get_or_create_by();
         }
       } else { // Dispose it since not necessary.
         if ( this.output1 ) {
@@ -105,6 +91,12 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
 
     // 3.
     Base.setup_apply_dummy.call( this, false, false ); // Default is destroy0 and destroy1.
+  }
+
+  /** @override */
+  static setAsConstructor( input0, input1, outputTensorCount, ...restArgs ) {
+    super.setAsConstructor.apply( this, restArgs );
+    Base.setAsConstructor_self.call( this, input0, input1, outputTensorCount, ...restArgs );
     return this;
   }
 
@@ -112,14 +104,10 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
    * The .input0 and .input1 will be set to null. The .output0 and .output1 will be recycled and then set to null.
    *
    * Sub-class should override this method (and call super.disposeResources() before return).
+   *
+   * @override
    */
   disposeResources() {
-
-//!!! (2022/06/22 Remarked) Old Codes.
-//    // Q: Why not release TensorPlaceholder here?
-//    // A: Some operations (e.g. Depthwise, Pointwise) will call .disposeTensors() before initialization. If here release output
-//    //    TensorPlaceholder, the initialization will fail.
-
 
     // Because outputs are created by this operation, they should be released by this operation.
     {
@@ -607,23 +595,4 @@ Do not use function declared in function because they may generate new function 
  */
 class Root extends Base() {
 }
-
-
-/**
- * Providing Operation.Root
- *
- */
-class RootPool extends Pool.Root {
-
-  constructor() {
-    super( "Operation.RootPool", Root, Root.setAsConstructor );
-  }
-
-}
-
-
-/**
- * Used as default Operation.Root provider for conforming to Recyclable interface.
- */
-Root.Pool = new RootPool();
 
