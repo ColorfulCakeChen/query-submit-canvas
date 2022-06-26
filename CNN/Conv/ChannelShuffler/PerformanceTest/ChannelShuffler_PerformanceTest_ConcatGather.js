@@ -13,13 +13,11 @@ class ConcatGather extends ChannelShuffler_ConcatGather {
    */
   static Pool = new Pool.Root( "ChannelShuffler.PerformanceTest.ConcatGatherPool", ConcatGather, ConcatGather.setAsConstructor );
 
+  /**
+   */
   constructor( concatenatedShape, outputGroupCount ) {
     super( concatenatedShape, outputGroupCount );
     ConcatGather.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
-  }
-
-  /** @override */
-  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
   }
 
   /** @override */
@@ -27,6 +25,10 @@ class ConcatGather extends ChannelShuffler_ConcatGather {
     super.setAsConstructor( concatenatedShape, outputGroupCount );
     ConcatGather.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
     return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
   }
 
   /** @override */
