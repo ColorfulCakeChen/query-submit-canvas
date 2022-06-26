@@ -6,6 +6,7 @@ export { Aggregate };
 export { AggregatePool };
 
 import * as Pool from "../util/Pool.js";
+import * as Pool from "../util/Recyclable.js";
 
 /**
  * The base class for representing valuePercentage as number berween [0, 100] inclusive. Acceptable by Receiver.Base.
@@ -14,7 +15,7 @@ import * as Pool from "../util/Pool.js";
  *
  * @member {Percentage.Base} parent The direct parent Percentage.Base of this Percentage.Base.
  */
-class Base {
+class Base extends Recyclable.Root {
 
   /**
    *
@@ -32,19 +33,12 @@ class Base {
     return this;
   }
 
-  /**
-   * Sub-class should override this method (and call super.disposeResources() before return).
-   */
-  disposeResources() {
-  }
-
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    BasePool.Singleton.recycle( this );
-  }
+  ///**
+  // * Sub-class should override this method (and call super.disposeResources() before return).
+  // */
+  //disposeResources() {
+  //  super.disposeResources();
+  //}
 
   /**
    * @return {Percentage.Base} The root Percentage.Base of the whole Percentage hierarchy. The root's valuePercentage represents the whole percentage.
@@ -83,9 +77,9 @@ class BasePool extends Pool.Root {
 }
 
 /**
- * Used as default ValueMax.Base provider.
+ * Used as default ValueMax.Base provider for conforming to Recyclable interface.
  */
-BasePool.Singleton = new BasePool();
+Base.Pool = new BasePool();
 
 
 /**
@@ -127,20 +121,12 @@ class Concrete extends Base {
     return this;
   }
 
-  /**
-   * Sub-class should override this method (and call super.disposeResources() before return).
-   */
-  disposeResources() {
-    super.disposeResources();
-  }
-
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    ConcretePool.Singleton.recycle( this );
-  }
+  ///**
+  // * Sub-class should override this method (and call super.disposeResources() before return).
+  // */
+  //disposeResources() {
+  //  super.disposeResources();
+  //}
 
   /**
    * @return {number}
@@ -175,9 +161,9 @@ class ConcretePool extends Pool.Root {
 }
 
 /**
- * Used as default ValueMax.Concrete provider.
+ * Used as default ValueMax.Concrete provider for conforming to Recyclable interface.
  */
-ConcretePool.Singleton = new ConcretePool();
+Concrete.Pool = new ConcretePool();
 
 
 /**
@@ -232,14 +218,6 @@ class Aggregate extends Base {
       this.children = null;
     }
     super.disposeResources();
-  }
-
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    AggregatePool.Singleton.recycle( this );
   }
 
   /**
@@ -303,7 +281,7 @@ class AggregatePool extends Pool.Root {
 }
 
 /**
- * Used as default ValueMax.Aggregate provider.
+ * Used as default ValueMax.Aggregate provider for conforming to Recyclable interface.
  */
-AggregatePool.Singleton = new AggregatePool();
+Aggregate.Pool = new AggregatePool();
 
