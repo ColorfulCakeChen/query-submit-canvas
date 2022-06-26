@@ -32,6 +32,15 @@ import * as Pool from "../Pool.js";
 let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
   /**
+   * Sub-class should override this method (and call super.disposeResources() before return).
+   */
+  disposeResources() {
+
+    if ( super.disposeResources instanceof Function ) // If parent class has the same method, call it.
+      super.disposeResources();
+  }
+
+  /**
    * This method will do the following in sequence:
    *   - call this.disposeResources() (if exists)
    *   - call this.constructor.Pool.recycle()
@@ -42,11 +51,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    * After calling this method, this object should be viewed as disposed and should not be operated again.
    */
   disposeResources_and_recycleToPool() {
-
-    if ( this.disposeResources instanceof Function ) { // If this object needs disposing, do it before being recyled.
-      this.disposeResources();
-    }
-
+    this.disposeResources();
     this.constructor.Pool.recycle( this );
   }
 
