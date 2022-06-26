@@ -37,18 +37,20 @@ import * as Recyclable from "../../util/Recyclable.js";
 class HigherHalfPassThrough extends Recyclable.Root {
 
   /**
-   *
+   * Used as default ChannelCountCalculator.HigherHalfPassThrough provider for conforming to Recyclable interface.
    */
-  constructor( inputChannelCount_total, outputChannelCount_total ) {
-    this.setAsConstructor( inputChannelCount_total, outputChannelCount_total );
-  }
+  static Pool = new Pool.Root( "ChannelCountCalculator.HigherHalfPassThrough", HigherHalfPassThrough, HigherHalfPassThrough.setAsConstructor );
 
   /**
    *
-   * @return {HigherHalfPassThrough}
-   *   Return the this object.
    */
-  setAsConstructor( inputChannelCount_total, outputChannelCount_total ) {
+  constructor( inputChannelCount_total, outputChannelCount_total ) {
+    super();
+    HigherHalfPassThrough.setAsConstructor.call( this, inputChannelCount_total, outputChannelCount_total );
+  }
+
+  /** @override */
+  static setAsConstructor_self( inputChannelCount_total, outputChannelCount_total ) {
 
     this.inputChannelCount_total = inputChannelCount_total;
     this.outputChannelCount_total = outputChannelCount_total;
@@ -68,7 +70,12 @@ class HigherHalfPassThrough extends Recyclable.Root {
 
     // The non-past-through channel count equals the output channel count minus the fixed (past-through) channel count.
     this.outputChannelCount_lowerHalf = this.outputChannelCount_total_real - this.outputChannelCount_higherHalf;
+  }
 
+  /** @override */
+  static setAsConstructor( inputChannelCount_total, outputChannelCount_total ) {
+    super.setAsConstructor();
+    HigherHalfPassThrough.setAsConstructor_self.call( this, inputChannelCount_total, outputChannelCount_total );
     return this;
   }
 
@@ -82,14 +89,7 @@ class HigherHalfPassThrough extends Recyclable.Root {
 class HigherHalfPassThroughPool extends Pool.Root {
 
   constructor() {
-    super( "ChannelCountCalculator.HigherHalfPassThrough", HigherHalfPassThrough, HigherHalfPassThrough.setAsConstructor );
   }
 
 }
-
-
-/**
- * Used as default ChannelCountCalculator.HigherHalfPassThrough provider for conforming to Recyclable interface.
- */
-HigherHalfPassThrough.Pool = new HigherHalfPassThroughPool();
 
