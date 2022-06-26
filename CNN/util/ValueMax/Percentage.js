@@ -1,9 +1,6 @@
 export { Base };
-export { BasePool };
 export { Concrete };
-export { ConcretePool };
 export { Aggregate };
-export { AggregatePool };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
@@ -18,6 +15,11 @@ import * as Recyclable from "../util/Recyclable.js";
 class Base extends Recyclable.Root {
 
   /**
+   * Used as default ValueMax.Percentage.Base provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "ValueMax.Percentage.Base", Base, Base.setAsConstructor );
+
+  /**
    *
    */
   constructor() {
@@ -25,10 +27,13 @@ class Base extends Recyclable.Root {
   }
 
   /**
+   * @param {Base} this
+   *   The Percentage.Base object to be initialized.
+   *
    * @return {Base}
    *   Return the this object.
    */
-  setAsConstructor() {
+  static setAsConstructor() {
     this.parent = null;
     return this;
   }
@@ -65,24 +70,6 @@ class Base extends Recyclable.Root {
 
 
 /**
- * Providing ValueMax.Base
- *
- */
-class BasePool extends Pool.Root {
-
-  constructor() {
-    super( Base, Base.setAsConstructor );
-  }
-
-}
-
-/**
- * Used as default ValueMax.Base provider for conforming to Recyclable interface.
- */
-Base.Pool = new BasePool();
-
-
-/**
  * Collect value and max and represents them as percentage.
  *
  * The Concrete.maxPercentage always returns 100. The Concrete.valuePercentage returns number berween [0, 100] inclusive.
@@ -91,6 +78,11 @@ Base.Pool = new BasePool();
  * @member {number} max   A positive number indicates the maximum value of this.value.
  */
 class Concrete extends Base {
+
+  /**
+   * Used as default ValueMax.Percentage.Concrete provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "ValueMax.Percentage.Concrete", Concrete, Concrete.setAsConstructor );
 
   /**
    * @param {number} max
@@ -105,6 +97,9 @@ class Concrete extends Base {
   }
 
   /**
+   * @param {Concrete} this
+   *   The Percentage.Concrete object to be initialized.
+   *
    * @param {number} max
    *   The possible maximum value of this.value. If negative, indicates not initialized. This is different from maxPercentage.
    * The maxPercentage is always 100. The this.max, however, could be zero or any positive value. If max is negative, the
@@ -114,7 +109,7 @@ class Concrete extends Base {
    * @return {Concrete}
    *   Return the this object.
    */
-  setAsConstructor( max = -1 ) {
+  static setAsConstructor( max = -1 ) {
     super.setAsConstructor();
     this.value = 0;
     this.max = max; // Negative indicates not initialized.
@@ -149,27 +144,14 @@ class Concrete extends Base {
 
 
 /**
- * Providing ValueMax.Concrete
- *
- */
-class ConcretePool extends Pool.Root {
-
-  constructor() {
-    super( Concrete, Concrete.setAsConstructor );
-  }
-
-}
-
-/**
- * Used as default ValueMax.Concrete provider for conforming to Recyclable interface.
- */
-Concrete.Pool = new ConcretePool();
-
-
-/**
  * Aggregate all children ( valuePercentage / maxPercentage ) and represents them as percentage.
  */
 class Aggregate extends Base {
+
+  /**
+   * Used as default ValueMax.Percentage.Aggregate provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "ValueMax.Percentage.Aggregate", Aggregate, Aggregate.setAsConstructor );
 
   /**
    * @param {Percentage.Base[]} children
@@ -181,13 +163,16 @@ class Aggregate extends Base {
   }
 
   /**
-   * @param {Percentage.Base[]} children
+   * @param {Aggregate} this
+   *   The Percentage.Aggregate object to be initialized.
+   *
+   * @param {Base[]} children
    *   An array of Percentage.Base which will be aggregated. Their parent will be set to this Percentage.Aggregate.
    *
    * @return {Aggregate}
    *   Return the this object.
    */
-  setAsConstructor( children = Pool.Array.Singleton.get_or_create_by( 0 ) ) {
+  static setAsConstructor( children = Pool.Array.Singleton.get_or_create_by( 0 ) ) {
     super.setAsConstructor();
 
     this.children = children;
@@ -266,22 +251,3 @@ class Aggregate extends Base {
   }
 
 }
-
-
-/**
- * Providing ValueMax.Aggregate
- *
- */
-class AggregatePool extends Pool.Root {
-
-  constructor() {
-    super( Aggregate, Aggregate.setAsConstructor );
-  }
-
-}
-
-/**
- * Used as default ValueMax.Aggregate provider for conforming to Recyclable interface.
- */
-Aggregate.Pool = new AggregatePool();
-
