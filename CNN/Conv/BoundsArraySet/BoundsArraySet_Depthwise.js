@@ -28,10 +28,26 @@ class Depthwise extends ConvBiasActivation {
    */
   constructor( input0, outputChannelCount0 ) {
     super( input0, outputChannelCount0 );
+    Depthwise.setAsConstructor_self.call( input0, outputChannelCount0 );
+  }
 
+  /** @override */
+  static setAsConstructor_self( input0, outputChannelCount0 ) {
     // Infer channelMultiplier.
     this.channelMultiplier = outputChannelCount0 / input0.channelCount;
   }
+
+  /** @override */
+  static setAsConstructor( input0, outputChannelCount0 ) {
+    super.setAsConstructor( input0, outputChannelCount0 );
+    Depthwise.setAsConstructor_self.call( this, input0, outputChannelCount0 );
+    return this;
+  }
+
+  ///** @override */
+  //disposeResources() {
+  //  super.disposeResources();
+  //}
 
   /**
    * Set this.bPassThrough[] according to inChannelPartInfoArray.
