@@ -279,19 +279,3 @@ class ScaleBoundsArray extends Recyclable.Root {
 
 }
 
-
-/**
- * Providing ScaleBoundsArray by specifying length.
- *
- */
-class ScaleBoundsArrayPool extends Pool.Root {
-
-  /**
-   *
-   */
-  constructor() {
-    super( "ActivationEscaping.ScaleBoundsArrayPool", ScaleBoundsArray, ScaleBoundsArrayPool.setAsConstructor_by_length );
-  }
-
-}
-
