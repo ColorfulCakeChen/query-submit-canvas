@@ -113,6 +113,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 
   /**
    * Discard all recycled objects (in this Pool.Base). (Note: The issued objects list are not influenced.)
+   * This could used if it is neccessary to release the memory used by the recycled objects.
    *
    * @param {Base}
    *   The Pool.Base object for handling the recycled bojects.
@@ -121,16 +122,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     this.recycledObjectArray.length = 0;
     this.recycledObjectSet.clear();
   }
-
-
-//!!! (2022/06/23 Remarked) seems not used.
-//   /**
-//    * @return {iterator)
-//    *   Return an iterator object that contains all recycled objects.
-//    */
-//   * recycledValues() {
-//     yield* this.recycledObjectArray.values();
-//   }
 
   /**
    *
@@ -156,13 +147,11 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
       return false; // 1. Can not recycle a null object.
 
     if ( this.recycledObjectSet.has( objectToBeRecycled ) ) { // 2. Avoid recycling one object multiple times (i.e. duplicately).
-
       throw Error(
         `Pool.Base.recycled_add(): `
           + `An object ( ${objectToBeRecycled} ) is recycled multiple times. `
           + `This may imply some problem (e.g. resource not transferred properly).`
         );
-
       return false;
     }
 
