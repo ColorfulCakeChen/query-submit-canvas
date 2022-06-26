@@ -23,7 +23,7 @@ class Base extends Recyclable.Root {
    *
    */
   constructor() {
-    this.setAsConstructor();
+    Base.setAsConstructor.call( this );
   }
 
   /**
@@ -34,6 +34,7 @@ class Base extends Recyclable.Root {
    *   Return the this object.
    */
   static setAsConstructor() {
+    super.setAsConstructor();
     this.parent = null;
     return this;
   }
@@ -93,7 +94,7 @@ class Concrete extends Base {
    */
   constructor( max = -1 ) {
     super();
-    this.setAsConstructor( max );
+    Base.setAsConstructor.call( this, max );
   }
 
   /**
@@ -159,7 +160,7 @@ class Aggregate extends Base {
    */
   constructor( children = Pool.Array.Singleton.get_or_create_by( 0 ) ) {
     super();
-    this.setAsConstructor( children );
+    Base.setAsConstructor.call( this, children );
   }
 
   /**
