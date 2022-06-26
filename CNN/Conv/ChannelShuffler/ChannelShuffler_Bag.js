@@ -1,10 +1,8 @@
 export { Bag };
-export { BagPool };
 
 import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-import { ConcatPointwiseConvPool } from "./ChannelShuffler_ConcatPointwiseConv.js";
 
 /**
  * A container which provides shared channel shufflers. This could simplify memory management.
@@ -19,10 +17,22 @@ import { ConcatPointwiseConvPool } from "./ChannelShuffler_ConcatPointwiseConv.j
 class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
 
   /**
+   * Used as default ChannelShuffler.Bag provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "ChannelShuffler.BagPool", Bag, Bag.setAsConstructor );
+
+  /**
    */
   constructor( channelShufflerPool = ConcatPointwiseConv.Pool ) {
     super();
     Bag.setAsConstructor_self.call( this, channelShufflerPool );
+  }
+
+  /** @override */
+  static setAsConstructor( channelShufflerPool = ConcatPointwiseConv.Pool ) {
+    super.setAsConstructor();
+    Bag.setAsConstructor_self.call( this, channelShufflerPool );
+    return this;
   }
 
   /** @override */
@@ -31,13 +41,6 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
 
     // A re-used shared array for reducing memory allocation.
     this.concatenatedShape = Recyclable.Array.Pool.get_or_create_by( 3 );
-  }
-
-  /** @override */
-  static setAsConstructor( channelShufflerPool = ConcatPointwiseConv.Pool ) {
-    super.setAsConstructor();
-    Bag.setAsConstructor_self.call( this, channelShufflerPool );
-    return this;
   }
 
   /** Release all channel shufflers and their tf.tensor.
@@ -91,21 +94,3 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
 
 }
 
-
-/**
- * Providing ChannelShuffler.Bag
- *
- */
-class BagPool extends Pool.Root {
-
-  constructor() {
-    super( "ChannelShuffler.BagPool", Bag, Bag.setAsConstructor );
-  }
-
-}
-
-
-/**
- * Used as default ChannelShuffler.Bag provider for conforming to Recyclable interface.
- */
-Bag.Pool = new BagPool();
