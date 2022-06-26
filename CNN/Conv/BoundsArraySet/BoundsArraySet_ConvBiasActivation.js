@@ -49,7 +49,7 @@ class ConvBiasActivation extends InputsOutputs {
    */
   constructor( input0, outputChannelCount0 ) {
     super( input0, undefined, outputChannelCount0, undefined ); // .input0 and .output0
-    ConvBiasActivation.setAsConstructor.call( this, input0, outputChannelCount0 );
+    ConvBiasActivation.setAsConstructor_self.call( this, input0, outputChannelCount0 );
   }
 
   /**
@@ -59,8 +59,7 @@ class ConvBiasActivation extends InputsOutputs {
    * @return {ConvBiasActivation}
    *   Return the this object.
    */
-  setAsConstructor( input0, outputChannelCount0 ) {
-    super.setAsConstructor( input0, undefined, outputChannelCount0, undefined ); // .input0 and .output0
+  static setAsConstructor_self( input0, outputChannelCount0 ) {
 
     if ( this.afterUndoPreviousActivationEscaping )
       this.afterUndoPreviousActivationEscaping.length = input0.length; // channel count same as input0.
@@ -83,6 +82,12 @@ class ConvBiasActivation extends InputsOutputs {
       this.bPassThrough = new Array( outputChannelCount0 );
 
     this.set_afterUndoPreviousActivationEscaping_by_input0_undoScales();
+  }
+
+  /** @override */
+  static setAsConstructor( input0, outputChannelCount0 ) {
+    super.setAsConstructor( input0, undefined, outputChannelCount0, undefined );
+    ConvBiasActivation.setAsConstructor_self.call( this, input0, outputChannelCount0 );
     return this;
   }
 
@@ -101,6 +106,8 @@ class ConvBiasActivation extends InputsOutputs {
 
   /**
    * Sub-class should override this method (and call super.disposeResources() before return).
+   *
+   * @override
    */
   disposeResources() {
 
