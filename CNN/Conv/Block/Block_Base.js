@@ -1,5 +1,4 @@
 export { Base };
-export { BasePool };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -315,24 +314,26 @@ import { Params } from "./Block_Params.js";
 class Base extends Recyclable.Root {
 
   /**
+   * Used as default Block.Base provider for conforming to Recyclable interface.
    */
-  constructor( ...restArgs ) {
-    super( ...restArgs );
-    Base.setAsConstructor.call( this, ...restArgs );
-  }
+  static Pool = new Pool.Root( "Block.BasePool", Base, Base.setAsConstructor );
 
   /**
-   * @param {Base} this
-   *   The object to be initialized.
-   *
-   * @return {Base}
-   *   Return the this object.
    */
-  static setAsConstructor( ...restArgs ) {
+  constructor() {
+    super();
+    Base.setAsConstructor_self.call( this );
+  }
 
-    if ( super.setAsConstructor instanceof Function )
-      super.setAsConstructor.call( this, ...restArgs ); // 0. All other arguments passed to parent class.
+  /** @override */
+  static setAsConstructor_self() {
+    // Nothing to do here (for Block.Base).
+  }
 
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    Base.setAsConstructor_self.call( this );
     return this;
   }
 
@@ -969,6 +970,8 @@ class Base extends Recyclable.Root {
 
   /**
    * Sub-class should override this method (and call super.disposeResources() before return).
+   *
+   * @override
    */
   disposeResources() {
 
@@ -1486,22 +1489,4 @@ class Base extends Recyclable.Root {
   }
 
 }
-
-
-/**
- * Providing Block.Base
- *
- */
-class BasePool extends Pool.Root {
-
-  constructor() {
-    super( "Block.BasePool", Base, Base.setAsConstructor );
-  }
-
-}
-
-/**
- * Used as default Block.Base provider for conforming to Recyclable interface.
- */
-Base.Pool = new BasePool();
 
