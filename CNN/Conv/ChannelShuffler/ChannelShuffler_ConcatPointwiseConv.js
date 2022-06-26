@@ -2,8 +2,8 @@ export { ConcatPointwiseConv };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-import { ShuffleInfo, ShuffleInfoPool } from "./ChannelShuffler_ShuffleInfo.js";
-import { ConcatGather, ConcatGatherPool } from "./ChannelShuffler_ConcatGather.js";
+import { ShuffleInfo } from "./ChannelShuffler_ShuffleInfo.js";
+import { ConcatGather } from "./ChannelShuffler_ConcatGather.js";
 
 /**
  * Implement the channel shuffler by 1x1 tf.Conv2D() (i.e. pointwise convolution).
