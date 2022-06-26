@@ -52,13 +52,7 @@ class ConvBiasActivation extends InputsOutputs {
     ConvBiasActivation.setAsConstructor_self.call( this, input0, outputChannelCount0 );
   }
 
-  /**
-   * @param {ConvBiasActivation} this
-   *   The BoundsArraySet.ConvBiasActivation object to be initialized.
-   *
-   * @return {ConvBiasActivation}
-   *   Return the this object.
-   */
+  /** @override */
   static setAsConstructor_self( input0, outputChannelCount0 ) {
 
     if ( this.afterUndoPreviousActivationEscaping )
