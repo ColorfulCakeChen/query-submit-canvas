@@ -60,20 +60,13 @@ class InputsOutputs extends Recyclable.Root {
    * @param {number} outputChannelCount1
    *   The channel count of 2nd output. (If undefined or null or zero or negative, there will be no output1.)
    */
-  constructor( input0, input1, outputChannelCount0, outputChannelCount1, ...restArgs ) {
+  constructor( input0, input1, outputChannelCount0, outputChannelCount1 ) {
     super();
-    InputsOutputs.setAsConstructor.call( this, input0, input1, outputChannelCount0, outputChannelCount1, ...restArgs );
+    InputsOutputs.setAsConstructor_self.call( this, input0, input1, outputChannelCount0, outputChannelCount1 );
   }
 
-  /**
-   * @param {InputsOutputs} this
-   *   The BoundsArraySet.InputsOutputs object to be initialized.
-   *
-   * @return {InputsOutputs}
-   *   Return the this object.
-   */
-  static setAsConstructor( input0, input1, outputChannelCount0, outputChannelCount1, ...restArgs ) {
-    super.setAsConstructor.apply( this, restArgs );
+  /** @override */
+  static setAsConstructor_self( input0, input1, outputChannelCount0, outputChannelCount1 ) {
 
     if ( !( input0 instanceof ActivationEscaping.ScaleBoundsArray ) )
       throw Error( `BoundsArraySet.InputsOutputs.setAsConstructor(): `
@@ -127,7 +120,12 @@ class InputsOutputs extends Recyclable.Root {
         + `outputChannelCount0 ( ${outputChannelCount0} ) can not be negative (i.e. must >= 0).`
       );
     }
+  }
 
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    InputsOutputs.setAsConstructor_self.call( this );
     return this;
   }
 
@@ -135,6 +133,8 @@ class InputsOutputs extends Recyclable.Root {
    * The .input0 and .input1 will be set to null. The .output0 and .output1 will be recycled and then set to null.
    *
    * Sub-class should override this method (and call super.disposeResources() before return).
+   *
+   * @override
    */
   disposeResources() {
 
