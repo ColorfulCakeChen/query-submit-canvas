@@ -28,6 +28,11 @@ import { ScaleArraySet } from "./ActivationEscaping_ScaleArraySet.js";
 class ScaleBoundsArray extends Recyclable.Root {
 
   /**
+   * Used as default ActivationEscaping.ScaleBoundsArray provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "ActivationEscaping.ScaleBoundsArrayPool", ScaleBoundsArray, ScaleBoundsArray.setAsConstructor );
+
+  /**
    */
   constructor( channelCount ) {
     this.boundsArray = new FloatValue.BoundsArray( channelCount );
@@ -52,22 +57,18 @@ class ScaleBoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {Percentage.Base[]} children
-   *   An array of Percentage.Base which will be aggregated. Their parent will be set to this Percentage.Aggregate.
+   * @param {ScaleBoundsArray} this
+   *   The ScaleBoundsArray object to be set length.
    *
-   * @return {Aggregate}
+   * @param {number} newLength
+   *   The this.length to be set to newLength.
+   *
+   * @return {ScaleBoundsArray}
    *   Return the this object.
    */
-  static setAsConstructor( children = Pool.Array.Singleton.get_or_create_by( 0 ) ) {
+  static setAsConstructor( newLength ) {
     super.setAsConstructor();
-
-    this.children = children;
-
-    for ( let i = 0; i < this.children.length; ++i ) {
-      let child = this.children[ i ];
-      if ( child )
-        child.parent = this;
-    }
+    this.length = newLength;
     return this;
   }
 
@@ -291,25 +292,5 @@ class ScaleBoundsArrayPool extends Pool.Root {
     super( "ActivationEscaping.ScaleBoundsArrayPool", ScaleBoundsArray, ScaleBoundsArrayPool.setAsConstructor_by_length );
   }
 
-  /**
-   * @param {ScaleBoundsArray} this
-   *   The ScaleBoundsArray object to be set length.
-   *
-   * @param {number} newLength
-   *   The this.length to be set to newLength.
-   *
-   * @return {ScaleBoundsArray}
-   *   Return the this object.
-   */
-  static setAsConstructor_by_length( newLength ) {
-    this.length = newLength;
-    return this;
-  }
-
 }
 
-
-/**
- * Used as default ActivationEscaping.ScaleBoundsArray provider for conforming to Recyclable interface.
- */
-ScaleBoundsArray.Pool = new ScaleBoundsArrayPool();
