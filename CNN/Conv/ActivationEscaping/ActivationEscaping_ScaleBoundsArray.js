@@ -35,6 +35,7 @@ class ScaleBoundsArray extends Recyclable.Root {
   /**
    */
   constructor( channelCount ) {
+    super();
     this.boundsArray = new FloatValue.BoundsArray( channelCount );
     this.scaleArraySet = new ScaleArraySet( channelCount );
   }
