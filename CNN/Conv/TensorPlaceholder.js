@@ -36,25 +36,22 @@ class Base extends Recyclable.Root {
   /**
    *
    */
-  constructor( ...restArgs ) {
+  constructor() {
     super();
-    Base.setAsConstructor.apply( this, restArgs  );
+    Base.setAsConstructor_self.apply( this );
   }
 
-  /**
-   * Initialize to empty.
-   *
-   * @param {Base} this
-   *   The TensorPlaceholder.Base object to be set length.
-   *
-   * @return {Base}
-   *   Return the this object.
-   */
-  static setAsConstructor( ...restArgs ) {
-    super.setAsConstructor.apply( this, restArgs );
+  /** @override */
+  static setAsConstructor_self() {
     this.finalOperation = null;
     this.realTensor = null;
     this.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
+  }
+
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    Base.setAsConstructor_self.call( this );
     return this;
   }
 
@@ -63,6 +60,8 @@ class Base extends Recyclable.Root {
    *
    * Usually, this method is not responsible for releasing .finalOperation and .realTensor. They should be handled
    * by the caller of apply().
+   *
+   * @override
    */
   disposeResources() {
     if ( this.scaleBoundsArray ) {
