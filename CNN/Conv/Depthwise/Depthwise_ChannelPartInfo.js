@@ -97,7 +97,7 @@ class FiltersBiasesPartInfo extends Recyclable.Root {
   /** @override */
   static setAsConstructor( aChannelPartInfoArray ) {
     super.setAsConstructor();
-    FiltersBiasesPartInfo.setAsConstructor_self.call( this );
+    FiltersBiasesPartInfo.setAsConstructor_self.call( this, aChannelPartInfoArray );
     return this;
   }
 
