@@ -1,6 +1,9 @@
 export { HigherHalfPassThrough };
 export { HigherHalfPassThroughPool };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
+
 /**
  * Calculate the channel count of lower half (of input and output) and higher half (of input and output) when the higher half of
  * input should be past-through to output.
@@ -31,7 +34,7 @@ export { HigherHalfPassThroughPool };
  *
  *
  */
-class HigherHalfPassThrough {
+class HigherHalfPassThrough extends Recyclable.Root {
 
   /**
    *
@@ -84,8 +87,9 @@ class HigherHalfPassThroughPool extends Pool.Root {
 
 }
 
+
 /**
- * Used as default ChannelCountCalculator.HigherHalfPassThrough provider.
+ * Used as default ChannelCountCalculator.HigherHalfPassThrough provider for conforming to Recyclable interface.
  */
-HigherHalfPassThroughPool.Singleton = new HigherHalfPassThroughPool();
+HigherHalfPassThrough.Pool = new HigherHalfPassThroughPool();
 
