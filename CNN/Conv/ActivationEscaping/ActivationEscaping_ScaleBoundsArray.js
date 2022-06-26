@@ -59,7 +59,7 @@ class ScaleBoundsArray extends Recyclable.Root {
 
   /**
    * @param {ScaleBoundsArray} this
-   *   The ScaleBoundsArray object to be set length.
+   *   The ActivationEscaping.ScaleBoundsArray object to be initialized.
    *
    * @param {number} newLength
    *   The this.length to be set to newLength.
