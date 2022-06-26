@@ -53,6 +53,13 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
   /** @override */
+  static setAsConstructor( input0, outputChannelCount0 ) {
+    super.setAsConstructor( input0, undefined, outputChannelCount0, undefined );
+    ConvBiasActivation.setAsConstructor_self.call( this, input0, outputChannelCount0 );
+    return this;
+  }
+
+  /** @override */
   static setAsConstructor_self( input0, outputChannelCount0 ) {
 
     if ( this.afterUndoPreviousActivationEscaping )
@@ -76,13 +83,6 @@ class ConvBiasActivation extends InputsOutputs {
       this.bPassThrough = new Array( outputChannelCount0 );
 
     this.set_afterUndoPreviousActivationEscaping_by_input0_undoScales();
-  }
-
-  /** @override */
-  static setAsConstructor( input0, outputChannelCount0 ) {
-    super.setAsConstructor( input0, undefined, outputChannelCount0, undefined );
-    ConvBiasActivation.setAsConstructor_self.call( this, input0, outputChannelCount0 );
-    return this;
   }
 
   /**
