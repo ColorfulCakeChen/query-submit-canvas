@@ -45,33 +45,25 @@ import { ShuffleInfo, ShuffleInfoPool } from "./ChannelShuffler_ShuffleInfo.js";
 class ConcatGather extends Recyclable.Root {
 
   /**
-   *
-   * @param {number[]} concatenatedShape  Used to calculate shuffleInfo.
-   * @param {number}   outputGroupCount   Used to calculate shuffleInfo.
-   * @exception {Object} If failed (e.g. out of GPU memory).
-   *
-   * @see ShuffleInfo
+   * Used as default ChannelShuffler.ConcatGather provider for conforming to Recyclable interface.
    */
-  constructor( concatenatedShape, outputGroupCount, ...restArgs ) {
-    super( ...restArgs );
-    ConcatGather.setAsConstructor.call( this, concatenatedShape, outputGroupCount );
-  }
+  static Pool = new Pool.Root( "ChannelShuffler.ConcatGatherPool", ConcatGather, ConcatGather.setAsConstructor );
 
   /**
    *
-   * @param {ShuffleInfo} this
-   *   The object to be initialized.
-   *
    * @param {number[]} concatenatedShape  Used to calculate shuffleInfo.
    * @param {number}   outputGroupCount   Used to calculate shuffleInfo.
    * @exception {Object} If failed (e.g. out of GPU memory).
    *
-   * @return {ConcatGather}
-   *   Return the this object.
-   *
    * @see ShuffleInfo
    */
-  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+  constructor( concatenatedShape, outputGroupCount ) {
+    super();
+    ConcatGather.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+  }
+
+  /** @override */
+  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
 
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
@@ -108,7 +100,12 @@ class ConcatGather extends Recyclable.Root {
 
     this.gather = this.gather_loop;
     this.concatGather = this.concatGather_dispose_finally_call_loop;
+  }
 
+  /** @override */
+  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+    super.setAsConstructor();
+    ConcatGather.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
     return this;
   }
 
@@ -116,6 +113,8 @@ class ConcatGather extends Recyclable.Root {
    * Release tf.tensor.
    *
    * Sub-class should override this method (and call super.disposeResources() before return).
+   *
+   * @override
    */
   disposeResources() {
     this.concatGather = null;
@@ -144,19 +143,8 @@ class ConcatGather extends Recyclable.Root {
       this.shuffleInfo = null;
     }
 
-    //super.disposeResources();
+    super.disposeResources();
   }
-
-//!!! (2022/06/25 Remarked) Inherits from Recyclable.Base instead.
-//   /**
-//    * After calling this method, this object should be viewed as disposed and should not be operated again.
-//    *
-//    * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-//    */
-//   disposeResources_and_recycleToPool() {
-//     this.disposeResources();
-//     ConcatGatherPool.Singleton.recycle( this );
-//   }
 
   get concatenatedShape() {
     return this.shuffleInfo.concatenatedShape;
@@ -207,21 +195,3 @@ class ConcatGather extends Recyclable.Root {
   }
 }
 
-
-/**
- * Providing ChannelShuffler.ConcatGather
- *
- */
-class ConcatGatherPool extends Pool.Root {
-
-  constructor() {
-    super( "ChannelShuffler.ConcatGatherPool", ConcatGather, ConcatGather.setAsConstructor );
-  }
-
-}
-
-
-/**
- * Used as default ChannelShuffler.ConcatGather provider for conforming to Recyclable interface.
- */
-ConcatGather.Pool = new ConcatGatherPool();
