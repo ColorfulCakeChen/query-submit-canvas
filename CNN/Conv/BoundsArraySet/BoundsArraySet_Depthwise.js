@@ -1,6 +1,6 @@
 export { Depthwise };
-export { DepthwisePool };
 
+import * as Pool from "../../util/Pool.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
@@ -18,6 +18,11 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "../Depthwise/Depthwise_
 class Depthwise extends ConvBiasActivation {
 
   /**
+   * Used as default BoundsArraySet.Depthwise provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "BoundsArraySet.DepthwisePool", Depthwise, Depthwise.setAsConstructor );
+
+  /**
    *   - The .input0 will be set as input0.
    *   - The .afterUndoPreviousActivationEscaping will be set according to  input0 and input0.scaleArraySet.undo.scales.
    */
@@ -26,14 +31,6 @@ class Depthwise extends ConvBiasActivation {
 
     // Infer channelMultiplier.
     this.channelMultiplier = outputChannelCount0 / input0.channelCount;
-  }
-
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    DepthwisePool.Singleton.recycle( this );
   }
 
   /**
@@ -88,32 +85,3 @@ class Depthwise extends ConvBiasActivation {
 
 }
 
-
-/**
- * Providing BoundsArraySet.Depthwise
- *
- */
-class DepthwisePool extends Pool.Root {
-
-  constructor() {
-    super( "BoundsArraySet.DepthwisePool", Depthwise, DepthwisePool.setAsConstructor );
-  }
-
-  /**
-   * @param {Depthwise} this
-   *   The Depthwise object to be initialized.
-   *
-   * @return {Depthwise}
-   *   Return the this object.
-   */
-  static setAsConstructor( input0, outputChannelCount0 ) {
-    this.set_input0_outputChannelCount0( input0, outputChannelCount0 );
-    return this;
-  }
-
-}
-
-/**
- * Used as default BoundsArraySet.Depthwise provider.
- */
-DepthwisePool.Singleton = new DepthwisePool();
