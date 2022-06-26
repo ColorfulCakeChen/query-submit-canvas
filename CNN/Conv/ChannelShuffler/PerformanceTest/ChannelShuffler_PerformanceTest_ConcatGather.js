@@ -1,5 +1,4 @@
 export { ConcatGather };
-export { ConcatGatherPool };
 
 import * as Pool from "../../../util/Pool.js";
 import { ConcatGather as ChannelShuffler_ConcatGather } from "../ChannelShuffler_ConcatGather.js";
@@ -9,20 +8,31 @@ import { ConcatGather as ChannelShuffler_ConcatGather } from "../ChannelShuffler
  */
 class ConcatGather extends ChannelShuffler_ConcatGather {
 
+  /**
+   * Used as default ChannelShuffler.PerformanceTest.ConcatGather provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "ChannelShuffler.PerformanceTest.ConcatGatherPool", ConcatGather, ConcatGather.setAsConstructor );
+
   constructor( concatenatedShape, outputGroupCount ) {
     super( concatenatedShape, outputGroupCount );
+    ConcatGather.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
   }
 
-//!!! (2022/06/25 Remarked) Inherits from Recyclable.Base instead.
-//   /**
-//    * After calling this method, this object should be viewed as disposed and should not be operated again.
-//    *
-//    * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-//    */
-//   disposeResources_and_recycleToPool() {
-//     this.disposeResources();
-//     ConcatGatherPool.Singleton.recycle( this );
-//   }
+  /** @override */
+  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
+  }
+
+  /** @override */
+  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+    super.setAsConstructor( concatenatedShape, outputGroupCount );
+    ConcatGather.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+    return this;
+  }
+
+  /** @override */
+  disposeResources() {
+   super.disposeResources();
+  }
 
   gather_map( concatenatedTensor ) {
     // shuffle and split by gather (one operation achieves two operations).
@@ -141,23 +151,4 @@ class ConcatGather extends ChannelShuffler_ConcatGather {
   }
 
 }
-
-
-/**
- * Providing ChannelShuffler.PerformanceTest.ConcatGather
- *
- */
-class ConcatGatherPool extends Pool.Root {
-
-  constructor() {
-    super( "ChannelShuffler.PerformanceTest.ConcatGatherPool", ConcatGather, ConcatGather.setAsConstructor );
-  }
-
-}
-
-
-/**
- * Used as default ChannelShuffler.PerformanceTest.ConcatGather provider for conforming to Recyclable interface.
- */
-ConcatGather.Pool = new ConcatGatherPool();
 
