@@ -11,39 +11,51 @@ import { ConcatPointwiseConvPool } from "./ChannelShuffler_ConcatPointwiseConv.j
  *
  * @member {Pool.Base} channelShufflerPool
  *   The pool object for creating new channel shuffler. It is one of the following:
- *   - ChannelShuffler.ShuffleInfoPool.Singleton
- *   - ChannelShuffler.ConcatGatherPool.Singleton
- *   - ChannelShuffler.SplitConcatPool.Singleton
- *   - ChannelShuffler.ConcatPointwiseConvPool.Singleton
+ *   - ChannelShuffler.ShuffleInfo.Pool
+ *   - ChannelShuffler.ConcatGather.Pool
+ *   - ChannelShuffler.SplitConcat.Pool
+ *   - ChannelShuffler.ConcatPointwiseConv.Pool
  */
 class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
 
   /**
    */
-  constructor( channelShufflerPool, ...restArgs ) {
-    super( ...restArgs );
-    Bag.setAsConstructor.call( this, channelShufflerPool, ...restArgs );
+  constructor( channelShufflerPool = ConcatPointwiseConv.Pool ) {
+    super();
+    Bag.setAsConstructor_self.call( this, channelShufflerPool );
   }
 
-  /**
-   *
-   * @param {ShuffleInfo} this
-   *   The object to be initialized.
-   *
-   * @return {Bag}
-   *   Return the this object.
-   */
-  static setAsConstructor( channelShufflerPool = ConcatPointwiseConvPool.Singleton, ...restArgs ) {
-
-    if ( super.setAsConstructor instanceof Function )
-      super.setAsConstructor.apply( this, restArgs );
-
+  /** @override */
+  static setAsConstructor_self( channelShufflerPool = ConcatPointwiseConv.Pool ) {
     this.channelShufflerPool = channelShufflerPool;
 
     // A re-used shared array for reducing memory allocation.
     this.concatenatedShape = Recyclable.Array.Pool.get_or_create_by( 3 );
+  }
 
+  /** @override */
+  static setAsConstructor( channelShufflerPool = ConcatPointwiseConv.Pool ) {
+    super.setAsConstructor();
+    Bag.setAsConstructor_self.call( this, channelShufflerPool );
     return this;
+  }
+
+  /** Release all channel shufflers and their tf.tensor.
+   * @override
+   */
+  disposeResources() {
+    
+    this.concatenatedShape.disposeResources_and_recycleToPool();
+    this.concatenatedShape = null;
+    
+    this.channelShufflerPool = null;
+
+    for ( let channelShuffler of this.values() ) {
+      channelShuffler.disposeResources_and_recycleToPool();
+    }
+    this.clear();
+
+    super.disposeResources();
   }
 
   /**
@@ -76,31 +88,6 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
     let channelShuffler = this.channelShufflerPool.get_or_create_by( this.concatenatedShape, outputGroupCount );
     return channelShuffler;
   }
-
-  /** Release all channel shufflers and their tf.tensor. */
-  disposeResources() {
-    
-    this.concatenatedShape.disposeResources_and_recycleToPool();
-    this.concatenatedShape = null;
-    
-    this.channelShufflerPool = null;
-
-    for ( let channelShuffler of this.values() ) {
-      channelShuffler.disposeResources_and_recycleToPool();
-    }
-    this.clear();
-  }
-
-//!!! (2022/06/25 Remarked) Inherits from Recyclable.Base instead.
-//   /**
-//    * After calling this method, this object should be viewed as disposed and should not be operated again.
-//    *
-//    * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-//    */
-//   disposeResources_and_recycleToPool() {
-//     this.disposeResources();
-//     BagPool.Singleton.recycle( this );
-//   }
 
 }
 
