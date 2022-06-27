@@ -46,7 +46,6 @@ class TestCorrectnessInfo extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self() {
-
     // For reducing memory allocation.
     this.imageInArraySelected = Recyclable.Array.Pool.get_or_create_by( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
     this.inputTensor3dArray = Recyclable.Array.Pool.get_or_create_by( 2 );
@@ -55,7 +54,6 @@ class TestCorrectnessInfo extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-
     this.outputTensor3dArray.disposeResources_and_recycleToPool();
     this.outputTensor3dArray = null;
 
@@ -256,7 +254,6 @@ class Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-
     this.arrayTemp_forInterleave_asGrouptTwo.disposeResources_and_recycleToPool();
     this.arrayTemp_forInterleave_asGrouptTwo = null;
 
