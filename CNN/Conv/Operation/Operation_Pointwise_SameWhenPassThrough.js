@@ -1,8 +1,7 @@
 export { Pointwise_SameWhenPassThrough };
-export { Pointwise_SameWhenPassThroughPool };
 
-import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Pool from "../../util/Pool.js";
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import { Pointwise } from "./Operation_Pointwise.js";
 
 /**
@@ -17,6 +16,12 @@ import { Pointwise } from "./Operation_Pointwise.js";
 class Pointwise_SameWhenPassThrough extends Pointwise {
 
   /**
+   * Used as default Operation.Pointwise_SameWhenPassThrough provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Operation.Pointwise_SameWhenPassThrough.Pool",
+    Pointwise_SameWhenPassThrough, Pointwise_SameWhenPassThrough.setAsConstructor );
+
+  /**
    */
   constructor(
     inputTensorPlaceholder0,
@@ -29,59 +34,34 @@ class Pointwise_SameWhenPassThrough extends Pointwise {
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
       nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
 
-    Pointwise_SameWhenPassThrough.setAsConstructor.call( this,
-      inputTensorPlaceholder0,
-      outputChannelCount, bBias, nActivationId,
-      nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
+    Pointwise_SameWhenPassThrough.setAsConstructor_self.call( this );
   }
 
-  /**
-   * @param {Pointwise_SameWhenPassThrough} this
-   *   The object to be initialized.
-   *
-   * @return {Pointwise_SameWhenPassThrough}
-   *   Return the this object.
-   */
+  /** @override */
   static setAsConstructor(
     inputTensorPlaceholder0,
     outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
-    super.setAsConstructor.call( this,
+    super.setAsConstructor(
       inputTensorPlaceholder0,
       outputChannelCount, bBias, nActivationId,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
       nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
 
+    Pointwise_SameWhenPassThrough.setAsConstructor_self.call( this );
     return this;
   }
 
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    Pointwise_SameWhenPassThroughPool.Singleton.recycle( this );
+  /** @override */
+  static setAsConstructor_self() {
+    // Do nothing.
+  }
+
+  /** @override */
+  disposeResources() {
+    super.disposeResources();
   }
 
 }
-
-
-/**
- * Providing Operation.Pointwise_SameWhenPassThrough
- *
- */
-class Pointwise_SameWhenPassThroughPool extends Pool.Root {
-
-  constructor() {
-    super( "Operation.Pointwise_SameWhenPassThroughPool",
-      Pointwise_SameWhenPassThrough, Pointwise_SameWhenPassThrough.setAsConstructor );
-  }
-
-}
-
-/**
- * Used as default Operation.Pointwise_SameWhenPassThrough provider.
- */
-Pointwise_SameWhenPassThroughPool.Singleton = new Pointwise_SameWhenPassThroughPool();
 
