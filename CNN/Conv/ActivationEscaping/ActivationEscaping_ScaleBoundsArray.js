@@ -30,7 +30,7 @@ class ScaleBoundsArray extends Recyclable.Root {
   /**
    * Used as default ActivationEscaping.ScaleBoundsArray provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "ActivationEscaping.ScaleBoundsArrayPool", ScaleBoundsArray, ScaleBoundsArray.setAsConstructor );
+  static Pool = new Pool.Root( "ActivationEscaping.ScaleBoundsArray.Pool", ScaleBoundsArray, ScaleBoundsArray.setAsConstructor );
 
   /**
    */
