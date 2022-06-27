@@ -377,6 +377,9 @@ class Params extends Base {
     let parameterMapModified, arrayIndexMap, parameterCountExtracted;
     if ( parameterMap ) {
 
+//!!! ...unfinished... (2022/06/27)
+// Whether possible use array and static parameterToStaticArrayIndexMAp?
+//
       parameterMapModified = new Map; // Collect all parameters.
 
       // Collect what parameters should be extracted from input array (rather than use values in the parameterMap).
