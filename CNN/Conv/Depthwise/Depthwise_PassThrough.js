@@ -278,8 +278,6 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Base {
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nPassThroughStyleId ) {
 
-//!!! ...unfinished... (2022/05/26) effectFilterValue, surroundingFilterValue ???
-
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
     return this.get_by_effectFilterValue_surroundingFilterValue_biasValue(
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
@@ -324,6 +322,11 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Base {
 class PassThrough extends PassThrough_FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d() ) {
 
   /**
+   * Used as default Depthwise.PassThrough provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Depthwise.PassThrough.Pool", PassThrough, PassThrough.setAsConstructor );
+
+  /**
    */
   constructor(
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
@@ -332,13 +335,34 @@ class PassThrough extends PassThrough_FiltersArray_BiasesArray( TwoTensors.filte
     super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, effectFilterValue, surroundingFilterValue, biasValue );
 
-    this.filtersTensor4d = tf.tensor4d( this.filtersArray, this.filtersShape );
+    PassThrough.setAsConstructor_self.call( this );
+  }
 
+  /** @override */
+  static setAsConstructor(
+    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    bBias, effectFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
+
+    super.setAsConstructor( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      bBias, effectFilterValue, surroundingFilterValue, biasValue );
+
+    PassThrough.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
+    this.filtersTensor4d = tf.tensor4d( this.filtersArray, this.filtersShape );
     if ( this.bBias ) {
       this.biasesTensor3d = tf.tensor3d( this.biasesArray, this.biasesShape );
     }
-
     this.bInitOk = true;
+  }
+
+  /** @override */
+  disposeResources() {
+    this.bInitOk = false;
+    super.disposeResources(); // Release .filtersTensor4d and biasesTensor3d.
   }
 
 }
