@@ -1,8 +1,8 @@
 export { Bag };
 
-import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 
 /**
  * A container which provides shared channel shufflers. This could simplify memory management.
