@@ -1,12 +1,43 @@
 export { Base };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
+
 /**
  *
  */
-class Base {
-  
-//   constructor() {
-//   }
+class Base extends Recyclable.Root {
+
+  /**
+   * Used as default NameNumberArrayObject_To_Float32Array.Base provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "NameNumberArrayObject_To_Float32Array.Bag.Pool", Base, Base.setAsConstructor );
+
+  /**
+   */
+  constructor() {
+    super();
+    Base.setAsConstructor_self.call( this );
+  }
+
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    Base.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
+  }
+
+  /** @override */
+  disposeResources() {
+
+    // Note: It seems that both .underlyingArrayBuffer and .weightsFloat32Array are re-usable. Do not dispose them.
+
+    super.disposeResources();
+  }
 
   /**
    * @param {number} byteLength
