@@ -1,5 +1,4 @@
 export { HigherHalfPassThrough };
-export { HigherHalfPassThroughPool };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -39,7 +38,8 @@ class HigherHalfPassThrough extends Recyclable.Root {
   /**
    * Used as default ChannelCountCalculator.HigherHalfPassThrough provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "ChannelCountCalculator.HigherHalfPassThrough", HigherHalfPassThrough, HigherHalfPassThrough.setAsConstructor );
+  static Pool = new Pool.Root( "ChannelCountCalculator.HigherHalfPassThrough.Pool",
+    HigherHalfPassThrough, HigherHalfPassThrough.setAsConstructor );
 
   /**
    *
@@ -77,18 +77,6 @@ class HigherHalfPassThrough extends Recyclable.Root {
     super.setAsConstructor();
     HigherHalfPassThrough.setAsConstructor_self.call( this, inputChannelCount_total, outputChannelCount_total );
     return this;
-  }
-
-}
-
-
-/**
- * Providing ChannelCountCalculator.HigherHalfPassThrough
- *
- */
-class HigherHalfPassThroughPool extends Pool.Root {
-
-  constructor() {
   }
 
 }
