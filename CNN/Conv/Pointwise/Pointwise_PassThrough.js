@@ -1,8 +1,11 @@
 export { PassThrough_FiltersArray_BiasesArray };
+export { PassThrough_FiltersArray_BiasesArray_Root };
 export { PassThrough_FiltersArray_BiasesArray_Bag };
 export { PassThrough };
 export { AllZeros };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
 import * as MultiLayerMap from "../../util/MultiLayerMap.js";
@@ -54,12 +57,33 @@ import * as MultiLayerMap from "../../util/MultiLayerMap.js";
  * @member {number[]} biasesArray
  *   The pass-through biases array.
  */
-let PassThrough_FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends ParentClass {
+let PassThrough_FiltersArray_BiasesArray
+  = ( ParentClass = Object ) => class PassThrough_FiltersArray_BiasesArray extends Recyclable.Base( ParentClass ) {
+
+  /**
+   * Used as default Pointwise.PassThrough_FiltersArray_BiasesArray provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Pointwise.PassThrough_FiltersArray_BiasesArray.Pool",
+    PassThrough_FiltersArray_BiasesArray, PassThrough_FiltersArray_BiasesArray.setAsConstructor );
 
   /**
    */
   constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
     super();
+    PassThrough_FiltersArray_BiasesArray.setAsConstructor_self.call( this,
+      inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue );
+  }
+
+  /** @override */
+  static setAsConstructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
+    super.setAsConstructor();
+    PassThrough_FiltersArray_BiasesArray.setAsConstructor_self.call( this,
+      inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.inputChannelIndexStart = inputChannelIndexStart;
@@ -87,8 +111,13 @@ let PassThrough_FiltersArray_BiasesArray = ( ParentClass = Object ) => class ext
     let zerosCount = outputChannelCount - extractedCount; // The output channels which no extracted values could be used will be filled by zeros.
 
 
-    this.filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
-    this.filtersArray = new Array( inputChannelCount * outputChannelCount );
+    this.filtersShape = Recyclable.Array.Pool.get_or_create_by( 4 );
+    this.filtersShape[ 0 ] = 1;
+    this.filtersShape[ 1 ] = 1;
+    this.filtersShape[ 2 ] = inputChannelCount;
+    this.filtersShape[ 3 ] = outputChannelCount;
+
+    this.filtersArray = Recyclable.Array.Pool.get_or_create_by( inputChannelCount * outputChannelCount );
     this.filtersArray.fill( 0 );
 
     for ( let i = 0; i < extractedCount; ++i ) {
@@ -100,11 +129,40 @@ let PassThrough_FiltersArray_BiasesArray = ( ParentClass = Object ) => class ext
     }
 
     if ( this.bBias ) {
-      this.biasesShape =  [ 1, 1, outputChannelCount ];
-      this.biasesArray = new Array( outputChannelCount );
+      this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 3 );
+      this.biasesShape[ 0 ] = 1;
+      this.biasesShape[ 1 ] = 1;
+      this.biasesShape[ 2 ] = outputChannelCount;
+
+      this.biasesArray = Recyclable.Array.Pool.get_or_create_by( outputChannelCount );
       this.biasesArray.fill( biasValue, 0, extractedCount ); // non-zero-hot.
       this.biasesArray.fill( 0, extractedCount, outputChannelCount ); // Others are zero.
     }
+  }
+
+  /** @override */
+  disposeResources() {
+    if ( this.biasesArray ) {
+      this.biasesArray.disposeResources_and_recycleToPool();
+      this.biasesArray = null;
+    }
+
+    if ( this.biasesShape ) {
+      this.biasesShape.disposeResources_and_recycleToPool();
+      this.biasesShape = null;
+    }
+
+    if ( this.filtersArray ) {
+      this.filtersArray.disposeResources_and_recycleToPool();
+      this.filtersArray = null;
+    }
+
+    if ( this.filtersShape ) {
+      this.filtersShape.disposeResources_and_recycleToPool();
+      this.filtersShape = null;
+    }
+
+    super.disposeResources();
   }
 
 }
