@@ -131,6 +131,8 @@ class ConcatShuffleSplit extends Root {
 
   /** @override */
   disposeResources() {
+    this.pfnShuffleSplit = null;
+    this.apply = null;
 
     if ( this.boundsArraySet ) {
       this.boundsArraySet.disposeResources_and_recycleToPool();
@@ -143,7 +145,9 @@ class ConcatShuffleSplit extends Root {
       this.inputTensors = null;
     }
 
-    this.apply = null;
+    this.bShouldShuffleSplit = undefined;
+    this.bShuffleSplit = undefined;
+    this.channelShuffler = undefined;
 
     super.disposeResources();
   }
