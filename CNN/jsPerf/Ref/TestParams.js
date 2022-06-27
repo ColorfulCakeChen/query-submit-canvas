@@ -1,5 +1,7 @@
 export { ParamDescConfig, Base };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as SequenceRandom_NumberArray from "./SequenceRandom_NumberArray.js";
 
 /**
@@ -77,23 +79,57 @@ class ParamValueChangeRecord {
  * these value will be restored and this list will be cleared to empty.
  *
  */
-class Base {
+class Base extends Recyclable.Root {
 
   /**
-   *
+   * Used as default TestParams.Base provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "TestParams.Base.Pool", Base, Base.setAsConstructor );
+
+  /**
    */
   constructor( id = -1 ) {
+    super();
+    Base.setAsConstructor_self.call( this, id );
+  }
+
+  /** @override */
+  static setAsConstructor( id = -1 ) {
+    super.setAsConstructor();
+    Base.setAsConstructor_self.call( this, id );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( id = -1 ) {
     this.id = id;
     this.yieldCount = 0;
     this.in = { paramsNumberArrayObject: {} };
     this.out = {};
-    this.modifyParamValueHistory = [];
+    this.modifyParamValueHistory = Recyclable.Array.Pool.get_or_create_by( 0 );
 
-    this.SequenceRandom_NumberArray_Bag = new SequenceRandom_NumberArray.Bag(); // For reducing same weights array re-generating.
+    // For reducing same weights array re-generating.
+    this.SequenceRandom_NumberArray_Bag = SequenceRandom_NumberArray.Bag.Pool.get_or_create_by();
     
     // For reducing array and object re-generating in .modifyParamValue()
-    this.modifyParamValue_singleMinMax = new Array( 2 );
+    this.modifyParamValue_singleMinMax = Recyclable.Array.Pool.get_or_create_by( 2 );
     this.modifyParamValue_valuePair = {};
+  }
+
+  /** @override */
+  disposeResources() {
+    this.modifyParamValue_singleMinMax.disposeResources_and_recycleToPool();
+    this.modifyParamValue_singleMinMax = null;
+
+    this.SequenceRandom_NumberArray_Bag.disposeResources_and_recycleToPool();
+    this.SequenceRandom_NumberArray_Bag = null;
+
+    this.modifyParamValueHistory.disposeResources_and_recycleToPool();
+    this.modifyParamValueHistory = null;
+
+    //!!! ...unfinished... (2022/06/27) What about other object properties?
+
+    super.disposeResources();
   }
 
   /**
