@@ -17,46 +17,48 @@ class Base extends Recyclable.Root {
   /**
    * Used as default ImageSourceBag.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "ImageSourceBag.Bag.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "ImageSourceBag.Base.Pool", Base, Base.setAsConstructor );
 
   /**
    */
   constructor() {
     super();
-    Bag.setAsConstructor_self.call( this );
+    Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    Bag.setAsConstructor_self.call( this );
+    Base.setAsConstructor_self.call( this );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self() {
     // Images indexed by [ originalHeight, originalWidth, channelCount, filterHeight, filterWidth, stridesPad ].
-    this.images = ???new MultiLayerMap.Base();
-    this.tensors = new MultiLayerMap.Base();
+
+    if ( !this.images )
+      this.images = new MultiLayerMap.Base();
+
+    if ( !this.tensors )
+      this.tensors = new MultiLayerMap.Base();
   }
 
   /** @override */
   disposeResources() {
 
-//!!!
-    this.clear();
-
-    for ( let channelShuffler of this.values() ) {
-      channelShuffler.disposeResources_and_recycleToPool();
-    }
-
-
-
-    if ( this.tensors ) {
+    {
       for ( let tensor of this.tensors.values() ) {
         tensor.dispose();
       }
       this.tensors.clear();
+    }
+
+    {
+      for ( let numberImage of this.images.values() ) {
+        numberImage.disposeResources_and_recycleToPool();
+      }
+      this.images.clear();
     }
 
     super.disposeResources();
@@ -69,8 +71,6 @@ class Base extends Recyclable.Root {
     }
     super.clear();
   }
-
-
 
   /**
    * If ( depthwiseFilterHeight == 1 ) and ( depthwiseFilterWidth == 1 ) and ( depthwiseStridesPad == 0 ), the original image will be
