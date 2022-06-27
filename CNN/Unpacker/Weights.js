@@ -2,6 +2,12 @@ export { Base, To, Params };
 
 import * as FloatValue from "./FloatValue.js";
 
+//!!! ...unfinished... (2022/06/27)
+// Changed to using elementOffsetBegin, elementOffsetEnd instead of byteOffsetBegin and byteOffsetEnd.
+// No longer rectricted to Float32Array. number[] should be acceptable.
+// No longer create more Float32Array object.
+//
+
 /**
  * A base class for extracting and keeping weights. It composes of a Float32Array and a shape. It can
  * be used as CNN (depthwise, pointwise and bias) filter weights.
