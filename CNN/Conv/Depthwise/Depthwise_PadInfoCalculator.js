@@ -58,7 +58,7 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs ) {
 
     super( ...restArgs );
-    Base.setAsConstructor_self.call( this,
+    PadInfoCalculator.setAsConstructor_self.call( this,
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
   }
 
@@ -67,7 +67,7 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs ) {
 
     super.setAsConstructor.apply( this, restArgs );
-    Base.setAsConstructor_self.call( this,
+    PadInfoCalculator.setAsConstructor_self.call( this,
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
     return this;
   }
