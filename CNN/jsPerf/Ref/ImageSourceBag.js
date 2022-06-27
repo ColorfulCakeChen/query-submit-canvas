@@ -1,5 +1,7 @@
 export { Base };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
@@ -10,16 +12,65 @@ import * as NumberImage from "./NumberImage.js";
  * depthwiseFilterWidth, depthwiseStridesPad. The same image data will be returned when same specification is requested. So that
  * the testing performance could be improved.
  */
-class Base {
+class Base extends Recyclable.Root {
+
+  /**
+   * Used as default ImageSourceBag.Base provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "ImageSourceBag.Bag.Pool", Base, Base.setAsConstructor );
 
   /**
    */
   constructor() {
+    super();
+    Bag.setAsConstructor_self.call( this );
+  }
 
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    Bag.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
     // Images indexed by [ originalHeight, originalWidth, channelCount, filterHeight, filterWidth, stridesPad ].
-    this.images = new MultiLayerMap.Base();
+    this.images = ???new MultiLayerMap.Base();
     this.tensors = new MultiLayerMap.Base();
   }
+
+  /** @override */
+  disposeResources() {
+
+//!!!
+    this.clear();
+
+    for ( let channelShuffler of this.values() ) {
+      channelShuffler.disposeResources_and_recycleToPool();
+    }
+
+
+
+    if ( this.tensors ) {
+      for ( let tensor of this.tensors.values() ) {
+        tensor.dispose();
+      }
+      this.tensors.clear();
+    }
+
+    super.disposeResources();
+  }
+
+  /** @override */
+  clear() {
+    for ( let channelShuffler of this.values() ) {
+      channelShuffler.disposeResources_and_recycleToPool();
+    }
+    super.clear();
+  }
+
+
 
   /**
    * If ( depthwiseFilterHeight == 1 ) and ( depthwiseFilterWidth == 1 ) and ( depthwiseStridesPad == 0 ), the original image will be
@@ -162,18 +213,6 @@ class Base {
       },
 
       originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
-  }
-
-  /** Release all tensors. */
-  disposeTensors() {
-
-    if ( this.tensors ) {
-      for ( let tensor of this.tensors.values() ) {
-        tensor.dispose();
-      }
-      this.tensors.clear();
-    }
-
   }
 
 }
