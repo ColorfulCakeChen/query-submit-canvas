@@ -49,7 +49,7 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
   /**
    * Used as default Depthwise.PadInfoCalculator provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Depthwise.PadInfoCalculatorPool", PadInfoCalculator, PadInfoCalculator.setAsConstructor );
+  static Pool = new Pool.Root( "Depthwise.PadInfoCalculator.Pool", PadInfoCalculator, PadInfoCalculator.setAsConstructor );
 
   /**
    *
