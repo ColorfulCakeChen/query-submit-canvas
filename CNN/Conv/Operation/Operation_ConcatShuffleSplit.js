@@ -65,14 +65,8 @@ class ConcatShuffleSplit extends Root {
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
-//!!! ...unfinished... (2022/06/27) This codes duplicates many times.
     let bShouldShuffleSplit = ( ( bShuffleSplit ) && ( channelShuffler ) ); // Want and could do channel shuffling and splitting.
-
-    let outputTensorCount;
-    if ( bShouldShuffleSplit )
-      outputTensorCount = 2; // Only if splitting is required (and possible), the output1 does exist.
-    else
-      outputTensorCount = 1;
+    let outputTensorCount = ( bShouldShuffleSplit ) ? 2 : 1; // Only if splitting is required (and possible), the output1 does exist.
 
     super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
@@ -92,14 +86,8 @@ class ConcatShuffleSplit extends Root {
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
-//!!! ...unfinished... (2022/06/27) This codes duplicates many times.
     let bShouldShuffleSplit = ( ( bShuffleSplit ) && ( channelShuffler ) ); // Want and could do channel shuffling and splitting.
-
-    let outputTensorCount;
-    if ( bShouldShuffleSplit )
-      outputTensorCount = 2; // Only if splitting is required (and possible), the output1 does exist.
-    else
-      outputTensorCount = 1;
+    let outputTensorCount = ( bShouldShuffleSplit ) ? 2 : 1; // Only if splitting is required (and possible), the output1 does exist.
 
     super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
@@ -120,7 +108,6 @@ class ConcatShuffleSplit extends Root {
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
-//!!! ...unfinished... (2022/06/27) This codes duplicates many times.
     let bShouldShuffleSplit = ( ( bShuffleSplit ) && ( channelShuffler ) ); // Want and could do channel shuffling and splitting.
 
     this.channelShuffler = channelShuffler;
@@ -222,58 +209,65 @@ class ConcatShuffleSplit extends Root {
 
   /** Create this.boundsArraySet. */
   static setup_BoundsArraySet( arrayTemp_forInterleave_asGrouptTwo ) {
+    this.boundsArraySet = BoundsArraySet.InputsOutputsPool.Singleton.sessionCall(
+      ConcatShuffleSplit.setup_BoundsArraySet_internal, this, arrayTemp_forInterleave_asGrouptTwo );
+  }
 
-//!!! ...unfinished... (2022/06/27) avoid function declared inside function.
-    this.boundsArraySet = BoundsArraySet.InputsOutputsPool.Singleton.sessionCall( () => {
+  /**
+   * Note: This method should not be called directly. It should be called by .setup_BoundsArraySet() so that the internally created
+   * BoundsArraySet could be disposed correctly.
+   *
+   * @return {BoundsArraySet.InputsOutputs}
+   *   Return the created BoundsArraySet.
+   */
+  static setup_BoundsArraySet_internal( arrayTemp_forInterleave_asGrouptTwo ) {
 
-      let inputScaleBoundsArray0 = this.input0.scaleBoundsArray;
-      let inputScaleBoundsArray1 = this.input1.scaleBoundsArray;
+    let inputScaleBoundsArray0 = this.input0.scaleBoundsArray;
+    let inputScaleBoundsArray1 = this.input1.scaleBoundsArray;
 
-      // Concatenated value bounds array set.
-      let concatBoundsArraySet;
-      {
-        concatBoundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by( inputScaleBoundsArray0, inputScaleBoundsArray1,
-          1 // Arbitrarily set a legal (but temporary) outputChannelCount0. It will be adjusted later.
+    // Concatenated value bounds array set.
+    let concatBoundsArraySet;
+    {
+      concatBoundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by( inputScaleBoundsArray0, inputScaleBoundsArray1,
+        1 // Arbitrarily set a legal (but temporary) outputChannelCount0. It will be adjusted later.
+      );
+
+      concatBoundsArraySet.set_outputs_all_by_concat_input0_input1(); // The outputChannelCount0 will be adjusted.
+    }
+
+    if ( this.bShouldShuffleSplit ) { // Want and could do channel shuffling and splitting.
+
+      if ( this.channelShuffler.outputGroupCount != 2 )
+        throw Error( `Operation.ConcatShuffleSplit.setup_BoundsArraySet_internal(): `
+          + `channelShuffler.outputGroupCount ( ${this.channelShuffler.outputGroupCount} ) must be 2 `
+          + `( other outputGroupCount does not supperted ).`
         );
 
-        concatBoundsArraySet.set_outputs_all_by_concat_input0_input1(); // The outputChannelCount0 will be adjusted.
+      // Shuffled value bounds array set.
+      let shuffledBoundsArraySet;
+      {
+        shuffledBoundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by( concatBoundsArraySet.output0, null,
+          concatBoundsArraySet.output0.channelCount );
+
+        shuffledBoundsArraySet.output0.set_all_byScaleBoundsArray( concatBoundsArraySet.output0 );
+        shuffledBoundsArraySet.set_outputs_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo );
       }
 
-      if ( this.bShouldShuffleSplit ) { // Want and could do channel shuffling and splitting.
+      // Splitted value bounds array set.
+      let splittedBoundsArraySet;
+      {
+        splittedBoundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by( shuffledBoundsArraySet.output0, null,
+          1, 1  // Arbitrarily set a legal (but temporary) outputChannelCount0 and outputChannelCount1. It will be adjusted later.
+        );
 
-        if ( this.channelShuffler.outputGroupCount != 2 )
-          throw Error( `Operation.ConcatShuffleSplit.setup_BoundsArraySet(): `
-            + `channelShuffler.outputGroupCount ( ${this.channelShuffler.outputGroupCount} ) must be 2 `
-            + `( other outputGroupCount does not supperted ).`
-          );
-
-        // Shuffled value bounds array set.
-        let shuffledBoundsArraySet;
-        {
-          shuffledBoundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by( concatBoundsArraySet.output0, null,
-            concatBoundsArraySet.output0.channelCount );
-
-          shuffledBoundsArraySet.output0.set_all_byScaleBoundsArray( concatBoundsArraySet.output0 );
-          shuffledBoundsArraySet.set_outputs_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo );
-        }
-
-        // Splitted value bounds array set.
-        let splittedBoundsArraySet;
-        {
-          splittedBoundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by( shuffledBoundsArraySet.output0, null,
-            1, 1  // Arbitrarily set a legal (but temporary) outputChannelCount0 and outputChannelCount1. It will be adjusted later.
-          );
-
-          splittedBoundsArraySet.set_outputs_all_byBoundsArray_split_input0();
-        }
-
-        return splittedBoundsArraySet;
-
-      } else { // Only concatenation is needed.
-        return concatBoundsArraySet;
+        splittedBoundsArraySet.set_outputs_all_byBoundsArray_split_input0();
       }
 
-    } );
+      return splittedBoundsArraySet;
+
+    } else { // Only concatenation is needed.
+      return concatBoundsArraySet;
+    }
   }
 
   /** Setup this.output0 and this.output1.
