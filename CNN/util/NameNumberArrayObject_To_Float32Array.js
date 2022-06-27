@@ -11,7 +11,7 @@ class Base extends Recyclable.Root {
   /**
    * Used as default NameNumberArrayObject_To_Float32Array.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "NameNumberArrayObject_To_Float32Array.Bag.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "NameNumberArrayObject_To_Float32Array.Base.Pool", Base, Base.setAsConstructor );
 
   /**
    */
