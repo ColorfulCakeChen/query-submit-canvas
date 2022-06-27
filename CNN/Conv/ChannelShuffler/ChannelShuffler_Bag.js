@@ -47,7 +47,7 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
   disposeResources() {
     this.concatenatedShape.disposeResources_and_recycleToPool();
     this.concatenatedShape = null;
-    
+
     this.channelShufflerPool = null;
 
     this.clear();
