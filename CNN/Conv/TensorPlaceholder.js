@@ -38,14 +38,7 @@ class Base extends Recyclable.Root {
    */
   constructor() {
     super();
-    Base.setAsConstructor_self.apply( this );
-  }
-
-  /** @override */
-  static setAsConstructor_self() {
-    this.finalOperation = null;
-    this.realTensor = null;
-    this.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
+    Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
@@ -53,6 +46,13 @@ class Base extends Recyclable.Root {
     super.setAsConstructor();
     Base.setAsConstructor_self.call( this );
     return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
+    this.finalOperation = null;
+    this.realTensor = null;
+    this.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
   }
 
   /**
