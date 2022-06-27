@@ -1,5 +1,4 @@
 export { MultiplyTwoTensors };
-export { MultiplyTwoTensorsPool };
 
 import * as Pool from "../../util/Pool.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
@@ -28,46 +27,55 @@ import { Root } from "./Operation_Base.js";
 class MultiplyTwoTensors extends Root {
 
   /**
-   *
+   * Used as default Operation.MultiplyTwoTensors provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Operation.MultiplyTwoTensors.Pool", MultiplyTwoTensors, MultiplyTwoTensors.setAsConstructor );
+
+  /**
    */
   constructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
-
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
-
-    MultiplyTwoTensors.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
+    MultiplyTwoTensors.setAsConstructor_self.call(
+      this, inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
   }
 
-  /**
-   * @param {MultiplyTwoTensors} this
-   *   The object to be initialized.
-   *
-   * @return {MultiplyTwoTensors}
-   *   Return the this object.
-   */
+  /** @override */
   static setAsConstructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
+    super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+    MultiplyTwoTensors.setAsConstructor_self.call(
+      this, inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
+    return this;
+  }
 
-    super.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
-
+  /** @override */
+  static setAsConstructor_self(
+    inputTensorPlaceholder0, inputTensorPlaceholder1,
+    bKeepInputTensor0, bKeepInputTensor1
+  ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
     MultiplyTwoTensors.adjust_pfn.call( this );
     MultiplyTwoTensors.setup_BoundsArraySet.call( this );
     MultiplyTwoTensors.setup_output0_TensorPlaceholder.call( this );
-    return this;
   }
 
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    MultiplyTwoTensorsPool.Singleton.recycle( this );
+  /** @override */
+  disposeResources() {
+
+    if ( this.boundsArraySet ) {
+      this.boundsArraySet.disposeResources_and_recycleToPool();
+      this.boundsArraySet = null;
+    }
+
+    this.apply = null;
+
+    super.disposeResources();
   }
 
   /**
@@ -124,7 +132,7 @@ class MultiplyTwoTensors extends Root {
         + `input1 channel count ( ${inputScaleBoundsArray1.channelCount} ).`
       );
 
-    this.boundsArraySet = BoundsArraySet.InputsOutputsPool.Singleton.get_or_create_by( inputScaleBoundsArray0, inputScaleBoundsArray1,
+    this.boundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by( inputScaleBoundsArray0, inputScaleBoundsArray1,
       inputScaleBoundsArray0.channelCount
     );
 
@@ -186,7 +194,7 @@ class MultiplyTwoTensors extends Root {
 
       this.output0.scaleBoundsArray = this.boundsArraySet.output0;
 
-      // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
+      // Release for reducing memory usage. (Since it has been transferred to inside the output tensor placeholder.)
       {
         this.boundsArraySet.output0 = null; // Because it has already been transferred to TensorPlaceholder this.output0
         this.boundsArraySet.disposeResources_and_recycleToPool();
@@ -230,22 +238,4 @@ class MultiplyTwoTensors extends Root {
   }
 
 }
-
-
-/**
- * Providing Operation.MultiplyTwoTensors
- *
- */
-class MultiplyTwoTensorsPool extends Pool.Root {
-
-  constructor() {
-    super( "Operation.MultiplyTwoTensorsPool", MultiplyTwoTensors, MultiplyTwoTensors.setAsConstructor );
-  }
-
-}
-
-/**
- * Used as default Operation.AddTwoTensors provider.
- */
-MultiplyTwoTensorsPool.Singleton = new MultiplyTwoTensorsPool();
 
