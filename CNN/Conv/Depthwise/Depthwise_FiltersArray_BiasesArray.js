@@ -226,7 +226,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
       // It will be filled with: [ bInitOk, boundsArraySet, poolWindowShape, filtersShape, filtersArray, biasesShape, biasesArray ].
       // It is mainly used for preventing these elements been recycled by .sessionCall().
       //
-      keptObjectArray = Recyclable.Array.Pool.get_or_create_by( 6 );
+      keptObjectArray = Recyclable.Array.Pool.get_or_create_by( 7 );
 
       Pool.All.sessionCall( FiltersArray_BiasesArray.init_internal, this,
         inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, keptObjectArray );
