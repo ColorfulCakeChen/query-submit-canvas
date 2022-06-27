@@ -880,6 +880,6 @@ Params.bKeepInputTensor =         new ParamDesc.Bool(               "bKeepInputT
 
 
 //!!! ...unfinished... (2022/06/27)
-// Build static parameterToSequenceIdMap
+// Build static ParamDescArray and ParamDesc_to_SequenceId_Map
 //
 
