@@ -1,7 +1,7 @@
 export { AddTwoTensors };
-export { AddTwoTensorsPool };
 
 import * as Pool from "../../util/Pool.js";
+//import * as Recyclable from "../../util/Recyclable.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import { Root } from "./Operation_Base.js";
@@ -28,52 +28,47 @@ import { Root } from "./Operation_Base.js";
 class AddTwoTensors extends Root {
 
   /**
-   *
+   * Used as default Operation.AddTwoTensors provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Operation.AddTwoTensors.Pool", AddTwoTensors, AddTwoTensors.setAsConstructor );
+
+  /**
    */
   constructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
-
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
-
-    AddTwoTensors.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
+    AddTwoTensors.setAsConstructor_self.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
   }
 
-  /**
-   * @param {AddTwoTensors} this
-   *   The object to be initialized.
-   *
-   * @return {AddTwoTensors}
-   *   Return the this object.
-   */
+  /** @override */
   static setAsConstructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
+    super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+    AddTwoTensors.setAsConstructor_self.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
+    return this;
+  }
 
-    super.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
-
+  /** @override */
+  static setAsConstructor_self(
+    inputTensorPlaceholder0, inputTensorPlaceholder1,
+    bKeepInputTensor0, bKeepInputTensor1
+  ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
     AddTwoTensors.adjust_pfn.call( this );
     AddTwoTensors.setup_BoundsArraySet.call( this, inputTensorPlaceholder0.scaleBoundsArray, inputTensorPlaceholder1.scaleBoundsArray );
     AddTwoTensors.setup_output0_TensorPlaceholder.call( this );
-    return this;
   }
 
-//!!! ...unfinished... (2022/06/24)
-// Whether possible Pool.All knows which Pool.Xxx this object should be recycled to?
-// So there is not necessary override .disposeResources_and_recycleToPool() for every sub classes.
-
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   *
-   * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    AddTwoTensorsPool.Singleton.recycle( this );
+  /** @override */
+  disposeResources() {
+    this.apply = null;
+//!!!
+    super.disposeResources();
   }
 
   /**
@@ -234,22 +229,4 @@ class AddTwoTensors extends Root {
   }
 
 }
-
-
-/**
- * Providing Operation.AddTwoTensors
- *
- */
-class AddTwoTensorsPool extends Pool.Root {
-
-  constructor() {
-    super( "Operation.AddTwoTensorsPool", AddTwoTensors, AddTwoTensors.setAsConstructor );
-  }
-
-}
-
-/**
- * Used as default Operation.AddTwoTensors provider.
- */
-AddTwoTensorsPool.Singleton = new AddTwoTensorsPool();
 
