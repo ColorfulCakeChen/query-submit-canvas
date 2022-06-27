@@ -246,22 +246,34 @@ class Base extends Recyclable.Root {
   static setAsConstructor_self() {
     this.channelShufflerBag = ChannelShuffler.Bag.Pool.get_or_create_by( ChannelShuffler.ShuffleInfo.Pool );
 
-//!!!
     // For reducing memory allocation.
-    this.testCorrectnessInfo = new TestCorrectnessInfo();
-    this.imageOutReferenceArray = new Array( 2 );
-    this.imageInArray_Fake = new Array( 2 );
-    this.asserter_Equal = new TensorTools.Asserter_Equal( 0.4, 0.001 );
-    this.arrayTemp_forInterleave_asGrouptTwo = []; // Used by calcConcatShuffleSplit().
+    this.testCorrectnessInfo = TestCorrectnessInfo.Pool.get_or_create_by();
+    this.imageOutReferenceArray = Recyclable.Array.Pool.get_or_create_by( 2 );
+    this.imageInArray_Fake = Recyclable.Array.Pool.get_or_create_by( 2 );
+    this.asserter_Equal = TensorTools.Asserter_Equal.get_or_create_by( 0.4, 0.001 );
+    this.arrayTemp_forInterleave_asGrouptTwo = Recyclable.Array.Pool.get_or_create_by( 0 ); // Used by calcConcatShuffleSplit().
   }
 
   /** @override */
   disposeResources() {
 
+    this.arrayTemp_forInterleave_asGrouptTwo.disposeResources_and_recycleToPool();
+    this.arrayTemp_forInterleave_asGrouptTwo = null;
+
+    this.asserter_Equal.disposeResources_and_recycleToPool();
+    this.asserter_Equal = null;
+
+    this.imageInArray_Fake.disposeResources_and_recycleToPool();
+    this.imageInArray_Fake = null;
+
+    this.imageOutReferenceArray.disposeResources_and_recycleToPool();
+    this.imageOutReferenceArray = null;
+
+    this.testCorrectnessInfo.disposeResources_and_recycleToPool();
+    this.testCorrectnessInfo = null;
+
     this.channelShufflerBag.disposeResources_and_recycleToPool();
     this.channelShufflerBag = null;
-
-//!!!
 
     super.disposeResources();
   }
