@@ -518,10 +518,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
         // Initialize element value bounds (per channel). Determine .input and .afterUndoPreviousActivationEscaping
         //
         // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
-
-//!!! (2022/06/22 Remarked) Use pool instead.
-//        this.boundsArraySet = new BoundsArraySet.Depthwise( inputScaleBoundsArray, this.outputChannelCount );
-
         this.boundsArraySet = BoundsArraySet.Depthwise.Pool.get_or_create_by( inputScaleBoundsArray, this.outputChannelCount );
       }
 
