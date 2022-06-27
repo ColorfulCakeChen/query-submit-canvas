@@ -55,29 +55,94 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 let PassThrough_FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfoCalculator( ParentClass ) {
 
   /**
+   * Used as default Depthwise.PassThrough_FiltersArray_BiasesArray provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Depthwise.PassThrough_FiltersArray_BiasesArray.Pool",
+    PassThrough_FiltersArray_BiasesArray, PassThrough_FiltersArray_BiasesArray.setAsConstructor );
+
+  /**
    */
   constructor(
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, effectFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
 
     super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+    PassThrough_FiltersArray_BiasesArray.setAsConstructor_self.call( this,
+      bBias, effectFilterValue, surroundingFilterValue, biasValue );
+  }
 
+  /** @override */
+  static setAsConstructor(
+    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    bBias, effectFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
+
+    super.setAsConstructor( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+    PassThrough_FiltersArray_BiasesArray.setAsConstructor_self.call( this,
+      bBias, effectFilterValue, surroundingFilterValue, biasValue );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( bBias, effectFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
     this.bBias = bBias;
     this.effectFilterValue = effectFilterValue;
     this.surroundingFilterValue = surroundingFilterValue;
     this.biasValue = biasValue;
 
-    this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.channelMultiplier ];
+    this.filtersShape = Recyclable.Array.Pool.get_or_create_by( 4 );
+    this.filtersShape[ 0 ] = this.filterHeight;
+    this.filtersShape[ 1 ] = this.filterWidth;
+    this.filtersShape[ 2 ] = this.inputChannelCount;
+    this.filtersShape[ 3 ] = this.channelMultiplier;
+
+//!!!???
     this.filtersArray = this.generate_PassThrough_FiltersArray( effectFilterValue, surroundingFilterValue );
 
     if ( this.bBias ) {
-      this.biasesShape =  [ 1, 1, this.outputChannelCount ];
-      this.biasesArray = new Array( this.outputChannelCount );
+      this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 3 );
+      this.biasesShape[ 0 ] = 1;
+      this.biasesShape[ 1 ] = 1;
+      this.biasesShape[ 2 ] = this.outputChannelCount;
+
+      this.biasesArray = Recyclable.Array.Pool.get_or_create_by( this.outputChannelCount );
       this.biasesArray.fill( biasValue );
     }
-
   }
 
+  /** @override */
+  disposeResources() {
+    if ( this.biasesArray ) {
+      this.biasesArray.disposeResources_and_recycleToPool();
+      this.biasesArray = null;
+    }
+
+    if ( this.biasesShape ) {
+      this.biasesShape.disposeResources_and_recycleToPool();
+      this.biasesShape = null;
+    }
+
+//!!!???
+    if ( this.filtersArray ) {
+      this.filtersArray.disposeResources_and_recycleToPool();
+      this.filtersArray = null;
+    }
+
+    if ( this.filtersShape ) {
+      this.filtersShape.disposeResources_and_recycleToPool();
+      this.filtersShape = null;
+    }
+    super.disposeResources();
+  }
+
+}
+
+
+/**
+ * Almost the same as Depthwise.PassThrough_FiltersArray_BiasesArray class except its parent class is fixed to Object. In other words,
+ * caller can not specify the parent class of Depthwise.PassThrough_FiltersArray_BiasesArray_Root (so it is named "Root" which can not
+ * have parent class).
+ */
+class PassThrough_FiltersArray_BiasesArray_Root extends PassThrough_FiltersArray_BiasesArray() {
 }
 
 
@@ -124,7 +189,7 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Base {
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, effectFilterValue, surroundingFilterValue, biasValue ) {
 
-    return new ( PassThrough_FiltersArray_BiasesArray() )(
+    return new PassThrough_FiltersArray_BiasesArray_Root(
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, effectFilterValue, surroundingFilterValue, biasValue );
   }
@@ -142,7 +207,7 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Base {
  * @see PadInfoCalculator
  * @see TwoTensors.filtersTensor4d_biasesTensor3d
  */
-class PassThrough extends PassThrough_FiltersArray_BiasesArray( PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d() ) ) {
+class PassThrough extends PassThrough_FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d() ) {
 
   /**
    */
@@ -163,4 +228,5 @@ class PassThrough extends PassThrough_FiltersArray_BiasesArray( PadInfoCalculato
   }
 
 }
+
 
