@@ -122,17 +122,15 @@ class ConcatShuffleSplit extends Root {
     this.inputTensors = Recyclable.Array.Pool.get_or_create_by( 2 ); // For reducing memory re-allocation to improve performance.
 
     ConcatShuffleSplit.adjust_pfn.call( this );
+    ConcatShuffleSplit.adjust_apply.call( this );
     ConcatShuffleSplit.setup_BoundsArraySet.call( this, arrayTemp_forInterleave_asGrouptTwo );
     ConcatShuffleSplit.setup_outputs_TensorPlaceholder.call( this );
-
-//!!! (2022/06/27 Remarked)
-//    this.setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 );
   }
 
   /** @override */
   disposeResources() {
-    this.pfnShuffleSplit = null;
     this.apply = null;
+    this.pfnShuffleSplit = null;
 
     if ( this.boundsArraySet ) {
       this.boundsArraySet.disposeResources_and_recycleToPool();
