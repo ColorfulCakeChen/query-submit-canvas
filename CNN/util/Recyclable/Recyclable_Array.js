@@ -15,21 +15,21 @@ class Recyclable_Array extends Base( Array ) {
 
   /**
    */
-  constructor( length ) {
+  constructor( length = 0 ) {
     super( length );
     // (2022/06/27 Remarked) The constructor of parent class (i.e. Array) has already done it.
     //Recyclable_Array.setAsConstructor_self.call( this, length );
   }
 
   /** @override */
-  static setAsConstructor( length ) {
+  static setAsConstructor( length = 0 ) {
     super.setAsConstructor();
     Recyclable_Array.setAsConstructor_self.call( this, length );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( length ) {
+  static setAsConstructor_self( length = 0 ) {
     this.length = length;
   }
 
