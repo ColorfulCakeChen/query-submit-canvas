@@ -195,7 +195,7 @@ class IssuedObjects {
    * @param {IssuedObjects} this
    *   The list for handling the objects issuing/recycling.
    *
-   * @param {object|object[]} keptObjectOrArray
+   * @param {Object|Object[]} keptObjectOrArray
    *   An object or an object array. If the object(s) is not null, they will be kept (i.e. not be recycled) and be moved to parent session.
    */
   static session_pop( keptObjectOrArray ) {
