@@ -378,7 +378,7 @@ class Params extends Base {
     if ( parameterMap ) {
 
 //!!! ...unfinished... (2022/06/27)
-// Whether possible use array and static parameterToStaticArrayIndexMAp?
+// Whether possible use array and static parameterToSequenceIdMap? (avoid dynamic Map for reducing memory re-allocation)
 //
       parameterMapModified = new Map; // Collect all parameters.
 
