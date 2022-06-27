@@ -1,8 +1,7 @@
 export { Pointwise_ConstantWhenPassThrough };
-export { Pointwise_ConstantWhenPassThroughPool };
 
-import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Pool from "../../util/Pool.js";
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import { Pointwise } from "./Operation_Pointwise.js";
 
 /**
@@ -17,6 +16,12 @@ import { Pointwise } from "./Operation_Pointwise.js";
 class Pointwise_ConstantWhenPassThrough extends Pointwise {
 
   /**
+   * Used as default Operation.Pointwise_ConstantWhenPassThrough provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Operation.Pointwise_ConstantWhenPassThrough.Pool",
+    Pointwise_ConstantWhenPassThrough, Pointwise_ConstantWhenPassThrough.setAsConstructor );
+
+  /**
    */
   constructor(
     inputTensorPlaceholder0,
@@ -29,59 +34,34 @@ class Pointwise_ConstantWhenPassThrough extends Pointwise {
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
       nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
 
-    Pointwise_ConstantWhenPassThrough.setAsConstructor.call( this,
-      inputTensorPlaceholder0,
-      outputChannelCount, bBias, nActivationId,
-      nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
+    Pointwise_ConstantWhenPassThrough.setAsConstructor_self.call( this );
   }
 
-  /**
-   * @param {Pointwise_ConstantWhenPassThrough} this
-   *   The object to be initialized.
-   *
-   * @return {Pointwise_ConstantWhenPassThrough}
-   *   Return the this object.
-   */
+  /** @override */
   static setAsConstructor(
     inputTensorPlaceholder0,
     outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
-    super.setAsConstructor.call( this,
+    super.setAsConstructor(
       inputTensorPlaceholder0,
       outputChannelCount, bBias, nActivationId,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
       nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
 
+    Pointwise_ConstantWhenPassThrough.setAsConstructor_self.call( this );
     return this;
   }
 
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    Pointwise_ConstantWhenPassThroughPool.Singleton.recycle( this );
+  /** @override */
+  static setAsConstructor_self() {
+    // Do nothing.
+  }
+
+  /** @override */
+  disposeResources() {
+    super.disposeResources();
   }
 
 }
-
-
-/**
- * Providing Operation.Pointwise_ConstantWhenPassThrough
- *
- */
-class Pointwise_ConstantWhenPassThroughPool extends Pool.Root {
-
-  constructor() {
-    super( "Operation.Pointwise_ConstantWhenPassThroughPool",
-      Pointwise_ConstantWhenPassThrough, Pointwise_ConstantWhenPassThrough.setAsConstructor );
-  }
-
-}
-
-/**
- * Used as default Operation.Pointwise_ConstantWhenPassThrough provider.
- */
-Pointwise_ConstantWhenPassThroughPool.Singleton = new Pointwise_ConstantWhenPassThroughPool();
 
