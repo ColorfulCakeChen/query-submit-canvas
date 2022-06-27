@@ -240,7 +240,7 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends Recyclable.Base( MultiLay
 
   /** */
   static create_by( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue ) {
-    return new ( PassThrough_FiltersArray_BiasesArray() )(
+    return PassThrough_FiltersArray_BiasesArray_Root(
       inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue );
   }
 
@@ -257,16 +257,38 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends Recyclable.Base( MultiLay
  */
 class PassThrough extends PassThrough_FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d() ) {
 
+  /**
+   * Used as default Pointwise.PassThrough provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Pointwise.PassThrough.Pool", PassThrough, PassThrough.setAsConstructor );
+
+  /**
+   */
   constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
     super( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue );
+    PassThrough.setAsConstructor_self.call( this );
+  }
 
+  /** @override */
+  static setAsConstructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
+    super.setAsConstructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue );
+    PassThrough.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
     this.filtersTensor4d = tf.tensor4d( this.filtersArray, this.filtersShape );
-
     if ( this.bBias ) {
-      this.biasesTensor3d = tf.tensor3d( this.biasesArray, this.biasShape );
+      this.biasesTensor3d = tf.tensor3d( this.biasesArray, this.biasesShape );
     }
-
     this.bInitOk = true;
+  }
+
+  /** @override */
+  disposeResources() {
+    this.bInitOk = false;
+    super.disposeResources(); // Release .filtersTensor4d and biasesTensor3d.
   }
 
 }
