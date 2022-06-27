@@ -53,12 +53,17 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
     
     this.channelShufflerPool = null;
 
-    for ( let channelShuffler of this.values() ) {
-      channelShuffler.disposeResources_and_recycleToPool();
-    }
     this.clear();
 
     super.disposeResources();
+  }
+
+  /** @override */
+  clear() {
+    for ( let channelShuffler of this.values() ) {
+      channelShuffler.disposeResources_and_recycleToPool();
+    }
+    super.clear();
   }
 
   /**
