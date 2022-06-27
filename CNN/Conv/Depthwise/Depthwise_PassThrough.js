@@ -256,9 +256,7 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends Recyclable.Base( MultiLay
   static setAsConstructor_self() {
   }
 
-  /** Release all channel shufflers and their tf.tensor.
-   * @override
-   */
+  /** @override */
   disposeResources() {
     this.clear();
     super.disposeResources();
