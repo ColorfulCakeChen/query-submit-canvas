@@ -198,9 +198,9 @@ let PassThrough_FiltersArray_BiasesArray
               for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
                 if ( ( effectFilterY == oneEffectFilterY ) && ( effectFilterX == oneEffectFilterX ) ) {
-                  depthwiseFiltersArray[ filterIndex ] = effectFilterValue;
+                  this.filtersArray[ filterIndex ] = effectFilterValue;
                 } else {
-                  depthwiseFiltersArray[ filterIndex ] = surroundingFilterValue;
+                  this.filtersArray[ filterIndex ] = surroundingFilterValue;
                 }
 
                 ++filterIndex;
@@ -231,9 +231,45 @@ class PassThrough_FiltersArray_BiasesArray_Root extends PassThrough_FiltersArray
  */
 class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Base {
 
-  //constructor() {
-  //  super();
-  //}
+  /**
+   * Used as default Depthwise.PassThrough_FiltersArray_BiasesArray_Bag provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Depthwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool",
+    PassThrough_FiltersArray_BiasesArray_Bag, PassThrough_FiltersArray_BiasesArray_Bag.setAsConstructor );
+
+  /**
+   */
+  constructor() {
+    super();
+    PassThrough_FiltersArray_BiasesArray_Bag.setAsConstructor_self.call( this );
+  }
+
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    PassThrough_FiltersArray_BiasesArray_Bag.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
+  }
+
+  /** Release all channel shufflers and their tf.tensor.
+   * @override
+   */
+  disposeResources() {
+    this.clear();
+    super.disposeResources();
+  }
+
+  /** @override */
+  clear() {
+    for ( let aPassThrough_FiltersArray_BiasesArray of this.values() ) {
+      aPassThrough_FiltersArray_BiasesArray.disposeResources_and_recycleToPool();
+    }
+    super.clear();
+  }
 
   /**
    *
