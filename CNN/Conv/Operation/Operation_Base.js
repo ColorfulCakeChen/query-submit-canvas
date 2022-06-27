@@ -36,7 +36,7 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
   /**
    * Used as default Operation.Root provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Operation.RootPool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "Operation.Base.Pool", Base, Base.setAsConstructor );
 
   /**
    * This constructor will register this operation as the input TensorPlaceholder's final operation. So the construction order is
