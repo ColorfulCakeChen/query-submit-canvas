@@ -1,5 +1,8 @@
 export { Comparator, Asserter_Equal };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
+
 /**
  *
  */
@@ -37,7 +40,12 @@ class Comparator {
 /**
  * Assert a tensor whether equals to a number array.
  */
-class Asserter_Equal {
+class Asserter_Equal extends Recyclable.Root {
+
+  /**
+   * Used as default TensorTools.Asserter_Equal provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "TensorTools.Asserter_Equal.Pool", Asserter_Equal, Asserter_Equal.setAsConstructor );
 
   /**
    * If ( differenceRate <= acceptableDifferenceRate ) or ( difference <= acceptableDifference ), two value are viewed as
@@ -55,13 +63,37 @@ class Asserter_Equal {
    * for small value. Default is 0.001.
    */
   constructor( acceptableDifferenceRate = 0.4, acceptableDifference = 0.001 ) {
+    super();
+    Asserter_Equal.setAsConstructor_self.call( this );
+  }
+
+  /** @override */
+  static setAsConstructor( acceptableDifferenceRate = 0.4, acceptableDifference = 0.001 ) {
+    super.setAsConstructor();
+    Asserter_Equal.setAsConstructor_self.call( this, acceptableDifferenceRate, acceptableDifference );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( acceptableDifferenceRate = 0.4, acceptableDifference = 0.001 ) {
     this.acceptableDifferenceRate = Math.abs( acceptableDifferenceRate );
     this.acceptableDifference = Math.abs( acceptableDifference );
     this.comparator = Asserter_Equal.ElementComparator.bind( this );
 
     // Used by assert_Number_Number().
-    this.lhsNumberArrayDefault = [ 0 ];
-    this.rhsNumberArrayDefault = [ 0 ];
+    this.lhsNumberArrayDefault = Recyclable.Array.Pool.get_or_create_by( 1 );
+    this.rhsNumberArrayDefault = Recyclable.Array.Pool.get_or_create_by( 1 );
+  }
+
+  /** @override */
+  disposeResources() {
+    this.rhsNumberArrayDefault.disposeResources_and_recycleToPool();
+    this.rhsNumberArrayDefault = null;
+
+    this.lhsNumberArrayDefault.disposeResources_and_recycleToPool();
+    this.lhsNumberArrayDefault = null;
+
+    super.disposeResources();
   }
 
   /**
