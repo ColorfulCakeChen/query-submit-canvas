@@ -1,7 +1,7 @@
 export { ConcatAlongAxisId2 };
-export { ConcatAlongAxisId2Pool };
 
 import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import { Root } from "./Operation_Base.js";
@@ -28,61 +28,65 @@ import { Root } from "./Operation_Base.js";
  */
 class ConcatAlongAxisId2 extends Root {
 
+  /**
+   * Used as default Operation.ConcatAlongAxisId2 provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Operation.ConcatAlongAxisId2.Pool", ConcatAlongAxisId2, ConcatAlongAxisId2.setAsConstructor );
+
+  /**
+   */
   constructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
-
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
-
-    ConcatAlongAxisId2.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
+    ConcatAlongAxisId2.setAsConstructor_self.call(
+      this, inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
   }
 
-  /**
-   * @param {ConcatAlongAxisId2} this
-   *   The object to be initialized.
-   *
-   * @return {ConcatAlongAxisId2}
-   *   Return the this object.
-   */
+  /** @override */
   static setAsConstructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
+    super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+    ConcatAlongAxisId2.setAsConstructor_self.call(
+      this, inputTensorPlaceholder0, inputTensorPlaceholder1, bKeepInputTensor0, bKeepInputTensor1 );
+    return this;
+  }
 
-    super.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
-
+  /** @override */
+  static setAsConstructor_self(
+    inputTensorPlaceholder0, inputTensorPlaceholder1,
+    bKeepInputTensor0, bKeepInputTensor1
+  ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
 
-    this.inputTensors = Pool.Array.Singleton.get_or_create_by( 2 ); // For reducing memory re-allocation.
+    this.inputTensors = Recyclable.Array.Pool.get_or_create_by( 2 ); // For reducing memory re-allocation.
 
     ConcatAlongAxisId2.adjust_pfn.call( this );
     ConcatAlongAxisId2.setup_BoundsArraySet.call( this );
     ConcatAlongAxisId2.setup_output0_TensorPlaceholder.call( this );
-    return this;
   }
 
-  /**
-   * Sub-class should override this method (and call super.disposeResources() before return).
-   */
+  /** @override */
   disposeResources() {
+
+    if ( this.boundsArraySet ) {
+      this.boundsArraySet.disposeResources_and_recycleToPool();
+      this.boundsArraySet = null;
+    }
+
     if ( this.inputTensors ) {
-      for ( let i = 0; i < this.inputTensors.length; ++i ) {
-        this.inputTensors[ i ] = null;
-      }
-      Pool.Array.Singleton.recycle( this.inputTensors );
+      this.inputTensors.lentth = 0; // Clear the dnagling tensors.
+      this.inputTensors.disposeResources_and_recycleToPool();
       this.inputTensors = null;
     }
-    super.disposeResources();
-  }
 
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    ConcatAlongAxisId2Pool.Singleton.recycle( this );
+    this.apply = null;
+
+    super.disposeResources();
   }
 
   /**
@@ -133,10 +137,7 @@ class ConcatAlongAxisId2 extends Root {
     let inputScaleBoundsArray0 = this.input0.scaleBoundsArray;
     let inputScaleBoundsArray1 = this.input1.scaleBoundsArray;
 
-    this.boundsArraySet = BoundsArraySet.InputsOutputsPool.Singleton.get_or_create_by( inputScaleBoundsArray0, inputScaleBoundsArray1,
-      1 // Arbitrarily set a legal (but temporary) outputChannelCount0. It will be adjusted later.
-    );
-
+    this.boundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by( inputScaleBoundsArray0, inputScaleBoundsArray1, 1 );
     this.boundsArraySet.set_outputs_all_by_concat_input0_input1(); // The outputChannelCount0 will be adjusted.
   }
 
@@ -244,22 +245,4 @@ class ConcatAlongAxisId2 extends Root {
   }
 
 }
-
-
-/**
- * Providing Operation.ConcatAlongAxisId2
- *
- */
-class ConcatAlongAxisId2Pool extends Pool.Root {
-
-  constructor() {
-    super( "Operation.ConcatAlongAxisId2Pool", ConcatAlongAxisId2, ConcatAlongAxisId2.setAsConstructor );
-  }
-
-}
-
-/**
- * Used as default Operation.ConcatAlongAxisId2 provider.
- */
-ConcatAlongAxisId2Pool.Singleton = new ConcatAlongAxisId2Pool();
 
