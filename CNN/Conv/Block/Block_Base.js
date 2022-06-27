@@ -975,13 +975,13 @@ class Base extends Recyclable.Root {
    */
   disposeResources() {
 
-    // Because .outputX are not created by this block, they should not be released by this block.
+    // 1. Because .outputX are not created by this block, they should not be released by this block.
     //
-    // Note: Because .outputX are just read only property returning .operationArray.outputX, it needs not do anything for them.
+    // Note: The .outputX are just read only property returning .operationArray.outputX.
 
-    // Because .inputX are created by this block, they should be released by this block.
+    // 2. Because .inputX are created by this block, they should be released by this block.
     //
-    // Note: Because .inputX are just read only property returning .operationArray.inputX, fetch them before disposing .operationArray.
+    // Note: The .inputX are just read only property returning .operationArray.inputX, so fetch them before disposing .operationArray.
     //
     let input0 = this.input0;
     let input1 = this.input1;
@@ -993,15 +993,18 @@ class Base extends Recyclable.Root {
         input0.disposeResources_and_recycleToPool();
     }
 
+    // 3.
     if ( this.operationArray ) {
       this.operationArray.disposeResources_and_recycleToPool();
       this.operationArray = null;
     }
 
+    // 4.
     if ( this.channelShuffler_ConcatPointwiseConv ) {
       this.channelShuffler_ConcatPointwiseConv = null; // Note: Do not dispose the channel shuffler here.
     }
 
+    // 5.
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
 
