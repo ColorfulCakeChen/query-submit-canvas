@@ -1,7 +1,7 @@
 export { TwinArray };
-export { TwinArrayPool };
 
 import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
 import { Root, RootPool } from "./Operation_Base.js";
@@ -42,6 +42,11 @@ import { Root, RootPool } from "./Operation_Base.js";
 class TwinArray extends Root {
 
   /**
+   * Used as default Operation.TwinArray provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Operation.TwinArray.Pool", TwinArray, TwinArray.setAsConstructor );
+
+  /**
    *
    */
   constructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount, ...restArgs ) {
@@ -49,27 +54,22 @@ class TwinArray extends Root {
     // Note: The real output TensorPlacehoder will be created later as final operation outputs.
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
 
-    TwinArray.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount, ...restArgs );
+    TwinArray.setAsConstructor_self.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
   }
 
-  /**
-   *
-   * @param {TwinArray} this
-   *   The object to be initialized.
-   *
-   * @return {TwinArray}
-   *   Return the this object.
-   */
+  /** @override */
   static setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount, ...restArgs ) {
+    super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
+    TwinArray.setAsConstructor_self.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
+    return this;
+  }
 
-    // Note: The real output TensorPlacehoder will be created later as final operation outputs.
-    super.setAsConstructor.call( this, inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
+  /** @override */
+  static setAsConstructor_self( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount, ...restArgs ) {
 
     // In order to handle keep-input-flag correctly (even if no sub operation at all), an ending dummy operation is used.
     {
-//!!! ...unfinished... (2022/06/22) Replaced by pool.
-//      this.endingDummyOperation = new Root( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
-      this.endingDummyOperation = RootPool.Singleton.get_or_create_by( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
+      this.endingDummyOperation = Root.Pool.get_or_create_by( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
       // The ending dummy operation's output will be the output of this operation array.
       {
@@ -80,7 +80,7 @@ class TwinArray extends Root {
       }
     }
 
-    this.operationArray = Pool.Array.Singleton.get_or_create_by( 0 );
+    this.operationArray = Recyclable.Array.Pool.get_or_create_by( 0 );
 
     TwinArray.setup_apply_loop.call( this );
 
@@ -89,17 +89,15 @@ class TwinArray extends Root {
     // When one or twin operations are appended, the newly appende operations' output tensor placeholders will be collected here
     // temporarily. And then they will be assigned as endingDummyOperation's input tensor placeholder.
     //
-    this.tempLastOutputTensorPlaceholderArray = Pool.Array.Singleton.get_or_create_by( 0 );
+    this.tempLastOutputTensorPlaceholderArray = Recyclable.Array.Pool.get_or_create_by( 0 );
     return this;
   }
 
-  /**
-   * @override
-   */
+  /** @override */
   disposeResources() {
 
     {
-      Pool.Array.Singleton.recycle( this.tempLastOutputTensorPlaceholderArray );
+      this.tempLastOutputTensorPlaceholderArray.disposeResources_and_recycleToPool();
       this.tempLastOutputTensorPlaceholderArray = null;
     }
 
@@ -117,8 +115,7 @@ class TwinArray extends Root {
 
     // Because outputs are created by .endingDummyOperation, they should be released by it.
     {
-      this.endingDummyOperation.disposeResources();
-      RootPool.Singleton.recycle( this.endingDummyOperation );
+      this.endingDummyOperation.disposeResources_and_recycleToPool();
       this.endingDummyOperation = null;
     }
 
@@ -130,13 +127,9 @@ class TwinArray extends Root {
         this.operationArray[ i ] = null;
       }
 
-      Pool.Array.Singleton.recycle( this.operationArray );
+      this.operationArray.disposeResources_and_recycleToPool();
       this.operationArray = null;
     }
-
-//!!! (2022/06/22 Remarked) disposeResources() means clear all to an empty object (just like constructor is not called).
-//     // Since there is no sub operation, short-circuit to the original inputs.
-//     TwinArray.set_endingInput0_endingInput1.call( this, this.input0, this.input1 );
 
     // Because inputs are not created by this operation, they should not be released by this operation.
     {
@@ -148,16 +141,6 @@ class TwinArray extends Root {
     }
 
     super.disposeResources();
-  }
-
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   *
-   * Sub-class should override this method for recycling to its pool (and NEVER call super.disposeResources_and_recycleToPool()).
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    TwinArrayPool.Singleton.recycle( this );
   }
 
   /**
@@ -414,22 +397,4 @@ class TwinArray extends Root {
   }
 
 }
-
-
-/**
- * Providing Operation.TwinArray
- *
- */
-class TwinArrayPool extends Pool.Root {
-
-  constructor() {
-    super( "Operation.TwinArrayPool", TwinArray, TwinArray.setAsConstructor );
-  }
-
-}
-
-/**
- * Used as default Operation.TwinArray provider.
- */
-TwinArrayPool.Singleton = new TwinArrayPool();
 
