@@ -151,7 +151,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
         || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier ) ) {
 
       if ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ) {
-        let msg = `Depthwise.FiltersArray_BiasesArray.setAsConstructor(): `
+        let msg = `Depthwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
           + `nHigherHalfDifferent ( ${ValueDesc.Depthwise_HigherHalfDifferent.Singleton.getStringOf( nHigherHalfDifferent )} ) `
           + `should be ( NONE ) when `
           + `AvgMax_Or_ChannelMultiplier is ( ${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getStringOf( AvgMax_Or_ChannelMultiplier )} )`
@@ -172,7 +172,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     if ( AvgMax_Or_ChannelMultiplier != 0 ) {
       if ( ( filterWidth == 1 ) && ( tf.getBackend() == "wasm" ) ) {
         throw Error(
-          `Depthwise.FiltersArray_BiasesArray.setAsConstructor(): `
+          `Depthwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
             + `In backend WASM, it seems that tf.pool() (both AVG and MAX) and tf.depthwiseConv2d() can not work with filterWidth = 1.`
         );
       }
@@ -180,7 +180,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
     if ( this.bHigherHalfDifferent ) {
       if ( inputChannelCount_lowerHalf > inputChannelCount )
-        throw Error( `Depthwise.FiltersArray_BiasesArray.setAsConstructor(): `
+        throw Error( `Depthwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
           + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
           + `inputChannelCount ( ${this.inputChannelCount} ).`
         );
