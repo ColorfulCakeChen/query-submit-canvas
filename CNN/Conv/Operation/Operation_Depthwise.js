@@ -1,5 +1,4 @@
 export { Depthwise };
-export { DepthwisePool };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Pool from "../../util/Pool.js";
@@ -51,6 +50,11 @@ import { Base } from "./Operation_Base.js";
 class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone.Root ) ) ) {
 
   /**
+   * Used as default Operation.Depthwise provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Operation.Depthwise.Pool", Depthwise, Depthwise.setAsConstructor );
+
+  /**
    */
   constructor(
     inputTensorPlaceholder0,
@@ -65,34 +69,30 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
       bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf );
 
-    Depthwise.setAsConstructor.call( this,
-      inputTensorPlaceholder0,
-      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
-      bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent );
+    Depthwise.setAsConstructor_self.call( this );
   }
 
-  /**
-   * @param {Depthwise} this
-   *   The object to be initialized.
-   *
-   * @return {Depthwise}
-   *   Return the this object.
-   */
+  /** @override */
   static setAsConstructor(
     inputTensorPlaceholder0,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent ) {
 
-    super.setAsConstructor.call( this,
+    super.setAsConstructor(
       inputTensorPlaceholder0, null, 1,
       inputTensorPlaceholder0.height, inputTensorPlaceholder0.width, inputTensorPlaceholder0.channelCount,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf );
 
+    Depthwise.setAsConstructor_self.call( this );
     return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
+    // Do nothing.
   }
 
   /**
@@ -132,14 +132,14 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
         try {
           if ( this.filtersShape && this.filtersArray ) {
             this.filtersTensor4d = tf.tensor( this.filtersArray, this.filtersShape );
-            Pool.Array.Singleton.recycle( this.filtersShape ); this.filtersShape = null; // Release for reducing memory usage.
-            Pool.Array.Singleton.recycle( this.filtersArray ); this.filtersArray = null;
+            this.filtersShape.disposeResources_and_recycleToPool(); this.filtersShape = null; // Release for reducing memory usage.
+            this.filtersArray.disposeResources_and_recycleToPool(); this.filtersArray = null;
           }
 
           if ( this.biasesShape && this.biasesArray ) {
             this.biasesTensor3d = tf.tensor( this.biasesArray, this.biasesShape );
-            Pool.Array.Singleton.recycle( this.biasesShape ); this.biasesShape = null; // Release for reducing memory usage.
-            Pool.Array.Singleton.recycle( this.biasesArray ); this.biasesArray = null;
+            this.biasesShape.disposeResources_and_recycleToPool(); this.biasesShape = null; // Release for reducing memory usage.
+            this.biasesArray.disposeResources_and_recycleToPool(); this.biasesArray = null;
           }
 
           this.output0.set_height_width_channelCount_scaleBoundsArray(
@@ -169,11 +169,36 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     return this.bInitOk;
   }
 
-  /**
-   * Sub-class should override this method (and call super.disposeResources() before return).
-   */
+  /** @override */
   disposeResources() {
-    this.apply = this.pfnOperation = this.pfnActivation = null;
+    if ( this.boundsArraySet ) {
+      this.boundsArraySet.disposeResources_and_recycleToPool();
+      this.boundsArraySet = null;
+    }
+
+    if ( this.filtersArray ) {
+      this.filtersArray.disposeResources_and_recycleToPool();
+      this.filtersArray = null;
+    }
+
+    if ( this.filtersShape ) {
+      this.filtersShape.disposeResources_and_recycleToPool();
+      this.filtersShape = null;
+    }
+
+    if ( this.biasesArray ) {
+      this.biasesArray.disposeResources_and_recycleToPool();
+      this.biasesArray = null;
+    }
+
+    if ( this.biasesShape ) {
+      this.biasesShape.disposeResources_and_recycleToPool();
+      this.biasesShape = null;
+    }
+
+    this.pfnActivation = null;
+    this.pfnOperation = null;
+    this.apply = null;
 
     // If these properties does not exist, assigning value (even undefined) to them will create them. Avoid it.
     {
@@ -192,14 +217,6 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     this.bInitOk = false;
 
     super.disposeResources(); // Release filtersTensor4d and biasesTensor3d.
-  }
-
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    DepthwisePool.Singleton.recycle( this );
   }
 
   /**
@@ -422,22 +439,4 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   }
 
 }
-
-
-/**
- * Providing Operation.Depthwise
- *
- */
-class DepthwisePool extends Pool.Root {
-
-  constructor() {
-    super( "Operation.DepthwisePool", Depthwise, Depthwise.setAsConstructor );
-  }
-
-}
-
-/**
- * Used as default Operation.Depthwise provider.
- */
-DepthwisePool.Singleton = new DepthwisePool();
 
