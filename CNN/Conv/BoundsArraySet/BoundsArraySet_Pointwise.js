@@ -3,7 +3,6 @@ export { Pointwise };
 import * as Pool from "../../util/Pool.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-import * as Weights from "../../Unpacker/Weights.js";
 import { ConvBiasActivation } from "./BoundsArraySet_ConvBiasActivation.js";
 import { ChannelPartInfo, FiltersBiasesPartInfo } from  "../Pointwise/Pointwise_ChannelPartInfo.js";
 
@@ -20,7 +19,7 @@ class Pointwise extends ConvBiasActivation {
   /**
    * Used as default BoundsArraySet.Pointwise provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "BoundsArraySet.PointwisePool", Pointwise, Pointwise.setAsConstructor );
+  static Pool = new Pool.Root( "BoundsArraySet.Pointwise.Pool", Pointwise, Pointwise.setAsConstructor );
 
   /**
    *   - The .input0 will be set as input0.
