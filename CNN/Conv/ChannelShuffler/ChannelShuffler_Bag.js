@@ -43,9 +43,7 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
     this.concatenatedShape = Recyclable.Array.Pool.get_or_create_by( 3 );
   }
 
-  /** Release all channel shufflers and their tf.tensor.
-   * @override
-   */
+  /** @override */
   disposeResources() {
     this.concatenatedShape.disposeResources_and_recycleToPool();
     this.concatenatedShape = null;
