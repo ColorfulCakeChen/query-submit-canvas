@@ -1,5 +1,7 @@
 export { Base };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
@@ -21,13 +23,49 @@ import * as BoundsArraySet_Asserter from "./BoundsArraySet_Asserter.js";
 /**
  * Information used by Base.testCorrectness().
  */
-class TestCorrectnessInfo {
+class TestCorrectnessInfo extends Recyclable.Root {
 
+  /**
+   * Used as default Block_Reference.TestCorrectnessInfo provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Block_Reference.TestCorrectnessInfo.Pool", TestCorrectnessInfo, TestCorrectnessInfo.setAsConstructor );
+
+  /**
+   */
   constructor() {
+    super();
+    TestCorrectnessInfo.setAsConstructor_self.call( this );
+  }
+
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    TestCorrectnessInfo.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
+
     // For reducing memory allocation.
-    this.imageInArraySelected = new Array( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
-    this.inputTensor3dArray = new Array( 2 );
-    this.outputTensor3dArray = new Array( 2 );
+    this.imageInArraySelected = Recyclable.Array.Pool.get_or_create_by( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
+    this.inputTensor3dArray = Recyclable.Array.Pool.get_or_create_by( 2 );
+    this.outputTensor3dArray = Recyclable.Array.Pool.get_or_create_by( 2 );
+  }
+
+  /** @override */
+  disposeResources() {
+
+    this.outputTensor3dArray.disposeResources_and_recycleToPool();
+    this.outputTensor3dArray = null;
+
+    this.inputTensor3dArray.disposeResources_and_recycleToPool();
+    this.inputTensor3dArray = null;
+
+    this.imageInArraySelected.disposeResources_and_recycleToPool();
+    this.imageInArraySelected = null;
+
+    super.disposeResources();
   }
 
   prepareBy( imageSourceBag, testParams, channelShufflerBag ) {
@@ -182,20 +220,50 @@ class TestCorrectnessInfo {
 /**
  * Reference computation of class Block.Base.
  */
-class Base {
+class Base extends Recyclable.Root {
+
+  /**
+   * Used as default Block_Reference.Base provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Block_Reference.Base.Pool", Base, Base.setAsConstructor );
 
   /**
    *
    */
   constructor() {
-    this.channelShufflerBag = new ChannelShuffler.Bag( ChannelShuffler.ShuffleInfo );
+    super();
+    Bag.setAsConstructor_self.call( this );
+  }
 
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    Bag.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
+    this.channelShufflerBag = ChannelShuffler.Bag.Pool.get_or_create_by( ChannelShuffler.ShuffleInfo.Pool );
+
+//!!!
     // For reducing memory allocation.
     this.testCorrectnessInfo = new TestCorrectnessInfo();
     this.imageOutReferenceArray = new Array( 2 );
     this.imageInArray_Fake = new Array( 2 );
     this.asserter_Equal = new TensorTools.Asserter_Equal( 0.4, 0.001 );
     this.arrayTemp_forInterleave_asGrouptTwo = []; // Used by calcConcatShuffleSplit().
+  }
+
+  /** @override */
+  disposeResources() {
+
+    this.channelShufflerBag.disposeResources_and_recycleToPool();
+    this.channelShufflerBag = null;
+
+//!!!
+
+    super.disposeResources();
   }
 
   /**
@@ -207,7 +275,7 @@ class Base {
    * @param {Block_TestParams.Base} testParams
    *   The test parameters. It is the value of Block_TestParams.Base.ParamsGenerator()'s result.
    *
-   * @param {ChannelShufflerPool.Base} channelShufflerBag
+   * @param {ChannelShuffler.Bag} channelShufflerBag
    *   The channelShufflers provider. It must be initialized with ChannelShuffler.ConcatPointwiseConv as parameter channelShufflerClass.
    *
    *     - It is only used when:
