@@ -3,7 +3,6 @@ export { Depthwise };
 import * as Pool from "../../util/Pool.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-import * as Weights from "../../Unpacker/Weights.js";
 import { ConvBiasActivation } from "./BoundsArraySet_ConvBiasActivation.js";
 import { ChannelPartInfo, FiltersBiasesPartInfo } from  "../Depthwise/Depthwise_ChannelPartInfo.js";
 
@@ -20,7 +19,7 @@ class Depthwise extends ConvBiasActivation {
   /**
    * Used as default BoundsArraySet.Depthwise provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "BoundsArraySet.DepthwisePool", Depthwise, Depthwise.setAsConstructor );
+  static Pool = new Pool.Root( "BoundsArraySet.Depthwise.Pool", Depthwise, Depthwise.setAsConstructor );
 
   /**
    *   - The .input0 will be set as input0.
