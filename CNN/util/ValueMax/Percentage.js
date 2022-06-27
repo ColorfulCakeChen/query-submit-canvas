@@ -17,7 +17,7 @@ class Base extends Recyclable.Root {
   /**
    * Used as default ValueMax.Percentage.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "ValueMax.Percentage.Base", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "ValueMax.Percentage.Base.Pool", Base, Base.setAsConstructor );
 
   /**
    *
@@ -81,7 +81,7 @@ class Concrete extends Base {
   /**
    * Used as default ValueMax.Percentage.Concrete provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "ValueMax.Percentage.Concrete", Concrete, Concrete.setAsConstructor );
+  static Pool = new Pool.Root( "ValueMax.Percentage.Concrete.Pool", Concrete, Concrete.setAsConstructor );
 
   /**
    * @param {number} max
@@ -141,7 +141,7 @@ class Aggregate extends Base {
   /**
    * Used as default ValueMax.Percentage.Aggregate provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "ValueMax.Percentage.Aggregate", Aggregate, Aggregate.setAsConstructor );
+  static Pool = new Pool.Root( "ValueMax.Percentage.Aggregate.Pool", Aggregate, Aggregate.setAsConstructor );
 
   /**
    * @param {Percentage.Base[]} children
