@@ -110,7 +110,6 @@ let PassThrough_FiltersArray_BiasesArray
     let extractedCount = endIndex - beginIndex; // So many channels will be past-through from input to output.
     let zerosCount = outputChannelCount - extractedCount; // The output channels which no extracted values could be used will be filled by zeros.
 
-
     this.filtersShape = Recyclable.Array.Pool.get_or_create_by( 4 );
     this.filtersShape[ 0 ] = 1;
     this.filtersShape[ 1 ] = 1;
@@ -169,15 +168,58 @@ let PassThrough_FiltersArray_BiasesArray
 
 
 /**
+ * Almost the same as Pointwise.PassThrough_FiltersArray_BiasesArray class except its parent class is fixed to Object. In other words,
+ * caller can not specify the parent class of Pointwise.PassThrough_FiltersArray_BiasesArray_Root (so it is named "Root" which can not
+ * have parent class).
+ */
+class PassThrough_FiltersArray_BiasesArray_Root extends PassThrough_FiltersArray_BiasesArray() {
+}
+
+
+/**
  * A pool for PassThrough_FiltersArray_BiasesArray with various parameters. It could reduce re-creating them of same parameters again
  * and again to improve performance.
  *
  */
-class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Base {
+class PassThrough_FiltersArray_BiasesArray_Bag extends Recyclable.Base( MultiLayerMap.Base ) {
 
-  //constructor() {
-  //  super();
-  //}
+  /**
+   * Used as default Pointwise.PassThrough_FiltersArray_BiasesArray_Bag provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Pointwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool",
+    PassThrough_FiltersArray_BiasesArray_Bag, PassThrough_FiltersArray_BiasesArray_Bag.setAsConstructor );
+
+  /**
+   */
+  constructor() {
+    super();
+    PassThrough_FiltersArray_BiasesArray_Bag.setAsConstructor_self.call( this );
+  }
+
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    PassThrough_FiltersArray_BiasesArray_Bag.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
+  }
+
+  /** @override */
+  disposeResources() {
+    this.clear();
+    super.disposeResources();
+  }
+
+  /** @override */
+  clear() {
+    for ( let aPassThrough_FiltersArray_BiasesArray of this.values() ) {
+      aPassThrough_FiltersArray_BiasesArray.disposeResources_and_recycleToPool();
+    }
+    super.clear();
+  }
 
   /**
    *
