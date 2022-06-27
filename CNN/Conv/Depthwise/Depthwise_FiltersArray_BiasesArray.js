@@ -1,9 +1,9 @@
 export { FiltersArray_BiasesArray };
 
+import * as Pool from "../../util/Pool.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
-import * as Pool from "../../util/Pool.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Depthwise_ChannelPartInfo.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
@@ -92,6 +92,11 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_BiasesArray extends PadInfoCalculator( ParentClass ) {
 
   /**
+   * Used as default Depthwise.FiltersArray_BiasesArray provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Depthwise.FiltersArray_BiasesArray.Pool", FiltersArray_BiasesArray, FiltersArray_BiasesArray.setAsConstructor );
+
+  /**
    */
   constructor(
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
@@ -101,18 +106,14 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
     super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs );
 
-    this.setAsConstructor(
+    FiltersArray_BiasesArray.setAsConstructor_self.call( this,
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf,
-      ...restArgs );
+      nHigherHalfDifferent, inputChannelCount_lowerHalf );
   }
 
- /**
-   * @return {FiltersArray_BiasesArray}
-   *   Return the this object.
-   */
-  setAsConstructor(
+  /** @override */
+  static setAsConstructor(
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf,
@@ -120,6 +121,20 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
     super.setAsConstructor(
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs );
+
+    FiltersArray_BiasesArray.setAsConstructor_self.call( this,
+      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      bBias, nActivationId, nPassThroughStyleId,
+      nHigherHalfDifferent, inputChannelCount_lowerHalf );
+
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self(
+    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    bBias, nActivationId, nPassThroughStyleId,
+    nHigherHalfDifferent, inputChannelCount_lowerHalf ) {
 
     this.bBias = bBias;
     this.nActivationId = nActivationId;
@@ -154,7 +169,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     // The tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
     // ourselves testing procedure.
     if ( AvgMax_Or_ChannelMultiplier != 0 ) {
-      if ( ( this.filterWidth == 1 ) && ( tf.getBackend() == "wasm" ) ) {
+      if ( ( filterWidth == 1 ) && ( tf.getBackend() == "wasm" ) ) {
         throw Error(
           `Depthwise.FiltersArray_BiasesArray.setAsConstructor(): `
             + `In backend WASM, it seems that tf.pool() (both AVG and MAX) and tf.depthwiseConv2d() can not work with filterWidth = 1.`
@@ -163,14 +178,17 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     }
 
     if ( this.bHigherHalfDifferent ) {
-      if ( this.inputChannelCount_lowerHalf > inputChannelCount )
+      if ( inputChannelCount_lowerHalf > inputChannelCount )
         throw Error( `Depthwise.FiltersArray_BiasesArray.setAsConstructor(): `
           + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
           + `inputChannelCount ( ${this.inputChannelCount} ).`
         );
     }
+  }
 
-    return this;
+  /** @override */
+  disposeResources() {
+    super.disposeResources();
   }
 
   /**
