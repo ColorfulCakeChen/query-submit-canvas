@@ -221,34 +221,27 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
     let bInitOk;
 
-    Recyclable.Array.Pool.sessionCall( () => {
-
-      // It will be filled with: [ boundsArraySet, poolWindowShape, filtersShape, filtersArray, biasesShape, biasesArray ].
-      // It is mainly used for preventing these elements been recycled by itself recycling pool.
+    let keptObjectArray;
+    try {
+      // It will be filled with: [ bInitOk, boundsArraySet, poolWindowShape, filtersShape, filtersArray, biasesShape, biasesArray ].
+      // It is mainly used for preventing these elements been recycled by .sessionCall().
       //
-      let keptObjectArray = Recyclable.Array.Pool.get_or_create_by( 6 );
+      keptObjectArray = Recyclable.Array.Pool.get_or_create_by( 6 );
 
-      FiltersBiasesPartInfo.Pool.sessionCall( () => {
-        ChannelPartInfo.Pool.sessionCall( () => {
-          Recyclable.Array.Pool.sessionCall( () => {
+      Pool.All.sessionCall( FiltersArray_BiasesArray.init_internal, this,
+        inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, keptObjectArray );
 
-            bInitOk = FiltersArray_BiasesArray.init_internal.call( this,
-              inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray );
+      bInitOk = keptObjectArray[ 0 ];
 
-            keptObjectArray[ 0 ] = this.boundsArraySet;
-            keptObjectArray[ 1 ] = this.poolWindowShape;
-            keptObjectArray[ 2 ] = this.filtersShape;
-            keptObjectArray[ 3 ] = this.filtersArray;
-            keptObjectArray[ 4 ] = this.biasesShape;
-            keptObjectArray[ 5 ] = this.biasesArray;
+    } catch ( e ) {
+      throw e:
 
-            return keptObjectArray;
-          } )
-        } )
-      } );
-
-      keptObjectArray.length = 0;
-    } );
+    } finally {
+      if ( keptObjectArray ) {
+        keptObjectArray.disposeResources_and_recycleToPool();
+        keptObjectArray = null;
+      }
+    }
 
     return bInitOk;
   }
@@ -276,9 +269,14 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
    * set of this depthwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
    *
-   * @return {boolean} Return true, if succeeded.
+   * @param {Object[]} o_keptObjectArray
+   *   Return [ bInitOk, this.boundsArraySet, this.poolWindowShape, this.filtersShape, this.filtersArray, this.biasesShape, this.biasesArray ].
+   * The bInitOk will be true, if succeeded.
+   *
+   * @return {boolean}
+   *   Return o_keptObjectArray.
    */
-  static init_internal( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray ) {
+  static init_internal( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, o_keptObjectArray ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -303,6 +301,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
+    o_keptObjectArray.lnegth = 7;
+    o_keptObjectArray[ 0 ] = false; // bInitOk.
 
 //!!! ...unfinished... (2022/01/11) What about ( bDepthwise == false )?
 
@@ -312,7 +312,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
 //!!! (2022/01/09 Remarked) Wrong!
 //     if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE )
-//       return true; // Nothing needs to be extracted.
+//       return o_keptObjectArray; // Nothing needs to be extracted.
 
 
     // Calculate lower half and higher half channel count.
@@ -492,7 +492,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     // Prepare source weights to be extracted.
     let sourceWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, weightsCount_extracted );
     if ( !sourceWeights.extract() )
-      return false;  // e.g. input array does not have enough data.
+      return o_keptObjectArray;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = sourceWeights.defaultByteOffsetEnd;
     this.tensorWeightCountExtracted_internal = weightsCount_extracted;
 
@@ -566,7 +566,15 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
         this.tensorWeightCountTotal_internal += tf.util.sizeFromShape( this.biasesShape );
     }
 
-    return true;
+    o_keptObjectArray[ 0 ] = true; // bInitOk.
+    o_keptObjectArray[ 1 ] = this.boundsArraySet;
+    o_keptObjectArray[ 2 ] = this.poolWindowShape;
+    o_keptObjectArray[ 3 ] = this.filtersShape;
+    o_keptObjectArray[ 4 ] = this.filtersArray;
+    o_keptObjectArray[ 5 ] = this.biasesShape;
+    o_keptObjectArray[ 6 ] = this.biasesArray;
+
+    return o_keptObjectArray;
   }
 
   /**
