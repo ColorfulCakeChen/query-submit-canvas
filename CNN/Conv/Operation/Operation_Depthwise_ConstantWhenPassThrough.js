@@ -1,8 +1,7 @@
 export { Depthwise_ConstantWhenPassThrough };
-export { Depthwise_ConstantWhenPassThroughPool };
 
-import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Pool from "../../util/Pool.js";
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import { Depthwise } from "./Operation_Depthwise.js";
 
 /**
@@ -15,6 +14,12 @@ import { Depthwise } from "./Operation_Depthwise.js";
  *
  */
 class Depthwise_ConstantWhenPassThrough extends Depthwise {
+
+   /**
+   * Used as default Operation.Depthwise_ConstantWhenPassThrough provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Operation.Depthwise_ConstantWhenPassThrough.Pool",
+    Depthwise_ConstantWhenPassThrough, Depthwise_ConstantWhenPassThrough.setAsConstructor );
 
   /**
    */
@@ -31,62 +36,36 @@ class Depthwise_ConstantWhenPassThrough extends Depthwise {
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
       nHigherHalfDifferent );
 
-    Depthwise_ConstantWhenPassThrough.setAsConstructor.call( this,
-      inputTensorPlaceholder0,
-      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
-      bBias, nActivationId,
-      nHigherHalfDifferent );
+    Depthwise_ConstantWhenPassThrough.setAsConstructor_self.call( this );
   }
 
-  /**
-   * @param {Depthwise_ConstantWhenPassThrough} this
-   *   The object to be initialized.
-   *
-   * @return {Depthwise_ConstantWhenPassThrough}
-   *   Return the this object.
-   */
+  /** @override */
   static setAsConstructor(
     inputTensorPlaceholder0,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId,
     nHigherHalfDifferent ) {
 
-    super.setAsConstructor.call( this,
+    super.setAsConstructor(
       inputTensorPlaceholder0,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
       nHigherHalfDifferent );
 
+    Depthwise_ConstantWhenPassThrough.setAsConstructor_self.call( this );
     return this;
   }
 
-  /**
-   * After calling this method, this object should be viewed as disposed and should not be operated again.
-   */
-  disposeResources_and_recycleToPool() {
-    this.disposeResources();
-    Depthwise_ConstantWhenPassThroughPool.Singleton.recycle( this );
+  /** @override */
+  static setAsConstructor_self() {
+    // Do nothing.
+  }
+
+  /** @override */
+  disposeResources() {
+    super.disposeResources();
   }
 
 }
-
-
-/**
- * Providing Operation.Depthwise_ConstantWhenPassThrough
- *
- */
-class Depthwise_ConstantWhenPassThroughPool extends Pool.Root {
-
-  constructor() {
-    super( "Operation.Depthwise_ConstantWhenPassThroughPool",
-      Depthwise_ConstantWhenPassThrough, Depthwise_ConstantWhenPassThrough.setAsConstructor );
-  }
-
-}
-
-/**
- * Used as default Operation.Depthwise_ConstantWhenPassThrough provider.
- */
-Depthwise_ConstantWhenPassThroughPool.Singleton = new Depthwise_ConstantWhenPassThroughPool();
 
