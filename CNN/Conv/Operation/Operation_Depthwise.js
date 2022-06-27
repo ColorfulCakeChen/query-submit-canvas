@@ -1,8 +1,8 @@
 export { Depthwise };
 
-import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Pool from "../../util/Pool.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import { FiltersArray_BiasesArray } from "../Depthwise/Depthwise_FiltersArray_BiasesArray.js";
