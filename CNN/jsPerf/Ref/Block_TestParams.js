@@ -1,5 +1,7 @@
 export { Base };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as RandTools from "../../util/RandTools.js";
 import * as NameNumberArrayObject_To_Float32Array from "../../util/NameNumberArrayObject_To_Float32Array.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
@@ -38,17 +40,50 @@ import * as Block from "../../Conv/Block.js";
 class Base extends TestParams.Base {
 
   /**
-   *
+   * Used as default Block_TestParams.Base provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Block_TestParams.Base.Pool", Base, Base.setAsConstructor );
+
+  /**
    */
   constructor() {
-   super();
-
-   this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag = new Pointwise.PassThrough_FiltersArray_BiasesArray_Bag();
-   this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag = new Depthwise.PassThrough_FiltersArray_BiasesArray_Bag();
-
-   // A pre-allocated ArrayBuffer which could be re-allocated when needed to get Float32Array. (For reducing memory re-allocation.)
-   this.Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
+    super();
+    Base.setAsConstructor_self.call( this );
   }
+
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    Base.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
+    this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag = Pointwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool.get_or_create_by();
+    this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag = Depthwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool.get_or_create_by();
+
+//!!!
+    // A pre-allocated ArrayBuffer which could be re-allocated when needed to get Float32Array. (For reducing memory re-allocation.)
+    this.Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
+  }
+
+  /** @override */
+  disposeResources() {
+
+//!!!
+    this.Float32Array_ByteOffsetBegin.disposeResources_and_recycleToPool();
+    this.Float32Array_ByteOffsetBegin = null;
+
+    this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources_and_recycleToPool();
+    this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag = null;
+
+    this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources_and_recycleToPool();
+    this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag = null;
+
+    super.disposeResources();
+  }
+
 
   /**
    * Use scattered parameters to fills the following proterties:
