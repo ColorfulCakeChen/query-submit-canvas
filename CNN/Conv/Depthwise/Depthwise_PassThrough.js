@@ -230,7 +230,7 @@ class PassThrough_FiltersArray_BiasesArray_Root extends PassThrough_FiltersArray
  * and again to improve performance.
  *
  */
-class PassThrough_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Base {
+class PassThrough_FiltersArray_BiasesArray_Bag extends Recyclable.Base( MultiLayerMap.Base ) {
 
   /**
    * Used as default Depthwise.PassThrough_FiltersArray_BiasesArray_Bag provider for conforming to Recyclable interface.
