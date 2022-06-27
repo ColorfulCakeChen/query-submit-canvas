@@ -63,15 +63,12 @@ class Base extends TestParams.Base {
     this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag = Pointwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool.get_or_create_by();
     this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag = Depthwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool.get_or_create_by();
 
-//!!!
     // A pre-allocated ArrayBuffer which could be re-allocated when needed to get Float32Array. (For reducing memory re-allocation.)
-    this.Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
+    this.Float32Array_ByteOffsetBegin = NameNumberArrayObject_To_Float32Array.Base.Pool.get_or_create_by();
   }
 
   /** @override */
   disposeResources() {
-
-//!!!
     this.Float32Array_ByteOffsetBegin.disposeResources_and_recycleToPool();
     this.Float32Array_ByteOffsetBegin = null;
 
@@ -83,7 +80,6 @@ class Base extends TestParams.Base {
 
     super.disposeResources();
   }
-
 
   /**
    * Use scattered parameters to fills the following proterties:
