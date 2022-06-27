@@ -1,7 +1,10 @@
 export { PassThrough_FiltersArray_BiasesArray };
+export { PassThrough_FiltersArray_BiasesArray_Root };
 export { PassThrough_FiltersArray_BiasesArray_Bag };
 export { PassThrough };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
 import * as MultiLayerMap from "../../util/MultiLayerMap.js";
@@ -52,7 +55,8 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *
  * @see PadInfoCalculator
  */
-let PassThrough_FiltersArray_BiasesArray = ( ParentClass = Object ) => class extends PadInfoCalculator( ParentClass ) {
+let PassThrough_FiltersArray_BiasesArray
+  = ( ParentClass = Object ) => class PassThrough_FiltersArray_BiasesArray extends PadInfoCalculator( ParentClass ) {
 
   /**
    * Used as default Depthwise.PassThrough_FiltersArray_BiasesArray provider for conforming to Recyclable interface.
@@ -95,8 +99,7 @@ let PassThrough_FiltersArray_BiasesArray = ( ParentClass = Object ) => class ext
     this.filtersShape[ 2 ] = this.inputChannelCount;
     this.filtersShape[ 3 ] = this.channelMultiplier;
 
-//!!!???
-    this.filtersArray = this.generate_PassThrough_FiltersArray( effectFilterValue, surroundingFilterValue );
+    PassThrough_FiltersArray_BiasesArray.generate_PassThrough_FiltersArray.call( this, effectFilterValue, surroundingFilterValue );
 
     if ( this.bBias ) {
       this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 3 );
@@ -121,7 +124,6 @@ let PassThrough_FiltersArray_BiasesArray = ( ParentClass = Object ) => class ext
       this.biasesShape = null;
     }
 
-//!!!???
     if ( this.filtersArray ) {
       this.filtersArray.disposeResources_and_recycleToPool();
       this.filtersArray = null;
@@ -132,6 +134,82 @@ let PassThrough_FiltersArray_BiasesArray = ( ParentClass = Object ) => class ext
       this.filtersShape = null;
     }
     super.disposeResources();
+  }
+
+  /**
+   * Determine the following properties:
+   *   - this.filtersArray
+   *
+   * It is an number array representing the depthwise convolution filters which could pass the input to output unchangely.
+   *
+   * If both effectFilterValue and otherFilterValue are the same as ( 1 / ( filterHeight * filter Width ) ), the result filter
+   * will have the same effect as average pooling.
+   *
+   *
+   * @param {number} effectFilterValue
+   *   The filter value used for the effect input pixel of the depthwise convolution. For pass-through, it is usually 1.
+   * Note: It is not always just at center of filter according to the filter shape and paddding.
+   *
+   * @param {number} surroundingFilterValue
+   *   The filter value used for the surrounding input pixel of the depthwise convolution. For pass-through, it is usually 0.
+   *
+   */
+  static generate_PassThrough_FiltersArray( effectFilterValue, surroundingFilterValue ) {
+
+    if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === this.AvgMax_Or_ChannelMultiplier )
+        || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === this.AvgMax_Or_ChannelMultiplier ) ) {
+
+      if ( this.filtersArray ) {
+        this.filtersArray.disposeResources_and_recycleToPool();
+        this.filtersArray = null;
+      }
+
+      return; // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
+    }
+
+    // Make up a depthwise convolution filter.
+    this.filtersArray = Recyclable.Array.Pool.get_or_create_by(
+      this.filterHeight * this.filterWidth * this.inputChannelCount * this.channelMultiplier );
+
+    // There is only one position (inside the effect depthwise filter) uses effectFilterValue.
+    // All other positions of the filter should be surroundingFilterValue.
+    //
+    let oneEffectFilterY = this.padHeightTop;
+    let oneEffectFilterX = this.padWidthLeft;
+
+    // Note: Unfortunately, this may not work for ( dilation > 1 ) because the non-zero-filter-value might be just at the dilation
+    //       position which does not exist in a filter. So, only ( dilation == 1 ) is supported.
+
+
+    let filterIndex = 0; // The index in the filter weights array.
+
+    for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
+      for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+
+        for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
+          for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
+
+            // The filter's dilation part can not be manipulated. (They are always zero.)
+            if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
+              continue;
+
+            for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+
+              for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+
+                if ( ( effectFilterY == oneEffectFilterY ) && ( effectFilterX == oneEffectFilterX ) ) {
+                  depthwiseFiltersArray[ filterIndex ] = effectFilterValue;
+                } else {
+                  depthwiseFiltersArray[ filterIndex ] = surroundingFilterValue;
+                }
+
+                ++filterIndex;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
 }
