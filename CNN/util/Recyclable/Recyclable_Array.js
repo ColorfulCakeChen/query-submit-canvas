@@ -1,5 +1,4 @@
 export { Recyclable_Array as Array };
-export { Recyclable_ArrayPool as ArrayPool };
 
 import { Base } from "./Recyclable_Base.js";
 import * as Pool from "../Pool.js";
@@ -10,38 +9,29 @@ import * as Pool from "../Pool.js";
 class Recyclable_Array extends Base( Array ) {
 
   /**
-   * @param {Array} this
-   *   The array object to be set length.
-   *
-   * @param {number} newLength
-   *   The this.length to be set to newLength.
-   *
-   * @return {Array}
-   *   Return the this object.
+   * Used as default Recyclable.Array provider for conforming to Recyclable interface.
    */
-  static setAsConstructor_by_length( newLength ) {
-    this.length = newLength;
+  static Pool = new Pool.Root( "Recyclable.Array.Pool", Recyclable_Array, Recyclable_Array.setAsConstructor );
+
+  /**
+   */
+  constructor( length ) {
+    super( length );
+    // (2022/06/27 Remarked) The constructor of parent class (i.e. Array) has already done it.
+    //Recyclable_Array.setAsConstructor_self.call( this, length );
+  }
+
+  /** @override */
+  static setAsConstructor( length ) {
+    super.setAsConstructor();
+    Recyclable_Array.setAsConstructor_self.call( this, length );
     return this;
   }
 
-}
-
-
-/**
- * Providing Recyclable.Array by specifying length.
- *
- */
-class Recyclable_ArrayPool extends Pool.Root {
-  
-  constructor() {
-    super( "Recyclable.ArrayPool", Recyclable_Array, Recyclable_Array.setAsConstructor_by_length );
+  /** @override */
+  static setAsConstructor_self( length ) {
+    this.length = length;
   }
 
 }
-
-
-/**
- * Used as default Recyclable.Array provider for conforming to Recyclable interface.
- */
-Recyclable_Array.Pool = new Recyclable_ArrayPool();
 
