@@ -1,7 +1,7 @@
 export { PadInfoCalculator };
-export { PadInfoCalculatorRoot };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as Recyclable from "../../util/Recyclable.js";
 
 /**
  * According to input image size and depthwise convolution parameters, calculate the padding information of the depthwise convolution.
@@ -43,44 +43,44 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  * @member {number} outputChannelCount    Output image channel count.
  * @member {number} outputElementCount    Output image elements count (= ( outputHeight * outputWidth * outputChannelCount ) ).
  */
-let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator extends ParentClass {
+let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator extends Recyclable.Base( ParentClass ) {
+
+  /**
+   * Used as default Depthwise.PadInfoCalculator provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Depthwise.PadInfoCalculatorPool", PadInfoCalculator, PadInfoCalculator.setAsConstructor );
 
   /**
    *
    */
-  constructor( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs ) {
-    super( ...restArgs );
-
-    this.setAsConstructor(
-      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs );
-  }
-
- /**
-   * @return {PadInfoCalculator}
-   *   Return the this object.
-   */
-  setAsConstructor(
+  constructor(
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs ) {
 
-    if ( super.setAsConstructor instanceof Function )
-      super.setAsConstructor( ...restArgs ); // 0. All other arguments passed to parent class.
+    super( ...restArgs );
+    Base.setAsConstructor_self.call( this,
+      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+  }
 
-    this.set( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+  /** @override */
+  static setAsConstructor(
+     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs ) {
+
+    super.setAsConstructor.apply( this, restArgs );
+    Base.setAsConstructor_self.call( this,
+      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
     return this;
   }
 
-  /**
-   * The .input0 and .input1 will be set to null. The .output0 and .output1 will be recycled and then set to null.
-   *
-   * Sub-class should override this method (and call super.disposeResources() before return).
-   */
+  /** @override */
+  static setAsConstructor_self(
+    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
+    this.set( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+  }
+
+  /** @override */
   disposeResources() {
-
     this.stridesPadInfo = null;
-
-    if ( super.disposeResources instanceof Function ) { // If parent class has the same method, call it.
-      super.disposeResources();
-    }
+    super.disposeResources();
   }
 
   /**
