@@ -1,5 +1,7 @@
 export { Bag };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 import * as RandTools from "../../util/RandTools.js";
 
@@ -8,7 +10,12 @@ import * as RandTools from "../../util/RandTools.js";
  * again and again to improve performance.
  *
  */
-class Bag extends MultiLayerMap.Base {
+class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
+
+  /**
+   * Used as default SequenceRandom_NumberArray.Bag provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "SequenceRandom_NumberArray.Bag.Pool", Bag, Bag.setAsConstructor );
 
   /**
    *
@@ -17,8 +24,34 @@ class Bag extends MultiLayerMap.Base {
    */
   constructor( nCountPerSameSpec = 10 ) {
     super();
+    Bag.setAsConstructor_self.call( this, nCountPerSameSpec );
+  }
+
+  /** @override */
+  static setAsConstructor( nCountPerSameSpec = 10 ) {
+    super.setAsConstructor();
+    Bag.setAsConstructor_self.call( this, nCountPerSameSpec );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( nCountPerSameSpec = 10 ) {
     this.nRandSpecIdMin = 0;
     this.nRandSpecIdMax = Math.max( 0, nCountPerSameSpec - 1 );
+  }
+
+  /** @override */
+  disposeResources() {
+    this.clear();
+    super.disposeResources();
+  }
+
+  /** @override */
+  clear() {
+    for ( let numberArray of this.values() ) {
+      numberArray.disposeResources_and_recycleToPool();
+    }
+    super.clear();
   }
 
   /**
@@ -35,21 +68,25 @@ class Bag extends MultiLayerMap.Base {
    * @param {number} randomOffsetMax  The random number offet upperer bound.
    */
   get_by_elementCount_randomOffsetMin_randomOffsetMax( elementCount, randomOffsetMin = 0, randomOffsetMax = 0 ) {
-
     let nRandSpecId = RandTools.getRandomIntInclusive( this.nRandSpecIdMin, this.nRandSpecIdMax );
-
-    return this.get_or_create_by_arguments1_etc(
-      ( elementCount, randomOffsetMin, randomOffsetMax, nRandSpecId ) => {
-
-        // For debug.
-        //if ( Number.isNaN( elementCount ) ) {
-        //  debugger;
-        //}
-
-        // Note: nRandSpecId is not used when generating number array.
-        return RandTools.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax );
-      },
+    return this.get_or_create_by_arguments1_etc( Bag.create_by,
       elementCount, randomOffsetMin, randomOffsetMax, nRandSpecId );
+  }
+
+  /**
+   */
+  static create_by( elementCount, randomOffsetMin, randomOffsetMax, nRandSpecId ) {
+
+    // For debug.
+    //if ( Number.isNaN( elementCount ) ) {
+    //  debugger;
+    //}
+
+    let numberArray = Recyclable.Array.Pool.get_or_create_by( elementCount );
+
+    // Note: nRandSpecId is not used when generating number array.
+    RandTools.fill_numberArray( numberArray, randomOffsetMin, randomOffsetMax );
+    return numberArray;
   }
 
 }
