@@ -4,7 +4,7 @@ import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
-import { Root, RootPool } from "./Operation_Base.js";
+import { Root } from "./Operation_Base.js";
 
 /**
  * An array of operations. Every time appending operation, one or parallel twin operations could be appended.
