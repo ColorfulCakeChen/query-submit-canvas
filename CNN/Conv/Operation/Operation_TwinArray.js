@@ -105,6 +105,10 @@ class TwinArray extends Root {
     //
     // Note: The this.output0 and this.output1 are created by .endingDummyOperation (i.e. not by this), they should be released
     // by .endingDummyOperation.
+    //
+    // Q: Why not just use read-only property to return .endingDummyOperation.outputX?
+    // A: Because the parent class (i.e. Operation.Root) has read-write .output0 and .output1 property, they can not become
+    //    read-only in here (i.e. in sub-class).
     {
       if ( this.output1 )
         this.output1 = null;
