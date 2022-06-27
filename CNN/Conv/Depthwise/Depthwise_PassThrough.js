@@ -133,6 +133,7 @@ let PassThrough_FiltersArray_BiasesArray
       this.filtersShape.disposeResources_and_recycleToPool();
       this.filtersShape = null;
     }
+
     super.disposeResources();
   }
 
