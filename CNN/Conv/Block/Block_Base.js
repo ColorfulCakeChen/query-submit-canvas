@@ -316,7 +316,7 @@ class Base extends Recyclable.Root {
   /**
    * Used as default Block.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Block.BasePool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "Block.Base.Pool", Base, Base.setAsConstructor );
 
   /**
    */
