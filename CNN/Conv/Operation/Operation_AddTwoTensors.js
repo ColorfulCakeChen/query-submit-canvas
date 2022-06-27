@@ -66,8 +66,14 @@ class AddTwoTensors extends Root {
 
   /** @override */
   disposeResources() {
+
+    if ( this.boundsArraySet ) {
+      this.boundsArraySet.disposeResources_and_recycleToPool();
+      this.boundsArraySet = null;
+    }
+
     this.apply = null;
-//!!!
+
     super.disposeResources();
   }
 
@@ -123,7 +129,7 @@ class AddTwoTensors extends Root {
         + `input1 channel count ( ${inputScaleBoundsArray1.channelCount} ).`
       );
 
-    this.boundsArraySet = BoundsArraySet.InputsOutputsPool.Singleton.get_or_create_by( inputScaleBoundsArray0, inputScaleBoundsArray1,
+    this.boundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by( inputScaleBoundsArray0, inputScaleBoundsArray1,
       inputScaleBoundsArray0.channelCount
     );
 
@@ -185,7 +191,7 @@ class AddTwoTensors extends Root {
 
       this.output0.scaleBoundsArray = this.boundsArraySet.output0;
 
-      // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
+      // Release for reducing memory usage. (Since it has been transferred to inside the output tensor placeholder.)
       {
         this.boundsArraySet.output0 = null; // Because it has already been transferred to TensorPlaceholder this.output0
         this.boundsArraySet.disposeResources_and_recycleToPool();
