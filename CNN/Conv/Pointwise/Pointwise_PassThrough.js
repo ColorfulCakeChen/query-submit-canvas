@@ -302,7 +302,12 @@ class PassThrough extends PassThrough_FiltersArray_BiasesArray( TwoTensors.filte
  *
  * @see TwoTensors.filtersTensor4d_biasesTensor3d
  */
-class AllZeros extends TwoTensors.filtersTensor4d_biasesTensor3d() {
+class AllZeros extends Recyclable.Base( TwoTensors.filtersTensor4d_biasesTensor3d() ) {
+
+  /**
+   * Used as default Pointwise.AllZeros provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Pointwise.AllZeros.Pool", AllZeros, AllZeros.setAsConstructor );
 
   /**
    * @param {number}  inputChannelCount      The channel count of input.
@@ -311,26 +316,70 @@ class AllZeros extends TwoTensors.filtersTensor4d_biasesTensor3d() {
    */
   constructor( inputChannelCount, outputChannelCount, bBias ) {
     super();
+    AllZeros.setAsConstructor_self.call( this, inputChannelCount, outputChannelCount, bBias );
+  }
+
+  /** @override */
+  static setAsConstructor( inputChannelCount, outputChannelCount, bBias ) {
+    super.setAsConstructor();
+    AllZeros.setAsConstructor_self.call( this, inputChannelCount, outputChannelCount, bBias );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( inputChannelCount, outputChannelCount, bBias ) {
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
 
     if ( inputChannelCount <= 0 )
-      throw `Pointwise.AllZeros.constructor(): inputChannelCount ( ${inputChannelCount} ) must be positive integer.`;
+      throw `Pointwise.AllZeros.setAsConstructor_self(): inputChannelCount ( ${inputChannelCount} ) must be positive integer.`;
 
     if ( outputChannelCount <= 0 )
-      throw `Pointwise.AllZeros.constructor(): outputChannelCount ( ${outputChannelCount} ) must be positive integer.`;
+      throw `Pointwise.AllZeros.setAsConstructor_self(): outputChannelCount ( ${outputChannelCount} ) must be positive integer.`;
 
-    let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
-    let biasesShape =  [ 1, 1, outputChannelCount ];
+    let filtersShape;
+    let biasesShape;
+    try {
+      filtersShape = Recyclable.Array.Pool.get_or_create_by( 4 );
+      filtersShape[ 0 ] = 1;
+      filtersShape[ 1 ] = 1;
+      filtersShape[ 2 ] = inputChannelCount;
+      filtersShape[ 3 ] = outputChannelCount;
 
-    this.filtersTensor4d = tf.zeros( filtersShape );
+      biasesShape = Recyclable.Array.Pool.get_or_create_by( 3 );
+      biasesShape[ 0 ] = 1;
+      biasesShape[ 1 ] = 1;
+      biasesShape[ 2 ] = outputChannelCount;
 
-    if ( this.bBias ) {
-      this.biasesTensor3d = tf.zero( biasesShape );    // Generate bias for just adding zero. (i.e. equals no bias).
+      this.filtersTensor4d = tf.zeros( filtersShape );
+
+      if ( this.bBias ) {
+        this.biasesTensor3d = tf.zero( biasesShape );    // Generate bias for just adding zero. (i.e. equals no bias).
+      }
+
+      this.bInitOk = true;
+
+    } catch ( e ) {
+      throw e;
+
+    } finally {
+      if ( filtersShape ) {
+        filtersShape.disposeResources_and_recycleToPool();
+        filtersShape = null;
+      }
+      if ( biasesShape ) {
+        biasesShape.disposeResources_and_recycleToPool();
+        biasesShape = null;
+      }
     }
 
-    this.bInitOk = true;
+  }
+
+  /** @override */
+  disposeResources() {
+    this.bInitOk = false;
+    super.disposeResources(); // Release .filtersTensor4d and biasesTensor3d.
   }
 
 }
