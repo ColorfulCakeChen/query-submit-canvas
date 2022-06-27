@@ -878,3 +878,8 @@ Params.nActivationId =            new ParamDesc.ActivationFunction(  "nActivatio
 
 Params.bKeepInputTensor =         new ParamDesc.Bool(               "bKeepInputTensor" );
 
+
+//!!! ...unfinished... (2022/06/27)
+// Build static parameterToSequenceIdMap
+//
+
