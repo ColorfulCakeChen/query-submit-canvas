@@ -1,6 +1,7 @@
 export { FiltersArray_BiasesArray };
 
 import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
@@ -220,16 +221,16 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
     let bInitOk;
 
-    Pool.Array.Singleton.sessionCall( () => {
+    Recyclable.Array.Pool.sessionCall( () => {
 
       // It will be filled with: [ boundsArraySet, poolWindowShape, filtersShape, filtersArray, biasesShape, biasesArray ].
       // It is mainly used for preventing these elements been recycled by itself recycling pool.
       //
-      let keptObjectArray = Pool.Array.Singleton.get_or_create_by( 6 );
+      let keptObjectArray = Recyclable.Array.Pool.get_or_create_by( 6 );
 
-      FiltersBiasesPartInfoPool.Singleton.sessionCall( () => {
-        ChannelPartInfoPool.Singleton.sessionCall( () => {
-          Pool.Array.Singleton.sessionCall( () => {
+      FiltersBiasesPartInfo.Pool.sessionCall( () => {
+        ChannelPartInfo.Pool.sessionCall( () => {
+          Recyclable.Array.Pool.sessionCall( () => {
 
             bInitOk = FiltersArray_BiasesArray.init_internal.call( this,
               inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray );
@@ -339,12 +340,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
         this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
         // Note: avg/max pooling do not have this.filtersShape to be extracted.
-        this.poolWindowShape = Pool.Array.Singleton.get_or_create_by( 2 );
+        this.poolWindowShape = Recyclable.Array.Pool.get_or_create_by( 2 );
         this.poolWindowShape[ 0 ] = this.filterHeight;
         this.poolWindowShape[ 1 ] = this.filterWidth;
 
         if ( this.bBias ) {
-          this.biasesShape = Pool.Array.Singleton.get_or_create_by( 1 );
+          this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 1 );
           this.biasesShape[ 0 ] = this.outputChannelCount;
 
           biasesWeightCount_extracted = this.outputChannelCount;
@@ -356,11 +357,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 //             new ChannelPartInfo( this.inputChannelCount ) ] )
 //         ];
 
-        aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
-        aChannelPartInfoArray[ 0 ] = ChannelPartInfoPool.Singleton.get_or_create_by( this.inputChannelCount );
+        aChannelPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 1 );
+        aChannelPartInfoArray[ 0 ] = ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount );
 
-        aFiltersBiasesPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
-        aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
+        aFiltersBiasesPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 1 );
+        aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfo.Pool.get_or_create_by( aChannelPartInfoArray );
 
       } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
 
@@ -375,11 +376,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 //                 new ChannelPartInfo( this.inputChannelCount ) ] )
 //             ];
 
-            aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
-            aChannelPartInfoArray[ 0 ] = ChannelPartInfoPool.Singleton.get_or_create_by( this.inputChannelCount );
+            aChannelPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 1 );
+            aChannelPartInfoArray[ 0 ] = ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount );
 
-            aFiltersBiasesPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
-            aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
+            aFiltersBiasesPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 1 );
+            aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfo.Pool.get_or_create_by( aChannelPartInfoArray );
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
@@ -401,20 +402,20 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 //                 new ChannelPartInfo( this.inputChannelCount_higherHalf ) ] )
 //             ];
 
-            aFiltersBiasesPartInfoArray = Pool.Array.Singleton.get_or_create_by( 2 );
+            aFiltersBiasesPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 2 );
 
             {
-              aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
-              aChannelPartInfoArray[ 0 ] = ChannelPartInfoPool.Singleton.get_or_create_by( this.inputChannelCount_lowerHalf );
+              aChannelPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 1 );
+              aChannelPartInfoArray[ 0 ] = ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf );
 
-              aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
+              aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfo.Pool.get_or_create_by( aChannelPartInfoArray );
             }
 
             {
-              aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
-              aChannelPartInfoArray[ 0 ] = ChannelPartInfoPool.Singleton.get_or_create_by( this.inputChannelCount_higherHalf );
+              aChannelPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 1 );
+              aChannelPartInfoArray[ 0 ] = ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_higherHalf );
 
-              aFiltersBiasesPartInfoArray[ 1 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
+              aFiltersBiasesPartInfoArray[ 1 ] = FiltersBiasesPartInfo.Pool.get_or_create_by( aChannelPartInfoArray );
             }
             break;
 
@@ -436,14 +437,14 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 //                 new ChannelPartInfo( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft ) ] )
 //             ];
 
-            aChannelPartInfoArray = Pool.Array.Singleton.get_or_create_by( 2 );
+            aChannelPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 2 );
             aChannelPartInfoArray[ 0 ]
-              = ChannelPartInfoPool.Singleton.get_or_create_by( this.inputChannelCount_lowerHalf );
+              = ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf );
             aChannelPartInfoArray[ 1 ]
-              = ChannelPartInfoPool.Singleton.get_or_create_by( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft );
+              = ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft );
 
-            aFiltersBiasesPartInfoArray = Pool.Array.Singleton.get_or_create_by( 1 );
-            aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfoPool.Singleton.get_or_create_by( aChannelPartInfoArray );
+            aFiltersBiasesPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 1 );
+            aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfo.Pool.get_or_create_by( aChannelPartInfoArray );
             break;
 
           default:
@@ -454,7 +455,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
             break;
         }
 
-        this.filtersShape = Pool.Array.Singleton.get_or_create_by( 4 );
+        this.filtersShape = Recyclable.Array.Pool.get_or_create_by( 4 );
         this.filtersShape[ 0 ] = this.filterHeight;
         this.filtersShape[ 1 ] = this.filterWidth;
         this.filtersShape[ 2 ] = this.inputChannelCount;
@@ -463,23 +464,23 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
         filtersWeightCount_extracted = this.filterHeight * this.filterWidth * this.inputChannelCount_toBeExtracted * this.channelMultiplier;
 
         if ( this.bBias ) {
-          this.biasesShape = Pool.Array.Singleton.get_or_create_by( 1 );
+          this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 1 );
           this.biasesShape[ 0 ] = this.outputChannelCount;
 
           biasesWeightCount_extracted = this.outputChannelCount_toBeExtracted;
         }
 
       } else { // No depthwise (i.e. zero) (so no channel multiplier).
-        aFiltersBiasesPartInfoArray = Pool.Array.Singleton.get_or_create_by( 0 );
+        aFiltersBiasesPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 0 );
         // Note: In this case, even if ( this.bBias == true ), the biasesArray will still not be extracted.
       }
     }
 
     // Prepare result filters and biases array.
     if ( this.filtersShape )
-      this.filtersArray = Pool.Array.Singleton.get_or_create_by( tf.util.sizeFromShape( this.filtersShape ) );
+      this.filtersArray = Recyclable.Array.Pool.get_or_create_by( tf.util.sizeFromShape( this.filtersShape ) );
     if ( this.biasesShape )
-      this.biasesArray = Pool.Array.Singleton.get_or_create_by( tf.util.sizeFromShape( this.biasesShape ) );
+      this.biasesArray = Recyclable.Array.Pool.get_or_create_by( tf.util.sizeFromShape( this.biasesShape ) );
 
     // Calculate weights count of filters and biases to be extracted.
     let weightsCount_extracted = 0;
@@ -521,7 +522,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 //!!! (2022/06/22 Remarked) Use pool instead.
 //        this.boundsArraySet = new BoundsArraySet.Depthwise( inputScaleBoundsArray, this.outputChannelCount );
 
-        this.boundsArraySet = BoundsArraySet.DepthwisePool.Singleton.get_or_create_by( inputScaleBoundsArray, this.outputChannelCount );
+        this.boundsArraySet = BoundsArraySet.Depthwise.Pool.get_or_create_by( inputScaleBoundsArray, this.outputChannelCount );
       }
 
       // Round 1
@@ -579,27 +580,27 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     }
 
     if ( this.biasesArray ) {
-      Pool.Array.Singleton.recycle( this.biasesArray );
+      Recyclable.Array.Pool.recycle( this.biasesArray );
       this.biasesArray = null;
     }
 
     if ( this.biasesShape ) {
-      Pool.Array.Singleton.recycle( this.biasesShape );
+      Recyclable.Array.Pool.recycle( this.biasesShape );
       this.biasesShape = null;
     }
 
     if ( this.filtersArray ) {
-      Pool.Array.Singleton.recycle( this.filtersArray );
+      Recyclable.Array.Pool.recycle( this.filtersArray );
       this.filtersArray = null;
     }
 
     if ( this.filtersShape ) {
-      Pool.Array.Singleton.recycle( this.filtersShape );
+      Recyclable.Array.Pool.recycle( this.filtersShape );
       this.filtersShape = null;
     }
 
     if ( this.poolWindowShape ) {
-      Pool.Array.Singleton.recycle( this.poolWindowShape );
+      Recyclable.Array.Pool.recycle( this.poolWindowShape );
       this.poolWindowShape = null;
     }
 
