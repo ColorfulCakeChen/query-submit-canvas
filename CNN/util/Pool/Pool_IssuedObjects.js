@@ -152,15 +152,21 @@ class IssuedObjects {
    *   A function to be called. It is viewed as a session. All objects the function got by .get_or_create_by() will be recycled
    * except the objects of the function's returned value (an object or an object array).
    *
+   * @return {Object} thisArg
+   *   The value of this provided for the call to function pfn.
+   *
+   * @return {any} restArgs
+   *   All other arguments will be passes into thisArg.pfn().
+   *
    * @return {any}
    *   Return anything which the pfn() returned. If the returned value is an object or an array of object, these objects (if they
    * inside IssuedObjects) will be kept (i.e. not be recycled) and become belonging to the parent session.
    */
-  sessionCall( pfn ) {
+  sessionCall( pfn, thisArg, ...restArgs ) {
     IssuedObjects.session_push.call( this );
     let returnedValue;
     try {
-      returnedValue = pfn();
+      returnedValue = pfn.apply( thisArg, restArgs );
     } finally {
       IssuedObjects.session_pop.call( this, returnedValue );
     }
