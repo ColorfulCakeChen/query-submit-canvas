@@ -960,17 +960,18 @@ class Base {
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
    *
-   * @param {string} interleaveName  A string for debug message of this interleaving.
-   * @param {Object} parametersDesc  Its .toString() for debug message of this block.
+   * @param {string} interleaveName1  The 1st part string for debug message of this interleaving.
+   * @param {string} interleaveName2  The 1st part string for debug message of this interleaving.
+   * @param {Object} parametersDesc   Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return this object which has been modifed in place.
    */
-  modify_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo, interleaveName, parametersDesc ) {
+  modify_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo, interleaveName1, interleaveName2, parametersDesc ) {
 
     if ( ( this.depth % 2 ) != 0 )
       throw Error( `NumberImage.Base.modify_byInterleave_asGrouptTwo(): `
-        + `${interleaveName}: `                   
+        + `${interleaveName1}${ interleaveName2 ? "_" :"" }${interleaveName2}: `
         + `channel count ( ${this.depth} ) must be even (i.e. divisible by 2). `
         + `(${parametersDesc})`
       );
@@ -996,10 +997,11 @@ class Base {
    * @param {NumberImage.Base} imageOutArray[ 0 ]   The first output image.
    * @param {NumberImage.Base} imageOutArray[ 1 ]   The second output image.
    *
-   * @param {string} splitName       A string for debug message of this splitting.
+   * @param {string} splitName1      The 1st part string for debug message of this splitting.
+   * @param {string} splitName2      The 2nd part string for debug message of this splitting.
    * @param {Object} parametersDesc  Its .toString() for debug message of this block.
    */
-  static calcSplitAlongAxisId2( imageIn, imageOutArray, splitName, parametersDesc ) {
+  static calcSplitAlongAxisId2( imageIn, imageOutArray, splitName1, splitName2, parametersDesc ) {
 
     imageOutArray.length = 2;
     imageOutArray[ 0 ] = null;
@@ -1061,14 +1063,15 @@ class Base {
   /**
    * @param {NumberImage.Base} imageIn1   The source image1 to be processed.
    * @param {NumberImage.Base} imageIn2   The source image2 to be processed.
-   * @param {string} concatName           A string for debug message of this concatenation.
+   * @param {string} concatName1          The 1st part string for debug message of this concatenation.
+   * @param {string} concatName2          The 2nd part string for debug message of this concatenation.
    * @param {Object} parametersDesc       Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return concatenated image along the axis id 2. If imageIn1 is null, return imageIn2. If imageIn2 is null, return imageIn1.
    * If both imageIn1 and imageIn2 is null, return null.
    */
-  static calcConcatAlongAxisId2( imageIn1, imageIn2, concatName, parametersDesc ) {
+  static calcConcatAlongAxisId2( imageIn1, imageIn2, concatName1, concatName2, parametersDesc ) {
 
     if ( null == imageIn1 ) {
       if ( null == imageIn2 )
@@ -1083,11 +1086,11 @@ class Base {
     }
 
     if ( imageIn1.height != imageIn2.height ),
-      throw Error( `${concatName} shape imageIn1.height (${imageIn1.height}) `
+      throw Error( `${concatName1}${ concatName2 ? "_" :"" }${concatName2}: shape imageIn1.height (${imageIn1.height}) `
         + `should match imageIn2.height (${imageIn2.height}). (${parametersDesc})` );
 
     if ( imageIn1.width != imageIn2.width ),
-      throw Error( `${concatName} shape imageIn1.width (${imageIn1.width}) `
+      throw Error( `${concatName1}${ concatName2 ? "_" :"" }${concatName2}: shape imageIn1.width (${imageIn1.width}) `
         + `should match imageIn2.width (${imageIn2.width}). (${parametersDesc})` );
 
     let imageOutLength = ( imageIn1.height * imageIn1.width * imageIn1.depth ) + ( imageIn2.height * imageIn2.width * imageIn2.depth );
@@ -1144,7 +1147,7 @@ class Base {
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
    *
-   * @param {string} concatShuffleSplitName  A string for debug message of this concatenation-shuffle-split.
+   * @param {string} concatShuffleSplitName  The 1st part string for debug message of this concatenation-shuffle-split.
    * @param {Object} parametersDesc          Its .toString() for debug message of this block.
    */
   static calcConcatShuffleSplit(
@@ -1172,20 +1175,20 @@ class Base {
 
     // 1.
     let concatResult = Base.calcConcatAlongAxisId2( imageInArray[ 0 ], imageInArray[ 1 ],
-      `${concatShuffleSplitName}_concat`, parametersDesc );
+      "concatShuffleSplitName", "concat", parametersDesc );
 
     // 2.
     let shuffleResult;
     if ( bShuffle ) {
       shuffleResult = concatResult.modify_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo,
-        `${concatShuffleSplitName}_interleave_asGrouptTwo`, parametersDesc );
+        "concatShuffleSplitName", "interleave_asGrouptTwo", parametersDesc );
     } else {
       shuffleResult = concatResult;
     }
  
     // 3.
     if ( bSplit ) {
-      Base.calcSplitAlongAxisId2( shuffleResult, imageOutArray, `${concatShuffleSplitName}_split`, parametersDesc );
+      Base.calcSplitAlongAxisId2( shuffleResult, imageOutArray, "concatShuffleSplitName", "split", parametersDesc );
     } else {
       imageInArray.length = 2;
       imageOutArray[ 0 ] = shuffleResult;
