@@ -21,25 +21,25 @@ class Case {
 
     try {
 
-      if ( TensorPlaceholder.BasePool.Singleton.issuedCount != 0 )
+      if ( TensorPlaceholder.Base.Pool.issuedCount != 0 )
         throw Error( `${this.assertPrefix}: memory leak. `
-          + `beginning issued TensorPlachodler count ( ${TensorPlaceholder.BasePool.Singleton.issuedCount} ) `
+          + `beginning issued TensorPlachodler count ( ${TensorPlaceholder.Base.Pool.issuedCount} ) `
           + `should be 0.`
         );
 
-      TensorPlaceholder.BasePool.Singleton.sessionCall( () => {
+      Pool.All.sessionCall( () => {
 
         let input0;
         if ( bInput0 )
-          input0 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
+          input0 = TensorPlaceholder.Base.Pool.get_or_create_by();
 
         let input1;
         if ( bInput1 )
-          input1 = TensorPlaceholder.BasePool.Singleton.get_or_create_by();
+          input1 = TensorPlaceholder.Base.Pool.get_or_create_by();
 
-        let TensorPlaceholderPool_issuedCount_before = TensorPlaceholder.BasePool.Singleton.issuedCount;
+        let TensorPlaceholderPool_issuedCount_before = TensorPlaceholder.Base.Pool.issuedCount;
 
-        this.operation = new classTested( input0, input1, outputTensorCount );
+        this.operation = classTested.Pool.get_or_create_by( input0, input1, outputTensorCount );
         this.operation.setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 );
 
         tf.tidy( () => {
@@ -87,7 +87,7 @@ class Case {
 
           this.operation.TensorPlaceholder_nullify_inputs_dispose_outputs();
 
-          let TensorPlaceholderPool_issuedCount_after = TensorPlaceholder.BasePool.Singleton.issuedCount;
+          let TensorPlaceholderPool_issuedCount_after = TensorPlaceholder.Base.Pool.issuedCount;
 
           if ( TensorPlaceholderPool_issuedCount_after != TensorPlaceholderPool_issuedCount_before )
             throw Error( `${this.assertPrefix}: memory leak. `
