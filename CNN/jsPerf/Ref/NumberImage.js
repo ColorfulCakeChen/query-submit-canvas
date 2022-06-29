@@ -614,11 +614,11 @@ class Base extends Recyclable.Root {
       return imageIn;
 
     if ( biasesArray == null )
-      throw Error( `${biasName} biasesArray (${biasesArray}) `
+      throw Error( `${biasName}: biasesArray (${biasesArray}) `
         + `should not be null. (${parametersDesc})` );
 
     if ( biasesArray.length != imageIn.depth )
-      throw Error( `${biasName} shape (${biasesArray.length}) `
+      throw Error( `${biasName}: shape (${biasesArray.length}) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})` );
 
     let index = 0;
@@ -728,27 +728,33 @@ class Base extends Recyclable.Root {
    *   Return a newly created object which is the result of adding this and another.
    */
   clone_byAdd( another, addName, parametersDesc ) {
-    let rHeight, rWidth, rDepth, rBoundsArraySet;
-    let resultArray;
+    let rHeight, rWidth, rDepth;
+    let imageOutNew;
+
+    // Q: Why not just modify this directly?
+    // A: The this might be the original input array which should not be modified at all. (because they might be used in another test.)
 
     if ( ( another.height == this.height ) && ( another.width == this.width ) && ( another.depth == this.depth ) ) { // Same size.
 
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      resultArray = new Float32Array( this.dataArray.length );
+      imageOutNew = Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
+        this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
+
       for ( let i = 0; i < this.dataArray.length; ++i ) {
-        resultArray[ i ] = this.dataArray[ i ] + another.dataArray[ i ];
+        imageOutNew.dataArray[ i ] = this.dataArray[ i ] + another.dataArray[ i ];
       }
 
     } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == this.depth ) ) { // Broadcast another to this.
 
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      resultArray = new Float32Array( this.dataArray.length );
+      imageOutNew = Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
+        this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
 
       let i = 0;
       for ( let y = 0; y < rHeight; ++y ) {
         for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
-            resultArray[ i ] = this.dataArray[ i ] + another.dataArray[ c ];
+            imageOutNew.dataArray[ i ] = this.dataArray[ i ] + another.dataArray[ c ];
           }
         }
       }
@@ -756,13 +762,14 @@ class Base extends Recyclable.Root {
     } else if ( ( this.height == 1 ) && ( this.width == 1 ) && ( this.depth == another.depth ) ) { // Broadcast this to another.
 
       rHeight = another.height; rWidth = another.width; rDepth = another.depth;
-      resultArray = new Float32Array( another.dataArray.length );
+      imageOutNew = Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
+        this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
 
       let i = 0;
       for ( let y = 0; y < rHeight; ++y ) {
         for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
-            resultArray[ i ] = this.dataArray[ c ] + another.dataArray[ i ];
+            imageOutNew.dataArray[ i ] = this.dataArray[ c ] + another.dataArray[ i ];
           }
         }
       }
@@ -778,8 +785,7 @@ class Base extends Recyclable.Root {
     }
 
     {
-      rBoundsArraySet = new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
-      rBoundsArraySet.output0
+      imageOutNew.boundsArraySet.output0
         .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
 
          // Note: Not add_all_byScaleBoundsArray_one(). The reason is that it is supported to broadcast in the same channel
@@ -788,9 +794,6 @@ class Base extends Recyclable.Root {
         .add_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
     }
 
-    // Q: Why not just modify this directly?
-    // A: The this might be the original input array which should not be modified at all. (because they might be used in another test.)
-    let imageOutNew = new Base( rHeight, rWidth, rDepth, resultArray, rBoundsArraySet );
     return imageOutNew;
   }
 
@@ -808,27 +811,33 @@ class Base extends Recyclable.Root {
    *   Return a newly created object which is the result of multiplying this and another.
    */
   clone_byMultiply( another, multiplyName, parametersDesc ) {
-    let rHeight, rWidth, rDepth, rBoundsArraySet;
-    let resultArray;
+    let rHeight, rWidth, rDepth;
+    let imageOutNew;
+
+    // Q: Why not just modify this directly?
+    // A: The this might be the original input array which should not be modified at all. (because they might be used in another test.)
 
     if ( ( another.height == this.height ) && ( another.width == this.width ) && ( another.depth == this.depth ) ) { // Same size.
 
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      resultArray = new Float32Array( this.dataArray.length );
+      imageOutNew = Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
+        this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
+
       for ( let i = 0; i < this.dataArray.length; ++i ) {
-        resultArray[ i ] = this.dataArray[ i ] * another.dataArray[ i ];
+        imageOutNew.dataArray[ i ] = this.dataArray[ i ] * another.dataArray[ i ];
       }
 
     } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == this.depth ) ) { // Broadcast another to this.
 
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      resultArray = new Float32Array( this.dataArray.length );
+      imageOutNew = Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
+        this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
 
       let i = 0;
       for ( let y = 0; y < rHeight; ++y ) {
         for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
-            resultArray[ i ] = this.dataArray[ i ] * another.dataArray[ c ];
+            imageOutNew.dataArray[ i ] = this.dataArray[ i ] * another.dataArray[ c ];
           }
         }
       }
@@ -836,13 +845,14 @@ class Base extends Recyclable.Root {
     } else if ( ( this.height == 1 ) && ( this.width == 1 ) && ( this.depth == another.depth ) ) { // Broadcast this to another.
 
       rHeight = another.height; rWidth = another.width; rDepth = another.depth;
-      resultArray = new Float32Array( another.dataArray.length );
+      imageOutNew = Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
+        this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
 
       let i = 0;
       for ( let y = 0; y < rHeight; ++y ) {
         for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
-            resultArray[ i ] = this.dataArray[ c ] * another.dataArray[ i ];
+            imageOutNew.dataArray[ i ] = this.dataArray[ c ] * another.dataArray[ i ];
           }
         }
       }
@@ -858,8 +868,7 @@ class Base extends Recyclable.Root {
     }
 
     {
-      rBoundsArraySet = new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, another.boundsArraySet.output0, rDepth );
-      rBoundsArraySet.output0
+      imageOutNew.boundsArraySet.output0
         .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
 
          // Note: Not multiply_all_byScaleBoundsArray_one(). The reason is that it is supported to broadcast in the same channel
@@ -868,9 +877,6 @@ class Base extends Recyclable.Root {
         .multiply_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
     }
 
-    // Q: Why not just modify this directly?
-    // A: The this might be the original input array which should not be modified at all. (because they might be used in another test.)
-    let imageOutNew = new Base( rHeight, rWidth, rDepth, resultArray, rBoundsArraySet );
     return imageOutNew;
   }
 
