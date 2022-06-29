@@ -395,7 +395,8 @@ class Base extends Recyclable.Root {
 
     let { channelMultiplier, dilationHeight, dilationWidth,
           stridesHeight, stridesWidth, padHeightTop, padWidthLeft,
-          outputHeight, outputWidth, outputChannelCount, outputElementCount } = padInfo;
+          outputHeight, outputWidth, outputChannelCount, //outputElementCount
+    } = padInfo;
 
     padInfo.disposeResources_and_recycleToPool();
     padInfo = null;
@@ -429,9 +430,19 @@ class Base extends Recyclable.Root {
           + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})` );
     }
 
-    let imageOut = new Base(
-      outputHeight, outputWidth, outputChannelCount, new Float32Array( outputElementCount ),
-      new BoundsArraySet.Depthwise( imageIn.boundsArraySet.output0, outputChannelCount ) );
+    let preFilledValue;
+    {
+      // Max pooling
+      if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) {
+        preFilledValue = Number.NEGATIVE_INFINITY; // So that any value is greater than initialized value.
+      } else {
+        preFilledValue = 0;
+      }
+    }
+
+    let imageOut = Base.Pool.get_or_creae_by(
+      outputHeight, outputWidth, outputChannelCount, preFilledValue,
+      imageIn.boundsArraySet.output0, null, BoundsArraySet.Depthwise, null );
 
     imageOut.boundsArraySet.set_bPassThrough_all( bPassThrough );
 
@@ -447,19 +458,11 @@ class Base extends Recyclable.Root {
         imageOut.boundsArraySet.afterFilter.set_all_byN( 0 );
 
         // If true, the .boundsArraySet.afterFilter for the filter position is calculated.
-        filtersArray_bBoundsCalculated = new Array( depthwiseFiltersArray.length );
+        filtersArray_bBoundsCalculated = Recyclable.Array.Pool.get_or_create_by( depthwiseFiltersArray.length );
         filtersArray_bBoundsCalculated.fill( false );
 
         tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
       }
-    }
-
-//!!! ...unfinished... (2022/06/25) Fill the array with zero for initialization. for mon-max pooling.
-// Perhaps, NumberImage's .setAsConstructor() should do that.
-
-    // Max pooling
-    if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) {
-        imageOut.dataArray.fill( Number.NEGATIVE_INFINITY ); // So that any value is greater than initialized value.
     }
 
     // Depthwise Convolution
@@ -566,6 +569,11 @@ class Base extends Recyclable.Root {
       tBounds = null;
     }
 
+    if ( filtersArray_bBoundsCalculated ) {
+      filtersArray_bBoundsCalculated.disposeResources_and_recycleToPool();
+      filtersArray_bBoundsCalculated = null;
+    }
+
     // Bias
     imageOut.modify_byBias( bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
 
@@ -574,7 +582,7 @@ class Base extends Recyclable.Root {
       // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
       // by .afterBias, bPassThrough and activation function's output range.
       imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
-!!!
+
       // Before activation function, scale every element according to its channel.
       Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
         depthwiseName, "ActivationEscapingScale", parametersDesc );
