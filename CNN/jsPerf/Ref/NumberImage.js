@@ -46,24 +46,33 @@ class Base extends Recyclable.Root {
    *   The value bounds of all pixels of this image. If null, assume all image pixels are inside the default value bounds
    * (i.e. Weights.Base.ValueBounds).
    *
+   * @param {ActivationEscaping.ScaleBoundsArray} input0_ScaleBoundsArray
+   *   The element value bounds (per channel) of 1st input (can NOT null). It is the domain of the operation. It (from constructor)
+   * will be cloned. This behavior is different from BoundsArraySet.
+   *
+   * @param {ActivationEscaping.ScaleBoundsArray} input1_ScaleBoundsArray
+   *   The element value bounds (per channel) of 2nd input (can null or undefined). It is the domain of the operation. It (from constructor)
+   * will be cloned. This behavior is different from BoundsArraySet.
+   *
    */
 
 //!!! (2022/06/29 Remarked) Replaced by filledValue and aBounds.
 //  constructor( height, width, depth, dataArray, boundsArraySet ) {
 
-  constructor( height, width, depth, preFilledValue, aBounds ) {
+  constructor( height, width, depth, preFilledValue, aBounds, input0_ScaleBoundsArray, input1_ScaleBoundsArray ) {
     super();
-    Base.setAsConstructor_self.call( this, height, width, depth, preFilledValue, aBounds );
+    Base.setAsConstructor_self.call( this, height, width, depth, preFilledValue, aBounds, input0_ScaleBoundsArray, input1_ScaleBoundsArray );
   }
 
   /** @override */
-  static setAsConstructor( height, width, depth, preFilledValue, aBounds ) {
+  static setAsConstructor( height, width, depth, preFilledValue, aBounds, input0_ScaleBoundsArray, input1_ScaleBoundsArray ) {
     super.setAsConstructor();
+    Base.setAsConstructor_self.call( this, height, width, depth, preFilledValue, aBounds, input0_ScaleBoundsArray, input1_ScaleBoundsArray );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( height, width, depth, preFilledValue, aBounds ) {
+  static setAsConstructor_self( height, width, depth, preFilledValue, aBounds, input0_ScaleBoundsArray, input1_ScaleBoundsArray ) {
     this.height = height;
     this.width = width;
     this.depth = depth;
@@ -74,11 +83,12 @@ class Base extends Recyclable.Root {
     this.dataArray = Recyclable.Array.Pool.get_or_create_by( elementCount );
     this.dataArray.fill( preFilledValue );
 
-//!!! ...unfinished... (2022/06/29)
-// Who is responsible for releasing inputScaleBoundsArray (i.e. this.boundsArraySet.inputX)?
+    // Note: NumberImage always owns itself input bounds array. (Although BoundsArraySet does not.)
+    this.input0_ScaleBoundsArray = input0_ScaleBoundsArray.clone();
+    this.input1_ScaleBoundsArray = input1_ScaleBoundsArray?.clone();
 
-    let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( depth );
-    this.boundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by( inputScaleBoundsArray, null, depth, undefined );
+    this.boundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by(
+      input0_ScaleBoundsArray, input1_ScaleBoundsArray, depth, undefined );
 
     // Default value bounds for an image.
     //
@@ -93,12 +103,14 @@ class Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-
-//!!! ...unfinished... (2022/06/29)
-// Who is responsible for releasing inputScaleBoundsArray (i.e. this.boundsArraySet.inputX)?
-
     this.boundsArraySet.disposeResources_and_recycleToPool();
     this.boundsArraySet = null;
+
+    this.input1_ScaleBoundsArray?.disposeResources_and_recycleToPool();
+    this.input1_ScaleBoundsArray = null;
+
+    this.input0_ScaleBoundsArray.disposeResources_and_recycleToPool();
+    this.input0_ScaleBoundsArray = null;
 
     this.dataArray.disposeResources_and_recycleToPool();
     this.dataArray = null;
@@ -111,7 +123,15 @@ class Base extends Recyclable.Root {
   }
 
   clone() {
-    let result = Base.Pool.get_or_create_by( this.height, this.width, this.depth, new Float32Array( this.dataArray ), this.boundsArraySet.clone() );
+    let result = Base.Pool.get_or_create_by( this.height, this.width, this.depth,
+      undefined, undefined, this.boundsArraySet.input0, this.boundsArraySet.input1 );
+
+    for ( let i = 0; i < this.dataArray.length; ++i ) { // Copy image pixels.
+      result.dataArray [ i ] = this.dataArray[ i ];
+    }
+
+//!!! ...unfinished... (2022/06/29) Copy boundsArraySet.
+
     return result;
   }
 
