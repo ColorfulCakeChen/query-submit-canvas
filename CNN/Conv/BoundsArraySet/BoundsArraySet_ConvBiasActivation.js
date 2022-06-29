@@ -189,10 +189,12 @@ class ConvBiasActivation extends InputsOutputs {
     {
       this.input0 = aBoundsArraySet.input0;
 
-      if ( aBoundsArraySet.input1 )
+      if ( aBoundsArraySet.input1 ) {
         this.input1 = aBoundsArraySet.input1;
-      else
-        delete this.input1;
+      } else {
+        if ( this.input1 )
+          this.input1 = undefined;
+      }
     }
 
     this.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( aBoundsArraySet.afterUndoPreviousActivationEscaping );
