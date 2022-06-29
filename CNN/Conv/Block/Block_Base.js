@@ -597,7 +597,7 @@ class Base extends Recyclable.Root {
     // 2.2 The pointwise1 convolution.
     if ( this.pointwise1ChannelCount > 0 ) {
 
-      let pointwise1 = new Operation.Pointwise_SameWhenPassThrough(
+      let pointwise1 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
         this.operationArray.endingInput0,
         this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
         nHigherHalfDifferent_pointwise1,
@@ -647,7 +647,7 @@ class Base extends Recyclable.Root {
           }
         }
 
-        depthwise1 = new Operation.Depthwise_SameWhenPassThrough(
+        depthwise1 = Operation.Depthwise_SameWhenPassThrough.Pool.get_or_create_by(
           this.operationArray.endingInput0,
           this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
           this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
@@ -672,7 +672,7 @@ class Base extends Recyclable.Root {
         // Q: Why does depthwise2 use the same configuration as depthwise1?
         // A: To ensure both result have the same ( height, width ) so that could be inputted to concatenator). This is especially
         //    true for StridesPad.
-        depthwise2 = new Operation.Depthwise_SameWhenPassThrough(
+        depthwise2 = Operation.Depthwise_SameWhenPassThrough.Pool.get_or_create_by(
           depthwise2_input0,
           this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
           this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
@@ -708,7 +708,7 @@ class Base extends Recyclable.Root {
       // Even if no depthwise, however, a .endingInput1 is necessary for concat1 to operate on. So create a dummy one.
       if ( this.bDepthwise2Requested ) {
         // Note: The two inputs of depthwise12Dummy might be the same one in fact.
-        let depthwise12Dummy = new Operation.Root( this.operationArray.endingInput0, depthwise2_input0, 2 );
+        let depthwise12Dummy = Operation.Root.Pool.get_or_create_by( this.operationArray.endingInput0, depthwise2_input0, 2 );
         this.operationArray.operation_append( depthwise12Dummy );
       }
     }
@@ -718,7 +718,7 @@ class Base extends Recyclable.Root {
 
     // 4. Concat1
     if ( this.bConcat1Requested ) {
-      let concat1 = new Operation.ConcatAlongAxisId2( this.operationArray.endingInput0, this.operationArray.endingInput1 );
+      let concat1 = Operation.ConcatAlongAxisId2.Pool.get_or_create_by( this.operationArray.endingInput0, this.operationArray.endingInput1 );
       this.operationArray.operation_append( concat1 );
     }
 
@@ -783,7 +783,7 @@ class Base extends Recyclable.Root {
       //       - However, this situation is difficult to be handled. We re-design Params so that the pointwise20ChannelCount is always
       //           not zero.
       //
-      let pointwise20 = new Operation.Pointwise_SameWhenPassThrough(
+      let pointwise20 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
         this.operationArray.endingInput0,
         this.pointwise20ChannelCount, this.bPointwise20Bias, this.pointwise20ActivationId,
         nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2, pointwise20_channelShuffler_outputGroupCount
@@ -805,7 +805,7 @@ class Base extends Recyclable.Root {
             pointwise21_input0 = this.operationArray.endingInput0;
         }
 
-        pointwise21 = new Operation.Pointwise_SameWhenPassThrough(
+        pointwise21 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
           pointwise21_input0,
           this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
           nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2, pointwise20_channelShuffler_outputGroupCount
@@ -871,13 +871,13 @@ class Base extends Recyclable.Root {
 
       let addInput0ToPointwise20;
       if ( this.operationArray.endingInput0?.is_height_width_channelCount_same_byTensorPlaceholder( this.operationArray.input0 ) ) {
-        addInput0ToPointwise20 = new Operation.AddTwoTensors( this.operationArray.input0, this.operationArray.endingInput0 );
+        addInput0ToPointwise20 = Operation.AddTwoTensors.Pool.get_or_create_by( this.operationArray.input0, this.operationArray.endingInput0 );
       }
 
       // Note: Only input0 (not input1) will be used to add to output.
       let addInput0ToPointwise21;
       if ( this.operationArray.endingInput1?.is_height_width_channelCount_same_byTensorPlaceholder( this.operationArray.input0 ) ) {
-        addInput0ToPointwise21 = new Operation.AddTwoTensors( this.operationArray.input0, this.operationArray.endingInput1 );
+        addInput0ToPointwise21 = Operation.AddTwoTensors.Pool.get_or_create_by( this.operationArray.input0, this.operationArray.endingInput1 );
       }
 
       this.operationArray.operation_append( addInput0ToPointwise20, addInput0ToPointwise21 );
@@ -903,7 +903,7 @@ class Base extends Recyclable.Root {
           break;
       }
 
-      let concat2ShuffleSplit = new Operation.ConcatShuffleSplit(
+      let concat2ShuffleSplit = Operation.ConcatShuffleSplit.Pool.get_or_create_by(
         this.operationArray.endingInput0, this.operationArray.endingInput1,
         channelShuffler_ConcatPointwiseConv, bShuffleSplit, arrayTemp_forInterleave_asGrouptTwo );
 
@@ -953,7 +953,7 @@ class Base extends Recyclable.Root {
     progressParent, params, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
     arrayTemp_forInterleave_asGrouptTwo ) {
 
-    progressParent = progressParent ?? ( new ValueMax.Percentage.Aggregate() );
+    progressParent = progressParent ?? ( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let initer = this.initer(
       progressParent, params, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
@@ -1154,7 +1154,7 @@ class Base extends Recyclable.Root {
 
       let squeezeDepthwise0;
       {
-        squeezeDepthwise0 = new Operation.Depthwise_ConstantWhenPassThrough(
+        squeezeDepthwise0 = Operation.Depthwise_ConstantWhenPassThrough.Pool.get_or_create_by(
           this.operationArray.endingInput0,
           squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
           squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent
@@ -1167,7 +1167,7 @@ class Base extends Recyclable.Root {
 
       let squeezeDepthwise1;
       if ( this.pointwise21ChannelCount > 0 ) {
-        squeezeDepthwise1 = new Operation.Depthwise_ConstantWhenPassThrough(
+        squeezeDepthwise1 = Operation.Depthwise_ConstantWhenPassThrough.Pool.get_or_create_by(
           this.operationArray.endingInput1,
           squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
           squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent
@@ -1226,7 +1226,7 @@ class Base extends Recyclable.Root {
         const excitationPointwise0_outputChannelCount_lowerHalf = input0.channelCount_lowerHalf;
         const excitationPointwise0_nActivationId = this.squeezeExcitationActivationId;
 
-        excitationPointwise0 = new Operation.Pointwise_ConstantWhenPassThrough(
+        excitationPointwise0 = Operation.Pointwise_ConstantWhenPassThrough.Pool.get_or_create_by(
           this.operationArray.endingInput0,
           excitationPointwise0_outputChannelCount, excitationPointwise_bBias, excitationPointwise0_nActivationId,
           nPointwise_HigherHalfDifferent, excitationPointwise0_outputChannelCount_lowerHalf,
@@ -1244,7 +1244,7 @@ class Base extends Recyclable.Root {
         const excitationPointwise1_outputChannelCount_lowerHalf = input1.channelCount_lowerHalf;
         const excitationPointwise1_nActivationId = this.squeezeExcitationActivationId;
 
-        excitationPointwise1 = new Operation.Pointwise_ConstantWhenPassThrough(
+        excitationPointwise1 = Operation.Pointwise_ConstantWhenPassThrough.Pool.get_or_create_by(
           this.operationArray.endingInput1,
           excitationPointwise1_outputChannelCount, excitationPointwise_bBias, excitationPointwise1_nActivationId,
           nPointwise_HigherHalfDifferent, excitationPointwise1_outputChannelCount_lowerHalf,
@@ -1261,11 +1261,11 @@ class Base extends Recyclable.Root {
 
     // 4. Mutiply
     {
-      let multiply0 = new Operation.MultiplyTwoTensors( input0, this.operationArray.endingInput0 );
+      let multiply0 = Operation.MultiplyTwoTensors.Pool.get_or_create_by( input0, this.operationArray.endingInput0 );
 
       let multiply1;
       if ( this.pointwise21ChannelCount > 0 ) {
-        multiply1 = new Operation.MultiplyTwoTensors( input1, this.operationArray.endingInput1 );
+        multiply1 = Operation.MultiplyTwoTensors.Pool.get_or_create_by( input1, this.operationArray.endingInput1 );
       }
 
       this.operationArray.operation_append( multiply0, multiply1 );
@@ -1313,7 +1313,7 @@ class Base extends Recyclable.Root {
 
     const intermediate_nHigherHalfDifferent = nPointwise_HigherHalfDifferent;
 
-    let intermediatePointwise = new Operation.Pointwise_ConstantWhenPassThrough(
+    let intermediatePointwise = Operation.Pointwise_ConstantWhenPassThrough.Pool.get_or_create_by(
       inputTensorPlaceholder,
       intermediate_outputChannelCount, intermediate_bBias, intermediate_nActivationId,
       intermediate_nHigherHalfDifferent, intermediate_outputChannelCount_lowerHalf,
