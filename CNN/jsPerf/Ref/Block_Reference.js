@@ -395,6 +395,10 @@ class Base extends Recyclable.Root {
 
       block.TensorPlaceholder_dispose_inputs_dispose_outputs();
 
+
+!!! ...unfinished... (2022/06/29) should release NumberImage.
+
+
 //!!! (2022/06/10 Remarked) Moved to outter jsPerf_Block to also catch testParamsGenerator's exception.
 //     } catch ( e ) {
 //       let backendName = tf.getBackend();
@@ -1161,6 +1165,10 @@ class Base extends Recyclable.Root {
         imageOutArray, imageOutArray, bShuffle, bSplit,
         this.arrayTemp_forInterleave_asGrouptTwo, concat2Name, testParams.out );
     }
+
+
+!!! ...unfinished... (2022/06/29) should release NumberImage.
+
 
     return imageOutArray;
   }
