@@ -243,9 +243,9 @@ class InputsOutputs extends Recyclable.Root {
    * @return {InputsOutputs}
    *   Return this (modified) object.
    */
-  set_outputs_all_byBoundsArraySet_Outputs( aBoundsArraySet_Outputs ) {
-    this.output0.set_all_byScaleBoundsArray( aBoundsArraySet_Outputs.output0 );
-    this.output1?.set_all_byScaleBoundsArray( aBoundsArraySet_Outputs.output1 );
+  set_outputs_all_byBoundsArraySet_Outputs( aBoundsArraySet ) {
+    this.output0.set_all_byScaleBoundsArray( aBoundsArraySet.output0 );
+    this.output1?.set_all_byScaleBoundsArray( aBoundsArraySet.output1 );
     return this;
   }
 
