@@ -37,7 +37,7 @@ class Base extends Recyclable.Root {
   /**
    *
    * @param {number} preFilledValue
-   *   Use this value to fill the created .dataArray[].
+   *   Use this value to fill the created .dataArray[]. If undefined, the .dataArray will not be pre-filled any value.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} input0_ScaleBoundsArray
    *   The element value bounds (per channel) of 1st input (can NOT null). It is the domain of the operation. It (from constructor)
@@ -52,11 +52,11 @@ class Base extends Recyclable.Root {
    * BoundsArraySet.Depthwise, BoundsArraySetPointwise.
    *
    * @param {FloatValue.Bounds} aBounds
-   *   The value bounds of all pixels of this image. If null, assume all image pixels are inside the default value bounds
-   * (i.e. Weights.Base.ValueBounds).
+   *   The value bounds of all pixels of this image. If undefined, the .boundsArraySet will not be pre-filled any value.
    */
 
 //!!! (2022/06/29 Remarked) Replaced by filledValue and aBounds.
+//  (i.e. Weights.Base.ValueBounds).
 //  constructor( height, width, depth, dataArray, boundsArraySet ) {
 
   constructor( height, width, depth, preFilledValue,
@@ -88,7 +88,8 @@ class Base extends Recyclable.Root {
 
     let elementCount = height * width * depth;
     this.dataArray = Recyclable.Array.Pool.get_or_create_by( elementCount );
-    this.dataArray.fill( preFilledValue );
+    if ( preFilledValue != undefined )
+      this.dataArray.fill( preFilledValue );
 
     // Note: NumberImage always owns itself input bounds array. (Although BoundsArraySet does not.)
     this.input0_ScaleBoundsArray = input0_ScaleBoundsArray.clone();
@@ -96,14 +97,9 @@ class Base extends Recyclable.Root {
 
     this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by( input0_ScaleBoundsArray, input1_ScaleBoundsArray, depth, undefined );
 
-    // Default value bounds for an image.
-    //
-    // Note: Do not use .filledValue as bounds.
-    //
-    if ( aBounds ) {
+    // Default value bounds for an image. (Note: Do not use .filledValue as bounds.)
+    if ( aBounds != undefined ) {
       this.boundsArraySet.set_outputs_all_byBounds( aBounds );
-    } else {
-      this.boundsArraySet.set_outputs_all_byBounds( Weights.Base.ValueBounds ); // Assume all images are inside the default value bounds.
     }
   }
 
@@ -130,7 +126,10 @@ class Base extends Recyclable.Root {
 
   clone() {
     let result = Base.Pool.get_or_create_by( this.height, this.width, this.depth,
-      undefined, undefined, this.boundsArraySet.input0, this.boundsArraySet.input1 );
+      undefined, // Because .dataArray will be filled by copying.
+      this.boundsArraySet.input0, this.boundsArraySet.input1,
+      undefined  // Because .boundsArraySet will be filled by copying.
+    );
 
     for ( let i = 0; i < this.dataArray.length; ++i ) { // Copy image pixels.
       result.dataArray [ i ] = this.dataArray[ i ];
@@ -230,10 +229,9 @@ class Base extends Recyclable.Root {
           + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})` );
     }
 
-    let imageOutLength = ( imageIn.height * imageIn.width * pointwiseChannelCount );
     let imageOut = new Base(
-      imageIn.height, imageIn.width, pointwiseChannelCount, new Float32Array( imageOutLength ),
-      new BoundsArraySet.Pointwise( imageIn.boundsArraySet.output0, pointwiseChannelCount ) );
+      imageIn.height, imageIn.width, pointwiseChannelCount, 0,
+      imageIn.boundsArraySet.output0, null, BoundsArraySet.Pointwise, null );
 
 //!!! ...unfinished... (2022/06/25) Fill the array with zero for initialization.
 // Perhaps, NumberImage's .setAsConstructor() should do that.
@@ -1315,26 +1313,39 @@ class Base extends Recyclable.Root {
    * [ randomOffsetMin, randomOffsetMax].
    */
   static create_bySequenceRandom( height, width, channelCount, randomOffsetMin = 0, randomOffsetMax = 0, bAutoBounds = false ) {
-    let elementCount = height * width * channelCount;
+
 
     let tBounds;
     if ( bAutoBounds ) {
       tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
     }
 
-    let dataArray = RandTools.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax, tBounds );
+    let imageNew;
+    {
+      let preFilledValue = undefined; // Because it will be filled with generated random values.
+      let aBounds = undefined;  // Because .boundsArraySet will be filled later.
 
-    let boundsArraySet; // If null, assume all image pixels are inside the default value bounds (i.e. Weights.Base.ValueBounds).
-    if ( bAutoBounds ) {
-      let inputScaleBoundsArray = new ActivationEscaping.ScaleBoundsArray( channelCount );
-      inputScaleBoundsArray.set_all_byBounds( tBounds );
+      let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( channelCount );
+      inputScaleBoundsArray.set_all_byBounds( Weights.Base.ValueBounds );
 
-      boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, undefined, channelCount, undefined );
+      let imageNew = new Base( height, width, channelCount, preFilledValue,
+        inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, aBounds );
+
+      inputScaleBoundsArray.disposeResources_and_recycleToPool(); // Because NumberImage.Base has already copy it.
+      inputScaleBoundsArray = null;
     }
 
-    tBounds.disposeResources_and_recycleToPool();
+    RandTools.fill_numberArray( imageNew.dataArray, imageNew.dataArray.length, randomOffsetMin, randomOffsetMax, tBounds );
 
-    let imageNew = new Base( height, width, channelCount, dataArray, boundsArraySet );
+    if ( tBounds ) {
+      imageNew.boundsArraySet.set_outputs_all_byBounds( tBounds );
+      tBounds.disposeResources_and_recycleToPool();
+      tBounds = null;
+
+    } else { // Otherwise, assume all image pixels are inside the default value bounds (i.e. Weights.Base.ValueBounds).
+      imageNew.boundsArraySet.set_outputs_all_byBounds( Weights.Base.ValueBounds );
+    }
+
     return imageNew;
   }
 
