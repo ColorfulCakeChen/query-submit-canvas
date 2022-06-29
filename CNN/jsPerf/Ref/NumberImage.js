@@ -1203,11 +1203,11 @@ class Base extends Recyclable.Root {
       throw Error( `${concatName1}${ concatName2 ? "_" :"" }${concatName2}: shape imageIn1.width (${imageIn1.width}) `
         + `should match imageIn2.width (${imageIn2.width}). (${parametersDesc})` );
 
-    let imageOutLength = ( imageIn1.height * imageIn1.width * imageIn1.depth ) + ( imageIn2.height * imageIn2.width * imageIn2.depth );
+    //let imageOutLength = ( imageIn1.height * imageIn1.width * imageIn1.depth ) + ( imageIn2.height * imageIn2.width * imageIn2.depth );
     let imageOutDepth = imageIn1.depth + imageIn2.depth;
-    let imageOut = new Base(
-      imageIn1.height, imageIn1.width, imageOutDepth, new Float32Array( imageOutLength ),
-      new BoundsArraySet.InputsOutputs( imageIn1.boundsArraySet.output0, imageIn2.boundsArraySet.output0, imageOutDepth )
+    let imageOut = Base.Pool.get_or_create_by(
+      imageIn1.height, imageIn1.width, imageOutDepth, undefined,
+      imageIn1.boundsArraySet.output0, imageIn2.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined
     );
 
     // Concatenate along the image depth.
