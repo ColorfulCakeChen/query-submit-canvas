@@ -871,8 +871,7 @@ class Base extends Recyclable.Root {
 // Try not to generate parameters description string in advance every time for reducing memory re-allocation.
 // Just generate them only if necessary.
 
-    // Create description for debug easily.
-    this.paramsOutDescription = Base.TestParams_Out_createDescription( testParams );
+    testParams.out.toString = Base.TestParams_Out_toString(); // Create description for debug easily.
 
 
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
@@ -913,7 +912,7 @@ class Base extends Recyclable.Root {
     } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
 
       NumberImage.Base.calcSplitAlongAxisId2(
-        imageInArray[ 0 ], this.imageInArray_Fake, "Split_imageIn_to_imageInArray_0_1", this.paramsOutDescription );
+        imageInArray[ 0 ], this.imageInArray_Fake, "Split_imageIn_to_imageInArray_0_1", testParams.out );
 
       imageIn0 = this.imageInArray_Fake[ 0 ];
       imageIn1 = this.imageInArray_Fake[ 1 ];
@@ -941,7 +940,7 @@ class Base extends Recyclable.Root {
     let imageIn1_beforePointwise1 = imageIn1;
     let pointwise1Result;
     if ( pointwise1ChannelCount > 0 ) {
-      pointwise1Result = testParams.use_pointwise1( imageIn0, pointwise1ChannelCount, "Pointwise1", this.paramsOutDescription );
+      pointwise1Result = testParams.use_pointwise1( imageIn0, pointwise1ChannelCount, "Pointwise1", testParams.out );
 
       if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn0_beforePointwise1, // copy input0 (not input1).
@@ -950,12 +949,12 @@ class Base extends Recyclable.Root {
 //          pointwise1ChannelCount, // So that it could be processed by depthwise2 and pointwise21 (with same structure of depthwise1 and pointwise20).
           imageIn0_beforePointwise1.depth,
 
-          "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", this.paramsOutDescription );
+          "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", testParams.out );
 
       } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
           imageIn1_beforePointwise1.depth, // No need same as pointwise1ChannelCount because depthwise2 and pointwise21 just pass-through it.
-          "Pointwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
+          "Pointwise1_imageIn1_HigherHalfPassThrough", testParams.out );
       }
 
     } else {
@@ -969,7 +968,7 @@ class Base extends Recyclable.Root {
             + `nConvBlockTypeId=`
             + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
             + `(${testParams.out.nConvBlockTypeId}). `
-            + `${this.paramsOutDescription}` );
+            + `${testParams.out}` );
 
         imageIn1 = imageIn0; // Not input1 but input0.
       }
@@ -984,14 +983,14 @@ class Base extends Recyclable.Root {
 //!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
 //    if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
     if ( testParams.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
-      depthwise1Result = testParams.use_depthwise1( pointwise1Result, "Depthwise1", this.paramsOutDescription );
+      depthwise1Result = testParams.use_depthwise1( pointwise1Result, "Depthwise1", testParams.out );
 
       // imageIn1 should be shrinked by depthwise1. Otherwise, its size may be different from pointwise20Result
       // and can not be concatenated together.
       //
       if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
         imageIn1 = testParams.use_depthwise1_PassThrough( imageIn1_beforeDepthwise1, // pass-through input1 (not input0).
-          "Depthwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
+          "Depthwise1_imageIn1_HigherHalfPassThrough", testParams.out );
       }
 
     } else {
@@ -1008,7 +1007,7 @@ class Base extends Recyclable.Root {
 //!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
 //      if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
       if ( testParams.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
-        depthwise2Result = testParams.use_depthwise2( imageIn0, "Depthwise2_for_input0", this.paramsOutDescription ); // depthwise2 apply to input0 (not input1).
+        depthwise2Result = testParams.use_depthwise2( imageIn0, "Depthwise2_for_input0", testParams.out ); // depthwise2 apply to input0 (not input1).
       } else {
         depthwise2Result = imageIn0; // Since depthwise2 is just no-op, its result is just the same as its input (i.e. input0 (not input1)).
       }
@@ -1020,7 +1019,7 @@ class Base extends Recyclable.Root {
       if ( testParams.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
 
         // depthwise2 apply to input1 which higher-half-copy-lower-half from input0 (not original input0, not original input1).
-        depthwise2Result = testParams.use_depthwise2( imageIn1, "Depthwise2_for_input1", this.paramsOutDescription );
+        depthwise2Result = testParams.use_depthwise2( imageIn1, "Depthwise2_for_input1", testParams.out );
 
       } else {
         depthwise2Result = imageIn0; // Since depthwise2 is just no-op, its result is just the same as its input (i.e. input0 (not input1)).
@@ -1035,13 +1034,13 @@ class Base extends Recyclable.Root {
       // Concatenate depthwise1's result and depthwise2's result.
       concat1Result = NumberImage.Base.calcConcatAlongAxisId2(
         depthwise1Result, depthwise2Result,
-        "Concat1_depthwise1_depthwise2 (SHUFFLE_NET_V2_BY_POINTWISE21_HEAD)", this.paramsOutDescription );
+        "Concat1_depthwise1_depthwise2 (SHUFFLE_NET_V2_BY_POINTWISE21_HEAD)", testParams.out );
 
     } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL() ) { // (10 or 11)
 
       // Concatenate depthwise1's result and input1.
       concat1Result = NumberImage.Base.calcConcatAlongAxisId2( depthwise1Result, imageIn1,
-        "Concat1_depthwise1_input1 (SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL)", this.paramsOutDescription );
+        "Concat1_depthwise1_input1 (SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL)", testParams.out );
     }
 
     // 4. Pointwise2
@@ -1070,17 +1069,17 @@ class Base extends Recyclable.Root {
     {
       if ( pointwise20ChannelCount > 0 ) {
         pointwise20Result = imageOutArray[ 0 ]
-          = testParams.use_pointwise20( concat1Result, pointwise20ChannelCount, "Pointwise20", this.paramsOutDescription );
+          = testParams.use_pointwise20( concat1Result, pointwise20ChannelCount, "Pointwise20", testParams.out );
 
         if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
           pointwise202Result = imageOutArray[ 1 ]
-            = testParams.use_pointwise202( depthwise2Result, pointwise20ChannelCount, "Pointwise202", this.paramsOutDescription );
+            = testParams.use_pointwise202( depthwise2Result, pointwise20ChannelCount, "Pointwise202", testParams.out );
 
         } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
           imageIn1 = imageOutArray[ 1 ]
             = testParams.use_pointwise20_PassThrough( imageIn1_beforePointwise20, // pass-through input1 (which is past-through by depthwise1).
                 pointwise20ChannelCount, // So that it could be concatenated with pointwise20Result.
-                "Pointwise20_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
+                "Pointwise20_imageIn1_HigherHalfPassThrough", testParams.out );
         }
 
       } else {
@@ -1091,7 +1090,7 @@ class Base extends Recyclable.Root {
       if ( bAddInputToOutputRequested )
         if ( pointwise20Result.depth == testParams.out.input0_channelCount ) // add-input-to-output is possible if same channel count.
           pointwise20Result = imageOutArray[ 0 ]
-            = pointwise20Result.clone_byAdd( imageIn0, "Pointwise20_AddInputToOutput", this.paramsOutDescription );
+            = pointwise20Result.clone_byAdd( imageIn0, "Pointwise20_AddInputToOutput", testParams.out );
     }
 
     // 4.2 Pointwise21
@@ -1117,7 +1116,7 @@ class Base extends Recyclable.Root {
       }
 
       pointwise21Result = imageOutArray[ 1 ]
-        = testParams.use_pointwise21( pointwise21_input, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
+        = testParams.use_pointwise21( pointwise21_input, pointwise21ChannelCount, "Pointwise21", testParams.out );
 
       // Residual Connection.
       //
@@ -1125,7 +1124,7 @@ class Base extends Recyclable.Root {
       if ( bAddInputToOutputRequested )
         if ( pointwise21Result.depth == testParams.out.input0_channelCount ) // add-input-to-output is possible if same channel count.
           pointwise21Result = imageOutArray[ 1 ]
-            = pointwise21Result.clone_byAdd( imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
+            = pointwise21Result.clone_byAdd( imageIn0, "Pointwise21_AddInputToOutput", testParams.out );
 
     } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY_or_TAIL() ) { // (3 or 4)
       imageOutArray[ 1 ] = imageIn1;
@@ -1160,93 +1159,93 @@ class Base extends Recyclable.Root {
             + `nConvBlockTypeId=`
             + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
             + `(${testParams.out.nConvBlockTypeId}). `
-            + `${this.paramsOutDescription}` );
+            + `${testParams.out}` );
           break;
       }
 
       if ( !imageOutArray[ 1 ] )
         throw Error( `Block_Reference.Base.calcResult(): `
           + `Concat2ShuffleSplit: imageOutArray[ 1 ] ( ${imageOutArray[ 1 ]} ) `
-            + `should not be null. ${this.paramsOutDescription}` );
+            + `should not be null. ${testParams.out}` );
 
       NumberImage.Base.calcConcatShuffleSplit(
         imageOutArray, imageOutArray, bShuffle, bSplit,
-        this.arrayTemp_forInterleave_asGrouptTwo, "${concat2Name}_", this.paramsOutDescription );
+        this.arrayTemp_forInterleave_asGrouptTwo, "${concat2Name}_", testParams.out );
     }
 
     return imageOutArray;
   }
 
   /**
-   * @param {Block_TestParams.Base} testParams
-   *   The test parameters for creating description.
+   * @param {Block_TestParams.out} this
+   *   The testParams.outfor creating description.
    *
    * @return {string}
-   *   The description of the testParams.out.
+   *   The description of this.
    */
-  static TestParams_Out_createDescription( testParams ) {
+  static TestParams_Out_toString() {
 
-    let inferencedParams = testParams.out.inferencedParams;
+    let inferencedParams = this.inferencedParams;
 
     let paramsOutDescription =
         `inputTensorCount=${inferencedParams.inputTensorCount}, `
 
-      + `input0_height=${testParams.out.input0_height}, input0_width=${testParams.out.input0_width}, `
-      + `inChannels0=${testParams.out.input0_channelCount}, `
+      + `input0_height=${this.input0_height}, input0_width=${this.input0_width}, `
+      + `inChannels0=${this.input0_channelCount}, `
 
       + `input1_height=${inferencedParams.input1_height}, input1_width=${inferencedParams.input1_width}, `
       + `inChannels1=${inferencedParams.input1_channelCount}, `
 
       + `nConvBlockTypeName=`
-      + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
-      + `(${testParams.out.nConvBlockTypeId}), `
+      + `${ValueDesc.ConvBlockType.Singleton.getStringOf( this.nConvBlockTypeId )}`
+      + `(${this.nConvBlockTypeId}), `
 
       + `bHigherHalfDifferent=${inferencedParams.bHigherHalfDifferent}, `
       + `bHigherHalfDepthwise2=${inferencedParams.bHigherHalfDepthwise2}, `
 
-      + `pointwise1ChannelCount=${testParams.out.inferencedParams.pointwise1ChannelCount}, `
-      + `bPointwise1Bias=${testParams.out.inferencedParams.bPointwise1Bias}, `
+      + `pointwise1ChannelCount=${this.inferencedParams.pointwise1ChannelCount}, `
+      + `bPointwise1Bias=${this.inferencedParams.bPointwise1Bias}, `
       + `pointwise1ActivationName=`
-        + `${ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.inferencedParams.pointwise1ActivationId )}`
-        + `(${testParams.out.inferencedParams.pointwise1ActivationId}), `
+        + `${ValueDesc.ActivationFunction.Singleton.getStringOf( inferencedParams.pointwise1ActivationId )}`
+        + `(${inferencedParams.pointwise1ActivationId}), `
 
       + `bDepthwiseRequestedAndNeeded=${inferencedParams.bDepthwiseRequestedAndNeeded}, `
       + `bDepthwise2Requested=${inferencedParams.bDepthwise2Requested}, `
 
       + `depthwise_AvgMax_Or_ChannelMultiplier=`
-        + `${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getStringOf( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier )}`
-        + `(${testParams.out.depthwise_AvgMax_Or_ChannelMultiplier}), `
-      + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, depthwiseFilterWidth=${testParams.out.depthwiseFilterWidth}, `
+        + `${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getStringOf( this.depthwise_AvgMax_Or_ChannelMultiplier )}`
+        + `(${this.depthwise_AvgMax_Or_ChannelMultiplier}), `
+      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
       + `depthwiseStridesPad=`
-        + `${ValueDesc.StridesPad.Singleton.getStringOf( testParams.out.depthwiseStridesPad )}`
-        + `(${testParams.out.depthwiseStridesPad}), `
-      + `bDepthwiseBias=${testParams.out.inferencedParams.bDepthwiseBias}, `
+        + `${ValueDesc.StridesPad.Singleton.getStringOf( this.depthwiseStridesPad )}`
+        + `(${this.depthwiseStridesPad}), `
+      + `bDepthwiseBias=${this.inferencedParams.bDepthwiseBias}, `
       + `depthwiseActivationName=`
-        + `${Block.Params.depthwiseActivationId.getStringOfValue( testParams.out.depthwiseActivationId )}`
-        + `(${testParams.out.depthwiseActivationId}), `
+        + `${Block.Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId )}`
+        + `(${this.depthwiseActivationId}), `
 
       + `bConcat1Requested=${inferencedParams.bConcat1Requested}, `
 
-      + `pointwise20ChannelCount=${testParams.out.pointwise20ChannelCount}, `
-      + `bPointwise20Bias=${testParams.out.inferencedParams.bPointwise20Bias}, `
+      + `pointwise20ChannelCount=${this.pointwise20ChannelCount}, `
+      + `bPointwise20Bias=${this.inferencedParams.bPointwise20Bias}, `
       + `pointwise20ActivationName=`
-        + `${Block.Params.pointwise20ActivationId.getStringOfValue( testParams.out.pointwise20ActivationId )}`
-        + `(${testParams.out.pointwise20ActivationId}), `
+        + `${Block.Params.pointwise20ActivationId.getStringOfValue( this.pointwise20ActivationId )}`
+        + `(${this.pointwise20ActivationId}), `
 
       + `nSqueezeExcitationChannelCountDivisorName=`
-        + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getStringOf( testParams.out.nSqueezeExcitationChannelCountDivisor )}`
-        + `(${testParams.out.nSqueezeExcitationChannelCountDivisor}), `
+        + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getStringOf( this.nSqueezeExcitationChannelCountDivisor )}`
+        + `(${this.nSqueezeExcitationChannelCountDivisor}), `
 
       + `squeezeExcitationActivationName=`
-        + `${ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.inferencedParams.squeezeExcitationActivationId )}`
-        + `(${testParams.out.inferencedParams.squeezeExcitationActivationId}), `
+        + `${ValueDesc.ActivationFunction.Singleton.getStringOf( this.inferencedParams.squeezeExcitationActivationId )}`
+        + `(${this.inferencedParams.squeezeExcitationActivationId}), `
 
       + `bAddInputToOutputRequested=${inferencedParams.bAddInputToOutputRequested}, `
       + `bConcat2ShuffleSplitRequested=${inferencedParams.bConcat2ShuffleSplitRequested}, `
       + `pointwise20_channelShuffler_outputGroupCount=${inferencedParams.pointwise20_channelShuffler_outputGroupCount}, `
       + `outputTensorCount=${inferencedParams.outputTensorCount}, `
 
-      + `bKeepInputTensor=${testParams.out.bKeepInputTensor}`
+      + `bKeepInputTensor=${this.bKeepInputTensor}`
     ;
 
     return paramsOutDescription;
