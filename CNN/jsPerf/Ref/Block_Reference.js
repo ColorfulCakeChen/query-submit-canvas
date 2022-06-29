@@ -1159,7 +1159,7 @@ class Base extends Recyclable.Root {
 
       NumberImage.Base.calcConcatShuffleSplit(
         imageOutArray, imageOutArray, bShuffle, bSplit,
-        this.arrayTemp_forInterleave_asGrouptTwo, "${concat2Name}_", testParams.out );
+        this.arrayTemp_forInterleave_asGrouptTwo, concat2Name, testParams.out );
     }
 
     return imageOutArray;
