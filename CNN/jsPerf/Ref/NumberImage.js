@@ -1113,8 +1113,8 @@ class Base extends Recyclable.Root {
       return;
 
     // Split value bounds array.
-    let rScaleBoundsArray_lowerHalf = new ActivationEscaping.ScaleBoundsArray( 0 );
-    let rScaleBoundsArray_higherHalf = new ActivationEscaping.ScaleBoundsArray( 0 );
+    let rScaleBoundsArray_lowerHalf = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( 0 );
+    let rScaleBoundsArray_higherHalf = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( 0 );
     imageIn.boundsArraySet.output0.split_to_lowerHalf_higherHalf( rScaleBoundsArray_lowerHalf, rScaleBoundsArray_higherHalf );
 
     // If not divided by 2, let lower half have one more.
@@ -1124,13 +1124,13 @@ class Base extends Recyclable.Root {
     let imageOutLength_lowerHalf = ( imageIn.height * imageIn.width * imageOutDepth_lowerHalf );
     let imageOutLength_higherHalf = ( imageIn.height * imageIn.width * imageOutDepth_higherHalf );
 
-    imageOutArray[ 0 ] = new Base(
-        imageIn.height, imageIn.width, imageOutDepth_lowerHalf, new Float32Array( imageOutLength_lowerHalf ),
-        new BoundsArraySet.InputsOutputs( imageIn.boundsArraySet.output0, undefined, imageOutDepth_lowerHalf ) );
+    imageOutArray[ 0 ] = Base.Pool.get_or_create_by(
+      imageIn.height, imageIn.width, imageOutDepth_lowerHalf, undefined,
+      imageIn.boundsArraySet.output0, undefined, BoundsArraySet.InputsOutputs, undefined );
 
-    imageOutArray[ 1 ] = new Base(
-        imageIn.height, imageIn.width, imageOutDepth_higherHalf, new Float32Array( imageOutLength_higherHalf ),
-        new BoundsArraySet.InputsOutputs( imageIn.boundsArraySet.output0, undefined, imageOutDepth_higherHalf ) );
+    imageOutArray[ 1 ] = Base.Pool.get_or_create_by(
+      imageIn.height, imageIn.width, imageOutDepth_higherHalf, undefined,
+      imageIn.boundsArraySet.output0, undefined, BoundsArraySet.InputsOutputs, undefined );
 
     let imageOut0 = imageOutArray[ 0 ];
     let imageOut1 = imageOutArray[ 1 ];
@@ -1160,6 +1160,14 @@ class Base extends Recyclable.Root {
     // Setup value bounds array.
     imageOut0.boundsArraySet.set_outputs_all_byScaleBoundsArray( rScaleBoundsArray_lowerHalf );
     imageOut1.boundsArraySet.set_outputs_all_byScaleBoundsArray( rScaleBoundsArray_higherHalf );
+
+    {
+      rScaleBoundsArray_lowerHalf.disposeResources_and_recycleToPool();
+      rScaleBoundsArray_lowerHalf = null;
+
+      rScaleBoundsArray_higherHalf.disposeResources_and_recycleToPool();
+      rScaleBoundsArray_higherHalf = null;
+    }
   }
 
   /**
