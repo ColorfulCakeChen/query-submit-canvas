@@ -22,7 +22,7 @@ import * as Depthwise from "../../Conv/Depthwise.js";
  * @member {number}   height    Image height
  * @member {number}   width     Image width
  * @member {number}   depth     Image channel count
- * @member {number[]|Float32Array} dataArray Image data
+ * @member {number[]} dataArray Image data
  *
  * @member {BoundsArraySet.InputsOutput} boundsArraySet
  *   The element value bounds set of this image.
@@ -39,7 +39,7 @@ class Base extends Recyclable.Root {
 
   /**
    *
-   * @param {number} filledValue
+   * @param {number} preFilledValue
    *   Use this value to fill the created .dataArray[].
    *
    * @param {FloatValue.Bounds} aBounds
@@ -51,29 +51,28 @@ class Base extends Recyclable.Root {
 //!!! (2022/06/29 Remarked) Replaced by filledValue and aBounds.
 //  constructor( height, width, depth, dataArray, boundsArraySet ) {
 
-  constructor( height, width, depth, filledValue, aBounds ) {
-    Base.setAsConstructor_self.call( this, height, width, depth, filledValue, aBounds );
+  constructor( height, width, depth, preFilledValue, aBounds ) {
+    super();
+    Base.setAsConstructor_self.call( this, height, width, depth, preFilledValue, aBounds );
   }
 
   /** @override */
-  static setAsConstructor( height, width, depth, filledValue, aBounds ) {
+  static setAsConstructor( height, width, depth, preFilledValue, aBounds ) {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this, height, width, depth, filledValue, aBounds );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( height, width, depth, filledValue, aBounds ) {
+  static setAsConstructor_self( height, width, depth, preFilledValue, aBounds ) {
     this.height = height;
     this.width = width;
     this.depth = depth;
-    this.filledValue = filledValue;
-    
-    if ( aBounds )
-      this.aBounds = aBounds.clone();
+
+    // Note: The preFilledValue and aBounds will not be recorded.
 
     let elementCount = height * width * depth;
     this.dataArray = Recyclable.Array.Pool.get_or_create_by( elementCount );
+    this.dataArray.fill( preFilledValue );
 
 //!!! ...unfinished... (2022/06/29)
 // Who is responsible for releasing inputScaleBoundsArray (i.e. this.boundsArraySet.inputX)?
@@ -98,10 +97,15 @@ class Base extends Recyclable.Root {
 //!!! ...unfinished... (2022/06/29)
 // Who is responsible for releasing inputScaleBoundsArray (i.e. this.boundsArraySet.inputX)?
 
-    if ( aBounds ) {
-      this.aBounds.disposeResources_and_recycleToPool();
-      this.aBounds = null;
-    }
+    this.boundsArraySet.disposeResources_and_recycleToPool();
+    this.boundsArraySet = null;
+
+    this.dataArray.disposeResources_and_recycleToPool();
+    this.dataArray = null;
+
+    this.depth = undefined;
+    this.width = undefined;
+    this.height = undefined;
 
     super.disposeResources();
   }
