@@ -81,6 +81,11 @@ class Base extends TestParams.Base {
     super.disposeResources();
   }
 
+  /** */
+  toString() {
+    return `( testParams.id=${this.id} )`;
+  }
+
   /**
    * Use scattered parameters to fills the following proterties:
    *   - this.in.inputFloat32Array
