@@ -42,10 +42,6 @@ class Base extends Recyclable.Root {
    * @param {number} preFilledValue
    *   Use this value to fill the created .dataArray[].
    *
-   * @param {FloatValue.Bounds} aBounds
-   *   The value bounds of all pixels of this image. If null, assume all image pixels are inside the default value bounds
-   * (i.e. Weights.Base.ValueBounds).
-   *
    * @param {ActivationEscaping.ScaleBoundsArray} input0_ScaleBoundsArray
    *   The element value bounds (per channel) of 1st input (can NOT null). It is the domain of the operation. It (from constructor)
    * will be cloned. This behavior is different from BoundsArraySet.
@@ -54,25 +50,39 @@ class Base extends Recyclable.Root {
    *   The element value bounds (per channel) of 2nd input (can null or undefined). It is the domain of the operation. It (from constructor)
    * will be cloned. This behavior is different from BoundsArraySet.
    *
+   * @param {Objetc} BoundsArraySetClass
+   *   What kinds of BoundsArraySet will be created. It should be one of BoundsArraySet.InputsOutputs, BoundsArraySet.ConvBiasActivation,
+   * BoundsArraySet.Depthwise, BoundsArraySetPointwise.
+   *
+   * @param {FloatValue.Bounds} aBounds
+   *   The value bounds of all pixels of this image. If null, assume all image pixels are inside the default value bounds
+   * (i.e. Weights.Base.ValueBounds).
    */
 
 //!!! (2022/06/29 Remarked) Replaced by filledValue and aBounds.
 //  constructor( height, width, depth, dataArray, boundsArraySet ) {
 
-  constructor( height, width, depth, preFilledValue, aBounds, input0_ScaleBoundsArray, input1_ScaleBoundsArray ) {
+  constructor( height, width, depth, preFilledValue,
+    input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds ) {
+
     super();
-    Base.setAsConstructor_self.call( this, height, width, depth, preFilledValue, aBounds, input0_ScaleBoundsArray, input1_ScaleBoundsArray );
+    Base.setAsConstructor_self.call( this, height, width, depth, preFilledValue,
+      input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds );
   }
 
   /** @override */
-  static setAsConstructor( height, width, depth, preFilledValue, aBounds, input0_ScaleBoundsArray, input1_ScaleBoundsArray ) {
+  static setAsConstructor( height, width, depth, preFilledValue,
+    input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds ) {
+
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this, height, width, depth, preFilledValue, aBounds, input0_ScaleBoundsArray, input1_ScaleBoundsArray );
+    Base.setAsConstructor_self.call( this, height, width, depth, preFilledValue,
+      input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( height, width, depth, preFilledValue, aBounds, input0_ScaleBoundsArray, input1_ScaleBoundsArray ) {
+  static setAsConstructor_self( height, width, depth, preFilledValue,
+    input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds ) {
     this.height = height;
     this.width = width;
     this.depth = depth;
@@ -87,8 +97,7 @@ class Base extends Recyclable.Root {
     this.input0_ScaleBoundsArray = input0_ScaleBoundsArray.clone();
     this.input1_ScaleBoundsArray = input1_ScaleBoundsArray?.clone();
 
-    this.boundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by(
-      input0_ScaleBoundsArray, input1_ScaleBoundsArray, depth, undefined );
+    this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by( input0_ScaleBoundsArray, input1_ScaleBoundsArray, depth, undefined );
 
     // Default value bounds for an image.
     //
