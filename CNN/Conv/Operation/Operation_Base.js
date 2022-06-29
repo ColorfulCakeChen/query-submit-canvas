@@ -667,34 +667,30 @@ Do not use function declared in function because they may generate new function 
       if ( this.input1 ) {
         if ( this.output0 ) {
           if ( this.output1 ) { //  9. ( , .input1 ) => ( .output0, .output1 )
-            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
-            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
             if ( bKeepInputTensor1 ) {
-              this.apply = () => { this.output0.realTensor = this.input1.realTensor.clone(); this.output1.realTensor = this.input1.realTensor.clone(); }
+  static apply__i1__o0_o1__k1() { this.output0.realTensor = this.input1.realTensor.clone(); this.output1.realTensor = this.input1.realTensor.clone(); }
             } else {
-              this.apply = () => { this.output0.realTensor = this.input1.realTensor; this.output1.realTensor = this.input1.realTensor.clone(); }
+  static apply__i1__o0_o1__d1() { this.output0.realTensor = this.input1.realTensor; this.output1.realTensor = this.input1.realTensor.clone(); }
             }
           } else {              // 10. ( , .input1 ) => ( .output0 )
-            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
             if ( bKeepInputTensor1 ) {
-              this.apply = () => { this.output0.realTensor = this.input1.realTensor.clone(); }
+  static apply__i1__o0__k1() { this.output0.realTensor = this.input1.realTensor.clone(); }
             } else {
-              this.apply = () => { this.output0.realTensor = this.input1.realTensor; }
+  static apply__i1__o0__d1() { this.output0.realTensor = this.input1.realTensor; }
             }
           }
         } else {
           if ( this.output1 ) { // 11. ( , .input1 ) => ( , .output1 )
-            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
             if ( bKeepInputTensor1 ) {
-              this.apply = () => { this.output1.realTensor = this.input1.realTensor.clone(); }
+  static apply__i1__o1__k1() { this.output1.realTensor = this.input1.realTensor.clone(); }
             } else {
-              this.apply = () => { this.output1.realTensor = this.input1.realTensor; }
+  static apply__i1__o1__d1() { this.output1.realTensor = this.input1.realTensor; }
             }
           } else {              // 12. ( , .input1 ) => (  )
             if ( bKeepInputTensor1 ) {
-              this.apply = () => {}
+  static apply__i1__k1() {}
             } else {
-              this.apply = () => { this.input1.realTensor.dispose(); }
+  static apply__i1__d1() { this.input1.realTensor.dispose(); }
             }
           }
         }
