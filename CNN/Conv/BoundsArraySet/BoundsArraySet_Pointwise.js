@@ -23,7 +23,7 @@ class Pointwise extends ConvBiasActivation {
 
   /**
    *   - The .input0 will be set as input0.
-   *   - The .afterUndoPreviousActivationEscaping will be set according to  input0 and input0.scaleArraySet.undo.scales.
+   *   - The .afterUndoPreviousActivationEscaping will be set according to input0 and input0.scaleArraySet.undo.scales.
    */
   constructor( input0, outputChannelCount0 ) {
     super( input0, outputChannelCount0 );
