@@ -1429,8 +1429,12 @@ class Base extends Recyclable.Root {
   get tensorWeightCountTotal()     { return this.operationArray.tensorWeightCountTotal; }
 
 
-  /** @return {string} The description string of all (adjusted) parameters of initer(). */
-  get parametersDescription() {
+  /**
+   * @return {string} The description string of all (adjusted) parameters of initer().
+   *
+   * @override
+   */
+  toString() {
     let str = ``
       + `inputTensorCount=${this.inputTensorCount}, `
 
