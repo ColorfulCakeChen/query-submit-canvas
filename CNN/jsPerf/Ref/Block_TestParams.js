@@ -1105,7 +1105,8 @@ class Base extends TestParams.Base {
 
     // 1. Pointwise1
     let pointwise1_resultOutputChannelCount = this.generate_pointwise_filters_biases( input0_channelCount_original,
-      pointwise1ChannelCount_original, paramsAll.inferencedParams.bPointwise1Bias, "pointwise1", io_paramsNumberArrayObject );
+      pointwise1ChannelCount_original, paramsAll.inferencedParams.bPointwise1Bias,
+      Base.PropertyNames.pointwise1, io_paramsNumberArrayObject );
 
     // 2. Depthwise
     let depthwise1_resultOutputChannelCount;
@@ -1119,10 +1120,11 @@ class Base extends TestParams.Base {
       if ( paramsAll.inferencedParams.bDepthwiseRequestedAndNeeded ) {
         depthwise1_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise1_inputChannelCount,
           paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
-          paramsAll.depthwiseStridesPad, paramsAll.inferencedParams.bDepthwiseBias, "depthwise1", io_paramsNumberArrayObject );
+          paramsAll.depthwiseStridesPad, paramsAll.inferencedParams.bDepthwiseBias,
+          Base.PropertyNames.depthwise1, io_paramsNumberArrayObject );
       } else {
         depthwise1_resultOutputChannelCount = depthwise1_inputChannelCount;
-        this.generate_depthwise_filters_biases( null, 0, null, null, null, null, "depthwise1", io_paramsNumberArrayObject );
+        this.generate_depthwise_filters_biases( null, 0, null, null, null, null, Base.PropertyNames.depthwise1, io_paramsNumberArrayObject );
       }
     }
 
@@ -1140,15 +1142,17 @@ class Base extends TestParams.Base {
         if ( paramsAll.inferencedParams.bDepthwiseRequestedAndNeeded ) {
           depthwise2_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise2_inputChannelCount,
             paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
-            paramsAll.depthwiseStridesPad, paramsAll.inferencedParams.bDepthwiseBias, "depthwise2", io_paramsNumberArrayObject );
+            paramsAll.depthwiseStridesPad, paramsAll.inferencedParams.bDepthwiseBias,
+            Base.PropertyNames.depthwise2, io_paramsNumberArrayObject );
         } else {
           depthwise2_resultOutputChannelCount = depthwise2_inputChannelCount;
-          this.generate_depthwise_filters_biases( null, 0, null, null, null, null, "depthwise2", io_paramsNumberArrayObject );
+          this.generate_depthwise_filters_biases( null, 0, null, null, null, null,
+            Base.PropertyNames.depthwise2, io_paramsNumberArrayObject );
         }
 
       // no depthwise2.
       } else {
-        this.generate_depthwise_filters_biases( null, 0, null, null, null, null, "depthwise2", io_paramsNumberArrayObject );
+        this.generate_depthwise_filters_biases( null, 0, null, null, null, null, Base.PropertyNames.depthwise2, io_paramsNumberArrayObject );
       }
     }
 
@@ -1243,13 +1247,13 @@ class Base extends TestParams.Base {
       this.generate_squeezeExcitation_filters_biases(
         paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
         pointwise20_inputChannelCount, pointwise202_inputChannelCount, pointwise21_inputChannelCount,
-        "pointwise20Prefix", "pointwise202Prefix", "pointwise21Prefix", io_paramsNumberArrayObject );
+        Base.PropertyNames.pointwise2PrefixSE, io_paramsNumberArrayObject );
 
     } else { // 4.2 Clear all prefix squeeze-and-excitation.
       this.generate_squeezeExcitation_filters_biases(
         paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
         0, 0, 0,
-        "pointwise20Prefix", "pointwise202Prefix", "pointwise21Prefix", io_paramsNumberArrayObject );
+        Base.PropertyNames.pointwise2PrefixSE, io_paramsNumberArrayObject );
     }
 
     // 5. Pointwise2
@@ -1260,16 +1264,18 @@ class Base extends TestParams.Base {
     //       to clear old them (because TestParams.Base.permuteParamRecursively() may not know them and may not clear them.
     {
       let pointwise20_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise20_inputChannelCount,
-        pointwise20_outputChannelCount, paramsAll.inferencedParams.bPointwise20Bias, "pointwise20", io_paramsNumberArrayObject );
+        pointwise20_outputChannelCount, paramsAll.inferencedParams.bPointwise20Bias,
+        Base.PropertyNames.pointwise20, io_paramsNumberArrayObject );
 
       let pointwise202_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise202_inputChannelCount,
-        pointwise202_outputChannelCount, paramsAll.inferencedParams.bPointwise20Bias, "pointwise202", io_paramsNumberArrayObject );
+        pointwise202_outputChannelCount, paramsAll.inferencedParams.bPointwise20Bias,
+        Base.PropertyNames.pointwise202, io_paramsNumberArrayObject );
     }
 
     // 5.2 Pointwise21
     {
       let pointwise21_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise21_inputChannelCount,
-        pointwise21_outputChannelCount, bPointwise21Bias, "pointwise21", io_paramsNumberArrayObject );
+        pointwise21_outputChannelCount, bPointwise21Bias, Base.PropertyNames.pointwise21, io_paramsNumberArrayObject );
     }
 
     // 6. Pointwise2's postfix squeeze-and-excitation
@@ -1281,13 +1287,13 @@ class Base extends TestParams.Base {
       this.generate_squeezeExcitation_filters_biases(
         paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
         pointwise20_outputChannelCount, pointwise202_outputChannelCount, pointwise21_outputChannelCount,
-        "pointwise20Postfix", "pointwise202Postfix", "pointwise21Postfix", io_paramsNumberArrayObject );
+        Base.PropertyNames.pointwise2PostfixSE, io_paramsNumberArrayObject );
 
     } else { // 6.2 Clear all postfix squeeze-and-excitation.
       this.generate_squeezeExcitation_filters_biases(
         paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
         0, 0, 0,
-        "pointwise20Postfix", "pointwise202Postfix", "pointwise21Postfix", io_paramsNumberArrayObject );
+        Base.PropertyNames.pointwise2PostfixSE, io_paramsNumberArrayObject );
     }
   }
 
