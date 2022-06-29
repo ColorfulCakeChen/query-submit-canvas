@@ -48,6 +48,7 @@ class TestCorrectnessInfo extends Recyclable.Root {
   static setAsConstructor_self() {
     // For reducing memory allocation.
     this.imageInArraySelected = Recyclable.Array.Pool.get_or_create_by( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
+    this.imageOutReferenceArray = Recyclable.Array.Pool.get_or_create_by( 2 );
     this.inputTensor3dArray = Recyclable.Array.Pool.get_or_create_by( 2 );
     this.outputTensor3dArray = Recyclable.Array.Pool.get_or_create_by( 2 );
   }
@@ -59,6 +60,9 @@ class TestCorrectnessInfo extends Recyclable.Root {
 
     this.inputTensor3dArray.disposeResources_and_recycleToPool();
     this.inputTensor3dArray = null;
+
+    this.imageOutReferenceArray.disposeResources_and_recycleToPool();
+    this.imageOutReferenceArray = null;
 
     this.imageInArraySelected.disposeResources_and_recycleToPool();
     this.imageInArraySelected = null;
@@ -79,6 +83,7 @@ class TestCorrectnessInfo extends Recyclable.Root {
     } = testParams.out;
 
     let imageInArraySelected = this.imageInArraySelected; // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
+    let imageOutReferenceArray = this.imageOutReferenceArray;
     let inputTensor3dArray = this.inputTensor3dArray;
     let outputTensor3dArray = this.outputTensor3dArray;
 
@@ -178,6 +183,7 @@ class TestCorrectnessInfo extends Recyclable.Root {
 
     }
 
+    imageOutReferenceArray.fill( undefined );
     outputTensor3dArray.fill( undefined );
     inputTensor3dArray.fill( undefined );
 
@@ -241,7 +247,6 @@ class Base extends Recyclable.Root {
 
     // For reducing memory allocation.
     this.testCorrectnessInfo = TestCorrectnessInfo.Pool.get_or_create_by();
-    this.imageOutReferenceArray = Recyclable.Array.Pool.get_or_create_by( 2 );
     this.imageInArray_Fake = Recyclable.Array.Pool.get_or_create_by( 2 );
     this.asserter_Equal = TensorTools.Asserter_Equal.get_or_create_by( 0.4, 0.001 );
     this.arrayTemp_forInterleave_asGrouptTwo = Recyclable.Array.Pool.get_or_create_by( 0 ); // Used by calcConcatShuffleSplit().
@@ -257,9 +262,6 @@ class Base extends Recyclable.Root {
 
     this.imageInArray_Fake.disposeResources_and_recycleToPool();
     this.imageInArray_Fake = null;
-
-    this.imageOutReferenceArray.disposeResources_and_recycleToPool();
-    this.imageOutReferenceArray = null;
 
     this.testCorrectnessInfo.disposeResources_and_recycleToPool();
     this.testCorrectnessInfo = null;
@@ -296,108 +298,7 @@ class Base extends Recyclable.Root {
     {
       this.testCorrectnessInfo.prepareBy( imageSourceBag, testParams, channelShufflerBag );
 
-      let {
-        imageInArraySelected, inputTensor3dArray, outputTensor3dArray,
-        input1_channelCount, channelShuffler_ConcatPointwiseConv, inputTensorDestroyCount,
-      } = this.testCorrectnessInfo;
-
-      let imageOutReferenceArray = this.imageOutReferenceArray;
-      {
-        this.calcResult( imageInArraySelected, imageOutReferenceArray ); // Output is an array with two elements.
-
-        if ( imageOutReferenceArray.length != 2 )
-          throw Error(
-            `Block_Reference.testCorrectness(): imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. `
-            + `( ${testParams} )`
-          );
-      }
-
-      let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
-
-      let block = Base.block_create( testParams,
-        imageInArraySelected[ 0 ].boundsArraySet.output0,
-        imageInArraySelected[ 1 ]?.boundsArraySet.output0,
-        channelShuffler_ConcatPointwiseConv, this.arrayTemp_forInterleave_asGrouptTwo );
-
-      // Note: Do not generate parameters description string in advance every time.
-      //       Just generate them only if necessary by .toString() for reducing memory re-allocation.
-
-      // Test input channel count.
-      Base.AssertTwoEqualValues( "inChannels1", block.inChannels1, input1_channelCount, block );
-
-      // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
-      // tensor count (i.e. inputTensorDestroyCount).
-      let tensorNumDifference_apply_before_after = block.outputTensorCount - inputTensorDestroyCount;
-
-      let memoryInfo_apply_before = tf.memory(); // Test memory leakage of block apply.
-      block.apply( inputTensor3dArray, outputTensor3dArray );
-      let memoryInfo_apply_after = tf.memory();
-
-      if ( memoryInfo_apply_after.numTensors != ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) )
-        throw Error( `Block.apply() memory leak. `
-          + `result tensor count ( ${memoryInfo_apply_after.numTensors} ) `
-          + `should be ( ${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } ) `
-          + `${block}` );
-
-      if ( inputTensor3dArray.length != 2 )
-        throw Error( `Block inputTensor3dArray.length ( ${inputTensor3dArray.length} ) should be 2. ${block}` );
-
-      if ( outputTensor3dArray.length != 2 )
-        throw Error( `Block outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${block}` );
-
-      { // Test output channel count.
-        const CHANNEL_AXIS_ID = 2; // Axis id 2 is depth (i.e. channel) dimension.
-        let outChannels0 = 0, outChannels1 = 0;
-
-        if ( outputTensor3dArray[ 0 ] && ( outputTensor3dArray[ 0 ].shape.length > CHANNEL_AXIS_ID ) )
-          outChannels0 = outputTensor3dArray[ 0 ].shape[ CHANNEL_AXIS_ID ];
-
-        if ( outputTensor3dArray[ 1 ] && ( outputTensor3dArray[ 1 ].shape.length > CHANNEL_AXIS_ID ) )
-          outChannels1 = outputTensor3dArray[ 1 ].shape[ CHANNEL_AXIS_ID ];
-
-        let outChannelsAll = outChannels0 + outChannels1;
-
-        Base.AssertTwoEqualValues( "outChannels0", block.outChannels0, outChannels0, block );
-        Base.AssertTwoEqualValues( "outChannels1", block.outChannels1, outChannels1, block );
-        Base.AssertTwoEqualValues( "outChannelsAll", block.outChannelsAll, outChannelsAll, block );
-      }
-
-      { // Test output tensor count.
-        let outputTensorCount = 0;
-
-        if ( outputTensor3dArray[ 0 ] )
-          ++outputTensorCount;
-
-        if ( outputTensor3dArray[ 1 ] )
-          ++outputTensorCount;
-
-        Base.AssertTwoEqualValues( "outputTensorCount", block.outputTensorCount, outputTensorCount, block );
-      }
-
-      // Test correctness of block BoundsArraySet.
-      this.assert_imageOut_BoundsArraySet( block, imageOutReferenceArray, block );
-
-      // Test correctness of block apply.
-      this.assert_imageOut_Tensors_byNumberArrays( outputTensor3dArray, imageOutReferenceArray, block );
-
-      block.disposeResources();
-      this.block = null; // For .toString() usage.
-
-      let memoryInfo_afterDispose = tf.memory();
-
-      if ( memoryInfo_afterDispose.numTensors != ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) )
-        throw Error( `Block create/dispose memory leak. `
-          + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
-          + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
-          + `${block}` );
-
-      tf.dispose( outputTensor3dArray );
-
-      block.TensorPlaceholder_dispose_inputs_dispose_outputs();
-
-
-!!! ...unfinished... (2022/06/29) should release NumberImage.
-
+      Pool.All.sessionCall( Base.testCorrectness_internal, this );
 
 //!!! (2022/06/10 Remarked) Moved to outter jsPerf_Block to also catch testParamsGenerator's exception.
 //     } catch ( e ) {
@@ -411,6 +312,116 @@ class Base extends Recyclable.Root {
 //       throw e;
     }
   }
+
+  /**
+   * Testing whether the results of different implementation are the same.
+   *
+   * @param {Block_Reference.Base} this
+   *   The reference Block object for testing.
+   */
+  static testCorrectness_internal() {
+    let testParams = this.testParams;
+    let testCorrectnessInfo = this.testCorrectnessInfo;
+
+    let {
+      imageInArraySelected, imageOutReferenceArray, inputTensor3dArray, outputTensor3dArray,
+      input1_channelCount, channelShuffler_ConcatPointwiseConv, inputTensorDestroyCount,
+    } = testCorrectnessInfo;
+
+    {
+      this.calcResult( imageInArraySelected, imageOutReferenceArray ); // Output is an array with two elements.
+
+      if ( imageOutReferenceArray.length != 2 )
+        throw Error(
+          `Block_Reference.testCorrectness(): imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. `
+          + `( ${testParams} )`
+        );
+    }
+
+    let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
+
+    let block = Base.block_create( testParams,
+      imageInArraySelected[ 0 ].boundsArraySet.output0,
+      imageInArraySelected[ 1 ]?.boundsArraySet.output0,
+      channelShuffler_ConcatPointwiseConv, this.arrayTemp_forInterleave_asGrouptTwo );
+
+    // Note: Do not generate parameters description string in advance every time.
+    //       Just generate them only if necessary by .toString() for reducing memory re-allocation.
+
+    // Test input channel count.
+    Base.AssertTwoEqualValues( "inChannels1", block.inChannels1, input1_channelCount, block );
+
+    // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
+    // tensor count (i.e. inputTensorDestroyCount).
+    let tensorNumDifference_apply_before_after = block.outputTensorCount - inputTensorDestroyCount;
+
+    let memoryInfo_apply_before = tf.memory(); // Test memory leakage of block apply.
+    block.apply( inputTensor3dArray, outputTensor3dArray );
+    let memoryInfo_apply_after = tf.memory();
+
+    if ( memoryInfo_apply_after.numTensors != ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) )
+      throw Error( `Block.apply() memory leak. `
+        + `result tensor count ( ${memoryInfo_apply_after.numTensors} ) `
+        + `should be ( ${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } ) `
+        + `${block}` );
+
+    if ( inputTensor3dArray.length != 2 )
+      throw Error( `Block inputTensor3dArray.length ( ${inputTensor3dArray.length} ) should be 2. ${block}` );
+
+    if ( outputTensor3dArray.length != 2 )
+      throw Error( `Block outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${block}` );
+
+    { // Test output channel count.
+      const CHANNEL_AXIS_ID = 2; // Axis id 2 is depth (i.e. channel) dimension.
+      let outChannels0 = 0, outChannels1 = 0;
+
+      if ( outputTensor3dArray[ 0 ] && ( outputTensor3dArray[ 0 ].shape.length > CHANNEL_AXIS_ID ) )
+        outChannels0 = outputTensor3dArray[ 0 ].shape[ CHANNEL_AXIS_ID ];
+
+      if ( outputTensor3dArray[ 1 ] && ( outputTensor3dArray[ 1 ].shape.length > CHANNEL_AXIS_ID ) )
+        outChannels1 = outputTensor3dArray[ 1 ].shape[ CHANNEL_AXIS_ID ];
+
+      let outChannelsAll = outChannels0 + outChannels1;
+
+      Base.AssertTwoEqualValues( "outChannels0", block.outChannels0, outChannels0, block );
+      Base.AssertTwoEqualValues( "outChannels1", block.outChannels1, outChannels1, block );
+      Base.AssertTwoEqualValues( "outChannelsAll", block.outChannelsAll, outChannelsAll, block );
+    }
+
+    { // Test output tensor count.
+      let outputTensorCount = 0;
+
+      if ( outputTensor3dArray[ 0 ] )
+        ++outputTensorCount;
+
+      if ( outputTensor3dArray[ 1 ] )
+        ++outputTensorCount;
+
+      Base.AssertTwoEqualValues( "outputTensorCount", block.outputTensorCount, outputTensorCount, block );
+    }
+
+    // Test correctness of block BoundsArraySet.
+    this.assert_imageOut_BoundsArraySet( block, imageOutReferenceArray, block );
+
+    // Test correctness of block apply.
+    this.assert_imageOut_Tensors_byNumberArrays( outputTensor3dArray, imageOutReferenceArray, block );
+
+    block.disposeResources();
+    this.block = null; // For .toString() usage.
+
+    let memoryInfo_afterDispose = tf.memory();
+
+    if ( memoryInfo_afterDispose.numTensors != ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) )
+      throw Error( `Block create/dispose memory leak. `
+        + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
+        + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
+        + `${block}` );
+
+    tf.dispose( outputTensor3dArray );
+
+    block.TensorPlaceholder_dispose_inputs_dispose_outputs();
+  }
+
 
   /**
    * Check the Block's output's BoundsArraySet.
@@ -855,6 +866,8 @@ class Base extends Recyclable.Root {
    *     - imageOutArray[ 0 ]: output0
    *     - imageOutArray[ 1 ]: output1
    *
+   * @return {NumberImage.Base[]}
+   *   Return imageOutArray.
    */ 
   calcResult( imageInArray, imageOutArray ) {
 
@@ -1165,10 +1178,6 @@ class Base extends Recyclable.Root {
         imageOutArray, imageOutArray, bShuffle, bSplit,
         this.arrayTemp_forInterleave_asGrouptTwo, concat2Name, testParams.out );
     }
-
-
-!!! ...unfinished... (2022/06/29) should release NumberImage.
-
 
     return imageOutArray;
   }
