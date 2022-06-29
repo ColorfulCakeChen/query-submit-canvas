@@ -1,5 +1,7 @@
 export { Base };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as RandTools from "../../util/RandTools.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
@@ -25,7 +27,12 @@ import * as Depthwise from "../../Conv/Depthwise.js";
  * @member {BoundsArraySet.InputsOutput} boundsArraySet
  *   The element value bounds set of this image.
  */
-class Base {
+class Base extends Recyclable.Root {
+
+  /**
+   * Used as default NumberImage.Base provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "NumberImage.Base.Pool", Base, Base.setAsConstructor );
 
 //!!! ...unfinished... (2022/06/25)
 // Instead of giving dataArray, specify what value to be filled in dataArray by default.
@@ -46,14 +53,14 @@ class Base {
     this.boundsArraySet = boundsArraySet;
 
     if ( !this.boundsArraySet ) { // Default value bounds for an image.
-      let inputScaleBoundsArray = new ActivationEscaping.ScaleBoundsArray( depth );
-      this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, null, depth, undefined );
+      let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( depth );
+      this.boundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by( inputScaleBoundsArray, null, depth, undefined );
       this.boundsArraySet.set_outputs_all_byBounds( Weights.Base.ValueBounds ); // Assume all images are inside the default value bounds.
     }
   }
 
   clone() {
-    let result = new Base( this.height, this.width, this.depth, new Float32Array( this.dataArray ), this.boundsArraySet.clone() );
+    let result = Base.Pool.get_or_create_by( this.height, this.width, this.depth, new Float32Array( this.dataArray ), this.boundsArraySet.clone() );
     return result;
   }
 
