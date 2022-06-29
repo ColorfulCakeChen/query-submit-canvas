@@ -1314,16 +1314,17 @@ class Base extends Recyclable.Root {
    */
   static create_bySequenceRandom( height, width, channelCount, randomOffsetMin = 0, randomOffsetMax = 0, bAutoBounds = false ) {
 
-
+    // 0.
     let tBounds;
     if ( bAutoBounds ) {
       tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
     }
 
+    // 1.
     let imageNew;
     {
-      let preFilledValue = undefined; // Because it will be filled with generated random values.
-      let aBounds = undefined;  // Because .boundsArraySet will be filled later.
+      const preFilledValue = undefined; // Because it will be filled with generated random values.
+      const aBounds = undefined;        // Because .boundsArraySet will be filled later.
 
       let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( channelCount );
       inputScaleBoundsArray.set_all_byBounds( Weights.Base.ValueBounds );
@@ -1335,14 +1336,16 @@ class Base extends Recyclable.Root {
       inputScaleBoundsArray = null;
     }
 
+    // 2. Fill .dataArray with random sequence values and got their bounds (if requested).
     RandTools.fill_numberArray( imageNew.dataArray, imageNew.dataArray.length, randomOffsetMin, randomOffsetMax, tBounds );
 
-    if ( tBounds ) {
+    // 3. Fill .boundsArraySet
+    if ( tBounds ) { // 3.1 by collected bounds (if requested).
       imageNew.boundsArraySet.set_outputs_all_byBounds( tBounds );
       tBounds.disposeResources_and_recycleToPool();
       tBounds = null;
 
-    } else { // Otherwise, assume all image pixels are inside the default value bounds (i.e. Weights.Base.ValueBounds).
+    } else { // 3.2 Otherwise, assume all image pixels are inside the default value bounds (i.e. Weights.Base.ValueBounds).
       imageNew.boundsArraySet.set_outputs_all_byBounds( Weights.Base.ValueBounds );
     }
 
