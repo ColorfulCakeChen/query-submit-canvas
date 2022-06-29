@@ -229,12 +229,9 @@ class Base extends Recyclable.Root {
           + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})` );
     }
 
-    let imageOut = new Base(
+    let imageOut = Base.Pool.get_or_create_by(
       imageIn.height, imageIn.width, pointwiseChannelCount, 0,
       imageIn.boundsArraySet.output0, null, BoundsArraySet.Pointwise, null );
-
-//!!! ...unfinished... (2022/06/25) Fill the array with zero for initialization.
-// Perhaps, NumberImage's .setAsConstructor() should do that.
 
     imageOut.boundsArraySet.set_bPassThrough_all( bPassThrough );
 
@@ -289,6 +286,7 @@ class Base extends Recyclable.Root {
         }
       }
       tBounds.disposeResources_and_recycleToPool();
+      tBounds = null;
     }
 
     // Bias
@@ -302,7 +300,7 @@ class Base extends Recyclable.Root {
 
       // Before activation function, scale every element according to its channel.
       Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
-        pointwiseName + " activation escaping scale", parametersDesc );
+        pointwiseName, "ActivationEscapingScale", parametersDesc );
     }
 
     // Activation
@@ -576,10 +574,10 @@ class Base extends Recyclable.Root {
       // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
       // by .afterBias, bPassThrough and activation function's output range.
       imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
-
+!!!
       // Before activation function, scale every element according to its channel.
       Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
-        depthwiseName + " activation escaping scale", parametersDesc );
+        depthwiseName, "ActivationEscapingScale", parametersDesc );
     }
 
     // Activation
@@ -638,20 +636,21 @@ class Base extends Recyclable.Root {
    *
    * @param {NumberImage.Base} imageIn          The imageIn.dataArray[] will be multiplied by scaleArray in place.
    * @param {FloatValue.ScaleArray} scaleArray  The scales for every channel.
-   * @param {string}   scaleName                A string for debug message of this scaling.
-   * @param {Object}   parametersDesc           Its .toString() for debug message of this block.
+   * @param {string} scaleName1                 The 1st part string for debug message of this scaling.
+   * @param {string} scaleName2                 The 2nd part string for debug message of this scaling.
+   * @param {Object} parametersDesc             Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return the (modified) image whose every element is scaled according to its channel.
    */
-  static scale_byChannel_withoutAffect_BoundsArraySet( imageIn, scaleArray, scaleName, parametersDesc ) {
+  static scale_byChannel_withoutAffect_BoundsArraySet( imageIn, scaleArray, scaleName1, scaleName2, parametersDesc ) {
 
     if ( scaleArray == null )
-      throw Error( `${scaleName} scaleArray (${scaleArray}) `
+      throw Error( `${scaleName1}${ scaleName2 ? "_" : "" }${scaleName2}: scaleArray (${scaleArray}) `
         + `should not be null. (${parametersDesc})` );
 
     if ( scaleArray.length != imageIn.depth )
-      throw Error( `${scaleName} shape (${scaleArray.length}) `
+      throw Error( `${scaleName1}${ scaleName2 ? "_" : "" }${scaleName2}: shape (${scaleArray.length}) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})` );
 
     let index = 0;
