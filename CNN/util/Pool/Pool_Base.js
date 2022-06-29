@@ -147,11 +147,10 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
       return false; // 1. Can not recycle a null object.
 
     if ( this.recycledObjectSet.has( objectToBeRecycled ) ) { // 2. Avoid recycling one object multiple times (i.e. duplicately).
-      throw Error(
-        `Pool.Base.recycled_add(): `
-          + `An object ( ${objectToBeRecycled} ) is recycled multiple times. `
-          + `This may imply some problem (e.g. resource not transferred properly).`
-        );
+      throw Error( `Pool.Base.recycled_add(): `
+        + `An object ( ${objectToBeRecycled} ) is recycled multiple times. `
+        + `This may imply some problem (e.g. resource not transferred properly).`
+      );
       return false;
     }
 
