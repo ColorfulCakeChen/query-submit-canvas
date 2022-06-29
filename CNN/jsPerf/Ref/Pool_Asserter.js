@@ -23,8 +23,14 @@ function assert_Pool_issuedCount( prefixMsg, pool, issuedCount_shouldBe ) {
  *
  * @param (Function} pfn
  *   The function to be called.
+ *
+ * @param (Object} thisArg
+ *   The "this" value when function pfn is called.
+ *
+ * @param (Object[]} restArgs
+ *   All arguments when function pfn is called.
  */
-function assert_Pool_issuedCount_same_after_as_before( prefixMsg, pfn ) {
+function assert_Pool_issuedCount_same_after_as_before( prefixMsg, pfn, thisArg, ...restArgs ) {
 
   let issuedCount_array_before;
   try {
@@ -34,7 +40,7 @@ function assert_Pool_issuedCount_same_after_as_before( prefixMsg, pfn ) {
       issuedCount_array_before[ i ] = pool.issuedCount;
     }
 
-    pfn.call();
+    pfn.apply( thisArg, restArgs );
 
     for ( let i = 0; i < Pool.All.registeredPoolArray.length; ++i ) {
       let pool = Pool.All.registeredPoolArray[ i ];
