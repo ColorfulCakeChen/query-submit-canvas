@@ -1023,13 +1023,13 @@ class Base extends Recyclable.Root {
       // Concatenate depthwise1's result and depthwise2's result.
       concat1Result = NumberImage.Base.calcConcatAlongAxisId2(
         depthwise1Result, depthwise2Result,
-        "Concat1_depthwise1_depthwise2 (SHUFFLE_NET_V2_BY_POINTWISE21_HEAD)", testParams.out );
+        "Concat1_depthwise1_depthwise2 (SHUFFLE_NET_V2_BY_POINTWISE21_HEAD)", null, testParams.out );
 
     } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL() ) { // (10 or 11)
 
       // Concatenate depthwise1's result and input1.
       concat1Result = NumberImage.Base.calcConcatAlongAxisId2( depthwise1Result, imageIn1,
-        "Concat1_depthwise1_input1 (SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL)", testParams.out );
+        "Concat1_depthwise1_input1 (SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL)", null, testParams.out );
     }
 
     // 4. Pointwise2
