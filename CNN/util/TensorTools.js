@@ -104,17 +104,17 @@ class Asserter_Equal extends Recyclable.Root {
    * @param {number[]} rhsNumberArray
    *   The number array to be compared against lhsNumberArray.
    *
-   * @param {string} prefixMsg
-   *   The text to be displayed at the beginning when comparison failed.
+   * @param {Object} prefixMsg
+   *   Its .toString() will be displayed at the beginning when comparison failed.
    *
-   * @param {string} lhsNumberArrayName
-   *   The text to be displayed for the lhsNumberArray when comparison failed.
+   * @param {Object} lhsNumberArrayName
+   *   Its .toString() will be displayed for the lhsNumberArray when comparison failed.
    *
-   * @param {string} rhsNumberArrayName
-   *   The text to be displayed for the rhsNumberArray when comparison failed.
+   * @param {Object} rhsNumberArrayName
+   *   Its .toString() will be displayed for the rhsNumberArray when comparison failed.
    *
-   * @param {string} postfixMsg
-   *   The text to be displayed at the tail when comparison failed.
+   * @param {Object} postfixMsg
+   *   Its .toString() will be displayed at the tail when comparison failed.
    */
   assert_NumberArray_NumberArray( lhsNumberArray, rhsNumberArray, prefixMsg, lhsNumberArrayName, rhsNumberArrayName, postfixMsg ) {
 
@@ -151,17 +151,17 @@ class Asserter_Equal extends Recyclable.Root {
    * @param {number} rhsNumber
    *   The number to be compared against lhsNumber.
    *
-   * @param {string} prefixMsg
-   *   The text to be displayed at the beginning when comparison failed.
+   * @param {Object} prefixMsg
+   *   Its .toString() will be displayed at the beginning when comparison failed.
    *
-   * @param {string} lhsNumberName
-   *   The text to be displayed for the lhsNumber when comparison failed.
+   * @param {Object} lhsNumberName
+   *   Its .toString() will be displayed for the lhsNumber when comparison failed.
    *
-   * @param {string} rhsNumberName
-   *   The text to be displayed for the rhsNumber when comparison failed.
+   * @param {Object} rhsNumberName
+   *   Its .toString() will be displayed for the rhsNumber when comparison failed.
    *
-   * @param {string} postfixMsg
-   *   The text to be displayed at the tail when comparison failed.
+   * @param {Object} postfixMsg
+   *   Its .toString() will be displayed at the tail when comparison failed.
    */
   assert_Number_Number( lhsNumber, rhsNumber, prefixMsg, lhsNumberName, rhsNumberName, postfixMsg ) {
     this.lhsNumberArrayDefault[ 0 ] = lhsNumber;
@@ -179,17 +179,17 @@ class Asserter_Equal extends Recyclable.Root {
    * @param {number[]} numberArray
    *   The number to be compared against tensor's data.
    *
-   * @param {string} prefixMsg
-   *   The text to be displayed at the beginning when comparison failed.
+   * @param {Object} prefixMsg
+   *   Its .toString() will be displayed at the beginning when comparison failed.
    *
-   * @param {string} tensorName
-   *   The text to be displayed for the tensor when comparison failed.
+   * @param {Object} tensorName
+   *   Its .toString() will be displayed for the tensor when comparison failed.
    *
-   * @param {string} numberArrayName
-   *   The text to be displayed for the numberArray when comparison failed.
+   * @param {Object} numberArrayName
+   *   Its .toString() will be displayed for the numberArray when comparison failed.
    *
-   * @param {string} postfixMsg
-   *   The text to be displayed at the tail when comparison failed.
+   * @param {Object} postfixMsg
+   *   Its .toString() will be displayed at the tail when comparison failed.
    */
   assert_Tensor_NumberArray( tensor, rhsNumberArray, prefixMsg, tensorName, rhsNumberArrayName, postfixMsg ) {
 
