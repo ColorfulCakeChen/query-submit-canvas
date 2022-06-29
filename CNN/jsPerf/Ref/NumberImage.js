@@ -99,7 +99,7 @@ class Base {
    *   The pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) when ( bPassThrough == true ).
    *
    * @param {string}   pointwiseName     A string for debug message of this convolution.
-   * @param {string}   parametersDesc    A string for debug message of this block.
+   * @param {Object}   parametersDesc    Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
@@ -275,7 +275,7 @@ class Base {
    *   The pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) when ( bPassThrough == true ).
    *
    * @param {string}   depthwiseName     A string for debug message of this convolution.
-   * @param {string}   parametersDesc    A string for debug message of this block.
+   * @param {Object}   parametersDesc    Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
@@ -505,7 +505,7 @@ class Base {
    * @param {boolean}  bBias             Whether add bias.
    * @param {number[]} biasesArray       The bias values.
    * @param {string}   biasName          A string for debug message of this bias.
-   * @param {string}   parametersDesc    A string for debug message of this block.
+   * @param {Object}   parametersDesc    Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return this which may or may not be added bias (according to bBias).
@@ -549,7 +549,7 @@ class Base {
    * @param {NumberImage.Base} imageIn          The imageIn.dataArray[] will be multiplied by scaleArray in place.
    * @param {FloatValue.ScaleArray} scaleArray  The scales for every channel.
    * @param {string}   scaleName                A string for debug message of this scaling.
-   * @param {string}   parametersDesc           A string for debug message of this block.
+   * @param {Object}   parametersDesc           Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return the (modified) image whose every element is scaled according to its channel.
@@ -583,7 +583,7 @@ class Base {
    * @param {NumberImage.Base} imageIn   The source image to be processed.
    * @param {string}   nActivationId     The name string of this activation function.
    *
-   * @param {string}   parametersDesc A string for debug message of this block.
+   * @param {Object}   parametersDesc    Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return this which may or may not be modified by activation function (according to nActivationId). The this.dataArray may be
@@ -626,7 +626,7 @@ class Base {
    * @param {NumberImage.Base} another     The second image to be used for adding.
    *
    * @param {string} addName               A string for debug message of this adding operation.
-   * @param {string} parametersDesc        A string for debug message of this block.
+   * @param {Object} parametersDesc        Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of adding this and another.
@@ -706,7 +706,7 @@ class Base {
    * @param {NumberImage.Base} another     The second image to be used for multiplying.
    *
    * @param {string} multiplyName          A string for debug message of this multiplying operation.
-   * @param {string} parametersDesc        A string for debug message of this block.
+   * @param {Object} parametersDesc        Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of multiplying this and another.
@@ -832,7 +832,7 @@ class Base {
    *   A bag for generating pass-through pointwise convolution filters and biases. Only used when ( bPassThrough == true ).
    *
    * @param {string}   squeezeExcitationName  A string for debug message of this squeeze-and-excitation.
-   * @param {string}   parametersDesc    A string for debug message of this block.
+   * @param {Object}   parametersDesc         Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the squeeze-and-excitation.
@@ -961,7 +961,7 @@ class Base {
    * and improve performance when doing Interleave_asGrouptTwo.
    *
    * @param {string} interleaveName  A string for debug message of this interleaving.
-   * @param {string} parametersDesc  A string for debug message of this block.
+   * @param {Object} parametersDesc  Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return this object which has been modifed in place.
@@ -996,8 +996,8 @@ class Base {
    * @param {NumberImage.Base} imageOutArray[ 0 ]   The first output image.
    * @param {NumberImage.Base} imageOutArray[ 1 ]   The second output image.
    *
-   * @param {string} splitName          A string for debug message of this splitting.
-   * @param {string} parametersDesc     A string for debug message of this block.
+   * @param {string} splitName       A string for debug message of this splitting.
+   * @param {Object} parametersDesc  Its .toString() for debug message of this block.
    */
   static calcSplitAlongAxisId2( imageIn, imageOutArray, splitName, parametersDesc ) {
 
@@ -1062,7 +1062,7 @@ class Base {
    * @param {NumberImage.Base} imageIn1   The source image1 to be processed.
    * @param {NumberImage.Base} imageIn2   The source image2 to be processed.
    * @param {string} concatName           A string for debug message of this concatenation.
-   * @param {string} parametersDesc       A string for debug message of this block.
+   * @param {Object} parametersDesc       Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return concatenated image along the axis id 2. If imageIn1 is null, return imageIn2. If imageIn2 is null, return imageIn1.
@@ -1144,8 +1144,8 @@ class Base {
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
    *
-   * @param {string}   concatShuffleSplitName       A string for debug message of this concatenation-shuffle-split.
-   * @param {string}   parametersDesc               A string for debug message of this block.
+   * @param {string} concatShuffleSplitName  A string for debug message of this concatenation-shuffle-split.
+   * @param {Object} parametersDesc          Its .toString() for debug message of this block.
    */
   static calcConcatShuffleSplit(
     imageInArray, imageOutArray, bShuffle, bSplit,
