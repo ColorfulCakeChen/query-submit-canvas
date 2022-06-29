@@ -697,27 +697,18 @@ Do not use function declared in function because they may generate new function 
       } else { // no input0, no input1.
         if ( this.output0 ) {
           if ( this.output1 ) { // 13. (  ) => ( .output0, .output1 )
-            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
-            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
-            this.apply = () => { this.output0.realTensor = null; this.output1.realTensor = null; }
+  static apply__o0_o1() { this.output0.realTensor = null; this.output1.realTensor = null; }
           } else {              // 14. (  ) => ( .output0 )
-            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
-            this.apply = () => { this.output0.realTensor = null; }
+  static apply__o0() { this.output0.realTensor = null; }
           }
         } else {
           if ( this.output1 ) { // 15. (  ) => ( , .output1 )
-            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
-            this.apply = () => { this.output1.realTensor = null; }
+  static apply__o1() { this.output1.realTensor = null; }
           } else {              // 16. (  ) => (  )
-            this.apply = () => {}
+  static apply__() {}
           }
         }
 
-        //!!! (2022/06/02 Remarked) It can be supported. Just put null to output should be enough.
-        //if ( this.input0 == this.input1 )
-        //  throw Error( `Operation.Base.setup_apply_dummy(): `
-        //    + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should at least one is non-null.`
-        //  );
       }
     }
 
