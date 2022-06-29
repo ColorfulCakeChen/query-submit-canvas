@@ -82,8 +82,6 @@ class TestCorrectnessInfo extends Recyclable.Root {
     let inputTensor3dArray = this.inputTensor3dArray;
     let outputTensor3dArray = this.outputTensor3dArray;
 
-    let strNote;
-
     let bTwoInputs, input1_channelCount;
     {
       bTwoInputs = ( inferencedParams.inputTensorCount == 2 );
@@ -92,8 +90,6 @@ class TestCorrectnessInfo extends Recyclable.Root {
 
     let channelShuffler_ConcatPointwiseConv, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount;
     {
-      strNote = `( testParams.id=${testParams.id} )`;
-
       imageInArraySelected.fill( undefined );
       imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( input0_height, input0_width, input0_channelCount );
 
@@ -117,7 +113,7 @@ class TestCorrectnessInfo extends Recyclable.Root {
           throw Error( `Block_Reference.TestCorrectnessInfo.prepareBy(): `
             + `input image1's ( height, width, depth ) = ( ${imageIn1.height}, ${imageIn1.width}, ${imageIn1.depth} ) should be `
             + `( ${inferencedParams.input1_height}, ${inferencedParams.input1_width}, ${inferencedParams.input1_channelCount} ). `
-            + `${strNote}`
+            + `( ${testParams} )`
           );
       } else {
         if ( !(   ( 0 == inferencedParams.input1_height )
@@ -126,13 +122,13 @@ class TestCorrectnessInfo extends Recyclable.Root {
           throw Error( `Block_Reference.TestCorrectnessInfo.prepareBy(): `
             + `inferenced input1's ( height, width, depth ) = `
             + `( ${inferencedParams.input1_height}, ${inferencedParams.input1_width}, ${inferencedParams.input1_channelCount} ) `
-            + `should be ( 0, 0, 0 ). ${strNote}`
+            + `should be ( 0, 0, 0 ). ( ${testParams} )`
           );
       }
 
       if ( imageInArraySelected.length != 2 )
         throw Error( `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-          + `imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ${strNote}` );
+          + `imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ( ${testParams} )` );
 
       // Prepare channel shuffler.
       const outputGroupCount = 2; // Only use two convolution groups.
@@ -169,12 +165,12 @@ class TestCorrectnessInfo extends Recyclable.Root {
             + `${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ]} ) `
             + `should be the same as input image1's ( height, width, concatenatedDepth ) = ( `
             + `${imageIn1.height}, ${imageIn1.width}, ${concatenatedDepth} ). `
-            + `${strNote}` );
+            + `( ${testParams} )` );
 
         if ( channelShuffler_ConcatPointwiseConv.outputGroupCount != outputGroupCount )
           throw Error( `Block_Reference.TestCorrectnessInfo.prepareBy(): `
             + `ChannelShuffler outputGroupCount ( ${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
-            + `should be the same as image outputGroupCount ( ${outputGroupCount} ). ${strNote}` );
+            + `should be the same as image outputGroupCount ( ${outputGroupCount} ). ( ${testParams} )` );
 
         channelShuffler_concatenatedShape = channelShuffler_ConcatPointwiseConv.concatenatedShape;
         channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
@@ -209,7 +205,6 @@ class TestCorrectnessInfo extends Recyclable.Root {
     this.input1_channelCount = input1_channelCount;
     this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
     this.inputTensorDestroyCount = inputTensorDestroyCount;
-    this.strNote = strNote;
   }
 
 }
@@ -304,7 +299,6 @@ class Base extends Recyclable.Root {
       let {
         imageInArraySelected, inputTensor3dArray, outputTensor3dArray,
         input1_channelCount, channelShuffler_ConcatPointwiseConv, inputTensorDestroyCount,
-        strNote
       } = this.testCorrectnessInfo;
 
       let imageOutReferenceArray = this.imageOutReferenceArray;
@@ -313,7 +307,8 @@ class Base extends Recyclable.Root {
 
         if ( imageOutReferenceArray.length != 2 )
           throw Error(
-            `Block_Reference.testCorrectness(): imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`
+            `Block_Reference.testCorrectness(): imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. `
+            + `( ${testParams} )`
           );
       }
 
@@ -324,16 +319,11 @@ class Base extends Recyclable.Root {
         imageInArraySelected[ 1 ]?.boundsArraySet.output0,
         channelShuffler_ConcatPointwiseConv, this.arrayTemp_forInterleave_asGrouptTwo );
 
-
-//!!! ...unfinished... (2022/06/25)
-// Try not to generate parameters description string in advance every time for reducing memory re-allocation.
-// Just generate them only if necessary.
-
-      let parametersDescription = block.parametersDescription;
-      strNote = `( testParams.id=${testParams.id}, ${parametersDescription} )`;
+      // Note: Do not generate parameters description string in advance every time.
+      //       Just generate them only if necessary by .toString() for reducing memory re-allocation.
 
       // Test input channel count.
-      Base.AssertTwoEqualValues( "inChannels1", block.inChannels1, input1_channelCount, strNote );
+      Base.AssertTwoEqualValues( "inChannels1", block.inChannels1, input1_channelCount, block );
 
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
@@ -347,13 +337,13 @@ class Base extends Recyclable.Root {
         throw Error( `Block.apply() memory leak. `
           + `result tensor count ( ${memoryInfo_apply_after.numTensors} ) `
           + `should be ( ${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } ) `
-          + `${strNote}` );
+          + `${block}` );
 
       if ( inputTensor3dArray.length != 2 )
-        throw Error( `Block inputTensor3dArray.length ( ${inputTensor3dArray.length} ) should be 2. ${strNote}` );
+        throw Error( `Block inputTensor3dArray.length ( ${inputTensor3dArray.length} ) should be 2. ${block}` );
 
       if ( outputTensor3dArray.length != 2 )
-        throw Error( `Block outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${strNote}` );
+        throw Error( `Block outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${block}` );
 
       { // Test output channel count.
         const CHANNEL_AXIS_ID = 2; // Axis id 2 is depth (i.e. channel) dimension.
@@ -367,9 +357,9 @@ class Base extends Recyclable.Root {
 
         let outChannelsAll = outChannels0 + outChannels1;
 
-        Base.AssertTwoEqualValues( "outChannels0", block.outChannels0, outChannels0, strNote );
-        Base.AssertTwoEqualValues( "outChannels1", block.outChannels1, outChannels1, strNote );
-        Base.AssertTwoEqualValues( "outChannelsAll", block.outChannelsAll, outChannelsAll, strNote );
+        Base.AssertTwoEqualValues( "outChannels0", block.outChannels0, outChannels0, block );
+        Base.AssertTwoEqualValues( "outChannels1", block.outChannels1, outChannels1, block );
+        Base.AssertTwoEqualValues( "outChannelsAll", block.outChannelsAll, outChannelsAll, block );
       }
 
       { // Test output tensor count.
@@ -381,23 +371,25 @@ class Base extends Recyclable.Root {
         if ( outputTensor3dArray[ 1 ] )
           ++outputTensorCount;
 
-        Base.AssertTwoEqualValues( "outputTensorCount", block.outputTensorCount, outputTensorCount, strNote );
+        Base.AssertTwoEqualValues( "outputTensorCount", block.outputTensorCount, outputTensorCount, block );
       }
 
       // Test correctness of block BoundsArraySet.
-      this.assert_imageOut_BoundsArraySet( block, imageOutReferenceArray, strNote );
+      this.assert_imageOut_BoundsArraySet( block, imageOutReferenceArray, block );
 
       // Test correctness of block apply.
-      this.assert_imageOut_Tensors_byNumberArrays( outputTensor3dArray, imageOutReferenceArray, strNote );
+      this.assert_imageOut_Tensors_byNumberArrays( outputTensor3dArray, imageOutReferenceArray, block );
 
       block.disposeResources();
+      this.block = null; // For .toString() usage.
+
       let memoryInfo_afterDispose = tf.memory();
 
       if ( memoryInfo_afterDispose.numTensors != ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) )
         throw Error( `Block create/dispose memory leak. `
           + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
           + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
-          + `${strNote}` );
+          + `${block}` );
 
       tf.dispose( outputTensor3dArray );
 
@@ -502,22 +494,18 @@ class Base extends Recyclable.Root {
       debugger;
     }
 
-
-//!!! ...unfinished... (2022/06/25)
-// Try not to generate parameters description string in advance every time for reducing memory re-allocation.
-// Just generate them only if necessary.
-
-    let parametersDescription = `( ${block.parametersDescription} )`;
+    // Note: Do not generate parameters description string in advance every time.
+    //       Just generate them only if necessary by .toString() for reducing memory re-allocation.
 
     if ( block.bInitOk != bInitOk )
-      throw Error( `Block validation state (${block.bInitOk}) mismatches initer's result (${bInitOk}). ${parametersDescription}` );
+      throw Error( `Block validation state (${block.bInitOk}) mismatches initer's result (${bInitOk}). ${block}` );
 
     if ( false == bInitOk )
-      throw Error( `Failed to initialize block object. ${parametersDescription}` );
+      throw Error( `Failed to initialize block object. ${block}` );
 
     if ( 100 != progress.valuePercentage )
       throw Error(
-        `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${parametersDescription}`);
+        `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${block}`);
 
     progress = ValueMax.Percentage.Aggregate.Singleton.recycle( progress );
     progress = null;
@@ -526,13 +514,13 @@ class Base extends Recyclable.Root {
       debugger;
     }
 
-    let asserter = new ObjectPropertyAsserter.Base( `Block`, block, parametersDescription );
+    let asserter = new ObjectPropertyAsserter.Base( `Block`, block, block );
 
     Base.AssertTwoEqualValues( "parsing beginning position",
-      block.byteOffsetBegin, testParams.in.byteOffsetBegin, parametersDescription );
+      block.byteOffsetBegin, testParams.in.byteOffsetBegin, block );
 
     Base.AssertTwoEqualValues( "parsing ending position",
-      block.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, parametersDescription );
+      block.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, block );
 
     // Linearity
     let bNoSqueezeExcitation_between_depthwise_and_pointwise2;
@@ -660,7 +648,9 @@ class Base extends Recyclable.Root {
           + `channelShuffler must NOT null when `
           + `nConvBlockTypeId=`
           + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
-          + `(${testParams.out.nConvBlockTypeId})` );
+          + `(${testParams.out.nConvBlockTypeId}) `
+          + `${block}`
+      );
 
       asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", channelShuffler_ConcatPointwiseConv );
 
@@ -841,10 +831,12 @@ class Base extends Recyclable.Root {
     return block;
   }
 
-
-  static AssertTwoEqualValues( valueName, value1, value2, parametersDescription ) {
+  /**
+   * @param {Object} parametersDesc  Its .toString() for debug message of this block.
+   */
+  static AssertTwoEqualValues( valueName, value1, value2, parametersDesc ) {
     if ( value1 != value2 )
-      throw Error( `Block ${valueName} (${value1}) should be (${value2}). ${parametersDescription}` );
+      throw Error( `Block ${valueName} (${value1}) should be (${value2}). ${parametersDesc}` );
   }
 
   /** According to imageInArray and this.testParams.in.paramsNumberArrayObject, calculate imageOutArray.
@@ -866,11 +858,8 @@ class Base extends Recyclable.Root {
     let inferencedParams = testParams.out.inferencedParams;
     let depthwisePadInfo = inferencedParams.depthwisePadInfo;
 
-
-//!!! ...unfinished... (2022/06/25)
-// Try not to generate parameters description string in advance every time for reducing memory re-allocation.
-// Just generate them only if necessary.
-
+    // Note: Do not generate parameters description string in advance every time.
+    //       Just generate them only if necessary by .toString() for reducing memory re-allocation.
     testParams.out.toString = Base.TestParams_Out_toString(); // Create description for debug easily.
 
 
@@ -1175,6 +1164,22 @@ class Base extends Recyclable.Root {
 
     return imageOutArray;
   }
+
+//!!! (2022/06/29 Remarked) User should specify block or testParams.out explicitly.
+//   /**
+//    * @return {string}
+//    *   Return a string of Block_Refernece by this.block (if exists) or by this.testParams.out.
+//    */
+//   toString() {
+//     let parametersDescription;
+//     if ( this.block ) {
+//       parametersDescription = this.block.toString();
+//     } else {
+//       parametersDescription = this.testParams.out.toString();
+//     }
+//     let result = `( testParams.id=${this.testParams.id}, ${parametersDescription} )`;
+//     return result;
+//   }
 
   /**
    * @param {Block_TestParams.out} this
