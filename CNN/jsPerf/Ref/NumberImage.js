@@ -39,24 +39,71 @@ class Base extends Recyclable.Root {
 
   /**
    *
-
-//!!! ...unfinished... (2022/06/25)
    * @param {number} filledValue
    *   Use this value to fill the created .dataArray[].
-
+   *
+   * @param {FloatValue.Bounds} aBounds
+   *   The value bounds of all pixels of this image. If null, assume all image pixels are inside the default value bounds
+   * (i.e. Weights.Base.ValueBounds).
+   *
    */
-  constructor( height, width, depth, dataArray, boundsArraySet ) {
+
+//!!! (2022/06/29 Remarked) Replaced by filledValue and aBounds.
+//  constructor( height, width, depth, dataArray, boundsArraySet ) {
+
+  constructor( height, width, depth, filledValue, aBounds ) {
+    Base.setAsConstructor_self.call( this, height, width, depth, filledValue, aBounds );
+  }
+
+  /** @override */
+  static setAsConstructor( height, width, depth, filledValue, aBounds ) {
+    super.setAsConstructor();
+    Base.setAsConstructor_self.call( this, height, width, depth, filledValue, aBounds );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( height, width, depth, filledValue, aBounds ) {
     this.height = height;
     this.width = width;
     this.depth = depth;
-    this.dataArray = dataArray;
-    this.boundsArraySet = boundsArraySet;
+    this.filledValue = filledValue;
+    
+    if ( aBounds )
+      this.aBounds = aBounds.clone();
 
-    if ( !this.boundsArraySet ) { // Default value bounds for an image.
-      let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( depth );
-      this.boundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by( inputScaleBoundsArray, null, depth, undefined );
+    let elementCount = height * width * depth;
+    this.dataArray = Recyclable.Array.Pool.get_or_create_by( elementCount );
+
+//!!! ...unfinished... (2022/06/29)
+// Who is responsible for releasing inputScaleBoundsArray (i.e. this.boundsArraySet.inputX)?
+
+    let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( depth );
+    this.boundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by( inputScaleBoundsArray, null, depth, undefined );
+
+    // Default value bounds for an image.
+    //
+    // Note: Do not use .filledValue as bounds.
+    //
+    if ( aBounds ) {
+      this.boundsArraySet.set_outputs_all_byBounds( aBounds );
+    } else {
       this.boundsArraySet.set_outputs_all_byBounds( Weights.Base.ValueBounds ); // Assume all images are inside the default value bounds.
     }
+  }
+
+  /** @override */
+  disposeResources() {
+
+//!!! ...unfinished... (2022/06/29)
+// Who is responsible for releasing inputScaleBoundsArray (i.e. this.boundsArraySet.inputX)?
+
+    if ( aBounds ) {
+      this.aBounds.disposeResources_and_recycleToPool();
+      this.aBounds = null;
+    }
+
+    super.disposeResources();
   }
 
   clone() {
@@ -199,7 +246,7 @@ class Base extends Recyclable.Root {
       }
 
       // Calculate value bounds of every output channels (i.e. .afterFilter).
-      let tBounds = new FloatValue.Bounds( 0, 0 );
+      let tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
       for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
         let filterIndexBase = ( inChannel * pointwiseChannelCount );
 
@@ -214,6 +261,7 @@ class Base extends Recyclable.Root {
           imageOut.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
         }
       }
+      tBounds.disposeResources_and_recycleToPool();
     }
 
     // Bias
@@ -317,12 +365,15 @@ class Base extends Recyclable.Root {
 
 //!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 ) or ( depthwiseFilterWidth <= 0 )?
 
-    let padInfo = new ( Depthwise.PadInfoCalculator() )( imageIn.height, imageIn.width, imageIn.depth, 
+    let padInfo = Depthwise.PadInfoCalculatorRoot.Pool.get_or_create_by( imageIn.height, imageIn.width, imageIn.depth, 
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
 
     let { channelMultiplier, dilationHeight, dilationWidth,
           stridesHeight, stridesWidth, padHeightTop, padWidthLeft,
           outputHeight, outputWidth, outputChannelCount, outputElementCount } = padInfo;
+
+    padInfo.disposeResources_and_recycleToPool();
+    padInfo = null;
 
     // For ( pad == "valid" ), negative ( inX, inY ) will never happen.
     // For ( pad == "same"  ), negative ( inX, inY ) may happen, but those pixels will be viewed as zero value.
@@ -374,7 +425,7 @@ class Base extends Recyclable.Root {
         filtersArray_bBoundsCalculated = new Array( depthwiseFiltersArray.length );
         filtersArray_bBoundsCalculated.fill( false );
 
-        tBounds = new FloatValue.Bounds( 0, 0 );
+        tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
       }
     }
 
@@ -485,6 +536,11 @@ class Base extends Recyclable.Root {
       }
     }
 
+    if ( tBounds ) {
+      tBounds.disposeResources_and_recycleToPool();
+      tBounds = null;
+    }
+
     // Bias
     imageOut.modify_byBias( bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
 
@@ -593,9 +649,8 @@ class Base extends Recyclable.Root {
    * @param {Object}   parametersDesc    Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
-   *   Return this which may or may not be modified by activation function (according to nActivationId). The this.dataArray may be
-   * just the original this.dataArray directly (when no activation function). Or, it may be a new Float32Array (when having activation
-   * function).
+   *   Return this which may or may not be modified by activation function (according to nActivationId). The this.dataArray will be
+   * just the original this.dataArray directly.
    */
   static modify_byActivation_withoutAffect_BoundsArraySet( imageIn, nActivationId, parametersDesc ) {
 
@@ -1223,11 +1278,11 @@ class Base extends Recyclable.Root {
    * [ randomOffsetMin, randomOffsetMax ] (inclusive) randomly. Default is 0.
    *
    * @param {boolean} bAutoBounds
-   *   If true, the value bounds will be is real bounds of the generated elements. If false, the value bounds will be
+   *   If true, the value bounds will be real bounds of the generated elements. If false, the value bounds will be
    * Weights.Base.ValueBounds. Default is false.
    *
    * @return {NumberImage.Base}
-   *   Return a generated new image. Basically, they are sequential numbers which could be added by random offset between
+   *   Return a newly generated image. Basically, they are sequential numbers which could be added by random offset between
    * [ randomOffsetMin, randomOffsetMax].
    */
   static create_bySequenceRandom( height, width, channelCount, randomOffsetMin = 0, randomOffsetMax = 0, bAutoBounds = false ) {
@@ -1235,7 +1290,7 @@ class Base extends Recyclable.Root {
 
     let tBounds;
     if ( bAutoBounds ) {
-     tBounds = new FloatValue.Bounds( 0, 0 );
+      tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
     }
 
     let dataArray = RandTools.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax, tBounds );
@@ -1247,6 +1302,8 @@ class Base extends Recyclable.Root {
 
       boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, undefined, channelCount, undefined );
     }
+
+    tBounds.disposeResources_and_recycleToPool();
 
     let imageNew = new Base( height, width, channelCount, dataArray, boundsArraySet );
     return imageNew;
