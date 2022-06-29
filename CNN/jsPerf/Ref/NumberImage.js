@@ -34,9 +34,6 @@ class Base extends Recyclable.Root {
    */
   static Pool = new Pool.Root( "NumberImage.Base.Pool", Base, Base.setAsConstructor );
 
-//!!! ...unfinished... (2022/06/25)
-// Instead of giving dataArray, specify what value to be filled in dataArray by default.
-
   /**
    *
    * @param {number} preFilledValue
@@ -139,8 +136,7 @@ class Base extends Recyclable.Root {
       result.dataArray [ i ] = this.dataArray[ i ];
     }
 
-//!!! ...unfinished... (2022/06/29) Copy boundsArraySet.
-
+    result.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.boundsArraySet ); // Copy boundsArraySet.
     return result;
   }
 
