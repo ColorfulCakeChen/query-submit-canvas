@@ -83,7 +83,7 @@ class Base extends TestParams.Base {
 
   /** */
   toString() {
-    return `( testParams.id=${this.id} )`;
+    return `testParams.id=${this.id}`;
   }
 
   /**
