@@ -780,8 +780,12 @@ class Base extends TestParams.Base {
    * @param {number} inputChannelCount_A
    *   The channel count of the squeeze-and-excitation's input.
    *
-   * @param {string} propertyNamePrefix_A
-   *   The name prefix of the result property in the o_numberArrayObject. If null, it will not be filled.
+   * @param {Object[]} propertyNames
+   * @param {Object[]} propertyNames[ i ].Intermediate.Filters
+   * @param {Object[]} propertyNames[ i ].Intermediate.Biases
+   * @param {Object[]} propertyNames[ i ].Excitation.Filters
+   * @param {Object[]} propertyNames[ i ].Excitation.Biases
+   *   The property names of the result object. It should have three object propertyNames[ 0 ], propertyNames[ 1 ], propertyNames[ 2 ].
    *
    * @param {object} io_numberArrayObject
    *   The object will be filled in result data. Every result number array will be set as a property of the object. At most,
@@ -794,7 +798,7 @@ class Base extends TestParams.Base {
   generate_squeezeExcitation_filters_biases(
     nSqueezeExcitationChannelCountDivisor, nActivationId,
     inputChannelCount_A, inputChannelCount_B, inputChannelCount_C,
-    propertyNamePrefix_A, propertyNamePrefix_B, propertyNamePrefix_C,
+    propertyNames,
     io_numberArrayObject ) {
 
     // 0.
@@ -845,12 +849,10 @@ class Base extends TestParams.Base {
     let intermediate_bBias;
     {
 
-//!!! ...unfinished... (2022/06/25) StringBuffer?
-// Try not to generate new (property name) string every time for reducing memory re-allocation.
-
-      const SEIntermediatePropertyNamePrefix_A = ( propertyNamePrefix_A ) ? ( `${propertyNamePrefix_A}SEIntermediate` ) : null;
-      const SEIntermediatePropertyNamePrefix_B = ( propertyNamePrefix_B ) ? ( `${propertyNamePrefix_B}SEIntermediate` ) : null;
-      const SEIntermediatePropertyNamePrefix_C = ( propertyNamePrefix_C ) ? ( `${propertyNamePrefix_C}SEIntermediate` ) : null;
+//!!! (2022/06/29 Remarked) Use propertyNames instead.
+//       const SEIntermediatePropertyNamePrefix_A = ( propertyNamePrefix_A ) ? ( `${propertyNamePrefix_A}SEIntermediate` ) : null;
+//       const SEIntermediatePropertyNamePrefix_B = ( propertyNamePrefix_B ) ? ( `${propertyNamePrefix_B}SEIntermediate` ) : null;
+//       const SEIntermediatePropertyNamePrefix_C = ( propertyNamePrefix_C ) ? ( `${propertyNamePrefix_C}SEIntermediate` ) : null;
 
       if ( bIntermediate ) {
         intermediate_outputChannelCount_A = Math.ceil( intermediate_inputChannelCount_A / nSqueezeExcitationChannelCountDivisor );
@@ -873,15 +875,15 @@ class Base extends TestParams.Base {
 
       this.generate_pointwise_filters_biases(
         intermediate_inputChannelCount_A, ( ( bIntermediate ) ? intermediate_outputChannelCount_A : 0 ),
-        intermediate_bBias, SEIntermediatePropertyNamePrefix_A, io_numberArrayObject );
+        intermediate_bBias, propertyNames[ 0 ].Intermediate, io_numberArrayObject );
 
       this.generate_pointwise_filters_biases(
         intermediate_inputChannelCount_B, ( ( bIntermediate ) ? intermediate_outputChannelCount_B : 0 ),
-        intermediate_bBias, SEIntermediatePropertyNamePrefix_B, io_numberArrayObject );
+        intermediate_bBias, propertyNames[ 1 ].Intermediate, io_numberArrayObject );
 
       this.generate_pointwise_filters_biases(
         intermediate_inputChannelCount_C, ( ( bIntermediate ) ? intermediate_outputChannelCount_C : 0 ),
-        intermediate_bBias, SEIntermediatePropertyNamePrefix_C, io_numberArrayObject );
+        intermediate_bBias, propertyNames[ 2 ].Intermediate, io_numberArrayObject );
     }
 
     // 3. excitation pointwise convolution.
@@ -896,21 +898,22 @@ class Base extends TestParams.Base {
 
     let excitation_bBias = true; // Always bBias
     {
-      const SEExcitationPropertyNamePrefix_A = ( propertyNamePrefix_A ) ? ( `${propertyNamePrefix_A}SEExcitation` ) : null;
-      const SEExcitationPropertyNamePrefix_B = ( propertyNamePrefix_B ) ? ( `${propertyNamePrefix_B}SEExcitation` ) : null;
-      const SEExcitationPropertyNamePrefix_C = ( propertyNamePrefix_C ) ? ( `${propertyNamePrefix_C}SEExcitation` ) : null;
+//!!! (2022/06/29 Remarked) Use propertyNames instead.
+//       const SEExcitationPropertyNamePrefix_A = ( propertyNamePrefix_A ) ? ( `${propertyNamePrefix_A}SEExcitation` ) : null;
+//       const SEExcitationPropertyNamePrefix_B = ( propertyNamePrefix_B ) ? ( `${propertyNamePrefix_B}SEExcitation` ) : null;
+//       const SEExcitationPropertyNamePrefix_C = ( propertyNamePrefix_C ) ? ( `${propertyNamePrefix_C}SEExcitation` ) : null;
 
       this.generate_pointwise_filters_biases(
         excitation_inputChannelCount_A, ( ( bExcitation ) ? excitation_outputChannelCount_A : 0 ),
-        excitation_bBias, SEExcitationPropertyNamePrefix_A, io_numberArrayObject );
+        excitation_bBias, propertyNames[ 0 ].Excitation, io_numberArrayObject );
 
       this.generate_pointwise_filters_biases(
         excitation_inputChannelCount_B, ( ( bExcitation ) ? excitation_outputChannelCount_B : 0 ),
-        excitation_bBias, SEExcitationPropertyNamePrefix_B, io_numberArrayObject );
+        excitation_bBias, propertyNames[ 1 ].Excitation, io_numberArrayObject );
 
       this.generate_pointwise_filters_biases(
         excitation_inputChannelCount_C, ( ( bExcitation ) ? excitation_outputChannelCount_C : 0 ),
-        excitation_bBias, SEExcitationPropertyNamePrefix_C, io_numberArrayObject );
+        excitation_bBias, propertyNames[ 2 ].Excitation, io_numberArrayObject );
     }
   }
 
@@ -924,46 +927,44 @@ class Base extends TestParams.Base {
    * @param {boolean} bBias
    *   If true, the returned array will contain a number array as the bias' weight values. If ( outputChannelCount <= 0 ), this will be ignored.
    *
-   * @param {string} propertyNamePrefix
-   *   The name prefix of the result object. For example, if ( resultPrefixName == "xxx" ), the key names of returned object's
-   * numberArrayMap will be "xxxFilters", "xxxBiases". If null, nothing will be filled.
+   * @param {Object} propertyNames
+   *   The property names of the result object. It should have two property: { Filters, Biases }. For example,
+   * ( propertyNames.Filters == "xxxFilters" ) and ( propertyNames.Biases == "xxxBiases" ). If null, nothing will be filled.
    *
    * @param {object} io_numberArrayObject
    *   The object will be filled in result data. Every result number array will be set as a property of the object. At most,
-   * two properties may be set: "xxxFilters", "xxxBiases". The "xxx" is the propertyNamePrefix.
+   * two properties may be set: "xxxFilters", "xxxBiases".
    *
    * @return {number}
    *   Return the outputChannelCount of this pointwise operation.
    */
-  generate_pointwise_filters_biases( inputChannelCount, outputChannelCount, bBias, propertyNamePrefix, io_numberArrayObject ) {
+  generate_pointwise_filters_biases( inputChannelCount, outputChannelCount, bBias, propertyNames, io_numberArrayObject ) {
 
     // If this pointwise operation does not exist, default outputChannelCount will be inputChannelCount.
     let result_outputChannelCount = inputChannelCount;
 
-    if ( propertyNamePrefix ) {
+    if ( propertyNames ) {
 
-//!!! ...unfinished... (2022/06/25) StringBuffer?
-// Try not to generate new (property name) string every time for reducing memory re-allocation.
-
-      const filtersPropertyName = `${propertyNamePrefix}Filters`;
-      const biasesPropertyName = `${propertyNamePrefix}Biases`;
+//!!! (2022/06/29 Remarked) Use propertyNames instead.
+//       const filtersPropertyName = `${propertyNamePrefix}Filters`;
+//       const biasesPropertyName = `${propertyNamePrefix}Biases`;
 
       if ( outputChannelCount > 0 ) {
         result_outputChannelCount = outputChannelCount;
 
         let filtersWeightsCount = inputChannelCount * outputChannelCount;
-        this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, filtersWeightsCount );
+        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Filters, filtersWeightsCount );
 
         if ( bBias ) {
           let biasesWeightsCount = result_outputChannelCount;
-          this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, biasesWeightsCount );
+          this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases, biasesWeightsCount );
         } else {
-          this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, 0 );
+          this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases, 0 );
         }
 
       } else { // No pointwise convolution.
-        this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, 0 );
-        this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, 0 );
+        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Filters, 0 );
+        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases, 0 );
       }
     }
 
@@ -978,52 +979,50 @@ class Base extends TestParams.Base {
    *   If true, the returned array will contain a number array as the bias' weight values. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ),
    * this will be ignored.
    *
-   * @param {string} propertyNamePrefix
-   *   The name prefix of the result object. For example, if ( resultPrefixName == "xxx" ), the key names of returned object's
-   * numberArrayMap will be "xxxFilters", "xxxBiases". If null, nothing will be filled.
+   * @param {Object} propertyNames
+   *   The property names of the result object. It should have two property: { Filters, Biases }. For example,
+   * ( propertyNames.Filters == "xxxFilters" ) and ( propertyNames.Biases == "xxxBiases" ). If null, nothing will be filled.
    *
    * @param {object} io_numberArrayObject
    *   The object will be filled in result data. Every result number array will be set as a property of the object. At most,
-   * two properties may be set: "xxxFilters", "xxxBiases". The "xxx" is the propertyNamePrefix.
+   * two properties may be set: "xxxFilters", "xxxBiases".
    *
    * @return {number}
    *   Return the outputChannelCount of this depthwise operation.
    */
   generate_depthwise_filters_biases(
     inputChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bBias,
-    propertyNamePrefix, io_numberArrayObject ) {
+    propertyNames, io_numberArrayObject ) {
 
     // If this depthwise operation does not exist, default outputChannelCount will be inputChannelCount.
     let result_outputChannelCount = inputChannelCount;
 
-    if ( propertyNamePrefix ) {
+    if ( propertyNames ) {
 
-//!!! ...unfinished... (2022/06/25) StringBuffer?
-// Try not to generate new (property name) string every time for reducing memory re-allocation.
-
-      const filtersPropertyName = `${propertyNamePrefix}Filters`;
-      const biasesPropertyName = `${propertyNamePrefix}Biases`;
+//!!! (2022/06/29 Remarked) Use propertyNames instead.
+//       const filtersPropertyName = `${propertyNamePrefix}Filters`;
+//       const biasesPropertyName = `${propertyNamePrefix}Biases`;
 
       if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
         result_outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
 
         let filtersWeightsCount = result_outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
-        this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, filtersWeightsCount );
+        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Filters, filtersWeightsCount );
 
       } else {
         // Note: if AVG or MAX pooling, this property will be empty array.
-        this.fill_object_property_numberArray( io_numberArrayObject, filtersPropertyName, 0 );
+        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Filters, 0 );
       }
 
       if ( depthwise_AvgMax_Or_ChannelMultiplier != 0 ) { // Include avgerage pooling, maximum pooling, convolution.
         if ( bBias ) {
           let biasesWeightsCount = result_outputChannelCount;
-          this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, biasesWeightsCount );
+          this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases, biasesWeightsCount );
         } else { // No bias.
-          this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, 0 );
+          this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases, 0 );
         }
       } else { // No depthwise convolution, no avg pooling, no max pooling.
-        this.fill_object_property_numberArray( io_numberArrayObject, biasesPropertyName, 0 );
+        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases, 0 );
       }
     }
 
@@ -1316,6 +1315,50 @@ Base.weightsRandomOffset = { min: -100, max: +100 };
 // Base.weightsRandomOffset = { min: -0, max: +0 };
 
 
+Base.PropertyNames = {};
+Base.PropertyNames.pointwise1 = { Filters: "pointwise1Filters", Biases: "pointwise1Biases" };
+Base.PropertyNames.depthwise1 = { Filters: "depthwise1Filters", Biases: "depthwise1Biases" };
+Base.PropertyNames.depthwise2 = { Filters: "depthwise2Filters", Biases: "depthwise2Biases" };
+
+Base.PropertyNames.pointwise20 =  { Filters: "pointwise20Filters",  Biases: "pointwise20Biases" };
+Base.PropertyNames.pointwise202 = { Filters: "pointwise202Filters", Biases: "pointwise202Biases" };
+Base.PropertyNames.pointwise21 =  { Filters: "pointwise21Filters",  Biases: "pointwise21Biases" };
+
+Base.PropertyNames.pointwise2PrefixSE = [
+  { // pointwise20's prefix squeeze-and-excitation
+    Intermediate: { Filters: "pointwise20PrefixSEIntermediateFilters",  Biases: "pointwise20PrefixSEIntermediateBiases" },
+    Excitation:   { Filters: "pointwise20PrefixSEExcitationFilters",    Biases: "pointwise20PrefixSEExcitationBiases" },
+  },
+
+  { // pointwise202's prefix squeeze-and-excitation
+    Intermediate: { Filters: "pointwise202PrefixSEIntermediateFilters", Biases: "pointwise202PrefixSEIntermediateBiases" },
+    Excitation:   { Filters: "pointwise202PrefixSEExcitationFilters",   Biases: "pointwise202PrefixSEExcitationBiases" },
+  },
+
+  { // pointwise21's prefix squeeze-and-excitation
+    Intermediate: { Filters: "pointwise21PrefixSEIntermediateFilters",  Biases: "pointwise21PrefixSEIntermediateBiases" },
+    Excitation:   { Filters: "pointwise21PrefixSEExcitationFilters",    Biases: "pointwise21PrefixSEExcitationBiases" },
+  },
+];
+
+Base.PropertyNames.pointwise2PostfixSE = [
+  { // pointwise20's postfix squeeze-and-excitation
+    Intermediate: { Filters: "pointwise20PostfixSEIntermediateFilters",  Biases: "pointwise20PostfixSEIntermediateBiases" },
+    Excitation:   { Filters: "pointwise20PostfixSEExcitationFilters",    Biases: "pointwise20PostfixSEExcitationBiases" },
+  },
+
+  { // pointwise202's postfix squeeze-and-excitation
+    Intermediate: { Filters: "pointwise202PostfixSEIntermediateFilters", Biases: "pointwise202PostfixSEIntermediateBiases" },
+    Excitation:   { Filters: "pointwise202PostfixSEExcitationFilters",   Biases: "pointwise202PostfixSEExcitationBiases" },
+  },
+
+  { // pointwise21's postfix squeeze-and-excitation
+    Intermediate: { Filters: "pointwise21PostfixSEIntermediateFilters",  Biases: "pointwise21PostfixSEIntermediateBiases" },
+    Excitation:   { Filters: "pointwise21PostfixSEExcitationFilters",    Biases: "pointwise21PostfixSEExcitationBiases" },
+  },
+];
+
+
 /**
  * The order when generate weightsFloat32Array[].
  *
@@ -1339,58 +1382,60 @@ Base.paramsNameOrderArray = [
   Block.Params.nActivationId.paramName,
 
   Block.Params.bKeepInputTensor.paramName,
-  
-  "pointwise1Filters",
-  "pointwise1Biases",
 
-  "depthwise1Filters",
-  "depthwise1Biases",
+  Base.PropertyNames.pointwise1.Filters,
+  Base.PropertyNames.pointwise1.Biases,
 
-  "depthwise2Filters",
-  "depthwise2Biases",
+  Base.PropertyNames.depthwise1.Filters,
+  Base.PropertyNames.depthwise1.Biases,
 
-  "pointwise20PrefixSEIntermediateFilters",  // pointwise20's prefix squeeze-and-excitation's intermediate pointwise
-  "pointwise20PrefixSEIntermediateBiases",
+  Base.PropertyNames.depthwise2.Filters,
+  Base.PropertyNames.depthwise2.Biases,
 
-  "pointwise202PrefixSEIntermediateFilters", // pointwise202's prefix squeeze-and-excitation's intermediate pointwise
-  "pointwise202PrefixSEIntermediateBiases",
+  Base.PropertyNames.pointwise2PrefixSE[ 0 ].Intermediate.Filters, // pointwise20's prefix squeeze-and-excitation's intermediate pointwise
+  Base.PropertyNames.pointwise2PrefixSE[ 0 ].Intermediate.Biases,
 
-  "pointwise21PrefixSEIntermediateFilters",  // pointwise21's prefix squeeze-and-excitation's intermediate pointwise
-  "pointwise21PrefixSEIntermediateBiases",
+  Base.PropertyNames.pointwise2PrefixSE[ 1 ].Intermediate.Filters, // pointwise202's prefix squeeze-and-excitation's intermediate pointwise
+  Base.PropertyNames.pointwise2PrefixSE[ 1 ].Intermediate.Biases,
 
-  "pointwise20PrefixSEExcitationFilters",    // pointwise20's prefix squeeze-and-excitation's excitation pointwise
-  "pointwise20PrefixSEExcitationBiases",
+  Base.PropertyNames.pointwise2PrefixSE[ 2 ].Intermediate.Filters, // pointwise21's prefix squeeze-and-excitation's intermediate pointwise
+  Base.PropertyNames.pointwise2PrefixSE[ 2 ].Intermediate.Biases,
 
-  "pointwise202PrefixSEExcitationFilters",   // pointwise202's prefix squeeze-and-excitation's excitation pointwise
-  "pointwise202PrefixSEExcitationBiases",
+  Base.PropertyNames.pointwise2PrefixSE[ 0 ].Excitation.Filters, // pointwise20's prefix squeeze-and-excitation's excitation pointwise
+  Base.PropertyNames.pointwise2PrefixSE[ 0 ].Excitation.Biases,
 
-  "pointwise21PrefixSEExcitationFilters",    // pointwise21's prefix squeeze-and-excitation's excitation pointwise
-  "pointwise21PrefixSEExcitationBiases",
+  Base.PropertyNames.pointwise2PrefixSE[ 1 ].Excitation.Filters, // pointwise202's prefix squeeze-and-excitation's excitation pointwise
+  Base.PropertyNames.pointwise2PrefixSE[ 1 ].Excitation.Biases,
 
-  "pointwise20Filters",
-  "pointwise20Biases",
+  Base.PropertyNames.pointwise2PrefixSE[ 2 ].Excitation.Filters, // pointwise21's prefix squeeze-and-excitation's excitation pointwise
+  Base.PropertyNames.pointwise2PrefixSE[ 2 ].Excitation.Biases,
 
-  "pointwise202Filters",
-  "pointwise202Biases",
+  Base.PropertyNames.pointwise20.Filters,
+  Base.PropertyNames.pointwise20.Biases,
 
-  "pointwise21Filters",
-  "pointwise21Biases",
+  Base.PropertyNames.pointwise202.Filters,
+  Base.PropertyNames.pointwise202.Biases,
 
-  "pointwise20PostfixSEIntermediateFilters",  // pointwise20's postfix squeeze-and-excitation's intermediate pointwise
-  "pointwise20PostfixSEIntermediateBiases",
+  Base.PropertyNames.pointwise21.Filters,
+  Base.PropertyNames.pointwise21.Biases,
 
-  "pointwise202PostfixSEIntermediateFilters", // pointwise202's postfix squeeze-and-excitation's intermediate pointwise
-  "pointwise202PostfixSEIntermediateBiases",
+  Base.PropertyNames.pointwise2PostfixSE[ 0 ].Intermediate.Filters, // pointwise20's postfix squeeze-and-excitation's intermediate pointwise
+  Base.PropertyNames.pointwise2PostfixSE[ 0 ].Intermediate.Biases,
 
-  "pointwise21PostfixSEIntermediateFilters",  // pointwise21's postfix squeeze-and-excitation's intermediate pointwise
-  "pointwise21PostfixSEIntermediateBiases",
+  Base.PropertyNames.pointwise2PostfixSE[ 1 ].Intermediate.Filters, // pointwise202's postfix squeeze-and-excitation's intermediate pointwise
+  Base.PropertyNames.pointwise2PostfixSE[ 1 ].Intermediate.Biases,
 
-  "pointwise20PostfixSEExcitationFilters",    // pointwise20's postfix squeeze-and-excitation's excitation pointwise
-  "pointwise20PostfixSEExcitationBiases",
+  Base.PropertyNames.pointwise2PostfixSE[ 2 ].Intermediate.Filters, // pointwise21's postfix squeeze-and-excitation's intermediate pointwise
+  Base.PropertyNames.pointwise2PostfixSE[ 2 ].Intermediate.Biases,
 
-  "pointwise202PostfixSEExcitationFilters",   // pointwise202's postfix squeeze-and-excitation's excitation pointwise
-  "pointwise202PostfixSEExcitationBiases",
+  Base.PropertyNames.pointwise2PostfixSE[ 0 ].Excitation.Filters, // pointwise20's postfix squeeze-and-excitation's excitation pointwise
+  Base.PropertyNames.pointwise2PostfixSE[ 0 ].Excitation.Biases,
 
-  "pointwise21PostfixSEExcitationFilters",    // pointwise21's postfix squeeze-and-excitation's excitation pointwise
-  "pointwise21PostfixSEExcitationBiases",
+  Base.PropertyNames.pointwise2PostfixSE[ 1 ].Excitation.Filters, // pointwise202's postfix squeeze-and-excitation's excitation pointwise
+  Base.PropertyNames.pointwise2PostfixSE[ 1 ].Excitation.Biases,
+
+  Base.PropertyNames.pointwise2PostfixSE[ 2 ].Excitation.Filters, // pointwise21's postfix squeeze-and-excitation's excitation pointwise
+  Base.PropertyNames.pointwise2PostfixSE[ 2 ].Excitation.Biases,
+
 ];
+
