@@ -9,11 +9,11 @@ class Base {
    * @param {string} objectName
    *   The object's name for debug easily. 
    *
-   * @param {object} object
+   * @param {Object} object
    *   The step object for 's name for debug easily. 
    *
-   * @param {string} contextDescription
-   *   Context message for debug easily. 
+   * @param {Object} contextDescription
+   *   Its .toString() will become the context message for debug easily. 
    */
   constructor( objectName, object, contextDescription ) {
     this.objectName = objectName;
