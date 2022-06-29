@@ -131,10 +131,9 @@ class IssuedObjects {
     let arrayIndex = this.toInSessionArrayIndexMap.get( issuedObject );
     if ( arrayIndex == undefined ) {
 
-      throw Error(
-        `Pool.IssuedObjects.issued_remove(): `
-          + `Try to remove an un-issued object ( ${issuedObject} ). `
-          + `This may imply some problem (e.g. recycle a resource multiple times).`
+      throw Error( `Pool.IssuedObjects.issued_remove(): `
+        + `Try to remove an un-issued object ( ${issuedObject} ). `
+        + `This may imply some problem (e.g. recycle a resource multiple times).`
       );
 
       return false; // 1. Not a (recorded) issued object.
