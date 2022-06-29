@@ -1,5 +1,7 @@
 export { Bounds };
 
+import * as Pool from "../util/Pool.js";
+import * as Recyclable from "../util/Recyclable.js";
 import { ScaleTranslate } from "./ScaleTranslate.js";
 import { BoundsArray } from "./BoundsArray.js";
 
@@ -15,16 +17,38 @@ import { BoundsArray } from "./BoundsArray.js";
  * @member {number} difference
  *   The distance between lower and upper.
  */
-class Bounds {
+class Bounds extends Recyclable.Root {
 
+  /**
+   * Used as default FloatValue.Bounds provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "FloatValue.Bounds.Pool", Bounds, Bounds.setAsConstructor );
+
+  /**
+   */
   constructor( lower, upper ) {
+    super();
+    Base.setAsConstructor_self.call( this, lower, upper );
+  }
+
+  /** @override */
+  static setAsConstructor( lower, upper ) {
+    super.setAsConstructor();
+    Base.setAsConstructor_self.call( this, lower, upper );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( lower, upper ) {
     this.lower = Math.min( lower, upper ); // Confirm ( lower <= upper ).
     this.upper = Math.max( lower, upper );
   }
 
-  get difference() {
-    let difference = this.upper - this.lower;
-    return difference;
+  /** @override */
+  disposeResources() {
+    this.lower = undefined;
+    this.upper = undefined;
+    super.disposeResources();
   }
 
   /**
@@ -32,7 +56,12 @@ class Bounds {
    *   Return newly created object which is a copy of this Bounds.
    */
   clone() {
-    return new Bounds( this.lower, this.upper );
+    return Bounds.Pool.get_or_create_by( this.lower, this.upper );
+  }
+
+  get difference() {
+    let difference = this.upper - this.lower;
+    return difference;
   }
 
   /**
