@@ -1350,10 +1350,10 @@ class Base extends Recyclable.Root {
       let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( channelCount );
       inputScaleBoundsArray.set_all_byBounds( Weights.Base.ValueBounds );
 
-      let imageNew = new Base( height, width, channelCount, preFilledValue,
+      imageNew = Base.Pool.get_or_create_by( height, width, channelCount, preFilledValue,
         inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, aBounds );
 
-      inputScaleBoundsArray.disposeResources_and_recycleToPool(); // Because NumberImage.Base has already copy it.
+      inputScaleBoundsArray.disposeResources_and_recycleToPool(); // Because the newly created NumberImage.Base has already copy it.
       inputScaleBoundsArray = null;
     }
 
