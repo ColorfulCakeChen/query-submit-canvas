@@ -1,7 +1,7 @@
 export { Comparator, Asserter_Equal };
 
-import * as Pool from "./util/Pool.js";
-import * as Recyclable from "./util/Recyclable.js";
+import * as Pool from "./Pool.js";
+import * as Recyclable from "./Recyclable.js";
 
 /**
  *
