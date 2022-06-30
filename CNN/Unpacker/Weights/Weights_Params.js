@@ -218,7 +218,16 @@ class Params extends Base {
 
   get parameterCount()          { return this.info.parameterCount; }
 
-//!!! ...unfinished... (2022/06/30)
-  
+  /**
+   * @param {ParamDesc.Base} aParamDesc
+   *   The aParamDesc.seqId will be used to access .info.finalValueArray[].
+   *
+   * @return {number}
+   *   Return the specific ParamDesc's value (no matter by specified or by evolution).
+   */
+  getParamValue_byParamDesc( aParamDesc ) {
+    let value = this.info.finalValueArray[ aParamDesc.seqId ];
+    return value;
+  }
 
 }
