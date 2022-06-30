@@ -5,7 +5,7 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
-import * as Pool_Asserter from "../util/Pool_Asserter.js";
+import * as Pool_Asserter from "../../util/Pool_Asserter.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ActivationEscaping from "../../Conv/ActivationEscaping.js";
