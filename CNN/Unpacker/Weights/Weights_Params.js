@@ -51,20 +51,20 @@ class ParamsInfo {
    *         paramDesc.valueDesc.range.adjust( extractedValue ) will be used as the parameter's value. (i.e. by evolution)
    *
    */
-  constructor( paramDescSequenceArray, ...restArgs ) {
+  constructor( elementOffsetBegin, paramDescSequenceArray, ...restArgs ) {
     super();
-    Base.setAsConstructor_self.call( this, paramDescSequenceArray, ...restArgs );
+    Base.setAsConstructor_self.call( this, elementOffsetBegin, paramDescSequenceArray, ...restArgs );
    }
 
   /** @override */
   static setAsConstructor( elementOffsetBegin, paramDescSequenceArray, ...restArgs ) {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this, paramDescSequenceArray, ...restArgs );
+    Base.setAsConstructor_self.call( this, elementOffsetBegin, paramDescSequenceArray, ...restArgs );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( paramDescSequenceArray, ...restArgs ) {
+  static setAsConstructor_self( elementOffsetBegin, paramDescSequenceArray, ...restArgs ) {
     this.paramDescSequenceArray = paramDescSequenceArray;
     this.parameterCount = paramDescSequenceArray.array.length;
 
@@ -85,7 +85,8 @@ class ParamsInfo {
         // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
         //
         if ( null == initValue ) {
-          this.inputWeightArrayIndexArray[ i ] = this.parameterCountExtracted; // Record the index (into inputWeightArray[]).
+          // Record the index (into inputWeightArray[]).
+          this.inputWeightArrayIndexArray[ i ] = elementOffsetBegin + this.parameterCountExtracted;
           ++this.parameterCountExtracted;
 
         } else {  // A non-null value means it is the parameter's value (which should also be adjusted).
@@ -141,26 +142,17 @@ class Params extends Base {
   static Pool = new Pool.Root( "Weights.Params.Pool", Params, Params.setAsConstructor );
 
   /**
-   *
-   *
-   *
-   * @param {number} elementOffsetBegin
-   *   The beginning position (i.e. array index) to extract from inputWeightsArray. If this value is negative, the extraction will
-   * fail (i.e. ( bInitOk == false ) ).
-   *
-   *
-//!!! ...unfinished... (2022/06/30)
    */
   constructor( elementOffsetBegin, aParamDescSequenceArray, ...restArgs ) {
-    let info = ParamsInfo.Pool.get_or_create_by( aParamDescSequenceArray, ...restArgs );
-    super( elementOffsetBegin, info.parameterCount );
+    let info = ParamsInfo.Pool.get_or_create_by( elementOffsetBegin, aParamDescSequenceArray, ...restArgs );
+    super( elementOffsetBegin, info.parameterCountExtracted );
     Base.setAsConstructor_self.call( this, info );
   }
 
   /** @override */
   static setAsConstructor( elementOffsetBegin, aParamDescSequenceArray, ...restArgs ) {
-    let info = ParamsInfo.Pool.get_or_create_by( aParamDescSequenceArray, ...restArgs );
-    super.setAsConstructor( elementOffsetBegin, info.parameterCount );
+    let info = ParamsInfo.Pool.get_or_create_by( elementOffsetBegin, aParamDescSequenceArray, ...restArgs );
+    super.setAsConstructor( elementOffsetBegin, info.parameterCountExtracted );
     Base.setAsConstructor_self.call( this, info );
     return this;
   }
@@ -180,49 +172,51 @@ class Params extends Base {
   }
 
   /**
-   * Extract parameters from inputFloat32Array.
+   * Extract parameters from inputWeightArray.
    *
    * @return {boolean} Return false, if extraction failed.
    *
    * @override
    */
-  init() {
+  init( inputWeightArray ) {
+
+    let bBaseInitOk = super.init(); // Determine and check input weight array bounds.
+    if ( !bBaseInitOk )
+      return false;
 
 //!!! ...unfinished... (2022/06/30)
-
-    this.weightsModified = null; // So that distinguishable if re-initialization failed.
-
-    if ( !this.parameterMap )
-      return false;  // Do not know what parameters to be used or extracted.
-
-    let bExtractOk = super.init(); // Extract a block of input array.
-    if ( !bExtractOk )
-      return false;
 
     // Copy the adjusted extracted weights.
     //
     // Do not modify the original array data, because the original data is necessary when backtracking (to try
     // another neural network layer configuration.
-    this.weightsModified = new Float32Array( this.weights.length );
 
     // Extract (by evolution) values from array, convert them, and put back into copied array and copied map.
-    for ( let [ paramDesc, arrayIndex ] of this.arrayIndexMap ) {
-      let extractedValue = this.weights[ arrayIndex ];
+    for ( let i = 0; i < this.info.parameterCount; ++i ) {
+      let inputWeightArrayIndex = this.info.inputWeightArrayIndexArray[ i ];
+      if ( inputWeightArrayIndex == undefined )
+        continue; // This parameter has a specified value. No need to be extracted from inputWeightArray. (i.e. not by evolution)
+
+      let paramDesc = this.info.paramDescSequenceArray.array[ i ];
+      let extractedValue = inputWeightArray[ inputWeightArrayIndex ];
       let adjustedValue = paramDesc.valueDesc.range.adjust( extractedValue );
-      this.weightsModified[ arrayIndex ] = adjustedValue;  // Record in array.
-      this.parameterMapModified.set( paramDesc, adjustedValue ); // Record in map, too.
+      this.info.finalValueArray[ i ] = adjustedValue;
     }
 
-    return bExtractOk;
+    this.bInitOk = true;
+    return true;
   }
 
-  /** @return {number} The count of the parameters extracted from inputFloat32Array. (i.e. by evolution) */
-  get parameterCountExtracted() { return this.weightCount; }
+  /**
+   * @return {number} The count of the parameters extracted from inputWeightArray. (i.e. by evolution) It should be the same as
+   *   .elementExtractedCount.
+   */
+  get parameterCountExtracted() { return this.info.parameterCountExtracted; }
 
   /**
    * @return {number}
-   *   The count of the all parameters (both directly given (i.e. by specifying) and extracted from inputFloat32Array (i.e. by evolution) ).
+   *   The count of the all parameters (both directly given (i.e. by specifying) and extracted from inputWeightArray (i.e. by evolution) ).
    */
-  get parameterCount()          { return this.parameterMapModified.size; }
+  get parameterCount()          { return this.info.parameterCount; }
 
 }
