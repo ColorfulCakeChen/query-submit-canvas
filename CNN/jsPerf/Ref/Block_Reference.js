@@ -512,7 +512,8 @@ class Base extends Recyclable.Root {
       testParams.in.bKeepInputTensor
     );
 
-    let bInitOk = block.init( progress, testParams.in.inputWeightArray, extractedParams, inputScaleBoundsArray0, inputScaleBoundsArray1,
+    let bInitOk = block.init( progress, testParams.in.inputWeightArray, testParams.in.elementOffsetBegin, extractedParams,
+      inputScaleBoundsArray0, inputScaleBoundsArray1,
       channelShuffler_ConcatPointwiseConv, arrayTemp_forInterleave_asGrouptTwo );
 
     let inferencedParams = testParams.out.inferencedParams;
