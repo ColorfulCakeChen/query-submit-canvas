@@ -338,6 +338,9 @@ class Base extends Recyclable.Root {
         );
     }
 
+//!!! ...unfinished... (2022/06/30)
+// should test Pool.All.issuedCount before and after block .create() and .apply().
+
     let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
 
     let block = Base.block_create( testParams,
@@ -407,7 +410,6 @@ class Base extends Recyclable.Root {
     this.assert_imageOut_Tensors_byNumberArrays( outputTensor3dArray, imageOutReferenceArray, block );
 
     block.disposeResources();
-    this.block = null; // For .toString() usage.
 
     let memoryInfo_afterDispose = tf.memory();
 
@@ -418,8 +420,6 @@ class Base extends Recyclable.Root {
         + `${block}` );
 
     tf.dispose( outputTensor3dArray );
-
-    block.TensorPlaceholder_dispose_inputs_dispose_outputs();
   }
 
 
@@ -1181,22 +1181,6 @@ class Base extends Recyclable.Root {
 
     return imageOutArray;
   }
-
-//!!! (2022/06/29 Remarked) User should specify block or testParams.out explicitly.
-//   /**
-//    * @return {string}
-//    *   Return a string of Block_Refernece by this.block (if exists) or by this.testParams.out.
-//    */
-//   toString() {
-//     let parametersDescription;
-//     if ( this.block ) {
-//       parametersDescription = this.block.toString();
-//     } else {
-//       parametersDescription = this.testParams.out.toString();
-//     }
-//     let result = `( testParams.id=${this.testParams.id}, ${parametersDescription} )`;
-//     return result;
-//   }
 
   /**
    * @param {Block_TestParams.out} this
