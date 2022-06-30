@@ -404,7 +404,7 @@ class Base extends Recyclable.Root {
 
     this.elementOffsetEnd = this.elementOffsetBegin = params.elementOffsetBegin;
 
-    if ( !params.init( ) )
+    if ( !params.init( inputWeightArray ) )
       return false;  // e.g. input array does not have enough data.
 
     // Record where to extract next weights. Only meaningful when ( this.bInitOk == true ).
