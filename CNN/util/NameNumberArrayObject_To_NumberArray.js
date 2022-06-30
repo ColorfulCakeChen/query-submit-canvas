@@ -99,11 +99,13 @@ class Base extends Recyclable.Root {
 
         if ( number_or_numberArray != undefined ) {
           if ( number_or_numberArray instanceof Array ) {
-            this.weightsArray.set( number_or_numberArray, offset ); // Assume number array.
-            offset += number_or_numberArray.length;
-          } else {
+            for ( let j = 0; j < number_or_numberArray.length; ++j ) { // 2.1
+              this.weightsArray[ offset ] = number_or_numberArray[ j ]; // Assume number array.
+              ++offset;
+            }
+          } else { // 2.2
             this.weightsArray[ offset ] = number_or_numberArray; // Assume number.
-            offset += 1;
+            ++offset;
           }
         }
       }
