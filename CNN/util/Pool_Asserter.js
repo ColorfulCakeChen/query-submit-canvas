@@ -2,8 +2,8 @@ export { assert_Pool_issuedCount };
 export { assert_Pool_issuedCount_same_after_as_before };
 export { assert_Pool_issuedCount_zero };
 
-import * as Pool from "../../util/Pool.js";
-import * as Recyclable from "../../util/Recyclable.js";
+import * as Pool from "./Pool.js";
+import * as Recyclable from "./Recyclable.js";
 
 /**
  */
