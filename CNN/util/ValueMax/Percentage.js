@@ -135,6 +135,9 @@ class Concrete extends Base {
 
 /**
  * Aggregate all children ( valuePercentage / maxPercentage ) and represents them as percentage.
+ *
+ * @member {Percentage.Base[]} children
+ *   An array of Percentage.Base which will be aggregated. Their parent will be set to this Percentage.Aggregate.
  */
 class Aggregate extends Base {
 
@@ -144,29 +147,22 @@ class Aggregate extends Base {
   static Pool = new Pool.Root( "ValueMax.Percentage.Aggregate.Pool", Aggregate, Aggregate.setAsConstructor );
 
   /**
-   * @param {Percentage.Base[]} children
-   *   An array of Percentage.Base which will be aggregated. Their parent will be set to this Percentage.Aggregate.
    */
-  constructor( children = Pool.Array.Singleton.get_or_create_by( 0 ) ) {
+  constructor() {
     super();
-    Aggregate.setAsConstructor_self.call( this, children );
+    Aggregate.setAsConstructor_self.call( this );
   }
 
   /** @override */
-  static setAsConstructor( children = Recyclable.Array.Pool.get_or_create_by( 0 ) ) {
+  static setAsConstructor() {
     super.setAsConstructor();
-    Aggregate.setAsConstructor_self.call( this, children );
+    Aggregate.setAsConstructor_self.call( this );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( children = Recyclable.Array.Pool.get_or_create_by( 0 ) ) {
-    this.children = children;
-    for ( let i = 0; i < this.children.length; ++i ) {
-      let child = this.children[ i ];
-      if ( child )
-        child.parent = this;
-    }
+  static setAsConstructor_self() {
+    this.children = Recyclable.Array.Pool.get_or_create_by( 0 );
   }
 
   /** @override */
