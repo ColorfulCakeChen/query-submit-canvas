@@ -1,5 +1,7 @@
 export { testCorrectness };
 
+import * as Pool from "../util/Pool.js";
+import * as Recyclable from "../util/Recyclable.js";
 //import * as RandTools from "../util/RandTools.js";
 import * as TensorPlaceholder from "../Conv/TensorPlaceholder.js";
 import * as Operation from "../Conv/Operation.js";
@@ -33,7 +35,7 @@ class Case {
         null, // No "this" for Pool_Asserter.assert_Pool_issuedCount_same_after_as_before().
         "jsPerf_Operation.Case()",
         Case.test_sessionCall_internal,
-        this // The "this" of Case.test_sessionCall_internal().
+        this // The "this" for Case.test_sessionCall_internal().
       );
 
     } catch ( e ) {
