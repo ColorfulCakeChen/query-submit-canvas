@@ -482,12 +482,12 @@ class Base extends Recyclable.Root {
     testParams, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
     arrayTemp_forInterleave_asGrouptTwo ) {
 
-    let block = new Block.Base();
+    let block = Block.Base.Pool.get_or_create_by();
 
     let progress = ValueMax.Percentage.Aggregate.Singleton.get_or_create_by();
 
     // Initialize successfully or failed.
-    let extractedParams = new Block.Params( testParams.in.elementOffsetBegin,
+    let extractedParams = Block.Params.Pool.get_or_create_by( testParams.in.elementOffsetBegin,
       testParams.in.input0_height, testParams.in.input0_width, testParams.in.input0_channelCount,
       testParams.in.nConvBlockTypeId,
       testParams.in.pointwise1ChannelCount,
@@ -529,7 +529,7 @@ class Base extends Recyclable.Root {
       debugger;
     }
 
-    let asserter = new ObjectPropertyAsserter.Base( `Block`, block, block );
+    let asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Block`, block, block );
 
     Base.AssertTwoEqualValues( "parsing beginning position",
       block.elementOffsetBegin, testParams.in.elementOffsetBegin, block );
@@ -927,7 +927,7 @@ class Base extends Recyclable.Root {
         // When no pointwise1, just keep it all-pass-through.
 
       } else { // Otherwise, only the lower half should be processed by pointwise1 convolution.
-        let pointwise1_higherHalfPassThrough = new ChannelCountCalculator.HigherHalfPassThrough(
+        let pointwise1_higherHalfPassThrough = ChannelCountCalculator.HigherHalfPassThrough.Pool.get_or_create_by(
           testParams.out.input0_channelCount, testParams.out.pointwise1ChannelCount );
 
         pointwise1ChannelCount = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
