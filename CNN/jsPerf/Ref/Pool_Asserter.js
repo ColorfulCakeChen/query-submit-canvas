@@ -18,7 +18,7 @@ import * as Recyclable from "../../util/Recyclable.js";
 
 /**
  */
-function assert_PoolAll_issuedCount( prefixMsg, issuedCount_shouldBe ) {
+function assert_Pool_issuedCount( prefixMsg, issuedCount_shouldBe ) {
   if ( Pool.All.issuedCount != issuedCount_shouldBe )
     throw Error( `${prefixMsg}: memory leak: `
       + `Pool.All.issuedCount ( ${Pool.All.issuedCount} ) should be ( ${issuedCount_shouldBe} ).` );
@@ -59,7 +59,7 @@ function assert_Pool_issuedCount_same_after_as_before( prefixMsg, pfn, thisArg, 
 //       assert_Pool_issuedCount( prefixMsg, pool, issuedCount_array_before[ i ] );
 //     }
 
-    assert_PoolAll_issuedCount( prefixMsg, issuedCount_before );
+    assert_Pool_issuedCount( prefixMsg, issuedCount_before );
 
   } catch ( e ) {
     throw e;
@@ -76,7 +76,7 @@ function assert_Pool_issuedCount_same_after_as_before( prefixMsg, pfn, thisArg, 
 /**
  *
  */
-function assert_PoolAll_issuedCount_zero( prefixMsg ) {
+function assert_Pool_issuedCount_zero( prefixMsg ) {
 
 //!!! (2022/06/30 Remarked) Now, no issuedCount for individual pool
 //   for ( let i = 0; i < Pool.All.registeredPoolArray.length; ++i ) {
@@ -84,5 +84,5 @@ function assert_PoolAll_issuedCount_zero( prefixMsg ) {
 //     assert_Pool_issuedCount( prefixMsg, pool, 0 );
 //   }
 
-  assert_PoolAll_issuedCount( prefixMsg, 0 );
+  assert_Pool_issuedCount( prefixMsg, 0 );
 }
