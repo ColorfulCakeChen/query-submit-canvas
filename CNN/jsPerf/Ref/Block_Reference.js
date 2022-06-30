@@ -424,7 +424,8 @@ class Base extends Recyclable.Root {
     // Test correctness of block apply.
     this.assert_imageOut_Tensors_byNumberArrays( outputTensor3dArray, imageOutReferenceArray, block );
 
-    block.disposeResources();
+    block.disposeResources_and_recycleToPool();
+    block = null;
 
     let memoryInfo_afterDispose = tf.memory();
 
@@ -534,7 +535,7 @@ class Base extends Recyclable.Root {
       throw Error(
         `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${block}`);
 
-    progress = ValueMax.Percentage.Aggregate.Singleton.recycle( progress );
+    progress.disposeResources_and_recycleToPool();
     progress = null;
 
     if ( block.elementOffsetEnd != testParams.in.inputWeightArray.length ) { //!!! For Debug. (parsing ending position)
