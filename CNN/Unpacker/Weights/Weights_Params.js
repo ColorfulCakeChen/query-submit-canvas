@@ -55,13 +55,13 @@ class ParamsInfo extends Recyclable.Root {
    */
   constructor( elementOffsetBegin, paramDescSequenceArray, ...restArgs ) {
     super();
-    Base.setAsConstructor_self.call( this, elementOffsetBegin, paramDescSequenceArray, ...restArgs );
+    ParamsInfo.setAsConstructor_self.call( this, elementOffsetBegin, paramDescSequenceArray, ...restArgs );
    }
 
   /** @override */
   static setAsConstructor( elementOffsetBegin, paramDescSequenceArray, ...restArgs ) {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this, elementOffsetBegin, paramDescSequenceArray, ...restArgs );
+    ParamsInfo.setAsConstructor_self.call( this, elementOffsetBegin, paramDescSequenceArray, ...restArgs );
     return this;
   }
 
