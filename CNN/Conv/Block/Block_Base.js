@@ -371,14 +371,14 @@ class Base extends Recyclable.Root {
    *   Yield ( value = false ) when ( done = true ) failed.
    */
   * initer(
-    progressParent, inputWeightArray, params,
+    progressParent, inputWeightArray, elementOffsetBegin, params,
     inputScaleBoundsArray0, inputScaleBoundsArray1,
     channelShuffler_ConcatPointwiseConv,
     arrayTemp_forInterleave_asGrouptTwo ) {
 
     // 0. Prepare
 
-    this.elementOffsetBegin = this.elementOffsetEnd = -1;
+    this.elementOffsetEnd = this.elementOffsetBegin = elementOffsetBegin;
     this.bInitOk = false;
 
     // 0.1 Estimate the maximum value of progress.
@@ -402,9 +402,7 @@ class Base extends Recyclable.Root {
     if ( !params )
       return false;
 
-    this.elementOffsetEnd = this.elementOffsetBegin = params.elementOffsetBegin;
-
-    if ( !params.init( inputWeightArray ) )
+    if ( !params.init( inputWeightArray, elementOffsetBegin ) )
       return false;  // e.g. input array does not have enough data.
 
     // Record where to extract next weights. Only meaningful when ( this.bInitOk == true ).
@@ -964,13 +962,15 @@ class Base extends Recyclable.Root {
    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
    */
   init(
-    progressParent, inputWeightArray, params, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
+    progressParent, inputWeightArray, elementOffsetBegin, params,
+    inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
     arrayTemp_forInterleave_asGrouptTwo ) {
 
     progressParent = progressParent ?? ( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let initer = this.initer(
-      progressParent, inputWeightArray, params, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
+      progressParent, inputWeightArray, elementOffsetBegin, params,
+      inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
       arrayTemp_forInterleave_asGrouptTwo );
 
     let initerNext;
