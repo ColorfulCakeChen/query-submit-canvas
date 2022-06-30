@@ -10,11 +10,6 @@ import * as ActivationEscaping from "../../Conv/ActivationEscaping.js";
 import * as BoundsArraySet from "../../Conv/BoundsArraySet.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
 
-
-//!!! ...unfinished... (2022/05/24)
-// Perhaps, provides NumberImagePool to create and recycle NumberImage for reducing memory re-allocation.
-// Pool by Map( length, Set( number_array ), at least recycle .dataArray
-
 /**
  * Image composed from numbers. For testing.
  *
@@ -1195,11 +1190,11 @@ class Base extends Recyclable.Root {
         ; // Both input is not null. Do concatenate them in the following.
     }
 
-    if ( imageIn1.height != imageIn2.height ),
+    if ( imageIn1.height != imageIn2.height )
       throw Error( `${concatName1}${ concatName2 ? "_" :"" }${concatName2}: shape imageIn1.height (${imageIn1.height}) `
         + `should match imageIn2.height (${imageIn2.height}). (${parametersDesc})` );
 
-    if ( imageIn1.width != imageIn2.width ),
+    if ( imageIn1.width != imageIn2.width )
       throw Error( `${concatName1}${ concatName2 ? "_" :"" }${concatName2}: shape imageIn1.width (${imageIn1.width}) `
         + `should match imageIn2.width (${imageIn2.width}). (${parametersDesc})` );
 
