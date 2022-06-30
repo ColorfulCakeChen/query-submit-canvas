@@ -322,7 +322,7 @@ class Params extends Weights.Params {
       nActivationId,
       bKeepInputTensor
     );
-    Base.setAsConstructor_self.call( this );
+    Params.setAsConstructor_self.call( this );
   }
 
   /** @override */
@@ -349,7 +349,7 @@ class Params extends Weights.Params {
       nActivationId,
       bKeepInputTensor
     );
-    Base.setAsConstructor_self.call( this );
+    Params.setAsConstructor_self.call( this );
     return this;
   }
 
