@@ -35,22 +35,21 @@ class Base extends Recyclable.Root {
   /**
    * Just record the begin and length without checking them. Please call extract() to finish extracting.
    */ 
-  constructor( elementOffsetBegin, elementExtractedCount ) {
+  constructor() {
     super();
-    Base.setAsConstructor_self.call( this, elementOffsetBegin, elementExtractedCount );
+    Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
-  static setAsConstructor( elementOffsetBegin, elementExtractedCount ) {
+  static setAsConstructor() {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this, elementOffsetBegin, elementExtractedCount );
+    Base.setAsConstructor_self.call( this );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( elementOffsetBegin, elementExtractedCount ) {
-    this.elementOffsetBegin = elementOffsetBegin;
-    this.elementExtractedCount = elementExtractedCount;
+  static setAsConstructor_self() {
+    // Do nothing.
   }
 
   /** @override */
@@ -70,7 +69,9 @@ class Base extends Recyclable.Root {
    *
    * @return {boolean} Return false, if extraction failed.
    */ 
-  init( inputWeightArray ) {
+  init( inputWeightArray, elementOffsetBegin, elementExtractedCount ) {
+    this.elementOffsetBegin = elementOffsetBegin;
+    this.elementExtractedCount = elementExtractedCount;
     this.bInitOk = false;
 
     if ( Number.isNaN( this.elementExtractedCount ) )
