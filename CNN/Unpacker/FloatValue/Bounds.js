@@ -28,13 +28,13 @@ class Bounds extends Recyclable.Root {
    */
   constructor( lower, upper ) {
     super();
-    Base.setAsConstructor_self.call( this, lower, upper );
+    Bounds.setAsConstructor_self.call( this, lower, upper );
   }
 
   /** @override */
   static setAsConstructor( lower, upper ) {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this, lower, upper );
+    Bounds.setAsConstructor_self.call( this, lower, upper );
     return this;
   }
 
