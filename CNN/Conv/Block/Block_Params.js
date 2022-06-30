@@ -909,15 +909,8 @@ Params.nActivationId =            new ParamDesc.ActivationFunction(  "nActivatio
 Params.bKeepInputTensor =         new ParamDesc.Bool(               "bKeepInputTensor" );
 
 
-//!!! ...unfinished... (2022/06/27)
-// Build static ParamDescArray and ParamDesc_to_SequenceId_Map
-// Or, ParamDesc has .nSeqId indtead of ParamDesc_to_SequenceId_Map.
-//
-// ParamDescSequenceArray
-//
-
 /**
- * Define the order of these parameters.
+ * Define the order of these parameters. (Fills ParamDesc.Xxx.seqId according to this array's order.)
  */
 Params.SequenceArray = new ParamDesc.SequenceArray( [
   Params.input0_height,
