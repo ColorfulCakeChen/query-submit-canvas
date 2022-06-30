@@ -886,3 +886,25 @@ Params.bKeepInputTensor =         new ParamDesc.Bool(               "bKeepInputT
 // ParamDescSequenceArray
 //
 
+/**
+ * Define the order of these parameters.
+ */
+Params.SequenceArray = new ParamDesc.SequenceArray( [
+  Params.input0_height,
+  Params.input0_width,
+  Params.input0_channelCount,
+  Params.nConvBlockTypeId,
+  Params.pointwise1ChannelCount,
+  Params.depthwise_AvgMax_Or_ChannelMultiplier,
+  Params.depthwiseFilterHeight,
+  Params.depthwiseFilterWidth,
+  Params.depthwiseStridesPad,
+  Params.depthwiseActivationId,
+  Params.pointwise20ChannelCount,
+  Params.pointwise20ActivationId,
+  Params.nSqueezeExcitationChannelCountDivisor,
+  Params.bSqueezeExcitationPrefix,
+  Params.nActivationId,
+  Params.bKeepInputTensor,
+] );
+
