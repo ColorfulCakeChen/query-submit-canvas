@@ -287,9 +287,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
       bInitOk = keptObjectArray[ 0 ];
 
-    } catch ( e ) {
-      throw e;
-
     } finally {
       if ( keptObjectArray ) {
         keptObjectArray.disposeResources_and_recycleToPool();
