@@ -57,20 +57,22 @@ class Case {
     if ( this.bInput1 )
       this.input1 = TensorPlaceholder.Base.Pool.get_or_create_by();
 
-    let TensorPlaceholderPool_issuedCount_before = TensorPlaceholder.Base.Pool.issuedCount;
+//!!! (2022/06/30 Remarked) Now, no issuedCount for individual pool
+//    let TensorPlaceholderPool_issuedCount_before = TensorPlaceholder.Base.Pool.issuedCount;
 
     this.operation = this.classTested.Pool.get_or_create_by( this.input0, this.input1, this.outputTensorCount );
     this.operation.setKeepInputTensor( this.bKeepInputTensor0, this.bKeepInputTensor1 );
 
     tf.tidy( Case.test_tidy_internal );
     
-    let TensorPlaceholderPool_issuedCount_after = TensorPlaceholder.Base.Pool.issuedCount;
-
-    if ( TensorPlaceholderPool_issuedCount_after != TensorPlaceholderPool_issuedCount_before )
-      throw Error( `${this.assertPrefix}: memory leak. `
-        + `result issued TensorPlachodler count ( ${TensorPlaceholderPool_issuedCount_after} ) `
-        + `should be ( ${TensorPlaceholderPool_issuedCount_before} ).`
-      );
+//!!! (2022/06/30 Remarked) Now, no issuedCount for individual pool
+//     let TensorPlaceholderPool_issuedCount_after = TensorPlaceholder.Base.Pool.issuedCount;
+//
+//     if ( TensorPlaceholderPool_issuedCount_after != TensorPlaceholderPool_issuedCount_before )
+//       throw Error( `${this.assertPrefix}: memory leak. `
+//         + `result issued TensorPlachodler count ( ${TensorPlaceholderPool_issuedCount_after} ) `
+//         + `should be ( ${TensorPlaceholderPool_issuedCount_before} ).`
+//       );
   }
 
   /**
