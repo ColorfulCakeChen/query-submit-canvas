@@ -744,7 +744,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
             let undoPreviousEscapingScale = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannelEnd ];
 
-            if ( undoPreviousEscapingScale != 1 ),
+            if ( undoPreviousEscapingScale != 1 )
               throw Error(
                   `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
                 + `For avg/max pooling, `
