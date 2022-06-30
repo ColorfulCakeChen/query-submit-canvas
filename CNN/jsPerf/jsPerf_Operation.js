@@ -63,7 +63,7 @@ class Case {
     this.operation = this.classTested.Pool.get_or_create_by( this.input0, this.input1, this.outputTensorCount );
     this.operation.setKeepInputTensor( this.bKeepInputTensor0, this.bKeepInputTensor1 );
 
-    tf.tidy( Case.test_tidy_internal );
+    tf.tidy( Case.test_tidy_internal.bind( this ) );
     
 //!!! (2022/06/30 Remarked) Now, no issuedCount for individual pool
 //     let TensorPlaceholderPool_issuedCount_after = TensorPlaceholder.Base.Pool.issuedCount;
