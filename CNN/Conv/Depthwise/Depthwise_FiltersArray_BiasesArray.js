@@ -13,13 +13,12 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  * Extract depthwise convolution filters and biases.
  *
  *
- * @member {number} byteOffsetBegin
- *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by init(). This is relative to the
- * inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
+ * @member {number} elementOffsetBegin
+ *   The position which is started (inclusive) to extract from inputWeightArray by init().
  *
- * @member {number} byteOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
- * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
+ * @member {number} elementOffsetEnd
+ *   The position which is ended to (non-inclusive) extract from inputWeightArray.buffer by init(). Where to extract next weights.
+ * Only meaningful when ( this.bInitOk == true ).
  *
  * @member {BoundsArraySet.Depthwise} boundsArraySet
  *   The element value bounds (per channel) of this depthwise convolution.
@@ -73,8 +72,8 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  * weights, if they are used in tensors.
  *
  * @member {number} tensorWeightCountExtracted_internal
- *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
- * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+ *   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used in
+ * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputWeightArray.
  *
  * @member {number[]} filtersShape
  *   The shape of the depthwise convolution filters array.
@@ -196,8 +195,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    * Extract depthwise filters and biases.
    *
    * The following properties will be modified:
-   *   - this.byteOffsetBegin
-   *   - this.byteOffsetEnd
+   *   - this.elementOffsetBegin
+   *   - this.elementOffsetEnd
    *   - this.tensorWeightCountExtracted_internal
    *   - this.tensorWeightCountTotal_internal
    *   - this.boundsArraySet
@@ -208,7 +207,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    *   - this.biasesArray     ( if ( this.bBias == true ) )
    *
    *
-   * @param {Float32Array} inputFloat32Array
+   * @param {Float32Array} inputWeightArray
    *   A Float32Array whose values will be interpreted as weights.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
@@ -217,7 +216,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray ) {
+  init( inputWeightArray, elementOffsetBegin, inputScaleBoundsArray ) {
 
     let bInitOk;
 
@@ -229,7 +228,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
       keptObjectArray = Recyclable.Array.Pool.get_or_create_by( 7 );
 
       Pool.All.sessionCall( FiltersArray_BiasesArray.init_internal, this,
-        inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, keptObjectArray );
+        inputWeightArray, elementOffsetBegin, inputScaleBoundsArray, keptObjectArray );
 
       bInitOk = keptObjectArray[ 0 ];
 
@@ -250,8 +249,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    * Extract depthwise filters and biases.
    *
    * The following properties will be modified:
-   *   - this.byteOffsetBegin
-   *   - this.byteOffsetEnd
+   *   - this.elementOffsetBegin
+   *   - this.elementOffsetEnd
    *   - this.tensorWeightCountExtracted_internal
    *   - this.tensorWeightCountTotal_internal
    *   - this.boundsArraySet
@@ -262,7 +261,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    *   - this.biasesArray     ( if ( this.bBias == true ) )
    *
    *
-   * @param {Float32Array} inputFloat32Array
+   * @param {Float32Array} inputWeightArray
    *   A Float32Array whose values will be interpreted as weights.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
@@ -276,13 +275,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    * @return {boolean}
    *   Return o_keptObjectArray.
    */
-  static init_internal( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, o_keptObjectArray ) {
+  static init_internal( inputWeightArray, elementOffsetBegin, inputScaleBoundsArray, o_keptObjectArray ) {
 
-    // Q1: Why is the inputFloat32Array not a parameter of constructor?
-    // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
+    // Q1: Why is the inputWeightArray not a parameter of constructor?
+    // A1: The reason is to avoid keeping it as this.inputWeightArray so that it could be released by memory garbage collector.
     //
     // Q2: Why is not the sourceWeights kept in this?
-    // A2: So that inputFloat32Array could be released.
+    // A2: So that inputWeightArray could be released.
 
 
     if ( this.inputChannelCount != inputScaleBoundsArray.length )
@@ -299,7 +298,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
       );
 
 
-    this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
+    this.elementOffsetBegin = this.elementOffsetEnd = elementOffsetBegin;
 
     o_keptObjectArray.lnegth = 7;
     o_keptObjectArray[ 0 ] = false; // bInitOk.
@@ -490,10 +489,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
       weightsCount_extracted += biasesWeightCount_extracted
 
     // Prepare source weights to be extracted.
-    let sourceWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, weightsCount_extracted );
-    if ( !sourceWeights.extract() )
+    let sourceWeights = Weights.Base.Pool.get_or_create_by( this.elementOffsetEnd, weightsCount_extracted );
+    if ( !sourceWeights.init( inputWeightArray ) )
       return o_keptObjectArray;  // e.g. input array does not have enough data.
-    this.byteOffsetEnd = sourceWeights.defaultByteOffsetEnd;
+    this.elementOffsetEnd = sourceWeights.elementOffsetEnd;
     this.tensorWeightCountExtracted_internal = weightsCount_extracted;
 
     // filters and bias: weights and value bounds.
@@ -524,7 +523,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
       // Round 1
       {
         this.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-          sourceWeights.weights, inputScaleBoundsArray, aFiltersBiasesPartInfoArray );
+          inputWeightArray, elementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray );
 
         this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray );
 
@@ -611,16 +610,16 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     this.tensorWeightCountTotal_internal = 0;
     this.tensorWeightCountExtracted_internal = 0;
 
-    this.byteOffsetBegin = this.byteOffsetEnd = -1;
+    this.elementOffsetBegin = this.elementOffsetEnd = -1;
 
     super.disposeResources();
   }
 
   /**
-   * Extract this.filtersArray and this.biasesArray from sourceFloat32Array and
+   * Extract this.filtersArray and this.biasesArray from sourceWeightArray and
    * apply inputScaleBoundsArray.scaleArraySet.undo.scales[]. Also set the .afterFilter and .afterBias.
    *
-   * @param {Float32Array} sourceFloat32Array
+   * @param {Float32Array} sourceWeightArray
    *   A Float32Array whose values will be interpreted as weights.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
@@ -631,7 +630,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    *   The input channel range array which describe lower/higher half channels index range.
    */
   set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-    sourceFloat32Array, inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
+    sourceWeightArray, elementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
 
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( this.nPassThroughStyleId );
     let tBounds = new FloatValue.Bounds( 0, 0 );
@@ -650,7 +649,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     }
 
     // Extracting weights of filters and biases. (Including extra scale.)
-    let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
+    let sourceIndex = elementOffsetBegin, filterIndex = 0, biasIndex = 0;
 
     let inChannelBegin = 0, inChannelEnd = 0,   // [ inChannelBegin, inChannelEnd ) are input channels of the current FiltersBiasesPart.
         outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
@@ -706,7 +705,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
                         }
 
                       } else { // Non-pass-through half channels.
-                        let sourceWeight = sourceFloat32Array[ sourceIndex ];
+                        let sourceWeight = sourceWeightArray[ sourceIndex ];
                         ++sourceIndex;
 
                         this.filtersArray[ filterIndex ] = sourceWeight * undoPreviousEscapingScale;
@@ -784,7 +783,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
                 biasValue = thePassThroughStyleInfo.biasValue;
 
               } else { // Non-pass-through half channels.
-                biasValue = sourceFloat32Array[ sourceIndex ];
+                biasValue = sourceWeightArray[ sourceIndex ];
                 ++sourceIndex;
               }
 
