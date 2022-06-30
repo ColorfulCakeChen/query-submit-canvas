@@ -32,7 +32,7 @@ class Case {
 
       Pool_Asserter.assert_Pool_issuedCount_same_after_as_before(
         "jsPerf_Operation.Case()",
-        Pool.All.sessionCall, this, // The "this" when calling Pool.All.sessionCall().
+        Pool.All.sessionCall, Pool.All, // The "this" when calling Pool.All.sessionCall().
         Case.test_sessionCall_internal, this, // The "this" when calling Case.test_sessionCall_internal().
       );
 
