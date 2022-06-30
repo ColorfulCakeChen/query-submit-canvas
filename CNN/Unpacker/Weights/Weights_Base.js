@@ -3,14 +3,6 @@ export { Base, To };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as FloatValue from "./FloatValue.js";
-//import * as ParamDesc from "./ParamDesc.js";
-
-
-//!!! ...unfinished... (2022/06/27)
-// Changed to using elementOffsetBegin, elementOffsetEnd instead of byteOffsetBegin and byteOffsetEnd.
-// No longer rectricted to Float32Array. number[] should be acceptable.
-// No longer create more Float32Array object.
-//
 
 /**
  * A base class for extracting and keeping weights. It composes of a Float32Array and a shape. It can
@@ -73,8 +65,9 @@ class Base extends Recyclable.Root {
   /**
    * Determine .elementOffsetEnd according to the inputWeightArray.lnegth, .elementOffsetBegin and .elementCount.
    *
-   * @param {number[]} inputWeightArray
-   *   The underlying weights source array to be extracted from.
+   * @param {number[]|Float32Array} inputWeightArray
+   *   The underlying weights source array to be extracted from. It will not be kept by this object. It is mainly used for checking
+   * whether .elementOffsetEnd is legal.
    *
    * @return {boolean} Return false, if extraction failed.
    */ 
@@ -88,57 +81,13 @@ class Base extends Recyclable.Root {
       return false;  // Failed, if negative.
 
     this.elementOffsetEnd = this.elementOffsetBegin + this.elementCount;
-    if ( this.elementOffsetEnd >= inputWeightArray.length )
-      return false;  // Failed, if negative.
-
-      byteOffsetEnd =   this.privilegeByteOffsetEnd = this.privilegeByteOffsetBegin + weightByteCount;
-      
-
-    let weightByteCount = weightCount * Float32Array.BYTES_PER_ELEMENT;
-
-    let input, byteOffsetBegin;
-    let byteOffsetEnd; // Not inclusive. It will be used as the next filter's beginning.
-
-    if ( this.privilegeInput ) {       // privilegeInput first.
-
-      if ( this.privilegeByteOffsetBegin < this.privilegeInput.byteOffset )
-        return false;  // Failed, the privilege beginning position is illegal (less than bounding).
-
-      input = this.privilegeInput;
-      byteOffsetBegin = this.privilegeByteOffsetBegin;
-      byteOffsetEnd =   this.privilegeByteOffsetEnd = this.privilegeByteOffsetBegin + weightByteCount;
-      this.defaultByteOffsetEnd = this.defaultByteOffsetBegin; // Stay at beginning for not used.
-
-    } else if ( this.defaultInput ) {  // defaultInput second.
-
-      if ( this.defaultByteOffsetBegin < this.defaultInput.byteOffset )
-        return false;  // Failed, the default beginning position is illegal (less than bounding).
-
-      input = this.defaultInput;
-      byteOffsetBegin = this.defaultByteOffsetBegin;
-      byteOffsetEnd =   this.defaultByteOffsetEnd = this.defaultByteOffsetBegin + weightByteCount;
-      this.privilegeByteOffsetEnd = this.privilegeByteOffsetBegin; // Stay at beginning for not used.
-
-    } else {
-      return false;  // Failed, both privilege and default input are null.
-    }
-
-    // Bounded by the input.byteLength.
-    let legalByteOffsetEnd = input.byteOffset + input.byteLength;
-    if ( byteOffsetEnd > legalByteOffsetEnd )
-      return false;  // Failed, if shape is too large (or NaN).
-
-    this.weights = new Float32Array( input.buffer, byteOffsetBegin, weightCount );  // Share the underlying array buffer.
+    if ( this.elementOffsetEnd > inputWeightArray.length )
+      return false;  // Failed, if out of array index range.
 
     this.bInitOk = true;
     return true;     // Success.
   }
 
-  /** @return Return true, if initialization is success (i.e. ( this.weights != null )). */
-  isValid()                      { return ( this.weights ) ? true : false; }
-
-  get weightByteCount()          { return this.weights.byteLength; }
-  get weightCount()              { return this.weights.length; }
 
 //!!! (2021/12/98 Remarked) Using bounds [ -2^24, +2^24 ] seems enough.
 //   /**
