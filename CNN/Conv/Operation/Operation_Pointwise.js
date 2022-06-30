@@ -90,7 +90,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin, arrayTemp_forInterleave_asGrouptTwo ) {
+  init( inputFloat32Array, elementOffsetBegin, arrayTemp_forInterleave_asGrouptTwo ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -107,7 +107,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     if ( !this.bPointwise ) {
       bExtractOk = true; // 2. no operation at all.
 
-      this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
+      this.elementOffsetBegin = this.elementOffsetEnd = elementOffsetBegin;
 
       // Bypass previous to next.
       //
@@ -117,7 +117,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 
     } else { // 3.
 
-      bExtractOk = super.init( inputFloat32Array, byteOffsetBegin, this.input0.scaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
+      bExtractOk = super.init( inputFloat32Array, elementOffsetBegin, this.input0.scaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
       if ( bExtractOk ) {
         try {
           if ( this.filtersShape && this.filtersArray ) {
