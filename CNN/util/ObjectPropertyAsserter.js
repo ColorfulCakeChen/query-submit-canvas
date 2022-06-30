@@ -10,7 +10,7 @@ class Base {
    *   The object's name for debug easily. 
    *
    * @param {Object} object
-   *   The step object for 's name for debug easily. 
+   *   The object whose properties will be asserted by method .propertyXxx(). 
    *
    * @param {Object} contextDescription
    *   Its .toString() will become the context message for debug easily. 
@@ -35,7 +35,7 @@ class Base {
    */
   propertyValueNE( propertyName, value ) {
     let propertyValue = this.object[ propertyName ];
-    if ( propertyValue == value ),
+    if ( propertyValue == value )
       throw Error( `${this.objectName}.${propertyName} (${propertyValue}) should not be (${value}). ${this.contextDescription}` );
   }
 
