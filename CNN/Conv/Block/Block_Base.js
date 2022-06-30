@@ -348,7 +348,8 @@ class Base extends Recyclable.Root {
    *   The underlying weights source array to be extracted from. It will not be kept by this object.
    *
    * @param {Params} params
-   *   A Params object. The params.extract() will be called to extract parameters.
+   *   A Params object. The params.init() will be called to extract parameters. This params will be owned and destroyed by this .initer().
+   * So caller should not use it again.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
    *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Block value bounds
@@ -476,6 +477,9 @@ class Base extends Recyclable.Root {
 
       this.outputTensorCount = params.outputTensorCount;
     }
+
+    params.disposeResources_and_recycleToPool();
+    params = null;
 
     // No matter whether the channel shuffler is used, it is always recorded in data member.
     this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
@@ -947,6 +951,10 @@ class Base extends Recyclable.Root {
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   If null, a temporary progress object will be created.
+   *
+   * @param {Params} params
+   *   A Params object. The params.init() will be called to extract parameters. This params will be owned and destroyed by this .init().
+   * So caller should not use it again.
    *
    * @param {number[]|Float32Array} inputWeightArray
    *   The underlying weights source array to be extracted from. It will not be kept by this object.
