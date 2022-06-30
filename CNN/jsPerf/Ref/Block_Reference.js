@@ -5,6 +5,7 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
+import * as Pool_Asserter from "../util/Pool_Asserter.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ActivationEscaping from "../../Conv/ActivationEscaping.js";
@@ -340,6 +341,9 @@ class Base extends Recyclable.Root {
 
 //!!! ...unfinished... (2022/06/30)
 // should test Pool.All.issuedCount before and after block .create() and .apply().
+// Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "Block_Reference.???testCorrectness_internal()", ??? );
+
+
 
     let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
 
@@ -870,6 +874,28 @@ class Base extends Recyclable.Root {
    *   Return imageOutArray.
    */ 
   calcResult( imageInArray, imageOutArray ) {
+    return Pool.All.sessionCall( Base.calcResult_internal, this );
+  }
+
+  /** According to imageInArray and this.testParams.in.paramsNumberArrayObject, calculate imageOutArray.
+   *
+   * @param {Block_Reference.Base} this
+   *   The referenece object to do the calculate.
+   *
+   * @param {NumberImage.Base[]} imageInArray
+   *   The images to be tested.
+   *     - imageInArray[ 0 ]: input0
+   *     - imageInArray[ 1 ]: input1
+   *
+   * @param {NumberImage.Base[]} imageOutArray
+   *   The images to be returned are placed here.
+   *     - imageOutArray[ 0 ]: output0
+   *     - imageOutArray[ 1 ]: output1
+   *
+   * @return {NumberImage.Base[]}
+   *   Return imageOutArray.
+   */ 
+  static calcResult_internal( imageInArray, imageOutArray ) {
 
     let testParams = this.testParams;
     let inferencedParams = testParams.out.inferencedParams;
