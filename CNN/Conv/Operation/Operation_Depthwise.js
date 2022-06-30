@@ -101,7 +101,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin ) {
+  init( inputFloat32Array, elementOffsetBegin ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -117,7 +117,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     if ( !this.bDepthwise ) {
       bExtractOk = true; // 2. no operation at all. No depthwise (e.g. zero or negative number) (so no channel multiplier, too).
 
-      this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
+      this.elementOffsetBegin = this.elementOffsetEnd = elementOffsetBegin;
 
       // Bypass previous to next.
       //
@@ -127,7 +127,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 
     } else { // 3.
 
-      bExtractOk = super.init( inputFloat32Array, byteOffsetBegin, this.input0.scaleBoundsArray );
+      bExtractOk = super.init( inputFloat32Array, elementOffsetBegin, this.input0.scaleBoundsArray );
       if ( bExtractOk ) {
         try {
           if ( this.filtersShape && this.filtersArray ) {
