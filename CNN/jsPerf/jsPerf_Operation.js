@@ -122,13 +122,8 @@ class Case {
         + `should be ( ${numTensors_predicted} ) = ( ${memoryInfo_apply_before.numTensors} + ${numTensors_delta} ).`
       );
 
-    this.operation.TensorPlaceholder_nullify_inputs_dispose_outputs();
-
-//!!! ...unfinished... (2022/06/04)
-// aTensorPlaceholder.height, aTensorPlaceholder.width,
-//         aTensorPlaceholder.channelCount, aTensorPlaceholder.channelCount_lowerHalf, aTensorPlaceholder.channelCount_higherHalf,
-//         aTensorPlaceholder.scaleBoundsArray
-
+    //!!! (2022/06/30 Remarked) Since caller uses .sessionCall(), it is not necessary release here.
+    //this.operation.disposeResources_and_recycleToPool();
   }
 
   assert_property_equal( strPropertyName0, strPropertyName1, strPropertyName2, rhsValue ) {
