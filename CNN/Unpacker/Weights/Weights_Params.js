@@ -132,6 +132,15 @@ class ParamsInfo {
  * @member {Weights.ParamsInfo} paramsInfo
  *   The ParamsDesc list with their specified or extracted values.
  *
+ * @member {number} parameterCountExtracted
+ *   The count of the parameters extracted from inputWeightArray (i.e. by evolution). It should be the same as .elementExtractedCount.
+ * Only meaningful if Params.init() successfully.
+ *
+ * @member {number} parameterCount
+ *   The count of the all parameters (both directly given (i.e. by specifying) and extracted from inputWeightArray (i.e. by evolution) ).
+ * It should be always the same as ( aParamDescSequenceArray.length ). This is the total parameter count provided by this object if
+ * Params.init() successfully.
+ *
  * @see Weights.Base
  */
 class Params extends Base {
@@ -184,8 +193,6 @@ class Params extends Base {
     if ( !bBaseInitOk )
       return false;
 
-//!!! ...unfinished... (2022/06/30)
-
     // Copy the adjusted extracted weights.
     //
     // Do not modify the original array data, because the original data is necessary when backtracking (to try
@@ -207,16 +214,11 @@ class Params extends Base {
     return true;
   }
 
-  /**
-   * @return {number} The count of the parameters extracted from inputWeightArray. (i.e. by evolution) It should be the same as
-   *   .elementExtractedCount.
-   */
   get parameterCountExtracted() { return this.info.parameterCountExtracted; }
 
-  /**
-   * @return {number}
-   *   The count of the all parameters (both directly given (i.e. by specifying) and extracted from inputWeightArray (i.e. by evolution) ).
-   */
   get parameterCount()          { return this.info.parameterCount; }
+
+//!!! ...unfinished... (2022/06/30)
+  
 
 }
