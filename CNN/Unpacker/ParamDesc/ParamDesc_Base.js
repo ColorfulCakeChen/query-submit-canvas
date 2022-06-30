@@ -1,8 +1,6 @@
 export { Base, Same, Bool, Int };
 export { ActivationFunction };
 
-//!!! (2022/06/16 Remarked) Replaced by ConvBlockType
-//export { channelCount1_pointwise1Before };
 export { ConvBlockType };
 
 export { AvgMax_Or_ChannelMultiplier };
@@ -10,7 +8,7 @@ export { SqueezeExcitationChannelCountDivisor };
 export { StridesPad };
 export { ConvStageType };
 
-import * as ValueDesc from "./ValueDesc.js";
+import * as ValueDesc from "../ValueDesc.js";
 
 
 /**
@@ -108,20 +106,6 @@ class ActivationFunction extends Base {
 }
 
 
-//!!! (2022/06/16 Remarked) Replaced by ConvBlockType
-// /**
-//  * Describe some properties of an channelCount1_pointwise1Before parameter.
-//  *
-//  * @member {ValueDesc.channelCount1_pointwise1Before} valueDesc
-//  *   The range of the parameter's all possible values. It is a ValueDesc.channelCount1_pointwise1Before object.
-//  */
-// class channelCount1_pointwise1Before extends Base {
-//   constructor( paramName ) {
-//     super( paramName, ValueDesc.channelCount1_pointwise1Before.Singleton );
-//   }
-// }
-
-
 /**
  * Describe some properties of an ConvBlockType parameter.
  *
@@ -185,3 +169,4 @@ class ConvStageType extends Base {
     super( paramName, ValueDesc.ConvStageType.Singleton );
   }
 }
+
