@@ -28,12 +28,6 @@ class Case {
 
     try {
 
-      if ( TensorPlaceholder.Base.Pool.issuedCount != 0 )
-        throw Error( `${this.assertPrefix}: memory leak. `
-          + `beginning issued TensorPlachodler count ( ${TensorPlaceholder.Base.Pool.issuedCount} ) `
-          + `should be 0.`
-        );
-
       Pool.All.sessionCall(
         Pool_Asserter.assert_Pool_issuedCount_same_after_as_before,
         null, // No "this" for Pool_Asserter.assert_Pool_issuedCount_same_after_as_before().
@@ -44,7 +38,7 @@ class Case {
 
     } catch ( e ) {
       throw Error( `${this.assertPrefix}: exception. `
-        + `${e}.`
+        + `${e}`
       );
     }
   }
