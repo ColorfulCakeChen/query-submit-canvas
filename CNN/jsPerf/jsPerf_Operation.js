@@ -30,9 +30,10 @@ class Case {
 
     try {
 
-      Pool_Asserter.assert_Pool_issuedCount_same_after_as_before(
+      Pool.All.sessionCall(
+        Pool_Asserter.assert_Pool_issuedCount_same_after_as_before,
+        null, // The "this" when calling Pool_Asserter.assert_Pool_issuedCount_same_after_as_before().
         "jsPerf_Operation.Case()",
-        Pool.All.sessionCall, Pool.All, // The "this" when calling Pool.All.sessionCall().
         Case.test_sessionCall_internal, this, // The "this" when calling Case.test_sessionCall_internal().
       );
 
@@ -120,8 +121,18 @@ class Case {
         + `should be ( ${numTensors_predicted} ) = ( ${memoryInfo_apply_before.numTensors} + ${numTensors_delta} ).`
       );
 
-    //!!! (2022/06/30 Remarked) Since caller uses .sessionCall(), it is not necessary release here.
-    //this.operation.disposeResources_and_recycleToPool();
+    {
+      this.operation.disposeResources_and_recycleToPool();
+      if ( this.input1 ) {
+        this.input1.disposeResources_and_recycleToPool();
+        this.input1 = null;
+      }
+
+      if ( this.input0 ) {
+        this.input0.disposeResources_and_recycleToPool();
+        this.input0 = null;
+      }
+    }
   }
 
   assert_property_equal( strPropertyName0, strPropertyName1, strPropertyName2, rhsValue ) {
