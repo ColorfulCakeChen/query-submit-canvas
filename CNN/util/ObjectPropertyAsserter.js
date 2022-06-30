@@ -1,9 +1,17 @@
 export { Base };
 
+import * as Pool from "./Pool.js";
+import * as Recyclable from "./Recyclable.js";
+
 /**
  * Assert an object's properties.
  */
 class Base {
+
+  /**
+   * Used as default ObjectPropertyAsserter.Base provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "ObjectPropertyAsserter.Pool", Base, Base.setAsConstructor );
 
   /**
    * @param {string} objectName
@@ -16,9 +24,30 @@ class Base {
    *   Its .toString() will become the context message for debug easily. 
    */
   constructor( objectName, object, contextDescription ) {
+    super();
+    Base.setAsConstructor_self.call( this, objectName, object, contextDescription );
+  }
+
+  /** @override */
+  static setAsConstructor( objectName, object, contextDescription ) {
+    super.setAsConstructor();
+    Base.setAsConstructor_self.call( this, objectName, object, contextDescription );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( objectName, object, contextDescription ) {
     this.objectName = objectName;
     this.object = object;
     this.contextDescription = contextDescription;
+  }
+
+  /** @override */
+  disposeResources() {
+    this.contextDescription = null;
+    this.object = null;
+    this.objectName = null;
+    super.disposeResources();
   }
 
   /**
