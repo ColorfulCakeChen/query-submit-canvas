@@ -299,7 +299,7 @@ class Params extends Weights.Params {
    * inputFloat32Array (i.e. by evolution).
    *
    */
-  constructor( elementOffsetBegin,
+  constructor(
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
@@ -310,7 +310,7 @@ class Params extends Weights.Params {
     nActivationId,
     bKeepInputTensor
   ) {
-    super( elementOffsetBegin,
+    super(
       Params.SequenceArray,
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
@@ -326,7 +326,7 @@ class Params extends Weights.Params {
   }
 
   /** @override */
-  static setAsConstructor( elementOffsetBegin,
+  static setAsConstructor(
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
@@ -337,7 +337,7 @@ class Params extends Weights.Params {
     nActivationId,
     bKeepInputTensor
   ) {
-    super.setAsConstructor( elementOffsetBegin,
+    super.setAsConstructor(
       Params.SequenceArray,
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
@@ -370,8 +370,8 @@ class Params extends Weights.Params {
    *
    * @override
    */
-  init( inputWeightArray ) {
-    let bExtractOk = super.init( inputWeightArray );
+  init( inputWeightArray, elementOffsetBegin ) {
+    let bExtractOk = super.init( inputWeightArray, elementOffsetBegin );
     if ( !bExtractOk )
       return false;
 
