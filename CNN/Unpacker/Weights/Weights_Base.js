@@ -2,7 +2,7 @@ export { Base, To };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-import * as FloatValue from "./FloatValue.js";
+import * as FloatValue from "../FloatValue.js";
 
 /**
  * A base class for extracting and keeping weights. It composes of a Float32Array and a shape. It can
