@@ -2,7 +2,7 @@ export { ChannelPartInfo };
 export { FiltersBiasesPartInfo };
 
 import * as Pool from "../../util/Pool.js";
-import * as Recyclable from "../util/Recyclable.js";
+import * as Recyclable from "../../util/Recyclable.js";
 
 /**
  * Half channels information. Describe channel index range of lower half or higher half.
