@@ -248,7 +248,7 @@ class Base extends Recyclable.Root {
     // For reducing memory allocation.
     this.testCorrectnessInfo = TestCorrectnessInfo.Pool.get_or_create_by();
     this.imageInArray_Fake = Recyclable.Array.Pool.get_or_create_by( 2 );
-    this.asserter_Equal = TensorTools.Asserter_Equal.get_or_create_by( 0.4, 0.001 );
+    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.001 );
     this.arrayTemp_forInterleave_asGrouptTwo = Recyclable.Array.Pool.get_or_create_by( 0 ); // Used by calcConcatShuffleSplit().
   }
 
@@ -484,7 +484,7 @@ class Base extends Recyclable.Root {
 
     let block = Block.Base.Pool.get_or_create_by();
 
-    let progress = ValueMax.Percentage.Aggregate.Singleton.get_or_create_by();
+    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
     // Initialize successfully or failed.
     let extractedParams = Block.Params.Pool.get_or_create_by( testParams.in.elementOffsetBegin,
