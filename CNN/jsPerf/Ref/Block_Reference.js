@@ -487,7 +487,7 @@ class Base extends Recyclable.Root {
     let progress = ValueMax.Percentage.Aggregate.Singleton.get_or_create_by();
 
     // Initialize successfully or failed.
-    let extractedParams = new Block.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
+    let extractedParams = new Block.Params( testParams.in.elementOffsetBegin,
       testParams.in.input0_height, testParams.in.input0_width, testParams.in.input0_channelCount,
       testParams.in.nConvBlockTypeId,
       testParams.in.pointwise1ChannelCount,
@@ -499,7 +499,7 @@ class Base extends Recyclable.Root {
       testParams.in.bKeepInputTensor
     );
 
-    let bInitOk = block.init( progress, extractedParams, inputScaleBoundsArray0, inputScaleBoundsArray1,
+    let bInitOk = block.init( progress, testParams.in.inputWeightArray, extractedParams, inputScaleBoundsArray0, inputScaleBoundsArray1,
       channelShuffler_ConcatPointwiseConv, arrayTemp_forInterleave_asGrouptTwo );
 
     let inferencedParams = testParams.out.inferencedParams;
@@ -525,17 +525,17 @@ class Base extends Recyclable.Root {
     progress = ValueMax.Percentage.Aggregate.Singleton.recycle( progress );
     progress = null;
 
-    if ( block.byteOffsetEnd != testParams.in.inputFloat32Array.byteLength ) { //!!! For Debug. (parsing ending position)
+    if ( block.elementOffsetEnd != testParams.in.inputWeightArray.length ) { //!!! For Debug. (parsing ending position)
       debugger;
     }
 
     let asserter = new ObjectPropertyAsserter.Base( `Block`, block, block );
 
     Base.AssertTwoEqualValues( "parsing beginning position",
-      block.byteOffsetBegin, testParams.in.byteOffsetBegin, block );
+      block.elementOffsetBegin, testParams.in.elementOffsetBegin, block );
 
     Base.AssertTwoEqualValues( "parsing ending position",
-      block.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, block );
+      block.elementOffsetEnd, testParams.in.inputWeightArray.length, block );
 
     // Linearity
     let bNoSqueezeExcitation_between_depthwise_and_pointwise2;
@@ -837,7 +837,7 @@ class Base extends Recyclable.Root {
 
       // Exclude parameters weights, all the others should be the extracted weight count.
       let tensorWeightCountExtracted
-        = ( testParams.in.inputFloat32Array.byteLength - extractedParams.defaultByteOffsetEnd ) / Float32Array.BYTES_PER_ELEMENT;
+        = ( testParams.in.inputWeightArray.length - extractedParams.elementOffsetEnd );
 
       asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
       asserter.propertyValueLE( "tensorWeightCountExtracted", tensorWeightCountTotal );
