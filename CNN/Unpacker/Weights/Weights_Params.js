@@ -7,43 +7,55 @@ import { Base } from "./Weights_Base.js";
 /**
  * The parameters for the weights of a neural network layer.
  *
+ * @member {ParamDesc.SequenceArray} aParamDescSequenceArray
+ *   An array describes how many and what kinds of parameters should be extracted.
+ *
+ * @member {number[]} initValueArray
+ *   An number array records the parameter values which is specified by ...restArgs of constructor. If a parameter value is null,
+ * it means the parameter should be extracted from inputWeightArray (i.e. by evolution). Otherwise, the parameter value is by
+ * specifying (from constructor). This array itself is indexed by ParamDesc.Xxx.seqId.
+ *
+ * @member {number[]} inputWeightArrayIndexArray
+ *   A number array records where to extract parameters which is null in .initValueArray[]. Every element is the array index into
+ * inputWeightArray[]. This array itself is indexed by ParamDesc.Xxx.seqId.
+ *
+ * @member {number[]} finalValueArray
+ *   An number array records the parameter values which combined both by specifying (from constructor) and by evolution (from
+ * inputWeightArray[]) and adjusted by ParamDesc.valueDesc.range.adjust(). This array itself is indexed by ParamDesc.Xxx.seqId.
+ *
+
+//!!! ...unfinished... (2022/06/30)
  * @member {Map} parameterMapModified
  *   All parameters provided by this object. Its entry is [ key, value ]. The key of the entry [ key, value ] is a ParamDesc.Xxx object
  * (the same as the key of the init()'s parameterMap). The value of the entry [ key, value ] is adjusted parameter value
  * which is combined from the value of the init()'s parameterMap and inputFloat32Array (or fixedWeights).
  *
  * @member {number} parameterCountExtracted
- *   How many parameters are extracted from inputFloat32Array or fixedWeights in fact. Only existed if init()
- * successfully. The same as this.weightCount (i.e. length of this.weights[] and this.weightsModified[]).
+ *   How many parameters are extracted from inputWeightArray[]. Only meaningful if extract() successfully.
  *
  * @member {number} parameterCount
- *   Always ( parameterMap.size ). This is the total parameter count provided by this object
- * if init() successfully.
+ *   Always ( aParamDescSequenceArray.length ). This is the total parameter count provided by this object
+ * if extract() successfully.
  *
- * @member {Float32Array} weightsModified
- *  The copied extracted values. They are copied from inputFloat32Array or fixedWeights, and then adjusted by
- * ParamDesc.valueDesc.range.adjust(). Its length will be the same as parameterCountExtracted.
  */
 class Params extends Base {
 
   /**
+   * Used as default Weights.Params provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Weights.Params.Pool", Params, Params.setAsConstructor );
+
+  /**
    *
    *
-   * @param {Float32Array} inputFloat32Array
-   *   A Float32Array whose values will be interpret as weights. It should have ( parameterCountExtractedAtLeast ) or
-   * ( parameterCountExtractedAtLeast + 1 ) or ( parameterCountExtractedAtLeast + 2 ) elements according to the
-   * value of channelMultiplier and outChannels.
    *
-   * @param {number} byteOffsetBegin
-   *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
-   * (not to the inputFloat32Array.byteOffset).
+   * @param {number} elementOffsetBegin
+   *   The beginning position (i.e. array index) to extract from inputWeightsArray. If this value is negative, the extraction will
+   * fail (i.e. ( bInitOk == false ) ).
+   *
    *
 
 //!!! ...unfinished... (2022/06/30)
-   * @param {ParamDesc.SequenceArray} aParamDescSequenceArray
-   *
-   *
-
    * @param {Map} parameterMap
    *   Describe what parameters to be used or extracted.
    *   - The key of this parameterMap's entry [ key, value ] should be a ParamDesc.Xxx object (one of ParamDesc.Base,
@@ -66,11 +78,10 @@ class Params extends Base {
    * inputFloat32Array. When not null, it should have parameterCountExtracted elements (i.e. the count of non-null values
    * of parameterMap).
    */
-
-//!!! (2022/06/30 Remarked) Replaced by aParamDescSequenceArray.
-//  constructor( inputFloat32Array, byteOffsetBegin, parameterMap, fixedWeights = null ) {
-
-  constructor( inputFloat32Array, byteOffsetBegin, aParamDescSequenceArray, fixedWeights = null ) {
+  constructor( elementOffsetBegin, aParamDescSequenceArray, ...restArgs ) {
+    
+    super( elementOffsetBegin, aParamDescSequenceArray.length );
+    Base.setAsConstructor_self.call( this, aParamDescSequenceArray, ...restArgs );
     
 
 
@@ -134,6 +145,34 @@ class Params extends Base {
     this.parameterMap = parameterMap;
     this.parameterMapModified = parameterMapModified;
     this.arrayIndexMap = arrayIndexMap;
+  }
+
+  /** @override */
+  static setAsConstructor( elementOffsetBegin, aParamDescSequenceArray, ...restArgs ) {
+    super( elementOffsetBegin, aParamDescSequenceArray.length );
+    Base.setAsConstructor_self.call( this, aParamDescSequenceArray, ...restArgs );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( aParamDescSequenceArray, ...restArgs ) {
+
+//!!! ...unfinished... (2022/06/30)
+
+    this.elementOffsetBegin = elementOffsetBegin;
+    this.elementCount = elementCount;
+  }
+
+  /** @override */
+  disposeResources() {
+
+//!!! ...unfinished... (2022/06/30)
+
+    this.bInitOk = undefined;
+    this.elementOffsetEnd = undefined;
+    this.elementCount = undefined;
+    this.elementOffsetBegin = undefined;
+    super.disposeResources();
   }
 
   /**
