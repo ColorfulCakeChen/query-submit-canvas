@@ -89,6 +89,7 @@ class ParamsInfo extends Recyclable.Root {
         if ( null == initValue ) {
           // Record the index (into inputWeightArray[]).
           this.inputWeightArrayIndexArray[ i ] = elementOffsetBegin + this.parameterCountExtracted;
+          this.finalValueArray[ i ] = undefined;
           ++this.parameterCountExtracted;
 
         } else {  // A non-null value means it is the parameter's value (which should also be adjusted).
@@ -157,14 +158,14 @@ class Params extends Base {
   constructor( elementOffsetBegin, aParamDescSequenceArray, ...restArgs ) {
     let info = ParamsInfo.Pool.get_or_create_by( elementOffsetBegin, aParamDescSequenceArray, ...restArgs );
     super( elementOffsetBegin, info.parameterCountExtracted );
-    Base.setAsConstructor_self.call( this, info );
+    Params.setAsConstructor_self.call( this, info );
   }
 
   /** @override */
   static setAsConstructor( elementOffsetBegin, aParamDescSequenceArray, ...restArgs ) {
     let info = ParamsInfo.Pool.get_or_create_by( elementOffsetBegin, aParamDescSequenceArray, ...restArgs );
     super.setAsConstructor( elementOffsetBegin, info.parameterCountExtracted );
-    Base.setAsConstructor_self.call( this, info );
+    Params.setAsConstructor_self.call( this, info );
     return this;
   }
 
