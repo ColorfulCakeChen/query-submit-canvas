@@ -25,48 +25,31 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  * @member {number} outputChannelCount
  *   The output channel count of this pointwise convolutiuon.
  *     - Usually, if ( outputChannelCount == 0 ), it means no operation at all (i.e. bPointwise == bExisted == false ).
- *     - However, if ( outputChannelCount == 0 ) but ( channelShuffler_outputGroupCount > 0 ), this pointwise will exist
- *         (i.e. bPointwise == bExisted == true ) and always will not have biases (no matter how bBias is). It is
- *         all-pass-through-and-channel-shuffling mode.
  *
  * @member {number} nPassThroughStyleId
  *   The pass-through style id (ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) of this convolution. It only affect the channels
  * which need to be pass-through from input to output.
  *
- * @member {number} outputChannelCount_Real
- *   Usually, the same as outputChannelCount. But when ( this.bAllPassThrough == true ) or ( this.bAllPassThroughShuffle == true ),
- * outputChannelCount_Real will be the same as inputChannelCount (in this case, the outputChannelCount is zero).
- *
  * @member {ValueDesc.Pointwise_HigherHalfDifferent} nHigherHalfDifferent
  *   - 0. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal poitwise convolution.
- *
- *     - 0.1 If ( outputChannelCount > 0 ), normal poitwise convolution.
- *
- *     - 0.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
+ *         normal poitwise convolution.
  *
  *   - 1. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH ):
- *
- *     - 1.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough),
+ *         (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough),
  *         (for pointwise1 of ShuffleNetV2_ByMobileNetV1's head),
  *         the filters for the output channels between 0 and ( outputChannelCount_lowerHalf - 1 ) will just pass
  *         through the input to output. The filters for the output channels between ( outputChannelCount_lowerHalf )
  *         and ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
  *         In this case, it will always have no biases (no matter how bBias is).
  *
- *     - 1.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
- *
  *   - 2. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF ):
- *
- *     - 2.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfCopyLowerHalf),
+ *         (i.e. bHigherHalfCopyLowerHalf),
  *         (for pointwise1 of ShuffleNetV2_ByMobileNetV1's head),
  *         the filters for the output channels between ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will just copy
  *         the input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
  *
- *     - 2.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
- *
  *   - 3. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE ):
- *          
- *     - 3.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfAnotherPointwise),
+ *         (i.e. bHigherHalfAnotherPointwise),
  *         (for pointwise2 of ShuffleNetV2_ByMobileNetV1's head),
  *         the filters for the input channels between 0 and ( inputChannelCount_lowerHalf - 1 ) are pointwise21, between
  *         ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) are pointwise212. These two filters (and biases)
@@ -74,42 +57,23 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  *         filters' (and biases') weights are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that
  *         the same filters weights could be used in these two architectures for comparing performance and correctness.
  *
- *      - 3.1.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bHigherHalfAnotherPointwise).
- *          (Not used.)
+ *     - 3.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bHigherHalfAnotherPointwise).
+ *           (Not used.)
  *
- *      - 3.1.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bHigherHalfAnotherPointwiseShuffle).
- *          (for pointwise2 of ShuffleNetV2_ByMobileNetV1's head with channel shuffling)
- *          The output channels will be arranged just like applying channel shuffler on them.
+ *     - 3.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bHigherHalfAnotherPointwiseShuffle).
+ *           (for pointwise2 of ShuffleNetV2_ByMobileNetV1's head with channel shuffling)
+ *           The output channels will be arranged just like applying channel shuffler on them.
  *
- *     - 3.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
- *
- *  - 4. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ):
- *      (for pointwise1/pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
- *
- *    - 4.1 If ( outputChannelCount > 0 ), the filters for the output channels between ( outputChannelCount_lowerHalf )
+ *   - 4. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ):
+ *        the filters for the output channels between ( outputChannelCount_lowerHalf )
  *        and ( outputChannelCount - 1 ) will just pass through the input to output.
  *
- *      - 4.1.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bHigherHalfPassThrough).
- *          (for pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
+ *     - 4.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bHigherHalfPassThrough).
+ *           (for pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
  *
- *      - 4.1.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bHigherHalfPassThroughShuffle).
- *          (for pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
- *          The output channels will be arranged just like applying channel shuffler on them.
- *
-
-//!!! ...unfinished... (2022/05/20) Perhaps, deprecate this special case. Since pointwise2 always exists now.
-
- *    - 4.2 If ( outputChannelCount <= 0 ), the filters will just pass through all input channels to output. In this case,
- *        the ( bPointwise == bExisted == true ) (not false), although the specified outputChannelCount is zero. And, it
- *        will always have no biases (no matter how bBias is).
- *
- *      - 4.2.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bAllPassThrough; no pointwise and no channel shuffler).
- *          (for pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
- *
- *      - 4.2.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bAllPassThroughShuffle).
- *          (for pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
- *          The output channels will be arranged just like applying channel shuffler on them.
- *
+ *     - 4.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bHigherHalfPassThroughShuffle).
+ *           (for pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
+ *           The output channels will be arranged just like applying channel shuffler on them.
  *
  * @member {boolean} bHigherHalfDifferent
  *   It will be false, if ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ).
@@ -213,21 +177,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
           + `inputChannelCount ( ${inputChannelCount} ).`
         );
 
-      if ( outputChannelCount > 0 ) {
-        if ( outputChannelCount_lowerHalf > outputChannelCount )
-          throw Error( `Pointwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
-            + `outputChannelCount_lowerHalf ( ${outputChannelCount_lowerHalf} ) can not be larger than `
-            + `outputChannelCount ( ${outputChannelCount} ).`
-          );
-
-      } else { // ( this.outputChannelCount <= 0 ), the outputChannelCount_Real will be inputChannelCount.
-        if ( outputChannelCount_lowerHalf > inputChannelCount )
-          throw Error( `Pointwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
-            + `outputChannelCount_lowerHalf ( ${outputChannelCount_lowerHalf} ) can not be larger than `
-            + `inputChannelCount ( ${inputChannelCount} ) when `
-            + `outputChannelCount ( ${outputChannelCount} ) is zero or negative.`
-          );
-      }
+      if ( outputChannelCount_lowerHalf > outputChannelCount )
+        throw Error( `Pointwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
+          + `outputChannelCount_lowerHalf ( ${outputChannelCount_lowerHalf} ) can not be larger than `
+          + `outputChannelCount ( ${outputChannelCount} ).`
+        );
 
       if ( ( inputChannelCount_lowerHalf > 0 ) != ( outputChannelCount_lowerHalf > 0 ) )
         throw Error( `Pointwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
@@ -353,9 +307,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
         + `( ${inputScaleBoundsArray.scaleArraySet.undo.length} ).`
       );
 
-    //
     // Note: Even if ( this.outputChannelCount <= 0 ), this function should work correctly as pass-through input to output.
-    // In fact, this condition is used for all-pass-through-shuffle.
     //
 
     this.elementOffsetBegin = this.elementOffsetEnd = elementOffsetBegin;
@@ -382,7 +334,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
       switch ( this.nHigherHalfDifferent ) {
         // 3.0 Normal pointwise convolution and bias.
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
-          this.outputChannelCount_Real = this.outputChannelCount;
 
           // Extract all weights as specified input/output channels.          
           filtersWeightCount_extracted = this.inputChannelCount * this.outputChannelCount;
@@ -404,7 +355,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
         // 3.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH: // (1)
-          this.outputChannelCount_Real = this.outputChannelCount;
           filtersWeightCount_extracted = biasesWeightCount_extracted = 0; // Does not extract any weights.
 
 //!!! (2022/06/22 Remarked) Replaced by pool.
@@ -426,8 +376,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
         // 3.2 bHigherHalfCopyLowerHalf
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF: // (2)
-          this.outputChannelCount_Real = this.outputChannelCount;
-
           filtersWeightCount_extracted = this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf;
           biasesWeightCount_extracted = this.outputChannelCount_lowerHalf;
 
@@ -450,8 +398,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
         // 3.3 bHigherHalfAnotherPointwise
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE: // (3)
-          this.outputChannelCount_Real = this.outputChannelCount;
-
           filtersWeightCount_extracted =
               ( this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf )
             + ( this.inputChannelCount_higherHalf * this.outputChannelCount_higherHalf );
@@ -492,12 +438,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
         // 3.4 bHigherHalfPassThrough
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
-
-//!!! (2022/06/22 Remarked) Deprecate ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
-//          if ( this.outputChannelCount > 0 ) { // 3.4.1.1 bHigherHalfPassThrough
-
-          this.outputChannelCount_Real = this.outputChannelCount;
-
           filtersWeightCount_extracted = this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf;
           biasesWeightCount_extracted = this.outputChannelCount_lowerHalf;
 
@@ -520,31 +460,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
           aFiltersBiasesPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 1 );
           aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfo.Pool.get_or_create_by( aChannelPartInfoArray );
 
-
           // Note: If ( HIGHER_HALF_PASS_THROUGH ) with ( inputChannelCount_lowerHalf == 0 ) and ( outputChannelCount_lowerHalf == 0 ),
-          // the result should be the same as AllPassThrough without using special ( outputChannelCount <= 0 ). In that case, however,
-          // the bAllPassThrough will be false.
-
-
-//!!! (2022/06/22 Remarked) Deprecate ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
-//           } else { // ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
-//
-// //!!! ...unfinished... (2022/05/20)
-//             // Perhaps, deprecate this special case. Since pointwise2 always exists now.
-//             // So assert if executed here.
-//             throw Error(
-//               `Pointwise.FiltersArray_BiasesArray.init(): `
-//                 + `outputChannelCount ( ${this.outputChannelCount} ) shoulde be positive.`
-//             );
-//
-//             this.bAllPassThrough = true; // Marked for this special case.
-//             this.outputChannelCount_Real = this.inputChannelCount; // (Note: In this case, this.outputChannelCount is zero. So use inputChannelCount.)
-//             filtersWeightCount_extracted = biasesWeightCount_extracted = 0; // Does not extract any weights.
-//             aFiltersBiasesPartInfoArray = [
-//               new FiltersBiasesPartInfo( [
-//                 new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_Real, true ) ] )
-//             ];
-//          }
+          // the result should be the same as AllPassThrough without using special ( outputChannelCount <= 0 ).
           break;
 
         default:
@@ -559,11 +476,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
       this.filtersShape[ 0 ] = 1;
       this.filtersShape[ 1 ] = 1;
       this.filtersShape[ 2 ] = this.inputChannelCount;
-      this.filtersShape[ 3 ] = this.outputChannelCount_Real;
+      this.filtersShape[ 3 ] = this.outputChannelCount;
 
       if ( this.bBias ) {
         this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 1 );
-        this.biasesShape[ 0 ] = this.outputChannelCount_Real;
+        this.biasesShape[ 0 ] = this.outputChannelCount;
       } else {
         biasesWeightCount_extracted = 0;
       }
@@ -609,7 +526,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
       // Round 0
       {
         // Initialize element value bounds (per channel). Determine .input and .afterUndoPreviousActivationEscaping
-        this.boundsArraySet = BoundsArraySet.Pointwise.Pool.get_or_create_by( inputScaleBoundsArray, this.outputChannelCount_Real );
+        this.boundsArraySet = BoundsArraySet.Pointwise.Pool.get_or_create_by( inputScaleBoundsArray, this.outputChannelCount );
       }
 
       // Round 1
@@ -632,14 +549,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
       switch ( this.nHigherHalfDifferent ) {
 
-        // 3.3
-        // 3.4
+        // 3.
+        // 4.
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE: // (3)
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
 
-          // 3.3.1.2 bHigherHalfAnotherPointwiseShuffle
-          // 3.4.1.2 bHigherHalfPassThroughShuffle
-          // 3.4.2.2 bAllPassThroughShuffle
+          // 3.2 bHigherHalfAnotherPointwiseShuffle
+          // 4.2 bHigherHalfPassThroughShuffle
           this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo );
           break;
 
@@ -816,7 +732,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
           } // inChannelPartIndex
 
           outChannelEnd = outChannel; // Record the ending output channel index of the current FiltersBiasesPart.
-          filterIndex += ( this.outputChannelCount_Real - outChannel ) + outChannelBegin; // Jump to the outChannelBegin of the next inChannel.
+          filterIndex += ( this.outputChannelCount - outChannel ) + outChannelBegin; // Jump to the outChannelBegin of the next inChannel.
 
         } // inChannelSub, inChannel
 
@@ -868,11 +784,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     //
     this.boundsArraySet.afterBias.add_all_byBoundsArray( this.boundsArraySet.afterFilter );
 
-    if ( outChannelEnd != this.outputChannelCount_Real )
+    if ( outChannelEnd != this.outputChannelCount )
       throw Error(
         `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
           + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total output channel count ( ${outChannelEnd} ) `
-          + `should be ( ${this.outputChannelCount_Real} ).` );
+          + `should be ( ${this.outputChannelCount} ).` );
   }
 
   /**
