@@ -157,6 +157,10 @@ class Params extends Base {
   /** @override */
   static setAsConstructor_self( aParamDescSequenceArray, ...restArgs ) {
 
+    this.initValueArray = Recyclable.Array.get_or_create_by( aParamDescSequenceArray.length );
+    this.inputWeightArrayIndexArray = Recyclable.Array.get_or_create_by( aParamDescSequenceArray.length );
+    this.finalValueArray = Recyclable.Array.get_or_create_by( aParamDescSequenceArray.length );
+
 //!!! ...unfinished... (2022/06/30)
 
     this.elementOffsetBegin = elementOffsetBegin;
@@ -165,6 +169,21 @@ class Params extends Base {
 
   /** @override */
   disposeResources() {
+
+    if ( this.finalValueArray ) {
+      this.finalValueArray.disposeResources_and_recycleToPool();
+      this.finalValueArray = null;
+    }
+
+    if ( this.inputWeightArrayIndexArray ) {
+      this.inputWeightArrayIndexArray.disposeResources_and_recycleToPool();
+      this.inputWeightArrayIndexArray = null;
+    }
+
+    if ( this.initValueArray ) {
+      this.initValueArray.disposeResources_and_recycleToPool();
+      this.initValueArray = null;
+    }
 
 //!!! ...unfinished... (2022/06/30)
 
