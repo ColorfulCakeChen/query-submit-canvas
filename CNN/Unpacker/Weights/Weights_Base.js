@@ -16,11 +16,11 @@ import * as FloatValue from "./FloatValue.js";
  *   The ending position (i.e. array index) after extracting from inputWeightsArray. It is not inclusive and can be used as the
  * beginning position of next (another) extraction. It is meaningful only if ( bInitOk == true ).
  *
- * @member {number} elementCount
+ * @member {number} elementExtractedCount
  *   How many weights (i.e. elements) will be extracted from inputWeightsArray. It should be a non-negative integer value.
  *
- *     - If too many elements need to be extracted (exceeds the inputWeightsArray.length) or elementCount is NaN or
- *         elementCount is negative, the extraction will fail (i.e. ( bInitOk == false ) ).
+ *     - If too many elements need to be extracted (exceeds the inputWeightsArray.length) or elementExtractedCount is NaN or
+ *         elementExtractedCount is negative, the extraction will fail (i.e. ( bInitOk == false ) ).
  *
  * @member {boolean} bInitOk
  *   If .init() success, it will be true.
@@ -35,35 +35,35 @@ class Base extends Recyclable.Root {
   /**
    * Just record the begin and length without checking them. Please call extract() to finish extracting.
    */ 
-  constructor( elementOffsetBegin, elementCount ) {
+  constructor( elementOffsetBegin, elementExtractedCount ) {
     super();
-    Base.setAsConstructor_self.call( this, elementOffsetBegin, elementCount );
+    Base.setAsConstructor_self.call( this, elementOffsetBegin, elementExtractedCount );
   }
 
   /** @override */
-  static setAsConstructor( elementOffsetBegin, elementCount ) {
+  static setAsConstructor( elementOffsetBegin, elementExtractedCount ) {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this, elementOffsetBegin, elementCount );
+    Base.setAsConstructor_self.call( this, elementOffsetBegin, elementExtractedCount );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( elementOffsetBegin, elementCount ) {
+  static setAsConstructor_self( elementOffsetBegin, elementExtractedCount ) {
     this.elementOffsetBegin = elementOffsetBegin;
-    this.elementCount = elementCount;
+    this.elementExtractedCount = elementExtractedCount;
   }
 
   /** @override */
   disposeResources() {
     this.bInitOk = undefined;
     this.elementOffsetEnd = undefined;
-    this.elementCount = undefined;
+    this.elementExtractedCount = undefined;
     this.elementOffsetBegin = undefined;
     super.disposeResources();
   }
 
   /**
-   * Determine .elementOffsetEnd according to the inputWeightArray.lnegth, .elementOffsetBegin and .elementCount.
+   * Determine .elementOffsetEnd according to the inputWeightArray.lnegth, .elementOffsetBegin and .elementExtractedCount.
    *
    * @param {number[]|Float32Array} inputWeightArray
    *   The underlying weights source array to be extracted from. It will not be kept by this object. It is mainly used for checking
@@ -74,13 +74,13 @@ class Base extends Recyclable.Root {
   init( inputWeightArray ) {
     this.bInitOk = false;
 
-    if ( Number.isNaN( this.elementCount ) )
+    if ( Number.isNaN( this.elementExtractedCount ) )
       return false;  // Failed, if NaN.
 
-    if ( this.elementCount < 0 )
+    if ( this.elementExtractedCount < 0 )
       return false;  // Failed, if negative.
 
-    this.elementOffsetEnd = this.elementOffsetBegin + this.elementCount;
+    this.elementOffsetEnd = this.elementOffsetBegin + this.elementExtractedCount;
     if ( this.elementOffsetEnd > inputWeightArray.length )
       return false;  // Failed, if out of array index range.
 
