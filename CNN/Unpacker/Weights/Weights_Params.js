@@ -8,7 +8,8 @@ import { Base } from "./Weights_Base.js";
  * Used by Weights.Params' constructor internally before calling parent (i.e. Weights.Base) class's constructor.
  *
  * @member {ParamDesc.SequenceArray} paramDescSequenceArray
- *   An array describes how many and what kinds of parameters should be extracted.
+ *   An array describes how many and what kinds of parameters should be extracted. It will be referenced (i.e. kept without cloned)
+ * and will not be released by this ParamsInfo object.
  *
  * @member {number[]} initValueArray
  *   An number array records the parameter values which is specified by ...restArgs of constructor. If a parameter value is null,
@@ -39,23 +40,33 @@ class ParamsInfo {
   static Pool = new Pool.Root( "Weights.ParamsInfo.Pool", ParamsInfo, ParamsInfo.setAsConstructor );
 
   /**
+   *
+   * @param {any[]} restArgs
+   *   Describe the specified parameters value. They should be arranged as the order of paramDescSequenceArray. For every element:
+   *
+   *     - If ( null != value ), the returned value of paramDesc.range.adjust( value ) will be used as the parameter's
+   *         value. (i.e. by specifying)
+   *
+   *     - If ( null == value ), the parameter will be extracted from inputWeightArray. The returned value of
+   *         paramDesc.valueDesc.range.adjust( extractedValue ) will be used as the parameter's value. (i.e. by evolution)
+   *
    */
-  constructor( aParamDescSequenceArray, ...restArgs ) {
+  constructor( paramDescSequenceArray, ...restArgs ) {
     super();
-    Base.setAsConstructor_self.call( this, aParamDescSequenceArray, ...restArgs );
+    Base.setAsConstructor_self.call( this, paramDescSequenceArray, ...restArgs );
    }
 
   /** @override */
-  static setAsConstructor( elementOffsetBegin, aParamDescSequenceArray, ...restArgs ) {
+  static setAsConstructor( elementOffsetBegin, paramDescSequenceArray, ...restArgs ) {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this, aParamDescSequenceArray, ...restArgs );
+    Base.setAsConstructor_self.call( this, paramDescSequenceArray, ...restArgs );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( aParamDescSequenceArray, ...restArgs ) {
-    this.paramDescSequenceArray = aParamDescSequenceArray;
-    this.parameterCount = aParamDescSequenceArray.array.length;
+  static setAsConstructor_self( paramDescSequenceArray, ...restArgs ) {
+    this.paramDescSequenceArray = paramDescSequenceArray;
+    this.parameterCount = paramDescSequenceArray.array.length;
 
     this.initValueArray = Recyclable.Array.get_or_create_by( this.parameterCount );
     this.inputWeightArrayIndexArray = Recyclable.Array.get_or_create_by( this.parameterCount );
@@ -63,7 +74,7 @@ class ParamsInfo {
 
     this.parameterCountExtracted = 0;
     for ( let i = 0; i < this.parameterCount; ++i ) {
-      let paramDesc = aParamDescSequenceArray[ i ];
+      let paramDesc = paramDescSequenceArray.array[ i ];
       let initValue = this.initValueArray[ i ] = restArgs[ i ]; // Collect all parameters.
 
       // Collect what parameters should be extracted from input array (rather than use values in the .initValueArray).
@@ -106,7 +117,8 @@ class ParamsInfo {
     }
 
     this.parameterCount = undefined;
-    
+    this.paramDescSequenceArray = null; // Do not release it. Just un-reference it.
+
     super.disposeResources();
   }
 
@@ -117,7 +129,7 @@ class ParamsInfo {
  * The parameters for the weights of a neural network layer.
  *
  * @member {Weights.ParamsInfo} paramsInfo
- *   The ParamsDesc with their specified or extracted values.
+ *   The ParamsDesc list with their specified or extracted values.
  *
  * @see Weights.Base
  */
@@ -137,156 +149,33 @@ class Params extends Base {
    * fail (i.e. ( bInitOk == false ) ).
    *
    *
-
 //!!! ...unfinished... (2022/06/30)
-   * @param {any[]} restArgs
-   *   Describe the parameters specified value. They should be arranged as the order inside aParamDescSequenceArray.
-   *   - The key of this parameterMap's entry [ key, value ] should be a ParamDesc.Xxx object (one of ParamDesc.Base,
-   *       ParamDesc.Same, ParamDesc.Bool) describing the parameter.
-   *
-   *     - The key.valueDesc should be a ValueDesc.Xxx object (one of ValueDesc.Same, ValueDesc.Bool, ValueDesc.Int).
-   *       The key.valueDesc.range should be a ValueRange.Xxx object (one of ValueRange.Same, ValueRange.Bool, ValueRange.Int).
-   *       The key.valueDesc.range.adjust() is a function for adjusting the parameter value.
-   *
-   *   - The value of this parameterMap's entry [ key, value ]:
-   *
-   *     - If ( null != value ), the returned value of key.range.adjust( value ) will be used as the parameter's
-   *       value. (i.e. by specifying)
-   *
-   *     - If ( null == value ), the parameter will be extracted from inputFloat32Array (or fixedWeights).The
-   *       returned value of key.valueDesc.range.adjust( extractedValue ) will be used as the parameter's value. (i.e. by evolution)
-   *
    */
   constructor( elementOffsetBegin, aParamDescSequenceArray, ...restArgs ) {
-    let prepareInfo = ParamsInfo.Pool.get_or_create_by( aParamDescSequenceArray, ...restArgs );
-    super( elementOffsetBegin, prepareInfo.parameterCount );
-    Base.setAsConstructor_self.call( this, prepareInfo );
-    prepareInfo.disposeResources_and_recycleToPool();
-    prepareInfo = null;
+    let info = ParamsInfo.Pool.get_or_create_by( aParamDescSequenceArray, ...restArgs );
+    super( elementOffsetBegin, info.parameterCount );
+    Base.setAsConstructor_self.call( this, info );
   }
 
   /** @override */
   static setAsConstructor( elementOffsetBegin, aParamDescSequenceArray, ...restArgs ) {
-    let prepareInfo = ParamsInfo.Pool.get_or_create_by( aParamDescSequenceArray, ...restArgs );
-    super.setAsConstructor( elementOffsetBegin, prepareInfo.parameterCount );
-    Base.setAsConstructor_self.call( this, prepareInfo );
-    prepareInfo.disposeResources_and_recycleToPool();
-    prepareInfo = null;
+    let info = ParamsInfo.Pool.get_or_create_by( aParamDescSequenceArray, ...restArgs );
+    super.setAsConstructor( elementOffsetBegin, info.parameterCount );
+    Base.setAsConstructor_self.call( this, info );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self( aParamsInfo ) {
-    
-    // Transfer the owner of these resource.
-
-    this.initValueArray = Recyclable.Array.get_or_create_by( aParamDescSequenceArray.length );
-    this.inputWeightArrayIndexArray = Recyclable.Array.get_or_create_by( aParamDescSequenceArray.length );
-    this.finalValueArray = Recyclable.Array.get_or_create_by( aParamDescSequenceArray.length );
-
-//!!! ...unfinished... (2022/06/30)
-    let 
-    for ( let i = 0; i < aParamDescSequenceArray.length; ++i ) {
-      let initValue = this.initValueArray[ i ] = restArgs[ i ]; // Collect all parameters.
-
-      // Collect what parameters should be extracted from input array (rather than use values in the parameterMap).
-      // At the same time, its array index will also be recorded for extracting its value from array.
-      {
-
-        // A null value means it should be extracted from inputFloat32Array (or fixedWeights). (i.e. by evolution)
-        //
-        // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
-        if ( null == initValue ) {
-          // Record the index (into this.weightsModified[]) and the adjuster.
-          this.inputWeightArrayIndexArray[ i ] = 
-          arrayIndexMap.set( paramDesc, i );
-          ++i;
-        } else {
-          // A non-null value means it is the parameter's value (which should also be adjusted).
-          let adjustedValue = paramDesc.valueDesc.range.adjust( value );
-          parameterMapModified.set( paramDesc, adjustedValue );
-        }
-
-      }
-
-      parameterCountExtracted = arrayIndexMap.size; // Determine how many parameters should be extracted from array.
-    }
-
-    }
-
-   
-
-
-    let parameterMapModified, arrayIndexMap, parameterCountExtracted;
-    if ( parameterMap ) {
-
-//!!! ...unfinished... (2022/06/27)
-// Whether possible use static  ParamDescArray and static ParamDesc_to_SequenceId_Map? (avoid dynamic Map for reducing memory re-allocation)
-//
-// parameterModifiedArray replaces parameterMapModified.
-// parameterExtractingIndexArray replaces arrayIndexMap.
-//
-//
-//
-//
-//
-
-      parameterMapModified = new Map; // Collect all parameters.
-
-      // Collect what parameters should be extracted from input array (rather than use values in the parameterMap).
-      // At the same time, its array index will also be recorded for extracting its value from array.
-      arrayIndexMap = new Map();
-      {
-        let i = 0;
-
-        for ( let [ paramDesc, value ] of parameterMap ) {
-
-          // A null value means it should be extracted from inputFloat32Array (or fixedWeights). (i.e. by evolution)
-          //
-          // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
-          if ( null == value ) {
-            // Record the index (into this.weightsModified[]) and the adjuster.
-            arrayIndexMap.set( paramDesc, i );
-            ++i;
-          } else {
-            // A non-null value means it is the parameter's value (which should also be adjusted).
-            let adjustedValue = paramDesc.valueDesc.range.adjust( value );
-            parameterMapModified.set( paramDesc, adjustedValue );
-          }
-        }
-
-      }
-
-      parameterCountExtracted = arrayIndexMap.size; // Determine how many parameters should be extracted from array.
-    }
-
-    super( inputFloat32Array, byteOffsetBegin, [ parameterCountExtracted ], privilegeInput, privilegeByteOffsetBegin );
-
-    this.parameterMap = parameterMap;
-    this.parameterMapModified = parameterMapModified;
-    this.arrayIndexMap = arrayIndexMap;
+    this.info = aParamsInfo;
   }
 
   /** @override */
   disposeResources() {
-
-    if ( this.finalValueArray ) {
-      this.finalValueArray.disposeResources_and_recycleToPool();
-      this.finalValueArray = null;
+    if ( this.info ) {
+      this.info.disposeResources_and_recycleToPool();
+      this.info = null;
     }
-
-    if ( this.inputWeightArrayIndexArray ) {
-      this.inputWeightArrayIndexArray.disposeResources_and_recycleToPool();
-      this.inputWeightArrayIndexArray = null;
-    }
-
-    if ( this.initValueArray ) {
-      this.initValueArray.disposeResources_and_recycleToPool();
-      this.initValueArray = null;
-    }
-
-//!!! ...unfinished... (2022/06/30)
-
     super.disposeResources();
   }
 
