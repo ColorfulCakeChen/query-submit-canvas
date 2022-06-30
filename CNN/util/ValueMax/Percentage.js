@@ -41,18 +41,18 @@ class Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+
     if ( this.parent ) {
       if ( this.parent instanceof Aggregate ) {
 
-!!! ...unfinished... (2022/06/30)
-// should remove self from parent.
-// Otherwise, when parent .disposeResources(), this object will be disposed again.
-//
-// How to remove fast?
-
+        // Do nothing currently.
+        //
+        // In theory, here should remove this child object from parent (i.e. Aggregate) so that the parent will not dispose (and
+        // recycle) this child object once again. In fact, however, this is an expensive action (because a linear search should
+        // be done. So, the better choice is to dispose the whole tree from root object by caller to avoid this problem.
       }
     }
-    this.parent = null;
+    this.parent = undefined;
     super.disposeResources();
   }
 
