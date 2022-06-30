@@ -33,6 +33,10 @@ import * as ValueDesc from "../ValueDesc.js";
  *   The description of the parameter's all possible values. It should be a ValueDesc.Xxx object (one of ValueDesc.Same,
  * ValueDesc.Bool, ValueDesc.Int). For example, ValueDesc.Same.Singleton, ValueDesc.Bool.Singleton.
  *
+ * @member {number} seqId
+ *   The sequence id of the parameter. It is filled by ParamDesc.SequenceArray' constructor. And it is used as the array index into
+ * Weights.Params.
+ *
  */
 class Base {
 
@@ -42,6 +46,7 @@ class Base {
   constructor( paramName, valueDesc ) {
     this.paramName = paramName;
     this.valueDesc = valueDesc;
+    this.seqId = -1;
   }
 
   /**
