@@ -2,8 +2,8 @@ export { Params, ParamsInfo };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-//import * as ValueDesc from "./ValueDesc.js";
-import * as ParamDesc from "./ParamDesc.js";
+//import * as ValueDesc from "../ValueDesc.js";
+import * as ParamDesc from "../ParamDesc.js";
 import { Base } from "./Weights_Base.js";
 
 /**
