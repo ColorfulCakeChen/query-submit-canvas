@@ -877,7 +877,7 @@ class Base extends Recyclable.Root {
 
     // Note: Do not generate parameters description string in advance every time.
     //       Just generate them only if necessary by .toString() for reducing memory re-allocation.
-    testParams.out.toString = Base.TestParams_Out_toString(); // Create description for debug easily.
+    testParams.out.toString = Base.TestParams_Out_toString; // For Creating description for debug easily.
 
 
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
