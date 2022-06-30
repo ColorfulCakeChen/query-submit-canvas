@@ -3,6 +3,9 @@ export { Base };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 
+//!!! (2022/06/30 deprecated)
+// Because Float32Array always needs to be re-created, this is time and space consuming.
+
 /**
  *
  */
