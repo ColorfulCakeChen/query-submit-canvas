@@ -6,7 +6,7 @@ import * as Recyclable from "./Recyclable.js";
 /**
  * Assert an object's properties.
  */
-class Base {
+class Base extends Recyclable.Root {
 
   /**
    * Used as default ObjectPropertyAsserter.Base provider for conforming to Recyclable interface.
