@@ -1,4 +1,6 @@
-export { Params, ParamsInfo };
+export { Params };
+//!!! (2022/06/30 Remarked) Integrated into Params.
+//export { ParamsInfo };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
