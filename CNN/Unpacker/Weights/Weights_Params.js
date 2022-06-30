@@ -34,7 +34,7 @@ import { Base } from "./Weights_Base.js";
  * successfully.
  *
  */
-class ParamsInfo {
+class ParamsInfo extends Recyclable.Root {
 
   /**
    * Used as default Weights.Params provider for conforming to Recyclable interface.
