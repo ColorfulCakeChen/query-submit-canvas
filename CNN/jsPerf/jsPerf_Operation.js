@@ -5,7 +5,7 @@ import * as Recyclable from "../util/Recyclable.js";
 //import * as RandTools from "../util/RandTools.js";
 import * as TensorPlaceholder from "../Conv/TensorPlaceholder.js";
 import * as Operation from "../Conv/Operation.js";
-import * as Pool_Asserter from "./Ref/Pool_Asserter.js"; 
+import * as Pool_Asserter from "../util/Pool_Asserter.js"; 
 
 /**
  * For testing Operation.Base.
