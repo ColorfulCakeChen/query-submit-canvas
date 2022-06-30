@@ -404,8 +404,7 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
    */
   static setup_apply_dummy( bKeepInputTensor0, bKeepInputTensor1 ) {
 
-!!! ...unfinished... (2022/06/24)
-Do not use function declared in function because they may generate new function object every time.
+    // Note: Do not use function declared in function because they may generate new function object every time.
 
     if ( this.input0 ) {
       if ( this.input1 ) {
@@ -415,27 +414,27 @@ Do not use function declared in function because they may generate new function 
             this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
-                this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); this.output1.realTensor = this.input1.realTensor.clone(); }
+                this.apply = Base.apply__i0_i1__o0_o1__k0_k1;
               else
-                this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); this.output1.realTensor = this.input1.realTensor; }
+                this.apply = Base.apply__i0_i1__o0_o1__k0_d1;
             } else {
               if ( bKeepInputTensor1 )
-                this.apply = () => { this.output0.realTensor = this.input0.realTensor; this.output1.realTensor = this.input1.realTensor.clone(); }
+                this.apply = Base.apply__i0_i1__o0_o1__d0_k1;
               else
-                this.apply = () => { this.output0.realTensor = this.input0.realTensor; this.output1.realTensor = this.input1.realTensor; }
+                this.apply = Base.apply__i0_i1__o0_o1__d0_d1;
             }
           } else {              //  2. ( .input0, .input1 ) => ( .output0 )
             this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
-                this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); }
+                this.apply = Base.apply__i0_i1__o0__k0_k1;
               else
-                this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); this.input1.realTensor.dispose(); }
+                this.apply = Base.apply__i0_i1__o0__k0_d1;
             } else {
               if ( bKeepInputTensor1 )
-                this.apply = () => { this.output0.realTensor = this.input0.realTensor; }
+                this.apply = Base.apply__i0_i1__o0__d0_k1;
               else
-                this.apply = () => { this.output0.realTensor = this.input0.realTensor; this.input1.realTensor.dispose(); }
+                this.apply = Base.apply__i0_i1__o0__d0_d1;
             }
           }
         } else {
@@ -443,26 +442,26 @@ Do not use function declared in function because they may generate new function 
             this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
-                this.apply = () => { this.output1.realTensor = this.input1.realTensor.clone(); }
+                this.apply = Base.apply__i0_i1__o1__k0_k1;
               else
-                this.apply = () => { this.output1.realTensor = this.input1.realTensor; }
+                this.apply = Base.apply__i0_i1__o1__k0_d1;
             } else {
               if ( bKeepInputTensor1 )
-                this.apply = () => { this.input0.realTensor.dispose(); this.output1.realTensor = this.input1.realTensor.clone(); }
+                this.apply = Base.apply__i0_i1__o1__d0_k1;
               else
-                this.apply = () => { this.input0.realTensor.dispose(); this.output1.realTensor = this.input1.realTensor; }
+                this.apply = Base.apply__i0_i1__o1__d0_d1;
             }
           } else {              //  4. ( .input0, .input1 ) => (  )
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
-                this.apply = () => {}
+                this.apply = Base.apply__i0_i1__k0_k1;
               else
-                this.apply = () => { this.input1.realTensor.dispose(); }
+                this.apply = Base.apply__i0_i1__k0_d1;
             } else {
               if ( bKeepInputTensor1 )
-                this.apply = () => { this.input0.realTensor.dispose(); }
+                this.apply = Base.apply__i0_i1__d0_k1;
               else
-                this.apply = () => { this.input0.realTensor.dispose(); this.input1.realTensor.dispose(); }
+                this.apply = Base.apply__i0_i1__d0_d1;
             }
           }
         }
@@ -472,31 +471,31 @@ Do not use function declared in function because they may generate new function 
             this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
             this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
             if ( bKeepInputTensor0 ) {
-              this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); this.output1.realTensor = this.input0.realTensor.clone(); }
+              this.apply = Base.apply__i0__o0_o1__k0;
             } else {
-              this.apply = () => { this.output0.realTensor = this.input0.realTensor; this.output1.realTensor = this.input0.realTensor.clone(); }
+              this.apply = Base.apply__i0__o0_o1__d0;
             }
           } else {              //  6. ( .input0 ) => ( .output0 )
             this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
             if ( bKeepInputTensor0 ) {
-              this.apply = () => { this.output0.realTensor = this.input0.realTensor.clone(); }
+              this.apply = Base.apply__i0__o0__k0;
             } else {
-              this.apply = () => { this.output0.realTensor = this.input0.realTensor; }
+              this.apply = Base.apply__i0__o0__d0;
             }
           }
         } else {
           if ( this.output1 ) { //  7. ( .input0 ) => ( , .output1 )
             this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
             if ( bKeepInputTensor0 ) {
-              this.apply = () => { this.output1.realTensor = this.input0.realTensor.clone(); }
+              this.apply = Base.apply__i0__o1__k0;
             } else {
-              this.apply = () => { this.output1.realTensor = this.input0.realTensor; }
+              this.apply = Base.apply__i0__o1__d0;
             }
           } else {              //  8. ( .input0 ) => (  )
             if ( bKeepInputTensor0 ) {
-              this.apply = () => {}
+              this.apply = Base.apply__i0__k0;
             } else {
-              this.apply = () => { this.input0.realTensor.dispose(); }
+              this.apply = Base.apply__i0__d0;
             }
           }
         }
@@ -508,31 +507,31 @@ Do not use function declared in function because they may generate new function 
             this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
             this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
             if ( bKeepInputTensor1 ) {
-              this.apply = () => { this.output0.realTensor = this.input1.realTensor.clone(); this.output1.realTensor = this.input1.realTensor.clone(); }
+              this.apply = Base.apply__i1__o0_o1__k1;
             } else {
-              this.apply = () => { this.output0.realTensor = this.input1.realTensor; this.output1.realTensor = this.input1.realTensor.clone(); }
+              this.apply = Base.apply__i1__o0_o1__d1;
             }
           } else {              // 10. ( , .input1 ) => ( .output0 )
             this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
             if ( bKeepInputTensor1 ) {
-              this.apply = () => { this.output0.realTensor = this.input1.realTensor.clone(); }
+              this.apply = Base.apply__i1__o0__k1;
             } else {
-              this.apply = () => { this.output0.realTensor = this.input1.realTensor; }
+              this.apply = Base.apply__i1__o0__d1;
             }
           }
         } else {
           if ( this.output1 ) { // 11. ( , .input1 ) => ( , .output1 )
             this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
             if ( bKeepInputTensor1 ) {
-              this.apply = () => { this.output1.realTensor = this.input1.realTensor.clone(); }
+              this.apply = Base.apply__i1__o1__k1;
             } else {
-              this.apply = () => { this.output1.realTensor = this.input1.realTensor; }
+              this.apply = Base.apply__i1__o1__d1;
             }
           } else {              // 12. ( , .input1 ) => (  )
             if ( bKeepInputTensor1 ) {
-              this.apply = () => {}
+              this.apply = Base.apply__i1__k1;
             } else {
-              this.apply = () => { this.input1.realTensor.dispose(); }
+              this.apply = Base.apply__i1__d1;
             }
           }
         }
@@ -541,17 +540,17 @@ Do not use function declared in function because they may generate new function 
           if ( this.output1 ) { // 13. (  ) => ( .output0, .output1 )
             this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
             this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
-            this.apply = () => { this.output0.realTensor = null; this.output1.realTensor = null; }
+            this.apply = Base.apply__o0_o1;
           } else {              // 14. (  ) => ( .output0 )
             this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
-            this.apply = () => { this.output0.realTensor = null; }
+            this.apply = Base.apply__o0;
           }
         } else {
           if ( this.output1 ) { // 15. (  ) => ( , .output1 )
             this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
-            this.apply = () => { this.output1.realTensor = null; }
+            this.apply = Base.apply__o1;
           } else {              // 16. (  ) => (  )
-            this.apply = () => {}
+            this.apply = Base.apply__;
           }
         }
 
@@ -564,9 +563,9 @@ Do not use function declared in function because they may generate new function 
     }
   }
 
-//!!! ...unfinished... (2022/06/29)
+
   /*
-   * The function name meaning:
+   * The apply__XXX() function name meaning:
    * - The i0 means has .input0
    * - The i1 means has .input1
    * - The o0 means has .output0
@@ -577,140 +576,57 @@ Do not use function declared in function because they may generate new function 
    * - The d1 means dispose .input1 tensor
    *
    */
-  
-    if ( this.input0 ) {
-      if ( this.input1 ) {
-        if ( this.output0 ) {
-          if ( this.output1 ) { //  1. ( .input0, .input1 ) => ( .output0, .output1 )
-
   static apply__i0_i1__o0_o1__k0_k1() { this.output0.realTensor = this.input0.realTensor.clone(); this.output1.realTensor = this.input1.realTensor.clone(); }
-              else
   static apply__i0_i1__o0_o1__k0_d1() { this.output0.realTensor = this.input0.realTensor.clone(); this.output1.realTensor = this.input1.realTensor; }
-            } else {
-              if ( bKeepInputTensor1 )
   static apply__i0_i1__o0_o1__d0_k1() { this.output0.realTensor = this.input0.realTensor; this.output1.realTensor = this.input1.realTensor.clone(); }
-              else
   static apply__i0_i1__o0_o1__d0_d1() { this.output0.realTensor = this.input0.realTensor; this.output1.realTensor = this.input1.realTensor; }
-            }
-          } else {              //  2. ( .input0, .input1 ) => ( .output0 )
-            if ( bKeepInputTensor0 ) {
-              if ( bKeepInputTensor1 )
-  static apply__i0_i1__o0__k0_k1() { this.output0.realTensor = this.input0.realTensor.clone(); }
-              else
-  static apply__i0_i1__o0__k0_d1() { this.output0.realTensor = this.input0.realTensor.clone(); this.input1.realTensor.dispose(); }
-            } else {
-              if ( bKeepInputTensor1 )
-  static apply__i0_i1__o0__d0_k1() { this.output0.realTensor = this.input0.realTensor; }
-              else
-  static apply__i0_i1__o0__d0_d1() { this.output0.realTensor = this.input0.realTensor; this.input1.realTensor.dispose(); }
-            }
-          }
-        } else {
-          if ( this.output1 ) { //  3. ( .input0, .input1 ) => ( , .output1 )
-            if ( bKeepInputTensor0 ) {
-              if ( bKeepInputTensor1 )
-  static apply__i0_i1__o1__k0_k1() { this.output1.realTensor = this.input1.realTensor.clone(); }
-              else
-  static apply__i0_i1__o1__k0_d1() { this.output1.realTensor = this.input1.realTensor; }
-            } else {
-              if ( bKeepInputTensor1 )
-  static apply__i0_i1__o1__d0_k1() { this.input0.realTensor.dispose(); this.output1.realTensor = this.input1.realTensor.clone(); }
-              else
-  static apply__i0_i1__o1__d0_d1() { this.input0.realTensor.dispose(); this.output1.realTensor = this.input1.realTensor; }
-            }
-          } else {              //  4. ( .input0, .input1 ) => (  )
-            if ( bKeepInputTensor0 ) {
-              if ( bKeepInputTensor1 )
-  static apply__i0_i1__k0_k1() {}
-              else
-  static apply__i0_i1__k0_d1() { this.input1.realTensor.dispose(); }
-            } else {
-              if ( bKeepInputTensor1 )
-  static apply__i0_i1__d0_k1() { this.input0.realTensor.dispose(); }
-              else
-  static apply__i0_i1__d0_d1() => { this.input0.realTensor.dispose(); this.input1.realTensor.dispose(); }
-            }
-          }
-        }
-      } else {
-        if ( this.output0 ) {
-          if ( this.output1 ) { //  5. ( .input0 ) => ( .output0, .output1 )
-            if ( bKeepInputTensor0 ) {
-  static apply__i0__o0_o1__k0() { this.output0.realTensor = this.input0.realTensor.clone(); this.output1.realTensor = this.input0.realTensor.clone(); }
-            } else {
-  static apply__i0__o0_o1__d0() { this.output0.realTensor = this.input0.realTensor; this.output1.realTensor = this.input0.realTensor.clone(); }
-            }
-          } else {              //  6. ( .input0 ) => ( .output0 )
-            if ( bKeepInputTensor0 ) {
-  static apply__i0__o0__k0() { this.output0.realTensor = this.input0.realTensor.clone(); }
-            } else {
-  static apply__i0__o0__d0() { this.output0.realTensor = this.input0.realTensor; }
-            }
-          }
-        } else {
-          if ( this.output1 ) { //  7. ( .input0 ) => ( , .output1 )
-            if ( bKeepInputTensor0 ) {
-  static apply__i0__o1__k0() { this.output1.realTensor = this.input0.realTensor.clone(); }
-            } else {
-  static apply__i0__o1__d0() { this.output1.realTensor = this.input0.realTensor; }
-            }
-          } else {              //  8. ( .input0 ) => (  )
-            if ( bKeepInputTensor0 ) {
-  static apply__i0__k0() {}
-            } else {
-  static apply__i0__d0() { this.input0.realTensor.dispose(); }
-            }
-          }
-        }
-      }
-    } else {
-      if ( this.input1 ) {
-        if ( this.output0 ) {
-          if ( this.output1 ) { //  9. ( , .input1 ) => ( .output0, .output1 )
-            if ( bKeepInputTensor1 ) {
-  static apply__i1__o0_o1__k1() { this.output0.realTensor = this.input1.realTensor.clone(); this.output1.realTensor = this.input1.realTensor.clone(); }
-            } else {
-  static apply__i1__o0_o1__d1() { this.output0.realTensor = this.input1.realTensor; this.output1.realTensor = this.input1.realTensor.clone(); }
-            }
-          } else {              // 10. ( , .input1 ) => ( .output0 )
-            if ( bKeepInputTensor1 ) {
-  static apply__i1__o0__k1() { this.output0.realTensor = this.input1.realTensor.clone(); }
-            } else {
-  static apply__i1__o0__d1() { this.output0.realTensor = this.input1.realTensor; }
-            }
-          }
-        } else {
-          if ( this.output1 ) { // 11. ( , .input1 ) => ( , .output1 )
-            if ( bKeepInputTensor1 ) {
-  static apply__i1__o1__k1() { this.output1.realTensor = this.input1.realTensor.clone(); }
-            } else {
-  static apply__i1__o1__d1() { this.output1.realTensor = this.input1.realTensor; }
-            }
-          } else {              // 12. ( , .input1 ) => (  )
-            if ( bKeepInputTensor1 ) {
-  static apply__i1__k1() {}
-            } else {
-  static apply__i1__d1() { this.input1.realTensor.dispose(); }
-            }
-          }
-        }
-      } else { // no input0, no input1.
-        if ( this.output0 ) {
-          if ( this.output1 ) { // 13. (  ) => ( .output0, .output1 )
-  static apply__o0_o1() { this.output0.realTensor = null; this.output1.realTensor = null; }
-          } else {              // 14. (  ) => ( .output0 )
-  static apply__o0() { this.output0.realTensor = null; }
-          }
-        } else {
-          if ( this.output1 ) { // 15. (  ) => ( , .output1 )
-  static apply__o1() { this.output1.realTensor = null; }
-          } else {              // 16. (  ) => (  )
-  static apply__() {}
-          }
-        }
 
-      }
-    }
+  static apply__i0_i1__o0__k0_k1() { this.output0.realTensor = this.input0.realTensor.clone(); }
+  static apply__i0_i1__o0__k0_d1() { this.output0.realTensor = this.input0.realTensor.clone(); this.input1.realTensor.dispose(); }
+  static apply__i0_i1__o0__d0_k1() { this.output0.realTensor = this.input0.realTensor; }
+  static apply__i0_i1__o0__d0_d1() { this.output0.realTensor = this.input0.realTensor; this.input1.realTensor.dispose(); }
+  
+  static apply__i0_i1__o1__k0_k1() { this.output1.realTensor = this.input1.realTensor.clone(); }
+  static apply__i0_i1__o1__k0_d1() { this.output1.realTensor = this.input1.realTensor; }
+  static apply__i0_i1__o1__d0_k1() { this.input0.realTensor.dispose(); this.output1.realTensor = this.input1.realTensor.clone(); }
+  static apply__i0_i1__o1__d0_d1() { this.input0.realTensor.dispose(); this.output1.realTensor = this.input1.realTensor; }
+
+  static apply__i0_i1__k0_k1() {}
+  static apply__i0_i1__k0_d1() { this.input1.realTensor.dispose(); }
+  static apply__i0_i1__d0_k1() { this.input0.realTensor.dispose(); }
+  static apply__i0_i1__d0_d1() { this.input0.realTensor.dispose(); this.input1.realTensor.dispose(); }
+
+  static apply__i0__o0_o1__k0() { this.output0.realTensor = this.input0.realTensor.clone(); this.output1.realTensor = this.input0.realTensor.clone(); }
+  static apply__i0__o0_o1__d0() { this.output0.realTensor = this.input0.realTensor; this.output1.realTensor = this.input0.realTensor.clone(); }
+
+  static apply__i0__o0__k0() { this.output0.realTensor = this.input0.realTensor.clone(); }
+  static apply__i0__o0__d0() { this.output0.realTensor = this.input0.realTensor; }
+
+  static apply__i0__o1__k0() { this.output1.realTensor = this.input0.realTensor.clone(); }
+  static apply__i0__o1__d0() { this.output1.realTensor = this.input0.realTensor; }
+
+  static apply__i0__k0() {}
+  static apply__i0__d0() { this.input0.realTensor.dispose(); }
+
+  static apply__i1__o0_o1__k1() { this.output0.realTensor = this.input1.realTensor.clone(); this.output1.realTensor = this.input1.realTensor.clone(); }
+  static apply__i1__o0_o1__d1() { this.output0.realTensor = this.input1.realTensor; this.output1.realTensor = this.input1.realTensor.clone(); }
+
+  static apply__i1__o0__k1() { this.output0.realTensor = this.input1.realTensor.clone(); }
+  static apply__i1__o0__d1() { this.output0.realTensor = this.input1.realTensor; }
+
+  static apply__i1__o1__k1() { this.output1.realTensor = this.input1.realTensor.clone(); }
+  static apply__i1__o1__d1() { this.output1.realTensor = this.input1.realTensor; }
+
+  static apply__i1__k1() {}
+  static apply__i1__d1() { this.input1.realTensor.dispose(); }
+
+  static apply__o0_o1() { this.output0.realTensor = null; this.output1.realTensor = null; }
+
+  static apply__o0() { this.output0.realTensor = null; }
+
+  static apply__o1() { this.output1.realTensor = null; }
+
+  static apply__() {}
 
 
   /**
