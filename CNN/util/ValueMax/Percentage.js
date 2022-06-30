@@ -2,8 +2,8 @@ export { Base };
 export { Concrete };
 export { Aggregate };
 
-import * as Pool from "../util/Pool.js";
-import * as Recyclable from "../util/Recyclable.js";
+import * as Pool from "../Pool.js";
+import * as Recyclable from "../Recyclable.js";
 
 /**
  * The base class for representing valuePercentage as number berween [0, 100] inclusive. Acceptable by Receiver.Base.
