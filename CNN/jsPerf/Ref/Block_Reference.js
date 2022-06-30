@@ -322,12 +322,10 @@ class Base extends Recyclable.Root {
    */
   static testCorrectness_internal() {
     let testParams = this.testParams;
-    let testCorrectnessInfo = this.testCorrectnessInfo;
 
     let {
-      imageInArraySelected, imageOutReferenceArray, inputTensor3dArray, outputTensor3dArray,
-      input1_channelCount, channelShuffler_ConcatPointwiseConv, inputTensorDestroyCount,
-    } = testCorrectnessInfo;
+      imageInArraySelected, imageOutReferenceArray, outputTensor3dArray,
+    } = this.testCorrectnessInfo;
 
     {
       this.calcResult( imageInArraySelected, imageOutReferenceArray ); // Output is an array with two elements.
@@ -339,11 +337,24 @@ class Base extends Recyclable.Root {
         );
     }
 
-//!!! ...unfinished... (2022/06/30)
-// should test Pool.All.issuedCount before and after block .create() and .apply().
-// Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "Block_Reference.???testCorrectness_internal()", ??? );
+    Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "Block_Reference.Base.block_create_apply_internal()",
+      Base.block_create_apply_internal, this );
 
+    tf.dispose( outputTensor3dArray );
+  }
 
+  /**
+   * @param {Block_Reference.Base} this
+   *   The referenece object to do the calculate.
+   *
+   */
+  static block_create_apply_internal() {
+    let testParams = this.testParams;
+
+    let {
+      imageInArraySelected, imageOutReferenceArray, inputTensor3dArray, outputTensor3dArray,
+      input1_channelCount, channelShuffler_ConcatPointwiseConv, inputTensorDestroyCount,
+    } = this.testCorrectnessInfo;
 
     let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
 
@@ -422,10 +433,7 @@ class Base extends Recyclable.Root {
         + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
         + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
         + `${block}` );
-
-    tf.dispose( outputTensor3dArray );
   }
-
 
   /**
    * Check the Block's output's BoundsArraySet.
