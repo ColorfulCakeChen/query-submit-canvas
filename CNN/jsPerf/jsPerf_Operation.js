@@ -32,11 +32,10 @@ class Case {
 
       Pool_Asserter.assert_Pool_issuedCount_same_after_as_before(
         "jsPerf_Operation.Case()",
-        null, // No "this" for Pool_Asserter.assert_Pool_issuedCount_same_after_as_before().
         Pool.All.sessionCall,
-        null, // No "this" for Pool.All.sessionCall().
-        Case.test_sessionCall_internal,
-        this // The "this" for Case.test_sessionCall_internal().
+        this, // The "this" when calling Pool.All.sessionCall().
+        Case.test_sessionCall_internal
+        this, // The "this" when calling Case.test_sessionCall_internal().
       );
 
     } catch ( e ) {
