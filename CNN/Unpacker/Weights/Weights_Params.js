@@ -5,6 +5,87 @@ import * as ParamDesc from "./ParamDesc.js";
 import { Base } from "./Weights_Base.js";
 
 /**
+ * Used by Weights.Params' constructor internally before calling parent (i.e. Weights.Base) class's constructor.
+ */
+class ParamsPrepareInfo {
+
+  /**
+   * Used as default Weights.Params provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Weights.ParamsPrepareInfo.Pool", ParamsPrepareInfo, ParamsPrepareInfo.setAsConstructor );
+
+  /**
+   */
+  constructor( aParamDescSequenceArray, ...restArgs ) {
+    super();
+    Base.setAsConstructor_self.call( this, aParamDescSequenceArray, ...restArgs );
+   }
+
+  /** @override */
+  static setAsConstructor( elementOffsetBegin, aParamDescSequenceArray, ...restArgs ) {
+    super.setAsConstructor();
+    Base.setAsConstructor_self.call( this, aParamDescSequenceArray, ...restArgs );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( aParamDescSequenceArray, ...restArgs ) {
+    this.initValueArray = Recyclable.Array.get_or_create_by( aParamDescSequenceArray.length );
+    this.inputWeightArrayIndexArray = Recyclable.Array.get_or_create_by( aParamDescSequenceArray.length );
+    this.finalValueArray = Recyclable.Array.get_or_create_by( aParamDescSequenceArray.length );
+
+    this.parameterCountExtracted = 0;
+    for ( let i = 0; i < aParamDescSequenceArray.length; ++i ) {
+      let paramDesc = aParamDescSequenceArray[ i ];
+      let initValue = this.initValueArray[ i ] = restArgs[ i ]; // Collect all parameters.
+
+      // Collect what parameters should be extracted from input array (rather than use values in the parameterMap).
+      // At the same time, its array index will also be recorded for extracting its value from array.
+      {
+
+        // A null value means it should be extracted from inputWeightArray. (i.e. by evolution)
+        //
+        // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
+        //
+        if ( null == initValue ) {
+          this.inputWeightArrayIndexArray[ i ] = this.parameterCountExtracted; // Record the index (into inputWeightArray[]).
+          ++this.parameterCountExtracted;
+
+        } else {
+          // A non-null value means it is the parameter's value (which should also be adjusted).
+          let adjustedValue = paramDesc.valueDesc.range.adjust( initValue );
+          this.finalValueArray[ i ] = adjustedValue;
+        }
+      }
+    }
+  }
+
+  /** @override */
+  disposeResources() {
+    this.parameterCountExtracted = undefined;
+
+    if ( this.finalValueArray ) {
+      this.finalValueArray.disposeResources_and_recycleToPool();
+      this.finalValueArray = null;
+    }
+
+    if ( this.inputWeightArrayIndexArray ) {
+      this.inputWeightArrayIndexArray.disposeResources_and_recycleToPool();
+      this.inputWeightArrayIndexArray = null;
+    }
+
+    if ( this.initValueArray ) {
+      this.initValueArray.disposeResources_and_recycleToPool();
+      this.initValueArray = null;
+    }
+
+    super.disposeResources();
+  }
+
+}
+
+
+/**
  * The parameters for the weights of a neural network layer.
  *
  * @member {ParamDesc.SequenceArray} aParamDescSequenceArray
@@ -25,18 +106,14 @@ import { Base } from "./Weights_Base.js";
  *
 
 //!!! ...unfinished... (2022/06/30)
- * @member {Map} parameterMapModified
- *   All parameters provided by this object. Its entry is [ key, value ]. The key of the entry [ key, value ] is a ParamDesc.Xxx object
- * (the same as the key of the init()'s parameterMap). The value of the entry [ key, value ] is adjusted parameter value
- * which is combined from the value of the init()'s parameterMap and inputFloat32Array (or fixedWeights).
- *
  * @member {number} parameterCountExtracted
- *   How many parameters are extracted from inputWeightArray[]. Only meaningful if extract() successfully.
+ *   How many parameters are extracted from inputWeightArray[]. Only meaningful if init() successfully.
  *
  * @member {number} parameterCount
  *   Always ( aParamDescSequenceArray.length ). This is the total parameter count provided by this object
- * if extract() successfully.
+ * if init() successfully.
  *
+ * @see Weights.Base
  */
 class Params extends Base {
 
@@ -73,29 +150,61 @@ class Params extends Base {
    *     - If ( null == value ), the parameter will be extracted from inputFloat32Array (or fixedWeights).The
    *       returned value of key.valueDesc.range.adjust( extractedValue ) will be used as the parameter's value. (i.e. by evolution)
    *
-   * @param {(Float32Array|number[])} fixedWeights
-   *   If null, extract parameters from inputFloat32Array. If not null, extract parameters from it instead of
-   * inputFloat32Array. When not null, it should have parameterCountExtracted elements (i.e. the count of non-null values
-   * of parameterMap).
    */
   constructor( elementOffsetBegin, aParamDescSequenceArray, ...restArgs ) {
-    
-    super( elementOffsetBegin, aParamDescSequenceArray.length );
+
+    PrepareInfo
+
+    super( elementOffsetBegin, ??? aParamDescSequenceArray.length );
     Base.setAsConstructor_self.call( this, aParamDescSequenceArray, ...restArgs );
-    
+   }
 
+  /** @override */
+  static setAsConstructor( elementOffsetBegin, aParamDescSequenceArray, ...restArgs ) {
+    super.setAsConstructor( elementOffsetBegin, ??? aParamDescSequenceArray.length );
+    Base.setAsConstructor_self.call( this, aParamDescSequenceArray, ...restArgs );
+    return this;
+  }
 
+  /** @override */
+  static setAsConstructor_self( aParamDescSequenceArray, ...restArgs ) {
 
-    // If has fixedWeights, use it as priviledge input.
-    let privilegeInput;
-    if ( fixedWeights ) {
-      if ( fixedWeights instanceof Float32Array )
-        privilegeInput = fixedWeights;
-      else
-        privilegeInput = new Float32Array( fixedWeights );  // Convert to Float32Array.
+    this.initValueArray = Recyclable.Array.get_or_create_by( aParamDescSequenceArray.length );
+    this.inputWeightArrayIndexArray = Recyclable.Array.get_or_create_by( aParamDescSequenceArray.length );
+    this.finalValueArray = Recyclable.Array.get_or_create_by( aParamDescSequenceArray.length );
+
+//!!! ...unfinished... (2022/06/30)
+    let 
+    for ( let i = 0; i < aParamDescSequenceArray.length; ++i ) {
+      let initValue = this.initValueArray[ i ] = restArgs[ i ]; // Collect all parameters.
+
+      // Collect what parameters should be extracted from input array (rather than use values in the parameterMap).
+      // At the same time, its array index will also be recorded for extracting its value from array.
+      {
+
+        // A null value means it should be extracted from inputFloat32Array (or fixedWeights). (i.e. by evolution)
+        //
+        // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
+        if ( null == initValue ) {
+          // Record the index (into this.weightsModified[]) and the adjuster.
+          this.inputWeightArrayIndexArray[ i ] = 
+          arrayIndexMap.set( paramDesc, i );
+          ++i;
+        } else {
+          // A non-null value means it is the parameter's value (which should also be adjusted).
+          let adjustedValue = paramDesc.valueDesc.range.adjust( value );
+          parameterMapModified.set( paramDesc, adjustedValue );
+        }
+
+      }
+
+      parameterCountExtracted = arrayIndexMap.size; // Determine how many parameters should be extracted from array.
     }
 
-    let privilegeByteOffsetBegin = 0; // fixedWeights always be extracted at the beginning.
+    }
+
+   
+
 
     let parameterMapModified, arrayIndexMap, parameterCountExtracted;
     if ( parameterMap ) {
@@ -148,26 +257,6 @@ class Params extends Base {
   }
 
   /** @override */
-  static setAsConstructor( elementOffsetBegin, aParamDescSequenceArray, ...restArgs ) {
-    super( elementOffsetBegin, aParamDescSequenceArray.length );
-    Base.setAsConstructor_self.call( this, aParamDescSequenceArray, ...restArgs );
-    return this;
-  }
-
-  /** @override */
-  static setAsConstructor_self( aParamDescSequenceArray, ...restArgs ) {
-
-    this.initValueArray = Recyclable.Array.get_or_create_by( aParamDescSequenceArray.length );
-    this.inputWeightArrayIndexArray = Recyclable.Array.get_or_create_by( aParamDescSequenceArray.length );
-    this.finalValueArray = Recyclable.Array.get_or_create_by( aParamDescSequenceArray.length );
-
-//!!! ...unfinished... (2022/06/30)
-
-    this.elementOffsetBegin = elementOffsetBegin;
-    this.elementCount = elementCount;
-  }
-
-  /** @override */
   disposeResources() {
 
     if ( this.finalValueArray ) {
@@ -187,10 +276,6 @@ class Params extends Base {
 
 //!!! ...unfinished... (2022/06/30)
 
-    this.bInitOk = undefined;
-    this.elementOffsetEnd = undefined;
-    this.elementCount = undefined;
-    this.elementOffsetBegin = undefined;
     super.disposeResources();
   }
 
@@ -201,14 +286,16 @@ class Params extends Base {
    *
    * @override
    */
-  extract() {
+  init() {
+
+//!!! ...unfinished... (2022/06/30)
 
     this.weightsModified = null; // So that distinguishable if re-initialization failed.
 
     if ( !this.parameterMap )
       return false;  // Do not know what parameters to be used or extracted.
 
-    let bExtractOk = super.extract(); // Extract a block of input array.
+    let bExtractOk = super.init(); // Extract a block of input array.
     if ( !bExtractOk )
       return false;
 
