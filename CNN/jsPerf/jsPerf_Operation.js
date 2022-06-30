@@ -59,7 +59,7 @@ class Case {
 
     let TensorPlaceholderPool_issuedCount_before = TensorPlaceholder.Base.Pool.issuedCount;
 
-    this.operation = this.classTested.Pool.get_or_create_by( this.input0, input1, this.outputTensorCount );
+    this.operation = this.classTested.Pool.get_or_create_by( this.input0, this.input1, this.outputTensorCount );
     this.operation.setKeepInputTensor( this.bKeepInputTensor0, this.bKeepInputTensor1 );
 
     tf.tidy( Case.test_tidy_internal );
