@@ -500,7 +500,7 @@ class Base extends Recyclable.Root {
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
     // Initialize successfully or failed.
-    let extractedParams = Block.Params.Pool.get_or_create_by( testParams.in.elementOffsetBegin,
+    let extractedParams = Block.Params.Pool.get_or_create_by(
       testParams.in.input0_height, testParams.in.input0_width, testParams.in.input0_channelCount,
       testParams.in.nConvBlockTypeId,
       testParams.in.pointwise1ChannelCount,
