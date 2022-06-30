@@ -299,8 +299,8 @@ import { Params } from "./Block_Params.js";
  * weights, if they are used in tensors. (Not including channelShuffler.)
  *
  * @member {number} tensorWeightCountExtracted
- *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
- * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+ *   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used in
+ * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputWeightArray.
  * (Not including channelShuffler.)
  *
  * @member {function} apply
@@ -382,12 +382,12 @@ class Base extends Recyclable.Root {
 
     // 0.1 Estimate the maximum value of progress.
     let progressMax =
-        1  // for extracting parameters from inputFloat32Array.
-      + 1  // for extracting pointwise1 filters (and biases) from inputFloat32Array and building tensors.
-      + 1  // for extracting depthwise filters (and biases) from inputFloat32Array and building tensors.
+        1  // for extracting parameters from inputWeightArray.
+      + 1  // for extracting pointwise1 filters (and biases) from inputWeightArray and building tensors.
+      + 1  // for extracting depthwise filters (and biases) from inputWeightArray and building tensors.
       + 1  // for concat1.
       + 1  // for extracting squeeze-and-excitation prefix pointwise2.
-      + 1  // for extracting pointwise2 filters (and biases) from inputFloat32Array and building tensors.
+      + 1  // for extracting pointwise2 filters (and biases) from inputWeightArray and building tensors.
       + 1  // for extracting squeeze-and-excitation postfix pointwise2.
       + 1  // for add-input-to-output.
       + 1  // for concat2-shuffle-split.
@@ -411,7 +411,7 @@ class Base extends Recyclable.Root {
 
     // Get parameters' real (adjusted) values.
     //
-    // Do not keep params in this.params so that the inputFloat32Array could be released.
+    // Do not keep params in this.params so that the inputWeightArray could be released.
     this.input0_height = params.input0_height;
     this.input0_width = params.input0_width;
     this.input0_channelCount = params.input0_channelCount;
@@ -1079,7 +1079,7 @@ class Base extends Recyclable.Root {
    * @param {ValueDesc.Pointwise_HigherHalfDifferent} nPointwise_HigherHalfDifferent
    *   The HigherHalfDifferent type for squeeze-and-excitation.
    *
-   * @param {Float32Array} inputFloat32Array
+   * @param {Float32Array} inputWeightArray
    *   A Float32Array whose values will be interpreted as weights.
    *
    * @return {boolean} Return true, if succeeded.
@@ -1200,7 +1200,7 @@ class Base extends Recyclable.Root {
       let intermediatePointwise0;
       {
         intermediatePointwise0 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
-          this.operationArray.endingInput0, this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array );
+          this.operationArray.endingInput0, this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray );
         if ( !intermediatePointwise0 )
           return false;  // e.g. input array does not have enough data.
       }
@@ -1208,7 +1208,7 @@ class Base extends Recyclable.Root {
       let intermediatePointwise1;
       if ( this.pointwise21ChannelCount > 0 ) {
         intermediatePointwise1 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
-          this.operationArray.endingInput1, this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputFloat32Array );
+          this.operationArray.endingInput1, this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray );
         if ( !intermediatePointwise1 )
           return false;  // e.g. input array does not have enough data.
       }
@@ -1290,7 +1290,7 @@ class Base extends Recyclable.Root {
    * @param {ValueDesc.Pointwise_HigherHalfDifferent} nPointwise_HigherHalfDifferent
    *   The HigherHalfDifferent type for squeeze-and-excitation.
    *
-   * @param {Float32Array} inputFloat32Array
+   * @param {Float32Array} inputWeightArray
    *   A Float32Array whose values will be interpreted as weights.
    *
    * @return {Operation.Pointwise}
