@@ -23,7 +23,7 @@ import * as FloatValue from "./FloatValue.js";
  *         elementCount is negative, the extraction will fail (i.e. ( bInitOk == false ) ).
  *
  * @member {boolean} bInitOk
- *   If .extract() success, it will be true.
+ *   If .init() success, it will be true.
  */
 class Base extends Recyclable.Root {
 
@@ -71,7 +71,7 @@ class Base extends Recyclable.Root {
    *
    * @return {boolean} Return false, if extraction failed.
    */ 
-  extract( inputWeightArray ) {
+  init( inputWeightArray ) {
     this.bInitOk = false;
 
     if ( Number.isNaN( this.elementCount ) )
