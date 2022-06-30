@@ -1,6 +1,8 @@
 export { Base, To, Params };
 
 import * as FloatValue from "./FloatValue.js";
+import * as ParamDesc from "./ParamDesc.js";
+
 
 //!!! ...unfinished... (2022/06/27)
 // Changed to using elementOffsetBegin, elementOffsetEnd instead of byteOffsetBegin and byteOffsetEnd.
@@ -339,6 +341,12 @@ class Params extends Base {
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
    *
+
+//!!! ...unfinished... (2022/06/30)
+   * @param {ParamDesc.SequenceArray} aParamDescSequenceArray
+   *
+   *
+
    * @param {Map} parameterMap
    *   Describe what parameters to be used or extracted.
    *   - The key of this parameterMap's entry [ key, value ] should be a ParamDesc.Xxx object (one of ParamDesc.Base,
@@ -361,7 +369,14 @@ class Params extends Base {
    * inputFloat32Array. When not null, it should have parameterCountExtracted elements (i.e. the count of non-null values
    * of parameterMap).
    */
-  constructor( inputFloat32Array, byteOffsetBegin, parameterMap, fixedWeights = null ) {
+
+//!!! (2022/06/30 Remarked) Replaced by aParamDescSequenceArray.
+//  constructor( inputFloat32Array, byteOffsetBegin, parameterMap, fixedWeights = null ) {
+
+  constructor( inputFloat32Array, byteOffsetBegin, aParamDescSequenceArray, fixedWeights = null ) {
+    
+
+
 
     // If has fixedWeights, use it as priviledge input.
     let privilegeInput;
