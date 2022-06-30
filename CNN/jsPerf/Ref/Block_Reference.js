@@ -231,13 +231,13 @@ class Base extends Recyclable.Root {
    */
   constructor() {
     super();
-    Bag.setAsConstructor_self.call( this );
+    Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    Bag.setAsConstructor_self.call( this );
+    Base.setAsConstructor_self.call( this );
     return this;
   }
 
