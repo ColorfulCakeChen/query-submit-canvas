@@ -19,8 +19,8 @@ import { Base } from "./Weights_Base.js";
  * specifying (from constructor). This array itself is indexed by ParamDesc.Xxx.seqId.
  *
  * @member {number[]} inputWeightArrayIndexArray
- *   A number array records where to extract parameters which is null in .initValueArray[]. Every element is the array index into
- * inputWeightArray[]. This array itself is indexed by ParamDesc.Xxx.seqId.
+ *   A number array records where to extract parameters which is null in .initValueArray[]. Every element is the relative
+ * array index into inputWeightArray[ elementOffsetBegin ]. This array itself is indexed by ParamDesc.Xxx.seqId.
  *
  * @member {number[]} finalValueArray
  *   An number array records the parameter values which combined both by specifying (from constructor) and by evolution (from
@@ -53,20 +53,20 @@ class ParamsInfo extends Recyclable.Root {
    *         paramDesc.valueDesc.range.adjust( extractedValue ) will be used as the parameter's value. (i.e. by evolution)
    *
    */
-  constructor( elementOffsetBegin, paramDescSequenceArray, ...restArgs ) {
+  constructor( paramDescSequenceArray, ...restArgs ) {
     super();
-    ParamsInfo.setAsConstructor_self.call( this, elementOffsetBegin, paramDescSequenceArray, ...restArgs );
+    ParamsInfo.setAsConstructor_self.call( this, paramDescSequenceArray, ...restArgs );
    }
 
   /** @override */
-  static setAsConstructor( elementOffsetBegin, paramDescSequenceArray, ...restArgs ) {
+  static setAsConstructor( paramDescSequenceArray, ...restArgs ) {
     super.setAsConstructor();
-    ParamsInfo.setAsConstructor_self.call( this, elementOffsetBegin, paramDescSequenceArray, ...restArgs );
+    ParamsInfo.setAsConstructor_self.call( this, paramDescSequenceArray, ...restArgs );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( elementOffsetBegin, paramDescSequenceArray, ...restArgs ) {
+  static setAsConstructor_self( paramDescSequenceArray, ...restArgs ) {
     this.paramDescSequenceArray = paramDescSequenceArray;
     this.parameterCount = paramDescSequenceArray.array.length;
 
@@ -88,7 +88,7 @@ class ParamsInfo extends Recyclable.Root {
         //
         if ( null == initValue ) {
           // Record the index (into inputWeightArray[]).
-          this.inputWeightArrayIndexArray[ i ] = elementOffsetBegin + this.parameterCountExtracted;
+          this.inputWeightArrayIndexArray[ i ] = this.parameterCountExtracted;
           this.finalValueArray[ i ] = undefined;
           ++this.parameterCountExtracted;
 
@@ -155,23 +155,21 @@ class Params extends Base {
 
   /**
    */
-  constructor( elementOffsetBegin, aParamDescSequenceArray, ...restArgs ) {
-    let info = ParamsInfo.Pool.get_or_create_by( elementOffsetBegin, aParamDescSequenceArray, ...restArgs );
-    super( elementOffsetBegin, info.parameterCountExtracted );
-    Params.setAsConstructor_self.call( this, info );
+  constructor( aParamDescSequenceArray, ...restArgs ) {
+    super();
+    Params.setAsConstructor_self.call( this, aParamDescSequenceArray, ...restArgs );
   }
 
   /** @override */
-  static setAsConstructor( elementOffsetBegin, aParamDescSequenceArray, ...restArgs ) {
-    let info = ParamsInfo.Pool.get_or_create_by( elementOffsetBegin, aParamDescSequenceArray, ...restArgs );
-    super.setAsConstructor( elementOffsetBegin, info.parameterCountExtracted );
-    Params.setAsConstructor_self.call( this, info );
+  static setAsConstructor( aParamDescSequenceArray, ...restArgs ) {
+    super.setAsConstructor();
+    Params.setAsConstructor_self.call( this, aParamDescSequenceArray, ...restArgs );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( aParamsInfo ) {
-    this.info = aParamsInfo;
+  static setAsConstructor_self( aParamDescSequenceArray, ...restArgs ) {
+    this.info = ParamsInfo.Pool.get_or_create_by( aParamDescSequenceArray, ...restArgs );
   }
 
   /** @override */
@@ -190,9 +188,10 @@ class Params extends Base {
    *
    * @override
    */
-  init( inputWeightArray ) {
+  init( inputWeightArray, elementOffsetBegin ) {
 
-    let bBaseInitOk = super.init(); // Determine and check input weight array bounds.
+    // Determine and check input weight array bounds.
+    let bBaseInitOk = super.init( inputWeightArray, elementOffsetBegin, this.info.parameterCountExtracted );
     if ( !bBaseInitOk )
       return false;
 
@@ -207,8 +206,10 @@ class Params extends Base {
       if ( inputWeightArrayIndex == undefined )
         continue; // This parameter has a specified value. No need to be extracted from inputWeightArray. (i.e. not by evolution)
 
+      let absoluteArrayIndex = elementOffsetBegin + inputWeightArrayIndex;
+      let extractedValue = inputWeightArray[ absoluteArrayIndex ];
+
       let paramDesc = this.info.paramDescSequenceArray.array[ i ];
-      let extractedValue = inputWeightArray[ inputWeightArrayIndex ];
       let adjustedValue = paramDesc.valueDesc.range.adjust( extractedValue );
       this.info.finalValueArray[ i ] = adjustedValue;
     }
