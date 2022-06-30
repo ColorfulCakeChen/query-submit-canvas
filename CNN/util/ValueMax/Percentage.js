@@ -41,6 +41,17 @@ class Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    if ( this.parent ) {
+      if ( this.parent instanceof Aggregate ) {
+
+!!! ...unfinished... (2022/06/30)
+// should remove self from parent.
+// Otherwise, when parent .disposeResources(), this object will be disposed again.
+//
+// How to remove fast?
+
+      }
+    }
     this.parent = null;
     super.disposeResources();
   }
