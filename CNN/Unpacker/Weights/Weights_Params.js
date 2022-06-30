@@ -70,9 +70,9 @@ class ParamsInfo extends Recyclable.Root {
     this.paramDescSequenceArray = paramDescSequenceArray;
     this.parameterCount = paramDescSequenceArray.array.length;
 
-    this.initValueArray = Recyclable.Array.get_or_create_by( this.parameterCount );
-    this.inputWeightArrayIndexArray = Recyclable.Array.get_or_create_by( this.parameterCount );
-    this.finalValueArray = Recyclable.Array.get_or_create_by( this.parameterCount );
+    this.initValueArray = Recyclable.Array.Pool.get_or_create_by( this.parameterCount );
+    this.inputWeightArrayIndexArray = Recyclable.Array.Pool.get_or_create_by( this.parameterCount );
+    this.finalValueArray = Recyclable.Array.Pool.get_or_create_by( this.parameterCount );
 
     this.parameterCountExtracted = 0;
     for ( let i = 0; i < this.parameterCount; ++i ) {
