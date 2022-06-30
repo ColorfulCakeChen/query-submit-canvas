@@ -3,7 +3,7 @@ export { Base };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as RandTools from "../../util/RandTools.js";
-import * as NameNumberArrayObject_To_Float32Array from "../../util/NameNumberArrayObject_To_Float32Array.js";
+import * as NameNumberArrayObject_To_NumberArray from "../../util/NameNumberArrayObject_To_NumberArray.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TestParams from "./TestParams.js";
 import * as NumberImage from "./NumberImage.js";
@@ -63,14 +63,14 @@ class Base extends TestParams.Base {
     this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag = Pointwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool.get_or_create_by();
     this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag = Depthwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool.get_or_create_by();
 
-    // A pre-allocated ArrayBuffer which could be re-allocated when needed to get Float32Array. (For reducing memory re-allocation.)
-    this.Float32Array_ByteOffsetBegin = NameNumberArrayObject_To_Float32Array.Base.Pool.get_or_create_by();
+    // A pre-allocated and re-used NumberArray. (For reducing memory re-allocation.)
+    this.NumberArray_ElementOffsetBegin = NameNumberArrayObject_To_NumberArray.Base.Pool.get_or_create_by();
   }
 
   /** @override */
   disposeResources() {
-    this.Float32Array_ByteOffsetBegin.disposeResources_and_recycleToPool();
-    this.Float32Array_ByteOffsetBegin = null;
+    this.NumberArray_ElementOffsetBegin.disposeResources_and_recycleToPool();
+    this.NumberArray_ElementOffsetBegin = null;
 
     this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources_and_recycleToPool();
     this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag = null;
@@ -152,11 +152,11 @@ class Base extends TestParams.Base {
     this.generate_out_inferencedParams();
     this.generate_Filters_Biases();
 
-    // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) Float32Array.
-    this.Float32Array_ByteOffsetBegin.setByConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
+    // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
+    this.NumberArray_ElementOffsetBegin.setByConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
 
-    this.in.inputFloat32Array = this.Float32Array_ByteOffsetBegin.weightsFloat32Array;
-    this.in.byteOffsetBegin = this.Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
+    this.in.inputWeightArray = this.NumberArray_ElementOffsetBegin.weightsArray;
+    this.in.elementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightsElementOffsetBegin;
 
     return this;
   }
