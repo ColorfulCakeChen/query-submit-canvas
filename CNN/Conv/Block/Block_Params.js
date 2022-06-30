@@ -1,5 +1,7 @@
 export { Params };
 
+import * as Pool from "../../util/Pool.js";
+//import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
@@ -191,14 +193,12 @@ import * as Depthwise from "../Depthwise.js";
 class Params extends Weights.Params {
 
   /**
-   * If a parameter's value is null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   *
-   * @param {Float32Array} inputFloat32Array
-   *   A Float32Array whose values will be interpreted as weights.
-   *
-   * @param {number} byteOffsetBegin
-   *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
-   * (not to the inputFloat32Array.byteOffset).
+   * Used as default Block.Params provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Block.Params.Pool", Params, Params.setAsConstructor );
+
+  /**
+   * If a parameter's value is null, it will be extracted from inputWeightArray (i.e. by evolution).
    *
    * @param {number} input0_height
    *   The height of apply()'s first input image (i.e. inputTensors[ 0 ]; input0). If null, it will be extracted
@@ -299,7 +299,7 @@ class Params extends Weights.Params {
    * inputFloat32Array (i.e. by evolution).
    *
    */
-  constructor( inputFloat32Array, byteOffsetBegin,
+  constructor( elementOffsetBegin,
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
@@ -310,38 +310,68 @@ class Params extends Weights.Params {
     nActivationId,
     bKeepInputTensor
   ) {
+    super( elementOffsetBegin,
+      Params.SequenceArray,
+      input0_height, input0_width, input0_channelCount,
+      nConvBlockTypeId,
+      pointwise1ChannelCount,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwiseActivationId,
+      pointwise20ChannelCount, pointwise20ActivationId,
+      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+      nActivationId,
+      bKeepInputTensor
+    );
+    Base.setAsConstructor_self.call( this );
+  }
 
-    let parameterMap = new Map( [
-      [ Params.input0_height,                         input0_height ],
-      [ Params.input0_width,                          input0_width ],
-      [ Params.input0_channelCount,                   input0_channelCount ],
-      [ Params.nConvBlockTypeId,                      nConvBlockTypeId ],
-      [ Params.pointwise1ChannelCount,                pointwise1ChannelCount ],
-      [ Params.depthwise_AvgMax_Or_ChannelMultiplier, depthwise_AvgMax_Or_ChannelMultiplier ],
-      [ Params.depthwiseFilterHeight,                 depthwiseFilterHeight ],
-      [ Params.depthwiseFilterWidth,                  depthwiseFilterWidth ],
-      [ Params.depthwiseStridesPad,                   depthwiseStridesPad ],
-      [ Params.depthwiseActivationId,                 depthwiseActivationId ],
-      [ Params.pointwise20ChannelCount,               pointwise20ChannelCount ],
-      [ Params.pointwise20ActivationId,               pointwise20ActivationId ],
-      [ Params.nSqueezeExcitationChannelCountDivisor, nSqueezeExcitationChannelCountDivisor ],
-      [ Params.bSqueezeExcitationPrefix,              bSqueezeExcitationPrefix ],
-      [ Params.nActivationId,                         nActivationId ],
-      [ Params.bKeepInputTensor,                      bKeepInputTensor ],
-    ] );
+  /** @override */
+  static setAsConstructor( elementOffsetBegin,
+    input0_height, input0_width, input0_channelCount,
+    nConvBlockTypeId,
+    pointwise1ChannelCount,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwiseActivationId,
+    pointwise20ChannelCount, pointwise20ActivationId,
+    nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+    nActivationId,
+    bKeepInputTensor
+  ) {
+    super.setAsConstructor( elementOffsetBegin,
+      Params.SequenceArray,
+      input0_height, input0_width, input0_channelCount,
+      nConvBlockTypeId,
+      pointwise1ChannelCount,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwiseActivationId,
+      pointwise20ChannelCount, pointwise20ActivationId,
+      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+      nActivationId,
+      bKeepInputTensor
+    );
+    Base.setAsConstructor_self.call( this );
+    return this;
+  }
 
-    super( inputFloat32Array, byteOffsetBegin, parameterMap );
+  /** @override */
+  static setAsConstructor_self() {
+    // Do nothing.
+  }
+
+  /** @override */
+  disposeResources() {
+    super.disposeResources();
   }
 
   /**
-   * Extract parameters from inputFloat32Array.
+   * Extract parameters from inputWeightArray.
    *
    * @return {boolean} Return false, if extraction failed.
    *
    * @override
    */
-  extract() {
-    let bExtractOk = super.extract();
+  init( inputWeightArray ) {
+    let bExtractOk = super.init( inputWeightArray );
     if ( !bExtractOk )
       return false;
 
@@ -762,37 +792,37 @@ class Params extends Weights.Params {
     );
   }
 
-  get input0_height()                        { return this.parameterMapModified.get( Params.input0_height ); }
-  get input0_width()                         { return this.parameterMapModified.get( Params.input0_width ); }
-  get input0_channelCount()                  { return this.parameterMapModified.get( Params.input0_channelCount ); }
+  get input0_height()                        { return this.getParamValue_byParamDesc( Params.input0_height ); }
+  get input0_width()                         { return this.getParamValue_byParamDesc( Params.input0_width ); }
+  get input0_channelCount()                  { return this.getParamValue_byParamDesc( Params.input0_channelCount ); }
 
   /** @return {number} The number version of nConvBlockTypeId. */
-  get nConvBlockTypeId()          { return this.parameterMapModified.get( Params.nConvBlockTypeId ); }
+  get nConvBlockTypeId()          { return this.getParamValue_byParamDesc( Params.nConvBlockTypeId ); }
 
   /** @return {string} The string version of nConvBlockTypeId. */
   get nConvBlockTypeName()        { return Params.nConvBlockTypeId.getStringOfValue( this.nConvBlockTypeId ); }
 
-  get pointwise1ChannelCount()    { return this.parameterMapModified.get( Params.pointwise1ChannelCount ); }
+  get pointwise1ChannelCount()    { return this.getParamValue_byParamDesc( Params.pointwise1ChannelCount ); }
 
   /** @return {number} The number version of the depthwise opertion. */
-  get depthwise_AvgMax_Or_ChannelMultiplier() { return this.parameterMapModified.get( Params.depthwise_AvgMax_Or_ChannelMultiplier ); }
+  get depthwise_AvgMax_Or_ChannelMultiplier() { return this.getParamValue_byParamDesc( Params.depthwise_AvgMax_Or_ChannelMultiplier ); }
 
   /** @return {string} The string version of the depthwise opertion. */
   get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
     return Params.depthwise_AvgMax_Or_ChannelMultiplier.getStringOfValue( this.depthwise_AvgMax_Or_ChannelMultiplier );
   }
 
-  get depthwiseFilterHeight()     { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
-  get depthwiseFilterWidth()      { return this.parameterMapModified.get( Params.depthwiseFilterWidth ); }
+  get depthwiseFilterHeight()     { return this.getParamValue_byParamDesc( Params.depthwiseFilterHeight ); }
+  get depthwiseFilterWidth()      { return this.getParamValue_byParamDesc( Params.depthwiseFilterWidth ); }
 
-  get depthwiseStridesPad()       { return this.parameterMapModified.get( Params.depthwiseStridesPad ); }
+  get depthwiseStridesPad()       { return this.getParamValue_byParamDesc( Params.depthwiseStridesPad ); }
   get depthwiseStridesPadName()   { return ValueDesc.StridesPad.Singleton.getStringOf( this.depthwiseStridesPad ); }
 
-  get depthwiseActivationId()     { return this.parameterMapModified.get( Params.depthwiseActivationId ); }
+  get depthwiseActivationId()     { return this.getParamValue_byParamDesc( Params.depthwiseActivationId ); }
   get depthwiseActivationName()   { return Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId ); }
 
-  get pointwise20ChannelCount()   { return this.parameterMapModified.get( Params.pointwise20ChannelCount ); }
-  get pointwise20ActivationId()   { return this.parameterMapModified.get( Params.pointwise20ActivationId ); }
+  get pointwise20ChannelCount()   { return this.getParamValue_byParamDesc( Params.pointwise20ChannelCount ); }
+  get pointwise20ActivationId()   { return this.getParamValue_byParamDesc( Params.pointwise20ActivationId ); }
   get pointwise20ActivationName() { return Params.pointwise20ActivationId.getStringOfValue( this.pointwise20ActivationId ); }
 
   // Note: pointwise21 use bias flag and activation id of pointwise20.
@@ -800,17 +830,17 @@ class Params extends Weights.Params {
   get pointwise21ActivationId()   { return this.pointwise20ActivationId; }
   get pointwise21ActivationName() { return this.pointwise20ActivationName; }
 
-  get nSqueezeExcitationChannelCountDivisor()     { return this.parameterMapModified.get( Params.nSqueezeExcitationChannelCountDivisor ); }
+  get nSqueezeExcitationChannelCountDivisor()     { return this.getParamValue_byParamDesc( Params.nSqueezeExcitationChannelCountDivisor ); }
   get nSqueezeExcitationChannelCountDivisorName() {
     return Params.nSqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
   }
 
-  get bSqueezeExcitationPrefix()  { return this.parameterMapModified.get( Params.bSqueezeExcitationPrefix ); }
+  get bSqueezeExcitationPrefix()  { return this.getParamValue_byParamDesc( Params.bSqueezeExcitationPrefix ); }
 
-  get nActivationId()             { return this.parameterMapModified.get( Params.nActivationId ); }
+  get nActivationId()             { return this.getParamValue_byParamDesc( Params.nActivationId ); }
   get nActivationName()           { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
 
-  get bKeepInputTensor()          { return this.parameterMapModified.get( Params.bKeepInputTensor ); }
+  get bKeepInputTensor()          { return this.getParamValue_byParamDesc( Params.bKeepInputTensor ); }
 }
 
 
