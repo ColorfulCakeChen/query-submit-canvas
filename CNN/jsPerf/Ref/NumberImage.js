@@ -1353,7 +1353,7 @@ class Base extends Recyclable.Root {
     }
 
     // 2. Fill .dataArray with random sequence values and got their bounds (if requested).
-    RandTools.fill_numberArray( imageNew.dataArray, imageNew.dataArray.length, randomOffsetMin, randomOffsetMax, tBounds );
+    RandTools.fill_numberArray( imageNew.dataArray, randomOffsetMin, randomOffsetMax, tBounds );
 
     // 3. Fill .boundsArraySet
     if ( tBounds ) { // 3.1 by collected bounds (if requested).
