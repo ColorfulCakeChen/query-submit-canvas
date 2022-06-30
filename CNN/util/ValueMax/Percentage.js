@@ -39,10 +39,11 @@ class Base extends Recyclable.Root {
     this.parent = null;
   }
 
-  ///** @override */
-  //disposeResources() {
-  //  super.disposeResources();
-  //}
+  /** @override */
+  disposeResources() {
+    this.parent = null;
+    super.disposeResources();
+  }
 
   /**
    * @return {Percentage.Base} The root Percentage.Base of the whole Percentage hierarchy. The root's valuePercentage represents the whole percentage.
@@ -108,10 +109,12 @@ class Concrete extends Base {
     this.max = max; // Negative indicates not initialized.
   }
 
-  ///** @override */
-  //disposeResources() {
-  //  super.disposeResources();
-  //}
+  /** @override */
+  disposeResources() {
+    this.max = undefined;
+    this.value = undefined;
+    super.disposeResources();
+  }
 
   /**
    * @return {number}
