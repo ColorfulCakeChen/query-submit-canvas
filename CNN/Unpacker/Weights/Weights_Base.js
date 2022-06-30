@@ -66,8 +66,7 @@ class Base extends Recyclable.Root {
    * Determine .elementOffsetEnd according to the inputWeightArray.lnegth, .elementOffsetBegin and .elementExtractedCount.
    *
    * @param {number[]|Float32Array} inputWeightArray
-   *   The underlying weights source array to be extracted from. It will not be kept by this object. It is mainly used for checking
-   * whether .elementOffsetEnd is legal.
+   *   The underlying weights source array to be extracted from. It will not be kept by this object.
    *
    * @return {boolean} Return false, if extraction failed.
    */ 
