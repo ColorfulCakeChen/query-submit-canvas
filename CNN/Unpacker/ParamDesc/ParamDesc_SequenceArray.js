@@ -23,7 +23,7 @@ class SequenceArray {
   constructor( aParamDescArray ) {
     this.array = aParamDescArray;
 
-    for ( let i = 0; i < this.array.legth; ++i ) {
+    for ( let i = 0; i < this.array.length; ++i ) {
       this.array[ i ].seqId = i;
     }
   }
