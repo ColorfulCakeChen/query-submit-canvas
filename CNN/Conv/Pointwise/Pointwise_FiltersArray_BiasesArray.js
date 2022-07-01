@@ -500,8 +500,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
       weightsCount_extracted += biasesWeightCount_extracted;
 
     // Prepare source weights to be extracted.
-    let sourceWeights = Weights.Base.Pool.get_or_create_by( this.elementOffsetEnd, weightsCount_extracted );
-    if ( !sourceWeights.init( inputWeightArray ) )
+    let sourceWeights = Weights.Base.Pool.get_or_create_by();
+    if ( !sourceWeights.init( inputWeightArray, this.elementOffsetEnd, weightsCount_extracted ) )
       return o_keptObjectArray;  // e.g. input array does not have enough data.
     this.elementOffsetEnd = sourceWeights.elementOffsetEnd;
     this.tensorWeightCountExtracted_internal = weightsCount_extracted;
