@@ -64,16 +64,23 @@ class Base extends Recyclable.Root {
    * @override
    */
   disposeResources() {
-    if ( this.scaleBoundsArray ) {
-      this.scaleBoundsArray.disposeResources_and_recycleToPool();
-      this.scaleBoundsArray = null;
-    }
+    this.ScaleBoundsArray_dispose();
 
     this.finalOperation = null;
     this.realTensor = null;
     this.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
 
     super.disposeResources();
+  }
+
+  /**
+   * Release (and recycle) .scaleBoundsArray (if exists).
+   */
+  ScaleBoundsArray_dispose() {
+    if ( this.scaleBoundsArray ) {
+      this.scaleBoundsArray.disposeResources_and_recycleToPool();
+      this.scaleBoundsArray = null;
+    }
   }
 
   /**
