@@ -118,13 +118,13 @@ class TwinArray extends Root {
     }
 
     // Because outputs are created by .endingDummyOperation, they should be released by it.
-    {
+    if ( this.endingDummyOperation ) {
       this.endingDummyOperation.disposeResources_and_recycleToPool();
       this.endingDummyOperation = null;
     }
 
     // Release every sub operation in reverse order.
-    {
+    if ( this.operationArray ) {
       for ( let i = ( this.operationArray.length - 1 ); i >= 0; --i ) {
         let operation = this.operationArray[ i ];
         operation.disposeResources_and_recycleToPool();
