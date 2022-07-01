@@ -764,7 +764,7 @@ class Base extends Recyclable.Root {
 
     // 5.2 The squeeze-and-excitation prefix pointwise2
     if ( this.bSqueezeExcitationPrefix )
-      if ( !Base.operationArray_append_SqueezeExcitation.call( this, nHigherHalfDifferent_pointwise2, params.defaultInput ) )
+      if ( !Base.operationArray_append_SqueezeExcitation.call( this, nHigherHalfDifferent_pointwise2, inputWeightArray ) )
         return false;  // e.g. input array does not have enough data.
 
     // 5.3
@@ -839,7 +839,7 @@ class Base extends Recyclable.Root {
       
     // 7.1
     if ( !this.bSqueezeExcitationPrefix ) // (i.e. postfix)
-      if ( !Base.operationArray_append_SqueezeExcitation.call( this, nHigherHalfDifferent_pointwise2, params.defaultInput ) )
+      if ( !Base.operationArray_append_SqueezeExcitation.call( this, nHigherHalfDifferent_pointwise2, inputWeightArray ) )
         return false;  // e.g. input array does not have enough data.
 
     // 7.2
