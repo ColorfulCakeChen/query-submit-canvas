@@ -418,7 +418,6 @@ class Base extends Recyclable.Root {
       Base.AssertTwoEqualValues( "outputTensorCount", block.outputTensorCount, outputTensorCount, block );
     }
 
-//!!! ...unfinished... (2022/07/02) Now Block does not have BoundsArraySet.
     // Test correctness of block BoundsArraySet.
     this.assert_imageOut_BoundsArraySet( block, imageOutReferenceArray, block );
 
