@@ -90,10 +90,13 @@ class Base extends Recyclable.Root {
     this.input0_ScaleBoundsArray = input0_ScaleBoundsArray.clone();
     this.input1_ScaleBoundsArray = input1_ScaleBoundsArray?.clone();
 
-!!! ...unfinished... (2022/07/01)
-// Different BoundsArraySet class have different arguments.
-
-    this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by( input0_ScaleBoundsArray, input1_ScaleBoundsArray, depth, undefined );
+    // Note1: Different BoundsArraySet class have different arguments.
+    // Note2: NumberImage's BoundsArraySet always has only output0.
+    if ( BoundsArraySetClass instanceof BoundsArraySet.ConvBiasActivation ) {
+      this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by( input0_ScaleBoundsArray, depth );
+    } else {
+      this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by( input0_ScaleBoundsArray, input1_ScaleBoundsArray, depth, undefined );
+    }
 
     // Default value bounds for an image. (Note: Do not use .filledValue as bounds.)
     if ( aBounds != undefined ) {
@@ -126,10 +129,7 @@ class Base extends Recyclable.Root {
     let result = Base.Pool.get_or_create_by( this.height, this.width, this.depth,
       undefined, // Because .dataArray will be filled by copying.
       this.boundsArraySet.input0, this.boundsArraySet.input1,
-                                            
-!!! ...unfinished... (2022/07/01)
-// should specify BoundsArraySet class. Otherwise, .boundsArraySet will not be created.
-
+      this.boundsArraySet.constructor, // BoundsArraySet class.
       undefined  // Because .boundsArraySet will be filled by copying.
     );
 
@@ -137,7 +137,7 @@ class Base extends Recyclable.Root {
       result.dataArray [ i ] = this.dataArray[ i ];
     }
 
-    result.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.boundsArraySet ); // Copy boundsArraySet.
+    result.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.boundsArraySet ); // Only copy BoundsArraySet.outputX
     return result;
   }
 
