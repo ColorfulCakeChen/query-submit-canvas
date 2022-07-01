@@ -190,7 +190,6 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 
     this.bDepthwise = false;
     this.bKeepInputTensor = false;  // Default will dispose input tensor.
-    this.bInitOk = false;
 
     super.disposeResources(); // Release filtersTensor4d and biasesTensor3d.
   }
