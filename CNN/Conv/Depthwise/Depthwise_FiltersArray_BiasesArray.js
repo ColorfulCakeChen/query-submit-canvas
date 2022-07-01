@@ -492,15 +492,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     }
 
     { // Release temporary resource.
-      if ( sourceWeights ) {
-        sourceWeights.disposeResources_and_recycleToPool();
-        sourceWeights = null;
-      }
+      sourceWeights.disposeResources_and_recycleToPool();
+      sourceWeights = null;
 
-      if ( aFiltersBiasesPartInfoArray ) {
-        aFiltersBiasesPartInfoArray.disposeResources_and_recycleToPool();
-        aFiltersBiasesPartInfoArray = null;
-      }
+      aFiltersBiasesPartInfoArray.disposeResources_and_recycleToPool();
+      aFiltersBiasesPartInfoArray = null;
     }
 
     return true; // bInitOk.
