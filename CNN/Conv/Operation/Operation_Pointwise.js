@@ -228,27 +228,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     // 0. Determine whether pointwise operation should exist.
     if ( this.outputChannelCount > 0 ) {
       this.bPointwise = true;
-
     } else {  // ( outputChannelCount <= 0 )
-      if ( this.channelShuffler_outputGroupCount > 0 ) {
-
-//!!! ...unfinished... (2022/05/20)
-        // Perhaps, deprecate this special case. Since pointwise2 always exists now.
-        // So assert if executed here.
-        throw Error(
-          `Operation.Pointwise.setup_bPointwise_pfn(): `
-            + `When outputChannelCount ( ${this.outputChannelCount} ) is not positive, `
-            + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) should not be positive.`
-        );
-
-        this.bPointwise = true; // all-pass-through-and-channel-shuffling mode. (Otherwise, no way to do channel shuffling.)
-        this.bBias = false; // In this case, there is always no biases (no matter how original bBias is).
-
-//!!! ...unfinished... (2022/05/20) What about nActivationId?
-
-      } else {
-        this.bPointwise = false;
-      }
+      this.bPointwise = false;
     }
 
     // 1.
