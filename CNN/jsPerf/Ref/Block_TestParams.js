@@ -156,7 +156,7 @@ class Base extends TestParams.Base {
     this.NumberArray_ElementOffsetBegin.setByConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
 
     this.in.inputWeightArray = this.NumberArray_ElementOffsetBegin.weightsArray;
-    this.in.elementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightsElementOffsetBegin;
+    this.in.weightElementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightsElementOffsetBegin;
 
     return this;
   }
