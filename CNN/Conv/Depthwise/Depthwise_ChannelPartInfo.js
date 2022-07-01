@@ -92,22 +92,20 @@ class FiltersBiasesPartInfo extends Recyclable.OwnerArray {
    *       is given.
    */
   constructor( ...restArgs ) {
-    super( restArgs.length );
-    FiltersBiasesPartInfo.setAsConstructor_self.call( this, restArgs );
+    super( ...restArgs );
+    FiltersBiasesPartInfo.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor( ...restArgs ) {
-    super.setAsConstructor( restArgs.length );
-    FiltersBiasesPartInfo.setAsConstructor_self.call( this, restArgs );
+    super.setAsConstructor( ...restArgs );
+    FiltersBiasesPartInfo.setAsConstructor_self.call( this );
     return this;
   }
 
   /** @override */
-  static setAsConstructor( aChannelPartInfoArray ) {
-    for ( let i = 0; i < aChannelPartInfoArray.length; ++i ) {
-      this[ i ] = aChannelPartInfoArray[ i ];
-    }
+  static setAsConstructor() {
+    // Do nothing.
   }
 
   /** @override */
