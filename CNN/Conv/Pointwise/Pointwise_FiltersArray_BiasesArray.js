@@ -17,7 +17,7 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  *
  * @member {number} elementOffsetEnd
  *   The position which is ended to (non-inclusive) extract from inputWeightArray by init(). Where to extract next weights.
- * Only meaningful when ( this.bInitOk == true ).
+ * Only meaningful if .init() returns true.
  *
  * @member {BoundsArraySet.Pointwise} boundsArraySet
  *   The element value bounds (per channel) of this pointwise convolution.
@@ -223,72 +223,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
    *
-   * @return {boolean} Return true, if succeeded.
-   */
-  init( inputWeightArray, elementOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo ) {
-
-    let bInitOk;
-
-    let keptObjectArray;
-    try {
-      // It will be filled with: [ bInitOk, boundsArraySet, filtersShape, filtersArray, biasesShape, biasesArray ].
-      // It is mainly used for preventing these elements been recycled by itself recycling pool.
-      //
-      let keptObjectArray = Recyclable.Array.Pool.get_or_create_by( 6 );
-
-!!! ...unfinished... (2022/07/01)
-// Not workable. Because nested object can not be detected by .sessionCall() and will be disposed unexpectedly.
-
-      Pool.All.sessionCall( FiltersArray_BiasesArray.init_internal, this,
-        inputWeightArray, elementOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo, keptObjectArray );
-
-      bInitOk = keptObjectArray[ 0 ];
-
-    } finally {
-      if ( keptObjectArray ) {
-        keptObjectArray.disposeResources_and_recycleToPool();
-        keptObjectArray = null;
-      }
-    }
-
-    return bInitOk;
-  }
-
-  /**
-   * Extract pointwise filters and biases.
-   *
-   * The following properties will be modified:
-   *   - this.elementOffsetBegin
-   *   - this.elementOffsetEnd
-   *   - this.tensorWeightCountExtracted_internal
-   *   - this.tensorWeightCountTotal_internal
-   *   - this.boundsArraySet
-   *   - this.filtersShape
-   *   - this.filtersArray
-   *   - this.biasesShape     ( if ( this.bBias == true ) )
-   *   - this.biasesArray     ( if ( this.bBias == true ) )
-   *
-   *
-   * @param {number[]|Float32Array} inputWeightArray
-   *   A Float32Array whose values will be interpreted as weights.
-   *
-   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
-   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
-   * set of this pointwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
-   *
-   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
-   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-   * and improve performance when doing Interleave_asGrouptTwo.
-   *
-   * @param {Object[]} o_keptObjectArray
-   *   Return [ bInitOk, this.boundsArraySet, this.filtersShape, this.filtersArray, this.biasesShape, this.biasesArray ].
-   * The bInitOk will be true, if succeeded.
-   *
    * @return {boolean}
-   *   Return o_keptObjectArray.
+   *   Return true, if succeeded.
    */
-  static init_internal(
-    inputWeightArray, elementOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo, o_keptObjectArray ) {
+  init_internal(
+    inputWeightArray, elementOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo ) {
 
     // Q1: Why is the inputWeightArray not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputWeightArray so that it could be released by memory garbage collector.
@@ -315,9 +254,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
     this.elementOffsetBegin = this.elementOffsetEnd = elementOffsetBegin;
 
-    o_keptObjectArray.lnegth = 6;
-    o_keptObjectArray[ 0 ] = false; // bInitOk.
-
     // Calculate lower half and higher half channel count. (Even if ( bHigherHalfDifferent == false ), these are still correct.)
     {
       if ( this.inputChannelCount_lowerHalf != undefined )
@@ -328,7 +264,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     }
 
     // Determine shape of the filters, biases, channels.
-    let aChannelPartInfoArray;
     let aFiltersBiasesPartInfoArray;
     let filtersWeightCount_extracted, biasesWeightCount_extracted;
 
@@ -348,12 +283,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 //               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount, false ) ] )
 //           ];
 
-          aChannelPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 1 );
-          aChannelPartInfoArray[ 0 ]
-            = ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount, this.outputChannelCount, false );
-
-          aFiltersBiasesPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 1 );
-          aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfo.Pool.get_or_create_by( aChannelPartInfoArray );
+          aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
+            FiltersBiasesPartInfo.Pool.get_or_create_by(
+              ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount, this.outputChannelCount, false )
+            )
+          );
           break;
 
         // 3.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
@@ -367,14 +301,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 //               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ] )
 //           ];
 
-          aChannelPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 2 );
-          aChannelPartInfoArray[ 0 ]
-            = ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  true );
-          aChannelPartInfoArray[ 1 ]
-            = ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true );
-
-          aFiltersBiasesPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 1 );
-          aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfo.Pool.get_or_create_by( aChannelPartInfoArray );
+          aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
+            FiltersBiasesPartInfo.Pool.get_or_create_by(
+              ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  true ),
+              ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true )
+            )
+          );
           break;
 
         // 3.2 bHigherHalfCopyLowerHalf
@@ -389,14 +321,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 //               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ] )
 //           ];
 
-          aChannelPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 2 );
-          aChannelPartInfoArray[ 0 ]
-            = ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf, false );
-          aChannelPartInfoArray[ 1 ]
-            = ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true );
-
-          aFiltersBiasesPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 1 );
-          aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfo.Pool.get_or_create_by( aChannelPartInfoArray );
+          aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
+            FiltersBiasesPartInfo.Pool.get_or_create_by(
+              ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf, false ),
+              ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true )
+            )
+          );
           break;
 
         // 3.3 bHigherHalfAnotherPointwise
@@ -417,26 +347,16 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 //             ] )
 //           ];
 
-
-          aFiltersBiasesPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 2 );
-
-          {
-            aChannelPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 1 );
-            aChannelPartInfoArray[ 0 ]
-              = ChannelPartInfo.Pool.get_or_create_by(
-                                                 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false );
-
-            aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfo.Pool.get_or_create_by( aChannelPartInfoArray );
-          }
-
-          {
-            aChannelPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 1 );
-            aChannelPartInfoArray[ 0 ]
-              = ChannelPartInfo.Pool.get_or_create_by(
-                  this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false );
-
-            aFiltersBiasesPartInfoArray[ 1 ] = FiltersBiasesPartInfo.Pool.get_or_create_by( aChannelPartInfoArray );
-          }
+          aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
+            FiltersBiasesPartInfo.Pool.get_or_create_by(
+              ChannelPartInfo.Pool.get_or_create_by(
+                                               0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false )
+            ),
+            FiltersBiasesPartInfo.Pool.get_or_create_by(
+              ChannelPartInfo.Pool.get_or_create_by(
+                this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false )
+            )
+          );
           break;
 
         // 3.4 bHigherHalfPassThrough
@@ -451,17 +371,14 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 //               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf,  true ) ] )
 //             ];
 
-          aChannelPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 2 );
-          aChannelPartInfoArray[ 0 ]
-            = ChannelPartInfo.Pool.get_or_create_by(
-                                               0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false );
-
-          aChannelPartInfoArray[ 1 ]
-            = ChannelPartInfo.Pool.get_or_create_by(
-                this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf,  true );
-
-          aFiltersBiasesPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 1 );
-          aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfo.Pool.get_or_create_by( aChannelPartInfoArray );
+          aFiltersBiasesPartInfoArray = Recyclable.Array.Pool.get_or_create_by(
+            FiltersBiasesPartInfo.Pool.get_or_create_by(
+              ChannelPartInfo.Pool.get_or_create_by(
+                                               0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
+              ChannelPartInfo.Pool.get_or_create_by(
+                this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf,  true )
+            )
+          );
 
           // Note: If ( HIGHER_HALF_PASS_THROUGH ) with ( inputChannelCount_lowerHalf == 0 ) and ( outputChannelCount_lowerHalf == 0 ),
           // the result should be the same as AllPassThrough without using special ( outputChannelCount <= 0 ).
@@ -505,7 +422,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     // Prepare source weights to be extracted.
     let sourceWeights = Weights.Base.Pool.get_or_create_by();
     if ( !sourceWeights.init( inputWeightArray, this.elementOffsetEnd, weightsCount_extracted ) )
-      return o_keptObjectArray;  // e.g. input array does not have enough data.
+      return false;  // e.g. input array does not have enough data.
     this.elementOffsetEnd = sourceWeights.elementOffsetEnd;
     this.tensorWeightCountExtracted_internal = weightsCount_extracted;
 
@@ -585,14 +502,19 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
         this.tensorWeightCountTotal_internal += tf.util.sizeFromShape( this.biasesShape );
     }
 
-    o_keptObjectArray[ 0 ] = true; // bInitOk.
-    o_keptObjectArray[ 1 ] = this.boundsArraySet;
-    o_keptObjectArray[ 2 ] = this.filtersShape;
-    o_keptObjectArray[ 3 ] = this.filtersArray;
-    o_keptObjectArray[ 4 ] = this.biasesShape;
-    o_keptObjectArray[ 5 ] = this.biasesArray;
+    { // Release temporary resource.
+      if ( sourceWeights ) {
+        sourceWeights.disposeResources_and_recycleToPool();
+        sourceWeights = null;
+      }
 
-    return o_keptObjectArray;
+      if ( aFiltersBiasesPartInfoArray ) {
+        aFiltersBiasesPartInfoArray.disposeResources_and_recycleToPool();
+        aFiltersBiasesPartInfoArray = null;
+      }
+    }
+
+    return true;
   }
 
   /**
