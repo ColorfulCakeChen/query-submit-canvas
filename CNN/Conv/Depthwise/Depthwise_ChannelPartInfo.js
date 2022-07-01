@@ -1,5 +1,6 @@
 export { ChannelPartInfo };
 export { FiltersBiasesPartInfo };
+export { FiltersBiasesPartInfoArray };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -26,7 +27,7 @@ class ChannelPartInfo extends Recyclable.Root {
   /**
    * Used as default Depthwise.ChannelPartInfo provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Depthwise.ChannelPartInfoPool", ChannelPartInfo, ChannelPartInfo.setAsConstructor );
+  static Pool = new Pool.Root( "Depthwise.ChannelPartInfo.Pool", ChannelPartInfo, ChannelPartInfo.setAsConstructor );
 
   /**
    */
@@ -84,7 +85,7 @@ class FiltersBiasesPartInfo extends Recyclable.Root {
   /**
    * Used as default Depthwise.FiltersBiasesPartInfo provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Depthwise.FiltersBiasesPartInfoPool", FiltersBiasesPartInfo, FiltersBiasesPartInfo.setAsConstructor );
+  static Pool = new Pool.Root( "Depthwise.FiltersBiasesPartInfo.Pool", FiltersBiasesPartInfo, FiltersBiasesPartInfo.setAsConstructor );
 
   /**
    *
@@ -108,6 +109,53 @@ class FiltersBiasesPartInfo extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+//!!! ...unfinished... (2022/07/01) should own and release them.
+    this.aChannelPartInfoArray = null; // Because the array is not created by this FiltersBiasesPartInfo, do not recyclye it here.
+    super.disposeResources();
+  }
+
+}
+
+!!! Recyclable.OwnerArray ?
+/**
+ * Describe a range for a (depthwise) filters and a biases.
+ *
+ *
+ * @member {ChannelPartInfo[]} aChannelPartInfoArray
+ *   Every input-output relationship of this parts.
+ *
+ */
+class FiltersBiasesPartInfoArray extends Recyclable.Array {
+
+  /**
+   * Used as default Depthwise.FiltersBiasesPartInfoArray provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root(
+    "Depthwise.FiltersBiasesPartInfoArray.Pool", FiltersBiasesPartInfoArray, FiltersBiasesPartInfoArray.setAsConstructor );
+
+  /**
+   *
+   */
+  constructor( aChannelPartInfoArray ) {
+    super();
+    FiltersBiasesPartInfo.setAsConstructor_self.call( this );
+  }
+
+  /** @override */
+  static setAsConstructor( aChannelPartInfoArray ) {
+    super.setAsConstructor();
+    FiltersBiasesPartInfo.setAsConstructor_self.call( this, aChannelPartInfoArray );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor( aChannelPartInfoArray ) {
+    this.aChannelPartInfoArray = aChannelPartInfoArray;
+  }
+
+  /** @override */
+  disposeResources() {
+//!!! ...unfinished... (2022/07/01) should own and release them.
     this.aChannelPartInfoArray = null; // Because the array is not created by this FiltersBiasesPartInfo, do not recyclye it here.
     super.disposeResources();
   }
