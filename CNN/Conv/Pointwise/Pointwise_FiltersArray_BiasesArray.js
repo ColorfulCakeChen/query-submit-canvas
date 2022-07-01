@@ -236,6 +236,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
       //
       let keptObjectArray = Recyclable.Array.Pool.get_or_create_by( 6 );
 
+!!! ...unfinished... (2022/07/01)
+// Not workable. Because nested object can not be detected by .sessionCall() and will be disposed unexpectedly.
+
       Pool.All.sessionCall( FiltersArray_BiasesArray.init_internal, this,
         inputWeightArray, elementOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo, keptObjectArray );
 
