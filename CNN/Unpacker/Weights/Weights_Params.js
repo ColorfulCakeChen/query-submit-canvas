@@ -1,136 +1,10 @@
 export { Params };
-//!!! (2022/06/30 Remarked) Integrated into Params.
-//export { ParamsInfo };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 //import * as ValueDesc from "../ValueDesc.js";
 import * as ParamDesc from "../ParamDesc.js";
-import { Base } from "./Weights_Base.js";
-
-//!!! (2022/06/30 Remarked) Integrated into Params.
-// /**
-//  * Used by Weights.Params' constructor internally before calling parent (i.e. Weights.Base) class's constructor.
-//  *
-//  * @member {ParamDesc.SequenceArray} paramDescSequenceArray
-//  *   An array describes how many and what kinds of parameters should be extracted. It will be referenced (i.e. kept without cloned)
-//  * and will not be released by this ParamsInfo object.
-//  *
-//  * @member {number[]} initValueArray
-//  *   An number array records the parameter values which is specified by ...restArgs of constructor. If a parameter value is null,
-//  * it means the parameter should be extracted from inputWeightArray (i.e. by evolution). Otherwise, the parameter value is by
-//  * specifying (from constructor). This array itself is indexed by ParamDesc.Xxx.seqId.
-//  *
-//  * @member {number[]} inputWeightArrayIndexArray
-//  *   A number array records where to extract parameters which is null in .initValueArray[]. Every element is the relative
-//  * array index into inputWeightArray[ elementOffsetBegin ]. This array itself is indexed by ParamDesc.Xxx.seqId.
-//  *
-//  * @member {number[]} finalValueArray
-//  *   An number array records the parameter values which combined both by specifying (from constructor) and by evolution (from
-//  * inputWeightArray[]) and adjusted by ParamDesc.valueDesc.range.adjust(). This array itself is indexed by ParamDesc.Xxx.seqId.
-//  *
-//  * @member {number} parameterCountExtracted
-//  *   How many parameters are extracted from inputWeightArray[]. Only meaningful if Params.init() successfully.
-//  *
-//  * @member {number} parameterCount
-//  *   Always ( aParamDescSequenceArray.length ). This is the total parameter count provided by this object if Params.init()
-//  * successfully.
-//  *
-//  */
-// class ParamsInfo extends Recyclable.Root {
-
-//   /**
-//    * Used as default Weights.Params provider for conforming to Recyclable interface.
-//    */
-//   static Pool = new Pool.Root( "Weights.ParamsInfo.Pool", ParamsInfo, ParamsInfo.setAsConstructor );
-
-//   /**
-//    *
-//    * @param {any[]} restArgs
-//    *   Describe the specified parameters value. They should be arranged as the order of paramDescSequenceArray. For every element:
-//    *
-//    *     - If ( null != value ), the returned value of paramDesc.range.adjust( value ) will be used as the parameter's
-//    *         value. (i.e. by specifying)
-//    *
-//    *     - If ( null == value ), the parameter will be extracted from inputWeightArray. The returned value of
-//    *         paramDesc.valueDesc.range.adjust( extractedValue ) will be used as the parameter's value. (i.e. by evolution)
-//    *
-//    */
-//   constructor( paramDescSequenceArray, ...restArgs ) {
-//     super();
-//     ParamsInfo.setAsConstructor_self.call( this, paramDescSequenceArray, ...restArgs );
-//    }
-
-//   /** @override */
-//   static setAsConstructor( paramDescSequenceArray, ...restArgs ) {
-//     super.setAsConstructor();
-//     ParamsInfo.setAsConstructor_self.call( this, paramDescSequenceArray, ...restArgs );
-//     return this;
-//   }
-
-//   /** @override */
-//   static setAsConstructor_self( paramDescSequenceArray, ...restArgs ) {
-//     this.paramDescSequenceArray = paramDescSequenceArray;
-//     this.parameterCount = paramDescSequenceArray.array.length;
-
-//     this.initValueArray = Recyclable.Array.Pool.get_or_create_by( this.parameterCount );
-//     this.inputWeightArrayIndexArray = Recyclable.Array.Pool.get_or_create_by( this.parameterCount );
-//     this.finalValueArray = Recyclable.Array.Pool.get_or_create_by( this.parameterCount );
-
-//     this.parameterCountExtracted = 0;
-//     for ( let i = 0; i < this.parameterCount; ++i ) {
-//       let paramDesc = paramDescSequenceArray.array[ i ];
-//       let initValue = this.initValueArray[ i ] = restArgs[ i ]; // Collect all parameters.
-
-//       // Collect what parameters should be extracted from input array (rather than use values in the .initValueArray).
-//       // At the same time, its array index (into inputWeightArray) will also be recorded for extracting its value in the future.
-//       {
-//         // A null value means it should be extracted from inputWeightArray. (i.e. by evolution)
-//         //
-//         // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
-//         //
-//         if ( null == initValue ) {
-//           // Record the index (into inputWeightArray[]).
-//           this.inputWeightArrayIndexArray[ i ] = this.parameterCountExtracted;
-//           this.finalValueArray[ i ] = undefined;
-//           ++this.parameterCountExtracted;
-
-//         } else {  // A non-null value means it is the parameter's value (which should also be adjusted).
-//           this.inputWeightArrayIndexArray[ i ] = undefined; // Indicates this parameter needs not be extracted from inputWeightArray.
-//           let adjustedValue = paramDesc.valueDesc.range.adjust( initValue );
-//           this.finalValueArray[ i ] = adjustedValue;
-//         }
-//       }
-//     }
-//   }
-
-//   /** @override */
-//   disposeResources() {
-//     this.parameterCountExtracted = undefined;
-
-//     if ( this.finalValueArray ) {
-//       this.finalValueArray.disposeResources_and_recycleToPool();
-//       this.finalValueArray = null;
-//     }
-
-//     if ( this.inputWeightArrayIndexArray ) {
-//       this.inputWeightArrayIndexArray.disposeResources_and_recycleToPool();
-//       this.inputWeightArrayIndexArray = null;
-//     }
-
-//     if ( this.initValueArray ) {
-//       this.initValueArray.disposeResources_and_recycleToPool();
-//       this.initValueArray = null;
-//     }
-
-//     this.parameterCount = undefined;
-//     this.paramDescSequenceArray = null; // Do not release it. Just un-reference it.
-
-//     super.disposeResources();
-//   }
-
-// }
-
+import { Root } from "./Weights_Base.js";
 
 /**
  * The parameters for the weights of a neural network layer.
@@ -177,7 +51,7 @@ import { Base } from "./Weights_Base.js";
  *
  * @see Weights.Base
  */
-class Params extends Base {
+class Params extends Root {
 
   /**
    * Used as default Weights.Params provider for conforming to Recyclable interface.
