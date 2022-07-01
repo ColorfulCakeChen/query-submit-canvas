@@ -96,18 +96,18 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   }
 
   /**
-   * @param {Float32Array} inputFloat32Array
-   *   A Float32Array whose values will be interpreted as weights.
+   * @param {number[]|Float32Array} inputWeightArray
+   *   A number array whose values will be interpreted as weights.
    *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, elementOffsetBegin ) {
+  init( inputWeightArray, elementOffsetBegin ) {
 
-    // Q1: Why is the inputFloat32Array not a parameter of constructor?
-    // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
+    // Q1: Why is the inputWeightArray not a parameter of constructor?
+    // A1: The reason is to avoid keeping it as this.inputWeightArray so that it could be released by memory garbage collector.
     //
     // Q2: Why are not filtersWeights and biasesWeights kept in this?
-    // A2: So that inputFloat32Array could be released.
+    // A2: So that inputWeightArray could be released.
 
 
     // 1. Determine operation functions.
@@ -127,7 +127,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 
     } else { // 3.
 
-      bExtractOk = super.init( inputFloat32Array, elementOffsetBegin, this.input0.scaleBoundsArray );
+      bExtractOk = super.init( inputWeightArray, elementOffsetBegin, this.input0.scaleBoundsArray );
       if ( bExtractOk ) {
         try {
           if ( this.filtersShape && this.filtersArray ) {
