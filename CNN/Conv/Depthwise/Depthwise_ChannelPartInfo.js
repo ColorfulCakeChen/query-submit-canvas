@@ -1,6 +1,5 @@
 export { ChannelPartInfo };
 export { FiltersBiasesPartInfo };
-export { FiltersBiasesPartInfoArray };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -75,12 +74,11 @@ class ChannelPartInfo extends Recyclable.Root {
 /**
  * Describe a range for a (depthwise) filters and a biases.
  *
- *
- * @member {ChannelPartInfo[]} aChannelPartInfoArray
- *   Every input-output relationship of this parts.
+ * It is an array of ChannelPartInfo. Every element describes input-output relationship of this parts. It owns and will
+ * release these ChannelPartInfo.
  *
  */
-class FiltersBiasesPartInfo extends Recyclable.Root {
+class FiltersBiasesPartInfo extends Recyclable.OwnerArray {
 
   /**
    * Used as default Depthwise.FiltersBiasesPartInfo provider for conforming to Recyclable interface.
@@ -88,75 +86,32 @@ class FiltersBiasesPartInfo extends Recyclable.Root {
   static Pool = new Pool.Root( "Depthwise.FiltersBiasesPartInfo.Pool", FiltersBiasesPartInfo, FiltersBiasesPartInfo.setAsConstructor );
 
   /**
+   * Every element of restArgs should be instance of ChannelPartInfo (even if restArgs has only one element).
    *
+   * Note: This behavior is different from original Array which will views the argement is length (not element) if only one argument
+   *       is given.
    */
-  constructor( aChannelPartInfoArray ) {
-    super();
-    FiltersBiasesPartInfo.setAsConstructor_self.call( this );
+  constructor( ...restArgs ) {
+    super( restArgs.length );
+    FiltersBiasesPartInfo.setAsConstructor_self.call( this, restArgs );
   }
 
   /** @override */
-  static setAsConstructor( aChannelPartInfoArray ) {
-    super.setAsConstructor();
-    FiltersBiasesPartInfo.setAsConstructor_self.call( this, aChannelPartInfoArray );
+  static setAsConstructor( ...restArgs ) {
+    super.setAsConstructor( restArgs.length );
+    FiltersBiasesPartInfo.setAsConstructor_self.call( this, restArgs );
     return this;
   }
 
   /** @override */
   static setAsConstructor( aChannelPartInfoArray ) {
-    this.aChannelPartInfoArray = aChannelPartInfoArray;
+    for ( let i = 0; i < aChannelPartInfoArray.length; ++i ) {
+      this[ i ] = aChannelPartInfoArray[ i ];
+    }
   }
 
   /** @override */
   disposeResources() {
-//!!! ...unfinished... (2022/07/01) should own and release them.
-    this.aChannelPartInfoArray = null; // Because the array is not created by this FiltersBiasesPartInfo, do not recyclye it here.
-    super.disposeResources();
-  }
-
-}
-
-!!! Recyclable.OwnerArray ?
-/**
- * Describe a range for a (depthwise) filters and a biases.
- *
- *
- * @member {ChannelPartInfo[]} aChannelPartInfoArray
- *   Every input-output relationship of this parts.
- *
- */
-class FiltersBiasesPartInfoArray extends Recyclable.Array {
-
-  /**
-   * Used as default Depthwise.FiltersBiasesPartInfoArray provider for conforming to Recyclable interface.
-   */
-  static Pool = new Pool.Root(
-    "Depthwise.FiltersBiasesPartInfoArray.Pool", FiltersBiasesPartInfoArray, FiltersBiasesPartInfoArray.setAsConstructor );
-
-  /**
-   *
-   */
-  constructor( aChannelPartInfoArray ) {
-    super();
-    FiltersBiasesPartInfo.setAsConstructor_self.call( this );
-  }
-
-  /** @override */
-  static setAsConstructor( aChannelPartInfoArray ) {
-    super.setAsConstructor();
-    FiltersBiasesPartInfo.setAsConstructor_self.call( this, aChannelPartInfoArray );
-    return this;
-  }
-
-  /** @override */
-  static setAsConstructor( aChannelPartInfoArray ) {
-    this.aChannelPartInfoArray = aChannelPartInfoArray;
-  }
-
-  /** @override */
-  disposeResources() {
-//!!! ...unfinished... (2022/07/01) should own and release them.
-    this.aChannelPartInfoArray = null; // Because the array is not created by this FiltersBiasesPartInfo, do not recyclye it here.
     super.disposeResources();
   }
 
