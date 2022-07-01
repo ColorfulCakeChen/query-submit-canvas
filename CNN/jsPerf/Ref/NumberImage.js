@@ -90,6 +90,9 @@ class Base extends Recyclable.Root {
     this.input0_ScaleBoundsArray = input0_ScaleBoundsArray.clone();
     this.input1_ScaleBoundsArray = input1_ScaleBoundsArray?.clone();
 
+!!! ...unfinished... (2022/07/01)
+// Defferent BoundsArraySet class have different arguments.
+
     this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by( input0_ScaleBoundsArray, input1_ScaleBoundsArray, depth, undefined );
 
     // Default value bounds for an image. (Note: Do not use .filledValue as bounds.)
