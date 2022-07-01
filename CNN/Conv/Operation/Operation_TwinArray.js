@@ -156,25 +156,17 @@ class TwinArray extends Root {
     for ( let i = 0; i < this.operationArray.length; ++i ) {
       let operation = this.operationArray[ i ];
 
-      if ( ( operation.input0?.scaleBoundsArray ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.input0 ) ) ) {
-        operation.input0.scaleBoundsArray.disposeResources_and_recycleToPool();
-        operation.input0.scaleBoundsArray = null;
-      }
+      if ( ( operation.input0 ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.input0 ) ) )
+        operation.input0.ScaleBoundsArray_dispose();
 
-      if ( ( operation.input1?.scaleBoundsArray ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.input1 ) ) ) {
-        operation.input1.scaleBoundsArray.disposeResources_and_recycleToPool();
-        operation.input1.scaleBoundsArray = null;
-      }
+      if ( ( operation.input1 ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.input1 ) ) )
+        operation.input1.ScaleBoundsArray_dispose();
 
-      if ( ( operation.output0?.scaleBoundsArray ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.output0 ) ) ) {
-        operation.output0.scaleBoundsArray.disposeResources_and_recycleToPool();
-        operation.output0.scaleBoundsArray = null;
-      }
+      if ( ( operation.output0 ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.output0 ) ) )
+        operation.output0.ScaleBoundsArray_dispose();
 
-      if ( ( operation.output1?.scaleBoundsArray ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.output1 ) ) ) {
-        operation.output1.scaleBoundsArray.disposeResources_and_recycleToPool();
-        operation.output1.scaleBoundsArray = null;
-      }
+      if ( ( operation.output1 ) && !( this.is_inputs_outputs_byTensorPlaceholder( operation.output1 ) ) )
+        operation.output1.ScaleBoundsArray_dispose();
     }
   }
 
