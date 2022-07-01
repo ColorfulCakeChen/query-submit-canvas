@@ -8,19 +8,19 @@ import * as FloatValue from "../FloatValue.js";
  * A base class for extracting and keeping weights. It composes of a Float32Array and a shape. It can
  * be used as CNN (depthwise, pointwise and bias) filter weights.
  *
- * @member {number} elementOffsetBegin
+ * @member {number} weightElementOffsetBegin
  *   The beginning position (i.e. array index) to extract from inputWeightsArray. If this value is negative, the extraction will
  * fail (i.e. ( bInitOk == false ) ).
  *
- * @member {number} elementOffsetEnd
+ * @member {number} weightElementOffsetEnd
  *   The ending position (i.e. array index) after extracting from inputWeightsArray. It is not inclusive and can be used as the
  * beginning position of next (another) extraction. It is meaningful only if ( bInitOk == true ).
  *
- * @member {number} elementExtractedCount
+ * @member {number} weightElementExtractedCount
  *   How many weights (i.e. elements) will be extracted from inputWeightsArray. It should be a non-negative integer value.
  *
- *     - If too many elements need to be extracted (exceeds the inputWeightsArray.length) or elementExtractedCount is NaN or
- *         elementExtractedCount is negative, the extraction will fail (i.e. ( bInitOk == false ) ).
+ *     - If too many elements need to be extracted (exceeds the inputWeightsArray.length) or weightElementExtractedCount is NaN or
+ *         weightElementExtractedCount is negative, the extraction will fail (i.e. ( bInitOk == false ) ).
  *
  * @member {boolean} bInitOk
  *   If .init() success, it will be true.
@@ -55,33 +55,33 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
   /** @override */
   disposeResources() {
     this.bInitOk = undefined;
-    this.elementOffsetEnd = undefined;
-    this.elementExtractedCount = undefined;
-    this.elementOffsetBegin = undefined;
+    this.weightElementOffsetEnd = undefined;
+    this.weightElementExtractedCount = undefined;
+    this.weightElementOffsetBegin = undefined;
     super.disposeResources();
   }
 
   /**
-   * Determine .elementOffsetEnd according to the inputWeightArray.lnegth, .elementOffsetBegin and .elementExtractedCount.
+   * Determine .weightElementOffsetEnd according to the inputWeightArray.lnegth, .weightElementOffsetBegin and .weightElementExtractedCount.
    *
    * @param {number[]|Float32Array} inputWeightArray
    *   The underlying weights source array to be extracted from. It will not be kept by this object.
    *
    * @return {boolean} Return false, if extraction failed.
    */ 
-  init( inputWeightArray, elementOffsetBegin, elementExtractedCount ) {
-    this.elementOffsetBegin = elementOffsetBegin;
-    this.elementExtractedCount = elementExtractedCount;
+  init( inputWeightArray, weightElementOffsetBegin, weightElementExtractedCount ) {
+    this.weightElementOffsetBegin = weightElementOffsetBegin;
+    this.weightElementExtractedCount = weightElementExtractedCount;
     this.bInitOk = false;
 
-    if ( Number.isNaN( this.elementExtractedCount ) )
+    if ( Number.isNaN( this.weightElementExtractedCount ) )
       return false;  // Failed, if NaN.
 
-    if ( this.elementExtractedCount < 0 )
+    if ( this.weightElementExtractedCount < 0 )
       return false;  // Failed, if negative.
 
-    this.elementOffsetEnd = this.elementOffsetBegin + this.elementExtractedCount;
-    if ( this.elementOffsetEnd > inputWeightArray.length )
+    this.weightElementOffsetEnd = this.weightElementOffsetBegin + this.weightElementExtractedCount;
+    if ( this.weightElementOffsetEnd > inputWeightArray.length )
       return false;  // Failed, if out of array index range.
 
     this.bInitOk = true;
