@@ -11,8 +11,11 @@ export { All };
  * @member {Object[]} inSessionArray
  *   If an issued object is belong to a session, it will be here.
  *
- * @member {Pool.Base[]} inSessionRecyclePoolArray
- *   Every in-session issued objects' corresponding recycle pool.
+
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+//  * @member {Pool.Base[]} inSessionRecyclePoolArray
+//  *   Every in-session issued objects' corresponding recycle pool.
+
  *
  * @member {Map} toInSessionArrayIndexMap
  *   Map every issued object to its array index in .inSessionArray[].
@@ -30,9 +33,12 @@ export { All };
  *   Temporary object list for moving kept (i.e. not recycled) objects to the parent session when a session is popping. Internally
  * used by .session_pop().
  *
- * @member {Pool.Base[]} movingObjectRecyclePoolArray
- *   Temporary pool list for moving kept (i.e. not recycled) objects to the parent session when a session is popping. Internally
- * used by .session_pop().
+
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+//  * @member {Pool.Base[]} movingObjectRecyclePoolArray
+//  *   Temporary pool list for moving kept (i.e. not recycled) objects to the parent session when a session is popping. Internally
+//  * used by .session_pop().
+
  *
  * @member {number} issuedCount
  *   The total quantity of all issued objects.
@@ -45,16 +51,20 @@ class IssuedObjects {
 
   constructor() {
 
-    // Q: Why not integrate .inSession and .inSessionRecyclePool into one extra object?
-    // A: In order to reduce memory allocation (for the extra object). Because memory allocation reducing is the main purpose
-    //    of this recycling pool.
-    //
-    // The drawback is that only in-session issued objects' recycling pool could be known. For not-in-session issued objects,
-    // there is no way to know their belonging recycling pool.
-    //
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+//    // Q: Why not integrate .inSessionArray and .inSessionRecyclePoolArray into one extra object?
+//    // A: In order to reduce memory allocation (for the extra object). Because memory allocation reducing is the main purpose
+//    //    of this recycling pool.
+//    //
+//    // The drawback is that only in-session issued objects' recycling pool could be known. For not-in-session issued objects,
+//    // there is no way to know their belonging recycling pool.
+//    //
 
     this.inSessionArray = new Array();
-    this.inSessionRecyclePoolArray = new Array();
+
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+//    this.inSessionRecyclePoolArray = new Array();
+
     this.toInSessionArrayIndexMap = new Map();
 
     this.registeredPoolArray = new Array();
@@ -62,7 +72,9 @@ class IssuedObjects {
     // For reducing memory re-allocation when handling objects automatic recycling between sessions.
     this.sessionKeptObjectSet = new Set();
     this.movingObjectArray = new Array();
-    this.movingObjectRecyclePoolArray = new Array();
+
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+//    this.movingObjectRecyclePoolArray = new Array();
   }
 
   get issuedCount() {
@@ -89,17 +101,27 @@ class IssuedObjects {
    * @param {Object} issuedObject
    *   The object which will be recorded as issued.
    *
-   * @param {Object} recyclePool
-   *   This recycle pool will be used when the issued object is recycled automatically. This will be recorded only if current is in
-   * session.
+
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+//    * @param {Object} recyclePool
+//    *   This recycle pool will be used when the issued object is recycled automatically. This will be recorded only if current is in
+//    * session.
+
    *
    * @return {boolean} Always return true.
    */
-  static issued_add( issuedObject, recyclePool ) {
+
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+//  static issued_add( issuedObject, recyclePool ) {
+
+  static issued_add( issuedObject ) {
     if ( this.isCurrentInSession ) {
       let arrayIndex = this.inSessionArray.length;
       this.inSessionArray.push( issuedObject );
-      this.inSessionRecyclePoolArray.push( recyclePool );
+
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+//      this.inSessionRecyclePoolArray.push( recyclePool );
+
       this.toInSessionArrayIndexMap.set( issuedObject, arrayIndex );
 
     } else {
@@ -141,7 +163,10 @@ class IssuedObjects {
 
     if ( arrayIndex >= 0 ) { // 2. The object is belong to a session.
       this.inSessionArray[ arrayIndex ] = null;
-      this.inSessionRecyclePoolArray[ arrayIndex ] = null;
+
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+//      this.inSessionRecyclePoolArray[ arrayIndex ] = null;
+
       this.toInSessionArrayIndexMap.delete( issuedObject );
 
     } else { // 3. The object is not belong to any session.
@@ -188,7 +213,9 @@ class IssuedObjects {
    */
   static session_push() {
     this.inSessionArray.push( IssuedObjects.SESSION_BORDER_MARK );
-    this.inSessionRecyclePoolArray.push( IssuedObjects.SESSION_BORDER_MARK );
+
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+//    this.inSessionRecyclePoolArray.push( IssuedObjects.SESSION_BORDER_MARK );
   }
 
   /**
@@ -217,7 +244,7 @@ class IssuedObjects {
             let keptObject = keptObjectOrArray[ i ];
             if ( keptObject ) {
 
-//!!! (2022/06/25 Remarked) Do not know which recyclePool.
+//!!! (2022/06/25 Remarked) Do not know which recyclePool. Perhaps, keptObject.constructor.Pool.recycled_has()
 // //!!! ...unfinished... (2022/06/25) Which recyclePool?
 //               if ( this.recycledObjects.has( keptObject ) )
 //                 throw Error( `Pool.IssuedObjects.session_pop(): `
@@ -230,7 +257,7 @@ class IssuedObjects {
           }
         } else if ( keptObjectOrArray instanceof Object ) { // 1.2 A single object to be kept.
           
-//!!! (2022/06/25 Remarked) Do not know which recyclePool.
+//!!! (2022/06/25 Remarked) Do not know which recyclePool. Perhaps, keptObject.constructor.Pool.recycled_has()
 // //!!! ...unfinished... (2022/06/25) Which recyclePool?
 //           if ( this.recycledObjects.has( keptObjectOrArray ) )
 //             throw Error( `Pool.IssuedObjects.session_pop(): `
@@ -246,13 +273,17 @@ class IssuedObjects {
     // 2. Recycle the last session's issued all objects (except objects should be kept).
 
     this.movingObjectArray.length = 0;
-    this.movingObjectRecyclePoolArray.length = 0;
+
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+//    this.movingObjectRecyclePoolArray.length = 0;
 
     while ( this.inSessionArray.length > 0 ) {
 
       // 2.1
       let issuedObject = this.inSessionArray.pop();
-      let recyclePool = this.inSessionRecyclePoolArray.pop();
+
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+//      let recyclePool = this.inSessionRecyclePoolArray.pop();
       {
         if ( issuedObject == null )
           continue; // 2.1.1 The object has been recycled (before this session end).
@@ -265,7 +296,9 @@ class IssuedObjects {
 
       if ( this.sessionKeptObjectSet.has( issuedObject ) ) { // 2.2 Found an object which should not be recycled.
         this.movingObjectArray.push( issuedObject ); // Collect it temporarily for moving it to parent session later.
-        this.movingObjectRecyclePoolArray.push( recyclePool );
+
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+//        this.movingObjectRecyclePoolArray.push( recyclePool );
 
       } else { // 2.3 Otherwise, recycle it.
         if ( issuedObject.disposeResources instanceof Function ) {
@@ -276,6 +309,11 @@ class IssuedObjects {
         // A: Because the issued object list has already been processed in the aboved codes, it is not necessary to re-process again.
         //    Calling .recycled_add() will be more efficient than .recycle().
         //
+
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+//        recyclePool.constructor.recycled_add.call( recyclePool, issuedObject );
+
+        let recyclePool = issuedObject.constructor.Pool;
         recyclePool.constructor.recycled_add.call( recyclePool, issuedObject );
       }
     }
@@ -283,10 +321,15 @@ class IssuedObjects {
     // 3. Re-push the objects which should be kept to the parent session.
     while ( this.movingObjectArray.length > 0 ) {
       let movingObject = this.movingObjectArray.pop();
-      let recyclePool = this.movingObjectRecyclePoolArray.pop();
+
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+//       let recyclePool = this.movingObjectRecyclePoolArray.pop();
+//
+//       // Moved (i.e. belonged) to parent session. Become an issued object (of different session), again.
+//       IssuedObjects.issued_add.call( this, movingObject, recyclePool );
 
       // Moved (i.e. belonged) to parent session. Become an issued object (of different session), again.
-      IssuedObjects.issued_add.call( this, movingObject, recyclePool );
+      IssuedObjects.issued_add.call( this, movingObject );
     }
 
     // 4. Reduce memory footprint.
@@ -296,6 +339,10 @@ class IssuedObjects {
 }
 
 /**
+
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+// * In the .inSessionArray and .inSessionRecyclePoolArray, this SESSION_BORDER_MARK will be placed between sessions. In fact, it
+
  * In the .inSessionArray and .inSessionRecyclePoolArray, this SESSION_BORDER_MARK will be placed between sessions. In fact, it
  * is just the IssuedObjects class object itself. The reason is that it is impossible to be an legal issued object of itself.
  */
