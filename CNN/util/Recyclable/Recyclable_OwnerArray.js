@@ -9,24 +9,24 @@ import { Array as Recyclable_Array } from "./Recyclable_Array.js";
  *
  *
  */
-class Recyclable_OwnerArray extends Recyclable_Array {
+class OwnerArray extends Recyclable_Array {
 
   /**
-   * Used as default Recyclable.OwnerArray  provider for conforming to Recyclable interface.
+   * Used as default Recyclable.OwnerArray provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Recyclable.OwnerArray.Pool", Recyclable_OwnerArray, Recyclable_OwnerArray.setAsConstructor );
+  static Pool = new Pool.Root( "Recyclable.OwnerArray.Pool", OwnerArray, OwnerArray.setAsConstructor );
 
   /**
    */
   constructor( ...restArgs ) {
     super( ...restArgs );
-    Recyclable_OwnerArray.setAsConstructor_self.call( this );
+    OwnerArray.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor( ...restArgs ) {
     super.setAsConstructor( ...restArgs );
-    Recyclable_OwnerArray.setAsConstructor_self.call( this );
+    OwnerArray.setAsConstructor_self.call( this );
     return this;
   }
 
