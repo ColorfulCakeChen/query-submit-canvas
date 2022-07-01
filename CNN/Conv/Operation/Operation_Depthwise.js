@@ -171,31 +171,6 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 
   /** @override */
   disposeResources() {
-    if ( this.boundsArraySet ) {
-      this.boundsArraySet.disposeResources_and_recycleToPool();
-      this.boundsArraySet = null;
-    }
-
-    if ( this.filtersArray ) {
-      this.filtersArray.disposeResources_and_recycleToPool();
-      this.filtersArray = null;
-    }
-
-    if ( this.filtersShape ) {
-      this.filtersShape.disposeResources_and_recycleToPool();
-      this.filtersShape = null;
-    }
-
-    if ( this.biasesArray ) {
-      this.biasesArray.disposeResources_and_recycleToPool();
-      this.biasesArray = null;
-    }
-
-    if ( this.biasesShape ) {
-      this.biasesShape.disposeResources_and_recycleToPool();
-      this.biasesShape = null;
-    }
-
     this.pfnActivation = null;
     this.pfnOperation = null;
     this.apply = null;
@@ -291,7 +266,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    * @override
    */
   get tensorWeightCountExtracted() {
-    return this.tensorWeightCountExtracted_internal;
+    return this.weightElementExtractedCount;
   }
 
   /**
