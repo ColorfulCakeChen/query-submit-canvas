@@ -1,7 +1,7 @@
 export { OwnerArray };
 
 import * as Pool from "../Pool.js";
-import { Base } from "./Recyclable_Base.js";
+import { Array as Recyclable_Array } from "./Recyclable_Array.js";
 
 /**
  * Similar to Recyclable_Array but it owns its contents (which are instances of Recyclable.Base). It will release its contents
@@ -21,7 +21,7 @@ import { Base } from "./Recyclable_Base.js";
  *
  *
  */
-class OwnerArray extends Array {
+class OwnerArray extends Recyclable_Array {
 
   /**
    * Used as default Recyclable.OwnerArray provider for conforming to Recyclable interface.
