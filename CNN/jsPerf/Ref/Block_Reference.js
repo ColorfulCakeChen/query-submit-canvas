@@ -884,7 +884,7 @@ class Base extends Recyclable.Root {
    *   Return imageOutArray.
    */ 
   calcResult( imageInArray, imageOutArray ) {
-    return Pool.All.sessionCall( Base.calcResult_internal, this );
+    return Pool.All.sessionCall( Base.calcResult_internal, this, imageInArray, imageOutArray );
   }
 
   /** According to imageInArray and this.testParams.in.paramsNumberArrayObject, calculate imageOutArray.
