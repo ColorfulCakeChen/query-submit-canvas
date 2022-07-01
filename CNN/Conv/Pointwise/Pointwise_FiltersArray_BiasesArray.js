@@ -252,8 +252,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
    * @return {boolean}
    *   Return true, if succeeded.
    */
-  init_internal(
-    inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo ) {
+  init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo ) {
 
     // Q1: Why is the inputWeightArray not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputWeightArray so that it could be released by memory garbage collector.
