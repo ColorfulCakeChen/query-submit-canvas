@@ -1,6 +1,7 @@
 export { OwnerArray };
 
 import * as Pool from "../Pool.js";
+import { Base } from "./Recyclable_Base.js";
 import { Array as Recyclable_Array } from "./Recyclable_Array.js";
 
 /**
@@ -66,9 +67,14 @@ class OwnerArray extends Recyclable_Array {
     // Release all contents since they are owned by this OwnerArray.
     for ( let i = 0; i < this.length; ++i ) {
       let object = this[ i ];
-      if ( object instanceof Recyclable.Base ) {
-        object.disposeResources_and_recycleToPool();
-        this[ i ] = null; // So that it will not become dangling object (since it has already been recycled).
+      if ( object ) {
+        // Note: ( object instanceof Base ) does not work here because Recyclable.Base is not a class definition (in fact, it is a
+        //       function return a class definition). So check whether .disposeResources_and_recycleToPool() exists instead.
+        //
+        if ( object.disposeResources_and_recycleToPool instanceof Function ) {
+          object.disposeResources_and_recycleToPool();
+          this[ i ] = null; // So that it will not become dangling object (since it has already been recycled).
+        }
       }
     }
 
