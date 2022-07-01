@@ -4,8 +4,8 @@ import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-import * as ParamDesc from "../../Unpacker/ParamDesc.js";
-import * as Weights from "../../Unpacker/Weights.js";
+//import * as ParamDesc from "../../Unpacker/ParamDesc.js";
+//import * as Weights from "../../Unpacker/Weights.js";
 import * as ChannelCountCalculator from "../ChannelCountCalculator.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as Operation from "../Operation.js";
@@ -311,9 +311,6 @@ import { Params } from "./Block_Params.js";
  * apply__input0__output0_output1(), apply__input0__output0() according to the initer()'s parameters.
  *
  */
-
-//!!! ...unfinished... (2022/07/01) should inherit from Weights.Base
-
 class Base extends Recyclable.Root {
 
   /**
