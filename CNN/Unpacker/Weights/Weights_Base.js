@@ -35,14 +35,14 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
   /**
    * Just record the begin and length without checking them. Please call extract() to finish extracting.
    */ 
-  constructor() {
-    super();
+  constructor( ...restArgs ) {
+    super( ...restArgs );
     Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
-  static setAsConstructor() {
-    super.setAsConstructor();
+  static setAsConstructor( ...restArgs ) {
+    super.setAsConstructor( ...restArgs );
     Base.setAsConstructor_self.call( this );
     return this;
   }
