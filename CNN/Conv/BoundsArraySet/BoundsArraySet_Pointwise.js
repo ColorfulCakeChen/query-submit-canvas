@@ -63,7 +63,7 @@ class Pointwise extends ConvBiasActivation {
     FiltersBiasesPartIndexLoop:
     for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
       let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
-      let inChannelPartInfoArray = aFiltersBiasesPartInfo.aChannelPartInfoArray;
+      let inChannelPartInfoArray = aFiltersBiasesPartInfo;
 
       outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
 
