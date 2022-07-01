@@ -1,4 +1,4 @@
-export { Base, To };
+export { Base, Root, To };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -25,7 +25,7 @@ import * as FloatValue from "../FloatValue.js";
  * @member {boolean} bInitOk
  *   If .init() success, it will be true.
  */
-class Base extends Recyclable.Root {
+let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( ParentClass ) {
 
   /**
    * Used as default Weights.Base provider for conforming to Recyclable interface.
@@ -169,6 +169,21 @@ class Base extends Recyclable.Root {
 //   }
 
 }
+
+
+/**
+ * Almost the same as Weights.Base class except its parent class is fixed to Object. In other words, caller can not
+ * specify the parent class of Weights.Root (so it is named "Root" which can not have parent class).
+ */
+class Root extends Base() {
+
+  /**
+   * Used as default Weights.Root provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Weights.Root.Pool", Base, Base.setAsConstructor );
+
+}
+
 
 //!!! ...unfinished... (2022/01/10)
 /*
