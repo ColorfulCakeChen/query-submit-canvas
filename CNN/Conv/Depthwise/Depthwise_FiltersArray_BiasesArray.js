@@ -218,7 +218,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       this.poolWindowShape = null;
     }
 
-    this.tensorWeightCountTotal_internal = 0;
+    this.tensorWeightCountTotal_internal = undefined;
 
     super.disposeResources();
   }
