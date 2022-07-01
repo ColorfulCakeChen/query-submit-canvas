@@ -512,7 +512,7 @@ class Base extends Recyclable.Root {
       testParams.in.bKeepInputTensor
     );
 
-    let bInitOk = block.init( progress, testParams.in.inputWeightArray, testParams.in.elementOffsetBegin, extractedParams,
+    let bInitOk = block.init( progress, testParams.in.inputWeightArray, testParams.in.weightElementOffsetBegin, extractedParams,
       inputScaleBoundsArray0, inputScaleBoundsArray1,
       channelShuffler_ConcatPointwiseConv, arrayTemp_forInterleave_asGrouptTwo );
 
@@ -539,17 +539,17 @@ class Base extends Recyclable.Root {
     progress.disposeResources_and_recycleToPool();
     progress = null;
 
-    if ( block.elementOffsetEnd != testParams.in.inputWeightArray.length ) { //!!! For Debug. (parsing ending position)
+    if ( block.weightElementOffsetEnd != testParams.in.inputWeightArray.length ) { //!!! For Debug. (parsing ending position)
       debugger;
     }
 
     let asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Block`, block, block );
 
     Base.AssertTwoEqualValues( "parsing beginning position",
-      block.elementOffsetBegin, testParams.in.elementOffsetBegin, block );
+      block.weightElementOffsetBegin, testParams.in.weightElementOffsetBegin, block );
 
     Base.AssertTwoEqualValues( "parsing ending position",
-      block.elementOffsetEnd, testParams.in.inputWeightArray.length, block );
+      block.weightElementOffsetEnd, testParams.in.inputWeightArray.length, block );
 
     // Linearity
     let bNoSqueezeExcitation_between_depthwise_and_pointwise2;
@@ -851,7 +851,7 @@ class Base extends Recyclable.Root {
 
       // Exclude parameters weights, all the others should be the extracted weight count.
       let tensorWeightCountExtracted
-        = ( testParams.in.inputWeightArray.length - extractedParams.elementOffsetEnd );
+        = ( testParams.in.inputWeightArray.length - extractedParams.weightElementOffsetEnd );
 
       asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
       asserter.propertyValueLE( "tensorWeightCountExtracted", tensorWeightCountTotal );
