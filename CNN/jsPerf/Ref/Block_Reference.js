@@ -499,25 +499,28 @@ class Base extends Recyclable.Root {
 
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
-    // Initialize successfully or failed.
-    let extractedParams = Block.Params.Pool.get_or_create_by(
-      testParams.in.input0_height, testParams.in.input0_width, testParams.in.input0_channelCount,
-      testParams.in.nConvBlockTypeId,
-      testParams.in.pointwise1ChannelCount,
-      testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
-      testParams.in.depthwiseStridesPad, testParams.in.depthwiseActivationId,
-      testParams.in.pointwise20ChannelCount, testParams.in.pointwise20ActivationId,
-      testParams.in.nSqueezeExcitationChannelCountDivisor, testParams.in.bSqueezeExcitationPrefix,
-      testParams.in.nActivationId,
-      testParams.in.bKeepInputTensor
-    );
+    let bInitOk;
+    {
+      let extractedParams = Block.Params.Pool.get_or_create_by(
+        testParams.in.input0_height, testParams.in.input0_width, testParams.in.input0_channelCount,
+        testParams.in.nConvBlockTypeId,
+        testParams.in.pointwise1ChannelCount,
+        testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
+        testParams.in.depthwiseStridesPad, testParams.in.depthwiseActivationId,
+        testParams.in.pointwise20ChannelCount, testParams.in.pointwise20ActivationId,
+        testParams.in.nSqueezeExcitationChannelCountDivisor, testParams.in.bSqueezeExcitationPrefix,
+        testParams.in.nActivationId,
+        testParams.in.bKeepInputTensor
+      );
 
-    let bInitOk = block.init( progress, testParams.in.inputWeightArray, testParams.in.weightElementOffsetBegin, extractedParams,
-      inputScaleBoundsArray0, inputScaleBoundsArray1,
-      channelShuffler_ConcatPointwiseConv, arrayTemp_forInterleave_asGrouptTwo );
+      bInitOk = block.init( progress, testParams.in.inputWeightArray, testParams.in.weightElementOffsetBegin, extractedParams,
+        inputScaleBoundsArray0, inputScaleBoundsArray1,
+        channelShuffler_ConcatPointwiseConv, arrayTemp_forInterleave_asGrouptTwo );
+    }
 
     let inferencedParams = testParams.out.inferencedParams;
 
+    // Initialize successfully or failed.
     if ( !bInitOk ) { //!!! For Debug.
       console.log( "testParams =", testParams );
       debugger;
@@ -850,8 +853,14 @@ class Base extends Recyclable.Root {
       asserter.propertyValue( "tensorWeightCountTotal", tensorWeightCountTotal );
 
       // Exclude parameters weights, all the others should be the extracted weight count.
-      let tensorWeightCountExtracted
-        = ( testParams.in.inputWeightArray.length - extractedParams.weightElementOffsetEnd );
+      //
+      // (2022/07/01) Because Params will be release by Block.init(), it can not be used here. Use first operation's beginning position
+      // instead (assume the operation exists and should be a depthwise or pointwise operation so that it has .weightElementOffsetBegin).
+      //
+      //let Params_weightElementOffsetEnd = extractedParams.weightElementOffsetEnd;
+      let Params_weightElementOffsetEnd = block.operationArray.operationArray[ 0 ].weightElementOffsetBegin;
+
+      let tensorWeightCountExtracted = ( testParams.in.inputWeightArray.length - Params_weightElementOffsetEnd );
 
       asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
       asserter.propertyValueLE( "tensorWeightCountExtracted", tensorWeightCountTotal );
