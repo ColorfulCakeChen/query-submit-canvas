@@ -17,8 +17,8 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *   The position which is started (inclusive) to extract from inputWeightArray by init().
  *
  * @member {number} elementOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputWeightArray.buffer by init(). Where to extract next weights.
- * Only meaningful when ( this.bInitOk == true ).
+ *   The position which is ended to (non-inclusive) extract from inputWeightArray by init(). Where to extract next weights.
+ * Only meaningful when ( init() returns true ).
  *
  * @member {BoundsArraySet.Depthwise} boundsArraySet
  *   The element value bounds (per channel) of this depthwise convolution.
@@ -86,9 +86,6 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *
  * @member {number[]} biasesArray
  *   The depthwise convolution biases array.
- *
- * @member {boolean} bInitOk
- *   If .init() success, it will be true.
  *
  * @see PadInfoCalculator
  */
