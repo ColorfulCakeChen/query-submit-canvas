@@ -96,7 +96,7 @@ class TwinArray extends Root {
   /** @override */
   disposeResources() {
 
-    {
+    if ( this.tempLastOutputTensorPlaceholderArray ) {
       this.tempLastOutputTensorPlaceholderArray.disposeResources_and_recycleToPool();
       this.tempLastOutputTensorPlaceholderArray = null;
     }
