@@ -311,6 +311,9 @@ import { Params } from "./Block_Params.js";
  * apply__input0__output0_output1(), apply__input0__output0() according to the initer()'s parameters.
  *
  */
+
+//!!! ...unfinished... (2022/07/01) should inherit from Weights.Base
+
 class Base extends Recyclable.Root {
 
   /**
