@@ -158,8 +158,8 @@ import { Base } from "./Weights_Base.js";
  *
  * @member {number} parameterCount
  *   The count of the all parameters (both directly given (i.e. by specifying) and extracted from inputWeightArray (i.e. by evolution) ).
- * It should be always the same as ( aParamDescSequenceArray.length ). This is the total parameter count provided by this object if
- * Params.init() successfully. It should be the same as ( aParamDescSequenceArray.length ).
+ * It should be always the same as ( aParamDescSequenceArray.array.length ). This is the total parameter count provided by this object if
+ * Params.init() successfully.
  *
  * @see Weights.Base
  */
@@ -197,14 +197,14 @@ class Params extends Base {
   /** @override */
   static setAsConstructor_self( paramDescSequenceArray, ...restArgs ) {
     this.paramDescSequenceArray = paramDescSequenceArray;
-    this.parameterCount = paramDescSequenceArray.array.length;
+    let parameterCount = paramDescSequenceArray.array.length;
 
-    this.initValueArray = Recyclable.Array.Pool.get_or_create_by( this.parameterCount );
-    this.inputWeightArrayIndexArray = Recyclable.Array.Pool.get_or_create_by( this.parameterCount );
-    this.finalValueArray = Recyclable.Array.Pool.get_or_create_by( this.parameterCount );
+    this.initValueArray = Recyclable.Array.Pool.get_or_create_by( parameterCount );
+    this.inputWeightArrayIndexArray = Recyclable.Array.Pool.get_or_create_by( parameterCount );
+    this.finalValueArray = Recyclable.Array.Pool.get_or_create_by( parameterCount );
 
     this.parameterCountExtracted = 0;
-    for ( let i = 0; i < this.parameterCount; ++i ) {
+    for ( let i = 0; i < parameterCount; ++i ) {
       let paramDesc = paramDescSequenceArray.array[ i ];
       let initValue = this.initValueArray[ i ] = restArgs[ i ]; // Collect all specified parameters.
 
@@ -249,7 +249,6 @@ class Params extends Base {
       this.initValueArray = null;
     }
 
-    this.parameterCount = undefined;
     this.paramDescSequenceArray = null; // Do not release it. Just un-reference it.
 
     super.disposeResources();
@@ -265,7 +264,7 @@ class Params extends Base {
   init( inputWeightArray, elementOffsetBegin ) {
 
     // Determine and check input weight array bounds.
-    let bBaseInitOk = super.init( inputWeightArray, elementOffsetBegin, this.info.parameterCountExtracted );
+    let bBaseInitOk = super.init( inputWeightArray, elementOffsetBegin, this.parameterCountExtracted );
     if ( !bBaseInitOk )
       return false;
 
@@ -275,7 +274,8 @@ class Params extends Base {
     // another neural network layer configuration.
 
     // Extract (by evolution) values from array, convert them, and put back into copied array and copied map.
-    for ( let i = 0; i < this.parameterCount; ++i ) {
+    const parameterCount = this.parameterCount;
+    for ( let i = 0; i < parameterCount; ++i ) {
       let inputWeightArrayIndex = this.inputWeightArrayIndexArray[ i ];
       if ( inputWeightArrayIndex == undefined )
         continue; // This parameter has a specified value. No need to be extracted from inputWeightArray. (i.e. not by evolution)
@@ -283,7 +283,7 @@ class Params extends Base {
       let absoluteArrayIndex = elementOffsetBegin + inputWeightArrayIndex;
       let extractedValue = inputWeightArray[ absoluteArrayIndex ];
 
-      let paramDesc = this.info.paramDescSequenceArray.array[ i ];
+      let paramDesc = this.paramDescSequenceArray.array[ i ];
       let adjustedValue = paramDesc.valueDesc.range.adjust( extractedValue );
       this.finalValueArray[ i ] = adjustedValue;
     }
@@ -292,15 +292,19 @@ class Params extends Base {
     return true;
   }
 
+  get parameterCount() {
+    return this.paramDescSequenceArray.array.length;
+  }
+
   /**
    * @param {ParamDesc.Base} aParamDesc
-   *   The aParamDesc.seqId will be used to access .info.finalValueArray[].
+   *   The aParamDesc.seqId will be used to access .finalValueArray[].
    *
    * @return {number}
    *   Return the specific ParamDesc's value (no matter by specified or by evolution).
    */
   getParamValue_byParamDesc( aParamDesc ) {
-    let value = this.info.finalValueArray[ aParamDesc.seqId ];
+    let value = this.finalValueArray[ aParamDesc.seqId ];
     return value;
   }
 
