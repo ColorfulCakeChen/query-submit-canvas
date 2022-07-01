@@ -236,7 +236,7 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
 
 /**
  * Almost the same as Depthwise.PadInfoCalculator class except its parent class is fixed to Object. In other words, caller can not
- * specify the parent class of Depthwise.PadInfoCalculator.Root (so it is named "Root" which can not have parent class).
+ * specify the parent class of Depthwise.PadInfoCalculatorRoot (so it is named "Root" which can not have parent class).
  */
 class PadInfoCalculatorRoot extends PadInfoCalculator() {
 }
