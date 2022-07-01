@@ -5,8 +5,7 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as FloatValue from "../FloatValue.js";
 
 /**
- * A base class for extracting and keeping weights. It composes of a Float32Array and a shape. It can
- * be used as CNN (depthwise, pointwise and bias) filter weights.
+ * A base class for weights extracting. It composes of a beninning and an ending array index.
  *
  * @member {number} weightElementOffsetBegin
  *   The beginning position (i.e. array index) to extract from inputWeightsArray. If this value is negative, the extraction will
