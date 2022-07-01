@@ -135,6 +135,17 @@ import { Base } from "./Weights_Base.js";
 /**
  * The parameters for the weights of a neural network layer.
  *
+ * @member {number} elementOffsetBegin
+ *   The beginning position (i.e. array index) to extract from inputWeightsArray. If this value is negative, the extraction will
+ * fail (i.e. ( bInitOk == false ) ).
+ *
+ * @member {number} elementOffsetEnd
+ *   The ending position (i.e. array index) after extracting from inputWeightsArray. It is not inclusive and can be used as the
+ * beginning position of next (another) extraction. It is meaningful only if ( bInitOk == true ).
+ *
+ * @member {number} elementExtractedCount
+ *   The same as parameterCountExtracted.
+ *
  * @member {ParamDesc.SequenceArray} paramDescSequenceArray
  *   An array describes how many and what kinds of parameters should be extracted. It will be referenced (i.e. kept without cloned)
  * and will not be released by this ParamsInfo object.
@@ -160,6 +171,9 @@ import { Base } from "./Weights_Base.js";
  *   The count of the all parameters (both directly given (i.e. by specifying) and extracted from inputWeightArray (i.e. by evolution) ).
  * It should be always the same as ( aParamDescSequenceArray.array.length ). This is the total parameter count provided by this object if
  * Params.init() successfully.
+ *
+ * @member {boolean} bInitOk
+ *   If .init() success, it will be true.
  *
  * @see Weights.Base
  */
