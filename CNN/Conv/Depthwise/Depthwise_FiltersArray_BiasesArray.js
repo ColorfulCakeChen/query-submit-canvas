@@ -187,6 +187,39 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
   /** @override */
   disposeResources() {
+
+    if ( this.boundsArraySet ) {
+      this.boundsArraySet.disposeResources_and_recycleToPool();
+      this.boundsArraySet = null;
+    }
+
+    if ( this.biasesArray ) {
+      Recyclable.Array.Pool.recycle( this.biasesArray );
+      this.biasesArray = null;
+    }
+
+    if ( this.biasesShape ) {
+      Recyclable.Array.Pool.recycle( this.biasesShape );
+      this.biasesShape = null;
+    }
+
+    if ( this.filtersArray ) {
+      Recyclable.Array.Pool.recycle( this.filtersArray );
+      this.filtersArray = null;
+    }
+
+    if ( this.filtersShape ) {
+      Recyclable.Array.Pool.recycle( this.filtersShape );
+      this.filtersShape = null;
+    }
+
+    if ( this.poolWindowShape ) {
+      Recyclable.Array.Pool.recycle( this.poolWindowShape );
+      this.poolWindowShape = null;
+    }
+
+    this.tensorWeightCountTotal_internal = 0;
+
     super.disposeResources();
   }
 
@@ -492,46 +525,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     this.bInitOk = true;
     return true;
-  }
-
-  /**
-   * Sub-class should override this method (and call super.disposeResources() before return).
-   */
-  disposeResources() {
-
-    if ( this.boundsArraySet ) {
-      this.boundsArraySet.disposeResources_and_recycleToPool();
-      this.boundsArraySet = null;
-    }
-
-    if ( this.biasesArray ) {
-      Recyclable.Array.Pool.recycle( this.biasesArray );
-      this.biasesArray = null;
-    }
-
-    if ( this.biasesShape ) {
-      Recyclable.Array.Pool.recycle( this.biasesShape );
-      this.biasesShape = null;
-    }
-
-    if ( this.filtersArray ) {
-      Recyclable.Array.Pool.recycle( this.filtersArray );
-      this.filtersArray = null;
-    }
-
-    if ( this.filtersShape ) {
-      Recyclable.Array.Pool.recycle( this.filtersShape );
-      this.filtersShape = null;
-    }
-
-    if ( this.poolWindowShape ) {
-      Recyclable.Array.Pool.recycle( this.poolWindowShape );
-      this.poolWindowShape = null;
-    }
-
-    this.tensorWeightCountTotal_internal = 0;
-
-    super.disposeResources();
   }
 
   /**
