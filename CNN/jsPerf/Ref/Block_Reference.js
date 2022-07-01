@@ -705,7 +705,7 @@ class Base extends Recyclable.Root {
       }
     }
 
-    let pointwise1ActivationName_shouldBe = ValueDesc.ActivationFunction.Singleton.Ids.getStringOf( pointwise1ActivationId_shouldBe );
+    let pointwise1ActivationName_shouldBe = ValueDesc.ActivationFunction.Singleton.getStringOf( pointwise1ActivationId_shouldBe );
       
     // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
     //
@@ -807,7 +807,7 @@ class Base extends Recyclable.Root {
 
     let squeezeExcitationActivationId_shouldBe = testParams.out.nActivationId;
     let squeezeExcitationActivationName_shouldBe
-      = ValueDesc.ActivationFunction.Singleton.Ids.getStringOf( squeezeExcitationActivationId_shouldBe );
+      = ValueDesc.ActivationFunction.Singleton.getStringOf( squeezeExcitationActivationId_shouldBe );
 
     asserter.propertyValue( "squeezeExcitationActivationId", squeezeExcitationActivationId_shouldBe );
     asserter.propertyValue( "squeezeExcitationActivationName", squeezeExcitationActivationName_shouldBe );
