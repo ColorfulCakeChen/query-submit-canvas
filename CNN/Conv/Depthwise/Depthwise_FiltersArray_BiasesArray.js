@@ -87,6 +87,9 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  * @member {number[]} biasesArray
  *   The depthwise convolution biases array.
  *
+ * @member {boolean} bInitOk
+ *   If .init() success, it will be true.
+ *
  * @see PadInfoCalculator
  */
 let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_BiasesArray extends PadInfoCalculator( ParentClass ) {
@@ -214,68 +217,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
    * set of this depthwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
    *
-   * @return {boolean} Return true, if succeeded.
-   */
-  init( inputWeightArray, elementOffsetBegin, inputScaleBoundsArray ) {
-
-    let bInitOk;
-
-    let keptObjectArray;
-    try {
-      // It will be filled with: [ bInitOk, boundsArraySet, poolWindowShape, filtersShape, filtersArray, biasesShape, biasesArray ].
-      // It is mainly used for preventing these elements been recycled by .sessionCall().
-      //
-      keptObjectArray = Recyclable.Array.Pool.get_or_create_by( 7 );
-
-!!! ...unfinished... (2022/07/01)
-// Not workable. Because nested object can not be detected by .sessionCall() and will be disposed unexpectedly.
-
-      Pool.All.sessionCall( FiltersArray_BiasesArray.init_internal, this,
-        inputWeightArray, elementOffsetBegin, inputScaleBoundsArray, keptObjectArray );
-
-      bInitOk = keptObjectArray[ 0 ];
-
-    } finally {
-      if ( keptObjectArray ) {
-        keptObjectArray.disposeResources_and_recycleToPool();
-        keptObjectArray = null;
-      }
-    }
-
-    return bInitOk;
-  }
-
-  /**
-   * Extract depthwise filters and biases.
-   *
-   * The following properties will be modified:
-   *   - this.elementOffsetBegin
-   *   - this.elementOffsetEnd
-   *   - this.tensorWeightCountExtracted_internal
-   *   - this.tensorWeightCountTotal_internal
-   *   - this.boundsArraySet
-   *   - this.poolWindowShape ( if ( this.AvgMax_Or_ChannelMultiplier < 0 ) )
-   *   - this.filtersShape    ( if ( this.AvgMax_Or_ChannelMultiplier > 0 ) )
-   *   - this.filtersArray    ( if ( this.AvgMax_Or_ChannelMultiplier > 0 ) )
-   *   - this.biasesShape     ( if ( this.bBias == true ) )
-   *   - this.biasesArray     ( if ( this.bBias == true ) )
-   *
-   *
-   * @param {Float32Array} inputWeightArray
-   *   A Float32Array whose values will be interpreted as weights.
-   *
-   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
-   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
-   * set of this depthwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
-   *
-   * @param {Object[]} o_keptObjectArray
-   *   Return [ bInitOk, this.boundsArraySet, this.poolWindowShape, this.filtersShape, this.filtersArray, this.biasesShape, this.biasesArray ].
-   * The bInitOk will be true, if succeeded.
-   *
    * @return {boolean}
    *   Return o_keptObjectArray.
    */
-  static init_internal( inputWeightArray, elementOffsetBegin, inputScaleBoundsArray, o_keptObjectArray ) {
+  init( inputWeightArray, elementOffsetBegin, inputScaleBoundsArray ) {
 
     // Q1: Why is the inputWeightArray not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputWeightArray so that it could be released by memory garbage collector.
@@ -300,8 +245,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
     this.elementOffsetBegin = this.elementOffsetEnd = elementOffsetBegin;
 
-    o_keptObjectArray.lnegth = 7;
-    o_keptObjectArray[ 0 ] = false; // bInitOk.
 
 //!!! ...unfinished... (2022/01/11) What about ( bDepthwise == false )?
 
@@ -311,7 +254,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
 //!!! (2022/01/09 Remarked) Wrong!
 //     if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE )
-//       return o_keptObjectArray; // Nothing needs to be extracted.
+//       return false; // Nothing needs to be extracted.
 
 
     // Calculate lower half and higher half channel count.
@@ -325,7 +268,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     }
 
     // Determine shape of the filters, biases, channels.
-    let aChannelPartInfoArray;
     let aFiltersBiasesPartInfoArray;
     let filtersWeightCount_extracted, biasesWeightCount_extracted;
 
@@ -356,9 +298,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 //             new ChannelPartInfo( this.inputChannelCount ) ] )
 //         ];
 
-        aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by( 1 );
-        aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfo.Pool.get_or_create_by(
-          ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount ),
+        aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
+          FiltersBiasesPartInfo.Pool.get_or_create_by(
+            ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount )
+          )
         );
 
       } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
@@ -374,9 +317,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 //                 new ChannelPartInfo( this.inputChannelCount ) ] )
 //             ];
 
-            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by( 1 );
-            aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfo.Pool.get_or_create_by(
-              ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount )
+            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
+              FiltersBiasesPartInfo.Pool.get_or_create_by(
+                ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount )
+              )
             );
             break;
 
@@ -399,15 +343,14 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 //                 new ChannelPartInfo( this.inputChannelCount_higherHalf ) ] )
 //             ];
 
-            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by( 2 );
-            {
-              aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfo.Pool.get_or_create_by(
+            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
+              FiltersBiasesPartInfo.Pool.get_or_create_by(
                 ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf )
-              );
-              aFiltersBiasesPartInfoArray[ 1 ] = FiltersBiasesPartInfo.Pool.get_or_create_by(
+              ),
+              FiltersBiasesPartInfo.Pool.get_or_create_by(
                 ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_higherHalf )
-              );
-            }
+              )
+            );
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
@@ -428,10 +371,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 //                 new ChannelPartInfo( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft ) ] )
 //             ];
 
-            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by( 1 );
-            aFiltersBiasesPartInfoArray[ 0 ] = FiltersBiasesPartInfo.Pool.get_or_create_by(
-              ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf ),
-              ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft )
+            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
+              FiltersBiasesPartInfo.Pool.get_or_create_by(
+                ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf ),
+                ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft )
+              )
             );
             break;
 
@@ -480,7 +424,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     // Prepare source weights to be extracted.
     let sourceWeights = Weights.Base.Pool.get_or_create_by();
     if ( !sourceWeights.init( inputWeightArray, this.elementOffsetEnd, weightsCount_extracted ) )
-      return o_keptObjectArray;  // e.g. input array does not have enough data.
+      return false;  // e.g. input array does not have enough data.
     this.elementOffsetEnd = sourceWeights.elementOffsetEnd;
     this.tensorWeightCountExtracted_internal = weightsCount_extracted;
 
@@ -550,15 +494,19 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
         this.tensorWeightCountTotal_internal += tf.util.sizeFromShape( this.biasesShape );
     }
 
-    o_keptObjectArray[ 0 ] = true; // bInitOk.
-    o_keptObjectArray[ 1 ] = this.boundsArraySet;
-    o_keptObjectArray[ 2 ] = this.poolWindowShape;
-    o_keptObjectArray[ 3 ] = this.filtersShape;
-    o_keptObjectArray[ 4 ] = this.filtersArray;
-    o_keptObjectArray[ 5 ] = this.biasesShape;
-    o_keptObjectArray[ 6 ] = this.biasesArray;
+    { // Release temporary resource.
+      if ( sourceWeights ) {
+        sourceWeights.disposeResources_and_recycleToPool();
+        sourceWeights = null;
+      }
 
-    return o_keptObjectArray;
+      if ( aFiltersBiasesPartInfoArray ) {
+        aFiltersBiasesPartInfoArray.disposeResources_and_recycleToPool();
+        aFiltersBiasesPartInfoArray = null;
+      }
+    }
+
+    return true; // bInitOk.
   }
 
   /**
