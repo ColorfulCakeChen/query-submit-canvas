@@ -165,10 +165,10 @@ import { Params } from "./Block_Params.js";
  * @member {boolean} bInitOk
  *   If true, this object initialized (i.e. initer()) successfully.
  *
- * @member {number} elementOffsetBegin
+ * @member {number} weightElementOffsetBegin
  *   The position which is started (inclusive) to extract from inputweightArray by initer().
  *
- * @member {number} elementOffsetEnd
+ * @member {number} weightElementOffsetEnd
  *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
@@ -371,14 +371,14 @@ class Base extends Recyclable.Root {
    *   Yield ( value = false ) when ( done = true ) failed.
    */
   * initer(
-    progressParent, inputWeightArray, elementOffsetBegin, params,
+    progressParent, inputWeightArray, weightElementOffsetBegin, params,
     inputScaleBoundsArray0, inputScaleBoundsArray1,
     channelShuffler_ConcatPointwiseConv,
     arrayTemp_forInterleave_asGrouptTwo ) {
 
     // 0. Prepare
 
-    this.elementOffsetEnd = this.elementOffsetBegin = elementOffsetBegin;
+    this.weightElementOffsetEnd = this.weightElementOffsetBegin = weightElementOffsetBegin;
     this.bInitOk = false;
 
     // 0.1 Estimate the maximum value of progress.
@@ -402,11 +402,11 @@ class Base extends Recyclable.Root {
     if ( !params )
       return false;
 
-    if ( !params.init( inputWeightArray, elementOffsetBegin ) )
+    if ( !params.init( inputWeightArray, weightElementOffsetBegin ) )
       return false;  // e.g. input array does not have enough data.
 
     // Record where to extract next weights. Only meaningful when ( this.bInitOk == true ).
-    this.elementOffsetEnd = params.elementOffsetEnd;
+    this.weightElementOffsetEnd = params.weightElementOffsetEnd;
 
     // Get parameters' real (adjusted) values.
     //
@@ -610,9 +610,9 @@ class Base extends Recyclable.Root {
         0 // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
       );
 
-      if ( !pointwise1.init( inputWeightArray, this.elementOffsetEnd ) )
+      if ( !pointwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
         return false;  // e.g. input array does not have enough data.
-      this.elementOffsetEnd = pointwise1.elementOffsetEnd;
+      this.weightElementOffsetEnd = pointwise1.weightElementOffsetEnd;
 
       this.operationArray.operation_append( pointwise1 );
     }
@@ -659,9 +659,9 @@ class Base extends Recyclable.Root {
           nHigherHalfDifferent_depthwise1
         );
 
-        if ( !depthwise1.init( inputWeightArray, this.elementOffsetEnd ) )
+        if ( !depthwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
           return false;  // e.g. input array does not have enough data.
-        this.elementOffsetEnd = depthwise1.elementOffsetEnd;
+        this.weightElementOffsetEnd = depthwise1.weightElementOffsetEnd;
       }
 
       // 3.2 The depthwise2 operation.
@@ -684,9 +684,9 @@ class Base extends Recyclable.Root {
           ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE // depthwise2 never has higher-half-different.
         );
 
-        if ( !depthwise2.init( inputWeightArray, this.elementOffsetEnd ) )
+        if ( !depthwise2.init( inputWeightArray, this.weightElementOffsetEnd ) )
           return false;  // e.g. input array does not have enough data.
-        this.elementOffsetEnd = depthwise2.elementOffsetEnd;
+        this.weightElementOffsetEnd = depthwise2.weightElementOffsetEnd;
 
         // Note:
         //   - If ( depthwise2.bExisted == true ), the depthwise2 is requested and created. It means ONE_INPUT_TWO_DEPTHWISE.
@@ -794,9 +794,9 @@ class Base extends Recyclable.Root {
         nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2, pointwise20_channelShuffler_outputGroupCount
       );
 
-      if ( !pointwise20.init( inputWeightArray, this.elementOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
+      if ( !pointwise20.init( inputWeightArray, this.weightElementOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
         return false;  // e.g. input array does not have enough data.
-      this.elementOffsetEnd = pointwise20.elementOffsetEnd;
+      this.weightElementOffsetEnd = pointwise20.weightElementOffsetEnd;
 
       // 6.2 Pointwise21
       let pointwise21;
@@ -819,9 +819,9 @@ class Base extends Recyclable.Root {
         // Note: Strictly speaking, sometimes pointwise21 is dependent on depthwise2. But it does not matter for BoundsArraySet
         // because depthwise1 and depthwise2 should have the same output value bounds.
         //
-        if ( !pointwise21.init( inputWeightArray, this.elementOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
+        if ( !pointwise21.init( inputWeightArray, this.weightElementOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
           return false;  // e.g. input array does not have enough data.
-        this.elementOffsetEnd = pointwise21.elementOffsetEnd;
+        this.weightElementOffsetEnd = pointwise21.weightElementOffsetEnd;
 
       } else { // Since pointwise21 is not requested (i.e. channel count is not positive), do not create the object for saving memory.
       }
@@ -962,14 +962,14 @@ class Base extends Recyclable.Root {
    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
    */
   init(
-    progressParent, inputWeightArray, elementOffsetBegin, params,
+    progressParent, inputWeightArray, weightElementOffsetBegin, params,
     inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
     arrayTemp_forInterleave_asGrouptTwo ) {
 
     progressParent = progressParent ?? ( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let initer = this.initer(
-      progressParent, inputWeightArray, elementOffsetBegin, params,
+      progressParent, inputWeightArray, weightElementOffsetBegin, params,
       inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
       arrayTemp_forInterleave_asGrouptTwo );
 
@@ -1019,7 +1019,7 @@ class Base extends Recyclable.Root {
     }
 
     // 5.
-    this.elementOffsetBegin = this.elementOffsetEnd = -1;
+    this.weightElementOffsetBegin = this.weightElementOffsetEnd = -1;
     this.bInitOk = false;
 
     super.disposeResources();
@@ -1082,7 +1082,7 @@ class Base extends Recyclable.Root {
    *
    *
    * @param {Block.Base} this
-   *   The object to be modified. The .operationArray and .elementOffsetEnd will be modified.
+   *   The object to be modified. The .operationArray and .weightElementOffsetEnd will be modified.
    *
    * @param {ValueDesc.Pointwise_HigherHalfDifferent} nPointwise_HigherHalfDifferent
    *   The HigherHalfDifferent type for squeeze-and-excitation.
@@ -1174,9 +1174,9 @@ class Base extends Recyclable.Root {
           squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent
         );
 
-        if ( !squeezeDepthwise0.init( inputWeightArray, this.elementOffsetEnd ) )
+        if ( !squeezeDepthwise0.init( inputWeightArray, this.weightElementOffsetEnd ) )
           return false;  // e.g. input array does not have enough data.
-        this.elementOffsetEnd = squeezeDepthwise0.elementOffsetEnd;
+        this.weightElementOffsetEnd = squeezeDepthwise0.weightElementOffsetEnd;
       }
 
       let squeezeDepthwise1;
@@ -1187,9 +1187,9 @@ class Base extends Recyclable.Root {
           squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent
         );
 
-        if ( !squeezeDepthwise1.init( inputWeightArray, this.elementOffsetEnd ) )
+        if ( !squeezeDepthwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
           return false;  // e.g. input array does not have enough data.
-        this.elementOffsetEnd = squeezeDepthwise1.elementOffsetEnd;
+        this.weightElementOffsetEnd = squeezeDepthwise1.weightElementOffsetEnd;
       }
 
       this.operationArray.operation_append( squeezeDepthwise0, squeezeDepthwise1 );
@@ -1247,9 +1247,9 @@ class Base extends Recyclable.Root {
           excitationPointwise_channelShuffler_outputGroupCount
         );
 
-        if ( !excitationPointwise0.init( inputWeightArray, this.elementOffsetEnd ) )
+        if ( !excitationPointwise0.init( inputWeightArray, this.weightElementOffsetEnd ) )
           return false;  // e.g. input array does not have enough data.
-        this.elementOffsetEnd = excitationPointwise0.elementOffsetEnd;
+        this.weightElementOffsetEnd = excitationPointwise0.weightElementOffsetEnd;
       }
 
       let excitationPointwise1;
@@ -1265,9 +1265,9 @@ class Base extends Recyclable.Root {
           excitationPointwise_channelShuffler_outputGroupCount
         );
 
-        if ( !excitationPointwise1.init( inputWeightArray, this.elementOffsetEnd ) )
+        if ( !excitationPointwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
           return false;  // e.g. input array does not have enough data.
-        this.elementOffsetEnd = excitationPointwise1.elementOffsetEnd;
+        this.weightElementOffsetEnd = excitationPointwise1.weightElementOffsetEnd;
       }
 
       this.operationArray.operation_append( excitationPointwise0, excitationPointwise1 );
@@ -1290,7 +1290,7 @@ class Base extends Recyclable.Root {
 
   /**
    * @param {Block.Base} this
-   *   The object to be modified. The .elementOffsetEnd will be modified.
+   *   The object to be modified. The .weightElementOffsetEnd will be modified.
    *
    * @param {TensorPlaceholder.Base} inputTensorPlaceholder
    *   The input tensor placeholder of this intermediate pointwise.
@@ -1334,9 +1334,9 @@ class Base extends Recyclable.Root {
       0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
     );
 
-    if ( !intermediatePointwise.init( inputWeightArray, this.elementOffsetEnd ) )
+    if ( !intermediatePointwise.init( inputWeightArray, this.weightElementOffsetEnd ) )
       return null;  // e.g. input array does not have enough data.
-    this.elementOffsetEnd = intermediatePointwise.elementOffsetEnd;
+    this.weightElementOffsetEnd = intermediatePointwise.weightElementOffsetEnd;
 
     return intermediatePointwise;
   }
