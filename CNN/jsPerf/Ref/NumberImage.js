@@ -91,7 +91,7 @@ class Base extends Recyclable.Root {
     this.input1_ScaleBoundsArray = input1_ScaleBoundsArray?.clone();
 
 !!! ...unfinished... (2022/07/01)
-// Defferent BoundsArraySet class have different arguments.
+// Different BoundsArraySet class have different arguments.
 
     this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by( input0_ScaleBoundsArray, input1_ScaleBoundsArray, depth, undefined );
 
@@ -126,6 +126,10 @@ class Base extends Recyclable.Root {
     let result = Base.Pool.get_or_create_by( this.height, this.width, this.depth,
       undefined, // Because .dataArray will be filled by copying.
       this.boundsArraySet.input0, this.boundsArraySet.input1,
+                                            
+!!! ...unfinished... (2022/07/01)
+// should specify BoundsArraySet class. Otherwise, .boundsArraySet will not be created.
+
       undefined  // Because .boundsArraySet will be filled by copying.
     );
 
