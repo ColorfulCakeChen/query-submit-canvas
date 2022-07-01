@@ -90,7 +90,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputWeightArray, elementOffsetBegin, arrayTemp_forInterleave_asGrouptTwo ) {
+  init( inputWeightArray, weightElementOffsetBegin, arrayTemp_forInterleave_asGrouptTwo ) {
 
     // Q1: Why is the inputWeightArray not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputWeightArray so that it could be released by memory garbage collector.
@@ -107,7 +107,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     if ( !this.bPointwise ) {
       bExtractOk = true; // 2. no operation at all.
 
-      this.elementOffsetBegin = this.elementOffsetEnd = elementOffsetBegin;
+      this.weightElementOffsetBegin = this.weightElementOffsetEnd = weightElementOffsetBegin;
+      this.weightElementExtractedCount = 0;
 
       // Bypass previous to next.
       //
@@ -117,7 +118,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 
     } else { // 3.
 
-      bExtractOk = super.init( inputWeightArray, elementOffsetBegin, this.input0.scaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
+      bExtractOk = super.init( inputWeightArray, weightElementOffsetBegin, this.input0.scaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
       if ( bExtractOk ) {
         try {
           if ( this.filtersShape && this.filtersArray ) {
@@ -161,38 +162,12 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 
   /** @override */
   disposeResources() {
-    if ( this.boundsArraySet ) {
-      this.boundsArraySet.disposeResources_and_recycleToPool();
-      this.boundsArraySet = null;
-    }
-
-    if ( this.filtersArray ) {
-      this.filtersArray.disposeResources_and_recycleToPool();
-      this.filtersArray = null;
-    }
-
-    if ( this.filtersShape ) {
-      this.filtersShape.disposeResources_and_recycleToPool();
-      this.filtersShape = null;
-    }
-
-    if ( this.biasesArray ) {
-      this.biasesArray.disposeResources_and_recycleToPool();
-      this.biasesArray = null;
-    }
-
-    if ( this.biasesShape ) {
-      this.biasesShape.disposeResources_and_recycleToPool();
-      this.biasesShape = null;
-    }
-
     this.pfnActivation = null;
     this.pfnConv = null;
     this.apply = null;
 
-    this.bPointwise = false;
-    this.bKeepInputTensor = false;  // Default will dispose input tensor.
-    this.bInitOk = false;
+    this.bPointwise = undefined;
+    this.bKeepInputTensor = undefined;
 
     super.disposeResources(); // Release filtersTensor4d and biasesTensor3d.
   }
@@ -233,7 +208,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    * @override
    */
   get tensorWeightCountExtracted() {
-    return this.tensorWeightCountExtracted_internal;
+    return this.weightElementExtractedCount;
   }
 
   /**
