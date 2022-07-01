@@ -1,7 +1,7 @@
 export { Recyclable_Array as Array };
 
-import { Base } from "./Recyclable_Base.js";
 import * as Pool from "../Pool.js";
+import { Base } from "./Recyclable_Base.js";
 
 /**
  * Almost the same as class Array but combined with Recyclable.Base interface.
