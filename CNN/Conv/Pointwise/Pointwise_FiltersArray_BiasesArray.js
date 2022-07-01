@@ -12,10 +12,10 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  * Extract pointwise convolution filters and biases.
  *
  *
- * @member {number} elementOffsetBegin
+ * @member {number} weightElementOffsetBegin
  *   The position which is started (inclusive) to extract from inputWeightArray by init().
  *
- * @member {number} elementOffsetEnd
+ * @member {number} weightElementOffsetEnd
  *   The position which is ended to (non-inclusive) extract from inputWeightArray by init(). Where to extract next weights.
  * Only meaningful if .init() returns true.
  *
@@ -93,10 +93,6 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
  * weights, if they are used in tensors.
  *
- * @member {number} tensorWeightCountExtracted_internal
- *   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used in
- * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputWeightArray.
- *
  * @member {number[]} filtersShape
  *   The shape of the pointwise convolution filters array.
  *
@@ -109,8 +105,12 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  * @member {number[]} biasesArray
  *   The pointwise convolution biases array.
  *
+ * @member {boolean} bInitOk
+ *   If .init() success, it will be true.
+ *
  */
-let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_BiasesArray extends Recyclable.Base( ParentClass ) {
+let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
+  class FiltersArray_BiasesArray extends Weights.Base( ParentClass ) {
 
   /**
    * Used as default Pointwise.FiltersArray_BiasesArray provider for conforming to Recyclable interface.
@@ -162,7 +162,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
     this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
 
-    this.tensorWeightCountExtracted_internal = 0;
     this.tensorWeightCountTotal_internal = 0;
 
     if ( inputChannelCount <= 0 )
@@ -194,6 +193,34 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
   /** @override */
   disposeResources() {
+
+    if ( this.boundsArraySet ) {
+      this.boundsArraySet.disposeResources_and_recycleToPool();
+      this.boundsArraySet = null;
+    }
+
+    if ( this.biasesArray ) {
+      Recyclable.Array.Pool.recycle( this.biasesArray );
+      this.biasesArray = null;
+    }
+
+    if ( this.biasesShape ) {
+      Recyclable.Array.Pool.recycle( this.biasesShape );
+      this.biasesShape = null;
+    }
+
+    if ( this.filtersArray ) {
+      Recyclable.Array.Pool.recycle( this.filtersArray );
+      this.filtersArray = null;
+    }
+
+    if ( this.filtersShape ) {
+      Recyclable.Array.Pool.recycle( this.filtersShape );
+      this.filtersShape = null;
+    }
+
+    this.tensorWeightCountTotal_internal = undefined;
+
     super.disposeResources();
   }
 
@@ -201,9 +228,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    * Extract pointwise filters and biases.
    *
    * The following properties will be modified:
-   *   - this.elementOffsetBegin
-   *   - this.elementOffsetEnd
-   *   - this.tensorWeightCountExtracted_internal
+   *   - this.weightElementOffsetBegin
+   *   - this.weightElementOffsetEnd
    *   - this.tensorWeightCountTotal_internal
    *   - this.boundsArraySet
    *   - this.filtersShape
@@ -227,7 +253,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    *   Return true, if succeeded.
    */
   init_internal(
-    inputWeightArray, elementOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo ) {
+    inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo ) {
 
     // Q1: Why is the inputWeightArray not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputWeightArray so that it could be released by memory garbage collector.
@@ -251,8 +277,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
 
     // Note: Even if ( this.outputChannelCount <= 0 ), this function should work correctly as pass-through input to output.
     //
-
-    this.elementOffsetBegin = this.elementOffsetEnd = elementOffsetBegin;
 
     // Calculate lower half and higher half channel count. (Even if ( bHigherHalfDifferent == false ), these are still correct.)
     {
@@ -420,11 +444,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
       weightsCount_extracted += biasesWeightCount_extracted;
 
     // Prepare source weights to be extracted.
-    let sourceWeights = Weights.Base.Pool.get_or_create_by();
-    if ( !sourceWeights.init( inputWeightArray, this.elementOffsetEnd, weightsCount_extracted ) )
+    if ( !super.init( inputWeightArray, weightElementOffsetBegin, weightsCount_extracted ) ) { // i.e. Weights.Base.init()
+      this.bInitOk = false;
       return false;  // e.g. input array does not have enough data.
-    this.elementOffsetEnd = sourceWeights.elementOffsetEnd;
-    this.tensorWeightCountExtracted_internal = weightsCount_extracted;
+    }
 
     // filters and bias: weights and value bounds.
     //
@@ -452,7 +475,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
       // Round 1
       {
         this.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-          inputWeightArray, elementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray );
+          inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray );
 
         this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray );
 
@@ -503,54 +526,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     }
 
     { // Release temporary resource.
-      sourceWeights.disposeResources_and_recycleToPool();
-      sourceWeights = null;
-
       aFiltersBiasesPartInfoArray.disposeResources_and_recycleToPool();
       aFiltersBiasesPartInfoArray = null;
     }
 
+    this.bInitOk = true;
     return true;
-  }
-
-  /**
-   * Sub-class should override this method (and call super.disposeResources() before return).
-   */
-  disposeResources() {
-
-    if ( this.boundsArraySet ) {
-      this.boundsArraySet.disposeResources_and_recycleToPool();
-      this.boundsArraySet = null;
-    }
-
-    if ( this.biasesArray ) {
-      Recyclable.Array.Pool.recycle( this.biasesArray );
-      this.biasesArray = null;
-    }
-
-    if ( this.biasesShape ) {
-      Recyclable.Array.Pool.recycle( this.biasesShape );
-      this.biasesShape = null;
-    }
-
-    if ( this.filtersArray ) {
-      Recyclable.Array.Pool.recycle( this.filtersArray );
-      this.filtersArray = null;
-    }
-
-    if ( this.filtersShape ) {
-      Recyclable.Array.Pool.recycle( this.filtersShape );
-      this.filtersShape = null;
-    }
-
-    this.tensorWeightCountTotal_internal = 0;
-    this.tensorWeightCountExtracted_internal = 0;
-
-    this.elementOffsetBegin = this.elementOffsetEnd = -1;
-
-    if ( super.disposeResources instanceof Function ) { // If parent class has the same method, call it.
-      super.disposeResources();
-    }
   }
 
   /**
@@ -568,7 +549,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    *   The input channel range array which describe lower/higher half channels index range.
    */
   set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-    sourceWeightArray, elementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
+    sourceWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
 
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( this.nPassThroughStyleId );
     let tBounds = new FloatValue.Bounds( 0, 0 );
@@ -587,7 +568,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
     }
 
     // Extracting weights of filters and biases. (Including extra scale.)
-    let sourceIndex = elementOffsetBegin, filterIndex = 0, biasIndex = 0;
+    let sourceIndex = weightElementOffsetBegin, filterIndex = 0, biasIndex = 0;
 
     let outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
 
