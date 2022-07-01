@@ -548,7 +548,7 @@ class Base extends Recyclable.Root {
         inputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.inputChannelCount_lowerHalf;
         outputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
 
-        ChannelCountCalculator.HigherHalfPassThroughPool.Singleton.recycle( pointwise1_higherHalfPassThrough );
+        pointwise1_higherHalfPassThrough.disposeResources_and_recycleToPool();
         pointwise1_higherHalfPassThrough = null;
       }
 
