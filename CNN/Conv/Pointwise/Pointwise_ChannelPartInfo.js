@@ -26,7 +26,7 @@ class ChannelPartInfo extends Recyclable.Root {
   /**
    * Used as default Pointwise.ChannelPartInfo provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Pointwise.ChannelPartInfoPool", ChannelPartInfo, ChannelPartInfo.setAsConstructor );
+  static Pool = new Pool.Root( "Pointwise.ChannelPartInfo.Pool", ChannelPartInfo, ChannelPartInfo.setAsConstructor );
 
   /**
    */
@@ -77,7 +77,7 @@ class FiltersBiasesPartInfo extends Recyclable.Root {
   /**
    * Used as default Pointwise.FiltersBiasesPartInfo provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Pointwise.FiltersBiasesPartInfoPool", FiltersBiasesPartInfo, FiltersBiasesPartInfo.setAsConstructor );
+  static Pool = new Pool.Root( "Pointwise.FiltersBiasesPartInfo.Pool", FiltersBiasesPartInfo, FiltersBiasesPartInfo.setAsConstructor );
 
   /**
    *
