@@ -65,7 +65,7 @@ class Depthwise extends ConvBiasActivation {
     FiltersBiasesPartIndexLoop:
     for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
       let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
-      let inChannelPartInfoArray = aFiltersBiasesPartInfo.aChannelPartInfoArray;
+      let inChannelPartInfoArray = aFiltersBiasesPartInfo;
 
       inChannelBegin = inChannelEnd;
       outChannelBegin = outChannelEnd;
