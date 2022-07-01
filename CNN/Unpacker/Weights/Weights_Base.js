@@ -88,86 +88,6 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
     return true;     // Success.
   }
 
-
-//!!! (2021/12/98 Remarked) Using bounds [ -2^24, +2^24 ] seems enough.
-//   /**
-//    * Confirm:
-//    *   - Every element is not NaN. (If it is, become 0.)
-//    *   - The smallest non-zero Math.abs( element ) is 2^(-24). (i.e. If ( -2^(-24) < element < +2^(-24) ), become 0.)
-//    *   - The largest Math.abs( element ) is 2^(+24).
-//    *
-//    * This is mainly for ensuring PointDepthPoint's output is legal float32:
-//    *   - PointDepthPoint is composed of 3 convolutions: pointwise1-depthwise-pointwise2.
-//    *   - Suppose every convolution has 4096 (= 2^12) input channels. (The bias is viewed as the last (i.e. 4095th) channels.)
-//    *   - Suppose depthwise uses 4x4 (= 2^4) filter for every channel.
-//    *   - Suppose every convolution does not have activation function (so that its result is unbounded).
-//    *   - If every Math.abs( pointwise1Input ) is restected to 0 or between [ 2^(-24), 2^24 ].
-//    *   - If every Math.abs( weight ) of pointwise1, depthwise, pointwise2 is restected to 0 or between [ 2^(-24), 2^24 ].
-//    *   - The Math.abs( pointwise1Result ) will be restriced to 0 or between [ 2^(-(24+24)), 2^(24+24+12) ] = [ 2^(-48), 2^60 ].
-//    *   - The Math.abs( depthwiseResult  ) will be restriced to 0 or between [ 2^(-(48+24)), 2^(60+24+4)  ] = [ 2^(-72), 2^88 ].
-//    *   - The Math.abs( pointwise2Result ) will be restriced to 0 or between [ 2^(-(72+24)), 2^(88+24+12) ] = [ 2^(-96), 2^124 ].
-//    *   - So the result is still legal float32 because Math.abs( float32 ) could be either 0 or between [ 2^(-126), 2^126 ].
-//    *
-//    * The 2^24 as input element should be enough for most situation:
-//    *   - Color image: The R, G, B, A channels are 8 bits (2^8) individually.
-//    *   - Sound track: 8 bits (2^8), or 16 bits (2^16), or 20 bits (2^20), or 24 bits (2^24). But not 32 bits (2^32)
-//    *   - Unicode character code point: 21 bits (2^21).
-//    *
-//    *
-//    * <pre>
-//    *              -2^(+24)       -2^(-24)                      +2^(-24)       +2^(+24)
-//    *            NEGATIVE_MIN   NEGATIVE_MAX        0         POSITIVE_MIN   POSITIVE_MAX
-//    *   --------------|--------------|--------------|--------------|--------------|--------------
-//    *
-//    * Restricted to:
-//    *                 |--------------|00000000000000000000000000000|--------------|
-//    * </pre>
-//    *
-//    *
-//    * @param {Float32Array} source
-//    *   The source Float32Array.
-//    *
-//    * @return {Float32Array}
-//    *   Return a copy of source. Every element (float32):
-//    *     - If ( Number.isNaN( element ) == true ), let it become 0.
-//    *     - If ( element != 0 ), Math.abs( element ) will be restricted between [ 2^(-24), 2^24 ].
-//    *     - ( Math.sign( element ) * Math.abs( element ) ) will be restricted between [ -2^(24), 2^24 ].
-//    */
-//   static Float32Array_CloneLegal( sourceArray ) {
-//     const POSITIVE_MIN = Math.pow( 2, -24 );
-//     const POSITIVE_MAX = Math.pow( 2, +24 );
-//     const NEGATIVE_MIN = - POSITIVE_MAX; // - Math.pow( 2, +24 )
-//     const NEGATIVE_MAX = - POSITIVE_MIN; // - Math.pow( 2, -24 )
-//
-//     let resultArray = new Float32Array( sourceArray.length );
-//     for ( let i = 0; i < sourceArray.length; ++i ) {
-//       let element = sourceArray[ i ];
-//
-//       let restricted;
-//       if ( Number.isNaN( element ) ) {
-//         restricted = 0;
-//
-//       } else if ( element >= POSITIVE_MIN ) {
-//         if ( element > POSITIVE_MAX )
-//           restricted = POSITIVE_MAX;
-//         else
-//           restricted = element;
-//
-//       } else if ( element <= NEGATIVE_MAX ) {
-//         if ( element < NEGATIVE_MIN )
-//           restricted = NEGATIVE_MIN;
-//         else
-//           restricted = element;
-//
-//       } else { // ( NEGATIVE_MAX < element < POSITIVE_MIN ) (Note: Zero is inside.)
-//         restricted = 0;
-//       }
-//
-//       resultArray[ i ] = restricted;
-//     }
-//     return resultArray;
-//   }
-
 }
 
 
@@ -176,12 +96,6 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
  * specify the parent class of Weights.Root (so it is named "Root" which can not have parent class).
  */
 class Root extends Base() {
-
-  /**
-   * Used as default Weights.Root provider for conforming to Recyclable interface.
-   */
-  static Pool = new Pool.Root( "Weights.Root.Pool", Base, Base.setAsConstructor );
-
 }
 
 
