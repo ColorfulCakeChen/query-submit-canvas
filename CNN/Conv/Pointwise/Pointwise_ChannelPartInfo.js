@@ -50,9 +50,7 @@ class ChannelPartInfo extends Recyclable.Root {
     this.bPassThrough = bPassThrough;
   }
 
-  /**
-   * Sub-class should override this method (and call super.disposeResources() before return).
-   */
+  /** @override */
   disposeResources() {
     this.bPassThrough = undefined;
     this.outputChannelCount = undefined;
@@ -99,9 +97,7 @@ class FiltersBiasesPartInfo extends Recyclable.Root {
     this.aChannelPartInfoArray = aChannelPartInfoArray;
   }
 
-  /**
-   * Sub-class should override this method (and call super.disposeResources() before return).
-   */
+  /** @override */
   disposeResources() {
     this.aChannelPartInfoArray = null; // Because the array is not created by this FiltersBiasesPartInfo, do not recyclye it here.
     super.disposeResources();
