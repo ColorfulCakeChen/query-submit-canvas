@@ -95,7 +95,7 @@ class FiltersBiasesPartInfo extends Recyclable.OwnerArray {
   }
 
   /** @override */
-  static setAsConstructor() {
+  static setAsConstructor_self() {
     // Do nothing.
   }
 
