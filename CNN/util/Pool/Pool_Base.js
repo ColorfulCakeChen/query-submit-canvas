@@ -72,8 +72,12 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
       returnedObject = new ( this.objectClass )( ...restArgs );
     }
 
+//!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
+//     // 2. Tracking the issued object for recycling automatically by session_pop().
+//     IssuedObjects.issued_add.call( IssuedObjects.Singleton, returnedObject, this );
+
     // 2. Tracking the issued object for recycling automatically by session_pop().
-    IssuedObjects.issued_add.call( IssuedObjects.Singleton, returnedObject, this );
+    IssuedObjects.issued_add.call( IssuedObjects.Singleton, returnedObject );
 
     return returnedObject;
   }
