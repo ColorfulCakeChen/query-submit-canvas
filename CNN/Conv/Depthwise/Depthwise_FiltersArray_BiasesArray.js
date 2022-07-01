@@ -218,7 +218,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) => class FiltersArray_Bi
    * set of this depthwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
    *
    * @return {boolean}
-   *   Return o_keptObjectArray.
+   *   Return true, if succeeded.
    */
   init( inputWeightArray, elementOffsetBegin, inputScaleBoundsArray ) {
 
