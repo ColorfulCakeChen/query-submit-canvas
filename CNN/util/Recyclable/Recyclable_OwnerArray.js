@@ -8,6 +8,18 @@ import { Array as Recyclable_Array } from "./Recyclable_Array.js";
  * (by calling their .disposeResources_and_recycleToPool()) in .disposeResources().
  *
  *
+ * Note: The behavior of this class's constructor (and .setAsConstructor()) is different from original Array (and Recyclable.Array).
+ *
+ *   - Original Array (and Recyclable.Array):
+ *
+ *     - If there is only one argument, it is viewed as the length of the newly created array.
+ *
+ *   - This Recyclable.OwnerArray:
+ *
+ *     - Even if there is only one argument, all arguments always are viewed as the contents the newly created array.
+ *         The reason is for convenient and for avoiding un-initialized element object.
+ *
+ *
  */
 class OwnerArray extends Recyclable_Array {
 
@@ -17,23 +29,38 @@ class OwnerArray extends Recyclable_Array {
   static Pool = new Pool.Root( "Recyclable.OwnerArray.Pool", OwnerArray, OwnerArray.setAsConstructor );
 
   /**
+   * Every element of restArgs should be instance of ChannelPartInfo (even if restArgs has only one element).
+   *
+   * Note: This behavior is different from original Array which will views the argement is length (not element) if only one argument
+   *       is given.
    */
   constructor( ...restArgs ) {
-    super( ...restArgs );
-    OwnerArray.setAsConstructor_self.call( this );
+    super( restArgs.length );
+    OwnerArray.setAsConstructor_self.call( this, restArgs );
   }
 
-  /** @override */
+  /**
+   * Every element of restArgs should be instance of ChannelPartInfo (even if restArgs has only one element).
+   *
+   * Note: This behavior is different from original Array which will views the argement is length (not element) if only one argument
+   *       is given.
+   *
+   * @override
+   */
   static setAsConstructor( ...restArgs ) {
-    super.setAsConstructor( ...restArgs );
-    OwnerArray.setAsConstructor_self.call( this );
+    super.setAsConstructor( restArgs.length );
+    OwnerArray.setAsConstructor_self.call( this, restArgs );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self() {
-    // Do nothing.
+  static setAsConstructor( objectArray ) {
+    for ( let i = 0; i < objectArray.length; ++i ) {
+      this[ i ] = objectArray[ i ];
+    }
   }
+
+//!!!
 
   /** @override */
   disposeResources() {
