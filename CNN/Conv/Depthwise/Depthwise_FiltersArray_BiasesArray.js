@@ -281,250 +281,253 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 //     if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE )
 //       return false; // Nothing needs to be extracted.
 
-
-    // Calculate lower half and higher half channel count.
-    //
-    // Even if avg/max pooling or ( bHigherHalfDifferent == false ), these are still correct.
-    //
-    if ( this.inputChannelCount_lowerHalf != undefined ) {
-      this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
-      this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.channelMultiplier;
-      this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
-    }
-
-    // Determine shape of the filters, biases, channels.
     let aFiltersBiasesPartInfoArray;
-    let filtersWeightCount_extracted, biasesWeightCount_extracted;
+    try {
 
-    // Set up aFiltersBiasesPartInfoArray and filtersShape and biasesShape.
-    {
-      if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
-
-        // In normal depthwise avg/max pooling, use specified specified channel count as extracted channel count.
-        // Although they are not used to extract avg/max filters, they will be used for extracting bias.
-        this.inputChannelCount_toBeExtracted = this.inputChannelCount;
-        this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-
-        // Note: avg/max pooling do not have this.filtersShape to be extracted.
-        this.poolWindowShape = Recyclable.Array.Pool.get_or_create_by( 2 );
-        this.poolWindowShape[ 0 ] = this.filterHeight;
-        this.poolWindowShape[ 1 ] = this.filterWidth;
-
-        if ( this.bBias ) {
-          this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 1 );
-          this.biasesShape[ 0 ] = this.outputChannelCount;
-
-          biasesWeightCount_extracted = this.outputChannelCount;
-        }
-
-//!!! (2022/06/22 Remarked) Replaced by pool.
-//         aFiltersBiasesPartInfoArray = [
-//           new FiltersBiasesPartInfo( [
-//             new ChannelPartInfo( this.inputChannelCount ) ] )
-//         ];
-
-        aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
-          FiltersBiasesPartInfo.Pool.get_or_create_by(
-            ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount )
-          )
-        );
-
-      } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
-
-        switch ( this.nHigherHalfDifferent ) {
-          case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
-            this.inputChannelCount_toBeExtracted = this.inputChannelCount;
-            this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-
-//!!! (2022/06/22 Remarked) Replaced by pool.
-//             aFiltersBiasesPartInfoArray = [
-//               new FiltersBiasesPartInfo( [
-//                 new ChannelPartInfo( this.inputChannelCount ) ] )
-//             ];
-
-            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
-              FiltersBiasesPartInfo.Pool.get_or_create_by(
-                ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount )
-              )
-            );
-            break;
-
-          case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
-
-            if ( this.inputChannelCount_lowerHalf <= 0 )
-              throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfDepthwise2(): `
-                + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
-              );
-
-            // Extract filters and biases for the specified channel count, but in different sequence.
-            this.inputChannelCount_toBeExtracted = this.inputChannelCount;
-            this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-
-//!!! (2022/06/22 Remarked) Replaced by pool.
-//             aFiltersBiasesPartInfoArray = [
-//               new FiltersBiasesPartInfo( [
-//                 new ChannelPartInfo( this.inputChannelCount_lowerHalf  ) ] ),
-//               new FiltersBiasesPartInfo( [
-//                 new ChannelPartInfo( this.inputChannelCount_higherHalf ) ] )
-//             ];
-
-            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
-              FiltersBiasesPartInfo.Pool.get_or_create_by(
-                ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf )
-              ),
-              FiltersBiasesPartInfo.Pool.get_or_create_by(
-                ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_higherHalf )
-              )
-            );
-            break;
-
-          case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
-
-            if ( this.inputChannelCount_lowerHalf <= 0 )
-              throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfPassThrough(): `
-                + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
-              );
-
-            // Just extract filters and biases for half of the specified channel count.
-            this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
-            this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
-
-//!!! (2022/06/22 Remarked) Replaced by pool.
-//             aFiltersBiasesPartInfoArray = [
-//               new FiltersBiasesPartInfo( [
-//                 new ChannelPartInfo( this.inputChannelCount_lowerHalf ),
-//                 new ChannelPartInfo( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft ) ] )
-//             ];
-
-            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
-              FiltersBiasesPartInfo.Pool.get_or_create_by(
-                ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf ),
-                ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft )
-              )
-            );
-            break;
-
-          default:
-            throw Error(
-              `Depthwise.FiltersArray_BiasesArray.init(): `
-                + `nHigherHalfDifferent ( ${this.nHigherHalfDifferent} ) is unknown value.`
-            );
-            break;
-        }
-
-        this.filtersShape = Recyclable.Array.Pool.get_or_create_by( 4 );
-        this.filtersShape[ 0 ] = this.filterHeight;
-        this.filtersShape[ 1 ] = this.filterWidth;
-        this.filtersShape[ 2 ] = this.inputChannelCount;
-        this.filtersShape[ 3 ] = this.channelMultiplier;
-
-        filtersWeightCount_extracted = this.filterHeight * this.filterWidth * this.inputChannelCount_toBeExtracted * this.channelMultiplier;
-
-        if ( this.bBias ) {
-          this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 1 );
-          this.biasesShape[ 0 ] = this.outputChannelCount;
-
-          biasesWeightCount_extracted = this.outputChannelCount_toBeExtracted;
-        }
-
-      } else { // No depthwise (i.e. zero) (so no channel multiplier).
-        aFiltersBiasesPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 0 );
-        // Note: In this case, even if ( this.bBias == true ), the biasesArray will still not be extracted.
-      }
-    }
-
-    // Prepare result filters and biases array.
-    if ( this.filtersShape )
-      this.filtersArray = Recyclable.Array.Pool.get_or_create_by( tf.util.sizeFromShape( this.filtersShape ) );
-    if ( this.biasesShape )
-      this.biasesArray = Recyclable.Array.Pool.get_or_create_by( tf.util.sizeFromShape( this.biasesShape ) );
-
-    // Calculate weights count of filters and biases to be extracted.
-    let weightsCount_extracted = 0;
-    if ( filtersWeightCount_extracted )
-      weightsCount_extracted += filtersWeightCount_extracted;
-    if ( biasesWeightCount_extracted )
-      weightsCount_extracted += biasesWeightCount_extracted
-
-    // Prepare source weights to be extracted.
-    if ( !super.init( inputWeightArray, weightElementOffsetBegin, weightsCount_extracted ) ) { // i.e. Weights.Base.init()
-      this.bInitOk = false;
-      return false;  // e.g. input array does not have enough data.
-    }
-
-    // filters and bias: weights and value bounds.
-    //
-    // It should be better to calculate per channel value bounds by real filter and bias value (i.e. not by an estimated value bounds).
-    // This is especially important for ActivationEscaping. Because inputDomainLinear of activation function is not wide, using looser
-    // value bounds estimation has higher possibility to lost information.
-    //
-    // Two-rounds processing is used:
-    //
-    //   - In the 1st round, extracting filter and bias value from sourceWeights[]. At the same time, calculating .afterFilter and
-    //       .afterBias by these extracted values combined with undoPreviousEscapingScale
-    //       (i.e. inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ]). And then,
-    //       Find out .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation.
-    //
-    //   - In the 2nd round, apply doEscapingScale (i.e. .activationEscaping_ScaleArraySet.do.scales[ outChannel ] )
-    //       to filter and bias value (and also .afterFilter and .afterBias).
-    //
-    {
-      // Round 0
-      {
-        // Initialize element value bounds (per channel). Determine .input and .afterUndoPreviousActivationEscaping
-        //
-        // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
-        this.boundsArraySet = BoundsArraySet.Depthwise.Pool.get_or_create_by( inputScaleBoundsArray, this.outputChannelCount );
+      // Calculate lower half and higher half channel count.
+      //
+      // Even if avg/max pooling or ( bHigherHalfDifferent == false ), these are still correct.
+      //
+      if ( this.inputChannelCount_lowerHalf != undefined ) {
+        this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+        this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.channelMultiplier;
+        this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
       }
 
-      // Round 1
+      // Determine shape of the filters, biases, channels.
+      let filtersWeightCount_extracted, biasesWeightCount_extracted;
+
+      // Set up aFiltersBiasesPartInfoArray and filtersShape and biasesShape.
       {
-        this.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-          inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray );
+        if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
-        this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray );
+          // In normal depthwise avg/max pooling, use specified specified channel count as extracted channel count.
+          // Although they are not used to extract avg/max filters, they will be used for extracting bias.
+          this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+          this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
-        // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
+          // Note: avg/max pooling do not have this.filtersShape to be extracted.
+          this.poolWindowShape = Recyclable.Array.Pool.get_or_create_by( 2 );
+          this.poolWindowShape[ 0 ] = this.filterHeight;
+          this.poolWindowShape[ 1 ] = this.filterWidth;
+
+          if ( this.bBias ) {
+            this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 1 );
+            this.biasesShape[ 0 ] = this.outputChannelCount;
+
+            biasesWeightCount_extracted = this.outputChannelCount;
+          }
+
+  //!!! (2022/06/22 Remarked) Replaced by pool.
+  //         aFiltersBiasesPartInfoArray = [
+  //           new FiltersBiasesPartInfo( [
+  //             new ChannelPartInfo( this.inputChannelCount ) ] )
+  //         ];
+
+          aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
+            FiltersBiasesPartInfo.Pool.get_or_create_by(
+              ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount )
+            )
+          );
+
+        } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
+
+          switch ( this.nHigherHalfDifferent ) {
+            case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
+              this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+              this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+
+  //!!! (2022/06/22 Remarked) Replaced by pool.
+  //             aFiltersBiasesPartInfoArray = [
+  //               new FiltersBiasesPartInfo( [
+  //                 new ChannelPartInfo( this.inputChannelCount ) ] )
+  //             ];
+
+              aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
+                FiltersBiasesPartInfo.Pool.get_or_create_by(
+                  ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount )
+                )
+              );
+              break;
+
+            case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
+
+              if ( this.inputChannelCount_lowerHalf <= 0 )
+                throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfDepthwise2(): `
+                  + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
+                );
+
+              // Extract filters and biases for the specified channel count, but in different sequence.
+              this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+              this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+
+  //!!! (2022/06/22 Remarked) Replaced by pool.
+  //             aFiltersBiasesPartInfoArray = [
+  //               new FiltersBiasesPartInfo( [
+  //                 new ChannelPartInfo( this.inputChannelCount_lowerHalf  ) ] ),
+  //               new FiltersBiasesPartInfo( [
+  //                 new ChannelPartInfo( this.inputChannelCount_higherHalf ) ] )
+  //             ];
+
+              aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
+                FiltersBiasesPartInfo.Pool.get_or_create_by(
+                  ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf )
+                ),
+                FiltersBiasesPartInfo.Pool.get_or_create_by(
+                  ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_higherHalf )
+                )
+              );
+              break;
+
+            case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
+
+              if ( this.inputChannelCount_lowerHalf <= 0 )
+                throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfPassThrough(): `
+                  + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
+                );
+
+              // Just extract filters and biases for half of the specified channel count.
+              this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
+              this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
+
+  //!!! (2022/06/22 Remarked) Replaced by pool.
+  //             aFiltersBiasesPartInfoArray = [
+  //               new FiltersBiasesPartInfo( [
+  //                 new ChannelPartInfo( this.inputChannelCount_lowerHalf ),
+  //                 new ChannelPartInfo( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft ) ] )
+  //             ];
+
+              aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
+                FiltersBiasesPartInfo.Pool.get_or_create_by(
+                  ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf ),
+                  ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft )
+                )
+              );
+              break;
+
+            default:
+              throw Error(
+                `Depthwise.FiltersArray_BiasesArray.init(): `
+                  + `nHigherHalfDifferent ( ${this.nHigherHalfDifferent} ) is unknown value.`
+              );
+              break;
+          }
+
+          this.filtersShape = Recyclable.Array.Pool.get_or_create_by( 4 );
+          this.filtersShape[ 0 ] = this.filterHeight;
+          this.filtersShape[ 1 ] = this.filterWidth;
+          this.filtersShape[ 2 ] = this.inputChannelCount;
+          this.filtersShape[ 3 ] = this.channelMultiplier;
+
+          filtersWeightCount_extracted = this.filterHeight * this.filterWidth * this.inputChannelCount_toBeExtracted * this.channelMultiplier;
+
+          if ( this.bBias ) {
+            this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 1 );
+            this.biasesShape[ 0 ] = this.outputChannelCount;
+
+            biasesWeightCount_extracted = this.outputChannelCount_toBeExtracted;
+          }
+
+        } else { // No depthwise (i.e. zero) (so no channel multiplier).
+          aFiltersBiasesPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 0 );
+          // Note: In this case, even if ( this.bBias == true ), the biasesArray will still not be extracted.
+        }
+      }
+
+      // Prepare result filters and biases array.
+      if ( this.filtersShape )
+        this.filtersArray = Recyclable.Array.Pool.get_or_create_by( tf.util.sizeFromShape( this.filtersShape ) );
+      if ( this.biasesShape )
+        this.biasesArray = Recyclable.Array.Pool.get_or_create_by( tf.util.sizeFromShape( this.biasesShape ) );
+
+      // Calculate weights count of filters and biases to be extracted.
+      let weightsCount_extracted = 0;
+      if ( filtersWeightCount_extracted )
+        weightsCount_extracted += filtersWeightCount_extracted;
+      if ( biasesWeightCount_extracted )
+        weightsCount_extracted += biasesWeightCount_extracted
+
+      // Prepare source weights to be extracted.
+      if ( !super.init( inputWeightArray, weightElementOffsetBegin, weightsCount_extracted ) ) { // i.e. Weights.Base.init()
+        this.bInitOk = false;
+        return false;  // e.g. input array does not have enough data.
+      }
+
+      // filters and bias: weights and value bounds.
+      //
+      // It should be better to calculate per channel value bounds by real filter and bias value (i.e. not by an estimated value bounds).
+      // This is especially important for ActivationEscaping. Because inputDomainLinear of activation function is not wide, using looser
+      // value bounds estimation has higher possibility to lost information.
+      //
+      // Two-rounds processing is used:
+      //
+      //   - In the 1st round, extracting filter and bias value from sourceWeights[]. At the same time, calculating .afterFilter and
+      //       .afterBias by these extracted values combined with undoPreviousEscapingScale
+      //       (i.e. inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ]). And then,
+      //       Find out .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation.
+      //
+      //   - In the 2nd round, apply doEscapingScale (i.e. .activationEscaping_ScaleArraySet.do.scales[ outChannel ] )
+      //       to filter and bias value (and also .afterFilter and .afterBias).
+      //
+      {
+        // Round 0
         {
-          if (   ( this.AvgMax_Or_ChannelMultiplier < 0 )
-              && (   ( this.bBias == false )
-                  && ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
-                 )
-             ) {
+          // Initialize element value bounds (per channel). Determine .input and .afterUndoPreviousActivationEscaping
+          //
+          // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
+          this.boundsArraySet = BoundsArraySet.Depthwise.Pool.get_or_create_by( inputScaleBoundsArray, this.outputChannelCount );
+        }
 
-            // For avg/max pooling, if it has no bias and no activation), the value bounds does not change (i.e. should be the same as input).
-            //
-            // In this case, the previous activation-escaping needs not be undo (so undoPreviousEscapingScale could be not 1). Using them
-            // as this avg/max pooling's activation-escaping since they can not be calculated in fact.
-            //
-            this.boundsArraySet.set_outputs_all_by_input0();
-          } else {
-            this.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( this.nActivationId );
+        // Round 1
+        {
+          this.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
+            inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray );
+
+          this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray );
+
+          // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
+          {
+            if (   ( this.AvgMax_Or_ChannelMultiplier < 0 )
+                && (   ( this.bBias == false )
+                    && ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
+                   )
+               ) {
+
+              // For avg/max pooling, if it has no bias and no activation), the value bounds does not change (i.e. should be the same as input).
+              //
+              // In this case, the previous activation-escaping needs not be undo (so undoPreviousEscapingScale could be not 1). Using them
+              // as this avg/max pooling's activation-escaping since they can not be calculated in fact.
+              //
+              this.boundsArraySet.set_outputs_all_by_input0();
+            } else {
+              this.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( this.nActivationId );
+            }
           }
         }
+
+        // Round 2
+        this.apply_doEscapingScale_to_filtersArray_biasesArray(); // Apply doEscapingScale.
       }
 
-      // Round 2
-      this.apply_doEscapingScale_to_filtersArray_biasesArray(); // Apply doEscapingScale.
+      {
+        this.tensorWeightCountTotal_internal = 0;
+
+        if ( this.filtersShape )
+          this.tensorWeightCountTotal_internal += tf.util.sizeFromShape( this.filtersShape );
+
+        if ( this.biasesShape )
+          this.tensorWeightCountTotal_internal += tf.util.sizeFromShape( this.biasesShape );
+      }
+
+      this.bInitOk = true;
+      return true;
+
+    } finally { // Release temporary resource.
+      if ( aFiltersBiasesPartInfoArray )
+        aFiltersBiasesPartInfoArray.disposeResources_and_recycleToPool();
+        aFiltersBiasesPartInfoArray = null;
+      }
     }
-
-    {
-      this.tensorWeightCountTotal_internal = 0;
-
-      if ( this.filtersShape )
-        this.tensorWeightCountTotal_internal += tf.util.sizeFromShape( this.filtersShape );
-
-      if ( this.biasesShape )
-        this.tensorWeightCountTotal_internal += tf.util.sizeFromShape( this.biasesShape );
-    }
-
-    { // Release temporary resource.
-      aFiltersBiasesPartInfoArray.disposeResources_and_recycleToPool();
-      aFiltersBiasesPartInfoArray = null;
-    }
-
-    this.bInitOk = true;
-    return true;
   }
 
   /**
