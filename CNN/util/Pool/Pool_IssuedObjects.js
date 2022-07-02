@@ -218,6 +218,17 @@ class IssuedObjects {
 //    this.inSessionRecyclePoolArray.push( IssuedObjects.SESSION_BORDER_MARK );
   }
 
+//!!! ...unfinished... (2022/07/02)
+// sessionKeptObjects should recursively collects all nested property (except already been searched ones for avoiding duplication).
+// However, this process will generate many iterator objects (i.e. violates the recycle pool system's principle (i.e. reducing memory
+// re-allocation)).
+//
+// And, even doing so, it is still has the problem which the nested children object may be disposed before their owner parent object.
+//
+// Perhaps, needs a Recyclabe.OwnerUniqueStack which has only push, pop, clear. Its .push() will not append ab object if the object
+// already exists.
+//
+
   /**
    * End a auto-recycling session. This method will pop all objects from IssuedObjects.array until encountering SESSION_BORDER_MARK.
    *
