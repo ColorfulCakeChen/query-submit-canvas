@@ -80,7 +80,7 @@ class TwinArray extends Root {
       }
     }
 
-    this.operationArray = Recyclable.Array.Pool.get_or_create_by( 0 );
+    this.operationArray = Recyclable.OwnerArray.Pool.get_or_create_by();
 
     TwinArray.setup_apply_loop.call( this );
 
@@ -125,12 +125,6 @@ class TwinArray extends Root {
 
     // Release every sub operation in reverse order.
     if ( this.operationArray ) {
-      for ( let i = ( this.operationArray.length - 1 ); i >= 0; --i ) {
-        let operation = this.operationArray[ i ];
-        operation.disposeResources_and_recycleToPool();
-        this.operationArray[ i ] = null;
-      }
-
       this.operationArray.disposeResources_and_recycleToPool();
       this.operationArray = null;
     }
