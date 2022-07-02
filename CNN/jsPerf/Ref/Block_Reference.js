@@ -303,7 +303,11 @@ class Base extends Recyclable.Root {
     {
       this.testCorrectnessInfo.prepareBy( imageSourceBag, testParams, channelShufflerBag );
 
-      Pool.All.sessionCall( Base.testCorrectness_internal, this );
+//!!! (2022/07/02 Remarked) Now all intermediate NumberImage should be disposed correctly.
+//    Pool.All.sessionCall( Base.testCorrectness_internal, this );
+
+      Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "Block_Reference.Base.testCorrectness_internal()",
+        Base.testCorrectness_internal, this );
 
 //!!! (2022/06/10 Remarked) Moved to outter jsPerf_Block to also catch testParamsGenerator's exception.
 //     } catch ( e ) {
@@ -345,6 +349,13 @@ class Base extends Recyclable.Root {
       Base.block_create_apply_internal, this );
 
     tf.dispose( outputTensor3dArray );
+
+    for ( let i = 0; i < imageOutReferenceArray.length; ++i ) { // Release output reference images.
+      if ( imageOutReferenceArray[ i ] ) {
+        imageOutReferenceArray[ i ].disposeResources_and_recycleToPool();
+        imageOutReferenceArray[ i ] = null;
+      }
+    }
   }
 
   /**
