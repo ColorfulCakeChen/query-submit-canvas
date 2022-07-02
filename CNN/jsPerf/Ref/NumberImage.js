@@ -49,11 +49,6 @@ class Base extends Recyclable.Root {
    * @param {FloatValue.Bounds} aBounds
    *   The value bounds of all pixels of this image. If undefined, the .boundsArraySet will not be pre-filled any value.
    */
-
-//!!! (2022/06/29 Remarked) Replaced by filledValue and aBounds.
-//  (i.e. Weights.Base.ValueBounds).
-//  constructor( height, width, depth, dataArray, boundsArraySet ) {
-
   constructor( height, width, depth, preFilledValue,
     input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds ) {
 
@@ -106,17 +101,25 @@ class Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    this.boundsArraySet.disposeResources_and_recycleToPool();
-    this.boundsArraySet = null;
+    if ( this.boundsArraySet ) {
+      this.boundsArraySet.disposeResources_and_recycleToPool();
+      this.boundsArraySet = null;
+    }
 
-    this.input1_ScaleBoundsArray?.disposeResources_and_recycleToPool();
-    this.input1_ScaleBoundsArray = null;
+    if ( this.input1_ScaleBoundsArray ) {
+      this.input1_ScaleBoundsArray.disposeResources_and_recycleToPool();
+      this.input1_ScaleBoundsArray = null;
+    }
 
-    this.input0_ScaleBoundsArray.disposeResources_and_recycleToPool();
-    this.input0_ScaleBoundsArray = null;
+    if ( this.input0_ScaleBoundsArray ) {
+      this.input0_ScaleBoundsArray.disposeResources_and_recycleToPool();
+      this.input0_ScaleBoundsArray = null;
+    }
 
-    this.dataArray.disposeResources_and_recycleToPool();
-    this.dataArray = null;
+    if ( this.dataArray ) {
+      this.dataArray.disposeResources_and_recycleToPool();
+      this.dataArray = null;
+    }
 
     this.depth = undefined;
     this.width = undefined;
