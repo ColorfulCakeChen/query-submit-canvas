@@ -63,18 +63,19 @@ class OwnerArray extends Recyclable_Array {
 
   /** @override */
   disposeResources() {
-    
-    // Release all contents since they are owned by this OwnerArray.
-    for ( let i = 0; i < this.length; ++i ) {
+
+    // Release all contents in reverse order because they are owned by this OwnerArray and usually created in forward order.
+    for ( let i = ( this.length - 1 ); i >= 0; --i ) {
       let object = this[ i ];
-      if ( object ) {
-        // Note: ( object instanceof Base ) does not work here because Recyclable.Base is not a class definition (in fact, it is a
-        //       function return a class definition). So check whether .disposeResources_and_recycleToPool() exists instead.
-        //
-        if ( object.disposeResources_and_recycleToPool instanceof Function ) {
-          object.disposeResources_and_recycleToPool();
-          this[ i ] = null; // So that it will not become dangling object (since it has already been recycled).
-        }
+      if ( !object )
+        continue;
+
+      // Note: ( object instanceof Base ) does not work here because Recyclable.Base is not a class definition (in fact, it
+      //       is a function return a class definition). So check whether .disposeResources_and_recycleToPool() exists instead.
+      //
+      if ( object.disposeResources_and_recycleToPool instanceof Function ) {
+        object.disposeResources_and_recycleToPool();
+        this[ i ] = null; // So that it will not become dangling object (since it has already been recycled).
       }
     }
 
