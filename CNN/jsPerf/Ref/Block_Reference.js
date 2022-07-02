@@ -883,25 +883,6 @@ class Base extends Recyclable.Root {
 
   /** According to imageInArray and this.testParams.in.paramsNumberArrayObject, calculate imageOutArray.
    *
-   * @param {NumberImage.Base[]} imageInArray
-   *   The images to be tested.
-   *     - imageInArray[ 0 ]: input0
-   *     - imageInArray[ 1 ]: input1
-   *
-   * @param {NumberImage.Base[]} imageOutArray
-   *   The images to be returned are placed here.
-   *     - imageOutArray[ 0 ]: output0
-   *     - imageOutArray[ 1 ]: output1
-   *
-   * @return {NumberImage.Base[]}
-   *   Return imageOutArray.
-   */ 
-  calcResult( imageInArray, imageOutArray ) {
-    return Pool.All.sessionCall( Base.calcResult_internal, this, imageInArray, imageOutArray );
-  }
-
-  /** According to imageInArray and this.testParams.in.paramsNumberArrayObject, calculate imageOutArray.
-   *
    * @param {Block_Reference.Base} this
    *   The referenece object to do the calculate.
    *
@@ -918,7 +899,7 @@ class Base extends Recyclable.Root {
    * @return {NumberImage.Base[]}
    *   Return imageOutArray.
    */ 
-  static calcResult_internal( imageInArray, imageOutArray ) {
+  calcResult( imageInArray, imageOutArray ) {
 
     let testParams = this.testParams;
     let inferencedParams = testParams.out.inferencedParams;
@@ -999,21 +980,18 @@ class Base extends Recyclable.Root {
     let imageIn1_beforePointwise1 = imageIn1;
     let pointwise1Result;
     if ( pointwise1ChannelCount > 0 ) {
-      pointwise1Result = testParams.use_pointwise1( imageIn0, pointwise1ChannelCount, "Pointwise1", testParams.out );
+      pointwise1Result = testParams.use_pointwise1(
+        imageIn0, pointwise1ChannelCount, this.imageNeedDisposeUniqueStack, "Pointwise1", testParams.out );
 
       if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn0_beforePointwise1, // copy input0 (not input1).
-
-//!!! (2022/06/17 Remarked)
-//          pointwise1ChannelCount, // So that it could be processed by depthwise2 and pointwise21 (with same structure of depthwise1 and pointwise20).
           imageIn0_beforePointwise1.depth,
-
-          "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", testParams.out );
+          this.imageNeedDisposeUniqueStack, "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", testParams.out );
 
       } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
           imageIn1_beforePointwise1.depth, // No need same as pointwise1ChannelCount because depthwise2 and pointwise21 just pass-through it.
-          "Pointwise1_imageIn1_HigherHalfPassThrough", testParams.out );
+          this.imageNeedDisposeUniqueStack, "Pointwise1_imageIn1_HigherHalfPassThrough", testParams.out );
       }
 
     } else {
@@ -1042,14 +1020,14 @@ class Base extends Recyclable.Root {
 //!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
 //    if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
     if ( testParams.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
-      depthwise1Result = testParams.use_depthwise1( pointwise1Result, "Depthwise1", testParams.out );
+      depthwise1Result = testParams.use_depthwise1( pointwise1Result, this.imageNeedDisposeUniqueStack, "Depthwise1", testParams.out );
 
       // imageIn1 should be shrinked by depthwise1. Otherwise, its size may be different from pointwise20Result
       // and can not be concatenated together.
       //
       if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
         imageIn1 = testParams.use_depthwise1_PassThrough( imageIn1_beforeDepthwise1, // pass-through input1 (not input0).
-          "Depthwise1_imageIn1_HigherHalfPassThrough", testParams.out );
+          this.imageNeedDisposeUniqueStack, "Depthwise1_imageIn1_HigherHalfPassThrough", testParams.out );
       }
 
     } else {
@@ -1066,7 +1044,8 @@ class Base extends Recyclable.Root {
 //!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
 //      if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
       if ( testParams.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
-        depthwise2Result = testParams.use_depthwise2( imageIn0, "Depthwise2_for_input0", testParams.out ); // depthwise2 apply to input0 (not input1).
+        depthwise2Result = testParams.use_depthwise2(
+          imageIn0, this.imageNeedDisposeUniqueStack, "Depthwise2_for_input0", testParams.out ); // depthwise2 apply to input0 (not input1).
       } else {
         depthwise2Result = imageIn0; // Since depthwise2 is just no-op, its result is just the same as its input (i.e. input0 (not input1)).
       }
@@ -1078,7 +1057,7 @@ class Base extends Recyclable.Root {
       if ( testParams.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
 
         // depthwise2 apply to input1 which higher-half-copy-lower-half from input0 (not original input0, not original input1).
-        depthwise2Result = testParams.use_depthwise2( imageIn1, "Depthwise2_for_input1", testParams.out );
+        depthwise2Result = testParams.use_depthwise2( imageIn1, this.imageNeedDisposeUniqueStack, "Depthwise2_for_input1", testParams.out );
 
       } else {
         depthwise2Result = imageIn0; // Since depthwise2 is just no-op, its result is just the same as its input (i.e. input0 (not input1)).
@@ -1127,18 +1106,18 @@ class Base extends Recyclable.Root {
     let pointwise20Result, pointwise202Result;
     {
       if ( pointwise20ChannelCount > 0 ) {
-        pointwise20Result = imageOutArray[ 0 ]
-          = testParams.use_pointwise20( concat1Result, pointwise20ChannelCount, "Pointwise20", testParams.out );
+        pointwise20Result = imageOutArray[ 0 ] = testParams.use_pointwise20(
+          concat1Result, pointwise20ChannelCount, this.imageNeedDisposeUniqueStack, "Pointwise20", testParams.out );
 
         if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
-          pointwise202Result = imageOutArray[ 1 ]
-            = testParams.use_pointwise202( depthwise2Result, pointwise20ChannelCount, "Pointwise202", testParams.out );
+          pointwise202Result = imageOutArray[ 1 ] = testParams.use_pointwise202(
+            depthwise2Result, pointwise20ChannelCount, this.imageNeedDisposeUniqueStack, "Pointwise202", testParams.out );
 
         } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
           imageIn1 = imageOutArray[ 1 ]
             = testParams.use_pointwise20_PassThrough( imageIn1_beforePointwise20, // pass-through input1 (which is past-through by depthwise1).
                 pointwise20ChannelCount, // So that it could be concatenated with pointwise20Result.
-                "Pointwise20_imageIn1_HigherHalfPassThrough", testParams.out );
+                this.imageNeedDisposeUniqueStack, "Pointwise20_imageIn1_HigherHalfPassThrough", testParams.out );
         }
 
       } else {
@@ -1182,8 +1161,8 @@ class Base extends Recyclable.Root {
       // Always using input0 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
       if ( bAddInputToOutputRequested )
         if ( pointwise21Result.depth == testParams.out.input0_channelCount ) // add-input-to-output is possible if same channel count.
-          pointwise21Result = imageOutArray[ 1 ]
-            = pointwise21Result.clone_byAdd( imageIn0, "Pointwise21_AddInputToOutput", testParams.out );
+          pointwise21Result = imageOutArray[ 1 ] = pointwise21Result.clone_byAdd(
+            imageIn0, this.imageNeedDisposeUniqueStack, "Pointwise21_AddInputToOutput", testParams.out );
 
     } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY_or_TAIL() ) { // (3 or 4)
       imageOutArray[ 1 ] = imageIn1;
