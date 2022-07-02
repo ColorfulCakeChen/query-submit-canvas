@@ -623,7 +623,7 @@ class Base extends Recyclable.Root {
     // Note: When ( pad == valid ), it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
 
     // The depthwise2 processes the input0 directly (i.e. not the pointwise1 result of input0, and not input1).
-    let depthwise2_input0 = this.operationArray.input0; // (Note: Not .endingInput0, Not .input1)
+    let depthwise2_input0 = this.input0; // (Note: Not .endingInput0, Not .input1)
 
     // Only if depthwise operation is requested and necessary, create them.
     if ( this.bDepthwiseRequestedAndNeeded ) {
@@ -873,14 +873,14 @@ class Base extends Recyclable.Root {
       //
 
       let addInput0ToPointwise20;
-      if ( this.operationArray.endingInput0?.is_height_width_channelCount_same_byTensorPlaceholder( this.operationArray.input0 ) ) {
-        addInput0ToPointwise20 = Operation.AddTwoTensors.Pool.get_or_create_by( this.operationArray.input0, this.operationArray.endingInput0 );
+      if ( this.operationArray.endingInput0?.is_height_width_channelCount_same_byTensorPlaceholder( this.input0 ) ) {
+        addInput0ToPointwise20 = Operation.AddTwoTensors.Pool.get_or_create_by( this.input0, this.operationArray.endingInput0 );
       }
 
       // Note: Only input0 (not input1) will be used to add to output.
       let addInput0ToPointwise21;
-      if ( this.operationArray.endingInput1?.is_height_width_channelCount_same_byTensorPlaceholder( this.operationArray.input0 ) ) {
-        addInput0ToPointwise21 = Operation.AddTwoTensors.Pool.get_or_create_by( this.operationArray.input0, this.operationArray.endingInput1 );
+      if ( this.operationArray.endingInput1?.is_height_width_channelCount_same_byTensorPlaceholder( this.input0 ) ) {
+        addInput0ToPointwise21 = Operation.AddTwoTensors.Pool.get_or_create_by( this.input0, this.operationArray.endingInput1 );
       }
 
       this.operationArray.operation_append( addInput0ToPointwise20, addInput0ToPointwise21 );
@@ -1366,8 +1366,8 @@ class Base extends Recyclable.Root {
 
   /** Use inputTensors[ 0 ] and inputTensors[ 1 ]. Generate outputTensors[ 0 ] and outputTensors[ 1 ]. */
   static apply__input0_input1__output0_output1( inputTensors, outputTensors ) {
-    this.operationArray.input0.realTensor = inputTensors[ 0 ];
-    this.operationArray.input1.realTensor = inputTensors[ 1 ];
+    this.input0.realTensor = inputTensors[ 0 ];
+    this.input1.realTensor = inputTensors[ 1 ];
     this.operationArray.apply();
     outputTensors[ 0 ] = this.operationArray.output0.realTensor;
     outputTensors[ 1 ] = this.operationArray.output1.realTensor;
@@ -1375,8 +1375,8 @@ class Base extends Recyclable.Root {
 
   /** Use inputTensors[ 0 ] and inputTensors[ 1 ]. Generate outputTensors[ 0 ] only (i.e. outputTensors[ 1 ] always null). */
   static apply__input0_input1__output0( inputTensors, outputTensors ) {
-    this.operationArray.input0.realTensor = inputTensors[ 0 ];
-    this.operationArray.input1.realTensor = inputTensors[ 1 ];
+    this.input0.realTensor = inputTensors[ 0 ];
+    this.input1.realTensor = inputTensors[ 1 ];
     this.operationArray.apply();
     outputTensors[ 0 ] = this.operationArray.output0.realTensor;
     outputTensors[ 1 ] = null;
@@ -1384,7 +1384,7 @@ class Base extends Recyclable.Root {
 
   /** Use inputTensors[ 0 ] only (i.e. ignore inputTensors[ 1 ]). Generate outputTensors[ 0 ] and outputTensors[ 1 ]. */
   static apply__input0__output0_output1( inputTensors, outputTensors ) {
-    this.operationArray.input0.realTensor = inputTensors[ 0 ];
+    this.input0.realTensor = inputTensors[ 0 ];
     this.operationArray.apply();
     outputTensors[ 0 ] = this.operationArray.output0.realTensor;
     outputTensors[ 1 ] = this.operationArray.output1.realTensor;
@@ -1392,7 +1392,7 @@ class Base extends Recyclable.Root {
 
   /** Use inputTensors[ 0 ] only (i.e. ignore inputTensors[ 1 ]). Generate outputTensors[ 0 ] only (i.e. outputTensors[ 1 ] always null). */
   static apply__input0__output0( inputTensors, outputTensors ) {
-    this.operationArray.input0.realTensor = inputTensors[ 0 ];
+    this.input0.realTensor = inputTensors[ 0 ];
     this.operationArray.apply();
     outputTensors[ 0 ] = this.operationArray.output0.realTensor;
     outputTensors[ 1 ] = null;
@@ -1400,12 +1400,12 @@ class Base extends Recyclable.Root {
 
 
   get inChannels0() {
-    return this.operationArray.input0.channelCount;
+    return this.input0.channelCount;
   }
 
   get inChannels1() {
-    if ( this.operationArray.input1 )
-      return this.operationArray.input1.channelCount;
+    if ( this.input1 )
+      return this.input1.channelCount;
     return 0;
   }
 
