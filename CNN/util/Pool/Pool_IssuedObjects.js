@@ -234,6 +234,8 @@ class IssuedObjects {
       return;
 
 //!!! ...unfinished... (2022/07/02)
+    // Note:
+    //
     // In theory, it is possible to collect all nested properties (and skip objects which have already been searched for avoiding
     // duplication) recursively. In reality, however, this process has some problems:
     //
@@ -243,9 +245,10 @@ class IssuedObjects {
     //   - Time consuming. For example, if a object property is just pure number Array (e.g. NumberImage.Base.dataArray), visiting
     //       its every element for finding recyclable object is unnecessary, meaningless and just wasting CPU time.
     //
+    //   - And, even if ignoring these above problem, it is still has the problem which the nested children object may be disposed
+    //       before their owner parent object. This will result in recycling the same object duplicately (i.e. Pool.Base.recycled_add()
+    //       is called multiple times with the same object).
     //
-    //
-    // And, even doing so, it is still has the problem which the nested children object may be disposed before their owner parent object.
     //
     // Perhaps, needs a Recyclabe.OwnerUniqueStack which has only push, pop, clear. Its .push() will not append ab object if the object
     // already exists.
