@@ -922,9 +922,7 @@ class Base extends Recyclable.Root {
     //    SHUFFLE_NET_V2_TAIL                    // (4) (ShuffleNetV2's tail)
     //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL   // (7) (ShuffleNetV2_ByMobileNetV1's tail)
 
-!!! ...unfinished... (2022/07/02)
-// Use this.imageNeedDisposeUniqueStack to collect images which may be necessary to be disposed.
-// Before this method returns, remove the input and output image of this method. And then call .clear()
+    // Collect images which may be necessary to be disposed in every computation operation.
     this.imageNeedDisposeUniqueStack.clear();
 
     let imageIn0, imageIn1;
@@ -1017,8 +1015,6 @@ class Base extends Recyclable.Root {
     let imageIn1_beforeDepthwise1 = imageIn1;
     let depthwise1Result;
 
-//!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
-//    if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
     if ( testParams.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
       depthwise1Result = testParams.use_depthwise1( pointwise1Result, this.imageNeedDisposeUniqueStack, "Depthwise1", testParams.out );
 
@@ -1041,8 +1037,6 @@ class Base extends Recyclable.Root {
         || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
        ) {
 
-//!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
-//      if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
       if ( testParams.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
         depthwise2Result = testParams.use_depthwise2(
           imageIn0, this.imageNeedDisposeUniqueStack, "Depthwise2_for_input0", testParams.out ); // depthwise2 apply to input0 (not input1).
@@ -1052,8 +1046,6 @@ class Base extends Recyclable.Root {
 
     } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
 
-//!!! (2022/06/08 Remarked) Using .bDepthwiseRequestedAndNeeded instead.
-//      if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
       if ( testParams.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
 
         // depthwise2 apply to input1 which higher-half-copy-lower-half from input0 (not original input0, not original input1).
@@ -1073,12 +1065,14 @@ class Base extends Recyclable.Root {
       concat1Result = NumberImage.Base.calcConcatAlongAxisId2(
         depthwise1Result, depthwise2Result,
         "Concat1_depthwise1_depthwise2 (SHUFFLE_NET_V2_BY_POINTWISE21_HEAD)", null, testParams.out );
+      this.imageNeedDisposeUniqueStack.push( depthwise1Result, depthwise2Result );
 
     } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL() ) { // (10 or 11)
 
       // Concatenate depthwise1's result and input1.
       concat1Result = NumberImage.Base.calcConcatAlongAxisId2( depthwise1Result, imageIn1,
         "Concat1_depthwise1_input1 (SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL)", null, testParams.out );
+      this.imageNeedDisposeUniqueStack.push( depthwise1Result, imageIn1 );
     }
 
     // 4. Pointwise2
@@ -1114,10 +1108,10 @@ class Base extends Recyclable.Root {
             depthwise2Result, pointwise20ChannelCount, this.imageNeedDisposeUniqueStack, "Pointwise202", testParams.out );
 
         } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
-          imageIn1 = imageOutArray[ 1 ]
-            = testParams.use_pointwise20_PassThrough( imageIn1_beforePointwise20, // pass-through input1 (which is past-through by depthwise1).
-                pointwise20ChannelCount, // So that it could be concatenated with pointwise20Result.
-                this.imageNeedDisposeUniqueStack, "Pointwise20_imageIn1_HigherHalfPassThrough", testParams.out );
+          imageIn1 = imageOutArray[ 1 ] = testParams.use_pointwise20_PassThrough(
+            imageIn1_beforePointwise20, // pass-through input1 (which is past-through by depthwise1).
+            pointwise20ChannelCount, // So that it could be concatenated with pointwise20Result.
+            this.imageNeedDisposeUniqueStack, "Pointwise20_imageIn1_HigherHalfPassThrough", testParams.out );
         }
 
       } else {
@@ -1126,9 +1120,11 @@ class Base extends Recyclable.Root {
 
       // Residual Connection.
       if ( bAddInputToOutputRequested )
-        if ( pointwise20Result.depth == testParams.out.input0_channelCount ) // add-input-to-output is possible if same channel count.
+        if ( pointwise20Result.depth == testParams.out.input0_channelCount ) { // add-input-to-output is possible if same channel count.
           pointwise20Result = imageOutArray[ 0 ]
             = pointwise20Result.clone_byAdd( imageIn0, "Pointwise20_AddInputToOutput", testParams.out );
+          this.imageNeedDisposeUniqueStack.push( pointwise20Result );
+        }
     }
 
     // 4.2 Pointwise21
@@ -1153,8 +1149,8 @@ class Base extends Recyclable.Root {
           pointwise21_input = concat1Result; break;
       }
 
-      pointwise21Result = imageOutArray[ 1 ]
-        = testParams.use_pointwise21( pointwise21_input, pointwise21ChannelCount, "Pointwise21", testParams.out );
+      pointwise21Result = imageOutArray[ 1 ] = testParams.use_pointwise21(
+        pointwise21_input, pointwise21ChannelCount, this.imageNeedDisposeUniqueStack, "Pointwise21", testParams.out );
 
       // Residual Connection.
       //
@@ -1206,19 +1202,24 @@ class Base extends Recyclable.Root {
           + `Concat2ShuffleSplit: imageOutArray[ 1 ] ( ${imageOutArray[ 1 ]} ) `
             + `should not be null. ${testParams.out}` );
 
+      // Because the following operation uses the input array as output array, collect before the operation. Otherwise,
+      // they will be lost to be disposed.
+      this.imageNeedDisposeUniqueStack.push( ...imageOutArray );
+
       NumberImage.Base.calcConcatShuffleSplit(
         imageOutArray, imageOutArray, bShuffle, bSplit,
         this.arrayTemp_forInterleave_asGrouptTwo, concat2Name, testParams.out );
     }
 
-!!! ...unfinished... (2022/07/02)
-// Use  to collect images which may be necessary to be disposed.
-// Before this method returns, remove the input and output image of this method from this.imageNeedDisposeUniqueStack.
-// And then call .clear()
-    {
-      for ( ) { 
+    { // Release all intermediate images.
+      for ( let i = 0; i < this.imageNeedDisposeUniqueStack.array.length; ++i ) { 
+        let imageNeedDispose = this.imageNeedDisposeUniqueStack.array[ i ];
+        if (   ( imageNeedDispose == imageInArray[ 0 ] ) || ( imageNeedDispose == imageInArray[ 1 ] )
+            || ( imageNeedDispose == imageOutArray[ 0 ] ) || ( imageNeedDispose == imageOutArray[ 1 ] )
+           ) {
+          this.imageNeedDisposeUniqueStack.array[ i ] = null; // So that input/output images of this method will not be disposed.
+        }
       }
-
       this.imageNeedDisposeUniqueStack.clear();
     }
 
