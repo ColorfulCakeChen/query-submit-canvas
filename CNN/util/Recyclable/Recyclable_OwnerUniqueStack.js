@@ -122,7 +122,7 @@ class OwnerUniqueStack extends Recyclable.Root {
   }
 
   /**
-   * Release all contents (by calling their .disposeResources() and empty this container).
+   * Release all contents (by calling their .disposeResources() and set this container's length to zero).
    */
   clear() {
     this.array.clear();
