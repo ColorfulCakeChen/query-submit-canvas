@@ -557,16 +557,14 @@ class Base extends Recyclable.Root {
 
     // 2.1.2 Create inputs tensor placeholders and sub operation array.
     {
-      let inputTensorPlaceholder0, inputTensorPlaceholder1;
-
       if ( inputScaleBoundsArray0.length != this.input0_channelCount )
         throw Error( `Block.Base.initer(): `
           + `inputScaleBoundsArray0's length ( ${inputScaleBoundsArray0.length} ) should be the same as `
           + `input0's channel count ( ${this.input0_channelCount} ).`
         );
 
-      inputTensorPlaceholder0 = TensorPlaceholder.Base.Pool.get_or_create_by();
-      inputTensorPlaceholder0.set_height_width_channelCount_scaleBoundsArray(
+      this.input0 = TensorPlaceholder.Base.Pool.get_or_create_by();
+      this.input0.set_height_width_channelCount_scaleBoundsArray(
         this.input0_height, this.input0_width,
         this.input0_channelCount, inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
         inputScaleBoundsArray0 );
@@ -584,14 +582,14 @@ class Base extends Recyclable.Root {
             + `input1's channel count ( ${this.input1_channelCount} ).`
           );
 
-        inputTensorPlaceholder1 = TensorPlaceholder.Base.Pool.get_or_create_by();
-        inputTensorPlaceholder1.set_height_width_channelCount_scaleBoundsArray(
+        this.input1 = TensorPlaceholder.Base.Pool.get_or_create_by();
+        this.input1.set_height_width_channelCount_scaleBoundsArray(
           this.input1_height, this.input1_width, this.input1_channelCount,
           undefined, undefined, // channelCount_lowerHalf, channelCount_higherHalf
           inputScaleBoundsArray1 );
       }
 
-      this.operationArray = Operation.TwinArray.Pool.get_or_create_by( inputTensorPlaceholder0, inputTensorPlaceholder1, this.outputTensorCount );
+      this.operationArray = Operation.TwinArray.Pool.get_or_create_by( this.input0, this.input1, this.outputTensorCount );
     }
 
     // Note: Once an operation is created (even if it just do nothing (e.g. ( pointwise1.bExisted == false ) ), it should always
@@ -993,24 +991,23 @@ class Base extends Recyclable.Root {
     //
     // Note: The .outputX are just read only property returning .operationArray.outputX.
 
-    // 2. Because .inputX are created by this block, they should be released by this block.
-    //
-    // Note: The .inputX are just read only property returning .operationArray.inputX, so fetch them before disposing .operationArray.
-    //
-    let input0 = this.input0;
-    let input1 = this.input1;
-    {
-      if ( input1 )
-        input1.disposeResources_and_recycleToPool();
- 
-      if ( input0 )
-        input0.disposeResources_and_recycleToPool();
-    }
-
-    // 3.
+    // 2.
     if ( this.operationArray ) {
       this.operationArray.disposeResources_and_recycleToPool();
       this.operationArray = null;
+    }
+
+    // 3. Because .inputX are created by this block, they should be released by this block.
+    {
+      if ( this.input1 ) {
+        this.input1.disposeResources_and_recycleToPool();
+        this.input1 = null;
+      }
+ 
+      if ( this.input0 ) {
+        this.input0.disposeResources_and_recycleToPool();
+        this.input0 = null;
+      }
     }
 
     // 4.
@@ -1411,9 +1408,6 @@ class Base extends Recyclable.Root {
       return this.operationArray.input1.channelCount;
     return 0;
   }
-
-  get input0() { return this.operationArray.input0; }
-  get input1() { return this.operationArray.input1; }
 
 
   get outputHeight() { return this.operationArray.output0.height; }
