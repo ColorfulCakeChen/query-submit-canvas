@@ -251,23 +251,27 @@ class Base extends Recyclable.Root {
     this.imageInArray_Fake = Recyclable.Array.Pool.get_or_create_by( 2 );
     this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.001 );
     this.arrayTemp_forInterleave_asGrouptTwo = Recyclable.Array.Pool.get_or_create_by( 0 ); // Used by calcConcatShuffleSplit().
+    this.imageNeedDisposeUniqueStack = Recyclable.OwnerUniqueStack.Pool.get_or_create_by();
   }
 
   /** @override */
   disposeResources() {
-    this.arrayTemp_forInterleave_asGrouptTwo.disposeResources_and_recycleToPool();
+    this.imageNeedDisposeUniqueStack?.disposeResources_and_recycleToPool();
+    this.imageNeedDisposeUniqueStack= null;
+
+    this.arrayTemp_forInterleave_asGrouptTwo?.disposeResources_and_recycleToPool();
     this.arrayTemp_forInterleave_asGrouptTwo = null;
 
-    this.asserter_Equal.disposeResources_and_recycleToPool();
+    this.asserter_Equal?.disposeResources_and_recycleToPool();
     this.asserter_Equal = null;
 
-    this.imageInArray_Fake.disposeResources_and_recycleToPool();
+    this.imageInArray_Fake?.disposeResources_and_recycleToPool();
     this.imageInArray_Fake = null;
 
-    this.testCorrectnessInfo.disposeResources_and_recycleToPool();
+    this.testCorrectnessInfo?.disposeResources_and_recycleToPool();
     this.testCorrectnessInfo = null;
 
-    this.channelShufflerBag.disposeResources_and_recycleToPool();
+    this.channelShufflerBag?.disposeResources_and_recycleToPool();
     this.channelShufflerBag = null;
 
     super.disposeResources();
@@ -937,6 +941,10 @@ class Base extends Recyclable.Root {
     //    SHUFFLE_NET_V2_TAIL                    // (4) (ShuffleNetV2's tail)
     //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL   // (7) (ShuffleNetV2_ByMobileNetV1's tail)
 
+!!! ...unfinished... (2022/07/02)
+// Use this.imageNeedDisposeUniqueStack to collect images which may be necessary to be disposed.
+// Before this method returns, remove the input and output image of this method. And then call .clear()
+    this.imageNeedDisposeUniqueStack.clear();
 
     let imageIn0, imageIn1;
 
@@ -1222,6 +1230,17 @@ class Base extends Recyclable.Root {
       NumberImage.Base.calcConcatShuffleSplit(
         imageOutArray, imageOutArray, bShuffle, bSplit,
         this.arrayTemp_forInterleave_asGrouptTwo, concat2Name, testParams.out );
+    }
+
+!!! ...unfinished... (2022/07/02)
+// Use  to collect images which may be necessary to be disposed.
+// Before this method returns, remove the input and output image of this method from this.imageNeedDisposeUniqueStack.
+// And then call .clear()
+    {
+      for ( ) { 
+      }
+
+      this.imageNeedDisposeUniqueStack.clear();
     }
 
     return imageOutArray;
