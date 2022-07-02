@@ -407,7 +407,7 @@ class Base extends TestParams.Base {
    *
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise1 convolution, bias and activation.
    */
-  use_pointwise1( inputImage, pointwise1ChannelCount, pointwiseName, parametersDesc ) {
+  use_pointwise1( inputImage, pointwise1ChannelCount, io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
     let result = inputImage.clone_byPointwise_NonPassThrough( pointwise1ChannelCount,
       this.in.paramsNumberArrayObject.pointwise1Filters, this.out.inferencedParams.bPointwise1Bias,
       this.in.paramsNumberArrayObject.pointwise1Biases, this.out.inferencedParams.pointwise1ActivationId, pointwiseName, parametersDesc );
@@ -422,7 +422,7 @@ class Base extends TestParams.Base {
    *
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise1 convolution, bias and activation.
    */
-  use_pointwise1_PassThrough( inputImage, pointwise1ChannelCount, pointwiseName, parametersDesc ) {
+  use_pointwise1_PassThrough( inputImage, pointwise1ChannelCount, io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
     let result = inputImage.clone_byPointwise_PassThrough( pointwise1ChannelCount,
       this.out.inferencedParams.bPointwise1Bias, this.out.inferencedParams.pointwise1ActivationId,
       this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag,
@@ -438,7 +438,7 @@ class Base extends TestParams.Base {
    *
    * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise1 convolution, bias and activation.
    */
-  use_depthwise1( inputImage, depthwiseName, parametersDesc ) {
+  use_depthwise1( inputImage, io_imageNeedDisposeUniqueStack, depthwiseName, parametersDesc ) {
     let result = inputImage.clone_byDepthwise_NonPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.in.paramsNumberArrayObject.depthwise1Filters, this.out.inferencedParams.bDepthwiseBias,
@@ -453,7 +453,7 @@ class Base extends TestParams.Base {
    *
    * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise1 convolution, bias and activation.
    */
-  use_depthwise1_PassThrough( inputImage, depthwiseName, parametersDesc ) {
+  use_depthwise1_PassThrough( inputImage, io_imageNeedDisposeUniqueStack, depthwiseName, parametersDesc ) {
     let result = inputImage.clone_byDepthwise_PassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.out.inferencedParams.bDepthwiseBias, this.out.depthwiseActivationId,
@@ -470,7 +470,7 @@ class Base extends TestParams.Base {
    *
    * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise2 convolution, bias and activation.
    */
-  use_depthwise2( inputImage, depthwiseName, parametersDesc ) {
+  use_depthwise2( inputImage, io_imageNeedDisposeUniqueStack, depthwiseName, parametersDesc ) {
     let result = inputImage.clone_byDepthwise_NonPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.in.paramsNumberArrayObject.depthwise2Filters, this.out.inferencedParams.bDepthwiseBias,
@@ -486,7 +486,7 @@ class Base extends TestParams.Base {
    *
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise20 convolution, bias and activation.
    */
-  use_pointwise20( inputImage, pointwise20ChannelCount, pointwiseName, parametersDesc ) {
+  use_pointwise20( inputImage, pointwise20ChannelCount, io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
 
     let squeezeExcitationPrefixOut = inputImage;
     if ( this.out.bSqueezeExcitationPrefix ) {
@@ -535,7 +535,7 @@ class Base extends TestParams.Base {
    *
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise202 convolution, bias and activation.
    */
-  use_pointwise202( inputImage, pointwise20ChannelCount, pointwiseName, parametersDesc ) {
+  use_pointwise202( inputImage, pointwise20ChannelCount, io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
 
     let squeezeExcitationPrefixOut = inputImage;
     if ( this.out.bSqueezeExcitationPrefix ) {
@@ -580,7 +580,7 @@ class Base extends TestParams.Base {
    *
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise20 pass-through convolution and bias.
    */
-  use_pointwise20_PassThrough( inputImage, pointwise20ChannelCount, pointwiseName, parametersDesc ) {
+  use_pointwise20_PassThrough( inputImage, pointwise20ChannelCount, io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
 
 //!!! (2022/06/08) Since pass-through, the squeeze-and-excitation seems not necessary.
 //     let squeezeExcitationOut = inputImage;
@@ -612,7 +612,7 @@ class Base extends TestParams.Base {
    *
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise21 convolution, bias and activation.
    */
-  use_pointwise21( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
+  use_pointwise21( inputImage, pointwise21ChannelCount, io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
     
     let squeezeExcitationPrefixOut = inputImage;
     if ( this.out.bSqueezeExcitationPrefix ) {
