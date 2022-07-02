@@ -72,6 +72,22 @@ class OwnerUniqueStack extends Recyclable.Root {
     return this.array.length;
   }
 
+  /** @override */
+  disposeResources() {
+
+    if ( this.set ) {
+      this.set.clear();
+      // Do not release the Set object for reducing memory re-allocation.
+    }
+
+    if ( this.array ) {
+      this.array.disposeResources_and_recycleToPool();
+      this.array = null;
+    }
+
+    super.disposeResources();
+  }
+
   /**
    * Append objects to the end of the array. If an object has been added before, the object will not be appended again.
    *
@@ -106,27 +122,11 @@ class OwnerUniqueStack extends Recyclable.Root {
   }
 
   /**
-   * Release all contents.
+   * Release all contents (by calling their .disposeResources() and empty this container).
    */
   clear() {
-    this.array.disposeResources(); // Note: Just .disposeResources(). Do not .recycleToPool().
+    this.array.clear();
     this.set.clear();
-  }
-
-  /** @override */
-  disposeResources() {
-
-    if ( this.set ) {
-      this.set.clear();
-      // Do not release the Set object for reducing memory re-allocation.
-    }
-
-    if ( this.array ) {
-      this.array.disposeResources_and_recycleToPool();
-      this.array = null;
-    }
-
-    super.disposeResources();
   }
 
 }
