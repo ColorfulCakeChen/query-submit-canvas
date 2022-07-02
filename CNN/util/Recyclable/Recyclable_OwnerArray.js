@@ -30,7 +30,7 @@ class OwnerArray extends Recyclable_Array {
   static Pool = new Pool.Root( "Recyclable.OwnerArray.Pool", OwnerArray, OwnerArray.setAsConstructor );
 
   /**
-   * Every element of restArgs should be instance of ChannelPartInfo (even if restArgs has only one element).
+   * Every element of restArgs should be instance of Recyclable.Base (even if restArgs has only one element).
    *
    * Note: This behavior is different from original Array which will views the argement is length (not element) if only one argument
    *       is given.
