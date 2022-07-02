@@ -65,26 +65,52 @@ class OwnerUniqueStack extends Recyclable.Root {
       this.set = new Set();
     }
 
-//!!!
-    for ( let i = 0; i < objectArray.length; ++i ) {
-      this[ i ] = objectArray[ i ];
-    }
+    this.push.apply( this, objectArray );
+  }
+
+  get length() {
+    return this.array.length;
   }
 
   /**
-   * @param {Recyclable.Base} object
-   *   A recyclable object to be appended into this container. If the object has already existed, it will not be append again.
-   * It could be null or undefined (and the null and undefined will be appended if it has never been appended before).
+   * Append objects to the end of the array. If an object has been added before, the object will not be appended again.
    *
-   * @return {boolean}
-   *   Return true, if the object is appended. Return false, if the object has already existed (so does not be appended again).
+   * @param {Recyclable.Base[]} restArgs
+   *   The recyclable objects to be appended into this container. If an object has already existed, it will not be append again.
+   * Object could be null or undefined (and the null and undefined will be appended if it has never been added before).
+   *
+   * @return {number}
+   *   Return the this.length.
    */
-  push( object ) {
-    if ( this.set.has( object ) )
-      return false;
+  push( ...restArgs ) {
+    for ( let i = 0; i < restArgs.length; ++i ) {
+      let object = restArgs[ i ];
+      if ( this.set.has( object ) )
+        continue;
+      this.array.push( object );
+      this.set.add( object );
+    }
+    return this.array.length;
+  }
 
-    this.array.push( object );
-    this.set.add( object );
+  /**
+   * @return {Object}
+   *   Return undefined, if there is no element. Otherwise, return the last obejct of the array.
+   */
+  pop() {
+    if ( this.array.length <= 0 )
+      return undefined;
+    let object = this.array.pop();
+    this.set.delete( object );
+    return object;
+  }
+
+  /**
+   * Release all contents.
+   */
+  clear() {
+    this.array.disposeResources(); // Note: Just .disposeResources(). Do not .recycleToPool().
+    this.set.clear();
   }
 
   /** @override */
