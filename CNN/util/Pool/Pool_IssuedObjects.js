@@ -233,7 +233,6 @@ class IssuedObjects {
     if ( !keptObjectOrArray )
       return;
 
-//!!! ...unfinished... (2022/07/02)
     // Note:
     //
     // In theory, it is possible to collect all nested properties (and skip objects which have already been searched for avoiding
@@ -250,8 +249,7 @@ class IssuedObjects {
     //       is called multiple times with the same object).
     //
     //
-    // Perhaps, needs a Recyclabe.OwnerUniqueStack which has only push, pop, clear. Its .push() will not append ab object if the object
-    // already exists.
+    // Suggestion: Perhaps, caller uses a Recyclabe.OwnerUniqueStack instead of this .sessionCall().
     //
 
     if ( keptObjectOrArray instanceof Array ) { // 1.1 An array of objects to be kept.
@@ -301,21 +299,6 @@ class IssuedObjects {
    */
   static session_pop( keptObjectOrArray ) {
     const SESSION_BORDER_MARK = IssuedObjects.SESSION_BORDER_MARK;
-
-//!!! ...unfinished... (2022/07/02)
-// sessionKeptObjects should recursively collects all nested property (except already been searched ones for avoiding duplication).
-// (Problem: How to collect object inside other container (e.g. Array, Set, Map)?)
-//
-//
-// However, this process will generate many iterator objects (i.e. violates the recycle pool system's principle (i.e. reducing memory
-// re-allocation)).
-//
-// And, even doing so, it is still has the problem which the nested children object may be disposed before their owner parent object.
-//
-// Perhaps, needs a Recyclabe.OwnerUniqueStack which has only push, pop, clear. Its .push() will not append ab object if the object
-// already exists.
-//
-
 
     // 1. Prepare object list to be kept (i.e. not be recycled).
     IssuedObjects.sessionKeptObjectSet_collect_from.call( this );
