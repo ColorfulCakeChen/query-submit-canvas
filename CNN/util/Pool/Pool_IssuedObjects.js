@@ -219,6 +219,70 @@ class IssuedObjects {
   }
 
   /**
+   * Collect objects which need to be kepy (i.e. not recycled) into .sessionKeptObjectSet
+   *
+   * @param {IssuedObjects} this
+   *   The list for handling the objects issuing/recycling.
+   *
+   * @param {Object|Object[]} keptObjectOrArray
+   *   An object or an object array. If the object(s) is not null, they will be kept (i.e. not be recycled) and be moved to parent session.
+   */
+  static sessionKeptObjectSet_collect_from( keptObjectOrArray ) {
+    this.sessionKeptObjectSet.clear();
+
+    if ( !keptObjectOrArray )
+      return;
+
+//!!! ...unfinished... (2022/07/02)
+    // In theory, it is possible to collect all nested properties (and skip objects which have already been searched for avoiding
+    // duplication) recursively. In reality, however, this process has some problems:
+    //
+    //   - Many iterator objects might be generated for visiting container (e.g. Set, Map). Generating many objects violates this
+    //       recycle pool system's principle (i.e. reducing memory re-allocation).
+    //
+    //   - Time consuming. For example, if a object property is just pure number Array (e.g. NumberImage.Base.dataArray), visiting
+    //       its every element for finding recyclable object is unnecessary, meaningless and just wasting CPU time.
+    //
+    //
+    //
+    // And, even doing so, it is still has the problem which the nested children object may be disposed before their owner parent object.
+    //
+    // Perhaps, needs a Recyclabe.OwnerUniqueStack which has only push, pop, clear. Its .push() will not append ab object if the object
+    // already exists.
+    //
+
+    if ( keptObjectOrArray instanceof Array ) { // 1.1 An array of objects to be kept.
+      for ( let i = 0; i < keptObjectOrArray.length; ++i ) {
+        let keptObject = keptObjectOrArray[ i ];
+        if ( keptObject ) {
+
+//!!! (2022/06/25 Remarked) Do not know which recyclePool. Perhaps, keptObject.constructor.Pool.recycled_has()
+// //!!! ...unfinished... (2022/06/25) Which recyclePool?
+//               if ( this.recycledObjects.has( keptObject ) )
+//                 throw Error( `Pool.IssuedObjects.session_pop(): `
+//                   + `The object to be kept (i.e. not to be recycled) ( ${keptObject} ) `
+//                   + `should not already be recycled (i.e. should not be inside .recycledObjects).`
+//                 );
+
+          this.sessionKeptObjectSet.add( keptObject );
+        }
+      }
+
+    } else if ( keptObjectOrArray instanceof Object ) { // 1.2 A single object to be kept.
+
+//!!! (2022/06/25 Remarked) Do not know which recyclePool. Perhaps, keptObject.constructor.Pool.recycled_has()
+// //!!! ...unfinished... (2022/06/25) Which recyclePool?
+//           if ( this.recycledObjects.has( keptObjectOrArray ) )
+//             throw Error( `Pool.IssuedObjects.session_pop(): `
+//               + `The object to be kept (i.e. not to be recycled) ( ${keptObjectOrArray} ) `
+//               + `should not already be recycled (i.e. should not be inside .recycledObjects).`
+//             );
+
+      this.sessionKeptObjectSet.add( keptObjectOrArray );
+    }
+  }
+
+  /**
    * End a auto-recycling session. This method will pop all objects from IssuedObjects.array until encountering SESSION_BORDER_MARK.
    *
    *   - If the popped objects are not listed in keptObjectArray, they will be recycled.
@@ -251,39 +315,7 @@ class IssuedObjects {
 
 
     // 1. Prepare object list to be kept (i.e. not be recycled).
-    {
-      this.sessionKeptObjectSet.clear();
-      if ( keptObjectOrArray ) {
-        if ( keptObjectOrArray instanceof Array ) { // 1.1 An array of objects to be kept.
-          for ( let i = 0; i < keptObjectOrArray.length; ++i ) {
-            let keptObject = keptObjectOrArray[ i ];
-            if ( keptObject ) {
-
-//!!! (2022/06/25 Remarked) Do not know which recyclePool. Perhaps, keptObject.constructor.Pool.recycled_has()
-// //!!! ...unfinished... (2022/06/25) Which recyclePool?
-//               if ( this.recycledObjects.has( keptObject ) )
-//                 throw Error( `Pool.IssuedObjects.session_pop(): `
-//                   + `The object to be kept (i.e. not to be recycled) ( ${keptObject} ) `
-//                   + `should not already be recycled (i.e. should not be inside .recycledObjects).`
-//                 );
-
-              this.sessionKeptObjectSet.add( keptObject );
-            }
-          }
-        } else if ( keptObjectOrArray instanceof Object ) { // 1.2 A single object to be kept.
-          
-//!!! (2022/06/25 Remarked) Do not know which recyclePool. Perhaps, keptObject.constructor.Pool.recycled_has()
-// //!!! ...unfinished... (2022/06/25) Which recyclePool?
-//           if ( this.recycledObjects.has( keptObjectOrArray ) )
-//             throw Error( `Pool.IssuedObjects.session_pop(): `
-//               + `The object to be kept (i.e. not to be recycled) ( ${keptObjectOrArray} ) `
-//               + `should not already be recycled (i.e. should not be inside .recycledObjects).`
-//             );
-
-          this.sessionKeptObjectSet.add( keptObjectOrArray );
-        }
-      }
-    }
+    IssuedObjects.sessionKeptObjectSet_collect_from.call( this );
 
     // 2. Recycle the last session's issued all objects (except objects should be kept).
 
