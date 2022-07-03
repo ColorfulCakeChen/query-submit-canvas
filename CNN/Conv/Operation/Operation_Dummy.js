@@ -45,7 +45,6 @@ class Dummy extends Root {
 
   /** @override */
   disposeResources() {
-    this.apply = null;
     super.disposeResources();
   }
 
