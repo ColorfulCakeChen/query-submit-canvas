@@ -326,7 +326,7 @@ class ConcatShuffleSplit extends Root {
     // 1. 
     this.output0.channelCount_lowerHalf = undefined;  // Note: After concatenation operation, the half channel information are always lost.
     this.output0.channelCount_higherHalf = undefined;
-    this.output0.scaleBoundsArray = this.boundsArraySet.output0;
+    this.output0.ScaleBoundsArray_set_without_clone( this.boundsArraySet.output0 );
 
     // 2.
     if ( this.bShouldShuffleSplit ) { // Only if splitting is required, the output1 does exist.
@@ -342,7 +342,7 @@ class ConcatShuffleSplit extends Root {
       this.output1.channelCount_lowerHalf = undefined;  // Note: After concatenation operation, the half channel information are always lost.
       this.output1.channelCount_higherHalf = undefined;
 
-      this.output1.scaleBoundsArray = this.boundsArraySet.output1;
+      this.output1.ScaleBoundsArray_set_without_clone( this.boundsArraySet.output1 );
 
     } else { // Only concatenation.
       this.output0.channelCount = this.input0.channelCount + this.input1.channelCount;
