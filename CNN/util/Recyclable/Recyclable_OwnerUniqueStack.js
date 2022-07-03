@@ -1,7 +1,7 @@
 export { OwnerUniqueStack };
 
 import * as Pool from "../Pool.js";
-import { Base } from "./Recyclable_Base.js";
+import { Root } from "./Recyclable_Base.js";
 import { OwnerArray } from "./Recyclable_OwnerArray.js";
 
 /**
@@ -23,7 +23,7 @@ import { OwnerArray } from "./Recyclable_OwnerArray.js";
  *         The reason is for convenient and for avoiding un-initialized element object.
  *
  */
-class OwnerUniqueStack extends Recyclable.Root {
+class OwnerUniqueStack extends Root {
 
   /**
    * Used as default Recyclable.OwnerUniqueStack provider for conforming to Recyclable interface.
