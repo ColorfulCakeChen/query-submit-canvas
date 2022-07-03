@@ -500,7 +500,7 @@ class Cases {
   /**  */
   disposeResources() {
     for ( let i = 0; i < this.aCaseArray.length; ++i ) {
-      this.aCaseArray[ i ].disposeResources_and_recycleToPool();
+      this.aCaseArray[ i ].disposeResources();
       this.aCaseArray[ i ] = null;
     }
   }
