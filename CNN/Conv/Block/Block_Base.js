@@ -352,12 +352,14 @@ class Base extends Recyclable.Root {
    * So caller should not use it again.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
-   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Block value bounds
-   * set. It will be kept (not cloned) directly. So caller should not modify them.
+   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Block value bounds set.
+   * It will be referenced (i.e. kept, but not cloned and not released) by this object. So caller should not modify them, but
+   * caller is responsible for releasing it.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray1
-   *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous Block value bounds
-   * set. It will be kept (not cloned) directly. So caller should not modify them.
+   *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous Block value bounds set.
+   * It will be referenced (i.e. kept, but not cloned and not released) by this object. So caller should not modify them, but
+   * caller is responsible for releasing it.
    *
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
@@ -997,14 +999,17 @@ class Base extends Recyclable.Root {
       this.operationArray = null;
     }
 
-    // 3. Because .inputX are created by this block, they should be released by this block.
+    // 3. Because .inputX are created by this block (but .inputX.scaleBoundArray are not), they should be released by this block
+    //    (except .inputX.scaleBoundArray).
     {
       if ( this.input1 ) {
+        this.input1.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray0 which should not be released here. So nullify it.
         this.input1.disposeResources_and_recycleToPool();
         this.input1 = null;
       }
  
       if ( this.input0 ) {
+        this.input0.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray1 which should not be released here. So nullify it.
         this.input0.disposeResources_and_recycleToPool();
         this.input0 = null;
       }
