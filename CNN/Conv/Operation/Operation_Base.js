@@ -406,6 +406,11 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
 
     // Note: Do not use function declared in function because they may generate new function object every time.
 
+!!! ...unfinished... (2022/07/03)
+// Every sub-class will clone the ScaleBoundsArray (for output) because here.
+// However, it will be disposed and replaced by the sub-class's output ScaleBoundsArray.
+// How to reduce the un-used ScaleBoundsArray generating here?
+
     if ( this.input0 ) {
       if ( this.input1 ) {
         if ( this.output0 ) {
