@@ -38,6 +38,7 @@ class Case {
       this.mmBounds = this.aBounds.clone().multiply_byBounds_multiply_byN( this.bBounds, N );
       let rhsBounds = this.aBounds.clone().multiply_byBounds( this.bBounds ).multiply_byN( N );
       this.assert_Bounds_byBounds( "mmBounds", rhsBounds );
+      rhsBounds.disposeResources_and_recycleToPool();
     }
 
     { // Test scaleTranslate_byScaleTranslate().
@@ -47,6 +48,7 @@ class Case {
       this.stBounds = this.aBounds.clone().scaleTranslate_byScaleTranslate( aScaleTranslate );
       let rhsBounds = this.aBounds.clone().multiply_byN( aScaleTranslate.scale ).add_byN( aScaleTranslate.translate );
       this.assert_Bounds_byBounds( "stBounds", rhsBounds );
+      rhsBounds.disposeResources_and_recycleToPool();
     }
 
     { // Test clamp_or_zeroIfNaN().
@@ -69,6 +71,20 @@ class Case {
           + `[ ${this.aBounds.lower}, ${this.aBounds.upper} ].` );
     }
 
+  }
+
+  /**  */
+  disposeResources() {
+    this.aBounds.disposeResources_and_recycleToPool();
+    this.bBounds.disposeResources_and_recycleToPool();
+
+    this.clampedBounds.disposeResources_and_recycleToPool();
+    this.addedBounds.disposeResources_and_recycleToPool();
+    this.multipledBounds.disposeResources_and_recycleToPool();
+    this.aMultipledNBounds.disposeResources_and_recycleToPool();
+
+    this.mmBounds.disposeResources_and_recycleToPool();
+    this.stBounds.disposeResources_and_recycleToPool();
   }
 
   assert_Bounds_byBounds( strBoundsTestName, rhsBounds ) {
@@ -471,6 +487,22 @@ class Cases {
             + `lhsValue ( ${lhsValue} ) should be rhsValue ( ${rhsValue} ).` );
       }
     }
+
+    // Release resources.
+    {
+      tBounds.disposeResources_and_recycleToPool();
+      tBounds = null;
+
+      this.disposeResources();
+    }
+  }
+
+  /**  */
+  disposeResources() {
+    for ( let i = 0; i < this.aCaseArray.length; ++i ) {
+      this.aCaseArray[ i ].disposeResources_and_recycleToPool();
+      this.aCaseArray[ i ] = null;
+    }
   }
 
   assert_BoundsArray_all_byArrayArray( strBoundsArrayTestName, rhsArrayArray ) {
@@ -505,7 +537,9 @@ class Cases {
 
 function testCorrectness() {
 
-  Pool.All.sessionCall( () => {
+//!!! (2022/07/03 Remarked) dispose manually.
+//  Pool.All.sessionCall( () => {
+
     let casesArray = [
       new Cases( 0, [
         new Case(  0, [  1,  2 ], [  3,  4 ],  5, [  3,  3 ], [  4,  6 ], [  3,  8 ], [   5,  10 ] ),
@@ -566,5 +600,6 @@ function testCorrectness() {
 
     ];
 
-  });
+//!!! (2022/07/03 Remarked) dispose manually.
+//  });
 }
