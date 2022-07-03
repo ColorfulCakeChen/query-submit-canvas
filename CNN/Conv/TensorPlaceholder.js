@@ -85,7 +85,9 @@ class Base extends Recyclable.Root {
 
   /**
    *
-   * @param {ActivationEscaping.ScaleBoundsArray} scaleBoundsArray  The tensor placeholder's ScaleBoundsArray.
+   * @param {ActivationEscaping.ScaleBoundsArray} scaleBoundsArray
+   *   The tensor placeholder's ScaleBoundsArray. It will be owned by this TensorPlaceholder. (i.e. This TensorPlaceholder will be
+   * responsible for releasing it.)
    */
   set_height_width_channelCount_scaleBoundsArray(
     height, width, channelCount, channelCount_lowerHalf, channelCount_higherHalf, scaleBoundsArray ) {
@@ -94,6 +96,8 @@ class Base extends Recyclable.Root {
     this.channelCount = channelCount;
     this.channelCount_lowerHalf = channelCount_lowerHalf;
     this.channelCount_higherHalf = channelCount_higherHalf;
+
+    this.ScaleBoundsArray_dispose(); // Release old ScaleBoundsArray.
     this.scaleBoundsArray = scaleBoundsArray;
   }
 
@@ -109,7 +113,8 @@ class Base extends Recyclable.Root {
       this.set_height_width_channelCount_scaleBoundsArray(
         aTensorPlaceholder.height, aTensorPlaceholder.width,
         aTensorPlaceholder.channelCount, aTensorPlaceholder.channelCount_lowerHalf, aTensorPlaceholder.channelCount_higherHalf,
-        aTensorPlaceholder.scaleBoundsArray );
+        aTensorPlaceholder.scaleBoundsArray.clone() // Note: Because TensorPlaceholder owns the ScaleBoundsArray, it should be cloned.
+      );
     } else {
       this.set_height_width_channelCount_scaleBoundsArray(
         undefined, undefined,
