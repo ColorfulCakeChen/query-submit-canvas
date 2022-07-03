@@ -194,27 +194,27 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     }
 
     if ( this.biasesArray ) {
-      Recyclable.Array.Pool.recycle( this.biasesArray );
+      this.biasesArray.disposeResources_and_recycleToPool();
       this.biasesArray = null;
     }
 
     if ( this.biasesShape ) {
-      Recyclable.Array.Pool.recycle( this.biasesShape );
+      this.biasesShape.disposeResources_and_recycleToPool();
       this.biasesShape = null;
     }
 
     if ( this.filtersArray ) {
-      Recyclable.Array.Pool.recycle( this.filtersArray );
+      this.filtersArray.disposeResources_and_recycleToPool();
       this.filtersArray = null;
     }
 
     if ( this.filtersShape ) {
-      Recyclable.Array.Pool.recycle( this.filtersShape );
+      this.filtersShape.disposeResources_and_recycleToPool();
       this.filtersShape = null;
     }
 
     if ( this.poolWindowShape ) {
-      Recyclable.Array.Pool.recycle( this.poolWindowShape );
+      this.poolWindowShape.disposeResources_and_recycleToPool();
       this.poolWindowShape = null;
     }
 
