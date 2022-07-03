@@ -249,7 +249,8 @@ class IssuedObjects {
     //       is called multiple times with the same object).
     //
     //
-    // Suggestion: Perhaps, caller uses a Recyclabe.OwnerUniqueStack instead of this .sessionCall().
+    // Suggestion: Perhaps, caller could use a Recyclabe.OwnerUniqueStack to collect and dispose recyclable objects by caller
+    //             itself. That may be better than using Pool.All.sessionCall().
     //
 
     if ( keptObjectOrArray instanceof Array ) { // 1.1 An array of objects to be kept.
