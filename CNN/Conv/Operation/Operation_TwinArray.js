@@ -119,6 +119,7 @@ class TwinArray extends Root {
 
 !!! ...unfinished... (2022/07/03)
 // Where does .endingDummyOperation.outputX's scaleBoundsArray come from?
+// What about .dispose_intermediate_ScaleBoundsArray() will do for that?
 
     // Because outputs are created by .endingDummyOperation, they should be released by it.
     if ( this.endingDummyOperation ) {
