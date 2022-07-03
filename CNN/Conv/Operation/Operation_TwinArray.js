@@ -367,7 +367,7 @@ class TwinArray extends Root {
    * @param {TensorPlaceholder.Base} endingInput1  The tensor placeholder to become .endingDummyOperation.input1.
    */
   static set_endingInput0_endingInput1( endingInput0, endingInput1 ) {
-    TwinArray.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this.endingDummyOperation, endingInput0, endingInput1 );
+    super.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this.endingDummyOperation, endingInput0, endingInput1 );
   }
 
 
