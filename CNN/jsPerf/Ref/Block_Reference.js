@@ -1093,7 +1093,7 @@ class Base extends Recyclable.Root {
     // 4.0.1 add-input-to-output is possible if same ( height, width ).
     let bAddInputToOutputRequested = false;
     if ( testParams.nConvBlockTypeId__is__MOBILE_NET_V2_BODY_TAIL() ) { // (1)
-      if (   ( inferencedParams.bDepthwiseRequestedAndNeeded == false )  // Either no depthwise (so output is same ( height, width ).
+      if (   ( inferencedParams.bDepthwiseRequestedAndNeeded == false )  // Either no depthwise (so output is same ( height, width )).
           || ( depthwisePadInfo.output_height_width_is_same_as_input() ) // Or has depthwise and output is same ( height, width ).
          ) { 
         bAddInputToOutputRequested = true;
