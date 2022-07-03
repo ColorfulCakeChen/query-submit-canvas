@@ -1,5 +1,7 @@
 export { testCorrectness };
 
+import * as Pool from "../util/Pool.js";
+import * as Recyclable from "../util/Recyclable.js";
 import * as RandTools from "../util/RandTools.js";
 import * as TensorTools from "../util/TensorTools.js";
 import * as FloatValue from "../Unpacker/FloatValue.js";
@@ -10,7 +12,7 @@ import * as FloatValue from "../Unpacker/FloatValue.js";
 class Base {
 
   constructor() {
-    this.asserter_Equal = new TensorTools.Asserter_Equal();
+    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by();
   }
 
   assert_PropertyProperty_Value( strThisPropertyName, strThisPropertyPropertyName, rhsValue ) {
@@ -27,6 +29,12 @@ class Base {
       ``, // rhsNumberName,
       ``  // postfixMsg
     );
+  }
+
+  /**  */
+  disposeResources() {
+    this.asserter_Equal.disposeResources_and_recycleToPool();
+    this.asserter_Equal = null;
   }
 
 }
@@ -110,6 +118,7 @@ class Case extends Base {
       }
     }
 
+    this.disposeResources();
   }
 
 }
@@ -123,6 +132,7 @@ class Cases extends Base {
   constructor() {
     super();
 
+    this.disposeResources();
   }
 
 }
