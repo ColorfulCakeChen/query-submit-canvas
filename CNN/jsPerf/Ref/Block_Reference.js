@@ -881,6 +881,9 @@ class Base extends Recyclable.Root {
       asserter.propertyValueLE( "tensorWeightCountExtracted", tensorWeightCountTotal );
     }
 
+    asserter.disposeResources_and_recycleToPool();
+    asserter = null;
+
     return block;
   }
 
