@@ -523,7 +523,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       return true;
 
     } finally { // Release temporary resource.
-      if ( aFiltersBiasesPartInfoArray )
+      if ( aFiltersBiasesPartInfoArray ) {
         aFiltersBiasesPartInfoArray.disposeResources_and_recycleToPool();
         aFiltersBiasesPartInfoArray = null;
       }
