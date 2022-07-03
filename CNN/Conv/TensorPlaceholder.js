@@ -74,6 +74,17 @@ class Base extends Recyclable.Root {
   }
 
   /**
+   * This method will release current ScaleBoundsArray (if exists).
+   *
+   * @param {ActivationEscaping.ScaleBoundsArray} aScaleBoundsArray
+   *   This ScaleBoundsArray will be kept directly (without clone).
+   */
+  ScaleBoundsArray_set_without_clone( aScaleBoundsArray ) {
+    this.ScaleBoundsArray_dispose(); // Release old ScaleBoundsArray.
+    this.scaleBoundsArray = aScaleBoundsArray;
+  }
+
+  /**
    * Release (and recycle) .scaleBoundsArray (if exists).
    */
   ScaleBoundsArray_dispose() {
@@ -97,8 +108,7 @@ class Base extends Recyclable.Root {
     this.channelCount_lowerHalf = channelCount_lowerHalf;
     this.channelCount_higherHalf = channelCount_higherHalf;
 
-    this.ScaleBoundsArray_dispose(); // Release old ScaleBoundsArray.
-    this.scaleBoundsArray = scaleBoundsArray;
+    this.ScaleBoundsArray_set_without_clone( scaleBoundsArray );
   }
 
   /**
