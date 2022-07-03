@@ -201,7 +201,7 @@ class ConcatAlongAxisId2 extends Root {
     this.output0.channelCount = this.input0.channelCount + this.input1.channelCount;
     this.output0.channelCount_lowerHalf = undefined;  // Note: After concatenation operation, the half channel information will be lost.
     this.output0.channelCount_higherHalf = undefined;
-    this.output0.scaleBoundsArray = this.boundsArraySet.output0;
+    this.output0.ScaleBoundsArray_set_without_clone( this.boundsArraySet.output0 );
 
     // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
     {
