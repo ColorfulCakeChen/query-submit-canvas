@@ -1,5 +1,6 @@
 export { Base } from "./Operation/Operation_Base.js";
 export { Root } from "./Operation/Operation_Base.js";
+export { Dummy } from "./Operation/Operation_Dummy.js";
 export { TwinArray } from "./Operation/Operation_TwinArray.js";
 export { AddTwoTensors } from "./Operation/Operation_AddTwoTensors.js";
 export { MultiplyTwoTensors } from "./Operation/Operation_MultiplyTwoTensors.js";
