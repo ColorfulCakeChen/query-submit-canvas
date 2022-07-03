@@ -113,7 +113,7 @@ class Base extends Recyclable.Root {
       this.set_height_width_channelCount_scaleBoundsArray(
         aTensorPlaceholder.height, aTensorPlaceholder.width,
         aTensorPlaceholder.channelCount, aTensorPlaceholder.channelCount_lowerHalf, aTensorPlaceholder.channelCount_higherHalf,
-        aTensorPlaceholder.scaleBoundsArray.clone() // Note: Because TensorPlaceholder owns the ScaleBoundsArray, it should be cloned.
+        aTensorPlaceholder.scaleBoundsArray?.clone() // Note: Because TensorPlaceholder owns the ScaleBoundsArray, it should be cloned.
       );
     } else {
       this.set_height_width_channelCount_scaleBoundsArray(
