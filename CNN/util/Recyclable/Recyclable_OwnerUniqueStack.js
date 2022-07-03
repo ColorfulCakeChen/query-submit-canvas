@@ -38,7 +38,7 @@ class OwnerUniqueStack extends Root {
    */
   constructor( ...restArgs ) {
     super();
-    OwnerArray.setAsConstructor_self.call( this, restArgs );
+    OwnerUniqueStack.setAsConstructor_self.call( this, restArgs );
   }
 
   /**
@@ -51,7 +51,7 @@ class OwnerUniqueStack extends Root {
    */
   static setAsConstructor( ...restArgs ) {
     super.setAsConstructor();
-    OwnerArray.setAsConstructor_self.call( this, restArgs );
+    OwnerUniqueStack.setAsConstructor_self.call( this, restArgs );
     return this;
   }
 
