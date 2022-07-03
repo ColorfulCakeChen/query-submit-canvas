@@ -85,16 +85,24 @@ class Base extends Recyclable.Root {
     this.input0_ScaleBoundsArray = input0_ScaleBoundsArray.clone();
     this.input1_ScaleBoundsArray = input1_ScaleBoundsArray?.clone();
 
-!!! ...unfinished... (2022/07/03)
-// BoundsArraySetClass is classs (i.e. not instance). It can not be tested by instanceof.
-//
-
     // Note1: Different BoundsArraySet class have different arguments.
-    // Note2: NumberImage's BoundsArraySet always has only output0.
-    if ( BoundsArraySetClass instanceof BoundsArraySet.ConvBiasActivation ) {
-      this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by( input0_ScaleBoundsArray, depth );
-    } else {
-      this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by( input0_ScaleBoundsArray, input1_ScaleBoundsArray, depth, undefined );
+    // Note2: BoundsArraySetClass is classs (i.e. not instance). It can not be tested by instanceof.
+    // Note3: NumberImage's BoundsArraySet always has only output0.
+    //
+    switch ( BoundsArraySetClass ) {
+      case BoundsArraySet.InputsOutputs:
+        this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by( input0_ScaleBoundsArray, input1_ScaleBoundsArray, depth, undefined );
+        break;
+
+      case BoundsArraySet.ConvBiasActivation:
+      case BoundsArraySet.Depthwise:
+      case BoundsArraySet.Pointwise:
+        this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by( input0_ScaleBoundsArray, depth );
+        break;
+
+      default:
+        throw Error( `NumberImage.Base.setAsConstructor_self(): Unknown BoundsArraySetClass ( ${BoundsArraySetClass} ).` );
+        break;
     }
 
     // Default value bounds for an image. (Note: Do not use .filledValue as bounds.)
