@@ -337,8 +337,6 @@ class Base extends Recyclable.Root {
 
     {
       this.calcResult( imageInArraySelected, imageOutReferenceArray ); // Output is an array with two elements.
-      
-      ActivationEscaping.ScaleBoundsArray.Pool; //!!! For Debug.
 
       if ( imageOutReferenceArray.length != 2 )
         throw Error(
@@ -349,8 +347,6 @@ class Base extends Recyclable.Root {
 
     Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "Block_Reference.Base.block_create_apply_internal()",
       Base.block_create_apply_internal, this );
-
-    ActivationEscaping.ScaleBoundsArray.Pool; //!!! For Debug.
 
     tf.dispose( outputTensor3dArray );
 
