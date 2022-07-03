@@ -91,13 +91,14 @@ class Base extends Recyclable.Root {
     //
     switch ( BoundsArraySetClass ) {
       case BoundsArraySet.InputsOutputs:
-        this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by( input0_ScaleBoundsArray, input1_ScaleBoundsArray, depth, undefined );
+        this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by(
+          this.input0_ScaleBoundsArray, this.input1_ScaleBoundsArray, depth, undefined );
         break;
 
       case BoundsArraySet.ConvBiasActivation:
       case BoundsArraySet.Depthwise:
       case BoundsArraySet.Pointwise:
-        this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by( input0_ScaleBoundsArray, depth );
+        this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by( this.input0_ScaleBoundsArray, depth );
         break;
 
       default:
