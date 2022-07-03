@@ -85,6 +85,10 @@ class Base extends Recyclable.Root {
     this.input0_ScaleBoundsArray = input0_ScaleBoundsArray.clone();
     this.input1_ScaleBoundsArray = input1_ScaleBoundsArray?.clone();
 
+!!! ...unfinished... (2022/07/03)
+// BoundsArraySetClass is classs (i.e. not instance). It can not be tested by instanceof.
+//
+
     // Note1: Different BoundsArraySet class have different arguments.
     // Note2: NumberImage's BoundsArraySet always has only output0.
     if ( BoundsArraySetClass instanceof BoundsArraySet.ConvBiasActivation ) {
