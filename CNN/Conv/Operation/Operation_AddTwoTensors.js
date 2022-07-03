@@ -188,7 +188,7 @@ class AddTwoTensors extends Root {
         }
       }
 
-      this.output0.scaleBoundsArray = this.boundsArraySet.output0;
+      this.output0.ScaleBoundsArray_set_without_clone( this.boundsArraySet.output0 );
 
       // Release for reducing memory usage. (Since it has been transferred to inside the output tensor placeholder.)
       {
