@@ -1132,9 +1132,10 @@ class Base extends Recyclable.Root {
       // Residual Connection.
       if ( bAddInputToOutputRequested )
         if ( pointwise20Result.depth == testParams.out.input0_channelCount ) { // add-input-to-output is possible if same channel count.
-          pointwise20Result = imageOutArray[ 0 ]
-            = pointwise20Result.clone_byAdd( imageIn0, "Pointwise20_AddInputToOutput", testParams.out );
-          this.imageNeedDisposeUniqueStack.push( pointwise20Result );
+          let pointwise20ResultOld = pointwise20Result;
+          pointwise20Result = imageOutArray[ 0 ] = pointwise20ResultOld.clone_byAdd(
+            imageIn0, "Pointwise20_AddInputToOutput", testParams.out );
+          this.imageNeedDisposeUniqueStack.push( pointwise20ResultOld );
         }
     }
 
@@ -1167,9 +1168,12 @@ class Base extends Recyclable.Root {
       //
       // Always using input0 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
       if ( bAddInputToOutputRequested )
-        if ( pointwise21Result.depth == testParams.out.input0_channelCount ) // add-input-to-output is possible if same channel count.
-          pointwise21Result = imageOutArray[ 1 ] = pointwise21Result.clone_byAdd(
+        if ( pointwise21Result.depth == testParams.out.input0_channelCount ) { // add-input-to-output is possible if same channel count.
+          let pointwise21ResultOld = pointwise21Result;
+          pointwise21Result = imageOutArray[ 1 ] = pointwise21ResultOld.clone_byAdd(
             imageIn0, this.imageNeedDisposeUniqueStack, "Pointwise21_AddInputToOutput", testParams.out );
+          this.imageNeedDisposeUniqueStack.push( pointwise21ResultOld );
+        }
 
     } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY_or_TAIL() ) { // (3 or 4)
       imageOutArray[ 1 ] = imageIn1;
