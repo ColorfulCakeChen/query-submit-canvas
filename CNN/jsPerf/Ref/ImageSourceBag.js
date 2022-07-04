@@ -153,44 +153,44 @@ class Base extends Recyclable.Root {
   static internal_getImage_by(
     originalHeight, originalWidth, channelCount, depthwiseFilterHeight = 1, depthwiseFilterWidth = 1, depthwiseStridesPad = 0 ) {
 
-    return this.images.get_or_create_by_arguments1_etc(
-
-      // Called when the requested image has not yet existed.
-      ( originalHeight, originalWidth, channelCount, depthwiseFilterHeight = 1, depthwiseFilterWidth = 1, depthwiseStridesPad = 0 ) => {
-
-        let image;
-
-        // 1. The original image is requested.
-        if ( ( depthwiseFilterHeight == 1 ) && ( depthwiseFilterWidth == 1 ) && ( depthwiseStridesPad == 0 ) ) {
-          let randomOffsetMin = -200; // Just choosed randomly.
-          let randomOffsetMax = +200;
-
-          //!!! (2022/04/21 Remaked) Using Weights.Base.ValueBounds is more like real use case.
-          //let bAutoBounds = true;  // Image pixel channel value bounds are inside the real generated value bounds.
-          let bAutoBounds = false; // Image pixel channel value bounds are inside the default value bounds (i.e. Weights.Base.ValueBounds).
-          image = NumberImage.Base.create_bySequenceRandom( originalHeight, originalWidth, channelCount, randomOffsetMin, randomOffsetMax );
-
-        // 2. The shrinked image requested.
-        } else {
-
-          // Use original image to create shrinked image.
-          let originalImage = Base.internal_getImage_by.call( this, originalHeight, originalWidth, channelCount );
-
-          // Borrow the clone_byDepthwise() function to create an input image which is shrinked by specified filter size and strides and pad.
-          image = originalImage.clone_byDepthwise_NonPassThrough(
-            ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX, // Max Pooling is faster and without filter weights.
-            depthwiseFilterHeight, depthwiseFilterWidth,
-            depthwiseStridesPad,
-            null, false,  // depthwiseFiltersArray, bDepthwiseBias, 
-            null, ValueDesc.ActivationFunction.Singleton.Ids.NONE, // depthwiseBiasesArray, depthwiseActivationId,
-            "Base.internal_getImage_by()", ""
-          );
-        }
-
-        return image;
-      },
-
+    return this.images.get_or_create_by_arguments1_etc( Base.image_createBy, this,
       originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+  }
+
+  /** Called when the requested image has not yet existed. */
+  static image_createBy(
+    originalHeight, originalWidth, channelCount, depthwiseFilterHeight = 1, depthwiseFilterWidth = 1, depthwiseStridesPad = 0 ) {
+
+    let image;
+
+    // 1. The original image is requested.
+    if ( ( depthwiseFilterHeight == 1 ) && ( depthwiseFilterWidth == 1 ) && ( depthwiseStridesPad == 0 ) ) {
+      let randomOffsetMin = -200; // Just choosed randomly.
+      let randomOffsetMax = +200;
+
+      //!!! (2022/04/21 Remaked) Using Weights.Base.ValueBounds is more like real use case.
+      //let bAutoBounds = true;  // Image pixel channel value bounds are inside the real generated value bounds.
+      let bAutoBounds = false; // Image pixel channel value bounds are inside the default value bounds (i.e. Weights.Base.ValueBounds).
+      image = NumberImage.Base.create_bySequenceRandom( originalHeight, originalWidth, channelCount, randomOffsetMin, randomOffsetMax );
+
+    // 2. The shrinked image requested.
+    } else {
+
+      // Use original image to create shrinked image.
+      let originalImage = Base.internal_getImage_by.call( this, originalHeight, originalWidth, channelCount );
+
+      // Borrow the clone_byDepthwise() function to create an input image which is shrinked by specified filter size and strides and pad.
+      image = originalImage.clone_byDepthwise_NonPassThrough(
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX, // Max Pooling is faster and without filter weights.
+        depthwiseFilterHeight, depthwiseFilterWidth,
+        depthwiseStridesPad,
+        null, false,  // depthwiseFiltersArray, bDepthwiseBias, 
+        null, ValueDesc.ActivationFunction.Singleton.Ids.NONE, // depthwiseBiasesArray, depthwiseActivationId,
+        "Base.internal_getImage_by()", ""
+      );
+    }
+
+    return image;
   }
 
   /**
@@ -199,20 +199,20 @@ class Base extends Recyclable.Root {
   static internal_getTensor3d_by(
     originalHeight, originalWidth, channelCount, depthwiseFilterHeight = 1, depthwiseFilterWidth = 1, depthwiseStridesPad = 0 ) {
 
-    return this.tensors.get_or_create_by_arguments1_etc(
-
-      // Called when the requested tensor has not yet existed.
-      ( originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad ) => {
-
-        let image = Base.internal_getImage_by.call( this,
-          originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
-
-        let shape = [ image.height, image.width, image.depth ];
-        let tensor = tf.tensor3d( image.dataArray, shape ); // Create new tensor of specified specification.
-        return tensor;
-      },
-
+    return this.tensors.get_or_create_by_arguments1_etc( Base.tensor_createBy, this,
       originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+  }
+
+  /** Called when the requested tensor has not yet existed. */
+  static tensor_createBy(
+    originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad ) {
+
+    let image = Base.internal_getImage_by.call( this,
+      originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+
+    let shape = [ image.height, image.width, image.depth ];
+    let tensor = tf.tensor3d( image.dataArray, shape ); // Create new tensor of specified specification.
+    return tensor;
   }
 
 }
