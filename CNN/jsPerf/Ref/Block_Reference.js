@@ -869,11 +869,18 @@ class Base extends Recyclable.Root {
 
       // Exclude parameters weights, all the others should be the extracted weight count.
       //
-      // (2022/07/01) Because Params will be release by Block.init(), it can not be used here. Use first operation's beginning position
-      // instead (assume the operation exists and should be a depthwise or pointwise operation so that it has .weightElementOffsetBegin).
+      // (2022/07/04) Because Params will be release by Block.init(), it can not be used here. Use first operation which has beginning
+      // position instead.
       //
       //let Params_weightElementOffsetEnd = extractedParams.weightElementOffsetEnd;
-      let Params_weightElementOffsetEnd = block.operationArray.operationArray[ 0 ].weightElementOffsetBegin;
+      let Params_weightElementOffsetEnd;
+      for ( let i = 0; i < block.operationArray.operationArray.length; ++i ) {
+        let operation = block.operationArray.operationArray[ i ];
+        if ( operation.weightElementOffsetBegin != undefined ) {
+          Params_weightElementOffsetEnd = operation.weightElementOffsetBegin;
+          break;
+        }
+      }
 
       let tensorWeightCountExtracted = ( testParams.in.inputWeightArray.length - Params_weightElementOffsetEnd );
 
