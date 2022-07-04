@@ -1310,15 +1310,20 @@ class Base extends Recyclable.Root {
     if ( bShuffle ) {
       shuffleResult = concatResult.modify_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo,
         "concatShuffleSplitName", "interleave_asGrouptTwo", parametersDesc );
+      concatResult.disposeResources_and_recycleToPool();
+      concatResult = null;
     } else {
       shuffleResult = concatResult;
+      concatResult = null; // (Since it has been transferred to shuffleResult.)
     }
  
     // 3.
     if ( bSplit ) {
       Base.calcSplitAlongAxisId2( shuffleResult, imageOutArray, "concatShuffleSplitName", "split", parametersDesc );
+      shuffleResult.disposeResources_and_recycleToPool();
+      shuffleResult = null;
     } else {
-      imageInArray.length = 2;
+      imageOutArray.length = 2;
       imageOutArray[ 0 ] = shuffleResult;
       imageOutArray[ 1 ] = null;
     }
