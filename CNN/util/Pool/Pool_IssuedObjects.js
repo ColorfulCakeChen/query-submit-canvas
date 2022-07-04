@@ -184,10 +184,10 @@ class IssuedObjects {
    *   A function to be called. It is viewed as a session. All objects the function got by .get_or_create_by() will be recycled
    * except the objects of the function's returned value (an object or an object array).
    *
-   * @return {Object} thisArg
+   * @param {Object} thisArg
    *   The value of this provided for the call to function pfn.
    *
-   * @return {any} restArgs
+   * @param {any} restArgs
    *   All other arguments will be passes into thisArg.pfn().
    *
    * @return {any}
