@@ -68,7 +68,7 @@ class ConcatShuffleSplit extends Root {
     let bShouldShuffleSplit = ( ( bShuffleSplit ) && ( channelShuffler ) ); // Want and could do channel shuffling and splitting.
     let outputTensorCount = ( bShouldShuffleSplit ) ? 2 : 1; // Only if splitting is required (and possible), the output1 does exist.
 
-    super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
+    super( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
     ConcatShuffleSplit.setAsConstructor_self.call( this,
       inputTensorPlaceholder0, inputTensorPlaceholder1,
