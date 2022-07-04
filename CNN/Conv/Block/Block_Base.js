@@ -713,7 +713,7 @@ class Base extends Recyclable.Root {
       // Even if no depthwise, however, a .endingInput1 is necessary for concat1 to operate on. So create a dummy one.
       if ( this.bDepthwise2Requested ) {
         // Note: The two inputs of depthwise12Dummy might be the same one in fact.
-        let depthwise12Dummy = Operation.Root.Pool.get_or_create_by( this.operationArray.endingInput0, depthwise2_input0, 2 );
+        let depthwise12Dummy = Operation.Dummy.Pool.get_or_create_by( this.operationArray.endingInput0, depthwise2_input0, 2 );
         this.operationArray.operation_append( depthwise12Dummy );
       }
     }
