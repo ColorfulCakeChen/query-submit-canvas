@@ -174,7 +174,6 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   disposeResources() {
     this.pfnActivation = null;
     this.pfnOperation = null;
-    this.apply = null;
 
     // If these properties does not exist, assigning value (even undefined) to them will create them. Avoid it.
     {
