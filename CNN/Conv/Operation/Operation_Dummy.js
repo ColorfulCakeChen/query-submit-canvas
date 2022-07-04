@@ -28,19 +28,19 @@ class Dummy extends Root {
    */
   constructor( input0, input1, outputTensorCount, ...restArgs ) {
     super( input0, input1, outputTensorCount, ...restArgs );
-    Base.setAsConstructor_self.call( this );
+    Dummy.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor( input0, input1, outputTensorCount, ...restArgs ) {
     super.setAsConstructor( input0, input1, outputTensorCount, ...restArgs );
-    Base.setAsConstructor_self.call( this );
+    Dummy.setAsConstructor_self.call( this );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self() {
-    Base.setup_apply_dummy.call( this, false, false ); // Default is destroy0 and destroy1.
+    Dummy.setup_apply_dummy.call( this, false, false ); // Default is destroy0 and destroy1.
   }
 
   /** @override */
@@ -63,7 +63,7 @@ class Dummy extends Root {
    *   Whether the .input1's tensor should be destroyed by this operation. It is ignored if .input1 does not exist.
    */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
-    Base.setup_apply_dummy.call( this, bKeepInputTensor0, bKeepInputTensor1 );
+    Dummy.setup_apply_dummy.call( this, bKeepInputTensor0, bKeepInputTensor1 );
   }
 
   /**
