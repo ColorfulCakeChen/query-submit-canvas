@@ -67,14 +67,10 @@ class MultiplyTwoTensors extends Root {
 
   /** @override */
   disposeResources() {
-
     if ( this.boundsArraySet ) {
       this.boundsArraySet.disposeResources_and_recycleToPool();
       this.boundsArraySet = null;
     }
-
-    this.apply = null;
-
     super.disposeResources();
   }
 
