@@ -117,12 +117,6 @@ class TwinArray extends Root {
         this.output0 = null;
     }
 
-//!!! ...unfinished... (2022/07/03)
-// Where does .endingDummyOperation.outputX's scaleBoundsArray come from?
-// What about .dispose_intermediate_ScaleBoundsArray() will do for that?
-//
-// Solution: TensorPlaceholder.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder() should clone the ScaleBoundsArray.
-
     // Because outputs are created by .endingDummyOperation, they should be released by it.
     if ( this.endingDummyOperation ) {
       this.endingDummyOperation.disposeResources_and_recycleToPool();
