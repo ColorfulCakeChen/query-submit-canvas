@@ -81,7 +81,7 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
    *   A shared channel shuffler which could process the specific concatenatedShape and outputGroupCount.
    */
   getChannelShuffler_by( concatenatedHeight, concatenatedWidth, concatenatedDepth, outputGroupCount ) {
-    return this.get_or_create_by_arguments1_etc( Bag.create_by,
+    return this.get_or_create_by_arguments1_etc( Bag.create_by, this,
       concatenatedHeight, concatenatedWidth, concatenatedDepth, outputGroupCount );
   }
 
