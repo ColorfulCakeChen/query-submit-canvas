@@ -84,8 +84,6 @@ class ConcatAlongAxisId2 extends Root {
       this.inputTensors = null;
     }
 
-    this.apply = null;
-
     super.disposeResources();
   }
 
