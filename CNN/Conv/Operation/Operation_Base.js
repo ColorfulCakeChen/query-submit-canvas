@@ -153,7 +153,7 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
    */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
     // Do nothing. (for Operation.Base)
-    thorw Error( `Operation.Base.setKeepInputTensor(): `
+    throw Error( `Operation.Base.setKeepInputTensor(): `
       + `Sub-class should override Operation.Base.setKeepInputTensor().`
     );
   }
@@ -418,7 +418,7 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
   }
 
   static apply_base_just_throw_error() {
-    thorw Error( `Operation.Base.apply(): `
+    throw Error( `Operation.Base.apply(): `
       + `Sub-class should define itself this.apply data property to function.`
     );
   }
