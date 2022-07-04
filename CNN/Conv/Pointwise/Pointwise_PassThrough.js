@@ -234,7 +234,7 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends Recyclable.Base( MultiLay
    *
    */
   get_by_filterValue_biasValue( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
-    return this.get_or_create_by_arguments1_etc( PassThrough_FiltersArray_BiasesArray_Bag.create_by,
+    return this.get_or_create_by_arguments1_etc( PassThrough_FiltersArray_BiasesArray_Bag.create_by, this,
       inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue );
   }
 
