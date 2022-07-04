@@ -1196,8 +1196,8 @@ class Base extends Recyclable.Root {
    * @param {Object} parametersDesc       Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
-   *   Return concatenated image along the axis id 2. If imageIn1 is null, return imageIn2. If imageIn2 is null, return imageIn1.
-   * If both imageIn1 and imageIn2 is null, return null.
+   *   Return concatenated image along the axis id 2. If imageIn1 is null, return imageIn2's copy. If imageIn2 is null, return
+   * imageIn1's copy. If both imageIn1 and imageIn2 is null, return null.
    */
   static calcConcatAlongAxisId2( imageIn1, imageIn2, concatName1, concatName2, parametersDesc ) {
 
@@ -1205,10 +1205,10 @@ class Base extends Recyclable.Root {
       if ( null == imageIn2 )
         return null; // Both input is null. Return null.
       else
-        return imageIn2; // Only input1 is null. Return input2.
+        return imageIn2.clone(); // Only input1 is null. Return input2.
     } else {
       if ( null == imageIn2 )
-        return imageIn1; // Only input2 is null. Return input1.
+        return imageIn1.clone(); // Only input2 is null. Return input1.
       else
         ; // Both input is not null. Do concatenate them in the following.
     }
