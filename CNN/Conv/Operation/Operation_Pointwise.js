@@ -164,7 +164,6 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   disposeResources() {
     this.pfnActivation = null;
     this.pfnConv = null;
-    this.apply = null;
 
     this.bPointwise = undefined;
     this.bKeepInputTensor = undefined;
