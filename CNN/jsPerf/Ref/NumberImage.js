@@ -1310,8 +1310,9 @@ class Base extends Recyclable.Root {
     if ( bShuffle ) {
       shuffleResult = concatResult.modify_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo,
         "concatShuffleSplitName", "interleave_asGrouptTwo", parametersDesc );
-      concatResult.disposeResources_and_recycleToPool();
-      concatResult = null;
+
+      // Note: The concatResult is just modified (i.e. not cloned). So do not dispose concatResult.
+      concatResult = null; // (Since it has been transferred to shuffleResult.)
     } else {
       shuffleResult = concatResult;
       concatResult = null; // (Since it has been transferred to shuffleResult.)
