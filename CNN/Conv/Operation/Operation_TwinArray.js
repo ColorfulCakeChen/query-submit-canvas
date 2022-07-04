@@ -5,6 +5,7 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
 import { Root } from "./Operation_Base.js";
+import { Dummy } from "./Operation_Dummy.js";
 
 /**
  * An array of operations. Every time appending operation, one or parallel twin operations could be appended.
@@ -69,7 +70,7 @@ class TwinArray extends Root {
 
     // In order to handle keep-input-flag correctly (even if no sub operation at all), an ending dummy operation is used.
     {
-      this.endingDummyOperation = Root.Pool.get_or_create_by( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
+      this.endingDummyOperation = Dummy.Pool.get_or_create_by( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
       // The ending dummy operation's output will be the output of this operation array.
       {
