@@ -458,7 +458,7 @@ class Base extends Recyclable.Root {
       }
     }
 
-    let imageOut = Base.Pool.get_or_creae_by(
+    let imageOut = Base.Pool.get_or_create_by(
       outputHeight, outputWidth, outputChannelCount, preFilledValue,
       imageIn.boundsArraySet.output0, null, BoundsArraySet.Depthwise, null );
 
