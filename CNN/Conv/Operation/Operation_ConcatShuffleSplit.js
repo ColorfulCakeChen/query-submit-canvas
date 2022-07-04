@@ -129,7 +129,6 @@ class ConcatShuffleSplit extends Root {
 
   /** @override */
   disposeResources() {
-    this.apply = null;
     this.pfnShuffleSplit = null;
 
     if ( this.boundsArraySet ) {
