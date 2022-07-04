@@ -161,9 +161,9 @@ Case.testTensorShape = [ 1 ];
 
 function testCorrectness() {
 
-  let classOperationRoot = Operation.Root;
+  let classOperationDummy = Operation.Dummy;
   let classOperationTwinArray = Operation.TwinArray;
-  let classTestedArray = [ classOperationRoot, classOperationTwinArray ];
+  let classTestedArray = Recyclable.Array.Pool.get_or_create_by( classOperationDummy, classOperationTwinArray );
 
   let caseId = -1;
   let bInput0, bInput1, outputTensorCount, bKeepInputTensor0, bKeepInputTensor1;
@@ -196,4 +196,7 @@ function testCorrectness() {
       }
     }
   }
+
+  classTestedArray.disposeResources_and_recycleToPool();
+  classTestedArray = null;
 }
