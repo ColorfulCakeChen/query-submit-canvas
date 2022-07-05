@@ -300,7 +300,7 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends Recyclable.Base( MultiLay
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, effectFilterValue, surroundingFilterValue, biasValue ) {
 
-    return new PassThrough_FiltersArray_BiasesArray_Root(
+    return PassThrough_FiltersArray_BiasesArray_Root.Pool.get_or_create_by(
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, effectFilterValue, surroundingFilterValue, biasValue );
   }
