@@ -722,10 +722,11 @@ class Base extends Recyclable.Root {
         else
           bPointwise1Bias_shouldBe = true;
 
-        pointwise1ActivationId_shouldBe = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+        pointwise1ActivationId_shouldBe = testParams.out.nActivationId;
+
       } else {
         bPointwise1Bias_shouldBe = false;
-        pointwise1ActivationId_shouldBe = testParams.out.nActivationId;
+        pointwise1ActivationId_shouldBe = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
       }
     }
 
