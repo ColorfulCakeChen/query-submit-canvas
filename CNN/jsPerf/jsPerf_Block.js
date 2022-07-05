@@ -8,6 +8,7 @@ import * as Weights from "../Unpacker/Weights.js";
 //import * as ValueMax from "../util/ValueMax.js";
 import * as RandTools from "../util/RandTools.js";
 import * as Pool from "../util/Pool.js";
+import * as Recyclable from "../util/Recyclable.js";
 import * as Pool_Asserter from "../util/Pool_Asserter.js";
 import * as BatchIdCalculator from "./BatchIdCalculator.js";
 import * as Block from "../Conv/Block.js";
@@ -161,24 +162,37 @@ class HeightWidthDepth {
 
     // Larger input image for performance testing.
     let inputTensorCount = 2;
-    this.testPerformance_NumberImageArray = new Array( inputTensorCount );
+    this.testPerformance_NumberImageArray = Recyclable.OwnerArray.Pool.get_or_create_by( inputTensorCount );
+
     this.dataTensor3dArray = tf.tidy( () => {
+      let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray( this.depth );
+
       let dataTensor3dArray = new Array( inputTensorCount );
 
       let shape = [ this.height, this.width, this.depth ];
-      let length = tf.util.sizeFromShape( shape );
+      let elementCount = tf.util.sizeFromShape( shape );
 
       for ( let i = 0; i < dataTensor3dArray.length; ++i ) {
-        let numberBegin = ( i * length );
-        let numberEnd = numberBegin + length;
+        let numberBegin = ( i * elementCount );
+        let numberEnd = numberBegin + elementCount;
 
-        let t = tf.range( numberBegin, numberEnd, 1 );
-        let dataTensor3d = tf.reshape( t, shape );
-        dataTensor3dArray[ i ] = dataTensor3d;
+        let image = this.testPerformance_NumberImageArray[ i ] = NumberImage.Base.Pool.get_or_create_by(
+          this.height, this.width, this.depth, undefined,
+          inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, Weights.Base.ValueBounds );
 
-        this.testPerformance_NumberImageArray[ i ] = new NumberImage.Base(
-          this.height, this.width, this.depth, dataTensor3d.dataSync() );
+        for ( let j = numberBegin; j < numberEnd; ++j ) {
+          image.dataArray[ j ] = j;
+        }
+
+//!!! (2022/07/05 Remarked) Replace by the above for-loop.
+//         let t = tf.range( numberBegin, numberEnd, 1 );
+//         let dataTensor3d = tf.reshape( t, shape );
+//        dataTensor3dArray[ i ] = dataTensor3d;
+        dataTensor3dArray[ i ] = tf.tensor( image.dataArray, shape );
       }
+
+      inputScaleBoundsArray.disposeResources_and_recycleToPool();
+      inputScaleBoundsArray = null;
 
       return dataTensor3dArray;
     });
@@ -397,6 +411,11 @@ class HeightWidthDepth {
     if ( this.channelShuffler_ConcatPointwiseConv ) { // Release shared ChannelShuffler.
       this.channelShuffler_ConcatPointwiseConv.disposeResources();
       this.channelShuffler_ConcatPointwiseConv = null;
+    }
+
+    if ( this.testPerformance_NumberImageArray ) {
+      this.testPerformance_NumberImageArray.disposeResources_and_recycleToPool();
+      this.testPerformance_NumberImageArray = null;
     }
   }
 
