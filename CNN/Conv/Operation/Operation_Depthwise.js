@@ -281,6 +281,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    *   The Base object to be determined and modified.
    */
   static setup_bDepthwise_pfn() {
+    this.bKeepInputTensor = false; // (Because this method will arrange function pointer as not-keep-input-tensor.)
 
     // 1.
     if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
