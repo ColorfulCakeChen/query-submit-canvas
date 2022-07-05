@@ -223,6 +223,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    *   The Base object to be determined and modified.
    */
   static setup_bPointwise_pfn() {
+    this.bKeepInputTensor = false; // (Because this method will arrange function pointer as not-keep-input-tensor.)
 
     // 0. Determine whether pointwise operation should exist.
     if ( this.outputChannelCount > 0 ) {
