@@ -544,7 +544,7 @@ class Base extends Recyclable.Root {
         // So that bHigherHalfPassThrough (or bAllPassThrough).
         nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
 
-        let pointwise1_higherHalfPassThrough = ChannelCountCalculator.HigherHalfPassThroughPool.Pool.get_or_create_by(
+        let pointwise1_higherHalfPassThrough = ChannelCountCalculator.HigherHalfPassThrough.Pool.get_or_create_by(
           this.input0_channelCount, this.pointwise1ChannelCount );
 
         inputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.inputChannelCount_lowerHalf;
