@@ -1093,7 +1093,7 @@ class Base extends Recyclable.Root {
         depthwise2Result = testParams.use_depthwise2( imageIn1, this.imageNeedDisposeUniqueStack, "Depthwise2_for_input1", testParams.out );
 
       } else {
-        depthwise2Result = imageIn0; // Since depthwise2 is just no-op, its result is just the same as its input (i.e. input0 (not input1)).
+        depthwise2Result = imageIn1; // Since depthwise2 is just no-op, its result is just the same as its input.
       }
     }
 
