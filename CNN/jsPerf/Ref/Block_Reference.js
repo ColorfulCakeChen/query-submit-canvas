@@ -991,6 +991,9 @@ class Base extends Recyclable.Root {
           testParams.out.input0_channelCount, testParams.out.pointwise1ChannelCount );
 
         pointwise1ChannelCount = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
+
+        pointwise1_higherHalfPassThrough.disposeResources_and_recycleToPool();
+        pointwise1_higherHalfPassThrough = null;
       }
 
       pointwise20ChannelCount = Math.ceil( testParams.out.pointwise20ChannelCount / 2 );
