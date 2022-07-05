@@ -582,6 +582,18 @@ class HeightWidthDepth {
 
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
+
+//!!! (2022/07/05 Temp Added) For debug.
+    try {
+      // After correctness testing done, create all Block for performance testing.
+      this.block_PerformanceTest_init();
+    } catch ( e ) {
+      debugger;
+      throw e;
+    }
+
+
+    
     Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_Block.testCorrectness()", () => {
 
       this.test_FloatValue();
