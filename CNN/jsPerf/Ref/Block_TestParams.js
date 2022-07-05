@@ -288,14 +288,9 @@ class Base extends TestParams.Base {
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( undefined )) for speeding up testing.
  
-//!!! (2022/06/21 Remarked) bias are all inferenced now.
-// //      Bias: undefined,
-// //      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min + 0 ],
-//       Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
-
-//       ActivationId: undefined,
+       ActivationId: undefined,
+//       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 //       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
-       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 //       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
       input0_height: [ 3, 3 ],
