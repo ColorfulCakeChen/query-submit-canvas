@@ -165,7 +165,7 @@ class HeightWidthDepth {
     this.testPerformance_NumberImageArray = Recyclable.OwnerArray.Pool.get_or_create_by( inputTensorCount );
 
     this.dataTensor3dArray = tf.tidy( () => {
-      let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray( this.depth );
+      let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( this.depth );
 
       let dataTensor3dArray = new Array( inputTensorCount );
 
