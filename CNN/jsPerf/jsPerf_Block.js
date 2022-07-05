@@ -590,7 +590,7 @@ class HeightWidthDepth {
   }
 
   // Testing whether the results of different implementation are the same.
-  * testCorrectness() {
+  * testCorrectnessGenerator() {
 
     {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
@@ -720,10 +720,10 @@ function init() {
   ];
 }
 
-function testCorrectness() {
+function* testCorrectness() {
   for ( let i = 0; i < globalThis.testSet_110x120x4_All.length; ++i ) {
     let testSet = globalThis.testSet_110x120x4_All[ i ];
-    testSet.testCorrectness();
+    yield* testSet.testCorrectness();
   }
 }
 
