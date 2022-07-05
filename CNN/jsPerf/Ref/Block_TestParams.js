@@ -279,20 +279,6 @@ class Base extends TestParams.Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.valueOutMinMax = {
-//!!! (2022/04/28 Temp) For testing large channel count.
-//      pointwise1ChannelCount: [ 2, 0 + 3 - 1 ],
-      pointwise1ChannelCount: [ 0, 0 + 3 - 1 ],
-
-      pointwise20ChannelCount: [ 1, 1 + 3 - 1 ],
-
-      // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
-      // (i.e. ( undefined )) for speeding up testing.
- 
-//       ActivationId: undefined,
-//       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-//       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
-       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-
       input0_height: [ 3, 3 ],
       input0_width: [ 4, 5 ],
 
@@ -300,6 +286,17 @@ class Base extends TestParams.Base {
         Block.Params.input0_channelCount.valueDesc.range.min,
         Block.Params.input0_channelCount.valueDesc.range.min + 4 - 1
       ],
+
+      nConvBlockTypeId: [
+        Block.Params.nConvBlockTypeId.valueDesc.range.min,
+        Block.Params.nConvBlockTypeId.valueDesc.range.max
+      ],
+
+//!!! (2022/04/28 Temp) For testing large channel count.
+//      pointwise1ChannelCount: [ 2, 0 + 3 - 1 ],
+      pointwise1ChannelCount: [ 0, 0 + 3 - 1 ],
+
+      pointwise20ChannelCount: [ 1, 1 + 3 - 1 ],
 
       depthwise_AvgMax_Or_ChannelMultiplier: [
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
@@ -327,10 +324,11 @@ class Base extends TestParams.Base {
 // //        ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID,  // (3)
 //       ],
 
-      nConvBlockTypeId: [
-        Block.Params.nConvBlockTypeId.valueDesc.range.min,
-        Block.Params.nConvBlockTypeId.valueDesc.range.max
-      ],
+      depthwiseActivationId:
+        undefined,
+//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+//        [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
       nSqueezeExcitationChannelCountDivisor: [
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
@@ -349,6 +347,20 @@ class Base extends TestParams.Base {
       bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min ],
 //      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
 
+      pointwise20ActivationId:
+        undefined,
+//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+//        [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+
+      // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
+      // (i.e. ( undefined )) for speeding up testing.
+ 
+       ActivationId: undefined,
+//       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+//       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+//       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+
       bKeepInputTensor: undefined,
 //      bKeepInputTensor: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
     };
@@ -362,7 +374,7 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.input0_width,            this.valueOutMinMax.input0_width ),
 
       new TestParams.ParamDescConfig( Block.Params.pointwise20ChannelCount, this.valueOutMinMax.pointwise20ChannelCount ),
-      new TestParams.ParamDescConfig( Block.Params.pointwise20ActivationId, this.valueOutMinMax.ActivationId ),
+      new TestParams.ParamDescConfig( Block.Params.pointwise20ActivationId, this.valueOutMinMax.pointwise20ActivationId ),
 
       new TestParams.ParamDescConfig( Block.Params.nActivationId,           this.valueOutMinMax.ActivationId ),
 
@@ -381,7 +393,7 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,   this.valueOutMinMax.depthwiseFilterHeight ),
       new TestParams.ParamDescConfig( Block.Params.depthwiseFilterWidth,    this.valueOutMinMax.depthwiseFilterWidth ),
       new TestParams.ParamDescConfig( Block.Params.depthwiseStridesPad,     this.valueOutMinMax.depthwiseStridesPad ),
-      new TestParams.ParamDescConfig( Block.Params.depthwiseActivationId,   this.valueOutMinMax.ActivationId ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseActivationId,   this.valueOutMinMax.depthwiseActivationId ),
 
       new TestParams.ParamDescConfig( Block.Params.pointwise1ChannelCount,  this.valueOutMinMax.pointwise1ChannelCount ),
 
