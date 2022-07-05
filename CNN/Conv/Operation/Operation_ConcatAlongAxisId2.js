@@ -79,7 +79,7 @@ class ConcatAlongAxisId2 extends Root {
     }
 
     if ( this.inputTensors ) {
-      this.inputTensors.lentth = 0; // Clear the dangling tensors.
+      this.inputTensors.length = 0; // Clear the dangling tensors.
       this.inputTensors.disposeResources_and_recycleToPool();
       this.inputTensors = null;
     }
