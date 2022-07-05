@@ -122,20 +122,24 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
       if ( bExtractOk ) {
         try {
 
-!!! ...unfinished... (2022/07/05)
-// The .shape of tf.tensor (i.e. this.filtersTensor4d, this.biasesTensor3d) will keep the this.filtersShape (which is a Recyclable.Array)
-// That is a problem because here will recycle the .filtersShape and .biasesShape.
-
           if ( this.filtersShape && this.filtersArray ) {
             this.filtersTensor4d = tf.tensor( this.filtersArray, this.filtersShape );
-            this.filtersShape.disposeResources_and_recycleToPool(); this.filtersShape = null; // Release for reducing memory usage.
-            this.filtersArray.disposeResources_and_recycleToPool(); this.filtersArray = null;
+            this.filtersArray.disposeResources_and_recycleToPool(); this.filtersArray = null; // Release for reducing memory usage.
+
+            // Note: Because .filtersShape will be kept by .filtersTensor4d internally, it can not be released here.
+
+//!!! (2022/07/05 Remarked) Because .filtersShape will be kept by .filtersTensor4d internally, it can not be released here.
+//            this.filtersShape.disposeResources_and_recycleToPool(); this.filtersShape = null;
           }
 
           if ( this.biasesShape && this.biasesArray ) {
             this.biasesTensor3d = tf.tensor( this.biasesArray, this.biasesShape );
-            this.biasesShape.disposeResources_and_recycleToPool(); this.biasesShape = null; // Release for reducing memory usage.
-            this.biasesArray.disposeResources_and_recycleToPool(); this.biasesArray = null;
+            this.biasesArray.disposeResources_and_recycleToPool(); this.biasesArray = null; // Release for reducing memory usage.
+
+            // Note: Because .biasesShape will be kept by .biasesTensor3d internally, it can not be released here.
+
+//!!! (2022/07/05 Remarked) Because .biasesShape will be kept by .biasesTensor3d internally, it can not be released here.
+//            this.biasesShape.disposeResources_and_recycleToPool(); this.biasesShape = null;
           }
 
           this.output0.set_height_width_channelCount_scaleBoundsArray(
