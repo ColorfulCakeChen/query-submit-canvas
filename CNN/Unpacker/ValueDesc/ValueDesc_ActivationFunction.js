@@ -57,8 +57,12 @@ class ActivationFunction extends Int {
 
   constructor() {
 
-    super( 0, 7,
-      [ "NONE",  "CLIP_BY_VALUE_N3_P3", "TANH",  "SIN", "RELU6",  "COS",  "SIGMOID", "RELU" ], //  "SOFTPLUS" ],
+//!!! (2022/07/05 Remarked) For speed-up testing.
+//    super( 0, 7,
+//      [ "NONE",  "CLIP_BY_VALUE_N3_P3", "TANH",  "SIN", "RELU6",  "COS",  "SIGMOID", "RELU" ], //  "SOFTPLUS" ],
+
+    super( 0, 1,
+      [ "NONE",  "CLIP_BY_VALUE_N3_P3" ],
 
       [
         new ActivationFunction.Info( 0, null, null, null, null, null ),
@@ -67,6 +71,8 @@ class ActivationFunction extends Int {
           ActivationFunction.reference_clipByValue_Negative3_Positive3,
           new FloatValue.Bounds( -3, +3 ), new FloatValue.Bounds( -3, +3 ), new FloatValue.Bounds( -3, +3 ) ),
 
+//!!! (2022/07/05 Remarked) For speed-up testing.
+/*
         new ActivationFunction.Info( 2, tf.tanh, ActivationFunction.reference_tanh,
           new FloatValue.Bounds( -1, +1 ), new FloatValue.Bounds( -0.005, +0.005 ), new FloatValue.Bounds( -0.005, +0.005 ) ),
 
@@ -97,6 +103,7 @@ class ActivationFunction extends Int {
         //new ActivationFunction.Info( 8, tf.softplus, ActivationFunction.reference_softplus,
         //  new FloatValue.Bounds( 0, +Infinity ),
         //  new FloatValue.Bounds( +5, +Infinity ), new FloatValue.Bounds( +5, +Infinity ) ),
+*/
       ]
     );
 
