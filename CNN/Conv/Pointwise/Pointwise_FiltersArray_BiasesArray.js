@@ -396,7 +396,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   //               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf,  true ) ] )
   //             ];
 
-            aFiltersBiasesPartInfoArray = Recyclable.Array.Pool.get_or_create_by(
+            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
               FiltersBiasesPartInfo.Pool.get_or_create_by(
                 ChannelPartInfo.Pool.get_or_create_by(
                                                  0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
