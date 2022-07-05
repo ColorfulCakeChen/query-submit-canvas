@@ -590,7 +590,7 @@ class HeightWidthDepth {
   }
 
   // Testing whether the results of different implementation are the same.
-  * testCorrectnessGenerator() {
+  * testCorrectness() {
 
     {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
