@@ -303,11 +303,17 @@ class Base extends Recyclable.Root {
     {
       this.testCorrectnessInfo.prepareBy( imageSourceBag, testParams, channelShufflerBag );
 
-//!!! (2022/07/02 Remarked) Now all intermediate NumberImage should be disposed correctly.
-//    Pool.All.sessionCall( Base.testCorrectness_internal, this );
+      if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
+          || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) // (6 or 7)
+         ) {
+        // Because these conv-block-type will generate pass-through filters, Pool.All.issuedCount will not be the same.
+        // So here does not check that.
+        Base.testCorrectness_internal.call( this );
 
-      Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "Block_Reference.Base.testCorrectness_internal()",
-        Base.testCorrectness_internal, this );
+      } else {
+        Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "Block_Reference.Base.testCorrectness_internal()",
+          Base.testCorrectness_internal, this );
+      }
 
 //!!! (2022/06/10 Remarked) Moved to outter jsPerf_Block to also catch testParamsGenerator's exception.
 //     } catch ( e ) {
