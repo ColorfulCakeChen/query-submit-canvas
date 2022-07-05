@@ -429,7 +429,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           }
 
         } else { // No depthwise (i.e. zero) (so no channel multiplier).
-          aFiltersBiasesPartInfoArray = Recyclable.Array.Pool.get_or_create_by( 0 );
+          aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by();
           // Note: In this case, even if ( this.bBias == true ), the biasesArray will still not be extracted.
         }
       }
