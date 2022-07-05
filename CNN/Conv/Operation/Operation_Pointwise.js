@@ -121,6 +121,11 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
       bExtractOk = super.init( inputWeightArray, weightElementOffsetBegin, this.input0.scaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
       if ( bExtractOk ) {
         try {
+
+!!! ...unfinished... (2022/07/05)
+// The .shape of tf.tensor (i.e. this.filtersTensor4d, this.biasesTensor3d) will keep the this.filtersShape (which is a Recyclable.Array)
+// That is a problem because here will recycle the .filtersShape and .biasesShape.
+
           if ( this.filtersShape && this.filtersArray ) {
             this.filtersTensor4d = tf.tensor( this.filtersArray, this.filtersShape );
             this.filtersShape.disposeResources_and_recycleToPool(); this.filtersShape = null; // Release for reducing memory usage.
