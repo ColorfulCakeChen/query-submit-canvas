@@ -123,7 +123,7 @@ import * as Depthwise from "../Depthwise.js";
  * if ( pointwise1ChannelCount == 0 ), this flag will be false.
  *
  * @member {number} pointwise1ActivationId
- *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the pointwise1 convolution. Usually, it is the
+ *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the pointwise1 convolution. Usually, it uses the
  * default activation function (i.e. nActivationId).
  *
  * @member {string} pointwise1ActivationName
@@ -180,7 +180,7 @@ import * as Depthwise from "../Depthwise.js";
  * pointwise2 convolution). It is always the same as pointwise20ActivationId. It is only meaningful if ( pointwise21ChannelCount > 0 ).
  *
  * @member {number} squeezeExcitationActivationId
- *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of squeeze-and-excitation. Usually, it is the
+ *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of squeeze-and-excitation. Usually, it uses the
  * default activation function (i.e. nActivationId).
  *
  * @member {string} squeezeExcitationActivationName
