@@ -180,8 +180,8 @@ class HeightWidthDepth {
           this.height, this.width, this.depth, undefined,
           inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, Weights.Base.ValueBounds );
 
-        for ( let j = numberBegin; j < numberEnd; ++j ) {
-          image.dataArray[ j ] = j;
+        for ( let j = 0; j < elementCount; ++j ) {
+          image.dataArray[ j ] = numberBegin + j;
         }
 
 //!!! (2022/07/05 Remarked) Replace by the above for-loop.
