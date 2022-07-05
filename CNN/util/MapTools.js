@@ -23,20 +23,20 @@ function get_or_create( containerMap, key, newObjectClass = Map ) {
 }
 
 /**
- * @param {object} container
- *   An object which may be a container or not. If container has method values(), it will be assumed to return an iterator. This
- * function will visit every element by the iterator. If the element still has method values(), they will be visit recursively.
- * If the element does not have method values(), the element will be yielded by this generator.
+ * @param {Map} containerMap
+ *   A map object which will be visited recursively. This function will visit every element by the containerMap. If its element still
+ * is a map object, its elements will be visited recursively. If the element is not a map object, the element will be yielded by this
+ * generator.
  *
  * @return {iterator)
  *   Return an iterator object that contains all values of all containers (recursively).
  */
-function* values_recursively( container ) {
-  if ( container.values instanceof Function ) {
-    for ( let element of container.values() ) {
+function* values_recursively( containerMap ) {
+  if ( containerMap instanceof Map ) {
+    for ( let element of containerMap.values() ) {
       yield* values_recursively( element ); // Try it. Perhaps it also a container.
     }
   } else {
-    yield container; // Since not a container (i.e. just an element), yield it.
+    yield containerMap; // Since not a container (i.e. just an element), yield it.
   }
 }
