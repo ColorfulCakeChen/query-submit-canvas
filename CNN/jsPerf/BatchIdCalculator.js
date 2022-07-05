@@ -14,18 +14,24 @@ class Base {
     this.lastBatchId = -1;
   }
 
+  /**
+   * @return {boolean}
+   *   Return true, if a batch id section is displayed. Return false, if there is no new batch id section should be displayed.
+   */
   checkAndDisplay( currentTestParamsId ) {
     const batchMessageInterval = this.batchMessageInterval;
 
     let currentBatchId = ( currentTestParamsId - ( currentTestParamsId % batchMessageInterval ) ) / batchMessageInterval;
-    if ( this.lastBatchId != currentBatchId ) {
-      let beginTestParamsId = ( this.lastBatchId + 1 ) * batchMessageInterval;
-      let endTestParamsId = ( currentBatchId + 1 ) * batchMessageInterval - 1;
+    if ( this.lastBatchId == currentBatchId )
+      return false;
 
-      console.log( `${tf.getBackend()}, `
-        + `testParams.id between [${beginTestParamsId} - ${endTestParamsId}] ...` );
+    let beginTestParamsId = ( this.lastBatchId + 1 ) * batchMessageInterval;
+    let endTestParamsId = ( currentBatchId + 1 ) * batchMessageInterval - 1;
 
-      this.lastBatchId = currentBatchId;
-    }
+    console.log( `${tf.getBackend()}, `
+      + `testParams.id between [${beginTestParamsId} - ${endTestParamsId}] ...` );
+
+    this.lastBatchId = currentBatchId;
+    return true;
   }
 }
