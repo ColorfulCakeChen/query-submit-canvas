@@ -590,17 +590,19 @@ class HeightWidthDepth {
   }
 
   // Testing whether the results of different implementation are the same.
-  testCorrectness() {
+  * testCorrectness() {
 
-    Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_Block.testCorrectness()", () => {
+    {
+      let pool_all_issuedCount_before = Pool.All.issuedCount;
 
       this.test_FloatValue();
       this.test_Weights_Float32Array_RestrictedClone();
       this.test_ValueRange_valueInputOutputGenerator();
       this.test_Operation();
 
-      tf.tidy( () => {
+      yield;
 
+      {
         let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag and channelShufflerBag.
 
         {
@@ -617,7 +619,10 @@ class HeightWidthDepth {
 
           try {
             for ( let testParams of testParamsGenerator ) {
-              batchIdCalculator.checkAndDisplay( testParams.id );
+              let bDisplayed = batchIdCalculator.checkAndDisplay( testParams.id );
+              if ( bDisplayed )
+                yield; // Since just entering a new batch section, take a break so that memory garbage collector could be activated to work.
+
               testReference.testCorrectness( imageSourceBag, testParams, channelShufflerBag );
             }
 
@@ -650,8 +655,11 @@ class HeightWidthDepth {
             + `result tensor count ( ${memoryInfo_testCorrectness_after.numTensors} ) `
             + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ) `
             + `` );
-      });
-    });
+      }
+
+      Pool_Asserter.assert_Pool_issuedCount( "jsPerf_Block.testCorrectness()", pool_all_issuedCount_before );
+      yield;
+    }
 
     try {
       // After correctness testing done, create all Block for performance testing.
