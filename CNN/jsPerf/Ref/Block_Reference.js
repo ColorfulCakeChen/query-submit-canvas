@@ -303,14 +303,16 @@ class Base extends Recyclable.Root {
     {
       this.testCorrectnessInfo.prepareBy( imageSourceBag, testParams, channelShufflerBag );
 
-      if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
-          || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) // (6 or 7)
-         ) {
-        // Because these conv-block-type will generate pass-through filters, Pool.All.issuedCount will not be the same.
-        // So here does not check that.
-        Base.testCorrectness_internal.call( this );
-
-      } else {
+//!!! (2022/07/05 Temp Remarked) For debug whether memory leak.
+//       if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
+//           || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) // (6 or 7)
+//          ) {
+//         // Because these conv-block-type will generate pass-through filters, Pool.All.issuedCount will not be the same.
+//         // So here does not check that.
+//         Base.testCorrectness_internal.call( this );
+//
+//       } else
+      {
         Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "Block_Reference.Base.testCorrectness_internal()",
           Base.testCorrectness_internal, this );
       }
@@ -343,6 +345,14 @@ class Base extends Recyclable.Root {
 
     {
       this.calcResult( imageInArraySelected, imageOutReferenceArray ); // Output is an array with two elements.
+
+      //!!! (2022/07/05 Temp Added) For debug whether memory leak.
+      // When     ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
+      //       || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) // (6 or 7)
+      {
+        testParams.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources();
+        testParams.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources();
+      }
 
       if ( imageOutReferenceArray.length != 2 )
         throw Error(
