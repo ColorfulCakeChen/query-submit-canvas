@@ -317,6 +317,11 @@ class Base extends Recyclable.Root {
           Base.testCorrectness_internal, this );
       }
 
+//!!! (2022/07/05 Temp Test)
+      {
+        testParams.SequenceRandom_NumberArray_Bag.clear();
+      }
+
 //!!! (2022/06/10 Remarked) Moved to outter jsPerf_Block to also catch testParamsGenerator's exception.
 //     } catch ( e ) {
 //       let backendName = tf.getBackend();
