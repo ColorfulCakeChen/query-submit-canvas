@@ -781,18 +781,14 @@ class Base extends Recyclable.Root {
 
     let bDepthwiseBias_shouldBe;
     {
-//!!! (2022/06/21 Added and Remarked)
-//       if ( !bDepthwiseRequestedAndNeeded ) {
-//           bDepthwiseBias_shouldBe = false;
-//
-//       } else {
-
+      if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
+        bDepthwiseBias_shouldBe = false;
+      } else {
         if ( bLinear_between_depthwise_and_pointwise2 )
           bDepthwiseBias_shouldBe = false;
         else
           bDepthwiseBias_shouldBe = true;
-
-//      }
+      }
     }
 
     asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", testParams.out.depthwise_AvgMax_Or_ChannelMultiplier );
