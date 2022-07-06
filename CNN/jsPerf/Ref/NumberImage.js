@@ -1040,6 +1040,11 @@ class Base extends Recyclable.Root {
           bPassThrough, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
           `${squeezeExcitationName}_intermediatePointwise`, parametersDesc );
 
+        if ( squeezeOut != this ) {
+          squeezeOut.disposeResources_and_recycleToPool();
+          squeezeOut = null;
+        }
+
       } else { // No intermediate pointwise convolution.
         intermediateOut = squeezeOut;
       }
@@ -1055,10 +1060,23 @@ class Base extends Recyclable.Root {
         excitationChannelCount, excitationFiltersArray, bBias_excitationPointwise, excitationBiasesArray, nActivationId,
         bPassThrough, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
         `${squeezeExcitationName}_excitationPointwise`, parametersDesc );
+
+      if ( intermediateOut != this ) {
+        intermediateOut.disposeResources_and_recycleToPool();
+        intermediateOut = null;
+      }
     }
 
     // 4. multiply
-    let multiplyOut = this.clone_byMultiply( excitationOut, `${squeezeExcitationName}_multiply`, parametersDesc );
+    let multiplyOut;
+    {
+      let multiplyOut = this.clone_byMultiply( excitationOut, `${squeezeExcitationName}_multiply`, parametersDesc );
+
+      if ( excitationOut != this ) {
+        excitationOut.disposeResources_and_recycleToPool();
+        excitationOut = null;
+      }
+    }
 
     return multiplyOut;
   }
