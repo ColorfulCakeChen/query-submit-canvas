@@ -288,7 +288,9 @@ class Base extends TestParams.Base {
       ],
 
       nConvBlockTypeId: [
+//!!! (2022/07/06 Temp Remarked) For speed-up debug.
         Block.Params.nConvBlockTypeId.valueDesc.range.min,
+        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD,
         Block.Params.nConvBlockTypeId.valueDesc.range.max
       ],
 
