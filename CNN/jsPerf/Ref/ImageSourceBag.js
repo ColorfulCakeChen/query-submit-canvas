@@ -186,7 +186,7 @@ class Base extends Recyclable.Root {
         depthwiseStridesPad,
         null, false,  // depthwiseFiltersArray, bDepthwiseBias, 
         null, ValueDesc.ActivationFunction.Singleton.Ids.NONE, // depthwiseBiasesArray, depthwiseActivationId,
-        "Base.internal_getImage_by()", ""
+        "", "ImageSourceBag.Base.internal_getImage_by()"
       );
     }
 
