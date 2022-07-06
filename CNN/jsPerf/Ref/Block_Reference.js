@@ -988,7 +988,7 @@ class Base extends Recyclable.Root {
     } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
 
       NumberImage.Base.calcSplitAlongAxisId2(
-        imageInArray[ 0 ], this.imageInArray_Fake, "Split_imageIn_to_imageInArray_0_1", testParams.out );
+        imageInArray[ 0 ], this.imageInArray_Fake, testParams.out, "Split_imageIn_to_imageInArray_0_1" );
 
       imageIn0 = this.imageInArray_Fake[ 0 ];
       imageIn1 = this.imageInArray_Fake[ 1 ];
@@ -1105,14 +1105,14 @@ class Base extends Recyclable.Root {
       // Concatenate depthwise1's result and depthwise2's result.
       concat1Result = NumberImage.Base.calcConcatAlongAxisId2(
         depthwise1Result, depthwise2Result,
-        "Concat1_depthwise1_depthwise2 (SHUFFLE_NET_V2_BY_POINTWISE21_HEAD)", null, testParams.out );
+        testParams.out, "Concat1_depthwise1_depthwise2 (SHUFFLE_NET_V2_BY_POINTWISE21_HEAD)" );
       this.imageNeedDisposeUniqueStack.push( depthwise1Result, depthwise2Result );
 
     } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL() ) { // (10 or 11)
 
       // Concatenate depthwise1's result and input1.
       concat1Result = NumberImage.Base.calcConcatAlongAxisId2( depthwise1Result, imageIn1,
-        "Concat1_depthwise1_input1 (SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL)", null, testParams.out );
+        testParams.out, "Concat1_depthwise1_input1 (SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL)" );
       this.imageNeedDisposeUniqueStack.push( depthwise1Result, imageIn1 );
     }
 
@@ -1164,7 +1164,7 @@ class Base extends Recyclable.Root {
         if ( pointwise20Result.depth == testParams.out.input0_channelCount ) { // add-input-to-output is possible if same channel count.
           let pointwise20ResultOld = pointwise20Result;
           pointwise20Result = imageOutArray[ 0 ] = pointwise20ResultOld.clone_byAdd(
-            imageIn0, "Pointwise20_AddInputToOutput", null, testParams.out );
+            imageIn0, testParams.out, "Pointwise20_AddInputToOutput" );
           this.imageNeedDisposeUniqueStack.push( pointwise20ResultOld );
         }
     }
@@ -1201,7 +1201,7 @@ class Base extends Recyclable.Root {
         if ( pointwise21Result.depth == testParams.out.input0_channelCount ) { // add-input-to-output is possible if same channel count.
           let pointwise21ResultOld = pointwise21Result;
           pointwise21Result = imageOutArray[ 1 ] = pointwise21ResultOld.clone_byAdd(
-            imageIn0, "Pointwise21_AddInputToOutput", null, testParams.out );
+            imageIn0, testParams.out, "Pointwise21_AddInputToOutput" );
           this.imageNeedDisposeUniqueStack.push( pointwise21ResultOld );
         }
 
@@ -1253,7 +1253,7 @@ class Base extends Recyclable.Root {
 
       NumberImage.Base.calcConcatShuffleSplit(
         imageOutArray, imageOutArray, bShuffle, bSplit,
-        this.arrayTemp_forInterleave_asGrouptTwo, concat2Name, testParams.out );
+        this.arrayTemp_forInterleave_asGrouptTwo, testParams.out, concat2Name );
     }
 
     { // Release all intermediate images.
