@@ -675,13 +675,16 @@ class Base extends Recyclable.Root {
    * @param {string} scaleName1                 The 1st part string for debug message of this scaling.
    * @param {string} scaleName2                 The 2nd part string for debug message of this scaling.
    * @param {string} scaleName3                 The 3rd part string for debug message of this scaling.
+   * @param {string} scaleName4                 The 4th part string for debug message of this scaling.
    * @param {Object} parametersDesc             Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return the (modified) image whose every element is scaled according to its channel.
    */
-  static scale_byChannel_withoutAffect_BoundsArraySet( imageIn, scaleArray, scaleName1, scaleName2, scaleName3, parametersDesc ) {
+  static scale_byChannel_withoutAffect_BoundsArraySet( imageIn, scaleArray,
+    scaleName1, scaleName2, scaleName3, scaleName4, parametersDesc ) {
 
+!!!
     if ( scaleArray == null )
       throw Error( `${scaleName1}${ scaleName2 ? `_${scaleName2}` : `` }${ scaleName3 ? `_${scaleName3}` : `` }: `
         + `scaleArray (${scaleArray}) `
@@ -956,8 +959,8 @@ class Base extends Recyclable.Root {
    * @param {Pointwise.PassThrough_FiltersArray_BiasesArray_Bag} aPointwise_PassThrough_FiltersArray_BiasesArray_Bag
    *   A bag for generating pass-through pointwise convolution filters and biases. Only used when ( bPassThrough == true ).
    *
-   * @param {string}   squeezeExcitationName  A string for debug message of this squeeze-and-excitation.
-   * @param {Object}   parametersDesc         Its .toString() for debug message of this block.
+   * @param {Object}   parametersDesc          Its .toString() for debug message of this block.
+   * @param {string[]} squeezeExcitationNames  The strings for debug message of this squeeze-and-excitation.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the squeeze-and-excitation.
@@ -969,12 +972,12 @@ class Base extends Recyclable.Root {
     nActivationId,
     bPassThrough,
     aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
-    squeezeExcitationName, parametersDesc ) {
+    parametersDesc, ...squeezeExcitationNames ) {
 
     if (   ( nSqueezeExcitationChannelCountDivisor == undefined )
         || ( nSqueezeExcitationChannelCountDivisor < ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE )
        )
-      throw Error( `${squeezeExcitationName}: `
+      throw Error( `${squeezeExcitationNames.join( "_" )}: `
         + `nSqueezeExcitationChannelCountDivisor ( ${nSqueezeExcitationChannelCountDivisor} ) `
         + `should be >= `
         + `ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE `
@@ -1017,7 +1020,7 @@ class Base extends Recyclable.Root {
       squeezeOut = this.clone_byDepthwise_NonPassThrough( // average pooling can not pass-through. (only convolution could do pass-through.)
         squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
         squeezeFiltersArray, squeezeBias, squeezeBiasesArray, squeezeActivationId,
-        squeezeExcitationName, "squeezeDepthwise", parametersDesc );
+        parametersDesc, ...squeezeExcitationNames, "squeezeDepthwise" );
     }
 
     // 2. intermediatePointwise
@@ -1043,7 +1046,7 @@ class Base extends Recyclable.Root {
         intermediateOut = squeezeOut.clone_byPointwise(
           intermediateChannelCount, intermediateFiltersArray, bBias_intermediatePointwise, intermediateBiasesArray, nActivationId,
           bPassThrough, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
-          squeezeExcitationName, "intermediatePointwise", parametersDesc );
+          parametersDesc, ...squeezeExcitationNames, "intermediatePointwise" );
 
         if ( squeezeOut != this ) {
           squeezeOut.disposeResources_and_recycleToPool();
@@ -1064,7 +1067,7 @@ class Base extends Recyclable.Root {
       excitationOut = intermediateOut.clone_byPointwise(
         excitationChannelCount, excitationFiltersArray, bBias_excitationPointwise, excitationBiasesArray, nActivationId,
         bPassThrough, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
-        squeezeExcitationName, "excitationPointwise", parametersDesc );
+        parametersDesc, ...squeezeExcitationNames, "excitationPointwise" );
 
       if ( intermediateOut != this ) {
         intermediateOut.disposeResources_and_recycleToPool();
@@ -1075,7 +1078,7 @@ class Base extends Recyclable.Root {
     // 4. multiply
     let multiplyOut;
     {
-      let multiplyOut = this.clone_byMultiply( excitationOut, squeezeExcitationName, "multiply", parametersDesc );
+      let multiplyOut = this.clone_byMultiply( excitationOut, parametersDesc, ...squeezeExcitationNames, "multiply" );
 
       if ( excitationOut != this ) {
         excitationOut.disposeResources_and_recycleToPool();
@@ -1103,18 +1106,17 @@ class Base extends Recyclable.Root {
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
    *
-   * @param {string} interleaveName1  The 1st part string for debug message of this interleaving.
-   * @param {string} interleaveName2  The 1st part string for debug message of this interleaving.
-   * @param {Object} parametersDesc   Its .toString() for debug message of this block.
+   * @param {Object}   parametersDesc   Its .toString() for debug message of this block.
+   * @param {string[]} interleaveNames  The strings for debug message of this interleaving.
    *
    * @return {NumberImage.Base}
    *   Return this object which has been modifed in place.
    */
-  modify_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo, interleaveName1, interleaveName2, parametersDesc ) {
+  modify_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo, parametersDesc, ...interleaveNames ) {
 
     if ( ( this.depth % 2 ) != 0 )
       throw Error( `NumberImage.Base.modify_byInterleave_asGrouptTwo(): `
-        + `${interleaveName1}${ interleaveName2 ? `_${interleaveName2}` : `` }: `
+        + `${interleaveNames.join( "_" )}: `
         + `channel count ( ${this.depth} ) must be even (i.e. divisible by 2). `
         + `(${parametersDesc})`
       );
@@ -1140,11 +1142,10 @@ class Base extends Recyclable.Root {
    * @param {NumberImage.Base} imageOutArray[ 0 ]   The first output image.
    * @param {NumberImage.Base} imageOutArray[ 1 ]   The second output image.
    *
-   * @param {string} splitName1      The 1st part string for debug message of this splitting.
-   * @param {string} splitName2      The 2nd part string for debug message of this splitting.
-   * @param {Object} parametersDesc  Its .toString() for debug message of this block.
+   * @param {Object}   parametersDesc  Its .toString() for debug message of this block.
+   * @param {string[]} splitNames      The strings for debug message of this splitting.
    */
-  static calcSplitAlongAxisId2( imageIn, imageOutArray, splitName1, splitName2, parametersDesc ) {
+  static calcSplitAlongAxisId2( imageIn, imageOutArray, parametersDesc, ...splitNames ) {
 
     imageOutArray.length = 2;
     imageOutArray[ 0 ] = null;
@@ -1214,15 +1215,14 @@ class Base extends Recyclable.Root {
   /**
    * @param {NumberImage.Base} imageIn1   The source image1 to be processed.
    * @param {NumberImage.Base} imageIn2   The source image2 to be processed.
-   * @param {string} concatName1          The 1st part string for debug message of this concatenation.
-   * @param {string} concatName2          The 2nd part string for debug message of this concatenation.
    * @param {Object} parametersDesc       Its .toString() for debug message of this block.
+   * @param {string[]} concatNames        The strings for debug message of this concatenation.
    *
    * @return {NumberImage.Base}
    *   Return concatenated image along the axis id 2. If imageIn1 is null, return imageIn2's copy. If imageIn2 is null, return
    * imageIn1's copy. If both imageIn1 and imageIn2 is null, return null.
    */
-  static calcConcatAlongAxisId2( imageIn1, imageIn2, concatName1, concatName2, parametersDesc ) {
+  static calcConcatAlongAxisId2( imageIn1, imageIn2, parametersDesc, ...concatNames ) {
 
     if ( null == imageIn1 ) {
       if ( null == imageIn2 )
@@ -1237,12 +1237,12 @@ class Base extends Recyclable.Root {
     }
 
     if ( imageIn1.height != imageIn2.height )
-      throw Error( `${concatName1}${ concatName2 ? `_${concatName2}` : `` }: `
+      throw Error( `${concatNames.join( "_" )}: `
         + `shape imageIn1.height (${imageIn1.height}) `
         + `should match imageIn2.height (${imageIn2.height}). (${parametersDesc})` );
 
     if ( imageIn1.width != imageIn2.width )
-      throw Error( `${concatName1}${ concatName2 ? `_${concatName2}` : `` }: `
+      throw Error( `${concatNames.join( "_" )}: `
         + `shape imageIn1.width (${imageIn1.width}) `
         + `should match imageIn2.width (${imageIn2.width}). (${parametersDesc})` );
 
@@ -1300,16 +1300,16 @@ class Base extends Recyclable.Root {
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
    *
-   * @param {string} concatShuffleSplitName  The 1st part string for debug message of this concatenation-shuffle-split.
-   * @param {Object} parametersDesc          Its .toString() for debug message of this block.
+   * @param {Object}   parametersDesc           Its .toString() for debug message of this block.
+   * @param {string[]} concatShuffleSplitNames  The strings for debug message of this concatenation-shuffle-split.
    */
   static calcConcatShuffleSplit(
     imageInArray, imageOutArray, bShuffle, bSplit,
     arrayTemp_forInterleave_asGrouptTwo,
-    concatShuffleSplitName, parametersDesc ) {
+    parametersDesc, ...concatShuffleSplitNames ) {
 
     if ( imageInArray.length != 2 )
-      throw Error( `${concatShuffleSplitName}: `
+      throw Error( `${concatShuffleSplitNames.join( "_" )}: `
         + `The length of imageInArray[] ( ${imageInArray.length} ) must be 2. `
         + `(${parametersDesc})`
       );
@@ -1319,7 +1319,8 @@ class Base extends Recyclable.Root {
          || ( imageInArray[ 0 ].width !=  imageInArray[ 1 ].width )
          //|| ( imageInArray[ 0 ].depth !=  imageInArray[ 1 ].depth )
        )
-      throw Error( `${concatShuffleSplitName}: The first input image's shape ( height, width, depth ) = `
+      throw Error( `${concatShuffleSplitNames.join( "_" )}: `
+        + `The first input image's shape ( height, width, depth ) = `
         + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${imageInArray[ 0 ].depth} ) `
         + `should be the same as the second input image's shape `
         + `( ${imageInArray[ 1 ].height}, ${imageInArray[ 1 ].width}, ${imageInArray[ 1 ].depth} ). `
@@ -1328,13 +1329,13 @@ class Base extends Recyclable.Root {
 
     // 1.
     let concatResult = Base.calcConcatAlongAxisId2( imageInArray[ 0 ], imageInArray[ 1 ],
-      "concatShuffleSplitName", "concat", parametersDesc );
+      parametersDesc, "concatShuffleSplitName", "concat" );
 
     // 2.
     let shuffleResult;
     if ( bShuffle ) {
       shuffleResult = concatResult.modify_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo,
-        "concatShuffleSplitName", "interleave_asGrouptTwo", parametersDesc );
+        parametersDesc, "concatShuffleSplitName", "interleave_asGrouptTwo" );
 
       // Note: The concatResult is just modified (i.e. not cloned). So do not dispose concatResult.
       concatResult = null; // (Since it has been transferred to shuffleResult.)
@@ -1345,7 +1346,7 @@ class Base extends Recyclable.Root {
  
     // 3.
     if ( bSplit ) {
-      Base.calcSplitAlongAxisId2( shuffleResult, imageOutArray, "concatShuffleSplitName", "split", parametersDesc );
+      Base.calcSplitAlongAxisId2( shuffleResult, imageOutArray, parametersDesc, "concatShuffleSplitName", "split" );
       shuffleResult.disposeResources_and_recycleToPool();
       shuffleResult = null;
     } else {
