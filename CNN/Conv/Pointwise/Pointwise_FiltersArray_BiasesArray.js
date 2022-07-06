@@ -417,11 +417,14 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             break;
         }
 
-        this.filtersShape = Recyclable.Array.Pool.get_or_create_by( 4 );
-        this.filtersShape[ 0 ] = 1;
-        this.filtersShape[ 1 ] = 1;
-        this.filtersShape[ 2 ] = this.inputChannelCount;
-        this.filtersShape[ 3 ] = this.outputChannelCount;
+//!!! (2022/07/06 Remarked) Use short form instead.
+//         this.filtersShape = Recyclable.Array.Pool.get_or_create_by( 4 );
+//         this.filtersShape[ 0 ] = 1;
+//         this.filtersShape[ 1 ] = 1;
+//         this.filtersShape[ 2 ] = this.inputChannelCount;
+//         this.filtersShape[ 3 ] = this.outputChannelCount;
+
+        this.filtersShape = Recyclable.Array.Pool.get_or_create_by( 1, 1, this.inputChannelCount, this.outputChannelCount );
 
         if ( this.bBias ) {
           this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 1 );
