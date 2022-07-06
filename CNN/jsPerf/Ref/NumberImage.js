@@ -1067,7 +1067,7 @@ class Base extends Recyclable.Root {
     // 4. multiply
     let multiplyOut;
     {
-      let multiplyOut = this.clone_byMultiply( excitationOut, parametersDesc, ...squeezeExcitationNames, "multiply" );
+      multiplyOut = this.clone_byMultiply( excitationOut, parametersDesc, ...squeezeExcitationNames, "multiply" );
 
       if ( excitationOut != this ) {
         excitationOut.disposeResources_and_recycleToPool();
