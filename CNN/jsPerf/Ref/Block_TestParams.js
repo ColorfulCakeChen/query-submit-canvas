@@ -417,7 +417,7 @@ class Base extends TestParams.Base {
     let result = inputImage.clone_byPointwise_NonPassThrough( pointwise1ChannelCount,
       this.in.paramsNumberArrayObject.pointwise1Filters, this.out.inferencedParams.bPointwise1Bias,
       this.in.paramsNumberArrayObject.pointwise1Biases, this.out.inferencedParams.pointwise1ActivationId,
-      pointwiseName, null, parametersDesc );
+      parametersDesc, pointwiseName );
     io_imageNeedDisposeUniqueStack.push( inputImage );
     return result;
   }
@@ -435,7 +435,7 @@ class Base extends TestParams.Base {
       this.out.inferencedParams.bPointwise1Bias, this.out.inferencedParams.pointwise1ActivationId,
       this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0, // SameWhenPassThrough.
-      pointwiseName, null, parametersDesc );
+      parametersDesc, pointwiseName );
     io_imageNeedDisposeUniqueStack.push( inputImage );
     return result;
   }
@@ -452,7 +452,7 @@ class Base extends TestParams.Base {
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.in.paramsNumberArrayObject.depthwise1Filters, this.out.inferencedParams.bDepthwiseBias,
       this.in.paramsNumberArrayObject.depthwise1Biases, this.out.depthwiseActivationId,
-      depthwiseName, null, parametersDesc );
+      parametersDesc, depthwiseName );
     io_imageNeedDisposeUniqueStack.push( inputImage );
     return result;
   }
@@ -470,7 +470,7 @@ class Base extends TestParams.Base {
       this.out.inferencedParams.bDepthwiseBias, this.out.depthwiseActivationId,
       this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0, // SameWhenPassThrough.
-      depthwiseName, null, parametersDesc );
+      parametersDesc, depthwiseName );
     io_imageNeedDisposeUniqueStack.push( inputImage );
     return result;
   }
@@ -487,7 +487,7 @@ class Base extends TestParams.Base {
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.in.paramsNumberArrayObject.depthwise2Filters, this.out.inferencedParams.bDepthwiseBias,
       this.in.paramsNumberArrayObject.depthwise2Biases, this.out.depthwiseActivationId,
-      depthwiseName, null, parametersDesc );
+      parametersDesc, depthwiseName );
     io_imageNeedDisposeUniqueStack.push( inputImage );
     return result;
   }
@@ -512,7 +512,7 @@ class Base extends TestParams.Base {
           this.in.paramsNumberArrayObject.pointwise20PrefixSEExcitationFilters,
           this.in.paramsNumberArrayObject.pointwise20PrefixSEExcitationBiases,
           this.out.inferencedParams.squeezeExcitationActivationId,
-          `${pointwiseName}_squeezeExcitationPrefix`, parametersDesc );
+          parametersDesc, pointwiseName, "squeezeExcitationPrefix" );
         io_imageNeedDisposeUniqueStack.push( inputImage );
       } // Otherwise, do not clone to improve performance.
     }
@@ -520,7 +520,7 @@ class Base extends TestParams.Base {
     let pointwiseOut = squeezeExcitationPrefixOut.clone_byPointwise_NonPassThrough( pointwise20ChannelCount,
       this.in.paramsNumberArrayObject.pointwise20Filters, this.out.inferencedParams.bPointwise20Bias,
       this.in.paramsNumberArrayObject.pointwise20Biases, this.out.pointwise20ActivationId,
-      pointwiseName, null, parametersDesc );
+      parametersDesc, pointwiseName );
     io_imageNeedDisposeUniqueStack.push( squeezeExcitationPrefixOut );
 
     let squeezeExcitationPostfixOut = pointwiseOut;
@@ -533,7 +533,7 @@ class Base extends TestParams.Base {
           this.in.paramsNumberArrayObject.pointwise20PostfixSEExcitationFilters,
           this.in.paramsNumberArrayObject.pointwise20PostfixSEExcitationBiases,
           this.out.inferencedParams.squeezeExcitationActivationId,
-          `${pointwiseName}_squeezeExcitationPostfix`, parametersDesc );
+          parametersDesc, pointwiseName, "squeezeExcitationPostfix" );
         io_imageNeedDisposeUniqueStack.push( pointwiseOut );
       } // Otherwise, do not clone to improve performance.
     }
@@ -565,7 +565,7 @@ class Base extends TestParams.Base {
           this.in.paramsNumberArrayObject.pointwise202PrefixSEExcitationFilters,
           this.in.paramsNumberArrayObject.pointwise202PrefixSEExcitationBiases,
           this.out.inferencedParams.squeezeExcitationActivationId,
-          `${pointwiseName}_squeezeExcitationPrefix`, parametersDesc );
+          parametersDesc, pointwiseName, "squeezeExcitationPrefix" );
         io_imageNeedDisposeUniqueStack.push( inputImage );
       } // Otherwise, do not clone to improve performance.
     }
@@ -573,7 +573,7 @@ class Base extends TestParams.Base {
     let pointwiseOut = squeezeExcitationPrefixOut.clone_byPointwise_NonPassThrough( pointwise20ChannelCount,
       this.in.paramsNumberArrayObject.pointwise202Filters, this.out.inferencedParams.bPointwise20Bias,
       this.in.paramsNumberArrayObject.pointwise202Biases, this.out.pointwise20ActivationId,
-      pointwiseName, null, parametersDesc );
+      parametersDesc, pointwiseName );
     io_imageNeedDisposeUniqueStack.push( squeezeExcitationPrefixOut );
 
     let squeezeExcitationPostfixOut = pointwiseOut;
@@ -586,7 +586,7 @@ class Base extends TestParams.Base {
           this.in.paramsNumberArrayObject.pointwise202PostfixSEExcitationFilters,
           this.in.paramsNumberArrayObject.pointwise202PostfixSEExcitationBiases,
           this.out.inferencedParams.squeezeExcitationActivationId,
-          `${pointwiseName}_squeezeExcitationPostfix`, parametersDesc );
+          parametersDesc, pointwiseName, "squeezeExcitationPostfix" );
         io_imageNeedDisposeUniqueStack.push( pointwiseOut );
       } // Otherwise, do not clone to improve performance.
     }
@@ -604,25 +604,13 @@ class Base extends TestParams.Base {
    */
   use_pointwise20_PassThrough( inputImage, pointwise20ChannelCount, io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
 
-//!!! (2022/06/08) Since pass-through, the squeeze-and-excitation seems not necessary.
-//     let squeezeExcitationOut = inputImage;
-//     if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { (-2)
-//       squeezeExcitationOut = inputImage.clone_bySqueezeExcitation_PassThrough(
-//         this.out.nSqueezeExcitationChannelCountDivisor,
-//         this.out.pointwise20ActivationId,
-//         this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag,
-//         `${pointwiseName}_squeezeExcitation`, parametersDesc );
-//
-//     // Without clone to improve performance.
-//     }
-
     // Note: Since pass-through, the squeeze-and-excitation is not necessary here.
 
     let result = inputImage.clone_byPointwise_PassThrough( pointwise20ChannelCount,
       this.out.inferencedParams.bPointwise20Bias, this.out.pointwise20ActivationId,
       this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0, // SameWhenPassThrough.
-      pointwiseName, null, parametersDesc );
+      parametersDesc, pointwiseName );
     io_imageNeedDisposeUniqueStack.push( inputImage );
     return result;
   }
@@ -647,7 +635,7 @@ class Base extends TestParams.Base {
           this.in.paramsNumberArrayObject.pointwise21PrefixSEExcitationFilters,
           this.in.paramsNumberArrayObject.pointwise21PrefixSEExcitationBiases,
           this.out.inferencedParams.squeezeExcitationActivationId, // (Note: Not pointwise21ActivationId)
-          `${pointwiseName}_squeezeExcitationPrefix`, parametersDesc );
+          parametersDesc, pointwiseName, "squeezeExcitationPrefix" );
         io_imageNeedDisposeUniqueStack.push( inputImage );
       } // Otherwise, do not clone to improve performance.
     }
@@ -655,7 +643,7 @@ class Base extends TestParams.Base {
     let pointwiseOut = squeezeExcitationPrefixOut.clone_byPointwise_NonPassThrough( pointwise21ChannelCount,
       this.in.paramsNumberArrayObject.pointwise21Filters, this.out.inferencedParams.bPointwise20Bias, // (Note: Not bPointwise21Bias)
       this.in.paramsNumberArrayObject.pointwise21Biases, this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
-      pointwiseName, null, parametersDesc );
+      parametersDesc, pointwiseName );
     io_imageNeedDisposeUniqueStack.push( squeezeExcitationPrefixOut );
 
     let squeezeExcitationPostfixOut = pointwiseOut;
@@ -668,7 +656,7 @@ class Base extends TestParams.Base {
           this.in.paramsNumberArrayObject.pointwise21PostfixSEExcitationFilters,
           this.in.paramsNumberArrayObject.pointwise21PostfixSEExcitationBiases,
           this.out.inferencedParams.squeezeExcitationActivationId, // (Note: Not pointwise21ActivationId)
-          `${pointwiseName}_squeezeExcitationPostfix`, parametersDesc );
+          parametersDesc, pointwiseName, "squeezeExcitationPostfix" );
         io_imageNeedDisposeUniqueStack.push( pointwiseOut );
       } // Otherwise, do not clone to improve performance.
     }
