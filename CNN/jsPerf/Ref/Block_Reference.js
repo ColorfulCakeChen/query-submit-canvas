@@ -1164,7 +1164,7 @@ class Base extends Recyclable.Root {
         if ( pointwise20Result.depth == testParams.out.input0_channelCount ) { // add-input-to-output is possible if same channel count.
           let pointwise20ResultOld = pointwise20Result;
           pointwise20Result = imageOutArray[ 0 ] = pointwise20ResultOld.clone_byAdd(
-            imageIn0, "Pointwise20_AddInputToOutput", testParams.out );
+            imageIn0, "Pointwise20_AddInputToOutput", null, testParams.out );
           this.imageNeedDisposeUniqueStack.push( pointwise20ResultOld );
         }
     }
@@ -1201,7 +1201,7 @@ class Base extends Recyclable.Root {
         if ( pointwise21Result.depth == testParams.out.input0_channelCount ) { // add-input-to-output is possible if same channel count.
           let pointwise21ResultOld = pointwise21Result;
           pointwise21Result = imageOutArray[ 1 ] = pointwise21ResultOld.clone_byAdd(
-            imageIn0, this.imageNeedDisposeUniqueStack, "Pointwise21_AddInputToOutput", testParams.out );
+            imageIn0, "Pointwise21_AddInputToOutput", null, testParams.out );
           this.imageNeedDisposeUniqueStack.push( pointwise21ResultOld );
         }
 
