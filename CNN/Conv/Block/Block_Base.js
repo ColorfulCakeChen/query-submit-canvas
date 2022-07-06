@@ -1099,14 +1099,24 @@ class Base extends Recyclable.Root {
     if ( this.nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
       return true; // No sequeeze-and-excitation.
 
-    // Note: Inside squeeze-and-excitation, all depthwsie and pointwise convolutions are constant-when-pass-through
-    //       so that the result for pass-through parts will not affect input when multiply to input.
+    // Note1: Inside squeeze-and-excitation, all depthwsie and pointwise convolutions are constant-when-pass-through
+    //        so that the result for pass-through parts will not affect input when multiply to input.
     //
 
     // 0.
 
     let input0 = this.operationArray.endingInput0; // will be used for output because output dimension should be the same as input.
     let input1 = this.operationArray.endingInput1;
+
+    // For
+    //   - ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1 (8)
+    //   - ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (9)
+    //
+    // Although they have pointwise21, however, their squeeze-and-excitation-1 uses .endingInput0 (i.e. not endingInput1) as input.
+    // So, if there is no input1, use input0 instead.
+    //
+    if ( !input1 )
+      input1 = input0;
 
     // Assume .endingInput0 and endingInput1 have the same height and width. So, checking .endingInput0 should be enough.
     let inputHeight = input0.height;
@@ -1184,7 +1194,7 @@ class Base extends Recyclable.Root {
       let squeezeDepthwise1;
       if ( this.pointwise21ChannelCount > 0 ) {
         squeezeDepthwise1 = Operation.Depthwise_ConstantWhenPassThrough.Pool.get_or_create_by(
-          this.operationArray.endingInput1,
+          this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
           squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
           squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent
         );
@@ -1218,7 +1228,8 @@ class Base extends Recyclable.Root {
       let intermediatePointwise1;
       if ( this.pointwise21ChannelCount > 0 ) {
         intermediatePointwise1 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
-          this.operationArray.endingInput1, this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray );
+          this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
+          this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray );
         if ( !intermediatePointwise1 )
           return false;  // e.g. input array does not have enough data.
       }
@@ -1261,7 +1272,7 @@ class Base extends Recyclable.Root {
         const excitationPointwise1_nActivationId = this.squeezeExcitationActivationId;
 
         excitationPointwise1 = Operation.Pointwise_ConstantWhenPassThrough.Pool.get_or_create_by(
-          this.operationArray.endingInput1,
+          this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
           excitationPointwise1_outputChannelCount, excitationPointwise_bBias, excitationPointwise1_nActivationId,
           nPointwise_HigherHalfDifferent, excitationPointwise1_outputChannelCount_lowerHalf,
           excitationPointwise_channelShuffler_outputGroupCount
