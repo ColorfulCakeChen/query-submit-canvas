@@ -378,14 +378,7 @@ class Base extends TestParams.Base {
 
       new TestParams.ParamDescConfig( Block.Params.nActivationId,           this.valueOutMinMax.ActivationId ),
 
-      new TestParams.ParamDescConfig( Block.Params.bSqueezeExcitationPrefix,
-                                                                            this.valueOutMinMax.bSqueezeExcitationPrefix ),
-
-      new TestParams.ParamDescConfig( Block.Params.nSqueezeExcitationChannelCountDivisor,
-                                                                            this.valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
-
-      new TestParams.ParamDescConfig( Block.Params.input0_channelCount,
-                                                                            this.valueOutMinMax.input0_channelCount ),
+      new TestParams.ParamDescConfig( Block.Params.input0_channelCount,     this.valueOutMinMax.input0_channelCount ),
 
       new TestParams.ParamDescConfig( Block.Params.depthwise_AvgMax_Or_ChannelMultiplier,
                                                                             this.valueOutMinMax.depthwise_AvgMax_Or_ChannelMultiplier ),
@@ -400,6 +393,12 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,        this.valueOutMinMax.bKeepInputTensor ),
 
       new TestParams.ParamDescConfig( Block.Params.nConvBlockTypeId,        this.valueOutMinMax.nConvBlockTypeId ),
+
+      new TestParams.ParamDescConfig( Block.Params.bSqueezeExcitationPrefix,
+                                                                            this.valueOutMinMax.bSqueezeExcitationPrefix ),
+
+      new TestParams.ParamDescConfig( Block.Params.nSqueezeExcitationChannelCountDivisor,
+                                                                            this.valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
 
     ];
 
