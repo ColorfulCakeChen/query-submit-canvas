@@ -1322,16 +1322,29 @@ class Base extends Recyclable.Root {
 
     const intermediate_inputChannelCount = inputTensorPlaceholder.channelCount;
     const intermediate_inputChannelCount_lowerHalf = inputTensorPlaceholder.channelCount_lowerHalf;
+    const intermediate_inputChannelCount_higherHalf = inputTensorPlaceholder.channelCount_higherHalf;
 
-    const intermediate_outputChannelCount_lowerHalf // Note: Using itself input channel count as dividend.
-      = Math.ceil( intermediate_inputChannelCount_lowerHalf / this.nSqueezeExcitationChannelCountDivisor );
+    let intermediate_outputChannelCount_lowerHalf;
+    if ( intermediate_inputChannelCount_lowerHalf != undefined )
+      intermediate_outputChannelCount_lowerHalf // Note: Using itself input channel count as dividend.
+        = Math.ceil( intermediate_inputChannelCount_lowerHalf / this.nSqueezeExcitationChannelCountDivisor );
+
+    let intermediate_outputChannelCount_higherHalf;
+    if ( intermediate_inputChannelCount_higherHalf != undefined )
+      intermediate_outputChannelCount_higherHalf // Note: Using itself input channel count as dividend.
+        = Math.ceil( intermediate_inputChannelCount_higherHalf / this.nSqueezeExcitationChannelCountDivisor );
 
     let intermediate_outputChannelCount;
+    {
+      if ( ( intermediate_outputChannelCount_lowerHalf != undefined ) && ( intermediate_outputChannelCount_higherHalf != undefined ) )
+        intermediate_outputChannelCount = intermediate_outputChannelCount_lowerHalf + intermediate_outputChannelCount_higherHalf;
+      else
+        intermediate_outputChannelCount = Math.ceil( intermediate_inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
 
-    if ( nPointwise_HigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ) // (4)
-      intermediate_outputChannelCount = intermediate_outputChannelCount_lowerHalf;
-    else
-      intermediate_outputChannelCount = Math.ceil( intermediate_inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
+      // Since higher-half is just pass-through, it could be discarded totally.
+      if ( nPointwise_HigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ) // (4)
+        intermediate_outputChannelCount = intermediate_outputChannelCount_lowerHalf;
+    }
 
     const intermediate_nActivationId = nActivationId;
 
