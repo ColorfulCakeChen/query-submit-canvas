@@ -161,23 +161,23 @@ class Base extends Recyclable.Root {
   clone_byPointwise_PassThrough(
     pointwiseChannelCount, bPointwiseBias, pointwiseActivationId,
     aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
-    pointwiseName, parametersDesc ) {
+    pointwiseName1, pointwiseName2, parametersDesc ) {
 
     return this.clone_byPointwise(
       pointwiseChannelCount, null, bPointwiseBias, null, pointwiseActivationId,
       true, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId, // (bPassThrough)
-      pointwiseName, parametersDesc );
+      pointwiseName1, pointwiseName2, parametersDesc );
   }
 
   /** Call this.clone_byPointwise() with ( bPassThrough == false ). */
   clone_byPointwise_NonPassThrough(
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-    pointwiseName, parametersDesc ) {
+    pointwiseName1, pointwiseName2, parametersDesc ) {
       
     return this.clone_byPointwise(
       pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
       false, null, null, // (bPassThrough)
-      pointwiseName, parametersDesc );
+      pointwiseName1, pointwiseName2, parametersDesc );
   }
 
   /**
@@ -198,7 +198,8 @@ class Base extends Recyclable.Root {
    * @param {number} nPassThroughStyleId
    *   The pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) when ( bPassThrough == true ).
    *
-   * @param {string}   pointwiseName     A string for debug message of this convolution.
+   * @param {string}   pointwiseName1    The 1st part string for debug message of this convolution.
+   * @param {string}   pointwiseName2    The 2nd part string for debug message of this convolution.
    * @param {Object}   parametersDesc    Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
@@ -208,7 +209,7 @@ class Base extends Recyclable.Root {
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
     bPassThrough,
     aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
-    pointwiseName, parametersDesc ) {
+    pointwiseName1, pointwiseName2, parametersDesc ) {
 
     let imageIn = this;
 
@@ -224,13 +225,14 @@ class Base extends Recyclable.Root {
 
       pointwiseFiltersArray = pointwisePassThrough.filtersArray;
       pointwiseBiasesArray = pointwisePassThrough.biasesArray;
-    }        
+    }
 
     {
       let filtersWeightCount = imageIn.depth * pointwiseChannelCount;
 
       if ( pointwiseFiltersArray.length != filtersWeightCount )
-        throw Error( `${pointwiseName}: filters weight count ( ${pointwiseFiltersArray.length} ) `
+        throw Error( `${pointwiseName1}${ pointwiseName2 ? `_${pointwiseName2}` : `` }: `
+          + `filters weight count ( ${pointwiseFiltersArray.length} ) `
           + `should be ( ${filtersWeightCount} ). (${parametersDesc})` );
 
       let biasesWeightCountShouldBe, biasesWeightCountInFact;
@@ -243,7 +245,8 @@ class Base extends Recyclable.Root {
       }
 
       if ( biasesWeightCountInFact != biasesWeightCountShouldBe )
-        throw Error( `${pointwiseName}: biases weight count ( ${biasesWeightCountInFact} ) `
+        throw Error( `${pointwiseName1}${ pointwiseName2 ? `_${pointwiseName2}` : `` }: `
+          + `biases weight count ( ${biasesWeightCountInFact} ) `
           + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})` );
     }
 
@@ -308,7 +311,7 @@ class Base extends Recyclable.Root {
     }
 
     // Bias
-    imageOut.modify_byBias( bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
+    imageOut.modify_byBias( bPointwiseBias, pointwiseBiasesArray, pointwiseName1, pointwiseName2, "bias", parametersDesc );
 
     // Activation Escaping.
     {
@@ -318,7 +321,7 @@ class Base extends Recyclable.Root {
 
       // Before activation function, scale every element according to its channel.
       Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
-        pointwiseName, "ActivationEscapingScale", parametersDesc );
+        pointwiseName1, pointwiseName2, "ActivationEscapingScale", parametersDesc );
     }
 
     // Activation
@@ -332,26 +335,26 @@ class Base extends Recyclable.Root {
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
     aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
-    depthwiseName, parametersDesc ) {
+    depthwiseName1, depthwiseName2, parametersDesc ) {
 
     return this.clone_byDepthwise(
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       null, bDepthwiseBias, null, depthwiseActivationId,
       true, aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId, // (bPassThrough)
-      depthwiseName, parametersDesc );
+      depthwiseName1, depthwiseName2, parametersDesc );
   }
 
   /** Call this.clone_byPointwise() with ( bPassThrough == false ). */
   clone_byDepthwise_NonPassThrough(
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-    depthwiseName, parametersDesc ) {
+    depthwiseName1, depthwiseName2, parametersDesc ) {
 
     return this.clone_byDepthwise(
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
       false, null, null, // (bPassThrough)
-      depthwiseName, parametersDesc );
+      depthwiseName1, depthwiseName2, parametersDesc );
   }
 
   /**
@@ -372,7 +375,8 @@ class Base extends Recyclable.Root {
    * @param {number} nPassThroughStyleId
    *   The pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) when ( bPassThrough == true ).
    *
-   * @param {string}   depthwiseName     A string for debug message of this convolution.
+   * @param {string}   depthwiseName1    The 1st part string for debug message of this convolution.
+   * @param {string}   depthwiseName2    The 2nd part string for debug message of this convolution.
    * @param {Object}   parametersDesc    Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
@@ -383,7 +387,7 @@ class Base extends Recyclable.Root {
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
     bPassThrough,
     aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
-    depthwiseName, parametersDesc ) {
+    depthwiseName1, depthwiseName2, parametersDesc ) {
 
     let imageIn = this;
 
@@ -429,7 +433,8 @@ class Base extends Recyclable.Root {
       let filtersWeightCount = depthwiseFilterHeight * depthwiseFilterWidth * imageIn.depth * channelMultiplier ;
 
       if ( depthwiseFiltersArray.length != filtersWeightCount )
-        throw Error( `${depthwiseName}: filters weight count ( ${depthwiseFiltersArray.length} ) `
+        throw Error( `${depthwiseName1}${ depthwiseName2 ? `_${depthwiseName2}` : `` }: `
+          + `filters weight count ( ${depthwiseFiltersArray.length} ) `
           + `should be ( ${filtersWeightCount} ). (${parametersDesc})` );
     }
 
@@ -444,7 +449,8 @@ class Base extends Recyclable.Root {
       }
 
       if ( biasesWeightCountInFact != biasesWeightCountShouldBe )
-        throw Error( `${depthwiseName}: biases weight count ( ${biasesWeightCountInFact} ) `
+        throw Error( `${depthwiseName1}${ depthwiseName2 ? `_${depthwiseName2}` : `` }: `
+          + `biases weight count ( ${biasesWeightCountInFact} ) `
           + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})` );
     }
 
@@ -593,7 +599,7 @@ class Base extends Recyclable.Root {
     }
 
     // Bias
-    imageOut.modify_byBias( bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
+    imageOut.modify_byBias( bDepthwiseBias, depthwiseBiasesArray, depthwiseName1, depthwiseName2, "bias", parametersDesc );
 
     // Activation Escaping.
     {
@@ -603,7 +609,7 @@ class Base extends Recyclable.Root {
 
       // Before activation function, scale every element according to its channel.
       Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
-        depthwiseName, "ActivationEscapingScale", parametersDesc );
+        depthwiseName1, depthwiseName2, "ActivationEscapingScale", parametersDesc );
     }
 
     // Activation
@@ -618,13 +624,15 @@ class Base extends Recyclable.Root {
    * @param {NumberImage.Base} this     The source image to be processed.
    * @param {boolean}  bBias             Whether add bias.
    * @param {number[]} biasesArray       The bias values.
-   * @param {string}   biasName          A string for debug message of this bias.
+   * @param {string}   biasName1         The 1st part string for debug message of this bias.
+   * @param {string}   biasName2         The 2nd part string for debug message of this bias.
+   * @param {string}   biasName3         The 3rd part string for debug message of this bias.
    * @param {Object}   parametersDesc    Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return this which may or may not be added bias (according to bBias).
    */
-  modify_byBias( bBias, biasesArray, biasName, parametersDesc ) {
+  modify_byBias( bBias, biasesArray, biasName1, biasName2, biasName3, parametersDesc ) {
     let imageIn = this;
 
     imageIn.boundsArraySet.afterBias.set_all_byBoundsArray( imageIn.boundsArraySet.afterFilter );
@@ -632,11 +640,13 @@ class Base extends Recyclable.Root {
       return imageIn;
 
     if ( biasesArray == null )
-      throw Error( `${biasName}: biasesArray (${biasesArray}) `
+      throw Error( `${biasName1}${ biasName2 ? `_${biasName2}` : `` }${ biasName3 ? `_${biasName3}` : `` }: `
+        + `biasesArray (${biasesArray}) `
         + `should not be null. (${parametersDesc})` );
 
     if ( biasesArray.length != imageIn.depth )
-      throw Error( `${biasName}: shape (${biasesArray.length}) `
+      throw Error( `${biasName1}${ biasName2 ? `_${biasName2}` : `` }${ biasName3 ? `_${biasName3}` : `` }: `
+        + `shape (${biasesArray.length}) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})` );
 
     let index = 0;
@@ -664,19 +674,22 @@ class Base extends Recyclable.Root {
    * @param {FloatValue.ScaleArray} scaleArray  The scales for every channel.
    * @param {string} scaleName1                 The 1st part string for debug message of this scaling.
    * @param {string} scaleName2                 The 2nd part string for debug message of this scaling.
+   * @param {string} scaleName3                 The 3rd part string for debug message of this scaling.
    * @param {Object} parametersDesc             Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return the (modified) image whose every element is scaled according to its channel.
    */
-  static scale_byChannel_withoutAffect_BoundsArraySet( imageIn, scaleArray, scaleName1, scaleName2, parametersDesc ) {
+  static scale_byChannel_withoutAffect_BoundsArraySet( imageIn, scaleArray, scaleName1, scaleName2, scaleName3, parametersDesc ) {
 
     if ( scaleArray == null )
-      throw Error( `${scaleName1}${ scaleName2 ? "_" : "" }${scaleName2}: scaleArray (${scaleArray}) `
+      throw Error( `${scaleName1}${ scaleName2 ? `_${scaleName2}` : `` }${ scaleName3 ? `_${scaleName3}` : `` }: `
+        + `scaleArray (${scaleArray}) `
         + `should not be null. (${parametersDesc})` );
 
     if ( scaleArray.length != imageIn.depth )
-      throw Error( `${scaleName1}${ scaleName2 ? "_" : "" }${scaleName2}: shape (${scaleArray.length}) `
+      throw Error( `${scaleName1}${ scaleName2 ? `_${scaleName2}` : `` }${ scaleName3 ? `_${scaleName3}` : `` }: `
+        + `shape (${scaleArray.length}) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})` );
 
     let index = 0;
@@ -710,17 +723,6 @@ class Base extends Recyclable.Root {
     if ( !theActivationFunctionInfo )
       return imageIn;
 
-//!!! (2022/06/15 Remarked) Using CPU instead of tensor to improve performance.
-//     let pfnActivation = theActivationFunctionInfo.pfn;
-//     if ( !pfnActivation )
-//       return imageIn;
-//
-//     // Because pfnActivation is function of tensorflow.js, it process tf.tensor (i.e. not a single value).
-//     // Let it process the whole input (as an Array) directly.
-//     let tensorOut = pfnActivation( imageIn.dataArray )
-//     imageIn.dataArray = tensorOut.dataSync();
-//     tensorOut.dispose();
-
     let pfnActivation = theActivationFunctionInfo.pfnReference;
     if ( !pfnActivation )
       return imageIn;
@@ -739,13 +741,14 @@ class Base extends Recyclable.Root {
    * @param {NumberImage.Base} this        The first image to be used for adding.
    * @param {NumberImage.Base} another     The second image to be used for adding.
    *
-   * @param {string} addName               A string for debug message of this adding operation.
+   * @param {string} addName1              The 1st part string for debug message of this adding operation.
+   * @param {string} addName2              The 2nd part string for debug message of this adding operation.
    * @param {Object} parametersDesc        Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of adding this and another.
    */
-  clone_byAdd( another, addName, parametersDesc ) {
+  clone_byAdd( another, addName1, addName2, parametersDesc ) {
     let rHeight, rWidth, rDepth;
     let imageOutNew;
 
@@ -794,7 +797,8 @@ class Base extends Recyclable.Root {
 
     } else {
       throw Error(
-        `${addName}: another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${another.depth} ) `
+        `${addName1}${ addName2 ? `_${addName2}` : `` }: `
+          + `another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${another.depth} ) `
           + `this ( height, width, depth ) = ( ${this.height}, ${this.width}, ${this.depth} ) `
           + `and `
           + `another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${another.depth} ) `
@@ -822,13 +826,14 @@ class Base extends Recyclable.Root {
    * @param {NumberImage.Base} this        The first image to be used for multiplying.
    * @param {NumberImage.Base} another     The second image to be used for multiplying.
    *
-   * @param {string} multiplyName          A string for debug message of this multiplying operation.
+   * @param {string} multiplyName1         The 1st part string for debug message of this multiplying operation.
+   * @param {string} multiplyName2         The 2nd part string for debug message of this multiplying operation.
    * @param {Object} parametersDesc        Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of multiplying this and another.
    */
-  clone_byMultiply( another, multiplyName, parametersDesc ) {
+  clone_byMultiply( another, multiplyName1, multiplyName2, parametersDesc ) {
     let rHeight, rWidth, rDepth;
     let imageOutNew;
 
@@ -877,7 +882,7 @@ class Base extends Recyclable.Root {
 
     } else {
       throw Error(
-        `${multiplyName}: `
+        `${multiplyName1}${ multiplyName2 ? `_${multiplyName2}` : `` }: `
           + `this ( height, width, depth ) = ( ${this.height}, ${this.width}, ${this.depth} ) `
           + `and `
           + `another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${another.depth} ) `
@@ -1012,7 +1017,7 @@ class Base extends Recyclable.Root {
       squeezeOut = this.clone_byDepthwise_NonPassThrough( // average pooling can not pass-through. (only convolution could do pass-through.)
         squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
         squeezeFiltersArray, squeezeBias, squeezeBiasesArray, squeezeActivationId,
-        `${squeezeExcitationName}_squeezeDepthwise`, parametersDesc );
+        squeezeExcitationName, "squeezeDepthwise", parametersDesc );
     }
 
     // 2. intermediatePointwise
@@ -1038,7 +1043,7 @@ class Base extends Recyclable.Root {
         intermediateOut = squeezeOut.clone_byPointwise(
           intermediateChannelCount, intermediateFiltersArray, bBias_intermediatePointwise, intermediateBiasesArray, nActivationId,
           bPassThrough, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
-          `${squeezeExcitationName}_intermediatePointwise`, parametersDesc );
+          squeezeExcitationName, "intermediatePointwise", parametersDesc );
 
         if ( squeezeOut != this ) {
           squeezeOut.disposeResources_and_recycleToPool();
@@ -1059,7 +1064,7 @@ class Base extends Recyclable.Root {
       excitationOut = intermediateOut.clone_byPointwise(
         excitationChannelCount, excitationFiltersArray, bBias_excitationPointwise, excitationBiasesArray, nActivationId,
         bPassThrough, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
-        `${squeezeExcitationName}_excitationPointwise`, parametersDesc );
+        squeezeExcitationName, "excitationPointwise", parametersDesc );
 
       if ( intermediateOut != this ) {
         intermediateOut.disposeResources_and_recycleToPool();
@@ -1070,7 +1075,7 @@ class Base extends Recyclable.Root {
     // 4. multiply
     let multiplyOut;
     {
-      let multiplyOut = this.clone_byMultiply( excitationOut, `${squeezeExcitationName}_multiply`, parametersDesc );
+      let multiplyOut = this.clone_byMultiply( excitationOut, squeezeExcitationName, "multiply", parametersDesc );
 
       if ( excitationOut != this ) {
         excitationOut.disposeResources_and_recycleToPool();
@@ -1109,7 +1114,7 @@ class Base extends Recyclable.Root {
 
     if ( ( this.depth % 2 ) != 0 )
       throw Error( `NumberImage.Base.modify_byInterleave_asGrouptTwo(): `
-        + `${interleaveName1}${ interleaveName2 ? "_" :"" }${interleaveName2}: `
+        + `${interleaveName1}${ interleaveName2 ? `_${interleaveName2}` : `` }: `
         + `channel count ( ${this.depth} ) must be even (i.e. divisible by 2). `
         + `(${parametersDesc})`
       );
@@ -1232,11 +1237,13 @@ class Base extends Recyclable.Root {
     }
 
     if ( imageIn1.height != imageIn2.height )
-      throw Error( `${concatName1}${ concatName2 ? "_" :"" }${concatName2}: shape imageIn1.height (${imageIn1.height}) `
+      throw Error( `${concatName1}${ concatName2 ? `_${concatName2}` : `` }: `
+        + `shape imageIn1.height (${imageIn1.height}) `
         + `should match imageIn2.height (${imageIn2.height}). (${parametersDesc})` );
 
     if ( imageIn1.width != imageIn2.width )
-      throw Error( `${concatName1}${ concatName2 ? "_" :"" }${concatName2}: shape imageIn1.width (${imageIn1.width}) `
+      throw Error( `${concatName1}${ concatName2 ? `_${concatName2}` : `` }: `
+        + `shape imageIn1.width (${imageIn1.width}) `
         + `should match imageIn2.width (${imageIn2.width}). (${parametersDesc})` );
 
     //let imageOutLength = ( imageIn1.height * imageIn1.width * imageIn1.depth ) + ( imageIn2.height * imageIn2.width * imageIn2.depth );
