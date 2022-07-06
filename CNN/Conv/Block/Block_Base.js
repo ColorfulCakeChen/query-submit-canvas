@@ -1324,8 +1324,9 @@ class Base extends Recyclable.Root {
     const intermediate_inputChannelCount_lowerHalf = inputTensorPlaceholder.channelCount_lowerHalf;
     const intermediate_inputChannelCount_higherHalf = inputTensorPlaceholder.channelCount_higherHalf;
 
-    if (   ( ( intermediate_inputChannelCount_lowerHalf == undefined ) && ( intermediate_inputChannelCount_higherHalf != undefined ) ) )
-        || ( ( intermediate_inputChannelCount_lowerHalf != undefined ) && ( intermediate_inputChannelCount_higherHalf == undefined ) ) ) )
+    if (   ( ( intermediate_inputChannelCount_lowerHalf == undefined ) && ( intermediate_inputChannelCount_higherHalf != undefined ) )
+        || ( ( intermediate_inputChannelCount_lowerHalf != undefined ) && ( intermediate_inputChannelCount_higherHalf == undefined ) )
+       )
       throw Error( `Block.Base.SequeezeExcitation_intermediatePointwise_create_init(): `
         + `intermediate_inputChannelCount_lowerHalf ( ${intermediate_inputChannelCount_lowerHalf} ) and `
         + `intermediate_inputChannelCount_higherHalf ( ${intermediate_inputChannelCount_higherHalf} ) `
