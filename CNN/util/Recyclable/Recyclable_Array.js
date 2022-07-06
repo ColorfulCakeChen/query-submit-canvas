@@ -44,10 +44,11 @@ class Recyclable_Array extends Base( Array ) {
     }
   }
 
-  ///** @override */
-  //disposeResources() {
-  //  super.disposeResources();
-  //}
+  /** @override */
+  disposeResources() {
+    this.length = 0;
+    super.disposeResources();
+  }
 
 }
 
