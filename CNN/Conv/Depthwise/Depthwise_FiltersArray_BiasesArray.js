@@ -413,11 +413,15 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               break;
           }
 
-          this.filtersShape = Recyclable.Array.Pool.get_or_create_by( 4 );
-          this.filtersShape[ 0 ] = this.filterHeight;
-          this.filtersShape[ 1 ] = this.filterWidth;
-          this.filtersShape[ 2 ] = this.inputChannelCount;
-          this.filtersShape[ 3 ] = this.channelMultiplier;
+//!!! (2022/07/06 Remarked) Use short form instead.
+//           this.filtersShape = Recyclable.Array.Pool.get_or_create_by( 4 );
+//           this.filtersShape[ 0 ] = this.filterHeight;
+//           this.filtersShape[ 1 ] = this.filterWidth;
+//           this.filtersShape[ 2 ] = this.inputChannelCount;
+//           this.filtersShape[ 3 ] = this.channelMultiplier;
+
+          this.filtersShape = Recyclable.Array.Pool.get_or_create_by(
+            this.filterHeight, this.filterWidth, this.inputChannelCount, this.channelMultiplier );
 
           filtersWeightCount_extracted = this.filterHeight * this.filterWidth * this.inputChannelCount_toBeExtracted * this.channelMultiplier;
 
