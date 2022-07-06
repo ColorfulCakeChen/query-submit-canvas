@@ -161,23 +161,23 @@ class Base extends Recyclable.Root {
   clone_byPointwise_PassThrough(
     pointwiseChannelCount, bPointwiseBias, pointwiseActivationId,
     aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
-    pointwiseName1, pointwiseName2, parametersDesc ) {
+    parametersDesc, ...pointwiseNames ) {
 
     return this.clone_byPointwise(
       pointwiseChannelCount, null, bPointwiseBias, null, pointwiseActivationId,
       true, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId, // (bPassThrough)
-      pointwiseName1, pointwiseName2, parametersDesc );
+      parametersDesc, ...pointwiseNames );
   }
 
   /** Call this.clone_byPointwise() with ( bPassThrough == false ). */
   clone_byPointwise_NonPassThrough(
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-    pointwiseName1, pointwiseName2, parametersDesc ) {
+    parametersDesc, ...pointwiseNames ) {
       
     return this.clone_byPointwise(
       pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
       false, null, null, // (bPassThrough)
-      pointwiseName1, pointwiseName2, parametersDesc );
+      parametersDesc, ...pointwiseNames );
   }
 
   /**
@@ -198,9 +198,8 @@ class Base extends Recyclable.Root {
    * @param {number} nPassThroughStyleId
    *   The pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) when ( bPassThrough == true ).
    *
-   * @param {string}   pointwiseName1    The 1st part string for debug message of this convolution.
-   * @param {string}   pointwiseName2    The 2nd part string for debug message of this convolution.
-   * @param {Object}   parametersDesc    Its .toString() for debug message of this block.
+   * @param {Object} parametersDesc    Its .toString() for debug message of this block.
+   * @param {string[]} pointwiseNames  The strings for debug message of this convolution.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
@@ -209,7 +208,7 @@ class Base extends Recyclable.Root {
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
     bPassThrough,
     aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
-    pointwiseName1, pointwiseName2, parametersDesc ) {
+    parametersDesc, ...pointwiseNames ) {
 
     let imageIn = this;
 
@@ -231,7 +230,7 @@ class Base extends Recyclable.Root {
       let filtersWeightCount = imageIn.depth * pointwiseChannelCount;
 
       if ( pointwiseFiltersArray.length != filtersWeightCount )
-        throw Error( `${pointwiseName1}${ pointwiseName2 ? `_${pointwiseName2}` : `` }: `
+        throw Error( `${pointwiseNames.join( "_" )}: `
           + `filters weight count ( ${pointwiseFiltersArray.length} ) `
           + `should be ( ${filtersWeightCount} ). (${parametersDesc})` );
 
@@ -245,7 +244,7 @@ class Base extends Recyclable.Root {
       }
 
       if ( biasesWeightCountInFact != biasesWeightCountShouldBe )
-        throw Error( `${pointwiseName1}${ pointwiseName2 ? `_${pointwiseName2}` : `` }: `
+        throw Error( `${pointwiseNames.join( "_" )}: `
           + `biases weight count ( ${biasesWeightCountInFact} ) `
           + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})` );
     }
@@ -311,7 +310,7 @@ class Base extends Recyclable.Root {
     }
 
     // Bias
-    imageOut.modify_byBias( bPointwiseBias, pointwiseBiasesArray, pointwiseName1, pointwiseName2, "bias", parametersDesc );
+    imageOut.modify_byBias( bPointwiseBias, pointwiseBiasesArray, parametersDesc, ...pointwiseNames, "bias" );
 
     // Activation Escaping.
     {
@@ -321,7 +320,7 @@ class Base extends Recyclable.Root {
 
       // Before activation function, scale every element according to its channel.
       Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
-        pointwiseName1, pointwiseName2, "ActivationEscapingScale", parametersDesc );
+        parametersDesc, ...pointwiseNames, "ActivationEscapingScale" );
     }
 
     // Activation
@@ -335,26 +334,26 @@ class Base extends Recyclable.Root {
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
     aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
-    depthwiseName1, depthwiseName2, parametersDesc ) {
+    parametersDesc, ...depthwiseNames ) {
 
     return this.clone_byDepthwise(
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       null, bDepthwiseBias, null, depthwiseActivationId,
       true, aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId, // (bPassThrough)
-      depthwiseName1, depthwiseName2, parametersDesc );
+      parametersDesc, ...depthwiseNames );
   }
 
   /** Call this.clone_byPointwise() with ( bPassThrough == false ). */
   clone_byDepthwise_NonPassThrough(
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-    depthwiseName1, depthwiseName2, parametersDesc ) {
+    parametersDesc, ...depthwiseNames ) {
 
     return this.clone_byDepthwise(
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
       false, null, null, // (bPassThrough)
-      depthwiseName1, depthwiseName2, parametersDesc );
+      parametersDesc, ...depthwiseNames );
   }
 
   /**
@@ -375,9 +374,8 @@ class Base extends Recyclable.Root {
    * @param {number} nPassThroughStyleId
    *   The pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) when ( bPassThrough == true ).
    *
-   * @param {string}   depthwiseName1    The 1st part string for debug message of this convolution.
-   * @param {string}   depthwiseName2    The 2nd part string for debug message of this convolution.
-   * @param {Object}   parametersDesc    Its .toString() for debug message of this block.
+   * @param {Object} parametersDesc    Its .toString() for debug message of this block.
+   * @param {string[]} depthwiseNames  The strings for debug message of this convolution.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
@@ -387,7 +385,7 @@ class Base extends Recyclable.Root {
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
     bPassThrough,
     aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
-    depthwiseName1, depthwiseName2, parametersDesc ) {
+    parametersDesc, ...depthwiseNames ) {
 
     let imageIn = this;
 
@@ -433,7 +431,7 @@ class Base extends Recyclable.Root {
       let filtersWeightCount = depthwiseFilterHeight * depthwiseFilterWidth * imageIn.depth * channelMultiplier ;
 
       if ( depthwiseFiltersArray.length != filtersWeightCount )
-        throw Error( `${depthwiseName1}${ depthwiseName2 ? `_${depthwiseName2}` : `` }: `
+        throw Error( `${depthwiseNames.join( "_" )}: `
           + `filters weight count ( ${depthwiseFiltersArray.length} ) `
           + `should be ( ${filtersWeightCount} ). (${parametersDesc})` );
     }
@@ -449,7 +447,7 @@ class Base extends Recyclable.Root {
       }
 
       if ( biasesWeightCountInFact != biasesWeightCountShouldBe )
-        throw Error( `${depthwiseName1}${ depthwiseName2 ? `_${depthwiseName2}` : `` }: `
+        throw Error( `${depthwiseNames.join( "_" )}: `
           + `biases weight count ( ${biasesWeightCountInFact} ) `
           + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})` );
     }
@@ -599,7 +597,7 @@ class Base extends Recyclable.Root {
     }
 
     // Bias
-    imageOut.modify_byBias( bDepthwiseBias, depthwiseBiasesArray, depthwiseName1, depthwiseName2, "bias", parametersDesc );
+    imageOut.modify_byBias( bDepthwiseBias, depthwiseBiasesArray, parametersDesc, ...depthwiseNames, "bias" );
 
     // Activation Escaping.
     {
@@ -609,7 +607,7 @@ class Base extends Recyclable.Root {
 
       // Before activation function, scale every element according to its channel.
       Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
-        depthwiseName1, depthwiseName2, "ActivationEscapingScale", parametersDesc );
+        parametersDesc, ...depthwiseNames, "ActivationEscapingScale" );
     }
 
     // Activation
@@ -621,18 +619,16 @@ class Base extends Recyclable.Root {
   /**
    * Note: This method will also set .boundsArraySet.afterBias.
    *
-   * @param {NumberImage.Base} this     The source image to be processed.
-   * @param {boolean}  bBias             Whether add bias.
-   * @param {number[]} biasesArray       The bias values.
-   * @param {string}   biasName1         The 1st part string for debug message of this bias.
-   * @param {string}   biasName2         The 2nd part string for debug message of this bias.
-   * @param {string}   biasName3         The 3rd part string for debug message of this bias.
-   * @param {Object}   parametersDesc    Its .toString() for debug message of this block.
+   * @param {NumberImage.Base} this    The source image to be processed.
+   * @param {boolean}  bBias           Whether add bias.
+   * @param {number[]} biasesArray     The bias values.
+   * @param {Object}   parametersDesc  Its .toString() for debug message of this block.
+   * @param {string[]} biasNames       The strings for debug message of this bias.
    *
    * @return {NumberImage.Base}
    *   Return this which may or may not be added bias (according to bBias).
    */
-  modify_byBias( bBias, biasesArray, biasName1, biasName2, biasName3, parametersDesc ) {
+  modify_byBias( bBias, biasesArray, parametersDesc, ...biasNames ) {
     let imageIn = this;
 
     imageIn.boundsArraySet.afterBias.set_all_byBoundsArray( imageIn.boundsArraySet.afterFilter );
@@ -640,12 +636,12 @@ class Base extends Recyclable.Root {
       return imageIn;
 
     if ( biasesArray == null )
-      throw Error( `${biasName1}${ biasName2 ? `_${biasName2}` : `` }${ biasName3 ? `_${biasName3}` : `` }: `
+      throw Error( `${biasNames.join( "_") }: `
         + `biasesArray (${biasesArray}) `
         + `should not be null. (${parametersDesc})` );
 
     if ( biasesArray.length != imageIn.depth )
-      throw Error( `${biasName1}${ biasName2 ? `_${biasName2}` : `` }${ biasName3 ? `_${biasName3}` : `` }: `
+      throw Error( `${biasNames.join( "_") }: `
         + `shape (${biasesArray.length}) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})` );
 
@@ -672,26 +668,21 @@ class Base extends Recyclable.Root {
    *
    * @param {NumberImage.Base} imageIn          The imageIn.dataArray[] will be multiplied by scaleArray in place.
    * @param {FloatValue.ScaleArray} scaleArray  The scales for every channel.
-   * @param {string} scaleName1                 The 1st part string for debug message of this scaling.
-   * @param {string} scaleName2                 The 2nd part string for debug message of this scaling.
-   * @param {string} scaleName3                 The 3rd part string for debug message of this scaling.
-   * @param {string} scaleName4                 The 4th part string for debug message of this scaling.
    * @param {Object} parametersDesc             Its .toString() for debug message of this block.
+   * @param {string[]} scaleNames               The strings for debug message of this scaling.
    *
    * @return {NumberImage.Base}
    *   Return the (modified) image whose every element is scaled according to its channel.
    */
-  static scale_byChannel_withoutAffect_BoundsArraySet( imageIn, scaleArray,
-    scaleName1, scaleName2, scaleName3, scaleName4, parametersDesc ) {
+  static scale_byChannel_withoutAffect_BoundsArraySet( imageIn, scaleArray, parametersDesc, ...scaleNames ) {
 
-!!!
     if ( scaleArray == null )
-      throw Error( `${scaleName1}${ scaleName2 ? `_${scaleName2}` : `` }${ scaleName3 ? `_${scaleName3}` : `` }: `
+      throw Error( `${scaleNames.join( "_" )}: `
         + `scaleArray (${scaleArray}) `
         + `should not be null. (${parametersDesc})` );
 
     if ( scaleArray.length != imageIn.depth )
-      throw Error( `${scaleName1}${ scaleName2 ? `_${scaleName2}` : `` }${ scaleName3 ? `_${scaleName3}` : `` }: `
+      throw Error( `${scaleNames.join( "_" )}: `
         + `shape (${scaleArray.length}) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})` );
 
@@ -711,10 +702,10 @@ class Base extends Recyclable.Root {
   /**
    * Note: This method does NOT adjust any BoundsArraySet.
    *
-   * @param {NumberImage.Base} imageIn   The source image to be processed.
-   * @param {string}   nActivationId     The name string of this activation function.
+   * @param {NumberImage.Base} imageIn  The source image to be processed.
+   * @param {string} nActivationId      The name string of this activation function.
    *
-   * @param {Object}   parametersDesc    Its .toString() for debug message of this block.
+   * @param {Object} parametersDesc     Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
    *   Return this which may or may not be modified by activation function (according to nActivationId). The this.dataArray will be
@@ -741,17 +732,16 @@ class Base extends Recyclable.Root {
    * Two input dimensions ( height, width, depth ) should be the same, or one should be a scalar ( 1, 1, depth ) value
    * (i.e. boradcast in the same channel (i.e. not across channels) is supported).
    *
-   * @param {NumberImage.Base} this        The first image to be used for adding.
-   * @param {NumberImage.Base} another     The second image to be used for adding.
+   * @param {NumberImage.Base} this     The first image to be used for adding.
+   * @param {NumberImage.Base} another  The second image to be used for adding.
    *
-   * @param {string} addName1              The 1st part string for debug message of this adding operation.
-   * @param {string} addName2              The 2nd part string for debug message of this adding operation.
-   * @param {Object} parametersDesc        Its .toString() for debug message of this block.
+   * @param {Object}   parametersDesc   Its .toString() for debug message of this block.
+   * @param {string[]} addNames         The strings for debug message of this adding operation.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of adding this and another.
    */
-  clone_byAdd( another, addName1, addName2, parametersDesc ) {
+  clone_byAdd( another, parametersDesc, ...addNames ) {
     let rHeight, rWidth, rDepth;
     let imageOutNew;
 
@@ -800,7 +790,7 @@ class Base extends Recyclable.Root {
 
     } else {
       throw Error(
-        `${addName1}${ addName2 ? `_${addName2}` : `` }: `
+        `${addNames.join( "_" )}: `
           + `another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${another.depth} ) `
           + `this ( height, width, depth ) = ( ${this.height}, ${this.width}, ${this.depth} ) `
           + `and `
@@ -826,17 +816,16 @@ class Base extends Recyclable.Root {
    * Two input dimensions ( height, width, depth ) should be the same, or one should be a scalar ( 1, 1, depth ) value
    * (i.e. boradcast in the same channel (i.e. not across channels) is supported).
    *
-   * @param {NumberImage.Base} this        The first image to be used for multiplying.
-   * @param {NumberImage.Base} another     The second image to be used for multiplying.
+   * @param {NumberImage.Base} this     The first image to be used for multiplying.
+   * @param {NumberImage.Base} another  The second image to be used for multiplying.
    *
-   * @param {string} multiplyName1         The 1st part string for debug message of this multiplying operation.
-   * @param {string} multiplyName2         The 2nd part string for debug message of this multiplying operation.
-   * @param {Object} parametersDesc        Its .toString() for debug message of this block.
+   * @param {Object}   parametersDesc   Its .toString() for debug message of this block.
+   * @param {string[]} multiplyNames    The strings for debug message of this multiplying operation.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of multiplying this and another.
    */
-  clone_byMultiply( another, multiplyName1, multiplyName2, parametersDesc ) {
+  clone_byMultiply( another, parametersDesc, ...multiplyNames ) {
     let rHeight, rWidth, rDepth;
     let imageOutNew;
 
@@ -885,7 +874,7 @@ class Base extends Recyclable.Root {
 
     } else {
       throw Error(
-        `${multiplyName1}${ multiplyName2 ? `_${multiplyName2}` : `` }: `
+        `${multiplyNames.join( "_" )}: `
           + `this ( height, width, depth ) = ( ${this.height}, ${this.width}, ${this.depth} ) `
           + `and `
           + `another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${another.depth} ) `
@@ -911,14 +900,14 @@ class Base extends Recyclable.Root {
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
     aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
-    squeezeExcitationName, parametersDesc ) {
+    parametersDesc, ...squeezeExcitationNames ) {
 
     return this.clone_bySqueezeExcitation(
       nSqueezeExcitationChannelCountDivisor,
       null, null, null, null,
       nActivationId,
       true, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, // (bPassThrough)
-      squeezeExcitationName, parametersDesc );
+      parametersDesc, ...squeezeExcitationNames );
   }
 
   /** Call this.clone_bySqueezeExcitation() with ( bPassThrough == false ). */
@@ -927,7 +916,7 @@ class Base extends Recyclable.Root {
     intermediateFiltersArray, intermediateBiasesArray,
     excitationFiltersArray, excitationBiasesArray,
     nActivationId,
-    squeezeExcitationName, parametersDesc ) {
+    parametersDesc, ...squeezeExcitationNames ) {
 
     return this.clone_bySqueezeExcitation(
       nSqueezeExcitationChannelCountDivisor,
@@ -935,7 +924,7 @@ class Base extends Recyclable.Root {
       excitationFiltersArray, excitationBiasesArray,
       nActivationId,
       false, null, // (bPassThrough)
-      squeezeExcitationName, parametersDesc );
+      parametersDesc, ...squeezeExcitationNames );
   }
 
   /**
