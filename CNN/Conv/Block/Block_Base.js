@@ -110,8 +110,8 @@ import { Params } from "./Block_Params.js";
  * </pre>
  *
  *
- *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1 (8) ):
- * (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount == 0 ) )
+ *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2 (8) ):
+ * (ShuffleNetV2_ByPointwise21's head when ( pointwise1ChannelCount == 0 ) )
  * <pre>
  * input0 - (pointwise1) - depthwise1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix)
  *                                    \ (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix)
@@ -119,7 +119,7 @@ import { Params } from "./Block_Params.js";
  *
  *
  *   - When ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (9) ):
- * (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ) )
+ * (ShuffleNetV2_ByPointwise21's head when ( pointwise1ChannelCount >= 1 ) )
  * <pre>
  * input0 - pointwise1 - depthwise1 - concat1 - (squeezeExcitationPrefix) - pointwise20 - (squeezeExcitationPostfix)
  *        \------------- depthwise2 /         \ (squeezeExcitationPrefix) - pointwise21 - (squeezeExcitationPostfix)
@@ -1109,7 +1109,7 @@ class Base extends Recyclable.Root {
     let input1 = this.operationArray.endingInput1;
 
     // For
-    //   - ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1 (8)
+    //   - ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2 (8)
     //   - ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (9)
     //
     // Although they have pointwise21, however, their squeeze-and-excitation-1 uses .endingInput0 (i.e. not endingInput1) as input.
