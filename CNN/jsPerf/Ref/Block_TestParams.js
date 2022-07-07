@@ -295,7 +295,8 @@ class Base extends TestParams.Base {
 //!!! (2022/07/06 Temp Added and Remarked) For speed-up debug.
 //         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
          ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1, // (8)
-         Block.Params.nConvBlockTypeId.valueDesc.range.max
+         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1, // (8)
+//         Block.Params.nConvBlockTypeId.valueDesc.range.max
        ],
 
 //!!! (2022/04/28 Temp) For testing large channel count.
