@@ -295,8 +295,8 @@ class Base extends TestParams.Base {
 //!!! (2022/07/06 Temp Added and Remarked) For speed-up debug.
          Block.Params.nConvBlockTypeId.valueDesc.range.min,
 //         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
-//         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1, // (8)
-//         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1 // (8)
+//         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2, // (8)
+//         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2 // (8)
          Block.Params.nConvBlockTypeId.valueDesc.range.max
        ],
 
@@ -734,9 +734,9 @@ class Base extends TestParams.Base {
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (8) (ShuffleNetV2_ByPointwise21's head without pointwise1). */
-  nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1() {
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1 )
+  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (8) (ShuffleNetV2_ByPointwise21's head when no pointwise1). */
+  nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2() {
+    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2 )
       return true;
     return false;
   }
@@ -1215,7 +1215,7 @@ class Base extends TestParams.Base {
           pointwise20_outputChannelCount = pointwise20ChannelCount_original;
           break;
 
-        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1: // ( 8)
+        case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2: // ( 8)
           pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount;
           pointwise21_inputChannelCount = depthwise1_resultOutputChannelCount;
           pointwise20_outputChannelCount = pointwise20ChannelCount_original;
