@@ -302,13 +302,20 @@ class Base extends TestParams.Base {
 
 //!!! (2022/04/28 Temp) For testing large channel count.
 //      pointwise1ChannelCount: [ 2, 0 + 3 - 1 ],
-      pointwise1ChannelCount: [ 0, 0 + 3 - 1 ],
+//!!! (2022/07/07 Temp Remarked) For speed up debug.
+//      pointwise1ChannelCount: [ 0, 0 + 3 - 1 ],
+      pointwise1ChannelCount: [ 0, 0 ],
 
       pointwise20ChannelCount: [ 1, 1 + 3 - 1 ],
 
+//!!! (2022/07/07 Temp Remarked) For speed up debug.
+//       depthwise_AvgMax_Or_ChannelMultiplier: [
+//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
+//       ],
       depthwise_AvgMax_Or_ChannelMultiplier: [
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
+        0,
+        0
       ],
 
       // (2021/10/06) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
