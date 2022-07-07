@@ -318,6 +318,8 @@ class ScaleArray {
     //  ( +-Infinity / +-Infinity ) == NaN
     //
     scale = dstLower / srcLower;
+    if ( scale > 1 )
+      scale = 1; // i.e. no need to scale because srcLower is already in bounds [ dstLower, dstUpper ].
 
     // 1.2 Verification.
     //   - If scale is zero or -Infinity or +Infinity or NaN, it is always failed.
@@ -327,6 +329,8 @@ class ScaleArray {
 
       // 2. Try upperer bound, since it is failed to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] by scale according to lower bound.
       scale = dstUpper / srcUpper;
+      if ( scale > 1 )
+        scale = 1; // i.e. no need to scale because srcUpper is already in bounds [ dstLower, dstUpper ].
 
       // 2.2 Verification. If scale is zero, it is always failed. Otherwise, check it by lower side.
       //   - If scale is zero or -Infinity or +Infinity or NaN, it is always failed.
