@@ -218,8 +218,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       this.poolWindowShape = null;
     }
 
-    this.tensorWeightCountTotal_internal = undefined;
-
     this.outputChannelCount_toBeExtracted = undefined;
     this.inputChannelCount_toBeExtracted = undefined;
 
