@@ -988,6 +988,7 @@ class Base extends Recyclable.Root {
    * @override
    */
   disposeResources() {
+    this.apply = null;
 
     // 1. Because .outputX are not created by this block, they should not be released by this block.
     //
