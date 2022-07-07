@@ -219,8 +219,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       this.filtersShape = null;
     }
 
-    this.tensorWeightCountTotal_internal = undefined;
-
     this.inputChannelCount_higherHalf = undefined;
     this.outputChannelCount_higherHalf = undefined;
 
