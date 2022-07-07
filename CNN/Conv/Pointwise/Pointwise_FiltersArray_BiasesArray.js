@@ -436,13 +436,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             break;
         }
 
-//!!! (2022/07/06 Remarked) Use short form instead.
-//         this.filtersShape = Recyclable.Array.Pool.get_or_create_by( 4 );
-//         this.filtersShape[ 0 ] = 1;
-//         this.filtersShape[ 1 ] = 1;
-//         this.filtersShape[ 2 ] = this.inputChannelCount;
-//         this.filtersShape[ 3 ] = this.outputChannelCount;
-
         this.filtersShape = Recyclable.Array.Pool.get_or_create_by( 1, 1, this.inputChannelCount, this.outputChannelCount );
 
         if ( this.bBias ) {
@@ -577,7 +570,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     sourceWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
 
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( this.nPassThroughStyleId );
-    let tBounds = new FloatValue.Bounds( 0, 0 );
+    let tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
 
     // Init
     {
@@ -716,6 +709,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
           + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total output channel count ( ${outChannelEnd} ) `
           + `should be ( ${this.outputChannelCount} ).` );
+
+    tBounds.disposeResources_and_recycleToPool();
+    tBounds = null;
   }
 
   /**
