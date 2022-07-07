@@ -16,8 +16,8 @@ import { Int } from "./ValueDesc_Base.js";
  *   -  5: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD
  *   -  6: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY
  *   -  7: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL
- *   -  8: SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1  (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount == 0 ))
- *   -  9: SHUFFLE_NET_V2_BY_POINTWISE21_HEAD                (ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
+ *   -  8: SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2  (ShuffleNetV2_ByPointwise21's head when ( pointwise1ChannelCount == 0 ))
+ *   -  9: SHUFFLE_NET_V2_BY_POINTWISE21_HEAD                (ShuffleNetV2_ByPointwise21's head when ( pointwise1ChannelCount >= 1 ))
  *   - 10: SHUFFLE_NET_V2_BY_POINTWISE21_BODY
  *   - 11: SHUFFLE_NET_V2_BY_POINTWISE21_TAIL
  */
@@ -34,7 +34,7 @@ class ConvBlockType extends Int {
         "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD",              // ( 5)
         "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY",              // ( 6)
         "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL",              // ( 7)
-        "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE1",  // ( 8)
+        "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2",  // ( 8)
         "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD",                // ( 9)
         "SHUFFLE_NET_V2_BY_POINTWISE21_BODY",                // (10)
         "SHUFFLE_NET_V2_BY_POINTWISE21_TAIL",                // (11)
