@@ -764,7 +764,10 @@ class Base extends Recyclable.Root {
 
     // 5.2 The squeeze-and-excitation prefix pointwise2
     if ( this.bSqueezeExcitationPrefix )
-      if ( !Base.operationArray_append_SqueezeExcitation.call( this, nHigherHalfDifferent_pointwise2, inputWeightArray ) )
+      if ( !Base.operationArray_append_SqueezeExcitation.call( this,
+              nHigherHalfDifferent_pointwise2, inputWeightArray,
+              0,  // Prefix squeeze-and-excitation's channels are NOT shuffled.
+              arrayTemp_forInterleave_asGrouptTwo ) )
         return false;  // e.g. input array does not have enough data.
 
     // 5.3
@@ -839,7 +842,10 @@ class Base extends Recyclable.Root {
       
     // 7.1
     if ( !this.bSqueezeExcitationPrefix ) // (i.e. postfix)
-      if ( !Base.operationArray_append_SqueezeExcitation.call( this, nHigherHalfDifferent_pointwise2, inputWeightArray ) )
+      if ( !Base.operationArray_append_SqueezeExcitation.call( this,
+              nHigherHalfDifferent_pointwise2, inputWeightArray,
+              pointwise20_channelShuffler_outputGroupCount, // Postfix squeeze-and-excitation's channels are shuffled.
+              arrayTemp_forInterleave_asGrouptTwo ) )
         return false;  // e.g. input array does not have enough data.
 
     // 7.2
@@ -1095,7 +1101,9 @@ class Base extends Recyclable.Root {
    *
    * @return {boolean} Return true, if succeeded.
    */
-  static operationArray_append_SqueezeExcitation( nPointwise_HigherHalfDifferent, inputWeightArray ) {
+  static operationArray_append_SqueezeExcitation(
+    nPointwise_HigherHalfDifferent, inputWeightArray,
+    channelShuffler_outputGroupCount, arrayTemp_forInterleave_asGrouptTwo ) {
 
     if ( this.nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
       return true; // No sequeeze-and-excitation.
@@ -1221,7 +1229,10 @@ class Base extends Recyclable.Root {
       let intermediatePointwise0;
       {
         intermediatePointwise0 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
-          this.operationArray.endingInput0, this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray );
+          this.operationArray.endingInput0,
+          this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
+          channelShuffler_outputGroupCount, arrayTemp_forInterleave_asGrouptTwo );
+
         if ( !intermediatePointwise0 )
           return false;  // e.g. input array does not have enough data.
       }
@@ -1230,7 +1241,9 @@ class Base extends Recyclable.Root {
       if ( this.pointwise21ChannelCount > 0 ) {
         intermediatePointwise1 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
           this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
-          this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray );
+          this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
+          channelShuffler_outputGroupCount, arrayTemp_forInterleave_asGrouptTwo );
+
         if ( !intermediatePointwise1 )
           return false;  // e.g. input array does not have enough data.
       }
@@ -1238,14 +1251,11 @@ class Base extends Recyclable.Root {
       this.operationArray.operation_append( intermediatePointwise0, intermediatePointwise1 );
     }
 
-
-//!!! ...unfinished... (2022/06/09)
-// the .channelCount_lowerHalf and .channelCount_higherHalf are lost after squeeze.
-// But intermediatePointwise and excitationPointwise needs them.
-
     // 3. excitationPointwise
     {
-      const excitationPointwise_channelShuffler_outputGroupCount = 0; // Inside squeeze-and-excitation, never shuffle channels.
+//!!! (2022/07/07 Remarked) needs shuffle
+//      const excitationPointwise_channelShuffler_outputGroupCount = 0; // Inside squeeze-and-excitation, never shuffle channels.
+
       const excitationPointwise_bBias = true; // the ending of squeeze-and-excitation should always have bias (even if no activation).
 
       let excitationPointwise0;
@@ -1258,10 +1268,10 @@ class Base extends Recyclable.Root {
           this.operationArray.endingInput0,
           excitationPointwise0_outputChannelCount, excitationPointwise_bBias, excitationPointwise0_nActivationId,
           nPointwise_HigherHalfDifferent, excitationPointwise0_outputChannelCount_lowerHalf,
-          excitationPointwise_channelShuffler_outputGroupCount
+          channelShuffler_outputGroupCount
         );
 
-        if ( !excitationPointwise0.init( inputWeightArray, this.weightElementOffsetEnd ) )
+        if ( !excitationPointwise0.init( inputWeightArray, this.weightElementOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
           return false;  // e.g. input array does not have enough data.
         this.weightElementOffsetEnd = excitationPointwise0.weightElementOffsetEnd;
       }
@@ -1276,10 +1286,10 @@ class Base extends Recyclable.Root {
           this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
           excitationPointwise1_outputChannelCount, excitationPointwise_bBias, excitationPointwise1_nActivationId,
           nPointwise_HigherHalfDifferent, excitationPointwise1_outputChannelCount_lowerHalf,
-          excitationPointwise_channelShuffler_outputGroupCount
+          channelShuffler_outputGroupCount
         );
 
-        if ( !excitationPointwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
+        if ( !excitationPointwise1.init( inputWeightArray, this.weightElementOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
           return false;  // e.g. input array does not have enough data.
         this.weightElementOffsetEnd = excitationPointwise1.weightElementOffsetEnd;
       }
@@ -1319,7 +1329,8 @@ class Base extends Recyclable.Root {
    *   Return the created (and initialized) intermediate pointwise of squeeze-and-excitation, if succeeded. Return null, if failed.
    */
   static SequeezeExcitation_intermediatePointwise_create_init(
-    inputTensorPlaceholder, nActivationId, nPointwise_HigherHalfDifferent, inputWeightArray ) {
+    inputTensorPlaceholder, nActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
+    channelShuffler_outputGroupCount, arrayTemp_forInterleave_asGrouptTwo ) {
 
     const intermediate_inputChannelCount = inputTensorPlaceholder.channelCount;
     const intermediate_inputChannelCount_lowerHalf = inputTensorPlaceholder.channelCount_lowerHalf;
@@ -1367,10 +1378,13 @@ class Base extends Recyclable.Root {
       inputTensorPlaceholder,
       intermediate_outputChannelCount, intermediate_bBias, intermediate_nActivationId,
       intermediate_nHigherHalfDifferent, intermediate_outputChannelCount_lowerHalf,
-      0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
+      channelShuffler_outputGroupCount
+
+//!!! (2022/07/07 Remarked) needs shuffle
+//       0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
     );
 
-    if ( !intermediatePointwise.init( inputWeightArray, this.weightElementOffsetEnd ) )
+    if ( !intermediatePointwise.init( inputWeightArray, this.weightElementOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
       return null;  // e.g. input array does not have enough data.
     this.weightElementOffsetEnd = intermediatePointwise.weightElementOffsetEnd;
 
