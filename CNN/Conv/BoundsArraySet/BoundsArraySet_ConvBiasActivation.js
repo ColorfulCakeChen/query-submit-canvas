@@ -303,7 +303,7 @@ class ConvBiasActivation extends InputsOutputs {
         if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
           this.output0.boundsArray.set_one_byBoundsArray( outChannel, this.afterBias, outChannel );
 
-//!!! ...unfinished... (2022/07/07)
+//!!! (2022/07/07 Remarked) Use activated escaping-scaled afterBias value instead.
 // It seems necessary to use clamp_one_byXxx() instead of set_one_byBounds().
 // Otherwise, squeeze-and-excitation when pass-through (constant 1 when pass through) will generate +-3 instead 1.
 //
@@ -326,17 +326,11 @@ class ConvBiasActivation extends InputsOutputs {
 //
 //         }
 
-        } else {
-
-          if ( bPassThrough ) { // For activation-escaping, it will be the output range for inputDomainLinear.
-            this.output0.boundsArray.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
-
-          } else { // For non-activation-escaping, it will be the output range for the whole input domain.
-            this.output0.boundsArray.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
-          }
-
+        } else { // Use activated escaping-scaled afterBias value as output.
+          let lower_activated = theActivationFunctionInfo.pfnReference( this.afterBias.lowers[ outChannel ] );
+          let upper_activated = theActivationFunctionInfo.pfnReference( this.afterBias.uppers[ outChannel ] );
+          this.output0.boundsArray.set_one_byLowerUpper( outChannel, lower_activated, upper_activated );
         }
-
       }
 
     }
