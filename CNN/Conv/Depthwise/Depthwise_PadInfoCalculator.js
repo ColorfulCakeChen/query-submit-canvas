@@ -81,7 +81,47 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
 
   /** @override */
   disposeResources() {
-    this.stridesPadInfo = null;
+    this.inputHeight = undefined;
+    this.inputWidth = undefined;
+    this.inputChannelCount = undefined;
+    this.AvgMax_Or_ChannelMultiplier = undefined;
+    this.filterHeight = undefined;
+    this.filterWidth = undefined;
+    this.stridesPad = undefined;
+
+    this.channelMultiplier = undefined;
+
+    this.filterSize = undefined;
+
+    this.stridesPadInfo = undefined;
+
+    this.strides = undefined;
+    this.pad = undefined;
+
+    this.stridesHeight = undefined;
+    this.stridesWidth = undefined;
+
+    this.dilationHeight = undefined;
+    this.dilationWidth = undefined;
+
+    this.effectFilterHeight = undefined;
+    this.effectFilterWidth = undefined;
+    this.effectFilterSize = undefined;
+
+    this.outputHeight = undefined;
+    this.outputWidth = undefined;
+
+    this.padHeight = undefined;
+    this.padWidth = undefined;
+
+    this.padHeightTop = undefined;
+    this.padHeightBottom = undefined;
+    this.padWidthLeft = undefined;
+    this.padWidthRight = undefined;
+
+    this.outputChannelCount = undefined;
+    this.outputElementCount = undefined;
+
     super.disposeResources();
   }
 
