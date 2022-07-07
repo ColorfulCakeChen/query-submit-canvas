@@ -458,31 +458,6 @@ class Params extends Weights.Params {
     let bNoNeighborAnalysis = Depthwise.PadInfoCalculatorRoot.output_height_width_is_no_neighbor_analysis( input0_height, input0_width,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth );
 
-//!!! (2022/06/21 Remarked) Old Codes. Replaced by bNonLinear_between_depthwise_and_pointwise2
-//     let depthwise_bLinearOrAffine;
-//     {
-//       depthwise_bLinearOrAffine =
-//          ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // i.e. depthwise is linear or affine.
-//
-//           // no squeeze-and-excitation (i.e. between depthwise and pointwise2 is linear or affine)
-//       && (   ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
-//
-//           // or, has squeeze-and-excitation, but after pointwise2. (i.e. between depthwise and pointwise2 is still linear or affine)
-//           || ( bSqueezeExcitationPrefix == false )
-//          );
-//     }
-//
-//     let depthwise_bLinear;
-//     {
-//       depthwise_bLinear = depthwise_bLinearOrAffine
-//         && (    ( bDepthwiseBias == false ) // It has no bias. (i.e. depthwise is linear)
-//
-//             // Or, its has bias, but its next operation (i.e. pointwise2) has bias (so its bias could be combined into the next operation's
-//             // bias). Then it could be viewed as linear.
-//             || ( ( bDepthwiseBias == true ) && ( bPointwise20Bias == true ) )
-//            );
-//     }
-
     // If a depthwise operation does not change output's ( height, width, channelCount ), does not analyze ( height, width ) neightbors,
     // does not non-linear, then it is equivalent to do nothing.
     //
