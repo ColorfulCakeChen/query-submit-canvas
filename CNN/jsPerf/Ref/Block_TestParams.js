@@ -337,22 +337,23 @@ class Base extends TestParams.Base {
 //        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
 //        [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
+//      bSqueezeExcitationPrefix: undefined,
+      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
+//      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min ],
+//      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
+
 //       nSqueezeExcitationChannelCountDivisor: [
 //         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
 //         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
 //       ],
 //!!! (2022/06/10 Temp Remarked) For speed up debug.
       nSqueezeExcitationChannelCountDivisor: [
-        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+//        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+        1,
         4
         //ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min + 7 - 1
         //ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.max
       ],
-
-//      bSqueezeExcitationPrefix: undefined,
-      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
-//      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min ],
-//      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
 
       pointwise20ActivationId:
 //        undefined,
