@@ -1267,13 +1267,13 @@ class Base extends TestParams.Base {
 
       // 4.1 Pointwise20's, Pointwise202's, Pointwise21's prefix squeeze-and-excitation.
       this.generate_squeezeExcitation_filters_biases(
-        paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
+        paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.nActivationId,
         pointwise20_inputChannelCount, pointwise202_inputChannelCount, pointwise21_inputChannelCount,
         Base.PropertyNames.pointwise2PrefixSE, io_paramsNumberArrayObject );
 
     } else { // 4.2 Clear all prefix squeeze-and-excitation.
       this.generate_squeezeExcitation_filters_biases(
-        paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
+        paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.nActivationId,
         0, 0, 0,
         Base.PropertyNames.pointwise2PrefixSE, io_paramsNumberArrayObject );
     }
@@ -1307,13 +1307,13 @@ class Base extends TestParams.Base {
 
       // 6.1 Pointwise20's, Pointwise202's, Pointwise21's postfix squeeze-and-excitation.
       this.generate_squeezeExcitation_filters_biases(
-        paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
+        paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.nActivationId,
         pointwise20_outputChannelCount, pointwise202_outputChannelCount, pointwise21_outputChannelCount,
         Base.PropertyNames.pointwise2PostfixSE, io_paramsNumberArrayObject );
 
     } else { // 6.2 Clear all postfix squeeze-and-excitation.
       this.generate_squeezeExcitation_filters_biases(
-        paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.pointwise20ActivationId,
+        paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.nActivationId,
         0, 0, 0,
         Base.PropertyNames.pointwise2PostfixSE, io_paramsNumberArrayObject );
     }
