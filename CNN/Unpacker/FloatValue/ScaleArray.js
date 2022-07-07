@@ -322,10 +322,13 @@ class ScaleArray {
       scale = 1; // i.e. no need to scale because srcLower is already in bounds [ dstLower, dstUpper ].
 
     // 1.2 Verification.
-    //   - If scale is zero or -Infinity or +Infinity or NaN, it is always failed.
+    //   - If scale is negative or zero or -Infinity or +Infinity or NaN, it is always failed.
     //   - If scaled source upper bound is out of destination range, it is also failed.
     let adjustedUpper = srcUpper * scale;
-    if ( ( scale == 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedUpper < dstLower ) || ( adjustedUpper > dstUpper ) ) {
+
+//!!! (2022/07/07 Remarked) keep scale positive.
+//    if ( ( scale == 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedUpper < dstLower ) || ( adjustedUpper > dstUpper ) ) {
+    if ( ( scale <= 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedUpper < dstLower ) || ( adjustedUpper > dstUpper ) ) {
 
       // 2. Try upperer bound, since it is failed to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] by scale according to lower bound.
       scale = dstUpper / srcUpper;
@@ -333,10 +336,13 @@ class ScaleArray {
         scale = 1; // i.e. no need to scale because srcUpper is already in bounds [ dstLower, dstUpper ].
 
       // 2.2 Verification. If scale is zero, it is always failed. Otherwise, check it by lower side.
-      //   - If scale is zero or -Infinity or +Infinity or NaN, it is always failed.
+      //   - If scale is negative or zero or -Infinity or +Infinity or NaN, it is always failed.
       //   - If scaled source lower bound is out of destination range, it is also failed.
       let adjustedLower = srcLower * scale;
-      if ( ( scale == 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedLower < dstLower ) || ( adjustedLower > dstUpper ) ) {
+
+//!!! (2022/07/07 Remarked) keep scale positive.
+//      if ( ( scale == 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedLower < dstLower ) || ( adjustedLower > dstUpper ) ) {
+      if ( ( scale <= 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedLower < dstLower ) || ( adjustedLower > dstUpper ) ) {
         // 3. It is impossible to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] only by scale because all cases are tried and failed.
         scale = Number.NaN;
       }
