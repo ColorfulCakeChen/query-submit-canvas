@@ -220,6 +220,21 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     this.tensorWeightCountTotal_internal = undefined;
 
+    this.outputChannelCount_toBeExtracted = undefined;
+    this.inputChannelCount_toBeExtracted = undefined;
+
+    this.outputChannelCount_higherHalf = undefined;
+    this.outputChannelCount_lowerHalf = undefined;
+    this.inputChannelCount_higherHalf = undefined;
+
+    this.tensorWeightCountTotal_internal = undefined;
+
+    this.inputChannelCount_lowerHalf = undefined;
+    this.nHigherHalfDifferent = undefined;
+    this.nPassThroughStyleId = undefined;
+    this.nActivationId = undefined;
+    this.bBias = undefined;
+
     super.disposeResources();
   }
 
