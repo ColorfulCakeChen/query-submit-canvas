@@ -305,6 +305,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
         this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.channelMultiplier;
         this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+      } else {
+        this.inputChannelCount_higherHalf = undefined;
+        this.outputChannelCount_lowerHalf = undefined;
+        this.outputChannelCount_higherHalf = undefined;
       }
 
       // Determine shape of the filters, biases, channels.
