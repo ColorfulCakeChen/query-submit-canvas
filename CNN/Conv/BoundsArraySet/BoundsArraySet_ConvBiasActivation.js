@@ -306,25 +306,37 @@ class ConvBiasActivation extends InputsOutputs {
 !!! ...unfinished... (2022/07/07)
 // seems it is necessary to use clamp_one_byXxx() instead of set_one_byBounds().
 // Otherwise, squeeze-and-excitation when pass-through (constant 1 when pass through) will generate +-3 instead 1.
+//
+//         // Otherwise, the activation function dominates the output range.
+//         //
+//         // Note1: clamp_one_byXxx() is not feasible here because output range usually is different from input domain. set_one_byXxx()
+//         //        is more feasible.
+//         //
+//         // Note2: However, set_one_byXxx() is not so friendly for activation function whose output range has Infinity (e.g. RELU is
+//         //        [ 0, +Infinity ]). The reason is that the result's bounds becomes a bounds with Infinity which is difficult to be
+//         //        handled for the follow-up processing.
+//         } else {
+//
+//           if ( bPassThrough ) { // For activation-escaping, it will be the output range for inputDomainLinear.
+//             this.output0.boundsArray.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
+//
+//           } else { // For non-activation-escaping, it will be the output range for the whole input domain.
+//             this.output0.boundsArray.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
+//           }
+//
+//         }
 
-        // Otherwise, the activation function dominates the output range.
-        //
-        // Note1: clamp_one_byXxx() is not feasible here because output range usually is different from input domain. set_one_byXxx()
-        //        is more feasible.
-        //
-        // Note2: However, set_one_byXxx() is not so friendly for activation function whose output range has Infinity (e.g. RELU is
-        //        [ 0, +Infinity ]). The reason is that the result's bounds becomes a bounds with Infinity which is difficult to be
-        //        handled for the follow-up processing.
         } else {
 
           if ( bPassThrough ) { // For activation-escaping, it will be the output range for inputDomainLinear.
-            this.output0.boundsArray.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
+            this.output0.boundsArray.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
 
           } else { // For non-activation-escaping, it will be the output range for the whole input domain.
-            this.output0.boundsArray.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
+            this.output0.boundsArray.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
           }
 
         }
+
       }
 
     }
