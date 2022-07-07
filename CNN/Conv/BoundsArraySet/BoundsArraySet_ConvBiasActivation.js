@@ -303,8 +303,8 @@ class ConvBiasActivation extends InputsOutputs {
         if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
           this.output0.boundsArray.set_one_byBoundsArray( outChannel, this.afterBias, outChannel );
 
-!!! ...unfinished... (2022/07/07)
-// seems it is necessary to use clamp_one_byXxx() instead of set_one_byBounds().
+//!!! ...unfinished... (2022/07/07)
+// It seems necessary to use clamp_one_byXxx() instead of set_one_byBounds().
 // Otherwise, squeeze-and-excitation when pass-through (constant 1 when pass through) will generate +-3 instead 1.
 //
 //         // Otherwise, the activation function dominates the output range.
