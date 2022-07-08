@@ -95,35 +95,23 @@ class ArrayInterleaver {
         + `height ( ${height} ) must be even (i.e. divisible by 2).`
       );
 
-//!!! ...unfinished... (2022/07/08)
-    arrayTemp.length = width???;
+    // Copy the elements to be re-arrange.
+    arrayTemp.length = elementCount;
+    for ( let i = 0; i < elementCount; ++i ) {
+      arrayTemp[ i ] = arrayIn[ i ];
+    }
 
     let heightHalf = Math.floor( height / 2 );
     let elementCountHalf = Math.floor( elementCount / 2 );
-
-//!!! ...unfinished... (2022/07/08)
-//
-//     for ( let indexBegin = 0; indexBegin < elementCount; indexBegin += width ) {
-//
-//       // Copy the elements to be re-arrange.
-//       for ( let i = 0; i < width; ++i ) {
-//         arrayTemp[ i ] = arrayIn[ indexBegin + i ];
-//       }
-//
-//     }
-
-//!!! ...unfinished... (2022/07/08)
 
     // Interleave the elements order.
     let toIndexNext;
     for ( let y = 0, toIndex = 0; y < heightHalf; ++y, toIndex = toIndexNext ) {
       toIndexNext = toIndex + width;
-
-      for ( let i = toIndex; i < toIndexNext; ++i )
+      for ( let i = toIndex; i < toIndexNext; ++i ) {
         arrayIn[ i ] = arrayTemp[ i ];
-
-      for ( let i = toIndex; i < toIndexNext; ++i )
-        arrayIn[ i ] = arrayTemp[ elementCountHalf + i ];
+        arrayIn[ i + width ] = arrayTemp[ i + elementCountHalf ];
+      }
     }
 
     return arrayIn;
