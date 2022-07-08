@@ -60,10 +60,6 @@ class ArrayInterleaver {
     return arrayIn;
   }
 
-
-//!!! ...unfinished... (2022/07/08)
-// Needs another kinds channel shuffling: along input channel (not along output channel)
-
   /**
    * Rearrange array elements along height by interleaving.
    *   - Only ( groupCount == 2 ) is supported.
@@ -103,21 +99,31 @@ class ArrayInterleaver {
     arrayTemp.length = width???;
 
     let heightHalf = Math.floor( height / 2 );
+    let elementCountHalf = Math.floor( elementCount / 2 );
+
+//!!! ...unfinished... (2022/07/08)
+//
+//     for ( let indexBegin = 0; indexBegin < elementCount; indexBegin += width ) {
+//
+//       // Copy the elements to be re-arrange.
+//       for ( let i = 0; i < width; ++i ) {
+//         arrayTemp[ i ] = arrayIn[ indexBegin + i ];
+//       }
+//
+//     }
 
 //!!! ...unfinished... (2022/07/08)
 
-    for ( let indexBegin = 0; indexBegin < elementCount; indexBegin += width ) {
+    // Interleave the elements order.
+    let toIndexNext;
+    for ( let y = 0, toIndex = 0; y < heightHalf; ++y, toIndex = toIndexNext ) {
+      toIndexNext = toIndex + width;
 
-      // Copy the elements to be re-arrange.
-      for ( let i = 0; i < width; ++i ) {
-        arrayTemp[ i ] = arrayIn[ indexBegin + i ];
-      }
+      for ( let i = toIndex; i < toIndexNext; ++i )
+        arrayIn[ i ] = arrayTemp[ i ];
 
-      // Interleave the elements order.
-      for ( let i = 0, toIndex = indexBegin; i < widthHalf; ++i, toIndex += 2 ) {
-        arrayIn[ toIndex     ] = arrayTemp[ i ];
-        arrayIn[ toIndex + 1 ] = arrayTemp[ i + widthHalf ];
-      }
+      for ( let i = toIndex; i < toIndexNext; ++i )
+        arrayIn[ i ] = arrayTemp[ elementCountHalf + i ];
     }
 
     return arrayIn;
