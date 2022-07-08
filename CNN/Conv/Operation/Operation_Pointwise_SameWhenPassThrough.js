@@ -26,13 +26,15 @@ class Pointwise_SameWhenPassThrough extends Pointwise {
   constructor(
     inputTensorPlaceholder0,
     outputChannelCount, bBias, nActivationId,
-    nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
+    nHigherHalfDifferent, outputChannelCount_lowerHalf,
+    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     super(
       inputTensorPlaceholder0,
       outputChannelCount, bBias, nActivationId,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
-      nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
+      nHigherHalfDifferent, outputChannelCount_lowerHalf,
+      channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
     Pointwise_SameWhenPassThrough.setAsConstructor_self.call( this );
   }
@@ -41,13 +43,15 @@ class Pointwise_SameWhenPassThrough extends Pointwise {
   static setAsConstructor(
     inputTensorPlaceholder0,
     outputChannelCount, bBias, nActivationId,
-    nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
+    nHigherHalfDifferent, outputChannelCount_lowerHalf,
+    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     super.setAsConstructor(
       inputTensorPlaceholder0,
       outputChannelCount, bBias, nActivationId,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
-      nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
+      nHigherHalfDifferent, outputChannelCount_lowerHalf,
+      channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
     Pointwise_SameWhenPassThrough.setAsConstructor_self.call( this );
     return this;
