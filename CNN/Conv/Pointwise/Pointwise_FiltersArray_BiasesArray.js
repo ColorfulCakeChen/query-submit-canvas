@@ -510,6 +510,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 // - Shuffle filters and biases by channelShuffler_outputGroupCount.
 //
 //
+// Or, Perhaps, the input ScaleBoundsArray should be channel shuffled?
+//
+//
 
           this.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
             inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray );
@@ -594,6 +597,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     sourceWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
 
 //!!! ...unfinished... (2022/07/08) should separate BoundsArraySet calculation from filters and biases extraction.
+//
+// Or, Perhaps, the input ScaleBoundsArray should be channel shuffled?
+//
 
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( this.nPassThroughStyleId );
     let tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
@@ -805,6 +811,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         this.filtersArray, this.inputChannelCount, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
 
       // Note: biases and BoundsArraySet are not affected because they are along output channels (i.e. not along input channels).
+
+
+//!!! ...unfinished... (2022/07/08)
+// Perhaps, the input ScaleBoundsArray should be channel shuffled?
     }
 
     // 2. Shuffle along output channels.
