@@ -5,6 +5,10 @@ export { ArrayInterleaver };
  */
 class ArrayInterleaver {
 
+!!! ...unfinished... (2022/07/08)
+// Needs another kinds channel shuffling: along input channel (not along output channel)
+
+
   /**
    * Rearrange array elements by interleaving.
    *   - Only ( groupCount == 2 ) is supported.
