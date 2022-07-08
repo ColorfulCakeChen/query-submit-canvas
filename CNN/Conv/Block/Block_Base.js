@@ -1216,13 +1216,6 @@ class Base extends Recyclable.Root {
       this.operationArray.operation_append( squeezeDepthwise0, squeezeDepthwise1 );
     }
 
-//!!! ...unfinished... (2022/06/09)
-// squeeze should not destroy channelCount_lowerHalf and channelCount_higherHalf.
-
-//!!! ...unfinished... (2022/06/09)
-// the .channelCount_lowerHalf and .channelCount_higherHalf are lost after squeeze.
-// But intermediatePointwise and excitationPointwise needs them.
-
     // 2. intermediatePointwise
     if ( bIntermediate ) {
 
@@ -1362,13 +1355,14 @@ class Base extends Recyclable.Root {
       else
         intermediate_outputChannelCount = Math.ceil( intermediate_inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
 
-!!! ...unfinished... (2022/07/08)
+//!!! ...unfinished... (2022/07/08)
 // intermediate_outputChannelCount_lowerHalf may be odd (i.e. not even; not divisible by 2) so that it can not be channel shuffled
 // (i.e. Interleave_asGrouptTwo can not work).
 
       // Since higher-half is just pass-through, it could be discarded totally.
       if ( nPointwise_HigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ) // (4)
-        intermediate_outputChannelCount = intermediate_outputChannelCount_lowerHalf;
+        if ( channelShuffler_outputGroupCount == 0 ) // Only if no channel shuffling, this discarding could be done.
+          intermediate_outputChannelCount = intermediate_outputChannelCount_lowerHalf;
     }
 
     const intermediate_nActivationId = nActivationId;
