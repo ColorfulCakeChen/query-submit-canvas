@@ -772,18 +772,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         + `output channel count ( ${this.outputChannelCount} ) must be even (i.e. divisible by 2).`
       );
 
-    { // Shuffle filters.
-      let filtersWeightsCount = this.inputChannelCount * this.outputChannelCount;
+    FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongWidth( // Shuffle filters.
+      this.filtersArray, this.inputChannelCount, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
 
-      for ( let indexBegin = 0; indexBegin < filtersWeightsCount; indexBegin += this.outputChannelCount ) {
-        FloatValue.ArrayInterleaver.interleave_asGrouptTwo(
-          this.filtersArray, indexBegin, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
-      }
-    }
-
-    if ( this.biasesArray )
-      FloatValue.ArrayInterleaver.interleave_asGrouptTwo(
-        this.biasesArray, 0, this.biasesArray.length, arrayTemp_forInterleave_asGrouptTwo ); // Shuffle biases.
+    if ( this.biasesArray ) // Shuffle biases.
+      FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongWidth(
+        this.biasesArray, 1, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
 
     this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo(
       arrayTemp_forInterleave_asGrouptTwo ); // Shuffle bounds array set of output.
