@@ -527,36 +527,32 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         this.apply_doEscapingScale_to_filtersArray_biasesArray(); // Apply doEscapingScale.
       }
 
-//!!! (2022/07/08 Remarked) No longer restrict which nHigherHalfDifferent.
       // Shuffle channels.
       //
       // Pre-shuffle channels by shuffling the filters and biases.
-      if ( ( this.channelShuffler_inputGroupCount > 0 ) || ( this.channelShuffler_outputGroupCount > 0 ) ) {
+      switch ( this.nHigherHalfDifferent ) {
 
-        switch ( this.nHigherHalfDifferent ) {
+        // 3.
+        // 4.
+        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE: // (3)
+        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
 
-          // 3.
-          // 4.
-          case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE: // (3)
-          case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
+          // 3.2 bHigherHalfAnotherPointwiseShuffle
+          // 4.2 bHigherHalfPassThroughShuffle
+          this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo );
+          break;
 
-            // 3.2 bHigherHalfAnotherPointwiseShuffle
-            // 4.2 bHigherHalfPassThroughShuffle
-            this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo );
-            break;
-
-          default:
-            throw Error(
-              `Pointwise.FiltersArray_BiasesArray.init(): `
-                + `channelShuffler_inputGroupCount (${this.channelShuffler_inputGroupCount}) and `
-                + `channelShuffler_outputGroupCount (${this.channelShuffler_outputGroupCount}) should be zero when `
-                + `nHigherHalfDifferent=`
-                  + `${ValueDesc.Pointwise_HigherHalfDifferent.Singleton.getStringOf( this.nHigherHalfDifferent )}`
-                  + `(${this.nHigherHalfDifferent}). `
-                + `Usually, only HIGHER_HALF_PASS_THROUGH could have channel shuffler.`
-            );
-            break;
-        }
+        default:
+          throw Error(
+            `Pointwise.FiltersArray_BiasesArray.init(): `
+              + `channelShuffler_inputGroupCount (${this.channelShuffler_inputGroupCount}) and `
+              + `channelShuffler_outputGroupCount (${this.channelShuffler_outputGroupCount}) should be zero when `
+              + `nHigherHalfDifferent=`
+                + `${ValueDesc.Pointwise_HigherHalfDifferent.Singleton.getStringOf( this.nHigherHalfDifferent )}`
+                + `(${this.nHigherHalfDifferent}). `
+              + `Usually, only HIGHER_HALF_PASS_THROUGH could have channel shuffler.`
+          );
+          break;
       }
 
       {
@@ -782,66 +778,59 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   }
 
   /**
-   * Shuffle (.filtersArray, .biasesArray, .boundsArraySet) by interleaving according to channelShuffler_inputGroupCount.
+   * Shuffle (.filtersArray, .biasesArray, .boundsArraySet) by interleaving.
    *   - Only ( outputGroupCount == 2 ) is supported.
-   *   - The output channel count must be even (i.e. divisible by 2).
+   *   - The input channel count must be even (i.e. divisible by 2), if ( .channelShuffler_inputGroupCount > 0 ).
+   *   - The output channel count must be even (i.e. divisible by 2), if ( .channelShuffler_outputGroupCount > 0 ).
    *
    * @param {Array} arrayTemp_forInterleave_asGrouptTwo
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance when doing Interleave_asGrouptTwo.
    */
-  set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo_along_inputChannels( arrayTemp_forInterleave_asGrouptTwo ) {
-    if ( this.channelShuffler_inputGroupCount <= 0 )
-      return;
+  set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo ) {
+    
+    // 1.Shuffle along input channels.
+    if ( this.channelShuffler_inputGroupCount > 0 ) {
 
-    if ( this.channelShuffler_inputGroupCount != 2 )
-      throw Error( `Pointwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
-        + `channelShuffler_inputGroupCount ( ${this.channelShuffler_inputGroupCount} ) only 2 is supported.`
-      );
+      if ( this.channelShuffler_inputGroupCount != 2 )
+        throw Error( `Pointwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
+          + `channelShuffler_inputGroupCount ( ${this.channelShuffler_inputGroupCount} ) only 2 is supported.`
+        );
 
-    if ( ( this.inputChannelCount % 2 ) != 0 )
-      throw Error( `Pointwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
-        + `input channel count ( ${this.inputChannelCount} ) must be even (i.e. divisible by 2).`
-      );
+      if ( ( this.inputChannelCount % 2 ) != 0 )
+        throw Error( `Pointwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
+          + `input channel count ( ${this.inputChannelCount} ) must be even (i.e. divisible by 2).`
+        );
 
-    FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongHeight( // Shuffle filters.
-      this.filtersArray, this.inputChannelCount, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
+      FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongHeight( // Shuffle filters.
+        this.filtersArray, this.inputChannelCount, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
 
-    // Note: biases and BoundsArraySet are not affected because they are along output channels (i.e. not along input channels).
-  }
+      // Note: biases and BoundsArraySet are not affected because they are along output channels (i.e. not along input channels).
+    }
 
-  /**
-   * Shuffle (.filtersArray, .biasesArray, .boundsArraySet) by interleaving according to channelShuffler_outputGroupCount.
-   *   - Only ( outputGroupCount == 2 ) is supported.
-   *   - The output channel count must be even (i.e. divisible by 2).
-   *
-   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
-   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-   * and improve performance when doing Interleave_asGrouptTwo.
-   */
-  set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo_along_outputChannels( arrayTemp_forInterleave_asGrouptTwo ) {
-    if ( this.channelShuffler_outputGroupCount <= 0 )
-      return;
+    // 2. Shuffle along output channels.
+    if ( this.channelShuffler_outputGroupCount > 0 ) {
 
-    if ( this.channelShuffler_outputGroupCount != 2 )
-      throw Error( `Pointwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
-        + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) only 2 is supported.`
-      );
+      if ( this.channelShuffler_outputGroupCount != 2 )
+        throw Error( `Pointwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
+          + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) only 2 is supported.`
+        );
 
-    if ( ( this.outputChannelCount % 2 ) != 0 )
-      throw Error( `Pointwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
-        + `output channel count ( ${this.outputChannelCount} ) must be even (i.e. divisible by 2).`
-      );
+      if ( ( this.outputChannelCount % 2 ) != 0 )
+        throw Error( `Pointwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
+          + `output channel count ( ${this.outputChannelCount} ) must be even (i.e. divisible by 2).`
+        );
 
-    FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongWidth( // Shuffle filters.
-      this.filtersArray, this.inputChannelCount, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
+      FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongWidth( // Shuffle filters.
+        this.filtersArray, this.inputChannelCount, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
 
-    if ( this.biasesArray ) // Shuffle biases.
-      FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongWidth(
-        this.biasesArray, 1, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
+      if ( this.biasesArray ) // Shuffle biases.
+        FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongWidth(
+          this.biasesArray, 1, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
 
-    this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo(
-      arrayTemp_forInterleave_asGrouptTwo ); // Shuffle bounds array set of output.
+      this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo(
+        arrayTemp_forInterleave_asGrouptTwo ); // Shuffle bounds array set of output.
+    }
   }
 
 
