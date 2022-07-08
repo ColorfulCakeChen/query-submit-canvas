@@ -6,7 +6,7 @@ export { ArrayInterleaver };
 class ArrayInterleaver {
 
 //!!! ...unfinished... (2022/07/08)
-// needs undo_interleave_asGrouptTwo()
+// needs interleave_asGrouptTwo_undo_Xxx()
 
   /**
    * Rearrange array elements by interleaving.
