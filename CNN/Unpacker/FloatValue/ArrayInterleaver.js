@@ -147,12 +147,13 @@ class ArrayInterleaver {
     let elementCountHalf = Math.floor( elementCount / 2 );
 
     // Interleave the elements order.
-    let toIndexEnd;
-    for ( let y = 0, toIndex = 0; y < height; y += 2, toIndex = ( toIndexEnd + width ) ) {
-      toIndexEnd = toIndex + width;
-      for ( let i = toIndex; i < toIndexEnd; ++i ) {
-        arrayIn[ i ] = arrayTemp[ i ];
-        arrayIn[ i + width ] = arrayTemp[ i + elementCountHalf ];
+    let fromIndex2, toIndex2;
+    for ( let y = 0, fromIndex1 = 0, toIndex1 = 0; y < height; y += 2, fromIndex1 += width, toIndex1 = ( toIndex2 + width ) ) {
+      fromIndex2 = fromIndex1 + elementCountHalf;
+      toIndex2 = toIndex1 + width;
+      for ( let i = 0; i < width; ++i ) {
+        arrayIn[ toIndex1 + i ] = arrayTemp[ fromIndex1 + i ];
+        arrayIn[ toIndex2 + i ] = arrayTemp[ fromIndex2 + i ];
       }
     }
 
