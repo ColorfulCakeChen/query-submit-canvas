@@ -5,8 +5,19 @@ export { ArrayInterleaver };
  */
 class ArrayInterleaver {
 
-!!! ...unfinished... (2022/07/08)
+//!!! ...unfinished... (2022/07/08)
 // Needs another kinds channel shuffling: along input channel (not along output channel)
+
+
+// !!! ...unfinished... (2022/07/08) along output channel (axis X)
+//     { // Shuffle filters.
+//       let filtersWeightsCount = this.inputChannelCount * this.outputChannelCount;
+//
+//       for ( let indexBegin = 0; indexBegin < filtersWeightsCount; indexBegin += this.outputChannelCount ) {
+//         FloatValue.ArrayInterleaver.interleave_asGrouptTwo(
+//           this.filtersArray, indexBegin, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
+//       }
+//     }
 
 
   /**
