@@ -1359,14 +1359,28 @@ class Base extends Recyclable.Root {
       else
         intermediate_outputChannelCount = Math.ceil( intermediate_inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
 
-!!! ...unfinished... (2022/07/08)
-// intermediate_outputChannelCount_lowerHalf may be odd (i.e. not even; not divisible by 2) so that it can not be channel shuffled
-// (i.e. Interleave_asGrouptTwo can not work).
+
+// !!! (2022/07/08 Remarked)
+// Because postfix squeeze-and-excitation are shuffling along input channels (i.e. not along output channels),
+// Discarding parts of output channels is fine.
+//
+// //!!! ...unfinished... (2022/07/08)
+// // intermediate_outputChannelCount_lowerHalf may be odd (i.e. not even; not divisible by 2) so that it can not be channel shuffled
+// // (i.e. Interleave_asGrouptTwo can not work).
+//
+//       // Since higher-half is just pass-through, it could be discarded totally.
+//       if ( nPointwise_HigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ) // (4)
+//         if ( channelShuffler_outputGroupCount == 0 ) // Only if no channel shuffling, this discarding could be done.
+//           intermediate_outputChannelCount = intermediate_outputChannelCount_lowerHalf;
+
 
       // Since higher-half is just pass-through, it could be discarded totally.
+      //
+      // Note: Even if ( channelShuffler_inputGroupCount != 0 ), this still works. Because postfix squeeze-and-excitation are
+      //       shuffling along input channels (i.e. not along output channels), Discarding parts of output channels is fine.
+      //
       if ( nPointwise_HigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ) // (4)
-        if ( channelShuffler_outputGroupCount == 0 ) // Only if no channel shuffling, this discarding could be done.
-          intermediate_outputChannelCount = intermediate_outputChannelCount_lowerHalf;
+        intermediate_outputChannelCount = intermediate_outputChannelCount_lowerHalf;
     }
 
     const intermediate_nActivationId = nActivationId;
