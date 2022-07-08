@@ -84,6 +84,11 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  * @member {number} outputChannelCount_lowerHalf
  *   The lower half output channel count when ( bHigherHalfDifferent == true ). It is ignored when ( bHigherHalfDifferent == false ).
  *
+ * @member {number} channelShuffler_inputGroupCount
+ *   The input group count of the channel shuffler. Usually, it is used after a output channel shuffled data when:
+ *   - ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE ).
+ *   - ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ).
+ *
  * @member {number} channelShuffler_outputGroupCount
  *   The output group count of the channel shuffler. Usually, it is used when:
  *   - ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE ).
@@ -121,27 +126,31 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
    */
   constructor(
     inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount,
+    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
+     channelShuffler_inputGroupCount, channelShuffler_outputGroupCount,
     ...restArgs ) {
 
     super( ...restArgs );
       
     FiltersArray_BiasesArray.setAsConstructor_self.call( this,
       inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
+      nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
+      channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
   }
 
   /** @override */
   static setAsConstructor(
     inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount,
+    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
+    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount,
     ...restArgs ) {
 
     super.setAsConstructor( ...restArgs );
 
     FiltersArray_BiasesArray.setAsConstructor_self.call( this,
       inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
+      nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
+      channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
     return this;
   }
@@ -149,7 +158,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   /** @override */
   static setAsConstructor_self(
     inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
+    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
+    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
@@ -160,6 +170,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     this.nHigherHalfDifferent = nHigherHalfDifferent;
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
     this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
+    this.channelShuffler_inputGroupCount = channelShuffler_inputGroupCount;
     this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
 
     this.tensorWeightCountTotal_internal = 0;
@@ -225,6 +236,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     this.tensorWeightCountTotal_internal = undefined;
 
     this.channelShuffler_outputGroupCount = undefined;
+    this.channelShuffler_inputGroupCount = undefined;
     this.outputChannelCount_lowerHalf = undefined;
     this.inputChannelCount_lowerHalf = undefined;
 
@@ -504,7 +516,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       }
 
       // Shuffle channels.
-      if ( this.channelShuffler_outputGroupCount > 0 ) { // Pre-shuffle channels by shuffling the filters and biases.
+      //
+      // Pre-shuffle channels by shuffling the filters and biases.
+      if ( ( this.channelShuffler_inputGroupCount > 0 ) || ( this.channelShuffler_outputGroupCount > 0 ) ) {
 
         switch ( this.nHigherHalfDifferent ) {
 
@@ -521,6 +535,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           default:
             throw Error(
               `Pointwise.FiltersArray_BiasesArray.init(): `
+                + `channelShuffler_inputGroupCount (${this.channelShuffler_inputGroupCount}) and `
                 + `channelShuffler_outputGroupCount (${this.channelShuffler_outputGroupCount}) should be zero when `
                 + `nHigherHalfDifferent=`
                   + `${ValueDesc.Pointwise_HigherHalfDifferent.Singleton.getStringOf( this.nHigherHalfDifferent )}`
