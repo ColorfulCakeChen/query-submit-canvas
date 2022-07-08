@@ -607,7 +607,8 @@ class Base extends Recyclable.Root {
         this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
         nHigherHalfDifferent_pointwise1,
         outputChannelCount_lowerHalf_pointwise1,
-        0 // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
+        0, // Default channelShuffler_inputGroupCount for pointwise1 is zero (never positive).
+        0  // Default channelShuffler_outputGroupCount for pointwise1 is zero (never positive).
       );
 
       if ( !pointwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
@@ -766,7 +767,7 @@ class Base extends Recyclable.Root {
     if ( this.bSqueezeExcitationPrefix )
       if ( !Base.operationArray_append_SqueezeExcitation.call( this,
               nHigherHalfDifferent_pointwise2, inputWeightArray,
-              0,  // Prefix squeeze-and-excitation's channels are NOT shuffled.
+              0,  // Prefix squeeze-and-excitation's channels are NOT shuffled along input channels.
               arrayTemp_forInterleave_asGrouptTwo ) )
         return false;  // e.g. input array does not have enough data.
 
@@ -794,7 +795,9 @@ class Base extends Recyclable.Root {
       let pointwise20 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
         this.operationArray.endingInput0,
         this.pointwise20ChannelCount, this.bPointwise20Bias, this.pointwise20ActivationId,
-        nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2, pointwise20_channelShuffler_outputGroupCount
+        nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2,
+        0, // No channelShuffler_inputGroupCount.
+        pointwise20_channelShuffler_outputGroupCount
       );
 
       if ( !pointwise20.init( inputWeightArray, this.weightElementOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
@@ -816,7 +819,9 @@ class Base extends Recyclable.Root {
         pointwise21 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
           pointwise21_input0,
           this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
-          nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2, pointwise20_channelShuffler_outputGroupCount
+          nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2,
+          0, // No channelShuffler_inputGroupCount.
+          pointwise20_channelShuffler_outputGroupCount
         );
 
         // Note: Strictly speaking, sometimes pointwise21 is dependent on depthwise2. But it does not matter for BoundsArraySet
@@ -844,7 +849,7 @@ class Base extends Recyclable.Root {
     if ( !this.bSqueezeExcitationPrefix ) // (i.e. postfix)
       if ( !Base.operationArray_append_SqueezeExcitation.call( this,
               nHigherHalfDifferent_pointwise2, inputWeightArray,
-              pointwise20_channelShuffler_outputGroupCount, // Postfix squeeze-and-excitation's channels are shuffled.
+              pointwise20_channelShuffler_outputGroupCount, // Postfix squeeze-and-excitation's channels are shuffled along input channels.
               arrayTemp_forInterleave_asGrouptTwo ) )
         return false;  // e.g. input array does not have enough data.
 
@@ -1103,7 +1108,7 @@ class Base extends Recyclable.Root {
    */
   static operationArray_append_SqueezeExcitation(
     nPointwise_HigherHalfDifferent, inputWeightArray,
-    channelShuffler_outputGroupCount, arrayTemp_forInterleave_asGrouptTwo ) {
+    channelShuffler_inputGroupCount, arrayTemp_forInterleave_asGrouptTwo ) {
 
     if ( this.nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
       return true; // No sequeeze-and-excitation.
@@ -1224,11 +1229,7 @@ class Base extends Recyclable.Root {
         intermediatePointwise0 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
           this.operationArray.endingInput0,
           this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
-
-!!! ...unfinished... (2022/07/08)
-// Needs another kinds channel shuffling: along input channel (not along output channel)
-
-          channelShuffler_outputGroupCount, arrayTemp_forInterleave_asGrouptTwo );
+          channelShuffler_inputGroupCount, arrayTemp_forInterleave_asGrouptTwo );
 
         if ( !intermediatePointwise0 )
           return false;  // e.g. input array does not have enough data.
@@ -1239,11 +1240,7 @@ class Base extends Recyclable.Root {
         intermediatePointwise1 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
           this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
           this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
-
-!!! ...unfinished... (2022/07/08)
-// Needs another kinds channel shuffling: along input channel (not along output channel)
-
-          channelShuffler_outputGroupCount, arrayTemp_forInterleave_asGrouptTwo );
+          channelShuffler_inputGroupCount, arrayTemp_forInterleave_asGrouptTwo );
 
         if ( !intermediatePointwise1 )
           return false;  // e.g. input array does not have enough data.
@@ -1254,9 +1251,6 @@ class Base extends Recyclable.Root {
 
     // 3. excitationPointwise
     {
-//!!! (2022/07/07 Remarked) needs shuffle
-//      const excitationPointwise_channelShuffler_outputGroupCount = 0; // Inside squeeze-and-excitation, never shuffle channels.
-
       const excitationPointwise_bBias = true; // the ending of squeeze-and-excitation should always have bias (even if no activation).
 
       let excitationPointwise0;
@@ -1269,11 +1263,8 @@ class Base extends Recyclable.Root {
           this.operationArray.endingInput0,
           excitationPointwise0_outputChannelCount, excitationPointwise_bBias, excitationPointwise0_nActivationId,
           nPointwise_HigherHalfDifferent, excitationPointwise0_outputChannelCount_lowerHalf,
-
-!!! ...unfinished... (2022/07/08)
-// Needs another kinds channel shuffling: along input channel (not along output channel)
-
-          channelShuffler_outputGroupCount
+          channelShuffler_inputGroupCount,
+          0 // No channelShuffler_outputGroupCount.
         );
 
         if ( !excitationPointwise0.init( inputWeightArray, this.weightElementOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
@@ -1291,11 +1282,8 @@ class Base extends Recyclable.Root {
           this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
           excitationPointwise1_outputChannelCount, excitationPointwise_bBias, excitationPointwise1_nActivationId,
           nPointwise_HigherHalfDifferent, excitationPointwise1_outputChannelCount_lowerHalf,
-
-!!! ...unfinished... (2022/07/08)
-// Needs another kinds channel shuffling: along input channel (not along output channel)
-
-          channelShuffler_outputGroupCount
+          channelShuffler_inputGroupCount,
+          0 // No channelShuffler_outputGroupCount.
         );
 
         if ( !excitationPointwise1.init( inputWeightArray, this.weightElementOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
@@ -1339,7 +1327,7 @@ class Base extends Recyclable.Root {
    */
   static SequeezeExcitation_intermediatePointwise_create_init(
     inputTensorPlaceholder, nActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
-    channelShuffler_outputGroupCount, arrayTemp_forInterleave_asGrouptTwo ) {
+    channelShuffler_inputGroupCount, arrayTemp_forInterleave_asGrouptTwo ) {
 
     const intermediate_inputChannelCount = inputTensorPlaceholder.channelCount;
     const intermediate_inputChannelCount_lowerHalf = inputTensorPlaceholder.channelCount_lowerHalf;
@@ -1371,7 +1359,7 @@ class Base extends Recyclable.Root {
       else
         intermediate_outputChannelCount = Math.ceil( intermediate_inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
 
-//!!! ...unfinished... (2022/07/08)
+!!! ...unfinished... (2022/07/08)
 // intermediate_outputChannelCount_lowerHalf may be odd (i.e. not even; not divisible by 2) so that it can not be channel shuffled
 // (i.e. Interleave_asGrouptTwo can not work).
 
@@ -1392,14 +1380,8 @@ class Base extends Recyclable.Root {
       inputTensorPlaceholder,
       intermediate_outputChannelCount, intermediate_bBias, intermediate_nActivationId,
       intermediate_nHigherHalfDifferent, intermediate_outputChannelCount_lowerHalf,
-
-!!! ...unfinished... (2022/07/08)
-// Needs another kinds channel shuffling: along input channel (not along output channel)
-
-      channelShuffler_outputGroupCount
-
-//!!! (2022/07/07 Remarked) needs shuffle
-//       0, // Inside squeeze-and-excitation, never shuffle channels. ( channelShuffler_outputGroupCount == 0 ).
+      channelShuffler_inputGroupCount,
+      0 // No channelShuffler_outputGroupCount.
     );
 
     if ( !intermediatePointwise.init( inputWeightArray, this.weightElementOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
