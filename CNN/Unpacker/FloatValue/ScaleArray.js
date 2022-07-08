@@ -218,7 +218,7 @@ class ScaleArray {
    * @return {ScaleArray} Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo( arrayTemp ) {
-    ArrayInterleaver.interleave_asGrouptTwo( this.scales, 0, this.scales.length, arrayTemp );
+    ArrayInterleaver.interleave_asGrouptTwo_alongWidth( this.scales, 1, this.scales.length, arrayTemp );
     return this;
   }
 
