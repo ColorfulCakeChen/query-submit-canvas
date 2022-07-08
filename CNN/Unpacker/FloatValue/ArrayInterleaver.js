@@ -101,14 +101,13 @@ class ArrayInterleaver {
       arrayTemp[ i ] = arrayIn[ i ];
     }
 
-    let heightHalf = Math.floor( height / 2 );
     let elementCountHalf = Math.floor( elementCount / 2 );
 
     // Interleave the elements order.
-    let toIndexNext;
-    for ( let y = 0, toIndex = 0; y < heightHalf; ++y, toIndex = toIndexNext ) {
-      toIndexNext = toIndex + width;
-      for ( let i = toIndex; i < toIndexNext; ++i ) {
+    let toIndexEnd;
+    for ( let y = 0, toIndex = 0; y < height; y += 2, toIndex = ( toIndexEnd + width ) ) {
+      toIndexEnd = toIndex + width;
+      for ( let i = toIndex; i < toIndexEnd; ++i ) {
         arrayIn[ i ] = arrayTemp[ i ];
         arrayIn[ i + width ] = arrayTemp[ i + elementCountHalf ];
       }
