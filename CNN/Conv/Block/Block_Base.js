@@ -1224,6 +1224,10 @@ class Base extends Recyclable.Root {
         intermediatePointwise0 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
           this.operationArray.endingInput0,
           this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
+
+!!! ...unfinished... (2022/07/08)
+// Needs another kinds channel shuffling: along input channel (not along output channel)
+
           channelShuffler_outputGroupCount, arrayTemp_forInterleave_asGrouptTwo );
 
         if ( !intermediatePointwise0 )
@@ -1235,6 +1239,10 @@ class Base extends Recyclable.Root {
         intermediatePointwise1 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
           this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
           this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
+
+!!! ...unfinished... (2022/07/08)
+// Needs another kinds channel shuffling: along input channel (not along output channel)
+
           channelShuffler_outputGroupCount, arrayTemp_forInterleave_asGrouptTwo );
 
         if ( !intermediatePointwise1 )
@@ -1261,6 +1269,10 @@ class Base extends Recyclable.Root {
           this.operationArray.endingInput0,
           excitationPointwise0_outputChannelCount, excitationPointwise_bBias, excitationPointwise0_nActivationId,
           nPointwise_HigherHalfDifferent, excitationPointwise0_outputChannelCount_lowerHalf,
+
+!!! ...unfinished... (2022/07/08)
+// Needs another kinds channel shuffling: along input channel (not along output channel)
+
           channelShuffler_outputGroupCount
         );
 
@@ -1279,6 +1291,10 @@ class Base extends Recyclable.Root {
           this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
           excitationPointwise1_outputChannelCount, excitationPointwise_bBias, excitationPointwise1_nActivationId,
           nPointwise_HigherHalfDifferent, excitationPointwise1_outputChannelCount_lowerHalf,
+
+!!! ...unfinished... (2022/07/08)
+// Needs another kinds channel shuffling: along input channel (not along output channel)
+
           channelShuffler_outputGroupCount
         );
 
@@ -1376,6 +1392,10 @@ class Base extends Recyclable.Root {
       inputTensorPlaceholder,
       intermediate_outputChannelCount, intermediate_bBias, intermediate_nActivationId,
       intermediate_nHigherHalfDifferent, intermediate_outputChannelCount_lowerHalf,
+
+!!! ...unfinished... (2022/07/08)
+// Needs another kinds channel shuffling: along input channel (not along output channel)
+
       channelShuffler_outputGroupCount
 
 //!!! (2022/07/07 Remarked) needs shuffle
