@@ -1373,14 +1373,13 @@ class Base extends Recyclable.Root {
 //         if ( channelShuffler_outputGroupCount == 0 ) // Only if no channel shuffling, this discarding could be done.
 //           intermediate_outputChannelCount = intermediate_outputChannelCount_lowerHalf;
 
-
       // Since higher-half is just pass-through, it could be discarded totally.
       //
-      // Note: Even if ( channelShuffler_inputGroupCount != 0 ), this still works. Because postfix squeeze-and-excitation are
-      //       shuffling along input channels (i.e. not along output channels), Discarding parts of output channels is fine.
+      // Note: Only if no channel shuffling (i.e. ( channelShuffler_inputGroupCount != 0 )), this discarding could be done.
       //
       if ( nPointwise_HigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ) // (4)
-        intermediate_outputChannelCount = intermediate_outputChannelCount_lowerHalf;
+        if ( channelShuffler_inputGroupCount == 0 )
+          intermediate_outputChannelCount = intermediate_outputChannelCount_lowerHalf;
     }
 
     const intermediate_nActivationId = nActivationId;
