@@ -510,7 +510,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 // - Shuffle filters and biases by channelShuffler_outputGroupCount.
 //
 //
-// Or, Perhaps, the input ScaleBoundsArray should be channel shuffled?
+// Or, Perhaps, the input ScaleBoundsArray should be channel shuffled? (No, it has already been shuffled by previous operation.)
 //
 //
 
@@ -598,7 +598,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
 //!!! ...unfinished... (2022/07/08) should separate BoundsArraySet calculation from filters and biases extraction.
 //
-// Or, Perhaps, the input ScaleBoundsArray should be channel shuffled?
+// Or, Perhaps, the input ScaleBoundsArray should be channel shuffled? (No, it has already been shuffled by previous operation.)
 //
 
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( this.nPassThroughStyleId );
@@ -814,7 +814,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
 
 //!!! ...unfinished... (2022/07/08)
-// Perhaps, the input ScaleBoundsArray should be channel shuffled?
+// Or, Perhaps, the input ScaleBoundsArray should be channel shuffled? (No, it has already been shuffled by previous operation.)
     }
 
     // 2. Shuffle along output channels.
