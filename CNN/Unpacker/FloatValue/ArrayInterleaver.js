@@ -5,6 +5,9 @@ export { ArrayInterleaver };
  */
 class ArrayInterleaver {
 
+//!!! ...unfinished... (2022/07/08)
+// needs undo_interleave_asGrouptTwo()
+
   /**
    * Rearrange array elements by interleaving.
    *   - Only ( groupCount == 2 ) is supported.
