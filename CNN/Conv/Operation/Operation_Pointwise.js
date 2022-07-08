@@ -50,12 +50,14 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   constructor(
     inputTensorPlaceholder0,
     outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
+    nHigherHalfDifferent, outputChannelCount_lowerHalf,
+    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     super(
       inputTensorPlaceholder0, null, 1,
       inputTensorPlaceholder0.channelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
+      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf, outputChannelCount_lowerHalf,
+      channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
     Pointwise.setAsConstructor_self.call( this );
   }
@@ -64,12 +66,14 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   static setAsConstructor(
     inputTensorPlaceholder0,
     outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
+    nHigherHalfDifferent, outputChannelCount_lowerHalf,
+    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     super.setAsConstructor(
       inputTensorPlaceholder0, null, 1,
       inputTensorPlaceholder0.channelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
+      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf, outputChannelCount_lowerHalf,
+      channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
     Pointwise.setAsConstructor_self.call( this );
     return this;
