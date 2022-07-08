@@ -224,8 +224,8 @@ class BoundsArray {
    * @return {BoundsArray} Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo( arrayTemp ) {
-    ArrayInterleaver.interleave_asGrouptTwo( this.lowers, 0, this.lowers.length, arrayTemp );
-    ArrayInterleaver.interleave_asGrouptTwo( this.uppers, 0, this.uppers.length, arrayTemp );
+    ArrayInterleaver.interleave_asGrouptTwo_alongWidth( this.lowers, 1, this.lowers.length, arrayTemp );
+    ArrayInterleaver.interleave_asGrouptTwo_alongWidth( this.uppers, 1, this.uppers.length, arrayTemp );
     return this;
   }
 
