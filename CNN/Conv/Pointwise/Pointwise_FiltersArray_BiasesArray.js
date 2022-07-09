@@ -85,9 +85,9 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  *   The lower half output channel count when ( bHigherHalfDifferent == true ). It is ignored when ( bHigherHalfDifferent == false ).
  *
  * @member {number} channelShuffler_inputGroupCount
- *   The input group count of the channel shuffler. Usually, it is used after a output channel shuffled data when:
- *   - ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE ).
- *   - ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ).
+ *   The input group count of the channel shuffler. Usually, it is used for undo previous operation's channel shuffling. If 0, the
+ * inputScaleBoundsArray will be used. If positive (currently, only 2 is supported), the inputScaleBoundsArray.beforeChannelShuffled
+ * will be used.
  *
  * @member {number} channelShuffler_outputGroupCount
  *   The output group count of the channel shuffler. Usually, it is used when:
