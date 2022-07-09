@@ -12,25 +12,24 @@ class ArrayInterleaver {
    * Rearrange array elements by interleaving.
    *   - Only ( groupCount == 2 ) is supported.
    *
-   * @param {Array} arrayIn
-   *   The array to be re-arranged.
+   * @param {Array} fromArray
+   *   The source array. It will not be modified. It is the source of copying.
    *
-   * @param {number} indexBegin
-   *   Re-arrange the arrayIn from which element.
+   * @param {number} fromIndex
+   *   The copying will begin at fromArray[ fromIndex ].
    *
-   * @param {number} elementCount
-   *   How many elements (begin at indexBegin) will be interleaved. It must be even (i.e. divisible by 2).
+   * @param {Array} toArray
+   *   The destination array. It will be modified (i.e. filled data copied from fromArray).
    *
-   * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements (from arrayIn) temporarily. Providing this array could reduce memory
-   * re-allocation and improve performance.
+   * @param {number} toIndex
+   *   The writing will begin at toArray[ toIndex ].
    *
-   * @return {Array}
-   *   Retrun the (modified) arrayIn itself.
+   * @param {number} elementCountHalf
+   *   There will be ( 2 * elementCountHalf ) elements copied from fromArray[ fromIndex ] to toArray[ toIndex ] but in a re-arranged
+   * interleaved order.
+   *
    */
   static interleave_asGrouptTwo_from_to( fromArray, fromIndex, toArray, toIndex, elementCountHalf ) {
-
-    // Interleave the elements order.
     for ( let i = 0, from = fromIndex, to = toIndex; i < elementCountHalf; ++i, ++from, to += 2 ) {
       toArray[ to     ] = fromArray[ from ];
       toArray[ to + 1 ] = fromArray[ from + elementCountHalf ];
