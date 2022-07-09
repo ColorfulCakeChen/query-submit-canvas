@@ -267,8 +267,8 @@ class BoundsArray extends Recyclable.Root {
    * @return {BoundsArray} Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo_byBoundsArray( aBoundsArray ) {
-
     let elementCount = aBoundsArray.length;
+
     if ( ( elementCount % 2 ) != 0 )
       throw Error( `FloatValue.BoundsArray.set_all_byInterleave_asGrouptTwo_byBoundsArray(): `
         + `elementCount ( ${elementCount} ) must be even (i.e. divisible by 2).`
