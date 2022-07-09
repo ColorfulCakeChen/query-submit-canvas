@@ -260,6 +260,7 @@ class ScaleArray extends Recyclable.Root {
    */
   set_all_byInterleave_asGrouptTwo_byScaleArray( aScaleArray ) {
     let elementCount = aScaleArray.length;
+
     if ( ( elementCount % 2 ) != 0 )
       throw Error( `FloatValue.ScaleArray.set_all_byInterleave_asGrouptTwo_byScaleArray(): `
         + `elementCount ( ${elementCount} ) must be even (i.e. divisible by 2).`
