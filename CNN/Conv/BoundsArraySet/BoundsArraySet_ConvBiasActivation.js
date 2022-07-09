@@ -1,6 +1,7 @@
 export { ConvBiasActivation };
 
 import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
@@ -66,27 +67,10 @@ class ConvBiasActivation extends InputsOutputs {
 
   /** @override */
   static setAsConstructor_self( input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
-
-    if ( this.afterUndoPreviousActivationEscaping )
-      this.afterUndoPreviousActivationEscaping.length = input0.length; // channel count same as input0.
-    else
-      this.afterUndoPreviousActivationEscaping = new FloatValue.BoundsArray( input0.length ); // channel count same as input0.
-
-    if ( this.afterFilter )
-      this.afterFilter.length = outputChannelCount0;
-    else
-      this.afterFilter = new FloatValue.BoundsArray( outputChannelCount0 );
-
-    if ( this.afterBias )
-      this.afterBias.length = outputChannelCount0;
-    else
-      this.afterBias = new FloatValue.BoundsArray( outputChannelCount0 );
-
-    if ( this.bPassThrough )
-      this.bPassThrough.length = outputChannelCount0;
-    else
-      this.bPassThrough = new Array( outputChannelCount0 );
-
+    this.afterUndoPreviousActivationEscaping = FloatValue.BoundsArray.Pool.get_or_create_by( input0.length ); // channel count same as input0.
+    this.afterFilter = FloatValue.BoundsArray.Pool.get_or_create_by( outputChannelCount0 );
+    this.afterBias = FloatValue.BoundsArray.Pool.get_or_create_by( outputChannelCount0 );
+    this.bPassThrough = Recyclable.Array.Pool.get_or_create_by( outputChannelCount0 );
     this.set_afterUndoPreviousActivationEscaping_by_input0_undoScales( channelShuffler_inputGroupCount );
   }
 
@@ -121,8 +105,29 @@ class ConvBiasActivation extends InputsOutputs {
    */
   disposeResources() {
 
-    // For reducing memory re-allocation when this BoundsArraySet is recycled and re-issued, the .afterUndoPreviousActivationEscaping,
-    // .afterFilter, .afterBias, .bPassThrough are not disposed by here.
+//!!! (2022/07/09 Remarked) Now uses pool.
+//    // For reducing memory re-allocation when this BoundsArraySet is recycled and re-issued, the .afterUndoPreviousActivationEscaping,
+//    // .afterFilter, .afterBias, .bPassThrough are not disposed by here.
+
+    if ( this.bPassThrough ) {
+      this.bPassThrough.disposeResources_and_recycleToPool();
+      this.bPassThrough = null;
+    }
+
+    if ( this.afterBias ) {
+      this.afterBias.disposeResources_and_recycleToPool();
+      this.afterBias = null;
+    }
+
+    if ( this.afterFilter ) {
+      this.afterFilter.disposeResources_and_recycleToPool();
+      this.afterFilter = null;
+    }
+
+    if ( this.afterUndoPreviousActivationEscaping ) {
+      this.afterUndoPreviousActivationEscaping.disposeResources_and_recycleToPool();
+      this.afterUndoPreviousActivationEscaping = null;
+    }
 
     super.disposeResources();
   }
