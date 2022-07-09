@@ -41,7 +41,7 @@ class ScaleArray extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    //this.scales.length = 0;
+    this.scales.length = 0;
     super.disposeResources();
   }
 
