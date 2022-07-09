@@ -184,7 +184,7 @@ class BoundsArray extends Recyclable.Root {
    * @return {BoundsArray} Return this (modified) object.
    */
   set_all_byNs( Ns ) {
-444    for ( let i = 0; i < this.lowers.length; ++i ) {
+    for ( let i = 0; i < this.lowers.length; ++i ) {
       this.set_one_byNs( i, Ns, i );
     }
     return this;
