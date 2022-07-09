@@ -88,13 +88,9 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    * @param {number[]|Float32Array} inputWeightArray
    *   A number array whose values will be interpreted as weights.
    *
-   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
-   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-   * and improve performance when doing Interleave_asGrouptTwo.
-   *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputWeightArray, weightElementOffsetBegin, arrayTemp_forInterleave_asGrouptTwo ) {
+  init( inputWeightArray, weightElementOffsetBegin ) {
 
     // Q1: Why is the inputWeightArray not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputWeightArray so that it could be released by memory garbage collector.
@@ -122,7 +118,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 
     } else { // 3.
 
-      bExtractOk = super.init( inputWeightArray, weightElementOffsetBegin, this.input0.scaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo );
+      bExtractOk = super.init( inputWeightArray, weightElementOffsetBegin, this.input0.scaleBoundsArray );
       if ( bExtractOk ) {
         try {
 
@@ -131,9 +127,6 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
             this.filtersArray.disposeResources_and_recycleToPool(); this.filtersArray = null; // Release for reducing memory usage.
 
             // Note: Because .filtersShape will be kept by .filtersTensor4d internally, it can not be released here.
-
-//!!! (2022/07/05 Remarked) Because .filtersShape will be kept by .filtersTensor4d internally, it can not be released here.
-//            this.filtersShape.disposeResources_and_recycleToPool(); this.filtersShape = null;
           }
 
           if ( this.biasesShape && this.biasesArray ) {
@@ -141,9 +134,6 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
             this.biasesArray.disposeResources_and_recycleToPool(); this.biasesArray = null; // Release for reducing memory usage.
 
             // Note: Because .biasesShape will be kept by .biasesTensor3d internally, it can not be released here.
-
-//!!! (2022/07/05 Remarked) Because .biasesShape will be kept by .biasesTensor3d internally, it can not be released here.
-//            this.biasesShape.disposeResources_and_recycleToPool(); this.biasesShape = null;
           }
 
           this.output0.set_height_width_channelCount_scaleBoundsArray(
