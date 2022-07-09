@@ -75,7 +75,7 @@ class Case extends Base {
     { // Test ScaleArray.set_one_byUndo_N().
       let arrayLength = RandTools.getRandomIntInclusive( 1, 5 );
 
-      let aScaleArray = new FloatValue.ScaleArray( arrayLength ); // Set up random scales.
+      let aScaleArray = FloatValue.ScaleArray.Pool.get_or_create_by( arrayLength ); // Set up random scales.
       {
         for ( let i = 0; i < arrayLength; ++i ) {
           let scale = RandTools.getRandomIntInclusive( -10, +10 );
@@ -87,7 +87,7 @@ class Case extends Base {
         }
       }
 
-      let undoScaleArray = new FloatValue.ScaleArray( arrayLength );
+      let undoScaleArray = FloatValue.ScaleArray.Pool.get_or_create_by( arrayLength );
 
       { // Test .set_all_byUndo_ScaleArray() and .set_one_byUndo_N()
 
@@ -116,9 +116,23 @@ class Case extends Base {
           this.assert_PropertyProperty_Value( "undoTest", "undoChangedValue", originalValue );
         }
       }
+
+      undoScaleArray.disposeResources_and_recycleToPool();
+      undoScaleArray = null;
+
+      aScaleArray.disposeResources_and_recycleToPool();
+      aScaleArray = null;
     }
 
     this.disposeResources();
+  }
+
+  /** @override */
+  disposeResources() {
+//     ??this.asserter_Equal.disposeResources_and_recycleToPool();
+//     this.asserter_Equal = null;
+
+    super.disposeResources();
   }
 
 }
