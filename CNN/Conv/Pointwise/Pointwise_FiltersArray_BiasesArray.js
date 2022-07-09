@@ -506,6 +506,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 //!!! ...unfinished... (2022/07/08) should separate BoundsArraySet calculation from filters and biases extraction.
 //
 // - Undo input ScaleBoundsArray's channel shuffler according to channelShuffler_inputGroupCount.
+//     Or, use .input0_notShufffled directly.
 // - Extracting filters and biases.
 // - Shuffle filters and biases by channelShuffler_inputGroupCount. (Shuffle along input channels.)
 // - Calculate BoundsArraySet.
