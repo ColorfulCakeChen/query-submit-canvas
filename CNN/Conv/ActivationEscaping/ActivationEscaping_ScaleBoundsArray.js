@@ -34,9 +34,9 @@ class ScaleBoundsArray extends ScaleBoundsArrayBase {
 
   /** @override */
   static setAsConstructor_self( channelCount ) {
-    // Do nothing.
-    //
-    // The .beforeChannelShuffled does not be created by default. It will be created when .set_all_byInterleave_asGrouptTwo() is called.
+    // By default (i.e. there is no channel shuffling), the .beforeChannelShuffled is just this ScaleBoundsArrayBase self.
+    // Only when .set_all_byInterleave_asGrouptTwo() is called, it will be created as a new and different ScaleBoundsArrayBase.
+    this.beforeChannelShuffled = this;
   }
 
   /** @override */
@@ -54,7 +54,11 @@ class ScaleBoundsArray extends ScaleBoundsArrayBase {
     result.set_all_byScaleBoundsArray( this );
 
     if ( this.beforeChannelShuffled ) {
-      result.beforeChannelShuffled = this.beforeChannelShuffled.clone();
+      if ( this.beforeChannelShuffled != this ) { // Has shuffled info.
+        result.beforeChannelShuffled = this.beforeChannelShuffled.clone();
+      } else { // No shuffled info.
+        result.beforeChannelShuffled = result;
+      }
     }
     return result;
   }
@@ -64,7 +68,9 @@ class ScaleBoundsArray extends ScaleBoundsArrayBase {
    */
   beforeChannelShuffled_dispose() {
     if ( this.beforeChannelShuffled ) {
-      this.beforeChannelShuffled.disposeResources_and_recycleToPool();
+      if ( this.beforeChannelShuffled != this ) { // Has shuffled info.
+        this.beforeChannelShuffled.disposeResources_and_recycleToPool();
+      }
       this.beforeChannelShuffled = null;
     }
   }
