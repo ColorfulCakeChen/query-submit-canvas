@@ -258,70 +258,29 @@ class BoundsArray extends Recyclable.Root {
     return this;
   }
 
+  /**
+   * Rearrange bounds by interleaving as ( groupCount == 2 ).
+   *
+   * @param {BoundsArray} aBoundsArray
+   *   The source BoundsArray to be copied from. Its element count must be even (i.e. divisible by 2).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  set_all_byInterleave_asGrouptTwo_byBoundsArray( aBoundsArray ) {
 
-//!!! (2022/04/25 Remarked) circular reference.
-//!!! ...unfinished... (2022/04/25 Added) .set_all_byBoundsArray_activation is un-tested.
-//
-//   /**
-//    * Set this bounds array as the aBoundsArray with activation function applied.
-//    *
-//    * @param {BoundsArray} aBoundsArray  The BoundsArray to be copied.
-//    * @param {number} nActivationId      The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) to be applied.
-//    *
-//    * @return {BoundsArray} Return this (modified) object.
-//    */
-//   set_all_byBoundsArray_activation( aBoundsArray, nActivationId ) {
-//     const theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
-//
-//     if ( !theActivationFunctionInfo.pfn ) {
-//       this.set_all_byBoundsArray( aBoundsArray ); // Since no activation function, the output range is determined by aBoundsArray.
-//       return this;
-//     }
-//
-//     try {
-//       let lowersActivated, uppersActivated;
-//
-//       // 1. Calculate the output range lower bound of the input domain.
-//       let lowersDomainTensor1d, lowersRangeTensor1d;
-//       try {
-//         try {
-//           lowersDomainTensor1d = tf.tensor1d( aBoundsArray.lowers );
-//           lowersRangeTensor1d = theActivationFunctionInfo.pfn( lowersDomainTensor1d );
-//         } finally {
-//           lowersDomainTensor1d.dispose();
-//         }
-//
-//         lowersActivated = lowersRangeTensor1d.dataSync();
-//
-//       } finally {
-//         lowersRangeTensor1d.dispose();
-//       }
-//
-//       // 2. Calculate the output range upper bound of the input domain.
-//       let uppersDomainTensor1d, uppersRangeTensor1d;
-//       try {
-//         try {
-//           uppersDomainTensor1d = tf.tensor1d( aBoundsArray.uppers );
-//           uppersRangeTensor1d = theActivationFunctionInfo.pfn( uppersDomainTensor1d );
-//         } finally {
-//           uppersDomainTensor1d.dispose();
-//         }
-//
-//         uppersActivated = uppersRangeTensor1d.dataSync();
-//
-//       } finally {
-//         uppersRangeTensor1d.dispose();
-//       }
-//
-//       // 3. Set to this.
-//       this.set_all_byLowersUppers( lowersActivated, uppersActivated );
-//
-//     } catch ( e ) {
-//       throw e;
-//     }
-//
-//     return this;
-//   }
+    let elementCount = aBoundsArray.length;
+    if ( ( elementCount % 2 ) != 0 )
+      throw Error( `FloatValue.BoundsArray.set_all_byInterleave_asGrouptTwo_byBoundsArray(): `
+        + `elementCount ( ${elementCount} ) must be even (i.e. divisible by 2).`
+      );
+
+    this.length = elementCount;
+    let elementCountHalf = ( elementCount / 2 );
+    ArrayInterleaver.interleave_asGrouptTwo_from_to( aBoundsArray.lowers, 0, this.lowers.length, 0, elementCountHalf );
+    ArrayInterleaver.interleave_asGrouptTwo_from_to( aBoundsArray.uppers, 0, this.uppers.length, 0, elementCountHalf );
+    return this;
+  }
+
 
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
