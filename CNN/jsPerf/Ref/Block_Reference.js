@@ -250,7 +250,12 @@ class Base extends Recyclable.Root {
     this.testCorrectnessInfo = TestCorrectnessInfo.Pool.get_or_create_by();
     this.imageInArray_Fake = Recyclable.Array.Pool.get_or_create_by( 2 );
     this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.001 );
-    this.arrayTemp_forInterleave_asGrouptTwo = Recyclable.Array.Pool.get_or_create_by( 0 ); // Used by calcConcatShuffleSplit().
+
+//!!! (2022/07/09 Remarked) Old Codes.
+//    *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+//    * and improve performance when doing Interleave_asGrouptTwo.
+//     this.arrayTemp_forInterleave_asGrouptTwo = Recyclable.Array.Pool.get_or_create_by( 0 ); // Used by calcConcatShuffleSplit().
+
     this.imageNeedDisposeUniqueStack = Recyclable.OwnerUniqueStack.Pool.get_or_create_by();
   }
 
@@ -259,8 +264,9 @@ class Base extends Recyclable.Root {
     this.imageNeedDisposeUniqueStack?.disposeResources_and_recycleToPool();
     this.imageNeedDisposeUniqueStack= null;
 
-    this.arrayTemp_forInterleave_asGrouptTwo?.disposeResources_and_recycleToPool();
-    this.arrayTemp_forInterleave_asGrouptTwo = null;
+//!!! (2022/07/09 Remarked) Old Codes.
+//     this.arrayTemp_forInterleave_asGrouptTwo?.disposeResources_and_recycleToPool();
+//     this.arrayTemp_forInterleave_asGrouptTwo = null;
 
     this.asserter_Equal?.disposeResources_and_recycleToPool();
     this.asserter_Equal = null;
@@ -392,7 +398,7 @@ class Base extends Recyclable.Root {
     let block = Base.block_create( testParams,
       imageInArraySelected[ 0 ].boundsArraySet.output0,
       imageInArraySelected[ 1 ]?.boundsArraySet.output0,
-      channelShuffler_ConcatPointwiseConv, this.arrayTemp_forInterleave_asGrouptTwo );
+      channelShuffler_ConcatPointwiseConv );
 
     // Note: Do not generate parameters description string in advance every time.
     //       Just generate them only if necessary by .toString() for reducing memory re-allocation.
@@ -516,15 +522,11 @@ class Base extends Recyclable.Root {
    *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous Block value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
    *
-   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
-   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
-   * and improve performance when doing Interleave_asGrouptTwo.
-   *
    * @return {Block.Base} The created block object.
    */
   static block_create(
-    testParams, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
-    arrayTemp_forInterleave_asGrouptTwo ) {
+    testParams, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv
+  ) {
 
     let block = Block.Base.Pool.get_or_create_by();
 
@@ -546,7 +548,7 @@ class Base extends Recyclable.Root {
 
       bInitOk = block.init( progress, testParams.in.inputWeightArray, testParams.in.weightElementOffsetBegin, extractedParams,
         inputScaleBoundsArray0, inputScaleBoundsArray1,
-        channelShuffler_ConcatPointwiseConv, arrayTemp_forInterleave_asGrouptTwo );
+        channelShuffler_ConcatPointwiseConv );
     }
 
     let inferencedParams = testParams.out.inferencedParams;
@@ -850,9 +852,6 @@ class Base extends Recyclable.Root {
     asserter.propertyValue( "nActivationName", nActivationName );
 
     // If depthwise does not exist, the output ( height, width ) should be the same as input.
-
-//!!! (2022/06/17 Remarked) Using bDepthwiseRequestedAndNeeded instead.
-//    if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) { // (0)
 
     if ( !bDepthwiseRequestedAndNeeded ) {
       asserter.propertyValue( "outputHeight", testParams.out.input0_height );
@@ -1249,7 +1248,7 @@ class Base extends Recyclable.Root {
 
       NumberImage.Base.calcConcatShuffleSplit(
         imageOutArray, imageOutArray, bShuffle, bSplit,
-        this.arrayTemp_forInterleave_asGrouptTwo, testParams.out, concat2Name );
+        testParams.out, concat2Name );
     }
 
     { // Release all intermediate images.
