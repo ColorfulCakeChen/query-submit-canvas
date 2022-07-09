@@ -613,10 +613,11 @@ function testCorrectness() {
 
   ];
 
-  // Release.
-  for ( let i = 0; i < casesArray.length; ++i ) {
-    casesArray[ i ].disposeResources();
-    casesArray[ i ] = null;
-  }
+//!!! (2022/07/09 Remarked) Its constructor has already disposed itself.
+//   // Release.
+//   for ( let i = 0; i < casesArray.length; ++i ) {
+//     casesArray[ i ].disposeResources();
+//     casesArray[ i ] = null;
+//   }
 
 }
