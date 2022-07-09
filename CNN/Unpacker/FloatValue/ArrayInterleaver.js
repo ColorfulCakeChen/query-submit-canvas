@@ -12,6 +12,11 @@ class ArrayInterleaver {
    * Rearrange array elements by interleaving.
    *   - Only ( groupCount == 2 ) is supported.
    *
+   * The fromArray and toArray can not be an overlapped array.
+   *   - They could be different array. Or,
+   *   - Thay could be the same array but fromArray[ fromIndex ] to fromArray[ fromIndex + ( 2 * elementCountHalf ) - 1 ] and
+   *       toArray[ toIndex ] to toArray[ toIndex + ( 2 * elementCountHalf ) - 1 ] can not overlapped.
+   *
    * @param {Array} fromArray
    *   The source array. It will not be modified. It is the source of copying.
    *
