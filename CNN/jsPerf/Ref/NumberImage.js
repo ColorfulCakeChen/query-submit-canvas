@@ -1085,15 +1085,7 @@ class Base extends Recyclable.Root {
    *   - Only ( outputGroupCount == 2 ) is supported.
    *   - The channel count must be even (i.e. divisible by 2).
    *
-   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
-   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-   * and improve performance when doing Interleave_asGrouptTwo.
-   *
    * @param {NumberImage.Base} this  The source image to be processed.
-   *
-   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
-   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-   * and improve performance when doing Interleave_asGrouptTwo.
    *
    * @param {Object}   parametersDesc   Its .toString() for debug message of this block.
    * @param {string[]} interleaveNames  The strings for debug message of this interleaving.
@@ -1101,23 +1093,35 @@ class Base extends Recyclable.Root {
    * @return {NumberImage.Base}
    *   Return this object which has been modifed in place.
    */
-  modify_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo, parametersDesc, ...interleaveNames ) {
+  modify_byInterleave_asGrouptTwo( parametersDesc, ...interleaveNames ) {
 
-    if ( ( this.depth % 2 ) != 0 )
-      throw Error( `NumberImage.Base.modify_byInterleave_asGrouptTwo(): `
-        + `${interleaveNames.join( "_" )}: `
-        + `channel count ( ${this.depth} ) must be even (i.e. divisible by 2). `
-        + `(${parametersDesc})`
-      );
+//!!! (2022/07/09 Remarrked) Old Codes.
+//     if ( ( this.depth % 2 ) != 0 )
+//       throw Error( `NumberImage.Base.modify_byInterleave_asGrouptTwo(): `
+//         + `${interleaveNames.join( "_" )}: `
+//         + `channel count ( ${this.depth} ) must be even (i.e. divisible by 2). `
+//         + `(${parametersDesc})`
+//       );
+//
+//     // Shuffle data.
+//     for ( let indexBegin = 0; indexBegin < this.dataArray.length; indexBegin += this.depth ) {
+//       FloatValue.ArrayInterleaver.interleave_asGrouptTwo(
+//         this.dataArray, indexBegin, this.depth, arrayTemp_forInterleave_asGrouptTwo );
+//     }
 
-    // Shuffle data.
-    for ( let indexBegin = 0; indexBegin < this.dataArray.length; indexBegin += this.depth ) {
-      FloatValue.ArrayInterleaver.interleave_asGrouptTwo(
-        this.dataArray, indexBegin, this.depth, arrayTemp_forInterleave_asGrouptTwo );
+    // Shuffle dataArray
+    {
+      let dataArrayShuffled = Recyclable.Array.Pool.get_or_create_by( this.dataArray.length );
+
+      FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongDepth_from_to(
+        this.dataArray, dataArrayShuffled, this.height, this.width, this.depth );
+
+      this.dataArray.disposeResources_and_recycleToPool();
+      this.dataArray = dataArrayShuffled;
     }
 
     // Shuffle BoundsArraySet.
-    this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo );
+    this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo();
 
     return this;
   }
@@ -1285,16 +1289,11 @@ class Base extends Recyclable.Root {
    *     - If false, channels will not be splitted. The result will be placed in imageOutArray[ 0 ] and imageOutArray[ 1 ] will be null.
    *     - If true, channels will be splitted into imageOutArray[ 0 ] and imageOutArray[ 1 ].
    *
-   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
-   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-   * and improve performance when doing Interleave_asGrouptTwo.
-   *
    * @param {Object}   parametersDesc           Its .toString() for debug message of this block.
    * @param {string[]} concatShuffleSplitNames  The strings for debug message of this concatenation-shuffle-split.
    */
   static calcConcatShuffleSplit(
     imageInArray, imageOutArray, bShuffle, bSplit,
-    arrayTemp_forInterleave_asGrouptTwo,
     parametersDesc, ...concatShuffleSplitNames ) {
 
     if ( imageInArray.length != 2 )
@@ -1323,7 +1322,7 @@ class Base extends Recyclable.Root {
     // 2.
     let shuffleResult;
     if ( bShuffle ) {
-      shuffleResult = concatResult.modify_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo,
+      shuffleResult = concatResult.modify_byInterleave_asGrouptTwo(
         parametersDesc, "concatShuffleSplitName", "interleave_asGrouptTwo" );
 
       // Note: The concatResult is just modified (i.e. not cloned). So do not dispose concatResult.
