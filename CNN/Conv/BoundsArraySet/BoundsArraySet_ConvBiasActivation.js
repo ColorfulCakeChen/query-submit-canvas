@@ -368,8 +368,20 @@ class ConvBiasActivation extends InputsOutputs {
    *   Return this (modified) object.
    */
   set_outputs_all_byInterleave_asGrouptTwo() {
-    this.afterFilter.set_all_byInterleave_asGrouptTwo();
-    this.afterBias.set_all_byInterleave_asGrouptTwo();
+    {
+      let afterFilterShuffled = FloatValue.BoundsArray.Pool.get_or_create_by( this.afterFilter.length );
+      this.afterFilter.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterFilter );
+      this.afterFilter.disposeResources_and_recycleToPool();
+      this.afterFilter = afterFilterShuffled;
+    }
+
+    {
+      let afterBiasShuffled = FloatValue.BoundsArray.Pool.get_or_create_by( this.afterBias.length );
+      this.afterBias.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterBias );
+      this.afterBias.disposeResources_and_recycleToPool();
+      this.afterBias = afterBiasShuffled;
+    }
+
     super.set_outputs_all_byInterleave_asGrouptTwo(); // i.e. this.afterActivation
 
     {
