@@ -1,4 +1,4 @@
-export { ScaleBoundsArray };
+export { ScaleBoundsArrayBase };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -15,22 +15,23 @@ import { ScaleArraySet } from "./ActivationEscaping_ScaleArraySet.js";
  * @member {FloatValue.BoundsArray} boundsArray
  *   The element value bounds (per channel).
  *
+ * @member {ScaleArraySet} scaleArraySet
+ *   The scales for activation escaping. Its .do will move this.afterBias bounds into the linear domain of the activation function.
+ * That is, for letting BoundsArraySet.ConvBiasActivation.afterBias escape from activation function's non-linear domain. And its .undo
+ * could undo the scales.
+ *
  * @member {number} length
  *   The channel count of the boundsArray (i.e. this.boundsArray.length).
  *
  * @member {number} channelCount
  *   The same as .length.
- *
- * @member {ScaleArraySet} scaleArraySet
- *   The scales for activation escaping. Its .do will move this.afterBias bounds into the linear domain of the activation function.
- * That is, for letting this.afterBias escape from activation function's non-linear domain. And its .undo could undo the scales.
  */
-class ScaleBoundsArray extends Recyclable.Root {
+class ScaleBoundsArrayBase extends Recyclable.Root {
 
   /**
-   * Used as default ActivationEscaping.ScaleBoundsArray provider for conforming to Recyclable interface.
+   * Used as default ActivationEscaping.ScaleBoundsArrayBase provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "ActivationEscaping.ScaleBoundsArray.Pool", ScaleBoundsArray, ScaleBoundsArray.setAsConstructor );
+  static Pool = new Pool.Root( "ActivationEscaping.ScaleBoundsArrayBase.Pool", ScaleBoundsArrayBase, ScaleBoundsArrayBase.setAsConstructor );
 
   /**
    */
@@ -43,7 +44,7 @@ class ScaleBoundsArray extends Recyclable.Root {
   /** @override */
   static setAsConstructor( channelCount ) {
     super.setAsConstructor();
-    ScaleBoundsArray.setAsConstructor_self.call( this, channelCount );
+    ScaleBoundsArrayBase.setAsConstructor_self.call( this, channelCount );
     return this;
   }
 
@@ -75,11 +76,11 @@ class ScaleBoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @return {ScaleBoundsArray}
+   * @return {ScaleBoundsArrayBase}
    *   Return a newly created ScaleBoundsArray which is a copy of this ScaleBoundsArray.
    */
   clone() {
-    let result = ScaleBoundsArray.Pool.get_or_create_by( this.channelCount );
+    let result = ScaleBoundsArrayBase.Pool.get_or_create_by( this.channelCount );
     result.set_all_byScaleBoundsArray( this );
     return result;
   }
