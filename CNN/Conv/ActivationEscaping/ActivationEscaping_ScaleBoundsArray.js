@@ -168,22 +168,23 @@ class ScaleBoundsArray extends Recyclable.Root {
     return this;
   }
 
-  /**
-   * Rearrange this.outputs[] channel information by interleaving as ( groupCount == 2 ). This channel count must be even
-   * (i.e. divisible by 2).
-   *
-   * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-   * and improve performance.
-   *
-   * @return {ScaleBoundsArray}
-   *   Return this (modified) object.
-   */
-  set_all_byInterleave_asGrouptTwo( arrayTemp ) {
-    this.boundsArray.set_all_byInterleave_asGrouptTwo( arrayTemp );
-    this.scaleArraySet.set_all_byInterleave_asGrouptTwo( arrayTemp );
-    return this;
-  }
+//!!! (2022/07/09 Remarked) Moved to ScaleBoundsArrayTwin.
+//   /**
+//    * Rearrange this.outputs[] channel information by interleaving as ( groupCount == 2 ). This channel count must be even
+//    * (i.e. divisible by 2).
+//    *
+//    * @param {Array} arrayTemp
+//    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
+//    * and improve performance.
+//    *
+//    * @return {ScaleBoundsArray}
+//    *   Return this (modified) object.
+//    */
+//   set_all_byInterleave_asGrouptTwo( arrayTemp ) {
+//     this.boundsArray.set_all_byInterleave_asGrouptTwo( arrayTemp );
+//     this.scaleArraySet.set_all_byInterleave_asGrouptTwo( arrayTemp );
+//     return this;
+//   }
 
 
   /**
