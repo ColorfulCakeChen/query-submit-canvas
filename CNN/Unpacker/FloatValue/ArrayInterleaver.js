@@ -58,7 +58,7 @@ class ArrayInterleaver {
    * @return {Array}
    *   Retrun the (modified) arrayIn itself.
    */
-  static interleave_asGrouptTwo( arrayIn, indexBegin, elementCount, arrayTemp = [] ) {
+  static interleave_asGrouptTwo( arrayIn, indexBegin, elementCount, arrayTemp ) {
 
     if ( ( elementCount % 2 ) != 0 )
       throw Error( `ArrayInterleaver.interleave_byGrouptTwo(): `
@@ -104,7 +104,7 @@ class ArrayInterleaver {
    * @return {Array}
    *   Retrun the (modified) arrayIn itself.
    */
-  static interleave_asGrouptTwo_alongWidth( arrayIn, height, width, arrayTemp = [] ) {
+  static interleave_asGrouptTwo_alongWidth( arrayIn, height, width, arrayTemp ) {
 
     let elementCount = height * width;
 
@@ -162,7 +162,7 @@ class ArrayInterleaver {
    * @return {Array}
    *   Retrun the (modified) arrayIn itself.
    */
-  static interleave_asGrouptTwo_alongHeight( arrayIn, height, width, arrayTemp = [] ) {
+  static interleave_asGrouptTwo_alongHeight( arrayIn, height, width, arrayTemp ) {
 
     let elementCount = height * width;
 
