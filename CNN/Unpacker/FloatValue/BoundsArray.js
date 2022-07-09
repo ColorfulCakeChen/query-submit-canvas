@@ -1,5 +1,7 @@
 export { BoundsArray };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import { Bounds } from "./Bounds.js";
 import { ScaleTranslateArray } from "./ScaleTranslateArray.js";
 import { ArrayInterleaver } from "./ArrayInterleaver.js";
@@ -16,11 +18,38 @@ import { ArrayInterleaver } from "./ArrayInterleaver.js";
  * @member {number} length
  *   The length of this bound array. Setting it will change the length.
  */
-class BoundsArray {
+class BoundsArray extends Recyclable.Root {
 
+  /**
+   * Used as default FloatValue.BoundsArray provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "FloatValue.BoundsArray.Pool", BoundsArray, BoundsArray.setAsConstructor );
+
+  /**
+   */
   constructor( length ) {
+    super();
+    BoundsArray.setAsConstructor_self.call( this, length );
+  }
+
+  /** @override */
+  static setAsConstructor( length ) {
+    super.setAsConstructor();
+    BoundsArray.setAsConstructor_self.call( this, length );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( length ) {
     this.lowers = new Array( length );
     this.uppers = new Array( length );
+  }
+
+  /** @override */
+  disposeResources() {
+    //this.lowers.length = 0;
+    //this.uppers.length = 0;
+    super.disposeResources();
   }
 
   get length() {
@@ -37,7 +66,7 @@ class BoundsArray {
    *   Return newly created object which is a copy of this BoundsArray.
    */
   clone() {
-    let result = new BoundsArray( this.lowers.length );
+    let result = BoundsArray.Pool.get_or_create_by( this.lowers.length );
     result.set_all_byBoundsArray( this );
     return result;
   }
