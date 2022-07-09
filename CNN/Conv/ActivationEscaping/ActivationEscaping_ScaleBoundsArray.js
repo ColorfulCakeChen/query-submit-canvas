@@ -34,6 +34,11 @@ class ScaleBoundsArray extends ScaleBoundsArrayBase {
 
   /** @override */
   static setAsConstructor_self( channelCount ) {
+
+!!! ...unfinished... (2022/07/09)
+// This still can not solve the squeeze (i.e. a avg pooling) does not know its previous (i.e. pointwise20) has channel shuffled.
+// interleave_undo_Xxx() seems still necessary.
+
     // By default (i.e. there is no channel shuffling), the .beforeChannelShuffled is just this ScaleBoundsArrayBase self.
     // Only when .set_all_byInterleave_asGrouptTwo() is called, it will be created as a new and different ScaleBoundsArrayBase.
     this.beforeChannelShuffled = this;
