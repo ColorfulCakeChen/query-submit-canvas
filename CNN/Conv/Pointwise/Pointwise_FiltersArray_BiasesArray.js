@@ -86,7 +86,7 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  *
  * @member {number} channelShuffler_inputGroupCount
  *   The input group count of the channel shuffler. Usually, it is used for undo previous operation's channel shuffling. If 0, the
- * inputScaleBoundsArray will be used. If positive (currently, only 2 is supported), the inputScaleBoundsArray.beforeChannelShuffled
+ * inputScaleBoundsArray will be used. If positive (only 2 is supported currently), the inputScaleBoundsArray.beforeChannelShuffled
  * will be used.
  *
  * @member {number} channelShuffler_outputGroupCount
