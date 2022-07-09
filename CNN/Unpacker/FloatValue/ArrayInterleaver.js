@@ -5,9 +5,6 @@ export { ArrayInterleaver };
  */
 class ArrayInterleaver {
 
-//!!! ...unfinished... (2022/07/08)
-// needs interleave_asGrouptTwo_undo_Xxx()
-
   /**
    * Rearrange array elements by interleaving.
    *   - Only ( groupCount == 2 ) is supported.
@@ -76,10 +73,13 @@ class ArrayInterleaver {
 
     // Interleave the elements order.
     let elementCountHalf = Math.floor( elementCount / 2 );
-    for ( let i = 0, toIndex = indexBegin; i < elementCountHalf; ++i, toIndex += 2 ) {
-      arrayIn[ toIndex     ] = arrayTemp[ i ];
-      arrayIn[ toIndex + 1 ] = arrayTemp[ i + elementCountHalf ];
-    }
+    ArrayInterleaver.interleave_asGrouptTwo_from_to( arrayTemp, 0, arrayIn, indexBegin, elementCountHalf );
+
+//!!! (2022/07/09 Remarked) Old Codes.
+//     for ( let i = 0, toIndex = indexBegin; i < elementCountHalf; ++i, toIndex += 2 ) {
+//       arrayIn[ toIndex     ] = arrayTemp[ i ];
+//       arrayIn[ toIndex + 1 ] = arrayTemp[ i + elementCountHalf ];
+//     }
 
     return arrayIn;
   }
@@ -129,11 +129,14 @@ class ArrayInterleaver {
         arrayTemp[ i ] = arrayIn[ indexBegin + i ];
       }
 
-      // Interleave the elements order.
-      for ( let i = 0, toIndex = indexBegin; i < widthHalf; ++i, toIndex += 2 ) {
-        arrayIn[ toIndex     ] = arrayTemp[ i ];
-        arrayIn[ toIndex + 1 ] = arrayTemp[ i + widthHalf ];
-      }
+      ArrayInterleaver.interleave_asGrouptTwo_from_to( arrayTemp, 0, arrayIn, indexBegin, widthHalf );
+
+//!!! (2022/07/09 Remarked) Old Codes.
+//       // Interleave the elements order.
+//       for ( let i = 0, toIndex = indexBegin; i < widthHalf; ++i, toIndex += 2 ) {
+//         arrayIn[ toIndex     ] = arrayTemp[ i ];
+//         arrayIn[ toIndex + 1 ] = arrayTemp[ i + widthHalf ];
+//       }
     }
 
     return arrayIn;
