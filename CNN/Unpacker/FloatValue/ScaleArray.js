@@ -1,5 +1,7 @@
 export { ScaleArray };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import { ArrayInterleaver } from "./ArrayInterleaver.js";
 
 /**
@@ -11,10 +13,36 @@ import { ArrayInterleaver } from "./ArrayInterleaver.js";
  * @member {number} length
  *   The length of this scale array. Setting it will change the length.
  */
-class ScaleArray {
+class ScaleArray extends Recyclable.Root {
 
+  /**
+   * Used as default FloatValue.ScaleArray provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "FloatValue.ScaleArray.Pool", ScaleArray, ScaleArray.setAsConstructor );
+
+  /**
+   */
   constructor( length ) {
+    super();
+    ScaleArray.setAsConstructor_self.call( this, length );
+  }
+
+  /** @override */
+  static setAsConstructor( length ) {
+    super.setAsConstructor();
+    ScaleArray.setAsConstructor_self.call( this, length );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( length ) {
     this.scales = new Array( length );
+  }
+
+  /** @override */
+  disposeResources() {
+    //this.scales.length = 0;
+    super.disposeResources();
   }
 
   get length() {
@@ -29,7 +57,7 @@ class ScaleArray {
    * @return {ScaleArray} Return a newly created ScaleArray which is a copy of this ScaleArray.
    */
   clone() {
-    let result = new ScaleArray( this.scales.length );
+    let result = ScaleArray.Pool.get_or_create_by( this.scales.length );
     result.set_all_byScaleArray( this );
     return result;
   }
