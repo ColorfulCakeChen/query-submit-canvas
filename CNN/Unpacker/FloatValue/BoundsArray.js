@@ -47,8 +47,8 @@ class BoundsArray extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    //this.lowers.length = 0;
-    //this.uppers.length = 0;
+    this.lowers.length = 0;
+    this.uppers.length = 0;
     super.disposeResources();
   }
 
