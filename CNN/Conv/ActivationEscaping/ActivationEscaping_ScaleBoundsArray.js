@@ -37,8 +37,6 @@ class ScaleBoundsArray extends ScaleBoundsArrayBase {
     // Do nothing.
     //
     // The .beforeChannelShuffled does not be created by default. It will be created when .set_all_byInterleave_asGrouptTwo() is called.
-
-//    this.beforeChannelShuffled = ScaleBoundsArray.Pool.get_or_create_by( channelCount );
   }
 
   /** @override */
@@ -88,6 +86,9 @@ class ScaleBoundsArray extends ScaleBoundsArrayBase {
 !!! ...unfinished... (2022/07/09)
 // Perhaps, use new algorithm which needs not arrayTemp but creates new .boundsArray and .scaleArraySet.
 // Because the only will be kept as .beforeChannelShuffled.
+
+
+//    this.beforeChannelShuffled = ScaleBoundsArray.Pool.get_or_create_by( channelCount );
 
     this.boundsArray.set_all_byInterleave_asGrouptTwo( arrayTemp );
     this.scaleArraySet.set_all_byInterleave_asGrouptTwo( arrayTemp );
