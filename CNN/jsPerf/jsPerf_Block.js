@@ -595,10 +595,12 @@ class HeightWidthDepth {
     {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
-      this.test_FloatValue();
-      this.test_Weights_Float32Array_RestrictedClone();
-      this.test_ValueRange_valueInputOutputGenerator();
-      this.test_Operation();
+      Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_Block.HeightWidthDepth.testCorrectness()", () => {
+        this.test_FloatValue();
+        this.test_Weights_Float32Array_RestrictedClone();
+        this.test_ValueRange_valueInputOutputGenerator();
+        this.test_Operation();
+      }, this );
 
       yield;
 
@@ -657,7 +659,7 @@ class HeightWidthDepth {
             + `` );
       }
 
-      Pool_Asserter.assert_Pool_issuedCount( "jsPerf_Block.testCorrectness()", pool_all_issuedCount_before );
+      Pool_Asserter.assert_Pool_issuedCount( "jsPerf_Block.HeightWidthDepth.testCorrectness()", pool_all_issuedCount_before );
       yield;
     }
 
