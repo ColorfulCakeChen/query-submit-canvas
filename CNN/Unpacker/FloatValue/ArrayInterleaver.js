@@ -28,6 +28,35 @@ class ArrayInterleaver {
    * @return {Array}
    *   Retrun the (modified) arrayIn itself.
    */
+  static interleave_asGrouptTwo_from_to( fromArray, fromIndex, toArray, toIndex, elementCountHalf ) {
+
+    // Interleave the elements order.
+    for ( let i = 0, from = fromIndex, to = toIndex; i < elementCountHalf; ++i, ++from, to += 2 ) {
+      toArray[ to     ] = fromArray[ from ];
+      toArray[ to + 1 ] = fromArray[ from + elementCountHalf ];
+    }
+  }
+
+  /**
+   * Rearrange array elements by interleaving.
+   *   - Only ( groupCount == 2 ) is supported.
+   *
+   * @param {Array} arrayIn
+   *   The array to be re-arranged.
+   *
+   * @param {number} indexBegin
+   *   Re-arrange the arrayIn from which element.
+   *
+   * @param {number} elementCount
+   *   How many elements (begin at indexBegin) will be interleaved. It must be even (i.e. divisible by 2).
+   *
+   * @param {Array} arrayTemp
+   *   A temporary array for placing the original elements (from arrayIn) temporarily. Providing this array could reduce memory
+   * re-allocation and improve performance.
+   *
+   * @return {Array}
+   *   Retrun the (modified) arrayIn itself.
+   */
   static interleave_asGrouptTwo( arrayIn, indexBegin, elementCount, arrayTemp = [] ) {
 
     if ( ( elementCount % 2 ) != 0 )
