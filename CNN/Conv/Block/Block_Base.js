@@ -361,10 +361,6 @@ class Base extends Recyclable.Root {
    * It will be referenced (i.e. kept, but not cloned and not released) by this object. So caller should not modify them, but
    * caller is responsible for releasing it.
    *
-   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
-   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-   * and improve performance when doing Interleave_asGrouptTwo.
-   *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
    *
@@ -375,8 +371,8 @@ class Base extends Recyclable.Root {
   * initer(
     progressParent, inputWeightArray, weightElementOffsetBegin, params,
     inputScaleBoundsArray0, inputScaleBoundsArray1,
-    channelShuffler_ConcatPointwiseConv,
-    arrayTemp_forInterleave_asGrouptTwo ) {
+    channelShuffler_ConcatPointwiseConv
+  ) {
 
     // 0. Prepare
 
@@ -767,8 +763,9 @@ class Base extends Recyclable.Root {
     if ( this.bSqueezeExcitationPrefix )
       if ( !Base.operationArray_append_SqueezeExcitation.call( this,
               nHigherHalfDifferent_pointwise2, inputWeightArray,
-              0,  // Prefix squeeze-and-excitation's channels are NOT shuffled along input channels.
-              arrayTemp_forInterleave_asGrouptTwo ) )
+              0 // Prefix squeeze-and-excitation's channels are NOT shuffled along input channels.
+            )
+         )
         return false;  // e.g. input array does not have enough data.
 
     // 5.3
@@ -800,7 +797,7 @@ class Base extends Recyclable.Root {
         pointwise20_channelShuffler_outputGroupCount
       );
 
-      if ( !pointwise20.init( inputWeightArray, this.weightElementOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
+      if ( !pointwise20.init( inputWeightArray, this.weightElementOffsetEnd ) )
         return false;  // e.g. input array does not have enough data.
       this.weightElementOffsetEnd = pointwise20.weightElementOffsetEnd;
 
@@ -827,7 +824,7 @@ class Base extends Recyclable.Root {
         // Note: Strictly speaking, sometimes pointwise21 is dependent on depthwise2. But it does not matter for BoundsArraySet
         // because depthwise1 and depthwise2 should have the same output value bounds.
         //
-        if ( !pointwise21.init( inputWeightArray, this.weightElementOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
+        if ( !pointwise21.init( inputWeightArray, this.weightElementOffsetEnd ) )
           return false;  // e.g. input array does not have enough data.
         this.weightElementOffsetEnd = pointwise21.weightElementOffsetEnd;
 
@@ -850,7 +847,8 @@ class Base extends Recyclable.Root {
       if ( !Base.operationArray_append_SqueezeExcitation.call( this,
               nHigherHalfDifferent_pointwise2, inputWeightArray,
               pointwise20_channelShuffler_outputGroupCount, // Postfix squeeze-and-excitation's channels are shuffled along input channels.
-              arrayTemp_forInterleave_asGrouptTwo ) )
+            )
+         )
         return false;  // e.g. input array does not have enough data.
 
     // 7.2
@@ -921,7 +919,7 @@ class Base extends Recyclable.Root {
 
       let concat2ShuffleSplit = Operation.ConcatShuffleSplit.Pool.get_or_create_by(
         this.operationArray.endingInput0, this.operationArray.endingInput1,
-        channelShuffler_ConcatPointwiseConv, bShuffleSplit, arrayTemp_forInterleave_asGrouptTwo );
+        channelShuffler_ConcatPointwiseConv, bShuffleSplit );
 
       this.operationArray.operation_append( concat2ShuffleSplit );
 
@@ -975,14 +973,14 @@ class Base extends Recyclable.Root {
   init(
     progressParent, inputWeightArray, weightElementOffsetBegin, params,
     inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
-    arrayTemp_forInterleave_asGrouptTwo ) {
+  ) {
 
     progressParent = progressParent ?? ( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let initer = this.initer(
       progressParent, inputWeightArray, weightElementOffsetBegin, params,
       inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
-      arrayTemp_forInterleave_asGrouptTwo );
+    );
 
     let initerNext;
     do {
@@ -1108,7 +1106,7 @@ class Base extends Recyclable.Root {
    */
   static operationArray_append_SqueezeExcitation(
     nPointwise_HigherHalfDifferent, inputWeightArray,
-    channelShuffler_outputGroupCount, arrayTemp_forInterleave_asGrouptTwo ) {
+    channelShuffler_outputGroupCount ) {
 
     if ( this.nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
       return true; // No sequeeze-and-excitation.
@@ -1229,7 +1227,7 @@ class Base extends Recyclable.Root {
         intermediatePointwise0 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
           this.operationArray.endingInput0,
           this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
-          channelShuffler_outputGroupCount, arrayTemp_forInterleave_asGrouptTwo );
+          channelShuffler_outputGroupCount );
 
         if ( !intermediatePointwise0 )
           return false;  // e.g. input array does not have enough data.
@@ -1240,7 +1238,7 @@ class Base extends Recyclable.Root {
         intermediatePointwise1 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
           this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
           this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
-          channelShuffler_outputGroupCount, arrayTemp_forInterleave_asGrouptTwo );
+          channelShuffler_outputGroupCount );
 
         if ( !intermediatePointwise1 )
           return false;  // e.g. input array does not have enough data.
@@ -1271,7 +1269,7 @@ class Base extends Recyclable.Root {
           channelShuffler_outputGroupCount // Keep the same output channels shuffling.
         );
 
-        if ( !excitationPointwise0.init( inputWeightArray, this.weightElementOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
+        if ( !excitationPointwise0.init( inputWeightArray, this.weightElementOffsetEnd ) )
           return false;  // e.g. input array does not have enough data.
         this.weightElementOffsetEnd = excitationPointwise0.weightElementOffsetEnd;
       }
@@ -1290,7 +1288,7 @@ class Base extends Recyclable.Root {
           channelShuffler_outputGroupCount // Keep the same output channels shuffling.
         );
 
-        if ( !excitationPointwise1.init( inputWeightArray, this.weightElementOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
+        if ( !excitationPointwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
           return false;  // e.g. input array does not have enough data.
         this.weightElementOffsetEnd = excitationPointwise1.weightElementOffsetEnd;
       }
@@ -1331,7 +1329,7 @@ class Base extends Recyclable.Root {
    */
   static SequeezeExcitation_intermediatePointwise_create_init(
     inputTensorPlaceholder, nActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
-    channelShuffler_outputGroupCount, arrayTemp_forInterleave_asGrouptTwo ) {
+    channelShuffler_outputGroupCount ) {
 
     const intermediate_inputChannelCount = inputTensorPlaceholder.channelCount;
     const intermediate_inputChannelCount_lowerHalf = inputTensorPlaceholder.channelCount_lowerHalf;
@@ -1392,7 +1390,7 @@ class Base extends Recyclable.Root {
       channelShuffler_outputGroupCount // Keep the same output channels shuffling.
     );
 
-    if ( !intermediatePointwise.init( inputWeightArray, this.weightElementOffsetEnd, arrayTemp_forInterleave_asGrouptTwo ) )
+    if ( !intermediatePointwise.init( inputWeightArray, this.weightElementOffsetEnd ) )
       return null;  // e.g. input array does not have enough data.
     this.weightElementOffsetEnd = intermediatePointwise.weightElementOffsetEnd;
 
