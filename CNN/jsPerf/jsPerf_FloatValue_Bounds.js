@@ -172,6 +172,9 @@ class Cases {
       for ( let i = 0; i < aCaseArray.length; ++i ) {
         this.assert_BoundsArray_one_byLowerUpper( "aBoundsArray", i, clonedBoundsArray.lowers[ i ], clonedBoundsArray.uppers[ i ] );
       }
+
+      clonedBoundsArray.disposeResources_and_recycleToPool();
+      clonedBoundsArray = null;
     }
 
     // Set
@@ -612,12 +615,5 @@ function testCorrectness() {
     ] ),
 
   ];
-
-//!!! (2022/07/09 Remarked) Its constructor has already disposed itself.
-//   // Release.
-//   for ( let i = 0; i < casesArray.length; ++i ) {
-//     casesArray[ i ].disposeResources();
-//     casesArray[ i ] = null;
-//   }
 
 }
