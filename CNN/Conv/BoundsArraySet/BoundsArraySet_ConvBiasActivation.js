@@ -364,18 +364,24 @@ class ConvBiasActivation extends InputsOutputs {
    * output0.scaleArraySet (i.e. activationEscaping), .bPassThrough) by interleaving as ( groupCount == 2 ). The channel
    * count must be even (i.e. divisible by 2).
    *
-   * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
-   * and improve performance.
-   *
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
-  set_outputs_all_byInterleave_asGrouptTwo( arrayTemp ) {
-    this.afterFilter.set_all_byInterleave_asGrouptTwo( arrayTemp );
-    this.afterBias.set_all_byInterleave_asGrouptTwo( arrayTemp );
-    super.set_outputs_all_byInterleave_asGrouptTwo( arrayTemp ); // i.e. this.afterActivation
-    FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.bPassThrough, 0, this.bPassThrough.length, arrayTemp );
+  set_outputs_all_byInterleave_asGrouptTwo() {
+    this.afterFilter.set_all_byInterleave_asGrouptTwo();
+    this.afterBias.set_all_byInterleave_asGrouptTwo();
+    super.set_outputs_all_byInterleave_asGrouptTwo(); // i.e. this.afterActivation
+
+    {
+      let bPassThroughShuffled = Recyclable.Array.Pool.get_or_create_by( this.bPassThrough.length );
+
+      FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongWidth_from_to(
+        this.bPassThrough, bPassThroughShuffled, 1, this.bPassThrough.length );
+
+      this.bPassThrough.disposeResources_and_recycleToPool();
+      this.bPassThrough = bPassThroughShuffled;
+    }
+
     return this;
   }
 
