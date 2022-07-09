@@ -82,6 +82,8 @@ class ConvBiasActivation extends InputsOutputs {
     else
       this.bPassThrough = new Array( outputChannelCount0 );
 
+!!! ...unfinished... (2022/07/09)
+// How to determine whether .beforeChannelShuffled should be used?
     this.set_afterUndoPreviousActivationEscaping_by_input0_undoScales();
   }
 
