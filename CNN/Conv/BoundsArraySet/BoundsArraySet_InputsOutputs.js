@@ -277,16 +277,12 @@ class InputsOutputs extends Recyclable.Root {
    * Rearrange this.outputs[] channel information by interleaving as ( groupCount == 2 ). This channel count must be even
    * (i.e. divisible by 2).
    *
-   * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-   * and improve performance.
-   *
    * @return {InputsOutputs}
    *   Return this (modified) object.
    */
-  set_outputs_all_byInterleave_asGrouptTwo( arrayTemp ) {
-    this.output0.set_all_byInterleave_asGrouptTwo( arrayTemp );
-    this.output1?.set_all_byInterleave_asGrouptTwo( arrayTemp );
+  set_outputs_all_byInterleave_asGrouptTwo() {
+    this.output0.set_all_byInterleave_asGrouptTwo();
+    this.output1?.set_all_byInterleave_asGrouptTwo();
     return this;
   }
 
