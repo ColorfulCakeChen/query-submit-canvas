@@ -1,5 +1,7 @@
 export { ScaleArraySet };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 
 /**
@@ -106,11 +108,46 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
  * @member {FloatValue.ScaleArray} undo
  *   If apply this.undo, it will have the effect of undoing the this.do.
  */
-class ScaleArraySet {
+class ScaleArraySet extends Recyclable.Root {
 
+  /**
+   * Used as default ActivationEscaping.ScaleArraySet provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "ActivationEscaping.ScaleArraySet.Pool", ScaleArraySet, ScaleArraySet.setAsConstructor );
+
+  /**
+   */
   constructor( arrayLength ) {
-    this.do = new FloatValue.ScaleArray( arrayLength );
-    this.undo = new FloatValue.ScaleArray( arrayLength );
+    super();
+    ScaleArraySet.setAsConstructor_self.call( this, arrayLength );
+  }
+
+  /** @override */
+  static setAsConstructor( arrayLength ) {
+    super.setAsConstructor();
+    ScaleArraySet.setAsConstructor_self.call( this, arrayLength );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( arrayLength ) {
+    this.do = FloatValue.ScaleArray.Pool.get_or_create_by( arrayLength );
+    this.undo = FloatValue.ScaleArray.Pool.get_or_create_by( arrayLength );
+  }
+
+  /** @override */
+  disposeResources() {
+    if ( this.do ) {
+      this.do.disposeResources_and_recycleToPool();
+      this.do = null;
+    }
+
+    if ( this.undo ) {
+      this.undo.disposeResources_and_recycleToPool();
+      this.undo = null;
+    }
+
+    super.disposeResources();
   }
 
   get length() {
@@ -126,7 +163,7 @@ class ScaleArraySet {
    * @return {ScaleArraySet} Return a newly created ScaleArraySet which is a copy of this ScaleArraySet.
    */
   clone() {
-    let result = new ScaleArraySet();
+    let result = ScaleArraySet.Pool.get_or_create_by( this.length );
     result.set_byScaleSet( this );
     return result;
   }
