@@ -1,34 +1,34 @@
-export { ScaleBoundsArrayTwin };
+export { ScaleBoundsArray };
 
 import * as Pool from "../../util/Pool.js";
 //import * as Recyclable from "../../util/Recyclable.js";
 //import * as FloatValue from "../../Unpacker/FloatValue.js";
-import { ScaleBoundsArray } from "./ActivationEscaping_ScaleBoundsArray.js";
+import { ScaleBoundsArrayBase } from "./ActivationEscaping_ScaleBoundsArrayBase.js";
 
 /**
- * A pair of ScaleBoundsArray. One is before channel shuffled. The other is channel shuffled.
+ * A pair of ScaleBoundsArrayBase. One is before channel shuffled. The other is channel shuffled.
  *
  *
  *
  */
-class ScaleBoundsArrayTwin extends ScaleBoundsArray {
+class ScaleBoundsArray extends ScaleBoundsArrayBase {
 
   /**
-   * Used as default ActivationEscaping.ScaleBoundsArrayTwin provider for conforming to Recyclable interface.
+   * Used as default ActivationEscaping.ScaleBoundsArray provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "ActivationEscaping.ScaleBoundsArrayTwin.Pool", ScaleBoundsArrayTwin, ScaleBoundsArrayTwin.setAsConstructor );
+  static Pool = new Pool.Root( "ActivationEscaping.ScaleBoundsArray.Pool", ScaleBoundsArray, ScaleBoundsArray.setAsConstructor );
 
   /**
    */
   constructor( channelCount ) {
     super( channelCount );
-    ScaleBoundsArrayTwin.setAsConstructor_self.call( this, channelCount );
+    ScaleBoundsArray.setAsConstructor_self.call( this, channelCount );
   }
 
   /** @override */
   static setAsConstructor( channelCount ) {
     super.setAsConstructor( channelCount );
-    ScaleBoundsArrayTwin.setAsConstructor_self.call( this, channelCount );
+    ScaleBoundsArray.setAsConstructor_self.call( this, channelCount );
     return this;
   }
 
@@ -48,11 +48,11 @@ class ScaleBoundsArrayTwin extends ScaleBoundsArray {
   }
 
   /**
-   * @return {ScaleBoundsArrayTwin}
-   *   Return a newly created ScaleBoundsArray which is a copy of this ScaleBoundsArrayTwin.
+   * @return {ScaleBoundsArray}
+   *   Return a newly created ScaleBoundsArray which is a copy of this ScaleBoundsArray.
    */
   clone() {
-    let result = ScaleBoundsArrayTwin.Pool.get_or_create_by( this.channelCount );
+    let result = ScaleBoundsArray.Pool.get_or_create_by( this.channelCount );
     result.set_all_byScaleBoundsArray( this );
 
     if ( this.beforeChannelShuffled ) {
@@ -79,7 +79,7 @@ class ScaleBoundsArrayTwin extends ScaleBoundsArray {
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance.
    *
-   * @return {ScaleBoundsArrayTwin}
+   * @return {ScaleBoundsArray}
    *   Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo( arrayTemp ) {
