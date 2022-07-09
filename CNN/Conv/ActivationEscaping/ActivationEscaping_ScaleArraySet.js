@@ -137,16 +137,14 @@ class ScaleArraySet extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    if ( this.do ) {
-      this.do.disposeResources_and_recycleToPool();
-      this.do = null;
-    }
-
     if ( this.undo ) {
       this.undo.disposeResources_and_recycleToPool();
       this.undo = null;
     }
-
+    if ( this.do ) {
+      this.do.disposeResources_and_recycleToPool();
+      this.do = null;
+    }
     super.disposeResources();
   }
 
