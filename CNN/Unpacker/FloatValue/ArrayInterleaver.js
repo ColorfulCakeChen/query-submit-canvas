@@ -298,7 +298,7 @@ class ArrayInterleaver {
 
     toArray.length = elementCount;
     let depthHalf = ( depth / 2 );
-    for ( let i = 0; i < elementCount; i += depthHalf ) {
+    for ( let i = 0; i < elementCount; i += depth ) {
       ArrayInterleaver.interleave_asGrouptTwo_from_to( fromArray, i, toArray, i, depthHalf );
     }
   }
