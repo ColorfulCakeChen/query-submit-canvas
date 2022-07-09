@@ -250,6 +250,27 @@ class ScaleArray extends Recyclable.Root {
     return this;
   }
 
+  /**
+   * Rearrange bounds by interleaving as ( groupCount == 2 ).
+   *
+   * @param {ScaleArray} aScaleArray
+   *   The source ScaleArray to be copied from. Its element count must be even (i.e. divisible by 2).
+   *
+   * @return {ScaleArray} Return this (modified) object.
+   */
+  set_all_byInterleave_asGrouptTwo_byScaleArray( aScaleArray ) {
+    let elementCount = aScaleArray.length;
+    if ( ( elementCount % 2 ) != 0 )
+      throw Error( `FloatValue.ScaleArray.set_all_byInterleave_asGrouptTwo_byScaleArray(): `
+        + `elementCount ( ${elementCount} ) must be even (i.e. divisible by 2).`
+      );
+
+    this.length = elementCount;
+    let elementCountHalf = ( elementCount / 2 );
+    ArrayInterleaver.interleave_asGrouptTwo_from_to( aScaleArray.scales, 0, this.scales, 0, elementCountHalf );
+    return this;
+  }
+
 
   /**
    * @param {ScaleArray} lowerHalfScaleArray   The ScaleArray of the 1st output. Its .length will be modified.
