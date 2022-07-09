@@ -176,7 +176,7 @@ class ScaleBoundsArray extends Recyclable.Root {
    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
    * and improve performance.
    *
-   * @return {InputsOutputs}
+   * @return {ScaleBoundsArray}
    *   Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo( arrayTemp ) {
