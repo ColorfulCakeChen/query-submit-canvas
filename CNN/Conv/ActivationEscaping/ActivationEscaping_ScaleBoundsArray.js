@@ -2,7 +2,7 @@ export { ScaleBoundsArray };
 
 import * as Pool from "../../util/Pool.js";
 //import * as Recyclable from "../../util/Recyclable.js";
-//import * as FloatValue from "../../Unpacker/FloatValue.js";
+import * as FloatValue from "../../Unpacker/FloatValue.js";
 import { ScaleBoundsArrayBase } from "./ActivationEscaping_ScaleBoundsArrayBase.js";
 
 /**
@@ -70,28 +70,35 @@ class ScaleBoundsArray extends ScaleBoundsArrayBase {
   }
 
   /**
-   * Rearrange this.outputs[] channel information by interleaving as ( groupCount == 2 ). This channel count must be even
-   * (i.e. divisible by 2).
+   * Rearrange channels information by interleaving as ( groupCount == 2 ). This channel count must be even
+   * (i.e. divisible by 2). The original "this" (i.e. not channel shuffled) ScaleBoundsArray will be swapped and kept in
+   * the .beforeChannelShuffled data member.
    *
-   * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-   * and improve performance.
    *
    * @return {ScaleBoundsArray}
    *   Return this (modified) object.
    */
-  set_all_byInterleave_asGrouptTwo( arrayTemp ) {
+  set_all_byInterleave_asGrouptTwo() {
     this.beforeChannelShuffled_dispose();
+    this.beforeChannelShuffled = ScaleBoundsArray.Pool.get_or_create_by( this.length );
 
-!!! ...unfinished... (2022/07/09)
-// Perhaps, use new algorithm which needs not arrayTemp but creates new .boundsArray and .scaleArraySet.
-// Because the only will be kept as .beforeChannelShuffled.
+    // Swap this and the new ScaleBoundsArray.
+    {
+      let tempBoundsArray = this.boundsArray;
+      let tempScaleArraySet = this.scaleArraySet;
 
+      this.boundsArray = this.beforeChannelShuffled.boundsArray;
+      this.scaleArraySet = this.beforeChannelShuffled.scaleArraySet;
 
-//    this.beforeChannelShuffled = ScaleBoundsArray.Pool.get_or_create_by( channelCount );
+      // Keep the old (i.e. not channel shuffled) ScaleBoundsArray.
+      this.beforeChannelShuffled.boundsArray = tempBoundsArray;
+      this.beforeChannelShuffled.scaleArraySet = tempScaleArraySet;
+    }
 
-    this.boundsArray.set_all_byInterleave_asGrouptTwo( arrayTemp );
-    this.scaleArraySet.set_all_byInterleave_asGrouptTwo( arrayTemp );
+    // Generae the new (i.e. channel shuffled) ScaleBoundsArray.
+    this.boundsArray.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.beforeChannelShuffled.boundsArray );
+    this.scaleArraySet.set_all_byInterleave_asGrouptTwo_byScaleArraySet( this.beforeChannelShuffled.scaleArraySet );
+
     return this;
   }
 
