@@ -129,18 +129,18 @@ class Cases {
     let oneRandCase = aCaseArray[ oneRandIndex ];
 
     // Convert multiple Bounds into one BoundsArray.
-    this.aLowers = new Array( aCaseArray.length );
-    this.aUppers = new Array( aCaseArray.length );
-    this.aLowersUppers = new Array( aCaseArray.length ); // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
-    this.bLowers = new Array( aCaseArray.length );
-    this.bUppers = new Array( aCaseArray.length );
-    this.bLowersUppers = new Array( aCaseArray.length ); // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
-    this.Ns = new Array( aCaseArray.length );
-    this.NsNs = new Array( aCaseArray.length );          // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
-    this.clampedArrayArray = new Array( aCaseArray.length );     // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
-    this.addedArrayArray = new Array( aCaseArray.length );       // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
-    this.multipledArrayArray = new Array( aCaseArray.length );   // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
-    this.aMultipledNArrayArray = new Array( aCaseArray.length ); // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
+    this.aLowers = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );
+    this.aUppers = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );
+    this.aLowersUppers = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length ); // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
+    this.bLowers = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );
+    this.bUppers = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );
+    this.bLowersUppers = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length ); // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
+    this.Ns = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );
+    this.NsNs = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );          // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
+    this.clampedArrayArray = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );     // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
+    this.addedArrayArray = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );       // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
+    this.multipledArrayArray = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );   // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
+    this.aMultipledNArrayArray = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length ); // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
 
     for ( let i = 0; i < aCaseArray.length; ++i ) {
       let oneCase = aCaseArray[ i ];
@@ -162,8 +162,8 @@ class Cases {
       this.aMultipledNArrayArray[ i ] = oneCase.aMultipledNArray;
     }
 
-    this.aBoundsArray = new FloatValue.BoundsArray( aCaseArray.length );
-    this.bBoundsArray = new FloatValue.BoundsArray( aCaseArray.length );
+    this.aBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( aCaseArray.length );
+    this.bBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( aCaseArray.length );
 
     // Clone
     {
@@ -499,6 +499,22 @@ class Cases {
 
   /**  */
   disposeResources() {
+    this.aLowers.disposeResources_and_recycleToPool();
+    this.aUppers.disposeResources_and_recycleToPool();
+    this.aLowersUppers.disposeResources_and_recycleToPool();
+    this.bLowers.disposeResources_and_recycleToPool();
+    this.bUppers.disposeResources_and_recycleToPool();
+    this.bLowersUppers.disposeResources_and_recycleToPool();
+    this.Ns.disposeResources_and_recycleToPool();
+    this.NsNs.disposeResources_and_recycleToPool();
+    this.clampedArrayArray.disposeResources_and_recycleToPool();
+    this.addedArrayArray.disposeResources_and_recycleToPool();
+    this.multipledArrayArray.disposeResources_and_recycleToPool();
+    this.aMultipledNArrayArray.disposeResources_and_recycleToPool();
+
+    this.aBoundsArray.disposeResources_and_recycleToPool();
+    this.bBoundsArray.disposeResources_and_recycleToPool();
+
     for ( let i = 0; i < this.aCaseArray.length; ++i ) {
       this.aCaseArray[ i ].disposeResources();
       this.aCaseArray[ i ] = null;
