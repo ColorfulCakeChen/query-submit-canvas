@@ -497,7 +497,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         // Round 0
         {
           // Initialize element value bounds (per channel). Determine .input and .afterUndoPreviousActivationEscaping
-          this.boundsArraySet = BoundsArraySet.Pointwise.Pool.get_or_create_by( inputScaleBoundsArray, this.outputChannelCount );
+          this.boundsArraySet = BoundsArraySet.Pointwise.Pool.get_or_create_by(
+            inputScaleBoundsArray, this.outputChannelCount, this.channelShuffler_inputGroupCount );
         }
 
         // Round 1
@@ -594,8 +595,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
     sourceWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
 
-//!!! ...unfinished... (2022/07/08) should separate BoundsArraySet calculation from filters and biases extraction.
-
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( this.nPassThroughStyleId );
     let tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
 
@@ -610,6 +609,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       if ( this.biasesArray ) {
         this.biasesArray.fill( 0 );
       }
+    }
+
+    let inputScaleBoundsArrayBase;
+    if ( this.channelShuffler_inputGroupCount > 0 ) {
+      inputScaleBoundsArrayBase = inputScaleBoundsArray.beforeChannelShuffled; // Use non-channel-shuffled info of previous operation.
+    } else {
+      inputScaleBoundsArrayBase = inputScaleBoundsArray; // Use channel-shuffled info of previous operation.
     }
 
     // Extracting weights of filters and biases. (Including extra scale.)
@@ -628,7 +634,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
         for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
 
-          let undoPreviousEscapingScale = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ];
+          let undoPreviousEscapingScale = inputScaleBoundsArrayBase.scaleArraySet.undo.scales[ inChannel ];
           let filterValuePassThrough = thePassThroughStyleInfo.filterValue * undoPreviousEscapingScale;
           let outChannel = outChannelBegin;
 
