@@ -46,21 +46,26 @@ class ConvBiasActivation extends InputsOutputs {
    *   - Only input0 (always no input1), because convolution (no matter pointwise or depthwise) could handle one input tensor.
    *   - Only output0 (always no output1), because convolution (no matter pointwise or depthwise) always generate one output tensor.
    *
+   * @param {number} channelShuffler_inputGroupCount
+   *   The input group count of the channel shuffler. Usually, it is used for undo previous operation's channel shuffling. If 0, the
+   * inputScaleBoundsArray will be used. If positive (only 2 is supported currently), the inputScaleBoundsArray.beforeChannelShuffled
+   * will be used.
+   *
    */
-  constructor( input0, outputChannelCount0 ) {
+  constructor( input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
     super( input0, undefined, outputChannelCount0, undefined ); // .input0 and .output0
-    ConvBiasActivation.setAsConstructor_self.call( this, input0, outputChannelCount0 );
+    ConvBiasActivation.setAsConstructor_self.call( this, input0, outputChannelCount0, channelShuffler_inputGroupCount );
   }
 
   /** @override */
-  static setAsConstructor( input0, outputChannelCount0 ) {
+  static setAsConstructor( input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
     super.setAsConstructor( input0, undefined, outputChannelCount0, undefined );
-    ConvBiasActivation.setAsConstructor_self.call( this, input0, outputChannelCount0 );
+    ConvBiasActivation.setAsConstructor_self.call( this, input0, outputChannelCount0, channelShuffler_inputGroupCount );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( input0, outputChannelCount0 ) {
+  static setAsConstructor_self( input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
 
     if ( this.afterUndoPreviousActivationEscaping )
       this.afterUndoPreviousActivationEscaping.length = input0.length; // channel count same as input0.
@@ -82,21 +87,30 @@ class ConvBiasActivation extends InputsOutputs {
     else
       this.bPassThrough = new Array( outputChannelCount0 );
 
-!!! ...unfinished... (2022/07/09)
-// How to determine whether .beforeChannelShuffled should be used?
-    this.set_afterUndoPreviousActivationEscaping_by_input0_undoScales();
+    this.set_afterUndoPreviousActivationEscaping_by_input0_undoScales( channelShuffler_inputGroupCount );
   }
 
   /**
    * Set .afterUndoPreviousActivationEscaping as .input0 multiplying .input0.scaleArraySet.undo.scales.
    *
+   * @param {number} channelShuffler_inputGroupCount
+   *   The input group count of the channel shuffler. Usually, it is used for undo previous operation's channel shuffling. If 0, the
+   * inputScaleBoundsArray will be used. If positive (only 2 is supported currently), the inputScaleBoundsArray.beforeChannelShuffled
+   * will be used.
+   *
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
-  set_afterUndoPreviousActivationEscaping_by_input0_undoScales() {
-    this.afterUndoPreviousActivationEscaping
-      .set_all_byBoundsArray( this.input0.boundsArray )
-      .multiply_all_byNs( this.input0.scaleArraySet.undo.scales );
+  set_afterUndoPreviousActivationEscaping_by_input0_undoScales( channelShuffler_inputGroupCount ) {
+    if ( channelShuffler_inputGroupCount > 0 ) {
+      this.afterUndoPreviousActivationEscaping
+        .set_all_byBoundsArray( this.input0.beforeChannelShuffled.boundsArray )
+        .multiply_all_byNs( this.input0.beforeChannelShuffled.scaleArraySet.undo.scales );
+    } else {
+      this.afterUndoPreviousActivationEscaping
+        .set_all_byBoundsArray( this.input0.boundsArray )
+        .multiply_all_byNs( this.input0.scaleArraySet.undo.scales );
+    }
     return this;
   }
 
