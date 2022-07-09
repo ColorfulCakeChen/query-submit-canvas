@@ -287,6 +287,20 @@ class ScaleArraySet extends Recyclable.Root {
   }
 
   /**
+   * Rearrange bounds by interleaving as ( groupCount == 2 ).
+   *
+   * @param {ScaleArraySet} aScaleArraySet
+   *   The source ScaleArraySet to be copied from. Its element count must be even (i.e. divisible by 2).
+   *
+   * @return {ScaleArraySet} Return this (modified) object.
+   */
+  set_all_byInterleave_asGrouptTwo_byScaleArraySet( aScaleArraySet ) {
+    this.do.set_all_byInterleave_asGrouptTwo_byScaleArray( aScaleArraySet.do );
+    this.undo.set_all_byInterleave_asGrouptTwo_byScaleArray( aScaleArraySet.undo );
+    return this;
+  }
+
+  /**
    * @param {ScaleArraySet} lowerHalfScaleArraySet   The ScaleArraySet of the 1st output. Its .length will be modified.
    * @param {ScaleArraySet} higherHalfScaleArraySet  The ScaleArraySet of the 2nd output. Its .length will be modified.
    *
