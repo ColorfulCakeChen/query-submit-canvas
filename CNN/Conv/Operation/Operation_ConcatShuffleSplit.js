@@ -53,15 +53,10 @@ class ConcatShuffleSplit extends Root {
   static Pool = new Pool.Root( "Operation.ConcatShuffleSplit.Pool", ConcatShuffleSplit, ConcatShuffleSplit.setAsConstructor );
 
   /**
-   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
-   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
-   * and improve performance when doing Interleave_asGrouptTwo.
-   *
    */
   constructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     channelShuffler, bShuffleSplit = true,
-    arrayTemp_forInterleave_asGrouptTwo,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
@@ -73,7 +68,6 @@ class ConcatShuffleSplit extends Root {
     ConcatShuffleSplit.setAsConstructor_self.call( this,
       inputTensorPlaceholder0, inputTensorPlaceholder1,
       channelShuffler, bShuffleSplit,
-      arrayTemp_forInterleave_asGrouptTwo,
       bKeepInputTensor0, bKeepInputTensor1
     );
   }
@@ -82,7 +76,6 @@ class ConcatShuffleSplit extends Root {
   static setAsConstructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     channelShuffler, bShuffleSplit = true,
-    arrayTemp_forInterleave_asGrouptTwo,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
@@ -94,7 +87,6 @@ class ConcatShuffleSplit extends Root {
     ConcatShuffleSplit.setAsConstructor_self.call( this,
       inputTensorPlaceholder0, inputTensorPlaceholder1,
       channelShuffler, bShuffleSplit,
-      arrayTemp_forInterleave_asGrouptTwo,
       bKeepInputTensor0, bKeepInputTensor1
     );
     return this;
@@ -104,7 +96,6 @@ class ConcatShuffleSplit extends Root {
   static setAsConstructor_self(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     channelShuffler, bShuffleSplit = true,
-    arrayTemp_forInterleave_asGrouptTwo,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
@@ -113,8 +104,8 @@ class ConcatShuffleSplit extends Root {
     this.channelShuffler = channelShuffler;
 
     // Note: If bShuffleSplit is changed, the BoundsArraySet and outputs' TensorPlacehoder will also be changed.
-    //       Then the inputScaleBoundsArray0, inputScaleBoundsArray1, arrayTemp_forInterleave_asGrouptTwo will be
-    //       required again. That is difficult. So forbid to change bShuffleSplit.
+    //       Then the inputScaleBoundsArray0, inputScaleBoundsArray1 will be required again. That is difficult.
+    //       So forbid to change bShuffleSplit.
     //
     this.bShuffleSplit = bShuffleSplit;
     this.bShouldShuffleSplit = bShouldShuffleSplit;
@@ -123,7 +114,7 @@ class ConcatShuffleSplit extends Root {
 
     ConcatShuffleSplit.adjust_pfn.call( this );
     ConcatShuffleSplit.adjust_apply.call( this );
-    ConcatShuffleSplit.setup_BoundsArraySet.call( this, arrayTemp_forInterleave_asGrouptTwo );
+    ConcatShuffleSplit.setup_BoundsArraySet.call( this );
     ConcatShuffleSplit.setup_outputs_TensorPlaceholder.call( this );
   }
 
@@ -209,7 +200,7 @@ class ConcatShuffleSplit extends Root {
   }
 
   /** Create this.boundsArraySet. */
-  static setup_BoundsArraySet( arrayTemp_forInterleave_asGrouptTwo ) {
+  static setup_BoundsArraySet() {
 
     let inputScaleBoundsArray0 = this.input0.scaleBoundsArray;
     let inputScaleBoundsArray1 = this.input1.scaleBoundsArray;
@@ -242,7 +233,7 @@ class ConcatShuffleSplit extends Root {
             concatBoundsArraySet.output0.channelCount );
 
           shuffledBoundsArraySet.output0.set_all_byScaleBoundsArray( concatBoundsArraySet.output0 );
-          shuffledBoundsArraySet.set_outputs_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo );
+          shuffledBoundsArraySet.set_outputs_all_byInterleave_asGrouptTwo();
         }
 
         // Splitted value bounds array set.
