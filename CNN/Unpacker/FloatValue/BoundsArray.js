@@ -184,7 +184,7 @@ class BoundsArray extends Recyclable.Root {
    * @return {BoundsArray} Return this (modified) object.
    */
   set_all_byNs( Ns ) {
-    for ( let i = 0; i < this.lowers.length; ++i ) {
+444    for ( let i = 0; i < this.lowers.length; ++i ) {
       this.set_one_byNs( i, Ns, i );
     }
     return this;
@@ -276,8 +276,8 @@ class BoundsArray extends Recyclable.Root {
 
     this.length = elementCount;
     let elementCountHalf = ( elementCount / 2 );
-    ArrayInterleaver.interleave_asGrouptTwo_from_to( aBoundsArray.lowers, 0, this.lowers.length, 0, elementCountHalf );
-    ArrayInterleaver.interleave_asGrouptTwo_from_to( aBoundsArray.uppers, 0, this.uppers.length, 0, elementCountHalf );
+    ArrayInterleaver.interleave_asGrouptTwo_from_to( aBoundsArray.lowers, 0, this.lowers, 0, elementCountHalf );
+    ArrayInterleaver.interleave_asGrouptTwo_from_to( aBoundsArray.uppers, 0, this.uppers, 0, elementCountHalf );
     return this;
   }
 
