@@ -88,6 +88,42 @@ class ArrayInterleaver {
    * Rearrange array elements along width by interleaving.
    *   - Only ( groupCount == 2 ) is supported.
    *
+   * @param {Array} fromArray
+   *   The source array. It will not be modified. It is the source of copying.
+   *
+   * @param {Array} toArray
+   *   The destination array. It will be modified (i.e. filled data copied from fromArray).
+   *
+   * @param {number} height
+   *   The virtual 2D array's height.
+   *
+   * @param {number} width
+   *   The virtual 2D array's width.
+   */
+  static interleave_asGrouptTwo_alongWidth_from_to( fromArray, toArray, height, width ) {
+    let elementCount = height * width;
+    if ( elementCount != fromArray.length )
+      throw Error( `ArrayInterleaver.interleave_asGrouptTwo_alongWidth(): `
+        + `( height * width ) = ( ${height} * ${width} ) = ${elementCount} `
+        + ` should be the same as input array length ( ${arrayIn.length} ).`
+      );
+
+    if ( ( width % 2 ) != 0 )
+      throw Error( `ArrayInterleaver.interleave_asGrouptTwo_alongWidth(): `
+        + `width ( ${width} ) must be even (i.e. divisible by 2).`
+      );
+
+    toArray.length = fromArray.length;
+    let widthHalf = ( width / 2 );
+    for ( let i = 0; i < elementCount; i += width ) {
+      ArrayInterleaver.interleave_asGrouptTwo_from_to( fromArray, i, toArray, i, widthHalf );
+    }
+  }
+
+  /**
+   * Rearrange array elements along width by interleaving.
+   *   - Only ( groupCount == 2 ) is supported.
+   *
    * @param {Array} arrayIn
    *   The array to be re-arranged. It is an 1D array but represents a 2D array.
    *
