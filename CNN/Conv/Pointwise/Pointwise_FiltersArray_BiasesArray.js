@@ -835,8 +835,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongWidth(
           this.biasesArray, 1, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
 
-      this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo(
-        arrayTemp_forInterleave_asGrouptTwo ); // Shuffle bounds array set of output.
+      this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo(); // Shuffle bounds array set of output.
     }
   }
 
