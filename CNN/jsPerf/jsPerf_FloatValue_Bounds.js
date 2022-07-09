@@ -129,18 +129,18 @@ class Cases {
     let oneRandCase = aCaseArray[ oneRandIndex ];
 
     // Convert multiple Bounds into one BoundsArray.
-    this.aLowers = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );
-    this.aUppers = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );
-    this.aLowersUppers = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length ); // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
-    this.bLowers = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );
-    this.bUppers = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );
-    this.bLowersUppers = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length ); // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
-    this.Ns = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );
-    this.NsNs = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );          // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
-    this.clampedArrayArray = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );     // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
-    this.addedArrayArray = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );       // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
-    this.multipledArrayArray = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length );   // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
-    this.aMultipledNArrayArray = Recyclabe.Array.Pool.get_or_create_by( aCaseArray.length ); // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
+    this.aLowers = Recyclable.Array.Pool.get_or_create_by( aCaseArray.length );
+    this.aUppers = Recyclable.Array.Pool.get_or_create_by( aCaseArray.length );
+    this.aLowersUppers = Recyclable.Array.Pool.get_or_create_by( aCaseArray.length ); // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
+    this.bLowers = Recyclable.Array.Pool.get_or_create_by( aCaseArray.length );
+    this.bUppers = Recyclable.Array.Pool.get_or_create_by( aCaseArray.length );
+    this.bLowersUppers = Recyclable.Array.Pool.get_or_create_by( aCaseArray.length ); // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
+    this.Ns = Recyclable.Array.Pool.get_or_create_by( aCaseArray.length );
+    this.NsNs = Recyclable.Array.Pool.get_or_create_by( aCaseArray.length );          // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
+    this.clampedArrayArray = Recyclable.Array.Pool.get_or_create_by( aCaseArray.length );     // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
+    this.addedArrayArray = Recyclable.Array.Pool.get_or_create_by( aCaseArray.length );       // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
+    this.multipledArrayArray = Recyclable.Array.Pool.get_or_create_by( aCaseArray.length );   // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
+    this.aMultipledNArrayArray = Recyclable.Array.Pool.get_or_create_by( aCaseArray.length ); // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
 
     for ( let i = 0; i < aCaseArray.length; ++i ) {
       let oneCase = aCaseArray[ i ];
