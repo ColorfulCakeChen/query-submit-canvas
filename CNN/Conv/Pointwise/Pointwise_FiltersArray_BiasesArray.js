@@ -272,14 +272,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
    *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
    * set of this pointwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
    *
-   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
-   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-   * and improve performance when doing Interleave_asGrouptTwo.
-   *
    * @return {boolean}
    *   Return true, if succeeded.
    */
-  init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo ) {
+  init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) {
 
     // Q1: Why is the inputWeightArray not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputWeightArray so that it could be released by memory garbage collector.
@@ -541,7 +537,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
           // 3.2 bHigherHalfAnotherPointwiseShuffle
           // 4.2 bHigherHalfPassThroughShuffle
-          this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo );
+          this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo();
           break;
 
         default:
@@ -789,12 +785,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
    *   - Only ( outputGroupCount == 2 ) is supported.
    *   - The input channel count must be even (i.e. divisible by 2), if ( .channelShuffler_inputGroupCount > 0 ).
    *   - The output channel count must be even (i.e. divisible by 2), if ( .channelShuffler_outputGroupCount > 0 ).
-   *
-   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
-   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-   * and improve performance when doing Interleave_asGrouptTwo.
    */
-  set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo ) {
+  set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo() {
     
     // 1.Shuffle along input channels.
     if ( this.channelShuffler_inputGroupCount > 0 ) {
