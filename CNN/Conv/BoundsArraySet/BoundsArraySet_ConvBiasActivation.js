@@ -92,11 +92,30 @@ class ConvBiasActivation extends InputsOutputs {
 
     // Undo the channel shuffling.
     if ( channelShuffler_inputGroupCount > 0 ) {
-      let unShuffled = FloatValue.BoundsArray.Pool.get_or_create_by( this.afterUndoPreviousActivationEscaping.length );
-      unShuffled.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterUndoPreviousActivationEscaping );
-      this.afterUndoPreviousActivationEscaping.disposeResources_and_recycleToPool();
-      this.afterUndoPreviousActivationEscaping = unShuffled;
+      this.set_afterUndoPreviousActivationEscaping_by_Interleave_asGrouptTwo_undo();
     }
+    return this;
+  }
+
+  /**
+   * Redo the channel shuffling of .afterUndoPreviousActivationEscaping.
+   */
+  set_afterUndoPreviousActivationEscaping_by_Interleave_asGrouptTwo() {
+    let unShuffled = FloatValue.BoundsArray.Pool.get_or_create_by( this.afterUndoPreviousActivationEscaping.length );
+    unShuffled.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterUndoPreviousActivationEscaping );
+    this.afterUndoPreviousActivationEscaping.disposeResources_and_recycleToPool();
+    this.afterUndoPreviousActivationEscaping = unShuffled;
+    return this;
+  }
+
+  /**
+   * Undo the channel shuffling of .afterUndoPreviousActivationEscaping.
+   */
+  set_afterUndoPreviousActivationEscaping_by_Interleave_asGrouptTwo_undo() {
+    let unShuffled = FloatValue.BoundsArray.Pool.get_or_create_by( this.afterUndoPreviousActivationEscaping.length );
+    unShuffled.set_all_byInterleave_asGrouptTwo_undo_byBoundsArray( this.afterUndoPreviousActivationEscaping );
+    this.afterUndoPreviousActivationEscaping.disposeResources_and_recycleToPool();
+    this.afterUndoPreviousActivationEscaping = unShuffled;
     return this;
   }
 
