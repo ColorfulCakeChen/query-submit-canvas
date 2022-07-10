@@ -630,6 +630,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
         for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
 
+!!! ...unfinished... (2022/07/10) inputScaleBoundsArrayBase.scaleArraySet also needs be undone interleaving.
+
           let undoPreviousEscapingScale = inputScaleBoundsArrayBase.scaleArraySet.undo.scales[ inChannel ];
           let filterValuePassThrough = thePassThroughStyleInfo.filterValue * undoPreviousEscapingScale;
           let outChannel = outChannelBegin;
