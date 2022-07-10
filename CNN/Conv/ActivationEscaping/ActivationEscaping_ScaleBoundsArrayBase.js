@@ -197,6 +197,34 @@ class ScaleBoundsArrayBase extends Recyclable.Root {
 
 
   /**
+   * Rearrange channels information by interleaving as ( groupCount == 2 ). This channel count must be even
+   * (i.e. divisible by 2). The original "this" (i.e. not channel shuffled) ScaleBoundsArray will be swapped and kept in
+   * the .beforeChannelShuffled data member.
+   *
+   *
+   * @return {ScaleBoundsArray}
+   *   Return this (modified) object.
+   */
+  set_all_byInterleave_asGrouptTwo() {
+    {
+      let boundsArrayShuffled = FloatValue.BoundsArray.Pool.get_or_create_by( this.boundsArray.length );
+      boundsArrayShuffled.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.boundsArray.boundsArray );
+      this.boundsArray.disposeResources_and_recycleToPool();
+      this.boundsArray = boundsArrayShuffled;
+    }
+
+    {
+      let scaleArraySetShuffled = ScaleArraySet.Pool.get_or_create_by( this.scaleArraySet.length );
+      scaleArraySetShuffled.set_all_byInterleave_asGrouptTwo_byScaleArraySet( this.scaleArraySet.scaleArraySet );
+      this.scaleArraySet.disposeResources_and_recycleToPool();
+      this.scaleArraySet = scaleArraySetShuffled;
+    }
+
+    return this;
+  }
+
+
+  /**
    * The this.scaleArraySet and aScaleBoundsArray.scaleArraySet must have the same length and values.
    *
    * @param {ScaleBoundsArray} aScaleBoundsArray  The ScaleBoundsArray to add.
