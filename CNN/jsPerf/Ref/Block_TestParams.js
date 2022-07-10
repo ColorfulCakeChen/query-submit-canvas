@@ -289,16 +289,17 @@ class Base extends TestParams.Base {
 
       nConvBlockTypeId: [
 //!!! (2022/07/06 Temp Remarked) For speed-up debug.
-        Block.Params.nConvBlockTypeId.valueDesc.range.min,
-        Block.Params.nConvBlockTypeId.valueDesc.range.max
-      ],
+//         Block.Params.nConvBlockTypeId.valueDesc.range.min,
+//         Block.Params.nConvBlockTypeId.valueDesc.range.max
+//       ],
 //!!! (2022/07/06 Temp Added and Remarked) For speed-up debug.
 //         Block.Params.nConvBlockTypeId.valueDesc.range.min,
-//         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
+         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
+         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD // (5)
 //         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY, // (6)
 //         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY // (6)
 //         Block.Params.nConvBlockTypeId.valueDesc.range.max
-//       ],
+       ],
 
       pointwise1ChannelCount: [ 0, 0 + 3 - 1 ],
 
