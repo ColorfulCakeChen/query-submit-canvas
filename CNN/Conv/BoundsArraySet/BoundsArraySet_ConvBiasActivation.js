@@ -87,9 +87,14 @@ class ConvBiasActivation extends InputsOutputs {
    */
   set_afterUndoPreviousActivationEscaping_by_input0_undoScales( channelShuffler_inputGroupCount ) {
     if ( channelShuffler_inputGroupCount > 0 ) {
+      
+!!! ...unfinished... (2022/07/10)
+// should become use interleave_asGroupTwo_alongWidth_undo()
+
       this.afterUndoPreviousActivationEscaping
         .set_all_byBoundsArray( this.input0.beforeChannelShuffled.boundsArray )
         .multiply_all_byNs( this.input0.beforeChannelShuffled.scaleArraySet.undo.scales );
+
     } else {
       this.afterUndoPreviousActivationEscaping
         .set_all_byBoundsArray( this.input0.boundsArray )
