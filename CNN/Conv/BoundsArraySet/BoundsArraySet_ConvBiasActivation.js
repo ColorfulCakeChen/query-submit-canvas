@@ -78,27 +78,24 @@ class ConvBiasActivation extends InputsOutputs {
    * Set .afterUndoPreviousActivationEscaping as .input0 multiplying .input0.scaleArraySet.undo.scales.
    *
    * @param {number} channelShuffler_inputGroupCount
-   *   The input group count of the channel shuffler. Usually, it is used for undo previous operation's channel shuffling. If 0, the
-   * inputScaleBoundsArray will be used. If positive (only 2 is supported currently), the inputScaleBoundsArray.beforeChannelShuffled
-   * will be used.
+   *   The input group count of the channel shuffler. Usually, it is used for undo previous operation's channel shuffling.
+   *   - If 0, the .afterUndoPreviousActivationEscaping will be in the same order of inputScaleBoundsArray.
+   *   - If 2, the .afterUndoPreviousActivationEscaping will be in the order of undo-interleave-as-group-two of inputScaleBoundsArray.
    *
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
   set_afterUndoPreviousActivationEscaping_by_input0_undoScales( channelShuffler_inputGroupCount ) {
+    this.afterUndoPreviousActivationEscaping
+      .set_all_byBoundsArray( this.input0.boundsArray )
+      .multiply_all_byNs( this.input0.scaleArraySet.undo.scales );
+
+    // Undo the channel shuffling.
     if ( channelShuffler_inputGroupCount > 0 ) {
-      
-!!! ...unfinished... (2022/07/10)
-// should become use interleave_asGroupTwo_alongWidth_undo()
-
-      this.afterUndoPreviousActivationEscaping
-        .set_all_byBoundsArray( this.input0.beforeChannelShuffled.boundsArray )
-        .multiply_all_byNs( this.input0.beforeChannelShuffled.scaleArraySet.undo.scales );
-
-    } else {
-      this.afterUndoPreviousActivationEscaping
-        .set_all_byBoundsArray( this.input0.boundsArray )
-        .multiply_all_byNs( this.input0.scaleArraySet.undo.scales );
+      let unShuffled = FloatValue.BoundsArray.Pool.get_or_create_by( this.afterUndoPreviousActivationEscaping.length );
+      unShuffled.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterUndoPreviousActivationEscaping );
+      this.afterUndoPreviousActivationEscaping.disposeResources_and_recycleToPool();
+      this.afterUndoPreviousActivationEscaping = unShuffled;
     }
     return this;
   }
