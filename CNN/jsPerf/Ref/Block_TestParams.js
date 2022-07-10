@@ -289,34 +289,30 @@ class Base extends TestParams.Base {
 
       nConvBlockTypeId: [
 //!!! (2022/07/06 Temp Remarked) For speed-up debug.
-//         Block.Params.nConvBlockTypeId.valueDesc.range.min,
-//         Block.Params.nConvBlockTypeId.valueDesc.range.max
-//       ],
+        Block.Params.nConvBlockTypeId.valueDesc.range.min,
+        Block.Params.nConvBlockTypeId.valueDesc.range.max
+      ],
 //!!! (2022/07/06 Temp Added and Remarked) For speed-up debug.
 //         Block.Params.nConvBlockTypeId.valueDesc.range.min,
 //         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
-         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY, // (6)
-         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY // (6)
+//         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY, // (6)
+//         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY // (6)
 //         Block.Params.nConvBlockTypeId.valueDesc.range.max
-       ],
+//       ],
 
-//!!! (2022/04/28 Temp) For testing large channel count.
-//      pointwise1ChannelCount: [ 2, 0 + 3 - 1 ],
-//!!! (2022/07/07 Temp Remarked) For speed up debug.
-//      pointwise1ChannelCount: [ 0, 0 + 3 - 1 ],
-      pointwise1ChannelCount: [ 0, 0 ],
+      pointwise1ChannelCount: [ 0, 0 + 3 - 1 ],
 
       pointwise20ChannelCount: [ 1, 1 + 3 - 1 ],
 
 //!!! (2022/07/07 Temp Remarked) For speed up debug.
-//       depthwise_AvgMax_Or_ChannelMultiplier: [
-//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
-//       ],
       depthwise_AvgMax_Or_ChannelMultiplier: [
-        0,
-        0
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
       ],
+//       depthwise_AvgMax_Or_ChannelMultiplier: [
+//         0,
+//         0
+//       ],
 
       // (2021/10/06) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
       depthwiseFilterHeight: [ Block.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
@@ -341,8 +337,8 @@ class Base extends TestParams.Base {
 
       depthwiseActivationId:
 //        undefined,
-//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
 //        [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
 //      bSqueezeExcitationPrefix: undefined,
@@ -351,27 +347,22 @@ class Base extends TestParams.Base {
 //      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
 
       nSqueezeExcitationChannelCountDivisor: [
-//!!! (2022/06/10 Temp Remarked) For speed up debug.
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
-//        1,
-//        2
         4
-        //ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min + 7 - 1
-        //ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.max
       ],
 
       pointwise20ActivationId:
 //        undefined,
-//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
 //        [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( undefined )) for speeding up testing.
  
 //       ActivationId: undefined,
-//       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+//       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
 //       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
       bKeepInputTensor: undefined,
