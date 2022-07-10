@@ -301,19 +301,21 @@ class Base extends TestParams.Base {
 //         Block.Params.nConvBlockTypeId.valueDesc.range.max
        ],
 
-      pointwise1ChannelCount: [ 0, 0 + 3 - 1 ],
+//!!! (2022/07/10 Temp Remarked) For speed-up debug.
+//      pointwise1ChannelCount: [ 0, 0 + 3 - 1 ],
+      pointwise1ChannelCount: [ 2, 0 + 3 - 1 ],
 
       pointwise20ChannelCount: [ 1, 1 + 3 - 1 ],
 
 //!!! (2022/07/07 Temp Remarked) For speed up debug.
-      depthwise_AvgMax_Or_ChannelMultiplier: [
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
-      ],
 //       depthwise_AvgMax_Or_ChannelMultiplier: [
-//         0,
-//         0
+//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
 //       ],
+      depthwise_AvgMax_Or_ChannelMultiplier: [
+        0,
+        0
+      ],
 
       // (2021/10/06) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
       depthwiseFilterHeight: [ Block.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
@@ -354,8 +356,8 @@ class Base extends TestParams.Base {
 
       pointwise20ActivationId:
 //        undefined,
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
 //        [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
