@@ -38,7 +38,7 @@ class Pointwise extends ConvBiasActivation {
   }
 
   /** @override */
-  static setAsConstructor_self( input0, outputChannelCount0 ) {
+  static setAsConstructor_self() {
     // Do nothing.
   }
 
