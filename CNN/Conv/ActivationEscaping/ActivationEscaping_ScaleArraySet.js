@@ -280,9 +280,9 @@ class ScaleArraySet extends Recyclable.Root {
    *
    * @return {ScaleArraySet} Return this (modified) object.
    */
-  set_all_byInterleave_asGrouptTwo( arrayTemp ) {
-    this.do.set_all_byInterleave_asGrouptTwo( arrayTemp );
-    this.undo.set_all_byInterleave_asGrouptTwo( arrayTemp );
+  set_all_byInterleave_asGrouptTwo_inPlace( arrayTemp ) {
+    this.do.set_all_byInterleave_asGrouptTwo_inPlace( arrayTemp );
+    this.undo.set_all_byInterleave_asGrouptTwo_inPlace( arrayTemp );
     return this;
   }
 
@@ -297,6 +297,20 @@ class ScaleArraySet extends Recyclable.Root {
   set_all_byInterleave_asGrouptTwo_byScaleArraySet( aScaleArraySet ) {
     this.do.set_all_byInterleave_asGrouptTwo_byScaleArray( aScaleArraySet.do );
     this.undo.set_all_byInterleave_asGrouptTwo_byScaleArray( aScaleArraySet.undo );
+    return this;
+  }
+
+  /**
+   * Rearrange bounds by undoing interleaving as ( groupCount == 2 ).
+   *
+   * @param {ScaleArraySet} aScaleArraySet
+   *   The source ScaleArraySet to be copied from. Its element count must be even (i.e. divisible by 2).
+   *
+   * @return {ScaleArraySet} Return this (modified) object.
+   */
+  set_all_byInterleave_asGrouptTwo_undo_byScaleArraySet( aScaleArraySet ) {
+    this.do.set_all_byInterleave_asGrouptTwo_undo_byScaleArray( aScaleArraySet.do );
+    this.undo.set_all_byInterleave_asGrouptTwo_undo_byScaleArray( aScaleArraySet.undo );
     return this;
   }
 
