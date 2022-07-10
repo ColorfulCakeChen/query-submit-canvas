@@ -252,9 +252,9 @@ class BoundsArray extends Recyclable.Root {
    *
    * @return {BoundsArray} Return this (modified) object.
    */
-  set_all_byInterleave_asGrouptTwo( arrayTemp ) {
-    ArrayInterleaver.interleave_asGrouptTwo_alongWidth( this.lowers, 1, this.lowers.length, arrayTemp );
-    ArrayInterleaver.interleave_asGrouptTwo_alongWidth( this.uppers, 1, this.uppers.length, arrayTemp );
+  set_all_byInterleave_asGrouptTwo_inPlace( arrayTemp ) {
+    ArrayInterleaver.interleave_asGrouptTwo_alongWidth_inPlace( this.lowers, 1, this.lowers.length, arrayTemp );
+    ArrayInterleaver.interleave_asGrouptTwo_alongWidth_inPlace( this.uppers, 1, this.uppers.length, arrayTemp );
     return this;
   }
 
@@ -278,6 +278,29 @@ class BoundsArray extends Recyclable.Root {
     let elementCountHalf = ( elementCount / 2 );
     ArrayInterleaver.interleave_asGrouptTwo_from_to( aBoundsArray.lowers, 0, this.lowers, 0, elementCountHalf );
     ArrayInterleaver.interleave_asGrouptTwo_from_to( aBoundsArray.uppers, 0, this.uppers, 0, elementCountHalf );
+    return this;
+  }
+
+  /**
+   * Rearrange bounds by undoing interleaving as ( groupCount == 2 ).
+   *
+   * @param {BoundsArray} aBoundsArray
+   *   The source BoundsArray to be copied from. Its element count must be even (i.e. divisible by 2).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  set_all_byInterleave_asGrouptTwo_undo_byBoundsArray( aBoundsArray ) {
+    let elementCount = aBoundsArray.length;
+
+    if ( ( elementCount % 2 ) != 0 )
+      throw Error( `FloatValue.BoundsArray.set_all_byInterleave_asGrouptTwo_undo_byBoundsArray(): `
+        + `elementCount ( ${elementCount} ) must be even (i.e. divisible by 2).`
+      );
+
+    this.length = elementCount;
+    let elementCountHalf = ( elementCount / 2 );
+    ArrayInterleaver.interleave_asGrouptTwo_from_to_undo( aBoundsArray.lowers, 0, this.lowers, 0, elementCountHalf );
+    ArrayInterleaver.interleave_asGrouptTwo_from_to_undo( aBoundsArray.uppers, 0, this.uppers, 0, elementCountHalf );
     return this;
   }
 
