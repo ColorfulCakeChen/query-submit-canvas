@@ -824,13 +824,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         this.filtersArray = filtersArrayShuffled;
       }
 
-      // Note: biases and BoundsArraySet are not affected because they are along output channels (i.e. not along input channels).
+      // Because its channel shuffling is undone, redo it here.
+      this.boundsArraySet.afterUndoPreviousActivationEscaping.set_afterUndoPreviousActivationEscaping_by_Interleave_asGrouptTwo();
 
-!!! ...unfinished... (2022/07/10)
-// should use interleave_asGroupTwo_alongWidth() for .afterUndoPreviousActivationEscaping
-
-      this.boundsArraySet.afterUndoPreviousActivationEscaping;
-
+      // Note: biases and other BoundsArraySet.afterXxx are not affected because they are along output channels (i.e. not
+      //       along input channels).
     }
 
     // 2. Shuffle along output channels.
