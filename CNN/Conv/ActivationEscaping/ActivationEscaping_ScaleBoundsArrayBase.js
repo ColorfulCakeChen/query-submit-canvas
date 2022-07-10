@@ -1,4 +1,4 @@
-export { ScaleBoundsArrayBase };
+export { ScaleBoundsArray };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -26,24 +26,24 @@ import { ScaleArraySet } from "./ActivationEscaping_ScaleArraySet.js";
  * @member {number} channelCount
  *   The same as .length.
  */
-class ScaleBoundsArrayBase extends Recyclable.Root {
+class ScaleBoundsArray extends Recyclable.Root {
 
   /**
-   * Used as default ActivationEscaping.ScaleBoundsArrayBase provider for conforming to Recyclable interface.
+   * Used as default ActivationEscaping.ScaleBoundsArray provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "ActivationEscaping.ScaleBoundsArrayBase.Pool", ScaleBoundsArrayBase, ScaleBoundsArrayBase.setAsConstructor );
+  static Pool = new Pool.Root( "ActivationEscaping.ScaleBoundsArray.Pool", ScaleBoundsArray, ScaleBoundsArray.setAsConstructor );
 
   /**
    */
   constructor( channelCount ) {
     super();
-    ScaleBoundsArrayBase.setAsConstructor_self.call( this, channelCount );
+    ScaleBoundsArray.setAsConstructor_self.call( this, channelCount );
   }
 
   /** @override */
   static setAsConstructor( channelCount ) {
     super.setAsConstructor();
-    ScaleBoundsArrayBase.setAsConstructor_self.call( this, channelCount );
+    ScaleBoundsArray.setAsConstructor_self.call( this, channelCount );
     return this;
   }
 
@@ -84,11 +84,11 @@ class ScaleBoundsArrayBase extends Recyclable.Root {
   }
 
   /**
-   * @return {ScaleBoundsArrayBase}
+   * @return {ScaleBoundsArray}
    *   Return a newly created ScaleBoundsArray which is a copy of this ScaleBoundsArray.
    */
   clone() {
-    let result = ScaleBoundsArrayBase.Pool.get_or_create_by( this.channelCount );
+    let result = ScaleBoundsArray.Pool.get_or_create_by( this.channelCount );
     result.set_all_byScaleBoundsArray( this );
     return result;
   }
@@ -177,25 +177,6 @@ class ScaleBoundsArrayBase extends Recyclable.Root {
     return this;
   }
 
-//!!! (2022/07/09 Remarked) Moved to ScaleBoundsArrayTwin.
-//   /**
-//    * Rearrange this.outputs[] channel information by interleaving as ( groupCount == 2 ). This channel count must be even
-//    * (i.e. divisible by 2).
-//    *
-//    * @param {Array} arrayTemp
-//    *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-//    * and improve performance.
-//    *
-//    * @return {ScaleBoundsArray}
-//    *   Return this (modified) object.
-//    */
-//   set_all_byInterleave_asGrouptTwo( arrayTemp ) {
-//     this.boundsArray.set_all_byInterleave_asGrouptTwo( arrayTemp );
-//     this.scaleArraySet.set_all_byInterleave_asGrouptTwo( arrayTemp );
-//     return this;
-//   }
-
-
   /**
    * Rearrange channels information by interleaving as ( groupCount == 2 ). This channel count must be even
    * (i.e. divisible by 2). The original "this" (i.e. not channel shuffled) ScaleBoundsArray will be swapped and kept in
@@ -212,14 +193,12 @@ class ScaleBoundsArrayBase extends Recyclable.Root {
       this.boundsArray.disposeResources_and_recycleToPool();
       this.boundsArray = boundsArrayShuffled;
     }
-
     {
       let scaleArraySetShuffled = ScaleArraySet.Pool.get_or_create_by( this.scaleArraySet.length );
       scaleArraySetShuffled.set_all_byInterleave_asGrouptTwo_byScaleArraySet( this.scaleArraySet.scaleArraySet );
       this.scaleArraySet.disposeResources_and_recycleToPool();
       this.scaleArraySet = scaleArraySetShuffled;
     }
-
     return this;
   }
 
