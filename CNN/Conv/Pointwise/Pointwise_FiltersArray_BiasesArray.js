@@ -607,11 +607,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       }
     }
 
-    let inputScaleBoundsArrayBase;
-    if ( this.channelShuffler_inputGroupCount > 0 ) {
-      inputScaleBoundsArrayBase = inputScaleBoundsArray.beforeChannelShuffled; // Use non-channel-shuffled info of previous operation.
+    let input_scaleArraySet_undo;
+    if ( this.channelShuffler_inputGroupCount > 0 ) { // Use non-channel-shuffled info of previous operation.
+      input_scaleArraySet_undo = ScaleArray.Pool.get_or_create_by( inputScaleBoundsArrayBase.scaleArraySet.undo.length );
+      input_scaleArraySet_undo.set_all_byInterleave_asGrouptTwo_undo_byScaleArray( inputScaleBoundsArrayBase.scaleArraySet.undo );
     } else {
-      inputScaleBoundsArrayBase = inputScaleBoundsArray; // Use channel-shuffled info of previous operation.
+      input_scaleArraySet_undo = inputScaleBoundsArrayBase.scaleArraySet.undo; // Use channel-shuffled info of previous operation.
     }
 
     // Extracting weights of filters and biases. (Including extra scale.)
@@ -629,10 +630,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       { // this.filtersArray
 
         for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
-
-!!! ...unfinished... (2022/07/10) inputScaleBoundsArrayBase.scaleArraySet also needs be undone interleaving.
-
-          let undoPreviousEscapingScale = inputScaleBoundsArrayBase.scaleArraySet.undo.scales[ inChannel ];
+          let undoPreviousEscapingScale = input_scaleArraySet_undo.scales[ inChannel ];
           let filterValuePassThrough = thePassThroughStyleInfo.filterValue * undoPreviousEscapingScale;
           let outChannel = outChannelBegin;
 
@@ -741,8 +739,16 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total output channel count ( ${outChannelEnd} ) `
           + `should be ( ${this.outputChannelCount} ).` );
 
-    tBounds.disposeResources_and_recycleToPool();
-    tBounds = null;
+    // Release temporary resources.
+    {
+      if ( this.channelShuffler_inputGroupCount > 0 ) {
+        input_scaleArraySet_undo.disposeResources_and_recycleToPool();
+        input_scaleArraySet_undo = null;
+      }
+
+      tBounds.disposeResources_and_recycleToPool();
+      tBounds = null;
+    }
   }
 
   /**
