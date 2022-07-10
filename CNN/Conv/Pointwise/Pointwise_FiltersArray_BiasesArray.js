@@ -528,30 +528,33 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       // Shuffle channels.
       //
       // Pre-shuffle channels by shuffling the filters and biases.
-      switch ( this.nHigherHalfDifferent ) {
+      this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo();
 
-        // 3.
-        // 4.
-        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE: // (3)
-        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
-
-          // 3.2 bHigherHalfAnotherPointwiseShuffle
-          // 4.2 bHigherHalfPassThroughShuffle
-          this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo();
-          break;
-
-        default:
-          throw Error(
-            `Pointwise.FiltersArray_BiasesArray.init(): `
-              + `channelShuffler_inputGroupCount (${this.channelShuffler_inputGroupCount}) and `
-              + `channelShuffler_outputGroupCount (${this.channelShuffler_outputGroupCount}) should be zero when `
-              + `nHigherHalfDifferent=`
-                + `${ValueDesc.Pointwise_HigherHalfDifferent.Singleton.getStringOf( this.nHigherHalfDifferent )}`
-                + `(${this.nHigherHalfDifferent}). `
-              + `Usually, only HIGHER_HALF_PASS_THROUGH could have channel shuffler.`
-          );
-          break;
-      }
+//!!! (2022/07/10 Remarked) No longer restrict which one could shuffling channels.
+//       switch ( this.nHigherHalfDifferent ) {
+//
+//         // 3.
+//         // 4.
+//         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE: // (3)
+//         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
+//
+//           // 3.2 bHigherHalfAnotherPointwiseShuffle
+//           // 4.2 bHigherHalfPassThroughShuffle
+//           this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo();
+//           break;
+//
+//         default:
+//           throw Error(
+//             `Pointwise.FiltersArray_BiasesArray.init(): `
+//               + `channelShuffler_inputGroupCount (${this.channelShuffler_inputGroupCount}) and `
+//               + `channelShuffler_outputGroupCount (${this.channelShuffler_outputGroupCount}) should be zero when `
+//               + `nHigherHalfDifferent=`
+//                 + `${ValueDesc.Pointwise_HigherHalfDifferent.Singleton.getStringOf( this.nHigherHalfDifferent )}`
+//                 + `(${this.nHigherHalfDifferent}). `
+//               + `Usually, only HIGHER_HALF_PASS_THROUGH could have channel shuffler.`
+//           );
+//           break;
+//       }
 
       {
         this.tensorWeightCountTotal_internal = 0;
