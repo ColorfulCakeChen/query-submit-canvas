@@ -245,8 +245,8 @@ class ScaleArray extends Recyclable.Root {
    *
    * @return {ScaleArray} Return this (modified) object.
    */
-  set_all_byInterleave_asGrouptTwo( arrayTemp ) {
-    ArrayInterleaver.interleave_asGrouptTwo_alongWidth( this.scales, 1, this.scales.length, arrayTemp );
+  set_all_byInterleave_asGrouptTwo_inPlace( arrayTemp ) {
+    ArrayInterleaver.interleave_asGrouptTwo_alongWidth_inPlace( this.scales, 1, this.scales.length, arrayTemp );
     return this;
   }
 
@@ -269,6 +269,28 @@ class ScaleArray extends Recyclable.Root {
     this.length = elementCount;
     let elementCountHalf = ( elementCount / 2 );
     ArrayInterleaver.interleave_asGrouptTwo_from_to( aScaleArray.scales, 0, this.scales, 0, elementCountHalf );
+    return this;
+  }
+
+  /**
+   * Rearrange bounds by undoing interleaving as ( groupCount == 2 ).
+   *
+   * @param {ScaleArray} aScaleArray
+   *   The source ScaleArray to be copied from. Its element count must be even (i.e. divisible by 2).
+   *
+   * @return {ScaleArray} Return this (modified) object.
+   */
+  set_all_byInterleave_asGrouptTwo_undo_byScaleArray( aScaleArray ) {
+    let elementCount = aScaleArray.length;
+
+    if ( ( elementCount % 2 ) != 0 )
+      throw Error( `FloatValue.ScaleArray.set_all_byInterleave_asGrouptTwo_undo_byScaleArray(): `
+        + `elementCount ( ${elementCount} ) must be even (i.e. divisible by 2).`
+      );
+
+    this.length = elementCount;
+    let elementCountHalf = ( elementCount / 2 );
+    ArrayInterleaver.interleave_asGrouptTwo_from_to_undo( aScaleArray.scales, 0, this.scales, 0, elementCountHalf );
     return this;
   }
 
