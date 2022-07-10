@@ -817,6 +817,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       }
 
       // Note: biases and BoundsArraySet are not affected because they are along output channels (i.e. not along input channels).
+
+!!! ...unfinished... (2022/07/10)
+// should use interleave_asGroupTwo_alongWidth() for .afterUndoPreviousActivationEscaping
+
+      this.boundsArraySet.afterUndoPreviousActivationEscaping;
+
     }
 
     // 2. Shuffle along output channels.
