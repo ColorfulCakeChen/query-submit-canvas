@@ -25,15 +25,15 @@ class Pointwise extends ConvBiasActivation {
    *   - The .input0 will be set as input0.
    *   - The .afterUndoPreviousActivationEscaping will be set according to input0 and input0.scaleArraySet.undo.scales.
    */
-  constructor( input0, outputChannelCount0 ) {
-    super( input0, outputChannelCount0 );
-    Pointwise.setAsConstructor_self.call( this, input0, outputChannelCount0 );
+  constructor( input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
+    super( input0, outputChannelCount0, channelShuffler_inputGroupCount );
+    Pointwise.setAsConstructor_self.call( this );
   }
 
   /** @override */
-  static setAsConstructor( input0, outputChannelCount0 ) {
-    super.setAsConstructor( input0, outputChannelCount0 );
-    Pointwise.setAsConstructor_self.call( this, input0, outputChannelCount0 );
+  static setAsConstructor( input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
+    super.setAsConstructor( input0, outputChannelCount0, channelShuffler_inputGroupCount );
+    Pointwise.setAsConstructor_self.call( this );
     return this;
   }
 
