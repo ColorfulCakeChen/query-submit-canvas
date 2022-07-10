@@ -609,10 +609,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     let input_scaleArraySet_undo;
     if ( this.channelShuffler_inputGroupCount > 0 ) { // Use non-channel-shuffled info of previous operation.
-      input_scaleArraySet_undo = ScaleArray.Pool.get_or_create_by( inputScaleBoundsArrayBase.scaleArraySet.undo.length );
-      input_scaleArraySet_undo.set_all_byInterleave_asGrouptTwo_undo_byScaleArray( inputScaleBoundsArrayBase.scaleArraySet.undo );
+      input_scaleArraySet_undo = ScaleArray.Pool.get_or_create_by( inputScaleBoundsArray.scaleArraySet.undo.length );
+      input_scaleArraySet_undo.set_all_byInterleave_asGrouptTwo_undo_byScaleArray( inputScaleBoundsArray.scaleArraySet.undo );
     } else {
-      input_scaleArraySet_undo = inputScaleBoundsArrayBase.scaleArraySet.undo; // Use channel-shuffled info of previous operation.
+      input_scaleArraySet_undo = inputScaleBoundsArray.scaleArraySet.undo; // Use channel-shuffled info of previous operation.
     }
 
     // Extracting weights of filters and biases. (Including extra scale.)
