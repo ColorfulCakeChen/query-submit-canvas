@@ -301,9 +301,9 @@ class Base extends TestParams.Base {
 //        Block.Params.nConvBlockTypeId.valueDesc.range.max
       ],
 
-//!!! (2022/07/10 Temp Remarked) For speed-up debug.
-      pointwise1ChannelCount: [ 0, 2 ],
-//      pointwise1ChannelCount: [ 2, 2 ],
+//!!! (2022/07/11 Temp Remarked) For speed-up debug.
+//      pointwise1ChannelCount: [ 0, 2 ],
+      pointwise1ChannelCount: [ 2, 2 ],
 
       pointwise20ChannelCount: [ 1, 3 ],
 
