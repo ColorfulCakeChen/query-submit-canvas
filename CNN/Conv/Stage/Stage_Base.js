@@ -1,7 +1,10 @@
 export { Base };
 
+import * as Pool from "../../util/Pool.js";
+//import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as TensorPlaceholder from "../TensorPlaceholder.js";
 
 //!!! (2022/06/07 Remarked) seems not necessary because already has TensorPlaceholder.
 //import * as BoundsArraySet from "../BoundsArraySet.js";
@@ -211,7 +214,31 @@ import { Params } from "./Stage_Params.js";
  * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
  *
  */
-class Base {
+class Base extends Recyclable.Root {
+
+  /**
+   * Used as default Stage.Base provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Stage.Base.Pool", Base, Base.setAsConstructor );
+
+  /**
+   */
+  constructor() {
+    super();
+    Base.setAsConstructor_self.call( this );
+  }
+
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    Base.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
+    // Nothing to do here (for Stage.Base).
+  }
 
   /**
    * Generator for initializing this object.
@@ -454,8 +481,8 @@ class Base {
     return bInitOk;
   }
 
-  /** Release all tensors. */
-  disposeTensors() {
+  /** @override */
+  disposeResources() {
     if ( this.blocksArray ) {
       for ( let i = 0; i < this.blocksArray.length; ++i ) {
         let block = this.blocksArray[ i ];
@@ -478,6 +505,8 @@ class Base {
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
+
+    super.disposeResources();
   }
 
   /**
