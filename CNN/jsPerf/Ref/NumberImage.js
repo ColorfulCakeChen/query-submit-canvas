@@ -617,8 +617,8 @@ class Base extends Recyclable.Root {
         //
         imageOut.boundsArraySet.set_outputs_all_by_input0();
 
-        // Note1: Since there is no undo previous scales, it needs not do .scale_byChannel_withoutAffect_BoundsArraySet().
-        // Note2: Since there is no activation, it needs not do .modify_byActivation_withoutAffect_BoundsArraySet().
+        // Note1: Since there is no undo previous scales, it needs not .scale_byChannel_withoutAffect_BoundsArraySet().
+        // Note2: Since there is no activation, it needs not .modify_byActivation_withoutAffect_BoundsArraySet().
 
       } else {
         imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
