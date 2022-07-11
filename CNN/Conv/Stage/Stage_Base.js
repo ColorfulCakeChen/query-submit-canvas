@@ -300,8 +300,8 @@ class Base extends Recyclable.Root {
       ;
 
     let progressRoot = progressParent.getRoot();
-    let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( progressMax ) ); // For parameters extracting.
-    let progressForBlocks = progressParent.addChild( new ValueMax.Percentage.Aggregate() ); // for block0, block1, 2, 3, ... 
+    let progressToAdvance = progressParent.addChild( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
+    let progressForBlocks = progressParent.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for block0, block1, 2, 3, ... 
 
     this.disposeTensors();
 
@@ -530,33 +530,23 @@ class Base extends Recyclable.Root {
     if ( !this.blocksArray )
       return;
 
-    { // 1. Release block0's outputs' ScaleBoundsArray.
-      this.block0.output0.scaleBoundsArray = null;
-
-      if ( this.block0.output1 )
-        this.block0.output1.scaleBoundsArray = null;
+    { // 1. Release blockLast's inputs' ScaleBoundsArray.
+      this.blockLast.input1?.ScaleBoundsArray_dispose();
+      this.blockLast.input0.ScaleBoundsArray_dispose();
     }
 
-    // 2. Release intermediate blocks' inputs' and outputs' ScaleBoundsArray.
-    for ( let i = 1; i < ( this.blocksArray.length - 1 ); ++i ) {
+    // 2. Release intermediate (i.e. except block0 and blockLast) blocks' inputs' and outputs' ScaleBoundsArray.
+    for ( let i = ( this.blocksArray.length - 2 ); i >= 1; --i ) {
       let block = this.blocksArray[ i ];
-
-      block.input0.scaleBoundsArray = null;
-
-      if ( block.input1 )
-        block.input1.scaleBoundsArray = null;
-
-      block.output0.scaleBoundsArray = null;
-
-      if ( block.output1 )
-        block.output1.scaleBoundsArray = null;
+      block.output1?.ScaleBoundsArray_dispose();
+      block.output0.ScaleBoundsArray_dispose();
+      block.input1?.ScaleBoundsArray_dispose();
+      block.input0.ScaleBoundsArray_dispose();
     }
 
-    { // 3. Release blockLast's outputs' ScaleBoundsArray.
-      this.blockLast.intput0.scaleBoundsArray = null;
-
-      if ( this.blockLast.intput1 )
-        this.blockLast.intput1.scaleBoundsArray = null;
+    { // 1. Release block0's outputs' ScaleBoundsArray.
+      this.block0.output1?.ScaleBoundsArray_dispose();
+      this.block0.output0.ScaleBoundsArray_dispose();
     }
   }
 
