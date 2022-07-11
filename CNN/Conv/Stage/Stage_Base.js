@@ -1,7 +1,7 @@
 export { Base };
 
 import * as Pool from "../../util/Pool.js";
-//import * as Recyclable from "../../util/Recyclable.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
@@ -357,7 +357,7 @@ class Base extends Recyclable.Root {
     let blockParams, block, blockIniter;
     let inputScaleBoundsArray;
 
-    this.blocksArray = new Array( blockParamsCreator.blockCount );
+    this.blocksArray = Recyclable.OwnerArray.Pool.get_or_create_by( blockParamsCreator.blockCount );
     for ( let i = 0; i < this.blocksArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
 
       if ( 0 == i ) { // Block0.
@@ -484,15 +484,12 @@ class Base extends Recyclable.Root {
   /** @override */
   disposeResources() {
     if ( this.blocksArray ) {
-      for ( let i = 0; i < this.blocksArray.length; ++i ) {
-        let block = this.blocksArray[ i ];
-        block.disposeTensors();
-      }
+      this.blocksArray.disposeResources_and_recycleToPool();
       this.blocksArray = null;
     }
 
-    if ( this.channelShuffler ) {
-      this.channelShuffler.disposeTensors(); // Stage is responsible for releasing the channel shuffler shared by all blocks of the stage.
+    if ( this.channelShuffler ) { // Stage is responsible for releasing the channel shuffler shared by all blocks of the stage.
+      this.channelShuffler.disposeResources_and_recycleToPool();
       this.channelShuffler = false;
     }
 
@@ -500,10 +497,12 @@ class Base extends Recyclable.Root {
 
     this.outputChannelCount = -1;
 
-    this.intermediateInputTensors = this.intermediateOutputTensors = null;
+    this.intermediateInputTensors = null;
+    this.intermediateOutputTensors = null;
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
-    this.byteOffsetBegin = this.byteOffsetEnd = -1;
+
+    this.weightElementOffsetBegin = this.weightElementOffsetEnd = -1;
     this.bInitOk = false;
 
     super.disposeResources();
@@ -560,22 +559,6 @@ class Base extends Recyclable.Root {
         this.blockLast.intput1.scaleBoundsArray = null;
     }
   }
-
-//!!! (2022/06/07 Remarked) seems not necessary because already has TensorPlaceholder.
-//   /**
-//    * Release all blocks' BoundsArraySet. This could reduce memory footprint.
-//    *
-//    * (Note: This stage's BoundsArraySet is kept.)
-//    */
-//   dispose_all_sub_BoundsArraySet() {
-//     if ( !this.blocksArray )
-//       return;
-//
-//     for ( let i = 0; i < this.blocksArray.length; ++i ) {
-//       let block = this.blocksArray[ i ];
-//       delete block.boundsArraySet;
-//     }
-//   }
 
   /**
    * Assert image size.
