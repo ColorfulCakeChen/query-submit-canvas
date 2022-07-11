@@ -1,5 +1,7 @@
 export { Params };
 
+import * as Pool from "../../util/Pool.js";
+//import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
@@ -16,6 +18,13 @@ import * as Weights from "../../Unpacker/Weights.js";
 /**
  * Convolution stage parameters.
  *
+ * @member {number} squeezeExcitationActivationId
+ *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of squeeze-and-excitation. Usually, it uses the
+ * default activation function (i.e. nActivationId).
+ *
+ * @member {string} squeezeExcitationActivationName
+ *   The string name of squeezeExcitationActivationId.
+ *
  * @member {number} outputHeight
  *   The height of output image. It is half of the input height (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
  *
@@ -30,26 +39,23 @@ class Params extends Weights.Params {
   static Pool = new Pool.Root( "Stage.Params.Pool", Params, Params.setAsConstructor );
 
   /**
-   * If a parameter's value is null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   *
-   * @param {Float32Array} inputFloat32Array
-   *   A Float32Array whose values will be interpreted as weights.
-   *
-   * @param {number} byteOffsetBegin
-   *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
-   * (not to the inputFloat32Array.byteOffset).
+   * If a parameter's value is null, it will be extracted from inputWeightArray (i.e. by evolution).
    *
    * @param {number} sourceHeight
    *   The height of the source image which will be processed by apply(). If null, it will be extracted from
-   * inputFloat32Array (i.e. by evolution).
+   * inputWeightArray (i.e. by evolution).
    *
    * @param {number} sourceWidth
    *   The width of the source image which will be processed by apply(). If null, it will be extracted from
-   * inputFloat32Array (i.e. by evolution).
+   * inputWeightArray (i.e. by evolution).
    *
    * @param {number} sourceChannelCount
    *   The depth (channel count) of the source image. It may be the output channel count of the previous convolution stage, so
-   * it could be large. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * it could be large. If null, it will be extracted from inputWeightArray (i.e. by evolution).
+   *
+   * @param {number} nConvStageTypeId
+   *   The convolution stage type (ValueDesc.ConvStageType.Singleton.Ids.Xxx). If null, it will be extracted from inputWeightArray
+   * (i.e. by evolution).
    *
    
 //!!! ...unfinished... (2022/06/25)
@@ -58,30 +64,26 @@ class Params extends Weights.Params {
 
    * @param {number} blockCountRequested
    *   How many blocks inside this stage are wanted.
-   *   - If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   *   - If null, it will be extracted from inputWeightArray (i.e. by evolution).
    *   - It must be ( >= 2 ). Because this stage will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
    *       (i.e. to halve height x width) and use ( blockCountRequested - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" )
    *       until the stage end. These can not be achieved by only one block. So there is at least two blocks.
    *
    * @param {boolean} bPointwise1
-   *   If false, there will be no pointwise1 (i.e. the 1st pointwise convolution).If null, it will be extracted from inputFloat32Array
+   *   If false, there will be no pointwise1 (i.e. the 1st pointwise convolution).If null, it will be extracted from inputWeightArray
    * (i.e. by evolution).
    *
    * @param {number} depthwiseFilterHeight
    *   The height of depthwise convolution's filter. At least 1 (so that 1D data could be processed). If null, it will be extracted
-   * from inputFloat32Array (i.e. by evolution).
+   * from inputWeightArray (i.e. by evolution).
    *
    * @param {number} depthwiseFilterWidth
    *   The width of depthwise convolution's filter. At least 2 (so that meaningless ( 1 * 1 ) could be avoided). If null, it will
-   * be extracted from inputFloat32Array (i.e. by evolution).
-   *
-   * @param {number} nActivationId
-   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be
-   * extracted from inputFloat32Array (i.e. by evolution).
+   * be extracted from inputWeightArray (i.e. by evolution).
    *
    * @param {boolean} bPointwise2ActivatedAtStageEnd
    *   If true, the blockLast's pointwise2 will have activation function. If false, the blockLast's pointwise2 will have no activation
-   * function. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * function. If null, it will be extracted from inputWeightArray (i.e. by evolution).
    *
    *   - If there will be next stage after this stage, it usually should be true (i.e. has activation function). The reason is that
    *       this stage's blockLast's pointwise2 (if has no activation function) and the next stage's block0's pointwise1 are essentially
@@ -104,27 +106,38 @@ class Params extends Weights.Params {
    *         output could have any value (i.e. the whole number line). If the last operation (i.e. pointwise2) has activation
    *         function, the output value will be restricted by the activation function (e.g. [ -1, +1 ] for tanh()).
    *
-   * @param {number} nConvStageType
-   *   The convolution stage type (ValueDesc.ConvStageType.Singleton.Ids.Xxx). If null, it will be extracted from inputFloat32Array
-   * (i.e. by evolution).
+   *
+   * @param {number} nSqueezeExcitationChannelCountDivisor
+   *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
+   * (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xx)
+   *
+   * @param {boolean} bSqueezeExcitationPrefix
+   *   If true, the squeeze-and-excitation will be before pointwise2. If false, the squeeze-and-excitation will be after pointwise2.
+   * If null, it will be extracted from inputWeightArray (i.e. by evolution).
+   * Only used if ( nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2) ).
+   *
+   * @param {number} nActivationId
+   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be
+   * extracted from inputWeightArray (i.e. by evolution).
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply() will not dispose inputTensor (i.e. will be kept). If null, it will be extracted from
-   * inputFloat32Array (i.e. by evolution).
+   * inputWeightArray (i.e. by evolution).
    *
    * @return {boolean}
    *   Return false, if initialization failed.
    *
    * @override
    */
-  constructor( inputFloat32Array, byteOffsetBegin,
+  constructor(
     sourceHeight, sourceWidth, sourceChannelCount,
+    nConvStageTypeId,
     blockCountRequested,
     bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth,
-    nActivationId,
     bPointwise2ActivatedAtStageEnd,
-    nConvStageType,
+    nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+    nActivationId,
     bKeepInputTensor
   ) {
 
@@ -139,31 +152,14 @@ class Params extends Weights.Params {
     //     If it is still a parameter it should be forced to 1 at least (always needs depthwise operation) in this case.
     //
 
-    let parameterMap = new Map( [
-      [ Params.sourceHeight,                   sourceHeight ],
-      [ Params.sourceWidth,                    sourceWidth ],
-      [ Params.sourceChannelCount,             sourceChannelCount ],
-      [ Params.blockCountRequested,             blockCountRequested ],
-      [ Params.bPointwise1,                    bPointwise1 ],
-      [ Params.depthwiseFilterHeight,          depthwiseFilterHeight ],
-      [ Params.depthwiseFilterWidth,           depthwiseFilterWidth ],
-      [ Params.nActivationId,                  nActivationId ],
-      [ Params.bPointwise2ActivatedAtStageEnd, bPointwise2ActivatedAtStageEnd ],
-      [ Params.nConvStageType,                 nConvStageType ],
-      [ Params.bKeepInputTensor,               bKeepInputTensor ],
-    ] );
-
-    super( inputFloat32Array, byteOffsetBegin, parameterMap );
-  }
-//!!!
     super(
       Params.SequenceArray,
-      input0_height, input0_width, input0_channelCount,
-      nConvBlockTypeId,
-      pointwise1ChannelCount,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-      depthwiseActivationId,
-      pointwise20ChannelCount, pointwise20ActivationId,
+      sourceHeight, sourceWidth, sourceChannelCount,
+      nConvStageTypeId,
+      blockCountRequested,
+      bPointwise1,
+      depthwiseFilterHeight, depthwiseFilterWidth,
+      bPointwise2ActivatedAtStageEnd,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       nActivationId,
       bKeepInputTensor
@@ -173,24 +169,24 @@ class Params extends Weights.Params {
 
   /** @override */
   static setAsConstructor(
-    input0_height, input0_width, input0_channelCount,
-    nConvBlockTypeId,
-    pointwise1ChannelCount,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-    depthwiseActivationId,
-    pointwise20ChannelCount, pointwise20ActivationId,
+    sourceHeight, sourceWidth, sourceChannelCount,
+    nConvStageTypeId,
+    blockCountRequested,
+    bPointwise1,
+    depthwiseFilterHeight, depthwiseFilterWidth,
+    bPointwise2ActivatedAtStageEnd,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     nActivationId,
     bKeepInputTensor
   ) {
     super.setAsConstructor(
       Params.SequenceArray,
-      input0_height, input0_width, input0_channelCount,
-      nConvBlockTypeId,
-      pointwise1ChannelCount,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-      depthwiseActivationId,
-      pointwise20ChannelCount, pointwise20ActivationId,
+      sourceHeight, sourceWidth, sourceChannelCount,
+      nConvStageTypeId,
+      blockCountRequested,
+      bPointwise1,
+      depthwiseFilterHeight, depthwiseFilterWidth,
+      bPointwise2ActivatedAtStageEnd,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       nActivationId,
       bKeepInputTensor
@@ -221,34 +217,6 @@ class Params extends Weights.Params {
     if ( !bExtractOk )
       return false;
 
-    // Determine input tensor count and whether request add-input-to-output.
-    Params.set_inferencedParams_by.call( this,
-      this.input0_height, this.input0_width, this.input0_channelCount,
-      this.nConvBlockTypeId,
-      this.pointwise1ChannelCount,
-      this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth, this.depthwiseStridesPad,
-      this.depthwiseActivationId,
-      this.pointwise20ChannelCount,
-      this.nSqueezeExcitationChannelCountDivisor, this.bSqueezeExcitationPrefix,
-      this.nActivationId,
-    );
-
-    return bExtractOk;
-  }
-
-//!!!
-  /**
-   * Extract parameters from inputFloat32Array.
-   *
-   * @return {boolean} Return false, if extraction failed.
-   *
-   * @override
-   */
-  extract() {
-    let bExtractOk = super.extract();
-    if ( !bExtractOk )
-      return false;
-
     Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( this, this.sourceHeight, this.sourceWidth );
 
     return bExtractOk;
@@ -274,11 +242,10 @@ class Params extends Weights.Params {
     this.outputHeight = Math.ceil( sourceHeight / stridesHeight );
     this.outputWidth =  Math.ceil( sourceWidth  / stridesWidth );
   }
-  
+
   get sourceHeight()              { return this.getParamValue_byParamDesc( Params.sourceHeight ); }
   get sourceWidth()               { return this.getParamValue_byParamDesc( Params.sourceWidth ); }
   get sourceChannelCount()        { return this.getParamValue_byParamDesc( Params.sourceChannelCount ); }
-
 
   /** @return {number} The number version of nConvStageTypeId. */
   get nConvStageTypeId()          { return this.getParamValue_byParamDesc( Params.nConvStageTypeId ); }
