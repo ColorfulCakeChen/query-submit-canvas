@@ -202,26 +202,26 @@ class Params extends Weights.Params {
    *
    * @param {number} input0_height
    *   The height of apply()'s first input image (i.e. inputTensors[ 0 ]; input0). If null, it will be extracted
-   * from inputFloat32Array (i.e. by evolution).
+   * from inputWeightArray (i.e. by evolution).
    *
    * @param {number} input0_width
    *   The width of apply()'s first input image (i.e. inputTensors[ 0 ]; input0). If null, it will be extracted
-   * from inputFloat32Array (i.e. by evolution).
+   * from inputWeightArray (i.e. by evolution).
    *
    * @param {number} input0_channelCount
    *   The channel count of apply()'s first input image (i.e. inputTensors[ 0 ]; input0). If null, it will be extracted
-   * from inputFloat32Array (i.e. by evolution).
+   * from inputWeightArray (i.e. by evolution).
    *
    * @param {number} nConvBlockTypeId
    *   The convolution type id of the block (i.e. ValueDesc.ConvBlockType.Singleton.Ids.Xxx). If null, it will be extracted
-   * from inputFloat32Array (i.e. by evolution).
+   * from inputWeightArray (i.e. by evolution).
    *
    * @param {number} pointwise1ChannelCount
-   *   The output channel count of the pointwise1 convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   *   The output channel count of the pointwise1 convolution. If null, it will be extracted from inputWeightArray (i.e. by evolution).
    * If 0, there will be no pointwise convolution before depthwise convolution.
    *
    * @param {number} depthwise_AvgMax_Or_ChannelMultiplier
-   *   Depthwise operation. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If non-null, it should be
+   *   Depthwise operation. If null, it will be extracted from inputWeightArray (i.e. by evolution). If non-null, it should be
    * integer between [ -2, 32 ]:
    *   - Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG (-2): average pooling.
    *   - Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX (-1): max pooling.
@@ -230,14 +230,14 @@ class Params extends Weights.Params {
    *
    * @param {number} depthwiseFilterHeight
    *   The height of depthwise convolution's filter. At least 1 (so that 1D data could be processed). If null, it will be extracted
-   * from inputFloat32Array (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will be ignored.
+   * from inputWeightArray (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will be ignored.
    *
    * @param {number} depthwiseFilterWidth
    *   The width of depthwise convolution's filter. At least 2 (so that meaningless ( 1 * 1 ) could be avoided). If null, it will
-   * be extracted from inputFloat32Array (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will be ignored.
+   * be extracted from inputWeightArray (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will be ignored.
    *
    * @param {number} depthwiseStridesPad
-   *   The strides and padding of depthwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   *   The strides and padding of depthwise convolution. If null, it will be extracted from inputWeightArray (i.e. by evolution).
    * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this depthwiseStridesPad will be ignored. It could be one of:
    *   - ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID (0) (strides = 1, pad = "valid")
    *   - ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME  (1) (strides = 1, pad = "same")
@@ -248,17 +248,17 @@ class Params extends Weights.Params {
    *
    * @param {number} depthwiseActivationId
    *   The activation function id (Params.depthwiseActivationId.valueDesc.Ids.Xxx) after depthwise convolution. If null, it will be
-   * extracted from inputFloat32Array (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this activation function
+   * extracted from inputWeightArray (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this activation function
    * will also be ignored.
    *
    * @param {number} pointwise20ChannelCount
-   *   The output channel count of the first pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   *   The output channel count of the first pointwise2 convolution. If null, it will be extracted from inputWeightArray (i.e. by evolution).
    * If ( pointwise20ChannelCount == 0 ) and ( pointwise21ChannelCount == 0 ), there will be no pointwise convolution after depthwise
    * convolution.
    *
    * @param {number} pointwise20ActivationId
    *   The activation function id (Params.pointwise20ActivationId.valueDesc.Ids.Xxx) after the first pointwise1 convolution. If null,
-   * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise20ChannelCount == 0 ), this activation function
+   * it will be extracted from inputWeightArray (i.e. by evolution). If ( pointwise20ChannelCount == 0 ), this activation function
    * will also be ignored.
    *
    * @param {number} nSqueezeExcitationChannelCountDivisor
@@ -285,18 +285,18 @@ class Params extends Weights.Params {
    *
    * @param {boolean} bSqueezeExcitationPrefix
    *   If true, the squeeze-and-excitation will be before pointwise2. If false, the squeeze-and-excitation will be after pointwise2.
-   * If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * If null, it will be extracted from inputWeightArray (i.e. by evolution).
    * Only used if ( nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2) ).
    *
    * @param {number} nActivationId
    *   The default activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx). If null, it will be extracted from
-   * inputFloat32Array (i.e. by evolution). It is used by pointwise1 and squeeze-and-excitation. pointwise1 and
+   * inputWeightArray (i.e. by evolution). It is used by pointwise1 and squeeze-and-excitation. pointwise1 and
    * squeeze-and-excitation should have activvation even if depthwise and pointwise20 do not have.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
    * For another example, the input image should be shared across many neural networks. If it is null, it will be extracted from
-   * inputFloat32Array (i.e. by evolution).
+   * inputWeightArray (i.e. by evolution).
    *
    */
   constructor(
