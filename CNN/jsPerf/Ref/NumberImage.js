@@ -616,17 +616,21 @@ class Base extends Recyclable.Root {
         // as this avg/max pooling's activation-escaping since they can not be calculated in fact.
         //
         imageOut.boundsArraySet.set_outputs_all_by_input0();
+
+        // Note1: Since there is no undo, it is not necessary to do .scale_byChannel_withoutAffect_BoundsArraySet().
+        // Note2: Since there is no activation, it is not necessary to do .modify_byActivation_withoutAffect_BoundsArraySet().
+
       } else {
         imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
+
+        // Before activation function, scale every element according to its channel.
+        Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
+          parametersDesc, ...depthwiseNames, "ActivationEscapingScale" );
+
+        // Activation
+        Base.modify_byActivation_withoutAffect_BoundsArraySet( imageOut, depthwiseActivationId, parametersDesc );
       }
-
-      // Before activation function, scale every element according to its channel.
-      Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
-        parametersDesc, ...depthwiseNames, "ActivationEscapingScale" );
     }
-
-    // Activation
-    Base.modify_byActivation_withoutAffect_BoundsArraySet( imageOut, depthwiseActivationId, parametersDesc );
 
     return imageOut;
   }
