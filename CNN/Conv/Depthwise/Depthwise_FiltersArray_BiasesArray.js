@@ -514,7 +514,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               //
               this.boundsArraySet.set_outputs_all_by_input0();
 
-              // Note: Since there is no undo, it is not necessary to do .apply_doEscapingScale_to_filtersArray_biasesArray().
+              // Note: Since there is no undo previous scales, it is not necessary to do .apply_doEscapingScale_to_filtersArray_biasesArray().
 
             } else {
               this.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( this.nActivationId );
