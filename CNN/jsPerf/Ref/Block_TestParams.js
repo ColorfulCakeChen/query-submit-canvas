@@ -1341,8 +1341,8 @@ class Base extends TestParams.Base {
 
 
 //!!! (2021/07/20 Temp Remarked) Fixed to non-random to simplify debug.
-//Base.weightsRandomOffset = { min: -100, max: +100 };
-Base.weightsRandomOffset = { min: -0, max: +0 };
+Base.weightsRandomOffset = { min: -100, max: +100 };
+//Base.weightsRandomOffset = { min: -0, max: +0 };
 
 
 Base.PropertyNames = {};
