@@ -282,28 +282,29 @@ class Base extends TestParams.Base {
       input0_height: [ 3, 3 ],
       input0_width: [ 4, 5 ],
 
-      input0_channelCount: [
-        Block.Params.input0_channelCount.valueDesc.range.min,
-        Block.Params.input0_channelCount.valueDesc.range.min + 4 - 1
-      ],
+      input0_channelCount: [ 1, 3 ],
+      //input0_channelCount: [
+      //  Block.Params.input0_channelCount.valueDesc.range.min,
+      //  Block.Params.input0_channelCount.valueDesc.range.min + 4 - 1
+      //],
 
       nConvBlockTypeId: [
 //!!! (2022/07/06 Temp Remarked) For speed-up debug.
-//         Block.Params.nConvBlockTypeId.valueDesc.range.min,
-//         Block.Params.nConvBlockTypeId.valueDesc.range.max
-//       ],
+        Block.Params.nConvBlockTypeId.valueDesc.range.min,
+        Block.Params.nConvBlockTypeId.valueDesc.range.max
+      ],
 //!!! (2022/07/06 Temp Added and Remarked) For speed-up debug.
 //        Block.Params.nConvBlockTypeId.valueDesc.range.min,
-        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
+//      ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
 //        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY // (6)
 //        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL, // (7)
-        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL // (7)
+//      ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL // (7)
 //        Block.Params.nConvBlockTypeId.valueDesc.range.max
-      ],
+//    ],
 
 //!!! (2022/07/11 Temp Remarked) For speed-up debug.
-//      pointwise1ChannelCount: [ 0, 2 ],
-      pointwise1ChannelCount: [ 2, 2 ],
+      pointwise1ChannelCount: [ 0, 2 ],
+//    pointwise1ChannelCount: [ 2, 2 ],
 
       pointwise20ChannelCount: [ 1, 3 ],
 
@@ -350,8 +351,8 @@ class Base extends TestParams.Base {
 //      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
 
       nSqueezeExcitationChannelCountDivisor: [
-//        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
-        4,
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+//      4,
         4
       ],
 
