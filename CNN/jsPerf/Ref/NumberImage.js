@@ -1114,20 +1114,6 @@ class Base extends Recyclable.Root {
    */
   modify_byInterleave_asGrouptTwo( parametersDesc, ...interleaveNames ) {
 
-//!!! (2022/07/09 Remarrked) Old Codes.
-//     if ( ( this.depth % 2 ) != 0 )
-//       throw Error( `NumberImage.Base.modify_byInterleave_asGrouptTwo(): `
-//         + `${interleaveNames.join( "_" )}: `
-//         + `channel count ( ${this.depth} ) must be even (i.e. divisible by 2). `
-//         + `(${parametersDesc})`
-//       );
-//
-//     // Shuffle data.
-//     for ( let indexBegin = 0; indexBegin < this.dataArray.length; indexBegin += this.depth ) {
-//       FloatValue.ArrayInterleaver.interleave_asGrouptTwo(
-//         this.dataArray, indexBegin, this.depth, arrayTemp_forInterleave_asGrouptTwo );
-//     }
-
     // Shuffle dataArray
     {
       let dataArrayShuffled = Recyclable.Array.Pool.get_or_create_by( this.dataArray.length );
