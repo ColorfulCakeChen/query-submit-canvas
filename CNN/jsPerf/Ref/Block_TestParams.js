@@ -302,7 +302,7 @@ class Base extends TestParams.Base {
       ],
 
 //!!! (2022/07/10 Temp Remarked) For speed-up debug.
-      pointwise1ChannelCount: [ 0, 3 ],
+      pointwise1ChannelCount: [ 0, 2 ],
 //      pointwise1ChannelCount: [ 2, 2 ],
 
       pointwise20ChannelCount: [ 1, 3 ],
