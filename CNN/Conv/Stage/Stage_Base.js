@@ -248,15 +248,12 @@ class Base extends Recyclable.Root {
    * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
    *
    * @param {Params} params
-   *   A Params object. The params.extract() will be called to extract parameters.
+   *   A Params object. The params.init() will be called to extract parameters. This params will be owned and destroyed by this .initer().
+   * So caller should not use it again.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
    *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Stage value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
-   *
-   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
-   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-   * and improve performance when doing Interleave_asGrouptTwo.
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
@@ -294,6 +291,9 @@ class Base extends Recyclable.Root {
 
     // 0. Prepare
 
+    this.weightElementOffsetEnd = this.weightElementOffsetBegin = weightElementOffsetBegin;
+    this.bInitOk = false;
+
     // Estimate the maximum value of progress.
     let progressMax =
       1    // for extracting parameters from inputFloat32Array.
@@ -313,8 +313,7 @@ class Base extends Recyclable.Root {
 
     if ( !params.extract() )
       return false;  // e.g. input array does not have enough data.
-
-    this.byteOffsetEnd = params.defaultByteOffsetEnd; // Record where to extract next weights. Only meaningful when ( this.bInitOk == true ).
+    this.weightElementOffsetEnd = params.weightElementOffsetEnd;
 
     // Get parameters' real (adjusted) values.
     //
@@ -322,15 +321,18 @@ class Base extends Recyclable.Root {
     this.sourceHeight = params.sourceHeight;
     this.sourceWidth = params.sourceWidth;
     this.sourceChannelCount = params.sourceChannelCount;
+    this.nConvStageTypeId = params.nConvStageTypeId;
+    this.nConvStageTypeName = params.nConvStageTypeName;
     this.blockCountRequested = params.blockCountRequested;
     this.bPointwise1 = params.bPointwise1;
     this.depthwiseFilterHeight = params.depthwiseFilterHeight;
     this.depthwiseFilterWidth = params.depthwiseFilterWidth;
+    this.bPointwise2ActivatedAtStageEnd = params.bPointwise2ActivatedAtStageEnd;
+    this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
+    this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
+    this.bSqueezeExcitationPrefix = params.bSqueezeExcitationPrefix;
     this.nActivationId = params.nActivationId;
     this.nActivationIdName = params.nActivationIdName;
-    this.bPointwise2ActivatedAtStageEnd = params.bPointwise2ActivatedAtStageEnd;
-    this.nConvStageType = params.nConvStageType;
-    this.nConvStageTypeName = params.nConvStageTypeName;
     this.bKeepInputTensor = params.bKeepInputTensor;
 
     // The parameters which are determined (inferenced) from the above parameters.
@@ -340,8 +342,14 @@ class Base extends Recyclable.Root {
     }
 
     // Pre-allocate array to place intermediate 2 input tensors and 2 output tensors. This could reduce memory re-allocation.
-    this.intermediateInputTensors = new Array( 2 );
-    this.intermediateOutputTensors = new Array( 2 );
+    this.intermediateInputTensors = Recyclable.Array.get_or_create_by( 2 );
+    this.intermediateOutputTensors = Recyclable.Array.get_or_create_by( 2 );
+
+    this.tensorWeightCountExtracted = 0;
+    this.tensorWeightCountTotal = 0;
+
+    params.disposeResources_and_recycleToPool();
+    params = null;
 
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
@@ -351,7 +359,7 @@ class Base extends Recyclable.Root {
     blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
 
     for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Progress for block0, 1, 2, 3, ... 
-      progressForBlocks.addChild( new ValueMax.Percentage.Aggregate() );
+      progressForBlocks.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
     }
 
     let blockParams, block, blockIniter;
@@ -399,8 +407,8 @@ class Base extends Recyclable.Root {
 
           this.channelShuffler = channelShuffler;
 
-          this.tensorWeightCountTotal += channelShuffler.tensorWeightCountTotal;
           this.tensorWeightCountExtracted += channelShuffler.tensorWeightCountExtracted;
+          this.tensorWeightCountTotal += channelShuffler.tensorWeightCountTotal;
 
         // If channelShuffler is null, do not use it. Otherwise, the this.channelShuffler will be cleared and could not be used
         // for releasing tensors.
@@ -483,6 +491,9 @@ class Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.outputChannelCount = -1;
+    this.block0 = this.blockLast = null; // It has already de disposed by this.block0 or this.blocks1After.
+
     if ( this.blocksArray ) {
       this.blocksArray.disposeResources_and_recycleToPool();
       this.blocksArray = null;
@@ -493,14 +504,18 @@ class Base extends Recyclable.Root {
       this.channelShuffler = false;
     }
 
-    this.block0 = this.blockLast = null; // It has already de disposed by this.block0 or this.blocks1After.
+    this.tensorWeightCountTotal = 0;
+    this.tensorWeightCountExtracted = 0;
 
-    this.outputChannelCount = -1;
+    if ( this.intermediateOutputTensors ) {
+      this.intermediateOutputTensors.disposeResources_and_recycleToPool();
+      this.intermediateOutputTensors = null;
+    }
 
-    this.intermediateInputTensors = null;
-    this.intermediateOutputTensors = null;
-
-    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
+    if ( this.intermediateInputTensors ) {
+      this.intermediateInputTensors.disposeResources_and_recycleToPool();
+      this.intermediateInputTensors = null;
+    }
 
     this.weightElementOffsetBegin = this.weightElementOffsetEnd = -1;
     this.bInitOk = false;
