@@ -513,14 +513,18 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               // as this avg/max pooling's activation-escaping since they can not be calculated in fact.
               //
               this.boundsArraySet.set_outputs_all_by_input0();
+
+              // Note: Since there is no undo, there is not necessary to do .apply_doEscapingScale_to_filtersArray_biasesArray().
+
             } else {
               this.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( this.nActivationId );
+
+              // Round 2
+              this.apply_doEscapingScale_to_filtersArray_biasesArray(); // Apply doEscapingScale.
             }
           }
         }
 
-        // Round 2
-        this.apply_doEscapingScale_to_filtersArray_biasesArray(); // Apply doEscapingScale.
       }
 
       {
