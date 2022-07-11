@@ -267,7 +267,7 @@ class Base extends Recyclable.Root {
    *
    * @see Block.Base.initer()
    */
-  * initer( progressParent, params, inputScaleBoundsArray0, arrayTemp_forInterleave_asGrouptTwo ) {
+  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
 
     // Both MobileNetV3 and ShuffleNetV2:
     //   - They all do not use (depthwise convolution) channelMultiplier.
@@ -412,7 +412,7 @@ class Base extends Recyclable.Root {
       block = this.blocksArray[ i ] = new Block.Base();
       blockIniter = block.initer( progressForBlocks.children[ i ], blockParams,
         inputScaleBoundsArray, null,
-        this.channelShuffler, arrayTemp_forInterleave_asGrouptTwo );
+        this.channelShuffler );
 
       this.bInitOk = yield* blockIniter;
       if ( !this.bInitOk )
@@ -467,7 +467,7 @@ class Base extends Recyclable.Root {
    *
    * @see Block.Base.init()
    */
-  init( progressParent, params, arrayTemp_forInterleave_asGrouptTwo ) {
+  init( progressParent, inputWeightArray, weightElementOffsetBegin, params ) {
 
     progressParent = progressParent ?? ( new ValueMax.Percentage.Aggregate() );
 
