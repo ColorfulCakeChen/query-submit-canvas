@@ -654,17 +654,26 @@ class Base extends Recyclable.Root {
     return this.blockLast.output0;
   }
 
-  /** @return {string} The description string of all (adjusted) parameters of initer(). */
-  get parametersDescription() {
+  /**
+   * @return {string} The description string of all (adjusted) parameters of initer().
+   *
+   * @override
+   */
+  toString() {
     let str =
         `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, sourceChannelCount=${this.sourceChannelCount}, `
+      + `nConvStageTypeName=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
       + `blockCountRequested=${this.blockCountRequested}, blockCount=${this.blockCount}, `
       + `bPointwise1=${this.bPointwise1}, `
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
       + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
-      + `nActivationIdName=${this.nActivationIdName}(${this.nActivationId}), `
       + `bPointwise2ActivatedAtStageEnd=${this.bPointwise2ActivatedAtStageEnd}, `
-      + `nConvStageType=${this.nConvStageTypeName}(${this.nConvStageType}), `
+
+      + `nSqueezeExcitationChannelCountDivisorName=${this.nSqueezeExcitationChannelCountDivisorName}`
+        + `(${this.nSqueezeExcitationChannelCountDivisor}), `
+      + `bSqueezeExcitationPrefix=${this.bSqueezeExcitationPrefix}, `
+
+      + `nActivationIdName=${this.nActivationIdName}(${this.nActivationId}), `
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, outputChannelCount=${this.outputChannelCount}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}`
     ;
@@ -676,7 +685,7 @@ class Base extends Recyclable.Root {
    *   The Stage.Params object to be reference.
    *
    * @return {Base}
-   *   Return newly created Stage.BlockParamsCreator.Xxx object according to stageParams.nConvStageType.
+   *   Return newly created Stage.BlockParamsCreator.Xxx object according to stageParams.nConvStageTypeId.
    */
   static create_BlockParamsCreator_byStageParams( stageParams ) {
 
@@ -692,7 +701,7 @@ class Base extends Recyclable.Root {
         + `unknown stageParams.nConvStageType ( ${stageParams.nConvStageType} ) value.`
       );
 
-    let classBlockParamsCreator = Base.nConvStageType_to_BlockParamsCreator_ClassArray[ stageParams.nConvStageType ];
+    let classBlockParamsCreator = Base.nConvStageType_to_BlockParamsCreator_ClassArray[ stageParams.nConvStageTypeId ];
     let aBlockParamsCreator = new classBlockParamsCreator( stageParams );
 
     return aBlockParamsCreator;
