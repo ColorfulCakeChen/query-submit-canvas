@@ -365,9 +365,9 @@ class Base extends TestParams.Base {
  
       ActivationId:
 //        undefined,
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 //         [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
-//         [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+         [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
       bKeepInputTensor: undefined,
 //      bKeepInputTensor: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
