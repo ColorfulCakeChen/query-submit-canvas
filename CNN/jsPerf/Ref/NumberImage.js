@@ -603,7 +603,22 @@ class Base extends Recyclable.Root {
     {
       // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
       // by .afterBias, bPassThrough and activation function's output range.
-      imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
+
+      if (   ( depthwise_AvgMax_Or_ChannelMultiplier < 0 )
+          && (   ( bDepthwiseBias == false )
+              && ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
+             )
+         ) {
+
+        // For avg/max pooling, if it has no bias and no activation), the value bounds does not change (i.e. should be the same as input).
+        //
+        // In this case, the previous activation-escaping needs not be undo (so undoPreviousEscapingScale could be not 1). Using them
+        // as this avg/max pooling's activation-escaping since they can not be calculated in fact.
+        //
+        imageOut.boundsArraySet.set_outputs_all_by_input0();
+      } else {
+        imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
+      }
 
       // Before activation function, scale every element according to its channel.
       Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
