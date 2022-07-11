@@ -35,12 +35,12 @@ import * as Depthwise from "../Depthwise.js";
  *   - depthwise convolution's direction is along ( hieght, width ) plane.
  *   - pointwise convolution's direction is along channel axis.
  *
- * What are affine transformations here?
+ * Which operations are affine transformations here?
  *   - pointwise convolution: linear (also affine) along channel axis.
  *   - depthwise convolution with ( pad = "valid" ): linear (also affine) along ( hieght, width ) plane.
  *   - bias: affine along channel axis (no matter pointwise's bias or depthwise's bias).
  *
- * What are non-linear operations here?
+ * Which operations are non-linear here?
  *   - activation
  *   - depthwise convolution with ( pad = "same" ): affine for inner pixels, non-affine for border pixels.
  *   - squeeze-and-excitation
