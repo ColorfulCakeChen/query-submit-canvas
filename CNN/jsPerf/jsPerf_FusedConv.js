@@ -1,4 +1,4 @@
-export { init, testCorrectness, disposeTensors };
+export { init, testCorrectness, disposeResources };
 
 //import * as Weights from "../Unpacker/Weights.js";
 //import * as TensorTools from "../util/TensorTools.js";
@@ -28,7 +28,7 @@ class HeightWidthDepth {
    */
   constructor( height, width, depth ) {
 
-    this.disposeTensors();
+    this.disposeResources();
 
     this.height = height;
     this.width = width;
@@ -61,7 +61,7 @@ class HeightWidthDepth {
       this.depthwiseFilterHeight, this.depthwiseFilterWidth, ( this.inputChannelCount + 1 ), ( this.outputChannelCount + 1 ) ];
   }
 
-  disposeTensors() {
+  disposeResources() {
     if ( this.dataTensor3dArray ) {
       tf.dispose( this.dataTensor3dArray );
       this.dataTensor3dArray = null;
@@ -73,7 +73,7 @@ class HeightWidthDepth {
   fusedConv_PerformanceTest_init() {
 
     // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
-    this.disposeTensors();
+    this.disposeResources();
 
     const randomOffsetMin = -10;
     const randomOffsetMax = +10;
@@ -180,7 +180,10 @@ class HeightWidthDepth {
 
 
   // Testing whether the results of different implementation are the same.
-  testCorrectness() {
+  * testCorrectness() {
+
+    yield;
+
     // After correctness testing done, create all Block for performance testing.
     this.fusedConv_PerformanceTest_init();
   }
@@ -190,7 +193,7 @@ class HeightWidthDepth {
 function init() {
   //console.log("jsPerf_FusedConv.js, init()");
 
-  disposeTensors();
+  disposeResources();
 
   let depth = 512; //8; //4;
 
@@ -205,19 +208,19 @@ function init() {
   ];
 }
 
-function testCorrectness() {
+function* testCorrectness() {
   for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
     let testSet = globalThis.testSet_All[ i ];
-    testSet.testCorrectness();
+    yield* testSet.testCorrectness();
   }
 }
 
-function disposeTensors() {
+function disposeResources() {
   if ( globalThis.testSet_All ) {
     for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
       let testSet = globalThis.testSet_All[ i ];
       if ( testSet )
-        testSet.disposeTensors();
+        testSet.disposeResources();
     }
 
     globalThis.testSet_All = null;
