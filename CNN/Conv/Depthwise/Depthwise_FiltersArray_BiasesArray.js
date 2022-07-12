@@ -102,6 +102,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf,
+
+!!! ...unfinished... (2022/07/12) also needs channelShuffler_inputGroupCount, channelShuffler_outputGroupCount
+
     ...restArgs ) {
 
     super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs );
