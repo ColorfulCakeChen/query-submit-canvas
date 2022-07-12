@@ -430,6 +430,7 @@ class Base extends Recyclable.Root {
     this.bDepthwiseBias = params.bDepthwiseBias;
     this.depthwiseActivationId = params.depthwiseActivationId;
     this.depthwiseActivationName = params.depthwiseActivationName;
+    this.depthwise1_nHigherHalfDifferent = params.depthwise1_nHigherHalfDifferent;
 
     this.pointwise20ChannelCount = params.pointwise20ChannelCount;
     this.bPointwise20Bias = params.bPointwise20Bias;
@@ -656,30 +657,11 @@ class Base extends Recyclable.Root {
       // 3.1 The depthwise1 operation.
       let depthwise1;
       {
-        let nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE;
-
-        if ( this.bHigherHalfDifferent == true ) {
-
-          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
-          // (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
-          if ( this.bHigherHalfDepthwise2 == true ) {
-            nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2;
-
-          // If depthwise1's higher half is responsible for achieving pass-through, it needs height and width of input image.
-          //
-          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
-          // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
-          // (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
-          } else {
-            nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
-          }
-        }
-
         depthwise1 = Operation.Depthwise_SameWhenPassThrough.Pool.get_or_create_by(
           this.operationArray.endingInput0,
           this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
           this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
-          nHigherHalfDifferent_depthwise1
+          this.depthwise1_nHigherHalfDifferent
         );
 
         if ( !depthwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
