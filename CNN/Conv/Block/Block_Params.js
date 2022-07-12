@@ -396,11 +396,13 @@ class Params extends Weights.Params {
    *   - this.bDepthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
+   *   - this.depthwise1_nHigherHalfDifferent
    *
    * When ( bDepthwiseRequestedAndNeeded == false ), the depthwise could be discarded to improve performance.
    */
   static set_depthwise_inferenced_by(
     input0_height, input0_width, input0_channelCount,
+    nConvBlockTypeId,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -488,6 +490,30 @@ class Params extends Weights.Params {
         // Do nothing.
       }
     }
+
+    // depthwise1
+    {
+      let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
+      this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE;
+
+      if ( infoConvBlockType.bHigherHalfDifferent == true ) {
+
+        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
+        // (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
+        if ( infoConvBlockType.bHigherHalfDepthwise2 == true ) {
+          this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2;
+
+        // If depthwise1's higher half is responsible for achieving pass-through, it needs height and width of input image.
+        //
+        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
+        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
+        // (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
+        } else {
+          this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
+        }
+      }
+    }
+
   }
 
   /**
@@ -500,6 +526,7 @@ class Params extends Weights.Params {
    *   - this.bDepthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
+   *   - this.depthwise1_nHigherHalfDifferent
    *
    */
   static set_inputTensorCount_input1_height_width_channelCount_depthwise_inferenced_by(
@@ -518,6 +545,7 @@ class Params extends Weights.Params {
     // 2. depthwise inferenced information.
     Params.set_depthwise_inferenced_by.call( this,
       input0_height, input0_width, input0_channelCount,
+      nConvBlockTypeId,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -692,6 +720,7 @@ class Params extends Weights.Params {
    *   - this.bDepthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
+   *   - this.depthwise1_nHigherHalfDifferent
    *   - this.bDepthwise2Requested
    *   - this.bConcat1Requested
    *   - this.bAddInputToOutputRequested
