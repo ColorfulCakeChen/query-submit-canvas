@@ -501,6 +501,8 @@ class Base extends Recyclable.Root {
     let inputChannelCount_lowerHalf_pointwise1 = undefined;
     let outputChannelCount_lowerHalf_pointwise1 = undefined;
 
+    let depthwise1_channelShuffler_outputGroupCount = 0; // (i.e. Whether Shuffle.)
+
 //!!! ...unfinished... (2021/11/15) What if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
 
     if ( this.bHigherHalfDifferent == true ) {
@@ -530,6 +532,8 @@ class Base extends Recyclable.Root {
 // So, in this case, pointwise1 (higher half copy lower, lower half pass through) could be discarded. But
 // the ( channelShuffler_inputGroupCount == 2 ) should be used for prefix squeeze-and-excitation and pointwise2. So that
 // they could undo the depthwise's pre-channel-shuffling.
+//
+// depthwise1_channelShuffler_outputGroupCount = this.pointwise20_channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
 //
 
           nHigherHalfDifferent_pointwise1
@@ -785,7 +789,7 @@ class Base extends Recyclable.Root {
     if ( this.bSqueezeExcitationPrefix )
       if ( !Base.operationArray_append_SqueezeExcitation.call( this,
               nHigherHalfDifferent_pointwise2, inputWeightArray,
-              0 // Prefix squeeze-and-excitation's channels are NOT shuffled along input channels.
+              depthwise1_channelShuffler_outputGroupCount // Prefix squeeze-and-excitation's channels are shuffled if depthwise1 did.
             )
          )
         return false;  // e.g. input array does not have enough data.
