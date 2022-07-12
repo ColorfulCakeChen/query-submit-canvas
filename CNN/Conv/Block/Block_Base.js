@@ -577,10 +577,16 @@ class Base extends Recyclable.Root {
           + `input0's channel count ( ${this.input0_channelCount} ).`
         );
 
+      let inputChannelCount_higherHalf_pointwise1 = this.input0_channelCount - inputChannelCount_lowerHalf_pointwise1;
+
       this.input0 = TensorPlaceholder.Base.Pool.get_or_create_by();
       this.input0.set_height_width_channelCount_scaleBoundsArray(
         this.input0_height, this.input0_width,
-        this.input0_channelCount, inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
+
+//!!! (2022/07/12 Remarked) should be input higher half ( not ouput lower half ).
+//        this.input0_channelCount, inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
+        this.input0_channelCount, inputChannelCount_lowerHalf_pointwise1, inputChannelCount_higherHalf_pointwise1,
+
         inputScaleBoundsArray0 );
 
       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY (3) )
