@@ -92,6 +92,9 @@ class ArrayInterleaver {
   }
 
 
+
+!!! ...unfinished... (2022/07/12) interleave_asGrouptTwo_along_last_2nd_axis_from_to()
+
   /**
    * Rearrange array elements along height by interleaving.
    *   - Only ( groupCount == 2 ) is supported.
@@ -155,6 +158,8 @@ class ArrayInterleaver {
     return arrayIn;
   }
 
+
+!!! ...unfinished... (2022/07/12) interleave_asGrouptTwo_along_last_axis_from_to()
 
   /**
    * Rearrange array elements along width by interleaving.
