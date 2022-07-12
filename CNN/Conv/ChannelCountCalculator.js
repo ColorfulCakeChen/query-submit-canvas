@@ -67,10 +67,10 @@ class HigherHalfPassThrough extends Recyclable.Root {
     // The input channel count to be past-through. (Note: Since it is past-through, it is fixed from input to output.)
     this.inputChannelCount_higherHalf = inputChannelCount_total - this.inputChannelCount_lowerHalf;
 
-    if ( this.outputChannelCount_total <= 0 )
-      this.outputChannelCount_total_real = inputChannelCount_total; // When output channel count is not specified, it will be the same as input.
-    else
+    if ( this.outputChannelCount_total > 0 )
       this.outputChannelCount_total_real = outputChannelCount_total;
+    else
+      this.outputChannelCount_total_real = inputChannelCount_total; // When output channel count is not specified, it will be the same as input.
 
     // Since higher half will be past through, it must be fixed the same as the higher half of input.
     this.outputChannelCount_higherHalf = this.inputChannelCount_higherHalf;
