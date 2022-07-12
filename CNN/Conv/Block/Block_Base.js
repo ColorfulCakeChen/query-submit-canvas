@@ -518,11 +518,19 @@ class Base extends Recyclable.Root {
         } else {
 
 !!! ...unfinished... (2022/07/12)
-// when ShuffleNetV2_byMobileNetV1_head and  (pointwise1ChannelCount == 0 ),
-// depthwise ( channelMultiplier == 2 ) just like channel shuffled of higher half copy lower half and lower half pass through with
-// ( channelMultiplier == 1 ). So pointwise1 (higher half copy lower, lower half pass through) could be discarded in this case. But
+// when
+//   - ShuffleNetV2_byMobileNetV1_head and
+//   - (pointwise1ChannelCount == 0 )
+//       i.e. ( nHigherHalfDifferent_pointwise1
+//                == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH )
+//   - ( nHigherHalfDifferent_depthwise1 == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2 ) and 
+//   - depthwise ( channelMultiplier == 1 )
+//
+// Use depthwise ( channelMultiplier == 2 ) could achieve almost the same effect but depthwise is pre-channel-shuffled.
+// So, in this case, pointwise1 (higher half copy lower, lower half pass through) could be discarded. But
 // the ( channelShuffler_inputGroupCount == 2 ) should be used for prefix squeeze-and-excitation and pointwise2. So that
 // they could undo the depthwise's pre-channel-shuffling.
+//
 
           nHigherHalfDifferent_pointwise1
             = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH;
