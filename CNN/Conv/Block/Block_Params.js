@@ -396,7 +396,6 @@ class Params extends Weights.Params {
    *   - this.depthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
-   *   - this.depthwise1_nHigherHalfDifferent
    *
    * When ( bDepthwiseRequestedAndNeeded == false ), the depthwise could be discarded to improve performance.
    */
@@ -490,30 +489,6 @@ class Params extends Weights.Params {
         // Do nothing.
       }
     }
-
-    // depthwise1
-    {
-      let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
-      this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE;
-
-      if ( infoConvBlockType.bHigherHalfDifferent == true ) {
-
-        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
-        // (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
-        if ( infoConvBlockType.bHigherHalfDepthwise2 == true ) {
-          this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2;
-
-        // If depthwise1's higher half is responsible for achieving pass-through, it needs height and width of input image.
-        //
-        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
-        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
-        // (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
-        } else {
-          this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
-        }
-      }
-    }
-
   }
 
   /**
@@ -526,7 +501,6 @@ class Params extends Weights.Params {
    *   - this.depthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
-   *   - this.depthwise1_nHigherHalfDifferent
    *
    */
   static set_inputTensorCount_input1_height_width_channelCount_depthwise_inferenced_by(
@@ -707,6 +681,80 @@ class Params extends Weights.Params {
 
   /**
    * Determine the following properties:
+   *   - this.pointwise1_nHigherHalfDifferent
+   *   - this.pointwise1_inputChannelCount_lowerHalf
+   *   - this.pointwise1_outputChannelCount_lowerHalf
+   *   - this.depthwise1_nHigherHalfDifferent
+   *   - this.depthwise1_channelShuffler_outputGroupCount
+   *   - this.pointwise20_nHigherHalfDifferent
+   *   - this.pointwise20_channelShuffler_outputGroupCount
+   *
+   */
+  static set_nHigherHalfDifferent_by(
+    nConvBlockTypeId ) {
+
+    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
+
+    // pointwise1
+
+//!!! ...unfinished... (2022/07/13)
+
+    // depthwise1
+    {
+      this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE;
+
+      if ( infoConvBlockType.bHigherHalfDifferent == true ) {
+
+        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
+        // (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
+        if ( infoConvBlockType.bHigherHalfDepthwise2 == true ) {
+          this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2;
+
+        // If depthwise1's higher half is responsible for achieving pass-through, it needs height and width of input image.
+        //
+        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
+        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
+        // (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
+        } else {
+          this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
+        }
+      }
+    }
+
+    // pointwise2
+    {
+      this.pointwise2_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
+      this.pointwise2_outputChannelCount_lowerHalf = undefined;
+  //    let pointwise20_channelShuffler_outputGroupCount = this.pointwise20_channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
+
+      if ( infoConvBlockType.bHigherHalfDifferent == true ) {
+
+        // In this case, it should be according to half of pointwise20ChannelCount (just like pointwise1).
+        // Note: Unlike pointwise1ChannelCount (which may be zero), pointwise20ChannelCount is always positive.
+        this.pointwise2_outputChannelCount_lowerHalf = Math.ceil( this.pointwise20ChannelCount / 2 );
+
+        // For bHigherHalfAnotherPointwise(Shuffle) (i.e. ( pointwise20ChannelCount > 0 ) ).
+        //
+        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
+        // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's head)
+        if ( infoConvBlockType.bHigherHalfDepthwise2 == true ) {
+          this.pointwise2_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE;
+
+        // For bHigherHalfPassThrough(Shuffle) (i.e. ( pointwise20ChannelCount > 0 ) ).
+        //
+        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
+        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
+        // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
+        } else {
+          this.pointwise2_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
+        }
+      }
+    }
+
+  }
+
+  /**
+   * Determine the following properties:
    *   - this.inputTensorCount
    *   - this.input1_height
    *   - this.input1_width
@@ -716,11 +764,13 @@ class Params extends Weights.Params {
    *   - this.pointwise1Bias
    *   - this.pointwise1ActivationId
    *   - this.pointwise1ActivationName
+   *   - this.pointwise1_nHigherHalfDifferent
    *   - this.bLinear_between_depthwise_and_pointwise2
    *   - this.depthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
    *   - this.depthwise1_nHigherHalfDifferent
+   *   - this.depthwise1_channelShuffler_outputGroupCount
    *   - this.bDepthwise2Requested
    *   - this.bConcat1Requested
    *   - this.bAddInputToOutputRequested
@@ -728,6 +778,7 @@ class Params extends Weights.Params {
    *   - this.bHigherHalfDifferent
    *   - this.bHigherHalfDepthwise2
    *   - this.pointwise20Bias
+   *   - this.pointwise20_nHigherHalfDifferent
    *   - this.pointwise20_channelShuffler_outputGroupCount
    *   - this.pointwise21ChannelCount
    *   - this.squeezeExcitationActivationId
