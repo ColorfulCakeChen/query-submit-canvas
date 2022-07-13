@@ -393,8 +393,6 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.depthwise_AvgMax_Or_ChannelMultiplier,
                                                                             this.valueOutMinMax.depthwise_AvgMax_Or_ChannelMultiplier ),
 
-      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,   this.valueOutMinMax.depthwiseFilterHeight ),
-      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterWidth,    this.valueOutMinMax.depthwiseFilterWidth ),
       new TestParams.ParamDescConfig( Block.Params.depthwiseStridesPad,     this.valueOutMinMax.depthwiseStridesPad ),
       new TestParams.ParamDescConfig( Block.Params.depthwiseActivationId,   this.valueOutMinMax.depthwiseActivationId ),
 
@@ -409,6 +407,9 @@ class Base extends TestParams.Base {
 
       new TestParams.ParamDescConfig( Block.Params.nSqueezeExcitationChannelCountDivisor,
                                                                             this.valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
+
+      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,   this.valueOutMinMax.depthwiseFilterHeight ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterWidth,    this.valueOutMinMax.depthwiseFilterWidth ),
 
     ];
 
