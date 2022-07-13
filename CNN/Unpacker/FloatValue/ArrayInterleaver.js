@@ -127,16 +127,19 @@ class ArrayInterleaver {
         + `shape's last 2nd axis length ( ${last2ndAxisLength} ) must be even (i.e. divisible by 2).`
       );
 
+    let last2ndAxisLengthHalf = ( last2ndAxisLength / 2 );
+
     let lastAxisId = shape.length - 1;
     let lastAxisLength = shape[ lastAxisId ];
+    
+    let fromIndex2Strides = last2ndAxisLengthHalf * lastAxisLength;
 
     toArray.length = elementCount;
-    let elementCountHalf = ( elementCount / 2 );
 
     let fromIndex1 = 0, toIndex1 = 0;
     let fromIndex2, toIndex2;
     for ( let y = 0; y < last2ndAxisLength; y += 2 ) {
-      fromIndex2 = fromIndex1 + elementCountHalf;
+      fromIndex2 = fromIndex1 + fromIndex2Strides;
       toIndex2 = toIndex1 + lastAxisLength;
 
       for ( let i = 0; i < lastAxisLength; ++i ) {
