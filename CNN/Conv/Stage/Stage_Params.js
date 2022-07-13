@@ -8,7 +8,6 @@ import * as Weights from "../../Unpacker/Weights.js";
 
 
 //!!! ...unfinished... (2022/05/28)
-// Add parameter nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix.
 //
 // Add parameter bPointwise2SqueezeExcitationAtStageEnd control whether this stage's final block's pointwise2 should have
 // squeeze-and-excitation.
@@ -282,7 +281,7 @@ Params.sourceChannelCount =             new ParamDesc.Int(                "sourc
 
 //!!! ...unfinished... (2022/06/17) should be renamed to nConvStageTypeId and nConvStageTypeName
 
-Params.nConvStageTypeId =                 new ParamDesc.ConvStageType(      "nConvStageTypeId" );
+Params.nConvStageTypeId =               new ParamDesc.ConvStageType(      "nConvStageTypeId" );
 
 Params.blockCountRequested =            new ParamDesc.Int(                "blockCountRequested",        2, (  1 * 1024 ) );
 Params.bPointwise1 =                    new ParamDesc.Bool(               "bPointwise1" );
@@ -291,7 +290,7 @@ Params.depthwiseFilterWidth =           new ParamDesc.Int(                "depth
 Params.bPointwise2ActivatedAtStageEnd = new ParamDesc.Bool(               "bPointwise2ActivatedAtStageEnd" );
 
 Params.nSqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
-Params.bSqueezeExcitationPrefix = new ParamDesc.Bool(               "bSqueezeExcitationPrefix" );
+Params.bSqueezeExcitationPrefix =       new ParamDesc.Bool(               "bSqueezeExcitationPrefix" );
 
 Params.nActivationId =                  new ParamDesc.ActivationFunction( "nActivationId" );
 
