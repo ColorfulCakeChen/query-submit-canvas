@@ -440,6 +440,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
             case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF_DEPTHWISE2: // (3)
 
+              if ( this.AvgMax_Or_ChannelMultiplier == 2 )
+                throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfCopyLowerHalfDepthwise2(): `
+                  + `AvgMax_Or_ChannelMultiplier ( ${this.AvgMax_Or_ChannelMultiplier} ) must be 2.`
+                );
+
               this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf;
               this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
