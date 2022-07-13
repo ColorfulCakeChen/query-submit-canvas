@@ -552,7 +552,7 @@ class Base extends Recyclable.Root {
       let pointwise1 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
         this.operationArray.endingInput0,
         this.pointwise1ChannelCount, this.pointwise1Bias, this.pointwise1ActivationId,
-        this.pointwise1nHigherHalfDifferent,
+        this.pointwise1_nHigherHalfDifferent,
         this.pointwise1_outputChannelCount_lowerHalf,
         0, // Default channelShuffler_inputGroupCount for pointwise1 is zero (never positive).
         0  // Default channelShuffler_outputGroupCount for pointwise1 is zero (never positive).
