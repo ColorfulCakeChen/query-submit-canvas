@@ -5,6 +5,7 @@ import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
+import * as ChannelCountCalculator from "../ChannelCountCalculator.js";
 import * as Depthwise from "../Depthwise.js";
 
 /**
@@ -681,23 +682,116 @@ class Params extends Weights.Params {
 
   /**
    * Determine the following properties:
+   *   - this.pointwise1ChannelCount (may be adjusted)
+   *   - this.pointwise1Bias (may be adjusted)
+   *   - this.pointwise1ActivationId (may be adjusted)
    *   - this.pointwise1_nHigherHalfDifferent
    *   - this.pointwise1_inputChannelCount_lowerHalf
    *   - this.pointwise1_outputChannelCount_lowerHalf
+   *   - this.depthwise_AvgMax_Or_ChannelMultiplier (may be adjusted)
+   *   - this.depthwise1_inputChannelCount_lowerHalf
+   *   - this.depthwise1_outputChannelCount_lowerHalf
    *   - this.depthwise1_nHigherHalfDifferent
    *   - this.depthwise1_channelShuffler_outputGroupCount
    *   - this.pointwise20_nHigherHalfDifferent
+   *   - this.pointwise20_outputChannelCount_lowerHalf
    *   - this.pointwise20_channelShuffler_outputGroupCount
    *
    */
   static set_nHigherHalfDifferent_by(
-    nConvBlockTypeId ) {
+    input0_channelCount,
+    nConvBlockTypeId,
+    pointwise1ChannelCount,
+    depthwise_AvgMax_Or_ChannelMultiplier
+  ) {
 
     let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
 
     // pointwise1
-
+    {
 //!!! ...unfinished... (2022/07/13)
+
+      // Assume not higher-half-different.
+      this.pointwise1_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
+      this.pointwise1_inputChannelCount_lowerHalf = undefined;
+      this.pointwise1_outputChannelCount_lowerHalf = undefined;
+
+      this.depthwise1_channelShuffler_outputGroupCount = 0; // (i.e. Whether Shuffle.)
+
+  //!!! ...unfinished... (2021/11/15) What if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
+
+      if ( infoConvBlockType.bHigherHalfDifferent == true ) {
+
+        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
+        // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's head)
+        if ( infoConvBlockType.bHigherHalfDepthwise2 == true ) {
+
+          this.pointwise1_inputChannelCount_lowerHalf = input0_channelCount;
+
+          if ( pointwise1ChannelCount > 0 ) {
+            this.pointwise1_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF;
+            this.pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount; // For depthwise1 (by specified channel count)
+
+          } else {
+
+  //!!! ...unfinished... (2022/07/12)
+  // when
+  //   - ShuffleNetV2_byMobileNetV1_head and
+  //   - (pointwise1ChannelCount == 0 )
+  //       i.e. ( nHigherHalfDifferent_pointwise1
+  //                == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH )
+  //   - ( nHigherHalfDifferent_depthwise1 == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2 ) and 
+  //   - depthwise ( channelMultiplier == 1 )
+  //
+  // Use depthwise ( channelMultiplier == 2 ) could achieve almost the same effect but depthwise is pre-channel-shuffled.
+  // So, in this case, pointwise1 (higher half copy lower, lower half pass through) could be discarded. But
+  // the ( channelShuffler_inputGroupCount == 2 ) should be used for prefix squeeze-and-excitation and pointwise2. So that
+  // they could undo the depthwise's pre-channel-shuffling.
+  //
+  // depthwise1_channelShuffler_outputGroupCount = this.pointwise20_channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
+  //
+  // Problem: When depthwise from ( channelMultiplier == 1 ) to ( channelMultiplier == 2 ), what about the filters weights?
+  //
+  //
+
+            this.pointwise1_nHigherHalfDifferent
+              = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH;
+
+            // Since this is an almost copy operation, bias and activation is not necessary.
+            this.pointwise1Bias = false;
+            this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+
+            this.pointwise1_outputChannelCount_lowerHalf = input0_channelCount; // For depthwise1 (by pass-through-input-to-output)
+          }
+
+          // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
+          this.pointwise1ChannelCount
+            = (  this.pointwise1_outputChannelCount_lowerHalf // For depthwise1.
+               + input0_channelCount                          // For depthwise2 (by depthwise1).
+              );
+
+        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
+        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
+        // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
+        } else {
+
+          // So that bHigherHalfPassThrough (or bAllPassThrough).
+          this.pointwise1_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
+
+          let pointwise1_higherHalfPassThrough = ChannelCountCalculator.HigherHalfPassThrough.Pool.get_or_create_by(
+            this.input0_channelCount, this.pointwise1ChannelCount );
+
+          this.pointwise1_inputChannelCount_lowerHalf = pointwise1_higherHalfPassThrough.inputChannelCount_lowerHalf;
+          this.pointwise1_outputChannelCount_lowerHalf = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
+
+          pointwise1_higherHalfPassThrough.disposeResources_and_recycleToPool();
+          pointwise1_higherHalfPassThrough = null;
+        }
+
+      // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
+      }
+
+    }
 
     // depthwise1
     {
@@ -719,6 +813,13 @@ class Params extends Weights.Params {
           this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
         }
       }
+
+//!!! ...unfinished... (2022/07/13)
+//    *   - this.depthwise1_inputChannelCount_lowerHalf
+//    *   - this.depthwise1_outputChannelCount_lowerHalf
+//    *   - this.depthwise1_nHigherHalfDifferent
+//    *   - this.depthwise1_channelShuffler_outputGroupCount
+
     }
 
     // pointwise2
