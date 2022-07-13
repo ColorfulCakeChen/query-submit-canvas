@@ -690,7 +690,6 @@ class Params extends Weights.Params {
    *   - this.pointwise1_outputChannelCount_lowerHalf
    *   - this.depthwise_AvgMax_Or_ChannelMultiplier (may be adjusted)
    *   - this.depthwise1_inputChannelCount_lowerHalf
-   *   - this.depthwise1_outputChannelCount_lowerHalf
    *   - this.depthwise1_nHigherHalfDifferent
    *   - this.depthwise1_channelShuffler_outputGroupCount
    *   - this.pointwise20_nHigherHalfDifferent
@@ -709,16 +708,13 @@ class Params extends Weights.Params {
 
     // pointwise1
     {
-//!!! ...unfinished... (2022/07/13)
-
-      // Assume not higher-half-different.
       this.pointwise1_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
       this.pointwise1_inputChannelCount_lowerHalf = undefined;
       this.pointwise1_outputChannelCount_lowerHalf = undefined;
 
       this.depthwise1_channelShuffler_outputGroupCount = 0; // (i.e. Whether Shuffle.)
 
-  //!!! ...unfinished... (2021/11/15) What if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
+//!!! ...unfinished... (2021/11/15) What if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
 
       if ( infoConvBlockType.bHigherHalfDifferent == true ) {
 
@@ -790,7 +786,6 @@ class Params extends Weights.Params {
 
       // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
       }
-
     }
 
     // depthwise1
@@ -816,8 +811,6 @@ class Params extends Weights.Params {
 
 //!!! ...unfinished... (2022/07/13)
 //    *   - this.depthwise1_inputChannelCount_lowerHalf
-//    *   - this.depthwise1_outputChannelCount_lowerHalf
-//    *   - this.depthwise1_nHigherHalfDifferent
 //    *   - this.depthwise1_channelShuffler_outputGroupCount
 
     }
@@ -826,7 +819,6 @@ class Params extends Weights.Params {
     {
       this.pointwise2_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
       this.pointwise2_outputChannelCount_lowerHalf = undefined;
-  //    let pointwise20_channelShuffler_outputGroupCount = this.pointwise20_channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
 
       if ( infoConvBlockType.bHigherHalfDifferent == true ) {
 
