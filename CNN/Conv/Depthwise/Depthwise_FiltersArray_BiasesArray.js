@@ -438,6 +438,26 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               );
               break;
 
+            case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF_DEPTHWISE2: // (3)
+
+              this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf;
+              this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+
+              // Extract filters and biases for the specified channel count, but in different sequence.
+              this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+              this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+
+//!!! ...unfinished... (2022/07/13)
+              aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
+                FiltersBiasesPartInfo.Pool.get_or_create_by(
+                  ChannelPartInfo.Pool.get_or_create_by( this.???inputChannelCount_lowerHalf )
+                ),
+                FiltersBiasesPartInfo.Pool.get_or_create_by(
+                  ChannelPartInfo.Pool.get_or_create_by( this.???inputChannelCount_higherHalf )
+                )
+              );
+              break;
+
             default:
               throw Error(
                 `Depthwise.FiltersArray_BiasesArray.init(): `
