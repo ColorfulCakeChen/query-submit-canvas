@@ -725,19 +725,19 @@ class Base extends Recyclable.Root {
 
     // pointwise1 parameters.
 
-    let bPointwise1Bias_shouldBe;
+    let pointwise1Bias_shouldBe;
     let pointwise1ActivationId_shouldBe;
     {
       if ( testParams.out.pointwise1ChannelCount > 0 ) {
         if ( bLinear_between_pointwise1_and_pointwise2 )
-          bPointwise1Bias_shouldBe = false;
+          pointwise1Bias_shouldBe = false;
         else
-          bPointwise1Bias_shouldBe = true;
+          pointwise1Bias_shouldBe = true;
 
         pointwise1ActivationId_shouldBe = testParams.out.nActivationId;
 
       } else {
-        bPointwise1Bias_shouldBe = false;
+        pointwise1Bias_shouldBe = false;
         pointwise1ActivationId_shouldBe = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
       }
     }
@@ -766,7 +766,7 @@ class Base extends Recyclable.Root {
         let pointwise1ChannelCount = ( testParams.out.input0_channelCount * 2 ); // As doubled input channel count.
         asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
 
-        bPointwise1Bias_shouldBe = false;
+        pointwise1Bias_shouldBe = false;
         pointwise1ActivationId_shouldBe = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
       }
 
@@ -774,22 +774,22 @@ class Base extends Recyclable.Root {
       asserter.propertyValue( "pointwise1ChannelCount", testParams.out.pointwise1ChannelCount );
     }
 
-    asserter.propertyValue( "bPointwise1Bias", testParams.out.inferencedParams.bPointwise1Bias );
-    asserter.propertyValue( "bPointwise1Bias", bPointwise1Bias_shouldBe );
+    asserter.propertyValue( "pointwise1Bias", testParams.out.inferencedParams.pointwise1Bias );
+    asserter.propertyValue( "pointwise1Bias", pointwise1Bias_shouldBe );
     asserter.propertyValue( "pointwise1ActivationId", pointwise1ActivationId_shouldBe );
     asserter.propertyValue( "pointwise1ActivationName", pointwise1ActivationName_shouldBe );
 
     // depthwise parameters.
 
-    let bDepthwiseBias_shouldBe;
+    let depthwiseBias_shouldBe;
     {
       if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
-        bDepthwiseBias_shouldBe = false;
+        depthwiseBias_shouldBe = false;
       } else {
         if ( bLinear_between_depthwise_and_pointwise2 )
-          bDepthwiseBias_shouldBe = false;
+          depthwiseBias_shouldBe = false;
         else
-          bDepthwiseBias_shouldBe = true;
+          depthwiseBias_shouldBe = true;
       }
     }
 
@@ -797,8 +797,8 @@ class Base extends Recyclable.Root {
     asserter.propertyValue( "depthwiseFilterHeight", testParams.out.depthwiseFilterHeight );
     asserter.propertyValue( "depthwiseFilterWidth", testParams.out.depthwiseFilterWidth );
     asserter.propertyValue( "depthwiseStridesPad", testParams.out.depthwiseStridesPad );
-    asserter.propertyValue( "bDepthwiseBias", testParams.out.inferencedParams.bDepthwiseBias );
-    asserter.propertyValue( "bDepthwiseBias", bDepthwiseBias_shouldBe );
+    asserter.propertyValue( "depthwiseBias", testParams.out.inferencedParams.depthwiseBias );
+    asserter.propertyValue( "depthwiseBias", depthwiseBias_shouldBe );
     asserter.propertyValue( "bDepthwiseRequestedAndNeeded", bDepthwiseRequestedAndNeeded );
     asserter.propertyValue( "depthwiseActivationId", testParams.out.depthwiseActivationId );
 
@@ -807,8 +807,8 @@ class Base extends Recyclable.Root {
 
     // pointwise20 parameters.
     asserter.propertyValue( "pointwise20ChannelCount", testParams.out.pointwise20ChannelCount );
-    asserter.propertyValue( "bPointwise20Bias", testParams.out.inferencedParams.bPointwise20Bias );
-    asserter.propertyValue( "bPointwise20Bias", true ); // pointwise2 should always has bias.
+    asserter.propertyValue( "pointwise20Bias", testParams.out.inferencedParams.pointwise20Bias );
+    asserter.propertyValue( "pointwise20Bias", true ); // pointwise2 should always has bias.
     asserter.propertyValue( "pointwise20ActivationId", testParams.out.pointwise20ActivationId );
 
     let pointwise20ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.pointwise20ActivationId );
@@ -830,7 +830,7 @@ class Base extends Recyclable.Root {
       }
     }
 
-    asserter.propertyValue( "bPointwise21Bias", testParams.out.inferencedParams.bPointwise20Bias ); // Always same as pointwise20.
+    asserter.propertyValue( "pointwise21Bias", testParams.out.inferencedParams.pointwise20Bias ); // Always same as pointwise20.
     asserter.propertyValue( "pointwise21ActivationId", testParams.out.pointwise20ActivationId ); // Always same as pointwise20.
     asserter.propertyValue( "pointwise21ActivationName", pointwise20ActivationName ); // Always same as pointwise20.
 
@@ -1294,7 +1294,7 @@ class Base extends Recyclable.Root {
       + `bHigherHalfDepthwise2=${inferencedParams.bHigherHalfDepthwise2}, `
 
       + `pointwise1ChannelCount=${this.inferencedParams.pointwise1ChannelCount}, `
-      + `bPointwise1Bias=${this.inferencedParams.bPointwise1Bias}, `
+      + `pointwise1Bias=${this.inferencedParams.pointwise1Bias}, `
       + `pointwise1ActivationName=`
         + `${ValueDesc.ActivationFunction.Singleton.getStringOf( inferencedParams.pointwise1ActivationId )}`
         + `(${inferencedParams.pointwise1ActivationId}), `
@@ -1309,7 +1309,7 @@ class Base extends Recyclable.Root {
       + `depthwiseStridesPad=`
         + `${ValueDesc.StridesPad.Singleton.getStringOf( this.depthwiseStridesPad )}`
         + `(${this.depthwiseStridesPad}), `
-      + `bDepthwiseBias=${this.inferencedParams.bDepthwiseBias}, `
+      + `depthwiseBias=${this.inferencedParams.depthwiseBias}, `
       + `depthwiseActivationName=`
         + `${Block.Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId )}`
         + `(${this.depthwiseActivationId}), `
@@ -1317,7 +1317,7 @@ class Base extends Recyclable.Root {
       + `bConcat1Requested=${inferencedParams.bConcat1Requested}, `
 
       + `pointwise20ChannelCount=${this.pointwise20ChannelCount}, `
-      + `bPointwise20Bias=${this.inferencedParams.bPointwise20Bias}, `
+      + `pointwise20Bias=${this.inferencedParams.pointwise20Bias}, `
       + `pointwise20ActivationName=`
         + `${Block.Params.pointwise20ActivationId.getStringOfValue( this.pointwise20ActivationId )}`
         + `(${this.pointwise20ActivationId}), `
