@@ -685,12 +685,14 @@ class Params extends Weights.Params {
    *   - this.pointwise1ChannelCount (may be adjusted)
    *   - this.pointwise1Bias (may be adjusted)
    *   - this.pointwise1ActivationId (may be adjusted)
+   *   - this.pointwise1ActivationName (may be adjusted)
    *   - this.pointwise1_nHigherHalfDifferent
    *   - this.pointwise1_inputChannelCount_lowerHalf
    *   - this.pointwise1_outputChannelCount_lowerHalf
    *   - this.depthwise_AvgMax_Or_ChannelMultiplier (may be adjusted)
-   *   - this.depthwise1_inputChannelCount_lowerHalf
+   *   - this.depthwise_AvgMax_Or_ChannelMultiplier_Name (may be adjusted)
    *   - this.depthwise1_nHigherHalfDifferent
+   *   - this.depthwise1_inputChannelCount_lowerHalf
    *   - this.depthwise1_channelShuffler_outputGroupCount
    *   - this.pointwise20_nHigherHalfDifferent
    *   - this.pointwise20_outputChannelCount_lowerHalf
@@ -732,26 +734,7 @@ class Params extends Weights.Params {
 
           } else {
 
-  //!!! ...unfinished... (2022/07/12)
-  // when
-  //   - ShuffleNetV2_byMobileNetV1_head and
-  //   - (pointwise1ChannelCount == 0 )
-  //       i.e. ( nHigherHalfDifferent_pointwise1
-  //                == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH )
-  //   - ( nHigherHalfDifferent_depthwise1 == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2 ) and 
-  //   - depthwise ( channelMultiplier == 1 )
-  //
-  // Use depthwise ( channelMultiplier == 2 ) could achieve almost the same effect but depthwise is pre-channel-shuffled.
-  // So, in this case, pointwise1 (higher half copy lower, lower half pass through) could be discarded. But
-  // the ( channelShuffler_inputGroupCount == 2 ) should be used for prefix squeeze-and-excitation and pointwise2. So that
-  // they could undo the depthwise's pre-channel-shuffling.
-  //
-  // depthwise1_channelShuffler_outputGroupCount = this.pointwise20_channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
-  //
-  // Problem: When depthwise from ( channelMultiplier == 1 ) to ( channelMultiplier == 2 ), what about the filters weights?
-  //
-  //
-
+            // When
             //   - ShuffleNetV2_byMobileNetV1_head and
             //   - ( pointwise1ChannelCount == 0 )
             //       i.e. ( pointwise1_nHigherHalfDifferent
@@ -762,15 +745,15 @@ class Params extends Weights.Params {
             if ( depthwise_AvgMax_Or_ChannelMultiplier == 1 ) {
               
               // Use depthwise ( channelMultiplier == 2 ) could achieve almost the same effect but depthwise will look like
-              // pre-channel-shuffled. So, in this case, pointwise1 (higher half copy lower, lower half pass through) could be discarded.
-              // But the ( channelShuffler_inputGroupCount == 2 ) should be used for prefix squeeze-and-excitation and pointwise2. So that
-              // they could undo the depthwise's pre-channel-shuffling.
+              // pre-channel-shuffled. So, in this case, pointwise1 (higher half copy lower, lower half pass through) could be
+              // discarded. But the ( channelShuffler_inputGroupCount == 2 ) should be used for prefix squeeze-and-excitation
+              // and pointwise2. So that they could undo the depthwise's pre-channel-shuffling.
               //
               this.depthwise_AvgMax_Or_ChannelMultiplier = 2;
-              
-//!!! ...unfinished... (2022/07/13)
-//    *   - this.depthwise1_inputChannelCount_lowerHalf
-
+              this.depthwise_AvgMax_Or_ChannelMultiplier_Name
+                = ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.getStringOf( this.depthwise_AvgMax_Or_ChannelMultiplier );
+  
+              this.depthwise1_inputChannelCount_lowerHalf = input0_channelCount;
               this.depthwise1_channelShuffler_outputGroupCount = pointwise20_channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
 
             } else {
@@ -781,13 +764,14 @@ class Params extends Weights.Params {
               // Since this is an almost copy operation, bias and activation is not necessary.
               this.pointwise1Bias = false;
               this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+              this.pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.pointwise1ActivationId );
 
               this.pointwise1_outputChannelCount_lowerHalf = input0_channelCount; // For depthwise1 (by pass-through-input-to-output)
             }
           }
 
           // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
-          if ( this.pointwise1ChannelCount > 0 ) {
+          if ( pointwise1ChannelCount > 0 ) {
             this.pointwise1ChannelCount
               = (  this.pointwise1_outputChannelCount_lowerHalf // For depthwise1.
                  + input0_channelCount                          // For depthwise2 (by depthwise1).
@@ -877,15 +861,21 @@ class Params extends Weights.Params {
    *   - this.input1_channelCount
    *   - this.bLinear_between_pointwise1_and_depthwise
    *   - this.bLinear_between_pointwise1_and_pointwise2
+   *   - this.pointwise1ChannelCount (may be adjusted)
    *   - this.pointwise1Bias
    *   - this.pointwise1ActivationId
    *   - this.pointwise1ActivationName
    *   - this.pointwise1_nHigherHalfDifferent
+   *   - this.pointwise1_inputChannelCount_lowerHalf
+   *   - this.pointwise1_outputChannelCount_lowerHalf
    *   - this.bLinear_between_depthwise_and_pointwise2
+   *   - this.depthwise_AvgMax_Or_ChannelMultiplier (may be adjusted)
+   *   - this.depthwise_AvgMax_Or_ChannelMultiplier_Name (may be adjusted)
    *   - this.depthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
    *   - this.depthwise1_nHigherHalfDifferent
+   *   - this.depthwise1_inputChannelCount_lowerHalf
    *   - this.depthwise1_channelShuffler_outputGroupCount
    *   - this.bDepthwise2Requested
    *   - this.bConcat1Requested
@@ -895,6 +885,7 @@ class Params extends Weights.Params {
    *   - this.bHigherHalfDepthwise2
    *   - this.pointwise20Bias
    *   - this.pointwise20_nHigherHalfDifferent
+   *   - this.pointwise20_outputChannelCount_lowerHalf
    *   - this.pointwise20_channelShuffler_outputGroupCount
    *   - this.pointwise21ChannelCount
    *   - this.squeezeExcitationActivationId
@@ -961,6 +952,15 @@ class Params extends Weights.Params {
     Params.set_squeezeExcitationActivationId_squeezeExcitationActivationName_by.call( this,
       nActivationId
     );
+      
+   // 6. nHigherHalfDifferent
+   Params.set_nHigherHalfDifferent_by.call( this,
+     input0_channelCount,
+     nConvBlockTypeId,
+     pointwise1ChannelCount,
+     depthwise_AvgMax_Or_ChannelMultiplier,
+     this.pointwise20_channelShuffler_outputGroupCount
+   );
   }
 
   get input0_height()                        { return this.getParamValue_byParamDesc( Params.input0_height ); }
