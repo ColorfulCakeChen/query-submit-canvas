@@ -55,7 +55,7 @@ import { Params } from "./Stage_Params.js";
  *
  * 3. Bias and Activation
  *
- * MobileNetV2_Xxx use the following (which is MobileNetV2's original design):
+ * MobileNetV2_Xxx uses the following (which is MobileNetV2's original design):
  *   - pointwise1: bias, activation.
  *   - depthwise:  bias, activation.
  *   - squeeze-and-excitation.
