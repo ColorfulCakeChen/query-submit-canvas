@@ -93,7 +93,7 @@ class ArrayInterleaver {
 
 
 
-!!! ...unfinished... (2022/07/12) interleave_asGrouptTwo_along_last_2nd_axis_from_to()
+//!!! ...unfinished... (2022/07/12) interleave_asGrouptTwo_along_last_2nd_axis_from_to()
 
   /**
    * Rearrange array elements along height by interleaving.
@@ -159,44 +159,99 @@ class ArrayInterleaver {
   }
 
 
-!!! ...unfinished... (2022/07/12) interleave_asGrouptTwo_along_last_axis_from_to()
-
+//!!! ...unfinished... (2022/07/12) interleave_asGrouptTwo_along_last_axis_from_to()
   /**
-   * Rearrange array elements along width by interleaving.
+   * Rearrange array elements along the last axis by interleaving.
    *   - Only ( groupCount == 2 ) is supported.
    *
    * @param {Array} fromArray  The source array. It will not be modified. It is the source of copying.
    * @param {Array} toArray    The destination array. It will be modified (i.e. filled data copied from fromArray).
-   * @param {number} height    The virtual 2D array's height.
-   * @param {number} width     The virtual 2D array's width.
+   * @param {Function} pfnInterleaver  The function to do the destination array. It will be modified (i.e. filled data copied from fromArray).
+   * @param {number[]} shape   The virtual N-dimension array's shape (e.g. [ width ] or [ height, width ] or [ height, width, depth ].
    */
-  static interleave_asGrouptTwo_alongWidth_from_to( fromArray, toArray, height, width ) {
-    let elementCount = height * width;
-    if ( elementCount != fromArray.length )
-      throw Error( `ArrayInterleaver.interleave_asGrouptTwo_alongWidth_from_to(): `
-        + `( height * width ) = ( ${height} * ${width} ) = ${elementCount} `
-        + ` should be the same as input array length ( ${fromArray.length} ).`
+  static interleave_asGrouptTwo_alongLastAxis_from_to( fromArray, toArray, ???, ...shape ) {
+    if ( shape.length < 1 ) {
+      throw Error( `ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(): `
+        + `shape.length ( ${shape.length} ) should be at least 1.`
       );
+    }
 
-    if ( ( width % 2 ) != 0 )
-      throw Error( `ArrayInterleaver.interleave_asGrouptTwo_alongWidth_from_to(): `
-        + `width ( ${width} ) must be even (i.e. divisible by 2).`
+    let elementCount = 1;
+    for ( let i = 0; i < shape.length; ++i ) {
+      elementCount *= shape[ i ];
+    }
+
+    if ( elementCount != fromArray.length ) {
+      let shapeString = shape.join( " * " );
+      throw Error( `ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(): `
+        + `shape ( ${shapeString} ) = ${elementCount} `
+        + `should be the same as input array length ( ${fromArray.length} ).`
+      );
+    }
+
+    let lastAxisId = shape.length - 1;
+    let lastAxisLength = shape[ lastAxisId ];
+    if ( ( lastAxisLength % 2 ) != 0 )
+      throw Error( `ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(): `
+        + `shape's last axis length ( ${lastAxisLength} ) must be even (i.e. divisible by 2).`
       );
 
     toArray.length = elementCount;
-    let widthHalf = ( width / 2 );
-    for ( let i = 0; i < elementCount; i += width ) {
-      ArrayInterleaver.interleave_asGrouptTwo_from_to( fromArray, i, toArray, i, widthHalf );
+    let lastAxisLengthHalf = ( lastAxisLength / 2 );
+    for ( let i = 0; i < elementCount; i += lastAxisLength ) {
+      ArrayInterleaver.interleave_asGrouptTwo_from_to( fromArray, i, toArray, i, lastAxisLengthHalf );
+    }
+  }
+
+
+  /**
+   * Rearrange array elements along the last axis by interleaving.
+   *   - Only ( groupCount == 2 ) is supported.
+   *
+   * @param {Array} fromArray  The source array. It will not be modified. It is the source of copying.
+   * @param {Array} toArray    The destination array. It will be modified (i.e. filled data copied from fromArray).
+   * @param {number[]} shape   The virtual N-dimension array's shape (e.g. [ width ] or [ height, width ] or [ height, width, depth ].
+   */
+  static interleave_asGrouptTwo_alongLastAxis_from_to( fromArray, toArray, ...shape ) {
+    if ( shape.length < 1 ) {
+      throw Error( `ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(): `
+        + `shape.length ( ${shape.length} ) should be at least 1.`
+      );
+    }
+
+    let elementCount = 1;
+    for ( let i = 0; i < shape.length; ++i ) {
+      elementCount *= shape[ i ];
+    }
+
+    if ( elementCount != fromArray.length ) {
+      let shapeString = shape.join( " * " );
+      throw Error( `ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(): `
+        + `shape ( ${shapeString} ) = ${elementCount} `
+        + `should be the same as input array length ( ${fromArray.length} ).`
+      );
+    }
+
+    let lastAxisId = shape.length - 1;
+    let lastAxisLength = shape[ lastAxisId ];
+    if ( ( lastAxisLength % 2 ) != 0 )
+      throw Error( `ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(): `
+        + `shape's last axis length ( ${lastAxisLength} ) must be even (i.e. divisible by 2).`
+      );
+
+    toArray.length = elementCount;
+    let lastAxisLengthHalf = ( lastAxisLength / 2 );
+    for ( let i = 0; i < elementCount; i += lastAxisLength ) {
+      ArrayInterleaver.interleave_asGrouptTwo_from_to( fromArray, i, toArray, i, lastAxisLengthHalf );
     }
   }
 
   /**
-   * Rearrange array elements along width by interleaving.
+   * Rearrange array elements along the last axis by interleaving.
    *   - Only ( groupCount == 2 ) is supported.
    *
-   * @param {Array} arrayIn  The array to be re-arranged. It is an 1D array but represents a 2D array.
-   * @param {number} height  The virtual 2D array's height.
-   * @param {number} width   The virtual 2D array's width.
+   * @param {Array} arrayIn   The array to be re-arranged. It is an 1D array but represents a N-dimension array.
+   * @param {number[]} shape  The virtual N-dimension array's shape (e.g. [ width ] or [ height, width ] or [ height, width, depth ].
    *
    * @param {Array} arrayTemp
    *   A temporary array for placing the original elements (from arrayIn) temporarily. Providing this array could reduce memory
@@ -205,27 +260,29 @@ class ArrayInterleaver {
    * @return {Array}
    *   Retrun the (modified) arrayIn itself.
    */
-  static interleave_asGrouptTwo_alongWidth_inPlace( arrayIn, height, width, arrayTemp ) {
+  static interleave_asGrouptTwo_alongLastAxis_inPlace( arrayIn, arrayTemp, ...shape ) {
 
     arrayTemp.length = arrayIn.length;
     for ( let i = 0; i < arrayIn.length; ++i ) { // Copy the elements to be re-arrange.
       arrayTemp[ i ] = arrayIn[ i ];
     }
 
-    ArrayInterleaver.interleave_asGrouptTwo_alongWidth( arrayTemp, arrayIn, height, width );
+    ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to( arrayTemp, arrayIn, ...shape );
     return arrayIn;
   }
 
+//!!!
   /**
-   * Rearrange array elements along width so that it undo the .interleave_asGrouptTwo_alongWidth_from_to().
+   * Rearrange array elements along the last axis so that it undo the .interleave_asGrouptTwo_alongLastAxis_from_to().
    *   - Only ( groupCount == 2 ) is supported.
    *
    * @param {Array} fromArray  The source array. It will not be modified. It is the source of copying.
    * @param {Array} toArray    The destination array. It will be modified (i.e. filled data copied from fromArray).
-   * @param {number} height    The virtual 2D array's height.
-   * @param {number} width     The virtual 2D array's width.
+   * @param {number[]} shape   The virtual N-dimension array's shape (e.g. [ width ] or [ height, width ] or [ height, width, depth ].
    */
-  static interleave_asGrouptTwo_alongWidth_from_to_undo( fromArray, toArray, height, width ) {
+//  static interleave_asGrouptTwo_alongWidth_from_to_undo( fromArray, toArray, height, width ) {
+  static interleave_asGrouptTwo_alongLastAxis_from_to_undo( fromArray, toArray, ...shape ) {
+
     let elementCount = height * width;
     if ( elementCount != fromArray.length )
       throw Error( `ArrayInterleaver.interleave_asGrouptTwo_alongWidth_from_to_undo(): `
