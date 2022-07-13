@@ -754,6 +754,8 @@ class Params extends Weights.Params {
             //
             if ( depthwise_AvgMax_Or_ChannelMultiplier == 1 ) {
 
+!!! ...unfinished... (2022/07/13) What about ( bDepthwiseRequestedAndNeeded == false )?
+
               // Use depthwise ( channelMultiplier == 2 ) could achieve almost the same effect but depthwise will look like
               // pre-channel-shuffled. So, in this case, pointwise1 (higher half copy lower, lower half pass through) could be
               // discarded. But the ( channelShuffler_inputGroupCount == 2 ) should be used for prefix squeeze-and-excitation
