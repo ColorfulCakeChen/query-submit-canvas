@@ -421,7 +421,7 @@ class Base extends Recyclable.Root {
     this.nConvBlockTypeName = params.nConvBlockTypeName;
 
     this.pointwise1ChannelCount = params.pointwise1ChannelCount;
-    this.bPointwise1Bias = params.bPointwise1Bias;
+    this.pointwise1Bias = params.pointwise1Bias;
     this.pointwise1ActivationId = params.pointwise1ActivationId;
     this.pointwise1ActivationName = params.pointwise1ActivationName;
 
@@ -431,13 +431,13 @@ class Base extends Recyclable.Root {
     this.depthwiseFilterWidth = params.depthwiseFilterWidth;
     this.depthwiseStridesPad = params.depthwiseStridesPad;
     this.depthwiseStridesPadName = params.depthwiseStridesPadName;
-    this.bDepthwiseBias = params.bDepthwiseBias;
+    this.depthwiseBias = params.depthwiseBias;
     this.depthwiseActivationId = params.depthwiseActivationId;
     this.depthwiseActivationName = params.depthwiseActivationName;
     this.depthwise1_nHigherHalfDifferent = params.depthwise1_nHigherHalfDifferent;
 
     this.pointwise20ChannelCount = params.pointwise20ChannelCount;
-    this.bPointwise20Bias = params.bPointwise20Bias;
+    this.pointwise20Bias = params.pointwise20Bias;
     this.pointwise20ActivationId = params.pointwise20ActivationId;
     this.pointwise20ActivationName = params.pointwise20ActivationName;
 
@@ -469,7 +469,7 @@ class Base extends Recyclable.Root {
       this.pointwise20_channelShuffler_outputGroupCount = params.pointwise20_channelShuffler_outputGroupCount;
 
       this.pointwise21ChannelCount = params.pointwise21ChannelCount;
-      this.bPointwise21Bias = params.bPointwise21Bias;
+      this.pointwise21Bias = params.pointwise21Bias;
       this.pointwise21ActivationId = params.pointwise21ActivationId;
       this.pointwise21ActivationName = params.pointwise21ActivationName;
       
@@ -548,7 +548,7 @@ class Base extends Recyclable.Root {
             = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH;
 
           // Since this is an almost copy operation, bias and activation is not necessary.
-          this.bPointwise1Bias = false;
+          this.pointwise1Bias = false;
           this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
           outputChannelCount_lowerHalf_pointwise1 = this.input0_channelCount; // For depthwise1 (by pass-through-input-to-output)
@@ -634,7 +634,7 @@ class Base extends Recyclable.Root {
 
       let pointwise1 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
         this.operationArray.endingInput0,
-        this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
+        this.pointwise1ChannelCount, this.pointwise1Bias, this.pointwise1ActivationId,
         nHigherHalfDifferent_pointwise1,
         outputChannelCount_lowerHalf_pointwise1,
         0, // Default channelShuffler_inputGroupCount for pointwise1 is zero (never positive).
@@ -667,7 +667,7 @@ class Base extends Recyclable.Root {
         depthwise1 = Operation.Depthwise_SameWhenPassThrough.Pool.get_or_create_by(
           this.operationArray.endingInput0,
           this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
-          this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
+          this.depthwiseStridesPad, this.depthwiseBias, this.depthwiseActivationId,
           this.depthwise1_nHigherHalfDifferent,
           ???channelShuffler_inputGroupCount, ???channelShuffler_outputGroupCount
         );
@@ -693,7 +693,7 @@ class Base extends Recyclable.Root {
         depthwise2 = Operation.Depthwise_SameWhenPassThrough.Pool.get_or_create_by(
           depthwise2_input0,
           this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
-          this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
+          this.depthwiseStridesPad, this.depthwiseBias, this.depthwiseActivationId,
           ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE, // depthwise2 never has higher-half-different.
           ???channelShuffler_inputGroupCount, ???channelShuffler_outputGroupCount
         );
@@ -808,7 +808,7 @@ class Base extends Recyclable.Root {
       //
       let pointwise20 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
         this.operationArray.endingInput0,
-        this.pointwise20ChannelCount, this.bPointwise20Bias, this.pointwise20ActivationId,
+        this.pointwise20ChannelCount, this.pointwise20Bias, this.pointwise20ActivationId,
         nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2,
         0, // No channelShuffler_inputGroupCount.
         pointwise20_channelShuffler_outputGroupCount
@@ -832,7 +832,7 @@ class Base extends Recyclable.Root {
 
         pointwise21 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
           pointwise21_input0,
-          this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
+          this.pointwise21ChannelCount, this.pointwise21Bias, this.pointwise21ActivationId,
           nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2,
           0, // No channelShuffler_inputGroupCount.
           pointwise20_channelShuffler_outputGroupCount
@@ -1539,7 +1539,7 @@ class Base extends Recyclable.Root {
       + `bHigherHalfDepthwise2=${this.bHigherHalfDepthwise2}, `
 
       + `pointwise1ChannelCount=${this.pointwise1ChannelCount}, `
-      + `bPointwise1Bias=${this.bPointwise1Bias}, `
+      + `pointwise1Bias=${this.pointwise1Bias}, `
       + `pointwise1ActivationName=${this.pointwise1ActivationName}(${this.pointwise1ActivationId}), `
 
       + `bDepthwiseRequestedAndNeeded=${this.bDepthwiseRequestedAndNeeded}, `
@@ -1549,17 +1549,17 @@ class Base extends Recyclable.Root {
         + `(${this.depthwise_AvgMax_Or_ChannelMultiplier}), `
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
       + `depthwiseStridesPad=${this.depthwiseStridesPadName}(${this.depthwiseStridesPad}), `
-      + `bDepthwiseBias=${this.bDepthwiseBias}, `
+      + `depthwiseBias=${this.depthwiseBias}, `
       + `depthwiseActivationName=${this.depthwiseActivationName}(${this.depthwiseActivationId}), `
 
       + `bConcat1Requested=${this.bConcat1Requested}, `
 
       + `pointwise20ChannelCount=${this.pointwise20ChannelCount}, `
-      + `bPointwise20Bias=${this.bPointwise20Bias}, `
+      + `pointwise20Bias=${this.pointwise20Bias}, `
       + `pointwise20ActivationName=${this.pointwise20ActivationName}(${this.pointwise20ActivationId}), `
 
       + `pointwise21ChannelCount=${this.pointwise21ChannelCount}, `
-      + `bPointwise21Bias=${this.bPointwise21Bias}, `
+      + `pointwise21Bias=${this.pointwise21Bias}, `
       + `pointwise21ActivationName=${this.pointwise21ActivationName}(${this.pointwise21ActivationId}), `
 
       + `nSqueezeExcitationChannelCountDivisorName=${this.nSqueezeExcitationChannelCountDivisorName}`
