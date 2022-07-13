@@ -440,6 +440,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
             case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF_DEPTHWISE2: // (3)
 
+              if ( this.AvgMax_Or_ChannelMultiplier != 2 )
+                throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfCopyLowerHalfDepthwise2(): `
+                  + `AvgMax_Or_ChannelMultiplier ( ${this.AvgMax_Or_ChannelMultiplier} ) must be 2. `
+                  + `So that higher-half can copy lower-half.` );
+
               if ( !( this.inputChannelCount_lowerHalf > 0 ) )
                 throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfCopyLowerHalfDepthwise2(): `
                   + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.` );
@@ -448,9 +453,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                 throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfCopyLowerHalfDepthwise2(): `
                   + `inputChannelCount_higherHalf ( ${this.inputChannelCount_higherHalf} ) must be zero.` );
 
-              if ( this.AvgMax_Or_ChannelMultiplier == 2 )
+              if ( this.channelShuffler_outputGroupCount != 2 )
                 throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfCopyLowerHalfDepthwise2(): `
-                  + `AvgMax_Or_ChannelMultiplier ( ${this.AvgMax_Or_ChannelMultiplier} ) must be 2.` );
+                  + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) must be 2. `
+                  + `Otherwise, higher-half does not copy lower-half.` );
 
               this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf;
               this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
