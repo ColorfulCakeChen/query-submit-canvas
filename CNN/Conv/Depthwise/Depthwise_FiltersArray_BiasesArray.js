@@ -385,7 +385,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
             case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
 
-              if ( this.inputChannelCount_lowerHalf <= 0 )
+              if ( !( this.inputChannelCount_lowerHalf > 0 ) )
                 throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfDepthwise2(): `
                   + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
                 );
@@ -414,7 +414,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
             case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
 
-              if ( this.inputChannelCount_lowerHalf <= 0 )
+              if ( !( this.inputChannelCount_lowerHalf > 0 ) )
                 throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfPassThrough(): `
                   + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
                 );
@@ -440,10 +440,17 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
             case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF_DEPTHWISE2: // (3)
 
+              if ( !( this.inputChannelCount_lowerHalf > 0 ) )
+                throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfCopyLowerHalfDepthwise2(): `
+                  + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.` );
+
+              if ( this.inputChannelCount_higherHalf != 0 )
+                throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfCopyLowerHalfDepthwise2(): `
+                  + `inputChannelCount_higherHalf ( ${this.inputChannelCount_higherHalf} ) must be zero.` );
+
               if ( this.AvgMax_Or_ChannelMultiplier == 2 )
                 throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfCopyLowerHalfDepthwise2(): `
-                  + `AvgMax_Or_ChannelMultiplier ( ${this.AvgMax_Or_ChannelMultiplier} ) must be 2.`
-                );
+                  + `AvgMax_Or_ChannelMultiplier ( ${this.AvgMax_Or_ChannelMultiplier} ) must be 2.` );
 
               this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf;
               this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
@@ -452,13 +459,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               this.inputChannelCount_toBeExtracted = this.inputChannelCount;
               this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
-//!!! ...unfinished... (2022/07/13)
               aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
                 FiltersBiasesPartInfo.Pool.get_or_create_by(
-                  ChannelPartInfo.Pool.get_or_create_by( this.???inputChannelCount_lowerHalf )
+                  ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf )
                 ),
                 FiltersBiasesPartInfo.Pool.get_or_create_by(
-                  ChannelPartInfo.Pool.get_or_create_by( this.???inputChannelCount_higherHalf )
+                  ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf ) // (Note: not inputChannelCount_higherHalf)
                 )
               );
               break;
