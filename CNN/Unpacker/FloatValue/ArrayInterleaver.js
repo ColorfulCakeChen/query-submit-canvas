@@ -132,23 +132,27 @@ class ArrayInterleaver {
     let lastAxisId = shape.length - 1;
     let lastAxisLength = shape[ lastAxisId ];
     
-    let fromIndex2Strides = last2ndAxisLengthHalf * lastAxisLength;
+    let last2AxisLength = last2ndAxisLength * lastAxisLength;
+    let last2AxisLengthHalf = last2ndAxisLengthHalf * lastAxisLength;
 
     toArray.length = elementCount;
 
     let fromIndex1 = 0, toIndex1 = 0;
     let fromIndex2, toIndex2;
-    for ( let y = 0; y < last2ndAxisLength; y += 2 ) {
-      fromIndex2 = fromIndex1 + fromIndex2Strides;
-      toIndex2 = toIndex1 + lastAxisLength;
 
-      for ( let i = 0; i < lastAxisLength; ++i ) {
-        toArray[ toIndex1 + i ] = fromArray[ fromIndex1 + i ];
-        toArray[ toIndex2 + i ] = fromArray[ fromIndex2 + i ];
+    for ( let e = 0; e < elementCount; e += last2AxisLength ) {
+      for ( let y = 0; y < last2ndAxisLength; y += 2 ) {
+        fromIndex2 = fromIndex1 + last2AxisLengthHalf;
+        toIndex2 = toIndex1 + lastAxisLength;
+
+        for ( let c = 0; c < lastAxisLength; ++c ) {
+          toArray[ toIndex1 + c ] = fromArray[ fromIndex1 + c ];
+          toArray[ toIndex2 + c ] = fromArray[ fromIndex2 + c ];
+        }
+
+        fromIndex1 += lastAxisLength;
+        toIndex1 = ( toIndex2 + lastAxisLength );
       }
-
-      fromIndex1 += lastAxisLength;
-      toIndex1 = ( toIndex2 + lastAxisLength );
     }
   }
 
