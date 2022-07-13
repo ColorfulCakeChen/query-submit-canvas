@@ -688,6 +688,7 @@ class Params extends Weights.Params {
    *   - this.pointwise1ActivationName (may be adjusted)
    *   - this.pointwise1_nHigherHalfDifferent
    *   - this.pointwise1_inputChannelCount_lowerHalf
+   *   - this.pointwise1_inputChannelCount_higherHalf
    *   - this.pointwise1_outputChannelCount_lowerHalf
    *   - this.depthwise_AvgMax_Or_ChannelMultiplier (may be adjusted)
    *   - this.depthwise_AvgMax_Or_ChannelMultiplier_Name (may be adjusted)
@@ -713,6 +714,7 @@ class Params extends Weights.Params {
     {
       this.pointwise1_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
       this.pointwise1_inputChannelCount_lowerHalf = undefined;
+      this.pointwise1_inputChannelCount_higherHalf = undefined;
       this.pointwise1_outputChannelCount_lowerHalf = undefined;
 
       this.depthwise1_inputChannelCount_lowerHalf = undefined;
@@ -798,6 +800,9 @@ class Params extends Weights.Params {
 
       // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
       }
+
+      if ( this.pointwise1_inputChannelCount_lowerHalf > 0 )
+        this.pointwise1_inputChannelCount_higherHalf = input0_channelCount - this.pointwise1_inputChannelCount_lowerHalf;
     }
 
     // depthwise1
@@ -867,6 +872,7 @@ class Params extends Weights.Params {
    *   - this.pointwise1ActivationName
    *   - this.pointwise1_nHigherHalfDifferent
    *   - this.pointwise1_inputChannelCount_lowerHalf
+   *   - this.pointwise1_inputChannelCount_higherHalf
    *   - this.pointwise1_outputChannelCount_lowerHalf
    *   - this.bLinear_between_depthwise_and_pointwise2
    *   - this.depthwise_AvgMax_Or_ChannelMultiplier (may be adjusted)
