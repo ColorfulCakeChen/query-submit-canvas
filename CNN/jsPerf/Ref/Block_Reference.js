@@ -765,19 +765,23 @@ class Base extends Recyclable.Root {
       //
       } else { // ( 0 == testParams.out.pointwise1ChannelCount )
 
-        if (   ( bDepthwiseRequestedAndNeeded )
-            && ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == 1 ) ) { // Use depthwise to double channels.
 
-          depthwise_AvgMax_Or_ChannelMultiplier_shouldBe = 2;
-
-        } else { // Use pointwise1 to double channels.
+//!!! (2022/07/13 Remarked) Does not work.
+//         if (   ( bDepthwiseRequestedAndNeeded )
+//             && ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == 1 ) ) { // Use depthwise to double channels.
+//
+//           depthwise_AvgMax_Or_ChannelMultiplier_shouldBe = 2;
+//
+//         } else { // Use pointwise1 to double channels.
 
           let pointwise1ChannelCount = ( testParams.out.input0_channelCount * 2 ); // As doubled input channel count.
           asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
 
           pointwise1Bias_shouldBe = false;
           pointwise1ActivationId_shouldBe = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-        }
+
+//!!! (2022/07/13 Remarked) Does not work.
+//        }
       }
 
     } else {
