@@ -342,9 +342,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
           // Note: avg/max pooling do not have this.filtersShape to be extracted.
-          this.poolWindowShape = Recyclable.Array.Pool.get_or_create_by( 2 );
-          this.poolWindowShape[ 0 ] = this.filterHeight;
-          this.poolWindowShape[ 1 ] = this.filterWidth;
+          this.poolWindowShape = Recyclable.Array.Pool.get_or_create_by( this.filterHeight, this.filterWidth );
 
           if ( this.bBias ) {
             this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 1 );
