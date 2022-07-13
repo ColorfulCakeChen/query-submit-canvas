@@ -33,24 +33,24 @@ import { Params } from "./Stage_Params.js";
  * it at block0 but by different ways:
  *
  *   - MobileNetV1 (0), MobileNetV1_padValid (1)
- *     - ( pointwise1ChannelCount == 0 ), depthwise1 double ( channelMultiplier == 2 ) of input0.
- *     - ( pointwise1ChannelCount >  0 ), pointwise1 double of input0.
+ *     - ( bPointwise1 == false ), depthwise1 double ( channelMultiplier == 2 ) of input0.
+ *     - ( bPointwise1 ==  true ), pointwise1 double of input0.
  *
  *   - MobileNetV2_Thin (2)
- *     - ( pointwise1ChannelCount == 0 ), depthwise1 double ( channelMultiplier == 2 ) of input0. pointwis21 double of input0.
- *     - ( pointwise1ChannelCount >  0 ), pointwise1 double of input0. pointwis21 double of input0.
+ *     - ( bPointwise1 == false ), depthwise1 double ( channelMultiplier == 2 ) of input0. pointwis21 double of input0.
+ *     - ( bPointwise1 ==  true ), pointwise1 double of input0. pointwis21 double of input0.
  *
  *   - MobileNetV2 (3)
- *     - ( pointwise1ChannelCount == 0 ), depthwise1 quadruple ( channelMultiplier == 4 ) of input0. pointwis21 double of input0.
- *     - ( pointwise1ChannelCount >  0 ), pointwise1 quadruple of input0. pointwis21 double of input0.
+ *     - ( bPointwise1 == false ), depthwise1 quadruple ( channelMultiplier == 4 ) of input0. pointwis21 double of input0.
+ *     - ( bPointwise1 ==  true ), pointwise1 quadruple of input0. pointwis21 double of input0.
  *
  *   - ShuffleNetV2 (4), ShuffleNetV2_ByPointwise21 (5)
- *     - ( pointwise1ChannelCount == 0 ), depthwise1 double ( channelMultiplier == 2 ) of input0.
- *     - ( pointwise1ChannelCount >  0 ), concatenate depthwise1 and depthwise2.
+ *     - ( bPointwise1 == false ), depthwise1 double ( channelMultiplier == 2 ) of input0.
+ *     - ( bPointwise1 ==  true ), concatenate depthwise1 and depthwise2.
  *
  *   - ShuffleNetV2_ByMobileNetV1 (6), ShuffleNetV2_ByMobileNetV1_padValid (7)
- *     - ( pointwise1ChannelCount == 0 ), pointwise1 (lower half pass through, higher half copy input0) double of input0.
- *     - ( pointwise1ChannelCount >  0 ), pointwise1 (higher half copy input0) double of input0.
+ *     - ( bPointwise1 == false ), pointwise1 (lower half pass through, higher half copy input0) double of input0.
+ *     - ( bPointwise1 ==  true ), pointwise1 (higher half copy input0) double of input0.
  *
  *
  * 3. Bias and Activation
@@ -303,15 +303,11 @@ class Base extends Recyclable.Root {
     let progressToAdvance = progressParent.addChild( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
     let progressForBlocks = progressParent.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for block0, block1, 2, 3, ... 
 
-    this.disposeTensors();
-
     // 1. Extract parameters.
     if ( !params )
       return false;
 
-    this.byteOffsetEnd = this.byteOffsetBegin = params.defaultByteOffsetBegin;
-
-    if ( !params.extract() )
+    if ( !params.init( inputWeightArray, weightElementOffsetBegin ) )
       return false;  // e.g. input array does not have enough data.
     this.weightElementOffsetEnd = params.weightElementOffsetEnd;
 
