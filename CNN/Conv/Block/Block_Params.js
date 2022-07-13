@@ -735,6 +735,12 @@ class Params extends Weights.Params {
             this.pointwise1_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF;
             this.pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount; // For depthwise1 (by specified channel count)
 
+            // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
+            this.pointwise1ChannelCount = (
+                this.pointwise1_outputChannelCount_lowerHalf // For depthwise1.
+              + input0_channelCount                          // For depthwise2 (by depthwise1).
+            );
+
           } else {
 
             // When
@@ -773,15 +779,13 @@ class Params extends Weights.Params {
               this.pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.pointwise1ActivationId );
 
               this.pointwise1_outputChannelCount_lowerHalf = input0_channelCount; // For depthwise1 (by pass-through-input-to-output)
-            }
-          }
 
-          // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
-          if ( pointwise1ChannelCount > 0 ) {
-            this.pointwise1ChannelCount
-              = (  this.pointwise1_outputChannelCount_lowerHalf // For depthwise1.
-                 + input0_channelCount                          // For depthwise2 (by depthwise1).
-                );
+              // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
+              this.pointwise1ChannelCount = (
+                  this.pointwise1_outputChannelCount_lowerHalf // For depthwise1.
+                + input0_channelCount                          // For depthwise2 (by depthwise1).
+              );
+            }
           }
 
         // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
