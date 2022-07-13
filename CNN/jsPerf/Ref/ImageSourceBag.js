@@ -168,10 +168,12 @@ class Base extends Recyclable.Root {
       let randomOffsetMin = -200; // Just choosed randomly.
       let randomOffsetMax = +200;
 
-      //!!! (2022/04/21 Remaked) Using Weights.Base.ValueBounds is more like real use case.
-      //let bAutoBounds = true;  // Image pixel channel value bounds are inside the real generated value bounds.
-      let bAutoBounds = false; // Image pixel channel value bounds are inside the default value bounds (i.e. Weights.Base.ValueBounds).
-      image = NumberImage.Base.create_bySequenceRandom( originalHeight, originalWidth, channelCount, randomOffsetMin, randomOffsetMax );
+      //!!! (2022/04/21 Remarked) Using Weights.Base.ValueBounds is more like real use case.
+      let bAutoBounds = true;  // Image pixel channel value bounds are inside the real generated value bounds.
+      //!!! (2022/07/13 Remarked) Using small ValueBounds may reduce floating-point accumulated error.
+      //let bAutoBounds = false; // Image pixel channel value bounds are inside the default value bounds (i.e. Weights.Base.ValueBounds).
+      image = NumberImage.Base.create_bySequenceRandom( originalHeight, originalWidth, channelCount, randomOffsetMin, randomOffsetMax,
+        bAutoBounds );
 
     // 2. The shrinked image requested.
     } else {
