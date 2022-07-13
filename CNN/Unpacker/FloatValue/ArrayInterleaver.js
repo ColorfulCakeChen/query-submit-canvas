@@ -145,7 +145,7 @@ class ArrayInterleaver {
       }
 
       fromIndex1 += lastAxisLength;
-      toIndex1 = ( toIndex2 + lastAxisLength )
+      toIndex1 = ( toIndex2 + lastAxisLength );
     }
   }
 
