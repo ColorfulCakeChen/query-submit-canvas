@@ -743,6 +743,7 @@ class Base extends Recyclable.Root {
     }
 
     let pointwise1ActivationName_shouldBe = ValueDesc.ActivationFunction.Singleton.getStringOf( pointwise1ActivationId_shouldBe );
+    let depthwise_AvgMax_Or_ChannelMultiplier_shouldBe = testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
       
     // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
     //
@@ -763,11 +764,20 @@ class Base extends Recyclable.Root {
       // no biases. Not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough. (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough)
       //
       } else { // ( 0 == testParams.out.pointwise1ChannelCount )
-        let pointwise1ChannelCount = ( testParams.out.input0_channelCount * 2 ); // As doubled input channel count.
-        asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
 
-        pointwise1Bias_shouldBe = false;
-        pointwise1ActivationId_shouldBe = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+        if (   ( bDepthwiseRequestedAndNeeded )
+            && ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == 1 ) ) { // Use depthwise to double channels.
+
+          depthwise_AvgMax_Or_ChannelMultiplier_shouldBe = 2;
+
+        } else { // Use pointwise1 to double channels.
+
+          let pointwise1ChannelCount = ( testParams.out.input0_channelCount * 2 ); // As doubled input channel count.
+          asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
+
+          pointwise1Bias_shouldBe = false;
+          pointwise1ActivationId_shouldBe = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+        }
       }
 
     } else {
@@ -793,7 +803,7 @@ class Base extends Recyclable.Root {
       }
     }
 
-    asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", testParams.out.depthwise_AvgMax_Or_ChannelMultiplier );
+    asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", depthwise_AvgMax_Or_ChannelMultiplier_shouldBe );
     asserter.propertyValue( "depthwiseFilterHeight", testParams.out.depthwiseFilterHeight );
     asserter.propertyValue( "depthwiseFilterWidth", testParams.out.depthwiseFilterWidth );
     asserter.propertyValue( "depthwiseStridesPad", testParams.out.depthwiseStridesPad );
