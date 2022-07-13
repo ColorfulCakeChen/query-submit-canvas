@@ -705,7 +705,7 @@ class Params extends Weights.Params {
     input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
-    depthwise_AvgMax_Or_ChannelMultiplier,
+    depthwise_AvgMax_Or_ChannelMultiplier, bDepthwiseRequestedAndNeeded,
     pointwise20_channelShuffler_outputGroupCount
   ) {
 
@@ -750,11 +750,10 @@ class Params extends Weights.Params {
             //       i.e. ( pointwise1_nHigherHalfDifferent
             //                == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH )
             //   - ( depthwise1_nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2 ) and 
-            //   - depthwise ( channelMultiplier == 1 )
+            //   - depthwise exists and ( channelMultiplier == 1 )
             //
-            if ( depthwise_AvgMax_Or_ChannelMultiplier == 1 ) {
-
-!!! ...unfinished... (2022/07/13) What about ( bDepthwiseRequestedAndNeeded == false )?
+            if (   ( bDepthwiseRequestedAndNeeded )
+                && ( depthwise_AvgMax_Or_ChannelMultiplier == 1 ) ) {
 
               // Use depthwise ( channelMultiplier == 2 ) could achieve almost the same effect but depthwise will look like
               // pre-channel-shuffled. So, in this case, pointwise1 (higher half copy lower, lower half pass through) could be
@@ -964,14 +963,15 @@ class Params extends Weights.Params {
       nActivationId
     );
       
-   // 6. nHigherHalfDifferent
-   Params.set_nHigherHalfDifferent_by.call( this,
-     input0_channelCount,
-     nConvBlockTypeId,
-     pointwise1ChannelCount,
-     depthwise_AvgMax_Or_ChannelMultiplier,
-     this.pointwise20_channelShuffler_outputGroupCount
-   );
+    // 6. nHigherHalfDifferent
+    Params.set_nHigherHalfDifferent_by.call( this,
+      input0_channelCount,
+      nConvBlockTypeId,
+      pointwise1ChannelCount,
+      depthwise_AvgMax_Or_ChannelMultiplier,
+      this.bDepthwiseRequestedAndNeeded,
+      this.pointwise20_channelShuffler_outputGroupCount
+    );
   }
 
   get input0_height()                        { return this.getParamValue_byParamDesc( Params.input0_height ); }
