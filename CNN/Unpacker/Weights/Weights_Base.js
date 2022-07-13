@@ -144,6 +144,13 @@ class Root extends Base() {
  *   - Color image: The R, G, B, A channels are 8 bits (2^8) individually.
  *   - Sound track: 8 bits (2^8), or 16 bits (2^16), or 20 bits (2^20), or 24 bits (2^24). But not 32 bits (2^32)
  *   - Unicode character code point: 21 bits (2^21).
+ *
+ * However, a large value bounds will generate more floating-point accumulated error especially when activation-escaping in
+ * ShuffleNetV2_byMobileNetV1. So use a just enough value bounds is better than always 2^24. For example,
+ *   - Color image: The R, G, B, A channels should use 8 bits (2^8) as value bounds.
+ *   - Sound track: should use 8 bits (2^8), or 16 bits (2^16), or 20 bits (2^20), or 24 bits (2^24).
+ *   - Unicode character code point: should use 21 bits (2^21).
+ *
  */
 Base.ValueBounds = new FloatValue.Bounds( -( 2 ** 24 ), +( 2 ** 24 ) );
 
