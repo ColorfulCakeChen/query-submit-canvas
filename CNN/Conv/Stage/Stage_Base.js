@@ -32,23 +32,23 @@ import { Params } from "./Stage_Params.js";
  * All types of stage will output an image whose channel count is twice of the input image's channel count. They all do
  * it at block0 but by different ways:
  *
- *   - MobileNetV1 (0)
+ *   - MobileNetV1 (0), MobileNetV1_padValid (1)
  *     - ( bPointwise1 == false ), depthwise1 double ( channelMultiplier == 2 ) of input0.
  *     - ( bPointwise1 == true ), pointwise1 double of input0.
- *
- *   - MobileNetV2 (1)
- *     - ( bPointwise1 == false ), depthwise1 quadruple ( channelMultiplier == 4 ) of input0. pointwis21 double of input0.
- *     - ( bPointwise1 == true ), pointwise1 quadruple of input0. pointwis21 double of input0.
  *
  *   - MobileNetV2_Thin (2)
  *     - ( bPointwise1 == false ), depthwise1 double ( channelMultiplier == 2 ) of input0. pointwis21 double of input0.
  *     - ( bPointwise1 == true ), pointwise1 double of input0. pointwis21 double of input0.
  *
- *   - ShuffleNetV2 (3), ShuffleNetV2_ByPointwise21 (4)
+ *   - MobileNetV2 (3)
+ *     - ( bPointwise1 == false ), depthwise1 quadruple ( channelMultiplier == 4 ) of input0. pointwis21 double of input0.
+ *     - ( bPointwise1 == true ), pointwise1 quadruple of input0. pointwis21 double of input0.
+ *
+ *   - ShuffleNetV2 (4), ShuffleNetV2_ByPointwise21 (5)
  *     - ( bPointwise1 == false ), depthwise1 double ( channelMultiplier == 2 ) of input0.
  *     - ( bPointwise1 == true ), concatenate depthwise1 and depthwise2.
  *
- *   - ShuffleNetV2_ByMobileNetV1 (5), ShuffleNetV2_ByMobileNetV1_padValid (6)
+ *   - ShuffleNetV2_ByMobileNetV1 (6), ShuffleNetV2_ByMobileNetV1_padValid (7)
  *     - ( bPointwise1 == false ), pointwise1 (lower half pass through, higher half copy input0) double of input0.
  *     - ( bPointwise1 == true ), pointwise1 (higher half copy input0) double of input0.
  *
