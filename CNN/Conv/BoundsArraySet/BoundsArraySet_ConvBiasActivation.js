@@ -408,8 +408,8 @@ class ConvBiasActivation extends InputsOutputs {
     {
       let bPassThroughShuffled = Recyclable.Array.Pool.get_or_create_by( this.bPassThrough.length );
 
-      FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongWidth_from_to(
-        this.bPassThrough, bPassThroughShuffled, 1, this.bPassThrough.length );
+      FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
+        this.bPassThrough, bPassThroughShuffled, this.bPassThrough.length );
 
       this.bPassThrough.disposeResources_and_recycleToPool();
       this.bPassThrough = bPassThroughShuffled;
