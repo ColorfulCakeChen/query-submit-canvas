@@ -42,8 +42,9 @@ function fill_numberArray( io_numberArray, randomOffsetMin = 0, randomOffsetMax 
   }
 
   if ( oBounds ) {
-    oBounds.set_byLowerUpper( 0, io_numberArray.length - 1 ); // Basically, value is between [ 0, ( io_numberArray.length - 1 ) ].
-    oBounds.add_byLowerUpper( randomOffsetMin, randomOffsetMax ); // Plus the random range.
+    oBounds
+      .set_byLowerUpper( 0, io_numberArray.length - 1 ) // Basically, value is between [ 0, ( io_numberArray.length - 1 ) ].
+      .add_byLowerUpper( randomOffsetMin, randomOffsetMax ); // Plus the random range.
   }
 
   return io_numberArray;
