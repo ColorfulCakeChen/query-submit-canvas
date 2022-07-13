@@ -425,7 +425,7 @@ class Base extends TestParams.Base {
    */
   use_pointwise1( inputImage, pointwise1ChannelCount, io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
     let result = inputImage.clone_byPointwise_NonPassThrough( pointwise1ChannelCount,
-      this.in.paramsNumberArrayObject.pointwise1Filters, this.out.inferencedParams.bPointwise1Bias,
+      this.in.paramsNumberArrayObject.pointwise1Filters, this.out.inferencedParams.pointwise1Bias,
       this.in.paramsNumberArrayObject.pointwise1Biases, this.out.inferencedParams.pointwise1ActivationId,
       parametersDesc, pointwiseName );
     io_imageNeedDisposeUniqueStack.push( inputImage );
@@ -442,7 +442,7 @@ class Base extends TestParams.Base {
    */
   use_pointwise1_PassThrough( inputImage, pointwise1ChannelCount, io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
     let result = inputImage.clone_byPointwise_PassThrough( pointwise1ChannelCount,
-      this.out.inferencedParams.bPointwise1Bias, this.out.inferencedParams.pointwise1ActivationId,
+      this.out.inferencedParams.pointwise1Bias, this.out.inferencedParams.pointwise1ActivationId,
       this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0, // SameWhenPassThrough.
       parametersDesc, pointwiseName );
@@ -460,7 +460,7 @@ class Base extends TestParams.Base {
   use_depthwise1( inputImage, io_imageNeedDisposeUniqueStack, depthwiseName, parametersDesc ) {
     let result = inputImage.clone_byDepthwise_NonPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
-      this.in.paramsNumberArrayObject.depthwise1Filters, this.out.inferencedParams.bDepthwiseBias,
+      this.in.paramsNumberArrayObject.depthwise1Filters, this.out.inferencedParams.depthwiseBias,
       this.in.paramsNumberArrayObject.depthwise1Biases, this.out.depthwiseActivationId,
       parametersDesc, depthwiseName );
     io_imageNeedDisposeUniqueStack.push( inputImage );
@@ -477,7 +477,7 @@ class Base extends TestParams.Base {
   use_depthwise1_PassThrough( inputImage, io_imageNeedDisposeUniqueStack, depthwiseName, parametersDesc ) {
     let result = inputImage.clone_byDepthwise_PassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
-      this.out.inferencedParams.bDepthwiseBias, this.out.depthwiseActivationId,
+      this.out.inferencedParams.depthwiseBias, this.out.depthwiseActivationId,
       this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0, // SameWhenPassThrough.
       parametersDesc, depthwiseName );
@@ -495,7 +495,7 @@ class Base extends TestParams.Base {
   use_depthwise2( inputImage, io_imageNeedDisposeUniqueStack, depthwiseName, parametersDesc ) {
     let result = inputImage.clone_byDepthwise_NonPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
-      this.in.paramsNumberArrayObject.depthwise2Filters, this.out.inferencedParams.bDepthwiseBias,
+      this.in.paramsNumberArrayObject.depthwise2Filters, this.out.inferencedParams.depthwiseBias,
       this.in.paramsNumberArrayObject.depthwise2Biases, this.out.depthwiseActivationId,
       parametersDesc, depthwiseName );
     io_imageNeedDisposeUniqueStack.push( inputImage );
@@ -528,7 +528,7 @@ class Base extends TestParams.Base {
     }
 
     let pointwiseOut = squeezeExcitationPrefixOut.clone_byPointwise_NonPassThrough( pointwise20ChannelCount,
-      this.in.paramsNumberArrayObject.pointwise20Filters, this.out.inferencedParams.bPointwise20Bias,
+      this.in.paramsNumberArrayObject.pointwise20Filters, this.out.inferencedParams.pointwise20Bias,
       this.in.paramsNumberArrayObject.pointwise20Biases, this.out.pointwise20ActivationId,
       parametersDesc, pointwiseName );
     io_imageNeedDisposeUniqueStack.push( squeezeExcitationPrefixOut );
@@ -553,7 +553,7 @@ class Base extends TestParams.Base {
 
   /**
    * Pointwise202 uses the same channel count, bias flag and activation function as Pointwise20 (i.e. pointwise20ChannelCount,
-   * bPointwise20Bias and pointwise20ActivationId), but uses different filters and biases weights (i.e. pointwise202Filters and
+   * pointwise20Bias and pointwise20ActivationId), but uses different filters and biases weights (i.e. pointwise202Filters and
    * pointwise202Biases)
    *
    * @param {NumberImage.Base} inputImage    The source image to be processed.
@@ -581,7 +581,7 @@ class Base extends TestParams.Base {
     }
 
     let pointwiseOut = squeezeExcitationPrefixOut.clone_byPointwise_NonPassThrough( pointwise20ChannelCount,
-      this.in.paramsNumberArrayObject.pointwise202Filters, this.out.inferencedParams.bPointwise20Bias,
+      this.in.paramsNumberArrayObject.pointwise202Filters, this.out.inferencedParams.pointwise20Bias,
       this.in.paramsNumberArrayObject.pointwise202Biases, this.out.pointwise20ActivationId,
       parametersDesc, pointwiseName );
     io_imageNeedDisposeUniqueStack.push( squeezeExcitationPrefixOut );
@@ -617,7 +617,7 @@ class Base extends TestParams.Base {
     // Note: Since pass-through, the squeeze-and-excitation is not necessary here.
 
     let result = inputImage.clone_byPointwise_PassThrough( pointwise20ChannelCount,
-      this.out.inferencedParams.bPointwise20Bias, this.out.pointwise20ActivationId,
+      this.out.inferencedParams.pointwise20Bias, this.out.pointwise20ActivationId,
       this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0, // SameWhenPassThrough.
       parametersDesc, pointwiseName );
@@ -651,7 +651,7 @@ class Base extends TestParams.Base {
     }
 
     let pointwiseOut = squeezeExcitationPrefixOut.clone_byPointwise_NonPassThrough( pointwise21ChannelCount,
-      this.in.paramsNumberArrayObject.pointwise21Filters, this.out.inferencedParams.bPointwise20Bias, // (Note: Not bPointwise21Bias)
+      this.in.paramsNumberArrayObject.pointwise21Filters, this.out.inferencedParams.pointwise20Bias, // (Note: Not pointwise21Bias)
       this.in.paramsNumberArrayObject.pointwise21Biases, this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
       parametersDesc, pointwiseName );
     io_imageNeedDisposeUniqueStack.push( squeezeExcitationPrefixOut );
@@ -1129,7 +1129,7 @@ class Base extends TestParams.Base {
 
     // 1. Pointwise1
     let pointwise1_resultOutputChannelCount = this.generate_pointwise_filters_biases( input0_channelCount_original,
-      pointwise1ChannelCount_original, paramsAll.inferencedParams.bPointwise1Bias,
+      pointwise1ChannelCount_original, paramsAll.inferencedParams.pointwise1Bias,
       Base.PropertyNames.pointwise1, io_paramsNumberArrayObject );
 
     // 2. Depthwise
@@ -1144,7 +1144,7 @@ class Base extends TestParams.Base {
       if ( paramsAll.inferencedParams.bDepthwiseRequestedAndNeeded ) {
         depthwise1_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise1_inputChannelCount,
           paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
-          paramsAll.depthwiseStridesPad, paramsAll.inferencedParams.bDepthwiseBias,
+          paramsAll.depthwiseStridesPad, paramsAll.inferencedParams.depthwiseBias,
           Base.PropertyNames.depthwise1, io_paramsNumberArrayObject );
       } else {
         depthwise1_resultOutputChannelCount = depthwise1_inputChannelCount;
@@ -1166,7 +1166,7 @@ class Base extends TestParams.Base {
         if ( paramsAll.inferencedParams.bDepthwiseRequestedAndNeeded ) {
           depthwise2_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise2_inputChannelCount,
             paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
-            paramsAll.depthwiseStridesPad, paramsAll.inferencedParams.bDepthwiseBias,
+            paramsAll.depthwiseStridesPad, paramsAll.inferencedParams.depthwiseBias,
             Base.PropertyNames.depthwise2, io_paramsNumberArrayObject );
         } else {
           depthwise2_resultOutputChannelCount = depthwise2_inputChannelCount;
@@ -1256,9 +1256,9 @@ class Base extends TestParams.Base {
     // 3.2 Pointwise21's Preparation.
     //
     // pointwise21's bias flag and activation function should always be the same as pointwise20's.
-    let bPointwise21Bias, nPointwise21ActivationId;
+    let pointwise21Bias, nPointwise21ActivationId;
     {
-      bPointwise21Bias = paramsAll.inferencedParams.bPointwise20Bias;
+      pointwise21Bias = paramsAll.inferencedParams.pointwise20Bias;
       nPointwise21ActivationId = paramsAll.pointwise20ActivationId;
     }
 
@@ -1288,18 +1288,18 @@ class Base extends TestParams.Base {
     //       to clear old them (because TestParams.Base.permuteParamRecursively() may not know them and may not clear them.
     {
       let pointwise20_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise20_inputChannelCount,
-        pointwise20_outputChannelCount, paramsAll.inferencedParams.bPointwise20Bias,
+        pointwise20_outputChannelCount, paramsAll.inferencedParams.pointwise20Bias,
         Base.PropertyNames.pointwise20, io_paramsNumberArrayObject );
 
       let pointwise202_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise202_inputChannelCount,
-        pointwise202_outputChannelCount, paramsAll.inferencedParams.bPointwise20Bias,
+        pointwise202_outputChannelCount, paramsAll.inferencedParams.pointwise20Bias,
         Base.PropertyNames.pointwise202, io_paramsNumberArrayObject );
     }
 
     // 5.2 Pointwise21
     {
       let pointwise21_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise21_inputChannelCount,
-        pointwise21_outputChannelCount, bPointwise21Bias, Base.PropertyNames.pointwise21, io_paramsNumberArrayObject );
+        pointwise21_outputChannelCount, pointwise21Bias, Base.PropertyNames.pointwise21, io_paramsNumberArrayObject );
     }
 
     // 6. Pointwise2's postfix squeeze-and-excitation
