@@ -751,7 +751,7 @@ class Base extends Recyclable.Root {
     // Assume not higher-half-different.
     let nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
     let outputChannelCount_lowerHalf_pointwise2 = undefined;
-    let pointwise20_channelShuffler_outputGroupCount = this.pointwise20_channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
+//    let pointwise20_channelShuffler_outputGroupCount = this.pointwise20_channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
 
     if ( this.bHigherHalfDifferent == true ) {
 
@@ -811,7 +811,7 @@ class Base extends Recyclable.Root {
         this.pointwise20ChannelCount, this.pointwise20Bias, this.pointwise20ActivationId,
         nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2,
         0, // No channelShuffler_inputGroupCount.
-        pointwise20_channelShuffler_outputGroupCount
+        this.pointwise20_channelShuffler_outputGroupCount
       );
 
       if ( !pointwise20.init( inputWeightArray, this.weightElementOffsetEnd ) )
@@ -835,7 +835,7 @@ class Base extends Recyclable.Root {
           this.pointwise21ChannelCount, this.pointwise21Bias, this.pointwise21ActivationId,
           nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2,
           0, // No channelShuffler_inputGroupCount.
-          pointwise20_channelShuffler_outputGroupCount
+          this.pointwise20_channelShuffler_outputGroupCount
         );
 
         // Note: Strictly speaking, sometimes pointwise21 is dependent on depthwise2. But it does not matter for BoundsArraySet
@@ -863,7 +863,7 @@ class Base extends Recyclable.Root {
     if ( !this.bSqueezeExcitationPrefix ) // (i.e. postfix)
       if ( !Base.operationArray_append_SqueezeExcitation.call( this,
               nHigherHalfDifferent_pointwise2, inputWeightArray,
-              pointwise20_channelShuffler_outputGroupCount, // Postfix squeeze-and-excitation's channels are shuffled along input channels.
+              this.pointwise20_channelShuffler_outputGroupCount, // Postfix squeeze-and-excitation's channels are shuffled along input channels.
             )
          )
         return false;  // e.g. input array does not have enough data.
