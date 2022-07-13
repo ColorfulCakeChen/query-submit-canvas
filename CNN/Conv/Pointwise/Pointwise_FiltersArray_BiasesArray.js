@@ -127,7 +127,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   constructor(
     inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
-     channelShuffler_inputGroupCount, channelShuffler_outputGroupCount,
+    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount,
     ...restArgs ) {
 
     super( ...restArgs );
