@@ -361,7 +361,10 @@ class Params extends Weights.Params {
 
   /** @override */
   disposeResources() {
-    this.depthwise_AvgMax_Or_ChannelMultiplier_modified = undefined;
+
+//!!! (2022/07/13 Remarked) Does not work.
+//    this.depthwise_AvgMax_Or_ChannelMultiplier_modified = undefined;
+
     this.pointwise1ChannelCount_modified = undefined;
     super.disposeResources();
   }
@@ -692,21 +695,28 @@ class Params extends Weights.Params {
    *   - this.pointwise1_inputChannelCount_lowerHalf
    *   - this.pointwise1_inputChannelCount_higherHalf
    *   - this.pointwise1_outputChannelCount_lowerHalf
-   *   - this.depthwise_AvgMax_Or_ChannelMultiplier_modified
+
+//!!! (2022/07/13 Remarked) Does not work.
+//    *   - this.depthwise_AvgMax_Or_ChannelMultiplier_modified
+
    *   - this.depthwise1_nHigherHalfDifferent
-   *   - this.depthwise1_inputChannelCount_lowerHalf
-   *   - this.depthwise1_channelShuffler_outputGroupCount
+
+//!!! (2022/07/13 Remarked) Does not work.
+//   *   - this.depthwise1_inputChannelCount_lowerHalf
+//    *   - this.depthwise1_channelShuffler_outputGroupCount
+
    *   - this.pointwise20_nHigherHalfDifferent
    *   - this.pointwise20_outputChannelCount_lowerHalf
-   *   - this.pointwise20_channelShuffler_outputGroupCount
    *
    */
   static set_nHigherHalfDifferent_by(
     input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
-    depthwise_AvgMax_Or_ChannelMultiplier, bDepthwiseRequestedAndNeeded,
-    pointwise20_channelShuffler_outputGroupCount
+
+//!!! (2022/07/13 Remarked) Does not work.
+//    depthwise_AvgMax_Or_ChannelMultiplier, bDepthwiseRequestedAndNeeded,
+//    pointwise20_channelShuffler_outputGroupCount
   ) {
 
     let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
@@ -718,9 +728,10 @@ class Params extends Weights.Params {
       this.pointwise1_inputChannelCount_higherHalf = undefined;
       this.pointwise1_outputChannelCount_lowerHalf = undefined;
 
-      this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE;
-      this.depthwise1_inputChannelCount_lowerHalf = undefined;
-      this.depthwise1_channelShuffler_outputGroupCount = 0; // (i.e. Whether Shuffle.)
+//!!! (2022/07/13 Remarked) Does not work.
+//       this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE;
+//       this.depthwise1_inputChannelCount_lowerHalf = undefined;
+//      this.depthwise1_channelShuffler_outputGroupCount = 0; // (i.e. Whether Shuffle.)
 
 //!!! ...unfinished... (2021/11/15) What if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
 
@@ -736,56 +747,66 @@ class Params extends Weights.Params {
             this.pointwise1_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF;
             this.pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount; // For depthwise1 (by specified channel count)
 
-            // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
-            this.pointwise1ChannelCount_modified = (
-                this.pointwise1_outputChannelCount_lowerHalf // For depthwise1.
-              + input0_channelCount                          // For depthwise2 (by depthwise1).
-            );
+//!!! (2022/07/13 Remarked) Does not work.
+//             // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
+//             this.pointwise1ChannelCount_modified = (
+//                 this.pointwise1_outputChannelCount_lowerHalf // For depthwise1.
+//               + input0_channelCount                          // For depthwise2 (by depthwise1).
+//             );
 
           } else {
 
-            // When
-            //   - ShuffleNetV2_byMobileNetV1_head and
-            //   - ( pointwise1ChannelCount == 0 )
-            //       i.e. ( pointwise1_nHigherHalfDifferent
-            //                == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH )
-            //   - ( depthwise1_nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2 ) and 
-            //   - depthwise exists and ( channelMultiplier == 1 )
-            //
-            if (   ( bDepthwiseRequestedAndNeeded )
-                && ( depthwise_AvgMax_Or_ChannelMultiplier == 1 ) ) {
 
-              // Use depthwise ( channelMultiplier == 2 ) could achieve almost the same effect but depthwise will look like
-              // pre-channel-shuffled. So, in this case, pointwise1 (higher half copy lower, lower half pass through) could be
-              // discarded. But the ( channelShuffler_inputGroupCount == 2 ) should be used for prefix squeeze-and-excitation
-              // and pointwise2. So that they could undo the depthwise's pre-channel-shuffling.
-              //
-              this.depthwise1_nHigherHalfDifferent
-                = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF_DEPTHWISE2;
+//!!! (2022/07/13 Remarked) Does not work.
+//             // When
+//             //   - ShuffleNetV2_byMobileNetV1_head and
+//             //   - ( pointwise1ChannelCount == 0 )
+//             //       i.e. ( pointwise1_nHigherHalfDifferent
+//             //                == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH )
+//             //   - ( depthwise1_nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2 ) and 
+//             //   - depthwise exists and ( channelMultiplier == 1 )
+//             //
+//             if (   ( bDepthwiseRequestedAndNeeded )
+//                 && ( depthwise_AvgMax_Or_ChannelMultiplier == 1 ) ) {
+//
+//               // Use depthwise ( channelMultiplier == 2 ) could achieve almost the same effect but depthwise will look like
+//               // pre-channel-shuffled. So, in this case, pointwise1 (higher half copy lower, lower half pass through) could be
+//               // discarded. But the ( channelShuffler_inputGroupCount == 2 ) should be used for prefix squeeze-and-excitation
+//               // and pointwise2. So that they could undo the depthwise's pre-channel-shuffling.
+//               //
+//               this.depthwise1_nHigherHalfDifferent
+//                 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF_DEPTHWISE2;
+//
+//               this.depthwise_AvgMax_Or_ChannelMultiplier_modified = 2;
+//               this.depthwise1_inputChannelCount_lowerHalf = input0_channelCount;
+//               this.depthwise1_channelShuffler_outputGroupCount = pointwise20_channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
+//
+//             } else {
 
-              this.depthwise_AvgMax_Or_ChannelMultiplier_modified = 2;
-              this.depthwise1_inputChannelCount_lowerHalf = input0_channelCount;
-              this.depthwise1_channelShuffler_outputGroupCount = pointwise20_channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
+            this.pointwise1_nHigherHalfDifferent
+              = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH;
 
-            } else {
+            // Since this is an almost copy operation, bias and activation is not necessary.
+            this.pointwise1Bias = false;
+            this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+            this.pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.pointwise1ActivationId );
 
-              this.pointwise1_nHigherHalfDifferent
-                = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH;
+            this.pointwise1_outputChannelCount_lowerHalf = input0_channelCount; // For depthwise1 (by pass-through-input-to-output)
 
-              // Since this is an almost copy operation, bias and activation is not necessary.
-              this.pointwise1Bias = false;
-              this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-              this.pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.pointwise1ActivationId );
-
-              this.pointwise1_outputChannelCount_lowerHalf = input0_channelCount; // For depthwise1 (by pass-through-input-to-output)
-
-              // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
-              this.pointwise1ChannelCount_modified = (
-                  this.pointwise1_outputChannelCount_lowerHalf // For depthwise1.
-                + input0_channelCount                          // For depthwise2 (by depthwise1).
-              );
-            }
+//!!! (2022/07/13 Remarked) Does not work.
+//               // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
+//               this.pointwise1ChannelCount_modified = (
+//                   this.pointwise1_outputChannelCount_lowerHalf // For depthwise1.
+//                 + input0_channelCount                          // For depthwise2 (by depthwise1).
+//               );
+//             }
           }
+
+          // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
+          this.pointwise1ChannelCount_modified = (
+              this.pointwise1_outputChannelCount_lowerHalf // For depthwise1.
+            + input0_channelCount                          // For depthwise2 (by depthwise1).
+          );
 
         // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
         // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
@@ -813,7 +834,10 @@ class Params extends Weights.Params {
     }
 
     // depthwise1
-    if ( this.depthwise1_nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ) { // If not yet determined.
+//!!! (2022/07/13 Remarked) Does not work.
+//    if ( this.depthwise1_nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ) { // If not yet determined.
+    {
+      this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE;
 
       if ( infoConvBlockType.bHigherHalfDifferent == true ) {
 
@@ -880,13 +904,19 @@ class Params extends Weights.Params {
    *   - this.pointwise1_inputChannelCount_higherHalf
    *   - this.pointwise1_outputChannelCount_lowerHalf
    *   - this.bLinear_between_depthwise_and_pointwise2
-   *   - this.depthwise_AvgMax_Or_ChannelMultiplier_modified
+
+//!!! (2022/07/13 Remarked) Does not work.
+//   *   - this.depthwise_AvgMax_Or_ChannelMultiplier_modified
+
    *   - this.depthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
    *   - this.depthwise1_nHigherHalfDifferent
-   *   - this.depthwise1_inputChannelCount_lowerHalf
-   *   - this.depthwise1_channelShuffler_outputGroupCount
+
+//!!! (2022/07/13 Remarked) Does not work.
+//   *   - this.depthwise1_inputChannelCount_lowerHalf
+//   *   - this.depthwise1_channelShuffler_outputGroupCount
+
    *   - this.bDepthwise2Requested
    *   - this.bConcat1Requested
    *   - this.bAddInputToOutputRequested
@@ -968,9 +998,11 @@ class Params extends Weights.Params {
       input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
-      depthwise_AvgMax_Or_ChannelMultiplier,
-      this.bDepthwiseRequestedAndNeeded,
-      this.pointwise20_channelShuffler_outputGroupCount
+
+//!!! (2022/07/13 Remarked) Does not work.
+//       depthwise_AvgMax_Or_ChannelMultiplier,
+//       this.bDepthwiseRequestedAndNeeded,
+//       this.pointwise20_channelShuffler_outputGroupCount
     );
   }
 
@@ -992,12 +1024,15 @@ class Params extends Weights.Params {
   }
 
   /** @return {number} The number version of the depthwise opertion. */
-  get depthwise_AvgMax_Or_ChannelMultiplier() {
-    if ( this.depthwise_AvgMax_Or_ChannelMultiplier_modified != undefined )
-      return this.depthwise_AvgMax_Or_ChannelMultiplier_modified;
-    else
-      return this.getParamValue_byParamDesc( Params.depthwise_AvgMax_Or_ChannelMultiplier );
-  }
+  get depthwise_AvgMax_Or_ChannelMultiplier() { return this.getParamValue_byParamDesc( Params.depthwise_AvgMax_Or_ChannelMultiplier ); }
+
+//!!! (2022/07/13 Remarked) Does not work.
+//   get depthwise_AvgMax_Or_ChannelMultiplier() {
+//     if ( this.depthwise_AvgMax_Or_ChannelMultiplier_modified != undefined )
+//       return this.depthwise_AvgMax_Or_ChannelMultiplier_modified;
+//     else
+//       return this.getParamValue_byParamDesc( Params.depthwise_AvgMax_Or_ChannelMultiplier );
+//   }
 
   /** @return {string} The string version of the depthwise opertion. */
   get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
