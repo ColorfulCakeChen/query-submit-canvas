@@ -350,11 +350,11 @@ class Base extends TestParams.Base {
 //      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min ],
 //      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
 
-      nSqueezeExcitationChannelCountDivisor: undefined,
-//       nSqueezeExcitationChannelCountDivisor: [
-//         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
-//         3
-//       ],
+//      nSqueezeExcitationChannelCountDivisor: undefined,
+      nSqueezeExcitationChannelCountDivisor: [
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+        3
+      ],
 
       pointwise20ActivationId:
         undefined,
