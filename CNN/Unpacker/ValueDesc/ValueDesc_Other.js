@@ -33,18 +33,21 @@ Pointwise_HigherHalfDifferent.Singleton = new Pointwise_HigherHalfDifferent;
 
 /** Describe id, range, name of the processing mode of depthwise convolution's higher half channels.
  *
- * Convert number value into integer between [ 0, 2 ] representing:
- *   - 0: NONE                     (normal depthwise convolution. no higher half different.)
- *   - 1: HIGHER_HALF_DEPTHWISE2   (depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
- *   - 2: HIGHER_HALF_PASS_THROUGH (depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
+ * Convert number value into integer between [ 0, 3 ] representing:
+ *   - 0: NONE                                    (normal depthwise convolution. no higher half different.)
+ *   - 1: HIGHER_HALF_DEPTHWISE2                  (depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
+ *   - 2: HIGHER_HALF_PASS_THROUGH                (depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
+ *   - 3: HIGHER_HALF_COPY_LOWER_HALF_DEPTHWISE2  (depthwise1 of ShuffleNetV2_ByMobileNetV1's head when ( pointwiseChannelCount == 0 )
+ *                                                   and ( depthwise_AvgMax_Or_ChannelMultiplier == 2 ) )
  */
 class Depthwise_HigherHalfDifferent extends Int {
 
   constructor() {
-    super( 0, 2, [
+    super( 0, 3, [
       "NONE",                     // (0)
       "HIGHER_HALF_DEPTHWISE2",   // (1)
       "HIGHER_HALF_PASS_THROUGH", // (2)
+      "HIGHER_HALF_COPY_LOWER_HALF_DEPTHWISE2", // (3)
     ] );
   }
 
