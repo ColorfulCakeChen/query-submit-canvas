@@ -745,7 +745,13 @@ class Params extends Weights.Params {
             //   - depthwise ( channelMultiplier == 1 )
             //
             if ( depthwise_AvgMax_Or_ChannelMultiplier == 1 ) {
-              
+
+!!! ...unfinished... (2022/07/13) seems not.
+              if ( ( input0_channelCount % 2 ) != 0 )
+                throw Error( `Block.Params.set_nHigherHalfDifferent_by(): `
+                  + `input0_channelCount ( ${input0_channelCount} ) must be even (i.e. divisible by 2).`
+                );
+
               // Use depthwise ( channelMultiplier == 2 ) could achieve almost the same effect but depthwise will look like
               // pre-channel-shuffled. So, in this case, pointwise1 (higher half copy lower, lower half pass through) could be
               // discarded. But the ( channelShuffler_inputGroupCount == 2 ) should be used for prefix squeeze-and-excitation
@@ -755,7 +761,8 @@ class Params extends Weights.Params {
               this.depthwise_AvgMax_Or_ChannelMultiplier_Name
                 = ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.getStringOf( this.depthwise_AvgMax_Or_ChannelMultiplier );
   
-              this.depthwise1_inputChannelCount_lowerHalf = input0_channelCount;
+!!! ...unfinished... (2022/07/13) seems not.
+              this.depthwise1_inputChannelCount_lowerHalf = input0_channelCount / 2;
               this.depthwise1_channelShuffler_outputGroupCount = pointwise20_channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
 
             } else {
