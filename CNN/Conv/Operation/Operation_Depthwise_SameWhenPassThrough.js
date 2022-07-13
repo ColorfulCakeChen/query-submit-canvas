@@ -27,14 +27,16 @@ class Depthwise_SameWhenPassThrough extends Depthwise {
     inputTensorPlaceholder0,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId,
-    nHigherHalfDifferent ) {
+    nHigherHalfDifferent,
+    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     super(
       inputTensorPlaceholder0,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
-      nHigherHalfDifferent );
+      nHigherHalfDifferent,
+      channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
     Depthwise_SameWhenPassThrough.setAsConstructor_self.call( this );
   }
@@ -44,14 +46,16 @@ class Depthwise_SameWhenPassThrough extends Depthwise {
     inputTensorPlaceholder0,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId,
-    nHigherHalfDifferent ) {
+    nHigherHalfDifferent,
+    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     super.setAsConstructor(
       inputTensorPlaceholder0,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
-      nHigherHalfDifferent );
+      nHigherHalfDifferent,
+      channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
     Depthwise_SameWhenPassThrough.setAsConstructor_self.call( this );
     return this;
