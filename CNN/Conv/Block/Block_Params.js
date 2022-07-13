@@ -717,6 +717,7 @@ class Params extends Weights.Params {
       this.pointwise1_inputChannelCount_higherHalf = undefined;
       this.pointwise1_outputChannelCount_lowerHalf = undefined;
 
+      this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE;
       this.depthwise1_inputChannelCount_lowerHalf = undefined;
       this.depthwise1_channelShuffler_outputGroupCount = 0; // (i.e. Whether Shuffle.)
 
@@ -746,23 +747,19 @@ class Params extends Weights.Params {
             //
             if ( depthwise_AvgMax_Or_ChannelMultiplier == 1 ) {
 
-!!! ...unfinished... (2022/07/13) seems not.
-              if ( ( input0_channelCount % 2 ) != 0 )
-                throw Error( `Block.Params.set_nHigherHalfDifferent_by(): `
-                  + `input0_channelCount ( ${input0_channelCount} ) must be even (i.e. divisible by 2).`
-                );
-
               // Use depthwise ( channelMultiplier == 2 ) could achieve almost the same effect but depthwise will look like
               // pre-channel-shuffled. So, in this case, pointwise1 (higher half copy lower, lower half pass through) could be
               // discarded. But the ( channelShuffler_inputGroupCount == 2 ) should be used for prefix squeeze-and-excitation
               // and pointwise2. So that they could undo the depthwise's pre-channel-shuffling.
               //
+              this.depthwise1_nHigherHalfDifferent
+                = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF_DEPTHWISE2;
+
               this.depthwise_AvgMax_Or_ChannelMultiplier = 2;
               this.depthwise_AvgMax_Or_ChannelMultiplier_Name
                 = ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.getStringOf( this.depthwise_AvgMax_Or_ChannelMultiplier );
   
-!!! ...unfinished... (2022/07/13) seems not.
-              this.depthwise1_inputChannelCount_lowerHalf = input0_channelCount / 2;
+              this.depthwise1_inputChannelCount_lowerHalf = input0_channelCount;
               this.depthwise1_channelShuffler_outputGroupCount = pointwise20_channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
 
             } else {
@@ -813,8 +810,7 @@ class Params extends Weights.Params {
     }
 
     // depthwise1
-    {
-      this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE;
+    if ( this.depthwise1_nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ) { // If not yet determined.
 
       if ( infoConvBlockType.bHigherHalfDifferent == true ) {
 
