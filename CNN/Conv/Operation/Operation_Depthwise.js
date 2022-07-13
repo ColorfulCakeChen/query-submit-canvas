@@ -60,14 +60,16 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     inputTensorPlaceholder0,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent ) {
+    nHigherHalfDifferent,
+    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     super(
       inputTensorPlaceholder0, null, 1,
       inputTensorPlaceholder0.height, inputTensorPlaceholder0.width, inputTensorPlaceholder0.channelCount,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf );
+      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf,
+      channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
     Depthwise.setAsConstructor_self.call( this );
   }
@@ -77,14 +79,16 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     inputTensorPlaceholder0,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent ) {
+    nHigherHalfDifferent,
+    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     super.setAsConstructor(
       inputTensorPlaceholder0, null, 1,
       inputTensorPlaceholder0.height, inputTensorPlaceholder0.width, inputTensorPlaceholder0.channelCount,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf );
+      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf,
+      channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
     Depthwise.setAsConstructor_self.call( this );
     return this;
