@@ -60,16 +60,14 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     inputTensorPlaceholder0,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent,
-    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
+    nHigherHalfDifferent ) {
 
     super(
       inputTensorPlaceholder0, null, 1,
       inputTensorPlaceholder0.height, inputTensorPlaceholder0.width, inputTensorPlaceholder0.channelCount,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf,
-      channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
+      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf );
 
     Depthwise.setAsConstructor_self.call( this );
   }
@@ -79,16 +77,14 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     inputTensorPlaceholder0,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent,
-    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
+    nHigherHalfDifferent ) {
 
     super.setAsConstructor(
       inputTensorPlaceholder0, null, 1,
       inputTensorPlaceholder0.height, inputTensorPlaceholder0.width, inputTensorPlaceholder0.channelCount,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf,
-      channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
+      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf );
 
     Depthwise.setAsConstructor_self.call( this );
     return this;
@@ -211,16 +207,6 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    * will or will not dispose its inputTensor.
    */
   setKeepInputTensor( bKeepInputTensor ) {
-
-//!!! (2022/06/23 Remarked) It seems no this problem now.
-//     // So that do nothing if disposeResources() has been called (i.e. .pfnOperation has been cleared).
-//     //
-//     // This could happen when Operation.TwinArray.disposeResources() which cause TensorPlaceholder.finalOperationOld.setKeepInputTensor()
-//     // called.
-//     //
-//     if ( !this.bInitOk )
-//       return;
-
     if ( bKeepInputTensor == this.bKeepInputTensor )
       return;
 
