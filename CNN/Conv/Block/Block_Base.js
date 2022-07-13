@@ -668,7 +668,8 @@ class Base extends Recyclable.Root {
           this.operationArray.endingInput0,
           this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
           this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
-          this.depthwise1_nHigherHalfDifferent
+          this.depthwise1_nHigherHalfDifferent,
+          ???channelShuffler_inputGroupCount, ???channelShuffler_outputGroupCount
         );
 
         if ( !depthwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
@@ -693,7 +694,8 @@ class Base extends Recyclable.Root {
           depthwise2_input0,
           this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
           this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
-          ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE // depthwise2 never has higher-half-different.
+          ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE, // depthwise2 never has higher-half-different.
+          ???channelShuffler_inputGroupCount, ???channelShuffler_outputGroupCount
         );
 
         if ( !depthwise2.init( inputWeightArray, this.weightElementOffsetEnd ) )
@@ -1210,7 +1212,8 @@ class Base extends Recyclable.Root {
         squeezeDepthwise0 = Operation.Depthwise_ConstantWhenPassThrough.Pool.get_or_create_by(
           this.operationArray.endingInput0,
           squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
-          squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent
+          squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent,
+          0, 0, // No channelShuffler_inputGroupCount, No channelShuffler_outputGroupCount. Because avg pooling can not do it.
         );
 
         if ( !squeezeDepthwise0.init( inputWeightArray, this.weightElementOffsetEnd ) )
@@ -1223,7 +1226,8 @@ class Base extends Recyclable.Root {
         squeezeDepthwise1 = Operation.Depthwise_ConstantWhenPassThrough.Pool.get_or_create_by(
           this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
           squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
-          squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent
+          squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent,
+          0, 0, // No channelShuffler_inputGroupCount, No channelShuffler_outputGroupCount. Because avg pooling can not do it.
         );
 
         if ( !squeezeDepthwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
