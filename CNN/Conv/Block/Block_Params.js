@@ -361,6 +361,8 @@ class Params extends Weights.Params {
 
   /** @override */
   disposeResources() {
+    this.depthwise_AvgMax_Or_ChannelMultiplier_modified = undefined;
+    this.pointwise1ChannelCount_modified = undefined;
     super.disposeResources();
   }
 
@@ -682,16 +684,15 @@ class Params extends Weights.Params {
 
   /**
    * Determine the following properties:
-   *   - this.pointwise1ChannelCount (may be adjusted)
-   *   - this.pointwise1Bias (may be adjusted)
-   *   - this.pointwise1ActivationId (may be adjusted)
-   *   - this.pointwise1ActivationName (may be adjusted)
+   *   - this.pointwise1ChannelCount_modified
+   *   - this.pointwise1Bias (may be modified)
+   *   - this.pointwise1ActivationId (may be modified)
+   *   - this.pointwise1ActivationName (may be modified)
    *   - this.pointwise1_nHigherHalfDifferent
    *   - this.pointwise1_inputChannelCount_lowerHalf
    *   - this.pointwise1_inputChannelCount_higherHalf
    *   - this.pointwise1_outputChannelCount_lowerHalf
-   *   - this.depthwise_AvgMax_Or_ChannelMultiplier (may be adjusted)
-   *   - this.depthwise_AvgMax_Or_ChannelMultiplier_Name (may be adjusted)
+   *   - this.depthwise_AvgMax_Or_ChannelMultiplier_modified
    *   - this.depthwise1_nHigherHalfDifferent
    *   - this.depthwise1_inputChannelCount_lowerHalf
    *   - this.depthwise1_channelShuffler_outputGroupCount
@@ -736,7 +737,7 @@ class Params extends Weights.Params {
             this.pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount; // For depthwise1 (by specified channel count)
 
             // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
-            this.pointwise1ChannelCount = (
+            this.pointwise1ChannelCount_modified = (
                 this.pointwise1_outputChannelCount_lowerHalf // For depthwise1.
               + input0_channelCount                          // For depthwise2 (by depthwise1).
             );
@@ -761,10 +762,7 @@ class Params extends Weights.Params {
               this.depthwise1_nHigherHalfDifferent
                 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF_DEPTHWISE2;
 
-              this.depthwise_AvgMax_Or_ChannelMultiplier = 2;
-              this.depthwise_AvgMax_Or_ChannelMultiplier_Name
-                = ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.getStringOf( this.depthwise_AvgMax_Or_ChannelMultiplier );
-  
+              this.depthwise_AvgMax_Or_ChannelMultiplier_modified = 2;
               this.depthwise1_inputChannelCount_lowerHalf = input0_channelCount;
               this.depthwise1_channelShuffler_outputGroupCount = pointwise20_channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
 
@@ -781,7 +779,7 @@ class Params extends Weights.Params {
               this.pointwise1_outputChannelCount_lowerHalf = input0_channelCount; // For depthwise1 (by pass-through-input-to-output)
 
               // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
-              this.pointwise1ChannelCount = (
+              this.pointwise1ChannelCount_modified = (
                   this.pointwise1_outputChannelCount_lowerHalf // For depthwise1.
                 + input0_channelCount                          // For depthwise2 (by depthwise1).
               );
@@ -862,7 +860,6 @@ class Params extends Weights.Params {
         }
       }
     }
-
   }
 
   /**
@@ -873,7 +870,7 @@ class Params extends Weights.Params {
    *   - this.input1_channelCount
    *   - this.bLinear_between_pointwise1_and_depthwise
    *   - this.bLinear_between_pointwise1_and_pointwise2
-   *   - this.pointwise1ChannelCount (may be adjusted)
+   *   - this.pointwise1ChannelCount_modified
    *   - this.pointwise1Bias
    *   - this.pointwise1ActivationId
    *   - this.pointwise1ActivationName
@@ -882,8 +879,7 @@ class Params extends Weights.Params {
    *   - this.pointwise1_inputChannelCount_higherHalf
    *   - this.pointwise1_outputChannelCount_lowerHalf
    *   - this.bLinear_between_depthwise_and_pointwise2
-   *   - this.depthwise_AvgMax_Or_ChannelMultiplier (may be adjusted)
-   *   - this.depthwise_AvgMax_Or_ChannelMultiplier_Name (may be adjusted)
+   *   - this.depthwise_AvgMax_Or_ChannelMultiplier_modified
    *   - this.depthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
@@ -986,10 +982,20 @@ class Params extends Weights.Params {
   /** @return {string} The string version of nConvBlockTypeId. */
   get nConvBlockTypeName()        { return Params.nConvBlockTypeId.getStringOfValue( this.nConvBlockTypeId ); }
 
-  get pointwise1ChannelCount()    { return this.getParamValue_byParamDesc( Params.pointwise1ChannelCount ); }
+  get pointwise1ChannelCount() {
+    if ( this.pointwise1ChannelCount_modified != undefined )
+      return this.pointwise1ChannelCount_modified;
+    else
+      return this.getParamValue_byParamDesc( Params.pointwise1ChannelCount );
+  }
 
   /** @return {number} The number version of the depthwise opertion. */
-  get depthwise_AvgMax_Or_ChannelMultiplier() { return this.getParamValue_byParamDesc( Params.depthwise_AvgMax_Or_ChannelMultiplier ); }
+  get depthwise_AvgMax_Or_ChannelMultiplier() {
+    if ( this.depthwise_AvgMax_Or_ChannelMultiplier_modified != undefined )
+      return this.depthwise_AvgMax_Or_ChannelMultiplier_modified;
+    else
+      return this.getParamValue_byParamDesc( Params.depthwise_AvgMax_Or_ChannelMultiplier );
+  }
 
   /** @return {string} The string version of the depthwise opertion. */
   get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
