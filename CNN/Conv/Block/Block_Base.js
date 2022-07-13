@@ -439,7 +439,8 @@ class Base extends Recyclable.Root {
     this.depthwiseActivationName = params.depthwiseActivationName;
     this.depthwise1_nHigherHalfDifferent = params.depthwise1_nHigherHalfDifferent;
     this.depthwise1_inputChannelCount_lowerHalf = params.depthwise1_inputChannelCount_lowerHalf;
-    this.depthwise1_channelShuffler_outputGroupCount = params.depthwise1_channelShuffler_outputGroupCount;
+//!!! (2022/07/13 Remarked) Does not work.
+//    this.depthwise1_channelShuffler_outputGroupCount = params.depthwise1_channelShuffler_outputGroupCount;
 
     this.pointwise20ChannelCount = params.pointwise20ChannelCount;
     this.pointwise20Bias = params.pointwise20Bias;
@@ -511,10 +512,6 @@ class Base extends Recyclable.Root {
       this.input0 = TensorPlaceholder.Base.Pool.get_or_create_by();
       this.input0.set_height_width_channelCount_scaleBoundsArray(
         this.input0_height, this.input0_width,
-
-//!!! (2022/07/12 Remarked) should be input higher half ( not ouput lower half ).
-//        this.input0_channelCount, inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
-
         this.input0_channelCount, this.pointwise1_inputChannelCount_lowerHalf, this.pointwise1_inputChannelCount_higherHalf,
         inputScaleBoundsArray0 );
 
@@ -587,7 +584,7 @@ class Base extends Recyclable.Root {
           this.depthwiseStridesPad, this.depthwiseBias, this.depthwiseActivationId,
           this.depthwise1_nHigherHalfDifferent,
           0, // No channelShuffler_inputGroupCount.
-          this.depthwise1_channelShuffler_outputGroupCount
+          0, // No cannelShuffler_outputGroupCount.
         );
 
         if ( !depthwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
@@ -667,7 +664,7 @@ class Base extends Recyclable.Root {
     if ( this.bSqueezeExcitationPrefix )
       if ( !Base.operationArray_append_SqueezeExcitation.call( this,
               this.pointwise20_nHigherHalfDifferent, inputWeightArray,
-              this.depthwise1_channelShuffler_outputGroupCount // Prefix squeeze-and-excitation's channels are shuffled if depthwise1 did.
+              0 // No channelShuffler_outputGroupCount.
             )
          )
         return false;  // e.g. input array does not have enough data.
@@ -697,7 +694,7 @@ class Base extends Recyclable.Root {
         this.operationArray.endingInput0,
         this.pointwise20ChannelCount, this.pointwise20Bias, this.pointwise20ActivationId,
         this.pointwise20_nHigherHalfDifferent, this.pointwise20_outputChannelCount_lowerHalf,
-        this.depthwise1_channelShuffler_outputGroupCount,
+        0, // No channelShuffler_inputGroupCount.
         this.pointwise20_channelShuffler_outputGroupCount
       );
 
@@ -721,7 +718,7 @@ class Base extends Recyclable.Root {
           pointwise21_input0,
           this.pointwise21ChannelCount, this.pointwise21Bias, this.pointwise21ActivationId,
           this.pointwise20_nHigherHalfDifferent, this.pointwise20_outputChannelCount_lowerHalf,
-          this.depthwise1_channelShuffler_outputGroupCount,
+          0, // No channelShuffler_inputGroupCount.
           this.pointwise20_channelShuffler_outputGroupCount
         );
 
