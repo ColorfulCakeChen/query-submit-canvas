@@ -67,6 +67,14 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *   The lower half channel count of input image. When ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ),
  * it will be used and must be a positive integer.
  *
+ * @member {number} channelShuffler_inputGroupCount
+ *   The input group count of the channel shuffler. Usually, it is used for undo previous operation's channel shuffling. If 0, the
+ * inputScaleBoundsArray will be used. If positive (only 2 is supported currently), the inputScaleBoundsArray.beforeChannelShuffled
+ * will be used.
+ *
+ * @member {number} channelShuffler_outputGroupCount
+ *   The output group count of the channel shuffler.
+ *
  * @member {number} tensorWeightCountTotal_internal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
  * weights, if they are used in tensors.
@@ -102,8 +110,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf,
-
-!!! ...unfinished... (2022/07/12) also needs channelShuffler_inputGroupCount, channelShuffler_outputGroupCount
+    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount,
 
     ...restArgs ) {
 
@@ -112,7 +119,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     FiltersArray_BiasesArray.setAsConstructor_self.call( this,
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf );
+      nHigherHalfDifferent, inputChannelCount_lowerHalf,
+      channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
   }
 
   /** @override */
@@ -120,6 +128,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf,
+    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount,
     ...restArgs ) {
 
     super.setAsConstructor(
@@ -128,7 +137,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     FiltersArray_BiasesArray.setAsConstructor_self.call( this,
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf );
+      nHigherHalfDifferent, inputChannelCount_lowerHalf,
+      channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
     return this;
   }
@@ -137,13 +147,16 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   static setAsConstructor_self(
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent, inputChannelCount_lowerHalf ) {
+    nHigherHalfDifferent, inputChannelCount_lowerHalf,
+    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     this.bBias = bBias;
     this.nActivationId = nActivationId;
     this.nPassThroughStyleId = nPassThroughStyleId;
     this.nHigherHalfDifferent = nHigherHalfDifferent;
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
+    this.channelShuffler_inputGroupCount = channelShuffler_inputGroupCount;
+    this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;      
 
     this.tensorWeightCountTotal_internal = 0;
 
@@ -230,6 +243,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     this.tensorWeightCountTotal_internal = undefined;
 
+    this.channelShuffler_outputGroupCount = undefined;
+    this.channelShuffler_inputGroupCount = undefined;
     this.inputChannelCount_lowerHalf = undefined;
     this.nHigherHalfDifferent = undefined;
     this.nPassThroughStyleId = undefined;
@@ -492,7 +507,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           // Initialize element value bounds (per channel). Determine .input and .afterUndoPreviousActivationEscaping
           //
           // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
-          this.boundsArraySet = BoundsArraySet.Depthwise.Pool.get_or_create_by( inputScaleBoundsArray, this.outputChannelCount );
+          this.boundsArraySet = BoundsArraySet.Depthwise.Pool.get_or_create_by(
+            inputScaleBoundsArray, this.outputChannelCount, this.channelShuffler_inputGroupCount );
         }
 
         // Round 1
@@ -527,8 +543,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             }
           }
         }
-
       }
+
+      // Shuffle channels.
+      //
+      // Pre-shuffle channels by shuffling the filters and biases.
+      this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo();
 
       {
         this.tensorWeightCountTotal_internal = 0;
