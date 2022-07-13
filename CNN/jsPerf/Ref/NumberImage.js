@@ -1118,7 +1118,7 @@ class Base extends Recyclable.Root {
     {
       let dataArrayShuffled = Recyclable.Array.Pool.get_or_create_by( this.dataArray.length );
 
-      FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongDepth_from_to(
+      FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
         this.dataArray, dataArrayShuffled, this.height, this.width, this.depth );
 
       this.dataArray.disposeResources_and_recycleToPool();
