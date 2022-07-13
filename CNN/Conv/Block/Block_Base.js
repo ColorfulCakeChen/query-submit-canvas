@@ -6,7 +6,6 @@ import * as ValueMax from "../../util/ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 //import * as Weights from "../../Unpacker/Weights.js";
-//import * as ChannelCountCalculator from "../ChannelCountCalculator.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as Operation from "../Operation.js";
 import { Params } from "./Block_Params.js";
@@ -424,6 +423,10 @@ class Base extends Recyclable.Root {
     this.pointwise1Bias = params.pointwise1Bias;
     this.pointwise1ActivationId = params.pointwise1ActivationId;
     this.pointwise1ActivationName = params.pointwise1ActivationName;
+    this.pointwise1_nHigherHalfDifferent = params.pointwise1_nHigherHalfDifferent;
+    this.pointwise1_inputChannelCount_lowerHalf = params.pointwise1_inputChannelCount_lowerHalf;
+    this.pointwise1_inputChannelCount_higherHalf = params.pointwise1_inputChannelCount_higherHalf;
+    this.pointwise1_outputChannelCount_lowerHalf = params.pointwise1_outputChannelCount_lowerHalf;
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = params.depthwise_AvgMax_Or_ChannelMultiplier;
     this.depthwise_AvgMax_Or_ChannelMultiplier_Name = params.depthwise_AvgMax_Or_ChannelMultiplier_Name;
@@ -435,11 +438,16 @@ class Base extends Recyclable.Root {
     this.depthwiseActivationId = params.depthwiseActivationId;
     this.depthwiseActivationName = params.depthwiseActivationName;
     this.depthwise1_nHigherHalfDifferent = params.depthwise1_nHigherHalfDifferent;
+    this.depthwise1_inputChannelCount_lowerHalf = params.depthwise1_inputChannelCount_lowerHalf;
+    this.depthwise1_channelShuffler_outputGroupCount = params.depthwise1_channelShuffler_outputGroupCount;
 
     this.pointwise20ChannelCount = params.pointwise20ChannelCount;
     this.pointwise20Bias = params.pointwise20Bias;
     this.pointwise20ActivationId = params.pointwise20ActivationId;
     this.pointwise20ActivationName = params.pointwise20ActivationName;
+    this.pointwise20_nHigherHalfDifferent = params.pointwise20_nHigherHalfDifferent;
+    this.pointwise20_outputChannelCount_lowerHalf = params.pointwise20_outputChannelCount_lowerHalf;
+    this.pointwise20_channelShuffler_outputGroupCount = params.pointwise20_channelShuffler_outputGroupCount;
 
     this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
     this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
@@ -466,7 +474,6 @@ class Base extends Recyclable.Root {
       this.bConcat2ShuffleSplitRequested = params.bConcat2ShuffleSplitRequested;
       this.bHigherHalfDifferent = params.bHigherHalfDifferent;
       this.bHigherHalfDepthwise2 = params.bHigherHalfDepthwise2;
-      this.pointwise20_channelShuffler_outputGroupCount = params.pointwise20_channelShuffler_outputGroupCount;
 
       this.pointwise21ChannelCount = params.pointwise21ChannelCount;
       this.pointwise21Bias = params.pointwise21Bias;
@@ -493,95 +500,7 @@ class Base extends Recyclable.Root {
 
     // 2.1 Prepare Input TensorPlaceholder and Operation Array.
 
-    // 2.1.1 Prepare partial pointwise1 arguments.
-
-//!!! ...unfinished... (2022/06/14)
-// Perhaps, moved to Block.Params.set_Xxx_by()
-// inputHeight1, inputWidth1, 
-// inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1
-
-
-    // Assume not higher-half-different.
-    let nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
-    let inputChannelCount_lowerHalf_pointwise1 = undefined;
-    let outputChannelCount_lowerHalf_pointwise1 = undefined;
-
-    let depthwise1_channelShuffler_outputGroupCount = 0; // (i.e. Whether Shuffle.)
-
-//!!! ...unfinished... (2021/11/15) What if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
-
-    if ( this.bHigherHalfDifferent == true ) {
-
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
-      // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's head)
-      if ( this.bHigherHalfDepthwise2 == true ) {
-
-        inputChannelCount_lowerHalf_pointwise1 = this.input0_channelCount;
-
-        if ( this.pointwise1ChannelCount > 0 ) {
-          nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF;
-          outputChannelCount_lowerHalf_pointwise1 = this.pointwise1ChannelCount; // For depthwise1 (by specified channel count)
-
-        } else {
-
-!!! ...unfinished... (2022/07/12)
-// when
-//   - ShuffleNetV2_byMobileNetV1_head and
-//   - (pointwise1ChannelCount == 0 )
-//       i.e. ( nHigherHalfDifferent_pointwise1
-//                == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH )
-//   - ( nHigherHalfDifferent_depthwise1 == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2 ) and 
-//   - depthwise ( channelMultiplier == 1 )
-//
-// Use depthwise ( channelMultiplier == 2 ) could achieve almost the same effect but depthwise is pre-channel-shuffled.
-// So, in this case, pointwise1 (higher half copy lower, lower half pass through) could be discarded. But
-// the ( channelShuffler_inputGroupCount == 2 ) should be used for prefix squeeze-and-excitation and pointwise2. So that
-// they could undo the depthwise's pre-channel-shuffling.
-//
-// depthwise1_channelShuffler_outputGroupCount = this.pointwise20_channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
-//
-// Problem: When depthwise from ( channelMultiplier == 1 ) to ( channelMultiplier == 2 ), what about the filters weights?
-//
-//
-
-          nHigherHalfDifferent_pointwise1
-            = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH;
-
-          // Since this is an almost copy operation, bias and activation is not necessary.
-          this.pointwise1Bias = false;
-          this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-
-          outputChannelCount_lowerHalf_pointwise1 = this.input0_channelCount; // For depthwise1 (by pass-through-input-to-output)
-        }
-
-        // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
-        this.pointwise1ChannelCount
-          = (  outputChannelCount_lowerHalf_pointwise1 // For depthwise1.
-             + this.input0_channelCount                // For depthwise2 (by depthwise1).
-            );
-
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
-      // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
-      } else {
-
-        // So that bHigherHalfPassThrough (or bAllPassThrough).
-        nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
-
-        let pointwise1_higherHalfPassThrough = ChannelCountCalculator.HigherHalfPassThrough.Pool.get_or_create_by(
-          this.input0_channelCount, this.pointwise1ChannelCount );
-
-        inputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.inputChannelCount_lowerHalf;
-        outputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
-
-        pointwise1_higherHalfPassThrough.disposeResources_and_recycleToPool();
-        pointwise1_higherHalfPassThrough = null;
-      }
-
-    // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
-    }
-
-    // 2.1.2 Create inputs tensor placeholders and sub operation array.
+    // Create inputs tensor placeholders and sub operation array.
     {
       if ( inputScaleBoundsArray0.length != this.input0_channelCount )
         throw Error( `Block.Base.initer(): `
@@ -589,16 +508,14 @@ class Base extends Recyclable.Root {
           + `input0's channel count ( ${this.input0_channelCount} ).`
         );
 
-      let inputChannelCount_higherHalf_pointwise1 = this.input0_channelCount - inputChannelCount_lowerHalf_pointwise1;
-
       this.input0 = TensorPlaceholder.Base.Pool.get_or_create_by();
       this.input0.set_height_width_channelCount_scaleBoundsArray(
         this.input0_height, this.input0_width,
 
 //!!! (2022/07/12 Remarked) should be input higher half ( not ouput lower half ).
 //        this.input0_channelCount, inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
-        this.input0_channelCount, inputChannelCount_lowerHalf_pointwise1, inputChannelCount_higherHalf_pointwise1,
 
+        this.input0_channelCount, this.pointwise1_inputChannelCount_lowerHalf, this.pointwise1_inputChannelCount_higherHalf,
         inputScaleBoundsArray0 );
 
       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY (3) )
@@ -635,8 +552,8 @@ class Base extends Recyclable.Root {
       let pointwise1 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
         this.operationArray.endingInput0,
         this.pointwise1ChannelCount, this.pointwise1Bias, this.pointwise1ActivationId,
-        nHigherHalfDifferent_pointwise1,
-        outputChannelCount_lowerHalf_pointwise1,
+        this.pointwise1nHigherHalfDifferent,
+        this.pointwise1_outputChannelCount_lowerHalf,
         0, // Default channelShuffler_inputGroupCount for pointwise1 is zero (never positive).
         0  // Default channelShuffler_outputGroupCount for pointwise1 is zero (never positive).
       );
@@ -669,7 +586,8 @@ class Base extends Recyclable.Root {
           this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
           this.depthwiseStridesPad, this.depthwiseBias, this.depthwiseActivationId,
           this.depthwise1_nHigherHalfDifferent,
-          ???channelShuffler_inputGroupCount, ???channelShuffler_outputGroupCount
+          0, // No channelShuffler_inputGroupCount.
+          this.depthwise1_channelShuffler_outputGroupCount
         );
 
         if ( !depthwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
@@ -695,7 +613,7 @@ class Base extends Recyclable.Root {
           this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
           this.depthwiseStridesPad, this.depthwiseBias, this.depthwiseActivationId,
           ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE, // depthwise2 never has higher-half-different.
-          ???channelShuffler_inputGroupCount, ???channelShuffler_outputGroupCount
+          0, 0 // No channelShuffler_inputGroupCount, No channelShuffler_outputGroupCount.
         );
 
         if ( !depthwise2.init( inputWeightArray, this.weightElementOffsetEnd ) )
@@ -746,41 +664,10 @@ class Base extends Recyclable.Root {
 
     // 5. The squeeze-and-excitation prefix pointwise2
 
-    // 5.1 Determine Pointwise_HigherHalfDifferent. (Both squeeze-and-excitation and pointwise2 needs it.)
-
-    // Assume not higher-half-different.
-    let nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
-    let outputChannelCount_lowerHalf_pointwise2 = undefined;
-//    let pointwise20_channelShuffler_outputGroupCount = this.pointwise20_channelShuffler_outputGroupCount; // (i.e. Whether Shuffle.)
-
-    if ( this.bHigherHalfDifferent == true ) {
-
-      // In this case, it should be according to half of pointwise20ChannelCount (just like pointwise1).
-      // Note: Unlike pointwise1ChannelCount (which may be zero), pointwise20ChannelCount is always positive.
-      outputChannelCount_lowerHalf_pointwise2 = Math.ceil( this.pointwise20ChannelCount / 2 );
-
-      // For bHigherHalfAnotherPointwise(Shuffle) (i.e. ( pointwise20ChannelCount > 0 ) ).
-      //
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
-      // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's head)
-      if ( this.bHigherHalfDepthwise2 == true ) {
-        nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE;
-
-      // For bHigherHalfPassThrough(Shuffle) (i.e. ( pointwise20ChannelCount > 0 ) ).
-      //
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
-      // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
-      } else {
-        nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
-      }
-    }
-
-    // 5.2 The squeeze-and-excitation prefix pointwise2
     if ( this.bSqueezeExcitationPrefix )
       if ( !Base.operationArray_append_SqueezeExcitation.call( this,
-              nHigherHalfDifferent_pointwise2, inputWeightArray,
-              depthwise1_channelShuffler_outputGroupCount // Prefix squeeze-and-excitation's channels are shuffled if depthwise1 did.
+              this.pointwise2_nHigherHalfDifferent, inputWeightArray,
+              this.depthwise1_channelShuffler_outputGroupCount // Prefix squeeze-and-excitation's channels are shuffled if depthwise1 did.
             )
          )
         return false;  // e.g. input array does not have enough data.
@@ -809,8 +696,8 @@ class Base extends Recyclable.Root {
       let pointwise20 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
         this.operationArray.endingInput0,
         this.pointwise20ChannelCount, this.pointwise20Bias, this.pointwise20ActivationId,
-        nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2,
-        0, // No channelShuffler_inputGroupCount.
+        this.pointwise2_nHigherHalfDifferent, this.pointwise2_outputChannelCount_lowerHalf,
+        this.depthwise1_channelShuffler_outputGroupCount,
         this.pointwise20_channelShuffler_outputGroupCount
       );
 
@@ -833,8 +720,8 @@ class Base extends Recyclable.Root {
         pointwise21 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
           pointwise21_input0,
           this.pointwise21ChannelCount, this.pointwise21Bias, this.pointwise21ActivationId,
-          nHigherHalfDifferent_pointwise2, outputChannelCount_lowerHalf_pointwise2,
-          0, // No channelShuffler_inputGroupCount.
+          this.pointwise2_nHigherHalfDifferent, this.pointwise2_outputChannelCount_lowerHalf,
+          this.depthwise1_channelShuffler_outputGroupCount,
           this.pointwise20_channelShuffler_outputGroupCount
         );
 
@@ -862,8 +749,8 @@ class Base extends Recyclable.Root {
     // 7.1
     if ( !this.bSqueezeExcitationPrefix ) // (i.e. postfix)
       if ( !Base.operationArray_append_SqueezeExcitation.call( this,
-              nHigherHalfDifferent_pointwise2, inputWeightArray,
-              this.pointwise20_channelShuffler_outputGroupCount, // Postfix squeeze-and-excitation's channels are shuffled along input channels.
+              this.pointwise2_nHigherHalfDifferent, inputWeightArray,
+              this.pointwise20_channelShuffler_outputGroupCount // Postfix squeeze-and-excitation's channels are shuffled if pointwise2 did.
             )
          )
         return false;  // e.g. input array does not have enough data.
