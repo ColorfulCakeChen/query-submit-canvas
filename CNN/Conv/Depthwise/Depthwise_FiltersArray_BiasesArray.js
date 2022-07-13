@@ -67,14 +67,6 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *   The lower half channel count of input image. When ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ),
  * it will be used and must be a positive integer.
  *
- * @member {number} channelShuffler_inputGroupCount
- *   The input group count of the channel shuffler. Usually, it is used for undo previous operation's channel shuffling. If 0, the
- * inputScaleBoundsArray will be used. If positive (only 2 is supported currently), the inputScaleBoundsArray.beforeChannelShuffled
- * will be used.
- *
- * @member {number} channelShuffler_outputGroupCount
- *   The output group count of the channel shuffler.
- *
  * @member {number} tensorWeightCountTotal_internal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
  * weights, if they are used in tensors.
@@ -110,8 +102,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf,
-    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount,
-
     ...restArgs ) {
 
     super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs );
@@ -119,8 +109,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     FiltersArray_BiasesArray.setAsConstructor_self.call( this,
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf,
-      channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
+      nHigherHalfDifferent, inputChannelCount_lowerHalf );
   }
 
   /** @override */
@@ -128,7 +117,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf,
-    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount,
     ...restArgs ) {
 
     super.setAsConstructor(
@@ -137,8 +125,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     FiltersArray_BiasesArray.setAsConstructor_self.call( this,
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf,
-      channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
+      nHigherHalfDifferent, inputChannelCount_lowerHalf );
 
     return this;
   }
@@ -147,16 +134,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   static setAsConstructor_self(
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent, inputChannelCount_lowerHalf,
-    channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
+    nHigherHalfDifferent, inputChannelCount_lowerHalf ) {
 
     this.bBias = bBias;
     this.nActivationId = nActivationId;
     this.nPassThroughStyleId = nPassThroughStyleId;
     this.nHigherHalfDifferent = nHigherHalfDifferent;
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
-    this.channelShuffler_inputGroupCount = channelShuffler_inputGroupCount;
-    this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;      
 
     this.tensorWeightCountTotal_internal = 0;
 
@@ -243,8 +227,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     this.tensorWeightCountTotal_internal = undefined;
 
-    this.channelShuffler_outputGroupCount = undefined;
-    this.channelShuffler_inputGroupCount = undefined;
     this.inputChannelCount_lowerHalf = undefined;
     this.nHigherHalfDifferent = undefined;
     this.nPassThroughStyleId = undefined;
@@ -438,42 +420,43 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               );
               break;
 
-            case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF_DEPTHWISE2: // (3)
-
-              if ( this.AvgMax_Or_ChannelMultiplier != 2 )
-                throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfCopyLowerHalfDepthwise2(): `
-                  + `AvgMax_Or_ChannelMultiplier ( ${this.AvgMax_Or_ChannelMultiplier} ) must be 2. `
-                  + `So that higher-half can copy lower-half.` );
-
-              if ( !( this.inputChannelCount_lowerHalf > 0 ) )
-                throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfCopyLowerHalfDepthwise2(): `
-                  + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.` );
-
-              if ( this.inputChannelCount_higherHalf != 0 )
-                throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfCopyLowerHalfDepthwise2(): `
-                  + `inputChannelCount_higherHalf ( ${this.inputChannelCount_higherHalf} ) must be zero.` );
-
-              if ( this.channelShuffler_outputGroupCount != 2 )
-                throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfCopyLowerHalfDepthwise2(): `
-                  + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) must be 2. `
-                  + `Otherwise, higher-half does not copy lower-half.` );
-
-              this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf;
-              this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
-
-              // Extract filters and biases for the specified channel count, but in different sequence.
-              this.inputChannelCount_toBeExtracted = this.inputChannelCount;
-              this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-
-              aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
-                FiltersBiasesPartInfo.Pool.get_or_create_by(
-                  ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf )
-                ),
-                FiltersBiasesPartInfo.Pool.get_or_create_by(
-                  ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf ) // (Note: not inputChannelCount_higherHalf)
-                )
-              );
-              break;
+//!!! (2022/07/13 Remarked) Does not work.
+//             case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF_DEPTHWISE2: // (3)
+//
+//               if ( this.AvgMax_Or_ChannelMultiplier != 2 )
+//                 throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfCopyLowerHalfDepthwise2(): `
+//                   + `AvgMax_Or_ChannelMultiplier ( ${this.AvgMax_Or_ChannelMultiplier} ) must be 2. `
+//                   + `So that higher-half can copy lower-half.` );
+//
+//               if ( !( this.inputChannelCount_lowerHalf > 0 ) )
+//                 throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfCopyLowerHalfDepthwise2(): `
+//                   + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.` );
+//
+//               if ( this.inputChannelCount_higherHalf != 0 )
+//                 throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfCopyLowerHalfDepthwise2(): `
+//                   + `inputChannelCount_higherHalf ( ${this.inputChannelCount_higherHalf} ) must be zero.` );
+//
+//               if ( this.channelShuffler_outputGroupCount != 2 )
+//                 throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfCopyLowerHalfDepthwise2(): `
+//                   + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) must be 2. `
+//                   + `Otherwise, higher-half does not copy lower-half.` );
+//
+//               this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf;
+//               this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+//
+//               // Extract filters and biases for the specified channel count, but in different sequence.
+//               this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+//               this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+//
+//               aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
+//                 FiltersBiasesPartInfo.Pool.get_or_create_by(
+//                   ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf )
+//                 ),
+//                 FiltersBiasesPartInfo.Pool.get_or_create_by(
+//                   ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf ) // (Note: not inputChannelCount_higherHalf)
+//                 )
+//               );
+//               break;
 
             default:
               throw Error(
@@ -543,7 +526,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           //
           // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
           this.boundsArraySet = BoundsArraySet.Depthwise.Pool.get_or_create_by(
-            inputScaleBoundsArray, this.outputChannelCount, this.channelShuffler_inputGroupCount );
+            inputScaleBoundsArray, this.outputChannelCount );
+
+//!!! (2022/07/13 Remarked) Does not work.
+//            inputScaleBoundsArray, this.outputChannelCount, this.channelShuffler_inputGroupCount );
         }
 
         // Round 1
@@ -580,10 +566,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         }
       }
 
-      // Shuffle channels.
-      //
-      // Pre-shuffle channels by shuffling the filters and biases.
-      this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo();
+//!!! (2022/07/13 Remarked) Does not work.
+//       // Shuffle channels.
+//       //
+//       // Pre-shuffle channels by shuffling the filters and biases.
+//       this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo();
 
       {
         this.tensorWeightCountTotal_internal = 0;
@@ -870,83 +857,84 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   }
 
 
-  /**
-   * Shuffle (.filtersArray, .biasesArray, .boundsArraySet) by interleaving.
-   *   - Only ( outputGroupCount == 2 ) is supported.
-   *   - The input channel count must be even (i.e. divisible by 2), if ( .channelShuffler_inputGroupCount > 0 ).
-   *   - The output channel count must be even (i.e. divisible by 2), if ( .channelShuffler_outputGroupCount > 0 ).
-   */
-  set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo() {
-    
-    // 1.Shuffle along input channels.
-    if ( this.channelShuffler_inputGroupCount > 0 ) {
-
-      if ( this.channelShuffler_inputGroupCount != 2 )
-        throw Error( `Depthwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
-          + `channelShuffler_inputGroupCount ( ${this.channelShuffler_inputGroupCount} ) only 2 is supported.`
-        );
-
-      if ( ( this.inputChannelCount % 2 ) != 0 )
-        throw Error( `Depthwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
-          + `input channel count ( ${this.inputChannelCount} ) must be even (i.e. divisible by 2).`
-        );
-
-      // Shuffle filters.
-      if ( this.filtersArray ) {
-        let filtersArrayShuffled = Recyclable.Array.Pool.get_or_create_by( this.filtersArray.length );
-
-        FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLast2ndAxis_from_to(
-          this.filtersArray, filtersArrayShuffled, this.filterHeight, this.filterWidth, this.inputChannelCount, this.outputChannelCount );
-
-        this.filtersArray.disposeResources_and_recycleToPool();
-        this.filtersArray = filtersArrayShuffled;
-      }
-
-      // Because its channel shuffling is undone before filters and biases weights extracting, redo it to restore to its original order.
-      this.boundsArraySet.set_afterUndoPreviousActivationEscaping_by_Interleave_asGrouptTwo();
-
-      // Note: biases and other BoundsArraySet.afterXxx are not affected because they are along output channels (i.e. not
-      //       along input channels).
-    }
-
-    // 2. Shuffle along output channels.
-    if ( this.channelShuffler_outputGroupCount > 0 ) {
-
-      if ( this.channelShuffler_outputGroupCount != 2 )
-        throw Error( `Depthwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
-          + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) only 2 is supported.`
-        );
-
-      if ( ( this.outputChannelCount % 2 ) != 0 )
-        throw Error( `Depthwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
-          + `output channel count ( ${this.outputChannelCount} ) must be even (i.e. divisible by 2).`
-        );
-
-      // Shuffle filters.
-      if ( this.filtersArray ) {
-        let filtersArrayShuffled = Recyclable.Array.Pool.get_or_create_by( this.filtersArray.length );
-
-        FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
-          this.filtersArray, filtersArrayShuffled, this.filterHeight, this.filterWidth, this.inputChannelCount, this.outputChannelCount );
-
-        this.filtersArray.disposeResources_and_recycleToPool();
-        this.filtersArray = filtersArrayShuffled;
-      }
-
-      // Shuffle biases.
-      if ( this.biasesArray ) {
-        let biasesArrayShuffled = Recyclable.Array.Pool.get_or_create_by( this.biasesArray.length );
-
-        FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
-          this.biasesArray, biasesArrayShuffled, this.outputChannelCount );
-
-        this.biasesArray.disposeResources_and_recycleToPool();
-        this.biasesArray = biasesArrayShuffled;
-      }
-
-      this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo(); // Shuffle bounds array set of output.
-    }
-  }
+//!!! (2022/07/13 Remarked) Does not work.
+//   /**
+//    * Shuffle (.filtersArray, .biasesArray, .boundsArraySet) by interleaving.
+//    *   - Only ( outputGroupCount == 2 ) is supported.
+//    *   - The input channel count must be even (i.e. divisible by 2), if ( .channelShuffler_inputGroupCount > 0 ).
+//    *   - The output channel count must be even (i.e. divisible by 2), if ( .channelShuffler_outputGroupCount > 0 ).
+//    */
+//   set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo() {
+//  
+//     // 1.Shuffle along input channels.
+//     if ( this.channelShuffler_inputGroupCount > 0 ) {
+//
+//       if ( this.channelShuffler_inputGroupCount != 2 )
+//         throw Error( `Depthwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
+//           + `channelShuffler_inputGroupCount ( ${this.channelShuffler_inputGroupCount} ) only 2 is supported.`
+//         );
+//
+//       if ( ( this.inputChannelCount % 2 ) != 0 )
+//         throw Error( `Depthwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
+//           + `input channel count ( ${this.inputChannelCount} ) must be even (i.e. divisible by 2).`
+//         );
+//
+//       // Shuffle filters.
+//       if ( this.filtersArray ) {
+//         let filtersArrayShuffled = Recyclable.Array.Pool.get_or_create_by( this.filtersArray.length );
+//
+//         FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLast2ndAxis_from_to(
+//           this.filtersArray, filtersArrayShuffled, this.filterHeight, this.filterWidth, this.inputChannelCount, this.outputChannelCount );
+//
+//         this.filtersArray.disposeResources_and_recycleToPool();
+//         this.filtersArray = filtersArrayShuffled;
+//       }
+//
+//       // Because its channel shuffling is undone before filters and biases weights extracting, redo it to restore to its original order.
+//       this.boundsArraySet.set_afterUndoPreviousActivationEscaping_by_Interleave_asGrouptTwo();
+//
+//       // Note: biases and other BoundsArraySet.afterXxx are not affected because they are along output channels (i.e. not
+//       //       along input channels).
+//     }
+//
+//     // 2. Shuffle along output channels.
+//     if ( this.channelShuffler_outputGroupCount > 0 ) {
+//
+//       if ( this.channelShuffler_outputGroupCount != 2 )
+//         throw Error( `Depthwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
+//           + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) only 2 is supported.`
+//         );
+//
+//       if ( ( this.outputChannelCount % 2 ) != 0 )
+//         throw Error( `Depthwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
+//           + `output channel count ( ${this.outputChannelCount} ) must be even (i.e. divisible by 2).`
+//         );
+//
+//       // Shuffle filters.
+//       if ( this.filtersArray ) {
+//         let filtersArrayShuffled = Recyclable.Array.Pool.get_or_create_by( this.filtersArray.length );
+//
+//         FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
+//           this.filtersArray, filtersArrayShuffled, this.filterHeight, this.filterWidth, this.inputChannelCount, this.outputChannelCount );
+//
+//         this.filtersArray.disposeResources_and_recycleToPool();
+//         this.filtersArray = filtersArrayShuffled;
+//       }
+//
+//       // Shuffle biases.
+//       if ( this.biasesArray ) {
+//         let biasesArrayShuffled = Recyclable.Array.Pool.get_or_create_by( this.biasesArray.length );
+//
+//         FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
+//           this.biasesArray, biasesArrayShuffled, this.outputChannelCount );
+//
+//         this.biasesArray.disposeResources_and_recycleToPool();
+//         this.biasesArray = biasesArrayShuffled;
+//       }
+//
+//       this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo(); // Shuffle bounds array set of output.
+//     }
+//   }
 
 
   get bHigherHalfDifferent() {
