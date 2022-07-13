@@ -29,8 +29,8 @@ import { Params } from "./Stage_Params.js";
  *
  * 2. Double channels
  *
- * All types of stage will output an image whose channel count is twice of the input image's channel count. But they all do
- * it at block0 but with different ways:
+ * All types of stage will output an image whose channel count is twice of the input image's channel count. They all do
+ * it at block0 but by different ways:
  *
  *   - MobileNetV1 (0)
  *     - ( bPointwise1 == false ), depthwise1 double ( channelMultiplier == 2 ) of input0.
