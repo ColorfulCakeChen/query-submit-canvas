@@ -13,7 +13,7 @@ import * as Depthwise from "../Depthwise.js";
  *
  * 1. bias
  *
- * How the bias flags (i.e. bPointwise1Bias, bDepthwiseBias, bPointwise20Bias) are determined? Basically speaking, they are
+ * How the bias flags (i.e. pointwise1Bias, depthwiseBias, pointwise20Bias) are determined? Basically speaking, they are
  * deterimined by two rules:
  *   - pointwise20 always has bias.
  *   - affine transformation combination rule.
@@ -23,7 +23,7 @@ import * as Depthwise from "../Depthwise.js";
  *
  * The pointwise2 is an always existed operation of a block (i.e. a block may not have pointwise1, may not have depthwise, but always
  * has pointwise2). It is also the final opportunity to add bias (i.e. to achieve affine transformation) for a block. It is feasible
- * to always have bias (i.e. ( bPointwise20Bias == true )). This ensures a block's output is affine transformed.
+ * to always have bias (i.e. ( pointwise20Bias == true )). This ensures a block's output is affine transformed.
  *
  *
  * 1.2 Affine Transformation Combination Rule
@@ -86,19 +86,19 @@ import * as Depthwise from "../Depthwise.js";
  *
  * After considering all above, the bias flags are determined by:
  *
- *   - The bPointwise20Bias (and so bPointwise21Bias) always is true.
+ *   - The pointwise20Bias (and so pointwise21Bias) always is true.
  *
  *   - For depthwise operation's bias, if:
  *      - depthwise operation existed (i.e. ( bDepthwiseRequestedAndNeeded == true )), and
  *      - there are non-linear operations between depthwise and pointwise2.
- *     Then, ( bDepthwiseBias == true ).
+ *     Then, ( depthwiseBias == true ).
  *
  *   - For pointwise1 operation's bias, if:
  *      - pointwise1 operation existed (i.e. ( pointwise1ChannelCount > 0 )), and
  *      - there are non-linear operations:
  *         - between pointwise1 and depthwise (if depthwise existed), or
  *         - between pointwise1 and pointwise2 (if depthwise does not exist).
- *     Then, ( bPointwise1Bias == true ).
+ *     Then, ( pointwise1Bias == true ).
  *
  *
  *
@@ -118,7 +118,7 @@ import * as Depthwise from "../Depthwise.js";
  *   The channel count of the second input (i.e. input1). If there is no input1, it will be 0. This is inferenced from other parameters.
  * The input1's channel count of Block.apply() should match this value. The Block.inChannels1 should also the same this value.
  *
- * @member {boolean} bPointwise1Bias
+ * @member {boolean} pointwise1Bias
  *   If true, there will be a bias after pointwise1 convolution. Usually, it will be true because pointwise1 always has bias. However,
  * if ( pointwise1ChannelCount == 0 ), this flag will be false.
  *
@@ -129,7 +129,7 @@ import * as Depthwise from "../Depthwise.js";
  * @member {string} pointwise1ActivationName
  *   The string name of pointwise1ActivationId.
  *
- * @member {boolean} bDepthwiseBias
+ * @member {boolean} depthwiseBias
  *   If true, there will be a bias after depthwise convolution. It is determined by operations between depthwise and pointwise2.
  *
  * @member {boolean} bDepthwiseRequestedAndNeeded
@@ -159,7 +159,7 @@ import * as Depthwise from "../Depthwise.js";
  *   Only if ( bHigherHalfDifferent == true ), this is meaningful. If true, the depthwise1 will use higher half channels to achieve
  * the depthwise2. If false, the depthwise1's higher half channels just pass through the input to output.
  *
- * @member {boolean} bPointwise20Bias
+ * @member {boolean} pointwise20Bias
  *   If true, there will be a bias after pointwise20 convolution. It is always true.
  *
  * @member {number} pointwise20_channelShuffler_outputGroupCount
@@ -171,9 +171,9 @@ import * as Depthwise from "../Depthwise.js";
  *   The output channel count of the second pointwise2 convolution. If ( pointwise21ChannelCount == 0 ), it means pointwise21 does
  * not existed.
  *
- * @member {boolean} bPointwise21Bias
+ * @member {boolean} pointwise21Bias
  *   If true, there will be a bias after pointwise21 (i.e. the second pointwise2 convolution). It is always the same as
- * bPointwise20Bias. It is only meaningful if ( pointwise21ChannelCount > 0 ).
+ * pointwise20Bias. It is only meaningful if ( pointwise21ChannelCount > 0 ).
  *
  * @member {number} pointwise21ActivationId
  *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after pointwise21 (i.e. the second
@@ -393,7 +393,7 @@ class Params extends Weights.Params {
   /**
    * Determine the following properties:
    *   - this.bLinear_between_depthwise_and_pointwise2
-   *   - this.bDepthwiseBias
+   *   - this.depthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
    *   - this.depthwise1_nHigherHalfDifferent
@@ -425,7 +425,7 @@ class Params extends Weights.Params {
       // Note: Because no depthwise, there is no depthwise activation function necessary to be considered.
       this.bLinear_between_depthwise_and_pointwise2 = bNoSqueezeExcitation_between_depthwise_and_pointwise2;
 
-      this.bDepthwiseBias = false;
+      this.depthwiseBias = false;
       this.bDepthwiseRequestedAndNeeded = false; // depthwise is not requested.
 
       if ( this.depthwisePadInfo ) // Clear it.
@@ -442,12 +442,12 @@ class Params extends Weights.Params {
       ;
     }
 
-    let bDepthwiseBias;
+    let depthwiseBias;
     {
       if ( bLinear_between_depthwise_and_pointwise2 )
-        bDepthwiseBias = this.bDepthwiseBias = false; // Because its could be combined into the next operation's (i.e. pointwise2's) bias.
+        depthwiseBias = this.depthwiseBias = false; // Because its could be combined into the next operation's (i.e. pointwise2's) bias.
       else
-        bDepthwiseBias = this.bDepthwiseBias = true;
+        depthwiseBias = this.depthwiseBias = true;
     }
 
     let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( depthwiseStridesPad );
@@ -523,7 +523,7 @@ class Params extends Weights.Params {
    *   - this.input1_width
    *   - this.input1_channelCount
    *   - this.bLinear_between_depthwise_and_pointwise2
-   *   - this.bDepthwiseBias
+   *   - this.depthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
    *   - this.depthwise1_nHigherHalfDifferent
@@ -611,11 +611,11 @@ class Params extends Weights.Params {
    * Determine the following properties:
    *   - this.bLinear_between_pointwise1_and_depthwise
    *   - this.bLinear_between_pointwise1_and_pointwise2
-   *   - this.bPointwise1Bias
+   *   - this.pointwise1Bias
    *   - this.pointwise1ActivationId
    *   - this.pointwise1ActivationName
    */
-  static set_bPointwise1Bias_pointwise1ActivationId_pointwise1ActivationName_by(
+  static set_pointwise1Bias_pointwise1ActivationId_pointwise1ActivationName_by(
     pointwise1ChannelCount,
     bLinear_between_depthwise_and_pointwise2,
     bDepthwiseRequestedAndNeeded,
@@ -625,7 +625,7 @@ class Params extends Weights.Params {
 
     // 1. If no pointwise1, there is no bias and no activation.
     if ( pointwise1ChannelCount <= 0 ) {
-      this.bPointwise1Bias = false;
+      this.pointwise1Bias = false;
       this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
       this.bLinear_between_pointwise1_and_depthwise = true;
@@ -655,23 +655,23 @@ class Params extends Weights.Params {
       if ( bLinear_between_pointwise1_and_depthwise ) {
         if ( bDepthwiseRequestedAndNeeded ) {
           if ( depthwisePadInfo.stridesPadInfo.pad_isValid() ) {
-            this.bPointwise1Bias = false;
+            this.pointwise1Bias = false;
             this.bLinear_between_pointwise1_and_pointwise2 = true;
           } else {
-            this.bPointwise1Bias = true;
+            this.pointwise1Bias = true;
             this.bLinear_between_pointwise1_and_pointwise2 = false; // depthwise with ( pad = "same" ) should be viewed as non-linear.
           }
         } else { // no depthwise.
           if ( bLinear_between_depthwise_and_pointwise2 ) {
-            this.bPointwise1Bias = false;
+            this.pointwise1Bias = false;
             this.bLinear_between_pointwise1_and_pointwise2 = true;
           } else {
-            this.bPointwise1Bias = true;
+            this.pointwise1Bias = true;
             this.bLinear_between_pointwise1_and_pointwise2 = false;
           }
         }
       } else {
-        this.bPointwise1Bias = true;
+        this.pointwise1Bias = true;
         this.bLinear_between_pointwise1_and_pointwise2 = false;
       }
 
@@ -713,11 +713,11 @@ class Params extends Weights.Params {
    *   - this.input1_channelCount
    *   - this.bLinear_between_pointwise1_and_depthwise
    *   - this.bLinear_between_pointwise1_and_pointwise2
-   *   - this.bPointwise1Bias
+   *   - this.pointwise1Bias
    *   - this.pointwise1ActivationId
    *   - this.pointwise1ActivationName
    *   - this.bLinear_between_depthwise_and_pointwise2
-   *   - this.bDepthwiseBias
+   *   - this.depthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
    *   - this.depthwise1_nHigherHalfDifferent
@@ -727,7 +727,7 @@ class Params extends Weights.Params {
    *   - this.bConcat2ShuffleSplitRequested
    *   - this.bHigherHalfDifferent
    *   - this.bHigherHalfDepthwise2
-   *   - this.bPointwise20Bias
+   *   - this.pointwise20Bias
    *   - this.pointwise20_channelShuffler_outputGroupCount
    *   - this.pointwise21ChannelCount
    *   - this.squeezeExcitationActivationId
@@ -749,7 +749,7 @@ class Params extends Weights.Params {
     // 0. Prepare.
     let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
 
-    this.bPointwise20Bias = true; // pointwise2 always has bias.
+    this.pointwise20Bias = true; // pointwise2 always has bias.
 
     // 1. The input1 channel count.
     Params.set_inputTensorCount_input1_height_width_channelCount_depthwise_inferenced_by.call( this,
@@ -777,7 +777,7 @@ class Params extends Weights.Params {
     this.pointwise20_channelShuffler_outputGroupCount = infoConvBlockType.pointwise20_channelShuffler_outputGroupCount;
 
     // 5. Pointwise1
-    Params.set_bPointwise1Bias_pointwise1ActivationId_pointwise1ActivationName_by.call( this,
+    Params.set_pointwise1Bias_pointwise1ActivationId_pointwise1ActivationName_by.call( this,
       pointwise1ChannelCount,
       this.bLinear_between_depthwise_and_pointwise2,
       this.bDepthwiseRequestedAndNeeded,
@@ -830,7 +830,7 @@ class Params extends Weights.Params {
   get pointwise20ActivationName() { return Params.pointwise20ActivationId.getStringOfValue( this.pointwise20ActivationId ); }
 
   // Note: pointwise21 use bias flag and activation id of pointwise20.
-  get bPointwise21Bias()          { return this.bPointwise20Bias; }
+  get pointwise21Bias()          { return this.pointwise20Bias; }
   get pointwise21ActivationId()   { return this.pointwise20ActivationId; }
   get pointwise21ActivationName() { return this.pointwise20ActivationName; }
 
