@@ -799,15 +799,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           + `input channel count ( ${this.inputChannelCount} ) must be even (i.e. divisible by 2).`
         );
 
-//!!! (2022/07/09 Remarked) Use swap to reducing copy.
-//       FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongHeight( // Shuffle filters.
-//         this.filtersArray, this.inputChannelCount, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
-
       // Shuffle filters.
       {
         let filtersArrayShuffled = Recyclable.Array.Pool.get_or_create_by( this.filtersArray.length );
 
-        FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongHeight_from_to(
+        FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLast2ndAxis_from_to(
           this.filtersArray, filtersArrayShuffled, this.inputChannelCount, this.outputChannelCount );
 
         this.filtersArray.disposeResources_and_recycleToPool();
@@ -834,19 +830,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           + `output channel count ( ${this.outputChannelCount} ) must be even (i.e. divisible by 2).`
         );
 
-//!!! (2022/07/09 Remarked) Use swap to reducing copy.
-//       FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongWidth( // Shuffle filters.
-//         this.filtersArray, this.inputChannelCount, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
-//
-//       if ( this.biasesArray ) // Shuffle biases.
-//         FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongWidth(
-//           this.biasesArray, 1, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
-
       // Shuffle filters.
       {
         let filtersArrayShuffled = Recyclable.Array.Pool.get_or_create_by( this.filtersArray.length );
 
-        FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongWidth_from_to(
+        FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
           this.filtersArray, filtersArrayShuffled, this.inputChannelCount, this.outputChannelCount );
 
         this.filtersArray.disposeResources_and_recycleToPool();
@@ -857,8 +845,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       if ( this.biasesArray ) {
         let biasesArrayShuffled = Recyclable.Array.Pool.get_or_create_by( this.biasesArray.length );
 
-        FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongWidth_from_to(
-          this.biasesArray, biasesArrayShuffled, 1, this.outputChannelCount );
+        FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
+          this.biasesArray, biasesArrayShuffled, this.outputChannelCount );
 
         this.biasesArray.disposeResources_and_recycleToPool();
         this.biasesArray = biasesArrayShuffled;
