@@ -666,7 +666,7 @@ class Base extends Recyclable.Root {
 
     if ( this.bSqueezeExcitationPrefix )
       if ( !Base.operationArray_append_SqueezeExcitation.call( this,
-              this.pointwise2_nHigherHalfDifferent, inputWeightArray,
+              this.pointwise20_nHigherHalfDifferent, inputWeightArray,
               this.depthwise1_channelShuffler_outputGroupCount // Prefix squeeze-and-excitation's channels are shuffled if depthwise1 did.
             )
          )
@@ -696,7 +696,7 @@ class Base extends Recyclable.Root {
       let pointwise20 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
         this.operationArray.endingInput0,
         this.pointwise20ChannelCount, this.pointwise20Bias, this.pointwise20ActivationId,
-        this.pointwise2_nHigherHalfDifferent, this.pointwise2_outputChannelCount_lowerHalf,
+        this.pointwise20_nHigherHalfDifferent, this.pointwise20_outputChannelCount_lowerHalf,
         this.depthwise1_channelShuffler_outputGroupCount,
         this.pointwise20_channelShuffler_outputGroupCount
       );
@@ -720,7 +720,7 @@ class Base extends Recyclable.Root {
         pointwise21 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
           pointwise21_input0,
           this.pointwise21ChannelCount, this.pointwise21Bias, this.pointwise21ActivationId,
-          this.pointwise2_nHigherHalfDifferent, this.pointwise2_outputChannelCount_lowerHalf,
+          this.pointwise20_nHigherHalfDifferent, this.pointwise20_outputChannelCount_lowerHalf,
           this.depthwise1_channelShuffler_outputGroupCount,
           this.pointwise20_channelShuffler_outputGroupCount
         );
@@ -749,7 +749,7 @@ class Base extends Recyclable.Root {
     // 7.1
     if ( !this.bSqueezeExcitationPrefix ) // (i.e. postfix)
       if ( !Base.operationArray_append_SqueezeExcitation.call( this,
-              this.pointwise2_nHigherHalfDifferent, inputWeightArray,
+              this.pointwise20_nHigherHalfDifferent, inputWeightArray,
               this.pointwise20_channelShuffler_outputGroupCount // Postfix squeeze-and-excitation's channels are shuffled if pointwise2 did.
             )
          )
