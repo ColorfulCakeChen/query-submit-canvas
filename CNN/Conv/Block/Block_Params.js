@@ -830,23 +830,23 @@ class Params extends Weights.Params {
       }
     }
 
-    // pointwise2
+    // pointwise20
     {
-      this.pointwise2_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
-      this.pointwise2_outputChannelCount_lowerHalf = undefined;
+      this.pointwise20_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
+      this.pointwise20_outputChannelCount_lowerHalf = undefined;
 
       if ( infoConvBlockType.bHigherHalfDifferent == true ) {
 
         // In this case, it should be according to half of pointwise20ChannelCount (just like pointwise1).
         // Note: Unlike pointwise1ChannelCount (which may be zero), pointwise20ChannelCount is always positive.
-        this.pointwise2_outputChannelCount_lowerHalf = Math.ceil( this.pointwise20ChannelCount / 2 );
+        this.pointwise20_outputChannelCount_lowerHalf = Math.ceil( this.pointwise20ChannelCount / 2 );
 
         // For bHigherHalfAnotherPointwise(Shuffle) (i.e. ( pointwise20ChannelCount > 0 ) ).
         //
         // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
         // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's head)
         if ( infoConvBlockType.bHigherHalfDepthwise2 == true ) {
-          this.pointwise2_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE;
+          this.pointwise20_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE;
 
         // For bHigherHalfPassThrough(Shuffle) (i.e. ( pointwise20ChannelCount > 0 ) ).
         //
@@ -854,7 +854,7 @@ class Params extends Weights.Params {
         // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
         // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
         } else {
-          this.pointwise2_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
+          this.pointwise20_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
         }
       }
     }
