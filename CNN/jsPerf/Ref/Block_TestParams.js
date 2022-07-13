@@ -340,8 +340,8 @@ class Base extends TestParams.Base {
 //       ],
 
       depthwiseActivationId:
-//        undefined,
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        undefined,
+//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 //        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
 //        [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
@@ -350,15 +350,15 @@ class Base extends TestParams.Base {
 //      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min ],
 //      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
 
-      nSqueezeExcitationChannelCountDivisor: [
-        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
-//      4,
-        4
-      ],
+      nSqueezeExcitationChannelCountDivisor: undefined,
+//       nSqueezeExcitationChannelCountDivisor: [
+//         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+//         3
+//       ],
 
       pointwise20ActivationId:
-//        undefined,
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        undefined,
+//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 //        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
 //        [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
@@ -366,10 +366,10 @@ class Base extends TestParams.Base {
       // (i.e. ( undefined )) for speeding up testing.
  
       ActivationId:
-//        undefined,
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-//         [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
-//         [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        undefined,
+//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+//        [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
       bKeepInputTensor: undefined,
 //      bKeepInputTensor: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
