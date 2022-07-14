@@ -1,5 +1,6 @@
 export { ShuffleNetV2_ByMobileNetV1 };
 
+import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { Params } from "../Stage_Params.js";
 import { ShuffleNetV2 } from "./ShuffleNetV2.js";
@@ -14,7 +15,7 @@ import { ShuffleNetV2 } from "./ShuffleNetV2.js";
  * Accodring to testing, the original ShuffleNetV2 is faster than MobileNetV2 in backend CPU. This may result from lesser
  * computation. However, in backend WASM and WEBGL, MobileNetV2 is faster than the original ShuffleNetV2. The possible
  * reason may be that the concatenate-shuffle-split (even achieved by pointwise convolution) operation is not friendly
- * for WASM and WEBGL.
+ * for WASM and WebGL.
  *
  * This results in an idea that:
  *
@@ -34,17 +35,43 @@ import { ShuffleNetV2 } from "./ShuffleNetV2.js";
  */
 class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 
+  /**
+   * Used as default Stage.BlockParamsCreator.ShuffleNetV2_ByMobileNetV1 provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Stage.BlockParamsCreator.ShuffleNetV2_ByMobileNetV1.Pool",
+    ShuffleNetV2_ByMobileNetV1, ShuffleNetV2_ByMobileNetV1.setAsConstructor );
+
+  /**
+   */
   constructor( stageParams ) {
     super( stageParams );
+    Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
+  static setAsConstructor( stageParams ) {
+    super.setAsConstructor( stageParams );
+    Base.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( stageParams ) {
+    // Do nothing.
+  }
+
+  ///** @override */
+  //disposeResources() {
+  //  super.disposeResources();
+  //}
+
+  /** @override */
   configTo_beforeBlock0() {
-    super.configTo_beforeBlock0(); // Use same input0 (height, width, channel count), bias, activation, depthwise filter size (as ShuffleNetV2).
+    super.configTo_beforeBlock0(); // Use same input0 (height, width, channel count), activation, depthwise filter size (as ShuffleNetV2).
 
     let stageParams = this.stageParams;
 
-    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1; // (-4)
+    this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD;
 
     if ( stageParams.bPointwise1 == false ) {
 
@@ -79,9 +106,6 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
     //
     this.pointwise20ChannelCount = stageParams.sourceChannelCount * 2;
 
-    // In ShuffleNetV2_ByMobileNetV1, there is always only output0 (i.e. no output1).
-    this.bOutput1Requested = false;
-
     // In ShuffleNetV2_ByMobileNetV1's head, all blocks have only output0 (with same depth as pointwise20 result) and no output1.
     this.outChannels0 = this.pointwise20ChannelCount;
     this.outChannels1 = 0;
@@ -94,7 +118,7 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
     let stageParams = this.stageParams;
 
     // Except that ShuffleNetV2_ByMobileNetV1 does not have channel shuffler. The pointwise20 will do channel shuffling.
-    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH; // (-5)
+    this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY;
 
     // In ShuffleNetV2_ByMobileNetV1's body/tail, if ( stageParams.bPointwise1 == false ), pointwise1ChannelCount is also 0.
     // In this case, pointwise1 will not be created by PointDepthPoint (i.e. different from block0).
@@ -120,7 +144,10 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 
   /** @override */
   configTo_beforeBlockLast() {
-    super.configTo_beforeBlockLast(); // BlockLast is the same as ShuffleNetV2.
+    super.configTo_beforeBlockLast(); // BlockLast is almost the same as ShuffleNetV2.
+
+    // Except that ShuffleNetV2_ByMobileNetV1 does not have channel shuffler. The pointwise20 will NOT do channel shuffling.
+    this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL;
   }
 }
 
