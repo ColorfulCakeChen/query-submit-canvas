@@ -81,8 +81,8 @@ import * as FloatValue from "../FloatValue.js";
  *       be less problematic.
  *
  *   - Advantage: Its activated value (i.e. 2) is easier to become any other value by a floating-point finite scaling.
- *       This reduces the floating-point accumulated error.
- *
+ *       This reduces the floating-point accumulated error. In this point of view, any powers of two (not only 2) (i.e. 2, 4, 8, ...)
+ *       is good for this task.
  *
  */
 class ActivationFunction extends Int {
