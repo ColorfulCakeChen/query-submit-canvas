@@ -105,10 +105,11 @@ class Base extends Recyclable.Root {
   configTo_beforeBlock0() {
     let stageParams = this.stageParams;
 
-    this.inputHeight0 = stageParams.sourceHeight; // block0 inputs the source image size.
-    this.inputWidth0 = stageParams.sourceWidth;
+    this.input0_height = stageParams.sourceHeight; // block0 inputs the source image size.
+    this.input0_width = stageParams.sourceWidth;
+    this.input0_channelCount = stageParams.sourceChannelCount;
 
-    this.bias_activation_setup_forBlock0(); // bias, activation of pointwise1, depthwise1, pointwise2
+    this.activation_setup_forBlock0(); // activation of depthwise1 and pointwise2.
 
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Default;
     this.depthwiseFilterWidth = this.depthwiseFilterWidth_Default;
@@ -117,29 +118,17 @@ class Base extends Recyclable.Root {
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
 
     this.bKeepInputTensor = stageParams.bKeepInputTensor; // block0 may or may not keep input tensor according to caller's necessary.
-
-//!!! ...unfinished... (2022/06/08)
-// If (
-//        ( ( inputHeight == 1 ) && ( inputWidth == 1 ) )
-//     && ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 ) // i.e. avg or max or none or ( channelMultiplier == 1 ).
-//     && ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // i.e. depthwise is linear.
-//     && (   ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2), no squeeze-and-excitation (i.e. depthwise is linear)
-//         || ( bSqueezeExcitationPrefix == false ) ) // or, has squeeze-and-excitation, but after pointwise2. (i.e. depthwise is still linear)
-//        )
-//    )
-//
-// Then, the depthwise should be discarded to improve performance.
-// Perhaps, this automatical optimization could be done in Block.Base (i.e. not in Stage).
-//
-
   }
 
   /**
    * Called after block0 is created (i.e. before block1, 2, 3, ...). Sub-class should override this method to adjust data members.
    */
   configTo_afterBlock0() {
-    this.inputHeight0 = this.stageParams.outputHeight; // all blocks (except block0) inputs half the source image size.
-    this.inputWidth0 = this.stageParams.outputWidth;
+    let stageParams = this.stageParams;
+
+    this.input0_height = stageParams.outputHeight; // all blocks (except block0) inputs half the source image size.
+    this.input0_width = stageParams.outputWidth;
+    //this.input0_channelCount = ???stageParams.sourceChannelCount;
 
     // All blocks (except block0 in NoPointwise1) will not double the channel count by depthwise, because block0 has already double
     // output channel count.
@@ -161,36 +150,26 @@ class Base extends Recyclable.Root {
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Last;
     this.depthwiseFilterWidth = this.depthwiseFilterWidth_Last;
 
-    this.bias_activation_setup_forBlockLast(); // bias, activation of pointwise1, depthwise1, pointwise2
+    this.activation_setup_forBlockLast(); // activation of depthwise1 and pointwise2
   }
 
   /**
-   * Config the bias and activation of pointwise1, depthwise1, pointwise2 for block0.
+   * Config the activation of depthwise1 and pointwise2 for block0.
    */
-  bias_activation_setup_forBlock0() {
+  activation_setup_forBlock0() {
     let stageParams = this.stageParams;
-
-    // pointwise1
-    {
-      this.bPointwise1Bias = true;
-      this.pointwise1ActivationId = stageParams.nActivationId;
-    }
 
     // depthwise
     {
-      // MobileNetV2_Xxx's depthwise have bias and activation (to remedy its pointwise2's no activation).
+      // MobileNetV2_Xxx's depthwise has activation (before prefix squeeze-and-excitation and to remedy its pointwise2's no activation).
       //
       if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
-        this.bDepthwiseBias = true;
         this.depthwiseActivationId = stageParams.nActivationId;
 
-      // non-MobileNetV2_Xxx's depthwise have no bias and no activation. (since they will be done at (squeeze-and-excitation
-      // and) pointwise2.)
+      // non-MobileNetV2_Xxx's depthwise has no activation. (since they will be done at pointwise2.)
       //
       } else {
-        this.bDepthwiseBias = false;
         this.depthwiseActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-
 
 //!!! ...unfinished... (2022/06/17)
 // If there is squeeze-and-excitation prefix pointwise2, the depthwise should be viewed as non-linear (even if depthwise activation
@@ -221,9 +200,9 @@ class Base extends Recyclable.Root {
   }
 
   /**
-   * Config the bias and activation of pointwise1, depthwise1, pointwise2 for blockLast.
+   * Config the activation of depthwise1 and pointwise2 for blockLast.
    */
-  bias_activation_setup_forBlockLast() {
+  activation_setup_forBlockLast() {
     let stageParams = this.stageParams;
 
     // pointwise2
