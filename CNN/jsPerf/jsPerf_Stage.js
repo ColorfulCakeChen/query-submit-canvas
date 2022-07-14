@@ -101,7 +101,10 @@ class HeightWidthDepth {
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
     //
 
-    this.testCaseMap = new Map();
+    if ( this.testCaseMap )
+      this.testCaseMap.clear();
+    else
+      this.testCaseMap = new Map();
 
     // Test Case 1: (MobileNetV1, ( bPointwise1 == true ))
     this.testCaseMap.set( "MobileNetV1_bPointwise1_true", { testParams: 
@@ -113,7 +116,6 @@ class HeightWidthDepth {
         true
       ) } );
 
-//!!!
     // Test Case 2: (MobileNetV1_padValid, ( bPointwise1 == true ))
     this.testCaseMap.set( "MobileNetV1_padValid_bPointwise1_true", { testParams: 
       ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
@@ -189,8 +191,8 @@ class HeightWidthDepth {
     for ( let name_testCase of this.testCaseMap.entries() ) {
       let name = name_testCase[ 0 ];
       let testCase = name_testCase[ 1 ];
-      if ( !testCase.block ) {
-        testCase.block = Stage_Reference.Base.Stage_create( testCase.testParams );
+      if ( !testCase.stage ) {
+        testCase.stage = Stage_Reference.Base.Stage_create( testCase.testParams );
       }
 
       console.log( `Stage.${name}: tensorWeightCount = { Extracted: ${testCase.block.tensorWeightCountExtracted}, ` 
@@ -204,14 +206,13 @@ class HeightWidthDepth {
       for ( let name_testCase of this.testCaseMap.entries() ) {
         let name = name_testCase[ 0 ];
         let testCase = name_testCase[ 1 ];
-        if ( testCase.block ) {
-          testCase.block.disposeResources();
+        if ( testCase.stage ) {
+          testCase.stage.disposeResources_and_recycleToPool();
         }
       }
-      this.testCaseMap = null;
+      this.testCaseMap.clear();
     }
 
-//!!!
     if ( this.testPerformance_NumberImageArray ) {
       this.testPerformance_NumberImageArray.disposeResources_and_recycleToPool();
       this.testPerformance_NumberImageArray = null;
@@ -227,7 +228,7 @@ class HeightWidthDepth {
   }
 
   /** Testing whether the results of different implementation are the same. */
-  testCorrectness() {
+  * testCorrectness() {
 
     tf.tidy( () => {
 
