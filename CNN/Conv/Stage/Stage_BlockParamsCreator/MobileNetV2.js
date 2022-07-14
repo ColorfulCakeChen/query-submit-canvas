@@ -1,5 +1,6 @@
 export { MobileNetV2 };
 
+import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { Params } from "../Stage_Params.js";
 import { MobileNetV2_Thin } from "./MobileNetV2_Thin.js";
@@ -11,13 +12,42 @@ import { MobileNetV2_Thin } from "./MobileNetV2_Thin.js";
  */
 class MobileNetV2 extends MobileNetV2_Thin {
 
+  /**
+   * Used as default Stage.BlockParamsCreator.MobileNetV2 provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Stage.BlockParamsCreator.MobileNetV2.Pool", MobileNetV2, MobileNetV2.setAsConstructor );
+
+  /**
+   */
+  constructor( stageParams ) {
+    super( stageParams );
+    Base.setAsConstructor_self.call( this );
+  }
+
+  /** @override */
+  static setAsConstructor( stageParams ) {
+    super.setAsConstructor( stageParams );
+    Base.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( stageParams ) {
+    // Do nothing.
+  }
+
+  ///** @override */
+  //disposeResources() {
+  //  super.disposeResources();
+  //}
+
   constructor( stageParams ) {
     super( stageParams );
   }
 
   /** @override */
   configTo_beforeBlock0() {
-    super.configTo_beforeBlock0(); // block0's inputHeight0, inputWidth0, bias, activation.
+    super.configTo_beforeBlock0(); // block0's input0_height, input0_width, input0_channelCount, activation.
 
     let stageParams = this.stageParams;
 
@@ -39,11 +69,11 @@ class MobileNetV2 extends MobileNetV2_Thin {
 
     // Except
     if ( stageParams.bPointwise1 == false ) {
-      this.pointwise1ChannelCount = 0;                                       // NoPointwise1.
-      this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                        // Double of pointwise20. (Quadruple of block0's input0.)
+      this.pointwise1ChannelCount = 0;                            // NoPointwise1.
+      this.depthwise_AvgMax_Or_ChannelMultiplier = 2;             // Double of pointwise20. (Quadruple of block0's input0.)
 
     } else {
-      this.pointwise1ChannelCount = this.channelCount0_pointwise1Before * 2; // Double of pointwise20. (Quadruple of block0's input0.)
+      this.pointwise1ChannelCount = this.input0_channelCount * 2; // Double of pointwise20. (Quadruple of block0's input0.)
       this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     }
   }
