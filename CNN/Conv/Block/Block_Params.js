@@ -398,14 +398,14 @@ class Params extends Weights.Params {
     return bExtractOk;
   }
 
-!!! ...unfinished... (2022/07/14)
+//!!! ...unfinished... (2022/07/14)
   /**
    * Using this Params' InferencedParams to create input TensorPlaceholder. They will be returned to targetObject.input0 and
    * targetObject.input1.
    */
   create_and_set_input_TensorPlaceholder_to( targetObject ) {
 
-!!! ...unfinished... (2022/07/14)
+//!!! ...unfinished... (2022/07/14)
 
   }
 
@@ -975,14 +975,6 @@ class Params extends Weights.Params {
 
   /** @return {number} The number version of the depthwise opertion. */
   get depthwise_AvgMax_Or_ChannelMultiplier() { return this.getParamValue_byParamDesc( Params.depthwise_AvgMax_Or_ChannelMultiplier ); }
-
-//!!! (2022/07/13 Remarked) Does not work.
-//   get depthwise_AvgMax_Or_ChannelMultiplier() {
-//     if ( this.depthwise_AvgMax_Or_ChannelMultiplier_modified != undefined )
-//       return this.depthwise_AvgMax_Or_ChannelMultiplier_modified;
-//     else
-//       return this.getParamValue_byParamDesc( Params.depthwise_AvgMax_Or_ChannelMultiplier );
-//   }
 
   /** @return {string} The string version of the depthwise opertion. */
   get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
