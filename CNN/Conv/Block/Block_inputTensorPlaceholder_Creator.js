@@ -1,4 +1,4 @@
-export { inputTensorPlaceholderCreator };
+export { inputTensorPlaceholder_Creator };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -37,26 +37,26 @@ import { Params } from "./Params.js";
  *   - ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF (2)
  *
  */
-class inputTensorPlaceholderCreator extends Recyclable.Root {
+class inputTensorPlaceholder_Creator extends Recyclable.Root {
 
   /**
    * Used as default Block.inputTensorPlaceholderCreator provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Block.inputTensorPlaceholderCreator.Pool",
-    inputTensorPlaceholderCreator, inputTensorPlaceholderCreator.setAsConstructor );
+  static Pool = new Pool.Root( "Block.inputTensorPlaceholder_Creator.Pool",
+    inputTensorPlaceholder_Creator, inputTensorPlaceholder_Creator.setAsConstructor );
 
   /**
    *
    */
   constructor( nConvBlockTypeId, inputChannelCount, outputChannelCount ) {
     super();
-    inputTensorPlaceholderCreator.setAsConstructor_self.call( this, nConvBlockTypeId, inputChannelCount, outputChannelCount );
+    inputTensorPlaceholder_Creator.setAsConstructor_self.call( this, nConvBlockTypeId, inputChannelCount, outputChannelCount );
   }
 
   /** @override */
   static setAsConstructor( nConvBlockTypeId, inputChannelCount, outputChannelCount ) {
     super.setAsConstructor();
-    inputTensorPlaceholderCreator.setAsConstructor_self.call( this, nConvBlockTypeId, inputChannelCount, outputChannelCount );
+    inputTensorPlaceholder_Creator.setAsConstructor_self.call( this, nConvBlockTypeId, inputChannelCount, outputChannelCount );
     return this;
   }
 
