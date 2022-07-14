@@ -121,7 +121,6 @@ class Base extends Recyclable.Root {
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
 
     this.nSqueezeExcitationChannelCountDivisor = stageParams.nSqueezeExcitationChannelCountDivisor;
-    this.bSqueezeExcitationPrefix = stageParams.bSqueezeExcitationPrefix;
 
     this.bKeepInputTensor = stageParams.bKeepInputTensor; // block0 may or may not keep input tensor according to caller's necessary.
   }
@@ -165,7 +164,7 @@ class Base extends Recyclable.Root {
   activation_setup_forBlock0() {
     let stageParams = this.stageParams;
 
-    // depthwise
+    // 1. depthwise
     {
       // MobileNetV2_Xxx's depthwise has activation (before prefix squeeze-and-excitation and to remedy its pointwise2's no activation).
       //
@@ -179,7 +178,7 @@ class Base extends Recyclable.Root {
       }
     }
 
-    // pointwise2
+    // 2. pointwise2
     {
       // MobileNetV2_Xxx's pointwise2 always does not have activation function.
       //
@@ -197,8 +196,23 @@ class Base extends Recyclable.Root {
       }
     }
 
-    // pointwise1 and squeeze-and-excitation
+    // 3. pointwise1 and squeeze-and-excitation
     this.nActivationId = stageParams.nActivationId;
+    
+    // 4. squeeze-and-excitation prefix or postfix
+    {
+      // MobileNetV2_Xxx uses prefix squeeze-and-excitation.
+      //
+      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
+        this.bSqueezeExcitationPrefix = true;
+
+      // non-MobileNetV2_Xxx uses postfix squeeze-and-excitation.
+      //
+      } else {
+        this.bSqueezeExcitationPrefix = false;
+      }
+    }
+
   }
 
   /**
