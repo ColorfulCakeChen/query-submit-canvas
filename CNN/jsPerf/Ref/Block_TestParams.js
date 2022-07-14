@@ -70,13 +70,13 @@ class Base extends TestParams.Base {
 
   /** @override */
   disposeResources() {
-    this.NumberArray_ElementOffsetBegin.disposeResources_and_recycleToPool();
+    this.NumberArray_ElementOffsetBegin?.disposeResources_and_recycleToPool();
     this.NumberArray_ElementOffsetBegin = null;
 
-    this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources_and_recycleToPool();
+    this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag?.disposeResources_and_recycleToPool();
     this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag = null;
 
-    this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources_and_recycleToPool();
+    this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag?.disposeResources_and_recycleToPool();
     this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag = null;
 
     super.disposeResources();
