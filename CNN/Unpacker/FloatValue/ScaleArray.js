@@ -376,11 +376,16 @@ class ScaleArray extends Recyclable.Root {
     let dstLower = Math.min( toLower, toUpper );
     let dstUpper = Math.max( toLower, toUpper );
 
-//!!! ...unfinished... (2022/07/14)
-// Is it better to let scale is two's power (e.g. 2^(-1), 2^(-2), 2^(-3), ... ) (i.e. 0.5, 0.25, 0.125, ... )?
-// Could it reduce floating-point accumulated error (after ShuffleNetV2_byMobileNetV2 pass-through by scaling and un-scaling repeately?
-
-
+    // Note:
+    //
+    // When a legal (positive) scale is found. A two's power value which is equal to or less than it will be returned instead.
+    //
+    //   scale = 2 ** Math.floor( Math.log2( scale ) )
+    //
+    // So the returned scale (if exists) is always two's power (e.g. 2^(-1), 2^(-2), 2^(-3), ... ) (i.e. 0.5, 0.25, 0.125, ... ).
+    // The reason is that they may reduce floating-point accumulated error after ShuffleNetV2_byMobileNetV2 pass-through by scaling
+    // and un-scaling repeately.
+    //
     let scale;
 
     // 1. Try lower bound.
@@ -403,8 +408,6 @@ class ScaleArray extends Recyclable.Root {
     //   - If scaled source upper bound is out of destination range, it is also failed.
     let adjustedUpper = srcUpper * scale;
 
-//!!! (2022/07/07 Remarked) keep scale positive.
-//    if ( ( scale == 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedUpper < dstLower ) || ( adjustedUpper > dstUpper ) ) {
     if ( ( scale <= 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedUpper < dstLower ) || ( adjustedUpper > dstUpper ) ) {
 
       // 2. Try upperer bound, since it is failed to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] by scale according to lower bound.
@@ -417,12 +420,18 @@ class ScaleArray extends Recyclable.Root {
       //   - If scaled source lower bound is out of destination range, it is also failed.
       let adjustedLower = srcLower * scale;
 
-//!!! (2022/07/07 Remarked) keep scale positive.
-//      if ( ( scale == 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedLower < dstLower ) || ( adjustedLower > dstUpper ) ) {
       if ( ( scale <= 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedLower < dstLower ) || ( adjustedLower > dstUpper ) ) {
         // 3. It is impossible to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] only by scale because all cases are tried and failed.
         scale = Number.NaN;
+
+      // 2.3 A legal (positive) scale is found. Make it is a two's power value which is equal to or less than it.
+      } else {
+        scale = 2 ** Math.floor( Math.log2( scale ) );
       }
+
+    // 1.3 A legal (positive) scale is found. Make it is a two's power value which is equal to or less than it.
+    } else {
+      scale = 2 ** Math.floor( Math.log2( scale ) );
     }
 
     return scale;
