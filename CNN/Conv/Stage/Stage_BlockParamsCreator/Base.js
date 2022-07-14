@@ -110,7 +110,7 @@ class Base extends Recyclable.Root {
 
     this.input0_height = stageParams.sourceHeight; // block0 inputs the source image size.
     this.input0_width = stageParams.sourceWidth;
-    this.input0_channelCount = stageParams.sourceChannelCount;
+    //this.input0_channelCount; // Sub-class should determine it.
 
     this.activation_setup_forBlock0(); // activation of depthwise1 and pointwise2.
 
@@ -131,7 +131,7 @@ class Base extends Recyclable.Root {
 
     this.input0_height = stageParams.outputHeight; // all blocks (except block0) inputs half the source image size.
     this.input0_width = stageParams.outputWidth;
-    //this.input0_channelCount = ???stageParams.sourceChannelCount;
+    //this.input0_channelCount; // Sub-class should determine it.
 
     // All blocks (except block0 in NoPointwise1) will not double the channel count by depthwise, because block0 has already double
     // output channel count.
