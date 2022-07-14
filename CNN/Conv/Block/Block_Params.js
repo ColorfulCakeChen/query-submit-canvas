@@ -400,52 +400,6 @@ class Params extends Weights.Params {
 
   /**
    * Determine the following properties:
-   *   - this.input0
-   *   - this.input1
-   *
-   */
-  static set_input0_input1_TensorPlaceholder(
-    inputTensorCount,
-    input0_height, input0_width, input0_channelCount, inputScaleBoundsArray0,
-    input1_height, input1_width, input1_channelCount, inputScaleBoundsArray1,
-    pointwise1_inputChannelCount_lowerHalf, pointwise1_inputChannelCount_higherHalf,
-  ) {
-
-    if ( inputScaleBoundsArray0.length != input0_channelCount )
-      throw Error( `Block.Params.set_input0_input1_TensorPlaceholder(): `
-        + `inputScaleBoundsArray0's length ( ${inputScaleBoundsArray0.length} ) should be the same as `
-        + `input0's channel count ( ${input0_channelCount} ).`
-      );
-
-    this.input0 = TensorPlaceholder.Base.Pool.get_or_create_by();
-    this.input0.set_height_width_channelCount_scaleBoundsArray(
-      input0_height, input0_width,
-      input0_channelCount, pointwise1_inputChannelCount_lowerHalf, pointwise1_inputChannelCount_higherHalf,
-      inputScaleBoundsArray0 );
-
-    // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY (3) )
-    // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL (4) )
-    // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY (10) )
-    // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL (11) )
-    //
-    if ( inputTensorCount > 1 ) {
-
-      if ( inputScaleBoundsArray1.length != input1_channelCount )
-        throw Error( `Block.Params.set_input0_input1_TensorPlaceholder(): `
-          + `inputScaleBoundsArray1's length ( ${inputScaleBoundsArray1.length} ) should be the same as `
-          + `input1's channel count ( ${input1_channelCount} ).`
-        );
-
-      this.input1 = TensorPlaceholder.Base.Pool.get_or_create_by();
-      this.input1.set_height_width_channelCount_scaleBoundsArray(
-        input1_height, input1_width, input1_channelCount,
-        undefined, undefined, // channelCount_lowerHalf, channelCount_higherHalf
-        inputScaleBoundsArray1 );
-    }
-  }
-
-  /**
-   * Determine the following properties:
    *   - this.bLinear_between_depthwise_and_pointwise2
    *   - this.depthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
