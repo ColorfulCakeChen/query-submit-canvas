@@ -1,5 +1,7 @@
 export { MobileNetV1 };
 
+import * as Pool from "../../util/Pool.js";
+//import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { Params } from "../Stage_Params.js";
 import { Base } from "./Base.js";
@@ -25,10 +27,36 @@ import { Base } from "./Base.js";
  */
 class MobileNetV1 extends Base {
 
+  /**
+   * Used as default Stage.BlockParamsCreator.MobileNetV1 provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Stage.BlockParamsCreator.MobileNetV1.Pool", MobileNetV1, MobileNetV1.setAsConstructor );
+
+  /**
+   */
   constructor( stageParams ) {
     super( stageParams );
+    Base.setAsConstructor_self.call( this );
   }
 
+  /** @override */
+  static setAsConstructor( stageParams ) {
+    super.setAsConstructor( stageParams );
+    Base.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( stageParams ) {
+    // Do nothing.
+  }
+
+  ///** @override */
+  //disposeResources() {
+  //  super.disposeResources();
+  //}
+
+//!!! ...unfinished... (2022/07/14)
   /** @override */
   configTo_beforeBlock0() {
     super.configTo_beforeBlock0(); // block0's inputHeight0, inputWidth0, bias, activation.
