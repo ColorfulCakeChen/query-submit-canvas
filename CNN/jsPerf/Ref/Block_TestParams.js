@@ -7,6 +7,7 @@ import * as NameNumberArrayObject_To_NumberArray from "../../util/NameNumberArra
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TestParams from "./TestParams.js";
 import * as NumberImage from "./NumberImage.js";
+import * as ImageSourceBag from "./ImageSourceBag.js";
 import * as Pointwise from "../../Conv/Pointwise.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
 import * as Block from "../../Conv/Block.js";
@@ -800,10 +801,10 @@ class Base extends TestParams.Base {
 
     //!!! (2022/05/23 Remarked)
     //Base.ensure_object_property_numberArray_length_filled( io_object, propertyName,
-    //  elementCount, Base.weightsRandomOffset.min, Base.weightsRandomOffset.max );
+    //  elementCount, ImageSourceBag.Base.weightsRandomOffset.min, ImageSourceBag.Base.weightsRandomOffset.max );
 
     super.ensure_object_property_numberArray_length_existed( io_object, propertyName,
-      elementCount, Base.weightsRandomOffset.min, Base.weightsRandomOffset.max );
+      elementCount, ImageSourceBag.Base.weightsRandomOffset.min, ImageSourceBag.Base.weightsRandomOffset.max );
   }
 
   /**
@@ -1351,11 +1352,6 @@ class Base extends TestParams.Base {
   }
 
 }
-
-
-//!!! (2021/07/20 Temp Remarked) Fixed to non-random to simplify debug.
-//Base.weightsRandomOffset = { min: -100, max: +100 };
-Base.weightsRandomOffset = { min: -0, max: +0 };
 
 
 Base.PropertyNames = {};
