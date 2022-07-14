@@ -70,7 +70,7 @@ import * as FloatValue from "../FloatValue.js";
  *       truncation error.
  *
  *   - Disadvantage: Its activated value (i.e. 3) seems harder to become any other value by a floating-point finite scaling.
- *       This may enlarge the floating-point accumulated error. For example, in order to let 3 become 100, a scale 33.333...
+ *       This increases the floating-point accumulated error. For example, in order to let 3 become 100, a scale 33.333...
  *       should be used. However, 33.3 can not be represented by a finite floating-point number.
  *
  * CLIP_BY_VALUE_N2_P2:
@@ -79,7 +79,7 @@ import * as FloatValue from "../FloatValue.js";
  *       needs use a smaller scale. This increases floating-point truncation error.
  *
  *   - Advantage: Its activated value (i.e. 2) is easier to become any other value by a floating-point finite scaling.
- *       This may reduce the floating-point accumulated error.
+ *       This reduces the floating-point accumulated error.
  *
  *
  */
