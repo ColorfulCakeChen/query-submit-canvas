@@ -5,6 +5,10 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import { Params } from "./Params.js";
 
+!!! ...unfinished... (2022/07/14)
+// Perhaps, porting all Block.Params.set_Xxx_by() static method to here.
+//
+
 /**
  * Calculate the channel count of lower half (of input and output) and higher half (of input and output) for pointwise1 of
  * ShuffleNetV2_ByMopbileNetV1's head/body/tail.
