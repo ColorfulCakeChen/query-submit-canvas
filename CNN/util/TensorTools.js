@@ -236,7 +236,7 @@ class Asserter_Equal extends Recyclable.Root {
 
       let deltaRate;
       if ( deltaRateBase > 0 ) // Avoid divided by zero.
-        deltaRate = delta / deltaRateBase; // Using ratio so that the difference will not to large even if value is large.
+        deltaRate = delta / deltaRateBase; // Using ratio so that the difference will not too large even if value is large.
       else
         deltaRate = delta;
 
