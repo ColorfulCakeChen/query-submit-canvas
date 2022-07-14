@@ -48,96 +48,90 @@ class inputTensorPlaceholder_Creator extends Recyclable.Root {
   /**
    *
    */
-  constructor( nConvBlockTypeId, inputChannelCount, outputChannelCount ) {
+  constructor(
+    input0_height, input0_width, input0_channelCount,
+    nConvBlockTypeId,
+    pointwise1ChannelCount,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwiseActivationId,
+    pointwise20ChannelCount,
+    nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix
+  ) {
     super();
-    inputTensorPlaceholder_Creator.setAsConstructor_self.call( this, nConvBlockTypeId, inputChannelCount, outputChannelCount );
+    inputTensorPlaceholder_Creator.setAsConstructor_self.call( this,
+      input0_height, input0_width, input0_channelCount,
+      nConvBlockTypeId,
+      pointwise1ChannelCount,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwiseActivationId,
+      pointwise20ChannelCount,
+      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix );
   }
 
   /** @override */
-  static setAsConstructor( nConvBlockTypeId, inputChannelCount, outputChannelCount ) {
+  static setAsConstructor(
+    input0_height, input0_width, input0_channelCount,
+    nConvBlockTypeId,
+    pointwise1ChannelCount,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwiseActivationId,
+    pointwise20ChannelCount,
+    nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix
+  ) {
     super.setAsConstructor();
-    inputTensorPlaceholder_Creator.setAsConstructor_self.call( this, nConvBlockTypeId, inputChannelCount, outputChannelCount );
+    inputTensorPlaceholder_Creator.setAsConstructor_self.call( this,
+      input0_height, input0_width, input0_channelCount,
+      nConvBlockTypeId,
+      pointwise1ChannelCount,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwiseActivationId,
+      pointwise20ChannelCount,
+      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( nConvBlockTypeId, inputChannelCount, outputChannelCount ) {
-    this.nConvBlockTypeId = nConvBlockTypeId;
-    this.inputChannelCount = inputChannelCount;
-    this.outputChannelCount = outputChannelCount;
-    
-    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
+  static setAsConstructor_self(
+    input0_height, input0_width, input0_channelCount,
+    nConvBlockTypeId,
+    pointwise1ChannelCount,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwiseActivationId,
+    pointwise20ChannelCount,
+    nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+  ) {
 
-    this.nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
-    this.inputChannelCount_lowerHalf = undefined;
-    this.inputChannelCount_higherHalf = undefined;
-    this.outputChannelCount_lowerHalf = undefined;
-    this.outputChannelCount_higherHalf = undefined;
+//!!! ...unfinished... (2022/07/14) Create input TensorPlaceholder.
 
+    Params.set_inputTensorCount_input1_height_width_channelCount_depthwise_inferenced_by.call( ???,
+      input0_height, input0_width, input0_channelCount,
+      nConvBlockTypeId,
+      pointwise1ChannelCount,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwiseActivationId,
+      pointwise20ChannelCount,
+      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+    );
 
-//!!! ...unfinished... (2021/11/15) What if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
+    Params.set_pointwise1_nHigherHalfDifferent_modify_pointwise1ChannelCount_pointwise1Bias_pointwise1ActivationId_by.call( ???,
+      input0_channelCount,
+      nConvBlockTypeId,
+      pointwise1ChannelCount
+    );
 
-    if ( infoConvBlockType.bHigherHalfDifferent == true ) {
+    Params.set_input0_input1_TensorPlaceholder.call( ???,
+      inputTensorCount,
+      input0_height, input0_width, input0_channelCount, inputScaleBoundsArray0,
+      input1_height, input1_width, input1_channelCount, inputScaleBoundsArray1,
+      pointwise1_inputChannelCount_lowerHalf, pointwise1_inputChannelCount_higherHalf,
+    );
 
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
-      // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's head)
-      if ( infoConvBlockType.bHigherHalfDepthwise2 == true ) {
-
-        this.inputChannelCount_lowerHalf = inputChannelCount;
-
-        if ( outputChannelCount > 0 ) {
-          this.nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF;
-          this.outputChannelCount_lowerHalf = outputChannelCount;
-
-        } else {
-
-          this.nHigherHalfDifferent
-            = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH;
-!!!
-          // Since this is an almost copy operation, bias and activation is not necessary.
-          this.pointwise1Bias = false;
-          this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-          this.pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.pointwise1ActivationId );
-
-          this.pointwise1_outputChannelCount_lowerHalf = input0_channelCount; // For depthwise1 (by pass-through-input-to-output)
-        }
-
-        // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
-        this.pointwise1ChannelCount_modified = (
-            this.pointwise1_outputChannelCount_lowerHalf // For depthwise1.
-          + input0_channelCount                          // For depthwise2 (by depthwise1).
-        );
-
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
-      // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
-      } else {
-
-        // So that bHigherHalfPassThrough (or bAllPassThrough).
-        this.pointwise1_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
-
-        let pointwise1_higherHalfPassThrough = ChannelCountCalculator.HigherHalfPassThrough.Pool.get_or_create_by(
-          this.input0_channelCount, this.pointwise1ChannelCount );
-
-        this.pointwise1_inputChannelCount_lowerHalf = pointwise1_higherHalfPassThrough.inputChannelCount_lowerHalf;
-        this.pointwise1_outputChannelCount_lowerHalf = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
-
-        pointwise1_higherHalfPassThrough.disposeResources_and_recycleToPool();
-        pointwise1_higherHalfPassThrough = null;
-      }
-
-    // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
-    }
-
-    if ( this.pointwise1_inputChannelCount_lowerHalf > 0 ) {
-      this.pointwise1_inputChannelCount_higherHalf = input0_channelCount - this.pointwise1_inputChannelCount_lowerHalf;
-    }
-
-    this.outputChannelCount_higherHalf = ???;
   }
 
   /** @override */
   disposeResources() {
+!!!
+
     this.nConvBlockTypeId = undefined;
     this.inputChannelCount = undefined;
     this.outputChannelCount = undefined;
