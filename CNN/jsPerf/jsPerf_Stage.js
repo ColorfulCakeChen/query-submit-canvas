@@ -230,48 +230,76 @@ class HeightWidthDepth {
   /** Testing whether the results of different implementation are the same. */
   * testCorrectness() {
 
-    tf.tidy( () => {
+    {
+      let pool_all_issuedCount_before = Pool.All.issuedCount;
 
-      let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
+      //Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_Stage.HeightWidthDepth.testCorrectness()", () => {
+      //}, this );
+
+      yield;
 
       {
-        // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors
-        //       dynamically created in them.
-        let imageSourceBag = new ImageSourceBag.Base();
+        let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
 
-        let testParams = new Stage_TestParams.Base();
-        let testParamsGenerator = testParams.ParamsGenerator();
-        let testReference = new Stage_Reference.Base();
+        {
+          // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors
+          //       dynamically created in them.
+          let imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by();
 
-        let batchIdCalculator = new BatchIdCalculator.Base( 50 * 1000 );
+          let testParams = Stage_TestParams.Base.Pool.get_or_create_by();
+          let testParamsGenerator = testParams.ParamsGenerator();
+          let testReference = Stage_Reference.Base.Pool.get_or_create_by();
 
-        try {
-          for ( testParams of testParamsGenerator ) {
-            batchIdCalculator.checkAndDisplay( testParams.id );
-            testReference.testCorrectness( imageSourceBag, testParams );
+          let batchIdCalculator = new BatchIdCalculator.Base( 50 * 1000 );
+
+          try {
+            for ( testParams of testParamsGenerator ) {
+              let bDisplayed = batchIdCalculator.checkAndDisplay( testParams.id );
+              if ( bDisplayed )
+                yield; // Since just entering a new batch section, take a break so that memory garbage collector could be activated to work.
+
+              testReference.testCorrectness( imageSourceBag, testParams );
+            }
+
+          } catch ( e ) {
+            let backendName = tf.getBackend();
+            let msg = `jsPerf_Stage.js: testCorrectness(): backendName=${backendName}, `
+              + `Stage, (yieldCount == ${testParams.yieldCount}), testParams.id == ${testParams.id}`;
+
+            console.log( msg );
+            alert( `${msg}\n${e}` );
+
+            //debugger;
+            throw e;
           }
 
-        } catch ( e ) {
-          let backendName = tf.getBackend();
-          console.log( `jsPerf_Stage.js: testCorrectness(): backendName=${backendName}, `
-            + `Stage testParams.id == ${testParams.id}` );
-          throw e;
+          batchIdCalculator.checkAndDisplay( testParams.id );
+
+          testReference.disposeResources_and_recycleToPool(); testReference = null;
+          testParams.disposeResources_and_recycleToPool(); testParams = null;
+          imageSourceBag.disposeResources_and_recycleToPool(); imageSourceBag = null;
         }
 
-        imageSourceBag.disposeResources();
+        let memoryInfo_testCorrectness_after = tf.memory();
+
+        if ( memoryInfo_testCorrectness_after.numTensors != memoryInfo_testCorrectness_before.numTensors )
+          throw Error( `testCorrectness() memory leak. `
+            + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
+            + `should be (${memoryInfo_testCorrectness_before.numTensors} `
+            + `` );
       }
 
-      let memoryInfo_testCorrectness_after = tf.memory();
+      Pool_Asserter.assert_Pool_issuedCount( "jsPerf_Block.HeightWidthDepth.testCorrectness()", pool_all_issuedCount_before );
+      yield;
+    }
 
-      if ( memoryInfo_testCorrectness_after.numTensors != memoryInfo_testCorrectness_before.numTensors )
-        throw Error( `testCorrectness() memory leak. `
-          + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
-          + `should be (${memoryInfo_testCorrectness_before.numTensors} `
-          + `` );
-    });
-
-    // After correctness testing done, create all Stage for performance testing.
-    this.block_PerformanceTest_init();
+    try {
+      // After correctness testing done, create all Stage for performance testing.
+      this.block_PerformanceTest_init();
+    } catch ( e ) {
+      debugger;
+      throw e;
+    }
   }
 
 }
@@ -293,10 +321,10 @@ function init() {
   ];
 }
 
-function testCorrectness() {
+function* testCorrectness() {
   for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
     let testSet = globalThis.testSet_All[ i ];
-    testSet.testCorrectness();
+    yield* testSet.testCorrectness();
   }
 }
 
