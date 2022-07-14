@@ -120,6 +120,9 @@ class Base extends Recyclable.Root {
     // block0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
 
+    this.nSqueezeExcitationChannelCountDivisor = stageParams.nSqueezeExcitationChannelCountDivisor;
+    this.bSqueezeExcitationPrefix = stageParams.bSqueezeExcitationPrefix;
+
     this.bKeepInputTensor = stageParams.bKeepInputTensor; // block0 may or may not keep input tensor according to caller's necessary.
   }
 
@@ -157,7 +160,7 @@ class Base extends Recyclable.Root {
   }
 
   /**
-   * Config the activation of depthwise1 and pointwise2 for block0.
+   * Config the activation of pointwise1, depthwise1, pointwise2 and squeeze-and-excitation for block0.
    */
   activation_setup_forBlock0() {
     let stageParams = this.stageParams;
@@ -193,10 +196,13 @@ class Base extends Recyclable.Root {
         this.pointwise20ActivationId = stageParams.nActivationId;
       }
     }
+
+    // pointwise1 and squeeze-and-excitation
+    this.nActivationId = stageParams.nActivationId;
   }
 
   /**
-   * Config the activation of depthwise1 and pointwise2 for blockLast.
+   * Config the activation of pointwise1, depthwise1, pointwise2 and squeeze-and-excitation for blockLast.
    */
   activation_setup_forBlockLast() {
     let stageParams = this.stageParams;
