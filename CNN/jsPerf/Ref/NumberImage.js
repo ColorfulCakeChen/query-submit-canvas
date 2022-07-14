@@ -13,6 +13,10 @@ import * as Depthwise from "../../Conv/Depthwise.js";
 /**
  * Image composed from numbers. For testing.
  *
+ * Note: It will convert computation result to Float32 by Math.fround(). The reason is that tensorflow.js uses Float32 (especially
+ *       in WebGL backend. This conversion could reduce the difference of NumberImage and tf.tensor.
+ *
+ *
  *
  * @member {number}   height    Image height
  * @member {number}   width     Image width
@@ -274,8 +278,8 @@ class Base extends Recyclable.Root {
             let outIndex = outIndexBaseC + outChannel;
             let filterIndex = filterIndexBase + outChannel;
 
-            imageOut.dataArray[ outIndex ]
-              += ( imageIn.dataArray[ inIndex ] * undoPreviousEscapingScale ) * pointwiseFiltersArray[ filterIndex ];
+            imageOut.dataArray[ outIndex ] = Math.fround( imageOut.dataArray[ outIndex ]
+              + ( ( imageIn.dataArray[ inIndex ] * undoPreviousEscapingScale ) * pointwiseFiltersArray[ filterIndex ] ) );
           }
         }
       }
@@ -547,7 +551,7 @@ class Base extends Recyclable.Root {
 
                     switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
                       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG: // Avg pooling
-                        imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ];
+                        imageOut.dataArray[ outIndex ] = Math.fround( imageOut.dataArray[ outIndex ] + imageIn.dataArray[ inIndex ] );
                         break;
 
                       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX: // Max pooling
@@ -555,8 +559,8 @@ class Base extends Recyclable.Root {
                         break;
 
                       default: // Convolution
-                        imageOut.dataArray[ outIndex ]
-                          += ( imageIn.dataArray[ inIndex ] * undoPreviousEscapingScale ) * depthwiseFiltersArray[ filterIndex ];
+                        imageOut.dataArray[ outIndex ] = Math.fround( imageOut.dataArray[ outIndex ]
+                          + ( ( imageIn.dataArray[ inIndex ] * undoPreviousEscapingScale ) * depthwiseFiltersArray[ filterIndex ] ) );
 
                         // Calculate value bounds of every output channels (i.e. .afterFilter).
                         if ( !filtersArray_bBoundsCalculated[ filterIndex ] ) {
@@ -579,7 +583,7 @@ class Base extends Recyclable.Root {
 
             // Avg pooling
             if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier ) {
-              imageOut.dataArray[ outIndex ] /= avgDivisor; // So that every sum is averaged.
+              imageOut.dataArray[ outIndex ] = Math.fround( imageOut.dataArray[ outIndex ] / avgDivisor ); // So that every sum is averaged.
             }
           }
         }
@@ -668,7 +672,7 @@ class Base extends Recyclable.Root {
     for ( let y = 0; y < imageIn.height; ++y ) {
       for ( let x = 0; x < imageIn.width; ++x ) {
         for ( let channel = 0; channel < imageIn.depth; ++channel ) {
-          imageIn.dataArray[ index ] += biasesArray[ channel ];
+          imageIn.dataArray[ index ] = Math.fround( imageIn.dataArray[ index ] + biasesArray[ channel ] );
           ++index;
         }
       }
@@ -709,7 +713,7 @@ class Base extends Recyclable.Root {
     for ( let y = 0; y < imageIn.height; ++y ) {
       for ( let x = 0; x < imageIn.width; ++x ) {
         for ( let channel = 0; channel < imageIn.depth; ++channel ) {
-          imageIn.dataArray[ index ] *= scaleArray.scales[ channel ];
+          imageIn.dataArray[ index ] = Math.fround( imageIn.dataArray[ index ] * scaleArray.scales[ channel ] );
           ++index;
         }
       }
@@ -741,7 +745,7 @@ class Base extends Recyclable.Root {
       return imageIn;
 
     for ( let i = 0; i < imageIn.dataArray.length; ++i ) {
-      imageIn.dataArray[ i ] = pfnActivation( imageIn.dataArray[ i ] );
+      imageIn.dataArray[ i ] = Math.fround( pfnActivation( imageIn.dataArray[ i ] ) );
     }
 
     return imageIn;
@@ -774,7 +778,7 @@ class Base extends Recyclable.Root {
         this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
 
       for ( let i = 0; i < this.dataArray.length; ++i ) {
-        imageOutNew.dataArray[ i ] = this.dataArray[ i ] + another.dataArray[ i ];
+        imageOutNew.dataArray[ i ] = Math.fround( this.dataArray[ i ] + another.dataArray[ i ] );
       }
 
     } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == this.depth ) ) { // Broadcast another to this.
@@ -787,7 +791,7 @@ class Base extends Recyclable.Root {
       for ( let y = 0; y < rHeight; ++y ) {
         for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
-            imageOutNew.dataArray[ i ] = this.dataArray[ i ] + another.dataArray[ c ];
+            imageOutNew.dataArray[ i ] = Math.fround( this.dataArray[ i ] + another.dataArray[ c ] );
           }
         }
       }
@@ -802,7 +806,7 @@ class Base extends Recyclable.Root {
       for ( let y = 0; y < rHeight; ++y ) {
         for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
-            imageOutNew.dataArray[ i ] = this.dataArray[ c ] + another.dataArray[ i ];
+            imageOutNew.dataArray[ i ] = Math.fround( this.dataArray[ c ] + another.dataArray[ i ] );
           }
         }
       }
@@ -858,7 +862,7 @@ class Base extends Recyclable.Root {
         this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
 
       for ( let i = 0; i < this.dataArray.length; ++i ) {
-        imageOutNew.dataArray[ i ] = this.dataArray[ i ] * another.dataArray[ i ];
+        imageOutNew.dataArray[ i ] = Math.fround( this.dataArray[ i ] * another.dataArray[ i ] );
       }
 
     } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == this.depth ) ) { // Broadcast another to this.
@@ -871,7 +875,7 @@ class Base extends Recyclable.Root {
       for ( let y = 0; y < rHeight; ++y ) {
         for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
-            imageOutNew.dataArray[ i ] = this.dataArray[ i ] * another.dataArray[ c ];
+            imageOutNew.dataArray[ i ] = Math.fround( this.dataArray[ i ] * another.dataArray[ c ] );
           }
         }
       }
@@ -886,7 +890,7 @@ class Base extends Recyclable.Root {
       for ( let y = 0; y < rHeight; ++y ) {
         for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
-            imageOutNew.dataArray[ i ] = this.dataArray[ c ] * another.dataArray[ i ];
+            imageOutNew.dataArray[ i ] = Math.fround( this.dataArray[ c ] * another.dataArray[ i ] );
           }
         }
       }
