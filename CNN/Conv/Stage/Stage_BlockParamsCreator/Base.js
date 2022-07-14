@@ -170,18 +170,11 @@ class Base extends Recyclable.Root {
       //
       } else {
         this.depthwiseActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-
-//!!! ...unfinished... (2022/06/17)
-// If there is squeeze-and-excitation prefix pointwise2, the depthwise should be viewed as non-linear (even if depthwise activation
-// does not exist). In this case, depthwise's bias should be existed too.
-
       }
     }
 
     // pointwise2
     {
-      this.bPointwise20Bias = true; // All blocks' outputs needs bias (even if MobileNetV2_Xxx).
-
       // MobileNetV2_Xxx's pointwise2 always does not have activation function.
       //
       // The reason is that MobileNetV2_Xxx's pointwise2 has add-input-to-output so its block's output is not affine transformation
