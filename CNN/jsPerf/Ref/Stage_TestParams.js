@@ -275,6 +275,12 @@ class Base extends TestParams.Base {
       sourceWidth:  [ 4, 5 ], // Test different input image width (even and odd).
       sourceChannelCount: [ 4, 4 ],
 
+//      nConvStageTypeId: undefined,
+      nConvStageTypeId: [
+        Stage.Params.nConvStageTypeId.valueDesc.range.min,
+        Stage.Params.nConvStageTypeId.valueDesc.range.max
+      ],
+
       blockCountRequested: [
         Stage.Params.blockCountRequested.valueDesc.range.min,
         Stage.Params.blockCountRequested.valueDesc.range.min + 5
@@ -290,6 +296,17 @@ class Base extends TestParams.Base {
       depthwiseFilterHeight: [ Stage.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
       depthwiseFilterWidth: [ Stage.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
 
+      bPointwise2ActivatedAtStageEnd: [
+        Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.min,
+        Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.max
+      ],
+
+//      nSqueezeExcitationChannelCountDivisor: undefined,
+      nSqueezeExcitationChannelCountDivisor: [
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+        3
+      ],
+
       // Beware of NONE and RELU. They easily result in infinity value because they do not have upper bound.
       //
 //       nActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
@@ -297,17 +314,6 @@ class Base extends TestParams.Base {
       nActivationId: [
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3 ],
-
-      bPointwise2ActivatedAtStageEnd: [
-        Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.min,
-        Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.max
-      ],
-
-//      nConvStageType: undefined,
-      nConvStageType: [
-        Stage.Params.nConvStageType.valueDesc.range.min,
-        Stage.Params.nConvStageType.valueDesc.range.max
-      ],
 
 //      bKeepInputTensor: undefined,
       bKeepInputTensor: [
@@ -323,13 +329,17 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Stage.Params.sourceHeight,                   this.valueOutMinMax.sourceHeight ),
       new TestParams.ParamDescConfig( Stage.Params.sourceWidth,                    this.valueOutMinMax.sourceWidth ),
       new TestParams.ParamDescConfig( Stage.Params.sourceChannelCount,             this.valueOutMinMax.sourceChannelCount ),
-      new TestParams.ParamDescConfig( Stage.Params.blockCountRequested,             this.valueOutMinMax.blockCountRequested ),
+      new TestParams.ParamDescConfig( Stage.Params.nConvStageTypeId,               this.valueOutMinMax.nConvStageTypeId ),
+      new TestParams.ParamDescConfig( Stage.Params.blockCountRequested,            this.valueOutMinMax.blockCountRequested ),
       new TestParams.ParamDescConfig( Stage.Params.bPointwise1,                    this.valueOutMinMax.bPointwise1 ),
       new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterHeight,          this.valueOutMinMax.depthwiseFilterHeight ),
       new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterWidth,           this.valueOutMinMax.depthwiseFilterWidth ),
-      new TestParams.ParamDescConfig( Stage.Params.nActivationId,                  this.valueOutMinMax.nActivationId ),
       new TestParams.ParamDescConfig( Stage.Params.bPointwise2ActivatedAtStageEnd, this.valueOutMinMax.bPointwise2ActivatedAtStageEnd ),
-      new TestParams.ParamDescConfig( Stage.Params.nConvStageType,                 this.valueOutMinMax.nConvStageType ),
+
+      new TestParams.ParamDescConfig( Stage.Params.nSqueezeExcitationChannelCountDivisor,
+                                                                                   this.valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
+
+      new TestParams.ParamDescConfig( Stage.Params.nActivationId,                  this.valueOutMinMax.nActivationId ),
       new TestParams.ParamDescConfig( Stage.Params.bKeepInputTensor,               this.valueOutMinMax.bKeepInputTensor ),
     ];
 
@@ -340,7 +350,7 @@ class Base extends TestParams.Base {
 
 
 /**
- * The order when generate weightsFloat32Array[].
+ * The order when generate inputWeightArray[].
  *
  * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Stage.initer().
  */
@@ -348,12 +358,13 @@ Base.paramsNameOrderArray_Basic = [
   Stage.Params.sourceHeight.paramName,
   Stage.Params.sourceWidth.paramName,
   Stage.Params.sourceChannelCount.paramName,
+  Stage.Params.nConvStageTypeId.paramName,
   Stage.Params.blockCountRequested.paramName,
   Stage.Params.bPointwise1.paramName,
   Stage.Params.depthwiseFilterHeight.paramName,
   Stage.Params.depthwiseFilterWidth.paramName,
-  Stage.Params.nActivationId.paramName,
   Stage.Params.bPointwise2ActivatedAtStageEnd.paramName,
-  Stage.Params.nConvStageType.paramName,
+  Stage.Params.nSqueezeExcitationChannelCountDivisor.paramName,  
+  Stage.Params.nActivationId.paramName,
   Stage.Params.bKeepInputTensor.paramName,
 ];
