@@ -165,15 +165,13 @@ class Base extends Recyclable.Root {
 
     // 1. The original image is requested.
     if ( ( depthwiseFilterHeight == 1 ) && ( depthwiseFilterWidth == 1 ) && ( depthwiseStridesPad == 0 ) ) {
-      let randomOffsetMin = -200; // Just choosed randomly.
-      let randomOffsetMax = +200;
 
       //!!! (2022/04/21 Remarked) Using Weights.Base.ValueBounds is more like real use case.
       let bAutoBounds = true;  // Image pixel channel value bounds are inside the real generated value bounds.
       //!!! (2022/07/13 Remarked) Using small ValueBounds may reduce floating-point accumulated error.
       //let bAutoBounds = false; // Image pixel channel value bounds are inside the default value bounds (i.e. Weights.Base.ValueBounds).
-      image = NumberImage.Base.create_bySequenceRandom( originalHeight, originalWidth, channelCount, randomOffsetMin, randomOffsetMax,
-        bAutoBounds );
+      image = NumberImage.Base.create_bySequenceRandom( originalHeight, originalWidth, channelCount,
+        Base.weightsRandomOffset.min, Base.weightsRandomOffset.max, bAutoBounds );
 
     // 2. The shrinked image requested.
     } else {
@@ -218,3 +216,8 @@ class Base extends Recyclable.Root {
   }
 
 }
+
+
+//!!! (2022/07/14 Temp Remarked) Fixed to non-random to simplify debug.
+//Base.weightsRandomOffset = { min: -200, max: +200 };
+Base.weightsRandomOffset = { min: -0, max: +0 };
