@@ -383,8 +383,9 @@ class ScaleArray extends Recyclable.Root {
     //   scale = 2 ** Math.floor( Math.log2( scale ) )
     //
     // So the returned scale (if exists) is always powers of two (e.g. 2^(-1), 2^(-2), 2^(-3), ... ) (i.e. 0.5, 0.25, 0.125, ... ).
-    // The reason is that they may reduce floating-point accumulated error after ShuffleNetV2_byMobileNetV2 pass-through by scaling
-    // and un-scaling repeately.
+    // Because they can be represented as a finite floating-point number (v.s. if scale is 0.3, it can not be represented as a finite
+    // floating-point number), this reduces floating-point accumulated error when ShuffleNetV2_byMobileNetV2 pass-through do-scale
+    // and undo-scale repeately. 
     //
     let scale;
 
