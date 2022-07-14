@@ -84,15 +84,20 @@ class HeightWidthDepth {
       return dataTensor3dArray;
     });
 
-//!!!
     let stepCountRequested = 10;
+    let nSqueezeExcitationChannelCountDivisor = 4;
 
-    // sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, bPointwise1,
-    // depthwiseFilterHeight, depthwiseFilterWidth, nActivationId, bPointwise2ActivatedAtStageEnd,
-    // nConvStageType, bKeepInputTensor
+    // sourceHeight, sourceWidth, sourceChannelCount,
+    // nConvStageTypeId,
+    // blockCountRequested,
+    // bPointwise1,
+    // depthwiseFilterHeight, depthwiseFilterWidth,
+    // bPointwise2ActivatedAtStageEnd,
+    // nSqueezeExcitationChannelCountDivisor,
+    // nActivationId,
+    // bKeepInputTensor
     //
-    //
-    // The block performance testing should:
+    // The stage performance testing should:
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
     //
 
@@ -101,72 +106,81 @@ class HeightWidthDepth {
     // Test Case 1: (MobileNetV1, ( bPointwise1 == true ))
     this.testCaseMap.set( "MobileNetV1_bPointwise1_true", { testParams: 
       ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, true,
-        3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
+        this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
+        stepCountRequested, true,
+        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
         true
       ) } );
 
+//!!!
     // Test Case 2: (MobileNetV1_padValid, ( bPointwise1 == true ))
     this.testCaseMap.set( "MobileNetV1_padValid_bPointwise1_true", { testParams: 
       ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, true,
-        3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
+        this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
+        stepCountRequested, true,
+        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
         true
       ) } );
 
     // Test Case 3: (MobileNetV2_Thin, ( bPointwise1 == true ))
     this.testCaseMap.set( "MobileNetV2_Thin_bPointwise1_true", { testParams: 
       ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, true,
-        3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
+        this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
+        stepCountRequested, true,
+        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
         true
       ) } );
 
     // Test Case 4: (MobileNetV2, ( bPointwise1 == true ))
     this.testCaseMap.set( "MobileNetV2_bPointwise1_true", { testParams: 
       ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, true,
-        3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
+        this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
+        stepCountRequested, true,
+        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
         true
       ) } );
 
     // Test Case 5: (ShuffleNetV2, ( bPointwise1 == true ))
     this.testCaseMap.set( "ShuffleV2_bPointwise1_true", { testParams: 
       ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, true,
-        3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
+        this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
+        stepCountRequested, true,
+        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
         true
       ) } );
 
     // Test Case 6: (ShuffleNetV2_byPointwise22, ( bPointwise1 == true ))
     this.testCaseMap.set( "ShuffleV2_byPointwise22_bPointwise1_true", { testParams: 
       ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, true,
-        3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
+        this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE22,
+        stepCountRequested, true,
+        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
         true
       ) } );
 
     // Test Case 7: (ShuffleNetV2_byMobileNetV1, ( bPointwise1 == true ))
     this.testCaseMap.set( "ShuffleNetV2_byMobileNetV1_bPointwise1_true", { testParams: 
       ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, true,
-        3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
+        this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
+        stepCountRequested, true,
+        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
         true
       ) } );
 
     // Test Case 8: (ShuffleNetV2_byMobileNetV1_padValid, ( bPointwise1 == true ))
     this.testCaseMap.set( "ShuffleNetV2_byMobileNetV1_padValid_bPointwise1_true", { testParams: 
       ( new Stage_TestParams.Base() ).set_By_ParamsScattered(
-        this.height, this.width, this.depth, stepCountRequested, true,
-        3, 3, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3, true,
+        this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
+        stepCountRequested, true,
+        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
         true
       ) } );
 
