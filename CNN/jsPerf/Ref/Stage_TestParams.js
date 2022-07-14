@@ -1,7 +1,9 @@
 export { Base };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as RandTools from "../../util/RandTools.js";
-import * as NameNumberArrayObject_To_Float32Array from "../../util/NameNumberArrayObject_To_Float32Array.js";
+import * as NameNumberArrayObject_To_NumberArray from "../../util/NameNumberArrayObject_To_NumberArray.js";
 //import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as ValueRange from "../../Unpacker/ValueRange.js";
@@ -35,20 +37,52 @@ import * as Stage from "../../Conv/Stage.js";
 class Base extends TestParams.Base {
 
   /**
-   *
+   * Used as default Stage_TestParams.Base provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Stage_TestParams.Base.Pool", Base, Base.setAsConstructor );
+
+  /**
    */
   constructor() {
     super();
-    this.blocksArray = new Array();
+    Base.setAsConstructor_self.call( this );
+  }
 
-    // A pre-allocated ArrayBuffer which could be re-allocated when needed to get Float32Array. (For reducing memory re-allocation.)
-    this.Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    Base.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
+    this.blocksArray = Recyclable.OwnerArray.Base.Pool.get_or_create_by();
+
+    // A pre-allocated and re-used NumberArray. (For reducing memory re-allocation.)
+    this.NumberArray_ElementOffsetBegin = NameNumberArrayObject_To_NumberArray.Base.Pool.get_or_create_by();
+  }
+
+  /** @override */
+  disposeResources() {
+    this.NumberArray_ElementOffsetBegin?.disposeResources_and_recycleToPool();
+    this.NumberArray_ElementOffsetBegin = null;
+
+    this.blocksArray?.disposeResources_and_recycleToPool();
+    this.blocksArray = null;
+
+    super.disposeResources();
+  }
+
+  /** */
+  toString() {
+    return `testParams.id=${this.id}`;
   }
 
   /**
    * Use scattered parameters to fills the following proterties:
-   *   - this.in.inputFloat32Array
-   *   - this.in.byteOffsetBegin
+   *   - this.in.inputWeightArray
+   *   - this.in.weightsElementOffsetBegin
    *   - this.out
    *
    * @return {Base}
@@ -86,8 +120,8 @@ class Base extends TestParams.Base {
  
   /**
    * Fills the following proterties:
-   *   - this.in.inputFloat32Array
-   *   - this.in.byteOffsetBegin
+   *   - this.in.inputWeightArray
+   *   - this.in.weightsElementOffsetBegin
    *   - this.out.outputHeight
    *   - this.out.outputWidth
    *
@@ -118,10 +152,10 @@ class Base extends TestParams.Base {
     blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last();
 
     this.blocksArray.length = blockParamsCreator.blockCount;
-    let paramsNameOrderArray = Base.paramsNameOrderArray_Basic.slice(); // Shallow copy.
+    let paramsNameOrderArray_modified = Recyclable.Array.Base.Pool.get_or_create_by( ...Base.paramsNameOrderArray_Basic ); // Shallow copy.
 
-    let paramsNumberArrayObject = {};
-    Object.assign( paramsNumberArrayObject, this.in.paramsNumberArrayObject ); // Shallow copy.
+    let paramsNumberArrayObject_modified = {};
+    Object.assign( paramsNumberArrayObject_modified, this.in.paramsNumberArrayObject ); // Shallow copy.
 
     let channelShuffler;
     for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
@@ -140,7 +174,7 @@ class Base extends TestParams.Base {
       }
 
       let blockName = `block${i}`;
-      paramsNameOrderArray.push( blockName ); // Place every block's parameters in sequence.
+      paramsNameOrderArray_modified.push( blockName ); // Place every block's parameters in sequence.
 
       let blockTestParams = new Block_TestParams.Base( this.id );
       blockTestParams.set_byParamsScattered(
@@ -157,7 +191,7 @@ class Base extends TestParams.Base {
       );
 
       this.blocksArray[ i ] = blockTestParams;
-      paramsNumberArrayObject[ blockName ] = blockTestParams.in.inputFloat32Array;
+      paramsNumberArrayObject_modified[ blockName ] = blockTestParams.in.inputFloat32Array;
 
       if ( 0 == i ) { // After block0 (i.e. for block1, 2, 3, ...)
         blockParamsCreator.configTo_afterBlock0();
@@ -166,15 +200,26 @@ class Base extends TestParams.Base {
 
     // Here (i.e. in Stage_TestParams), the channelShuffler is not used. Just release it for avoiding memory leak.
     if ( channelShuffler ) {
-      channelShuffler.disposeTensors();
+      channelShuffler.disposeResources_and_recycleToPool();
       channelShuffler = null;
     }
 
-    // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) Float32Array.
-    this.Float32Array_ByteOffsetBegin.setByConcat( paramsNameOrderArray, paramsNumberArrayObject, weightsElementOffsetBegin );
+    if ( blockParamsCreator ) {
+      blockParamsCreator.disposeResources_and_recycleToPool();
+      blockParamsCreator = null;
+    }
 
-    this.in.inputFloat32Array = this.Float32Array_ByteOffsetBegin.weightsFloat32Array;
-    this.in.byteOffsetBegin = this.Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
+    // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
+    this.NumberArray_ElementOffsetBegin.setByConcat(
+      paramsNameOrderArray_modified, paramsNumberArrayObject_modified, weightsElementOffsetBegin );
+
+    this.in.inputWeightArray = this.NumberArray_ElementOffsetBegin.weightsArray;
+    this.in.weightElementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightsElementOffsetBegin;
+
+    if ( paramsNameOrderArray_modified ) {
+      paramsNameOrderArray_modified.disposeResources_and_recycleToPool();
+      paramsNameOrderArray_modified = null;
+    }
 
     return this;
   }
