@@ -250,11 +250,6 @@ class Base extends Recyclable.Root {
     this.imageInArray_Fake = Recyclable.Array.Pool.get_or_create_by( 2 );
     this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.001 );
 
-//!!! (2022/07/09 Remarked) Old Codes.
-//    *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
-//    * and improve performance when doing Interleave_asGrouptTwo.
-//     this.arrayTemp_forInterleave_asGrouptTwo = Recyclable.Array.Pool.get_or_create_by( 0 ); // Used by calcConcatShuffleSplit().
-
     this.imageNeedDisposeUniqueStack = Recyclable.OwnerUniqueStack.Pool.get_or_create_by();
   }
 
@@ -262,10 +257,6 @@ class Base extends Recyclable.Root {
   disposeResources() {
     this.imageNeedDisposeUniqueStack?.disposeResources_and_recycleToPool();
     this.imageNeedDisposeUniqueStack= null;
-
-//!!! (2022/07/09 Remarked) Old Codes.
-//     this.arrayTemp_forInterleave_asGrouptTwo?.disposeResources_and_recycleToPool();
-//     this.arrayTemp_forInterleave_asGrouptTwo = null;
 
     this.asserter_Equal?.disposeResources_and_recycleToPool();
     this.asserter_Equal = null;
@@ -393,6 +384,13 @@ class Base extends Recyclable.Root {
     } = this.testCorrectnessInfo;
 
     let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
+
+//!!! ...unfinished... (2022/07/14) Create input TensorPlaceholder.
+//     Block.Params.set_pointwise1_nHigherHalfDifferent_modify_pointwise1ChannelCount_pointwise1Bias_pointwise1ActivationId_by.call( ???,
+//       input0_channelCount,
+//       nConvBlockTypeId,
+//       pointwise1ChannelCount
+//     );
 
     let block = Base.block_create( testParams,
       imageInArraySelected[ 0 ].boundsArraySet.output0,
