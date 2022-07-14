@@ -297,7 +297,7 @@ class Base extends Recyclable.Root {
 
     let progressRoot = progressParent.getRoot();
     let progressToAdvance = progressParent.addChild( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
-    let progressForBlocks = progressParent.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for block0, block1, 2, 3, ... 
+    let progressForBlocks = progressParent.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for block0, block1, block2, ... 
 
     // 1. Extract parameters.
     if ( !params )
@@ -409,15 +409,15 @@ class Base extends Recyclable.Root {
       // If channelShuffler has ever got, never change it.
       }
 
-      block = this.blocksArray[ i ] = new Block.Base();
-      blockIniter = block.initer( progressForBlocks.children[ i ], blockParams,
+      block = this.blocksArray[ i ] = Block.Base.Pool.get_or_create_by();
+      blockIniter = block.initer( progressForBlocks.children[ i ], inputWeightArray, this.weightElementOffsetEnd, blockParams,
         inputScaleBoundsArray, null,
         this.channelShuffler );
 
       this.bInitOk = yield* blockIniter;
       if ( !this.bInitOk )
         return false;
-      this.byteOffsetEnd = block.byteOffsetEnd;
+      this.weightElementOffsetEnd = params.weightElementOffsetEnd;
 
       this.tensorWeightCountTotal += block.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += block.tensorWeightCountExtracted;
@@ -433,21 +433,11 @@ class Base extends Recyclable.Root {
 
     this.outputChannelCount = this.blockLast.outChannelsAll;
 
-//!!! (2022/06/07 Remarked) seems not necessary because already has TensorPlaceholder.
-//     {
-//       this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, null,
-//         this.blockLast.boundsArraySet.output0.channelCount, 0 );
-//
-//       this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.blockLast.boundsArraySet );
-//
-//       this.dispose_all_sub_BoundsArraySet(); // Release all blocks' bounds array set for reducing memory footprint.
-//     }
-
     this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
 
     // In our Stage design, no matter which configuration, the outputChannelCount always is twice as sourceChannelCount.
     if ( this.outputChannelCount != ( this.sourceChannelCount * 2 ) )
-      throw Error( `Stage.initer(): `
+      throw Error( `Stage.Base.initer(): `
         + `the outputChannelCount ( ${this.outputChannelCount} ) should always be twice as `
         + `sourceChannelCount ( ${this.sourceChannelCount} ).` );
 
@@ -467,11 +457,11 @@ class Base extends Recyclable.Root {
    *
    * @see Block.Base.init()
    */
-  init( progressParent, inputWeightArray, weightElementOffsetBegin, params ) {
+  init( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
 
-    progressParent = progressParent ?? ( new ValueMax.Percentage.Aggregate() );
+    progressParent = progressParent ?? ( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-    let initer = this.initer( progressParent, params );
+    let initer = this.initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 );
     let initerNext;
     do {
       initerNext = initer.next();
@@ -695,7 +685,7 @@ class Base extends Recyclable.Root {
       );
 
     let classBlockParamsCreator = Base.nConvStageType_to_BlockParamsCreator_ClassArray[ stageParams.nConvStageTypeId ];
-    let aBlockParamsCreator = new classBlockParamsCreator( stageParams );
+    let aBlockParamsCreator = classBlockParamsCreator.Pool.get_or_create_by( stageParams );
 
     return aBlockParamsCreator;
   }
@@ -704,7 +694,7 @@ class Base extends Recyclable.Root {
 
 
 /**
- * Mapping nConvStageType (number as array index) to BlockParamsCreator class object.
+ * Mapping nConvStageTypeId (number as array index) to BlockParamsCreator class object.
  */
 Base.nConvStageType_to_BlockParamsCreator_ClassArray = [
   BlockParamsCreator.MobileNetV1,                         // ValueDesc.ConvStageType.Ids.MOBILE_NET_V1 (0)
