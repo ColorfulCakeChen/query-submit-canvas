@@ -69,7 +69,19 @@ import * as FloatValue from "../FloatValue.js";
  *   - Advantage: has larger inputDomainLinear so that activation-escaping could use a larger scale and reduce floating-point
  *       truncation error. (The same reason why RELU6 is better than RELU.)
  *
- *   - Disadvantage: 
+ *   - Disadvantage: The activated value (i.e. 3) seems harder to become any other value by a floating-point finite scaling.
+ *       This may enlarge the floating-point accumulated error. For example, in order to let 3 become 100, a scale 33.333...
+ *       should be used. However, 33.3 can not be represented by a finite floating-point number.
+ *
+ * CLIP_BY_VALUE_N2_P2:
+ *
+ *   - Disadvantage: has smaller inputDomainLinear [ -2, +2 ] (than CLIP_BY_VALUE_N3_P3 [ -3, +3 ]) so that activation-escaping
+ *       could use a larger scale and reduce floating-point truncation error. (The same reason why RELU6 is better than RELU.)
+ *
+ *   - Advantage: The activated value (i.e. 3) seems harder to become any other value by a floating-point finite scaling.
+ *       This may enlarge the floating-point accumulated error. For example, in order to let 3 become 100, a scale 33.333...
+ *       should be used. However, 33.3 can not be represented by a finite floating-point number.
+ *
  *
  *
  *
