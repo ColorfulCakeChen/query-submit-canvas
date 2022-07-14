@@ -507,28 +507,15 @@ class Base extends Recyclable.Root {
   }
 
   /**
-   * Call .TensorPlaceholder_dispose_inputs_dispose_outputs() of all sub blocks.
-   */
-  TensorPlaceholder_dispose_inputs_dispose_outputs() {
-    if ( this.blocksArray ) {
-      for ( let i = 0; i < this.blocksArray.length; ++i ) {
-        let block = this.blocksArray[ i ];
-        block.TensorPlaceholder_dispose_inputs_dispose_outputs();
-      }
-    }
-  }
-
-  /**
-   * Release all ScaleBoundsArray (inside tensor placeholder) except .block0.input0 and .blockLast.output0
+   * Release all ScaleBoundsArray (inside tensor placeholder) except .block0.inputX and .blockLast.outputX
    *
    * This could reduce memory footprint by releasing unused scale bounds array.
    */
   dispose_intermediate_ScaleBoundsArray() {
-
     if ( !this.blocksArray )
       return;
 
-    { // 1. Release blockLast's inputs' ScaleBoundsArray.
+    { // 1. Release blockLast's inputs' ScaleBoundsArray. (Note: .blockLast.outputX are kept.)
       this.blockLast.input1?.ScaleBoundsArray_dispose();
       this.blockLast.input0.ScaleBoundsArray_dispose();
     }
@@ -542,7 +529,7 @@ class Base extends Recyclable.Root {
       block.input0.ScaleBoundsArray_dispose();
     }
 
-    { // 1. Release block0's outputs' ScaleBoundsArray.
+    { // 3. Release block0's outputs' ScaleBoundsArray. (Note: .block0.inputX are kept.)
       this.block0.output1?.ScaleBoundsArray_dispose();
       this.block0.output0.ScaleBoundsArray_dispose();
     }
