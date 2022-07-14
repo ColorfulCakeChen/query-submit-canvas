@@ -378,11 +378,11 @@ class ScaleArray extends Recyclable.Root {
 
     // Note:
     //
-    // When a legal (positive) scale is found. A two's power value which is equal to or less than it will be returned instead.
+    // When a legal (positive) scale is found. A value of powers of two which is equal to or less than it will be returned instead.
     //
     //   scale = 2 ** Math.floor( Math.log2( scale ) )
     //
-    // So the returned scale (if exists) is always two's power (e.g. 2^(-1), 2^(-2), 2^(-3), ... ) (i.e. 0.5, 0.25, 0.125, ... ).
+    // So the returned scale (if exists) is always powers of two (e.g. 2^(-1), 2^(-2), 2^(-3), ... ) (i.e. 0.5, 0.25, 0.125, ... ).
     // The reason is that they may reduce floating-point accumulated error after ShuffleNetV2_byMobileNetV2 pass-through by scaling
     // and un-scaling repeately.
     //
@@ -424,12 +424,12 @@ class ScaleArray extends Recyclable.Root {
         // 3. It is impossible to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] only by scale because all cases are tried and failed.
         scale = Number.NaN;
 
-      // 2.3 A legal (positive) scale is found. Make it is a two's power value which is equal to or less than it.
+      // 2.3 A legal (positive) scale is found. Make it is a value of powers of two value which is equal to or less than it.
       } else {
         scale = 2 ** Math.floor( Math.log2( scale ) );
       }
 
-    // 1.3 A legal (positive) scale is found. Make it is a two's power value which is equal to or less than it.
+    // 1.3 A legal (positive) scale is found. Make it is a value of powers of two value which is equal to or less than it.
     } else {
       scale = 2 ** Math.floor( Math.log2( scale ) );
     }
