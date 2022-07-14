@@ -10,11 +10,11 @@ import { Base } from "./Base.js";
  * Provide parameters for MobileNetV1 (i.e. no-add-inut-to-output, pointwise1 is same size of pointwise20).
  *
  * Although this the simplest pointwise1-depthwise-pointwise2 architecture, it may be the most efficient neural network if
- * using CLIP_BY_VALUE_N3_P3 (instead of RELU) as activation function.
+ * using CLIP_BY_VALUE_N2_P2 (instead of RELU) as activation function.
  *
  * The reasons are:
  *
- *   - Inference speed faster than MobileNetV2: According to experience of ShuffleNetV2_ByMobileNetV1, the CLIP_BY_VALUE_N3_P3
+ *   - Inference speed faster than MobileNetV2: According to experience of ShuffleNetV2_ByMobileNetV1, the CLIP_BY_VALUE_N2_P2
  *       activation function could achieve skipping connection (i.e. residual connection) without add-input-to-output (i.e MobileNetV2).
  *
  *   - Inference speed could be faster than ShuffleNetV2_ByMobileNetV1: MobileNetV1_Xxx's all blocks could have no pointwise1.
@@ -82,8 +82,6 @@ class MobileNetV1 extends Base {
     //
     this.pointwise20ChannelCount = stageParams.sourceChannelCount * 2;
 
-    this.bOutput1Requested = false; // In MobileNet, all blocks do not have output1.
-
     this.outChannels0 = this.pointwise20ChannelCount;
     this.outChannels1 = 0;
   }
@@ -93,10 +91,7 @@ class MobileNetV1 extends Base {
     super.configTo_afterBlock0(); // block1, 2, 3, ...'s inputHeight0, inputWidth0.
 
     // The input0 of all blocks (except block0) have the same depth as previous (also block0's) block's output0.
-    this.channelCount0_pointwise1Before = this.outChannels0;
-
-    // In MobileNetV1, all blocks (include block0) do not use input1.
-    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT;
+    this.input0_channelCount = this.outChannels0;
   }
 
   /** @override */
