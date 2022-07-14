@@ -41,10 +41,6 @@ class MobileNetV2 extends MobileNetV2_Thin {
   //  super.disposeResources();
   //}
 
-  constructor( stageParams ) {
-    super( stageParams );
-  }
-
   /** @override */
   configTo_beforeBlock0() {
     super.configTo_beforeBlock0(); // block0's input0_height, input0_width, input0_channelCount, activation.
