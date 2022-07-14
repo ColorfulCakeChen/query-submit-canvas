@@ -8,6 +8,9 @@ import { Params } from "./Params.js";
 !!! ...unfinished... (2022/07/14)
 // Perhaps, porting all Block.Params.set_Xxx_by() static method to here.
 //
+// Renamed to class Block.InferencedParams
+//
+//
 
 /**
  * Calculate the channel count of lower half (of input and output) and higher half (of input and output) for pointwise1 of
