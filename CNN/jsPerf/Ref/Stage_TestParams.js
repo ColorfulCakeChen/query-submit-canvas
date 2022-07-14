@@ -55,15 +55,27 @@ class Base extends TestParams.Base {
    *   Return this object self.
    */
   set_byParamsScattered(
-    sourceHeight, sourceWidth, sourceChannelCount, blockCountRequested, bPointwise1,
-    depthwiseFilterHeight, depthwiseFilterWidth, nActivationId,
-    bPointwise2ActivatedAtStageEnd, nConvStageType, bKeepInputTensor
+    sourceHeight, sourceWidth, sourceChannelCount,
+    nConvStageTypeId,
+    blockCountRequested,
+    bPointwise1,
+    depthwiseFilterHeight, depthwiseFilterWidth,
+    bPointwise2ActivatedAtStageEnd,
+    nSqueezeExcitationChannelCountDivisor,
+    nActivationId,
+    bKeepInputTensor
   ) {
     this.in.paramsNumberArrayObject = {};
     this.out = {
-      sourceHeight, sourceWidth, sourceChannelCount, blockCountRequested, bPointwise1,
-      depthwiseFilterHeight, depthwiseFilterWidth, nActivationId,
-      bPointwise2ActivatedAtStageEnd, nConvStageType, bKeepInputTensor
+      sourceHeight, sourceWidth, sourceChannelCount,
+      nConvStageTypeId,
+      blockCountRequested,
+      bPointwise1,
+      depthwiseFilterHeight, depthwiseFilterWidth,
+      bPointwise2ActivatedAtStageEnd,
+      nSqueezeExcitationChannelCountDivisor,
+      nActivationId,
+      bKeepInputTensor
     };
 
     Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
