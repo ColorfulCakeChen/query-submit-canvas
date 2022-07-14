@@ -7,7 +7,10 @@ import * as FloatValue from "../FloatValue.js";
 /**
  * Describe activation function parameter's id, range, name.
  *
- * The activation function ActivationFunction.Info.pfn( x ) is almost linear when x is inside inputDomainLinear. Its output is outputRangeLinear.
+ * The activation function ActivationFunction.Info.pfn( x ) is almost linear when x is inside inputDomainLinear. Its output is
+ * outputRangeLinear.
+ *
+ *   - CLIP_BY_VALUE_N2_P2( [ -2, +2 ] ) = [ -2, +2 ]
  *   - CLIP_BY_VALUE_N3_P3( [ -3, +3 ] ) = [ -3, +3 ]
  *   - RELU6( [ 0, 6 ] ) = [ 0, 6 ]
  *   - TANH ( [ -0.005, +0.005 ] ) = [ -0.005, +0.005]
@@ -43,9 +46,9 @@ import * as FloatValue from "../FloatValue.js";
  *
  *
  *
- * Q: Since activation by clipByValue() is enough, why not just using saturated integer for convolution?
- * A: Although saturated integer could achieve clipByValue automatically without activation function (i.e. less computation time).
- *    It has some disadvantages:
+ * Q1: Since activation by clipByValue() is enough, why not just using saturated integer for convolution?
+ * A1: Although saturated integer could achieve clipByValue automatically without activation function (i.e. less computation time).
+ *     It has some disadvantages:
  *
  *      - It can not escape saturation (i.e. escape activation) by scaling. The reason is that needs multiply a number less
  *         than one which can not be represented by integer (i.e. floatig-point number is required).
@@ -55,6 +58,21 @@ import * as FloatValue from "../FloatValue.js";
  *
  * On the other hand, floating-point number has already been similar to a kind of saturated number (i.e. maximum is saturated to
  * +Infinity, and minimum is saturated to -Infinity).
+ *
+ *
+ *
+ * Q2: Why use CLIP_BY_VALUE_N2_P2 instead of CLIP_BY_VALUE_N3_P3?
+ * A2: 
+ *
+ * CLIP_BY_VALUE_N3_P3:
+ *
+ *   - Advantage: has larger inputDomainLinear so that activation-escaping could use a larger scale and reduce floating-point
+ *       truncation error. (The same reason why RELU6 is better than RELU.)
+ *
+ *   - Disadvantage: 
+ *
+ *
+ *
  *
  */
 class ActivationFunction extends Int {
