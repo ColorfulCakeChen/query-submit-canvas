@@ -345,94 +345,103 @@ class Base extends Recyclable.Root {
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
-    // 2. Create every blocks.
-    let blockParamsCreator = Base.create_BlockParamsCreator_byStageParams( params );
-    blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
+    let blockParamsCreator;
+    try {
+      // 2. Create every blocks.
+      blockParamsCreator = Base.create_BlockParamsCreator_byStageParams( params );
+      blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
 
-    for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Progress for block0, 1, 2, 3, ... 
-      progressForBlocks.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-    }
-
-    let blockParams, block, blockIniter;
-    let inputScaleBoundsArray;
-
-    this.blocksArray = Recyclable.OwnerArray.Pool.get_or_create_by( blockParamsCreator.blockCount );
-    for ( let i = 0; i < this.blocksArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
-
-      if ( 0 == i ) { // Block0.
-        blockParamsCreator.configTo_beforeBlock0();
-        inputScaleBoundsArray = inputScaleBoundsArray0;
+      for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Progress for block0, 1, 2, 3, ... 
+        progressForBlocks.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
       }
 
-      // BlockLast. (Note: Block0 may also be BlockLast.) 
-      //
-      // If this is the last block of this stage (i.e. at-stage-end)
-      //   - a different depthwise filter size may be used.
-      //   - a different activation function may be used after pointwise2 convolution.
-      if ( ( this.blocksArray.length - 1 ) == i ) {
-        blockParamsCreator.configTo_beforeBlockLast();
-      }
+      let blockParams, block, blockIniter;
+      let inputScaleBoundsArray;
 
-      this.assert_ImageSize_BetweenBlock( i, blockParamsCreator ); // Assert image size.
+      this.blocksArray = Recyclable.OwnerArray.Pool.get_or_create_by( blockParamsCreator.blockCount );
+      for ( let i = 0; i < this.blocksArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
 
-      blockParams = blockParamsCreator.create_BlockParams(); // Create current block.
-
-      if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
-
-        // If channelShuffler is not null, keep it so that its tensors could be released.
-        let channelShuffler = blockParamsCreator.channelShuffler;
-        if ( channelShuffler ) {
-
-          if ( ( this.channelShuffler ) && ( this.channelShuffler != channelShuffler ) )
-            throw Error( `Stage.Base.initer(): `
-              + `At most, only one (and same) channel shuffler could be used (and shared by all blocks of a stage).` );
-
-          this.channelShuffler = channelShuffler;
-
-          this.tensorWeightCountExtracted += channelShuffler.tensorWeightCountExtracted;
-          this.tensorWeightCountTotal += channelShuffler.tensorWeightCountTotal;
-
-        // If channelShuffler is null, do not use it. Otherwise, the this.channelShuffler will be cleared and could not be used
-        // for releasing tensors.
+        if ( 0 == i ) { // Block0.
+          blockParamsCreator.configTo_beforeBlock0();
+          inputScaleBoundsArray = inputScaleBoundsArray0;
         }
 
-      // If channelShuffler has ever got, never change it.
+        // BlockLast. (Note: Block0 may also be BlockLast.) 
+        //
+        // If this is the last block of this stage (i.e. at-stage-end)
+        //   - a different depthwise filter size may be used.
+        //   - a different activation function may be used after pointwise2 convolution.
+        if ( ( this.blocksArray.length - 1 ) == i ) {
+          blockParamsCreator.configTo_beforeBlockLast();
+        }
+
+        this.assert_ImageSize_BetweenBlock( i, blockParamsCreator ); // Assert image size.
+
+        blockParams = blockParamsCreator.create_BlockParams(); // Create current block.
+
+        if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
+
+          // If channelShuffler is not null, keep it so that its tensors could be released.
+          let channelShuffler = blockParamsCreator.channelShuffler;
+          if ( channelShuffler ) {
+
+            if ( ( this.channelShuffler ) && ( this.channelShuffler != channelShuffler ) )
+              throw Error( `Stage.Base.initer(): `
+                + `At most, only one (and same) channel shuffler could be used (and shared by all blocks of a stage).` );
+
+            this.channelShuffler = channelShuffler;
+
+            this.tensorWeightCountExtracted += channelShuffler.tensorWeightCountExtracted;
+            this.tensorWeightCountTotal += channelShuffler.tensorWeightCountTotal;
+
+          // If channelShuffler is null, do not use it. Otherwise, the this.channelShuffler will be cleared and could not be used
+          // for releasing tensors.
+          }
+
+        // If channelShuffler has ever got, never change it.
+        }
+
+        block = this.blocksArray[ i ] = Block.Base.Pool.get_or_create_by();
+        blockIniter = block.initer( progressForBlocks.children[ i ], inputWeightArray, this.weightElementOffsetEnd, blockParams,
+          inputScaleBoundsArray, null,
+          this.channelShuffler );
+
+        this.bInitOk = yield* blockIniter;
+        if ( !this.bInitOk )
+          return false;
+        this.weightElementOffsetEnd = params.weightElementOffsetEnd;
+
+        this.tensorWeightCountTotal += block.tensorWeightCountTotal;
+        this.tensorWeightCountExtracted += block.tensorWeightCountExtracted;
+
+        if ( 0 == i ) { // After block0 (i.e. for block1, 2, 3, ...)
+          blockParamsCreator.configTo_afterBlock0();
+          inputScaleBoundsArray = block.output0.scaleBoundsArray;
+        }
       }
 
-      block = this.blocksArray[ i ] = Block.Base.Pool.get_or_create_by();
-      blockIniter = block.initer( progressForBlocks.children[ i ], inputWeightArray, this.weightElementOffsetEnd, blockParams,
-        inputScaleBoundsArray, null,
-        this.channelShuffler );
+      this.block0 = this.blocksArray[ 0 ]; // Shortcut to the first block.
+      this.blockLast = this.blocksArray[ this.blocksArray.length - 1 ]; // Shortcut to the last block.
 
-      this.bInitOk = yield* blockIniter;
-      if ( !this.bInitOk )
-        return false;
-      this.weightElementOffsetEnd = params.weightElementOffsetEnd;
+      this.outputChannelCount = this.blockLast.outChannelsAll;
 
-      this.tensorWeightCountTotal += block.tensorWeightCountTotal;
-      this.tensorWeightCountExtracted += block.tensorWeightCountExtracted;
+      this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
 
-      if ( 0 == i ) { // After block0 (i.e. for block1, 2, 3, ...)
-        blockParamsCreator.configTo_afterBlock0();
-        inputScaleBoundsArray = block.output0.scaleBoundsArray;
+      // In our Stage design, no matter which configuration, the outputChannelCount always is twice as sourceChannelCount.
+      if ( this.outputChannelCount != ( this.sourceChannelCount * 2 ) )
+        throw Error( `Stage.Base.initer(): `
+          + `the outputChannelCount ( ${this.outputChannelCount} ) should always be twice as `
+          + `sourceChannelCount ( ${this.sourceChannelCount} ).` );
+
+      this.bInitOk = true;
+      return this.bInitOk;
+
+    } finally {
+      if ( blockParamsCreator ) {
+        blockParamsCreator.disposeResources_and_recycleToPool();
+        blockParamsCreator = null;
       }
     }
-
-    this.block0 = this.blocksArray[ 0 ]; // Shortcut to the first block.
-    this.blockLast = this.blocksArray[ this.blocksArray.length - 1 ]; // Shortcut to the last block.
-
-    this.outputChannelCount = this.blockLast.outChannelsAll;
-
-    this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
-
-    // In our Stage design, no matter which configuration, the outputChannelCount always is twice as sourceChannelCount.
-    if ( this.outputChannelCount != ( this.sourceChannelCount * 2 ) )
-      throw Error( `Stage.Base.initer(): `
-        + `the outputChannelCount ( ${this.outputChannelCount} ) should always be twice as `
-        + `sourceChannelCount ( ${this.sourceChannelCount} ).` );
-
-    this.bInitOk = true;
-    return this.bInitOk;
   }
 
   /**
