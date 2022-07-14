@@ -1,5 +1,6 @@
 export { ShuffleNetV2_ByPointwise21 };
 
+import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { Params } from "../Stage_Params.js";
 import { ShuffleNetV2 } from "./ShuffleNetV2.js";
@@ -84,9 +85,35 @@ import { ShuffleNetV2 } from "./ShuffleNetV2.js";
  */
 class ShuffleNetV2_ByPointwise21 extends ShuffleNetV2 {
 
+  /**
+   * Used as default Stage.BlockParamsCreator.ShuffleNetV2_ByPointwise21 provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Stage.BlockParamsCreator.ShuffleNetV2_ByPointwise21.Pool",
+    ShuffleNetV2_ByPointwise21, ShuffleNetV2_ByPointwise21.setAsConstructor );
+
+  /**
+   */
   constructor( stageParams ) {
     super( stageParams );
+    Base.setAsConstructor_self.call( this );
   }
+
+  /** @override */
+  static setAsConstructor( stageParams ) {
+    super.setAsConstructor( stageParams );
+    Base.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( stageParams ) {
+    // Do nothing.
+  }
+
+  ///** @override */
+  //disposeResources() {
+  //  super.disposeResources();
+  //}
 
   /** @override */
   configTo_beforeBlock0() {
@@ -102,14 +129,14 @@ class ShuffleNetV2_ByPointwise21 extends ShuffleNetV2 {
       // is not needed. Then, a simpler configuration could be used.
       //
       // Just use once depthwise convolution (but with channel multipler 2) to double the channel count.
-      this.channelCount1_pointwise1Before
-        = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE; // no concatenate, no add-input-to-output.
+      //
+      this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2;
+
       this.pointwise1ChannelCount = 0;                                  // NoPointwise1.
       this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                   // Double of input0. (Same as pointwise20.)
 
     } else {
-      this.channelCount1_pointwise1Before
-        = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD;
+      this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD;
       this.pointwise1ChannelCount = stageParams.sourceChannelCount * 2; // Double of input0. (Same as pointwise20.)
       this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     }
@@ -120,7 +147,9 @@ class ShuffleNetV2_ByPointwise21 extends ShuffleNetV2 {
     super.configTo_afterBlock0(); // Block1, 2, 3, ... are almost the same as ShuffleNetV2.
 
     // Except that ShuffleNetV2_ByPointwise21 does not have channel shuffler. The pointwise20 and pointwise21 will do channel shuffling.
-    this.channelCount1_pointwise1Before = this.outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
+    // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
+    //
+    this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY;
   }
 
   /** @override */
@@ -130,7 +159,10 @@ class ShuffleNetV2_ByPointwise21 extends ShuffleNetV2 {
 
   /** @override */
   configTo_beforeBlockLast() {
-    super.configTo_beforeBlockLast(); // BlockLast is the same as ShuffleNetV2.
+    super.configTo_beforeBlockLast(); // BlockLast is almost the same as ShuffleNetV2.
+
+    // Except that ShuffleNetV2_ByPointwise21 does not have channel shuffler, and no pointwise21 because needs not channel shuffling.
+    this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL;
   }
 }
 
