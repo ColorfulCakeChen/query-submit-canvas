@@ -447,12 +447,11 @@ class Params extends Weights.Params {
       ;
     }
 
-    let depthwiseBias;
     {
       if ( bLinear_between_depthwise_and_pointwise2 )
-        depthwiseBias = this.depthwiseBias = false; // Because its could be combined into the next operation's (i.e. pointwise2's) bias.
+        this.depthwiseBias = false; // Because its could be combined into the next operation's (i.e. pointwise2's) bias.
       else
-        depthwiseBias = this.depthwiseBias = true;
+        this.depthwiseBias = true;
     }
 
     let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( depthwiseStridesPad );
