@@ -1,5 +1,6 @@
 export { ShuffleNetV2_ByMobileNetV1_padValid };
 
+import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { Params } from "../Stage_Params.js";
 import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
@@ -39,9 +40,35 @@ import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
  */
 class ShuffleNetV2_ByMobileNetV1_padValid extends ShuffleNetV2_ByMobileNetV1 {
 
+  /**
+   * Used as default Stage.BlockParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Stage.BlockParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid.Pool",
+    ShuffleNetV2_ByMobileNetV1_padValid, ShuffleNetV2_ByMobileNetV1_padValid.setAsConstructor );
+
+  /**
+   */
   constructor( stageParams ) {
     super( stageParams );
+    Base.setAsConstructor_self.call( this );
   }
+
+  /** @override */
+  static setAsConstructor( stageParams ) {
+    super.setAsConstructor( stageParams );
+    Base.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( stageParams ) {
+    // Do nothing.
+  }
+
+  ///** @override */
+  //disposeResources() {
+  //  super.disposeResources();
+  //}
 
   /** @override */
   configTo_beforeBlock0() {
