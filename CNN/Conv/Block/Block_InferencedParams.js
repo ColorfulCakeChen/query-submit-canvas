@@ -1,9 +1,9 @@
-export { inputTensorPlaceholder_Creator };
+export { InferencedParams };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-import { Params } from "./Params.js";
+//import { Params } from "./Params.js";
 
 !!! ...unfinished... (2022/07/14)
 // Perhaps, porting all Block.Params.set_Xxx_by() static method to here.
@@ -44,13 +44,12 @@ import { Params } from "./Params.js";
  *   - ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF (2)
  *
  */
-class inputTensorPlaceholder_Creator extends Recyclable.Root {
+class InferencedParams extends Recyclable.Root {
 
   /**
-   * Used as default Block.inputTensorPlaceholderCreator provider for conforming to Recyclable interface.
+   * Used as default Block.InferencedParams provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Block.inputTensorPlaceholder_Creator.Pool",
-    inputTensorPlaceholder_Creator, inputTensorPlaceholder_Creator.setAsConstructor );
+  static Pool = new Pool.Root( "Block.InferencedParams.Pool", InferencedParams, InferencedParams.setAsConstructor );
 
   /**
    *
@@ -65,7 +64,7 @@ class inputTensorPlaceholder_Creator extends Recyclable.Root {
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix
   ) {
     super();
-    inputTensorPlaceholder_Creator.setAsConstructor_self.call( this,
+    InferencedParams.setAsConstructor_self.call( this,
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
@@ -86,7 +85,7 @@ class inputTensorPlaceholder_Creator extends Recyclable.Root {
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix
   ) {
     super.setAsConstructor();
-    inputTensorPlaceholder_Creator.setAsConstructor_self.call( this,
+    InferencedParams.setAsConstructor_self.call( this,
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
