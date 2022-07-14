@@ -1,5 +1,7 @@
 export { Base };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as ValueMax from "../../ValueMax.js";
@@ -14,16 +16,52 @@ import * as BoundsArraySet_Asserter from "./BoundsArraySet_Asserter.js";
 /**
  * Reference computation of class Stage.Base.
  */
-class Base {
+class Base extends Recyclable.Root {
 
+  /**
+   * Used as default Stage_Reference.Base provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Stage_Reference.Base.Pool", Base, Base.setAsConstructor );
+
+  /**
+   *
+   */
   constructor() {
-    this.Block_Reference = new Block_Reference.Base();
-    this.asserter_Equal = new TensorTools.Asserter_Equal( 0.4, 0.001 );
+    super();
+    Base.setAsConstructor_self.call( this );
+  }
+
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    Base.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
+    this.Block_Reference = Block_Reference.Base.Pool.get_or_create_by();
+    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.01 );
 
     // For reducing memory allocation.
-    this.imageInArray = new Array( 2 );  // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
-    this.arrayTemp_forInterleave_asGrouptTwo = [];
+    this.imageInArray = Recyclable.Array.Pool.get_or_create_by( 2 );  // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
   }
+
+  /** @override */
+  disposeResources() {
+    this.imageInArray?.disposeResources_and_recycleToPool();
+    this.imageInArray = null;
+
+    this.asserter_Equal?.disposeResources_and_recycleToPool();
+    this.asserter_Equal = null;
+
+    this.Block_Reference?.disposeResources_and_recycleToPool();
+    this.Block_Reference = null;
+
+    super.disposeResources();
+  }
+
+!!! ...unfinished... (2022/07/14)
 
   /**
    * Testing whether the results of different implementation are the same.
