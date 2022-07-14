@@ -1,9 +1,8 @@
-export { init, testCorrectness, disposeTensors };
+export { init, testCorrectness, disposeResources };
 
-//import * as TensorTools from "../util/TensorTools.js";
-//import * as ValueMax from "../ValueMax.js";
-//import * as ValueRange from "../Unpacker/ValueRange.js";
-//import * as ParamDesc from "../Unpacker/ParamDesc.js";
+import * as Pool from "../util/Pool.js";
+import * as Recyclable from "../util/Recyclable.js";
+import * as Pool_Asserter from "../util/Pool_Asserter.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as BatchIdCalculator from "./BatchIdCalculator.js";
 import * as Stage from "../Conv/Stage.js";
@@ -30,7 +29,7 @@ class HeightWidthDepth {
    */
   constructor( height, width, depth ) {
 
-    this.disposeTensors();
+    this.disposeResources();
 
     this.height = height;
     this.width = width;
@@ -39,7 +38,7 @@ class HeightWidthDepth {
     this.valueCount = height * width * depth;
   }
 
-  disposeTensors() {
+  disposeResources() {
     if ( this.dataTensor3dArray ) {
       tf.dispose( this.dataTensor3dArray );
       this.dataTensor3dArray = null;
@@ -51,32 +50,41 @@ class HeightWidthDepth {
   block_PerformanceTest_init() {
 
     // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
-    this.disposeTensors();
+    this.disposeResources();
 
     // Larger input image for performance testing.
     let inputTensorCount = 1;
-    this.testPerformance_ImageDataArray = new Array( inputTensorCount );
+    this.testPerformance_NumberImageArray = Recyclable.OwnerArray.Pool.get_or_create_by( inputTensorCount );
     this.dataTensor3dArray = tf.tidy( () => {
+      let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( this.depth );
+
       let dataTensor3dArray = new Array( inputTensorCount );
 
       let shape = [ this.height, this.width, this.depth ];
-      let length = tf.util.sizeFromShape( shape );
+      let elementCount = tf.util.sizeFromShape( shape );
 
       for ( let i = 0; i < dataTensor3dArray.length; ++i ) {
-        let numberBegin = ( i * length );
-        let numberEnd = numberBegin + length;
+        let numberBegin = ( i * elementCount );
+        let numberEnd = numberBegin + elementCount;
 
-        let t = tf.range( numberBegin, numberEnd, 1 );
-        let dataTensor3d = tf.reshape( t, shape );
-        dataTensor3dArray[ i ] = dataTensor3d;
+        let image = this.testPerformance_NumberImageArray[ i ] = NumberImage.Base.Pool.get_or_create_by(
+          this.height, this.width, this.depth, undefined,
+          inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, Weights.Base.ValueBounds );
 
-        this.testPerformance_ImageDataArray[ i ] = new NumberImage.Base(
-          this.height, this.width, this.depth, dataTensor3d.dataSync() );
+        for ( let j = 0; j < elementCount; ++j ) {
+          image.dataArray[ j ] = numberBegin + j;
+        }
+
+        dataTensor3dArray[ i ] = tf.tensor( image.dataArray, shape );
       }
+
+      inputScaleBoundsArray.disposeResources_and_recycleToPool();
+      inputScaleBoundsArray = null;
 
       return dataTensor3dArray;
     });
 
+//!!!
     let stepCountRequested = 10;
 
     // sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, bPointwise1,
@@ -183,10 +191,16 @@ class HeightWidthDepth {
         let name = name_testCase[ 0 ];
         let testCase = name_testCase[ 1 ];
         if ( testCase.block ) {
-          testCase.block.disposeTensors();
+          testCase.block.disposeResources();
         }
       }
       this.testCaseMap = null;
+    }
+
+//!!!
+    if ( this.testPerformance_NumberImageArray ) {
+      this.testPerformance_NumberImageArray.disposeResources_and_recycleToPool();
+      this.testPerformance_NumberImageArray = null;
     }
   }
 
@@ -229,7 +243,7 @@ class HeightWidthDepth {
           throw e;
         }
 
-        imageSourceBag.disposeTensors();
+        imageSourceBag.disposeResources();
       }
 
       let memoryInfo_testCorrectness_after = tf.memory();
@@ -251,7 +265,7 @@ class HeightWidthDepth {
 function init() {
   //console.log("jsPerf_Stage.js, init()");
 
-  disposeTensors();
+  disposeResources();
 
   let depth = 4;
 
@@ -271,12 +285,12 @@ function testCorrectness() {
   }
 }
 
-function disposeTensors() {
+function disposeResources() {
   if ( globalThis.testSet_All ) {
     for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
       let testSet = globalThis.testSet_All[ i ];
       if ( testSet )
-        testSet.disposeTensors();
+        testSet.disposeResources();
     }
 
     globalThis.testSet_All = null;
