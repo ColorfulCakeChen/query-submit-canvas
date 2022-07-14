@@ -102,6 +102,12 @@ import * as Depthwise from "../Depthwise.js";
  *     Then, ( pointwise1Bias == true ).
  *
  *
+ * 1.4 Others thinking
+ *
+ * Q: When input ( height, width ) is ( 1, 1 ), is it possible to improvement performance by integrating biases into convolution filters?
+ * A: That may not work because using pointwise convolution to generate a constant channel is expensive especially when
+ *    channel count is large.
+ *
  *
  *
  * @member {number} inputTensorCount
