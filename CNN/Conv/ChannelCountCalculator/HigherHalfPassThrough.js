@@ -1,4 +1,3 @@
-//export { HigherHalfCopyLowerHalf };
 export { HigherHalfPassThrough };
 
 import * as Pool from "../../util/Pool.js";
