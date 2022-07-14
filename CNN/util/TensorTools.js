@@ -229,10 +229,14 @@ class Asserter_Equal extends Recyclable.Root {
       let valueAbs = Math.abs( value );
       let valueRefAbs = Math.abs( valueRef );
 
-      // Ratio to the smaller one.
-      //
-      // When one of two compared values is zero, it will always be failed if compare to the larger value (got 100% delteRate).
-      let deltaRateBase = Math.min( valueAbs, valueRefAbs );
+//!!! (2022/07/14 Remarked) compare to smaller one (when it is zero), get infinity delteRate. That is worse.
+//       // Ratio to the smaller one.
+//       //
+//       // When one of two compared values is zero, it will always be failed if compare to the larger value (got 100% delteRate).
+//       let deltaRateBase = Math.min( valueAbs, valueRefAbs );
+
+      // Ratio to the larger one (so that the ratio will be smaller.)
+      let deltaRateBase = Math.max( valueAbs, valueRefAbs );
 
       let deltaRate;
       if ( deltaRateBase > 0 ) // Avoid divided by zero.
