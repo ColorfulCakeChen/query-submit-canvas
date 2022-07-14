@@ -5,10 +5,6 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
-
-//!!! (2022/06/07 Remarked) seems not necessary because already has TensorPlaceholder.
-//import * as BoundsArraySet from "../BoundsArraySet.js";
-
 import * as Block from "../Block.js";
 import * as ChannelShuffler from "../ChannelShuffler.js";
 import * as BlockParamsCreator from "./Stage_BlockParamsCreator.js";
@@ -174,11 +170,11 @@ import { Params } from "./Stage_Params.js";
  * @member {boolean} bInitOk
  *  If true, this object initialized (i.e. initer()) successfully.
  *
- * @member {number} byteOffsetBegin
- *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by initer().
+ * @member {number} weightElementOffsetBegin
+ *   The position which is started (inclusive) to extract from inputweightArray by initer().
  *
- * @member {number} byteOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by initer(). Where to extract next weights.
+ * @member {number} weightElementOffsetEnd
+ *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
  * @member {Block.Base[]} blocksArray
@@ -488,7 +484,8 @@ class Base extends Recyclable.Root {
   /** @override */
   disposeResources() {
     this.outputChannelCount = -1;
-    this.block0 = this.blockLast = null; // It has already de disposed by this.block0 or this.blocks1After.
+    this.blockLast = null; // It is just a reference into this.blocksArray[].
+    this.block0 = null; // It is just a reference into this.blocksArray[].
 
     if ( this.blocksArray ) {
       this.blocksArray.disposeResources_and_recycleToPool();
