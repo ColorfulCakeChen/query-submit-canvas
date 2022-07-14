@@ -1399,7 +1399,7 @@ Base.PropertyNames.pointwise2PostfixSE = [
 
 
 /**
- * The order when generate weightsFloat32Array[].
+ * The order when generate inputWeightArray[].
  *
  * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Block.initer().
  */
