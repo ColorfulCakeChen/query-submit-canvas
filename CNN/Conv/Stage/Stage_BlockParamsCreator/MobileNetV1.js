@@ -63,10 +63,9 @@ class MobileNetV1 extends Base {
 
     let stageParams = this.stageParams;
 
-    this.channelCount0_pointwise1Before = stageParams.sourceChannelCount; // Block0 uses the original input channel count (as input0).
+    this.input0_channelCount = stageParams.sourceChannelCount; // Block0 uses the original input channel count (as input0).
 
-    // In MobileNetV1, all blocks (include block0) do not use input1.
-    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT;
+    this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL;
 
     if ( stageParams.bPointwise1 == false ) {
       this.pointwise1ChannelCount = 0;                                  // NoPointwise1.
