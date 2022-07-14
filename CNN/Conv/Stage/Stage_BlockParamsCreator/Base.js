@@ -17,39 +17,66 @@ import { Params } from "../Stage_Params.js";
  *   The output1's channel count in current configuration.
  *
  */
-class Base {
+class Base extends Recyclable.Root {
+
+  /**
+   * Used as default Stage.BlockParamsCreator.Base provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Stage.BlockParamsCreator.Base.Pool", Base, Base.setAsConstructor );
 
   /**
    * @param {Params} stageParams
    *   The Stage.Params object which provides basic parameters.
    */
   constructor( stageParams ) {
+    super();
+    Base.setAsConstructor_self.call( this, stageParams );
+  }
+
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    Base.setAsConstructor_self.call( this, stageParams );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( stageParams ) {
     this.stageParams = stageParams;
+  }
 
-//       this.input0_height, this.input0_width, this.input0_channelCount,
-//       this.nConvBlockTypeId,
-//       this.pointwise1ChannelCount,
-//       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth, this.depthwiseStridesPad,
-//       this.depthwiseActivationId,
-//       this.pointwise20ChannelCount, this.pointwise20ActivationId,
-//       this.nSqueezeExcitationChannelCountDivisor, this.bSqueezeExcitationPrefix,
-//       this.nActivationId,
-//       this.bKeepInputTensor
-
-    this.inputHeight0 = this.inputWidth0 =
-    this.channelCount0_pointwise1Before = this.channelCount1_pointwise1Before =
-    this.pointwise1ChannelCount = this.bPointwise1Bias = this.pointwise1ActivationId =
-    this.depthwise_AvgMax_Or_ChannelMultiplier = this.depthwiseFilterHeight = this.depthwiseFilterWidth =
-    this.depthwiseStridesPad = this.bDepthwiseBias = this.depthwiseActivationId =
-    this.pointwise20ChannelCount = this.bPointwise20Bias = this.pointwise20ActivationId =
-    this.bOutput1Requested = this.bKeepInputTensor = undefined;
-
-    this.blockCount = // How many block should be in the stage.
-    this.depthwiseFilterHeight_Default = this.depthwiseFilterWidth_Default = // The default depthwise filter size.
-    this.depthwiseFilterHeight_Last = this.depthwiseFilterWidth_Last =       // The last block's depthwise filter size.
-    this.outChannels0 = this.outChannels1 = -1;
-
+  /** @override */
+  disposeResources() {
     this.channelShuffler = undefined;
+
+    this.blockCount = undefined; // How many block should be in the stage.
+    this.depthwiseFilterHeight_Default = undefined;
+    this.depthwiseFilterWidth_Default = undefined; // The default depthwise filter size.
+    this.depthwiseFilterHeight_Last = undefined;
+    this.depthwiseFilterWidth_Last = undefined;       // The last block's depthwise filter size.
+    this.outChannels0 = undefined;
+    this.outChannels1 = undefined;
+
+    this.bKeepInputTensor = undefined;
+    this.nActivationId = undefined;
+    this.bSqueezeExcitationPrefix = undefined;
+    this.nSqueezeExcitationChannelCountDivisor = undefined;
+    this.pointwise20ActivationId = undefined;
+    this.pointwise20ChannelCount = undefined;
+    this.depthwiseActivationId = undefined;
+    this.depthwiseStridesPad = undefined;
+    this.depthwiseFilterWidth = undefined;
+    this.depthwiseFilterHeight = undefined;
+    this.depthwise_AvgMax_Or_ChannelMultiplier = undefined;
+    this.pointwise1ChannelCount = undefined;
+    this.nConvBlockTypeId = undefined;
+    this.input0_channelCount = undefined;
+    this.input0_width = undefined;
+    this.input0_height = undefined;
+
+    this.stageParams = undefined;
+
+    super.disposeResources();
   }
 
   /** Called to determine blockCount, depthwiseFilterHeight_Default, depthwiseFilterWidth_Default, depthwiseFilterHeight_Last,
