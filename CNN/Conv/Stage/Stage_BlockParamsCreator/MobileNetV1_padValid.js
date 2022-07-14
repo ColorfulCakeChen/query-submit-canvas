@@ -1,5 +1,6 @@
 export { MobileNetV1_padValid };
 
+import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { Params } from "../Stage_Params.js";
 import { MobileNetV1 } from "./MobileNetV1.js";
@@ -13,10 +14,36 @@ import { MobileNetV1 } from "./MobileNetV1.js";
  */
 class MobileNetV1_padValid extends MobileNetV1 {
 
+  /**
+   * Used as default Stage.BlockParamsCreator.MobileNetV1_padValid provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root(
+    "Stage.BlockParamsCreator.MobileNetV1_padValid.Pool", MobileNetV1_padValid, MobileNetV1_padValid.setAsConstructor );
+
+  /**
+   */
   constructor( stageParams ) {
     super( stageParams );
+    Base.setAsConstructor_self.call( this );
   }
 
+  /** @override */
+  static setAsConstructor( stageParams ) {
+    super.setAsConstructor( stageParams );
+    Base.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( stageParams ) {
+    // Do nothing.
+  }
+
+  ///** @override */
+  //disposeResources() {
+  //  super.disposeResources();
+  //}
+  
   /** @override */
   configTo_beforeBlock0() {
     super.configTo_beforeBlock0(); // Block0 is almost the same as MobileNetV1.
