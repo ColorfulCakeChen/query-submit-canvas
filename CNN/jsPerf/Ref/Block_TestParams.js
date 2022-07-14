@@ -89,8 +89,8 @@ class Base extends TestParams.Base {
 
   /**
    * Use scattered parameters to fills the following proterties:
-   *   - this.in.inputFloat32Array
-   *   - this.in.byteOffsetBegin
+   *   - this.in.inputWeightArray
+   *   - this.in.weightsElementOffsetBegin
    *   - this.out
    *
    * @return {Base}
@@ -128,8 +128,8 @@ class Base extends TestParams.Base {
  
   /**
    * Fills the following proterties:
-   *   - this.in.inputFloat32Array
-   *   - this.in.byteOffsetBegin
+   *   - this.in.inputWeightArray
+   *   - this.in.weightsElementOffsetBegin
    *
    * @param {object} this.in.paramsNumberArrayObject
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
