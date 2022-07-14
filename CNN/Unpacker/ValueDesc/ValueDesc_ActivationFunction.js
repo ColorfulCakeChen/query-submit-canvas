@@ -76,7 +76,9 @@ import * as FloatValue from "../FloatValue.js";
  * CLIP_BY_VALUE_N2_P2:
  *
  *   - Disadvantage: It has smaller inputDomainLinear [ -2, +2 ] (than CLIP_BY_VALUE_N3_P3 [ -3, +3 ]) so that activation-escaping
- *       needs use a smaller scale. This increases floating-point truncation error.
+ *       needs use a smaller scale. This increases floating-point truncation error. Fortunately, if a just enough input value
+ *       bounds is used (e.g. for RGBA image, uses 2^8 (instead of 2^24) as every channel's input value bounds), this issue could
+ *       be less problematic.
  *
  *   - Advantage: Its activated value (i.e. 2) is easier to become any other value by a floating-point finite scaling.
  *       This reduces the floating-point accumulated error.
