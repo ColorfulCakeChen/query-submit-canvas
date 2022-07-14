@@ -496,6 +496,10 @@ class Base extends Recyclable.Root {
 
     // 2.1 Prepare Input TensorPlaceholder and Operation Array.
 
+!!! ...unfinished... (2022/07/14)
+// Separate to outside. Here just check and throw exception.
+//
+
     // Create inputs tensor placeholders and sub operation array.
     {
       if ( inputScaleBoundsArray0.length != this.input0_channelCount )
