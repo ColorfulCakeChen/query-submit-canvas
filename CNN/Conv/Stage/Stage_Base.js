@@ -340,8 +340,7 @@ class Base extends Recyclable.Root {
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
 
-    params.disposeResources_and_recycleToPool();
-    params = null;
+    // Note: params will be released by BlockParamsCreator.
 
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
