@@ -11,10 +11,6 @@ import * as Operation from "../Operation.js";
 import { Params } from "./Block_Params.js";
 
 
-//!!! ...unfinished... (2022/07/12)
-// When input ( height, width ) is ( 1, 1 ), biases could be integrated into convolution filters to improvement performance.
-//
-
 //!!! ...unfinished... (2022/05/28)
 // Perhaps, checking the BoundsArraySet of every step. If a step's all channels' BoundsArraySet will not activated by the
 // activation function (suppose using CLIP_BY_VALUE_XXX), automatically drop the activation function call and combine the
@@ -161,7 +157,6 @@ import { Params } from "./Block_Params.js";
  * channelShuffler could be acheived by pointwise convolution more efficiently (than reshape). This results in our simplified
  * ShuffleNetV2 structure: replacing pointwise-concat-shuffle-split with concat-pointwise. It should be more efficient because
  * less operations are used than original structure.
- *
  *
  *
  *
