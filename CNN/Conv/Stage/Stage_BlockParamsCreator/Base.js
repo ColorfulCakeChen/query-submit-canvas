@@ -1,5 +1,7 @@
 export { Base }; // Stage.BlockParamsCreator.Base
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import * as Block from "../../Block.js";
 import { Params } from "../Stage_Params.js";
@@ -23,6 +25,16 @@ class Base {
    */
   constructor( stageParams ) {
     this.stageParams = stageParams;
+
+//       this.input0_height, this.input0_width, this.input0_channelCount,
+//       this.nConvBlockTypeId,
+//       this.pointwise1ChannelCount,
+//       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth, this.depthwiseStridesPad,
+//       this.depthwiseActivationId,
+//       this.pointwise20ChannelCount, this.pointwise20ActivationId,
+//       this.nSqueezeExcitationChannelCountDivisor, this.bSqueezeExcitationPrefix,
+//       this.nActivationId,
+//       this.bKeepInputTensor
 
     this.inputHeight0 = this.inputWidth0 =
     this.channelCount0_pointwise1Before = this.channelCount1_pointwise1Before =
@@ -211,27 +223,19 @@ class Base {
 
   /**
    *
-   * @param {Float32Array} inputFloat32Array
-   *   A Float32Array whose values will be interpreted as weights.
-   *
-   * @param {number} byteOffsetBegin
-   *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
-   * (not to the inputFloat32Array.byteOffset).
-   *
    * @return {Block.Params}
    *   Create and return a Block.Params according to this object's current state.
    */
-  create_BlockParams( inputFloat32Array, byteOffsetBegin ) {
-    let params = new Block.Params(
-      inputFloat32Array, byteOffsetBegin,
-      this.inputHeight0, this.inputWidth0,
-      this.channelCount0_pointwise1Before,
-      this.channelCount1_pointwise1Before,
-      this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
-      this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
-      this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
-      this.pointwise20ChannelCount, this.bPointwise20Bias, this.pointwise20ActivationId,
-      this.bOutput1Requested,
+  create_BlockParams() {
+    let params = Block.Params.Pool.get_or_create_by(
+      this.input0_height, this.input0_width, this.input0_channelCount,
+      this.nConvBlockTypeId,
+      this.pointwise1ChannelCount,
+      this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth, this.depthwiseStridesPad,
+      this.depthwiseActivationId,
+      this.pointwise20ChannelCount, this.pointwise20ActivationId,
+      this.nSqueezeExcitationChannelCountDivisor, this.bSqueezeExcitationPrefix,
+      this.nActivationId,
       this.bKeepInputTensor
     );
     return params;
