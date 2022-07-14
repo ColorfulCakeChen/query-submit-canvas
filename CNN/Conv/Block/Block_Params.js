@@ -745,9 +745,7 @@ class Params extends Weights.Params {
    *
    */
   static set_pointwise1_nHigherHalfDifferent_modify_pointwise1ChannelCount_pointwise1Bias_pointwise1ActivationId_by(
-    input0_channelCount,
-    nConvBlockTypeId,
-    pointwise1ChannelCount
+    input0_channelCount, nConvBlockTypeId, pointwise1ChannelCount
   ) {
     let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
 
@@ -830,12 +828,7 @@ class Params extends Weights.Params {
    *   - this.pointwise20_outputChannelCount_lowerHalf
    *
    */
-  static set_nHigherHalfDifferent_by(
-    input0_channelCount,
-    nConvBlockTypeId,
-    pointwise1ChannelCount,
-  ) {
-
+  static set_nHigherHalfDifferent_by( input0_channelCount, nConvBlockTypeId, pointwise1ChannelCount ) {
     let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
 
     // pointwise1
@@ -914,19 +907,10 @@ class Params extends Weights.Params {
    *   - this.pointwise1_inputChannelCount_higherHalf
    *   - this.pointwise1_outputChannelCount_lowerHalf
    *   - this.bLinear_between_depthwise_and_pointwise2
-
-//!!! (2022/07/13 Remarked) Does not work.
-//   *   - this.depthwise_AvgMax_Or_ChannelMultiplier_modified
-
    *   - this.depthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
    *   - this.depthwise1_nHigherHalfDifferent
-
-//!!! (2022/07/13 Remarked) Does not work.
-//   *   - this.depthwise1_inputChannelCount_lowerHalf
-//   *   - this.depthwise1_channelShuffler_outputGroupCount
-
    *   - this.bDepthwise2Requested
    *   - this.bConcat1Requested
    *   - this.bAddInputToOutputRequested
@@ -1004,16 +988,7 @@ class Params extends Weights.Params {
     );
       
     // 6. nHigherHalfDifferent
-    Params.set_nHigherHalfDifferent_by.call( this,
-      input0_channelCount,
-      nConvBlockTypeId,
-      pointwise1ChannelCount,
-
-//!!! (2022/07/13 Remarked) Does not work.
-//       depthwise_AvgMax_Or_ChannelMultiplier,
-//       this.bDepthwiseRequestedAndNeeded,
-//       this.pointwise20_channelShuffler_outputGroupCount
-    );
+    Params.set_nHigherHalfDifferent_by.call( this, input0_channelCount, nConvBlockTypeId, pointwise1ChannelCount );
   }
 
   get input0_height()                        { return this.getParamValue_byParamDesc( Params.input0_height ); }
