@@ -1,7 +1,6 @@
 export { MobileNetV1 };
 
 import * as Pool from "../../util/Pool.js";
-//import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { Params } from "../Stage_Params.js";
 import { Base } from "./Base.js";
