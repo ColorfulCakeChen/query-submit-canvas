@@ -55,10 +55,9 @@ class MobileNetV1 extends Base {
   //  super.disposeResources();
   //}
 
-//!!! ...unfinished... (2022/07/14)
   /** @override */
   configTo_beforeBlock0() {
-    super.configTo_beforeBlock0(); // block0's inputHeight0, inputWidth0, bias, activation.
+    super.configTo_beforeBlock0(); // block0's input0_height, input0_width, activation.
 
     let stageParams = this.stageParams;
 
