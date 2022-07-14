@@ -376,6 +376,11 @@ class ScaleArray extends Recyclable.Root {
     let dstLower = Math.min( toLower, toUpper );
     let dstUpper = Math.max( toLower, toUpper );
 
+//!!! ...unfinished... (2022/07/14)
+// Is it better to let scale is two's power (e.g. 2^(-1), 2^(-2), 2^(-3), ... ) (i.e. 0.5, 0.25, 0.125, ... )?
+// Could it reduce floating-point accumulated error (after ShuffleNetV2_byMobileNetV2 pass-through by scaling and un-scaling repeately?
+
+
     let scale;
 
     // 1. Try lower bound.
