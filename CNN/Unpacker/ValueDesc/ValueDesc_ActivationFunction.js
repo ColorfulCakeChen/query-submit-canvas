@@ -25,6 +25,10 @@ import * as FloatValue from "../FloatValue.js";
  *   - ERF: Avoid. Backend WASM does not support it.
  *
 
+//!!! ...unfinished... (2022/07/14)
+// Could [ -2, +2 ] be better than [ -3, +3 ]? Does two's power reduce floating-point accumulated error (after ShuffleNetV2_byMobileNetV2
+// pass-through by scaling and un-scaling repeately)?
+
 //!!! ...unfinished... (2022/01/11)
 // What about: (tf.clipByValue() is also supported by WASM)
 //   - tf.clipByValue( -1, +1 )?
