@@ -231,10 +231,10 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].depth,
       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
           8,
-          1,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N3_P3,
-          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N3_P3,
+          1,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
-      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
        true
     );
 
@@ -246,10 +246,10 @@ class HeightWidthDepth {
       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
           8,
         Block.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,
-                 3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N3_P3,
-          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N3_P3,
+                 3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
-      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
        true
     );
 
@@ -261,10 +261,10 @@ class HeightWidthDepth {
       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
           8,
         Block.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,
-                 3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N3_P3,
-          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N3_P3,
+                 3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
-      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
        true
     );
 
@@ -275,10 +275,10 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].depth,
       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
           8,
-          2,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N3_P3,
-          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N3_P3,
+          2,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
-      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
        true
     );
 
@@ -289,10 +289,10 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].depth,
       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
           8,
-          2,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N3_P3,
-          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N3_P3,
+          2,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
-      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
        true
     );
 
@@ -303,10 +303,10 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].depth,
       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
           8,
-          2,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N3_P3,
-          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N3_P3,
+          2,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
-      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
        true
     );
 
@@ -317,10 +317,10 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].depth,
       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
           0,
-         32,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N3_P3,
+         32,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
         128, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
-      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
        true
     );
 
@@ -331,10 +331,10 @@ class HeightWidthDepth {
       this.testPerformance_NumberImageArray[ 0 ].depth,
       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
         128,
-          0,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N3_P3,
+          0,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
         128, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
       ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
-      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
        true
     );
 
