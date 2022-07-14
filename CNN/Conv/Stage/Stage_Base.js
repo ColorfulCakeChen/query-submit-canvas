@@ -374,18 +374,9 @@ class Base extends Recyclable.Root {
         blockParamsCreator.configTo_beforeBlockLast();
       }
 
-      // Assert image size.
-      {
-        let previousBlock;
-        if ( 0 < i ) { // Except Block0.
-          previousBlock = this.blocksArray[ i - 1 ];
-        }
+      this.assert_ImageSize_BetweenBlock( i, blockParamsCreator ); // Assert image size.
 
-        this.assert_ImageSize_BetweenBlock( blockParamsCreator, previousBlock );
-      }
-
-      // Create current block.
-      blockParams = blockParamsCreator.create_BlockParams( params.defaultInput, this.byteOffsetEnd );
+      blockParams = blockParamsCreator.create_BlockParams(); // Create current block.
 
       if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
 
@@ -394,7 +385,7 @@ class Base extends Recyclable.Root {
         if ( channelShuffler ) {
 
           if ( ( this.channelShuffler ) && ( this.channelShuffler != channelShuffler ) )
-            throw Error( `Stage.initer(): `
+            throw Error( `Stage.Base.initer(): `
               + `At most, only one (and same) channel shuffler could be used (and shared by all blocks of a stage).` );
 
           this.channelShuffler = channelShuffler;
@@ -538,38 +529,40 @@ class Base extends Recyclable.Root {
   /**
    * Assert image size.
    *
+   * @param {number} blockIndex
+   *   Which block (i.e. block0, block1, block2, ...).
+   *
    * @param {Params_to_BlockParams.Base} blockParamsCreator
    *   The maker which will produce current block (Block.Base) object.
-   *
-   * @param {Block.Base} previousBlock
-   *   The previous block (Block.Base) object.
    */
-  assert_ImageSize_BetweenBlock( blockParamsCreator, previousBlock ) {
+  assert_ImageSize_BetweenBlock( blockIndex, blockParamsCreator ) {
 
-    if ( 0 == i ) { // Block0.
+    if ( 0 == blockIndex ) { // Block0.
       if ( blockParamsCreator.inputHeight != this.sourceHeight )
-        throw Error( `Stage.initer(): `
-          + `block${i}'s input image height ( ${blockParamsCreator.inputHeight} ) should be the same as `
+        throw Error( `Stage.Base.initer(): `
+          + `block${blockIndex}'s input image height ( ${blockParamsCreator.inputHeight} ) should be the same as `
           + `stage's source image height ( ${this.sourceHeight} ).`
         );
 
       if ( blockParamsCreator.inputWidth != this.sourceWidth )
-        throw Error( `Stage.initer(): `
-          + `block${i}'s input image width ( ${blockParamsCreator.inputWidth} ) should be the same as `
+        throw Error( `Stage.Base.initer(): `
+          + `block${blockIndex}'s input image width ( ${blockParamsCreator.inputWidth} ) should be the same as `
           + `stage's source image width ( ${this.sourceWidth} ).`
         );
 
     } else { // After Block0.
+      let previousBlock = this.blocksArray[ blockIndex - 1 ];
+
       if ( blockParamsCreator.inputHeight != previousBlock.outputHeight )
-        throw Error( `Stage.initer(): `
-          + `block${i}'s input image height ( ${blockParamsCreator.inputHeight} ) should be the same as `
-          + `block${ i - 1 }'s output image height ( ${previousBlock.outputHeight} ).`
+        throw Error( `Stage.Base.initer(): `
+          + `block${blockIndex}'s input image height ( ${blockParamsCreator.inputHeight} ) should be the same as `
+          + `block${ blockIndex - 1 }'s output image height ( ${previousBlock.outputHeight} ).`
        );
 
       if ( blockParamsCreator.inputWidth != previousBlock.outputWidth )
-        throw Error( `Stage.initer(): `
-          + `block${i}'s input image width ( ${blockParamsCreator.inputWidth} ) should be the same as `
-          + `block${ i - 1 }'s output image width ( ${previousBlock.outputWidth} ).`
+        throw Error( `Stage.Base.initer(): `
+          + `block${blockIndex}'s input image width ( ${blockParamsCreator.inputWidth} ) should be the same as `
+          + `block${ blockIndex - 1 }'s output image width ( ${previousBlock.outputWidth} ).`
         );
     }
   }
