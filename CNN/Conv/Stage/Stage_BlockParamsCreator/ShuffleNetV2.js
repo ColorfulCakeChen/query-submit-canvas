@@ -1,5 +1,6 @@
 export { ShuffleNetV2 };
 
+import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import * as ChannelShuffler from "../../ChannelShuffler.js";
 import { Params } from "../Stage_Params.js";
@@ -47,9 +48,34 @@ import { Base } from "./Base.js";
  */
 class ShuffleNetV2 extends Base {
 
+  /**
+   * Used as default Stage.BlockParamsCreator.ShuffleNetV2 provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Stage.BlockParamsCreator.ShuffleNetV2.Pool", ShuffleNetV2, ShuffleNetV2.setAsConstructor );
+
+  /**
+   */
   constructor( stageParams ) {
     super( stageParams );
+    Base.setAsConstructor_self.call( this );
   }
+
+  /** @override */
+  static setAsConstructor( stageParams ) {
+    super.setAsConstructor( stageParams );
+    Base.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( stageParams ) {
+    // Do nothing.
+  }
+
+  ///** @override */
+  //disposeResources() {
+  //  super.disposeResources();
+  //}
 
   /** @override */
   determine_blockCount_depthwiseFilterHeightWidth_Default_Last() {
@@ -64,22 +90,21 @@ class ShuffleNetV2 extends Base {
 
   /** @override */
   configTo_beforeBlock0() {
-    super.configTo_beforeBlock0(); // block0's inputHeight0, inputWidth0.
+    super.configTo_beforeBlock0(); // block0's input0_height, input0_width, activation.
 
     let stageParams = this.stageParams;
 
-    this.channelCount0_pointwise1Before = stageParams.sourceChannelCount; // Block0 uses the original input channel count (as input0).
-    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.SHUFFLE_NET_V2_HEAD;
+    this.input0_channelCount = stageParams.sourceChannelCount; // Block0 uses the original input channel count (as input0).
+    this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD;
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
 
     // In ShuffleNetV2, all blocks' (except blockLast) output0 is the same depth as source input0.
     this.pointwise20ChannelCount = stageParams.sourceChannelCount;
 
-    this.bOutput1Requested = true; // In ShuffleNetV2, all blocks (except blockLast) have output1 with same depth as source input0.
-
     // In ShuffleNetV2, all blocks (except blockLast) have both output0 and output1 with same depth as pointwise20 result.
-    this.outChannels0 = this.outChannels1 = this.pointwise20ChannelCount;
+    this.outChannels0 = this.pointwise20ChannelCount;
+    this.outChannels1 = this.pointwise20ChannelCount;
   }
 
   /** @override */
@@ -87,14 +112,14 @@ class ShuffleNetV2 extends Base {
     super.configTo_afterBlock0();
 
     // The ( input0, input1 ) of all blocks (except block0) have the same depth as previous (also block0's) block's ( output0, output1 ).
-    this.channelCount0_pointwise1Before = this.outChannels0;
+    this.input0_channelCount = this.outChannels0;
 
     // (with concatenation, without add-input-to-output).
     //
     // The channel count of input1 must be the same as pointwise20's result. The result of pointwise20 (which operates on input0)
     // will be concatenated with input1.
     //
-    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE20_INPUT1;
+    this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY;
 
     this.channelShuffler_init(); // In ShuffleNetV2, all blocks (except block0) uses channel shuffler (with two convolution groups).
   }
@@ -112,12 +137,14 @@ class ShuffleNetV2 extends Base {
     let outputGroupCount = 2; // Always with two convolution groups.
     let concatenatedDepth = block0_outChannelsAll; // All blocks always have the same total output channel count as block0.
     let concatenatedShape = [ stageParams.sourceHeight, stageParams.sourceWidth, concatenatedDepth ];
-    this.channelShuffler = new ChannelShuffler.ConcatPointwiseConv( concatenatedShape, outputGroupCount );
+    this.channelShuffler = ChannelShuffler.ConcatPointwiseConv.Pool.get_or_create_by( concatenatedShape, outputGroupCount );
   }
 
   /** @override */
   configTo_beforeBlockLast() {
     super.configTo_beforeBlockLast(); // Still, blockLast may use a different activation function after pointwise2 convolution.
+
+    this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL;
 
     // In ShuffleNetV2, the blockLast only has output0 (no output1).
     //
@@ -126,7 +153,6 @@ class ShuffleNetV2 extends Base {
     //   - It is the concatenation of pointwise20's result and input1.
     //
     this.pointwise20ChannelCount = this.stageParams.sourceChannelCount * 2;
-    this.bOutput1Requested = false;
 
     this.outChannels0 = this.outChannels0 + this.outChannels1;
     this.outChannels1 = 0;
