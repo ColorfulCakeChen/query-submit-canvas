@@ -290,9 +290,9 @@ class Base extends TestParams.Base {
 
       nConvBlockTypeId: [
 //!!! (2022/07/06 Temp Remarked) For speed-up debug.
-//         Block.Params.nConvBlockTypeId.valueDesc.range.min,
-//         Block.Params.nConvBlockTypeId.valueDesc.range.max
-//       ],
+        Block.Params.nConvBlockTypeId.valueDesc.range.min,
+        Block.Params.nConvBlockTypeId.valueDesc.range.max
+      ],
 //!!! (2022/07/13 Temp Added and Remarked) For speed-up debug.
 //         Block.Params.nConvBlockTypeId.valueDesc.range.min,
 //         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
@@ -305,14 +305,14 @@ class Base extends TestParams.Base {
 //       ],
 //!!! (2022/07/06 Temp Added and Remarked) For speed-up debug.
 //        Block.Params.nConvBlockTypeId.valueDesc.range.min,
-      ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL, // (1)
-      ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL // (1)
-//      ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
-//        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY // (6)
-//        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL, // (7)
-//      ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL // (7)
+//       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL, // (1)
+//       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL // (1)
+//       ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
+//       ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY // (6)
+//       ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL, // (7)
+//       ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL // (7)
 //       Block.Params.nConvBlockTypeId.valueDesc.range.max
-   ],
+//   ],
 
 //!!! (2022/07/11 Temp Remarked) For speed-up debug.
       pointwise1ChannelCount: [ 0, 2 ],
@@ -1354,8 +1354,8 @@ class Base extends TestParams.Base {
 
 
 //!!! (2021/07/20 Temp Remarked) Fixed to non-random to simplify debug.
-Base.weightsRandomOffset = { min: -100, max: +100 };
-//Base.weightsRandomOffset = { min: -0, max: +0 };
+//Base.weightsRandomOffset = { min: -100, max: +100 };
+Base.weightsRandomOffset = { min: -0, max: +0 };
 
 
 Base.PropertyNames = {};
