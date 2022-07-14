@@ -26,7 +26,7 @@ class Base extends Recyclable.Root {
 
   /**
    * @param {Params} stageParams
-   *   The Stage.Params object which provides basic parameters.
+   *   The Stage.Params object which provides basic parameters. It will be owned and released by this Stage.BlockParamsCreator.Base onject.
    */
   constructor( stageParams ) {
     super();
@@ -34,7 +34,7 @@ class Base extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor() {
+  static setAsConstructor( stageParams ) {
     super.setAsConstructor();
     Base.setAsConstructor_self.call( this, stageParams );
     return this;
@@ -47,13 +47,13 @@ class Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    this.channelShuffler = undefined;
+    this.channelShuffler = undefined; // Note: channelShuffler is owned and released by Stage.Base (not here Stage.BlockParamsCreator.Base).
 
     this.blockCount = undefined; // How many block should be in the stage.
     this.depthwiseFilterHeight_Default = undefined;
     this.depthwiseFilterWidth_Default = undefined; // The default depthwise filter size.
     this.depthwiseFilterHeight_Last = undefined;
-    this.depthwiseFilterWidth_Last = undefined;       // The last block's depthwise filter size.
+    this.depthwiseFilterWidth_Last = undefined;    // The last block's depthwise filter size.
     this.outChannels0 = undefined;
     this.outChannels1 = undefined;
 
@@ -74,7 +74,10 @@ class Base extends Recyclable.Root {
     this.input0_width = undefined;
     this.input0_height = undefined;
 
-    this.stageParams = undefined;
+    if ( this.stageParams ) {
+      this.stageParams.disposeResources_and_recycleToPool();
+      this.stageParams = undefined;
+    }
 
     super.disposeResources();
   }
