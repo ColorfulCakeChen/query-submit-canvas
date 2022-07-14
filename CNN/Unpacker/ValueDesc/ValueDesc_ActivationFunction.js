@@ -66,24 +66,20 @@ import * as FloatValue from "../FloatValue.js";
  *
  * CLIP_BY_VALUE_N3_P3:
  *
- *   - Advantage: has larger inputDomainLinear so that activation-escaping could use a larger scale and reduce floating-point
- *       truncation error. (The same reason why RELU6 is better than RELU.)
+ *   - Advantage: It has larger inputDomainLinear so that activation-escaping could use a larger scale. This reduces floating-point
+ *       truncation error.
  *
- *   - Disadvantage: The activated value (i.e. 3) seems harder to become any other value by a floating-point finite scaling.
+ *   - Disadvantage: Its activated value (i.e. 3) seems harder to become any other value by a floating-point finite scaling.
  *       This may enlarge the floating-point accumulated error. For example, in order to let 3 become 100, a scale 33.333...
  *       should be used. However, 33.3 can not be represented by a finite floating-point number.
  *
  * CLIP_BY_VALUE_N2_P2:
  *
- *   - Disadvantage: has smaller inputDomainLinear [ -2, +2 ] (than CLIP_BY_VALUE_N3_P3 [ -3, +3 ]) so that activation-escaping
- *       could use a larger scale and reduce floating-point truncation error. (The same reason why RELU6 is better than RELU.)
+ *   - Disadvantage: It has smaller inputDomainLinear [ -2, +2 ] (than CLIP_BY_VALUE_N3_P3 [ -3, +3 ]) so that activation-escaping
+ *       needs use a smaller scale. This increases floating-point truncation error.
  *
- *   - Advantage: The activated value (i.e. 3) seems harder to become any other value by a floating-point finite scaling.
- *       This may enlarge the floating-point accumulated error. For example, in order to let 3 become 100, a scale 33.333...
- *       should be used. However, 33.3 can not be represented by a finite floating-point number.
- *
- *
- *
+ *   - Advantage: Its activated value (i.e. 2) is easier to become any other value by a floating-point finite scaling.
+ *       This may reduce the floating-point accumulated error.
  *
  *
  */
@@ -92,35 +88,39 @@ class ActivationFunction extends Int {
   constructor() {
 
 //!!! (2022/07/05 Remarked) For speed-up testing.
-//    super( 0, 7,
-//      [ "NONE",  "CLIP_BY_VALUE_N3_P3", "TANH",  "SIN", "RELU6",  "COS",  "SIGMOID", "RELU" ], //  "SOFTPLUS" ],
+//    super( 0, 8,
+//      [ "NONE",  "CLIP_BY_VALUE_N2_P2", "CLIP_BY_VALUE_N3_P3", "TANH",  "SIN", "RELU6",  "COS",  "SIGMOID", "RELU" ], //  "SOFTPLUS" ],
 
     super( 0, 1,
-      [ "NONE",  "CLIP_BY_VALUE_N3_P3" ],
+      [ "NONE",  "CLIP_BY_VALUE_N2_P2" ],
 
       [
         new ActivationFunction.Info( 0, null, null, null, null, null ),
 
-        new ActivationFunction.Info( 1, ActivationFunction.clipByValue_Negative3_Positive3,
-          ActivationFunction.reference_clipByValue_Negative3_Positive3,
-          new FloatValue.Bounds( -3, +3 ), new FloatValue.Bounds( -3, +3 ), new FloatValue.Bounds( -3, +3 ) ),
+        new ActivationFunction.Info( 1, ActivationFunction.clipByValue_Negative2_Positive2,
+          ActivationFunction.reference_clipByValue_Negative2_Positive2,
+          new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ) ),
 
 //!!! (2022/07/05 Remarked) For speed-up testing.
 /*
-        new ActivationFunction.Info( 2, tf.tanh, ActivationFunction.reference_tanh,
+        new ActivationFunction.Info( 2, ActivationFunction.clipByValue_Negative3_Positive3,
+          ActivationFunction.reference_clipByValue_Negative3_Positive3,
+          new FloatValue.Bounds( -3, +3 ), new FloatValue.Bounds( -3, +3 ), new FloatValue.Bounds( -3, +3 ) ),
+
+        new ActivationFunction.Info( 3, tf.tanh, ActivationFunction.reference_tanh,
           new FloatValue.Bounds( -1, +1 ), new FloatValue.Bounds( -0.005, +0.005 ), new FloatValue.Bounds( -0.005, +0.005 ) ),
 
-        new ActivationFunction.Info( 3, tf.sin, ActivationFunction.reference_sin,
+        new ActivationFunction.Info( 4, tf.sin, ActivationFunction.reference_sin,
           new FloatValue.Bounds( -1, +1 ), new FloatValue.Bounds( -0.005, +0.005 ), new FloatValue.Bounds( -0.005, +0.005 ) ),
 
-        new ActivationFunction.Info( 4, tf.relu6, ActivationFunction.reference_relu6,
+        new ActivationFunction.Info( 5, tf.relu6, ActivationFunction.reference_relu6,
           new FloatValue.Bounds( 0, 6 ), new FloatValue.Bounds( 0, 6 ), new FloatValue.Bounds( 0, 6 ) ),
 
-        new ActivationFunction.Info( 5, tf.cos, ActivationFunction.reference_cos,
+        new ActivationFunction.Info( 6, tf.cos, ActivationFunction.reference_cos,
           new FloatValue.Bounds( -1, +1 ),
           new FloatValue.Bounds( -( ( Math.PI / 2 ) + 0.005 ), -( ( Math.PI / 2 ) - 0.005 ) ), new FloatValue.Bounds( -0.005, +0.005 ) ),
 
-        new ActivationFunction.Info( 6, tf.sigmoid, ActivationFunction.reference_sigmoid,
+        new ActivationFunction.Info( 7, tf.sigmoid, ActivationFunction.reference_sigmoid,
           new FloatValue.Bounds( 0, 1 ), new FloatValue.Bounds( -0.125, +0.125 ), new FloatValue.Bounds( +0.468, +0.532 ) ),
 
         // (2021/12/09)
@@ -131,16 +131,32 @@ class ActivationFunction extends Int {
         // (2022/01/11)
         // However, if the BoundsArraySet.afterActivation is calculate by .clamp_byXxx() (not by set_byXxx()), the Infinity bounds is
         // not a problem.
-        new ActivationFunction.Info( 7, tf.relu, ActivationFunction.reference_relu,
+        new ActivationFunction.Info( 8, tf.relu, ActivationFunction.reference_relu,
           new FloatValue.Bounds( 0, +Infinity ), new FloatValue.Bounds( 0, +Infinity ), new FloatValue.Bounds( 0, +Infinity ) ),
 
-        //new ActivationFunction.Info( 8, tf.softplus, ActivationFunction.reference_softplus,
+        //new ActivationFunction.Info( 9, tf.softplus, ActivationFunction.reference_softplus,
         //  new FloatValue.Bounds( 0, +Infinity ),
         //  new FloatValue.Bounds( +5, +Infinity ), new FloatValue.Bounds( +5, +Infinity ) ),
 */
       ]
     );
 
+  }
+
+  /**
+   * This non-linear function has the a little smaller range (i.e. 5) than RELU6 (i.e. 7), but has both negative and positive value
+   * around zero point.
+   */
+  static clipByValue_Negative2_Positive2( x ) {
+    return tf.clipByValue( x, -2, +2 );
+  }
+
+  static reference_clipByValue_Negative2_Positive2( x ) {
+    if ( x <= -2 )
+      return -2;
+    else if ( x >= +2 )
+      return +2;
+    return x;
   }
 
   /**
