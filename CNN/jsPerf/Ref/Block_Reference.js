@@ -10,7 +10,6 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ActivationEscaping from "../../Conv/ActivationEscaping.js";
 import * as BoundsArraySet from "../../Conv/BoundsArraySet.js";
-import * as ChannelCountCalculator from "../../Conv/ChannelCountCalculator.js";
 import * as Pointwise from "../../Conv/Pointwise.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
 import * as ChannelShuffler from "../../Conv/ChannelShuffler.js";
@@ -1006,7 +1005,7 @@ class Base extends Recyclable.Root {
         // When no pointwise1, just keep it all-pass-through.
 
       } else { // Otherwise, only the lower half should be processed by pointwise1 convolution.
-        let pointwise1_higherHalfPassThrough = ChannelCountCalculator.HigherHalfPassThrough.Pool.get_or_create_by(
+        let pointwise1_higherHalfPassThrough = Block.ChannelCountCalculator.HigherHalfPassThrough.Pool.get_or_create_by(
           testParams.out.input0_channelCount, testParams.out.pointwise1ChannelCount );
 
         pointwise1ChannelCount = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
