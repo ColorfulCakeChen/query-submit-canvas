@@ -249,7 +249,7 @@ class Base extends Recyclable.Root {
     // For reducing memory allocation.
     this.testCorrectnessInfo = TestCorrectnessInfo.Pool.get_or_create_by();
     this.imageInArray_Fake = Recyclable.Array.Pool.get_or_create_by( 2 );
-    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.001 );
+    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.01 );
 
 //!!! (2022/07/09 Remarked) Old Codes.
 //    *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
