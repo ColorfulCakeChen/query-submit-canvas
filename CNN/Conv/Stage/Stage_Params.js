@@ -17,13 +17,6 @@ import * as Weights from "../../Unpacker/Weights.js";
 /**
  * Convolution stage parameters.
  *
- * @member {number} squeezeExcitationActivationId
- *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of squeeze-and-excitation. Usually, it uses the
- * default activation function (i.e. nActivationId).
- *
- * @member {string} squeezeExcitationActivationName
- *   The string name of squeezeExcitationActivationId.
- *
  * @member {number} outputHeight
  *   The height of output image. It is half of the input height (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
  *
@@ -110,11 +103,6 @@ class Params extends Weights.Params {
    *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
    * (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xx)
    *
-   * @param {boolean} bSqueezeExcitationPrefix
-   *   If true, the squeeze-and-excitation will be before pointwise2. If false, the squeeze-and-excitation will be after pointwise2.
-   * If null, it will be extracted from inputWeightArray (i.e. by evolution).
-   * Only used if ( nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2) ).
-   *
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be
    * extracted from inputWeightArray (i.e. by evolution).
@@ -135,7 +123,7 @@ class Params extends Weights.Params {
     bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth,
     bPointwise2ActivatedAtStageEnd,
-    nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+    nSqueezeExcitationChannelCountDivisor,
     nActivationId,
     bKeepInputTensor
   ) {
@@ -159,7 +147,7 @@ class Params extends Weights.Params {
       bPointwise1,
       depthwiseFilterHeight, depthwiseFilterWidth,
       bPointwise2ActivatedAtStageEnd,
-      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+      nSqueezeExcitationChannelCountDivisor,
       nActivationId,
       bKeepInputTensor
     );
@@ -174,7 +162,7 @@ class Params extends Weights.Params {
     bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth,
     bPointwise2ActivatedAtStageEnd,
-    nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+    nSqueezeExcitationChannelCountDivisor,
     nActivationId,
     bKeepInputTensor
   ) {
@@ -186,7 +174,7 @@ class Params extends Weights.Params {
       bPointwise1,
       depthwiseFilterHeight, depthwiseFilterWidth,
       bPointwise2ActivatedAtStageEnd,
-      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+      nSqueezeExcitationChannelCountDivisor,
       nActivationId,
       bKeepInputTensor
     );
@@ -265,7 +253,8 @@ class Params extends Weights.Params {
     return Params.nSqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
   }
 
-  get bSqueezeExcitationPrefix()  { return this.getParamValue_byParamDesc( Params.bSqueezeExcitationPrefix ); }
+  //!!! (2022/07/14 Remarked) Stage.BlockParamsCreator will determine it.
+  //get bSqueezeExcitationPrefix()  { return this.getParamValue_byParamDesc( Params.bSqueezeExcitationPrefix ); }
 
   get nActivationId()             { return this.getParamValue_byParamDesc( Params.nActivationId ); }
   get nActivationName()           { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
@@ -279,8 +268,6 @@ Params.sourceHeight =                   new ParamDesc.Int(                "sourc
 Params.sourceWidth =                    new ParamDesc.Int(                "sourceWidth",                1, ( 10 * 1024 ) );
 Params.sourceChannelCount =             new ParamDesc.Int(                "sourceChannelCount",         1, ( 10 * 1024 ) );
 
-//!!! ...unfinished... (2022/06/17) should be renamed to nConvStageTypeId and nConvStageTypeName
-
 Params.nConvStageTypeId =               new ParamDesc.ConvStageType(      "nConvStageTypeId" );
 
 Params.blockCountRequested =            new ParamDesc.Int(                "blockCountRequested",        2, (  1 * 1024 ) );
@@ -290,7 +277,7 @@ Params.depthwiseFilterWidth =           new ParamDesc.Int(                "depth
 Params.bPointwise2ActivatedAtStageEnd = new ParamDesc.Bool(               "bPointwise2ActivatedAtStageEnd" );
 
 Params.nSqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
-Params.bSqueezeExcitationPrefix =       new ParamDesc.Bool(               "bSqueezeExcitationPrefix" );
+//Params.bSqueezeExcitationPrefix =       new ParamDesc.Bool(               "bSqueezeExcitationPrefix" );
 
 Params.nActivationId =                  new ParamDesc.ActivationFunction( "nActivationId" );
 
@@ -312,7 +299,7 @@ Params.SequenceArray = new ParamDesc.SequenceArray( [
   Params.depthwiseFilterWidth,
   Params.bPointwise2ActivatedAtStageEnd,
   Params.nSqueezeExcitationChannelCountDivisor,
-  Params.bSqueezeExcitationPrefix,
+  //Params.bSqueezeExcitationPrefix,
   Params.nActivationId,
   Params.bKeepInputTensor,
 ] );
