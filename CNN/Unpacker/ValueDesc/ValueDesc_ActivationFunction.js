@@ -62,7 +62,7 @@ import * as FloatValue from "../FloatValue.js";
  *
  *
  * Q2: Why use CLIP_BY_VALUE_N2_P2 instead of CLIP_BY_VALUE_N3_P3?
- * A2: 
+ * A2: To reduce floating-point accumulated error.
  *
  * CLIP_BY_VALUE_N3_P3:
  *
