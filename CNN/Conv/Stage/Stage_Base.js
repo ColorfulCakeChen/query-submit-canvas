@@ -333,11 +333,6 @@ class Base extends Recyclable.Root {
       this.outputWidth = params.outputWidth;
     }
 
-//!!! (2022/07/15 Remarked) Now block will use TensorPlaceholder directly.
-//     // Pre-allocate array to place intermediate 2 input tensors and 2 output tensors. This could reduce memory re-allocation.
-//     this.intermediateInputTensors = Recyclable.Array.get_or_create_by( 2 );
-//     this.intermediateOutputTensors = Recyclable.Array.get_or_create_by( 2 );
-
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
 
@@ -441,8 +436,12 @@ class Base extends Recyclable.Root {
 
     } finally {
       if ( blockParamsCreator ) {
-        blockParamsCreator.disposeResources_and_recycleToPool(); // Also release Stage.Params object.
+        blockParamsCreator.disposeResources_and_recycleToPool();
         blockParamsCreator = null;
+      }
+      if ( params ) {
+        params.disposeResources_and_recycleToPool();
+        params = undefined;
       }
     }
   }
