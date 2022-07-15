@@ -5,7 +5,7 @@ import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
-import * as ChannelCountCalculator from "../ChannelCountCalculator.js";
+import * as ChannelCountCalculator from "./Block_ChannelCountCalculator.js";
 import * as Depthwise from "../Depthwise.js";
 
 /**
