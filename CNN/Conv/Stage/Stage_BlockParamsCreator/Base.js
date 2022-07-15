@@ -168,7 +168,7 @@ class Base extends Recyclable.Root {
     {
       // MobileNetV2_Xxx's depthwise has activation (before prefix squeeze-and-excitation and to remedy its pointwise2's no activation).
       //
-      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
+      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
         this.depthwiseActivationId = stageParams.nActivationId;
 
       // non-MobileNetV2_Xxx's depthwise has no activation. (since they will be done at pointwise2.)
@@ -186,7 +186,7 @@ class Base extends Recyclable.Root {
       // (even if no activation function). It and the next block's pointwise1 is not continuous multiple affine transformation
       // and will not become just one affine transformation.
       //
-      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
+      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
         this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
       // For all other ConvStageType, all non-blockLast's pointwise2 must have activation function (to become non-affine transformation).
@@ -203,7 +203,7 @@ class Base extends Recyclable.Root {
     {
       // MobileNetV2_Xxx uses prefix squeeze-and-excitation.
       //
-      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
+      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
         this.bSqueezeExcitationPrefix = true;
 
       // non-MobileNetV2_Xxx uses postfix squeeze-and-excitation.
