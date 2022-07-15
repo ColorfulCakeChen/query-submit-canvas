@@ -828,18 +828,50 @@ class Base extends Recyclable.Root {
       }
 
 //!!! ...unfinished... (2022/07/15) 
+      // squeeze-and-excitation
       {
         asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", stageParams.nSqueezeExcitationChannelCountDivisor );
         asserter.propertyValue( "squeezeExcitationActivationId", stageParams.nActivationId );
-        asserter.propertyValue( "bSqueezeExcitationPrefix", ??? );
+
+        switch ( nConvStageTypeId ) {
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
+            asserter.propertyValue( "bSqueezeExcitationPrefix", false );
+            break;
+
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
+            asserter.propertyValue( "bSqueezeExcitationPrefix", true );
+            break;
+
+          default:
+            Base.Assert_nConvStageTypeId_Unknown(
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+            break;
+        }
       }
 
 //!!! ...unfinished... (2022/07/15) 
       // output height and width
       {
         if ( blockParams instanceof Block_TestParams.Base ) {
-          asserter.propertyValue( "???outputHeight", stageParams.outputHeight );
-          asserter.propertyValue( "???outputWidth", stageParams.outputWidth );
+
+          if ( blockParams.bDepthwiseRequestedAndNeeded ) {
+            Base.AssertTwoEqualValues( `.${asserter.objectName}.outputHeight`,
+              blockParams.inferencedParams.depthwisePadInfo.outputHeight, stageParams.outputHeight , asserter.contextDescription );
+
+            Base.AssertTwoEqualValues( `.${asserter.objectName}.outputWidth`,
+              blockParams.inferencedParams.depthwisePadInfo.outputWidth, stageParams.outputWidth , asserter.contextDescription );
+
+          } else {
+            asserter.propertyValue( "input0_height", stageParams.outputHeight );
+            asserter.propertyValue( "input0_width", stageParams.outputWidth );
+          }
+
         } else { // Block.Base
           asserter.propertyValue( "outputHeight", stageParams.outputHeight );
           asserter.propertyValue( "outputWidth", stageParams.outputWidth );
