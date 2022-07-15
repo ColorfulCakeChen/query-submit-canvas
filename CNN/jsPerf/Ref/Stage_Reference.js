@@ -444,8 +444,6 @@ class Base extends Recyclable.Root {
         }
       }
 
-//!!! ...unfinished... (2022/07/15) ConvBlockType
-
       // nConvBlockTypeId
       if ( 0 == blockIndex ) { // block0
         switch ( nConvStageTypeId ) {
@@ -453,26 +451,25 @@ class Base extends Recyclable.Root {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
-            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL );
+            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL );
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
-!!!
-            break;
-
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-            if ( stageParams.bPointwise1 == false ) {
-              asserter.propertyValue( "nConvBlockTypeId", ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
-            } else {
-              asserter.propertyValue( "nConvBlockTypeId",
-                ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE );
-            }
+            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD );
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-            asserter.propertyValue( "nConvBlockTypeId",
-              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 );
+            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD );
+            break;
+
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
+            if ( stageParams.bPointwise1 == false ) {
+              asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2 );
+            } else {
+              asserter.propertyValue( "nConvBlockTypeId",
+                ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD );
+            }
             break;
 
           default:
@@ -480,6 +477,8 @@ class Base extends Recyclable.Root {
               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
             break;
         }
+
+//!!! ...unfinished... (2022/07/15) ConvBlockType
 
       } else { // block1, 2, 3, ...
         switch ( nConvStageTypeId ) {
