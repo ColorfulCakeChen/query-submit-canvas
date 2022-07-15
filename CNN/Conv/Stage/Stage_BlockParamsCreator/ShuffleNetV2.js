@@ -10,6 +10,9 @@ import { Base } from "./Base.js";
  * Provide parameters for ShuffleNetV2 (i.e. shuffle channel by ChannelShuffler.ConcatPointwiseConv).
  *
  *
+
+!!! ...unfinished... (2022/07/15) seems not the case now.
+
  * 1. Special case: NoPointwise1 ( stageParams.bPointwise1 == false ) ShuffleNetV2 (i.e. without pointwise1, with concatenator).
  * 
  * What is the different of the NoPointwise1 configuration?
@@ -96,6 +99,12 @@ class ShuffleNetV2 extends Base {
 
     this.input0_channelCount = stageParams.sourceChannelCount; // Block0 uses the original input channel count (as input0).
     this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD;
+
+    if ( stageParams.bPointwise1 == false ) {
+      this.pointwise1ChannelCount = 0; // NoPointwise1.
+    } else {
+      this.pointwise1ChannelCount = stageParams.sourceChannelCount; // same as input0_channelCount.
+    }
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
 
