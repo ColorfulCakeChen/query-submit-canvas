@@ -541,8 +541,6 @@ class Base extends Recyclable.Root {
         }
       }
 
-//!!! ...unfinished... (2022/07/15) pointwise1ChannelCount
-
       // pointwise1ChannelCount
       if ( 0 == blockIndex ) { // block0
         switch ( nConvStageTypeId ) {
@@ -563,11 +561,10 @@ class Base extends Recyclable.Root {
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
             if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount );
+              asserter.propertyValue( "pointwise1ChannelCount", single_Block0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
@@ -587,6 +584,13 @@ class Base extends Recyclable.Root {
             }
             break;
 
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
+            if ( stageParams.bPointwise1 == false )
+              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+            else
+              asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount );
+            break;
+
           default:
             Base.Assert_nConvStageTypeId_Unknown(
               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
@@ -594,6 +598,8 @@ class Base extends Recyclable.Root {
         }
 
       } else { // block1, 2, 3, ...
+//!!! ...unfinished... (2022/07/15) pointwise1ChannelCount
+
         switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
