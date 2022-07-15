@@ -552,6 +552,11 @@ class Base extends Operation.Base() {
     inputTensor3d.dispose();
   }
 
+
+//!!! ...unfinished... (2022/07/15)
+// If ( input_channelCount == 1 ), it needs not split, add, concat. (gather is just enough.)
+//
+
   /**
    * (Used when vocabulary tables are one merged tensor2d. This is faster than SplitReshapeGatherConcat.)
    *
