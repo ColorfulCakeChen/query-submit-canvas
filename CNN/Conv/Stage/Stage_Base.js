@@ -357,14 +357,14 @@ class Base extends Recyclable.Root {
       }
 
       let blockParams, block, blockIniter;
-      let inputScaleBoundsArray;
+      let input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder;
 
       this.blockArray = Recyclable.OwnerArray.Pool.get_or_create_by( blockParamsCreator.blockCount );
       for ( let i = 0; i < this.blockArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
 
         if ( 0 == i ) { // Block0.
           blockParamsCreator.configTo_beforeBlock0();
-          inputScaleBoundsArray = inputScaleBoundsArray0;
+          input0_ScaleBoundsArray_or_TensorPlaceholder = inputScaleBoundsArray0;
         }
 
         // BlockLast. (Note: Block0 may also be BlockLast.) 
@@ -404,12 +404,7 @@ class Base extends Recyclable.Root {
 
         block = this.blockArray[ i ] = Block.Base.Pool.get_or_create_by();
         blockIniter = block.initer( progressForBlocks.children[ i ], inputWeightArray, this.weightElementOffsetEnd, blockParams,
-
-!!! ...unfinished... (2022/07/15)
-// block0: inputScaleBoundsArray
-// block1, 2, 3...: previous block's output TensorPlaceholder
-
-          inputScaleBoundsArray, null,
+          input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
           this.channelShuffler );
 
         this.bInitOk = yield* blockIniter;
@@ -422,8 +417,10 @@ class Base extends Recyclable.Root {
 
         if ( 0 == i ) { // After block0 (i.e. for block1, 2, 3, ...)
           blockParamsCreator.configTo_afterBlock0();
-          inputScaleBoundsArray = block.output0.scaleBoundsArray;
         }
+
+        input0_ScaleBoundsArray_or_TensorPlaceholder = block.output0;
+        input1_ScaleBoundsArray_or_TensorPlaceholder = block.output1;
       }
 
       this.block0 = this.blockArray[ 0 ]; // Shortcut to the first block.
