@@ -270,7 +270,7 @@ class Base extends Recyclable.Root {
     let bInitOk = stage.init( progress, testParams.in.inputWeightArray, testParams.in.weightElementOffsetBegin, extractedParams,
       inputScaleBoundsArray0 );
 
-    if ( stage.bInitOk != bInitOk ),
+    if ( stage.bInitOk != bInitOk )
       throw Error( `Stage validation state (${stage.bInitOk}) mismatches initer's result (${bInitOk}). ${stage}` );
 
     if ( !bInitOk ) { //!!! For Debug.
@@ -383,7 +383,7 @@ class Base extends Recyclable.Root {
     if ( blockCount <= 0 )
       throw Error( `Stage blockCount (${blockCount}) should be larger than 0. ${parametersDescription}` );
 
-    if ( blockCount < 2 ),
+    if ( blockCount < 2 )
       throw Error( `Stage blockCount (${blockCount}) should be >= 2. ${parametersDescription}` );
 
     let blockName, blockParams, pointwise1ChannelCount;
