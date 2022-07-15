@@ -827,6 +827,25 @@ class Base extends Recyclable.Root {
         asserter.propertyValue( "bOutput1Requested", false );
       }
 
+//!!! ...unfinished... (2022/07/15) 
+      {
+        asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", stageParams.nSqueezeExcitationChannelCountDivisor );
+        asserter.propertyValue( "squeezeExcitationActivationId", stageParams.nActivationId );
+        asserter.propertyValue( "bSqueezeExcitationPrefix", ??? );
+      }
+
+//!!! ...unfinished... (2022/07/15) 
+      // output height and width
+      {
+        if ( blockParams instanceof Block_TestParams.Base ) {
+          asserter.propertyValue( "???outputHeight", stageParams.outputHeight );
+          asserter.propertyValue( "???outputWidth", stageParams.outputWidth );
+        } else { // Block.Base
+          asserter.propertyValue( "outputHeight", stageParams.outputHeight );
+          asserter.propertyValue( "outputWidth", stageParams.outputWidth );
+        }
+      }
+
       // outChannels0, outChannels1
       if ( ( blockCount - 1 ) > blockIndex ) { // block0, 1, 2, 3, ..., ( blockCount - 2 )
         switch ( nConvStageTypeId ) {
