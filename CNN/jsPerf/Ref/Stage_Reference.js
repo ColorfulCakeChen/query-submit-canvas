@@ -381,7 +381,7 @@ class Base extends Recyclable.Root {
     let nConvStageTypeId = stageParams.nConvStageTypeId;
 
     let single_Block0Input0ChannelCount = stageParams.sourceChannelCount;        // Single of block0's input0 channel count.
-    let double_Block0Input0ChannelCount = double_Block0Input0ChannelCount * 2;   // Double of block0's input0 channel count.
+    let double_Block0Input0ChannelCount = stageParams.sourceChannelCount * 2;    // Double of block0's input0 channel count.
     let quadruple_Block0Input0ChannelCount = stageParams.sourceChannelCount * 4; // Quadruple of block0's input0 channel count.
 
     let blockCount = blockParamsArray.length;
