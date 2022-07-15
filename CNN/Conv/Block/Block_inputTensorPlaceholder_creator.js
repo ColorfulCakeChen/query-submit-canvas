@@ -34,7 +34,7 @@ class inputTensorPlaceholder_creator {
       let inputScaleBoundsArray = input_ScaleBoundsArray_or_TensorPlaceholder;
 
       if ( inputScaleBoundsArray.length != input_channelCount )
-        throw Error( `Block.input_TensorPlaceholder.create_or_check_TensorPlaceholder_by(): `
+        throw Error( `Block.inputTensorPlaceholder_creator.create_or_check_TensorPlaceholder_by(): `
           + `inputScaleBoundsArray's length ( ${inputScaleBoundsArray.length} ) should be the same as `
           + `input's channel count ( ${input_channelCount} ).`
         );
@@ -59,7 +59,7 @@ class inputTensorPlaceholder_creator {
           && ( inputTensorPlaceholder.channelCount_lowerHalf != input_channelCount_lowerHalf )
           && ( inputTensorPlaceholder.channelCount_higherHalf != input_channelCount_higherHalf )
          )
-        throw Error( `Block.input_TensorPlaceholder.create_or_check_TensorPlaceholder_by(): `
+        throw Error( `Block.inputTensorPlaceholder_creator.create_or_check_TensorPlaceholder_by(): `
           + `inputTensorPlaceholder's ( height, width, channelCount, channelCount_lowerHalf, channelCount_higherHalf ) = `
           + `( ${inputTensorPlaceholder.height}, ${inputTensorPlaceholder.width}, ${inputTensorPlaceholder.channelCount}, `
             + `${inputTensorPlaceholder.channelCount_lowerHalf}, ${inputTensorPlaceholder.channelCount_higherHalf} ) `
@@ -68,7 +68,7 @@ class inputTensorPlaceholder_creator {
         );
 
       if ( inputScaleBoundsArray.length != input_channelCount )
-        throw Error( `Block.input_TensorPlaceholder.create_or_check_TensorPlaceholder_by(): `
+        throw Error( `Block.inputTensorPlaceholder_creator.create_or_check_TensorPlaceholder_by(): `
           + `inputScaleBoundsArray's length ( ${inputScaleBoundsArray.length} ) should be the same as `
           + `input's channel count ( ${input_channelCount} ).`
         );
@@ -77,7 +77,7 @@ class inputTensorPlaceholder_creator {
 
     // 3.
     } else {
-      throw Error( `Block.input_TensorPlaceholder.create_or_check_TensorPlaceholder_by(): `
+      throw Error( `Block.inputTensorPlaceholder_creator.create_or_check_TensorPlaceholder_by(): `
         + `input_ScaleBoundsArray_or_TensorPlaceholder shoulde be an instance of either `
         + `ActivationEscaping.ScaleBoundsArray or TensorPlaceholder.Base.`
       );
@@ -124,7 +124,7 @@ class inputTensorPlaceholder_creator {
       input0_ScaleBoundsArray_or_TensorPlaceholder
     );
 
-    if ( this.input0 == input0_ScaleBoundsArray_or_TensorPlaceholder ) {
+    if ( this.input0 == input0_ScaleBoundsArray_or_TensorPlaceholder )
       this.input0_bOwned = false;
     else 
       this.input0_bOwned = true; // Because it is created here.
@@ -144,7 +144,7 @@ class inputTensorPlaceholder_creator {
         input1_ScaleBoundsArray_or_TensorPlaceholder
       );
 
-      if ( this.input1 == input1_ScaleBoundsArray_or_TensorPlaceholder ) {
+      if ( this.input1 == input1_ScaleBoundsArray_or_TensorPlaceholder )
         this.input1_bOwned = false;
       else 
         this.input1_bOwned = true; // Because it is created here.
