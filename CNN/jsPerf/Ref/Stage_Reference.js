@@ -79,10 +79,10 @@ class Base extends Recyclable.Root {
   testCorrectness( imageSourceBag, testParams ) {
 
     let {
-      sourceChannelCount,
+      sourceHeight, sourceWidth, sourceChannelCount,
     } = testParams.out;
 
-    this.testCorrectness_imageIn = imageSourceBag.getImage_by( sourceChannelCount );
+    this.testCorrectness_imageIn = imageSourceBag.getImage_by( sourceHeight, sourceWidth, sourceChannelCount );
 
     Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "Stage_Reference.Base.testCorrectness_internal()",
       Base.testCorrectness_internal, this );
@@ -125,7 +125,7 @@ class Base extends Recyclable.Root {
     let testParams = this.testParams;
 
     let {
-      sourceChannelCount,
+      sourceHeight, sourceWidth, sourceChannelCount,
       bKeepInputTensor,
 
       outputHeight,
@@ -135,7 +135,7 @@ class Base extends Recyclable.Root {
 
     let outputChannelCount = sourceChannelCount * 2; // In current Stage's design, the output channel always is twice as input.
 
-    let inputTensor3d = imageSourceBag.getTensor3d_by( sourceChannelCount );
+    let inputTensor3d = imageSourceBag.getTensor3d_by( sourceHeight, sourceWidth, sourceChannelCount );
 
     let inputTensorDestroyCount; // How many input tensors will be destroyed by Stage.apply().
     if ( bKeepInputTensor ) {
