@@ -45,18 +45,18 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
    */
   constructor( stageParams ) {
     super( stageParams );
-    Base.setAsConstructor_self.call( this );
+    ShuffleNetV2_ByMobileNetV1.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor( stageParams ) {
     super.setAsConstructor( stageParams );
-    Base.setAsConstructor_self.call( this );
+    ShuffleNetV2_ByMobileNetV1.setAsConstructor_self.call( this );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( stageParams ) {
+  static setAsConstructor_self() {
     // Do nothing.
   }
 
