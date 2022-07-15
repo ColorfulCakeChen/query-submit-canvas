@@ -319,8 +319,6 @@ class Base extends Recyclable.Root {
 
     Base.AssertParameters_Stage_blocks( stage, stage ); // Test every block's parameters.
 
-//!!! ...unfinished... (2022/07/15)
-
     {
       let tensorWeightCountTotal = 0;
       let tensorWeightCountExtracted = 0;
