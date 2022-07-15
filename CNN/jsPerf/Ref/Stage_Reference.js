@@ -598,16 +598,14 @@ class Base extends Recyclable.Root {
         }
 
       } else { // block1, 2, 3, ...
-//!!! ...unfinished... (2022/07/15) pointwise1ChannelCount
-
         switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
             if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
@@ -628,11 +626,14 @@ class Base extends Recyclable.Root {
         }
       }
 
-      asserter.propertyValue( "bPointwise1Bias", true );
-      asserter.propertyValue( "pointwise1ActivationId", stageParams.nActivationId );
+      //!!! (2022/07/15 Remarked) pointwise1Bias and pointwise1ActivationId are determined by Block.Params (and be tested there).
+      //asserter.propertyValue( "pointwise1Bias", true );
+      //asserter.propertyValue( "pointwise1ActivationId", stageParams.nActivationId );
 
       asserter.propertyValue( "depthwiseFilterHeight", stageParams.depthwiseFilterHeight );
       asserter.propertyValue( "depthwiseFilterWidth", stageParams.depthwiseFilterWidth );
+
+//!!! ...unfinished... (2022/07/15) depthwise_AvgMax_Or_ChannelMultiplier
 
       // depthwise_AvgMax_Or_ChannelMultiplier
       if ( 0 == blockIndex ) { // block0
