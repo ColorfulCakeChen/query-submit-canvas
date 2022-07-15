@@ -90,7 +90,6 @@ class Base extends Recyclable.Root {
   static testCorrectness_internal( imageSourceBag, testParams ) {
     this.testParams = testParams;
 
-//!!! ...unfinished... (2022/07/15)
     let {
       sourceHeight, sourceWidth, sourceChannelCount,
       nConvStageTypeId,
@@ -103,17 +102,18 @@ class Base extends Recyclable.Root {
       bKeepInputTensor
     } = testParams.out;
 
-    let referredParams = {};
+    let inferencedParams = {};
     let outputHeight, outputWidth, outputChannelCount;
     {
-      Stage.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( referredParams, sourceHeight, sourceWidth );
+      Stage.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( inferencedParams, sourceHeight, sourceWidth );
 
-      outputHeight = referredParams.outputHeight;
-      outputWidth = referredParams.outputWidth;
+      outputHeight = inferencedParams.outputHeight;
+      outputWidth = inferencedParams.outputWidth;
 
       outputChannelCount = sourceChannelCount * 2; // In current Stage's design, the output channel always is twice as input.
     }
 
+//!!! ...unfinished... (2022/07/15)
     let imageIn = imageSourceBag.getImage_by( sourceChannelCount );
     let imageOutReference = this.calcResult( imageIn );
 
@@ -792,41 +792,17 @@ class Base extends Recyclable.Root {
   calcResult( imageIn ) {
     let testParams = this.testParams;
 
+    // Note: Do not generate parameters description string in advance every time.
+    //       Just generate them only if necessary by .toString() for reducing memory re-allocation.
+    testParams.out.toString = Base.TestParams_Out_toString; // For Creating description for debug easily.
+
     let channelShuffler_concatenatedShape;
     let channelShuffler_outputGroupCount = 2; // In ShuffleNetV2, channel shuffler always has 2 convolution group.
 
-    {
-      let referredParams = {};
-      Stage.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( referredParams,
-        testParams.out.sourceHeight, testParams.out.sourceWidth );
+    // In ShuffleNetV2, channel shuffler always has half ( height, width ) and twice channel count of original input0.
+    channelShuffler_concatenatedShape = [ testParams.out.outputHeight, testParams.out.outputWidth, imageIn.depth * 2 ];
 
-      // In ShuffleNetV2, channel shuffler always has half ( height, width ) and twice channel count of original input0.
-      channelShuffler_concatenatedShape = [ referredParams.outputHeight, referredParams.outputWidth, imageIn.depth * 2 ];
-
-      // Create description for debug easily.
-      this.paramsOutDescription =
-
-          `sourceHeight=${testParams.out.sourceHeight}, sourceWidth=${testParams.out.sourceWidth}, `
-        + `sourceChannelCount=${testParams.out.sourceChannelCount}, `
-        + `blockCountRequested=${testParams.out.blockCountRequested}, `
-        + `bPointwise1=${testParams.out.bPointwise1}, `
-        + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, depthwiseFilterWidth=${testParams.out.depthwiseFilterWidth}, `
-
-        + `nActivationIdName=${ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.nActivationId )}`
-          + `(${testParams.out.nActivationId}), `
-
-        + `bPointwise2BiasAtStageEnd=${testParams.out.bPointwise2BiasAtStageEnd}, `
-
-        + `nConvStageType=${ValueDesc.ConvStageType.Singleton.getStringOf( testParams.out.nConvStageType )}`
-          + `(${testParams.out.nConvStageType}), `
-
-        + `outputHeight=${referredParams.outputHeight}, outputWidth=${referredParams.outputWidth}, `
-//        + `outputChannelCount=${???.outputChannelCount}, `
-        + `bKeepInputTensor=${testParams.out.bKeepInputTensor}`
-      ;
-    }
-
-    Base.AssertParameters_Stage_blocks( testParams, this.paramsOutDescription ); // Test every block's parameters.
+    Base.AssertParameters_Stage_blocks( testParams, testParams.out ); // Test every block's parameters.
 
     // Calculate every blocks in sequence.
 
@@ -844,6 +820,40 @@ class Base extends Recyclable.Root {
 
     let imageOut = imageOutArray[ 0 ]; // The blockLast should have only input0.
     return imageOut;
+  }
+
+
+  /**
+   * @param {Stage_TestParams.out} this
+   *   The testParams.outfor creating description.
+   *
+   * @return {string}
+   *   The description of this.
+   */
+  static TestParams_Out_toString() {
+
+    let paramsOutDescription =
+
+        `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, `
+      + `sourceChannelCount=${this.sourceChannelCount}, `
+      + `blockCountRequested=${this.blockCountRequested}, `
+      + `bPointwise1=${this.bPointwise1}, `
+      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
+
+      + `nActivationIdName=${ValueDesc.ActivationFunction.Singleton.getStringOf( this.nActivationId )}`
+        + `(${this.nActivationId}), `
+
+      + `bPointwise2BiasAtStageEnd=${this.bPointwise2BiasAtStageEnd}, `
+
+      + `nConvStageType=${ValueDesc.ConvStageType.Singleton.getStringOf( this.nConvStageType )}`
+        + `(${this.nConvStageType}), `
+
+      + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
+//        + `outputChannelCount=${???.outputChannelCount}, `
+      + `bKeepInputTensor=${this.bKeepInputTensor}`
+    ;
+
+    return paramsOutDescription;
   }
 
 }
