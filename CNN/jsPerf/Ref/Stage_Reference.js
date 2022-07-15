@@ -350,6 +350,12 @@ class Base extends Recyclable.Root {
       throw Error(  `Stage ${valueName} (${value1}) should be (${value2}). ${parametersDescription}` );
   }
 
+  /** */
+  static Assert_nConvStageTypeId_Unknown( prefixMsg, nConvStageTypeId, postfixMsg ) {
+    let strUnknownConvStageTypeId = `${prefixMsg} unknown nConvStageTypeId ( ${nConvStageTypeId} ) value. ${postfixMsg}`;
+    throw Error( strUnknownConvStageTypeId );
+  }
+
   /**
    * Test every block's parameters.
    *
@@ -369,7 +375,7 @@ class Base extends Recyclable.Root {
     let nConvStageTypeId = stageParams.nConvStageTypeId;
 
     let single_Block0Input0ChannelCount = stageParams.sourceChannelCount;        // Single of block0's input0 channel count.
-    let double_Block0Input0ChannelCount = double_Block0Input0ChannelCount * 2;    // Double of block0's input0 channel count.
+    let double_Block0Input0ChannelCount = double_Block0Input0ChannelCount * 2;   // Double of block0's input0 channel count.
     let quadruple_Block0Input0ChannelCount = stageParams.sourceChannelCount * 4; // Quadruple of block0's input0 channel count.
 
     let blockCount = blockParamsArray.length;
@@ -393,9 +399,6 @@ class Base extends Recyclable.Root {
       }
 
       let asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Stage.${blockName}`, blockParams, parametersDescription );
-
-      let strUnknownConvStageTypeId = `Stage_Reference.Base.AssertParameters_Stage_blocks(): `
-            `unknown nConvStageTypeId ( ${nConvStageTypeId} ) value. ${asserter.contextDescription}`;
 
       // inputHeight0, inputWidth0
       if ( 0 == blockIndex ) { // block0
@@ -428,7 +431,10 @@ class Base extends Recyclable.Root {
             asserter.propertyValue( "channelCount0_pointwise1Before", double_Block0Input0ChannelCount );
             break;
 
-          default: throw Error( strUnknownConvStageTypeId ); break;
+          default:
+            Base.Assert_nConvStageTypeId_Unknown(
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+            break;
         }
       }
 
@@ -458,7 +464,10 @@ class Base extends Recyclable.Root {
               ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 );
             break;
 
-          default: throw Error( strUnknownConvStageTypeId ); break;
+          default:
+            Base.Assert_nConvStageTypeId_Unknown(
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+            break;
         }
 
       } else { // block1, 2, 3, ...
@@ -489,7 +498,10 @@ class Base extends Recyclable.Root {
               ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH );
             break;
 
-          default: throw Error( strUnknownConvStageTypeId ); break;
+          default:
+            Base.Assert_nConvStageTypeId_Unknown(
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+            break;
         }
       }
 
@@ -537,7 +549,10 @@ class Base extends Recyclable.Root {
             }
             break;
 
-          default: throw Error( strUnknownConvStageTypeId ); break;
+          default:
+            Base.Assert_nConvStageTypeId_Unknown(
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+            break;
         }
 
       } else { // block1, 2, 3, ...
@@ -562,7 +577,10 @@ class Base extends Recyclable.Root {
               asserter.propertyValue( "pointwise1ChannelCount", quadruple_Block0Input0ChannelCount );
             break;
 
-          default: throw Error( strUnknownConvStageTypeId ); break;
+          default:
+            Base.Assert_nConvStageTypeId_Unknown(
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+            break;
         }
       }
 
@@ -604,7 +622,10 @@ class Base extends Recyclable.Root {
             asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
-          default: throw Error( strUnknownConvStageTypeId ); break;
+          default:
+            Base.Assert_nConvStageTypeId_Unknown(
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+            break;
         }
 
       } else { // block1, 2, 3, ...
@@ -626,7 +647,10 @@ class Base extends Recyclable.Root {
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
-          default: throw Error( strUnknownConvStageTypeId ); break;
+          default:
+            Base.Assert_nConvStageTypeId_Unknown(
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+            break;
         }
       }
 
@@ -647,7 +671,10 @@ class Base extends Recyclable.Root {
             asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID );
             break;
 
-          default: throw Error( strUnknownConvStageTypeId ); break;
+          default:
+            Base.Assert_nConvStageTypeId_Unknown(
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+            break;
         }
 
       } else { // block1, 2, 3, ...
@@ -666,7 +693,10 @@ class Base extends Recyclable.Root {
             asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID );
             break;
 
-          default: throw Error( strUnknownConvStageTypeId ); break;
+          default:
+            Base.Assert_nConvStageTypeId_Unknown(
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+            break;
         }
       }
 
@@ -697,7 +727,10 @@ class Base extends Recyclable.Root {
             asserter.propertyValue( "pointwise22ChannelCount", single_Block0Input0ChannelCount );
             break;
 
-          default: throw Error( strUnknownConvStageTypeId ); break;
+          default:
+            Base.Assert_nConvStageTypeId_Unknown(
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+            break;
         }
       }
 
@@ -739,7 +772,10 @@ class Base extends Recyclable.Root {
             asserter.propertyValue( "bOutput1Requested", true );
             break;
 
-          default: throw Error( strUnknownConvStageTypeId ); break;
+          default:
+            Base.Assert_nConvStageTypeId_Unknown(
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+            break;
         }
 
       } else { // blockLast
@@ -765,7 +801,10 @@ class Base extends Recyclable.Root {
             asserter.propertyValue( "outChannels1", single_Block0Input0ChannelCount );
             break;
 
-          default: throw Error( strUnknownConvStageTypeId ); break;
+          default:
+            Base.Assert_nConvStageTypeId_Unknown(
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+            break;
         }
 
       } else { // blockLast
