@@ -2,9 +2,10 @@ export { Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
+import * as BoundsArraySet_Asserter from "../../util/BoundsArraySet_Asserter.js";
+import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as Pool_Asserter from "../../util/Pool_Asserter.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
@@ -17,7 +18,6 @@ import * as Block from "../../Conv/Block.js";
 import * as Block_TestParams from "./Block_TestParams.js"; 
 import * as NumberImage from "./NumberImage.js";
 import * as ImageSourceBag from "./ImageSourceBag.js";
-import * as BoundsArraySet_Asserter from "./BoundsArraySet_Asserter.js";
 
 
 /**
