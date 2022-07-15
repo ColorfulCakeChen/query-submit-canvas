@@ -385,31 +385,6 @@ class Base extends Recyclable.Root {
 
     let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
 
-//!!! ...unfinished... (2022/07/14) Create input TensorPlaceholder.
-
-//     Block.Params.set_inputTensorCount_input1_height_width_channelCount_depthwise_inferenced_by.call( ???,
-//       input0_height, input0_width, input0_channelCount,
-//       nConvBlockTypeId,
-//       pointwise1ChannelCount,
-//       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-//       depthwiseActivationId,
-//       pointwise20ChannelCount,
-//       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
-//     );
-
-//     Block.Params.set_pointwise1_nHigherHalfDifferent_modify_pointwise1ChannelCount_pointwise1Bias_pointwise1ActivationId_by.call( ???,
-//       input0_channelCount,
-//       nConvBlockTypeId,
-//       pointwise1ChannelCount
-//     );
-
-//     Block.Params.set_input0_input1_TensorPlaceholder.call( ???,
-//       inputTensorCount,
-//       input0_height, input0_width, input0_channelCount, inputScaleBoundsArray0,
-//       input1_height, input1_width, input1_channelCount, inputScaleBoundsArray1,
-//       pointwise1_inputChannelCount_lowerHalf, pointwise1_inputChannelCount_higherHalf,
-//     );
-
     let block = Base.block_create( testParams,
       imageInArraySelected[ 0 ].boundsArraySet.output0,
       imageInArraySelected[ 1 ]?.boundsArraySet.output0,
@@ -427,9 +402,6 @@ class Base extends Recyclable.Root {
 
     let memoryInfo_apply_before = tf.memory(); // Test memory leakage of block apply.
     {
-//!!! (2022/07/15 Remarked)
-//       block.apply( inputTensor3dArray, outputTensor3dArray );
-
       block.input0.realTensor = inputTensor3dArray[ 0 ];
       if ( block.input1 )
         block.input1.realTensor = inputTensor3dArray[ 1 ];
