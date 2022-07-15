@@ -85,7 +85,7 @@ class Base extends Recyclable.Root {
     this.testCorrectness_imageIn = imageSourceBag.getImage_by( sourceHeight, sourceWidth, sourceChannelCount );
 
     Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "Stage_Reference.Base.testCorrectness_internal()",
-      Base.testCorrectness_internal, this );
+      Base.testCorrectness_internal, this, imageSourceBag, testParams );
 
     this.testCorrectness_imageIn = null;
   }
@@ -106,7 +106,7 @@ class Base extends Recyclable.Root {
     this.testCorrectness_imageOutReference = this.calcResult( this.testCorrectness_imageIn );
 
     Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "Stage_Reference.Base.stage_create_apply_internal()",
-      Base.stage_create_apply_internal, this );
+      Base.stage_create_apply_internal, this, imageSourceBag );
 
     { // Release output reference images.
       if ( this.testCorrectness_imageOutReference != this.testCorrectness_imageIn ) { // Do not release image from ImageSourceBag.
