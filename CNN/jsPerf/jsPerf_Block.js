@@ -429,64 +429,49 @@ class HeightWidthDepth {
   }
 
   /** */
-  static block_call_apply( block, inputTensors, outputTensors ) {
+  static block_call_apply_dispose( block, inputTensors ) {
     block.input0.realTensor = inputTensors[ 0 ];
     if ( block.input1 )
       block.input1.realTensor = inputTensors[ 1 ];
 
     block.apply();
 
-    outputTensors[ 0 ] = block.output0.realTensor;
-    outputTensors[ 1 ] = block.output1?.realTensor;
+    tf.dispose( block.output0.realTensor );
+    if ( block.output1.realTensor )
+      tf.dispose( block.output1.realTensor );
   }
 
   // Test apply by depthwise convolution.
   test_DConv_1_bias_COS_AddInputToOutput() {
-    let outputTensor3dArray = [];
-    HeightWidthDepth.block_call_apply.call( this.block_DConv_1_bias_COS_AddInputToOutput, this.dataTensor3dArray, outputTensor3dArray );
-    tf.dispose( outputTensor3dArray );
+    HeightWidthDepth.block_call_apply_dispose.call( this.block_DConv_1_bias_COS_AddInputToOutput, this.dataTensor3dArray );
   }
 
   test_Avg_bias_COS_AddInputToOutput() {
-    let outputTensor3dArray = [];
-    HeightWidthDepth.block_call_apply.call( this.block_Avg_bias_COS_AddInputToOutput, this.dataTensor3dArray, outputTensor3dArray );
-    tf.dispose( outputTensor3dArray );
+    HeightWidthDepth.block_call_apply_dispose.call( this.block_Avg_bias_COS_AddInputToOutput, this.dataTensor3dArray );
   }
 
   test_Max_bias_COS_AddInputToOutput() {
-    let outputTensor3dArray = [];
-    HeightWidthDepth.block_call_apply.call( this.block_Max_bias_COS_AddInputToOutput, this.dataTensor3dArray, outputTensor3dArray );
-    tf.dispose( outputTensor3dArray );
+    HeightWidthDepth.block_call_apply_dispose.call( this.block_Max_bias_COS_AddInputToOutput, this.dataTensor3dArray );
   }
 
   test_DConv_2_bias_COS_AddInputToOutput() {
-    let outputTensor3dArray = [];
-    HeightWidthDepth.block_call_apply.call( this.block_DConv_2_bias_COS_AddInputToOutput, this.dataTensor3dArray, outputTensor3dArray );
-    tf.dispose( outputTensor3dArray );
+    HeightWidthDepth.block_call_apply_dispose.call( this.block_DConv_2_bias_COS_AddInputToOutput, this.dataTensor3dArray );
   }
 
   test_DConv_2_COS_AddInputToOutput() {
-    let outputTensor3dArray = [];
-    HeightWidthDepth.block_call_apply.call( this.block_DConv_2_COS_AddInputToOutput, this.dataTensor3dArray, outputTensor3dArray );
-    tf.dispose( outputTensor3dArray );
+    HeightWidthDepth.block_call_apply_dispose.call( this.block_DConv_2_COS_AddInputToOutput, this.dataTensor3dArray );
   }
 
   test_DConv_2_COS() {
-    let outputTensor3dArray = [];
-    HeightWidthDepth.block_call_apply.call( this.block_DConv_2_COS, this.dataTensor3dArray, outputTensor3dArray );
-    tf.dispose( outputTensor3dArray );
+    HeightWidthDepth.block_call_apply_dispose.call( this.block_DConv_2_COS, this.dataTensor3dArray );
   }
 
   test_DConv_32_bias_COS_P128_bias() {
-    let outputTensor3dArray = [];
-    HeightWidthDepth.block_call_apply.call( this.block_DConv_32_bias_COS_P128_bias., this.dataTensor3dArray, outputTensor3dArray );
-    tf.dispose( outputTensor3dArray );
+    HeightWidthDepth.block_call_apply_dispose.call( this.block_DConv_32_bias_COS_P128_bias, this.dataTensor3dArray );
   }
 
   test_P128_bias_COS_P128_bias() {
-    let outputTensor3dArray = [];
-    HeightWidthDepth.block_call_apply.call( this.block_P128_bias_COS_P128_bias, this.dataTensor3dArray, outputTensor3dArray );
-    tf.dispose( outputTensor3dArray );
+    HeightWidthDepth.block_call_apply_dispose.call( this.block_P128_bias_COS_P128_bias, this.dataTensor3dArray );
   }
 
   test_FloatValue() {
