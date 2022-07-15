@@ -24,13 +24,13 @@ class MobileNetV1_padValid extends MobileNetV1 {
    */
   constructor( stageParams ) {
     super( stageParams );
-    Base.setAsConstructor_self.call( this );
+    MobileNetV1_padValid.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor( stageParams ) {
     super.setAsConstructor( stageParams );
-    Base.setAsConstructor_self.call( this );
+    MobileNetV1_padValid.setAsConstructor_self.call( this );
     return this;
   }
 
