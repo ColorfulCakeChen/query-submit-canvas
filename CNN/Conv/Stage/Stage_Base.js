@@ -333,9 +333,10 @@ class Base extends Recyclable.Root {
       this.outputWidth = params.outputWidth;
     }
 
-    // Pre-allocate array to place intermediate 2 input tensors and 2 output tensors. This could reduce memory re-allocation.
-    this.intermediateInputTensors = Recyclable.Array.get_or_create_by( 2 );
-    this.intermediateOutputTensors = Recyclable.Array.get_or_create_by( 2 );
+//!!! (2022/07/15 Remarked) Now block will use TensorPlaceholder directly.
+//     // Pre-allocate array to place intermediate 2 input tensors and 2 output tensors. This could reduce memory re-allocation.
+//     this.intermediateInputTensors = Recyclable.Array.get_or_create_by( 2 );
+//     this.intermediateOutputTensors = Recyclable.Array.get_or_create_by( 2 );
 
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
@@ -403,6 +404,11 @@ class Base extends Recyclable.Root {
 
         block = this.blocksArray[ i ] = Block.Base.Pool.get_or_create_by();
         blockIniter = block.initer( progressForBlocks.children[ i ], inputWeightArray, this.weightElementOffsetEnd, blockParams,
+
+!!! ...unfinished... (2022/07/15)
+// block0: inputScaleBoundsArray
+// block1, 2, 3...: previous block's output TensorPlaceholder
+
           inputScaleBoundsArray, null,
           this.channelShuffler );
 
@@ -489,15 +495,16 @@ class Base extends Recyclable.Root {
     this.tensorWeightCountTotal = 0;
     this.tensorWeightCountExtracted = 0;
 
-    if ( this.intermediateOutputTensors ) {
-      this.intermediateOutputTensors.disposeResources_and_recycleToPool();
-      this.intermediateOutputTensors = null;
-    }
-
-    if ( this.intermediateInputTensors ) {
-      this.intermediateInputTensors.disposeResources_and_recycleToPool();
-      this.intermediateInputTensors = null;
-    }
+//!!! (2022/07/15 Remarked) Now block will use TensorPlaceholder directly.
+//     if ( this.intermediateOutputTensors ) {
+//       this.intermediateOutputTensors.disposeResources_and_recycleToPool();
+//       this.intermediateOutputTensors = null;
+//     }
+//
+//     if ( this.intermediateInputTensors ) {
+//       this.intermediateInputTensors.disposeResources_and_recycleToPool();
+//       this.intermediateInputTensors = null;
+//     }
 
     this.weightElementOffsetBegin = this.weightElementOffsetEnd = -1;
     this.bInitOk = false;
@@ -585,6 +592,10 @@ class Base extends Recyclable.Root {
    *   Return a new tensor. All other intermediate tensors were disposed.
    */
   apply( inputTensor ) {
+
+!!! ...unfinished... (2022/07/15)
+// block0: inputScaleBoundsArray
+// block1, 2, 3...: previous block's output TensorPlaceholder
     let inputTensors = this.intermediateInputTensors;
     let outputTensors = this.intermediateOutputTensors;
 
@@ -610,6 +621,35 @@ class Base extends Recyclable.Root {
     outputTensors[ 1 ] = null;
 
     return outputTensor;
+
+
+
+//!!! (2022/07/15 Remarked) Now block will use TensorPlaceholder directly.
+//     let inputTensors = this.intermediateInputTensors;
+//     let outputTensors = this.intermediateOutputTensors;
+//
+//     outputTensors[ 0 ] = inputTensor;
+//     outputTensors[ 1 ] = null; // Note: The block0 should only input one tensor.
+//
+//     let blocksArray = this.blocksArray;
+//     let block;
+//     for ( let i = 0; i < blocksArray.length; ++i ) {
+//       inputTensors[ 0 ] = outputTensors[ 0 ]; // Previous block's output becomes next block's input.
+//       inputTensors[ 1 ] = outputTensors[ 1 ];
+//
+//       block = blocksArray[ i ];
+//       block.apply( inputTensors, outputTensors );
+//     }
+//
+//     let outputTensor = outputTensors[ 0 ]; // Note: The blockLast should only output one tensor.
+//
+//     // Avoid dangling tensors.
+//     inputTensors[ 0 ] = null;
+//     inputTensors[ 1 ] = null;
+//     outputTensors[ 0 ] = null;
+//     outputTensors[ 1 ] = null;
+//
+//     return outputTensor;
   }
 
   /** How many blocks inside this stage are created. (may different from this.blockCountRequested.) */
