@@ -1011,7 +1011,8 @@ class Params extends Weights.Params {
 
   get bKeepInputTensor()          { return this.getParamValue_byParamDesc( Params.bKeepInputTensor ); }
 
-  
+
+//!!! ...unfinished... (2022/07/15) seems not used.
   get output_height() {
     if ( this.bDepthwiseRequestedAndNeeded )
       return this.depthwisePadInfo.outputHeight;
@@ -1019,6 +1020,7 @@ class Params extends Weights.Params {
       return this.input0_height;
   }
 
+//!!! ...unfinished... (2022/07/15) seems not used.
   get output_width() {
     if ( this.bDepthwiseRequestedAndNeeded )
       return this.depthwisePadInfo.outputWidth;
