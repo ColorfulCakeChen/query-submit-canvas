@@ -873,10 +873,18 @@ class Base extends Recyclable.Root {
     this.imageInArray[ 1 ] = null;
 
     let imageOutArray = this.imageInArray;
-    let blockCount = testParams.blockArray.length;
-    for ( let blockIndex = 0; blockIndex < blockCount; ++blockIndex ) {
+
+    for ( let blockIndex = 0; blockIndex < testParams.blockArray.length; ++blockIndex ) {
       blockRef.testParams = testParams.blockArray[ blockIndex ];
       imageOutArray = blockRef.calcResult( imageOutArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
+
+      // So that it can debug whether memory leak.
+      {
+        blockRef.testParams.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources();
+        blockRef.testParams.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources();
+      }
+
+!!! release image in
     }
 
     let imageOut = imageOutArray[ 0 ]; // The blockLast should have only input0.
