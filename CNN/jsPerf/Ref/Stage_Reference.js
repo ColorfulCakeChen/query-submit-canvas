@@ -408,33 +408,33 @@ class Base extends Recyclable.Root {
 
       // inputHeight0, inputWidth0
       if ( 0 == blockIndex ) { // block0
-        asserter.propertyValue( "inputHeight0", stageParams.sourceHeight );
-        asserter.propertyValue( "inputWidth0", stageParams.sourceWidth );
+        asserter.propertyValue( "input0_height", stageParams.sourceHeight );
+        asserter.propertyValue( "input0_width", stageParams.sourceWidth );
       } else { // block1, 2, 3, ...
-        asserter.propertyValue( "inputHeight0", stageParams.outputHeight );
-        asserter.propertyValue( "inputWidth0", stageParams.outputWidth );
+        asserter.propertyValue( "input0_height", stageParams.outputHeight );
+        asserter.propertyValue( "input0_width", stageParams.outputWidth );
       }
 
-      // channelCount0_pointwise1Before
+      // input0_channelCount
       if ( 0 == blockIndex ) { // block0
-        asserter.propertyValue( "channelCount0_pointwise1Before", single_Block0Input0ChannelCount );
+        asserter.propertyValue( "input0_channelCount", single_Block0Input0ChannelCount );
       } else { // block1, 2, 3, ...
         switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
-            asserter.propertyValue( "channelCount0_pointwise1Before", double_Block0Input0ChannelCount );
+            asserter.propertyValue( "input0_channelCount", double_Block0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE22: // (5)
-            asserter.propertyValue( "channelCount0_pointwise1Before", single_Block0Input0ChannelCount );
+            asserter.propertyValue( "input0_channelCount", single_Block0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
-            asserter.propertyValue( "channelCount0_pointwise1Before", double_Block0Input0ChannelCount );
+            asserter.propertyValue( "input0_channelCount", double_Block0Input0ChannelCount );
             break;
 
           default:
@@ -444,7 +444,9 @@ class Base extends Recyclable.Root {
         }
       }
 
-      // channelCount1_pointwise1Before
+//!!! ...unfinished... (2022/07/15) ConvBlockType
+
+      // nConvBlockTypeId
       if ( 0 == blockIndex ) { // block0
         switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
