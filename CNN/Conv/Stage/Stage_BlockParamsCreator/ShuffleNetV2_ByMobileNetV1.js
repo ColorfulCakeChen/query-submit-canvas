@@ -77,7 +77,7 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 
       // In ShuffleNetV2_ByMobileNetV1's head, if ( stageParams.bPointwise1 == false ), pointwise1ChannelCount is also 0.
       //
-      // But, in this case, pointwise1 will still be created by PointDepthPoint intrinsically and output double of input0.
+      // But, in this case, pointwise1 will still be created by Block intrinsically and output double of input0.
       //
       // The input0 will just be pass-through as pointwise1's lower half.
       // The input0 will also be copied as pointwise1's higher half.
