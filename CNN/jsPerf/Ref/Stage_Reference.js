@@ -46,10 +46,14 @@ class Base extends Recyclable.Root {
 
     // For reducing memory allocation.
     this.imageInArray = Recyclable.Array.Pool.get_or_create_by( 2 );  // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
+    this.imageOutArray = Recyclable.Array.Pool.get_or_create_by( 2 );  // imageOutArray[ 0 ] is output0, imageOutArray[ 1 ] is output1.
   }
 
   /** @override */
   disposeResources() {
+    this.imageOutArray?.disposeResources_and_recycleToPool();
+    this.imageOutArray = null;
+
     this.imageInArray?.disposeResources_and_recycleToPool();
     this.imageInArray = null;
 
@@ -105,7 +109,9 @@ class Base extends Recyclable.Root {
       Base.stage_create_apply_internal, this );
 
     { // Release output reference images.
-      this.testCorrectness_imageOutReference.disposeResources_and_recycleToPool();
+      if ( this.testCorrectness_imageOutReference != this.testCorrectness_imageIn ) { // Do not release image from ImageSourceBag.
+        this.testCorrectness_imageOutReference.disposeResources_and_recycleToPool();
+      }
       this.testCorrectness_imageOutReference = null;
     }
   }
@@ -857,11 +863,12 @@ class Base extends Recyclable.Root {
     //       Just generate them only if necessary by .toString() for reducing memory re-allocation.
     testParams.out.toString = Base.TestParams_Out_toString; // For Creating description for debug easily.
 
-    let channelShuffler_concatenatedShape;
-    let channelShuffler_outputGroupCount = 2; // In ShuffleNetV2, channel shuffler always has 2 convolution group.
-
-    // In ShuffleNetV2, channel shuffler always has half ( height, width ) and twice channel count of original input0.
-    channelShuffler_concatenatedShape = [ testParams.out.outputHeight, testParams.out.outputWidth, imageIn.depth * 2 ];
+//!!! (2022/07/15 Remarked) seems not used.
+//     let channelShuffler_concatenatedShape;
+//     let channelShuffler_outputGroupCount = 2; // In ShuffleNetV2, channel shuffler always has 2 convolution group.
+//
+//     // In ShuffleNetV2, channel shuffler always has half ( height, width ) and twice channel count of original input0.
+//     channelShuffler_concatenatedShape = [ testParams.out.outputHeight, testParams.out.outputWidth, imageIn.depth * 2 ];
 
     Base.AssertParameters_Stage_blocks( testParams, testParams.out ); // Test every block's parameters.
 
@@ -869,14 +876,15 @@ class Base extends Recyclable.Root {
 
     let blockRef = this.Block_Reference;
 
-    this.imageInArray[ 0 ] = imageIn;
-    this.imageInArray[ 1 ] = null;
-
-    let imageOutArray = this.imageInArray;
+    this.imageOutArray[ 0 ] = imageIn;
+    this.imageOutArray[ 1 ] = null;
 
     for ( let blockIndex = 0; blockIndex < testParams.blockArray.length; ++blockIndex ) {
+      this.imageInArray[ 0 ] = this.imageOutArray[ 0 ];
+      this.imageInArray[ 1 ] = this.imageOutArray[ 1 ];
+
       blockRef.testParams = testParams.blockArray[ blockIndex ];
-      imageOutArray = blockRef.calcResult( imageOutArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
+      blockRef.calcResult( this.imageInArray, this.imageOutArray );
 
       // So that it can debug whether memory leak.
       {
@@ -884,10 +892,29 @@ class Base extends Recyclable.Root {
         blockRef.testParams.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources();
       }
 
-!!! release image in
+      { // Release input image.
+        if ( this.imageInArray[ 0 ] ) {
+          if ( this.imageInArray[ 0 ] != imageIn ) { // Do not release image from ImageSourceBag.
+            this.imageInArray[ 0 ].disposeResources_and_recycleToPool();
+          }
+          this.imageInArray[ 0 ] = null;
+        }
+
+        if ( this.imageInArray[ 1 ] ) {
+          this.imageInArray[ 1 ].disposeResources_and_recycleToPool();
+          this.imageInArray[ 1 ] = null;
+        }
+      }
     }
 
-    let imageOut = imageOutArray[ 0 ]; // The blockLast should have only input0.
+    let imageOut = this.imageOutArray[ 0 ]; // The blockLast should have only input0.
+
+    // Avoid dangling tensors.
+    this.imageInArray[ 0 ] = null;
+    this.imageInArray[ 1 ] = null;
+    this.imageOutArray[ 0 ] = null;
+    this.imageOutArray[ 1 ] = null;
+
     return imageOut;
   }
 
