@@ -1,6 +1,6 @@
 export { ShuffleNetV2_ByMobileNetV1_padValid };
 
-import * as Pool from "../../util/Pool.js";
+import * as Pool from "../../../util/Pool.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { Params } from "../Stage_Params.js";
 import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
