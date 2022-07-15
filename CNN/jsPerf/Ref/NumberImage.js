@@ -278,8 +278,11 @@ class Base extends Recyclable.Root {
             let outIndex = outIndexBaseC + outChannel;
             let filterIndex = filterIndexBase + outChannel;
 
-            imageOut.dataArray[ outIndex ] = Math.fround( imageOut.dataArray[ outIndex ]
-              + ( ( imageIn.dataArray[ inIndex ] * undoPreviousEscapingScale ) * pointwiseFiltersArray[ filterIndex ] ) );
+            imageOut.dataArray[ outIndex ] = Math.fround( Math.fround( imageOut.dataArray[ outIndex ] )
+              + ( Math.fround( Math.fround( imageIn.dataArray[ inIndex ] ) * Math.fround( undoPreviousEscapingScale ) )
+                    * Math.fround( pointwiseFiltersArray[ filterIndex ] )
+                )
+            );
           }
         }
       }
@@ -551,7 +554,8 @@ class Base extends Recyclable.Root {
 
                     switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
                       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG: // Avg pooling
-                        imageOut.dataArray[ outIndex ] = Math.fround( imageOut.dataArray[ outIndex ] + imageIn.dataArray[ inIndex ] );
+                        imageOut.dataArray[ outIndex ] = Math.fround(
+                          Math.fround( imageOut.dataArray[ outIndex ] ) + Math.fround( imageIn.dataArray[ inIndex ] ) );
                         break;
 
                       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX: // Max pooling
@@ -560,7 +564,11 @@ class Base extends Recyclable.Root {
 
                       default: // Convolution
                         imageOut.dataArray[ outIndex ] = Math.fround( imageOut.dataArray[ outIndex ]
-                          + ( ( imageIn.dataArray[ inIndex ] * undoPreviousEscapingScale ) * depthwiseFiltersArray[ filterIndex ] ) );
+                          + ( Math.fround(
+                                Math.fround( imageIn.dataArray[ inIndex ] ) * Math.fround( undoPreviousEscapingScale )
+                              )
+                              * Math.fround( depthwiseFiltersArray[ filterIndex ] )
+                            );
 
                         // Calculate value bounds of every output channels (i.e. .afterFilter).
                         if ( !filtersArray_bBoundsCalculated[ filterIndex ] ) {
@@ -583,7 +591,8 @@ class Base extends Recyclable.Root {
 
             // Avg pooling
             if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier ) {
-              imageOut.dataArray[ outIndex ] = Math.fround( imageOut.dataArray[ outIndex ] / avgDivisor ); // So that every sum is averaged.
+              imageOut.dataArray[ outIndex ] = Math.fround(
+                Math.fround( imageOut.dataArray[ outIndex ] ) / Math.fround( avgDivisor ) ); // So that every sum is averaged.
             }
           }
         }
@@ -672,7 +681,7 @@ class Base extends Recyclable.Root {
     for ( let y = 0; y < imageIn.height; ++y ) {
       for ( let x = 0; x < imageIn.width; ++x ) {
         for ( let channel = 0; channel < imageIn.depth; ++channel ) {
-          imageIn.dataArray[ index ] = Math.fround( imageIn.dataArray[ index ] + biasesArray[ channel ] );
+          imageIn.dataArray[ index ] = Math.fround( Math.fround( imageIn.dataArray[ index ] ) + Math.fround( biasesArray[ channel ] ) );
           ++index;
         }
       }
@@ -713,7 +722,7 @@ class Base extends Recyclable.Root {
     for ( let y = 0; y < imageIn.height; ++y ) {
       for ( let x = 0; x < imageIn.width; ++x ) {
         for ( let channel = 0; channel < imageIn.depth; ++channel ) {
-          imageIn.dataArray[ index ] = Math.fround( imageIn.dataArray[ index ] * scaleArray.scales[ channel ] );
+          imageIn.dataArray[ index ] = Math.fround( Math.fround( imageIn.dataArray[ index ] ) * Math.fround( scaleArray.scales[ channel ] ) );
           ++index;
         }
       }
@@ -745,7 +754,7 @@ class Base extends Recyclable.Root {
       return imageIn;
 
     for ( let i = 0; i < imageIn.dataArray.length; ++i ) {
-      imageIn.dataArray[ i ] = Math.fround( pfnActivation( imageIn.dataArray[ i ] ) );
+      imageIn.dataArray[ i ] = Math.fround( pfnActivation( Math.fround( imageIn.dataArray[ i ] ) ) );
     }
 
     return imageIn;
@@ -778,7 +787,7 @@ class Base extends Recyclable.Root {
         this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
 
       for ( let i = 0; i < this.dataArray.length; ++i ) {
-        imageOutNew.dataArray[ i ] = Math.fround( this.dataArray[ i ] + another.dataArray[ i ] );
+        imageOutNew.dataArray[ i ] = Math.fround( Math.fround( this.dataArray[ i ] ) + Math.fround( another.dataArray[ i ] ) );
       }
 
     } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == this.depth ) ) { // Broadcast another to this.
@@ -791,7 +800,7 @@ class Base extends Recyclable.Root {
       for ( let y = 0; y < rHeight; ++y ) {
         for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
-            imageOutNew.dataArray[ i ] = Math.fround( this.dataArray[ i ] + another.dataArray[ c ] );
+            imageOutNew.dataArray[ i ] = Math.fround( Math.fround( this.dataArray[ i ] ) + Math.fround( another.dataArray[ c ] ) );
           }
         }
       }
@@ -806,7 +815,7 @@ class Base extends Recyclable.Root {
       for ( let y = 0; y < rHeight; ++y ) {
         for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
-            imageOutNew.dataArray[ i ] = Math.fround( this.dataArray[ c ] + another.dataArray[ i ] );
+            imageOutNew.dataArray[ i ] = Math.fround( Math.fround( this.dataArray[ c ] ) + Math.fround( another.dataArray[ i ] ) );
           }
         }
       }
@@ -862,7 +871,7 @@ class Base extends Recyclable.Root {
         this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
 
       for ( let i = 0; i < this.dataArray.length; ++i ) {
-        imageOutNew.dataArray[ i ] = Math.fround( this.dataArray[ i ] * another.dataArray[ i ] );
+        imageOutNew.dataArray[ i ] = Math.fround( Math.fround( this.dataArray[ i ] ) * Math.fround( another.dataArray[ i ] ) );
       }
 
     } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == this.depth ) ) { // Broadcast another to this.
@@ -875,7 +884,7 @@ class Base extends Recyclable.Root {
       for ( let y = 0; y < rHeight; ++y ) {
         for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
-            imageOutNew.dataArray[ i ] = Math.fround( this.dataArray[ i ] * another.dataArray[ c ] );
+            imageOutNew.dataArray[ i ] = Math.fround( Math.fround( this.dataArray[ i ] ) * Math.fround( another.dataArray[ c ] ) );
           }
         }
       }
@@ -890,7 +899,7 @@ class Base extends Recyclable.Root {
       for ( let y = 0; y < rHeight; ++y ) {
         for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
-            imageOutNew.dataArray[ i ] = Math.fround( this.dataArray[ c ] * another.dataArray[ i ] );
+            imageOutNew.dataArray[ i ] = Math.fround( Math.fround( this.dataArray[ c ] ) * Math.fround( another.dataArray[ i ] ) );
           }
         }
       }
