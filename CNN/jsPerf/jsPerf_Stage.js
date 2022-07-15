@@ -6,6 +6,7 @@ import * as Pool_Asserter from "../util/Pool_Asserter.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as BatchIdCalculator from "./BatchIdCalculator.js";
 import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
+import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
 import * as Stage from "../Conv/Stage.js";
 import * as Stage_Reference from "./Ref/Stage_Reference.js";
 import * as Stage_TestParams from "./Ref/Stage_TestParams.js"; 
