@@ -3,6 +3,8 @@ export { InferencedParams };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as ActivationEscaping from "../ActivationEscaping.js";
+import * as TensorPlaceholder from "../TensorPlaceholder.js";
 //import { Params } from "./Params.js";
 
 !!! ...unfinished... (2022/07/14)
@@ -149,6 +151,77 @@ class InferencedParams extends Recyclable.Root {
     this.outputChannelCount_higherHalf = undefined;
 
     super.disposeResources();
+  }
+
+  /**
+   *
+   * @param {ActivationEscaping.ScaleBoundsArray|TensorPlaceholder.Base} input_ScaleBoundsArray_or_TensorPlaceholder
+   *   The input's information.
+   *     - If it is an ActivationEscaping.ScaleBoundsArray object, a new TensorPlaceholder will be created and returned.
+   *     - If it is a TensorPlaceholder.Base object, it will be returned (not cloned) directly.
+   *
+   * @return {TensorPlaceholder.Base}
+   *   Return either a newly created TensorPlaceholder or input_ScaleBoundsArray_or_TensorPlaceholder directly.
+   */
+  static create_or_check_TensorPlaceholder_by(
+    input_height, input_width, input_channelCount,
+    input_channelCount_lowerHalf, input_channelCount_higherHalf,
+    input_ScaleBoundsArray_or_TensorPlaceholder
+  ) {
+
+    // 1.
+    if ( input_ScaleBoundsArray_or_TensorPlaceholder instanceof ActivationEscaping.ScaleBoundsArray ) {
+      let inputScaleBoundsArray = input_ScaleBoundsArray_or_TensorPlaceholder;
+
+      if ( inputScaleBoundsArray.length != input_channelCount )
+        throw Error( `Block.input_TensorPlaceholder.create_or_check_TensorPlaceholder_by(): `
+          + `inputScaleBoundsArray's length ( ${inputScaleBoundsArray.length} ) should be the same as `
+          + `input's channel count ( ${input_channelCount} ).`
+        );
+
+      let inputTensorPlaceholder = TensorPlaceholder.Base.Pool.get_or_create_by();
+      inputTensorPlaceholder.set_height_width_channelCount_scaleBoundsArray(
+        input_height, input_width,
+        input_channelCount, input_channelCount_lowerHalf, input_channelCount_higherHalf,
+        inputScaleBoundsArray );
+
+      return inputTensorPlaceholder;
+
+    // 2.
+    } else if ( input_ScaleBoundsArray_or_TensorPlaceholder instanceof TensorPlaceholder.Base ) {
+
+      let inputTensorPlaceholder = input_ScaleBoundsArray_or_TensorPlaceholder;
+      let inputScaleBoundsArray = inputTensorPlaceholder.scaleBoundsArray;
+
+      if (   ( inputTensorPlaceholder.height != input_height )
+          && ( inputTensorPlaceholder.width != input_width )
+          && ( inputTensorPlaceholder.channelCount != input_channelCount )
+          && ( inputTensorPlaceholder.channelCount_lowerHalf != input_channelCount_lowerHalf )
+          && ( inputTensorPlaceholder.channelCount_higherHalf != input_channelCount_higherHalf )
+         )
+        throw Error( `Block.input_TensorPlaceholder.create_or_check_TensorPlaceholder_by(): `
+          + `inputTensorPlaceholder's ( height, width, channelCount, channelCount_lowerHalf, channelCount_higherHalf ) = `
+          + `( ${inputTensorPlaceholder.height}, ${inputTensorPlaceholder.width}, ${inputTensorPlaceholder.channelCount}, `
+            + `${inputTensorPlaceholder.channelCount_lowerHalf}, ${inputTensorPlaceholder.channelCount_higherHalf} ) `
+          + `should be `
+          + `( ${input_height}, ${input_width}, ${input_channelCount}, ${input_channelCount_lowerHalf}, ${input_channelCount_higherHalf} ).`
+        );
+
+      if ( inputScaleBoundsArray.length != input_channelCount )
+        throw Error( `Block.input_TensorPlaceholder.create_or_check_TensorPlaceholder_by(): `
+          + `inputScaleBoundsArray's length ( ${inputScaleBoundsArray.length} ) should be the same as `
+          + `input's channel count ( ${input_channelCount} ).`
+        );
+
+      return inputTensorPlaceholder;
+
+    // 3.
+    } else {
+      throw Error( `Block.input_TensorPlaceholder.create_or_check_TensorPlaceholder_by(): `
+        + `input_ScaleBoundsArray_or_TensorPlaceholder shoulde be an instance of either `
+        + `ActivationEscaping.ScaleBoundsArray or TensorPlaceholder.Base.`
+      );
+    }
   }
 
   /**
