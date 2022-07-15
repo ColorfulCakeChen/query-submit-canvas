@@ -151,7 +151,7 @@ class Base extends Recyclable.Root {
       Base.AssertTwoEqualValues( "outputWidth", stage.outputWidth, outputWidth, stage );
       Base.AssertTwoEqualValues( "outputChannelCount", stage.outputChannelCount, outputChannelCount, stage );
 
-      Base.AssertTwoEqualValues( "blockCount", stage.blockCount, testParams.blocksArray.length, stage );
+      Base.AssertTwoEqualValues( "blockCount", stage.blockCount, testParams.blockArray.length, stage );
 
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
@@ -317,16 +317,16 @@ class Base extends Recyclable.Root {
     // Other parameters.
     asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
 
-//!!! ...unfinished... (2022/07/15)
-
     Base.AssertParameters_Stage_blocks( stage, stage ); // Test every block's parameters.
+
+//!!! ...unfinished... (2022/07/15)
 
     {
       let tensorWeightCountTotal = 0;
       let tensorWeightCountExtracted = 0;
 
-      for ( let i = 0; i < stage.blocksArray.length; ++i ) {
-        let block = stage.blocksArray[ i ];
+      for ( let i = 0; i < stage.blockArray.length; ++i ) {
+        let block = stage.blockArray[ i ];
         tensorWeightCountTotal += block.tensorWeightCountTotal;
         tensorWeightCountExtracted += block.tensorWeightCountExtracted;
       }
@@ -360,7 +360,7 @@ class Base extends Recyclable.Root {
    *
    */
   static AssertParameters_Stage_blocks( stageParams, parametersDescription ) {
-    let blockParamsArray = stageParams.blocksArray; // No matter Stage.Base or Stage_TestParams.Base
+    let blockParamsArray = stageParams.blockArray; // No matter Stage.Base or Stage_TestParams.Base
 
     if ( stageParams instanceof Stage_TestParams.Base ) {
       stageParams = stageParams.out;
@@ -836,9 +836,9 @@ class Base extends Recyclable.Root {
     this.imageInArray[ 1 ] = null;
 
     let imageOutArray = this.imageInArray;
-    let blockCount = testParams.blocksArray.length;
+    let blockCount = testParams.blockArray.length;
     for ( let blockIndex = 0; blockIndex < blockCount; ++blockIndex ) {
-      blockRef.testParams = testParams.blocksArray[ blockIndex ];
+      blockRef.testParams = testParams.blockArray[ blockIndex ];
       imageOutArray = blockRef.calcResult( imageOutArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
     }
 
