@@ -3,9 +3,9 @@ export { Base };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as TensorTools from "../../util/TensorTools.js";
-import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
-import * as ValueMax from "../../ValueMax.js";
+import * as ValueMax from "../../util/ValueMax.js";
 import * as BoundsArraySet_Asserter from "../../util/BoundsArraySet_Asserter.js";
+import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as Pool_Asserter from "../../util/Pool_Asserter.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ImageSourceBag from "./ImageSourceBag.js"; 
@@ -297,22 +297,18 @@ class Base extends Recyclable.Root {
     Base.AssertTwoEqualValues( "parsing ending position",
       stage.weightElementOffsetEnd, testParams.in.inputWeightArray.byteLength, stage );
 
-//!!! ...unfinished... (2022/07/15)
-
     // parameters.
     asserter.propertyValue( "sourceHeight", testParams.out.sourceHeight );
     asserter.propertyValue( "sourceWidth", testParams.out.sourceWidth );
     asserter.propertyValue( "sourceChannelCount", testParams.out.sourceChannelCount );
+    asserter.propertyValue( "nConvStageTypeId", testParams.out.nConvStageTypeId );
     asserter.propertyValue( "blockCountRequested", testParams.out.blockCountRequested );
-
     asserter.propertyValue( "bPointwise1", testParams.out.bPointwise1 );
-
     asserter.propertyValue( "depthwiseFilterHeight", testParams.out.depthwiseFilterHeight );
     asserter.propertyValue( "depthwiseFilterWidth", testParams.out.depthwiseFilterWidth );
-
-    asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
     asserter.propertyValue( "bPointwise2ActivatedAtStageEnd", testParams.out.bPointwise2ActivatedAtStageEnd );
-    asserter.propertyValue( "nConvStageType", testParams.out.nConvStageType );
+    asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", testParams.out.nSqueezeExcitationChannelCountDivisor );
+    asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
 
     // Referred parameters.
     asserter.propertyValue( "outputHeight", testParams.out.outputHeight );
@@ -320,6 +316,8 @@ class Base extends Recyclable.Root {
 
     // Other parameters.
     asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
+
+//!!! ...unfinished... (2022/07/15)
 
     Base.AssertParameters_Stage_blocks( stage, stage ); // Test every block's parameters.
 
@@ -370,7 +368,7 @@ class Base extends Recyclable.Root {
     }
 
     let blockCountRequested = stageParams.blockCountRequested;
-    let nConvStageType = stageParams.nConvStageType;
+    let nConvStageTypeId = stageParams.nConvStageTypeId;
 
     let single_Block0Input0ChannelCount = stageParams.sourceChannelCount;        // Single of block0's input0 channel count.
     let double_Block0Input0ChannelCount = double_Block0Input0ChannelCount * 2;    // Double of block0's input0 channel count.
@@ -398,8 +396,8 @@ class Base extends Recyclable.Root {
 
       let asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Stage.${blockName}`, blockParams, parametersDescription );
 
-      let strUnknownConvStageType = `Stage_Reference.Base.AssertParameters_Stage_blocks(): `
-            `unknown nConvStageType ( ${nConvStageType} ) value. ${asserter.contextDescription}`;
+      let strUnknownConvStageTypeId = `Stage_Reference.Base.AssertParameters_Stage_blocks(): `
+            `unknown nConvStageTypeId ( ${nConvStageTypeId} ) value. ${asserter.contextDescription}`;
 
       // inputHeight0, inputWidth0
       if ( 0 == blockIndex ) { // block0
@@ -414,7 +412,7 @@ class Base extends Recyclable.Root {
       if ( 0 == blockIndex ) { // block0
         asserter.propertyValue( "channelCount0_pointwise1Before", single_Block0Input0ChannelCount );
       } else { // block1, 2, 3, ...
-        switch ( nConvStageType ) {
+        switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
@@ -432,13 +430,13 @@ class Base extends Recyclable.Root {
             asserter.propertyValue( "channelCount0_pointwise1Before", double_Block0Input0ChannelCount );
             break;
 
-          default: throw Error( strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageTypeId ); break;
         }
       }
 
       // channelCount1_pointwise1Before
       if ( 0 == blockIndex ) { // block0
-        switch ( nConvStageType ) {
+        switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
@@ -462,11 +460,11 @@ class Base extends Recyclable.Root {
               ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 );
             break;
 
-          default: throw Error( strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageTypeId ); break;
         }
 
       } else { // block1, 2, 3, ...
-        switch ( nConvStageType ) {
+        switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
             asserter.propertyValue( "channelCount1_pointwise1Before", ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
@@ -493,13 +491,13 @@ class Base extends Recyclable.Root {
               ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH );
             break;
 
-          default: throw Error( strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageTypeId ); break;
         }
       }
 
       // pointwise1ChannelCount
       if ( 0 == blockIndex ) { // block0
-        switch ( nConvStageType ) {
+        switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
@@ -541,11 +539,11 @@ class Base extends Recyclable.Root {
             }
             break;
 
-          default: throw Error( strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageTypeId ); break;
         }
 
       } else { // block1, 2, 3, ...
-        switch ( nConvStageType ) {
+        switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
@@ -566,7 +564,7 @@ class Base extends Recyclable.Root {
               asserter.propertyValue( "pointwise1ChannelCount", quadruple_Block0Input0ChannelCount );
             break;
 
-          default: throw Error( strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageTypeId ); break;
         }
       }
 
@@ -578,7 +576,7 @@ class Base extends Recyclable.Root {
 
       // depthwise_AvgMax_Or_ChannelMultiplier
       if ( 0 == blockIndex ) { // block0
-        switch ( nConvStageType ) {
+        switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
@@ -608,11 +606,11 @@ class Base extends Recyclable.Root {
             asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
-          default: throw Error( strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageTypeId ); break;
         }
 
       } else { // block1, 2, 3, ...
-        switch ( nConvStageType ) {
+        switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
@@ -630,13 +628,13 @@ class Base extends Recyclable.Root {
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
-          default: throw Error( strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageTypeId ); break;
         }
       }
 
       // depthwiseStridesPad
       if ( 0 == blockIndex ) { // block0
-        switch ( nConvStageType ) {
+        switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
@@ -651,11 +649,11 @@ class Base extends Recyclable.Root {
             asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID );
             break;
 
-          default: throw Error( strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageTypeId ); break;
         }
 
       } else { // block1, 2, 3, ...
-        switch ( nConvStageType ) {
+        switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
@@ -670,11 +668,11 @@ class Base extends Recyclable.Root {
             asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID );
             break;
 
-          default: throw Error( strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageTypeId ); break;
         }
       }
 
-      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
+      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
         asserter.propertyValue( "bDepthwiseBias", true );
         asserter.propertyValue( "depthwiseActivationId", stageParams.nActivationId );
       } else {
@@ -684,7 +682,7 @@ class Base extends Recyclable.Root {
 
       // pointwise21ChannelCount
       { // block0, 1, 2, 3, ...
-        switch ( nConvStageType ) {
+        switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
@@ -701,7 +699,7 @@ class Base extends Recyclable.Root {
             asserter.propertyValue( "pointwise22ChannelCount", single_Block0Input0ChannelCount );
             break;
 
-          default: throw Error( strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageTypeId ); break;
         }
       }
 
@@ -709,13 +707,13 @@ class Base extends Recyclable.Root {
 
       // pointwise21ActivationId
       if ( ( blockCount - 1 ) > blockIndex ) { // block0, 1, 2, 3, ..., ( blockCount - 2 )
-        if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
+        if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
           asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
         } else {
           asserter.propertyValue( "pointwise21ActivationId", stageParams.nActivationId );
         }
       } else { // blockLast
-        if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
+        if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
           asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
         } else {
           if ( stageParams.bPointwise2ActivatedAtStageEnd == false ) {
@@ -728,7 +726,7 @@ class Base extends Recyclable.Root {
 
       // bOutput1Requested
       if ( ( blockCount - 1 ) > blockIndex ) { // block0, 1, 2, 3, ..., ( blockCount - 2 )
-        switch ( nConvStageType ) {
+        switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
@@ -743,7 +741,7 @@ class Base extends Recyclable.Root {
             asserter.propertyValue( "bOutput1Requested", true );
             break;
 
-          default: throw Error( strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageTypeId ); break;
         }
 
       } else { // blockLast
@@ -752,7 +750,7 @@ class Base extends Recyclable.Root {
 
       // outChannels0, outChannels1
       if ( ( blockCount - 1 ) > blockIndex ) { // block0, 1, 2, 3, ..., ( blockCount - 2 )
-        switch ( nConvStageType ) {
+        switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
@@ -769,7 +767,7 @@ class Base extends Recyclable.Root {
             asserter.propertyValue( "outChannels1", single_Block0Input0ChannelCount );
             break;
 
-          default: throw Error( strUnknownConvStageType ); break;
+          default: throw Error( strUnknownConvStageTypeId ); break;
         }
 
       } else { // blockLast
@@ -781,7 +779,7 @@ class Base extends Recyclable.Root {
       if ( blockParams instanceof Block.Base ) {
 
         // addInput0ToPointwise21
-        if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
+        if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
           asserter.propertyValueNE( "addInput0ToPointwise21", null ); // Only MobileNetV2_Xxx has add-input-to-output.
         } else {
           asserter.propertyValue( "addInput0ToPointwise21", null );
@@ -871,8 +869,8 @@ class Base extends Recyclable.Root {
 
       + `bPointwise2BiasAtStageEnd=${this.bPointwise2BiasAtStageEnd}, `
 
-      + `nConvStageType=${ValueDesc.ConvStageType.Singleton.getStringOf( this.nConvStageType )}`
-        + `(${this.nConvStageType}), `
+      + `nConvStageTypeId=${ValueDesc.ConvStageType.Singleton.getStringOf( this.nConvStageTypeId )}`
+        + `(${this.nConvStageTypeId}), `
 
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
 //        + `outputChannelCount=${???.outputChannelCount}, `
