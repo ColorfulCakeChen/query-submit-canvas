@@ -350,17 +350,6 @@ class Base extends Recyclable.Root {
    *   A Params object. The params.init() will be called to extract parameters. This params will be owned and destroyed by this .initer().
    * So caller should not use it again.
    *
-
-   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
-   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Block value bounds set.
-   * It will be referenced (i.e. kept, but not cloned and not released) by this object. So caller should not modify them, but
-   * caller is responsible for releasing it.
-   *
-   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray1
-   *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous Block value bounds set.
-   * It will be referenced (i.e. kept, but not cloned and not released) by this object. So caller should not modify them, but
-   * caller is responsible for releasing it.
-   *
    * @param {ActivationEscaping.ScaleBoundsArray|TensorPlaceholder.Base} input0_ScaleBoundsArray_or_TensorPlaceholder
    *   The element value bounds (per channel) or TensorPlaceholder of input0.
    *
@@ -400,7 +389,7 @@ class Base extends Recyclable.Root {
    */
   * initer(
     progressParent, inputWeightArray, weightElementOffsetBegin, params,
-    inputScaleBoundsArray0, inputScaleBoundsArray1,
+    input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
     channelShuffler_ConcatPointwiseConv
   ) {
 
@@ -466,8 +455,6 @@ class Base extends Recyclable.Root {
     this.depthwiseActivationName = params.depthwiseActivationName;
     this.depthwise1_nHigherHalfDifferent = params.depthwise1_nHigherHalfDifferent;
     this.depthwise1_inputChannelCount_lowerHalf = params.depthwise1_inputChannelCount_lowerHalf;
-//!!! (2022/07/13 Remarked) Does not work.
-//    this.depthwise1_channelShuffler_outputGroupCount = params.depthwise1_channelShuffler_outputGroupCount;
 
     this.pointwise20ChannelCount = params.pointwise20ChannelCount;
     this.pointwise20Bias = params.pointwise20Bias;
@@ -528,47 +515,54 @@ class Base extends Recyclable.Root {
 
     // 2.1 Prepare Input TensorPlaceholder and Operation Array.
 
-!!! ...unfinished... (2022/07/14)
-// Separate to outside. Here just check and throw exception.
+    // 2.1.1 Prepare input tensor placeholders.
+    inputTensorPlaceholder_creator.set_input0_input1_TensorPlaceholder_by.call( this,
+      this.inputTensorCount,
+      this.input0_height, this.input0_width, this.input0_channelCount, input0_ScaleBoundsArray_or_TensorPlaceholder,
+      this.input1_height, this.input1_width, this.input1_channelCount, input1_ScaleBoundsArray_or_TensorPlaceholder,
+      this.pointwise1_inputChannelCount_lowerHalf, this.pointwise1_inputChannelCount_higherHalf
+    );
+
+    // 2.1.2 Create sub operation array.
+    this.operationArray = Operation.TwinArray.Pool.get_or_create_by( this.input0, this.input1, this.outputTensorCount );
+
+//!!! (2022/07/15 Remarked) Old Codes. Use inputTensorPlaceholder_creator instead.
+//     // Create inputs tensor placeholders and sub operation array.
+//     {
+//       if ( inputScaleBoundsArray0.length != this.input0_channelCount )
+//         throw Error( `Block.Base.initer(): `
+//           + `inputScaleBoundsArray0's length ( ${inputScaleBoundsArray0.length} ) should be the same as `
+//           + `input0's channel count ( ${this.input0_channelCount} ).`
+//         );
 //
-inputTensorPlaceholder_creator
-
-    // Create inputs tensor placeholders and sub operation array.
-    {
-      if ( inputScaleBoundsArray0.length != this.input0_channelCount )
-        throw Error( `Block.Base.initer(): `
-          + `inputScaleBoundsArray0's length ( ${inputScaleBoundsArray0.length} ) should be the same as `
-          + `input0's channel count ( ${this.input0_channelCount} ).`
-        );
-
-      this.input0 = TensorPlaceholder.Base.Pool.get_or_create_by();
-      this.input0.set_height_width_channelCount_scaleBoundsArray(
-        this.input0_height, this.input0_width,
-        this.input0_channelCount, this.pointwise1_inputChannelCount_lowerHalf, this.pointwise1_inputChannelCount_higherHalf,
-        inputScaleBoundsArray0 );
-
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY (3) )
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL (4) )
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY (10) )
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL (11) )
-      //
-      if ( this.inputTensorCount > 1 ) {
-
-        if ( inputScaleBoundsArray1.length != this.input1_channelCount )
-          throw Error( `Block.Base.initer(): `
-            + `inputScaleBoundsArray1's length ( ${inputScaleBoundsArray1.length} ) should be the same as `
-            + `input1's channel count ( ${this.input1_channelCount} ).`
-          );
-
-        this.input1 = TensorPlaceholder.Base.Pool.get_or_create_by();
-        this.input1.set_height_width_channelCount_scaleBoundsArray(
-          this.input1_height, this.input1_width, this.input1_channelCount,
-          undefined, undefined, // channelCount_lowerHalf, channelCount_higherHalf
-          inputScaleBoundsArray1 );
-      }
-
-      this.operationArray = Operation.TwinArray.Pool.get_or_create_by( this.input0, this.input1, this.outputTensorCount );
-    }
+//       this.input0 = TensorPlaceholder.Base.Pool.get_or_create_by();
+//       this.input0.set_height_width_channelCount_scaleBoundsArray(
+//         this.input0_height, this.input0_width,
+//         this.input0_channelCount, this.pointwise1_inputChannelCount_lowerHalf, this.pointwise1_inputChannelCount_higherHalf,
+//         inputScaleBoundsArray0 );
+//
+//       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY (3) )
+//       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL (4) )
+//       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY (10) )
+//       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL (11) )
+//       //
+//       if ( this.inputTensorCount > 1 ) {
+//
+//         if ( inputScaleBoundsArray1.length != this.input1_channelCount )
+//           throw Error( `Block.Base.initer(): `
+//             + `inputScaleBoundsArray1's length ( ${inputScaleBoundsArray1.length} ) should be the same as `
+//             + `input1's channel count ( ${this.input1_channelCount} ).`
+//           );
+//
+//         this.input1 = TensorPlaceholder.Base.Pool.get_or_create_by();
+//         this.input1.set_height_width_channelCount_scaleBoundsArray(
+//           this.input1_height, this.input1_width, this.input1_channelCount,
+//           undefined, undefined, // channelCount_lowerHalf, channelCount_higherHalf
+//           inputScaleBoundsArray1 );
+//       }
+//
+//       this.operationArray = Operation.TwinArray.Pool.get_or_create_by( this.input0, this.input1, this.outputTensorCount );
+//     }
 
     // Note: Once an operation is created (even if it just do nothing (e.g. ( pointwise1.bExisted == false ) ), it should always
     //       be appended to this.operationArray. The reason is that a created operation has already registered as the finalOperation
@@ -892,27 +886,24 @@ inputTensorPlaceholder_creator
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   If null, a temporary progress object will be created.
    *
-   * @param {Params} params
-   *   A Params object. The params.init() will be called to extract parameters. This params will be owned and destroyed by this .init().
-   * So caller should not use it again.
-   *
-   * @param {number[]|Float32Array} inputWeightArray
-   *   The underlying weights source array to be extracted from. It will not be kept by this object.
-   *
    * @return {boolean}
    *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
+   *
+   * @see this.initer()
    */
   init(
     progressParent, inputWeightArray, weightElementOffsetBegin, params,
-    inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
+    input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
+    channelShuffler_ConcatPointwiseConv
   ) {
 
     progressParent = progressParent ?? ( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let initer = this.initer(
       progressParent, inputWeightArray, weightElementOffsetBegin, params,
-      inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
+      input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
+      channelShuffler_ConcatPointwiseConv
     );
 
     let initerNext;
@@ -945,15 +936,21 @@ inputTensorPlaceholder_creator
     // 3. The .inputX may or may not be created by this block (but .inputX.scaleBoundArray are always not), they should be released by
     //    this block according to .Xxx_bOwned flag (except .inputX.scaleBoundArray).
     {
-      if ( ( this.input1 ) && ( this.input1_bOwned ) ) {
+      if ( this.input1 ) {
         this.input1.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray0 which should not be released here. So nullify it.
-        this.input1.disposeResources_and_recycleToPool();
+        if ( this.input1_bOwned ) {
+          this.input1.disposeResources_and_recycleToPool();
+        }
+        this.input1_bOwned = undefined;
         this.input1 = null;
       }
  
-      if ( ( this.input0 ) && ( this.input0_bOwned ) ) {
+      if ( this.input0 ) {
         this.input0.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray1 which should not be released here. So nullify it.
-        this.input0.disposeResources_and_recycleToPool();
+        if ( this.input0_bOwned ) {
+          this.input0.disposeResources_and_recycleToPool();
+        }
+        this.input0_bOwned = undefined;
         this.input0 = null;
       }
     }
