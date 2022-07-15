@@ -680,15 +680,15 @@ class Base extends Recyclable.Root {
       throw Error( `Stage.BlockParamsCreator.Base.create_byStageParams(): `
         + `stageParams.blockCountRequested ( ${stageParams.blockCountRequested} ) must be >= 2.` );
 
-    if ( !(   ( stageParams.nConvStageType >= 0 )
-           && ( stageParams.nConvStageType < Base.nConvStageType_to_BlockParamsCreator_ClassArray.length )
+    if ( !(   ( stageParams.nConvStageTypeId >= 0 )
+           && ( stageParams.nConvStageTypeId < Base.nConvStageTypeId_to_BlockParamsCreator_ClassArray.length )
           ) 
        )
       throw Error( `Stage.Base.create_BlockParamsCreator_byStageParams(): `
-        + `unknown stageParams.nConvStageType ( ${stageParams.nConvStageType} ) value.`
+        + `unknown stageParams.nConvStageTypeId ( ${stageParams.nConvStageTypeId} ) value.`
       );
 
-    let classBlockParamsCreator = Base.nConvStageType_to_BlockParamsCreator_ClassArray[ stageParams.nConvStageTypeId ];
+    let classBlockParamsCreator = Base.nConvStageTypeId_to_BlockParamsCreator_ClassArray[ stageParams.nConvStageTypeId ];
     let aBlockParamsCreator = classBlockParamsCreator.Pool.get_or_create_by( stageParams );
 
     return aBlockParamsCreator;
@@ -700,7 +700,7 @@ class Base extends Recyclable.Root {
 /**
  * Mapping nConvStageTypeId (number as array index) to BlockParamsCreator class object.
  */
-Base.nConvStageType_to_BlockParamsCreator_ClassArray = [
+Base.nConvStageTypeId_to_BlockParamsCreator_ClassArray = [
   BlockParamsCreator.MobileNetV1,                         // ValueDesc.ConvStageType.Ids.MOBILE_NET_V1 (0)
   BlockParamsCreator.MobileNetV1_padValid,                // ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID (1)
   BlockParamsCreator.MobileNetV2_Thin,                    // ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN (2)
