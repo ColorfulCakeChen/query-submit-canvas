@@ -177,7 +177,7 @@ import { Params } from "./Stage_Params.js";
  *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
- * @member {Block.Base[]} blocksArray
+ * @member {Block.Base[]} blockArray
  *   All computation blocks of this stage.
  *
  * @member {Block.Base} block0
@@ -359,8 +359,8 @@ class Base extends Recyclable.Root {
       let blockParams, block, blockIniter;
       let inputScaleBoundsArray;
 
-      this.blocksArray = Recyclable.OwnerArray.Pool.get_or_create_by( blockParamsCreator.blockCount );
-      for ( let i = 0; i < this.blocksArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
+      this.blockArray = Recyclable.OwnerArray.Pool.get_or_create_by( blockParamsCreator.blockCount );
+      for ( let i = 0; i < this.blockArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
 
         if ( 0 == i ) { // Block0.
           blockParamsCreator.configTo_beforeBlock0();
@@ -372,7 +372,7 @@ class Base extends Recyclable.Root {
         // If this is the last block of this stage (i.e. at-stage-end)
         //   - a different depthwise filter size may be used.
         //   - a different activation function may be used after pointwise2 convolution.
-        if ( ( this.blocksArray.length - 1 ) == i ) {
+        if ( ( this.blockArray.length - 1 ) == i ) {
           blockParamsCreator.configTo_beforeBlockLast();
         }
 
@@ -402,7 +402,7 @@ class Base extends Recyclable.Root {
         // If channelShuffler has ever got, never change it.
         }
 
-        block = this.blocksArray[ i ] = Block.Base.Pool.get_or_create_by();
+        block = this.blockArray[ i ] = Block.Base.Pool.get_or_create_by();
         blockIniter = block.initer( progressForBlocks.children[ i ], inputWeightArray, this.weightElementOffsetEnd, blockParams,
 
 !!! ...unfinished... (2022/07/15)
@@ -426,8 +426,8 @@ class Base extends Recyclable.Root {
         }
       }
 
-      this.block0 = this.blocksArray[ 0 ]; // Shortcut to the first block.
-      this.blockLast = this.blocksArray[ this.blocksArray.length - 1 ]; // Shortcut to the last block.
+      this.block0 = this.blockArray[ 0 ]; // Shortcut to the first block.
+      this.blockLast = this.blockArray[ this.blockArray.length - 1 ]; // Shortcut to the last block.
 
       this.outputChannelCount = this.blockLast.outChannelsAll;
 
@@ -479,12 +479,12 @@ class Base extends Recyclable.Root {
   /** @override */
   disposeResources() {
     this.outputChannelCount = -1;
-    this.blockLast = null; // It is just a reference into this.blocksArray[].
-    this.block0 = null; // It is just a reference into this.blocksArray[].
+    this.blockLast = null; // It is just a reference into this.blockArray[].
+    this.block0 = null; // It is just a reference into this.blockArray[].
 
-    if ( this.blocksArray ) {
-      this.blocksArray.disposeResources_and_recycleToPool();
-      this.blocksArray = null;
+    if ( this.blockArray ) {
+      this.blockArray.disposeResources_and_recycleToPool();
+      this.blockArray = null;
     }
 
     if ( this.channelShuffler ) { // Stage is responsible for releasing the channel shuffler shared by all blocks of the stage.
@@ -518,7 +518,7 @@ class Base extends Recyclable.Root {
    * This could reduce memory footprint by releasing unused scale bounds array.
    */
   dispose_intermediate_ScaleBoundsArray() {
-    if ( !this.blocksArray )
+    if ( !this.blockArray )
       return;
 
     { // 1. Release blockLast's inputs' ScaleBoundsArray. (Note: .blockLast.outputX are kept.)
@@ -527,8 +527,8 @@ class Base extends Recyclable.Root {
     }
 
     // 2. Release intermediate (i.e. except block0 and blockLast) blocks' inputs' and outputs' ScaleBoundsArray.
-    for ( let i = ( this.blocksArray.length - 2 ); i >= 1; --i ) {
-      let block = this.blocksArray[ i ];
+    for ( let i = ( this.blockArray.length - 2 ); i >= 1; --i ) {
+      let block = this.blockArray[ i ];
       block.output1?.ScaleBoundsArray_dispose();
       block.output0.ScaleBoundsArray_dispose();
       block.input1?.ScaleBoundsArray_dispose();
@@ -566,7 +566,7 @@ class Base extends Recyclable.Root {
         );
 
     } else { // After Block0.
-      let previousBlock = this.blocksArray[ blockIndex - 1 ];
+      let previousBlock = this.blockArray[ blockIndex - 1 ];
 
       if ( blockParamsCreator.inputHeight != previousBlock.outputHeight )
         throw Error( `Stage.Base.initer(): `
@@ -592,36 +592,15 @@ class Base extends Recyclable.Root {
    *   Return a new tensor. All other intermediate tensors were disposed.
    */
   apply( inputTensor ) {
+    this.block0.input0.realTensor = inputTensor; // Note: The block0 should only input one tensor.
 
-!!! ...unfinished... (2022/07/15)
-// block0: inputScaleBoundsArray
-// block1, 2, 3...: previous block's output TensorPlaceholder
-    let inputTensors = this.intermediateInputTensors;
-    let outputTensors = this.intermediateOutputTensors;
-
-    outputTensors[ 0 ] = inputTensor;
-    outputTensors[ 1 ] = null; // Note: The block0 should only input one tensor.
-
-    let blocksArray = this.blocksArray;
-    let block;
-    for ( let i = 0; i < blocksArray.length; ++i ) {
-      inputTensors[ 0 ] = outputTensors[ 0 ]; // Previous block's output becomes next block's input.
-      inputTensors[ 1 ] = outputTensors[ 1 ];
-
-      block = blocksArray[ i ];
-      block.apply( inputTensors, outputTensors );
+    let blockArray = this.blockArray;
+    for ( let i = 0; i < blockArray.length; ++i ) {
+      blockArray[ i ].apply();
     }
 
-    let outputTensor = outputTensors[ 0 ]; // Note: The blockLast should only output one tensor.
-
-    // Avoid dangling tensors.
-    inputTensors[ 0 ] = null;
-    inputTensors[ 1 ] = null;
-    outputTensors[ 0 ] = null;
-    outputTensors[ 1 ] = null;
-
+    let outputTensor = this.blockLast.output0.realTensor; // Note: The blockLast should only output one tensor.
     return outputTensor;
-
 
 
 //!!! (2022/07/15 Remarked) Now block will use TensorPlaceholder directly.
@@ -631,13 +610,13 @@ class Base extends Recyclable.Root {
 //     outputTensors[ 0 ] = inputTensor;
 //     outputTensors[ 1 ] = null; // Note: The block0 should only input one tensor.
 //
-//     let blocksArray = this.blocksArray;
+//     let blockArray = this.blockArray;
 //     let block;
-//     for ( let i = 0; i < blocksArray.length; ++i ) {
+//     for ( let i = 0; i < blockArray.length; ++i ) {
 //       inputTensors[ 0 ] = outputTensors[ 0 ]; // Previous block's output becomes next block's input.
 //       inputTensors[ 1 ] = outputTensors[ 1 ];
 //
-//       block = blocksArray[ i ];
+//       block = blockArray[ i ];
 //       block.apply( inputTensors, outputTensors );
 //     }
 //
@@ -654,7 +633,7 @@ class Base extends Recyclable.Root {
 
   /** How many blocks inside this stage are created. (may different from this.blockCountRequested.) */
   get blockCount() {
-    return this.blocksArray.length;
+    return this.blockArray.length;
   }
 
   get input0() {
