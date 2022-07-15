@@ -145,6 +145,13 @@ class inputTensorPlaceholder_creator {
         this.input1_bOwned = false;
       else 
         this.input1_bOwned = true; // Because it is created here.
+
+    } else {
+      if ( input1_ScaleBoundsArray_or_TensorPlaceholder != null )
+        throw Error( `Block.inputTensorPlaceholder_creator.set_input0_input1_TensorPlaceholder_by(): `
+          + `input1_ScaleBoundsArray_or_TensorPlaceholder ( ${input1_ScaleBoundsArray_or_TensorPlaceholder} ) should null `
+          + `when ( inputTensorCount ( ${inputTensorCount} ) <= 1 ).`
+        );
     }
   }
 
