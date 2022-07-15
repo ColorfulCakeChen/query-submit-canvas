@@ -270,11 +270,8 @@ class Base extends Recyclable.Root {
     let bInitOk = stage.init( progress, testParams.in.inputWeightArray, testParams.in.weightElementOffsetBegin, extractedParams,
       inputScaleBoundsArray0 );
 
-//!!! ...unfinished... (2022/07/15)
-    let parametersDescription = `( ${stage.parametersDescription} )`;
-
     if ( stage.bInitOk != bInitOk ),
-      throw Error( `Stage validation state (${stage.bInitOk}) mismatches initer's result (${bInitOk}). ${parametersDescription}` );
+      throw Error( `Stage validation state (${stage.bInitOk}) mismatches initer's result (${bInitOk}). ${stage}` );
 
     if ( !bInitOk ) { //!!! For Debug.
       console.log( "testParams =", testParams );
@@ -282,23 +279,25 @@ class Base extends Recyclable.Root {
     }
 
     if ( false == bInitOk )
-      throw Error(  `Failed to initialize stage object. ${parametersDescription}` );
+      throw Error(  `Failed to initialize stage object. ${stage}` );
 
     if ( 100 != progress.valuePercentage )
       throw Error( 
-        `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${parametersDescription}`);
+        `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${stage}`);
 
-    if ( stage.byteOffsetEnd != testParams.in.inputFloat32Array.byteLength ) { //!!! For Debug. (parsing ending position)
+    if ( stage.weightElementOffsetEnd != testParams.in.inputWeightArray.byteLength ) { //!!! For Debug. (parsing ending position)
       debugger;
     }
 
-    let asserter = new ObjectPropertyAsserter.Base( `Stage`, stage, parametersDescription );
+    let asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Stage`, stage, stage );
 
     Base.AssertTwoEqualValues( "parsing beginning position",
-      stage.byteOffsetBegin, testParams.in.byteOffsetBegin, parametersDescription );
+      stage.weightElementOffsetBegin, testParams.in.weightElementOffsetBegin, stage );
 
     Base.AssertTwoEqualValues( "parsing ending position",
-      stage.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, parametersDescription );
+      stage.weightElementOffsetEnd, testParams.in.inputWeightArray.byteLength, stage );
+
+//!!! ...unfinished... (2022/07/15)
 
     // parameters.
     asserter.propertyValue( "sourceHeight", testParams.out.sourceHeight );
@@ -322,7 +321,7 @@ class Base extends Recyclable.Root {
     // Other parameters.
     asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
 
-    Base.AssertParameters_Stage_blocks( stage, parametersDescription ); // Test every block's parameters.
+    Base.AssertParameters_Stage_blocks( stage, stage ); // Test every block's parameters.
 
     {
       let tensorWeightCountTotal = 0;
@@ -342,6 +341,9 @@ class Base extends Recyclable.Root {
       asserter.propertyValue( "tensorWeightCountTotal", tensorWeightCountTotal );
       asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
     }
+
+    asserter.disposeResources_and_recycleToPool();
+    asserter = null;
 
     return stage;
   }
@@ -394,7 +396,7 @@ class Base extends Recyclable.Root {
         }
       }
 
-      let asserter = new ObjectPropertyAsserter.Base( `Stage.${blockName}`, blockParams, parametersDescription );
+      let asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Stage.${blockName}`, blockParams, parametersDescription );
 
       let strUnknownConvStageType = `Stage_Reference.Base.AssertParameters_Stage_blocks(): `
             `unknown nConvStageType ( ${nConvStageType} ) value. ${asserter.contextDescription}`;
@@ -796,6 +798,8 @@ class Base extends Recyclable.Root {
         asserter.propertyValue( "bKeepInputTensor", false );
       }
 
+      asserter.disposeResources_and_recycleToPool();
+      asserter = null;
     }
   }
 
