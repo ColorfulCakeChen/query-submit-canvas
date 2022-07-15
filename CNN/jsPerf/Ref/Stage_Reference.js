@@ -5,6 +5,7 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as ValueMax from "../../ValueMax.js";
+import * as Pool_Asserter from "../../util/Pool_Asserter.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ImageSourceBag from "./ImageSourceBag.js"; 
 import * as Block_TestParams from "./Block_TestParams.js"; 
@@ -61,8 +62,6 @@ class Base extends Recyclable.Root {
     super.disposeResources();
   }
 
-!!! ...unfinished... (2022/07/14)
-
   /**
    * Testing whether the results of different implementation are the same.
    *
@@ -74,121 +73,118 @@ class Base extends Recyclable.Root {
    *
    */
   testCorrectness( imageSourceBag, testParams ) {
+    Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "Stage_Reference.Base.testCorrectness_internal()",
+      Base.testCorrectness_internal, this );
+  }
+
+  /**
+   * Testing whether the results of different implementation are the same.
+   *
+   * @param {ImageSourceBag.Base} imageSourceBag
+   *   The provider of image and tensor of variable specification for testing.
+   *
+   * @param {Stage_TestParams.Base} testParams
+   *   The test parameters. It is the value of Stage_TestParams.Base.ParamsGenerator()'s result.
+   *
+   */
+  static testCorrectness_internal( imageSourceBag, testParams ) {
     this.testParams = testParams;
 
-    try {
-      let sourceHeight = this.testParams.out.sourceHeight;
-      let sourceWidth = this.testParams.out.sourceWidth;
-      let sourceChannelCount = this.testParams.out.sourceChannelCount;
-      let blockCountRequested = this.testParams.out.blockCountRequested;
-      let bPointwise1 = this.testParams.out.bPointwise1;
-      let depthwiseFilterHeight = this.testParams.out.depthwiseFilterHeight;
-      let depthwiseFilterWidth = this.testParams.out.depthwiseFilterWidth;
-      let nActivationId = this.testParams.out.nActivationId;
-      let bPointwise2BiasAtStageEnd = this.testParams.out.bPointwise2BiasAtStageEnd;
-      let nConvStageType = this.testParams.out.nConvStageType;
-      let bKeepInputTensor = this.testParams.out.bKeepInputTensor;
+//!!! ...unfinished... (2022/07/15)
+    let {
+      sourceHeight, sourceWidth, sourceChannelCount,
+      nConvStageTypeId,
+      blockCountRequested,
+      bPointwise1,
+      depthwiseFilterHeight, depthwiseFilterWidth,
+      bPointwise2ActivatedAtStageEnd,
+      nSqueezeExcitationChannelCountDivisor,
+      nActivationId,
+      bKeepInputTensor
+    } = testParams.out;
 
-      let referredParams = {};
-      let outputHeight, outputWidth, outputChannelCount;
-      {
-        Stage.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( referredParams, sourceHeight, sourceWidth );
+    let referredParams = {};
+    let outputHeight, outputWidth, outputChannelCount;
+    {
+      Stage.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( referredParams, sourceHeight, sourceWidth );
 
-        outputHeight = referredParams.outputHeight;
-        outputWidth = referredParams.outputWidth;
+      outputHeight = referredParams.outputHeight;
+      outputWidth = referredParams.outputWidth;
 
-        outputChannelCount = sourceChannelCount * 2; // In current Stage's design, the output channel always is twice as input.
-      }
-
-      let strNote;
-      strNote = `( this.testParams.id=${this.testParams.id} )`;
-
-      let imageIn = imageSourceBag.getImage_by( sourceChannelCount );
-      let imageOutReference = this.calcResult( imageIn );
-
-      let inputTensor3d = imageSourceBag.getTensor3d_by( sourceChannelCount );
-
-      let inputTensorDestroyCount; // How many input tensors will be destroyed by Stage.apply().
-      if ( bKeepInputTensor ) {
-        inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
-
-      } else {
-        inputTensor3d = inputTensor3d.clone(); // Clone for being destroyed. 
-        inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
-      }
-
-      let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
-      let stage = Base.Stage_create( testParams );
-
-      let parametersDescription = stage.parametersDescription;
-      strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
-
-      Base.AssertTwoEqualValues( "outputHeight", stage.outputHeight, outputHeight, strNote );
-      Base.AssertTwoEqualValues( "outputWidth", stage.outputWidth, outputWidth, strNote );
-      Base.AssertTwoEqualValues( "outputChannelCount", stage.outputChannelCount, outputChannelCount, strNote );
-
-      Base.AssertTwoEqualValues( "blockCount", stage.blockCount, testParams.blocksArray.length, strNote );
-
-      // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
-      // tensor count (i.e. inputTensorDestroyCount).
-      let stage_outputTensorCount = 1;
-      let tensorNumDifference_apply_before_after = stage_outputTensorCount - inputTensorDestroyCount;
-
-      let memoryInfo_apply_before = tf.memory(); // Test memory leakage of Stage.apply.
-      let outputTensor3d = stage.apply( inputTensor3d );
-      let memoryInfo_apply_after = tf.memory();
-
-      if ( memoryInfo_apply_after.numTensors != ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) )
-        throw Error( `Stage.apply() memory leak. `
-          + `result tensor count (${memoryInfo_apply_after.numTensors}) `
-          + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
-          + `${strNote}` );
-
-      if ( !inputTensor3d )
-        throw Error( `Stage inputTensor3d should not be null. ${strNote}` ); // But may be disposed.
-
-      if ( !outputTensor3d )
-        throw Error( `Stage outputTensor3d should not be null. ${strNote}` );
-
-      { // Test output channel count.
-        const CHANNEL_AXIS_ID = 2; // Axis id 2 is depth (i.e. channel) dimension.
-        let outputTensorChannelCount = 0;
-
-        if ( outputTensor3d && ( outputTensor3d.shape.length > CHANNEL_AXIS_ID ) )
-          outputTensorChannelCount = outputTensor3d.shape[ CHANNEL_AXIS_ID ];
-
-        // The real channel count of the output tensor should be the same as predicted output channel count.
-        Base.AssertTwoEqualValues( "outChannels", stage.outputChannelCount, outputTensorChannelCount, strNote );
-      }
-
-      // Test correctness of Stage BoundsArraySet.
-      this.assert_imageOut_BoundsArraySet( stage.boundsArraySet, imageOutReference, parametersDescription );
-
-      // Test correctness of Stage.apply.
-      this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, imageOutReference, parametersDescription );
-
-      stage.disposeTensors();
-      let memoryInfo_afterDispose = tf.memory();
-
-      if ( memoryInfo_afterDispose.numTensors != ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) )
-        throw Error(  `Stage create/dispose memory leak. `
-          + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
-          + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
-          + `${strNote}` );
-
-      tf.dispose( outputTensor3d );
-
-    } catch ( e ) {
-      let backendName = tf.getBackend();
-      let msg = `Stage_Reference.js: testCorrectness(): backendName=${backendName}, `
-        + `Stage, (yieldCount == ${testParams.yieldCount}), this.testParams.id == ${testParams.id}`;
-
-      console.log( msg );
-      alert( `${msg}\n${e}` );
-
-      throw e;
+      outputChannelCount = sourceChannelCount * 2; // In current Stage's design, the output channel always is twice as input.
     }
 
+    let imageIn = imageSourceBag.getImage_by( sourceChannelCount );
+    let imageOutReference = this.calcResult( imageIn );
+
+    let inputTensor3d = imageSourceBag.getTensor3d_by( sourceChannelCount );
+
+    let inputTensorDestroyCount; // How many input tensors will be destroyed by Stage.apply().
+    if ( bKeepInputTensor ) {
+      inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
+
+    } else {
+      inputTensor3d = inputTensor3d.clone(); // Clone for being destroyed. 
+      inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
+    }
+
+    let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
+    let stage = Base.Stage_create( testParams );
+
+    Base.AssertTwoEqualValues( "outputHeight", stage.outputHeight, outputHeight, stage );
+    Base.AssertTwoEqualValues( "outputWidth", stage.outputWidth, outputWidth, stage );
+    Base.AssertTwoEqualValues( "outputChannelCount", stage.outputChannelCount, outputChannelCount, stage );
+
+    Base.AssertTwoEqualValues( "blockCount", stage.blockCount, testParams.blocksArray.length, stage );
+
+    // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
+    // tensor count (i.e. inputTensorDestroyCount).
+    let stage_outputTensorCount = 1;
+    let tensorNumDifference_apply_before_after = stage_outputTensorCount - inputTensorDestroyCount;
+
+    let memoryInfo_apply_before = tf.memory(); // Test memory leakage of Stage.apply.
+    let outputTensor3d = stage.apply( inputTensor3d );
+    let memoryInfo_apply_after = tf.memory();
+
+    if ( memoryInfo_apply_after.numTensors != ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) )
+      throw Error( `Stage.apply() memory leak. `
+        + `result tensor count (${memoryInfo_apply_after.numTensors}) `
+        + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
+        + `${stage}` );
+
+    if ( !inputTensor3d )
+      throw Error( `Stage inputTensor3d should not be null. ${stage}` ); // But may be disposed.
+
+    if ( !outputTensor3d )
+      throw Error( `Stage outputTensor3d should not be null. ${stage}` );
+
+    { // Test output channel count.
+      const CHANNEL_AXIS_ID = 2; // Axis id 2 is depth (i.e. channel) dimension.
+      let outputTensorChannelCount = 0;
+
+      if ( outputTensor3d && ( outputTensor3d.shape.length > CHANNEL_AXIS_ID ) )
+        outputTensorChannelCount = outputTensor3d.shape[ CHANNEL_AXIS_ID ];
+
+      // The real channel count of the output tensor should be the same as predicted output channel count.
+      Base.AssertTwoEqualValues( "outChannels", stage.outputChannelCount, outputTensorChannelCount, stage );
+    }
+
+    // Test correctness of Stage BoundsArraySet.
+    this.assert_imageOut_BoundsArraySet( stage.boundsArraySet, imageOutReference, stage );
+
+    // Test correctness of Stage.apply.
+    this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, imageOutReference, stage );
+
+    stage.disposeTensors();
+    let memoryInfo_afterDispose = tf.memory();
+
+    if ( memoryInfo_afterDispose.numTensors != ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) )
+      throw Error(  `Stage create/dispose memory leak. `
+        + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
+        + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
+        + `${stage}` );
+
+    tf.dispose( outputTensor3d );
   }
 
   /**
