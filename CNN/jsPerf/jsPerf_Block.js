@@ -437,7 +437,7 @@ class HeightWidthDepth {
     block.apply();
 
     tf.dispose( block.output0.realTensor );
-    if ( block.output1.realTensor )
+    if ( block.output1?.realTensor )
       tf.dispose( block.output1.realTensor );
   }
 
