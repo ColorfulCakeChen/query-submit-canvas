@@ -31,7 +31,7 @@ import * as Stage from "../../Conv/Stage.js";
  *   The "out" sub-object's data members represent the "should-be" result of Stage.Params's extract(). That is, it has
  * the above data members (with outputHeight, outputWidth) except paramsNumberArrayObject, inputFloat32Array, byteOffsetBegin.
  *
- * @member {object[]} blocksArray
+ * @member {object[]} blockArray
  *   Every element is an Block_TestParams object for the parameters of the block.
  */
 class Base extends TestParams.Base {
@@ -57,7 +57,7 @@ class Base extends TestParams.Base {
 
   /** @override */
   static setAsConstructor_self() {
-    this.blocksArray = Recyclable.OwnerArray.Pool.get_or_create_by();
+    this.blockArray = Recyclable.OwnerArray.Pool.get_or_create_by();
 
     // A pre-allocated and re-used NumberArray. (For reducing memory re-allocation.)
     this.NumberArray_ElementOffsetBegin = NameNumberArrayObject_To_NumberArray.Base.Pool.get_or_create_by();
@@ -68,8 +68,8 @@ class Base extends TestParams.Base {
     this.NumberArray_ElementOffsetBegin?.disposeResources_and_recycleToPool();
     this.NumberArray_ElementOffsetBegin = null;
 
-    this.blocksArray?.disposeResources_and_recycleToPool();
-    this.blocksArray = null;
+    this.blockArray?.disposeResources_and_recycleToPool();
+    this.blockArray = null;
 
     super.disposeResources();
   }
@@ -151,7 +151,9 @@ class Base extends TestParams.Base {
     let blockParamsCreator = Stage.Base.create_BlockParamsCreator_byStageParams( stageParams );
     blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last();
 
-    this.blocksArray.length = blockParamsCreator.blockCount;
+    this.blockArray.clear();
+    this.blockArray.length = blockParamsCreator.blockCount;
+
     let paramsNameOrderArray_modified = Recyclable.Array.Pool.get_or_create_by( ...Base.paramsNameOrderArray_Basic ); // Shallow copy.
 
     let paramsNumberArrayObject_modified = {};
@@ -164,7 +166,7 @@ class Base extends TestParams.Base {
         blockParamsCreator.configTo_beforeBlock0();
       }
 
-      if ( ( this.blocksArray.length - 1 ) == i ) { // BlockLast. (Note: Block0 may also be BlockLast.)
+      if ( ( this.blockArray.length - 1 ) == i ) { // BlockLast. (Note: Block0 may also be BlockLast.)
         blockParamsCreator.configTo_beforeBlockLast();
       }
 
@@ -176,21 +178,21 @@ class Base extends TestParams.Base {
       let blockName = `block${i}`;
       paramsNameOrderArray_modified.push( blockName ); // Place every block's parameters in sequence.
 
-      let blockTestParams = new Block_TestParams.Base( this.id );
+      let blockTestParams = Block_TestParams.Base.Pool.get_or_create_by( this.id );
       blockTestParams.set_byParamsScattered(
-        blockParamsCreator.channelCount0_pointwise1Before,
-        blockParamsCreator.channelCount1_pointwise1Before,
-        blockParamsCreator.pointwise1ChannelCount, blockParamsCreator.bPointwise1Bias, blockParamsCreator.pointwise1ActivationId,
-        blockParamsCreator.depthwise_AvgMax_Or_ChannelMultiplier,
-        blockParamsCreator.depthwiseFilterHeight, blockParamsCreator.depthwiseFilterWidth, blockParamsCreator.depthwiseStridesPad,
-        blockParamsCreator.bDepthwiseBias, blockParamsCreator.depthwiseActivationId,
-        blockParamsCreator.nSqueezeExcitationChannelCountDivisor,
-        blockParamsCreator.pointwise21ChannelCount, blockParamsCreator.bPointwise21Bias, blockParamsCreator.pointwise21ActivationId,
-        blockParamsCreator.bOutput1Requested,
+        blockParamsCreator.input0_height, blockParamsCreator.input0_width, blockParamsCreator.input0_channelCount,
+        blockParamsCreator.nConvBlockTypeId,
+        blockParamsCreator.pointwise1ChannelCount,
+        blockParamsCreator.depthwise_AvgMax_Or_ChannelMultiplier, blockParamsCreator.depthwiseFilterHeight,
+        blockParamsCreator.depthwiseFilterWidth, blockParamsCreator.depthwiseStridesPad,
+        blockParamsCreator.depthwiseActivationId,
+        blockParamsCreator.pointwise20ChannelCount, blockParamsCreator.pointwise20ActivationId,
+        blockParamsCreator.nSqueezeExcitationChannelCountDivisor, blockParamsCreator.bSqueezeExcitationPrefix,
+        blockParamsCreator.nActivationId,
         blockParamsCreator.bKeepInputTensor
       );
 
-      this.blocksArray[ i ] = blockTestParams;
+      this.blockArray[ i ] = blockTestParams;
       paramsNumberArrayObject_modified[ blockName ] = blockTestParams.in.inputFloat32Array;
 
       if ( 0 == i ) { // After block0 (i.e. for block1, 2, 3, ...)
@@ -246,7 +248,7 @@ class Base extends TestParams.Base {
    * @override
    */
   onYield_after() {
-    this.blocksArray.length = 0; // Clear blocks' parameters.
+    this.blockArray.length = 0; // Clear blocks' parameters.
   }
 
   /**
