@@ -35,7 +35,7 @@ class MobileNetV1_padValid extends MobileNetV1 {
   }
 
   /** @override */
-  static setAsConstructor_self( stageParams ) {
+  static setAsConstructor_self() {
     // Do nothing.
   }
 
