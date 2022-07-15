@@ -2,7 +2,7 @@ export { Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-import * as ValueMax from "../../ValueMax.js";
+import * as ValueMax from "../../util/ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as Block from "../Block.js";
