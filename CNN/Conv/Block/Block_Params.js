@@ -1010,6 +1010,22 @@ class Params extends Weights.Params {
   get nActivationName()           { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
 
   get bKeepInputTensor()          { return this.getParamValue_byParamDesc( Params.bKeepInputTensor ); }
+
+  
+  get output_height() {
+    if ( this.bDepthwiseRequestedAndNeeded )
+      return this.depthwisePadInfo.outputHeight;
+    else
+      return this.input0_height;
+  }
+
+  get output_width() {
+    if ( this.bDepthwiseRequestedAndNeeded )
+      return this.depthwisePadInfo.outputWidth;
+    else
+      return this.input0_width;
+  }
+
 }
 
 
