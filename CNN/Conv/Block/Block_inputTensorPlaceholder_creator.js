@@ -1,8 +1,5 @@
 export { inputTensorPlaceholder_creator };
 
-//import * as Pool from "../../util/Pool.js";
-//import * as Recyclable from "../../util/Recyclable.js";
-//import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 
