@@ -314,7 +314,7 @@ class Base extends TestParams.Base {
 //       ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL, // (7)
 //       ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL // (7)
 //       Block.Params.nConvBlockTypeId.valueDesc.range.max
-   ],
+//   ],
 
 //!!! (2022/07/11 Temp Remarked) For speed-up debug.
       pointwise1ChannelCount: [ 0, 2 ],
