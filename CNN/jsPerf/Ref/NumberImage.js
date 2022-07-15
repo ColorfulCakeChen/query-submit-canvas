@@ -272,14 +272,14 @@ class Base extends Recyclable.Root {
           let inIndex = inIndexBaseC + inChannel;
           let filterIndexBase = ( inChannel * pointwiseChannelCount );
 
-          let undoPreviousEscapingScale = imageIn.boundsArraySet.output0.scaleArraySet.undo.scales[ inChannel ];
+          let undoPreviousEscapingScale = Math.fround( imageIn.boundsArraySet.output0.scaleArraySet.undo.scales[ inChannel ] );
 
           for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
             let outIndex = outIndexBaseC + outChannel;
             let filterIndex = filterIndexBase + outChannel;
 
-            imageOut.dataArray[ outIndex ] = Math.fround( Math.fround( imageOut.dataArray[ outIndex ] )
-              + ( Math.fround( Math.fround( imageIn.dataArray[ inIndex ] ) * Math.fround( undoPreviousEscapingScale ) )
+            imageOut.dataArray[ outIndex ] = Math.fround( imageOut.dataArray[ outIndex ]
+              + ( Math.fround( Math.fround( imageIn.dataArray[ inIndex ] ) * undoPreviousEscapingScale )
                     * Math.fround( pointwiseFiltersArray[ filterIndex ] )
                 )
             );
@@ -507,7 +507,7 @@ class Base extends Recyclable.Root {
           let outChannelBase = inChannel * channelMultiplier;
           let outIndexBaseSubC = outIndexBaseC + outChannelBase;
 
-          let undoPreviousEscapingScale = imageIn.boundsArraySet.output0.scaleArraySet.undo.scales[ inChannel ];
+          let undoPreviousEscapingScale = Math.fround( imageIn.boundsArraySet.output0.scaleArraySet.undo.scales[ inChannel ] );
 
           for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
             let outChannel = outChannelBase + outChannelSub;
@@ -565,7 +565,7 @@ class Base extends Recyclable.Root {
                       default: // Convolution
                         imageOut.dataArray[ outIndex ] = Math.fround( imageOut.dataArray[ outIndex ]
                           + ( Math.fround(
-                                Math.fround( imageIn.dataArray[ inIndex ] ) * Math.fround( undoPreviousEscapingScale )
+                                Math.fround( imageIn.dataArray[ inIndex ] ) * undoPreviousEscapingScale
                               )
                               * Math.fround( depthwiseFiltersArray[ filterIndex ] )
                             )
