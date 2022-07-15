@@ -46,7 +46,7 @@ class MobileNetV1 extends Base {
   }
 
   /** @override */
-  static setAsConstructor_self( stageParams ) {
+  static setAsConstructor_self() {
     // Do nothing.
   }
 
