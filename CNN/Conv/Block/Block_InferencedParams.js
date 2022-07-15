@@ -156,11 +156,23 @@ class InferencedParams extends Recyclable.Root {
    *   - this.input0
    *   - this.input1
    *
+   * @param {ActivationEscaping.ScaleBoundsArray|TensorPlaceholder.Base} input0_ScaleBoundsArray_or_TensorPlaceholder
+   *   The input0's information.
+   *     - If it is an ActivationEscaping.ScaleBoundsArray object, a new TensorPlaceholder will be created.
+   *     - If it is a TensorPlaceholder.Base object, it will be used (not cloned) as input0's TensorPlaceholder directly.
+   *
+   * @param {ActivationEscaping.ScaleBoundsArray|TensorPlaceholder.Base} input1_ScaleBoundsArray_or_TensorPlaceholder
+   *   The input1's information.
+   *     - If it is an ActivationEscaping.ScaleBoundsArray object, a new TensorPlaceholder will be created.
+   *     - If it is a TensorPlaceholder.Base object, it will be used (not cloned) as input1's TensorPlaceholder directly.
+   *
+   *
+   *
    */
-  static set_input0_input1_TensorPlaceholder(
+  static set_input0_input1_TensorPlaceholder_by(
     inputTensorCount,
-    input0_height, input0_width, input0_channelCount, inputScaleBoundsArray0,
-    input1_height, input1_width, input1_channelCount, inputScaleBoundsArray1,
+    input0_height, input0_width, input0_channelCount, input0_ScaleBoundsArray_or_TensorPlaceholder,
+    input1_height, input1_width, input1_channelCount, input1_ScaleBoundsArray_or_TensorPlaceholder,
     pointwise1_inputChannelCount_lowerHalf, pointwise1_inputChannelCount_higherHalf,
   ) {
 
