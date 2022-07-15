@@ -9,6 +9,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as Operation from "../Operation.js";
 import { Params } from "./Block_Params.js";
+import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_creator.js";
 
 
 //!!! ...unfinished... (2022/05/28)
@@ -349,6 +350,7 @@ class Base extends Recyclable.Root {
    *   A Params object. The params.init() will be called to extract parameters. This params will be owned and destroyed by this .initer().
    * So caller should not use it again.
    *
+
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
    *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Block value bounds set.
    * It will be referenced (i.e. kept, but not cloned and not released) by this object. So caller should not modify them, but
@@ -358,6 +360,36 @@ class Base extends Recyclable.Root {
    *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous Block value bounds set.
    * It will be referenced (i.e. kept, but not cloned and not released) by this object. So caller should not modify them, but
    * caller is responsible for releasing it.
+   *
+   * @param {ActivationEscaping.ScaleBoundsArray|TensorPlaceholder.Base} input0_ScaleBoundsArray_or_TensorPlaceholder
+   *   The element value bounds (per channel) or TensorPlaceholder of input0.
+   *
+   *     - If it is an ActivationEscaping.ScaleBoundsArray object:
+   *         - A new TensorPlaceholder will be created.
+   *         - ( .input0_bOwned == true )
+   *         - TensorPlaceholder will be released by here (Block.Base).
+   *         - ActivationEscaping.ScaleBoundsArray will NOT be released by here (Block.Base).
+   *
+   *     - If it is a TensorPlaceholder.Base object (usually, it is The .output0 of the previous Block):
+   *         - It will be used (not cloned, not owned) as input0's TensorPlaceholder directly.
+   *         - ( .input0_bOwned == false )
+   *         - TensorPlaceholder will NOT be released by here (Block.Base).
+   *         - ActivationEscaping.ScaleBoundsArray will NOT be released by here (Block.Base).
+   *
+   * @param {ActivationEscaping.ScaleBoundsArray|TensorPlaceholder.Base} input1_ScaleBoundsArray_or_TensorPlaceholder
+   *   The element value bounds (per channel) or TensorPlaceholder of input1.
+   *
+   *     - If it is an ActivationEscaping.ScaleBoundsArray object:
+   *         - A new TensorPlaceholder will be created.
+   *         - ( .input1_bOwned == true )
+   *         - TensorPlaceholder will be released by here (Block.Base).
+   *         - ActivationEscaping.ScaleBoundsArray will NOT be released by here (Block.Base).
+   *
+   *     - If it is a TensorPlaceholder.Base object (usually, it is The .output0 of the previous Block):
+   *         - It will be used (not cloned, not owned) as input0's TensorPlaceholder directly.
+   *         - ( .input1bOwned == false )
+   *         - TensorPlaceholder will NOT be released by here (Block.Base).
+   *         - ActivationEscaping.ScaleBoundsArray will NOT be released by here (Block.Base).
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
@@ -499,6 +531,7 @@ class Base extends Recyclable.Root {
 !!! ...unfinished... (2022/07/14)
 // Separate to outside. Here just check and throw exception.
 //
+inputTensorPlaceholder_creator
 
     // Create inputs tensor placeholders and sub operation array.
     {
@@ -909,16 +942,16 @@ class Base extends Recyclable.Root {
       this.operationArray = null;
     }
 
-    // 3. Because .inputX are created by this block (but .inputX.scaleBoundArray are not), they should be released by this block
-    //    (except .inputX.scaleBoundArray).
+    // 3. The .inputX may or may not be created by this block (but .inputX.scaleBoundArray are always not), they should be released by
+    //    this block according to .Xxx_bOwned flag (except .inputX.scaleBoundArray).
     {
-      if ( this.input1 ) {
+      if ( ( this.input1 ) && ( this.input1_bOwned ) ) {
         this.input1.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray0 which should not be released here. So nullify it.
         this.input1.disposeResources_and_recycleToPool();
         this.input1 = null;
       }
  
-      if ( this.input0 ) {
+      if ( ( this.input0 ) && ( this.input0_bOwned ) ) {
         this.input0.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray1 which should not be released here. So nullify it.
         this.input0.disposeResources_and_recycleToPool();
         this.input0 = null;
