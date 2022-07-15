@@ -103,7 +103,7 @@ class inputTensorPlaceholder_creator {
    *   The input0's information.
    *
    *     - If it is an ActivationEscaping.ScaleBoundsArray object, a new TensorPlaceholder will be created.
-   *         .input0_bOwned will be true (which means caller is responsible for releasing it.)
+   *         .input0_bOwned will be true (which means caller is responsible for releasing it).
    *
    *     - If it is a TensorPlaceholder.Base object, it will be used (not cloned) as input0's TensorPlaceholder directly.
    *         .input0_bOwned will be false.
@@ -112,7 +112,7 @@ class inputTensorPlaceholder_creator {
    *   The input1's information.
    *
    *     - If it is an ActivationEscaping.ScaleBoundsArray object, a new TensorPlaceholder will be created.
-   *         .input1_bOwned will be true (which means caller is responsible for releasing it.)
+   *         .input1_bOwned will be true (which means caller is responsible for releasing it).
    *
    *     - If it is a TensorPlaceholder.Base object, it will be used (not cloned) as input1's TensorPlaceholder directly.
    *         .input1_bOwned will be false.
