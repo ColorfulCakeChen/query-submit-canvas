@@ -5,14 +5,6 @@ export { inputTensorPlaceholder_creator };
 //import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
-//import { Params } from "./Params.js";
-
-//!!! ...unfinished... (2022/07/14)
-// Perhaps, porting all Block.Params.set_Xxx_by() static method to here.
-//
-// Renamed to class Block.InferencedParams
-//
-//
 
 /**
  * A helper for preparing input TensorPlaceholder of Block.Base (especially for ShuffleNetV2_ByMopbileNetV1's head/body/tail).
@@ -122,7 +114,7 @@ class inputTensorPlaceholder_creator {
     inputTensorCount,
     input0_height, input0_width, input0_channelCount, input0_ScaleBoundsArray_or_TensorPlaceholder,
     input1_height, input1_width, input1_channelCount, input1_ScaleBoundsArray_or_TensorPlaceholder,
-    pointwise1_inputChannelCount_lowerHalf, pointwise1_inputChannelCount_higherHalf,
+    pointwise1_inputChannelCount_lowerHalf, pointwise1_inputChannelCount_higherHalf
   ) {
 
     // 1. input0
