@@ -465,10 +465,10 @@ class Base extends Recyclable.Root {
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
             if ( stageParams.bPointwise1 == false ) {
-              asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2 );
-            } else {
               asserter.propertyValue( "nConvBlockTypeId",
-                ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD );
+                ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2 );
+            } else {
+              asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD );
             }
             break;
 
@@ -478,34 +478,60 @@ class Base extends Recyclable.Root {
             break;
         }
 
-//!!! ...unfinished... (2022/07/15) ConvBlockType
-
-      } else { // block1, 2, 3, ...
+      } else if ( ( blockCount - 1 ) > blockIndex ) { // block1, 2, 3, ..., ( blockCount - 2 )
         switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
+            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL );
             break;
 
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
-            asserter.propertyValue( "nConvBlockTypeId",
-              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT );
+            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL );
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
-            asserter.propertyValue( "nConvBlockTypeId",
-              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 );
-            break;
-
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-            asserter.propertyValue( "nConvBlockTypeId", single_Block0Input0ChannelCount ); // TWO_INPUTS
+            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY );
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-            asserter.propertyValue( "nConvBlockTypeId",
-              ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH );
+            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY );
+            break;
+
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
+            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY );
+            break;
+
+          default:
+            Base.Assert_nConvStageTypeId_Unknown(
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+            break;
+        }
+
+      } else { // blockLast ( blockCount - 1 )
+        switch ( nConvStageTypeId ) {
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL );
+            break;
+
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
+            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL );
+            break;
+
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL );
+            break;
+
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
+            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL );
+            break;
+
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
+            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL );
             break;
 
           default:
@@ -514,6 +540,8 @@ class Base extends Recyclable.Root {
             break;
         }
       }
+
+//!!! ...unfinished... (2022/07/15) pointwise1ChannelCount
 
       // pointwise1ChannelCount
       if ( 0 == blockIndex ) { // block0
