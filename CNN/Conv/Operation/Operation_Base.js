@@ -26,9 +26,9 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
  *
  * @member {function} apply
  *   This is a data member which is a pointer to a function. The function processes .input0.realTensor (and .input1.realTensor) as
- * inputTensor(s). It puts to .output0.realTensor as outputTensor. They are tf.tensor3d and just be passed from input to output.
- * The inputTensors may or may not be disposed according to setKeepInputTensor(). Default is setKeepInputTensor( false, false )
- * which will destroy all inputs. Usually, sub-class should override this data member.
+ * inputTensor(s). It puts to .output0.realTensor as outputTensor. The inputTensors may or may not be disposed according to
+ * setKeepInputTensor(). Default is setKeepInputTensor( false, false ) which will destroy all inputs. Usually, sub-class should
+ * override this data member.
  *
  */
 let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( ParentClass ) {
