@@ -26,7 +26,8 @@ class Base extends Recyclable.Root {
 
   /**
    * @param {Params} stageParams
-   *   The Stage.Params object which provides basic parameters. It will be owned and released by this Stage.BlockParamsCreator.Base onject.
+   *   The Stage.Params object which provides basic parameters. It will be referenced (i.e. not cloned, not owned, not released)
+   * by this Stage.BlockParamsCreator.Base onject.
    */
   constructor( stageParams ) {
     super();
@@ -74,10 +75,7 @@ class Base extends Recyclable.Root {
     this.input0_width = undefined;
     this.input0_height = undefined;
 
-    if ( this.stageParams ) {
-      this.stageParams.disposeResources_and_recycleToPool();
-      this.stageParams = undefined;
-    }
+    this.stageParams = undefined; // Just nullify it. Do not release it here.
 
     super.disposeResources();
   }
