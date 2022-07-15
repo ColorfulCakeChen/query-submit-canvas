@@ -426,7 +426,19 @@ class Base extends Recyclable.Root {
     let tensorNumDifference_apply_before_after = block.outputTensorCount - inputTensorDestroyCount;
 
     let memoryInfo_apply_before = tf.memory(); // Test memory leakage of block apply.
-    block.apply( inputTensor3dArray, outputTensor3dArray );
+    {
+//!!! (2022/07/15 Remarked)
+//       block.apply( inputTensor3dArray, outputTensor3dArray );
+
+      block.input0.realTensor = inputTensor3dArray[ 0 ];
+      if ( block.input1 )
+        block.input1.realTensor = inputTensor3dArray[ 1 ];
+
+      block.apply();
+
+      outputTensor3dArray[ 0 ] = block.output0.realTensor;
+      outputTensor3dArray[ 1 ] = block.output1?.realTensor;
+    }
     let memoryInfo_apply_after = tf.memory();
 
     if ( memoryInfo_apply_after.numTensors != ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) )
