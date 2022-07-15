@@ -568,7 +568,8 @@ class Base extends Recyclable.Root {
                                 Math.fround( imageIn.dataArray[ inIndex ] ) * Math.fround( undoPreviousEscapingScale )
                               )
                               * Math.fround( depthwiseFiltersArray[ filterIndex ] )
-                            );
+                            )
+                        );
 
                         // Calculate value bounds of every output channels (i.e. .afterFilter).
                         if ( !filtersArray_bBoundsCalculated[ filterIndex ] ) {
