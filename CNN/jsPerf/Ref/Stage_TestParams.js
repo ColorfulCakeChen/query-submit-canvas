@@ -57,7 +57,7 @@ class Base extends TestParams.Base {
 
   /** @override */
   static setAsConstructor_self() {
-    this.blocksArray = Recyclable.OwnerArray.Base.Pool.get_or_create_by();
+    this.blocksArray = Recyclable.OwnerArray.Pool.get_or_create_by();
 
     // A pre-allocated and re-used NumberArray. (For reducing memory re-allocation.)
     this.NumberArray_ElementOffsetBegin = NameNumberArrayObject_To_NumberArray.Base.Pool.get_or_create_by();
@@ -152,7 +152,7 @@ class Base extends TestParams.Base {
     blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last();
 
     this.blocksArray.length = blockParamsCreator.blockCount;
-    let paramsNameOrderArray_modified = Recyclable.Array.Base.Pool.get_or_create_by( ...Base.paramsNameOrderArray_Basic ); // Shallow copy.
+    let paramsNameOrderArray_modified = Recyclable.Array.Pool.get_or_create_by( ...Base.paramsNameOrderArray_Basic ); // Shallow copy.
 
     let paramsNumberArrayObject_modified = {};
     Object.assign( paramsNumberArrayObject_modified, this.in.paramsNumberArrayObject ); // Shallow copy.
