@@ -5,6 +5,7 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as ValueMax from "../../ValueMax.js";
+import * as BoundsArraySet_Asserter from "../../util/BoundsArraySet_Asserter.js";
 import * as Pool_Asserter from "../../util/Pool_Asserter.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ImageSourceBag from "./ImageSourceBag.js"; 
@@ -12,7 +13,6 @@ import * as Block_TestParams from "./Block_TestParams.js";
 import * as Block_Reference from "./Block_Reference.js"; 
 import * as Stage_TestParams from "./Stage_TestParams.js"; 
 import * as Stage from "../../Conv/Stage.js";
-import * as BoundsArraySet_Asserter from "./BoundsArraySet_Asserter.js";
 
 /**
  * Reference computation of class Stage.Base.
