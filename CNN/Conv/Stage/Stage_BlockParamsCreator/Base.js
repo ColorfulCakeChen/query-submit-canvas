@@ -1,6 +1,6 @@
 export { Base }; // Stage.BlockParamsCreator.Base
 
-import * as Pool from "../../util/Pool.js";
+import * as Pool from "../../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import * as Block from "../../Block.js";
