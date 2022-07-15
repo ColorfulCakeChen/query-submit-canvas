@@ -10,9 +10,9 @@ import { Int } from "./ValueDesc_Base.js";
  *   - 2: MOBILE_NET_V2_THIN                        (i.e. add-inut-to-output, pointwise1 is same size of pointwise20)
  *   - 3: MOBILE_NET_V2                             (i.e. add-inut-to-output, pointwise1 is tiwce size of pointwise20)
  *   - 4: SHUFFLE_NET_V2                            (i.e. by channel shuffler)
- *   - 5: SHUFFLE_NET_V2_BY_POINTWISE21             (i.e. by pointwise21)
- *   - 6: SHUFFLE_NET_V2_BY_MOBILE_NET_V1           (i.e. by integrated pointwise1, depthwise1, pointwise20)
- *   - 7: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (i.e. by depthwise1 with ( pad = "valid" ) )
+ *   - 5: SHUFFLE_NET_V2_BY_MOBILE_NET_V1           (i.e. by integrated pointwise1, depthwise1, pointwise20)
+ *   - 6: SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (i.e. by depthwise1 with ( pad = "valid" ) )
+ *   - 7: SHUFFLE_NET_V2_BY_POINTWISE21             (i.e. by pointwise21)
  */
 class ConvStageType extends Int {
 
@@ -23,9 +23,9 @@ class ConvStageType extends Int {
       "MOBILE_NET_V2_THIN",                        // (2)
       "MOBILE_NET_V2",                             // (3)
       "SHUFFLE_NET_V2",                            // (4)
-      "SHUFFLE_NET_V2_BY_POINTWISE21",             // (5)
-      "SHUFFLE_NET_V2_BY_MOBILE_NET_V1",           // (6)
-      "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID", // (7)
+      "SHUFFLE_NET_V2_BY_MOBILE_NET_V1",           // (5)
+      "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID", // (6)
+      "SHUFFLE_NET_V2_BY_POINTWISE21",             // (7)
     ] );
   }
 
@@ -66,9 +66,9 @@ class ConvStageType extends Int {
   static isShuffleNet( nConvStageTypeId ) {
     switch ( nConvStageTypeId ) {
       case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
-      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (5)
-      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (6)
-      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
+      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
+      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
         return true;
       default:
         return false;
@@ -82,7 +82,7 @@ class ConvStageType extends Int {
   static isPadValid() {
     switch ( nConvStageTypeId ) {
       case ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
+      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
         return true;
       default:
         return false;
