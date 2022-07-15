@@ -79,7 +79,7 @@ class ConvStageType extends Int {
    * @param {number} nConvStageType  The numeric identifier of ConvStageType. (ConvStageType.Singleton.Ids.Xxx)
    * @return {boolean} Return true, if it is Xxx_PAD_VALID.
    */
-  static  isPadValid() {
+  static isPadValid() {
     switch ( nConvStageType ) {
       case ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
       case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (7)
