@@ -185,9 +185,8 @@ class Base extends Recyclable.Root {
         Base.AssertTwoEqualValues( "outChannels", stage.outputChannelCount, outputTensorChannelCount, stage );
       }
 
-//!!! ...unfinished... (2022/07/15)
       // Test correctness of Stage BoundsArraySet.
-      this.assert_imageOut_BoundsArraySet( stage.boundsArraySet, this.testCorrectness_imageOutReference, stage );
+      this.assert_imageOut_BoundsArraySet( stage, this.testCorrectness_imageOutReference, stage );
 
       // Test correctness of Stage.apply.
       this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, this.testCorrectness_imageOutReference, stage );
@@ -209,12 +208,13 @@ class Base extends Recyclable.Root {
   /**
    * Check the Stage's output's BoundsArraySet.
    *
-   * @param {BoundsArraySet} aBoundsArraySet      The bounds array set of the Stage.
+   * @param {Stage.Base} stage                    The stage to be checked.
    * @param {NumberImage.Base} imageOutReference  Refernece output Image data of the Stage_Reference's calcResult().
    */
-  assert_imageOut_BoundsArraySet( aBoundsArraySet, imageOutReference, parametersDescription ) {
-    BoundsArraySet_Asserter.assert_BoundsArraySet_Outputs( this.asserter_Equal,
-      aBoundsArraySet, [ imageOutReference ], `Stage`, parametersDescription );
+  assert_imageOut_BoundsArraySet( stage, imageOutReference, parametersDescription ) {
+    BoundsArraySet_Asserter.assert_ScaleBoundsArray( this.asserter_Equal,
+      stage.output0.scaleBoundsArray, imageOutReference.boundsArraySet.output0,
+      "output0", "output0_Ref", `Stage`, parametersDescription );
   }
 
   /**
@@ -232,7 +232,7 @@ class Base extends Recyclable.Root {
       outputArrayRef = null;
     }
 
-    this.asserter_Equal.assert(
+    this.asserter_Equal.assert_Tensor_NumberArray(
       outputTensor, outputArrayRef,
       "Stage", `outputTensor`, `outputRef`, parametersDescription
     );
@@ -250,6 +250,7 @@ class Base extends Recyclable.Root {
    */
   static Stage_create( testParams, inputScaleBoundsArray0 ) {
 
+//!!! ...unfinished... (2022/07/15)
     let stage = new Stage.Base();
 
     let progress = new ValueMax.Percentage.Aggregate();
