@@ -42,7 +42,7 @@ class Base extends Recyclable.Root {
   /** @override */
   static setAsConstructor_self() {
     this.Block_Reference = Block_Reference.Base.Pool.get_or_create_by();
-    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.001 );
+    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.005 );
 
     // For reducing memory allocation.
     this.imageInArray = Recyclable.Array.Pool.get_or_create_by( 2 );  // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
@@ -250,25 +250,27 @@ class Base extends Recyclable.Root {
    */
   static Stage_create( testParams, inputScaleBoundsArray0 ) {
 
-//!!! ...unfinished... (2022/07/15)
-    let stage = new Stage.Base();
+    let stage = Stage.Base.Pool.get_or_create_by();
 
-    let progress = new ValueMax.Percentage.Aggregate();
+    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
     // Initialize successfully or failed.
-    let extractedParams = new Stage.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
+    let extractedParams = Stage.Params.Pool.get_or_create_by(
       testParams.in.sourceHeight, testParams.in.sourceWidth, testParams.in.sourceChannelCount,
+      testParams.in.nConvStageTypeId,
       testParams.in.blockCountRequested,
       testParams.in.bPointwise1,
       testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
-      testParams.in.nActivationId,
       testParams.in.bPointwise2BiasAtStageEnd,
-      testParams.in.nConvStageType,
+      testParams.in.nSqueezeExcitationChannelCountDivisor,
+      testParams.in.nActivationId,
       testParams.in.bKeepInputTensor
     );
 
-    let bInitOk = stage.init( progress, extractedParams, inputScaleBoundsArray0, this.arrayTemp_forInterleave_asGrouptTwo );
+    let bInitOk = stage.init( progress, testParams.in.inputWeightArray, testParams.in.weightElementOffsetBegin, extractedParams,
+      inputScaleBoundsArray0 );
 
+//!!! ...unfinished... (2022/07/15)
     let parametersDescription = `( ${stage.parametersDescription} )`;
 
     if ( stage.bInitOk != bInitOk ),
