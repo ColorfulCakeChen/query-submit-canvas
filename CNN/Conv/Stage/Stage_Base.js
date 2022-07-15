@@ -441,7 +441,7 @@ class Base extends Recyclable.Root {
 
     } finally {
       if ( blockParamsCreator ) {
-        blockParamsCreator.disposeResources_and_recycleToPool();
+        blockParamsCreator.disposeResources_and_recycleToPool(); // Also release Stage.Params object.
         blockParamsCreator = null;
       }
     }
