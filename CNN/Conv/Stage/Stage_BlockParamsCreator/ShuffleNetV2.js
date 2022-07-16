@@ -10,25 +10,7 @@ import { Base } from "./Base.js";
  * Provide parameters for ShuffleNetV2 (i.e. shuffle channel by ChannelShuffler.ConcatPointwiseConv).
  *
  *
-
-!!! ...unfinished... (2022/07/15) seems not the case now.
-
- * 1. Special case: NoPointwise1 ( stageParams.bPointwise1 == false ) ShuffleNetV2 (i.e. without pointwise1, with concatenator).
- * 
- * What is the different of the NoPointwise1 configuration?
- *
- * When the poitwise1 convolution (of every block (including block0)) is discarded (i.e. ( stageParams.bPointwise1 == false ) ),
- * the block0 and block0's branch could be achieved simultaneously by:
- *   - once depthwise convolution (channelMultipler = 2, strides = 2, pad = same, bias, CLIP_BY_VALUE_N3_P3).
- *   - No need to concatenate because the above operation already double channel count.
- *
- * Note that:
- *   - The depthwise1 convolution (channelMultipler = 2, strides = 2) of block0 achieves simultaneously two depthwise
- *     convolution (channelMultipler = 1, strides = 2) of block0 and block0's branch. So, it is one less depthwise
- *     convolution and one less concatenating (than original ShuffleNetV2).
- *
- *
- * 1. Drawback when ( stageParams.bPointwise1 == false )
+ * 1. Last Channel Stationary
  *
  * Channel shuffler has a characteristic that it always does not shuffle the first and last channel (i.e. the channel 0
  * and channel ( N - 1 ) will always be at the same place). In ShuffleNetV2, the pointwise1 could alleviate this issue
@@ -42,11 +24,6 @@ import { Base } from "./Base.js";
  *   - In good side, it is easy to keep and pass information to the next stage.
  *   - In bad side, it wastes a channel (i.e. the last channel) if there is no information needed to be kept and passed
  *       to the next stage.
- *
- * If ( stageParams.bPointwise1 == false ), there will be no pointwise1 (i.e. no chance) to shuffle the (first and) last
- * channel's position.
- *
- * So, it may be NOT suggested to use ShuffleNetV2 with ( stageParams.bPointwise1 == false ).
  *
  */
 class ShuffleNetV2 extends Base {
