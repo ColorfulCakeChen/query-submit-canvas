@@ -69,17 +69,29 @@ import { ShuffleNetV2 } from "./ShuffleNetV2.js";
  * In summary, this method may result in a slower ShuffleNetV2.
  *
  *
- * 2. Better when ( stageParams.bPointwise1 == false )
+ * 2. Better Special case: NoPointwise1 ( stageParams.bPointwise1 == false )
+ * 
+ * What is the different of the NoPointwise1 configuration?
  *
- * Different from ShufflerNetV2, the issue of the first and last channel fixed at stationary place does not exist in this
- * ShuffleNetV2_ByPointwise21. The reason is that it uses non-shared pointwise2 instead of channel shuffler. This lets
- * ( stageParams.bPointwise1 == false ) become feasible because it no longer relies on pointwise1 to change the first and
- * last channel position.
+ * When the poitwise1 convolution (of every block (including block0)) is discarded (i.e. ( stageParams.bPointwise1 == false ) ),
+ * the block0 and block0's branch could be achieved simultaneously by:
+ *   - once depthwise convolution (channelMultipler = 2, strides = 2, pad = same, bias, CLIP_BY_VALUE_N3_P3).
+ *   - No need to concatenate because the above operation already double channel count.
  *
- * In addition, the redued computation (because of no pointwise1) could compansate the extra computation (because of
- * non-shared pointwise2).
+ * Note that:
+ *   - The depthwise1 convolution (channelMultipler = 2, strides = 2) of block0 achieves simultaneously two depthwise
+ *     convolution (channelMultipler = 1, strides = 2) of block0 and block0's branch. So, it is one less depthwise
+ *     convolution and one less concatenating (than original ShuffleNetV2).
  *
- * It is suggested to use ShuffleNetV2_ByPointwise21 with ( stageParams.bPointwise1 == false ).
+ * The redued computation (because of no pointwise1) could compansate the extra computation (because of non-shared pointwise2).
+ *
+ * It is worth considering to use ShuffleNetV2_ByPointwise21 with ( stageParams.bPointwise1 == false ).
+ *
+ *
+ * 3. No Last Channel Stationary
+ *
+ * Different from ShufflerNetV2, the issue of last channel fixed at stationary place does not exist in this
+ * ShuffleNetV2_ByPointwise21. The reason is that it uses non-shared pointwise2 instead of channel shuffler.
  *
  *
  */
