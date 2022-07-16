@@ -925,19 +925,18 @@ class Base extends Recyclable.Root {
         asserter.propertyValue( "output1_channelCount", 0 );
       }
 
-//!!! ...unfinished... (2022/07/16) 
-      // .addInput0ToPointwise21, .addInput0ToPointwise22
+      // .addInput0ToPointwise20, .addInput0ToPointwise21
       if ( blockParams instanceof Block.Base ) {
 
-        // addInput0ToPointwise21
+        // addInput0ToPointwise20
         if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
-          asserter.propertyValueNE( "addInput0ToPointwise21", null ); // Only MobileNetV2_Xxx has add-input-to-output.
+          asserter.propertyValueNE( "bAddInputToOutput0", true ); // Only MobileNetV2_Xxx has add-input-to-output.
         } else {
-          asserter.propertyValue( "addInput0ToPointwise21", null );
+          asserter.propertyValue( "bAddInputToOutput0", false );
         }
 
-        // addInput0ToPointwise22
-        asserter.propertyValue( "addInput0ToPointwise22", null ); // None of any neural network has add-input-to-output1.
+        // addInput0ToPointwise21
+        asserter.propertyValue( "bAddInputToOutput1", false ); // None of any neural network has add-input-to-output1.
       }
 
       // bKeepInputTensor
