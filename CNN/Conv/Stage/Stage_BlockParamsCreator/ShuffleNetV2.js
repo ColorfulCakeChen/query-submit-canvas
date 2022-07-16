@@ -89,8 +89,8 @@ class ShuffleNetV2 extends Base {
     this.pointwise20ChannelCount = stageParams.sourceChannelCount;
 
     // In ShuffleNetV2, all blocks (except blockLast) have both output0 and output1 with same depth as pointwise20 result.
-    this.outChannels0 = this.pointwise20ChannelCount;
-    this.outChannels1 = this.pointwise20ChannelCount;
+    this.output0_channelCount = this.pointwise20ChannelCount;
+    this.output1_channelCount = this.pointwise20ChannelCount;
   }
 
   /** @override */
@@ -98,7 +98,7 @@ class ShuffleNetV2 extends Base {
     super.configTo_afterBlock0();
 
     // The ( input0, input1 ) of all blocks (except block0) have the same depth as previous (also block0's) block's ( output0, output1 ).
-    this.input0_channelCount = this.outChannels0;
+    this.input0_channelCount = this.output0_channelCount;
 
     // (with concatenation, without add-input-to-output).
     //
@@ -118,7 +118,7 @@ class ShuffleNetV2 extends Base {
    */
   channelShuffler_init() {
     let stageParams = this.stageParams;
-    let block0_outChannelsAll = this.outChannels0 + this.outChannels1;
+    let block0_outChannelsAll = this.output0_channelCount + this.output1_channelCount;
 
     let outputGroupCount = 2; // Always with two convolution groups.
     let concatenatedDepth = block0_outChannelsAll; // All blocks always have the same total output channel count as block0.
@@ -140,8 +140,8 @@ class ShuffleNetV2 extends Base {
     //
     this.pointwise20ChannelCount = this.stageParams.sourceChannelCount * 2;
 
-    this.outChannels0 = this.outChannels0 + this.outChannels1;
-    this.outChannels1 = 0;
+    this.output0_channelCount = this.output0_channelCount + this.output1_channelCount;
+    this.output1_channelCount = 0;
   }
 }
 
