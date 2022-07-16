@@ -323,7 +323,7 @@ class Base extends Recyclable.Root {
     this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
     this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
     this.nActivationId = params.nActivationId;
-    this.nActivationName = params.nActivationIdName;
+    this.nActivationName = params.nActivationName;
     this.bKeepInputTensor = params.bKeepInputTensor;
 
     // The parameters which are determined (inferenced) from the above parameters.
