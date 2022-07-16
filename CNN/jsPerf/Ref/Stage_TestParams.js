@@ -515,12 +515,9 @@ class Base extends TestParams.Base {
         3
       ],
 
-      // Beware of NONE and RELU. They easily result in infinity value because they do not have upper bound.
+      // Must have ActivationFunction (i.e. can not be NONE). Otherwise, it easily results in infinity value because of multiple block.
       //
-//      nActivationId: undefined,
-//       nActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
-       nActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-//       nActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.max ],
+       nActivationId: [ ValueDesc.ActivationFunction.Singleton.range.max, ValueDesc.ActivationFunction.Singleton.range.max ],
 
 //      bKeepInputTensor: undefined,
       bKeepInputTensor: [
