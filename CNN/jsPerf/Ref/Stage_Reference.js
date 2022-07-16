@@ -895,11 +895,14 @@ class Base extends Recyclable.Root {
         if ( blockParams instanceof Block_TestParams.Base ) {
 
           if ( blockParams.bDepthwiseRequestedAndNeeded ) {
-            Base.AssertTwoEqualValues( `.${asserter.objectName}.outputHeight`,
-              blockParams.inferencedParams.depthwisePadInfo.outputHeight, stageParams.outputHeight , asserter.contextDescription );
 
-            Base.AssertTwoEqualValues( `.${asserter.objectName}.outputWidth`,
-              blockParams.inferencedParams.depthwisePadInfo.outputWidth, stageParams.outputWidth , asserter.contextDescription );
+            if ( blockParams.inferencedParams.depthwisePadInfo.outputHeight != stageParams.outputHeight )
+              throw Error( `${asserter.objectName}.outputHeight (${blockParams.inferencedParams.depthwisePadInfo.outputHeight}) `
+                + `should be (${stageParams.outputHeight}). ${asserter.contextDescription}` );
+
+            if ( blockParams.inferencedParams.depthwisePadInfo.outputWidth != stageParams.outputWidth )
+              throw Error( `${asserter.objectName}.outputWidth (${blockParams.inferencedParams.depthwisePadInfo.outputWidth}) `
+                + `should be (${stageParams.outputWidth}). ${asserter.contextDescription}` );
 
           } else {
             asserter.propertyValue( "input0_height", stageParams.outputHeight );
