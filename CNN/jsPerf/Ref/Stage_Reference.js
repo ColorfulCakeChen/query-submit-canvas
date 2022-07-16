@@ -889,30 +889,10 @@ class Base extends Recyclable.Root {
         }
       }
 
-//!!! ...unfinished... (2022/07/16) 
       // output height and width
       {
-        if ( blockParams instanceof Block_TestParams.Base ) {
-
-          if ( blockParams.bDepthwiseRequestedAndNeeded ) {
-
-            if ( blockParams.inferencedParams.depthwisePadInfo.outputHeight != stageParams.outputHeight )
-              throw Error( `${asserter.objectName}.outputHeight (${blockParams.inferencedParams.depthwisePadInfo.outputHeight}) `
-                + `should be (${stageParams.outputHeight}). ${asserter.contextDescription}` );
-
-            if ( blockParams.inferencedParams.depthwisePadInfo.outputWidth != stageParams.outputWidth )
-              throw Error( `${asserter.objectName}.outputWidth (${blockParams.inferencedParams.depthwisePadInfo.outputWidth}) `
-                + `should be (${stageParams.outputWidth}). ${asserter.contextDescription}` );
-
-          } else {
-            asserter.propertyValue( "input0_height", stageParams.outputHeight );
-            asserter.propertyValue( "input0_width", stageParams.outputWidth );
-          }
-
-        } else { // Block.Base
-          asserter.propertyValue( "outputHeight", stageParams.outputHeight );
-          asserter.propertyValue( "outputWidth", stageParams.outputWidth );
-        }
+        asserter.propertyValue( "outputHeight", stageParams.outputHeight );
+        asserter.propertyValue( "outputWidth", stageParams.outputWidth );
       }
 
       // outChannels0, outChannels1
@@ -945,6 +925,7 @@ class Base extends Recyclable.Root {
         asserter.propertyValue( "outChannels1", 0 );
       }
 
+//!!! ...unfinished... (2022/07/16) 
       // .addInput0ToPointwise21, .addInput0ToPointwise22
       if ( blockParams instanceof Block.Base ) {
 
