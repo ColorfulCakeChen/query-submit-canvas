@@ -3,7 +3,7 @@ export { Out };
 import * as Pool from "../../../util/Pool.js";
 import * as Recyclable from "../../../util/Recyclable.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
-import * as Depthwise from "../../../Conv/Depthwise.js";
+import * as Block from "../../../Conv/Block.js";
 
 /**
  *
@@ -121,35 +121,51 @@ class Out extends Recyclable.Root {
     super.disposeResources();
   }
 
-  /** */
-  toString() {
-    return `testParams.id=${this.id}`;
+  /** Fill this.inferencedParams. */
+  generate_inferencedParams() {
+    if ( !this.inferencedParams ) {
+      this.inferencedParams = {};
+    }
+    Block.Params.set_inferencedParams_by.call( this.inferencedParams,
+      this.input0_height, this.input0_width, this.input0_channelCount,
+      this.nConvBlockTypeId,
+      this.pointwise1ChannelCount,
+      this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
+      this.depthwiseStridesPad, this.depthwiseActivationId,
+      this.pointwise20ChannelCount,
+      this.nSqueezeExcitationChannelCountDivisor, this.bSqueezeExcitationPrefix,
+      this.nActivationId
+    );
   }
 
-//!!! ...unfinished... (2022/07/15) seems not used.
   get output_height() {
-    if ( this.bDepthwiseRequestedAndNeeded )
-      return this.depthwisePadInfo.outputHeight;
+    if ( this.inferencedParams.bDepthwiseRequestedAndNeeded )
+      return this.inferencedParams.depthwisePadInfo.outputHeight;
     else
       return this.input0_height;
   }
 
-//!!! ...unfinished... (2022/07/15) seems not used.
   get output_width() {
-    if ( this.bDepthwiseRequestedAndNeeded )
-      return this.depthwisePadInfo.outputWidth;
+    if ( this.inferencedParams.bDepthwiseRequestedAndNeeded )
+      return this.inferencedParams.depthwisePadInfo.outputWidth;
     else
       return this.input0_width;
   }
 
-  /**
-   * @param {Block_TestParams.out} this
-   *   The testParams.outfor creating description.
-   *
-   * @return {string}
-   *   The description of this.
-   */
-  static TestParams_Out_toString() {
+  get outChannels0() {
+    return this.pointwise20ChannelCount;
+  }
+
+  get outChannels1() {
+    return this.inferencedParams.pointwise21ChannelCount;
+  }
+
+  get outChannelsAll() {
+    return ( this.outChannels0 + this.outChannels1 );
+  }
+
+  /** @override */
+  toString() {
 
     let inferencedParams = this.inferencedParams;
 
@@ -161,6 +177,9 @@ class Out extends Recyclable.Root {
 
       + `input1_height=${inferencedParams.input1_height}, input1_width=${inferencedParams.input1_width}, `
       + `inChannels1=${inferencedParams.input1_channelCount}, `
+
+      + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
+      + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels1}, outChannelsAll=${this.outChannelsAll}, `
 
       + `nConvBlockTypeName=`
       + `${ValueDesc.ConvBlockType.Singleton.getStringOf( this.nConvBlockTypeId )}`
