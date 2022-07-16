@@ -286,13 +286,13 @@ class Base extends Recyclable.Root {
     }
 
     if ( false == bInitOk )
-      throw Error(  `Failed to initialize stage object. ${stage}` );
+      throw Error( `Failed to initialize stage object. ${stage}` );
 
     if ( 100 != progress.valuePercentage )
-      throw Error( 
+      throw Error(
         `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${stage}`);
 
-    if ( stage.weightElementOffsetEnd != testParams.in.inputWeightArray.byteLength ) { //!!! For Debug. (parsing ending position)
+    if ( stage.weightElementOffsetEnd != testParams.in.inputWeightArray.length ) { //!!! For Debug. (parsing ending position)
       debugger;
     }
 
@@ -302,7 +302,7 @@ class Base extends Recyclable.Root {
       stage.weightElementOffsetBegin, testParams.in.weightElementOffsetBegin, stage );
 
     Base.AssertTwoEqualValues( "parsing ending position",
-      stage.weightElementOffsetEnd, testParams.in.inputWeightArray.byteLength, stage );
+      stage.weightElementOffsetEnd, testParams.in.inputWeightArray.length, stage );
 
     // parameters.
     asserter.propertyValue( "sourceHeight", testParams.out.sourceHeight );
