@@ -951,11 +951,6 @@ class Base extends Recyclable.Root {
     let inferencedParams = testParams.out.inferencedParams;
     let depthwisePadInfo = inferencedParams.depthwisePadInfo;
 
-    // Note: Do not generate parameters description string in advance every time.
-    //       Just generate them only if necessary by .toString() for reducing memory re-allocation.
-    testParams.out.toString = Base.TestParams_Out_toString; // For Creating description for debug easily.
-
-
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
     //    SHUFFLE_NET_V2_HEAD                    // (2) (ShuffleNetV2's head)
     //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD   // (5) (ShuffleNetV2_ByMobileNetV1's head)
@@ -1277,81 +1272,6 @@ class Base extends Recyclable.Root {
     }
 
     return imageOutArray;
-  }
-
-  /**
-   * @param {Block_TestParams.out} this
-   *   The testParams.outfor creating description.
-   *
-   * @return {string}
-   *   The description of this.
-   */
-  static TestParams_Out_toString() {
-
-    let inferencedParams = this.inferencedParams;
-
-    let paramsOutDescription =
-        `inputTensorCount=${inferencedParams.inputTensorCount}, `
-
-      + `input0_height=${this.input0_height}, input0_width=${this.input0_width}, `
-      + `inChannels0=${this.input0_channelCount}, `
-
-      + `input1_height=${inferencedParams.input1_height}, input1_width=${inferencedParams.input1_width}, `
-      + `inChannels1=${inferencedParams.input1_channelCount}, `
-
-      + `nConvBlockTypeName=`
-      + `${ValueDesc.ConvBlockType.Singleton.getStringOf( this.nConvBlockTypeId )}`
-      + `(${this.nConvBlockTypeId}), `
-
-      + `bHigherHalfDifferent=${inferencedParams.bHigherHalfDifferent}, `
-      + `bHigherHalfDepthwise2=${inferencedParams.bHigherHalfDepthwise2}, `
-
-      + `pointwise1ChannelCount=${this.inferencedParams.pointwise1ChannelCount}, `
-      + `pointwise1Bias=${this.inferencedParams.pointwise1Bias}, `
-      + `pointwise1ActivationName=`
-        + `${ValueDesc.ActivationFunction.Singleton.getStringOf( inferencedParams.pointwise1ActivationId )}`
-        + `(${inferencedParams.pointwise1ActivationId}), `
-
-      + `bDepthwiseRequestedAndNeeded=${inferencedParams.bDepthwiseRequestedAndNeeded}, `
-      + `bDepthwise2Requested=${inferencedParams.bDepthwise2Requested}, `
-
-      + `depthwise_AvgMax_Or_ChannelMultiplier=`
-        + `${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getStringOf( this.depthwise_AvgMax_Or_ChannelMultiplier )}`
-        + `(${this.depthwise_AvgMax_Or_ChannelMultiplier}), `
-      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
-      + `depthwiseStridesPad=`
-        + `${ValueDesc.StridesPad.Singleton.getStringOf( this.depthwiseStridesPad )}`
-        + `(${this.depthwiseStridesPad}), `
-      + `depthwiseBias=${this.inferencedParams.depthwiseBias}, `
-      + `depthwiseActivationName=`
-        + `${Block.Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId )}`
-        + `(${this.depthwiseActivationId}), `
-
-      + `bConcat1Requested=${inferencedParams.bConcat1Requested}, `
-
-      + `pointwise20ChannelCount=${this.pointwise20ChannelCount}, `
-      + `pointwise20Bias=${this.inferencedParams.pointwise20Bias}, `
-      + `pointwise20ActivationName=`
-        + `${Block.Params.pointwise20ActivationId.getStringOfValue( this.pointwise20ActivationId )}`
-        + `(${this.pointwise20ActivationId}), `
-
-      + `nSqueezeExcitationChannelCountDivisorName=`
-        + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getStringOf( this.nSqueezeExcitationChannelCountDivisor )}`
-        + `(${this.nSqueezeExcitationChannelCountDivisor}), `
-
-      + `squeezeExcitationActivationName=`
-        + `${ValueDesc.ActivationFunction.Singleton.getStringOf( this.inferencedParams.squeezeExcitationActivationId )}`
-        + `(${this.inferencedParams.squeezeExcitationActivationId}), `
-
-      + `bAddInputToOutputRequested=${inferencedParams.bAddInputToOutputRequested}, `
-      + `bConcat2ShuffleSplitRequested=${inferencedParams.bConcat2ShuffleSplitRequested}, `
-      + `pointwise20_channelShuffler_outputGroupCount=${inferencedParams.pointwise20_channelShuffler_outputGroupCount}, `
-      + `outputTensorCount=${inferencedParams.outputTensorCount}, `
-
-      + `bKeepInputTensor=${this.bKeepInputTensor}`
-    ;
-
-    return paramsOutDescription;
   }
 
 }
