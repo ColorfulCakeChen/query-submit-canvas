@@ -135,21 +135,21 @@ class ShuffleNetV2_ByPointwise21 extends ShuffleNetV2 {
 
     if ( stageParams.bPointwise1 == false ) {
 
-      // NoPointwise1 ShuffleNetV2 (expanding by once depthwise).
+      // NoPointwise1 ShuffleNetV2_ByPointwise21 (expanding by once depthwise).
       //
-      // If block0 does not have pointwise1 convolution before depthwise convolution, the depthwise2 convolution (in original ShuffleNetV2)
-      // is not needed. Then, a simpler configuration could be used.
+      // If block0 does not have pointwise1 convolution before depthwise convolution, the depthwise2 convolution is not
+      // necessary. Then, a simpler configuration could be used.
       //
       // Just use once depthwise convolution (but with channel multipler 2) to double the channel count.
       //
       this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2;
 
       this.pointwise1ChannelCount = 0;                                  // NoPointwise1.
-      this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                   // Double of input0. (Same as pointwise20.)
+      this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                   // Double of input0. (Double of pointwise20.)
 
     } else {
       this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD;
-      this.pointwise1ChannelCount = stageParams.sourceChannelCount * 2; // Double of input0. (Same as pointwise20.)
+      this.pointwise1ChannelCount = stageParams.sourceChannelCount * 2; // Double of input0. (Double of pointwise20.)
       this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     }
   }
@@ -158,10 +158,20 @@ class ShuffleNetV2_ByPointwise21 extends ShuffleNetV2 {
   configTo_afterBlock0() {
     super.configTo_afterBlock0(); // Block1, 2, 3, ... are almost the same as ShuffleNetV2.
 
+    let stageParams = this.stageParams;
+
     // Except that ShuffleNetV2_ByPointwise21 does not have channel shuffler. The pointwise20 and pointwise21 will do channel shuffling.
     // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
     //
     this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY;
+
+    if ( stageParams.bPointwise1 == false ) {
+      this.pointwise1ChannelCount = 0;                              // NoPointwise1.
+    } else {
+      this.pointwise1ChannelCount = stageParams.sourceChannelCount; // Same as original input0. (Same as pointwise20.)
+    }
+
+    this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
   }
 
   /** @override */
