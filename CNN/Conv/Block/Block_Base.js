@@ -184,7 +184,7 @@ import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_c
  *
  * @member {number} input1_channelCount
  *   The channel count of the second input (i.e. input1). If there is no input1, it will be 0. This is inferenced from other parameters.
- * The input1's channel count of Block.apply() should match this value. The Block.inChannels1 should also the same this value.
+ * The input1's channel count of Block.apply() should match this value.
  *
  * @member {boolean} bDepthwiseRequestedAndNeeded
  *   Whether depthwise operation is requested and necessary.
@@ -241,11 +241,11 @@ import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_c
  *   The name of activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the second pointwise2 convolution.
  * It is only meaningful if ( pointwise21ChannelCount > 0 ) (i.e. ( bPointwise21 == true ) and ( pointwise20ChannelCount > 0 ) ).
  *
- * @member {number} inChannels0
+ * @member {number} input0_channelCount
  *   The channel count of the first input tensor (i.e. inputTensors[ 0 ]). This is the same as this.input0_channelCount
  * (from initer()).
  *
- * @member {number} inChannels1
+ * @member {number} input1_channelCount
  *   The channel count of the second input tensor (i.e. inputTensors[ 1 ]). It is zero or positive (never negative).
  *
  * @member {TensorPlaceholder.Base} input0
@@ -262,14 +262,14 @@ import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_c
  *   The width of the output image. If depthwise does not exist, it will be the same as input0_width. Otherwise, depthwise
  * determines output_width.
  *
- * @member {number} outChannels0
+ * @member {number} output0_channelCount
  *   The channel count of the outputTensor[ 0 ]. In theory, even if ( pointwise20ChannelCount == 0 ) and ( pointwise21ChannelCount == 0 ),
  * this will still be non-zero. However, now the pointwise20ChannelCount should always be not zero. 
  *
- * @member {number} outChannels1
+ * @member {number} output1_channelCount
  *   The channel count of the outputTensor[ 1 ]. If ( pointwise21ChannelCount == 0 ), this will be zero.
  *
- * @member {number} outChannelsAll
+ * @member {number} output_channelCount
  *   The channel count of all output tensors (i.e. both outputTensor[ 0 ] and outputTensor[ 1 ]).
  *
  * @member {TensorPlaceholder.Base} output0
@@ -1408,11 +1408,11 @@ class Base extends Recyclable.Root {
 //   }
 
 
-  get inChannels0() {
+  get input0_channelCount() {
     return this.input0.channelCount;
   }
 
-  get inChannels1() {
+  get input1_channelCount() {
     if ( this.input1 )
       return this.input1.channelCount;
     return 0;
@@ -1423,18 +1423,18 @@ class Base extends Recyclable.Root {
   get output_width() { return this.operationArray.output0.width; }
 
 
-  get outChannels0() {
+  get output0_channelCount() {
     return this.operationArray.output0.channelCount;
   }
 
-  get outChannels1() {
+  get output1_channelCount() {
     if ( this.operationArray.output1 )
       return this.operationArray.output1.channelCount;
     return 0;
   }
 
-  get outChannelsAll() {
-     return ( this.outChannels0 + this.outChannels1 );
+  get output_channelCount() {
+     return ( this.output0_channelCount + this.output1_channelCount );
   }
 
 
@@ -1456,13 +1456,14 @@ class Base extends Recyclable.Root {
       + `inputTensorCount=${this.inputTensorCount}, `
 
       + `input0_height=${this.input0_height}, input0_width=${this.input0_width}, `
-      + `inChannels0=${this.inChannels0}, `
+      + `input0_channelCount=${this.input0_channelCount}, `
 
       + `input1_height=${this.input1_height}, input1_width=${this.input1_width}, `
-      + `inChannels1=${this.inChannels1}, `
+      + `input1_channelCount=${this.input1_channelCount}, `
 
       + `output_height=${this.output_height}, output_width=${this.output_width}, `
-      + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels1}, outChannelsAll=${this.outChannelsAll}, `
+      + `output0_channelCount=${this.output0_channelCount}, output1_channelCount=${this.output1_channelCount}, `
+      + `output_channelCount=${this.output_channelCount}, `
 
       + `nConvBlockTypeName=${this.nConvBlockTypeName}(${this.nConvBlockTypeId}), `
 
