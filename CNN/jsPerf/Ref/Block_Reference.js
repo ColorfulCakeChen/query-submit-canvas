@@ -867,14 +867,14 @@ class Base extends Recyclable.Root {
     // If depthwise does not exist, the output ( height, width ) should be the same as input.
 
     if ( !bDepthwiseRequestedAndNeeded ) {
-      asserter.propertyValue( "outputHeight", testParams.out.input0_height );
-      asserter.propertyValue( "outputWidth", testParams.out.input0_width );
+      asserter.propertyValue( "output_height", testParams.out.input0_height );
+      asserter.propertyValue( "output_width", testParams.out.input0_width );
 
     // Otherwise, depthwise determines output ( height, width ).
     } else {
       let depthwisePadInfo = inferencedParams.depthwisePadInfo;
-      asserter.propertyValue( "outputHeight", depthwisePadInfo.outputHeight );
-      asserter.propertyValue( "outputWidth", depthwisePadInfo.outputWidth );
+      asserter.propertyValue( "output_height", depthwisePadInfo.outputHeight );
+      asserter.propertyValue( "output_width", depthwisePadInfo.outputWidth );
     }
 
     // Other parameters.
