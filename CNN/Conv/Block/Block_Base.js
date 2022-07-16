@@ -533,44 +533,6 @@ class Base extends Recyclable.Root {
     // 2.1.2 Create sub operation array.
     this.operationArray = Operation.TwinArray.Pool.get_or_create_by( this.input0, this.input1, this.outputTensorCount );
 
-//!!! (2022/07/15 Remarked) Old Codes. Use inputTensorPlaceholder_creator instead.
-//     // Create inputs tensor placeholders and sub operation array.
-//     {
-//       if ( inputScaleBoundsArray0.length != this.input0_channelCount )
-//         throw Error( `Block.Base.initer(): `
-//           + `inputScaleBoundsArray0's length ( ${inputScaleBoundsArray0.length} ) should be the same as `
-//           + `input0's channel count ( ${this.input0_channelCount} ).`
-//         );
-//
-//       this.input0 = TensorPlaceholder.Base.Pool.get_or_create_by();
-//       this.input0.set_height_width_channelCount_scaleBoundsArray(
-//         this.input0_height, this.input0_width,
-//         this.input0_channelCount, this.pointwise1_inputChannelCount_lowerHalf, this.pointwise1_inputChannelCount_higherHalf,
-//         inputScaleBoundsArray0 );
-//
-//       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY (3) )
-//       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL (4) )
-//       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY (10) )
-//       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL (11) )
-//       //
-//       if ( this.inputTensorCount > 1 ) {
-//
-//         if ( inputScaleBoundsArray1.length != this.input1_channelCount )
-//           throw Error( `Block.Base.initer(): `
-//             + `inputScaleBoundsArray1's length ( ${inputScaleBoundsArray1.length} ) should be the same as `
-//             + `input1's channel count ( ${this.input1_channelCount} ).`
-//           );
-//
-//         this.input1 = TensorPlaceholder.Base.Pool.get_or_create_by();
-//         this.input1.set_height_width_channelCount_scaleBoundsArray(
-//           this.input1_height, this.input1_width, this.input1_channelCount,
-//           undefined, undefined, // channelCount_lowerHalf, channelCount_higherHalf
-//           inputScaleBoundsArray1 );
-//       }
-//
-//       this.operationArray = Operation.TwinArray.Pool.get_or_create_by( this.input0, this.input1, this.outputTensorCount );
-//     }
-
     // Note: Once an operation is created (even if it just do nothing (e.g. ( pointwise1.bExisted == false ) ), it should always
     //       be appended to this.operationArray. The reason is that a created operation has already registered as the finalOperation
     //       of .endingInputX. Unless it could be un-registered, otherwise it should always be put into queue.
@@ -1346,77 +1308,17 @@ class Base extends Recyclable.Root {
     this.operationArray.apply();
   }
 
-//!!! (2022/07/15 Remarked) Old Codes. Now use input TensorPlaceholder directly.
-//   /**
-//    * Setup .apply according .inputTensorCount and .outputTensorCount.
-//    *   - If ( this.inputTensorCount == 1 ), the inputTensors[ 0 ] will be used.
-//    *   - If ( this.inputTensorCount == 2 ), the inputTensors[ 0 ] and inputTensors[ 1 ] will be used.
-//    *   - If ( this.outputTensorCount == 1 ), the outputTensors[ 0 ] will be the result and outputTensors[ 1 ] will be undefined.
-//    *   - If ( this.outputTensorCount == 2 ), the outputTensors[ 0 ] and outputTensors[ 1 ] will be the result.
-//    *
-//    * The input tensors may or may not be disposed.
-//    *
-//    */
-//   static setup_apply_block() {
-//     if ( this.inputTensorCount >= 2 ) {
-//       if ( this.outputTensorCount >= 2 ) {
-//         this.apply = Base.apply__input0_input1__output0_output1;
-//       } else {
-//         this.apply = Base.apply__input0_input1__output0;
-//       }
-//     } else {
-//       if ( this.outputTensorCount >= 2 ) {
-//         this.apply = Base.apply__input0__output0_output1;
-//       } else {
-//         this.apply = Base.apply__input0__output0;
-//       }
-//     }
-//   }
-//
-//   /** Use inputTensors[ 0 ] and inputTensors[ 1 ]. Generate outputTensors[ 0 ] and outputTensors[ 1 ]. */
-//   static apply__input0_input1__output0_output1( inputTensors, outputTensors ) {
-//     this.input0.realTensor = inputTensors[ 0 ];
-//     this.input1.realTensor = inputTensors[ 1 ];
-//     this.operationArray.apply();
-//     outputTensors[ 0 ] = this.operationArray.output0.realTensor;
-//     outputTensors[ 1 ] = this.operationArray.output1.realTensor;
-//   }
-//
-//   /** Use inputTensors[ 0 ] and inputTensors[ 1 ]. Generate outputTensors[ 0 ] only (i.e. outputTensors[ 1 ] always null). */
-//   static apply__input0_input1__output0( inputTensors, outputTensors ) {
-//     this.input0.realTensor = inputTensors[ 0 ];
-//     this.input1.realTensor = inputTensors[ 1 ];
-//     this.operationArray.apply();
-//     outputTensors[ 0 ] = this.operationArray.output0.realTensor;
-//     outputTensors[ 1 ] = null;
-//   }
-//
-//   /** Use inputTensors[ 0 ] only (i.e. ignore inputTensors[ 1 ]). Generate outputTensors[ 0 ] and outputTensors[ 1 ]. */
-//   static apply__input0__output0_output1( inputTensors, outputTensors ) {
-//     this.input0.realTensor = inputTensors[ 0 ];
-//     this.operationArray.apply();
-//     outputTensors[ 0 ] = this.operationArray.output0.realTensor;
-//     outputTensors[ 1 ] = this.operationArray.output1.realTensor;
-//   }
-//
-//   /** Use inputTensors[ 0 ] only (i.e. ignore inputTensors[ 1 ]). Generate outputTensors[ 0 ] only (i.e. outputTensors[ 1 ] always null). */
-//   static apply__input0__output0( inputTensors, outputTensors ) {
-//     this.input0.realTensor = inputTensors[ 0 ];
-//     this.operationArray.apply();
-//     outputTensors[ 0 ] = this.operationArray.output0.realTensor;
-//     outputTensors[ 1 ] = null;
-//   }
 
-
-  get input0_channelCount() {
-    return this.input0.channelCount;
-  }
-
-  get input1_channelCount() {
-    if ( this.input1 )
-      return this.input1.channelCount;
-    return 0;
-  }
+//!!! (2022/07/16 Remarked) already a data member.
+//   get input0_channelCount() {
+//     return this.input0.channelCount;
+//   }
+//
+//   get input1_channelCount() {
+//     if ( this.input1 )
+//       return this.input1.channelCount;
+//     return 0;
+//   }
 
 
   get output_height() { return this.operationArray.output0.height; }
