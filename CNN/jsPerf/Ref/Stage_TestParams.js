@@ -102,6 +102,9 @@ class Out extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.outputWidth = undefined;
+    this.outputHeight = undefined;
+
     this.sourceHeight = undefined;
     this.sourceWidth = undefined;
     this.sourceChannelCount = undefined;
