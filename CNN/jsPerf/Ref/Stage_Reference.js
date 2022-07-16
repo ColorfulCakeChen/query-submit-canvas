@@ -703,8 +703,6 @@ class Base extends Recyclable.Root {
         }
       }
 
-//!!! ...unfinished... (2022/07/15) depthwise_AvgMax_Or_ChannelMultiplier
-
       // depthwiseStridesPad
       if ( 0 == blockIndex ) { // block0
         switch ( nConvStageTypeId ) {
@@ -751,13 +749,23 @@ class Base extends Recyclable.Root {
         }
       }
 
-      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
-        asserter.propertyValue( "bDepthwiseBias", true );
-        asserter.propertyValue( "depthwiseActivationId", stageParams.nActivationId );
-      } else {
-        asserter.propertyValue( "bDepthwiseBias", false );
-        asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+      // depthwiseActivationId
+      {
+        if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
+
+          //!!! (2022/07/15 Remarked) depthwiseBias is determined by Block.Params (and be tested there).
+          //asserter.propertyValue( "depthwiseBias", true );
+          asserter.propertyValue( "depthwiseActivationId", stageParams.nActivationId );
+
+        } else {
+
+          //!!! (2022/07/15 Remarked) depthwiseBias is determined by Block.Params (and be tested there).
+          //asserter.propertyValue( "depthwiseBias", false );
+          asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+        }
       }
+
+//!!! ...unfinished... (2022/07/15) depthwiseActivationId
 
       // pointwise21ChannelCount
       { // block0, 1, 2, 3, ...
