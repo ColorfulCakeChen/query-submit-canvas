@@ -163,22 +163,9 @@ class Base extends TestParams.Base {
     return this;
   }
 
-  /** Fill this.out.flag according to this.out
-   */
+  /** Fill this.out.inferencedParams according to this.out */
   generate_out_inferencedParams() {
-    if ( !this.out.inferencedParams ) {
-      this.out.inferencedParams = {};
-    }
-    Block.Params.set_inferencedParams_by.call( this.out.inferencedParams,
-      this.out.input0_height, this.out.input0_width, this.out.input0_channelCount,
-      this.out.nConvBlockTypeId,
-      this.out.pointwise1ChannelCount,
-      this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
-      this.out.depthwiseStridesPad, this.out.depthwiseActivationId,
-      this.out.pointwise20ChannelCount,
-      this.out.nSqueezeExcitationChannelCountDivisor, this.out.bSqueezeExcitationPrefix,
-      this.out.nActivationId
-    );
+    this.out.generate_inferencedParams();
   }
 
   /**
