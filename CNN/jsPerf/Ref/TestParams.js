@@ -63,16 +63,17 @@ class ParamValueChangeRecord {
  * @member {number} yieldCount
  *   How many legal (i.e. ( onYield_isLegal() == true ) ) TestParams are yielded.
  *
- * @member {object} in
- *   The "in" sub-object's data members represent every parameters of some (e.g. PointDepthPoint) Params's constructor. Besides,
+ * @member {Object} in
+ *   The "in" sub-object's data members represent every parameters of some (e.g. Block) Params's constructor. Besides,
  * it also has the following properties:
- *   - paramsNumberArrayObject: All (non-concatenated) parameters (include filters and biases) which will be packed into inputFloat32Array.
- *   - inputFloat32Array: A packed Float32Array from paramsNumberArrayObject with byteOffsetBegin.
- *   - byteOffsetBegin: The offset in inputFloat32Array to the first parameter.
+ *   - paramsNumberArrayObject: All (non-concatenated) parameters (include filters and biases) which will be packed into inputWeightArray.
+ *   - inputWeightArray: A number array from paramsNumberArrayObject with weightElementOffsetBegin.
+ *   - weightElementOffsetBegin: The offset in inputWeightArray to the first parameter.
  *
- * @member {object} out
- *   The "out" sub-object's data members represent the "should-be" result of some (e.g. PointDepthPoint) Params.extract().
- * That is, it has the data members of this.in except inputFloat32Array, byteOffsetBegin, weights.
+ * @member {Object} out
+ *   The "out" sub-object's data members represent the "should-be" result of some (e.g. Block) Params.init().
+ * That is, it has the data members of this.in except inputWeightArray, weightElementOffsetBegin. Sub class is responsible for
+ * creating and releasing it.
  *
  * @member {ParamValueChangeRecord[]} modifyParamValueHistory
  *   A record will be pushed into this list when calling this.modifyParamValue(). When call this.restoreParamValues(),
@@ -105,7 +106,10 @@ class Base extends Recyclable.Root {
     this.id = id;
     this.yieldCount = 0;
     this.in = { paramsNumberArrayObject: {} };
-    this.out = {};
+
+    // Sub class is responsible for creating and releasing it.
+    //this.out = undefined; //{};
+
     this.modifyParamValueHistory = Recyclable.Array.Pool.get_or_create_by( 0 );
 
     // For reducing same weights array re-generating.
