@@ -1,4 +1,4 @@
-export { Base };
+export { Base, Out };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -9,6 +9,155 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TestParams from "./TestParams.js";
 import * as Block_TestParams from "./Block_TestParams.js";
 import * as Stage from "../../Conv/Stage.js";
+
+/**
+ *
+ */
+class Out extends Recyclable.Root {
+
+  /**
+   * Used as default Stage_TestParams.Out provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "Stage_TestParams.Out.Pool", Out, Out.setAsConstructor );
+
+  /**
+   */
+  constructor(
+    sourceHeight, sourceWidth, sourceChannelCount,
+    nConvStageTypeId,
+    blockCountRequested,
+    bPointwise1,
+    depthwiseFilterHeight, depthwiseFilterWidth,
+    bPointwise2ActivatedAtStageEnd,
+    nSqueezeExcitationChannelCountDivisor,
+    nActivationId,
+    bKeepInputTensor
+  ) {
+    super();
+    Out.setAsConstructor_self.call( this,
+      sourceHeight, sourceWidth, sourceChannelCount,
+      nConvStageTypeId,
+      blockCountRequested,
+      bPointwise1,
+      depthwiseFilterHeight, depthwiseFilterWidth,
+      bPointwise2ActivatedAtStageEnd,
+      nSqueezeExcitationChannelCountDivisor,
+      nActivationId,
+      bKeepInputTensor
+    );
+  }
+
+  /** @override */
+  static setAsConstructor(
+    sourceHeight, sourceWidth, sourceChannelCount,
+    nConvStageTypeId,
+    blockCountRequested,
+    bPointwise1,
+    depthwiseFilterHeight, depthwiseFilterWidth,
+    bPointwise2ActivatedAtStageEnd,
+    nSqueezeExcitationChannelCountDivisor,
+    nActivationId,
+    bKeepInputTensor
+  ) {
+    super.setAsConstructor();
+    Out.setAsConstructor_self.call( this,
+      sourceHeight, sourceWidth, sourceChannelCount,
+      nConvStageTypeId,
+      blockCountRequested,
+      bPointwise1,
+      depthwiseFilterHeight, depthwiseFilterWidth,
+      bPointwise2ActivatedAtStageEnd,
+      nSqueezeExcitationChannelCountDivisor,
+      nActivationId,
+      bKeepInputTensor
+    );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self(
+    sourceHeight, sourceWidth, sourceChannelCount,
+    nConvStageTypeId,
+    blockCountRequested,
+    bPointwise1,
+    depthwiseFilterHeight, depthwiseFilterWidth,
+    bPointwise2ActivatedAtStageEnd,
+    nSqueezeExcitationChannelCountDivisor,
+    nActivationId,
+    bKeepInputTensor
+  ) {
+    this.sourceHeight = sourceHeight;
+    this.sourceWidth = sourceWidth;
+    this.sourceChannelCount = sourceChannelCount;
+    this.nConvStageTypeId = nConvStageTypeId;
+    this.blockCountRequested = blockCountRequested;
+    this.bPointwise1 = bPointwise1;
+    this.depthwiseFilterHeight = depthwiseFilterHeight;
+    this.depthwiseFilterWidth = depthwiseFilterWidth;
+    this.bPointwise2ActivatedAtStageEnd = bPointwise2ActivatedAtStageEnd;
+    this.nSqueezeExcitationChannelCountDivisor = nSqueezeExcitationChannelCountDivisor;
+    this.nActivationId = nActivationId;
+    this.bKeepInputTensor = bKeepInputTensor;
+  }
+
+  /** @override */
+  disposeResources() {
+    this.sourceHeight = undefined;
+    this.sourceWidth = undefined;
+    this.sourceChannelCount = undefined;
+    this.nConvStageTypeId = undefined;
+    this.blockCountRequested = undefined;
+    this.bPointwise1 = undefined;
+    this.depthwiseFilterHeight = undefined;
+    this.depthwiseFilterWidth = undefined;
+    this.bPointwise2ActivatedAtStageEnd = undefined;
+    this.nSqueezeExcitationChannelCountDivisor = undefined;
+    this.nActivationId = undefined;
+    this.bKeepInputTensor = undefined;
+
+    super.disposeResources();
+  }
+
+  /**  */
+  generate_inferencedParams() {
+
+    // Fill in outputHeight, outputWidth.
+    Stage.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call(
+      stageParams, stageParams.sourceHeight, stageParams.sourceWidth );
+  }
+
+  /** @override */
+  toString() {
+    let paramsOutDescription =
+        `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, `
+      + `sourceChannelCount=${this.sourceChannelCount}, `
+
+      + `nConvStageTypeId=${ValueDesc.ConvStageType.Singleton.getStringOf( this.nConvStageTypeId )}`
+        + `(${this.nConvStageTypeId}), `
+
+      + `blockCountRequested=${this.blockCountRequested}, `
+      + `bPointwise1=${this.bPointwise1}, `
+      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
+
+      + `bPointwise2BiasAtStageEnd=${this.bPointwise2BiasAtStageEnd}, `
+
+      + `nSqueezeExcitationChannelCountDivisorName=`
+        + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getStringOf( this.nSqueezeExcitationChannelCountDivisor )}`
+        + `(${this.nSqueezeExcitationChannelCountDivisor}), `
+
+      + `nActivationIdName=${ValueDesc.ActivationFunction.Singleton.getStringOf( this.nActivationId )}`
+        + `(${this.nActivationId}), `
+
+      + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
+//        + `outputChannelCount=${???.outputChannelCount}, `
+      + `bKeepInputTensor=${this.bKeepInputTensor}`
+    ;
+
+    return paramsOutDescription;
+  }
+
+}
+
 
 /**
  *
@@ -60,10 +209,17 @@ class Base extends TestParams.Base {
 
     // A pre-allocated and re-used NumberArray. (For reducing memory re-allocation.)
     this.NumberArray_ElementOffsetBegin = NameNumberArrayObject_To_NumberArray.Base.Pool.get_or_create_by();
+
+    this.out = Out.Pool.get_or_create_by();
   }
 
   /** @override */
   disposeResources() {
+    if ( this.out ) {
+      this.out.disposeResources_and_recycleToPool();
+      this.out = null;
+    }
+
     this.NumberArray_ElementOffsetBegin?.disposeResources_and_recycleToPool();
     this.NumberArray_ElementOffsetBegin = null;
 
@@ -99,7 +255,13 @@ class Base extends TestParams.Base {
     bKeepInputTensor
   ) {
     this.in.paramsNumberArrayObject = {};
-    this.out = {
+
+    if ( this.out ) {
+      this.out.disposeResources_and_recycleToPool();
+      this.out = null;
+    }
+
+    this.out = Out.Pool.get_or_create_by(
       sourceHeight, sourceWidth, sourceChannelCount,
       nConvStageTypeId,
       blockCountRequested,
@@ -109,7 +271,7 @@ class Base extends TestParams.Base {
       nSqueezeExcitationChannelCountDivisor,
       nActivationId,
       bKeepInputTensor
-    };
+    );
 
     Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
 
@@ -143,9 +305,7 @@ class Base extends TestParams.Base {
   set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
     let stageParams = this.out;
 
-    // Fill in outputHeight, outputWidth.
-    Stage.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call(
-      stageParams, stageParams.sourceHeight, stageParams.sourceWidth );
+    this.generate_out_inferencedParams(); // Fill in outputHeight, outputWidth.
 
     let blockParamsCreator = Stage.Base.create_BlockParamsCreator_byStageParams( stageParams );
     blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last();
@@ -223,6 +383,11 @@ class Base extends TestParams.Base {
     }
 
     return this;
+  }
+
+  /** Fill this.out.inferencedParams according to this.out */
+  generate_out_inferencedParams() {
+    this.out.generate_inferencedParams();
   }
 
   /**
