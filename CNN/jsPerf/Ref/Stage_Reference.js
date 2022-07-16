@@ -268,7 +268,7 @@ class Base extends Recyclable.Root {
       testParams.in.blockCountRequested,
       testParams.in.bPointwise1,
       testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
-      testParams.in.bPointwise2BiasAtStageEnd,
+      testParams.in.bPointwise2ActivatedAtStageEnd,
       testParams.in.nSqueezeExcitationChannelCountDivisor,
       testParams.in.nActivationId,
       testParams.in.bKeepInputTensor
