@@ -299,7 +299,6 @@ Params.SequenceArray = new ParamDesc.SequenceArray( [
   Params.depthwiseFilterWidth,
   Params.bPointwise2ActivatedAtStageEnd,
   Params.nSqueezeExcitationChannelCountDivisor,
-  //Params.bSqueezeExcitationPrefix,
   Params.nActivationId,
   Params.bKeepInputTensor,
 ] );
