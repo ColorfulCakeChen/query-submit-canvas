@@ -12,6 +12,7 @@ import * as ImageSourceBag from "./ImageSourceBag.js";
 import * as Block_TestParams from "./Block_TestParams.js"; 
 import * as Block_Reference from "./Block_Reference.js"; 
 import * as Stage_TestParams from "./Stage_TestParams.js"; 
+import * as Block from "../../Conv/Block.js";
 import * as Stage from "../../Conv/Stage.js";
 
 /**
