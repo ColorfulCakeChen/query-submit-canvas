@@ -71,6 +71,11 @@ class Base extends TestParams.Base {
 
   /** @override */
   disposeResources() {
+    if ( this.out ) {
+      this.out.disposeResources_and_recycleToPool();
+      this.out = null;
+    }
+
     this.NumberArray_ElementOffsetBegin?.disposeResources_and_recycleToPool();
     this.NumberArray_ElementOffsetBegin = null;
 
@@ -109,7 +114,13 @@ class Base extends TestParams.Base {
     bKeepInputTensor
   ) {
     this.in.paramsNumberArrayObject = {};
-    this.out = {
+      
+    if ( this.out ) {
+      this.out.disposeResources_and_recycleToPool();
+      this.out = null;
+    }
+
+    this.out = Out.Pool.get_or_create_by(
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
@@ -119,7 +130,7 @@ class Base extends TestParams.Base {
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       nActivationId,
       bKeepInputTensor
-    };
+    );
 
     Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
 
