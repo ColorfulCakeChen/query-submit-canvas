@@ -469,19 +469,10 @@ class Base extends TestParams.Base {
   /**
    * Responsible for generating testing paramters combinations.
    *
-   * @param {number} sourceHeight
-   *   Only test the height of input image.
-   *
-   * @param {number} sourceWidth
-   *   Only test the width of input image.
-   *
-   * @param {number} sourceChannelCount
-   *   Only test the depth of input image.
-   *
    * @yield {Base}
    *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
    */
-  * ParamsGenerator( sourceHeight, sourceWidth, sourceChannelCount ) {
+  * ParamsGenerator() {
     // (2022/04/30 Remarked) For speed up testing by reduce testing space.
     //let depthwiseFilterMaxSize = 5;
     let depthwiseFilterMaxSize = 3;
