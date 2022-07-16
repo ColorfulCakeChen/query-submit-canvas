@@ -394,7 +394,7 @@ class Base extends Recyclable.Root {
     //       Just generate them only if necessary by .toString() for reducing memory re-allocation.
 
     // Test input channel count.
-    Base.AssertTwoEqualValues( "inChannels1", block.inChannels1, input1_channelCount, block );
+    Base.AssertTwoEqualValues( "input1_channelCount", block.input1_channelCount, input1_channelCount, block );
 
     // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
     // tensor count (i.e. inputTensorDestroyCount).
@@ -427,19 +427,19 @@ class Base extends Recyclable.Root {
 
     { // Test output channel count.
       const CHANNEL_AXIS_ID = 2; // Axis id 2 is depth (i.e. channel) dimension.
-      let outChannels0 = 0, outChannels1 = 0;
+      let output0_channelCount = 0, output1_channelCount = 0;
 
       if ( outputTensor3dArray[ 0 ] && ( outputTensor3dArray[ 0 ].shape.length > CHANNEL_AXIS_ID ) )
-        outChannels0 = outputTensor3dArray[ 0 ].shape[ CHANNEL_AXIS_ID ];
+        output0_channelCount = outputTensor3dArray[ 0 ].shape[ CHANNEL_AXIS_ID ];
 
       if ( outputTensor3dArray[ 1 ] && ( outputTensor3dArray[ 1 ].shape.length > CHANNEL_AXIS_ID ) )
-        outChannels1 = outputTensor3dArray[ 1 ].shape[ CHANNEL_AXIS_ID ];
+        output1_channelCount = outputTensor3dArray[ 1 ].shape[ CHANNEL_AXIS_ID ];
 
-      let outChannelsAll = outChannels0 + outChannels1;
+      let output_channelCount = output0_channelCount + output1_channelCount;
 
-      Base.AssertTwoEqualValues( "outChannels0", block.outChannels0, outChannels0, block );
-      Base.AssertTwoEqualValues( "outChannels1", block.outChannels1, outChannels1, block );
-      Base.AssertTwoEqualValues( "outChannelsAll", block.outChannelsAll, outChannelsAll, block );
+      Base.AssertTwoEqualValues( "output0_channelCount", block.output0_channelCount, output0_channelCount, block );
+      Base.AssertTwoEqualValues( "output1_channelCount", block.output1_channelCount, output1_channelCount, block );
+      Base.AssertTwoEqualValues( "output_channelCount", block.output_channelCount, output_channelCount, block );
     }
 
     { // Test output tensor count.
@@ -675,7 +675,7 @@ class Base extends Recyclable.Root {
     // input tensor parameters.
     asserter.propertyValue( "input0_height", testParams.out.input0_height );
     asserter.propertyValue( "input0_width", testParams.out.input0_width );
-    asserter.propertyValue( "inChannels0", testParams.out.input0_channelCount );
+    asserter.propertyValue( "input0_channelCount", testParams.out.input0_channelCount );
     asserter.propertyValue( "nConvBlockId", testParams.out.nConvBlockId );
 
 //!!! ...unfinished... (2022/06/16) input1_height, input1_width, input1_channelCount
