@@ -67,6 +67,8 @@ class Base extends TestParams.Base {
 
     // A pre-allocated and re-used NumberArray. (For reducing memory re-allocation.)
     this.NumberArray_ElementOffsetBegin = NameNumberArrayObject_To_NumberArray.Base.Pool.get_or_create_by();
+
+    this.out = Out.Pool.get_or_create_by();
   }
 
   /** @override */
