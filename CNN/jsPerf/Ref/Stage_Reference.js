@@ -894,8 +894,8 @@ class Base extends Recyclable.Root {
 
       // output height and width
       {
-        asserter.propertyValue( "outputHeight", stageParams.outputHeight );
-        asserter.propertyValue( "outputWidth", stageParams.outputWidth );
+        asserter.propertyValue( "output_height", stageParams.outputHeight );
+        asserter.propertyValue( "output_width", stageParams.outputWidth );
       }
 
       // output0_channelCount, output1_channelCount
