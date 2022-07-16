@@ -322,7 +322,6 @@ class Base extends Recyclable.Root {
     this.bPointwise2ActivatedAtStageEnd = params.bPointwise2ActivatedAtStageEnd;
     this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
     this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
-    this.bSqueezeExcitationPrefix = params.bSqueezeExcitationPrefix;
     this.nActivationId = params.nActivationId;
     this.nActivationIdName = params.nActivationIdName;
     this.bKeepInputTensor = params.bKeepInputTensor;
@@ -659,7 +658,6 @@ class Base extends Recyclable.Root {
 
       + `nSqueezeExcitationChannelCountDivisorName=${this.nSqueezeExcitationChannelCountDivisorName}`
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
-      + `bSqueezeExcitationPrefix=${this.bSqueezeExcitationPrefix}, `
 
       + `nActivationIdName=${this.nActivationIdName}(${this.nActivationId}), `
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, outputChannelCount=${this.outputChannelCount}, `
