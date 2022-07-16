@@ -602,10 +602,8 @@ class Base extends Recyclable.Root {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
             if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
@@ -617,6 +615,14 @@ class Base extends Recyclable.Root {
               asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
               asserter.propertyValue( "pointwise1ChannelCount", quadruple_Block0Input0ChannelCount );
+            break;
+
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
+            if ( stageParams.bPointwise1 == false )
+              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+            else
+              asserter.propertyValue( "pointwise1ChannelCount", single_Block0Input0ChannelCount );
             break;
 
           default:
@@ -632,8 +638,6 @@ class Base extends Recyclable.Root {
 
       asserter.propertyValue( "depthwiseFilterHeight", stageParams.depthwiseFilterHeight );
       asserter.propertyValue( "depthwiseFilterWidth", stageParams.depthwiseFilterWidth );
-
-//!!! ...unfinished... (2022/07/15) depthwise_AvgMax_Or_ChannelMultiplier
 
       // depthwise_AvgMax_Or_ChannelMultiplier
       if ( 0 == blockIndex ) { // block0
@@ -655,16 +659,16 @@ class Base extends Recyclable.Root {
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
+            asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
+            break;
+
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
             if ( stageParams.bPointwise1 == false )
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
             else
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
-            break;
-
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-            asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
           default:
@@ -674,14 +678,16 @@ class Base extends Recyclable.Root {
         }
 
       } else { // block1, 2, 3, ...
+//!!! ...unfinished... (2022/07/15) depthwise_AvgMax_Or_ChannelMultiplier
+
         switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
+          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
             asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
