@@ -152,16 +152,16 @@ class Out extends Recyclable.Root {
       return this.input0_width;
   }
 
-  get outChannels0() {
+  get output0_channelCount() {
     return this.pointwise20ChannelCount;
   }
 
-  get outChannels1() {
+  get output1_channelCount() {
     return this.inferencedParams.pointwise21ChannelCount;
   }
 
-  get outChannelsAll() {
-    return ( this.outChannels0 + this.outChannels1 );
+  get output_channelCount() {
+    return ( this.output0_channelCount + this.output1_channelCount );
   }
 
   /** @override */
@@ -173,13 +173,14 @@ class Out extends Recyclable.Root {
         `inputTensorCount=${inferencedParams.inputTensorCount}, `
 
       + `input0_height=${this.input0_height}, input0_width=${this.input0_width}, `
-      + `inChannels0=${this.input0_channelCount}, `
+      + `input0_channelCount=${this.input0_channelCount}, `
 
       + `input1_height=${inferencedParams.input1_height}, input1_width=${inferencedParams.input1_width}, `
-      + `inChannels1=${inferencedParams.input1_channelCount}, `
+      + `input1_channelCount=${inferencedParams.input1_channelCount}, `
 
-      + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
-      + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels1}, outChannelsAll=${this.outChannelsAll}, `
+      + `output_height=${this.output_height}, output_width=${this.output_width}, `
+      + `output0_channelCount=${this.output0_channelCount}, output1_channelCount=${this.output1_channelCount}, `
+      + `output_channelCount=${this.output_channelCount}, `
 
       + `nConvBlockTypeName=`
       + `${ValueDesc.ConvBlockType.Singleton.getStringOf( this.nConvBlockTypeId )}`
