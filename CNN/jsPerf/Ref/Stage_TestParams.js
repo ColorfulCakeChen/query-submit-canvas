@@ -396,6 +396,55 @@ class Base extends TestParams.Base {
    * @override
    */
   onYield_isLegal() {
+
+// !!! ...unfinished... (2022/07/16)
+//
+//     // (2021/07/20)
+//     // Note: In backend WASM, when filter width is 1 (note: filter height does not have this issue and could be 1), it seems that
+//     // tf.pool() (both AVG and MAX) and tf.depthwiseConv2d() will calculate wrongly. In backend CPU and WebGL, this problem does
+//     // not exist.
+//     //
+//     // (2022/05/01)
+//     // The tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
+//     // ourselves testing procedure.
+//     if ( tf.getBackend() == "wasm" ) {
+//
+//       this.generate_out_inferencedParams(); // So that this.out.inferencedParams and .depthwisePadInfo is usable.
+//       if ( this.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
+//
+//         // For depthwise1/depthwis2.
+//         if ( this.out.depthwiseFilterWidth == 1 )
+//           return false;
+//
+//         let pointwise2_inputWidth = this.out.inferencedParams.depthwisePadInfo.outputWidth;
+//
+//         // For squeeze-and-excitation.
+//         //
+//         // (squeeze is an average pooling. Its filter width is the same as inputWidth (i.e. pointwise2_inputWidth).)
+//         if (   ( pointwise2_inputWidth == 1 )
+//             && ( ValueDesc.SqueezeExcitationChannelCountDivisor.hasSqueeze( this.out.nSqueezeExcitationChannelCountDivisor ) )
+//            )
+//           return false;
+//       }
+//     }
+
+
+    // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
+    //
+    // Note: When pad is "same", this restriction does not exist.
+    switch ( this.out.nConvStageTypeId ) {
+      case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+      case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
+        if (   ( this.out.depthwiseFilterHeight > this.out.sourceHeight )
+            || ( this.out.depthwiseFilterWidth  > this.out.sourceWidth  ) )
+          return false;
+        break;
+
+      default:
+        // Otherwise, when pad is "same", it should test more filter size.
+        break;
+    }
+
     return true;
   }
 
