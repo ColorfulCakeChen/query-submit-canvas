@@ -659,7 +659,7 @@ class Base extends Recyclable.Root {
       + `nSqueezeExcitationChannelCountDivisorName=${this.nSqueezeExcitationChannelCountDivisorName}`
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
 
-      + `nActivationIdName=${this.nActivationIdName}(${this.nActivationId}), `
+      + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, outputChannelCount=${this.outputChannelCount}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}`
     ;
