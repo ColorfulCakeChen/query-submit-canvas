@@ -174,12 +174,12 @@ class Out extends Recyclable.Root {
  * pointwise1ChannelCountRate, depthwiseFilterHeight, nActivationId, nActivationIdAtStageEnd, nWhetherShuffleChannel,
  * bKeepInputTensor. It also has the following properties:
  *   - paramsNumberArrayObject
- *   - inputFloat32Array
+ *   - inputWeightArray
  *   - byteOffsetBegin
  *
  * @member {object} out
  *   The "out" sub-object's data members represent the "should-be" result of Stage.Params's extract(). That is, it has
- * the above data members (with outputHeight, outputWidth) except paramsNumberArrayObject, inputFloat32Array, byteOffsetBegin.
+ * the above data members (with outputHeight, outputWidth) except paramsNumberArrayObject, inputWeightArray, byteOffsetBegin.
  *
  * @member {object[]} blockArray
  *   Every element is an Block_TestParams object for the parameters of the block.
@@ -298,7 +298,7 @@ class Base extends TestParams.Base {
    * bKeepInputTensor, outputHeight, outputWidth.
    *
    * @param {number} weightsElementOffsetBegin
-   *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
+   *   Offset how many elements (4 bytes per element) at the beginning of the result inputWeightArray.
    * The this.in.byteOffsetBegin will be ( 4 * weightsElementOffsetBegin ).
    *
    * @return {Base}
@@ -354,7 +354,7 @@ class Base extends TestParams.Base {
       );
 
       this.blockArray[ i ] = blockTestParams;
-      paramsNumberArrayObject_modified[ blockName ] = blockTestParams.in.inputFloat32Array;
+      paramsNumberArrayObject_modified[ blockName ] = blockTestParams.in.inputWeightArray;
 
       if ( 0 == i ) { // After block0 (i.e. for block1, 2, 3, ...)
         blockParamsCreator.configTo_afterBlock0();
