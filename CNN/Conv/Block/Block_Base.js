@@ -254,13 +254,13 @@ import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_c
  * @member {TensorPlaceholder.Base} input1
  *   The TensorPlaceholder object which represents this operation's 2nd input. It exists only if ( this.inputTensorCount > 1 ).
  *
- * @member {number} outputHeight
+ * @member {number} output_height
  *   The height of the output image. If depthwise does not exist, it will be the same as input0_height. Otherwise, depthwise
- * determines outputHeight.
+ * determines output_height.
  *
- * @member {number} outputWidth
+ * @member {number} output_width
  *   The width of the output image. If depthwise does not exist, it will be the same as input0_width. Otherwise, depthwise
- * determines outputWidth.
+ * determines output_width.
  *
  * @member {number} outChannels0
  *   The channel count of the outputTensor[ 0 ]. In theory, even if ( pointwise20ChannelCount == 0 ) and ( pointwise21ChannelCount == 0 ),
@@ -1419,8 +1419,8 @@ class Base extends Recyclable.Root {
   }
 
 
-  get outputHeight() { return this.operationArray.output0.height; }
-  get outputWidth() { return this.operationArray.output0.width; }
+  get output_height() { return this.operationArray.output0.height; }
+  get output_width() { return this.operationArray.output0.width; }
 
 
   get outChannels0() {
