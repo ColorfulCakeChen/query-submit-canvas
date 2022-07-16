@@ -407,7 +407,7 @@ class Base extends Recyclable.Root {
         this.bInitOk = yield* blockIniter;
         if ( !this.bInitOk )
           return false;
-        this.weightElementOffsetEnd = params.weightElementOffsetEnd;
+        this.weightElementOffsetEnd = block.weightElementOffsetEnd;
 
         this.tensorWeightCountTotal += block.tensorWeightCountTotal;
         this.tensorWeightCountExtracted += block.tensorWeightCountExtracted;
