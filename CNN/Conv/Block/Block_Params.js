@@ -398,17 +398,6 @@ class Params extends Weights.Params {
     return bExtractOk;
   }
 
-//!!! (2022/07/14 Remarked) Block.Base will use or create by itself.
-//   /**
-//    * Using this Params' InferencedParams to create input TensorPlaceholder. They will be returned to targetObject.input0 and
-//    * targetObject.input1.
-//    */
-//   create_and_set_input_TensorPlaceholder_to( targetObject ) {
-//
-// //!!! ...unfinished... (2022/07/14)
-//
-//   }
-
   /**
    * Determine the following properties:
    *   - this.bLinear_between_depthwise_and_pointwise2
