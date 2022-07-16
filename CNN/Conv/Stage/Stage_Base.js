@@ -421,7 +421,7 @@ class Base extends Recyclable.Root {
       this.block0 = this.blockArray[ 0 ]; // Shortcut to the first block.
       this.blockLast = this.blockArray[ this.blockArray.length - 1 ]; // Shortcut to the last block.
 
-      this.outputChannelCount = this.blockLast.outChannelsAll;
+      this.outputChannelCount = this.blockLast.output_channelCount;
 
       this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
 
