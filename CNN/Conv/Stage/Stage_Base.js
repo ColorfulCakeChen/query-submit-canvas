@@ -549,15 +549,15 @@ class Base extends Recyclable.Root {
   assert_ImageSize_BetweenBlock( blockIndex, blockParamsCreator ) {
 
     if ( 0 == blockIndex ) { // Block0.
-      if ( blockParamsCreator.inputHeight != this.sourceHeight )
+      if ( blockParamsCreator.input0_height != this.sourceHeight )
         throw Error( `Stage.Base.initer(): `
-          + `block${blockIndex}'s input image height ( ${blockParamsCreator.inputHeight} ) should be the same as `
+          + `block${blockIndex}'s input image height ( ${blockParamsCreator.input0_height} ) should be the same as `
           + `stage's source image height ( ${this.sourceHeight} ).`
         );
 
-      if ( blockParamsCreator.inputWidth != this.sourceWidth )
+      if ( blockParamsCreator.input0_width != this.sourceWidth )
         throw Error( `Stage.Base.initer(): `
-          + `block${blockIndex}'s input image width ( ${blockParamsCreator.inputWidth} ) should be the same as `
+          + `block${blockIndex}'s input image width ( ${blockParamsCreator.input0_width} ) should be the same as `
           + `stage's source image width ( ${this.sourceWidth} ).`
         );
 
