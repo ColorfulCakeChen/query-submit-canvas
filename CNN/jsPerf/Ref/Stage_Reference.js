@@ -188,7 +188,7 @@ class Base extends Recyclable.Root {
           outputTensorChannelCount = outputTensor3d.shape[ CHANNEL_AXIS_ID ];
 
         // The real channel count of the output tensor should be the same as predicted output channel count.
-        Base.AssertTwoEqualValues( "outChannels", stage.outputChannelCount, outputTensorChannelCount, stage );
+        Base.AssertTwoEqualValues( "outputChannelCount", stage.outputChannelCount, outputTensorChannelCount, stage );
       }
 
       // Test correctness of Stage BoundsArraySet.
@@ -895,7 +895,7 @@ class Base extends Recyclable.Root {
         asserter.propertyValue( "outputWidth", stageParams.outputWidth );
       }
 
-      // outChannels0, outChannels1
+      // output0_channelCount, output1_channelCount
       if ( ( blockCount - 1 ) > blockIndex ) { // block0, 1, 2, 3, ..., ( blockCount - 2 )
         switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
@@ -904,14 +904,14 @@ class Base extends Recyclable.Root {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-            asserter.propertyValue( "outChannels0", double_Block0Input0ChannelCount );
-            asserter.propertyValue( "outChannels1", 0 );
+            asserter.propertyValue( "output0_channelCount", double_Block0Input0ChannelCount );
+            asserter.propertyValue( "output1_channelCount", 0 );
             break;
 
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
           case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-            asserter.propertyValue( "outChannels0", single_Block0Input0ChannelCount );
-            asserter.propertyValue( "outChannels1", single_Block0Input0ChannelCount );
+            asserter.propertyValue( "output0_channelCount", single_Block0Input0ChannelCount );
+            asserter.propertyValue( "output1_channelCount", single_Block0Input0ChannelCount );
             break;
 
           default:
@@ -921,8 +921,8 @@ class Base extends Recyclable.Root {
         }
 
       } else { // blockLast
-        asserter.propertyValue( "outChannels0", double_Block0Input0ChannelCount );
-        asserter.propertyValue( "outChannels1", 0 );
+        asserter.propertyValue( "output0_channelCount", double_Block0Input0ChannelCount );
+        asserter.propertyValue( "output1_channelCount", 0 );
       }
 
 //!!! ...unfinished... (2022/07/16) 
