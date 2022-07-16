@@ -354,7 +354,9 @@ class Base extends Recyclable.Root {
       let blockParams, block, blockIniter;
       let input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder;
 
-      this.blockArray = Recyclable.OwnerArray.Pool.get_or_create_by( blockParamsCreator.blockCount );
+      this.blockArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
+      this.blockArray.length = blockParamsCreator.blockCount;
+
       for ( let i = 0; i < this.blockArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
 
         if ( 0 == i ) { // Block0.
