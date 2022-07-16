@@ -752,49 +752,73 @@ class Base extends Recyclable.Root {
       // depthwiseActivationId
       {
         if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
-
-          //!!! (2022/07/15 Remarked) depthwiseBias is determined by Block.Params (and be tested there).
+          //!!! (2022/07/16 Remarked) depthwiseBias is determined by Block.Params (and be tested there).
           //asserter.propertyValue( "depthwiseBias", true );
           asserter.propertyValue( "depthwiseActivationId", stageParams.nActivationId );
 
         } else {
-
-          //!!! (2022/07/15 Remarked) depthwiseBias is determined by Block.Params (and be tested there).
+          //!!! (2022/07/16 Remarked) depthwiseBias is determined by Block.Params (and be tested there).
           //asserter.propertyValue( "depthwiseBias", false );
           asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
         }
       }
 
-//!!! ...unfinished... (2022/07/15) depthwiseActivationId
-
-      // pointwise21ChannelCount
+      // pointwise20ChannelCount
       { // block0, 1, 2, 3, ...
-        switch ( nConvStageTypeId ) {
-          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-            asserter.propertyValue( "pointwise21ChannelCount", double_Block0Input0ChannelCount );
-            asserter.propertyValue( "pointwise22ChannelCount", 0 );
-            break;
+        if ( ( blockCount - 1 ) > blockIndex ) { // block0, 1, 2, 3, ..., ( blockCount - 2 )
+          switch ( nConvStageTypeId ) {
+            case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
+            case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+            case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
+            case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
+            case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
+            case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
+              asserter.propertyValue( "pointwise20ChannelCount", double_Block0Input0ChannelCount );
+              asserter.propertyValue( "pointwise21ChannelCount", 0 );
+              break;
 
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-            asserter.propertyValue( "pointwise21ChannelCount", single_Block0Input0ChannelCount );
-            asserter.propertyValue( "pointwise22ChannelCount", single_Block0Input0ChannelCount );
-            break;
+            case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+            case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
+              asserter.propertyValue( "pointwise20ChannelCount", single_Block0Input0ChannelCount );
+              asserter.propertyValue( "pointwise21ChannelCount", single_Block0Input0ChannelCount );
+              break;
 
-          default:
-            Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
-            break;
+            default:
+              Base.Assert_nConvStageTypeId_Unknown(
+                "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+              break;
+          }
+
+        } else { // blockLast
+          switch ( nConvStageTypeId ) {
+            case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
+            case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+            case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
+            case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
+            case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
+            case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
+            case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
+            case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
+              asserter.propertyValue( "pointwise20ChannelCount", double_Block0Input0ChannelCount );
+              asserter.propertyValue( "pointwise21ChannelCount", 0 );
+              break;
+
+            default:
+              Base.Assert_nConvStageTypeId_Unknown(
+                "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+              break;
+          }
         }
       }
 
-      asserter.propertyValue( "bPointwise21Bias", true );
+      //!!! (2022/07/16 Remarked) pointwise20Bias is determined by Block.Params (and be tested there).
+      //asserter.propertyValue( "pointwise20Bias", true );
 
+//!!! ...unfinished... (2022/07/15) pointwise20ActivationId
+      // pointwise20ChannelCount, pointwise20ActivationId
+      {
+        asserter.propertyValue( "pointwise20ChannelCount", . );
+      }
       // pointwise21ActivationId
       if ( ( blockCount - 1 ) > blockIndex ) { // block0, 1, 2, 3, ..., ( blockCount - 2 )
         if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
