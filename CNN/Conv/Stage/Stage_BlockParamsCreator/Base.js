@@ -199,18 +199,13 @@ class Base extends Recyclable.Root {
     
     // 4. squeeze-and-excitation prefix or postfix
     {
-      // MobileNetV2_Xxx uses prefix squeeze-and-excitation.
-      //
-      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
+      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) { // MobileNetV2_Xxx uses prefix squeeze-and-excitation.
         this.bSqueezeExcitationPrefix = true;
 
-      // non-MobileNetV2_Xxx uses postfix squeeze-and-excitation.
-      //
-      } else {
+      } else { // non-MobileNetV2_Xxx uses postfix squeeze-and-excitation.
         this.bSqueezeExcitationPrefix = false;
       }
     }
-
   }
 
   /**
