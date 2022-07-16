@@ -862,35 +862,6 @@ class Base extends Recyclable.Root {
         }
       }
 
-//!!! ...unfinished... (2022/07/15) 
-      // bOutput1Requested
-      if ( ( blockCount - 1 ) > blockIndex ) { // block0, 1, 2, 3, ..., ( blockCount - 2 )
-        switch ( nConvStageTypeId ) {
-          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvStageType.Ids.MOBILE_NET_V2: // (3)
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-            asserter.propertyValue( "bOutput1Requested", false );
-            break;
-
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-            asserter.propertyValue( "bOutput1Requested", true );
-            break;
-
-          default:
-            Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
-            break;
-        }
-
-      } else { // blockLast
-        asserter.propertyValue( "bOutput1Requested", false );
-      }
-
-//!!! ...unfinished... (2022/07/15) 
       // squeeze-and-excitation
       {
         asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", stageParams.nSqueezeExcitationChannelCountDivisor );
@@ -918,7 +889,7 @@ class Base extends Recyclable.Root {
         }
       }
 
-//!!! ...unfinished... (2022/07/15) 
+//!!! ...unfinished... (2022/07/16) 
       // output height and width
       {
         if ( blockParams instanceof Block_TestParams.Base ) {
