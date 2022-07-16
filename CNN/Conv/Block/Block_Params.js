@@ -123,7 +123,7 @@ import * as Depthwise from "../Depthwise.js";
  *
  * @member {number} input1_channelCount
  *   The channel count of the second input (i.e. input1). If there is no input1, it will be 0. This is inferenced from other parameters.
- * The input1's channel count of Block.apply() should match this value. The Block.inChannels1 should also the same this value.
+ * The input1's channel count of Block.apply() should match this value. The Block.input1_channelCount should also the same this value.
  *
  * @member {boolean} pointwise1Bias
  *   If true, there will be a bias after pointwise1 convolution. Usually, it will be true because pointwise1 always has bias. However,
