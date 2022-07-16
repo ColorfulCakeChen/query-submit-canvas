@@ -227,7 +227,7 @@ class Base extends Recyclable.Root {
       // (even if no activation function). It and the next block's pointwise1 is not continuous multiple affine transformation
       // and will not become just one affine transformation.
       //
-      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageType ) ) {
+      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
         this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
       // For all other ConvStageType, whether blockLast's pointwise2 has activation function is according to the specified flag.
