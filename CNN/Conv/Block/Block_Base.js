@@ -1461,7 +1461,7 @@ class Base extends Recyclable.Root {
       + `input1_height=${this.input1_height}, input1_width=${this.input1_width}, `
       + `inChannels1=${this.inChannels1}, `
 
-      + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
+      + `output_height=${this.output_height}, output_width=${this.output_width}, `
       + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels1}, outChannelsAll=${this.outChannelsAll}, `
 
       + `nConvBlockTypeName=${this.nConvBlockTypeName}(${this.nConvBlockTypeId}), `
