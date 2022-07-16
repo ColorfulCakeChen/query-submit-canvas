@@ -763,51 +763,52 @@ class Base extends Recyclable.Root {
         }
       }
 
-      // pointwise20ChannelCount
-      if ( ( blockCount - 1 ) > blockIndex ) { // block0, 1, 2, 3, ..., ( blockCount - 2 )
-        switch ( nConvStageTypeId ) {
-          case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
-          case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
-          case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-            asserter.propertyValue( "pointwise20ChannelCount", double_Block0Input0ChannelCount );
-            asserter.propertyValue( "pointwise21ChannelCount", 0 );
-            break;
+//!!! (2022/07/16 Remarked) already been tested in the following output_channelCount
+//       // pointwise20ChannelCount
+//       if ( ( blockCount - 1 ) > blockIndex ) { // block0, 1, 2, 3, ..., ( blockCount - 2 )
+//         switch ( nConvStageTypeId ) {
+//           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1: // (0)
+//           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+//           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
+//           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
+//           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
+//           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
+//             asserter.propertyValue( "pointwise20ChannelCount", double_Block0Input0ChannelCount );
+//             asserter.propertyValue( "pointwise21ChannelCount", 0 );
+//             break;
+//
+//           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
+//           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
+//             asserter.propertyValue( "pointwise20ChannelCount", single_Block0Input0ChannelCount );
+//             asserter.propertyValue( "pointwise21ChannelCount", single_Block0Input0ChannelCount );
+//             break;
+//
+//           default:
+//             Base.Assert_nConvStageTypeId_Unknown(
+//               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+//             break;
+//         }
+//
+//       } else { // blockLast
+//         switch ( nConvStageTypeId ) {
+//           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1: // (0)
+//           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+//           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
+//           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
+//           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
+//           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
+//           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
+//           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
+//             asserter.propertyValue( "pointwise20ChannelCount", double_Block0Input0ChannelCount );
+//             asserter.propertyValue( "pointwise21ChannelCount", 0 );
+//             break;
 
-          case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-            asserter.propertyValue( "pointwise20ChannelCount", single_Block0Input0ChannelCount );
-            asserter.propertyValue( "pointwise21ChannelCount", single_Block0Input0ChannelCount );
-            break;
-
-          default:
-            Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
-            break;
-        }
-
-      } else { // blockLast
-        switch ( nConvStageTypeId ) {
-          case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1: // (0)
-          case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-          case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
-          case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
-          case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
-          case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-          case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-            asserter.propertyValue( "pointwise20ChannelCount", double_Block0Input0ChannelCount );
-            asserter.propertyValue( "pointwise21ChannelCount", 0 );
-            break;
-
-          default:
-            Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
-            break;
-        }
-      }
+//           default:
+//             Base.Assert_nConvStageTypeId_Unknown(
+//               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+//             break;
+//         }
+//       }
 
       //!!! (2022/07/16 Remarked) pointwise20Bias is determined by Block.Params (and be tested there).
       //asserter.propertyValue( "pointwise20Bias", true );
@@ -865,7 +866,9 @@ class Base extends Recyclable.Root {
       // squeeze-and-excitation
       {
         asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", stageParams.nSqueezeExcitationChannelCountDivisor );
-        asserter.propertyValue( "squeezeExcitationActivationId", stageParams.nActivationId );
+
+//!!! (2022/07/16 Remarked) There is no such member in Block_TestParams.Out or Block.Base
+//        asserter.propertyValue( "squeezeExcitationActivationId", stageParams.nActivationId );
 
         switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1: // (0)
