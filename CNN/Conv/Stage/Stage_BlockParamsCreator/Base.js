@@ -10,10 +10,10 @@ import { Params } from "../Stage_Params.js";
  * Base class for all Stage.BlockParamsCreator.Xxx classes.
  *
  *
- * @member {number} outChannels0
+ * @member {number} output0_channelCount
  *   The output0's channel count in current configuration.
  *
- * @member {number} outChannels1
+ * @member {number} output1_channelCount
  *   The output1's channel count in current configuration.
  *
  */
@@ -55,8 +55,8 @@ class Base extends Recyclable.Root {
     this.depthwiseFilterWidth_Default = undefined; // The default depthwise filter size.
     this.depthwiseFilterHeight_Last = undefined;
     this.depthwiseFilterWidth_Last = undefined;    // The last block's depthwise filter size.
-    this.outChannels0 = undefined;
-    this.outChannels1 = undefined;
+    this.output0_channelCount = undefined;
+    this.output1_channelCount = undefined;
 
     this.bKeepInputTensor = undefined;
     this.nActivationId = undefined;
