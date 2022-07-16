@@ -292,6 +292,9 @@ class Base extends Recyclable.Root {
       throw Error(
         `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${stage}`);
 
+    progress.disposeResources_and_recycleToPool();
+    progress = null;
+
     if ( stage.weightElementOffsetEnd != testParams.in.inputWeightArray.length ) { //!!! For Debug. (parsing ending position)
       debugger;
     }
