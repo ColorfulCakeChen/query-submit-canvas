@@ -204,6 +204,12 @@ import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_c
  * @member {boolean} bAddInputToOutputRequested
  *   If true, the input (in this case, the main input (i.e. input0)) will be added to the output for achieving skip connection.
  *
+ * @member {boolean} bAddInputToOutput0
+ *   If true, the input (in this case, the main input (i.e. input0)) is added to the output0 for achieving skip connection.
+ *
+ * @member {boolean} bAddInputToOutput1
+ *   If true, the input (in this case, the main input (i.e. input0)) is added to the output1 for achieving skip connection.
+ *
  * @member {boolean} bHigherHalfDifferent
  *   Only if ( channelShuffler != null ), this is meaningful. If true, the higher half input channels are processed differently.
  * For pointwise convolution, the higher half may copy lower half, or the higher half may just pass through the input to output.
@@ -768,6 +774,8 @@ class Base extends Recyclable.Root {
     //   - However, even if MobileNetV2, only if not block0 (whose strides == ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME (2))
     //       of a stage, the add-input-to-output can be done.
     //
+    this.bAddInputToOutput0 = false;
+    this.bAddInputToOutput1 = false;
     if ( this.bAddInputToOutputRequested ) {
 
       // Note:
@@ -782,12 +790,14 @@ class Base extends Recyclable.Root {
       let addInput0ToPointwise20;
       if ( this.operationArray.endingInput0?.is_height_width_channelCount_same_byTensorPlaceholder( this.input0 ) ) {
         addInput0ToPointwise20 = Operation.AddTwoTensors.Pool.get_or_create_by( this.input0, this.operationArray.endingInput0 );
+        this.bAddInputToOutput0 = true;
       }
 
       // Note: Only input0 (not input1) will be used to add to output.
       let addInput0ToPointwise21;
       if ( this.operationArray.endingInput1?.is_height_width_channelCount_same_byTensorPlaceholder( this.input0 ) ) {
         addInput0ToPointwise21 = Operation.AddTwoTensors.Pool.get_or_create_by( this.input0, this.operationArray.endingInput1 );
+        this.bAddInputToOutput1 = true;
       }
 
       this.operationArray.operation_append( addInput0ToPointwise20, addInput0ToPointwise21 );
