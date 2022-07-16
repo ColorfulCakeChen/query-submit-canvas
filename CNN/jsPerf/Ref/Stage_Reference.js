@@ -152,7 +152,7 @@ class Base extends Recyclable.Root {
 
     let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
     {
-      let stage = Base.Stage_create( testParams );
+      let stage = Base.Stage_create( testParams, this.testCorrectness_imageIn.boundsArraySet.output0 );
 
       Base.AssertTwoEqualValues( "outputHeight", stage.outputHeight, outputHeight, stage );
       Base.AssertTwoEqualValues( "outputWidth", stage.outputWidth, outputWidth, stage );
