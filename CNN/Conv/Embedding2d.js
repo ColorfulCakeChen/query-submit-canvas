@@ -6,6 +6,12 @@ import * as Weights from "../Unpacker/Weights.js";
 import * as Operation from "./Operation.js";
 //import * as ReturnOrClone from "./ReturnOrClone.js";
 
+
+//!!! ...unfinished... (2022/07/16)
+// If ( input_channelCount == 1 ), it could be no split, no reshape, no add, no concat. (gather is just enough.)
+// This could improve performance.
+
+
 /**
  * Embedding (2d) layer parameters.
  */
@@ -552,10 +558,6 @@ class Base extends Operation.Base() {
     inputTensor3d.dispose();
   }
 
-
-//!!! ...unfinished... (2022/07/15)
-// If ( input_channelCount == 1 ), it needs not split, add, concat. (gather is just enough.)
-//
 
   /**
    * (Used when vocabulary tables are one merged tensor2d. This is faster than SplitReshapeGatherConcat.)
