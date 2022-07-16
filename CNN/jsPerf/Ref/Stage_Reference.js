@@ -678,8 +678,6 @@ class Base extends Recyclable.Root {
         }
 
       } else { // block1, 2, 3, ...
-//!!! ...unfinished... (2022/07/15) depthwise_AvgMax_Or_ChannelMultiplier
-
         switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -704,6 +702,8 @@ class Base extends Recyclable.Root {
             break;
         }
       }
+
+//!!! ...unfinished... (2022/07/15) depthwise_AvgMax_Or_ChannelMultiplier
 
       // depthwiseStridesPad
       if ( 0 == blockIndex ) { // block0
