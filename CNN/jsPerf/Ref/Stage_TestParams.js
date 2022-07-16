@@ -147,7 +147,7 @@ class Out extends Recyclable.Root {
         + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getStringOf( this.nSqueezeExcitationChannelCountDivisor )}`
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
 
-      + `nActivationIdName=${ValueDesc.ActivationFunction.Singleton.getStringOf( this.nActivationId )}`
+      + `nActivationName=${ValueDesc.ActivationFunction.Singleton.getStringOf( this.nActivationId )}`
         + `(${this.nActivationId}), `
 
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
