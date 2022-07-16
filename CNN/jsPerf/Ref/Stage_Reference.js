@@ -986,10 +986,6 @@ class Base extends Recyclable.Root {
   calcResult( imageIn ) {
     let testParams = this.testParams;
 
-    // Note: Do not generate parameters description string in advance every time.
-    //       Just generate them only if necessary by .toString() for reducing memory re-allocation.
-    testParams.out.toString = Base.TestParams_Out_toString; // For Creating description for debug easily.
-
 //!!! (2022/07/15 Remarked) seems not used.
 //     let channelShuffler_concatenatedShape;
 //     let channelShuffler_outputGroupCount = 2; // In ShuffleNetV2, channel shuffler always has 2 convolution group.
@@ -1043,40 +1039,6 @@ class Base extends Recyclable.Root {
     this.imageOutArray[ 1 ] = null;
 
     return imageOut;
-  }
-
-
-  /**
-   * @param {Stage_TestParams.out} this
-   *   The testParams.outfor creating description.
-   *
-   * @return {string}
-   *   The description of this.
-   */
-  static TestParams_Out_toString() {
-
-    let paramsOutDescription =
-
-        `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, `
-      + `sourceChannelCount=${this.sourceChannelCount}, `
-      + `blockCountRequested=${this.blockCountRequested}, `
-      + `bPointwise1=${this.bPointwise1}, `
-      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
-
-      + `nActivationIdName=${ValueDesc.ActivationFunction.Singleton.getStringOf( this.nActivationId )}`
-        + `(${this.nActivationId}), `
-
-      + `bPointwise2BiasAtStageEnd=${this.bPointwise2BiasAtStageEnd}, `
-
-      + `nConvStageTypeId=${ValueDesc.ConvStageType.Singleton.getStringOf( this.nConvStageTypeId )}`
-        + `(${this.nConvStageTypeId}), `
-
-      + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
-//        + `outputChannelCount=${???.outputChannelCount}, `
-      + `bKeepInputTensor=${this.bKeepInputTensor}`
-    ;
-
-    return paramsOutDescription;
   }
 
 }
