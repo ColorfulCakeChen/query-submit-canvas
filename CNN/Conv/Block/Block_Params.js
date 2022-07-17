@@ -433,6 +433,9 @@ class Params extends Weights.Params {
         this.depthwiseFilterWidth_modified = input0_width;
       else
         this.depthwiseFilterWidth_modified = depthwiseFilterWidth;
+    } else {
+      this.depthwiseFilterHeight_modified = depthwiseFilterHeight;
+      this.depthwiseFilterWidth_modified = depthwiseFilterWidth;
     }
 
     let bNoSqueezeExcitation_between_depthwise_and_pointwise2;
