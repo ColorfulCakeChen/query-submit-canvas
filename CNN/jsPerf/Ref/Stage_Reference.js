@@ -200,6 +200,13 @@ class Base extends Recyclable.Root {
 
       stage.disposeResources_and_recycleToPool();
       stage = null;
+
+//!!! ...unfinished... (2022/07/17) need test.
+//
+// For ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 and ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
+// if ( bPointwise2ActivatedAtStageEnd == false ), their result should be the same.
+//
+
     }
     let memoryInfo_afterDispose = tf.memory();
 
