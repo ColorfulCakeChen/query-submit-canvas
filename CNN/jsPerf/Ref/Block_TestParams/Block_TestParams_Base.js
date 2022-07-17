@@ -479,7 +479,7 @@ class Base extends TestParams.Base {
    */
   use_depthwise1( inputImage, io_imageNeedDisposeUniqueStack, depthwiseName, parametersDesc ) {
     let result = inputImage.clone_byDepthwise_NonPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
-      this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
+      this.out.depthwiseFilterHeight_real, this.out.depthwiseFilterWidth_real, this.out.depthwiseStridesPad,
       this.in.paramsNumberArrayObject.depthwise1Filters, this.out.inferencedParams.depthwiseBias,
       this.in.paramsNumberArrayObject.depthwise1Biases, this.out.depthwiseActivationId,
       parametersDesc, depthwiseName );
@@ -496,7 +496,7 @@ class Base extends TestParams.Base {
    */
   use_depthwise1_PassThrough( inputImage, io_imageNeedDisposeUniqueStack, depthwiseName, parametersDesc ) {
     let result = inputImage.clone_byDepthwise_PassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
-      this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
+      this.out.depthwiseFilterHeight_real, this.out.depthwiseFilterWidth_real, this.out.depthwiseStridesPad,
       this.out.inferencedParams.depthwiseBias, this.out.depthwiseActivationId,
       this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0, // SameWhenPassThrough.
@@ -514,7 +514,7 @@ class Base extends TestParams.Base {
    */
   use_depthwise2( inputImage, io_imageNeedDisposeUniqueStack, depthwiseName, parametersDesc ) {
     let result = inputImage.clone_byDepthwise_NonPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
-      this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
+      this.out.depthwiseFilterHeight_real, this.out.depthwiseFilterWidth_real, this.out.depthwiseStridesPad,
       this.in.paramsNumberArrayObject.depthwise2Filters, this.out.inferencedParams.depthwiseBias,
       this.in.paramsNumberArrayObject.depthwise2Biases, this.out.depthwiseActivationId,
       parametersDesc, depthwiseName );
@@ -892,12 +892,6 @@ class Base extends TestParams.Base {
 
     let intermediate_bBias;
     {
-
-//!!! (2022/06/29 Remarked) Use propertyNames instead.
-//       const SEIntermediatePropertyNamePrefix_A = ( propertyNamePrefix_A ) ? ( `${propertyNamePrefix_A}SEIntermediate` ) : null;
-//       const SEIntermediatePropertyNamePrefix_B = ( propertyNamePrefix_B ) ? ( `${propertyNamePrefix_B}SEIntermediate` ) : null;
-//       const SEIntermediatePropertyNamePrefix_C = ( propertyNamePrefix_C ) ? ( `${propertyNamePrefix_C}SEIntermediate` ) : null;
-
       if ( bIntermediate ) {
         intermediate_outputChannelCount_A = Math.ceil( intermediate_inputChannelCount_A / nSqueezeExcitationChannelCountDivisor );
         intermediate_outputChannelCount_B = Math.ceil( intermediate_inputChannelCount_B / nSqueezeExcitationChannelCountDivisor );
@@ -942,11 +936,6 @@ class Base extends TestParams.Base {
 
     let excitation_bBias = true; // Always bBias
     {
-//!!! (2022/06/29 Remarked) Use propertyNames instead.
-//       const SEExcitationPropertyNamePrefix_A = ( propertyNamePrefix_A ) ? ( `${propertyNamePrefix_A}SEExcitation` ) : null;
-//       const SEExcitationPropertyNamePrefix_B = ( propertyNamePrefix_B ) ? ( `${propertyNamePrefix_B}SEExcitation` ) : null;
-//       const SEExcitationPropertyNamePrefix_C = ( propertyNamePrefix_C ) ? ( `${propertyNamePrefix_C}SEExcitation` ) : null;
-
       this.generate_pointwise_filters_biases(
         excitation_inputChannelCount_A, ( ( bExcitation ) ? excitation_outputChannelCount_A : 0 ),
         excitation_bBias, propertyNames[ 0 ].Excitation, io_numberArrayObject );
@@ -988,11 +977,6 @@ class Base extends TestParams.Base {
     let result_outputChannelCount = inputChannelCount;
 
     if ( propertyNames ) {
-
-//!!! (2022/06/29 Remarked) Use propertyNames instead.
-//       const filtersPropertyName = `${propertyNamePrefix}Filters`;
-//       const biasesPropertyName = `${propertyNamePrefix}Biases`;
-
       if ( outputChannelCount > 0 ) {
         result_outputChannelCount = outputChannelCount;
 
@@ -1042,11 +1026,6 @@ class Base extends TestParams.Base {
     let result_outputChannelCount = inputChannelCount;
 
     if ( propertyNames ) {
-
-//!!! (2022/06/29 Remarked) Use propertyNames instead.
-//       const filtersPropertyName = `${propertyNamePrefix}Filters`;
-//       const biasesPropertyName = `${propertyNamePrefix}Biases`;
-
       if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
         result_outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
 
@@ -1163,7 +1142,7 @@ class Base extends TestParams.Base {
       // Only if depthwise operation is requested and necessary, create them.
       if ( paramsAll.inferencedParams.bDepthwiseRequestedAndNeeded ) {
         depthwise1_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise1_inputChannelCount,
-          paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
+          paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight_real, paramsAll.depthwiseFilterWidth_real,
           paramsAll.depthwiseStridesPad, paramsAll.inferencedParams.depthwiseBias,
           Base.PropertyNames.depthwise1, io_paramsNumberArrayObject );
       } else {
@@ -1185,7 +1164,7 @@ class Base extends TestParams.Base {
         // Only if depthwise operation is requested and necessary, create them.
         if ( paramsAll.inferencedParams.bDepthwiseRequestedAndNeeded ) {
           depthwise2_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise2_inputChannelCount,
-            paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
+            paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight_real, paramsAll.depthwiseFilterWidth_real,
             paramsAll.depthwiseStridesPad, paramsAll.inferencedParams.depthwiseBias,
             Base.PropertyNames.depthwise2, io_paramsNumberArrayObject );
         } else {
