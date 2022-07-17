@@ -217,7 +217,10 @@ class Out extends Recyclable.Root {
       + `depthwise_AvgMax_Or_ChannelMultiplier=`
         + `${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getStringOf( this.depthwise_AvgMax_Or_ChannelMultiplier )}`
         + `(${this.depthwise_AvgMax_Or_ChannelMultiplier}), `
+
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
+      + `depthwiseFilterHeight_real=${this.depthwiseFilterHeight_real}, depthwiseFilterWidth_real=${this.depthwiseFilterWidth_real}, `
+
       + `depthwiseStridesPad=`
         + `${ValueDesc.StridesPad.Singleton.getStringOf( this.depthwiseStridesPad )}`
         + `(${this.depthwiseStridesPad}), `
