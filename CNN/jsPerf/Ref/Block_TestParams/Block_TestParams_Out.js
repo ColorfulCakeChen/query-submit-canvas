@@ -140,16 +140,16 @@ class Out extends Recyclable.Root {
 
   /** The inferencedParams.depthwiseFilterHeight_modified is considered*/
   get depthwiseFilterHeight_real() {
-    if ( this.inferencedParams.bDepthwiseRequestedAndNeeded )
-      return this.inferencedParams.depthwisePadInfo.depthwiseFilterHeight_modified;
+    if ( this.inferencedParams.depthwiseFilterHeight_modified != undefined )
+      return this.inferencedParams.depthwiseFilterHeight_modified;
     else
       return this.depthwiseFilterHeight;
   }
 
   /** The inferencedParams.depthwiseFilterWidth_modified is considered*/
   get depthwiseFilterWidth_real() {
-    if ( this.inferencedParams.bDepthwiseRequestedAndNeeded )
-      return this.inferencedParams.depthwisePadInfo.depthwiseFilterWidth_modified;
+    if ( this.inferencedParams.depthwiseFilterWidth_modified != undefined )
+      return this.inferencedParams.depthwiseFilterWidth_modified;
     else
       return this.depthwiseFilterWidth;
   }
