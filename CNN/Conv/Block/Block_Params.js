@@ -368,6 +368,8 @@ class Params extends Weights.Params {
   /** @override */
   disposeResources() {
     this.pointwise1ChannelCount_modified = undefined;
+    this.depthwiseFilterHeight_modified = undefined;
+    this.depthwiseFilterWidth_modified = undefined;
     super.disposeResources();
   }
 
@@ -398,7 +400,7 @@ class Params extends Weights.Params {
     return bExtractOk;
   }
 
-!!! ...unfinished... (2022/07/17)
+//!!! ...unfinished... (2022/07/17)
 // If (   ( ValueDesc.StridesPad.pad_isValid( depthwiseStridesPad ) )
 //     && ( depthwiseFilterHeight, depthwiseFilterWidth ) > ( input0_height, input0_width ) ),
 // adjust ( depthwiseFilterHeight, depthwiseFilterWidth ) to ( input0_height, input0_width ).
@@ -412,6 +414,8 @@ class Params extends Weights.Params {
    *   - this.bLinear_between_depthwise_and_pointwise2
    *   - this.depthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
+   *   - this.depthwiseFilterHeight_modified
+   *   - this.depthwiseFilterWidth_modified
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
    *
    * When ( bDepthwiseRequestedAndNeeded == false ), the depthwise could be discarded to improve performance.
@@ -423,6 +427,19 @@ class Params extends Weights.Params {
     depthwiseActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
   ) {
+
+//!!! ...unfinished... (2022/07/17)
+    // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
+    //
+    // Note: When pad is "same", this restriction does not exist.
+    if ( ValueDesc.StridesPad.pad_isValid( depthwiseStridesPad ) ) {
+      
+        && ( depthwiseFilterHeight, depthwiseFilterWidth ) > ( input0_height, input0_width ) ),
+    adjust ( depthwiseFilterHeight, depthwiseFilterWidth ) to ( input0_height, input0_width ).
+
+
+   *   - this.depthwiseFilterHeight_modified
+   *   - this.depthwiseFilterWidth_modified
 
     let bNoSqueezeExcitation_between_depthwise_and_pointwise2;
     {
@@ -979,8 +996,19 @@ class Params extends Weights.Params {
     return Params.depthwise_AvgMax_Or_ChannelMultiplier.getStringOfValue( this.depthwise_AvgMax_Or_ChannelMultiplier );
   }
 
-  get depthwiseFilterHeight()     { return this.getParamValue_byParamDesc( Params.depthwiseFilterHeight ); }
-  get depthwiseFilterWidth()      { return this.getParamValue_byParamDesc( Params.depthwiseFilterWidth ); }
+  get depthwiseFilterHeight() {
+    if ( this.depthwiseFilterHeight_modified != undefined )
+      return this.depthwiseFilterHeight_modified;
+    else
+      return this.getParamValue_byParamDesc( Params.depthwiseFilterHeight );
+  }
+
+  get depthwiseFilterWidth() {
+    if ( this.depthwiseFilterWidth_modified != undefined )
+      return this.depthwiseFilterWidth_modified;
+    else
+      return this.getParamValue_byParamDesc( Params.depthwiseFilterWidth );
+  }
 
   get depthwiseStridesPad()       { return this.getParamValue_byParamDesc( Params.depthwiseStridesPad ); }
   get depthwiseStridesPadName()   { return ValueDesc.StridesPad.Singleton.getStringOf( this.depthwiseStridesPad ); }
