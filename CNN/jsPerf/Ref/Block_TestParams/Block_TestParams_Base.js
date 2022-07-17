@@ -235,17 +235,20 @@ class Base extends TestParams.Base {
       }
     }
 
-    // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
-    //
-    // Note: When pad is "same", this restriction does not exist.
-    if ( ValueDesc.StridesPad.pad_isValid( this.out.depthwiseStridesPad ) ) {
 
-      if (   ( this.out.depthwiseFilterHeight > this.out.input0_height )
-          || ( this.out.depthwiseFilterWidth  > this.out.input0_width  ) )
-        return false;
-
-    // Otherwise, when pad is "same", it should test more filter size.
-    }
+//!!! (2022/07/17 Remarked) Block.Params will adjust it.
+//
+//     // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
+//     //
+//     // Note: When pad is "same", this restriction does not exist.
+//     if ( ValueDesc.StridesPad.pad_isValid( this.out.depthwiseStridesPad ) ) {
+//
+//       if (   ( this.out.depthwiseFilterHeight > this.out.input0_height )
+//           || ( this.out.depthwiseFilterWidth  > this.out.input0_width  ) )
+//         return false;
+//
+//     // Otherwise, when pad is "same", it should test more filter size.
+//     }
 
     return true;
   }
