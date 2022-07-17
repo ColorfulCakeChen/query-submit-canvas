@@ -403,6 +403,9 @@ class Params extends Weights.Params {
 //     && ( depthwiseFilterHeight, depthwiseFilterWidth ) > ( input0_height, input0_width ) ),
 // adjust ( depthwiseFilterHeight, depthwiseFilterWidth ) to ( input0_height, input0_width ).
 //
+// When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
+//
+// Note: When pad is "same", this restriction does not exist.
 
   /**
    * Determine the following properties:
