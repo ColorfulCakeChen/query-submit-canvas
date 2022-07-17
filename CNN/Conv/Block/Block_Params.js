@@ -412,10 +412,10 @@ class Params extends Weights.Params {
   /**
    * Determine the following properties:
    *   - this.bLinear_between_depthwise_and_pointwise2
-   *   - this.depthwiseBias
-   *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwiseFilterHeight_modified
    *   - this.depthwiseFilterWidth_modified
+   *   - this.depthwiseBias
+   *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
    *
    * When ( bDepthwiseRequestedAndNeeded == false ), the depthwise could be discarded to improve performance.
@@ -428,18 +428,21 @@ class Params extends Weights.Params {
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
   ) {
 
-//!!! ...unfinished... (2022/07/17)
     // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
     //
     // Note: When pad is "same", this restriction does not exist.
+    //
     if ( ValueDesc.StridesPad.pad_isValid( depthwiseStridesPad ) ) {
-      
-        && ( depthwiseFilterHeight, depthwiseFilterWidth ) > ( input0_height, input0_width ) ),
-    adjust ( depthwiseFilterHeight, depthwiseFilterWidth ) to ( input0_height, input0_width ).
+      if ( depthwiseFilterHeight > input0_height )
+        this.depthwiseFilterHeight_modified = input0_height;
+      else
+        this.depthwiseFilterHeight_modified = depthwiseFilterHeight;
 
-
-   *   - this.depthwiseFilterHeight_modified
-   *   - this.depthwiseFilterWidth_modified
+      if ( depthwiseFilterWidth > input0_width )
+        this.depthwiseFilterWidth_modified = input0_width;
+      else
+        this.depthwiseFilterWidth_modified = depthwiseFilterWidth;
+    }
 
     let bNoSqueezeExcitation_between_depthwise_and_pointwise2;
     {
@@ -487,10 +490,10 @@ class Params extends Weights.Params {
     let bChannelCountSame = Depthwise.PadInfoCalculatorRoot.output_channelCount_is_same_as_input( depthwise_AvgMax_Or_ChannelMultiplier );
 
     let bHeightWidthSame = Depthwise.PadInfoCalculatorRoot.output_height_width_is_same_as_input( input0_height, input0_width,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, stridesPadInfo );
+      depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight_modified, this.depthwiseFilterWidth_modified, stridesPadInfo );
 
     let bNoNeighborAnalysis = Depthwise.PadInfoCalculatorRoot.output_height_width_is_no_neighbor_analysis( input0_height, input0_width,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth );
+      depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight_modified, this.depthwiseFilterWidth_modified );
 
     // If a depthwise operation does not change output's ( height, width, channelCount ), does not analyze ( height, width ) neightbors,
     // does not non-linear, then it is equivalent to do nothing.
@@ -509,11 +512,13 @@ class Params extends Weights.Params {
       if ( this.depthwisePadInfo ) { // Re-using (instead of re-creating) may improve runtime speed.
         this.depthwisePadInfo.set(
           input0_height, input0_width, input0_channelCount, 
-          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+          depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight_modified, this.depthwiseFilterWidth_modified,
+          depthwiseStridesPad );
       } else {
         this.depthwisePadInfo = new Depthwise.PadInfoCalculatorRoot(
           input0_height, input0_width, input0_channelCount, 
-          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+          depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight_modified, this.depthwiseFilterWidth_modified,
+          depthwiseStridesPad );
       }
     } else {
       if ( this.depthwisePadInfo ) { // Clear it.
@@ -531,6 +536,8 @@ class Params extends Weights.Params {
    *   - this.input1_width
    *   - this.input1_channelCount
    *   - this.bLinear_between_depthwise_and_pointwise2
+   *   - this.depthwiseFilterHeight_modified
+   *   - this.depthwiseFilterWidth_modified
    *   - this.depthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
@@ -887,6 +894,8 @@ class Params extends Weights.Params {
    *   - this.pointwise1_inputChannelCount_higherHalf
    *   - this.pointwise1_outputChannelCount_lowerHalf
    *   - this.bLinear_between_depthwise_and_pointwise2
+   *   - this.depthwiseFilterHeight_modified
+   *   - this.depthwiseFilterWidth_modified
    *   - this.depthwiseBias
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
