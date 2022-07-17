@@ -76,7 +76,7 @@ class TestCorrectnessInfo extends Recyclable.Root {
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight_real, depthwiseFilterWidth_real, depthwiseStridesPad,
       pointwise20ChannelCount,
       bKeepInputTensor,
       inferencedParams
@@ -107,7 +107,7 @@ class TestCorrectnessInfo extends Recyclable.Root {
       //
       let imageIn1 = imageSourceBag.getImage_by(
         input0_height, input0_width, input1_channelCount,
-        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight_real, depthwiseFilterWidth_real, depthwiseStridesPad );
 
       if ( bTwoInputs ) { // Pass two input images according to parameters.
         imageInArraySelected[ 1 ] = imageIn1;
@@ -191,7 +191,7 @@ class TestCorrectnessInfo extends Recyclable.Root {
     if ( bTwoInputs ) { // Pass two input tensors according to parameters.
       inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by(
         input0_height, input0_width, input1_channelCount,
-        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight_real, depthwiseFilterWidth_real, depthwiseStridesPad );
     }
 
     let inputTensorDestroyCount; // How many input tensors will be destroyed by Block.apply().
@@ -654,12 +654,14 @@ class Base extends Recyclable.Root {
 
         let bHeightWidthSame = Depthwise.PadInfoCalculatorRoot.output_height_width_is_same_as_input(
           testParams.out.input0_height, testParams.out.input0_width,
-          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth,
+          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
+          testParams.out.depthwiseFilterHeight_real, testParams.out.depthwiseFilterWidth_real,
           stridesPadInfo );
 
         let bNoNeighborAnalysis = Depthwise.PadInfoCalculatorRoot.output_height_width_is_no_neighbor_analysis(
           testParams.out.input0_height, testParams.out.input0_width,
-          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth );
+          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
+          testParams.out.depthwiseFilterHeight_real, testParams.out.depthwiseFilterWidth_real );
 
         if (   ( bChannelCountSame )
             && ( bHeightWidthSame )
@@ -807,8 +809,8 @@ class Base extends Recyclable.Root {
     }
 
     asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", depthwise_AvgMax_Or_ChannelMultiplier_shouldBe );
-    asserter.propertyValue( "depthwiseFilterHeight", testParams.out.depthwiseFilterHeight );
-    asserter.propertyValue( "depthwiseFilterWidth", testParams.out.depthwiseFilterWidth );
+    asserter.propertyValue( "depthwiseFilterHeight", testParams.out.depthwiseFilterHeight_real );
+    asserter.propertyValue( "depthwiseFilterWidth", testParams.out.depthwiseFilterWidth_real );
     asserter.propertyValue( "depthwiseStridesPad", testParams.out.depthwiseStridesPad );
     asserter.propertyValue( "depthwiseBias", testParams.out.inferencedParams.depthwiseBias );
     asserter.propertyValue( "depthwiseBias", depthwiseBias_shouldBe );
