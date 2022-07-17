@@ -138,6 +138,22 @@ class Out extends Recyclable.Root {
     );
   }
 
+  /** The inferencedParams.depthwiseFilterHeight_modified is considered*/
+  get depthwiseFilterHeight_real() {
+    if ( this.inferencedParams.bDepthwiseRequestedAndNeeded )
+      return this.inferencedParams.depthwisePadInfo.depthwiseFilterHeight;
+    else
+      return this.depthwiseFilterHeight;
+  }
+
+  /** The inferencedParams.depthwiseFilterWidth_modified is considered*/
+  get depthwiseFilterWidth_real() {
+    if ( this.inferencedParams.bDepthwiseRequestedAndNeeded )
+      return this.inferencedParams.depthwisePadInfo.depthwiseFilterWidth;
+    else
+      return this.depthwiseFilterWidth;
+  }
+
   get output_height() {
     if ( this.inferencedParams.bDepthwiseRequestedAndNeeded )
       return this.inferencedParams.depthwisePadInfo.outputHeight;
