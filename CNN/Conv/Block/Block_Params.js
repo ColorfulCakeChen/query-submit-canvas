@@ -399,7 +399,7 @@ class Params extends Weights.Params {
   }
 
 !!! ...unfinished... (2022/07/17)
-// If (   ( ValueDesc.StridesPad.Singleton.pad_isValid( depthwiseStridesPad ) )
+// If (   ( ValueDesc.StridesPad.pad_isValid( depthwiseStridesPad ) )
 //     && ( depthwiseFilterHeight, depthwiseFilterWidth ) > ( input0_height, input0_width ) ),
 // adjust ( depthwiseFilterHeight, depthwiseFilterWidth ) to ( input0_height, input0_width ).
 //
