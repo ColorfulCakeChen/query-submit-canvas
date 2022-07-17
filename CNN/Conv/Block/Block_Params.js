@@ -400,15 +400,6 @@ class Params extends Weights.Params {
     return bExtractOk;
   }
 
-//!!! ...unfinished... (2022/07/17)
-// If (   ( ValueDesc.StridesPad.pad_isValid( depthwiseStridesPad ) )
-//     && ( depthwiseFilterHeight, depthwiseFilterWidth ) > ( input0_height, input0_width ) ),
-// adjust ( depthwiseFilterHeight, depthwiseFilterWidth ) to ( input0_height, input0_width ).
-//
-// When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
-//
-// Note: When pad is "same", this restriction does not exist.
-
   /**
    * Determine the following properties:
    *   - this.bLinear_between_depthwise_and_pointwise2
@@ -1047,22 +1038,19 @@ class Params extends Weights.Params {
   get bKeepInputTensor()          { return this.getParamValue_byParamDesc( Params.bKeepInputTensor ); }
 
 
-//!!! (2022/07/16 Remarked) seems not used.
-// //!!! ...unfinished... (2022/07/15) seems not used.
-//   get output_height() {
-//     if ( this.bDepthwiseRequestedAndNeeded )
-//       return this.depthwisePadInfo.outputHeight;
-//     else
-//       return this.input0_height;
-//   }
-//
-// //!!! ...unfinished... (2022/07/15) seems not used.
-//   get output_width() {
-//     if ( this.bDepthwiseRequestedAndNeeded )
-//       return this.depthwisePadInfo.outputWidth;
-//     else
-//       return this.input0_width;
-//   }
+  get output_height() {
+    if ( this.bDepthwiseRequestedAndNeeded )
+      return this.depthwisePadInfo.outputHeight;
+    else
+      return this.input0_height;
+  }
+
+  get output_width() {
+    if ( this.bDepthwiseRequestedAndNeeded )
+      return this.depthwisePadInfo.outputWidth;
+    else
+      return this.input0_width;
+  }
 
 }
 
