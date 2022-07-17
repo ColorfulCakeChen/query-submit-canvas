@@ -141,7 +141,7 @@ class Out extends Recyclable.Root {
   /** The inferencedParams.depthwiseFilterHeight_modified is considered*/
   get depthwiseFilterHeight_real() {
     if ( this.inferencedParams.bDepthwiseRequestedAndNeeded )
-      return this.inferencedParams.depthwisePadInfo.depthwiseFilterHeight;
+      return this.inferencedParams.depthwisePadInfo.depthwiseFilterHeight_modified;
     else
       return this.depthwiseFilterHeight;
   }
@@ -149,7 +149,7 @@ class Out extends Recyclable.Root {
   /** The inferencedParams.depthwiseFilterWidth_modified is considered*/
   get depthwiseFilterWidth_real() {
     if ( this.inferencedParams.bDepthwiseRequestedAndNeeded )
-      return this.inferencedParams.depthwisePadInfo.depthwiseFilterWidth;
+      return this.inferencedParams.depthwisePadInfo.depthwiseFilterWidth_modified;
     else
       return this.depthwiseFilterWidth;
   }
