@@ -135,7 +135,7 @@ class Out extends Recyclable.Root {
   generate_inferencedParams() {
     this.InferencedParams_dispose();
 
-    this.inferencedParams = InferencedParams.Pool.get_or_create_by(
+    this.inferencedParams = Block.InferencedParams.Pool.get_or_create_by(
       this.input0_height, this.input0_width, this.input0_channelCount,
       this.nConvBlockTypeId,
       this.pointwise1ChannelCount,
