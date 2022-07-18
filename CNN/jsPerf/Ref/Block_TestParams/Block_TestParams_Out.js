@@ -147,6 +147,14 @@ class Out extends Recyclable.Root {
     );
   }
 
+  /** The inferencedParams.pointwise1ChannelCount_modified is considered*/
+  get pointwise1ChannelCount_real() {
+    if ( this.inferencedParams.pointwise1ChannelCount_modified != undefined )
+      return this.inferencedParams.pointwise1ChannelCount_modified;
+    else
+      return this.pointwise1ChannelCount;
+  }
+
   /** The inferencedParams.depthwiseFilterHeight_modified is considered*/
   get depthwiseFilterHeight_real() {
     if ( this.inferencedParams.depthwiseFilterHeight_modified != undefined )
