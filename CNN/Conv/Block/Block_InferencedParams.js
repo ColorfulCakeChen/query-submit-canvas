@@ -26,7 +26,7 @@ class InferencedParams extends Recyclable.Root {
     pointwise1ChannelCount,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseActivationId,
-    pointwise20ChannelCount,
+    pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     nActivationId
   ) {
@@ -37,7 +37,7 @@ class InferencedParams extends Recyclable.Root {
       pointwise1ChannelCount,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseActivationId,
-      pointwise20ChannelCount,
+      pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       nActivationId
     );
@@ -50,7 +50,7 @@ class InferencedParams extends Recyclable.Root {
     pointwise1ChannelCount,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseActivationId,
-    pointwise20ChannelCount,
+    pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     nActivationId
   ) {
@@ -61,7 +61,7 @@ class InferencedParams extends Recyclable.Root {
       pointwise1ChannelCount,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseActivationId,
-      pointwise20ChannelCount,
+      pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       nActivationId
     );
@@ -75,7 +75,7 @@ class InferencedParams extends Recyclable.Root {
     pointwise1ChannelCount,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseActivationId,
-    pointwise20ChannelCount,
+    pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     nActivationId
   ) {
@@ -85,7 +85,7 @@ class InferencedParams extends Recyclable.Root {
       pointwise1ChannelCount,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseActivationId,
-      pointwise20ChannelCount,
+      pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       nActivationId
     );
@@ -414,15 +414,25 @@ class InferencedParams extends Recyclable.Root {
   /**
    * Determine the following properties:
    *   - this.pointwise21ChannelCount
+   *   - this.pointwise21Bias
+   *   - this.pointwise21ActivationId
+   *   - this.pointwise21ActivationName
    */
-  static set_pointwise21ChannelCount_by( nConvBlockTypeId, pointwise20ChannelCount ) {
+  static set_pointwise21ChannelCount_pointwise21Bias_pointwise21ActivationId_by(
+    nConvBlockTypeId, pointwise20ChannelCount, pointwise20Bias, pointwise20ActivationId ) {
 
     // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
     let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
-    if ( infoConvBlockType.bPointwise21 )
+    if ( infoConvBlockType.bPointwise21 ) {
       this.pointwise21ChannelCount = pointwise20ChannelCount; // Still may be 0.
-    else
+      this.pointwise21Bias = pointwise20Bias;
+      this.pointwise21ActivationId = pointwise20ActivationId;
+    } else {
       this.pointwise21ChannelCount = 0; // No pointwise21.
+      this.pointwise21Bias = false;
+      this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+    }
+    this.pointwise21ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.pointwise20ActivationId );
   }
 
   /**
@@ -617,6 +627,9 @@ class InferencedParams extends Recyclable.Root {
    *   - this.pointwise20_outputChannelCount_lowerHalf
    *   - this.pointwise20_channelShuffler_outputGroupCount
    *   - this.pointwise21ChannelCount
+   *   - this.pointwise21Bias
+   *   - this.pointwise21ActivationId
+   *   - this.pointwise21ActivationName
    *   - this.squeezeExcitationActivationId
    *   - this.squeezeExcitationActivationName
    *   - this.outputTensorCount
@@ -628,7 +641,7 @@ class InferencedParams extends Recyclable.Root {
     pointwise1ChannelCount,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseActivationId,
-    pointwise20ChannelCount,
+    pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     nActivationId
   ) {
@@ -675,7 +688,8 @@ class InferencedParams extends Recyclable.Root {
     // 6. Pointwise21
     //
     // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
-    InferencedParams.set_pointwise21ChannelCount_by.call( this, nConvBlockTypeId, pointwise20ChannelCount );
+    InferencedParams.set_pointwise21ChannelCount_pointwise21Bias_pointwise21ActivationId_by.call( this,
+      nConvBlockTypeId, pointwise20ChannelCount, this.pointwise20Bias, pointwise20ActivationId );
 
     // 5. squeeze-and-excitation
     InferencedParams.set_squeezeExcitationActivationId_squeezeExcitationActivationName_by.call( this,
