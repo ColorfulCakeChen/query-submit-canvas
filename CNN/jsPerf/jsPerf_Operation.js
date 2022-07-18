@@ -5,7 +5,6 @@ import * as Recyclable from "../util/Recyclable.js";
 //import * as RandTools from "../util/RandTools.js";
 import * as TensorPlaceholder from "../Conv/TensorPlaceholder.js";
 import * as Operation from "../Conv/Operation.js";
-import * as Pool_Asserter from "../util/Pool_Asserter.js"; 
 
 /**
  * For testing Operation.Base.
@@ -31,8 +30,8 @@ class Case {
     try {
 
       Pool.All.sessionCall(
-        Pool_Asserter.assert_Pool_issuedCount_same_after_as_before,
-        null, // The "this" when calling Pool_Asserter.assert_Pool_issuedCount_same_after_as_before().
+        Pool.Asserter.assert_Pool_issuedCount_same_after_as_before,
+        null, // The "this" when calling Pool.Asserter.assert_Pool_issuedCount_same_after_as_before().
         "jsPerf_Operation.Case()",
         Case.test_sessionCall_internal, this, // The "this" when calling Case.test_sessionCall_internal().
       );
@@ -56,22 +55,10 @@ class Case {
     if ( this.bInput1 )
       this.input1 = TensorPlaceholder.Base.Pool.get_or_create_by();
 
-//!!! (2022/06/30 Remarked) Now, no issuedCount for individual pool
-//    let TensorPlaceholderPool_issuedCount_before = TensorPlaceholder.Base.Pool.issuedCount;
-
     this.operation = this.classTested.Pool.get_or_create_by( this.input0, this.input1, this.outputTensorCount );
     this.operation.setKeepInputTensor( this.bKeepInputTensor0, this.bKeepInputTensor1 );
 
     tf.tidy( Case.test_tidy_internal.bind( this ) );
-    
-//!!! (2022/06/30 Remarked) Now, no issuedCount for individual pool
-//     let TensorPlaceholderPool_issuedCount_after = TensorPlaceholder.Base.Pool.issuedCount;
-//
-//     if ( TensorPlaceholderPool_issuedCount_after != TensorPlaceholderPool_issuedCount_before )
-//       throw Error( `${this.assertPrefix}: memory leak. `
-//         + `result issued TensorPlachodler count ( ${TensorPlaceholderPool_issuedCount_after} ) `
-//         + `should be ( ${TensorPlaceholderPool_issuedCount_before} ).`
-//       );
   }
 
   /**
