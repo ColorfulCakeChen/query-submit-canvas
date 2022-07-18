@@ -417,11 +417,12 @@ class Params extends Weights.Params {
   /** @return {string} The string version of nConvBlockTypeId. */
   get nConvBlockTypeName()        { return Params.nConvBlockTypeId.getStringOfValue( this.nConvBlockTypeId ); }
 
-  get pointwise1ChannelCount() {
+  get pointwise1ChannelCount()      { return this.getParamValue_byParamDesc( Params.pointwise1ChannelCount ); }
+  get pointwise1ChannelCount_real() {
     if ( this.inferencedParams.pointwise1ChannelCount_modified != undefined )
       return this.inferencedParams.pointwise1ChannelCount_modified;
     else
-      return this.getParamValue_byParamDesc( Params.pointwise1ChannelCount );
+      return this.pointwise1ChannelCount;
   }
 
   /** @return {number} The number version of the depthwise opertion. */
@@ -432,18 +433,20 @@ class Params extends Weights.Params {
     return Params.depthwise_AvgMax_Or_ChannelMultiplier.getStringOfValue( this.depthwise_AvgMax_Or_ChannelMultiplier );
   }
 
-  get depthwiseFilterHeight() {
+  get depthwiseFilterHeight()      { return this.getParamValue_byParamDesc( Params.depthwiseFilterHeight ); }
+  get depthwiseFilterHeight_real() {
     if ( this.inferencedParams.depthwiseFilterHeight_modified != undefined )
       return this.inferencedParams.depthwiseFilterHeight_modified;
     else
-      return this.getParamValue_byParamDesc( Params.depthwiseFilterHeight );
+      return this.depthwiseFilterHeight;
   }
 
-  get depthwiseFilterWidth() {
+  get depthwiseFilterWidth()      { return this.getParamValue_byParamDesc( Params.depthwiseFilterWidth ); }
+  get depthwiseFilterWidth_real() {
     if ( this.inferencedParams.depthwiseFilterWidth_modified != undefined )
       return this.inferencedParams.depthwiseFilterWidth_modified;
     else
-      return this.getParamValue_byParamDesc( Params.depthwiseFilterWidth );
+      return this.depthwiseFilterWidth;
   }
 
   get depthwiseStridesPad()       { return this.getParamValue_byParamDesc( Params.depthwiseStridesPad ); }
@@ -475,15 +478,15 @@ class Params extends Weights.Params {
 
 
   get output_height() {
-    if ( this.bDepthwiseRequestedAndNeeded )
-      return this.depthwisePadInfo.outputHeight;
+    if ( this.inferencedParams.bDepthwiseRequestedAndNeeded )
+      return this.inferencedParams.depthwisePadInfo.outputHeight;
     else
       return this.input0_height;
   }
 
   get output_width() {
-    if ( this.bDepthwiseRequestedAndNeeded )
-      return this.depthwisePadInfo.outputWidth;
+    if ( this.inferencedParams.bDepthwiseRequestedAndNeeded )
+      return this.inferencedParams.depthwisePadInfo.outputWidth;
     else
       return this.input0_width;
   }
