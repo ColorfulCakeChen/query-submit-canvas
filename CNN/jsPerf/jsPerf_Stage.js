@@ -2,7 +2,6 @@ export { init, testCorrectness, disposeResources };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
-import * as Pool_Asserter from "../util/Pool_Asserter.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
@@ -236,7 +235,7 @@ class HeightWidthDepth {
     {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
-      //Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_Stage.HeightWidthDepth.testCorrectness()", () => {
+      //Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_Stage.HeightWidthDepth.testCorrectness()", () => {
       //}, this );
 
       yield;
@@ -292,7 +291,7 @@ class HeightWidthDepth {
             + `` );
       }
 
-      Pool_Asserter.assert_Pool_issuedCount( "jsPerf_Block.HeightWidthDepth.testCorrectness()", pool_all_issuedCount_before );
+      Pool.Asserter.assert_Pool_issuedCount( "jsPerf_Block.HeightWidthDepth.testCorrectness()", pool_all_issuedCount_before );
       yield;
     }
 
