@@ -219,6 +219,9 @@ class Params extends Weights.Params {
    */
   static set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( sourceHeight, sourceWidth ) {
 
+!!! ...unfinished... (2022/07/18)
+// No so easy beccause pad may be "valid" and depthwise filter may be adjusted (when larger than input size of every block.
+
     // By default, the output ( height, width ) is half of the input (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
     //
     // Note: This calculation copied from the getPadAndOutInfo() of
