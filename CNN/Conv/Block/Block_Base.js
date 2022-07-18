@@ -9,6 +9,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as Operation from "../Operation.js";
 import { Params } from "./Block_Params.js";
+import { InferencedParams } from "./Block_InferencedParams.js";
 import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_creator.js";
 
 
