@@ -6,7 +6,6 @@ import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import * as BoundsArraySet_Asserter from "../../util/BoundsArraySet_Asserter.js";
 import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
-import * as Pool_Asserter from "../../util/Pool_Asserter.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ImageSourceBag from "./ImageSourceBag.js"; 
 import * as Block_TestParams from "./Block_TestParams.js"; 
@@ -85,7 +84,7 @@ class Base extends Recyclable.Root {
 
     this.testCorrectness_imageIn = imageSourceBag.getImage_by( sourceHeight, sourceWidth, sourceChannelCount );
 
-    Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "Stage_Reference.Base.testCorrectness_internal()",
+    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Stage_Reference.Base.testCorrectness_internal()",
       Base.testCorrectness_internal, this, imageSourceBag, testParams );
 
     this.testCorrectness_imageIn = null;
@@ -106,7 +105,7 @@ class Base extends Recyclable.Root {
 
     this.testCorrectness_imageOutReference = this.calcResult( this.testCorrectness_imageIn );
 
-    Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "Stage_Reference.Base.stage_create_apply_internal()",
+    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Stage_Reference.Base.stage_create_apply_internal()",
       Base.stage_create_apply_internal, this, imageSourceBag );
 
     { // Release output reference images.
