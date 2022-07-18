@@ -490,7 +490,7 @@ class InferencedParams extends Recyclable.Root {
         this.pointwise1_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
 
         let pointwise1_higherHalfPassThrough = ChannelCountCalculator.HigherHalfPassThrough.Pool.get_or_create_by(
-          this.input0_channelCount, this.pointwise1ChannelCount );
+          input0_channelCount, pointwise1ChannelCount );
 
         this.pointwise1_inputChannelCount_lowerHalf = pointwise1_higherHalfPassThrough.inputChannelCount_lowerHalf;
         this.pointwise1_outputChannelCount_lowerHalf = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
