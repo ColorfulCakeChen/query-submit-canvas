@@ -313,16 +313,7 @@ import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_c
  *   This is a data member which is a pointer to a function. The function processes .input0.realTensor (and .input1.realTensor) as
  * inputTensor(s). It puts to .output0.realTensor as outputTensor. The inputTensors may or may not be disposed according to
  * setKeepInputTensor(). All intermediate tensors will be disposed.
- !!!
- * In fact, this method calls one of apply__input0_input1__output0_output1(), apply__input0_input1__output0(),
- * apply__input0__output0_output1(), apply__input0__output0() according to the initer()'s parameters.
  *
-!!! 
- The function processes .input0.realTensor (and .input1.realTensor) as
- * inputTensor(s). It puts to .output0.realTensor as outputTensor. They are tf.tensor3d and just be passed from input to output.
- * The inputTensors may or may not be disposed according to setKeepInputTensor(). Default is setKeepInputTensor( false, false )
- * which will destroy all inputs. Usually, sub-class should override this data member.
-
  */
 class Base extends Recyclable.Root {
 
@@ -450,13 +441,13 @@ class Base extends Recyclable.Root {
     this.nConvBlockTypeName = params.nConvBlockTypeName;
 
     this.pointwise1ChannelCount = params.pointwise1ChannelCount;
-    this.pointwise1Bias = params.pointwise1Bias;
-    this.pointwise1ActivationId = params.pointwise1ActivationId;
-    this.pointwise1ActivationName = params.pointwise1ActivationName;
-    this.pointwise1_nHigherHalfDifferent = params.pointwise1_nHigherHalfDifferent;
-    this.pointwise1_inputChannelCount_lowerHalf = params.pointwise1_inputChannelCount_lowerHalf;
-    this.pointwise1_inputChannelCount_higherHalf = params.pointwise1_inputChannelCount_higherHalf;
-    this.pointwise1_outputChannelCount_lowerHalf = params.pointwise1_outputChannelCount_lowerHalf;
+    this.pointwise1Bias = params.inferencedParams.pointwise1Bias;
+    this.pointwise1ActivationId = params.inferencedParams.pointwise1ActivationId;
+    this.pointwise1ActivationName = params.inferencedParams.pointwise1ActivationName;
+    this.pointwise1_nHigherHalfDifferent = params.inferencedParams.pointwise1_nHigherHalfDifferent;
+    this.pointwise1_inputChannelCount_lowerHalf = params.inferencedParams.pointwise1_inputChannelCount_lowerHalf;
+    this.pointwise1_inputChannelCount_higherHalf = params.inferencedParams.pointwise1_inputChannelCount_higherHalf;
+    this.pointwise1_outputChannelCount_lowerHalf = params.inferencedParams.pointwise1_outputChannelCount_lowerHalf;
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = params.depthwise_AvgMax_Or_ChannelMultiplier;
     this.depthwise_AvgMax_Or_ChannelMultiplier_Name = params.depthwise_AvgMax_Or_ChannelMultiplier_Name;
@@ -464,19 +455,19 @@ class Base extends Recyclable.Root {
     this.depthwiseFilterWidth = params.depthwiseFilterWidth;
     this.depthwiseStridesPad = params.depthwiseStridesPad;
     this.depthwiseStridesPadName = params.depthwiseStridesPadName;
-    this.depthwiseBias = params.depthwiseBias;
+    this.depthwiseBias = params.inferencedParams.depthwiseBias;
     this.depthwiseActivationId = params.depthwiseActivationId;
     this.depthwiseActivationName = params.depthwiseActivationName;
-    this.depthwise1_nHigherHalfDifferent = params.depthwise1_nHigherHalfDifferent;
-    this.depthwise1_inputChannelCount_lowerHalf = params.depthwise1_inputChannelCount_lowerHalf;
+    this.depthwise1_nHigherHalfDifferent = params.inferencedParams.depthwise1_nHigherHalfDifferent;
+    this.depthwise1_inputChannelCount_lowerHalf = params.inferencedParams.depthwise1_inputChannelCount_lowerHalf;
 
     this.pointwise20ChannelCount = params.pointwise20ChannelCount;
-    this.pointwise20Bias = params.pointwise20Bias;
+    this.pointwise20Bias = params.inferencedParams.pointwise20Bias;
     this.pointwise20ActivationId = params.pointwise20ActivationId;
     this.pointwise20ActivationName = params.pointwise20ActivationName;
-    this.pointwise20_nHigherHalfDifferent = params.pointwise20_nHigherHalfDifferent;
-    this.pointwise20_outputChannelCount_lowerHalf = params.pointwise20_outputChannelCount_lowerHalf;
-    this.pointwise20_channelShuffler_outputGroupCount = params.pointwise20_channelShuffler_outputGroupCount;
+    this.pointwise20_nHigherHalfDifferent = params.inferencedParams.pointwise20_nHigherHalfDifferent;
+    this.pointwise20_outputChannelCount_lowerHalf = params.inferencedParams.pointwise20_outputChannelCount_lowerHalf;
+    this.pointwise20_channelShuffler_outputGroupCount = params.inferencedParams.pointwise20_channelShuffler_outputGroupCount;
 
     this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
     this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
@@ -489,30 +480,32 @@ class Base extends Recyclable.Root {
 
     // The parameters which are inferenced from the above parameters.
     {
-      this.inputTensorCount = params.inputTensorCount;
-      this.input1_height = params.input1_height;
-      this.input1_width = params.input1_width;
-      this.input1_channelCount = params.input1_channelCount;
+      this.inputTensorCount = params.inferencedParams.inputTensorCount;
+      this.input1_height = params.inferencedParams.input1_height;
+      this.input1_width = params.inferencedParams.input1_width;
+      this.input1_channelCount = params.inferencedParams.input1_channelCount;
 
-      this.bDepthwiseRequestedAndNeeded = params.bDepthwiseRequestedAndNeeded;
-      this.depthwisePadInfo = params.depthwisePadInfo;
+      this.bDepthwiseRequestedAndNeeded = params.inferencedParams.bDepthwiseRequestedAndNeeded;
 
-      this.bDepthwise2Requested = params.bDepthwise2Requested;
-      this.bConcat1Requested = params.bConcat1Requested;
-      this.bAddInputToOutputRequested = params.bAddInputToOutputRequested;
-      this.bConcat2ShuffleSplitRequested = params.bConcat2ShuffleSplitRequested;
-      this.bHigherHalfDifferent = params.bHigherHalfDifferent;
-      this.bHigherHalfDepthwise2 = params.bHigherHalfDepthwise2;
+      this.depthwisePadInfo = params.inferencedParams.depthwisePadInfo;
+      params.inferencedParams.depthwisePadInfo = null; // (Because ownership is transferred.)
 
-      this.pointwise21ChannelCount = params.pointwise21ChannelCount;
-      this.pointwise21Bias = params.pointwise21Bias;
-      this.pointwise21ActivationId = params.pointwise21ActivationId;
-      this.pointwise21ActivationName = params.pointwise21ActivationName;
+      this.bDepthwise2Requested = params.inferencedParams.bDepthwise2Requested;
+      this.bConcat1Requested = params.inferencedParams.bConcat1Requested;
+      this.bAddInputToOutputRequested = params.inferencedParams.bAddInputToOutputRequested;
+      this.bConcat2ShuffleSplitRequested = params.inferencedParams.bConcat2ShuffleSplitRequested;
+      this.bHigherHalfDifferent = params.inferencedParams.bHigherHalfDifferent;
+      this.bHigherHalfDepthwise2 = params.inferencedParams.bHigherHalfDepthwise2;
+
+      this.pointwise21ChannelCount = params.inferencedParams.pointwise21ChannelCount;
+      this.pointwise21Bias = params.inferencedParams.pointwise21Bias;
+      this.pointwise21ActivationId = params.inferencedParams.pointwise21ActivationId;
+      this.pointwise21ActivationName = params.inferencedParams.pointwise21ActivationName;
       
-      this.squeezeExcitationActivationId = params.squeezeExcitationActivationId;
-      this.squeezeExcitationActivationName = params.squeezeExcitationActivationName;
+      this.squeezeExcitationActivationId = params.inferencedParams.squeezeExcitationActivationId;
+      this.squeezeExcitationActivationName = params.inferencedParams.squeezeExcitationActivationName;
 
-      this.outputTensorCount = params.outputTensorCount;
+      this.outputTensorCount = params.inferencedParams.outputTensorCount;
     }
 
     params.disposeResources_and_recycleToPool();
@@ -863,12 +856,6 @@ class Base extends Recyclable.Root {
   /**
    * Initialize this object by calling initer() and advance the generator by loop until done.
    *
-
-//!!! (2022/07/17 Remarked) Who will release it if it is create here automatically? So, do not do that.
-//    * @param {ValueMax.Percentage.Aggregate} progressParent
-//    *   If null, a temporary progress object will be created.
-
-   *
    * @return {boolean}
    *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
@@ -880,9 +867,6 @@ class Base extends Recyclable.Root {
     input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
     channelShuffler_ConcatPointwiseConv
   ) {
-
-//!!! (2022/07/17 Remarked) Who will release it if it is create here automatically? So, do not do that.
-//    progressParent = progressParent ?? ( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let initer = this.initer(
       progressParent, inputWeightArray, weightElementOffsetBegin, params,
@@ -945,6 +929,12 @@ class Base extends Recyclable.Root {
     }
 
     // 5.
+    if ( this.depthwisePadInfo ) {
+      this.depthwisePadInfo.disposeResources_and_recycleToPool();
+      this.depthwisePadInfo = null;
+    }
+
+    // 6.
     this.weightElementOffsetBegin = this.weightElementOffsetEnd = -1;
     this.bInitOk = false;
 
