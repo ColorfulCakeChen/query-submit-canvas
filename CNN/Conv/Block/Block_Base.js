@@ -501,7 +501,7 @@ class Base extends Recyclable.Root {
       this.pointwise21Bias = params.inferencedParams.pointwise21Bias;
       this.pointwise21ActivationId = params.inferencedParams.pointwise21ActivationId;
       this.pointwise21ActivationName = params.inferencedParams.pointwise21ActivationName;
-      
+
       this.squeezeExcitationActivationId = params.inferencedParams.squeezeExcitationActivationId;
       this.squeezeExcitationActivationName = params.inferencedParams.squeezeExcitationActivationName;
 
