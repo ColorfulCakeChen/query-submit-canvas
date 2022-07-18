@@ -521,7 +521,7 @@ class InferencedParams extends Recyclable.Root {
    *   - this.pointwise20_outputChannelCount_lowerHalf
    *
    */
-  static set_nHigherHalfDifferent_by( input0_channelCount, nConvBlockTypeId, pointwise1ChannelCount ) {
+  static set_nHigherHalfDifferent_by( input0_channelCount, nConvBlockTypeId, pointwise1ChannelCount, pointwise20ChannelCount ) {
     let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
 
     // pointwise1
@@ -562,7 +562,7 @@ class InferencedParams extends Recyclable.Root {
 
         // In this case, it should be according to half of pointwise20ChannelCount (just like pointwise1).
         // Note: Unlike pointwise1ChannelCount (which may be zero), pointwise20ChannelCount is always positive.
-        this.pointwise20_outputChannelCount_lowerHalf = Math.ceil( this.pointwise20ChannelCount / 2 );
+        this.pointwise20_outputChannelCount_lowerHalf = Math.ceil( pointwise20ChannelCount / 2 );
 
         // For bHigherHalfAnotherPointwise(Shuffle) (i.e. ( pointwise20ChannelCount > 0 ) ).
         //
@@ -681,9 +681,10 @@ class InferencedParams extends Recyclable.Root {
     InferencedParams.set_squeezeExcitationActivationId_squeezeExcitationActivationName_by.call( this,
       nActivationId
     );
-      
+
     // 6. nHigherHalfDifferent
-    InferencedParams.set_nHigherHalfDifferent_by.call( this, input0_channelCount, nConvBlockTypeId, pointwise1ChannelCount );
+    InferencedParams.set_nHigherHalfDifferent_by.call( this,
+      input0_channelCount, nConvBlockTypeId, pointwise1ChannelCount, pointwise20ChannelCount );
   }
 
 }
