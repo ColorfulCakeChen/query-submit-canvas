@@ -3,14 +3,13 @@ export { assert_Pool_issuedCount_same_after_as_before };
 export { assert_Pool_issuedCount_zero };
 
 import { IssuedObjects, All } from "./Pool_IssuedObjects.js";
-//import * as Recyclable from "../Recyclable.js";
 
 /**
  */
 function assert_Pool_issuedCount( prefixMsg, issuedCount_shouldBe ) {
-  if ( Pool.All.issuedCount != issuedCount_shouldBe )
+  if ( All.issuedCount != issuedCount_shouldBe )
     throw Error( `${prefixMsg}: memory leak: `
-      + `Pool.All.issuedCount ( ${Pool.All.issuedCount} ) should be ( ${issuedCount_shouldBe} ).` );
+      + `Pool.All.issuedCount ( ${All.issuedCount} ) should be ( ${issuedCount_shouldBe} ).` );
 }
 
 /**
@@ -32,7 +31,7 @@ function assert_Pool_issuedCount_same_after_as_before( prefixMsg, pfn, thisArg, 
   let returnedValue;
 
   try {
-    let issuedCount_before = Pool.All.issuedCount;
+    let issuedCount_before = All.issuedCount;
 
     returnedValue = pfn.apply( thisArg, restArgs );
 
