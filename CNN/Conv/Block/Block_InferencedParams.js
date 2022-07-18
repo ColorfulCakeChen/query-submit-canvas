@@ -53,8 +53,7 @@ class InferencedParams extends Recyclable.Root {
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     nActivationId
   ) {
-
-    super.setAsConstructor.apply( this, restArgs );
+    super.setAsConstructor();
     InferencedParams.setAsConstructor_self.call( this,
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
@@ -93,14 +92,19 @@ class InferencedParams extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    if ( this.depthwisePadInfo ) {
-      this.depthwisePadInfo.disposeResources_and_recycleToPool();
-      this.depthwisePadInfo = null;
-    }
+    this.DepthwisePadInfo_dispose();
 
 //!!! ...unfinished... (2022/07/18) Other properties?
 
     super.disposeResources();
+  }
+
+  /** Release .depthwisePadInfo */
+  DepthwisePadInfo_dispose() {
+    if ( this.depthwisePadInfo ) {
+      this.depthwisePadInfo.disposeResources_and_recycleToPool();
+      this.depthwisePadInfo = null;
+    }
   }
 
   /**
