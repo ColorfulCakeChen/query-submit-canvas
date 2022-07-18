@@ -425,13 +425,11 @@ class InferencedParams extends Recyclable.Root {
     let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
     if ( infoConvBlockType.bPointwise21 ) {
       this.pointwise21ChannelCount = pointwise20ChannelCount; // Still may be 0.
-      this.pointwise21Bias = pointwise20Bias;
-      this.pointwise21ActivationId = pointwise20ActivationId;
     } else {
       this.pointwise21ChannelCount = 0; // No pointwise21.
-      this.pointwise21Bias = false;
-      this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
     }
+    this.pointwise21Bias = pointwise20Bias;
+    this.pointwise21ActivationId = pointwise20ActivationId;
     this.pointwise21ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.pointwise21ActivationId );
   }
 
