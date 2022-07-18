@@ -1,8 +1,6 @@
 export { Base, Same, Bool, Int };
 export { ActivationFunction };
-
 export { ConvBlockType };
-
 export { AvgMax_Or_ChannelMultiplier };
 export { SqueezeExcitationChannelCountDivisor };
 export { StridesPad };
