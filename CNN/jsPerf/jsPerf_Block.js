@@ -9,7 +9,6 @@ import * as Weights from "../Unpacker/Weights.js";
 import * as RandTools from "../util/RandTools.js";
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
-import * as Pool_Asserter from "../util/Pool_Asserter.js";
 import * as BatchIdCalculator from "./BatchIdCalculator.js";
 import * as Block from "../Conv/Block.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
@@ -591,7 +590,7 @@ class HeightWidthDepth {
     {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
-      Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_Block.HeightWidthDepth.testCorrectness()", () => {
+      Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_Block.HeightWidthDepth.testCorrectness()", () => {
         this.test_FloatValue();
         this.test_Weights_Float32Array_RestrictedClone();
         this.test_ValueRange_valueInputOutputGenerator();
@@ -655,7 +654,7 @@ class HeightWidthDepth {
             + `` );
       }
 
-      Pool_Asserter.assert_Pool_issuedCount( "jsPerf_Block.HeightWidthDepth.testCorrectness()", pool_all_issuedCount_before );
+      Pool.Asserter.assert_Pool_issuedCount( "jsPerf_Block.HeightWidthDepth.testCorrectness()", pool_all_issuedCount_before );
       yield;
     }
 
