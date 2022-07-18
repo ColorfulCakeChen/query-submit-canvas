@@ -6,7 +6,6 @@ import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import * as BoundsArraySet_Asserter from "../../util/BoundsArraySet_Asserter.js";
 import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
-import * as Pool_Asserter from "../../util/Pool_Asserter.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ActivationEscaping from "../../Conv/ActivationEscaping.js";
@@ -309,7 +308,7 @@ class Base extends Recyclable.Root {
 //
 //       } else
       {
-        Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "Block_Reference.Base.testCorrectness_internal()",
+        Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Block_Reference.Base.testCorrectness_internal()",
           Base.testCorrectness_internal, this );
       }
 
@@ -357,7 +356,7 @@ class Base extends Recyclable.Root {
         );
     }
 
-    Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "Block_Reference.Base.block_create_apply_internal()",
+    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Block_Reference.Base.block_create_apply_internal()",
       Base.block_create_apply_internal, this );
 
     tf.dispose( outputTensor3dArray );
