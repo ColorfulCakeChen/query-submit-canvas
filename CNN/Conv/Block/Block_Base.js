@@ -440,7 +440,7 @@ class Base extends Recyclable.Root {
     this.nConvBlockTypeId = params.nConvBlockTypeId;
     this.nConvBlockTypeName = params.nConvBlockTypeName;
 
-    this.pointwise1ChannelCount = params.pointwise1ChannelCount;
+    this.pointwise1ChannelCount = params.pointwise1ChannelCount_real;
     this.pointwise1Bias = params.inferencedParams.pointwise1Bias;
     this.pointwise1ActivationId = params.inferencedParams.pointwise1ActivationId;
     this.pointwise1ActivationName = params.inferencedParams.pointwise1ActivationName;
@@ -451,8 +451,8 @@ class Base extends Recyclable.Root {
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = params.depthwise_AvgMax_Or_ChannelMultiplier;
     this.depthwise_AvgMax_Or_ChannelMultiplier_Name = params.depthwise_AvgMax_Or_ChannelMultiplier_Name;
-    this.depthwiseFilterHeight = params.depthwiseFilterHeight;
-    this.depthwiseFilterWidth = params.depthwiseFilterWidth;
+    this.depthwiseFilterHeight = params.depthwiseFilterHeight_real;
+    this.depthwiseFilterWidth = params.depthwiseFilterWidth_real;
     this.depthwiseStridesPad = params.depthwiseStridesPad;
     this.depthwiseStridesPadName = params.depthwiseStridesPadName;
     this.depthwiseBias = params.inferencedParams.depthwiseBias;
