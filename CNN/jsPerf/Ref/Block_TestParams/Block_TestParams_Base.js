@@ -217,21 +217,23 @@ class Base extends TestParams.Base {
     // (2022/05/01)
     // The tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
     // ourselves testing procedure.
+    //
     if ( tf.getBackend() == "wasm" ) {
 
       this.generate_out_inferencedParams(); // So that this.out.inferencedParams and .depthwisePadInfo is usable.
       if ( this.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
 
         // For depthwise1/depthwis2.
-        if ( this.out.depthwiseFilterWidth == 1 )
+        if ( ( this.out.depthwiseFilterHeight == 1 ) || ( this.out.depthwiseFilterWidth == 1 ) )
           return false;
 
+        let pointwise2_inputHeight = this.out.inferencedParams.depthwisePadInfo.outputHeight;
         let pointwise2_inputWidth = this.out.inferencedParams.depthwisePadInfo.outputWidth;
 
         // For squeeze-and-excitation.
         //
         // (squeeze is an average pooling. Its filter width is the same as inputWidth (i.e. pointwise2_inputWidth).)
-        if (   ( pointwise2_inputWidth == 1 )
+        if (   ( ( pointwise2_inputHeight == 1 ) || ( pointwise2_inputWidth == 1 ) )
             && ( ValueDesc.SqueezeExcitationChannelCountDivisor.hasSqueeze( this.out.nSqueezeExcitationChannelCountDivisor ) )
            )
           return false;
