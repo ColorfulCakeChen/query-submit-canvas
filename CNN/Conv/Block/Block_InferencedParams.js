@@ -94,6 +94,10 @@ class InferencedParams extends Recyclable.Root {
   disposeResources() {
     this.DepthwisePadInfo_dispose();
 
+    this.pointwise1ChannelCount_modified = undefined;
+    this.depthwiseFilterHeight_modified = undefined;
+    this.depthwiseFilterWidth_modified = undefined;
+
 //!!! ...unfinished... (2022/07/18) Other properties?
 
     super.disposeResources();
