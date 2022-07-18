@@ -101,6 +101,8 @@ class Out extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.InferencedParams_dispose();
+
     this.input0_height = undefined;
     this.input0_width = undefined;
     this.input0_channelCount = undefined;
@@ -121,12 +123,19 @@ class Out extends Recyclable.Root {
     super.disposeResources();
   }
 
+  /** Release .inferencedParams */
+  InferencedParams_dispose() {
+    if ( this.inferencedParams ) {
+      this.inferencedParams.disposeResources_and_recycleToPool();
+      this.inferencedParams = null;
+    }
+  }
+
   /** Fill this.inferencedParams. */
   generate_inferencedParams() {
-    if ( !this.inferencedParams ) {
-      this.inferencedParams = {};
-    }
-    Block.Params.set_inferencedParams_by.call( this.inferencedParams,
+    this.InferencedParams_dispose();
+
+    this.inferencedParams = InferencedParams.Pool.get_or_create_by(
       this.input0_height, this.input0_width, this.input0_channelCount,
       this.nConvBlockTypeId,
       this.pointwise1ChannelCount,
