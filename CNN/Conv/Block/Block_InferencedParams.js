@@ -432,7 +432,7 @@ class InferencedParams extends Recyclable.Root {
       this.pointwise21Bias = false;
       this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
     }
-    this.pointwise21ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.pointwise20ActivationId );
+    this.pointwise21ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.pointwise21ActivationId );
   }
 
   /**
