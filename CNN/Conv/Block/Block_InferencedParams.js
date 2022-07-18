@@ -263,7 +263,7 @@ class InferencedParams extends Recyclable.Root {
     this.inputTensorCount = ValueDesc.ConvBlockType.inputTensorCount_get( nConvBlockTypeId );
 
     // 2. depthwise inferenced information.
-    Params.set_depthwise_inferenced_by.call( this,
+    InferencedParams.set_depthwise_inferenced_by.call( this,
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
@@ -316,7 +316,7 @@ class InferencedParams extends Recyclable.Root {
 
           if ( this.inputTensorCount > 1 )
             throw Error(
-              `Block.Params.set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by(): `
+              `Block.InferencedParams.set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by(): `
               + `When ( nConvBlockTypeId == `
               + `${ValueDesc.ConvBlockType.Singleton.getStringOf( nConvBlockTypeId )}`
               + `(${nConvBlockTypeId}) ), `
@@ -525,7 +525,7 @@ class InferencedParams extends Recyclable.Root {
     let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
 
     // pointwise1
-    Params.set_pointwise1_nHigherHalfDifferent_modify_pointwise1ChannelCount_pointwise1Bias_pointwise1ActivationId_by.call( this,
+    InferencedParams.set_pointwise1_nHigherHalfDifferent_modify_pointwise1ChannelCount_pointwise1Bias_pointwise1ActivationId_by.call( this,
       input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount
@@ -639,7 +639,7 @@ class InferencedParams extends Recyclable.Root {
     this.pointwise20Bias = true; // pointwise2 always has bias.
 
     // 1. The input1 channel count.
-    Params.set_inputTensorCount_input1_height_width_channelCount_depthwise_inferenced_by.call( this,
+    InferencedParams.set_inputTensorCount_input1_height_width_channelCount_depthwise_inferenced_by.call( this,
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
@@ -664,7 +664,7 @@ class InferencedParams extends Recyclable.Root {
     this.pointwise20_channelShuffler_outputGroupCount = infoConvBlockType.pointwise20_channelShuffler_outputGroupCount;
 
     // 5. Pointwise1
-    Params.set_pointwise1Bias_pointwise1ActivationId_pointwise1ActivationName_by.call( this,
+    InferencedParams.set_pointwise1Bias_pointwise1ActivationId_pointwise1ActivationName_by.call( this,
       pointwise1ChannelCount,
       this.bLinear_between_depthwise_and_pointwise2,
       this.bDepthwiseRequestedAndNeeded,
@@ -675,15 +675,15 @@ class InferencedParams extends Recyclable.Root {
     // 6. Pointwise21
     //
     // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
-    Params.set_pointwise21ChannelCount_by.call( this, nConvBlockTypeId, pointwise20ChannelCount );
+    InferencedParams.set_pointwise21ChannelCount_by.call( this, nConvBlockTypeId, pointwise20ChannelCount );
 
     // 5. squeeze-and-excitation
-    Params.set_squeezeExcitationActivationId_squeezeExcitationActivationName_by.call( this,
+    InferencedParams.set_squeezeExcitationActivationId_squeezeExcitationActivationName_by.call( this,
       nActivationId
     );
       
     // 6. nHigherHalfDifferent
-    Params.set_nHigherHalfDifferent_by.call( this, input0_channelCount, nConvBlockTypeId, pointwise1ChannelCount );
+    InferencedParams.set_nHigherHalfDifferent_by.call( this, input0_channelCount, nConvBlockTypeId, pointwise1ChannelCount );
   }
 
 }
