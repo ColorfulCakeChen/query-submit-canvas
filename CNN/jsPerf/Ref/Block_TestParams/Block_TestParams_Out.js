@@ -141,7 +141,7 @@ class Out extends Recyclable.Root {
       this.pointwise1ChannelCount,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
       this.depthwiseStridesPad, this.depthwiseActivationId,
-      this.pointwise20ChannelCount,
+      this.pointwise20ChannelCount, this.pointwise20ActivationId,
       this.nSqueezeExcitationChannelCountDivisor, this.bSqueezeExcitationPrefix,
       this.nActivationId
     );
