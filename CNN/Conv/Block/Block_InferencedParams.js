@@ -1,12 +1,13 @@
 export { InferencedParams };
 
 import * as Pool from "../../util/Pool.js";
-//import * as Recyclable from "../../util/Recyclable.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ChannelCountCalculator from "./Block_ChannelCountCalculator.js";
 import * as Depthwise from "../Depthwise.js";
 
 /**
+ * All properties inferenced from Block.Params.
  *
  */
 class InferencedParams extends Recyclable.Root {
