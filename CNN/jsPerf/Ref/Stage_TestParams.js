@@ -125,7 +125,12 @@ class Out extends Recyclable.Root {
   generate_inferencedParams() {
 
     // Fill in outputHeight, outputWidth.
-    Stage.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( this, this.sourceHeight, this.sourceWidth );
+    Stage.Params.set_outputHeight_outputWidth_by.call( this,
+      this.sourceHeight, this.sourceWidth,
+      this.nConvStageTypeId,
+      this.blockCountRequested,
+      this.depthwiseFilterHeight, this.depthwiseFilterWidth
+    );
   }
 
   /** @override */
