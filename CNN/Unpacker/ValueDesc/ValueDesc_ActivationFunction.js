@@ -213,21 +213,6 @@ class ActivationFunction extends Int {
     return Math.log( 1 + Math.exp( x ) );
   }
 
-  /**
-   * Convert activation function id to information object.
-   *
-   * @param {number} nActivationId
-   *   It should be one of ValueDesc.ActivationFunction.Singleton.Ids.Xxx. (e.g. ValueDesc.ActivationFunction.Singleton.Ids.NONE,
-   * ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.COS, ...)
-   *
-   * @return {ActivationFunction.Info}
-   *   It should be one of ValueDesc.ActivationFunction.Singleton.integerToObjectMap according to the nActivationId.
-   */
-  getInfoById( nActivationId ) {
-    let info = this.integerToObjectMap.get( nActivationId );
-    return info;
-  }
-
 }
 
 /**
