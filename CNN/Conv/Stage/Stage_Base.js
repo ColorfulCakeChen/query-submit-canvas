@@ -328,8 +328,9 @@ class Base extends Recyclable.Root {
 
     // The parameters which are determined (inferenced) from the above parameters.
     {
-      this.outputHeight = params.outputHeight;
-      this.outputWidth = params.outputWidth;
+//!!! (2022/07/19 Remarked) should come from the last block.
+//       this.outputHeight = params.outputHeight;
+//       this.outputWidth = params.outputWidth;
     }
 
     this.tensorWeightCountExtracted = 0;
@@ -643,6 +644,14 @@ class Base extends Recyclable.Root {
 
   get output0() {
     return this.blockLast.output0;
+  }
+
+  get outputHeight() {
+    return this.blockLast.output0.height;
+  }
+
+  get outputWidth() {
+    return this.blockLast.output0.width;
   }
 
   /**
