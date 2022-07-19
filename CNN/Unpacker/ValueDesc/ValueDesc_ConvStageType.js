@@ -17,16 +17,16 @@ import { Int } from "./ValueDesc_Base.js";
 class ConvStageType extends Int {
 
   constructor() {
-    super( 0, 7, [
-      "MOBILE_NET_V1",                             // (0)
-      "MOBILE_NET_V1_PAD_VALID",                   // (1)
-      "MOBILE_NET_V2_THIN",                        // (2)
-      "MOBILE_NET_V2",                             // (3)
-      "SHUFFLE_NET_V2",                            // (4)
-      "SHUFFLE_NET_V2_BY_MOBILE_NET_V1",           // (5)
-      "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID", // (6)
-      "SHUFFLE_NET_V2_BY_POINTWISE21",             // (7)
-    ] );
+    super( 0, 7, {
+      MOBILE_NET_V1:                             0,
+      MOBILE_NET_V1_PAD_VALID:                   1,
+      MOBILE_NET_V2_THIN:                        2,
+      MOBILE_NET_V2:                             3,
+      SHUFFLE_NET_V2:                            4,
+      SHUFFLE_NET_V2_BY_MOBILE_NET_V1:           5,
+      SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: 6,
+      SHUFFLE_NET_V2_BY_POINTWISE21:             7,
+    } );
   }
 
   /**
@@ -35,10 +35,10 @@ class ConvStageType extends Int {
    */
   static isMobileNet( nConvStageTypeId ) {
     switch ( nConvStageTypeId ) {
-      case ConvStageType.Singleton.Ids.MOBILE_NET_V1: // (0)
-      case ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-      case ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
-      case ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
+      case ConvStageType.Singleton.Ids.MOBILE_NET_V1: 0)
+      case ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: 1)
+      case ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: 2)
+      case ConvStageType.Singleton.Ids.MOBILE_NET_V2: 3)
         return true;
       default:
         return false;
@@ -51,8 +51,8 @@ class ConvStageType extends Int {
    */
   static isMobileNetV2( nConvStageTypeId ) {
     switch ( nConvStageTypeId ) {
-      case ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
-      case ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
+      case ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: 2)
+      case ConvStageType.Singleton.Ids.MOBILE_NET_V2: 3)
         return true;
       default:
         return false;
@@ -65,10 +65,10 @@ class ConvStageType extends Int {
    */
   static isShuffleNet( nConvStageTypeId ) {
     switch ( nConvStageTypeId ) {
-      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
-      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
-      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
+      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: 4)
+      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: 5)
+      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: 6)
+      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: 7)
         return true;
       default:
         return false;
@@ -81,8 +81,8 @@ class ConvStageType extends Int {
    */
   static isPadValid( nConvStageTypeId ) {
     switch ( nConvStageTypeId ) {
-      case ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
+      case ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: 1)
+      case ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: 6)
         return true;
       default:
         return false;
