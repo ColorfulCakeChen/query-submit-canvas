@@ -28,7 +28,7 @@ class SqueezeExcitationChannelCountDivisor extends Int {
       // (2022/05/26 Remarked) Do not define these names because they will occupy too many memory.
       //
       //... [ ... new Array( 64 ).keys() ].map( x => `SQUEEZE_INTERMEDIATE_DIVISOR_${( x + 1 )}_EXCITATION` )
-    ] );
+    } );
   }
 
 //!!! (2022/05/26 Remarked) too many info object needs to be created.
