@@ -112,7 +112,7 @@ class Int {
       let valueArray = Object.values( Ids );
       if ( nameArray.length > this.range.kinds )
         throw Error( `ValueDesc.Int.constructor(): Range violation: `
-          + `Object.keys( Ids ).length ( ${nameArray.length} ) <= range.kinds ( ${this.range.kinds} ).`
+          + `Object.keys( Ids ).length ( ${nameArray.length} ) should be <= range.kinds ( ${this.range.kinds} ).`
         );
 
       this.integerToNameMap = new Map;
@@ -135,7 +135,7 @@ class Int {
       let objectArray = Object.values( Infos );
       if ( nameArray.length > this.range.kinds )
         throw Error( `ValueDesc.Int.constructor(): Range violation: `
-          + `Object.keys( Infos ).length ( ${nameArray.length} ) <= range.kinds ( ${this.range.kinds} ).`
+          + `Object.keys( Infos ).length ( ${nameArray.length} ) should be <= range.kinds ( ${this.range.kinds} ).`
         );
 
       this.integerToObjectMap = new Map;
