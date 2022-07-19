@@ -80,20 +80,6 @@ class ConvBlockType extends Int {
     return NaN;
   }
 
-  /**
-   * Convert convolution block type id to information object.
-   *
-   * @param {umber} nConvBlockTypeId
-   *   It should be one of ValueDesc.ConvBlockType.Singleton.Ids.Xxx.
-   *
-   * @return {ConvBlockType.Info}
-   *   It should be one of ValueDesc.ConvBlockType.Singleton.integerToObjectMap according to the nStridesPadId.
-   */
-  getInfoById( nConvBlockTypeId ) {
-    let info = this.integerToObjectMap.get( nConvBlockTypeId );
-    return info;
-  }
-
 }
 
 
