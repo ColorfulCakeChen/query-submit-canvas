@@ -205,7 +205,12 @@ class Params extends Weights.Params {
     if ( !bExtractOk )
       return false;
 
-    Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( this, this.sourceHeight, this.sourceWidth );
+    Params.set_outputHeight_outputWidth_by.call( this,
+      this.sourceHeight, this.sourceWidth,
+      this.nConvStageTypeId,
+      this.blockCountRequested,
+      this.depthwiseFilterHeight, this.depthwiseFilterWidth
+    );
 
     return bExtractOk;
   }
@@ -218,15 +223,12 @@ class Params extends Weights.Params {
    * @param {number} sourceHeight  The height of source image.
    * @param {number} sourceWidth   The width of source image.
    */
-  static set_outputHeight_outputWidth_by_sourceHeight_sourceWidth(
+  static set_outputHeight_outputWidth_by(
     sourceHeight, sourceWidth,
     nConvStageTypeId,
     blockCountRequested,
     depthwiseFilterHeight, depthwiseFilterWidth
   ) {
-
-//!!! ...unfinished... (2022/07/18)
-// No so easy beccause pad may be "valid" and depthwise filter may be adjusted (when larger than input size of every block.
 
     // These two parameters are not important for calculating output height and width. Fixing them as constant 1 should be enough.
     const inputChannelCount = 1;
