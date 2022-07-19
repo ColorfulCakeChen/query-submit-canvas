@@ -25,20 +25,20 @@ class ConvBlockType extends Int {
 
   constructor() {
     super( 0, 11,
-      [
-        "MOBILE_NET_V1_HEAD_BODY_TAIL",                      // ( 0)
-        "MOBILE_NET_V2_BODY_TAIL",                           // ( 1)
-        "SHUFFLE_NET_V2_HEAD",                               // ( 2)
-        "SHUFFLE_NET_V2_BODY",                               // ( 3)
-        "SHUFFLE_NET_V2_TAIL",                               // ( 4)
-        "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD",              // ( 5)
-        "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY",              // ( 6)
-        "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL",              // ( 7)
-        "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2",  // ( 8)
-        "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD",                // ( 9)
-        "SHUFFLE_NET_V2_BY_POINTWISE21_BODY",                // (10)
-        "SHUFFLE_NET_V2_BY_POINTWISE21_TAIL",                // (11)
-      ],
+      {
+        MOBILE_NET_V1_HEAD_BODY_TAIL:                       0,
+        MOBILE_NET_V2_BODY_TAIL:                            1,
+        SHUFFLE_NET_V2_HEAD:                                2,
+        SHUFFLE_NET_V2_BODY:                                3,
+        SHUFFLE_NET_V2_TAIL:                                4,
+        SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD:               5,
+        SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY:               6,
+        SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL:               7,
+        SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2:   8,
+        SHUFFLE_NET_V2_BY_POINTWISE21_HEAD:                 9,
+        SHUFFLE_NET_V2_BY_POINTWISE21_BODY:                10,
+        SHUFFLE_NET_V2_BY_POINTWISE21_TAIL:                11,
+      },
 
       [
          new ConvBlockType.Info(  0, 1, 1, false, false, false, false, false, false, 0, false ),
