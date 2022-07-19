@@ -94,35 +94,46 @@ class ActivationFunction extends Int {
 //      [ "NONE",  "CLIP_BY_VALUE_N2_P2", "CLIP_BY_VALUE_N3_P3", "TANH",  "SIN", "RELU6",  "COS",  "SIGMOID", "RELU" ], //  "SOFTPLUS" ],
 
     super( 0, 1,
-      [ "NONE",  "CLIP_BY_VALUE_N2_P2" ],
+      { NONE : 0,
+        CLIP_BY_VALUE_N2_P2: 1
 
-      [
-        new ActivationFunction.Info( 0, null, null, null, null, null ),
+//!!! (2022/07/05 Remarked) For speed-up testing.
+//         CLIP_BY_VALUE_N3_P3: 2,
+//         TANH: 3,
+//         SIN: 4,
+//         RELU6: 5,
+//         COS: 6,
+//         SIGMOID: 7,
+//         RELU: 8,
+//         //SOFTPLUS: 9,
+      },
 
-        new ActivationFunction.Info( 1, ActivationFunction.clipByValue_Negative2_Positive2,
+      { NONE : new ActivationFunction.Info( 0, null, null, null, null, null ),
+
+        CLIP_BY_VALUE_N2_P2: new ActivationFunction.Info( 1, ActivationFunction.clipByValue_Negative2_Positive2,
           ActivationFunction.reference_clipByValue_Negative2_Positive2,
           new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ) ),
 
 //!!! (2022/07/05 Remarked) For speed-up testing.
 /*
-        new ActivationFunction.Info( 2, ActivationFunction.clipByValue_Negative3_Positive3,
+        CLIP_BY_VALUE_N3_P3: new ActivationFunction.Info( 2, ActivationFunction.clipByValue_Negative3_Positive3,
           ActivationFunction.reference_clipByValue_Negative3_Positive3,
           new FloatValue.Bounds( -3, +3 ), new FloatValue.Bounds( -3, +3 ), new FloatValue.Bounds( -3, +3 ) ),
 
-        new ActivationFunction.Info( 3, tf.tanh, ActivationFunction.reference_tanh,
+        TANH: new ActivationFunction.Info( 3, tf.tanh, ActivationFunction.reference_tanh,
           new FloatValue.Bounds( -1, +1 ), new FloatValue.Bounds( -0.005, +0.005 ), new FloatValue.Bounds( -0.005, +0.005 ) ),
 
-        new ActivationFunction.Info( 4, tf.sin, ActivationFunction.reference_sin,
+        SIN: new ActivationFunction.Info( 4, tf.sin, ActivationFunction.reference_sin,
           new FloatValue.Bounds( -1, +1 ), new FloatValue.Bounds( -0.005, +0.005 ), new FloatValue.Bounds( -0.005, +0.005 ) ),
 
-        new ActivationFunction.Info( 5, tf.relu6, ActivationFunction.reference_relu6,
+        RELU6: new ActivationFunction.Info( 5, tf.relu6, ActivationFunction.reference_relu6,
           new FloatValue.Bounds( 0, 6 ), new FloatValue.Bounds( 0, 6 ), new FloatValue.Bounds( 0, 6 ) ),
 
-        new ActivationFunction.Info( 6, tf.cos, ActivationFunction.reference_cos,
+        COS: new ActivationFunction.Info( 6, tf.cos, ActivationFunction.reference_cos,
           new FloatValue.Bounds( -1, +1 ),
           new FloatValue.Bounds( -( ( Math.PI / 2 ) + 0.005 ), -( ( Math.PI / 2 ) - 0.005 ) ), new FloatValue.Bounds( -0.005, +0.005 ) ),
 
-        new ActivationFunction.Info( 7, tf.sigmoid, ActivationFunction.reference_sigmoid,
+        SIGMOID: new ActivationFunction.Info( 7, tf.sigmoid, ActivationFunction.reference_sigmoid,
           new FloatValue.Bounds( 0, 1 ), new FloatValue.Bounds( -0.125, +0.125 ), new FloatValue.Bounds( +0.468, +0.532 ) ),
 
         // (2021/12/09)
@@ -133,14 +144,14 @@ class ActivationFunction extends Int {
         // (2022/01/11)
         // However, if the BoundsArraySet.afterActivation is calculate by .clamp_byXxx() (not by set_byXxx()), the Infinity bounds is
         // not a problem.
-        new ActivationFunction.Info( 8, tf.relu, ActivationFunction.reference_relu,
+        RELU: new ActivationFunction.Info( 8, tf.relu, ActivationFunction.reference_relu,
           new FloatValue.Bounds( 0, +Infinity ), new FloatValue.Bounds( 0, +Infinity ), new FloatValue.Bounds( 0, +Infinity ) ),
 
-        //new ActivationFunction.Info( 9, tf.softplus, ActivationFunction.reference_softplus,
+        //SOFTPLUS: new ActivationFunction.Info( 9, tf.softplus, ActivationFunction.reference_softplus,
         //  new FloatValue.Bounds( 0, +Infinity ),
         //  new FloatValue.Bounds( +5, +Infinity ), new FloatValue.Bounds( +5, +Infinity ) ),
 */
-      ]
+      }
     );
 
   }
