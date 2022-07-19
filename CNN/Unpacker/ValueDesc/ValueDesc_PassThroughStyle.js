@@ -28,20 +28,6 @@ class PassThroughStyle extends Int {
 
   }
 
-  /**
-   * Convert pass-through style id to information object.
-   *
-   * @param {number} nPassThroughStyleId
-   *   It should be one of ValueDesc.PassThroughStyle.Singleton.Ids.Xxx.
-   *
-   * @return {PassThroughStyle.Info}
-   *   It should be one of ValueDesc.PassThroughStyle.Singleton.integerToObjectMap according to the nPassThroughStyleId.
-   */
-  getInfoById( nPassThroughStyleId ) {
-    let info = this.integerToObjectMap.get( nPassThroughStyleId );
-    return info;
-  }
-
 }
 
 /**
