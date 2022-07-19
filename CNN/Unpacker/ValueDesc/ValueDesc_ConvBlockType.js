@@ -40,20 +40,20 @@ class ConvBlockType extends Int {
         SHUFFLE_NET_V2_BY_POINTWISE21_TAIL:                11,
       },
 
-      [
-         new ConvBlockType.Info(  0, 1, 1, false, false, false, false, false, false, 0, false ),
-         new ConvBlockType.Info(  1, 1, 1, false, false,  true, false, false, false, 0, false ),
-         new ConvBlockType.Info(  2, 1, 2,  true, false, false,  true, false, false, 0,  true ),
-         new ConvBlockType.Info(  3, 2, 2, false, false, false,  true, false, false, 0, false ),
-         new ConvBlockType.Info(  4, 2, 1, false, false, false,  true, false, false, 0, false ),
-         new ConvBlockType.Info(  5, 1, 1, false, false, false, false,  true,  true, 2, false ),
-         new ConvBlockType.Info(  6, 1, 1, false, false, false, false,  true, false, 2, false ),
-         new ConvBlockType.Info(  7, 1, 1, false, false, false, false,  true, false, 0, false ),
-         new ConvBlockType.Info(  8, 1, 2, false, false, false, false, false, false, 0,  true ),
-         new ConvBlockType.Info(  9, 1, 2,  true,  true, false, false, false, false, 0,  true ),
-         new ConvBlockType.Info( 10, 2, 2, false,  true, false, false, false, false, 0,  true ),
-         new ConvBlockType.Info( 11, 2, 1, false,  true, false, false, false, false, 0, false ),
-      ]
+      {
+         MOBILE_NET_V1_HEAD_BODY_TAIL:                     new ConvBlockType.Info(  0, 1, 1, false, false, false, false, false, false, 0, false ),
+         MOBILE_NET_V2_BODY_TAIL:                          new ConvBlockType.Info(  1, 1, 1, false, false,  true, false, false, false, 0, false ),
+         SHUFFLE_NET_V2_HEAD:                              new ConvBlockType.Info(  2, 1, 2,  true, false, false,  true, false, false, 0,  true ),
+         SHUFFLE_NET_V2_BODY:                              new ConvBlockType.Info(  3, 2, 2, false, false, false,  true, false, false, 0, false ),
+         SHUFFLE_NET_V2_TAIL:                              new ConvBlockType.Info(  4, 2, 1, false, false, false,  true, false, false, 0, false ),
+         SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD:             new ConvBlockType.Info(  5, 1, 1, false, false, false, false,  true,  true, 2, false ),
+         SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY:             new ConvBlockType.Info(  6, 1, 1, false, false, false, false,  true, false, 2, false ),
+         SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL:             new ConvBlockType.Info(  7, 1, 1, false, false, false, false,  true, false, 0, false ),
+         SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2: new ConvBlockType.Info(  8, 1, 2, false, false, false, false, false, false, 0,  true ),
+         SHUFFLE_NET_V2_BY_POINTWISE21_HEAD:               new ConvBlockType.Info(  9, 1, 2,  true,  true, false, false, false, false, 0,  true ),
+         SHUFFLE_NET_V2_BY_POINTWISE21_BODY:               new ConvBlockType.Info( 10, 2, 2, false,  true, false, false, false, false, 0,  true ),
+         SHUFFLE_NET_V2_BY_POINTWISE21_TAIL:               new ConvBlockType.Info( 11, 2, 1, false,  true, false, false, false, false, 0, false ),
+      }
     );
   }
 
