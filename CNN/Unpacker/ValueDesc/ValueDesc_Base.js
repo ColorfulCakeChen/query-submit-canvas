@@ -90,6 +90,9 @@ Bool.Singleton = new Bool;
  */
 class Int {
 
+!!! ...unfinished... (2022/07/19)
+// name to number, name to object map should object property syntax (instead of string) so that javascript could work.
+
   /**
    *
    * @param {number} valueIntegerMin
