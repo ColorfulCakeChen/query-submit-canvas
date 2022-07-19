@@ -228,48 +228,73 @@ class Params extends Weights.Params {
 //!!! ...unfinished... (2022/07/18)
 // No so easy beccause pad may be "valid" and depthwise filter may be adjusted (when larger than input size of every block.
 
-    let inputHeight, inputWidth, stridesPad;
+    // These two parameters are not important for calculating output height and width. Fixing them as constant 1 should be enough.
+    const inputChannelCount = 1;
+    const AvgMax_Or_ChannelMultiplier = 1;
+
+    let inputHeight, inputWidth, depthwiseFilterHeight_adjusted, depthwiseFilterWidth_adjusted, stridesPad;
+    let depthwisePadInfo;
 
     // block0
     {
       inputHeight = sourceHeight;
       inputWidth = sourceWidth
 
-      stridesPad;
-      if ( ValueDesc.ConvStageType.isPadValid( nConvStageTypeId ) )
+      depthwiseFilterHeight_adjusted = depthwiseFilterHeight;
+      depthwiseFilterWidth_adjusted = depthwiseFilterWidth;
+
+      if ( ValueDesc.ConvStageType.isPadValid( nConvStageTypeId ) ) {
+
+        // When pad is "valid", depthwise conv filter size can not larger than input image size.
+        if ( depthwiseFilterHeight_adjusted ) > inputHeight )
+          depthwiseFilterHeight_adjusted = inputHeight;
+
+        if ( depthwiseFilterWidth_adjusted ) > inputWidth )
+          depthwiseFilterWidth_adjusted = inputWidth;
+
         stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID;
-      else
+
+      } else {
         stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
+      }
+
+      depthwisePadInfo = Depthwise.PadInfoCalculatorRoot.Pool.get_or_create_by(
+        inputHeight, inputWidth, inputChannelCount,
+        AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight_adjusted, depthwiseFilterWidth_adjusted, stridesPad );
     }
 
-    // By default, the block0's output ( height, width ) is half of the input (i.e. result of depthwise convolution with
-    // ( strides = 2, pad = "same" ) ).
-    //
-    // Note: This calculation copied from the getPadAndOutInfo() of
-    // (https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts).
-    //
-    let depthwisePadInfo = Depthwise.PadInfoCalculatorRoot.Pool.get_or_create_by(
+    // block1, 2, 3, ..., blockLast
+    for ( let i = 1; i < blockCountRequested; ++i ) {
+      inputHeight = depthwisePadInfo.outputHeight;
+      inputWidth = depthwisePadInfo.outputWidth;
 
-      
+      if ( ValueDesc.ConvStageType.isPadValid( nConvStageTypeId ) ) {
 
+        // When pad is "valid", depthwise conv filter size can not larger than input image size.
+        if ( depthwiseFilterHeight_adjusted ) > inputHeight )
+          depthwiseFilterHeight_adjusted = inputHeight;
 
-      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad )
+        if ( depthwiseFilterWidth_adjusted ) > inputWidth )
+          depthwiseFilterWidth_adjusted = inputWidth;
 
-    let stridesHeight = 2, stridesWidth = 2;
-    let block0_outputHeight = Math.ceil( sourceHeight / stridesHeight );
-    let block0_outputWidth =  Math.ceil( sourceWidth  / stridesWidth );
-    
- * Convert number value into integer between [ 0, 3 ] representing strides and pad:
- *   -  0: STRIDES_1_PAD_VALID (strides = 1, pad = "valid")
- *   -  1: STRIDES_1_PAD_SAME  (strides = 1, pad = "same")
- *   -  2: STRIDES_2_PAD_SAME  (strides = 2, pad = "same")
- *   -  3: STRIDES_2_PAD_VALID (strides = 2, pad = "valid")
-    
+        stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
 
-//!!! ...unfinished... (2022/07/19)
-    this.outputHeight = ;
-    this.outputWidth =  ;
+      } else {
+        stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
+      }
 
+      depthwisePadInfo.set(
+        inputHeight, inputWidth, inputChannelCount,
+        AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight_adjusted, depthwiseFilterWidth_adjusted, stridesPad );
+    }
+
+    this.outputHeight = depthwisePadInfo.outputHeight;
+    this.outputWidth = depthwisePadInfo.outputWidth;
+
+    if ( depthwisePadInfo ) {
+      depthwisePadInfo.disposeResources_and_recycleToPool();
+      depthwisePadInfo = null;
+    }
 
 //!!! (2022/07/19 Remarked) Old Codes
 //     // By default, the block0's output ( height, width ) is half of the input (i.e. result of depthwise convolution with
