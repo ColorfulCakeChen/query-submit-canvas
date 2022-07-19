@@ -17,12 +17,12 @@ import { Int } from "./ValueDesc_Base.js";
 class SqueezeExcitationChannelCountDivisor extends Int {
 
   constructor() {
-    super( -2, 64, [
-      "NONE",               // (-2)
-      "EXCITATION",         // (-1)
-      "SQUEEZE_EXCITATION", // ( 0)
+    super( -2, 64, {
+      NONE:               -2,
+      EXCITATION:         -1,
+      SQUEEZE_EXCITATION:  0,
 
-      // "SQUEEZE_INTERMEDIATE_DIVISOR_1_EXCITATION", "SQUEEZE_INTERMEDIATE_DIVISOR_2_EXCITATION",
+      // "SQUEEZE_INTERMEDIATE_DIVISOR_1_EXCITATION: "SQUEEZE_INTERMEDIATE_DIVISOR_2_EXCITATION:
       // ..., "SQUEEZE_INTERMEDIATE_DIVISOR_64_EXCITATION".
       //
       // (2022/05/26 Remarked) Do not define these names because they will occupy too many memory.
