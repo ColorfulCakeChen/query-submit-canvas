@@ -100,7 +100,7 @@ class Int {
    * @param {number} valueIntegerMax
    *   The last (i.e. maximum) integer of the parameter's all possible values.
    */
-  constructor( valueIntegerMin, valueIntegerMax, Ids, Infos ) {
+  constructor( valueIntegerMin, valueIntegerMax, Ids = {}, Infos = {} ) {
 
     this.range = new ValueRange.Int( valueIntegerMin, valueIntegerMax );
     this.Ids = Ids;
@@ -130,8 +130,7 @@ class Int {
     }
 
     // Infos
-    this.integerToObjectMap = new Map;
-    if ( Infos ) {
+    {
       let nameArray = Object.keys( Infos );
       let objectArray = Object.values( Infos );
       if ( nameArray.length > this.range.kinds )
@@ -139,6 +138,7 @@ class Int {
           + `Object.keys( Infos ).length ( ${nameArray.length} ) should be <= range.kinds ( ${this.range.kinds} ).`
         );
 
+      this.integerToObjectMap = new Map;
       for ( let i = 0; i < nameArray.length; ++i ) {
         let name = nameArray[ i ];
         let integerId = Ids[ name ];
