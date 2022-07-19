@@ -146,7 +146,7 @@ class Out extends Recyclable.Root {
       + `bPointwise1=${this.bPointwise1}, `
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
 
-      + `bPointwise2BiasAtStageEnd=${this.bPointwise2BiasAtStageEnd}, `
+      + `bPointwise2ActivatedAtStageEnd=${this.bPointwise2ActivatedAtStageEnd}, `
 
       + `nSqueezeExcitationChannelCountDivisorName=`
         + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getStringOf( this.nSqueezeExcitationChannelCountDivisor )}`
