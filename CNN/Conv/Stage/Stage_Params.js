@@ -5,6 +5,7 @@ import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
+import * as Depthwise from "../Depthwise.js";
 
 
 //!!! ...unfinished... (2022/05/28)
@@ -217,20 +218,69 @@ class Params extends Weights.Params {
    * @param {number} sourceHeight  The height of source image.
    * @param {number} sourceWidth   The width of source image.
    */
-  static set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( sourceHeight, sourceWidth ) {
+  static set_outputHeight_outputWidth_by_sourceHeight_sourceWidth(
+    sourceHeight, sourceWidth,
+    nConvStageTypeId,
+    blockCountRequested,
+    depthwiseFilterHeight, depthwiseFilterWidth
+  ) {
 
-!!! ...unfinished... (2022/07/18)
+//!!! ...unfinished... (2022/07/18)
 // No so easy beccause pad may be "valid" and depthwise filter may be adjusted (when larger than input size of every block.
 
-    // By default, the output ( height, width ) is half of the input (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
+    let inputHeight, inputWidth, stridesPad;
+
+    // block0
+    {
+      inputHeight = sourceHeight;
+      inputWidth = sourceWidth
+
+      stridesPad;
+      if ( ValueDesc.ConvStageType.isPadValid( nConvStageTypeId ) )
+        stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID;
+      else
+        stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
+    }
+
+    // By default, the block0's output ( height, width ) is half of the input (i.e. result of depthwise convolution with
+    // ( strides = 2, pad = "same" ) ).
     //
     // Note: This calculation copied from the getPadAndOutInfo() of
     // (https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts).
     //
+    let depthwisePadInfo = Depthwise.PadInfoCalculatorRoot.Pool.get_or_create_by(
+
+      
+
+
+      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad )
 
     let stridesHeight = 2, stridesWidth = 2;
-    this.outputHeight = Math.ceil( sourceHeight / stridesHeight );
-    this.outputWidth =  Math.ceil( sourceWidth  / stridesWidth );
+    let block0_outputHeight = Math.ceil( sourceHeight / stridesHeight );
+    let block0_outputWidth =  Math.ceil( sourceWidth  / stridesWidth );
+    
+ * Convert number value into integer between [ 0, 3 ] representing strides and pad:
+ *   -  0: STRIDES_1_PAD_VALID (strides = 1, pad = "valid")
+ *   -  1: STRIDES_1_PAD_SAME  (strides = 1, pad = "same")
+ *   -  2: STRIDES_2_PAD_SAME  (strides = 2, pad = "same")
+ *   -  3: STRIDES_2_PAD_VALID (strides = 2, pad = "valid")
+    
+
+//!!! ...unfinished... (2022/07/19)
+    this.outputHeight = ;
+    this.outputWidth =  ;
+
+
+//!!! (2022/07/19 Remarked) Old Codes
+//     // By default, the block0's output ( height, width ) is half of the input (i.e. result of depthwise convolution with
+//     // ( strides = 2, pad = "same" ) ).
+//     //
+//     // Note: This calculation copied from the getPadAndOutInfo() of
+//     // (https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts).
+//     //
+//     let stridesHeight = 2, stridesWidth = 2;
+//     this.outputHeight = Math.ceil( sourceHeight / stridesHeight );
+//     this.outputWidth =  Math.ceil( sourceWidth  / stridesWidth );
   }
 
   get sourceHeight()              { return this.getParamValue_byParamDesc( Params.sourceHeight ); }
