@@ -248,10 +248,10 @@ class Params extends Weights.Params {
       if ( ValueDesc.ConvStageType.isPadValid( nConvStageTypeId ) ) {
 
         // When pad is "valid", depthwise conv filter size can not larger than input image size.
-        if ( depthwiseFilterHeight_adjusted ) > inputHeight )
+        if ( depthwiseFilterHeight_adjusted > inputHeight )
           depthwiseFilterHeight_adjusted = inputHeight;
 
-        if ( depthwiseFilterWidth_adjusted ) > inputWidth )
+        if ( depthwiseFilterWidth_adjusted > inputWidth )
           depthwiseFilterWidth_adjusted = inputWidth;
 
         stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID;
@@ -273,10 +273,10 @@ class Params extends Weights.Params {
       if ( ValueDesc.ConvStageType.isPadValid( nConvStageTypeId ) ) {
 
         // When pad is "valid", depthwise conv filter size can not larger than input image size.
-        if ( depthwiseFilterHeight_adjusted ) > inputHeight )
+        if ( depthwiseFilterHeight_adjusted > inputHeight )
           depthwiseFilterHeight_adjusted = inputHeight;
 
-        if ( depthwiseFilterWidth_adjusted ) > inputWidth )
+        if ( depthwiseFilterWidth_adjusted > inputWidth )
           depthwiseFilterWidth_adjusted = inputWidth;
 
         stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
