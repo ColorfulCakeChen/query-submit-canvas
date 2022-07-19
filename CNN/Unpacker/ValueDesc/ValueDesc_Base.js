@@ -61,20 +61,6 @@ Bool.Singleton = new Bool;
  *   The integer range of the parameter's all possible values. It is an ValueRange.Int object with ( min = valueIntegerMin )
  * and ( max = valueIntegerMax ).
  *
-
-//!!! (2022/07/19 Remarked)
-//  * @member {string[]} valueNames
-//  *   The string names of the parameter's all named values. It is an array of strings. They should be all legal identifers too (i.e. A-Z,
-//  * a-z, 0-9 (not at first character), and "_"). They will become the properties' names of this.Ids. Note that
-//  * ( valueNames.length <= range.kinds ). This means that only first valueNames.length values have names. So, it is possible
-//  * that all values do not have names (when valueNames[] is empty).
-//  *
-//  * @member {object[]} valueObjects
-//  *   The extra objects of the parameter values. It is an array of objects. They will become the properties' names of this.extraObjects.
-//  * Note that ( valueObjects.length <= range.kinds ). This means that only first valueObjects.length values have names. So, it is possible
-//  * that all values do not have extra objects (when valueObjects[] is empty).
-
- *
  * @member {Object} Ids
  *   An object contains all the named values. Its length could be less than .range.kinds (i.e. some number value could have no
  * name). It is just like a name-to-integer Map, but could be accessed by dot (.) operator (not by .get() method). This Ids
@@ -95,13 +81,6 @@ Bool.Singleton = new Bool;
  *   - ...
  *   - this.Infos.Zzz = object_for_( valueIntegerMin + ( valueNames.length - 1 ) )
  *
-
-//!!! (2022/07/19 Remarked)
-//  * @member {Map} nameToIntegerMap
-//  *   A map object contains the parameter's all named values. Using this.nameToIntegerMap.get( name ) could get the integer value of
-//  * the name.
-
- *
  * @member {Map} integerToNameMap
  *   A map object contains the parameter's all named values. Using this.integerToNameMap.get( integerValue ) could get the name of
  * the integer value.
@@ -119,7 +98,7 @@ class Int {
    *   The first (i.e. minimum) integer of the parameter's all possible values.
    *
    * @param {number} valueIntegerMax
-   *   The last (i.e. maximum) integer of the parameter's all possible values. It should equal ( valueIntegerMin + ( valueNames.length - 1 ) ).
+   *   The last (i.e. maximum) integer of the parameter's all possible values.
    */
   constructor( valueIntegerMin, valueIntegerMax, Ids = {}, Infos = {} ) {
 
@@ -127,6 +106,7 @@ class Int {
     this.Ids = Ids;
     this.Infos = Infos;
 
+    // Ids
     {
       let nameArray = Object.keys( Ids );
       let valueArray = Object.values( Ids );
@@ -137,9 +117,9 @@ class Int {
 
       this.integerToNameMap = new Map;
       for ( let i = 0; i < nameArray.length; ++i ) {
-        let integerId = valueArray[ i ]; // Ensure the number value is in range.
+        let integerId = valueArray[ i ];
 
-        if ( ( integerId < this.range.min ) || ( integerId > this.range.max ) )
+        if ( ( integerId < this.range.min ) || ( integerId > this.range.max ) ) // Ensure the number value is in range.
           throw Error( `ValueDesc.Int.constructor(): Range violation: `
             + `integerId ( ${integerId} ) should be in range [ ${this.range.min}, ${this.range.max} ].`
           );
@@ -149,16 +129,26 @@ class Int {
       }
     }
 
+    // Infos
     {
-      if ( Object.keys( Infos ).length > this.range.kinds )
+      let nameArray = Object.keys( Infos );
+      let objectArray = Object.values( Infos );
+      if ( nameArray.length > this.range.kinds )
         throw Error( `ValueDesc.Int.constructor(): Range violation: `
-          + `Object.keys( Infos ).length ( ${Object.keys( Infos ).length} ) <= range.kinds ( ${this.range.kinds} ).`
+          + `Object.keys( Infos ).length ( ${nameArray.length} ) <= range.kinds ( ${this.range.kinds} ).`
         );
 
       this.integerToObjectMap = new Map;
-      for ( let i = 0; i < valueObjects.length; ++i ) {
-        let integerId = ( valueIntegerMin + i );
-        let object = valueObjects[ i ];
+      for ( let i = 0; i < nameArray.length; ++i ) {
+        let name = nameArray[ i ];
+        let integerId = Ids[ name ];
+
+        if ( integerId == undefined )
+          throw Error( `ValueDesc.Int.constructor(): Unknown name: `
+            + `Info name ( ${name} ) should have number value.`
+          );
+
+        let object = objectArray[ i ];
         this.integerToObjectMap.set( integerId, object );
       }
     }
