@@ -14,19 +14,19 @@ class StridesPad extends Int {
 
   constructor() {
     super( 0, 3,
-      [
-        "STRIDES_1_PAD_VALID", // (0) (strides = 1, pad = "valid")
-        "STRIDES_1_PAD_SAME",  // (1) (strides = 1, pad = "same")
-        "STRIDES_2_PAD_SAME",  // (2) (strides = 2, pad = "same")
-        "STRIDES_2_PAD_VALID", // (3) (strides = 2, pad = "valid")
-      ],
+      {
+        STRIDES_1_PAD_VALID: 0,
+        STRIDES_1_PAD_SAME:  1,
+        STRIDES_2_PAD_SAME:  2,
+        STRIDES_2_PAD_VALID: 3,
+      },
 
-      [
-        new StridesPad.Info( 0, 1, StridesPad.Info.PAD_VALID ),
-        new StridesPad.Info( 1, 1, StridesPad.Info.PAD_SAME  ),
-        new StridesPad.Info( 2, 2, StridesPad.Info.PAD_SAME  ),
-        new StridesPad.Info( 3, 2, StridesPad.Info.PAD_VALID ),
-      ],
+      {
+        STRIDES_1_PAD_VALID: new StridesPad.Info( 0, 1, StridesPad.Info.PAD_VALID ),
+        STRIDES_1_PAD_SAME:  new StridesPad.Info( 1, 1, StridesPad.Info.PAD_SAME  ),
+        STRIDES_2_PAD_SAME:  new StridesPad.Info( 2, 2, StridesPad.Info.PAD_SAME  ),
+        STRIDES_2_PAD_VALID: new StridesPad.Info( 3, 2, StridesPad.Info.PAD_VALID ),
+      },
     );
   }
 
@@ -61,20 +61,6 @@ class StridesPad extends Int {
     if ( info )
       return info.pad_isSame();
     return false;
-  }
-
-  /**
-   * Convert strides-pad style id to information object.
-   *
-   * @param {number} nStridesPadId
-   *   It should be one of ValueDesc.StridesPad.Singleton.Ids.Xxx.
-   *
-   * @return {StridesPad.Info}
-   *   It should be one of ValueDesc.StridesPad.Singleton.integerToObjectMap according to the nStridesPadId.
-   */
-  getInfoById( nStridesPadId ) {
-    let info = this.integerToObjectMap.get( nStridesPadId );
-    return info;
   }
 
 }
