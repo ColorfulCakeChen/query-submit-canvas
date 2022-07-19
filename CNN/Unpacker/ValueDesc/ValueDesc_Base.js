@@ -166,6 +166,19 @@ class Int {
     return name;
   }
 
+  /**
+   *
+   * @param {number} integerValue
+   *   It should be one of ValueDesc.Yyy.Singleton.Ids.Xxx.
+   *
+   * @return {Object}
+   *   Return the extra information object of the integerValue. Return undefined, if not found.
+   */
+  getInfoById( integerValue ) {
+    let info = this.integerToObjectMap.get( integerValue );
+    return info;
+  }
+
 }
 
 
