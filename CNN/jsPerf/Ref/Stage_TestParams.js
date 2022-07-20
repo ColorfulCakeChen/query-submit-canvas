@@ -344,10 +344,11 @@ class Base extends TestParams.Base {
         blockParamsCreator.configTo_beforeBlockLast();
       }
 
-      // If channelShuffler is not null, keep it so that its tensors could be released.
-      if ( blockParamsCreator.channelShuffler ) {
-        channelShuffler = blockParamsCreator.channelShuffler;
-      }
+//!!! (2022/07/20 Remarked) seems not used.
+      // // If channelShuffler is not null, keep it so that its tensors could be released.
+      // if ( blockParamsCreator.channelShuffler ) {
+      //   channelShuffler = blockParamsCreator.channelShuffler;
+      // }
 
       let blockName = `block${i}`;
       paramsNameOrderArray_modified.push( blockName ); // Place every block's parameters in sequence.
@@ -370,11 +371,12 @@ class Base extends TestParams.Base {
       paramsNumberArrayObject_modified[ blockName ] = blockTestParams.in.inputWeightArray;
     }
 
-    // Here (i.e. in Stage_TestParams), the channelShuffler is not used. Just release it for avoiding memory leak.
-    if ( channelShuffler ) {
-      channelShuffler.disposeResources_and_recycleToPool();
-      channelShuffler = null;
-    }
+//!!! (2022/07/20 Remarked) blockParamsCreator will release it.
+    // // Here (i.e. in Stage_TestParams), the channelShuffler is not used. Just release it for avoiding memory leak.
+    // if ( channelShuffler ) {
+    //   channelShuffler.disposeResources_and_recycleToPool();
+    //   channelShuffler = null;
+    // }
 
     if ( blockParamsCreator ) {
       blockParamsCreator.disposeResources_and_recycleToPool();

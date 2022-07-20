@@ -513,10 +513,11 @@ class Base extends Recyclable.Root {
   /**
    *
    */
-   channelShuffler_dispose() {
+  channelShuffler_dispose() {
     if ( this.channelShuffler ) {
-    this.channelShuffler.disposeResources_and_recycleToPool();
-    this.channelShuffler = false;
+      this.channelShuffler.disposeResources_and_recycleToPool();
+      this.channelShuffler = false;
+    }
   }
 
   /**
