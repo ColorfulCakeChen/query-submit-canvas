@@ -158,11 +158,11 @@ class HeightWidthDepth {
         true
       ) } );
 
-    // Test Case 6: (ShuffleNetV2_byPointwise22, ( bPointwise1 == true ))
-    this.testCaseMap.set( "ShuffleV2_byPointwise22_bPointwise1_true", { testParams: 
+    // Test Case 6: (ShuffleNetV2_byPointwise21, ( bPointwise1 == true ))
+    this.testCaseMap.set( "ShuffleV2_byPointwise21_bPointwise1_true", { testParams: 
       ( new Stage_TestParams.Base() ).set_byParamsScattered(
         this.height, this.width, this.depth,
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE22,
+        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
         stepCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
