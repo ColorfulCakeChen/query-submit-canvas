@@ -363,7 +363,7 @@ class Base extends Recyclable.Root {
           blockParamsCreator.configTo_beforeBlock0();
           input0_ScaleBoundsArray_or_TensorPlaceholder = inputScaleBoundsArray0;
         } else { // (i.e. block1, 2, 3, ...)
-          blockParamsCreator.configTo_beforeBlockN_exceptBlock0();
+          blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i );
         }
 
         // BlockLast. (Note: Block0 may also be BlockLast.) 
