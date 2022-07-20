@@ -5,8 +5,6 @@ import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
-//import * as ChannelCountCalculator from "./Block_ChannelCountCalculator.js";
-//import * as Depthwise from "../Depthwise.js";
 import { InferencedParams } from "./Block_InferencedParams.js";
 
 /**
@@ -110,6 +108,9 @@ import { InferencedParams } from "./Block_InferencedParams.js";
  *    channel count is large.
  *
  *
+ *
+ * @member {InferencedParams} inferencedParams
+ *   The inferenced parameters of this block parameters.
  *
  * @member {number} inputTensorCount
  *   How many input tensors should be passed into Block.apply() as parameter inputTensors[].
