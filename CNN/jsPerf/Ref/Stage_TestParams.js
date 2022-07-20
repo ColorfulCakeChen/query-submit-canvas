@@ -433,24 +433,6 @@ class Base extends TestParams.Base {
 //       }
 //     }
 
-
-//!!! (2022/07/17 Remarked) Block.Params will adjust it.
-//     // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
-//     //
-//     // Note: When pad is "same", this restriction does not exist.
-//     switch ( this.out.nConvStageTypeId ) {
-//       case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-//       case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-//         if (   ( this.out.depthwiseFilterHeight > this.out.sourceHeight )
-//             || ( this.out.depthwiseFilterWidth  > this.out.sourceWidth  ) )
-//           return false;
-//         break;
-//
-//       default:
-//         // Otherwise, when pad is "same", it should test more filter size.
-//         break;
-//     }
-
     return true;
   }
 
@@ -490,9 +472,14 @@ class Base extends TestParams.Base {
       sourceChannelCount: [ 4, 4 ],
 
 //      nConvStageTypeId: undefined,
+//!!! (2022/07/20 Temp Remarked) For speed-up debug.
+      // nConvStageTypeId: [
+      //   Stage.Params.nConvStageTypeId.valueDesc.range.min,
+      //   Stage.Params.nConvStageTypeId.valueDesc.range.max
+      // ],
       nConvStageTypeId: [
-        Stage.Params.nConvStageTypeId.valueDesc.range.min,
-        Stage.Params.nConvStageTypeId.valueDesc.range.max
+        ValueDesc.ConvStageType.Singleton.MOBILE_NET_V1_PAD_VALID, // (1)
+        ValueDesc.ConvStageType.Singleton.MOBILE_NET_V1_PAD_VALID // (1)
       ],
 
       blockCountRequested: [
