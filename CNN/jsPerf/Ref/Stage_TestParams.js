@@ -368,6 +368,10 @@ class Base extends TestParams.Base {
       paramsNumberArrayObject_modified[ blockName ] = blockTestParams.in.inputWeightArray;
 
       if ( 0 == i ) { // After block0 (i.e. for block1, 2, 3, ...)
+
+!!! ...unfinished... (2022/07/20)
+// This should be called many times (i.e. every block1, 2, 3, ... call once) because input/output width may be changed.
+
         blockParamsCreator.configTo_afterBlock0();
       }
     }
