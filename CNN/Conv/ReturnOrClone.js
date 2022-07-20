@@ -90,10 +90,10 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    * ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.COS, ...)
    *
    * @return {ValueDesc.ActivationFunction.Info}
-   *   It should be one of ValueDesc.ActivationFunction.Singleton.integerToObjectMap according to the nActivationId.
+   *   It should be one of ValueDesc.ActivationFunction.Singleton.integerToInfoMap according to the nActivationId.
    */
-  static ActivationFunction_getInfoById( nActivationId ) {
-    let info = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
+  static ActivationFunction_getInfo_byId( nActivationId ) {
+    let info = ValueDesc.ActivationFunction.Singleton.getInfo_byId( nActivationId );
     return info;
   }
 
@@ -105,11 +105,11 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    * ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.COS, ...)
    *
    * @return {function}
-   *   It should be pfn of ValueDesc.ActivationFunction.Singleton.integerToObjectMap according to the nActivationId. (e.g. null,
+   *   It should be pfn of ValueDesc.ActivationFunction.Singleton.integerToInfoMap according to the nActivationId. (e.g. null,
    * tf.relu6, tf.cos, ...)
    */
-  static ActivationFunction_getById( nActivationId ) {
-    let info = Base.ActivationFunction_getInfoById( nActivationId );
+  static ActivationFunction_get_byId( nActivationId ) {
+    let info = Base.ActivationFunction_getInfo_byId( nActivationId );
     let pfn = info?.pfn;
     return pfn;
   }

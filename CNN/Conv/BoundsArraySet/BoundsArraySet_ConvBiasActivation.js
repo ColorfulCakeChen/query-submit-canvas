@@ -276,7 +276,7 @@ class ConvBiasActivation extends InputsOutputs {
    */
   adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( nActivationId ) {
 
-    const theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
+    const theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfo_byId( nActivationId );
 
     let doEscapingScale;
     for ( let outChannel = 0; outChannel < this.afterBias.length; ++outChannel ) {
@@ -319,7 +319,7 @@ class ConvBiasActivation extends InputsOutputs {
             if ( Number.isNaN( doEscapingScale ) == true )
               throw Error( `BoundsArraySet.ConvBiasActivation.`
                 + `adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId( `
-                  + ` ${ValueDesc.ActivationFunction.Singleton.getStringOf( nActivationId )}(${nActivationId}) ): `
+                  + ` ${ValueDesc.ActivationFunction.Singleton.getName_byId( nActivationId )}(${nActivationId}) ): `
                 + `this.output0.scaleArraySet.do.scales[ ${outChannel} ] ( ${doEscapingScale} ) `
                 + `should not be NaN. `
                 + `Please use activation function (e.g. clipByValue(), tanh()) which has both negative and positive parts near origin point.`

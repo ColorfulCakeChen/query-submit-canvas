@@ -150,9 +150,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
       if ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ) {
         let msg = `Depthwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
-          + `nHigherHalfDifferent ( ${ValueDesc.Depthwise_HigherHalfDifferent.Singleton.getStringOf( nHigherHalfDifferent )} ) `
+          + `nHigherHalfDifferent ( ${ValueDesc.Depthwise_HigherHalfDifferent.Singleton.getName_byId( nHigherHalfDifferent )} ) `
           + `should be ( NONE ) when `
-          + `AvgMax_Or_ChannelMultiplier is ( ${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getStringOf( AvgMax_Or_ChannelMultiplier )} )`
+          + `AvgMax_Or_ChannelMultiplier is ( ${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getName_byId( AvgMax_Or_ChannelMultiplier )} )`
           ;
 
         throw msg;
@@ -610,7 +610,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
     sourceWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
 
-    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( this.nPassThroughStyleId );
+    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfo_byId( this.nPassThroughStyleId );
     let tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
 
     // Init
@@ -730,7 +730,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                   `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
                 + `For avg/max pooling, `
                 + `if ( bBias ( ${this.bBias} ) is not false ) or `
-                + `( nActivationId ( ${ValueDesc.ActivationFunction.Singleton.getStringOf( this.nActivationId )}(${this.nActivationId}) ) `
+                + `( nActivationId ( ${ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId )}(${this.nActivationId}) ) `
                   + `is not ValueDesc.ActivationFunction.Singleton.Ids.NONE(0) ), `
                 + `undoPreviousEscapingScale[ ${inChannelEnd} ] ( ${undoPreviousEscapingScale} ) must be 1 .`
               );

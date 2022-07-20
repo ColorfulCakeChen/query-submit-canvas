@@ -52,7 +52,7 @@ class Base {
    *   Return the value's string (or name if it has).
    */
   getStringOfValue( value ) {
-    return this.valueDesc.getStringOf( value );
+    return this.valueDesc.getName_byId( value );
   }
 }
 

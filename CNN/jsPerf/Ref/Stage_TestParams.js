@@ -139,7 +139,7 @@ class Out extends Recyclable.Root {
         `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, `
       + `sourceChannelCount=${this.sourceChannelCount}, `
 
-      + `nConvStageTypeId=${ValueDesc.ConvStageType.Singleton.getStringOf( this.nConvStageTypeId )}`
+      + `nConvStageTypeId=${ValueDesc.ConvStageType.Singleton.getName_byId( this.nConvStageTypeId )}`
         + `(${this.nConvStageTypeId}), `
 
       + `blockCountRequested=${this.blockCountRequested}, `
@@ -149,10 +149,10 @@ class Out extends Recyclable.Root {
       + `bPointwise2ActivatedAtStageEnd=${this.bPointwise2ActivatedAtStageEnd}, `
 
       + `nSqueezeExcitationChannelCountDivisorName=`
-        + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getStringOf( this.nSqueezeExcitationChannelCountDivisor )}`
+        + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor )}`
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
 
-      + `nActivationName=${ValueDesc.ActivationFunction.Singleton.getStringOf( this.nActivationId )}`
+      + `nActivationName=${ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId )}`
         + `(${this.nActivationId}), `
 
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `

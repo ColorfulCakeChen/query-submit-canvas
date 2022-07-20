@@ -239,7 +239,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     this.pfnConv = Pointwise.Conv_and_destroy; // will dispose inputTensor.
 
     // 2.
-    this.pfnActivation = Pointwise.ActivationFunction_getById( this.nActivationId );
+    this.pfnActivation = Pointwise.ActivationFunction_get_byId( this.nActivationId );
 
     // 3.
     if ( this.bPointwise ) {

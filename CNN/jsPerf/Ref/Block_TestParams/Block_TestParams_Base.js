@@ -186,7 +186,7 @@ class Base extends TestParams.Base {
    */
   onYield_isLegal() {
 
-    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( this.out.nConvBlockTypeId );
+    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfo_byId( this.out.nConvBlockTypeId );
 
     // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
     switch ( this.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
@@ -1071,7 +1071,7 @@ class Base extends TestParams.Base {
 
     let io_paramsNumberArrayObject = this.in.paramsNumberArrayObject;
 
-    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( paramsAll.nConvBlockTypeId );
+    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfo_byId( paramsAll.nConvBlockTypeId );
 
 
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
@@ -1250,7 +1250,7 @@ class Base extends TestParams.Base {
             throw Error( `Block_Reference.Base.calcResult(): `
               + `Block.TestParams.Base.generate_Filters_Biases(): Unknown `
               + `nConvBlockTypeId=`
-              + `${ValueDesc.ConvBlockType.Singleton.getStringOf( paramsAll.nConvBlockTypeId )}`
+              + `${ValueDesc.ConvBlockType.Singleton.getName_byId( paramsAll.nConvBlockTypeId )}`
               + `(${paramsAll.nConvBlockTypeId}). `
               + `` );
           break;

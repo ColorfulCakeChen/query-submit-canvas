@@ -225,7 +225,7 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends Recyclable.Base( MultiLay
    *
    */
   get_by_PassThroughStyleId( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, nPassThroughStyleId ) {
-    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( nPassThroughStyleId );
+    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfo_byId( nPassThroughStyleId );
     return this.get_by_filterValue_biasValue( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias,
       thePassThroughStyleInfo.filterValue, thePassThroughStyleInfo.biasValue );
   }

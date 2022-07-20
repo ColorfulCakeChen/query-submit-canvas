@@ -216,7 +216,7 @@ class Out extends Recyclable.Root {
       + `output_channelCount=${this.output_channelCount}, `
 
       + `nConvBlockTypeName=`
-      + `${ValueDesc.ConvBlockType.Singleton.getStringOf( this.nConvBlockTypeId )}`
+      + `${ValueDesc.ConvBlockType.Singleton.getName_byId( this.nConvBlockTypeId )}`
       + `(${this.nConvBlockTypeId}), `
 
       + `bHigherHalfDifferent=${inferencedParams.bHigherHalfDifferent}, `
@@ -225,21 +225,21 @@ class Out extends Recyclable.Root {
       + `pointwise1ChannelCount=${this.inferencedParams.pointwise1ChannelCount}, `
       + `pointwise1Bias=${this.inferencedParams.pointwise1Bias}, `
       + `pointwise1ActivationName=`
-        + `${ValueDesc.ActivationFunction.Singleton.getStringOf( inferencedParams.pointwise1ActivationId )}`
+        + `${ValueDesc.ActivationFunction.Singleton.getName_byId( inferencedParams.pointwise1ActivationId )}`
         + `(${inferencedParams.pointwise1ActivationId}), `
 
       + `bDepthwiseRequestedAndNeeded=${inferencedParams.bDepthwiseRequestedAndNeeded}, `
       + `bDepthwise2Requested=${inferencedParams.bDepthwise2Requested}, `
 
       + `depthwise_AvgMax_Or_ChannelMultiplier=`
-        + `${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getStringOf( this.depthwise_AvgMax_Or_ChannelMultiplier )}`
+        + `${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getName_byId( this.depthwise_AvgMax_Or_ChannelMultiplier )}`
         + `(${this.depthwise_AvgMax_Or_ChannelMultiplier}), `
 
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
       + `depthwiseFilterHeight_real=${this.depthwiseFilterHeight_real}, depthwiseFilterWidth_real=${this.depthwiseFilterWidth_real}, `
 
       + `depthwiseStridesPad=`
-        + `${ValueDesc.StridesPad.Singleton.getStringOf( this.depthwiseStridesPad )}`
+        + `${ValueDesc.StridesPad.Singleton.getName_byId( this.depthwiseStridesPad )}`
         + `(${this.depthwiseStridesPad}), `
       + `depthwiseBias=${this.inferencedParams.depthwiseBias}, `
       + `depthwiseActivationName=`
@@ -255,11 +255,11 @@ class Out extends Recyclable.Root {
         + `(${this.pointwise20ActivationId}), `
 
       + `nSqueezeExcitationChannelCountDivisorName=`
-        + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getStringOf( this.nSqueezeExcitationChannelCountDivisor )}`
+        + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor )}`
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
 
       + `squeezeExcitationActivationName=`
-        + `${ValueDesc.ActivationFunction.Singleton.getStringOf( this.inferencedParams.squeezeExcitationActivationId )}`
+        + `${ValueDesc.ActivationFunction.Singleton.getName_byId( this.inferencedParams.squeezeExcitationActivationId )}`
         + `(${this.inferencedParams.squeezeExcitationActivationId}), `
 
       + `bAddInputToOutputRequested=${inferencedParams.bAddInputToOutputRequested}, `

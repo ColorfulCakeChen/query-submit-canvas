@@ -320,7 +320,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     }
 
     // 2.
-    this.pfnActivation = Depthwise.ActivationFunction_getById( this.nActivationId );
+    this.pfnActivation = Depthwise.ActivationFunction_get_byId( this.nActivationId );
 
     // 3.
     if ( this.bDepthwise ) {

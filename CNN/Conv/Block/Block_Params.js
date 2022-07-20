@@ -450,7 +450,7 @@ class Params extends Weights.Params {
   }
 
   get depthwiseStridesPad()       { return this.getParamValue_byParamDesc( Params.depthwiseStridesPad ); }
-  get depthwiseStridesPadName()   { return ValueDesc.StridesPad.Singleton.getStringOf( this.depthwiseStridesPad ); }
+  get depthwiseStridesPadName()   { return ValueDesc.StridesPad.Singleton.getName_byId( this.depthwiseStridesPad ); }
 
   get depthwiseActivationId()     { return this.getParamValue_byParamDesc( Params.depthwiseActivationId ); }
   get depthwiseActivationName()   { return Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId ); }

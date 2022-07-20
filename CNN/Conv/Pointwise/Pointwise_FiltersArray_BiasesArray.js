@@ -536,7 +536,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 //               + `channelShuffler_inputGroupCount (${this.channelShuffler_inputGroupCount}) and `
 //               + `channelShuffler_outputGroupCount (${this.channelShuffler_outputGroupCount}) should be zero when `
 //               + `nHigherHalfDifferent=`
-//                 + `${ValueDesc.Pointwise_HigherHalfDifferent.Singleton.getStringOf( this.nHigherHalfDifferent )}`
+//                 + `${ValueDesc.Pointwise_HigherHalfDifferent.Singleton.getName_byId( this.nHigherHalfDifferent )}`
 //                 + `(${this.nHigherHalfDifferent}). `
 //               + `Usually, only HIGHER_HALF_PASS_THROUGH could have channel shuffler.`
 //           );
@@ -581,7 +581,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
     sourceWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
 
-    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfoById( this.nPassThroughStyleId );
+    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfo_byId( this.nPassThroughStyleId );
     let tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
 
     // Init

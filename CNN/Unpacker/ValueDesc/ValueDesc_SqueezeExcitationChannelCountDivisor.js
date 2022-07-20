@@ -18,9 +18,9 @@ class SqueezeExcitationChannelCountDivisor extends Int {
 
   constructor() {
     super( -2, 64, {
-      NONE:               -2,
-      EXCITATION:         -1,
-      SQUEEZE_EXCITATION:  0,
+      NONE:               new Int.Info( -2, "NONE" ),
+      EXCITATION:         new Int.Info( -1, "EXCITATION" ),
+      SQUEEZE_EXCITATION: new Int.Info(  0, "SQUEEZE_EXCITATION" ),
 
       // "SQUEEZE_INTERMEDIATE_DIVISOR_1_EXCITATION: "SQUEEZE_INTERMEDIATE_DIVISOR_2_EXCITATION:
       // ..., "SQUEEZE_INTERMEDIATE_DIVISOR_64_EXCITATION".
@@ -30,21 +30,6 @@ class SqueezeExcitationChannelCountDivisor extends Int {
       //... [ ... new Array( 64 ).keys() ].map( x => `SQUEEZE_INTERMEDIATE_DIVISOR_${( x + 1 )}_EXCITATION` )
     } );
   }
-
-//!!! (2022/05/26 Remarked) too many info object needs to be created.
-//   /**
-//    * Convert squeeze-and-excitation channel count divisor id to information object.
-//    *
-//    * @param {number} nSqueezeExcitationChannelCountDivisorId
-//    *   It should be one of ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx.
-//    *
-//    * @return {SqueezeExcitationChannelCountDivisor.Info}
-//    *   It should be one of ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.integerToObjectMap according to the nSqueezeExcitationChannelCountDivisorId.
-//    */
-//   getInfoById( nSqueezeExcitationChannelCountDivisorId ) {
-//     let info = this.integerToObjectMap.get( nSqueezeExcitationChannelCountDivisorId );
-//     return info;
-//   }
 
   /**
    * @param {number} nSqueezeExcitationChannelCountDivisorId   One of ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx.

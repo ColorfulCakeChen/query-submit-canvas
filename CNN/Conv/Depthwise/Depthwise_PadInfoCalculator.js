@@ -148,10 +148,10 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
     this.filterSize = this.filterHeight * this.filterWidth;
 
     // Strides and Padding.
-    this.stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( stridesPad );
+    this.stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfo_byId( stridesPad );
     {
       if ( !this.stridesPadInfo ) { // If not found, using default which could let add-input-to-output possible.
-        this.stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME );
+        this.stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfo_byId( ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME );
       }
 
       this.strides = this.stridesPadInfo.strides;
