@@ -123,6 +123,9 @@ class Base extends Recyclable.Root {
     this.bKeepInputTensor = stageParams.bKeepInputTensor; // block0 may or may not keep input tensor according to caller's necessary.
   }
 
+!!! ...unfinished... (2022/07/20)
+// This should be called many times (i.e. every block1, 2, 3, ... call once) because input/output width may be changed.
+
   /**
    * Called after block0 is created (i.e. before block1, 2, 3, ...). Sub-class should override this method to adjust data members.
    */
