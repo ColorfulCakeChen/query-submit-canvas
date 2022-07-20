@@ -133,17 +133,19 @@ class ConvBlockType extends Int {
  * means pointwise21 existed.
  *
  */
-ConvBlockType.Info = class {
+ConvBlockType.Info = class ConvBlockType_Info extends Int.Info {
 
   /**
    *
    */
-  constructor( nConvBlockTypeId, inputTensorCount, outputTensorCount,
+  constructor( nConvBlockTypeId, nameForMessage,
+    inputTensorCount, outputTensorCount,
     bDepthwise2Requested, bConcat1Requested, bAddInputToOutputRequested, bConcat2ShuffleSplitRequested,
     bHigherHalfDifferent, bHigherHalfDepthwise2, pointwise20_channelShuffler_outputGroupCount,
     bPointwise21
   ) {
-    this.nConvBlockTypeId = nConvBlockTypeId;
+    super( nConvBlockTypeId, nameForMessage );
+
     this.inputTensorCount = inputTensorCount;
     this.outputTensorCount = outputTensorCount;
 
