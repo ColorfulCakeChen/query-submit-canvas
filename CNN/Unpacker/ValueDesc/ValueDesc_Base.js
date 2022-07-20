@@ -110,7 +110,7 @@ class Int {
       this.integerToInfoMap = new Map;
 
       let nameForProgramArray = Object.keys( Infos );
-      for ( let i = 0; i < nameArray.length; ++i ) {
+      for ( let i = 0; i < infoArray.length; ++i ) {
         let info = infoArray[ i ];
 
         let integerId = info.id;
