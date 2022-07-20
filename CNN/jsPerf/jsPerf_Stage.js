@@ -198,7 +198,7 @@ class HeightWidthDepth {
           testCase.testParams, this.testPerformance_NumberImageArray[ 0 ].boundsArraySet.output0 );
       }
 
-      console.log( `Stage.${name}: tensorWeightCount = { Extracted: ${testCase.block.tensorWeightCountExtracted}, ` 
+      console.log( `Stage.${name}: tensorWeightCount = { Extracted: ${testCase.stage.tensorWeightCountExtracted}, `
         + `Total: ${testCase.block.tensorWeightCountTotal} }` );
     }
 
