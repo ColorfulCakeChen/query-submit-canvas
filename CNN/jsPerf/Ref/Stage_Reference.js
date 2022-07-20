@@ -417,12 +417,22 @@ class Base extends Recyclable.Root {
       let asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Stage.${blockName}`, blockParams, parametersDescription );
 
       // inputHeight0, inputWidth0
-      if ( 0 == blockIndex ) { // block0
-        asserter.propertyValue( "input0_height", stageParams.sourceHeight );
-        asserter.propertyValue( "input0_width", stageParams.sourceWidth );
+      {
+        if ( 0 == blockIndex ) { // block0
+          asserter.propertyValue( "input0_height", stageParams.sourceHeight );
+          asserter.propertyValue( "input0_width", stageParams.sourceWidth );
+        }
+
+        if ( stageParams instanceof Stage_TestParams.Out ) {
+          asserter.propertyValue( "input0_height", stageParams.inferencedParams.inputHeightArray[ blockIndex ] );
+          asserter.propertyValue( "input0_width", stageParams.inferencedParams.inputWidthArray[ blockIndex ] );
+        } else { // Stage.Base
+          let stage = stageParams;
+          let block = stage.blockArray[ blockIndex ];
+          asserter.propertyValue( "input0_height", block.input0_height );
+          asserter.propertyValue( "input0_width", block.input0_width );
+        }
       }
-      asserter.propertyValue( "input0_height", stageParams.inferencedParams.inputHeightArray[ blockIndex ] );
-      asserter.propertyValue( "input0_width", stageParams.inferencedParams.inputWidthArray[ blockIndex ] );
 
       // input0_channelCount
       if ( 0 == blockIndex ) { // block0
@@ -903,12 +913,26 @@ class Base extends Recyclable.Root {
 
       // output height and width
       {
-        asserter.propertyValue( "output_height", stageParams.inferencedParams.outputHeightArray[ blockIndex ] );
-        asserter.propertyValue( "output_width", stageParams.inferencedParams.outputWidthArray[ blockIndex ] );
 
-        if ( ( blockCount - 1 ) == blockIndex ) { // blockLast
-          asserter.propertyValue( "output_height", stageParams.inferencedParams.outputHeight );
-          asserter.propertyValue( "output_width", stageParams.inferencedParams.outputWidth );
+        if ( stageParams instanceof Stage_TestParams.Out ) {
+          asserter.propertyValue( "output_height", stageParams.inferencedParams.outputHeightArray[ blockIndex ] );
+          asserter.propertyValue( "output_width", stageParams.inferencedParams.outputWidthArray[ blockIndex ] );
+  
+          if ( ( blockCount - 1 ) == blockIndex ) { // blockLast
+            asserter.propertyValue( "output_height", stageParams.inferencedParams.outputHeight );
+            asserter.propertyValue( "output_width", stageParams.inferencedParams.outputWidth );
+          }
+  
+        } else { // Stage.Base
+          let block = stageParams.blockArray[ blockIndex ];
+          asserter.propertyValue( "output_height", block.output_height );
+          asserter.propertyValue( "output_width", block.output_width );
+  
+          let stage = stageParams;
+          if ( ( blockCount - 1 ) == blockIndex ) { // blockLast
+            asserter.propertyValue( "output_height", stage.outputHeight );
+            asserter.propertyValue( "output_width", stage.outputWidth );
+          }
         }
       }
 
