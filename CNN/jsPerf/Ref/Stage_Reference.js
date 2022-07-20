@@ -656,8 +656,20 @@ class Base extends Recyclable.Root {
       //asserter.propertyValue( "pointwise1Bias", true );
       //asserter.propertyValue( "pointwise1ActivationId", stageParams.nActivationId );
 
-      asserter.propertyValue( "depthwiseFilterHeight", stageParams.depthwiseFilterHeight );
-      asserter.propertyValue( "depthwiseFilterWidth", stageParams.depthwiseFilterWidth );
+      // depthwiseFilterHeight and depthwiseFilterWidth
+      {
+        if ( 0 == blockIndex ) { // block0
+          asserter.propertyValue( "depthwiseFilterHeight", stageParams.depthwiseFilterHeight );
+          asserter.propertyValue( "depthwiseFilterWidth", stageParams.depthwiseFilterWidth );
+        }
+
+        if ( stageParams instanceof Stage_TestParams.Out ) {
+          asserter.propertyValue( "depthwiseFilterHeight", stageParams.inferencedParams.depthwiseFilterHeightArray[ blockIndex ] );
+          asserter.propertyValue( "depthwiseFilterWidth", stageParams.inferencedParams.depthwiseFilterWidthArray[ blockIndex ] );
+        } else { // Stage.Base
+          // Note: Stage.Base does not have information to verify every block's depthwise filter height/width.
+        }
+      }
 
       // depthwise_AvgMax_Or_ChannelMultiplier
       if ( 0 == blockIndex ) { // block0
