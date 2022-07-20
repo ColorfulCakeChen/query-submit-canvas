@@ -161,7 +161,7 @@ class Out extends Recyclable.Root {
       + `nActivationName=${ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId )}`
         + `(${this.nActivationId}), `
 
-      + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
+      + `outputHeight=${this.inferencedParams.outputHeight}, outputWidth=${this.inferencedParams.outputWidth}, `
 //        + `outputChannelCount=${???.outputChannelCount}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}`
     ;
