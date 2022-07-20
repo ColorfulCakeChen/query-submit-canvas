@@ -427,10 +427,13 @@ class Base extends Recyclable.Root {
           asserter.propertyValue( "input0_height", stageParams.inferencedParams.inputHeightArray[ blockIndex ] );
           asserter.propertyValue( "input0_width", stageParams.inferencedParams.inputWidthArray[ blockIndex ] );
         } else { // Stage.Base
-          let stage = stageParams;
-          let block = stage.blockArray[ blockIndex ];
-          asserter.propertyValue( "input0_height", block.input0_height );
-          asserter.propertyValue( "input0_width", block.input0_width );
+          // Note: Stage.Base does not have information to verify every block's input height/width.
+
+//!!! (2022/07/20 Remarked) blockParams already is block itself.
+//           let stage = stageParams;
+//           let block = stage.blockArray[ blockIndex ];
+//           asserter.propertyValue( "input0_height", block.input0_height );
+//           asserter.propertyValue( "input0_width", block.input0_width );
         }
       }
 
@@ -924,15 +927,18 @@ class Base extends Recyclable.Root {
           }
   
         } else { // Stage.Base
-          let block = stageParams.blockArray[ blockIndex ];
-          asserter.propertyValue( "output_height", block.output_height );
-          asserter.propertyValue( "output_width", block.output_width );
-  
-          let stage = stageParams;
-          if ( ( blockCount - 1 ) == blockIndex ) { // blockLast
-            asserter.propertyValue( "output_height", stage.outputHeight );
-            asserter.propertyValue( "output_width", stage.outputWidth );
-          }
+          // Note: Stage.Base does not have information to verify every block's input height/width.
+
+//!!! (2022/07/20 Remarked) blockParams already is block itself.
+//           let block = stageParams.blockArray[ blockIndex ];
+//           asserter.propertyValue( "output_height", block.output_height );
+//           asserter.propertyValue( "output_width", block.output_width );
+//  
+//           let stage = stageParams;
+//           if ( ( blockCount - 1 ) == blockIndex ) { // blockLast
+//             asserter.propertyValue( "output_height", stage.outputHeight );
+//             asserter.propertyValue( "output_width", stage.outputWidth );
+//           }
         }
       }
 
