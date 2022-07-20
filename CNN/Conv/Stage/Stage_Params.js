@@ -213,8 +213,9 @@ class Params extends Weights.Params {
     if ( !bExtractOk )
       return false;
 
-!!!
-    Params.set_outputHeight_outputWidth_by.call( this,
+    this.InferencedParams_dispose();
+
+    this.inferencedParams = InferencedParams.Pool.get_or_create_by(
       this.sourceHeight, this.sourceWidth,
       this.nConvStageTypeId,
       this.blockCountRequested,

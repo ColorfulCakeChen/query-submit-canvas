@@ -393,6 +393,8 @@ class Params extends Weights.Params {
     if ( !bExtractOk )
       return false;
 
+    this.InferencedParams_dispose();
+
     // Determine input tensor count and whether request add-input-to-output.
     this.inferencedParams = InferencedParams.Pool.get_or_create_by(
       this.input0_height, this.input0_width, this.input0_channelCount,
