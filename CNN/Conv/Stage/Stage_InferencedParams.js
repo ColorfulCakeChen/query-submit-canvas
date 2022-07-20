@@ -26,6 +26,12 @@ import * as Depthwise from "../Depthwise.js";
  * @member {number} outputWidth
  *   The width of output image. It is half of the input width (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
  *
+ * @member {number[]} depthwiseFilterHeightArray
+ *   The depthwise filter height of input image of every block.
+ *
+ * @member {number[]} depthwiseFilterWidthArray
+ *   The depthwise filter width of input image of every block.
+ *
  */
 class InferencedParams extends Recyclable.Root {
 
@@ -96,6 +102,17 @@ class InferencedParams extends Recyclable.Root {
 
   /** Release .inutHeightArray, .inputWidthArray, .outputHeightArray, .outputWidthArray */
   height_width_array_dispose() {
+
+    if ( this.depthwiseFilterWidthArray ) {
+      this.depthwiseFilterWidthArray.disposeResources_and_recycleToPool();
+      this.depthwiseFilterWidthArray = null;
+    }
+
+    if ( this.depthwiseFilterHeightArray ) {
+      this.depthwiseFilterHeightArray.disposeResources_and_recycleToPool();
+      this.depthwiseFilterHeightArray = null;
+    }
+
     if ( this.outputWidthArray ) {
       this.outputWidthArray.disposeResources_and_recycleToPool();
       this.outputWidthArray = null;
@@ -141,7 +158,9 @@ class InferencedParams extends Recyclable.Root {
     this.inputWidthArray = Recyclable.Array.Pool.get_or_create_by( blockCountRequested );
     this.outputHeightArray = Recyclable.Array.Pool.get_or_create_by( blockCountRequested );
     this.outputWidthArray = Recyclable.Array.Pool.get_or_create_by( blockCountRequested );
- 
+    this.depthwiseFilterWidthArray = Recyclable.Array.Pool.get_or_create_by( blockCountRequested );
+    this.depthwiseFilterHeightArray = Recyclable.Array.Pool.get_or_create_by( blockCountRequested );
+
     // These two parameters are not important for calculating output height and width. Fixing them as constant 1 should be enough.
     const inputChannelCount = 1;
     const AvgMax_Or_ChannelMultiplier = 1;
@@ -154,17 +173,18 @@ class InferencedParams extends Recyclable.Root {
       this.inputHeightArray[ 0 ] = inputHeight = sourceHeight;
       this.inputWidthArray[ 0 ] = inputWidth = sourceWidth;
 
-      depthwiseFilterHeight_adjusted = depthwiseFilterHeight;
-      depthwiseFilterWidth_adjusted = depthwiseFilterWidth;
-
       if ( ValueDesc.ConvStageType.isPadValid( nConvStageTypeId ) ) {
 
         // When pad is "valid", depthwise conv filter size can not larger than input image size.
-        if ( depthwiseFilterHeight_adjusted > inputHeight )
-          depthwiseFilterHeight_adjusted = inputHeight;
+        if ( depthwiseFilterHeight > inputHeight )
+          this.depthwiseFilterHeightArray[ 0 ] = depthwiseFilterHeight_adjusted = inputHeight;
+        else
+          this.depthwiseFilterHeightArray[ 0 ] = depthwiseFilterWidth_adjusted = depthwiseFilterWidth;
 
-        if ( depthwiseFilterWidth_adjusted > inputWidth )
-          depthwiseFilterWidth_adjusted = inputWidth;
+        if ( depthwiseFilterWidth > inputWidth )
+          this.depthwiseFilterWidthArray[ 0 ] = depthwiseFilterWidth_adjusted = inputWidth;
+        else
+          this.depthwiseFilterWidthArray[ 0 ] = depthwiseFilterHeight_adjusted = depthwiseFilterHeight;
 
         stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID;
 
@@ -189,10 +209,14 @@ class InferencedParams extends Recyclable.Root {
 
         // When pad is "valid", depthwise conv filter size can not larger than input image size.
         if ( depthwiseFilterHeight_adjusted > inputHeight )
-          depthwiseFilterHeight_adjusted = inputHeight;
+          this.depthwiseFilterHeightArray[ i ] = depthwiseFilterHeight_adjusted = inputHeight;
+        else
+          this.depthwiseFilterHeightArray[ i ] = depthwiseFilterHeight_adjusted = depthwiseFilterHeight;
 
         if ( depthwiseFilterWidth_adjusted > inputWidth )
-          depthwiseFilterWidth_adjusted = inputWidth;
+          this.depthwiseFilterWidthArray[ i ] = depthwiseFilterWidth_adjusted = inputWidth;
+        else
+          this.depthwiseFilterWidthArray[ i ] = depthwiseFilterWidth_adjusted = depthwiseFilterWidth;
 
         stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
 
