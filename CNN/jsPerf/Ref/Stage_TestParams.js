@@ -331,7 +331,8 @@ class Base extends TestParams.Base {
     let paramsNumberArrayObject_modified = {};
     Object.assign( paramsNumberArrayObject_modified, this.in.paramsNumberArrayObject ); // Shallow copy.
 
-    let channelShuffler;
+//!!! (2022/07/20 Remarked) seems not used.
+    // let channelShuffler;
     for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
 
       if ( 0 == i ) { // Block0.
