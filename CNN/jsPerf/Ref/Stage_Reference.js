@@ -907,8 +907,8 @@ class Base extends Recyclable.Root {
         asserter.propertyValue( "output_width", stageParams.inferencedParams.outputWidthArray[ blockIndex ] );
 
         if ( ( blockCount - 1 ) == blockIndex ) { // blockLast
-          asserter.propertyValue( "output_height", stageParams.outputHeight );
-          asserter.propertyValue( "output_width", stageParams.outputWidth );
+          asserter.propertyValue( "output_height", stageParams.inferencedParams.outputHeight );
+          asserter.propertyValue( "output_width", stageParams.inferencedParams.outputWidth );
         }
       }
 
