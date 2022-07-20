@@ -421,8 +421,8 @@ class Base extends Recyclable.Root {
         asserter.propertyValue( "input0_height", stageParams.sourceHeight );
         asserter.propertyValue( "input0_width", stageParams.sourceWidth );
       }
-      asserter.propertyValue( "input0_height", stageParams.inferencedParams.outputHeightArray[ blockIndex ] );
-      asserter.propertyValue( "input0_width", stageParams.inferencedParams.outputWidthArray[ blockIndex ] );
+      asserter.propertyValue( "input0_height", stageParams.inferencedParams.inputHeightArray[ blockIndex ] );
+      asserter.propertyValue( "input0_width", stageParams.inferencedParams.inputWidthArray[ blockIndex ] );
 
       // input0_channelCount
       if ( 0 == blockIndex ) { // block0

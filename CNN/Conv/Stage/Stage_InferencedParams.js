@@ -238,11 +238,11 @@ class InferencedParams extends Recyclable.Root {
     depthwiseFilterHeight, depthwiseFilterWidth
   ) {
     InferencedParams.set_outputHeight_outputWidth_by.call( this,
-        sourceHeight, sourceWidth,
-        nConvStageTypeId,
-        blockCountRequested,
-        depthwiseFilterHeight, depthwiseFilterWidth
-      );
+      sourceHeight, sourceWidth,
+      nConvStageTypeId,
+      blockCountRequested,
+      depthwiseFilterHeight, depthwiseFilterWidth
+    );
   }
 
 }
