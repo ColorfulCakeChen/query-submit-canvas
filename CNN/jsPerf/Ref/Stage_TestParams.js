@@ -336,6 +336,8 @@ class Base extends TestParams.Base {
 
       if ( 0 == i ) { // Block0.
         blockParamsCreator.configTo_beforeBlock0();
+      } else { // (i.e. block1, 2, 3, ...)
+        blockParamsCreator.configTo_beforeBlockN_exceptBlock0();
       }
 
       if ( ( this.blockArray.length - 1 ) == i ) { // BlockLast. (Note: Block0 may also be BlockLast.)
@@ -366,14 +368,6 @@ class Base extends TestParams.Base {
 
       this.blockArray[ i ] = blockTestParams;
       paramsNumberArrayObject_modified[ blockName ] = blockTestParams.in.inputWeightArray;
-
-      if ( 0 == i ) { // After block0 (i.e. for block1, 2, 3, ...)
-
-!!! ...unfinished... (2022/07/20)
-// This should be called many times (i.e. every block1, 2, 3, ... call once) because input/output width may be changed.
-
-        blockParamsCreator.configTo_afterBlock0();
-      }
     }
 
     // Here (i.e. in Stage_TestParams), the channelShuffler is not used. Just release it for avoiding memory leak.

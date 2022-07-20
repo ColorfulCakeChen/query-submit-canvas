@@ -94,8 +94,8 @@ class ShuffleNetV2 extends Base {
   }
 
   /** @override */
-  configTo_afterBlock0() {
-    super.configTo_afterBlock0();
+  configTo_beforeBlockN_exceptBlock0() {
+    super.configToconfigTo_beforeBlockN_exceptBlock0_afterBlock0();
 
     // The ( input0, input1 ) of all blocks (except block0) have the same depth as previous (also block0's) block's ( output0, output1 ).
     this.input0_channelCount = this.output0_channelCount;

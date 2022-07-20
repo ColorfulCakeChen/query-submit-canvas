@@ -121,19 +121,22 @@ class Base extends Recyclable.Root {
     this.nSqueezeExcitationChannelCountDivisor = stageParams.nSqueezeExcitationChannelCountDivisor;
 
     this.bKeepInputTensor = stageParams.bKeepInputTensor; // block0 may or may not keep input tensor according to caller's necessary.
+
+    this.output_height = stageParams.inferencedParams.outputHeightArray[ 0 ];
+    this.output_width = stageParams.inferencedParams.outputWidthArray[ 0 ];
   }
 
-!!! ...unfinished... (2022/07/20)
-// This should be called many times (i.e. every block1, 2, 3, ... call once) because input/output width may be changed.
-
   /**
-   * Called after block0 is created (i.e. before block1, 2, 3, ...). Sub-class should override this method to adjust data members.
+   * Called before every block (excluding block0, including block1, 2, ...). Sub-class should override this method to adjust data members.
+   *
+   * @param {number} blockIndex
+   *   The id (i.e. 1, 2, ...) of the block which will be created.
    */
-  configTo_afterBlock0() {
+  configTo_beforeBlockN_exceptBlock0( blockIndex ) {
     let stageParams = this.stageParams;
 
-    this.input0_height = stageParams.outputHeight; // all blocks (except block0) inputs half the source image size.
-    this.input0_width = stageParams.outputWidth;
+    this.input0_height = stageParams.inferencedParams.inputHeightArray[ blockIndex ];
+    this.input0_width = stageParams.inferencedParams.inputWidthArray[ blockIndex ];
     //this.input0_channelCount; // Sub-class should determine it.
 
     // All blocks (except block0 in NoPointwise1) will not double the channel count by depthwise, because block0 has already double
@@ -145,12 +148,18 @@ class Base extends Recyclable.Root {
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
 
     this.bKeepInputTensor = false; // No matter bKeepInputTensor, all blocks (except block0) should not keep input tensor.
+
+    this.output_height = stageParams.inferencedParams.outputHeightArray[ blockIndex ];
+    this.output_width = stageParams.inferencedParams.outputWidthArray[ blockIndex ];
   }
 
   /**
    * Called before blockLast is about to be created. Sub-class could override this method to adjust data members.
    */
   configTo_beforeBlockLast() {
+
+    this.input0_height = stageParams.inferencedParams.inputHeightArray[ blockIndex ];
+    this.input0_width = stageParams.inferencedParams.inputWidthArray[ blockIndex ];
 
     // Besides, the blockLast may use a different depthwise filter size. This is especially true for NotShuffleNet_NotMobileNet.
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Last;

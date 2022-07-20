@@ -362,6 +362,8 @@ class Base extends Recyclable.Root {
         if ( 0 == i ) { // Block0.
           blockParamsCreator.configTo_beforeBlock0();
           input0_ScaleBoundsArray_or_TensorPlaceholder = inputScaleBoundsArray0;
+        } else { // (i.e. block1, 2, 3, ...)
+          blockParamsCreator.configTo_beforeBlockN_exceptBlock0();
         }
 
         // BlockLast. (Note: Block0 may also be BlockLast.) 
@@ -411,16 +413,6 @@ class Base extends Recyclable.Root {
 
         this.tensorWeightCountTotal += block.tensorWeightCountTotal;
         this.tensorWeightCountExtracted += block.tensorWeightCountExtracted;
-
-        if ( 0 == i ) { // After block0 (i.e. for block1, 2, 3, ...)
-
-
-!!! ...unfinished... (2022/07/20)
-// This should be called many times (i.e. every block1, 2, 3, ... call once) because input/output width may be changed.
-          
-          
-          blockParamsCreator.configTo_afterBlock0();
-        }
 
         input0_ScaleBoundsArray_or_TensorPlaceholder = block.output0;
         input1_ScaleBoundsArray_or_TensorPlaceholder = block.output1;

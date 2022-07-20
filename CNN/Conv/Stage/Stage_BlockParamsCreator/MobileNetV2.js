@@ -58,8 +58,8 @@ class MobileNetV2 extends MobileNetV2_Thin {
   }
 
   /** @override */
-  configTo_afterBlock0() {
-    super.configTo_afterBlock0(); // block1, 2, 3, ... are almost the same as MobileNetV2_Thin.
+  configTo_beforeBlockN_exceptBlock0() {
+    super.configTo_beforeBlockN_exceptBlock0(); // block1, 2, 3, ... are almost the same as MobileNetV2_Thin.
 
     let stageParams = this.stageParams;
 

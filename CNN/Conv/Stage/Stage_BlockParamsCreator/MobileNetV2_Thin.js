@@ -47,8 +47,8 @@ class MobileNetV2_Thin extends MobileNetV1 {
   }
 
   /** @override */
-  configTo_afterBlock0() {
-    super.configTo_afterBlock0(); // block1, 2, 3, ...'s input0_height, input0_width.
+  configTo_beforeBlockN_exceptBlock0() {
+    super.configTo_beforeBlockN_exceptBlock0(); // block1, 2, 3, ...'s input0_height, input0_width.
 
     // In MobileNetV2:
     //   - All blocks (except block0) do add-input-to-output (without concatenation).

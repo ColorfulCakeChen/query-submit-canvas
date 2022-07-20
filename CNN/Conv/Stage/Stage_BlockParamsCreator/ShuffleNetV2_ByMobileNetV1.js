@@ -112,8 +112,8 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
   }
 
   /** @override */
-  configTo_afterBlock0() {
-    super.configTo_afterBlock0(); // Block1, 2, 3, ... are almost the same as ShuffleNetV2.
+  configTo_beforeBlockN_exceptBlock0() {
+    super.configTo_beforeBlockN_exceptBlock0(); // Block1, 2, 3, ... are almost the same as ShuffleNetV2.
 
     let stageParams = this.stageParams;
 
