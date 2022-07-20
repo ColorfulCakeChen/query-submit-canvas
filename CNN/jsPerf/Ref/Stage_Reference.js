@@ -421,8 +421,8 @@ class Base extends Recyclable.Root {
         asserter.propertyValue( "input0_height", stageParams.sourceHeight );
         asserter.propertyValue( "input0_width", stageParams.sourceWidth );
       }
-      asserter.propertyValue( "input0_height", stageParams.outputHeightArray[ blockIndex ] );
-      asserter.propertyValue( "input0_width", stageParams.outputWidthArray[ blockIndex ] );
+      asserter.propertyValue( "input0_height", stageParams.inferencedParams.outputHeightArray[ blockIndex ] );
+      asserter.propertyValue( "input0_width", stageParams.inferencedParams.outputWidthArray[ blockIndex ] );
 
       // input0_channelCount
       if ( 0 == blockIndex ) { // block0
@@ -903,8 +903,8 @@ class Base extends Recyclable.Root {
 
       // output height and width
       {
-        asserter.propertyValue( "output_height", stageParams.outputHeightArray[ blockIndex ] );
-        asserter.propertyValue( "output_width", stageParams.outputWidthArray[ blockIndex ] );
+        asserter.propertyValue( "output_height", stageParams.inferencedParams.outputHeightArray[ blockIndex ] );
+        asserter.propertyValue( "output_width", stageParams.inferencedParams.outputWidthArray[ blockIndex ] );
 
         if ( ( blockCount - 1 ) == blockIndex ) { // blockLast
           asserter.propertyValue( "output_height", stageParams.outputHeight );

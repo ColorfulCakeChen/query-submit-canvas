@@ -102,8 +102,7 @@ class Out extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    this.outputWidth = undefined;
-    this.outputHeight = undefined;
+    this.InferencedParams_dispose();
 
     this.sourceHeight = undefined;
     this.sourceWidth = undefined;
@@ -121,11 +120,18 @@ class Out extends Recyclable.Root {
     super.disposeResources();
   }
 
+  /** Release .inferencedParams */
+  InferencedParams_dispose() {
+    if ( this.inferencedParams ) {
+      this.inferencedParams.disposeResources_and_recycleToPool();
+      this.inferencedParams = null;
+    }
+  }
+
   /**  */
   generate_inferencedParams() {
-
-    // Fill in outputHeight, outputWidth.
-    Stage.Params.set_outputHeight_outputWidth_by.call( this,
+    this.InferencedParams_dispose();
+    this.inferencedParams = Stage.InferencedParams.Pool.get_or_create_by(
       this.sourceHeight, this.sourceWidth,
       this.nConvStageTypeId,
       this.blockCountRequested,
