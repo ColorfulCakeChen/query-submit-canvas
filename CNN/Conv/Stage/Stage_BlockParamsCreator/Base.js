@@ -168,9 +168,6 @@ class Base extends Recyclable.Root {
    */
   configTo_beforeBlockLast() {
 
-    this.input0_height = stageParams.inferencedParams.inputHeightArray[ blockIndex ];
-    this.input0_width = stageParams.inferencedParams.inputWidthArray[ blockIndex ];
-
     // Besides, the blockLast may use a different depthwise filter size. This is especially true for NotShuffleNet_NotMobileNet.
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Last;
     this.depthwiseFilterWidth = this.depthwiseFilterWidth_Last;
