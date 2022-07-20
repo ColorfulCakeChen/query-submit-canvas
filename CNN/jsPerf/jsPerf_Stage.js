@@ -199,7 +199,7 @@ class HeightWidthDepth {
       }
 
       console.log( `Stage.${name}: tensorWeightCount = { Extracted: ${testCase.stage.tensorWeightCountExtracted}, `
-        + `Total: ${testCase.block.tensorWeightCountTotal} }` );
+        + `Total: ${testCase.stage.tensorWeightCountTotal} }` );
     }
 
   }
