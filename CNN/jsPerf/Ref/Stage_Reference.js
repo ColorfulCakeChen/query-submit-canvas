@@ -373,16 +373,18 @@ class Base extends Recyclable.Root {
   /**
    * Test every block's parameters.
    *
-   * @param {Stage.Base[]|Stage_TestParams.Base[]} stageParams
+   * @param {Stage.Base[]|Stage_TestParams.Base[]} stageParamsToBeChecked
    *   The stage to be checked. It parameters will be checked.
    *
    */
-  static AssertParameters_Stage_blocks( stageParams, parametersDescription ) {
-    let blockParamsArray = stageParams.blockArray; // No matter Stage.Base or Stage_TestParams.Base
+  static AssertParameters_Stage_blocks( stageParamsToBeChecked, parametersDescription ) {
+    let blockParamsArray = stageParamsToBeChecked.blockArray; // No matter Stage.Base or Stage_TestParams.Base
 
-    if ( stageParams instanceof Stage_TestParams.Base ) {
-      stageParams = stageParams.out;
+    let stageParams;
+    if ( stageParamsToBeChecked instanceof Stage_TestParams.Base ) {
+      stageParams = stageParamsToBeChecked.out;
     } else { // Stage.Base
+      stageParams = stageParamsToBeChecked;
     }
 
     let blockCountRequested = stageParams.blockCountRequested;
