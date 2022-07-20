@@ -6,7 +6,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as Depthwise from "../Depthwise.js";
-import { InferencedParams } from "./Block_InferencedParams.js";
+import { InferencedParams } from "./Stage_InferencedParams.js";
 
 
 //!!! ...unfinished... (2022/05/28)
