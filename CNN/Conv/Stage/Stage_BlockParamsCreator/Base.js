@@ -48,7 +48,7 @@ class Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    this.channelShuffler = undefined; // Note: channelShuffler is owned and released by Stage.Base (not here Stage.BlockParamsCreator.Base).
+    this.channelShuffler_dispose();
 
     this.blockCount = undefined; // How many block should be in the stage.
     this.depthwiseFilterHeight_Default = undefined;
@@ -78,6 +78,15 @@ class Base extends Recyclable.Root {
     this.stageParams = undefined; // Just nullify it. Do not release it here.
 
     super.disposeResources();
+  }
+
+  /**
+   *
+   */
+   channelShuffler_dispose() {
+    if ( this.channelShuffler ) {
+    this.channelShuffler.disposeResources_and_recycleToPool();
+    this.channelShuffler = false;
   }
 
   /** Called to determine blockCount, depthwiseFilterHeight_Default, depthwiseFilterWidth_Default, depthwiseFilterHeight_Last,

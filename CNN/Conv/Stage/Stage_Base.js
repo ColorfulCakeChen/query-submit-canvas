@@ -436,6 +436,7 @@ class Base extends Recyclable.Root {
 
     } finally {
       if ( blockParamsCreator ) {
+        blockParamsCreator.channelShuffler = null; // (Because ownership has been transferred to this Stage object.)
         blockParamsCreator.disposeResources_and_recycleToPool();
         blockParamsCreator = null;
       }
@@ -487,10 +488,7 @@ class Base extends Recyclable.Root {
       this.blockArray = null;
     }
 
-    if ( this.channelShuffler ) { // Stage is responsible for releasing the channel shuffler shared by all blocks of the stage.
-      this.channelShuffler.disposeResources_and_recycleToPool();
-      this.channelShuffler = false;
-    }
+    this.channelShuffler_dispose();
 
     this.tensorWeightCountTotal = 0;
     this.tensorWeightCountExtracted = 0;
@@ -510,6 +508,15 @@ class Base extends Recyclable.Root {
     this.bInitOk = false;
 
     super.disposeResources();
+  }
+
+  /**
+   *
+   */
+   channelShuffler_dispose() {
+    if ( this.channelShuffler ) {
+    this.channelShuffler.disposeResources_and_recycleToPool();
+    this.channelShuffler = false;
   }
 
   /**

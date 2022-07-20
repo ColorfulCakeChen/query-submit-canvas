@@ -107,9 +107,10 @@ class ShuffleNetV2 extends Base {
     //
     this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY;
 
-    this.channelShuffler_init(); // In ShuffleNetV2, all blocks (except block0) uses channel shuffler (with two convolution groups).
+    if ( !this.channelShuffler )
+      this.channelShuffler_init(); // In ShuffleNetV2, all blocks (except block0) uses channel shuffler (with two convolution groups).
   }
-  
+
   /**
    * Create channel shuffler if necessary and put in this.channelShuffler.
    *
