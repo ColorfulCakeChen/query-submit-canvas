@@ -127,11 +127,9 @@ class Base extends Recyclable.Root {
     let {
       sourceHeight, sourceWidth, sourceChannelCount,
       bKeepInputTensor,
-
-      outputHeight,
-      outputWidth,
-
     } = testParams.out;
+
+    let { outputHeight, outputWidth } = testParams.out.inferencedParams;
 
     let outputChannelCount = sourceChannelCount * 2; // In current Stage's design, the output channel always is twice as input.
 
@@ -933,7 +931,7 @@ class Base extends Recyclable.Root {
 //           let block = stageParams.blockArray[ blockIndex ];
 //           asserter.propertyValue( "output_height", block.output_height );
 //           asserter.propertyValue( "output_width", block.output_width );
-//  
+  
 //           let stage = stageParams;
 //           if ( ( blockCount - 1 ) == blockIndex ) { // blockLast
 //             asserter.propertyValue( "output_height", stage.outputHeight );
