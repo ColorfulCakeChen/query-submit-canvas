@@ -85,8 +85,8 @@ class MobileNetV1 extends Base {
   }
 
   /** @override */
-  configTo_beforeBlockN_exceptBlock0() {
-    super.configTo_beforeBlockN_exceptBlock0(); // block1, 2, 3, ...'s input0_height, input0_width.
+  configTo_beforeBlockN_exceptBlock0( blockIndex ) {
+    super.configTo_beforeBlockN_exceptBlock0( blockIndex ); // block1, 2, 3, ...'s input0_height, input0_width.
 
     // The input0 of all blocks (except block0) have the same depth as previous (also block0's) block's output0.
     this.input0_channelCount = this.output0_channelCount;

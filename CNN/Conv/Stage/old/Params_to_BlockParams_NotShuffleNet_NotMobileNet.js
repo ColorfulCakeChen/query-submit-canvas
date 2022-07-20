@@ -106,8 +106,8 @@ Params.to_BlockParams.NotShuffleNet_NotMobileNet = class extends Params.to_Block
   }
 
   /** @override */
-  configTo_beforeBlockN_exceptBlock0() {
-    super.configTo_beforeBlockN_exceptBlock0(); // Almost the same as MobileNetV2.
+  configTo_beforeBlockN_exceptBlock0( blockIndex ) {
+    super.configTo_beforeBlockN_exceptBlock0( blockIndex ); // Almost the same as MobileNetV2.
 
     // In NotShuffleNet_NotMobileNet:
     //   - All blocks (include block0) without add-input-to-output (and without concatenation).

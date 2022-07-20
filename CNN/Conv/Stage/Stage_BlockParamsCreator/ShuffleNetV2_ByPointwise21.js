@@ -155,8 +155,8 @@ class ShuffleNetV2_ByPointwise21 extends ShuffleNetV2 {
   }
 
   /** @override */
-  configTo_beforeBlockN_exceptBlock0() {
-    super.configTo_beforeBlockN_exceptBlock0(); // Block1, 2, 3, ... are almost the same as ShuffleNetV2.
+  configTo_beforeBlockN_exceptBlock0( blockIndex ) {
+    super.configTo_beforeBlockN_exceptBlock0( blockIndex ); // Block1, 2, 3, ... are almost the same as ShuffleNetV2.
 
     let stageParams = this.stageParams;
 

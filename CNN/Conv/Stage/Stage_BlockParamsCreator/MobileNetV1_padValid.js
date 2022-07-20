@@ -53,8 +53,8 @@ class MobileNetV1_padValid extends MobileNetV1 {
   }
 
   /** @override */
-  configTo_beforeBlockN_exceptBlock0() {
-    super.configTo_beforeBlockN_exceptBlock0(); // Block1, 2, 3, ... are almost the same as MobileNetV1.
+  configTo_beforeBlockN_exceptBlock0( blockIndex ) {
+    super.configTo_beforeBlockN_exceptBlock0( blockIndex ); // Block1, 2, 3, ... are almost the same as MobileNetV1.
 
     // Except padding is "valid" (not "same").
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
