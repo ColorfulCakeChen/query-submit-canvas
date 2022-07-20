@@ -75,7 +75,7 @@ import { ShuffleNetV2 } from "./ShuffleNetV2.js";
  *
  * When the poitwise1 convolution (of every block (including block0)) is discarded (i.e. ( stageParams.bPointwise1 == false ) ),
  * the block0 and block0's branch could be achieved simultaneously by:
- *   - once depthwise convolution (channelMultipler = 2, strides = 2, pad = same, bias, CLIP_BY_VALUE_N3_P3).
+ *   - once depthwise convolution (channelMultipler = 2, strides = 2, pad = same, bias, CLIP_BY_VALUE_N2_P2).
  *   - No need to concatenate because the above operation already double channel count.
  *
  * Note that:

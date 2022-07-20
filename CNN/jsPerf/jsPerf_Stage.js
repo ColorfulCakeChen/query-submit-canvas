@@ -114,7 +114,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
         stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) } );
 
@@ -124,7 +124,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
         stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) } );
 
@@ -134,7 +134,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
         stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) } );
 
@@ -144,7 +144,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
         stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) } );
 
@@ -154,7 +154,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
         stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) } );
 
@@ -164,7 +164,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE22,
         stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) } );
 
@@ -174,7 +174,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
         stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) } );
 
@@ -184,7 +184,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
         stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N3_P3,
+        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) } );
 
