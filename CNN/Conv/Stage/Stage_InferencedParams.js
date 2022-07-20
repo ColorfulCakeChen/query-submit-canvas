@@ -179,12 +179,12 @@ class InferencedParams extends Recyclable.Root {
         if ( depthwiseFilterHeight > inputHeight )
           this.depthwiseFilterHeightArray[ 0 ] = depthwiseFilterHeight_adjusted = inputHeight;
         else
-          this.depthwiseFilterHeightArray[ 0 ] = depthwiseFilterWidth_adjusted = depthwiseFilterWidth;
+          this.depthwiseFilterHeightArray[ 0 ] = depthwiseFilterHeight_adjusted = depthwiseFilterHeight;
 
         if ( depthwiseFilterWidth > inputWidth )
           this.depthwiseFilterWidthArray[ 0 ] = depthwiseFilterWidth_adjusted = inputWidth;
         else
-          this.depthwiseFilterWidthArray[ 0 ] = depthwiseFilterHeight_adjusted = depthwiseFilterHeight;
+          this.depthwiseFilterWidthArray[ 0 ] = depthwiseFilterWidth_adjusted = depthwiseFilterWidth;
 
         stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID;
 
