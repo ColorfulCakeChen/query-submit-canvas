@@ -194,7 +194,8 @@ class HeightWidthDepth {
       let name = name_testCase[ 0 ];
       let testCase = name_testCase[ 1 ];
       if ( !testCase.stage ) {
-        testCase.stage = Stage_Reference.Base.Stage_create( testCase.testParams );
+        testCase.stage = Stage_Reference.Base.Stage_create(
+          testCase.testParams, this.testPerformance_NumberImageArray[ 0 ].boundsArraySet.output0 );
       }
 
       console.log( `Stage.${name}: tensorWeightCount = { Extracted: ${testCase.block.tensorWeightCountExtracted}, ` 
