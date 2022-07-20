@@ -327,8 +327,8 @@ class Base extends Recyclable.Root {
     asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
 
     // Referred parameters.
-    asserter.propertyValue( "outputHeight", testParams.out.outputHeight );
-    asserter.propertyValue( "outputWidth", testParams.out.outputWidth );
+    asserter.propertyValue( "outputHeight", testParams.out.inferencedParams.outputHeight );
+    asserter.propertyValue( "outputWidth", testParams.out.inferencedParams.outputWidth );
 
     // Other parameters.
     asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
