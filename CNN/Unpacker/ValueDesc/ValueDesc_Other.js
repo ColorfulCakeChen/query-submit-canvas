@@ -17,11 +17,11 @@ class Pointwise_HigherHalfDifferent extends Int {
 
   constructor() {
     super( 0, 4, {
-      NONE:                                                 0,
-      HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH: 1,
-      HIGHER_HALF_COPY_LOWER_HALF:                          2,
-      HIGHER_HALF_ANOTHER_POINTWISE:                        3,
-      HIGHER_HALF_PASS_THROUGH:                             4,
+      NONE:                                                 new Int.Info( 0, "NONE" ),
+      HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH: new Int.Info( 1, "HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH" ),
+      HIGHER_HALF_COPY_LOWER_HALF:                          new Int.Info( 2, "HIGHER_HALF_COPY_LOWER_HALF" ),
+      HIGHER_HALF_ANOTHER_POINTWISE:                        new Int.Info( 3, "HIGHER_HALF_ANOTHER_POINTWISE" ),
+      HIGHER_HALF_PASS_THROUGH:                             new Int.Info( 4, "HIGHER_HALF_PASS_THROUGH" ),
     } );
   }
 
@@ -47,9 +47,9 @@ class Depthwise_HigherHalfDifferent extends Int {
 
   constructor() {
     super( 0, 2, {
-      NONE:                     0,
-      HIGHER_HALF_DEPTHWISE2:   1,
-      HIGHER_HALF_PASS_THROUGH: 2,
+      NONE:                     new Int.Info( 0, "NONE" ),
+      HIGHER_HALF_DEPTHWISE2:   new Int.Info( 1, "HIGHER_HALF_DEPTHWISE2" ),
+      HIGHER_HALF_PASS_THROUGH: new Int.Info( 2, "HIGHER_HALF_PASS_THROUGH" ),
 
 //!!! (2022/07/13 Remarked) Does not work.
 //      "HIGHER_HALF_COPY_LOWER_HALF_DEPTHWISE2: 3)
@@ -73,7 +73,11 @@ Depthwise_HigherHalfDifferent.Singleton = new Depthwise_HigherHalfDifferent;
 class AvgMax_Or_ChannelMultiplier extends Int {
 
   constructor() {
-    super( -2, 32, { AVG: -2, MAX: -1, NONE: 0 } );
+    super( -2, 32, {
+      AVG:  new Int.Info( -2, "AVG" ),
+      MAX:  new Int.Info( -1, "MAX" ),
+      NONE: new Int.Info(  0, "NONE" ),
+    } );
   }
 
 }

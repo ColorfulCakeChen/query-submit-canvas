@@ -746,7 +746,7 @@ class Base extends Recyclable.Root {
    */
   static modify_byActivation_withoutAffect_BoundsArraySet( imageIn, nActivationId, parametersDesc ) {
 
-    let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
+    let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfo_byId( nActivationId );
     if ( !theActivationFunctionInfo )
       return imageIn;
 

@@ -191,7 +191,7 @@ class InferencedParams extends Recyclable.Root {
         this.depthwiseBias = true;
     }
 
-    let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( depthwiseStridesPad );
+    let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfo_byId( depthwiseStridesPad );
 
     let bChannelCountSame = Depthwise.PadInfoCalculatorRoot.output_channelCount_is_same_as_input( depthwise_AvgMax_Or_ChannelMultiplier );
 
@@ -318,7 +318,7 @@ class InferencedParams extends Recyclable.Root {
             throw Error(
               `Block.InferencedParams.set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by(): `
               + `When ( nConvBlockTypeId == `
-              + `${ValueDesc.ConvBlockType.Singleton.getStringOf( nConvBlockTypeId )}`
+              + `${ValueDesc.ConvBlockType.Singleton.getName_byId( nConvBlockTypeId )}`
               + `(${nConvBlockTypeId}) ), `
               + `input tensor count ( ${this.inputTensorCount} ) should be one.`
             );
@@ -398,7 +398,7 @@ class InferencedParams extends Recyclable.Root {
     }
 
     // 3.
-    this.pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.pointwise1ActivationId );
+    this.pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise1ActivationId );
   }
 
   /**
@@ -408,7 +408,7 @@ class InferencedParams extends Recyclable.Root {
    */
   static set_squeezeExcitationActivationId_squeezeExcitationActivationName_by( nActivationId ) {
     this.squeezeExcitationActivationId = nActivationId;
-    this.squeezeExcitationActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.squeezeExcitationActivationId );
+    this.squeezeExcitationActivationName = ValueDesc.ActivationFunction.Singleton.getName_byId( this.squeezeExcitationActivationId );
   }
 
   /**
@@ -422,7 +422,7 @@ class InferencedParams extends Recyclable.Root {
     nConvBlockTypeId, pointwise20ChannelCount, pointwise20Bias, pointwise20ActivationId ) {
 
     // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
-    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
+    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfo_byId( nConvBlockTypeId );
     if ( infoConvBlockType.bPointwise21 ) {
       this.pointwise21ChannelCount = pointwise20ChannelCount; // Still may be 0.
     } else {
@@ -430,7 +430,7 @@ class InferencedParams extends Recyclable.Root {
     }
     this.pointwise21Bias = pointwise20Bias;
     this.pointwise21ActivationId = pointwise20ActivationId;
-    this.pointwise21ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.pointwise21ActivationId );
+    this.pointwise21ActivationName = ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise21ActivationId );
   }
 
   /**
@@ -448,7 +448,7 @@ class InferencedParams extends Recyclable.Root {
   static set_pointwise1_nHigherHalfDifferent_modify_pointwise1ChannelCount_pointwise1Bias_pointwise1ActivationId_by(
     input0_channelCount, nConvBlockTypeId, pointwise1ChannelCount
   ) {
-    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
+    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfo_byId( nConvBlockTypeId );
 
     this.pointwise1ChannelCount_modified = undefined;
     this.pointwise1_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
@@ -478,7 +478,7 @@ class InferencedParams extends Recyclable.Root {
           // Since this is an almost copy operation, bias and activation is not necessary.
           this.pointwise1Bias = false;
           this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-          this.pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( this.pointwise1ActivationId );
+          this.pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise1ActivationId );
 
           this.pointwise1_outputChannelCount_lowerHalf = input0_channelCount; // For depthwise1 (by pass-through-input-to-output)
         }
@@ -530,7 +530,7 @@ class InferencedParams extends Recyclable.Root {
    *
    */
   static set_nHigherHalfDifferent_by( input0_channelCount, nConvBlockTypeId, pointwise1ChannelCount, pointwise20ChannelCount ) {
-    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
+    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfo_byId( nConvBlockTypeId );
 
     // pointwise1
     InferencedParams.set_pointwise1_nHigherHalfDifferent_modify_pointwise1ChannelCount_pointwise1Bias_pointwise1ActivationId_by.call( this,
@@ -645,7 +645,7 @@ class InferencedParams extends Recyclable.Root {
   ) {
 
     // 0. Prepare.
-    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfoById( nConvBlockTypeId );
+    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfo_byId( nConvBlockTypeId );
 
     this.pointwise20Bias = true; // pointwise2 always has bias.
 

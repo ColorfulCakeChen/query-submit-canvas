@@ -16,13 +16,8 @@ class PassThroughStyle extends Int {
   constructor() {
     super( 0, 1,
       {
-        PASS_THROUGH_STYLE_FILTER_1_BIAS_0: 0,
-        PASS_THROUGH_STYLE_FILTER_0_BIAS_1: 1,
-      },
-
-      {
-        PASS_THROUGH_STYLE_FILTER_1_BIAS_0: new PassThroughStyle.Info( 0, 1, 0 ),
-        PASS_THROUGH_STYLE_FILTER_0_BIAS_1: new PassThroughStyle.Info( 1, 0, 1 ),
+        PASS_THROUGH_STYLE_FILTER_1_BIAS_0: new PassThroughStyle.Info( 0, "PASS_THROUGH_STYLE_FILTER_1_BIAS_0", 1, 0 ),
+        PASS_THROUGH_STYLE_FILTER_0_BIAS_1: new PassThroughStyle.Info( 1, "PASS_THROUGH_STYLE_FILTER_0_BIAS_1", 0, 1 ),
       }
     );
 
@@ -42,10 +37,10 @@ class PassThroughStyle extends Int {
  *   The convolution bias value for the pass-through style.
  *
  */
-PassThroughStyle.Info = class {
+PassThroughStyle.Info = class PassThroughStyle_Info extends Int.Info {
 
-  constructor( nPassThroughStyleId, filterValue, biasValue ) {
-    this.nPassThroughStyleId = nPassThroughStyleId;
+  constructor( nPassThroughStyleId, nameForMessage, filterValue, biasValue ) {
+    super( nPassThroughStyleId, nameForMessage );
     this.filterValue = filterValue;
     this.biasValue = biasValue;
   }

@@ -18,14 +18,14 @@ class ConvStageType extends Int {
 
   constructor() {
     super( 0, 7, {
-      MOBILE_NET_V1:                             0,
-      MOBILE_NET_V1_PAD_VALID:                   1,
-      MOBILE_NET_V2_THIN:                        2,
-      MOBILE_NET_V2:                             3,
-      SHUFFLE_NET_V2:                            4,
-      SHUFFLE_NET_V2_BY_MOBILE_NET_V1:           5,
-      SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: 6,
-      SHUFFLE_NET_V2_BY_POINTWISE21:             7,
+      MOBILE_NET_V1:                             new Int.Info( 0, "MOBILE_NET_V1" ),
+      MOBILE_NET_V1_PAD_VALID:                   new Int.Info( 1, "MOBILE_NET_V1_PAD_VALID" ),
+      MOBILE_NET_V2_THIN:                        new Int.Info( 2, "MOBILE_NET_V2_THIN" ),
+      MOBILE_NET_V2:                             new Int.Info( 3, "MOBILE_NET_V2" ),
+      SHUFFLE_NET_V2:                            new Int.Info( 4, "SHUFFLE_NET_V2" ),
+      SHUFFLE_NET_V2_BY_MOBILE_NET_V1:           new Int.Info( 5, "SHUFFLE_NET_V2_BY_MOBILE_NET_V1" ),
+      SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: new Int.Info( 6, "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID" ),
+      SHUFFLE_NET_V2_BY_POINTWISE21:             new Int.Info( 7, "SHUFFLE_NET_V2_BY_POINTWISE21" ),
     } );
   }
 

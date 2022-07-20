@@ -71,7 +71,7 @@ class Average_FiltersArray_BiasesArray_Bag extends MultiLayerMap.Base {
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nAverageStyleId ) {
 
-    const theAverageStyleInfo = ValueDesc.AverageStyle.Singleton.getInfoById( nAverageStyleId );
+    const theAverageStyleInfo = ValueDesc.AverageStyle.Singleton.getInfo_byId( nAverageStyleId );
     return this.get_by_biasValue(
       inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, ???theAverageStyleInfo.filterValue, theAverageStyleInfo.biasValue );

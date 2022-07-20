@@ -646,7 +646,7 @@ class Base extends Recyclable.Root {
         bDepthwiseRequestedAndNeeded = false;
 
       } else {
-        let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfoById( testParams.out.depthwiseStridesPad );
+        let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfo_byId( testParams.out.depthwiseStridesPad );
 
         let bChannelCountSame = Depthwise.PadInfoCalculatorRoot.output_channelCount_is_same_as_input(
           testParams.out.depthwise_AvgMax_Or_ChannelMultiplier );
@@ -712,7 +712,7 @@ class Base extends Recyclable.Root {
         throw Error( `Block_Reference.Base.block_create(): `
           + `channelShuffler must NOT null when `
           + `nConvBlockTypeId=`
-          + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
+          + `${ValueDesc.ConvBlockType.Singleton.getName_byId( testParams.out.nConvBlockTypeId )}`
           + `(${testParams.out.nConvBlockTypeId}) `
           + `${block}`
       );
@@ -742,7 +742,7 @@ class Base extends Recyclable.Root {
       }
     }
 
-    let pointwise1ActivationName_shouldBe = ValueDesc.ActivationFunction.Singleton.getStringOf( pointwise1ActivationId_shouldBe );
+    let pointwise1ActivationName_shouldBe = ValueDesc.ActivationFunction.Singleton.getName_byId( pointwise1ActivationId_shouldBe );
     let depthwise_AvgMax_Or_ChannelMultiplier_shouldBe = testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
       
     // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
@@ -816,7 +816,7 @@ class Base extends Recyclable.Root {
     asserter.propertyValue( "bDepthwiseRequestedAndNeeded", bDepthwiseRequestedAndNeeded );
     asserter.propertyValue( "depthwiseActivationId", testParams.out.depthwiseActivationId );
 
-    let depthwiseActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.depthwiseActivationId );
+    let depthwiseActivationName = ValueDesc.ActivationFunction.Singleton.getName_byId( testParams.out.depthwiseActivationId );
     asserter.propertyValue( "depthwiseActivationName", depthwiseActivationName );
 
     // pointwise20 parameters.
@@ -825,7 +825,7 @@ class Base extends Recyclable.Root {
     asserter.propertyValue( "pointwise20Bias", true ); // pointwise2 should always has bias.
     asserter.propertyValue( "pointwise20ActivationId", testParams.out.pointwise20ActivationId );
 
-    let pointwise20ActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.pointwise20ActivationId );
+    let pointwise20ActivationName = ValueDesc.ActivationFunction.Singleton.getName_byId( testParams.out.pointwise20ActivationId );
     asserter.propertyValue( "pointwise20ActivationName", pointwise20ActivationName );
 
     // pointwise21 parameters.
@@ -854,7 +854,7 @@ class Base extends Recyclable.Root {
 
     let squeezeExcitationActivationId_shouldBe = testParams.out.nActivationId;
     let squeezeExcitationActivationName_shouldBe
-      = ValueDesc.ActivationFunction.Singleton.getStringOf( squeezeExcitationActivationId_shouldBe );
+      = ValueDesc.ActivationFunction.Singleton.getName_byId( squeezeExcitationActivationId_shouldBe );
 
     asserter.propertyValue( "squeezeExcitationActivationId", squeezeExcitationActivationId_shouldBe );
     asserter.propertyValue( "squeezeExcitationActivationName", squeezeExcitationActivationName_shouldBe );
@@ -862,7 +862,7 @@ class Base extends Recyclable.Root {
     // Default activation
     asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
 
-    let nActivationName = ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.nActivationId );
+    let nActivationName = ValueDesc.ActivationFunction.Singleton.getName_byId( testParams.out.nActivationId );
     asserter.propertyValue( "nActivationName", nActivationName );
 
     // If depthwise does not exist, the output ( height, width ) should be the same as input.
@@ -1046,7 +1046,7 @@ class Base extends Recyclable.Root {
           throw Error( `Block_Reference.Base.calcResult(): `
             + `imageIn1 must be null when `
             + `nConvBlockTypeId=`
-            + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
+            + `${ValueDesc.ConvBlockType.Singleton.getName_byId( testParams.out.nConvBlockTypeId )}`
             + `(${testParams.out.nConvBlockTypeId}). `
             + `${testParams.out}` );
 
@@ -1240,7 +1240,7 @@ class Base extends Recyclable.Root {
           throw Error( `Block_Reference.Base.calcResult(): `
             + `Concat2ShuffleSplit: Unsupported `
             + `nConvBlockTypeId=`
-            + `${ValueDesc.ConvBlockType.Singleton.getStringOf( testParams.out.nConvBlockTypeId )}`
+            + `${ValueDesc.ConvBlockType.Singleton.getName_byId( testParams.out.nConvBlockTypeId )}`
             + `(${testParams.out.nConvBlockTypeId}). `
             + `${testParams.out}` );
           break;

@@ -16,7 +16,7 @@ class Same {
   }
 
   /** @return {string} Return the string value. */
-  getStringOf( value ) {
+  getName_byId( value ) {
     return value.toString();
   }
 }
@@ -39,7 +39,7 @@ class Bool {
   }
 
   /** @return {string} Return the string value. */
-  getStringOf( value ) {
+  getName_byId( value ) {
     return value.toString();
   }
 }
@@ -62,32 +62,25 @@ Bool.Singleton = new Bool;
  * and ( max = valueIntegerMax ).
  *
  * @member {Object} Ids
- *   An object contains all the named values. Its length could be less than .range.kinds (i.e. some number value could have no
- * name). It is just like a name-to-integer Map, but could be accessed by dot (.) operator (not by .get() method). This Ids
- * object will be kept (i.e. not cloned) by this ValueDesc.Int object. It could be used as a constant enumeration. The
- * this.Ids.valueName will be valueInteger. Or, the this.Ids[ valueName ] will be valueInteger. That is:
- *   - this.Ids.Xxx = ( valueIntegerMin + 0 )
- *   - this.Ids.Yyy = ( valueIntegerMin + 1 )
- *   - ...
- *   - this.Ids.Zzz = ( valueIntegerMin + ( valueNames.length - 1 ) )
+ *   An object contains all the named values. It is constructed from Infos.Xxx and Infos.Xxx.id. The Objects.keys( Ids ).length
+ * could be less than .range.kinds (i.e. some number value could have no name). It is just like a name-to-integer Map, but could
+ * be accessed by dot (.) operator (not by .get() method). It could be used as a constant enumeration. The this.Ids.valueName
+ * (or this.Ids[ valueName ]) will be valueInteger.
  *
  * @member {Object} Infos
- *   An object contains the parameter's all names' extra information objects. Its length could be less than .range.kinds (i.e.
- * some number value could have no extra information object). It is just like a name-to-object Map, but could be accessed by dot (.)
- * operator (not by .get() method). This could be used as a constant enumeration. The this.Infos.valueName will be an object.
- * Or, the this.Infos[ valueName ] will be object. That is:
- *   - this.Infos.Xxx = object_for_( valueIntegerMin + 0 )
- *   - this.Infos.Yyy = object_for_( valueIntegerMin + 1 )
- *   - ...
- *   - this.Infos.Zzz = object_for_( valueIntegerMin + ( valueNames.length - 1 ) )
+ *   An object contains all named integer values' information. Its evey property should a Int.Info (or sub-class) object.
+ * This Infos object will be kept (i.e. not cloned) by this ValueDesc.Int object.  The Objects.keys( Infos ).length could
+ * be less than .range.kinds (i.e. some number value could have no extra information object). It is just like a name-to-object
+ * Map, but could be accessed by dot (.) operator (not by .get() method). This could be used as a constant enumeration.
+ * The this.Infos.valueName (or this.Infos[ valueName ]) will be an Int.Info (sub-class) instance.
  *
  * @member {Map} integerToNameMap
- *   A map object contains the parameter's all named values. Using this.integerToNameMap.get( integerValue ) could get the name of
+ *   A map object contains integer value to its name. Using this.integerToNameMap.get( integerValue ) could get the name of
  * the integer value.
  *
- * @member {Map} integerToObjectMap
- *   A map object contains the parameter's all object values. Using this.integerToObjectMap.get( integerValue ) could get the extra
- * object of the integer value.
+ * @member {Map} integerToInfoMap
+ *   A map object contains integer value to its information. Using this.integerToObjectMap.get( integerValue ) could get the
+ * information object of the integer value.
  *
  */
 class Int {
@@ -100,56 +93,38 @@ class Int {
    * @param {number} valueIntegerMax
    *   The last (i.e. maximum) integer of the parameter's all possible values.
    */
-  constructor( valueIntegerMin, valueIntegerMax, Ids = {}, Infos = {} ) {
+  constructor( valueIntegerMin, valueIntegerMax, Infos = {} ) {
 
     this.range = new ValueRange.Int( valueIntegerMin, valueIntegerMax );
-    this.Ids = Ids;
     this.Infos = Infos;
 
-    // Ids
+    let infoArray = Object.values( Infos );
+    if ( infoArray.length > this.range.kinds )
+      throw Error( `ValueDesc.Int.constructor(): Range violation: `
+        + `Object.keys( Infos ).length ( ${infoArray.length} ) should be <= range.kinds ( ${this.range.kinds} ).`
+      );
+
     {
-      let nameArray = Object.keys( Ids );
-      let valueArray = Object.values( Ids );
-      if ( nameArray.length > this.range.kinds )
-        throw Error( `ValueDesc.Int.constructor(): Range violation: `
-          + `Object.keys( Ids ).length ( ${nameArray.length} ) should be <= range.kinds ( ${this.range.kinds} ).`
-        );
-
+      this.Ids = {};
       this.integerToNameMap = new Map;
-      for ( let i = 0; i < nameArray.length; ++i ) {
-        let integerId = valueArray[ i ];
+      this.integerToInfoMap = new Map;
 
+      let nameForProgramArray = Object.keys( Infos );
+      for ( let i = 0; i < nameArray.length; ++i ) {
+        let info = infoArray[ i ];
+
+        let integerId = info.id;
         if ( ( integerId < this.range.min ) || ( integerId > this.range.max ) ) // Ensure the number value is in range.
           throw Error( `ValueDesc.Int.constructor(): Range violation: `
             + `integerId ( ${integerId} ) should be in range [ ${this.range.min}, ${this.range.max} ].`
           );
 
-        let name = nameArray[ i ];
-        this.integerToNameMap.set( integerId, name );
-      }
-    }
+        let nameForProgram = nameForProgramArray[ i ]; // This is name could be twisted by JavaScript codes compressor.
+        let nameForMessage = info.nameForMessage; // This is name will not be twisted by JavaScript codes compressor.
 
-    // Infos
-    {
-      let nameArray = Object.keys( Infos );
-      let objectArray = Object.values( Infos );
-      if ( nameArray.length > this.range.kinds )
-        throw Error( `ValueDesc.Int.constructor(): Range violation: `
-          + `Object.keys( Infos ).length ( ${nameArray.length} ) should be <= range.kinds ( ${this.range.kinds} ).`
-        );
-
-      this.integerToObjectMap = new Map;
-      for ( let i = 0; i < nameArray.length; ++i ) {
-        let name = nameArray[ i ];
-        let integerId = Ids[ name ];
-
-        if ( integerId == undefined )
-          throw Error( `ValueDesc.Int.constructor(): Unknown name: `
-            + `Info name ( ${name} ) should have number value.`
-          );
-
-        let object = objectArray[ i ];
-        this.integerToObjectMap.set( integerId, object );
+        this.Ids[ nameForProgram ] = integerId;
+        this.integerToNameMap.set( integerId, nameForMessage );
+        this.integerToInfoMap.set( integerId, info );
       }
     }
   }
@@ -158,7 +133,7 @@ class Int {
    * @return {string}
    *   Return the name of the integerValue. If no name, return the string of the integer value (e.g. "1", "2", ..., "64").
    */
-  getStringOf( integerValue ) {
+  getName_byId( integerValue ) {
     let name = this.integerToNameMap.get( integerValue ); // Look up whether has name (e.g. "AVG", "MAX", "NONE").
     if ( null == name ) {
       name = integerValue.toString();
@@ -174,9 +149,31 @@ class Int {
    * @return {Object}
    *   Return the extra information object of the integerValue. Return undefined, if not found.
    */
-  getInfoById( integerValue ) {
-    let info = this.integerToObjectMap.get( integerValue );
+  getInfo_byId( integerValue ) {
+    let info = this.integerToInfoMap.get( integerValue );
     return info;
+  }
+
+}
+
+
+/**
+ * Provide number identifier and string name of a integer value.
+ */
+Int.Info = class Int_Info {
+
+  /**
+   * 
+   * @param {number} id
+   *   The number identifier of the integer value. In fact, this is the integer value itself.
+   *
+   * @param {string} nameForMessage
+   *   The string name of the integer value. Usually, it is used for debug message. This is why it is a string (so that
+   * it will not be twisted by JavaScript codes compressor).
+   */
+  constructor( id, nameForMessage ) {
+    this.id = id;
+    this.nameForMessage = nameForMessage;
   }
 
 }
