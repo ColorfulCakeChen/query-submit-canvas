@@ -416,18 +416,13 @@ class Base extends Recyclable.Root {
 
       let asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Stage.${blockName}`, blockParams, parametersDescription );
 
-
-!!! ...unfinished... (2022/07/20) double_Block0Input0ChannelCount, 1, 2, ... has different input height and width.
-
-
       // inputHeight0, inputWidth0
       if ( 0 == blockIndex ) { // block0
         asserter.propertyValue( "input0_height", stageParams.sourceHeight );
         asserter.propertyValue( "input0_width", stageParams.sourceWidth );
-      } else { // block1, 2, 3, ...
-        asserter.propertyValue( "input0_height", stageParams.outputHeight );
-        asserter.propertyValue( "input0_width", stageParams.outputWidth );
       }
+      asserter.propertyValue( "input0_height", stageParams.outputHeightArray[ blockIndex ] );
+      asserter.propertyValue( "input0_width", stageParams.outputWidthArray[ blockIndex ] );
 
       // input0_channelCount
       if ( 0 == blockIndex ) { // block0
@@ -908,11 +903,13 @@ class Base extends Recyclable.Root {
 
       // output height and width
       {
+        asserter.propertyValue( "output_height", stageParams.outputHeightArray[ blockIndex ] );
+        asserter.propertyValue( "output_width", stageParams.outputWidthArray[ blockIndex ] );
 
-!!! ...unfinished... (2022/07/20) double_Block0Input0ChannelCount, 1, 2, ... has different output height and width.
-
-        asserter.propertyValue( "output_height", stageParams.outputHeight );
-        asserter.propertyValue( "output_width", stageParams.outputWidth );
+        if ( ( blockCount - 1 ) == blockIndex ) { // blockLast
+          asserter.propertyValue( "output_height", stageParams.outputHeight );
+          asserter.propertyValue( "output_width", stageParams.outputWidth );
+        }
       }
 
       // output0_channelCount, output1_channelCount
