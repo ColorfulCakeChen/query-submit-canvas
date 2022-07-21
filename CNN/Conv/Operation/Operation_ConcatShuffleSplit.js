@@ -60,7 +60,7 @@ class ConcatShuffleSplit extends Root {
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
-    let bShouldShuffleSplit = ( ( bShuffleSplit ) && ( channelShuffler ) ); // Want and could do channel shuffling and splitting.
+    let bShouldShuffleSplit = ( ( bShuffleSplit ) && ( channelShuffler != null ) ); // Want and could do channel shuffling and splitting.
     let outputTensorCount = ( bShouldShuffleSplit ) ? 2 : 1; // Only if splitting is required (and possible), the output1 does exist.
 
     super( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
@@ -79,7 +79,7 @@ class ConcatShuffleSplit extends Root {
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
-    let bShouldShuffleSplit = ( ( bShuffleSplit ) && ( channelShuffler ) ); // Want and could do channel shuffling and splitting.
+    let bShouldShuffleSplit = ( ( bShuffleSplit ) && ( channelShuffler != null ) ); // Want and could do channel shuffling and splitting.
     let outputTensorCount = ( bShouldShuffleSplit ) ? 2 : 1; // Only if splitting is required (and possible), the output1 does exist.
 
     super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
@@ -99,7 +99,7 @@ class ConcatShuffleSplit extends Root {
     bKeepInputTensor0, bKeepInputTensor1
   ) {
 
-    let bShouldShuffleSplit = ( ( bShuffleSplit ) && ( channelShuffler ) ); // Want and could do channel shuffling and splitting.
+    let bShouldShuffleSplit = ( ( bShuffleSplit ) && ( channelShuffler != null ) ); // Want and could do channel shuffling and splitting.
 
     this.channelShuffler = channelShuffler;
 

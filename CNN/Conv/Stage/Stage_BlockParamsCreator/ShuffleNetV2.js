@@ -91,6 +91,9 @@ class ShuffleNetV2 extends Base {
     // In ShuffleNetV2, all blocks (except blockLast) have both output0 and output1 with same depth as pointwise20 result.
     this.output0_channelCount = this.pointwise20ChannelCount;
     this.output1_channelCount = this.pointwise20ChannelCount;
+
+    if ( !this.channelShuffler )
+      this.channelShuffler_init(); // In ShuffleNetV2, all blocks (except blockLast) uses channel shuffler (with two convolution groups).
   }
 
   /** @override */
@@ -106,9 +109,6 @@ class ShuffleNetV2 extends Base {
     // will be concatenated with input1.
     //
     this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY;
-
-    if ( !this.channelShuffler )
-      this.channelShuffler_init(); // In ShuffleNetV2, all blocks (except block0) uses channel shuffler (with two convolution groups).
   }
 
   /**
