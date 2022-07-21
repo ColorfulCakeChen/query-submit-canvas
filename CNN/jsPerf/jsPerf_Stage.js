@@ -193,9 +193,14 @@ class HeightWidthDepth {
     for ( let name_testCase of this.testCaseMap.entries() ) {
       let name = name_testCase[ 0 ];
       let testCase = name_testCase[ 1 ];
-      if ( !testCase.stage ) {
-        testCase.stage = Stage_Reference.Base.Stage_create(
-          testCase.testParams, this.testPerformance_NumberImageArray[ 0 ].boundsArraySet.output0 );
+      try {
+        if ( !testCase.stage ) {
+          testCase.stage = Stage_Reference.Base.Stage_create(
+            testCase.testParams, this.testPerformance_NumberImageArray[ 0 ].boundsArraySet.output0 );
+        }
+      } catch ( e ) {
+        debugger;
+        throw e;
       }
 
       console.log( `Stage.${name}: tensorWeightCount = { Extracted: ${testCase.stage.tensorWeightCountExtracted}, `
