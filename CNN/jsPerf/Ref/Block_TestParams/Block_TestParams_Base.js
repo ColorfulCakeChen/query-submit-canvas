@@ -1124,20 +1124,18 @@ class Base extends TestParams.Base {
       } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
         this.doubleParamValue( Block.Params.input0_channelCount );
 
-        let pointwise1_outputChannelCount_lowerHalf;
-        let pointwise1_inputChannelCount_higherHalf;
-
         if ( pointwise1ChannelCount_original == 0 ) {
-          pointwise1_outputChannelCount_lowerHalf = input0_channelCount_original;
+          // Keep the same.
+
         } else {
-          pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount_original;
+          let pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount_original;
+
+          // Because input0's channel count has been doubled (in the above), the higher half is just the same as the original input0's channel count.
+          let pointwise1_inputChannelCount_higherHalf = input0_channelCount_original;
+
+          let pointwise1ChannelCount_enlarged = pointwise1_outputChannelCount_lowerHalf + pointwise1_inputChannelCount_higherHalf;
+          this.modifyParamValue( Block.Params.pointwise1ChannelCount, pointwise1ChannelCount_enlarged );
         }
-
-        // Because input0's channel count has been doubled (in the above), the higher half is just the same as the original input0's channel count.
-        pointwise1_inputChannelCount_higherHalf = input0_channelCount_original;
-
-        let pointwise1ChannelCount_enlarged = pointwise1_outputChannelCount_lowerHalf + pointwise1_inputChannelCount_higherHalf;
-        this.modifyParamValue( Block.Params.pointwise1ChannelCount, pointwise1ChannelCount_enlarged );
 
         this.doubleParamValue( Block.Params.pointwise20ChannelCount );
       }
