@@ -594,13 +594,13 @@ class Base extends Recyclable.Root {
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
             if ( stage_or_stageTestParamsOut.bPointwise1 == false ) {
-              if ( block_or_blockTestParamsOut instanceof Block_TestParams.Base ) {
+              if ( block_or_blockTestParamsOut instanceof Block_TestParams.Out ) {
                 block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", 0 ); // Zero in parameters.
               } else { // Block.Base
                 block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount ); // Double in reality internally.
               }
             } else {
-              if ( block_or_blockTestParamsOut instanceof Block_TestParams.Base ) {
+              if ( block_or_blockTestParamsOut instanceof Block_TestParams.Out ) {
                 block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", single_Block0Input0ChannelCount ); // Single in parameters.
               } else { // Block.Base
                 block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount ); // Double in reality internally.
