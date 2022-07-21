@@ -458,7 +458,7 @@ class Base extends TestParams.Base {
    * @override
    */
   onYield_after() {
-    this.blockArray.length = 0; // Clear blocks' parameters.
+    this.blockArray.clear(); // Clear blocks' parameters.
   }
 
   /**

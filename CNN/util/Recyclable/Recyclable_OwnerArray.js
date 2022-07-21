@@ -68,18 +68,22 @@ class OwnerArray extends Recyclable_Array {
     super.disposeResources();
   }
 
-  /**
-   * All contents after this[ newLength ] will also be released (by calling their .disposeResources_and_recycleToPool()).
-   */
-  set length( newLength ) {
-    OwnerArray.sub_objects_disposeResources_fromIndex.call( this, newLength );
-    super.length = newLength;
-  }
+  //!!! (2022/07/21 Remarked) Not work. It seems Array.length can not be overrided.
+  // /**
+  //  * All contents after this[ newLength ] will also be released (by calling their .disposeResources_and_recycleToPool()).
+  //  */
+  // set length( newLength ) {
+  //   OwnerArray.sub_objects_disposeResources_fromIndex.call( this, newLength );
+  //   super.length = newLength;
+  // }
 
   /**
-   * Release all contents (by calling their .disposeResources() and set this container's length to zero).
+   * Release all contents (by calling their .disposeResources_and_recycleToPool() and set this container's length to zero).
+   *
+   * Note: Set OwnerArray.length = 0 directly will cause memory leak because the contents are not released.
    */
   clear() {
+    OwnerArray.sub_objects_disposeResources_fromIndex.call( this, 0 );
     this.length = 0;
   }
 
