@@ -163,10 +163,10 @@ class Base extends TestParams.Base {
    *   Return this object self.
    */
   set_byParamsNumberArrayMap_ParamsOut(
-    weightsElementOffsetBegin = 0, bDouble_if_ShuffleNetV2_byMobileNetV1 ) {
+    weightsElementOffsetBegin = 0, bDouble_when_ShuffleNetV2_byMobileNetV1 ) {
 
     this.generate_out_inferencedParams();
-    this.generate_Filters_Biases( bDouble_if_ShuffleNetV2_byMobileNetV1 );
+    this.generate_Filters_Biases( bDouble_when_ShuffleNetV2_byMobileNetV1 );
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
     this.NumberArray_ElementOffsetBegin.setByConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
@@ -1065,11 +1065,11 @@ class Base extends TestParams.Base {
    * @param {Block_TestParams.Base} this
    *   The TestParam object to be referenced (and modified).
    *
-   * @param {boolean} bDouble_if_ShuffleNetV2_byMobileNetV1
+   * @param {boolean} bDouble_when_ShuffleNetV2_byMobileNetV1
    *   If true and nConvBlockTypeId is SHUFFLE_NET_V2_BY_MOBILE_NET_V1_Xxx, some channel count will be
    * doubled. Mainly used for testing Block_TestParams.
    */
-  generate_Filters_Biases( bDouble_if_ShuffleNetV2_byMobileNetV1 ) {
+  generate_Filters_Biases( bDouble_when_ShuffleNetV2_byMobileNetV1 ) {
 
     let paramsAll = this.out;
     let inferencedParams = paramsAll.inferencedParams;
@@ -1098,7 +1098,7 @@ class Base extends TestParams.Base {
     let pointwise1ChannelCount_original = paramsAll.pointwise1ChannelCount;
     let pointwise20ChannelCount_original = paramsAll.pointwise20ChannelCount;
 
-    if ( bDoubleFor_ShuffleNetV2_byMobileNetV1 ) {
+    if ( bDouble_when_ShuffleNetV2_byMobileNetV1 ) {
 
       // In ShuffleNetV2_ByMobileNetV1's head:
       //   - pointwise20ChannelCount.
