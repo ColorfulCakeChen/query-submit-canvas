@@ -414,8 +414,8 @@ class Base extends Recyclable.Root {
         }
       }
 
-      let block_or_blockTestParamsOut_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Stage.${blockName}`,
-        block_or_blockTestParamsOut, parametersDescription );
+      let block_or_blockTestParamsOut_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by(
+        `Stage.${blockName}`, block_or_blockTestParamsOut, parametersDescription );
 
       // inputHeight0, inputWidth0
       {
