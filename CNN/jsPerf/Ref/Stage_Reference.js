@@ -411,6 +411,7 @@ class Base extends Recyclable.Root {
         if ( block_or_blockTestParams instanceof Block_TestParams.Base ) {
           block_or_blockTestParamsOut = block_or_blockTestParams.out;
         } else { // Block.Base
+          block_or_blockTestParamsOut = block_or_blockTestParams;
         }
       }
 
