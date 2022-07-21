@@ -303,7 +303,7 @@ class Base extends Recyclable.Root {
       debugger;
     }
 
-    let asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Stage`, stage, stage );
+    let stage_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Stage`, stage, stage );
 
     Base.AssertTwoEqualValues( "parsing beginning position",
       stage.weightElementOffsetBegin, testParams.in.weightElementOffsetBegin, stage );
@@ -312,24 +312,24 @@ class Base extends Recyclable.Root {
       stage.weightElementOffsetEnd, testParams.in.inputWeightArray.length, stage );
 
     // parameters.
-    asserter.propertyValue( "sourceHeight", testParams.out.sourceHeight );
-    asserter.propertyValue( "sourceWidth", testParams.out.sourceWidth );
-    asserter.propertyValue( "sourceChannelCount", testParams.out.sourceChannelCount );
-    asserter.propertyValue( "nConvStageTypeId", testParams.out.nConvStageTypeId );
-    asserter.propertyValue( "blockCountRequested", testParams.out.blockCountRequested );
-    asserter.propertyValue( "bPointwise1", testParams.out.bPointwise1 );
-    asserter.propertyValue( "depthwiseFilterHeight", testParams.out.depthwiseFilterHeight );
-    asserter.propertyValue( "depthwiseFilterWidth", testParams.out.depthwiseFilterWidth );
-    asserter.propertyValue( "bPointwise2ActivatedAtStageEnd", testParams.out.bPointwise2ActivatedAtStageEnd );
-    asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", testParams.out.nSqueezeExcitationChannelCountDivisor );
-    asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
+    stage_asserter.propertyValue( "sourceHeight", testParams.out.sourceHeight );
+    stage_asserter.propertyValue( "sourceWidth", testParams.out.sourceWidth );
+    stage_asserter.propertyValue( "sourceChannelCount", testParams.out.sourceChannelCount );
+    stage_asserter.propertyValue( "nConvStageTypeId", testParams.out.nConvStageTypeId );
+    stage_asserter.propertyValue( "blockCountRequested", testParams.out.blockCountRequested );
+    stage_asserter.propertyValue( "bPointwise1", testParams.out.bPointwise1 );
+    stage_asserter.propertyValue( "depthwiseFilterHeight", testParams.out.depthwiseFilterHeight );
+    stage_asserter.propertyValue( "depthwiseFilterWidth", testParams.out.depthwiseFilterWidth );
+    stage_asserter.propertyValue( "bPointwise2ActivatedAtStageEnd", testParams.out.bPointwise2ActivatedAtStageEnd );
+    stage_asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", testParams.out.nSqueezeExcitationChannelCountDivisor );
+    stage_asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
 
     // Referred parameters.
-    asserter.propertyValue( "outputHeight", testParams.out.inferencedParams.outputHeight );
-    asserter.propertyValue( "outputWidth", testParams.out.inferencedParams.outputWidth );
+    stage_asserter.propertyValue( "outputHeight", testParams.out.inferencedParams.outputHeight );
+    stage_asserter.propertyValue( "outputWidth", testParams.out.inferencedParams.outputWidth );
 
     // Other parameters.
-    asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
+    stage_asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
 
     Base.AssertParameters_Stage_blocks( stage, stage ); // Test every block's parameters.
 
@@ -348,12 +348,12 @@ class Base extends Recyclable.Root {
         tensorWeightCountExtracted += stage.channelShuffler.tensorWeightCountExtracted;
       }
 
-      asserter.propertyValue( "tensorWeightCountTotal", tensorWeightCountTotal );
-      asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
+      stage_asserter.propertyValue( "tensorWeightCountTotal", tensorWeightCountTotal );
+      stage_asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
     }
 
-    asserter.disposeResources_and_recycleToPool();
-    asserter = null;
+    stage_asserter.disposeResources_and_recycleToPool();
+    stage_asserter = null;
 
     return stage;
   }
@@ -414,55 +414,55 @@ class Base extends Recyclable.Root {
         }
       }
 
-      let asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Stage.${blockName}`,
+      let block_or_blockTestParamsOut_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Stage.${blockName}`,
         block_or_blockTestParamsOut, parametersDescription );
 
       // inputHeight0, inputWidth0
       {
         if ( 0 == blockIndex ) { // block0
-          asserter.propertyValue( "input0_height", stage_or_stageTestParamsOut.sourceHeight );
-          asserter.propertyValue( "input0_width", stage_or_stageTestParamsOut.sourceWidth );
+          block_or_blockTestParamsOut_asserter.propertyValue( "input0_height", stage_or_stageTestParamsOut.sourceHeight );
+          block_or_blockTestParamsOut_asserter.propertyValue( "input0_width", stage_or_stageTestParamsOut.sourceWidth );
         }
 
         if ( stage_or_stageTestParamsOut instanceof Stage_TestParams.Out ) {
-          asserter.propertyValue( "input0_height", stage_or_stageTestParamsOut.inferencedParams.inputHeightArray[ blockIndex ] );
-          asserter.propertyValue( "input0_width", stage_or_stageTestParamsOut.inferencedParams.inputWidthArray[ blockIndex ] );
+          block_or_blockTestParamsOut_asserter.propertyValue( "input0_height", stage_or_stageTestParamsOut.inferencedParams.inputHeightArray[ blockIndex ] );
+          block_or_blockTestParamsOut_asserter.propertyValue( "input0_width", stage_or_stageTestParamsOut.inferencedParams.inputWidthArray[ blockIndex ] );
         } else { // Stage.Base
           // Note: Stage.Base does not have information to verify every block's input height/width.
 
 //!!! (2022/07/20 Remarked) block_or_blockTestParamsOut already is block itself.
 //           let stage = stage_or_stageTestParamsOut;
 //           let block = stage.blockArray[ blockIndex ];
-//           asserter.propertyValue( "input0_height", block.input0_height );
-//           asserter.propertyValue( "input0_width", block.input0_width );
+//           block_or_blockTestParamsOut_asserter.propertyValue( "input0_height", block.input0_height );
+//           block_or_blockTestParamsOut_asserter.propertyValue( "input0_width", block.input0_width );
         }
       }
 
       // input0_channelCount
       if ( 0 == blockIndex ) { // block0
-        asserter.propertyValue( "input0_channelCount", single_Block0Input0ChannelCount );
+        block_or_blockTestParamsOut_asserter.propertyValue( "input0_channelCount", single_Block0Input0ChannelCount );
       } else { // block1, 2, 3, ...
         switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
-            asserter.propertyValue( "input0_channelCount", double_Block0Input0ChannelCount );
+            block_or_blockTestParamsOut_asserter.propertyValue( "input0_channelCount", double_Block0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-            asserter.propertyValue( "input0_channelCount", single_Block0Input0ChannelCount );
+            block_or_blockTestParamsOut_asserter.propertyValue( "input0_channelCount", single_Block0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-            asserter.propertyValue( "input0_channelCount", double_Block0Input0ChannelCount );
+            block_or_blockTestParamsOut_asserter.propertyValue( "input0_channelCount", double_Block0Input0ChannelCount );
             break;
 
           default:
             Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
       }
@@ -474,30 +474,30 @@ class Base extends Recyclable.Root {
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
-            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL );
+            block_or_blockTestParamsOut_asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
-            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD );
+            block_or_blockTestParamsOut_asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD );
+            block_or_blockTestParamsOut_asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
             if ( stage_or_stageTestParamsOut.bPointwise1 == false ) {
-              asserter.propertyValue( "nConvBlockTypeId",
+              block_or_blockTestParamsOut_asserter.propertyValue( "nConvBlockTypeId",
                 ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2 );
             } else {
-              asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD );
+              block_or_blockTestParamsOut_asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD );
             }
             break;
 
           default:
             Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
 
@@ -505,30 +505,30 @@ class Base extends Recyclable.Root {
         switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL );
+            block_or_blockTestParamsOut_asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
-            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL );
+            block_or_blockTestParamsOut_asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
-            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY );
+            block_or_blockTestParamsOut_asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY );
+            block_or_blockTestParamsOut_asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY );
+            block_or_blockTestParamsOut_asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY );
             break;
 
           default:
             Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
 
@@ -536,30 +536,30 @@ class Base extends Recyclable.Root {
         switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL );
+            block_or_blockTestParamsOut_asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
-            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL );
+            block_or_blockTestParamsOut_asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
-            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL );
+            block_or_blockTestParamsOut_asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL );
+            block_or_blockTestParamsOut_asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-            asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL );
+            block_or_blockTestParamsOut_asserter.propertyValue( "nConvBlockTypeId", ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL );
             break;
 
           default:
             Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
       }
@@ -571,52 +571,52 @@ class Base extends Recyclable.Root {
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
             if ( stage_or_stageTestParamsOut.bPointwise1 == false )
-              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+              block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount );
+              block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
             if ( stage_or_stageTestParamsOut.bPointwise1 == false )
-              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+              block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", quadruple_Block0Input0ChannelCount );
+              block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", quadruple_Block0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
             if ( stage_or_stageTestParamsOut.bPointwise1 == false )
-              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+              block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", single_Block0Input0ChannelCount );
+              block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", single_Block0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
             if ( stage_or_stageTestParamsOut.bPointwise1 == false ) {
               if ( block_or_blockTestParamsOut instanceof Block_TestParams.Base ) {
-                asserter.propertyValue( "pointwise1ChannelCount", 0 ); // Zero in parameters.
+                block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", 0 ); // Zero in parameters.
               } else { // Block.Base
-                asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount ); // Double in reality internally.
+                block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount ); // Double in reality internally.
               }
             } else {
               if ( block_or_blockTestParamsOut instanceof Block_TestParams.Base ) {
-                asserter.propertyValue( "pointwise1ChannelCount", single_Block0Input0ChannelCount ); // Single in parameters.
+                block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", single_Block0Input0ChannelCount ); // Single in parameters.
               } else { // Block.Base
-                asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount ); // Double in reality internally.
+                block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount ); // Double in reality internally.
               }
             }
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
             if ( stage_or_stageTestParamsOut.bPointwise1 == false )
-              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+              block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount );
+              block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount );
             break;
 
           default:
             Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
 
@@ -628,42 +628,42 @@ class Base extends Recyclable.Root {
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
             if ( stage_or_stageTestParamsOut.bPointwise1 == false )
-              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+              block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount );
+              block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
             if ( stage_or_stageTestParamsOut.bPointwise1 == false )
-              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+              block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", quadruple_Block0Input0ChannelCount );
+              block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", quadruple_Block0Input0ChannelCount );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
             if ( stage_or_stageTestParamsOut.bPointwise1 == false )
-              asserter.propertyValue( "pointwise1ChannelCount", 0 );
+              block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", 0 );
             else
-              asserter.propertyValue( "pointwise1ChannelCount", single_Block0Input0ChannelCount );
+              block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ChannelCount", single_Block0Input0ChannelCount );
             break;
 
           default:
             Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
       }
 
       //!!! (2022/07/15 Remarked) pointwise1Bias and pointwise1ActivationId are determined by Block.Params (and be tested there).
-      //asserter.propertyValue( "pointwise1Bias", true );
-      //asserter.propertyValue( "pointwise1ActivationId", stage_or_stageTestParamsOut.nActivationId );
+      //block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1Bias", true );
+      //block_or_blockTestParamsOut_asserter.propertyValue( "pointwise1ActivationId", stage_or_stageTestParamsOut.nActivationId );
 
       // depthwiseFilterHeight and depthwiseFilterWidth
       {
         if ( stage_or_stageTestParamsOut instanceof Stage_TestParams.Out ) {
-          asserter.propertyValue( "depthwiseFilterHeight", stage_or_stageTestParamsOut.inferencedParams.depthwiseFilterHeightArray[ blockIndex ] );
-          asserter.propertyValue( "depthwiseFilterWidth", stage_or_stageTestParamsOut.inferencedParams.depthwiseFilterWidthArray[ blockIndex ] );
+          block_or_blockTestParamsOut_asserter.propertyValue( "depthwiseFilterHeight", stage_or_stageTestParamsOut.inferencedParams.depthwiseFilterHeightArray[ blockIndex ] );
+          block_or_blockTestParamsOut_asserter.propertyValue( "depthwiseFilterWidth", stage_or_stageTestParamsOut.inferencedParams.depthwiseFilterWidthArray[ blockIndex ] );
         } else { // Stage.Base
           // Note: Stage.Base does not have information to verify every block's depthwise filter height/width.
         }
@@ -676,34 +676,34 @@ class Base extends Recyclable.Root {
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
             if ( stage_or_stageTestParamsOut.bPointwise1 == false )
-              asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
+              block_or_blockTestParamsOut_asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
             else
-              asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
+              block_or_blockTestParamsOut_asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
             if ( stage_or_stageTestParamsOut.bPointwise1 == false )
-              asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 4 );
+              block_or_blockTestParamsOut_asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 4 );
             else
-              asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
+              block_or_blockTestParamsOut_asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-            asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
+            block_or_blockTestParamsOut_asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
             if ( stage_or_stageTestParamsOut.bPointwise1 == false )
-              asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
+              block_or_blockTestParamsOut_asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
             else
-              asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
+              block_or_blockTestParamsOut_asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
           default:
             Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
 
@@ -716,19 +716,19 @@ class Base extends Recyclable.Root {
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-            asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
+            block_or_blockTestParamsOut_asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
             if ( stage_or_stageTestParamsOut.bPointwise1 == false )
-              asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
+              block_or_blockTestParamsOut_asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
             else
-              asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
+              block_or_blockTestParamsOut_asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             break;
 
           default:
             Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
       }
@@ -742,17 +742,17 @@ class Base extends Recyclable.Root {
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
-            asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME );
+            block_or_blockTestParamsOut_asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-            asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID );
+            block_or_blockTestParamsOut_asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID );
             break;
 
           default:
             Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
 
@@ -764,17 +764,17 @@ class Base extends Recyclable.Root {
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
-            asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME );
+            block_or_blockTestParamsOut_asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-            asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID );
+            block_or_blockTestParamsOut_asserter.propertyValue( "depthwiseStridesPad", ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID );
             break;
 
           default:
             Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
       }
@@ -783,13 +783,13 @@ class Base extends Recyclable.Root {
       {
         if ( ValueDesc.ConvStageType.isMobileNetV2( stage_or_stageTestParamsOut.nConvStageTypeId ) ) {
           //!!! (2022/07/16 Remarked) depthwiseBias is determined by Block.Params (and be tested there).
-          //asserter.propertyValue( "depthwiseBias", true );
-          asserter.propertyValue( "depthwiseActivationId", stage_or_stageTestParamsOut.nActivationId );
+          //block_or_blockTestParamsOut_asserter.propertyValue( "depthwiseBias", true );
+          block_or_blockTestParamsOut_asserter.propertyValue( "depthwiseActivationId", stage_or_stageTestParamsOut.nActivationId );
 
         } else {
           //!!! (2022/07/16 Remarked) depthwiseBias is determined by Block.Params (and be tested there).
-          //asserter.propertyValue( "depthwiseBias", false );
-          asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+          //block_or_blockTestParamsOut_asserter.propertyValue( "depthwiseBias", false );
+          block_or_blockTestParamsOut_asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
         }
       }
 
@@ -803,19 +803,19 @@ class Base extends Recyclable.Root {
 //           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
 //           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
 //           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-//             asserter.propertyValue( "pointwise20ChannelCount", double_Block0Input0ChannelCount );
-//             asserter.propertyValue( "pointwise21ChannelCount", 0 );
+//             block_or_blockTestParamsOut_asserter.propertyValue( "pointwise20ChannelCount", double_Block0Input0ChannelCount );
+//             block_or_blockTestParamsOut_asserter.propertyValue( "pointwise21ChannelCount", 0 );
 //             break;
 //
 //           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
 //           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-//             asserter.propertyValue( "pointwise20ChannelCount", single_Block0Input0ChannelCount );
-//             asserter.propertyValue( "pointwise21ChannelCount", single_Block0Input0ChannelCount );
+//             block_or_blockTestParamsOut_asserter.propertyValue( "pointwise20ChannelCount", single_Block0Input0ChannelCount );
+//             block_or_blockTestParamsOut_asserter.propertyValue( "pointwise21ChannelCount", single_Block0Input0ChannelCount );
 //             break;
 //
 //           default:
 //             Base.Assert_nConvStageTypeId_Unknown(
-//               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+//               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
 //             break;
 //         }
 //
@@ -829,19 +829,19 @@ class Base extends Recyclable.Root {
 //           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
 //           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
 //           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-//             asserter.propertyValue( "pointwise20ChannelCount", double_Block0Input0ChannelCount );
-//             asserter.propertyValue( "pointwise21ChannelCount", 0 );
+//             block_or_blockTestParamsOut_asserter.propertyValue( "pointwise20ChannelCount", double_Block0Input0ChannelCount );
+//             block_or_blockTestParamsOut_asserter.propertyValue( "pointwise21ChannelCount", 0 );
 //             break;
 
 //           default:
 //             Base.Assert_nConvStageTypeId_Unknown(
-//               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+//               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
 //             break;
 //         }
 //       }
 
       //!!! (2022/07/16 Remarked) pointwise20Bias is determined by Block.Params (and be tested there).
-      //asserter.propertyValue( "pointwise20Bias", true );
+      //block_or_blockTestParamsOut_asserter.propertyValue( "pointwise20Bias", true );
 
       // pointwise20ActivationId
       if ( ( blockCount - 1 ) > blockIndex ) { // block0, 1, 2, 3, ..., ( blockCount - 2 )
@@ -852,17 +852,17 @@ class Base extends Recyclable.Root {
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-            asserter.propertyValue( "pointwise20ActivationId", stage_or_stageTestParamsOut.nActivationId );
+            block_or_blockTestParamsOut_asserter.propertyValue( "pointwise20ActivationId", stage_or_stageTestParamsOut.nActivationId );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
-            asserter.propertyValue( "pointwise20ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+            block_or_blockTestParamsOut_asserter.propertyValue( "pointwise20ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
             break;
 
           default:
             Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
 
@@ -875,30 +875,30 @@ class Base extends Recyclable.Root {
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
             if ( stage_or_stageTestParamsOut.bPointwise2ActivatedAtStageEnd == false ) {
-              asserter.propertyValue( "pointwise20ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+              block_or_blockTestParamsOut_asserter.propertyValue( "pointwise20ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
             } else {
-              asserter.propertyValue( "pointwise20ActivationId", stage_or_stageTestParamsOut.nActivationId );
+              block_or_blockTestParamsOut_asserter.propertyValue( "pointwise20ActivationId", stage_or_stageTestParamsOut.nActivationId );
             }
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
-            asserter.propertyValue( "pointwise20ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+            block_or_blockTestParamsOut_asserter.propertyValue( "pointwise20ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
             break;
 
           default:
             Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
       }
 
       // squeeze-and-excitation
       {
-        asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", stage_or_stageTestParamsOut.nSqueezeExcitationChannelCountDivisor );
+        block_or_blockTestParamsOut_asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", stage_or_stageTestParamsOut.nSqueezeExcitationChannelCountDivisor );
 
 //!!! (2022/07/16 Remarked) There is no such member in Block_TestParams.Out or Block.Base
-//        asserter.propertyValue( "squeezeExcitationActivationId", stage_or_stageTestParamsOut.nActivationId );
+//        block_or_blockTestParamsOut_asserter.propertyValue( "squeezeExcitationActivationId", stage_or_stageTestParamsOut.nActivationId );
 
         switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1: // (0)
@@ -907,17 +907,17 @@ class Base extends Recyclable.Root {
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-            asserter.propertyValue( "bSqueezeExcitationPrefix", false );
+            block_or_blockTestParamsOut_asserter.propertyValue( "bSqueezeExcitationPrefix", false );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
-            asserter.propertyValue( "bSqueezeExcitationPrefix", true );
+            block_or_blockTestParamsOut_asserter.propertyValue( "bSqueezeExcitationPrefix", true );
             break;
 
           default:
             Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
       }
@@ -926,12 +926,12 @@ class Base extends Recyclable.Root {
       {
 
         if ( stage_or_stageTestParamsOut instanceof Stage_TestParams.Out ) {
-          asserter.propertyValue( "output_height", stage_or_stageTestParamsOut.inferencedParams.outputHeightArray[ blockIndex ] );
-          asserter.propertyValue( "output_width", stage_or_stageTestParamsOut.inferencedParams.outputWidthArray[ blockIndex ] );
+          block_or_blockTestParamsOut_asserter.propertyValue( "output_height", stage_or_stageTestParamsOut.inferencedParams.outputHeightArray[ blockIndex ] );
+          block_or_blockTestParamsOut_asserter.propertyValue( "output_width", stage_or_stageTestParamsOut.inferencedParams.outputWidthArray[ blockIndex ] );
   
           if ( ( blockCount - 1 ) == blockIndex ) { // blockLast
-            asserter.propertyValue( "output_height", stage_or_stageTestParamsOut.inferencedParams.outputHeight );
-            asserter.propertyValue( "output_width", stage_or_stageTestParamsOut.inferencedParams.outputWidth );
+            block_or_blockTestParamsOut_asserter.propertyValue( "output_height", stage_or_stageTestParamsOut.inferencedParams.outputHeight );
+            block_or_blockTestParamsOut_asserter.propertyValue( "output_width", stage_or_stageTestParamsOut.inferencedParams.outputWidth );
           }
   
         } else { // Stage.Base
@@ -939,13 +939,13 @@ class Base extends Recyclable.Root {
 
 //!!! (2022/07/20 Remarked) block_or_blockTestParamsOut already is block itself.
 //           let block = stage_or_stageTestParamsOut.blockArray[ blockIndex ];
-//           asserter.propertyValue( "output_height", block.output_height );
-//           asserter.propertyValue( "output_width", block.output_width );
+//           block_or_blockTestParamsOut_asserter.propertyValue( "output_height", block.output_height );
+//           block_or_blockTestParamsOut_asserter.propertyValue( "output_width", block.output_width );
   
 //           let stage = stage_or_stageTestParamsOut;
 //           if ( ( blockCount - 1 ) == blockIndex ) { // blockLast
-//             asserter.propertyValue( "output_height", stage.outputHeight );
-//             asserter.propertyValue( "output_width", stage.outputWidth );
+//             block_or_blockTestParamsOut_asserter.propertyValue( "output_height", stage.outputHeight );
+//             block_or_blockTestParamsOut_asserter.propertyValue( "output_width", stage.outputWidth );
 //           }
         }
       }
@@ -959,25 +959,25 @@ class Base extends Recyclable.Root {
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-            asserter.propertyValue( "output0_channelCount", double_Block0Input0ChannelCount );
-            asserter.propertyValue( "output1_channelCount", 0 );
+            block_or_blockTestParamsOut_asserter.propertyValue( "output0_channelCount", double_Block0Input0ChannelCount );
+            block_or_blockTestParamsOut_asserter.propertyValue( "output1_channelCount", 0 );
             break;
 
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-            asserter.propertyValue( "output0_channelCount", single_Block0Input0ChannelCount );
-            asserter.propertyValue( "output1_channelCount", single_Block0Input0ChannelCount );
+            block_or_blockTestParamsOut_asserter.propertyValue( "output0_channelCount", single_Block0Input0ChannelCount );
+            block_or_blockTestParamsOut_asserter.propertyValue( "output1_channelCount", single_Block0Input0ChannelCount );
             break;
 
           default:
             Base.Assert_nConvStageTypeId_Unknown(
-              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, asserter.contextDescription );
+              "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
 
       } else { // blockLast
-        asserter.propertyValue( "output0_channelCount", double_Block0Input0ChannelCount );
-        asserter.propertyValue( "output1_channelCount", 0 );
+        block_or_blockTestParamsOut_asserter.propertyValue( "output0_channelCount", double_Block0Input0ChannelCount );
+        block_or_blockTestParamsOut_asserter.propertyValue( "output1_channelCount", 0 );
       }
 
       // .addInput0ToPointwise20, .addInput0ToPointwise21
@@ -985,24 +985,24 @@ class Base extends Recyclable.Root {
 
         // addInput0ToPointwise20
         if ( ValueDesc.ConvStageType.isMobileNetV2( stage_or_stageTestParamsOut.nConvStageTypeId ) ) {
-          asserter.propertyValueNE( "bAddInputToOutput0", true ); // Only MobileNetV2_Xxx has add-input-to-output.
+          block_or_blockTestParamsOut_asserter.propertyValueNE( "bAddInputToOutput0", true ); // Only MobileNetV2_Xxx has add-input-to-output.
         } else {
-          asserter.propertyValue( "bAddInputToOutput0", false );
+          block_or_blockTestParamsOut_asserter.propertyValue( "bAddInputToOutput0", false );
         }
 
         // addInput0ToPointwise21
-        asserter.propertyValue( "bAddInputToOutput1", false ); // None of any neural network has add-input-to-output1.
+        block_or_blockTestParamsOut_asserter.propertyValue( "bAddInputToOutput1", false ); // None of any neural network has add-input-to-output1.
       }
 
       // bKeepInputTensor
       if ( 0 == blockIndex ) {
-        asserter.propertyValue( "bKeepInputTensor", stage_or_stageTestParamsOut.bKeepInputTensor );
+        block_or_blockTestParamsOut_asserter.propertyValue( "bKeepInputTensor", stage_or_stageTestParamsOut.bKeepInputTensor );
       } else {
-        asserter.propertyValue( "bKeepInputTensor", false );
+        block_or_blockTestParamsOut_asserter.propertyValue( "bKeepInputTensor", false );
       }
 
-      asserter.disposeResources_and_recycleToPool();
-      asserter = null;
+      block_or_blockTestParamsOut_asserter.disposeResources_and_recycleToPool();
+      block_or_blockTestParamsOut_asserter = null;
     }
   }
 
