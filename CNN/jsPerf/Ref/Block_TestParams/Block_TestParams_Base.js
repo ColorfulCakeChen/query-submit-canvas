@@ -1124,18 +1124,20 @@ class Base extends TestParams.Base {
       } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
         this.doubleParamValue( Block.Params.input0_channelCount );
 
+        let pointwise1_outputChannelCount_lowerHalf;
+        let pointwise1_inputChannelCount_higherHalf;
+
         if ( pointwise1ChannelCount_original == 0 ) {
-          // When the output channel count is not specified, keep it zero.
-
+          pointwise1_outputChannelCount_lowerHalf = input0_channelCount_original;
         } else {
-          let pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount_original;
-
-          // Because input0's channel count has been doubled (in the above), the higher half is just the same as the original input0's channel count.
-          let pointwise1_inputChannelCount_higherHalf = input0_channelCount_original;
-
-          let pointwise1ChannelCount_enlarged = pointwise1_outputChannelCount_lowerHalf + pointwise1_inputChannelCount_higherHalf;
-          this.modifyParamValue( Block.Params.pointwise1ChannelCount, pointwise1ChannelCount_enlarged );
+          pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount_original;
         }
+
+        // Because input0's channel count has been doubled (in the above), the higher half is just the same as the original input0's channel count.
+        pointwise1_inputChannelCount_higherHalf = input0_channelCount_original;
+
+        let pointwise1ChannelCount_enlarged = pointwise1_outputChannelCount_lowerHalf + pointwise1_inputChannelCount_higherHalf;
+        this.modifyParamValue( Block.Params.pointwise1ChannelCount, pointwise1ChannelCount_enlarged );
 
         this.doubleParamValue( Block.Params.pointwise20ChannelCount );
       }
@@ -1144,18 +1146,25 @@ class Base extends TestParams.Base {
     } else {
 
       if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
-        if ( ( pointwise20ChannelCount_original % 2 ) != 0 )
-          throw Error( `Block_TestParams.Base.generate_Filters_Biases(): `
-            + `pointwise20ChannelCount_original ( ${pointwise20ChannelCount_original} ) `
-            + `should be divisible by 2.`
-          );
-
-        pointwise20ChannelCount_original = pointwise20ChannelCount_original / 2;
+        // pointwise20ChannelCount_original has already been halved.
 
       } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
 
+        {
+          if ( ( input0_channelCount_original % 2 ) != 0 )
+          throw Error( `Block_TestParams.Base.generate_Filters_Biases(): `
+            + `input0_channelCount_original ( ${input0_channelCount_original} ) `
+            + `should be divisible by 2.`
+          );
+
+          input0_channelCount_original = input0_channelCount_original / 2;
+        }
+
+        let pointwise1_outputChannelCount_lowerHalf;
+        let pointwise1_inputChannelCount_higherHalf;
+
         if ( pointwise1ChannelCount_original == 0 ) {
-          // When the output channel count is not specified, keep it zero.
+          pointwise1_outputChannelCount_lowerHalf = input0_channelCount_original; // already halved.
 
         } else {
 
@@ -1165,18 +1174,23 @@ class Base extends TestParams.Base {
             + `should be divisible by 2.`
           );
 
-          if ( ( input0_channelCount_original % 2 ) != 0 )
-          throw Error( `Block_TestParams.Base.generate_Filters_Biases(): `
-            + `input0_channelCount_original ( ${input0_channelCount_original} ) `
-            + `should be divisible by 2.`
-          );
-
-          let pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount_original / 2;
-          let pointwise1_inputChannelCount_higherHalf = input0_channelCount_original / 2;
-          let pointwise1ChannelCount_enlarged = pointwise1_outputChannelCount_lowerHalf + pointwise1_inputChannelCount_higherHalf;
+          pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount_original / 2;
         }
+
+        pointwise1_inputChannelCount_higherHalf = input0_channelCount_original; // already halved.
+
+        let pointwise1ChannelCount_enlarged = pointwise1_outputChannelCount_lowerHalf + pointwise1_inputChannelCount_higherHalf;
       }
 
+      {
+        if ( ( pointwise20ChannelCount_original % 2 ) != 0 )
+        throw Error( `Block_TestParams.Base.generate_Filters_Biases(): `
+          + `pointwise20ChannelCount_original ( ${pointwise20ChannelCount_original} ) `
+          + `should be divisible by 2.`
+        );
+
+        pointwise20ChannelCount_original = pointwise20ChannelCount_original / 2;
+      }
     }
 
     // 1. Pointwise1
