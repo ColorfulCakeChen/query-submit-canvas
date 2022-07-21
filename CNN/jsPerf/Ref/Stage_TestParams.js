@@ -341,8 +341,6 @@ class Base extends TestParams.Base {
     let paramsNumberArrayObject_modified = {};
     Object.assign( paramsNumberArrayObject_modified, this.in.paramsNumberArrayObject ); // Shallow copy.
 
-//!!! (2022/07/20 Remarked) seems not used.
-    // let channelShuffler;
     for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
 
       if ( 0 == i ) { // Block0.
@@ -354,12 +352,6 @@ class Base extends TestParams.Base {
       if ( ( this.blockArray.length - 1 ) == i ) { // BlockLast. (Note: Block0 may also be BlockLast.)
         blockParamsCreator.configTo_beforeBlockLast();
       }
-
-//!!! (2022/07/20 Remarked) seems not used.
-      // // If channelShuffler is not null, keep it so that its tensors could be released.
-      // if ( blockParamsCreator.channelShuffler ) {
-      //   channelShuffler = blockParamsCreator.channelShuffler;
-      // }
 
       let blockName = `block${i}`;
       paramsNameOrderArray_modified.push( blockName ); // Place every block's parameters in sequence.
@@ -381,13 +373,6 @@ class Base extends TestParams.Base {
       this.blockArray[ i ] = blockTestParams;
       paramsNumberArrayObject_modified[ blockName ] = blockTestParams.in.inputWeightArray;
     }
-
-//!!! (2022/07/20 Remarked) blockParamsCreator will release it.
-    // // Here (i.e. in Stage_TestParams), the channelShuffler is not used. Just release it for avoiding memory leak.
-    // if ( channelShuffler ) {
-    //   channelShuffler.disposeResources_and_recycleToPool();
-    //   channelShuffler = null;
-    // }
 
     if ( blockParamsCreator ) {
       blockParamsCreator.disposeResources_and_recycleToPool();

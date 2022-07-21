@@ -116,7 +116,7 @@ class Base extends TestParams.Base {
     bKeepInputTensor
   ) {
     this.in.paramsNumberArrayObject = {};
-      
+
     if ( this.out ) {
       this.out.disposeResources_and_recycleToPool();
       this.out = null;
@@ -137,7 +137,7 @@ class Base extends TestParams.Base {
     Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
 
     let weightsElementOffsetBegin = 0;
-    return this.set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin );
+    return this.set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin, false );
   }
  
   /**
@@ -162,10 +162,11 @@ class Base extends TestParams.Base {
    * @return {Base}
    *   Return this object self.
    */
-  set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
+  set_byParamsNumberArrayMap_ParamsOut(
+    weightsElementOffsetBegin = 0, bDouble_if_ShuffleNetV2_byMobileNetV1 ) {
 
     this.generate_out_inferencedParams();
-    this.generate_Filters_Biases();
+    this.generate_Filters_Biases( bDouble_if_ShuffleNetV2_byMobileNetV1 );
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
     this.NumberArray_ElementOffsetBegin.setByConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
@@ -265,7 +266,7 @@ class Base extends TestParams.Base {
     // For testing not start at the offset 0.
     let weightsElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
 
-    this.set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin );
+    this.set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin, true );
   }
 
   /**
@@ -1064,8 +1065,11 @@ class Base extends TestParams.Base {
    * @param {Block_TestParams.Base} this
    *   The TestParam object to be referenced (and modified).
    *
+   * @param {boolean} bDouble_if_ShuffleNetV2_byMobileNetV1
+   *   If true and nConvBlockTypeId is SHUFFLE_NET_V2_BY_MOBILE_NET_V1_Xxx, some channel count will be
+   * doubled. Mainly used for testing Block_TestParams.
    */
-  generate_Filters_Biases() {
+  generate_Filters_Biases( bDouble_if_ShuffleNetV2_byMobileNetV1 ) {
 
     let paramsAll = this.out;
     let inferencedParams = paramsAll.inferencedParams;
@@ -1094,43 +1098,46 @@ class Base extends TestParams.Base {
     let pointwise1ChannelCount_original = paramsAll.pointwise1ChannelCount;
     let pointwise20ChannelCount_original = paramsAll.pointwise20ChannelCount;
 
-    // In ShuffleNetV2_ByMobileNetV1's head:
-    //   - pointwise20ChannelCount.
-    //     - Double it in paramsAll and io_paramsNumberArrayObject (if existed).
-    //   - Use original the above parameters twice to generate filters and biases weights.
-    //     - pointwise20 and pointwise202
-    //
-    // The reason is that Block will only extract filters and biases weights of the above parameters twice in this case.
-    //
-    if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
-      this.doubleParamValue( Block.Params.pointwise20ChannelCount );
+    if ( bDoubleFor_ShuffleNetV2_byMobileNetV1 ) {
 
-    // In ShuffleNetV2_ByMobileNetV1's body/tail:
-    //   - input0_channelCount, pointwise20ChannelCount.
-    //     - Double them in paramsAll and io_paramsNumberArrayObject (if existed).
-    //   -  pointwise1ChannelCount.
-    //     - Adjust it in paramsAll and io_paramsNumberArrayObject (if existed).
-    //   - But use original the above parameters to generate filters weights.
-    //
-    // The reason is that Block will only extract filters weights of half the above parameters in this case.
-    //
-    } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
-      this.doubleParamValue( Block.Params.input0_channelCount );
+      // In ShuffleNetV2_ByMobileNetV1's head:
+      //   - pointwise20ChannelCount.
+      //     - Double it in paramsAll and io_paramsNumberArrayObject (if existed).
+      //   - Use original the above parameters twice to generate filters and biases weights.
+      //     - pointwise20 and pointwise202
+      //
+      // The reason is that Block will only extract filters and biases weights of the above parameters twice in this case.
+      //
+      if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
+        this.doubleParamValue( Block.Params.pointwise20ChannelCount );
 
-      if ( pointwise1ChannelCount_original == 0 ) {
-        // When the output channel count is not specified, keep it zero.
+      // In ShuffleNetV2_ByMobileNetV1's body/tail:
+      //   - input0_channelCount, pointwise20ChannelCount.
+      //     - Double them in paramsAll and io_paramsNumberArrayObject (if existed).
+      //   -  pointwise1ChannelCount.
+      //     - Adjust it in paramsAll and io_paramsNumberArrayObject (if existed).
+      //   - But use original the above parameters to generate filters weights.
+      //
+      // The reason is that Block will only extract filters weights of half the above parameters in this case.
+      //
+      } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
+        this.doubleParamValue( Block.Params.input0_channelCount );
 
-      } else {
-        let outputChannelCount_lowerHalf_pointwise1 = pointwise1ChannelCount_original;
+        if ( pointwise1ChannelCount_original == 0 ) {
+          // When the output channel count is not specified, keep it zero.
 
-        // Because input0's channel count has been doubled (in the above), the higher half is just the same as the original input0's channel count.
-        let inputChannelCount_higherHalf_pointwise1 = input0_channelCount_original;
+        } else {
+          let outputChannelCount_lowerHalf_pointwise1 = pointwise1ChannelCount_original;
 
-        let pointwise1ChannelCount_enlarged = outputChannelCount_lowerHalf_pointwise1 + inputChannelCount_higherHalf_pointwise1;
-        this.modifyParamValue( Block.Params.pointwise1ChannelCount, pointwise1ChannelCount_enlarged );
+          // Because input0's channel count has been doubled (in the above), the higher half is just the same as the original input0's channel count.
+          let inputChannelCount_higherHalf_pointwise1 = input0_channelCount_original;
+
+          let pointwise1ChannelCount_enlarged = outputChannelCount_lowerHalf_pointwise1 + inputChannelCount_higherHalf_pointwise1;
+          this.modifyParamValue( Block.Params.pointwise1ChannelCount, pointwise1ChannelCount_enlarged );
+        }
+
+        this.doubleParamValue( Block.Params.pointwise20ChannelCount );
       }
-
-      this.doubleParamValue( Block.Params.pointwise20ChannelCount );
     }
 
     // 1. Pointwise1
