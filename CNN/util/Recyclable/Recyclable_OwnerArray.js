@@ -68,10 +68,17 @@ class OwnerArray extends Recyclable_Array {
   }
 
   /**
+   * All contents after this[ newLength ] will also be released (by calling their .disposeResources_and_recycleToPool()).
+   */
+  set length( newLength ) {
+    OwnerArray.sub_objects_disposeResources.call( this, newLength );
+    super.length = newLength;
+  }
+
+  /**
    * Release all contents (by calling their .disposeResources() and set this container's length to zero).
    */
   clear() {
-    OwnerArray.sub_objects_disposeResources.call( this );
     this.length = 0;
   }
 
@@ -79,9 +86,12 @@ class OwnerArray extends Recyclable_Array {
    * Call all contents' .disposeResources(). Set them to null. But does NOT change this container's length.
    *
    * Note: Contents are disposed in reverse order because they are usually created in forward order.
+   *
+   * @param {number} fromIndex
+   *   Dispose all owned objects between this[ fromIndex ] to this [ this.length - 1 ].
    */
-  static sub_objects_disposeResources() {
-    for ( let i = ( this.length - 1 ); i >= 0; --i ) {
+  static sub_objects_disposeResources_fromIndex( fromIndex = 0 ) {
+    for ( let i = ( this.length - 1 ); i >= fromIndex; --i ) {
       let object = this[ i ];
       if ( !object )
         continue;
