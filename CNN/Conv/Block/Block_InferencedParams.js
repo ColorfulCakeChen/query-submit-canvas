@@ -297,7 +297,7 @@ class InferencedParams extends Recyclable.Root {
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL:
-          this.input1_channelCount = input0_channelCount;
+          this.input1_channelCount = input0_channelCount; // (Usually, it is also the same as pointwise20ChannelCount.)
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY:
