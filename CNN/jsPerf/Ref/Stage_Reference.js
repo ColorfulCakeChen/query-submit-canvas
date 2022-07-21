@@ -986,7 +986,7 @@ class Base extends Recyclable.Root {
 
         // addInput0ToPointwise20
         if ( ValueDesc.ConvStageType.isMobileNetV2( stage_or_stageTestParamsOut.nConvStageTypeId ) ) {
-          block_or_blockTestParamsOut_asserter.propertyValueNE( "bAddInputToOutput0", true ); // Only MobileNetV2_Xxx has add-input-to-output.
+          block_or_blockTestParamsOut_asserter.propertyValue( "bAddInputToOutput0", true ); // Only MobileNetV2_Xxx has add-input-to-output.
         } else {
           block_or_blockTestParamsOut_asserter.propertyValue( "bAddInputToOutput0", false );
         }

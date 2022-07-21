@@ -56,7 +56,7 @@ class Base extends Recyclable.Root {
   propertyValue( propertyName, value ) {
     let propertyValue = this.object[ propertyName ];
     if ( propertyValue != value )
-      throw Error( `${this.objectName}.${propertyName} (${propertyValue}) should be (${value}). ${this.contextDescription}` );
+      throw Error( `${this.objectName}.${propertyName} ( ${propertyValue} ) should be ( ${value} ). ${this.contextDescription}` );
   }
 
   /**
@@ -65,7 +65,7 @@ class Base extends Recyclable.Root {
   propertyValueNE( propertyName, value ) {
     let propertyValue = this.object[ propertyName ];
     if ( propertyValue == value )
-      throw Error( `${this.objectName}.${propertyName} (${propertyValue}) should not be (${value}). ${this.contextDescription}` );
+      throw Error( `${this.objectName}.${propertyName} ( ${propertyValue} ) should not be ( ${value} ). ${this.contextDescription}` );
   }
 
   /**
@@ -74,7 +74,7 @@ class Base extends Recyclable.Root {
   propertyValueLE( propertyName, value ) {
     let propertyValue = this.object[ propertyName ];
     if ( propertyValue > value )
-      throw Error( `${this.objectName}.${propertyName} (${propertyValue}) should be <= (${value}). ${this.contextDescription}` );
+      throw Error( `${this.objectName}.${propertyName} ( ${propertyValue} ) should be <= ( ${value} ). ${this.contextDescription}` );
   }
 
 }
