@@ -104,10 +104,14 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 
     // In ShuffleNetV2_ByMobileNetV1's head, pointwise20ChannelCount is always twice of input0's channel count.
     //
+//!!! (2022/07/21)
     this.pointwise20ChannelCount = stageParams.sourceChannelCount * 2;
+//    this.pointwise20ChannelCount = stageParams.sourceChannelCount;
 
     // In ShuffleNetV2_ByMobileNetV1's head, all blocks have only output0 (with same depth as pointwise20 result) and no output1.
+//!!! (2022/07/21)
     this.output0_channelCount = this.pointwise20ChannelCount;
+//    this.output0_channelCount = stageParams.sourceChannelCount * 2;
     this.output1_channelCount = 0;
   }
 

@@ -1127,17 +1127,40 @@ class Base extends TestParams.Base {
           // When the output channel count is not specified, keep it zero.
 
         } else {
-          let outputChannelCount_lowerHalf_pointwise1 = pointwise1ChannelCount_original;
+          let pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount_original;
 
           // Because input0's channel count has been doubled (in the above), the higher half is just the same as the original input0's channel count.
-          let inputChannelCount_higherHalf_pointwise1 = input0_channelCount_original;
+          let pointwise1_inputChannelCount_higherHalf = input0_channelCount_original;
 
-          let pointwise1ChannelCount_enlarged = outputChannelCount_lowerHalf_pointwise1 + inputChannelCount_higherHalf_pointwise1;
+          let pointwise1ChannelCount_enlarged = pointwise1_outputChannelCount_lowerHalf + pointwise1_inputChannelCount_higherHalf;
           this.modifyParamValue( Block.Params.pointwise1ChannelCount, pointwise1ChannelCount_enlarged );
         }
 
         this.doubleParamValue( Block.Params.pointwise20ChannelCount );
       }
+
+    } else {
+
+//!!! ...unfinished... (2022/07/21) should assert whether they could be divisible by 2:
+// input0_channelCount_original = ;
+// pointwise1ChannelCount_original = ;
+// pointwise20ChannelCount_original = ;
+
+      if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
+        pointwise20ChannelCount_original = pointwise20ChannelCount_original / 2;
+
+      } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
+
+        if ( pointwise1ChannelCount_original == 0 ) {
+          // When the output channel count is not specified, keep it zero.
+
+        } else {
+          let pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount_original / 2;
+          let pointwise1_inputChannelCount_higherHalf = input0_channelCount_original / 2;
+          let pointwise1ChannelCount_enlarged = pointwise1_outputChannelCount_lowerHalf + pointwise1_inputChannelCount_higherHalf;
+        }
+      }
+
     }
 
     // 1. Pointwise1
