@@ -191,7 +191,7 @@ class Out extends Recyclable.Root {
 // For ShuffleNetV2's tail, output0_channelCount is not the same as pointwise20ChannelCount.
 //    return this.pointwise20ChannelCount;
 
-    switch ( nConvBlockTypeId ) {
+    switch ( this.nConvBlockTypeId ) {
       case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL:
         return ( this.pointwise20ChannelCount + this.input1_channelCount );
         break;
