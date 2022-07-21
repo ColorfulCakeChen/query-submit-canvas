@@ -222,6 +222,39 @@ class Out extends Recyclable.Root {
     return ( this.output0_channelCount + this.output1_channelCount );
   }
 
+
+  get nConvBlockTypeName() {
+    return ValueDesc.ConvBlockType.Singleton.getName_byId( this.nConvBlockTypeId );
+  }
+
+  get pointwise1ActivationName() {
+    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.inferencedParams.pointwise1ActivationId );
+  }
+
+  get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
+    return ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getName_byId( this.depthwise_AvgMax_Or_ChannelMultiplier );
+  }
+
+  get depthwiseStridesPadName() {
+    return ValueDesc.StridesPad.Singleton.getName_byId( this.depthwiseStridesPad );
+  }
+
+  get depthwiseActivationName() {
+    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.depthwiseActivationId );
+  }
+
+  get pointwise20ActivationName() {
+    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise20ActivationId );
+  }
+
+  get nSqueezeExcitationChannelCountDivisorName() {
+    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor );
+  }
+
+  get squeezeExcitationActivationName() {
+    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.inferencedParams.squeezeExcitationActivationId );
+  }
+
   /** @override */
   toString() {
 
@@ -240,51 +273,42 @@ class Out extends Recyclable.Root {
       + `output0_channelCount=${this.output0_channelCount}, output1_channelCount=${this.output1_channelCount}, `
       + `output_channelCount=${this.output_channelCount}, `
 
-      + `nConvBlockTypeName=`
-      + `${ValueDesc.ConvBlockType.Singleton.getName_byId( this.nConvBlockTypeId )}`
-      + `(${this.nConvBlockTypeId}), `
+      + `nConvBlockTypeName=${this.nConvBlockTypeName}(${this.nConvBlockTypeId}), `
 
       + `bHigherHalfDifferent=${inferencedParams.bHigherHalfDifferent}, `
       + `bHigherHalfDepthwise2=${inferencedParams.bHigherHalfDepthwise2}, `
 
       + `pointwise1ChannelCount=${this.inferencedParams.pointwise1ChannelCount}, `
       + `pointwise1Bias=${this.inferencedParams.pointwise1Bias}, `
-      + `pointwise1ActivationName=`
-        + `${ValueDesc.ActivationFunction.Singleton.getName_byId( inferencedParams.pointwise1ActivationId )}`
-        + `(${inferencedParams.pointwise1ActivationId}), `
+      + `pointwise1ActivationName=${this.pointwise1ActivationName}`
+        + `(${this.inferencedParams.pointwise1ActivationId}), `
 
       + `bDepthwiseRequestedAndNeeded=${inferencedParams.bDepthwiseRequestedAndNeeded}, `
       + `bDepthwise2Requested=${inferencedParams.bDepthwise2Requested}, `
 
       + `depthwise_AvgMax_Or_ChannelMultiplier=`
-        + `${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getName_byId( this.depthwise_AvgMax_Or_ChannelMultiplier )}`
+        + `${this.depthwise_AvgMax_Or_ChannelMultiplier_Name}`
         + `(${this.depthwise_AvgMax_Or_ChannelMultiplier}), `
 
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
       + `depthwiseFilterHeight_real=${this.depthwiseFilterHeight_real}, depthwiseFilterWidth_real=${this.depthwiseFilterWidth_real}, `
 
-      + `depthwiseStridesPad=`
-        + `${ValueDesc.StridesPad.Singleton.getName_byId( this.depthwiseStridesPad )}`
-        + `(${this.depthwiseStridesPad}), `
+      + `depthwiseStridesPad=${this.depthwiseStridesPadName}(${this.depthwiseStridesPad}), `
       + `depthwiseBias=${this.inferencedParams.depthwiseBias}, `
-      + `depthwiseActivationName=`
-        + `${Block.Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId )}`
-        + `(${this.depthwiseActivationId}), `
+      + `depthwiseActivationName=${this.depthwiseActivationName}(${this.depthwiseActivationId}), `
 
       + `bConcat1Requested=${inferencedParams.bConcat1Requested}, `
 
       + `pointwise20ChannelCount=${this.pointwise20ChannelCount}, `
       + `pointwise20Bias=${this.inferencedParams.pointwise20Bias}, `
-      + `pointwise20ActivationName=`
-        + `${Block.Params.pointwise20ActivationId.getStringOfValue( this.pointwise20ActivationId )}`
-        + `(${this.pointwise20ActivationId}), `
+      + `pointwise20ActivationName=${this.pointwise20ActivationName}(${this.pointwise20ActivationId}), `
 
       + `nSqueezeExcitationChannelCountDivisorName=`
-        + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor )}`
+        + `${this.nSqueezeExcitationChannelCountDivisorName}`
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
 
       + `squeezeExcitationActivationName=`
-        + `${ValueDesc.ActivationFunction.Singleton.getName_byId( this.inferencedParams.squeezeExcitationActivationId )}`
+        + `${this.squeezeExcitationActivationName}`
         + `(${this.inferencedParams.squeezeExcitationActivationId}), `
 
       + `bAddInputToOutputRequested=${inferencedParams.bAddInputToOutputRequested}, `

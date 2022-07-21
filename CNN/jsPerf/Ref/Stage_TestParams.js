@@ -139,14 +139,25 @@ class Out extends Recyclable.Root {
     );
   }
 
+  get nConvStageTypeName() {
+    return ValueDesc.ConvStageType.Singleton.getName_byId( this.nConvStageTypeId );
+  }
+
+  get nSqueezeExcitationChannelCountDivisorName() {
+    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor );
+  }
+
+  get nActivationName() {
+    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId );
+  }
+
   /** @override */
   toString() {
     let paramsOutDescription =
         `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, `
       + `sourceChannelCount=${this.sourceChannelCount}, `
 
-      + `nConvStageTypeId=${ValueDesc.ConvStageType.Singleton.getName_byId( this.nConvStageTypeId )}`
-        + `(${this.nConvStageTypeId}), `
+      + `nConvStageTypeId=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
 
       + `blockCountRequested=${this.blockCountRequested}, `
       + `bPointwise1=${this.bPointwise1}, `
@@ -155,11 +166,10 @@ class Out extends Recyclable.Root {
       + `bPointwise2ActivatedAtStageEnd=${this.bPointwise2ActivatedAtStageEnd}, `
 
       + `nSqueezeExcitationChannelCountDivisorName=`
-        + `${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor )}`
+        + `${this.nSqueezeExcitationChannelCountDivisorName}`
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
 
-      + `nActivationName=${ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId )}`
-        + `(${this.nActivationId}), `
+      + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
 
       + `outputHeight=${this.inferencedParams.outputHeight}, outputWidth=${this.inferencedParams.outputWidth}, `
 //        + `outputChannelCount=${???.outputChannelCount}, `
