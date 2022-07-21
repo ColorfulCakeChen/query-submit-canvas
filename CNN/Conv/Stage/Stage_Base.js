@@ -428,7 +428,7 @@ class Base extends Recyclable.Root {
       // In our Stage design, no matter which configuration, the outputChannelCount always is twice as sourceChannelCount.
       if ( this.outputChannelCount != ( this.sourceChannelCount * 2 ) )
         throw Error( `Stage.Base.initer(): `
-          + `the outputChannelCount ( ${this.outputChannelCount} ) should always be twice as `
+          + `the outputChannelCount ( ${this.outputChannelCount} ) should always be twice of `
           + `sourceChannelCount ( ${this.sourceChannelCount} ).` );
 
       this.bInitOk = true;

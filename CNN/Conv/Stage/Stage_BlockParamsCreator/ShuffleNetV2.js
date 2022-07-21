@@ -139,8 +139,9 @@ class ShuffleNetV2 extends Base {
     //   - It will have double channel count of source input0.
     //   - It is the concatenation of pointwise20's result and input1.
     //
-    this.pointwise20ChannelCount = this.stageParams.sourceChannelCount * 2;
-
+    // The pointwise20ChannelCount is still the same as sourceChannelCount (i.e. original input0_channelCount).
+    // The input1_channelCount is also the same as sourceChannelCount (i.e. original input0_channelCount).
+    //
     this.output0_channelCount = this.output0_channelCount + this.output1_channelCount;
     this.output1_channelCount = 0;
   }
