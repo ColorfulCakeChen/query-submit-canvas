@@ -1125,7 +1125,7 @@ class Base extends TestParams.Base {
         this.doubleParamValue( Block.Params.input0_channelCount );
 
         if ( pointwise1ChannelCount_original == 0 ) {
-          // Keep the same.
+          // When the output channel count is not specified, keep it zero.
 
         } else {
           let pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount_original;
