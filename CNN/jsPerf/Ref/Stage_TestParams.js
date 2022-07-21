@@ -480,14 +480,16 @@ class Base extends TestParams.Base {
 
 //      nConvStageTypeId: undefined,
 //!!! (2022/07/20 Temp Remarked) For speed-up debug.
-      nConvStageTypeId: [
-        Stage.Params.nConvStageTypeId.valueDesc.range.min,
-        Stage.Params.nConvStageTypeId.valueDesc.range.max
-      ],
       // nConvStageTypeId: [
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID, // (1)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID // (1)
+      //   Stage.Params.nConvStageTypeId.valueDesc.range.min,
+      //   Stage.Params.nConvStageTypeId.valueDesc.range.max
       // ],
+      nConvStageTypeId: [
+      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID, // (1)
+        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN, // (2)
+        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN // (2)
+      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID // (1)
+      ],
 
       blockCountRequested: [
         Stage.Params.blockCountRequested.valueDesc.range.min,
