@@ -193,7 +193,7 @@ class Out extends Recyclable.Root {
 
     switch ( this.nConvBlockTypeId ) {
       case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL:
-        return ( this.pointwise20ChannelCount + this.input1_channelCount );
+        return ( this.pointwise20ChannelCount + this.inferencedParams.input1_channelCount );
         break;
 
       default:
