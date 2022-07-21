@@ -203,7 +203,19 @@ class Out extends Recyclable.Root {
   }
 
   get output1_channelCount() {
-    return this.inferencedParams.pointwise21ChannelCount;
+
+//!!! ...unfinished... (2022/07/21)
+//    return this.inferencedParams.pointwise21ChannelCount;
+
+    switch ( this.nConvBlockTypeId ) {
+      case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY:
+        return this.inferencedParams.input1_channelCount;
+        break;
+
+      default:
+        return this.inferencedParams.pointwise21ChannelCount;
+        break;
+    }
   }
 
   get output_channelCount() {
