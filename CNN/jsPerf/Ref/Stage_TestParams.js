@@ -485,10 +485,12 @@ class Base extends TestParams.Base {
       //   Stage.Params.nConvStageTypeId.valueDesc.range.max
       // ],
       nConvStageTypeId: [
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID, // (1)
-        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN, // (2)
-        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN // (2)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID // (1)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID, // (1)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN, // (2)
+        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2, // (3)
+        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2 // (3)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN // (2)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID // (1)
       ],
 
       blockCountRequested: [
