@@ -662,8 +662,8 @@ class Base extends Recyclable.Root {
       // depthwiseFilterHeight and depthwiseFilterWidth
       {
         if ( stage_or_stageTestParamsOut instanceof Stage_TestParams.Out ) {
-          block_or_blockTestParamsOut_asserter.propertyValue( "depthwiseFilterHeight", stage_or_stageTestParamsOut.inferencedParams.depthwiseFilterHeightArray[ blockIndex ] );
-          block_or_blockTestParamsOut_asserter.propertyValue( "depthwiseFilterWidth", stage_or_stageTestParamsOut.inferencedParams.depthwiseFilterWidthArray[ blockIndex ] );
+          block_or_blockTestParamsOut_asserter.propertyValue( "depthwiseFilterHeight_real", stage_or_stageTestParamsOut.inferencedParams.depthwiseFilterHeightArray[ blockIndex ] );
+          block_or_blockTestParamsOut_asserter.propertyValue( "depthwiseFilterWidth_real", stage_or_stageTestParamsOut.inferencedParams.depthwiseFilterWidthArray[ blockIndex ] );
         } else { // Stage.Base
           // Note: Stage.Base does not have information to verify every block's depthwise filter height/width.
         }
