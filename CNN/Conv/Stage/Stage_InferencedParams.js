@@ -189,6 +189,8 @@ class InferencedParams extends Recyclable.Root {
         stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID;
 
       } else {
+        this.depthwiseFilterHeightArray[ 0 ] = depthwiseFilterHeight_adjusted = depthwiseFilterHeight;
+        this.depthwiseFilterWidthArray[ 0 ] = depthwiseFilterWidth_adjusted = depthwiseFilterWidth;
         stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
       }
 
@@ -221,6 +223,8 @@ class InferencedParams extends Recyclable.Root {
         stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
 
       } else {
+        this.depthwiseFilterHeightArray[ i ] = depthwiseFilterHeight_adjusted = depthwiseFilterHeight;
+        this.depthwiseFilterWidthArray[ i ] = depthwiseFilterWidth_adjusted = depthwiseFilterWidth;
         stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
       }
 
