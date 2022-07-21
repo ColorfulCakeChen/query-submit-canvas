@@ -63,7 +63,8 @@ class OwnerArray extends Recyclable_Array {
 
   /** @override */
   disposeResources() {
-    OwnerArray.sub_objects_disposeResources.call( this ); // Release all contents because they are owned by this OwnerArray.
+    // Release all contents because they are owned by this OwnerArray.
+    OwnerArray.sub_objects_disposeResources_fromIndex.call( this, 0 );
     super.disposeResources();
   }
 
@@ -71,7 +72,7 @@ class OwnerArray extends Recyclable_Array {
    * All contents after this[ newLength ] will also be released (by calling their .disposeResources_and_recycleToPool()).
    */
   set length( newLength ) {
-    OwnerArray.sub_objects_disposeResources.call( this, newLength );
+    OwnerArray.sub_objects_disposeResources_fromIndex.call( this, newLength );
     super.length = newLength;
   }
 
