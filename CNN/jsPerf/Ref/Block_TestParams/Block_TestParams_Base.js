@@ -319,12 +319,12 @@ class Base extends TestParams.Base {
 //       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL, // (1)
 //       ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL // (1)
 //       ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
-      ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
+      // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
       // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY, // (6)
       // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY, // (3)
       // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL // (4)
       // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY // (6)
-      // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL, // (7)
+      ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL, // (7)
       ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL // (7)
 //       Block.Params.nConvBlockTypeId.valueDesc.range.max
   ],
