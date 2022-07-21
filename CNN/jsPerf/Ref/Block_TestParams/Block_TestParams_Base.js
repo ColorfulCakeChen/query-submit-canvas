@@ -1098,6 +1098,7 @@ class Base extends TestParams.Base {
     let pointwise1ChannelCount_original = paramsAll.pointwise1ChannelCount;
     let pointwise20ChannelCount_original = paramsAll.pointwise20ChannelCount;
 
+    // 0.1 For avoiding channel count can not be divisible by 2 when auto generating testing.
     if ( bDouble_when_ShuffleNetV2_byMobileNetV1 ) {
 
       // In ShuffleNetV2_ByMobileNetV1's head:
@@ -1139,12 +1140,8 @@ class Base extends TestParams.Base {
         this.doubleParamValue( Block.Params.pointwise20ChannelCount );
       }
 
+    // 0.2 Normal case (i.e. when channel count could be divisible by 2)
     } else {
-
-//!!! ...unfinished... (2022/07/21) should assert whether they could be divisible by 2:
-// input0_channelCount_original = ;
-// pointwise1ChannelCount_original = ;
-// pointwise20ChannelCount_original = ;
 
       if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
         if ( ( pointwise20ChannelCount_original % 2 ) != 0 )
@@ -1152,6 +1149,7 @@ class Base extends TestParams.Base {
             + `pointwise20ChannelCount_original ( ${pointwise20ChannelCount_original} ) `
             + `should be divisible by 2.`
           );
+
         pointwise20ChannelCount_original = pointwise20ChannelCount_original / 2;
 
       } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
