@@ -1179,7 +1179,14 @@ class Base extends TestParams.Base {
 
         pointwise1_inputChannelCount_higherHalf = input0_channelCount_original; // already halved.
 
-        let pointwise1ChannelCount_enlarged = pointwise1_outputChannelCount_lowerHalf + pointwise1_inputChannelCount_higherHalf;
+        {
+          let pointwise1ChannelCount_enlarged = pointwise1_outputChannelCount_lowerHalf + pointwise1_inputChannelCount_higherHalf;
+          if ( pointwise1ChannelCount_enlarged != input0_channelCount_original )
+            throw Error( `Block_TestParams.Base.generate_Filters_Biases(): `
+              + `pointwise1ChannelCount_enlarged ( ${pointwise1ChannelCount_enlarged} ) `
+              + `should be the same as input0_channelCount_original ( ${input0_channelCount_original} ).`
+            );
+        }
       }
 
       {
