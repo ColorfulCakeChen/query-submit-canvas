@@ -135,7 +135,7 @@ class ConcatShuffleSplit extends Root {
 
     this.bShouldShuffleSplit = undefined;
     this.bShuffleSplit = undefined;
-    this.channelShuffler = undefined;
+    this.channelShuffler = undefined; // ChannelShuffler is not owned by this operation. Just nullify it.
 
     super.disposeResources();
   }
