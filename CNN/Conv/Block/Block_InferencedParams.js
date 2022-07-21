@@ -296,8 +296,10 @@ class InferencedParams extends Recyclable.Root {
 
 //!!! (2022/07/21 Remarked)
 // Why different from SHUFFLE_NET_V2_BY_POINTWISE21_Xxx? should be the same.
-//          this.input1_channelCount = pointwise20ChannelCount; // (Note: pointwise20 always exists.)
-//          break;
+
+         // So that concat( pointwise20, input1 )'s output channel could be divisible by 2 (for channel shuffling as two groups).
+         this.input1_channelCount = pointwise20ChannelCount; // (Note: pointwise20 always exists.)
+         break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY:
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL:
