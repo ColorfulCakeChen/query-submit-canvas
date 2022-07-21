@@ -925,7 +925,6 @@ class Base extends Recyclable.Root {
 
       // output height and width
       {
-
         if ( stage_or_stageTestParamsOut instanceof Stage_TestParams.Out ) {
           block_or_blockTestParamsOut_asserter.propertyValue( "output_height", stage_or_stageTestParamsOut.inferencedParams.outputHeightArray[ blockIndex ] );
           block_or_blockTestParamsOut_asserter.propertyValue( "output_width", stage_or_stageTestParamsOut.inferencedParams.outputWidthArray[ blockIndex ] );
@@ -986,7 +985,10 @@ class Base extends Recyclable.Root {
 
         // addInput0ToPointwise20
         if ( ValueDesc.ConvStageType.isMobileNetV2( stage_or_stageTestParamsOut.nConvStageTypeId ) ) {
-          block_or_blockTestParamsOut_asserter.propertyValue( "bAddInputToOutput0", true ); // Only MobileNetV2_Xxx has add-input-to-output.
+          if ( 0 == blockIndex ) // block0
+            block_or_blockTestParamsOut_asserter.propertyValue( "bAddInputToOutput0", false );
+          else // block1, 2, 3, ... (Only MobileNetV2_Xxx's non-block0 has add-input-to-output.)
+            block_or_blockTestParamsOut_asserter.propertyValue( "bAddInputToOutput0", true );
         } else {
           block_or_blockTestParamsOut_asserter.propertyValue( "bAddInputToOutput0", false );
         }
