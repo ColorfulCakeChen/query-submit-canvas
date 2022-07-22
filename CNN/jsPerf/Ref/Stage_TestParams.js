@@ -476,7 +476,7 @@ class Base extends TestParams.Base {
 //!!! (2022/07/22 Temp Remarked) For speed-up debug.
       sourceHeight: [ 1, 5 ],
       sourceWidth:  [ 1, 5 ], // Test different input image width (even and odd).
-      sourceChannelCount: [ 1, 4 ],
+      sourceChannelCount: [ 3, 4 ],
 
 //      nConvStageTypeId: undefined,
 //!!! (2022/07/20 Temp Remarked) For speed-up debug.
@@ -502,7 +502,7 @@ class Base extends TestParams.Base {
 
       blockCountRequested: [
         Stage.Params.blockCountRequested.valueDesc.range.min,
-        Stage.Params.blockCountRequested.valueDesc.range.min + 5
+        Stage.Params.blockCountRequested.valueDesc.range.min + 2
       ],
 
 //      bPointwise1: undefined,
