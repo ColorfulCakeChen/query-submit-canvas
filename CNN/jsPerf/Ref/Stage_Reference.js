@@ -268,6 +268,7 @@ class Base extends Recyclable.Root {
     let extractedParams = Stage.Params.Pool.get_or_create_by(
       testParams.in.sourceHeight, testParams.in.sourceWidth, testParams.in.sourceChannelCount,
 
+//!!! ...unfinished... (2022/07/22) What if ( testParams.in.nConvStageTypeId == null )?
       ???testParams.in.nConvStageTypeId,
       testParams.in.blockCountRequested,
       testParams.in.bPointwise1,
