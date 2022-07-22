@@ -265,14 +265,12 @@ class Base extends Recyclable.Root {
 
     // Modify nConvStageTypeId.
     {
-      if ( testParams.in.nConvStageTypeId == null ) {
+      if ( testParams.in.nConvStageTypeId == null ) { // Needs re-compose .inputWeightArray after modification.
         testParams.modifyParamValue( Stage.Params.nConvStageTypeId, nConvStageTypeId_toBeCompared );
+        testParams.set_byParamsNumberArrayMap_ParamsOut( testParams.in.weightElementOffsetBegin );
       } else {
         testParams.in.nConvStageTypeId = nConvStageTypeId_toBeCompared;
       }
-
-      // Re-compse testParams.in.inputWeightArray.
-      testParams.set_byParamsNumberArrayMap_ParamsOut( testParams.in.weightElementOffsetBegin );
     }
 
 //!!! ...unfinished... (2022/07/22)
@@ -323,14 +321,12 @@ class Base extends Recyclable.Root {
     // Restore nConvStageTypeId.
     {
       if ( testParams.in.nConvStageTypeId == null ) {
-        testParams.modifyParamValue_pop();
-    
+        testParams.modifyParamValue_pop(); // Restore param.
+        //!!! (2022/07/22 Remarked) No need to re-compose .inputWeightArray because it will not be used again.
+        //testParams.set_byParamsNumberArrayMap_ParamsOut( testParams.in.weightElementOffsetBegin );
       } else {
         testParams.in.nConvStageTypeId = nConvStageTypeId_original;
       }
-
-      // Re-compse testParams.in.inputWeightArray.
-      testParams.set_byParamsNumberArrayMap_ParamsOut( testParams.in.weightElementOffsetBegin );
     }  
   
   }
