@@ -48,14 +48,14 @@ class Base extends TestParams.Base {
 
   /**
    */
-  constructor() {
-    super();
+  constructor( id ) {
+    super( id );
     Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
-  static setAsConstructor() {
-    super.setAsConstructor();
+  static setAsConstructor( id ) {
+    super.setAsConstructor( id );
     Base.setAsConstructor_self.call( this );
     return this;
   }
