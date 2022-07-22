@@ -1166,11 +1166,11 @@ class Base extends TestParams.Base {
           input0_channelCount_original = input0_channelCount_original / 2;
         }
 
-        let pointwise1_outputChannelCount_lowerHalf;
-        let pointwise1_inputChannelCount_higherHalf;
-
         if ( pointwise1ChannelCount_original == 0 ) {
-          pointwise1_outputChannelCount_lowerHalf = input0_channelCount_original; // already halved.
+          // When the output channel count is not specified, keep it zero.
+
+//!!! (2022/07/22 Remarked)
+//          pointwise1_outputChannelCount_lowerHalf = input0_channelCount_original; // already halved.
 
         } else {
 
@@ -1180,12 +1180,9 @@ class Base extends TestParams.Base {
             + `should be divisible by 2.`
           );
 
-          pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount_original / 2;
-        }
+          let pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount_original / 2;
+          let pointwise1_inputChannelCount_higherHalf = input0_channelCount_original; // already halved.
 
-        pointwise1_inputChannelCount_higherHalf = input0_channelCount_original; // already halved.
-
-        {
           let pointwise1ChannelCount_enlarged = pointwise1_outputChannelCount_lowerHalf + pointwise1_inputChannelCount_higherHalf;
           if ( pointwise1ChannelCount_enlarged != input0_channelCount_original )
             throw Error( `Block_TestParams.Base.generate_Filters_Biases(): `
