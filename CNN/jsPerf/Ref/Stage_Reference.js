@@ -271,7 +271,8 @@ class Base extends Recyclable.Root {
         testParams.in.nConvStageTypeId = nConvStageTypeId_toBeCompared;
       }
 
-//!!! ...unfinished... (2022/07/22) re-compse inputWeightArray.
+      // Re-compse testParams.in.inputWeightArray.
+      testParams.set_byParamsNumberArrayMap_ParamsOut( testParams.in.weightElementOffsetBegin );
     }
 
 //!!! ...unfinished... (2022/07/22)
@@ -328,7 +329,8 @@ class Base extends Recyclable.Root {
         testParams.in.nConvStageTypeId = nConvStageTypeId_original;
       }
 
-//!!! ...unfinished... (2022/07/22) re-compse inputWeightArray.
+      // Re-compse testParams.in.inputWeightArray.
+      testParams.set_byParamsNumberArrayMap_ParamsOut( testParams.in.weightElementOffsetBegin );
     }  
   
   }
