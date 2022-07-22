@@ -474,13 +474,9 @@ class Base extends TestParams.Base {
       // sourceWidth:  [ 4, 5 ], // Test different input image width (even and odd).
       // sourceChannelCount: [ 4, 4 ],
 //!!! (2022/07/22 Temp Remarked) For speed-up debug.
-      // sourceHeight: [ 1, 5 ],
-      // sourceWidth:  [ 1, 5 ], // Test different input image width (even and odd).
-      // sourceChannelCount: [ 1, 4 ],
-
-      sourceHeight: [ 1, 1 ],
-      sourceWidth:  [ 3, 3 ],
-      sourceChannelCount: [ 1, 1 ],
+      sourceHeight: [ 1, 5 ],
+      sourceWidth:  [ 1, 5 ], // Test different input image width (even and odd).
+      sourceChannelCount: [ 1, 4 ],
 
 //      nConvStageTypeId: undefined,
 //!!! (2022/07/20 Temp Remarked) For speed-up debug.
