@@ -1150,7 +1150,7 @@ class Base extends TestParams.Base {
             + `pointwise20ChannelCount_original ( ${pointwise20ChannelCount_original} ) `
             + `should be divisible by 2.`
           );
-  
+
           pointwise20ChannelCount_original = pointwise20ChannelCount_original / 2;
         }
 
