@@ -197,19 +197,16 @@ class Base extends Recyclable.Root {
       // Test correctness of Stage.apply.
       this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, this.testCorrectness_imageOutReference, stage );
 
-      // Compare result of ShuffleNetV2 and ShuffleNetV2_byMobileNetV1 when ( bPointwise2ActivatedAtStageEnd == true ).
-      if ( bPointwise2ActivatedAtStageEnd == true ) {
-
 //!!! ...unfinished... (2022/07/17) need test.
 //
 // For  and ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
 // if ( bPointwise2ActivatedAtStageEnd == false ), their result should be the same.
 //
-        Base.stage_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1.call( this,
-          testParams, this.testCorrectness_imageIn.boundsArraySet.output0,
-          ??? );
 
-      }
+      // Compare result of ShuffleNetV2 and ShuffleNetV2_byMobileNetV1.
+      Base.stage_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1.call( this,
+        testParams, this.testCorrectness_imageIn.boundsArraySet.output0,
+        ??? );
 
       stage.disposeResources_and_recycleToPool();
       stage = null;
@@ -232,7 +229,15 @@ class Base extends Recyclable.Root {
    */
   static stage_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1( testParams,
     inputScaleBoundsArray0,
-    stage_original, inputTensor3d_fromBag, outputTensor3d_original ) {
+    // stage_original,
+    inputTensor3d_fromBag, outputTensor3d_original ) {
+
+    if ( bPointwise2ActivatedAtStageEnd == false )
+      return; // In this case, ShuffleNetV2 and ShuffleNetV2_byMobileNetV1 are different because activation escaping scale.
+
+    if (   ( nConvStageTypeId != ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 )
+        || ( nConvStageTypeId != ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 ) )
+      return; // Only compare ShuffleNetV2 and ShuffleNetV2_byMobileNetV1.
 
     let {
       nConvStageTypeId,
@@ -247,15 +252,25 @@ class Base extends Recyclable.Root {
       inputTensor3d = inputTensor3d_fromBag.clone(); // Clone for being destroyed. 
     }
 
-    if ( nConvStageTypeId == ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 ) {
+    let nConvStageTypeId_original = nConvStageTypeId;
+    let nConvStageTypeId_toBeCompared;
+    switch ( nConvStageTypeId ) {
+      case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2:
+        nConvStageTypeId_toBeCompared = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1;
+        break;
+      case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1:
+        nConvStageTypeId_toBeCompared = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2;
+        break;
+    }
 
-      //!!! ...unfinished... (2022/07/22)
+    // Modify nConvStageTypeId.
+//!!! ...unfinished... (2022/07/22) What if ( testParams.in.nConvStageTypeId == null )?
+    if ( testParams.in.nConvStageTypeId == null ) {
 
+//!!! ...unfinished... (2022/07/22) modify Stage_TestParams, re-compse inputWeightArray.
 
-    } else if ( nConvStageTypeId == ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 ) {
-
-//!!! ...unfinished... (2022/07/22)
-
+    } else {
+      testParams.in.nConvStageTypeId = nConvStageTypeId_toBeCompared;
     }
 
 
@@ -300,6 +315,20 @@ class Base extends Recyclable.Root {
     progress.disposeResources_and_recycleToPool();
     progress = null;
 
+
+//!!! ...unfinished... (2022/07/22) call stage_toBeCompared.apply(). Compare result tensor.
+
+
+    // Restore nConvStageTypeId.
+    if ( testParams.in.nConvStageTypeId == null ) {
+
+//!!! ...unfinished... (2022/07/22) pop Stage_TestParams modify record, re-compse inputWeightArray.
+  
+    } else {
+      testParams.in.nConvStageTypeId = nConvStageTypeId_original;
+    }
+  
+  
   }
 
   /**
