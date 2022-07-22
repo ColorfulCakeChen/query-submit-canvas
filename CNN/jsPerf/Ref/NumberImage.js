@@ -475,28 +475,6 @@ class Base extends Recyclable.Root {
 
     imageOut.boundsArraySet.set_bPassThrough_all( bPassThrough );
 
-//!!! (2022/07/22 Remarked) deprecated filtersArray_bBoundsCalculated.
-//   // Prepare value bounds of every output channels (i.e. .afterFilter).
-// //    let filtersArray_bBoundsCalculated, tBounds;
-//     let tBounds;
-//     {
-//       // Note: imageOut.boundsArraySet.afterUndoPreviousActivationEscaping has already been setup by BoundsArraySet.Depthwise() constructor.
-//
-//       if ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ) { // For avg/max pooling, the value bounds will not change.
-//         imageOut.boundsArraySet.afterFilter.set_all_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping );
-//
-//       } else { // For normal depthwise convolution, value bounds should be calculated by accumulation.
-//         imageOut.boundsArraySet.afterFilter.set_all_byN( 0 );
-//
-// //!!! (2022/07/22 Remarked) deprecated filtersArray_bBoundsCalculated.
-// //        // If true, the .boundsArraySet.afterFilter for the filter position is calculated.
-// //        filtersArray_bBoundsCalculated = Recyclable.Array.Pool.get_or_create_by( depthwiseFiltersArray.length );
-// //        filtersArray_bBoundsCalculated.fill( false );
-//
-//         tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
-//       }
-//     }
-
     // Depthwise Convolution
     for ( let outY = 0; outY < outputHeight; ++outY ) {
       let outIndexBaseX = ( outY * outputWidth );
@@ -573,22 +551,6 @@ class Base extends Recyclable.Root {
                               * Math.fround( depthwiseFiltersArray[ filterIndex ] )
                             )
                         );
-
-//!!! (2022/07/22 Remarked) deprecated filtersArray_bBoundsCalculated.
-// // when pad=same, this may be wrong because padded pixels (especially the right-bottom padded pixles) are not calculated.
-//
-//                         // Calculate value bounds of every output channels (i.e. .afterFilter).
-//                         if ( !filtersArray_bBoundsCalculated[ filterIndex ] ) {
-//
-//                           // Note: .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
-//                           tBounds
-//                             .set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
-//                             .multiply_byN( depthwiseFiltersArray[ filterIndex ] );
-//
-//                           imageOut.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
-//
-//                           filtersArray_bBoundsCalculated[ filterIndex ] = true;
-//                         }
                         break;
                     }
                   }
@@ -666,12 +628,6 @@ class Base extends Recyclable.Root {
       tBounds.disposeResources_and_recycleToPool();
       tBounds = null;
     }
-
-//!!! (2022/07/22 Remarked) deprecated filtersArray_bBoundsCalculated.
-//    if ( filtersArray_bBoundsCalculated ) {
-//      filtersArray_bBoundsCalculated.disposeResources_and_recycleToPool();
-//      filtersArray_bBoundsCalculated = null;
-//    }
 
     // Bias
     imageOut.modify_byBias( bDepthwiseBias, depthwiseBiasesArray, parametersDesc, ...depthwiseNames, "bias" );
