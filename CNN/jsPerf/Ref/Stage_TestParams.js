@@ -473,30 +473,36 @@ class Base extends TestParams.Base {
       // sourceHeight: [ 3, 3 ],
       // sourceWidth:  [ 4, 5 ], // Test different input image width (even and odd).
       // sourceChannelCount: [ 4, 4 ],
+//!!! (2022/07/22 Temp Remarked) For speed-up debug.
+      // sourceHeight: [ 1, 5 ],
+      // sourceWidth:  [ 1, 5 ], // Test different input image width (even and odd).
+      // sourceChannelCount: [ 1, 4 ],
 
-      sourceHeight: [ 1, 5 ],
-      sourceWidth:  [ 1, 5 ], // Test different input image width (even and odd).
-      sourceChannelCount: [ 1, 4 ],
+      sourceHeight: [ 1, 1 ],
+      sourceWidth:  [ 3, 3 ],
+      sourceChannelCount: [ 1, 1 ],
 
 //      nConvStageTypeId: undefined,
 //!!! (2022/07/20 Temp Remarked) For speed-up debug.
-      nConvStageTypeId: [
-        Stage.Params.nConvStageTypeId.valueDesc.range.min,
-        Stage.Params.nConvStageTypeId.valueDesc.range.max
-      ],
       // nConvStageTypeId: [
-      // //   // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID, // (1)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN, // (2)
-      // //   // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2, // (3)
-      // //   // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2, // (4)
-      // //   // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1, // (5)
-      // //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21, // (7)
-      // //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21 // (7)
-      // //   // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 // (4)
-      // //   // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2 // (3)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN // (2)
-      // //   // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID // (1)
+      //   Stage.Params.nConvStageTypeId.valueDesc.range.min,
+      //   Stage.Params.nConvStageTypeId.valueDesc.range.max
       // ],
+      nConvStageTypeId: [
+        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1, // (0)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID, // (1)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN, // (2)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2, // (3)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2, // (4)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1, // (5)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21, // (7)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21 // (7)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 // (4)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2 // (3)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN // (2)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID // (1)
+        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1 // (0)
+    ],
 
       blockCountRequested: [
         Stage.Params.blockCountRequested.valueDesc.range.min,
