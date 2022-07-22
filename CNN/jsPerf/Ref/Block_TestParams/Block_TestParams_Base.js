@@ -1098,6 +1098,10 @@ class Base extends TestParams.Base {
     let pointwise1ChannelCount_original = paramsAll.pointwise1ChannelCount;
     let pointwise20ChannelCount_original = paramsAll.pointwise20ChannelCount;
 
+    let input0_channelCount_for_generating = input0_channelCount_original;
+    let pointwise1Channel_for_generating = pointwise1ChannelCount_original;
+    let pointwise20Channel_for_generating = pointwise20ChannelCount_original;
+
     // 0.1 For avoiding channel count can not be divisible by 2 when auto generating testing.
     if ( bDouble_when_ShuffleNetV2_byMobileNetV1 ) {
 
@@ -1151,7 +1155,7 @@ class Base extends TestParams.Base {
             + `should be divisible by 2.`
           );
 
-          pointwise20ChannelCount_original = pointwise20ChannelCount_original / 2;
+          pointwise20ChannelCount_for_generating = pointwise20ChannelCount_original / 2;
         }
 
       } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
@@ -1163,14 +1167,11 @@ class Base extends TestParams.Base {
             + `should be divisible by 2.`
           );
 
-          input0_channelCount_original = input0_channelCount_original / 2;
+          input0_channelCount_for_generating = input0_channelCount_original / 2;
         }
 
         if ( pointwise1ChannelCount_original == 0 ) {
           // When the output channel count is not specified, keep it zero.
-
-//!!! (2022/07/22 Remarked)
-//          pointwise1_outputChannelCount_lowerHalf = input0_channelCount_original; // already halved.
 
         } else {
 
@@ -1181,7 +1182,7 @@ class Base extends TestParams.Base {
           );
 
           let pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount_original / 2;
-          let pointwise1_inputChannelCount_higherHalf = input0_channelCount_original; // already halved.
+          let pointwise1_inputChannelCount_higherHalf = input0_channelCount_for_generating; // already halved.
 
           let pointwise1ChannelCount_enlarged = pointwise1_outputChannelCount_lowerHalf + pointwise1_inputChannelCount_higherHalf;
           if ( pointwise1ChannelCount_enlarged != input0_channelCount_original )
@@ -1198,14 +1199,14 @@ class Base extends TestParams.Base {
             + `should be divisible by 2.`
           );
   
-          pointwise20ChannelCount_original = pointwise20ChannelCount_original / 2;
+          pointwise20ChannelCount_for_generating = pointwise20ChannelCount_original / 2;
         }
       }
     }
 
     // 1. Pointwise1
-    let pointwise1_resultOutputChannelCount = this.generate_pointwise_filters_biases( input0_channelCount_original,
-      pointwise1ChannelCount_original, paramsAll.inferencedParams.pointwise1Bias,
+    let pointwise1_resultOutputChannelCount = this.generate_pointwise_filters_biases( input0_channelCount_for_generating,
+      pointwise1ChannelCount_for_generating, paramsAll.inferencedParams.pointwise1Bias,
       Base.PropertyNames.pointwise1, io_paramsNumberArrayObject );
 
     // 2. Depthwise
@@ -1266,21 +1267,21 @@ class Base extends TestParams.Base {
         case ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL: // ( 0)
         case ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL: // ( 1)
           pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount;
-          pointwise20_outputChannelCount = pointwise20ChannelCount_original;
+          pointwise20_outputChannelCount = pointwise20ChannelCount_for_generating;
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD: // ( 2)
           pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount;
           pointwise21_inputChannelCount = depthwise2_resultOutputChannelCount;
-          pointwise20_outputChannelCount = pointwise20ChannelCount_original;
-          pointwise21_outputChannelCount = pointwise20ChannelCount_original;
+          pointwise20_outputChannelCount = pointwise20ChannelCount_for_generating;
+          pointwise21_outputChannelCount = pointwise20ChannelCount_for_generating;
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD: // ( 5)
           pointwise20_inputChannelCount =  depthwise1_resultOutputChannelCount;
           pointwise202_inputChannelCount = depthwise2_resultOutputChannelCount;
-          pointwise20_outputChannelCount =  pointwise20ChannelCount_original;
-          pointwise202_outputChannelCount = pointwise20ChannelCount_original;
+          pointwise20_outputChannelCount =  pointwise20ChannelCount_for_generating;
+          pointwise202_outputChannelCount = pointwise20ChannelCount_for_generating;
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY: // ( 3)
@@ -1288,33 +1289,33 @@ class Base extends TestParams.Base {
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY: // ( 6)
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL: // ( 7)
           pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount;
-          pointwise20_outputChannelCount = pointwise20ChannelCount_original;
+          pointwise20_outputChannelCount = pointwise20ChannelCount_for_generating;
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2: // ( 8)
           pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount;
           pointwise21_inputChannelCount = depthwise1_resultOutputChannelCount;
-          pointwise20_outputChannelCount = pointwise20ChannelCount_original;
-          pointwise21_outputChannelCount = pointwise20ChannelCount_original;
+          pointwise20_outputChannelCount = pointwise20ChannelCount_for_generating;
+          pointwise21_outputChannelCount = pointwise20ChannelCount_for_generating;
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD: // ( 9)
           pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount + depthwise2_resultOutputChannelCount;
           pointwise21_inputChannelCount = pointwise20_inputChannelCount;
-          pointwise20_outputChannelCount = pointwise20ChannelCount_original;
-          pointwise21_outputChannelCount = pointwise20ChannelCount_original;
+          pointwise20_outputChannelCount = pointwise20ChannelCount_for_generating;
+          pointwise21_outputChannelCount = pointwise20ChannelCount_for_generating;
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY: // (10)
           pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount + inferencedParams.input1_channelCount;
           pointwise21_inputChannelCount = pointwise20_inputChannelCount;
-          pointwise20_outputChannelCount = pointwise20ChannelCount_original;
-          pointwise21_outputChannelCount = pointwise20ChannelCount_original;
+          pointwise20_outputChannelCount = pointwise20ChannelCount_for_generating;
+          pointwise21_outputChannelCount = pointwise20ChannelCount_for_generating;
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL: // (11)
           pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount + inferencedParams.input1_channelCount;
-          pointwise20_outputChannelCount = pointwise20ChannelCount_original;
+          pointwise20_outputChannelCount = pointwise20ChannelCount_for_generating;
           break;
 
         default:
