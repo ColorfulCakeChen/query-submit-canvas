@@ -264,15 +264,15 @@ class Base extends Recyclable.Root {
     }
 
     // Modify nConvStageTypeId.
-//!!! ...unfinished... (2022/07/22) What if ( testParams.in.nConvStageTypeId == null )?
-    if ( testParams.in.nConvStageTypeId == null ) {
+    {
+      if ( testParams.in.nConvStageTypeId == null ) {
+        testParams.modifyParamValue( Stage.Params.nConvStageTypeId, nConvStageTypeId_toBeCompared );
+      } else {
+        testParams.in.nConvStageTypeId = nConvStageTypeId_toBeCompared;
+      }
 
-//!!! ...unfinished... (2022/07/22) modify Stage_TestParams, re-compse inputWeightArray.
-
-    } else {
-      testParams.in.nConvStageTypeId = nConvStageTypeId_toBeCompared;
+//!!! ...unfinished... (2022/07/22) re-compse inputWeightArray.
     }
-
 
 //!!! ...unfinished... (2022/07/22)
     let stage = Stage.Base.Pool.get_or_create_by();
@@ -320,14 +320,16 @@ class Base extends Recyclable.Root {
 
 
     // Restore nConvStageTypeId.
-    if ( testParams.in.nConvStageTypeId == null ) {
+    {
+      if ( testParams.in.nConvStageTypeId == null ) {
+        testParams.modifyParamValue_pop();
+    
+      } else {
+        testParams.in.nConvStageTypeId = nConvStageTypeId_original;
+      }
 
-//!!! ...unfinished... (2022/07/22) pop Stage_TestParams modify record, re-compse inputWeightArray.
-  
-    } else {
-      testParams.in.nConvStageTypeId = nConvStageTypeId_original;
-    }
-  
+//!!! ...unfinished... (2022/07/22) re-compse inputWeightArray.
+    }  
   
   }
 
