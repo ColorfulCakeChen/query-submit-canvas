@@ -469,9 +469,14 @@ class Base extends TestParams.Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.valueOutMinMax = {
-      sourceHeight: [ 3, 3 ],
-      sourceWidth:  [ 4, 5 ], // Test different input image width (even and odd).
-      sourceChannelCount: [ 4, 4 ],
+//!!! (2022/07/22 Temp Remarked) For test more.
+      // sourceHeight: [ 3, 3 ],
+      // sourceWidth:  [ 4, 5 ], // Test different input image width (even and odd).
+      // sourceChannelCount: [ 4, 4 ],
+
+      sourceHeight: [ 1, 3 ],
+      sourceWidth:  [ 1, 5 ], // Test different input image width (even and odd).
+      sourceChannelCount: [ 1, 4 ],
 
 //      nConvStageTypeId: undefined,
 //!!! (2022/07/20 Temp Remarked) For speed-up debug.
