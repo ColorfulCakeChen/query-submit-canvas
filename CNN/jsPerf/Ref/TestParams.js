@@ -242,26 +242,53 @@ class Base extends Recyclable.Root {
   }
 
   /**
+   * Pop the this.modifyParamValueHistory to restore the last paaram modification.
+   */
+  modifyParamValue_pop() {
+    if ( this.modifyParamValueHistory.length <= 0 )
+      return; // No record needs be restored.
+
+    let changeRecord = this.modifyParamValueHistory.pop();
+    let paramName = changeRecord.paramDesc.paramName;
+
+    if ( this.out[ paramName ] != undefined )
+      this.out[ paramName ] = changeRecord.outValue_original;
+
+    if ( this.in[ paramName ] != undefined ) {
+      this.in[ paramName ] = changeRecord.inValue_original;
+    }
+
+    if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) {
+      this.in.paramsNumberArrayObject[ paramName ] = changeRecord.inValue_original; // (should be a number (can not be a number array)).
+    }
+  }
+
+  /**
    * Restore parameters' values according to this.modifyParamValueHistory. And empty this.modifyParamValueHistory.
    */
   restoreParamValues() {
-    for ( let i = this.modifyParamValueHistory.length - 1; i >= 0; --i ) { // From the last to first.
-      let changeRecord = this.modifyParamValueHistory[ i ];
-      let paramName = changeRecord.paramDesc.paramName;
+//!!! (2022/07/22 Remarked) Call modifyParamValue_pop() instead.
+//     for ( let i = this.modifyParamValueHistory.length - 1; i >= 0; --i ) { // From the last to first.
+//       let changeRecord = this.modifyParamValueHistory[ i ];
+//       let paramName = changeRecord.paramDesc.paramName;
+//
+//       if ( this.out[ paramName ] != undefined )
+//         this.out[ paramName ] = changeRecord.outValue_original;
+//
+//       if ( this.in[ paramName ] != undefined ) {
+//         this.in[ paramName ] = changeRecord.inValue_original;
+//       }
+//
+//       if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) {
+//         this.in.paramsNumberArrayObject[ paramName ] = changeRecord.inValue_original; // (should be a number (can not be a number array)).
+//       }
+//     }
+//  
+//     this.modifyParamValueHistory.length = 0; // Clear history.
 
-      if ( this.out[ paramName ] != undefined )
-        this.out[ paramName ] = changeRecord.outValue_original;
-
-      if ( this.in[ paramName ] != undefined ) {
-        this.in[ paramName ] = changeRecord.inValue_original;
-      }
-
-      if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) {
-        this.in.paramsNumberArrayObject[ paramName ] = changeRecord.inValue_original; // (should be a number (can not be a number array)).
-      }
+    while ( this.modifyParamValueHistory.length > 0 ) { // From the last to first.
+      modifyParamValue_pop();
     }
-    
-    this.modifyParamValueHistory.length = 0; // Clear history.
   }
 
 
