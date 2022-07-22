@@ -404,7 +404,7 @@ class Base extends TestParams.Base {
    */
   onYield_isLegal() {
 
-// !!! ...unfinished... (2022/07/16)
+//!!! ...unfinished... (2022/07/22)
 //
 //     // (2021/07/20)
 //     // Note: In backend WASM, when filter width is 1 (note: filter height does not have this issue and could be 1), it seems that
@@ -417,6 +417,10 @@ class Base extends TestParams.Base {
 //     if ( tf.getBackend() == "wasm" ) {
 //
 //       this.generate_out_inferencedParams(); // So that this.out.inferencedParams and .depthwisePadInfo is usable.
+//
+//       *   - this.depthwiseFilterWidthArray
+//       *   - this.depthwiseFilterHeightArray
+// 
 //       if ( this.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
 //
 //         // For depthwise1/depthwis2.

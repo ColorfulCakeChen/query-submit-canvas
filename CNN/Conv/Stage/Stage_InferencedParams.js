@@ -142,6 +142,8 @@ class InferencedParams extends Recyclable.Root {
    *   - this.outputWidthArray
    *   - this.outputHeight
    *   - this.outputWidth
+   *   - this.depthwiseFilterWidthArray
+   *   - this.depthwiseFilterHeightArray
    *
    * @param {number} sourceHeight  The height of source image.
    * @param {number} sourceWidth   The width of source image.
