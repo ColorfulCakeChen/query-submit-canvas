@@ -1099,8 +1099,8 @@ class Base extends TestParams.Base {
     let pointwise20ChannelCount_original = paramsAll.pointwise20ChannelCount;
 
     let input0_channelCount_for_generating = input0_channelCount_original;
-    let pointwise1Channel_for_generating = pointwise1ChannelCount_original;
-    let pointwise20Channel_for_generating = pointwise20ChannelCount_original;
+    let pointwise1ChannelCount_for_generating = pointwise1ChannelCount_original;
+    let pointwise20ChannelCount_for_generating = pointwise20ChannelCount_original;
 
     // 0.1 For avoiding channel count can not be divisible by 2 when auto generating testing.
     if ( bDouble_when_ShuffleNetV2_byMobileNetV1 ) {
