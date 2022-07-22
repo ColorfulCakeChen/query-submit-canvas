@@ -255,6 +255,10 @@ class Out extends Recyclable.Root {
     return ValueDesc.ActivationFunction.Singleton.getName_byId( this.inferencedParams.squeezeExcitationActivationId );
   }
 
+  get nActivationName() {
+    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId );
+  }
+
   /** @override */
   toString() {
 

@@ -255,6 +255,30 @@ class Base extends Recyclable.Root {
     }
   }
 
+  get nConvBlockTypeName() {
+    return ValueDesc.ConvBlockType.Singleton.getName_byId( this.nConvBlockTypeId );
+  }
+
+  get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
+    return ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getName_byId( this.depthwise_AvgMax_Or_ChannelMultiplier );
+  }
+
+  get depthwiseActivationName() {
+    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.depthwiseActivationId );
+  }
+
+  get pointwise20ActivationName() {
+    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise20ActivationId );
+  }
+
+  get nSqueezeExcitationChannelCountDivisorName() {
+    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor );
+  }
+
+  get nActivationName() {
+    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId );
+  }
+
   /**
    *
    * @return {Block.Params}
