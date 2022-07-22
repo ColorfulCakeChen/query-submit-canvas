@@ -267,6 +267,9 @@ class Base extends Recyclable.Root {
     {
       if ( testParams.in.nConvStageTypeId == null ) { // Needs re-compose .inputWeightArray after modification.
         testParams.modifyParamValue( Stage.Params.nConvStageTypeId, nConvStageTypeId_toBeCompared );
+
+//!!! ...unfinished... (2022/07/22) How to re-generate with the same filters and biases array?
+
         testParams.set_byParamsNumberArrayMap_ParamsOut( testParams.in.weightElementOffsetBegin );
       } else {
         testParams.in.nConvStageTypeId = nConvStageTypeId_toBeCompared;
