@@ -193,13 +193,11 @@ class ShuffleNetV2_ByPointwise21 extends Base {
     // In ShuffleNetV2_ByPointwise21, the blockLast only has output0 (no output1).
     //
     // The output0:
-    //   - It will have double channel count of source input0.
-    //   - It is the concatenation of pointwise20's result and input1.
+    //   - It will be the pointwise20ChannelCount.
+    //   - The pointwise20ChannelCount is double of sourceChannelCount (i.e. twice of original input0_channelCount).
     //
-    // The pointwise20ChannelCount is still the same as sourceChannelCount (i.e. original input0_channelCount).
-    // The input1_channelCount is also the same as sourceChannelCount (i.e. original input0_channelCount).
-    //
-    this.output0_channelCount = this.output0_channelCount + this.output1_channelCount;
+    this.pointwise20ChannelCount = stageParams.sourceChannelCount * 2;
+    this.output0_channelCount = this.pointwise20ChannelCount;
     this.output1_channelCount = 0;
   }
 }
