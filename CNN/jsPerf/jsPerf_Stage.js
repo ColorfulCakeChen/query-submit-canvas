@@ -230,8 +230,8 @@ class HeightWidthDepth {
   /** Test apply by Xxx */
   testStage_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
-    let block = testCase.block;
-    let outputTensor3d = block.apply( this.dataTensor3dArray[ 0 ] );
+    let stage = testCase.stage;
+    let outputTensor3d = stage.apply( this.dataTensor3dArray[ 0 ] );
     tf.dispose( outputTensor3d );
   }
 
@@ -258,7 +258,7 @@ class HeightWidthDepth {
           let testParamsGenerator = testParams.ParamsGenerator();
           let testReference = Stage_Reference.Base.Pool.get_or_create_by();
 
-          let batchIdCalculator = new BatchIdCalculator.Base( 50 * 1000 );
+          let batchIdCalculator = new BatchIdCalculator.Base( 50 * 100 );
 
           try {
             for ( testParams of testParamsGenerator ) {

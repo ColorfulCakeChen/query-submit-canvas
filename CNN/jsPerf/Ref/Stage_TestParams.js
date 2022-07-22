@@ -474,7 +474,7 @@ class Base extends TestParams.Base {
       // sourceWidth:  [ 4, 5 ], // Test different input image width (even and odd).
       // sourceChannelCount: [ 4, 4 ],
 
-      sourceHeight: [ 1, 3 ],
+      sourceHeight: [ 1, 5 ],
       sourceWidth:  [ 1, 5 ], // Test different input image width (even and odd).
       sourceChannelCount: [ 1, 4 ],
 
