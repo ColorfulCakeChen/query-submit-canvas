@@ -3,7 +3,7 @@ export { ShuffleNetV2_ByPointwise21 };
 import * as Pool from "../../../util/Pool.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { Params } from "../Stage_Params.js";
-import { ShuffleNetV2 } from "./ShuffleNetV2.js";
+import { Base } from "./Base.js";
 
 /**
  * Provide parameters for ShuffleNetV2_ByPointwise21 (i.e. shuffle channel by pointwise21).
@@ -95,7 +95,7 @@ import { ShuffleNetV2 } from "./ShuffleNetV2.js";
  *
  *
  */
-class ShuffleNetV2_ByPointwise21 extends ShuffleNetV2 {
+class ShuffleNetV2_ByPointwise21 extends Base {
 
   /**
    * Used as default Stage.BlockParamsCreator.ShuffleNetV2_ByPointwise21 provider for conforming to Recyclable interface.
@@ -133,6 +133,8 @@ class ShuffleNetV2_ByPointwise21 extends ShuffleNetV2 {
 
     let stageParams = this.stageParams;
 
+    this.input0_channelCount = stageParams.sourceChannelCount; // Block0 uses the original input channel count (as input0).
+
     if ( stageParams.bPointwise1 == false ) {
 
       // NoPointwise1 ShuffleNetV2_ByPointwise21 (expanding by once depthwise).
@@ -152,17 +154,22 @@ class ShuffleNetV2_ByPointwise21 extends ShuffleNetV2 {
       this.pointwise1ChannelCount = stageParams.sourceChannelCount * 2; // Double of input0. (Double of pointwise20.)
       this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     }
+
+    // In ShuffleNetV2_ByPointwise21, all blocks' (except blockLast) output0 is the same depth as source input0.
+    this.pointwise20ChannelCount = stageParams.sourceChannelCount;
+
+    // In ShuffleNetV2_ByPointwise21, all blocks (except blockLast) have both output0 and output1 with same depth as pointwise20 result.
+    this.output0_channelCount = this.pointwise20ChannelCount;
+    this.output1_channelCount = this.pointwise20ChannelCount;
   }
 
   /** @override */
   configTo_beforeBlockN_exceptBlock0( blockIndex ) {
-    super.configTo_beforeBlockN_exceptBlock0( blockIndex ); // Block1, 2, 3, ... are almost the same as ShuffleNetV2.
+    super.configTo_beforeBlockN_exceptBlock0( blockIndex );
 
     let stageParams = this.stageParams;
 
-    // Except that ShuffleNetV2_ByPointwise21 does not have channel shuffler. The pointwise20 and pointwise21 will do channel shuffling.
-    // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
-    //
+    this.input0_channelCount = this.output0_channelCount;
     this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY;
 
     if ( stageParams.bPointwise1 == false ) {
@@ -179,10 +186,21 @@ class ShuffleNetV2_ByPointwise21 extends ShuffleNetV2 {
 
   /** @override */
   configTo_beforeBlockLast() {
-    super.configTo_beforeBlockLast(); // BlockLast is almost the same as ShuffleNetV2.
+    super.configTo_beforeBlockLast();
 
-    // Except that ShuffleNetV2_ByPointwise21 does not have channel shuffler, and no pointwise21 because needs not channel shuffling.
     this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL;
+
+    // In ShuffleNetV2_ByPointwise21, the blockLast only has output0 (no output1).
+    //
+    // The output0:
+    //   - It will have double channel count of source input0.
+    //   - It is the concatenation of pointwise20's result and input1.
+    //
+    // The pointwise20ChannelCount is still the same as sourceChannelCount (i.e. original input0_channelCount).
+    // The input1_channelCount is also the same as sourceChannelCount (i.e. original input0_channelCount).
+    //
+    this.output0_channelCount = this.output0_channelCount + this.output1_channelCount;
+    this.output1_channelCount = 0;
   }
 }
 

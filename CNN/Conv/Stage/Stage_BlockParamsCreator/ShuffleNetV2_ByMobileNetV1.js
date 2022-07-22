@@ -3,7 +3,7 @@ export { ShuffleNetV2_ByMobileNetV1 };
 import * as Pool from "../../../util/Pool.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { Params } from "../Stage_Params.js";
-import { ShuffleNetV2 } from "./ShuffleNetV2.js";
+import { Base } from "./Base.js";
 
 /*
  * Provide parameters for ShuffleNetV2_ByMobileNetV1 (i.e. concatenate, shuffle channel, split by integrated pointwise1, depthwise1,
@@ -33,7 +33,7 @@ import { ShuffleNetV2 } from "./ShuffleNetV2.js";
  *     The learning (or say, evolving) performance should be faster by using ShuffleNetV2 (rather than MobileNetV1).
  *
  */
-class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
+class ShuffleNetV2_ByMobileNetV1 extends Base {
 
   /**
    * Used as default Stage.BlockParamsCreator.ShuffleNetV2_ByMobileNetV1 provider for conforming to Recyclable interface.
@@ -71,6 +71,7 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 
     let stageParams = this.stageParams;
 
+    this.input0_channelCount = stageParams.sourceChannelCount; // Block0 uses the original input channel count (as input0).
     this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD;
 
     if ( stageParams.bPointwise1 == false ) {
@@ -102,26 +103,21 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
     //
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
 
-    // In ShuffleNetV2_ByMobileNetV1's head, pointwise20ChannelCount is always twice of input0's channel count.
-    //
-//!!! (2022/07/21)
+    // In ShuffleNetV2_ByMobileNetV1, pointwise20ChannelCount is always twice of original input0's channel count.
     this.pointwise20ChannelCount = stageParams.sourceChannelCount * 2;
-//    this.pointwise20ChannelCount = stageParams.sourceChannelCount;
 
-    // In ShuffleNetV2_ByMobileNetV1's head, all blocks have only output0 (with same depth as pointwise20 result) and no output1.
-//!!! (2022/07/21)
+    // In ShuffleNetV2_ByMobileNetV1, all blocks have only output0 (with same depth as pointwise20 result) and no output1.
     this.output0_channelCount = this.pointwise20ChannelCount;
-//    this.output0_channelCount = stageParams.sourceChannelCount * 2;
     this.output1_channelCount = 0;
   }
 
   /** @override */
   configTo_beforeBlockN_exceptBlock0( blockIndex ) {
-    super.configTo_beforeBlockN_exceptBlock0( blockIndex ); // Block1, 2, 3, ... are almost the same as ShuffleNetV2.
+    super.configTo_beforeBlockN_exceptBlock0( blockIndex );
 
     let stageParams = this.stageParams;
 
-    // Except that ShuffleNetV2_ByMobileNetV1 does not have channel shuffler. The pointwise20 will do channel shuffling.
+    this.input0_channelCount = this.output0_channelCount;
     this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY;
 
     // In ShuffleNetV2_ByMobileNetV1's body/tail, if ( stageParams.bPointwise1 == false ), pointwise1ChannelCount is also 0.
@@ -148,9 +144,7 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 
   /** @override */
   configTo_beforeBlockLast() {
-    super.configTo_beforeBlockLast(); // BlockLast is almost the same as ShuffleNetV2.
-
-    // Except that ShuffleNetV2_ByMobileNetV1 does not have channel shuffler. The pointwise20 will NOT do channel shuffling.
+    super.configTo_beforeBlockLast();
     this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL;
   }
 }
