@@ -167,15 +167,13 @@ class ShuffleNetV2_ByPointwise21 extends Base {
   configTo_beforeBlockN_exceptBlock0( blockIndex ) {
     super.configTo_beforeBlockN_exceptBlock0( blockIndex );
 
-    let stageParams = this.stageParams;
-
     this.input0_channelCount = this.output0_channelCount;
     this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY;
 
     if ( stageParams.bPointwise1 == false ) {
       this.pointwise1ChannelCount = 0;                              // NoPointwise1.
     } else {
-      this.pointwise1ChannelCount = stageParams.sourceChannelCount; // Same as original input0. (Same as pointwise20.)
+      this.pointwise1ChannelCount = this.stageParams.sourceChannelCount; // Same as original input0. (Same as pointwise20.)
     }
   }
 
@@ -196,7 +194,7 @@ class ShuffleNetV2_ByPointwise21 extends Base {
     //   - It will be the pointwise20ChannelCount.
     //   - The pointwise20ChannelCount is double of sourceChannelCount (i.e. twice of original input0_channelCount).
     //
-    this.pointwise20ChannelCount = stageParams.sourceChannelCount * 2;
+    this.pointwise20ChannelCount = this.stageParams.sourceChannelCount * 2;
     this.output0_channelCount = this.pointwise20ChannelCount;
     this.output1_channelCount = 0;
   }
