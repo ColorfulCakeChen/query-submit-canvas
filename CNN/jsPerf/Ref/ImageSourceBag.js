@@ -219,5 +219,5 @@ class Base extends Recyclable.Root {
 
 
 //!!! (2022/07/14 Temp Remarked) Fixed to non-random to simplify debug.
-Base.weightsRandomOffset = { min: -200, max: +200 };
-//Base.weightsRandomOffset = { min: -0, max: +0 };
+//Base.weightsRandomOffset = { min: -200, max: +200 };
+Base.weightsRandomOffset = { min: -0, max: +0 };
