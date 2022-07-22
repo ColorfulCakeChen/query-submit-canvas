@@ -1154,7 +1154,6 @@ class Base extends TestParams.Base {
             + `pointwise20ChannelCount_original ( ${pointwise20ChannelCount_original} ) `
             + `should be divisible by 2.`
           );
-
           pointwise20ChannelCount_for_generating = pointwise20ChannelCount_original / 2;
         }
 
@@ -1166,7 +1165,6 @@ class Base extends TestParams.Base {
             + `input0_channelCount_original ( ${input0_channelCount_original} ) `
             + `should be divisible by 2.`
           );
-
           input0_channelCount_for_generating = input0_channelCount_original / 2;
         }
 
@@ -1175,13 +1173,16 @@ class Base extends TestParams.Base {
 
         } else {
 
-          if ( ( pointwise1ChannelCount_original % 2 ) != 0 )
-          throw Error( `Block_TestParams.Base.generate_Filters_Biases(): `
-            + `pointwise1ChannelCount_original ( ${pointwise1ChannelCount_original} ) `
-            + `should be divisible by 2.`
-          );
+          {
+            if ( ( pointwise1ChannelCount_original % 2 ) != 0 )
+            throw Error( `Block_TestParams.Base.generate_Filters_Biases(): `
+              + `pointwise1ChannelCount_original ( ${pointwise1ChannelCount_original} ) `
+              + `should be divisible by 2.`
+            );
+            pointwise1ChannelCount_for_generating = pointwise1ChannelCount_original / 2;
+          }
 
-          let pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount_original / 2;
+          let pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount_for_generating; // already halved.
           let pointwise1_inputChannelCount_higherHalf = input0_channelCount_for_generating; // already halved.
 
           let pointwise1ChannelCount_enlarged = pointwise1_outputChannelCount_lowerHalf + pointwise1_inputChannelCount_higherHalf;
@@ -1198,7 +1199,6 @@ class Base extends TestParams.Base {
             + `pointwise20ChannelCount_original ( ${pointwise20ChannelCount_original} ) `
             + `should be divisible by 2.`
           );
-  
           pointwise20ChannelCount_for_generating = pointwise20ChannelCount_original / 2;
         }
       }
