@@ -245,17 +245,6 @@ class InferencedParams extends Recyclable.Root {
       depthwisePadInfo.disposeResources_and_recycleToPool();
       depthwisePadInfo = null;
     }
-
-//!!! (2022/07/19 Remarked) Old Codes
-//     // By default, the block0's output ( height, width ) is half of the input (i.e. result of depthwise convolution with
-//     // ( strides = 2, pad = "same" ) ).
-//     //
-//     // Note: This calculation copied from the getPadAndOutInfo() of
-//     // (https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts).
-//     //
-//     let stridesHeight = 2, stridesWidth = 2;
-//     this.outputHeight = Math.ceil( sourceHeight / stridesHeight );
-//     this.outputWidth =  Math.ceil( sourceWidth  / stridesWidth );
   }
 
   /**

@@ -106,7 +106,7 @@ class Base extends Recyclable.Root {
     this.testCorrectness_imageOutReference = this.calcResult( this.testCorrectness_imageIn );
 
     Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Stage_Reference.Base.stage_create_apply_internal()",
-      Base.stage_create_apply_internal, this, imageSourceBag );
+      Base.stage_create_apply_internal, this, imageSourceBag, testParams );
 
     { // Release output reference images.
       if ( this.testCorrectness_imageOutReference != this.testCorrectness_imageIn ) { // Do not release image from ImageSourceBag.
@@ -121,11 +121,12 @@ class Base extends Recyclable.Root {
    *   The referenece object to do the calculate.
    *
    */
-  static stage_create_apply_internal( imageSourceBag ) {
-    let testParams = this.testParams;
+  static stage_create_apply_internal( imageSourceBag, testParams ) {
 
     let {
       sourceHeight, sourceWidth, sourceChannelCount,
+      nConvStageTypeId,
+      bPointwise2ActivatedAtStageEnd,
       bKeepInputTensor,
     } = testParams.out;
 
@@ -195,15 +196,28 @@ class Base extends Recyclable.Root {
       // Test correctness of Stage.apply.
       this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, this.testCorrectness_imageOutReference, stage );
 
-      stage.disposeResources_and_recycleToPool();
-      stage = null;
+      // Compare result of ShuffleNetV2 and ShuffleNetV2_byMobileNetV1 when ( bPointwise2ActivatedAtStageEnd == true ).
+      if ( bPointwise2ActivatedAtStageEnd == true ) {
 
 //!!! ...unfinished... (2022/07/17) need test.
 //
-// For ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 and ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
+// For  and ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
 // if ( bPointwise2ActivatedAtStageEnd == false ), their result should be the same.
 //
 
+        if ( nConvStageTypeId == ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 ) {
+
+//!!! ...unfinished... (2022/07/22)
+
+        } else if ( nConvStageTypeId == ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 ) {
+
+//!!! ...unfinished... (2022/07/22)
+
+        }
+      }
+
+      stage.disposeResources_and_recycleToPool();
+      stage = null;
     }
     let memoryInfo_afterDispose = tf.memory();
 
@@ -430,12 +444,6 @@ class Base extends Recyclable.Root {
           block_or_blockTestParamsOut_asserter.propertyValue( "input0_width", stage_or_stageTestParamsOut.inferencedParams.inputWidthArray[ blockIndex ] );
         } else { // Stage.Base
           // Note: Stage.Base does not have information to verify every block's input height/width.
-
-//!!! (2022/07/20 Remarked) block_or_blockTestParamsOut already is block itself.
-//           let stage = stage_or_stageTestParamsOut;
-//           let block = stage.blockArray[ blockIndex ];
-//           block_or_blockTestParamsOut_asserter.propertyValue( "input0_height", block.input0_height );
-//           block_or_blockTestParamsOut_asserter.propertyValue( "input0_width", block.input0_width );
         }
       }
 
@@ -794,53 +802,6 @@ class Base extends Recyclable.Root {
         }
       }
 
-//!!! (2022/07/16 Remarked) already been tested in the following output_channelCount
-//       // pointwise20ChannelCount
-//       if ( ( blockCount - 1 ) > blockIndex ) { // block0, 1, 2, 3, ..., ( blockCount - 2 )
-//         switch ( nConvStageTypeId ) {
-//           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1: // (0)
-//           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-//           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
-//           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
-//           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
-//           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-//             block_or_blockTestParamsOut_asserter.propertyValue( "pointwise20ChannelCount", double_Block0Input0ChannelCount );
-//             block_or_blockTestParamsOut_asserter.propertyValue( "pointwise21ChannelCount", 0 );
-//             break;
-//
-//           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
-//           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-//             block_or_blockTestParamsOut_asserter.propertyValue( "pointwise20ChannelCount", single_Block0Input0ChannelCount );
-//             block_or_blockTestParamsOut_asserter.propertyValue( "pointwise21ChannelCount", single_Block0Input0ChannelCount );
-//             break;
-//
-//           default:
-//             Base.Assert_nConvStageTypeId_Unknown(
-//               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
-//             break;
-//         }
-//
-//       } else { // blockLast
-//         switch ( nConvStageTypeId ) {
-//           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1: // (0)
-//           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
-//           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
-//           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
-//           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
-//           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
-//           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
-//           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-//             block_or_blockTestParamsOut_asserter.propertyValue( "pointwise20ChannelCount", double_Block0Input0ChannelCount );
-//             block_or_blockTestParamsOut_asserter.propertyValue( "pointwise21ChannelCount", 0 );
-//             break;
-
-//           default:
-//             Base.Assert_nConvStageTypeId_Unknown(
-//               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
-//             break;
-//         }
-//       }
-
       //!!! (2022/07/16 Remarked) pointwise20Bias is determined by Block.Params (and be tested there).
       //block_or_blockTestParamsOut_asserter.propertyValue( "pointwise20Bias", true );
 
@@ -898,9 +859,6 @@ class Base extends Recyclable.Root {
       {
         block_or_blockTestParamsOut_asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", stage_or_stageTestParamsOut.nSqueezeExcitationChannelCountDivisor );
 
-//!!! (2022/07/16 Remarked) There is no such member in Block_TestParams.Out or Block.Base
-//        block_or_blockTestParamsOut_asserter.propertyValue( "squeezeExcitationActivationId", stage_or_stageTestParamsOut.nActivationId );
-
         switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
@@ -936,17 +894,6 @@ class Base extends Recyclable.Root {
   
         } else { // Stage.Base
           // Note: Stage.Base does not have information to verify every block's input height/width.
-
-//!!! (2022/07/20 Remarked) block_or_blockTestParamsOut already is block itself.
-//           let block = stage_or_stageTestParamsOut.blockArray[ blockIndex ];
-//           block_or_blockTestParamsOut_asserter.propertyValue( "output_height", block.output_height );
-//           block_or_blockTestParamsOut_asserter.propertyValue( "output_width", block.output_width );
-  
-//           let stage = stage_or_stageTestParamsOut;
-//           if ( ( blockCount - 1 ) == blockIndex ) { // blockLast
-//             block_or_blockTestParamsOut_asserter.propertyValue( "output_height", stage.outputHeight );
-//             block_or_blockTestParamsOut_asserter.propertyValue( "output_width", stage.outputWidth );
-//           }
         }
       }
 
@@ -1023,13 +970,6 @@ class Base extends Recyclable.Root {
    */
   calcResult( imageIn ) {
     let testParams = this.testParams;
-
-//!!! (2022/07/15 Remarked) seems not used.
-//     let channelShuffler_concatenatedShape;
-//     let channelShuffler_outputGroupCount = 2; // In ShuffleNetV2, channel shuffler always has 2 convolution group.
-//
-//     // In ShuffleNetV2, channel shuffler always has half ( height, width ) and twice channel count of original input0.
-//     channelShuffler_concatenatedShape = [ testParams.out.outputHeight, testParams.out.outputWidth, imageIn.depth * 2 ];
 
     Base.AssertParameters_Stage_blocks( testParams, testParams.out ); // Test every block's parameters.
 
