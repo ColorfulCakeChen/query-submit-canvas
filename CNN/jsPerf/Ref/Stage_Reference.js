@@ -130,18 +130,16 @@ class Base extends Recyclable.Root {
       bKeepInputTensor,
     } = testParams.out;
 
-    let { outputHeight, outputWidth } = testParams.out.inferencedParams;
+    let inputTensor3d_fromBag = imageSourceBag.getTensor3d_by( sourceHeight, sourceWidth, sourceChannelCount );
 
-    let outputChannelCount = sourceChannelCount * 2; // In current Stage's design, the output channel always is twice as input.
-
-    let inputTensor3d = imageSourceBag.getTensor3d_by( sourceHeight, sourceWidth, sourceChannelCount );
-
+    let inputTensor3d;
     let inputTensorDestroyCount; // How many input tensors will be destroyed by Stage.apply().
     if ( bKeepInputTensor ) {
+      inputTensor3d = inputTensor3d_fromBag; // The same one because it will not be destroyed. 
       inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
 
     } else {
-      inputTensor3d = inputTensor3d.clone(); // Clone for being destroyed. 
+      inputTensor3d = inputTensor3d_fromBag.clone(); // Clone for being destroyed. 
       inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
     }
 
@@ -152,6 +150,9 @@ class Base extends Recyclable.Root {
     {
       let stage = Base.Stage_create( testParams, this.testCorrectness_imageIn.boundsArraySet.output0 );
 
+      let { outputHeight, outputWidth } = testParams.out.inferencedParams;
+      let outputChannelCount = sourceChannelCount * 2; // In current Stage's design, the output channel always is twice as input.
+  
       Base.AssertTwoEqualValues( "outputHeight", stage.outputHeight, outputHeight, stage );
       Base.AssertTwoEqualValues( "outputWidth", stage.outputWidth, outputWidth, stage );
       Base.AssertTwoEqualValues( "outputChannelCount", stage.outputChannelCount, outputChannelCount, stage );
@@ -204,16 +205,10 @@ class Base extends Recyclable.Root {
 // For  and ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
 // if ( bPointwise2ActivatedAtStageEnd == false ), their result should be the same.
 //
+        Base.stage_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1.call( this,
+          testParams, this.testCorrectness_imageIn.boundsArraySet.output0,
+          ??? );
 
-        if ( nConvStageTypeId == ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 ) {
-
-//!!! ...unfinished... (2022/07/22)
-
-        } else if ( nConvStageTypeId == ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 ) {
-
-//!!! ...unfinished... (2022/07/22)
-
-        }
       }
 
       stage.disposeResources_and_recycleToPool();
@@ -228,6 +223,82 @@ class Base extends Recyclable.Root {
         + `${stage}` );
 
     tf.dispose( outputTensor3d );
+  }
+
+  /**
+   * @param {Stage.Base} stage_original
+   * @param {tf.tensor} inputTensor3d_fromBag    The input tensor from imageSourceBag.
+   * @param {tf.tensor} outputTensor3d_original  The output tensor (from original stage) to be compared.
+   */
+  static stage_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1( testParams,
+    inputScaleBoundsArray0,
+    stage_original, inputTensor3d_fromBag, outputTensor3d_original ) {
+
+    let {
+      nConvStageTypeId,
+      bKeepInputTensor,
+    } = testParams.out;
+ 
+//!!! ...unfinished... (2022/07/22)
+    let inputTensor3d;
+    if ( bKeepInputTensor ) {
+      inputTensor3d = inputTensor3d_fromBag; // The same one because it will not be destroyed. 
+    } else {
+      inputTensor3d = inputTensor3d_fromBag.clone(); // Clone for being destroyed. 
+    }
+
+    if ( nConvStageTypeId == ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 ) {
+
+      //!!! ...unfinished... (2022/07/22)
+
+
+    } else if ( nConvStageTypeId == ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 ) {
+
+//!!! ...unfinished... (2022/07/22)
+
+    }
+
+
+//!!! ...unfinished... (2022/07/22)
+    let stage = Stage.Base.Pool.get_or_create_by();
+
+    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+
+    // Initialize successfully or failed.
+    let extractedParams = Stage.Params.Pool.get_or_create_by(
+      testParams.in.sourceHeight, testParams.in.sourceWidth, testParams.in.sourceChannelCount,
+
+      ???testParams.in.nConvStageTypeId,
+      testParams.in.blockCountRequested,
+      testParams.in.bPointwise1,
+      testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
+      testParams.in.bPointwise2ActivatedAtStageEnd,
+      testParams.in.nSqueezeExcitationChannelCountDivisor,
+      testParams.in.nActivationId,
+      testParams.in.bKeepInputTensor
+    );
+
+    let bInitOk = stage.init( progress, testParams.in.inputWeightArray, testParams.in.weightElementOffsetBegin, extractedParams,
+      inputScaleBoundsArray0 );
+
+    if ( stage.bInitOk != bInitOk )
+      throw Error( `Stage validation state (${stage.bInitOk}) mismatches initer's result (${bInitOk}). ${stage}` );
+
+    if ( !bInitOk ) { //!!! For Debug.
+      console.log( "testParams =", testParams );
+      debugger;
+    }
+
+    if ( false == bInitOk )
+      throw Error( `Failed to initialize stage object. ${stage}` );
+
+    if ( 100 != progress.valuePercentage )
+      throw Error(
+        `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${stage}`);
+
+    progress.disposeResources_and_recycleToPool();
+    progress = null;
+
   }
 
   /**
