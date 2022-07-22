@@ -474,13 +474,13 @@ class Base extends TestParams.Base {
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.valueOutMinMax = {
 //!!! (2022/07/22 Temp Remarked) For test more.
-      // sourceHeight: [ 3, 3 ],
-      // sourceWidth:  [ 4, 5 ], // Test different input image width (even and odd).
-      // sourceChannelCount: [ 4, 4 ],
-//!!! (2022/07/22 Temp Remarked) For speed-up debug.
-      sourceHeight: [ 1, 5 ],
-      sourceWidth:  [ 1, 5 ], // Test different input image width (even and odd).
+      sourceHeight: [ 3, 3 ],
+      sourceWidth:  [ 4, 5 ], // Test different input image width (even and odd).
       sourceChannelCount: [ 3, 4 ],
+//!!! (2022/07/22 Temp Remarked) For speed-up debug.
+      // sourceHeight: [ 1, 5 ],
+      // sourceWidth:  [ 1, 5 ], // Test different input image width (even and odd).
+      // sourceChannelCount: [ 3, 4 ],
 
 //      nConvStageTypeId: undefined,
 //!!! (2022/07/20 Temp Remarked) For speed-up debug.
@@ -516,8 +516,11 @@ class Base extends TestParams.Base {
       ],
 
       // (2022/05/05) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
-      depthwiseFilterHeight: [ Stage.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
-      depthwiseFilterWidth: [ Stage.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
+//!!! (2022/07/22 Remarked) to avoid depthwise filter 1 x N or N x 1
+//      depthwiseFilterHeight: [ Stage.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
+//      depthwiseFilterWidth: [ Stage.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
+      depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
+      depthwiseFilterWidth: [ 2, depthwiseFilterMaxSize ],
 
       bPointwise2ActivatedAtStageEnd: [
         Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.min,
