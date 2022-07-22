@@ -571,6 +571,9 @@ class Base extends Recyclable.Root {
                             )
                         );
 
+//!!! ...unfinished... (2022/07/22)
+// when pad=same, this may be wrong because padded pixels are not calculated.
+
                         // Calculate value bounds of every output channels (i.e. .afterFilter).
                         if ( !filtersArray_bBoundsCalculated[ filterIndex ] ) {
 
