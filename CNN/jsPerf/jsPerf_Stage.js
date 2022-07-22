@@ -258,7 +258,7 @@ class HeightWidthDepth {
           let testParamsGenerator = testParams.ParamsGenerator();
           let testReference = Stage_Reference.Base.Pool.get_or_create_by();
 
-          let batchIdCalculator = new BatchIdCalculator.Base( 50 * 100 );
+          let batchIdCalculator = new BatchIdCalculator.Base( 50 * 1000 );
 
           try {
             for ( testParams of testParamsGenerator ) {
