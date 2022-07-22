@@ -632,13 +632,13 @@ class Base extends Recyclable.Root {
 
           FilterYLoop:
           for ( let filterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
-            for ( let dilationFilterY = 0; dilationFilterY < dilationHeight; ++dilationFilterY, ++inY ) {
+            for ( let dilationFilterY = 0; dilationFilterY < dilationHeight; ++dilationFilterY ) {
 
               let filterIndexBaseX = ( filterY * depthwiseFilterWidth );
 
               FilterXLoop:
               for ( let filterX = 0; filterX < depthwiseFilterWidth; ++filterX ) {
-                for ( let dilationFilterX = 0; dilationFilterX < dilationWidth; ++dilationFilterX, ++inX ) {
+                for ( let dilationFilterX = 0; dilationFilterX < dilationWidth; ++dilationFilterX ) {
 
                   // No need to compute the filter's dilation part (because it is always zero).
                   //
