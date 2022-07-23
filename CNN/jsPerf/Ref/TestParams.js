@@ -139,7 +139,15 @@ class Base extends Recyclable.Root {
   static setAsConstructor_self( id = -1 ) {
     this.id = id;
     this.yieldCount = 0;
-    this.in = { paramsNumberArrayObject: {} };
+
+//!!! (2022/07/23 Remarked) re-use if possible.
+//    this.in = { paramsNumberArrayObject: {} };
+
+    if ( this.in ) {
+      // Do nothing. Re-use it since it exists.
+    } else {
+      this.in = { paramsNumberArrayObject: {} };
+    }
 
     // Sub class is responsible for creating and releasing it.
     //this.out = undefined; //{};
@@ -151,11 +159,21 @@ class Base extends Recyclable.Root {
     
     // For reducing array and object re-generating in .modifyParamValue()
     this.modifyParamValue_singleMinMax = Recyclable.Array.Pool.get_or_create_by( 2 );
-    this.modifyParamValue_valuePair = {};
+
+//!!! (2022/07/23 Remarked) re-use if possible.
+//    this.modifyParamValue_valuePair = {};
+
+    if ( this.modifyParamValue_valuePair ) {
+      // Do nothing. Re-use it since it exists.
+    } else {
+      this.modifyParamValue_valuePair = {};
+    }
   }
 
   /** @override */
   disposeResources() {
+    //this.modifyParamValue_valuePair; // Keep and re-use.
+
     this.modifyParamValue_singleMinMax.disposeResources_and_recycleToPool();
     this.modifyParamValue_singleMinMax = null;
 
@@ -164,6 +182,8 @@ class Base extends Recyclable.Root {
 
     this.modifyParamValueHistory.disposeResources_and_recycleToPool();
     this.modifyParamValueHistory = null;
+
+    //this.in; // Keep and re-use.
 
     //!!! ...unfinished... (2022/06/27) What about other object properties?
 
