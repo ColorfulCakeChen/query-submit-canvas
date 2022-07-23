@@ -41,7 +41,7 @@ class ParamValueChangeRecord extends Recyclable.Root {
    * Used as default TestParams.ParamValueChangeRecord provider for conforming to Recyclable interface.
    */
   static Pool = new Pool.Root( "TestParams.ParamValueChangeRecord.Pool",
-  ParamValueChangeRecord, ParamValueChangeRecord.setAsConstructor );
+    ParamValueChangeRecord, ParamValueChangeRecord.setAsConstructor );
 
   /**
    */
