@@ -4,7 +4,7 @@ import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 //import * as BoundsArraySet from "../BoundsArraySet.js";
-import { Base } from "./Operation_Base.js";
+//import { Base } from "./Operation_Base.js";
 import * as Weights from "../../Unpacker/Weights.js";
 
 /**
@@ -33,6 +33,23 @@ import * as Weights from "../../Unpacker/Weights.js";
  *
  *
  *
+ * @member {boolean} bInitOk
+ *  If true, this object initialized (i.e. initer()) successfully.
+ *
+ * @member {number} weightElementOffsetBegin
+ *   The position which is started (inclusive) to extract from inputWeightArray by initer().
+ *
+ * @member {number} weightElementOffsetEnd
+ *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
+ * Only meaningful when ( this.bInitOk == true ).
+ * 
+ * @param {number} input_channelCount
+ *   The input channel count.
+ *
+ * @member {number} channelMultiplier
+ *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
+ * embedding channels. It could be viewed as embeddingChannelCountPerInputChannel.
+ *
  * @member {number} vocabularyCountPerInputChannel
  *   Every input channel will have how many vocabularies. This is also vocabulary count per vocabulary table (because
  * every input channel has a vocabulary table). For an image data (R-G-B-A four channels), there will be 256
@@ -46,25 +63,11 @@ import * as Weights from "../../Unpacker/Weights.js";
  * input to output. Since apply_and_destroy_or_keep()'s input is just vocabulary id (one channel or multiple channels),
  * pre-embedded vocabulary id inside the embedding table acheives the same effect by less computation (but more memory).
  *
- * @member {boolean} bInitOk
- *  If true, this object initialized (i.e. initer()) successfully.
- *
- * @member {number} weightElementOffsetBegin
- *   The position which is started (inclusive) to extract from inputWeightArray by initer().
- *
- * @member {number} weightElementOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
- * Only meaningful when ( this.bInitOk == true ).
- *
- * @member {number} inChannels
- *   Input channel count.
- *
- * @member {number} channelMultiplier
- *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
- * embedding channels. It could be viewed as embeddingChannelCountPerInputChannel.
- *
- * @member {number} outChannels
+ * @member {number} output_channelCount
  *   Output channel count. It is always depending on channelMultiplier and equals to ( inChannels * channelMultiplier ).
+ *
+ * @member {BoundsArraySet.InputsOutputs} boundsArraySet
+ *   The element value bounds (per channel) of this embedding.
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
@@ -86,11 +89,10 @@ import * as Weights from "../../Unpacker/Weights.js";
  * so that they can be used as tf.gather()'s indices. If ( this.bKeepInputTensor == false ), the inputTensor3d
  * will be disposed. If ( this.bKeepInputTensor == true ), the inputTensor3d will be kept.
  *
- * @see Operation.Base
  * @see Weight.Root
  *
  */
-class AddGatherReshape extends Base( Weights.Root ) {
+class AddGatherReshape extends Weights.Root {
 
   /**
    * Used as default Embedding.AddGatherReshape provider for conforming to Recyclable interface.
@@ -100,10 +102,7 @@ class AddGatherReshape extends Base( Weights.Root ) {
   /**
    *
    */
-  constructor(
-    inputTensorPlaceholder0,
-    channelMultiplier
-  ) {
+  constructor() {
     super();
     AddGatherReshape.setAsConstructor_self.call( this );
   }
@@ -133,9 +132,9 @@ class AddGatherReshape extends Base( Weights.Root ) {
   /**
    * Generator for initializing this object.
    *
-   * @param {Params} params
-   *   A Params object. The params.init() will be called to extract parameters. This params will be owned and destroyed by this .initer().
-   * So caller should not use it again.
+   * @param {boolean} bKeepInputTensor
+   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
+   * For another example, the input image should be shared across many neural networks.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
    *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Stage value bounds
@@ -145,7 +144,16 @@ class AddGatherReshape extends Base( Weights.Root ) {
    *   Return true, if successfully. Return false, if failed.
    *
    */
-   * init( inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
-   }
+  * init( inputWeightArray, weightElementOffsetBegin,
+    input_channelCount,
+    channelMultiplier,
+    vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
+    bKeepInputTensor,
+    inputScaleBoundsArray0
+  ) {
+
+   
+ 
+  }
 
 }
