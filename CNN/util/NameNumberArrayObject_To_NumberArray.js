@@ -112,4 +112,53 @@ class Base extends Recyclable.Root {
     }
   }
 
+  /**
+   *
+   *
+   * @param {string[]} nameOrderArray
+   *   An array of string. Every element is a string name of a parameter. The number array in nameNumberArrayObject will be concatenated
+   * according to the element order of this nameOrderArray[].
+   *
+   * @param {object} nameNumberArrayObject
+   *   An object whose all properties are number or number array. It is a map from a string name to a number or number array. The names
+   * should be found in nameOrderArray[].
+   *
+   * @param {number} weightsElementOffsetBegin
+   *   Offset how many elements (4 bytes per element) at the beginning of the result weightsArray.
+   *
+   * @param {string[]} nameToBeFound
+   *   A name string to be searched. It should be one element of nameOrderArray[].
+   *
+   * @return {number}
+   *   - Return the element index of this.weightsArray) of the nameToBeFound, if found.
+   *   - Return negative value, if not found.
+   */
+   weightsElementIndex_find_byName(
+    nameOrderArray, nameNumberArrayObject, weightsElementOffsetBegin,
+    nameToBeFound
+   ) {
+    let weightsElementIndex = -1;
+
+    // (Use the same looping logic of .setByConcat())
+    let weightsTotalLength = weightsElementOffsetBegin;
+    for ( let i = 0; i < nameOrderArray.length; ++i ) {
+      let name = nameOrderArray[ i ];
+      if ( name == nameToBeFound) {
+        weightsElementIndex = weightsTotalLength;
+        break;
+      }
+
+      let number_or_numberArray = nameNumberArrayObject[ name ];
+      if ( number_or_numberArray != undefined ) {
+        if ( number_or_numberArray instanceof Array ) {
+          weightsTotalLength += number_or_numberArray.length; // Assume number array.
+        } else {
+          weightsTotalLength += 1; // Assume number.
+        }
+      }
+    }
+
+    return weightsElementIndex;
+   }
+
 }
