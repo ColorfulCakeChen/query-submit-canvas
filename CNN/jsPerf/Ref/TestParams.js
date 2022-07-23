@@ -356,7 +356,7 @@ class Base extends Recyclable.Root {
 //  
 //     this.modifyParamValueHistory.length = 0; // Clear history.
 
-    while ( modifyParamValue_pop_and_restore() ) { // Restored from the last to first.
+    while ( this.modifyParamValue_pop_and_restore() ) { // Restored from the last to first.
       // Do nothing.
     }
   }
