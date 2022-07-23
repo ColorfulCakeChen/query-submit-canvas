@@ -450,12 +450,6 @@ class Base extends Recyclable.Root {
   /**
    * Initialize this object by calling initer() and advance the generator by loop until done.
    *
-
-//!!! (2022/07/17 Remarked) Who will release it if it is create here automatically? So, do not do that.
-//    * @param {ValueMax.Percentage.Aggregate} progressParent
-//    *   If null, a temporary progress object will be created.
-
-   *
    * @return {boolean}
    *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
@@ -463,9 +457,6 @@ class Base extends Recyclable.Root {
    * @see Block.Base.init()
    */
   init( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
-
-//!!! (2022/07/17 Remarked) Who will release it if it is create here automatically? So, do not do that.
-//    progressParent = progressParent ?? ( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let initer = this.initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 );
     let initerNext;

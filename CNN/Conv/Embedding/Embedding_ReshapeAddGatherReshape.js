@@ -4,7 +4,8 @@ import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 //import * as BoundsArraySet from "../BoundsArraySet.js";
-import { Root } from "./Operation_Base.js";
+import { Base } from "./Operation_Base.js";
+import * as Weights from "../../Unpacker/Weights.js";
 
 /**
  *
@@ -85,8 +86,11 @@ import { Root } from "./Operation_Base.js";
  * so that they can be used as tf.gather()'s indices. If ( this.bKeepInputTensor == false ), the inputTensor3d
  * will be disposed. If ( this.bKeepInputTensor == true ), the inputTensor3d will be kept.
  *
+ * @see Operation.Base
+ * @see Weight.Root
+ *
  */
-class ReshapeAddGatherReshape extends Recyclable.Root {
+class ReshapeAddGatherReshape extends Base( Weights.Root ) {
 
   /**
    * Used as default Embedding.ReshapeAddGatherReshape provider for conforming to Recyclable interface.
@@ -96,7 +100,10 @@ class ReshapeAddGatherReshape extends Recyclable.Root {
   /**
    *
    */
-  constructor() {
+  constructor(
+    inputTensorPlaceholder0,
+    channelMultiplier
+  ) {
     super();
     ReshapeAddGatherReshape.setAsConstructor_self.call( this );
   }
@@ -123,5 +130,22 @@ class ReshapeAddGatherReshape extends Recyclable.Root {
     super.disposeResources();
   }
 
+  /**
+   * Generator for initializing this object.
+   *
+   * @param {Params} params
+   *   A Params object. The params.init() will be called to extract parameters. This params will be owned and destroyed by this .initer().
+   * So caller should not use it again.
+   *
+   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
+   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Stage value bounds
+   * set. It will be kept (not cloned) directly. So caller should not modify them.
+   *
+   * @return {boolean}
+   *   Return true, if successfully. Return false, if failed.
+   *
+   */
+   * init( inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
+   }
 
 }

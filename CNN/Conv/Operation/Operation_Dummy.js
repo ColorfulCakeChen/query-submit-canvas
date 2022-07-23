@@ -15,7 +15,7 @@ import { Root } from "./Operation_Base.js";
  * The inputTensors may or may not be disposed according to setKeepInputTensor(). Default is setKeepInputTensor( false, false )
  * which will destroy all inputs. Usually, sub-class should override this data member.
  *
- * @see Operration.Base
+ * @see Operation.Base
  */
 class Dummy extends Root {
 

@@ -35,7 +35,7 @@ import { Base } from "./Operation_Base.js";
  * ConvBias_and_destroy_or_keep(), ConvActivation_and_destroy_or_keep(), ConvBiasActivation_and_destroy_or_keep()
  * according to the parameters.
  *
- * @see Operration.Base
+ * @see Operation.Base
  * @see Pointwise.FiltersArray_BiasesArray
  */
 class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone.Root ) ) ) {
