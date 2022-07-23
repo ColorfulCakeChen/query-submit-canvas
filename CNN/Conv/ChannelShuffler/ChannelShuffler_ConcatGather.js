@@ -27,8 +27,8 @@ import { ShuffleInfo } from "./ChannelShuffler_ShuffleInfo.js";
  * by calling disposeResources().
  *
  * @member {number} tensorWeightCountExtracted
- *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
- * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+ *   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used in
+ * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputWeightArray.
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced

@@ -166,7 +166,7 @@ import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_c
  *   If true, this object initialized (i.e. initer()) successfully.
  *
  * @member {number} weightElementOffsetBegin
- *   The position which is started (inclusive) to extract from inputweightArray by initer().
+ *   The position which is started (inclusive) to extract from inputWeightArray by initer().
  *
  * @member {number} weightElementOffsetEnd
  *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.

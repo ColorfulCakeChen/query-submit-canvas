@@ -171,7 +171,7 @@ import { Params } from "./Stage_Params.js";
  *  If true, this object initialized (i.e. initer()) successfully.
  *
  * @member {number} weightElementOffsetBegin
- *   The position which is started (inclusive) to extract from inputweightArray by initer().
+ *   The position which is started (inclusive) to extract from inputWeightArray by initer().
  *
  * @member {number} weightElementOffsetEnd
  *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
@@ -206,8 +206,8 @@ import { Params } from "./Stage_Params.js";
  * weights, if they are used in tensors.
  *
  * @member {number} tensorWeightCountExtracted
- *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
- * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+ *   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used in
+ * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputWeightArray.
  *
  */
 class Base extends Recyclable.Root {
@@ -292,7 +292,7 @@ class Base extends Recyclable.Root {
 
     // Estimate the maximum value of progress.
     let progressMax =
-      1    // for extracting parameters from inputFloat32Array.
+      1    // for extracting parameters from inputWeightArray.
       ;
 
     let progressRoot = progressParent.getRoot();
@@ -309,7 +309,7 @@ class Base extends Recyclable.Root {
 
     // Get parameters' real (adjusted) values.
     //
-    // Do not keep params in this.params so that the inputFloat32Array could be released.
+    // Do not keep params in this.params so that the inputWeightArray could be released.
     this.sourceHeight = params.sourceHeight;
     this.sourceWidth = params.sourceWidth;
     this.sourceChannelCount = params.sourceChannelCount;

@@ -229,7 +229,7 @@ class Base extends Recyclable.Root {
    *   - this.out.Xxx: every parameter.
    *
    * This method should fill the following data:
-   *   - this.in.inputFloat32Array
+   *   - this.in.inputWeightArray
    *   - this.in.byteOffsetBegin
    *
    * Sub-class should override this method.
@@ -487,7 +487,7 @@ class Base extends Recyclable.Root {
         yield *Base.permuteParamRecursively.call( this, nextParamDescConfigIndex );
 
       } else {
-        // Try parameter value assigned from inputFloat32Array (i.e. by evolution).
+        // Try parameter value assigned from inputWeightArray (i.e. by evolution).
         this.in[ paramDesc.paramName ] = null;
         this.in.paramsNumberArrayObject[ paramDesc.paramName ] = pair.valueInput; // (number or number array)
         yield *Base.permuteParamRecursively.call( this, nextParamDescConfigIndex );

@@ -27,7 +27,7 @@ import { Out } from "./Block_TestParams_Out.js";
  * depthwiseFilterWidth, depthwiseStridesPad, depthwiseActivationId, pointwise20ChannelCount,
  * pointwise20ActivationId, nActivationId, bKeepInputTensor. It also has the following properties:
  *   - paramsNumberArrayObject
- *   - inputFloat32Array
+ *   - inputWeightArray
  *   - byteOffsetBegin
  *
  * @member {object} io_paramsNumberArrayObject
@@ -36,7 +36,7 @@ import { Out } from "./Block_TestParams_Out.js";
  *
  * @member {object} out
  *   The "out" sub-object's data members represent the "should-be" result of Block.Params's extract().
- * That is, it has the above data members except paramsNumberArrayObject, inputFloat32Array, byteOffsetBegin.
+ * That is, it has the above data members except paramsNumberArrayObject, inputWeightArray, byteOffsetBegin.
  *
  */
 class Base extends TestParams.Base {
