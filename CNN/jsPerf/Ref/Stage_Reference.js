@@ -235,7 +235,7 @@ class Base extends Recyclable.Root {
       return; // In this case, ShuffleNetV2 and ShuffleNetV2_byMobileNetV1 are different because activation escaping scale.
 
     if (   ( nConvStageTypeId != ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 )
-        || ( nConvStageTypeId != ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 ) )
+        && ( nConvStageTypeId != ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 ) )
       return; // Only compare ShuffleNetV2 and ShuffleNetV2_byMobileNetV1.
 
     // Determine which ConvStageType will be generate.
