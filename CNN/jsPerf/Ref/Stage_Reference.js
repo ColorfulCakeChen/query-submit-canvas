@@ -264,7 +264,7 @@ class Base extends Recyclable.Root {
           testParams.in.paramsNumberArrayObject, testParams.in.weightElementOffsetBegin,
           Stage.Params.nConvStageTypeId.paramName );
 
-        this.in.inputWeightArray[ nConvStageTypeId_weightsElementIndex ] = nConvStageTypeId_toBeCompared;
+        testParams.in.inputWeightArray[ nConvStageTypeId_weightsElementIndex ] = nConvStageTypeId_toBeCompared;
 
         // It seems not necessary to re-compose .inputWeightArray because all blocks' parameters are generated directly
         // by Stage_BlockParamsCreator (i.e. not in the .inputWeightArray).
