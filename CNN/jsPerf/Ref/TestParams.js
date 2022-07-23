@@ -479,7 +479,8 @@ class Base extends Recyclable.Root {
 
       //!!! (2021/07/19 Temp Used) For testing without randomly.
       //let dice = 0;
-      let dice = Math.random();
+      let dice = 1;
+      //let dice = Math.random();
       if ( dice < 0.5 ) {
         // Try parameter value assigned directly (i.e. by specifying).      
         this.in[ paramDesc.paramName ] = pair.valueInput;
