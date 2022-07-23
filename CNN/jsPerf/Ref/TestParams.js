@@ -35,8 +35,30 @@ class ParamDescConfig {
  * @member {integer} outValue_new       The parameter's new output value. This is adjusted value of outValue_specified.
  * @member {integer} outValue_specified The parameter's output value which is wanted.
  */
-class ParamValueChangeRecord {
+class ParamValueChangeRecord extends Recyclable.Root {
+
+  /**
+   * Used as default TestParams.ParamValueChangeRecord provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "TestParams.ParamValueChangeRecord.Pool",
+  ParamValueChangeRecord, ParamValueChangeRecord.setAsConstructor );
+
+  /**
+   */
   constructor( paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) {
+    super();
+    Out.setAsConstructor_self.call( this, paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ));
+  }
+
+  /** @override */
+  static setAsConstructor( paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) {
+    super.setAsConstructor();
+    Out.setAsConstructor_self.call( this, paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) {
     this.paramDesc = paramDesc;
     this.inValue_original = inValue_original;
     this.outValue_original = outValue_original;
@@ -44,6 +66,18 @@ class ParamValueChangeRecord {
     this.outValue_new = outValue_new;
     this.outValue_specified = outValue_specified;
   }
+
+  /** @override */
+  disposeResources() {
+    this.paramDesc = undefined;
+    this.inValue_original = undefined;
+    this.outValue_original = undefined;
+    this.inValue_new = undefined;
+    this.outValue_new = undefined;
+    this.outValue_specified = undefined;
+    super.disposeResources();
+  }
+
 }
 
 
@@ -76,7 +110,7 @@ class ParamValueChangeRecord {
  * creating and releasing it.
  *
  * @member {ParamValueChangeRecord[]} modifyParamValueHistory
- *   A record will be pushed into this list when calling this.modifyParamValue(). When call this.restoreParamValues(),
+ *   A record will be pushed into this list when calling this.modifyParamValue(). When call this.modifyParamValue_restore_all(),
  * these value will be restored and this list will be cleared to empty.
  *
  */
@@ -184,7 +218,7 @@ class Base extends Recyclable.Root {
   }
 
   /**
-   * Modify specified parameter's value and record in this.modifyParamValueHistory so that they could be restore by restoreParamValues().
+   * Modify specified parameter's value and record in this.modifyParamValueHistory so that they could be restore by modifyParamValue_restore_all().
    *
    * @param {ParamDesc.Xxx} paramDesc
    *   The parameter to be doubled.
@@ -234,7 +268,7 @@ class Base extends Recyclable.Root {
 
     // Record modification (for restoring in the future).
     {
-      let changeRecord = new ParamValueChangeRecord(
+      let changeRecord = ParamValueChangeRecord.Pool.get_or_create_by(
         paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified );
 
       this.modifyParamValueHistory.push( changeRecord );
@@ -243,10 +277,12 @@ class Base extends Recyclable.Root {
 
   /**
    * Pop the this.modifyParamValueHistory to restore the last paaram modification.
+   * @return {boolean}
+   *   Return true, if a record has been popped and restored. Return false, if no record could be popped.
    */
-  modifyParamValue_pop() {
+  modifyParamValue_pop_and_restore() {
     if ( this.modifyParamValueHistory.length <= 0 )
-      return; // No record needs be restored.
+      return false; // No record needs be restored.
 
     let changeRecord = this.modifyParamValueHistory.pop();
     let paramName = changeRecord.paramDesc.paramName;
@@ -261,13 +297,17 @@ class Base extends Recyclable.Root {
     if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) {
       this.in.paramsNumberArrayObject[ paramName ] = changeRecord.inValue_original; // (should be a number (can not be a number array)).
     }
+
+    changeRecord.disposeResources_and_recycleToPool();
+    changeRecord = null;
+    return true;
   }
 
   /**
    * Restore parameters' values according to this.modifyParamValueHistory. And empty this.modifyParamValueHistory.
    */
-  restoreParamValues() {
-//!!! (2022/07/22 Remarked) Call modifyParamValue_pop() instead.
+  modifyParamValue_restore_all() {
+//!!! (2022/07/22 Remarked) Call modifyParamValue_pop_and_restore() instead.
 //     for ( let i = this.modifyParamValueHistory.length - 1; i >= 0; --i ) { // From the last to first.
 //       let changeRecord = this.modifyParamValueHistory[ i ];
 //       let paramName = changeRecord.paramDesc.paramName;
@@ -286,8 +326,8 @@ class Base extends Recyclable.Root {
 //  
 //     this.modifyParamValueHistory.length = 0; // Clear history.
 
-    while ( this.modifyParamValueHistory.length > 0 ) { // From the last to first.
-      modifyParamValue_pop();
+    while ( modifyParamValue_pop_and_restore() ) { // Restored from the last to first.
+      // Do nothing.
     }
   }
 
@@ -375,7 +415,7 @@ class Base extends Recyclable.Root {
         this.onYield_before();
         yield this;
         this.onYield_after();
-        this.restoreParamValues(); // Restore this object because onYield_before() may modify it.
+        this.modifyParamValue_restore_all(); // Restore this object because onYield_before() may modify it.
       }
 
       return; // Stop this recusive. Back-track to another parameters combination.
