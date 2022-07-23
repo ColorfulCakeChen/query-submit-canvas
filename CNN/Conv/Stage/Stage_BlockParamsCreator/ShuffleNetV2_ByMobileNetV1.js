@@ -32,6 +32,17 @@ import { Base } from "./Base.js";
  * A1: The filter weights count is different. MobileNetV1 has more (a lot) filter weights needed to be learned than ShuffleNetV2.
  *     The learning (or say, evolving) performance should be faster by using ShuffleNetV2 (rather than MobileNetV1).
  *
+ *
+ * 2. Last Channel Stationary
+ *
+ * Just like ShuffleNetV2, The last channel also always stays stationary in ShuffleNetV2_ByMobileNetV1. Even worse, because
+ * ShuffleNetV2_ByMobileNetV1 uses scaling to achieve activation escaping. The stationary last channel never have chance to
+ * be re-calicated (i.e. it will accumulate floating-point error between scaling/un-scaling).
+ *
+ * So, the last channel may be have obvious difference from ShuffleNetV2. A possible workaround may always not use the last
+ * channel data of final stage's output.
+ *
+ *
  */
 class ShuffleNetV2_ByMobileNetV1 extends Base {
 
