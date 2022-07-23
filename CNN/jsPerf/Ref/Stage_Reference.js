@@ -260,7 +260,8 @@ class Base extends Recyclable.Root {
     {
       if ( testParams.in.nConvStageTypeId == null ) { // i.e. Needs parameter nConvStageTypeId is inside .inputWeightArray.
         nConvStageTypeId_weightsElementIndex = testParams.NumberArray_ElementOffsetBegin.weightsElementIndex_find_byName(
-          Stage_TestParams.Base.paramsNameOrderArray_Basic, testParams.in.paramsNumberArrayObject, testParams.in.weightElementOffsetBegin,
+          Stage_TestParams.Base.paramsNameOrderArray_Basic,
+          testParams.in.paramsNumberArrayObject, testParams.in.weightElementOffsetBegin,
           Stage.Params.nConvStageTypeId.paramName );
 
         this.in.inputWeightArray[ nConvStageTypeId_weightsElementIndex ] = nConvStageTypeId_toBeCompared;
