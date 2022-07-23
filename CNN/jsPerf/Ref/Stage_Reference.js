@@ -230,7 +230,7 @@ class Base extends Recyclable.Root {
       bPointwise2ActivatedAtStageEnd,
       bKeepInputTensor,
     } = testParams.out;
-   
+
     if ( bPointwise2ActivatedAtStageEnd == false )
       return; // In this case, ShuffleNetV2 and ShuffleNetV2_byMobileNetV1 are different because activation escaping scale.
 
