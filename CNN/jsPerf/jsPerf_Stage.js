@@ -149,7 +149,7 @@ class HeightWidthDepth {
       ) } );
 
     // Test Case 5: (ShuffleNetV2, ( bPointwise1 == true ))
-    this.testCaseMap.set( "ShuffleV2_bPointwise1_true", { testParams: 
+    this.testCaseMap.set( "ShuffleNetV2_bPointwise1_true", { testParams: 
       ( new Stage_TestParams.Base() ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
@@ -159,7 +159,7 @@ class HeightWidthDepth {
       ) } );
 
     // Test Case 6: (ShuffleNetV2_byPointwise21, ( bPointwise1 == true ))
-    this.testCaseMap.set( "ShuffleV2_byPointwise21_bPointwise1_true", { testParams: 
+    this.testCaseMap.set( "ShuffleNetV2_byPointwise21_bPointwise1_true", { testParams: 
       ( new Stage_TestParams.Base() ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,

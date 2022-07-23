@@ -269,12 +269,6 @@ class Base extends Recyclable.Root {
         // It seems not necessary to re-compose .inputWeightArray because all blocks' parameters are generated directly
         // by Stage_BlockParamsCreator (i.e. not in the .inputWeightArray).
 
-//!!! (2022/07/23 Remarked) seems not necessary to re-generate filters and biases array
-//         testParams.modifyParamValue( Stage.Params.nConvStageTypeId, nConvStageTypeId_toBeCompared );
-//
-// //!!! ...unfinished... (2022/07/22) How to re-generate with the same filters and biases array?
-//         testParams.set_byParamsNumberArrayMap_ParamsOut( testParams.in.weightElementOffsetBegin );
-
       } else {
         testParams.in.nConvStageTypeId = nConvStageTypeId_toBeCompared;
       }
@@ -348,12 +342,6 @@ class Base extends Recyclable.Root {
     {
       if ( testParams.in.nConvStageTypeId == null ) {
         // Do nothing. It seems not necessary to re-compose .inputWeightArray because it will not be used again.
-
-//!!! (2022/07/23 Remarked) seems not necessary to restore.
-//         testParams.modifyParamValue_pop(); // Restore param.
-//         //!!! (2022/07/22 Remarked) No need to re-compose .inputWeightArray because it will not be used again.
-//         //testParams.set_byParamsNumberArrayMap_ParamsOut( testParams.in.weightElementOffsetBegin );
-
       } else {
         testParams.in.nConvStageTypeId = nConvStageTypeId_original;
       }
