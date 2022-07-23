@@ -87,7 +87,7 @@ class HeightWidthDepth {
     });
 
     let stepCountRequested = 10;
-    let nSqueezeExcitationChannelCountDivisor = 4;
+    let nSqueezeExcitationChannelCountDivisor = 2;
 
     // sourceHeight, sourceWidth, sourceChannelCount,
     // nConvStageTypeId,
