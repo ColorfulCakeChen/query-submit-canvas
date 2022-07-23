@@ -231,8 +231,10 @@ class Base extends Recyclable.Root {
       bKeepInputTensor,
     } = testParams.out;
 
-    if ( bPointwise2ActivatedAtStageEnd == false )
-      return; // In this case, ShuffleNetV2 and ShuffleNetV2_byMobileNetV1 are different because activation escaping scale.
+    // If pointwise2 has activation function, do not this comparison. Because ShuffleNetV2 and
+    // ShuffleNetV2_byMobileNetV1 are always different by activation escaping scale in this case.
+    if ( bPointwise2ActivatedAtStageEnd == true )
+      return;
 
     if (   ( nConvStageTypeId != ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 )
         && ( nConvStageTypeId != ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 ) )
