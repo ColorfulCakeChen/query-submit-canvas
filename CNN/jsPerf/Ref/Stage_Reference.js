@@ -249,6 +249,9 @@ class Base extends Recyclable.Root {
         break;
     }
 
+    let nConvStageTypeId_original_name = ValueDesc.ConvStageType.Singleton.getName_byId( nConvStageTypeId_original );
+    let nConvStageTypeId_toBeCompared_name = ValueDesc.ConvStageType.Singleton.getName_byId( nConvStageTypeId_toBeCompared );
+
     // Modify nConvStageTypeId.
     let nConvStageTypeId_weightsElementIndex;
     {
@@ -316,10 +319,19 @@ class Base extends Recyclable.Root {
       // Test correctness of Stage BoundsArraySet.
       this.assert_imageOut_BoundsArraySet( stage_toBeCompared, this.testCorrectness_imageOutReference, stage_toBeCompared );
 
-      // Test correctness of Stage.apply.
-      this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, this.testCorrectness_imageOutReference, stage );
+      //!!! (2022/07/23 Remarked) Compare to outputTensor3d_original directly.
+      //// Test correctness of Stage.apply.
+      //this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, this.testCorrectness_imageOutReference, stage );
 
-//!!! ...unfinshed... (2022/07/23) Why not compare to outputTensor3d_original directly?
+      // Compare to outputTensor3d_original.
+      let output_original = outputTensor3d_original.dataSync();
+      this.asserter_Equal.assert_Tensor_NumberArray(
+        outputTensor3d, output_original,
+        "Stage_toBeCompared",
+        nConvStageTypeId_toBeCompared_name,
+        nConvStageTypeId_original_name,
+        stage_toBeCompared
+      );
     }
 
     tf.dispose( outputTensor3d );
