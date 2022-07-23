@@ -29,9 +29,9 @@ class ParamDescConfig {
 
 /**
  * @member {ParamDesc.Xxx} paramDesc    Which parameter is changed.
- * @member {number}  inValue_original    The parameter's original input value.
+ * @member {number}  inValue_original   The parameter's original input value.
  * @member {integer} outValue_original  The parameter's original output value.
- * @member {number}  inValue_new         The parameter's new input value.
+ * @member {number}  inValue_new        The parameter's new input value.
  * @member {integer} outValue_new       The parameter's new output value. This is adjusted value of outValue_specified.
  * @member {integer} outValue_specified The parameter's output value which is wanted.
  */
@@ -45,20 +45,30 @@ class ParamValueChangeRecord extends Recyclable.Root {
 
   /**
    */
-  constructor( paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) {
+  constructor( paramDesc,
+    inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) {
+
     super();
-    Out.setAsConstructor_self.call( this, paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified );
+    ParamValueChangeRecord.setAsConstructor_self.call( this,
+      paramDesc,
+      inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified );
   }
 
   /** @override */
-  static setAsConstructor( paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) {
+  static setAsConstructor( paramDesc,
+    inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) {
+
     super.setAsConstructor();
-    Out.setAsConstructor_self.call( this, paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified );
+    ParamValueChangeRecord.setAsConstructor_self.call( this,
+      paramDesc,
+      inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) {
+  static setAsConstructor_self( paramDesc,
+    inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) {
+
     this.paramDesc = paramDesc;
     this.inValue_original = inValue_original;
     this.outValue_original = outValue_original;
