@@ -47,13 +47,13 @@ class ParamValueChangeRecord extends Recyclable.Root {
    */
   constructor( paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) {
     super();
-    Out.setAsConstructor_self.call( this, paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ));
+    Out.setAsConstructor_self.call( this, paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified );
   }
 
   /** @override */
   static setAsConstructor( paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) {
     super.setAsConstructor();
-    Out.setAsConstructor_self.call( this, paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) );
+    Out.setAsConstructor_self.call( this, paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified );
     return this;
   }
 
