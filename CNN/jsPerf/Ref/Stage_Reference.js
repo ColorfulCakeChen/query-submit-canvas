@@ -232,7 +232,7 @@ class Base extends Recyclable.Root {
     } = testParams.out;
 
     // If pointwise2 has activation function, do not this comparison. Because ShuffleNetV2 and
-    // ShuffleNetV2_byMobileNetV1 are always different by activation escaping scale in this case.
+    // ShuffleNetV2_byMobileNetV1 are usually different by activation escaping scale in this case.
     if ( bPointwise2ActivatedAtStageEnd == true )
       return;
 
