@@ -225,6 +225,12 @@ class Base extends Recyclable.Root {
     testParams, inputScaleBoundsArray0,
     inputTensor3d_fromBag, outputTensor3d_original ) {
 
+    let {
+      nConvStageTypeId,
+      bPointwise2ActivatedAtStageEnd,
+      bKeepInputTensor,
+    } = testParams.out;
+   
     if ( bPointwise2ActivatedAtStageEnd == false )
       return; // In this case, ShuffleNetV2 and ShuffleNetV2_byMobileNetV1 are different because activation escaping scale.
 
@@ -232,11 +238,6 @@ class Base extends Recyclable.Root {
         || ( nConvStageTypeId != ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 ) )
       return; // Only compare ShuffleNetV2 and ShuffleNetV2_byMobileNetV1.
 
-    let {
-      nConvStageTypeId,
-      bKeepInputTensor,
-    } = testParams.out;
- 
     // Determine which ConvStageType will be generate.
     let nConvStageTypeId_original = nConvStageTypeId;
     let nConvStageTypeId_toBeCompared;
