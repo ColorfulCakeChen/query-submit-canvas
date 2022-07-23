@@ -197,16 +197,10 @@ class Base extends Recyclable.Root {
       // Test correctness of Stage.apply.
       this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, this.testCorrectness_imageOutReference, stage );
 
-//!!! ...unfinished... (2022/07/17) need test.
-//
-// For  and ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
-// if ( bPointwise2ActivatedAtStageEnd == false ), their result should be the same.
-//
-
       // Compare result of ShuffleNetV2 and ShuffleNetV2_byMobileNetV1.
       Base.stage_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1.call( this,
         testParams, this.testCorrectness_imageIn.boundsArraySet.output0,
-        ??? );
+        inputTensor3d_fromBag, outputTensor3d );
 
       stage.disposeResources_and_recycleToPool();
       stage = null;
@@ -227,9 +221,8 @@ class Base extends Recyclable.Root {
    * @param {tf.tensor} inputTensor3d_fromBag    The input tensor from imageSourceBag.
    * @param {tf.tensor} outputTensor3d_original  The output tensor (from original stage) to be compared.
    */
-  static stage_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1( testParams,
-    inputScaleBoundsArray0,
-    // stage_original,
+  static stage_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1(
+    testParams, inputScaleBoundsArray0,
     inputTensor3d_fromBag, outputTensor3d_original ) {
 
     if ( bPointwise2ActivatedAtStageEnd == false )
@@ -244,14 +237,7 @@ class Base extends Recyclable.Root {
       bKeepInputTensor,
     } = testParams.out;
  
-//!!! ...unfinished... (2022/07/22)
-    let inputTensor3d;
-    if ( bKeepInputTensor ) {
-      inputTensor3d = inputTensor3d_fromBag; // The same one because it will not be destroyed. 
-    } else {
-      inputTensor3d = inputTensor3d_fromBag.clone(); // Clone for being destroyed. 
-    }
-
+    // Determine which ConvStageType will be generate.
     let nConvStageTypeId_original = nConvStageTypeId;
     let nConvStageTypeId_toBeCompared;
     switch ( nConvStageTypeId ) {
@@ -266,7 +252,7 @@ class Base extends Recyclable.Root {
     // Modify nConvStageTypeId.
     let nConvStageTypeId_weightsElementIndex;
     {
-      if ( testParams.in.nConvStageTypeId == null ) { // Needs re-compose .inputWeightArray after modification.
+      if ( testParams.in.nConvStageTypeId == null ) { // i.e. Needs parameter nConvStageTypeId is inside .inputWeightArray.
         nConvStageTypeId_weightsElementIndex = testParams.weightsElementIndex_find_byName(
           Base.paramsNameOrderArray_Basic, this.in.paramsNumberArrayObject, this.in.weightElementOffsetBegin,
           Stage.Params.nConvStageTypeId.paramName );
@@ -287,17 +273,12 @@ class Base extends Recyclable.Root {
       }
     }
 
-//!!! ...unfinished... (2022/07/22)
-    let stage = Stage.Base.Pool.get_or_create_by();
-
-    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+    let stage_toBeCompared = Stage.Base.Pool.get_or_create_by();
 
     // Initialize successfully or failed.
     let extractedParams = Stage.Params.Pool.get_or_create_by(
       testParams.in.sourceHeight, testParams.in.sourceWidth, testParams.in.sourceChannelCount,
-
-//!!! ...unfinished... (2022/07/22) What if ( testParams.in.nConvStageTypeId == null )?
-      ???testParams.in.nConvStageTypeId,
+      testParams.in.nConvStageTypeId,
       testParams.in.blockCountRequested,
       testParams.in.bPointwise1,
       testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
@@ -307,19 +288,12 @@ class Base extends Recyclable.Root {
       testParams.in.bKeepInputTensor
     );
 
-    let bInitOk = stage.init( progress, testParams.in.inputWeightArray, testParams.in.weightElementOffsetBegin, extractedParams,
+    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+    let bInitOk = stage_toBeCompared.init( progress, testParams.in.inputWeightArray, testParams.in.weightElementOffsetBegin, extractedParams,
       inputScaleBoundsArray0 );
 
-    if ( stage.bInitOk != bInitOk )
-      throw Error( `Stage validation state (${stage.bInitOk}) mismatches initer's result (${bInitOk}). ${stage}` );
-
-    if ( !bInitOk ) { //!!! For Debug.
-      console.log( "testParams =", testParams );
-      debugger;
-    }
-
     if ( false == bInitOk )
-      throw Error( `Failed to initialize stage object. ${stage}` );
+      throw Error( `Failed to initialize stage object. ${stage_toBeCompared}` );
 
     if ( 100 != progress.valuePercentage )
       throw Error(
@@ -328,9 +302,31 @@ class Base extends Recyclable.Root {
     progress.disposeResources_and_recycleToPool();
     progress = null;
 
+    // Prepare input tensor.
+    let inputTensor3d;
+    if ( bKeepInputTensor ) {
+      inputTensor3d = inputTensor3d_fromBag; // The same one because it will not be destroyed. 
+    } else {
+      inputTensor3d = inputTensor3d_fromBag.clone(); // Clone for being destroyed. 
+    }
 
-//!!! ...unfinished... (2022/07/22) call stage_toBeCompared.apply(). Compare result tensor.
+    let outputTensor3d = stage_toBeCompared.apply( inputTensor3d );
 
+    {
+      // Test correctness of Stage BoundsArraySet.
+      this.assert_imageOut_BoundsArraySet( stage_toBeCompared, this.testCorrectness_imageOutReference, stage_toBeCompared );
+
+      // Test correctness of Stage.apply.
+      this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, this.testCorrectness_imageOutReference, stage );
+
+//!!! ...unfinshed... (2022/07/23) Why not compare to outputTensor3d_original directly?
+    }
+
+    tf.dispose( outputTensor3d );
+    outputTensor3d = null;
+
+    stage_toBeCompared.disposeResources_and_recycleToPool();
+    stage_toBeCompared = null;
 
     // Restore nConvStageTypeId.
     {
