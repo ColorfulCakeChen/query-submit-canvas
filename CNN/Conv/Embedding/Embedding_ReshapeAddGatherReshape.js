@@ -1,4 +1,4 @@
-export { ReshapeAddGatherReshape };
+export { AddGatherReshape };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -90,12 +90,12 @@ import * as Weights from "../../Unpacker/Weights.js";
  * @see Weight.Root
  *
  */
-class ReshapeAddGatherReshape extends Base( Weights.Root ) {
+class AddGatherReshape extends Base( Weights.Root ) {
 
   /**
-   * Used as default Embedding.ReshapeAddGatherReshape provider for conforming to Recyclable interface.
+   * Used as default Embedding.AddGatherReshape provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Embedding.ReshapeAddGatherReshape.Pool", ReshapeAddGatherReshape, ReshapeAddGatherReshape.setAsConstructor );
+  static Pool = new Pool.Root( "Embedding.AddGatherReshape.Pool", AddGatherReshape, AddGatherReshape.setAsConstructor );
 
   /**
    *
@@ -105,13 +105,13 @@ class ReshapeAddGatherReshape extends Base( Weights.Root ) {
     channelMultiplier
   ) {
     super();
-    ReshapeAddGatherReshape.setAsConstructor_self.call( this );
+    AddGatherReshape.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    ReshapeAddGatherReshape.setAsConstructor_self.call( this );
+    AddGatherReshape.setAsConstructor_self.call( this );
     return this;
   }
 
