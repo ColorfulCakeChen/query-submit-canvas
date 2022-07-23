@@ -329,12 +329,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             filtersWeightCount_extracted = this.inputChannelCount * this.outputChannelCount;
             biasesWeightCount_extracted = this.outputChannelCount;
 
-  //!!! (2022/06/22 Remarked) Replaced by pool.
-  //           aFiltersBiasesPartInfoArray = [
-  //             new FiltersBiasesPartInfo(
-  //               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount, false ) ] )
-  //           ];
-
             aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
               FiltersBiasesPartInfo.Pool.get_or_create_by(
                 ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount, this.outputChannelCount, false )
@@ -345,14 +339,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           // 3.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
           case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH: // (1)
             filtersWeightCount_extracted = biasesWeightCount_extracted = 0; // Does not extract any weights.
-
-  //!!! (2022/06/22 Remarked) Replaced by pool.
-  //           aFiltersBiasesPartInfoArray = [
-  //             new FiltersBiasesPartInfo( [
-  //               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  true ),
-  //               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ] )
-  //           ];
-
             aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
               FiltersBiasesPartInfo.Pool.get_or_create_by(
                 ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  true ),
@@ -365,13 +351,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF: // (2)
             filtersWeightCount_extracted = this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf;
             biasesWeightCount_extracted = this.outputChannelCount_lowerHalf;
-
-  //!!! (2022/06/22 Remarked) Replaced by pool.
-  //           aFiltersBiasesPartInfoArray = [
-  //             new FiltersBiasesPartInfo( [
-  //               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf, false ),
-  //               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ] )
-  //           ];
 
             aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
               FiltersBiasesPartInfo.Pool.get_or_create_by(
@@ -389,16 +368,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
             biasesWeightCount_extracted = this.outputChannelCount;
 
-  //!!! (2022/06/22 Remarked) Replaced by pool.
-  //           aFiltersBiasesPartInfoArray = [
-  //             new FiltersBiasesPartInfo( [
-  //               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
-  //             ] ),
-  //             new FiltersBiasesPartInfo( [
-  //               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ),
-  //             ] )
-  //           ];
-
             aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
               FiltersBiasesPartInfo.Pool.get_or_create_by(
                 ChannelPartInfo.Pool.get_or_create_by(
@@ -415,13 +384,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
             filtersWeightCount_extracted = this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf;
             biasesWeightCount_extracted = this.outputChannelCount_lowerHalf;
-
-  //!!! (2022/06/22 Remarked) Replaced by pool.
-  //           aFiltersBiasesPartInfoArray = [
-  //             new FiltersBiasesPartInfo( [
-  //               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
-  //               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf,  true ) ] )
-  //             ];
 
             aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
               FiltersBiasesPartInfo.Pool.get_or_create_by(
@@ -516,32 +478,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       //
       // Pre-shuffle channels by shuffling the filters and biases.
       this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo();
-
-//!!! (2022/07/10 Remarked) No longer restrict which one could shuffling channels.
-//       switch ( this.nHigherHalfDifferent ) {
-//
-//         // 3.
-//         // 4.
-//         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE: // (3)
-//         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
-//
-//           // 3.2 bHigherHalfAnotherPointwiseShuffle
-//           // 4.2 bHigherHalfPassThroughShuffle
-//           this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo();
-//           break;
-//
-//         default:
-//           throw Error(
-//             `Pointwise.FiltersArray_BiasesArray.init(): `
-//               + `channelShuffler_inputGroupCount (${this.channelShuffler_inputGroupCount}) and `
-//               + `channelShuffler_outputGroupCount (${this.channelShuffler_outputGroupCount}) should be zero when `
-//               + `nHigherHalfDifferent=`
-//                 + `${ValueDesc.Pointwise_HigherHalfDifferent.Singleton.getName_byId( this.nHigherHalfDifferent )}`
-//                 + `(${this.nHigherHalfDifferent}). `
-//               + `Usually, only HIGHER_HALF_PASS_THROUGH could have channel shuffler.`
-//           );
-//           break;
-//       }
 
       {
         this.tensorWeightCountTotal_internal = 0;
