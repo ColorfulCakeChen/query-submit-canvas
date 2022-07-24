@@ -2,8 +2,8 @@ export { ParamDescConfig, Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+import * as NameNumberArrayObject from "../../util/NameNumberArrayObject.js";
 import * as SequenceRandom_NumberArray from "./SequenceRandom_NumberArray.js";
-import * as NameNumberArrayObject from "./NameNumberArrayObject.js";
 
 /**
  * Describe which parameter and how many combination for the parameter.
