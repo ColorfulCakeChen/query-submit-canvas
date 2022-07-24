@@ -90,7 +90,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputWeightArray, weightElementOffsetBegin ) {
+  init( inputWeightArray, weightsElementOffsetBegin ) {
 
     // Q1: Why is the inputWeightArray not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputWeightArray so that it could be released by memory garbage collector.
@@ -107,8 +107,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
     if ( !this.bPointwise ) {
       bExtractOk = true; // 2. no operation at all.
 
-      this.weightElementOffsetBegin = this.weightElementOffsetEnd = weightElementOffsetBegin;
-      this.weightElementExtractedCount = 0;
+      this.weightsElementOffsetBegin = this.weightsElementOffsetEnd = weightsElementOffsetBegin;
+      this.weightsElementExtractedCount = 0;
 
       // Bypass previous to next.
       //
@@ -118,7 +118,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 
     } else { // 3.
 
-      bExtractOk = super.init( inputWeightArray, weightElementOffsetBegin, this.input0.scaleBoundsArray );
+      bExtractOk = super.init( inputWeightArray, weightsElementOffsetBegin, this.input0.scaleBoundsArray );
       if ( bExtractOk ) {
         try {
 
@@ -210,7 +210,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    * @override
    */
   get tensorWeightCountExtracted() {
-    return this.weightElementExtractedCount;
+    return this.weightsElementExtractedCount;
   }
 
   /**

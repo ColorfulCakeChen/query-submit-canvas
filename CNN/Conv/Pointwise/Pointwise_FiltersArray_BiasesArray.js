@@ -12,10 +12,10 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  * Extract pointwise convolution filters and biases.
  *
  *
- * @member {number} weightElementOffsetBegin
+ * @member {number} weightsElementOffsetBegin
  *   The position which is started (inclusive) to extract from inputWeightArray by init().
  *
- * @member {number} weightElementOffsetEnd
+ * @member {number} weightsElementOffsetEnd
  *   The position which is ended to (non-inclusive) extract from inputWeightArray by init(). Where to extract next weights.
  * Only meaningful if .init() returns true.
  *
@@ -255,8 +255,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
    * Extract pointwise filters and biases.
    *
    * The following properties will be modified:
-   *   - this.weightElementOffsetBegin
-   *   - this.weightElementOffsetEnd
+   *   - this.weightsElementOffsetBegin
+   *   - this.weightsElementOffsetEnd
    *   - this.tensorWeightCountTotal_internal
    *   - this.boundsArraySet
    *   - this.filtersShape
@@ -275,7 +275,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
    * @return {boolean}
    *   Return true, if succeeded.
    */
-  init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) {
+  init( inputWeightArray, weightsElementOffsetBegin, inputScaleBoundsArray ) {
 
     // Q1: Why is the inputWeightArray not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputWeightArray so that it could be released by memory garbage collector.
@@ -430,7 +430,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         weightsCount_extracted += biasesWeightCount_extracted;
 
       // Prepare source weights to be extracted.
-      if ( !super.init( inputWeightArray, weightElementOffsetBegin, weightsCount_extracted ) ) { // i.e. Weights.Base.init()
+      if ( !super.init( inputWeightArray, weightsElementOffsetBegin, weightsCount_extracted ) ) { // i.e. Weights.Base.init()
         this.bInitOk = false;
         return false;  // e.g. input array does not have enough data.
       }
@@ -462,7 +462,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         // Round 1
         {
           this.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-            inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray );
+            inputWeightArray, weightsElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray );
 
           this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray );
 
@@ -515,7 +515,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
    *   The input channel range array which describe lower/higher half channels index range.
    */
   set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-    sourceWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
+    sourceWeightArray, weightsElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
 
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfo_byId( this.nPassThroughStyleId );
     let tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
@@ -542,7 +542,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     }
 
     // Extracting weights of filters and biases. (Including extra scale.)
-    let sourceIndex = weightElementOffsetBegin, filterIndex = 0, biasIndex = 0;
+    let sourceIndex = weightsElementOffsetBegin, filterIndex = 0, biasIndex = 0;
 
     let outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
 

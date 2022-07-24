@@ -397,7 +397,7 @@ class Base extends TestParams.Base {
 //       paramsNameOrderArray_modified, paramsNumberArrayObject_modified, weightsElementOffsetBegin );
 //
 //     this.in.weightArray = this.NumberArray_ElementOffsetBegin.weightArray;
-//     this.in.weightElementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightsElementOffsetBegin;
+//     this.in.weightsElementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightsElementOffsetBegin;
 //
 //     if ( paramsNameOrderArray_modified ) {
 //       paramsNameOrderArray_modified.disposeResources_and_recycleToPool();

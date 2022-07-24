@@ -112,12 +112,12 @@ class ParamValueChangeRecord extends Recyclable.Root {
  *   The "in" sub-object's data members represent every parameters of some (e.g. Block) Params's constructor. Besides,
  * it also has the following properties:
  *   - paramsNumberArrayObject: All (non-concatenated) parameters (include filters and biases) which will be packed into inputWeightArray.
- *   - inputWeightArray: A number array from paramsNumberArrayObject with weightElementOffsetBegin.
- *   - weightElementOffsetBegin: The offset in inputWeightArray to the first parameter.
+ *   - inputWeightArray: A number array from paramsNumberArrayObject with weightsElementOffsetBegin.
+ *   - weightsElementOffsetBegin: The offset in inputWeightArray to the first parameter.
  *
  * @member {Object} out
  *   The "out" sub-object's data members represent the "should-be" result of some (e.g. Block) Params.init().
- * That is, it has the data members of this.in except inputWeightArray, weightElementOffsetBegin. Sub class is responsible for
+ * That is, it has the data members of this.in except inputWeightArray, weightsElementOffsetBegin. Sub class is responsible for
  * creating and releasing it.
  *
  * @member {ParamValueChangeRecord[]} modifyParamValueHistory

@@ -544,7 +544,7 @@ class Base extends Recyclable.Root {
         testParams.in.bKeepInputTensor
       );
 
-      bInitOk = block.init( progress, testParams.in.weightArray, testParams.in.weightElementOffsetBegin, extractedParams,
+      bInitOk = block.init( progress, testParams.in.weightArray, testParams.in.weightsElementOffsetBegin, extractedParams,
         inputScaleBoundsArray0, inputScaleBoundsArray1,
         channelShuffler_ConcatPointwiseConv );
     }
@@ -573,17 +573,17 @@ class Base extends Recyclable.Root {
     progress.disposeResources_and_recycleToPool();
     progress = null;
 
-    if ( block.weightElementOffsetEnd != testParams.in.weightArray.length ) { //!!! For Debug. (parsing ending position)
+    if ( block.weightsElementOffsetEnd != testParams.in.weightArray.length ) { //!!! For Debug. (parsing ending position)
       debugger;
     }
 
     let asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Block`, block, block );
 
     Base.AssertTwoEqualValues( "parsing beginning position",
-      block.weightElementOffsetBegin, testParams.in.weightElementOffsetBegin, block );
+      block.weightsElementOffsetBegin, testParams.in.weightsElementOffsetBegin, block );
 
     Base.AssertTwoEqualValues( "parsing ending position",
-      block.weightElementOffsetEnd, testParams.in.weightArray.length, block );
+      block.weightsElementOffsetEnd, testParams.in.weightArray.length, block );
 
     // Linearity
     let bNoSqueezeExcitation_between_depthwise_and_pointwise2;
@@ -898,17 +898,17 @@ class Base extends Recyclable.Root {
       // (2022/07/04) Because Params will be release by Block.init(), it can not be used here. Use first operation which has beginning
       // position instead.
       //
-      //let Params_weightElementOffsetEnd = extractedParams.weightElementOffsetEnd;
-      let Params_weightElementOffsetEnd;
+      //let Params_weightsElementOffsetEnd = extractedParams.weightsElementOffsetEnd;
+      let Params_weightsElementOffsetEnd;
       for ( let i = 0; i < block.operationArray.operationArray.length; ++i ) {
         let operation = block.operationArray.operationArray[ i ];
-        if ( operation.weightElementOffsetBegin != undefined ) {
-          Params_weightElementOffsetEnd = operation.weightElementOffsetBegin;
+        if ( operation.weightsElementOffsetBegin != undefined ) {
+          Params_weightsElementOffsetEnd = operation.weightsElementOffsetBegin;
           break;
         }
       }
 
-      let tensorWeightCountExtracted = ( testParams.in.weightArray.length - Params_weightElementOffsetEnd );
+      let tensorWeightCountExtracted = ( testParams.in.weightArray.length - Params_weightsElementOffsetEnd );
 
       asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
       asserter.propertyValueLE( "tensorWeightCountExtracted", tensorWeightCountTotal );

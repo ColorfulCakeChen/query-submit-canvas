@@ -177,7 +177,7 @@ class Base extends TestParams.Base {
 //     this.NumberArray_ElementOffsetBegin.set_byConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
 //
 //     this.in.weightArray = this.NumberArray_ElementOffsetBegin.weightArray;
-//     this.in.weightElementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightsElementOffsetBegin;
+//     this.in.weightsElementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightsElementOffsetBegin;
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
     this.in.set_byConcat(
