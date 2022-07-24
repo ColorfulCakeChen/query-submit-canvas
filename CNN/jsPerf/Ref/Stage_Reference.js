@@ -2,7 +2,7 @@ export { Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-import * as NameNumberArrayObject from "../../../util/NameNumberArrayObject.js";
+import * as NameNumberArrayObject from "../../util/NameNumberArrayObject.js";
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import * as BoundsArraySet_Asserter from "../../util/BoundsArraySet_Asserter.js";
