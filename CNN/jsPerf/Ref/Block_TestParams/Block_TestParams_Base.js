@@ -168,6 +168,8 @@ class Base extends TestParams.Base {
     this.generate_out_inferencedParams();
     this.generate_Filters_Biases( bDouble_when_ShuffleNetV2_byMobileNetV1 );
 
+!!! ...unfinished... (2022/07/24) this.in = already is weightsArray_weightsElementOffsetBegin
+
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
     this.NumberArray_ElementOffsetBegin.setByConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
 

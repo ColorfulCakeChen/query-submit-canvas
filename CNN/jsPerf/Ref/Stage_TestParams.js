@@ -353,6 +353,7 @@ class Base extends TestParams.Base {
         blockParamsCreator.configTo_beforeBlockLast();
       }
 
+!!! ...unfinished... (2022/07/24) use integer numeric propert name instead.
       let blockName = `block${i}`;
       paramsNameOrderArray_modified.push( blockName ); // Place every block's parameters in sequence.
 
@@ -378,6 +379,8 @@ class Base extends TestParams.Base {
       blockParamsCreator.disposeResources_and_recycleToPool();
       blockParamsCreator = null;
     }
+
+!!! ...unfinished... (2022/07/24) this.in = already is weightsArray_weightsElementOffsetBegin
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
     this.NumberArray_ElementOffsetBegin.setByConcat(

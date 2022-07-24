@@ -3,6 +3,7 @@ export { ParamDescConfig, Base };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as SequenceRandom_NumberArray from "./SequenceRandom_NumberArray.js";
+import * as NameNumberArrayObject from "./NameNumberArrayObject.js";
 
 /**
  * Describe which parameter and how many combination for the parameter.
@@ -156,7 +157,11 @@ class Base extends Recyclable.Root {
     if ( this.in ) {
       // Do nothing. Re-use it since it exists.
     } else {
-      this.in = { paramsNumberArrayObject: {} };
+//!!! (2022/07/24 Remarked) use NameNumberArrayObject.
+//      this.in = { paramsNumberArrayObject: {} };
+
+      this.in = new weightsArray_weightsElementOffsetBegin();
+      this.in.paramsNumberArrayObject = new NameNumberArrayObject.Base();
     }
 
     // Sub class is responsible for creating and releasing it.
