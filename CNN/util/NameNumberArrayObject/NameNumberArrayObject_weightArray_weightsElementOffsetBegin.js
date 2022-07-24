@@ -75,7 +75,7 @@ class weightArray_weightsElementOffsetBegin extends Recyclable.Root {
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightArray.
    *
    */
-  setByConcat( nameOrderArray, nameNumberArrayObject, weightsElementOffsetBegin = 0 ) {
+  set_byConcat( nameOrderArray, nameNumberArrayObject, weightsElementOffsetBegin = 0 ) {
 
     this.weightsElementOffsetBegin = weightsElementOffsetBegin; // Skip the un-used element count.
 
@@ -186,7 +186,7 @@ class weightArray_weightsElementOffsetBegin extends Recyclable.Root {
 
     let weightsTotalLength = weightsElementOffsetBegin;
 
-    // 1. (Use the same looping logic of .setByConcat().)
+    // 1. (Use the same looping logic of .set_byConcat().)
 
     // 1.1 String named properties.
     for ( let i = 0; i < nameOrderArray.length; ++i ) {

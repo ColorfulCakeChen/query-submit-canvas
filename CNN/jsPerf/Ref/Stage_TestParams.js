@@ -393,7 +393,7 @@ class Base extends TestParams.Base {
 //!!! (2022/07/24 Remarked) this.in = already is weightArray_weightsElementOffsetBegin
 //
 //     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
-//     this.NumberArray_ElementOffsetBegin.setByConcat(
+//     this.NumberArray_ElementOffsetBegin.set_byConcat(
 //       paramsNameOrderArray_modified, paramsNumberArrayObject_modified, weightsElementOffsetBegin );
 //
 //     this.in.weightArray = this.NumberArray_ElementOffsetBegin.weightArray;
@@ -405,7 +405,7 @@ class Base extends TestParams.Base {
 //     }
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
-    this.in.Base.setByConcat(
+    this.in.set_byConcat(
       Base.paramsNameOrderArray_Basic, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
 
     return this;

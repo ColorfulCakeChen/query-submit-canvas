@@ -99,7 +99,7 @@ class Base extends Recyclable.Root {
    *
    * @returned {number} weightsElementOffsetBegin
    */
-  setByConcat( nameOrderArray, nameNumberArrayObject, weightsElementOffsetBegin = 0 ) {
+  set_byConcat( nameOrderArray, nameNumberArrayObject, weightsElementOffsetBegin = 0 ) {
 
     this.weightsByteOffsetBegin = weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used byte count.
 

@@ -174,13 +174,13 @@ class Base extends TestParams.Base {
 // !!! (2022/07/24 Remarked) this.in = already is weightArray_weightsElementOffsetBegin
 //
 //     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
-//     this.NumberArray_ElementOffsetBegin.setByConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
+//     this.NumberArray_ElementOffsetBegin.set_byConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
 //
 //     this.in.weightArray = this.NumberArray_ElementOffsetBegin.weightArray;
 //     this.in.weightElementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightsElementOffsetBegin;
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
-    this.in.Base.setByConcat(
+    this.in.set_byConcat(
       Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
 
     return this;
