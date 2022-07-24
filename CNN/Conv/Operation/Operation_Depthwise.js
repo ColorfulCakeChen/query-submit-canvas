@@ -118,7 +118,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
       bExtractOk = true; // 2. no operation at all. No depthwise (e.g. zero or negative number) (so no channel multiplier, too).
 
       this.weightElementOffsetBegin = this.weightElementOffsetEnd = weightElementOffsetBegin;
-      this.weightsElementExtractedCount = 0;
+      this.weightElementExtractedCount = 0;
 
       // Bypass previous to next.
       //
@@ -264,7 +264,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    * @override
    */
   get tensorWeightCountExtracted() {
-    return this.weightsElementExtractedCount;
+    return this.weightElementExtractedCount;
   }
 
   /**

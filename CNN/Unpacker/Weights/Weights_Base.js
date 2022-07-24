@@ -15,11 +15,11 @@ import * as FloatValue from "../FloatValue.js";
  *   The ending position (i.e. array index) after extracting from inputWeightsArray. It is not inclusive and can be used as the
  * beginning position of next (another) extraction. It is meaningful only if ( bInitOk == true ).
  *
- * @member {number} weightsElementExtractedCount
+ * @member {number} weightElementExtractedCount
  *   How many weights (i.e. elements) will be extracted from inputWeightsArray. It should be a non-negative integer value.
  *
- *     - If too many elements need to be extracted (exceeds the inputWeightsArray.length) or weightsElementExtractedCount is NaN or
- *         weightsElementExtractedCount is negative, the extraction will fail (i.e. ( bInitOk == false ) ).
+ *     - If too many elements need to be extracted (exceeds the inputWeightsArray.length) or weightElementExtractedCount is NaN or
+ *         weightElementExtractedCount is negative, the extraction will fail (i.e. ( bInitOk == false ) ).
  *
  * @member {boolean} bInitOk
  *   If .init() success, it will be true.
@@ -55,31 +55,31 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
   disposeResources() {
     this.bInitOk = undefined;
     this.weightElementOffsetEnd = undefined;
-    this.weightsElementExtractedCount = undefined;
+    this.weightElementExtractedCount = undefined;
     this.weightElementOffsetBegin = undefined;
     super.disposeResources();
   }
 
   /**
-   * Determine .weightElementOffsetEnd according to the inputWeightArray.lnegth, .weightElementOffsetBegin and .weightsElementExtractedCount.
+   * Determine .weightElementOffsetEnd according to the inputWeightArray.lnegth, .weightElementOffsetBegin and .weightElementExtractedCount.
    *
    * @param {number[]|Float32Array} inputWeightArray
    *   The underlying weights source array to be extracted from. It will not be kept by this object.
    *
    * @return {boolean} Return false, if extraction failed.
    */ 
-  init( inputWeightArray, weightElementOffsetBegin, weightsElementExtractedCount ) {
+  init( inputWeightArray, weightElementOffsetBegin, weightElementExtractedCount ) {
     this.weightElementOffsetBegin = weightElementOffsetBegin;
-    this.weightsElementExtractedCount = weightsElementExtractedCount;
+    this.weightElementExtractedCount = weightElementExtractedCount;
     this.bInitOk = false;
 
-    if ( Number.isNaN( this.weightsElementExtractedCount ) )
+    if ( Number.isNaN( this.weightElementExtractedCount ) )
       return false;  // Failed, if NaN.
 
-    if ( this.weightsElementExtractedCount < 0 )
+    if ( this.weightElementExtractedCount < 0 )
       return false;  // Failed, if negative.
 
-    this.weightElementOffsetEnd = this.weightElementOffsetBegin + this.weightsElementExtractedCount;
+    this.weightElementOffsetEnd = this.weightElementOffsetBegin + this.weightElementExtractedCount;
     if ( this.weightElementOffsetEnd > inputWeightArray.length )
       return false;  // Failed, if out of array index range.
 

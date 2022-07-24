@@ -256,15 +256,15 @@ class Base extends Recyclable.Root {
     let nConvStageTypeId_toBeCompared_name = ValueDesc.ConvStageType.Singleton.getName_byId( nConvStageTypeId_toBeCompared );
 
     // Modify nConvStageTypeId.
-    let nConvStageTypeId_weightsElementIndex;
+    let nConvStageTypeId_weightElementIndex;
     {
       if ( testParams.in.nConvStageTypeId == null ) { // i.e. Needs parameter nConvStageTypeId is inside .inputWeightArray.
-        nConvStageTypeId_weightsElementIndex = testParams.NumberArray_ElementOffsetBegin.weightsElementIndex_find_byName(
+        nConvStageTypeId_weightElementIndex = testParams.in.weightElementIndex_find_byName(
           Stage_TestParams.Base.paramsNameOrderArray_Basic,
           testParams.in.paramsNumberArrayObject, testParams.in.weightElementOffsetBegin,
           Stage.Params.nConvStageTypeId.paramName );
 
-        testParams.in.weightArray[ nConvStageTypeId_weightsElementIndex ] = nConvStageTypeId_toBeCompared;
+        testParams.in.weightArray[ nConvStageTypeId_weightElementIndex ] = nConvStageTypeId_toBeCompared;
 
         // It seems not necessary to re-compose .inputWeightArray because all blocks' parameters are generated directly
         // by Stage_BlockParamsCreator (i.e. not in the .inputWeightArray).

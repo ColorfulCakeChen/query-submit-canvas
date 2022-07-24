@@ -108,7 +108,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
       bExtractOk = true; // 2. no operation at all.
 
       this.weightElementOffsetBegin = this.weightElementOffsetEnd = weightElementOffsetBegin;
-      this.weightsElementExtractedCount = 0;
+      this.weightElementExtractedCount = 0;
 
       // Bypass previous to next.
       //
@@ -210,7 +210,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    * @override
    */
   get tensorWeightCountExtracted() {
-    return this.weightsElementExtractedCount;
+    return this.weightElementExtractedCount;
   }
 
   /**

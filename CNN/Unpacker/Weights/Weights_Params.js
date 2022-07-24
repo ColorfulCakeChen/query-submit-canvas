@@ -17,7 +17,7 @@ import { Root } from "./Weights_Base.js";
  *   The ending position (i.e. array index) after extracting from inputWeightsArray. It is not inclusive and can be used as the
  * beginning position of next (another) extraction. It is meaningful only if ( bInitOk == true ).
  *
- * @member {number} weightsElementExtractedCount
+ * @member {number} weightElementExtractedCount
  *   The same as parameterCountExtracted.
  *
  * @member {ParamDesc.SequenceArray} paramDescSequenceArray
@@ -38,7 +38,7 @@ import { Root } from "./Weights_Base.js";
  * inputWeightArray[]) and adjusted by ParamDesc.valueDesc.range.adjust(). This array itself is indexed by ParamDesc.Xxx.seqId.
  *
  * @member {number} parameterCountExtracted
- *   The count of the parameters extracted from inputWeightArray (i.e. by evolution). It should be the same as .weightsElementExtractedCount.
+ *   The count of the parameters extracted from inputWeightArray (i.e. by evolution). It should be the same as .weightElementExtractedCount.
  * Only meaningful if Params.init() successfully.
  *
  * @member {number} parameterCount

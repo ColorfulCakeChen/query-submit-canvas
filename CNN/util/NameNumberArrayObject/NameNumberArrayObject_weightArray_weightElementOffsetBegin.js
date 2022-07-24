@@ -80,7 +80,7 @@ class weightArray_weightElementOffsetBegin extends Recyclable.Root {
     this.weightElementOffsetBegin = weightElementOffsetBegin; // Skip the un-used element count.
 
     // 1. Calculate the total length include the extra offset.
-    let weightsTotalLength = weightElementOffsetBegin;
+    let weightTotalLength = weightElementOffsetBegin;
     {
       // 1.1 String named properties.
       for ( let i = 0; i < nameOrderArray.length; ++i ) {
@@ -88,9 +88,9 @@ class weightArray_weightElementOffsetBegin extends Recyclable.Root {
         let number_or_numberArray = nameNumberArrayObject[ name ];
         if ( number_or_numberArray != undefined ) {
           if ( number_or_numberArray instanceof Array ) {
-            weightsTotalLength += number_or_numberArray.length; // Assume number array.
+            weightTotalLength += number_or_numberArray.length; // Assume number array.
           } else {
-            weightsTotalLength += 1; // Assume number.
+            weightTotalLength += 1; // Assume number.
           }
         }
       }
@@ -100,9 +100,9 @@ class weightArray_weightElementOffsetBegin extends Recyclable.Root {
         let number_or_numberArray = nameNumberArrayObject[ i ];
         if ( number_or_numberArray != undefined ) {
           if ( number_or_numberArray instanceof Array ) {
-            weightsTotalLength += number_or_numberArray.length; // Assume number array.
+            weightTotalLength += number_or_numberArray.length; // Assume number array.
           } else {
-            weightsTotalLength += 1; // Assume number.
+            weightTotalLength += 1; // Assume number.
           }
         }
       }
@@ -110,7 +110,7 @@ class weightArray_weightElementOffsetBegin extends Recyclable.Root {
   
     // 2. Concatenate all number array into a (re-used) Float32Array.
     {
-      this.weightArray.length = weightsTotalLength;
+      this.weightArray.length = weightTotalLength;
 
       for ( let i = 0; i < this.weightElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
         this.weightArray[ i ] = -i;
@@ -178,13 +178,13 @@ class weightArray_weightElementOffsetBegin extends Recyclable.Root {
    *   - Return the element index of this.weightArray) of the nameToBeFound, if found.
    *   - Return negative value, if not found.
    */
-   static weightsElementIndex_find_byName(
+   static weightElementIndex_find_byName(
     nameOrderArray, nameNumberArrayObject, weightElementOffsetBegin,
     nameToBeFound
    ) {
-    let weightsElementIndex = -1;
+    let weightElementIndex = -1;
 
-    let weightsTotalLength = weightElementOffsetBegin;
+    let weightTotalLength = weightElementOffsetBegin;
 
     // 1. (Use the same looping logic of .set_byConcat().)
 
@@ -192,40 +192,40 @@ class weightArray_weightElementOffsetBegin extends Recyclable.Root {
     for ( let i = 0; i < nameOrderArray.length; ++i ) {
       let name = nameOrderArray[ i ];
       if ( name == nameToBeFound) {
-        weightsElementIndex = weightsTotalLength;
+        weightElementIndex = weightTotalLength;
         break;
       }
 
       let number_or_numberArray = nameNumberArrayObject[ name ];
       if ( number_or_numberArray != undefined ) {
         if ( number_or_numberArray instanceof Array ) {
-          weightsTotalLength += number_or_numberArray.length; // Assume number array.
+          weightTotalLength += number_or_numberArray.length; // Assume number array.
         } else {
-          weightsTotalLength += 1; // Assume number.
+          weightTotalLength += 1; // Assume number.
         }
       }
     }
 
     // 1.2 Integer numeric properties. (If not found in string named property, search integer numeric property.)
-    if ( weightsElementIndex < 0 ) {
+    if ( weightElementIndex < 0 ) {
       for ( let i = 0; i < nameNumberArrayObject.length; ++i ) {
         if ( i == nameToBeFound) {
-          weightsElementIndex = weightsTotalLength;
+          weightElementIndex = weightTotalLength;
           break;
         }
   
         let number_or_numberArray = nameNumberArrayObject[ i ];
         if ( number_or_numberArray != undefined ) {
           if ( number_or_numberArray instanceof Array ) {
-            weightsTotalLength += number_or_numberArray.length; // Assume number array.
+            weightTotalLength += number_or_numberArray.length; // Assume number array.
           } else {
-            weightsTotalLength += 1; // Assume number.
+            weightTotalLength += 1; // Assume number.
           }
         }
       }
     }
 
-    return weightsElementIndex;
+    return weightElementIndex;
    }
 
 }
