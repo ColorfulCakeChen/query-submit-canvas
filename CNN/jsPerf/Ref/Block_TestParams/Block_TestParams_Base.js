@@ -97,7 +97,7 @@ class Base extends TestParams.Base {
 
   /**
    * Use scattered parameters to fills the following proterties:
-   *   - this.in.inputWeightArray
+   *   - this.in.weightsArray
    *   - this.in.weightsElementOffsetBegin
    *   - this.out
    *
@@ -142,7 +142,7 @@ class Base extends TestParams.Base {
  
   /**
    * Fills the following proterties:
-   *   - this.in.inputWeightArray
+   *   - this.in.weightsArray
    *   - this.in.weightsElementOffsetBegin
    *
    * @param {object} this.in.paramsNumberArrayObject
@@ -173,7 +173,7 @@ class Base extends TestParams.Base {
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
     this.NumberArray_ElementOffsetBegin.setByConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
 
-    this.in.inputWeightArray = this.NumberArray_ElementOffsetBegin.weightsArray;
+    this.in.weightsArray = this.NumberArray_ElementOffsetBegin.weightsArray;
     this.in.weightElementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightsElementOffsetBegin;
 
     return this;

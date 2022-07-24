@@ -234,7 +234,7 @@ class Base extends Recyclable.Root {
    *   - this.out.Xxx: every parameter.
    *
    * This method should fill the following data:
-   *   - this.in.inputWeightArray
+   *   - this.in.weightsArray
    *   - this.in.byteOffsetBegin
    *
    * Sub-class should override this method.

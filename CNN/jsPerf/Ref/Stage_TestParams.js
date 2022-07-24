@@ -259,7 +259,7 @@ class Base extends TestParams.Base {
 
   /**
    * Use scattered parameters to fills the following proterties:
-   *   - this.in.inputWeightArray
+   *   - this.in.weightsArray
    *   - this.in.weightsElementOffsetBegin
    *   - this.out
    *
@@ -304,7 +304,7 @@ class Base extends TestParams.Base {
  
   /**
    * Fills the following proterties:
-   *   - this.in.inputWeightArray
+   *   - this.in.weightsArray
    *   - this.in.weightsElementOffsetBegin
    *   - this.out.outputHeight
    *   - this.out.outputWidth
@@ -372,7 +372,7 @@ class Base extends TestParams.Base {
       );
 
       this.blockArray[ i ] = blockTestParams;
-      paramsNumberArrayObject_modified[ blockName ] = blockTestParams.in.inputWeightArray;
+      paramsNumberArrayObject_modified[ blockName ] = blockTestParams.in.weightsArray;
     }
 
     if ( blockParamsCreator ) {
@@ -386,7 +386,7 @@ class Base extends TestParams.Base {
     this.NumberArray_ElementOffsetBegin.setByConcat(
       paramsNameOrderArray_modified, paramsNumberArrayObject_modified, weightsElementOffsetBegin );
 
-    this.in.inputWeightArray = this.NumberArray_ElementOffsetBegin.weightsArray;
+    this.in.weightsArray = this.NumberArray_ElementOffsetBegin.weightsArray;
     this.in.weightElementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightsElementOffsetBegin;
 
     if ( paramsNameOrderArray_modified ) {

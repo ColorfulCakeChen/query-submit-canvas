@@ -264,7 +264,7 @@ class Base extends Recyclable.Root {
           testParams.in.paramsNumberArrayObject, testParams.in.weightElementOffsetBegin,
           Stage.Params.nConvStageTypeId.paramName );
 
-        testParams.in.inputWeightArray[ nConvStageTypeId_weightsElementIndex ] = nConvStageTypeId_toBeCompared;
+        testParams.in.weightsArray[ nConvStageTypeId_weightsElementIndex ] = nConvStageTypeId_toBeCompared;
 
         // It seems not necessary to re-compose .inputWeightArray because all blocks' parameters are generated directly
         // by Stage_BlockParamsCreator (i.e. not in the .inputWeightArray).
@@ -290,7 +290,7 @@ class Base extends Recyclable.Root {
     );
 
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-    let bInitOk = stage_toBeCompared.init( progress, testParams.in.inputWeightArray, testParams.in.weightElementOffsetBegin, extractedParams,
+    let bInitOk = stage_toBeCompared.init( progress, testParams.in.weightsArray, testParams.in.weightElementOffsetBegin, extractedParams,
       inputScaleBoundsArray0 );
 
     if ( false == bInitOk )
@@ -411,7 +411,7 @@ class Base extends Recyclable.Root {
       testParams.in.bKeepInputTensor
     );
 
-    let bInitOk = stage.init( progress, testParams.in.inputWeightArray, testParams.in.weightElementOffsetBegin, extractedParams,
+    let bInitOk = stage.init( progress, testParams.in.weightsArray, testParams.in.weightElementOffsetBegin, extractedParams,
       inputScaleBoundsArray0 );
 
     if ( stage.bInitOk != bInitOk )
@@ -432,7 +432,7 @@ class Base extends Recyclable.Root {
     progress.disposeResources_and_recycleToPool();
     progress = null;
 
-    if ( stage.weightElementOffsetEnd != testParams.in.inputWeightArray.length ) { //!!! For Debug. (parsing ending position)
+    if ( stage.weightElementOffsetEnd != testParams.in.weightsArray.length ) { //!!! For Debug. (parsing ending position)
       debugger;
     }
 
@@ -442,7 +442,7 @@ class Base extends Recyclable.Root {
       stage.weightElementOffsetBegin, testParams.in.weightElementOffsetBegin, stage );
 
     Base.AssertTwoEqualValues( "parsing ending position",
-      stage.weightElementOffsetEnd, testParams.in.inputWeightArray.length, stage );
+      stage.weightElementOffsetEnd, testParams.in.weightsArray.length, stage );
 
     // parameters.
     stage_asserter.propertyValue( "sourceHeight", testParams.out.sourceHeight );
