@@ -1,29 +1,38 @@
-export { Base };
+export { weightsArray_weightsElementOffsetBegin };
 
 import * as Pool from "./Pool.js";
 import * as Recyclable from "./Recyclable.js";
 
 /**
+ * Mainly used as the composed result of NameNumberArrayObject.Base object.
  *
+ *
+ * @member {number[]} weightsArray
+ *   A number array which is the composed result of NameNumberArrayObject.Base object.
+ *
+ * @member {number} weightsElementOffsetBegin
+ *   The valid element index of the .weightsArray[]. Used for simulating extracting weights from
+ * .weightsArray[]'s internal.
  */
-class Base extends Recyclable.Root {
+class weightsArray_weightsElementOffsetBegin extends Recyclable.Root {
 
   /**
-   * Used as default NameNumberArrayObject_To_NumberArray.Base provider for conforming to Recyclable interface.
+   * Used as default NameNumberArrayObject.weightsArray_weightsElementOffsetBegin provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "NameNumberArrayObject_To_NumberArray.Base.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "NameNumberArrayObject.weightsArray_weightsElementOffsetBegin.Pool",
+    weightsArray_weightsElementOffsetBegin, weightsArray_weightsElementOffsetBegin.setAsConstructor );
 
   /**
    */
   constructor() {
     super();
-    Base.setAsConstructor_self.call( this );
+    weightsArray_weightsElementOffsetBegin.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this );
+    weightsArray_weightsElementOffsetBegin.setAsConstructor_self.call( this );
     return this;
   }
 
@@ -58,7 +67,7 @@ class Base extends Recyclable.Root {
    *   An array of string. Every element is a string name of a parameter. The number array in nameNumberArrayObject will be concatenated
    * according to the element order of this nameOrderArray[].
    *
-   * @param {object} nameNumberArrayObject
+   * @param {NameNumberArrayObject.Base} nameNumberArrayObject
    *   An object whose all properties are number or number array. It is a map from a string name to a number or number array. The names
    * should be found in nameOrderArray[].
    *
@@ -83,6 +92,9 @@ class Base extends Recyclable.Root {
         }
       }
     }
+
+//!!! ...unfinished... (2022/07/24)
+// The numeric properties of nameNumberArrayObject should be included.
 
     // 2. Concatenate all number array into a (re-used) Float32Array.
     {
@@ -109,10 +121,15 @@ class Base extends Recyclable.Root {
           }
         }
       }
+
+//!!! ...unfinished... (2022/07/24)
+// The numeric properties of nameNumberArrayObject should be included.
+
     }
   }
 
   /**
+   * Note: The numeric properties of nameNumberArrayObject is ignored in this method.
    *
    *
    * @param {string[]} nameOrderArray
@@ -133,7 +150,7 @@ class Base extends Recyclable.Root {
    *   - Return the element index of this.weightsArray) of the nameToBeFound, if found.
    *   - Return negative value, if not found.
    */
-   weightsElementIndex_find_byName(
+   static weightsElementIndex_find_byName(
     nameOrderArray, nameNumberArrayObject, weightsElementOffsetBegin,
     nameToBeFound
    ) {
