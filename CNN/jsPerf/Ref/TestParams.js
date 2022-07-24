@@ -151,15 +151,9 @@ class Base extends Recyclable.Root {
     this.id = id;
     this.yieldCount = 0;
 
-//!!! (2022/07/23 Remarked) re-use if possible.
-//    this.in = { paramsNumberArrayObject: {} };
-
     if ( this.in ) {
       // Do nothing. Re-use it since it exists.
     } else {
-//!!! (2022/07/24 Remarked) use NameNumberArrayObject.
-//      this.in = { paramsNumberArrayObject: {} };
-
       this.in = new NameNumberArrayObject.weightArray_weightElementOffsetBegin();
       this.in.paramsNumberArrayObject = new NameNumberArrayObject.Base(); // All parameters which will be packed into weights array.
     }
@@ -196,7 +190,11 @@ class Base extends Recyclable.Root {
     this.modifyParamValueHistory = null;
 
     //this.in.paramsNumberArrayObject; // Keep and re-use.
-    //this.in; // Keep and re-use.
+
+    // Note: The this.in is kept and re-used.
+    if ( this.in ) {
+      this.in.disposeResources(); // But this.in.weightArray should be released.
+    }
 
     //!!! ...unfinished... (2022/06/27) What about other object properties?
 
