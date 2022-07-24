@@ -544,7 +544,7 @@ class Base extends Recyclable.Root {
         testParams.in.bKeepInputTensor
       );
 
-      bInitOk = block.init( progress, testParams.in_weights.weightArray, testParams.in.weightElementOffsetBegin, extractedParams,
+      bInitOk = block.init( progress, testParams.in_weights.weightArray, testParams.in_weights.weightElementOffsetBegin, extractedParams,
         inputScaleBoundsArray0, inputScaleBoundsArray1,
         channelShuffler_ConcatPointwiseConv );
     }
@@ -580,7 +580,7 @@ class Base extends Recyclable.Root {
     let asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Block`, block, block );
 
     Base.AssertTwoEqualValues( "parsing beginning position",
-      block.weightElementOffsetBegin, testParams.in.weightElementOffsetBegin, block );
+      block.weightElementOffsetBegin, testParams.in_weights.weightElementOffsetBegin, block );
 
     Base.AssertTwoEqualValues( "parsing ending position",
       block.weightElementOffsetEnd, testParams.in_weights.weightArray.length, block );

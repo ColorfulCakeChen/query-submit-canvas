@@ -263,7 +263,7 @@ class Base extends Recyclable.Root {
         nConvStageTypeId_weightElementIndex
           = NameNumberArrayObject.weightArray_weightElementOffsetBegin.weightElementIndex_find_byName(
               Stage_TestParams.Base.paramsNameOrderArray_Basic,
-              testParams.in.paramsNumberArrayObject, testParams.in.weightElementOffsetBegin,
+              testParams.in.paramsNumberArrayObject, testParams.in_weights.weightElementOffsetBegin,
               Stage.Params.nConvStageTypeId.paramName );
 
         testParams.in_weights.weightArray[ nConvStageTypeId_weightElementIndex ] = nConvStageTypeId_toBeCompared;
@@ -292,7 +292,9 @@ class Base extends Recyclable.Root {
     );
 
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-    let bInitOk = stage_toBeCompared.init( progress, testParams.in_weights.weightArray, testParams.in.weightElementOffsetBegin, extractedParams,
+    let bInitOk = stage_toBeCompared.init( progress,
+      testParams.in_weights.weightArray, testParams.in_weights.weightElementOffsetBegin,
+      extractedParams,
       inputScaleBoundsArray0 );
 
     if ( false == bInitOk )
@@ -413,7 +415,9 @@ class Base extends Recyclable.Root {
       testParams.in.bKeepInputTensor
     );
 
-    let bInitOk = stage.init( progress, testParams.in_weights.weightArray, testParams.in.weightElementOffsetBegin, extractedParams,
+    let bInitOk = stage.init( progress,
+      testParams.in_weights.weightArray, testParams.in_weights.weightElementOffsetBegin,
+      extractedParams,
       inputScaleBoundsArray0 );
 
     if ( stage.bInitOk != bInitOk )
@@ -441,7 +445,7 @@ class Base extends Recyclable.Root {
     let stage_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Stage`, stage, stage );
 
     Base.AssertTwoEqualValues( "parsing beginning position",
-      stage.weightElementOffsetBegin, testParams.in.weightElementOffsetBegin, stage );
+      stage.weightElementOffsetBegin, testParams.in_weights.weightElementOffsetBegin, stage );
 
     Base.AssertTwoEqualValues( "parsing ending position",
       stage.weightElementOffsetEnd, testParams.in_weights.weightArray.length, stage );
