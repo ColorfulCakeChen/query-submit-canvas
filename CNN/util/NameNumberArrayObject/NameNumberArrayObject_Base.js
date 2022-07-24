@@ -1,7 +1,7 @@
 export { Base };
 
-import * as Pool from "./Pool.js";
-import * as Recyclable from "./Recyclable.js";
+import * as Pool from "../Pool.js";
+import * as Recyclable from "../Recyclable.js";
 
 /**
  * This object has string named properties and integer numeric properties (just like an Array). No matter

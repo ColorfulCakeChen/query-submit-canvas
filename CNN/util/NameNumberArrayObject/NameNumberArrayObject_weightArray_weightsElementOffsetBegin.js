@@ -1,7 +1,7 @@
 export { weightArray_weightsElementOffsetBegin };
 
-import * as Pool from "./Pool.js";
-import * as Recyclable from "./Recyclable.js";
+import * as Pool from "../Pool.js";
+import * as Recyclable from "../Recyclable.js";
 
 /**
  * Mainly used as the composed result of NameNumberArrayObject.Base object.
