@@ -158,7 +158,7 @@ class Base extends Recyclable.Root {
       this.in.paramsNumberArrayObject = new NameNumberArrayObject.Base(); // All parameters which will be packed into weights array.
     }
 
-    this.in_weights = new NameNumberArrayObject.weightArray_weightElementOffsetBegin();
+    this.in_weights = NameNumberArrayObject.weightArray_weightElementOffsetBegin.Pool.get_or_create_by();
 
     // Sub class is responsible for creating and releasing it.
     //this.out = undefined; //{};
