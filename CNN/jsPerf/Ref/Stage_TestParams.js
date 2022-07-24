@@ -260,8 +260,7 @@ class Base extends TestParams.Base {
 
   /**
    * Use scattered parameters to fills the following proterties:
-   *   - this.in.weightArray
-   *   - this.in.weightElementOffsetBegin
+   *   - this.in_weights
    *   - this.out
    *
    * @return {Base}
@@ -306,8 +305,7 @@ class Base extends TestParams.Base {
  
   /**
    * Fills the following proterties:
-   *   - this.in.weightArray
-   *   - this.in.weightElementOffsetBegin
+   *   - this.in_weights
    *   - this.out.outputHeight
    *   - this.out.outputWidth
    *
@@ -377,31 +375,13 @@ class Base extends TestParams.Base {
       );
 
       this.blockArray[ i ] = blockTestParams;
-
-//!!! (2022/07/24 Remarked) use integer numeric propert name instead.
-//       paramsNumberArrayObject_modified[ blockName ] = blockTestParams.in.weightArray;
-
-      this.in.paramsNumberArrayObject.push( blockTestParams.in.weightArray ); // Place every block's parameters in sequence.
+      this.in.paramsNumberArrayObject.push( blockTestParams.in_weights.weightArray ); // Place every block's parameters in sequence.
     }
 
     if ( blockParamsCreator ) {
       blockParamsCreator.disposeResources_and_recycleToPool();
       blockParamsCreator = null;
     }
-
-//!!! (2022/07/24 Remarked) this.in = already is weightArray_weightElementOffsetBegin
-//
-//     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
-//     this.NumberArray_ElementOffsetBegin.set_byConcat(
-//       paramsNameOrderArray_modified, paramsNumberArrayObject_modified, weightElementOffsetBegin );
-//
-//     this.in.weightArray = this.NumberArray_ElementOffsetBegin.weightArray;
-//     this.in.weightElementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightElementOffsetBegin;
-//
-//     if ( paramsNameOrderArray_modified ) {
-//       paramsNameOrderArray_modified.disposeResources_and_recycleToPool();
-//       paramsNameOrderArray_modified = null;
-//     }
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
     this.in.set_byConcat(

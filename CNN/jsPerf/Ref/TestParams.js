@@ -154,9 +154,11 @@ class Base extends Recyclable.Root {
     if ( this.in ) {
       // Do nothing. Re-use it since it exists.
     } else {
-      this.in = new NameNumberArrayObject.weightArray_weightElementOffsetBegin();
+      this.in = {};
       this.in.paramsNumberArrayObject = new NameNumberArrayObject.Base(); // All parameters which will be packed into weights array.
     }
+
+    this.in_weights = new NameNumberArrayObject.weightArray_weightElementOffsetBegin();
 
     // Sub class is responsible for creating and releasing it.
     //this.out = undefined; //{};
@@ -180,21 +182,20 @@ class Base extends Recyclable.Root {
   disposeResources() {
     //this.modifyParamValue_valuePair; // Keep and re-use.
 
-    this.modifyParamValue_singleMinMax.disposeResources_and_recycleToPool();
+    this.modifyParamValue_singleMinMax?.disposeResources_and_recycleToPool();
     this.modifyParamValue_singleMinMax = null;
 
-    this.SequenceRandom_NumberArray_Bag.disposeResources_and_recycleToPool();
+    this.SequenceRandom_NumberArray_Bag?.disposeResources_and_recycleToPool();
     this.SequenceRandom_NumberArray_Bag = null;
 
-    this.modifyParamValueHistory.disposeResources_and_recycleToPool();
+    this.modifyParamValueHistory?.disposeResources_and_recycleToPool();
     this.modifyParamValueHistory = null;
 
-    //this.in.paramsNumberArrayObject; // Keep and re-use.
+    this.in_weights?.disposeResources_and_recycleToPool();
+    this.in_weights = null;
 
-    // Note: The this.in is kept and re-used.
-    if ( this.in ) {
-      this.in.disposeResources(); // But this.in.weightArray should be released.
-    }
+    //this.in.paramsNumberArrayObject; // Keep and re-use.
+    //this.in; // Keep and re-use.
 
     //!!! ...unfinished... (2022/06/27) What about other object properties?
 
@@ -230,8 +231,7 @@ class Base extends Recyclable.Root {
    *   - this.out.Xxx: every parameter.
    *
    * This method should fill the following data:
-   *   - this.in.weightArray
-   *   - this.in.byteOffsetBegin
+   *   - this.in_weights.weightArray
    *
    * Sub-class should override this method.
    */

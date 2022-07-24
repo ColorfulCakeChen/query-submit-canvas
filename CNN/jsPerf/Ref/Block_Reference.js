@@ -544,7 +544,7 @@ class Base extends Recyclable.Root {
         testParams.in.bKeepInputTensor
       );
 
-      bInitOk = block.init( progress, testParams.in.weightArray, testParams.in.weightElementOffsetBegin, extractedParams,
+      bInitOk = block.init( progress, testParams.in_weights.weightArray, testParams.in.weightElementOffsetBegin, extractedParams,
         inputScaleBoundsArray0, inputScaleBoundsArray1,
         channelShuffler_ConcatPointwiseConv );
     }
@@ -573,7 +573,7 @@ class Base extends Recyclable.Root {
     progress.disposeResources_and_recycleToPool();
     progress = null;
 
-    if ( block.weightElementOffsetEnd != testParams.in.weightArray.length ) { //!!! For Debug. (parsing ending position)
+    if ( block.weightElementOffsetEnd != testParams.in_weights.weightArray.length ) { //!!! For Debug. (parsing ending position)
       debugger;
     }
 
@@ -583,7 +583,7 @@ class Base extends Recyclable.Root {
       block.weightElementOffsetBegin, testParams.in.weightElementOffsetBegin, block );
 
     Base.AssertTwoEqualValues( "parsing ending position",
-      block.weightElementOffsetEnd, testParams.in.weightArray.length, block );
+      block.weightElementOffsetEnd, testParams.in_weights.weightArray.length, block );
 
     // Linearity
     let bNoSqueezeExcitation_between_depthwise_and_pointwise2;
@@ -908,7 +908,7 @@ class Base extends Recyclable.Root {
         }
       }
 
-      let tensorWeightCountExtracted = ( testParams.in.weightArray.length - Params_weightElementOffsetEnd );
+      let tensorWeightCountExtracted = ( testParams.in_weights.weightArray.length - Params_weightElementOffsetEnd );
 
       asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
       asserter.propertyValueLE( "tensorWeightCountExtracted", tensorWeightCountTotal );

@@ -98,8 +98,7 @@ class Base extends TestParams.Base {
 
   /**
    * Use scattered parameters to fills the following proterties:
-   *   - this.in.weightArray
-   *   - this.in.weightElementOffsetBegin
+   *   - this.in_weights
    *   - this.out
    *
    * @return {Base}
@@ -144,8 +143,7 @@ class Base extends TestParams.Base {
  
   /**
    * Fills the following proterties:
-   *   - this.in.weightArray
-   *   - this.in.weightElementOffsetBegin
+   *   - this.in_weights
    *
    * @param {object} this.in.paramsNumberArrayObject
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
@@ -169,14 +167,6 @@ class Base extends TestParams.Base {
 
     this.generate_out_inferencedParams();
     this.generate_Filters_Biases( bDouble_when_ShuffleNetV2_byMobileNetV1 );
-
-// !!! (2022/07/24 Remarked) this.in = already is weightArray_weightElementOffsetBegin
-//
-//     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
-//     this.NumberArray_ElementOffsetBegin.set_byConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
-//
-//     this.in.weightArray = this.NumberArray_ElementOffsetBegin.weightArray;
-//     this.in.weightElementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightElementOffsetBegin;
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
     this.in.set_byConcat(
