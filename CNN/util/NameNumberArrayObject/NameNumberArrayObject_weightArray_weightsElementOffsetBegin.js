@@ -81,21 +81,33 @@ class weightArray_weightsElementOffsetBegin extends Recyclable.Root {
 
     // 1. Calculate the total length include the extra offset.
     let weightsTotalLength = weightsElementOffsetBegin;
-    for ( let i = 0; i < nameOrderArray.length; ++i ) {
-      let name = nameOrderArray[ i ];
-      let number_or_numberArray = nameNumberArrayObject[ name ];
-      if ( number_or_numberArray != undefined ) {
-        if ( number_or_numberArray instanceof Array ) {
-          weightsTotalLength += number_or_numberArray.length; // Assume number array.
-        } else {
-          weightsTotalLength += 1; // Assume number.
+    {
+      // 1.1 String named properties.
+      for ( let i = 0; i < nameOrderArray.length; ++i ) {
+        let name = nameOrderArray[ i ];
+        let number_or_numberArray = nameNumberArrayObject[ name ];
+        if ( number_or_numberArray != undefined ) {
+          if ( number_or_numberArray instanceof Array ) {
+            weightsTotalLength += number_or_numberArray.length; // Assume number array.
+          } else {
+            weightsTotalLength += 1; // Assume number.
+          }
+        }
+      }
+
+      // 1.2 Integer numeric properties.
+      for ( let i = 0; i < nameNumberArrayObject.length; ++i ) {
+        let number_or_numberArray = nameNumberArrayObject[ i ];
+        if ( number_or_numberArray != undefined ) {
+          if ( number_or_numberArray instanceof Array ) {
+            weightsTotalLength += number_or_numberArray.length; // Assume number array.
+          } else {
+            weightsTotalLength += 1; // Assume number.
+          }
         }
       }
     }
-
-!!! ...unfinished... (2022/07/24)
-// The numeric properties of nameNumberArrayObject should be included.
-
+  
     // 2. Concatenate all number array into a (re-used) Float32Array.
     {
       this.weightArray.length = weightsTotalLength;
@@ -105,26 +117,41 @@ class weightArray_weightsElementOffsetBegin extends Recyclable.Root {
       }
 
       let offset = weightsElementOffsetBegin;
+
+      // 2.1 String named properties.
       for ( let i = 0; i < nameOrderArray.length; ++i ) { // Concatenate all number array into a Float32Array.
         let name = nameOrderArray[ i ];
         let number_or_numberArray = nameNumberArrayObject[ name ];
 
         if ( number_or_numberArray != undefined ) {
           if ( number_or_numberArray instanceof Array ) {
-            for ( let j = 0; j < number_or_numberArray.length; ++j ) { // 2.1
+            for ( let j = 0; j < number_or_numberArray.length; ++j ) { // 2.1.1
               this.weightArray[ offset ] = number_or_numberArray[ j ]; // Assume number array.
               ++offset;
             }
-          } else { // 2.2
+          } else { // 2.1.2
             this.weightArray[ offset ] = number_or_numberArray; // Assume number.
             ++offset;
           }
         }
       }
 
-!!! ...unfinished... (2022/07/24)
-// The numeric properties of nameNumberArrayObject should be included.
+      // 2.2 Integer numeric properties.
+      for ( let i = 0; i < nameNumberArrayObject.length; ++i ) { // Concatenate all number array into a Float32Array.
+        let number_or_numberArray = nameNumberArrayObject[ i ];
 
+        if ( number_or_numberArray != undefined ) {
+          if ( number_or_numberArray instanceof Array ) {
+            for ( let j = 0; j < number_or_numberArray.length; ++j ) { // 2.2.1
+              this.weightArray[ offset ] = number_or_numberArray[ j ]; // Assume number array.
+              ++offset;
+            }
+          } else { // 2.2.2
+            this.weightArray[ offset ] = number_or_numberArray; // Assume number.
+            ++offset;
+          }
+        }
+      }
     }
   }
 
@@ -143,8 +170,9 @@ class weightArray_weightsElementOffsetBegin extends Recyclable.Root {
    * @param {number} weightsElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightArray.
    *
-   * @param {string[]} nameToBeFound
-   *   A name string to be searched. It should be one element of nameOrderArray[].
+   * @param {string[]|number} nameToBeFound
+   *   A name string or an integer which represents the property be searched. If a string, it should
+   * be one element of nameOrderArray[].
    *
    * @return {number}
    *   - Return the element index of this.weightArray) of the nameToBeFound, if found.
@@ -156,8 +184,11 @@ class weightArray_weightsElementOffsetBegin extends Recyclable.Root {
    ) {
     let weightsElementIndex = -1;
 
-    // (Use the same looping logic of .setByConcat())
     let weightsTotalLength = weightsElementOffsetBegin;
+
+    // 1. (Use the same looping logic of .setByConcat().)
+
+    // 1.1 String named properties.
     for ( let i = 0; i < nameOrderArray.length; ++i ) {
       let name = nameOrderArray[ i ];
       if ( name == nameToBeFound) {
@@ -171,6 +202,25 @@ class weightArray_weightsElementOffsetBegin extends Recyclable.Root {
           weightsTotalLength += number_or_numberArray.length; // Assume number array.
         } else {
           weightsTotalLength += 1; // Assume number.
+        }
+      }
+    }
+
+    // 1.2 Integer numeric properties. (If not found in string named property, search integer numeric property.)
+    if ( weightsElementIndex < 0 ) {
+      for ( let i = 0; i < nameNumberArrayObject.length; ++i ) {
+        if ( i == nameToBeFound) {
+          weightsElementIndex = weightsTotalLength;
+          break;
+        }
+  
+        let number_or_numberArray = nameNumberArrayObject[ i ];
+        if ( number_or_numberArray != undefined ) {
+          if ( number_or_numberArray instanceof Array ) {
+            weightsTotalLength += number_or_numberArray.length; // Assume number array.
+          } else {
+            weightsTotalLength += 1; // Assume number.
+          }
         }
       }
     }
