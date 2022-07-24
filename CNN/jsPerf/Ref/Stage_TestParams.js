@@ -230,8 +230,9 @@ class Base extends TestParams.Base {
   static setAsConstructor_self() {
     this.blockArray = Recyclable.OwnerArray.Pool.get_or_create_by();
 
-    // A pre-allocated and re-used NumberArray. (For reducing memory re-allocation.)
-    this.NumberArray_ElementOffsetBegin = NameNumberArrayObject_To_NumberArray.Base.Pool.get_or_create_by();
+//!!! (2022/07/24 Remarked) this.in is already a NameNumberArrayObject.weightArray_weightsElementOffsetBegin object.
+//    // A pre-allocated and re-used NumberArray. (For reducing memory re-allocation.)
+//    this.NumberArray_ElementOffsetBegin = NameNumberArrayObject_To_NumberArray.Base.Pool.get_or_create_by();
 
     this.out = Out.Pool.get_or_create_by();
   }
@@ -243,8 +244,9 @@ class Base extends TestParams.Base {
       this.out = null;
     }
 
-    this.NumberArray_ElementOffsetBegin?.disposeResources_and_recycleToPool();
-    this.NumberArray_ElementOffsetBegin = null;
+//!!! (2022/07/24 Remarked) this.in is already a NameNumberArrayObject.weightArray_weightsElementOffsetBegin object.
+    // this.NumberArray_ElementOffsetBegin?.disposeResources_and_recycleToPool();
+    // this.NumberArray_ElementOffsetBegin = null;
 
     this.blockArray?.disposeResources_and_recycleToPool();
     this.blockArray = null;
@@ -259,7 +261,7 @@ class Base extends TestParams.Base {
 
   /**
    * Use scattered parameters to fills the following proterties:
-   *   - this.in.weightsArray
+   *   - this.in.weightArray
    *   - this.in.weightsElementOffsetBegin
    *   - this.out
    *
@@ -277,7 +279,8 @@ class Base extends TestParams.Base {
     nActivationId,
     bKeepInputTensor
   ) {
-    this.in.paramsNumberArrayObject = {};
+// !!! (2022/07/24 Remarked) seems not necessary to empty it.
+//     this.in.paramsNumberArrayObject = {};
 
     if ( this.out ) {
       this.out.disposeResources_and_recycleToPool();
@@ -304,7 +307,7 @@ class Base extends TestParams.Base {
  
   /**
    * Fills the following proterties:
-   *   - this.in.weightsArray
+   *   - this.in.weightArray
    *   - this.in.weightsElementOffsetBegin
    *   - this.out.outputHeight
    *   - this.out.outputWidth
@@ -336,10 +339,13 @@ class Base extends TestParams.Base {
     this.blockArray.clear();
     this.blockArray.length = blockParamsCreator.blockCount;
 
-    let paramsNameOrderArray_modified = Recyclable.Array.Pool.get_or_create_by( ...Base.paramsNameOrderArray_Basic ); // Shallow copy.
+//!!! (2022/07/24 Remarked) use integer numeric propert name instead.
+//     let paramsNameOrderArray_modified = Recyclable.Array.Pool.get_or_create_by( ...Base.paramsNameOrderArray_Basic ); // Shallow copy.
+//
+//     let paramsNumberArrayObject_modified = {};
+//     Object.assign( paramsNumberArrayObject_modified, this.in.paramsNumberArrayObject ); // Shallow copy.
 
-    let paramsNumberArrayObject_modified = {};
-    Object.assign( paramsNumberArrayObject_modified, this.in.paramsNumberArrayObject ); // Shallow copy.
+    this.in.paramsNumberArrayObject.length = 0;
 
     for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
 
@@ -353,9 +359,9 @@ class Base extends TestParams.Base {
         blockParamsCreator.configTo_beforeBlockLast();
       }
 
-!!! ...unfinished... (2022/07/24) use integer numeric propert name instead.
-      let blockName = `block${i}`;
-      paramsNameOrderArray_modified.push( blockName ); // Place every block's parameters in sequence.
+//!!! (2022/07/24 Remarked) use integer numeric propert name instead.
+//       let blockName = `block${i}`;
+//       paramsNameOrderArray_modified.push( blockName ); // Place every block's parameters in sequence.
 
       let blockTestParams = Block_TestParams.Base.Pool.get_or_create_by( this.id );
       blockTestParams.set_byParamsScattered(
@@ -372,7 +378,11 @@ class Base extends TestParams.Base {
       );
 
       this.blockArray[ i ] = blockTestParams;
-      paramsNumberArrayObject_modified[ blockName ] = blockTestParams.in.weightsArray;
+
+//!!! (2022/07/24 Remarked) use integer numeric propert name instead.
+//       paramsNumberArrayObject_modified[ blockName ] = blockTestParams.in.weightArray;
+
+      this.in.paramsNumberArrayObject.push( blockTestParams.in.weightArray ); // Place every block's parameters in sequence.
     }
 
     if ( blockParamsCreator ) {
@@ -380,19 +390,23 @@ class Base extends TestParams.Base {
       blockParamsCreator = null;
     }
 
-!!! ...unfinished... (2022/07/24) this.in = already is weightsArray_weightsElementOffsetBegin
+//!!! (2022/07/24 Remarked) this.in = already is weightArray_weightsElementOffsetBegin
+//
+//     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
+//     this.NumberArray_ElementOffsetBegin.setByConcat(
+//       paramsNameOrderArray_modified, paramsNumberArrayObject_modified, weightsElementOffsetBegin );
+//
+//     this.in.weightArray = this.NumberArray_ElementOffsetBegin.weightArray;
+//     this.in.weightElementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightsElementOffsetBegin;
+//
+//     if ( paramsNameOrderArray_modified ) {
+//       paramsNameOrderArray_modified.disposeResources_and_recycleToPool();
+//       paramsNameOrderArray_modified = null;
+//     }
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
-    this.NumberArray_ElementOffsetBegin.setByConcat(
-      paramsNameOrderArray_modified, paramsNumberArrayObject_modified, weightsElementOffsetBegin );
-
-    this.in.weightsArray = this.NumberArray_ElementOffsetBegin.weightsArray;
-    this.in.weightElementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightsElementOffsetBegin;
-
-    if ( paramsNameOrderArray_modified ) {
-      paramsNameOrderArray_modified.disposeResources_and_recycleToPool();
-      paramsNameOrderArray_modified = null;
-    }
+    this.in.Base.setByConcat(
+      Base.paramsNameOrderArray_Basic, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
 
     return this;
   }

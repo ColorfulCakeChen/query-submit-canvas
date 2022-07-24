@@ -1,4 +1,4 @@
-export { weightsArray_weightsElementOffsetBegin };
+export { weightArray_weightsElementOffsetBegin };
 
 import * as Pool from "./Pool.js";
 import * as Recyclable from "./Recyclable.js";
@@ -7,60 +7,60 @@ import * as Recyclable from "./Recyclable.js";
  * Mainly used as the composed result of NameNumberArrayObject.Base object.
  *
  *
- * @member {number[]} weightsArray
+ * @member {number[]} weightArray
  *   A number array which is the composed result of NameNumberArrayObject.Base object.
  *
  * @member {number} weightsElementOffsetBegin
- *   The valid element index of the .weightsArray[]. Used for simulating extracting weights from
- * .weightsArray[]'s internal.
+ *   The valid element index of the .weightArray[]. Used for simulating extracting weights from
+ * .weightArray[]'s internal.
  */
-class weightsArray_weightsElementOffsetBegin extends Recyclable.Root {
+class weightArray_weightsElementOffsetBegin extends Recyclable.Root {
 
   /**
-   * Used as default NameNumberArrayObject.weightsArray_weightsElementOffsetBegin provider for conforming to Recyclable interface.
+   * Used as default NameNumberArrayObject.weightArray_weightsElementOffsetBegin provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "NameNumberArrayObject.weightsArray_weightsElementOffsetBegin.Pool",
-    weightsArray_weightsElementOffsetBegin, weightsArray_weightsElementOffsetBegin.setAsConstructor );
+  static Pool = new Pool.Root( "NameNumberArrayObject.weightArray_weightsElementOffsetBegin.Pool",
+    weightArray_weightsElementOffsetBegin, weightArray_weightsElementOffsetBegin.setAsConstructor );
 
   /**
    */
   constructor() {
     super();
-    weightsArray_weightsElementOffsetBegin.setAsConstructor_self.call( this );
+    weightArray_weightsElementOffsetBegin.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    weightsArray_weightsElementOffsetBegin.setAsConstructor_self.call( this );
+    weightArray_weightsElementOffsetBegin.setAsConstructor_self.call( this );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self() {
-    this.weightsArray = Recyclable.Array.Pool.get_or_create_by( 0 );
+    this.weightArray = Recyclable.Array.Pool.get_or_create_by( 0 );
   }
 
   /** @override */
   disposeResources() {
     this.weightsElementOffsetBegin = undefined;
 
-    if ( this.weightsArray ) {
-      this.weightsArray.disposeResources_and_recycleToPool();
-      this.weightsArray = null;
+    if ( this.weightArray ) {
+      this.weightArray.disposeResources_and_recycleToPool();
+      this.weightArray = null;
     }
 
     super.disposeResources();
   }
 
   /**
-   * Concatenate multiple number arrays into one NumberArray (this.weightsArray) in a specified order.
+   * Concatenate multiple number arrays into one NumberArray (this.weightArray) in a specified order.
    *
-   * It fills two data members of this object { weightsArray, weightsElementOffsetBegin }.
-   *   - this.weightsArray: A number array which is the concatenated result of the numberArrayArray.
-   *   - this.weightsElementOffsetBegin: A random offset element count inside weightsArray.
+   * It fills two data members of this object { weightArray, weightsElementOffsetBegin }.
+   *   - this.weightArray: A number array which is the concatenated result of the numberArrayArray.
+   *   - this.weightsElementOffsetBegin: A random offset element count inside weightArray.
    *
-   * Note: The this.weightsArray is re-used. So caller should not modify it.
+   * Note: The this.weightArray is re-used. So caller should not modify it.
    *
    *
    * @param {string[]} nameOrderArray
@@ -72,7 +72,7 @@ class weightsArray_weightsElementOffsetBegin extends Recyclable.Root {
    * should be found in nameOrderArray[].
    *
    * @param {number} weightsElementOffsetBegin
-   *   Offset how many elements (4 bytes per element) at the beginning of the result weightsArray.
+   *   Offset how many elements (4 bytes per element) at the beginning of the result weightArray.
    *
    */
   setByConcat( nameOrderArray, nameNumberArrayObject, weightsElementOffsetBegin = 0 ) {
@@ -93,15 +93,15 @@ class weightsArray_weightsElementOffsetBegin extends Recyclable.Root {
       }
     }
 
-//!!! ...unfinished... (2022/07/24)
+!!! ...unfinished... (2022/07/24)
 // The numeric properties of nameNumberArrayObject should be included.
 
     // 2. Concatenate all number array into a (re-used) Float32Array.
     {
-      this.weightsArray.length = weightsTotalLength;
+      this.weightArray.length = weightsTotalLength;
 
       for ( let i = 0; i < this.weightsElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
-        this.weightsArray[ i ] = -i;
+        this.weightArray[ i ] = -i;
       }
 
       let offset = weightsElementOffsetBegin;
@@ -112,17 +112,17 @@ class weightsArray_weightsElementOffsetBegin extends Recyclable.Root {
         if ( number_or_numberArray != undefined ) {
           if ( number_or_numberArray instanceof Array ) {
             for ( let j = 0; j < number_or_numberArray.length; ++j ) { // 2.1
-              this.weightsArray[ offset ] = number_or_numberArray[ j ]; // Assume number array.
+              this.weightArray[ offset ] = number_or_numberArray[ j ]; // Assume number array.
               ++offset;
             }
           } else { // 2.2
-            this.weightsArray[ offset ] = number_or_numberArray; // Assume number.
+            this.weightArray[ offset ] = number_or_numberArray; // Assume number.
             ++offset;
           }
         }
       }
 
-//!!! ...unfinished... (2022/07/24)
+!!! ...unfinished... (2022/07/24)
 // The numeric properties of nameNumberArrayObject should be included.
 
     }
@@ -141,13 +141,13 @@ class weightsArray_weightsElementOffsetBegin extends Recyclable.Root {
    * should be found in nameOrderArray[].
    *
    * @param {number} weightsElementOffsetBegin
-   *   Offset how many elements (4 bytes per element) at the beginning of the result weightsArray.
+   *   Offset how many elements (4 bytes per element) at the beginning of the result weightArray.
    *
    * @param {string[]} nameToBeFound
    *   A name string to be searched. It should be one element of nameOrderArray[].
    *
    * @return {number}
-   *   - Return the element index of this.weightsArray) of the nameToBeFound, if found.
+   *   - Return the element index of this.weightArray) of the nameToBeFound, if found.
    *   - Return negative value, if not found.
    */
    static weightsElementIndex_find_byName(

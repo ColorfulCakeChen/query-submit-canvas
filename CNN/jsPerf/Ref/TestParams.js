@@ -160,7 +160,7 @@ class Base extends Recyclable.Root {
 //!!! (2022/07/24 Remarked) use NameNumberArrayObject.
 //      this.in = { paramsNumberArrayObject: {} };
 
-      this.in = new weightsArray_weightsElementOffsetBegin();
+      this.in = new NameNumberArrayObject.weightArray_weightsElementOffsetBegin();
       this.in.paramsNumberArrayObject = new NameNumberArrayObject.Base();
     }
 
@@ -174,9 +174,6 @@ class Base extends Recyclable.Root {
     
     // For reducing array and object re-generating in .modifyParamValue()
     this.modifyParamValue_singleMinMax = Recyclable.Array.Pool.get_or_create_by( 2 );
-
-//!!! (2022/07/23 Remarked) re-use if possible.
-//    this.modifyParamValue_valuePair = {};
 
     if ( this.modifyParamValue_valuePair ) {
       // Do nothing. Re-use it since it exists.
@@ -198,6 +195,7 @@ class Base extends Recyclable.Root {
     this.modifyParamValueHistory.disposeResources_and_recycleToPool();
     this.modifyParamValueHistory = null;
 
+    //this.in.paramsNumberArrayObject; // Keep and re-use.
     //this.in; // Keep and re-use.
 
     //!!! ...unfinished... (2022/06/27) What about other object properties?
@@ -234,7 +232,7 @@ class Base extends Recyclable.Root {
    *   - this.out.Xxx: every parameter.
    *
    * This method should fill the following data:
-   *   - this.in.weightsArray
+   *   - this.in.weightArray
    *   - this.in.byteOffsetBegin
    *
    * Sub-class should override this method.
