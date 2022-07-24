@@ -2,6 +2,7 @@ export { Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+import * as NameNumberArrayObject from "../../../util/NameNumberArrayObject.js";
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import * as BoundsArraySet_Asserter from "../../util/BoundsArraySet_Asserter.js";
@@ -259,10 +260,11 @@ class Base extends Recyclable.Root {
     let nConvStageTypeId_weightElementIndex;
     {
       if ( testParams.in.nConvStageTypeId == null ) { // i.e. Needs parameter nConvStageTypeId is inside .inputWeightArray.
-        nConvStageTypeId_weightElementIndex = testParams.in.weightElementIndex_find_byName(
-          Stage_TestParams.Base.paramsNameOrderArray_Basic,
-          testParams.in.paramsNumberArrayObject, testParams.in.weightElementOffsetBegin,
-          Stage.Params.nConvStageTypeId.paramName );
+        nConvStageTypeId_weightElementIndex
+          = NameNumberArrayObject.weightArray_weightElementOffsetBegin.weightElementIndex_find_byName(
+              Stage_TestParams.Base.paramsNameOrderArray_Basic,
+              testParams.in.paramsNumberArrayObject, testParams.in.weightElementOffsetBegin,
+              Stage.Params.nConvStageTypeId.paramName );
 
         testParams.in.weightArray[ nConvStageTypeId_weightElementIndex ] = nConvStageTypeId_toBeCompared;
 

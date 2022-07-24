@@ -3,7 +3,6 @@ export { Base };
 import * as Pool from "../../../util/Pool.js";
 import * as Recyclable from "../../../util/Recyclable.js";
 import * as RandTools from "../../../util/RandTools.js";
-import * as NameNumberArrayObject from "../../../util/NameNumberArrayObject.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import * as TestParams from "../TestParams.js";
 import * as NumberImage from "../NumberImage.js";
