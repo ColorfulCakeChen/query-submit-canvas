@@ -80,7 +80,7 @@ class weightArray_weightElementOffsetBegin extends Recyclable.Root {
     this.weightElementOffsetBegin = weightElementOffsetBegin; // Skip the un-used element count.
 
     // 1. Calculate the total length include the extra offset.
-    let weightTotalLength = weightElementOffsetBegin;
+    let weightsTotalLength = weightElementOffsetBegin;
     {
       // 1.1 String named properties.
       for ( let i = 0; i < nameOrderArray.length; ++i ) {
@@ -88,9 +88,9 @@ class weightArray_weightElementOffsetBegin extends Recyclable.Root {
         let number_or_numberArray = nameNumberArrayObject[ name ];
         if ( number_or_numberArray != undefined ) {
           if ( number_or_numberArray instanceof Array ) {
-            weightTotalLength += number_or_numberArray.length; // Assume number array.
+            weightsTotalLength += number_or_numberArray.length; // Assume number array.
           } else {
-            weightTotalLength += 1; // Assume number.
+            weightsTotalLength += 1; // Assume number.
           }
         }
       }
@@ -100,9 +100,9 @@ class weightArray_weightElementOffsetBegin extends Recyclable.Root {
         let number_or_numberArray = nameNumberArrayObject[ i ];
         if ( number_or_numberArray != undefined ) {
           if ( number_or_numberArray instanceof Array ) {
-            weightTotalLength += number_or_numberArray.length; // Assume number array.
+            weightsTotalLength += number_or_numberArray.length; // Assume number array.
           } else {
-            weightTotalLength += 1; // Assume number.
+            weightsTotalLength += 1; // Assume number.
           }
         }
       }
@@ -110,7 +110,7 @@ class weightArray_weightElementOffsetBegin extends Recyclable.Root {
   
     // 2. Concatenate all number array into a (re-used) Float32Array.
     {
-      this.weightArray.length = weightTotalLength;
+      this.weightArray.length = weightsTotalLength;
 
       for ( let i = 0; i < this.weightElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
         this.weightArray[ i ] = -i;
@@ -184,7 +184,7 @@ class weightArray_weightElementOffsetBegin extends Recyclable.Root {
    ) {
     let weightElementIndex = -1;
 
-    let weightTotalLength = weightElementOffsetBegin;
+    let weightsTotalLength = weightElementOffsetBegin;
 
     // 1. (Use the same looping logic of .set_byConcat().)
 
@@ -192,16 +192,16 @@ class weightArray_weightElementOffsetBegin extends Recyclable.Root {
     for ( let i = 0; i < nameOrderArray.length; ++i ) {
       let name = nameOrderArray[ i ];
       if ( name == nameToBeFound) {
-        weightElementIndex = weightTotalLength;
+        weightElementIndex = weightsTotalLength;
         break;
       }
 
       let number_or_numberArray = nameNumberArrayObject[ name ];
       if ( number_or_numberArray != undefined ) {
         if ( number_or_numberArray instanceof Array ) {
-          weightTotalLength += number_or_numberArray.length; // Assume number array.
+          weightsTotalLength += number_or_numberArray.length; // Assume number array.
         } else {
-          weightTotalLength += 1; // Assume number.
+          weightsTotalLength += 1; // Assume number.
         }
       }
     }
@@ -210,16 +210,16 @@ class weightArray_weightElementOffsetBegin extends Recyclable.Root {
     if ( weightElementIndex < 0 ) {
       for ( let i = 0; i < nameNumberArrayObject.length; ++i ) {
         if ( i == nameToBeFound) {
-          weightElementIndex = weightTotalLength;
+          weightElementIndex = weightsTotalLength;
           break;
         }
   
         let number_or_numberArray = nameNumberArrayObject[ i ];
         if ( number_or_numberArray != undefined ) {
           if ( number_or_numberArray instanceof Array ) {
-            weightTotalLength += number_or_numberArray.length; // Assume number array.
+            weightsTotalLength += number_or_numberArray.length; // Assume number array.
           } else {
-            weightTotalLength += 1; // Assume number.
+            weightsTotalLength += 1; // Assume number.
           }
         }
       }
