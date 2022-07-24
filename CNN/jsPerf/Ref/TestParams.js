@@ -161,7 +161,7 @@ class Base extends Recyclable.Root {
 //      this.in = { paramsNumberArrayObject: {} };
 
       this.in = new NameNumberArrayObject.weightArray_weightsElementOffsetBegin();
-      this.in.paramsNumberArrayObject = new NameNumberArrayObject.Base();
+      this.in.paramsNumberArrayObject = new NameNumberArrayObject.Base(); // All parameters which will be packed into weights array.
     }
 
     // Sub class is responsible for creating and releasing it.
@@ -340,25 +340,6 @@ class Base extends Recyclable.Root {
    * Restore parameters' values according to this.modifyParamValueHistory. And empty this.modifyParamValueHistory.
    */
   modifyParamValue_restore_all() {
-//!!! (2022/07/22 Remarked) Call modifyParamValue_pop_and_restore() instead.
-//     for ( let i = this.modifyParamValueHistory.length - 1; i >= 0; --i ) { // From the last to first.
-//       let changeRecord = this.modifyParamValueHistory[ i ];
-//       let paramName = changeRecord.paramDesc.paramName;
-//
-//       if ( this.out[ paramName ] != undefined )
-//         this.out[ paramName ] = changeRecord.outValue_original;
-//
-//       if ( this.in[ paramName ] != undefined ) {
-//         this.in[ paramName ] = changeRecord.inValue_original;
-//       }
-//
-//       if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) {
-//         this.in.paramsNumberArrayObject[ paramName ] = changeRecord.inValue_original; // (should be a number (can not be a number array)).
-//       }
-//     }
-//  
-//     this.modifyParamValueHistory.length = 0; // Clear history.
-
     while ( this.modifyParamValue_pop_and_restore() ) { // Restored from the last to first.
       // Do nothing.
     }
@@ -420,7 +401,9 @@ class Base extends Recyclable.Root {
   static * ParamsGenerator( paramDescConfigArray ) {
     this.config = { paramDescConfigArray: paramDescConfigArray };
 
-    this.in.paramsNumberArrayObject = {}; // All parameters which will be packed into weights array.
+//!!! (2022/07/23 Remarked) re-use it. do not re-create it.
+//    this.in.paramsNumberArrayObject = {}; // All parameters which will be packed into weights array.
+
     yield *Base.permuteParamRecursively.call( this, 0 );
   }
 
