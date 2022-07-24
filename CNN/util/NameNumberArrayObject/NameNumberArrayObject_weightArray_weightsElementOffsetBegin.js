@@ -1,4 +1,4 @@
-export { weightArray_weightsElementOffsetBegin };
+export { weightArray_weightElementOffsetBegin };
 
 import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
@@ -10,29 +10,29 @@ import * as Recyclable from "../Recyclable.js";
  * @member {number[]} weightArray
  *   A number array which is the composed result of NameNumberArrayObject.Base object.
  *
- * @member {number} weightsElementOffsetBegin
+ * @member {number} weightElementOffsetBegin
  *   The valid element index of the .weightArray[]. Used for simulating extracting weights from
  * .weightArray[]'s internal.
  */
-class weightArray_weightsElementOffsetBegin extends Recyclable.Root {
+class weightArray_weightElementOffsetBegin extends Recyclable.Root {
 
   /**
-   * Used as default NameNumberArrayObject.weightArray_weightsElementOffsetBegin provider for conforming to Recyclable interface.
+   * Used as default NameNumberArrayObject.weightArray_weightElementOffsetBegin provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "NameNumberArrayObject.weightArray_weightsElementOffsetBegin.Pool",
-    weightArray_weightsElementOffsetBegin, weightArray_weightsElementOffsetBegin.setAsConstructor );
+  static Pool = new Pool.Root( "NameNumberArrayObject.weightArray_weightElementOffsetBegin.Pool",
+    weightArray_weightElementOffsetBegin, weightArray_weightElementOffsetBegin.setAsConstructor );
 
   /**
    */
   constructor() {
     super();
-    weightArray_weightsElementOffsetBegin.setAsConstructor_self.call( this );
+    weightArray_weightElementOffsetBegin.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    weightArray_weightsElementOffsetBegin.setAsConstructor_self.call( this );
+    weightArray_weightElementOffsetBegin.setAsConstructor_self.call( this );
     return this;
   }
 
@@ -43,7 +43,7 @@ class weightArray_weightsElementOffsetBegin extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    this.weightsElementOffsetBegin = undefined;
+    this.weightElementOffsetBegin = undefined;
 
     if ( this.weightArray ) {
       this.weightArray.disposeResources_and_recycleToPool();
@@ -56,9 +56,9 @@ class weightArray_weightsElementOffsetBegin extends Recyclable.Root {
   /**
    * Concatenate multiple number arrays into one NumberArray (this.weightArray) in a specified order.
    *
-   * It fills two data members of this object { weightArray, weightsElementOffsetBegin }.
+   * It fills two data members of this object { weightArray, weightElementOffsetBegin }.
    *   - this.weightArray: A number array which is the concatenated result of the numberArrayArray.
-   *   - this.weightsElementOffsetBegin: A random offset element count inside weightArray.
+   *   - this.weightElementOffsetBegin: A random offset element count inside weightArray.
    *
    * Note: The this.weightArray is re-used. So caller should not modify it.
    *
@@ -71,16 +71,16 @@ class weightArray_weightsElementOffsetBegin extends Recyclable.Root {
    *   An object whose all properties are number or number array. It is a map from a string name to a number or number array. The names
    * should be found in nameOrderArray[].
    *
-   * @param {number} weightsElementOffsetBegin
+   * @param {number} weightElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightArray.
    *
    */
-  set_byConcat( nameOrderArray, nameNumberArrayObject, weightsElementOffsetBegin = 0 ) {
+  set_byConcat( nameOrderArray, nameNumberArrayObject, weightElementOffsetBegin = 0 ) {
 
-    this.weightsElementOffsetBegin = weightsElementOffsetBegin; // Skip the un-used element count.
+    this.weightElementOffsetBegin = weightElementOffsetBegin; // Skip the un-used element count.
 
     // 1. Calculate the total length include the extra offset.
-    let weightsTotalLength = weightsElementOffsetBegin;
+    let weightsTotalLength = weightElementOffsetBegin;
     {
       // 1.1 String named properties.
       for ( let i = 0; i < nameOrderArray.length; ++i ) {
@@ -112,11 +112,11 @@ class weightArray_weightsElementOffsetBegin extends Recyclable.Root {
     {
       this.weightArray.length = weightsTotalLength;
 
-      for ( let i = 0; i < this.weightsElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
+      for ( let i = 0; i < this.weightElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
         this.weightArray[ i ] = -i;
       }
 
-      let offset = weightsElementOffsetBegin;
+      let offset = weightElementOffsetBegin;
 
       // 2.1 String named properties.
       for ( let i = 0; i < nameOrderArray.length; ++i ) { // Concatenate all number array into a Float32Array.
@@ -167,7 +167,7 @@ class weightArray_weightsElementOffsetBegin extends Recyclable.Root {
    *   An object whose all properties are number or number array. It is a map from a string name to a number or number array. The names
    * should be found in nameOrderArray[].
    *
-   * @param {number} weightsElementOffsetBegin
+   * @param {number} weightElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightArray.
    *
    * @param {string[]|number} nameToBeFound
@@ -179,12 +179,12 @@ class weightArray_weightsElementOffsetBegin extends Recyclable.Root {
    *   - Return negative value, if not found.
    */
    static weightsElementIndex_find_byName(
-    nameOrderArray, nameNumberArrayObject, weightsElementOffsetBegin,
+    nameOrderArray, nameNumberArrayObject, weightElementOffsetBegin,
     nameToBeFound
    ) {
     let weightsElementIndex = -1;
 
-    let weightsTotalLength = weightsElementOffsetBegin;
+    let weightsTotalLength = weightElementOffsetBegin;
 
     // 1. (Use the same looping logic of .set_byConcat().)
 

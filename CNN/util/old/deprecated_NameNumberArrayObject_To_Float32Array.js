@@ -94,17 +94,17 @@ class Base extends Recyclable.Root {
    *   An object whose all properties are number or number array. It is a map from a string name to a number or number array. The names
    * should be found in nameOrderArray[].
    *
-   * @param {number} weightsElementOffsetBegin
+   * @param {number} weightElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
    *
-   * @returned {number} weightsElementOffsetBegin
+   * @returned {number} weightElementOffsetBegin
    */
-  set_byConcat( nameOrderArray, nameNumberArrayObject, weightsElementOffsetBegin = 0 ) {
+  set_byConcat( nameOrderArray, nameNumberArrayObject, weightElementOffsetBegin = 0 ) {
 
-    this.weightsByteOffsetBegin = weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used byte count.
+    this.weightsByteOffsetBegin = weightElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used byte count.
 
     // Calculate the total length include the extra offset.
-    let weightsTotalLength = weightsElementOffsetBegin;
+    let weightsTotalLength = weightElementOffsetBegin;
     for ( let i = 0; i < nameOrderArray.length; ++i ) {
       let name = nameOrderArray[ i ];
       let number_or_numberArray = nameNumberArrayObject[ name ];
@@ -120,11 +120,11 @@ class Base extends Recyclable.Root {
     // Concatenate all number array into a (re-used) Float32Array.
     this.prepare_weightsFloat32Array( weightsTotalLength );
     {
-      for ( let i = 0; i < this.weightsElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
+      for ( let i = 0; i < this.weightElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
         this.weightsFloat32Array[ i ] = -i;
       }
 
-      let offset = weightsElementOffsetBegin;
+      let offset = weightElementOffsetBegin;
       for ( let i = 0; i < nameOrderArray.length; ++i ) { // Concatenate all number array into a Float32Array.
         let name = nameOrderArray[ i ];
         let number_or_numberArray = nameNumberArrayObject[ name ];

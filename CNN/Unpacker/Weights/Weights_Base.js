@@ -7,11 +7,11 @@ import * as FloatValue from "../FloatValue.js";
 /**
  * A base class for weights extracting. It composes of a beninning and an ending array index.
  *
- * @member {number} weightsElementOffsetBegin
+ * @member {number} weightElementOffsetBegin
  *   The beginning position (i.e. array index) to extract from inputWeightsArray. If this value is negative, the extraction will
  * fail (i.e. ( bInitOk == false ) ).
  *
- * @member {number} weightsElementOffsetEnd
+ * @member {number} weightElementOffsetEnd
  *   The ending position (i.e. array index) after extracting from inputWeightsArray. It is not inclusive and can be used as the
  * beginning position of next (another) extraction. It is meaningful only if ( bInitOk == true ).
  *
@@ -54,22 +54,22 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
   /** @override */
   disposeResources() {
     this.bInitOk = undefined;
-    this.weightsElementOffsetEnd = undefined;
+    this.weightElementOffsetEnd = undefined;
     this.weightsElementExtractedCount = undefined;
-    this.weightsElementOffsetBegin = undefined;
+    this.weightElementOffsetBegin = undefined;
     super.disposeResources();
   }
 
   /**
-   * Determine .weightsElementOffsetEnd according to the inputWeightArray.lnegth, .weightsElementOffsetBegin and .weightsElementExtractedCount.
+   * Determine .weightElementOffsetEnd according to the inputWeightArray.lnegth, .weightElementOffsetBegin and .weightsElementExtractedCount.
    *
    * @param {number[]|Float32Array} inputWeightArray
    *   The underlying weights source array to be extracted from. It will not be kept by this object.
    *
    * @return {boolean} Return false, if extraction failed.
    */ 
-  init( inputWeightArray, weightsElementOffsetBegin, weightsElementExtractedCount ) {
-    this.weightsElementOffsetBegin = weightsElementOffsetBegin;
+  init( inputWeightArray, weightElementOffsetBegin, weightsElementExtractedCount ) {
+    this.weightElementOffsetBegin = weightElementOffsetBegin;
     this.weightsElementExtractedCount = weightsElementExtractedCount;
     this.bInitOk = false;
 
@@ -79,8 +79,8 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
     if ( this.weightsElementExtractedCount < 0 )
       return false;  // Failed, if negative.
 
-    this.weightsElementOffsetEnd = this.weightsElementOffsetBegin + this.weightsElementExtractedCount;
-    if ( this.weightsElementOffsetEnd > inputWeightArray.length )
+    this.weightElementOffsetEnd = this.weightElementOffsetBegin + this.weightsElementExtractedCount;
+    if ( this.weightElementOffsetEnd > inputWeightArray.length )
       return false;  // Failed, if out of array index range.
 
     this.bInitOk = true;

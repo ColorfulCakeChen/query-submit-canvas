@@ -9,11 +9,11 @@ import { Root } from "./Weights_Base.js";
 /**
  * The parameters for the weights of a neural network layer.
  *
- * @member {number} weightsElementOffsetBegin
+ * @member {number} weightElementOffsetBegin
  *   The beginning position (i.e. array index) to extract from inputWeightsArray. If this value is negative, the extraction will
  * fail (i.e. ( bInitOk == false ) ).
  *
- * @member {number} weightsElementOffsetEnd
+ * @member {number} weightElementOffsetEnd
  *   The ending position (i.e. array index) after extracting from inputWeightsArray. It is not inclusive and can be used as the
  * beginning position of next (another) extraction. It is meaningful only if ( bInitOk == true ).
  *
@@ -31,7 +31,7 @@ import { Root } from "./Weights_Base.js";
  *
  * @member {number[]} inputWeightArrayIndexArray
  *   A number array records where to extract parameters which is null in .initValueArray[]. Every element is the relative
- * array index into inputWeightArray[ weightsElementOffsetBegin ]. This array itself is indexed by ParamDesc.Xxx.seqId.
+ * array index into inputWeightArray[ weightElementOffsetBegin ]. This array itself is indexed by ParamDesc.Xxx.seqId.
  *
  * @member {number[]} finalValueArray
  *   An number array records the parameter values which combined both by specifying (from constructor) and by evolution (from
@@ -149,10 +149,10 @@ class Params extends Root {
    *
    * @override
    */
-  init( inputWeightArray, weightsElementOffsetBegin ) {
+  init( inputWeightArray, weightElementOffsetBegin ) {
 
     // Determine and check input weight array bounds.
-    let bBaseInitOk = super.init( inputWeightArray, weightsElementOffsetBegin, this.parameterCountExtracted );
+    let bBaseInitOk = super.init( inputWeightArray, weightElementOffsetBegin, this.parameterCountExtracted );
     if ( !bBaseInitOk )
       return false;
 
@@ -168,7 +168,7 @@ class Params extends Root {
       if ( inputWeightArrayIndex == undefined )
         continue; // This parameter has a specified value. No need to be extracted from inputWeightArray. (i.e. not by evolution)
 
-      let absoluteArrayIndex = weightsElementOffsetBegin + inputWeightArrayIndex;
+      let absoluteArrayIndex = weightElementOffsetBegin + inputWeightArrayIndex;
       let extractedValue = inputWeightArray[ absoluteArrayIndex ];
 
       let paramDesc = this.paramDescSequenceArray.array[ i ];

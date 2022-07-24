@@ -36,10 +36,10 @@ import * as Weights from "../../Unpacker/Weights.js";
  * @member {boolean} bInitOk
  *  If true, this object initialized (i.e. initer()) successfully.
  *
- * @member {number} weightsElementOffsetBegin
+ * @member {number} weightElementOffsetBegin
  *   The position which is started (inclusive) to extract from inputWeightArray by initer().
  *
- * @member {number} weightsElementOffsetEnd
+ * @member {number} weightElementOffsetEnd
  *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  * 
@@ -144,7 +144,7 @@ class AddGatherReshape extends Weights.Root {
    *   Return true, if successfully. Return false, if failed.
    *
    */
-  * init( inputWeightArray, weightsElementOffsetBegin,
+  * init( inputWeightArray, weightElementOffsetBegin,
     input_channelCount,
     channelMultiplier,
     vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,

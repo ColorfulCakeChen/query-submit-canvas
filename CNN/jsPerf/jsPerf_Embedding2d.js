@@ -34,8 +34,8 @@ class HeightWidthDepth {
 
     this.concatenatedShape = [ height, width, depth ];
 
-    this.weightsElementOffsetBegin = 3; // Skip the un-used. (in element count)
-    this.weightsByteOffsetBegin = this.weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used. (in byte count)
+    this.weightElementOffsetBegin = 3; // Skip the un-used. (in element count)
+    this.weightsByteOffsetBegin = this.weightElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used. (in byte count)
     this.vocabularyCountPerInputChannel = 256;
 
     this.dataTensor3d = tf.tidy( () => {
@@ -59,18 +59,18 @@ class HeightWidthDepth {
     let channelMultiplierEstimated = Embedding2d.Params.channelMultiplier.valueDesc.range.adjust( channelMultiplier );
 
     let wieghtsArrayLength = 
-      this.weightsElementOffsetBegin // Skip the un-used.
+      this.weightElementOffsetBegin // Skip the un-used.
         + ( depth * ( this.vocabularyCountPerInputChannel * channelMultiplierEstimated ) ) 
       ;
 
     this.weightsFloat32Array = new Float32Array( wieghtsArrayLength );
     {
-      for ( let i = 0; i < this.weightsElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
+      for ( let i = 0; i < this.weightElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
         this.weightsFloat32Array[ i ] = -i;
       }
 
-      for ( let i = this.weightsElementOffsetBegin; i < wieghtsArrayLength; ++i ) { // Make-up the embedding weight values.
-        this.weightsFloat32Array[ i ] = ( i - this.weightsElementOffsetBegin );  // For debugging more easily.
+      for ( let i = this.weightElementOffsetBegin; i < wieghtsArrayLength; ++i ) { // Make-up the embedding weight values.
+        this.weightsFloat32Array[ i ] = ( i - this.weightElementOffsetBegin );  // For debugging more easily.
 //        this.weightsFloat32Array[ i ] = Math.random() * 10;
       }
     }
@@ -267,7 +267,7 @@ class HeightWidthDepth {
             let vocabularyTableElementOffset = ( inputChannelValue * channelMultiplier_forExtract );
 
             // The embedding vocabulary element channel beginning of the vocabulary element.
-            let vocabularyTableElementChannelOffsetBase = ( this.weightsElementOffsetBegin + vocabularyTableOffset + vocabularyTableElementOffset );
+            let vocabularyTableElementChannelOffsetBase = ( this.weightElementOffsetBegin + vocabularyTableOffset + vocabularyTableElementOffset );
 
             // Output Channel
             for ( let outputChannelIndexOffset = 0; outputChannelIndexOffset < embedding2d.channelMultiplier; ++outputChannelIndexOffset ) {

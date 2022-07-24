@@ -170,10 +170,10 @@ import { Params } from "./Stage_Params.js";
  * @member {boolean} bInitOk
  *  If true, this object initialized (i.e. initer()) successfully.
  *
- * @member {number} weightsElementOffsetBegin
+ * @member {number} weightElementOffsetBegin
  *   The position which is started (inclusive) to extract from inputWeightArray by initer().
  *
- * @member {number} weightsElementOffsetEnd
+ * @member {number} weightElementOffsetEnd
  *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
@@ -260,7 +260,7 @@ class Base extends Recyclable.Root {
    *
    * @see Block.Base.initer()
    */
-  * initer( progressParent, inputWeightArray, weightsElementOffsetBegin, params, inputScaleBoundsArray0 ) {
+  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
 
     // Both MobileNetV3 and ShuffleNetV2:
     //   - They all do not use (depthwise convolution) channelMultiplier.
@@ -287,7 +287,7 @@ class Base extends Recyclable.Root {
 
     // 0. Prepare
 
-    this.weightsElementOffsetEnd = this.weightsElementOffsetBegin = weightsElementOffsetBegin;
+    this.weightElementOffsetEnd = this.weightElementOffsetBegin = weightElementOffsetBegin;
     this.bInitOk = false;
 
     // Estimate the maximum value of progress.
@@ -303,9 +303,9 @@ class Base extends Recyclable.Root {
     if ( !params )
       return false;
 
-    if ( !params.init( inputWeightArray, weightsElementOffsetBegin ) )
+    if ( !params.init( inputWeightArray, weightElementOffsetBegin ) )
       return false;  // e.g. input array does not have enough data.
-    this.weightsElementOffsetEnd = params.weightsElementOffsetEnd;
+    this.weightElementOffsetEnd = params.weightElementOffsetEnd;
 
     // Get parameters' real (adjusted) values.
     //
@@ -402,14 +402,14 @@ class Base extends Recyclable.Root {
         }
 
         block = this.blockArray[ i ] = Block.Base.Pool.get_or_create_by();
-        blockIniter = block.initer( progressForBlocks.children[ i ], inputWeightArray, this.weightsElementOffsetEnd, blockParams,
+        blockIniter = block.initer( progressForBlocks.children[ i ], inputWeightArray, this.weightElementOffsetEnd, blockParams,
           input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
           this.channelShuffler );
 
         this.bInitOk = yield* blockIniter;
         if ( !this.bInitOk )
           return false;
-        this.weightsElementOffsetEnd = block.weightsElementOffsetEnd;
+        this.weightElementOffsetEnd = block.weightElementOffsetEnd;
 
         this.tensorWeightCountTotal += block.tensorWeightCountTotal;
         this.tensorWeightCountExtracted += block.tensorWeightCountExtracted;
@@ -456,9 +456,9 @@ class Base extends Recyclable.Root {
    *
    * @see Block.Base.init()
    */
-  init( progressParent, inputWeightArray, weightsElementOffsetBegin, params, inputScaleBoundsArray0 ) {
+  init( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
 
-    let initer = this.initer( progressParent, inputWeightArray, weightsElementOffsetBegin, params, inputScaleBoundsArray0 );
+    let initer = this.initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 );
     let initerNext;
     do {
       initerNext = initer.next();
@@ -495,7 +495,7 @@ class Base extends Recyclable.Root {
 //       this.intermediateInputTensors = null;
 //     }
 
-    this.weightsElementOffsetBegin = this.weightsElementOffsetEnd = -1;
+    this.weightElementOffsetBegin = this.weightElementOffsetEnd = -1;
     this.bInitOk = false;
 
     super.disposeResources();

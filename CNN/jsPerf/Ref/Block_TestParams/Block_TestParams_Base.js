@@ -65,7 +65,7 @@ class Base extends TestParams.Base {
     this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag = Pointwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool.get_or_create_by();
     this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag = Depthwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool.get_or_create_by();
 
-//!!! (2022/07/24 Remarked) this.in is already a NameNumberArrayObject.weightArray_weightsElementOffsetBegin object.
+//!!! (2022/07/24 Remarked) this.in is already a NameNumberArrayObject.weightArray_weightElementOffsetBegin object.
     // // A pre-allocated and re-used NumberArray. (For reducing memory re-allocation.)
     // this.NumberArray_ElementOffsetBegin = NameNumberArrayObject_To_NumberArray.Base.Pool.get_or_create_by();
 
@@ -79,7 +79,7 @@ class Base extends TestParams.Base {
       this.out = null;
     }
 
-//!!! (2022/07/24 Remarked) this.in is already a NameNumberArrayObject.weightArray_weightsElementOffsetBegin object.
+//!!! (2022/07/24 Remarked) this.in is already a NameNumberArrayObject.weightArray_weightElementOffsetBegin object.
     // this.NumberArray_ElementOffsetBegin?.disposeResources_and_recycleToPool();
     // this.NumberArray_ElementOffsetBegin = null;
 
@@ -100,7 +100,7 @@ class Base extends TestParams.Base {
   /**
    * Use scattered parameters to fills the following proterties:
    *   - this.in.weightArray
-   *   - this.in.weightsElementOffsetBegin
+   *   - this.in.weightElementOffsetBegin
    *   - this.out
    *
    * @return {Base}
@@ -139,14 +139,14 @@ class Base extends TestParams.Base {
 
     Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
 
-    let weightsElementOffsetBegin = 0;
-    return this.set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin, false );
+    let weightElementOffsetBegin = 0;
+    return this.set_byParamsNumberArrayMap_ParamsOut( weightElementOffsetBegin, false );
   }
  
   /**
    * Fills the following proterties:
    *   - this.in.weightArray
-   *   - this.in.weightsElementOffsetBegin
+   *   - this.in.weightElementOffsetBegin
    *
    * @param {object} this.in.paramsNumberArrayObject
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
@@ -158,30 +158,30 @@ class Base extends TestParams.Base {
    * depthwiseFilterWidth, depthwiseStridesPad, depthwiseActivationId, pointwise20ChannelCount,
    * pointwise20ActivationId, nActivationId, bKeepInputTensor. And depthwisePadInfo.
    *
-   * @param {number} weightsElementOffsetBegin
+   * @param {number} weightElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
-   * The this.in.byteOffsetBegin will be ( 4 * weightsElementOffsetBegin ).
+   * The this.in.byteOffsetBegin will be ( 4 * weightElementOffsetBegin ).
    *
    * @return {Base}
    *   Return this object self.
    */
   set_byParamsNumberArrayMap_ParamsOut(
-    weightsElementOffsetBegin = 0, bDouble_when_ShuffleNetV2_byMobileNetV1 ) {
+    weightElementOffsetBegin = 0, bDouble_when_ShuffleNetV2_byMobileNetV1 ) {
 
     this.generate_out_inferencedParams();
     this.generate_Filters_Biases( bDouble_when_ShuffleNetV2_byMobileNetV1 );
 
-// !!! (2022/07/24 Remarked) this.in = already is weightArray_weightsElementOffsetBegin
+// !!! (2022/07/24 Remarked) this.in = already is weightArray_weightElementOffsetBegin
 //
 //     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
-//     this.NumberArray_ElementOffsetBegin.set_byConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
+//     this.NumberArray_ElementOffsetBegin.set_byConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
 //
 //     this.in.weightArray = this.NumberArray_ElementOffsetBegin.weightArray;
-//     this.in.weightsElementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightsElementOffsetBegin;
+//     this.in.weightElementOffsetBegin = this.NumberArray_ElementOffsetBegin.weightElementOffsetBegin;
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
     this.in.set_byConcat(
-      Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
+      Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
 
     return this;
   }
@@ -273,9 +273,9 @@ class Base extends TestParams.Base {
    */
   onYield_before() {
     // For testing not start at the offset 0.
-    let weightsElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
+    let weightElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
 
-    this.set_byParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin, true );
+    this.set_byParamsNumberArrayMap_ParamsOut( weightElementOffsetBegin, true );
   }
 
   /**

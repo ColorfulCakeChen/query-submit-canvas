@@ -261,7 +261,7 @@ class Base extends Recyclable.Root {
       if ( testParams.in.nConvStageTypeId == null ) { // i.e. Needs parameter nConvStageTypeId is inside .inputWeightArray.
         nConvStageTypeId_weightsElementIndex = testParams.NumberArray_ElementOffsetBegin.weightsElementIndex_find_byName(
           Stage_TestParams.Base.paramsNameOrderArray_Basic,
-          testParams.in.paramsNumberArrayObject, testParams.in.weightsElementOffsetBegin,
+          testParams.in.paramsNumberArrayObject, testParams.in.weightElementOffsetBegin,
           Stage.Params.nConvStageTypeId.paramName );
 
         testParams.in.weightArray[ nConvStageTypeId_weightsElementIndex ] = nConvStageTypeId_toBeCompared;
@@ -290,7 +290,7 @@ class Base extends Recyclable.Root {
     );
 
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-    let bInitOk = stage_toBeCompared.init( progress, testParams.in.weightArray, testParams.in.weightsElementOffsetBegin, extractedParams,
+    let bInitOk = stage_toBeCompared.init( progress, testParams.in.weightArray, testParams.in.weightElementOffsetBegin, extractedParams,
       inputScaleBoundsArray0 );
 
     if ( false == bInitOk )
@@ -411,7 +411,7 @@ class Base extends Recyclable.Root {
       testParams.in.bKeepInputTensor
     );
 
-    let bInitOk = stage.init( progress, testParams.in.weightArray, testParams.in.weightsElementOffsetBegin, extractedParams,
+    let bInitOk = stage.init( progress, testParams.in.weightArray, testParams.in.weightElementOffsetBegin, extractedParams,
       inputScaleBoundsArray0 );
 
     if ( stage.bInitOk != bInitOk )
@@ -432,17 +432,17 @@ class Base extends Recyclable.Root {
     progress.disposeResources_and_recycleToPool();
     progress = null;
 
-    if ( stage.weightsElementOffsetEnd != testParams.in.weightArray.length ) { //!!! For Debug. (parsing ending position)
+    if ( stage.weightElementOffsetEnd != testParams.in.weightArray.length ) { //!!! For Debug. (parsing ending position)
       debugger;
     }
 
     let stage_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Stage`, stage, stage );
 
     Base.AssertTwoEqualValues( "parsing beginning position",
-      stage.weightsElementOffsetBegin, testParams.in.weightsElementOffsetBegin, stage );
+      stage.weightElementOffsetBegin, testParams.in.weightElementOffsetBegin, stage );
 
     Base.AssertTwoEqualValues( "parsing ending position",
-      stage.weightsElementOffsetEnd, testParams.in.weightArray.length, stage );
+      stage.weightElementOffsetEnd, testParams.in.weightArray.length, stage );
 
     // parameters.
     stage_asserter.propertyValue( "sourceHeight", testParams.out.sourceHeight );
