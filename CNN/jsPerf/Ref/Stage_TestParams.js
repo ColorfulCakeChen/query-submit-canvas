@@ -384,7 +384,7 @@ class Base extends TestParams.Base {
     }
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
-    this.in.set_byConcat(
+    this.in_weights.set_byConcat(
       Base.paramsNameOrderArray_Basic, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
 
     return this;

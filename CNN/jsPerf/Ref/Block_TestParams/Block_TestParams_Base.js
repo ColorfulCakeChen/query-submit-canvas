@@ -169,7 +169,7 @@ class Base extends TestParams.Base {
     this.generate_Filters_Biases( bDouble_when_ShuffleNetV2_byMobileNetV1 );
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
-    this.in.set_byConcat(
+    this.in_weights.set_byConcat(
       Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
 
     return this;
