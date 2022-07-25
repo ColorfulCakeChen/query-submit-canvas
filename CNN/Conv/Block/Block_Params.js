@@ -1,4 +1,4 @@
-export { Params };
+export { Block_Params as Params };
 
 import * as Pool from "../../util/Pool.js";
 //import * as Recyclable from "../../util/Recyclable.js";
@@ -199,12 +199,12 @@ import { InferencedParams } from "./Block_InferencedParams.js";
  *   How many output tensors will be returned by the parameter outputTensors[] of Block.apply(). At least 1. At most 2.
  *
  */
-class Params extends Weights.Params {
+class Block_Params extends Weights.Params {
 
   /**
    * Used as default Block.Params provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Block.Params.Pool", Params, Params.setAsConstructor );
+  static Pool = new Pool.Root( "Block.Params.Pool", Block_Params, Block_Params.setAsConstructor );
 
   /**
    * If a parameter's value is null, it will be extracted from inputWeightArray (i.e. by evolution).
@@ -320,7 +320,7 @@ class Params extends Weights.Params {
     bKeepInputTensor
   ) {
     super(
-      Params.SequenceArray,
+      Block_Params.SequenceArray,
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
@@ -331,7 +331,7 @@ class Params extends Weights.Params {
       nActivationId,
       bKeepInputTensor
     );
-    Params.setAsConstructor_self.call( this );
+    Block_Params.setAsConstructor_self.call( this );
   }
 
   /** @override */
@@ -347,7 +347,7 @@ class Params extends Weights.Params {
     bKeepInputTensor
   ) {
     super.setAsConstructor(
-      Params.SequenceArray,
+      Block_Params.SequenceArray,
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
@@ -358,7 +358,7 @@ class Params extends Weights.Params {
       nActivationId,
       bKeepInputTensor
     );
-    Params.setAsConstructor_self.call( this );
+    Block_Params.setAsConstructor_self.call( this );
     return this;
   }
 
@@ -410,17 +410,17 @@ class Params extends Weights.Params {
     return bExtractOk;
   }
 
-  get input0_height()                        { return this.getParamValue_byParamDesc( Params.input0_height ); }
-  get input0_width()                         { return this.getParamValue_byParamDesc( Params.input0_width ); }
-  get input0_channelCount()                  { return this.getParamValue_byParamDesc( Params.input0_channelCount ); }
+  get input0_height()                        { return this.getParamValue_byParamDesc( Block_Params.input0_height ); }
+  get input0_width()                         { return this.getParamValue_byParamDesc( Block_Params.input0_width ); }
+  get input0_channelCount()                  { return this.getParamValue_byParamDesc( Block_Params.input0_channelCount ); }
 
   /** @return {number} The number version of nConvBlockTypeId. */
-  get nConvBlockTypeId()          { return this.getParamValue_byParamDesc( Params.nConvBlockTypeId ); }
+  get nConvBlockTypeId()          { return this.getParamValue_byParamDesc( Block_Params.nConvBlockTypeId ); }
 
   /** @return {string} The string version of nConvBlockTypeId. */
-  get nConvBlockTypeName()        { return Params.nConvBlockTypeId.getStringOfValue( this.nConvBlockTypeId ); }
+  get nConvBlockTypeName()        { return Block_Params.nConvBlockTypeId.getStringOfValue( this.nConvBlockTypeId ); }
 
-  get pointwise1ChannelCount()      { return this.getParamValue_byParamDesc( Params.pointwise1ChannelCount ); }
+  get pointwise1ChannelCount()      { return this.getParamValue_byParamDesc( Block_Params.pointwise1ChannelCount ); }
   get pointwise1ChannelCount_real() {
     if ( this.inferencedParams.pointwise1ChannelCount_modified != undefined )
       return this.inferencedParams.pointwise1ChannelCount_modified;
@@ -429,14 +429,14 @@ class Params extends Weights.Params {
   }
 
   /** @return {number} The number version of the depthwise opertion. */
-  get depthwise_AvgMax_Or_ChannelMultiplier() { return this.getParamValue_byParamDesc( Params.depthwise_AvgMax_Or_ChannelMultiplier ); }
+  get depthwise_AvgMax_Or_ChannelMultiplier() { return this.getParamValue_byParamDesc( Block_Params.depthwise_AvgMax_Or_ChannelMultiplier ); }
 
   /** @return {string} The string version of the depthwise opertion. */
   get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
-    return Params.depthwise_AvgMax_Or_ChannelMultiplier.getStringOfValue( this.depthwise_AvgMax_Or_ChannelMultiplier );
+    return Block_Params.depthwise_AvgMax_Or_ChannelMultiplier.getStringOfValue( this.depthwise_AvgMax_Or_ChannelMultiplier );
   }
 
-  get depthwiseFilterHeight()      { return this.getParamValue_byParamDesc( Params.depthwiseFilterHeight ); }
+  get depthwiseFilterHeight()      { return this.getParamValue_byParamDesc( Block_Params.depthwiseFilterHeight ); }
   get depthwiseFilterHeight_real() {
     if ( this.inferencedParams.depthwiseFilterHeight_modified != undefined )
       return this.inferencedParams.depthwiseFilterHeight_modified;
@@ -444,7 +444,7 @@ class Params extends Weights.Params {
       return this.depthwiseFilterHeight;
   }
 
-  get depthwiseFilterWidth()      { return this.getParamValue_byParamDesc( Params.depthwiseFilterWidth ); }
+  get depthwiseFilterWidth()      { return this.getParamValue_byParamDesc( Block_Params.depthwiseFilterWidth ); }
   get depthwiseFilterWidth_real() {
     if ( this.inferencedParams.depthwiseFilterWidth_modified != undefined )
       return this.inferencedParams.depthwiseFilterWidth_modified;
@@ -452,27 +452,27 @@ class Params extends Weights.Params {
       return this.depthwiseFilterWidth;
   }
 
-  get depthwiseStridesPad()       { return this.getParamValue_byParamDesc( Params.depthwiseStridesPad ); }
+  get depthwiseStridesPad()       { return this.getParamValue_byParamDesc( Block_Params.depthwiseStridesPad ); }
   get depthwiseStridesPadName()   { return ValueDesc.StridesPad.Singleton.getName_byId( this.depthwiseStridesPad ); }
 
-  get depthwiseActivationId()     { return this.getParamValue_byParamDesc( Params.depthwiseActivationId ); }
-  get depthwiseActivationName()   { return Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId ); }
+  get depthwiseActivationId()     { return this.getParamValue_byParamDesc( Block_Params.depthwiseActivationId ); }
+  get depthwiseActivationName()   { return Block_Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId ); }
 
-  get pointwise20ChannelCount()   { return this.getParamValue_byParamDesc( Params.pointwise20ChannelCount ); }
-  get pointwise20ActivationId()   { return this.getParamValue_byParamDesc( Params.pointwise20ActivationId ); }
-  get pointwise20ActivationName() { return Params.pointwise20ActivationId.getStringOfValue( this.pointwise20ActivationId ); }
+  get pointwise20ChannelCount()   { return this.getParamValue_byParamDesc( Block_Params.pointwise20ChannelCount ); }
+  get pointwise20ActivationId()   { return this.getParamValue_byParamDesc( Block_Params.pointwise20ActivationId ); }
+  get pointwise20ActivationName() { return Block_Params.pointwise20ActivationId.getStringOfValue( this.pointwise20ActivationId ); }
 
-  get nSqueezeExcitationChannelCountDivisor()     { return this.getParamValue_byParamDesc( Params.nSqueezeExcitationChannelCountDivisor ); }
+  get nSqueezeExcitationChannelCountDivisor()     { return this.getParamValue_byParamDesc( Block_Params.nSqueezeExcitationChannelCountDivisor ); }
   get nSqueezeExcitationChannelCountDivisorName() {
-    return Params.nSqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
+    return Block_Params.nSqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
   }
 
-  get bSqueezeExcitationPrefix()  { return this.getParamValue_byParamDesc( Params.bSqueezeExcitationPrefix ); }
+  get bSqueezeExcitationPrefix()  { return this.getParamValue_byParamDesc( Block_Params.bSqueezeExcitationPrefix ); }
 
-  get nActivationId()             { return this.getParamValue_byParamDesc( Params.nActivationId ); }
-  get nActivationName()           { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
+  get nActivationId()             { return this.getParamValue_byParamDesc( Block_Params.nActivationId ); }
+  get nActivationName()           { return Block_Params.nActivationId.getStringOfValue( this.nActivationId ); }
 
-  get bKeepInputTensor()          { return this.getParamValue_byParamDesc( Params.bKeepInputTensor ); }
+  get bKeepInputTensor()          { return this.getParamValue_byParamDesc( Block_Params.bKeepInputTensor ); }
 
 
   get output_height() {
@@ -494,15 +494,15 @@ class Params extends Weights.Params {
 
 // Define parameter descriptions.
 
-Params.input0_height =           new ParamDesc.Int(                 "input0_height",           1, ( 10 * 1024 ) );
-Params.input0_width =            new ParamDesc.Int(                 "input0_width",            1, ( 10 * 1024 ) );
+Block_Params.input0_height =           new ParamDesc.Int(                 "input0_height",           1, ( 10 * 1024 ) );
+Block_Params.input0_width =            new ParamDesc.Int(                 "input0_width",            1, ( 10 * 1024 ) );
 
 /** At least, there should be 1 input channel. */
-Params.input0_channelCount =     new ParamDesc.Int(                 "input0_channelCount",     1, ( 10 * 1024 ) );
+Block_Params.input0_channelCount =     new ParamDesc.Int(                 "input0_channelCount",     1, ( 10 * 1024 ) );
 
-Params.nConvBlockTypeId =        new ParamDesc.ConvBlockType(       "nConvBlockTypeId" );
+Block_Params.nConvBlockTypeId =        new ParamDesc.ConvBlockType(       "nConvBlockTypeId" );
 
-Params.pointwise1ChannelCount =  new ParamDesc.Int(                 "pointwise1ChannelCount",  0, ( 10 * 1024 ) );
+Block_Params.pointwise1ChannelCount =  new ParamDesc.Int(                 "pointwise1ChannelCount",  0, ( 10 * 1024 ) );
 
 /** Define depthwise operation's id, range, name.
  *
@@ -512,7 +512,7 @@ Params.pointwise1ChannelCount =  new ParamDesc.Int(                 "pointwise1C
  *   -  0: no depthwise operation. (NONE)
  *   - [ 1, 32 ]: depthwise convolution with channel multiplier between 1 and 32 (inclusive).
  */
-Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_ChannelMultiplier( "depthwise_AvgMax_Or_ChannelMultiplier" );
+Block_Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_ChannelMultiplier( "depthwise_AvgMax_Or_ChannelMultiplier" );
 
 
 /** Define suitable value for depthwise convolution filter size.
@@ -535,47 +535,47 @@ Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_ChannelMu
  * not exist.
  *
  */
-Params.depthwiseFilterHeight =    new ParamDesc.Int(                "depthwiseFilterHeight",   1, ( 10 * 1024 ) );
-Params.depthwiseFilterWidth =     new ParamDesc.Int(                "depthwiseFilterWidth",    1, ( 10 * 1024 ) );
+Block_Params.depthwiseFilterHeight =    new ParamDesc.Int(                "depthwiseFilterHeight",   1, ( 10 * 1024 ) );
+Block_Params.depthwiseFilterWidth =     new ParamDesc.Int(                "depthwiseFilterWidth",    1, ( 10 * 1024 ) );
 
-Params.depthwiseStridesPad =      new ParamDesc.StridesPad(         "depthwiseStridesPad" );
-Params.depthwiseActivationId =    new ParamDesc.ActivationFunction( "depthwiseActivationId" );
+Block_Params.depthwiseStridesPad =      new ParamDesc.StridesPad(         "depthwiseStridesPad" );
+Block_Params.depthwiseActivationId =    new ParamDesc.ActivationFunction( "depthwiseActivationId" );
 
 // Note: Force pointwise20ChannelCount always not zero. So that input0_channelCount_higherHalf could be determined
 // when
 //   - ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5)
 //   - ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6)
 //
-Params.pointwise20ChannelCount =  new ParamDesc.Int(                "pointwise20ChannelCount", 1, ( 10 * 1024 ) );
-Params.pointwise20ActivationId =  new ParamDesc.ActivationFunction( "pointwise20ActivationId" );
+Block_Params.pointwise20ChannelCount =  new ParamDesc.Int(                "pointwise20ChannelCount", 1, ( 10 * 1024 ) );
+Block_Params.pointwise20ActivationId =  new ParamDesc.ActivationFunction( "pointwise20ActivationId" );
 
-Params.nSqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
-Params.bSqueezeExcitationPrefix = new ParamDesc.Bool(               "bSqueezeExcitationPrefix" );
+Block_Params.nSqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
+Block_Params.bSqueezeExcitationPrefix = new ParamDesc.Bool(               "bSqueezeExcitationPrefix" );
 
-Params.nActivationId =            new ParamDesc.ActivationFunction(  "nActivationId" );
+Block_Params.nActivationId =            new ParamDesc.ActivationFunction(  "nActivationId" );
 
-Params.bKeepInputTensor =         new ParamDesc.Bool(               "bKeepInputTensor" );
+Block_Params.bKeepInputTensor =         new ParamDesc.Bool(               "bKeepInputTensor" );
 
 
 /**
  * Define the order of these parameters. (Fills ParamDesc.Xxx.seqId according to this array's order.)
  */
-Params.SequenceArray = new ParamDesc.SequenceArray( [
-  Params.input0_height,
-  Params.input0_width,
-  Params.input0_channelCount,
-  Params.nConvBlockTypeId,
-  Params.pointwise1ChannelCount,
-  Params.depthwise_AvgMax_Or_ChannelMultiplier,
-  Params.depthwiseFilterHeight,
-  Params.depthwiseFilterWidth,
-  Params.depthwiseStridesPad,
-  Params.depthwiseActivationId,
-  Params.pointwise20ChannelCount,
-  Params.pointwise20ActivationId,
-  Params.nSqueezeExcitationChannelCountDivisor,
-  Params.bSqueezeExcitationPrefix,
-  Params.nActivationId,
-  Params.bKeepInputTensor,
+Block_Params.SequenceArray = new ParamDesc.SequenceArray( [
+  Block_Params.input0_height,
+  Block_Params.input0_width,
+  Block_Params.input0_channelCount,
+  Block_Params.nConvBlockTypeId,
+  Block_Params.pointwise1ChannelCount,
+  Block_Params.depthwise_AvgMax_Or_ChannelMultiplier,
+  Block_Params.depthwiseFilterHeight,
+  Block_Params.depthwiseFilterWidth,
+  Block_Params.depthwiseStridesPad,
+  Block_Params.depthwiseActivationId,
+  Block_Params.pointwise20ChannelCount,
+  Block_Params.pointwise20ActivationId,
+  Block_Params.nSqueezeExcitationChannelCountDivisor,
+  Block_Params.bSqueezeExcitationPrefix,
+  Block_Params.nActivationId,
+  Block_Params.bKeepInputTensor,
 ] );
 

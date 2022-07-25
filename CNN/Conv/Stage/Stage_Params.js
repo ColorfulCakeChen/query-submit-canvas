@@ -1,4 +1,4 @@
-export { Params };
+export { Stage_Params as Params };
 
 import * as Pool from "../../util/Pool.js";
 //import * as Recyclable from "../../util/Recyclable.js";
@@ -23,12 +23,12 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *   The inferenced parameters of this stage parameters.
  *
  */
-class Params extends Weights.Params {
+class Stage_Params extends Weights.Params {
 
   /**
    * Used as default Stage.Params provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Stage.Params.Pool", Params, Params.setAsConstructor );
+  static Pool = new Pool.Root( "Stage.Params.Pool", Stage_Params, Stage_Params.setAsConstructor );
 
   /**
    * If a parameter's value is null, it will be extracted from inputWeightArray (i.e. by evolution).
@@ -136,7 +136,7 @@ class Params extends Weights.Params {
     //
 
     super(
-      Params.SequenceArray,
+      Stage_Params.SequenceArray,
       sourceHeight, sourceWidth, sourceChannelCount,
       nConvStageTypeId,
       blockCountRequested,
@@ -147,7 +147,7 @@ class Params extends Weights.Params {
       nActivationId,
       bKeepInputTensor
     );
-    Params.setAsConstructor_self.call( this );
+    Stage_Params.setAsConstructor_self.call( this );
   }
 
   /** @override */
@@ -163,7 +163,7 @@ class Params extends Weights.Params {
     bKeepInputTensor
   ) {
     super.setAsConstructor(
-      Params.SequenceArray,
+      Stage_Params.SequenceArray,
       sourceHeight, sourceWidth, sourceChannelCount,
       nConvStageTypeId,
       blockCountRequested,
@@ -174,7 +174,7 @@ class Params extends Weights.Params {
       nActivationId,
       bKeepInputTensor
     );
-    Params.setAsConstructor_self.call( this );
+    Stage_Params.setAsConstructor_self.call( this );
     return this;
   }
 
@@ -221,76 +221,73 @@ class Params extends Weights.Params {
     return bExtractOk;
   }
 
-  get sourceHeight()              { return this.getParamValue_byParamDesc( Params.sourceHeight ); }
-  get sourceWidth()               { return this.getParamValue_byParamDesc( Params.sourceWidth ); }
-  get sourceChannelCount()        { return this.getParamValue_byParamDesc( Params.sourceChannelCount ); }
+  get sourceHeight()              { return this.getParamValue_byParamDesc( Stage_Params.sourceHeight ); }
+  get sourceWidth()               { return this.getParamValue_byParamDesc( Stage_Params.sourceWidth ); }
+  get sourceChannelCount()        { return this.getParamValue_byParamDesc( Stage_Params.sourceChannelCount ); }
 
   /** @return {number} The number version of nConvStageTypeId. */
-  get nConvStageTypeId()          { return this.getParamValue_byParamDesc( Params.nConvStageTypeId ); }
+  get nConvStageTypeId()          { return this.getParamValue_byParamDesc( Stage_Params.nConvStageTypeId ); }
 
   /** @return {string} The string version of nConvStageTypeId. */
-  get nConvStageTypeName()        { return Params.nConvStageTypeId.getStringOfValue( this.nConvStageTypeId ); }
+  get nConvStageTypeName()        { return Stage_Params.nConvStageTypeId.getStringOfValue( this.nConvStageTypeId ); }
 
-  get blockCountRequested()       { return this.getParamValue_byParamDesc( Params.blockCountRequested ); }
-  get bPointwise1()               { return this.getParamValue_byParamDesc( Params.bPointwise1 ); }
+  get blockCountRequested()       { return this.getParamValue_byParamDesc( Stage_Params.blockCountRequested ); }
+  get bPointwise1()               { return this.getParamValue_byParamDesc( Stage_Params.bPointwise1 ); }
 
-  get depthwiseFilterHeight()     { return this.getParamValue_byParamDesc( Params.depthwiseFilterHeight ); }
-  get depthwiseFilterWidth()      { return this.getParamValue_byParamDesc( Params.depthwiseFilterWidth ); }
+  get depthwiseFilterHeight()     { return this.getParamValue_byParamDesc( Stage_Params.depthwiseFilterHeight ); }
+  get depthwiseFilterWidth()      { return this.getParamValue_byParamDesc( Stage_Params.depthwiseFilterWidth ); }
 
-  get bPointwise2ActivatedAtStageEnd() { return this.getParamValue_byParamDesc( Params.bPointwise2ActivatedAtStageEnd ); }
+  get bPointwise2ActivatedAtStageEnd() { return this.getParamValue_byParamDesc( Stage_Params.bPointwise2ActivatedAtStageEnd ); }
 
-  get nSqueezeExcitationChannelCountDivisor()     { return this.getParamValue_byParamDesc( Params.nSqueezeExcitationChannelCountDivisor ); }
+  get nSqueezeExcitationChannelCountDivisor()     { return this.getParamValue_byParamDesc( Stage_Params.nSqueezeExcitationChannelCountDivisor ); }
   get nSqueezeExcitationChannelCountDivisorName() {
-    return Params.nSqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
+    return Stage_Params.nSqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
   }
 
-  //!!! (2022/07/14 Remarked) Stage.BlockParamsCreator will determine it.
-  //get bSqueezeExcitationPrefix()  { return this.getParamValue_byParamDesc( Params.bSqueezeExcitationPrefix ); }
+  get nActivationId()             { return this.getParamValue_byParamDesc( Stage_Params.nActivationId ); }
+  get nActivationName()           { return Stage_Params.nActivationId.getStringOfValue( this.nActivationId ); }
 
-  get nActivationId()             { return this.getParamValue_byParamDesc( Params.nActivationId ); }
-  get nActivationName()           { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
-
-  get bKeepInputTensor()          { return this.getParamValue_byParamDesc( Params.bKeepInputTensor ); }
+  get bKeepInputTensor()          { return this.getParamValue_byParamDesc( Stage_Params.bKeepInputTensor ); }
 }
 
 
 // Define parameter descriptions.
-Params.sourceHeight =                   new ParamDesc.Int(                "sourceHeight",               1, ( 10 * 1024 ) );
-Params.sourceWidth =                    new ParamDesc.Int(                "sourceWidth",                1, ( 10 * 1024 ) );
-Params.sourceChannelCount =             new ParamDesc.Int(                "sourceChannelCount",         1, ( 10 * 1024 ) );
+Stage_Params.sourceHeight =                   new ParamDesc.Int(                "sourceHeight",               1, ( 10 * 1024 ) );
+Stage_Params.sourceWidth =                    new ParamDesc.Int(                "sourceWidth",                1, ( 10 * 1024 ) );
+Stage_Params.sourceChannelCount =             new ParamDesc.Int(                "sourceChannelCount",         1, ( 10 * 1024 ) );
 
-Params.nConvStageTypeId =               new ParamDesc.ConvStageType(      "nConvStageTypeId" );
+Stage_Params.nConvStageTypeId =               new ParamDesc.ConvStageType(      "nConvStageTypeId" );
 
-Params.blockCountRequested =            new ParamDesc.Int(                "blockCountRequested",        2, (  1 * 1024 ) );
-Params.bPointwise1 =                    new ParamDesc.Bool(               "bPointwise1" );
-Params.depthwiseFilterHeight =          new ParamDesc.Int(                "depthwiseFilterHeight",      1, ( 10 * 1024 ) );
-Params.depthwiseFilterWidth =           new ParamDesc.Int(                "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
-Params.bPointwise2ActivatedAtStageEnd = new ParamDesc.Bool(               "bPointwise2ActivatedAtStageEnd" );
+Stage_Params.blockCountRequested =            new ParamDesc.Int(                "blockCountRequested",        2, (  1 * 1024 ) );
+Stage_Params.bPointwise1 =                    new ParamDesc.Bool(               "bPointwise1" );
+Stage_Params.depthwiseFilterHeight =          new ParamDesc.Int(                "depthwiseFilterHeight",      1, ( 10 * 1024 ) );
+Stage_Params.depthwiseFilterWidth =           new ParamDesc.Int(                "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
+Stage_Params.bPointwise2ActivatedAtStageEnd = new ParamDesc.Bool(               "bPointwise2ActivatedAtStageEnd" );
 
-Params.nSqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
-//Params.bSqueezeExcitationPrefix =       new ParamDesc.Bool(               "bSqueezeExcitationPrefix" );
+Stage_Params.nSqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
+//Stage_Params.bSqueezeExcitationPrefix =       new ParamDesc.Bool(               "bSqueezeExcitationPrefix" );
 
-Params.nActivationId =                  new ParamDesc.ActivationFunction( "nActivationId" );
+Stage_Params.nActivationId =                  new ParamDesc.ActivationFunction( "nActivationId" );
 
-Params.bKeepInputTensor =               new ParamDesc.Bool(               "bKeepInputTensor" );
+Stage_Params.bKeepInputTensor =               new ParamDesc.Bool(               "bKeepInputTensor" );
 
 
 
 /**
  * Define the order of these parameters. (Fills ParamDesc.Xxx.seqId according to this array's order.)
  */
-Params.SequenceArray = new ParamDesc.SequenceArray( [
-  Params.sourceHeight,
-  Params.sourceWidth,
-  Params.sourceChannelCount,
-  Params.nConvStageTypeId,
-  Params.blockCountRequested,
-  Params.bPointwise1,
-  Params.depthwiseFilterHeight,
-  Params.depthwiseFilterWidth,
-  Params.bPointwise2ActivatedAtStageEnd,
-  Params.nSqueezeExcitationChannelCountDivisor,
-  Params.nActivationId,
-  Params.bKeepInputTensor,
+Stage_Params.SequenceArray = new ParamDesc.SequenceArray( [
+  Stage_Params.sourceHeight,
+  Stage_Params.sourceWidth,
+  Stage_Params.sourceChannelCount,
+  Stage_Params.nConvStageTypeId,
+  Stage_Params.blockCountRequested,
+  Stage_Params.bPointwise1,
+  Stage_Params.depthwiseFilterHeight,
+  Stage_Params.depthwiseFilterWidth,
+  Stage_Params.bPointwise2ActivatedAtStageEnd,
+  Stage_Params.nSqueezeExcitationChannelCountDivisor,
+  Stage_Params.nActivationId,
+  Stage_Params.bKeepInputTensor,
 ] );
 

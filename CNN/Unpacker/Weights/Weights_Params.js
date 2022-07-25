@@ -1,4 +1,4 @@
-export { Params };
+export { Weights_Params as Params };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -51,12 +51,12 @@ import { Root } from "./Weights_Base.js";
  *
  * @see Weights.Base
  */
-class Params extends Root {
+class Weights_Params extends Root {
 
   /**
    * Used as default Weights.Params provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Weights.Params.Pool", Params, Params.setAsConstructor );
+  static Pool = new Pool.Root( "Weights.Params.Pool", Weights_Params, Weights_Params.setAsConstructor );
 
   /**
    *
@@ -72,13 +72,13 @@ class Params extends Root {
    */
   constructor( paramDescSequenceArray, ...restArgs ) {
     super();
-    Params.setAsConstructor_self.call( this, paramDescSequenceArray, ...restArgs );
+    Weights_Params.setAsConstructor_self.call( this, paramDescSequenceArray, ...restArgs );
    }
 
   /** @override */
   static setAsConstructor( paramDescSequenceArray, ...restArgs ) {
     super.setAsConstructor();
-    Params.setAsConstructor_self.call( this, paramDescSequenceArray, ...restArgs );
+    Weights_Params.setAsConstructor_self.call( this, paramDescSequenceArray, ...restArgs );
     return this;
   }
 
