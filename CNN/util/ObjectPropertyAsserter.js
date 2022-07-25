@@ -1,4 +1,4 @@
-export { Base };
+export { ObjectPropertyAsserter_Base as NameNumberArrayObject_Base };
 
 import * as Pool from "./Pool.js";
 import * as Recyclable from "./Recyclable.js";
@@ -6,12 +6,13 @@ import * as Recyclable from "./Recyclable.js";
 /**
  * Assert an object's properties.
  */
-class Base extends Recyclable.Root {
+class NameNumberArrayObject_Base extends Recyclable.Root {
 
   /**
    * Used as default ObjectPropertyAsserter.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "ObjectPropertyAsserter.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "ObjectPropertyAsserter.Base.Pool",
+    NameNumberArrayObject_Base, NameNumberArrayObject_Base.setAsConstructor );
 
   /**
    * @param {string} objectName
@@ -25,13 +26,13 @@ class Base extends Recyclable.Root {
    */
   constructor( objectName, object, contextDescription ) {
     super();
-    Base.setAsConstructor_self.call( this, objectName, object, contextDescription );
+    NameNumberArrayObject_Base.setAsConstructor_self.call( this, objectName, object, contextDescription );
   }
 
   /** @override */
   static setAsConstructor( objectName, object, contextDescription ) {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this, objectName, object, contextDescription );
+    NameNumberArrayObject_Base.setAsConstructor_self.call( this, objectName, object, contextDescription );
     return this;
   }
 

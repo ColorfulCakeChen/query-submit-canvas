@@ -1,4 +1,4 @@
-export { Base, Out };
+export { Stage_TestParams_Base as Base, Out };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -204,34 +204,30 @@ class Out extends Recyclable.Root {
  * @member {object[]} blockArray
  *   Every element is an Block_TestParams object for the parameters of the block.
  */
-class Base extends TestParams.Base {
+class Stage_TestParams_Base extends TestParams.Base {
 
   /**
    * Used as default Stage_TestParams.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Stage_TestParams.Base.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "Stage_TestParams.Base.Pool", Stage_TestParams_Base, Stage_TestParams_Base.setAsConstructor );
 
   /**
    */
   constructor( id ) {
     super( id );
-    Base.setAsConstructor_self.call( this );
+    Stage_TestParams_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor( id ) {
     super.setAsConstructor( id );
-    Base.setAsConstructor_self.call( this );
+    Stage_TestParams_Base.setAsConstructor_self.call( this );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self() {
     this.blockArray = Recyclable.OwnerArray.Pool.get_or_create_by();
-
-//!!! (2022/07/24 Remarked) this.in is already a NameNumberArrayObject.weightArray_weightElementOffsetBegin object.
-//    // A pre-allocated and re-used NumberArray. (For reducing memory re-allocation.)
-//    this.NumberArray_ElementOffsetBegin = NameNumberArrayObject_To_NumberArray.Base.Pool.get_or_create_by();
 
     this.out = Out.Pool.get_or_create_by();
   }
@@ -242,10 +238,6 @@ class Base extends TestParams.Base {
       this.out.disposeResources_and_recycleToPool();
       this.out = null;
     }
-
-//!!! (2022/07/24 Remarked) this.in is already a NameNumberArrayObject.weightArray_weightElementOffsetBegin object.
-    // this.NumberArray_ElementOffsetBegin?.disposeResources_and_recycleToPool();
-    // this.NumberArray_ElementOffsetBegin = null;
 
     this.blockArray?.disposeResources_and_recycleToPool();
     this.blockArray = null;
@@ -322,7 +314,7 @@ class Base extends TestParams.Base {
    *   Offset how many elements (4 bytes per element) at the beginning of the result inputWeightArray.
    * The this.in.byteOffsetBegin will be ( 4 * weightElementOffsetBegin ).
    *
-   * @return {Base}
+   * @return {Stage_TestParams_Base}
    *   Return this object self.
    */
   set_byParamsNumberArrayMap_ParamsOut( weightElementOffsetBegin = 0 ) {
@@ -385,7 +377,7 @@ class Base extends TestParams.Base {
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
     this.in_weights.set_byConcat(
-      Base.paramsNameOrderArray_Basic, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
+      Stage_TestParams_Base.paramsNameOrderArray_Basic, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
 
     return this;
   }
@@ -563,7 +555,7 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Stage.Params.bKeepInputTensor,               this.valueOutMinMax.bKeepInputTensor ),
     ];
 
-    yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
+    yield *Stage_TestParams_Base.ParamsGenerator.call( this, paramDescConfigArray );
   }
 
 }
@@ -574,7 +566,7 @@ class Base extends TestParams.Base {
  *
  * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Stage.initer().
  */
-Base.paramsNameOrderArray_Basic = [
+Stage_TestParams_Base.paramsNameOrderArray_Basic = [
   Stage.Params.sourceHeight.paramName,
   Stage.Params.sourceWidth.paramName,
   Stage.Params.sourceChannelCount.paramName,

@@ -1,4 +1,4 @@
-export { Base };
+export { Net_Base as Base };
 
 //import * as NetProgress from "./NetProgress.js";
 import * as NetConfig from "../NetConfig.js";
@@ -23,7 +23,7 @@ import * as ConvStage from "../Conv/Stage.js";
  * @member {number[]} sourceImageHeightWidth
  *   The size (i.e. [ height, width ]) of the source image. When apply_and_destroy_or_keep() is called, the input tensor should be this size.
  */
-class Base {
+class Net_Base {
 
   /**
    * @param {NetConfig.Base} config

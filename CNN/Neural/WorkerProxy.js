@@ -7,7 +7,7 @@
 import * as NeuralNetProgress from "./NetProgress.js";
 //import * as GVizTQ from "../util/GVizTQ.js";
 
-export { PendingPromiseInfo, Base };
+export { PendingPromiseInfo, WorkerProxy_Base as Base };
 
 
 /**
@@ -55,7 +55,7 @@ class ProcessRelayPromises {
  * @member {Worker} worker                The worker.
  * @member {Map}    pendingPromiseInfoMap The map for promise of the unhandled processing.
  */
-class Base {
+class WorkerProxy_Base {
 
   /**
    * Initialize this worker proxy. It will create one web worker and inform it to create one neural network.
@@ -97,7 +97,7 @@ class Base {
     this.workerOptions = null;
 
     let worker = this.worker = new Worker( this.workerURL, this.workerOptions );
-    worker.onmessage = Base.onmessage_fromWorker.bind( this ); // Register callback from the web worker.
+    worker.onmessage = WorkerProxy_Base.onmessage_fromWorker.bind( this ); // Register callback from the web worker.
 
     // Worker Initialization message.
     let message = {

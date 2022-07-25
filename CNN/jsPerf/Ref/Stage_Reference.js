@@ -1,4 +1,4 @@
-export { Base };
+export { Stage_Reference_Base as Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";

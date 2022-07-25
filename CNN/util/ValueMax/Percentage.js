@@ -1,4 +1,4 @@
-export { Base };
+export { ValueMax_Percentage_Base as Base };
 export { Concrete };
 export { Aggregate };
 
@@ -12,25 +12,26 @@ import * as Recyclable from "../Recyclable.js";
  *
  * @member {Percentage.Base} parent The direct parent Percentage.Base of this Percentage.Base.
  */
-class Base extends Recyclable.Root {
+class ValueMax_Percentage_Base extends Recyclable.Root {
 
   /**
    * Used as default ValueMax.Percentage.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "ValueMax.Percentage.Base.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "ValueMax.Percentage.Base.Pool",
+    ValueMax_Percentage_Base, ValueMax_Percentage_Base.setAsConstructor );
 
   /**
    *
    */
   constructor() {
     super();
-    Base.setAsConstructor_self.call( this );
+    ValueMax_Percentage_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this );
+    ValueMax_Percentage_Base.setAsConstructor_self.call( this );
     return this;
   }
 
@@ -88,7 +89,7 @@ class Base extends Recyclable.Root {
  * @member {number} value A positive number between [ 0, max ]. Usually, caller will increase it.
  * @member {number} max   A positive number indicates the maximum value of this.value.
  */
-class Concrete extends Base {
+class Concrete extends ValueMax_Percentage_Base {
 
   /**
    * Used as default ValueMax.Percentage.Concrete provider for conforming to Recyclable interface.
@@ -153,7 +154,7 @@ class Concrete extends Base {
  * @member {Percentage.Base[]} children
  *   An array of Percentage.Base which will be aggregated. Their parent will be set to this Percentage.Aggregate.
  */
-class Aggregate extends Base {
+class Aggregate extends ValueMax_Percentage_Base {
 
   /**
    * Used as default ValueMax.Percentage.Aggregate provider for conforming to Recyclable interface.

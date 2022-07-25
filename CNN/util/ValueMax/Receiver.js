@@ -1,7 +1,7 @@
-export { Base, HTMLProgress };
+export { ValueMax_Receiver_Base as Base, HTMLProgress };
 
 /** Do nothing when receives value, max and done. */
-class Base {
+class ValueMax_Receiver_Base {
   /**
    * @param {number} value The current value.
    * @param {number} max   The maximum value.
@@ -26,12 +26,12 @@ class Base {
 }
 
 /** Dummy receiver which discards all information. */
-Base.dummy = new Base();
+ValueMax_Receiver_Base.dummy = new ValueMax_Receiver_Base();
 
 /**
  * Report progress to HTMLProgressElement.
  */
-class HTMLProgress extends Base {
+class HTMLProgress extends ValueMax_Receiver_Base {
   /** @param {HTMLProgressElement} htmlProgress The HTMLProgressElement for reporting progress. can not null. */
   constructor(htmlProgress) {
     super();
@@ -80,7 +80,7 @@ class HTMLProgress extends Base {
  * @param {string} htmlProgressTitle The title of HTMLProgressElement.
  * @return
  *   Return a new ProgressReceiver.HTMLProgress, if found.
- *   Return the shared ProgressReceiver.Base.dummy, If not found.
+ *   Return the shared ProgressReceiver.ValueMax_Receiver_Base.dummy, If not found.
  */
 HTMLProgress.createByTitle_or_getDummy = function (htmlProgressTitle) {
   if (htmlProgressTitle) {

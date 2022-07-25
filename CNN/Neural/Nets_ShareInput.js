@@ -2,7 +2,7 @@ import * as Net from "./Net.js";
 import * as WorkerProxies from "./WorkerProxies.js";
 
 export { Config } from "./Net.js";
-export { Base };
+export { Nets_ShareInput_Base as Base };
 
 //!!! ...unfinished... (2022/04/20)
 // Since it is slow to transfer data between CPU and GPU (for WebGL), it seems not feasible to use multiple workers
@@ -29,7 +29,7 @@ export { Base };
  *   The size (i.e. [ height, width ]) of the source image. When apply() is called, the source image will be extracted from the sourceCanvas
  * and be resized to this size. Every neural network receives this resized source image.
  */
-class Base {
+class Nets_ShareInput_Base {
 
   /**
    * @param {Net.Config} neuralNetConfig

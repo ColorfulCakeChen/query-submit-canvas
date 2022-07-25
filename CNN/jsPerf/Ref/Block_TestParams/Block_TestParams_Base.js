@@ -1,4 +1,4 @@
-export { Base };
+export { Block_TestParams_Base as Base };
 
 import * as Pool from "../../../util/Pool.js";
 import * as Recyclable from "../../../util/Recyclable.js";
@@ -31,31 +31,32 @@ import { Out } from "./Block_TestParams_Out.js";
  *
  * @member {object} io_paramsNumberArrayObject
  *   An object. It is a map from a string name (e.g. parameter name) to a number array. The name should be one of
- * Base.paramsNameOrderArray[] elements.
+ * Block_TestParams_Base.paramsNameOrderArray[] elements.
  *
  * @member {object} out
  *   The "out" sub-object's data members represent the "should-be" result of Block.Params's extract().
  * That is, it has the above data members except paramsNumberArrayObject, inputWeightArray, byteOffsetBegin.
  *
  */
-class Base extends TestParams.Base {
+class Block_TestParams_Base extends TestParams.Base {
 
   /**
    * Used as default Block_TestParams.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Block_TestParams.Base.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "Block_TestParams.Base.Pool",
+    Block_TestParams_Base, Block_TestParams_Base.setAsConstructor );
 
   /**
    */
   constructor( id ) {
     super( id );
-    Base.setAsConstructor_self.call( this );
+    Block_TestParams_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor( id ) {
     super.setAsConstructor( id );
-    Base.setAsConstructor_self.call( this );
+    Block_TestParams_Base.setAsConstructor_self.call( this );
     return this;
   }
 
@@ -63,10 +64,6 @@ class Base extends TestParams.Base {
   static setAsConstructor_self() {
     this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag = Pointwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool.get_or_create_by();
     this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag = Depthwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool.get_or_create_by();
-
-//!!! (2022/07/24 Remarked) this.in is already a NameNumberArrayObject.weightArray_weightElementOffsetBegin object.
-    // // A pre-allocated and re-used NumberArray. (For reducing memory re-allocation.)
-    // this.NumberArray_ElementOffsetBegin = NameNumberArrayObject_To_NumberArray.Base.Pool.get_or_create_by();
 
     this.out = Out.Pool.get_or_create_by();
   }
@@ -147,7 +144,7 @@ class Base extends TestParams.Base {
    *
    * @param {object} this.in.paramsNumberArrayObject
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
-   * The name should be one of Base.paramsNameOrderArray[] elements.
+   * The name should be one of Block_TestParams_Base.paramsNameOrderArray[] elements.
    *
    * @param {object} this.out
    *   An object which has the following data members: input0_height, input0_width, input0_channelCount, nConvBlockTypeId,
@@ -170,7 +167,7 @@ class Base extends TestParams.Base {
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
     this.in_weights.set_byConcat(
-      Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
+      Block_TestParams_Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
 
     return this;
   }
@@ -1205,7 +1202,7 @@ class Base extends TestParams.Base {
     // 1. Pointwise1
     let pointwise1_resultOutputChannelCount = this.generate_pointwise_filters_biases( input0_channelCount_for_generating,
       pointwise1ChannelCount_for_generating, paramsAll.inferencedParams.pointwise1Bias,
-      Base.PropertyNames.pointwise1, io_paramsNumberArrayObject );
+      Block_TestParams_Base.PropertyNames.pointwise1, io_paramsNumberArrayObject );
 
     // 2. Depthwise
     let depthwise1_resultOutputChannelCount;
@@ -1220,10 +1217,10 @@ class Base extends TestParams.Base {
         depthwise1_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise1_inputChannelCount,
           paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight_real, paramsAll.depthwiseFilterWidth_real,
           paramsAll.depthwiseStridesPad, paramsAll.inferencedParams.depthwiseBias,
-          Base.PropertyNames.depthwise1, io_paramsNumberArrayObject );
+          Block_TestParams_Base.PropertyNames.depthwise1, io_paramsNumberArrayObject );
       } else {
         depthwise1_resultOutputChannelCount = depthwise1_inputChannelCount;
-        this.generate_depthwise_filters_biases( null, 0, null, null, null, null, Base.PropertyNames.depthwise1, io_paramsNumberArrayObject );
+        this.generate_depthwise_filters_biases( null, 0, null, null, null, null, Block_TestParams_Base.PropertyNames.depthwise1, io_paramsNumberArrayObject );
       }
     }
 
@@ -1242,16 +1239,16 @@ class Base extends TestParams.Base {
           depthwise2_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise2_inputChannelCount,
             paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight_real, paramsAll.depthwiseFilterWidth_real,
             paramsAll.depthwiseStridesPad, paramsAll.inferencedParams.depthwiseBias,
-            Base.PropertyNames.depthwise2, io_paramsNumberArrayObject );
+            Block_TestParams_Base.PropertyNames.depthwise2, io_paramsNumberArrayObject );
         } else {
           depthwise2_resultOutputChannelCount = depthwise2_inputChannelCount;
           this.generate_depthwise_filters_biases( null, 0, null, null, null, null,
-            Base.PropertyNames.depthwise2, io_paramsNumberArrayObject );
+            Block_TestParams_Base.PropertyNames.depthwise2, io_paramsNumberArrayObject );
         }
 
       // no depthwise2.
       } else {
-        this.generate_depthwise_filters_biases( null, 0, null, null, null, null, Base.PropertyNames.depthwise2, io_paramsNumberArrayObject );
+        this.generate_depthwise_filters_biases( null, 0, null, null, null, null, Block_TestParams_Base.PropertyNames.depthwise2, io_paramsNumberArrayObject );
       }
     }
 
@@ -1346,13 +1343,13 @@ class Base extends TestParams.Base {
       this.generate_squeezeExcitation_filters_biases(
         paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.nActivationId,
         pointwise20_inputChannelCount, pointwise202_inputChannelCount, pointwise21_inputChannelCount,
-        Base.PropertyNames.pointwise2PrefixSE, io_paramsNumberArrayObject );
+        Block_TestParams_Base.PropertyNames.pointwise2PrefixSE, io_paramsNumberArrayObject );
 
     } else { // 4.2 Clear all prefix squeeze-and-excitation.
       this.generate_squeezeExcitation_filters_biases(
         paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.nActivationId,
         0, 0, 0,
-        Base.PropertyNames.pointwise2PrefixSE, io_paramsNumberArrayObject );
+        Block_TestParams_Base.PropertyNames.pointwise2PrefixSE, io_paramsNumberArrayObject );
     }
 
     // 5. Pointwise2
@@ -1360,21 +1357,21 @@ class Base extends TestParams.Base {
     // 5.1 Pointwise20
     //
     // Note: Even if ( Xxx_outputChannelCount == 0 ), the .generate_pointwise_filters_biases() still needs to be called
-    //       to clear old them (because TestParams.Base.permuteParamRecursively() may not know them and may not clear them.
+    //       to clear old them (because TestParams.Block_TestParams_Base.permuteParamRecursively() may not know them and may not clear them.
     {
       let pointwise20_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise20_inputChannelCount,
         pointwise20_outputChannelCount, paramsAll.inferencedParams.pointwise20Bias,
-        Base.PropertyNames.pointwise20, io_paramsNumberArrayObject );
+        Block_TestParams_Base.PropertyNames.pointwise20, io_paramsNumberArrayObject );
 
       let pointwise202_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise202_inputChannelCount,
         pointwise202_outputChannelCount, paramsAll.inferencedParams.pointwise20Bias,
-        Base.PropertyNames.pointwise202, io_paramsNumberArrayObject );
+        Block_TestParams_Base.PropertyNames.pointwise202, io_paramsNumberArrayObject );
     }
 
     // 5.2 Pointwise21
     {
       let pointwise21_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise21_inputChannelCount,
-        pointwise21_outputChannelCount, pointwise21Bias, Base.PropertyNames.pointwise21, io_paramsNumberArrayObject );
+        pointwise21_outputChannelCount, pointwise21Bias, Block_TestParams_Base.PropertyNames.pointwise21, io_paramsNumberArrayObject );
     }
 
     // 6. Pointwise2's postfix squeeze-and-excitation
@@ -1386,13 +1383,13 @@ class Base extends TestParams.Base {
       this.generate_squeezeExcitation_filters_biases(
         paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.nActivationId,
         pointwise20_outputChannelCount, pointwise202_outputChannelCount, pointwise21_outputChannelCount,
-        Base.PropertyNames.pointwise2PostfixSE, io_paramsNumberArrayObject );
+        Block_TestParams_Base.PropertyNames.pointwise2PostfixSE, io_paramsNumberArrayObject );
 
     } else { // 6.2 Clear all postfix squeeze-and-excitation.
       this.generate_squeezeExcitation_filters_biases(
         paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.nActivationId,
         0, 0, 0,
-        Base.PropertyNames.pointwise2PostfixSE, io_paramsNumberArrayObject );
+        Block_TestParams_Base.PropertyNames.pointwise2PostfixSE, io_paramsNumberArrayObject );
     }
   }
 
@@ -1415,16 +1412,16 @@ class Base extends TestParams.Base {
 }
 
 
-Base.PropertyNames = {};
-Base.PropertyNames.pointwise1 = { Filters: "pointwise1Filters", Biases: "pointwise1Biases" };
-Base.PropertyNames.depthwise1 = { Filters: "depthwise1Filters", Biases: "depthwise1Biases" };
-Base.PropertyNames.depthwise2 = { Filters: "depthwise2Filters", Biases: "depthwise2Biases" };
+Block_TestParams_Base.PropertyNames = {};
+Block_TestParams_Base.PropertyNames.pointwise1 = { Filters: "pointwise1Filters", Biases: "pointwise1Biases" };
+Block_TestParams_Base.PropertyNames.depthwise1 = { Filters: "depthwise1Filters", Biases: "depthwise1Biases" };
+Block_TestParams_Base.PropertyNames.depthwise2 = { Filters: "depthwise2Filters", Biases: "depthwise2Biases" };
 
-Base.PropertyNames.pointwise20 =  { Filters: "pointwise20Filters",  Biases: "pointwise20Biases" };
-Base.PropertyNames.pointwise202 = { Filters: "pointwise202Filters", Biases: "pointwise202Biases" };
-Base.PropertyNames.pointwise21 =  { Filters: "pointwise21Filters",  Biases: "pointwise21Biases" };
+Block_TestParams_Base.PropertyNames.pointwise20 =  { Filters: "pointwise20Filters",  Biases: "pointwise20Biases" };
+Block_TestParams_Base.PropertyNames.pointwise202 = { Filters: "pointwise202Filters", Biases: "pointwise202Biases" };
+Block_TestParams_Base.PropertyNames.pointwise21 =  { Filters: "pointwise21Filters",  Biases: "pointwise21Biases" };
 
-Base.PropertyNames.pointwise2PrefixSE = [
+Block_TestParams_Base.PropertyNames.pointwise2PrefixSE = [
   { // pointwise20's prefix squeeze-and-excitation
     Intermediate: { Filters: "pointwise20PrefixSEIntermediateFilters",  Biases: "pointwise20PrefixSEIntermediateBiases" },
     Excitation:   { Filters: "pointwise20PrefixSEExcitationFilters",    Biases: "pointwise20PrefixSEExcitationBiases" },
@@ -1441,7 +1438,7 @@ Base.PropertyNames.pointwise2PrefixSE = [
   },
 ];
 
-Base.PropertyNames.pointwise2PostfixSE = [
+Block_TestParams_Base.PropertyNames.pointwise2PostfixSE = [
   { // pointwise20's postfix squeeze-and-excitation
     Intermediate: { Filters: "pointwise20PostfixSEIntermediateFilters",  Biases: "pointwise20PostfixSEIntermediateBiases" },
     Excitation:   { Filters: "pointwise20PostfixSEExcitationFilters",    Biases: "pointwise20PostfixSEExcitationBiases" },
@@ -1464,7 +1461,7 @@ Base.PropertyNames.pointwise2PostfixSE = [
  *
  * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Block.initer().
  */
-Base.paramsNameOrderArray = [
+Block_TestParams_Base.paramsNameOrderArray = [
   Block.Params.input0_height.paramName,
   Block.Params.input0_width.paramName,
   Block.Params.input0_channelCount.paramName,
@@ -1483,59 +1480,59 @@ Base.paramsNameOrderArray = [
 
   Block.Params.bKeepInputTensor.paramName,
 
-  Base.PropertyNames.pointwise1.Filters,
-  Base.PropertyNames.pointwise1.Biases,
+  Block_TestParams_Base.PropertyNames.pointwise1.Filters,
+  Block_TestParams_Base.PropertyNames.pointwise1.Biases,
 
-  Base.PropertyNames.depthwise1.Filters,
-  Base.PropertyNames.depthwise1.Biases,
+  Block_TestParams_Base.PropertyNames.depthwise1.Filters,
+  Block_TestParams_Base.PropertyNames.depthwise1.Biases,
 
-  Base.PropertyNames.depthwise2.Filters,
-  Base.PropertyNames.depthwise2.Biases,
+  Block_TestParams_Base.PropertyNames.depthwise2.Filters,
+  Block_TestParams_Base.PropertyNames.depthwise2.Biases,
 
-  Base.PropertyNames.pointwise2PrefixSE[ 0 ].Intermediate.Filters, // pointwise20's prefix squeeze-and-excitation's intermediate pointwise
-  Base.PropertyNames.pointwise2PrefixSE[ 0 ].Intermediate.Biases,
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 0 ].Intermediate.Filters, // pointwise20's prefix squeeze-and-excitation's intermediate pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 0 ].Intermediate.Biases,
 
-  Base.PropertyNames.pointwise2PrefixSE[ 1 ].Intermediate.Filters, // pointwise202's prefix squeeze-and-excitation's intermediate pointwise
-  Base.PropertyNames.pointwise2PrefixSE[ 1 ].Intermediate.Biases,
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 1 ].Intermediate.Filters, // pointwise202's prefix squeeze-and-excitation's intermediate pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 1 ].Intermediate.Biases,
 
-  Base.PropertyNames.pointwise2PrefixSE[ 2 ].Intermediate.Filters, // pointwise21's prefix squeeze-and-excitation's intermediate pointwise
-  Base.PropertyNames.pointwise2PrefixSE[ 2 ].Intermediate.Biases,
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 2 ].Intermediate.Filters, // pointwise21's prefix squeeze-and-excitation's intermediate pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 2 ].Intermediate.Biases,
 
-  Base.PropertyNames.pointwise2PrefixSE[ 0 ].Excitation.Filters, // pointwise20's prefix squeeze-and-excitation's excitation pointwise
-  Base.PropertyNames.pointwise2PrefixSE[ 0 ].Excitation.Biases,
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 0 ].Excitation.Filters, // pointwise20's prefix squeeze-and-excitation's excitation pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 0 ].Excitation.Biases,
 
-  Base.PropertyNames.pointwise2PrefixSE[ 1 ].Excitation.Filters, // pointwise202's prefix squeeze-and-excitation's excitation pointwise
-  Base.PropertyNames.pointwise2PrefixSE[ 1 ].Excitation.Biases,
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 1 ].Excitation.Filters, // pointwise202's prefix squeeze-and-excitation's excitation pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 1 ].Excitation.Biases,
 
-  Base.PropertyNames.pointwise2PrefixSE[ 2 ].Excitation.Filters, // pointwise21's prefix squeeze-and-excitation's excitation pointwise
-  Base.PropertyNames.pointwise2PrefixSE[ 2 ].Excitation.Biases,
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 2 ].Excitation.Filters, // pointwise21's prefix squeeze-and-excitation's excitation pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 2 ].Excitation.Biases,
 
-  Base.PropertyNames.pointwise20.Filters,
-  Base.PropertyNames.pointwise20.Biases,
+  Block_TestParams_Base.PropertyNames.pointwise20.Filters,
+  Block_TestParams_Base.PropertyNames.pointwise20.Biases,
 
-  Base.PropertyNames.pointwise202.Filters,
-  Base.PropertyNames.pointwise202.Biases,
+  Block_TestParams_Base.PropertyNames.pointwise202.Filters,
+  Block_TestParams_Base.PropertyNames.pointwise202.Biases,
 
-  Base.PropertyNames.pointwise21.Filters,
-  Base.PropertyNames.pointwise21.Biases,
+  Block_TestParams_Base.PropertyNames.pointwise21.Filters,
+  Block_TestParams_Base.PropertyNames.pointwise21.Biases,
 
-  Base.PropertyNames.pointwise2PostfixSE[ 0 ].Intermediate.Filters, // pointwise20's postfix squeeze-and-excitation's intermediate pointwise
-  Base.PropertyNames.pointwise2PostfixSE[ 0 ].Intermediate.Biases,
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 0 ].Intermediate.Filters, // pointwise20's postfix squeeze-and-excitation's intermediate pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 0 ].Intermediate.Biases,
 
-  Base.PropertyNames.pointwise2PostfixSE[ 1 ].Intermediate.Filters, // pointwise202's postfix squeeze-and-excitation's intermediate pointwise
-  Base.PropertyNames.pointwise2PostfixSE[ 1 ].Intermediate.Biases,
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 1 ].Intermediate.Filters, // pointwise202's postfix squeeze-and-excitation's intermediate pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 1 ].Intermediate.Biases,
 
-  Base.PropertyNames.pointwise2PostfixSE[ 2 ].Intermediate.Filters, // pointwise21's postfix squeeze-and-excitation's intermediate pointwise
-  Base.PropertyNames.pointwise2PostfixSE[ 2 ].Intermediate.Biases,
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 2 ].Intermediate.Filters, // pointwise21's postfix squeeze-and-excitation's intermediate pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 2 ].Intermediate.Biases,
 
-  Base.PropertyNames.pointwise2PostfixSE[ 0 ].Excitation.Filters, // pointwise20's postfix squeeze-and-excitation's excitation pointwise
-  Base.PropertyNames.pointwise2PostfixSE[ 0 ].Excitation.Biases,
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 0 ].Excitation.Filters, // pointwise20's postfix squeeze-and-excitation's excitation pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 0 ].Excitation.Biases,
 
-  Base.PropertyNames.pointwise2PostfixSE[ 1 ].Excitation.Filters, // pointwise202's postfix squeeze-and-excitation's excitation pointwise
-  Base.PropertyNames.pointwise2PostfixSE[ 1 ].Excitation.Biases,
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 1 ].Excitation.Filters, // pointwise202's postfix squeeze-and-excitation's excitation pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 1 ].Excitation.Biases,
 
-  Base.PropertyNames.pointwise2PostfixSE[ 2 ].Excitation.Filters, // pointwise21's postfix squeeze-and-excitation's excitation pointwise
-  Base.PropertyNames.pointwise2PostfixSE[ 2 ].Excitation.Biases,
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 2 ].Excitation.Filters, // pointwise21's postfix squeeze-and-excitation's excitation pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 2 ].Excitation.Biases,
 
 ];
 

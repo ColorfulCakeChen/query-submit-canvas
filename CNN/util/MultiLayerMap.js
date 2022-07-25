@@ -1,4 +1,4 @@
-export { Base };
+export { MultiLayerMap_Base as Base };
 
 import * as MapTools from "./MapTools.js";
 
@@ -7,7 +7,7 @@ import * as MapTools from "./MapTools.js";
  * creates.
  *
  */
-class Base {
+class MultiLayerMap_Base {
 
   /**
    *

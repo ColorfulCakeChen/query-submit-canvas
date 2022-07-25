@@ -1,4 +1,4 @@
-export { Base };
+export { NameNumberArrayObject_Base as Base };
 
 import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
@@ -14,24 +14,25 @@ import * as Recyclable from "../Recyclable.js";
  *
  *
  */
-class Base extends Recyclable.Array {
+class NameNumberArrayObject_Base extends Recyclable.Array {
 
   /**
    * Used as default NameNumberArrayObject.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "NameNumberArrayObject.Base.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "NameNumberArrayObject.Base.Pool",
+    NameNumberArrayObject_Base, NameNumberArrayObject_Base.setAsConstructor );
 
   /**
    */
   constructor() {
     super();
-    Base.setAsConstructor_self.call( this );
+    NameNumberArrayObject_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this );
+    NameNumberArrayObject_Base.setAsConstructor_self.call( this );
     return this;
   }
 

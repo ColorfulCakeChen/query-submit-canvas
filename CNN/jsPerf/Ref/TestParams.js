@@ -1,4 +1,4 @@
-export { ParamDescConfig, Base };
+export { ParamDescConfig, TestParams_Base as Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -125,24 +125,24 @@ class ParamValueChangeRecord extends Recyclable.Root {
  * these value will be restored and this list will be cleared to empty.
  *
  */
-class Base extends Recyclable.Root {
+class TestParams_Base extends Recyclable.Root {
 
   /**
    * Used as default TestParams.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "TestParams.Base.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "TestParams.Base.Pool", TestParams_Base, TestParams_Base.setAsConstructor );
 
   /**
    */
   constructor( id = -1 ) {
     super();
-    Base.setAsConstructor_self.call( this, id );
+    TestParams_Base.setAsConstructor_self.call( this, id );
   }
 
   /** @override */
   static setAsConstructor( id = -1 ) {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this, id );
+    TestParams_Base.setAsConstructor_self.call( this, id );
     return this;
   }
 
@@ -369,7 +369,7 @@ class Base extends Recyclable.Root {
   }
 
   /**
-   * Similar to Base.ensure_object_property_numberArray_length_filled(). But the property will be a shared number array. Its value
+   * Similar to TestParams_Base.ensure_object_property_numberArray_length_filled(). But the property will be a shared number array. Its value
    * may be shared with other caller.
    *
    * This may have better performance because of number array re-using (instead of re-generating).
@@ -402,7 +402,7 @@ class Base extends Recyclable.Root {
 //!!! (2022/07/23 Remarked) re-use it. do not re-create it.
 //    this.in.paramsNumberArrayObject = {}; // All parameters which will be packed into weights array.
 
-    yield *Base.permuteParamRecursively.call( this, 0 );
+    yield *TestParams_Base.permuteParamRecursively.call( this, 0 );
   }
 
   /**
@@ -468,13 +468,13 @@ class Base extends Recyclable.Root {
       if ( dice < 0.5 ) {
         // Try parameter value assigned directly (i.e. by specifying).      
         this.in[ paramDesc.paramName ] = pair.valueInput;
-        yield *Base.permuteParamRecursively.call( this, nextParamDescConfigIndex );
+        yield *TestParams_Base.permuteParamRecursively.call( this, nextParamDescConfigIndex );
 
       } else {
         // Try parameter value assigned from inputWeightArray (i.e. by evolution).
         this.in[ paramDesc.paramName ] = null;
         this.in.paramsNumberArrayObject[ paramDesc.paramName ] = pair.valueInput; // (number or number array)
-        yield *Base.permuteParamRecursively.call( this, nextParamDescConfigIndex );
+        yield *TestParams_Base.permuteParamRecursively.call( this, nextParamDescConfigIndex );
 
         this.in.paramsNumberArrayObject[ paramDesc.paramName ] = undefined; // So that it could be re-tried as by-specifying when backtracking.
       }

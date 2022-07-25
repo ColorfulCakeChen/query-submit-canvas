@@ -1,4 +1,4 @@
-export { Base, Same, Bool, Int };
+export { ParamDesc_Base as Base, Same, Bool, Int };
 export { ActivationFunction };
 export { ConvBlockType };
 export { AvgMax_Or_ChannelMultiplier };
@@ -36,7 +36,7 @@ import * as ValueDesc from "../ValueDesc.js";
  * Weights.Params.
  *
  */
-class Base {
+class ParamDesc_Base {
 
   /**
    *
@@ -63,7 +63,7 @@ class Base {
  * @member {ValueDesc.Same} valueDesc
  *   The range of the parameter's all possible values. It is a ValueDesc.Same object.
  */
-class Same extends Base {
+class Same extends ParamDesc_Base {
   constructor( paramName ) {
     super( paramName, ValueDesc.Same.Singleton );
   }
@@ -76,7 +76,7 @@ class Same extends Base {
  * @member {ValueDesc.Bool} valueDesc
  *   The boolean range of the parameter's all possible values. It is a ValueDesc.Bool object.
  */
-class Bool extends Base {
+class Bool extends ParamDesc_Base {
   constructor( paramName ) {
     super( paramName, ValueDesc.Bool.Singleton );
   }
@@ -89,7 +89,7 @@ class Bool extends Base {
  * @member {ValueDesc.Int} valueDesc
  *   The integer range of the parameter's all possible values. It is a ValueDesc.Bool object.
  */
-class Int extends Base {
+class Int extends ParamDesc_Base {
   constructor( paramName, valueIntegerMin, valueIntegerMax, valueNames = [], valueObjects = [] ) {
     super( paramName, new ValueDesc.Int( valueIntegerMin, valueIntegerMax, valueNames, valueObjects ) );
   }
@@ -102,7 +102,7 @@ class Int extends Base {
  * @member {ValueDesc.ActivationFunction} valueDesc
  *   The range of the parameter's all possible values. It is a ValueDesc.ActivationFunction object.
  */
-class ActivationFunction extends Base {
+class ActivationFunction extends ParamDesc_Base {
   constructor( paramName ) {
     super( paramName, ValueDesc.ActivationFunction.Singleton );
   }
@@ -115,7 +115,7 @@ class ActivationFunction extends Base {
  * @member {ValueDesc.ConvBlockType} valueDesc
  *   The range of the parameter's all possible values. It is a ValueDesc.ConvBlockType object.
  */
-class ConvBlockType extends Base {
+class ConvBlockType extends ParamDesc_Base {
   constructor( paramName ) {
     super( paramName, ValueDesc.ConvBlockType.Singleton );
   }
@@ -128,7 +128,7 @@ class ConvBlockType extends Base {
  * @member {ValueDesc.AvgMax_Or_ChannelMultiplier} valueDesc
  *   The range of the parameter's all possible values. It is a ValueDesc.AvgMax_Or_ChannelMultiplier object.
  */
-class AvgMax_Or_ChannelMultiplier extends Base {
+class AvgMax_Or_ChannelMultiplier extends ParamDesc_Base {
   constructor( paramName ) {
     super( paramName, ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton );
   }
@@ -141,7 +141,7 @@ class AvgMax_Or_ChannelMultiplier extends Base {
  * @member {ValueDesc.AvgMax_Or_ChannelMultiplier} valueDesc
  *   The range of the parameter's all possible values. It is a ValueDesc.AvgMax_Or_ChannelMultiplier object.
  */
-class SqueezeExcitationChannelCountDivisor extends Base {
+class SqueezeExcitationChannelCountDivisor extends ParamDesc_Base {
   constructor( paramName ) {
     super( paramName, ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton );
   }
@@ -154,7 +154,7 @@ class SqueezeExcitationChannelCountDivisor extends Base {
  * @member {ValueDesc.StridesPad} valueDesc
  *   The range of the parameter's all possible values. It is a ValueDesc.StridesPad object.
  */
-class StridesPad extends Base {
+class StridesPad extends ParamDesc_Base {
   constructor( paramName ) {
     super( paramName, ValueDesc.StridesPad.Singleton );
   }
@@ -167,7 +167,7 @@ class StridesPad extends Base {
  * @member {ValueDesc.ConvStageType} valueDesc
  *   The range of the parameter's all possible values. It is a ValueDesc.ConvStageType object.
  */
-class ConvStageType extends Base {
+class ConvStageType extends ParamDesc_Base {
   constructor( paramName ) {
     super( paramName, ValueDesc.ConvStageType.Singleton );
   }
