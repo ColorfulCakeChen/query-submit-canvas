@@ -152,7 +152,7 @@ class Root extends Weights_Base() {
  *   - Unicode character code point: should use 21 bits (2^21).
  *
  */
-Base.ValueBounds = new FloatValue.Bounds( -( 2 ** 24 ), +( 2 ** 24 ) );
+Weights_Base.ValueBounds = new FloatValue.Bounds( -( 2 ** 24 ), +( 2 ** 24 ) );
 
 
 /**
