@@ -7,9 +7,12 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
 //import { Base } from "./Operation_Base.js";
 import * as Weights from "../../Unpacker/Weights.js";
 
+//!!! ...unfinished... (2022/07/25)
+// Perhaps, provide a parameter control whether different input channel uses the same
+// or different look-up (i.e. vocabulary) table.
+
 /**
  *
- 
  * Embedding could achieve non-linear mapping (just like any perceptron). But it is achieved by lookup table (instead
  * of weighted sum, bias and activation function). This implies:
  *   - It may use more (CPU or GPU) memory, but may use less (CPU or GPU) computation.
