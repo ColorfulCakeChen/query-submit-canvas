@@ -1,4 +1,4 @@
-export { ImageSource_Bag as Bag };
+export { ImageSourceBag_Base as Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -12,24 +12,24 @@ import * as NumberImage from "./NumberImage.js";
  * depthwiseFilterWidth, depthwiseStridesPad. The same image data will be returned when same specification is requested. So that
  * the testing performance could be improved.
  */
-class ImageSource_Bag extends Recyclable.Root {
+class ImageSourceBag_Base extends Recyclable.Root {
 
   /**
    * Used as default ImageSource.Bag provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "ImageSource.Bag.Pool", ImageSource_Bag, ImageSource_Bag.setAsConstructor );
+  static Pool = new Pool.Root( "ImageSource.Bag.Pool", ImageSourceBag_Base, ImageSourceBag_Base.setAsConstructor );
 
   /**
    */
   constructor() {
     super();
-    ImageSource_Bag.setAsConstructor_self.call( this );
+    ImageSourceBag_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    ImageSource_Bag.setAsConstructor_self.call( this );
+    ImageSourceBag_Base.setAsConstructor_self.call( this );
     return this;
   }
 
@@ -113,12 +113,12 @@ class ImageSource_Bag extends Recyclable.Root {
     //
     // Because there is not depthwise operation, there is not possible to shrink.
     if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
-      let originalImage = ImageSource_Bag.internal_getImage_by.call( this, originalHeight, originalWidth, channelCount );
+      let originalImage = ImageSourceBag_Base.internal_getImage_by.call( this, originalHeight, originalWidth, channelCount );
       return originalImage;
     }
 
     // 2. Otherwise, return image which is adjusted by depthwise operation.
-    let image = ImageSource_Bag.internal_getImage_by.call( this,
+    let image = ImageSourceBag_Base.internal_getImage_by.call( this,
       originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
 
     return image;
@@ -137,12 +137,12 @@ class ImageSource_Bag extends Recyclable.Root {
     //
     // Because there is not depthwise operation, there is not possible to shrink.
     if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
-      let originalTensor = ImageSource_Bag.internal_getTensor3d_by.call( this, originalHeight, originalWidth, channelCount );
+      let originalTensor = ImageSourceBag_Base.internal_getTensor3d_by.call( this, originalHeight, originalWidth, channelCount );
       return originalTensor;
     }
 
     // 2. Otherwise, return image tensor which is adjusted by depthwise operation.
-    let tensor = ImageSource_Bag.internal_getTensor3d_by.call( this,
+    let tensor = ImageSourceBag_Base.internal_getTensor3d_by.call( this,
       originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
     return tensor;
   }
@@ -153,7 +153,7 @@ class ImageSource_Bag extends Recyclable.Root {
   static internal_getImage_by(
     originalHeight, originalWidth, channelCount, depthwiseFilterHeight = 1, depthwiseFilterWidth = 1, depthwiseStridesPad = 0 ) {
 
-    return this.images.get_or_create_by_arguments1_etc( ImageSource_Bag.image_createBy, this,
+    return this.images.get_or_create_by_arguments1_etc( ImageSourceBag_Base.image_createBy, this,
       originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
   }
 
@@ -171,13 +171,13 @@ class ImageSource_Bag extends Recyclable.Root {
       //!!! (2022/07/13 Remarked) Using small ValueBounds may reduce floating-point accumulated error.
       //let bAutoBounds = false; // Image pixel channel value bounds are inside the default value bounds (i.e. Weights.Base.ValueBounds).
       image = NumberImage.Base.create_bySequenceRandom( originalHeight, originalWidth, channelCount,
-        ImageSource_Bag.weightsRandomOffset.min, ImageSource_Bag.weightsRandomOffset.max, bAutoBounds );
+        ImageSourceBag_Base.weightsRandomOffset.min, ImageSourceBag_Base.weightsRandomOffset.max, bAutoBounds );
 
     // 2. The shrinked image requested.
     } else {
 
       // Use original image to create shrinked image.
-      let originalImage = ImageSource_Bag.internal_getImage_by.call( this, originalHeight, originalWidth, channelCount );
+      let originalImage = ImageSourceBag_Base.internal_getImage_by.call( this, originalHeight, originalWidth, channelCount );
 
       // Borrow the clone_byDepthwise() function to create an input image which is shrinked by specified filter size and strides and pad.
       image = originalImage.clone_byDepthwise_NonPassThrough(
@@ -199,7 +199,7 @@ class ImageSource_Bag extends Recyclable.Root {
   static internal_getTensor3d_by(
     originalHeight, originalWidth, channelCount, depthwiseFilterHeight = 1, depthwiseFilterWidth = 1, depthwiseStridesPad = 0 ) {
 
-    return this.tensors.get_or_create_by_arguments1_etc( ImageSource_Bag.tensor_createBy, this,
+    return this.tensors.get_or_create_by_arguments1_etc( ImageSourceBag_Base.tensor_createBy, this,
       originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
   }
 
@@ -207,7 +207,7 @@ class ImageSource_Bag extends Recyclable.Root {
   static tensor_createBy(
     originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad ) {
 
-    let image = ImageSource_Bag.internal_getImage_by.call( this,
+    let image = ImageSourceBag_Base.internal_getImage_by.call( this,
       originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
 
     let shape = [ image.height, image.width, image.depth ];
@@ -219,6 +219,6 @@ class ImageSource_Bag extends Recyclable.Root {
 
 
 //!!! (2022/07/14 Temp Remarked) Fixed to non-random to simplify debug.
-ImageSource_Bag.weightsRandomOffset = { min: -200, max: +200 };
-//ImageSource_Bag.weightsRandomOffset = { min: 11, max: 11 };
-//ImageSource_Bag.weightsRandomOffset = { min: -0, max: +0 };
+ImageSourceBag_Base.weightsRandomOffset = { min: -200, max: +200 };
+//ImageSourceBag_Base.weightsRandomOffset = { min: 11, max: 11 };
+//ImageSourceBag_Base.weightsRandomOffset = { min: -0, max: +0 };
