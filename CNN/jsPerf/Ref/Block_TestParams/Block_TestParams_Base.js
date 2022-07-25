@@ -435,7 +435,7 @@ class Block_TestParams_Base extends TestParams.Base {
 
     ];
 
-    yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
+    yield *Block_TestParams_Base.ParamsGenerator.call( this, paramDescConfigArray );
   }
 
   /**
