@@ -1423,7 +1423,7 @@ class NumberImage_Base extends Recyclable.Root {
       const aBounds = undefined;        // Because .boundsArraySet will be filled later.
 
       let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( channelCount );
-      inputScaleBoundsArray.set_all_byBounds( Weights.NumberImage_Base.ValueBounds );
+      inputScaleBoundsArray.set_all_byBounds( Weights.Base.ValueBounds );
 
       imageNew = NumberImage_Base.Pool.get_or_create_by( height, width, channelCount, preFilledValue,
         inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, aBounds );
