@@ -1,4 +1,4 @@
-export { Base };
+export { Block_Base as Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -315,24 +315,24 @@ import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_c
  * setKeepInputTensor(). All intermediate tensors will be disposed.
  *
  */
-class Base extends Recyclable.Root {
+class Block_Base extends Recyclable.Root {
 
   /**
    * Used as default Block.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Block.Base.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "Block.Base.Pool", Block_Base, Block_Base.setAsConstructor );
 
   /**
    */
   constructor() {
     super();
-    Base.setAsConstructor_self.call( this );
+    Block_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this );
+    Block_Base.setAsConstructor_self.call( this );
     return this;
   }
 
@@ -657,7 +657,7 @@ class Base extends Recyclable.Root {
     // 5. The squeeze-and-excitation prefix pointwise2
 
     if ( this.bSqueezeExcitationPrefix )
-      if ( !Base.operationArray_append_SqueezeExcitation.call( this,
+      if ( !Block_Base.operationArray_append_SqueezeExcitation.call( this,
               this.pointwise20_nHigherHalfDifferent, inputWeightArray,
               0 // No channelShuffler_outputGroupCount.
             )
@@ -740,7 +740,7 @@ class Base extends Recyclable.Root {
       
     // 7.1
     if ( !this.bSqueezeExcitationPrefix ) // (i.e. postfix)
-      if ( !Base.operationArray_append_SqueezeExcitation.call( this,
+      if ( !Block_Base.operationArray_append_SqueezeExcitation.call( this,
               this.pointwise20_nHigherHalfDifferent, inputWeightArray,
               this.pointwise20_channelShuffler_outputGroupCount // Postfix squeeze-and-excitation's channels are shuffled if pointwise2 did.
             )
@@ -833,7 +833,7 @@ class Base extends Recyclable.Root {
     // 10. Configure correct function pointers according to whether keeping or destroying input tensor.
 
     // 10.1 Determine which apply_Xxx() function should be used.
-    Base.setup_apply_block.call( this );
+    Block_Base.setup_apply_block.call( this );
 
     // 10.2 Adjust the destroy-or-keep behavior of every tensor according to whether the operation is the final operation of the tensor.
     //
@@ -1130,7 +1130,7 @@ class Base extends Recyclable.Root {
 
       let intermediatePointwise0;
       {
-        intermediatePointwise0 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
+        intermediatePointwise0 = Block_Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
           this.operationArray.endingInput0,
           this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
           channelShuffler_outputGroupCount );
@@ -1141,7 +1141,7 @@ class Base extends Recyclable.Root {
 
       let intermediatePointwise1;
       if ( this.pointwise21ChannelCount > 0 ) {
-        intermediatePointwise1 = Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
+        intermediatePointwise1 = Block_Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
           this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
           this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
           channelShuffler_outputGroupCount );
@@ -1305,7 +1305,7 @@ class Base extends Recyclable.Root {
 
   /** Setup .apply. */
   static setup_apply_block() {
-    this.apply = Base.apply_block;
+    this.apply = Block_Base.apply_block;
   }
 
   /** Call .operationArray.apply() directly. The .input0.realTensor ( and .input1.realTensor) will be used directly. */

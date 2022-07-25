@@ -1,4 +1,4 @@
-export { Base };
+export { Stage_Base as Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -210,24 +210,24 @@ import { Params } from "./Stage_Params.js";
  * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputWeightArray.
  *
  */
-class Base extends Recyclable.Root {
+class Stage_Base extends Recyclable.Root {
 
   /**
    * Used as default Stage.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Stage.Base.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "Stage.Base.Pool", Stage_Base, Stage_Base.setAsConstructor );
 
   /**
    */
   constructor() {
     super();
-    Base.setAsConstructor_self.call( this );
+    Stage_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this );
+    Stage_Base.setAsConstructor_self.call( this );
     return this;
   }
 
@@ -344,7 +344,7 @@ class Base extends Recyclable.Root {
     let blockParamsCreator;
     try {
       // 2. Create every blocks.
-      blockParamsCreator = Base.create_BlockParamsCreator_byStageParams( params );
+      blockParamsCreator = Stage_Base.create_BlockParamsCreator_byStageParams( params );
       blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
 
       for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Progress for block0, 1, 2, 3, ... 
@@ -546,7 +546,7 @@ class Base extends Recyclable.Root {
    * @param {number} blockIndex
    *   Which block (i.e. block0, block1, block2, ...).
    *
-   * @param {Params_to_BlockParams.Base} blockParamsCreator
+   * @param {Stage_BlockParamsCreator.Base} blockParamsCreator
    *   The maker which will produce current block (Block.Base) object.
    */
   assert_ImageSize_BetweenBlock( blockIndex, blockParamsCreator ) {
@@ -690,14 +690,14 @@ class Base extends Recyclable.Root {
         + `stageParams.blockCountRequested ( ${stageParams.blockCountRequested} ) must be >= 2.` );
 
     if ( !(   ( stageParams.nConvStageTypeId >= 0 )
-           && ( stageParams.nConvStageTypeId < Base.nConvStageTypeId_to_BlockParamsCreator_ClassArray.length )
+           && ( stageParams.nConvStageTypeId < Stage_Base.nConvStageTypeId_to_BlockParamsCreator_ClassArray.length )
           ) 
        )
       throw Error( `Stage.Base.create_BlockParamsCreator_byStageParams(): `
         + `unknown stageParams.nConvStageTypeId ( ${stageParams.nConvStageTypeId} ) value.`
       );
 
-    let classBlockParamsCreator = Base.nConvStageTypeId_to_BlockParamsCreator_ClassArray[ stageParams.nConvStageTypeId ];
+    let classBlockParamsCreator = Stage_Base.nConvStageTypeId_to_BlockParamsCreator_ClassArray[ stageParams.nConvStageTypeId ];
     let aBlockParamsCreator = classBlockParamsCreator.Pool.get_or_create_by( stageParams );
 
     return aBlockParamsCreator;
@@ -709,7 +709,7 @@ class Base extends Recyclable.Root {
 /**
  * Mapping nConvStageTypeId (number as array index) to BlockParamsCreator class object.
  */
-Base.nConvStageTypeId_to_BlockParamsCreator_ClassArray = [
+Stage_Base.nConvStageTypeId_to_BlockParamsCreator_ClassArray = [
   BlockParamsCreator.MobileNetV1,                         // ValueDesc.ConvStageType.Ids.MOBILE_NET_V1 (0)
   BlockParamsCreator.MobileNetV1_padValid,                // ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID (1)
   BlockParamsCreator.MobileNetV2_Thin,                    // ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN (2)

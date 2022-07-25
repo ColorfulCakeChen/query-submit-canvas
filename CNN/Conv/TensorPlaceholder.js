@@ -1,4 +1,4 @@
-export { Base };
+export { TensorPlaceholder_Base as Base };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
@@ -26,25 +26,25 @@ import * as ActivationEscaping from "./ActivationEscaping.js";
  * set. It will be kept (not cloned) directly. So caller should use them carefully.
  *
  */
-class Base extends Recyclable.Root {
+class TensorPlaceholder_Base extends Recyclable.Root {
 
   /**
    * Used as default TensorPlaceholder.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "TensorPlaceholder.Base.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "TensorPlaceholder.Base.Pool", TensorPlaceholder_Base, TensorPlaceholder_Base.setAsConstructor );
 
   /**
    *
    */
   constructor() {
     super();
-    Base.setAsConstructor_self.call( this );
+    TensorPlaceholder_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this );
+    TensorPlaceholder_Base.setAsConstructor_self.call( this );
     return this;
   }
 

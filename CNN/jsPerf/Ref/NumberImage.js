@@ -1,4 +1,4 @@
-export { Base };
+export { NumberImage_Base as Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -26,12 +26,12 @@ import * as Depthwise from "../../Conv/Depthwise.js";
  * @member {BoundsArraySet.InputsOutput} boundsArraySet
  *   The element value bounds set of this image.
  */
-class Base extends Recyclable.Root {
+class NumberImage_Base extends Recyclable.Root {
 
   /**
    * Used as default NumberImage.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "NumberImage.Base.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "NumberImage.Base.Pool", NumberImage_Base, NumberImage_Base.setAsConstructor );
 
   /**
    *
@@ -57,7 +57,7 @@ class Base extends Recyclable.Root {
     input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds ) {
 
     super();
-    Base.setAsConstructor_self.call( this, height, width, depth, preFilledValue,
+    NumberImage_Base.setAsConstructor_self.call( this, height, width, depth, preFilledValue,
       input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds );
   }
 
@@ -66,7 +66,7 @@ class Base extends Recyclable.Root {
     input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds ) {
 
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this, height, width, depth, preFilledValue,
+    NumberImage_Base.setAsConstructor_self.call( this, height, width, depth, preFilledValue,
       input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds );
     return this;
   }
@@ -146,7 +146,7 @@ class Base extends Recyclable.Root {
   }
 
   clone() {
-    let result = Base.Pool.get_or_create_by( this.height, this.width, this.depth,
+    let result = NumberImage_Base.Pool.get_or_create_by( this.height, this.width, this.depth,
       undefined, // Because .dataArray will be filled by copying.
       this.boundsArraySet.input0, this.boundsArraySet.input1,
       this.boundsArraySet.constructor, // BoundsArraySet class.
@@ -253,7 +253,7 @@ class Base extends Recyclable.Root {
           + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})` );
     }
 
-    let imageOut = Base.Pool.get_or_create_by(
+    let imageOut = NumberImage_Base.Pool.get_or_create_by(
       imageIn.height, imageIn.width, pointwiseChannelCount, 0,
       imageIn.boundsArraySet.output0, null, BoundsArraySet.Pointwise, null );
 
@@ -326,12 +326,12 @@ class Base extends Recyclable.Root {
       imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( pointwiseActivationId );
 
       // Before activation function, scale every element according to its channel.
-      Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
+      NumberImage_Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
         parametersDesc, ...pointwiseNames, "ActivationEscapingScale" );
     }
 
     // Activation
-    Base.modify_byActivation_withoutAffect_BoundsArraySet( imageOut, pointwiseActivationId, parametersDesc );
+    NumberImage_Base.modify_byActivation_withoutAffect_BoundsArraySet( imageOut, pointwiseActivationId, parametersDesc );
 
     return imageOut;
   }
@@ -469,7 +469,7 @@ class Base extends Recyclable.Root {
       }
     }
 
-    let imageOut = Base.Pool.get_or_create_by(
+    let imageOut = NumberImage_Base.Pool.get_or_create_by(
       outputHeight, outputWidth, outputChannelCount, preFilledValue,
       imageIn.boundsArraySet.output0, null, BoundsArraySet.Depthwise, null );
 
@@ -657,11 +657,11 @@ class Base extends Recyclable.Root {
         imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
 
         // Before activation function, scale every element according to its channel.
-        Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
+        NumberImage_Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
           parametersDesc, ...depthwiseNames, "ActivationEscapingScale" );
 
         // Activation
-        Base.modify_byActivation_withoutAffect_BoundsArraySet( imageOut, depthwiseActivationId, parametersDesc );
+        NumberImage_Base.modify_byActivation_withoutAffect_BoundsArraySet( imageOut, depthwiseActivationId, parametersDesc );
       }
     }
 
@@ -803,7 +803,7 @@ class Base extends Recyclable.Root {
     if ( ( another.height == this.height ) && ( another.width == this.width ) && ( another.depth == this.depth ) ) { // Same size.
 
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      imageOutNew = Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
+      imageOutNew = NumberImage_Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
         this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
 
       for ( let i = 0; i < this.dataArray.length; ++i ) {
@@ -813,7 +813,7 @@ class Base extends Recyclable.Root {
     } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == this.depth ) ) { // Broadcast another to this.
 
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      imageOutNew = Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
+      imageOutNew = NumberImage_Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
         this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
 
       let i = 0;
@@ -828,7 +828,7 @@ class Base extends Recyclable.Root {
     } else if ( ( this.height == 1 ) && ( this.width == 1 ) && ( this.depth == another.depth ) ) { // Broadcast this to another.
 
       rHeight = another.height; rWidth = another.width; rDepth = another.depth;
-      imageOutNew = Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
+      imageOutNew = NumberImage_Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
         this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
 
       let i = 0;
@@ -887,7 +887,7 @@ class Base extends Recyclable.Root {
     if ( ( another.height == this.height ) && ( another.width == this.width ) && ( another.depth == this.depth ) ) { // Same size.
 
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      imageOutNew = Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
+      imageOutNew = NumberImage_Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
         this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
 
       for ( let i = 0; i < this.dataArray.length; ++i ) {
@@ -897,7 +897,7 @@ class Base extends Recyclable.Root {
     } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == this.depth ) ) { // Broadcast another to this.
 
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      imageOutNew = Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
+      imageOutNew = NumberImage_Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
         this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
 
       let i = 0;
@@ -912,7 +912,7 @@ class Base extends Recyclable.Root {
     } else if ( ( this.height == 1 ) && ( this.width == 1 ) && ( this.depth == another.depth ) ) { // Broadcast this to another.
 
       rHeight = another.height; rWidth = another.width; rDepth = another.depth;
-      imageOutNew = Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
+      imageOutNew = NumberImage_Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
         this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
 
       let i = 0;
@@ -984,7 +984,6 @@ class Base extends Recyclable.Root {
    *
    * @param {number} nSqueezeExcitationChannelCountDivisor
    *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
-   * (Please see also SqueezeExcitation.Base.nSqueezeExcitationChannelCountDivisor explanation.)
    *
    * @param {number[]} intermediateFiltersArray  The intermediate pointwise convolution filter weights. Only used if ( bPassThrough == false ).
    * @param {number[]} intermediateBiasesArray   The intermediate bias weights. Only used if ( bPassThrough == false ).
@@ -1197,11 +1196,11 @@ class Base extends Recyclable.Root {
     let imageOutLength_lowerHalf = ( imageIn.height * imageIn.width * imageOutDepth_lowerHalf );
     let imageOutLength_higherHalf = ( imageIn.height * imageIn.width * imageOutDepth_higherHalf );
 
-    imageOutArray[ 0 ] = Base.Pool.get_or_create_by(
+    imageOutArray[ 0 ] = NumberImage_Base.Pool.get_or_create_by(
       imageIn.height, imageIn.width, imageOutDepth_lowerHalf, undefined,
       imageIn.boundsArraySet.output0, undefined, BoundsArraySet.InputsOutputs, undefined );
 
-    imageOutArray[ 1 ] = Base.Pool.get_or_create_by(
+    imageOutArray[ 1 ] = NumberImage_Base.Pool.get_or_create_by(
       imageIn.height, imageIn.width, imageOutDepth_higherHalf, undefined,
       imageIn.boundsArraySet.output0, undefined, BoundsArraySet.InputsOutputs, undefined );
 
@@ -1279,7 +1278,7 @@ class Base extends Recyclable.Root {
 
     //let imageOutLength = ( imageIn1.height * imageIn1.width * imageIn1.depth ) + ( imageIn2.height * imageIn2.width * imageIn2.depth );
     let imageOutDepth = imageIn1.depth + imageIn2.depth;
-    let imageOut = Base.Pool.get_or_create_by(
+    let imageOut = NumberImage_Base.Pool.get_or_create_by(
       imageIn1.height, imageIn1.width, imageOutDepth, undefined,
       imageIn1.boundsArraySet.output0, imageIn2.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined
     );
@@ -1354,7 +1353,7 @@ class Base extends Recyclable.Root {
       );
 
     // 1.
-    let concatResult = Base.calcConcatAlongAxisId2( imageInArray[ 0 ], imageInArray[ 1 ],
+    let concatResult = NumberImage_Base.calcConcatAlongAxisId2( imageInArray[ 0 ], imageInArray[ 1 ],
       parametersDesc, "concatShuffleSplitName", "concat" );
 
     // 2.
@@ -1372,7 +1371,7 @@ class Base extends Recyclable.Root {
  
     // 3.
     if ( bSplit ) {
-      Base.calcSplitAlongAxisId2( shuffleResult, imageOutArray, parametersDesc, "concatShuffleSplitName", "split" );
+      NumberImage_Base.calcSplitAlongAxisId2( shuffleResult, imageOutArray, parametersDesc, "concatShuffleSplitName", "split" );
       shuffleResult.disposeResources_and_recycleToPool();
       shuffleResult = null;
     } else {
@@ -1424,9 +1423,9 @@ class Base extends Recyclable.Root {
       const aBounds = undefined;        // Because .boundsArraySet will be filled later.
 
       let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( channelCount );
-      inputScaleBoundsArray.set_all_byBounds( Weights.Base.ValueBounds );
+      inputScaleBoundsArray.set_all_byBounds( Weights.NumberImage_Base.ValueBounds );
 
-      imageNew = Base.Pool.get_or_create_by( height, width, channelCount, preFilledValue,
+      imageNew = NumberImage_Base.Pool.get_or_create_by( height, width, channelCount, preFilledValue,
         inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, aBounds );
 
       inputScaleBoundsArray.disposeResources_and_recycleToPool(); // Because the newly created NumberImage.Base has already copy it.

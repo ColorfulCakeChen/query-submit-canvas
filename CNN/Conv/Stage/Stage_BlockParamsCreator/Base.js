@@ -1,4 +1,4 @@
-export { Base }; // Stage.BlockParamsCreator.Base
+export { Stage_BlockParamsCreator_Base as Base };
 
 import * as Pool from "../../../util/Pool.js";
 import * as Recyclable from "../../../util/Recyclable.js";
@@ -17,12 +17,13 @@ import { Params } from "../Stage_Params.js";
  *   The output1's channel count in current configuration.
  *
  */
-class Base extends Recyclable.Root {
+class Stage_BlockParamsCreator_Base extends Recyclable.Root {
 
   /**
    * Used as default Stage.BlockParamsCreator.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Stage.BlockParamsCreator.Base.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "Stage.BlockParamsCreator.Base.Pool",
+    Stage_BlockParamsCreator_Base, Stage_BlockParamsCreator_Base.setAsConstructor );
 
   /**
    * @param {Params} stageParams
@@ -31,13 +32,13 @@ class Base extends Recyclable.Root {
    */
   constructor( stageParams ) {
     super();
-    Base.setAsConstructor_self.call( this, stageParams );
+    Stage_BlockParamsCreator_Base.setAsConstructor_self.call( this, stageParams );
   }
 
   /** @override */
   static setAsConstructor( stageParams ) {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this, stageParams );
+    Stage_BlockParamsCreator_Base.setAsConstructor_self.call( this, stageParams );
     return this;
   }
 

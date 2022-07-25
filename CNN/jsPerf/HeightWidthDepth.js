@@ -1,13 +1,13 @@
+export { HeightWidthDepth_Base as Base };
+
 import * as PartTime from "../PartTime.js";
 import * as NeuralNets_ShareInput from "../Neural/Nets_ShareInput.js";
 //import * as TensorTools from "../util/TensorTools.js";
 
-export { Base };
-
 /**
  * A test set.
  */
-class Base {
+class HeightWidthDepth_Base {
 
   /**
    * @param {number} height      image height

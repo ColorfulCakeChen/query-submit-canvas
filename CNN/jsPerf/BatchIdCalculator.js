@@ -1,9 +1,9 @@
-export { Base };
+export { BatchIdCalculator_Base as Base };
 
 /**
  *
  */
-class Base {
+class BatchIdCalculator_Base {
   
   /**
    * @param {number} batchMessageInterval

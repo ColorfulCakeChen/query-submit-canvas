@@ -18,25 +18,26 @@ import * as Stage from "../../Conv/Stage.js";
 /**
  * Reference computation of class Stage.Base.
  */
-class Base extends Recyclable.Root {
+class Stage_Reference_Base extends Recyclable.Root {
 
   /**
    * Used as default Stage_Reference.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Stage_Reference.Base.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "Stage_Reference.Base.Pool",
+    Stage_Reference_Base, Stage_Reference_Base.setAsConstructor );
 
   /**
    *
    */
   constructor() {
     super();
-    Base.setAsConstructor_self.call( this );
+    Stage_Reference_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    Base.setAsConstructor_self.call( this );
+    Stage_Reference_Base.setAsConstructor_self.call( this );
     return this;
   }
 
@@ -86,7 +87,7 @@ class Base extends Recyclable.Root {
     this.testCorrectness_imageIn = imageSourceBag.getImage_by( sourceHeight, sourceWidth, sourceChannelCount );
 
     Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Stage_Reference.Base.testCorrectness_internal()",
-      Base.testCorrectness_internal, this, imageSourceBag, testParams );
+      Stage_Reference_Base.testCorrectness_internal, this, imageSourceBag, testParams );
 
     this.testCorrectness_imageIn = null;
   }
@@ -107,7 +108,7 @@ class Base extends Recyclable.Root {
     this.testCorrectness_imageOutReference = this.calcResult( this.testCorrectness_imageIn );
 
     Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Stage_Reference.Base.stage_create_apply_internal()",
-      Base.stage_create_apply_internal, this, imageSourceBag, testParams );
+      Stage_Reference_Base.stage_create_apply_internal, this, imageSourceBag, testParams );
 
     { // Release output reference images.
       if ( this.testCorrectness_imageOutReference != this.testCorrectness_imageIn ) { // Do not release image from ImageSourceBag.
@@ -149,16 +150,16 @@ class Base extends Recyclable.Root {
 
     let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
     {
-      let stage = Base.Stage_create( testParams, this.testCorrectness_imageIn.boundsArraySet.output0 );
+      let stage = Stage_Reference_Base.Stage_create( testParams, this.testCorrectness_imageIn.boundsArraySet.output0 );
 
       let { outputHeight, outputWidth } = testParams.out.inferencedParams;
       let outputChannelCount = sourceChannelCount * 2; // In current Stage's design, the output channel always is twice as input.
   
-      Base.AssertTwoEqualValues( "outputHeight", stage.outputHeight, outputHeight, stage );
-      Base.AssertTwoEqualValues( "outputWidth", stage.outputWidth, outputWidth, stage );
-      Base.AssertTwoEqualValues( "outputChannelCount", stage.outputChannelCount, outputChannelCount, stage );
+      Stage_Reference_Base.AssertTwoEqualValues( "outputHeight", stage.outputHeight, outputHeight, stage );
+      Stage_Reference_Base.AssertTwoEqualValues( "outputWidth", stage.outputWidth, outputWidth, stage );
+      Stage_Reference_Base.AssertTwoEqualValues( "outputChannelCount", stage.outputChannelCount, outputChannelCount, stage );
 
-      Base.AssertTwoEqualValues( "blockCount", stage.blockCount, testParams.blockArray.length, stage );
+      Stage_Reference_Base.AssertTwoEqualValues( "blockCount", stage.blockCount, testParams.blockArray.length, stage );
 
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
@@ -189,7 +190,7 @@ class Base extends Recyclable.Root {
           outputTensorChannelCount = outputTensor3d.shape[ CHANNEL_AXIS_ID ];
 
         // The real channel count of the output tensor should be the same as predicted output channel count.
-        Base.AssertTwoEqualValues( "outputChannelCount", stage.outputChannelCount, outputTensorChannelCount, stage );
+        Stage_Reference_Base.AssertTwoEqualValues( "outputChannelCount", stage.outputChannelCount, outputTensorChannelCount, stage );
       }
 
       // Test correctness of Stage BoundsArraySet.
@@ -199,7 +200,7 @@ class Base extends Recyclable.Root {
       this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, this.testCorrectness_imageOutReference, stage );
 
       // Compare result of ShuffleNetV2 and ShuffleNetV2_byMobileNetV1.
-      Base.stage_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1.call( this,
+      Stage_Reference_Base.stage_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1.call( this,
         testParams, this.testCorrectness_imageIn.boundsArraySet.output0,
         inputTensor3d_fromBag, outputTensor3d );
 
@@ -444,10 +445,10 @@ class Base extends Recyclable.Root {
 
     let stage_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Stage`, stage, stage );
 
-    Base.AssertTwoEqualValues( "parsing beginning position",
+    Stage_Reference_Base.AssertTwoEqualValues( "parsing beginning position",
       stage.weightElementOffsetBegin, testParams.in_weights.weightElementOffsetBegin, stage );
 
-    Base.AssertTwoEqualValues( "parsing ending position",
+    Stage_Reference_Base.AssertTwoEqualValues( "parsing ending position",
       stage.weightElementOffsetEnd, testParams.in_weights.weightArray.length, stage );
 
     // parameters.
@@ -470,7 +471,7 @@ class Base extends Recyclable.Root {
     // Other parameters.
     stage_asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
 
-    Base.AssertParameters_Stage_blocks( stage, stage ); // Test every block's parameters.
+    Stage_Reference_Base.AssertParameters_Stage_blocks( stage, stage ); // Test every block's parameters.
 
     {
       let tensorWeightCountTotal = 0;
@@ -595,7 +596,7 @@ class Base extends Recyclable.Root {
             break;
 
           default:
-            Base.Assert_nConvStageTypeId_Unknown(
+            Stage_Reference_Base.Assert_nConvStageTypeId_Unknown(
               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
@@ -630,7 +631,7 @@ class Base extends Recyclable.Root {
             break;
 
           default:
-            Base.Assert_nConvStageTypeId_Unknown(
+            Stage_Reference_Base.Assert_nConvStageTypeId_Unknown(
               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
@@ -661,7 +662,7 @@ class Base extends Recyclable.Root {
             break;
 
           default:
-            Base.Assert_nConvStageTypeId_Unknown(
+            Stage_Reference_Base.Assert_nConvStageTypeId_Unknown(
               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
@@ -692,7 +693,7 @@ class Base extends Recyclable.Root {
             break;
 
           default:
-            Base.Assert_nConvStageTypeId_Unknown(
+            Stage_Reference_Base.Assert_nConvStageTypeId_Unknown(
               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
@@ -749,7 +750,7 @@ class Base extends Recyclable.Root {
             break;
 
           default:
-            Base.Assert_nConvStageTypeId_Unknown(
+            Stage_Reference_Base.Assert_nConvStageTypeId_Unknown(
               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
@@ -783,7 +784,7 @@ class Base extends Recyclable.Root {
             break;
 
           default:
-            Base.Assert_nConvStageTypeId_Unknown(
+            Stage_Reference_Base.Assert_nConvStageTypeId_Unknown(
               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
@@ -836,7 +837,7 @@ class Base extends Recyclable.Root {
             break;
 
           default:
-            Base.Assert_nConvStageTypeId_Unknown(
+            Stage_Reference_Base.Assert_nConvStageTypeId_Unknown(
               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
@@ -861,7 +862,7 @@ class Base extends Recyclable.Root {
             break;
 
           default:
-            Base.Assert_nConvStageTypeId_Unknown(
+            Stage_Reference_Base.Assert_nConvStageTypeId_Unknown(
               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
@@ -885,7 +886,7 @@ class Base extends Recyclable.Root {
             break;
 
           default:
-            Base.Assert_nConvStageTypeId_Unknown(
+            Stage_Reference_Base.Assert_nConvStageTypeId_Unknown(
               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
@@ -907,7 +908,7 @@ class Base extends Recyclable.Root {
             break;
 
           default:
-            Base.Assert_nConvStageTypeId_Unknown(
+            Stage_Reference_Base.Assert_nConvStageTypeId_Unknown(
               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
@@ -948,7 +949,7 @@ class Base extends Recyclable.Root {
             break;
 
           default:
-            Base.Assert_nConvStageTypeId_Unknown(
+            Stage_Reference_Base.Assert_nConvStageTypeId_Unknown(
               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
@@ -974,7 +975,7 @@ class Base extends Recyclable.Root {
             break;
 
           default:
-            Base.Assert_nConvStageTypeId_Unknown(
+            Stage_Reference_Base.Assert_nConvStageTypeId_Unknown(
               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
@@ -1000,7 +1001,7 @@ class Base extends Recyclable.Root {
             break;
 
           default:
-            Base.Assert_nConvStageTypeId_Unknown(
+            Stage_Reference_Base.Assert_nConvStageTypeId_Unknown(
               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
@@ -1042,7 +1043,7 @@ class Base extends Recyclable.Root {
             break;
 
           default:
-            Base.Assert_nConvStageTypeId_Unknown(
+            Stage_Reference_Base.Assert_nConvStageTypeId_Unknown(
               "Stage_Reference.Base.AssertParameters_Stage_blocks():", nConvStageTypeId, block_or_blockTestParamsOut_asserter.contextDescription );
             break;
         }
@@ -1096,7 +1097,7 @@ class Base extends Recyclable.Root {
   calcResult( imageIn ) {
     let testParams = this.testParams;
 
-    Base.AssertParameters_Stage_blocks( testParams, testParams.out ); // Test every block's parameters.
+    Stage_Reference_Base.AssertParameters_Stage_blocks( testParams, testParams.out ); // Test every block's parameters.
 
     // Calculate every blocks in sequence.
 

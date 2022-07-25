@@ -1,4 +1,4 @@
-export { Base };
+export { NetConfig_Base as Base };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 //import * as ConvBlock from "../Conv/Block.js";
@@ -169,7 +169,7 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
  * arbitrary value because it will not be restricted by the range of the activation function.
  *
  */
-class Base {
+class NetConfig_Base {
   /**
    * @param {number} depthwiseChannelMultiplierBlock0Step0
    *   The depthwise convolution of the first step (Step 0) of the first block (Block 0) will expand input channel by this factor.
