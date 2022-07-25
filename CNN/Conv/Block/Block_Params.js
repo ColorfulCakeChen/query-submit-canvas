@@ -462,12 +462,6 @@ class Params extends Weights.Params {
   get pointwise20ActivationId()   { return this.getParamValue_byParamDesc( Params.pointwise20ActivationId ); }
   get pointwise20ActivationName() { return Params.pointwise20ActivationId.getStringOfValue( this.pointwise20ActivationId ); }
 
-//!!! (2022/07/18 Remarked) Integrated into InferenceParams.
-//   // Note: pointwise21 use bias flag and activation id of pointwise20.
-//   get pointwise21Bias()           { return this.inferencedParams.pointwise20Bias; }
-//   get pointwise21ActivationId()   { return this.pointwise20ActivationId; }
-//   get pointwise21ActivationName() { return this.pointwise20ActivationName; }
-
   get nSqueezeExcitationChannelCountDivisor()     { return this.getParamValue_byParamDesc( Params.nSqueezeExcitationChannelCountDivisor ); }
   get nSqueezeExcitationChannelCountDivisorName() {
     return Params.nSqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );

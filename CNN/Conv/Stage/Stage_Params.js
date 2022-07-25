@@ -111,10 +111,6 @@ class Params extends Weights.Params {
    *   If true, apply() will not dispose inputTensor (i.e. will be kept). If null, it will be extracted from
    * inputWeightArray (i.e. by evolution).
    *
-   * @return {boolean}
-   *   Return false, if initialization failed.
-   *
-   * @override
    */
   constructor(
     sourceHeight, sourceWidth, sourceChannelCount,
