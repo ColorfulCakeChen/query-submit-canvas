@@ -193,7 +193,8 @@ let Pool_Base = ( ParentClass = Object ) => class Pool_Base extends ParentClass 
 }
 
 
- * Almost the same as Pool.Pool_Base class except its parent class is fixed to Object. In other words, caller can not
+/**
+ * Almost the same as Pool.Base class except its parent class is fixed to Object. In other words, caller can not
  * specify the parent class of Pool.Root (so it is named "Root" which can not have parent class).
  */
 class Root extends Pool_Base() {
