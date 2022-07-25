@@ -1,4 +1,4 @@
-export { Base, Root, To };
+export { Weights_Base as Base, Root, To };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -24,25 +24,25 @@ import * as FloatValue from "../FloatValue.js";
  * @member {boolean} bInitOk
  *   If .init() success, it will be true.
  */
-let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( ParentClass ) {
+let Weights_Base = ( ParentClass = Object ) => class Weights_Base extends Recyclable.Base( ParentClass ) {
 
   /**
    * Used as default Weights.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Weights.Base.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "Weights.Base.Pool", Weights_Base, Weights_Base.setAsConstructor );
 
   /**
    * Just record the begin and length without checking them. Please call extract() to finish extracting.
    */ 
   constructor( ...restArgs ) {
     super( ...restArgs );
-    Base.setAsConstructor_self.call( this );
+    Weights_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor( ...restArgs ) {
     super.setAsConstructor( ...restArgs );
-    Base.setAsConstructor_self.call( this );
+    Weights_Base.setAsConstructor_self.call( this );
     return this;
   }
 
@@ -94,7 +94,7 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
  * Almost the same as Weights.Base class except its parent class is fixed to Object. In other words, caller can not
  * specify the parent class of Weights.Root (so it is named "Root" which can not have parent class).
  */
-class Root extends Base() {
+class Root extends Weights_Base() {
 }
 
 

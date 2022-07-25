@@ -1,4 +1,4 @@
-export { Base, Root };
+export { Recyclable_Base as Base, Root };
 
 import * as Pool from "../Pool.js";
 
@@ -29,7 +29,7 @@ import * as Pool from "../Pool.js";
  *
  *
  */
-let Base = ( ParentClass = Object ) => class Base extends ParentClass {
+let Recyclable_Base = ( ParentClass = Object ) => class Recyclable_Base extends ParentClass {
 
   /**
   * Sub-class's constructor could call itself SubClassXxx.setAsConstructor_self() (i.e. do NOT call .setAsConstructor() because super()
@@ -37,7 +37,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
   */
   constructor( ...restArgs ) {
    super( ...restArgs );
-   Base.setAsConstructor_self.call( this );
+   Recyclable_Base.setAsConstructor_self.call( this );
   }
 
   /**
@@ -61,7 +61,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     if ( super.setAsConstructor instanceof Function ) // If parent class has the same method, call it.
       super.setAsConstructor.apply( this, restArgs );
 
-    Base.setAsConstructor_self.call( this );
+    Recyclable_Base.setAsConstructor_self.call( this );
 
     return this;
   }
@@ -114,6 +114,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
  * Almost the same as Recyclable.Base class except its parent class is fixed to Object. In other words, caller can not specify the
  * parent class of Recyclable.Root (so it is named "Root" which can not have parent class).
  */
-class Root extends Base() {
+class Root extends Recyclable_Base() {
 }
 

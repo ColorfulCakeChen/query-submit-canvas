@@ -1,4 +1,4 @@
-export { Base, Root };
+export { Pool_Base as Base, Root };
 
 import { IssuedObjects } from "./Pool_IssuedObjects.js"
 
@@ -28,7 +28,7 @@ import { IssuedObjects } from "./Pool_IssuedObjects.js"
  *   The quantity of recycled objects.
  *
  */
-let Base = ( ParentClass = Object ) => class Base extends ParentClass {
+let Pool_Base = ( ParentClass = Object ) => class Pool_Base extends ParentClass {
 
   /**
    * This constructor will register this object to Pool.All.registeredPoolArray list. And it will never be removed from the list.
@@ -63,7 +63,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
     // Note: candicatedObject and returnedObject may not be the same one object. It is possible the pfn_SetAsConstructor_ReturnObject()
     //       returns a different object.
     //
-    let candicatedObject = Base.recycled_pop.call( this );
+    let candicatedObject = Pool_Base.recycled_pop.call( this );
     if ( candicatedObject != null ) {
       returnedObject = this.pfn_SetAsConstructor_ReturnObject.apply( candicatedObject, restArgs );
 
@@ -92,7 +92,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
   recycle( objectToBeRecycled ) {
 
     // 1. Recycle it.
-    let bRecycleOk = Base.recycled_add.call( this, objectToBeRecycled );
+    let bRecycleOk = Pool_Base.recycled_add.call( this, objectToBeRecycled );
 
     // 2. Removed it from issued object list. Otheriwse, the list will become larger and larger.
     if ( bRecycleOk )
@@ -193,10 +193,9 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
 }
 
 
-/**
- * Almost the same as Pool.Base class except its parent class is fixed to Object. In other words, caller can not
+ * Almost the same as Pool.Pool_Base class except its parent class is fixed to Object. In other words, caller can not
  * specify the parent class of Pool.Root (so it is named "Root" which can not have parent class).
  */
-class Root extends Base() {
+class Root extends Pool_Base() {
 }
 

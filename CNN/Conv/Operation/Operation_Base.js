@@ -1,4 +1,4 @@
-export { Base, Root };
+export { Operation_Base as Base, Root };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -31,12 +31,12 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
  * override this data member.
  *
  */
-let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( ParentClass ) {
+let Operation_Base = ( ParentClass = Object ) => class Operation_Base extends Recyclable.Base( ParentClass ) {
 
   /**
    * Used as default Operation.Root provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Operation.Base.Pool", Base, Base.setAsConstructor );
+  static Pool = new Pool.Root( "Operation.Base.Pool", Operation_Base, Operation_Base.setAsConstructor );
 
   /**
    * This constructor will register this operation as the input TensorPlaceholder's final operation. So the construction order is
@@ -49,13 +49,13 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
    */
   constructor( input0, input1, outputTensorCount, ...restArgs ) {
     super( ...restArgs ); // All other arguments passed to parent class's constructor.
-    Base.setAsConstructor_self.call( this, input0, input1, outputTensorCount, ...restArgs );
+    Operation_Base.setAsConstructor_self.call( this, input0, input1, outputTensorCount, ...restArgs );
   }
 
   /** @override */
   static setAsConstructor( input0, input1, outputTensorCount, ...restArgs ) {
     super.setAsConstructor.apply( this, restArgs );
-    Base.setAsConstructor_self.call( this, input0, input1, outputTensorCount, ...restArgs );
+    Operation_Base.setAsConstructor_self.call( this, input0, input1, outputTensorCount, ...restArgs );
     return this;
   }
 
@@ -63,7 +63,7 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
   static setAsConstructor_self( input0, input1, outputTensorCount, ...restArgs ) {
 
     // 1. Set and register as the input TensorPlaceholder's final user.
-    Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this, input0, input1 );
+    Operation_Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this, input0, input1 );
 
     // 2. Prepare output TensorPlaceholder.
     {
@@ -99,7 +99,7 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
     // 3. this.apply
     //
     // Note: In this Operation.Base object, there is no this.apply definition. Sub-class should define it.
-    this.apply = Base.apply_base_just_throw_error;
+    this.apply = Operation_Base.apply_base_just_throw_error;
   }
 
   /**
@@ -169,8 +169,8 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
    */
   setKeepInputTensor_IfNotFinalOperation_Or_In( alwaysKeepSet ) {
 
-    let input0_bKeep = Base.TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In.call( this, this.input0, alwaysKeepSet );
-    let input1_bKeep = Base.TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In.call( this, this.input1, alwaysKeepSet );
+    let input0_bKeep = Operation_Base.TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In.call( this, this.input0, alwaysKeepSet );
+    let input1_bKeep = Operation_Base.TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In.call( this, this.input1, alwaysKeepSet );
 
     // If two inputs are not null and they are the same one tensor placeholder (i.e. it appears multiple times, i.e.
     // ( this.input0 == this.input1 ) ), the conatined tensor will be disposed multiple times. In order to alleviate this
@@ -386,11 +386,11 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
    */
   static set_inputTensorPlaceholder0_inputTensorPlaceholder1( input0, input1 ) {
 
-    let newInput0 = Base.TensorPlaceholder_get_modified_for_set_input_from_old_to_new.call( this, this.input0, input0 );
+    let newInput0 = Operation_Base.TensorPlaceholder_get_modified_for_set_input_from_old_to_new.call( this, this.input0, input0 );
     if ( this.input0 != newInput0 ) // So that it could keep not existed if original does not existed.
       this.input0 = newInput0;
 
-    let newInput1 = Base.TensorPlaceholder_get_modified_for_set_input_from_old_to_new.call( this, this.input1, input1 );
+    let newInput1 = Operation_Base.TensorPlaceholder_get_modified_for_set_input_from_old_to_new.call( this, this.input1, input1 );
     if ( this.input1 != newInput1 ) // So that it could keep not existed if original does not existed.
       this.input1 = newInput1;
   }
@@ -430,6 +430,6 @@ let Base = ( ParentClass = Object ) => class Base extends Recyclable.Base( Paren
  * Almost the same as Operation.Base class except its parent class is fixed to Object. In other words, caller can not specify the
  * parent class of Operation.Root (so it is named "Root" which can not have parent class).
  */
-class Root extends Base() {
+class Root extends Operation_Base() {
 }
 

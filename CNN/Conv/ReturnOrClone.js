@@ -1,4 +1,4 @@
-export { Base, Root };
+export { ReturnOrClone_Base as Base, Root };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 
@@ -6,7 +6,7 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
  * Provide return_input_directly() and keep_input_return_copy.
  *
  */
-let Base = ( ParentClass = Object ) => class Base extends ParentClass {
+let ReturnOrClone_Base = ( ParentClass = Object ) => class ReturnOrClone_Base extends ParentClass {
 
   /**
    *
@@ -109,7 +109,7 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
    * tf.relu6, tf.cos, ...)
    */
   static ActivationFunction_get_byId( nActivationId ) {
-    let info = Base.ActivationFunction_getInfo_byId( nActivationId );
+    let info = ReturnOrClone_Base.ActivationFunction_getInfo_byId( nActivationId );
     let pfn = info?.pfn;
     return pfn;
   }
@@ -121,6 +121,6 @@ let Base = ( ParentClass = Object ) => class Base extends ParentClass {
  * Almost the same as ReturnOrClone.Base class except its parent class is fixed to Object. In other words, caller can not specify the
  * parent class of ReturnOrClone.Root (so it is named "Root" which can not have parent class).
  */
-class Root extends Base() {
+class Root extends ReturnOrClone_Base() {
 }
 
