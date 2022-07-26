@@ -5,11 +5,7 @@ import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
-//import { InferencedParams } from "./Embedding_InferencedParams.js";
-
-
-//!!! ...unfinished... (2022/07/25)
-
+import { InferencedParams } from "./Embedding_InferencedParams.js";
 
 /**
  * Embedding parameters.
@@ -57,8 +53,11 @@ import * as Weights from "../../Unpacker/Weights.js";
  * input to output. Since apply_and_destroy_or_keep()'s input is just vocabulary id (one channel or multiple channels),
  * pre-embedded vocabulary id inside the embedding table acheives the same effect by less computation (but more memory).
  *
- * @member {number} output_channelCount
- *   Output channel count. It is always depending on channelMultiplier and equals to ( inChannels * channelMultiplier ).
+ * @member {boolean} bKeepInputTensor
+ *   If true, apply() will not dispose inputTensor (i.e. will be kept).
+ *
+ * @member {InferencedParams} inferencedParams
+ *   The inferenced parameters of this embedding parameters.
  *
  * @member {BoundsArraySet.InputsOutputs} boundsArraySet
  *   The element value bounds (per channel) of this embedding.
@@ -71,24 +70,19 @@ import * as Weights from "../../Unpacker/Weights.js";
   /**
    * Used as default Embedding.Params provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Embedding.Params.Pool", Params, Params.setAsConstructor );
+  static Pool = new Pool.Root( "Embedding.Params.Pool", Embedding_Params, Embedding_Params.setAsConstructor );
 
   /**
    * If a parameter's value is null, it will be extracted from inputWeightArray (i.e. by evolution).
    *
    */
   constructor(
-    input_channelCount,
-    channelMultiplier,
-    vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
+    input_channelCount, channelMultiplier, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
     bKeepInputTensor,
   ) {
-
     super(
-      Params.SequenceArray,
-      input_channelCount,
-      channelMultiplier,
-      vocabularyCountPerInputChannel, bEmbedVocabularyId,
+      Embedding_Params.SequenceArray,
+      input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
       bKeepInputTensor,
     );
     Embedding_Params.setAsConstructor_self.call( this );
@@ -96,16 +90,12 @@ import * as Weights from "../../Unpacker/Weights.js";
 
   /** @override */
   static setAsConstructor(
-    input_channelCount,
-    channelMultiplier,
-    vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
+    input_channelCount, channelMultiplier, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
     bKeepInputTensor,
   ) {
     super.setAsConstructor(
-      Params.SequenceArray,
-      input_channelCount,
-      channelMultiplier,
-      vocabularyCountPerInputChannel, bEmbedVocabularyId,
+      Embedding_Params.SequenceArray,
+      input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
       bKeepInputTensor,
     );
     Embedding_Params.setAsConstructor_self.call( this );
@@ -119,20 +109,18 @@ import * as Weights from "../../Unpacker/Weights.js";
 
   /** @override */
   disposeResources() {
-//!!! ...unfinished... (2022/07/25)
-//    this.InferencedParams_dispose();
+    this.InferencedParams_dispose();
     super.disposeResources();
   }
 
-//!!! ...unfinished... (2022/07/25)
-  // /** Release .inferencedParams */
-  // InferencedParams_dispose() {
-  //   if ( this.inferencedParams ) {
-  //     this.inferencedParams.disposeResources_and_recycleToPool();
-  //     this.inferencedParams = null;
-  //   }
-  // }
-Embedding_Params
+  /** Release .inferencedParams */
+  InferencedParams_dispose() {
+    if ( this.inferencedParams ) {
+      this.inferencedParams.disposeResources_and_recycleToPool();
+      this.inferencedParams = null;
+    }
+  }
+
   /**
    * Extract parameters from inputWeightArray.
    *
@@ -145,92 +133,39 @@ Embedding_Params
     if ( !bExtractOk )
       return false;
 
-//!!! ...unfinished... (2022/07/25)
-//     this.InferencedParams_dispose();
-//
-//     this.inferencedParams = InferencedParams.Pool.get_or_create_by(
-//       this.input_channelCount,
-//       this.channelMultiplier,
-//       this.vocabularyCountPerInputChannel, this.bEmbedVocabularyId,
-//       this.bKeepInputTensor
-//     );
+    this.InferencedParams_dispose();
+
+    this.inferencedParams = InferencedParams.Pool.get_or_create_by(
+      this.input_channelCount, this.channelMultiplier
+    );
 
     return bExtractOk;
   }
 
-//!!! ...unfinished... (2022/07/25)
-
-  get sourceHeight()              { return this.getParamValue_byParamDesc( Params.sourceHeight ); }
-  get sourceWidth()               { return this.getParamValue_byParamDesc( Params.sourceWidth ); }
-  get sourceChannelCount()        { return this.getParamValue_byParamDesc( Params.sourceChannelCount ); }
-
-  /** @return {number} The number version of nConvStageTypeId. */
-  get nConvStageTypeId()          { return this.getParamValue_byParamDesc( Params.nConvStageTypeId ); }
-
-  /** @return {string} The string version of nConvStageTypeId. */
-  get nConvStageTypeName()        { return Params.nConvStageTypeId.getStringOfValue( this.nConvStageTypeId ); }
-
-  get blockCountRequested()       { return this.getParamValue_byParamDesc( Params.blockCountRequested ); }
-  get bPointwise1()               { return this.getParamValue_byParamDesc( Params.bPointwise1 ); }
-
-  get depthwiseFilterHeight()     { return this.getParamValue_byParamDesc( Params.depthwiseFilterHeight ); }
-  get depthwiseFilterWidth()      { return this.getParamValue_byParamDesc( Params.depthwiseFilterWidth ); }
-
-  get bPointwise2ActivatedAtStageEnd() { return this.getParamValue_byParamDesc( Params.bPointwise2ActivatedAtStageEnd ); }
-
-  get nSqueezeExcitationChannelCountDivisor()     { return this.getParamValue_byParamDesc( Params.nSqueezeExcitationChannelCountDivisor ); }
-  get nSqueezeExcitationChannelCountDivisorName() {
-    return Params.nSqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
-  }
-
-  //!!! (2022/07/14 Remarked) Stage.BlockParamsCreator will determine it.
-  //get bSqueezeExcitationPrefix()  { return this.getParamValue_byParamDesc( Params.bSqueezeExcitationPrefix ); }
-
-  get nActivationId()             { return this.getParamValue_byParamDesc( Params.nActivationId ); }
-  get nActivationName()           { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
-
-  get bKeepInputTensor()          { return this.getParamValue_byParamDesc( Params.bKeepInputTensor ); }
+  get input_channelCount()             { return this.getParamValue_byParamDesc( Embedding_Params.sourceChannelCount ); }
+  get channelMultiplier()              { return this.getParamValue_byParamDesc( Embedding_Params.channelMultiplier ); }
+  get vocabularyCountPerInputChannel() { return this.getParamValue_byParamDesc( Embedding_Params.vocabularyCountPerInputChannel ); }
+  get bEmbedVocabularyId()             { return this.getParamValue_byParamDesc( Embedding_Params.bEmbedVocabularyId ); }
+  get bKeepInputTensor()               { return this.getParamValue_byParamDesc( Params.bKeepInputTensor ); }
 }
 
 
 // Define parameter descriptions.
-Params.sourceHeight =                   new ParamDesc.Int(                "sourceHeight",               1, ( 10 * 1024 ) );
-Params.sourceWidth =                    new ParamDesc.Int(                "sourceWidth",                1, ( 10 * 1024 ) );
-Params.sourceChannelCount =             new ParamDesc.Int(                "sourceChannelCount",         1, ( 10 * 1024 ) );
+Embedding_Params.input_channelCount =             new ParamDesc.Int(  "input_channelCount",             1, ( 10 * 1024 ) );
+Embedding_Params.channelMultiplier =              new ParamDesc.Int(  "channelMultiplier",              1, 256 );
+Embedding_Params.vocabularyCountPerInputChannel = new ParamDesc.Int(  "vocabularyCountPerInputChannel", 1, ( 2 ** 24 ) );
+Embedding_Params.bEmbedVocabularyId =             new ParamDesc.Bool( "bEmbedVocabularyId" );
+Embedding_Params.bKeepInputTensor =               new ParamDesc.Bool( "bKeepInputTensor" );
 
-Params.nConvStageTypeId =               new ParamDesc.ConvStageType(      "nConvStageTypeId" );
-
-Params.blockCountRequested =            new ParamDesc.Int(                "blockCountRequested",        2, (  1 * 1024 ) );
-Params.bPointwise1 =                    new ParamDesc.Bool(               "bPointwise1" );
-Params.depthwiseFilterHeight =          new ParamDesc.Int(                "depthwiseFilterHeight",      1, ( 10 * 1024 ) );
-Params.depthwiseFilterWidth =           new ParamDesc.Int(                "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
-Params.bPointwise2ActivatedAtStageEnd = new ParamDesc.Bool(               "bPointwise2ActivatedAtStageEnd" );
-
-Params.nSqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
-//Params.bSqueezeExcitationPrefix =       new ParamDesc.Bool(               "bSqueezeExcitationPrefix" );
-
-Params.nActivationId =                  new ParamDesc.ActivationFunction( "nActivationId" );
-
-Params.bKeepInputTensor =               new ParamDesc.Bool(               "bKeepInputTensor" );
-
-
-//!!! ...unfinished... (2022/07/25)
 
 /**
  * Define the order of these parameters. (Fills ParamDesc.Xxx.seqId according to this array's order.)
  */
-Params.SequenceArray = new ParamDesc.SequenceArray( [
-  Params.sourceHeight,
-  Params.sourceWidth,
-  Params.sourceChannelCount,
-  Params.nConvStageTypeId,
-  Params.blockCountRequested,
-  Params.bPointwise1,
-  Params.depthwiseFilterHeight,
-  Params.depthwiseFilterWidth,
-  Params.bPointwise2ActivatedAtStageEnd,
-  Params.nSqueezeExcitationChannelCountDivisor,
-  Params.nActivationId,
-  Params.bKeepInputTensor,
+Embedding_Params.SequenceArray = new ParamDesc.SequenceArray( [
+  Embedding_Params.input_channelCount,
+  Embedding_Params.channelMultiplier,
+  Embedding_Params.vocabularyCountPerInputChannel,
+  Embedding_Params.bEmbedVocabularyId,
+  Embedding_Params.bKeepInputTensor,
 ] );
 
