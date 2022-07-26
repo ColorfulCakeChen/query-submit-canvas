@@ -83,7 +83,7 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
    */
   get_by_elementCount_randomOffsetMin_randomOffsetMax(
     elementCount,
-    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 1024, oBounds ) {
+    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 4096, oBounds ) {
 
     let nRandSpecId = RandTools.getRandomIntInclusive( this.nRandSpecIdMin, this.nRandSpecIdMax );
 

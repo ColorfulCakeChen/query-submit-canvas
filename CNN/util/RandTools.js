@@ -41,7 +41,7 @@ function getRandomIntInclusive( min, max ) {
  *   Return the io_numberArray.
  */
 function fill_numberArray(
-  io_numberArray, randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 1024,
+  io_numberArray, randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 4096,
   oBounds = null ) {
 
   if ( oBounds ) {
@@ -95,7 +95,7 @@ function fill_numberArray(
  *   Return a number array.
  */
 function generate_numberArray(
-  elementCount, randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 1024,
+  elementCount, randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 4096,
   oBounds = null ) {
 
   let numberArray = new Array( elementCount );

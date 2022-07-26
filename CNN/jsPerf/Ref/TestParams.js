@@ -366,7 +366,7 @@ class TestParams_Base extends Recyclable.Root {
    */
   static ensure_object_property_numberArray_length_filled(
     io_object, propertyName, elementCount,
-    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 1024 ) {
+    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 4096 ) {
 
     if (   ( io_object[ propertyName ] == undefined )          // The property does not exist.
         || ( !( io_object[ propertyName ] instanceof Array ) ) // The property exists but is not an array.
@@ -399,7 +399,7 @@ class TestParams_Base extends Recyclable.Root {
    */
   ensure_object_property_numberArray_length_existed(
     io_object, propertyName, elementCount,
-    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 1024,
+    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 4096,
     oBounds ) {
 
     io_object[ propertyName ] = this.SequenceRandom_NumberArray_Bag.get_by_elementCount_randomOffsetMin_randomOffsetMax(
@@ -507,4 +507,4 @@ TestParams_Base.weightsRandomOffset = { min: -200, max: +200 };
 //TestParams_Base.weightsRandomOffset = { min: 11, max: 11 };
 //TestParams_Base.weightsRandomOffset = { min: -0, max: +0 };
 
-TestParams_Base.weightsDivisorForRemainder = 1024;
+TestParams_Base.weightsDivisorForRemainder = 4096;
