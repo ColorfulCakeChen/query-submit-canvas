@@ -37,15 +37,33 @@ function getRandomIntInclusive( min, max ) {
  *   Return the io_numberArray.
  */
 function fill_numberArray( io_numberArray, randomOffsetMin = 0, randomOffsetMax = 0, oBounds = null ) {
-  for ( let i = 0; i < io_numberArray.length; ++i ) {
-    io_numberArray[ i ] = i + getRandomIntInclusive( randomOffsetMin, randomOffsetMax );
+  if ( oBounds ) {
+    let lowerBound = +Infinity;
+    let upperBound = -Infinity;
+    let value;
+    for ( let i = 0; i < io_numberArray.length; ++i ) {
+      value = i + getRandomIntInclusive( randomOffsetMin, randomOffsetMax );
+      if ( value > upperBound )
+        upperBound = value;
+      if ( value < lowerBound )
+        lowerBound = value;
+      io_numberArray[ i ] = value;
+    }
+    oBounds.set_byLowerUpper( lowerBound, upperBound );
+
+  } else {
+    for ( let i = 0; i < io_numberArray.length; ++i ) {
+      io_numberArray[ i ] = i + getRandomIntInclusive( randomOffsetMin, randomOffsetMax );
+    }
   }
 
-  if ( oBounds ) {
-    oBounds
-      .set_byLowerUpper( 0, io_numberArray.length - 1 ) // Basically, value is between [ 0, ( io_numberArray.length - 1 ) ].
-      .add_byLowerUpper( randomOffsetMin, randomOffsetMax ); // Plus the random range.
-  }
+//!!! (2022/07/26) should find out real bounds (not inferenced bounds).
+// Otherwise, it will not match Embedding's real bounds.
+//   if ( oBounds ) {
+//     oBounds
+//       .set_byLowerUpper( 0, io_numberArray.length - 1 ) // Basically, value is between [ 0, ( io_numberArray.length - 1 ) ].
+//       .add_byLowerUpper( randomOffsetMin, randomOffsetMax ); // Plus the random range.
+//   }
 
   return io_numberArray;
 }
