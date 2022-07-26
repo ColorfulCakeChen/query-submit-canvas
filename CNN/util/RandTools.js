@@ -47,7 +47,7 @@ function fill_numberArray(
 !!! ...unfinished... (2022/07/26)
 // If io_numberArray is instanceof Recyclable.NumberArray_withBounds which has properties lowerBound and upperBounds.
 // Record Bounds.
-    
+
   if ( oBounds ) {
     let lowerBound = +Infinity;
     let upperBound = -Infinity;

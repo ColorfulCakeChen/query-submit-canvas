@@ -41,10 +41,10 @@ class OwnerArray extends Recyclable_Array {
   }
 
   /**
-   * Every element of restArgs should be instance of ChannelPartInfo (even if restArgs has only one element).
+   * Every element of restArgs should be Recyclable.Base object (even if restArgs has only one element).
    *
-   * Note: This behavior is different from original Array which will views the argement is length (not element) if only one argument
-   *       is given.
+   * Note: This behavior is different from original Array which will views the argement is length (not element)
+   *       if only one argument is given.
    *
    * @override
    */
