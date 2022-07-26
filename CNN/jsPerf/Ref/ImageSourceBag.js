@@ -166,14 +166,9 @@ class ImageSourceBag_Base extends Recyclable.Root {
     // 1. The original image is requested.
     if ( ( depthwiseFilterHeight == 1 ) && ( depthwiseFilterWidth == 1 ) && ( depthwiseStridesPad == 0 ) ) {
 
-      //!!! (2022/04/21 Remarked) Using Weights.Base.ValueBounds is more like real use case.
-      let bAutoBounds = true;  // Image pixel channel value bounds are inside the real generated value bounds.
-      //!!! (2022/07/13 Remarked) Using small ValueBounds may reduce floating-point accumulated error.
-      //let bAutoBounds = false; // Image pixel channel value bounds are inside the default value bounds (i.e. Weights.Base.ValueBounds).
       image = NumberImage.Base.create_bySequenceRandom( originalHeight, originalWidth, channelCount,
         ImageSourceBag_Base.weightsRandomOffset.min, ImageSourceBag_Base.weightsRandomOffset.max,
-        ImageSourceBag_Base.weightsDivisorForRemainder,
-        bAutoBounds
+        ImageSourceBag_Base.weightsDivisorForRemainder
       );
 
     // 2. The shrinked image requested.

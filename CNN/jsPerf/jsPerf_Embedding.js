@@ -60,7 +60,6 @@ class HeightWidthDepth {
     this.testPerformance_NumberImageArray = Recyclable.OwnerArray.Pool.get_or_create_by( inputTensorCount );
     this.dataTensor3dArray = tf.tidy( () => {
       const randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 256;
-      const bAutoBounds = true;
 
 //!!! (2022/07/26 Remarked) Use create_bySequenceRandom() instead.
 //      let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( this.depth );
@@ -86,8 +85,8 @@ class HeightWidthDepth {
       
         let image = this.testPerformance_NumberImageArray[ i ] = NumberImage.Base.create_bySequenceRandom(
           this.height, this.width, this.depth,
-          randomOffsetMin, randomOffsetMax, divisorForRemainder,
-          bAutoBounds );
+          randomOffsetMin, randomOffsetMax, divisorForRemainder
+        );
 
         dataTensor3dArray[ i ] = tf.tensor( image.dataArray, shape );
       }

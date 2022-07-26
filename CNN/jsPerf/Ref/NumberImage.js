@@ -81,7 +81,7 @@ class NumberImage_Base extends Recyclable.Root {
     // Note: The preFilledValue and aBounds will not be recorded.
 
     let elementCount = height * width * depth;
-    this.dataArray = Recyclable.Array.Pool.get_or_create_by( elementCount );
+    this.dataArray = Recyclable.NumberArray_withBounds.Pool.get_or_create_by( elementCount );
     if ( preFilledValue != undefined )
       this.dataArray.fill( preFilledValue );
 
@@ -1413,14 +1413,8 @@ class NumberImage_Base extends Recyclable.Root {
    */
   static create_bySequenceRandom(
     height, width, channelCount,
-    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 256,
-    bAutoBounds = false ) {
-
-    // 0.
-    let tBounds;
-    if ( bAutoBounds ) {
-      tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
-    }
+    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 256
+  ) {
 
     // 1.
     let imageNew;
@@ -1439,17 +1433,10 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     // 2. Fill .dataArray with random sequence values and got their bounds (if requested).
-    RandTools.fill_numberArray( imageNew.dataArray, randomOffsetMin, randomOffsetMax, divisorForRemainder, tBounds );
+    RandTools.fill_numberArray( imageNew.dataArray, randomOffsetMin, randomOffsetMax, divisorForRemainder );
 
     // 3. Fill .boundsArraySet
-    if ( tBounds ) { // 3.1 by collected bounds (if requested).
-      imageNew.boundsArraySet.set_outputs_all_byBounds( tBounds );
-      tBounds.disposeResources_and_recycleToPool();
-      tBounds = null;
-
-    } else { // 3.2 Otherwise, assume all image pixels are inside the default value bounds (i.e. Weights.Base.ValueBounds).
-      imageNew.boundsArraySet.set_outputs_all_byBounds( Weights.Base.ValueBounds );
-    }
+    imageNew.boundsArraySet.set_outputs_all_byLowerUpper( imageNew.dataArray.lowerBound, imageNew.dataArray.upperBound );
 
     return imageNew;
   }
