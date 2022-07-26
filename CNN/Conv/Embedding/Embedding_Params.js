@@ -80,12 +80,14 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
    *
    */
   constructor(
-    input_channelCount, channelMultiplier, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
+    input_height, input_width, input_channelCount,
+    channelMultiplier, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
     bKeepInputTensor
   ) {
     super(
       Embedding_Params.SequenceArray,
-      input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+      input_height, input_width, input_channelCount,
+      vocabularyCountPerInputChannel, bEmbedVocabularyId,
       bKeepInputTensor
     );
     Embedding_Params.setAsConstructor_self.call( this );
@@ -93,12 +95,14 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
 
   /** @override */
   static setAsConstructor(
-    input_channelCount, channelMultiplier, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
+    input_height, input_width, input_channelCount,
+    channelMultiplier, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
     bKeepInputTensor
   ) {
     super.setAsConstructor(
       Embedding_Params.SequenceArray,
-      input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+      input_height, input_width, input_channelCount,
+      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
       bKeepInputTensor
     );
     Embedding_Params.setAsConstructor_self.call( this );
@@ -139,13 +143,16 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
     this.InferencedParams_dispose();
 
     this.inferencedParams = InferencedParams.Pool.get_or_create_by(
-      this.input_channelCount, this.channelMultiplier
+      this.input_height, this.input_width, this.input_channelCount,
+      this.channelMultiplier
     );
 
     return bExtractOk;
   }
 
-  get input_channelCount()             { return this.getParamValue_byParamDesc( Embedding_Params.sourceChannelCount ); }
+  get input_height()                   { return this.getParamValue_byParamDesc( Embedding_Params.input_height ); }
+  get input_width()                    { return this.getParamValue_byParamDesc( Embedding_Params.input_width ); }
+  get input_channelCount()             { return this.getParamValue_byParamDesc( Embedding_Params.input_channelCount ); }
   get channelMultiplier()              { return this.getParamValue_byParamDesc( Embedding_Params.channelMultiplier ); }
   get vocabularyCountPerInputChannel() { return this.getParamValue_byParamDesc( Embedding_Params.vocabularyCountPerInputChannel ); }
   get bEmbedVocabularyId()             { return this.getParamValue_byParamDesc( Embedding_Params.bEmbedVocabularyId ); }
@@ -154,6 +161,8 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
 
 
 // Define parameter descriptions.
+Embedding_Params.input_height =                   new ParamDesc.Int(  "input_height",                   1, ( 10 * 1024 ) );
+Embedding_Params.input_width =                    new ParamDesc.Int(  "input_width",                    1, ( 10 * 1024 ) );
 Embedding_Params.input_channelCount =             new ParamDesc.Int(  "input_channelCount",             1, ( 10 * 1024 ) );
 Embedding_Params.channelMultiplier =              new ParamDesc.Int(  "channelMultiplier",              1, (  1 * 1024 ) );
 Embedding_Params.vocabularyCountPerInputChannel = new ParamDesc.Int(  "vocabularyCountPerInputChannel", 1, ( 2 ** 24 ) );
@@ -165,6 +174,8 @@ Embedding_Params.bKeepInputTensor =               new ParamDesc.Bool( "bKeepInpu
  * Define the order of these parameters. (Fills ParamDesc.Xxx.seqId according to this array's order.)
  */
 Embedding_Params.SequenceArray = new ParamDesc.SequenceArray( [
+  Embedding_Params.input_height,
+  Embedding_Params.input_width,
   Embedding_Params.input_channelCount,
   Embedding_Params.channelMultiplier,
   Embedding_Params.vocabularyCountPerInputChannel,

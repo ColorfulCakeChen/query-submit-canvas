@@ -20,32 +20,34 @@ class InferencedParams extends Recyclable.Root {
   /**
    *
    */
-  constructor( input_channelCount, channelMultiplier ) {
+  constructor( input_height, input_width, input_channelCount, channelMultiplier ) {
     super();
     InferencedParams.set_inferencedParams_by.call( this,
-      input_channelCount, channelMultiplier
+      input_height, input_width, input_channelCount, channelMultiplier
     );
   }
 
   /** @override */
-  static setAsConstructor( input_channelCount, channelMultiplier ) {
+  static setAsConstructor( input_height, input_width, input_channelCount, channelMultiplier ) {
     super.setAsConstructor();
     InferencedParams.set_inferencedParams_by.call( this,
-      input_channelCount, channelMultiplier
+      input_height, input_width, input_channelCount, channelMultiplier
     );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( input_channelCount, channelMultiplier ) {
+  static setAsConstructor_self( input_height, input_width, input_channelCount, channelMultiplier ) {
     InferencedParams.set_inferencedParams_by.call( this,
-      input_channelCount, channelMultiplier
+      input_height, input_width, input_channelCount, channelMultiplier
     );
   }
 
   /** @override */
   disposeResources() {
     this.output_channelCount = undefined;
+    this.output_width = undefined;
+    this.output_height = undefined;
     super.disposeResources();
   }
 
@@ -54,16 +56,18 @@ class InferencedParams extends Recyclable.Root {
    *   - this.output_channelCount
    *
    */
-  static set_output_channelCount_by( input_channelCount, channelMultiplier ) {
+  static set_output_height_width_channelCount_by( input_height, input_width, input_channelCount, channelMultiplier ) {
+    this.output_height = input_height;
+    this.output_width = input_width;
     this.output_channelCount = input_channelCount * channelMultiplier;
   }
 
   /**
    *
    */
-  static set_inferencedParams_by( input_channelCount, channelMultiplier ) {
-    InferencedParams.set_output_channelCount.call( this,
-      input_channelCount, channelMultiplier
+  static set_inferencedParams_by( input_height, input_width, input_channelCount, channelMultiplier ) {
+    InferencedParams.set_output_height_width_channelCount_by.call( this,
+      input_height, input_width, input_channelCount, channelMultiplier
     );
   }
 

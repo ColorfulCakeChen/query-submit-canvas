@@ -23,24 +23,28 @@ class Out extends Recyclable.Root {
   /**
    */
   constructor(
-    input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+    input_height, input_width, input_channelCount,
+    channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
     bKeepInputTensor
   ) {
     super();
     Out.setAsConstructor_self.call( this,
-      input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+      input_height, input_width, input_channelCount,
+      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
       bKeepInputTensor
     );
   }
 
   /** @override */
   static setAsConstructor(
-    input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+    input_height, input_width, input_channelCount,
+    channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
     bKeepInputTensor
   ) {
     super.setAsConstructor();
     Out.setAsConstructor_self.call( this,
-      input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+      input_height, input_width, input_channelCount,
+      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
       bKeepInputTensor
     );
     return this;
@@ -48,9 +52,12 @@ class Out extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self(
-    input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+    input_height, input_width, input_channelCount,
+    channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
     bKeepInputTensor
   ) {
+    this.input_height = input_height;
+    this.input_width = input_width;
     this.input_channelCount = input_channelCount;
     this.channelMultiplier = channelMultiplier;
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
@@ -62,6 +69,8 @@ class Out extends Recyclable.Root {
   disposeResources() {
     this.InferencedParams_dispose();
 
+    this.input_height = undefined;
+    this.input_width = undefined;
     this.input_channelCount = undefined;
     this.channelMultiplier = undefined;
     this.vocabularyCountPerInputChannel = undefined;
@@ -83,14 +92,17 @@ class Out extends Recyclable.Root {
   generate_inferencedParams() {
     this.InferencedParams_dispose();
     this.inferencedParams = Embedding.InferencedParams.Pool.get_or_create_by(
-      this.input_channelCount, this.channelMultiplier
+      this.input_height, this.input_width, this.input_channelCount,
+      this.channelMultiplier
     );
   }
 
   /** @override */
   toString() {
-    let paramsOutDescription =
-        `input_channelCount=${this.input_channelCount}, `
+    let paramsOutDescription = ``
+      + `input_height=${this.input_height}, `
+      + `input_width=${this.input_width}, `
+      + `input_channelCount=${this.input_channelCount}, `
       + `channelMultiplier=${this.channelMultiplier}, `
       + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
       + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
@@ -286,6 +298,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
+      input_height: [ 3, 3 ],
+      input_width: [ 4, 5 ],
 
       input_channelCount: [
         Embedding.Params.input_channelCount.valueDesc.range.min,
@@ -299,7 +313,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
       vocabularyCountPerInputChannel: [
         256, //Embedding.Params.vocabularyCountPerInputChannel.valueDesc.range.min,
-        256
+        257
       ],
 
       bEmbedVocabularyId: [
@@ -318,6 +332,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
     //
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
+      new TestParams.ParamDescConfig( Embedding.Params.input_height,                   valueOutMinMax.input_height ),
+      new TestParams.ParamDescConfig( Embedding.Params.input_width,                    valueOutMinMax.input_width ),
       new TestParams.ParamDescConfig( Embedding.Params.input_channelCount,             valueOutMinMax.input_channelCount ),
       new TestParams.ParamDescConfig( Embedding.Params.channelMultiplier,              valueOutMinMax.channelMultiplier ),
       new TestParams.ParamDescConfig( Embedding.Params.vocabularyCountPerInputChannel, valueOutMinMax.vocabularyCountPerInputChannel ),
@@ -360,6 +376,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
  * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Embedding.initer().
  */
 Embedding_TestParams_Base.paramsNameOrderArray_Basic = [
+  Embedding.Params.input_height.paramName,
+  Embedding.Params.input_width.paramName,
   Embedding.Params.input_channelCount.paramName,
   Embedding.Params.channelMultiplier.paramName,
   Embedding.Params.vocabularyCountPerInputChannel.paramName,

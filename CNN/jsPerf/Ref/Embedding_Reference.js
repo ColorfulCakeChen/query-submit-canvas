@@ -40,10 +40,6 @@ class Embedding_Reference_Base extends Recyclable.Root {
   /** @override */
   static setAsConstructor_self() {
     this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.005 );
-
-    // Arbitrary defined input image height and width.
-    this.input_height = 3;
-    this.input_width = 4;
   }
 
   /** @override */
@@ -67,10 +63,10 @@ class Embedding_Reference_Base extends Recyclable.Root {
   testCorrectness( imageSourceBag, testParams ) {
 
     let {
-      input_channelCount,
+      input_height, input_width, input_channelCount,
     } = testParams.out;
 
-    this.testCorrectness_imageIn = imageSourceBag.getImage_by( this.input_height, this.input_width, input_channelCount );
+    this.testCorrectness_imageIn = imageSourceBag.getImage_by( input_height, input_width, input_channelCount );
 
     Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Embedding_Reference.Base.testCorrectness_internal()",
       Embedding_Reference_Base.testCorrectness_internal, this, imageSourceBag, testParams );
@@ -112,11 +108,12 @@ class Embedding_Reference_Base extends Recyclable.Root {
   static embedding_create_apply_internal( imageSourceBag, testParams ) {
 
     let {
-      input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+      input_height, input_width, input_channelCount,
+      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
       bKeepInputTensor,
     } = testParams.out;
 
-    let inputTensor3d_fromBag = imageSourceBag.getTensor3d_by( this.input_height, this.input_width, input_channelCount );
+    let inputTensor3d_fromBag = imageSourceBag.getTensor3d_by( input_height, input_width, input_channelCount );
 
     let inputTensor3d;
     let inputTensorDestroyCount; // How many input tensors will be destroyed by Embedding.apply().
@@ -196,7 +193,8 @@ class Embedding_Reference_Base extends Recyclable.Root {
    */
   assert_imageOut_BoundsArraySet( embedding, imageOutReference, parametersDescription ) {
     BoundsArraySet_Asserter.assert_ScaleBoundsArray( this.asserter_Equal,
-      embedding.output0.scaleBoundsArray, imageOutReference.boundsArraySet.output0,
+      // embedding.output0.scaleBoundsArray, imageOutReference.boundsArraySet.output0,
+      embedding.boundsArraySet.output0, imageOutReference.boundsArraySet.output0,
       "output0", "output0_Ref", "Embedding", parametersDescription );
   }
 
@@ -239,7 +237,8 @@ class Embedding_Reference_Base extends Recyclable.Root {
   
     // Initialize successfully or failed.
     let extractedParams = Embedding.Params.Pool.get_or_create_by(
-      testParams.in.input_channelCount, testParams.in.channelMultiplier, testParams.in.vocabularyCountPerInputChannel,
+      testParams.in.input_height, testParams.in.input_width, testParams.in.input_channelCount,
+      testParams.in.channelMultiplier, testParams.in.vocabularyCountPerInputChannel,
       testParams.in.bEmbedVocabularyId,
       testParams.in.bKeepInputTensor
     );
@@ -280,16 +279,18 @@ class Embedding_Reference_Base extends Recyclable.Root {
       embedding.weightElementOffsetEnd, testParams.in_weights.weightArray.length, embedding );
 
     // parameters.
+    embedding_asserter.propertyValue( "input_height", testParams.out.input_height );
+    embedding_asserter.propertyValue( "input_width", testParams.out.input_width );
     embedding_asserter.propertyValue( "input_channelCount", testParams.out.input_channelCount );
     embedding_asserter.propertyValue( "channelMultiplier", testParams.out.channelMultiplier );
     embedding_asserter.propertyValue( "vocabularyCountPerInputChannel", testParams.out.vocabularyCountPerInputChannel );
     embedding_asserter.propertyValue( "bEmbedVocabularyId", testParams.out.bEmbedVocabularyId );
 
     // Inferenced parameters.
-    let { output_channelCount } = testParams.out.inferencedParams;
+    let { output_height, output_width, output_channelCount } = testParams.out.inferencedParams;
 
-    // embedding_asserter.propertyValue( "outputHeight", testParams.out.inferencedParams.outputHeight );
-    // embedding_asserter.propertyValue( "outputWidth", testParams.out.inferencedParams.outputWidth );
+    embedding_asserter.propertyValue( "output_height", output_height );
+    embedding_asserter.propertyValue( "output_width", output_width );
     embedding_asserter.propertyValue( "output_channelCount", output_channelCount );
 
     // Other parameters.
