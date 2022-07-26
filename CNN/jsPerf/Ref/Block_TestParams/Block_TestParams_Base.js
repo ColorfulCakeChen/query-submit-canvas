@@ -257,7 +257,7 @@ class Block_TestParams_Base extends TestParams.Base {
     let depthwiseFilterMaxSize = 3;
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
-    this.valueOutMinMax = {
+    let valueOutMinMax = this.valueOutMinMax = {
       input0_height: [ 3, 3 ],
       input0_width: [ 4, 5 ],
 
@@ -375,36 +375,36 @@ class Block_TestParams_Base extends TestParams.Base {
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
 
-      new TestParams.ParamDescConfig( Block.Params.input0_height,           this.valueOutMinMax.input0_height ),
-      new TestParams.ParamDescConfig( Block.Params.input0_width,            this.valueOutMinMax.input0_width ),
+      new TestParams.ParamDescConfig( Block.Params.input0_height,           valueOutMinMax.input0_height ),
+      new TestParams.ParamDescConfig( Block.Params.input0_width,            valueOutMinMax.input0_width ),
 
-      new TestParams.ParamDescConfig( Block.Params.pointwise20ChannelCount, this.valueOutMinMax.pointwise20ChannelCount ),
-      new TestParams.ParamDescConfig( Block.Params.pointwise20ActivationId, this.valueOutMinMax.pointwise20ActivationId ),
+      new TestParams.ParamDescConfig( Block.Params.pointwise20ChannelCount, valueOutMinMax.pointwise20ChannelCount ),
+      new TestParams.ParamDescConfig( Block.Params.pointwise20ActivationId, valueOutMinMax.pointwise20ActivationId ),
 
-      new TestParams.ParamDescConfig( Block.Params.nActivationId,           this.valueOutMinMax.ActivationId ),
+      new TestParams.ParamDescConfig( Block.Params.nActivationId,           valueOutMinMax.ActivationId ),
 
-      new TestParams.ParamDescConfig( Block.Params.input0_channelCount,     this.valueOutMinMax.input0_channelCount ),
+      new TestParams.ParamDescConfig( Block.Params.input0_channelCount,     valueOutMinMax.input0_channelCount ),
 
       new TestParams.ParamDescConfig( Block.Params.depthwise_AvgMax_Or_ChannelMultiplier,
-                                                                            this.valueOutMinMax.depthwise_AvgMax_Or_ChannelMultiplier ),
+                                                                            valueOutMinMax.depthwise_AvgMax_Or_ChannelMultiplier ),
 
-      new TestParams.ParamDescConfig( Block.Params.depthwiseStridesPad,     this.valueOutMinMax.depthwiseStridesPad ),
-      new TestParams.ParamDescConfig( Block.Params.depthwiseActivationId,   this.valueOutMinMax.depthwiseActivationId ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseStridesPad,     valueOutMinMax.depthwiseStridesPad ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseActivationId,   valueOutMinMax.depthwiseActivationId ),
 
-      new TestParams.ParamDescConfig( Block.Params.pointwise1ChannelCount,  this.valueOutMinMax.pointwise1ChannelCount ),
+      new TestParams.ParamDescConfig( Block.Params.pointwise1ChannelCount,  valueOutMinMax.pointwise1ChannelCount ),
 
-      new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,        this.valueOutMinMax.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,        valueOutMinMax.bKeepInputTensor ),
 
-      new TestParams.ParamDescConfig( Block.Params.nConvBlockTypeId,        this.valueOutMinMax.nConvBlockTypeId ),
+      new TestParams.ParamDescConfig( Block.Params.nConvBlockTypeId,        valueOutMinMax.nConvBlockTypeId ),
 
       new TestParams.ParamDescConfig( Block.Params.bSqueezeExcitationPrefix,
-                                                                            this.valueOutMinMax.bSqueezeExcitationPrefix ),
+                                                                            valueOutMinMax.bSqueezeExcitationPrefix ),
 
       new TestParams.ParamDescConfig( Block.Params.nSqueezeExcitationChannelCountDivisor,
-                                                                            this.valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
+                                                                            valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
 
-      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,   this.valueOutMinMax.depthwiseFilterHeight ),
-      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterWidth,    this.valueOutMinMax.depthwiseFilterWidth ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,   valueOutMinMax.depthwiseFilterHeight ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterWidth,    valueOutMinMax.depthwiseFilterWidth ),
 
     ];
 

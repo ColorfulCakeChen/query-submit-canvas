@@ -7,6 +7,9 @@ import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import { InferencedParams } from "./Embedding_InferencedParams.js";
 
+//!!! ...unfinished... (2022/07/26)
+// Perhaps, add parameter bCastToInt32 for controlling whether needs cast input to integer.
+
 /**
  * Embedding parameters.
  *
@@ -152,7 +155,7 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
 
 // Define parameter descriptions.
 Embedding_Params.input_channelCount =             new ParamDesc.Int(  "input_channelCount",             1, ( 10 * 1024 ) );
-Embedding_Params.channelMultiplier =              new ParamDesc.Int(  "channelMultiplier",              1, 256 );
+Embedding_Params.channelMultiplier =              new ParamDesc.Int(  "channelMultiplier",              1, (  1 * 1024 ) );
 Embedding_Params.vocabularyCountPerInputChannel = new ParamDesc.Int(  "vocabularyCountPerInputChannel", 1, ( 2 ** 24 ) );
 Embedding_Params.bEmbedVocabularyId =             new ParamDesc.Bool( "bEmbedVocabularyId" );
 Embedding_Params.bKeepInputTensor =               new ParamDesc.Bool( "bKeepInputTensor" );

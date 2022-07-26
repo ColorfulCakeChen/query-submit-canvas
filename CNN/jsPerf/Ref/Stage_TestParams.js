@@ -427,7 +427,7 @@ class Stage_TestParams_Base extends TestParams.Base {
     let depthwiseFilterMaxSize = 3;
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
-    this.valueOutMinMax = {
+    let valueOutMinMax = this.valueOutMinMax = {
 //!!! (2022/07/22 Temp Remarked) For test more.
       sourceHeight: [ 3, 3 ],
       sourceWidth:  [ 4, 5 ], // Test different input image width (even and odd).
@@ -505,21 +505,21 @@ class Stage_TestParams_Base extends TestParams.Base {
     //
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
-      new TestParams.ParamDescConfig( Stage.Params.sourceHeight,                   this.valueOutMinMax.sourceHeight ),
-      new TestParams.ParamDescConfig( Stage.Params.sourceWidth,                    this.valueOutMinMax.sourceWidth ),
-      new TestParams.ParamDescConfig( Stage.Params.sourceChannelCount,             this.valueOutMinMax.sourceChannelCount ),
-      new TestParams.ParamDescConfig( Stage.Params.nConvStageTypeId,               this.valueOutMinMax.nConvStageTypeId ),
-      new TestParams.ParamDescConfig( Stage.Params.blockCountRequested,            this.valueOutMinMax.blockCountRequested ),
-      new TestParams.ParamDescConfig( Stage.Params.bPointwise1,                    this.valueOutMinMax.bPointwise1 ),
-      new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterHeight,          this.valueOutMinMax.depthwiseFilterHeight ),
-      new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterWidth,           this.valueOutMinMax.depthwiseFilterWidth ),
-      new TestParams.ParamDescConfig( Stage.Params.bPointwise2ActivatedAtStageEnd, this.valueOutMinMax.bPointwise2ActivatedAtStageEnd ),
+      new TestParams.ParamDescConfig( Stage.Params.sourceHeight,                   valueOutMinMax.sourceHeight ),
+      new TestParams.ParamDescConfig( Stage.Params.sourceWidth,                    valueOutMinMax.sourceWidth ),
+      new TestParams.ParamDescConfig( Stage.Params.sourceChannelCount,             valueOutMinMax.sourceChannelCount ),
+      new TestParams.ParamDescConfig( Stage.Params.nConvStageTypeId,               valueOutMinMax.nConvStageTypeId ),
+      new TestParams.ParamDescConfig( Stage.Params.blockCountRequested,            valueOutMinMax.blockCountRequested ),
+      new TestParams.ParamDescConfig( Stage.Params.bPointwise1,                    valueOutMinMax.bPointwise1 ),
+      new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterHeight,          valueOutMinMax.depthwiseFilterHeight ),
+      new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterWidth,           valueOutMinMax.depthwiseFilterWidth ),
+      new TestParams.ParamDescConfig( Stage.Params.bPointwise2ActivatedAtStageEnd, valueOutMinMax.bPointwise2ActivatedAtStageEnd ),
 
       new TestParams.ParamDescConfig( Stage.Params.nSqueezeExcitationChannelCountDivisor,
-                                                                                   this.valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
+                                                                                   valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
 
-      new TestParams.ParamDescConfig( Stage.Params.nActivationId,                  this.valueOutMinMax.nActivationId ),
-      new TestParams.ParamDescConfig( Stage.Params.bKeepInputTensor,               this.valueOutMinMax.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( Stage.Params.nActivationId,                  valueOutMinMax.nActivationId ),
+      new TestParams.ParamDescConfig( Stage.Params.bKeepInputTensor,               valueOutMinMax.bKeepInputTensor ),
     ];
 
     yield *Stage_TestParams_Base.ParamsGenerator.call( this, paramDescConfigArray );

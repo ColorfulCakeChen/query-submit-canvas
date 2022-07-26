@@ -276,40 +276,6 @@ class Embedding_TestParams_Base extends TestParams.Base {
    */
   onYield_isLegal() {
 
-//!!! ...unfinished... (2022/07/22)
-//
-//     // (2021/07/20)
-//     // Note: In backend WASM, when filter width is 1 (note: filter height does not have this issue and could be 1), it seems that
-//     // tf.pool() (both AVG and MAX) and tf.depthwiseConv2d() will calculate wrongly. In backend CPU and WebGL, this problem does
-//     // not exist.
-//     //
-//     // (2022/05/01)
-//     // The tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
-//     // ourselves testing procedure.
-//     if ( tf.getBackend() == "wasm" ) {
-//
-//       this.generate_out_inferencedParams(); // So that this.out.inferencedParams and .depthwisePadInfo is usable.
-//
-//       *   - this.depthwiseFilterWidthArray
-//       *   - this.depthwiseFilterHeightArray
-// 
-//       if ( this.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
-//
-//         // For depthwise1/depthwis2.
-//         if ( this.out.depthwiseFilterWidth == 1 )
-//           return false;
-//
-//         let pointwise2_inputWidth = this.out.inferencedParams.depthwisePadInfo.outputWidth;
-//
-//         // For squeeze-and-excitation.
-//         //
-//         // (squeeze is an average pooling. Its filter width is the same as inputWidth (i.e. pointwise2_inputWidth).)
-//         if (   ( pointwise2_inputWidth == 1 )
-//             && ( ValueDesc.SqueezeExcitationChannelCountDivisor.hasSqueeze( this.out.nSqueezeExcitationChannelCountDivisor ) )
-//            )
-//           return false;
-//       }
-//     }
 
     return true;
   }
@@ -329,6 +295,9 @@ class Embedding_TestParams_Base extends TestParams.Base {
    * @override
    */
   onYield_after() {
+
+//!!! ...unfinished... (2022/07/26)
+
     this.blockArray.clear(); // Clear blocks' parameters.
   }
 
@@ -339,79 +308,31 @@ class Embedding_TestParams_Base extends TestParams.Base {
    *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
    */
   * ParamsGenerator() {
-    // (2022/04/30 Remarked) For speed up testing by reduce testing space.
-    //let depthwiseFilterMaxSize = 5;
-    let depthwiseFilterMaxSize = 3;
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
-    this.valueOutMinMax = {
-//!!! (2022/07/22 Temp Remarked) For test more.
-      sourceHeight: [ 3, 3 ],
-      sourceWidth:  [ 4, 5 ], // Test different input image width (even and odd).
-      sourceChannelCount: [ 3, 4 ],
-//!!! (2022/07/22 Temp Remarked) For speed-up debug.
-      // sourceHeight: [ 1, 5 ],
-      // sourceWidth:  [ 1, 5 ], // Test different input image width (even and odd).
-      // sourceChannelCount: [ 3, 4 ],
+    let valueOutMinMax = this.valueOutMinMax = {
 
-//      nConvStageTypeId: undefined,
-//!!! (2022/07/20 Temp Remarked) For speed-up debug.
-      nConvStageTypeId: [
-        Embedding.Params.nConvStageTypeId.valueDesc.range.min,
-        Embedding.Params.nConvStageTypeId.valueDesc.range.max
-      ],
-      // nConvStageTypeId: [
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1, // (0)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID, // (1)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN, // (2)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2, // (3)
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2, // (4)
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1, // (5)
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21, // (7)
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 // (5)
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21 // (7)
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 // (4)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2 // (3)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN // (2)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID // (1)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1 // (0)
-      // ],
-
-      blockCountRequested: [
-        Embedding.Params.blockCountRequested.valueDesc.range.min,
-        Embedding.Params.blockCountRequested.valueDesc.range.min + 2
+      input_channelCount: [
+        Embedding.Params.input_channelCount.valueDesc.range.min,
+        4
       ],
 
-//      bPointwise1: undefined,
-      bPointwise1: [
-        Embedding.Params.bPointwise1.valueDesc.range.min,
-        Embedding.Params.bPointwise1.valueDesc.range.max
+      channelMultiplier: [
+        Embedding.Params.channelMultiplier.valueDesc.range.min,
+        4
       ],
 
-      // (2022/05/05) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
-//!!! (2022/07/22 Remarked) to avoid depthwise filter 1 x N or N x 1
-//      depthwiseFilterHeight: [ Embedding.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
-//      depthwiseFilterWidth: [ Embedding.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
-      depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
-      depthwiseFilterWidth: [ 2, depthwiseFilterMaxSize ],
-
-      bPointwise2ActivatedAtStageEnd: [
-        Embedding.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.min,
-        Embedding.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.max
+      vocabularyCountPerInputChannel: [
+        256, //Embedding.Params.vocabularyCountPerInputChannel.valueDesc.range.min,
+        256
       ],
 
-//      nSqueezeExcitationChannelCountDivisor: undefined,
-      nSqueezeExcitationChannelCountDivisor: [
-        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
-        3
+      bEmbedVocabularyId: [
+        Embedding.Params.bEmbedVocabularyId.valueDesc.range.min,
+        Embedding.Params.bEmbedVocabularyId.valueDesc.range.max
       ],
 
-      // Must have ActivationFunction (i.e. can not be NONE). Otherwise, it easily results in infinity value because of multiple block.
-      //
-       nActivationId: [ ValueDesc.ActivationFunction.Singleton.range.max, ValueDesc.ActivationFunction.Singleton.range.max ],
-
-//      bKeepInputTensor: undefined,
+      // bKeepInputTensor: undefined,
       bKeepInputTensor: [
         Embedding.Params.bKeepInputTensor.valueDesc.range.min,
         Embedding.Params.bKeepInputTensor.valueDesc.range.max
@@ -422,21 +343,11 @@ class Embedding_TestParams_Base extends TestParams.Base {
     //
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
-      new TestParams.ParamDescConfig( Embedding.Params.sourceHeight,                   this.valueOutMinMax.sourceHeight ),
-      new TestParams.ParamDescConfig( Embedding.Params.sourceWidth,                    this.valueOutMinMax.sourceWidth ),
-      new TestParams.ParamDescConfig( Embedding.Params.sourceChannelCount,             this.valueOutMinMax.sourceChannelCount ),
-      new TestParams.ParamDescConfig( Embedding.Params.nConvStageTypeId,               this.valueOutMinMax.nConvStageTypeId ),
-      new TestParams.ParamDescConfig( Embedding.Params.blockCountRequested,            this.valueOutMinMax.blockCountRequested ),
-      new TestParams.ParamDescConfig( Embedding.Params.bPointwise1,                    this.valueOutMinMax.bPointwise1 ),
-      new TestParams.ParamDescConfig( Embedding.Params.depthwiseFilterHeight,          this.valueOutMinMax.depthwiseFilterHeight ),
-      new TestParams.ParamDescConfig( Embedding.Params.depthwiseFilterWidth,           this.valueOutMinMax.depthwiseFilterWidth ),
-      new TestParams.ParamDescConfig( Embedding.Params.bPointwise2ActivatedAtStageEnd, this.valueOutMinMax.bPointwise2ActivatedAtStageEnd ),
-
-      new TestParams.ParamDescConfig( Embedding.Params.nSqueezeExcitationChannelCountDivisor,
-                                                                                   this.valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
-
-      new TestParams.ParamDescConfig( Embedding.Params.nActivationId,                  this.valueOutMinMax.nActivationId ),
-      new TestParams.ParamDescConfig( Embedding.Params.bKeepInputTensor,               this.valueOutMinMax.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( Embedding.Params.input_channelCount,             valueOutMinMax.input_channelCount ),
+      new TestParams.ParamDescConfig( Embedding.Params.channelMultiplier,              valueOutMinMax.channelMultiplier ),
+      new TestParams.ParamDescConfig( Embedding.Params.vocabularyCountPerInputChannel, valueOutMinMax.vocabularyCountPerInputChannel ),
+      new TestParams.ParamDescConfig( Embedding.Params.bEmbedVocabularyId,             valueOutMinMax.bEmbedVocabularyId ),
+      new TestParams.ParamDescConfig( Embedding.Params.bKeepInputTensor,               valueOutMinMax.bKeepInputTensor ),
     ];
 
     yield *Embedding_TestParams_Base.ParamsGenerator.call( this, paramDescConfigArray );
@@ -451,16 +362,9 @@ class Embedding_TestParams_Base extends TestParams.Base {
  * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Embedding.initer().
  */
 Embedding_TestParams_Base.paramsNameOrderArray_Basic = [
-  Embedding.Params.sourceHeight.paramName,
-  Embedding.Params.sourceWidth.paramName,
-  Embedding.Params.sourceChannelCount.paramName,
-  Embedding.Params.nConvStageTypeId.paramName,
-  Embedding.Params.blockCountRequested.paramName,
-  Embedding.Params.bPointwise1.paramName,
-  Embedding.Params.depthwiseFilterHeight.paramName,
-  Embedding.Params.depthwiseFilterWidth.paramName,
-  Embedding.Params.bPointwise2ActivatedAtStageEnd.paramName,
-  Embedding.Params.nSqueezeExcitationChannelCountDivisor.paramName,  
-  Embedding.Params.nActivationId.paramName,
+  Embedding.Params.input_channelCount.paramName,
+  Embedding.Params.channelMultiplier.paramName,
+  Embedding.Params.vocabularyCountPerInputChannel.paramName,
+  Embedding.Params.bEmbedVocabularyId.paramName,
   Embedding.Params.bKeepInputTensor.paramName,
 ];
