@@ -320,6 +320,8 @@ class Embedding_Reference_Base extends Recyclable.Root {
         tensorWeightCountExtracted = testParams.out.input_channelCount * testParams.out.channelMultiplier;
       }
 
+      tensorWeightCountTotal = tensorWeightCountExtracted;
+
       embedding_asserter.propertyValue( "tensorWeightCountTotal", tensorWeightCountTotal );
       embedding_asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
     }
