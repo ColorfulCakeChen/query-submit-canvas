@@ -89,6 +89,9 @@ class Embedding_Reference_Base extends Recyclable.Root {
 
     this.testCorrectness_imageOutReference = this.calcResult( this.testCorrectness_imageIn );
 
+//!!! ...unfinished... (2022/07/26)
+// should try twice: one is for Embedding.AddGatherReshape, the other is for Embedding.SplitGatherConcat.
+
     Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Embedding_Reference.Base.embedding_create_apply_internal()",
       Embedding_Reference_Base.embedding_create_apply_internal, this, imageSourceBag, testParams );
 
@@ -104,8 +107,11 @@ class Embedding_Reference_Base extends Recyclable.Root {
    * @param {Embedding_Reference.Base} this
    *   The referenece object to do the calculate.
    *
+   * @param {Class} EmbeddingClass
+   *   Either Embedding.AddGatherReshape or Embedding.SplitGatherConcat.
+   *
    */
-  static embedding_create_apply_internal( imageSourceBag, testParams ) {
+  static embedding_create_apply_internal( EmbeddingClass, imageSourceBag, testParams ) {
 
     let {
       input_height, input_width, input_channelCount,
@@ -131,7 +137,8 @@ class Embedding_Reference_Base extends Recyclable.Root {
 
     let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
     {
-      let embedding = Embedding_Reference_Base.Embedding_create( testParams, this.testCorrectness_imageIn.boundsArraySet.output0 );
+      let embedding = Embedding_Reference_Base.Embedding_create(
+        EmbeddingClass, testParams, this.testCorrectness_imageIn.boundsArraySet.output0 );
 
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
@@ -220,6 +227,9 @@ class Embedding_Reference_Base extends Recyclable.Root {
   }
 
   /**
+   * @param {Class} EmbeddingClass
+   *   Either Embedding.AddGatherReshape or Embedding.SplitGatherConcat.
+   *
    * @param {Embedding_TestParams.Base} testParams
    *   The test parameters. It is the value of Embedding_TestParams.Base.ParamsGenerator()'s result.
    *
@@ -229,9 +239,9 @@ class Embedding_Reference_Base extends Recyclable.Root {
    *
    * @return {Embedding.Base} The created Embedding object.
    */
-  static Embedding_create( testParams, inputScaleBoundsArray0 ) {
+  static Embedding_create( EmbeddingClass, testParams, inputScaleBoundsArray0 ) {
 
-    let embedding = Embedding.Base.Pool.get_or_create_by();
+    let embedding = EmbeddingClass.Pool.get_or_create_by();
 
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
   
@@ -332,12 +342,9 @@ class Embedding_Reference_Base extends Recyclable.Root {
    */
   calcResult( imageIn ) {
     let testParams = this.testParams;
+    let testParamsOut = this.testParams.out;
 
-    let { output_height, output_width, output_channelCount } = testParams.out.inferencedParams;
-
-//!!! ...unfinished... (2022/07/26)
-// static setAsConstructor_self( height, width, depth, preFilledValue,
-//   input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds ) {
+    let { output_height, output_width, output_channelCount } = testParamsOut.inferencedParams;
 
     let imageOut;
     {
@@ -350,7 +357,8 @@ class Embedding_Reference_Base extends Recyclable.Root {
       );
     }
 
-    Embedding_Reference_Base.AssertParameters_Embedding_blocks( testParams, testParams.out ); // Test every block's parameters.
+//!!! ...unfinished... (2022/07/26)
+
 
     // Calculate every blocks in sequence.
 
