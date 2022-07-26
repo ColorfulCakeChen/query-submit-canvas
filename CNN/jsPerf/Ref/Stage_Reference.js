@@ -152,14 +152,15 @@ class Stage_Reference_Base extends Recyclable.Root {
     {
       let stage = Stage_Reference_Base.Stage_create( testParams, this.testCorrectness_imageIn.boundsArraySet.output0 );
 
-      let { outputHeight, outputWidth } = testParams.out.inferencedParams;
-      let outputChannelCount = sourceChannelCount * 2; // In current Stage's design, the output channel always is twice as input.
-  
-      Stage_Reference_Base.AssertTwoEqualValues( "outputHeight", stage.outputHeight, outputHeight, stage );
-      Stage_Reference_Base.AssertTwoEqualValues( "outputWidth", stage.outputWidth, outputWidth, stage );
-      Stage_Reference_Base.AssertTwoEqualValues( "outputChannelCount", stage.outputChannelCount, outputChannelCount, stage );
-
-      Stage_Reference_Base.AssertTwoEqualValues( "blockCount", stage.blockCount, testParams.blockArray.length, stage );
+//!!! (2022/07/26 Remarked) Moved into Stage_create().
+//       let { outputHeight, outputWidth } = testParams.out.inferencedParams;
+//       let outputChannelCount = sourceChannelCount * 2; // In current Stage's design, the output channel always is twice as input.
+//
+//       Stage_Reference_Base.AssertTwoEqualValues( "outputHeight", stage.outputHeight, outputHeight, stage );
+//       Stage_Reference_Base.AssertTwoEqualValues( "outputWidth", stage.outputWidth, outputWidth, stage );
+//       Stage_Reference_Base.AssertTwoEqualValues( "outputChannelCount", stage.outputChannelCount, outputChannelCount, stage );
+//
+//       Stage_Reference_Base.AssertTwoEqualValues( "blockCount", stage.blockCount, testParams.blockArray.length, stage );
 
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
@@ -363,7 +364,7 @@ class Stage_Reference_Base extends Recyclable.Root {
   assert_imageOut_BoundsArraySet( stage, imageOutReference, parametersDescription ) {
     BoundsArraySet_Asserter.assert_ScaleBoundsArray( this.asserter_Equal,
       stage.output0.scaleBoundsArray, imageOutReference.boundsArraySet.output0,
-      "output0", "output0_Ref", `Stage`, parametersDescription );
+      "output0", "output0_Ref", "Stage", parametersDescription );
   }
 
   /**
@@ -383,7 +384,7 @@ class Stage_Reference_Base extends Recyclable.Root {
 
     this.asserter_Equal.assert_Tensor_NumberArray(
       outputTensor, outputArrayRef,
-      "Stage", `outputTensor`, `outputRef`, parametersDescription
+      "Stage", "outputTensor", "outputRef", parametersDescription
     );
   }
 
@@ -443,7 +444,7 @@ class Stage_Reference_Base extends Recyclable.Root {
       debugger;
     }
 
-    let stage_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Stage`, stage, stage );
+    let stage_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( "Stage", stage, stage );
 
     Stage_Reference_Base.AssertTwoEqualValues( "parsing beginning position",
       stage.weightElementOffsetBegin, testParams.in_weights.weightElementOffsetBegin, stage );
@@ -464,9 +465,14 @@ class Stage_Reference_Base extends Recyclable.Root {
     stage_asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", testParams.out.nSqueezeExcitationChannelCountDivisor );
     stage_asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
 
-    // Referred parameters.
-    stage_asserter.propertyValue( "outputHeight", testParams.out.inferencedParams.outputHeight );
-    stage_asserter.propertyValue( "outputWidth", testParams.out.inferencedParams.outputWidth );
+    // Inferenced parameters.
+    let { outputHeight, outputWidth } = testParams.out.inferencedParams;
+    let outputChannelCount = sourceChannelCount * 2; // In current Stage's design, the output channel always is twice as input.
+
+    stage_asserter.propertyValue( "outputHeight", outputHeight );
+    stage_asserter.propertyValue( "outputWidth", outputWidth );
+    stage_asserter.propertyValue( "outputChannelCount", outputChannelCount );
+    stage_asserter.propertyValue( "blockCount", testParams.blockArray.length );
 
     // Other parameters.
     stage_asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
@@ -501,7 +507,7 @@ class Stage_Reference_Base extends Recyclable.Root {
   /** */
   static AssertTwoEqualValues( valueName, value1, value2, parametersDescription ) {
     if ( value1 != value2 )
-      throw Error(  `Stage ${valueName} (${value1}) should be (${value2}). ${parametersDescription}` );
+      throw Error( `Stage ${valueName} (${value1}) should be (${value2}). ${parametersDescription}` );
   }
 
   /** */
@@ -1084,15 +1090,10 @@ class Stage_Reference_Base extends Recyclable.Root {
 
   /** According to imageIn and this.testParams.in.paramsNumberArrayObject, calculate imageOut.
    *
-   * @param {object} imageIn
+   * @param {NumberImage.Base} imageIn
    *   The image to be tested.
    *
-   * @param {number}   imageIn.height    Image height
-   * @param {number}   imageIn.width     Image width
-   * @param {number}   imageIn.depth     Image channel count
-   * @param {number[]} imageIn.dataArray Image data
-   *
-   * @return {object} Return output image as object { height, widthm depth, dataArray }.
+   * @return {NumberImage.Base} Return output image.
    */
   calcResult( imageIn ) {
     let testParams = this.testParams;
