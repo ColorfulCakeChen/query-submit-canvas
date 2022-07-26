@@ -111,99 +111,102 @@ class HeightWidthDepth {
 //!!! ...unfinished... (2022/07/26)
 //      Embedding.AddGatherReshape, Embedding.SplitGatherConcat,
       
-    // Test Case 1: (MobileNetV1, ( channelMultiplier == 1 ))
-    this.testCaseMap.set( "MobileNetV1_channelMultiplier_1", { testParams: 
+    // Test Case 1: (AddGatherReshape, ( channelMultiplier == 1 ))
+    this.testCaseMap.set( "AddGatherReshape_channelMultiplier_1", { testParams: 
       ( new Embedding_TestParams.Base() ).set_byParamsScattered(
         this.height, this.width, this.depth, 1,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
       ) } );
 
-    // Test Case 2: (MobileNetV1_padValid, ( channelMultiplier == 2 ))
-    this.testCaseMap.set( "MobileNetV1_channelMultiplier_2", { testParams: 
+    // Test Case 2: (SplitGatherConcat, ( channelMultiplier == 1 ))
+    this.testCaseMap.set( "SplitGatherConcat_channelMultiplier_1", { testParams: 
+      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
+        this.height, this.width, this.depth, 1,
+        vocabularyCountPerInputChannel, bEmbedVocabularyId,
+        true
+      ) } );
+
+    // Test Case 3: (AddGatherReshape, ( channelMultiplier == 2 ))
+    this.testCaseMap.set( "AddGatherReshape_channelMultiplier_2", { testParams: 
       ( new Embedding_TestParams.Base() ).set_byParamsScattered(
         this.height, this.width, this.depth, 2,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
       ) } );
 
-    // Test Case 3: (MobileNetV2_Thin, ( bPointwise1 == true ))
-    this.testCaseMap.set( "MobileNetV2_Thin_bPointwise1_true", { testParams: 
+    // Test Case 4: (SplitGatherConcat, ( channelMultiplier == 2 ))
+    this.testCaseMap.set( "SplitGatherConcat_channelMultiplier_2", { testParams: 
       ( new Embedding_TestParams.Base() ).set_byParamsScattered(
-        this.height, this.width, this.depth,
-        ValueDesc.ConvEmbeddingType.Singleton.Ids.MOBILE_NET_V2_THIN,
+        this.height, this.width, this.depth, 2,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
       ) } );
 
-    // Test Case 4: (MobileNetV2, ( bPointwise1 == true ))
-    this.testCaseMap.set( "MobileNetV2_bPointwise1_true", { testParams: 
+    // Test Case 5: (AddGatherReshape, ( channelMultiplier == 3 ))
+    this.testCaseMap.set( "AddGatherReshape_channelMultiplier_3", { testParams: 
       ( new Embedding_TestParams.Base() ).set_byParamsScattered(
-        this.height, this.width, this.depth,
-        ValueDesc.ConvEmbeddingType.Singleton.Ids.MOBILE_NET_V2,
+        this.height, this.width, this.depth, 3,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
       ) } );
 
-    // Test Case 5: (ShuffleNetV2, ( bPointwise1 == true ))
-    this.testCaseMap.set( "ShuffleNetV2_bPointwise1_true", { testParams: 
+    // Test Case 6: (SplitGatherConcat, ( channelMultiplier == 3 ))
+    this.testCaseMap.set( "SplitGatherConcat_channelMultiplier_3", { testParams: 
       ( new Embedding_TestParams.Base() ).set_byParamsScattered(
-        this.height, this.width, this.depth,
-        ValueDesc.ConvEmbeddingType.Singleton.Ids.SHUFFLE_NET_V2,
+        this.height, this.width, this.depth, 3,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
       ) } );
 
-    // Test Case 6: (ShuffleNetV2_byPointwise21, ( bPointwise1 == true ))
-    this.testCaseMap.set( "ShuffleNetV2_byPointwise21_bPointwise1_true", { testParams: 
+    // Test Case 7: (AddGatherReshape, ( channelMultiplier == 4 ))
+    this.testCaseMap.set( "AddGatherReshape_channelMultiplier_4", { testParams: 
       ( new Embedding_TestParams.Base() ).set_byParamsScattered(
-        this.height, this.width, this.depth,
-        ValueDesc.ConvEmbeddingType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
+        this.height, this.width, this.depth, 4,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
       ) } );
 
-    // Test Case 7: (ShuffleNetV2_byMobileNetV1, ( bPointwise1 == true ))
-    this.testCaseMap.set( "ShuffleNetV2_byMobileNetV1_bPointwise1_true", { testParams: 
+    // Test Case 8: (SplitGatherConcat, ( channelMultiplier == 4 ))
+    this.testCaseMap.set( "SplitGatherConcat_channelMultiplier_4", { testParams: 
       ( new Embedding_TestParams.Base() ).set_byParamsScattered(
-        this.height, this.width, this.depth,
-        ValueDesc.ConvEmbeddingType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
-        vocabularyCountPerInputChannel, bEmbedVocabularyId,
-        true
-      ) } );
-
-    // Test Case 8: (ShuffleNetV2_byMobileNetV1_padValid, ( bPointwise1 == true ))
-    this.testCaseMap.set( "ShuffleNetV2_byMobileNetV1_padValid_bPointwise1_true", { testParams: 
-      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
-        this.height, this.width, this.depth,
-        ValueDesc.ConvEmbeddingType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
+        this.height, this.width, this.depth, 4,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
       ) } );
 
 
     // Create the different Embedding objects for performance testing.
-    for ( let name_testCase of this.testCaseMap.entries() ) {
-      let name = name_testCase[ 0 ];
-      let testCase = name_testCase[ 1 ];
-      try {
-        if ( !testCase.embedding ) {
-          testCase.embedding = Embedding_Reference.Base.Embedding_create(
-            Embedding.AddGatherReshape,
-//!!!???
-//            Embedding.SplitGatherConcat,
-            testCase.testParams,
-            this.testPerformance_NumberImageArray[ 0 ].boundsArraySet.output0 );
+    {
+      let i = 0;
+      for ( let name_testCase of this.testCaseMap.entries() ) {
+        let name = name_testCase[ 0 ];
+        let testCase = name_testCase[ 1 ];
+        try {
+          if ( !testCase.embedding ) {
+            let EmbeddingClass;
+            {
+              if ( ( i % 2 ) == 0 )
+                EmbeddingClass = Embedding.AddGatherReshape;
+              else
+                EmbeddingClass = Embedding.SplitGatherConcat;
+            }
+
+            testCase.embedding = Embedding_Reference.Base.Embedding_create(
+              EmbeddingClass, testCase.testParams,
+              this.testPerformance_NumberImageArray[ 0 ].boundsArraySet.output0 );
+          }
+        } catch ( e ) {
+          debugger;
+          throw e;
         }
-      } catch ( e ) {
-        debugger;
-        throw e;
+
+        console.log( `Embedding.${name}: tensorWeightCount = { Extracted: ${testCase.embedding.tensorWeightCountExtracted}, `
+          + `Total: ${testCase.embedding.tensorWeightCountTotal} }` );
+
+        ++i;
       }
-
-      console.log( `Embedding.${name}: tensorWeightCount = { Extracted: ${testCase.embedding.tensorWeightCountExtracted}, `
-        + `Total: ${testCase.embedding.tensorWeightCountTotal} }` );
     }
-
   }
 
   embedding_PerformanceTest_release() {
