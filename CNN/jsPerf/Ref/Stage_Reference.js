@@ -467,7 +467,7 @@ class Stage_Reference_Base extends Recyclable.Root {
 
     // Inferenced parameters.
     let { outputHeight, outputWidth } = testParams.out.inferencedParams;
-    let outputChannelCount = sourceChannelCount * 2; // In current Stage's design, the output channel always is twice as input.
+    let outputChannelCount = testParams.out.sourceChannelCount * 2; // In current Stage's design, the output channel always is twice as input.
 
     stage_asserter.propertyValue( "outputHeight", outputHeight );
     stage_asserter.propertyValue( "outputWidth", outputWidth );
