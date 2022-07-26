@@ -362,7 +362,36 @@ class Embedding_Reference_Base extends Recyclable.Root {
     }
 
 //!!! ...unfinished... (2022/07/26)
+    let inElementIndex = 0;
+    let outElementIndex = 0;
 
+    for ( let y = 0; y < testParamsOut.input_height; ++y ) {
+      for ( let x = 0; x < testParamsOut.input_width; ++x ) {
+
+        let outChannelIndex = 0;
+        for ( let inChannelIndex = 0; inChannelIndex < testParamsOut.input_channelCount; ++inChannelIndex ) {
+          let vocabularyTable = testParams.in.paramsNumberArrayObject[ inChannelIndex ];
+          let vocabularyId = imageIn.dataArray[ inElementIndex ];
+          let vocabularyChannelIndex = vocabularyId * testParamsOut.channelMultiplier;
+
+          for ( let outChannelSub = 0; outChannelSub < testParamsOut.channelMultiplier; ++outChannelSub ) {
+
+
+            imageOut.dataArray[ outElementIndex ] = vocabularyTable[ vocabularyChannelIndex ];
+            
+
+//!!! ...unfinished... (2022/07/26)
+
+
+            ++vocabularyChannelIndex;
+            ++outElementIndex;
+            ++outChannelIndex;
+          }
+
+          ++inElementIndex;
+        }
+      }
+    }
 
     // Calculate every blocks in sequence.
 
