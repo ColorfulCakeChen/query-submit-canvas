@@ -328,12 +328,27 @@ class Embedding_Reference_Base extends Recyclable.Root {
    * @param {NumberImage.Base} imageIn
    *   The image to be tested.
    *
-   * @return {obNumberImage.Baseject} Return output image.
+   * @return {NumberImage.Base} Return output image.
    */
   calcResult( imageIn ) {
     let testParams = this.testParams;
 
+    let { output_height, output_width, output_channelCount } = testParams.out.inferencedParams;
+
 //!!! ...unfinished... (2022/07/26)
+// static setAsConstructor_self( height, width, depth, preFilledValue,
+//   input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds ) {
+
+    let imageOut;
+    {
+      let preFilledValue = undefined;
+      let preFilledBounds = undefined;
+      let input1_ScaleBoundsArray = null;
+      imageOut = NumberImage_Base.Pool.get_or_create_by(
+        output_height, output_width, output_channelCount, preFilledValue,
+        imageIn.boundsArraySet.output0, input1_ScaleBoundsArray, BoundsArraySet.InputsOutputs, preFilledBounds
+      );
+    }
 
     Embedding_Reference_Base.AssertParameters_Embedding_blocks( testParams, testParams.out ); // Test every block's parameters.
 
