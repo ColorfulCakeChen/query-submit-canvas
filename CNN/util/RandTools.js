@@ -1,6 +1,7 @@
 export { getRandomIntInclusive, fill_numberArray, generate_numberArray };
 
 import * as FloatValue from "../Unpacker/FloatValue.js";
+import * as Recyclable from "./Recyclable.js";
 
 /**
  * Return a random integer between min and max. (This function comes from MDN's Math.random().)
@@ -19,8 +20,9 @@ function getRandomIntInclusive( min, max ) {
 
 /**
  *
- * @param {number[]} io_numberArray
- *   The number array to be filled.
+ * @param {number[]|Recyclable.NumberArray_withBounds} io_numberArray
+ *   The number array to be filled. If it is an instance of Recyclable.NumberArray_withBounds, its
+ * .lowerBound and .upperBound will be filled.
  *
  * @param {number} randomOffsetMin
  *   Every element of the generated number array will been shifted from the sequence id between
@@ -34,21 +36,13 @@ function getRandomIntInclusive( min, max ) {
  *   The generated value will be divided by divisorForRemainder. The remainder will be the real
  * output value. This is used for restricted the value bounds.
  *
- * @param {FloatValue.Bounds} oBounds
- *   If not null, it will be filled (i.e. returned) as the value lower and upper bounds of the returned number array.
- *
- * @return {number[]}
+ * @return {number[]|Recyclable.NumberArray_withBounds}
  *   Return the io_numberArray.
  */
 function fill_numberArray(
-  io_numberArray, randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 4096,
-  oBounds = null ) {
+  io_numberArray, randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 4096 ) {
 
-!!! ...unfinished... (2022/07/26)
-// If io_numberArray is instanceof Recyclable.NumberArray_withBounds which has properties lowerBound and upperBounds.
-// Record Bounds.
-
-  if ( oBounds ) {
+  if ( io_numberArray instanceof Recyclable.NumberArray_withBounds ) {
     let lowerBound = +Infinity;
     let upperBound = -Infinity;
     let value;
@@ -60,7 +54,8 @@ function fill_numberArray(
         lowerBound = value;
       io_numberArray[ i ] = value;
     }
-    oBounds.set_byLowerUpper( lowerBound, upperBound );
+    io_numberArray.lowerBound = lowerBound;
+    io_numberArray.upperBound = upperBound;
 
   } else {
     for ( let i = 0; i < io_numberArray.length; ++i ) {

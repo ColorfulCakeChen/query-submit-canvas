@@ -377,7 +377,8 @@ class TestParams_Base extends Recyclable.Root {
       io_object[ propertyName ].length = elementCount;         // Ensure it with specified length.
     }
 
-    RandTools.fill_numberArray( io_object[ propertyName ], elementCount, randomOffsetMin, randomOffsetMax );
+    RandTools.fill_numberArray( io_object[ propertyName ],
+      elementCount, randomOffsetMin, randomOffsetMax, divisorForRemainder );
   }
 
   /**
@@ -394,16 +395,14 @@ class TestParams_Base extends Recyclable.Root {
    * @param {number} randomOffsetMax      The random number offet upperer bound.
    * @param {number} divisorForRemainder  The divisor for restricting value bounds.
    *
-   * @param {FloatValue.Bounds} oBounds
-   *   If not null, it will be filled (i.e. returned) as the value lower and upper bounds of the returned number array.
    */
   ensure_object_property_numberArray_length_existed(
     io_object, propertyName, elementCount,
-    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 4096,
-    oBounds ) {
+    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 4096
+  ) {
 
     io_object[ propertyName ] = this.SequenceRandom_NumberArray_Bag.get_by_elementCount_randomOffsetMin_randomOffsetMax(
-      elementCount, randomOffsetMin, randomOffsetMax, divisorForRemainder, oBounds );
+      elementCount, randomOffsetMin, randomOffsetMax, divisorForRemainder );
   }
 
 
