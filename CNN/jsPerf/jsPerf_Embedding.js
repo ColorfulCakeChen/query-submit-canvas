@@ -89,7 +89,9 @@ class HeightWidthDepth {
     let stepCountRequested = 10;
     let nSqueezeExcitationChannelCountDivisor = 2;
 
-//!!! ...unfinished... (2022/07/26) Test different channel multiplier and AddGatherReshape or SplitGatherConcat
+//!!! ...unfinished... (2022/07/26)
+// Test different channel multiplier and AddGatherReshape or SplitGatherConcat
+// and whether bCastToInt32
 
     // sourceHeight, sourceWidth, sourceChannelCount,
     // nConvStageTypeId,
