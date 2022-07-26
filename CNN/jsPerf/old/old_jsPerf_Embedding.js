@@ -1,7 +1,7 @@
 export { init, testCorrectness, testDifferentDisposeStrategy_All, disposeTensors };
 
 import * as ValueMax from "../ValueMax.js";
-import * as Embedding2d from "../Conv/Embedding2d.js";
+import * as Embedding from "../Conv/Embedding2d.js";
 //import * as TensorTools from "../util/TensorTools.js";
 
 /**
@@ -56,7 +56,7 @@ class HeightWidthDepth {
 //     if ( channelMultiplierEstimated < 1 )
 //       channelMultiplierEstimated = 1;
 
-    let channelMultiplierEstimated = Embedding2d.Params.channelMultiplier.valueDesc.range.adjust( channelMultiplier );
+    let channelMultiplierEstimated = Embedding.Params.channelMultiplier.valueDesc.range.adjust( channelMultiplier );
 
     let wieghtsArrayLength = 
       this.weightElementOffsetBegin // Skip the un-used.
@@ -82,21 +82,21 @@ class HeightWidthDepth {
       this.dataTensor3d = null;
     }
 
-    this.embedding2d_release();
+    this.embedding_release();
   }
 
   /**
-   * @return {Embedding2d.Base} The created embedding object.
+   * @return {Embedding.Base} The created embedding object.
    */
-  embedding2d_create( bEmbedVocabularyId, bKeepInputTensor, bSplitReshapeGatherConcat ) {
+  embedding_create( bEmbedVocabularyId, bKeepInputTensor, bSplitReshapeGatherConcat ) {
 
-    let embedding2d = new Embedding2d.Base();
+    let embedding = new Embedding.Base();
 
     let progress = new ValueMax.Percentage.Aggregate();
 
     // Initialize successfully or failed.
-    let params = new Embedding2d.Params( this.weightsFloat32Array, this.weightsByteOffsetBegin, this.channelMultiplier );
-    let bInitOk = embedding2d.init(
+    let params = new Embedding.Params( this.weightsFloat32Array, this.weightsByteOffsetBegin, this.channelMultiplier );
+    let bInitOk = embedding.init(
       progress,
       this.depth,
       this.vocabularyCountPerInputChannel,
