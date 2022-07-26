@@ -100,10 +100,6 @@ class HeightWidthDepth {
     });
 
 
-//!!! ...unfinished... (2022/07/26)
-// Test different channel multiplier and AddGatherReshape or SplitGatherConcat
-// and whether bCastToInt32
-
     let vocabularyCountPerInputChannel = 256;
     let bEmbedVocabularyId = true;
 
@@ -120,10 +116,6 @@ class HeightWidthDepth {
     else
       this.testCaseMap = new Map();
 
-
-//!!! ...unfinished... (2022/07/26)
-//      Embedding.AddGatherReshape, Embedding.SplitGatherConcat,
-      
     // Test Case 1: (AddGatherReshape, ( channelMultiplier == 1 ))
     this.testCaseMap.set( "AddGatherReshape_channelMultiplier_1", { testParams: 
       ( new Embedding_TestParams.Base() ).set_byParamsScattered(
