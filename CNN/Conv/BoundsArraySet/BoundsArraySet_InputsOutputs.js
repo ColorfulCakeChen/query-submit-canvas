@@ -187,6 +187,22 @@ class InputsOutputs extends Recyclable.Root {
   }
 
   /**
+   * Set all .output0 (and output1) to the same as the specified [ aLower, aUpper ]. Set their (activationEscaping)
+   * this.scaleArraySet to default ( 1 ). The .input0 (and .input1) are not modified.
+   *
+   * @param {number} aLower  The new lower bound.
+   * @param {number} aUpper  The new upper bound.
+   *
+   * @return {InputsOutputs}
+   *   Return this (modified) object.
+   */
+  set_outputs_all_byLowerUpper( aLower, aUpper ) {
+    this.output0.set_all_byLowerUpper( aLower, aUpper );
+    this.output1?.set_all_byLowerUpper( aLower, aUpper );
+    return this;
+  }
+
+  /**
    * @param {FloatValue.Bounds} aBounds
    *   Set all .output0 (and output1) to the same as the specified aBounds. Set their (activationEscaping) this.scaleArraySet
    * to default ( 1 ). The .input0 (and .input1) are not modified.
