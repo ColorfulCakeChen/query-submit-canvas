@@ -199,67 +199,26 @@ class Embedding_TestParams_Base extends TestParams.Base {
    *   Return this object self.
    */
   set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin = 0 ) {
-
-//!!! ...unfinished... (2022/07/26)
-
-    let stageParams = this.out;
+    let embeddingParams = this.out;
 
     this.generate_out_inferencedParams();
 
-    let blockParamsCreator = Embedding.Base.create_BlockParamsCreator_byStageParams( stageParams );
-    blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last();
-
-    this.blockArray.clear();
-    this.blockArray.length = blockParamsCreator.blockCount;
-
-//!!! (2022/07/24 Remarked) use integer numeric propert name instead.
-//     let paramsNameOrderArray_modified = Recyclable.Array.Pool.get_or_create_by( ...Base.paramsNameOrderArray_Basic ); // Shallow copy.
-//
-//     let paramsNumberArrayObject_modified = {};
-//     Object.assign( paramsNumberArrayObject_modified, this.in.paramsNumberArrayObject ); // Shallow copy.
-
-    this.in.paramsNumberArrayObject.length = 0;
-
-    for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
-
-      if ( 0 == i ) { // Block0.
-        blockParamsCreator.configTo_beforeBlock0();
-      } else { // (i.e. block1, 2, 3, ...)
-        blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i );
-      }
-
-      if ( ( this.blockArray.length - 1 ) == i ) { // BlockLast. (Note: Block0 may also be BlockLast.)
-        blockParamsCreator.configTo_beforeBlockLast();
-      }
-
-//!!! (2022/07/24 Remarked) use integer numeric propert name instead.
-//       let blockName = `block${i}`;
-//       paramsNameOrderArray_modified.push( blockName ); // Place every block's parameters in sequence.
-
-      let blockTestParams = Block_TestParams.Base.Pool.get_or_create_by( this.id );
-      blockTestParams.set_byParamsScattered(
-        blockParamsCreator.input0_height, blockParamsCreator.input0_width, blockParamsCreator.input0_channelCount,
-        blockParamsCreator.nConvBlockTypeId,
-        blockParamsCreator.pointwise1ChannelCount,
-        blockParamsCreator.depthwise_AvgMax_Or_ChannelMultiplier, blockParamsCreator.depthwiseFilterHeight,
-        blockParamsCreator.depthwiseFilterWidth, blockParamsCreator.depthwiseStridesPad,
-        blockParamsCreator.depthwiseActivationId,
-        blockParamsCreator.pointwise20ChannelCount, blockParamsCreator.pointwise20ActivationId,
-        blockParamsCreator.nSqueezeExcitationChannelCountDivisor, blockParamsCreator.bSqueezeExcitationPrefix,
-        blockParamsCreator.nActivationId,
-        blockParamsCreator.bKeepInputTensor
-      );
-
-      this.blockArray[ i ] = blockTestParams;
-      this.in.paramsNumberArrayObject.push( blockTestParams.in_weights.weightArray ); // Place every block's parameters in sequence.
+    let tableElementCountPerInputChannel;
+    if ( embeddingParams.bEmbedVocabularyId ) {
+      tableElementCountPerInputChannel
+        = ( embeddingParams.vocabularyCountPerInputChannel * ( embeddingParams.channelMultiplier - 1 ) );
+    } else {
+      tableElementCountPerInputChannel
+        = ( embeddingParams.vocabularyCountPerInputChannel * embeddingParams.channelMultiplier );
     }
 
-    if ( blockParamsCreator ) {
-      blockParamsCreator.disposeResources_and_recycleToPool();
-      blockParamsCreator = null;
+    // Generate look-up table of every input channel.
+    this.in.paramsNumberArrayObject.length = embeddingParams.input_channelCount;
+    for ( let i = 0; i < embeddingParams.input_channelCount; ++i ) {
+      this.fill_object_property_numberArray( this.in.paramsNumberArrayObject, i, tableElementCountPerInputChannel );
     }
 
-    // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
+    // Pack all parameters, look-up tables weights into a (pre-allocated and re-used) NumberArray.
     this.in_weights.set_byConcat(
       Embedding_TestParams_Base.paramsNameOrderArray_Basic, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
 
@@ -275,8 +234,6 @@ class Embedding_TestParams_Base extends TestParams.Base {
    * @override
    */
   onYield_isLegal() {
-
-
     return true;
   }
 
@@ -295,10 +252,6 @@ class Embedding_TestParams_Base extends TestParams.Base {
    * @override
    */
   onYield_after() {
-
-//!!! ...unfinished... (2022/07/26)
-
-    this.blockArray.clear(); // Clear blocks' parameters.
   }
 
   /**
@@ -351,6 +304,24 @@ class Embedding_TestParams_Base extends TestParams.Base {
     ];
 
     yield *Embedding_TestParams_Base.ParamsGenerator.call( this, paramDescConfigArray );
+  }
+
+  /**
+   * Fill an object's property as a number array.
+   *
+   * Similar to Base.ensure_object_property_numberArray_length_filled(). But the property will be a shared number array. Its value
+   * may be shared with other caller.
+   *
+   * This may have better performance because of number array re-using (instead of re-generating).
+   *
+   *
+   * @param {object} io_object            The object to be checked and modified.
+   * @param {string|numner} propertyName  The property io_object[ propertyName ] will be ensured as a number array.
+   * @param {number} elementCount         The property io_object[ propertyName ].length will be ensured as elementCount.
+   */
+   fill_object_property_numberArray( io_object, propertyName, elementCount ) {
+    super.ensure_object_property_numberArray_length_existed( io_object, propertyName,
+      elementCount, ImageSourceBag.Base.weightsRandomOffset.min, ImageSourceBag.Base.weightsRandomOffset.max );
   }
 
 }
