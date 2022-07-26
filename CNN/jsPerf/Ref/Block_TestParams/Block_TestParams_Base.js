@@ -16,26 +16,8 @@ import { Out } from "./Block_TestParams_Out.js";
  *
  * This is an object { id, in, out } which has one number and two sub-objects.
  *
- * @member {number} id
- *   The numeric identifier of this testing parameter combination.
  *
- * @member {object} in
- *   The "in" sub-object's data members represent every parameters of the Block.Params's constructor. That is,
- * it has the following data members: input0_height, input0_width, input0_channelCount, nConvBlockTypeId,
- * pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
- * depthwiseFilterWidth, depthwiseStridesPad, depthwiseActivationId, pointwise20ChannelCount,
- * pointwise20ActivationId, nActivationId, bKeepInputTensor. It also has the following properties:
- *   - paramsNumberArrayObject
- *   - inputWeightArray
- *   - byteOffsetBegin
- *
- * @member {object} io_paramsNumberArrayObject
- *   An object. It is a map from a string name (e.g. parameter name) to a number array. The name should be one of
- * Block_TestParams_Base.paramsNameOrderArray[] elements.
- *
- * @member {object} out
- *   The "out" sub-object's data members represent the "should-be" result of Block.Params's extract().
- * That is, it has the above data members except paramsNumberArrayObject, inputWeightArray, byteOffsetBegin.
+ * @see TestParams.Base
  *
  */
 class Block_TestParams_Base extends TestParams.Base {
@@ -88,13 +70,9 @@ class Block_TestParams_Base extends TestParams.Base {
     super.disposeResources();
   }
 
-  /** */
-  toString() {
-    return `testParams.id=${this.id}`;
-  }
-
   /**
    * Use scattered parameters to fills the following proterties:
+   *   - this.in
    *   - this.in_weights
    *   - this.out
    *
@@ -112,9 +90,6 @@ class Block_TestParams_Base extends TestParams.Base {
     nActivationId,
     bKeepInputTensor
   ) {
-// !!! (2022/07/24 Remarked) seems not necessary to empty it.
-//     this.in.paramsNumberArrayObject = {};
-
     if ( this.out ) {
       this.out.disposeResources_and_recycleToPool();
       this.out = null;
@@ -135,22 +110,20 @@ class Block_TestParams_Base extends TestParams.Base {
     Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
 
     let weightElementOffsetBegin = 0;
-    return this.set_byParamsNumberArrayMap_ParamsOut( weightElementOffsetBegin, false );
+    return this.set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin, false );
   }
  
   /**
    * Fills the following proterties:
    *   - this.in_weights
+   *   - this.out.inferencedParams
    *
    * @param {object} this.in.paramsNumberArrayObject
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
    * The name should be one of Block_TestParams_Base.paramsNameOrderArray[] elements.
    *
-   * @param {object} this.out
-   *   An object which has the following data members: input0_height, input0_width, input0_channelCount, nConvBlockTypeId,
-   * pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
-   * depthwiseFilterWidth, depthwiseStridesPad, depthwiseActivationId, pointwise20ChannelCount,
-   * pointwise20ActivationId, nActivationId, bKeepInputTensor. And depthwisePadInfo.
+   * @param {Block_TestParams.Out} this.out
+   *   An object which will be the final result of Block.Params.
    *
    * @param {number} weightElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
@@ -159,7 +132,7 @@ class Block_TestParams_Base extends TestParams.Base {
    * @return {Base}
    *   Return this object self.
    */
-  set_byParamsNumberArrayMap_ParamsOut(
+  set_byParamsNumberArrayObject_ParamsOut(
     weightElementOffsetBegin = 0, bDouble_when_ShuffleNetV2_byMobileNetV1 ) {
 
     this.generate_out_inferencedParams();
@@ -261,7 +234,7 @@ class Block_TestParams_Base extends TestParams.Base {
     // For testing not start at the offset 0.
     let weightElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
 
-    this.set_byParamsNumberArrayMap_ParamsOut( weightElementOffsetBegin, true );
+    this.set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin, true );
   }
 
   /**

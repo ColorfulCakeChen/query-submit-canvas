@@ -1,4 +1,5 @@
-export { Stage_TestParams_Base as Base, Out };
+export { Embedding_TestParams_Base as Base };
+export { Out };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -6,8 +7,7 @@ import * as RandTools from "../../util/RandTools.js";
 //import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TestParams from "./TestParams.js";
-import * as Block_TestParams from "./Block_TestParams.js";
-import * as Stage from "../../Conv/Stage.js";
+//import * as Embedding from "../../Conv/Embedding.js";
 
 /**
  *
@@ -15,59 +15,31 @@ import * as Stage from "../../Conv/Stage.js";
 class Out extends Recyclable.Root {
 
   /**
-   * Used as default Stage_TestParams.Out provider for conforming to Recyclable interface.
+   * Used as default Embedding_TestParams.Out provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Stage_TestParams.Out.Pool", Out, Out.setAsConstructor );
+  static Pool = new Pool.Root( "Embedding_TestParams.Out.Pool", Out, Out.setAsConstructor );
 
   /**
    */
   constructor(
-    sourceHeight, sourceWidth, sourceChannelCount,
-    nConvStageTypeId,
-    blockCountRequested,
-    bPointwise1,
-    depthwiseFilterHeight, depthwiseFilterWidth,
-    bPointwise2ActivatedAtStageEnd,
-    nSqueezeExcitationChannelCountDivisor,
-    nActivationId,
+    input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
     bKeepInputTensor
   ) {
     super();
     Out.setAsConstructor_self.call( this,
-      sourceHeight, sourceWidth, sourceChannelCount,
-      nConvStageTypeId,
-      blockCountRequested,
-      bPointwise1,
-      depthwiseFilterHeight, depthwiseFilterWidth,
-      bPointwise2ActivatedAtStageEnd,
-      nSqueezeExcitationChannelCountDivisor,
-      nActivationId,
+      input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
       bKeepInputTensor
     );
   }
 
   /** @override */
   static setAsConstructor(
-    sourceHeight, sourceWidth, sourceChannelCount,
-    nConvStageTypeId,
-    blockCountRequested,
-    bPointwise1,
-    depthwiseFilterHeight, depthwiseFilterWidth,
-    bPointwise2ActivatedAtStageEnd,
-    nSqueezeExcitationChannelCountDivisor,
-    nActivationId,
+    input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
     bKeepInputTensor
   ) {
     super.setAsConstructor();
     Out.setAsConstructor_self.call( this,
-      sourceHeight, sourceWidth, sourceChannelCount,
-      nConvStageTypeId,
-      blockCountRequested,
-      bPointwise1,
-      depthwiseFilterHeight, depthwiseFilterWidth,
-      bPointwise2ActivatedAtStageEnd,
-      nSqueezeExcitationChannelCountDivisor,
-      nActivationId,
+      input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
       bKeepInputTensor
     );
     return this;
@@ -75,27 +47,13 @@ class Out extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self(
-    sourceHeight, sourceWidth, sourceChannelCount,
-    nConvStageTypeId,
-    blockCountRequested,
-    bPointwise1,
-    depthwiseFilterHeight, depthwiseFilterWidth,
-    bPointwise2ActivatedAtStageEnd,
-    nSqueezeExcitationChannelCountDivisor,
-    nActivationId,
+    input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
     bKeepInputTensor
   ) {
-    this.sourceHeight = sourceHeight;
-    this.sourceWidth = sourceWidth;
-    this.sourceChannelCount = sourceChannelCount;
-    this.nConvStageTypeId = nConvStageTypeId;
-    this.blockCountRequested = blockCountRequested;
-    this.bPointwise1 = bPointwise1;
-    this.depthwiseFilterHeight = depthwiseFilterHeight;
-    this.depthwiseFilterWidth = depthwiseFilterWidth;
-    this.bPointwise2ActivatedAtStageEnd = bPointwise2ActivatedAtStageEnd;
-    this.nSqueezeExcitationChannelCountDivisor = nSqueezeExcitationChannelCountDivisor;
-    this.nActivationId = nActivationId;
+    this.input_channelCount = input_channelCount;
+    this.channelMultiplier = channelMultiplier;
+    this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
+    this.bEmbedVocabularyId = bEmbedVocabularyId;
     this.bKeepInputTensor = bKeepInputTensor;
   }
 
@@ -103,17 +61,10 @@ class Out extends Recyclable.Root {
   disposeResources() {
     this.InferencedParams_dispose();
 
-    this.sourceHeight = undefined;
-    this.sourceWidth = undefined;
-    this.sourceChannelCount = undefined;
-    this.nConvStageTypeId = undefined;
-    this.blockCountRequested = undefined;
-    this.bPointwise1 = undefined;
-    this.depthwiseFilterHeight = undefined;
-    this.depthwiseFilterWidth = undefined;
-    this.bPointwise2ActivatedAtStageEnd = undefined;
-    this.nSqueezeExcitationChannelCountDivisor = undefined;
-    this.nActivationId = undefined;
+    this.input_channelCount = undefined;
+    this.channelMultiplier = undefined;
+    this.vocabularyCountPerInputChannel = undefined;
+    this.bEmbedVocabularyId = undefined;
     this.bKeepInputTensor = undefined;
 
     super.disposeResources();
@@ -130,48 +81,21 @@ class Out extends Recyclable.Root {
   /**  */
   generate_inferencedParams() {
     this.InferencedParams_dispose();
-    this.inferencedParams = Stage.InferencedParams.Pool.get_or_create_by(
-      this.sourceHeight, this.sourceWidth,
-      this.nConvStageTypeId,
-      this.blockCountRequested,
-      this.depthwiseFilterHeight, this.depthwiseFilterWidth
+    this.inferencedParams = Embedding.InferencedParams.Pool.get_or_create_by(
+      this.input_channelCount, this.channelMultiplier
     );
-  }
-
-  get nConvStageTypeName() {
-    return ValueDesc.ConvStageType.Singleton.getName_byId( this.nConvStageTypeId );
-  }
-
-  get nSqueezeExcitationChannelCountDivisorName() {
-    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor );
-  }
-
-  get nActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId );
   }
 
   /** @override */
   toString() {
     let paramsOutDescription =
-        `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, `
-      + `sourceChannelCount=${this.sourceChannelCount}, `
+        `input_channelCount=${this.input_channelCount}, `
+      + `channelMultiplier=${this.channelMultiplier}, `
+      + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
+      + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
 
-      + `nConvStageTypeId=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
+      + `output_channelCount=${this.inferencedParams.output_channelCount}, `
 
-      + `blockCountRequested=${this.blockCountRequested}, `
-      + `bPointwise1=${this.bPointwise1}, `
-      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
-
-      + `bPointwise2ActivatedAtStageEnd=${this.bPointwise2ActivatedAtStageEnd}, `
-
-      + `nSqueezeExcitationChannelCountDivisorName=`
-        + `${this.nSqueezeExcitationChannelCountDivisorName}`
-        + `(${this.nSqueezeExcitationChannelCountDivisor}), `
-
-      + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
-
-      + `outputHeight=${this.inferencedParams.outputHeight}, outputWidth=${this.inferencedParams.outputWidth}, `
-//        + `outputChannelCount=${???.outputChannelCount}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}`
     ;
 
@@ -186,36 +110,32 @@ class Out extends Recyclable.Root {
  * This is an object { id, in, out } which has one number and two sub-objects.
  *
  *
- * @member {object[]} blockArray
- *   Every element is an Block_TestParams object for the parameters of the block.
- *
  * @see TestParams.Base
  */
-class Stage_TestParams_Base extends TestParams.Base {
+class Embedding_TestParams_Base extends TestParams.Base {
 
   /**
-   * Used as default Stage_TestParams.Base provider for conforming to Recyclable interface.
+   * Used as default Embedding_TestParams.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Stage_TestParams.Base.Pool", Stage_TestParams_Base, Stage_TestParams_Base.setAsConstructor );
+  static Pool = new Pool.Root( "Embedding_TestParams.Base.Pool",
+    Embedding_TestParams_Base, Embedding_TestParams_Base.setAsConstructor );
 
   /**
    */
   constructor( id ) {
     super( id );
-    Stage_TestParams_Base.setAsConstructor_self.call( this );
+    Embedding_TestParams_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor( id ) {
     super.setAsConstructor( id );
-    Stage_TestParams_Base.setAsConstructor_self.call( this );
+    Embedding_TestParams_Base.setAsConstructor_self.call( this );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self() {
-    this.blockArray = Recyclable.OwnerArray.Pool.get_or_create_by();
-
     this.out = Out.Pool.get_or_create_by();
   }
 
@@ -225,9 +145,6 @@ class Stage_TestParams_Base extends TestParams.Base {
       this.out.disposeResources_and_recycleToPool();
       this.out = null;
     }
-
-    this.blockArray?.disposeResources_and_recycleToPool();
-    this.blockArray = null;
 
     super.disposeResources();
   }
@@ -242,30 +159,17 @@ class Stage_TestParams_Base extends TestParams.Base {
    *   Return this object self.
    */
   set_byParamsScattered(
-    sourceHeight, sourceWidth, sourceChannelCount,
-    nConvStageTypeId,
-    blockCountRequested,
-    bPointwise1,
-    depthwiseFilterHeight, depthwiseFilterWidth,
-    bPointwise2ActivatedAtStageEnd,
-    nSqueezeExcitationChannelCountDivisor,
-    nActivationId,
+    input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
     bKeepInputTensor
   ) {
+
     if ( this.out ) {
       this.out.disposeResources_and_recycleToPool();
       this.out = null;
     }
 
     this.out = Out.Pool.get_or_create_by(
-      sourceHeight, sourceWidth, sourceChannelCount,
-      nConvStageTypeId,
-      blockCountRequested,
-      bPointwise1,
-      depthwiseFilterHeight, depthwiseFilterWidth,
-      bPointwise2ActivatedAtStageEnd,
-      nSqueezeExcitationChannelCountDivisor,
-      nActivationId,
+      input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
       bKeepInputTensor
     );
 
@@ -284,26 +188,35 @@ class Stage_TestParams_Base extends TestParams.Base {
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
    * The name should be one of Base.paramsNameOrderArray[] elements.
    *
-   * @param {Stage_TestParams.Out} this.out
-   *   An object which will be the final result of Stage.Params.
+   * @param {Embedding_TestParams.Out} this.out
+   *   An object which will be the final result of Embedding.Params.
    *
    * @param {number} weightElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result inputWeightArray.
    * The this.in.byteOffsetBegin will be ( 4 * weightElementOffsetBegin ).
    *
-   * @return {Stage_TestParams_Base}
+   * @return {Embedding_TestParams_Base}
    *   Return this object self.
    */
   set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin = 0 ) {
+
+//!!! ...unfinished... (2022/07/26)
+
     let stageParams = this.out;
 
-    this.generate_out_inferencedParams(); // Fill in outputHeight, outputWidth.
+    this.generate_out_inferencedParams();
 
-    let blockParamsCreator = Stage.Base.create_BlockParamsCreator_byStageParams( stageParams );
+    let blockParamsCreator = Embedding.Base.create_BlockParamsCreator_byStageParams( stageParams );
     blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last();
 
     this.blockArray.clear();
     this.blockArray.length = blockParamsCreator.blockCount;
+
+//!!! (2022/07/24 Remarked) use integer numeric propert name instead.
+//     let paramsNameOrderArray_modified = Recyclable.Array.Pool.get_or_create_by( ...Base.paramsNameOrderArray_Basic ); // Shallow copy.
+//
+//     let paramsNumberArrayObject_modified = {};
+//     Object.assign( paramsNumberArrayObject_modified, this.in.paramsNumberArrayObject ); // Shallow copy.
 
     this.in.paramsNumberArrayObject.length = 0;
 
@@ -318,6 +231,10 @@ class Stage_TestParams_Base extends TestParams.Base {
       if ( ( this.blockArray.length - 1 ) == i ) { // BlockLast. (Note: Block0 may also be BlockLast.)
         blockParamsCreator.configTo_beforeBlockLast();
       }
+
+//!!! (2022/07/24 Remarked) use integer numeric propert name instead.
+//       let blockName = `block${i}`;
+//       paramsNameOrderArray_modified.push( blockName ); // Place every block's parameters in sequence.
 
       let blockTestParams = Block_TestParams.Base.Pool.get_or_create_by( this.id );
       blockTestParams.set_byParamsScattered(
@@ -344,7 +261,7 @@ class Stage_TestParams_Base extends TestParams.Base {
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
     this.in_weights.set_byConcat(
-      Stage_TestParams_Base.paramsNameOrderArray_Basic, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
+      Embedding_TestParams_Base.paramsNameOrderArray_Basic, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
 
     return this;
   }
@@ -440,8 +357,8 @@ class Stage_TestParams_Base extends TestParams.Base {
 //      nConvStageTypeId: undefined,
 //!!! (2022/07/20 Temp Remarked) For speed-up debug.
       nConvStageTypeId: [
-        Stage.Params.nConvStageTypeId.valueDesc.range.min,
-        Stage.Params.nConvStageTypeId.valueDesc.range.max
+        Embedding.Params.nConvStageTypeId.valueDesc.range.min,
+        Embedding.Params.nConvStageTypeId.valueDesc.range.max
       ],
       // nConvStageTypeId: [
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1, // (0)
@@ -462,26 +379,26 @@ class Stage_TestParams_Base extends TestParams.Base {
       // ],
 
       blockCountRequested: [
-        Stage.Params.blockCountRequested.valueDesc.range.min,
-        Stage.Params.blockCountRequested.valueDesc.range.min + 2
+        Embedding.Params.blockCountRequested.valueDesc.range.min,
+        Embedding.Params.blockCountRequested.valueDesc.range.min + 2
       ],
 
 //      bPointwise1: undefined,
       bPointwise1: [
-        Stage.Params.bPointwise1.valueDesc.range.min,
-        Stage.Params.bPointwise1.valueDesc.range.max
+        Embedding.Params.bPointwise1.valueDesc.range.min,
+        Embedding.Params.bPointwise1.valueDesc.range.max
       ],
 
       // (2022/05/05) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 //!!! (2022/07/22 Remarked) to avoid depthwise filter 1 x N or N x 1
-//      depthwiseFilterHeight: [ Stage.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
-//      depthwiseFilterWidth: [ Stage.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
+//      depthwiseFilterHeight: [ Embedding.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
+//      depthwiseFilterWidth: [ Embedding.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
       depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
       depthwiseFilterWidth: [ 2, depthwiseFilterMaxSize ],
 
       bPointwise2ActivatedAtStageEnd: [
-        Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.min,
-        Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.max
+        Embedding.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.min,
+        Embedding.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.max
       ],
 
 //      nSqueezeExcitationChannelCountDivisor: undefined,
@@ -496,8 +413,8 @@ class Stage_TestParams_Base extends TestParams.Base {
 
 //      bKeepInputTensor: undefined,
       bKeepInputTensor: [
-        Stage.Params.bKeepInputTensor.valueDesc.range.min,
-        Stage.Params.bKeepInputTensor.valueDesc.range.max
+        Embedding.Params.bKeepInputTensor.valueDesc.range.min,
+        Embedding.Params.bKeepInputTensor.valueDesc.range.max
       ],
     };
 
@@ -505,24 +422,24 @@ class Stage_TestParams_Base extends TestParams.Base {
     //
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
-      new TestParams.ParamDescConfig( Stage.Params.sourceHeight,                   this.valueOutMinMax.sourceHeight ),
-      new TestParams.ParamDescConfig( Stage.Params.sourceWidth,                    this.valueOutMinMax.sourceWidth ),
-      new TestParams.ParamDescConfig( Stage.Params.sourceChannelCount,             this.valueOutMinMax.sourceChannelCount ),
-      new TestParams.ParamDescConfig( Stage.Params.nConvStageTypeId,               this.valueOutMinMax.nConvStageTypeId ),
-      new TestParams.ParamDescConfig( Stage.Params.blockCountRequested,            this.valueOutMinMax.blockCountRequested ),
-      new TestParams.ParamDescConfig( Stage.Params.bPointwise1,                    this.valueOutMinMax.bPointwise1 ),
-      new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterHeight,          this.valueOutMinMax.depthwiseFilterHeight ),
-      new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterWidth,           this.valueOutMinMax.depthwiseFilterWidth ),
-      new TestParams.ParamDescConfig( Stage.Params.bPointwise2ActivatedAtStageEnd, this.valueOutMinMax.bPointwise2ActivatedAtStageEnd ),
+      new TestParams.ParamDescConfig( Embedding.Params.sourceHeight,                   this.valueOutMinMax.sourceHeight ),
+      new TestParams.ParamDescConfig( Embedding.Params.sourceWidth,                    this.valueOutMinMax.sourceWidth ),
+      new TestParams.ParamDescConfig( Embedding.Params.sourceChannelCount,             this.valueOutMinMax.sourceChannelCount ),
+      new TestParams.ParamDescConfig( Embedding.Params.nConvStageTypeId,               this.valueOutMinMax.nConvStageTypeId ),
+      new TestParams.ParamDescConfig( Embedding.Params.blockCountRequested,            this.valueOutMinMax.blockCountRequested ),
+      new TestParams.ParamDescConfig( Embedding.Params.bPointwise1,                    this.valueOutMinMax.bPointwise1 ),
+      new TestParams.ParamDescConfig( Embedding.Params.depthwiseFilterHeight,          this.valueOutMinMax.depthwiseFilterHeight ),
+      new TestParams.ParamDescConfig( Embedding.Params.depthwiseFilterWidth,           this.valueOutMinMax.depthwiseFilterWidth ),
+      new TestParams.ParamDescConfig( Embedding.Params.bPointwise2ActivatedAtStageEnd, this.valueOutMinMax.bPointwise2ActivatedAtStageEnd ),
 
-      new TestParams.ParamDescConfig( Stage.Params.nSqueezeExcitationChannelCountDivisor,
+      new TestParams.ParamDescConfig( Embedding.Params.nSqueezeExcitationChannelCountDivisor,
                                                                                    this.valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
 
-      new TestParams.ParamDescConfig( Stage.Params.nActivationId,                  this.valueOutMinMax.nActivationId ),
-      new TestParams.ParamDescConfig( Stage.Params.bKeepInputTensor,               this.valueOutMinMax.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( Embedding.Params.nActivationId,                  this.valueOutMinMax.nActivationId ),
+      new TestParams.ParamDescConfig( Embedding.Params.bKeepInputTensor,               this.valueOutMinMax.bKeepInputTensor ),
     ];
 
-    yield *Stage_TestParams_Base.ParamsGenerator.call( this, paramDescConfigArray );
+    yield *Embedding_TestParams_Base.ParamsGenerator.call( this, paramDescConfigArray );
   }
 
 }
@@ -531,19 +448,19 @@ class Stage_TestParams_Base extends TestParams.Base {
 /**
  * The order when generate inputWeightArray[].
  *
- * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Stage.initer().
+ * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Embedding.initer().
  */
-Stage_TestParams_Base.paramsNameOrderArray_Basic = [
-  Stage.Params.sourceHeight.paramName,
-  Stage.Params.sourceWidth.paramName,
-  Stage.Params.sourceChannelCount.paramName,
-  Stage.Params.nConvStageTypeId.paramName,
-  Stage.Params.blockCountRequested.paramName,
-  Stage.Params.bPointwise1.paramName,
-  Stage.Params.depthwiseFilterHeight.paramName,
-  Stage.Params.depthwiseFilterWidth.paramName,
-  Stage.Params.bPointwise2ActivatedAtStageEnd.paramName,
-  Stage.Params.nSqueezeExcitationChannelCountDivisor.paramName,  
-  Stage.Params.nActivationId.paramName,
-  Stage.Params.bKeepInputTensor.paramName,
+Embedding_TestParams_Base.paramsNameOrderArray_Basic = [
+  Embedding.Params.sourceHeight.paramName,
+  Embedding.Params.sourceWidth.paramName,
+  Embedding.Params.sourceChannelCount.paramName,
+  Embedding.Params.nConvStageTypeId.paramName,
+  Embedding.Params.blockCountRequested.paramName,
+  Embedding.Params.bPointwise1.paramName,
+  Embedding.Params.depthwiseFilterHeight.paramName,
+  Embedding.Params.depthwiseFilterWidth.paramName,
+  Embedding.Params.bPointwise2ActivatedAtStageEnd.paramName,
+  Embedding.Params.nSqueezeExcitationChannelCountDivisor.paramName,  
+  Embedding.Params.nActivationId.paramName,
+  Embedding.Params.bKeepInputTensor.paramName,
 ];

@@ -78,12 +78,12 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
    */
   constructor(
     input_channelCount, channelMultiplier, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
-    bKeepInputTensor,
+    bKeepInputTensor
   ) {
     super(
       Embedding_Params.SequenceArray,
       input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
-      bKeepInputTensor,
+      bKeepInputTensor
     );
     Embedding_Params.setAsConstructor_self.call( this );
   }
@@ -91,12 +91,12 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
   /** @override */
   static setAsConstructor(
     input_channelCount, channelMultiplier, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
-    bKeepInputTensor,
+    bKeepInputTensor
   ) {
     super.setAsConstructor(
       Embedding_Params.SequenceArray,
       input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
-      bKeepInputTensor,
+      bKeepInputTensor
     );
     Embedding_Params.setAsConstructor_self.call( this );
     return this;

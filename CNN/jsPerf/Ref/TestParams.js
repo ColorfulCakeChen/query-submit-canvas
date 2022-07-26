@@ -112,7 +112,9 @@ class ParamValueChangeRecord extends Recyclable.Root {
  *   The "in" sub-object's data members represent every parameters of some (e.g. Block) Params's constructor. Besides,
  * it also has the following properties:
  *   - paramsNumberArrayObject: All (non-concatenated) parameters (include filters and biases) which will be packed into inputWeightArray.
- *   - inputWeightArray: A number array from paramsNumberArrayObject with weightElementOffsetBegin.
+ * 
+ * @member {NameNumberArrayObject.weightArray_weightElementOffsetBegin} in_weights
+ *   - weightArray: A number array from paramsNumberArrayObject with weightElementOffsetBegin.
  *   - weightElementOffsetBegin: The offset in inputWeightArray to the first parameter.
  *
  * @member {Object} out
@@ -202,6 +204,11 @@ class TestParams_Base extends Recyclable.Root {
     super.disposeResources();
   }
 
+  /** */
+  toString() {
+    return `testParams.id=${this.id}`;
+  }
+
   /**
    * Called by permuteParamRecursively() before onYield_before() is called.
    *
@@ -226,6 +233,7 @@ class TestParams_Base extends Recyclable.Root {
    *
    * The the following data should already be ready:
    *   - this.id
+   *   - this.in_weights
    *   - this.in.paramsNumberArrayObject: Every should-be-packed parameter.
    *   - this.in.Xxx: every non-packed parameter.
    *   - this.out.Xxx: every parameter.
@@ -399,8 +407,7 @@ class TestParams_Base extends Recyclable.Root {
   static * ParamsGenerator( paramDescConfigArray ) {
     this.config = { paramDescConfigArray: paramDescConfigArray };
 
-//!!! (2022/07/23 Remarked) re-use it. do not re-create it.
-//    this.in.paramsNumberArrayObject = {}; // All parameters which will be packed into weights array.
+    // Note: this.in and this.in.paramsNumberArrayObject will not be cleared. They will be reused directly.
 
     yield *TestParams_Base.permuteParamRecursively.call( this, 0 );
   }
