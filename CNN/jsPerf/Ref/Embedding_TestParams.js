@@ -362,7 +362,9 @@ class Embedding_TestParams_Base extends TestParams.Base {
    */
   fill_object_property_numberArray( io_object, propertyName, elementCount, oBounds ) {
     super.ensure_object_property_numberArray_length_existed( io_object, propertyName,
-      elementCount, ImageSourceBag.Base.weightsRandomOffset.min, ImageSourceBag.Base.weightsRandomOffset.max,
+      elementCount,
+      TestParams.Base.weightsRandomOffset.min, TestParams.Base.weightsRandomOffset.max,
+      TestParams.Base.weightsDivisorForRemainder,
       oBounds
     );
   }

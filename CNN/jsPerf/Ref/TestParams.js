@@ -357,13 +357,16 @@ class TestParams_Base extends Recyclable.Root {
    * Ensure io_object[ propertyName ] exists as a number array with specified length. It will be filled with random number
    * as ( sequence_nunmer + random_number_offset ).
    *
-   * @param {object} io_object        The object to be checked and modified.
-   * @param {string} propertyName     The property io_object[ propertyName ] will be ensured as a number array.
-   * @param {number} elementCount     The property io_object[ propertyName ].length will be ensured as elementCount.
-   * @param {number} randomOffsetMin  The random number offet lower bound.
-   * @param {number} randomOffsetMax  The random number offet upperer bound.
+   * @param {object} io_object            The object to be checked and modified.
+   * @param {string} propertyName         The property io_object[ propertyName ] will be ensured as a number array.
+   * @param {number} elementCount         The property io_object[ propertyName ].length will be ensured as elementCount.
+   * @param {number} randomOffsetMin      The random number offet lower bound.
+   * @param {number} randomOffsetMax      The random number offet upperer bound.
+   * @param {number} divisorForRemainder  The divisor for restricting value bounds.
    */
-  static ensure_object_property_numberArray_length_filled( io_object, propertyName, elementCount, randomOffsetMin = 0, randomOffsetMax = 0 ) {
+  static ensure_object_property_numberArray_length_filled(
+    io_object, propertyName, elementCount,
+    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 1024 ) {
 
     if (   ( io_object[ propertyName ] == undefined )          // The property does not exist.
         || ( !( io_object[ propertyName ] instanceof Array ) ) // The property exists but is not an array.
@@ -384,20 +387,23 @@ class TestParams_Base extends Recyclable.Root {
    * This may have better performance because of number array re-using (instead of re-generating).
    *
    *
-   * @param {object} io_object        The object to be checked and modified.
-   * @param {string} propertyName     The property io_object[ propertyName ] will be ensured as a number array.
-   * @param {number} elementCount     The property io_object[ propertyName ].length will be ensured as elementCount.
-   * @param {number} randomOffsetMin  The random number offet lower bound.
-   * @param {number} randomOffsetMax  The random number offet upperer bound.
+   * @param {object} io_object            The object to be checked and modified.
+   * @param {string} propertyName         The property io_object[ propertyName ] will be ensured as a number array.
+   * @param {number} elementCount         The property io_object[ propertyName ].length will be ensured as elementCount.
+   * @param {number} randomOffsetMin      The random number offet lower bound.
+   * @param {number} randomOffsetMax      The random number offet upperer bound.
+   * @param {number} divisorForRemainder  The divisor for restricting value bounds.
    *
    * @param {FloatValue.Bounds} oBounds
    *   If not null, it will be filled (i.e. returned) as the value lower and upper bounds of the returned number array.
    */
   ensure_object_property_numberArray_length_existed(
-    io_object, propertyName, elementCount, randomOffsetMin = 0, randomOffsetMax = 0, oBounds ) {
+    io_object, propertyName, elementCount,
+    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 1024,
+    oBounds ) {
 
     io_object[ propertyName ] = this.SequenceRandom_NumberArray_Bag.get_by_elementCount_randomOffsetMin_randomOffsetMax(
-      elementCount, randomOffsetMin, randomOffsetMax, oBounds );
+      elementCount, randomOffsetMin, randomOffsetMax, divisorForRemainder, oBounds );
   }
 
 
@@ -495,3 +501,10 @@ class TestParams_Base extends Recyclable.Root {
   }
 
 }
+
+//!!! (2022/07/26 Temp Remarked) Fixed to non-random to simplify debug.
+TestParams_Base.weightsRandomOffset = { min: -200, max: +200 };
+//TestParams_Base.weightsRandomOffset = { min: 11, max: 11 };
+//TestParams_Base.weightsRandomOffset = { min: -0, max: +0 };
+
+TestParams_Base.weightsDivisorForRemainder = 1024;

@@ -171,7 +171,10 @@ class ImageSourceBag_Base extends Recyclable.Root {
       //!!! (2022/07/13 Remarked) Using small ValueBounds may reduce floating-point accumulated error.
       //let bAutoBounds = false; // Image pixel channel value bounds are inside the default value bounds (i.e. Weights.Base.ValueBounds).
       image = NumberImage.Base.create_bySequenceRandom( originalHeight, originalWidth, channelCount,
-        ImageSourceBag_Base.weightsRandomOffset.min, ImageSourceBag_Base.weightsRandomOffset.max, bAutoBounds );
+        ImageSourceBag_Base.weightsRandomOffset.min, ImageSourceBag_Base.weightsRandomOffset.max,
+        ImageSourceBag_Base.weightsDivisorForRemainder,
+        bAutoBounds
+      );
 
     // 2. The shrinked image requested.
     } else {
@@ -218,7 +221,17 @@ class ImageSourceBag_Base extends Recyclable.Root {
 }
 
 
+/**
+ * Image pixel's every channel value should be in [ 0, 256 ].
+ *   - ( weightsRandomOffset.min == 0 ) could avoid generate negative pixel value.
+ *   - ( weightsDivisorForRemainder == 256 ) could avoid generate pixel value larger than 255.
+ *
+ */ 
+
 //!!! (2022/07/14 Temp Remarked) Fixed to non-random to simplify debug.
-ImageSourceBag_Base.weightsRandomOffset = { min: -200, max: +200 };
+ImageSourceBag_Base.weightsRandomOffset = { min: 0, max: +200 };
+//ImageSourceBag_Base.weightsRandomOffset = { min: -200, max: +200 };
 //ImageSourceBag_Base.weightsRandomOffset = { min: 11, max: 11 };
 //ImageSourceBag_Base.weightsRandomOffset = { min: -0, max: +0 };
+
+ImageSourceBag_Base.weightsDivisorForRemainder = 256;

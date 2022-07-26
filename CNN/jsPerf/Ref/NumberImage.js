@@ -1400,6 +1400,9 @@ class NumberImage_Base extends Recyclable.Root {
    *   Every element of the generated number array will been shifted from the sequence id between
    * [ randomOffsetMin, randomOffsetMax ] (inclusive) randomly. Default is 0.
    *
+   * @param {number} divisorForRemainder
+   *   To restrict the generated value. Default is 256, because image's evey channel of a pixel should be in [ 0, 255 ].
+   *
    * @param {boolean} bAutoBounds
    *   If true, the value bounds will be real bounds of the generated elements. If false, the value bounds will be
    * Weights.Base.ValueBounds. Default is false.
@@ -1408,7 +1411,10 @@ class NumberImage_Base extends Recyclable.Root {
    *   Return a newly generated image. Basically, they are sequential numbers which could be added by random offset between
    * [ randomOffsetMin, randomOffsetMax].
    */
-  static create_bySequenceRandom( height, width, channelCount, randomOffsetMin = 0, randomOffsetMax = 0, bAutoBounds = false ) {
+  static create_bySequenceRandom(
+    height, width, channelCount,
+    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 256,
+    bAutoBounds = false ) {
 
     // 0.
     let tBounds;
@@ -1433,7 +1439,7 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     // 2. Fill .dataArray with random sequence values and got their bounds (if requested).
-    RandTools.fill_numberArray( imageNew.dataArray, randomOffsetMin, randomOffsetMax, tBounds );
+    RandTools.fill_numberArray( imageNew.dataArray, randomOffsetMin, randomOffsetMax, divisorForRemainder, tBounds );
 
     // 3. Fill .boundsArraySet
     if ( tBounds ) { // 3.1 by collected bounds (if requested).

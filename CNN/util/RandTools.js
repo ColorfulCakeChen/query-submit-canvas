@@ -30,19 +30,26 @@ function getRandomIntInclusive( min, max ) {
  *   Every element of the generated number array will been shifted from the sequence id between
  * [ randomOffsetMin, randomOffsetMax ] (inclusive) randomly.
  *
+ * @param {number} divisorForRemainder
+ *   The generated value will be divided by divisorForRemainder. The remainder will be the real
+ * output value. This is used for restricted the value bounds.
+ *
  * @param {FloatValue.Bounds} oBounds
  *   If not null, it will be filled (i.e. returned) as the value lower and upper bounds of the returned number array.
  *
  * @return {number[]}
  *   Return the io_numberArray.
  */
-function fill_numberArray( io_numberArray, randomOffsetMin = 0, randomOffsetMax = 0, oBounds = null ) {
+function fill_numberArray(
+  io_numberArray, randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 1024,
+  oBounds = null ) {
+
   if ( oBounds ) {
     let lowerBound = +Infinity;
     let upperBound = -Infinity;
     let value;
     for ( let i = 0; i < io_numberArray.length; ++i ) {
-      value = i + getRandomIntInclusive( randomOffsetMin, randomOffsetMax );
+      value = ( i + getRandomIntInclusive( randomOffsetMin, randomOffsetMax ) ) % divisorForRemainder;
       if ( value > upperBound )
         upperBound = value;
       if ( value < lowerBound )
@@ -53,7 +60,7 @@ function fill_numberArray( io_numberArray, randomOffsetMin = 0, randomOffsetMax 
 
   } else {
     for ( let i = 0; i < io_numberArray.length; ++i ) {
-      io_numberArray[ i ] = i + getRandomIntInclusive( randomOffsetMin, randomOffsetMax );
+      io_numberArray[ i ] = ( i + getRandomIntInclusive( randomOffsetMin, randomOffsetMax ) ) % divisorForRemainder;
     }
   }
 
@@ -87,7 +94,10 @@ function fill_numberArray( io_numberArray, randomOffsetMin = 0, randomOffsetMax 
  * @return {number[]}
  *   Return a number array.
  */
-function generate_numberArray( elementCount, randomOffsetMin = 0, randomOffsetMax = 0, oBounds = null ) {
+function generate_numberArray(
+  elementCount, randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 1024,
+  oBounds = null ) {
+
   let numberArray = new Array( elementCount );
-  return fill_numberArray( numberArray, randomOffsetMin, randomOffsetMax, oBounds );
+  return fill_numberArray( numberArray, randomOffsetMin, randomOffsetMax,  divisorForRemainder, oBounds );
 }

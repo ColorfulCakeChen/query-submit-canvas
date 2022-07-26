@@ -77,40 +77,48 @@ class HeightWidthDepth {
 
     const randomOffsetMin = -10;
     const randomOffsetMax = +10;
+    const divisorForRemainder = 100 * 1024;
 
     this.filters_list = new Array( 4 );
     this.biases_list = new Array( 3 );
 
 
     this.depthwiseFilters = this.filters_list[ 0 ] = tf.tensor(
-      RandTools.generate_numberArray( tf.util.sizeFromShape( this.depthwiseFiltersShape ), randomOffsetMin, randomOffsetMax ),
+      RandTools.generate_numberArray( tf.util.sizeFromShape( this.depthwiseFiltersShape ),
+        randomOffsetMin, randomOffsetMax, divisorForRemainder ),
       this.depthwiseFiltersShape );
 
     this.depthwiseBiases = this.biases_list[ 0 ] = tf.tensor(
-      RandTools.generate_numberArray( tf.util.sizeFromShape( this.depthwiseBiasesShape ), randomOffsetMin, randomOffsetMax ),
+      RandTools.generate_numberArray( tf.util.sizeFromShape( this.depthwiseBiasesShape ),
+        randomOffsetMin, randomOffsetMax, divisorForRemainder ),
       this.depthwiseBiasesShape );
 
 
     this.pointwiseFilters = this.filters_list[ 1 ] = tf.tensor(
-      RandTools.generate_numberArray( tf.util.sizeFromShape( this.pointwiseFiltersShape ), randomOffsetMin, randomOffsetMax ),
+      RandTools.generate_numberArray( tf.util.sizeFromShape( this.pointwiseFiltersShape ),
+        randomOffsetMin, randomOffsetMax, divisorForRemainder ),
       this.pointwiseFiltersShape );
 
     this.pointwiseBiases = this.biases_list[ 1 ] = tf.tensor(
-      RandTools.generate_numberArray( tf.util.sizeFromShape( this.pointwiseBiasesShape ), randomOffsetMin, randomOffsetMax ),
+      RandTools.generate_numberArray( tf.util.sizeFromShape( this.pointwiseBiasesShape ),
+        randomOffsetMin, randomOffsetMax, divisorForRemainder ),
       this.pointwiseBiasesShape );
 
 
     this.fusedConvFilters = this.filters_list[ 2 ] = tf.tensor(
-      RandTools.generate_numberArray( tf.util.sizeFromShape( this.fusedConvFiltersShape ), randomOffsetMin, randomOffsetMax ),
+      RandTools.generate_numberArray( tf.util.sizeFromShape( this.fusedConvFiltersShape ),
+        randomOffsetMin, randomOffsetMax, divisorForRemainder ),
       this.fusedConvFiltersShape );
 
     this.fusedConvBiases = this.biases_list[ 2 ] = tf.tensor(
-      RandTools.generate_numberArray( tf.util.sizeFromShape( this.fusedConvBiasesShape ), randomOffsetMin, randomOffsetMax ),
+      RandTools.generate_numberArray( tf.util.sizeFromShape( this.fusedConvBiasesShape ),
+        randomOffsetMin, randomOffsetMax, divisorForRemainder ),
       this.fusedConvBiasesShape );
 
 
     this.fusedConvWithBiasFilters = this.filters_list[ 3 ] = tf.tensor(
-      RandTools.generate_numberArray( tf.util.sizeFromShape( this.fusedConvWithBiasFiltersShape ), randomOffsetMin, randomOffsetMax ),
+      RandTools.generate_numberArray( tf.util.sizeFromShape( this.fusedConvWithBiasFiltersShape ),
+        randomOffsetMin, randomOffsetMax, divisorForRemainder ),
       this.fusedConvWithBiasFiltersShape );
 
 
@@ -118,11 +126,13 @@ class HeightWidthDepth {
     this.dataTensor3dArray = new Array( 2 );
 
     this.inputImage = this.dataTensor3dArray[ 0 ] = tf.tensor(
-      RandTools.generate_numberArray( tf.util.sizeFromShape( this.inputShape ), randomOffsetMin, randomOffsetMax ),
+      RandTools.generate_numberArray( tf.util.sizeFromShape( this.inputShape ),
+        randomOffsetMin, randomOffsetMax, divisorForRemainder ),
       this.inputShape );
 
     this.inputWithBiasImage = this.dataTensor3dArray[ 1 ] = tf.tensor(
-      RandTools.generate_numberArray( tf.util.sizeFromShape( this.inputWithBiasShape ), randomOffsetMin, randomOffsetMax ),
+      RandTools.generate_numberArray( tf.util.sizeFromShape( this.inputWithBiasShape ),
+        randomOffsetMin, randomOffsetMax, divisorForRemainder ),
       this.inputWithBiasShape );
   }
 

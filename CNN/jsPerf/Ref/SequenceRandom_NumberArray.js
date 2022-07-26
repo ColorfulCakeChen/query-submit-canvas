@@ -81,12 +81,15 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
    * @param {FloatValue.Bounds} oBounds
    *   If not null, it will be filled (i.e. returned) as the value lower and upper bounds of the returned number array.
    */
-  get_by_elementCount_randomOffsetMin_randomOffsetMax( elementCount, randomOffsetMin = 0, randomOffsetMax = 0, oBounds ) {
+  get_by_elementCount_randomOffsetMin_randomOffsetMax(
+    elementCount,
+    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 1024, oBounds ) {
+
     let nRandSpecId = RandTools.getRandomIntInclusive( this.nRandSpecIdMin, this.nRandSpecIdMax );
 
     let tBounds = FloatValue.Bounds/Pool.get_or_create_by();
     let numberArray = this.get_or_create_by_arguments1_etc( Bag.create_by, this,
-      elementCount, randomOffsetMin, randomOffsetMax, tBounds, nRandSpecId );
+      elementCount, randomOffsetMin, randomOffsetMax, divisorForRemainder, tBounds, nRandSpecId );
 
     let tBoundsExisted = this.NumberArrayToBoundsMap.get( numberArray );
     if ( tBoundsExisted == undefined ) {
@@ -113,7 +116,10 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
    * @param {FloatValue.Bounds} oBounds
    *   If not null, it will be filled (i.e. returned) as the value lower and upper bounds of the returned number array.
    */
-  static create_by( elementCount, randomOffsetMin, randomOffsetMax, oBounds, nRandSpecId ) {
+  static create_by(
+    elementCount,
+    randomOffsetMin, randomOffsetMax, divisorForRemainder,
+    oBounds, nRandSpecId ) {
 
     // For debug.
     //if ( Number.isNaN( elementCount ) ) {
@@ -123,7 +129,7 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
     let numberArray = Recyclable.Array.Pool.get_or_create_by( elementCount );
 
     // Note: nRandSpecId is not used when generating number array.
-    RandTools.fill_numberArray( numberArray, randomOffsetMin, randomOffsetMax, oBounds );
+    RandTools.fill_numberArray( numberArray, randomOffsetMin, randomOffsetMax, divisorForRemainder, oBounds );
     return numberArray;
   }
 
