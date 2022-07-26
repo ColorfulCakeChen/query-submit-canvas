@@ -7,8 +7,8 @@ import * as Weights from "../Unpacker/Weights.js";
 import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
 import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
 import * as Embedding from "../Conv/Embedding.js";
-import * as Stage_Reference from "./Ref/Stage_Reference.js";
-import * as Stage_TestParams from "./Ref/Stage_TestParams.js"; 
+import * as Embedding_Reference from "./Ref/Embedding_Reference.js";
+import * as Embedding_TestParams from "./Ref/Embedding_TestParams.js"; 
 import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
 import * as NumberImage from "./Ref/NumberImage.js"; 
 import * as BatchIdCalculator from "./BatchIdCalculator.js";
@@ -16,7 +16,7 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
 /**
  * Test CNN Embedding.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/15055/249/colorfulcakechen-cnn-stage-af287a20950912b74dc087705bab}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/15055/249/colorfulcakechen-cnn-embedding-af287a20950912b74dc087705bab}
  */
 
 /**
@@ -46,10 +46,10 @@ class HeightWidthDepth {
       this.dataTensor3dArray = null;
     }
 
-    this.block_PerformanceTest_release();
+    this.embedding_PerformanceTest_release();
   }
 
-  block_PerformanceTest_init() {
+  embedding_PerformanceTest_init() {
 
     // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
     this.disposeResources();
@@ -86,24 +86,19 @@ class HeightWidthDepth {
       return dataTensor3dArray;
     });
 
-    let stepCountRequested = 10;
-    let nSqueezeExcitationChannelCountDivisor = 2;
 
 //!!! ...unfinished... (2022/07/26)
 // Test different channel multiplier and AddGatherReshape or SplitGatherConcat
 // and whether bCastToInt32
 
-    // sourceHeight, sourceWidth, sourceChannelCount,
-    // nConvStageTypeId,
-    // blockCountRequested,
-    // bPointwise1,
-    // depthwiseFilterHeight, depthwiseFilterWidth,
-    // bPointwise2ActivatedAtStageEnd,
-    // nSqueezeExcitationChannelCountDivisor,
-    // nActivationId,
+    let vocabularyCountPerInputChannel = 256;
+    let bEmbedVocabularyId = true;
+
+    // input_height, input_width, input_channelCount,
+    // channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
     // bKeepInputTensor
     //
-    // The stage performance testing should:
+    // The embedding performance testing should:
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
     //
 
@@ -112,83 +107,77 @@ class HeightWidthDepth {
     else
       this.testCaseMap = new Map();
 
-    // Test Case 1: (MobileNetV1, ( bPointwise1 == true ))
-    this.testCaseMap.set( "MobileNetV1_bPointwise1_true", { testParams: 
-      ( new Stage_TestParams.Base() ).set_byParamsScattered(
-        this.height, this.width, this.depth,
-        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
-        stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+
+//!!! ...unfinished... (2022/07/26)
+//      Embedding.AddGatherReshape, Embedding.SplitGatherConcat,
+      
+    // Test Case 1: (MobileNetV1, ( channelMultiplier == 1 ))
+    this.testCaseMap.set( "MobileNetV1_channelMultiplier_1", { testParams: 
+      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
+        this.height, this.width, this.depth, 1,
+        vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
       ) } );
 
-    // Test Case 2: (MobileNetV1_padValid, ( bPointwise1 == true ))
-    this.testCaseMap.set( "MobileNetV1_padValid_bPointwise1_true", { testParams: 
-      ( new Stage_TestParams.Base() ).set_byParamsScattered(
-        this.height, this.width, this.depth,
-        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
-        stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+    // Test Case 2: (MobileNetV1_padValid, ( channelMultiplier == 2 ))
+    this.testCaseMap.set( "MobileNetV1_channelMultiplier_2", { testParams: 
+      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
+        this.height, this.width, this.depth, 2,
+        vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
       ) } );
 
     // Test Case 3: (MobileNetV2_Thin, ( bPointwise1 == true ))
     this.testCaseMap.set( "MobileNetV2_Thin_bPointwise1_true", { testParams: 
-      ( new Stage_TestParams.Base() ).set_byParamsScattered(
+      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
         this.height, this.width, this.depth,
-        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
-        stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        ValueDesc.ConvEmbeddingType.Singleton.Ids.MOBILE_NET_V2_THIN,
+        vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
       ) } );
 
     // Test Case 4: (MobileNetV2, ( bPointwise1 == true ))
     this.testCaseMap.set( "MobileNetV2_bPointwise1_true", { testParams: 
-      ( new Stage_TestParams.Base() ).set_byParamsScattered(
+      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
         this.height, this.width, this.depth,
-        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
-        stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        ValueDesc.ConvEmbeddingType.Singleton.Ids.MOBILE_NET_V2,
+        vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
       ) } );
 
     // Test Case 5: (ShuffleNetV2, ( bPointwise1 == true ))
     this.testCaseMap.set( "ShuffleNetV2_bPointwise1_true", { testParams: 
-      ( new Stage_TestParams.Base() ).set_byParamsScattered(
+      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
         this.height, this.width, this.depth,
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
-        stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        ValueDesc.ConvEmbeddingType.Singleton.Ids.SHUFFLE_NET_V2,
+        vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
       ) } );
 
     // Test Case 6: (ShuffleNetV2_byPointwise21, ( bPointwise1 == true ))
     this.testCaseMap.set( "ShuffleNetV2_byPointwise21_bPointwise1_true", { testParams: 
-      ( new Stage_TestParams.Base() ).set_byParamsScattered(
+      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
         this.height, this.width, this.depth,
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
-        stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        ValueDesc.ConvEmbeddingType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
+        vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
       ) } );
 
     // Test Case 7: (ShuffleNetV2_byMobileNetV1, ( bPointwise1 == true ))
     this.testCaseMap.set( "ShuffleNetV2_byMobileNetV1_bPointwise1_true", { testParams: 
-      ( new Stage_TestParams.Base() ).set_byParamsScattered(
+      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
         this.height, this.width, this.depth,
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
-        stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        ValueDesc.ConvEmbeddingType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
+        vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
       ) } );
 
     // Test Case 8: (ShuffleNetV2_byMobileNetV1_padValid, ( bPointwise1 == true ))
     this.testCaseMap.set( "ShuffleNetV2_byMobileNetV1_padValid_bPointwise1_true", { testParams: 
-      ( new Stage_TestParams.Base() ).set_byParamsScattered(
+      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
         this.height, this.width, this.depth,
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
-        stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        ValueDesc.ConvEmbeddingType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
+        vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
       ) } );
 
@@ -198,28 +187,32 @@ class HeightWidthDepth {
       let name = name_testCase[ 0 ];
       let testCase = name_testCase[ 1 ];
       try {
-        if ( !testCase.stage ) {
-          testCase.stage = Stage_Reference.Base.Stage_create(
-            testCase.testParams, this.testPerformance_NumberImageArray[ 0 ].boundsArraySet.output0 );
+        if ( !testCase.embedding ) {
+          testCase.embedding = Embedding_Reference.Base.Embedding_create(
+            Embedding.AddGatherReshape,
+//!!!???
+//            Embedding.SplitGatherConcat,
+            testCase.testParams,
+            this.testPerformance_NumberImageArray[ 0 ].boundsArraySet.output0 );
         }
       } catch ( e ) {
         debugger;
         throw e;
       }
 
-      console.log( `Embedding.${name}: tensorWeightCount = { Extracted: ${testCase.stage.tensorWeightCountExtracted}, `
-        + `Total: ${testCase.stage.tensorWeightCountTotal} }` );
+      console.log( `Embedding.${name}: tensorWeightCount = { Extracted: ${testCase.embedding.tensorWeightCountExtracted}, `
+        + `Total: ${testCase.embedding.tensorWeightCountTotal} }` );
     }
 
   }
 
-  block_PerformanceTest_release() {
+  embedding_PerformanceTest_release() {
     if ( this.testCaseMap ) {
       for ( let name_testCase of this.testCaseMap.entries() ) {
         let name = name_testCase[ 0 ];
         let testCase = name_testCase[ 1 ];
-        if ( testCase.stage ) {
-          testCase.stage.disposeResources_and_recycleToPool();
+        if ( testCase.embedding ) {
+          testCase.embedding.disposeResources_and_recycleToPool();
         }
       }
       this.testCaseMap.clear();
@@ -232,10 +225,10 @@ class HeightWidthDepth {
   }
 
   /** Test apply by Xxx */
-  testStage_ByName( testCaseName ) {
+  testEmbedding_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
-    let stage = testCase.stage;
-    let outputTensor3d = stage.apply( this.dataTensor3dArray[ 0 ] );
+    let embedding = testCase.embedding;
+    let outputTensor3d = embedding.apply( this.dataTensor3dArray[ 0 ] );
     tf.dispose( outputTensor3d );
   }
 
@@ -244,9 +237,6 @@ class HeightWidthDepth {
 
     {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
-
-      //Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_Stage.HeightWidthDepth.testCorrectness()", () => {
-      //}, this );
 
       yield;
 
@@ -258,9 +248,9 @@ class HeightWidthDepth {
           //       dynamically created in them.
           let imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by();
 
-          let testParams = Stage_TestParams.Base.Pool.get_or_create_by();
+          let testParams = Embedding_TestParams.Base.Pool.get_or_create_by();
           let testParamsGenerator = testParams.ParamsGenerator();
-          let testReference = Stage_Reference.Base.Pool.get_or_create_by();
+          let testReference = Embedding_Reference.Base.Pool.get_or_create_by();
 
           let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
 
@@ -275,7 +265,7 @@ class HeightWidthDepth {
 
           } catch ( e ) {
             let backendName = tf.getBackend();
-            let msg = `jsPerf_Stage.js: testCorrectness(): backendName=${backendName}, `
+            let msg = `jsPerf_Embedding.js: testCorrectness(): backendName=${backendName}, `
               + `Embedding, (yieldCount == ${testParams.yieldCount}), testParams.id == ${testParams.id}`;
 
             console.log( msg );
@@ -307,7 +297,7 @@ class HeightWidthDepth {
 
     try {
       // After correctness testing done, create all Embedding for performance testing.
-      this.block_PerformanceTest_init();
+      this.embedding_PerformanceTest_init();
     } catch ( e ) {
       debugger;
       throw e;
@@ -318,7 +308,7 @@ class HeightWidthDepth {
 
 
 function init() {
-  //console.log("jsPerf_Stage.js, init()");
+  //console.log("jsPerf_Embedding.js, init()");
 
   disposeResources();
 

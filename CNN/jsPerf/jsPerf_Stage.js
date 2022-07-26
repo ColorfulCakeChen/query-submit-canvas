@@ -46,10 +46,10 @@ class HeightWidthDepth {
       this.dataTensor3dArray = null;
     }
 
-    this.block_PerformanceTest_release();
+    this.stage_PerformanceTest_release();
   }
 
-  block_PerformanceTest_init() {
+  stage_PerformanceTest_init() {
 
     // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
     this.disposeResources();
@@ -209,7 +209,7 @@ class HeightWidthDepth {
 
   }
 
-  block_PerformanceTest_release() {
+  stage_PerformanceTest_release() {
     if ( this.testCaseMap ) {
       for ( let name_testCase of this.testCaseMap.entries() ) {
         let name = name_testCase[ 0 ];
@@ -303,7 +303,7 @@ class HeightWidthDepth {
 
     try {
       // After correctness testing done, create all Stage for performance testing.
-      this.block_PerformanceTest_init();
+      this.stage_PerformanceTest_init();
     } catch ( e ) {
       debugger;
       throw e;
