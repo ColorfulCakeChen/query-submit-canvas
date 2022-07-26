@@ -84,6 +84,8 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
     randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 4096 ) {
 
     let nRandSpecId = RandTools.getRandomIntInclusive( this.nRandSpecIdMin, this.nRandSpecIdMax );
+    let numberArray = this.get_or_create_by_arguments1_etc( Bag.create_by, this,
+      elementCount, randomOffsetMin, randomOffsetMax, divisorForRemainder, nRandSpecId );
 
 // !!! (2022/07/26 Remarked) Use use Recyclable.NumberArray_withBounds instead.
 //

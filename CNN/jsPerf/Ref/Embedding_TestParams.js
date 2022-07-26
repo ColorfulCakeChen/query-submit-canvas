@@ -357,15 +357,12 @@ class Embedding_TestParams_Base extends TestParams.Base {
    * @param {string|numner} propertyName  The property io_object[ propertyName ] will be ensured as a number array.
    * @param {number} elementCount         The property io_object[ propertyName ].length will be ensured as elementCount.
    *
-   * @param {FloatValue.Bounds} oBounds
-   *   If not null, it will be filled (i.e. returned) as the value lower and upper bounds of the returned number array.
    */
-  fill_object_property_numberArray( io_object, propertyName, elementCount, oBounds ) {
+  fill_object_property_numberArray( io_object, propertyName, elementCount ) {
     super.ensure_object_property_numberArray_length_existed( io_object, propertyName,
       elementCount,
       TestParams.Base.weightsRandomOffset.min, TestParams.Base.weightsRandomOffset.max,
-      TestParams.Base.weightsDivisorForRemainder,
-      oBounds
+      TestParams.Base.weightsDivisorForRemainder
     );
   }
 
