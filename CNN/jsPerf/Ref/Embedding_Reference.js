@@ -89,11 +89,15 @@ class Embedding_Reference_Base extends Recyclable.Root {
 
     this.testCorrectness_imageOutReference = this.calcResult( this.testCorrectness_imageIn );
 
-//!!! ...unfinished... (2022/07/26)
-// should try twice: one is for Embedding.AddGatherReshape, the other is for Embedding.SplitGatherConcat.
+    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
+      "Embedding_Reference.Base.embedding_create_apply_internal( AddGatherReshape )",
+      Embedding_Reference_Base.embedding_create_apply_internal, this,
+      Embedding.AddGatherReshape, imageSourceBag, testParams );
 
-    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Embedding_Reference.Base.embedding_create_apply_internal()",
-      Embedding_Reference_Base.embedding_create_apply_internal, this, imageSourceBag, testParams );
+    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
+      "Embedding_Reference.Base.embedding_create_apply_internal( SplitGatherConcat )",
+      Embedding_Reference_Base.embedding_create_apply_internal, this,
+      Embedding.SplitGatherConcat, imageSourceBag, testParams );
 
     { // Release output reference images.
       if ( this.testCorrectness_imageOutReference != this.testCorrectness_imageIn ) { // Do not release image from ImageSourceBag.
