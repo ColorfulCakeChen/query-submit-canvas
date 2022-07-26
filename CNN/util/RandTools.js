@@ -31,7 +31,7 @@ function getRandomIntInclusive( min, max ) {
  * [ randomOffsetMin, randomOffsetMax ] (inclusive) randomly.
  *
  * @param {FloatValue.Bounds} oBounds
- *   If not null, it will be filled as the value lower and upper bounds of the returned number array.
+ *   If not null, it will be filled (i.e. returned) as the value lower and upper bounds of the returned number array.
  *
  * @return {number[]}
  *   Return the io_numberArray.

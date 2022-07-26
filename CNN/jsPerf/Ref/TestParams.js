@@ -3,6 +3,7 @@ export { ParamDescConfig, TestParams_Base as Base };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as NameNumberArrayObject from "../../util/NameNumberArrayObject.js";
+import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as SequenceRandom_NumberArray from "./SequenceRandom_NumberArray.js";
 
 /**
@@ -388,10 +389,15 @@ class TestParams_Base extends Recyclable.Root {
    * @param {number} elementCount     The property io_object[ propertyName ].length will be ensured as elementCount.
    * @param {number} randomOffsetMin  The random number offet lower bound.
    * @param {number} randomOffsetMax  The random number offet upperer bound.
+   *
+   * @param {FloatValue.Bounds} oBounds
+   *   If not null, it will be filled (i.e. returned) as the value lower and upper bounds of the returned number array.
    */
-  ensure_object_property_numberArray_length_existed( io_object, propertyName, elementCount, randomOffsetMin = 0, randomOffsetMax = 0 ) {
+  ensure_object_property_numberArray_length_existed(
+    io_object, propertyName, elementCount, randomOffsetMin = 0, randomOffsetMax = 0, oBounds ) {
+
     io_object[ propertyName ] = this.SequenceRandom_NumberArray_Bag.get_by_elementCount_randomOffsetMin_randomOffsetMax(
-      elementCount, randomOffsetMin, randomOffsetMax );
+      elementCount, randomOffsetMin, randomOffsetMax, oBounds );
   }
 
 

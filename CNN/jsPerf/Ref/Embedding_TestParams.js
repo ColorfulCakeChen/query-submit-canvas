@@ -5,6 +5,7 @@ import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as RandTools from "../../util/RandTools.js";
 //import * as ParamDesc from "../../Unpacker/ParamDesc.js";
+import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TestParams from "./TestParams.js";
 //import * as Embedding from "../../Conv/Embedding.js";
@@ -137,10 +138,16 @@ class Embedding_TestParams_Base extends TestParams.Base {
   /** @override */
   static setAsConstructor_self() {
     this.out = Out.Pool.get_or_create_by();
+    this.out_boundsArray = FloatValue.BoundsArray.Pool.get_or_create_by(); // Every output channel's value bounds.
   }
 
   /** @override */
   disposeResources() {
+    if ( this.out_boundsArray ) {
+      this.out_boundsArray.disposeResources_and_recycleToPool();
+      this.out_boundsArray = null;
+    }
+
     if ( this.out ) {
       this.out.disposeResources_and_recycleToPool();
       this.out = null;
@@ -154,6 +161,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
    *   - this.in
    *   - this.in_weights
    *   - this.out
+   *   - this.out_boundsArray
    *
    * @return {Base}
    *   Return this object self.
@@ -183,6 +191,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
    * Fills the following proterties:
    *   - this.in_weights
    *   - this.out.inferencedParams
+   *   - this.out_boundsArray
    *
    * @param {object} this.in.paramsNumberArrayObject
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
@@ -200,6 +209,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
    */
   set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin = 0 ) {
     let embeddingParams = this.out;
+    let tBounds = FloatValue.Bounds/Pool.get_or_create_by();
 
     this.generate_out_inferencedParams();
 
@@ -214,13 +224,25 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
     // Generate look-up table of every input channel.
     this.in.paramsNumberArrayObject.length = embeddingParams.input_channelCount;
+    this.out_boundsArray.length = embeddingParams.inferencedParams.output_channelCount;
+
+    let outChannelIndex = 0;
     for ( let i = 0; i < embeddingParams.input_channelCount; ++i ) {
-      this.fill_object_property_numberArray( this.in.paramsNumberArrayObject, i, tableElementCountPerInputChannel );
+      this.fill_object_property_numberArray( this.in.paramsNumberArrayObject, i, tableElementCountPerInputChannel, tBounds );
+
+      // Every output channel's value bounds.
+      for ( let outChannelSub = 0; outChannelSub < embeddingParams.channelMultiplier; ++outChannelSub) {
+        this.out_boundsArray.set_one_byBounds( outChannelIndex, tBounds );
+        ++outChannelIndex;
+      }
     }
 
     // Pack all parameters, look-up tables weights into a (pre-allocated and re-used) NumberArray.
     this.in_weights.set_byConcat(
       Embedding_TestParams_Base.paramsNameOrderArray_Basic, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
+
+    tBounds.disposeResources_and_recycleToPool();
+    tBounds = null;
 
     return this;
   }
@@ -318,10 +340,15 @@ class Embedding_TestParams_Base extends TestParams.Base {
    * @param {object} io_object            The object to be checked and modified.
    * @param {string|numner} propertyName  The property io_object[ propertyName ] will be ensured as a number array.
    * @param {number} elementCount         The property io_object[ propertyName ].length will be ensured as elementCount.
+   *
+   * @param {FloatValue.Bounds} oBounds
+   *   If not null, it will be filled (i.e. returned) as the value lower and upper bounds of the returned number array.
    */
-   fill_object_property_numberArray( io_object, propertyName, elementCount ) {
+  fill_object_property_numberArray( io_object, propertyName, elementCount, oBounds ) {
     super.ensure_object_property_numberArray_length_existed( io_object, propertyName,
-      elementCount, ImageSourceBag.Base.weightsRandomOffset.min, ImageSourceBag.Base.weightsRandomOffset.max );
+      elementCount, ImageSourceBag.Base.weightsRandomOffset.min, ImageSourceBag.Base.weightsRandomOffset.max,
+      oBounds
+    );
   }
 
 }

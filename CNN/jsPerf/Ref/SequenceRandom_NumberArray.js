@@ -4,6 +4,7 @@ import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 import * as RandTools from "../../util/RandTools.js";
+import * as FloatValue from "../../Unpacker/FloatValue.js";
 
 /**
  * A pool for number array which is created with sequence and randomized offset. It could reduce re-creating them of same parameters
@@ -38,6 +39,8 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
   static setAsConstructor_self( nCountPerSameSpec = 10 ) {
     this.nRandSpecIdMin = 0;
     this.nRandSpecIdMax = Math.max( 0, nCountPerSameSpec - 1 );
+
+    this.NumberArrayToBoundsMap = new Map(); // Record value bounds of every generated number array.
   }
 
   /** @override */
@@ -48,9 +51,17 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
 
   /** @override */
   clear() {
+    {
+      for ( let bounds of this.NumberArrayToBoundsMap.values() ) {
+        bounds.disposeResources_and_recycleToPool();
+      }
+      this.NumberArrayToBoundsMap.clear();
+    }
+
     for ( let numberArray of this.values() ) {
       numberArray.disposeResources_and_recycleToPool();
     }
+
     super.clear();
   }
 
@@ -66,16 +77,43 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
    * @param {number} elementCount     The property io_object[ propertyName ].length will be ensured as elementCount.
    * @param {number} randomOffsetMin  The random number offet lower bound.
    * @param {number} randomOffsetMax  The random number offet upperer bound.
+   *
+   * @param {FloatValue.Bounds} oBounds
+   *   If not null, it will be filled (i.e. returned) as the value lower and upper bounds of the returned number array.
    */
-  get_by_elementCount_randomOffsetMin_randomOffsetMax( elementCount, randomOffsetMin = 0, randomOffsetMax = 0 ) {
+  get_by_elementCount_randomOffsetMin_randomOffsetMax( elementCount, randomOffsetMin = 0, randomOffsetMax = 0, oBounds ) {
     let nRandSpecId = RandTools.getRandomIntInclusive( this.nRandSpecIdMin, this.nRandSpecIdMax );
-    return this.get_or_create_by_arguments1_etc( Bag.create_by, this,
-      elementCount, randomOffsetMin, randomOffsetMax, nRandSpecId );
+
+    let tBounds = FloatValue.Bounds/Pool.get_or_create_by();
+    let numberArray = this.get_or_create_by_arguments1_etc( Bag.create_by, this,
+      elementCount, randomOffsetMin, randomOffsetMax, tBounds, nRandSpecId );
+
+    let tBoundsExisted = this.NumberArrayToBoundsMap.get( numberArray );
+    if ( tBoundsExisted == undefined ) {
+      // The number array is newly created. Record its value bounds.
+      this.NumberArrayToBoundsMap.set( numberArray, tBounds );
+
+      if ( oBounds )
+        oBounds.set_byBounds( tBounds );
+
+    } else {
+      // The number array is an old one. No needs to record its value bounds again.
+      tBounds.disposeResources_and_recycleToPool();
+      tBounds = null;
+
+      if ( oBounds )
+        oBounds.set_byBounds( tBoundsExisted );
+    }
+
+    return numberArray;
   }
 
   /**
+   *
+   * @param {FloatValue.Bounds} oBounds
+   *   If not null, it will be filled (i.e. returned) as the value lower and upper bounds of the returned number array.
    */
-  static create_by( elementCount, randomOffsetMin, randomOffsetMax, nRandSpecId ) {
+  static create_by( elementCount, randomOffsetMin, randomOffsetMax, oBounds, nRandSpecId ) {
 
     // For debug.
     //if ( Number.isNaN( elementCount ) ) {
@@ -85,7 +123,7 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
     let numberArray = Recyclable.Array.Pool.get_or_create_by( elementCount );
 
     // Note: nRandSpecId is not used when generating number array.
-    RandTools.fill_numberArray( numberArray, randomOffsetMin, randomOffsetMax );
+    RandTools.fill_numberArray( numberArray, randomOffsetMin, randomOffsetMax, oBounds );
     return numberArray;
   }
 
