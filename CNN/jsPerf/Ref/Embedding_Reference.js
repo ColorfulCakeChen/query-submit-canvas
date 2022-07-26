@@ -348,6 +348,11 @@ class Embedding_Reference_Base extends Recyclable.Root {
     let testParams = this.testParams;
     let testParamsOut = this.testParams.out;
 
+    let {
+      input_height, input_width, input_channelCount,
+      channelMultiplier,
+    } = testParams.out;
+
     let { output_height, output_width, output_channelCount } = testParamsOut.inferencedParams;
 
     let imageOut;
@@ -361,31 +366,24 @@ class Embedding_Reference_Base extends Recyclable.Root {
       );
     }
 
-//!!! ...unfinished... (2022/07/26)
     let inElementIndex = 0;
     let outElementIndex = 0;
 
-    for ( let y = 0; y < testParamsOut.input_height; ++y ) {
-      for ( let x = 0; x < testParamsOut.input_width; ++x ) {
+    for ( let y = 0; y < input_height; ++y ) {
+      for ( let x = 0; x < input_width; ++x ) {
 
-        let outChannelIndex = 0;
-        for ( let inChannelIndex = 0; inChannelIndex < testParamsOut.input_channelCount; ++inChannelIndex ) {
+        //let outChannelIndex = 0;
+        for ( let inChannelIndex = 0; inChannelIndex < input_channelCount; ++inChannelIndex ) {
           let vocabularyTable = testParams.in.paramsNumberArrayObject[ inChannelIndex ];
-          let vocabularyId = imageIn.dataArray[ inElementIndex ];
-          let vocabularyChannelIndex = vocabularyId * testParamsOut.channelMultiplier;
+          let vocabularyId = imageIn.dataArray[ inElementIndex ]; // should be an integer.
+          let vocabularyElementIndex = vocabularyId * channelMultiplier;
 
-          for ( let outChannelSub = 0; outChannelSub < testParamsOut.channelMultiplier; ++outChannelSub ) {
+          for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
+            imageOut.dataArray[ outElementIndex ] = vocabularyTable[ vocabularyElementIndex ];
 
-
-            imageOut.dataArray[ outElementIndex ] = vocabularyTable[ vocabularyChannelIndex ];
-            
-
-//!!! ...unfinished... (2022/07/26)
-
-
-            ++vocabularyChannelIndex;
+            ++vocabularyElementIndex;
             ++outElementIndex;
-            ++outChannelIndex;
+            //++outChannelIndex;
           }
 
           ++inElementIndex;
@@ -393,48 +391,7 @@ class Embedding_Reference_Base extends Recyclable.Root {
       }
     }
 
-    // Calculate every blocks in sequence.
-
-    let blockRef = this.Block_Reference;
-
-    this.imageOutArray[ 0 ] = imageIn;
-    this.imageOutArray[ 1 ] = null;
-
-    for ( let blockIndex = 0; blockIndex < testParams.blockArray.length; ++blockIndex ) {
-      this.imageInArray[ 0 ] = this.imageOutArray[ 0 ];
-      this.imageInArray[ 1 ] = this.imageOutArray[ 1 ];
-
-      blockRef.testParams = testParams.blockArray[ blockIndex ];
-      blockRef.calcResult( this.imageInArray, this.imageOutArray );
-
-      // So that it can debug whether memory leak.
-      {
-        blockRef.testParams.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources();
-        blockRef.testParams.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources();
-      }
-
-      { // Release input image.
-        if ( this.imageInArray[ 0 ] ) {
-          if ( this.imageInArray[ 0 ] != imageIn ) { // Do not release image from ImageSourceBag.
-            this.imageInArray[ 0 ].disposeResources_and_recycleToPool();
-          }
-          this.imageInArray[ 0 ] = null;
-        }
-
-        if ( this.imageInArray[ 1 ] ) {
-          this.imageInArray[ 1 ].disposeResources_and_recycleToPool();
-          this.imageInArray[ 1 ] = null;
-        }
-      }
-    }
-
-    let imageOut = this.imageOutArray[ 0 ]; // The blockLast should have only input0.
-
-    // Avoid dangling tensors.
-    this.imageInArray[ 0 ] = null;
-    this.imageInArray[ 1 ] = null;
-    this.imageOutArray[ 0 ] = null;
-    this.imageOutArray[ 1 ] = null;
+    imageOut.boundsArraySet.output0.set_all_byBoundsArray( testParams.in_boundsArray );
 
     return imageOut;
   }

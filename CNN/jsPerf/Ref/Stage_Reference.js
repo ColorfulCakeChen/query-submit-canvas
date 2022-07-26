@@ -1120,7 +1120,7 @@ class Stage_Reference_Base extends Recyclable.Root {
         blockRef.testParams.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources();
       }
 
-      { // Release input image.
+      { // Release intermediate input images.
         if ( this.imageInArray[ 0 ] ) {
           if ( this.imageInArray[ 0 ] != imageIn ) { // Do not release image from ImageSourceBag.
             this.imageInArray[ 0 ].disposeResources_and_recycleToPool();
