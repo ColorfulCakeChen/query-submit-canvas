@@ -1,9 +1,11 @@
-export { AddGatherReshape };
+export { AddGatherReshape_FiltersArray };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+//import * as TensorPlaceholder from "../TensorPlaceholder.js";
 //import * as BoundsArraySet from "../BoundsArraySet.js";
-import { AddGatherReshape_FiltersArray } from "./Embedding_AddGatherReshape_FiltersArray.js";
+//import { Base } from "./Operation_Base.js";
+import * as Weights from "../../Unpacker/Weights.js";
 
 
 //!!! ...unfinished... (2022/07/26)
@@ -83,28 +85,40 @@ import { AddGatherReshape_FiltersArray } from "./Embedding_AddGatherReshape_Filt
  *   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used in
  * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputWeightArray.
  *
+ * @member {function} destroy_or_keep_input
+ *   This is a function pointer to one of destroy_input(), keep_input(). If ( this.bKeepInputTensor == false ),
+ * it pointer to destroy_input(). If ( this.bKeepInputTensor == true ), it pointer to keep_input().
+ *
+ * @member {function} apply_and_destroy_or_keep
+ *   Process the input and produce output by looking up the weights of this embedding layer. This is a function pointer
+ * to one of keep_input_return_copy(), return_input_directly(), apply_and_destroy_or_keep_SplitGatherConcat().
+ * It inputs a tensor3d data (e.g. height-width-color for color image, or 1-width-1 for text) with this.inChannels
+ * (e.g. 4 for r-g-b-a, or 1 for text) channels. The inputTensor3d.dtype must be int32 (i.e. can not be float32)
+ * so that they can be used as tf.gather()'s indices. If ( this.bKeepInputTensor == false ), the inputTensor3d
+ * will be disposed. If ( this.bKeepInputTensor == true ), the inputTensor3d will be kept.
+ *
  * @see Weight.Root
  *
  */
-class AddGatherReshape extends AddGatherReshape_FiltersArray {
+class AddGatherReshape extends Weights.Root {
 
   /**
-   * Used as default Embedding.AddGatherReshape_FiltersArray provider for conforming to Recyclable interface.
+   * Used as default Embedding.AddGatherReshape provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Embedding.AddGatherReshape_FiltersArray.Pool", AddGatherReshape_FiltersArray, AddGatherReshape_FiltersArray.setAsConstructor );
+  static Pool = new Pool.Root( "Embedding.AddGatherReshape.Pool", AddGatherReshape, AddGatherReshape.setAsConstructor );
 
   /**
    *
    */
   constructor() {
     super();
-    AddGatherReshape_FiltersArray.setAsConstructor_self.call( this );
+    AddGatherReshape.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    AddGatherReshape_FiltersArray.setAsConstructor_self.call( this );
+    AddGatherReshape.setAsConstructor_self.call( this );
     return this;
   }
 
