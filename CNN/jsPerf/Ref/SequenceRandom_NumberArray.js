@@ -90,6 +90,7 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
 !!! ...unfinished... (2022/07/26)
 // Bounds object should not be part of keys.
 // Because it is changing (i.e. not constant).
+// Perhaps, use Recyclable.NumberArray_withBounds which has properties lowerBound and upperBounds
 
     let tBounds = FloatValue.Bounds.Pool.get_or_create_by();
     let numberArray = this.get_or_create_by_arguments1_etc( Bag.create_by, this,

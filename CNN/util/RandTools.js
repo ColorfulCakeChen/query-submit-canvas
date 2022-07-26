@@ -44,6 +44,10 @@ function fill_numberArray(
   io_numberArray, randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 4096,
   oBounds = null ) {
 
+!!! ...unfinished... (2022/07/26)
+// If io_numberArray is instanceof Recyclable.NumberArray_withBounds which has properties lowerBound and upperBounds.
+// Record Bounds.
+    
   if ( oBounds ) {
     let lowerBound = +Infinity;
     let upperBound = -Infinity;
