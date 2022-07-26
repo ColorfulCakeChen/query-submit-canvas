@@ -2,6 +2,7 @@ export { init, testCorrectness, disposeResources };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
+import * as RandTools from "../util/RandTools.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
@@ -58,7 +59,11 @@ class HeightWidthDepth {
     let inputTensorCount = 1;
     this.testPerformance_NumberImageArray = Recyclable.OwnerArray.Pool.get_or_create_by( inputTensorCount );
     this.dataTensor3dArray = tf.tidy( () => {
-      let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( this.depth );
+      const randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 256;
+      const bAutoBounds = true;
+
+//!!! (2022/07/26 Remarked) Use create_bySequenceRandom() instead.
+//      let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( this.depth );
 
       let dataTensor3dArray = new Array( inputTensorCount );
 
@@ -66,22 +71,30 @@ class HeightWidthDepth {
       let elementCount = tf.util.sizeFromShape( shape );
 
       for ( let i = 0; i < dataTensor3dArray.length; ++i ) {
-        let numberBegin = ( i * elementCount );
-        let numberEnd = numberBegin + elementCount;
 
-        let image = this.testPerformance_NumberImageArray[ i ] = NumberImage.Base.Pool.get_or_create_by(
-          this.height, this.width, this.depth, undefined,
-          inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, Weights.Base.ValueBounds );
-
-        for ( let j = 0; j < elementCount; ++j ) {
-          image.dataArray[ j ] = numberBegin + j;
-        }
+//!!! (2022/07/26 Remarked) Use create_bySequenceRandom() instead.
+//         let numberBegin = ( i * elementCount );
+//         let numberEnd = numberBegin + elementCount;
+//
+//         let image = this.testPerformance_NumberImageArray[ i ] = NumberImage.Base.Pool.get_or_create_by(
+//           this.height, this.width, this.depth, undefined,
+//           inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, Weights.Base.ValueBounds );
+//
+//         for ( let j = 0; j < elementCount; ++j ) {
+//           image.dataArray[ j ] = numberBegin + j;
+//         }
+      
+        let image = this.testPerformance_NumberImageArray[ i ] = NumberImage.Base.create_bySequenceRandom(
+          this.height, this.width, this.depth,
+          randomOffsetMin, randomOffsetMax, divisorForRemainder,
+          bAutoBounds );
 
         dataTensor3dArray[ i ] = tf.tensor( image.dataArray, shape );
       }
 
-      inputScaleBoundsArray.disposeResources_and_recycleToPool();
-      inputScaleBoundsArray = null;
+//!!! (2022/07/26 Remarked) Use create_bySequenceRandom() instead.
+//      inputScaleBoundsArray.disposeResources_and_recycleToPool();
+//      inputScaleBoundsArray = null;
 
       return dataTensor3dArray;
     });
