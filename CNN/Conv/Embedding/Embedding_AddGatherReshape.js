@@ -195,6 +195,10 @@ class AddGatherReshape extends FiltersArray_One {
    */
   apply( inputTensor ) {
 
+!!! ...unfinished... (2022/07/27)
+// If only ( channelMultiplier == 1 ) 
+// no needs to add, and no needs to reshape. gather is just enough.
+
     // Shifting vocabulary indices of input. (Broadcasting is used.)
     const vocabularyIndicesTensor3d = inputTensor3d.add( this.channelValueOffsetTensor3d );
 
