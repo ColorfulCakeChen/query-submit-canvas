@@ -91,25 +91,29 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
 
       // For collecting the rank reduced tensor2d (from the splitted inputTensor3d). They
       // will be used to look up vocabulary table.
-      this.vocabularyIndicesOneChannelTensor2dArray = Recyclable.Array.get_or_create_by( this.splitCount );
+      this.vocabularyIndicesOneChannelTensor2dArray = Recyclable.Array.Pool.get_or_create_by( this.splitCount );
 
       // The first 2 dimension of apply()'s inputTensor3d. When the input is splitted and
       // reduce to tensor2d, their shape should be this. It is used for reshape from
       // tensor3d to tensor2d.
       //
       // (Used when vocabulary tables are tensor2d.)
-      this.inputTensor2dShape = Recyclable.Array.get_or_create_by( 2 );
+      this.inputTensor2dShape = Recyclable.Array.Pool.get_or_create_by( 2 );
 
       // For collecting the results of every looking (vocabulary table) up. They will be
       // concatenated into one tensor3d as apply()'s result.
-      this.embeddedTensor3dArray = Recyclable.Array.get_or_create_by( this.splitCount );
+      this.embeddedTensor3dArray = Recyclable.Array.Pool.get_or_create_by( this.splitCount );
     }
   }
 
   /** @override */
   disposeResources() {
-    // For collecting the rank reduced tensor2d (from the splitted inputTensor3d). They will be used to look up vocabulary table.
-    this.vocabularyIndicesOneChannelTensor2dArray = Recyclable.Array.get_or_create_by( this.splitCount );
+
+    if ( this.vocabularyTablesTensorArray ) {
+      tf.dispose( this.vocabularyTablesTensorArray ); // Release tensors.
+      this.vocabularyTablesTensorArray.disposeResources_and_recycleToPool();
+      this.vocabularyTablesTensorArray = null;
+    }
 
     if ( this.embeddedTensor3dArray ) {
       this.embeddedTensor3dArray.disposeResources_and_recycleToPool();
@@ -126,12 +130,7 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
       this.vocabularyIndicesOneChannelTensor2dArray = null;
     }
 
-!!! ...unfinished... (2022/07/27)
-    if ( this.vocabularyTablesTensorArray ) {
-      this.vocabularyTablesTensorArray.dispose();
-      this.vocabularyTablesTensorArray = null;
-    }
-
+    this.splitCount = undefined;
     this.bKeepInputTensor = undefined;
 
     super.disposeResources();
@@ -156,15 +155,17 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
 
 
 !!! ...unfinished... (2022/07/27)
+    this.vocabularyTablesTensorArray = Recyclable.Array.Pool.get_or_create_by( vocabularyTables.length ); // could be tensor3d or tensor2d.
 
-    Embedding_AddGatherReshape.setup_apply_embedding.call( this );
+
+    Embedding_SplitReshapeGatherConcat.setup_apply_embedding.call( this );
     return true;
   }
 
   /** Determine this.apply data members.
    *
-   * @param {Embedding_AddGatherReshape} this
-   *   The Embedding_AddGatherReshape object to be determined and modified.
+   * @param {Embedding_SplitReshapeGatherConcat} this
+   *   The Embedding_SplitReshapeGatherConcat object to be determined and modified.
    */
   static setup_apply_embedding() {
 
