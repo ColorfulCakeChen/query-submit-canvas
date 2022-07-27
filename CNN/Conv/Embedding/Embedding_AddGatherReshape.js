@@ -11,16 +11,7 @@ import { FiltersArray_One } from "./Embedding_FiltersArray_One.js";
  * @member {boolean} bKeepInputTensor
  *   If true, .apply() will not dispose inputTensor (i.e. keep). For another example, the input image
  * needs be shared across many neural networks.
- *
  * 
- * 
-
-!!! ...unfinished... (2022/07/27)
-
- * @member {function} destroy_or_keep_input
- *   This is a function pointer to one of destroy_input(), keep_input(). If ( this.bKeepInputTensor == false ),
- * it pointer to destroy_input(). If ( this.bKeepInputTensor == true ), it pointer to keep_input().
- *
  * @member {function} apply
  *   Process the input and produce output by looking up the weights of this embedding layer. This is a
  * data member to a function. The function inputs a tensor3d data (e.g. height-width-color for color image,
@@ -74,6 +65,7 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) 
       bKeepInputTensor,
       this.output_height, this.output_width, this.output_channelCount
     );
+    return this;
   }
 
   /** @override */
