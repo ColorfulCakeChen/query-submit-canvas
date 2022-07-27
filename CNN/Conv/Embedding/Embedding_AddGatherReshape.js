@@ -71,7 +71,15 @@ class AddGatherReshape extends FiltersArray_One {
   disposeResources() {
     this.bKeepInputTensor = undefined;
 
-!!! ...unfinished... (2022/07/27) Release tensors.
+    if ( this.vocabularyTableTensor2d ) {
+      this.vocabularyTableTensor2d.dispose();
+      this.vocabularyTableTensor2d = null;
+    }
+
+    if ( this.channelValueOffsetTensor3d ) {
+      this.channelValueOffsetTensor3d.dispose();
+      this.channelValueOffsetTensor3d = null;
+    }
 
     super.disposeResources();
   }
@@ -94,11 +102,29 @@ class AddGatherReshape extends FiltersArray_One {
     }
 
 !!! ...unfinished... (2022/07/27) Create tensors.
-    
+    {
+      this.vocabularyTableTensor2d = tf.concat( this.vocabularyTablesTensorArray, 0 );
+
+      // Build a tensor3d for shifting every value of every input channels of inputTensor3d. So that they can be used for
+      // indexing the one merged longer vocabulary table tensor2d.
+      //
+      // Channel                  0: ( channelValue + (                  0 * vocabularyCountPerInputChannel ) )
+      // Channel                  1: ( channelValue + (                  1 * vocabularyCountPerInputChannel ) )
+      // Channel                  2: ( channelValue + (                  2 * vocabularyCountPerInputChannel ) )
+      //   :
+      // Channel ( inChannels - 1 ): ( channelValue + ( ( inChannels - 1 ) * vocabularyCountPerInputChannel ) )
+      let numberSequencer = new Array( inChannels ).keys(); // Generator: 0, 1, 2, ..., ( inChannels - 1 )
+      let channelValueOffset = [ ...numberSequencer ].map( x => x * vocabularyCountPerInputChannel );
+      this.channelValueOffsetTensor3d = tf.tensor3d( channelValueOffset, [ 1, 1, inChannels ], "int32" ); // One pixel.
+
+      this.tensorWeightCountTotal += this.channelValueOffsetTensor3d.size;
+    }
 
 
-
-
+    { // Release filtersArray for reducing memory footprint.
+      this.filtersArray.disposeResources_and_recycleToPool();
+      this.filtersArray = null;
+    }
   }
 
   /**
