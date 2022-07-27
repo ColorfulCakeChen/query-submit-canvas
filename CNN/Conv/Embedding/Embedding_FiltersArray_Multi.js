@@ -1,31 +1,31 @@
-export { Embedding_FiltersArray_One as FiltersArray_One };
+export { Embedding_FiltersArray_Multi as FiltersArray_Multi };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
-import { FiltersArray_Base } from "./Embedding_FiltersArray_One.js";
+import { FiltersArray_Base } from "./Embedding_FiltersArray_Multi.js";
 
 /**
- * A large table which is composed of all vocabulary table of every input channel. It is
- * mainly used by Embedding.AddGatherReshape.
+ * Multiple tables for every vocabulary table of every input channel. It is mainly used by
+ * Embedding.SplitReshapeGatherConcat.
  *
  *
  *
- * @member {Racyclable.Array} filtersArray
- *   The embedding vocabulary look-up table. It is composed by merging all input channels'
- * vocabulary.
+ * @member {Racyclable.OwnerArray} filtersArrayArray
+ *   Its every element is an instance of Racyclable.Array which is the embedding vocabulary
+ * look-up table of one input channel.
  *
  * @see Embedding.FiltersArray_Base
  *
  */
-class Embedding_FiltersArray_One extends FiltersArray_Base {
+class Embedding_FiltersArray_Multi extends FiltersArray_Base {
 
   /**
-   * Used as default Embedding.FiltersArray_One provider for conforming to Recyclable interface.
+   * Used as default Embedding.FiltersArray_Multi provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Embedding.FiltersArray_One.Pool",
-    Embedding_FiltersArray_One, Embedding_FiltersArray_One.setAsConstructor );
+  static Pool = new Pool.Root( "Embedding.FiltersArray_Multi.Pool",
+    Embedding_FiltersArray_Multi, Embedding_FiltersArray_Multi.setAsConstructor );
 
   /**
    *

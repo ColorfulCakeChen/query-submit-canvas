@@ -1,4 +1,4 @@
-export { SplitGatherConcat };
+export { SplitReshapeGatherConcat };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -6,25 +6,25 @@ import * as Recyclable from "../../util/Recyclable.js";
 /**
  *
  */
-class SplitGatherConcat extends Recyclable.Root {
+class SplitReshapeGatherConcat extends Recyclable.Root {
 
   /**
-   * Used as default Embedding.SplitGatherConcat provider for conforming to Recyclable interface.
+   * Used as default Embedding.SplitReshapeGatherConcat provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Embedding.SplitGatherConcat.Pool", SplitGatherConcat, SplitGatherConcat.setAsConstructor );
+  static Pool = new Pool.Root( "Embedding.SplitReshapeGatherConcat.Pool", SplitReshapeGatherConcat, SplitReshapeGatherConcat.setAsConstructor );
 
   /**
    *
    */
   constructor() {
     super();
-    SplitGatherConcat.setAsConstructor_self.call( this );
+    SplitReshapeGatherConcat.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    SplitGatherConcat.setAsConstructor_self.call( this );
+    SplitReshapeGatherConcat.setAsConstructor_self.call( this );
     return this;
   }
 
