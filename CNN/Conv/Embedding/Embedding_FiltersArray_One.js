@@ -91,18 +91,36 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
 
     let sourceIndex = weightElementOffsetBegin;
     let filterIndex = 0;
-    for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
 
-      for ( let vocabularyId = 0; vocabularyId < this.vocabularyCountPerInputChannel; ++vocabularyId ) {
+    if ( this.bEmbedVocabularyId ) {
 
-        for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+      for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
+        for ( let vocabularyId = 0; vocabularyId < this.vocabularyCountPerInputChannel; ++vocabularyId ) {
 
-//!!! ...unfinished... (2022/07/27) filtersArray, bEmbedVocabularyId
+          this.filtersArray[ filterIndex ] = vocabularyId; // Embed the vocabulary's id.
+          ++filterIndex;
 
+          for ( let outChannelSub = 1; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+            this.filtersArray[ filterIndex ] = inputWeightArray[ sourceIndex ];
+            ++filterIndex;
+            ++sourceIndex;
+          }
         }
       }
-    }
 
+    } else {
+
+      for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
+        for ( let vocabularyId = 0; vocabularyId < this.vocabularyCountPerInputChannel; ++vocabularyId ) {
+          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+            this.filtersArray[ filterIndex ] = inputWeightArray[ sourceIndex ];
+            ++filterIndex;
+            ++sourceIndex;
+          }
+        }
+      }
+  
+    }
     return true;
   }
 
