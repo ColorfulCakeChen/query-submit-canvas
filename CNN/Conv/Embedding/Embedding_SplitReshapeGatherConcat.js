@@ -76,30 +76,34 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
   ) {
     this.bKeepInputTensor = bKeepInputTensor;
 
-    // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
-    //
-    // For example, suppose input is a color image (i.e. height-width-color tensor3d).
-    // The last axis is a 4 color (r-g-b-a) channel. Splitting along the last axis
-    // (the color channel) results in an array [ r, g, b, a ] which has 4 tensor3d
-    // (in fact, they should be viewed as tensor1d).
-    //
-    // This is pre-calculated for improving performance of apply().
-    this.splitCount = input_channelCount;
+    // The followings are intermediate temporary arrays. Pre-allocate these array shells (instead of re-allocating every
+    // time apply_and_destroy_or_keep()) for improving performance.
+    {
+      // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
+      //
+      // For example, suppose input is a color image (i.e. height-width-color tensor3d).
+      // The last axis is a 4 color (r-g-b-a) channel. Splitting along the last axis
+      // (the color channel) results in an array [ r, g, b, a ] which has 4 tensor3d
+      // (in fact, they should be viewed as tensor1d).
+      //
+      // This is pre-calculated for improving performance of apply().
+      this.splitCount = input_channelCount;
 
-    // For collecting the rank reduced tensor2d (from the splitted inputTensor3d). They
-    // will be used to look up vocabulary table.
-    this.vocabularyIndicesOneChannelTensor2dArray = Recyclable.Array.get_or_create_by( this.splitCount );
+      // For collecting the rank reduced tensor2d (from the splitted inputTensor3d). They
+      // will be used to look up vocabulary table.
+      this.vocabularyIndicesOneChannelTensor2dArray = Recyclable.Array.get_or_create_by( this.splitCount );
 
-    // The first 2 dimension of apply()'s inputTensor3d. When the input is splitted and
-    // reduce to tensor2d, their shape should be this. It is used for reshape from
-    // tensor3d to tensor2d.
-    //
-    // (Used when vocabulary tables are tensor2d.)
-    this.inputTensor2dShape = Recyclable.Array.get_or_create_by( 2 );
+      // The first 2 dimension of apply()'s inputTensor3d. When the input is splitted and
+      // reduce to tensor2d, their shape should be this. It is used for reshape from
+      // tensor3d to tensor2d.
+      //
+      // (Used when vocabulary tables are tensor2d.)
+      this.inputTensor2dShape = Recyclable.Array.get_or_create_by( 2 );
 
-    // For collecting the results of every looking (vocabulary table) up. They will be
-    // concatenated into one tensor3d as apply()'s result.
-    this.embeddedTensor3dArray = Recyclable.Array.get_or_create_by( this.splitCount );
+      // For collecting the results of every looking (vocabulary table) up. They will be
+      // concatenated into one tensor3d as apply()'s result.
+      this.embeddedTensor3dArray = Recyclable.Array.get_or_create_by( this.splitCount );
+    }
   }
 
   /** @override */
@@ -122,13 +126,11 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
       this.vocabularyIndicesOneChannelTensor2dArray = null;
     }
 
-
 !!! ...unfinished... (2022/07/27)
-    if ( this.vocabularyTableTensor2d ) {
-      this.vocabularyTableTensor2d.dispose();
-      this.vocabularyTableTensor2d = null;
+    if ( this.vocabularyTablesTensorArray ) {
+      this.vocabularyTablesTensorArray.dispose();
+      this.vocabularyTablesTensorArray = null;
     }
-
 
     this.bKeepInputTensor = undefined;
 
