@@ -88,7 +88,6 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) 
 
   /** @override */
   disposeResources() {
-    this.bKeepInputTensor = undefined;
 
     if ( this.outputTensor3dShape ) {
       this.outputTensor3dShape.disposeResources_and_recycleToPool();
@@ -114,6 +113,8 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) 
       this.channelValueOffsetShape.disposeResources_and_recycleToPool();
       this.channelValueOffsetShape = null;
     }
+
+    this.bKeepInputTensor = undefined;
 
     super.disposeResources();
   }

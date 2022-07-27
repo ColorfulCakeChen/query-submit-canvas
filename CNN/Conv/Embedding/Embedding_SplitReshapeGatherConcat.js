@@ -44,6 +44,7 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
     Embedding_SplitReshapeGatherConcat.setAsConstructor_self.call( this,
+      input_channelCount,
       bKeepInputTensor,
       // this.output_height, this.output_width, this.output_channelCount
     );
@@ -60,6 +61,7 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
     Embedding_SplitReshapeGatherConcat.setAsConstructor_self.call( this,
+      input_channelCount,
       bKeepInputTensor,
       // this.output_height, this.output_width, this.output_channelCount
     );
@@ -68,21 +70,65 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
 
   /** @override */
   static setAsConstructor_self(
+    input_channelCount,
     bKeepInputTensor,
     // output_height, output_width, output_channelCount
   ) {
     this.bKeepInputTensor = bKeepInputTensor;
 
-!!! ...unfinished... (2022/07/27)
+    // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
+    //
+    // For example, suppose input is a color image (i.e. height-width-color tensor3d). The last
+    // axis is a 4 color (r-g-b-a) channel. Splitting along the last axis (the color channel)
+    // results in an array [ r, g, b, a ] which has 4 tensor3d (in fact, they should be
+    // viewed as tensor1d).
+    //
+    // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
+    this.splitCount = input_channelCount;
 
+    // For collecting the rank reduced tensor2d (from the splitted inputTensor3d). They will be used to look up vocabulary table.
+    this.vocabularyIndicesOneChannelTensor2dArray = Recyclable.Array.get_or_create_by( this.splitCount );
+
+    // The first 2 dimension of apply_and_destroy_or_keep()'s inputTensor3d. When the input is splitted and reduce to tensor2d,
+    // their shape should be this. It is used for reshape from tensor3d to tensor2d.
+    //
+    // (Used when vocabulary tables are tensor2d.)
+    this.inputTensor2dShape = Recyclable.Array.get_or_create_by( 2 );
+
+    // For collecting the results of every looking (vocabulary table) up. They will be concatenated into one tensor3d as
+    // apply_and_destroy_or_keep()'s result.
+    this.embeddedTensor3dArray = Recyclable.Array.get_or_create_by( this.splitCount );
   }
 
   /** @override */
   disposeResources() {
-    this.bKeepInputTensor = undefined;
+    // For collecting the rank reduced tensor2d (from the splitted inputTensor3d). They will be used to look up vocabulary table.
+    this.vocabularyIndicesOneChannelTensor2dArray = Recyclable.Array.get_or_create_by( this.splitCount );
+
+    if ( this.embeddedTensor3dArray ) {
+      this.embeddedTensor3dArray.disposeResources_and_recycleToPool();
+      this.embeddedTensor3dArray = null;
+    }
+
+    if ( this.inputTensor2dShape ) {
+      this.inputTensor2dShape.disposeResources_and_recycleToPool();
+      this.inputTensor2dShape = null;
+    }
+
+    if ( this.vocabularyIndicesOneChannelTensor2dArray ) {
+      this.embeddedTensor3dArrayvocabularyIndicesOneChannelTensor2dArray.disposeResources_and_recycleToPool();
+      this.vocabularyIndicesOneChannelTensor2dArray = null;
+    }
 
 
 !!! ...unfinished... (2022/07/27)
+    if ( this.vocabularyTableTensor2d ) {
+      this.vocabularyTableTensor2d.dispose();
+      this.vocabularyTableTensor2d = null;
+    }
+
+
+    this.bKeepInputTensor = undefined;
 
     super.disposeResources();
   }
