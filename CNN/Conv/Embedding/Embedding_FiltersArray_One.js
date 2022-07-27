@@ -167,11 +167,12 @@ class FiltersArray_One extends Weights.Root {
         + `should be all one (i.e. should not have activation escaping scaling).`
       );
 
-    if ( !inputScaleBoundsArray.boundsArray.is_all_IN_byLowerUpper( 0, this.vocabularyCountPerInputChannel ) )
+    let vocabularyIdMax = this.vocabularyCountPerInputChannel - 1; // maximum legal vocabulary id.
+    if ( !inputScaleBoundsArray.boundsArray.is_all_IN_byLowerUpper( 0, vocabularyIdMax ) )
       throw Error( `Embedding.FiltersArray_One.init(): `
         + `The .output.boundsArray ( ${inputScaleBoundsArray.boundsArray} ) `
         + `of previous operation `
-        + `should be all within [ 0, ${this.vocabularyCountPerInputChannel} ].`
+        + `should be all within [ 0, ${vocabularyIdMax} ].`
       );
    
  
