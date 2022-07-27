@@ -75,6 +75,15 @@ import * as Weights from "../../Unpacker/Weights.js";
  * @member {number} output_channelCount
  *   Output channel count. It is always depending on channelMultiplier and equals to ( inChannels * channelMultiplier ).
  *
+ * @member {number} tensorWeightCountExtracted
+ *   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used
+ * in tensors. Not including embedded vocabulary id (even if ( bEmbedVocabularyId == true )), because they are not extracted
+ * from inputWeightArray.
+ *
+ * @member {number} tensorWeightCountTotal
+ *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including embedded
+ * vocabulary id.
+ *
  * @member {BoundsArraySet.InputsOutputs} boundsArraySet
  *   The element value bounds (per channel) of this embedding.
  *
@@ -128,10 +137,14 @@ class FiltersArray_Base extends Weights.Root {
     {
       this.output_channelCount = this.input_channelCount * this.channelMultiplier;
 
-      if ( this.bEmbedVocabularyId )
+      if ( this.bEmbedVocabularyId ) {
         this.weightsCountPerVocabularyTable = ( this.channelMultiplier - 1 ) * this.vocabularyCountPerInputChannel;
-      else
+
+      } else {
         this.weightsCountPerVocabularyTable = this.channelMultiplier * this.vocabularyCountPerInputChannel;
+      }
+
+      this.tensorWeightCountTotal_internal = this.input_channelCount * this.output_channelCount;
     }
   }
 
@@ -142,6 +155,7 @@ class FiltersArray_Base extends Weights.Root {
       this.boundsArraySet = null;
     }
 
+    this.tensorWeightCountTotal_internal = undefined;
     this.weightsCountPerVocabularyTable = undefined;
     this.output_channelCount = undefined;
 
@@ -190,6 +204,8 @@ class FiltersArray_Base extends Weights.Root {
     let tableCount = this.input_channelCount;
     let weightsCount_extracted = this.weightsCountPerVocabularyTable * tableCount;
 
+    this.tensorWeightCountTotal_internal
+
     // Prepare source weights to be extracted.
     if ( !super.init( inputWeightArray, weightElementOffsetBegin, weightsCount_extracted ) ) { // i.e. Weights.Base.init()
       this.bInitOk = false;
@@ -202,6 +218,16 @@ class FiltersArray_Base extends Weights.Root {
 
     this.bInitOk = true;
     return true;
+  }
+
+  /** @override */
+  get tensorWeightCountExtracted() {
+    return this.weightElementExtractedCount;
+  }
+
+  /** @override */
+  get tensorWeightCountTotal() {
+    return this.tensorWeightCountTotal_internal;
   }
 
 }

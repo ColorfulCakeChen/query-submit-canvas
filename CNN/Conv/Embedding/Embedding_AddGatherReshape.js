@@ -17,14 +17,6 @@ import { FiltersArray_One } from "./Embedding_FiltersArray_One.js";
 /**
  *
  *
- * @member {number} tensorWeightCountTotal
- *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
- * weights, if they are used in tensors.
- *
- * @member {number} tensorWeightCountExtracted
- *   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used in
- * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputWeightArray.
- *
  * @member {function} destroy_or_keep_input
  *   This is a function pointer to one of destroy_input(), keep_input(). If ( this.bKeepInputTensor == false ),
  * it pointer to destroy_input(). If ( this.bKeepInputTensor == true ), it pointer to keep_input().
