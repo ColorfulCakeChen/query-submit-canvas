@@ -115,6 +115,11 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
       this.vocabularyTablesTensorArray = null;
     }
 
+    if ( this.vocabularyTableShape ) {
+      this.vocabularyTableShape.disposeResources_and_recycleToPool();
+      this.vocabularyTableShape = null;
+    }
+
     if ( this.embeddedTensor3dArray ) {
       this.embeddedTensor3dArray.disposeResources_and_recycleToPool();
       this.embeddedTensor3dArray = null;
@@ -153,10 +158,25 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
       return false;  // e.g. input array does not have enough data.
     }
 
+    // 2. vocabularyTablesTensorArray
+    {
+      this.vocabularyTableShape
+        = Recyclable.Array.Pool.get_or_create( this.vocabularyCountPerInputChannel, this.channelMultiplier );
 
-!!! ...unfinished... (2022/07/27)
-    this.vocabularyTablesTensorArray = Recyclable.Array.Pool.get_or_create_by( vocabularyTables.length ); // could be tensor3d or tensor2d.
+      this.vocabularyTablesTensorArray = Recyclable.Array.Pool.get_or_create_by( this.filtersArrayArray.length ); // could be tensor3d or tensor2d.
+      for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
+        let filtersArray = this.filtersArrayArray[ inChannel ];
+        this.vocabularyTablesTensorArray = tf.tensor( filtersArray, this.vocabularyTableShape );
+      }
 
+      { // Release filtersArrayArray for reducing memory footprint.
+        this.filtersArrayArray.disposeResources_and_recycleToPool();
+        this.filtersArrayArray = null;
+      }
+
+      // Note: Because .vocabularyTableShape will be kept by .vocabularyTableTensor2d internally,
+      //       it can not be released here.
+    }
 
     Embedding_SplitReshapeGatherConcat.setup_apply_embedding.call( this );
     return true;
