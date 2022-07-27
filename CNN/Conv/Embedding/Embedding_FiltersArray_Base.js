@@ -1,4 +1,4 @@
-export { FiltersArray_One };
+export { FiltersArray_Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -16,8 +16,7 @@ import * as Weights from "../../Unpacker/Weights.js";
 // or different look-up (i.e. vocabulary) table.
 
 /**
- * A large table which is composed of all vocabulary table of every input channel. It is
- * mainly used by Embedding.AddGatherReshape.
+ * This is the base class of Embedding.FiltersArray_One and Embedding.FiltersArray_Multi.
  *
  *
  * Embedding could achieve non-linear mapping (just like any perceptron). But it is achieved by lookup table (instead
@@ -82,12 +81,12 @@ import * as Weights from "../../Unpacker/Weights.js";
  * @see Weight.Root
  *
  */
-class FiltersArray_One extends Weights.Root {
+class FiltersArray_Base extends Weights.Root {
 
   /**
-   * Used as default Embedding.FiltersArray_One provider for conforming to Recyclable interface.
+   * Used as default Embedding.FiltersArray_Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Embedding.FiltersArray_One.Pool", FiltersArray_One, FiltersArray_One.setAsConstructor );
+  static Pool = new Pool.Root( "Embedding.FiltersArray_Base.Pool", FiltersArray_Base, FiltersArray_Base.setAsConstructor );
 
   /**
    *
@@ -97,7 +96,7 @@ class FiltersArray_One extends Weights.Root {
     channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
   ) {
     super();
-    FiltersArray_One.setAsConstructor_self.call( this,
+    FiltersArray_Base.setAsConstructor_self.call( this,
       input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
@@ -109,7 +108,7 @@ class FiltersArray_One extends Weights.Root {
     channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
   ) {
     super.setAsConstructor();
-    FiltersArray_One.setAsConstructor_self.call( this,
+    FiltersArray_Base.setAsConstructor_self.call( this,
       input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
@@ -126,18 +125,30 @@ class FiltersArray_One extends Weights.Root {
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.bEmbedVocabularyId = bEmbedVocabularyId;
 
-    // this.boundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by();
+    {
+      this.output_channelCount = this.input_channelCount * this.channelMultiplier;
+
+      if ( this.bEmbedVocabularyId )
+        this.weightsCountPerVocabularyTable = ( this.channelMultiplier - 1 ) * this.vocabularyCountPerInputChannel;
+      else
+        this.weightsCountPerVocabularyTable = this.channelMultiplier * this.vocabularyCountPerInputChannel;
+    }
   }
 
   /** @override */
   disposeResources() {
-
-!!! ...unfinished... (2022/07/27)
-
-    if ( this.filtersArray ) {
-      this.filtersArray.disposeResources_and_recycleToPool();
-      this.filtersArray = null;
+    if ( this.boundsArraySet ) {
+      this.boundsArraySet.disposeResources_and_recycleToPool();
+      this.boundsArraySet = null;
     }
+
+    this.weightsCountPerVocabularyTable = undefined;
+    this.output_channelCount = undefined;
+
+    this.bEmbedVocabularyId = undefined;
+    this.vocabularyCountPerInputChannel = undefined;
+    this.channelMultiplier = undefined;
+    this.input_channelCount = undefined;
 
     super.disposeResources();
   }
@@ -156,13 +167,13 @@ class FiltersArray_One extends Weights.Root {
   init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) {
 
     if ( this.input_channelCount != inputScaleBoundsArray.length )
-      throw Error( `Embedding.FiltersArray_One.init(): `
+      throw Error( `Embedding.FiltersArray_Base.init(): `
         + `input_channelCount ( ${this.input_channelCount} ) should be the same as `
         + `output_channelCount of previous operation ( ${inputScaleBoundsArray.length} ).`
       );
 
     if ( !inputScaleBoundsArray.scaleArraySet.undo.is_all_EQ_byN( 1 ) )
-      throw Error( `Embedding.FiltersArray_One.init(): `
+      throw Error( `Embedding.FiltersArray_Base.init(): `
         + `The .output.scaleArraySet.undo ( ${inputScaleBoundsArray.scaleArraySet.undo.scales} ) `
         + `of previous operation `
         + `should be all one (i.e. should not have activation escaping scaling).`
@@ -170,13 +181,27 @@ class FiltersArray_One extends Weights.Root {
 
     let vocabularyIdMax = this.vocabularyCountPerInputChannel - 1; // maximum legal vocabulary id.
     if ( !inputScaleBoundsArray.boundsArray.is_all_IN_byLowerUpper( 0, vocabularyIdMax ) )
-      throw Error( `Embedding.FiltersArray_One.init(): `
+      throw Error( `Embedding.FiltersArray_Base.init(): `
         + `The .output.boundsArray ( ${inputScaleBoundsArray.boundsArray} ) `
         + `of previous operation `
         + `should be all within [ 0, ${vocabularyIdMax} ].`
       );
-   
- 
+
+    let tableCount = this.input_channelCount;
+    let weightsCount_extracted = this.weightsCountPerVocabularyTable * tableCount;
+
+    // Prepare source weights to be extracted.
+    if ( !super.init( inputWeightArray, weightElementOffsetBegin, weightsCount_extracted ) ) { // i.e. Weights.Base.init()
+      this.bInitOk = false;
+      return false;  // e.g. input array does not have enough data.
+    }
+
+    // Initialize element value bounds (per channel).
+    this.boundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by(
+      inputScaleBoundsArray, null, this.output_channelCount );
+
+    this.bInitOk = true;
+    return true;
   }
 
 }
