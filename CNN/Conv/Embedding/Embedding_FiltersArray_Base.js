@@ -125,7 +125,7 @@ class Embedding_FiltersArray_Base extends Weights.Base( InferencedParams ) {
   }
 
   /**
-   * Generator for initializing this object.
+   * Initialize this object.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
    *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds

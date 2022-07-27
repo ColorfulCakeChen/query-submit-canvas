@@ -69,7 +69,7 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
   }
 
   /**
-   * Generator for initializing this object.
+   * Initialize this object.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
    *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
