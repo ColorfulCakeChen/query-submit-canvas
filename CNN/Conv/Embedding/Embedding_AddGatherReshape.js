@@ -12,11 +12,16 @@ import { FiltersArray_One } from "./Embedding_FiltersArray_One.js";
  *   If true, .apply() will not dispose inputTensor (i.e. keep). For another example, the input image
  * needs be shared across many neural networks.
  *
+ * 
+ * 
+
+!!! ...unfinished... (2022/07/27)
+
  * @member {function} destroy_or_keep_input
  *   This is a function pointer to one of destroy_input(), keep_input(). If ( this.bKeepInputTensor == false ),
  * it pointer to destroy_input(). If ( this.bKeepInputTensor == true ), it pointer to keep_input().
  *
- * @member {function} apply_and_destroy_or_keep
+ * @member {function} apply
  *   Process the input and produce output by looking up the weights of this embedding layer. This is a function pointer
  * to one of keep_input_return_copy(), return_input_directly(), apply_and_destroy_or_keep_SplitGatherConcat().
  * It inputs a tensor3d data (e.g. height-width-color for color image, or 1-width-1 for text) with this.inChannels
@@ -183,6 +188,38 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) 
       // Note: Because .vocabularyTableShape will be kept by .vocabularyTableTensor2d internally,
       //       it can not be released here.
     }
+
+    Embedding_AddGatherReshape.setup_apply.call( this );
+    return true;
+  }
+
+  /** Determine this.apply data members.
+   *
+   * @param {Embedding_AddGatherReshape} this
+   *   The Embedding_AddGatherReshape object to be determined and modified.
+   */
+  static setup_apply() {
+
+    // 1. Shortcut operation.
+    if ( // If channelMultiplier is illegal (i.e. zero or negative). (may happen by evolution.)
+           ( this.channelMultiplier < 1 )
+
+        // Or, if there is only one output channel per input channel and the only one output channel is just vocabulary id.
+        || ( ( this.channelMultiplier == 1 ) && ( this.bEmbedVocabularyId ) )
+       ) {
+
+      if ( this.bKeepInputTensor )
+        // 1.1 For ( channelMultiplier <= 1 ) and ( bKeepInputTensor == true  ), return a copy of input (as output) immediately.
+        this.apply = Embedding_AddGatherReshape.keep_input_return_copy;
+      else
+        // 1.2 For ( channelMultiplier <= 1 ) and ( bKeepInputTensor == false ), return input (as output) immediately.
+        this.apply = Embedding_AddGatherReshape.return_input_directly;
+
+    } else { // 2. channelMultiplier is positive.
+      
+!!! ...unfinished... (2022/07/27)
+
+    }
   }
 
   /**
@@ -195,24 +232,9 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) 
    * @return {tf.tensor3d}
    *   Return a new tensor. All other intermediate tensors were disposed.
    */
-  apply( inputTensor ) {
+  static apply_add_gather_reshape( inputTensor ) {
 
 !!! ...unfinished... (2022/07/27)
-    // 2.1 Shortcut operation.
-    if ( // If channelMultiplier is illegal (i.e. zero or negative). (may happen by evolution.)
-           ( channelMultiplier < 1 )
-
-        // Or, if there is only one output channel per input channel and the only one output channel is just vocabulary id.
-        || ( ( channelMultiplier == 1 ) && ( bEmbedVocabularyId ) )
-       ) {
-
-      if ( bKeepInputTensor )
-        // 2.1.1 For ( channelMultiplier <= 1 ) and ( bKeepInputTensor == true  ), return a copy of input (as output) immediately.        
-        this.apply_and_destroy_or_keep = Base.keep_input_return_copy;
-      else
-        // 2.1.2 For ( channelMultiplier <= 1 ) and ( bKeepInputTensor == false ), return input (as output) immediately.
-        this.apply_and_destroy_or_keep = Base.return_input_directly;
-
 
 
     // 1. Shift vocabulary indices (so that a large merged table could be used to improve performance).
