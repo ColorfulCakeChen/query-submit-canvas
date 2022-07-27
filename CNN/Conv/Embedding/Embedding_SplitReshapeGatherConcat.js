@@ -96,7 +96,8 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
 
       // For collecting the rank reduced tensor2d (from the splitted inputTensor3d). They
       // will be used to look up vocabulary table.
-      this.vocabularyIndicesOneChannelTensor2dArray = Recyclable.Array.Pool.get_or_create_by( this.splitCount );
+      this.vocabularyIndicesOneChannelTensor2dArray
+        = Recyclable.Array.Pool.get_or_create_by( this.splitCount );
 
       // The first 2 dimension of apply()'s inputTensor3d. When the input is splitted and
       // reduce to tensor2d, their shape should be this. It is used for reshape from
@@ -273,14 +274,14 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
     // Concatenate along the last axis, so that it becomes tensor3d and with embedded (more) channels in the last axis.
     //
     // The result of tensor2d.gather( tensor2d ) are tensor3d, so their last axis is 2 (= 3 - 1).
-    let predictResult = tf.concat( embeddedTensor3dArray, 2 );
+    let outputTensor3d = tf.concat( embeddedTensor3dArray, 2 );
 
     for ( let i = 0; i < embeddedTensor3dArray.length; ++i ) { // Release intermediate temporary tensors.
       embeddedTensor3dArray[ i ].dispose();
       embeddedTensor3dArray[ i ] = null; // So that it is cleared when next time re-used.
     }
 
-    return predictResult;
+    return outputTensor3d;
   }
 
 }
