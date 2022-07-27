@@ -76,6 +76,11 @@ class AddGatherReshape extends FiltersArray_One {
       this.vocabularyTableTensor2d = null;
     }
 
+    if ( this.vocabularyTableShape ) {
+      this.vocabularyTableShape.dispose();
+      this.vocabularyTableShape = null;
+    }
+
     if ( this.channelValueOffsetTensor3d ) {
       this.channelValueOffsetTensor3d.dispose();
       this.channelValueOffsetTensor3d = null;
@@ -106,11 +111,8 @@ class AddGatherReshape extends FiltersArray_One {
       return false;  // e.g. input array does not have enough data.
     }
 
-!!! ...unfinished... (2022/07/27) Create tensors.
+    // 2.
     {
-      let vocabularyCountTotal = this.vocabularyCountPerInputChannel * this.input_channelCount;
-      this.vocabularyTableTensor2d = tf.tensor2d( this.filtersArray, [ vocabularyCountTotal, this.channelMultiplier ] );
-
       // Build a tensor3d for shifting every value of every input channels of inputTensor3d. So that they can be used for
       // indexing the one merged longer vocabulary table tensor2d.
       //
@@ -138,10 +140,26 @@ class AddGatherReshape extends FiltersArray_One {
       this.tensorWeightCountTotal += this.channelValueOffsetTensor3d.size;
     }
 
+    // 3.
+    {
+      {
+        let vocabularyCountTotal = this.vocabularyCountPerInputChannel * this.input_channelCount;
 
-    { // Release filtersArray for reducing memory footprint.
-      this.filtersArray.disposeResources_and_recycleToPool();
-      this.filtersArray = null;
+        this.vocabularyTableShape
+          = Recyclable.Array.Pool.get_or_create( vocabularyCountTotal, this.channelMultiplier );
+
+        this.vocabularyTableTensor2d = tf.tensor2d( this.filtersArray, this.vocabularyTableShape );
+
+        // Note: Because .vocabularyTableShape will be kept by .vocabularyTableTensor2d internally,
+        //       it can not be released here.
+      }
+
+      this.tensorWeightCountTotal += this.vocabularyTableTensor2d.size;
+
+      { // Release filtersArray for reducing memory footprint.
+        this.filtersArray.disposeResources_and_recycleToPool();
+        this.filtersArray = null;
+      }
     }
   }
 
