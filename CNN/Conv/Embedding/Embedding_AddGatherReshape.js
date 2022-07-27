@@ -22,12 +22,14 @@ import { FiltersArray_One } from "./Embedding_FiltersArray_One.js";
  * it pointer to destroy_input(). If ( this.bKeepInputTensor == true ), it pointer to keep_input().
  *
  * @member {function} apply
- *   Process the input and produce output by looking up the weights of this embedding layer. This is a function pointer
- * to one of keep_input_return_copy(), return_input_directly(), apply_and_destroy_or_keep_SplitGatherConcat().
- * It inputs a tensor3d data (e.g. height-width-color for color image, or 1-width-1 for text) with this.inChannels
- * (e.g. 4 for r-g-b-a, or 1 for text) channels. The inputTensor3d.dtype must be int32 (i.e. can not be float32)
- * so that they can be used as tf.gather()'s indices. If ( this.bKeepInputTensor == false ), the inputTensor3d
- * will be disposed. If ( this.bKeepInputTensor == true ), the inputTensor3d will be kept.
+ *   Process the input and produce output by looking up the weights of this embedding layer. This is a
+ * data member to a function. The function inputs a tensor3d data (e.g. height-width-color for color image,
+ * or 1-width-1 for text) with this.inChannels (e.g. 4 for r-g-b-a, or 1 for text) channels. The
+ * inputTensor3d.dtype must be int32 (i.e. can not be float32) so that they can be used as tf.gather()'s
+ * indices. If ( this.bKeepInputTensor == false ), the inputTensor3d will be disposed. If
+ * ( this.bKeepInputTensor == true ), the inputTensor3d will be kept.It is one of keep_input_return_copy(),
+ * return_input_directly(), apply_gather_reshape_and_keep(), apply_gather_reshape_and_destroy(),
+ * apply_add_gather_reshape_and_keep(), apply_add_gather_reshape_and_destroy().
  *
  * @see Embedding.FiltersArray_One
  *
@@ -189,7 +191,7 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) 
       //       it can not be released here.
     }
 
-    Embedding_AddGatherReshape.setup_apply.call( this );
+    Embedding_AddGatherReshape.setup_apply_embedding.call( this );
     return true;
   }
 
@@ -198,7 +200,7 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) 
    * @param {Embedding_AddGatherReshape} this
    *   The Embedding_AddGatherReshape object to be determined and modified.
    */
-  static setup_apply() {
+  static setup_apply_embedding() {
 
     // 1. Shortcut operation.
     if ( // If channelMultiplier is illegal (i.e. zero or negative). (may happen by evolution.)
@@ -216,11 +218,24 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) 
         this.apply = Embedding_AddGatherReshape.return_input_directly;
 
     } else { // 2. channelMultiplier is positive.
-      
-!!! ...unfinished... (2022/07/27)
 
+      if ( this.channelMultiplier == 1 ) { // 2.1
+        if ( this.bKeepInputTensor )
+          this.apply = Embedding_AddGatherReshape.apply_gather_reshape_and_keep;
+        else
+          this.apply = Embedding_AddGatherReshape.apply_gather_reshape_and_destroy;
+
+      } else { // 2.2 ( channelMultiplier > 1 )
+        if ( this.bKeepInputTensor )
+          this.apply = Embedding_AddGatherReshape.apply_add_gather_reshape_and_keep;
+        else
+          this.apply = Embedding_AddGatherReshape.apply_add_gather_reshape_and_destroy;
+      }
     }
   }
+
+
+!!! ...unfinished... (2022/07/27)
 
   /**
    * Process input, destroy or keep input, return result.
