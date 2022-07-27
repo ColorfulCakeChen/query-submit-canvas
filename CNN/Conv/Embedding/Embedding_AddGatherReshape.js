@@ -2,20 +2,14 @@ export { AddGatherReshape };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-//import * as BoundsArraySet from "../BoundsArraySet.js";
 import { FiltersArray_One } from "./Embedding_FiltersArray_One.js";
-
-
-//!!! ...unfinished... (2022/07/26)
-// Embedding assert if input bounds per channel larger than vocabulary count per table.
-
-
-//!!! ...unfinished... (2022/07/25)
-// Perhaps, provide a parameter control whether different input channel uses the same
-// or different look-up (i.e. vocabulary) table.
 
 /**
  *
+ *
+ * @member {boolean} bKeepInputTensor
+ *   If true, .apply() will not dispose inputTensor (i.e. keep). For another example, the input image
+ * needs be shared across many neural networks.
  *
  * @member {function} destroy_or_keep_input
  *   This is a function pointer to one of destroy_input(), keep_input(). If ( this.bKeepInputTensor == false ),
@@ -43,30 +37,26 @@ class AddGatherReshape extends FiltersArray_One {
    *
    */
   constructor(
-    input_channelCount,
-    channelMultiplier,
-    vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
+    input_height, input_width, input_channelCount,
+    channelMultiplier, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
     bKeepInputTensor
   ) {
     super(
-      input_channelCount,
-      channelMultiplier,
-      vocabularyCountPerInputChannel, bEmbedVocabularyId
+      input_height, input_width, input_channelCount,
+      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
     AddGatherReshape.setAsConstructor_self.call( this, bKeepInputTensor );
   }
 
   /** @override */
   static setAsConstructor(
-    input_channelCount,
-    channelMultiplier,
-    vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
+    input_height, input_width, input_channelCount,
+    channelMultiplier, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
     bKeepInputTensor
   ) {
     super.setAsConstructor(
-      input_channelCount,
-      channelMultiplier,
-      vocabularyCountPerInputChannel, bEmbedVocabularyId
+      input_height, input_width, input_channelCount,
+      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
     AddGatherReshape.setAsConstructor_self.call( this, bKeepInputTensor );
   }
@@ -81,17 +71,13 @@ class AddGatherReshape extends FiltersArray_One {
   disposeResources() {
     this.bKeepInputTensor = undefined;
 
-!!! ...unfinished... (2022/07/17)
+!!! ...unfinished... (2022/07/27) Release tensors.
 
     super.disposeResources();
   }
 
   /**
-   * Generator for initializing this object.
-   *
-   * @param {boolean} bKeepInputTensor
-   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
-   * For another example, the input image should be shared across many neural networks.
+   * Initialize this object.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
    *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Stage value bounds
@@ -99,18 +85,36 @@ class AddGatherReshape extends FiltersArray_One {
    *
    * @return {boolean}
    *   Return true, if successfully. Return false, if failed.
-   *
    */
-  * init( inputWeightArray, weightElementOffsetBegin,
-    input_channelCount,
-    channelMultiplier,
-    vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
-    bKeepInputTensor,
-    inputScaleBoundsArray0
-  ) {
+   init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) {
 
-   
- 
+    // 1. Extract weights.
+    if ( !super.init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) ) {
+      return false;  // e.g. input array does not have enough data.
+    }
+
+!!! ...unfinished... (2022/07/27) Create tensors.
+    
+
+
+
+
+  }
+
+  /**
+   * Process input, destroy or keep input, return result.
+   *
+   * @param {tf.tensor3d} inputTensor
+   *   The source input image ( height x width x channel ) which will be processed. This inputTensor may or may not be disposed
+   * according to .bKeepInputTensor.
+   *
+   * @return {tf.tensor3d}
+   *   Return a new tensor. All other intermediate tensors were disposed.
+   */
+  apply( inputTensor ) {
+
+//!!! ...unfinished... (2022/07/27)
+
   }
 
 }
