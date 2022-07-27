@@ -15,10 +15,10 @@ import { FiltersArray_One } from "./Embedding_FiltersArray_One.js";
  * @member {function} apply
  *   Process the input and produce output by looking up the weights of this embedding layer. This is a
  * data member to a function. The function inputs a tensor3d data (e.g. height-width-color for color image,
- * or 1-width-1 for text) with this.inChannels (e.g. 4 for r-g-b-a, or 1 for text) channels. The
+ * or 1-width-1 for text) with this.input_channelCount (e.g. 4 for r-g-b-a, or 1 for text) channels. The
  * inputTensor3d.dtype must be int32 (i.e. can not be float32) so that they can be used as tf.gather()'s
  * indices. If ( this.bKeepInputTensor == false ), the inputTensor3d will be disposed. If
- * ( this.bKeepInputTensor == true ), the inputTensor3d will be kept.It is one of keep_input_return_copy(),
+ * ( this.bKeepInputTensor == true ), the inputTensor3d will be kept. It is one of keep_input_return_copy(),
  * return_input_directly(), apply_gather_reshape_and_keep(), apply_gather_reshape_and_destroy(),
  * apply_add_gather_reshape_and_keep(), apply_add_gather_reshape_and_destroy().
  *
@@ -312,8 +312,6 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) 
     // 2. Reshape tensor4d to tensor3d.
     //
     // Note: Use pre-calculated array (i.e. outputTensor3dShape) for improving performance.
-    //       Its ( outputTensor3dShape[ 0 ], outputTensor3dShape[ 1 ] ) should be the same
-    //       as ( inputTensor3d.shape[ 0 ], inputTensor3d.shape[ 1 ] ).
     //
     let outputTensor3d = gatherTensor4d.reshape( this.outputTensor3dShape );
     gatherTensor4d.dispose();

@@ -11,14 +11,19 @@ import { FiltersArray_Multi } from "./Embedding_FiltersArray_Multi.js";
  * needs be shared across many neural networks.
  * 
  * @member {function} apply
- *   Process the input and produce output by looking up the weights of this embedding layer. This is a
- * data member to a function. The function inputs a tensor3d data (e.g. height-width-color for color image,
- * or 1-width-1 for text) with this.inChannels (e.g. 4 for r-g-b-a, or 1 for text) channels. The
- * inputTensor3d.dtype must be int32 (i.e. can not be float32) so that they can be used as tf.gather()'s
- * indices. If ( this.bKeepInputTensor == false ), the inputTensor3d will be disposed. If
- * ( this.bKeepInputTensor == true ), the inputTensor3d will be kept.It is one of keep_input_return_copy(),
- * return_input_directly(), apply_gather_reshape_and_keep(), apply_gather_reshape_and_destroy(),
- * apply_add_gather_reshape_and_keep(), apply_add_gather_reshape_and_destroy().
+ *   Process the input and produce output by looking up the weights of this embedding layer. The function
+ * inputs a tensor3d data (e.g. height-width-color for color image, or 1-width-1 for text) with
+ * this.input_channelCount (e.g. 4 for r-g-b-a, or 1 for text) channels. The inputTensor3d.dtype must be
+ * int32 (i.e. can not be float32) so that they can be used as tf.gather()'s indices. If
+ * ( this.bKeepInputTensor == false ), the inputTensor3d will be disposed. If
+ * ( this.bKeepInputTensor == true ), the inputTensor3d will be kept.
+
+// !!! (2022/07/27 Remarked) Use .apply() directly.
+//
+//  * It is one of keep_input_return_copy(),
+//  * return_input_directly(), apply_gather_reshape_and_keep(), apply_gather_reshape_and_destroy(),
+//  * apply_add_gather_reshape_and_keep(), apply_add_gather_reshape_and_destroy().
+
  *
  * @see Embedding.FiltersArray_Multi
  *
@@ -44,7 +49,7 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
     Embedding_SplitReshapeGatherConcat.setAsConstructor_self.call( this,
-      input_channelCount,
+      input_height, input_width, input_channelCount,
       bKeepInputTensor,
       // this.output_height, this.output_width, this.output_channelCount
     );
@@ -61,7 +66,7 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
     Embedding_SplitReshapeGatherConcat.setAsConstructor_self.call( this,
-      input_channelCount,
+      input_height, input_width, input_channelCount,
       bKeepInputTensor,
       // this.output_height, this.output_width, this.output_channelCount
     );
@@ -70,7 +75,7 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
 
   /** @override */
   static setAsConstructor_self(
-    input_channelCount,
+    input_height, input_width, input_channelCount,
     bKeepInputTensor,
     // output_height, output_width, output_channelCount
   ) {
@@ -98,7 +103,8 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
       // tensor3d to tensor2d.
       //
       // (Used when vocabulary tables are tensor2d.)
-      this.inputTensor2dShape = Recyclable.Array.Pool.get_or_create_by( 2 );
+      this.inputTensor2dShape
+        = Recyclable.Array.Pool.get_or_create_by( input_height, input_width );
 
       // For collecting the results of every looking (vocabulary table) up. They will be
       // concatenated into one tensor3d as apply()'s result.
@@ -178,34 +184,103 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
       //       it can not be released here.
     }
 
-    Embedding_SplitReshapeGatherConcat.setup_apply_embedding.call( this );
+// !!! (2022/07/27 Remarked) Use .apply() directly.
+//     Embedding_SplitReshapeGatherConcat.setup_apply_embedding.call( this );
+
     return true;
   }
 
-  /** Determine this.apply data members.
+// !!! (2022/07/27 Remarked) Use .apply() directly.
+//   /** Determine this.apply data members.
+//    *
+//    * @param {Embedding_SplitReshapeGatherConcat} this
+//    *   The Embedding_SplitReshapeGatherConcat object to be determined and modified.
+//    */
+//   static setup_apply_embedding() {
+//
+// !!! ...unfinished... (2022/07/27)
+//
+//   }
+//
+//   /** */
+//   static apply_Xxx_and_keep( inputTensor ) {
+//
+// !!! ...unfinished... (2022/07/27)
+//
+//   }
+//
+//   /** */
+//   static apply_Xxx_and_destroy( inputTensor ) {
+//
+// !!! ...unfinished... (2022/07/27)
+//
+//   }
+
+  /**
+   * (Used when vocabulary tables are tensor3d.)
    *
-   * @param {Embedding_SplitReshapeGatherConcat} this
-   *   The Embedding_SplitReshapeGatherConcat object to be determined and modified.
+   * This is slower than AddGatherReshape. It may due to the splitting and concatenating operation.
    */
-  static setup_apply_embedding() {
+  apply( inputTensor3d ) {
 
-!!! ...unfinished... (2022/07/27)
+//!!! ...unfinished... could use gahter, gather, concat instead of split, gather, concat?
+//!!! ...unfinished... could use unstack, gather, stack instead of split, gather, concat?
+//!!! ...unfinished... could use oneHot, pointwise convolution instead of split, gather, concat?
 
+    // Using pre-allocated array as local variable to improving performance.
+    let vocabularyIndicesOneChannelTensor2dArray = this.vocabularyIndicesOneChannelTensor2dArray;
+
+    // Extract vocabulary indices from input.
+    {
+      // The input is tensor3d, the last axis id (for splitting) is 2 (= 3 - 1).
+      //
+      // Split along the last axis (of input) as many as the shape size (of the last axis) (i.e. become tensor2d).
+      // In fact, the result is still tensor3d but has only one channel.
+      //
+      // The splitCount should be the same as ( this.inChannels ) or ( inputTensor3d.shape[ inputTensor3d.shape.length - 1 ] ).
+      const oneChannelTensor3dArray = inputTensor3d.split( this.splitCount, 2 );
+
+      if ( !this.bKeepInputTensor ) {
+        inputTensor3d.dispose();
+        //inputTensor3d = null;
+      }
+
+      // Use pre-calculated array (i.e. inputTensor2dShape) for improving performance.
+      let inputTensor2dShape = this.inputTensor2dShape;
+
+      // The splitted of input is still tensor3d but has only one channel. Reshape it to tensor2d so that the
+      // resule of tf.gather() will be tensor3d.
+      for ( let i = 0; i < oneChannelTensor3dArray.length; ++i ) {
+        vocabularyIndicesOneChannelTensor2dArray[ i ] = oneChannelTensor3dArray[ i ].reshape( inputTensor2dShape );
+        oneChannelTensor3dArray[ i ].dispose();
+      }
+    }
+
+    let embeddedTensor3dArray = this.embeddedTensor3dArray; // Using pre-allocated array as local variable to improving performance.
+
+    // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
+    // Every tensor3d (one channel) will be expanded to tensor3d (multiple channels).
+    for ( let channelIndex = 0; channelIndex < vocabularyIndicesOneChannelTensor2dArray.length; ++channelIndex ) {
+      let oneChannelTensor2d = vocabularyIndicesOneChannelTensor2dArray[ channelIndex ];
+
+      // tensor2d.gather( tensor2d ) results to tensor3d.
+      embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensorArray[ channelIndex ].gather( oneChannelTensor2d );
+
+      oneChannelTensor2d.dispose(); // Release intermediate temporary tensor as soon as possible for reducing memory footprint.
+      vocabularyIndicesOneChannelTensor2dArray[ channelIndex ] = null; // So that it is cleared when next time re-used.
+    }
+
+    // Concatenate along the last axis, so that it becomes tensor3d and with embedded (more) channels in the last axis.
+    //
+    // The result of tensor2d.gather( tensor2d ) are tensor3d, so their last axis is 2 (= 3 - 1).
+    let predictResult = tf.concat( embeddedTensor3dArray, 2 );
+
+    for ( let i = 0; i < embeddedTensor3dArray.length; ++i ) { // Release intermediate temporary tensors.
+      embeddedTensor3dArray[ i ].dispose();
+      embeddedTensor3dArray[ i ] = null; // So that it is cleared when next time re-used.
+    }
+
+    return predictResult;
   }
-
-  /** */
-  static apply_Xxx_and_keep( inputTensor ) {
-
-!!! ...unfinished... (2022/07/27)
-
-  }
-
-  /** */
-  static apply_Xxx_and_destroy( inputTensor ) {
-
-!!! ...unfinished... (2022/07/27)
-
-  }
-
 
 }
