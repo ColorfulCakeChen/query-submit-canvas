@@ -144,7 +144,11 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) 
     }
 
     // 2. channelValueOffsetTensor3d
-    {
+    if ( this.input_channelCount == 1 ) {
+      // No need to shift input channel value because there is only one vocabulary table.
+
+    } else { // ( input_channelCount > 1 )
+
       // Build a tensor3d for shifting every value of every input channels of inputTensor3d. So that they can be used for
       // indexing the one merged longer vocabulary table tensor2d.
       //
@@ -219,13 +223,13 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) 
 
     } else { // 2. channelMultiplier is positive.
 
-      if ( this.channelMultiplier == 1 ) { // 2.1
+      if ( this.input_channelCount == 1 ) { // 2.1
         if ( this.bKeepInputTensor )
           this.apply = Embedding_AddGatherReshape.apply_gather_reshape_and_keep;
         else
           this.apply = Embedding_AddGatherReshape.apply_gather_reshape_and_destroy;
 
-      } else { // 2.2 ( channelMultiplier > 1 )
+      } else { // 2.2 ( input_channelCount > 1 )
         if ( this.bKeepInputTensor )
           this.apply = Embedding_AddGatherReshape.apply_add_gather_reshape_and_keep;
         else
