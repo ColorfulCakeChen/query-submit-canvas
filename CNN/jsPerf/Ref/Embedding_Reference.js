@@ -320,10 +320,14 @@ class Embedding_Reference_Base extends Recyclable.Root {
         tensorWeightCountExtracted = testParams.out.input_channelCount * testParams.out.channelMultiplier;
       }
 
-      tensorWeightCountTotal = tensorWeightCountExtracted;
+      //!!! (2022/07/27 Remarked) Because embedding may use some extra tensors,
+      // the tensorWeightCountTotal may not the same as tensorWeightCountExtracted.
+      //
+      // tensorWeightCountTotal = tensorWeightCountExtracted;
+      // embedding_asserter.propertyValue( "tensorWeightCountTotal", tensorWeightCountTotal );
 
-      embedding_asserter.propertyValue( "tensorWeightCountTotal", tensorWeightCountTotal );
       embedding_asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
+      embedding_asserter.propertyValueLE( "tensorWeightCountExtracted", embedding.tensorWeightCountTotal );
     }
 
     embedding_asserter.disposeResources_and_recycleToPool();

@@ -111,7 +111,7 @@ class AddGatherReshape extends FiltersArray_One {
       return false;  // e.g. input array does not have enough data.
     }
 
-    // 2.
+    // 2. channelValueOffsetTensor3d
     {
       // Build a tensor3d for shifting every value of every input channels of inputTensor3d. So that they can be used for
       // indexing the one merged longer vocabulary table tensor2d.
@@ -137,29 +137,26 @@ class AddGatherReshape extends FiltersArray_One {
         //       it can not be released here.
       }
 
+      // Because channelValueOffsetTensor3d is not included in .filtersArray, append it.
       this.tensorWeightCountTotal += this.channelValueOffsetTensor3d.size;
     }
 
-    // 3.
+    // 3. vocabularyTableTensor2d
     {
-      {
-        let vocabularyCountTotal = this.vocabularyCountPerInputChannel * this.input_channelCount;
+      let vocabularyCountTotal = this.vocabularyCountPerInputChannel * this.input_channelCount;
 
-        this.vocabularyTableShape
-          = Recyclable.Array.Pool.get_or_create( vocabularyCountTotal, this.channelMultiplier );
+      this.vocabularyTableShape
+        = Recyclable.Array.Pool.get_or_create( vocabularyCountTotal, this.channelMultiplier );
 
-        this.vocabularyTableTensor2d = tf.tensor2d( this.filtersArray, this.vocabularyTableShape );
-
-        // Note: Because .vocabularyTableShape will be kept by .vocabularyTableTensor2d internally,
-        //       it can not be released here.
-      }
-
-      this.tensorWeightCountTotal += this.vocabularyTableTensor2d.size;
+      this.vocabularyTableTensor2d = tf.tensor2d( this.filtersArray, this.vocabularyTableShape );
 
       { // Release filtersArray for reducing memory footprint.
         this.filtersArray.disposeResources_and_recycleToPool();
         this.filtersArray = null;
       }
+
+      // Note: Because .vocabularyTableShape will be kept by .vocabularyTableTensor2d internally,
+      //       it can not be released here.
     }
   }
 
