@@ -228,7 +228,7 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
 //!!! ...unfinished... could use unstack, gather, stack instead of split, gather, concat?
 //!!! ...unfinished... could use oneHot, pointwise convolution instead of split, gather, concat?
 
-!!! ...unfinished... (2022/07/27)
+//!!! ...unfinished... (2022/07/27)
 // if ( input_channelCount == 1 ), no need split and concat.
 
     // Using pre-allocated array as local variable to improving performance.
