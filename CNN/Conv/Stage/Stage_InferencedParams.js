@@ -1,4 +1,4 @@
-export { InferencedParams };
+export { Stage_InferencedParams as InferencedParams };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -33,12 +33,13 @@ import * as Depthwise from "../Depthwise.js";
  *   The depthwise filter width of input image of every block.
  *
  */
-class InferencedParams extends Recyclable.Root {
+class Stage_InferencedParams extends Recyclable.Root {
 
   /**
    * Used as default Stage.InferencedParams provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Stage.InferencedParams.Pool", InferencedParams, InferencedParams.setAsConstructor );
+  static Pool = new Pool.Root( "Stage.InferencedParams.Pool",
+    Stage_InferencedParams, Stage_InferencedParams.setAsConstructor );
 
   /**
    *
@@ -50,7 +51,7 @@ class InferencedParams extends Recyclable.Root {
     depthwiseFilterHeight, depthwiseFilterWidth
   ) {
     super();
-    InferencedParams.set_inferencedParams_by.call( this,
+    Stage_InferencedParams.set_inferencedParams_by.call( this,
       sourceHeight, sourceWidth,
       nConvStageTypeId,
       blockCountRequested,
@@ -66,7 +67,7 @@ class InferencedParams extends Recyclable.Root {
     depthwiseFilterHeight, depthwiseFilterWidth
   ) {
     super.setAsConstructor();
-    InferencedParams.set_inferencedParams_by.call( this,
+    Stage_InferencedParams.set_inferencedParams_by.call( this,
       sourceHeight, sourceWidth,
       nConvStageTypeId,
       blockCountRequested,
@@ -82,7 +83,7 @@ class InferencedParams extends Recyclable.Root {
     blockCountRequested,
     depthwiseFilterHeight, depthwiseFilterWidth
   ) {
-    InferencedParams.set_inferencedParams_by.call( this,
+    Stage_InferencedParams.set_inferencedParams_by.call( this,
       sourceHeight, sourceWidth,
       nConvStageTypeId,
       blockCountRequested,
@@ -256,7 +257,7 @@ class InferencedParams extends Recyclable.Root {
     blockCountRequested,
     depthwiseFilterHeight, depthwiseFilterWidth
   ) {
-    InferencedParams.set_outputHeight_outputWidth_by.call( this,
+    Stage_InferencedParams.set_outputHeight_outputWidth_by.call( this,
       sourceHeight, sourceWidth,
       nConvStageTypeId,
       blockCountRequested,
