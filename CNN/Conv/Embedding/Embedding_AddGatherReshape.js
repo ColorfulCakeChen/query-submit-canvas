@@ -64,12 +64,27 @@ class AddGatherReshape extends FiltersArray_One {
   /** @override */
   static setAsConstructor_self() {
     this.bKeepInputTensor = bKeepInputTensor;
+
+    // The 3 dimension of apply()'s outputTensor3d. When the input is splitted to
+    // tensor3d and the vocabulary tables are tensor3d, the result of tf.gather()
+    // will be tensor5d. This shape is used for reshape the output from tensor5d
+    // to tensor3d.
+    //
+    // (Used when vocabulary tables are tensor3d.)
+    this.outputTensor3dShape = Recyclable.Array.Pool.get_or_create_bby(
+      undefined, undefined, this.outChannels );
+
     return this;
   }
 
   /** @override */
   disposeResources() {
     this.bKeepInputTensor = undefined;
+
+    if ( this.outputTensor3dShape ) {
+      this.outputTensor3dShape.disposeResources_and_recycleToPool();
+      this.outputTensor3dShape = null;
+    }
 
     if ( this.vocabularyTableTensor2d ) {
       this.vocabularyTableTensor2d.dispose();
@@ -172,8 +187,29 @@ class AddGatherReshape extends FiltersArray_One {
    */
   apply( inputTensor ) {
 
-//!!! ...unfinished... (2022/07/27)
+    let outputTensor3dShape = this.outputTensor3dShape; // Use pre-calculated array for improving performance.
+    outputTensor3dShape[ 0 ] = inputTensor3d.shape[ 0 ];
+    outputTensor3dShape[ 1 ] = inputTensor3d.shape[ 1 ];
 
+    // Shifting vocabulary indices of input. (Broadcasting is used.)
+    const vocabularyIndicesTensor3d = inputTensor3d.add( this.channelValueOffsetTensor3d );
+
+    if ( !this.bKeepInputTensor ) {
+      inputTensor3d.dispose();
+      inputTensor3d = null;
+    }
+
+    // Gather along the first axis (i.e. axis id 0).
+    //
+    // tensor2d.gather( tensor3d ) results to tensor4d.
+    const gatherTensor4d = this.vocabularyTableTensor2d.gather( vocabularyIndicesTensor3d, 0 );
+    vocabularyIndicesTensor3d.dispose();
+
+    // Reshape tensor4d to tensor3d.
+    const outputTensor3d = gatherTensor4d.reshape( outputTensor3dShape );
+    gatherTensor4d.dispose();
+
+    return outputTensor3d;
   }
 
 }
