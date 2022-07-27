@@ -223,13 +223,13 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) 
 
     } else { // 2. channelMultiplier is positive.
 
-      if ( this.input_channelCount == 1 ) { // 2.1
+      if ( this.input_channelCount == 1 ) { // 2.1 No need shift input vhannel value.
         if ( this.bKeepInputTensor )
           this.apply = Embedding_AddGatherReshape.apply_gather_reshape_and_keep;
         else
           this.apply = Embedding_AddGatherReshape.apply_gather_reshape_and_destroy;
 
-      } else { // 2.2 ( input_channelCount > 1 )
+      } else { // 2.2 ( input_channelCount > 1 ), Need shift input vhannel value.
         if ( this.bKeepInputTensor )
           this.apply = Embedding_AddGatherReshape.apply_add_gather_reshape_and_keep;
         else
@@ -238,56 +238,91 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) 
     }
   }
 
+  /** */
+  static apply_gather_reshape_and_keep( inputTensor ) {
 
-!!! ...unfinished... (2022/07/27)
+    // 0. No needs Shift vocabulary indices by input channel.
 
-  /**
-   * Process input, destroy or keep input, return result.
-   *
-   * @param {tf.tensor3d} inputTensor
-   *   The source input image ( height x width x channel ) which will be processed. This inputTensor may or may
-   * not be disposed according to .bKeepInputTensor.
-   *
-   * @return {tf.tensor3d}
-   *   Return a new tensor. All other intermediate tensors were disposed.
-   */
-  static apply_add_gather_reshape( inputTensor ) {
-
-!!! ...unfinished... (2022/07/27)
-
-
-    // 1. Shift vocabulary indices (so that a large merged table could be used to improve performance).
-    let vocabularyIndicesTensor3d;
-    {
-      if ( this.channelMultiplier == 1 ) { // 1.1 No needs to shift vocabulary indices.
-        vocabularyIndicesTensor3d = inputTensor3d.clone();
-
-      } else { // ( channelMultiplier > 1 )
-
-        // 1.2 Shifting vocabulary indices by input channel. (Broadcasting is used.)
-        vocabularyIndicesTensor3d = inputTensor3d.add( this.channelValueOffsetTensor3d );
-      }
-    }
-
-    // 2. Release input tensor.
-    if ( !this.bKeepInputTensor ) {
-      inputTensor3d.dispose();
-      inputTensor3d = null;
-    }
-
-    // 3. Gather along the first axis (i.e. axis id 0).
-    //
-    // tensor2d.gather( tensor3d ) results to tensor4d.
-    const gatherTensor4d = this.vocabularyTableTensor2d.gather( vocabularyIndicesTensor3d, 0 );
+    // 1. Gather along the first axis (i.e. axis id 0). tensor2d.gather( tensor3d ) results to tensor4d.
+    let gatherTensor4d = this.vocabularyTableTensor2d.gather( inputTensor3d, 0 );
     vocabularyIndicesTensor3d.dispose();
 
-    // 4. Reshape tensor4d to tensor3d.
+    // 1.2 Keep input tensor. (i.e. Not release input tensor.)
+
+    // 2. Reshape tensor4d to tensor3d.
+    let outputTensor3d = gatherTensor4d.reshape( this.outputTensor3dShape );
+    gatherTensor4d.dispose();
+
+    return outputTensor3d;
+  }
+
+  /** */
+  static apply_gather_reshape_and_destroy( inputTensor ) {
+
+    // 0. No needs Shift vocabulary indices by input channel.
+
+    // 1. Gather along the first axis (i.e. axis id 0). tensor2d.gather( tensor3d ) results to tensor4d.
+    let gatherTensor4d = this.vocabularyTableTensor2d.gather( inputTensor3d, 0 );
+    vocabularyIndicesTensor3d.dispose();
+
+    // 1.2 Release input tensor.
+    inputTensor3d.dispose();
+    //inputTensor3d = null;
+
+    // 2. Reshape tensor4d to tensor3d.
+    let outputTensor3d = gatherTensor4d.reshape( this.outputTensor3dShape );
+    gatherTensor4d.dispose();
+
+    return outputTensor3d;
+  }
+
+  /** */
+  static apply_add_gather_reshape_and_keep( inputTensor ) {
+
+    // 0.
+
+    // 0.1 Shifting vocabulary indices by input channel. (Broadcasting is used.)
+    let vocabularyIndicesTensor3d = inputTensor3d.add( this.channelValueOffsetTensor3d );
+
+    // 0.2 Keep input tensor. (i.e. Not release input tensor.)
+
+    // 1. Gather along the first axis (i.e. axis id 0). tensor2d.gather( tensor3d ) results to tensor4d.
+    let gatherTensor4d = this.vocabularyTableTensor2d.gather( vocabularyIndicesTensor3d, 0 );
+    vocabularyIndicesTensor3d.dispose();
+
+    // 2. Reshape tensor4d to tensor3d.
+    let outputTensor3d = gatherTensor4d.reshape( this.outputTensor3dShape );
+    gatherTensor4d.dispose();
+
+    return outputTensor3d;
+  }
+    
+  /** */
+  static apply_add_gather_reshape_and_destroy( inputTensor ) {
+
+    // 0.
+
+    // 0.1 Shifting vocabulary indices by input channel. (Broadcasting is used.)
+    //     So that a large merged table could be used to improve performance.
+    let vocabularyIndicesTensor3d = inputTensor3d.add( this.channelValueOffsetTensor3d );
+
+    // 0.2 Release input tensor.
+    inputTensor3d.dispose();
+    //inputTensor3d = null;
+
+    // 1. Gather along the first axis (i.e. axis id 0).
+    //
+    // tensor2d.gather( tensor3d ) results to tensor4d.
+    let gatherTensor4d = this.vocabularyTableTensor2d.gather( vocabularyIndicesTensor3d, 0 );
+    vocabularyIndicesTensor3d.dispose();
+
+    // 2. Reshape tensor4d to tensor3d.
     //
     // Note: Use pre-calculated array (i.e. outputTensor3dShape) for improving performance.
     //       Its ( outputTensor3dShape[ 0 ], outputTensor3dShape[ 1 ] ) should be the same
     //       as ( inputTensor3d.shape[ 0 ], inputTensor3d.shape[ 1 ] ).
     //
-    const outputTensor3d = gatherTensor4d.reshape( this.outputTensor3dShape );
+    let outputTensor3d = gatherTensor4d.reshape( this.outputTensor3dShape );
     gatherTensor4d.dispose();
 
     return outputTensor3d;
