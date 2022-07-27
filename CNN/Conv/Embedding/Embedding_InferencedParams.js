@@ -113,17 +113,17 @@ class Embedding_InferencedParams extends Recyclable.Root {
     this.output_width = input_width;
     this.output_channelCount = input_channelCount * channelMultiplier;
 
-    this.vocabularyIdMax = this.vocabularyCountPerInputChannel - 1; // maximum legal vocabulary id.
+    this.vocabularyIdMax = vocabularyCountPerInputChannel - 1; // maximum legal vocabulary id.
 
     if ( this.bEmbedVocabularyId )
-      this.weightCountPerVocabularyTable_extracted = ( this.channelMultiplier - 1 ) * this.vocabularyCountPerInputChannel;
+      this.weightCountPerVocabularyTable_extracted = ( channelMultiplier - 1 ) * vocabularyCountPerInputChannel;
     else
-      this.weightCountPerVocabularyTable_extracted = this.channelMultiplier * this.vocabularyCountPerInputChannel;
+      this.weightCountPerVocabularyTable_extracted = channelMultiplier * vocabularyCountPerInputChannel;
 
-    this.weightCountPerVocabularyTable = this.channelMultiplier * this.vocabularyCountPerInputChannel;
+    this.weightCountPerVocabularyTable = channelMultiplier * vocabularyCountPerInputChannel;
 
-    this.tensorWeightCountExtracted = this.weightCountPerVocabularyTable_extracted * this.input_channelCount;
-    this.tensorWeightCountTotal = this.weightCountPerVocabularyTable * this.input_channelCount;
+    this.tensorWeightCountExtracted = this.weightCountPerVocabularyTable_extracted * input_channelCount;
+    this.tensorWeightCountTotal = this.weightCountPerVocabularyTable * input_channelCount;
   }
 
   /** @override */

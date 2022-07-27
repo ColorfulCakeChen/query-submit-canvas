@@ -2,9 +2,10 @@ export { Embedding_FiltersArray_Base as FiltersArray_Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+import * as Weights from "../../Unpacker/Weights.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
-import * as Weights from "../../Unpacker/Weights.js";
+import { InferencedParams } from "./Embedding_InferencedParams.js";
 
 
 //!!! ...unfinished... (2022/07/25)
@@ -51,10 +52,11 @@ import * as Weights from "../../Unpacker/Weights.js";
  * @member {BoundsArraySet.InputsOutputs} boundsArraySet
  *   The element value bounds (per channel) of this embedding.
  *
- * @see Weight.Root
+ * @see Weight.Base
+ * @see Embedding.InferencedParams
  *
  */
-class Embedding_FiltersArray_Base extends Weights.Root {
+class Embedding_FiltersArray_Base extends Weights.Base( InferencedParams ) {
 
   /**
    * Used as default Embedding.FiltersArray_Base provider for conforming to Recyclable interface.
@@ -66,12 +68,15 @@ class Embedding_FiltersArray_Base extends Weights.Root {
    *
    */
   constructor(
-    input_channelCount,
+    input_height, input_width, input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
   ) {
-    super();
+    super(
+      input_height, input_width, input_channelCount,
+      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
+    );
     Embedding_FiltersArray_Base.setAsConstructor_self.call( this,
-      input_channelCount,
+      input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
   }
@@ -81,38 +86,25 @@ class Embedding_FiltersArray_Base extends Weights.Root {
     input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
   ) {
-    super.setAsConstructor();
+    super.setAsConstructor(
+      input_height, input_width, input_channelCount,
+      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
+    );
     Embedding_FiltersArray_Base.setAsConstructor_self.call( this,
-      input_channelCount,
+      input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self(
-    input_channelCount,
-    channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
-  ) {
+  static setAsConstructor_self() {
+    this.input_height = input_height;
+    this.input_width = input_width;
     this.input_channelCount = input_channelCount;
     this.channelMultiplier = channelMultiplier;
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.bEmbedVocabularyId = bEmbedVocabularyId;
-
-    {
-      this.output_channelCount = this.input_channelCount * this.channelMultiplier;
-      this.vocabularyIdMax = this.vocabularyCountPerInputChannel - 1; // maximum legal vocabulary id.
-
-      if ( this.bEmbedVocabularyId ) {
-        this.weightsCountPerVocabularyTable_extracted = ( this.channelMultiplier - 1 ) * this.vocabularyCountPerInputChannel;
-
-      } else {
-        this.weightsCountPerVocabularyTable_extracted = this.channelMultiplier * this.vocabularyCountPerInputChannel;
-      }
-
-      this.weightsCountPerVocabularyTable = this.channelMultiplier * this.vocabularyCountPerInputChannel;
-      this.tensorWeightCountTotal_internal = this.weightsCountPerVocabularyTable * this.input_channelCount;
-    }
   }
 
   /** @override */
@@ -122,15 +114,12 @@ class Embedding_FiltersArray_Base extends Weights.Root {
       this.boundsArraySet = null;
     }
 
-    this.weightsCountPerVocabularyTable_extracted = undefined;
-    this.vocabularyIdMax = undefined;
-    this.tensorWeightCountTotal_internal = undefined;
-    this.output_channelCount = undefined;
-
     this.bEmbedVocabularyId = undefined;
     this.vocabularyCountPerInputChannel = undefined;
     this.channelMultiplier = undefined;
     this.input_channelCount = undefined;
+    this.input_width = undefined;
+    this.input_height = undefined;
 
     super.disposeResources();
   }
@@ -168,10 +157,8 @@ class Embedding_FiltersArray_Base extends Weights.Root {
         + `should be all within [ 0, ${this.vocabularyIdMax} ].`
       );
 
-    let weightsCount_extracted = this.weightsCountPerVocabularyTable_extracted * this.input_channelCount;
-
-    // Prepare source weights to be extracted.
-    if ( !super.init( inputWeightArray, weightElementOffsetBegin, weightsCount_extracted ) ) { // i.e. Weights.Base.init()
+    // Calcualte weights extracting beginning and ending position.
+    if ( !super.init( inputWeightArray, weightElementOffsetBegin, this.tensorWeightCountExtracted ) ) {
       return false;  // e.g. input array does not have enough data.
     }
 
@@ -180,16 +167,6 @@ class Embedding_FiltersArray_Base extends Weights.Root {
       inputScaleBoundsArray, null, this.output_channelCount );
 
     return true;
-  }
-
-  /** @override */
-  get tensorWeightCountExtracted() {
-    return this.weightElementExtractedCount;
-  }
-
-  /** @override */
-  get tensorWeightCountTotal() {
-    return this.tensorWeightCountTotal_internal;
   }
 
 }

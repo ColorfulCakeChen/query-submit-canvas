@@ -69,13 +69,13 @@ class Out extends Recyclable.Root {
   disposeResources() {
     this.InferencedParams_dispose();
 
-    this.input_height = undefined;
-    this.input_width = undefined;
-    this.input_channelCount = undefined;
-    this.channelMultiplier = undefined;
-    this.vocabularyCountPerInputChannel = undefined;
-    this.bEmbedVocabularyId = undefined;
     this.bKeepInputTensor = undefined;
+    this.bEmbedVocabularyId = undefined;
+    this.vocabularyCountPerInputChannel = undefined;
+    this.channelMultiplier = undefined;
+    this.input_channelCount = undefined;
+    this.input_width = undefined;
+    this.input_height = undefined;
 
     super.disposeResources();
   }

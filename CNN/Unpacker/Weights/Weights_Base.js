@@ -1,4 +1,6 @@
-export { Weights_Base as Base, Root, To };
+export { Weights_Base as Base };
+export { Weights_Root as Root };
+export { To };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -94,7 +96,7 @@ let Weights_Base = ( ParentClass = Object ) => class Weights_Base extends Recycl
  * Almost the same as Weights.Base class except its parent class is fixed to Object. In other words, caller can not
  * specify the parent class of Weights.Root (so it is named "Root" which can not have parent class).
  */
-class Root extends Weights_Base() {
+class Weights_Root extends Weights_Base() {
 }
 
 
