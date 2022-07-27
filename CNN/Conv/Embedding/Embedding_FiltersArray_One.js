@@ -92,10 +92,14 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
     let sourceIndex = weightElementOffsetBegin;
     let filterIndex = 0;
     for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
-      for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
-//!!! ...unfinished... (2022/07/27) filtersArray
+      for ( let vocabularyId = 0; vocabularyId < this.vocabularyCountPerInputChannel; ++vocabularyId ) {
 
+        for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+
+//!!! ...unfinished... (2022/07/27) filtersArray, bEmbedVocabularyId
+
+        }
       }
     }
 
