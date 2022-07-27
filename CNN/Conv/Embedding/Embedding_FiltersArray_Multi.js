@@ -60,9 +60,9 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
 
   /** @override */
   disposeResources() {
-    if ( this.filtersArray ) {
-      this.filtersArray.disposeResources_and_recycleToPool();
-      this.filtersArray = null;
+    if ( this.filtersArrayArray ) {
+      this.filtersArrayArray.disposeResources_and_recycleToPool();
+      this.filtersArrayArray = null;
     }
 
     super.disposeResources();
@@ -86,7 +86,7 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
       return false;  // e.g. input array does not have enough data.
     }
 
-//!!! ...unfinished... (2022/07/27) BoundsArray ?
+//!!! ...unfinished... (2022/07/27)
 
     // 2. filtersArray
     let outChannelSubBegin;
@@ -95,19 +95,24 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
     else
       outChannelSubBegin = 0;
 
-    this.filtersArray = Recyclable.Array.Pool.get_or_create_by( this.tensorWeightCountTotal );
     this.boundsArraySet.output0.set_all_byLowerUpper( +Infinity, -Infinity );
+    let outBoundsArray = this.boundsArraySet.output0.boundsArray;
+
+    this.filtersArrayArray = Recyclable.OwnerArray.Pool.get_or_create_by( this.input_channelCount );
 
     let sourceIndex = weightElementOffsetBegin;
-    let filterIndex = 0;
 
     let outChannel = 0;
-    let outBoundsArray = this.boundsArraySet.output0.boundsArray;
     for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
+
+      let filtersArray = this.filtersArrayArray[ inChannel ]
+        = Recyclable.Array.Pool.get_or_create_by( this.tensorWeightCountTotal );
+
+      let filterIndex = 0;
       for ( let vocabularyId = 0; vocabularyId < this.vocabularyCountPerInputChannel; ++vocabularyId ) {
 
         if ( this.bEmbedVocabularyId ) {
-          this.filtersArray[ filterIndex ] = vocabularyId; // Embed the vocabulary's id.
+          filtersArray[ filterIndex ] = vocabularyId; // Embed the vocabulary's id.
           ++filterIndex;
 
           outBoundsArray.enlarge_one_byN( outChannel, vocabularyId );
@@ -118,7 +123,7 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
           let filterValue = inputWeightArray[ sourceIndex ];
           ++sourceIndex;
 
-          this.filtersArray[ filterIndex ] = filterValue;
+          filtersArray[ filterIndex ] = filterValue;
           ++filterIndex;
 
           outBoundsArray.enlarge_one_byN( outChannel, filterValue );

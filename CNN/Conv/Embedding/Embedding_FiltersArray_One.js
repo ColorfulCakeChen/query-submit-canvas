@@ -86,8 +86,6 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
       return false;  // e.g. input array does not have enough data.
     }
 
-//!!! ...unfinished... (2022/07/27) BoundsArray ?
-
     // 2. filtersArray
     let outChannelSubBegin;
     if ( this.bEmbedVocabularyId )
@@ -95,14 +93,15 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
     else
       outChannelSubBegin = 0;
 
-    this.filtersArray = Recyclable.Array.Pool.get_or_create_by( this.tensorWeightCountTotal );
     this.boundsArraySet.output0.set_all_byLowerUpper( +Infinity, -Infinity );
+    let outBoundsArray = this.boundsArraySet.output0.boundsArray;
 
-    let sourceIndex = weightElementOffsetBegin;
+    this.filtersArray = Recyclable.Array.Pool.get_or_create_by( this.tensorWeightCountTotal );
     let filterIndex = 0;
 
+    let sourceIndex = weightElementOffsetBegin;
+
     let outChannel = 0;
-    let outBoundsArray = this.boundsArraySet.output0.boundsArray;
     for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
       for ( let vocabularyId = 0; vocabularyId < this.vocabularyCountPerInputChannel; ++vocabularyId ) {
 
