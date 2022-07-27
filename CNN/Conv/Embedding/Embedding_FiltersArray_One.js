@@ -110,20 +110,18 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
           this.filtersArray[ filterIndex ] = vocabularyId; // Embed the vocabulary's id.
           ++filterIndex;
 
-//!!! ...unfinished... (2022/07/27) BoundsArray ?
-          outBoundsArray.clamp_one_byLowerUpper( outChannel, ???aLower, ???aUpper );
-
+          outBoundsArray.enlarge_one_byN( outChannel, vocabularyId );
           ++outChannel;
         }
 
         for ( let outChannelSub = outChannelSubBegin; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
-          this.filtersArray[ filterIndex ] = inputWeightArray[ sourceIndex ];
-          ++filterIndex;
+          let filterValue = inputWeightArray[ sourceIndex ];
           ++sourceIndex;
 
-//!!! ...unfinished... (2022/07/27) BoundsArray ?
-          outBoundsArray.clamp_one_byLowerUpper( outChannel, ???aLower, ???aUpper );
+          this.filtersArray[ filterIndex ] = filterValue;
+          ++filterIndex;
 
+          outBoundsArray.enlarge_one_byN( outChannel, filterValue );
           ++outChannel;
         }
       }

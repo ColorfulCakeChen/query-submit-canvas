@@ -172,6 +172,21 @@ class Bounds extends Recyclable.Root {
 
 
   /**
+   * @param {number} N
+   *   Enlarge this bounds so that [ this.lower, this.upper ] contains N.
+   *
+   * @return {Bounds} Return this (modified) object.
+   */
+   enlarge_byN( N ) {
+    if ( this.lower > N )
+      this.lower = N;
+    if ( this.upper < N )
+      this.upper = N;
+    return this;
+  }
+
+
+  /**
    * @param {number} aLower   Clamp this.lower by aLower.
    * @param {number} aUpper   Clamp this.upper by aUpper.
    *

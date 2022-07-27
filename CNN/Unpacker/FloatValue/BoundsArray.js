@@ -346,6 +346,21 @@ class BoundsArray extends Recyclable.Root {
 
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number} N          Enlarge bounds so that [ this.lowers[ thisIndex ], this.uppers[ thisIndex ] ] contains N.
+   *
+   * @return {Bounds} Return this (modified) object.
+   */
+   enlarge_one_byN( thisIndex, N ) {
+    if ( this.lowers[ thisIndex ] > N )
+      this.lowers[ thisIndex ] = N;
+    if ( this.uppers[ thisIndex ] < N )
+      this.uppers[ thisIndex ] = N;
+    return this;
+  }
+
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {number} aLower     Clamp this.lowers[ thisIndex ] by aLower.
    * @param {number} aUpper     Clamp this.uppers[ thisIndex ] by aUpper.
    *
