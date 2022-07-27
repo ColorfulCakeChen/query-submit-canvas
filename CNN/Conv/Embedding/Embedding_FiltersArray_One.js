@@ -160,13 +160,19 @@ class FiltersArray_One extends Weights.Root {
         + `output_channelCount of previous operation ( ${inputScaleBoundsArray.length} ).`
       );
 
-    if ( inputScaleBoundsArray.scaleArraySet.undo.is_all_EQ_byN( 1 ) )
+    if ( !inputScaleBoundsArray.scaleArraySet.undo.is_all_EQ_byN( 1 ) )
       throw Error( `Embedding.FiltersArray_One.init(): `
         + `The .output.scaleArraySet.undo ( ${inputScaleBoundsArray.scaleArraySet.undo.scales} ) `
         + `of previous operation `
         + `should be all one (i.e. should not have activation escaping scaling).`
       );
 
+    if ( !inputScaleBoundsArray.boundsArray.is_all_IN_byLowerUpper( 0, this.vocabularyCountPerInputChannel ) )
+      throw Error( `Embedding.FiltersArray_One.init(): `
+        + `The .output.boundsArray ( ${inputScaleBoundsArray.boundsArray} ) `
+        + `of previous operation `
+        + `should be all within [ 0, ${this.vocabularyCountPerInputChannel} ].`
+      );
    
  
   }
