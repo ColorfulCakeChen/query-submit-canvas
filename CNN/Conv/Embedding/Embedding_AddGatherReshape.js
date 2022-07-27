@@ -81,6 +81,11 @@ class AddGatherReshape extends FiltersArray_One {
       this.channelValueOffsetTensor3d = null;
     }
 
+    if ( this.channelValueOffsetShape ) {
+      this.channelValueOffsetShape.dispose();
+      this.channelValueOffsetShape = null;
+    }
+
     super.disposeResources();
   }
 
@@ -103,7 +108,8 @@ class AddGatherReshape extends FiltersArray_One {
 
 !!! ...unfinished... (2022/07/27) Create tensors.
     {
-      this.vocabularyTableTensor2d = tf.concat( this.vocabularyTablesTensorArray, 0 );
+      let vocabularyCountTotal = this.vocabularyCountPerInputChannel * this.input_channelCount;
+      this.vocabularyTableTensor2d = tf.tensor2d( this.filtersArray, [ vocabularyCountTotal, this.channelMultiplier ] );
 
       // Build a tensor3d for shifting every value of every input channels of inputTensor3d. So that they can be used for
       // indexing the one merged longer vocabulary table tensor2d.
@@ -113,9 +119,21 @@ class AddGatherReshape extends FiltersArray_One {
       // Channel                  2: ( channelValue + (                  2 * vocabularyCountPerInputChannel ) )
       //   :
       // Channel ( inChannels - 1 ): ( channelValue + ( ( inChannels - 1 ) * vocabularyCountPerInputChannel ) )
-      let numberSequencer = new Array( inChannels ).keys(); // Generator: 0, 1, 2, ..., ( inChannels - 1 )
-      let channelValueOffset = [ ...numberSequencer ].map( x => x * vocabularyCountPerInputChannel );
-      this.channelValueOffsetTensor3d = tf.tensor3d( channelValueOffset, [ 1, 1, inChannels ], "int32" ); // One pixel.
+      {
+        let channelValueOffsetArray = Recyclable.Array.Pool.get_or_create( this.input_channelCount );
+        for ( let i = 0; i < channelValueOffsetArray.length; ++i )
+          channelValueOffsetArray[ i ] = i * this.vocabularyCountPerInputChannel;
+
+        this.channelValueOffsetShape = Recyclable.Array.Pool.get_or_create( 1, 1, this.input_channelCount );
+        this.channelValueOffsetTensor3d
+          = tf.tensor3d( channelValueOffsetArray, this.channelValueOffsetShape , "int32" ); // For one pixel's all input channels.
+
+        channelValueOffsetArray.disposeResources_and_recycleToPool();
+        channelValueOffsetArray = null;
+
+        // Note: Because .channelValueOffsetShape will be kept by .channelValueOffsetTensor3d internally,
+        //       it can not be released here.
+      }
 
       this.tensorWeightCountTotal += this.channelValueOffsetTensor3d.size;
     }
