@@ -1,4 +1,4 @@
-export { ReturnOrClone_Base as Base, Root };
+export { ReturnOrClone_Base as Base, ReturnOrClone_Root as Root };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 
@@ -121,6 +121,6 @@ let ReturnOrClone_Base = ( ParentClass = Object ) => class ReturnOrClone_Base ex
  * Almost the same as ReturnOrClone.Base class except its parent class is fixed to Object. In other words, caller can not specify the
  * parent class of ReturnOrClone.Root (so it is named "Root" which can not have parent class).
  */
-class Root extends ReturnOrClone_Base() {
+class ReturnOrClone_Root extends ReturnOrClone_Base() {
 }
 

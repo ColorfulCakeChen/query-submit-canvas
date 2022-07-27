@@ -1,7 +1,8 @@
-export { AddGatherReshape };
+export { Embedding_AddGatherReshape as AddGatherReshape };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+import * as ReturnOrClone from "../ReturnOrClone.js";
 import { FiltersArray_One } from "./Embedding_FiltersArray_One.js";
 
 /**
@@ -26,12 +27,13 @@ import { FiltersArray_One } from "./Embedding_FiltersArray_One.js";
  * @see Embedding.FiltersArray_One
  *
  */
-class AddGatherReshape extends FiltersArray_One {
+class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) {
 
   /**
    * Used as default Embedding.AddGatherReshape provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Embedding.AddGatherReshape.Pool", AddGatherReshape, AddGatherReshape.setAsConstructor );
+  static Pool = new Pool.Root( "Embedding.AddGatherReshape.Pool",
+    Embedding_AddGatherReshape, Embedding_AddGatherReshape.setAsConstructor );
 
   /**
    *
@@ -45,7 +47,7 @@ class AddGatherReshape extends FiltersArray_One {
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
-    AddGatherReshape.setAsConstructor_self.call( this,
+    Embedding_AddGatherReshape.setAsConstructor_self.call( this,
       bKeepInputTensor,
       this.output_height, this.output_width, this.output_channelCount
     );
@@ -61,7 +63,7 @@ class AddGatherReshape extends FiltersArray_One {
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
-    AddGatherReshape.setAsConstructor_self.call( this,
+    Embedding_AddGatherReshape.setAsConstructor_self.call( this,
       bKeepInputTensor,
       this.output_height, this.output_width, this.output_channelCount
     );
