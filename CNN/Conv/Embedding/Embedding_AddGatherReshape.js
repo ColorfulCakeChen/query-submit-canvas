@@ -195,6 +195,24 @@ class AddGatherReshape extends FiltersArray_One {
    */
   apply( inputTensor ) {
 
+!!! ...unfinished... (2022/07/27)
+    // 2.1 Shortcut operation.
+    if ( // If channelMultiplier is illegal (i.e. zero or negative). (may happen by evolution.)
+           ( channelMultiplier < 1 )
+
+        // Or, if there is only one output channel per input channel and the only one output channel is just vocabulary id.
+        || ( ( channelMultiplier == 1 ) && ( bEmbedVocabularyId ) )
+       ) {
+
+      if ( bKeepInputTensor )
+        // 2.1.1 For ( channelMultiplier <= 1 ) and ( bKeepInputTensor == true  ), return a copy of input (as output) immediately.        
+        this.apply_and_destroy_or_keep = Base.keep_input_return_copy;
+      else
+        // 2.1.2 For ( channelMultiplier <= 1 ) and ( bKeepInputTensor == false ), return input (as output) immediately.
+        this.apply_and_destroy_or_keep = Base.return_input_directly;
+
+
+
     // 1. Shift vocabulary indices (so that a large merged table could be used to improve performance).
     let vocabularyIndicesTensor3d;
     {
