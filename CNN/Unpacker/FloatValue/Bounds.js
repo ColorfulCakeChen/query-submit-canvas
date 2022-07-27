@@ -40,8 +40,13 @@ class Bounds extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self( lower, upper ) {
-    this.lower = Math.min( lower, upper ); // Confirm ( lower <= upper ).
-    this.upper = Math.max( lower, upper );
+    if ( aLower < aUpper ) { // Confirm ( lower <= upper ).
+      this.lower = aLower;
+      this.upper = aUpper;
+    } else {
+      this.lower = aUpper;
+      this.upper = aLower;
+    }
   }
 
   /** @override */
@@ -86,8 +91,13 @@ class Bounds extends Recyclable.Root {
    *   Return this (modified) object which is [ aLower, aUpper ].
    */
   set_byLowerUpper( aLower, aUpper ) {
-    this.lower = Math.min( aLower, aUpper ); // Confirm ( lower <= upper ).
-    this.upper = Math.max( aLower, aUpper );
+    if ( aLower < aUpper ) { // Confirm ( lower <= upper ).
+      this.lower = aLower;
+      this.upper = aUpper;
+    } else {
+      this.lower = aUpper;
+      this.upper = aLower;
+    }
     return this;
   }
 
@@ -142,14 +152,26 @@ class Bounds extends Recyclable.Root {
    *   Return this (modified) object which is [ max( this.lower, aLower ), min( this.upper, aUpper ) ].
    */
   clamp_byLowerUpper( aLower, aUpper ) {
-    let anotherLower = Math.min( aLower, aUpper ); // Confirm ( anotherLower <= anotherUpper )
-    let anotherUpper = Math.max( aLower, aUpper );
+    let anotherLower, anotherUpper; // Confirm ( anotherLower <= anotherUpper )
+    if ( aLower < aUpper ) {
+      anotherLower = aLower;
+      anotherUpper = aUpper;
+    } else {
+      anotherLower = aUpper;
+      anotherUpper = aLower;
+    }
 
     // Because two bounds may be totally non-intersected, both thisLower and thisUpper needs be clamped by [ aLower, aUpper ].
     let lower_clamped = Math.min( Math.max( anotherLower, this.lower ), anotherUpper );
     let upper_clamped = Math.min( Math.max( anotherLower, this.upper ), anotherUpper );
-    this.lower = Math.min( lower_clamped, upper_clamped ); // Confirm ( lower <= upper )
-    this.upper = Math.max( lower_clamped, upper_clamped );
+
+    if ( lower_clamped < upper_clamped ) { // Confirm ( lower <= upper )
+      this.lower = lower_clamped;
+      this.upper = upper_clamped;
+    } else {
+      this.lower = upper_clamped;
+      this.upper = lower_clamped;
+    }
     return this;
   }
 
