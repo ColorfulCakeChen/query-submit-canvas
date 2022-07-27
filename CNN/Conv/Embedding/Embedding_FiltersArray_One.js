@@ -6,14 +6,9 @@ import * as Recyclable from "../../util/Recyclable.js";
 //import * as BoundsArraySet from "../BoundsArraySet.js";
 import { FiltersArray_Base } from "./Embedding_FiltersArray_One.js";
 
-//!!! ...unfinished... (2022/07/25)
-// Perhaps, provide a parameter control whether different input channel uses the same
-// or different look-up (i.e. vocabulary) table.
-
 /**
  * A large table which is composed of all vocabulary table of every input channel. It is
  * mainly used by Embedding.AddGatherReshape.
- *
  *
  *
  *
@@ -65,9 +60,6 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
 
   /** @override */
   disposeResources() {
-
-!!! ...unfinished... (2022/07/27)
-
     if ( this.filtersArray ) {
       this.filtersArray.disposeResources_and_recycleToPool();
       this.filtersArray = null;
@@ -95,6 +87,17 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
     }
 
 //!!! ...unfinished... (2022/07/27) filtersArray
+    this.filtersArray = Recyclable.Array.Pool.get_or_create_by( this.tensorWeightCountTotal );
+
+    let sourceIndex = weightElementOffsetBegin;
+    let filterIndex = 0;
+    for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
+      for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+
+//!!! ...unfinished... (2022/07/27) filtersArray
+
+      }
+    }
 
     return true;
   }

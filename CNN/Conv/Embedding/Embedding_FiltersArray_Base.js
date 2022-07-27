@@ -1,7 +1,7 @@
 export { Embedding_FiltersArray_Base as FiltersArray_Base };
 
 import * as Pool from "../../util/Pool.js";
-import * as Recyclable from "../../util/Recyclable.js";
+//import * as Recyclable from "../../util/Recyclable.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
