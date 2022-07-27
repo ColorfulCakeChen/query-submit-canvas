@@ -36,8 +36,14 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
  *
  *
  *
+ * @param {number} input_height
+ *   The input image's height.
+ *
+ * @param {number} input_width
+ *   The input image's width.
+ *
  * @param {number} input_channelCount
- *   The input channel count.
+ *   The input image's channel count.
  *
  * @member {number} channelMultiplier
  *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many

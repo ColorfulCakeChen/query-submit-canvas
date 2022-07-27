@@ -48,38 +48,6 @@ import * as Weights from "../../Unpacker/Weights.js";
  *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  * 
- * @param {number} input_channelCount
- *   The input channel count.
- *
- * @member {number} channelMultiplier
- *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
- * embedding channels. It could be viewed as embeddingChannelCountPerInputChannel.
- *
- * @member {number} vocabularyCountPerInputChannel
- *   Every input channel will have how many vocabularies. This is also vocabulary count per vocabulary table (because
- * every input channel has a vocabulary table). For an image data (R-G-B-A four channels), there will be 256
- * vocabularies per input channel because every channel is represented by one byte (8 bits) which has 2^8 = 256 kinds
- * of possible values.
- *
- * @member {boolean} bEmbedVocabularyId
- *   If true, one of embedding channels will be an auto-generated vocabulary id (i.e. 0, 1, 2, ...). So only
- * ( channelMultiplier - 1 ) embedding channels will be extracted from inputWeightArray. The extra vocabulary id
- * channel achieves residual connection. Residual connection means apply_and_destroy_or_keep() will append (concatenate)
- * input to output. Since apply_and_destroy_or_keep()'s input is just vocabulary id (one channel or multiple channels),
- * pre-embedded vocabulary id inside the embedding table acheives the same effect by less computation (but more memory).
- *
- * @member {number} output_channelCount
- *   Output channel count. It is always depending on channelMultiplier and equals to ( inChannels * channelMultiplier ).
- *
- * @member {number} tensorWeightCountExtracted
- *   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used
- * in tensors. Not including embedded vocabulary id (even if ( bEmbedVocabularyId == true )), because they are not extracted
- * from inputWeightArray.
- *
- * @member {number} tensorWeightCountTotal
- *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including embedded
- * vocabulary id.
- *
  * @member {BoundsArraySet.InputsOutputs} boundsArraySet
  *   The element value bounds (per channel) of this embedding.
  *
@@ -133,15 +101,17 @@ class Embedding_FiltersArray_Base extends Weights.Root {
 
     {
       this.output_channelCount = this.input_channelCount * this.channelMultiplier;
-      this.tensorWeightCountTotal_internal = this.input_channelCount * this.output_channelCount;
       this.vocabularyIdMax = this.vocabularyCountPerInputChannel - 1; // maximum legal vocabulary id.
 
       if ( this.bEmbedVocabularyId ) {
-        this.weightsCountPerVocabularyTable = ( this.channelMultiplier - 1 ) * this.vocabularyCountPerInputChannel;
+        this.weightsCountPerVocabularyTable_extracted = ( this.channelMultiplier - 1 ) * this.vocabularyCountPerInputChannel;
 
       } else {
-        this.weightsCountPerVocabularyTable = this.channelMultiplier * this.vocabularyCountPerInputChannel;
+        this.weightsCountPerVocabularyTable_extracted = this.channelMultiplier * this.vocabularyCountPerInputChannel;
       }
+
+      this.weightsCountPerVocabularyTable = this.channelMultiplier * this.vocabularyCountPerInputChannel;
+      this.tensorWeightCountTotal_internal = this.weightsCountPerVocabularyTable * this.input_channelCount;
     }
   }
 
@@ -152,7 +122,7 @@ class Embedding_FiltersArray_Base extends Weights.Root {
       this.boundsArraySet = null;
     }
 
-    this.weightsCountPerVocabularyTable = undefined;
+    this.weightsCountPerVocabularyTable_extracted = undefined;
     this.vocabularyIdMax = undefined;
     this.tensorWeightCountTotal_internal = undefined;
     this.output_channelCount = undefined;
@@ -198,14 +168,10 @@ class Embedding_FiltersArray_Base extends Weights.Root {
         + `should be all within [ 0, ${this.vocabularyIdMax} ].`
       );
 
-    let tableCount = this.input_channelCount;
-    let weightsCount_extracted = this.weightsCountPerVocabularyTable * tableCount;
-
-    this.tensorWeightCountTotal_internal
+    let weightsCount_extracted = this.weightsCountPerVocabularyTable_extracted * this.input_channelCount;
 
     // Prepare source weights to be extracted.
     if ( !super.init( inputWeightArray, weightElementOffsetBegin, weightsCount_extracted ) ) { // i.e. Weights.Base.init()
-      this.bInitOk = false;
       return false;  // e.g. input array does not have enough data.
     }
 
@@ -213,7 +179,6 @@ class Embedding_FiltersArray_Base extends Weights.Root {
     this.boundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by(
       inputScaleBoundsArray, null, this.output_channelCount );
 
-    this.bInitOk = true;
     return true;
   }
 
