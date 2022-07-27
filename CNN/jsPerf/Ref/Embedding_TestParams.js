@@ -218,7 +218,6 @@ class Embedding_TestParams_Base extends TestParams.Base {
    */
   set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin = 0 ) {
     let embeddingParams = this.out;
-    let tBounds = FloatValue.Bounds/Pool.get_or_create_by();
 
     this.generate_out_inferencedParams();
 
@@ -237,11 +236,14 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
     let outChannelIndex = 0;
     for ( let i = 0; i < embeddingParams.input_channelCount; ++i ) {
-      this.fill_object_property_numberArray( this.in.paramsNumberArrayObject, i, tableElementCountPerInputChannel, tBounds );
+      this.fill_object_property_numberArray( this.in.paramsNumberArrayObject, i, tableElementCountPerInputChannel );
 
       // Every output channel's value bounds.
       for ( let outChannelSub = 0; outChannelSub < embeddingParams.channelMultiplier; ++outChannelSub) {
-        this.out_boundsArray.set_one_byBounds( outChannelIndex, tBounds );
+        this.out_boundsArray.set_one_byLowerUpper( outChannelIndex,
+          this.in.paramsNumberArrayObject[ i ].lowerBound,
+          this.in.paramsNumberArrayObject[ i ].upperBound
+        );
         ++outChannelIndex;
       }
     }
@@ -249,9 +251,6 @@ class Embedding_TestParams_Base extends TestParams.Base {
     // Pack all parameters, look-up tables weights into a (pre-allocated and re-used) NumberArray.
     this.in_weights.set_byConcat(
       Embedding_TestParams_Base.paramsNameOrderArray_Basic, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
-
-    tBounds.disposeResources_and_recycleToPool();
-    tBounds = null;
 
     return this;
   }
