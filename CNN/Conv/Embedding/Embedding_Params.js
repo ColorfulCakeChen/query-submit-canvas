@@ -150,7 +150,7 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
 
     this.inferencedParams = InferencedParams.Pool.get_or_create_by(
       this.input_height, this.input_width, this.input_channelCount,
-      this.channelMultiplier
+      this.channelMultiplier, this.vocabularyCountPerInputChannel, this.bEmbedVocabularyId
     );
 
     return bExtractOk;

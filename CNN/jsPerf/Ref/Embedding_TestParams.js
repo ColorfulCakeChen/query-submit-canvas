@@ -93,26 +93,23 @@ class Out extends Recyclable.Root {
     this.InferencedParams_dispose();
     this.inferencedParams = Embedding.InferencedParams.Pool.get_or_create_by(
       this.input_height, this.input_width, this.input_channelCount,
-      this.channelMultiplier
+      this.channelMultiplier, this.vocabularyCountPerInputChannel, this.bEmbedVocabularyId
     );
   }
 
   /** @override */
   toString() {
-    let paramsOutDescription = ``
+    let strDescription = ``
       + `input_height=${this.input_height}, `
       + `input_width=${this.input_width}, `
       + `input_channelCount=${this.input_channelCount}, `
       + `channelMultiplier=${this.channelMultiplier}, `
       + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
       + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
-
-      + `output_channelCount=${this.inferencedParams.output_channelCount}, `
-
-      + `bKeepInputTensor=${this.bKeepInputTensor}`
+      + `bKeepInputTensor=${this.bKeepInputTensor}, `
+      + `${this.inferencedParams}`
     ;
-
-    return paramsOutDescription;
+    return strDescription;
   }
 
 }

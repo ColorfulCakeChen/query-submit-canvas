@@ -126,4 +126,19 @@ class Embedding_InferencedParams extends Recyclable.Root {
     this.tensorWeightCountTotal = this.weightCountPerVocabularyTable * this.input_channelCount;
   }
 
+  /** @override */
+  toString() {
+    let strDescription = ``
+      + `output_height=${this.output_height}, `
+      + `output_width=${this.output_width}, `
+      + `output_channelCount=${this.output_channelCount}, `
+      + `vocabularyIdMax=${this.vocabularyIdMax}, `
+      + `weightCountPerVocabularyTable_extracted=${this.weightCountPerVocabularyTable_extracted}, `
+      + `weightCountPerVocabularyTable=${this.weightCountPerVocabularyTable}, `
+      + `tensorWeightCountExtracted=${this.tensorWeightCountExtracted}, `
+      + `tensorWeightCountTotal=${this.tensorWeightCountTotal}`
+    ;
+    return strDescription;
+  }
+
 }
