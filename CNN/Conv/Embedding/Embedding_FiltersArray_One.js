@@ -1,10 +1,8 @@
-export { AddGatherReshape_FiltersArray };
+export { FiltersArray_One };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-//import * as TensorPlaceholder from "../TensorPlaceholder.js";
-//import * as BoundsArraySet from "../BoundsArraySet.js";
-//import { Base } from "./Operation_Base.js";
+import * as BoundsArraySet from "../BoundsArraySet.js";
 import * as Weights from "../../Unpacker/Weights.js";
 
 
@@ -17,6 +15,9 @@ import * as Weights from "../../Unpacker/Weights.js";
 // or different look-up (i.e. vocabulary) table.
 
 /**
+ * A large table which is composed of all vocabulary table of every input channel. It is
+ * mainly used by Embedding.AddGatherReshape.
+ *
  *
  * Embedding could achieve non-linear mapping (just like any perceptron). But it is achieved by lookup table (instead
  * of weighted sum, bias and activation function). This implies:
@@ -77,60 +78,60 @@ import * as Weights from "../../Unpacker/Weights.js";
  * @member {BoundsArraySet.InputsOutputs} boundsArraySet
  *   The element value bounds (per channel) of this embedding.
  *
- * @member {number} tensorWeightCountTotal
- *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
- * weights, if they are used in tensors.
- *
- * @member {number} tensorWeightCountExtracted
- *   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used in
- * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputWeightArray.
- *
- * @member {function} destroy_or_keep_input
- *   This is a function pointer to one of destroy_input(), keep_input(). If ( this.bKeepInputTensor == false ),
- * it pointer to destroy_input(). If ( this.bKeepInputTensor == true ), it pointer to keep_input().
- *
- * @member {function} apply_and_destroy_or_keep
- *   Process the input and produce output by looking up the weights of this embedding layer. This is a function pointer
- * to one of keep_input_return_copy(), return_input_directly(), apply_and_destroy_or_keep_SplitGatherConcat().
- * It inputs a tensor3d data (e.g. height-width-color for color image, or 1-width-1 for text) with this.inChannels
- * (e.g. 4 for r-g-b-a, or 1 for text) channels. The inputTensor3d.dtype must be int32 (i.e. can not be float32)
- * so that they can be used as tf.gather()'s indices. If ( this.bKeepInputTensor == false ), the inputTensor3d
- * will be disposed. If ( this.bKeepInputTensor == true ), the inputTensor3d will be kept.
- *
  * @see Weight.Root
  *
  */
-class AddGatherReshape extends Weights.Root {
+class FiltersArray_One extends Weights.Root {
 
   /**
-   * Used as default Embedding.AddGatherReshape provider for conforming to Recyclable interface.
+   * Used as default Embedding.FiltersArray_One provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Embedding.AddGatherReshape.Pool", AddGatherReshape, AddGatherReshape.setAsConstructor );
+  static Pool = new Pool.Root( "Embedding.FiltersArray_One.Pool", FiltersArray_One, FiltersArray_One.setAsConstructor );
 
   /**
    *
    */
-  constructor() {
+  constructor(
+    input_channelCount,
+    channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
+  ) {
     super();
-    AddGatherReshape.setAsConstructor_self.call( this );
+    FiltersArray_One.setAsConstructor_self.call( this,
+      input_channelCount,
+      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
+    );
   }
 
   /** @override */
-  static setAsConstructor() {
+  static setAsConstructor(
+    input_channelCount,
+    channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
+  ) {
     super.setAsConstructor();
-    AddGatherReshape.setAsConstructor_self.call( this );
+    FiltersArray_One.setAsConstructor_self.call( this,
+      input_channelCount,
+      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
+    );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self() {
-
-!!! ...unfinished... (2022/07/17)
-
+  static setAsConstructor_self(
+    input_channelCount,
+    channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
+  ) {
+    this.input_channelCount = input_channelCount;
+    this.channelMultiplier = channelMultiplier;
+    this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
+    this.bEmbedVocabularyId = bEmbedVocabularyId;
   }
 
   /** @override */
   disposeResources() {
+    this.input_channelCount = undefined;
+    this.channelMultiplier = undefined;
+    this.vocabularyCountPerInputChannel = undefined;
+    this.bEmbedVocabularyId = undefined;
 
 !!! ...unfinished... (2022/07/17)
 
@@ -140,25 +141,11 @@ class AddGatherReshape extends Weights.Root {
   /**
    * Generator for initializing this object.
    *
-   * @param {boolean} bKeepInputTensor
-   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
-   * For another example, the input image should be shared across many neural networks.
-   *
-   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
-   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Stage value bounds
-   * set. It will be kept (not cloned) directly. So caller should not modify them.
-   *
    * @return {boolean}
    *   Return true, if successfully. Return false, if failed.
    *
    */
-  * init( inputWeightArray, weightElementOffsetBegin,
-    input_channelCount,
-    channelMultiplier,
-    vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
-    bKeepInputTensor,
-    inputScaleBoundsArray0
-  ) {
+  init( inputWeightArray, weightElementOffsetBegin ) {
 
    
  

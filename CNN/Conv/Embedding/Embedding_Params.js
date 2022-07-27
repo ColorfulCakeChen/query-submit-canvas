@@ -87,7 +87,7 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
     super(
       Embedding_Params.SequenceArray,
       input_height, input_width, input_channelCount,
-      vocabularyCountPerInputChannel, bEmbedVocabularyId,
+      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
       bKeepInputTensor
     );
     Embedding_Params.setAsConstructor_self.call( this );
