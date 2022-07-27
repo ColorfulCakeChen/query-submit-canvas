@@ -1,14 +1,10 @@
-export { FiltersArray_Base };
+export { Embedding_FiltersArray_Base as FiltersArray_Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import * as Weights from "../../Unpacker/Weights.js";
-
-
-//!!! ...unfinished... (2022/07/26)
-// Embedding assert if input bounds per channel larger than vocabulary count per table.
 
 
 //!!! ...unfinished... (2022/07/25)
@@ -90,12 +86,13 @@ import * as Weights from "../../Unpacker/Weights.js";
  * @see Weight.Root
  *
  */
-class FiltersArray_Base extends Weights.Root {
+class Embedding_FiltersArray_Base extends Weights.Root {
 
   /**
    * Used as default Embedding.FiltersArray_Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Embedding.FiltersArray_Base.Pool", FiltersArray_Base, FiltersArray_Base.setAsConstructor );
+  static Pool = new Pool.Root( "Embedding.FiltersArray_Base.Pool",
+    Embedding_FiltersArray_Base, Embedding_FiltersArray_Base.setAsConstructor );
 
   /**
    *
@@ -105,7 +102,7 @@ class FiltersArray_Base extends Weights.Root {
     channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
   ) {
     super();
-    FiltersArray_Base.setAsConstructor_self.call( this,
+    Embedding_FiltersArray_Base.setAsConstructor_self.call( this,
       input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
@@ -117,7 +114,7 @@ class FiltersArray_Base extends Weights.Root {
     channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
   ) {
     super.setAsConstructor();
-    FiltersArray_Base.setAsConstructor_self.call( this,
+    Embedding_FiltersArray_Base.setAsConstructor_self.call( this,
       input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
@@ -136,6 +133,8 @@ class FiltersArray_Base extends Weights.Root {
 
     {
       this.output_channelCount = this.input_channelCount * this.channelMultiplier;
+      this.tensorWeightCountTotal_internal = this.input_channelCount * this.output_channelCount;
+      this.vocabularyIdMax = this.vocabularyCountPerInputChannel - 1; // maximum legal vocabulary id.
 
       if ( this.bEmbedVocabularyId ) {
         this.weightsCountPerVocabularyTable = ( this.channelMultiplier - 1 ) * this.vocabularyCountPerInputChannel;
@@ -143,8 +142,6 @@ class FiltersArray_Base extends Weights.Root {
       } else {
         this.weightsCountPerVocabularyTable = this.channelMultiplier * this.vocabularyCountPerInputChannel;
       }
-
-      this.tensorWeightCountTotal_internal = this.input_channelCount * this.output_channelCount;
     }
   }
 
@@ -155,8 +152,9 @@ class FiltersArray_Base extends Weights.Root {
       this.boundsArraySet = null;
     }
 
-    this.tensorWeightCountTotal_internal = undefined;
     this.weightsCountPerVocabularyTable = undefined;
+    this.vocabularyIdMax = undefined;
+    this.tensorWeightCountTotal_internal = undefined;
     this.output_channelCount = undefined;
 
     this.bEmbedVocabularyId = undefined;
@@ -193,12 +191,11 @@ class FiltersArray_Base extends Weights.Root {
         + `should be all one (i.e. should not have activation escaping scaling).`
       );
 
-    let vocabularyIdMax = this.vocabularyCountPerInputChannel - 1; // maximum legal vocabulary id.
-    if ( !inputScaleBoundsArray.boundsArray.is_all_IN_byLowerUpper( 0, vocabularyIdMax ) )
+    if ( !inputScaleBoundsArray.boundsArray.is_all_IN_byLowerUpper( 0, this.vocabularyIdMax ) )
       throw Error( `Embedding.FiltersArray_Base.init(): `
         + `The .output.boundsArray ( ${inputScaleBoundsArray.boundsArray} ) `
         + `of previous operation `
-        + `should be all within [ 0, ${vocabularyIdMax} ].`
+        + `should be all within [ 0, ${this.vocabularyIdMax} ].`
       );
 
     let tableCount = this.input_channelCount;
