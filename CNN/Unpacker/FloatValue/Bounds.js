@@ -69,6 +69,33 @@ class Bounds extends Recyclable.Root {
     return difference;
   }
 
+
+  /**
+   * @param {number} aLower  The lower bound to be compared.
+   * @param {number} aUpper  The upper bound to be compared.
+   *
+   * @return {boolean} Return true, if ( .lower >= aLower ) and ( .upper <= aUpper ).
+   */
+   is_IN_byLowerUpper( aLower, aUpper ) {
+    let lower, upper; // Confirm ( lower <= upper ).
+    if ( aLower < aUpper ) {
+      lower = aLower;
+      upper = aUpper;
+    } else {
+      lower = aUpper;
+      upper = aLower;
+    }
+
+    if ( this.lower > lower )
+      return false;
+
+    if ( this.upper < upper )
+      return false;
+
+    return true;
+  }
+
+
   /**
    * @param {number} N
    *   Set ( this.lower, this.upper ) by N.
