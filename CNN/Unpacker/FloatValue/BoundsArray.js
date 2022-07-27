@@ -71,6 +71,33 @@ class BoundsArray extends Recyclable.Root {
     return result;
   }
 
+
+  /**
+   * @param {number} aLower  The lower bound to be compared.
+   * @param {number} aUpper  The upper bound to be compared.
+   *
+   * @return {boolean} Return true, if ( .lowers[] >= aLower ) and ( .uppers[] <= aUpper ).
+   */
+   is_all_IN_byLowerUpper( aLower, aUpper ) {
+    let lower, upper; // Confirm ( lower <= upper ).
+    if ( aLower < aUpper ) {
+      lower = aLower;
+      upper = aUpper;
+    } else {
+      lower = aUpper;
+      upper = aLower;
+    }
+
+    for ( let i = 0; i < this.lowers.length; ++i ) {
+      if ( this.lowers[ i ] > lower )
+        return false;
+      if ( this.uppers[ i ] < upper )
+        return false;
+    }
+    return true;
+  }
+
+
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {number} N          Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( N, N ).
@@ -91,8 +118,13 @@ class BoundsArray extends Recyclable.Root {
    * @return {BoundsArray} Return this (modified) object.
    */
   set_one_byLowerUpper( thisIndex, aLower, aUpper ) {
-    this.lowers[ thisIndex ] = Math.min( aLower, aUpper ); // Confirm ( lower <= upper ).
-    this.uppers[ thisIndex ] = Math.max( aLower, aUpper );
+    if ( aLower < aUpper ) { // Confirm ( lower <= upper ).
+      this.lowers[ thisIndex ] = aLower;
+      this.uppers[ thisIndex ] = aUpper;
+    } else {
+      this.lowers[ thisIndex ] = aUpper;
+      this.uppers[ thisIndex ] = aLower;
+    }
     return this;
   }
 
@@ -162,8 +194,15 @@ class BoundsArray extends Recyclable.Root {
    * @return {BoundsArray} Return this (modified) object.
    */
   set_all_byLowerUpper( aLower, aUpper ) {
-    let lower = Math.min( aLower, aUpper ); // Confirm ( lower <= upper ).
-    let upper = Math.max( aLower, aUpper );
+    let lower, upper; // Confirm ( lower <= upper ).
+    if ( aLower < aUpper ) {
+      lower = aLower;
+      upper = aUpper;
+    } else {
+      lower = aUpper;
+      upper = aLower;
+    }
+
     this.lowers.fill( lower );
     this.uppers.fill( upper );
     return this;
@@ -313,14 +352,37 @@ class BoundsArray extends Recyclable.Root {
    * @return {BoundsArray} Return this (modified) object.
    */
   clamp_one_byLowerUpper( thisIndex, aLower, aUpper ) {
-    let anotherLower = Math.min( aLower, aUpper ); // Confirm ( anotherLower <= anotherUpper )
-    let anotherUpper = Math.max( aLower, aUpper );
+//!!! (2022/07/27 Remarked) Reduce comparison.
+//     let anotherLower = Math.min( aLower, aUpper ); // Confirm ( anotherLower <= anotherUpper )
+//     let anotherUpper = Math.max( aLower, aUpper );
+//
+//     // Because two bounds may be totally non-intersected, both thisLower and thisUpper needs be clamped by [ aLower, aUpper ].
+//     let lower_clamped = Math.min( Math.max( anotherLower, this.lowers[ thisIndex ] ), anotherUpper );
+//     let upper_clamped = Math.min( Math.max( anotherLower, this.uppers[ thisIndex ] ), anotherUpper );
+//     this.lowers[ thisIndex ] = Math.min( lower_clamped, upper_clamped ); // Confirm ( lower <= upper )
+//     this.uppers[ thisIndex ] = Math.max( lower_clamped, upper_clamped );
+
+
+    let anotherLower, anotherUpper; // Confirm ( anotherLower <= anotherUpper )
+    if ( aLower < aUpper ) {
+      anotherLower = aLower;
+      anotherUpper = aUpper;
+    } else {
+      anotherLower = aUpper;
+      anotherUpper = aLower;
+    }
 
     // Because two bounds may be totally non-intersected, both thisLower and thisUpper needs be clamped by [ aLower, aUpper ].
     let lower_clamped = Math.min( Math.max( anotherLower, this.lowers[ thisIndex ] ), anotherUpper );
     let upper_clamped = Math.min( Math.max( anotherLower, this.uppers[ thisIndex ] ), anotherUpper );
-    this.lowers[ thisIndex ] = Math.min( lower_clamped, upper_clamped ); // Confirm ( lower <= upper )
-    this.uppers[ thisIndex ] = Math.max( lower_clamped, upper_clamped );
+
+    if ( lower_clamped < upper_clamped ) { // Confirm ( lower <= upper )
+      this.lowers[ thisIndex ] = lower_clamped;
+      this.uppers[ thisIndex ] = upper_clamped;
+    } else {
+      this.lowers[ thisIndex ] = upper_clamped;
+      this.uppers[ thisIndex ] = lower_clamped;
+    }
     return this;
   }
 
@@ -367,15 +429,27 @@ class BoundsArray extends Recyclable.Root {
    * @return {BoundsArray} Return this (modified) object.
    */
   clamp_all_byLowerUpper( aLower, aUpper ) {
-    let anotherLower = Math.min( aLower, aUpper ); // Confirm ( anotherLower <= anotherUpper )
-    let anotherUpper = Math.max( aLower, aUpper );
+    let anotherLower, anotherUpper; // Confirm ( anotherLower <= anotherUpper )
+    if ( aLower < aUpper ) {
+      anotherLower = aLower;
+      anotherUpper = aUpper;
+    } else {
+      anotherLower = aUpper;
+      anotherUpper = aLower;
+    }
 
     // Because two bounds may be totally non-intersected, both thisLower and thisUpper needs be clamped by [ aLower, aUpper ].
     for ( let i = 0; i < this.lowers.length; ++i ) {
       let lower_clamped = Math.min( Math.max( anotherLower, this.lowers[ i ] ), anotherUpper );
       let upper_clamped = Math.min( Math.max( anotherLower, this.uppers[ i ] ), anotherUpper );
-      this.lowers[ i ] = Math.min( lower_clamped, upper_clamped ); // Confirm ( lower <= upper )
-      this.uppers[ i ] = Math.max( lower_clamped, upper_clamped );
+
+      if ( lower_clamped < upper_clamped ) { // Confirm ( lower <= upper )
+        this.lowers[ i ] = lower_clamped;
+        this.uppers[ i ] = upper_clamped;
+      } else {
+        this.lowers[ i ] = upper_clamped;
+        this.uppers[ i ] = lower_clamped;
+      }
     }
     return this;
   }
