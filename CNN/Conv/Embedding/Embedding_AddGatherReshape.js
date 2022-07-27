@@ -45,7 +45,10 @@ class AddGatherReshape extends FiltersArray_One {
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
-    AddGatherReshape.setAsConstructor_self.call( this, bKeepInputTensor );
+    AddGatherReshape.setAsConstructor_self.call( this,
+      bKeepInputTensor,
+      this.output_height, this.output_width, this.output_channelCount
+    );
   }
 
   /** @override */
@@ -58,11 +61,17 @@ class AddGatherReshape extends FiltersArray_One {
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
-    AddGatherReshape.setAsConstructor_self.call( this, bKeepInputTensor );
+    AddGatherReshape.setAsConstructor_self.call( this,
+      bKeepInputTensor,
+      this.output_height, this.output_width, this.output_channelCount
+    );
   }
 
   /** @override */
-  static setAsConstructor_self() {
+  static setAsConstructor_self(
+    bKeepInputTensor,
+    output_height, output_width, output_channelCount
+  ) {
     this.bKeepInputTensor = bKeepInputTensor;
 
     // The 3 dimension of apply()'s outputTensor3d. When the input is splitted to
@@ -71,8 +80,7 @@ class AddGatherReshape extends FiltersArray_One {
     // to tensor3d.
     //
     // (Used when vocabulary tables are tensor3d.)
-    this.outputTensor3dShape = Recyclable.Array.Pool.get_or_create_bby(
-      undefined, undefined, this.outChannels );
+    this.outputTensor3dShape = Recyclable.Array.Pool.get_or_create_by( output_height, output_width, output_channelCount );
 
     return this;
   }
@@ -179,17 +187,13 @@ class AddGatherReshape extends FiltersArray_One {
    * Process input, destroy or keep input, return result.
    *
    * @param {tf.tensor3d} inputTensor
-   *   The source input image ( height x width x channel ) which will be processed. This inputTensor may or may not be disposed
-   * according to .bKeepInputTensor.
+   *   The source input image ( height x width x channel ) which will be processed. This inputTensor may or may
+   * not be disposed according to .bKeepInputTensor.
    *
    * @return {tf.tensor3d}
    *   Return a new tensor. All other intermediate tensors were disposed.
    */
   apply( inputTensor ) {
-
-    let outputTensor3dShape = this.outputTensor3dShape; // Use pre-calculated array for improving performance.
-    outputTensor3dShape[ 0 ] = inputTensor3d.shape[ 0 ];
-    outputTensor3dShape[ 1 ] = inputTensor3d.shape[ 1 ];
 
     // Shifting vocabulary indices of input. (Broadcasting is used.)
     const vocabularyIndicesTensor3d = inputTensor3d.add( this.channelValueOffsetTensor3d );
@@ -206,7 +210,12 @@ class AddGatherReshape extends FiltersArray_One {
     vocabularyIndicesTensor3d.dispose();
 
     // Reshape tensor4d to tensor3d.
-    const outputTensor3d = gatherTensor4d.reshape( outputTensor3dShape );
+    //
+    // Note: Use pre-calculated array (i.e. outputTensor3dShape) for improving performance.
+    //       Its ( outputTensor3dShape[ 0 ], outputTensor3dShape[ 1 ] ) should be the same
+    //       as ( inputTensor3d.shape[ 0 ], inputTensor3d.shape[ 1 ] ).
+    //
+    const outputTensor3d = gatherTensor4d.reshape( this.outputTensor3dShape );
     gatherTensor4d.dispose();
 
     return outputTensor3d;
