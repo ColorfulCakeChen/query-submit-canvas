@@ -95,9 +95,9 @@ class Embedding_Reference_Base extends Recyclable.Root {
       Embedding.AddGatherReshape, imageSourceBag, testParams );
 
     Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
-      "Embedding_Reference.Base.embedding_create_apply_internal( SplitGatherConcat )",
+      "Embedding_Reference.Base.embedding_create_apply_internal( SplitReshapeGatherConcat )",
       Embedding_Reference_Base.embedding_create_apply_internal, this,
-      Embedding.SplitGatherConcat, imageSourceBag, testParams );
+      Embedding.SplitReshapeGatherConcat, imageSourceBag, testParams );
 
     { // Release output reference images.
       if ( this.testCorrectness_imageOutReference != this.testCorrectness_imageIn ) { // Do not release image from ImageSourceBag.
@@ -112,7 +112,7 @@ class Embedding_Reference_Base extends Recyclable.Root {
    *   The referenece object to do the calculate.
    *
    * @param {Class} EmbeddingClass
-   *   Either Embedding.AddGatherReshape or Embedding.SplitGatherConcat.
+   *   Either Embedding.AddGatherReshape or Embedding.SplitReshapeGatherConcat.
    *
    */
   static embedding_create_apply_internal( EmbeddingClass, imageSourceBag, testParams ) {
@@ -232,7 +232,7 @@ class Embedding_Reference_Base extends Recyclable.Root {
 
   /**
    * @param {Class} EmbeddingClass
-   *   Either Embedding.AddGatherReshape or Embedding.SplitGatherConcat.
+   *   Either Embedding.AddGatherReshape or Embedding.SplitReshapeGatherConcat.
    *
    * @param {Embedding_TestParams.Base} testParams
    *   The test parameters. It is the value of Embedding_TestParams.Base.ParamsGenerator()'s result.

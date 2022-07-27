@@ -123,8 +123,8 @@ class HeightWidthDepth {
         true
       ) } );
 
-    // Test Case 2: (SplitGatherConcat, ( channelMultiplier == 1 ))
-    this.testCaseMap.set( "SplitGatherConcat_channelMultiplier_1", { testParams: 
+    // Test Case 2: (SplitReshapeGatherConcat, ( channelMultiplier == 1 ))
+    this.testCaseMap.set( "SplitReshapeGatherConcat_channelMultiplier_1", { testParams: 
       ( new Embedding_TestParams.Base() ).set_byParamsScattered(
         this.height, this.width, this.depth, 1,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -139,8 +139,8 @@ class HeightWidthDepth {
         true
       ) } );
 
-    // Test Case 4: (SplitGatherConcat, ( channelMultiplier == 2 ))
-    this.testCaseMap.set( "SplitGatherConcat_channelMultiplier_2", { testParams: 
+    // Test Case 4: (SplitReshapeGatherConcat, ( channelMultiplier == 2 ))
+    this.testCaseMap.set( "SplitReshapeGatherConcat_channelMultiplier_2", { testParams: 
       ( new Embedding_TestParams.Base() ).set_byParamsScattered(
         this.height, this.width, this.depth, 2,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -155,8 +155,8 @@ class HeightWidthDepth {
         true
       ) } );
 
-    // Test Case 6: (SplitGatherConcat, ( channelMultiplier == 3 ))
-    this.testCaseMap.set( "SplitGatherConcat_channelMultiplier_3", { testParams: 
+    // Test Case 6: (SplitReshapeGatherConcat, ( channelMultiplier == 3 ))
+    this.testCaseMap.set( "SplitReshapeGatherConcat_channelMultiplier_3", { testParams: 
       ( new Embedding_TestParams.Base() ).set_byParamsScattered(
         this.height, this.width, this.depth, 3,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -171,8 +171,8 @@ class HeightWidthDepth {
         true
       ) } );
 
-    // Test Case 8: (SplitGatherConcat, ( channelMultiplier == 4 ))
-    this.testCaseMap.set( "SplitGatherConcat_channelMultiplier_4", { testParams: 
+    // Test Case 8: (SplitReshapeGatherConcat, ( channelMultiplier == 4 ))
+    this.testCaseMap.set( "SplitReshapeGatherConcat_channelMultiplier_4", { testParams: 
       ( new Embedding_TestParams.Base() ).set_byParamsScattered(
         this.height, this.width, this.depth, 4,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -193,7 +193,7 @@ class HeightWidthDepth {
               if ( ( i % 2 ) == 0 )
                 EmbeddingClass = Embedding.AddGatherReshape;
               else
-                EmbeddingClass = Embedding.SplitGatherConcat;
+                EmbeddingClass = Embedding.SplitReshapeGatherConcat;
             }
 
             testCase.embedding = Embedding_Reference.Base.Embedding_create(
