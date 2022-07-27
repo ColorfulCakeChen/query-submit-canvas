@@ -96,11 +96,13 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
       outChannelSubBegin = 0;
 
     this.filtersArray = Recyclable.Array.Pool.get_or_create_by( this.tensorWeightCountTotal );
+    this.boundsArraySet.output0.set_all_byLowerUpper( +Infinity, -Infinity );
 
     let sourceIndex = weightElementOffsetBegin;
     let filterIndex = 0;
 
     let outChannel = 0;
+    let outBoundsArray = this.boundsArraySet.output0.boundsArray;
     for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
       for ( let vocabularyId = 0; vocabularyId < this.vocabularyCountPerInputChannel; ++vocabularyId ) {
 
@@ -109,6 +111,7 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
           ++filterIndex;
 
 //!!! ...unfinished... (2022/07/27) BoundsArray ?
+          outBoundsArray.clamp_one_byLowerUpper( outChannel, ???aLower, ???aUpper );
 
           ++outChannel;
         }
@@ -118,10 +121,10 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
           ++filterIndex;
           ++sourceIndex;
 
-          ++outChannel;
-
 //!!! ...unfinished... (2022/07/27) BoundsArray ?
+          outBoundsArray.clamp_one_byLowerUpper( outChannel, ???aLower, ???aUpper );
 
+          ++outChannel;
         }
       }
     }
