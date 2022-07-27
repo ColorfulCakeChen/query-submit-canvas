@@ -62,6 +62,21 @@ class ScaleArray extends Recyclable.Root {
     return result;
   }
 
+
+  /**
+   * @param {number} N  The value to be compared.
+   *
+   * @return {boolean} Return true, if all .scales[] equal to N.
+   */
+  is_all_EQ_byN( N = 1 ) {
+    for ( let i = 0; i < this.scales.length; ++i) {
+      if ( this.scales[ i ] != N )
+        return false;
+    }
+    return true;
+  }
+
+
   /**
    * @param {number} thisIndex  The array index of this.scales[].
    * @param {number} N          Set ( this.scales[ thisIndex ] ) by ( N ). Default are ( N = 1 ) (i.e. no scale).

@@ -2,6 +2,7 @@ export { FiltersArray_One };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+import * as ActivationEscaping from "../ActivationEscaping.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import * as Weights from "../../Unpacker/Weights.js";
 
@@ -124,6 +125,8 @@ class FiltersArray_One extends Weights.Root {
     this.channelMultiplier = channelMultiplier;
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.bEmbedVocabularyId = bEmbedVocabularyId;
+
+    // this.boundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by();
   }
 
   /** @override */
@@ -141,11 +144,28 @@ class FiltersArray_One extends Weights.Root {
   /**
    * Generator for initializing this object.
    *
+   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
+   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
+   * set of this pointwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
+   *
    * @return {boolean}
    *   Return true, if successfully. Return false, if failed.
    *
    */
-  init( inputWeightArray, weightElementOffsetBegin ) {
+  init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) {
+
+    if ( this.input_channelCount != inputScaleBoundsArray.length )
+      throw Error( `Embedding.FiltersArray_One.init(): `
+        + `input_channelCount ( ${this.input_channelCount} ) should be the same as `
+        + `output_channelCount of previous operation ( ${inputScaleBoundsArray.length} ).`
+      );
+
+    if ( inputScaleBoundsArray.scaleArraySet.undo.is_all_EQ_byN( 1 ) )
+      throw Error( `Embedding.FiltersArray_One.init(): `
+        + `The .output.scaleArraySet.undo ( ${inputScaleBoundsArray.scaleArraySet.undo.scales} ) `
+        + `of previous operation `
+        + `should be all one (i.e. should not have activation escaping scaling).`
+      );
 
    
  
