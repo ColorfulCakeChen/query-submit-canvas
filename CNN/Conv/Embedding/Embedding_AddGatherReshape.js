@@ -77,7 +77,7 @@ class AddGatherReshape extends FiltersArray_One {
     }
 
     if ( this.vocabularyTableShape ) {
-      this.vocabularyTableShape.dispose();
+      this.vocabularyTableShape.disposeResources_and_recycleToPool();
       this.vocabularyTableShape = null;
     }
 
@@ -87,7 +87,7 @@ class AddGatherReshape extends FiltersArray_One {
     }
 
     if ( this.channelValueOffsetShape ) {
-      this.channelValueOffsetShape.dispose();
+      this.channelValueOffsetShape.disposeResources_and_recycleToPool();
       this.channelValueOffsetShape = null;
     }
 
