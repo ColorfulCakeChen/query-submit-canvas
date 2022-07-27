@@ -81,18 +81,19 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
    */
   init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) {
 
-    // Calcualte weights extracting beginning and ending position.
+    // 1. Calcualte weights extracting beginning and ending position.
     if ( !super.init( inputWeightArray, weightElementOffsetBegin, this.tensorWeightCountExtracted ) ) {
       return false;  // e.g. input array does not have enough data.
     }
 
-//!!! ...unfinished... (2022/07/27) filtersArray
+//!!! ...unfinished... (2022/07/27) 
+    // 2. filtersArray
     this.filtersArray = Recyclable.Array.Pool.get_or_create_by( this.tensorWeightCountTotal );
 
     let sourceIndex = weightElementOffsetBegin;
     let filterIndex = 0;
 
-    if ( this.bEmbedVocabularyId ) {
+    if ( this.bEmbedVocabularyId ) { // 2.1 with embeded vocabulary id.
 
       for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
         for ( let vocabularyId = 0; vocabularyId < this.vocabularyCountPerInputChannel; ++vocabularyId ) {
@@ -108,7 +109,7 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
         }
       }
 
-    } else {
+    } else { // 2.2 without embeded vocabulary id.
 
       for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
         for ( let vocabularyId = 0; vocabularyId < this.vocabularyCountPerInputChannel; ++vocabularyId ) {
