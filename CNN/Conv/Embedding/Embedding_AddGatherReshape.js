@@ -195,25 +195,32 @@ class AddGatherReshape extends FiltersArray_One {
    */
   apply( inputTensor ) {
 
-!!! ...unfinished... (2022/07/27)
-// If only ( channelMultiplier == 1 ) 
-// no needs to add, and no needs to reshape. gather is just enough.
+    // 1. Shift vocabulary indices (so that a large merged table could be used to improve performance).
+    let vocabularyIndicesTensor3d;
+    {
+      if ( this.channelMultiplier == 1 ) { // 1.1 No needs to shift vocabulary indices.
+        vocabularyIndicesTensor3d = inputTensor3d.clone();
 
-    // Shifting vocabulary indices of input. (Broadcasting is used.)
-    const vocabularyIndicesTensor3d = inputTensor3d.add( this.channelValueOffsetTensor3d );
+      } else { // ( channelMultiplier > 1 )
 
+        // 1.2 Shifting vocabulary indices by input channel. (Broadcasting is used.)
+        vocabularyIndicesTensor3d = inputTensor3d.add( this.channelValueOffsetTensor3d );
+      }
+    }
+
+    // 2. Release input tensor.
     if ( !this.bKeepInputTensor ) {
       inputTensor3d.dispose();
       inputTensor3d = null;
     }
 
-    // Gather along the first axis (i.e. axis id 0).
+    // 3. Gather along the first axis (i.e. axis id 0).
     //
     // tensor2d.gather( tensor3d ) results to tensor4d.
     const gatherTensor4d = this.vocabularyTableTensor2d.gather( vocabularyIndicesTensor3d, 0 );
     vocabularyIndicesTensor3d.dispose();
 
-    // Reshape tensor4d to tensor3d.
+    // 4. Reshape tensor4d to tensor3d.
     //
     // Note: Use pre-calculated array (i.e. outputTensor3dShape) for improving performance.
     //       Its ( outputTensor3dShape[ 0 ], outputTensor3dShape[ 1 ] ) should be the same
