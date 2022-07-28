@@ -25,11 +25,8 @@ import { Base } from "./Embedding_Base.js";
 //  * return_input_directly(), apply_gather_reshape_and_keep(), apply_gather_reshape_and_destroy(),
 //  * apply_add_gather_reshape_and_keep(), apply_add_gather_reshape_and_destroy().
 
- *
- * @see Embedding.FiltersArray_Multi
- *
  */
-class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArray_Multi ) {
+class Embedding_SplitReshapeGatherConcat extends Base {
 
   /**
    * Used as default Embedding.SplitReshapeGatherConcat provider for conforming to Recyclable interface.
