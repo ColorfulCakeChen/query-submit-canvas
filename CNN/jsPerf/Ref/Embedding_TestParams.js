@@ -250,6 +250,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
       this.fill_object_property_numberArray( this.in.paramsNumberArrayObject,
         inChannel, tableElementCountPerInputChannel );
 
+      let vocabularyElementArray = this.in.paramsNumberArrayObject[ inChannel ];
+
       let vocabularyElementIndex = 0;
       for ( let vocabularyId = 0; vocabularyId < embeddingParams.vocabularyCountPerInputChannel; ++vocabularyId ) {
         let outChannel = 0;
@@ -261,7 +263,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
     
         // Every output channel's value bounds.
         for ( let outChannelSub = outChannelSubBegin; outChannelSub < embeddingParams.channelMultiplier; ++outChannelSub) {
-          let vocabularyElement = this.in.paramsNumberArrayObject[ vocabularyElementIndex ];
+          let vocabularyElement = vocabularyElementArray[ vocabularyElementIndex ];
           ++vocabularyElementIndex;
 
           this.out_boundsArray.enlarge_one_byN( outChannel, vocabularyElement );
