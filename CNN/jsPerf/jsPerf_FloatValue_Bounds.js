@@ -71,6 +71,9 @@ class Case {
           + `[ ${this.aBounds.lower}, ${this.aBounds.upper} ].` );
     }
 
+!!! ...unfinished... (2022/07/28)
+// test is_contain_Xxx() and is_in_Xxx()
+
   }
 
   /**  */
@@ -176,6 +179,11 @@ class Cases {
       clonedBoundsArray.disposeResources_and_recycleToPool();
       clonedBoundsArray = null;
     }
+
+
+!!! ...unfinished... (2022/07/28)
+// test is_Yyy_contain_Xxx() and is_Yyy_in_Xxx()
+
 
     // Set
     {
