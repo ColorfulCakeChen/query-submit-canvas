@@ -122,7 +122,7 @@ class Embedding_SplitReshapeGatherConcat extends Base {
         this.channelMultiplier, this.vocabularyCountPerInputChannel, this.bEmbedVocabularyId
       );
 
-      if ( !theFiltersArray_Multi.init( inputWeightArray, this.weightElementOffsetEnd ) ) {
+      if ( !theFiltersArray_Multi.init( inputWeightArray, this.weightElementOffsetEnd, inputScaleBoundsArray0 ) ) {
         this.bInitOk = false;
         return false;  // e.g. input array does not have enough data.
       }

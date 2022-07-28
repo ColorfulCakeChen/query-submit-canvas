@@ -117,7 +117,7 @@ class Embedding_AddGatherReshape extends Base {
         this.channelMultiplier, this.vocabularyCountPerInputChannel, this.bEmbedVocabularyId
       );
 
-      if ( !theFiltersArray_One.init( inputWeightArray, this.weightElementOffsetEnd ) ) {
+      if ( !theFiltersArray_One.init( inputWeightArray, this.weightElementOffsetEnd, inputScaleBoundsArray0 ) ) {
         this.bInitOk = false;
         return false;  // e.g. input array does not have enough data.
       }
