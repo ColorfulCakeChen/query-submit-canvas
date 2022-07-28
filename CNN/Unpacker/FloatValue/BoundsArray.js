@@ -89,9 +89,9 @@ class BoundsArray extends Recyclable.Root {
     }
 
     for ( let i = 0; i < this.lowers.length; ++i ) {
-      if ( this.lowers[ i ] > lower )
+      if ( this.lowers[ i ] < lower )
         return false;
-      if ( this.uppers[ i ] < upper )
+      if ( this.uppers[ i ] > upper )
         return false;
     }
     return true;
