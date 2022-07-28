@@ -133,14 +133,14 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
 
     // The parameters which are determined (inferenced) from the above parameters.
     {
-      this.output_height = params.inferenced.output_height;
-      this.output_width = params.inferenced.output_width;
-      this.output_channelCount = params.inferenced.output_channelCount;
-      this.vocabularyIdMax = params.inferenced.vocabularyIdMax;
-      this.weightCountPerVocabularyTable_extracted = params.inferenced.weightCountPerVocabularyTable_extracted;
-      this.weightCountPerVocabularyTable = params.inferenced.weightCountPerVocabularyTable;
-      this.tensorWeightCountExtracted = params.inferenced.tensorWeightCountExtracted;
-      this.tensorWeightCountTotal = params.inferenced.tensorWeightCountTotal;
+      this.output_height = params.inferencedParams.output_height;
+      this.output_width = params.inferencedParams.output_width;
+      this.output_channelCount = params.inferencedParams.output_channelCount;
+      this.vocabularyIdMax = params.inferencedParams.vocabularyIdMax;
+      this.weightCountPerVocabularyTable_extracted = params.inferencedParams.weightCountPerVocabularyTable_extracted;
+      this.weightCountPerVocabularyTable = params.inferencedParams.weightCountPerVocabularyTable;
+      this.tensorWeightCountExtracted = params.inferencedParams.tensorWeightCountExtracted;
+      this.tensorWeightCountTotal = params.inferencedParams.tensorWeightCountTotal;
     }
 
     ++progressToAdvance.value;
