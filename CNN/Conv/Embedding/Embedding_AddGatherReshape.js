@@ -4,6 +4,7 @@ import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
 import { FiltersArray_One } from "./Embedding_FiltersArray_One.js";
+import { Base } from "./Embedding_Base.js";
 
 /**
  *
@@ -22,10 +23,8 @@ import { FiltersArray_One } from "./Embedding_FiltersArray_One.js";
  * return_input_directly(), apply_gather_reshape_and_keep(), apply_gather_reshape_and_destroy(),
  * apply_add_gather_reshape_and_keep(), apply_add_gather_reshape_and_destroy().
  *
- * @see Embedding.FiltersArray_One
- *
  */
-class Embedding_AddGatherReshape extends ReturnOrClone.Root {
+class Embedding_AddGatherReshape extends Base {
 
   /**
    * Used as default Embedding.AddGatherReshape provider for conforming to Recyclable interface.
@@ -55,11 +54,6 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Root {
   /** @override */
   disposeResources() {
 
-    if ( this.outputTensor3dShape ) {
-      this.outputTensor3dShape.disposeResources_and_recycleToPool();
-      this.outputTensor3dShape = null;
-    }
-
     if ( this.vocabularyTableTensor2d ) {
       this.vocabularyTableTensor2d.dispose();
       this.vocabularyTableTensor2d = null;
@@ -80,7 +74,10 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Root {
       this.channelValueOffsetShape = null;
     }
 
-    this.bKeepInputTensor = undefined;
+    if ( this.outputTensor3dShape ) {
+      this.outputTensor3dShape.disposeResources_and_recycleToPool();
+      this.outputTensor3dShape = null;
+    }
 
     super.disposeResources();
   }
@@ -103,90 +100,114 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Root {
 
     // 0. Prepare
 
-    this.weightElementOffsetEnd = this.weightElementOffsetBegin = weightElementOffsetBegin;
-    this.bInitOk = false;
+    // Estimate the maximum value of progress.
+    let progressMax =
+        1  // for extracting filters array from inputWeightArray.
+      + 1  // for creating vocabulary tables.
+      ;
 
+    let progressRoot = progressParent.getRoot();
+    let progressToAdvance = progressParent.addChild( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
     // 1. Extract weights.
-    if ( !params.init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) ) {
+    let bParamInitOk = yield* super.initer( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray );
+    if ( !bParamInitOk )
       return false;  // e.g. input array does not have enough data.
-    }
 
-!!!
-    // 1. Extract weights.
-    if ( !super.init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) ) {
-      return false;  // e.g. input array does not have enough data.
-    }
+    let theFiltersArray_One;
+    try {
 
+      // 2. Extract filters array
+      theFiltersArray_One = FiltersArray_One.Pool.get_or_create_by(
+        this.input_height, this.input_width, this.input_channelCount,
+        this.channelMultiplier, this.vocabularyCountPerInputChannel, this.bEmbedVocabularyId
+      );
 
-//!!!
+      if ( !theFiltersArray_One.init( inputWeightArray, this.weightElementOffsetEnd ) ) {
+        this.bInitOk = false;
+        return false;  // e.g. input array does not have enough data.
+      }
+      this.weightElementOffsetEnd = theFiltersArray_One.weightElementOffsetEnd;
+  
+      this.boundsArraySet = theFiltersArray_One.boundsArraySet;
+      theFiltersArray_One.boundsArraySet = null; // (Because ownership transferred.)
 
-    this.bKeepInputTensor = bKeepInputTensor;
+      ++progressToAdvance.value;
+      yield progressRoot;  // filters array extracted. Report progress.
 
-    // The 3 dimension of apply()'s outputTensor3d. When the input is splitted to
-    // tensor3d and the vocabulary tables are tensor3d, the result of tf.gather()
-    // will be tensor5d. This shape is used for reshape the output from tensor5d
-    // to tensor3d.
-    //
-    // (Used when vocabulary tables are tensor3d.)
-    this.outputTensor3dShape = Recyclable.Array.Pool.get_or_create_by( output_height, output_width, output_channelCount );
-
-
-//!!!
-    // 2. channelValueOffsetTensor3d
-    if ( this.input_channelCount == 1 ) {
-      // No need to shift input channel value because there is only one vocabulary table.
-
-    } else { // ( input_channelCount > 1 )
-
-      // Build a tensor3d for shifting every value of every input channels of inputTensor3d. So that they can be used for
-      // indexing the one merged longer vocabulary table tensor2d.
-      //
-      // Channel                  0: ( channelValue + (                  0 * vocabularyCountPerInputChannel ) )
-      // Channel                  1: ( channelValue + (                  1 * vocabularyCountPerInputChannel ) )
-      // Channel                  2: ( channelValue + (                  2 * vocabularyCountPerInputChannel ) )
-      //   :
-      // Channel ( inChannels - 1 ): ( channelValue + ( ( inChannels - 1 ) * vocabularyCountPerInputChannel ) )
+      // 3. For reducing memory re-allocation.
       {
-        let channelValueOffsetArray = Recyclable.Array.Pool.get_or_create( this.input_channelCount );
-        for ( let i = 0; i < channelValueOffsetArray.length; ++i )
-          channelValueOffsetArray[ i ] = i * this.vocabularyCountPerInputChannel;
+        // The 3 dimension of apply()'s outputTensor3d. When the input is splitted to
+        // tensor3d and the vocabulary tables are tensor3d, the result of tf.gather()
+        // will be tensor5d. This shape is used for reshape the output from tensor5d
+        // to tensor3d.
+        //
+        // (Used when vocabulary tables are tensor3d.)
+        this.outputTensor3dShape = Recyclable.Array.Pool.get_or_create_by( output_height, output_width, output_channelCount );
+      }
 
-        this.channelValueOffsetShape = Recyclable.Array.Pool.get_or_create( 1, 1, this.input_channelCount );
-        this.channelValueOffsetTensor3d
-          = tf.tensor3d( channelValueOffsetArray, this.channelValueOffsetShape , "int32" ); // For one pixel's all input channels.
+      // 4. channelValueOffsetTensor3d
+      if ( this.input_channelCount == 1 ) {
+        // No need to shift input channel value because there is only one vocabulary table.
 
-        channelValueOffsetArray.disposeResources_and_recycleToPool();
-        channelValueOffsetArray = null;
+      } else { // ( input_channelCount > 1 )
 
-        // Note: Because .channelValueOffsetShape will be kept by .channelValueOffsetTensor3d internally,
+        // Build a tensor3d for shifting every value of every input channels of inputTensor3d. So that they can be used for
+        // indexing the one merged longer vocabulary table tensor2d.
+        //
+        // Channel                  0: ( channelValue + (                  0 * vocabularyCountPerInputChannel ) )
+        // Channel                  1: ( channelValue + (                  1 * vocabularyCountPerInputChannel ) )
+        // Channel                  2: ( channelValue + (                  2 * vocabularyCountPerInputChannel ) )
+        //   :
+        // Channel ( inChannels - 1 ): ( channelValue + ( ( inChannels - 1 ) * vocabularyCountPerInputChannel ) )
+        {
+          let channelValueOffsetArray = Recyclable.Array.Pool.get_or_create( this.input_channelCount );
+          for ( let i = 0; i < channelValueOffsetArray.length; ++i )
+            channelValueOffsetArray[ i ] = i * this.vocabularyCountPerInputChannel;
+
+          this.channelValueOffsetShape = Recyclable.Array.Pool.get_or_create( 1, 1, this.input_channelCount );
+          this.channelValueOffsetTensor3d
+            = tf.tensor3d( channelValueOffsetArray, this.channelValueOffsetShape , "int32" ); // For one pixel's all input channels.
+
+          channelValueOffsetArray.disposeResources_and_recycleToPool();
+          channelValueOffsetArray = null;
+
+          // Note: Because .channelValueOffsetShape will be kept by .channelValueOffsetTensor3d internally,
+          //       it can not be released here.
+        }
+
+        // Because channelValueOffsetTensor3d is not included in .filtersArray, append it.
+        this.tensorWeightCountTotal += this.channelValueOffsetTensor3d.size;
+      }
+
+      // 5. vocabularyTableTensor2d
+      {
+        let vocabularyCountTotal = this.vocabularyCountPerInputChannel * this.input_channelCount;
+
+        this.vocabularyTableShape
+          = Recyclable.Array.Pool.get_or_create( vocabularyCountTotal, this.channelMultiplier );
+
+        this.vocabularyTableTensor2d = tf.tensor2d( theFiltersArray_One.filtersArray, this.vocabularyTableShape );
+
+        // Note: Because .vocabularyTableShape will be kept by .vocabularyTableTensor2d internally,
         //       it can not be released here.
       }
 
-      // Because channelValueOffsetTensor3d is not included in .filtersArray, append it.
-      this.tensorWeightCountTotal += this.channelValueOffsetTensor3d.size;
-    }
+      // 6.
+      Embedding_AddGatherReshape.setup_apply_embedding.call( this );
 
-    // 3. vocabularyTableTensor2d
-    {
-      let vocabularyCountTotal = this.vocabularyCountPerInputChannel * this.input_channelCount;
+      ++progressToAdvance.value;
+      yield progressRoot;  // Embedding initialization done. Report progress.
 
-      this.vocabularyTableShape
-        = Recyclable.Array.Pool.get_or_create( vocabularyCountTotal, this.channelMultiplier );
+      this.bInitOk = true;
+      return true;
 
-      this.vocabularyTableTensor2d = tf.tensor2d( this.filtersArray, this.vocabularyTableShape );
-
-      { // Release filtersArray for reducing memory footprint.
-        this.filtersArray.disposeResources_and_recycleToPool();
-        this.filtersArray = null;
+    } finally {
+      if ( theFiltersArray_One ) { // Release filtersArray for reducing memory footprint.
+        theFiltersArray_One.disposeResources_and_recycleToPool();
+        theFiltersArray_One = null;
       }
-
-      // Note: Because .vocabularyTableShape will be kept by .vocabularyTableTensor2d internally,
-      //       it can not be released here.
     }
-
-    Embedding_AddGatherReshape.setup_apply_embedding.call( this );
-    return true;
   }
 
   /** Determine this.apply data members.

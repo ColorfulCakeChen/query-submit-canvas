@@ -30,7 +30,7 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
   /**
    *
    */
-   constructor(
+  constructor(
     input_height, input_width, input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
   ) {
