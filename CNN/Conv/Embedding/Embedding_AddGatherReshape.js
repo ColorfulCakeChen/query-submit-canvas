@@ -251,7 +251,6 @@ class Embedding_AddGatherReshape extends Base {
 
     // 1. Gather along the first axis (i.e. axis id 0). tensor2d.gather( tensor3d ) results to tensor4d.
     let gatherTensor4d = this.vocabularyTableTensor2d.gather( inputTensor3d, 0 );
-    vocabularyIndicesTensor3d.dispose();
 
     // 1.2 Keep input tensor. (i.e. Not release input tensor.)
 
@@ -269,7 +268,6 @@ class Embedding_AddGatherReshape extends Base {
 
     // 1. Gather along the first axis (i.e. axis id 0). tensor2d.gather( tensor3d ) results to tensor4d.
     let gatherTensor4d = this.vocabularyTableTensor2d.gather( inputTensor3d, 0 );
-    vocabularyIndicesTensor3d.dispose();
 
     // 1.2 Release input tensor.
     inputTensor3d.dispose();
