@@ -245,7 +245,7 @@ class Embedding_AddGatherReshape extends Base {
   }
 
   /** */
-  static apply_gather_reshape_and_keep( inputTensor ) {
+  static apply_gather_reshape_and_keep( inputTensor3d ) {
 
     // 0. No needs Shift vocabulary indices by input channel.
 
@@ -263,7 +263,7 @@ class Embedding_AddGatherReshape extends Base {
   }
 
   /** */
-  static apply_gather_reshape_and_destroy( inputTensor ) {
+  static apply_gather_reshape_and_destroy( inputTensor3d ) {
 
     // 0. No needs Shift vocabulary indices by input channel.
 
@@ -283,7 +283,7 @@ class Embedding_AddGatherReshape extends Base {
   }
 
   /** */
-  static apply_add_gather_reshape_and_keep( inputTensor ) {
+  static apply_add_gather_reshape_and_keep( inputTensor3d ) {
 
     // 0.
 
@@ -304,7 +304,7 @@ class Embedding_AddGatherReshape extends Base {
   }
     
   /** */
-  static apply_add_gather_reshape_and_destroy( inputTensor ) {
+  static apply_add_gather_reshape_and_destroy( inputTensor3d ) {
 
     // 0.
 
