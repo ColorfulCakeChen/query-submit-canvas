@@ -116,7 +116,7 @@ class Embedding_InferencedParams extends Recyclable.Root {
 
     this.vocabularyIdMax = vocabularyCountPerInputChannel - 1; // maximum legal vocabulary id.
 
-    if ( this.bEmbedVocabularyId )
+    if ( bEmbedVocabularyId )
       this.weightCountPerVocabularyTable_extracted = ( channelMultiplier - 1 ) * vocabularyCountPerInputChannel;
     else
       this.weightCountPerVocabularyTable_extracted = channelMultiplier * vocabularyCountPerInputChannel;
