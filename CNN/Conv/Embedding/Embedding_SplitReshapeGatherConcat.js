@@ -2,8 +2,9 @@ export { Embedding_SplitReshapeGatherConcat as SplitReshapeGatherConcat };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-import * as ReturnOrClone from "../ReturnOrClone.js";
+import * as ValueMax from "../../util/ValueMax.js";
 import { FiltersArray_Multi } from "./Embedding_FiltersArray_Multi.js";
+import { Base } from "./Embedding_Base.js";
 
 /**
  * @member {boolean} bKeepInputTensor
@@ -39,78 +40,20 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
   /**
    *
    */
-   constructor(
-    input_height, input_width, input_channelCount,
-    channelMultiplier, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
-    bKeepInputTensor
-  ) {
-    super(
-      input_height, input_width, input_channelCount,
-      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
-    );
-    Embedding_SplitReshapeGatherConcat.setAsConstructor_self.call( this,
-      input_height, input_width, input_channelCount,
-      bKeepInputTensor,
-      // this.output_height, this.output_width, this.output_channelCount
-    );
+   constructor() {
+    super();
+    Embedding_SplitReshapeGatherConcat.setAsConstructor_self.call( this );
   }
 
   /** @override */
-  static setAsConstructor(
-    input_height, input_width, input_channelCount,
-    channelMultiplier, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
-    bKeepInputTensor
-  ) {
-    super.setAsConstructor(
-      input_height, input_width, input_channelCount,
-      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
-    );
-    Embedding_SplitReshapeGatherConcat.setAsConstructor_self.call( this,
-      input_height, input_width, input_channelCount,
-      bKeepInputTensor,
-      // this.output_height, this.output_width, this.output_channelCount
-    );
+  static setAsConstructor() {
+    super.setAsConstructor();
+    Embedding_SplitReshapeGatherConcat.setAsConstructor_self.call( this );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self(
-    input_height, input_width, input_channelCount,
-    bKeepInputTensor,
-    // output_height, output_width, output_channelCount
-  ) {
-    this.bKeepInputTensor = bKeepInputTensor;
-
-    // The followings are intermediate temporary arrays. Pre-allocate these array shells (instead of re-allocating every
-    // time apply_and_destroy_or_keep()) for improving performance.
-    {
-      // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
-      //
-      // For example, suppose input is a color image (i.e. height-width-color tensor3d).
-      // The last axis is a 4 color (r-g-b-a) channel. Splitting along the last axis
-      // (the color channel) results in an array [ r, g, b, a ] which has 4 tensor3d
-      // (in fact, they should be viewed as tensor1d).
-      //
-      // This is pre-calculated for improving performance of apply().
-      this.splitCount = input_channelCount;
-
-      // For collecting the rank reduced tensor2d (from the splitted inputTensor3d). They
-      // will be used to look up vocabulary table.
-      this.vocabularyIndicesOneChannelTensor2dArray
-        = Recyclable.Array.Pool.get_or_create_by( this.splitCount );
-
-      // The first 2 dimension of apply()'s inputTensor3d. When the input is splitted and
-      // reduce to tensor2d, their shape should be this. It is used for reshape from
-      // tensor3d to tensor2d.
-      //
-      // (Used when vocabulary tables are tensor2d.)
-      this.inputTensor2dShape
-        = Recyclable.Array.Pool.get_or_create_by( input_height, input_width );
-
-      // For collecting the results of every looking (vocabulary table) up. They will be
-      // concatenated into one tensor3d as apply()'s result.
-      this.embeddedTensor3dArray = Recyclable.Array.Pool.get_or_create_by( this.splitCount );
-    }
+  static setAsConstructor_self() {
   }
 
   /** @override */
@@ -143,52 +86,119 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
     }
 
     this.splitCount = undefined;
-    this.bKeepInputTensor = undefined;
 
     super.disposeResources();
   }
 
   /**
-   * Initialize this object.
+   * Generator for initializing this object.
    *
-   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
-   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Stage value bounds
-   * set. It will be kept (not cloned) directly. So caller should not modify them.
-   *
-   * @return {boolean}
-   *   Return true, if successfully. Return false, if failed.
+   * @override
    */
-   init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) {
+  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
+
+    // 0. Prepare
+
+    // Estimate the maximum value of progress.
+    let progressMax =
+        1  // for extracting filters array from inputWeightArray.
+      + 1  // for creating vocabulary tables.
+      ;
+
+    let progressRoot = progressParent.getRoot();
+    let progressToAdvance = progressParent.addChild( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
     // 1. Extract weights.
-    if ( !super.init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) ) {
+    let bParamInitOk = yield* super.initer( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray );
+    if ( !bParamInitOk )
       return false;  // e.g. input array does not have enough data.
-    }
 
-    // 2. vocabularyTablesTensorArray
-    {
-      this.vocabularyTableShape
-        = Recyclable.Array.Pool.get_or_create( this.vocabularyCountPerInputChannel, this.channelMultiplier );
+    let theFiltersArray_Multi;
+    try {
 
-      this.vocabularyTablesTensorArray = Recyclable.Array.Pool.get_or_create_by( this.filtersArrayArray.length ); // could be tensor3d or tensor2d.
-      for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
-        let filtersArray = this.filtersArrayArray[ inChannel ];
-        this.vocabularyTablesTensorArray = tf.tensor( filtersArray, this.vocabularyTableShape );
+      // 2. Extract filters array
+      theFiltersArray_Multi = FiltersArray_Multi.Pool.get_or_create_by(
+        this.input_height, this.input_width, this.input_channelCount,
+        this.channelMultiplier, this.vocabularyCountPerInputChannel, this.bEmbedVocabularyId
+      );
+
+      if ( !theFiltersArray_Multi.init( inputWeightArray, this.weightElementOffsetEnd ) ) {
+        this.bInitOk = false;
+        return false;  // e.g. input array does not have enough data.
+      }
+      this.weightElementOffsetEnd = theFiltersArray_Multi.weightElementOffsetEnd;
+  
+      this.boundsArraySet = theFiltersArray_Multi.boundsArraySet;
+      theFiltersArray_Multi.boundsArraySet = null; // (Because ownership transferred.)
+
+      ++progressToAdvance.value;
+      yield progressRoot;  // filters array extracted. Report progress.
+
+      // 3. For reducing memory re-allocation.
+      //
+      // The followings are intermediate temporary arrays. Pre-allocate these array shells (instead of re-allocating every
+      // time apply_and_destroy_or_keep()) for improving performance.
+      {
+        // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
+        //
+        // For example, suppose input is a color image (i.e. height-width-color tensor3d).
+        // The last axis is a 4 color (r-g-b-a) channel. Splitting along the last axis
+        // (the color channel) results in an array [ r, g, b, a ] which has 4 tensor3d
+        // (in fact, they should be viewed as tensor1d).
+        //
+        // This is pre-calculated for improving performance of apply().
+        this.splitCount = input_channelCount;
+
+        // For collecting the rank reduced tensor2d (from the splitted inputTensor3d). They
+        // will be used to look up vocabulary table.
+        this.vocabularyIndicesOneChannelTensor2dArray
+          = Recyclable.Array.Pool.get_or_create_by( this.splitCount );
+
+        // The first 2 dimension of apply()'s inputTensor3d. When the input is splitted and
+        // reduce to tensor2d, their shape should be this. It is used for reshape from
+        // tensor3d to tensor2d.
+        //
+        // (Used when vocabulary tables are tensor2d.)
+        this.inputTensor2dShape
+          = Recyclable.Array.Pool.get_or_create_by( input_height, input_width );
+
+        // For collecting the results of every looking (vocabulary table) up. They will be
+        // concatenated into one tensor3d as apply()'s result.
+        this.embeddedTensor3dArray = Recyclable.Array.Pool.get_or_create_by( this.splitCount );
       }
 
-      { // Release filtersArrayArray for reducing memory footprint.
-        this.filtersArrayArray.disposeResources_and_recycleToPool();
-        this.filtersArrayArray = null;
-      }
+      // 4. vocabularyTablesTensorArray
+      {
+        this.vocabularyTableShape
+          = Recyclable.Array.Pool.get_or_create( this.vocabularyCountPerInputChannel, this.channelMultiplier );
 
-      // Note: Because .vocabularyTableShape will be kept by .vocabularyTableTensor2d internally,
-      //       it can not be released here.
-    }
+        this.vocabularyTablesTensorArray = Recyclable.Array.Pool.get_or_create_by(
+          theFiltersArray_Multi.filtersArrayArray.length ); // could be tensor3d or tensor2d.
+
+        for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
+          let filtersArray = theFiltersArray_Multi.filtersArrayArray[ inChannel ];
+          this.vocabularyTablesTensorArray = tf.tensor( filtersArray, this.vocabularyTableShape );
+        }
+
+        // Note: Because .vocabularyTableShape will be kept by .vocabularyTableTensor2d internally,
+        //       it can not be released here.
+      }
 
 // !!! (2022/07/27 Remarked) Use .apply() directly.
 //     Embedding_SplitReshapeGatherConcat.setup_apply_embedding.call( this );
 
-    return true;
+      ++progressToAdvance.value;
+      yield progressRoot;  // Embedding initialization done. Report progress.
+
+      this.bInitOk = true;
+      return true;
+
+    } finally {
+      if ( theFiltersArray_Multi ) { // Release filtersArray for reducing memory footprint.
+        theFiltersArray_Multi.disposeResources_and_recycleToPool();
+        theFiltersArray_Multi = null;
+      }
+    }
   }
 
 // !!! (2022/07/27 Remarked) Use .apply() directly.

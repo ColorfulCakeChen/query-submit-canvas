@@ -2,7 +2,7 @@ export { Embedding_AddGatherReshape as AddGatherReshape };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-import * as ReturnOrClone from "../ReturnOrClone.js";
+import * as ValueMax from "../../util/ValueMax.js";
 import { FiltersArray_One } from "./Embedding_FiltersArray_One.js";
 import { Base } from "./Embedding_Base.js";
 
@@ -83,20 +83,11 @@ class Embedding_AddGatherReshape extends Base {
   }
 
   /**
-   * Initialize this object.
+   * Generator for initializing this object.
    *
-   * @param {Embedding.Params} params
-   *   A Params object. The params.init() will be called to extract parameters. This params will
-   * be owned and destroyed by this .init(). So caller should not use it again.
-   *
-   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
-   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Stage value bounds
-   * set. It will be kept (not cloned) directly. So caller should not modify them.
-   *
-   * @return {boolean}
-   *   Return true, if successfully. Return false, if failed.
+   * @override
    */
-   init( inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray ) {
+  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
 
     // 0. Prepare
 
