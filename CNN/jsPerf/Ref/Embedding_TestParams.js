@@ -242,7 +242,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
     // Generate look-up table of every input channel.
     this.in.paramsNumberArrayObject.length = embeddingParams.input_channelCount;
 
-    this.out_boundsArray.length = embeddingParams.output_channelCount;
+    this.out_boundsArray.length = embeddingParams.inferencedParams.output_channelCount;
     this.out_boundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
 
     let outChannelIndex = 0;
