@@ -234,6 +234,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
     // Generate look-up table of every input channel.
     this.in.paramsNumberArrayObject.length = embeddingParams.input_channelCount;
+
+!!! ...unfinished... (2022/07/28) should consider ( bEmbedVocabularyId == true )
     this.out_boundsArray.length = embeddingParams.inferencedParams.output_channelCount;
 
     let outChannelIndex = 0;
