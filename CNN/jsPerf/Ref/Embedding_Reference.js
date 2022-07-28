@@ -318,9 +318,13 @@ class Embedding_Reference_Base extends Recyclable.Root {
       let tensorWeightCountExtracted = 0;
 
       if ( testParams.out.bEmbedVocabularyId ) {
-        tensorWeightCountExtracted = testParams.out.input_channelCount * ( testParams.out.channelMultiplier - 1 );
+        tensorWeightCountExtracted
+          = testParams.out.input_channelCount * ( testParams.out.channelMultiplier - 1 )
+              * testParams.out.vocabularyCountPerInputChannel;
       } else {
-        tensorWeightCountExtracted = testParams.out.input_channelCount * testParams.out.channelMultiplier;
+        tensorWeightCountExtracted
+          = testParams.out.input_channelCount * testParams.out.channelMultiplier
+              * testParams.out.vocabularyCountPerInputChannel;
       }
 
       //!!! (2022/07/27 Remarked) Because embedding may use some extra tensors,
