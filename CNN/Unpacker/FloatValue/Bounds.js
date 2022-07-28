@@ -91,6 +91,19 @@ class Bounds extends Recyclable.Root {
 
 
   /**
+   * Set ( this.lower, this.upper ) to ( +Infinity, -Infinity ). This can not be
+   * achieved by set_byLowerUpper() because ( lower > upper ). Usually, this method
+   * is used mainly before calling .enlarge_byN() to find out bounds.
+   *
+   * @return {Bounds} Return this (modified) object which is [ +Infinity, -Infinity ].
+   */
+   set_by_PositiveInfinity_NegativeInfinity() {
+    this.lower = +Infinity;
+    this.upper = -Infinity;
+    return this;
+  }
+
+  /**
    * @param {number} N
    *   Set ( this.lower, this.upper ) by N.
    *

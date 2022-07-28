@@ -93,7 +93,7 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
     else
       outChannelSubBegin = 0;
 
-    this.boundsArraySet.output0.set_all_byLowerUpper( +Infinity, -Infinity );
+    this.boundsArraySet.output0.set_all_by_PositiveInfinity_NegativeInfinity();
     let outBoundsArray = this.boundsArraySet.output0.boundsArray;
 
     this.filtersArray = Recyclable.Array.Pool.get_or_create_by( this.tensorWeightCountTotal );

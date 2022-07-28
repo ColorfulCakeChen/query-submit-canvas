@@ -177,6 +177,19 @@ class BoundsArray extends Recyclable.Root {
 
 
   /**
+   * Set all ( this.lowers[], this.uppers[] ) to ( +Infinity, -Infinity ). This can
+   * not be achieved by set_byLowerUpper() because ( lower > upper ). Usually, this
+   * method is used mainly before calling .enlarge_one_byN() to find out bounds.
+   *
+   * @return {Bounds} Return this (modified) object which is [ +Infinity, -Infinity ].
+   */
+   set_all_by_PositiveInfinity_NegativeInfinity() {
+    this.lowers.fill( +Infinity );
+    this.uppers.fill( -Infinity );
+    return this;
+  }
+
+  /**
    * @param {number} N  Set all ( this.lowers[], this.uppers[] ) by ( N, N ).
    *
    * @return {BoundsArray} Return this (modified) object.
