@@ -8,7 +8,7 @@ import * as BoundsArraySet_Asserter from "../../util/BoundsArraySet_Asserter.js"
 import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as ActivationEscaping from "../../ConvActivationEscaping.js";
-import * as BoundsArraySet from "../../ConvBoundsArraySet.js";
+import * as BoundsArraySet from "../../Conv/BoundsArraySet.js";
 import * as Embedding from "../../Conv/Embedding.js";
 import * as ImageSourceBag from "./ImageSourceBag.js"; 
 import * as NumberImage from "./NumberImage.js"; 
