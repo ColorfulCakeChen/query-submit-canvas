@@ -65,12 +65,23 @@ class Bounds extends Recyclable.Root {
 
 
   /**
+   * @param {number} N  The value to be compared.
+   *
+   * @return {boolean} Return true, if ( .lower <= N ) and ( .upper >= N ).
+   */
+   is_contain_N( N ) {
+    if ( ( this.lower <= N ) && ( this.upper >= N ) )
+      return true;
+    return false;
+  }
+
+  /**
    * @param {number} aLower  The lower bound to be compared.
    * @param {number} aUpper  The upper bound to be compared.
    *
-   * @return {boolean} Return true, if ( .lower >= aLower ) and ( .upper <= aUpper ).
+   * @return {boolean} Return true, if ( .lower <= aLower ) and ( .upper >= aUpper ).
    */
-   is_IN_byLowerUpper( aLower, aUpper ) {
+   is_contain_LowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
     if ( aLower < aUpper ) {
       lower = aLower;
@@ -80,9 +91,29 @@ class Bounds extends Recyclable.Root {
       upper = aLower;
     }
 
-    if ( ( this.lowers[ thisIndex ] >= lower ) && ( this.uppers[ thisIndex ] <= upper ) )
+    if ( ( this.lower <= lower ) && ( this.upper >= upper ) )
       return true;
+    return false;
+  }
 
+  /**
+   * @param {number} aLower  The lower bound to be compared.
+   * @param {number} aUpper  The upper bound to be compared.
+   *
+   * @return {boolean} Return true, if ( .lower >= aLower ) and ( .upper <= aUpper ).
+   */
+   is_in_LowerUpper( aLower, aUpper ) {
+    let lower, upper; // Confirm ( lower <= upper ).
+    if ( aLower < aUpper ) {
+      lower = aLower;
+      upper = aUpper;
+    } else {
+      lower = aUpper;
+      upper = aLower;
+    }
+
+    if ( ( this.lower >= lower ) && ( this.uppers <= upper ) )
+      return true;
     return false;
   }
 

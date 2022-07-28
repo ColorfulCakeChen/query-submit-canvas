@@ -153,7 +153,7 @@ class Embedding_FiltersArray_Base extends Weights.Base( InferencedParams ) {
         + `should be all one (i.e. should not have activation escaping scaling).`
       );
 
-    if ( !inputScaleBoundsArray.boundsArray.is_all_IN_byLowerUpper( 0, this.vocabularyIdMax ) )
+    if ( !inputScaleBoundsArray.boundsArray.is_all_in_LowerUpper( 0, this.vocabularyIdMax ) )
       throw Error( `Embedding.FiltersArray_Base.init(): `
         + `The .output.boundsArray ( ${inputScaleBoundsArray.boundsArray} ) `
         + `of previous operation `
