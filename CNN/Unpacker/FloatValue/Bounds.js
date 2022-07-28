@@ -39,14 +39,8 @@ class Bounds extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor_self( lower, upper ) {
-    if ( aLower < aUpper ) { // Confirm ( lower <= upper ).
-      this.lower = aLower;
-      this.upper = aUpper;
-    } else {
-      this.lower = aUpper;
-      this.upper = aLower;
-    }
+  static setAsConstructor_self( aLower, aUpper ) {
+    this.set_byLowerUpper( aLower, aUpper );
   }
 
   /** @override */
