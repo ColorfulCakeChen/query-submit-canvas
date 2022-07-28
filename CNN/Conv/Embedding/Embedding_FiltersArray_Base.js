@@ -83,7 +83,7 @@ class Embedding_FiltersArray_Base extends Weights.Base( InferencedParams ) {
 
   /** @override */
   static setAsConstructor(
-    input_channelCount,
+    input_height, input_width, input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
   ) {
     super.setAsConstructor(

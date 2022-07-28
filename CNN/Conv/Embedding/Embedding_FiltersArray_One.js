@@ -43,7 +43,7 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
 
   /** @override */
   static setAsConstructor(
-    input_channelCount,
+    input_height, input_width, input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
   ) {
     super.setAsConstructor(
