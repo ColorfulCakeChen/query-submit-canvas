@@ -25,7 +25,7 @@ import { FiltersArray_One } from "./Embedding_FiltersArray_One.js";
  * @see Embedding.FiltersArray_One
  *
  */
-class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) {
+class Embedding_AddGatherReshape extends ReturnOrClone.Root {
 
   /**
    * Used as default Embedding.AddGatherReshape provider for conforming to Recyclable interface.
@@ -34,55 +34,21 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) 
     Embedding_AddGatherReshape, Embedding_AddGatherReshape.setAsConstructor );
 
   /**
-   *
    */
-  constructor(
-    input_height, input_width, input_channelCount,
-    channelMultiplier, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
-    bKeepInputTensor
-  ) {
-    super(
-      input_height, input_width, input_channelCount,
-      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
-    );
-    Embedding_AddGatherReshape.setAsConstructor_self.call( this,
-      bKeepInputTensor,
-      this.output_height, this.output_width, this.output_channelCount
-    );
+  constructor() {
+    super();
+    Embedding_AddGatherReshape.setAsConstructor_self.call( this );
   }
 
   /** @override */
-  static setAsConstructor(
-    input_height, input_width, input_channelCount,
-    channelMultiplier, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
-    bKeepInputTensor
-  ) {
-    super.setAsConstructor(
-      input_height, input_width, input_channelCount,
-      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
-    );
-    Embedding_AddGatherReshape.setAsConstructor_self.call( this,
-      bKeepInputTensor,
-      this.output_height, this.output_width, this.output_channelCount
-    );
+  static setAsConstructor() {
+    super.setAsConstructor();
+    Embedding_AddGatherReshape.setAsConstructor_self.call( this );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self(
-    bKeepInputTensor,
-    output_height, output_width, output_channelCount
-  ) {
-    this.bKeepInputTensor = bKeepInputTensor;
-
-    // The 3 dimension of apply()'s outputTensor3d. When the input is splitted to
-    // tensor3d and the vocabulary tables are tensor3d, the result of tf.gather()
-    // will be tensor5d. This shape is used for reshape the output from tensor5d
-    // to tensor3d.
-    //
-    // (Used when vocabulary tables are tensor3d.)
-    this.outputTensor3dShape = Recyclable.Array.Pool.get_or_create_by( output_height, output_width, output_channelCount );
-
+  static setAsConstructor_self() {
     return this;
   }
 
@@ -122,6 +88,10 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) 
   /**
    * Initialize this object.
    *
+   * @param {Embedding.Params} params
+   *   A Params object. The params.init() will be called to extract parameters. This params will
+   * be owned and destroyed by this .init(). So caller should not use it again.
+   *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
    *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Stage value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
@@ -129,13 +99,33 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Base( FiltersArray_One ) 
    * @return {boolean}
    *   Return true, if successfully. Return false, if failed.
    */
-   init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) {
+   init( inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray ) {
+
+    // 0. Prepare
+
+    this.weightElementOffsetEnd = this.weightElementOffsetBegin = weightElementOffsetBegin;
+    this.bInitOk = false;
+
 
     // 1. Extract weights.
-    if ( !super.init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) ) {
+    if ( !params.init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) ) {
       return false;  // e.g. input array does not have enough data.
     }
 
+//!!!
+
+    this.bKeepInputTensor = bKeepInputTensor;
+
+    // The 3 dimension of apply()'s outputTensor3d. When the input is splitted to
+    // tensor3d and the vocabulary tables are tensor3d, the result of tf.gather()
+    // will be tensor5d. This shape is used for reshape the output from tensor5d
+    // to tensor3d.
+    //
+    // (Used when vocabulary tables are tensor3d.)
+    this.outputTensor3dShape = Recyclable.Array.Pool.get_or_create_by( output_height, output_width, output_channelCount );
+
+
+//!!!
     // 2. channelValueOffsetTensor3d
     if ( this.input_channelCount == 1 ) {
       // No need to shift input channel value because there is only one vocabulary table.

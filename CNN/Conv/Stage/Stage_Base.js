@@ -258,7 +258,6 @@ class Stage_Base extends Recyclable.Root {
    *   Yield ( value = true ) when ( done = true ) successfully.
    *   Yield ( value = false ) when ( done = true ) failed.
    *
-   * @see Block.Base.initer()
    */
   * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
 
