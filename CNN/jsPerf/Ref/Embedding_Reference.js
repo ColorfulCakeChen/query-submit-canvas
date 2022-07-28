@@ -248,10 +248,6 @@ class Embedding_Reference_Base extends Recyclable.Root {
    */
   static Embedding_create( EmbeddingClass, testParams, inputScaleBoundsArray0 ) {
 
-    let embedding = EmbeddingClass.Pool.get_or_create_by();
-
-    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-  
     // Initialize successfully or failed.
     let extractedParams = Embedding.Params.Pool.get_or_create_by(
       testParams.in.input_height, testParams.in.input_width, testParams.in.input_channelCount,
@@ -260,9 +256,27 @@ class Embedding_Reference_Base extends Recyclable.Root {
       testParams.in.bKeepInputTensor
     );
 
-    let bInitOk = embedding.init( progress,
-      testParams.in_weights.weightArray, testParams.in_weights.weightElementOffsetBegin,
-      extractedParams,
+    let bParamsInitOk = extractedParams.init(
+      testParams.in_weights.weightArray, testParams.in_weights.weightElementOffsetBegin );
+
+    if ( extractedParams.bInitOk != bParamsInitOk )
+      throw Error( `Embedding.Params validation state (${extractedParams.bInitOk}) `
+       + `mismatches initer's result (${bParamsInitOk}). ${extractedParams}` );
+
+    Embedding_Reference_Base.AssertTwoEqualValues( "Embedding.Params parsing beginning position",
+      extractedParams.weightElementOffsetBegin, testParams.in_weights.weightElementOffsetBegin, extractedParams );
+ 
+
+    let embedding = EmbeddingClass.Pool.get_or_create_by(
+      extractedParams.input_height, extractedParams.input_width, extractedParams.in.input_channelCount,
+      extractedParams.channelMultiplier,
+      extractedParams.vocabularyCountPerInputChannel,
+      extractedParams.bEmbedVocabularyId,
+      extractedParams.bKeepInputTensor
+    );
+
+    let bInitOk = embedding.init(
+      testParams.in_weights.weightArray, extractedParams.weightElementOffsetEnd,
       inputScaleBoundsArray0 );
 
     if ( embedding.bInitOk != bInitOk )
@@ -276,24 +290,16 @@ class Embedding_Reference_Base extends Recyclable.Root {
     if ( false == bInitOk )
       throw Error( `Failed to initialize embedding object. ${embedding}` );
 
-    if ( 100 != progress.valuePercentage )
-      throw Error(
-        `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${embedding}`);
+    Embedding_Reference_Base.AssertTwoEqualValues( "Embedding parsing beginning position",
+      embedding.weightElementOffsetBegin, extractedParams.weightElementOffsetEnd, embedding );
 
-    progress.disposeResources_and_recycleToPool();
-    progress = null;
-
-    // if ( embedding.weightElementOffsetEnd != testParams.in_weights.weightArray.length ) { //!!! For Debug. (parsing ending position)
-    //   debugger;
-    // }
-
-    let embedding_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( "Embedding", embedding, embedding );
-
-    Embedding_Reference_Base.AssertTwoEqualValues( "parsing beginning position",
-      embedding.weightElementOffsetBegin, testParams.in_weights.weightElementOffsetBegin, embedding );
-
-    Embedding_Reference_Base.AssertTwoEqualValues( "parsing ending position",
+    Embedding_Reference_Base.AssertTwoEqualValues( "Embedding parsing ending position",
       embedding.weightElementOffsetEnd, testParams.in_weights.weightArray.length, embedding );
+
+    extractedParams.disposeResources_and_recycleToPool();
+    extractedParams = null;
+  
+    let embedding_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( "Embedding", embedding, embedding );
 
     // parameters.
     embedding_asserter.propertyValue( "input_height", testParams.out.input_height );
