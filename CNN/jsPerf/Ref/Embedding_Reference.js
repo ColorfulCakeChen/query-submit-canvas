@@ -8,6 +8,7 @@ import * as BoundsArraySet_Asserter from "../../util/BoundsArraySet_Asserter.js"
 import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ImageSourceBag from "./ImageSourceBag.js"; 
+import * as NumberImage from "./NumberImage.js"; 
 import * as Embedding_TestParams from "./Embedding_TestParams.js"; 
 import * as Embedding from "../../Conv/Embedding.js";
 
@@ -366,7 +367,7 @@ class Embedding_Reference_Base extends Recyclable.Root {
       let preFilledValue = undefined;
       let preFilledBounds = undefined;
       let input1_ScaleBoundsArray = null;
-      imageOut = NumberImage_Base.Pool.get_or_create_by(
+      imageOut = NumberImage.Base.Pool.get_or_create_by(
         output_height, output_width, output_channelCount, preFilledValue,
         imageIn.boundsArraySet.output0, input1_ScaleBoundsArray, BoundsArraySet.InputsOutputs, preFilledBounds
       );
