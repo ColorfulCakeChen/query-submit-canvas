@@ -218,25 +218,25 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
    * @override
    */
   toString() {
+    let strDescription = ``
+      + `input_height=${this.input_height}, `
+      + `input_width=${this.input_width}, `
+      + `input_channelCount=${this.input_channelCount}, `
+      + `channelMultiplier=${this.channelMultiplier}, `
+      + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
+      + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
+      + `bKeepInputTensor=${this.bKeepInputTensor}, `
 
-//!!! ...unfinished... (2022/07/28)
-    let str =
-        `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, sourceChannelCount=${this.sourceChannelCount}, `
-      + `nConvStageTypeName=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
-      + `blockCountRequested=${this.blockCountRequested}, blockCount=${this.blockCount}, `
-      + `bPointwise1=${this.bPointwise1}, `
-      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
-      + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
-      + `bPointwise2ActivatedAtStageEnd=${this.bPointwise2ActivatedAtStageEnd}, `
-
-      + `nSqueezeExcitationChannelCountDivisorName=${this.nSqueezeExcitationChannelCountDivisorName}`
-        + `(${this.nSqueezeExcitationChannelCountDivisor}), `
-
-      + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
-      + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, outputChannelCount=${this.outputChannelCount}, `
-      + `bKeepInputTensor=${this.bKeepInputTensor}`
+      + `output_height=${this.output_height}, `
+      + `output_width=${this.output_width}, `
+      + `output_channelCount=${this.output_channelCount}, `
+      + `vocabularyIdMax=${this.vocabularyIdMax}, `
+      + `weightCountPerVocabularyTable_extracted=${this.weightCountPerVocabularyTable_extracted}, `
+      + `weightCountPerVocabularyTable=${this.weightCountPerVocabularyTable}, `
+      + `tensorWeightCountExtracted=${this.tensorWeightCountExtracted}, `
+      + `tensorWeightCountTotal=${this.tensorWeightCountTotal}`
     ;
-    return str;
+    return strDescription;
   }
 
 }
