@@ -70,11 +70,6 @@ class Case {
           + `clamp ( ${randValue} ) got ( ${clampedValue} ) should between `
           + `[ ${this.aBounds.lower}, ${this.aBounds.upper} ].` );
     }
-
-!!! ...unfinished... (2022/07/28)
-// test set_by_PositiveInfinity_NegativeInfinity() and enlarge_byN()
-// test is_contain_Xxx() and is_in_Xxx()
-
   }
 
   /**  */
@@ -180,12 +175,6 @@ class Cases {
       clonedBoundsArray.disposeResources_and_recycleToPool();
       clonedBoundsArray = null;
     }
-
-
-!!! ...unfinished... (2022/07/28)
-// test set_all_by_PositiveInfinity_NegativeInfinity() and enlarge_one_byN()
-// test is_Yyy_contain_Xxx() and is_Yyy_in_Xxx()
-
 
     // Set
     {
@@ -564,6 +553,60 @@ class Cases {
 
 }
 
+
+function test_enlarge_contain_in() {
+
+!!! ...unfinished... (2022/07/28)
+// test set_by_PositiveInfinity_NegativeInfinity() and enlarge_byN()
+// test is_contain_Xxx() and is_in_Xxx()
+    
+!!! ...unfinished... (2022/07/28)
+// test set_all_by_PositiveInfinity_NegativeInfinity() and enlarge_one_byN()
+// test is_Yyy_contain_Xxx() and is_Yyy_in_Xxx()
+
+  let aBounds = FloatValue.Bounds.Pool.get_or_create_by();
+  let bBounds = FloatValue.Bounds.Pool.get_or_create_by();
+  let aBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
+
+  for ( let a = -2; a <= +2; ++a )
+    for ( let b = -2; b <= +2; ++b )
+      for ( let c = -2; c <= +2; ++c )
+        for ( let d = -2; d <= +2; ++d ) {
+          aBounds.set_one_byLowerUpper( a, b );
+          bBounds.set_one_byLowerUpper( c, d );
+
+          aBoundsArray.set_one_byLowerUpper( 0, a, b );
+          aBoundsArray.set_one_byLowerUpper( 1, c, d );
+
+          aBounds.enlarge_byN( c ).enlarge_byN( d );
+          aBounds.is_contain_N( c );
+          aBounds.is_contain_N( d );
+          aBounds.is_contain_Bounds( bBounds );
+          bBounds.is_in_Bounds( aBounds );
+          aBounds.is_contain_BoundsArray_one( aBoundsArray, 1 );
+          aBoundsArray.is_one_in_Bounds( 1, aBounds );
+
+          aBoundsArray.enlarge_one_byN( 0, c ).enlarge_one_byN( 0, d );
+          aBoundsArray.is_one_contain_N( 0, c );
+          aBoundsArray.is_one_contain_N( 0, d );
+          aBoundsArray.is_one_contain_Bounds( 0, bBounds );
+          bBounds.is_in_BoundsArray_one( aBoundsArray, 0 );
+          aBoundsArray.is_one_contain_BoundsArray_one( 0, aBoundsArray, 1 );
+          aBoundsArray.is_one_in_BoundsArray_one( 1, aBoundsArray, 0 );
+
+        }
+
+  if ( thisValue != rhsArrayValue )
+    throw Error( `jsPerf_FloatValue_Bounds.test_enlarge_contain_in(): `
+      + `Cases( casesId = ${this.casesId} ).${strBoundsArrayTestName}.${lowers_or_uppers_name}[ ${lhsArrayIndex} ] `
+      + `( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
+
+  aBounds.disposeResources_and_recycleToPool(); aBounds = null;
+  bBounds.disposeResources_and_recycleToPool(); bBounds = null;
+  aBoundsArray.disposeResources_and_recycleToPool(); aBoundsArray = null;
+}
+
+
 function testCorrectness() {
 
   let casesArray = [
@@ -625,5 +668,7 @@ function testCorrectness() {
     ] ),
 
   ];
+
+  test_enlarge_contain_in();
 
 }
