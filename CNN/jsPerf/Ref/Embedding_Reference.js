@@ -364,6 +364,7 @@ class Embedding_Reference_Base extends Recyclable.Root {
     let {
       input_height, input_width, input_channelCount,
       channelMultiplier,
+      bEmbedVocabularyId
     } = testParams.out;
 
     let { output_height, output_width, output_channelCount } = testParamsOut.inferencedParams;
@@ -379,6 +380,12 @@ class Embedding_Reference_Base extends Recyclable.Root {
       );
     }
 
+    let outChannelSubBegin;
+    if ( this.bEmbedVocabularyId )
+      outChannelSubBegin = 1;
+    else
+      outChannelSubBegin = 0;
+
     let inElementIndex = 0;
     let outElementIndex = 0;
 
@@ -391,7 +398,16 @@ class Embedding_Reference_Base extends Recyclable.Root {
           let vocabularyId = imageIn.dataArray[ inElementIndex ]; // should be an integer.
           let vocabularyElementIndex = vocabularyId * channelMultiplier;
 
-          for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
+!!! ...unfinished... (2022/07/28)
+// What about bounds array?
+
+          if ( bEmbedVocabularyId ) {
+            imageOut.dataArray[ outElementIndex ] = vocabularyId;
+            ++outElementIndex;
+            //++outChannelIndex;
+          }
+
+          for ( let outChannelSub = outChannelSubBegin; outChannelSub < channelMultiplier; ++outChannelSub ) {
             imageOut.dataArray[ outElementIndex ] = vocabularyTable[ vocabularyElementIndex ];
 
             ++vocabularyElementIndex;
