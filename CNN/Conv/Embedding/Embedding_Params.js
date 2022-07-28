@@ -162,7 +162,7 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
   get channelMultiplier()              { return this.getParamValue_byParamDesc( Embedding_Params.channelMultiplier ); }
   get vocabularyCountPerInputChannel() { return this.getParamValue_byParamDesc( Embedding_Params.vocabularyCountPerInputChannel ); }
   get bEmbedVocabularyId()             { return this.getParamValue_byParamDesc( Embedding_Params.bEmbedVocabularyId ); }
-  get bKeepInputTensor()               { return this.getParamValue_byParamDesc( Params.bKeepInputTensor ); }
+  get bKeepInputTensor()               { return this.getParamValue_byParamDesc( Embedding_Params.bKeepInputTensor ); }
 }
 
 
