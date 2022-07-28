@@ -245,27 +245,27 @@ class Embedding_TestParams_Base extends TestParams.Base {
     this.out_boundsArray.length = embeddingParams.inferencedParams.output_channelCount;
     this.out_boundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
 
-    let outChannelIndex = 0;
-    for ( let inChannelIndex = 0; inChannelIndex < embeddingParams.input_channelCount; ++inChannelIndex ) {
+    for ( let inChannel = 0; inChannel < embeddingParams.input_channelCount; ++inChannel ) {
 
       this.fill_object_property_numberArray( this.in.paramsNumberArrayObject,
-        inChannelIndex, tableElementCountPerInputChannel );
+        inChannel, tableElementCountPerInputChannel );
 
       let vocabularyElementIndex = 0;
       for ( let vocabularyId = 0; vocabularyId < embeddingParams.vocabularyCountPerInputChannel; ++vocabularyId ) {
+        let outChannel = 0;
 
         if ( embeddingParams.bEmbedVocabularyId ) {
-          this.out_boundsArray.enlarge_one_byN( outChannelIndex, vocabularyId );
-          ++outChannelIndex;
+          this.out_boundsArray.enlarge_one_byN( outChannel, vocabularyId );
+          ++outChannel;
         }
     
         // Every output channel's value bounds.
-        for ( let outChannelSub = outChannelSubBegin; outChannelSub < channelMultiplier; ++outChannelSub) {
+        for ( let outChannelSub = outChannelSubBegin; outChannelSub < embeddingParams.channelMultiplier; ++outChannelSub) {
           let vocabularyElement = this.in.paramsNumberArrayObject[ vocabularyElementIndex ];
           ++vocabularyElementIndex;
 
-          this.out_boundsArray.enlarge_one_byN( outChannelIndex, vocabularyElement );
-          ++outChannelIndex;
+          this.out_boundsArray.enlarge_one_byN( outChannel, vocabularyElement );
+          ++outChannel;
         }
       }
     }

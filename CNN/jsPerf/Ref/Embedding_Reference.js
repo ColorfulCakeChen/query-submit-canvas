@@ -398,23 +398,23 @@ class Embedding_Reference_Base extends Recyclable.Root {
     for ( let y = 0; y < input_height; ++y ) {
       for ( let x = 0; x < input_width; ++x ) {
 
-        //let outChannelIndex = 0;
-        for ( let inChannelIndex = 0; inChannelIndex < input_channelCount; ++inChannelIndex ) {
-          let vocabularyTable = testParams.in.paramsNumberArrayObject[ inChannelIndex ];
+        //let outChannel = 0;
+        for ( let inChannel = 0; inChannel < input_channelCount; ++inChannel ) {
+          let vocabularyTable = testParams.in.paramsNumberArrayObject[ inChannel ];
           let vocabularyId = imageIn.dataArray[ inElementIndex ]; // should be an integer.
           let vocabularyElementIndex = vocabularyId * tableChannelCountPerInputChannel;
 
           if ( bEmbedVocabularyId ) {
             imageOut.dataArray[ outElementIndex ] = vocabularyId;
             ++outElementIndex;
-            //++outChannelIndex;
+            //++outChannel;
           }
 
           for ( let outChannelSub = outChannelSubBegin; outChannelSub < channelMultiplier; ++outChannelSub ) {
             imageOut.dataArray[ outElementIndex ] = vocabularyTable[ vocabularyElementIndex ];
             ++vocabularyElementIndex;
             ++outElementIndex;
-            //++outChannelIndex;
+            //++outChannel;
           }
 
           ++inElementIndex;
