@@ -80,8 +80,9 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
    * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
    *
    * @param {Params} params
-   *   A Params object. The params.init() will be called to extract parameters. This params will be owned and destroyed by this .initer().
-   * So caller should not use it again.
+   *   A Params object. The params.init() will be called to extract parameters. This
+   * params will be owned and destroyed by this .initer(). So caller should not use
+   * it again.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
    *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Stage value bounds

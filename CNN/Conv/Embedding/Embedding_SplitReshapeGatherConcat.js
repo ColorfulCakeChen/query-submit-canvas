@@ -107,7 +107,9 @@ class Embedding_SplitReshapeGatherConcat extends Base {
     let progressToAdvance = progressParent.addChild( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
     // 1. Extract weights.
-    let bParamInitOk = yield* super.initer( progressParent, inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray0 );
+    let bParamInitOk = yield* super.initer( progressParent,
+      inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 );
+
     if ( !bParamInitOk )
       return false;  // e.g. input array does not have enough data.
 
