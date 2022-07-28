@@ -112,6 +112,13 @@ class Embedding_AddGatherReshape extends ReturnOrClone.Root {
       return false;  // e.g. input array does not have enough data.
     }
 
+!!!
+    // 1. Extract weights.
+    if ( !super.init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) ) {
+      return false;  // e.g. input array does not have enough data.
+    }
+
+
 //!!!
 
     this.bKeepInputTensor = bKeepInputTensor;

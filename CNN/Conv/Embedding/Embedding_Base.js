@@ -3,9 +3,7 @@ export { Embedding_Base as Base };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../util/ValueMax.js";
-//import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
-//import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import { Params } from "./Embedding_Params.js";
 
 /**
@@ -45,11 +43,8 @@ import { Params } from "./Embedding_Params.js";
  *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  * 
- * @member {BoundsArraySet.InputsOutputs} boundsArraySet
- *   The element value bounds (per channel) of this embedding.
- *
  */
-class Embedding_Base extends Recyclable.Root {
+class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
 
   /**
    * Used as default Embedding.Base provider for conforming to Recyclable interface.
@@ -111,7 +106,6 @@ class Embedding_Base extends Recyclable.Root {
 
     let progressRoot = progressParent.getRoot();
     let progressToAdvance = progressParent.addChild( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
-    let progressForBlocks = progressParent.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for block0, block1, block2, ... 
 
     // 1. Extract parameters.
     if ( !params )
@@ -124,15 +118,25 @@ class Embedding_Base extends Recyclable.Root {
     // Get parameters' real (adjusted) values.
     //
     // Do not keep params in this.params so that the inputWeightArray could be released.
+    this.input_height = params.input_height;
+    this.input_width = params.input_width;
+    this.input_channelCount = params.input_channelCount;
+    this.channelMultiplier = params.channelMultiplier;
+    this.vocabularyCountPerInputChannel = params.vocabularyCountPerInputChannel;
+    this.bEmbedVocabularyId = params.bEmbedVocabularyId;
+    this.bKeepInputTensor = params.bKeepInputTensor;
 
     // The parameters which are determined (inferenced) from the above parameters.
     {
+      this.output_height = params.inferenced.output_height;
+      this.output_width = params.inferenced.output_width;
+      this.output_channelCount = params.inferenced.output_channelCount;
+      this.vocabularyIdMax = params.inferenced.vocabularyIdMax;
+      this.weightCountPerVocabularyTable_extracted = params.inferenced.weightCountPerVocabularyTable_extracted;
+      this.weightCountPerVocabularyTable = params.inferenced.weightCountPerVocabularyTable;
+      this.tensorWeightCountExtracted = params.inferenced.tensorWeightCountExtracted;
+      this.tensorWeightCountTotal = params.inferenced.tensorWeightCountTotal;
     }
-
-    this.tensorWeightCountExtracted = 0;
-    this.tensorWeightCountTotal = 0;
-
-    // Note: params will be released by BlockParamsCreator.
 
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
@@ -174,12 +178,28 @@ class Embedding_Base extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
-//!!! ...unfinished... (2022/07/28)
-    this.tensorWeightCountTotal = 0;
-    this.tensorWeightCountExtracted = 0;
+//!!! ...unfinished... (2022/07/28) params ?
 
-    this.weightElementOffsetBegin = this.weightElementOffsetEnd = -1;
-    this.bInitOk = false;
+    this.tensorWeightCountTotal = undefined;
+    this.tensorWeightCountExtracted = undefined;
+    this.weightCountPerVocabularyTable = undefined;
+    this.weightCountPerVocabularyTable_extracted = undefined;
+    this.vocabularyIdMax = undefined;
+    this.output_channelCount = undefined;
+    this.output_width = undefined;
+    this.output_height = undefined;
+
+    this.bKeepInputTensor = undefined;
+    this.bEmbedVocabularyId = undefined;
+    this.vocabularyCountPerInputChannel = undefined;
+    this.channelMultiplier = undefined;
+    this.input_channelCount = undefined;
+    this.input_width = undefined;
+    this.input_height = undefined;
+
+    this.weightElementOffsetEnd = undefined;
+    this.weightElementOffsetBegin = undefined;
+    this.bInitOk = undefined;
 
     super.disposeResources();
   }
