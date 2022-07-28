@@ -101,9 +101,9 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
 
     let sourceIndex = weightElementOffsetBegin;
 
-    let outChannel = 0;
     for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
       for ( let vocabularyId = 0; vocabularyId < this.vocabularyCountPerInputChannel; ++vocabularyId ) {
+        let outChannel = 0;
 
         if ( this.bEmbedVocabularyId ) {
           this.filtersArray[ filterIndex ] = vocabularyId; // Embed the vocabulary's id.
