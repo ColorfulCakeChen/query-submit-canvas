@@ -223,27 +223,28 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
     this.generate_out_inferencedParams();
 
-    let tableElementCountPerInputChannel;
-    if ( embeddingParams.bEmbedVocabularyId ) {
-      tableElementCountPerInputChannel
-        = ( embeddingParams.vocabularyCountPerInputChannel * ( embeddingParams.channelMultiplier - 1 ) );
-    } else {
-      tableElementCountPerInputChannel
-        = ( embeddingParams.vocabularyCountPerInputChannel * embeddingParams.channelMultiplier );
-    }
+    let tableChannelCountPerInputChannel;
+    if ( embeddingParams.bEmbedVocabularyId )
+      tableChannelCountPerInputChannel = ( embeddingParams.channelMultiplier - 1 );
+    else
+      tableChannelCountPerInputChannel = embeddingParams.channelMultiplier;
+
+    let tableElementCountPerInputChannel
+      = embeddingParams.vocabularyCountPerInputChannel * tableChannelCountPerInputChannel;
 
     // Generate look-up table of every input channel.
     this.in.paramsNumberArrayObject.length = embeddingParams.input_channelCount;
-
-!!! ...unfinished... (2022/07/28) should consider ( bEmbedVocabularyId == true )
     this.out_boundsArray.length = embeddingParams.inferencedParams.output_channelCount;
 
     let outChannelIndex = 0;
     for ( let i = 0; i < embeddingParams.input_channelCount; ++i ) {
+
+!!! ...unfinished... (2022/07/28) should consider ( bEmbedVocabularyId == true )
+
       this.fill_object_property_numberArray( this.in.paramsNumberArrayObject, i, tableElementCountPerInputChannel );
 
       // Every output channel's value bounds.
-      for ( let outChannelSub = 0; outChannelSub < embeddingParams.channelMultiplier; ++outChannelSub) {
+      for ( let outChannelSub = 0; outChannelSub < ???embeddingParams.channelMultiplier; ++outChannelSub) {
         this.out_boundsArray.set_one_byLowerUpper( outChannelIndex,
           this.in.paramsNumberArrayObject[ i ].lowerBound,
           this.in.paramsNumberArrayObject[ i ].upperBound
