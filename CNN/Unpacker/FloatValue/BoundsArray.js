@@ -73,6 +73,29 @@ class BoundsArray extends Recyclable.Root {
 
 
   /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number} aLower     The lower bound to be compared.
+   * @param {number} aUpper     The upper bound to be compared.
+   *
+   * @return {boolean} Return true, if ( .lowers[ thisIndex ] >= aLower ) and ( .uppers[ thisIndex ] <= aUpper ).
+   */
+   is_one_IN_byLowerUpper( thisIndex, aLower, aUpper ) {
+    let lower, upper; // Confirm ( lower <= upper ).
+    if ( aLower < aUpper ) {
+      lower = aLower;
+      upper = aUpper;
+    } else {
+      lower = aUpper;
+      upper = aLower;
+    }
+
+    if ( ( this.lowers[ thisIndex ] >= lower ) && ( this.uppers[ thisIndex ] <= upper ) )
+      return true;
+
+    return false;
+  }
+
+  /**
    * @param {number} aLower  The lower bound to be compared.
    * @param {number} aUpper  The upper bound to be compared.
    *
@@ -89,10 +112,9 @@ class BoundsArray extends Recyclable.Root {
     }
 
     for ( let i = 0; i < this.lowers.length; ++i ) {
-      if ( this.lowers[ i ] < lower )
-        return false;
-      if ( this.uppers[ i ] > upper )
-        return false;
+      if ( ( this.lowers[ i ] >= lower ) && ( this.uppers[ i ] <= upper ) )
+        continue;
+      return false;
     }
     return true;
   }
