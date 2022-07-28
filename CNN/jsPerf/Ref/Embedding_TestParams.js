@@ -224,11 +224,15 @@ class Embedding_TestParams_Base extends TestParams.Base {
     this.generate_out_inferencedParams();
 
     let tableChannelCountPerInputChannel;
-    if ( embeddingParams.bEmbedVocabularyId )
+    let outChannelSubBegin;
+    if ( embeddingParams.bEmbedVocabularyId ) {
       tableChannelCountPerInputChannel = ( embeddingParams.channelMultiplier - 1 );
-    else
+      outChannelSubBegin = 1;
+    } else {
       tableChannelCountPerInputChannel = embeddingParams.channelMultiplier;
-
+      outChannelSubBegin = 0;
+    }
+  
     let tableElementCountPerInputChannel
       = embeddingParams.vocabularyCountPerInputChannel * tableChannelCountPerInputChannel;
 
@@ -237,16 +241,28 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
     // Generate look-up table of every input channel.
     this.in.paramsNumberArrayObject.length = embeddingParams.input_channelCount;
-    this.out_boundsArray.length = tableChannelCountAll;
+    this.out_boundsArray.length = embeddingParams.output_channelCount;
 
     let outChannelIndex = 0;
     for ( let inChannelIndex = 0; inChannelIndex < embeddingParams.input_channelCount; ++inChannelIndex ) {
+
+      if ( embeddingParams.bEmbedVocabularyId ) {
+        this.out_boundsArray.set_one_byLowerUpper( outChannelIndex,
+
+!!! ...unfinished... (2022/07/28)
+          ???
+
+          this.in.paramsNumberArrayObject[ inChannelIndex ].lowerBound,
+          this.in.paramsNumberArrayObject[ inChannelIndex ].upperBound
+        );
+        ++outChannelIndex;
+      }
 
       this.fill_object_property_numberArray( this.in.paramsNumberArrayObject,
         inChannelIndex, tableElementCountPerInputChannel );
 
       // Every output channel's value bounds.
-      for ( let outChannelSub = 0; outChannelSub < tableChannelCountPerInputChannel; ++outChannelSub) {
+      for ( let outChannelSub = outChannelSubBegin; outChannelSub < channelMultiplier; ++outChannelSub) {
         this.out_boundsArray.set_one_byLowerUpper( outChannelIndex,
           this.in.paramsNumberArrayObject[ inChannelIndex ].lowerBound,
           this.in.paramsNumberArrayObject[ inChannelIndex ].upperBound
