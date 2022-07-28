@@ -1,6 +1,7 @@
 export { Embedding_InferencedParams as InferencedParams };
 
 import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 
 /**
  * All properties inferenced from Embedding.Params.
