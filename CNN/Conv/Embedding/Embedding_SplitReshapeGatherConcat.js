@@ -78,7 +78,7 @@ class Embedding_SplitReshapeGatherConcat extends Base {
     }
 
     if ( this.vocabularyIndicesOneChannelTensor2dArray ) {
-      this.embeddedTensor3dArrayvocabularyIndicesOneChannelTensor2dArray.disposeResources_and_recycleToPool();
+      this.vocabularyIndicesOneChannelTensor2dArray.disposeResources_and_recycleToPool();
       this.vocabularyIndicesOneChannelTensor2dArray = null;
     }
 
