@@ -241,33 +241,32 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
     // Generate look-up table of every input channel.
     this.in.paramsNumberArrayObject.length = embeddingParams.input_channelCount;
+
     this.out_boundsArray.length = embeddingParams.output_channelCount;
+    this.out_boundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
 
     let outChannelIndex = 0;
     for ( let inChannelIndex = 0; inChannelIndex < embeddingParams.input_channelCount; ++inChannelIndex ) {
 
-      if ( embeddingParams.bEmbedVocabularyId ) {
-        this.out_boundsArray.set_one_byLowerUpper( outChannelIndex,
-
-!!! ...unfinished... (2022/07/28)
-          ???
-
-          this.in.paramsNumberArrayObject[ inChannelIndex ].lowerBound,
-          this.in.paramsNumberArrayObject[ inChannelIndex ].upperBound
-        );
-        ++outChannelIndex;
-      }
-
       this.fill_object_property_numberArray( this.in.paramsNumberArrayObject,
         inChannelIndex, tableElementCountPerInputChannel );
 
-      // Every output channel's value bounds.
-      for ( let outChannelSub = outChannelSubBegin; outChannelSub < channelMultiplier; ++outChannelSub) {
-        this.out_boundsArray.set_one_byLowerUpper( outChannelIndex,
-          this.in.paramsNumberArrayObject[ inChannelIndex ].lowerBound,
-          this.in.paramsNumberArrayObject[ inChannelIndex ].upperBound
-        );
-        ++outChannelIndex;
+      let vocabularyElementIndex = 0;
+      for ( let vocabularyId = 0; vocabularyId < embeddingParams.vocabularyCountPerInputChannel; ++vocabularyId ) {
+
+        if ( embeddingParams.bEmbedVocabularyId ) {
+          this.out_boundsArray.enlarge_one_byN( outChannelIndex, vocabularyId );
+          ++outChannelIndex;
+        }
+    
+        // Every output channel's value bounds.
+        for ( let outChannelSub = outChannelSubBegin; outChannelSub < channelMultiplier; ++outChannelSub) {
+          let vocabularyElement = this.in.paramsNumberArrayObject[ vocabularyElementIndex ];
+          ++vocabularyElementIndex;
+
+          this.out_boundsArray.enlarge_one_byN( outChannelIndex, vocabularyElement );
+          ++outChannelIndex;
+        }
       }
     }
 

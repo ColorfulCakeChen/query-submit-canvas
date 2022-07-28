@@ -379,8 +379,6 @@ class Embedding_Reference_Base extends Recyclable.Root {
         imageIn.boundsArraySet.output0, input1_ScaleBoundsArray, BoundsArraySet.InputsOutputs, preFilledBounds
       );
 
-!!! wrong (2022/07/28)
-// out_boundsArray's channel count may be less than imageOut's output channel count
       imageOut.boundsArraySet.output0.set_all_byBoundsArray( testParams.out_boundsArray );
     }
 
@@ -393,8 +391,6 @@ class Embedding_Reference_Base extends Recyclable.Root {
       tableChannelCountPerInputChannel = channelMultiplier;
       outChannelSubBegin = 0;
     }
-
-    const outChannel_for_EmbedVocabularyId = 0; // The embedded vocabulary id is always placed at output channel 0.
 
     let inElementIndex = 0;
     let outElementIndex = 0;
@@ -411,18 +407,11 @@ class Embedding_Reference_Base extends Recyclable.Root {
           if ( bEmbedVocabularyId ) {
             imageOut.dataArray[ outElementIndex ] = vocabularyId;
             ++outElementIndex;
-
-            // Because the value (i.e. vocabularyId) is not included in the embedding filters array,
-            // the value bounds should consider it here.
-            imageOut.boundsArraySet.output0.boundsArray.enlarge_one_byN(
-              outChannel_for_EmbedVocabularyId, vocabularyId );
-
             //++outChannelIndex;
           }
 
           for ( let outChannelSub = outChannelSubBegin; outChannelSub < channelMultiplier; ++outChannelSub ) {
             imageOut.dataArray[ outElementIndex ] = vocabularyTable[ vocabularyElementIndex ];
-
             ++vocabularyElementIndex;
             ++outElementIndex;
             //++outChannelIndex;
