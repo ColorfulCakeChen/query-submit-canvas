@@ -571,6 +571,22 @@ function test_enlarge_contain_in() {
           aBoundsArray.set_one_byLowerUpper( 1, c, d );
 
           let bShouldTrue = true;
+
+          // is_contain_Xxx(), is_in_Xxx()
+          {
+            if ( aBounds.is_contain_Bounds( bBounds ) )
+              bShouldTrue &&= bBounds.is_in_Bounds( aBounds );
+
+            if ( aBounds.is_in_Bounds( bBounds ) )
+              bShouldTrue &&= bBounds.is_contain_Bounds( aBounds );
+
+            if ( aBounds.is_contain_BoundsArray_one( aBoundsArray, 1 ) )
+              bShouldTrue &&= aBoundsArray.is_one_in_Bounds( 1, aBounds );
+
+            if ( aBounds.is_in_BoundsArray_one( aBoundsArray, 1 ) )
+              bShouldTrue &&= aBoundsArray.is_one_contain_Bounds( 1, aBounds );
+          }
+
           aBounds.enlarge_byN( c ).enlarge_byN( d );
           bShouldTrue &&= aBounds.is_contain_N( c );
           bShouldTrue &&= aBounds.is_contain_N( d );
