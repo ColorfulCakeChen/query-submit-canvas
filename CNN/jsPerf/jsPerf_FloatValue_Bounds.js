@@ -556,14 +556,6 @@ class Cases {
 
 function test_enlarge_contain_in() {
 
-!!! ...unfinished... (2022/07/28)
-// test set_by_PositiveInfinity_NegativeInfinity() and enlarge_byN()
-// test is_contain_Xxx() and is_in_Xxx()
-    
-!!! ...unfinished... (2022/07/28)
-// test set_all_by_PositiveInfinity_NegativeInfinity() and enlarge_one_byN()
-// test is_Yyy_contain_Xxx() and is_Yyy_in_Xxx()
-
   let aBounds = FloatValue.Bounds.Pool.get_or_create_by();
   let bBounds = FloatValue.Bounds.Pool.get_or_create_by();
   let aBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
@@ -578,28 +570,43 @@ function test_enlarge_contain_in() {
           aBoundsArray.set_one_byLowerUpper( 0, a, b );
           aBoundsArray.set_one_byLowerUpper( 1, c, d );
 
+          let bShouldTrue = true;
           aBounds.enlarge_byN( c ).enlarge_byN( d );
-          aBounds.is_contain_N( c );
-          aBounds.is_contain_N( d );
-          aBounds.is_contain_Bounds( bBounds );
-          bBounds.is_in_Bounds( aBounds );
-          aBounds.is_contain_BoundsArray_one( aBoundsArray, 1 );
-          aBoundsArray.is_one_in_Bounds( 1, aBounds );
+          bShouldTrue &&= aBounds.is_contain_N( c );
+          bShouldTrue &&= aBounds.is_contain_N( d );
+          bShouldTrue &&= aBounds.is_contain_Bounds( bBounds );
+          bShouldTrue &&= bBounds.is_in_Bounds( aBounds );
+          bShouldTrue &&= aBounds.is_contain_BoundsArray_one( aBoundsArray, 1 );
+          bShouldTrue &&= aBoundsArray.is_one_in_Bounds( 1, aBounds );
 
           aBoundsArray.enlarge_one_byN( 0, c ).enlarge_one_byN( 0, d );
-          aBoundsArray.is_one_contain_N( 0, c );
-          aBoundsArray.is_one_contain_N( 0, d );
-          aBoundsArray.is_one_contain_Bounds( 0, bBounds );
-          bBounds.is_in_BoundsArray_one( aBoundsArray, 0 );
-          aBoundsArray.is_one_contain_BoundsArray_one( 0, aBoundsArray, 1 );
-          aBoundsArray.is_one_in_BoundsArray_one( 1, aBoundsArray, 0 );
+          bShouldTrue &&= aBoundsArray.is_one_contain_N( 0, c );
+          bShouldTrue &&= aBoundsArray.is_one_contain_N( 0, d );
+          bShouldTrue &&= aBoundsArray.is_one_contain_Bounds( 0, bBounds );
+          bShouldTrue &&= bBounds.is_in_BoundsArray_one( aBoundsArray, 0 );
+          bShouldTrue &&= aBoundsArray.is_one_contain_BoundsArray_one( 0, aBoundsArray, 1 );
+          bShouldTrue &&= aBoundsArray.is_one_in_BoundsArray_one( 1, aBoundsArray, 0 );
 
+          // PositiveInfinity_NegativeInfinity(), is_all_contain_Xxx(), is_all_in_Xxx()
+          {
+            aBounds.set_by_PositiveInfinity_NegativeInfinity();
+            aBounds.enlarge_byN( a ).enlarge_byN( b );
+
+            aBoundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
+            aBoundsArray.enlarge_one_byN( 0, a ).enlarge_one_byN( 0, b );
+            aBoundsArray.enlarge_one_byN( 1, a ).enlarge_one_byN( 1, b );
+            bShouldTrue &&= aBoundsArray.is_all_contain_Bounds( aBounds );
+            bShouldTrue &&= aBoundsArray.is_all_contain_BoundsArray_one( aBoundsArray, 0 );
+            bShouldTrue &&= aBoundsArray.is_all_in_Bounds( aBounds );
+            bShouldTrue &&= aBoundsArray.is_all_in_BoundsArray_one( aBoundsArray, 1 );
+          }
+
+          if ( !bShouldTrue )
+            throw Error( `jsPerf_FloatValue_Bounds.test_enlarge_contain_in(): `
+              + `Something wrong. When ( a, b, c, d ) = `
+              + `( ${a}, ${b}, ${c}, ${d}  ).`
+            );
         }
-
-  if ( thisValue != rhsArrayValue )
-    throw Error( `jsPerf_FloatValue_Bounds.test_enlarge_contain_in(): `
-      + `Cases( casesId = ${this.casesId} ).${strBoundsArrayTestName}.${lowers_or_uppers_name}[ ${lhsArrayIndex} ] `
-      + `( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
 
   aBounds.disposeResources_and_recycleToPool(); aBounds = null;
   bBounds.disposeResources_and_recycleToPool(); bBounds = null;
