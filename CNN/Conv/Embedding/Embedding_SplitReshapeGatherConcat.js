@@ -170,7 +170,7 @@ class Embedding_SplitReshapeGatherConcat extends Base {
       // 4. vocabularyTablesTensorArray
       {
         this.vocabularyTableShape
-          = Recyclable.Array.Pool.get_or_create( this.vocabularyCountPerInputChannel, this.channelMultiplier );
+          = Recyclable.Array.Pool.get_or_create_by( this.vocabularyCountPerInputChannel, this.channelMultiplier );
 
         this.vocabularyTablesTensorArray = Recyclable.Array.Pool.get_or_create_by(
           theFiltersArray_Multi.filtersArrayArray.length ); // could be tensor3d or tensor2d.

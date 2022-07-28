@@ -156,11 +156,11 @@ class Embedding_AddGatherReshape extends Base {
         //   :
         // Channel ( inChannels - 1 ): ( channelValue + ( ( inChannels - 1 ) * vocabularyCountPerInputChannel ) )
         {
-          let channelValueOffsetArray = Recyclable.Array.Pool.get_or_create( this.input_channelCount );
+          let channelValueOffsetArray = Recyclable.Array.Pool.get_or_create_by( this.input_channelCount );
           for ( let i = 0; i < channelValueOffsetArray.length; ++i )
             channelValueOffsetArray[ i ] = i * this.vocabularyCountPerInputChannel;
 
-          this.channelValueOffsetShape = Recyclable.Array.Pool.get_or_create( 1, 1, this.input_channelCount );
+          this.channelValueOffsetShape = Recyclable.Array.Pool.get_or_create_by( 1, 1, this.input_channelCount );
           this.channelValueOffsetTensor3d
             = tf.tensor3d( channelValueOffsetArray, this.channelValueOffsetShape , "int32" ); // For one pixel's all input channels.
 
@@ -180,7 +180,7 @@ class Embedding_AddGatherReshape extends Base {
         let vocabularyCountTotal = this.vocabularyCountPerInputChannel * this.input_channelCount;
 
         this.vocabularyTableShape
-          = Recyclable.Array.Pool.get_or_create( vocabularyCountTotal, this.channelMultiplier );
+          = Recyclable.Array.Pool.get_or_create_by( vocabularyCountTotal, this.channelMultiplier );
 
         this.vocabularyTableTensor2d = tf.tensor2d( theFiltersArray_One.filtersArray, this.vocabularyTableShape );
 
