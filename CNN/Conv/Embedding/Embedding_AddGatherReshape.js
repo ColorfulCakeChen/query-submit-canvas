@@ -137,7 +137,8 @@ class Embedding_AddGatherReshape extends Base {
         // to tensor3d.
         //
         // (Used when vocabulary tables are tensor3d.)
-        this.outputTensor3dShape = Recyclable.Array.Pool.get_or_create_by( output_height, output_width, output_channelCount );
+        this.outputTensor3dShape = Recyclable.Array.Pool.get_or_create_by(
+          this.output_height, this.output_width, this.output_channelCount );
       }
 
       // 4. channelValueOffsetTensor3d

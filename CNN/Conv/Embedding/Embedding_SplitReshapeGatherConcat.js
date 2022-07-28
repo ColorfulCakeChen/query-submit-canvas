@@ -147,7 +147,7 @@ class Embedding_SplitReshapeGatherConcat extends Base {
         // (in fact, they should be viewed as tensor1d).
         //
         // This is pre-calculated for improving performance of apply().
-        this.splitCount = input_channelCount;
+        this.splitCount = this.input_channelCount;
 
         // For collecting the rank reduced tensor2d (from the splitted inputTensor3d). They
         // will be used to look up vocabulary table.
@@ -160,7 +160,7 @@ class Embedding_SplitReshapeGatherConcat extends Base {
         //
         // (Used when vocabulary tables are tensor2d.)
         this.inputTensor2dShape
-          = Recyclable.Array.Pool.get_or_create_by( input_height, input_width );
+          = Recyclable.Array.Pool.get_or_create_by( this.input_height, this.input_width );
 
         // For collecting the results of every looking (vocabulary table) up. They will be
         // concatenated into one tensor3d as apply()'s result.
