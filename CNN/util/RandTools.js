@@ -40,7 +40,7 @@ function getRandomIntInclusive( min, max ) {
  *   Return the io_numberArray.
  */
 function fill_numberArray(
-  io_numberArray, randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 4096 ) {
+  io_numberArray, randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = ( 2 ** 26 ) ) {
 
   if ( io_numberArray instanceof Recyclable.NumberArray_withBounds ) {
     let lowerBound = +Infinity;
@@ -94,7 +94,7 @@ function fill_numberArray(
  *   Return a number array.
  */
 function generate_numberArray(
-  elementCount, randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 4096,
+  elementCount, randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = ( 2 ** 26 ),
   oBounds = null ) {
 
   let numberArray = new Array( elementCount );
