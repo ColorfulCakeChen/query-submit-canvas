@@ -106,6 +106,19 @@ class ScaleBoundsArray extends Recyclable.Root {
   }
 
   /**
+   * Set all ( this.lowers[], this.uppers[] ) to ( +Infinity, -Infinity ). This can
+   * not be achieved by set_byLowerUpper() because ( lower > upper ). Usually, this
+   * method is used mainly before calling .enlarge_one_byN() to find out bounds.
+   *
+   * @return {Bounds} Return this (modified) object which is [ +Infinity, -Infinity ].
+   */
+   set_all_by_PositiveInfinity_NegativeInfinity() {
+    this.boundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
+    this.set_activationEscaping_all_none();
+    return this;
+  }
+
+  /**
    * The .scaleArraySet will be set to 1 (i.e. no scale).
    *
    * @param {number} aLower  Set all this.boundsArray.lowers[] by aLower.
