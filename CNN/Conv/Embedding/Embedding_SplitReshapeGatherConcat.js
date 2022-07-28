@@ -95,7 +95,8 @@ class Embedding_SplitReshapeGatherConcat extends ReturnOrClone.Base( FiltersArra
    *
    * @override
    */
-  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
+  * initer( progressParent,
+    inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
 
     // 0. Prepare
 

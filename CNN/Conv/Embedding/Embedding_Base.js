@@ -95,7 +95,8 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
    *   Yield ( value = false ) when ( done = true ) failed.
    *
    */
-  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
+  * initer( progressParent,
+    inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
 
     // 0. Prepare
 

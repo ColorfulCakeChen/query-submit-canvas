@@ -87,7 +87,8 @@ class Embedding_AddGatherReshape extends Base {
    *
    * @override
    */
-  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
+  * initer( progressParent,
+    inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
 
     // 0. Prepare
 

@@ -86,8 +86,6 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
       return false;  // e.g. input array does not have enough data.
     }
 
-//!!! ...unfinished... (2022/07/27)
-
     // 2. filtersArray
     let outChannelSubBegin;
     if ( this.bEmbedVocabularyId )
