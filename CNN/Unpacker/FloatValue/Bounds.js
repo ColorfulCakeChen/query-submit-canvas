@@ -102,8 +102,19 @@ class Bounds extends Recyclable.Root {
    * @return {boolean} Return true, if ( .lower <= aBounds.lower ) and ( .upper >= aBounds.upper ).
    */
   is_contain_Bounds( aBounds ) {
-    return this.is_in_LowerUpper( aBounds.lower, aBounds.upper );
+    return this.is_contain_LowerUpper( aBounds.lower, aBounds.upper );
   }
+
+  /**
+   * @param {BoundsArray} aBoundsArray  The bounds array to be compared.
+   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {boolean} Return true, if ( .lower <= aBounds.lower ) and ( .upper >= aBounds.upper ).
+   */
+  is_contain_BoundsArray_one( aBoundsArray, aIndex ) {
+    return this.is_contain_LowerUpper( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+  }
+
   
  /**
    * @param {number} aLower  The lower bound to be compared.
@@ -111,7 +122,7 @@ class Bounds extends Recyclable.Root {
    *
    * @return {boolean} Return true, if ( .lower >= aLower ) and ( .upper <= aUpper ).
    */
-   is_in_LowerUpper( aLower, aUpper ) {
+  is_in_LowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
     if ( aLower < aUpper ) {
       lower = aLower;
@@ -124,6 +135,26 @@ class Bounds extends Recyclable.Root {
     if ( ( this.lower >= lower ) && ( this.uppers <= upper ) )
       return true;
     return false;
+  }
+
+  /**
+   * @param {Bounds} aBounds  The bounds to be compared.
+   *
+   * @return {boolean} Return true, if ( .lower >= aBounds.lower ) and ( .upper <= aBounds.upper ).
+   */
+  is_in_Bounds( aBounds ) {
+    return this.is_in_LowerUpper( aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {BoundsArray} aBoundsArray  The bounds array to be compared.
+   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {boolean} Return true, if ( .lower >= aBoundsArray.lowers[ aIndex ] )
+   *   and ( .upper <= aBoundsArray.uppers[ aIndex ] ).
+   */
+  is_in_BoundsArray_one( aBoundsArray, aIndex ) {
+    return this.is_in_LowerUpper( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
 
