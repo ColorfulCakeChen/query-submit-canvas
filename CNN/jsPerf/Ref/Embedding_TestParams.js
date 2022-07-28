@@ -274,6 +274,13 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
       if ( !this.out_boundsArray.is_one_IN_byLowerUpper(
              outChannel, vocabularyElementArray.lowerBound, vocabularyElementArray.upperBound ) )
+
+!!! ...unfinished... (2022/07/28)
+// What about embeddingParams.inferencedParams.vocabularyIdMax?
+
+        // if ( !this.out_boundsArray.is_one_IN_byLowerUpper(
+        // outChannel, vocabularyElementArray.lowerBound, vocabularyElementArray.upperBound ) )
+              
         throw Error( `Embedding_TestParams.Base.set_byParamsNumberArrayObject_ParamsOut(): `
           + `The .output.boundsArray[ ${outChannel} ]'s ( lower, upper ) = `
           + `( ${this.out_boundsArray.lowers[ outChannel ]}, ${this.out_boundsArray.uppers[ outChannel ]} ) `
