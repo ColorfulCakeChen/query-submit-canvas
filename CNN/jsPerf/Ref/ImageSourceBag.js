@@ -20,23 +20,27 @@ class ImageSourceBag_Base extends Recyclable.Root {
   static Pool = new Pool.Root( "ImageSource.Bag.Pool", ImageSourceBag_Base, ImageSourceBag_Base.setAsConstructor );
 
   /**
+   * @param {string} tensor_dtype
+   *   The data type of the generated tf.tensor object. (e.g. "float32" or "int32")
    */
-  constructor() {
+  constructor( tensor_dtype = "float32" ) {
     super();
-    ImageSourceBag_Base.setAsConstructor_self.call( this );
+    ImageSourceBag_Base.setAsConstructor_self.call( this, tensor_dtype );
   }
 
   /** @override */
-  static setAsConstructor() {
+  static setAsConstructor( tensor_dtype ) {
     super.setAsConstructor();
-    ImageSourceBag_Base.setAsConstructor_self.call( this );
+    ImageSourceBag_Base.setAsConstructor_self.call( this, tensor_dtype );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self() {
-    // Images indexed by [ originalHeight, originalWidth, channelCount, filterHeight, filterWidth, stridesPad ].
+  static setAsConstructor_self( tensor_dtype ) {
 
+    this.tensor_dtype = tensor_dtype;
+
+    // Images indexed by [ originalHeight, originalWidth, channelCount, filterHeight, filterWidth, stridesPad ].
     if ( !this.images )
       this.images = new MultiLayerMap.Base();
 
@@ -60,6 +64,8 @@ class ImageSourceBag_Base extends Recyclable.Root {
       }
       this.images.clear();
     }
+
+    this.tensor_dtype = undefined;
 
     super.disposeResources();
   }
@@ -209,7 +215,7 @@ class ImageSourceBag_Base extends Recyclable.Root {
       originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
 
     let shape = [ image.height, image.width, image.depth ];
-    let tensor = tf.tensor3d( image.dataArray, shape ); // Create new tensor of specified specification.
+    let tensor = tf.tensor3d( image.dataArray, shape, this.tensor_dtype ); // Create new tensor of specified specification.
     return tensor;
   }
 

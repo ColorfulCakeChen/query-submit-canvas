@@ -253,7 +253,7 @@ class HeightWidthDepth {
         {
           // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors
           //       dynamically created in them.
-          let imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by();
+          let imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
           let testParams = Embedding_TestParams.Base.Pool.get_or_create_by();
           let testParamsGenerator = testParams.ParamsGenerator();
