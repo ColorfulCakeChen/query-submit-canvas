@@ -400,7 +400,7 @@ class Embedding_Reference_Base extends Recyclable.Root {
       }
     }
 
-    imageOut.boundsArraySet.output0.set_all_byBoundsArray( testParams.in_boundsArray );
+    imageOut.boundsArraySet.output0.set_all_byBoundsArray( testParams.out_boundsArray );
 
     return imageOut;
   }
