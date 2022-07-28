@@ -100,6 +100,7 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
 
     let sourceIndex = weightElementOffsetBegin;
 
+    let outChannelBegin = 0;
     for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
 
       let filtersArray = this.filtersArrayArray[ inChannel ]
@@ -107,7 +108,7 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
 
       let filterIndex = 0;
       for ( let vocabularyId = 0; vocabularyId < this.vocabularyCountPerInputChannel; ++vocabularyId ) {
-        let outChannel = 0;
+        let outChannel = outChannelBegin;
 
         if ( this.bEmbedVocabularyId ) {
           filtersArray[ filterIndex ] = vocabularyId; // Embed the vocabulary's id.
@@ -128,6 +129,8 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
           ++outChannel;
         }
       }
+
+      outChannelBegin += this.channelMultiplier;
     }
 
     return true;

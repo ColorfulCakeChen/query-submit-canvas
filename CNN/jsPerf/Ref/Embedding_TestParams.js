@@ -245,6 +245,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
     this.out_boundsArray.length = embeddingParams.inferencedParams.output_channelCount;
     this.out_boundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
 
+    let outChannelBegin = 0;
     for ( let inChannel = 0; inChannel < embeddingParams.input_channelCount; ++inChannel ) {
 
       this.fill_object_property_numberArray( this.in.paramsNumberArrayObject,
@@ -254,13 +255,13 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
       let vocabularyElementIndex = 0;
       for ( let vocabularyId = 0; vocabularyId < embeddingParams.vocabularyCountPerInputChannel; ++vocabularyId ) {
-        let outChannel = 0;
+        let outChannel = outChannelBegin;
 
         if ( embeddingParams.bEmbedVocabularyId ) {
           this.out_boundsArray.enlarge_one_byN( outChannel, vocabularyId );
           ++outChannel;
         }
-    
+
         // Every output channel's value bounds.
         for ( let outChannelSub = outChannelSubBegin; outChannelSub < embeddingParams.channelMultiplier; ++outChannelSub) {
           let vocabularyElement = vocabularyElementArray[ vocabularyElementIndex ];
@@ -270,6 +271,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
           ++outChannel;
         }
       }
+
+      outChannelBegin += embeddingParams.channelMultiplier;
     }
 
     // Pack all parameters, look-up tables weights into a (pre-allocated and re-used) NumberArray.
