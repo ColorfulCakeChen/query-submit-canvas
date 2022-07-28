@@ -4,7 +4,7 @@ import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
-import { FiltersArray_Base } from "./Embedding_FiltersArray_One.js";
+import { FiltersArray_Base } from "./Embedding_FiltersArray_Base.js";
 
 /**
  * A large table which is composed of all vocabulary table of every input channel. It is
