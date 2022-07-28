@@ -38,7 +38,7 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
-    Embedding_FiltersArray_Base.setAsConstructor_self.call( this );
+    Embedding_FiltersArray_Multi.setAsConstructor_self.call( this );
   }
 
   /** @override */
@@ -50,7 +50,7 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
-    Embedding_FiltersArray_Base.setAsConstructor_self.call( this );
+    Embedding_FiltersArray_Multi.setAsConstructor_self.call( this );
     return this;
   }
 
