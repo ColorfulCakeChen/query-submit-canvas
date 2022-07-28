@@ -165,7 +165,7 @@ class Bounds extends Recyclable.Root {
    *
    * @return {Bounds} Return this (modified) object which is [ +Infinity, -Infinity ].
    */
-   set_by_PositiveInfinity_NegativeInfinity() {
+  set_by_PositiveInfinity_NegativeInfinity() {
     this.lower = +Infinity;
     this.upper = -Infinity;
     return this;

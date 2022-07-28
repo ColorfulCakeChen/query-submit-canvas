@@ -72,6 +72,7 @@ class Case {
     }
 
 !!! ...unfinished... (2022/07/28)
+// test set_by_PositiveInfinity_NegativeInfinity() and enlarge_byN()
 // test is_contain_Xxx() and is_in_Xxx()
 
   }
@@ -182,6 +183,7 @@ class Cases {
 
 
 !!! ...unfinished... (2022/07/28)
+// test set_all_by_PositiveInfinity_NegativeInfinity() and enlarge_one_byN()
 // test is_Yyy_contain_Xxx() and is_Yyy_in_Xxx()
 
 
