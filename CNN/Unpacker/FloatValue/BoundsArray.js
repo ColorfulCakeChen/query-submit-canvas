@@ -108,6 +108,16 @@ class BoundsArray extends Recyclable.Root {
 
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {Bounds} aBounds    The bounds to be compared.
+   *
+   * @return {boolean} Return true, if ( .lowers[ thisIndex ] <= aBounds.lower ) and ( .uppers[ thisIndex ] >= aBounds.upper ).
+   */
+  is_one_contain_Bounds( thisIndex, aBounds ) {
+    return this.is_one_contain_LowerUpper( thisIndex, aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {number} aLower     The lower bound to be compared.
    * @param {number} aUpper     The upper bound to be compared.
    *
@@ -148,7 +158,7 @@ class BoundsArray extends Recyclable.Root {
    *
    * @return {boolean} Return true, if ( .lowers[] <= aLower ) and ( .uppers[] >= aUpper ).
    */
-   is_all_contain_LowerUpper( aLower, aUpper ) {
+  is_all_contain_LowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
     if ( aLower < aUpper ) {
       lower = aLower;
@@ -167,12 +177,21 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
+   * @param {Bounds} aBounds  The bounds to be compared.
+   *
+   * @return {boolean} Return true, if ( .lowers[] <= aBounds.lower ) and ( .uppers[] >= aBounds.upper ).
+   */
+  is_all_contain_Bounds( aBounds ) {
+    return this.is_all_contain_LowerUpper( aBounds.lower, aBounds.upper );
+  }
+
+  /**
    * @param {number} aLower  The lower bound to be compared.
    * @param {number} aUpper  The upper bound to be compared.
    *
    * @return {boolean} Return true, if ( .lowers[] >= aLower ) and ( .uppers[] <= aUpper ).
    */
-   is_all_in_LowerUpper( aLower, aUpper ) {
+  is_all_in_LowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
     if ( aLower < aUpper ) {
       lower = aLower;
@@ -188,6 +207,15 @@ class BoundsArray extends Recyclable.Root {
       return false;
     }
     return true;
+  }
+
+  /**
+   * @param {Bounds} aBounds  The bounds to be compared.
+   *
+   * @return {boolean} Return true, if ( .lowers[] >= aBounds.lower ) and ( .uppers[] <= aBounds.upper ).
+   */
+  is_all_in_Bounds( aBounds ) {
+    return this.is_all_in_LowerUpper( aBounds.lower, aBounds.upper );
   }
 
 
