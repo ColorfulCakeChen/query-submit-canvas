@@ -176,7 +176,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
    *   Return this object self.
    */
   set_byParamsScattered(
-    input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+    input_height, input_width, input_channelCount,
+    channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
     bKeepInputTensor
   ) {
 
@@ -186,7 +187,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
     }
 
     this.out = Out.Pool.get_or_create_by(
-      input_channelCount, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+      input_height, input_width, input_channelCount,
+      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
       bKeepInputTensor
     );
 
