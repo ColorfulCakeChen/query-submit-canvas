@@ -82,7 +82,7 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
   init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) {
 
     // 1. Calcualte weights extracting beginning and ending position.
-    if ( !super.init( inputWeightArray, weightElementOffsetBegin, this.tensorWeightCountExtracted ) ) {
+    if ( !super.init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) ) {
       return false;  // e.g. input array does not have enough data.
     }
 
