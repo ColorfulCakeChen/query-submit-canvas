@@ -92,11 +92,10 @@ class Embedding_Reference_Base extends Recyclable.Root {
 
     this.testCorrectness_imageOutReference = this.calcResult( this.testCorrectness_imageIn );
 
-//!!! (2022/07/29 Temp Remarked) for test SplitReshapeGatherConcat only.
-//     Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
-//       "Embedding_Reference.Base.embedding_create_apply_internal( AddGatherReshape )",
-//       Embedding_Reference_Base.embedding_create_apply_internal, this,
-//       Embedding.AddGatherReshape, imageSourceBag, testParams );
+    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
+      "Embedding_Reference.Base.embedding_create_apply_internal( AddGatherReshape )",
+      Embedding_Reference_Base.embedding_create_apply_internal, this,
+      Embedding.AddGatherReshape, imageSourceBag, testParams );
 
     Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
       "Embedding_Reference.Base.embedding_create_apply_internal( SplitReshapeGatherConcat )",

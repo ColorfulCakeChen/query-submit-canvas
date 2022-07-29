@@ -275,10 +275,13 @@ class Embedding_SplitReshapeGatherConcat extends Base {
     // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
     // Every tensor3d (one channel) will be expanded to tensor3d (multiple channels).
     for ( let channelIndex = 0; channelIndex < vocabularyIndicesOneChannelTensor2dArray.length; ++channelIndex ) {
+      let vocabularyTablesTensor2d = this.vocabularyTablesTensorArray[ channelIndex ];
       let oneChannelTensor2d = vocabularyIndicesOneChannelTensor2dArray[ channelIndex ];
 
       // tensor2d.gather( tensor2d ) results to tensor3d.
-      embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensorArray[ channelIndex ].gather( oneChannelTensor2d, 0 );
+//!!! (2022/07/29 Remarked) use vocabularyTablesTensor2d instead.
+//      embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensorArray[ channelIndex ].gather( oneChannelTensor2d, 0 );
+      embeddedTensor3dArray[ channelIndex ] = vocabularyTablesTensor2d.gather( oneChannelTensor2d, 0 );
 
       oneChannelTensor2d.dispose(); // Release intermediate temporary tensor as soon as possible for reducing memory footprint.
       vocabularyIndicesOneChannelTensor2dArray[ channelIndex ] = null; // So that it is cleared when next time re-used.
