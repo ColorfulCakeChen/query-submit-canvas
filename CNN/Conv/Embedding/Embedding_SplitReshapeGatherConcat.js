@@ -270,7 +270,13 @@ class Embedding_SplitReshapeGatherConcat extends Base {
       // The splitted of input is still tensor3d but has only one channel. Reshape it to tensor2d so that the
       // resule of tf.gather() will be tensor3d.
       for ( let i = 0; i < oneChannelTensor3dArray.length; ++i ) {
-        vocabularyIndicesOneChannelTensor2dArray[ i ] = oneChannelTensor3dArray[ i ].reshape( inputTensor2dShape );
+
+//!!! (2022/07/29 Temp Remarked) Use normal array for shape
+//        vocabularyIndicesOneChannelTensor2dArray[ i ] = oneChannelTensor3dArray[ i ].reshape( inputTensor2dShape );
+
+        vocabularyIndicesOneChannelTensor2dArray[ i ]
+          = oneChannelTensor3dArray[ i ].reshape( [ this.input_height, this.input_width ] );
+
         oneChannelTensor3dArray[ i ].dispose();
       }
     }
