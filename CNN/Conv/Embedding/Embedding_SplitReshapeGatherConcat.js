@@ -177,12 +177,7 @@ class Embedding_SplitReshapeGatherConcat extends Base {
 
         for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
           let filtersArray = theFiltersArray_Multi.filtersArrayArray[ inChannel ];
-
-//!!! (2022/07/29 Temp Remarked) Use normal array for shape
-//          this.vocabularyTablesTensorArray[ inChannel ] = tf.tensor2d( filtersArray, this.vocabularyTableShape );
-
-          this.vocabularyTablesTensorArray[ inChannel ] = tf.tensor2d( filtersArray,
-            [ this.vocabularyCountPerInputChannel, this.channelMultiplier ] );
+          this.vocabularyTablesTensorArray[ inChannel ] = tf.tensor2d( filtersArray, this.vocabularyTableShape );
         }
 
         // Note: Because .vocabularyTableShape will be kept by .vocabularyTableTensor2d internally,
@@ -270,13 +265,7 @@ class Embedding_SplitReshapeGatherConcat extends Base {
       // The splitted of input is still tensor3d but has only one channel. Reshape it to tensor2d so that the
       // resule of tf.gather() will be tensor3d.
       for ( let i = 0; i < oneChannelTensor3dArray.length; ++i ) {
-
-//!!! (2022/07/29 Temp Remarked) Use normal array for shape
-//        vocabularyIndicesOneChannelTensor2dArray[ i ] = oneChannelTensor3dArray[ i ].reshape( inputTensor2dShape );
-
-        vocabularyIndicesOneChannelTensor2dArray[ i ]
-          = oneChannelTensor3dArray[ i ].reshape( [ this.input_height, this.input_width ] );
-
+        vocabularyIndicesOneChannelTensor2dArray[ i ] = oneChannelTensor3dArray[ i ].reshape( inputTensor2dShape );
         oneChannelTensor3dArray[ i ].dispose();
       }
     }
