@@ -7,6 +7,10 @@ import { FiltersArray_Multi } from "./Embedding_FiltersArray_Multi.js";
 import { Base } from "./Embedding_Base.js";
 
 /**
+ * This Embedding.SplitReshapeGatherConcat is slower than Embedding.AddGatherReshape
+ * especially in backend WebGL.
+ * 
+ * 
  * @member {boolean} bKeepInputTensor
  *   If true, .apply() will not dispose inputTensor (i.e. keep). For another example, the input image
  * needs be shared across many neural networks.
@@ -18,13 +22,7 @@ import { Base } from "./Embedding_Base.js";
  * int32 (i.e. can not be float32) so that they can be used as tf.gather()'s indices. If
  * ( this.bKeepInputTensor == false ), the inputTensor3d will be disposed. If
  * ( this.bKeepInputTensor == true ), the inputTensor3d will be kept.
-
-// !!! (2022/07/27 Remarked) Use .apply() directly.
-//
-//  * It is one of keep_input_return_copy(),
-//  * return_input_directly(), apply_gather_reshape_and_keep(), apply_gather_reshape_and_destroy(),
-//  * apply_add_gather_reshape_and_keep(), apply_add_gather_reshape_and_destroy().
-
+ *
  */
 class Embedding_SplitReshapeGatherConcat extends Base {
 
@@ -193,9 +191,6 @@ class Embedding_SplitReshapeGatherConcat extends Base {
         //       it can not be released here.
       }
 
-// !!! (2022/07/27 Remarked) Use .apply() directly.
-//     Embedding_SplitReshapeGatherConcat.setup_apply_embedding.call( this );
-
       ++progressToAdvance.value;
       yield progressRoot;  // Embedding initialization done. Report progress.
 
@@ -209,32 +204,6 @@ class Embedding_SplitReshapeGatherConcat extends Base {
       }
     }
   }
-
-// !!! (2022/07/27 Remarked) Use .apply() directly.
-//   /** Determine this.apply data members.
-//    *
-//    * @param {Embedding_SplitReshapeGatherConcat} this
-//    *   The Embedding_SplitReshapeGatherConcat object to be determined and modified.
-//    */
-//   static setup_apply_embedding() {
-//
-// !!! ...unfinished... (2022/07/27)
-//
-//   }
-//
-//   /** */
-//   static apply_Xxx_and_keep( inputTensor ) {
-//
-// !!! ...unfinished... (2022/07/27)
-//
-//   }
-//
-//   /** */
-//   static apply_Xxx_and_destroy( inputTensor ) {
-//
-// !!! ...unfinished... (2022/07/27)
-//
-//   }
 
   /**
    * (Used when vocabulary tables are tensor3d.)

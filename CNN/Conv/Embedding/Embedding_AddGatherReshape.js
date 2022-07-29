@@ -7,6 +7,8 @@ import { FiltersArray_One } from "./Embedding_FiltersArray_One.js";
 import { Base } from "./Embedding_Base.js";
 
 /**
+ * This Embedding.AddGatherReshape is faster than Embedding.SplitReshapeGatherConcat
+ * especially in backend WebGL.
  *
  *
  * @member {boolean} bKeepInputTensor
