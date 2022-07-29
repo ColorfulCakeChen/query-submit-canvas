@@ -278,7 +278,7 @@ class Embedding_SplitReshapeGatherConcat extends Base {
       let oneChannelTensor2d = vocabularyIndicesOneChannelTensor2dArray[ channelIndex ];
 
       // tensor2d.gather( tensor2d ) results to tensor3d.
-      embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensorArray[ channelIndex ].gather( oneChannelTensor2d );
+      embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensorArray[ channelIndex ].gather( oneChannelTensor2d, 0 );
 
       oneChannelTensor2d.dispose(); // Release intermediate temporary tensor as soon as possible for reducing memory footprint.
       vocabularyIndicesOneChannelTensor2dArray[ channelIndex ] = null; // So that it is cleared when next time re-used.
