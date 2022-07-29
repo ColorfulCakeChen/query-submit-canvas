@@ -564,8 +564,8 @@ function test_enlarge_contain_in() {
     for ( let b = -2; b <= +2; ++b )
       for ( let c = -2; c <= +2; ++c )
         for ( let d = -2; d <= +2; ++d ) {
-          aBounds.set_one_byLowerUpper( a, b );
-          bBounds.set_one_byLowerUpper( c, d );
+          aBounds.set_byLowerUpper( a, b );
+          bBounds.set_byLowerUpper( c, d );
 
           aBoundsArray.set_one_byLowerUpper( 0, a, b );
           aBoundsArray.set_one_byLowerUpper( 1, c, d );
@@ -587,7 +587,9 @@ function test_enlarge_contain_in() {
               bShouldTrue &&= aBoundsArray.is_one_contain_Bounds( 1, aBounds );
           }
 
-          aBounds.enlarge_byN( c ).enlarge_byN( d );
+          if ( !aBounds.is_contain_Bounds( bBounds ) )
+            aBounds.enlarge_byN( c ).enlarge_byN( d );
+
           bShouldTrue &&= aBounds.is_contain_N( c );
           bShouldTrue &&= aBounds.is_contain_N( d );
           bShouldTrue &&= aBounds.is_contain_Bounds( bBounds );
@@ -595,7 +597,9 @@ function test_enlarge_contain_in() {
           bShouldTrue &&= aBounds.is_contain_BoundsArray_one( aBoundsArray, 1 );
           bShouldTrue &&= aBoundsArray.is_one_in_Bounds( 1, aBounds );
 
-          aBoundsArray.enlarge_one_byN( 0, c ).enlarge_one_byN( 0, d );
+          if ( !aBoundsArray.is_one_contain_BoundsArray_one( 0, aBoundsArray, 1 ) )
+            aBoundsArray.enlarge_one_byN( 0, c ).enlarge_one_byN( 0, d );
+
           bShouldTrue &&= aBoundsArray.is_one_contain_N( 0, c );
           bShouldTrue &&= aBoundsArray.is_one_contain_N( 0, d );
           bShouldTrue &&= aBoundsArray.is_one_contain_Bounds( 0, bBounds );
