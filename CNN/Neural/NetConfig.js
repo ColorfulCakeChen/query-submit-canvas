@@ -157,7 +157,7 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
  *
  * 3. The final activation function
  *
- * The last PointDepthPoint's pointwise2 of every stage without activation function
+ * The last block's pointwise2 of every stage without activation function
  * (i.e. nActivationIdAtStageEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) could let the output of neural network be any
  * arbitrary value because it will not be restricted by the range of the activation function.
  *
@@ -199,13 +199,14 @@ class NetConfig_Base {
    *   The image or canvas which provides image.
    *
    * @param {boolean} bForceInt32
-   *   If true, the dtype of the returned tf.tensor3d will guaranteed to be int32. Otherwise, the dtype of the returned tf.tensor3d
-   * may be int32 or float32 (if resized). This is useful if the result will be used by an embedding layer (which only accepts
-   * integer input).
+   *   If true, the dtype of the returned tf.tensor3d will guaranteed to be int32.
+   * Otherwise, the dtype of the returned tf.tensor3d may be int32 or float32 (if
+   * resized). This is useful if the result will be used by an embedding layer
+   * (which only accepts integer input).
    *
    * @return {tf.tensor3d}
-   *   Return the tensor3d which is the scaled image from canvas. Its size will be this.sourceImageHeightWidth. Its channel count
-   * will be this.config.sourceChannelCount.
+   *   Return the tensor3d which is the scaled image from canvas. Its size will
+   * be this.sourceImageHeightWidth. Its channel count will be this.config.sourceChannelCount.
    */
   create_ScaledSourceTensor_from_ImageData_or_Canvas( source_ImageData_or_Canvas, bForceInt32 ) {
 
@@ -216,7 +217,8 @@ class NetConfig_Base {
         && ( sourceTensor.shape[ 1 ] == this.sourceWidth  ) )
       return sourceTensor;
 
-    // Otherwise, resize to the default size (height x width) which is the input image size used for training the neural network.
+    // Otherwise, resize to the default size (height x width) which is the input
+    // image size used for training the neural network.
     //
     // ( alignCorners = true ) for visual image resizing.
     let scaledSourceTensorFloat32;
