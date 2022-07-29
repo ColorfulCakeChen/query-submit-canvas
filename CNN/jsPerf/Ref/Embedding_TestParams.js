@@ -281,7 +281,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
           if ( embeddingParams.bEmbedVocabularyId ) {
             bBoundsOk &&= this.out_boundsArray.is_one_contain_N( outChannel, vocabularyId );
-            bBoundsOk &&= this.out_boundsArray.is_one_in_byLowerUpper( outChannel,
+            bBoundsOk &&= this.out_boundsArray.is_one_in_LowerUpper( outChannel,
               vocabularyElementArray.lowerBound, vocabularyElementArray.upperBound );
             if ( !bBoundsOk )
               throw Error( `Embedding_TestParams.Base.set_byParamsNumberArrayObject_ParamsOut(): `
@@ -300,7 +300,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
             ++vocabularyElementIndex;
 
             bBoundsOk &&= this.out_boundsArray.is_one_contain_N( outChannel, vocabularyElement );
-            bBoundsOk &&= this.out_boundsArray.is_one_in_byLowerUpper( outChannel,
+            bBoundsOk &&= this.out_boundsArray.is_one_in_LowerUpper( outChannel,
               vocabularyElementArray.lowerBound, vocabularyElementArray.upperBound );
             if ( !bBoundsOk )
               throw Error( `Embedding_TestParams.Base.set_byParamsNumberArrayObject_ParamsOut(): `
