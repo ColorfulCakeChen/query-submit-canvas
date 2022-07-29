@@ -169,15 +169,20 @@ class Embedding_SplitReshapeGatherConcat extends Base {
 
       // 4. vocabularyTablesTensorArray
       {
-        this.vocabularyTableShape
-          = Recyclable.Array.Pool.get_or_create_by( this.vocabularyCountPerInputChannel, this.channelMultiplier );
+        this.vocabularyTableShape = Recyclable.Array.Pool.get_or_create_by(
+          this.vocabularyCountPerInputChannel, this.channelMultiplier );
 
         this.vocabularyTablesTensorArray = Recyclable.Array.Pool.get_or_create_by(
           theFiltersArray_Multi.filtersArrayArray.length ); // could be tensor3d or tensor2d.
 
         for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
           let filtersArray = theFiltersArray_Multi.filtersArrayArray[ inChannel ];
-          this.vocabularyTablesTensorArray[ inChannel ] = tf.tensor2d( filtersArray, this.vocabularyTableShape );
+
+//!!! (2022/07/29 Temp Remarked) Use normal (non-re-used) array as shape.
+//          this.vocabularyTablesTensorArray[ inChannel ] = tf.tensor2d( filtersArray, this.vocabularyTableShape );
+
+          this.vocabularyTablesTensorArray[ inChannel ] = tf.tensor2d( filtersArray,
+            [ this.vocabularyCountPerInputChannel, this.channelMultiplier ] );
         }
 
         // Note: Because .vocabularyTableShape will be kept by .vocabularyTableTensor2d internally,
@@ -275,13 +280,14 @@ class Embedding_SplitReshapeGatherConcat extends Base {
     // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
     // Every tensor3d (one channel) will be expanded to tensor3d (multiple channels).
     for ( let channelIndex = 0; channelIndex < vocabularyIndicesOneChannelTensor2dArray.length; ++channelIndex ) {
-      let vocabularyTablesTensor2d = this.vocabularyTablesTensorArray[ channelIndex ];
+//!!! (2022/07/29 Remarked) use this.vocabularyTablesTensorArray[ channelIndex ] directly.
+//      let vocabularyTablesTensor2d = this.vocabularyTablesTensorArray[ channelIndex ];
       let oneChannelTensor2d = vocabularyIndicesOneChannelTensor2dArray[ channelIndex ];
 
       // tensor2d.gather( tensor2d ) results to tensor3d.
 //!!! (2022/07/29 Remarked) use vocabularyTablesTensor2d instead.
-//      embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensorArray[ channelIndex ].gather( oneChannelTensor2d, 0 );
-      embeddedTensor3dArray[ channelIndex ] = vocabularyTablesTensor2d.gather( oneChannelTensor2d, 0 );
+      embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensorArray[ channelIndex ].gather( oneChannelTensor2d, 0 );
+//      embeddedTensor3dArray[ channelIndex ] = vocabularyTablesTensor2d.gather( oneChannelTensor2d, 0 );
 
       oneChannelTensor2d.dispose(); // Release intermediate temporary tensor as soon as possible for reducing memory footprint.
       vocabularyIndicesOneChannelTensor2dArray[ channelIndex ] = null; // So that it is cleared when next time re-used.
