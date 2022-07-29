@@ -9,10 +9,10 @@ export { Nets_ShareInput_Base as Base };
 // (which will transfer data between CPU and GPU multiple times) to process both competition side of an difference
 // evolution iteration.
 //
-// Perhaps, combine two neural network of both competion side into one larger neural network (suppose they have the
-// same neural network architecture, e.g. same layer count of ShuffleNetV2). Every (combined) pointwise and depthwise
-// convolution computes both side in one tensorflow.js function call. This may be faster than compute them in two
-// iteration.
+// Perhaps, combine two neural networks of both competition sides into one larger neural network (suppose they have
+// the same neural network architecture, e.g. same layer count of ShuffleNetV2). Every (combined) pointwise and
+// depthwise convolution computes both side in one tensorflow.js function call. This may be faster than compute
+// them in two iteration.
 //
 
 
