@@ -177,7 +177,7 @@ class Embedding_SplitReshapeGatherConcat extends Base {
 
         for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
           let filtersArray = theFiltersArray_Multi.filtersArrayArray[ inChannel ];
-          this.vocabularyTablesTensorArray[ inChannel ] = tf.tensor( filtersArray, this.vocabularyTableShape );
+          this.vocabularyTablesTensorArray[ inChannel ] = tf.tensor2d( filtersArray, this.vocabularyTableShape );
         }
 
         // Note: Because .vocabularyTableShape will be kept by .vocabularyTableTensor2d internally,
