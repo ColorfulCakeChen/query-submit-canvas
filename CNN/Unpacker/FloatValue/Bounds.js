@@ -132,7 +132,7 @@ class Bounds extends Recyclable.Root {
       upper = aLower;
     }
 
-    if ( ( this.lower >= lower ) && ( this.uppers <= upper ) )
+    if ( ( this.lower >= lower ) && ( this.upper <= upper ) )
       return true;
     return false;
   }
