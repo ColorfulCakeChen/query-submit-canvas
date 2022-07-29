@@ -1,12 +1,12 @@
 export { NetConfig_Base as Base };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
-//import * as ConvBlock from "../Conv/Block.js";
+//import * as ConvStage from "../Conv/Stage.js";
 
 
 //!!! ...unfinished... (2021/10/07)
 /**
- * How to let block generate more channels?
+ * How to let stage generate more channels?
  * (For example, for letting the extra output channel combined into the input of the next run.)
  *
  * 1. Input larger ( height, width ).
@@ -19,33 +19,26 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
  *    Problem: This may slower the computation speed in backend CPU and WASM. (In WEBGL, it still is fast.)
  *
  *
- * 3. Use more blocks.
+ * 3. Use more stages.
  *
- *    Problem: The extra blocks will all operate at input ( height, width ) = ( 1, 1 ).
+ *    Problem: The extra stages will all operate at input ( height, width ) = ( 1, 1 ).
  *
  *
- * 4. Let Block have parameter extraOutputChannelCountRate.
+ * 4. Let Stage have parameter extraOutputChannelCountRate.
  *
  *    The outputChannelCount will always be even (i.e. ( 2 * extraOutputChannelCountRate ) ) because ShuffleNetV2 should
  *    always double the channel count at least.
  *
  *
- * 5. Let Block have parameter bHalveHeightWidth.
+ * 5. Let Stage have parameter bHalveHeightWidth.
  *
- *    If ( bHalveHeightWidth == false ), Block will keep the ( height, width ) of output the same as input.
- *    Problem1: Block_NotShuffleNet_NotMobileNet will have only one step in this case.
- *    Problem2: How does Neural.Net determine which block should or shoud not halve the ( height, width )?
+ *    If ( bHalveHeightWidth == false ), Stage will keep the ( height, width ) of output the same as input.
+ *    Problem1: Stage_NotShuffleNet_NotMobileNet will have only one block in this case.
+ *    Problem2: How does Neural.Net determine which stage should or shoud not halve the ( height, width )?
  *
  *
  */ 
 
-
-//!!! ...unfinished... (2021/10/11)
-// NotShuffleNet_NotMobileNet may be skipped because too slower?
-// MobileNetV1 should with ( pointwise1ChannelCountRate = 0 )
-// MobileNetV2 should with ( pointwise1ChannelCountRate = 2 )
-// ShuffleNetV2 should with ( pointwise1ChannelCountRate = 1 )
-// ShuffleNetV2_ByPointwise22 should with ( pointwise1ChannelCountRate = 0 )
 
 
 //!!! ...unfinished... (2021/08/13) Define:
@@ -67,8 +60,8 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 /**
  * The base class for neural network's configuration.
  *
- * A special recommended configuration is 3x3 ShuffleNetV2 without explicit bias (but with implicit bias by SIGMOID activation)
- * and without activation at the end of every block:
+ * A special recommended configuration is 3x3 ShuffleNetV2 without explicit bias (but with implicit bias by SIGMOID
+ * activation) and without activation at the end of every stage:
  *   - bChannelShuffler: true
  *   - pointwise1ChannelCountRate: 1
 
@@ -78,11 +71,11 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
  *   - depthwiseFilterHeight: 3
 
 //!!! ...unfinished... (2021/08/11) should be removed.
-// *   - depthwiseChannelMultiplierBlock0Step0: 1
+// *   - depthwiseChannelMultiplierStage0Block0: 1
 
  *   - bBias: false
  *   - nActivationId: ValueDesc.ActivationFunction.Singleton.Ids.SIGMOID
- *   - nActivationIdAtBlockEnd: ValueDesc.ActivationFunction.Singleton.Ids.NONE
+ *   - nActivationIdAtStageEnd: ValueDesc.ActivationFunction.Singleton.Ids.NONE
  *
  *
  * 1. The bias operation
@@ -164,39 +157,39 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
  *
  * 3. The final activation function
  *
- * The last PointDepthPoint's pointwise2 of every block without activation function
- * (i.e. nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) could let the output of neural network be any
+ * The last PointDepthPoint's pointwise2 of every stage without activation function
+ * (i.e. nActivationIdAtStageEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) could let the output of neural network be any
  * arbitrary value because it will not be restricted by the range of the activation function.
  *
  */
 class NetConfig_Base {
   /**
-   * @param {number} depthwiseChannelMultiplierBlock0Step0
-   *   The depthwise convolution of the first step (Step 0) of the first block (Block 0) will expand input channel by this factor.
+   * @param {number} depthwiseChannelMultiplierStage0Block0
+   *   The depthwise convolution of the first block (Block 0) of the first stage (Stage 0) will expand input channel by this factor.
    *
-   * @see ConvBlock.Base.init 
+   * @see ConvStage.Base.init 
    */
   constructor(
     sourceHeight, sourceWidth, sourceChannelCount = 4,
-    stepCountPerBlock,
+    blockCountPerStage,
     bChannelShuffler = true,
     pointwise1ChannelCountRate = 1,
-    strAvgMaxConv = "Conv", depthwiseFilterHeight = 3, depthwiseChannelMultiplierBlock0Step0 = 1, bBias = false,
+    strAvgMaxConv = "Conv", depthwiseFilterHeight = 3, depthwiseChannelMultiplierStage0Block0 = 1, bBias = false,
     nActivationId = ValueDesc.ActivationFunction.Singleton.Ids.COS,
-    nActivationIdAtBlockEnd = ValueDesc.ActivationFunction.Singleton.Ids.NONE )
+    nActivationIdAtStageEnd = ValueDesc.ActivationFunction.Singleton.Ids.NONE )
   {
     this.sourceHeight = sourceHeight;
     this.sourceWidth = sourceWidth;
     this.sourceChannelCount = sourceChannelCount;
-    this.stepCountPerBlock = stepCountPerBlock;
+    this.blockCountPerStage = blockCountPerStage;
     this.bChannelShuffler = bChannelShuffler;
     this.pointwise1ChannelCountRate = pointwise1ChannelCountRate;
     this.strAvgMaxConv = strAvgMaxConv;
     this.depthwiseFilterHeight = depthwiseFilterHeight;
-    this.depthwiseChannelMultiplierBlock0Step0 = depthwiseChannelMultiplierBlock0Step0;
+    this.depthwiseChannelMultiplierStage0Block0 = depthwiseChannelMultiplierStage0Block0;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
-    this.nActivationIdAtBlockEnd = nActivationIdAtBlockEnd;
+    this.nActivationIdAtStageEnd = nActivationIdAtStageEnd;
 
     this.sourceHeightWidth = [ this.sourceHeight, this.sourceWidth ];
   }
@@ -249,9 +242,9 @@ class NetConfig_Base {
     }
   }
 
-  /** The channel count of the first block (Block 0). */
-  get channelCountBlock0() {
-    return this.sourceChannelCount * this.depthwiseChannelMultiplierBlock0Step0;
+  /** The channel count of the first stage (Stage 0). */
+  get channelCountStage0() {
+    return this.sourceChannelCount * this.depthwiseChannelMultiplierStage0Block0;
   }
 
 }
