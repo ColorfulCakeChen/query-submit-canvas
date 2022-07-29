@@ -88,7 +88,7 @@ class HeightWidthDepth {
           randomOffsetMin, randomOffsetMax, divisorForRemainder
         );
 
-        dataTensor3dArray[ i ] = tf.tensor( image.dataArray, shape );
+        dataTensor3dArray[ i ] = tf.tensor( image.dataArray, shape, "int32" );
       }
 
 //!!! (2022/07/26 Remarked) Use create_bySequenceRandom() instead.
