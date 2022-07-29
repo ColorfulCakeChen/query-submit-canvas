@@ -367,8 +367,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
-      input_height: [ 3, 3 ],
-      input_width: [ 4, 5 ],
+      input_height: [ 1, 5 ],
+      input_width: [ 1, 5 ],
 
       input_channelCount: [
         Embedding.Params.input_channelCount.valueDesc.range.min,
