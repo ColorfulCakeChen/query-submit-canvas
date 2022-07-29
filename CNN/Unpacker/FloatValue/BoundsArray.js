@@ -125,7 +125,7 @@ class BoundsArray extends Recyclable.Root {
    *   and ( .uppers[ thisIndex ] >= aBoundsArray.uppers[ aIndex ] ).
    */
   is_one_contain_BoundsArray_one( thisIndex, aBoundsArray, aIndex ) {
-    return this.is_one_contain_LowerUpper( thisIndex, aBoundsArray.lowers[ aIndex ], aBoundsArray.upper[ aIndex ] );
+    return this.is_one_contain_LowerUpper( thisIndex, aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
   /**
