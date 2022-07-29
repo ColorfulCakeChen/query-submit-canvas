@@ -253,42 +253,75 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
       let vocabularyElementArray = this.in.paramsNumberArrayObject[ inChannel ];
 
-      let vocabularyElementIndex = 0;
-      for ( let vocabularyId = 0; vocabularyId < embeddingParams.vocabularyCountPerInputChannel; ++vocabularyId ) {
-        let outChannel = outChannelBegin;
+      { // Find out every output channel's value bounds.
+        let vocabularyElementIndex = 0;
+        for ( let vocabularyId = 0; vocabularyId < embeddingParams.vocabularyCountPerInputChannel; ++vocabularyId ) {
+          let outChannel = outChannelBegin;
 
-        if ( embeddingParams.bEmbedVocabularyId ) {
-          this.out_boundsArray.enlarge_one_byN( outChannel, vocabularyId );
-          ++outChannel;
-        }
+          if ( embeddingParams.bEmbedVocabularyId ) {
+            this.out_boundsArray.enlarge_one_byN( outChannel, vocabularyId );
+            ++outChannel;
+          }
 
-        // Every output channel's value bounds.
-        for ( let outChannelSub = outChannelSubBegin; outChannelSub < embeddingParams.channelMultiplier; ++outChannelSub) {
-          let vocabularyElement = vocabularyElementArray[ vocabularyElementIndex ];
-          ++vocabularyElementIndex;
+          for ( let outChannelSub = outChannelSubBegin; outChannelSub < embeddingParams.channelMultiplier; ++outChannelSub) {
+            let vocabularyElement = vocabularyElementArray[ vocabularyElementIndex ];
+            ++vocabularyElementIndex;
 
-          this.out_boundsArray.enlarge_one_byN( outChannel, vocabularyElement );
-          ++outChannel;
+            this.out_boundsArray.enlarge_one_byN( outChannel, vocabularyElement );
+            ++outChannel;
+          }
         }
       }
 
-      if ( !this.out_boundsArray.is_one_IN_byLowerUpper(
-             outChannel, vocabularyElementArray.lowerBound, vocabularyElementArray.upperBound ) )
+      { // Verify every output channel's value bounds.
+        let bBoundsOk = true;
+        let vocabularyElementIndex = 0;
+        for ( let vocabularyId = 0; vocabularyId < embeddingParams.vocabularyCountPerInputChannel; ++vocabularyId ) {
+          let outChannel = outChannelBegin;
 
-!!! ...unfinished... (2022/07/28)
-// What about embeddingParams.inferencedParams.vocabularyIdMax?
+          if ( embeddingParams.bEmbedVocabularyId ) {
+            bBoundsOk &&= this.out_boundsArray.is_one_contain_N( outChannel, vocabularyId );
+            if ( !bBoundsOk )
+              throw Error( `Embedding_TestParams.Base.set_byParamsNumberArrayObject_ParamsOut(): `
+                + `vocabularyId=${vocabularyId} `
+                + `should be in bounds `
+                + `[ ${this.out_boundsArray.lowers[ outChannel ]}, ${this.out_boundsArray.uppers[ outChannel ]} ].`
+              );
 
-        // if ( !this.out_boundsArray.is_one_IN_byLowerUpper(
-        // outChannel, vocabularyElementArray.lowerBound, vocabularyElementArray.upperBound ) )
-              
-        throw Error( `Embedding_TestParams.Base.set_byParamsNumberArrayObject_ParamsOut(): `
-          + `The .output.boundsArray[ ${outChannel} ]'s ( lower, upper ) = `
-          + `( ${this.out_boundsArray.lowers[ outChannel ]}, ${this.out_boundsArray.uppers[ outChannel ]} ) `
-          + `should be in `
-          + `( ${vocabularyElementArray.lowerBound}, ${vocabularyElementArray.upperBound} ).`
-        );
+            ++outChannel;
+          }
+
+          for ( let outChannelSub = outChannelSubBegin; outChannelSub < embeddingParams.channelMultiplier; ++outChannelSub) {
+            let vocabularyElement = vocabularyElementArray[ vocabularyElementIndex ];
+            ++vocabularyElementIndex;
+
+            bBoundsOk &&= this.out_boundsArray.is_one_contain_N( outChannel, vocabularyElement );
+            if ( !bBoundsOk )
+              throw Error( `Embedding_TestParams.Base.set_byParamsNumberArrayObject_ParamsOut(): `
+                + `vocabularyId=${vocabularyId}, `
+                + `vocabularyElementArray=[ ${vocabularyElementArray} ], `
+                + `vocabularyElementArray[ ${outChannel} ]=${vocabularyElement} `
+                + `should be in bounds `
+                + `[ ${this.out_boundsArray.lowers[ outChannel ]}, ${this.out_boundsArray.uppers[ outChannel ]} ].`
+              );
+
+            ++outChannel;
+          }
+        }
+      }
 
       outChannelBegin += embeddingParams.channelMultiplier;
+    }
+
+    { // Verify all output channel's value bounds.
+      let bBoundsOk = this.out_boundsArray.is_all_in_byLowerUpper(
+        vocabularyElementArray.lowerBound, vocabularyElementArray.upperBound );
+      if ( !bBoundsOk )
+        throw Error( `Embedding_TestParams.Base.set_byParamsNumberArrayObject_ParamsOut(): `
+          + `The .output.boundsArray ( ${this.out_boundsArray} ) `
+          + `should be in bounds `
+          + `[ ${vocabularyElementArray.lowerBound}, ${vocabularyElementArray.upperBound} ].`
+        );
     }
 
     // Pack all parameters, look-up tables weights into a (pre-allocated and re-used) NumberArray.

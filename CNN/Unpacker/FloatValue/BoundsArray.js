@@ -1056,5 +1056,11 @@ class BoundsArray extends Recyclable.Root {
     return this;
   }
 
+  /** @override */
+  toString() {
+    let str = `lowers=[ ${this.lowers} ], uppers=[ ${this.uppers} ]`;
+    return str;
+  }
+
 }
 

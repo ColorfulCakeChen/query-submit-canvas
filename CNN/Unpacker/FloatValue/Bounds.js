@@ -545,5 +545,11 @@ class Bounds extends Recyclable.Root {
     return resultArray;
   }
 
+  /** @override */
+  toString() {
+    let str = `lower=${this.lower}, upper=${this.upper}`;
+    return str;
+  }
+
 }
 
