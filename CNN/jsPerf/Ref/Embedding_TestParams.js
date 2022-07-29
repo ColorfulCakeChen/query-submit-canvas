@@ -281,11 +281,15 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
           if ( embeddingParams.bEmbedVocabularyId ) {
             bBoundsOk &&= this.out_boundsArray.is_one_contain_N( outChannel, vocabularyId );
+            bBoundsOk &&= this.out_boundsArray.is_one_in_byLowerUpper( outChannel,
+              vocabularyElementArray.lowerBound, vocabularyElementArray.upperBound );
             if ( !bBoundsOk )
               throw Error( `Embedding_TestParams.Base.set_byParamsNumberArrayObject_ParamsOut(): `
                 + `vocabularyId=${vocabularyId} `
                 + `should be in bounds `
-                + `[ ${this.out_boundsArray.lowers[ outChannel ]}, ${this.out_boundsArray.uppers[ outChannel ]} ].`
+                + `[ ${this.out_boundsArray.lowers[ outChannel ]}, ${this.out_boundsArray.uppers[ outChannel ]} ] `
+                + `and bounds `
+                + `[ ${vocabularyElementArray.lowerBound}, ${vocabularyElementArray.upperBound} ].`
               );
 
             ++outChannel;
@@ -296,13 +300,17 @@ class Embedding_TestParams_Base extends TestParams.Base {
             ++vocabularyElementIndex;
 
             bBoundsOk &&= this.out_boundsArray.is_one_contain_N( outChannel, vocabularyElement );
+            bBoundsOk &&= this.out_boundsArray.is_one_in_byLowerUpper( outChannel,
+              vocabularyElementArray.lowerBound, vocabularyElementArray.upperBound );
             if ( !bBoundsOk )
               throw Error( `Embedding_TestParams.Base.set_byParamsNumberArrayObject_ParamsOut(): `
                 + `vocabularyId=${vocabularyId}, `
                 + `vocabularyElementArray=[ ${vocabularyElementArray} ], `
                 + `vocabularyElementArray[ ${outChannel} ]=${vocabularyElement} `
                 + `should be in bounds `
-                + `[ ${this.out_boundsArray.lowers[ outChannel ]}, ${this.out_boundsArray.uppers[ outChannel ]} ].`
+                + `[ ${this.out_boundsArray.lowers[ outChannel ]}, ${this.out_boundsArray.uppers[ outChannel ]} ] `
+                + `and bounds `
+                + `[ ${vocabularyElementArray.lowerBound}, ${vocabularyElementArray.upperBound} ].`
               );
 
             ++outChannel;
@@ -311,17 +319,6 @@ class Embedding_TestParams_Base extends TestParams.Base {
       }
 
       outChannelBegin += embeddingParams.channelMultiplier;
-    }
-
-    { // Verify all output channel's value bounds.
-      let bBoundsOk = this.out_boundsArray.is_all_in_byLowerUpper(
-        vocabularyElementArray.lowerBound, vocabularyElementArray.upperBound );
-      if ( !bBoundsOk )
-        throw Error( `Embedding_TestParams.Base.set_byParamsNumberArrayObject_ParamsOut(): `
-          + `The .output.boundsArray ( ${this.out_boundsArray} ) `
-          + `should be in bounds `
-          + `[ ${vocabularyElementArray.lowerBound}, ${vocabularyElementArray.upperBound} ].`
-        );
     }
 
     // Pack all parameters, look-up tables weights into a (pre-allocated and re-used) NumberArray.
