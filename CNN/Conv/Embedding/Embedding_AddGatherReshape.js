@@ -182,7 +182,10 @@ class Embedding_AddGatherReshape extends Base {
         this.vocabularyTableShape
           = Recyclable.Array.Pool.get_or_create_by( vocabularyCountTotal, this.channelMultiplier );
 
-        this.vocabularyTableTensor2d = tf.tensor2d( theFiltersArray_One.filtersArray, this.vocabularyTableShape );
+//!!! (2022/07/29 Temp Remarked) Use normal (non-re-used) array as shape.
+//        this.vocabularyTableTensor2d = tf.tensor2d( theFiltersArray_One.filtersArray, this.vocabularyTableShape );
+        this.vocabularyTableTensor2d = tf.tensor2d( theFiltersArray_One.filtersArray,
+          [ vocabularyCountTotal, this.channelMultiplier ] );
 
         // Note: Because .vocabularyTableShape will be kept by .vocabularyTableTensor2d internally,
         //       it can not be released here.
