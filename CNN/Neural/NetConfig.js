@@ -230,7 +230,7 @@ class NetConfig_Base {
       sourceTensor.dispose();
     }
 
-    if ( !bForceInt32 ) {
+    if ( !bForceInt32 )
       return scaledSourceTensorFloat32;
 
     // Convert to int32 if necessary. (Because the tf.resize() result's dtype is float32.)
