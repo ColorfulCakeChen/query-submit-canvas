@@ -48,7 +48,7 @@ class Nets_ShareInput_Base {
     neuralNetCount,
     bWebWorker
   ) {
-    neuralNetCount = neuralNetCount | 1; // At least, one neural network.
+    neuralNetCount = neuralNetCount ?? 1; // At least, one neural network.
 
     this.disposeTensors();
 
