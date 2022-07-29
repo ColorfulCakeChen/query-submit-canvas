@@ -104,7 +104,7 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
     for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
 
       let filtersArray = this.filtersArrayArray[ inChannel ]
-        = Recyclable.Array.Pool.get_or_create_by( this.tensorWeightCountTotal );
+        = Recyclable.Array.Pool.get_or_create_by( this.weightCountPerVocabularyTable );
 
       let filterIndex = 0;
       for ( let vocabularyId = 0; vocabularyId < this.vocabularyCountPerInputChannel; ++vocabularyId ) {
