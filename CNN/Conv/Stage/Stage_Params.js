@@ -182,16 +182,7 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
 
   /** @override */
   disposeResources() {
-    this.InferencedParams_dispose();
     super.disposeResources();
-  }
-
-  /** Release .inferencedParams */
-  InferencedParams_dispose() {
-    if ( this.inferencedParams ) {
-      this.inferencedParams.disposeResources_and_recycleToPool();
-      this.inferencedParams = null;
-    }
   }
 
   /**
@@ -216,7 +207,7 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
       this.depthwiseFilterHeight = this.getParamValue_byParamDesc( Stage_Params.depthwiseFilterHeight );
       this.depthwiseFilterWidth = this.getParamValue_byParamDesc( Stage_Params.depthwiseFilterWidth );
       this.bPointwise2ActivatedAtStageEnd = this.getParamValue_byParamDesc( Stage_Params.bPointwise2ActivatedAtStageEnd );
-      this.nSqueezeExcitationChannelCountDivisor = return this.getParamValue_byParamDesc( Stage_Params.nSqueezeExcitationChannelCountDivisor );
+      this.nSqueezeExcitationChannelCountDivisor = this.getParamValue_byParamDesc( Stage_Params.nSqueezeExcitationChannelCountDivisor );
       this.nActivationId = this.getParamValue_byParamDesc( Stage_Params.nActivationId );
       this.bKeepInputTensor = this.getParamValue_byParamDesc( Stage_Params.bKeepInputTensor );
     }

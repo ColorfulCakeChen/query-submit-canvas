@@ -5,6 +5,7 @@ import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
+import { ParamsBase } from "./Block_ParamsBase.js";
 import { InferencedParams } from "./Block_InferencedParams.js";
 
 /**
@@ -199,7 +200,7 @@ import { InferencedParams } from "./Block_InferencedParams.js";
  *   How many output tensors will be returned by the parameter outputTensors[] of Block.apply(). At least 1. At most 2.
  *
  */
-class Block_Params extends Weights.Params {
+class Block_Params extends Weights.Params( ParamsBase ) {
 
   /**
    * Used as default Block.Params provider for conforming to Recyclable interface.
