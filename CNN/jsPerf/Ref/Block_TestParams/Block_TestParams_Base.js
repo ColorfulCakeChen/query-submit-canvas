@@ -10,7 +10,6 @@ import * as ImageSourceBag from "../ImageSourceBag.js";
 import * as Pointwise from "../../../Conv/Pointwise.js";
 import * as Depthwise from "../../../Conv/Depthwise.js";
 import * as Block from "../../../Conv/Block.js";
-import { Out } from "./Block_TestParams_Out.js";
 
 /**
  *
@@ -47,7 +46,7 @@ class Block_TestParams_Base extends TestParams.Base {
     this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag = Pointwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool.get_or_create_by();
     this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag = Depthwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool.get_or_create_by();
 
-    this.out = Out.Pool.get_or_create_by();
+    this.out = Block.ParamsBase.Pool.get_or_create_by();
   }
 
   /** @override */
@@ -95,7 +94,7 @@ class Block_TestParams_Base extends TestParams.Base {
       this.out = null;
     }
 
-    this.out = Out.Pool.get_or_create_by(
+    this.out = Block.ParamsBase.Pool.get_or_create_by(
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
@@ -122,7 +121,7 @@ class Block_TestParams_Base extends TestParams.Base {
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
    * The name should be one of Block_TestParams_Base.paramsNameOrderArray[] elements.
    *
-   * @param {Block_TestParams.Out} this.out
+   * @param {Block.ParamsBase} this.out
    *   An object which will be the final result of Block.Params.
    *
    * @param {number} weightElementOffsetBegin
@@ -147,7 +146,7 @@ class Block_TestParams_Base extends TestParams.Base {
 
   /** Fill this.out.inferencedParams according to this.out */
   generate_out_inferencedParams() {
-    this.out.generate_inferencedParams();
+    this.out.InferencedParams_create();
   }
 
   /**
