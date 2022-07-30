@@ -201,7 +201,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     blockCountRequested
   ) {
 
- //!!! ...unfinished... (2022/07/31)
+ //!!! ...unfinished... (2022/07/31) should use NeuralNet_StageParamsCreator_Base to create them.
 
     this.depthwiseFilterHeight = 3; // Always use ( 3 * 3 ) depthwise filter.
     this.depthwiseFilterWidth = 3;

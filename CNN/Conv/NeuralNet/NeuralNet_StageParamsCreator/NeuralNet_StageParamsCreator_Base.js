@@ -80,26 +80,30 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
   configTo_beforeStage0() {
     let neuralNetParams = this.neuralNetParams;
 
+//!!! ...unfinished... (2022/07/30)
     this.input_height = neuralNetParams.input_height;
     this.input_width = neuralNetParams.input_width;
     this.input_channelCount = neuralNetParams.input_channelCount;
+
+    this.bEmbedVocabularyId = true;
 
     this.nConvStageTypeId = neuralNetParams.nConvStageTypeId;
 
     this.blockCountRequested = neuralNetParams.blockCountRequested;
     this.bPointwise1 = true; // Always use pointwise1.
 
-    this.depthwiseFilterHeight = neuralNetParams.inferencedParams.depthwiseFilterHeight;
-    this.depthwiseFilterWidth = neuralNetParams.inferencedParams.depthwiseFilterWidth;
+    this.depthwiseFilterHeight = 3; // Always use ( 3 * 3 ) depthwise filter.
+    this.depthwiseFilterWidth = 3;
 
     this.bPointwise2ActivatedAtStageEnd = true; // All stages (except stageLast) have activation function.
 
-    this.nSqueezeExcitationChannelCountDivisor
-      = neuralNetParams.inferencedParams.nSqueezeExcitationChannelCountDivisor;
+    // Use the suggested squeeze-and-excitation divisor.
+    this.nSqueezeExcitationChannelCountDivisor = 16;
 
-    // Always Use 
-    this.nActivationId = neuralNetParams.inferencedParams.nActivationId;
+    // Always use the only suggested activation function.
+    this.nActivationId = ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2;
 
+//!!!
     // Because NeuralNet always has an embedding layer (in front of stage0),
     // all stages should not keep input tensor (no matter what
     // neuralNetParams.bKeepInputTensor is).

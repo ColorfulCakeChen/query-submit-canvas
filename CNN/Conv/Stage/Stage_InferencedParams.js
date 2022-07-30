@@ -162,6 +162,8 @@ class Stage_InferencedParams extends Recyclable.Root {
     depthwiseFilterHeight, depthwiseFilterWidth
   ) {
 
+//!!! ...unfinished... (2022/07/31) should use Stage_BlockParamsCreator to create them.
+
     this.height_width_array_dispose();
     this.inputHeightArray = Recyclable.Array.Pool.get_or_create_by( blockCountRequested );
     this.inputWidthArray = Recyclable.Array.Pool.get_or_create_by( blockCountRequested );
