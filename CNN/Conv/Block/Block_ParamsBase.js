@@ -1,19 +1,20 @@
-export { Out };
+export { Block_ParamsBase as ParamsBase };
 
-import * as Pool from "../../../util/Pool.js";
-import * as Recyclable from "../../../util/Recyclable.js";
-import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
-import * as Block from "../../../Conv/Block.js";
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+//import * as Block from "../../Conv/Block.js";
+import { InferencedParams } from "./Block_InferencedParams.js";
 
 /**
  *
  */
-class Out extends Recyclable.Root {
+class Block_ParamsBase extends Recyclable.Root {
 
   /**
-   * Used as default Block_TestParams.Out provider for conforming to Recyclable interface.
+   * Used as default Block.ParamsBase provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Block_TestParams.Out.Pool", Out, Out.setAsConstructor );
+  static Pool = new Pool.Root( "Block.ParamsBase.Pool", Block_ParamsBase, Block_ParamsBase.setAsConstructor );
 
   /**
    */
@@ -29,7 +30,7 @@ class Out extends Recyclable.Root {
     bKeepInputTensor
   ) {
     super();
-    Out.setAsConstructor_self.call( this,
+    Block_ParamsBase.setAsConstructor_self.call( this,
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
@@ -55,7 +56,7 @@ class Out extends Recyclable.Root {
     bKeepInputTensor
   ) {
     super.setAsConstructor();
-    Out.setAsConstructor_self.call( this,
+    Block_ParamsBase.setAsConstructor_self.call( this,
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
@@ -132,7 +133,7 @@ class Out extends Recyclable.Root {
   }
 
   /** Fill this.inferencedParams. */
-  generate_inferencedParams() {
+  InferencedParams_create() {
     this.InferencedParams_dispose();
 
     this.inferencedParams = Block.InferencedParams.Pool.get_or_create_by(
@@ -218,10 +219,6 @@ class Out extends Recyclable.Root {
     return ValueDesc.ConvBlockType.Singleton.getName_byId( this.nConvBlockTypeId );
   }
 
-  get pointwise1ActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.inferencedParams.pointwise1ActivationId );
-  }
-
   get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
     return ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getName_byId( this.depthwise_AvgMax_Or_ChannelMultiplier );
   }
@@ -242,27 +239,15 @@ class Out extends Recyclable.Root {
     return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor );
   }
 
-  get squeezeExcitationActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.inferencedParams.squeezeExcitationActivationId );
-  }
-
   get nActivationName() {
     return ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId );
   }
 
   /** @override */
   toString() {
-
-    let inferencedParams = this.inferencedParams;
-
-    let paramsOutDescription =
-        `inputTensorCount=${inferencedParams.inputTensorCount}, `
-
+    let str = ``
       + `input0_height=${this.input0_height}, input0_width=${this.input0_width}, `
       + `input0_channelCount=${this.input0_channelCount}, `
-
-      + `input1_height=${inferencedParams.input1_height}, input1_width=${inferencedParams.input1_width}, `
-      + `input1_channelCount=${inferencedParams.input1_channelCount}, `
 
       + `output_height=${this.output_height}, output_width=${this.output_width}, `
       + `output0_channelCount=${this.output0_channelCount}, output1_channelCount=${this.output1_channelCount}, `
@@ -270,51 +255,30 @@ class Out extends Recyclable.Root {
 
       + `nConvBlockTypeName=${this.nConvBlockTypeName}(${this.nConvBlockTypeId}), `
 
-      + `bHigherHalfDifferent=${inferencedParams.bHigherHalfDifferent}, `
-      + `bHigherHalfDepthwise2=${inferencedParams.bHigherHalfDepthwise2}, `
-
-      + `pointwise1ChannelCount=${this.inferencedParams.pointwise1ChannelCount}, `
-      + `pointwise1Bias=${this.inferencedParams.pointwise1Bias}, `
-      + `pointwise1ActivationName=${this.pointwise1ActivationName}`
-        + `(${this.inferencedParams.pointwise1ActivationId}), `
-
-      + `bDepthwiseRequestedAndNeeded=${inferencedParams.bDepthwiseRequestedAndNeeded}, `
-      + `bDepthwise2Requested=${inferencedParams.bDepthwise2Requested}, `
-
       + `depthwise_AvgMax_Or_ChannelMultiplier=`
         + `${this.depthwise_AvgMax_Or_ChannelMultiplier_Name}`
         + `(${this.depthwise_AvgMax_Or_ChannelMultiplier}), `
 
-      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
-      + `depthwiseFilterHeight_real=${this.depthwiseFilterHeight_real}, depthwiseFilterWidth_real=${this.depthwiseFilterWidth_real}, `
+      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
+      + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
+      + `depthwiseFilterHeight_real=${this.depthwiseFilterHeight_real}, `
+      + `depthwiseFilterWidth_real=${this.depthwiseFilterWidth_real}, `
 
       + `depthwiseStridesPad=${this.depthwiseStridesPadName}(${this.depthwiseStridesPad}), `
-      + `depthwiseBias=${this.inferencedParams.depthwiseBias}, `
       + `depthwiseActivationName=${this.depthwiseActivationName}(${this.depthwiseActivationId}), `
 
-      + `bConcat1Requested=${inferencedParams.bConcat1Requested}, `
-
       + `pointwise20ChannelCount=${this.pointwise20ChannelCount}, `
-      + `pointwise20Bias=${this.inferencedParams.pointwise20Bias}, `
       + `pointwise20ActivationName=${this.pointwise20ActivationName}(${this.pointwise20ActivationId}), `
 
       + `nSqueezeExcitationChannelCountDivisorName=`
         + `${this.nSqueezeExcitationChannelCountDivisorName}`
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
 
-      + `squeezeExcitationActivationName=`
-        + `${this.squeezeExcitationActivationName}`
-        + `(${this.inferencedParams.squeezeExcitationActivationId}), `
-
-      + `bAddInputToOutputRequested=${inferencedParams.bAddInputToOutputRequested}, `
-      + `bConcat2ShuffleSplitRequested=${inferencedParams.bConcat2ShuffleSplitRequested}, `
-      + `pointwise20_channelShuffler_outputGroupCount=${inferencedParams.pointwise20_channelShuffler_outputGroupCount}, `
-      + `outputTensorCount=${inferencedParams.outputTensorCount}, `
-
-      + `bKeepInputTensor=${this.bKeepInputTensor}`
+      + `bKeepInputTensor=${this.bKeepInputTensor}, `
+      + `${this.inferencedParams}`
     ;
 
-    return paramsOutDescription;
+    return str;
   }
 
 }

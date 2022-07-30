@@ -409,11 +409,9 @@ class Block_InferencedParams extends Recyclable.Root {
   /**
    * Determine the following properties:
    *   - this.squeezeExcitationActivationId
-   *   - this.squeezeExcitationActivationName
    */
-  static set_squeezeExcitationActivationId_squeezeExcitationActivationName_by( nActivationId ) {
+  static set_squeezeExcitationActivationId_by( nActivationId ) {
     this.squeezeExcitationActivationId = nActivationId;
-    this.squeezeExcitationActivationName = ValueDesc.ActivationFunction.Singleton.getName_byId( this.squeezeExcitationActivationId );
   }
 
   /**
@@ -695,13 +693,59 @@ class Block_InferencedParams extends Recyclable.Root {
       nConvBlockTypeId, pointwise20ChannelCount, this.pointwise20Bias, pointwise20ActivationId );
 
     // 5. squeeze-and-excitation
-    Block_InferencedParams.set_squeezeExcitationActivationId_squeezeExcitationActivationName_by.call( this,
+    Block_InferencedParams.set_squeezeExcitationActivationId_by.call( this,
       nActivationId
     );
 
     // 6. nHigherHalfDifferent
     Block_InferencedParams.set_nHigherHalfDifferent_by.call( this,
       input0_channelCount, nConvBlockTypeId, pointwise1ChannelCount, pointwise20ChannelCount );
+  }
+
+  get pointwise1ActivationName() {
+    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise1ActivationId );
+  }
+
+  get squeezeExcitationActivationName() {
+    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.squeezeExcitationActivationId );
+  }
+
+  /** @override */
+  toString() {
+    let str = ``
+      + `inputTensorCount=${this.inputTensorCount}, `
+
+      + `input1_height=${this.input1_height}, input1_width=${this.input1_width}, `
+      + `input1_channelCount=${this.input1_channelCount}, `
+
+      + `bHigherHalfDifferent=${this.bHigherHalfDifferent}, `
+      + `bHigherHalfDepthwise2=${this.bHigherHalfDepthwise2}, `
+
+      + `pointwise1ChannelCount=${this.this.pointwise1ChannelCount}, `
+      + `pointwise1Bias=${this.this.pointwise1Bias}, `
+      + `pointwise1ActivationName=${this.pointwise1ActivationName}`
+        + `(${this.this.pointwise1ActivationId}), `
+
+      + `bDepthwiseRequestedAndNeeded=${this.bDepthwiseRequestedAndNeeded}, `
+      + `bDepthwise2Requested=${this.bDepthwise2Requested}, `
+
+      + `depthwiseBias=${this.this.depthwiseBias}, `
+
+      + `bConcat1Requested=${this.bConcat1Requested}, `
+
+      + `pointwise20Bias=${this.this.pointwise20Bias}, `
+
+      + `squeezeExcitationActivationName=`
+        + `${this.squeezeExcitationActivationName}`
+        + `(${this.this.squeezeExcitationActivationId}), `
+
+      + `bAddInputToOutputRequested=${this.bAddInputToOutputRequested}, `
+      + `bConcat2ShuffleSplitRequested=${this.bConcat2ShuffleSplitRequested}, `
+      + `pointwise20_channelShuffler_outputGroupCount=${this.pointwise20_channelShuffler_outputGroupCount}, `
+      + `outputTensorCount=${this.outputTensorCount}, `
+    ;
+
+    return str;
   }
 
 }
