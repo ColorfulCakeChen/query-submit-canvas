@@ -79,7 +79,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     blockCountRequested
   ) {
     super();
-    NeuralNet_InferencedParams.set_inferencedParams_by.call( this,
+    NeuralNet_InferencedParams.setAsConstructor_self.call( this,
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId, stageCountRequested,
@@ -95,7 +95,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     blockCountRequested
   ) {
     super.setAsConstructor();
-    NeuralNet_InferencedParams.set_inferencedParams_by.call( this,
+    NeuralNet_InferencedParams.setAsConstructor_self.call( this,
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId, stageCountRequested,

@@ -28,6 +28,9 @@ import * as Depthwise from "../Depthwise.js";
  *   The width of output image. Usually, it is roughly half of the input width
  * (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
  *
+ * @member {number} outputChannelCount
+ *   The channel count of output image. Usually, it is double the input channel count.
+ *
  * @member {number[]} depthwiseFilterHeightArray
  *   The depthwise filter height of input image of every block.
  *
@@ -47,14 +50,14 @@ class Stage_InferencedParams extends Recyclable.Root {
    *
    */
   constructor(
-    sourceHeight, sourceWidth,
+    sourceHeight, sourceWidth, sourceChannelCount,
     nConvStageTypeId,
     blockCountRequested,
     depthwiseFilterHeight, depthwiseFilterWidth
   ) {
     super();
-    Stage_InferencedParams.set_inferencedParams_by.call( this,
-      sourceHeight, sourceWidth,
+    Stage_InferencedParams.setAsConstructor_self.call( this,
+      sourceHeight, sourceWidth, sourceChannelCount,
       nConvStageTypeId,
       blockCountRequested,
       depthwiseFilterHeight, depthwiseFilterWidth
@@ -63,14 +66,14 @@ class Stage_InferencedParams extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor(
-    sourceHeight, sourceWidth,
+    sourceHeight, sourceWidth, sourceChannelCount,
     nConvStageTypeId,
     blockCountRequested,
     depthwiseFilterHeight, depthwiseFilterWidth
   ) {
     super.setAsConstructor();
-    Stage_InferencedParams.set_inferencedParams_by.call( this,
-      sourceHeight, sourceWidth,
+    Stage_InferencedParams.setAsConstructor_self.call( this,
+      sourceHeight, sourceWidth, sourceChannelCount,
       nConvStageTypeId,
       blockCountRequested,
       depthwiseFilterHeight, depthwiseFilterWidth
@@ -80,13 +83,13 @@ class Stage_InferencedParams extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self(
-    sourceHeight, sourceWidth,
+    sourceHeight, sourceWidth, sourceChannelCount,
     nConvStageTypeId,
     blockCountRequested,
     depthwiseFilterHeight, depthwiseFilterWidth
   ) {
     Stage_InferencedParams.set_inferencedParams_by.call( this,
-      sourceHeight, sourceWidth,
+      sourceHeight, sourceWidth, sourceChannelCount,
       nConvStageTypeId,
       blockCountRequested,
       depthwiseFilterHeight, depthwiseFilterWidth
@@ -250,14 +253,15 @@ class Stage_InferencedParams extends Recyclable.Root {
       depthwisePadInfo = null;
     }
 
-    this.outputChannelCount = undefined;
+    // In current Stage's design, the output channel always is twice as input.
+    this.outputChannelCount = sourceChannelCount * 2;
   }
 
   /**
    *
    */
   static set_inferencedParams_by(
-    sourceHeight, sourceWidth,
+    sourceHeight, sourceWidth, sourceChannelCount,
     nConvStageTypeId,
     blockCountRequested,
     depthwiseFilterHeight, depthwiseFilterWidth
@@ -268,6 +272,16 @@ class Stage_InferencedParams extends Recyclable.Root {
       blockCountRequested,
       depthwiseFilterHeight, depthwiseFilterWidth
     );
+  }
+
+  /** @override */
+  toString() {
+    let str = ``
+      + `outputHeight=${this.outputHeight}, `
+      + `outputWidth=${this.outputWidth}, `
+      + `outputChannelCount=${this.outputChannelCount}`
+    ;
+    return str;
   }
 
 }

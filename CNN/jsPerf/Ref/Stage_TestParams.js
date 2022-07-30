@@ -131,7 +131,7 @@ class Out extends Recyclable.Root {
   generate_inferencedParams() {
     this.InferencedParams_dispose();
     this.inferencedParams = Stage.InferencedParams.Pool.get_or_create_by(
-      this.sourceHeight, this.sourceWidth,
+      this.sourceHeight, this.sourceWidth, this.sourceChannelCount,
       this.nConvStageTypeId,
       this.blockCountRequested,
       this.depthwiseFilterHeight, this.depthwiseFilterWidth
@@ -152,7 +152,7 @@ class Out extends Recyclable.Root {
 
   /** @override */
   toString() {
-    let paramsOutDescription =
+    let str =
         `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, `
       + `sourceChannelCount=${this.sourceChannelCount}, `
 
@@ -169,13 +169,12 @@ class Out extends Recyclable.Root {
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
 
       + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
+      + `bKeepInputTensor=${this.bKeepInputTensor}, `
 
-      + `outputHeight=${this.inferencedParams.outputHeight}, outputWidth=${this.inferencedParams.outputWidth}, `
-//        + `outputChannelCount=${???.outputChannelCount}, `
-      + `bKeepInputTensor=${this.bKeepInputTensor}`
+      + `${this.inferencedParams}`
     ;
 
-    return paramsOutDescription;
+    return str;
   }
 
 }

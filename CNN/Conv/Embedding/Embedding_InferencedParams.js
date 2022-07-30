@@ -51,7 +51,7 @@ class Embedding_InferencedParams extends Recyclable.Root {
     channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
   ) {
     super();
-    Embedding_InferencedParams.set_inferencedParams_by.call( this,
+    Embedding_InferencedParams.setAsConstructor_self.call( this,
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
@@ -63,7 +63,7 @@ class Embedding_InferencedParams extends Recyclable.Root {
     channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
   ) {
     super.setAsConstructor();
-    Embedding_InferencedParams.set_inferencedParams_by.call( this,
+    Embedding_InferencedParams.setAsConstructor_self.call( this,
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
