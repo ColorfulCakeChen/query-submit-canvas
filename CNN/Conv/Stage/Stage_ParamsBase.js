@@ -6,6 +6,10 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import { InferencedParams } from "./Stage_InferencedParams.js";
 
 /**
+ * Convolution stage parameters.
+ *
+ * @member {InferencedParams} inferencedParams
+ *   The inferenced parameters of this stage parameters.
  *
  */
  class Stage_ParamsBase extends Recyclable.Root {
