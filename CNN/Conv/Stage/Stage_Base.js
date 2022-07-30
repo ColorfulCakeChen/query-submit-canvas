@@ -483,17 +483,6 @@ class Stage_Base extends Recyclable.Root {
     this.tensorWeightCountTotal = 0;
     this.tensorWeightCountExtracted = 0;
 
-//!!! (2022/07/15 Remarked) Now block will use TensorPlaceholder directly.
-//     if ( this.intermediateOutputTensors ) {
-//       this.intermediateOutputTensors.disposeResources_and_recycleToPool();
-//       this.intermediateOutputTensors = null;
-//     }
-//
-//     if ( this.intermediateInputTensors ) {
-//       this.intermediateInputTensors.disposeResources_and_recycleToPool();
-//       this.intermediateInputTensors = null;
-//     }
-
     this.weightElementOffsetBegin = this.weightElementOffsetEnd = -1;
     this.bInitOk = false;
 
@@ -599,34 +588,6 @@ class Stage_Base extends Recyclable.Root {
 
     let outputTensor = this.blockLast.output0.realTensor; // Note: The blockLast should only output one tensor.
     return outputTensor;
-
-
-//!!! (2022/07/15 Remarked) Now block will use TensorPlaceholder directly.
-//     let inputTensors = this.intermediateInputTensors;
-//     let outputTensors = this.intermediateOutputTensors;
-//
-//     outputTensors[ 0 ] = inputTensor;
-//     outputTensors[ 1 ] = null; // Note: The block0 should only input one tensor.
-//
-//     let blockArray = this.blockArray;
-//     let block;
-//     for ( let i = 0; i < blockArray.length; ++i ) {
-//       inputTensors[ 0 ] = outputTensors[ 0 ]; // Previous block's output becomes next block's input.
-//       inputTensors[ 1 ] = outputTensors[ 1 ];
-//
-//       block = blockArray[ i ];
-//       block.apply( inputTensors, outputTensors );
-//     }
-//
-//     let outputTensor = outputTensors[ 0 ]; // Note: The blockLast should only output one tensor.
-//
-//     // Avoid dangling tensors.
-//     inputTensors[ 0 ] = null;
-//     inputTensors[ 1 ] = null;
-//     outputTensors[ 0 ] = null;
-//     outputTensors[ 1 ] = null;
-//
-//     return outputTensor;
   }
 
   /** How many blocks inside this stage are created. (may different from this.blockCountRequested.) */
@@ -675,46 +636,4 @@ class Stage_Base extends Recyclable.Root {
     return str;
   }
 
-  /**
-   * @param {Params} stageParams
-   *   The Stage.Params object to be reference.
-   *
-   * @return {Base}
-   *   Return newly created Stage.BlockParamsCreator.Xxx object according to stageParams.nConvStageTypeId.
-   */
-  static create_BlockParamsCreator_byStageParams( stageParams ) {
-
-    if ( stageParams.blockCountRequested < 2 )
-      throw Error( `Stage.BlockParamsCreator.Base.create_byStageParams(): `
-        + `stageParams.blockCountRequested ( ${stageParams.blockCountRequested} ) must be >= 2.` );
-
-    if ( !(   ( stageParams.nConvStageTypeId >= 0 )
-           && ( stageParams.nConvStageTypeId < Stage_Base.nConvStageTypeId_to_BlockParamsCreator_ClassArray.length )
-          ) 
-       )
-      throw Error( `Stage.Base.create_BlockParamsCreator_byStageParams(): `
-        + `unknown stageParams.nConvStageTypeId ( ${stageParams.nConvStageTypeId} ) value.`
-      );
-
-    let classBlockParamsCreator = Stage_Base.nConvStageTypeId_to_BlockParamsCreator_ClassArray[ stageParams.nConvStageTypeId ];
-    let aBlockParamsCreator = classBlockParamsCreator.Pool.get_or_create_by( stageParams );
-
-    return aBlockParamsCreator;
-  }
-
 }
-
-
-/**
- * Mapping nConvStageTypeId (number as array index) to BlockParamsCreator class object.
- */
-Stage_Base.nConvStageTypeId_to_BlockParamsCreator_ClassArray = [
-  BlockParamsCreator.MobileNetV1,                         // ValueDesc.ConvStageType.Ids.MOBILE_NET_V1 (0)
-  BlockParamsCreator.MobileNetV1_padValid,                // ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID (1)
-  BlockParamsCreator.MobileNetV2_Thin,                    // ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN (2)
-  BlockParamsCreator.MobileNetV2,                         // ValueDesc.ConvStageType.Ids.MOBILE_NET_V2 (3)
-  BlockParamsCreator.ShuffleNetV2,                        // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2 (4)
-  BlockParamsCreator.ShuffleNetV2_ByMobileNetV1,          // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5)
-  BlockParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid, // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6)
-  BlockParamsCreator.ShuffleNetV2_ByPointwise21,          // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21 (7)
-];

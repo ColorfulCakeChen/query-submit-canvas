@@ -98,6 +98,8 @@ class Stage_InferencedParams extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.channelShuffler_dispose();
+
     this.height_width_array_dispose();
 
     this.outputChannelCount = undefined;
@@ -105,6 +107,16 @@ class Stage_InferencedParams extends Recyclable.Root {
     this.outputHeight = undefined;
 
     super.disposeResources();
+  }
+
+  /**
+   *
+   */
+  channelShuffler_dispose() {
+    if ( this.channelShuffler ) {
+      this.channelShuffler.disposeResources_and_recycleToPool();
+      this.channelShuffler = false;
+    }
   }
 
   /** Release .xxxHeightArray and .xxxWidthArray */
@@ -276,6 +288,33 @@ class Stage_InferencedParams extends Recyclable.Root {
     );
   }
 
+  /**
+   * @param {Params} stageParams
+   *   The Stage.Params object to be reference.
+   *
+   * @return {Base}
+   *   Return newly created Stage.BlockParamsCreator.Xxx object according to stageParams.nConvStageTypeId.
+   */
+   static create_BlockParamsCreator_byStageParams( stageParams ) {
+
+    if ( stageParams.blockCountRequested < 2 )
+      throw Error( `Stage.BlockParamsCreator.Base.create_byStageParams(): `
+        + `stageParams.blockCountRequested ( ${stageParams.blockCountRequested} ) must be >= 2.` );
+
+    if ( !(   ( stageParams.nConvStageTypeId >= 0 )
+           && ( stageParams.nConvStageTypeId < Stage_Base.nConvStageTypeId_to_BlockParamsCreator_ClassArray.length )
+          ) 
+       )
+      throw Error( `Stage.Base.create_BlockParamsCreator_byStageParams(): `
+        + `unknown stageParams.nConvStageTypeId ( ${stageParams.nConvStageTypeId} ) value.`
+      );
+
+    let classBlockParamsCreator = Stage_InferencedParams.nConvStageTypeId_to_BlockParamsCreator_ClassArray[ stageParams.nConvStageTypeId ];
+    let aBlockParamsCreator = classBlockParamsCreator.Pool.get_or_create_by( stageParams );
+
+    return aBlockParamsCreator;
+  }
+
   /** @override */
   toString() {
     let str = ``
@@ -287,3 +326,17 @@ class Stage_InferencedParams extends Recyclable.Root {
   }
 
 }
+
+/**
+ * Mapping nConvStageTypeId (number as array index) to BlockParamsCreator class object.
+ */
+Stage_InferencedParams.nConvStageTypeId_to_BlockParamsCreator_ClassArray = [
+  BlockParamsCreator.MobileNetV1,                         // ValueDesc.ConvStageType.Ids.MOBILE_NET_V1 (0)
+  BlockParamsCreator.MobileNetV1_padValid,                // ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID (1)
+  BlockParamsCreator.MobileNetV2_Thin,                    // ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN (2)
+  BlockParamsCreator.MobileNetV2,                         // ValueDesc.ConvStageType.Ids.MOBILE_NET_V2 (3)
+  BlockParamsCreator.ShuffleNetV2,                        // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2 (4)
+  BlockParamsCreator.ShuffleNetV2_ByMobileNetV1,          // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5)
+  BlockParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid, // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6)
+  BlockParamsCreator.ShuffleNetV2_ByPointwise21,          // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21 (7)
+];
