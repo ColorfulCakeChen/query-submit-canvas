@@ -109,6 +109,10 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
  //!!! ...unfinished... (2022/07/31)
  // Perhaps, use Stage_InferencedParams to find out every stage's output heigh and width.
+ // however, need know depthwiseFilterHeight, depthwiseFilterWidth
+
+    this.depthwiseFilterHeight = 3; // Always use ( 3 * 3 ) depthwise filter.
+    this.depthwiseFilterWidth = 3;
 
     this.output_height = input_height;
     this.output_width = input_width;
