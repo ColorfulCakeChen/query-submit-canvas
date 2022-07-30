@@ -215,7 +215,6 @@ class Stage_TestParams_Base extends TestParams.Base {
   /** @override */
   static setAsConstructor_self() {
     this.blockArray = Recyclable.OwnerArray.Pool.get_or_create_by();
-
     this.out = Out.Pool.get_or_create_by();
   }
 
@@ -311,7 +310,7 @@ class Stage_TestParams_Base extends TestParams.Base {
 
       if ( 0 == i ) { // Block0.
         blockParamsCreator.configTo_beforeBlock0();
-      } else { // (i.e. block1, 2, 3, ...)
+      } else { // (i.e. Block1, 2, 3, ...)
         blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i );
       }
 

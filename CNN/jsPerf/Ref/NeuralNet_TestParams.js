@@ -7,8 +7,10 @@ import * as RandTools from "../../util/RandTools.js";
 //import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-import * as TestParams from "./TestParams.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
+import * as TestParams from "./TestParams.js";
+import * as Embedding_TestParams from "./Embedding_TestParams.js";
+import * as Stage_TestParams from "./Stage_TestParams.js";
 
 /**
  *
@@ -185,6 +187,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
   /** @override */
   static setAsConstructor_self() {
+    this.stageArray = Recyclable.OwnerArray.Pool.get_or_create_by();
     this.out = Out.Pool.get_or_create_by();
   }
 
@@ -194,6 +197,13 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       this.out.disposeResources_and_recycleToPool();
       this.out = null;
     }
+
+    this.stageArray?.disposeResources_and_recycleToPool();
+    this.stageArray = null;
+
+    this.embeddingTestParams?.disposeResources_and_recycleToPool();
+    this.embeddingTestParams = null;
+
     super.disposeResources();
   }
 
@@ -263,6 +273,58 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
 //!!! ...unfinished... (2022/07/30)
 
+    this.in.paramsNumberArrayObject.length = 0;
+
+    {
+      this.embeddingTestParams?.disposeResources_and_recycleToPool();
+      this.embeddingTestParams = Embedding_TestParasm.Pool.get_or_create_by( this.id );
+
+      this.embeddingTestParams.set_byParamsScattered(
+        neuralNetParams.input_height,
+        neuralNetParams.input_width,
+        neuralNetParams.input_channelCount,
+        neuralNetParams.vocabularyChannelCount,
+        neuralNetParams.vocabularyCountPerInputChannel,
+        neuralNetParams.inferencedParams.bEmbedVocabularyId,
+        neuralNetParams.bKeepInputTensor
+      );
+
+      this.in.paramsNumberArrayObject.push( this.embeddingTestParams.in_weights.weightArray );
+    }
+
+    let stageParamsCreator = Stage.Base.create_StageParamsCreator_byNeuralNetParams( neuralNetParams );
+
+    this.stageArray.clear();
+    this.stageArray.length = stageParamsCreator.stageCount;
+
+    for ( let i = 0; i < stageCount; ++i ) { // Stage0, 1, 2, 3, ..., StageLast.
+
+      if ( 0 == i ) { // Stage0.
+        stageParamsCreator.configTo_beforeStage0();
+      } else { // (i.e. Stage1, 2, 3, ...)
+        stageParamsCreator.configTo_beforeStageN_exceptStage0( i );
+      }
+
+      if ( ( this.blockArray.length - 1 ) == i ) { // StageLast. (Note: Stage0 may also be StageLast.)
+        stageParamsCreator.configTo_beforeStageLast();
+      }
+
+      let stageTestParams = Stage_TestParams.Base.Pool.get_or_create_by( this.id );
+      blockTestParams.set_byParamsScattered(
+        stageParamsCreator.sourceHeight, stageParamsCreator.sourceWidth, stageParamsCreator.sourceChannelCount,
+        stageParamsCreator.nConvStageTypeId,
+        stageParamsCreator.blockCountRequested,
+        stageParamsCreator.bPointwise1,
+        stageParamsCreator.depthwiseFilterHeight, stageParamsCreator.depthwiseFilterWidth,
+        stageParamsCreator.bPointwise2ActivatedAtStageEnd,
+        stageParamsCreator.nSqueezeExcitationChannelCountDivisor,
+        stageParamsCreator.nActivationId,
+        stageParamsCreator.bKeepInputTensor
+      );
+
+      this.stageArray[ i ] = stageTestParams;
+      this.in.paramsNumberArrayObject.push( stageTestParams.in_weights.weightArray ); // Place every stage's parameters in sequence.
+    }
 
     // Pack all parameters, look-up tables weights into a (pre-allocated and re-used) NumberArray.
     this.in_weights.set_byConcat(
@@ -298,6 +360,10 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
    * @override
    */
   onYield_after() {
+    this.stageArray.clear();
+
+    this.embeddingTestParams?.disposeResources_and_recycleToPool();
+    this.embeddingTestParams = null;
   }
 
   /**
