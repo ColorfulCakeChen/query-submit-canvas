@@ -74,39 +74,41 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
   }
 
   /**
-   * Called before stage0 is about to be created. Sub-class should override this method to adjust data members.
-   *
-   * Stage 0.
-   *
-   * The special points of a neuralNet's stage 0 are:
-   *   - halve the height x width. (Both ShuffleNetV2 and MobileNetV2) (by depthwise convolution with strides = 2)
-   *   - Double channels. (Please see explanation of class NeuralNet.Base)
+   * Called before stage0 is about to be created.
    */
   configTo_beforeStage0() {
     let neuralNetParams = this.neuralNetParams;
 
-    this.input0_height = neuralNetParams.sourceHeight; // stage0 inputs the source image size.
-    this.input0_width = neuralNetParams.sourceWidth;
-    //this.input0_channelCount; // Sub-class should determine it.
+    this.input_height = neuralNetParams.input_height;
+    this.input_width = neuralNetParams.input_width;
+    this.input_channelCount = neuralNetParams.input_channelCount;
 
-    this.activation_setup_forStage0(); // activation of depthwise1 and pointwise2.
+    this.nConvStageTypeId = neuralNetParams.nConvStageTypeId;
 
-    this.depthwiseFilterHeight = this.depthwiseFilterHeight_Default;
-    this.depthwiseFilterWidth = this.depthwiseFilterWidth_Default;
+    this.blockCountRequested = neuralNetParams.blockCountRequested;
+    this.bPointwise1 = true; // Always use pointwise1.
 
-    // stage0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
-    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
+    this.depthwiseFilterHeight = neuralNetParams.depthwiseFilterHeight;
+    this.depthwiseFilterWidth = neuralNetParams.depthwiseFilterWidth;
+
+    this.bPointwise2ActivatedAtStageEnd = true; // All stages (except stageLast) have activation function.
 
     this.nSqueezeExcitationChannelCountDivisor = neuralNetParams.nSqueezeExcitationChannelCountDivisor;
 
-    this.bKeepInputTensor = neuralNetParams.bKeepInputTensor; // stage0 may or may not keep input tensor according to caller's necessary.
+    this.nActivationId = ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2;
 
+    // Because NeuralNet always has an embedding layer (in front of stage0),
+    // all stages should not keep input tensor (no matter what
+    // neuralNetParams.bKeepInputTensor is).
+    this.bKeepInputTensor = false;
+
+//!!! ...unfinished... (2022/07/30)
     this.output_height = neuralNetParams.inferencedParams.outputHeightArray[ 0 ];
     this.output_width = neuralNetParams.inferencedParams.outputWidthArray[ 0 ];
   }
 
   /**
-   * Called before every stage (excluding stage0, including stage1, 2, ...). Sub-class should override this method to adjust data members.
+   * Called before every stage (excluding stage0, including stage1, 2, ...).
    *
    * @param {number} stageIndex
    *   The id (i.e. 1, 2, ...) of the stage which will be created.
@@ -114,20 +116,12 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
   configTo_beforeStageN_exceptStage0( stageIndex ) {
     let neuralNetParams = this.neuralNetParams;
 
-    this.input0_height = neuralNetParams.inferencedParams.inputHeightArray[ stageIndex ];
-    this.input0_width = neuralNetParams.inferencedParams.inputWidthArray[ stageIndex ];
-    //this.input0_channelCount; // Sub-class should determine it.
+//!!! ...unfinished... (2022/07/30)
+    this.input_height = neuralNetParams.inferencedParams.inputHeightArray[ stageIndex ];
+    this.input_width = neuralNetParams.inferencedParams.inputWidthArray[ stageIndex ];
+    this.input_channelCount = ???;
 
-    // All stages (except stage0 in NoPointwise1) will not double the channel count by depthwise, because stage0 has already double
-    // output channel count.
-    //
-    this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
-
-    // All stages (except stage0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
-    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
-
-    this.bKeepInputTensor = false; // No matter bKeepInputTensor, all stages (except stage0) should not keep input tensor.
-
+//!!! ...unfinished... (2022/07/30)
     this.output_height = neuralNetParams.inferencedParams.outputHeightArray[ stageIndex ];
     this.output_width = neuralNetParams.inferencedParams.outputWidthArray[ stageIndex ];
   }
@@ -137,10 +131,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
    */
   configTo_beforeStageLast() {
 
-    // Besides, the stageLast may use a different depthwise filter size. This is especially true for NotShuffleNet_NotMobileNet.
-    this.depthwiseFilterHeight = this.depthwiseFilterHeight_Last;
-    this.depthwiseFilterWidth = this.depthwiseFilterWidth_Last;
-
+    // Only the final stage's output does not have activation function.
+    this.bPointwise2ActivatedAtStageEnd = false;
   }
 
   get nConvStageTypeName() {
