@@ -338,9 +338,8 @@ class Block_InferencedParams extends Recyclable.Root {
    *   - this.bLinear_between_pointwise1_and_pointwise2
    *   - this.pointwise1Bias
    *   - this.pointwise1ActivationId
-   *   - this.pointwise1ActivationName
    */
-  static set_pointwise1Bias_pointwise1ActivationId_pointwise1ActivationName_by(
+  static set_pointwise1Bias_pointwise1ActivationId_by(
     pointwise1ChannelCount,
     bLinear_between_depthwise_and_pointwise2,
     bDepthwiseRequestedAndNeeded,
@@ -416,7 +415,6 @@ class Block_InferencedParams extends Recyclable.Root {
    *   - this.pointwise21ChannelCount
    *   - this.pointwise21Bias
    *   - this.pointwise21ActivationId
-   *   - this.pointwise21ActivationName
    */
   static set_pointwise21ChannelCount_pointwise21Bias_pointwise21ActivationId_by(
     nConvBlockTypeId, pointwise20ChannelCount, pointwise20Bias, pointwise20ActivationId ) {
@@ -437,7 +435,6 @@ class Block_InferencedParams extends Recyclable.Root {
    *   - this.pointwise1ChannelCount_modified
    *   - this.pointwise1Bias (may be modified)
    *   - this.pointwise1ActivationId (may be modified)
-   *   - this.pointwise1ActivationName (may be modified)
    *   - this.pointwise1_nHigherHalfDifferent
    *   - this.pointwise1_inputChannelCount_lowerHalf
    *   - this.pointwise1_inputChannelCount_higherHalf
@@ -517,7 +514,6 @@ class Block_InferencedParams extends Recyclable.Root {
    *   - this.pointwise1ChannelCount_modified
    *   - this.pointwise1Bias (may be modified)
    *   - this.pointwise1ActivationId (may be modified)
-   *   - this.pointwise1ActivationName (may be modified)
    *   - this.pointwise1_nHigherHalfDifferent
    *   - this.pointwise1_inputChannelCount_lowerHalf
    *   - this.pointwise1_inputChannelCount_higherHalf
@@ -600,7 +596,6 @@ class Block_InferencedParams extends Recyclable.Root {
    *   - this.pointwise1ChannelCount_modified
    *   - this.pointwise1Bias
    *   - this.pointwise1ActivationId
-   *   - this.pointwise1ActivationName
    *   - this.pointwise1_nHigherHalfDifferent
    *   - this.pointwise1_inputChannelCount_lowerHalf
    *   - this.pointwise1_inputChannelCount_higherHalf
@@ -625,9 +620,7 @@ class Block_InferencedParams extends Recyclable.Root {
    *   - this.pointwise21ChannelCount
    *   - this.pointwise21Bias
    *   - this.pointwise21ActivationId
-   *   - this.pointwise21ActivationName
    *   - this.squeezeExcitationActivationId
-   *   - this.squeezeExcitationActivationName
    *   - this.outputTensorCount
    *
    */
@@ -673,7 +666,7 @@ class Block_InferencedParams extends Recyclable.Root {
     this.pointwise20_channelShuffler_outputGroupCount = infoConvBlockType.pointwise20_channelShuffler_outputGroupCount;
 
     // 5. Pointwise1
-    Block_InferencedParams.set_pointwise1Bias_pointwise1ActivationId_pointwise1ActivationName_by.call( this,
+    Block_InferencedParams.set_pointwise1Bias_pointwise1ActivationId_by.call( this,
       pointwise1ChannelCount,
       this.bLinear_between_depthwise_and_pointwise2,
       this.bDepthwiseRequestedAndNeeded,
@@ -699,6 +692,10 @@ class Block_InferencedParams extends Recyclable.Root {
 
   get pointwise1ActivationName() {
     return ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise1ActivationId );
+  }
+
+  get pointwise21ActivationName() {
+    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise21ActivationId );
   }
 
   get squeezeExcitationActivationName() {
