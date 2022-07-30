@@ -4,7 +4,7 @@ import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 //import * as ValueDesc from "../ValueDesc.js";
 import * as ParamDesc from "../ParamDesc.js";
-import { Root } from "./Weights_Base.js";
+import { Base } from "./Weights_Base.js";
 
 /**
  * The parameters for the weights of a neural network layer.
