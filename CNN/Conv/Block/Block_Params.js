@@ -370,16 +370,7 @@ class Block_Params extends Weights.Params( ParamsBase ) {
 
   /** @override */
   disposeResources() {
-    this.InferencedParams_dispose();
     super.disposeResources();
-  }
-
-  /** Release .inferencedParams */
-  InferencedParams_dispose() {
-    if ( this.inferencedParams ) {
-      this.inferencedParams.disposeResources_and_recycleToPool();
-      this.inferencedParams = null;
-    }
   }
 
   /**
@@ -396,6 +387,26 @@ class Block_Params extends Weights.Params( ParamsBase ) {
 
     this.InferencedParams_dispose();
 
+//!!!
+    {
+      this.input0_height = this.getParamValue_byParamDesc( Block_Params.input0_height );
+      this.input0_width = this.getParamValue_byParamDesc( Block_Params.input0_width );
+      this.input0_channelCount = this.getParamValue_byParamDesc( Block_Params.input0_channelCount );
+      this.nConvBlockTypeId = this.getParamValue_byParamDesc( Block_Params.nConvBlockTypeId );
+      this.pointwise1ChannelCount = this.getParamValue_byParamDesc( Block_Params.pointwise1ChannelCount );
+      this.depthwise_AvgMax_Or_ChannelMultiplier = this.getParamValue_byParamDesc( Block_Params.depthwise_AvgMax_Or_ChannelMultiplier );
+      this.depthwiseFilterHeight = this.getParamValue_byParamDesc( Block_Params.depthwiseFilterHeight );
+      this.depthwiseFilterWidth = this.getParamValue_byParamDesc( Block_Params.depthwiseFilterWidth );
+      this.depthwiseStridesPad = this.getParamValue_byParamDesc( Block_Params.depthwiseStridesPad );
+      this.depthwiseActivationId = this.getParamValue_byParamDesc( Block_Params.depthwiseActivationId );
+      this.pointwise20ChannelCount = this.getParamValue_byParamDesc( Block_Params.pointwise20ChannelCount );
+      this.pointwise20ActivationId = this.getParamValue_byParamDesc( Block_Params.pointwise20ActivationId );
+      this.nSqueezeExcitationChannelCountDivisor = this.getParamValue_byParamDesc( Block_Params.nSqueezeExcitationChannelCountDivisor );
+      this.bSqueezeExcitationPrefix = this.getParamValue_byParamDesc( Block_Params.bSqueezeExcitationPrefix );
+      this.nActivationId = this.getParamValue_byParamDesc( Block_Params.nActivationId );
+      this.bKeepInputTensor = this.getParamValue_byParamDesc( Block_Params.bKeepInputTensor );
+    }
+
     // Determine input tensor count and whether request add-input-to-output.
     this.inferencedParams = InferencedParams.Pool.get_or_create_by(
       this.input0_height, this.input0_width, this.input0_channelCount,
@@ -411,84 +422,85 @@ class Block_Params extends Weights.Params( ParamsBase ) {
     return bExtractOk;
   }
 
-  get input0_height()                        { return this.getParamValue_byParamDesc( Block_Params.input0_height ); }
-  get input0_width()                         { return this.getParamValue_byParamDesc( Block_Params.input0_width ); }
-  get input0_channelCount()                  { return this.getParamValue_byParamDesc( Block_Params.input0_channelCount ); }
+//!!! (2022/07/30 Remarked) Use ParamsBase instead.
+  // get input0_height()                        { return this.getParamValue_byParamDesc( Block_Params.input0_height ); }
+  // get input0_width()                         { return this.getParamValue_byParamDesc( Block_Params.input0_width ); }
+  // get input0_channelCount()                  { return this.getParamValue_byParamDesc( Block_Params.input0_channelCount ); }
 
-  /** @return {number} The number version of nConvBlockTypeId. */
-  get nConvBlockTypeId()          { return this.getParamValue_byParamDesc( Block_Params.nConvBlockTypeId ); }
+  // /** @return {number} The number version of nConvBlockTypeId. */
+  // get nConvBlockTypeId()          { return this.getParamValue_byParamDesc( Block_Params.nConvBlockTypeId ); }
 
-  /** @return {string} The string version of nConvBlockTypeId. */
-  get nConvBlockTypeName()        { return Block_Params.nConvBlockTypeId.getStringOfValue( this.nConvBlockTypeId ); }
+  // /** @return {string} The string version of nConvBlockTypeId. */
+  // get nConvBlockTypeName()        { return Block_Params.nConvBlockTypeId.getStringOfValue( this.nConvBlockTypeId ); }
 
-  get pointwise1ChannelCount()      { return this.getParamValue_byParamDesc( Block_Params.pointwise1ChannelCount ); }
-  get pointwise1ChannelCount_real() {
-    if ( this.inferencedParams.pointwise1ChannelCount_modified != undefined )
-      return this.inferencedParams.pointwise1ChannelCount_modified;
-    else
-      return this.pointwise1ChannelCount;
-  }
+  // get pointwise1ChannelCount()      { return this.getParamValue_byParamDesc( Block_Params.pointwise1ChannelCount ); }
+  // get pointwise1ChannelCount_real() {
+  //   if ( this.inferencedParams.pointwise1ChannelCount_modified != undefined )
+  //     return this.inferencedParams.pointwise1ChannelCount_modified;
+  //   else
+  //     return this.pointwise1ChannelCount;
+  // }
 
-  /** @return {number} The number version of the depthwise opertion. */
-  get depthwise_AvgMax_Or_ChannelMultiplier() { return this.getParamValue_byParamDesc( Block_Params.depthwise_AvgMax_Or_ChannelMultiplier ); }
+  // /** @return {number} The number version of the depthwise opertion. */
+  // get depthwise_AvgMax_Or_ChannelMultiplier() { return this.getParamValue_byParamDesc( Block_Params.depthwise_AvgMax_Or_ChannelMultiplier ); }
 
-  /** @return {string} The string version of the depthwise opertion. */
-  get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
-    return Block_Params.depthwise_AvgMax_Or_ChannelMultiplier.getStringOfValue( this.depthwise_AvgMax_Or_ChannelMultiplier );
-  }
+  // /** @return {string} The string version of the depthwise opertion. */
+  // get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
+  //   return Block_Params.depthwise_AvgMax_Or_ChannelMultiplier.getStringOfValue( this.depthwise_AvgMax_Or_ChannelMultiplier );
+  // }
 
-  get depthwiseFilterHeight()      { return this.getParamValue_byParamDesc( Block_Params.depthwiseFilterHeight ); }
-  get depthwiseFilterHeight_real() {
-    if ( this.inferencedParams.depthwiseFilterHeight_modified != undefined )
-      return this.inferencedParams.depthwiseFilterHeight_modified;
-    else
-      return this.depthwiseFilterHeight;
-  }
+  // get depthwiseFilterHeight()      { return this.getParamValue_byParamDesc( Block_Params.depthwiseFilterHeight ); }
+  // get depthwiseFilterHeight_real() {
+  //   if ( this.inferencedParams.depthwiseFilterHeight_modified != undefined )
+  //     return this.inferencedParams.depthwiseFilterHeight_modified;
+  //   else
+  //     return this.depthwiseFilterHeight;
+  // }
 
-  get depthwiseFilterWidth()      { return this.getParamValue_byParamDesc( Block_Params.depthwiseFilterWidth ); }
-  get depthwiseFilterWidth_real() {
-    if ( this.inferencedParams.depthwiseFilterWidth_modified != undefined )
-      return this.inferencedParams.depthwiseFilterWidth_modified;
-    else
-      return this.depthwiseFilterWidth;
-  }
+  // get depthwiseFilterWidth()      { return this.getParamValue_byParamDesc( Block_Params.depthwiseFilterWidth ); }
+  // get depthwiseFilterWidth_real() {
+  //   if ( this.inferencedParams.depthwiseFilterWidth_modified != undefined )
+  //     return this.inferencedParams.depthwiseFilterWidth_modified;
+  //   else
+  //     return this.depthwiseFilterWidth;
+  // }
 
-  get depthwiseStridesPad()       { return this.getParamValue_byParamDesc( Block_Params.depthwiseStridesPad ); }
-  get depthwiseStridesPadName()   { return ValueDesc.StridesPad.Singleton.getName_byId( this.depthwiseStridesPad ); }
+  // get depthwiseStridesPad()       { return this.getParamValue_byParamDesc( Block_Params.depthwiseStridesPad ); }
+  // get depthwiseStridesPadName()   { return ValueDesc.StridesPad.Singleton.getName_byId( this.depthwiseStridesPad ); }
 
-  get depthwiseActivationId()     { return this.getParamValue_byParamDesc( Block_Params.depthwiseActivationId ); }
-  get depthwiseActivationName()   { return Block_Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId ); }
+  // get depthwiseActivationId()     { return this.getParamValue_byParamDesc( Block_Params.depthwiseActivationId ); }
+  // get depthwiseActivationName()   { return Block_Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId ); }
 
-  get pointwise20ChannelCount()   { return this.getParamValue_byParamDesc( Block_Params.pointwise20ChannelCount ); }
-  get pointwise20ActivationId()   { return this.getParamValue_byParamDesc( Block_Params.pointwise20ActivationId ); }
-  get pointwise20ActivationName() { return Block_Params.pointwise20ActivationId.getStringOfValue( this.pointwise20ActivationId ); }
+  // get pointwise20ChannelCount()   { return this.getParamValue_byParamDesc( Block_Params.pointwise20ChannelCount ); }
+  // get pointwise20ActivationId()   { return this.getParamValue_byParamDesc( Block_Params.pointwise20ActivationId ); }
+  // get pointwise20ActivationName() { return Block_Params.pointwise20ActivationId.getStringOfValue( this.pointwise20ActivationId ); }
 
-  get nSqueezeExcitationChannelCountDivisor()     { return this.getParamValue_byParamDesc( Block_Params.nSqueezeExcitationChannelCountDivisor ); }
-  get nSqueezeExcitationChannelCountDivisorName() {
-    return Block_Params.nSqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
-  }
+  // get nSqueezeExcitationChannelCountDivisor()     { return this.getParamValue_byParamDesc( Block_Params.nSqueezeExcitationChannelCountDivisor ); }
+  // get nSqueezeExcitationChannelCountDivisorName() {
+  //   return Block_Params.nSqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
+  // }
 
-  get bSqueezeExcitationPrefix()  { return this.getParamValue_byParamDesc( Block_Params.bSqueezeExcitationPrefix ); }
+  // get bSqueezeExcitationPrefix()  { return this.getParamValue_byParamDesc( Block_Params.bSqueezeExcitationPrefix ); }
 
-  get nActivationId()             { return this.getParamValue_byParamDesc( Block_Params.nActivationId ); }
-  get nActivationName()           { return Block_Params.nActivationId.getStringOfValue( this.nActivationId ); }
+  // get nActivationId()             { return this.getParamValue_byParamDesc( Block_Params.nActivationId ); }
+  // get nActivationName()           { return Block_Params.nActivationId.getStringOfValue( this.nActivationId ); }
 
-  get bKeepInputTensor()          { return this.getParamValue_byParamDesc( Block_Params.bKeepInputTensor ); }
+  // get bKeepInputTensor()          { return this.getParamValue_byParamDesc( Block_Params.bKeepInputTensor ); }
 
 
-  get output_height() {
-    if ( this.inferencedParams.bDepthwiseRequestedAndNeeded )
-      return this.inferencedParams.depthwisePadInfo.outputHeight;
-    else
-      return this.input0_height;
-  }
+  // get output_height() {
+  //   if ( this.inferencedParams.bDepthwiseRequestedAndNeeded )
+  //     return this.inferencedParams.depthwisePadInfo.outputHeight;
+  //   else
+  //     return this.input0_height;
+  // }
 
-  get output_width() {
-    if ( this.inferencedParams.bDepthwiseRequestedAndNeeded )
-      return this.inferencedParams.depthwisePadInfo.outputWidth;
-    else
-      return this.input0_width;
-  }
+  // get output_width() {
+  //   if ( this.inferencedParams.bDepthwiseRequestedAndNeeded )
+  //     return this.inferencedParams.depthwisePadInfo.outputWidth;
+  //   else
+  //     return this.input0_width;
+  // }
 
 }
 

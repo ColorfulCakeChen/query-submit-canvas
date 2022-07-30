@@ -1,3 +1,4 @@
+export { ParamsBase } from "./Embedding/Embedding_ParamsBase.js";
 export { Params } from "./Embedding/Embedding_Params.js";
 export { InferencedParams } from "./Embedding/Embedding_InferencedParams.js";
 export { FiltersArray_Base } from "./Embedding/Embedding_FiltersArray_Base.js";

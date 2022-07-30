@@ -148,12 +148,20 @@ class Block_ParamsBase extends Recyclable.Root {
     );
   }
 
+  get nConvBlockTypeName() {
+    return ValueDesc.ConvBlockType.Singleton.getName_byId( this.nConvBlockTypeId );
+  }
+
   /** The inferencedParams.pointwise1ChannelCount_modified is considered*/
   get pointwise1ChannelCount_real() {
     if ( this.inferencedParams.pointwise1ChannelCount_modified != undefined )
       return this.inferencedParams.pointwise1ChannelCount_modified;
     else
       return this.pointwise1ChannelCount;
+  }
+
+  get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
+    return ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getName_byId( this.depthwise_AvgMax_Or_ChannelMultiplier );
   }
 
   /** The inferencedParams.depthwiseFilterHeight_modified is considered*/
@@ -170,6 +178,26 @@ class Block_ParamsBase extends Recyclable.Root {
       return this.inferencedParams.depthwiseFilterWidth_modified;
     else
       return this.depthwiseFilterWidth;
+  }
+
+  get depthwiseStridesPadName() {
+    return ValueDesc.StridesPad.Singleton.getName_byId( this.depthwiseStridesPad );
+  }
+
+  get depthwiseActivationName() {
+    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.depthwiseActivationId );
+  }
+
+  get pointwise20ActivationName() {
+    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise20ActivationId );
+  }
+
+  get nSqueezeExcitationChannelCountDivisorName() {
+    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor );
+  }
+
+  get nActivationName() {
+    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId );
   }
 
   get output_height() {
@@ -212,35 +240,6 @@ class Block_ParamsBase extends Recyclable.Root {
 
   get output_channelCount() {
     return ( this.output0_channelCount + this.output1_channelCount );
-  }
-
-
-  get nConvBlockTypeName() {
-    return ValueDesc.ConvBlockType.Singleton.getName_byId( this.nConvBlockTypeId );
-  }
-
-  get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
-    return ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getName_byId( this.depthwise_AvgMax_Or_ChannelMultiplier );
-  }
-
-  get depthwiseStridesPadName() {
-    return ValueDesc.StridesPad.Singleton.getName_byId( this.depthwiseStridesPad );
-  }
-
-  get depthwiseActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.depthwiseActivationId );
-  }
-
-  get pointwise20ActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise20ActivationId );
-  }
-
-  get nSqueezeExcitationChannelCountDivisorName() {
-    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor );
-  }
-
-  get nActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId );
   }
 
   /** @override */
