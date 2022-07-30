@@ -401,9 +401,6 @@ class Block_InferencedParams extends Recyclable.Root {
       }
 
     }
-
-    // 3.
-    this.pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise1ActivationId );
   }
 
   /**
@@ -433,7 +430,6 @@ class Block_InferencedParams extends Recyclable.Root {
     }
     this.pointwise21Bias = pointwise20Bias;
     this.pointwise21ActivationId = pointwise20ActivationId;
-    this.pointwise21ActivationName = ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise21ActivationId );
   }
 
   /**
@@ -481,7 +477,6 @@ class Block_InferencedParams extends Recyclable.Root {
           // Since this is an almost copy operation, bias and activation is not necessary.
           this.pointwise1Bias = false;
           this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-          this.pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise1ActivationId );
 
           this.pointwise1_outputChannelCount_lowerHalf = input0_channelCount; // For depthwise1 (by pass-through-input-to-output)
         }
