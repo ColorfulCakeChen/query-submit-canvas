@@ -213,12 +213,7 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
     }
 
     this.InferencedParams_dispose();
-    this.inferencedParams = InferencedParams.Pool.get_or_create_by(
-      this.sourceHeight, this.sourceWidth, this.sourceChannelCount,
-      this.nConvStageTypeId,
-      this.blockCountRequested,
-      this.depthwiseFilterHeight, this.depthwiseFilterWidth
-    );
+    this.inferencedParams = InferencedParams.Pool.get_or_create_by( this );
 
     return bExtractOk;
   }

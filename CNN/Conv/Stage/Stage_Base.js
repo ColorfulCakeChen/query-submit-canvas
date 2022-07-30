@@ -495,7 +495,7 @@ class Stage_Base extends Recyclable.Root {
   channelShuffler_dispose() {
     if ( this.channelShuffler ) {
       this.channelShuffler.disposeResources_and_recycleToPool();
-      this.channelShuffler = false;
+      this.channelShuffler = null;
     }
   }
 

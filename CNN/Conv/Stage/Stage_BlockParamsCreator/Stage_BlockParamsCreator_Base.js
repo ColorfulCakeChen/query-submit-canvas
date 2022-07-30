@@ -4,7 +4,7 @@ import * as Pool from "../../../util/Pool.js";
 import * as Recyclable from "../../../util/Recyclable.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import * as Block from "../../Block.js";
-import { Params } from "../Stage_Params.js";
+import { ParamsBase } from "../Stage_ParamsBase.js";
 
 /**
  * Base class for all Stage.BlockParamsCreator.Xxx classes.
@@ -26,9 +26,10 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     Stage_BlockParamsCreator_Base, Stage_BlockParamsCreator_Base.setAsConstructor );
 
   /**
-   * @param {Params} stageParams
-   *   The Stage.Params object which provides basic parameters. It will be referenced (i.e. not cloned, not owned, not released)
-   * by this Stage.BlockParamsCreator.Base onject.
+   * @param {Stage.ParamsBase} stageParams
+   *   The Stage.ParamsBase object which provides basic parameters. It will be
+   * referenced (i.e. not cloned, not owned, not released) by this
+   * Stage.BlockParamsCreator.Base onject.
    */
   constructor( stageParams ) {
     super();
