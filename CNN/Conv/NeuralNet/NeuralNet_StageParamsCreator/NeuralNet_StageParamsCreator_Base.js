@@ -93,7 +93,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 
     this.bPointwise2ActivatedAtStageEnd = true; // All stages (except stageLast) have activation function.
 
-    this.nSqueezeExcitationChannelCountDivisor = neuralNetParams.nSqueezeExcitationChannelCountDivisor;
+    this.nSqueezeExcitationChannelCountDivisor
+      = neuralNetParams.inferencedParams.nSqueezeExcitationChannelCountDivisor;
 
     // Always Use 
     this.nActivationId = neuralNetParams.inferencedParams.nActivationId;
