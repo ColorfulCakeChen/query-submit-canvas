@@ -88,8 +88,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     this.blockCountRequested = neuralNetParams.blockCountRequested;
     this.bPointwise1 = true; // Always use pointwise1.
 
-    this.depthwiseFilterHeight = neuralNetParams.depthwiseFilterHeight;
-    this.depthwiseFilterWidth = neuralNetParams.depthwiseFilterWidth;
+    this.depthwiseFilterHeight = 3; // Always use ( 3 * 3 ) depthwise filter.
+    this.depthwiseFilterWidth = 3;
 
     this.bPointwise2ActivatedAtStageEnd = true; // All stages (except stageLast) have activation function.
 
