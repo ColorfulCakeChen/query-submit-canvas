@@ -13,27 +13,6 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
 /**
  * Embedding parameters.
  *
- * Embedding could achieve non-linear mapping (just like any perceptron). But it is achieved by lookup table (instead
- * of weighted sum, bias and activation function). This implies:
- *   - It may use more (CPU or GPU) memory, but may use less (CPU or GPU) computation.
- *   - It can only achieve channel expansion, and can not achieve channel aggregation. (because no weighted sum)
- *   - It can only represent context-independent (not context-dependent) information. (because no weighted sum)
- *   - It can only handle integer input (i.e. int32, not float32).
- *
- * It is useful as the first layer of text or image processing because their inputs are all integer (e.g. character codes,
- * word indices, color codes, etc). And, the first layer only needs carry context-independent information (and all the other
- * layers after it will produce context-dependent information).
- *
- * This object always accepts tensor3d (dtype = int32).
- *   - The axis 0 is height. (Image height) (Text lines and usually only 1 line.)
- *   - The axis 1 is width. (Image width) (Text length (e.g. character count).)
- *   - The axis 2 is channel. (Image color channel) (Text character code channel and usually only 1 channel.)
- *
- * An embedding layer contains one params (this.params) and inChannels embedding vocabulary tables.
- *   - Every input channel has one embedding vocabulary table.
- *   - Every embedding vocabulary table has vocabularyCountPerInputChannel vocabularies.
- *   - Every vocabulary has channelMultiplier embedding channels.
- *
  *
  *
  * @param {number} input_height
@@ -67,9 +46,6 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
  *
  * @member {InferencedParams} inferencedParams
  *   The inferenced parameters of this embedding parameters.
- *
- * @member {BoundsArraySet.InputsOutputs} boundsArraySet
- *   The element value bounds (per channel) of this embedding.
  *
  * @see Weight.Params
  *
