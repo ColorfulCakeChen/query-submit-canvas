@@ -3,7 +3,6 @@ export { Block_ParamsBase as ParamsBase };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-//import * as Block from "../../Conv/Block.js";
 import { InferencedParams } from "./Block_InferencedParams.js";
 
 /**
@@ -136,7 +135,7 @@ class Block_ParamsBase extends Recyclable.Root {
   InferencedParams_create() {
     this.InferencedParams_dispose();
 
-    this.inferencedParams = Block.InferencedParams.Pool.get_or_create_by(
+    this.inferencedParams = InferencedParams.Pool.get_or_create_by(
       this.input0_height, this.input0_width, this.input0_channelCount,
       this.nConvBlockTypeId,
       this.pointwise1ChannelCount,
