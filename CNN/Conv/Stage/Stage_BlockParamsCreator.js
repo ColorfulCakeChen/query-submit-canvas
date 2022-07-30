@@ -1,4 +1,4 @@
-export { Base } from "./Stage_BlockParamsCreator/Base.js";
+export { Base } from "./Stage_BlockParamsCreator/Stage_BlockParamsCreator_Base.js";
 export { MobileNetV1 } from "./Stage_BlockParamsCreator/MobileNetV1.js";
 export { MobileNetV1_padValid } from "./Stage_BlockParamsCreator/MobileNetV1_padValid.js";
 export { MobileNetV2_Thin } from "./Stage_BlockParamsCreator/MobileNetV2_Thin.js";
