@@ -5,6 +5,7 @@ import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
+import { ParamsBase } from "./Embedding_ParamsBase.js";
 import { InferencedParams } from "./Embedding_InferencedParams.js";
 
 //!!! ...unfinished... (2022/07/26)
@@ -50,7 +51,7 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
  * @see Weight.Params
  *
  */
- class Embedding_Params extends Weights.Params {
+ class Embedding_Params extends Weights.Params( ParamsBase ) {
 
   /**
    * Used as default Embedding.Params provider for conforming to Recyclable interface.
@@ -98,16 +99,7 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
 
   /** @override */
   disposeResources() {
-    this.InferencedParams_dispose();
     super.disposeResources();
-  }
-
-  /** Release .inferencedParams */
-  InferencedParams_dispose() {
-    if ( this.inferencedParams ) {
-      this.inferencedParams.disposeResources_and_recycleToPool();
-      this.inferencedParams = null;
-    }
   }
 
   /**
@@ -122,8 +114,17 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
     if ( !bExtractOk )
       return false;
 
-    this.InferencedParams_dispose();
+    {
+      this.input_height = this.getParamValue_byParamDesc( Embedding_Params.input_height );
+      this.input_width = this.getParamValue_byParamDesc( Embedding_Params.input_width );
+      this.input_channelCount = this.getParamValue_byParamDesc( Embedding_Params.input_channelCount );
+      this.channelMultiplier = this.getParamValue_byParamDesc( Embedding_Params.channelMultiplier );
+      this.vocabularyCountPerInputChannel = this.getParamValue_byParamDesc( Embedding_Params.vocabularyCountPerInputChannel );
+      this.bEmbedVocabularyId = this.getParamValue_byParamDesc( Embedding_Params.bEmbedVocabularyId );
+      this.bKeepInputTensor = this.getParamValue_byParamDesc( Embedding_Params.bKeepInputTensor );
+    }
 
+    this.InferencedParams_dispose();
     this.inferencedParams = InferencedParams.Pool.get_or_create_by(
       this.input_height, this.input_width, this.input_channelCount,
       this.channelMultiplier, this.vocabularyCountPerInputChannel, this.bEmbedVocabularyId
@@ -132,13 +133,14 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
     return bExtractOk;
   }
 
-  get input_height()                   { return this.getParamValue_byParamDesc( Embedding_Params.input_height ); }
-  get input_width()                    { return this.getParamValue_byParamDesc( Embedding_Params.input_width ); }
-  get input_channelCount()             { return this.getParamValue_byParamDesc( Embedding_Params.input_channelCount ); }
-  get channelMultiplier()              { return this.getParamValue_byParamDesc( Embedding_Params.channelMultiplier ); }
-  get vocabularyCountPerInputChannel() { return this.getParamValue_byParamDesc( Embedding_Params.vocabularyCountPerInputChannel ); }
-  get bEmbedVocabularyId()             { return this.getParamValue_byParamDesc( Embedding_Params.bEmbedVocabularyId ); }
-  get bKeepInputTensor()               { return this.getParamValue_byParamDesc( Embedding_Params.bKeepInputTensor ); }
+//!!! (2022/07/31 Remarked) USe ParamsBase instead.
+  // get input_height()                   { return this.getParamValue_byParamDesc( Embedding_Params.input_height ); }
+  // get input_width()                    { return this.getParamValue_byParamDesc( Embedding_Params.input_width ); }
+  // get input_channelCount()             { return this.getParamValue_byParamDesc( Embedding_Params.input_channelCount ); }
+  // get channelMultiplier()              { return this.getParamValue_byParamDesc( Embedding_Params.channelMultiplier ); }
+  // get vocabularyCountPerInputChannel() { return this.getParamValue_byParamDesc( Embedding_Params.vocabularyCountPerInputChannel ); }
+  // get bEmbedVocabularyId()             { return this.getParamValue_byParamDesc( Embedding_Params.bEmbedVocabularyId ); }
+  // get bKeepInputTensor()               { return this.getParamValue_byParamDesc( Embedding_Params.bKeepInputTensor ); }
 }
 
 

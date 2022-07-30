@@ -1,5 +1,4 @@
 export { Embedding_TestParams_Base as Base };
-export { Out };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -9,111 +8,6 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TestParams from "./TestParams.js";
 import * as Embedding from "../../Conv/Embedding.js";
-
-/**
- *
- */
-class Out extends Recyclable.Root {
-
-  /**
-   * Used as default Embedding_TestParams.Out provider for conforming to Recyclable interface.
-   */
-  static Pool = new Pool.Root( "Embedding_TestParams.Out.Pool", Out, Out.setAsConstructor );
-
-  /**
-   */
-  constructor(
-    input_height, input_width, input_channelCount,
-    channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
-    bKeepInputTensor
-  ) {
-    super();
-    Out.setAsConstructor_self.call( this,
-      input_height, input_width, input_channelCount,
-      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
-      bKeepInputTensor
-    );
-  }
-
-  /** @override */
-  static setAsConstructor(
-    input_height, input_width, input_channelCount,
-    channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
-    bKeepInputTensor
-  ) {
-    super.setAsConstructor();
-    Out.setAsConstructor_self.call( this,
-      input_height, input_width, input_channelCount,
-      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
-      bKeepInputTensor
-    );
-    return this;
-  }
-
-  /** @override */
-  static setAsConstructor_self(
-    input_height, input_width, input_channelCount,
-    channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
-    bKeepInputTensor
-  ) {
-    this.input_height = input_height;
-    this.input_width = input_width;
-    this.input_channelCount = input_channelCount;
-    this.channelMultiplier = channelMultiplier;
-    this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
-    this.bEmbedVocabularyId = bEmbedVocabularyId;
-    this.bKeepInputTensor = bKeepInputTensor;
-  }
-
-  /** @override */
-  disposeResources() {
-    this.InferencedParams_dispose();
-
-    this.bKeepInputTensor = undefined;
-    this.bEmbedVocabularyId = undefined;
-    this.vocabularyCountPerInputChannel = undefined;
-    this.channelMultiplier = undefined;
-    this.input_channelCount = undefined;
-    this.input_width = undefined;
-    this.input_height = undefined;
-
-    super.disposeResources();
-  }
-
-  /** Release .inferencedParams */
-  InferencedParams_dispose() {
-    if ( this.inferencedParams ) {
-      this.inferencedParams.disposeResources_and_recycleToPool();
-      this.inferencedParams = null;
-    }
-  }
-
-  /**  */
-  generate_inferencedParams() {
-    this.InferencedParams_dispose();
-    this.inferencedParams = Embedding.InferencedParams.Pool.get_or_create_by(
-      this.input_height, this.input_width, this.input_channelCount,
-      this.channelMultiplier, this.vocabularyCountPerInputChannel, this.bEmbedVocabularyId
-    );
-  }
-
-  /** @override */
-  toString() {
-    let strDescription = ``
-      + `input_height=${this.input_height}, `
-      + `input_width=${this.input_width}, `
-      + `input_channelCount=${this.input_channelCount}, `
-      + `channelMultiplier=${this.channelMultiplier}, `
-      + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
-      + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
-      + `bKeepInputTensor=${this.bKeepInputTensor}, `
-      + `${this.inferencedParams}`
-    ;
-    return strDescription;
-  }
-
-}
-
 
 /**
  *
@@ -146,7 +40,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
   /** @override */
   static setAsConstructor_self() {
-    this.out = Out.Pool.get_or_create_by();
+    this.out = Embedding.ParamsBase.Pool.get_or_create_by();
     this.out_boundsArray = FloatValue.BoundsArray.Pool.get_or_create_by(); // Every output channel's value bounds.
   }
 
@@ -186,7 +80,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
       this.out = null;
     }
 
-    this.out = Out.Pool.get_or_create_by(
+    this.out = Embedding.ParamsBase.Pool.get_or_create_by(
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
       bKeepInputTensor
@@ -208,7 +102,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
    * The name should be one of Base.paramsNameOrderArray[] elements.
    *
-   * @param {Embedding_TestParams.Out} this.out
+   * @param {Embedding.ParamsBase} this.out
    *   An object which will be the final result of Embedding.Params.
    *
    * @param {number} weightElementOffsetBegin
@@ -330,7 +224,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
   /** Fill this.out.inferencedParams according to this.out */
   generate_out_inferencedParams() {
-    this.out.generate_inferencedParams();
+    this.out.InferencedParams_create();
   }
 
   /**
