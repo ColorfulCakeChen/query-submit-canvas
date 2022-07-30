@@ -50,10 +50,11 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
-    this.stageCount = undefined; // How many stage should be in the neuralNet.
+    this.output_channelCount = undefined;
+    this.output_width = undefined;
+    this.output_height = undefined;
 
-    this.output0_channelCount = undefined;
-    this.output1_channelCount = undefined;
+    this.stageCount = undefined; // How many stage should be in the neuralNet.
 
     this.bKeepInputTensor = undefined;
     this.nActivationId = undefined;
@@ -64,9 +65,9 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     this.bPointwise1 = undefined;
     this.blockCountRequested = undefined;
     this.nConvStageTypeId = undefined;
-    this.input0_channelCount = undefined;
-    this.input0_width = undefined;
-    this.input0_height = undefined;
+    this.input_channelCount = undefined;
+    this.input_width = undefined;
+    this.input_height = undefined;
 
     this.neuralNetParams = undefined; // Just nullify it. Do not release it here.
 
@@ -107,6 +108,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 //!!! ...unfinished... (2022/07/30)
     this.output_height = neuralNetParams.inferencedParams.outputHeightArray[ 0 ];
     this.output_width = neuralNetParams.inferencedParams.outputWidthArray[ 0 ];
+    this.output_channelCount = ;
   }
 
   /**
@@ -126,6 +128,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 //!!! ...unfinished... (2022/07/30)
     this.output_height = neuralNetParams.inferencedParams.outputHeightArray[ stageIndex ];
     this.output_width = neuralNetParams.inferencedParams.outputWidthArray[ stageIndex ];
+    this.output_channelCount = ;
   }
 
   /**

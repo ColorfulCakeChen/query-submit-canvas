@@ -58,6 +58,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     this.depthwiseFilterWidth_Last = undefined;    // The last block's depthwise filter size.
     this.output0_channelCount = undefined;
     this.output1_channelCount = undefined;
+    this.output_height = undefined;
+    this.output_width = undefined;
 
     this.bKeepInputTensor = undefined;
     this.nActivationId = undefined;

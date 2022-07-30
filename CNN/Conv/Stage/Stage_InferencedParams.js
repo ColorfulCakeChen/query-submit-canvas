@@ -21,10 +21,12 @@ import * as Depthwise from "../Depthwise.js";
  *   The width of output image of every block.
  *
  * @member {number} outputHeight
- *   The height of output image. It is half of the input height (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
+ *   The height of output image. Usually, it is roughly half of the input height
+ * (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
  *
  * @member {number} outputWidth
- *   The width of output image. It is half of the input width (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
+ *   The width of output image. Usually, it is roughly half of the input width
+ * (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
  *
  * @member {number[]} depthwiseFilterHeightArray
  *   The depthwise filter height of input image of every block.

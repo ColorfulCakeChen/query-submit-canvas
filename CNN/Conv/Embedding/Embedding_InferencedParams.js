@@ -6,10 +6,10 @@ import * as Recyclable from "../../util/Recyclable.js";
 /**
  * All properties inferenced from Embedding.Params.
  *
- * @param {number} output_height
+ * @member {number} output_height
  *   The output image's height.
  *
- * @param {number} output_width
+ * @member {number} output_width
  *   The output image's width.
  *
  * @member {number} output_channelCount
