@@ -1,4 +1,4 @@
-export { Stage_TestParams_Base as Base, Out };
+export { Stage_TestParams_Base as Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -8,177 +8,6 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TestParams from "./TestParams.js";
 import * as Block_TestParams from "./Block_TestParams.js";
 import * as Stage from "../../Conv/Stage.js";
-
-/**
- *
- */
-class Out extends Recyclable.Root {
-
-  /**
-   * Used as default Stage_TestParams.Out provider for conforming to Recyclable interface.
-   */
-  static Pool = new Pool.Root( "Stage_TestParams.Out.Pool", Out, Out.setAsConstructor );
-
-  /**
-   */
-  constructor(
-    sourceHeight, sourceWidth, sourceChannelCount,
-    nConvStageTypeId,
-    blockCountRequested,
-    bPointwise1,
-    depthwiseFilterHeight, depthwiseFilterWidth,
-    bPointwise2ActivatedAtStageEnd,
-    nSqueezeExcitationChannelCountDivisor,
-    nActivationId,
-    bKeepInputTensor
-  ) {
-    super();
-    Out.setAsConstructor_self.call( this,
-      sourceHeight, sourceWidth, sourceChannelCount,
-      nConvStageTypeId,
-      blockCountRequested,
-      bPointwise1,
-      depthwiseFilterHeight, depthwiseFilterWidth,
-      bPointwise2ActivatedAtStageEnd,
-      nSqueezeExcitationChannelCountDivisor,
-      nActivationId,
-      bKeepInputTensor
-    );
-  }
-
-  /** @override */
-  static setAsConstructor(
-    sourceHeight, sourceWidth, sourceChannelCount,
-    nConvStageTypeId,
-    blockCountRequested,
-    bPointwise1,
-    depthwiseFilterHeight, depthwiseFilterWidth,
-    bPointwise2ActivatedAtStageEnd,
-    nSqueezeExcitationChannelCountDivisor,
-    nActivationId,
-    bKeepInputTensor
-  ) {
-    super.setAsConstructor();
-    Out.setAsConstructor_self.call( this,
-      sourceHeight, sourceWidth, sourceChannelCount,
-      nConvStageTypeId,
-      blockCountRequested,
-      bPointwise1,
-      depthwiseFilterHeight, depthwiseFilterWidth,
-      bPointwise2ActivatedAtStageEnd,
-      nSqueezeExcitationChannelCountDivisor,
-      nActivationId,
-      bKeepInputTensor
-    );
-    return this;
-  }
-
-  /** @override */
-  static setAsConstructor_self(
-    sourceHeight, sourceWidth, sourceChannelCount,
-    nConvStageTypeId,
-    blockCountRequested,
-    bPointwise1,
-    depthwiseFilterHeight, depthwiseFilterWidth,
-    bPointwise2ActivatedAtStageEnd,
-    nSqueezeExcitationChannelCountDivisor,
-    nActivationId,
-    bKeepInputTensor
-  ) {
-    this.sourceHeight = sourceHeight;
-    this.sourceWidth = sourceWidth;
-    this.sourceChannelCount = sourceChannelCount;
-    this.nConvStageTypeId = nConvStageTypeId;
-    this.blockCountRequested = blockCountRequested;
-    this.bPointwise1 = bPointwise1;
-    this.depthwiseFilterHeight = depthwiseFilterHeight;
-    this.depthwiseFilterWidth = depthwiseFilterWidth;
-    this.bPointwise2ActivatedAtStageEnd = bPointwise2ActivatedAtStageEnd;
-    this.nSqueezeExcitationChannelCountDivisor = nSqueezeExcitationChannelCountDivisor;
-    this.nActivationId = nActivationId;
-    this.bKeepInputTensor = bKeepInputTensor;
-  }
-
-  /** @override */
-  disposeResources() {
-    this.InferencedParams_dispose();
-
-    this.sourceHeight = undefined;
-    this.sourceWidth = undefined;
-    this.sourceChannelCount = undefined;
-    this.nConvStageTypeId = undefined;
-    this.blockCountRequested = undefined;
-    this.bPointwise1 = undefined;
-    this.depthwiseFilterHeight = undefined;
-    this.depthwiseFilterWidth = undefined;
-    this.bPointwise2ActivatedAtStageEnd = undefined;
-    this.nSqueezeExcitationChannelCountDivisor = undefined;
-    this.nActivationId = undefined;
-    this.bKeepInputTensor = undefined;
-
-    super.disposeResources();
-  }
-
-  /** Release .inferencedParams */
-  InferencedParams_dispose() {
-    if ( this.inferencedParams ) {
-      this.inferencedParams.disposeResources_and_recycleToPool();
-      this.inferencedParams = null;
-    }
-  }
-
-  /**  */
-  generate_inferencedParams() {
-    this.InferencedParams_dispose();
-    this.inferencedParams = Stage.InferencedParams.Pool.get_or_create_by(
-      this.sourceHeight, this.sourceWidth, this.sourceChannelCount,
-      this.nConvStageTypeId,
-      this.blockCountRequested,
-      this.depthwiseFilterHeight, this.depthwiseFilterWidth
-    );
-  }
-
-  get nConvStageTypeName() {
-    return ValueDesc.ConvStageType.Singleton.getName_byId( this.nConvStageTypeId );
-  }
-
-  get nSqueezeExcitationChannelCountDivisorName() {
-    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor );
-  }
-
-  get nActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId );
-  }
-
-  /** @override */
-  toString() {
-    let str =
-        `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, `
-      + `sourceChannelCount=${this.sourceChannelCount}, `
-
-      + `nConvStageTypeId=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
-
-      + `blockCountRequested=${this.blockCountRequested}, `
-      + `bPointwise1=${this.bPointwise1}, `
-      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
-
-      + `bPointwise2ActivatedAtStageEnd=${this.bPointwise2ActivatedAtStageEnd}, `
-
-      + `nSqueezeExcitationChannelCountDivisorName=`
-        + `${this.nSqueezeExcitationChannelCountDivisorName}`
-        + `(${this.nSqueezeExcitationChannelCountDivisor}), `
-
-      + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
-      + `bKeepInputTensor=${this.bKeepInputTensor}, `
-
-      + `${this.inferencedParams}`
-    ;
-
-    return str;
-  }
-
-}
-
 
 /**
  *
@@ -214,7 +43,7 @@ class Stage_TestParams_Base extends TestParams.Base {
   /** @override */
   static setAsConstructor_self() {
     this.blockArray = Recyclable.OwnerArray.Pool.get_or_create_by();
-    this.out = Out.Pool.get_or_create_by();
+    this.out = Stage.ParamsBase.Pool.get_or_create_by();
   }
 
   /** @override */
@@ -255,7 +84,7 @@ class Stage_TestParams_Base extends TestParams.Base {
       this.out = null;
     }
 
-    this.out = Out.Pool.get_or_create_by(
+    this.out = Stage.ParamsBase.get_or_create_by(
       sourceHeight, sourceWidth, sourceChannelCount,
       nConvStageTypeId,
       blockCountRequested,
@@ -349,7 +178,7 @@ class Stage_TestParams_Base extends TestParams.Base {
 
   /** Fill this.out.inferencedParams according to this.out */
   generate_out_inferencedParams() {
-    this.out.generate_inferencedParams();
+    this.out.InferencedParams_create();
   }
 
   /**
