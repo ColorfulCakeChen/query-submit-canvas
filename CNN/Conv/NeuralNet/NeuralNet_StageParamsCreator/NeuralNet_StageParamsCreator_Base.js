@@ -95,7 +95,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 
     this.nSqueezeExcitationChannelCountDivisor = neuralNetParams.nSqueezeExcitationChannelCountDivisor;
 
-    this.nActivationId = ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2;
+    // Always Use 
+    this.nActivationId = neuralNetParams.inferencedParams.nActivationId;
 
     // Because NeuralNet always has an embedding layer (in front of stage0),
     // all stages should not keep input tensor (no matter what

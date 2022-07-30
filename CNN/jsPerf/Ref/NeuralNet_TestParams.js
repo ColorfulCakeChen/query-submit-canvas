@@ -28,7 +28,7 @@ class Out extends Recyclable.Root {
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId, stageCountRequested,
-    blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+    blockCountRequested,
     bKeepInputTensor
   ) {
     super();
@@ -36,7 +36,7 @@ class Out extends Recyclable.Root {
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId, stageCountRequested,
-      blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+      blockCountRequested,
       bKeepInputTensor
     );
   }
@@ -46,7 +46,7 @@ class Out extends Recyclable.Root {
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId, stageCountRequested,
-    blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+    blockCountRequested,
     bKeepInputTensor
   ) {
     super.setAsConstructor();
@@ -54,7 +54,7 @@ class Out extends Recyclable.Root {
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId, stageCountRequested,
-      blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+      blockCountRequested,
       bKeepInputTensor
     );
     return this;
@@ -65,7 +65,7 @@ class Out extends Recyclable.Root {
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId, stageCountRequested,
-    blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+    blockCountRequested,
     bKeepInputTensor
   ) {
     this.input_height = input_height;
@@ -76,7 +76,6 @@ class Out extends Recyclable.Root {
     this.nConvStageTypeId = nConvStageTypeId;
     this.stageCountRequested = stageCountRequested;
     this.blockCountRequested = blockCountRequested;
-    this.nSqueezeExcitationChannelCountDivisor = nSqueezeExcitationChannelCountDivisor;
     this.bKeepInputTensor = bKeepInputTensor;
   }
 
@@ -85,7 +84,6 @@ class Out extends Recyclable.Root {
     this.InferencedParams_dispose();
 
     this.bKeepInputTensor = undefined;
-    this.nSqueezeExcitationChannelCountDivisor = undefined;
     this.blockCountRequested = undefined;
     this.stageCountRequested = undefined;
     this.nConvStageTypeId = undefined;
@@ -115,16 +113,12 @@ class Out extends Recyclable.Root {
 //!!! ...unfinished... (2022/07/30)
       this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
       this.nConvStageTypeId, this.stageCountRequested,
-      this.blockCountRequested, this.nSqueezeExcitationChannelCountDivisor,
+      this.blockCountRequested
     );
   }
 
   get nConvStageTypeName() {
     return ValueDesc.ConvStageType.Singleton.getName_byId( this.nConvStageTypeId );
-  }
-
-  get nSqueezeExcitationChannelCountDivisorName() {
-    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor );
   }
 
   /** @override */
@@ -143,9 +137,6 @@ class Out extends Recyclable.Root {
       + `stageCountRequested=${this.stageCountRequested}, `
 
       + `blockCountRequested=${this.blockCountRequested}, `
-      + `nSqueezeExcitationChannelCountDivisorName=`
-        + `${this.nSqueezeExcitationChannelCountDivisorName}`
-        + `(${this.nSqueezeExcitationChannelCountDivisor}), `
 
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
       + `${this.inferencedParams}`
@@ -220,7 +211,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId, stageCountRequested,
-    blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+    blockCountRequested,
     bKeepInputTensor
   ) {
 
@@ -236,7 +227,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId, stageCountRequested,
-      blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+      blockCountRequested,
       bKeepInputTensor
     );
 
@@ -409,11 +400,6 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
         4 //NeuralNet.Params.blockCountRequested.valueDesc.range.max
       ],
 
-      nSqueezeExcitationChannelCountDivisor: [
-        NeuralNet.Params.nSqueezeExcitationChannelCountDivisor.valueDesc.range.min,
-        4 //NeuralNet.Params.nSqueezeExcitationChannelCountDivisor.valueDesc.range.max
-      ],
-
       // bKeepInputTensor: undefined,
       bKeepInputTensor: [
         NeuralNet.Params.bKeepInputTensor.valueDesc.range.min,
@@ -435,8 +421,6 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       new TestParams.ParamDescConfig( NeuralNet.Params.nConvStageTypeId,               valueOutMinMax.nConvStageTypeId ),
       new TestParams.ParamDescConfig( NeuralNet.Params.stageCountRequested,            valueOutMinMax.stageCountRequested ),
       new TestParams.ParamDescConfig( NeuralNet.Params.blockCountRequested,            valueOutMinMax.blockCountRequested ),
-      new TestParams.ParamDescConfig( NeuralNet.Params.nSqueezeExcitationChannelCountDivisor,
-                                                                                       valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
 
       new TestParams.ParamDescConfig( NeuralNet.Params.bKeepInputTensor,               valueOutMinMax.bKeepInputTensor ),
     ];
@@ -484,6 +468,5 @@ NeuralNet_TestParams_Base.paramsNameOrderArray_Basic = [
   NeuralNet_Params.nConvStageTypeId.paramName,
   NeuralNet_Params.stageCountRequested.paramName,
   NeuralNet_Params.blockCountRequested.paramName,
-  NeuralNet_Params.nSqueezeExcitationChannelCountDivisor.paramName,
   NeuralNet.Params.bKeepInputTensor.paramName,
 ];

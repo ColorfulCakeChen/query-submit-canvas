@@ -50,11 +50,6 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  * @member {number} blockCountRequested
  *   How many blocks inside every stage are wanted. It must be ( >= 2 ).
  *
- * @member {number} nSqueezeExcitationChannelCountDivisor
- *   An integer represents the channel count divisor for every block's
- * squeeze-and-excitation's intermediate pointwise convolution channel count.
- * (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xx)
- *
  * @member {boolean} bKeepInputTensor
  *   If true, apply() will not dispose inputTensor (i.e. will be kept).
  *
@@ -79,7 +74,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel = 256,
     nConvStageTypeId, stageCountRequested,
-    blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+    blockCountRequested,
     bKeepInputTensor
   ) {
     super(
@@ -87,7 +82,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId, stageCountRequested,
-      blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+      blockCountRequested,
       bKeepInputTensor
     );
     NeuralNet_Params.setAsConstructor_self.call( this );
@@ -98,7 +93,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel = 256,
     nConvStageTypeId, stageCountRequested,
-    blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+    blockCountRequested,
     bKeepInputTensor
   ) {
     super.setAsConstructor(
@@ -106,7 +101,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId, stageCountRequested,
-      blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+      blockCountRequested,
       bKeepInputTensor
     );
     NeuralNet_Params.setAsConstructor_self.call( this );
@@ -152,8 +147,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 //!!! ...unfinished... (2022/07/30)
       this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
       this.nConvStageTypeId, this.stageCountRequested,
-      this.blockCountRequested, this.nSqueezeExcitationChannelCountDivisor,
-
+      this.blockCountRequested
     );
 
     return bExtractOk;
@@ -177,11 +171,6 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 
   get blockCountRequested()            { return this.getParamValue_byParamDesc( NeuralNet_Params.blockCountRequested ); }
 
-  get nSqueezeExcitationChannelCountDivisor()     { return this.getParamValue_byParamDesc( NeuralNet_Params.nSqueezeExcitationChannelCountDivisor ); }
-  get nSqueezeExcitationChannelCountDivisorName() {
-    return NeuralNet_Params.nSqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
-  }
-
   get bKeepInputTensor()               { return this.getParamValue_byParamDesc( NeuralNet_Params.bKeepInputTensor ); }
 }
 
@@ -198,7 +187,6 @@ NeuralNet_Params.nConvStageTypeId =               new ParamDesc.ConvStageType( "
 NeuralNet_Params.stageCountRequested =            new ParamDesc.Int(           "stageCountRequested",   1, (  1 * 1024 ) );
 
 NeuralNet_Params.blockCountRequested =            new ParamDesc.Int(           "blockCountRequested",   2, (  1 * 1024 ) );
-NeuralNet_Params.nSqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
 
 NeuralNet_Params.bKeepInputTensor =               new ParamDesc.Bool( "bKeepInputTensor" );
 
@@ -215,7 +203,6 @@ NeuralNet_Params.SequenceArray = new ParamDesc.SequenceArray( [
   NeuralNet_Params.nConvStageTypeId,
   NeuralNet_Params.stageCountRequested,
   NeuralNet_Params.blockCountRequested,
-  NeuralNet_Params.nSqueezeExcitationChannelCountDivisor,
   NeuralNet_Params.bKeepInputTensor,
 ] );
 

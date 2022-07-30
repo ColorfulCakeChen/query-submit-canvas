@@ -5,7 +5,6 @@ import * as Recyclable from "../../util/Recyclable.js";
 
 //!!! ...unfinished... (2022/07/31)
 // Is it possible to infer stageCountRequested, blockCountRequested,
-// nSqueezeExcitationChannelCountDivisor?
 
 /**
  * All properties inferenced from NeuralNet.Params.
@@ -37,14 +36,14 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId, stageCountRequested,
-    blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+    blockCountRequested
   ) {
     super();
     NeuralNet_InferencedParams.set_inferencedParams_by.call( this,
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId, stageCountRequested,
-      blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+      blockCountRequested
     );
   }
 
@@ -53,14 +52,14 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId, stageCountRequested,
-    blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+    blockCountRequested
   ) {
     super.setAsConstructor();
     NeuralNet_InferencedParams.set_inferencedParams_by.call( this,
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId, stageCountRequested,
-      blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+      blockCountRequested
     );
     return this;
   }
@@ -70,13 +69,13 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId, stageCountRequested,
-    blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+    blockCountRequested
   ) {
     NeuralNet_InferencedParams.set_inferencedParams_by.call( this,
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId, stageCountRequested,
-      blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+      blockCountRequested
     );
   }
 
@@ -85,40 +84,67 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
  //!!! ...unfinished... (2022/07/31)
 
-    this.bEmbedVocabularyId = undefined;
     this.output_channelCount = undefined;
     this.output_width = undefined;
     this.output_height = undefined;
+
+    this.nActivationId = undefined;
+    this.nSqueezeExcitationChannelCountDivisor = undefined;
+    this.depthwiseFilterWidth = undefined;
+    this.depthwiseFilterHeight = undefined;
+    this.bEmbedVocabularyId = undefined;
+
     super.disposeResources();
   }
 
   /**
    * Determine the following properties:
+   *   - this.depthwiseFilterHeight
+   *   - this.depthwiseFilterWidth
+   *   - this.bEmbedVocabularyId
+   *   - this.nActivationId
+   *   - this.nSqueezeExcitationChannelCountDivisor
    *   - this.output_height
    *   - this.output_width
    *   - this.output_channelCount
-   *   - this.bEmbedVocabularyId
    *
    */
   static set_inferencedParams_by(
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId, stageCountRequested,
-    blockCountRequested, nSqueezeExcitationChannelCountDivisor,
+    blockCountRequested
   ) {
+
+ //!!! ...unfinished... (2022/07/31)
+
+    this.depthwiseFilterHeight = 3; // Always use ( 3 * 3 ) depthwise filter.
+    this.depthwiseFilterWidth = 3;
+
+    this.bEmbedVocabularyId = true;
+
+    // Always use the only suggested activation function.
+    this.nActivationId = ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2;
+
+    // Use the suggested squeeze-and-excitation divisor.
+    this.nSqueezeExcitationChannelCountDivisor = 16;
 
  //!!! ...unfinished... (2022/07/31)
  // Perhaps, use Stage_InferencedParams to find out every stage's output heigh and width.
  // however, need know depthwiseFilterHeight, depthwiseFilterWidth
 
-    this.depthwiseFilterHeight = 3; // Always use ( 3 * 3 ) depthwise filter.
-    this.depthwiseFilterWidth = 3;
-
     this.output_height = input_height;
     this.output_width = input_width;
     this.output_channelCount = input_channelCount * channelMultiplier;
 
-    this.bEmbedVocabularyId = true;
+  }
+
+  get nActivationName() {
+    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId );
+  }
+
+  get nSqueezeExcitationChannelCountDivisorName() {
+    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor );
   }
 
   /** @override */
@@ -126,11 +152,19 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
  //!!! ...unfinished... (2022/07/31)
 
-   let strDescription = ``
+    let strDescription = ``
+      + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
+      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
+      + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
+      + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
+
+      + `nSqueezeExcitationChannelCountDivisorName=`
+        + `${this.nSqueezeExcitationChannelCountDivisorName}`
+        + `(${this.nSqueezeExcitationChannelCountDivisor}), `
+
       + `output_height=${this.output_height}, `
       + `output_width=${this.output_width}, `
       + `output_channelCount=${this.output_channelCount}, `
-      + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
     ;
     return strDescription;
   }
