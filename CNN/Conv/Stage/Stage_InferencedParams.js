@@ -97,13 +97,14 @@ class Stage_InferencedParams extends Recyclable.Root {
   disposeResources() {
     this.height_width_array_dispose();
 
+    this.outputChannelCount = undefined;
     this.outputWidth = undefined;
     this.outputHeight = undefined;
 
     super.disposeResources();
   }
 
-  /** Release .inutHeightArray, .inputWidthArray, .outputHeightArray, .outputWidthArray */
+  /** Release .xxxHeightArray and .xxxWidthArray */
   height_width_array_dispose() {
 
     if ( this.depthwiseFilterWidthArray ) {
@@ -248,6 +249,8 @@ class Stage_InferencedParams extends Recyclable.Root {
       depthwisePadInfo.disposeResources_and_recycleToPool();
       depthwisePadInfo = null;
     }
+
+    this.outputChannelCount = undefined;
   }
 
   /**

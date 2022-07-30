@@ -38,20 +38,26 @@ import * as Stage from "../Stage.js";
  * @member {number[]} input_widthArray
  *   The input image's width of every stage.
  *
+ * @member {number[]} input_channelCountArray
+ *   The input image's channel count of every stage.
+ *
  * @member {number[]} output_heightArray
  *   The output image's height of every stage.
  *
  * @member {number[]} output_widthArray
  *   The output image's width of every stage.
  *
+ * @member {number[]} output_channelCountArray
+ *   The output image's channel count of every stage.
+ *
  * @member {number} output_height
- *   The output image's height.
+ *   The output image's height of this neural network.
  *
  * @member {number} output_width
- *   The output image's width.
+ *   The output image's width of this neural network.
  *
  * @member {number} output_channelCount
- *   The output image's channel count.
+ *   The output image's channel count of this neural network.
  *
  * @see NeuralNet.Params
  */
@@ -122,7 +128,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     this.output_width = undefined;
     this.output_height = undefined;
 
-    this.height_width_array_dispose();
+    this.height_width_channelCount_array_dispose();
 
     this.stageCount = undefined; // How many stage should be in the neuralNet.
 
@@ -135,8 +141,13 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     super.disposeResources();
   }
 
-  /** Release .inutHeightArray, .input_widthArray, .output_heightArray, .output_widthArray */
-  height_width_array_dispose() {
+  /** Release .xxx_heightArray, .xxx_widthArray, .xxx_channelCountArray */
+  height_width_channelCount_array_dispose() {
+
+    if ( this.output_channelCountArray ) {
+      this.output_channelCountArray.disposeResources_and_recycleToPool();
+      this.output_channelCountArray = null;
+    }
 
     if ( this.output_widthArray ) {
       this.output_widthArray.disposeResources_and_recycleToPool();
@@ -146,6 +157,11 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     if ( this.output_heightArray ) {
       this.output_heightArray.disposeResources_and_recycleToPool();
       this.output_heightArray = null;
+    }
+
+    if ( this.input_channelCountArray ) {
+      this.input_channelCountArray.disposeResources_and_recycleToPool();
+      this.input_channelCountArray = null;
     }
 
     if ( this.input_widthArray ) {
@@ -169,8 +185,10 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
    *   - this.stageCount
    *   - this.input_heightArray
    *   - this.input_widthArray
+   *   - this.input_channelCountArray
    *   - this.output_heightArray
    *   - this.output_widthArray
+   *   - this.output_channelCountArray
    *   - this.output_height
    *   - this.output_width
    *   - this.output_channelCount
@@ -205,10 +223,10 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       this.height_width_array_dispose();
       this.input_heightArray = Recyclable.Array.Pool.get_or_create_by( this.stageCount );
       this.input_widthArray = Recyclable.Array.Pool.get_or_create_by( this.stageCount );
+      this.input_channelCountArray = Recyclable.Array.Pool.get_or_create_by( this.stageCount );
       this.output_heightArray = Recyclable.Array.Pool.get_or_create_by( this.stageCount );
       this.output_widthArray = Recyclable.Array.Pool.get_or_create_by( this.stageCount );
-
-      //this.input_channelCountArray[ 0 ] = vocabularyChannelCount;
+      this.output_channelCountArray = Recyclable.Array.Pool.get_or_create_by( this.stageCount );
 
       let stage_inferencedParams;
 
@@ -216,6 +234,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       {
         this.input_heightArray[ 0 ] = input_height;
         this.input_widthArray[ 0 ] = input_width;
+        this.input_channelCountArray[ 0 ] = vocabularyChannelCount; // (after embedding)
 
         stage_inferencedParams = Stage.inferencedParams.Pool.get_or_create_by(
           this.input_heightArray[ i ], this.input_widthArray[ i ],
@@ -226,12 +245,14 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
         this.output_heightArray[ 0 ] = stage_inferencedParams.outputHeight;
         this.output_widthArray[ 0 ] = stage_inferencedParams.outputWidth;
+        this.output_channelCountArray[ 0 ] = stage_inferencedParams.outputChannelCount;
       }
 
       // stage1, 2, 3, ...
       for ( let i = 1; i < this.stageCount; ++i ) {
         this.input_heightArray[ i ] = stage_inferencedParams.outputHeight;
         this.input_widthArray[ i ] = stage_inferencedParams.outputWidth;
+        this.input_channelCountArray[ i ] = stage_inferencedParams.outputChannelCount;
 
         stage_inferencedParams.disposeResources_and_recycleToPool();
         stage_inferencedParams = null;
@@ -245,15 +266,15 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
         this.output_heightArray[ i ] = stage_inferencedParams.outputHeight;
         this.output_widthArray[ i ] = stage_inferencedParams.outputWidth;
+        this.output_channelCountArray[ i ] = stage_inferencedParams.outputChannelCount;
       }
+
+      this.output_height = stage_inferencedParams.outputHeight;
+      this.output_width = stage_inferencedParams.outputWidth;
+      this.output_channelCount = stage_inferencedParams.outputChannelCount;
 
       stage_inferencedParams.disposeResources_and_recycleToPool();
       stage_inferencedParams = null;
-
- //!!! ...unfinished... (2022/07/31)
-      this.output_height = input_height;
-      this.output_width = input_width;
-      this.output_channelCount = input_channelCount * channelMultiplier;
     }
 
   }
