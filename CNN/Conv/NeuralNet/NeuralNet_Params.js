@@ -166,11 +166,21 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
   get vocabularyChannelCount()         { return this.getParamValue_byParamDesc( NeuralNet_Params.vocabularyChannelCount ); }
   get vocabularyCountPerInputChannel() { return this.getParamValue_byParamDesc( NeuralNet_Params.vocabularyCountPerInputChannel ); }
 
+  /** @return {number} The number version of nConvStageTypeId. */
   get nConvStageTypeId()               { return this.getParamValue_byParamDesc( NeuralNet_Params.nConvStageTypeId ); }
+
+  /** @return {string} The string version of nConvStageTypeId. */
+  get nConvStageTypeName()             { return NeuralNet_Params.nConvStageTypeId.getStringOfValue( this.nConvStageTypeId ); }
+
+
   get stageCountRequested()            { return this.getParamValue_byParamDesc( NeuralNet_Params.stageCountRequested ); }
 
   get blockCountRequested()            { return this.getParamValue_byParamDesc( NeuralNet_Params.blockCountRequested ); }
-  get nSqueezeExcitationChannelCountDivisor() { return this.getParamValue_byParamDesc( NeuralNet_Params.nSqueezeExcitationChannelCountDivisor ); }
+
+  get nSqueezeExcitationChannelCountDivisor()     { return this.getParamValue_byParamDesc( NeuralNet_Params.nSqueezeExcitationChannelCountDivisor ); }
+  get nSqueezeExcitationChannelCountDivisorName() {
+    return NeuralNet_Params.nSqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
+  }
 
   get bKeepInputTensor()               { return this.getParamValue_byParamDesc( NeuralNet_Params.bKeepInputTensor ); }
 }

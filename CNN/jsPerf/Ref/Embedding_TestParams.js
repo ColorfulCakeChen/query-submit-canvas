@@ -232,7 +232,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
       tableChannelCountPerInputChannel = embeddingParams.channelMultiplier;
       outChannelSubBegin = 0;
     }
-  
+
     let tableElementCountPerInputChannel
       = embeddingParams.vocabularyCountPerInputChannel * tableChannelCountPerInputChannel;
 
