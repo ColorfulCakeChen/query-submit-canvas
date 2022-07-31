@@ -343,6 +343,8 @@ class Stage_Base extends Recyclable.Root {
 
     let blockParamsCreator;
     try {
+      let BlockParamsClass = params.BlockParamsClass_get();
+
       // 2. Create every blocks.
       blockParamsCreator = InferencedParams.create_BlockParamsCreator_byStageParams( params );
       blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
@@ -378,7 +380,7 @@ class Stage_Base extends Recyclable.Root {
 
         this.assert_ImageSize_BetweenBlock( i, blockParamsCreator ); // Assert image size.
 
-        blockParams = blockParamsCreator.create_BlockParams(); // Create current block.
+        blockParams = blockParamsCreator.create_BlockParams( BlockParamsClass ); // Create current block.
 
         if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
 

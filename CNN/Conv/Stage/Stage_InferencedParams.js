@@ -139,11 +139,11 @@ class Stage_InferencedParams extends Recyclable.Root {
     // else // Stage.ParamsBase
     //   BlockParamsClass = Block.ParamsBase;
 
-    let BlockParamsClass = stageParamsBase.BlockParamsClass_get();
-
     let blockParamsCreator;
     try {
-      // 2. Create every blocks.
+      let BlockParamsClass = stageParamsBase.BlockParamsClass_get();
+
+      // Create every blocks.
       blockParamsCreator = Stage_InferencedParams.create_BlockParamsCreator_byStageParams( stageParamsBase );
       blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
 

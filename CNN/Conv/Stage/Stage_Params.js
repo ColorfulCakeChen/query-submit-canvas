@@ -184,12 +184,7 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
     super.disposeResources();
   }
 
-  /**
-   * (In fact, this method should never be used. The reason is the same as why
-   * Stage.Params.init() should not call .InferencedParams_create())
-   *
-   * @override
-   */
+  /** @override */
   BlockParamsClass_get() {
     return Block.Params;
   }
