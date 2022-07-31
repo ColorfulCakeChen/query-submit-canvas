@@ -126,6 +126,7 @@ class Stage_TestParams_Base extends TestParams.Base {
 
     this.generate_out_inferencedParams(); // Fill in outputHeight, outputWidth.
 
+!!! ...unfinished... (2022/07/31) should use stageParams.inferenced.blockParamsArray instead.
     let blockParamsCreator = Stage.Base.create_BlockParamsCreator_byStageParams( stageParams );
     blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last();
 
