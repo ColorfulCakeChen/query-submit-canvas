@@ -84,7 +84,7 @@ class Stage_TestParams_Base extends TestParams.Base {
       this.out = null;
     }
 
-    this.out = Stage.ParamsBase.get_or_create_by(
+    this.out = Stage.ParamsBase.Pool.get_or_create_by(
       sourceHeight, sourceWidth, sourceChannelCount,
       nConvStageTypeId,
       blockCountRequested,
