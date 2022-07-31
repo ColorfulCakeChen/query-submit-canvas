@@ -340,13 +340,13 @@ class Stage_Base extends Recyclable.Root {
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
-    let blockParamsCreator;
+//!!! ...unfinished... (2022/07/31) should use Block.Params in Stage.Params.inferencedParams instead.
     try {
-      // 2. Create every blocks.
-      blockParamsCreator = Stage_Base.create_BlockParamsCreator_byStageParams( params );
-      blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
+      let blockParamsArray = inferencedParams.blockParamsArray;
 
-      for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Progress for block0, 1, 2, 3, ... 
+      // 2. Create every blocks.
+
+      for ( let i = 0; i < blockParamsArray.blockCount; ++i ) { // Progress for block0, 1, 2, 3, ... 
         progressForBlocks.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
       }
 
@@ -354,15 +354,13 @@ class Stage_Base extends Recyclable.Root {
       let input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder;
 
       this.blockArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
-      this.blockArray.length = blockParamsCreator.blockCount;
+      this.blockArray.length = blockParamsArray.length;
 
       for ( let i = 0; i < this.blockArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
 
         if ( 0 == i ) { // Block0.
-          blockParamsCreator.configTo_beforeBlock0();
           input0_ScaleBoundsArray_or_TensorPlaceholder = inputScaleBoundsArray0;
         } else { // (i.e. block1, 2, 3, ...)
-          blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i );
         }
 
         // BlockLast. (Note: Block0 may also be BlockLast.) 
@@ -371,17 +369,17 @@ class Stage_Base extends Recyclable.Root {
         //   - a different depthwise filter size may be used.
         //   - a different activation function may be used after pointwise2 convolution.
         if ( ( this.blockArray.length - 1 ) == i ) {
-          blockParamsCreator.configTo_beforeBlockLast();
         }
-
+//!!!
         this.assert_ImageSize_BetweenBlock( i, blockParamsCreator ); // Assert image size.
 
-        blockParams = blockParamsCreator.create_BlockParams(); // Create current block.
+        blockParams = blockParamsArray[ i ]; // Get current block.
+        blockParamsArray[ i ] = null; // (Ownership transferred. Because Block.Base.init() will own and destroy it.)
 
         if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
 
           // If channelShuffler is not null, keep it so that its tensors could be released.
-          let channelShuffler = blockParamsCreator.channelShuffler;
+          let channelShuffler = blockParams.channelShuffler;
           if ( channelShuffler ) {
 
             if ( ( this.channelShuffler ) && ( this.channelShuffler != channelShuffler ) )
@@ -402,8 +400,8 @@ class Stage_Base extends Recyclable.Root {
 
         block = this.blockArray[ i ] = Block.Base.Pool.get_or_create_by();
         blockIniter = block.initer( progressForBlocks.children[ i ], inputWeightArray, this.weightElementOffsetEnd, blockParams,
-          input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
-          this.channelShuffler );
+          input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder
+        );
 
         this.bInitOk = yield* blockIniter;
         if ( !this.bInitOk )
@@ -434,16 +432,121 @@ class Stage_Base extends Recyclable.Root {
       return this.bInitOk;
 
     } finally {
-      if ( blockParamsCreator ) {
-        blockParamsCreator.channelShuffler = null; // (Because ownership has been transferred to this Stage object.)
-        blockParamsCreator.disposeResources_and_recycleToPool();
-        blockParamsCreator = null;
-      }
       if ( params ) {
         params.disposeResources_and_recycleToPool();
         params = undefined;
       }
     }
+
+
+
+
+
+//!!! (2022/07/31 Remarked) use Block.Params in Stage.Params.inferencedParams instead.
+    // let blockParamsCreator;
+    // try {
+    //   // 2. Create every blocks.
+    //   blockParamsCreator = Stage_Base.create_BlockParamsCreator_byStageParams( params );
+    //   blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
+
+    //   for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Progress for block0, 1, 2, 3, ... 
+    //     progressForBlocks.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    //   }
+
+    //   let blockParams, block, blockIniter;
+    //   let input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder;
+
+    //   this.blockArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
+    //   this.blockArray.length = blockParamsCreator.blockCount;
+
+    //   for ( let i = 0; i < this.blockArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
+
+    //     if ( 0 == i ) { // Block0.
+    //       blockParamsCreator.configTo_beforeBlock0();
+    //       input0_ScaleBoundsArray_or_TensorPlaceholder = inputScaleBoundsArray0;
+    //     } else { // (i.e. block1, 2, 3, ...)
+    //       blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i );
+    //     }
+
+    //     // BlockLast. (Note: Block0 may also be BlockLast.) 
+    //     //
+    //     // If this is the last block of this stage (i.e. at-stage-end)
+    //     //   - a different depthwise filter size may be used.
+    //     //   - a different activation function may be used after pointwise2 convolution.
+    //     if ( ( this.blockArray.length - 1 ) == i ) {
+    //       blockParamsCreator.configTo_beforeBlockLast();
+    //     }
+
+    //     this.assert_ImageSize_BetweenBlock( i, blockParamsCreator ); // Assert image size.
+
+    //     blockParams = blockParamsCreator.create_BlockParams(); // Create current block.
+
+    //     if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
+
+    //       // If channelShuffler is not null, keep it so that its tensors could be released.
+    //       let channelShuffler = blockParamsCreator.channelShuffler;
+    //       if ( channelShuffler ) {
+
+    //         if ( ( this.channelShuffler ) && ( this.channelShuffler != channelShuffler ) )
+    //           throw Error( `Stage.Base.initer(): `
+    //             + `At most, only one (and same) channel shuffler could be used (and shared by all blocks of a stage).` );
+
+    //         this.channelShuffler = channelShuffler;
+
+    //         this.tensorWeightCountExtracted += channelShuffler.tensorWeightCountExtracted;
+    //         this.tensorWeightCountTotal += channelShuffler.tensorWeightCountTotal;
+
+    //       // If channelShuffler is null, do not use it. Otherwise, the this.channelShuffler will be cleared and could not be used
+    //       // for releasing tensors.
+    //       }
+
+    //     // If channelShuffler has ever got, never change it.
+    //     }
+
+    //     block = this.blockArray[ i ] = Block.Base.Pool.get_or_create_by();
+    //     blockIniter = block.initer( progressForBlocks.children[ i ], inputWeightArray, this.weightElementOffsetEnd, blockParams,
+    //       input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
+    //       this.channelShuffler );
+
+    //     this.bInitOk = yield* blockIniter;
+    //     if ( !this.bInitOk )
+    //       return false;
+    //     this.weightElementOffsetEnd = block.weightElementOffsetEnd;
+
+    //     this.tensorWeightCountTotal += block.tensorWeightCountTotal;
+    //     this.tensorWeightCountExtracted += block.tensorWeightCountExtracted;
+
+    //     input0_ScaleBoundsArray_or_TensorPlaceholder = block.output0;
+    //     input1_ScaleBoundsArray_or_TensorPlaceholder = block.output1;
+    //   }
+
+    //   this.block0 = this.blockArray[ 0 ]; // Shortcut to the first block.
+    //   this.blockLast = this.blockArray[ this.blockArray.length - 1 ]; // Shortcut to the last block.
+
+    //   this.outputChannelCount = this.blockLast.output_channelCount;
+
+    //   this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
+
+    //   // In our Stage design, no matter which configuration, the outputChannelCount always is twice as sourceChannelCount.
+    //   if ( this.outputChannelCount != ( this.sourceChannelCount * 2 ) )
+    //     throw Error( `Stage.Base.initer(): `
+    //       + `the outputChannelCount ( ${this.outputChannelCount} ) should always be twice of `
+    //       + `sourceChannelCount ( ${this.sourceChannelCount} ).` );
+
+    //   this.bInitOk = true;
+    //   return this.bInitOk;
+
+    // } finally {
+    //   if ( blockParamsCreator ) {
+    //     blockParamsCreator.channelShuffler = null; // (Because ownership has been transferred to this Stage object.)
+    //     blockParamsCreator.disposeResources_and_recycleToPool();
+    //     blockParamsCreator = null;
+    //   }
+    //   if ( params ) {
+    //     params.disposeResources_and_recycleToPool();
+    //     params = undefined;
+    //   }
+    // }
   }
 
   /**

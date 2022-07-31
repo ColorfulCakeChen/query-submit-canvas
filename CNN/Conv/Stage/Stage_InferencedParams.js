@@ -119,7 +119,11 @@ class Stage_InferencedParams extends Recyclable.Root {
    * 
    */
   blockParamsArray_create( stageParamsBase ) {
-    this.blockParamsArray_dispose();
+    if ( this.blockParamsArray ) {
+      this.blockParamsArray.clear(); // (Re-used if exists.)
+    } else {
+      this.blockParamsArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
+    }
 
     let BlockParamsClass;
     if ( stageParamsBase instanceof Stage.Params )
@@ -127,19 +131,18 @@ class Stage_InferencedParams extends Recyclable.Root {
     else // Stage.ParamsBase
       BlockParamsClass = Block.ParamsBase;
 
-//!!! ...unfinished... (2022/07/31) should use Stage_BlockParamsCreator to create them.
     let blockParamsCreator;
     try {
       // 2. Create every blocks.
       blockParamsCreator = Stage_InferencedParams.create_BlockParamsCreator_byStageParams( stageParamsBase );
       blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
 
+      let blockCount = blockParamsCreator.blockCount;
+
+      this.blockParamsArray.length = blockCount;
+
       let blockParams;
-
-      this.blockParamsArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
-      this.blockParamsArray.length = blockParamsCreator.blockCount;
-
-      for ( let i = 0; i < this.blockArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
+      for ( let i = 0; i < blockCount; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
 
         if ( 0 == i ) { // Block0.
           blockParamsCreator.configTo_beforeBlock0();
@@ -184,6 +187,8 @@ class Stage_InferencedParams extends Recyclable.Root {
 
         // If channelShuffler has ever got, never change it.
         }
+
+        blockParams.channelShuffler = this.channelShuffler; // Block.Params needs channel shuffler info (but does not own it).
 
         this.blockParamsArray[ i ] = blockParams;
       }
@@ -402,9 +407,16 @@ class Stage_InferencedParams extends Recyclable.Root {
     return aBlockParamsCreator;
   }
 
+  get blockCount() {
+    if ( this.blockParamsArray )
+      return this.blockParamsArray.length;
+    return 0;
+  }
+
   /** @override */
   toString() {
     let str = ``
+      + `blockCount=${this.blockCount}, `
       + `outputHeight=${this.outputHeight}, `
       + `outputWidth=${this.outputWidth}, `
       + `outputChannelCount=${this.outputChannelCount}`
