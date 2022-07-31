@@ -159,6 +159,10 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     let stageParams = this.stageParams;
 
 !!! ...unfinished... (2022/07/31) How to get it?
+// Perhaps, let configTo_Xxx() also generate Block.Params (or Block.ParamsBase).
+// And then, it could get output height and width.
+//
+
     this.input0_height = stageParams.inferencedParams.inputHeightArray[ blockIndex ];
     this.input0_width = stageParams.inferencedParams.inputWidthArray[ blockIndex ];
     //this.input0_channelCount; // Sub-class should determine it.
