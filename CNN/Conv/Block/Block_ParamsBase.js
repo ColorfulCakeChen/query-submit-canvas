@@ -134,7 +134,6 @@ class Block_ParamsBase extends Recyclable.Root {
   /** Fill this.inferencedParams. */
   InferencedParams_create() {
     this.InferencedParams_dispose();
-
     this.inferencedParams = InferencedParams.Pool.get_or_create_by(
       this.input0_height, this.input0_width, this.input0_channelCount,
       this.nConvBlockTypeId,

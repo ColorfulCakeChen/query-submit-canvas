@@ -121,6 +121,12 @@ class Stage_InferencedParams extends Recyclable.Root {
   blockParamsArray_create( stageParamsBase ) {
     this.blockParamsArray_dispose();
 
+    let BlockParamsClass;
+    if ( stageParamsBase instanceof Stage.Params )
+      BlockParamsClass = Block.Params;
+    else // Stage.ParamsBase
+      BlockParamsClass = Block.ParamsBase;
+
 //!!! ...unfinished... (2022/07/31) should use Stage_BlockParamsCreator to create them.
     let blockParamsCreator;
     try {
@@ -153,7 +159,7 @@ class Stage_InferencedParams extends Recyclable.Root {
 //!!! (2022/07/30 Remarked) Stage.Base should do it.
 //        this.assert_ImageSize_BetweenBlock( i, blockParamsCreator ); // Assert image size.
 
-        blockParams = blockParamsCreator.create_BlockParams(); // Create current block.
+        blockParams = blockParamsCreator.create_BlockParams( BlockParamsClass ); // Create current block.
 
         if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
 

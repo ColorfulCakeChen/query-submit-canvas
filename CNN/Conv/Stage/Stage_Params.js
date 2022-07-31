@@ -212,8 +212,7 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
       this.bKeepInputTensor = this.getParamValue_byParamDesc( Stage_Params.bKeepInputTensor );
     }
 
-    this.InferencedParams_dispose();
-    this.inferencedParams = InferencedParams.Pool.get_or_create_by( this );
+    this.InferencedParams_create();
 
     return bExtractOk;
   }

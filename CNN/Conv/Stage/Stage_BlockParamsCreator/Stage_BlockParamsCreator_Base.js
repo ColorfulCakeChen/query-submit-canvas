@@ -285,11 +285,15 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
 
   /**
    *
-   * @return {Block.Params}
-   *   Create and return a Block.Params according to this object's current state.
+   * @paramm {Block.ParamsBase|Block.Params} BlockParamsClass
+   *   Which kinds of block parameters object should be created.
+   * 
+   * @return {Block.ParamsBase|Block.Params}
+   *   Create and return a Block.ParamsBase or Block.Params according to this
+   * object's current state.
    */
-  create_BlockParams() {
-    let params = Block.Params.Pool.get_or_create_by(
+  create_BlockParams( BlockParamsClass ) {
+    let params = BlockParamsClass.Pool.get_or_create_by(
       this.input0_height, this.input0_width, this.input0_channelCount,
       this.nConvBlockTypeId,
       this.pointwise1ChannelCount,

@@ -124,11 +124,7 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
       this.bKeepInputTensor = this.getParamValue_byParamDesc( Embedding_Params.bKeepInputTensor );
     }
 
-    this.InferencedParams_dispose();
-    this.inferencedParams = InferencedParams.Pool.get_or_create_by(
-      this.input_height, this.input_width, this.input_channelCount,
-      this.channelMultiplier, this.vocabularyCountPerInputChannel, this.bEmbedVocabularyId
-    );
+    this.InferencedParams_create();
 
     return bExtractOk;
   }

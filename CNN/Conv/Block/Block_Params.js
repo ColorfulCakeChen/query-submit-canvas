@@ -385,9 +385,6 @@ class Block_Params extends Weights.Params( ParamsBase ) {
     if ( !bExtractOk )
       return false;
 
-    this.InferencedParams_dispose();
-
-//!!!
     {
       this.input0_height = this.getParamValue_byParamDesc( Block_Params.input0_height );
       this.input0_width = this.getParamValue_byParamDesc( Block_Params.input0_width );
@@ -407,17 +404,7 @@ class Block_Params extends Weights.Params( ParamsBase ) {
       this.bKeepInputTensor = this.getParamValue_byParamDesc( Block_Params.bKeepInputTensor );
     }
 
-    // Determine input tensor count and whether request add-input-to-output.
-    this.inferencedParams = InferencedParams.Pool.get_or_create_by(
-      this.input0_height, this.input0_width, this.input0_channelCount,
-      this.nConvBlockTypeId,
-      this.pointwise1ChannelCount,
-      this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth, this.depthwiseStridesPad,
-      this.depthwiseActivationId,
-      this.pointwise20ChannelCount, this.pointwise20ActivationId,
-      this.nSqueezeExcitationChannelCountDivisor, this.bSqueezeExcitationPrefix,
-      this.nActivationId,
-    );
+    this.InferencedParams_create();
 
     return bExtractOk;
   }
