@@ -59,8 +59,13 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     this.depthwiseFilterWidth_Last = undefined;    // The last block's depthwise filter size.
     this.output0_channelCount = undefined;
     this.output1_channelCount = undefined;
-    this.output_height = undefined;
-    this.output_width = undefined;
+
+//!!! (2022/07/31 Remarked)
+// This circular reference back to the still generating Stage_InferencedParams.
+// And, this seems not necessary be generated because Stage_InferencedParams
+// will have it after blockParams is created.
+    // this.output_height = undefined;
+    // this.output_width = undefined;
 
     this.bKeepInputTensor = undefined;
     this.nActivationId = undefined;
@@ -136,8 +141,12 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
 
     this.bKeepInputTensor = stageParams.bKeepInputTensor; // block0 may or may not keep input tensor according to caller's necessary.
 
-    this.output_height = stageParams.inferencedParams.blockParamsArray[ 0 ].output_height;
-    this.output_width = stageParams.inferencedParams.blockParamsArray[ 0 ].output_width;
+//!!! (2022/07/31 Remarked)
+// This circular reference back to the still generating Stage_InferencedParams.
+// And, this seems not necessary be generated because Stage_InferencedParams
+// will have it after blockParams is created.
+    // this.output_height = stageParams.inferencedParams.blockParamsArray[ 0 ].output_height;
+    // this.output_width = stageParams.inferencedParams.blockParamsArray[ 0 ].output_width;
   }
 
   /**
@@ -163,8 +172,12 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
 
     this.bKeepInputTensor = false; // No matter bKeepInputTensor, all blocks (except block0) should not keep input tensor.
 
-    this.output_height = stageParams.inferencedParams.blockParamsArray[ blockIndex ].output_height;
-    this.output_width = stageParams.inferencedParams.blockParamsArray[ blockIndex ].output_width;
+//!!! (2022/07/31 Remarked)
+// This circular reference back to the still generating Stage_InferencedParams.
+// And, this seems not necessary be generated because Stage_InferencedParams
+// will have it after blockParams is created.
+    // this.output_height = stageParams.inferencedParams.blockParamsArray[ blockIndex ].output_height;
+    // this.output_width = stageParams.inferencedParams.blockParamsArray[ blockIndex ].output_width;
   }
 
   /**
