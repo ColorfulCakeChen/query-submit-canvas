@@ -4,7 +4,7 @@ import * as Pool from "../../../util/Pool.js";
 import * as Recyclable from "../../../util/Recyclable.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import * as Block from "../../Block.js";
-import { ParamsBase } from "../Stage_ParamsBase.js";
+//import { ParamsBase } from "../Stage_ParamsBase.js";
 
 /**
  * Base class for all Stage.BlockParamsCreator.Xxx classes.
