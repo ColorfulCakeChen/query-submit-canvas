@@ -203,9 +203,9 @@ class Stage_InferencedParams extends Recyclable.Root {
       this.blockParams0 = this.blockParamsArray[ 0 ]; // Shortcut to the first block.
       this.blockParamsLast = this.blockParamsArray[ this.blockParamsArray.length - 1 ]; // Shortcut to the last block.
 
-      this.outputHeight = this.blockLast.output_height;
-      this.outputWidth = this.blockLast.output_width;
-      this.outputChannelCount = this.blockLast.output_channelCount;
+      this.outputHeight = this.blockParamsLast.output_height;
+      this.outputWidth = this.blockParamsLast.output_width;
+      this.outputChannelCount = this.blockParamsLast.output_channelCount;
 
     } finally {
       if ( blockParamsCreator ) {
