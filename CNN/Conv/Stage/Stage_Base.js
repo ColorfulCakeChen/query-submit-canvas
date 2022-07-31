@@ -9,6 +9,7 @@ import * as Block from "../Block.js";
 import * as ChannelShuffler from "../ChannelShuffler.js";
 import * as BlockParamsCreator from "./Stage_BlockParamsCreator.js";
 import { Params } from "./Stage_Params.js";
+import { InferencedParams } from "./Stage_InferencedParams.js";
 
 /**
  * Implement a stage of  or MobileNetV1 or MobileNetV2 or ShuffleNetV2 (with 2 output channel groups). It is a sequence of
@@ -343,7 +344,7 @@ class Stage_Base extends Recyclable.Root {
     let blockParamsCreator;
     try {
       // 2. Create every blocks.
-      blockParamsCreator = Stage_Base.create_BlockParamsCreator_byStageParams( params );
+      blockParamsCreator = InferencedParams.create_BlockParamsCreator_byStageParams( params );
       blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
 
       for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Progress for block0, 1, 2, 3, ... 
