@@ -742,13 +742,13 @@ class Stage_Reference_Base extends Recyclable.Root {
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
             if ( stage_or_stageParamsBase.bPointwise1 == false ) {
-              if ( block_or_blockParamsBase instanceof Block_TestParams.Out ) {
+              if ( block_or_blockParamsBase instanceof Block.ParamsBase ) {
                 block_or_blockParamsBase_asserter.propertyValue( "pointwise1ChannelCount", 0 ); // Zero in parameters.
               } else { // Block.Base
                 block_or_blockParamsBase_asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount ); // Double in reality internally.
               }
             } else {
-              if ( block_or_blockParamsBase instanceof Block_TestParams.Out ) {
+              if ( block_or_blockParamsBase instanceof Block.ParamsBase ) {
                 block_or_blockParamsBase_asserter.propertyValue( "pointwise1ChannelCount", single_Block0Input0ChannelCount ); // Single in parameters.
               } else { // Block.Base
                 block_or_blockParamsBase_asserter.propertyValue( "pointwise1ChannelCount", double_Block0Input0ChannelCount ); // Double in reality internally.
