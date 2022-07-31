@@ -139,6 +139,8 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
     if ( !bExtractOk )
       return false;
 
+//!!! ...unfinished... (2022/07/31) should call InferencedParams_create() instead.
+
     this.InferencedParams_dispose();
 
     this.inferencedParams = InferencedParams.Pool.get_or_create_by(

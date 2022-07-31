@@ -370,11 +370,11 @@ class Stage_Base extends Recyclable.Root {
         //   - a different activation function may be used after pointwise2 convolution.
         if ( ( this.blockArray.length - 1 ) == i ) {
         }
-//!!!
-        this.assert_ImageSize_BetweenBlock( i, blockParamsCreator ); // Assert image size.
 
         blockParams = blockParamsArray[ i ]; // Get current block.
         blockParamsArray[ i ] = null; // (Ownership transferred. Because Block.Base.init() will own and destroy it.)
+
+        this.assert_ImageSize_BetweenBlock( i, blockParams ); // Assert image size.
 
         if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
 
@@ -637,40 +637,82 @@ class Stage_Base extends Recyclable.Root {
    * @param {number} blockIndex
    *   Which block (i.e. block0, block1, block2, ...).
    *
-   * @param {Stage_BlockParamsCreator.Base} blockParamsCreator
+   * @param {Block.Params} blockParams
    *   The maker which will produce current block (Block.Base) object.
    */
-  assert_ImageSize_BetweenBlock( blockIndex, blockParamsCreator ) {
+   assert_ImageSize_BetweenBlock( blockIndex, blockParams ) {
 
     if ( 0 == blockIndex ) { // Block0.
-      if ( blockParamsCreator.input0_height != this.sourceHeight )
+      if ( blockParams.input0_height != this.sourceHeight )
         throw Error( `Stage.Base.initer(): `
-          + `block${blockIndex}'s input image height ( ${blockParamsCreator.input0_height} ) should be the same as `
+          + `block${blockIndex}'s input image height ( ${blockParams.input0_height} ) should be the same as `
           + `stage's source image height ( ${this.sourceHeight} ).`
         );
 
-      if ( blockParamsCreator.input0_width != this.sourceWidth )
+      if ( blockParams.input0_width != this.sourceWidth )
         throw Error( `Stage.Base.initer(): `
-          + `block${blockIndex}'s input image width ( ${blockParamsCreator.input0_width} ) should be the same as `
+          + `block${blockIndex}'s input image width ( ${blockParams.input0_width} ) should be the same as `
           + `stage's source image width ( ${this.sourceWidth} ).`
         );
 
     } else { // After Block0.
       let previousBlock = this.blockArray[ blockIndex - 1 ];
 
-      if ( blockParamsCreator.inputHeight != previousBlock.outputHeight )
+      if ( blockParams.input0_height != previousBlock.output_height )
         throw Error( `Stage.Base.initer(): `
-          + `block${blockIndex}'s input image height ( ${blockParamsCreator.inputHeight} ) should be the same as `
-          + `block${ blockIndex - 1 }'s output image height ( ${previousBlock.outputHeight} ).`
+          + `block${blockIndex}'s input image height ( ${blockParams.input0_height} ) should be the same as `
+          + `block${ blockIndex - 1 }'s output image height ( ${previousBlock.output_height} ).`
        );
 
-      if ( blockParamsCreator.inputWidth != previousBlock.outputWidth )
+      if ( blockParams.input0_width != previousBlock.output_width )
         throw Error( `Stage.Base.initer(): `
-          + `block${blockIndex}'s input image width ( ${blockParamsCreator.inputWidth} ) should be the same as `
-          + `block${ blockIndex - 1 }'s output image width ( ${previousBlock.outputWidth} ).`
+          + `block${blockIndex}'s input image width ( ${blockParams.input0_width} ) should be the same as `
+          + `block${ blockIndex - 1 }'s output image width ( ${previousBlock.output_width} ).`
         );
     }
   }
+
+//!!! (2022/07/31 Remarked) use Block.Params in Stage.Params.inferencedParams instead.
+  // /**
+  //  * Assert image size.
+  //  *
+  //  * @param {number} blockIndex
+  //  *   Which block (i.e. block0, block1, block2, ...).
+  //  *
+  //  * @param {Stage_BlockParamsCreator.Base} blockParamsCreator
+  //  *   The maker which will produce current block (Block.Base) object.
+  //  */
+  // assert_ImageSize_BetweenBlock( blockIndex, blockParamsCreator ) {
+
+  //   if ( 0 == blockIndex ) { // Block0.
+  //     if ( blockParamsCreator.input0_height != this.sourceHeight )
+  //       throw Error( `Stage.Base.initer(): `
+  //         + `block${blockIndex}'s input image height ( ${blockParamsCreator.input0_height} ) should be the same as `
+  //         + `stage's source image height ( ${this.sourceHeight} ).`
+  //       );
+
+  //     if ( blockParamsCreator.input0_width != this.sourceWidth )
+  //       throw Error( `Stage.Base.initer(): `
+  //         + `block${blockIndex}'s input image width ( ${blockParamsCreator.input0_width} ) should be the same as `
+  //         + `stage's source image width ( ${this.sourceWidth} ).`
+  //       );
+
+  //   } else { // After Block0.
+  //     let previousBlock = this.blockArray[ blockIndex - 1 ];
+
+  //     if ( blockParamsCreator.inputHeight != previousBlock.outputHeight )
+  //       throw Error( `Stage.Base.initer(): `
+  //         + `block${blockIndex}'s input image height ( ${blockParamsCreator.inputHeight} ) should be the same as `
+  //         + `block${ blockIndex - 1 }'s output image height ( ${previousBlock.outputHeight} ).`
+  //      );
+
+  //     if ( blockParamsCreator.inputWidth != previousBlock.outputWidth )
+  //       throw Error( `Stage.Base.initer(): `
+  //         + `block${blockIndex}'s input image width ( ${blockParamsCreator.inputWidth} ) should be the same as `
+  //         + `block${ blockIndex - 1 }'s output image width ( ${previousBlock.outputWidth} ).`
+  //       );
+  //   }
+  // }
 
   /** Process input, destroy or keep input, return result.
    *
