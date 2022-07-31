@@ -544,9 +544,11 @@ class BlockReference_Base extends Recyclable.Root {
         testParams.in.bKeepInputTensor
       );
 
+      extractedParams.channelShuffler = channelShuffler_ConcatPointwiseConv;
+
       bInitOk = block.init( progress, testParams.in_weights.weightArray, testParams.in_weights.weightElementOffsetBegin, extractedParams,
-        inputScaleBoundsArray0, inputScaleBoundsArray1,
-        channelShuffler_ConcatPointwiseConv );
+        inputScaleBoundsArray0, inputScaleBoundsArray1
+      );
     }
 
     let inferencedParams = testParams.out.inferencedParams;

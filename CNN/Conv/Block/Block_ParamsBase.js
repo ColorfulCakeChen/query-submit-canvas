@@ -7,6 +7,10 @@ import { InferencedParams } from "./Block_InferencedParams.js";
 
 /**
  *
+ * @param {ChannelShuffler.Xxx} channelShuffler
+ *   The channel shuffler should be used by block. Usually, only ShuffleNetV2 will have
+ * it. This Block.ParamsBase dose not own it and will not dispose it (because a channel
+ * shuffler usually is shared by multiple blocks).
  */
 class Block_ParamsBase extends Recyclable.Root {
 
@@ -102,6 +106,8 @@ class Block_ParamsBase extends Recyclable.Root {
   /** @override */
   disposeResources() {
     this.InferencedParams_dispose();
+
+    this.channelShuffler = null; // Just nullify it, because it is not owned by this block parameters.
 
     this.input0_height = undefined;
     this.input0_width = undefined;

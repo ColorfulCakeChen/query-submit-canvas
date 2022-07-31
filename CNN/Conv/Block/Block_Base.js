@@ -8,6 +8,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as Weights from "../../Unpacker/Weights.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import * as Operation from "../Operation.js";
+import * as ChannelShuffler from "../ChannelShuffler.js";
 import { Params } from "./Block_Params.js";
 import { InferencedParams } from "./Block_InferencedParams.js";
 import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_creator.js";
@@ -395,7 +396,9 @@ class Block_Base extends Recyclable.Root {
   * initer(
     progressParent, inputWeightArray, weightElementOffsetBegin, params,
     input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
-    channelShuffler_ConcatPointwiseConv
+
+//!!! (2022/07/31 Remarked) come from Block.Params now.
+//    channelShuffler_ConcatPointwiseConv
   ) {
 
     // 0. Prepare
@@ -508,11 +511,22 @@ class Block_Base extends Recyclable.Root {
       this.outputTensorCount = params.inferencedParams.outputTensorCount;
     }
 
-    params.disposeResources_and_recycleToPool();
-    params = null;
+//!!! (2022/07/31 Remarked) come from Block.Params now.
+//    // No matter whether the channel shuffler is used, it is always recorded in data member.
+//    this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
 
     // No matter whether the channel shuffler is used, it is always recorded in data member.
-    this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
+    this.channelShuffler_ConcatPointwiseConv = params.channelShuffler;
+    if ( this.channelShuffler_ConcatPointwiseConv ) {
+      if ( !( this.channelShuffler_ConcatPointwiseConv instanceof ChannelShuffler.ConcatPointwiseConv ) )
+        throw Error ( `Block.Base.initer(): `
+          + `channelShuffler ( ${this.channelShuffler_ConcatPointwiseConv} ) `
+          + `should be an instanceof ChannelShuffler.ConcatPointwiseConv`
+        );
+    }
+
+    params.disposeResources_and_recycleToPool();
+    params = null;
 
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
@@ -819,7 +833,7 @@ class Block_Base extends Recyclable.Root {
 
       let concat2ShuffleSplit = Operation.ConcatShuffleSplit.Pool.get_or_create_by(
         this.operationArray.endingInput0, this.operationArray.endingInput1,
-        channelShuffler_ConcatPointwiseConv, bShuffleSplit );
+        this.channelShuffler_ConcatPointwiseConv, bShuffleSplit );
 
       this.operationArray.operation_append( concat2ShuffleSplit );
 
@@ -865,13 +879,17 @@ class Block_Base extends Recyclable.Root {
   init(
     progressParent, inputWeightArray, weightElementOffsetBegin, params,
     input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
-    channelShuffler_ConcatPointwiseConv
+
+//!!! (2022/07/31 Remarked) come from Block.Params now.
+//    channelShuffler_ConcatPointwiseConv
   ) {
 
     let initer = this.initer(
       progressParent, inputWeightArray, weightElementOffsetBegin, params,
       input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
-      channelShuffler_ConcatPointwiseConv
+
+//!!! (2022/07/31 Remarked) come from Block.Params now.
+//      channelShuffler_ConcatPointwiseConv
     );
 
     let initerNext;
