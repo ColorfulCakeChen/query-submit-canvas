@@ -80,8 +80,13 @@ class Stage_InferencedParams extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    this.channelShuffler_dispose();
+    this.blockParamsLast = undefined;
+    this.blockParams0 = undefined;
+
     this.blockParamsArray_dispose();
+    this.channelShuffler_dispose();
+
+    this.blockCount = undefined;
 
 //!!! ...unfinished... (2022/07/31) should use Stage_BlockParamsCreator to create them.
 
@@ -142,17 +147,17 @@ class Stage_InferencedParams extends Recyclable.Root {
       blockParamsCreator = Stage_InferencedParams.create_BlockParamsCreator_byStageParams( stageParamsBase );
       blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
 
-      let blockCount = blockParamsCreator.blockCount;
-
-      this.blockParamsArray.length = blockCount;
+      this.blockCount = blockParamsCreator.blockCount;
+      this.blockParamsArray.length = this.blockCount;
 
       let blockParams;
-      for ( let i = 0; i < blockCount; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
+      let next_input_height, next_input_width;
+      for ( let i = 0; i < this.blockCount; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
 
         if ( 0 == i ) { // Block0.
           blockParamsCreator.configTo_beforeBlock0();
         } else { // (i.e. block1, 2, 3, ...)
-          blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i, ??input_height, input_width );
+          blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i, next_input_height, next_input_width );
         }
 
         // BlockLast. (Note: Block0 may also be BlockLast.) 
@@ -163,9 +168,6 @@ class Stage_InferencedParams extends Recyclable.Root {
         if ( ( this.blockParamsArray.length - 1 ) == i ) {
           blockParamsCreator.configTo_beforeBlockLast();
         }
-
-//!!! (2022/07/30 Remarked) Stage.Base should do it.
-//        this.assert_ImageSize_BetweenBlock( i, blockParamsCreator ); // Assert image size.
 
         blockParams = blockParamsCreator.create_BlockParams( BlockParamsClass ); // Create current block.
 
@@ -182,10 +184,6 @@ class Stage_InferencedParams extends Recyclable.Root {
             this.channelShuffler = channelShuffler;
             blockParamsCreator.channelShuffler = null; // (Ownership transferred.)
 
-//!!! (2022/07/30 Remarked) Stage.Base should do it.
-//            this.tensorWeightCountExtracted += channelShuffler.tensorWeightCountExtracted;
-//            this.tensorWeightCountTotal += channelShuffler.tensorWeightCountTotal;
-
           // If channelShuffler is null, do not use it. Otherwise, the this.channelShuffler
           // will be cleared and could not be used for releasing tensors.
           }
@@ -196,6 +194,8 @@ class Stage_InferencedParams extends Recyclable.Root {
         blockParams.channelShuffler = this.channelShuffler; // Block.Params needs channel shuffler info (but does not own it).
 
         this.blockParamsArray[ i ] = blockParams;
+        next_input_height = blockParams.output_height;
+        next_input_width = blockParams.output_width;
       }
 
       this.blockParams0 = this.blockParamsArray[ 0 ]; // Shortcut to the first block.
@@ -410,12 +410,6 @@ class Stage_InferencedParams extends Recyclable.Root {
     let aBlockParamsCreator = classBlockParamsCreator.Pool.get_or_create_by( stageParams );
 
     return aBlockParamsCreator;
-  }
-
-  get blockCount() {
-    if ( this.blockParamsArray )
-      return this.blockParamsArray.length;
-    return 0;
   }
 
   /** @override */
