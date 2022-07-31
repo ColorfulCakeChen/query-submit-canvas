@@ -194,6 +194,8 @@ class Stage_InferencedParams extends Recyclable.Root {
 
         blockParams.channelShuffler = this.channelShuffler; // Block.Params needs channel shuffler info (but does not own it).
 
+        blockParams.InferencedParams_create();
+
         next_input_height = blockParams.output_height;
         next_input_width = blockParams.output_width;
       }
