@@ -126,49 +126,79 @@ class Stage_TestParams_Base extends TestParams.Base {
 
     this.generate_out_inferencedParams(); // Fill in outputHeight, outputWidth.
 
-!!! ...unfinished... (2022/07/31) should use stageParams.inferenced.blockParamsArray instead.
-    let blockParamsCreator = Stage.Base.create_BlockParamsCreator_byStageParams( stageParams );
-    blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last();
+    let blockParamsArray = stageParams.inferencedParams.blockParamsArray;
 
     this.blockArray.clear();
-    this.blockArray.length = blockParamsCreator.blockCount;
+    this.blockArray.length = blockParamsArray.length;
 
     this.in.paramsNumberArrayObject.length = 0;
 
-    for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
-
-      if ( 0 == i ) { // Block0.
-        blockParamsCreator.configTo_beforeBlock0();
-      } else { // (i.e. Block1, 2, 3, ...)
-        blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i );
-      }
-
-      if ( ( this.blockArray.length - 1 ) == i ) { // BlockLast. (Note: Block0 may also be BlockLast.)
-        blockParamsCreator.configTo_beforeBlockLast();
-      }
+    let blockParams;
+    for ( let i = 0; i < blockParamsArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
+      blockParams = blockParamsArray[ i ]; // Get current block parameters.
 
       let blockTestParams = Block_TestParams.Base.Pool.get_or_create_by( this.id );
       blockTestParams.set_byParamsScattered(
-        blockParamsCreator.input0_height, blockParamsCreator.input0_width, blockParamsCreator.input0_channelCount,
-        blockParamsCreator.nConvBlockTypeId,
-        blockParamsCreator.pointwise1ChannelCount,
-        blockParamsCreator.depthwise_AvgMax_Or_ChannelMultiplier, blockParamsCreator.depthwiseFilterHeight,
-        blockParamsCreator.depthwiseFilterWidth, blockParamsCreator.depthwiseStridesPad,
-        blockParamsCreator.depthwiseActivationId,
-        blockParamsCreator.pointwise20ChannelCount, blockParamsCreator.pointwise20ActivationId,
-        blockParamsCreator.nSqueezeExcitationChannelCountDivisor, blockParamsCreator.bSqueezeExcitationPrefix,
-        blockParamsCreator.nActivationId,
-        blockParamsCreator.bKeepInputTensor
+        blockParams.input0_height, blockParams.input0_width, blockParams.input0_channelCount,
+        blockParams.nConvBlockTypeId,
+        blockParams.pointwise1ChannelCount,
+        blockParams.depthwise_AvgMax_Or_ChannelMultiplier, blockParams.depthwiseFilterHeight,
+        blockParams.depthwiseFilterWidth, blockParams.depthwiseStridesPad,
+        blockParams.depthwiseActivationId,
+        blockParams.pointwise20ChannelCount, blockParams.pointwise20ActivationId,
+        blockParams.nSqueezeExcitationChannelCountDivisor, blockParams.bSqueezeExcitationPrefix,
+        blockParams.nActivationId,
+        blockParams.bKeepInputTensor
       );
 
       this.blockArray[ i ] = blockTestParams;
       this.in.paramsNumberArrayObject.push( blockTestParams.in_weights.weightArray ); // Place every block's parameters in sequence.
     }
 
-    if ( blockParamsCreator ) {
-      blockParamsCreator.disposeResources_and_recycleToPool();
-      blockParamsCreator = null;
-    }
+
+//!!! (2022/07/31 Remarked) use stageParams.inferenced.blockParamsArray instead.
+//     let blockParamsCreator = Stage.Base.create_BlockParamsCreator_byStageParams( stageParams );
+//     blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last();
+
+//     this.blockArray.clear();
+//     this.blockArray.length = blockParamsCreator.blockCount;
+
+//     this.in.paramsNumberArrayObject.length = 0;
+
+//     for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
+
+//       if ( 0 == i ) { // Block0.
+//         blockParamsCreator.configTo_beforeBlock0();
+//       } else { // (i.e. Block1, 2, 3, ...)
+//         blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i );
+//       }
+
+//       if ( ( this.blockArray.length - 1 ) == i ) { // BlockLast. (Note: Block0 may also be BlockLast.)
+//         blockParamsCreator.configTo_beforeBlockLast();
+//       }
+
+//       let blockTestParams = Block_TestParams.Base.Pool.get_or_create_by( this.id );
+//       blockTestParams.set_byParamsScattered(
+//         blockParamsCreator.input0_height, blockParamsCreator.input0_width, blockParamsCreator.input0_channelCount,
+//         blockParamsCreator.nConvBlockTypeId,
+//         blockParamsCreator.pointwise1ChannelCount,
+//         blockParamsCreator.depthwise_AvgMax_Or_ChannelMultiplier, blockParamsCreator.depthwiseFilterHeight,
+//         blockParamsCreator.depthwiseFilterWidth, blockParamsCreator.depthwiseStridesPad,
+//         blockParamsCreator.depthwiseActivationId,
+//         blockParamsCreator.pointwise20ChannelCount, blockParamsCreator.pointwise20ActivationId,
+//         blockParamsCreator.nSqueezeExcitationChannelCountDivisor, blockParamsCreator.bSqueezeExcitationPrefix,
+//         blockParamsCreator.nActivationId,
+//         blockParamsCreator.bKeepInputTensor
+//       );
+
+//       this.blockArray[ i ] = blockTestParams;
+//       this.in.paramsNumberArrayObject.push( blockTestParams.in_weights.weightArray ); // Place every block's parameters in sequence.
+//     }
+
+//     if ( blockParamsCreator ) {
+//       blockParamsCreator.disposeResources_and_recycleToPool();
+//       blockParamsCreator = null;
+//     }
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
     this.in_weights.set_byConcat(
