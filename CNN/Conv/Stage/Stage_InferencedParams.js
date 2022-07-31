@@ -6,7 +6,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as Depthwise from "../Depthwise.js";
 import * as ChannelShuffler from "../ChannelShuffler.js";
 import * as BlockParamsCreator from "./Stage_BlockParamsCreator.js";
-import { ParamsBase } from "./Stage_ParamsBase.js";
+//import { ParamsBase } from "./Stage_ParamsBase.js";
 
 /**
  * All properties inferenced from Stage.Params.
