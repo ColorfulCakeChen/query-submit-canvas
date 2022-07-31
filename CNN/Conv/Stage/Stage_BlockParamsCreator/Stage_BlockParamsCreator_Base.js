@@ -154,17 +154,22 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
    *
    * @param {number} blockIndex
    *   The id (i.e. 1, 2, ...) of the block which will be created.
+   *
+   * @param {number} input_height
+   *   The input height of the block which will be created.
+   *
+   * @param {number} input_width
+   *   The input idth of the block which will be created.
    */
-  configTo_beforeBlockN_exceptBlock0( blockIndex ) {
+  configTo_beforeBlockN_exceptBlock0( blockIndex, input_height, input_width ) {
     let stageParams = this.stageParams;
 
-!!! ...unfinished... (2022/07/31) How to get it?
-// Perhaps, let configTo_Xxx() also generate Block.Params (or Block.ParamsBase).
-// And then, it could get output height and width.
-//
+//!!! (2022/07/31 Remarked) from function parameter directly.
+//     this.input0_height = stageParams.inferencedParams.inputHeightArray[ blockIndex ];
+//     this.input0_width = stageParams.inferencedParams.inputWidthArray[ blockIndex ];
+    this.input0_height = input_height;
+    this.input0_width = input_width;
 
-    this.input0_height = stageParams.inferencedParams.inputHeightArray[ blockIndex ];
-    this.input0_width = stageParams.inferencedParams.inputWidthArray[ blockIndex ];
     //this.input0_channelCount; // Sub-class should determine it.
 
     // All blocks (except block0 in NoPointwise1) will not double the channel count by depthwise, because block0 has already double

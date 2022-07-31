@@ -164,8 +164,8 @@ class ShuffleNetV2_ByPointwise21 extends Base {
   }
 
   /** @override */
-  configTo_beforeBlockN_exceptBlock0( blockIndex ) {
-    super.configTo_beforeBlockN_exceptBlock0( blockIndex );
+  configTo_beforeBlockN_exceptBlock0( blockIndex, input_height, input_width ) {
+    super.configTo_beforeBlockN_exceptBlock0( blockIndex, input_height, input_width );
 
     let stageParams = this.stageParams;
 

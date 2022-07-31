@@ -152,7 +152,7 @@ class Stage_InferencedParams extends Recyclable.Root {
         if ( 0 == i ) { // Block0.
           blockParamsCreator.configTo_beforeBlock0();
         } else { // (i.e. block1, 2, 3, ...)
-          blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i );
+          blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i, ??input_height, input_width );
         }
 
         // BlockLast. (Note: Block0 may also be BlockLast.) 

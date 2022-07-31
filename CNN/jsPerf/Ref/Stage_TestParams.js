@@ -170,7 +170,7 @@ class Stage_TestParams_Base extends TestParams.Base {
 //       if ( 0 == i ) { // Block0.
 //         blockParamsCreator.configTo_beforeBlock0();
 //       } else { // (i.e. Block1, 2, 3, ...)
-//         blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i );
+//         blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i, ???input_height, input_width );
 //       }
 
 //       if ( ( this.blockArray.length - 1 ) == i ) { // BlockLast. (Note: Block0 may also be BlockLast.)
