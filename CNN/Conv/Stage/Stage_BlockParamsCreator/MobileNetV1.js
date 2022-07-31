@@ -3,7 +3,7 @@ export { MobileNetV1 };
 import * as Pool from "../../../util/Pool.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { Params } from "../Stage_Params.js";
-import { Base } from "./Base.js";
+import { Base } from "./Stage_BlockParamsCreator_Base.js";
 
 /**
  * Provide parameters for MobileNetV1 (i.e. no-add-inut-to-output, pointwise1 is same size of pointwise20).

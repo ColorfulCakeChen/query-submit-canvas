@@ -4,7 +4,7 @@ import * as Pool from "../../../util/Pool.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import * as ChannelShuffler from "../../ChannelShuffler.js";
 import { Params } from "../Stage_Params.js";
-import { Base } from "./Base.js";
+import { Base } from "./Stage_BlockParamsCreator_Base.js";
 
 /**
  * Provide parameters for ShuffleNetV2 (i.e. shuffle channel by ChannelShuffler.ConcatPointwiseConv).
