@@ -125,6 +125,8 @@ class Stage_InferencedParams extends Recyclable.Root {
       this.blockParamsArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
     }
 
+    this.channelShuffler_dispose(); // So that new channel shuffler (if has) could be owned.
+
 //!!! (2022/07/31 Remarked) Use BlockParamsClass_get() instead.
     // let BlockParamsClass;
     // if ( stageParamsBase instanceof Stage.Params )
