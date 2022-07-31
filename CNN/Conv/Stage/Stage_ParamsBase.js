@@ -130,7 +130,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
   /** Create .inferencedParams */
   InferencedParams_create() {
     this.InferencedParams_dispose();
-    this.inferencedParams = Stage.InferencedParams.Pool.get_or_create_by( this );
+    this.inferencedParams = InferencedParams.Pool.get_or_create_by( this );
   }
 
   get nConvStageTypeName() {
