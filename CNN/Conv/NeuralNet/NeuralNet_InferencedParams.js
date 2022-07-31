@@ -201,12 +201,13 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     blockCountRequested
   ) {
 
- //!!! ...unfinished... (2022/07/31) should use NeuralNet_StageParamsCreator_Base to create them.
+    this.bEmbedVocabularyId = true;
+
+
+//!!! ...unfinished... (2022/07/31) should use NeuralNet_StageParamsCreator_Base to create them.
 
     this.depthwiseFilterHeight = 3; // Always use ( 3 * 3 ) depthwise filter.
     this.depthwiseFilterWidth = 3;
-
-    this.bEmbedVocabularyId = true;
 
     // Always use the only suggested activation function.
     this.nActivationId = ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2;
