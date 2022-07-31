@@ -124,7 +124,7 @@ class Stage_TestParams_Base extends TestParams.Base {
   set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin = 0 ) {
     let stageParams = this.out;
 
-    this.generate_out_inferencedParams(); // Fill in outputHeight, outputWidth.
+    this.generate_out_inferencedParams(); // Generate blockParamsArray[].
 
     let blockParamsArray = stageParams.inferencedParams.blockParamsArray;
 
