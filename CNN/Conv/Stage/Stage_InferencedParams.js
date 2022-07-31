@@ -169,7 +169,8 @@ class Stage_InferencedParams extends Recyclable.Root {
           blockParamsCreator.configTo_beforeBlockLast();
         }
 
-        blockParams = blockParamsCreator.create_BlockParams( BlockParamsClass ); // Create current block.
+        blockParams = this.blockParamsArray[ i ]
+          = blockParamsCreator.create_BlockParams( BlockParamsClass ); // Create current block.
 
         if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
 
@@ -193,7 +194,6 @@ class Stage_InferencedParams extends Recyclable.Root {
 
         blockParams.channelShuffler = this.channelShuffler; // Block.Params needs channel shuffler info (but does not own it).
 
-        this.blockParamsArray[ i ] = blockParams;
         next_input_height = blockParams.output_height;
         next_input_width = blockParams.output_width;
       }
@@ -203,7 +203,7 @@ class Stage_InferencedParams extends Recyclable.Root {
 
       this.outputHeight = this.blockLast.output_height;
       this.outputWidth = this.blockLast.output_width;
-      this.outputChannelCount = this.blockLast.output0_channelCount;
+      this.outputChannelCount = this.blockLast.output_channelCount;
 
     } finally {
       if ( blockParamsCreator ) {

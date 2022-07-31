@@ -340,27 +340,30 @@ class Stage_Base extends Recyclable.Root {
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
-//!!! ...unfinished... (2022/07/31) should use Block.Params in Stage.Params.inferencedParams instead.
+    let blockParamsCreator;
     try {
-      let blockParamsArray = inferencedParams.blockParamsArray;
-
       // 2. Create every blocks.
+      blockParamsCreator = Stage_Base.create_BlockParamsCreator_byStageParams( params );
+      blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
 
-      for ( let i = 0; i < blockParamsArray.blockCount; ++i ) { // Progress for block0, 1, 2, 3, ... 
+      for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Progress for block0, 1, 2, 3, ... 
         progressForBlocks.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
       }
 
       let blockParams, block, blockIniter;
       let input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder;
+      let next_input_height, next_input_width;
 
       this.blockArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
-      this.blockArray.length = blockParamsArray.length;
+      this.blockArray.length = blockParamsCreator.blockCount;
 
       for ( let i = 0; i < this.blockArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
 
         if ( 0 == i ) { // Block0.
+          blockParamsCreator.configTo_beforeBlock0();
           input0_ScaleBoundsArray_or_TensorPlaceholder = inputScaleBoundsArray0;
         } else { // (i.e. block1, 2, 3, ...)
+          blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i, next_input_height, next_input_width );
         }
 
         // BlockLast. (Note: Block0 may also be BlockLast.) 
@@ -369,17 +372,17 @@ class Stage_Base extends Recyclable.Root {
         //   - a different depthwise filter size may be used.
         //   - a different activation function may be used after pointwise2 convolution.
         if ( ( this.blockArray.length - 1 ) == i ) {
+          blockParamsCreator.configTo_beforeBlockLast();
         }
 
-        blockParams = blockParamsArray[ i ]; // Get current block.
-        blockParamsArray[ i ] = null; // (Ownership transferred. Because Block.Base.init() will own and destroy it.)
+        this.assert_ImageSize_BetweenBlock( i, blockParamsCreator ); // Assert image size.
 
-        this.assert_ImageSize_BetweenBlock( i, blockParams ); // Assert image size.
+        blockParams = blockParamsCreator.create_BlockParams(); // Create current block.
 
         if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
 
           // If channelShuffler is not null, keep it so that its tensors could be released.
-          let channelShuffler = blockParams.channelShuffler;
+          let channelShuffler = blockParamsCreator.channelShuffler;
           if ( channelShuffler ) {
 
             if ( ( this.channelShuffler ) && ( this.channelShuffler != channelShuffler ) )
@@ -387,6 +390,7 @@ class Stage_Base extends Recyclable.Root {
                 + `At most, only one (and same) channel shuffler could be used (and shared by all blocks of a stage).` );
 
             this.channelShuffler = channelShuffler;
+            blockParamsCreator.channelShuffler = null; // (Ownership transferred.)
 
             this.tensorWeightCountExtracted += channelShuffler.tensorWeightCountExtracted;
             this.tensorWeightCountTotal += channelShuffler.tensorWeightCountTotal;
@@ -397,6 +401,8 @@ class Stage_Base extends Recyclable.Root {
 
         // If channelShuffler has ever got, never change it.
         }
+
+        blockParams.channelShuffler = this.channelShuffler; // Block.Params needs channel shuffler info (but does not own it).
 
         block = this.blockArray[ i ] = Block.Base.Pool.get_or_create_by();
         blockIniter = block.initer( progressForBlocks.children[ i ], inputWeightArray, this.weightElementOffsetEnd, blockParams,
@@ -413,12 +419,13 @@ class Stage_Base extends Recyclable.Root {
 
         input0_ScaleBoundsArray_or_TensorPlaceholder = block.output0;
         input1_ScaleBoundsArray_or_TensorPlaceholder = block.output1;
+
+        next_input_height = block.output_height;
+        next_input_width = block.output_width;
       }
 
       this.block0 = this.blockArray[ 0 ]; // Shortcut to the first block.
       this.blockLast = this.blockArray[ this.blockArray.length - 1 ]; // Shortcut to the last block.
-
-      this.outputChannelCount = this.blockLast.output_channelCount;
 
       this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
 
@@ -432,121 +439,16 @@ class Stage_Base extends Recyclable.Root {
       return this.bInitOk;
 
     } finally {
+      if ( blockParamsCreator ) {
+        blockParamsCreator.channelShuffler = null; // (Because ownership has been transferred to this Stage object.)
+        blockParamsCreator.disposeResources_and_recycleToPool();
+        blockParamsCreator = null;
+      }
       if ( params ) {
         params.disposeResources_and_recycleToPool();
         params = undefined;
       }
     }
-
-
-
-
-
-//!!! (2022/07/31 Remarked) use Block.Params in Stage.Params.inferencedParams instead.
-    // let blockParamsCreator;
-    // try {
-    //   // 2. Create every blocks.
-    //   blockParamsCreator = Stage_Base.create_BlockParamsCreator_byStageParams( params );
-    //   blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
-
-    //   for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Progress for block0, 1, 2, 3, ... 
-    //     progressForBlocks.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-    //   }
-
-    //   let blockParams, block, blockIniter;
-    //   let input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder;
-
-    //   this.blockArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
-    //   this.blockArray.length = blockParamsCreator.blockCount;
-
-    //   for ( let i = 0; i < this.blockArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
-
-    //     if ( 0 == i ) { // Block0.
-    //       blockParamsCreator.configTo_beforeBlock0();
-    //       input0_ScaleBoundsArray_or_TensorPlaceholder = inputScaleBoundsArray0;
-    //     } else { // (i.e. block1, 2, 3, ...)
-    //       blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i, ??input_height, input_width );
-    //     }
-
-    //     // BlockLast. (Note: Block0 may also be BlockLast.) 
-    //     //
-    //     // If this is the last block of this stage (i.e. at-stage-end)
-    //     //   - a different depthwise filter size may be used.
-    //     //   - a different activation function may be used after pointwise2 convolution.
-    //     if ( ( this.blockArray.length - 1 ) == i ) {
-    //       blockParamsCreator.configTo_beforeBlockLast();
-    //     }
-
-    //     this.assert_ImageSize_BetweenBlock( i, blockParamsCreator ); // Assert image size.
-
-    //     blockParams = blockParamsCreator.create_BlockParams(); // Create current block.
-
-    //     if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
-
-    //       // If channelShuffler is not null, keep it so that its tensors could be released.
-    //       let channelShuffler = blockParamsCreator.channelShuffler;
-    //       if ( channelShuffler ) {
-
-    //         if ( ( this.channelShuffler ) && ( this.channelShuffler != channelShuffler ) )
-    //           throw Error( `Stage.Base.initer(): `
-    //             + `At most, only one (and same) channel shuffler could be used (and shared by all blocks of a stage).` );
-
-    //         this.channelShuffler = channelShuffler;
-
-    //         this.tensorWeightCountExtracted += channelShuffler.tensorWeightCountExtracted;
-    //         this.tensorWeightCountTotal += channelShuffler.tensorWeightCountTotal;
-
-    //       // If channelShuffler is null, do not use it. Otherwise, the this.channelShuffler will be cleared and could not be used
-    //       // for releasing tensors.
-    //       }
-
-    //     // If channelShuffler has ever got, never change it.
-    //     }
-
-    //     block = this.blockArray[ i ] = Block.Base.Pool.get_or_create_by();
-    //     blockIniter = block.initer( progressForBlocks.children[ i ], inputWeightArray, this.weightElementOffsetEnd, blockParams,
-    //       input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
-    //       this.channelShuffler );
-
-    //     this.bInitOk = yield* blockIniter;
-    //     if ( !this.bInitOk )
-    //       return false;
-    //     this.weightElementOffsetEnd = block.weightElementOffsetEnd;
-
-    //     this.tensorWeightCountTotal += block.tensorWeightCountTotal;
-    //     this.tensorWeightCountExtracted += block.tensorWeightCountExtracted;
-
-    //     input0_ScaleBoundsArray_or_TensorPlaceholder = block.output0;
-    //     input1_ScaleBoundsArray_or_TensorPlaceholder = block.output1;
-    //   }
-
-    //   this.block0 = this.blockArray[ 0 ]; // Shortcut to the first block.
-    //   this.blockLast = this.blockArray[ this.blockArray.length - 1 ]; // Shortcut to the last block.
-
-    //   this.outputChannelCount = this.blockLast.output_channelCount;
-
-    //   this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
-
-    //   // In our Stage design, no matter which configuration, the outputChannelCount always is twice as sourceChannelCount.
-    //   if ( this.outputChannelCount != ( this.sourceChannelCount * 2 ) )
-    //     throw Error( `Stage.Base.initer(): `
-    //       + `the outputChannelCount ( ${this.outputChannelCount} ) should always be twice of `
-    //       + `sourceChannelCount ( ${this.sourceChannelCount} ).` );
-
-    //   this.bInitOk = true;
-    //   return this.bInitOk;
-
-    // } finally {
-    //   if ( blockParamsCreator ) {
-    //     blockParamsCreator.channelShuffler = null; // (Because ownership has been transferred to this Stage object.)
-    //     blockParamsCreator.disposeResources_and_recycleToPool();
-    //     blockParamsCreator = null;
-    //   }
-    //   if ( params ) {
-    //     params.disposeResources_and_recycleToPool();
-    //     params = undefined;
-    //   }
-    // }
   }
 
   /**
@@ -631,88 +533,88 @@ class Stage_Base extends Recyclable.Root {
     }
   }
 
-  /**
-   * Assert image size.
-   *
-   * @param {number} blockIndex
-   *   Which block (i.e. block0, block1, block2, ...).
-   *
-   * @param {Block.Params} blockParams
-   *   The maker which will produce current block (Block.Base) object.
-   */
-   assert_ImageSize_BetweenBlock( blockIndex, blockParams ) {
-
-    if ( 0 == blockIndex ) { // Block0.
-      if ( blockParams.input0_height != this.sourceHeight )
-        throw Error( `Stage.Base.initer(): `
-          + `block${blockIndex}'s input image height ( ${blockParams.input0_height} ) should be the same as `
-          + `stage's source image height ( ${this.sourceHeight} ).`
-        );
-
-      if ( blockParams.input0_width != this.sourceWidth )
-        throw Error( `Stage.Base.initer(): `
-          + `block${blockIndex}'s input image width ( ${blockParams.input0_width} ) should be the same as `
-          + `stage's source image width ( ${this.sourceWidth} ).`
-        );
-
-    } else { // After Block0.
-      let previousBlock = this.blockArray[ blockIndex - 1 ];
-
-      if ( blockParams.input0_height != previousBlock.output_height )
-        throw Error( `Stage.Base.initer(): `
-          + `block${blockIndex}'s input image height ( ${blockParams.input0_height} ) should be the same as `
-          + `block${ blockIndex - 1 }'s output image height ( ${previousBlock.output_height} ).`
-       );
-
-      if ( blockParams.input0_width != previousBlock.output_width )
-        throw Error( `Stage.Base.initer(): `
-          + `block${blockIndex}'s input image width ( ${blockParams.input0_width} ) should be the same as `
-          + `block${ blockIndex - 1 }'s output image width ( ${previousBlock.output_width} ).`
-        );
-    }
-  }
-
-//!!! (2022/07/31 Remarked) use Block.Params in Stage.Params.inferencedParams instead.
+//!!! (2022/07/31 Added and Remarked) use Stage_BlockParamsCreator.
   // /**
   //  * Assert image size.
   //  *
   //  * @param {number} blockIndex
   //  *   Which block (i.e. block0, block1, block2, ...).
   //  *
-  //  * @param {Stage_BlockParamsCreator.Base} blockParamsCreator
+  //  * @param {Block.Params} blockParams
   //  *   The maker which will produce current block (Block.Base) object.
   //  */
-  // assert_ImageSize_BetweenBlock( blockIndex, blockParamsCreator ) {
+  //  assert_ImageSize_BetweenBlock( blockIndex, blockParams ) {
 
   //   if ( 0 == blockIndex ) { // Block0.
-  //     if ( blockParamsCreator.input0_height != this.sourceHeight )
+  //     if ( blockParams.input0_height != this.sourceHeight )
   //       throw Error( `Stage.Base.initer(): `
-  //         + `block${blockIndex}'s input image height ( ${blockParamsCreator.input0_height} ) should be the same as `
+  //         + `block${blockIndex}'s input image height ( ${blockParams.input0_height} ) should be the same as `
   //         + `stage's source image height ( ${this.sourceHeight} ).`
   //       );
 
-  //     if ( blockParamsCreator.input0_width != this.sourceWidth )
+  //     if ( blockParams.input0_width != this.sourceWidth )
   //       throw Error( `Stage.Base.initer(): `
-  //         + `block${blockIndex}'s input image width ( ${blockParamsCreator.input0_width} ) should be the same as `
+  //         + `block${blockIndex}'s input image width ( ${blockParams.input0_width} ) should be the same as `
   //         + `stage's source image width ( ${this.sourceWidth} ).`
   //       );
 
   //   } else { // After Block0.
   //     let previousBlock = this.blockArray[ blockIndex - 1 ];
 
-  //     if ( blockParamsCreator.inputHeight != previousBlock.outputHeight )
+  //     if ( blockParams.input0_height != previousBlock.output_height )
   //       throw Error( `Stage.Base.initer(): `
-  //         + `block${blockIndex}'s input image height ( ${blockParamsCreator.inputHeight} ) should be the same as `
-  //         + `block${ blockIndex - 1 }'s output image height ( ${previousBlock.outputHeight} ).`
+  //         + `block${blockIndex}'s input image height ( ${blockParams.input0_height} ) should be the same as `
+  //         + `block${ blockIndex - 1 }'s output image height ( ${previousBlock.output_height} ).`
   //      );
 
-  //     if ( blockParamsCreator.inputWidth != previousBlock.outputWidth )
+  //     if ( blockParams.input0_width != previousBlock.output_width )
   //       throw Error( `Stage.Base.initer(): `
-  //         + `block${blockIndex}'s input image width ( ${blockParamsCreator.inputWidth} ) should be the same as `
-  //         + `block${ blockIndex - 1 }'s output image width ( ${previousBlock.outputWidth} ).`
+  //         + `block${blockIndex}'s input image width ( ${blockParams.input0_width} ) should be the same as `
+  //         + `block${ blockIndex - 1 }'s output image width ( ${previousBlock.output_width} ).`
   //       );
   //   }
   // }
+
+  /**
+   * Assert image size.
+   *
+   * @param {number} blockIndex
+   *   Which block (i.e. block0, block1, block2, ...).
+   *
+   * @param {Stage_BlockParamsCreator.Base} blockParamsCreator
+   *   The maker which will produce current block (Block.Base) object.
+   */
+  assert_ImageSize_BetweenBlock( blockIndex, blockParamsCreator ) {
+
+    if ( 0 == blockIndex ) { // Block0.
+      if ( blockParamsCreator.input0_height != this.sourceHeight )
+        throw Error( `Stage.Base.initer(): `
+          + `block${blockIndex}'s input image height ( ${blockParamsCreator.input0_height} ) should be the same as `
+          + `stage's source image height ( ${this.sourceHeight} ).`
+        );
+
+      if ( blockParamsCreator.input0_width != this.sourceWidth )
+        throw Error( `Stage.Base.initer(): `
+          + `block${blockIndex}'s input image width ( ${blockParamsCreator.input0_width} ) should be the same as `
+          + `stage's source image width ( ${this.sourceWidth} ).`
+        );
+
+    } else { // After Block0.
+      let previousBlock = this.blockArray[ blockIndex - 1 ];
+
+      if ( blockParamsCreator.inputHeight != previousBlock.outputHeight )
+        throw Error( `Stage.Base.initer(): `
+          + `block${blockIndex}'s input image height ( ${blockParamsCreator.inputHeight} ) should be the same as `
+          + `block${ blockIndex - 1 }'s output image height ( ${previousBlock.outputHeight} ).`
+       );
+
+      if ( blockParamsCreator.inputWidth != previousBlock.outputWidth )
+        throw Error( `Stage.Base.initer(): `
+          + `block${blockIndex}'s input image width ( ${blockParamsCreator.inputWidth} ) should be the same as `
+          + `block${ blockIndex - 1 }'s output image width ( ${previousBlock.outputWidth} ).`
+        );
+    }
+  }
 
   /** Process input, destroy or keep input, return result.
    *
@@ -749,11 +651,15 @@ class Stage_Base extends Recyclable.Root {
   }
 
   get outputHeight() {
-    return this.blockLast.output0.height;
+    return this.blockLast.output_height;
   }
 
   get outputWidth() {
-    return this.blockLast.output0.width;
+    return this.blockLast.output_width;
+  }
+
+  get outputChannelCount() {
+    return this.blockLast.output_channelCount;
   }
 
   /**

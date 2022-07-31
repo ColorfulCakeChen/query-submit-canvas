@@ -1332,18 +1332,6 @@ class Block_Base extends Recyclable.Root {
   }
 
 
-//!!! (2022/07/16 Remarked) already a data member.
-//   get input0_channelCount() {
-//     return this.input0.channelCount;
-//   }
-//
-//   get input1_channelCount() {
-//     if ( this.input1 )
-//       return this.input1.channelCount;
-//     return 0;
-//   }
-
-
   get output_height() { return this.operationArray.output0.height; }
   get output_width() { return this.operationArray.output0.width; }
 
