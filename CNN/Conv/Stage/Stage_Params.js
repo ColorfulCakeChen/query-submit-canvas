@@ -216,7 +216,17 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
       this.bKeepInputTensor = this.getParamValue_byParamDesc( Stage_Params.bKeepInputTensor );
     }
 
-    this.InferencedParams_create();
+    // (2022/07/31 Remarked)
+    //
+    // Stage.Params needs not and can not generate Block.Params by itself. Only
+    // Stage.Base.initer() could do that.
+    //
+    // The reason is Stage.BlockParamsCreator needs input_height and input_width
+    // of previous block. And these could only be available from previous Block.Base
+    // which should be created by Stage.Base.initer().
+    // 
+    // 
+    //this.InferencedParams_create();
 
     return bExtractOk;
   }
