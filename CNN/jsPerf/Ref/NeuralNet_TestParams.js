@@ -14,141 +14,6 @@ import * as Stage_TestParams from "./Stage_TestParams.js";
 
 /**
  *
- */
-class Out extends Recyclable.Root {
-
-  /**
-   * Used as default NeuralNet_TestParams.Out provider for conforming to Recyclable interface.
-   */
-  static Pool = new Pool.Root( "NeuralNet_TestParams.Out.Pool", Out, Out.setAsConstructor );
-
-  /**
-   */
-  constructor(
-    input_height, input_width, input_channelCount,
-    vocabularyChannelCount, vocabularyCountPerInputChannel,
-    nConvStageTypeId, stageCountRequested,
-    blockCountRequested,
-    bKeepInputTensor
-  ) {
-    super();
-    Out.setAsConstructor_self.call( this,
-      input_height, input_width, input_channelCount,
-      vocabularyChannelCount, vocabularyCountPerInputChannel,
-      nConvStageTypeId, stageCountRequested,
-      blockCountRequested,
-      bKeepInputTensor
-    );
-  }
-
-  /** @override */
-  static setAsConstructor(
-    input_height, input_width, input_channelCount,
-    vocabularyChannelCount, vocabularyCountPerInputChannel,
-    nConvStageTypeId, stageCountRequested,
-    blockCountRequested,
-    bKeepInputTensor
-  ) {
-    super.setAsConstructor();
-    Out.setAsConstructor_self.call( this,
-      input_height, input_width, input_channelCount,
-      vocabularyChannelCount, vocabularyCountPerInputChannel,
-      nConvStageTypeId, stageCountRequested,
-      blockCountRequested,
-      bKeepInputTensor
-    );
-    return this;
-  }
-
-  /** @override */
-  static setAsConstructor_self(
-    input_height, input_width, input_channelCount,
-    vocabularyChannelCount, vocabularyCountPerInputChannel,
-    nConvStageTypeId, stageCountRequested,
-    blockCountRequested,
-    bKeepInputTensor
-  ) {
-    this.input_height = input_height;
-    this.input_width = input_width;
-    this.input_channelCount = input_channelCount;
-    this.vocabularyChannelCount = vocabularyChannelCount;
-    this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
-    this.nConvStageTypeId = nConvStageTypeId;
-    this.stageCountRequested = stageCountRequested;
-    this.blockCountRequested = blockCountRequested;
-    this.bKeepInputTensor = bKeepInputTensor;
-  }
-
-  /** @override */
-  disposeResources() {
-    this.InferencedParams_dispose();
-
-    this.bKeepInputTensor = undefined;
-    this.blockCountRequested = undefined;
-    this.stageCountRequested = undefined;
-    this.nConvStageTypeId = undefined;
-    this.vocabularyCountPerInputChannel = undefined;
-    this.vocabularyChannelCount = undefined;
-    this.input_channelCount = undefined;
-    this.input_width = undefined;
-    this.input_height = undefined;
-
-    super.disposeResources();
-  }
-
-  /** Release .inferencedParams */
-  InferencedParams_dispose() {
-    if ( this.inferencedParams ) {
-      this.inferencedParams.disposeResources_and_recycleToPool();
-      this.inferencedParams = null;
-    }
-  }
-
-  /**  */
-  generate_inferencedParams() {
-    this.InferencedParams_dispose();
-    this.inferencedParams = NeuralNet.InferencedParams.Pool.get_or_create_by(
-      this.input_height, this.input_width, this.input_channelCount,
-
-//!!! ...unfinished... (2022/07/30)
-      this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
-      this.nConvStageTypeId, this.stageCountRequested,
-      this.blockCountRequested
-    );
-  }
-
-  get nConvStageTypeName() {
-    return ValueDesc.ConvStageType.Singleton.getName_byId( this.nConvStageTypeId );
-  }
-
-  /** @override */
-  toString() {
-
-//!!! ...unfinished... (2022/07/30)
-
-    let strDescription = ``
-      + `input_height=${this.input_height}, `
-      + `input_width=${this.input_width}, `
-      + `input_channelCount=${this.input_channelCount}, `
-      + `vocabularyChannelCount=${this.vocabularyChannelCount}, `
-      + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
-
-      + `nConvStageTypeId=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
-      + `stageCountRequested=${this.stageCountRequested}, `
-
-      + `blockCountRequested=${this.blockCountRequested}, `
-
-      + `bKeepInputTensor=${this.bKeepInputTensor}, `
-      + `${this.inferencedParams}`
-    ;
-    return strDescription;
-  }
-
-}
-
-
-/**
- *
  * This is an object { id, in, out } which has one number and two sub-objects.
  *
  *
@@ -179,7 +44,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
   /** @override */
   static setAsConstructor_self() {
     this.stageArray = Recyclable.OwnerArray.Pool.get_or_create_by();
-    this.out = Out.Pool.get_or_create_by();
+    this.out = NeuralNet.ParamsBase.Pool.get_or_create_by();
   }
 
   /** @override */
@@ -223,7 +88,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 //!!! ...unfinished... (2022/07/30)
 
 
-    this.out = Out.Pool.get_or_create_by(
+    this.out = NeuralNet.ParamsBase.Pool.get_or_create_by(
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId, stageCountRequested,
@@ -326,7 +191,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
   /** Fill this.out.inferencedParams according to this.out */
   generate_out_inferencedParams() {
-    this.out.generate_inferencedParams();
+    this.out.InferencedParams_create();
   }
 
   /**

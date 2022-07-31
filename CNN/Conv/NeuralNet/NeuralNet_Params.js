@@ -4,8 +4,8 @@ import * as Pool from "../../util/Pool.js";
 //import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
-//import * as Weights from "../../Unpacker/Weights.js";
-import { InferencedParams } from "./NeuralNet_InferencedParams.js";
+import * as Weights from "../../Unpacker/Weights.js";
+import { ParamsBase } from "./NeuralNet_ParamsBase.js";
 
 //!!! ...unfinished... (2022/07/31)
 
@@ -59,7 +59,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  * @see Weight.Params
  *
  */
- class NeuralNet_Params extends Weights.Params {
+ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
 
   /**
    * Used as default NeuralNet.Params provider for conforming to Recyclable interface.
@@ -115,16 +115,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 
   /** @override */
   disposeResources() {
-    this.InferencedParams_dispose();
     super.disposeResources();
-  }
-
-  /** Release .inferencedParams */
-  InferencedParams_dispose() {
-    if ( this.inferencedParams ) {
-      this.inferencedParams.disposeResources_and_recycleToPool();
-      this.inferencedParams = null;
-    }
   }
 
   /**
@@ -139,41 +130,23 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
     if ( !bExtractOk )
       return false;
 
-//!!! ...unfinished... (2022/07/31) should call InferencedParams_create() instead.
+    {
+      this.input_height = this.getParamValue_byParamDesc( NeuralNet_Params.input_height );
+      this.input_width = this.getParamValue_byParamDesc( NeuralNet_Params.input_width );
+      this.input_channelCount = this.getParamValue_byParamDesc( NeuralNet_Params.input_channelCount );
+      this.vocabularyChannelCount = this.getParamValue_byParamDesc( NeuralNet_Params.vocabularyChannelCount );
+      this.vocabularyCountPerInputChannel = this.getParamValue_byParamDesc( NeuralNet_Params.vocabularyCountPerInputChannel );
+      this.nConvStageTypeId = this.getParamValue_byParamDesc( NeuralNet_Params.nConvStageTypeId );
+      this.stageCountRequested = this.getParamValue_byParamDesc( NeuralNet_Params.stageCountRequested );
+      this.blockCountRequested = this.getParamValue_byParamDesc( NeuralNet_Params.blockCountRequested );
+      this.bKeepInputTensor = this.getParamValue_byParamDesc( NeuralNet_Params.bKeepInputTensor );
+    }
 
-    this.InferencedParams_dispose();
-
-    this.inferencedParams = InferencedParams.Pool.get_or_create_by(
-      this.input_height, this.input_width, this.input_channelCount,
-
-//!!! ...unfinished... (2022/07/30)
-      this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
-      this.nConvStageTypeId, this.stageCountRequested,
-      this.blockCountRequested
-    );
+    this.InferencedParams_create();
 
     return bExtractOk;
   }
 
-  get input_height()                   { return this.getParamValue_byParamDesc( NeuralNet_Params.input_height ); }
-  get input_width()                    { return this.getParamValue_byParamDesc( NeuralNet_Params.input_width ); }
-  get input_channelCount()             { return this.getParamValue_byParamDesc( NeuralNet_Params.input_channelCount ); }
-
-  get vocabularyChannelCount()         { return this.getParamValue_byParamDesc( NeuralNet_Params.vocabularyChannelCount ); }
-  get vocabularyCountPerInputChannel() { return this.getParamValue_byParamDesc( NeuralNet_Params.vocabularyCountPerInputChannel ); }
-
-  /** @return {number} The number version of nConvStageTypeId. */
-  get nConvStageTypeId()               { return this.getParamValue_byParamDesc( NeuralNet_Params.nConvStageTypeId ); }
-
-  /** @return {string} The string version of nConvStageTypeId. */
-  get nConvStageTypeName()             { return NeuralNet_Params.nConvStageTypeId.getStringOfValue( this.nConvStageTypeId ); }
-
-
-  get stageCountRequested()            { return this.getParamValue_byParamDesc( NeuralNet_Params.stageCountRequested ); }
-
-  get blockCountRequested()            { return this.getParamValue_byParamDesc( NeuralNet_Params.blockCountRequested ); }
-
-  get bKeepInputTensor()               { return this.getParamValue_byParamDesc( NeuralNet_Params.bKeepInputTensor ); }
 }
 
 
