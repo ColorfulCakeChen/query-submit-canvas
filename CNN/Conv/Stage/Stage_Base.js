@@ -477,7 +477,6 @@ class Stage_Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    this.outputChannelCount = -1;
     this.blockLast = null; // It is just a reference into this.blockArray[].
     this.block0 = null; // It is just a reference into this.blockArray[].
 
