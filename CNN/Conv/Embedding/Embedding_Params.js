@@ -129,14 +129,6 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
     return bExtractOk;
   }
 
-//!!! (2022/07/31 Remarked) USe ParamsBase instead.
-  // get input_height()                   { return this.getParamValue_byParamDesc( Embedding_Params.input_height ); }
-  // get input_width()                    { return this.getParamValue_byParamDesc( Embedding_Params.input_width ); }
-  // get input_channelCount()             { return this.getParamValue_byParamDesc( Embedding_Params.input_channelCount ); }
-  // get channelMultiplier()              { return this.getParamValue_byParamDesc( Embedding_Params.channelMultiplier ); }
-  // get vocabularyCountPerInputChannel() { return this.getParamValue_byParamDesc( Embedding_Params.vocabularyCountPerInputChannel ); }
-  // get bEmbedVocabularyId()             { return this.getParamValue_byParamDesc( Embedding_Params.bEmbedVocabularyId ); }
-  // get bKeepInputTensor()               { return this.getParamValue_byParamDesc( Embedding_Params.bKeepInputTensor ); }
 }
 
 

@@ -2,7 +2,6 @@ export { Embedding_ParamsBase as ParamsBase };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import { InferencedParams } from "./Embedding_InferencedParams.js";
 
 /**
