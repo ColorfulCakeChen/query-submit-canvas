@@ -9,7 +9,7 @@ import * as BlockParamsCreator from "./Stage_BlockParamsCreator.js";
 //import { ParamsBase } from "./Stage_ParamsBase.js";
 
 /**
- * All properties inferenced from Stage.Params.
+ * All properties inferenced from Stage.ParamsBase.
  *
 
 //!!! (2022/07/30 Remarked) use Stage_BlockParamsCreator to create them.
@@ -125,11 +125,14 @@ class Stage_InferencedParams extends Recyclable.Root {
       this.blockParamsArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
     }
 
-    let BlockParamsClass;
-    if ( stageParamsBase instanceof Stage.Params )
-      BlockParamsClass = Block.Params;
-    else // Stage.ParamsBase
-      BlockParamsClass = Block.ParamsBase;
+//!!! (2022/07/31 Remarked) Use BlockParamsClass_get() instead.
+    // let BlockParamsClass;
+    // if ( stageParamsBase instanceof Stage.Params )
+    //   BlockParamsClass = Block.Params;
+    // else // Stage.ParamsBase
+    //   BlockParamsClass = Block.ParamsBase;
+
+    let BlockParamsClass = stageParamsBase.BlockParamsClass_get();
 
     let blockParamsCreator;
     try {

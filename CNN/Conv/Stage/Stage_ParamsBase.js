@@ -3,6 +3,7 @@ export { Stage_ParamsBase as ParamsBase };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as Block from "../Block.js";
 import { InferencedParams } from "./Stage_InferencedParams.js";
 
 /**
@@ -131,6 +132,14 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
   InferencedParams_create() {
     this.InferencedParams_dispose();
     this.inferencedParams = InferencedParams.Pool.get_or_create_by( this );
+  }
+
+  /**
+   * @return {Block.ParamsBase|Block.Params}
+   *   Return which block parameter class should be used by InferencedParams.
+   */
+  BlockParamsClass_get() {
+    return Block.ParamsBase;
   }
 
   get nConvStageTypeName() {

@@ -5,7 +5,7 @@ import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
-import * as Depthwise from "../Depthwise.js";
+import * as Block from "../Block.js";
 import { ParamsBase } from "./Stage_ParamsBase.js";
 
 //!!! ...unfinished... (2022/05/28)
@@ -182,6 +182,11 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
   /** @override */
   disposeResources() {
     super.disposeResources();
+  }
+
+  /** @override */
+  BlockParamsClass_get() {
+    return Block.Params;
   }
 
   /**
