@@ -136,8 +136,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
 
     this.bKeepInputTensor = stageParams.bKeepInputTensor; // block0 may or may not keep input tensor according to caller's necessary.
 
-    this.output_height = stageParams.inferencedParams.outputHeightArray[ 0 ];
-    this.output_width = stageParams.inferencedParams.outputWidthArray[ 0 ];
+    this.output_height = stageParams.inferencedParams.blockParamsArray[ 0 ].output_height;
+    this.output_width = stageParams.inferencedParams.blockParamsArray[ 0 ].output_width;
   }
 
   /**
@@ -163,8 +163,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
 
     this.bKeepInputTensor = false; // No matter bKeepInputTensor, all blocks (except block0) should not keep input tensor.
 
-    this.output_height = stageParams.inferencedParams.outputHeightArray[ blockIndex ];
-    this.output_width = stageParams.inferencedParams.outputWidthArray[ blockIndex ];
+    this.output_height = stageParams.inferencedParams.blockParamsArray[ blockIndex ].output_height;
+    this.output_width = stageParams.inferencedParams.blockParamsArray[ blockIndex ].output_width;
   }
 
   /**
