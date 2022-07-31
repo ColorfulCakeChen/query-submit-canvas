@@ -397,7 +397,7 @@ class Stage_InferencedParams extends Recyclable.Root {
         + `stageParams.blockCountRequested ( ${stageParams.blockCountRequested} ) must be >= 2.` );
 
     if ( !(   ( stageParams.nConvStageTypeId >= 0 )
-           && ( stageParams.nConvStageTypeId < Stage_Base.nConvStageTypeId_to_BlockParamsCreator_ClassArray.length )
+           && ( stageParams.nConvStageTypeId < Stage_InferencedParams.nConvStageTypeId_to_BlockParamsCreator_ClassArray.length )
           ) 
        )
       throw Error( `Stage.InferencedParams.create_BlockParamsCreator_byStageParams(): `
