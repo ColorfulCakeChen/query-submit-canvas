@@ -2,7 +2,7 @@ export { MobileNetV2_Thin };
 
 import * as Pool from "../../../util/Pool.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
-import { Params } from "../Stage_Params.js";
+//import { Params } from "../Stage_Params.js";
 import { MobileNetV1 } from "./MobileNetV1.js";
 
 /**
