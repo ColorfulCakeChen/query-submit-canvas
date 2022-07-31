@@ -158,6 +158,7 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
   configTo_beforeBlockN_exceptBlock0( blockIndex ) {
     let stageParams = this.stageParams;
 
+!!! ...unfinished... (2022/07/31) How to get it?
     this.input0_height = stageParams.inferencedParams.inputHeightArray[ blockIndex ];
     this.input0_width = stageParams.inferencedParams.inputWidthArray[ blockIndex ];
     //this.input0_channelCount; // Sub-class should determine it.
