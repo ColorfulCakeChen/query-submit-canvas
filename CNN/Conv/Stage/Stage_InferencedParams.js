@@ -132,6 +132,7 @@ class Stage_InferencedParams extends Recyclable.Root {
 
 //!!! ...unfinished... (2022/08/01)
 // should determine use Stage_BlockParamsCreator or not according to some flag.
+// stageParamsBase.blockParamsArray_requested()?
 
     let blockParamsCreator;
     try {
