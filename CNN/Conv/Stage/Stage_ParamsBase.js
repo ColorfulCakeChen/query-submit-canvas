@@ -135,6 +135,13 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
   }
 
   /**
+   * @return {boolean} Return true, if .inferencedParams will create .blockParamsArray
+   */
+  inferencedParams_blockParamsArray_needed() {
+    return true;
+  }
+
+  /**
    * @return {Block.ParamsBase|Block.Params}
    *   Return which block parameter class should be used by InferencedParams.
    */

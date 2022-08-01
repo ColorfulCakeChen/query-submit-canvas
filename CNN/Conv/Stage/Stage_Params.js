@@ -183,6 +183,18 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
   disposeResources() {
     super.disposeResources();
   }
+  /**
+   * @return {boolean} Always return false. Stage.Params needs not and can not
+   * generate Block.Params by itself. Only Stage.Base.initer() could do that.
+   * The reason is Stage.BlockParamsCreator needs input_height and input_width
+   * of previous block. And these could only be available from previous
+   * Block.Base which should be created by Stage.Base.initer().
+   * 
+   * @override
+   */
+  inferencedParams_blockParamsArray_needed() {
+    return false;
+  }
 
   /** @override */
   BlockParamsClass_get() {
@@ -216,49 +228,11 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
       this.bKeepInputTensor = this.getParamValue_byParamDesc( Stage_Params.bKeepInputTensor );
     }
 
-    // (2022/07/31 Remarked)
-    //
-    // Stage.Params needs not and can not generate Block.Params by itself. Only
-    // Stage.Base.initer() could do that.
-    //
-    // The reason is Stage.BlockParamsCreator needs input_height and input_width
-    // of previous block. And these could only be available from previous Block.Base
-    // which should be created by Stage.Base.initer().
-    // 
-    // 
-    //this.inferencedParams_create();
+    this.inferencedParams_create();
 
     return bExtractOk;
   }
 
-//!!! (2022/07/30 Remarked) Use parent class's data properties instead.
-  // get sourceHeight()              { return this.getParamValue_byParamDesc( Stage_Params.sourceHeight ); }
-  // get sourceWidth()               { return this.getParamValue_byParamDesc( Stage_Params.sourceWidth ); }
-  // get sourceChannelCount()        { return this.getParamValue_byParamDesc( Stage_Params.sourceChannelCount ); }
-
-  // /** @return {number} The number version of nConvStageTypeId. */
-  // get nConvStageTypeId()          { return this.getParamValue_byParamDesc( Stage_Params.nConvStageTypeId ); }
-
-  // /** @return {string} The string version of nConvStageTypeId. */
-  // get nConvStageTypeName()        { return Stage_Params.nConvStageTypeId.getStringOfValue( this.nConvStageTypeId ); }
-
-  // get blockCountRequested()       { return this.getParamValue_byParamDesc( Stage_Params.blockCountRequested ); }
-  // get bPointwise1()               { return this.getParamValue_byParamDesc( Stage_Params.bPointwise1 ); }
-
-  // get depthwiseFilterHeight()     { return this.getParamValue_byParamDesc( Stage_Params.depthwiseFilterHeight ); }
-  // get depthwiseFilterWidth()      { return this.getParamValue_byParamDesc( Stage_Params.depthwiseFilterWidth ); }
-
-  // get bPointwise2ActivatedAtStageEnd() { return this.getParamValue_byParamDesc( Stage_Params.bPointwise2ActivatedAtStageEnd ); }
-
-  // get nSqueezeExcitationChannelCountDivisor()     { return this.getParamValue_byParamDesc( Stage_Params.nSqueezeExcitationChannelCountDivisor ); }
-  // get nSqueezeExcitationChannelCountDivisorName() {
-  //   return Stage_Params.nSqueezeExcitationChannelCountDivisor.getStringOfValue( this.nSqueezeExcitationChannelCountDivisor );
-  // }
-
-  // get nActivationId()             { return this.getParamValue_byParamDesc( Stage_Params.nActivationId ); }
-  // get nActivationName()           { return Stage_Params.nActivationId.getStringOfValue( this.nActivationId ); }
-
-  // get bKeepInputTensor()          { return this.getParamValue_byParamDesc( Stage_Params.bKeepInputTensor ); }
 }
 
 

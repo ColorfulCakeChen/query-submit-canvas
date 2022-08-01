@@ -130,9 +130,8 @@ class Stage_InferencedParams extends Recyclable.Root {
 
     this.channelShuffler_dispose(); // So that new channel shuffler (if has) could be owned.
 
-//!!! ...unfinished... (2022/08/01)
-// should determine use Stage_BlockParamsCreator or not according to some flag.
-// stageParamsBase.blockParamsArray_requested()?
+    if ( !inferencedParams_blockParamsArray_needed() )
+      return; // No need to create blockParamsArray.
 
     let blockParamsCreator;
     try {
