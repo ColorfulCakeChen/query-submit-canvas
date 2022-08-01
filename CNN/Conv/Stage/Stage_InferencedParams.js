@@ -88,8 +88,6 @@ class Stage_InferencedParams extends Recyclable.Root {
 
     this.blockCount = undefined;
 
-//!!! ...unfinished... (2022/07/31) should use Stage_BlockParamsCreator to create them.
-
 //!!! (2022/07/30 Remarked) should use Stage_BlockParamsCreator to create them.
 //    this.height_width_array_dispose();
 
@@ -132,12 +130,8 @@ class Stage_InferencedParams extends Recyclable.Root {
 
     this.channelShuffler_dispose(); // So that new channel shuffler (if has) could be owned.
 
-//!!! (2022/07/31 Remarked) Use BlockParamsClass_get() instead.
-    // let BlockParamsClass;
-    // if ( stageParamsBase instanceof Stage.Params )
-    //   BlockParamsClass = Block.Params;
-    // else // Stage.ParamsBase
-    //   BlockParamsClass = Block.ParamsBase;
+//!!! ...unfinished... (2022/08/01)
+// should determine use Stage_BlockParamsCreator or not according to some flag.
 
     let blockParamsCreator;
     try {
