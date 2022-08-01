@@ -119,7 +119,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
   /**
    * @return {boolean} Return true, if .inferencedParams will create .stageParamsArray
    */
-   inferencedParams_stageParamsArray_needed() {
+  inferencedParams_stageParamsArray_needed() {
     return true;
   }
 
@@ -127,7 +127,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
    * @return {Stage.ParamsBase|Stage.Params}
    *   Return which stage parameter class should be used by InferencedParams.
    */
-   StageParamsClass_get() {
+  StageParamsClass_get() {
     return Stage.ParamsBase;
   }
 

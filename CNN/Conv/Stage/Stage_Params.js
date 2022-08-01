@@ -183,6 +183,7 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
   disposeResources() {
     super.disposeResources();
   }
+
   /**
    * @return {boolean} Always return false. Stage.Params needs not and can not
    * generate Block.Params by itself. Only Stage.Base.initer() could do that.

@@ -5,6 +5,7 @@ import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
+import * as Stage from "../Stage.js";
 import { ParamsBase } from "./NeuralNet_ParamsBase.js";
 
 //!!! ...unfinished... (2022/07/31)
@@ -52,9 +53,6 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
  *
  * @member {boolean} bKeepInputTensor
  *   If true, apply() will not dispose inputTensor (i.e. will be kept).
- *
- * @member {InferencedParams} inferencedParams
- *   The inferenced parameters of this embedding parameters.
  *
  * @see Weight.Params
  *
@@ -116,6 +114,24 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
   /** @override */
   disposeResources() {
     super.disposeResources();
+  }
+
+  /**
+   * @return {boolean} Always return false. NeuralNet.Params needs not and can not
+   * generate Stage.Params by itself. Only NeuralNet.Base.initer() could do that.
+   * The reason is NeuralNet.StageParamsCreator needs input_height and input_width
+   * of previous block. And these could only be available from previous
+   * Stage.Base which should be created by NeuralNet.Base.initer().
+   * 
+   * @override
+   */
+  inferencedParams_stageParamsArray_needed() {
+    return false;
+  }
+
+  /** @override */
+  StageParamsClass_get() {
+    return Stage.Params;
   }
 
   /**
