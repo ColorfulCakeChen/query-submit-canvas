@@ -226,7 +226,7 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
     // which should be created by Stage.Base.initer().
     // 
     // 
-    //this.InferencedParams_create();
+    //this.inferencedParams_create();
 
     return bExtractOk;
   }

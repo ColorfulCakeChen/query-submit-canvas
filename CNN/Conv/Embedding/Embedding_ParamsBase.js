@@ -62,7 +62,7 @@ class Embedding_ParamsBase extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    this.InferencedParams_dispose();
+    this.inferencedParams_dispose();
 
     this.bKeepInputTensor = undefined;
     this.bEmbedVocabularyId = undefined;
@@ -76,7 +76,7 @@ class Embedding_ParamsBase extends Recyclable.Root {
   }
 
   /** Release .inferencedParams */
-  InferencedParams_dispose() {
+  inferencedParams_dispose() {
     if ( this.inferencedParams ) {
       this.inferencedParams.disposeResources_and_recycleToPool();
       this.inferencedParams = null;
@@ -84,8 +84,8 @@ class Embedding_ParamsBase extends Recyclable.Root {
   }
 
   /** Create .inferencedParams */
-  InferencedParams_create() {
-    this.InferencedParams_dispose();
+  inferencedParams_create() {
+    this.inferencedParams_dispose();
     this.inferencedParams = InferencedParams.Pool.get_or_create_by(
       this.input_height, this.input_width, this.input_channelCount,
       this.channelMultiplier, this.vocabularyCountPerInputChannel, this.bEmbedVocabularyId

@@ -404,7 +404,7 @@ class Block_Params extends Weights.Params( ParamsBase ) {
       this.bKeepInputTensor = this.getParamValue_byParamDesc( Block_Params.bKeepInputTensor );
     }
 
-    this.InferencedParams_create();
+    this.inferencedParams_create();
 
     return bExtractOk;
   }

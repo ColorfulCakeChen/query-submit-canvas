@@ -142,7 +142,7 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
       this.bKeepInputTensor = this.getParamValue_byParamDesc( NeuralNet_Params.bKeepInputTensor );
     }
 
-    this.InferencedParams_create();
+    this.inferencedParams_create();
 
     return bExtractOk;
   }

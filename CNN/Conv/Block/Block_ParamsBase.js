@@ -105,7 +105,7 @@ class Block_ParamsBase extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    this.InferencedParams_dispose();
+    this.inferencedParams_dispose();
 
     this.channelShuffler = null; // Just nullify it, because it is not owned by this block parameters.
 
@@ -130,7 +130,7 @@ class Block_ParamsBase extends Recyclable.Root {
   }
 
   /** Release .inferencedParams */
-  InferencedParams_dispose() {
+  inferencedParams_dispose() {
     if ( this.inferencedParams ) {
       this.inferencedParams.disposeResources_and_recycleToPool();
       this.inferencedParams = null;
@@ -138,8 +138,8 @@ class Block_ParamsBase extends Recyclable.Root {
   }
 
   /** Fill this.inferencedParams. */
-  InferencedParams_create() {
-    this.InferencedParams_dispose();
+  inferencedParams_create() {
+    this.inferencedParams_dispose();
     this.inferencedParams = InferencedParams.Pool.get_or_create_by(
       this.input0_height, this.input0_width, this.input0_channelCount,
       this.nConvBlockTypeId,

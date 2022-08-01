@@ -191,7 +191,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
   /** Fill this.out.inferencedParams according to this.out */
   generate_out_inferencedParams() {
-    this.out.InferencedParams_create();
+    this.out.inferencedParams_create();
   }
 
   /**

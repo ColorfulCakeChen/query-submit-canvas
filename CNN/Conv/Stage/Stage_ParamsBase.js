@@ -102,7 +102,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
 
   /** @override */
   disposeResources() {
-    this.InferencedParams_dispose();
+    this.inferencedParams_dispose();
 
     this.sourceHeight = undefined;
     this.sourceWidth = undefined;
@@ -121,7 +121,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
   }
 
   /** Release .inferencedParams */
-  InferencedParams_dispose() {
+  inferencedParams_dispose() {
     if ( this.inferencedParams ) {
       this.inferencedParams.disposeResources_and_recycleToPool();
       this.inferencedParams = null;
@@ -129,8 +129,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
   }
 
   /** Create .inferencedParams */
-  InferencedParams_create() {
-    this.InferencedParams_dispose();
+  inferencedParams_create() {
+    this.inferencedParams_dispose();
     this.inferencedParams = InferencedParams.Pool.get_or_create_by( this );
   }
 

@@ -124,7 +124,7 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
       this.bKeepInputTensor = this.getParamValue_byParamDesc( Embedding_Params.bKeepInputTensor );
     }
 
-    this.InferencedParams_create();
+    this.inferencedParams_create();
 
     return bExtractOk;
   }
