@@ -4,9 +4,13 @@ export { NeuralNet_ParamsBase as ParamsBase } ;
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as Stage from "../Stage.js";
 import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 
 /**
+ *
+ * @member {InferencedParams} inferencedParams
+ *   The inferenced parameters of this neural network parameters.
  *
  */
  class NeuralNet_ParamsBase extends Recyclable.Root {
@@ -112,16 +116,28 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
     );
   }
 
+  /**
+   * @return {boolean} Return true, if .inferencedParams will create .stageParamsArray
+   */
+   inferencedParams_stageParamsArray_needed() {
+    return true;
+  }
+
+  /**
+   * @return {Stage.ParamsBase|Stage.Params}
+   *   Return which stage parameter class should be used by InferencedParams.
+   */
+   StageParamsClass_get() {
+    return Stage.ParamsBase;
+  }
+
   get nConvStageTypeName() {
     return ValueDesc.ConvStageType.Singleton.getName_byId( this.nConvStageTypeId );
   }
 
   /** @override */
   toString() {
-
-//!!! ...unfinished... (2022/07/30)
-
-    let strDescription = ``
+    let str = ``
       + `input_height=${this.input_height}, `
       + `input_width=${this.input_width}, `
       + `input_channelCount=${this.input_channelCount}, `
@@ -136,7 +152,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
       + `${this.inferencedParams}`
     ;
-    return strDescription;
+    return str;
   }
 
 }
