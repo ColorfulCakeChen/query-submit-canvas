@@ -456,12 +456,14 @@ class Stage_Reference_Base extends Recyclable.Root {
     stage_asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
 
     // Inferenced parameters.
-    let { output_height, output_width, output_channelCount } = testParams.out.inferencedParams;
+    let { blockCount, output_height, output_width, output_channelCount }
+      = testParams.out.inferencedParams;
 
+    stage_asserter.propertyValue( "blockCount", blockCount );
+    stage_asserter.propertyValue( "blockCount", testParams.blockArray.length );
     stage_asserter.propertyValue( "output_height", output_height );
     stage_asserter.propertyValue( "output_width", output_width );
     stage_asserter.propertyValue( "output_channelCount", output_channelCount );
-    stage_asserter.propertyValue( "blockCount", testParams.blockArray.length );
 
     // Other parameters.
     stage_asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
@@ -508,7 +510,7 @@ class Stage_Reference_Base extends Recyclable.Root {
   /**
    * Test every block's parameters.
    *
-   * @param {Stage.Base[]|Stage_TestParams.Base[]} stage_or_stageTestParams
+   * @param {Stage.Base|Stage_TestParams.Base[]} stage_or_stageTestParams
    *   The stage to be checked. It parameters will be checked.
    *
    */
@@ -553,7 +555,7 @@ class Stage_Reference_Base extends Recyclable.Root {
       let block_or_blockParamsBase_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by(
         `Stage.${blockName}`, block_or_blockParamsBase, parametersDescription );
 
-      // inputHeight0, inputWidth0
+      // input0_height, input0_width
       {
         if ( 0 == blockIndex ) { // block0
           block_or_blockParamsBase_asserter.propertyValue( "input0_height", stage_or_stageParamsBase.input_height );
@@ -1036,7 +1038,7 @@ class Stage_Reference_Base extends Recyclable.Root {
           }
   
         } else { // Stage.Base
-          // Note: Stage.Base does not have information to verify every block's input height/width.
+          // Note: Stage.Base does not have information to verify every block's output height/width.
         }
       }
 
