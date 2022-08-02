@@ -60,7 +60,7 @@ class HeightWidthDepth {
   /**
    * 
    */
-   embedding_PerformanceTest_addCase( testCaseName, embeddingTestParams ) {
+  embedding_PerformanceTest_addCase( testCaseName, embeddingTestParams ) {
     try {
 
       // Pre-create performance test case's input image.
@@ -219,8 +219,7 @@ class HeightWidthDepth {
   /** Testing whether the results of different implementation are the same. */
   * testCorrectness() {
 
-//!!! (2022/08/02 Temp Remarked) For speed-up PerformanceTest.
-    if ( 0 ) {
+    {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
       yield;

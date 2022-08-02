@@ -20,6 +20,19 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
  */
 
 /**
+ * 
+ */
+ class PerformanceTestCase {
+  constructor( testCaseId, testCaseName, neuralNetTestParams, neuralNet, inputTensor3d ) {
+    this.testCaseId = testCaseId;
+    this.testCaseName = testCaseName;
+    this.neuralNetTestParams = neuralNetTestParams;
+    this.neuralNet = neuralNet;
+    this.inputTensor3d = inputTensor3d;
+  }
+}
+
+/**
  * A test set.
  */
 class HeightWidthDepth {
@@ -41,12 +54,43 @@ class HeightWidthDepth {
   }
 
   disposeResources() {
-    if ( this.dataTensor3dArray ) {
-      tf.dispose( this.dataTensor3dArray );
-      this.dataTensor3dArray = null;
-    }
-
     this.neuralNet_PerformanceTest_release();
+  }
+
+  /**
+   * 
+   */
+  neuralNet_PerformanceTest_addCase( testCaseName, neuralNetTestParams ) {
+    try {
+
+      // Pre-create performance test case's input image.
+      let inputImage = this.testPerformance_imageSourceBag.getImage_by(
+        neuralNetTestParams.out.input_height,
+        neuralNetTestParams.out.input_width,
+        neuralNetTestParams.out.input_channelCount );
+
+      // Pre-create performance test case's input tensor.
+      let inputTensor3d = this.testPerformance_imageSourceBag.getTensor3d_by(
+        neuralNetTestParams.out.input_height,
+        neuralNetTestParams.out.input_width,
+        neuralNetTestParams.out.input_channelCount );
+
+      let neuralNet = NeuralNet_Reference.Base.NeuralNet_create(
+        neuralNetTestParams, inputImage.boundsArraySet.output0 );
+
+      let aPerformanceTestCase = new PerformanceTestCase(
+        neuralNetTestParams.id, testCaseName, neuralNetTestParams, neuralNet, inputTensor3d );
+
+      this.testCaseMap.set( testCaseName, aPerformanceTestCase );
+
+      console.log( `NeuralNet.${testCaseName}: tensorWeightCount = { `
+        + `Extracted: ${neuralNet.tensorWeightCountExtracted}, `
+        + `Total: ${neuralNet.tensorWeightCountTotal} }` );
+
+    } catch ( e ) {
+      debugger;
+      throw e;
+    }
   }
 
   neuralNet_PerformanceTest_init() {
@@ -55,36 +99,7 @@ class HeightWidthDepth {
     this.disposeResources();
 
     // Larger input image for performance testing.
-    let inputTensorCount = 1;
-    this.testPerformance_NumberImageArray = Recyclable.OwnerArray.Pool.get_or_create_by( inputTensorCount );
-    this.dataTensor3dArray = tf.tidy( () => {
-      let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( this.depth );
-
-      let dataTensor3dArray = new Array( inputTensorCount );
-
-      let shape = [ this.height, this.width, this.depth ];
-      let elementCount = tf.util.sizeFromShape( shape );
-
-      for ( let i = 0; i < dataTensor3dArray.length; ++i ) {
-        let numberBegin = ( i * elementCount );
-        let numberEnd = numberBegin + elementCount;
-
-        let image = this.testPerformance_NumberImageArray[ i ] = NumberImage.Base.Pool.get_or_create_by(
-          this.height, this.width, this.depth, undefined,
-          inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, Weights.Base.ValueBounds );
-
-        for ( let j = 0; j < elementCount; ++j ) {
-          image.dataArray[ j ] = numberBegin + j;
-        }
-
-        dataTensor3dArray[ i ] = tf.tensor( image.dataArray, shape );
-      }
-
-      inputScaleBoundsArray.disposeResources_and_recycleToPool();
-      inputScaleBoundsArray = null;
-
-      return dataTensor3dArray;
-    });
+    this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
     let vocabularyChannelCount = 8;
     let vocabularyCountPerInputChannel = 256;
@@ -105,106 +120,85 @@ class HeightWidthDepth {
     else
       this.testCaseMap = new Map();
 
-    // Test Case 1: (MobileNetV1)
-    this.testCaseMap.set( "MobileNetV1", { testParams: 
-      ( new NeuralNet_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 0: (MobileNetV1)
+    this.neuralNet_PerformanceTest_addCase( "MobileNetV1",
+      ( new NeuralNet_TestParams.Base( 0 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
         ValueDesc.ConvNeuralNetType.Singleton.Ids.MOBILE_NET_V1,
         this.stageCountRequested, this.blockCountRequested, true
-      ) } );
+      ) );
 
-    // Test Case 2: (MobileNetV1_padValid)
-    this.testCaseMap.set( "MobileNetV1_padValid", { testParams: 
-      ( new NeuralNet_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 1: (MobileNetV1_padValid)
+    this.neuralNet_PerformanceTest_addCase( "MobileNetV1_padValid",
+      ( new NeuralNet_TestParams.Base( 1 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
         ValueDesc.ConvNeuralNetType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
         this.stageCountRequested, this.blockCountRequested, true
-      ) } );
+      ) );
 
-    // Test Case 3: (MobileNetV2_Thin)
-    this.testCaseMap.set( "MobileNetV2_Thin", { testParams: 
-      ( new NeuralNet_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 2: (MobileNetV2_Thin)
+    this.neuralNet_PerformanceTest_addCase( "MobileNetV2_Thin",
+      ( new NeuralNet_TestParams.Base( 2 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
         ValueDesc.ConvNeuralNetType.Singleton.Ids.MOBILE_NET_V2_THIN,
         this.stageCountRequested, this.blockCountRequested, true
-      ) } );
+      ) );
 
-    // Test Case 4: (MobileNetV2)
-    this.testCaseMap.set( "MobileNetV2", { testParams: 
-      ( new NeuralNet_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 3: (MobileNetV2)
+    this.neuralNet_PerformanceTest_addCase( "MobileNetV2",
+      ( new NeuralNet_TestParams.Base( 3 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
         ValueDesc.ConvNeuralNetType.Singleton.Ids.MOBILE_NET_V2,
         this.stageCountRequested, this.blockCountRequested, true
-      ) } );
+      ) );
 
-    // Test Case 5: (ShuffleNetV2))
-    this.testCaseMap.set( "ShuffleNetV2", { testParams: 
-      ( new NeuralNet_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 4: (ShuffleNetV2))
+    this.neuralNet_PerformanceTest_addCase( "ShuffleNetV2",
+      ( new NeuralNet_TestParams.Base( 4 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
         ValueDesc.ConvNeuralNetType.Singleton.Ids.SHUFFLE_NET_V2,
         stepCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
-      ) } );
+      ) );
 
-    // Test Case 6: (ShuffleNetV2_byPointwise21)
-    this.testCaseMap.set( "ShuffleNetV2_byPointwise21", { testParams: 
-      ( new NeuralNet_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 5: (ShuffleNetV2_byPointwise21)
+    this.neuralNet_PerformanceTest_addCase( "ShuffleNetV2_byPointwise21",
+      ( new NeuralNet_TestParams.Base( 5 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
         ValueDesc.ConvNeuralNetType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
         stepCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
-      ) } );
+      ) );
 
-    // Test Case 7: (ShuffleNetV2_byMobileNetV1)
-    this.testCaseMap.set( "ShuffleNetV2_byMobileNetV1", { testParams: 
-      ( new NeuralNet_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 6: (ShuffleNetV2_byMobileNetV1)
+    this.neuralNet_PerformanceTest_addCase( "ShuffleNetV2_byMobileNetV1",
+      ( new NeuralNet_TestParams.Base( 6 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
         ValueDesc.ConvNeuralNetType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
         stepCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
-      ) } );
+      ) );
 
-    // Test Case 8: (ShuffleNetV2_byMobileNetV1_padValid)
-    this.testCaseMap.set( "ShuffleNetV2_byMobileNetV1_padValid", { testParams: 
-      ( new NeuralNet_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 7: (ShuffleNetV2_byMobileNetV1_padValid)
+    this.neuralNet_PerformanceTest_addCase( "ShuffleNetV2_byMobileNetV1_padValid",
+      ( new NeuralNet_TestParams.Base( 7 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
         ValueDesc.ConvNeuralNetType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
         stepCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
-      ) } );
-
-
-    // Create the different NeuralNet objects for performance testing.
-    for ( let name_testCase of this.testCaseMap.entries() ) {
-      let name = name_testCase[ 0 ];
-      let testCase = name_testCase[ 1 ];
-      try {
-        if ( !testCase.neuralNet ) {
-          testCase.neuralNet = NeuralNet_Reference.Base.NeuralNet_create(
-            testCase.testParams, this.testPerformance_NumberImageArray[ 0 ].boundsArraySet.output0 );
-        }
-      } catch ( e ) {
-        debugger;
-        throw e;
-      }
-
-      console.log( `NeuralNet.${name}: tensorWeightCount = { `
-        + `Extracted: ${testCase.neuralNet.tensorWeightCountExtracted}, `
-        + `Total: ${testCase.neuralNet.tensorWeightCountTotal} }` );
-    }
-
+      ) );
   }
 
   neuralNet_PerformanceTest_release() {
@@ -219,9 +213,9 @@ class HeightWidthDepth {
       this.testCaseMap.clear();
     }
 
-    if ( this.testPerformance_NumberImageArray ) {
-      this.testPerformance_NumberImageArray.disposeResources_and_recycleToPool();
-      this.testPerformance_NumberImageArray = null;
+    if ( this.testPerformance_imageSourceBag ) {
+      this.testPerformance_imageSourceBag.disposeResources_and_recycleToPool();
+      this.testPerformance_imageSourceBag = null;
     }
   }
 
@@ -229,7 +223,7 @@ class HeightWidthDepth {
   testNeuralNet_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
     let neuralNet = testCase.neuralNet;
-    let outputTensor3d = neuralNet.apply( this.dataTensor3dArray[ 0 ] );
+    let outputTensor3d = neuralNet.apply( testCase.inputTensor3d );
     tf.dispose( outputTensor3d );
   }
 
