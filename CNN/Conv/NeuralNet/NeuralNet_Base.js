@@ -240,13 +240,8 @@ class NeuralNet_Base extends Recyclable.Root {
 
       this.outputChannelCount = this.stageLast.output_channelCount;
 
-      this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate stages' bounds array set for reducing memory footprint.
 //!!!???
-      // In our NeuralNet design, no matter which configuration, the outputChannelCount always is twice as sourceChannelCount.
-      if ( this.outputChannelCount != ( this.sourceChannelCount * 2 ) )
-        throw Error( `NeuralNet.Base.initer(): `
-          + `the outputChannelCount ( ${this.outputChannelCount} ) should always be twice of `
-          + `sourceChannelCount ( ${this.sourceChannelCount} ).` );
+      this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate stages' bounds array set for reducing memory footprint.
 
       this.bInitOk = true;
       return this.bInitOk;
