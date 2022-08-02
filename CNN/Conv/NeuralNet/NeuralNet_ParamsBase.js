@@ -106,14 +106,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
   /**  */
   inferencedParams_create() {
     this.inferencedParams_dispose();
-    this.inferencedParams = InferencedParams.Pool.get_or_create_by(
-      this.input_height, this.input_width, this.input_channelCount,
-
-//!!! ...unfinished... (2022/07/30)
-      this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
-      this.nConvStageTypeId, this.stageCountRequested,
-      this.blockCountRequested
-    );
+    this.inferencedParams = InferencedParams.Pool.get_or_create_by( this );
   }
 
   /**

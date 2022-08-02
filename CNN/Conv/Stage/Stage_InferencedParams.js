@@ -2,7 +2,7 @@ export { Stage_InferencedParams as InferencedParams };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+//import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as Depthwise from "../Depthwise.js";
 import * as ChannelShuffler from "../ChannelShuffler.js";
 import * as BlockParamsCreator from "./Stage_BlockParamsCreator.js";
@@ -10,6 +10,11 @@ import * as BlockParamsCreator from "./Stage_BlockParamsCreator.js";
 
 /**
  * All properties inferenced from Stage.ParamsBase.
+ *
+ *
+ * @member {Block.ParamsBase[]} blockParamsArray
+ *   The blocks parameters of this stage. It will be created only if
+ * ( stageParamsBase.inferencedParams_blockParamsArray_needed() == true ).
  *
 
 //!!! (2022/07/30 Remarked) use Stage_BlockParamsCreator to create them.
@@ -57,6 +62,7 @@ class Stage_InferencedParams extends Recyclable.Root {
 
   /**
    * @param {Stage.ParamsBase} stageParamsBase
+   *   The stage parameters of this inferenced stage parameters.
    */
   constructor( stageParamsBase ) {
     super();
@@ -80,6 +86,10 @@ class Stage_InferencedParams extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.outputChannelCount = undefined;
+    this.outputWidth = undefined;
+    this.outputHeight = undefined;
+
     this.blockParamsLast = undefined;
     this.blockParams0 = undefined;
 
@@ -90,10 +100,6 @@ class Stage_InferencedParams extends Recyclable.Root {
 
 //!!! (2022/07/30 Remarked) should use Stage_BlockParamsCreator to create them.
 //    this.height_width_array_dispose();
-
-    this.outputChannelCount = undefined;
-    this.outputWidth = undefined;
-    this.outputHeight = undefined;
 
     super.disposeResources();
   }
@@ -137,7 +143,7 @@ class Stage_InferencedParams extends Recyclable.Root {
     try {
       let BlockParamsClass = stageParamsBase.BlockParamsClass_get();
 
-      // Create every blocks.
+      // Create every block.
       blockParamsCreator = Stage_InferencedParams.create_BlockParamsCreator_byStageParams( stageParamsBase );
       blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
 
