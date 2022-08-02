@@ -322,20 +322,10 @@ class NeuralNet_Base extends Recyclable.Root {
   }
 
   /**
-  *
-  */
-  channelShuffler_dispose() {
-    if ( this.channelShuffler ) {
-      this.channelShuffler.disposeResources_and_recycleToPool();
-      this.channelShuffler = false;
-    }
-  }
-
-  /**
-  * Release all ScaleBoundsArray (inside tensor placeholder) except .stage0.inputX and .stageLast.outputX
-  *
-  * This could reduce memory footprint by releasing unused scale bounds array.
-  */
+   * Release all ScaleBoundsArray (inside tensor placeholder) except .stage0.inputX and .stageLast.outputX
+   *
+   * This could reduce memory footprint by releasing unused scale bounds array.
+   */
   dispose_intermediate_ScaleBoundsArray() {
     if ( !this.stageArray )
       return;
@@ -380,33 +370,6 @@ class NeuralNet_Base extends Recyclable.Root {
     let outputTensor = this.stageLast.output0.realTensor; // Note: The stageLast should only output one tensor.
     return outputTensor;
 
-
-//!!! (2022/07/15 Remarked) Now stage will use TensorPlaceholder directly.
-//     let inputTensors = this.intermediateInputTensors;
-//     let outputTensors = this.intermediateOutputTensors;
-//
-//     outputTensors[ 0 ] = inputTensor;
-//     outputTensors[ 1 ] = null; // Note: The stage0 should only input one tensor.
-//
-//     let stageArray = this.stageArray;
-//     let stage;
-//     for ( let i = 0; i < stageArray.length; ++i ) {
-//       inputTensors[ 0 ] = outputTensors[ 0 ]; // Previous stage's output becomes next stage's input.
-//       inputTensors[ 1 ] = outputTensors[ 1 ];
-//
-//       stage = stageArray[ i ];
-//       stage.apply( inputTensors, outputTensors );
-//     }
-//
-//     let outputTensor = outputTensors[ 0 ]; // Note: The stageLast should only output one tensor.
-//
-//     // Avoid dangling tensors.
-//     inputTensors[ 0 ] = null;
-//     inputTensors[ 1 ] = null;
-//     outputTensors[ 0 ] = null;
-//     outputTensors[ 1 ] = null;
-//
-//     return outputTensor;
   }
 
   /** How many stages inside this neuralNet are created. (may different from this.stageCountRequested.) */

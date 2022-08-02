@@ -18,28 +18,27 @@ import * as Stage from "../Stage.js";
  * input to output. Since apply_and_destroy_or_keep()'s input is just vocabulary id (one channel or multiple channels),
  * pre-embedded vocabulary id inside the embedding table acheives the same effect by less computation (but more memory).
  *
- * @member {number} depthwiseFilterHeight
- *   The height of depthwise convolution's filter.
- *
- * @member {number} depthwiseFilterWidth
- *   The width of depthwise convolution's filter.
- *
- * @member {number} nSqueezeExcitationChannelCountDivisor
- *   An integer represents the channel count divisor for block's
- * squeeze-and-excitation's intermediate pointwise convolution channel count.
- * (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xx)
- *
- * @member {number} nActivationId
- *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx)
- * after every convolution.
+ 
+//!!! (2022/08/02 Remarked) They are defined in NeuralNet_StageParamsCreator
+//  * @member {number} depthwiseFilterHeight
+//  *   The height of depthwise convolution's filter.
+//  *
+//  * @member {number} depthwiseFilterWidth
+//  *   The width of depthwise convolution's filter.
+//  *
+//  * @member {number} nSqueezeExcitationChannelCountDivisor
+//  *   An integer represents the channel count divisor for block's
+//  * squeeze-and-excitation's intermediate pointwise convolution channel count.
+//  * (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xx)
+//  *
+//  * @member {number} nActivationId
+//  *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx)
+//  * after every convolution.
+
  *
  * @member {Stage.ParamsBase[]} stageParamsArray
  *   The stages parameters of this neural network. It will be created only if
  * ( neuralNetParamsBase.inferencedParams_stageParamsArray_needed() == true ).
- *
-
-!!! ...unfinished... (2022/08/02)
-
  *
  * @member {number} output_height
  *   The output image's height of this neural network.
@@ -79,9 +78,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self( neuralNetParamsBase ) {
-
     this.bEmbedVocabularyId = true; // Neural network should always have embedding layer.
-
     this.stageParamsArray_create( neuralNetParamsBase );
   }
 
@@ -157,8 +154,6 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
         stageParams.inferencedParams_create();
 
-//!!! ...unfinished... (2022/08/02)
-
         next_input_height = stageParams.inferencedParasm.output_height;
         next_input_width = stageParams.inferencedParasm.output_width;
         next_input_channelCount = stageParams.inferencedParasm.output_channelCount;
@@ -167,9 +162,9 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       this.stageParams0 = this.stageParamsArray[ 0 ]; // Shortcut to the first block.
       this.stageParamsLast = this.stageParamsArray[ this.stageParamsArray.length - 1 ]; // Shortcut to the last block.
 
-      this.outputHeight = this.stageParamsLast.output_height;
-      this.outputWidth = this.stageParamsLast.output_width;
-      this.outputChannelCount = this.stageParamsLast.output_channelCount;
+      this.output_height = this.stageParamsLast.inferencedParasm.output_height;
+      this.output_width = this.stageParamsLast.inferencedParasm.output_width;
+      this.output_channelCount = this.stageParamsLast.inferencedParasm.output_channelCount;
 
     } finally {
       if ( stageParamsCreator ) {
@@ -209,24 +204,24 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
   /** @override */
   toString() {
-
- //!!! ...unfinished... (2022/07/31)
-
-    let strDescription = ``
+    let str = ``
       + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
-      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
-      + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
-      + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
+      + `stageCount=${this.stageCount}, `
 
-      + `nSqueezeExcitationChannelCountDivisorName=`
-        + `${this.nSqueezeExcitationChannelCountDivisorName}`
-        + `(${this.nSqueezeExcitationChannelCountDivisor}), `
+//!!! (2022/08/02 Remarked) They are defined in NeuralNet_StageParamsCreator
+      // + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
+      // + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
+      // + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
+
+      // + `nSqueezeExcitationChannelCountDivisorName=`
+      //   + `${this.nSqueezeExcitationChannelCountDivisorName}`
+      //   + `(${this.nSqueezeExcitationChannelCountDivisor}), `
 
       + `output_height=${this.output_height}, `
       + `output_width=${this.output_width}, `
       + `output_channelCount=${this.output_channelCount}, `
     ;
-    return strDescription;
+    return str;
   }
 
 }
