@@ -233,8 +233,7 @@ class HeightWidthDepth {
   /** Testing whether the results of different implementation are the same. */
   * testCorrectness() {
 
-//!!! (2022/08/02 Temp Remarked) For speed-up PerformanceTest.
-    if ( 0 ) {
+    {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
       //Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_Stage.HeightWidthDepth.testCorrectness()", () => {

@@ -126,7 +126,7 @@ class HeightWidthDepth {
       this.testCaseMap = new Map();
 
     // Test Case 0: (AddGatherReshape, ( channelMultiplier == 1 ))
-    this.stage_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_1",
+    this.embedding_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_1",
       ( new Embedding_TestParams.Base( 0 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 1,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -134,7 +134,7 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 1: (SplitReshapeGatherConcat, ( channelMultiplier == 1 ))
-    this.stage_PerformanceTest_addCase( "SplitReshapeGatherConcat_channelMultiplier_1",
+    this.embedding_PerformanceTest_addCase( "SplitReshapeGatherConcat_channelMultiplier_1",
       ( new Embedding_TestParams.Base( 1 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 1,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -142,7 +142,7 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 2: (AddGatherReshape, ( channelMultiplier == 2 ))
-    this.stage_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_2",
+    this.embedding_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_2",
       ( new Embedding_TestParams.Base( 2 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 2,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -150,7 +150,7 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 3: (SplitReshapeGatherConcat, ( channelMultiplier == 2 ))
-    this.stage_PerformanceTest_addCase( "SplitReshapeGatherConcat_channelMultiplier_2",
+    this.embedding_PerformanceTest_addCase( "SplitReshapeGatherConcat_channelMultiplier_2",
       ( new Embedding_TestParams.Base( 3 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 2,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -158,7 +158,7 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 4: (AddGatherReshape, ( channelMultiplier == 4 ))
-    this.stage_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_4",
+    this.embedding_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_4",
       ( new Embedding_TestParams.Base( 4 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 4,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -166,7 +166,7 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 5: (SplitReshapeGatherConcat, ( channelMultiplier == 4 ))
-    this.stage_PerformanceTest_addCase( "SplitReshapeGatherConcat_channelMultiplier_4",
+    this.embedding_PerformanceTest_addCase( "SplitReshapeGatherConcat_channelMultiplier_4",
       ( new Embedding_TestParams.Base( 5 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 4,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -174,7 +174,7 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 6: (AddGatherReshape, ( channelMultiplier == 8 ))
-    this.stage_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_8",
+    this.embedding_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_8",
       ( new Embedding_TestParams.Base( 6 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 8,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -182,7 +182,7 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 7: (SplitReshapeGatherConcat, ( channelMultiplier == 8 ))
-    this.stage_PerformanceTest_addCase( "SplitReshapeGatherConcat_channelMultiplier_8",
+    this.embedding_PerformanceTest_addCase( "SplitReshapeGatherConcat_channelMultiplier_8",
       ( new Embedding_TestParams.Base( 7 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 8,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
