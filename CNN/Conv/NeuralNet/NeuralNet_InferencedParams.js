@@ -3,7 +3,6 @@ export { NeuralNet_InferencedParams as InferencedParams };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
-import * as Stage from "../Stage.js";
 
 //!!! ...unfinished... (2022/07/31)
 // Is it possible to infer stageCountRequested, blockCountRequested?
@@ -222,7 +221,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
         + `neuralNetParams.stageCountRequested ( ${neuralNetParams.stageCountRequested} ) must be >= 1.` );
 
     // Currently, only one kind of NeuralNet.StageParamsCreator could be used.
-    let aStageParamsCreator = NeuralNet.StageParamsCreator.Base.Pool.get_or_create_by( neuralNetParams );
+    let aStageParamsCreator = StageParamsCreator.Base.Pool.get_or_create_by( neuralNetParams );
 
     return aStageParamsCreator;
   }
