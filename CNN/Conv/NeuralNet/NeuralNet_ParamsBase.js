@@ -112,7 +112,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
   /**
    * @return {boolean} Return true, if .inferencedParams will create .stageParamsArray
    */
-  inferencedParams_stageParamsArray_needed() {
+  inferencedParams_embeddingParams_stageParamsArray_needed() {
     return true;
   }
 

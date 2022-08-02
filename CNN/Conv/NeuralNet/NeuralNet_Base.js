@@ -146,6 +146,7 @@ class NeuralNet_Base extends Recyclable.Root {
 
     // The parameters which are determined (inferenced) from the above parameters.
     {
+      this.bEmbedVocabularyId = params.inferencedParams.bEmbedVocabularyId;
     }
 
     this.tensorWeightCountExtracted = 0;
@@ -154,32 +155,39 @@ class NeuralNet_Base extends Recyclable.Root {
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
-//!!! ...unfinished... (2022/08/02) embedding
-    {
-      this.embedding = Embedding.Base.Pool.get_or_create_by();
-      let embeddingIniter = Eembedding.initer( progressForEmbedding,
-        inputWeightArray, this.weightElementOffsetEnd, ???stageParams,
-        input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
-        this.channelShuffler );
+    let input_ScaleBoundsArray;
 
-      this.bInitOk = yield* stageIniter;
+    // 2. Create embedding layer.
+    {
+      let embeddingParams = EmbeddingParamsClass.Pool.get_or_create_by(
+        this.input_height, this.input_width, this.input_channelCount,
+        this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
+        this.bEmbedVocabularyId,
+        this.bKeepInputTensor
+      );
+  
+      this.embedding = Embedding.AddGatherReshape.Pool.get_or_create_by();
+      let embeddingIniter = embedding.initer( progressForEmbedding,
+        inputWeightArray, this.weightElementOffsetEnd, embeddingParams,
+        inputScaleBoundsArray0
+      );
+
+      this.bInitOk = yield* embeddingIniter;
       if ( !this.bInitOk )
         return false;
-      this.weightElementOffsetEnd = stage.weightElementOffsetEnd;
+      this.weightElementOffsetEnd = embedding.weightElementOffsetEnd;
 
-      this.tensorWeightCountTotal += stage.tensorWeightCountTotal;
-      this.tensorWeightCountExtracted += stage.tensorWeightCountExtracted;
+      this.tensorWeightCountTotal += embeddiembedding.tensorWeightCountTotal;
+      this.tensorWeightCountExtracted += embedding.tensorWeightCountExtracted;
 
-      input0_ScaleBoundsArray_or_TensorPlaceholder = stage.output0;
-      input1_ScaleBoundsArray_or_TensorPlaceholder = stage.output1;
-
+      input_ScaleBoundsArray = embedding.boundsArraySet.output0.scaleBoundsArray;
     }
 
+    // 3. Create every stages.
     let stageParamsCreator;
     try {
       let StageParamsClass = params.StageParamsClass_get();
 
-      // 2. Create every stages.
       stageParamsCreator = InferencedParams.create_StageParamsCreator_byNeuralNetParams( params );
 
       for ( let i = 0; i < stageParamsCreator.stageCount; ++i ) { // Progress for stage0, 1, 2, 3, ... 
@@ -187,7 +195,6 @@ class NeuralNet_Base extends Recyclable.Root {
       }
 
       let stageParams, stage, stageIniter;
-      let input_ScaleBoundsArray;
       let next_input_height, next_input_width, next_input_channelCount;
 
       this.stageArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
@@ -197,7 +204,7 @@ class NeuralNet_Base extends Recyclable.Root {
 
         if ( 0 == i ) { // Stage0.
           stageParamsCreator.configTo_beforeStage0();
-          input_ScaleBoundsArray = inputScaleBoundsArray0;
+          input_ScaleBoundsArray = ??? inputScaleBoundsArray0;
         } else { // (i.e. stage1, 2, 3, ...)
           stageParamsCreator.configTo_beforeStageN_exceptStage0( i, next_input_height, next_input_width, next_input_channelCount );
         }

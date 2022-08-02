@@ -38,7 +38,7 @@ import * as Stage from "../Stage.js";
  *
  * @member {Stage.ParamsBase[]} stageParamsArray
  *   The stages parameters of this neural network. It will be created only if
- * ( neuralNetParamsBase.inferencedParams_stageParamsArray_needed() == true ).
+ * ( neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() == true ).
  *
  * @member {number} output_height
  *   The output image's height of this neural network.
@@ -118,6 +118,9 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
     this.bEmbedVocabularyId = true; // Neural network should always have embedding layer.
 
+    if ( !neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() )
+      return; // No need to create .embeddingParams.
+
     let EmbeddingParamsClass = neuralNetParamsBase.EmbeddingParamsClass_get();
     this.embeddingParams = EmbeddingParamsClass.Pool.get_or_create_by(
       neuralNetParamsBase.input_height,
@@ -150,8 +153,8 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       this.stageParamsArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
     }
 
-    if ( !neuralNetParamsBase.inferencedParams_stageParamsArray_needed() )
-      return; // No need to create stageParamsArray.
+    if ( !neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() )
+      return; // No need to create .stageParamsArray.
 
     let stageParamsCreator;
     try {

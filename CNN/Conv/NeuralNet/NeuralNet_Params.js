@@ -125,7 +125,7 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
    * 
    * @override
    */
-  inferencedParams_stageParamsArray_needed() {
+  inferencedParams_embeddingParams_stageParamsArray_needed() {
     return false;
   }
 
