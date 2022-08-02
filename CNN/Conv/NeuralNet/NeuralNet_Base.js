@@ -324,6 +324,10 @@ class NeuralNet_Base extends Recyclable.Root {
     if ( !this.stageArray )
       return;
 
+    // Note: In this case, stage0 and stageLast are the same one.
+    if ( this.stageCount <= 1 )
+      return; // No intermediate stage exists.
+
     { // 1. Release stageLast's inputs' ScaleBoundsArray. (Note: .stageLast.outputX are kept.)
       this.stageLast.input1?.ScaleBoundsArray_dispose();
       this.stageLast.input0.ScaleBoundsArray_dispose();
