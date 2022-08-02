@@ -568,10 +568,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       stage_asserter.propertyValue( "nConvStageTypeId", neuralNet.nConvStageTypeId );
 
       // bPointwise2ActivatedAtStageEnd
-      if ( 0 == stageIndex ) { // stage0
-        stage_asserter.propertyValue( "bPointwise2ActivatedAtStageEnd", true );
-
-      } else if ( ( stageCount - 1 ) > stageIndex ) { // stage1, 2, 3, ..., ( stageCount - 2 )
+      if ( ( stageCount - 1 ) > stageIndex ) { // stage0, 1, 2, 3, ..., ( stageCount - 2 )
         stage_asserter.propertyValue( "bPointwise2ActivatedAtStageEnd", true );
 
       } else { // stageLast ( stageCount - 1 )
