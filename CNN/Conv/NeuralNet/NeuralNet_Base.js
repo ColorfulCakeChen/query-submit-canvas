@@ -159,6 +159,7 @@ class NeuralNet_Base extends Recyclable.Root {
 
     // 2. Create embedding layer.
     {
+      let EmbeddingParamsClass = params.EmbeddingParamsClass_get();
       let embeddingParams = EmbeddingParamsClass.Pool.get_or_create_by(
         this.input_height, this.input_width, this.input_channelCount,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
