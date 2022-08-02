@@ -187,17 +187,17 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
         stageParams.inferencedParams_create();
 
-        next_input_height = stageParams.inferencedParasm.output_height;
-        next_input_width = stageParams.inferencedParasm.output_width;
-        next_input_channelCount = stageParams.inferencedParasm.output_channelCount;
+        next_input_height = stageParams.inferencedParams.output_height;
+        next_input_width = stageParams.inferencedParams.output_width;
+        next_input_channelCount = stageParams.inferencedParams.output_channelCount;
       }
 
       this.stageParams0 = this.stageParamsArray[ 0 ]; // Shortcut to the first stage.
       this.stageParamsLast = this.stageParamsArray[ this.stageParamsArray.length - 1 ]; // Shortcut to the last stage.
 
-      this.output_height = this.stageParamsLast.inferencedParasm.output_height;
-      this.output_width = this.stageParamsLast.inferencedParasm.output_width;
-      this.output_channelCount = this.stageParamsLast.inferencedParasm.output_channelCount;
+      this.output_height = this.stageParamsLast.inferencedParams.output_height;
+      this.output_width = this.stageParamsLast.inferencedParams.output_width;
+      this.output_channelCount = this.stageParamsLast.inferencedParams.output_channelCount;
 
     } finally {
       if ( stageParamsCreator ) {
