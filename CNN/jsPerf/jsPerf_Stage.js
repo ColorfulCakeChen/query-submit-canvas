@@ -90,7 +90,7 @@ class HeightWidthDepth {
 
       console.log( `Stage.${testCaseName}: tensorWeightCount = { `
         + `Extracted: ${stage.tensorWeightCountExtracted}, `
-        + `Total: ${testCase.stage.tensorWeightCountTotal} }` );
+        + `Total: ${stage.tensorWeightCountTotal} }` );
 
     } catch ( e ) {
       debugger;
