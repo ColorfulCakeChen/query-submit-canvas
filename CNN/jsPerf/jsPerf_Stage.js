@@ -19,6 +19,20 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
  * @see {@link https://www.measurethat.net/Benchmarks/Show/15055/302/colorfulcakechen-cnn-stage-e3f60bcb51602297af79317d2f98}
  */
 
+
+/**
+ * 
+ */
+class PerformanceTestCase {
+  constructor( testCaseId, testCaseName, stageTestParams, stage, inputTensor3d ) {
+    this.testCaseId = testCaseId;
+    this.testCaseName = testCaseName;
+    this.stageTestParams = stageTestParams;
+    this.stage = stage;
+    this.inputTensor3d = inputTensor3d;
+  }
+}
+
 /**
  * A test set.
  */
@@ -41,12 +55,47 @@ class HeightWidthDepth {
   }
 
   disposeResources() {
-    if ( this.dataTensor3dArray ) {
-      tf.dispose( this.dataTensor3dArray );
-      this.dataTensor3dArray = null;
-    }
+//!!! (2022/08/02 Remarked) Use ImageSourceBag instead.
+    // if ( this.dataTensor3dArray ) {
+    //   tf.dispose( this.dataTensor3dArray );
+    //   this.dataTensor3dArray = null;
+    // }
 
     this.stage_PerformanceTest_release();
+  }
+
+  /**
+   * 
+   */
+  stage_PerformanceTest_addCase( testCaseName, stageTestParams ) {
+    try {
+
+      // Pre-create performance test case's input image.
+      let inputImage = this.testPerformance_imageSourceBag.getImage_by(
+        stageTestParams.out.input_height,
+        stageTestParams.out.input_width,
+        stageTestParams.out.input_channelCount );
+
+      // Pre-create performance test case's input tensor.
+      let inputTensor3d = this.testPerformance_imageSourceBag.getTensor3d_by(
+        stageTestParams.out.input_height,
+        stageTestParams.out.input_width,
+        stageTestParams.out.input_channelCount );
+
+      let stage = Stage_Reference.Base.Stage_create(
+        stageTestParams, inputImage.boundsArraySet.output0 );
+
+      let aPerformanceTestCase = new PerformanceTestCase(
+        stageTestParams.id, testCaseName, stageTestParams, stage, inputTensor3d );
+
+      console.log( `Stage.${testCaseName}: tensorWeightCount = { `
+        + `Extracted: ${stage.tensorWeightCountExtracted}, `
+        + `Total: ${testCase.stage.tensorWeightCountTotal} }` );
+
+    } catch ( e ) {
+      debugger;
+      throw e;
+    }
   }
 
   stage_PerformanceTest_init() {
@@ -55,36 +104,40 @@ class HeightWidthDepth {
     this.disposeResources();
 
     // Larger input image for performance testing.
-    let inputTensorCount = 1;
-    this.testPerformance_NumberImageArray = Recyclable.OwnerArray.Pool.get_or_create_by( inputTensorCount );
-    this.dataTensor3dArray = tf.tidy( () => {
-      let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( this.depth );
 
-      let dataTensor3dArray = new Array( inputTensorCount );
+//!!! (2022/08/02 Remarked) Use ImageSourceBag instead.
+    // let inputTensorCount = 1;
+    // this.testPerformance_NumberImageArray = Recyclable.OwnerArray.Pool.get_or_create_by( inputTensorCount );
+    // this.dataTensor3dArray = tf.tidy( () => {
+    //   let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( this.depth );
 
-      let shape = [ this.height, this.width, this.depth ];
-      let elementCount = tf.util.sizeFromShape( shape );
+    //   let dataTensor3dArray = new Array( inputTensorCount );
 
-      for ( let i = 0; i < dataTensor3dArray.length; ++i ) {
-        let numberBegin = ( i * elementCount );
-        let numberEnd = numberBegin + elementCount;
+    //   let shape = [ this.height, this.width, this.depth ];
+    //   let elementCount = tf.util.sizeFromShape( shape );
 
-        let image = this.testPerformance_NumberImageArray[ i ] = NumberImage.Base.Pool.get_or_create_by(
-          this.height, this.width, this.depth, undefined,
-          inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, Weights.Base.ValueBounds );
+    //   for ( let i = 0; i < dataTensor3dArray.length; ++i ) {
+    //     let numberBegin = ( i * elementCount );
+    //     let numberEnd = numberBegin + elementCount;
 
-        for ( let j = 0; j < elementCount; ++j ) {
-          image.dataArray[ j ] = numberBegin + j;
-        }
+    //     let image = this.testPerformance_NumberImageArray[ i ] = NumberImage.Base.Pool.get_or_create_by(
+    //       this.height, this.width, this.depth, undefined,
+    //       inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, Weights.Base.ValueBounds );
 
-        dataTensor3dArray[ i ] = tf.tensor( image.dataArray, shape );
-      }
+    //     for ( let j = 0; j < elementCount; ++j ) {
+    //       image.dataArray[ j ] = numberBegin + j;
+    //     }
 
-      inputScaleBoundsArray.disposeResources_and_recycleToPool();
-      inputScaleBoundsArray = null;
+    //     dataTensor3dArray[ i ] = tf.tensor( image.dataArray, shape );
+    //   }
 
-      return dataTensor3dArray;
-    });
+    //   inputScaleBoundsArray.disposeResources_and_recycleToPool();
+    //   inputScaleBoundsArray = null;
+
+    //   return dataTensor3dArray;
+    // });
+
+    this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by();
 
     let blockCountRequested = 10;
     let nSqueezeExcitationChannelCountDivisor = 2;
@@ -108,105 +161,105 @@ class HeightWidthDepth {
     else
       this.testCaseMap = new Map();
 
-    // Test Case 1: (MobileNetV1, ( bPointwise1 == true ))
-    this.testCaseMap.set( "MobileNetV1_bPointwise1_true", { testParams: 
-      ( new Stage_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 0: (MobileNetV1, ( bPointwise1 == true ))
+    this.stage_PerformanceTest_addCase( "MobileNetV1_bPointwise1_true",
+      ( new Stage_TestParams.Base( 0 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
         blockCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
-      ) } );
+      ) );
 
-    // Test Case 2: (MobileNetV1_padValid, ( bPointwise1 == true ))
-    this.testCaseMap.set( "MobileNetV1_padValid_bPointwise1_true", { testParams: 
-      ( new Stage_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 1: (MobileNetV1_padValid, ( bPointwise1 == true ))
+    this.stage_PerformanceTest_addCase( "MobileNetV1_padValid_bPointwise1_true",
+      ( new Stage_TestParams.Base( 1 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
         blockCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
-      ) } );
+      ) );
 
-    // Test Case 3: (MobileNetV2_Thin, ( bPointwise1 == true ))
-    this.testCaseMap.set( "MobileNetV2_Thin_bPointwise1_true", { testParams: 
-      ( new Stage_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 2: (MobileNetV2_Thin, ( bPointwise1 == true ))
+    this.stage_PerformanceTest_addCase( "MobileNetV2_Thin_bPointwise1_true",
+      ( new Stage_TestParams.Base( 2 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
         blockCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
-      ) } );
+      ) );
 
-    // Test Case 4: (MobileNetV2, ( bPointwise1 == true ))
-    this.testCaseMap.set( "MobileNetV2_bPointwise1_true", { testParams: 
-      ( new Stage_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 3: (MobileNetV2, ( bPointwise1 == true ))
+    this.stage_PerformanceTest_addCase( "MobileNetV2_bPointwise1_true",
+      ( new Stage_TestParams.Base( 3 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
         blockCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
-      ) } );
+      ) );
 
-    // Test Case 5: (ShuffleNetV2, ( bPointwise1 == true ))
-    this.testCaseMap.set( "ShuffleNetV2_bPointwise1_true", { testParams: 
-      ( new Stage_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 4: (ShuffleNetV2, ( bPointwise1 == true ))
+    this.stage_PerformanceTest_addCase( "ShuffleNetV2_bPointwise1_true",
+      ( new Stage_TestParams.Base( 4 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
         blockCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
-      ) } );
+      ) );
 
-    // Test Case 6: (ShuffleNetV2_byPointwise21, ( bPointwise1 == true ))
-    this.testCaseMap.set( "ShuffleNetV2_byPointwise21_bPointwise1_true", { testParams: 
-      ( new Stage_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 5: (ShuffleNetV2_byPointwise21, ( bPointwise1 == true ))
+    this.stage_PerformanceTest_addCase( "ShuffleNetV2_byPointwise21_bPointwise1_true",
+      ( new Stage_TestParams.Base( 5 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
         blockCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
-      ) } );
+      ) );
 
-    // Test Case 7: (ShuffleNetV2_byMobileNetV1, ( bPointwise1 == true ))
-    this.testCaseMap.set( "ShuffleNetV2_byMobileNetV1_bPointwise1_true", { testParams: 
-      ( new Stage_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 6: (ShuffleNetV2_byMobileNetV1, ( bPointwise1 == true ))
+    this.stage_PerformanceTest_addCase( "ShuffleNetV2_byMobileNetV1_bPointwise1_true",
+      ( new Stage_TestParams.Base( 6 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
         blockCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
-      ) } );
+      ) );
 
-    // Test Case 8: (ShuffleNetV2_byMobileNetV1_padValid, ( bPointwise1 == true ))
-    this.testCaseMap.set( "ShuffleNetV2_byMobileNetV1_padValid_bPointwise1_true", { testParams: 
-      ( new Stage_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 7: (ShuffleNetV2_byMobileNetV1_padValid, ( bPointwise1 == true ))
+    this.stage_PerformanceTest_addCase( "ShuffleNetV2_byMobileNetV1_padValid_bPointwise1_true",
+      ( new Stage_TestParams.Base( 7 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
         blockCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
-      ) } );
+      ) );
 
+//!!! (2022/08/02 Remarked) Use this.stage_PerformanceTest_addCase() instead.
+    // // Create the different Stage objects for performance testing.
+    // for ( let name_testCase of this.testCaseMap.entries() ) {
+    //   let name = name_testCase[ 0 ];
+    //   let testCase = name_testCase[ 1 ];
+    //   try {
+    //     if ( !testCase.stage ) {
+    //       testCase.stage = Stage_Reference.Base.Stage_create(
+    //         testCase.testParams, this.testPerformance_NumberImageArray[ 0 ].boundsArraySet.output0 );
+    //     }
+    //   } catch ( e ) {
+    //     debugger;
+    //     throw e;
+    //   }
 
-    // Create the different Stage objects for performance testing.
-    for ( let name_testCase of this.testCaseMap.entries() ) {
-      let name = name_testCase[ 0 ];
-      let testCase = name_testCase[ 1 ];
-      try {
-        if ( !testCase.stage ) {
-          testCase.stage = Stage_Reference.Base.Stage_create(
-            testCase.testParams, this.testPerformance_NumberImageArray[ 0 ].boundsArraySet.output0 );
-        }
-      } catch ( e ) {
-        debugger;
-        throw e;
-      }
-
-      console.log( `Stage.${name}: tensorWeightCount = { `
-        + `Extracted: ${testCase.stage.tensorWeightCountExtracted}, `
-        + `Total: ${testCase.stage.tensorWeightCountTotal} }` );
-    }
+    //   console.log( `Stage.${name}: tensorWeightCount = { `
+    //     + `Extracted: ${testCase.stage.tensorWeightCountExtracted}, `
+    //     + `Total: ${testCase.stage.tensorWeightCountTotal} }` );
+    // }
 
   }
 
@@ -222,24 +275,31 @@ class HeightWidthDepth {
       this.testCaseMap.clear();
     }
 
-    if ( this.testPerformance_NumberImageArray ) {
-      this.testPerformance_NumberImageArray.disposeResources_and_recycleToPool();
-      this.testPerformance_NumberImageArray = null;
+    if ( this.testPerformance_imageSourceBag ) {
+      this.testPerformance_imageSourceBag.disposeResources_and_recycleToPool();
+      this.testPerformance_imageSourceBag = null;
     }
+
+//!!! (2022/08/02 Remarked) Use ImageSourceBag instead.
+    // if ( this.testPerformance_NumberImageArray ) {
+    //   this.testPerformance_NumberImageArray.disposeResources_and_recycleToPool();
+    //   this.testPerformance_NumberImageArray = null;
+    // }
   }
 
   /** Test apply by Xxx */
   testStage_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
     let stage = testCase.stage;
-    let outputTensor3d = stage.apply( this.dataTensor3dArray[ 0 ] );
+    let outputTensor3d = stage.apply( testCase.inputTensor3d );
     tf.dispose( outputTensor3d );
   }
 
   /** Testing whether the results of different implementation are the same. */
   * testCorrectness() {
 
-    {
+//!!! (2022/08/02 Temp Remarked) For speed-up PerformanceTest.
+    if ( 0 ) {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
       //Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_Stage.HeightWidthDepth.testCorrectness()", () => {
