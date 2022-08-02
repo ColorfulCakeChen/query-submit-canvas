@@ -17,7 +17,7 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
 /**
  * Test CNN Embedding.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/11003/164/colorfulcakechen-cnn-embedding-dba952b508d00e7999049015}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/11003/167/colorfulcakechen-cnn-embedding-dad4fcc3e48e96d2533b2c67}
  */
 
 /**
@@ -205,7 +205,8 @@ class HeightWidthDepth {
           throw e;
         }
 
-        console.log( `Embedding.${name}: tensorWeightCount = { Extracted: ${testCase.embedding.tensorWeightCountExtracted}, `
+        console.log( `Embedding.${name}: tensorWeightCount = { `
+          + `Extracted: ${testCase.embedding.tensorWeightCountExtracted}, `
           + `Total: ${testCase.embedding.tensorWeightCountTotal} }` );
 
         ++i;
@@ -295,7 +296,7 @@ class HeightWidthDepth {
           throw Error( `testCorrectness() memory leak. `
             + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
             + `should be (${memoryInfo_testCorrectness_before.numTensors} `
-            + `` );
+          );
       }
 
       Pool.Asserter.assert_Pool_issuedCount( "jsPerf_Block.HeightWidthDepth.testCorrectness()", pool_all_issuedCount_before );

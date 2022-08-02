@@ -28,7 +28,7 @@ import * as jsPerf_Operation from "./jsPerf_Operation.js";
 /**
  * Test CNN Block.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/1388/colorfulcakechen-cnn-block-41a819c998f0dfde4b32caccc4a6}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/1401/colorfulcakechen-cnn-block-463360cf7324d7983e74c14486ea}
  */
 
 /**
@@ -651,7 +651,7 @@ class HeightWidthDepth {
           throw Error( `testCorrectness() memory leak. `
             + `result tensor count ( ${memoryInfo_testCorrectness_after.numTensors} ) `
             + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ) `
-            + `` );
+          );
       }
 
       Pool.Asserter.assert_Pool_issuedCount( "jsPerf_Block.HeightWidthDepth.testCorrectness()", pool_all_issuedCount_before );
