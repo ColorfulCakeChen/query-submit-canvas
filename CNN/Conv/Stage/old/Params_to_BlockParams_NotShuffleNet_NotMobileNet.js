@@ -17,7 +17,7 @@
 Params.to_BlockParams.NotShuffleNet_NotMobileNet = class extends Params.to_BlockParams.MobileNetV2 {
 
   /**
-   * Compute how many block shoud be used and what is the last block's depthwise filter size, when shrink sourceHeight to outputHeight
+   * Compute how many block shoud be used and what is the last block's depthwise filter size, when shrink input_height to outputHeight
    * by depthwise convolution with ( strides = 1, pad = "valid" ).
    *
    * The this.blockCount will be at least 1 (never 0).
@@ -34,8 +34,8 @@ Params.to_BlockParams.NotShuffleNet_NotMobileNet = class extends Params.to_Block
 
 //!!! ...unfinished... (2022/04/29) What if height and width need different block count?
 
-    let differenceHeight = stageParams.sourceHeight - stageParams.outputHeight;
-    //let differenceWidth =  stageParams.sourceWidth  - stageParams.outputWidth;
+    let differenceHeight = stageParams.input_height - stageParams.output_height;
+    //let differenceWidth =  stageParams.input_width  - stageParams.output_width;
 
     if ( 0 == differenceHeight ) { // 1. No difference between source and output size.
       this.blockCount = 1; // Only one block is needed. (Avoid no blocks. At least, there should be one block.)
@@ -56,7 +56,7 @@ Params.to_BlockParams.NotShuffleNet_NotMobileNet = class extends Params.to_Block
       // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
       let heightReducedPerBlock = this.depthwiseFilterHeight_Default - 1;
 
-      // The possible block count for reducing sourceHeight to outputHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
+      // The possible block count for reducing input_height to output_height by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
       //
       // This value may be less than real block count because the filter size of the last block may be larger than its input.
       let blockCountCandidate = Math.floor( differenceHeight / heightReducedPerBlock );

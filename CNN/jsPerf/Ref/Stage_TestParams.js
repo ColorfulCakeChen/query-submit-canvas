@@ -69,7 +69,7 @@ class Stage_TestParams_Base extends TestParams.Base {
    *   Return this object self.
    */
   set_byParamsScattered(
-    sourceHeight, sourceWidth, sourceChannelCount,
+    input_height, input_width, input_channelCount,
     nConvStageTypeId,
     blockCountRequested,
     bPointwise1,
@@ -85,7 +85,7 @@ class Stage_TestParams_Base extends TestParams.Base {
     }
 
     this.out = Stage.ParamsBase.Pool.get_or_create_by(
-      sourceHeight, sourceWidth, sourceChannelCount,
+      input_height, input_width, input_channelCount,
       nConvStageTypeId,
       blockCountRequested,
       bPointwise1,
@@ -287,13 +287,13 @@ class Stage_TestParams_Base extends TestParams.Base {
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
 //!!! (2022/07/22 Temp Remarked) For test more.
-      sourceHeight: [ 3, 3 ],
-      sourceWidth:  [ 4, 5 ], // Test different input image width (even and odd).
-      sourceChannelCount: [ 3, 4 ],
+      input_height: [ 3, 3 ],
+      input_width:  [ 4, 5 ], // Test different input image width (even and odd).
+      input_channelCount: [ 3, 4 ],
 //!!! (2022/07/22 Temp Remarked) For speed-up debug.
-      // sourceHeight: [ 1, 5 ],
-      // sourceWidth:  [ 1, 5 ], // Test different input image width (even and odd).
-      // sourceChannelCount: [ 3, 4 ],
+      // input_height: [ 1, 5 ],
+      // input_width:  [ 1, 5 ], // Test different input image width (even and odd).
+      // input_channelCount: [ 3, 4 ],
 
 //      nConvStageTypeId: undefined,
 //!!! (2022/07/20 Temp Remarked) For speed-up debug.
@@ -363,9 +363,9 @@ class Stage_TestParams_Base extends TestParams.Base {
     //
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
-      new TestParams.ParamDescConfig( Stage.Params.sourceHeight,                   valueOutMinMax.sourceHeight ),
-      new TestParams.ParamDescConfig( Stage.Params.sourceWidth,                    valueOutMinMax.sourceWidth ),
-      new TestParams.ParamDescConfig( Stage.Params.sourceChannelCount,             valueOutMinMax.sourceChannelCount ),
+      new TestParams.ParamDescConfig( Stage.Params.input_height,                   valueOutMinMax.input_height ),
+      new TestParams.ParamDescConfig( Stage.Params.input_width,                    valueOutMinMax.input_width ),
+      new TestParams.ParamDescConfig( Stage.Params.input_channelCount,             valueOutMinMax.input_channelCount ),
       new TestParams.ParamDescConfig( Stage.Params.nConvStageTypeId,               valueOutMinMax.nConvStageTypeId ),
       new TestParams.ParamDescConfig( Stage.Params.blockCountRequested,            valueOutMinMax.blockCountRequested ),
       new TestParams.ParamDescConfig( Stage.Params.bPointwise1,                    valueOutMinMax.bPointwise1 ),
@@ -392,9 +392,9 @@ class Stage_TestParams_Base extends TestParams.Base {
  * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Stage.initer().
  */
 Stage_TestParams_Base.paramsNameOrderArray_Basic = [
-  Stage.Params.sourceHeight.paramName,
-  Stage.Params.sourceWidth.paramName,
-  Stage.Params.sourceChannelCount.paramName,
+  Stage.Params.input_height.paramName,
+  Stage.Params.input_width.paramName,
+  Stage.Params.input_channelCount.paramName,
   Stage.Params.nConvStageTypeId.paramName,
   Stage.Params.blockCountRequested.paramName,
   Stage.Params.bPointwise1.paramName,

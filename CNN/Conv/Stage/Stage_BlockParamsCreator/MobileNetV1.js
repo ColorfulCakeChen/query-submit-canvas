@@ -61,7 +61,7 @@ class MobileNetV1 extends Base {
 
     let stageParams = this.stageParams;
 
-    this.input0_channelCount = stageParams.sourceChannelCount; // Block0 uses the original input channel count (as input0).
+    this.input0_channelCount = stageParams.input_channelCount; // Block0 uses the original input channel count (as input0).
 
     this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL;
 
@@ -70,7 +70,7 @@ class MobileNetV1 extends Base {
       this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                   // Double of input0. (Same as pointwise20.)
 
     } else {
-      this.pointwise1ChannelCount = stageParams.sourceChannelCount * 2; // Double of input0. (Same as pointwise20.)
+      this.pointwise1ChannelCount = stageParams.input_channelCount * 2; // Double of input0. (Same as pointwise20.)
       this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     }
 
@@ -78,7 +78,7 @@ class MobileNetV1 extends Base {
     //
     // Note: In original MobileNet(V2) design, it is not always "twice". We choose "twice" just for comparing with ShuffleNetV2.
     //
-    this.pointwise20ChannelCount = stageParams.sourceChannelCount * 2;
+    this.pointwise20ChannelCount = stageParams.input_channelCount * 2;
 
     this.output0_channelCount = this.pointwise20ChannelCount;
     this.output1_channelCount = 0;

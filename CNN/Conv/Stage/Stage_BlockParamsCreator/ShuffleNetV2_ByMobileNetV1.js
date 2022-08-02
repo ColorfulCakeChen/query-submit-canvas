@@ -82,7 +82,7 @@ class ShuffleNetV2_ByMobileNetV1 extends Base {
 
     let stageParams = this.stageParams;
 
-    this.input0_channelCount = stageParams.sourceChannelCount; // Block0 uses the original input channel count (as input0).
+    this.input0_channelCount = stageParams.input_channelCount; // Block0 uses the original input channel count (as input0).
     this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD;
 
     if ( stageParams.bPointwise1 == false ) {
@@ -106,7 +106,7 @@ class ShuffleNetV2_ByMobileNetV1 extends Base {
       // The input0 will be processed by pointwise1's lower half.
       // The input0 will be copied as pointwise1's higher half.
       //
-      this.pointwise1ChannelCount = stageParams.sourceChannelCount; // (Intrinsically, Double of input0. (Same as pointwise20.))
+      this.pointwise1ChannelCount = stageParams.input_channelCount; // (Intrinsically, Double of input0. (Same as pointwise20.))
     }
 
     // In ShuffleNetV2_ByMobileNetV1's head, depthwise always output the same channel count of pointwise1 real output channel count
@@ -115,7 +115,7 @@ class ShuffleNetV2_ByMobileNetV1 extends Base {
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
 
     // In ShuffleNetV2_ByMobileNetV1, pointwise20ChannelCount is always twice of original input0's channel count.
-    this.pointwise20ChannelCount = stageParams.sourceChannelCount * 2;
+    this.pointwise20ChannelCount = stageParams.input_channelCount * 2;
 
     // In ShuffleNetV2_ByMobileNetV1, all blocks have only output0 (with same depth as pointwise20 result) and no output1.
     this.output0_channelCount = this.pointwise20ChannelCount;

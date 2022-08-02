@@ -89,7 +89,7 @@ class HeightWidthDepth {
     let stepCountRequested = 10;
     let nSqueezeExcitationChannelCountDivisor = 2;
 
-    // sourceHeight, sourceWidth, sourceChannelCount,
+    // input_height, input_width, input_channelCount,
     // nConvStageTypeId,
     // blockCountRequested,
     // bPointwise1,

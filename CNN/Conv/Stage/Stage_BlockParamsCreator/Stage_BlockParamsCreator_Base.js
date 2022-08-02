@@ -119,8 +119,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
   configTo_beforeBlock0() {
     let stageParams = this.stageParams;
 
-    this.input0_height = stageParams.sourceHeight; // block0 inputs the source image size.
-    this.input0_width = stageParams.sourceWidth;
+    this.input0_height = stageParams.input_height; // block0 inputs the source image size.
+    this.input0_width = stageParams.input_width;
     //this.input0_channelCount; // Sub-class should determine it.
 
     this.activation_setup_forBlock0(); // activation of depthwise1 and pointwise2.

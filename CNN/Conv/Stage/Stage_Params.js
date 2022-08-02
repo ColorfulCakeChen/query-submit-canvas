@@ -29,15 +29,15 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
   /**
    * If a parameter's value is null, it will be extracted from inputWeightArray (i.e. by evolution).
    *
-   * @param {number} sourceHeight
+   * @param {number} input_height
    *   The height of the source image which will be processed by apply(). If null, it will be extracted from
    * inputWeightArray (i.e. by evolution).
    *
-   * @param {number} sourceWidth
+   * @param {number} input_width
    *   The width of the source image which will be processed by apply(). If null, it will be extracted from
    * inputWeightArray (i.e. by evolution).
    *
-   * @param {number} sourceChannelCount
+   * @param {number} input_channelCount
    *   The depth (channel count) of the source image. It may be the output channel count of the previous convolution stage, so
    * it could be large. If null, it will be extracted from inputWeightArray (i.e. by evolution).
    *
@@ -109,7 +109,7 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
    *
    */
   constructor(
-    sourceHeight, sourceWidth, sourceChannelCount,
+    input_height, input_width, input_channelCount,
     nConvStageTypeId,
     blockCountRequested,
     bPointwise1,
@@ -133,7 +133,7 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
 
     super(
       Stage_Params.SequenceArray,
-      sourceHeight, sourceWidth, sourceChannelCount,
+      input_height, input_width, input_channelCount,
       nConvStageTypeId,
       blockCountRequested,
       bPointwise1,
@@ -148,7 +148,7 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
 
   /** @override */
   static setAsConstructor(
-    sourceHeight, sourceWidth, sourceChannelCount,
+    input_height, input_width, input_channelCount,
     nConvStageTypeId,
     blockCountRequested,
     bPointwise1,
@@ -160,7 +160,7 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
   ) {
     super.setAsConstructor(
       Stage_Params.SequenceArray,
-      sourceHeight, sourceWidth, sourceChannelCount,
+      input_height, input_width, input_channelCount,
       nConvStageTypeId,
       blockCountRequested,
       bPointwise1,
@@ -215,9 +215,9 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
       return false;
 
     {
-      this.sourceHeight = this.getParamValue_byParamDesc( Stage_Params.sourceHeight );
-      this.sourceWidth = this.getParamValue_byParamDesc( Stage_Params.sourceWidth );
-      this.sourceChannelCount = this.getParamValue_byParamDesc( Stage_Params.sourceChannelCount );
+      this.input_height = this.getParamValue_byParamDesc( Stage_Params.input_height );
+      this.input_width = this.getParamValue_byParamDesc( Stage_Params.input_width );
+      this.input_channelCount = this.getParamValue_byParamDesc( Stage_Params.input_channelCount );
       this.nConvStageTypeId = this.getParamValue_byParamDesc( Stage_Params.nConvStageTypeId );
       this.blockCountRequested = this.getParamValue_byParamDesc( Stage_Params.blockCountRequested );
       this.bPointwise1 = this.getParamValue_byParamDesc( Stage_Params.bPointwise1 );
@@ -238,9 +238,9 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
 
 
 // Define parameter descriptions.
-Stage_Params.sourceHeight =                   new ParamDesc.Int(                "sourceHeight",               1, ( 10 * 1024 ) );
-Stage_Params.sourceWidth =                    new ParamDesc.Int(                "sourceWidth",                1, ( 10 * 1024 ) );
-Stage_Params.sourceChannelCount =             new ParamDesc.Int(                "sourceChannelCount",         1, ( 10 * 1024 ) );
+Stage_Params.input_height =                   new ParamDesc.Int(                "input_height",               1, ( 10 * 1024 ) );
+Stage_Params.input_width =                    new ParamDesc.Int(                "input_width",                1, ( 10 * 1024 ) );
+Stage_Params.input_channelCount =             new ParamDesc.Int(                "input_channelCount",         1, ( 10 * 1024 ) );
 
 Stage_Params.nConvStageTypeId =               new ParamDesc.ConvStageType(      "nConvStageTypeId" );
 
@@ -263,9 +263,9 @@ Stage_Params.bKeepInputTensor =               new ParamDesc.Bool(               
  * Define the order of these parameters. (Fills ParamDesc.Xxx.seqId according to this array's order.)
  */
 Stage_Params.SequenceArray = new ParamDesc.SequenceArray( [
-  Stage_Params.sourceHeight,
-  Stage_Params.sourceWidth,
-  Stage_Params.sourceChannelCount,
+  Stage_Params.input_height,
+  Stage_Params.input_width,
+  Stage_Params.input_channelCount,
   Stage_Params.nConvStageTypeId,
   Stage_Params.blockCountRequested,
   Stage_Params.bPointwise1,

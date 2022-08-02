@@ -310,9 +310,9 @@ class Stage_Base extends Recyclable.Root {
     // Get parameters' real (adjusted) values.
     //
     // Do not keep params in this.params so that the inputWeightArray could be released.
-    this.sourceHeight = params.sourceHeight;
-    this.sourceWidth = params.sourceWidth;
-    this.sourceChannelCount = params.sourceChannelCount;
+    this.input_height = params.input_height;
+    this.input_width = params.input_width;
+    this.input_channelCount = params.input_channelCount;
     this.nConvStageTypeId = params.nConvStageTypeId;
     this.nConvStageTypeName = params.nConvStageTypeName;
     this.blockCountRequested = params.blockCountRequested;
@@ -429,11 +429,12 @@ class Stage_Base extends Recyclable.Root {
 
       this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
 
-      // In our Stage design, no matter which configuration, the outputChannelCount always is twice as sourceChannelCount.
-      if ( this.outputChannelCount != ( this.sourceChannelCount * 2 ) )
+      // In our Stage design, no matter which configuration, the output_channelCount
+      // always is twice as input_channelCount.
+      if ( this.output_channelCount != ( this.input_channelCount * 2 ) )
         throw Error( `Stage.Base.initer(): `
-          + `the outputChannelCount ( ${this.outputChannelCount} ) should always be twice of `
-          + `sourceChannelCount ( ${this.sourceChannelCount} ).` );
+          + `the output_channelCount ( ${this.output_channelCount} ) should always be twice of `
+          + `input_channelCount ( ${this.input_channelCount} ).` );
 
       this.bInitOk = true;
       return this.bInitOk;
@@ -545,16 +546,16 @@ class Stage_Base extends Recyclable.Root {
   //  assert_ImageSize_BetweenBlock( blockIndex, blockParams ) {
 
   //   if ( 0 == blockIndex ) { // Block0.
-  //     if ( blockParams.input0_height != this.sourceHeight )
+  //     if ( blockParams.input0_height != this.input_height )
   //       throw Error( `Stage.Base.initer(): `
   //         + `block${blockIndex}'s input image height ( ${blockParams.input0_height} ) should be the same as `
-  //         + `stage's source image height ( ${this.sourceHeight} ).`
+  //         + `stage's source image height ( ${this.input_height} ).`
   //       );
 
-  //     if ( blockParams.input0_width != this.sourceWidth )
+  //     if ( blockParams.input0_width != this.input_width )
   //       throw Error( `Stage.Base.initer(): `
   //         + `block${blockIndex}'s input image width ( ${blockParams.input0_width} ) should be the same as `
-  //         + `stage's source image width ( ${this.sourceWidth} ).`
+  //         + `stage's source image width ( ${this.input_width} ).`
   //       );
 
   //   } else { // After Block0.
@@ -587,17 +588,17 @@ class Stage_Base extends Recyclable.Root {
 
     if ( 0 == blockIndex ) { // Block0.
       if (   ( blockParamsCreator.input0_height == undefined )
-          || ( blockParamsCreator.input0_height != this.sourceHeight ) )
+          || ( blockParamsCreator.input0_height != this.input_height ) )
         throw Error( `Stage.Base.initer(): `
           + `block${blockIndex}'s input image height ( ${blockParamsCreator.input0_height} ) should be the same as `
-          + `stage's source image height ( ${this.sourceHeight} ).`
+          + `stage's source image height ( ${this.input_height} ).`
         );
 
       if (   ( blockParamsCreator.input0_width == undefined )
-          || ( blockParamsCreator.input0_width != this.sourceWidth ) )
+          || ( blockParamsCreator.input0_width != this.input_width ) )
         throw Error( `Stage.Base.initer(): `
           + `block${blockIndex}'s input image width ( ${blockParamsCreator.input0_width} ) should be the same as `
-          + `stage's source image width ( ${this.sourceWidth} ).`
+          + `stage's source image width ( ${this.input_width} ).`
         );
 
     } else { // After Block0.
@@ -672,7 +673,7 @@ class Stage_Base extends Recyclable.Root {
    */
   toString() {
     let str =
-        `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, sourceChannelCount=${this.sourceChannelCount}, `
+        `input_height=${this.input_height}, input_width=${this.input_width}, input_channelCount=${this.input_channelCount}, `
       + `nConvStageTypeName=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
       + `blockCountRequested=${this.blockCountRequested}, blockCount=${this.blockCount}, `
       + `bPointwise1=${this.bPointwise1}, `

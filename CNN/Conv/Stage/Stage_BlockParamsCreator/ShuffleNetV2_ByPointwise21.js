@@ -133,7 +133,7 @@ class ShuffleNetV2_ByPointwise21 extends Base {
 
     let stageParams = this.stageParams;
 
-    this.input0_channelCount = stageParams.sourceChannelCount; // Block0 uses the original input channel count (as input0).
+    this.input0_channelCount = stageParams.input_channelCount; // Block0 uses the original input channel count (as input0).
 
     if ( stageParams.bPointwise1 == false ) {
 
@@ -151,12 +151,12 @@ class ShuffleNetV2_ByPointwise21 extends Base {
 
     } else {
       this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD;
-      this.pointwise1ChannelCount = stageParams.sourceChannelCount * 2; // Double of input0. (Double of pointwise20.)
+      this.pointwise1ChannelCount = stageParams.input_channelCount * 2; // Double of input0. (Double of pointwise20.)
       this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     }
 
     // In ShuffleNetV2_ByPointwise21, all blocks' (except blockLast) output0 is the same depth as source input0.
-    this.pointwise20ChannelCount = stageParams.sourceChannelCount;
+    this.pointwise20ChannelCount = stageParams.input_channelCount;
 
     // In ShuffleNetV2_ByPointwise21, all blocks (except blockLast) have both output0 and output1 with same depth as pointwise20 result.
     this.output0_channelCount = this.pointwise20ChannelCount;
@@ -175,7 +175,7 @@ class ShuffleNetV2_ByPointwise21 extends Base {
     if ( stageParams.bPointwise1 == false ) {
       this.pointwise1ChannelCount = 0;                              // NoPointwise1.
     } else {
-      this.pointwise1ChannelCount = stageParams.sourceChannelCount; // Same as original input0. (Same as pointwise20.)
+      this.pointwise1ChannelCount = stageParams.input_channelCount; // Same as original input0. (Same as pointwise20.)
     }
   }
 
@@ -194,9 +194,9 @@ class ShuffleNetV2_ByPointwise21 extends Base {
     //
     // The output0:
     //   - It will be the pointwise20ChannelCount.
-    //   - The pointwise20ChannelCount is double of sourceChannelCount (i.e. twice of original input0_channelCount).
+    //   - The pointwise20ChannelCount is double of input_channelCount (i.e. twice of original input0_channelCount).
     //
-    this.pointwise20ChannelCount = this.stageParams.sourceChannelCount * 2;
+    this.pointwise20ChannelCount = this.stageParams.input_channelCount * 2;
     this.output0_channelCount = this.pointwise20ChannelCount;
     this.output1_channelCount = 0;
   }

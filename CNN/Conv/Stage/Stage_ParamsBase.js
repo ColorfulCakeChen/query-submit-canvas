@@ -23,7 +23,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
   /**
    */
   constructor(
-    sourceHeight, sourceWidth, sourceChannelCount,
+    input_height, input_width, input_channelCount,
     nConvStageTypeId,
     blockCountRequested,
     bPointwise1,
@@ -35,7 +35,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
   ) {
     super();
     Stage_ParamsBase.setAsConstructor_self.call( this,
-      sourceHeight, sourceWidth, sourceChannelCount,
+      input_height, input_width, input_channelCount,
       nConvStageTypeId,
       blockCountRequested,
       bPointwise1,
@@ -49,7 +49,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
 
   /** @override */
   static setAsConstructor(
-    sourceHeight, sourceWidth, sourceChannelCount,
+    input_height, input_width, input_channelCount,
     nConvStageTypeId,
     blockCountRequested,
     bPointwise1,
@@ -61,7 +61,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
   ) {
     super.setAsConstructor();
     Stage_ParamsBase.setAsConstructor_self.call( this,
-      sourceHeight, sourceWidth, sourceChannelCount,
+      input_height, input_width, input_channelCount,
       nConvStageTypeId,
       blockCountRequested,
       bPointwise1,
@@ -76,7 +76,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
 
   /** @override */
   static setAsConstructor_self(
-    sourceHeight, sourceWidth, sourceChannelCount,
+    input_height, input_width, input_channelCount,
     nConvStageTypeId,
     blockCountRequested,
     bPointwise1,
@@ -86,9 +86,9 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
     nActivationId,
     bKeepInputTensor
   ) {
-    this.sourceHeight = sourceHeight;
-    this.sourceWidth = sourceWidth;
-    this.sourceChannelCount = sourceChannelCount;
+    this.input_height = input_height;
+    this.input_width = input_width;
+    this.input_channelCount = input_channelCount;
     this.nConvStageTypeId = nConvStageTypeId;
     this.blockCountRequested = blockCountRequested;
     this.bPointwise1 = bPointwise1;
@@ -104,9 +104,9 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
   disposeResources() {
     this.inferencedParams_dispose();
 
-    this.sourceHeight = undefined;
-    this.sourceWidth = undefined;
-    this.sourceChannelCount = undefined;
+    this.input_height = undefined;
+    this.input_width = undefined;
+    this.input_channelCount = undefined;
     this.nConvStageTypeId = undefined;
     this.blockCountRequested = undefined;
     this.bPointwise1 = undefined;
@@ -164,8 +164,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
   /** @override */
   toString() {
     let str =
-        `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, `
-      + `sourceChannelCount=${this.sourceChannelCount}, `
+        `input_height=${this.input_height}, input_width=${this.input_width}, `
+      + `input_channelCount=${this.input_channelCount}, `
 
       + `nConvStageTypeId=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
 

@@ -52,7 +52,7 @@ class MobileNetV2 extends MobileNetV2_Thin {
       this.depthwise_AvgMax_Or_ChannelMultiplier = 4;                   // Quadruple of input0. (Double of pointwise20.)
 
     } else {
-      this.pointwise1ChannelCount = stageParams.sourceChannelCount * 4; // Quadruple of input0. (Double of pointwise20.)
+      this.pointwise1ChannelCount = stageParams.input_channelCount * 4; // Quadruple of input0. (Double of pointwise20.)
       this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     }
   }

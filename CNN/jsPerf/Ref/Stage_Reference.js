@@ -81,10 +81,10 @@ class Stage_Reference_Base extends Recyclable.Root {
   testCorrectness( imageSourceBag, testParams ) {
 
     let {
-      sourceHeight, sourceWidth, sourceChannelCount,
+      input_height, input_width, input_channelCount,
     } = testParams.out;
 
-    this.testCorrectness_imageIn = imageSourceBag.getImage_by( sourceHeight, sourceWidth, sourceChannelCount );
+    this.testCorrectness_imageIn = imageSourceBag.getImage_by( input_height, input_width, input_channelCount );
 
     Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Stage_Reference.Base.testCorrectness_internal()",
       Stage_Reference_Base.testCorrectness_internal, this, imageSourceBag, testParams );
@@ -126,13 +126,13 @@ class Stage_Reference_Base extends Recyclable.Root {
   static stage_create_apply_internal( imageSourceBag, testParams ) {
 
     let {
-      sourceHeight, sourceWidth, sourceChannelCount,
+      input_height, input_width, input_channelCount,
       nConvStageTypeId,
       bPointwise2ActivatedAtStageEnd,
       bKeepInputTensor,
     } = testParams.out;
 
-    let inputTensor3d_fromBag = imageSourceBag.getTensor3d_by( sourceHeight, sourceWidth, sourceChannelCount );
+    let inputTensor3d_fromBag = imageSourceBag.getTensor3d_by( input_height, input_width, input_channelCount );
 
     let inputTensor3d;
     let inputTensorDestroyCount; // How many input tensors will be destroyed by Stage.apply().
@@ -272,7 +272,7 @@ class Stage_Reference_Base extends Recyclable.Root {
 
     // Initialize successfully or failed.
     let extractedParams = Stage.Params.Pool.get_or_create_by(
-      testParams.in.sourceHeight, testParams.in.sourceWidth, testParams.in.sourceChannelCount,
+      testParams.in.input_height, testParams.in.input_width, testParams.in.input_channelCount,
       testParams.in.nConvStageTypeId,
       testParams.in.blockCountRequested,
       testParams.in.bPointwise1,
@@ -396,7 +396,7 @@ class Stage_Reference_Base extends Recyclable.Root {
 
     // Initialize successfully or failed.
     let extractedParams = Stage.Params.Pool.get_or_create_by(
-      testParams.in.sourceHeight, testParams.in.sourceWidth, testParams.in.sourceChannelCount,
+      testParams.in.input_height, testParams.in.input_width, testParams.in.input_channelCount,
       testParams.in.nConvStageTypeId,
       testParams.in.blockCountRequested,
       testParams.in.bPointwise1,
@@ -443,9 +443,9 @@ class Stage_Reference_Base extends Recyclable.Root {
       stage.weightElementOffsetEnd, testParams.in_weights.weightArray.length, stage );
 
     // parameters.
-    stage_asserter.propertyValue( "sourceHeight", testParams.out.sourceHeight );
-    stage_asserter.propertyValue( "sourceWidth", testParams.out.sourceWidth );
-    stage_asserter.propertyValue( "sourceChannelCount", testParams.out.sourceChannelCount );
+    stage_asserter.propertyValue( "input_height", testParams.out.input_height );
+    stage_asserter.propertyValue( "input_width", testParams.out.input_width );
+    stage_asserter.propertyValue( "input_channelCount", testParams.out.input_channelCount );
     stage_asserter.propertyValue( "nConvStageTypeId", testParams.out.nConvStageTypeId );
     stage_asserter.propertyValue( "blockCountRequested", testParams.out.blockCountRequested );
     stage_asserter.propertyValue( "bPointwise1", testParams.out.bPointwise1 );
@@ -525,9 +525,9 @@ class Stage_Reference_Base extends Recyclable.Root {
     let blockCountRequested = stage_or_stageParamsBase.blockCountRequested;
     let nConvStageTypeId = stage_or_stageParamsBase.nConvStageTypeId;
 
-    let single_Block0Input0ChannelCount = stage_or_stageParamsBase.sourceChannelCount;        // Single of block0's input0 channel count.
-    let double_Block0Input0ChannelCount = stage_or_stageParamsBase.sourceChannelCount * 2;    // Double of block0's input0 channel count.
-    let quadruple_Block0Input0ChannelCount = stage_or_stageParamsBase.sourceChannelCount * 4; // Quadruple of block0's input0 channel count.
+    let single_Block0Input0ChannelCount = stage_or_stageParamsBase.input_channelCount;        // Single of block0's input0 channel count.
+    let double_Block0Input0ChannelCount = stage_or_stageParamsBase.input_channelCount * 2;    // Double of block0's input0 channel count.
+    let quadruple_Block0Input0ChannelCount = stage_or_stageParamsBase.input_channelCount * 4; // Quadruple of block0's input0 channel count.
 
     let blockCount = blockArray_or_blockTestParamsArray.length;
 
@@ -556,8 +556,8 @@ class Stage_Reference_Base extends Recyclable.Root {
       // inputHeight0, inputWidth0
       {
         if ( 0 == blockIndex ) { // block0
-          block_or_blockParamsBase_asserter.propertyValue( "input0_height", stage_or_stageParamsBase.sourceHeight );
-          block_or_blockParamsBase_asserter.propertyValue( "input0_width", stage_or_stageParamsBase.sourceWidth );
+          block_or_blockParamsBase_asserter.propertyValue( "input0_height", stage_or_stageParamsBase.input_height );
+          block_or_blockParamsBase_asserter.propertyValue( "input0_width", stage_or_stageParamsBase.input_width );
         }
 
         if ( stage_or_stageParamsBase instanceof Stage.ParamsBase ) {
