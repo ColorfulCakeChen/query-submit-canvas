@@ -181,7 +181,7 @@ class NeuralNet_Base extends Recyclable.Root {
       this.tensorWeightCountTotal += this.embedding.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += this.embedding.tensorWeightCountExtracted;
 
-      input_ScaleBoundsArray = this.embedding.boundsArraySet.output0.scaleBoundsArray;
+      input_ScaleBoundsArray = this.embedding.boundsArraySet.output0;
     }
 
     // 3. Create every stages.
