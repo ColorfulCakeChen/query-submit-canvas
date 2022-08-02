@@ -502,7 +502,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     let embedding_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by(
       "`NeuralNet.embedding", embedding, parametersDescription );
 
-    embedding_asserter.propertyValue( "vocabularyChannelCount", neuralNet.vocabularyChannelCount );
+    embedding_asserter.propertyValue( "channelMultiplier", neuralNet.vocabularyChannelCount );
     embedding_asserter.propertyValue( "vocabularyCountPerInputChannel", neuralNet.vocabularyCountPerInputChannel );
     embedding_asserter.propertyValue( "bKeepInputTensor", neuralNet.bKeepInputTensor );
 
