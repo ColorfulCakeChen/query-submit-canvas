@@ -292,11 +292,25 @@ class NeuralNet_Base extends Recyclable.Root {
       this.embedding = null;
     }
 
-    this.tensorWeightCountTotal = 0;
-    this.tensorWeightCountExtracted = 0;
+    this.bEmbedVocabularyId = undefined;
 
-    this.weightElementOffsetBegin = this.weightElementOffsetEnd = -1;
-    this.bInitOk = false;
+    this.bKeepInputTensor = undefined;
+    this.blockCountRequested = undefined;
+    this.stageCountRequested = undefined;
+    this.nConvStageTypeName = undefined;
+    this.nConvStageTypeId = undefined;
+    this.vocabularyCountPerInputChannel = undefined;
+    this.vocabularyChannelCount = undefined;
+    this.input_channelCount = undefined;
+    this.input_width = undefined;
+    this.input_height = undefined;
+
+    this.tensorWeightCountTotal = undefined;
+    this.tensorWeightCountExtracted = undefined;
+
+    this.weightElementOffsetBegin = undefined;
+    this.weightElementOffsetEnd = undefined;
+    this.bInitOk = undefined;
 
     super.disposeResources();
   }
