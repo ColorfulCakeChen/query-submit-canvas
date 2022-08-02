@@ -578,7 +578,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
       // output_channelCount
       {
-        stage_asserter.propertyValue( "input_channelCount", stage.input_channelCount * 2 ); // Every stage double its input channel count.
+        stage_asserter.propertyValue( "output_channelCount", stage.input_channelCount * 2 ); // Every stage double its input channel count.
       }
 
       // bKeepInputTensor
