@@ -338,18 +338,14 @@ class NeuralNet_Base extends Recyclable.Root {
   */
   apply( inputTensor ) {
 
-//!!! ...unfinished... (2022/08/02)
-
-    this.stage0.input0.realTensor = inputTensor; // Note: The stage0 should only input one tensor.
+    let outputTensor = this.embedding.apply( inputTensor );
 
     let stageArray = this.stageArray;
     for ( let i = 0; i < stageArray.length; ++i ) {
-      stageArray[ i ].apply();
+      outputTensor = stageArray[ i ].apply( outputTensor );
     }
 
-    let outputTensor = this.stageLast.output0.realTensor; // Note: The stageLast should only output one tensor.
     return outputTensor;
-
   }
 
   /** How many stages inside this neuralNet are created. (may different from this.stageCountRequested.) */
