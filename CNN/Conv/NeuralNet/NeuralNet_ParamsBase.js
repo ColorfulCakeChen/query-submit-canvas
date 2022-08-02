@@ -137,7 +137,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
       + `vocabularyChannelCount=${this.vocabularyChannelCount}, `
       + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
 
-      + `nConvStageTypeId=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
+      + `nConvStageTypeName=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
       + `stageCountRequested=${this.stageCountRequested}, `
 
       + `blockCountRequested=${this.blockCountRequested}, `

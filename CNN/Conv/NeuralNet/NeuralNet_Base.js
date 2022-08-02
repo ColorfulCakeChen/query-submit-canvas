@@ -42,13 +42,13 @@ import { Params } from "./NeuralNet_Params.js";
 * @member {TensorPlaceholder.Base} input0
 *   The TensorPlaceholder object which represents this neuralNet's input.
 *
-* @member {number} outputHeight
+* @member {number} output_height
 *   The output image height of this neuralNet's last stage.
 *
-* @member {number} outputWidth
+* @member {number} output_width
 *   The output image width of this neuralNet's last stage.
 *
-* @member {number} outputChannelCount
+* @member {number} output_channelCount
 *   The output channel count of this neuralNet's last stage.
 *
 * @member {TensorPlaceholder.Base} output0
@@ -114,29 +114,6 @@ class NeuralNet_Base extends Recyclable.Root {
   */
   * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
 
-    // Both MobileNetV3 and ShuffleNetV2:
-    //   - They all do not use (depthwise convolution) channelMultiplier.
-    //   - They all use 1x1 (pointwise) convolution to expand channel count.
-    //   - They all use 1x1 (pointwise) convolution before depthwise convolution.
-    //   - They all use activation function after first pointwise convolution.
-    //   - They all use depthwise convolution with ( pad = "same" ).
-    //   - They all use depthwise convolution with ( strides = 2 ) for shrinking (halving) height x width.
-    //   - They all do use batch normalization (include bias) after pointwise and depthwise convolution.
-    //
-    // Inisde one of their neuralNet, three convolutions are used:
-    //   A) 1x1 (pointwise) convolution, with activation.
-    //   B) depthwise convolution, (ShuffleNetV2) without or (MobileNetV2) with activation.
-    //   C) 1x1 (pointwise) convolution, (ShuffleNetV2) with or (MobileNetV2) without activation.
-    //
-    // In MobileNetV3, convolution A expands channel count (with activation), convolution C shrinks channel count (without activation).
-    // It may use squeeze-and-excitation after convolution B (without activation). When there is necessary to increase output channel
-    // count (usually in stage 0 of a neuralNet), the convolution C is responsible for this.
-    //
-    // In ShuffleNetV2, convolution A (with activation), convolution B (without activation) and convolution C (with activation) never
-    // change channel count. When there is necessary to increase output channel count (usually in stage 0 of a neuralNet), it expands channel
-    // count by concatenating two shrinked (halven) height x width.
-
-
     // 0. Prepare
 
     this.weightElementOffsetEnd = this.weightElementOffsetBegin = weightElementOffsetBegin;
@@ -162,27 +139,18 @@ class NeuralNet_Base extends Recyclable.Root {
     // Get parameters' real (adjusted) values.
     //
     // Do not keep params in this.params so that the inputWeightArray could be released.
-    this.sourceHeight = params.sourceHeight;
-    this.sourceWidth = params.sourceWidth;
-    this.sourceChannelCount = params.sourceChannelCount;
-    this.nConvNeuralNetTypeId = params.nConvNeuralNetTypeId;
-    this.nConvNeuralNetTypeName = params.nConvNeuralNetTypeName;
+    this.input_height = params.input_height;
+    this.input_width = params.input_width;
+    this.input_channelCount = params.input_channelCount;
+    this.vocabularyChannelCount = params.vocabularyChannelCount;
+    this.vocabularyCountPerInputChannel = params.vocabularyCountPerInputChannel;
+    this.nConvStageTypeId = params.nConvStageTypeId;
     this.stageCountRequested = params.stageCountRequested;
-    this.bPointwise1 = params.bPointwise1;
-    this.depthwiseFilterHeight = params.depthwiseFilterHeight;
-    this.depthwiseFilterWidth = params.depthwiseFilterWidth;
-    this.bPointwise2ActivatedAtNeuralNetEnd = params.bPointwise2ActivatedAtNeuralNetEnd;
-    this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
-    this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
-    this.nActivationId = params.nActivationId;
-    this.nActivationName = params.nActivationName;
+    this.blockCountRequested = params.blockCountRequested;
     this.bKeepInputTensor = params.bKeepInputTensor;
 
     // The parameters which are determined (inferenced) from the above parameters.
     {
-//!!! (2022/07/19 Remarked) should come from the last stage.
-//       this.outputHeight = params.outputHeight;
-//       this.outputWidth = params.outputWidth;
     }
 
     this.tensorWeightCountExtracted = 0;
@@ -392,47 +360,6 @@ class NeuralNet_Base extends Recyclable.Root {
     }
   }
 
-  /**
-  * Assert image size.
-  *
-  * @param {number} stageIndex
-  *   Which stage (i.e. stage0, stage1, stage2, ...).
-  *
-  * @param {NeuralNet_StageParamsCreator.Base} stageParamsCreator
-  *   The maker which will produce current stage (Stage.Base) object.
-  */
-  assert_ImageSize_BetweenStage( stageIndex, stageParamsCreator ) {
-
-    if ( 0 == stageIndex ) { // Stage0.
-      if ( stageParamsCreator.input0_height != this.sourceHeight )
-        throw Error( `NeuralNet.Base.initer(): `
-          + `stage${stageIndex}'s input image height ( ${stageParamsCreator.input0_height} ) should be the same as `
-          + `neuralNet's source image height ( ${this.sourceHeight} ).`
-        );
-
-      if ( stageParamsCreator.input0_width != this.sourceWidth )
-        throw Error( `NeuralNet.Base.initer(): `
-          + `stage${stageIndex}'s input image width ( ${stageParamsCreator.input0_width} ) should be the same as `
-          + `neuralNet's source image width ( ${this.sourceWidth} ).`
-        );
-
-    } else { // After Stage0.
-      let previousStage = this.stageArray[ stageIndex - 1 ];
-
-      if ( stageParamsCreator.inputHeight != previousStage.outputHeight )
-        throw Error( `NeuralNet.Base.initer(): `
-          + `stage${stageIndex}'s input image height ( ${stageParamsCreator.inputHeight} ) should be the same as `
-          + `stage${ stageIndex - 1 }'s output image height ( ${previousStage.outputHeight} ).`
-      );
-
-      if ( stageParamsCreator.inputWidth != previousStage.outputWidth )
-        throw Error( `NeuralNet.Base.initer(): `
-          + `stage${stageIndex}'s input image width ( ${stageParamsCreator.inputWidth} ) should be the same as `
-          + `stage${ stageIndex - 1 }'s output image width ( ${previousStage.outputWidth} ).`
-        );
-    }
-  }
-
   /** Process input, destroy or keep input, return result.
   *
   * @param {tf.tensor3d} inputTensor
@@ -495,12 +422,16 @@ class NeuralNet_Base extends Recyclable.Root {
     return this.stageLast.output0;
   }
 
-  get outputHeight() {
+  get output_height() {
     return this.stageLast.output0.height;
   }
 
-  get outputWidth() {
+  get output_width() {
     return this.stageLast.output0.width;
+  }
+
+  get output_channelCount() {
+    return this.stageLast.output0.channelCount;
   }
 
   /**
@@ -509,65 +440,21 @@ class NeuralNet_Base extends Recyclable.Root {
   * @override
   */
   toString() {
-    let str =
-        `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, sourceChannelCount=${this.sourceChannelCount}, `
-      + `nConvNeuralNetTypeName=${this.nConvNeuralNetTypeName}(${this.nConvNeuralNetTypeId}), `
-      + `stageCountRequested=${this.stageCountRequested}, stageCount=${this.stageCount}, `
-      + `bPointwise1=${this.bPointwise1}, `
-      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
-      + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
-      + `bPointwise2ActivatedAtNeuralNetEnd=${this.bPointwise2ActivatedAtNeuralNetEnd}, `
+    let str = ``
+      + `input_height=${this.input_height}, `
+      + `input_width=${this.input_width}, `
+      + `input_channelCount=${this.input_channelCount}, `
+      + `vocabularyChannelCount=${this.vocabularyChannelCount}, `
+      + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
+      + `nConvStageTypeName=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
+      + `stageCountRequested=${this.stageCountRequested}, `
+      + `blockCountRequested=${this.blockCountRequested}, `
+      + `bKeepInputTensor=${this.bKeepInputTensor}, `
 
-      + `nSqueezeExcitationChannelCountDivisorName=${this.nSqueezeExcitationChannelCountDivisorName}`
-        + `(${this.nSqueezeExcitationChannelCountDivisor}), `
-
-      + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
-      + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, outputChannelCount=${this.outputChannelCount}, `
-      + `bKeepInputTensor=${this.bKeepInputTensor}`
+      + `output_height=${this.output_height}, output_width=${this.output_width}, output_channelCount=${this.output_channelCount}`
     ;
     return str;
   }
 
-  /**
-  * @param {Params} neuralNetParams
-  *   The NeuralNet.Params object to be reference.
-  *
-  * @return {Base}
-  *   Return newly created NeuralNet.StageParamsCreator.Xxx object according to neuralNetParams.nConvNeuralNetTypeId.
-  */
-  static create_StageParamsCreator_byNeuralNetParams( neuralNetParams ) {
-
-    if ( neuralNetParams.stageCountRequested < 2 )
-      throw Error( `NeuralNet.StageParamsCreator.Base.create_byNeuralNetParams(): `
-        + `neuralNetParams.stageCountRequested ( ${neuralNetParams.stageCountRequested} ) must be >= 2.` );
-
-    if ( !(   ( neuralNetParams.nConvNeuralNetTypeId >= 0 )
-          && ( neuralNetParams.nConvNeuralNetTypeId < NeuralNet_Base.nConvNeuralNetTypeId_to_StageParamsCreator_ClassArray.length )
-          ) 
-      )
-      throw Error( `NeuralNet.Base.create_StageParamsCreator_byNeuralNetParams(): `
-        + `unknown neuralNetParams.nConvNeuralNetTypeId ( ${neuralNetParams.nConvNeuralNetTypeId} ) value.`
-      );
-
-    let classStageParamsCreator = NeuralNet_Base.nConvNeuralNetTypeId_to_StageParamsCreator_ClassArray[ neuralNetParams.nConvNeuralNetTypeId ];
-    let aStageParamsCreator = classStageParamsCreator.Pool.get_or_create_by( neuralNetParams );
-
-    return aStageParamsCreator;
-  }
-
 }
 
-
-/**
-* Mapping nConvNeuralNetTypeId (number as array index) to StageParamsCreator class object.
-*/
-NeuralNet_Base.nConvNeuralNetTypeId_to_StageParamsCreator_ClassArray = [
-  StageParamsCreator.MobileNetV1,                         // ValueDesc.ConvNeuralNetType.Ids.MOBILE_NET_V1 (0)
-  StageParamsCreator.MobileNetV1_padValid,                // ValueDesc.ConvNeuralNetType.Ids.MOBILE_NET_V1_PAD_VALID (1)
-  StageParamsCreator.MobileNetV2_Thin,                    // ValueDesc.ConvNeuralNetType.Ids.MOBILE_NET_V2_THIN (2)
-  StageParamsCreator.MobileNetV2,                         // ValueDesc.ConvNeuralNetType.Ids.MOBILE_NET_V2 (3)
-  StageParamsCreator.ShuffleNetV2,                        // ValueDesc.ConvNeuralNetType.Ids.SHUFFLE_NET_V2 (4)
-  StageParamsCreator.ShuffleNetV2_ByMobileNetV1,          // ValueDesc.ConvNeuralNetType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5)
-  StageParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid, // ValueDesc.ConvNeuralNetType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6)
-  StageParamsCreator.ShuffleNetV2_ByPointwise21,          // ValueDesc.ConvNeuralNetType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21 (7)
-];

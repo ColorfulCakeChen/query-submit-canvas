@@ -190,13 +190,13 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  * @member {TensorPlaceholder.Base} input0
  *   The TensorPlaceholder object which represents this stage's input.
  *
- * @member {number} outputHeight
+ * @member {number} output_height
  *   The output image height of this stage's last block.
  *
- * @member {number} outputWidth
+ * @member {number} output_width
  *   The output image width of this stage's last block.
  *
- * @member {number} outputChannelCount
+ * @member {number} output_channelCount
  *   The output channel count of this stage's last block.
  *
  * @member {TensorPlaceholder.Base} output0
@@ -328,9 +328,6 @@ class Stage_Base extends Recyclable.Root {
 
     // The parameters which are determined (inferenced) from the above parameters.
     {
-//!!! (2022/07/19 Remarked) should come from the last block.
-//       this.outputHeight = params.outputHeight;
-//       this.outputWidth = params.outputWidth;
     }
 
     this.tensorWeightCountExtracted = 0;
@@ -589,13 +586,15 @@ class Stage_Base extends Recyclable.Root {
   assert_ImageSize_BetweenBlock( blockIndex, blockParamsCreator ) {
 
     if ( 0 == blockIndex ) { // Block0.
-      if ( blockParamsCreator.input0_height != this.sourceHeight )
+      if (   ( blockParamsCreator.input0_height == undefined )
+          || ( blockParamsCreator.input0_height != this.sourceHeight ) )
         throw Error( `Stage.Base.initer(): `
           + `block${blockIndex}'s input image height ( ${blockParamsCreator.input0_height} ) should be the same as `
           + `stage's source image height ( ${this.sourceHeight} ).`
         );
 
-      if ( blockParamsCreator.input0_width != this.sourceWidth )
+      if (   ( blockParamsCreator.input0_width == undefined )
+          || ( blockParamsCreator.input0_width != this.sourceWidth ) )
         throw Error( `Stage.Base.initer(): `
           + `block${blockIndex}'s input image width ( ${blockParamsCreator.input0_width} ) should be the same as `
           + `stage's source image width ( ${this.sourceWidth} ).`
@@ -604,16 +603,18 @@ class Stage_Base extends Recyclable.Root {
     } else { // After Block0.
       let previousBlock = this.blockArray[ blockIndex - 1 ];
 
-      if ( blockParamsCreator.inputHeight != previousBlock.outputHeight )
+      if (   ( blockParamsCreator.input0_height == undefined )
+          || ( blockParamsCreator.input0_height != previousBlock.output_height ) )
         throw Error( `Stage.Base.initer(): `
-          + `block${blockIndex}'s input image height ( ${blockParamsCreator.inputHeight} ) should be the same as `
-          + `block${ blockIndex - 1 }'s output image height ( ${previousBlock.outputHeight} ).`
+          + `block${blockIndex}'s input image height ( ${blockParamsCreator.input0_height} ) should be the same as `
+          + `block${ blockIndex - 1 }'s output image height ( ${previousBlock.output_height} ).`
        );
 
-      if ( blockParamsCreator.inputWidth != previousBlock.outputWidth )
+      if (   ( blockParamsCreator.input0_width == undefined )
+          || ( blockParamsCreator.input0_width != previousBlock.output_width ) )
         throw Error( `Stage.Base.initer(): `
-          + `block${blockIndex}'s input image width ( ${blockParamsCreator.inputWidth} ) should be the same as `
-          + `block${ blockIndex - 1 }'s output image width ( ${previousBlock.outputWidth} ).`
+          + `block${blockIndex}'s input image width ( ${blockParamsCreator.input_width} ) should be the same as `
+          + `block${ blockIndex - 1 }'s output image width ( ${previousBlock.output_width} ).`
         );
     }
   }
@@ -652,15 +653,15 @@ class Stage_Base extends Recyclable.Root {
     return this.blockLast.output0;
   }
 
-  get outputHeight() {
+  get output_height() {
     return this.blockLast.output_height;
   }
 
-  get outputWidth() {
+  get output_width() {
     return this.blockLast.output_width;
   }
 
-  get outputChannelCount() {
+  get output_channelCount() {
     return this.blockLast.output_channelCount;
   }
 
@@ -683,8 +684,9 @@ class Stage_Base extends Recyclable.Root {
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
 
       + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
-      + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, outputChannelCount=${this.outputChannelCount}, `
-      + `bKeepInputTensor=${this.bKeepInputTensor}`
+      + `bKeepInputTensor=${this.bKeepInputTensor}, `
+
+      + `output_height=${this.output_height}, output_width=${this.output_width}, output_channelCount=${this.output_channelCount}`
     ;
     return str;
   }

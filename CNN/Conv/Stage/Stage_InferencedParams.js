@@ -31,15 +31,15 @@ import * as BlockParamsCreator from "./Stage_BlockParamsCreator.js";
 //  *   The width of output image of every block.
 
  *
- * @member {number} outputHeight
+ * @member {number} output_height
  *   The height of output image. Usually, it is roughly half of the input height
  * (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
  *
- * @member {number} outputWidth
+ * @member {number} output_width
  *   The width of output image. Usually, it is roughly half of the input width
  * (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
  *
- * @member {number} outputChannelCount
+ * @member {number} output_channelCount
  *   The channel count of output image. Usually, it is double the input channel count.
  *
 
@@ -86,9 +86,9 @@ class Stage_InferencedParams extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    this.outputChannelCount = undefined;
-    this.outputWidth = undefined;
-    this.outputHeight = undefined;
+    this.output_channelCount = undefined;
+    this.output_width = undefined;
+    this.output_height = undefined;
 
     this.blockParamsLast = undefined;
     this.blockParams0 = undefined;
@@ -203,9 +203,9 @@ class Stage_InferencedParams extends Recyclable.Root {
       this.blockParams0 = this.blockParamsArray[ 0 ]; // Shortcut to the first block.
       this.blockParamsLast = this.blockParamsArray[ this.blockParamsArray.length - 1 ]; // Shortcut to the last block.
 
-      this.outputHeight = this.blockParamsLast.output_height;
-      this.outputWidth = this.blockParamsLast.output_width;
-      this.outputChannelCount = this.blockParamsLast.output_channelCount;
+      this.output_height = this.blockParamsLast.output_height;
+      this.output_width = this.blockParamsLast.output_width;
+      this.output_channelCount = this.blockParamsLast.output_channelCount;
 
     } finally {
       if ( blockParamsCreator ) {
@@ -418,9 +418,9 @@ class Stage_InferencedParams extends Recyclable.Root {
   toString() {
     let str = ``
       + `blockCount=${this.blockCount}, `
-      + `outputHeight=${this.outputHeight}, `
-      + `outputWidth=${this.outputWidth}, `
-      + `outputChannelCount=${this.outputChannelCount}`
+      + `output_height=${this.output_height}, `
+      + `output_width=${this.output_width}, `
+      + `output_channelCount=${this.output_channelCount}`
     ;
     return str;
   }

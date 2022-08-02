@@ -152,16 +152,6 @@ class Stage_Reference_Base extends Recyclable.Root {
     {
       let stage = Stage_Reference_Base.Stage_create( testParams, this.testCorrectness_imageIn.boundsArraySet.output0 );
 
-//!!! (2022/07/26 Remarked) Moved into Stage_create().
-//       let { outputHeight, outputWidth } = testParams.out.inferencedParams;
-//       let outputChannelCount = sourceChannelCount * 2; // In current Stage's design, the output channel always is twice as input.
-//
-//       Stage_Reference_Base.AssertTwoEqualValues( "outputHeight", stage.outputHeight, outputHeight, stage );
-//       Stage_Reference_Base.AssertTwoEqualValues( "outputWidth", stage.outputWidth, outputWidth, stage );
-//       Stage_Reference_Base.AssertTwoEqualValues( "outputChannelCount", stage.outputChannelCount, outputChannelCount, stage );
-//
-//       Stage_Reference_Base.AssertTwoEqualValues( "blockCount", stage.blockCount, testParams.blockArray.length, stage );
-
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
       let stage_outputTensorCount = 1;
@@ -466,11 +456,11 @@ class Stage_Reference_Base extends Recyclable.Root {
     stage_asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
 
     // Inferenced parameters.
-    let { outputHeight, outputWidth, outputChannelCount } = testParams.out.inferencedParams;
+    let { output_height, output_width, output_channelCount } = testParams.out.inferencedParams;
 
-    stage_asserter.propertyValue( "outputHeight", outputHeight );
-    stage_asserter.propertyValue( "outputWidth", outputWidth );
-    stage_asserter.propertyValue( "outputChannelCount", outputChannelCount );
+    stage_asserter.propertyValue( "output_height", output_height );
+    stage_asserter.propertyValue( "output_width", output_width );
+    stage_asserter.propertyValue( "output_channelCount", output_channelCount );
     stage_asserter.propertyValue( "blockCount", testParams.blockArray.length );
 
     // Other parameters.
@@ -1034,10 +1024,6 @@ class Stage_Reference_Base extends Recyclable.Root {
       {
         if ( stage_or_stageParamsBase instanceof Stage.ParamsBase ) {
 
-//!!! (2022/07/31 Remarked) use Block.ParamsBase in Stage.Params.inferencedParams instead.
-          // block_or_blockParamsBase_asserter.propertyValue( "output_height", stage_or_stageParamsBase.inferencedParams.outputHeightArray[ blockIndex ] );
-          // block_or_blockParamsBase_asserter.propertyValue( "output_width", stage_or_stageParamsBase.inferencedParams.outputWidthArray[ blockIndex ] );
-
           block_or_blockParamsBase_asserter.propertyValue( "output_height",
             stage_or_stageParamsBase.inferencedParams.blockParamsArray[ blockIndex ].output_height );
 
@@ -1045,8 +1031,8 @@ class Stage_Reference_Base extends Recyclable.Root {
             stage_or_stageParamsBase.inferencedParams.blockParamsArray[ blockIndex ].output_width );
 
           if ( ( blockCount - 1 ) == blockIndex ) { // blockLast
-            block_or_blockParamsBase_asserter.propertyValue( "output_height", stage_or_stageParamsBase.inferencedParams.outputHeight );
-            block_or_blockParamsBase_asserter.propertyValue( "output_width", stage_or_stageParamsBase.inferencedParams.outputWidth );
+            block_or_blockParamsBase_asserter.propertyValue( "output_height", stage_or_stageParamsBase.inferencedParams.output_height );
+            block_or_blockParamsBase_asserter.propertyValue( "output_width", stage_or_stageParamsBase.inferencedParams.output_width );
           }
   
         } else { // Stage.Base

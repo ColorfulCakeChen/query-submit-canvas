@@ -137,22 +137,17 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       this.stageParamsArray.length = this.stageCount;
 
       let stageParams;
-      let next_input_height, next_input_width;
+      let next_input_height, next_input_width, next_input_channelCount;
       for ( let i = 0; i < this.stageCount; ++i ) { // Stage0, 1, 2, 3, ..., StageLast.
-
-//!!! ...unfinished... (2022/08/02)
 
         if ( 0 == i ) { // Stage0.
           stageParamsCreator.configTo_beforeStage0();
         } else { // (i.e. block1, 2, 3, ...)
-          stageParamsCreator.configTo_beforeStageN_exceptStage0( i, next_input_height, next_input_width );
+          stageParamsCreator.configTo_beforeStageN_exceptStage0(
+            i, next_input_height, next_input_width, next_input_channelCount );
         }
 
         // StageLast. (Note: Stage0 may also be StageLast.) 
-        //
-        // If this is the last block of this stage (i.e. at-stage-end)
-        //   - a different depthwise filter size may be used.
-        //   - a different activation function may be used after pointwise2 convolution.
         if ( ( this.stageParamsArray.length - 1 ) == i ) {
           stageParamsCreator.configTo_beforeStageLast();
         }
@@ -160,32 +155,13 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
         stageParams = this.stageParamsArray[ i ]
           = stageParamsCreator.create_StageParams( StageParamsClass ); // Create current block.
 
-        if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
-
-          // If channelShuffler is not null, keep it so that its tensors could be released.
-          let channelShuffler = stageParamsCreator.channelShuffler;
-          if ( channelShuffler ) {
-
-            if ( ( this.channelShuffler ) && ( this.channelShuffler != channelShuffler ) )
-              throw Error( `Stage.ParamsBase.stageParamsArray_create(): `
-                + `At most, only one (and same) channel shuffler could be used (and shared by all blocks of a stage).` );
-
-            this.channelShuffler = channelShuffler;
-            stageParamsCreator.channelShuffler = null; // (Ownership transferred.)
-
-          // If channelShuffler is null, do not use it. Otherwise, the this.channelShuffler
-          // will be cleared and could not be used for releasing tensors.
-          }
-
-        // If channelShuffler has ever got, never change it.
-        }
-
-        stageParams.channelShuffler = this.channelShuffler; // Stage.Params needs channel shuffler info (but does not own it).
-
         stageParams.inferencedParams_create();
 
-        next_input_height = stageParams.output_height;
-        next_input_width = stageParams.output_width;
+//!!! ...unfinished... (2022/08/02)
+
+        next_input_height = stageParams.inferencedParasm.output_height;
+        next_input_width = stageParams.inferencedParasm.output_width;
+        next_input_channelCount = stageParams.inferencedParasm.output_channelCount;
       }
 
       this.stageParams0 = this.stageParamsArray[ 0 ]; // Shortcut to the first block.
