@@ -552,7 +552,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
       // input0_channelCount
       if ( 0 == stageIndex ) { // stage0
-        stage_asserter.propertyValue( "input_channelCount", neuralNet.input_channelCount );
+        stage_asserter.propertyValue( "input_channelCount",
+          neuralNet.input_channelCount * neuralNet.vocabularyChannelCount );
 
       } else { // stage1, 2, 3, ...
         stage_asserter.propertyValue( "input_channelCount", stagePrevious.output_channel * 2 ); // Every stage double previous channel count.
