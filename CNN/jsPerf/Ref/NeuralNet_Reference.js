@@ -49,20 +49,10 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     this.Embedding_Reference = Embedding_Reference.Base.Pool.get_or_create_by();
     this.Stage_Reference = Stage_Reference.Base.Pool.get_or_create_by();
     this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.005 );
-
-    // For reducing memory allocation.
-    this.imageInArray = Recyclable.Array.Pool.get_or_create_by( 2 );  // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
-    this.imageOutArray = Recyclable.Array.Pool.get_or_create_by( 2 );  // imageOutArray[ 0 ] is output0, imageOutArray[ 1 ] is output1.
   }
 
   /** @override */
   disposeResources() {
-    this.imageOutArray?.disposeResources_and_recycleToPool();
-    this.imageOutArray = null;
-
-    this.imageInArray?.disposeResources_and_recycleToPool();
-    this.imageInArray = null;
-
     this.asserter_Equal?.disposeResources_and_recycleToPool();
     this.asserter_Equal = null;
 
@@ -609,50 +599,31 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
   calcResult( imageIn ) {
     let testParams = this.testParams;
 
-//!!! ...unfinished... (2022/08/02) 
+    let imageOut;
+    let imageToBeProccessed = imageIn;
+
+    // Calculate embedding.
+    let embeddingRef = this.Embedding_Reference;
+    imageOut = embeddingRef.calcResult( imageToBeProccessed );
 
     // Calculate every stages in sequence.
 
     let stageRef = this.Stage_Reference;
-
-    this.imageOutArray[ 0 ] = imageIn;
-    this.imageOutArray[ 1 ] = null;
-
     for ( let stageIndex = 0; stageIndex < testParams.stageArray.length; ++stageIndex ) {
-      this.imageInArray[ 0 ] = this.imageOutArray[ 0 ];
-      this.imageInArray[ 1 ] = this.imageOutArray[ 1 ];
+      imageToBeProccessed = imageOut;
 
       stageRef.testParams = testParams.stageArray[ stageIndex ];
-      stageRef.calcResult( this.imageInArray, this.imageOutArray );
-
-      // So that it can debug whether memory leak.
-      {
-        stageRef.testParams.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources();
-        stageRef.testParams.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources();
-      }
+      imageOut = stageRef.calcResult( imageToBeProccessed );
 
       { // Release intermediate input images.
-        if ( this.imageInArray[ 0 ] ) {
-          if ( this.imageInArray[ 0 ] != imageIn ) { // Do not release image from ImageSourceBag.
-            this.imageInArray[ 0 ].disposeResources_and_recycleToPool();
+        if ( imageToBeProccessed ) {
+          if ( imageToBeProccessed != imageIn ) { // Do not release image from ImageSourceBag.
+            imageToBeProccessed.disposeResources_and_recycleToPool();
           }
-          this.imageInArray[ 0 ] = null;
-        }
-
-        if ( this.imageInArray[ 1 ] ) {
-          this.imageInArray[ 1 ].disposeResources_and_recycleToPool();
-          this.imageInArray[ 1 ] = null;
+          imageToBeProccessed = null;
         }
       }
     }
-
-    let imageOut = this.imageOutArray[ 0 ]; // The stageLast should have only input0.
-
-    // Avoid dangling tensors.
-    this.imageInArray[ 0 ] = null;
-    this.imageInArray[ 1 ] = null;
-    this.imageOutArray[ 0 ] = null;
-    this.imageOutArray[ 1 ] = null;
 
     return imageOut;
   }
