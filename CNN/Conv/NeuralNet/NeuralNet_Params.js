@@ -5,10 +5,9 @@ import * as Pool from "../../util/Pool.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
+import * as Embedding from "../Embedding.js";
 import * as Stage from "../Stage.js";
 import { ParamsBase } from "./NeuralNet_ParamsBase.js";
-
-//!!! ...unfinished... (2022/07/31)
 
 //!!! ...unfinished... (2022/07/26)
 // Perhaps, add parameter bCastToInt32 for controlling whether needs cast input to integer.
