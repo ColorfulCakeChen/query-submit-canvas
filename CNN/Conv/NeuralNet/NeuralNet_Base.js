@@ -140,6 +140,7 @@ class NeuralNet_Base extends Recyclable.Root {
     this.vocabularyChannelCount = params.vocabularyChannelCount;
     this.vocabularyCountPerInputChannel = params.vocabularyCountPerInputChannel;
     this.nConvStageTypeId = params.nConvStageTypeId;
+    this.nConvStageTypeName = params.nConvStageTypeName;
     this.stageCountRequested = params.stageCountRequested;
     this.blockCountRequested = params.blockCountRequested;
     this.bKeepInputTensor = params.bKeepInputTensor;
