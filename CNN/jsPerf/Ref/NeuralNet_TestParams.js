@@ -148,7 +148,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       let stageParams = stageParamsArray[ i ];
 
       let stageTestParams = Stage_TestParams.Base.Pool.get_or_create_by( this.id );
-      blockTestParams.set_byParamsScattered(
+      stageTestParams.set_byParamsScattered(
         stageParams.input_height, stageParams.input_width, stageParams.input_channelCount,
         stageParams.nConvStageTypeId,
         stageParams.blockCountRequested,
