@@ -168,7 +168,7 @@ class NeuralNet_Base extends Recyclable.Root {
       );
   
       this.embedding = Embedding.AddGatherReshape.Pool.get_or_create_by();
-      let embeddingIniter = embedding.initer( progressForEmbedding,
+      let embeddingIniter = this.embedding.initer( progressForEmbedding,
         inputWeightArray, this.weightElementOffsetEnd, embeddingParams,
         inputScaleBoundsArray0
       );
