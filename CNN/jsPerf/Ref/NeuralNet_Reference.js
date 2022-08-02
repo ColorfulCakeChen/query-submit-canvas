@@ -441,6 +441,11 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     neuralNet_asserter.propertyValue( "output_width", output_width );
     neuralNet_asserter.propertyValue( "output_channelCount", output_channelCount );
 
+    // Every stage will double channel count.
+    let embedding_output_channelCount = testParams.out.input_channelCount * testParams.out.vocabularyChannelCount;
+    neuralNet_asserter.propertyValue( "output_channelCount",
+      embedding_output_channelCount * ( 2 ** stageCount ) );
+
     // Other parameters.
     neuralNet_asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
 
