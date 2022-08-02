@@ -335,7 +335,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
    */
   assert_imageOut_BoundsArraySet( neuralNet, imageOutReference, parametersDescription ) {
     BoundsArraySet_Asserter.assert_ScaleBoundsArray( this.asserter_Equal,
-      neuralNet.output0.scaleBoundsArray, imageOutReference.boundsArraySet.output0,
+      neuralNet.output_scaleBoundsArray, imageOutReference.boundsArraySet.output0,
       "output0", "output0_Ref", "NeuralNet", parametersDescription );
   }
 

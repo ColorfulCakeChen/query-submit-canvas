@@ -382,6 +382,10 @@ class NeuralNet_Base extends Recyclable.Root {
     return this.stageLast.output0.channelCount;
   }
 
+  get output_scaleBoundsArray() {
+    return this.stageLast.output0.scaleBoundsArray;
+  }
+
   /**
   * @return {string} The description string of all (adjusted) parameters of initer().
   *
