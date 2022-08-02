@@ -204,7 +204,6 @@ class NeuralNet_Base extends Recyclable.Root {
 
         if ( 0 == i ) { // Stage0.
           stageParamsCreator.configTo_beforeStage0();
-          input_ScaleBoundsArray = ??? inputScaleBoundsArray0;
         } else { // (i.e. stage1, 2, 3, ...)
           stageParamsCreator.configTo_beforeStageN_exceptStage0( i, next_input_height, next_input_width, next_input_channelCount );
         }
@@ -216,12 +215,11 @@ class NeuralNet_Base extends Recyclable.Root {
 
         stageParams = stageParamsCreator.create_StageParams( StageParamsClass ); // Create current stage parameters.
 
-//!!! ...unfinished... (2022/08/02)
-
         stage = this.stageArray[ i ] = Stage.Base.Pool.get_or_create_by();
-        stageIniter = stage.initer( progressForStages.children[ i ], inputWeightArray, this.weightElementOffsetEnd, stageParams,
-          input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
-          this.channelShuffler );
+        stageIniter = stage.initer( progressForStages.children[ i ],
+          inputWeightArray, this.weightElementOffsetEnd, stageParams,
+          input_ScaleBoundsArray
+        );
 
         this.bInitOk = yield* stageIniter;
         if ( !this.bInitOk )
@@ -231,16 +229,12 @@ class NeuralNet_Base extends Recyclable.Root {
         this.tensorWeightCountTotal += stage.tensorWeightCountTotal;
         this.tensorWeightCountExtracted += stage.tensorWeightCountExtracted;
 
-        input0_ScaleBoundsArray_or_TensorPlaceholder = stage.output0;
-        input1_ScaleBoundsArray_or_TensorPlaceholder = stage.output1;
+        input_ScaleBoundsArray = stage.output0.scaleBoundsArray;
       }
 
       this.stage0 = this.stageArray[ 0 ]; // Shortcut to the first stage.
       this.stageLast = this.stageArray[ this.stageArray.length - 1 ]; // Shortcut to the last stage.
 
-      this.outputChannelCount = this.stageLast.output_channelCount;
-
-//!!!???
       this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate stages' bounds array set for reducing memory footprint.
 
       this.bInitOk = true;
@@ -343,6 +337,9 @@ class NeuralNet_Base extends Recyclable.Root {
   *   Return a new tensor. All other intermediate tensors were disposed.
   */
   apply( inputTensor ) {
+
+//!!! ...unfinished... (2022/08/02)
+
     this.stage0.input0.realTensor = inputTensor; // Note: The stage0 should only input one tensor.
 
     let stageArray = this.stageArray;
