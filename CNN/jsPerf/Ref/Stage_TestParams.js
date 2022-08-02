@@ -3,11 +3,10 @@ export { Stage_TestParams_Base as Base };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as RandTools from "../../util/RandTools.js";
-//import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as Stage from "../../Conv/Stage.js";
 import * as TestParams from "./TestParams.js";
 import * as Block_TestParams from "./Block_TestParams.js";
-import * as Stage from "../../Conv/Stage.js";
 
 /**
  *
@@ -48,10 +47,8 @@ class Stage_TestParams_Base extends TestParams.Base {
 
   /** @override */
   disposeResources() {
-    if ( this.out ) {
-      this.out.disposeResources_and_recycleToPool();
-      this.out = null;
-    }
+    this.out?.disposeResources_and_recycleToPool();
+    this.out = null;
 
     this.blockArray?.disposeResources_and_recycleToPool();
     this.blockArray = null;
@@ -111,7 +108,7 @@ class Stage_TestParams_Base extends TestParams.Base {
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
    * The name should be one of Base.paramsNameOrderArray[] elements.
    *
-   * @param {Stage_TestParams.Out} this.out
+   * @param {Stage.ParamsBase} this.out
    *   An object which will be the final result of Stage.Params.
    *
    * @param {number} weightElementOffsetBegin
@@ -154,51 +151,6 @@ class Stage_TestParams_Base extends TestParams.Base {
       this.blockArray[ i ] = blockTestParams;
       this.in.paramsNumberArrayObject.push( blockTestParams.in_weights.weightArray ); // Place every block's parameters in sequence.
     }
-
-
-//!!! (2022/07/31 Remarked) use stageParams.inferenced.blockParamsArray instead.
-//     let blockParamsCreator = Stage.Base.create_BlockParamsCreator_byStageParams( stageParams );
-//     blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last();
-
-//     this.blockArray.clear();
-//     this.blockArray.length = blockParamsCreator.blockCount;
-
-//     this.in.paramsNumberArrayObject.length = 0;
-
-//     for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
-
-//       if ( 0 == i ) { // Block0.
-//         blockParamsCreator.configTo_beforeBlock0();
-//       } else { // (i.e. Block1, 2, 3, ...)
-//         blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i, ???input_height, input_width );
-//       }
-
-//       if ( ( this.blockArray.length - 1 ) == i ) { // BlockLast. (Note: Block0 may also be BlockLast.)
-//         blockParamsCreator.configTo_beforeBlockLast();
-//       }
-
-//       let blockTestParams = Block_TestParams.Base.Pool.get_or_create_by( this.id );
-//       blockTestParams.set_byParamsScattered(
-//         blockParamsCreator.input0_height, blockParamsCreator.input0_width, blockParamsCreator.input0_channelCount,
-//         blockParamsCreator.nConvBlockTypeId,
-//         blockParamsCreator.pointwise1ChannelCount,
-//         blockParamsCreator.depthwise_AvgMax_Or_ChannelMultiplier, blockParamsCreator.depthwiseFilterHeight,
-//         blockParamsCreator.depthwiseFilterWidth, blockParamsCreator.depthwiseStridesPad,
-//         blockParamsCreator.depthwiseActivationId,
-//         blockParamsCreator.pointwise20ChannelCount, blockParamsCreator.pointwise20ActivationId,
-//         blockParamsCreator.nSqueezeExcitationChannelCountDivisor, blockParamsCreator.bSqueezeExcitationPrefix,
-//         blockParamsCreator.nActivationId,
-//         blockParamsCreator.bKeepInputTensor
-//       );
-
-//       this.blockArray[ i ] = blockTestParams;
-//       this.in.paramsNumberArrayObject.push( blockTestParams.in_weights.weightArray ); // Place every block's parameters in sequence.
-//     }
-
-//     if ( blockParamsCreator ) {
-//       blockParamsCreator.disposeResources_and_recycleToPool();
-//       blockParamsCreator = null;
-//     }
 
     // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
     this.in_weights.set_byConcat(

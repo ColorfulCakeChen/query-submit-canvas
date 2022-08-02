@@ -1,11 +1,8 @@
 export { NeuralNet_TestParams_Base as Base };
-export { Out };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as RandTools from "../../util/RandTools.js";
-//import * as ParamDesc from "../../Unpacker/ParamDesc.js";
-import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
 import * as TestParams from "./TestParams.js";
@@ -49,10 +46,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
   /** @override */
   disposeResources() {
-    if ( this.out ) {
-      this.out.disposeResources_and_recycleToPool();
-      this.out = null;
-    }
+    this.out?.disposeResources_and_recycleToPool();
+    this.out = null;
 
     this.stageArray?.disposeResources_and_recycleToPool();
     this.stageArray = null;
@@ -85,9 +80,6 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       this.out = null;
     }
 
-//!!! ...unfinished... (2022/07/30)
-
-
     this.out = NeuralNet.ParamsBase.Pool.get_or_create_by(
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
@@ -111,7 +103,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
    * The name should be one of Base.paramsNameOrderArray[] elements.
    *
-   * @param {NeuralNet_TestParams.Out} this.out
+   * @param {NeuralNet.ParamsBase} this.out
    *   An object which will be the final result of NeuralNet.Params.
    *
    * @param {number} weightElementOffsetBegin
@@ -148,34 +140,25 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       this.in.paramsNumberArrayObject.push( this.embeddingTestParams.in_weights.weightArray );
     }
 
-    let stageParamsCreator = Stage.Base.create_StageParamsCreator_byNeuralNetParams( neuralNetParams );
+    let stageParamsArray = neuralNetParams.inferencedParams.stageParamsArray;
 
     this.stageArray.clear();
-    this.stageArray.length = stageParamsCreator.stageCount;
+    this.stageArray.length = stageParamsArray.length;
 
-    for ( let i = 0; i < stageCount; ++i ) { // Stage0, 1, 2, 3, ..., StageLast.
-
-      if ( 0 == i ) { // Stage0.
-        stageParamsCreator.configTo_beforeStage0();
-      } else { // (i.e. Stage1, 2, 3, ...)
-        stageParamsCreator.configTo_beforeStageN_exceptStage0( i );
-      }
-
-      if ( ( this.blockArray.length - 1 ) == i ) { // StageLast. (Note: Stage0 may also be StageLast.)
-        stageParamsCreator.configTo_beforeStageLast();
-      }
+    for ( let i = 0; i < stageParamsArray.length; ++i ) { // Stage0, 1, 2, 3, ..., StageLast.
+      let stageParams = stageParamsArray[ i ];
 
       let stageTestParams = Stage_TestParams.Base.Pool.get_or_create_by( this.id );
       blockTestParams.set_byParamsScattered(
-        stageParamsCreator.input_height, stageParamsCreator.input_width, stageParamsCreator.input_channelCount,
-        stageParamsCreator.nConvStageTypeId,
-        stageParamsCreator.blockCountRequested,
-        stageParamsCreator.bPointwise1,
-        stageParamsCreator.depthwiseFilterHeight, stageParamsCreator.depthwiseFilterWidth,
-        stageParamsCreator.bPointwise2ActivatedAtStageEnd,
-        stageParamsCreator.nSqueezeExcitationChannelCountDivisor,
-        stageParamsCreator.nActivationId,
-        stageParamsCreator.bKeepInputTensor
+        stageParams.input_height, stageParams.input_width, stageParams.input_channelCount,
+        stageParams.nConvStageTypeId,
+        stageParams.blockCountRequested,
+        stageParams.bPointwise1,
+        stageParams.depthwiseFilterHeight, stageParams.depthwiseFilterWidth,
+        stageParams.bPointwise2ActivatedAtStageEnd,
+        stageParams.nSqueezeExcitationChannelCountDivisor,
+        stageParams.nActivationId,
+        stageParams.bKeepInputTensor
       );
 
       this.stageArray[ i ] = stageTestParams;
