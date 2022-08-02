@@ -88,6 +88,8 @@ class HeightWidthDepth {
       let aPerformanceTestCase = new PerformanceTestCase(
         stageTestParams.id, testCaseName, stageTestParams, stage, inputTensor3d );
 
+      this.testCaseMap.set( testCaseName, aPerformanceTestCase );
+
       console.log( `Stage.${testCaseName}: tensorWeightCount = { `
         + `Extracted: ${stage.tensorWeightCountExtracted}, `
         + `Total: ${stage.tensorWeightCountTotal} }` );
