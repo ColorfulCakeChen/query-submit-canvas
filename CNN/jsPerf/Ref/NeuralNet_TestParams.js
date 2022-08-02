@@ -52,8 +52,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     this.stageArray?.disposeResources_and_recycleToPool();
     this.stageArray = null;
 
-    this.embeddingTestParams?.disposeResources_and_recycleToPool();
-    this.embeddingTestParams = null;
+    this.embedding?.disposeResources_and_recycleToPool();
+    this.embedding = null;
 
     super.disposeResources();
   }
@@ -122,10 +122,10 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
     // 1. Embedding
     {
-      this.embeddingTestParams?.disposeResources_and_recycleToPool();
-      this.embeddingTestParams = Embedding_TestParasm.Pool.get_or_create_by( this.id );
+      this.embedding?.disposeResources_and_recycleToPool();
+      this.embedding = Embedding_TestParams.Pool.get_or_create_by( this.id );
 
-      this.embeddingTestParams.set_byParamsScattered(
+      this.embedding.set_byParamsScattered(
         neuralNetParams.input_height,
         neuralNetParams.input_width,
         neuralNetParams.input_channelCount,
@@ -135,7 +135,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
         neuralNetParams.bKeepInputTensor
       );
 
-      this.in.paramsNumberArrayObject.push( this.embeddingTestParams.in_weights.weightArray );
+      this.in.paramsNumberArrayObject.push( this.embedding.in_weights.weightArray );
     }
 
     // 2. Stages
@@ -200,8 +200,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
   onYield_after() {
     this.stageArray.clear();
 
-    this.embeddingTestParams?.disposeResources_and_recycleToPool();
-    this.embeddingTestParams = null;
+    this.embedding?.disposeResources_and_recycleToPool();
+    this.embedding = null;
   }
 
   /**
