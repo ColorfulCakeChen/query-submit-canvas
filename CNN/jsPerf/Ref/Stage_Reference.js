@@ -181,7 +181,7 @@ class Stage_Reference_Base extends Recyclable.Root {
           outputTensorChannelCount = outputTensor3d.shape[ CHANNEL_AXIS_ID ];
 
         // The real channel count of the output tensor should be the same as predicted output channel count.
-        Stage_Reference_Base.AssertTwoEqualValues( "outputChannelCount", stage.outputChannelCount, outputTensorChannelCount, stage );
+        Stage_Reference_Base.AssertTwoEqualValues( "output_channelCount", stage.output_channelCount, outputTensorChannelCount, stage );
       }
 
       // Test correctness of Stage BoundsArraySet.
