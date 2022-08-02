@@ -21,6 +21,19 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
  */
 
 /**
+ * 
+ */
+ class PerformanceTestCase {
+  constructor( testCaseId, testCaseName, embeddingTestParams, embedding, inputTensor3d ) {
+    this.testCaseId = testCaseId;
+    this.testCaseName = testCaseName;
+    this.embeddingTestParams = embeddingTestParams;
+    this.embedding = embedding;
+    this.inputTensor3d = inputTensor3d;
+  }
+}
+
+/**
  * A test set.
  */
 class HeightWidthDepth {
@@ -42,12 +55,50 @@ class HeightWidthDepth {
   }
 
   disposeResources() {
-    if ( this.dataTensor3dArray ) {
-      tf.dispose( this.dataTensor3dArray );
-      this.dataTensor3dArray = null;
-    }
-
     this.embedding_PerformanceTest_release();
+  }
+  /**
+   * 
+   */
+   embedding_PerformanceTest_addCase( testCaseName, embeddingTestParams ) {
+    try {
+
+      // Pre-create performance test case's input image.
+      let inputImage = this.testPerformance_imageSourceBag.getImage_by(
+        embeddingTestParams.out.input_height,
+        embeddingTestParams.out.input_width,
+        embeddingTestParams.out.input_channelCount );
+
+      // Pre-create performance test case's input tensor.
+      let inputTensor3d = this.testPerformance_imageSourceBag.getTensor3d_by(
+        embeddingTestParams.out.input_height,
+        embeddingTestParams.out.input_width,
+        embeddingTestParams.out.input_channelCount );
+
+      let EmbeddingClass;
+      {
+        if ( ( embeddingTestParams.id % 2 ) == 0 )
+          EmbeddingClass = Embedding.AddGatherReshape;
+        else
+          EmbeddingClass = Embedding.SplitReshapeGatherConcat;
+      }
+
+      let embedding = Embedding_Reference.Base.Embedding_create(
+        EmbeddingClass, embeddingTestParams, inputImage.boundsArraySet.output0 );
+
+      let aPerformanceTestCase = new PerformanceTestCase(
+        embeddingTestParams.id, testCaseName, embeddingTestParams, embedding, inputTensor3d );
+
+      this.testCaseMap.set( testCaseName, aPerformanceTestCase );
+
+      console.log( `Embedding.${testCaseName}: tensorWeightCount = { `
+        + `Extracted: ${embedding.tensorWeightCountExtracted}, `
+        + `Total: ${embedding.tensorWeightCountTotal} }` );
+
+    } catch ( e ) {
+      debugger;
+      throw e;
+    }
   }
 
   embedding_PerformanceTest_init() {
@@ -56,48 +107,7 @@ class HeightWidthDepth {
     this.disposeResources();
 
     // Larger input image for performance testing.
-    let inputTensorCount = 1;
-    this.testPerformance_NumberImageArray = Recyclable.OwnerArray.Pool.get_or_create_by( inputTensorCount );
-    this.dataTensor3dArray = tf.tidy( () => {
-      const randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 256;
-
-//!!! (2022/07/26 Remarked) Use create_bySequenceRandom() instead.
-//      let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( this.depth );
-
-      let dataTensor3dArray = new Array( inputTensorCount );
-
-      let shape = [ this.height, this.width, this.depth ];
-      let elementCount = tf.util.sizeFromShape( shape );
-
-      for ( let i = 0; i < dataTensor3dArray.length; ++i ) {
-
-//!!! (2022/07/26 Remarked) Use create_bySequenceRandom() instead.
-//         let numberBegin = ( i * elementCount );
-//         let numberEnd = numberBegin + elementCount;
-//
-//         let image = this.testPerformance_NumberImageArray[ i ] = NumberImage.Base.Pool.get_or_create_by(
-//           this.height, this.width, this.depth, undefined,
-//           inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, Weights.Base.ValueBounds );
-//
-//         for ( let j = 0; j < elementCount; ++j ) {
-//           image.dataArray[ j ] = numberBegin + j;
-//         }
-      
-        let image = this.testPerformance_NumberImageArray[ i ] = NumberImage.Base.create_bySequenceRandom(
-          this.height, this.width, this.depth,
-          randomOffsetMin, randomOffsetMax, divisorForRemainder
-        );
-
-        dataTensor3dArray[ i ] = tf.tensor( image.dataArray, shape, "int32" );
-      }
-
-//!!! (2022/07/26 Remarked) Use create_bySequenceRandom() instead.
-//      inputScaleBoundsArray.disposeResources_and_recycleToPool();
-//      inputScaleBoundsArray = null;
-
-      return dataTensor3dArray;
-    });
-
+    this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32 ");
 
     let vocabularyCountPerInputChannel = 256;
     let bEmbedVocabularyId = true;
@@ -115,103 +125,69 @@ class HeightWidthDepth {
     else
       this.testCaseMap = new Map();
 
-    // Test Case 1: (AddGatherReshape, ( channelMultiplier == 1 ))
-    this.testCaseMap.set( "AddGatherReshape_channelMultiplier_1", { testParams: 
-      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 0: (AddGatherReshape, ( channelMultiplier == 1 ))
+    this.stage_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_1",
+      ( new Embedding_TestParams.Base( 0 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 1,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
-      ) } );
+      ) );
 
-    // Test Case 2: (SplitReshapeGatherConcat, ( channelMultiplier == 1 ))
-    this.testCaseMap.set( "SplitReshapeGatherConcat_channelMultiplier_1", { testParams: 
-      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 1: (SplitReshapeGatherConcat, ( channelMultiplier == 1 ))
+    this.stage_PerformanceTest_addCase( "SplitReshapeGatherConcat_channelMultiplier_1",
+      ( new Embedding_TestParams.Base( 1 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 1,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
-      ) } );
+      ) );
 
-    // Test Case 3: (AddGatherReshape, ( channelMultiplier == 2 ))
-    this.testCaseMap.set( "AddGatherReshape_channelMultiplier_2", { testParams: 
-      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 2: (AddGatherReshape, ( channelMultiplier == 2 ))
+    this.stage_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_2",
+      ( new Embedding_TestParams.Base( 2 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 2,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
-      ) } );
+      ) );
 
-    // Test Case 4: (SplitReshapeGatherConcat, ( channelMultiplier == 2 ))
-    this.testCaseMap.set( "SplitReshapeGatherConcat_channelMultiplier_2", { testParams: 
-      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 3: (SplitReshapeGatherConcat, ( channelMultiplier == 2 ))
+    this.stage_PerformanceTest_addCase( "SplitReshapeGatherConcat_channelMultiplier_2",
+      ( new Embedding_TestParams.Base( 3 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 2,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
-      ) } );
+      ) );
 
-    // Test Case 5: (AddGatherReshape, ( channelMultiplier == 4 ))
-    this.testCaseMap.set( "AddGatherReshape_channelMultiplier_4", { testParams: 
-      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 4: (AddGatherReshape, ( channelMultiplier == 4 ))
+    this.stage_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_4",
+      ( new Embedding_TestParams.Base( 4 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 4,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
-      ) } );
+      ) );
 
-    // Test Case 6: (SplitReshapeGatherConcat, ( channelMultiplier == 4 ))
-    this.testCaseMap.set( "SplitReshapeGatherConcat_channelMultiplier_4", { testParams: 
-      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 5: (SplitReshapeGatherConcat, ( channelMultiplier == 4 ))
+    this.stage_PerformanceTest_addCase( "SplitReshapeGatherConcat_channelMultiplier_4",
+      ( new Embedding_TestParams.Base( 5 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 4,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
-      ) } );
+      ) );
 
-    // Test Case 7: (AddGatherReshape, ( channelMultiplier == 8 ))
-    this.testCaseMap.set( "AddGatherReshape_channelMultiplier_8", { testParams: 
-      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 6: (AddGatherReshape, ( channelMultiplier == 8 ))
+    this.stage_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_8",
+      ( new Embedding_TestParams.Base( 6 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 8,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
-      ) } );
+      ) );
 
-    // Test Case 8: (SplitReshapeGatherConcat, ( channelMultiplier == 8 ))
-    this.testCaseMap.set( "SplitReshapeGatherConcat_channelMultiplier_8", { testParams: 
-      ( new Embedding_TestParams.Base() ).set_byParamsScattered(
+    // Test Case 7: (SplitReshapeGatherConcat, ( channelMultiplier == 8 ))
+    this.stage_PerformanceTest_addCase( "SplitReshapeGatherConcat_channelMultiplier_8",
+      ( new Embedding_TestParams.Base( 7 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 8,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
         true
-      ) } );
-
-
-    // Create the different Embedding objects for performance testing.
-    {
-      let i = 0;
-      for ( let name_testCase of this.testCaseMap.entries() ) {
-        let name = name_testCase[ 0 ];
-        let testCase = name_testCase[ 1 ];
-        try {
-          if ( !testCase.embedding ) {
-            let EmbeddingClass;
-            {
-              if ( ( i % 2 ) == 0 )
-                EmbeddingClass = Embedding.AddGatherReshape;
-              else
-                EmbeddingClass = Embedding.SplitReshapeGatherConcat;
-            }
-
-            testCase.embedding = Embedding_Reference.Base.Embedding_create(
-              EmbeddingClass, testCase.testParams,
-              this.testPerformance_NumberImageArray[ 0 ].boundsArraySet.output0 );
-          }
-        } catch ( e ) {
-          debugger;
-          throw e;
-        }
-
-        console.log( `Embedding.${name}: tensorWeightCount = { `
-          + `Extracted: ${testCase.embedding.tensorWeightCountExtracted}, `
-          + `Total: ${testCase.embedding.tensorWeightCountTotal} }` );
-
-        ++i;
-      }
-    }
+      ) );
   }
 
   embedding_PerformanceTest_release() {
@@ -226,9 +202,9 @@ class HeightWidthDepth {
       this.testCaseMap.clear();
     }
 
-    if ( this.testPerformance_NumberImageArray ) {
-      this.testPerformance_NumberImageArray.disposeResources_and_recycleToPool();
-      this.testPerformance_NumberImageArray = null;
+    if ( this.testPerformance_imageSourceBag ) {
+      this.testPerformance_imageSourceBag.disposeResources_and_recycleToPool();
+      this.testPerformance_imageSourceBag = null;
     }
   }
 
@@ -236,14 +212,15 @@ class HeightWidthDepth {
   testEmbedding_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
     let embedding = testCase.embedding;
-    let outputTensor3d = embedding.apply( this.dataTensor3dArray[ 0 ] );
+    let outputTensor3d = embedding.apply( testCase.inputTensor3d );
     tf.dispose( outputTensor3d );
   }
 
   /** Testing whether the results of different implementation are the same. */
   * testCorrectness() {
 
-    {
+//!!! (2022/08/02 Temp Remarked) For speed-up PerformanceTest.
+    if ( 0 ) {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
       yield;

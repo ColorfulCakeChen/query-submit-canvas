@@ -19,7 +19,6 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
  * @see {@link https://www.measurethat.net/Benchmarks/Show/15055/302/colorfulcakechen-cnn-stage-e3f60bcb51602297af79317d2f98}
  */
 
-
 /**
  * 
  */
@@ -55,12 +54,6 @@ class HeightWidthDepth {
   }
 
   disposeResources() {
-//!!! (2022/08/02 Remarked) Use ImageSourceBag instead.
-    // if ( this.dataTensor3dArray ) {
-    //   tf.dispose( this.dataTensor3dArray );
-    //   this.dataTensor3dArray = null;
-    // }
-
     this.stage_PerformanceTest_release();
   }
 
@@ -106,39 +99,6 @@ class HeightWidthDepth {
     this.disposeResources();
 
     // Larger input image for performance testing.
-
-//!!! (2022/08/02 Remarked) Use ImageSourceBag instead.
-    // let inputTensorCount = 1;
-    // this.testPerformance_NumberImageArray = Recyclable.OwnerArray.Pool.get_or_create_by( inputTensorCount );
-    // this.dataTensor3dArray = tf.tidy( () => {
-    //   let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( this.depth );
-
-    //   let dataTensor3dArray = new Array( inputTensorCount );
-
-    //   let shape = [ this.height, this.width, this.depth ];
-    //   let elementCount = tf.util.sizeFromShape( shape );
-
-    //   for ( let i = 0; i < dataTensor3dArray.length; ++i ) {
-    //     let numberBegin = ( i * elementCount );
-    //     let numberEnd = numberBegin + elementCount;
-
-    //     let image = this.testPerformance_NumberImageArray[ i ] = NumberImage.Base.Pool.get_or_create_by(
-    //       this.height, this.width, this.depth, undefined,
-    //       inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, Weights.Base.ValueBounds );
-
-    //     for ( let j = 0; j < elementCount; ++j ) {
-    //       image.dataArray[ j ] = numberBegin + j;
-    //     }
-
-    //     dataTensor3dArray[ i ] = tf.tensor( image.dataArray, shape );
-    //   }
-
-    //   inputScaleBoundsArray.disposeResources_and_recycleToPool();
-    //   inputScaleBoundsArray = null;
-
-    //   return dataTensor3dArray;
-    // });
-
     this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by();
 
     let blockCountRequested = 10;
@@ -242,27 +202,6 @@ class HeightWidthDepth {
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) );
-
-//!!! (2022/08/02 Remarked) Use this.stage_PerformanceTest_addCase() instead.
-    // // Create the different Stage objects for performance testing.
-    // for ( let name_testCase of this.testCaseMap.entries() ) {
-    //   let name = name_testCase[ 0 ];
-    //   let testCase = name_testCase[ 1 ];
-    //   try {
-    //     if ( !testCase.stage ) {
-    //       testCase.stage = Stage_Reference.Base.Stage_create(
-    //         testCase.testParams, this.testPerformance_NumberImageArray[ 0 ].boundsArraySet.output0 );
-    //     }
-    //   } catch ( e ) {
-    //     debugger;
-    //     throw e;
-    //   }
-
-    //   console.log( `Stage.${name}: tensorWeightCount = { `
-    //     + `Extracted: ${testCase.stage.tensorWeightCountExtracted}, `
-    //     + `Total: ${testCase.stage.tensorWeightCountTotal} }` );
-    // }
-
   }
 
   stage_PerformanceTest_release() {
@@ -281,12 +220,6 @@ class HeightWidthDepth {
       this.testPerformance_imageSourceBag.disposeResources_and_recycleToPool();
       this.testPerformance_imageSourceBag = null;
     }
-
-//!!! (2022/08/02 Remarked) Use ImageSourceBag instead.
-    // if ( this.testPerformance_NumberImageArray ) {
-    //   this.testPerformance_NumberImageArray.disposeResources_and_recycleToPool();
-    //   this.testPerformance_NumberImageArray = null;
-    // }
   }
 
   /** Test apply by Xxx */
