@@ -118,11 +118,9 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
     this.generate_out_inferencedParams();
 
-
-//!!! ...unfinished... (2022/07/30)
-
     this.in.paramsNumberArrayObject.length = 0;
 
+    // 1. Embedding
     {
       this.embeddingTestParams?.disposeResources_and_recycleToPool();
       this.embeddingTestParams = Embedding_TestParasm.Pool.get_or_create_by( this.id );
@@ -140,6 +138,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       this.in.paramsNumberArrayObject.push( this.embeddingTestParams.in_weights.weightArray );
     }
 
+    // 2. Stages
     let stageParamsArray = neuralNetParams.inferencedParams.stageParamsArray;
 
     this.stageArray.clear();

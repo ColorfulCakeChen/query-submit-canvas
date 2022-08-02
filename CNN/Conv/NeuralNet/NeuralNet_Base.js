@@ -3,66 +3,60 @@ export { NeuralNet_Base as Base };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../util/ValueMax.js";
-import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-import * as TensorPlaceholder from "../TensorPlaceholder.js";
+import * as Embedding from "../Embedding.js";
 import * as Stage from "../Stage.js";
-import * as ChannelShuffler from "../ChannelShuffler.js";
 import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
 import { Params } from "./NeuralNet_Params.js";
+import { InferencedParams } from "./Stage_InferencedParams.js";
  
-//!!! ...unfinished... (2022/07/31)
-
 /**
  * This is the base class of NeuralNet.
  *
  *
- * NeuralNet is composed of an embedding and multiple neuralNets.
-*
-*
-*
-* @member {boolean} bInitOk
-*  If true, this object initialized (i.e. initer()) successfully.
-*
-* @member {number} weightElementOffsetBegin
-*   The position which is started (inclusive) to extract from inputWeightArray by initer().
-*
-* @member {number} weightElementOffsetEnd
-*   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
-* Only meaningful when ( this.bInitOk == true ).
-*
-* @member {Stage.Base[]} stageArray
-*   All computation stages of this neuralNet.
-*
-* @member {Stage.Base} stage0
-*   The first computation stage of this neuralNet.
-*
-* @member {Stage.Base} stageLast
-*   The last computation stage of this neuralNet. It may be the same as this.stage0 when there is only one stage inside this neuralNet.
-*
-* @member {TensorPlaceholder.Base} input0
-*   The TensorPlaceholder object which represents this neuralNet's input.
-*
-* @member {number} output_height
-*   The output image height of this neuralNet's last stage.
-*
-* @member {number} output_width
-*   The output image width of this neuralNet's last stage.
-*
-* @member {number} output_channelCount
-*   The output channel count of this neuralNet's last stage.
-*
-* @member {TensorPlaceholder.Base} output0
-*   The TensorPlaceholder object which represents this neuralNet's output.
-*
-* @member {number} tensorWeightCountTotal
-*   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
-* weights, if they are used in tensors.
-*
-* @member {number} tensorWeightCountExtracted
-*   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used in
-* tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputWeightArray.
-*
-*/
+ * NeuralNet is composed of an embedding and multiple stages.
+ *
+ *
+ *
+ * @member {boolean} bInitOk
+ *  If true, this object initialized (i.e. initer()) successfully.
+ *
+ * @member {number} weightElementOffsetBegin
+ *   The position which is started (inclusive) to extract from inputWeightArray by initer().
+ *
+ * @member {number} weightElementOffsetEnd
+ *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
+ * Only meaningful when ( this.bInitOk == true ).
+ *
+ * @member {Embedding.Base} embedding
+ *   The embedding layer before all stages of this neuralNet.
+ *
+ * @member {Stage.Base[]} stageArray
+ *   All computation stages of this neuralNet.
+ *
+ * @member {Stage.Base} stage0
+ *   The first computation stage of this neuralNet.
+ *
+ * @member {Stage.Base} stageLast
+ *   The last computation stage of this neuralNet. It may be the same as this.stage0 when there is only one stage inside this neuralNet.
+ *
+ * @member {number} output_height
+ *   The output image height of this neuralNet's last stage.
+ *
+ * @member {number} output_width
+ *   The output image width of this neuralNet's last stage.
+ *
+ * @member {number} output_channelCount
+ *   The output channel count of this neuralNet's last stage.
+ *
+ * @member {number} tensorWeightCountTotal
+ *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
+ * weights, if they are used in tensors.
+ *
+ * @member {number} tensorWeightCountExtracted
+ *   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used in
+ * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputWeightArray.
+ *
+ */
 class NeuralNet_Base extends Recyclable.Root {
 
   /**
@@ -96,7 +90,7 @@ class NeuralNet_Base extends Recyclable.Root {
   *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
   * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
   *
-  * @param {Params} params
+  * @param {NeuralNet.Params} params
   *   A Params object. The params.init() will be called to extract parameters. This params will be owned and destroyed by this .initer().
   * So caller should not use it again.
   *
@@ -126,6 +120,7 @@ class NeuralNet_Base extends Recyclable.Root {
 
     let progressRoot = progressParent.getRoot();
     let progressToAdvance = progressParent.addChild( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
+    let progressForEmbedding = progressParent.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for embedding extracting.
     let progressForStages = progressParent.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for stage0, stage1, stage2, ... 
 
     // 1. Extract parameters.
@@ -156,23 +151,44 @@ class NeuralNet_Base extends Recyclable.Root {
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
 
-    // Note: params will be released by StageParamsCreator.
-
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
+//!!! ...unfinished... (2022/08/02) embedding
+    {
+      this.embedding = Embedding.Base.Pool.get_or_create_by();
+      let embeddingIniter = Eembedding.initer( progressForEmbedding,
+        inputWeightArray, this.weightElementOffsetEnd, ???stageParams,
+        input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
+        this.channelShuffler );
+
+      this.bInitOk = yield* stageIniter;
+      if ( !this.bInitOk )
+        return false;
+      this.weightElementOffsetEnd = stage.weightElementOffsetEnd;
+
+      this.tensorWeightCountTotal += stage.tensorWeightCountTotal;
+      this.tensorWeightCountExtracted += stage.tensorWeightCountExtracted;
+
+      input0_ScaleBoundsArray_or_TensorPlaceholder = stage.output0;
+      input1_ScaleBoundsArray_or_TensorPlaceholder = stage.output1;
+
+    }
+
     let stageParamsCreator;
     try {
+      let StageParamsClass = params.StageParamsClass_get();
+
       // 2. Create every stages.
-      stageParamsCreator = NeuralNet_Base.create_StageParamsCreator_byNeuralNetParams( params );
-      stageParamsCreator.determine_stageCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real stage count.
+      stageParamsCreator = InferencedParams.create_StageParamsCreator_byNeuralNetParams( params );
 
       for ( let i = 0; i < stageParamsCreator.stageCount; ++i ) { // Progress for stage0, 1, 2, 3, ... 
         progressForStages.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
       }
 
       let stageParams, stage, stageIniter;
-      let input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder;
+      let input_ScaleBoundsArray;
+      let next_input_height, next_input_width, next_input_channelCount;
 
       this.stageArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
       this.stageArray.length = stageParamsCreator.stageCount;
@@ -181,45 +197,19 @@ class NeuralNet_Base extends Recyclable.Root {
 
         if ( 0 == i ) { // Stage0.
           stageParamsCreator.configTo_beforeStage0();
-          input0_ScaleBoundsArray_or_TensorPlaceholder = inputScaleBoundsArray0;
+          input_ScaleBoundsArray = inputScaleBoundsArray0;
         } else { // (i.e. stage1, 2, 3, ...)
-          stageParamsCreator.configTo_beforeStageN_exceptStage0( i );
+          stageParamsCreator.configTo_beforeStageN_exceptStage0( i, next_input_height, next_input_width, next_input_channelCount );
         }
 
         // StageLast. (Note: Stage0 may also be StageLast.) 
-        //
-        // If this is the last stage of this neuralNet (i.e. at-neuralNet-end)
-        //   - a different depthwise filter size may be used.
-        //   - a different activation function may be used after pointwise2 convolution.
         if ( ( this.stageArray.length - 1 ) == i ) {
           stageParamsCreator.configTo_beforeStageLast();
         }
 
-        this.assert_ImageSize_BetweenStage( i, stageParamsCreator ); // Assert image size.
+        stageParams = stageParamsCreator.create_StageParams( StageParamsClass ); // Create current stage parameters.
 
-        stageParams = stageParamsCreator.create_StageParams(); // Create current stage.
-
-        if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
-
-          // If channelShuffler is not null, keep it so that its tensors could be released.
-          let channelShuffler = stageParamsCreator.channelShuffler;
-          if ( channelShuffler ) {
-
-            if ( ( this.channelShuffler ) && ( this.channelShuffler != channelShuffler ) )
-              throw Error( `NeuralNet.Base.initer(): `
-                + `At most, only one (and same) channel shuffler could be used (and shared by all stages of a neuralNet).` );
-
-            this.channelShuffler = channelShuffler;
-
-            this.tensorWeightCountExtracted += channelShuffler.tensorWeightCountExtracted;
-            this.tensorWeightCountTotal += channelShuffler.tensorWeightCountTotal;
-
-          // If channelShuffler is null, do not use it. Otherwise, the this.channelShuffler will be cleared and could not be used
-          // for releasing tensors.
-          }
-
-        // If channelShuffler has ever got, never change it.
-        }
+//!!! ...unfinished... (2022/08/02)
 
         stage = this.stageArray[ i ] = Stage.Base.Pool.get_or_create_by();
         stageIniter = stage.initer( progressForStages.children[ i ], inputWeightArray, this.weightElementOffsetEnd, stageParams,
@@ -290,7 +280,6 @@ class NeuralNet_Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    this.outputChannelCount = -1;
     this.stageLast = null; // It is just a reference into this.stageArray[].
     this.stage0 = null; // It is just a reference into this.stageArray[].
 
@@ -299,21 +288,13 @@ class NeuralNet_Base extends Recyclable.Root {
       this.stageArray = null;
     }
 
-    this.channelShuffler_dispose();
+    if ( this.embedding ) {
+      this.embedding.disposeResources_and_recycleToPool();
+      this.embedding = null;
+    }
 
     this.tensorWeightCountTotal = 0;
     this.tensorWeightCountExtracted = 0;
-
-//!!! (2022/07/15 Remarked) Now stage will use TensorPlaceholder directly.
-//     if ( this.intermediateOutputTensors ) {
-//       this.intermediateOutputTensors.disposeResources_and_recycleToPool();
-//       this.intermediateOutputTensors = null;
-//     }
-//
-//     if ( this.intermediateInputTensors ) {
-//       this.intermediateInputTensors.disposeResources_and_recycleToPool();
-//       this.intermediateInputTensors = null;
-//     }
 
     this.weightElementOffsetBegin = this.weightElementOffsetEnd = -1;
     this.bInitOk = false;
@@ -377,14 +358,6 @@ class NeuralNet_Base extends Recyclable.Root {
     return this.stageArray.length;
   }
 
-  get input0() {
-    return this.stage0.input0;
-  }
-
-  get output0() {
-    return this.stageLast.output0;
-  }
-
   get output_height() {
     return this.stageLast.output0.height;
   }
@@ -414,6 +387,7 @@ class NeuralNet_Base extends Recyclable.Root {
       + `blockCountRequested=${this.blockCountRequested}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
 
+      + `stageCount=${this.stageCount}, `
       + `output_height=${this.output_height}, output_width=${this.output_width}, output_channelCount=${this.output_channelCount}`
     ;
     return str;

@@ -117,6 +117,14 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
   }
 
   /**
+   * @return {Embedding.ParamsBase|Embedding.Params}
+   *   Return which embedding parameter class should be used by InferencedParams.
+   */
+  EmbeddingParamsClass_get() {
+    return Embedding.ParamsBase;
+  }
+
+  /**
    * @return {Stage.ParamsBase|Stage.Params}
    *   Return which stage parameter class should be used by InferencedParams.
    */

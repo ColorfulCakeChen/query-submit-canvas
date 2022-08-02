@@ -604,10 +604,10 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
     // Calculate embedding.
     let embeddingRef = this.Embedding_Reference;
+    embeddingRef.testParams = testParams.embeddingTestParams;
     imageOut = embeddingRef.calcResult( imageToBeProccessed );
 
     // Calculate every stages in sequence.
-
     let stageRef = this.Stage_Reference;
     for ( let stageIndex = 0; stageIndex < testParams.stageArray.length; ++stageIndex ) {
       imageToBeProccessed = imageOut;

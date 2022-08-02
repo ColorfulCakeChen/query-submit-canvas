@@ -78,7 +78,10 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 
     this.input_height = neuralNetParams.input_height;
     this.input_width = neuralNetParams.input_width;
-    this.input_channelCount = neuralNetParams.input_channelCount;
+
+    // The channel count is expanded by prefix embedding layer.
+    this.input_channelCount
+      = neuralNetParams.input_channelCount * neuralNetParams.vocabularyChannelCount;
 
     this.nConvStageTypeId = neuralNetParams.nConvStageTypeId;
 

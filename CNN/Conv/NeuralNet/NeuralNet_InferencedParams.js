@@ -78,7 +78,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self( neuralNetParamsBase ) {
-    this.bEmbedVocabularyId = true; // Neural network should always have embedding layer.
+    this.embeddingParams_create( neuralNetParamsBase );
     this.stageParamsArray_create( neuralNetParamsBase );
   }
 
@@ -92,9 +92,9 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     this.stageParams0 = undefined;
 
     this.stageParamsArray_dispose();
-
     this.stageCount = undefined; // How many stage should be in the neuralNet.
 
+    this.embeddingParams_dispose();
     this.bEmbedVocabularyId = undefined;
 
     super.disposeResources();
@@ -103,7 +103,37 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
   /**
    * 
    */
-   stageParamsArray_dispose() {
+   embeddingParams_dispose() {
+    if ( this.embeddingParams ) {
+      this.embeddingParams.disposeResources_and_recycleToPool();
+      this.embeddingParams = null;
+    }
+  }
+
+  /**
+   * 
+   */
+  embeddingParams_create( neuralNetParamsBase ) {
+    this.embeddingParams_dispose();
+
+    this.bEmbedVocabularyId = true; // Neural network should always have embedding layer.
+
+    let EmbeddingParamsClass = neuralNetParamsBase.EmbeddingParamsClass_get();
+    this.embeddingParams = EmbeddingParamsClass.Pool.get_or_create_by(
+      neuralNetParamsBase.input_height,
+      neuralNetParamsBase.input_width,
+      neuralNetParamsBase.input_channelCount,
+      neuralNetParamsBase.vocabularyChannelCount,
+      neuralNetParamsBase.vocabularyCountPerInputChannel,
+      this.bEmbedVocabularyId,
+      neuralNetParamsBase.bKeepInputTensor
+    );
+  }
+
+  /**
+   * 
+   */
+  stageParamsArray_dispose() {
     if ( this.stageParamsArray ) {
       this.stageParamsArray.disposeResources_and_recycleToPool();
       this.stageParamsArray = null;
@@ -139,7 +169,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
         if ( 0 == i ) { // Stage0.
           stageParamsCreator.configTo_beforeStage0();
-        } else { // (i.e. block1, 2, 3, ...)
+        } else { // (i.e. stage1, 2, 3, ...)
           stageParamsCreator.configTo_beforeStageN_exceptStage0(
             i, next_input_height, next_input_width, next_input_channelCount );
         }
@@ -150,7 +180,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
         }
 
         stageParams = this.stageParamsArray[ i ]
-          = stageParamsCreator.create_StageParams( StageParamsClass ); // Create current block.
+          = stageParamsCreator.create_StageParams( StageParamsClass ); // Create current stage.
 
         stageParams.inferencedParams_create();
 
@@ -159,8 +189,8 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
         next_input_channelCount = stageParams.inferencedParasm.output_channelCount;
       }
 
-      this.stageParams0 = this.stageParamsArray[ 0 ]; // Shortcut to the first block.
-      this.stageParamsLast = this.stageParamsArray[ this.stageParamsArray.length - 1 ]; // Shortcut to the last block.
+      this.stageParams0 = this.stageParamsArray[ 0 ]; // Shortcut to the first stage.
+      this.stageParamsLast = this.stageParamsArray[ this.stageParamsArray.length - 1 ]; // Shortcut to the last stage.
 
       this.output_height = this.stageParamsLast.inferencedParasm.output_height;
       this.output_width = this.stageParamsLast.inferencedParasm.output_width;
@@ -186,7 +216,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
     if ( neuralNetParams.stageCountRequested < 1 )
       throw Error( `NeuralNet.InferencedParams.Base.create_StageParamsCreator_byNeuralNetParams(): `
-        + `neuralNetParams.stageCountRequested ( ${neuralNetParams.blockCountRequested} ) must be >= 1.` );
+        + `neuralNetParams.stageCountRequested ( ${neuralNetParams.stageCountRequested} ) must be >= 1.` );
 
     // Currently, only one kind of NeuralNet.StageParamsCreator could be used.
     let aStageParamsCreator = NeuralNet.StageParamsCreator.Base.Pool.get_or_create_by( neuralNetParams );

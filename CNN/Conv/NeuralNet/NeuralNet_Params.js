@@ -130,6 +130,11 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
   }
 
   /** @override */
+  EmbeddingParamsClass_get() {
+    return Embedding.Params;
+  }
+
+  /** @override */
   StageParamsClass_get() {
     return Stage.Params;
   }

@@ -333,8 +333,6 @@ class Stage_Base extends Recyclable.Root {
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
 
-    // Note: params will be released by BlockParamsCreator.
-
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
@@ -379,7 +377,7 @@ class Stage_Base extends Recyclable.Root {
 // are passed into Stage_BlockParamsCreator directly.
 //        this.assert_ImageSize_BetweenBlock( i, blockParamsCreator ); // Assert image size.
 
-        blockParams = blockParamsCreator.create_BlockParams( BlockParamsClass ); // Create current block.
+        blockParams = blockParamsCreator.create_BlockParams( BlockParamsClass ); // Create current block parameters.
 
         if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
 
@@ -650,6 +648,7 @@ class Stage_Base extends Recyclable.Root {
       + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
 
+      + `blockCount=${this.blockCount}, `
       + `output_height=${this.output_height}, output_width=${this.output_width}, output_channelCount=${this.output_channelCount}`
     ;
     return str;
