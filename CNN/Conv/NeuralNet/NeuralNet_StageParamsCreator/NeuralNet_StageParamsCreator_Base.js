@@ -4,17 +4,11 @@ import * as Pool from "../../../util/Pool.js";
 import * as Recyclable from "../../../util/Recyclable.js";
 import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import * as Stage from "../../Stage.js";
-import { Params } from "../NeuralNet_Params.js";
+//import { Params } from "../NeuralNet_Params.js";
 
 /**
  * Base class for all NeuralNet.StageParamsCreator.Xxx classes.
  *
- *
- * @member {number} output0_channelCount
- *   The output0's channel count in current configuration.
- *
- * @member {number} output1_channelCount
- *   The output1's channel count in current configuration.
  *
  */
 class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
@@ -54,8 +48,6 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     this.output_width = undefined;
     this.output_height = undefined;
 
-    this.stageCount = undefined; // How many stage should be in the neuralNet.
-
     this.bKeepInputTensor = undefined;
     this.nActivationId = undefined;
     this.nSqueezeExcitationChannelCountDivisor = undefined;
@@ -69,6 +61,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     this.input_width = undefined;
     this.input_height = undefined;
 
+    this.stageCount = undefined; // How many stage should be in the neuralNet.
+
     this.neuralNetParams = undefined; // Just nullify it. Do not release it here.
 
     super.disposeResources();
@@ -80,7 +74,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
   configTo_beforeStage0() {
     let neuralNetParams = this.neuralNetParams;
 
-//!!! ...unfinished... (2022/07/30)
+    this.stageCount = neuralNetParams.stageCountRequested; // By default, the stage count is just the requested original stage count.
+
     this.input_height = neuralNetParams.input_height;
     this.input_width = neuralNetParams.input_width;
     this.input_channelCount = neuralNetParams.input_channelCount;
@@ -101,16 +96,10 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     // Always use the only suggested activation function.
     this.nActivationId = ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2;
 
-//!!!
     // Because NeuralNet always has an embedding layer (in front of stage0),
     // all stages should not keep input tensor (no matter what
     // neuralNetParams.bKeepInputTensor is).
     this.bKeepInputTensor = false;
-
-//!!! ...unfinished... (2022/07/30)
-    this.output_height = neuralNetParams.inferencedParams.outputHeightArray[ 0 ];
-    this.output_width = neuralNetParams.inferencedParams.outputWidthArray[ 0 ];
-    this.output_channelCount = ;
   }
 
   /**
@@ -118,19 +107,24 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
    *
    * @param {number} stageIndex
    *   The id (i.e. 1, 2, ...) of the stage which will be created.
+   *
+   * @param {number} input_height
+   *   The input height of the stage which will be created.
+   *
+   * @param {number} input_width
+   *   The input width of the stage which will be created.
+   *
+   * @param {number} input_channelCount
+   *   The input channel counr of the stage which will be created.
    */
-  configTo_beforeStageN_exceptStage0( stageIndex ) {
-    let neuralNetParams = this.neuralNetParams;
+  configTo_beforeStageN_exceptStage0(
+    stageIndex, input_height, input_width, input_channelCount ) {
 
-//!!! ...unfinished... (2022/07/30)
-    this.input_height = neuralNetParams.inferencedParams.inputHeightArray[ stageIndex ];
-    this.input_width = neuralNetParams.inferencedParams.inputWidthArray[ stageIndex ];
-    this.input_channelCount = ???;
+    //let neuralNetParams = this.neuralNetParams;
 
-//!!! ...unfinished... (2022/07/30)
-    this.output_height = neuralNetParams.inferencedParams.outputHeightArray[ stageIndex ];
-    this.output_width = neuralNetParams.inferencedParams.outputWidthArray[ stageIndex ];
-    this.output_channelCount = ;
+    this.input_height = input_height;
+    this.input_width = input_width;
+    this.input_channelCount = input_channelCount;
   }
 
   /**
@@ -141,6 +135,9 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     // Only the final stage's output does not have activation function.
     this.bPointwise2ActivatedAtStageEnd = false;
   }
+
+  // The following read only properties is useful when debugging, although they
+  // are not used in program.
 
   get nConvStageTypeName() {
     return ValueDesc.ConvStageType.Singleton.getName_byId( this.nConvStageTypeId );
@@ -156,12 +153,16 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 
   /**
    *
-   * @return {Stage.Params}
-   *   Create and return a Stage.Params according to this object's current state.
+   * @paramm {Stage.ParamsBase|Stage.Params} StageParamsClass
+   *   Which kinds of stage parameters object should be created.
+   *
+   * @return {Stage.ParamsBase|Stage.Params}
+   *   Create and return a Stage.ParamsBase or Stage.Params according to this
+   * object's current state.
    */
-  create_StageParams() {
-    let params = Stage.Params.Pool.get_or_create_by(
-      this.input0_height, this.input0_width, this.input0_channelCount,
+  create_StageParams( StageParamsClass ) {
+    let params = StageParamsClass.Pool.get_or_create_by(
+      this.input_height, this.input_width, this.input_channelCount,
       this.nConvStageTypeId,
       this.blockCountRequested,
       this.bPointwise1,

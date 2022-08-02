@@ -10,12 +10,6 @@ import * as Block from "../../Block.js";
  * Base class for all Stage.BlockParamsCreator.Xxx classes.
  *
  *
- * @member {number} output0_channelCount
- *   The output0's channel count in current configuration.
- *
- * @member {number} output1_channelCount
- *   The output1's channel count in current configuration.
- *
  */
 class Stage_BlockParamsCreator_Base extends Recyclable.Root {
 
@@ -282,6 +276,9 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     }
   }
 
+  // The following read only properties is useful when debugging, although they
+  // are not used in program.
+
   get nConvBlockTypeName() {
     return ValueDesc.ConvBlockType.Singleton.getName_byId( this.nConvBlockTypeId );
   }
@@ -310,7 +307,7 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
    *
    * @paramm {Block.ParamsBase|Block.Params} BlockParamsClass
    *   Which kinds of block parameters object should be created.
-   * 
+   *
    * @return {Block.ParamsBase|Block.Params}
    *   Create and return a Block.ParamsBase or Block.Params according to this
    * object's current state.
