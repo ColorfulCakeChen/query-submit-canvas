@@ -7,7 +7,7 @@ import * as Embedding from "../Embedding.js";
 import * as Stage from "../Stage.js";
 import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
 import { Params } from "./NeuralNet_Params.js";
-import { InferencedParams } from "./Stage_InferencedParams.js";
+import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  
 /**
  * This is the base class of NeuralNet.
