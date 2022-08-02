@@ -391,7 +391,7 @@ class Stage_InferencedParams extends Recyclable.Root {
    * @param {Stage.ParamsBase} stageParams
    *   The Stage.ParamsBase object to be referenced.
    *
-   * @return {Base}
+   * @return {Stage.BlockParamsCreator.Base}
    *   Return newly created Stage.BlockParamsCreator.Xxx object according to stageParams.nConvStageTypeId.
    */
    static create_BlockParamsCreator_byStageParams( stageParams ) {

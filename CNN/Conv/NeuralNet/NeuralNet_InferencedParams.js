@@ -205,28 +205,20 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
   }
 
   /**
-   * @param {Stage.ParamsBase} stageParams
-   *   The Stage.ParamsBase object to be referenced.
+   * @param {NeuralNet.ParamsBase} neuralNetParams
+   *   The NeuralNet.ParamsBase object to be referenced.
    *
-   * @return {Base}
-   *   Return newly created Stage.StageParamsCreator.Xxx object according to stageParams.nConvStageTypeId.
+   * @return {NeuralNet.StageParamsCreator.Base}
+   *   Return newly created NeuralNet.StageParamsCreator.Xxx object according to neuralNetParams.nConvStageTypeId.
    */
-   static create_StageParamsCreator_byStageParams( stageParams ) {
+   static create_StageParamsCreator_byNeuralNetParams( neuralNetParams ) {
 
-    if ( stageParams.blockCountRequested < 2 )
-      throw Error( `Stage.InferencedParams.Base.create_StageParamsCreator_byStageParams(): `
-        + `stageParams.blockCountRequested ( ${stageParams.blockCountRequested} ) must be >= 2.` );
+    if ( neuralNetParams.stageCountRequested < 1 )
+      throw Error( `NeuralNet.InferencedParams.Base.create_StageParamsCreator_byNeuralNetParams(): `
+        + `neuralNetParams.stageCountRequested ( ${neuralNetParams.blockCountRequested} ) must be >= 1.` );
 
-    if ( !(   ( stageParams.nConvStageTypeId >= 0 )
-           && ( stageParams.nConvStageTypeId < Stage_InferencedParams.nConvStageTypeId_to_StageParamsCreator_ClassArray.length )
-          ) 
-       )
-      throw Error( `Stage.InferencedParams.create_StageParamsCreator_byStageParams(): `
-        + `unknown stageParams.nConvStageTypeId ( ${stageParams.nConvStageTypeId} ) value.`
-      );
-
-    let classStageParamsCreator = Stage_InferencedParams.nConvStageTypeId_to_StageParamsCreator_ClassArray[ stageParams.nConvStageTypeId ];
-    let aStageParamsCreator = classStageParamsCreator.Pool.get_or_create_by( stageParams );
+    // Currently, only one kind of NeuralNet.StageParamsCreator could be used.
+    let aStageParamsCreator = NeuralNet.StageParamsCreator.Base.Pool.get_or_create_by( neuralNetParams );
 
     return aStageParamsCreator;
   }
@@ -263,17 +255,3 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
 }
 
-
-/**
- * Mapping nConvStageTypeId (number as array index) to StageParamsCreator class object.
- */
- Stage_InferencedParams.nConvStageTypeId_to_StageParamsCreator_ClassArray = [
-  StageParamsCreator.MobileNetV1,                         // ValueDesc.ConvStageType.Ids.MOBILE_NET_V1 (0)
-  StageParamsCreator.MobileNetV1_padValid,                // ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID (1)
-  StageParamsCreator.MobileNetV2_Thin,                    // ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN (2)
-  StageParamsCreator.MobileNetV2,                         // ValueDesc.ConvStageType.Ids.MOBILE_NET_V2 (3)
-  StageParamsCreator.ShuffleNetV2,                        // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2 (4)
-  StageParamsCreator.ShuffleNetV2_ByMobileNetV1,          // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5)
-  StageParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid, // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6)
-  StageParamsCreator.ShuffleNetV2_ByPointwise21,          // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21 (7)
-];
