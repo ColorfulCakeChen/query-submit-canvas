@@ -107,7 +107,7 @@ class HeightWidthDepth {
     this.disposeResources();
 
     // Larger input image for performance testing.
-    this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32 ");
+    this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
     let vocabularyCountPerInputChannel = 256;
     let bEmbedVocabularyId = true;
