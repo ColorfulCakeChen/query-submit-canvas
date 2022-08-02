@@ -497,7 +497,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
    *
    */
   static AssertParameters_NeuralNet_embedding( neuralNet, parametersDescription ) {
-    let embedding = neuralNet.embeddingParams;
+    let embedding = neuralNet.embedding;
 
     let embedding_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by(
       "`NeuralNet.embedding", embedding, parametersDescription );
@@ -518,7 +518,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
    *
    */
   static AssertParameters_NeuralNet_stages( neuralNet, parametersDescription ) {
-    let stageArray = neuralNet.stageParamsArray;
+    let stageArray = neuralNet.stageArray;
 
     // let stageCountRequested = neuralNet.stageCountRequested;
     // let nConvStageTypeId = neuralNet.nConvStageTypeId;
