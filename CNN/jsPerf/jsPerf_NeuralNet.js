@@ -86,7 +86,7 @@ class HeightWidthDepth {
       return dataTensor3dArray;
     });
 
-    let vocabularyChannelCount = 16;
+    let vocabularyChannelCount = 8;
     let vocabularyCountPerInputChannel = 256;
     let stageCountRequested = 10;
     let blockCountRequested = 10;
