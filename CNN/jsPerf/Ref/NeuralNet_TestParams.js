@@ -123,7 +123,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     // 1. Embedding
     {
       this.embedding?.disposeResources_and_recycleToPool();
-      this.embedding = Embedding_TestParams.Pool.get_or_create_by( this.id );
+      this.embedding = Embedding_TestParams.Base.Pool.get_or_create_by( this.id );
 
       this.embedding.set_byParamsScattered(
         neuralNetParams.input_height,
