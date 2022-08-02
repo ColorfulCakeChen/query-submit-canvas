@@ -8,7 +8,7 @@ import * as Stage from "../Stage.js";
 import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
 import { Params } from "./NeuralNet_Params.js";
 import { InferencedParams } from "./NeuralNet_InferencedParams.js";
- 
+
 /**
  * This is the base class of NeuralNet.
  *
@@ -189,6 +189,7 @@ class NeuralNet_Base extends Recyclable.Root {
       let StageParamsClass = params.StageParamsClass_get();
 
       stageParamsCreator = InferencedParams.create_StageParamsCreator_byNeuralNetParams( params );
+      stageParamsCreator.determine_stageCount();
 
       for ( let i = 0; i < stageParamsCreator.stageCount; ++i ) { // Progress for stage0, 1, 2, 3, ... 
         progressForStages.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );

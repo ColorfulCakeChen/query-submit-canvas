@@ -68,13 +68,21 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     super.disposeResources();
   }
 
+  /** Called to determine stageCount.
+    *
+    * Sub-class could override this method to adjust data members.
+    */
+  determine_stageCount() {
+    let neuralNetParams = this.neuralNetParams;
+
+    this.stageCount = neuralNetParams.stageCountRequested; // By default, the stage count is just the requested original stage count.
+  }
+
   /**
    * Called before stage0 is about to be created.
    */
   configTo_beforeStage0() {
     let neuralNetParams = this.neuralNetParams;
-
-    this.stageCount = neuralNetParams.stageCountRequested; // By default, the stage count is just the requested original stage count.
 
     this.input_height = neuralNetParams.input_height;
     this.input_width = neuralNetParams.input_width;

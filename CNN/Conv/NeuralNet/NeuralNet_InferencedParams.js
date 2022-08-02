@@ -161,6 +161,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
       // Create every stage.
       stageParamsCreator = NeuralNet_InferencedParams.create_StageParamsCreator_byNeuralNetParams( neuralNetParamsBase );
+      stageParamsCreator.determine_stageCount();
 
       this.stageCount = stageParamsCreator.stageCount;
       this.stageParamsArray.length = this.stageCount;
