@@ -140,7 +140,7 @@ class Embedding_FiltersArray_Base extends Weights.Base( InferencedParams ) {
 
   init( inputWeightArray, weightElementOffsetBegin ) {
 
-        // Calcualte weights extracting beginning and ending position.
+    // Calcualte weights extracting beginning and ending position.
     if ( !super.init( inputWeightArray, weightElementOffsetBegin, this.tensorWeightCountExtracted ) ) {
       return false;  // e.g. input array does not have enough data.
     }

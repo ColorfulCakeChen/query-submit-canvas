@@ -6,7 +6,7 @@ import * as Recyclable from "../util/Recyclable.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
-import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
+//import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
 import * as Embedding from "../Conv/Embedding.js";
 import * as Embedding_Reference from "./Ref/Embedding_Reference.js";
 import * as Embedding_TestParams from "./Ref/Embedding_TestParams.js"; 
@@ -84,7 +84,7 @@ class HeightWidthDepth {
       }
 
       let embedding = Embedding_Reference.Base.Embedding_create(
-        EmbeddingClass, embeddingTestParams, inputImage.boundsArraySet.output0 );
+        EmbeddingClass, embeddingTestParams );
 
       let aPerformanceTestCase = new PerformanceTestCase(
         embeddingTestParams.id, testCaseName, embeddingTestParams, embedding, inputTensor3d );
