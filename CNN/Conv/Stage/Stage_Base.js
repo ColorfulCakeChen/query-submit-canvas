@@ -427,7 +427,8 @@ class Stage_Base extends Recyclable.Root {
       this.block0 = this.blockArray[ 0 ]; // Shortcut to the first block.
       this.blockLast = this.blockArray[ this.blockArray.length - 1 ]; // Shortcut to the last block.
 
-      this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
+//!!! (2022/08/03 Temp Remarked) For debug.
+//      this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
 
       // In our Stage design, no matter which configuration, the output_channelCount
       // always is twice as input_channelCount.
