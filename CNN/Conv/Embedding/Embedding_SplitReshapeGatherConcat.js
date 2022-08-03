@@ -90,8 +90,7 @@ class Embedding_SplitReshapeGatherConcat extends Base {
    *
    * @override
    */
-  * initer( progressParent,
-    inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
+  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params ) {
 
     // 0. Prepare
 
@@ -106,7 +105,7 @@ class Embedding_SplitReshapeGatherConcat extends Base {
 
     // 1. Extract weights.
     let bParamInitOk = yield* super.initer( progressParent,
-      inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 );
+      inputWeightArray, weightElementOffsetBegin, params );
 
     if ( !bParamInitOk )
       return false;  // e.g. input array does not have enough data.
@@ -120,14 +119,14 @@ class Embedding_SplitReshapeGatherConcat extends Base {
         this.channelMultiplier, this.vocabularyCountPerInputChannel, this.bEmbedVocabularyId
       );
 
-      if ( !theFiltersArray_Multi.init( inputWeightArray, this.weightElementOffsetEnd, inputScaleBoundsArray0 ) ) {
+      if ( !theFiltersArray_Multi.init( inputWeightArray, this.weightElementOffsetEnd ) ) {
         this.bInitOk = false;
         return false;  // e.g. input array does not have enough data.
       }
       this.weightElementOffsetEnd = theFiltersArray_Multi.weightElementOffsetEnd;
   
-      this.boundsArraySet = theFiltersArray_Multi.boundsArraySet;
-      theFiltersArray_Multi.boundsArraySet = null; // (Because ownership transferred.)
+      this.output_scaleBoundsArray = theFiltersArray_Multi.output_scaleBoundsArray;
+      theFiltersArray_Multi.output_scaleBoundsArray = null; // (Because ownership transferred.)
 
       ++progressToAdvance.value;
       yield progressRoot;  // filters array extracted. Report progress.

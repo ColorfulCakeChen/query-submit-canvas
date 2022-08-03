@@ -3,7 +3,6 @@ export { Embedding_FiltersArray_Multi as FiltersArray_Multi };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
-import * as BoundsArraySet from "../BoundsArraySet.js";
 import { FiltersArray_Base } from "./Embedding_FiltersArray_Base.js";
 
 /**
@@ -71,18 +70,14 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
   /**
    * Initialize this object.
    *
-   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
-   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
-   * set of this pointwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
-   *
    * @return {boolean}
    *   Return true, if successfully. Return false, if failed.
    *
    */
-  init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) {
+  init( inputWeightArray, weightElementOffsetBegin ) {
 
     // 1. Calcualte weights extracting beginning and ending position.
-    if ( !super.init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) ) {
+    if ( !super.init( inputWeightArray, weightElementOffsetBegin ) ) {
       return false;  // e.g. input array does not have enough data.
     }
 
@@ -93,8 +88,8 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
     else
       outChannelSubBegin = 0;
 
-    this.boundsArraySet.output0.set_all_by_PositiveInfinity_NegativeInfinity();
-    let outBoundsArray = this.boundsArraySet.output0.boundsArray;
+    this.output_scaleBoundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
+    let outBoundsArray = this.output_scaleBoundsArray.boundsArray;
 
     this.filtersArrayArray = Recyclable.OwnerArray.Pool.get_or_create_by( this.input_channelCount );
 

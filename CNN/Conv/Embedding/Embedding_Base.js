@@ -43,8 +43,8 @@ import { Params } from "./Embedding_Params.js";
  *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  * 
- * @member {BoundsArraySet.InputsOutputs} boundsArraySet
- *   The element value bounds (per channel) of this embedding.
+ * @member {ActivationEscaping.ScaleBoundsArray} output_scaleBoundsArray
+ *   The element value bounds (per channel) of output (can NOT null).
  *
  */
 class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
@@ -181,9 +181,9 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
   /** @override */
   disposeResources() {
 
-    if ( this.boundsArraySet ) {
-      this.boundsArraySet.disposeResources_and_recycleToPool();
-      this.boundsArraySet = null;
+    if ( this.output_scaleBoundsArray ) {
+      this.output_scaleBoundsArray.disposeResources_and_recycleToPool();
+      this.output_scaleBoundsArray = null;
     }
 
     this.tensorWeightCountTotal = undefined;

@@ -4,7 +4,6 @@ import * as Pool from "../../util/Pool.js";
 //import * as Recyclable from "../../util/Recyclable.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
-import * as BoundsArraySet from "../BoundsArraySet.js";
 import { InferencedParams } from "./Embedding_InferencedParams.js";
 
 
@@ -14,28 +13,6 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
 
 /**
  * This is the base class of Embedding.FiltersArray_One and Embedding.FiltersArray_Multi.
- *
- *
- * Embedding could achieve non-linear mapping (just like any perceptron). But it is achieved by lookup table (instead
- * of weighted sum, bias and activation function). This implies:
- *   - It may use more (CPU or GPU) memory, but may use less (CPU or GPU) computation.
- *   - It can only achieve channel expansion, and can not achieve channel aggregation. (because no weighted sum)
- *   - It can only represent context-independent (not context-dependent) information. (because no weighted sum)
- *   - It can only handle integer input (i.e. int32, not float32).
- *
- * It is useful as the first layer of text or image processing because their inputs are all integer (e.g. character codes,
- * word indices, color codes, etc). And, the first layer only needs carry context-independent information (and all the other
- * layers after it will produce context-dependent information).
- *
- * This object always accepts tensor3d (dtype = int32).
- *   - The axis 0 is height. (Image height) (Text lines and usually only 1 line.)
- *   - The axis 1 is width. (Image width) (Text length (e.g. character count).)
- *   - The axis 2 is channel. (Image color channel) (Text character code channel and usually only 1 channel.)
- *
- * An embedding layer contains one params (this.params) and inChannels embedding vocabulary tables.
- *   - Every input channel has one embedding vocabulary table.
- *   - Every embedding vocabulary table has vocabularyCountPerInputChannel vocabularies.
- *   - Every vocabulary has channelMultiplier embedding channels.
  *
  *
  *
@@ -49,8 +26,8 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
  *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  * 
- * @member {BoundsArraySet.InputsOutputs} boundsArraySet
- *   The element value bounds (per channel) of this embedding.
+ * @member {ActivationEscaping.ScaleBoundsArray} output_scaleBoundsArray
+ *   The element value bounds (per channel) of output (can NOT null).
  *
  * @see Weight.Base
  * @see Embedding.InferencedParams
@@ -112,9 +89,9 @@ class Embedding_FiltersArray_Base extends Weights.Base( InferencedParams ) {
 
   /** @override */
   disposeResources() {
-    if ( this.boundsArraySet ) {
-      this.boundsArraySet.disposeResources_and_recycleToPool();
-      this.boundsArraySet = null;
+    if ( this.output_scaleBoundsArray ) {
+      this.output_scaleBoundsArray.disposeResources_and_recycleToPool();
+      this.output_scaleBoundsArray = null;
     }
 
     this.bEmbedVocabularyId = undefined;
@@ -129,45 +106,48 @@ class Embedding_FiltersArray_Base extends Weights.Base( InferencedParams ) {
 
   /**
    * Initialize this object.
-   *
-   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
-   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
-   * set of this pointwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
+   * 
+   * Note: Embedding_FiltersArray.init() does not have argument inputScaleBoundsArray,
+   * but it does assumes input's value bounds is [ 0, vocabularyCountPerInputChannel ].
    *
    * @return {boolean}
    *   Return true, if successfully. Return false, if failed.
-   *
    */
-  init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) {
 
-    if ( this.input_channelCount != inputScaleBoundsArray.length )
-      throw Error( `Embedding.FiltersArray_Base.init(): `
-        + `input_channelCount ( ${this.input_channelCount} ) should be the same as `
-        + `output_channelCount of previous operation ( ${inputScaleBoundsArray.length} ).`
-      );
+//!!! (2022/08/03 Remarked) Embedding_FiltersArray.init() no longer has inputScaleBoundsArray.
 
-    if ( !inputScaleBoundsArray.scaleArraySet.undo.is_all_EQ_byN( 1 ) )
-      throw Error( `Embedding.FiltersArray_Base.init(): `
-        + `The .output.scaleArraySet.undo ( ${inputScaleBoundsArray.scaleArraySet.undo.scales} ) `
-        + `of previous operation `
-        + `should be all one (i.e. should not have activation escaping scaling).`
-      );
+//   init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) {
 
-    if ( !inputScaleBoundsArray.boundsArray.is_all_in_LowerUpper( 0, this.vocabularyIdMax ) )
-      throw Error( `Embedding.FiltersArray_Base.init(): `
-        + `The .output.boundsArray ( ${inputScaleBoundsArray.boundsArray} ) `
-        + `of previous operation `
-        + `should be all within [ 0, ${this.vocabularyIdMax} ].`
-      );
+//     if ( this.input_channelCount != inputScaleBoundsArray.length )
+//       throw Error( `Embedding.FiltersArray_Base.init(): `
+//         + `input_channelCount ( ${this.input_channelCount} ) should be the same as `
+//         + `output_channelCount of previous operation ( ${inputScaleBoundsArray.length} ).`
+//       );
 
-    // Calcualte weights extracting beginning and ending position.
+//     if ( !inputScaleBoundsArray.scaleArraySet.undo.is_all_EQ_byN( 1 ) )
+//       throw Error( `Embedding.FiltersArray_Base.init(): `
+//         + `The .output.scaleArraySet.undo ( ${inputScaleBoundsArray.scaleArraySet.undo.scales} ) `
+//         + `of previous operation `
+//         + `should be all one (i.e. should not have activation escaping scaling).`
+//       );
+
+//     if ( !inputScaleBoundsArray.boundsArray.is_all_in_LowerUpper( 0, this.vocabularyIdMax ) )
+//       throw Error( `Embedding.FiltersArray_Base.init(): `
+//         + `The .output.boundsArray ( ${inputScaleBoundsArray.boundsArray} ) `
+//         + `of previous operation `
+//         + `should be all within [ 0, ${this.vocabularyIdMax} ].`
+//       );
+
+  init( inputWeightArray, weightElementOffsetBegin ) {
+
+        // Calcualte weights extracting beginning and ending position.
     if ( !super.init( inputWeightArray, weightElementOffsetBegin, this.tensorWeightCountExtracted ) ) {
       return false;  // e.g. input array does not have enough data.
     }
 
     // Initialize element value bounds (per channel).
-    this.boundsArraySet = BoundsArraySet.InputsOutputs.Pool.get_or_create_by(
-      inputScaleBoundsArray, null, this.output_channelCount );
+    this.output_scaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by(
+      this.output_channelCount );
 
     return true;
   }
