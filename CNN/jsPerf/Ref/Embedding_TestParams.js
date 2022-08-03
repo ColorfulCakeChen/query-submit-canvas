@@ -265,12 +265,12 @@ class Embedding_TestParams_Base extends TestParams.Base {
       input_width: [ 1, 5 ],
 
       input_channelCount: [
-        Embedding.Params.input_channelCount.valueDesc.range.min,
+        1, //Embedding.Params.input_channelCount.valueDesc.range.min,
         4
       ],
 
       channelMultiplier: [
-        Embedding.Params.channelMultiplier.valueDesc.range.min,
+        1, //Embedding.Params.channelMultiplier.valueDesc.range.min,
         4
       ],
 

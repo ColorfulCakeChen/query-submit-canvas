@@ -218,18 +218,18 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       input_width: [ 1, 5 ],
 
       input_channelCount: [
-        NeuralNet.Params.input_channelCount.valueDesc.range.min,
+        1, //NeuralNet.Params.input_channelCount.valueDesc.range.min,
         4
       ],
 
       vocabularyChannelCount: [
-        NeuralNet.Params.vocabularyChannelCount.valueDesc.range.min,
+        1, //NeuralNet.Params.vocabularyChannelCount.valueDesc.range.min,
         4
       ],
 
       vocabularyCountPerInputChannel: [
         256, //NeuralNet.Params.vocabularyCountPerInputChannel.valueDesc.range.min,
-        257
+        256
       ],
 
       nConvStageTypeId: [
@@ -239,7 +239,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
       stageCountRequested: [
         NeuralNet.Params.stageCountRequested.valueDesc.range.min,
-        10 //NeuralNet.Params.stageCountRequested.valueDesc.range.max
+        5 //NeuralNet.Params.stageCountRequested.valueDesc.range.max
       ],
 
       blockCountRequested: [
