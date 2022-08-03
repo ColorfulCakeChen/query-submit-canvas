@@ -849,8 +849,8 @@ class Block_Base extends Recyclable.Root {
     this.operationArray.setKeepInputTensor( this.bKeepInputTensor, this.bKeepInputTensor )
 
 //!!! (2022/08/03 Temp Remarked) For debug.
-    // 10.3 Reduce memory footprint by releasing unused (intermediate) bounds array set.
-   this.dispose_intermediate_ScaleBoundsArray();
+//     // 10.3 Reduce memory footprint by releasing unused (intermediate) bounds array set.
+//     this.dispose_intermediate_ScaleBoundsArray();
 
     // 10.4
     ++progressToAdvance.value;
