@@ -296,18 +296,18 @@ class Stage_TestParams_Base extends TestParams.Base {
 
 //      nSqueezeExcitationChannelCountDivisor: undefined,
 //!!! (2022/08/03 Temp Remarked) For speed-up debug.
-      nSqueezeExcitationChannelCountDivisor: [
-        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
-        3
-      ],
+      // nSqueezeExcitationChannelCountDivisor: [
+      //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+      //   3
+      // ],
       // nSqueezeExcitationChannelCountDivisor: [
       //   16,
       //   16
       // ],
-      // nSqueezeExcitationChannelCountDivisor: [
-      //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE,
-      //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE
-      // ],
+      nSqueezeExcitationChannelCountDivisor: [
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION,
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION
+      ],
 
       // Must have ActivationFunction (i.e. can not be NONE). Otherwise, it easily results in infinity value because of multiple block.
       //
