@@ -273,7 +273,7 @@ class Stage_TestParams_Base extends TestParams.Base {
 
       blockCountRequested: [
         Stage.Params.blockCountRequested.valueDesc.range.min,
-        Stage.Params.blockCountRequested.valueDesc.range.min + 2
+        Stage.Params.blockCountRequested.valueDesc.range.min + 4
       ],
 
 //      bPointwise1: undefined,
