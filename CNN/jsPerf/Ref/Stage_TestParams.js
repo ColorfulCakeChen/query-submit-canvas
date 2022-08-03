@@ -239,29 +239,29 @@ class Stage_TestParams_Base extends TestParams.Base {
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
 //!!! (2022/07/22 Temp Remarked) For test more.
-      input_height: [ 3, 3 ],
-      input_width:  [ 4, 5 ], // Test different input image width (even and odd).
-      input_channelCount: [ 3, 4 ],
-//!!! (2022/07/22 Temp Remarked) For speed-up debug.
-      // input_height: [ 1, 5 ],
-      // input_width:  [ 1, 5 ], // Test different input image width (even and odd).
+      // input_height: [ 3, 3 ],
+      // input_width:  [ 4, 5 ], // Test different input image width (even and odd).
       // input_channelCount: [ 3, 4 ],
+//!!! (2022/07/22 Temp Remarked) For speed-up debug.
+      input_height: [ 1, 5 ],
+      input_width:  [ 1, 5 ], // Test different input image width (even and odd).
+      input_channelCount: [ 1, 4 ],
 
 //      nConvStageTypeId: undefined,
 //!!! (2022/07/20 Temp Remarked) For speed-up debug.
-      nConvStageTypeId: [
-        Stage.Params.nConvStageTypeId.valueDesc.range.min,
-        Stage.Params.nConvStageTypeId.valueDesc.range.max
-      ],
       // nConvStageTypeId: [
+      //   Stage.Params.nConvStageTypeId.valueDesc.range.min,
+      //   Stage.Params.nConvStageTypeId.valueDesc.range.max
+      // ],
+      nConvStageTypeId: [
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1, // (0)
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID, // (1)
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN, // (2)
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2, // (3)
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2, // (4)
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1, // (5)
+        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1, // (5)
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21, // (7)
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 // (5)
+        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 // (5)
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21 // (7)
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 // (4)
@@ -269,7 +269,7 @@ class Stage_TestParams_Base extends TestParams.Base {
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN // (2)
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID // (1)
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1 // (0)
-      // ],
+      ],
 
       blockCountRequested: [
         Stage.Params.blockCountRequested.valueDesc.range.min,
