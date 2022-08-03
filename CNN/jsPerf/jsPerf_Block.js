@@ -86,7 +86,7 @@ class HeightWidthDepth {
         imageInArraySelected, channelShuffler_ConcatPointwiseConv
       } = testCorrectnessInfo;
  
-      let block = BlockReference_Base.block_create( blockTestParams,
+      let block = Block_Reference.Base.block_create( blockTestParams,
         imageInArraySelected[ 0 ].boundsArraySet.output0,
         imageInArraySelected[ 1 ]?.boundsArraySet.output0,
         channelShuffler_ConcatPointwiseConv );

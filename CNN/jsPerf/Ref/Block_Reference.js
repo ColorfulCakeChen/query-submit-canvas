@@ -1,5 +1,5 @@
 export { TestCorrectnessInfo };
-export { BlockReference_Base as Base };
+export { Block_Reference_Base as Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -219,25 +219,25 @@ class TestCorrectnessInfo extends Recyclable.Root {
 /**
  * Reference computation of class Block.Base.
  */
-class BlockReference_Base extends Recyclable.Root {
+class Block_Reference_Base extends Recyclable.Root {
 
   /**
    * Used as default Block_Reference.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Block_Reference.Base.Pool", BlockReference_Base, BlockReference_Base.setAsConstructor );
+  static Pool = new Pool.Root( "Block_Reference.Base.Pool", Block_Reference_Base, Block_Reference_Base.setAsConstructor );
 
   /**
    *
    */
   constructor() {
     super();
-    BlockReference_Base.setAsConstructor_self.call( this );
+    Block_Reference_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    BlockReference_Base.setAsConstructor_self.call( this );
+    Block_Reference_Base.setAsConstructor_self.call( this );
     return this;
   }
 
@@ -305,12 +305,12 @@ class BlockReference_Base extends Recyclable.Root {
 //          ) {
 //         // Because these conv-block-type will generate pass-through filters, Pool.All.issuedCount will not be the same.
 //         // So here does not check that.
-//         BlockReference_Base.testCorrectness_internal.call( this );
+//         Block_Reference_Base.testCorrectness_internal.call( this );
 //
 //       } else
       {
         Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Block_Reference.Base.testCorrectness_internal()",
-          BlockReference_Base.testCorrectness_internal, this );
+          Block_Reference_Base.testCorrectness_internal, this );
       }
 
 //!!! (2022/06/10 Remarked) Moved to outter jsPerf_Block to also catch testParamsGenerator's exception.
@@ -358,7 +358,7 @@ class BlockReference_Base extends Recyclable.Root {
     }
 
     Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Block_Reference.Base.block_create_apply_internal()",
-      BlockReference_Base.block_create_apply_internal, this );
+      Block_Reference_Base.block_create_apply_internal, this );
 
     tf.dispose( outputTensor3dArray );
 
@@ -385,7 +385,7 @@ class BlockReference_Base extends Recyclable.Root {
 
     let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
 
-    let block = BlockReference_Base.block_create( testParams,
+    let block = Block_Reference_Base.block_create( testParams,
       imageInArraySelected[ 0 ].boundsArraySet.output0,
       imageInArraySelected[ 1 ]?.boundsArraySet.output0,
       channelShuffler_ConcatPointwiseConv );
@@ -394,7 +394,7 @@ class BlockReference_Base extends Recyclable.Root {
     //       Just generate them only if necessary by .toString() for reducing memory re-allocation.
 
     // Test input channel count.
-    BlockReference_Base.AssertTwoEqualValues( "input1_channelCount", block.input1_channelCount, input1_channelCount, block );
+    Block_Reference_Base.AssertTwoEqualValues( "input1_channelCount", block.input1_channelCount, input1_channelCount, block );
 
     // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
     // tensor count (i.e. inputTensorDestroyCount).
@@ -437,9 +437,9 @@ class BlockReference_Base extends Recyclable.Root {
 
       let output_channelCount = output0_channelCount + output1_channelCount;
 
-      BlockReference_Base.AssertTwoEqualValues( "output0_channelCount", block.output0_channelCount, output0_channelCount, block );
-      BlockReference_Base.AssertTwoEqualValues( "output1_channelCount", block.output1_channelCount, output1_channelCount, block );
-      BlockReference_Base.AssertTwoEqualValues( "output_channelCount", block.output_channelCount, output_channelCount, block );
+      Block_Reference_Base.AssertTwoEqualValues( "output0_channelCount", block.output0_channelCount, output0_channelCount, block );
+      Block_Reference_Base.AssertTwoEqualValues( "output1_channelCount", block.output1_channelCount, output1_channelCount, block );
+      Block_Reference_Base.AssertTwoEqualValues( "output_channelCount", block.output_channelCount, output_channelCount, block );
     }
 
     { // Test output tensor count.
@@ -451,7 +451,7 @@ class BlockReference_Base extends Recyclable.Root {
       if ( outputTensor3dArray[ 1 ] )
         ++outputTensorCount;
 
-      BlockReference_Base.AssertTwoEqualValues( "outputTensorCount", block.outputTensorCount, outputTensorCount, block );
+      Block_Reference_Base.AssertTwoEqualValues( "outputTensorCount", block.outputTensorCount, outputTensorCount, block );
     }
 
     // Test correctness of block BoundsArraySet.
@@ -582,10 +582,10 @@ class BlockReference_Base extends Recyclable.Root {
 
     let asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Block`, block, block );
 
-    BlockReference_Base.AssertTwoEqualValues( "parsing beginning position",
+    Block_Reference_Base.AssertTwoEqualValues( "parsing beginning position",
       block.weightElementOffsetBegin, testParams.in_weights.weightElementOffsetBegin, block );
 
-    BlockReference_Base.AssertTwoEqualValues( "parsing ending position",
+    Block_Reference_Base.AssertTwoEqualValues( "parsing ending position",
       block.weightElementOffsetEnd, testParams.in_weights.weightArray.length, block );
 
     // Linearity
