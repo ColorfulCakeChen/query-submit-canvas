@@ -84,29 +84,29 @@ class NeuralNet_Base extends Recyclable.Root {
   }
 
   /**
-  * Generator for initializing this object.
-  *
-  * @param {ValueMax.Percentage.Aggregate} progressParent
-  *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
-  * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
-  *
-  * @param {NeuralNet.Params} params
-  *   A Params object. The params.init() will be called to extract parameters. This params will be owned and destroyed by this .initer().
-  * So caller should not use it again.
-  *
-  * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
-  *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous NeuralNet value bounds
-  * set. It will be kept (not cloned) directly. So caller should not modify them.
-  *
-  * @yield {ValueMax.Percentage.Aggregate}
-  *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
-  *
-  * @yield {boolean}
-  *   Yield ( value = true ) when ( done = true ) successfully.
-  *   Yield ( value = false ) when ( done = true ) failed.
-  *
-  */
-  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
+   * Generator for initializing this object.
+   *
+   * Note: NeuralNet.initer() does not have argument inputScaleBoundsArray0. The reason
+   * is it has an embedding layer which is does not have inputScaleBoundsArray0 too.
+   * So, it also assumes input's value bounds is [ 0, vocabularyCountPerInputChannel ].
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
+   * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
+   *
+   * @param {NeuralNet.Params} params
+   *   A Params object. The params.init() will be called to extract parameters. This params will be owned and destroyed by this .initer().
+   * So caller should not use it again.
+   *
+   * @yield {ValueMax.Percentage.Aggregate}
+   *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
+   *
+   * @yield {boolean}
+   *   Yield ( value = true ) when ( done = true ) successfully.
+   *   Yield ( value = false ) when ( done = true ) failed.
+   *
+   */
+  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params ) {
 
     // 0. Prepare
 
@@ -156,7 +156,7 @@ class NeuralNet_Base extends Recyclable.Root {
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
-    let input_ScaleBoundsArray;
+    let next_input_ScaleBoundsArray_or_TensorPlaceholder;
 
     // 2. Create embedding layer.
     {
@@ -170,8 +170,7 @@ class NeuralNet_Base extends Recyclable.Root {
   
       this.embedding = Embedding.AddGatherReshape.Pool.get_or_create_by();
       let embeddingIniter = this.embedding.initer( progressForEmbedding,
-        inputWeightArray, this.weightElementOffsetEnd, embeddingParams,
-        inputScaleBoundsArray0
+        inputWeightArray, this.weightElementOffsetEnd, embeddingParams
       );
 
       this.bInitOk = yield* embeddingIniter;
@@ -182,7 +181,7 @@ class NeuralNet_Base extends Recyclable.Root {
       this.tensorWeightCountTotal += this.embedding.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += this.embedding.tensorWeightCountExtracted;
 
-      input_ScaleBoundsArray = this.embedding.boundsArraySet.output0;
+      next_input_ScaleBoundsArray_or_TensorPlaceholder = this.embedding.boundsArraySet.output0; // (This is a ScaleBoundsArray.)
     }
 
     // 3. Create every stages.
@@ -221,7 +220,7 @@ class NeuralNet_Base extends Recyclable.Root {
         stage = this.stageArray[ i ] = Stage.Base.Pool.get_or_create_by();
         stageIniter = stage.initer( progressForStages.children[ i ],
           inputWeightArray, this.weightElementOffsetEnd, stageParams,
-          input_ScaleBoundsArray
+          next_input_ScaleBoundsArray_or_TensorPlaceholder
         );
 
         this.bInitOk = yield* stageIniter;
@@ -232,7 +231,7 @@ class NeuralNet_Base extends Recyclable.Root {
         this.tensorWeightCountTotal += stage.tensorWeightCountTotal;
         this.tensorWeightCountExtracted += stage.tensorWeightCountExtracted;
 
-        input_ScaleBoundsArray = stage.output0.scaleBoundsArray;
+        next_input_ScaleBoundsArray_or_TensorPlaceholder = stage.output0; // (This is a TensorPlaceholder.)
 
         next_input_height = stage.output_height;
         next_input_width = stage.output_width;

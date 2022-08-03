@@ -248,9 +248,8 @@ class Stage_Base extends Recyclable.Root {
    *   A Params object. The params.init() will be called to extract parameters. This params will be owned and destroyed by this .initer().
    * So caller should not use it again.
    *
-   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
-   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Stage value bounds
-   * set. It will be kept (not cloned) directly. So caller should not modify them.
+   * @param {ActivationEscaping.ScaleBoundsArray|TensorPlaceholder.Base} input_ScaleBoundsArray_or_TensorPlaceholder
+   *   The element value bounds (per channel) or TensorPlaceholder of this stage's input.
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
@@ -260,7 +259,8 @@ class Stage_Base extends Recyclable.Root {
    *   Yield ( value = false ) when ( done = true ) failed.
    *
    */
-  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
+  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params,
+   input_ScaleBoundsArray_or_TensorPlaceholder ) {
 
     // Both MobileNetV3 and ShuffleNetV2:
     //   - They all do not use (depthwise convolution) channelMultiplier.
@@ -359,7 +359,7 @@ class Stage_Base extends Recyclable.Root {
 
         if ( 0 == i ) { // Block0.
           blockParamsCreator.configTo_beforeBlock0();
-          input0_ScaleBoundsArray_or_TensorPlaceholder = inputScaleBoundsArray0;
+          input0_ScaleBoundsArray_or_TensorPlaceholder = input_ScaleBoundsArray_or_TensorPlaceholder;
         } else { // (i.e. block1, 2, 3, ...)
           blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i, next_input_height, next_input_width );
         }

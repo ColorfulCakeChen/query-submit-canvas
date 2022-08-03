@@ -74,6 +74,9 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
 
   /**
    * Generator for initializing this object.
+   * 
+   * Note: Embedding.initer() does not have argument inputScaleBoundsArray0, but it does
+   * assumes input's value bounds is [ 0, vocabularyCountPerInputChannel ].
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
@@ -84,10 +87,6 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
    * params will be owned and destroyed by this .initer(). So caller should not use
    * it again.
    *
-   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
-   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Stage value bounds
-   * set. It will be kept (not cloned) directly. So caller should not modify them.
-   *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
    *
@@ -96,8 +95,7 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
    *   Yield ( value = false ) when ( done = true ) failed.
    *
    */
-  * initer( progressParent,
-    inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
+  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params ) {
 
     // 0. Prepare
 
@@ -168,9 +166,9 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
    *
    * @see Block.Base.init()
    */
-  init( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
+  init( progressParent, inputWeightArray, weightElementOffsetBegin, params ) {
 
-    let initer = this.initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 );
+    let initer = this.initer( progressParent, inputWeightArray, weightElementOffsetBegin, params );
     let initerNext;
     do {
       initerNext = initer.next();

@@ -396,9 +396,6 @@ class Block_Base extends Recyclable.Root {
   * initer(
     progressParent, inputWeightArray, weightElementOffsetBegin, params,
     input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
-
-//!!! (2022/07/31 Remarked) come from Block.Params now.
-//    channelShuffler_ConcatPointwiseConv
   ) {
 
     // 0. Prepare
@@ -510,10 +507,6 @@ class Block_Base extends Recyclable.Root {
 
       this.outputTensorCount = params.inferencedParams.outputTensorCount;
     }
-
-//!!! (2022/07/31 Remarked) come from Block.Params now.
-//    // No matter whether the channel shuffler is used, it is always recorded in data member.
-//    this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
 
     // No matter whether the channel shuffler is used, it is always recorded in data member.
     this.channelShuffler_ConcatPointwiseConv = params.channelShuffler;
@@ -879,17 +872,11 @@ class Block_Base extends Recyclable.Root {
   init(
     progressParent, inputWeightArray, weightElementOffsetBegin, params,
     input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
-
-//!!! (2022/07/31 Remarked) come from Block.Params now.
-//    channelShuffler_ConcatPointwiseConv
   ) {
 
     let initer = this.initer(
       progressParent, inputWeightArray, weightElementOffsetBegin, params,
       input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
-
-//!!! (2022/07/31 Remarked) come from Block.Params now.
-//      channelShuffler_ConcatPointwiseConv
     );
 
     let initerNext;
