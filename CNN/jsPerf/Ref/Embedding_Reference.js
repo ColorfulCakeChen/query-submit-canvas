@@ -145,7 +145,7 @@ class Embedding_Reference_Base extends Recyclable.Root {
     let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
     {
       let embedding = Embedding_Reference_Base.Embedding_create(
-        EmbeddingClass, testParams, this.testCorrectness_imageIn.boundsArraySet.output0 );
+        EmbeddingClass, testParams );
 
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
@@ -207,8 +207,7 @@ class Embedding_Reference_Base extends Recyclable.Root {
    */
   assert_imageOut_BoundsArraySet( embedding, imageOutReference, parametersDescription ) {
     BoundsArraySet_Asserter.assert_ScaleBoundsArray( this.asserter_Equal,
-      // embedding.output0.scaleBoundsArray, imageOutReference.boundsArraySet.output0,
-      embedding.boundsArraySet.output0, imageOutReference.boundsArraySet.output0,
+      embedding.output_scaleBoundsArray, imageOutReference.boundsArraySet.output0,
       "output0", "output0_Ref", "Embedding", parametersDescription );
   }
 
@@ -240,13 +239,9 @@ class Embedding_Reference_Base extends Recyclable.Root {
    * @param {Embedding_TestParams.Base} testParams
    *   The test parameters. It is the value of Embedding_TestParams.Base.ParamsGenerator()'s result.
    *
-   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
-   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Embedding value bounds
-   * set. It will be kept (not cloned) directly. So caller should not modify them.
-   *
    * @return {Embedding.Base} The created Embedding object.
    */
-  static Embedding_create( EmbeddingClass, testParams, inputScaleBoundsArray0 ) {
+  static Embedding_create( EmbeddingClass, testParams ) {
 
     let embedding = EmbeddingClass.Pool.get_or_create_by();
 
@@ -262,8 +257,8 @@ class Embedding_Reference_Base extends Recyclable.Root {
 
     let bInitOk = embedding.init( progress,
       testParams.in_weights.weightArray, testParams.in_weights.weightElementOffsetBegin,
-      extractedParams,
-      inputScaleBoundsArray0 );
+      extractedParams
+    );
 
     if ( embedding.bInitOk != bInitOk )
       throw Error( `Embedding validation state (${embedding.bInitOk}) mismatches initer's result (${bInitOk}). ${embedding}` );
