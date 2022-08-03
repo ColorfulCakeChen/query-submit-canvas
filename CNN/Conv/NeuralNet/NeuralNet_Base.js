@@ -233,6 +233,10 @@ class NeuralNet_Base extends Recyclable.Root {
         this.tensorWeightCountExtracted += stage.tensorWeightCountExtracted;
 
         input_ScaleBoundsArray = stage.output0.scaleBoundsArray;
+
+        next_input_height = stage.output_height;
+        next_input_width = stage.output_width;
+        next_input_channelCount = stage.output_channelCount;
       }
 
       this.stage0 = this.stageArray[ 0 ]; // Shortcut to the first stage.
