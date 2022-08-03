@@ -501,9 +501,9 @@ class TestParams_Base extends Recyclable.Root {
 
 }
 
-//!!! (2022/07/26 Temp Remarked) Fixed to non-random to simplify debug.
-TestParams_Base.weightsRandomOffset = { min: -200, max: +200 };
-//TestParams_Base.weightsRandomOffset = { min: 11, max: 11 };
+//!!! (2022/08/03 Temp Remarked) Fixed to non-random to simplify debug.
+//TestParams_Base.weightsRandomOffset = { min: -200, max: +200 };
+TestParams_Base.weightsRandomOffset = { min: 11, max: 11 };
 //TestParams_Base.weightsRandomOffset = { min: -0, max: +0 };
 
 TestParams_Base.weightsDivisorForRemainder = 4096;
