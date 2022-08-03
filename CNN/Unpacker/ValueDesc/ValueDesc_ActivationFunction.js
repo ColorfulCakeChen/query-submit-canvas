@@ -102,7 +102,7 @@ class ActivationFunction extends Int {
 
 //!!! (2022/08/03 Temp Remarked) Try large range whether reduceing accumulated error.
 //          new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ) ),
-          new FloatValue.Bounds( -4, +4 ), new FloatValue.Bounds( -4, +4 ), new FloatValue.Bounds( -4, +4 ) ),
+          new FloatValue.Bounds( -8, +8 ), new FloatValue.Bounds( -8, +8 ), new FloatValue.Bounds( -8, +8 ) ),
 
 //!!! (2022/07/05 Remarked) For speed-up testing.
 /*
