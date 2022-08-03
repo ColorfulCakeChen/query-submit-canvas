@@ -142,7 +142,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
     let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of stage create/dispose.
     {
-      let neuralNet = NeuralNet_Reference_Base.NeuralNet_create( testParams, this.testCorrectness_imageIn.boundsArraySet.output0 );
+      let neuralNet = NeuralNet_Reference_Base.NeuralNet_create( testParams );
 
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
@@ -184,7 +184,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
       // Compare result of ShuffleNetV2 and ShuffleNetV2_byMobileNetV1.
       NeuralNet_Reference_Base.neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1.call( this,
-        testParams, this.testCorrectness_imageIn.boundsArraySet.output0,
+        testParams,
         inputTensor3d_fromBag, outputTensor3d );
 
       neuralNet.disposeResources_and_recycleToPool();
@@ -207,7 +207,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
    * @param {tf.tensor} outputTensor3d_original  The output tensor (from original neuralNet) to be compared.
    */
   static neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1(
-    testParams, inputScaleBoundsArray0,
+    testParams,
     inputTensor3d_fromBag, outputTensor3d_original ) {
 
     let {
@@ -268,8 +268,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
     let bInitOk = neuralNet_toBeCompared.init( progress,
       testParams.in_weights.weightArray, testParams.in_weights.weightElementOffsetBegin,
-      extractedParams,
-      inputScaleBoundsArray0 );
+      extractedParams
+    );
 
     if ( false == bInitOk )
       throw Error( `Failed to initialize neuralNet object. ${neuralNet_toBeCompared}` );
@@ -364,13 +364,9 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
    * @param {NeuralNet_TestParams.Base} testParams
    *   The test parameters. It is the value of NeuralNet_TestParams.Base.ParamsGenerator()'s result.
    *
-   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
-   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous NeuralNet value bounds
-   * set. It will be kept (not cloned) directly. So caller should not modify them.
-   *
    * @return {NeuralNet.Base} The created NeuralNet object.
    */
-  static NeuralNet_create( testParams, inputScaleBoundsArray0 ) {
+  static NeuralNet_create( testParams ) {
 
     let neuralNet = NeuralNet.Base.Pool.get_or_create_by();
 
@@ -387,8 +383,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
     let bInitOk = neuralNet.init( progress,
       testParams.in_weights.weightArray, testParams.in_weights.weightElementOffsetBegin,
-      extractedParams,
-      inputScaleBoundsArray0 );
+      extractedParams
+    );
 
     if ( neuralNet.bInitOk != bInitOk )
       throw Error( `NeuralNet validation state (${neuralNet.bInitOk}) mismatches initer's result (${bInitOk}). ${neuralNet}` );
