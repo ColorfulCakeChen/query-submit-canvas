@@ -906,22 +906,42 @@ class Block_Base extends Recyclable.Root {
       this.operationArray = null;
     }
 
-    // 3. The .inputX may or may not be created by this block (but .inputX.scaleBoundArray are always not), they should be released by
-    //    this block according to .Xxx_bOwned flag (except .inputX.scaleBoundArray).
+//!!! (2022/08/03 Remarked) Wrong. Old Codes.
+//    // 3. The .inputX may or may not be created by this block (but .inputX.scaleBoundArray are always not), they should be released by
+//    //    this block according to .Xxx_bOwned flag (except .inputX.scaleBoundArray).
+
+    // 3. The .inputX may or may not be created by this block, they should be released
+    //    by this block according to .Xxx_bOwned flag.
     {
       if ( this.input1 ) {
-        this.input1.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray0 which should not be released here. So nullify it.
+//!!! (2022/08/03 Remarked) Wrong. Old Codes.
+        // this.input1.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray0 which should not be released here. So nullify it.
+        // if ( this.input1_bOwned ) {
+        //   this.input1.disposeResources_and_recycleToPool();
+        // }
+
         if ( this.input1_bOwned ) {
+          this.input1.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray0 which should not be released here. So nullify it.
           this.input1.disposeResources_and_recycleToPool();
+        } else {
+          // .input1 is totally created by caller. Do not release it (and do not nullify .input1.scaleBoundsArray) here.
         }
         this.input1_bOwned = undefined;
         this.input1 = null;
       }
  
       if ( this.input0 ) {
-        this.input0.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray1 which should not be released here. So nullify it.
+//!!! (2022/08/03 Remarked) Wrong. Old Codes.
+        // this.input0.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray1 which should not be released here. So nullify it.
+        // if ( this.input0_bOwned ) {
+        //   this.input0.disposeResources_and_recycleToPool();
+        // }
+
         if ( this.input0_bOwned ) {
+          this.input0.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray1 which should not be released here. So nullify it.
           this.input0.disposeResources_and_recycleToPool();
+        } else {
+          // .input0 is totally created by caller. Do not release it (and do not nullify .input0.scaleBoundsArray) here.
         }
         this.input0_bOwned = undefined;
         this.input0 = null;
