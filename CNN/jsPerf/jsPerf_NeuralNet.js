@@ -75,8 +75,7 @@ class HeightWidthDepth {
         neuralNetTestParams.out.input_width,
         neuralNetTestParams.out.input_channelCount );
 
-      let neuralNet = NeuralNet_Reference.Base.NeuralNet_create(
-        neuralNetTestParams, inputImage.boundsArraySet.output0 );
+      let neuralNet = NeuralNet_Reference.Base.NeuralNet_create( neuralNetTestParams );
 
       let aPerformanceTestCase = new PerformanceTestCase(
         neuralNetTestParams.id, testCaseName, neuralNetTestParams, neuralNet, inputTensor3d );
