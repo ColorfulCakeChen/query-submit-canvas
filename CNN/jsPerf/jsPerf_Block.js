@@ -139,7 +139,7 @@ class HeightWidthDepth {
     // Test Case 0: (pointwise1 (bias, COS), depthwise (channelMultiplier = 1, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     this.block_PerformanceTest_addCase(
       "DConv_1_bias_COS_AddInputToOutput",
-      new Block_TestParams.Base( 0 ).set_byParamsScattered(
+      ( new Block_TestParams.Base( 0 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
             8,
@@ -154,7 +154,7 @@ class HeightWidthDepth {
     // Test Case 1: (pointwise1 (bias, COS), depthwise (avg pooling, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     this.block_PerformanceTest_addCase(
       "Avg_bias_COS_AddInputToOutput",
-      new Block_TestParams.Base( 1 ).set_byParamsScattered(
+      ( new Block_TestParams.Base( 1 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
             8,
@@ -170,7 +170,7 @@ class HeightWidthDepth {
     // Test Case 2: (pointwise1 (bias, COS), depthwise (max pooling, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     this.block_PerformanceTest_addCase(
       "Max_bias_COS_AddInputToOutput",
-      new Block_TestParams.Base( 2 ).set_byParamsScattered(
+      ( new Block_TestParams.Base( 2 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
             8,
@@ -186,7 +186,7 @@ class HeightWidthDepth {
     // Test Case 3: (pointwise1 (bias, COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     this.block_PerformanceTest_addCase(
       "DConv_2_bias_COS_AddInputToOutput",
-      new Block_TestParams.Base( 3 ).set_byParamsScattered(
+      ( new Block_TestParams.Base( 3 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
             8,
@@ -195,12 +195,13 @@ class HeightWidthDepth {
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
+      )
     );
 
     // Test Case 4: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS), AddInputToOutput)
     this.block_PerformanceTest_addCase(
       "DConv_2_COS_AddInputToOutput",
-      new Block_TestParams.Base( 4 ).set_byParamsScattered(
+      ( new Block_TestParams.Base( 4 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
             8,
@@ -215,7 +216,7 @@ class HeightWidthDepth {
     // Test Case 5: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS))
     this.block_PerformanceTest_addCase(
       "DConv_2_COS",
-      new Block_TestParams.Base( 5 ).set_byParamsScattered(
+      ( new Block_TestParams.Base( 5 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
             8,
@@ -230,7 +231,7 @@ class HeightWidthDepth {
     // Test Case 6: (pointwise1 (none), depthwise (channelMultiplier = 32, strides = 1, pad = same, bias, COS), pointwise2 (bias))
     this.block_PerformanceTest_addCase(
       "DConv_32_bias_COS_P128_bias",
-      new Block_TestParams.Base( 6 ).set_byParamsScattered(
+      ( new Block_TestParams.Base( 6 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
             0,
@@ -245,7 +246,7 @@ class HeightWidthDepth {
     // Test Case 7: (pointwise1 (bias, COS), depthwise (none), pointwise2 (bias))
     this.block_PerformanceTest_addCase(
       "P128_bias_COS_P128_bias",
-      new Block_TestParams.Base( 7 ).set_byParamsScattered(
+      ( new Block_TestParams.Base( 7 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
           128,
@@ -535,42 +536,41 @@ function init() {
   disposeResources();
 
   let depth = 4;
-//  globalThis.testSet_110x120x4 = new HeightWidthDepth( 110, 120, depth ); // height, width, depth
 
   // Using mobile phone's resolution ( 2160 * 1080 ) will crash the computer.
   // Using ( 1 / 10 ) of computer screen ( 1920 * 1080 ).
-  globalThis.testSet_110x120x4 = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
+  globalThis.testSet_108x192x4 = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
 
-  globalThis.testSet_110x120x4_All = [
-    globalThis.testSet_110x120x4
+  globalThis.testSet_108x192x4_All = [
+    globalThis.testSet_108x192x4
   ];
 }
 
 function* testCorrectness() {
-  for ( let i = 0; i < globalThis.testSet_110x120x4_All.length; ++i ) {
-    let testSet = globalThis.testSet_110x120x4_All[ i ];
+  for ( let i = 0; i < globalThis.testSet_108x192x4_All.length; ++i ) {
+    let testSet = globalThis.testSet_108x192x4_All[ i ];
     yield* testSet.testCorrectness();
   }
 }
 
 function testDifferentDisposeStrategy_All() {
-  for ( let i = 0; i < globalThis.testSet_110x120x4_All.length; ++i ) {
-    let testSet = globalThis.testSet_110x120x4_All[ i ];
+  for ( let i = 0; i < globalThis.testSet_108x192x4_All.length; ++i ) {
+    let testSet = globalThis.testSet_108x192x4_All[ i ];
     testSet.testDifferentDisposeStrategy_All();
   }
 }
 
 function disposeResources() {
-  if ( globalThis.testSet_110x120x4_All ) {
-    for ( let i = 0; i < globalThis.testSet_110x120x4_All.length; ++i ) {
-      let testSet = globalThis.testSet_110x120x4_All[ i ];
+  if ( globalThis.testSet_108x192x4_All ) {
+    for ( let i = 0; i < globalThis.testSet_108x192x4_All.length; ++i ) {
+      let testSet = globalThis.testSet_108x192x4_All[ i ];
       if ( testSet )
         testSet.disposeResources();
     }
 
-    globalThis.testSet_110x120x4_All = null;
+    globalThis.testSet_108x192x4_All = null;
   }
 
-  globalThis.testSet_110x120x4
+  globalThis.testSet_108x192x4
     = null;
 }
