@@ -16,7 +16,7 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
 /**
  * Test CNN Stage.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/15055/302/colorfulcakechen-cnn-stage-e3f60bcb51602297af79317d2f98}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/15055/307/colorfulcakechen-cnn-stage-5c8100207cf80b8a3944c093874c}
  */
 
 /**
