@@ -101,6 +101,11 @@ class HeightWidthDepth {
     // Larger input image for performance testing.
     this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by();
 
+    if ( this.testCaseMap )
+      this.testCaseMap.clear();
+    else
+      this.testCaseMap = new Map();
+
     let blockCountRequested = 10;
     let nSqueezeExcitationChannelCountDivisor = 2;
 
@@ -117,11 +122,6 @@ class HeightWidthDepth {
     // The stage performance testing should:
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
     //
-
-    if ( this.testCaseMap )
-      this.testCaseMap.clear();
-    else
-      this.testCaseMap = new Map();
 
     // Test Case 0: (MobileNetV1, ( bPointwise1 == true ))
     this.stage_PerformanceTest_addCase( "MobileNetV1_bPointwise1_true",

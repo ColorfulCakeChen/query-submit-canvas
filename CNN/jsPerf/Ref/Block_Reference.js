@@ -1,3 +1,4 @@
+export { TestCorrectnessInfo };
 export { BlockReference_Base as Base };
 
 import * as Pool from "../../util/Pool.js";

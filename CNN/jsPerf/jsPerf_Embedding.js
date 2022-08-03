@@ -109,6 +109,11 @@ class HeightWidthDepth {
     // Larger input image for performance testing.
     this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
+    if ( this.testCaseMap )
+      this.testCaseMap.clear();
+    else
+      this.testCaseMap = new Map();
+
     let vocabularyCountPerInputChannel = 256;
     let bEmbedVocabularyId = true;
 
@@ -119,11 +124,6 @@ class HeightWidthDepth {
     // The embedding performance testing should:
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
     //
-
-    if ( this.testCaseMap )
-      this.testCaseMap.clear();
-    else
-      this.testCaseMap = new Map();
 
     // Test Case 0: (AddGatherReshape, ( channelMultiplier == 1 ))
     this.embedding_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_1",

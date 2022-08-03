@@ -32,6 +32,19 @@ import * as jsPerf_Operation from "./jsPerf_Operation.js";
  */
 
 /**
+ * 
+ */
+ class PerformanceTestCase {
+  constructor( testCaseId, testCaseName, blockTestParams, block, testCorrectnessInfo ) {
+    this.testCaseId = testCaseId;
+    this.testCaseName = testCaseName;
+    this.blockTestParams = blockTestParams;
+    this.block = block;
+    this.testCorrectnessInfo = testCorrectnessInfo;
+  }
+}
+
+/**
  * A test set.
  */
 class HeightWidthDepth {
@@ -55,152 +68,57 @@ class HeightWidthDepth {
   }
 
   disposeResources() {
-    if ( this.dataTensor3dArray ) {
-      tf.dispose( this.dataTensor3dArray );
-      this.dataTensor3dArray = null;
-    }
-
     this.block_PerformanceTest_release();
   }
 
+  /**
+   * 
+   */
+  block_PerformanceTest_addCase( testCaseName, blockTestParams ) {
+    try {
+      let testCorrectnessInfo = Block_Reference.TestCorrectnessInfo.Pool.get_or_create_by();
+      testCorrectnessInfo.prepareBy(
+        this.testPerformance_imageSourceBag,
+        blockTestParams,
+        this.testPerformance_channelShufflerBag );
+
+      let {
+        imageInArraySelected, channelShuffler_ConcatPointwiseConv
+      } = testCorrectnessInfo;
+ 
+      let block = BlockReference_Base.block_create( blockTestParams,
+        imageInArraySelected[ 0 ].boundsArraySet.output0,
+        imageInArraySelected[ 1 ]?.boundsArraySet.output0,
+        channelShuffler_ConcatPointwiseConv );
+
+      let aPerformanceTestCase = new PerformanceTestCase(
+        blockTestParams.id, testCaseName, blockTestParams, block, testCorrectnessInfo );
+
+      this.testCaseMap.set( testCaseName, aPerformanceTestCase );
+
+      console.log( `Block.${testCaseName}: tensorWeightCount = { `
+        + `Extracted: ${block.tensorWeightCountExtracted}, `
+        + `Total: ${block.tensorWeightCountTotal} }` );
+
+    } catch ( e ) {
+      debugger;
+      throw e;
+    }
+  }
+
   block_PerformanceTest_init() {
-
-    let pointwise_4to8_FiltersArray =
-    [
-       1,  4,  2,  3, -3, -2,  4,  1,
-       2,  3, -3, -2,  4,  1,  1,  4,
-      -3, -2,  4,  1,  1,  4,  2,  3,
-       4,  1,  1,  4,  2,  3, -3, -2,
-    ];
-
-    let pointwise_4to8_BiasesArray =
-    [ 3, 4, 5, 6, 7, 8, 9, 10, ];
-
-    // (If value too large (out of float32 range), the result will strange. So, use smaller and negative value.)
-    let depthwise_8to16_FiltersArray =
-    [
-       1, -9, -5,  7,  2,  8,  4,  1, -3,  7, -6,  9,  4, -6,  8, -2,
-       2,  8,  4,  1, -3,  7, -6,  9,  4, -6,  8, -2,  5,  5, -7, -3,
-      -3,  7, -6,  9,  4, -6,  8, -2,  5,  5, -7, -3,  6,  4,  9,  5,
-
-       4, -6,  8, -2,  5,  5, -7, -3,  6,  4,  9,  5,  7,  3, -3,  4,
-       5,  5, -7, -3,  6,  4,  9,  5,  7,  3, -3,  4, -8,  2,  1, -8,
-       6,  4,  9,  5,  7,  3, -3,  4, -8,  2,  1, -8, -9,  1, -2,  6,
-
-       7,  3, -3,  4, -8,  2,  1, -8, -9,  1, -2,  6,  1, -9, -5,  7,
-      -8,  2,  1, -8, -9,  1, -2,  6,  1, -9, -5,  7,  2,  8,  4,  1,
-      -9,  1, -2,  6,  1, -9, -5,  7,  2,  8,  4,  1, -3,  7, -6,  9,
-    ];
-
-    let depthwise_8to16_BiasesArray =
-    [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, ];
-
-    let depthwise_4to128_FiltersArray = [ ... new Array( 3 * 3 * 4 * 32 ).keys() ]; // filterHeight * filterWidth * inChannel * channelMultiplier
-    let depthwise_Xto128_BiasesArray =  [ ... new Array(         4 * 32 ).keys() ]; // inChannel * channelMultiplier
-
-    let depthwise_8to8_FiltersArray =
-    [
-       1, -9, -5,  7,  2,  8,  4,  1,
-       2,  8,  4,  1, -3,  7, -6,  9,
-      -3,  7, -6,  9,  4, -6,  8, -2,
-
-       4, -6,  8, -2,  5,  5, -7, -3,
-       5,  5, -7, -3,  6,  4,  9,  5,
-       6,  4,  9,  5,  7,  3, -3,  4,
-
-       7,  3, -3,  4, -8,  2,  1, -8,
-      -8,  2,  1, -8, -9,  1, -2,  6,
-      -9,  1, -2,  6,  1, -9, -5,  7,
-    ];
-
-    let depthwise_8to8_BiasesArray =
-    [ 101, 102, 103, 104, 105, 106, 107, 108, ];
-
-    let pointwise_16to4_FiltersArray =
-    [
-      11, 21, 31, 41,
-      12, 22, 32, 42,
-      13, 23, 33, 43,
-      14, 24, 34, 44,
-      15, 25, 35, 45,
-      16, 26, 36, 46,
-      17, 27, 37, 47,
-      18, 28, 38, 48,
-      19, 29, 39, 49,
-      20, 30, 40, 50,
-      21, 31, 41, 51,
-      22, 32, 42, 52,
-      23, 33, 43, 53,
-      24, 34, 44, 54,
-      25, 35, 45, 55,
-      26, 36, 46, 56,
-    ];
-
-    let pointwise_8to4_FiltersArray =
-    [
-      11, 21, 31, 41,
-      12, 22, 32, 42,
-      13, 23, 33, 43,
-      14, 24, 34, 44,
-      15, 25, 35, 45,
-      16, 26, 36, 46,
-      17, 27, 37, 47,
-      18, 28, 38, 48,
-    ];
-
-    let pointwise_4to128_FiltersArray =   [ ... new Array(   4 * 128 ).keys() ]; // inChannel * outChannel
-    let pointwise_128to128_FiltersArray = [ ... new Array( 128 * 128 ).keys() ]; // inChannel * outChannel
-
-    let pointwise_Xto4_BiasesArray =
-    [ 201, 202, 203, 204, ];
-
-    let pointwise_Xto128_BiasesArray =    [ ... new Array( 128 ).keys() ];       // outChannel
 
     // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
     this.disposeResources();
 
     // Larger input image for performance testing.
-    let inputTensorCount = 2;
-    this.testPerformance_NumberImageArray = Recyclable.OwnerArray.Pool.get_or_create_by( inputTensorCount );
+    this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by();
+    this.testPerformance_channelShufflerBag = ChannelShuffler.Bag.Pool.get_or_create_by( ChannelShuffler.ConcatPointwiseConv.Pool );
 
-    this.dataTensor3dArray = tf.tidy( () => {
-      let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( this.depth );
-
-      let dataTensor3dArray = new Array( inputTensorCount );
-
-      let shape = [ this.height, this.width, this.depth ];
-      let elementCount = tf.util.sizeFromShape( shape );
-
-      for ( let i = 0; i < dataTensor3dArray.length; ++i ) {
-        let numberBegin = ( i * elementCount );
-        let numberEnd = numberBegin + elementCount;
-
-        let image = this.testPerformance_NumberImageArray[ i ] = NumberImage.Base.Pool.get_or_create_by(
-          this.height, this.width, this.depth, undefined,
-          inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, Weights.Base.ValueBounds );
-
-        for ( let j = 0; j < elementCount; ++j ) {
-          image.dataArray[ j ] = numberBegin + j;
-        }
-
-//!!! (2022/07/05 Remarked) Replace by the above for-loop.
-//         let t = tf.range( numberBegin, numberEnd, 1 );
-//         let dataTensor3d = tf.reshape( t, shape );
-//        dataTensor3dArray[ i ] = dataTensor3d;
-        dataTensor3dArray[ i ] = tf.tensor( image.dataArray, shape );
-      }
-
-      inputScaleBoundsArray.disposeResources_and_recycleToPool();
-      inputScaleBoundsArray = null;
-
-      return dataTensor3dArray;
-    });
-
-
-    // Create shared ChannelShuffler.
-    let concatenatedShape = [ this.height, this.width, this.depth * this.outputGroupCount ]; 
-    let channelShuffler_ConcatPointwiseConv = this.channelShuffler_ConcatPointwiseConv
-          = new ChannelShuffler.ConcatPointwiseConv( concatenatedShape, this.outputGroupCount );
+    if ( this.testCaseMap )
+      this.testCaseMap.clear();
+    else
+      this.testCaseMap = new Map();
 
     // input0_height, input0_width, input0_channelCount,
     // nConvBlockTypeId,
@@ -212,264 +130,174 @@ class HeightWidthDepth {
     // nActivationId,
     // bKeepInputTensor
     //
-
+    //
     // The block for performance testing should:
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
     //
 
 
-//!!! ...unfinished... (2022/06/17)
-// nSqueezeExcitationChannelCountDivisor, ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx
-// combined with bSqueezeExcitationPrefix
-
-
-    // Test Case: (pointwise1 (bias, COS), depthwise (channelMultiplier = 1, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
-    let testCase_pointwise1_4to8_bias_COS_depthwise_8to8_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput =
-    new Block_TestParams.Base().set_byParamsScattered(
-      this.testPerformance_NumberImageArray[ 0 ].height, this.testPerformance_NumberImageArray[ 0 ].width,
-      this.testPerformance_NumberImageArray[ 0 ].depth,
-      ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
-          8,
-          1,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
-      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-       true
+    // Test Case 0: (pointwise1 (bias, COS), depthwise (channelMultiplier = 1, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
+    this.block_PerformanceTest_addCase(
+      "DConv_1_bias_COS_AddInputToOutput",
+      new Block_TestParams.Base( 0 ).set_byParamsScattered(
+        this.height, this.width, this.depth,
+        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
+            8,
+            1,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+            4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
+        ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        true
+      )
     );
 
-    // Test Case: (pointwise1 (bias, COS), depthwise (avg pooling, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
-    let testCase_pointwise1_4to8_bias_COS_depthwise_avg_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput =
-    new Block_TestParams.Base().set_byParamsScattered(
-      this.testPerformance_NumberImageArray[ 0 ].height, this.testPerformance_NumberImageArray[ 0 ].width,
-      this.testPerformance_NumberImageArray[ 0 ].depth,
-      ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
-          8,
-        Block.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,
-                 3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
-      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-       true
+    // Test Case 1: (pointwise1 (bias, COS), depthwise (avg pooling, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
+    this.block_PerformanceTest_addCase(
+      "Avg_bias_COS_AddInputToOutput",
+      new Block_TestParams.Base( 1 ).set_byParamsScattered(
+        this.height, this.width, this.depth,
+        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
+            8,
+          Block.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,
+                  3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+            4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
+        ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        true
+      )
     );
 
-    // Test Case: (pointwise1 (bias, COS), depthwise (max pooling, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
-    let testCase_pointwise1_4to8_bias_COS_depthwise_max_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput =
-    new Block_TestParams.Base().set_byParamsScattered(
-      this.testPerformance_NumberImageArray[ 0 ].height, this.testPerformance_NumberImageArray[ 0 ].width,
-      this.testPerformance_NumberImageArray[ 0 ].depth,
-      ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
-          8,
-        Block.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,
-                 3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
-      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-       true
+    // Test Case 2: (pointwise1 (bias, COS), depthwise (max pooling, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
+    this.block_PerformanceTest_addCase(
+      "Max_bias_COS_AddInputToOutput",
+      new Block_TestParams.Base( 2 ).set_byParamsScattered(
+        this.height, this.width, this.depth,
+        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
+            8,
+          Block.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,
+                  3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+            4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
+        ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        true
+      )
     );
 
-    // Test Case: (pointwise1 (bias, COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
-    let testCase_pointwise1_4to8_bias_COS_depthwise_8to16_strides_1_pad_same_bias_COS_pointwise2_16to4_bias_COS_AddInputToOutput =
-    new Block_TestParams.Base().set_byParamsScattered(
-      this.testPerformance_NumberImageArray[ 0 ].height, this.testPerformance_NumberImageArray[ 0 ].width,
-      this.testPerformance_NumberImageArray[ 0 ].depth,
-      ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
-          8,
-          2,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
-      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-       true
+    // Test Case 3: (pointwise1 (bias, COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
+    this.block_PerformanceTest_addCase(
+      "DConv_2_bias_COS_AddInputToOutput",
+      new Block_TestParams.Base( 3 ).set_byParamsScattered(
+        this.height, this.width, this.depth,
+        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
+            8,
+            2,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+            4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
+        ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        true
     );
 
-    // Test Case: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS), AddInputToOutput)
-    let testCase_pointwise1_4to8_COS_depthwise_8to16_strides_1_pad_same_COS_pointwise2_16to4_COS_AddInputToOutput =
-    new Block_TestParams.Base().set_byParamsScattered(
-      this.testPerformance_NumberImageArray[ 0 ].height, this.testPerformance_NumberImageArray[ 0 ].width,
-      this.testPerformance_NumberImageArray[ 0 ].depth,
-      ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
-          8,
-          2,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
-      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-       true
+    // Test Case 4: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS), AddInputToOutput)
+    this.block_PerformanceTest_addCase(
+      "DConv_2_COS_AddInputToOutput",
+      new Block_TestParams.Base( 4 ).set_byParamsScattered(
+        this.height, this.width, this.depth,
+        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
+            8,
+            2,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+            4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
+        ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        true
+      )
     );
 
-    // Test Case: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS))
-    let testCase_pointwise1_4to8_COS_depthwise_8to16_strides_1_pad_same_COS_pointwise2_16to4_COS =
-    new Block_TestParams.Base().set_byParamsScattered(
-      this.testPerformance_NumberImageArray[ 0 ].height, this.testPerformance_NumberImageArray[ 0 ].width,
-      this.testPerformance_NumberImageArray[ 0 ].depth,
-      ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
-          8,
-          2,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-          4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
-      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-       true
+    // Test Case 5: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS))
+    this.block_PerformanceTest_addCase(
+      "DConv_2_COS",
+      new Block_TestParams.Base( 5 ).set_byParamsScattered(
+        this.height, this.width, this.depth,
+        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
+            8,
+            2,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+            4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
+        ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        true
+      )
     );
 
-    // Test Case: (pointwise1 (none), depthwise (channelMultiplier = 32, strides = 1, pad = same, bias, COS), pointwise2 (bias))
-    let testCase_pointwise1_none_depthwise_4to128_strides_1_pad_same_bias_COS_pointwise2_128to128_bias =
-    new Block_TestParams.Base().set_byParamsScattered(
-      this.testPerformance_NumberImageArray[ 0 ].height, this.testPerformance_NumberImageArray[ 0 ].width,
-      this.testPerformance_NumberImageArray[ 0 ].depth,
-      ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
-          0,
-         32,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-        128, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
-      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
-      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-       true
+    // Test Case 6: (pointwise1 (none), depthwise (channelMultiplier = 32, strides = 1, pad = same, bias, COS), pointwise2 (bias))
+    this.block_PerformanceTest_addCase(
+      "DConv_32_bias_COS_P128_bias",
+      new Block_TestParams.Base( 6 ).set_byParamsScattered(
+        this.height, this.width, this.depth,
+        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
+            0,
+          32,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+          128, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
+        ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        true
+      )
     );
 
-    // Test Case: (pointwise1 (bias, COS), depthwise (none), pointwise2 (bias))
-    let testCase_pointwise1_4to128_bias_COS_depthwise_none_COS_pointwise2_128to128_bias =
-    new Block_TestParams.Base().set_byParamsScattered(
-      this.testPerformance_NumberImageArray[ 0 ].height, this.testPerformance_NumberImageArray[ 0 ].width,
-      this.testPerformance_NumberImageArray[ 0 ].depth,
-      ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
-        128,
-          0,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-        128, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
-      ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
-      ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-       true
+    // Test Case 7: (pointwise1 (bias, COS), depthwise (none), pointwise2 (bias))
+    this.block_PerformanceTest_addCase(
+      "P128_bias_COS_P128_bias",
+      new Block_TestParams.Base( 7 ).set_byParamsScattered(
+        this.height, this.width, this.depth,
+        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
+          128,
+            0,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+          128, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
+        ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        true
+      )
     );
-
-    let inputScaleBoundsArray0 = this.testPerformance_NumberImageArray[ 0 ].boundsArraySet.output0;
-    let inputScaleBoundsArray1 = this.testPerformance_NumberImageArray[ 1 ].boundsArraySet.output0;
-
-    // Different block objects.
-    //
-    // ( bKeepInputTensor )
-    this.block_list = [
-
-      // The block for performance testing.
-      this.block_DConv_1_bias_COS_AddInputToOutput
-        = Block_Reference.Base.block_create(
-            testCase_pointwise1_4to8_bias_COS_depthwise_8to8_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput,
-            inputScaleBoundsArray0, null, //inputScaleBoundsArray1
-            null, //channelShuffler_ConcatPointwiseConv,
-          ),
-
-      this.block_Avg_bias_COS_AddInputToOutput
-        = Block_Reference.Base.block_create(
-            testCase_pointwise1_4to8_bias_COS_depthwise_avg_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput,
-            inputScaleBoundsArray0, null, //inputScaleBoundsArray1
-            null, //channelShuffler_ConcatPointwiseConv,
-          ),
-
-      this.block_Max_bias_COS_AddInputToOutput
-        = Block_Reference.Base.block_create(
-            testCase_pointwise1_4to8_bias_COS_depthwise_max_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput,
-            inputScaleBoundsArray0, null, //inputScaleBoundsArray1
-            null, //channelShuffler_ConcatPointwiseConv,
-          ),
-
-      this.block_DConv_2_bias_COS_AddInputToOutput
-        = Block_Reference.Base.block_create(
-            testCase_pointwise1_4to8_bias_COS_depthwise_8to16_strides_1_pad_same_bias_COS_pointwise2_16to4_bias_COS_AddInputToOutput,
-            inputScaleBoundsArray0, null, //inputScaleBoundsArray1
-            null, //channelShuffler_ConcatPointwiseConv,
-          ),
-
-      this.block_DConv_2_COS_AddInputToOutput
-        = Block_Reference.Base.block_create(
-            testCase_pointwise1_4to8_COS_depthwise_8to16_strides_1_pad_same_COS_pointwise2_16to4_COS_AddInputToOutput,
-            inputScaleBoundsArray0, null, //inputScaleBoundsArray1
-            null, //channelShuffler_ConcatPointwiseConv,
-          ),
-
-      this.block_DConv_2_COS
-        = Block_Reference.Base.block_create(
-            testCase_pointwise1_4to8_COS_depthwise_8to16_strides_1_pad_same_COS_pointwise2_16to4_COS,
-            inputScaleBoundsArray0, null, //inputScaleBoundsArray1
-            null, //channelShuffler_ConcatPointwiseConv,
-          ),
-
-      this.block_DConv_32_bias_COS_P128_bias
-        = Block_Reference.Base.block_create(
-            testCase_pointwise1_none_depthwise_4to128_strides_1_pad_same_bias_COS_pointwise2_128to128_bias,
-            inputScaleBoundsArray0, null, //inputScaleBoundsArray1
-            null, //channelShuffler_ConcatPointwiseConv,
-          ),
-
-      this.block_P128_bias_COS_P128_bias
-        = Block_Reference.Base.block_create(
-            testCase_pointwise1_4to128_bias_COS_depthwise_none_COS_pointwise2_128to128_bias,
-            inputScaleBoundsArray0, null, //inputScaleBoundsArray1
-            null, //channelShuffler_ConcatPointwiseConv,
-          ),
-
-    ];
 
   }
 
   block_PerformanceTest_release() {
-    if ( this.block_list ) {
-      for ( let i = 0; i < this.block_list.length; ++i ) {
-        let block = this.block_list[ i ];
-        block.disposeResources();
+    if ( this.testCaseMap ) {
+      for ( let name_testCase of this.testCaseMap.entries() ) {
+        let name = name_testCase[ 0 ];
+        let testCase = name_testCase[ 1 ];
+        testCase.block.disposeResources_and_recycleToPool();
+        testCase.testCorrectnessInfo.disposeResources_and_recycleToPool();
       }
-      this.block_list = null;
+      this.testCaseMap.clear();
     }
 
-    if ( this.channelShuffler_ConcatPointwiseConv ) { // Release shared ChannelShuffler.
-      this.channelShuffler_ConcatPointwiseConv.disposeResources();
-      this.channelShuffler_ConcatPointwiseConv = null;
+    this.testPerformance_imageSourceBag?.disposeResources_and_recycleToPool();
+    this.testPerformance_imageSourceBag = null;
+
+    this.testPerformance_channelShufflerBag?.disposeResources_and_recycleToPool();
+    this.testPerformance_channelShufflerBag = null;
+  }
+
+  /** Test apply by Xxx */
+  testBlock_ByName( testCaseName ) {
+    let testCase = this.testCaseMap.get( testCaseName );
+    let block = testCase.block;
+
+    let {
+      inputTensor3dArray, outputTensor3dArray
+    } = testCase.testCorrectnessInfo;
+
+    {
+      block.input0.realTensor = inputTensor3dArray[ 0 ];
+      if ( block.input1 )
+        block.input1.realTensor = inputTensor3dArray[ 1 ];
+
+      block.apply();
+
+      outputTensor3dArray[ 0 ] = block.output0.realTensor;
+      outputTensor3dArray[ 1 ] = block.output1?.realTensor;
     }
 
-    if ( this.testPerformance_NumberImageArray ) {
-      this.testPerformance_NumberImageArray.disposeResources_and_recycleToPool();
-      this.testPerformance_NumberImageArray = null;
-    }
-  }
-
-  /** */
-  static block_call_apply_dispose( block, inputTensors ) {
-    block.input0.realTensor = inputTensors[ 0 ];
-    if ( block.input1 )
-      block.input1.realTensor = inputTensors[ 1 ];
-
-    block.apply();
-
-    tf.dispose( block.output0.realTensor );
-    if ( block.output1?.realTensor )
-      tf.dispose( block.output1.realTensor );
-  }
-
-  // Test apply by depthwise convolution.
-  test_DConv_1_bias_COS_AddInputToOutput() {
-    HeightWidthDepth.block_call_apply_dispose( this.block_DConv_1_bias_COS_AddInputToOutput, this.dataTensor3dArray );
-  }
-
-  test_Avg_bias_COS_AddInputToOutput() {
-    HeightWidthDepth.block_call_apply_dispose( this.block_Avg_bias_COS_AddInputToOutput, this.dataTensor3dArray );
-  }
-
-  test_Max_bias_COS_AddInputToOutput() {
-    HeightWidthDepth.block_call_apply_dispose( this.block_Max_bias_COS_AddInputToOutput, this.dataTensor3dArray );
-  }
-
-  test_DConv_2_bias_COS_AddInputToOutput() {
-    HeightWidthDepth.block_call_apply_dispose( this.block_DConv_2_bias_COS_AddInputToOutput, this.dataTensor3dArray );
-  }
-
-  test_DConv_2_COS_AddInputToOutput() {
-    HeightWidthDepth.block_call_apply_dispose( this.block_DConv_2_COS_AddInputToOutput, this.dataTensor3dArray );
-  }
-
-  test_DConv_2_COS() {
-    HeightWidthDepth.block_call_apply_dispose( this.block_DConv_2_COS, this.dataTensor3dArray );
-  }
-
-  test_DConv_32_bias_COS_P128_bias() {
-    HeightWidthDepth.block_call_apply_dispose( this.block_DConv_32_bias_COS_P128_bias, this.dataTensor3dArray );
-  }
-
-  test_P128_bias_COS_P128_bias() {
-    HeightWidthDepth.block_call_apply_dispose( this.block_P128_bias_COS_P128_bias, this.dataTensor3dArray );
+    tf.dispose( outputTensor3dArray );
   }
 
   test_FloatValue() {
@@ -587,7 +415,8 @@ class HeightWidthDepth {
   // Testing whether the results of different implementation are the same.
   * testCorrectness() {
 
-    {
+//!!! (2022/08/03 Temp Remarked) For speed-up PerformanceTest
+    if ( 0 ) {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
       Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_Block.HeightWidthDepth.testCorrectness()", () => {

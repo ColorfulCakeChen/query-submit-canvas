@@ -101,6 +101,11 @@ class HeightWidthDepth {
     // Larger input image for performance testing.
     this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
+    if ( this.testCaseMap )
+      this.testCaseMap.clear();
+    else
+      this.testCaseMap = new Map();
+
     let vocabularyChannelCount = 8;
     let vocabularyCountPerInputChannel = 256;
     let stageCountRequested = 10;
@@ -114,11 +119,6 @@ class HeightWidthDepth {
     // The neuralNet performance testing should:
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
     //
-
-    if ( this.testCaseMap )
-      this.testCaseMap.clear();
-    else
-      this.testCaseMap = new Map();
 
     // Test Case 0: (MobileNetV1)
     this.neuralNet_PerformanceTest_addCase( "MobileNetV1",
