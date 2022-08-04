@@ -61,7 +61,8 @@ class inputTensorPlaceholder_creator {
           + `( ${inputTensorPlaceholder.height}, ${inputTensorPlaceholder.width}, ${inputTensorPlaceholder.channelCount} `
             + `( ${inputTensorPlaceholder.channelCount_lowerHalf}, ${inputTensorPlaceholder.channelCount_higherHalf} ) ) `
           + `should be `
-          + `( ${input_height}, ${input_width}, ${input_channelCount}, ${input_channelCount_lowerHalf}, ${input_channelCount_higherHalf} ).`
+          + `( ${input_height}, ${input_width}, ${input_channelCount} `
+            + `( ${input_channelCount_lowerHalf}, ${input_channelCount_higherHalf} ) ).`
         );
 
       if ( inputScaleBoundsArray.length != input_channelCount )
