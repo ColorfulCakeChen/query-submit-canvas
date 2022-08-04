@@ -204,7 +204,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *       the activation function will destroy all negative input (e.g. RELU6 or SIGMOID
  *       or COS).
  *
- *   - They could achievve activation escaping without increase floating-point
+ *   - They could achieve activation escaping without increase floating-point
  *       accumulated error.
  *
  * Disadvantage:
