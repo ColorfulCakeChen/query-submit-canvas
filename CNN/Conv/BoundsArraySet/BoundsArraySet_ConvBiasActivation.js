@@ -126,10 +126,6 @@ class ConvBiasActivation extends InputsOutputs {
    */
   disposeResources() {
 
-//!!! (2022/07/09 Remarked) Now uses pool.
-//    // For reducing memory re-allocation when this BoundsArraySet is recycled and re-issued, the .afterUndoPreviousActivationEscaping,
-//    // .afterFilter, .afterBias, .bPassThrough are not disposed by here.
-
     if ( this.bPassThrough ) {
       this.bPassThrough.disposeResources_and_recycleToPool();
       this.bPassThrough = null;
@@ -344,29 +340,6 @@ class ConvBiasActivation extends InputsOutputs {
         // If no activation function, the output range is determined by adjusted .afterBias.
         if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
           this.output0.boundsArray.set_one_byBoundsArray( outChannel, this.afterBias, outChannel );
-
-//!!! (2022/07/07 Remarked) Use activated escaping-scaled afterBias value instead.
-// It seems necessary to use clamp_one_byXxx() instead of set_one_byBounds().
-// Otherwise, squeeze-and-excitation when pass-through (constant 1 when pass through) will generate +-3 instead 1.
-//
-//         // Otherwise, the activation function dominates the output range.
-//         //
-//         // Note1: clamp_one_byXxx() is not feasible here because output range usually is different from input domain. set_one_byXxx()
-//         //        is more feasible.
-//         //
-//         // Note2: However, set_one_byXxx() is not so friendly for activation function whose output range has Infinity (e.g. RELU is
-//         //        [ 0, +Infinity ]). The reason is that the result's bounds becomes a bounds with Infinity which is difficult to be
-//         //        handled for the follow-up processing.
-//         } else {
-//
-//           if ( bPassThrough ) { // For activation-escaping, it will be the output range for inputDomainLinear.
-//             this.output0.boundsArray.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
-//
-//           } else { // For non-activation-escaping, it will be the output range for the whole input domain.
-//             this.output0.boundsArray.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
-//           }
-//
-//         }
 
         } else { // Use activated escaping-scaled afterBias value as output.
           let lower_activated = theActivationFunctionInfo.pfnReference( this.afterBias.lowers[ outChannel ] );
