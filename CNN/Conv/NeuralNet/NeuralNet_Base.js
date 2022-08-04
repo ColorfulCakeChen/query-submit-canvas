@@ -245,6 +245,11 @@ class NeuralNet_Base extends Recyclable.Root {
 // SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL's pointwise20 uses higher_half_another_pointwise_no_shuffle
 // instead of higher_half__pass_through_no_shuffle). So that the higher-half are
 // linear transformed.
+//
+//!!! ...unfinished... (2022/08/04)
+// What if let their pointwise2 always not activated (just like MobileNetV2)?
+// Could it solve the above problem?
+//
 
           // For ShuffleNetV2_ByMobileNetV1, the previous stage's output channel count
           // will have lowerHalf and higherHalf. However, the next stage's input needs
