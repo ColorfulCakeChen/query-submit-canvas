@@ -107,7 +107,7 @@ class HeightWidthDepth {
 
     let vocabularyChannelCount = 8;
     let vocabularyCountPerInputChannel = 256;
-    let stageCountRequested = 10;
+    let stageCountRequested = 5;
     let blockCountRequested = 10;
 
     // input_height, input_width, input_channelCount,
