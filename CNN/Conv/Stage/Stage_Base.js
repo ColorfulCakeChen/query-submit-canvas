@@ -176,7 +176,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *
  * 4.1 Special activation function
  *
- * For neural network without special mechanism (e.g. MobileNetV1), it is better to use
+ * For neural network without special mechanism (e.g. MobileNetV1,
+ * ShuffleNetv2_ByMobileNetV1), it is better to use
  * a activation function which:
  *   - has both negative and possible value near origin point.
  *   - is linear between these negative and possible value near origin point.
