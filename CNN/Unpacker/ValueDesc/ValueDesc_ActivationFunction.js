@@ -97,14 +97,20 @@ class ActivationFunction extends Int {
       { NONE : new ActivationFunction.Info( 0, "NONE", null, null, null, null, null ),
 
         CLIP_BY_VALUE_N2_P2: new ActivationFunction.Info( 1, "CLIP_BY_VALUE_N2_P2",
+
+//!!! (2022/08/04 Temp Remarked) Try large range whether reduceing accumulated error.
           ActivationFunction.clipByValue_Negative2_Positive2,
           ActivationFunction.reference_clipByValue_Negative2_Positive2,
+          new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ) ),
 
-//!!! (2022/08/03 Temp Remarked) Try large range whether reduceing accumulated error.
-//          new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ) ),
-//!!! (2022/08/03 Temp Remarked) Try small range whether reduceing accumulated error.
-          new FloatValue.Bounds( -16, +16 ), new FloatValue.Bounds( -16, +16 ), new FloatValue.Bounds( -16, +16 ) ),
-//          new FloatValue.Bounds( -1, +1 ), new FloatValue.Bounds( -1, +1 ), new FloatValue.Bounds( -1, +1 ) ),
+//!!! (2022/08/04 Temp Remarked) Try small range whether reduceing accumulated error.
+          // ActivationFunction.clipByValue_Negative8_Positive8,
+          // ActivationFunction.reference_clipByValue_Negative8_Positive8,
+          // new FloatValue.Bounds( -8, +8 ), new FloatValue.Bounds( -8, +8 ), new FloatValue.Bounds( -8, +8 ) ),
+
+          // ActivationFunction.clipByValue_Negative4_Positive4,
+          // ActivationFunction.reference_clipByValue_Negative4_Positive4,
+          // new FloatValue.Bounds( -4, +4 ), new FloatValue.Bounds( -4, +4 ), new FloatValue.Bounds( -4, +4 ) ),
 
 //!!! (2022/07/05 Remarked) For speed-up testing.
 /*
@@ -156,35 +162,49 @@ class ActivationFunction extends Int {
 
   }
 
+  /**   */
+  static reference_clipByValue_lowerBound_upperBound( x, lowerBound, upperBound ) {
+    if ( x < lowerBound )
+      return lowerBound;
+    else if ( x > upperBound )
+      return upperBound;
+    return x;
+  }
+
+
+  /** */
+  static clipByValue_Negative16_Positive16( x ) { return tf.clipByValue( x, -16, +16 ); }
+  static reference_clipByValue_Negative16_Positive16( x ) {
+    return ActivationFunction.reference_clipByValue_lowerBound_upperBound( x, -16, +16 );
+  }
+
+  /** */
+  static clipByValue_Negative8_Positive8( x ) { return tf.clipByValue( x, -8, +8 ); }
+  static reference_clipByValue_Negative8_Positive8( x ) {
+    return ActivationFunction.reference_clipByValue_lowerBound_upperBound( x, -8, +8 );
+  }
+
+  /** */
+  static clipByValue_Negative4_Positive4( x ) { return tf.clipByValue( x, -4, +4 ); }
+  static reference_clipByValue_Negative4_Positive4( x ) {
+    return ActivationFunction.reference_clipByValue_lowerBound_upperBound( x, -4, +4 );
+  }
+
   /**
    * This non-linear function has the a little smaller range (i.e. 5) than RELU6 (i.e. 7), but has both negative and positive value
    * around zero point.
    */
-  static clipByValue_Negative2_Positive2( x ) {
-    return tf.clipByValue( x, -2, +2 );
-  }
-
+  static clipByValue_Negative2_Positive2( x ) { return tf.clipByValue( x, -2, +2 ); }
   static reference_clipByValue_Negative2_Positive2( x ) {
-    if ( x <= -2 )
-      return -2;
-    else if ( x >= +2 )
-      return +2;
-    return x;
+    return ActivationFunction.reference_clipByValue_lowerBound_upperBound( x, -2, +2 );
   }
 
   /**
    * This non-linear function has the same range (i.e. 7) as RELU6, but has both negative and positive value around zero point.
    */
-  static clipByValue_Negative3_Positive3( x ) {
-    return tf.clipByValue( x, -3, +3 );
-  }
-
+  static clipByValue_Negative3_Positive3( x ) { return tf.clipByValue( x, -3, +3 ); }
   static reference_clipByValue_Negative3_Positive3( x ) {
-    if ( x <= -3 )
-      return -3;
-    else if ( x >= +3 )
-      return +3;
-    return x;
+    return ActivationFunction.reference_clipByValue_lowerBound_upperBound( x, -3, +3 );
   }
 
   static reference_tanh( x ) { return Math.tanh( x ); }
