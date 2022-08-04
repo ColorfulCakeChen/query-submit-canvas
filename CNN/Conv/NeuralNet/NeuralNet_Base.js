@@ -236,6 +236,16 @@ class NeuralNet_Base extends Recyclable.Root {
         {
           next_input_ScaleBoundsArray_or_TensorPlaceholder = stage.output0; // (This is a TensorPlaceholder.)
 
+//!!! ...unfinished... (2022/08/04)
+// This seems imply that the higher half of the final output of ShuffleNetV2 are not
+// usable because they come from the previous stage's activated output (i.e. value
+// between [ -2, + 2 ]).
+//
+// Perhaps, should change ConvBlockType SHUFFLE_NET_V2_TAIL has pointwise21 (and
+// SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL's pointwise20 uses higher_half_another_pointwise_no_shuffle
+// instead of higher_half__pass_through_no_shuffle). So that the higher-half are
+// linear transformed.
+
           // For ShuffleNetV2_ByMobileNetV1, the previous stage's output channel count
           // will have lowerHalf and higherHalf. However, the next stage's input needs
           // lowerHalf equal whole channel count and no higherHalf. Modify it fot that.
