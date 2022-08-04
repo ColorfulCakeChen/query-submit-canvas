@@ -124,7 +124,7 @@ class HeightWidthDepth {
       ( new NeuralNet_TestParams.Base( 0 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
-        ValueDesc.ConvNeuralNetType.Singleton.Ids.MOBILE_NET_V1,
+        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
         this.stageCountRequested, this.blockCountRequested, true
       ) );
 
@@ -133,7 +133,7 @@ class HeightWidthDepth {
       ( new NeuralNet_TestParams.Base( 1 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
-        ValueDesc.ConvNeuralNetType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
+        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
         this.stageCountRequested, this.blockCountRequested, true
       ) );
 
@@ -142,7 +142,7 @@ class HeightWidthDepth {
       ( new NeuralNet_TestParams.Base( 2 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
-        ValueDesc.ConvNeuralNetType.Singleton.Ids.MOBILE_NET_V2_THIN,
+        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
         this.stageCountRequested, this.blockCountRequested, true
       ) );
 
@@ -151,7 +151,7 @@ class HeightWidthDepth {
       ( new NeuralNet_TestParams.Base( 3 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
-        ValueDesc.ConvNeuralNetType.Singleton.Ids.MOBILE_NET_V2,
+        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
         this.stageCountRequested, this.blockCountRequested, true
       ) );
 
@@ -160,7 +160,7 @@ class HeightWidthDepth {
       ( new NeuralNet_TestParams.Base( 4 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
-        ValueDesc.ConvNeuralNetType.Singleton.Ids.SHUFFLE_NET_V2,
+        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
         stepCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
@@ -171,7 +171,7 @@ class HeightWidthDepth {
       ( new NeuralNet_TestParams.Base( 5 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
-        ValueDesc.ConvNeuralNetType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
+        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
         stepCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
@@ -182,7 +182,7 @@ class HeightWidthDepth {
       ( new NeuralNet_TestParams.Base( 6 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
-        ValueDesc.ConvNeuralNetType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
+        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
         stepCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
@@ -193,7 +193,7 @@ class HeightWidthDepth {
       ( new NeuralNet_TestParams.Base( 7 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
-        ValueDesc.ConvNeuralNetType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
+        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
         stepCountRequested, true,
         3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
