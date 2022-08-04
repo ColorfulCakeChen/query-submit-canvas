@@ -257,14 +257,10 @@ class Block_TestParams_Base extends TestParams.Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
-      input0_height: [ 3, 3 ],
-      input0_width: [ 4, 5 ],
+      input0_height: [ 1, 5 ], //[ 3, 3 ],
+      input0_width: [ 1, 5 ], //[ 4, 5 ],
 
-      input0_channelCount: [ 1, 3 ],
-      //input0_channelCount: [
-      //  Block.Params.input0_channelCount.valueDesc.range.min,
-      //  Block.Params.input0_channelCount.valueDesc.range.min + 4 - 1
-      //],
+      input0_channelCount: [ 1, 4 ], //[ 1, 3 ],
 
       nConvBlockTypeId: [
 //!!! (2022/07/06 Temp Remarked) For speed-up debug.
@@ -297,10 +293,10 @@ class Block_TestParams_Base extends TestParams.Base {
   ],
 
 //!!! (2022/07/11 Temp Remarked) For speed-up debug.
-      pointwise1ChannelCount: [ 0, 2 ],
+      pointwise1ChannelCount: [ 0, 8 ], //[ 0, 2 ],
 //    pointwise1ChannelCount: [ 2, 2 ],
 
-      pointwise20ChannelCount: [ 1, 3 ],
+      pointwise20ChannelCount: [ 1, 8 ], //[ 1, 3 ],
 
 //!!! (2022/07/07 Temp Remarked) For speed up debug.
       depthwise_AvgMax_Or_ChannelMultiplier: [
@@ -334,8 +330,8 @@ class Block_TestParams_Base extends TestParams.Base {
 //       ],
 
       depthwiseActivationId:
-        undefined,
-//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+//        undefined,
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 //        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
 //        [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
@@ -351,8 +347,8 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       pointwise20ActivationId:
-        undefined,
-//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+//        undefined,
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 //        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
 //        [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
@@ -360,8 +356,8 @@ class Block_TestParams_Base extends TestParams.Base {
       // (i.e. ( undefined )) for speeding up testing.
  
       ActivationId:
-        undefined,
-//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+//        undefined,
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 //        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
 //        [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
