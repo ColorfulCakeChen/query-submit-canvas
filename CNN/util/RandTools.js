@@ -42,6 +42,9 @@ function getRandomIntInclusive( min, max ) {
 function fill_numberArray(
   io_numberArray, randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = ( 2 ** 26 ) ) {
 
+!!! ...unfinished... (2022/08/04) inline getRandomIntInclusive()
+!!! ...unfinished... (2022/08/04) add parameter step.
+
   if ( io_numberArray instanceof Recyclable.NumberArray_withBounds ) {
     let lowerBound = +Infinity;
     let upperBound = -Infinity;
