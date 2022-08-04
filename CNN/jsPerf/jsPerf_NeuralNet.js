@@ -123,80 +123,72 @@ class HeightWidthDepth {
     this.neuralNet_PerformanceTest_addCase( "MobileNetV1",
       ( new NeuralNet_TestParams.Base( 0 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
-        this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
+        vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
-        this.stageCountRequested, this.blockCountRequested, true
+        stageCountRequested, blockCountRequested, true
       ) );
 
     // Test Case 1: (MobileNetV1_padValid)
     this.neuralNet_PerformanceTest_addCase( "MobileNetV1_padValid",
       ( new NeuralNet_TestParams.Base( 1 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
-        this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
+        vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
-        this.stageCountRequested, this.blockCountRequested, true
+        stageCountRequested, blockCountRequested, true
       ) );
 
     // Test Case 2: (MobileNetV2_Thin)
     this.neuralNet_PerformanceTest_addCase( "MobileNetV2_Thin",
       ( new NeuralNet_TestParams.Base( 2 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
-        this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
+        vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
-        this.stageCountRequested, this.blockCountRequested, true
+        stageCountRequested, blockCountRequested, true
       ) );
 
     // Test Case 3: (MobileNetV2)
     this.neuralNet_PerformanceTest_addCase( "MobileNetV2",
       ( new NeuralNet_TestParams.Base( 3 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
-        this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
+        vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
-        this.stageCountRequested, this.blockCountRequested, true
+        stageCountRequested, blockCountRequested, true
       ) );
 
     // Test Case 4: (ShuffleNetV2))
     this.neuralNet_PerformanceTest_addCase( "ShuffleNetV2",
       ( new NeuralNet_TestParams.Base( 4 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
-        this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
+        vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
-        stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        stageCountRequested, blockCountRequested, true
       ) );
 
     // Test Case 5: (ShuffleNetV2_byPointwise21)
     this.neuralNet_PerformanceTest_addCase( "ShuffleNetV2_byPointwise21",
       ( new NeuralNet_TestParams.Base( 5 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
-        this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
+        vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
-        stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        stageCountRequested, blockCountRequested, true
       ) );
 
     // Test Case 6: (ShuffleNetV2_byMobileNetV1)
     this.neuralNet_PerformanceTest_addCase( "ShuffleNetV2_byMobileNetV1",
       ( new NeuralNet_TestParams.Base( 6 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
-        this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
+        vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
-        stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        stageCountRequested, blockCountRequested, true
       ) );
 
     // Test Case 7: (ShuffleNetV2_byMobileNetV1_padValid)
     this.neuralNet_PerformanceTest_addCase( "ShuffleNetV2_byMobileNetV1_padValid",
       ( new NeuralNet_TestParams.Base( 7 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
-        this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
+        vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
-        stepCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        stageCountRequested, blockCountRequested, true
       ) );
   }
 
