@@ -105,10 +105,10 @@ class HeightWidthDepth {
     else
       this.testCaseMap = new Map();
 
-    let vocabularyChannelCount = 8;
+    let vocabularyChannelCount = 4;
     let vocabularyCountPerInputChannel = 256;
     let stageCountRequested = 5;
-    let blockCountRequested = 6;
+    let blockCountRequested = 5;
 
     // input_height, input_width, input_channelCount,
     // vocabularyChannelCount, vocabularyCountPerInputChannel,
