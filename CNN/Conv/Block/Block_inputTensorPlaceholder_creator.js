@@ -57,9 +57,9 @@ class inputTensorPlaceholder_creator {
           || ( inputTensorPlaceholder.channelCount_higherHalf != input_channelCount_higherHalf )
          )
         throw Error( `Block.inputTensorPlaceholder_creator.create_or_check_TensorPlaceholder_by(): `
-          + `inputTensorPlaceholder's ( height, width, channelCount, channelCount_lowerHalf, channelCount_higherHalf ) = `
-          + `( ${inputTensorPlaceholder.height}, ${inputTensorPlaceholder.width}, ${inputTensorPlaceholder.channelCount}, `
-            + `${inputTensorPlaceholder.channelCount_lowerHalf}, ${inputTensorPlaceholder.channelCount_higherHalf} ) `
+          + `inputTensorPlaceholder's ( height, width, channelCount ( channelCount_lowerHalf, channelCount_higherHalf ) ) = `
+          + `( ${inputTensorPlaceholder.height}, ${inputTensorPlaceholder.width}, ${inputTensorPlaceholder.channelCount} `
+            + `( ${inputTensorPlaceholder.channelCount_lowerHalf}, ${inputTensorPlaceholder.channelCount_higherHalf} ) ) `
           + `should be `
           + `( ${input_height}, ${input_width}, ${input_channelCount}, ${input_channelCount_lowerHalf}, ${input_channelCount_higherHalf} ).`
         );
