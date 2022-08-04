@@ -59,6 +59,9 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     this.Stage_Reference?.disposeResources_and_recycleToPool();
     this.Stage_Reference = null;
 
+    this.Embedding_Reference?.disposeResources_and_recycleToPool();
+    this.Embedding_Reference = null;
+
     super.disposeResources();
   }
 
