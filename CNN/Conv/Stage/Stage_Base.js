@@ -202,7 +202,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  * Advantage:
  *   - Because these mechanism, it seems no problem to use any activation function. Even
  *       the activation function will destroy all negative input (e.g. RELU6 or SIGMOID
- *       or SIN).
+ *       or COS).
  *
  *   - They could achievve activation escaping without increase floating-point
  *       accumulated error.
