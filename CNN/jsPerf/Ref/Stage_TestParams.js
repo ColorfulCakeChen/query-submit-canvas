@@ -300,14 +300,14 @@ class Stage_TestParams_Base extends TestParams.Base {
       //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
       //   3
       // ],
-      // nSqueezeExcitationChannelCountDivisor: [
-      //   16,
-      //   16
-      // ],
       nSqueezeExcitationChannelCountDivisor: [
-        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION,
-        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION
+        16,
+        16
       ],
+      // nSqueezeExcitationChannelCountDivisor: [
+      //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION,
+      //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION
+      // ],
 
       // Must have ActivationFunction (i.e. can not be NONE). Otherwise, it easily results in infinity value because of multiple block.
       //
