@@ -167,6 +167,50 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  * function.
  *
  *
+ * 4. Activation Escaping
+ *
+ * Activation function achieve non-linear transformation, but also destroy linear
+ * information. In order to escape the activation function's non-linearity two possible
+ * solutions are provided.
+ *
+ *
+ * 4.1 Special activation function
+ *
+ * For neural network without special mechanism (e.g. MobileNetV1), it is better to use
+ * a activation function which:
+ *   - has both negative and possible value near origin point.
+ *   - is linear between these negative and possible value near origin point.
+ *
+ * For example, CLIP_BY_VALUE_N2_P2 or TANH or SIN.
+ *
+ * Advantage:
+ *   - When neural network want information to keep linear, it could just scale value
+ *       (by convolution filter weights) into the linear part.
+ *
+ * Disadvantage:
+ *   - These activation escaping scaling might increase the floating-point accumulated
+ *       error.
+ *
+ *
+ * 4.2 Special connection
+ *
+ * Some neural networks has special mechanism to escape activation function's
+ * non-linearity:
+ *   - MobileNetV2 has residual connection. (add-input-to-output)
+ *   - ShuffleNetV2 has pass-through channel group. (split-concat)
+ *
+ * Advantage:
+ *   - Because these mechanism, it seems no problem to use any activation function. Even
+ *       the activation function will destroy all negative input (e.g. RELU6 or SIGMOID).
+ *
+ *   - They could achievve activation escaping without increase floating-point
+ *       accumulated error.
+ *
+ * Disadvantage:
+ *   - These mechanism increase opertions and computation time.
+ *
+ *
+ *
  *
  * @member {boolean} bInitOk
  *  If true, this object initialized (i.e. initer()) successfully.
