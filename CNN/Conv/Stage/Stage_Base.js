@@ -50,6 +50,43 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *     - ( bPointwise1 ==  true ), pointwise1 (higher half copy input0) double of input0.
  *
  *
+
+
+!!! ...unfinished... (2022/08/04) New design
+
+ * 3. Bias and Activation
+ *
+ * MobileNetV2_Xxx uses the following (which is MobileNetV2's original design):
+ *   - pointwise1: bias, activation.
+ *   - depthwise:  bias, activation.
+ *   - prefix squeeze-and-excitation.
+ *   - pointwise2: bias, NO activation.
+ *
+ * All non-MobileNetV2_Xxx ConvStageType use the following:
+ *   - pointwise1: bias, activation.
+ *
+ *   - depthwise:  bias, activation.
+ *     - In ShuffleNetV2's original design, depthwise has bias but has no activation.
+ *     - We let depthwise also has activation (just like MobileNetV2_Xxx).
+ *
+ *   - pointwise2: bias, NO activation.
+ *     - In ShuffleNetV2's original design, pointwise2 always has bias and activation.
+ *     - We let pointwise2 has no activation (just like MobileNetV2_Xxx).
+ *
+ *   - postfix squeeze-and-excitation.
+ *     - In non-MobileNetV2_Xxx, the squeeze-and-excitation is behind pointwise2.
+ *     - This is the main different from MobileNetV2_Xxx.
+ *     - This prevents pointwise2 and the next stage's pointwise1 from becoming one
+ *         affine transformation.
+ *
+ *
+
+
+
+
+
+!!! ...unfinished... (2022/08/04 Remarked) Old Design.
+
  * 3. Bias and Activation
  *
  * MobileNetV2_Xxx uses the following (which is MobileNetV2's original design):
