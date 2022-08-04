@@ -214,8 +214,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
-      input_height: [ 5, 5 ],
-      input_width: [ 5, 5 ],
+      input_height: [ 3, 5 ],
+      input_width: [ 3, 5 ],
 
       input_channelCount: [
         1, //NeuralNet.Params.input_channelCount.valueDesc.range.min,
