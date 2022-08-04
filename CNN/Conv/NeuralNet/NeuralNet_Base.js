@@ -232,7 +232,19 @@ class NeuralNet_Base extends Recyclable.Root {
         this.tensorWeightCountTotal += stage.tensorWeightCountTotal;
         this.tensorWeightCountExtracted += stage.tensorWeightCountExtracted;
 
-        next_input_ScaleBoundsArray_or_TensorPlaceholder = stage.output0; // (This is a TensorPlaceholder.)
+        {
+          next_input_ScaleBoundsArray_or_TensorPlaceholder = stage.output0; // (This is a TensorPlaceholder.)
+
+          // For ShuffleNetV2_ByMobileNetV1, the previous stage's output channel count
+          // will have lowerHalf and higherHalf. However, the next stage's input needs
+          // lowerHalf equal whole channel count and no higherHalf. Modify it fot that.
+          if ( ValueDesc.ConvStageType.isShuffleNetV2_ByMobileNetV1( this.nConvStageTypeId ) ) {
+            next_input_ScaleBoundsArray_or_TensorPlaceholder.channelCount_lowerHalf
+              = next_input_ScaleBoundsArray_or_TensorPlaceholder.channelCount;
+
+            next_input_ScaleBoundsArray_or_TensorPlaceholder.channelCount_higherHalf = 0;
+          }
+        }
 
         next_input_height = stage.output_height;
         next_input_width = stage.output_width;

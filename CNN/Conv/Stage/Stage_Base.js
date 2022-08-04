@@ -419,10 +419,6 @@ class Stage_Base extends Recyclable.Root {
           blockParamsCreator.configTo_beforeBlockLast();
         }
 
-//!!! (2022/08/02 Remarked) No loner useful, because input_height and input_width
-// are passed into Stage_BlockParamsCreator directly.
-//        this.assert_ImageSize_BetweenBlock( i, blockParamsCreator ); // Assert image size.
-
         blockParams = blockParamsCreator.create_BlockParams( BlockParamsClass ); // Create current block parameters.
 
         if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
@@ -474,7 +470,7 @@ class Stage_Base extends Recyclable.Root {
       this.blockLast = this.blockArray[ this.blockArray.length - 1 ]; // Shortcut to the last block.
 
 //!!! (2022/08/03 Temp Remarked) For debug.
-//      this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
+      this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
 
       // In our Stage design, no matter which configuration, the output_channelCount
       // always is twice as input_channelCount.
@@ -579,54 +575,6 @@ class Stage_Base extends Recyclable.Root {
       this.block0.output0.ScaleBoundsArray_dispose();
     }
   }
-
-//!!! (2022/08/02 Remarked) No loner useful, because input_height and input_width
-// are passed into Stage_BlockParamsCreator directly.
-
-//   /**
-//    * Assert image size.
-//    *
-//    * @param {number} blockIndex
-//    *   Which block (i.e. block0, block1, block2, ...).
-//    *
-//    * @param {Stage_BlockParamsCreator.Base} blockParamsCreator
-//    *   The maker which will produce current block (Block.Base) object.
-//    */
-//   assert_ImageSize_BetweenBlock( blockIndex, blockParamsCreator ) {
-
-//     if ( 0 == blockIndex ) { // Block0.
-//       if (   ( blockParamsCreator.input0_height == undefined )
-//           || ( blockParamsCreator.input0_height != this.input_height ) )
-//         throw Error( `Stage.Base.initer(): `
-//           + `block${blockIndex}'s input image height ( ${blockParamsCreator.input0_height} ) should be the same as `
-//           + `stage's source image height ( ${this.input_height} ).`
-//         );
-
-//       if (   ( blockParamsCreator.input0_width == undefined )
-//           || ( blockParamsCreator.input0_width != this.input_width ) )
-//         throw Error( `Stage.Base.initer(): `
-//           + `block${blockIndex}'s input image width ( ${blockParamsCreator.input0_width} ) should be the same as `
-//           + `stage's source image width ( ${this.input_width} ).`
-//         );
-
-//     } else { // After Block0.
-//       let previousBlock = this.blockArray[ blockIndex - 1 ];
-
-//       if (   ( blockParamsCreator.input0_height == undefined )
-//           || ( blockParamsCreator.input0_height != previousBlock.output_height ) )
-//         throw Error( `Stage.Base.initer(): `
-//           + `block${blockIndex}'s input image height ( ${blockParamsCreator.input0_height} ) should be the same as `
-//           + `block${ blockIndex - 1 }'s output image height ( ${previousBlock.output_height} ).`
-//        );
-
-//       if (   ( blockParamsCreator.input0_width == undefined )
-//           || ( blockParamsCreator.input0_width != previousBlock.output_width ) )
-//         throw Error( `Stage.Base.initer(): `
-//           + `block${blockIndex}'s input image width ( ${blockParamsCreator.input_width} ) should be the same as `
-//           + `block${ blockIndex - 1 }'s output image width ( ${previousBlock.output_width} ).`
-//         );
-//     }
-//   }
 
   /** Process input, destroy or keep input, return result.
    *
