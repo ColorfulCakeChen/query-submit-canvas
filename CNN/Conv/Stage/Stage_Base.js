@@ -79,10 +79,59 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *     - This prevents pointwise2 and the next stage's pointwise1 from becoming one
  *         affine transformation.
  *
+ * 
+ * 3.1 MobileNetV2_Xxx's pointwise2: no activation
  *
-
-
-
+ * The reason why MobileNetV2_Xxx's pointwise2 could always have no activation
+ * function is that MobileNetV2_Xxx's pointwise2 has add-input-to-output so its
+ * block's output is not affine transformation (even if no activation function).
+ * It and the next block's pointwise1 do not form continuous multiple affine
+ * transformation and will not become just one affine transformation.
+ *
+ *
+ * 3.2 non-MobileNetV2_Xxx's pointwise2:
+ *
+ *
+ * 3.2.1 Original Design
+ * 
+ * In ShuffleNetV2's original design, depthwise has bias but has no activation,
+ * pointwise2 always has bias and activation. This also avoids the previous
+ * block's pointwise2 and the next block's pointwis1 become just one (i.e. not
+ * two) affine transformation (i.e. do twice computation but just have same
+ * effect of one computation).
+ *
+ *
+ * Problem1
+ *
+ * In ShuffleNetV2_ByMobileNetV1, if an operation has activation function, its
+ * pass-through part will scale its convolution filters for escaping the activation
+ * function's non-linear parts (in order to keep linear). This results in its
+ * output is wrong (i.e. different from original ShuffleNetV2). In order to resolve
+ * this issue, the last stage's last operation (i.e. last stage's blockLast's
+ * pointwise2) should have no activation (so it will not scale its convolution
+ * filters for escaping the activation function's non-linear parts).
+ *
+ * 
+ * Problem2
+ * 
+ * In ShuffleNetV2_Xxx, even if the staeLast's pointwise2 has no activation (i.e.
+ * ( bPointwise2ActivatedAtStageEnd == true ) ), the stageLast's output's higher
+ * half are still activated (and not usable by caller) because the they come from
+ * stageLast's previous stage directly.
+ *
+ *
+ * 3.2 Current Design
+ *
+ * Use MobileNetV2's configuration (i.e. depthwise has activation and pointwise2
+ * does not have activation). However, in order to prevent pointwise2 from becoming
+ * linear transformation, a squeeze-and-excitation postfix pointwise2 is necessary.
+ *
+ * Although this design is mainly for solving ShuffleNetV2_ByMobileNetV1's issue,
+ * it does have practical advantage in fact. The output could have any value (i.e.
+ * the whole number line). If the last operation (i.e. pointwise2) always has
+ * activation function, the output value will always be restricted by the activation
+ * function (e.g. [ -1, +1 ] if tanh()).
+ *
 
 
 !!! ...unfinished... (2022/08/04 Remarked) Old Design.

@@ -6,6 +6,9 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Block from "../Block.js";
 import { InferencedParams } from "./Stage_InferencedParams.js";
 
+!!! ...unfinished... (2022/08/04)
+// should drop bPointwise2ActivatedAtStageEnd
+
 /**
  * Convolution stage parameters.
  *
