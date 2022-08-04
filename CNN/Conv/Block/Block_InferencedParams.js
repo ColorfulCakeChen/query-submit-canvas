@@ -694,6 +694,18 @@ class Block_InferencedParams extends Recyclable.Root {
     return ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise1ActivationId );
   }
 
+  get pointwise1_nHigherHalfDifferent_Name() {
+    return ValueDesc.Pointwise_HigherHalfDifferent.Singleton.getName_byId( this.pointwise1_nHigherHalfDifferent );
+  }
+
+  get depthwise1_nHigherHalfDifferent_Name() {
+    return ValueDesc.Depthwise_HigherHalfDifferent.Singleton.getName_byId( this.depthwise1_nHigherHalfDifferent );
+  }
+
+  get pointwise20_nHigherHalfDifferent_Name() {
+    return ValueDesc.Pointwise_HigherHalfDifferent.Singleton.getName_byId( this.pointwise20_nHigherHalfDifferent );
+  }
+
   get pointwise21ActivationName() {
     return ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise21ActivationId );
   }
