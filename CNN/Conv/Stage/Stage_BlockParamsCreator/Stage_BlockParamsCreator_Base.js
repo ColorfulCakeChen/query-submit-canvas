@@ -202,6 +202,16 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
   activation_setup_forBlock0() {
     let stageParams = this.stageParams;
 
+!!! ...unfinished... (2022/08/04)
+// should drop bPointwise2ActivatedAtStageEnd
+// and all use MobileNetV2_Xxx's 
+//    - depthwise (bias, activation)
+//    - pointwise2 (bias, no activation)
+//
+// except squeeze-and-excitation is different:
+//   - MobileNetV2_Xxx: prefix
+//   - non-MobileNetV2_Xxx: postfix
+    
     // 1. depthwise
     {
       // MobileNetV2_Xxx's depthwise has activation (before prefix squeeze-and-excitation and to remedy its pointwise2's no activation).
