@@ -243,9 +243,9 @@ class Stage_TestParams_Base extends TestParams.Base {
       // input_width:  [ 4, 5 ], // Test different input image width (even and odd).
       // input_channelCount: [ 3, 4 ],
 //!!! (2022/07/22 Temp Remarked) For speed-up debug.
-      input_height: [ 1, 5 ],
-      input_width:  [ 1, 5 ], // Test different input image width (even and odd).
-      input_channelCount: [ 1, 4 ],
+      input_height: [ 1, 1 ],
+      input_width:  [ 1, 1 ], // Test different input image width (even and odd).
+      input_channelCount: [ 4, 4 ],
 
 //      nConvStageTypeId: undefined,
 //!!! (2022/07/20 Temp Remarked) For speed-up debug.
@@ -271,27 +271,45 @@ class Stage_TestParams_Base extends TestParams.Base {
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1 // (0)
       ],
 
+//!!! (2022/08/04 Temp Remarked) For speed-up debug.
+      // blockCountRequested: [
+      //   Stage.Params.blockCountRequested.valueDesc.range.min,
+      //   Stage.Params.blockCountRequested.valueDesc.range.min + 3
+      // ],
       blockCountRequested: [
-        Stage.Params.blockCountRequested.valueDesc.range.min,
-        Stage.Params.blockCountRequested.valueDesc.range.min + 3
+        2,
+        2
       ],
 
 //      bPointwise1: undefined,
+//!!! (2022/08/04 Temp Remarked) For speed-up debug.
+      // bPointwise1: [
+      //   Stage.Params.bPointwise1.valueDesc.range.min,
+      //   Stage.Params.bPointwise1.valueDesc.range.max
+      // ],
       bPointwise1: [
-        Stage.Params.bPointwise1.valueDesc.range.min,
-        Stage.Params.bPointwise1.valueDesc.range.max
+        true,
+        true
       ],
 
       // (2022/05/05) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 //!!! (2022/07/22 Remarked) to avoid depthwise filter 1 x N or N x 1
 //      depthwiseFilterHeight: [ Stage.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
 //      depthwiseFilterWidth: [ Stage.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
-      depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
-      depthwiseFilterWidth: [ 2, depthwiseFilterMaxSize ],
+//!!! (2022/08/04 Temp Remarked) For speed-up debug.
+      // depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
+      // depthwiseFilterWidth: [ 2, depthwiseFilterMaxSize ],
+      depthwiseFilterHeight: [ 3, 3 ],
+      depthwiseFilterWidth: [ 3, 3 ],
 
+//!!! (2022/08/04 Temp Remarked) For speed-up debug.
+      // bPointwise2ActivatedAtStageEnd: [
+      //   Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.min,
+      //   Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.max
+      // ],
       bPointwise2ActivatedAtStageEnd: [
-        Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.min,
-        Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.max
+        false,
+        false
       ],
 
 //      nSqueezeExcitationChannelCountDivisor: undefined,
@@ -311,7 +329,7 @@ class Stage_TestParams_Base extends TestParams.Base {
 
       // Must have ActivationFunction (i.e. can not be NONE). Otherwise, it easily results in infinity value because of multiple block.
       //
-       nActivationId: [ ValueDesc.ActivationFunction.Singleton.range.max, ValueDesc.ActivationFunction.Singleton.range.max ],
+      nActivationId: [ ValueDesc.ActivationFunction.Singleton.range.max, ValueDesc.ActivationFunction.Singleton.range.max ],
 
 //      bKeepInputTensor: undefined,
       bKeepInputTensor: [
