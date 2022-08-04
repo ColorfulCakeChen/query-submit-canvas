@@ -725,23 +725,30 @@ class Block_InferencedParams extends Recyclable.Root {
       + `bHigherHalfDifferent=${this.bHigherHalfDifferent}, `
       + `bHigherHalfDepthwise2=${this.bHigherHalfDepthwise2}, `
 
-      + `pointwise1ChannelCount=${this.this.pointwise1ChannelCount}, `
-      + `pointwise1Bias=${this.this.pointwise1Bias}, `
+      + `pointwise1ChannelCount=${this.pointwise1ChannelCount}, `
+      + `pointwise1Bias=${this.pointwise1Bias}, `
       + `pointwise1ActivationName=${this.pointwise1ActivationName}`
-        + `(${this.this.pointwise1ActivationId}), `
+        + `(${this.pointwise1ActivationId}), `
+
+      + `pointwise1_nHigherHalfDifferent=${this.pointwise1_nHigherHalfDifferent_Name}`
+        + `${this.pointwise1_nHigherHalfDifferent}, `
 
       + `bDepthwiseRequestedAndNeeded=${this.bDepthwiseRequestedAndNeeded}, `
       + `bDepthwise2Requested=${this.bDepthwise2Requested}, `
 
-      + `depthwiseBias=${this.this.depthwiseBias}, `
+      + `depthwiseBias=${this.depthwiseBias}, `
+      + `depthwise1_nHigherHalfDifferent=${this.depthwise1_nHigherHalfDifferent_Name}`
+        + `${this.depthwise1_nHigherHalfDifferent}, `
 
       + `bConcat1Requested=${this.bConcat1Requested}, `
 
-      + `pointwise20Bias=${this.this.pointwise20Bias}, `
+      + `pointwise20Bias=${this.pointwise20Bias}, `
+      + `pointwise20_nHigherHalfDifferent=${this.pointwise20_nHigherHalfDifferent_Name}`
+        + `${this.pointwise20_nHigherHalfDifferent}, `
 
       + `squeezeExcitationActivationName=`
         + `${this.squeezeExcitationActivationName}`
-        + `(${this.this.squeezeExcitationActivationId}), `
+        + `(${this.squeezeExcitationActivationId}), `
 
       + `bAddInputToOutputRequested=${this.bAddInputToOutputRequested}, `
       + `bConcat2ShuffleSplitRequested=${this.bConcat2ShuffleSplitRequested}, `
