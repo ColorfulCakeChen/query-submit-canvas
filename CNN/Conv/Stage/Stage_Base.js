@@ -132,132 +132,68 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  * activation function, the output value will always be restricted by the activation
  * function (e.g. [ -1, +1 ] if tanh()).
  *
-
-
-!!! ...unfinished... (2022/08/04 Remarked) Old Design.
-
- * 3. Bias and Activation
+ * 
+ * 3.3 Appendix: Combined affine transformation
  *
- * MobileNetV2_Xxx uses the following (which is MobileNetV2's original design):
- *   - pointwise1: bias, activation.
- *   - depthwise:  bias, activation.
- *   - prefix squeeze-and-excitation.
- *   - pointwise2: bias, NO activation.
+ * 
+ * 3.3.1 The characteristic of affine transformation:
  *
- * All non-MobileNetV2_Xxx ConvStageType use the following (which is ShuffleNetV2's original design):
- *   - pointwise1: bias, activation.
+ *   "If an operation has no activation function (i.e. it is affine transformation),
+ *    it can also have no bias because the next operation's bias can achieve the
+ *    same result. (Multiple affine transformations can be combined into one affine
+ *    transformation.)"
  *
- *   - depthwise:  NO bias, NO activation.
- *     - In ShuffleNetV2's original design, depthwise always has bias.
- *     - We drop depthwise's bias because it could be achieved by pointwise2's bias.
- *         (Note: The squeeze-and-excitation is behind pointwise2 in these ConvStageTypes.)
- *
- *   - pointwise2:
- *     - non-blockLast: bias, activation.
- *     - blockLast:     bias, activation or no activation (according to stageParams.bPointwise2ActivatedAtStageEnd).
- *       - In ShuffleNetV2's original design, pointwise2 always has bias and activation. We adjust it according to
- *           stageParams.bPointwise2ActivatedAtStageEnd for ShuffleNetV2_ByMobileNetV1 to undo activation escaping
- *           scales.
- *
- *   - postfix squeeze-and-excitation.
- *
- *
- * 3.1 MobileNetV2_Xxx's pointwise2: no activation
- *
- * The reason why MobileNetV2_Xxx's pointwise2 could always have no activation function is that MobileNetV2_Xxx's pointwise2
- * has add-input-to-output so its block's output is not affine transformation (even if no activation function). It and the next
- * block's pointwise1 do not form continuous multiple affine transformation and will not become just one affine transformation.
- *
- *
-
-//!!! ...unfinished... (2022/08/04)
-// Problem: For ShuffleNetV2_Xxx, even if ( bPointwise2ActivatedAtStageEnd == true ),
-// the stageLast's output's higher half are still activated (and not usable) because
-// the they come from previous stage of stageLast directly.
-//
-// Possible solution: Use MobileNetV2's configuration (i.e. depthwise has activation
-// and pointwise2 does not have activation). However, in order to prevent pointwise2
-// from becoming linear transformation, a squeeze-and-excitation postfix pointwise2
-// is necessary.
-// 
-
-
- * 3.2 non-MobileNetV2_Xxx's pointwise2: activation or no activation
- *
- *
- * 3.2.1 Default: activation
- *
- * By default, for all non-MobileNetV2_Xxx ConvStageType, all non-blockLast's pointwise2 should have activation function (to
- * become non-affine transformation). The reason is to avoid the previous block's pointwise2 and the next block's pointwis1 become
- * just one (i.e. not two) affine transformation (i.e. do twice computation but just have same effect of one computation).
- *
- *
- * 3.2.2 blockLast: activation or no activation
- *
- * The reason why non-MobileNetV2_Xxx's blockLast's pointwise2 may or may not have activation function is for
- * ShuffleNetV2_ByMobileNetV1 to undo activation escaping scales.
- *
- * In ShuffleNetV2_ByMobileNetV1, if an operation has activation function, its pass-through part will scale its convolution filters
- * for escaping the activation function's non-linear parts (in order to keep linear). This results in its output is wrong (i.e.
- * different from original ShuffleNetV2). In order to resolve this issue, the last stage's last operation (i.e. last stage's
- * blockLast's pointwise2) should have no activation (so it will not scale its convolution filters for escaping the activation
- * function's non-linear parts).
- *
- * This is achieved by caller specifying ( stageParams.bPointwise2ActivatedAtStageEnd == false ) for the last stage.
- *
- * Although this design is mainly for solving ShuffleNetV2_ByMobileNetV1's issue, it does have practical advantage in fact. The
- * output could have any value (i.e. the whole number line). If the last operation (i.e. pointwise2) always has activation function,
- * the output value will always be restricted by the activation function (e.g. [ -1, +1 ] if tanh()).
- *
- *
- * 3.3 non-MobileNetV2_Xxx's depthwise
- *
- * The reason why non-MobileNetV2_Xxx's depthwise does not have bias is the following characteristic of affine transformation:
- *
- *   "If an operation has no activation function (i.e. it is affine transformation), it can also have no bias because the next
- *    operation's bias can achieve the same result. (Multiple affine transformations can be combined into one affine transformation.)"
- *
- *
- * 3.3.1 Combined affine transformation
- *
- * In non-MobileNetV2_Xxx, the depthwise does not have activation function (and does not have squeeze-and-excitation following it) so
- * it is affine transformation. Since the depthwise's next operation (i.e. pointwise2) always has bias, it is not necessary to have
- * bias in the depthwise.
+ * In non-MobileNetV2_Xxx's original design, the depthwise does not have activation
+ * function (and does not have squeeze-and-excitation following it) so it is affine
+ * transformation. Since the depthwise's next operation (i.e. pointwise2) always
+ * has bias, it is not necessary to have bias in the depthwise.
  *
  *
  * 3.3.2 Note the assumption's detail
  *
- * To accomplish the above affine transformation combination assumption, the "next operation" should be:
+ * To accomplish the above affine transformation combination assumption, the "next
+ * operation" should be:
  *   - pointwise convolution. or,
  *   - depthwise convolution with ( pad = "valid" ).
  *
  * Why not workable if the next operation is depthwise convolution with ( pad = "same" )?
  *
- * The reason is that the depthwise convolution with ( pad = "same" ) will pad zero. The count of these padded zero is
- * different according to the input pixel position. The varying zero count results in that varying bias is required.
- * Varying bias is impossible to be achieved since data in the same channel could only have the same bias.
+ * The reason is that the depthwise convolution with ( pad = "same" ) will pad zero.
+ * The count of these padded zero is different according to the input pixel position.
+ * The varying zero count results in that varying bias is required. Varying bias is
+ * impossible to be achieved since data in the same channel could only have the same
+ * bias.
  *
- * On the other hand, the depthwise convolution with ( pad = "valid" ) does not pad any value. The per channel (fixed)
- * bias is sufficient to remedy the previous affine transformation's no-bias.
+ * On the other hand, the depthwise convolution with ( pad = "valid" ) does not
+ * pad any value. The per channel (fixed) bias is sufficient to remedy the previous
+ * affine transformation's no-bias.
  *
- * Note: The squeeze (of squeeze-and-excitation) is depthwise (globale average) convolution with ( pad = "valid" ). The
- * excitation (of squeeze-and-excitation) is pointwise convolution. So they also meet these criterion.
+ * Note: The squeeze (of squeeze-and-excitation) is depthwise (globale average)
+ * convolution with ( pad = "valid" ). The excitation (of squeeze-and-excitation)
+ * is pointwise convolution. So they also meet these criterion.
+ *
+ * 
+ * 4. squeeze-and-excitation
+ *
+ * Because squeeze-and-excitation has activation function internally and will be
+ * multiplied to its input, it should be viewed as a non-linear operation (just
+ * like activation function is a non-linear operation).
+ *
+ * If squeeze-and-excitation is prefix the pointwise2 convolution (i.e. just after
+ * the depthwise convolution), the depthwise convolution should have bias (and even
+ * activation). Since squeeze-and-excitation is non-linear, if it is applied, a bias
+ * should be applied (to achieve affine transformation) before the non-linearity
+ * operation.
+ *
+ * In MobileNetV2_Xxx (whose squeeze-and-excitation is prefix), its depthwise has
+ * bias (and activation) for this reason.
+ *
+ * In non-MobileNetV2_Xxx, the squeeze-and-excitation is postfix (not prefix) the
+ * pointwise2 convolution to prevent pointwise2 and the next stage's pointwise1
+ * from becoming one affine transformation.
  *
  *
- * 3.3.3 squeeze-and-excitation
- *
- * Because squeeze-and-excitation has activation function internally and will be multiplied to its input, it should be viewed
- * as a non-linear operation (just like activation function is a non-linear operation).
- *
- * If squeeze-and-excitation is prefix the pointwise2 convolution (i.e. just after the depthwise convolution), the depthwise
- * convolution should have bias (and even activation). Since squeeze-and-excitation is non-linear, if it is applied, a bias
- * should be applied (to achieve affine transformation) before the non-linearity operation.
- *
- * For this reason, in non-MobileNetV2_Xxx, let squeeze-and-excitation is postfix (not prefix) the pointwise2 convolution. Then,
- * the depthwise could still has no bias and no activation because it is still linear between depthwise and pointwise2.
- *
- *
- * 3.4 Note: tf.batchNorm()
+ * 5. Note: tf.batchNorm()
  *
  * tf.batchNorm() has bias intrinsically.
  *
@@ -266,14 +202,14 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  * function.
  *
  *
- * 4. Activation Escaping
+ * 6. Activation Escaping
  *
  * Activation function achieve non-linear transformation, but also destroy linear
  * information. In order to escape the activation function's non-linearity two possible
  * solutions are provided.
  *
  *
- * 4.1 Special activation function
+ * 6.1 Special activation function
  *
  * For neural network without special mechanism (e.g. MobileNetV1,
  * ShuffleNetv2_ByMobileNetV1), it is better to use
@@ -292,7 +228,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *       error.
  *
  *
- * 4.2 Special connection
+ * 6.2 Special connection
  *
  * Some neural networks has special mechanism to escape activation function's
  * non-linearity:
