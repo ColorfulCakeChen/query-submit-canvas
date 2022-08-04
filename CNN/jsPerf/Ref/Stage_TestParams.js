@@ -239,29 +239,29 @@ class Stage_TestParams_Base extends TestParams.Base {
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
 //!!! (2022/07/22 Temp Remarked) For test more.
-      // input_height: [ 3, 3 ],
-      // input_width:  [ 4, 5 ], // Test different input image width (even and odd).
-      // input_channelCount: [ 3, 4 ],
+      input_height: [ 3, 3 ],
+      input_width:  [ 4, 5 ], // Test different input image width (even and odd).
+      input_channelCount: [ 3, 4 ],
 //!!! (2022/07/22 Temp Remarked) For speed-up debug.
-      input_height: [ 1, 1 ],
-      input_width:  [ 1, 1 ], // Test different input image width (even and odd).
-      input_channelCount: [ 4, 4 ],
+      // input_height: [ 1, 1 ],
+      // input_width:  [ 1, 1 ], // Test different input image width (even and odd).
+      // input_channelCount: [ 4, 4 ],
 
 //      nConvStageTypeId: undefined,
 //!!! (2022/07/20 Temp Remarked) For speed-up debug.
-      // nConvStageTypeId: [
-      //   Stage.Params.nConvStageTypeId.valueDesc.range.min,
-      //   Stage.Params.nConvStageTypeId.valueDesc.range.max
-      // ],
       nConvStageTypeId: [
+        Stage.Params.nConvStageTypeId.valueDesc.range.min,
+        Stage.Params.nConvStageTypeId.valueDesc.range.max
+      ],
+      // nConvStageTypeId: [
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1, // (0)
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID, // (1)
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN, // (2)
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2, // (3)
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2, // (4)
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1, // (5)
+      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1, // (5)
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21, // (7)
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 // (5)
+      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 // (5)
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21 // (7)
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 // (4)
@@ -269,27 +269,19 @@ class Stage_TestParams_Base extends TestParams.Base {
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN // (2)
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID // (1)
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1 // (0)
-      ],
+      // ],
 
 //!!! (2022/08/04 Temp Remarked) For speed-up debug.
-      // blockCountRequested: [
-      //   Stage.Params.blockCountRequested.valueDesc.range.min,
-      //   Stage.Params.blockCountRequested.valueDesc.range.min + 3
-      // ],
       blockCountRequested: [
-        2,
-        2
+        Stage.Params.blockCountRequested.valueDesc.range.min,
+        Stage.Params.blockCountRequested.valueDesc.range.min + 3
       ],
 
 //      bPointwise1: undefined,
 //!!! (2022/08/04 Temp Remarked) For speed-up debug.
-      // bPointwise1: [
-      //   Stage.Params.bPointwise1.valueDesc.range.min,
-      //   Stage.Params.bPointwise1.valueDesc.range.max
-      // ],
       bPointwise1: [
-        true,
-        true
+        Stage.Params.bPointwise1.valueDesc.range.min,
+        Stage.Params.bPointwise1.valueDesc.range.max
       ],
 
       // (2022/05/05) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
@@ -297,31 +289,25 @@ class Stage_TestParams_Base extends TestParams.Base {
 //      depthwiseFilterHeight: [ Stage.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
 //      depthwiseFilterWidth: [ Stage.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
 //!!! (2022/08/04 Temp Remarked) For speed-up debug.
-      // depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
-      // depthwiseFilterWidth: [ 2, depthwiseFilterMaxSize ],
-      depthwiseFilterHeight: [ 3, 3 ],
-      depthwiseFilterWidth: [ 3, 3 ],
+      depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
+      depthwiseFilterWidth: [ 2, depthwiseFilterMaxSize ],
 
 //!!! (2022/08/04 Temp Remarked) For speed-up debug.
-      // bPointwise2ActivatedAtStageEnd: [
-      //   Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.min,
-      //   Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.max
-      // ],
       bPointwise2ActivatedAtStageEnd: [
-        false,
-        false
+        Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.min,
+        Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.max
       ],
 
 //      nSqueezeExcitationChannelCountDivisor: undefined,
 //!!! (2022/08/03 Temp Remarked) For speed-up debug.
-      // nSqueezeExcitationChannelCountDivisor: [
-      //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
-      //   3
-      // ],
       nSqueezeExcitationChannelCountDivisor: [
-        16,
-        16
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+        3
       ],
+      // nSqueezeExcitationChannelCountDivisor: [
+      //   16,
+      //   16
+      // ],
       // nSqueezeExcitationChannelCountDivisor: [
       //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION,
       //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION
