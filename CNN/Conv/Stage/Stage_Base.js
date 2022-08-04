@@ -83,6 +83,19 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  * block's pointwise1 do not form continuous multiple affine transformation and will not become just one affine transformation.
  *
  *
+
+//!!! ...unfinished... (2022/08/04)
+// Problem: For ShuffleNetV2_Xxx, even if ( bPointwise2ActivatedAtStageEnd == true ),
+// the stageLast's output's higher half are still activated (and not usable) because
+// the they come from previous stage of stageLast directly.
+//
+// Possible solution: Use MobileNetV2's configuration (i.e. depthwise has activation
+// and pointwise2 does not have activation). However, in order to prevent pointwise2
+// from becoming linear transformation, a squeeze-and-excitation postfix pointwise2
+// is necessary.
+// 
+
+
  * 3.2 non-MobileNetV2_Xxx's pointwise2: activation or no activation
  *
  *
