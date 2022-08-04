@@ -214,8 +214,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
-      input_height: [ 1, 5 ],
-      input_width: [ 1, 5 ],
+      input_height: [ 2, 5 ],
+      input_width: [ 2, 5 ],
 
       input_channelCount: [
         1, //NeuralNet.Params.input_channelCount.valueDesc.range.min,
@@ -224,7 +224,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
       vocabularyChannelCount: [
         1, //NeuralNet.Params.vocabularyChannelCount.valueDesc.range.min,
-        4
+        2 //4
       ],
 
       vocabularyCountPerInputChannel: [
@@ -239,12 +239,12 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
       stageCountRequested: [
         NeuralNet.Params.stageCountRequested.valueDesc.range.min,
-        5 //NeuralNet.Params.stageCountRequested.valueDesc.range.max
+        3 //NeuralNet.Params.stageCountRequested.valueDesc.range.max
       ],
 
       blockCountRequested: [
         NeuralNet.Params.blockCountRequested.valueDesc.range.min,
-        4 //NeuralNet.Params.blockCountRequested.valueDesc.range.max
+        3 //NeuralNet.Params.blockCountRequested.valueDesc.range.max
       ],
 
       // bKeepInputTensor: undefined,
