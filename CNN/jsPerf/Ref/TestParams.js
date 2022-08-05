@@ -381,6 +381,7 @@ class TestParams_Base extends Recyclable.Root {
     }
 
     RandTools.fill_numberArray( io_object[ propertyName ],
+      elementCount, 1, 1,
       valueBegin, valueStep,
       randomOffsetMin, randomOffsetMax, divisorForRemainder );
   }

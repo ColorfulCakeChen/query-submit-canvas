@@ -117,21 +117,24 @@ function fill_numberArray( io_numberArray,
 
 /**
  *
- * @param {number} elementCount
- *   The returned number array will have so many elements.
+ * @param {number} height        The length of axis0 of the io_numberArray.
+ * @param {number} width         The length of axis1 of the io_numberArray.
+ * @param {number} channelCount  The length of axis2 of the io_numberArray.
  *
  * @return {number[]}
  *   Return a number array.
  *
  * @see fill_integerArray()
  */
-function generate_numberArray( elementCount,
+function generate_numberArray(
+  height, width, channelCount,
   valueBegin = 0, valueStep = 1,
   randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = ( 2 ** 26 ),
   oBounds = null ) {
 
-  let numberArray = new Array( elementCount );
+  let numberArray = new Array();
   return fill_numberArray( numberArray,
+    height, width, channelCount,
     valueBegin, valueStep,
     randomOffsetMin, randomOffsetMax,  divisorForRemainder );
 }

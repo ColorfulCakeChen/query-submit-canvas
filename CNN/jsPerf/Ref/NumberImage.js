@@ -1435,6 +1435,7 @@ class NumberImage_Base extends Recyclable.Root {
 
     // 2. Fill .dataArray with random sequence values and got their bounds (if requested).
     RandTools.fill_numberArray( imageNew.dataArray,
+      height, width, channelCount,
       valueBegin, valueStep,
       randomOffsetMin, randomOffsetMax, divisorForRemainder );
 

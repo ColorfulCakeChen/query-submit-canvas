@@ -113,6 +113,7 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
 
     // Note: nRandSpecId is not used when generating number array.
     RandTools.fill_numberArray( numberArray,
+      elementCount, 1, 1,
       valueBegin, valueStep,
       randomOffsetMin, randomOffsetMax, divisorForRemainder );
     return numberArray;
