@@ -1439,12 +1439,8 @@ class NumberImage_Base extends Recyclable.Root {
       valueBegin, valueStep,
       randomOffsetMin, randomOffsetMax, divisorForRemainder );
 
-!!! ...unfinished... (2022/08/05) 
-// should let neighbor chnnael have diferent bounds
-// should collect Bounds by channel
-
     // 3. Fill .boundsArraySet
-    imageNew.boundsArraySet.set_outputs_all_byLowerUpper( imageNew.dataArray.lowerBound, imageNew.dataArray.upperBound );
+    imageNew.boundsArraySet.set_outputs_all_byBoundsArray( imageNew.dataArray.boundsArray_byChannel );
 
     return imageNew;
   }
