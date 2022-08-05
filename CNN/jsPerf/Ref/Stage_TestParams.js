@@ -270,9 +270,13 @@ class Stage_TestParams_Base extends TestParams.Base {
       // ],
 
 //!!! (2022/08/04 Temp Remarked) For speed-up debug.
+      // blockCountRequested: [
+      //   Stage.Params.blockCountRequested.valueDesc.range.min,
+      //   Stage.Params.blockCountRequested.valueDesc.range.min + 3
+      // ],
       blockCountRequested: [
-        Stage.Params.blockCountRequested.valueDesc.range.min,
-        Stage.Params.blockCountRequested.valueDesc.range.min + 3
+        3,
+        3
       ],
 
 //      bPointwise1: undefined,
@@ -292,14 +296,14 @@ class Stage_TestParams_Base extends TestParams.Base {
 
 //      nSqueezeExcitationChannelCountDivisor: undefined,
 //!!! (2022/08/03 Temp Remarked) For speed-up debug.
+      // nSqueezeExcitationChannelCountDivisor: [
+      //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+      //   3
+      // ],
       nSqueezeExcitationChannelCountDivisor: [
-        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+        3,
         3
       ],
-      // nSqueezeExcitationChannelCountDivisor: [
-      //   16,
-      //   16
-      // ],
       // nSqueezeExcitationChannelCountDivisor: [
       //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION,
       //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION
