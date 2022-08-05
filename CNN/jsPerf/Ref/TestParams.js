@@ -514,7 +514,7 @@ TestParams_Base.weightsValueBegin = 0;
 TestParams_Base.weightsValueStep = 10;
 
 //!!! (2022/08/03 Temp Remarked) Fixed to non-random to simplify debug.
-TestParams_Base.weightsRandomOffset = { min: -0, max: +0 };
+//TestParams_Base.weightsRandomOffset = { min: -0, max: +0 };
 //TestParams_Base.weightsRandomOffset = { min: -1, max: +1 };
 TestParams_Base.weightsRandomOffset = { min: -5, max: +5 };
 //TestParams_Base.weightsRandomOffset = { min: -50, max: +50 };
