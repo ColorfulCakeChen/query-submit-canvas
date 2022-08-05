@@ -31,7 +31,7 @@ function ScriptLoader_createPromise( url, isModule, htmlElementId ) {
 async function testAll( bDisplayFailedTensor ) {
   const inputHeight_max = 4;
   const inputWidth_max = 4;
-  const inputDepth_max = 4;
+  const inputDepth_max = 2;
   const dtypeArray = [ "float32", "int32" ];
   const outputHeight_max = 4;
   const outputWidth_max = 4;
