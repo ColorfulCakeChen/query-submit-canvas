@@ -318,9 +318,14 @@ class Stage_TestParams_Base extends TestParams.Base {
       nActivationId: [ ValueDesc.ActivationFunction.Singleton.range.max, ValueDesc.ActivationFunction.Singleton.range.max ],
 
 //      bKeepInputTensor: undefined,
+//!!! (2022/08/04 Temp Remarked) For speed-up debug.
+      // bKeepInputTensor: [
+      //   Stage.Params.bKeepInputTensor.valueDesc.range.min,
+      //   Stage.Params.bKeepInputTensor.valueDesc.range.max
+      // ],
       bKeepInputTensor: [
-        Stage.Params.bKeepInputTensor.valueDesc.range.min,
-        Stage.Params.bKeepInputTensor.valueDesc.range.max
+        false,
+        false
       ],
     };
 
