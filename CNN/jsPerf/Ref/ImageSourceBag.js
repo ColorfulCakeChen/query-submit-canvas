@@ -235,9 +235,9 @@ ImageSourceBag_Base.weightsValueBegin = 0;
 ImageSourceBag_Base.weightsValueStep = 1;
 
 //!!! (2022/07/14 Temp Remarked) Fixed to non-random to simplify debug.
-ImageSourceBag_Base.weightsRandomOffset = { min: 0, max: +200 };
+//ImageSourceBag_Base.weightsRandomOffset = { min: 0, max: +200 };
 //ImageSourceBag_Base.weightsRandomOffset = { min: -200, max: +200 };
 //ImageSourceBag_Base.weightsRandomOffset = { min: 11, max: 11 };
-//ImageSourceBag_Base.weightsRandomOffset = { min: -0, max: +0 };
+ImageSourceBag_Base.weightsRandomOffset = { min: -0, max: +0 };
 
 ImageSourceBag_Base.weightsDivisorForRemainder = 256;
