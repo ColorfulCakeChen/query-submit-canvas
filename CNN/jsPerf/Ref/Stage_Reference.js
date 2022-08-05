@@ -564,10 +564,6 @@ class Stage_Reference_Base extends Recyclable.Root {
 
         if ( stage_or_stageParamsBase instanceof Stage.ParamsBase ) {
 
-//!!! (2022/07/31 Remarked) use Block.ParamsBase in Stage.Params.inferencedParams instead.
-          // block_or_blockParamsBase_asserter.propertyValue( "input0_height", stage_or_stageParamsBase.inferencedParams.inputHeightArray[ blockIndex ] );
-          // block_or_blockParamsBase_asserter.propertyValue( "input0_width", stage_or_stageParamsBase.inferencedParams.inputWidthArray[ blockIndex ] );
-
           block_or_blockParamsBase_asserter.propertyValue( "input0_height",
             stage_or_stageParamsBase.inferencedParams.blockParamsArray[ blockIndex ].input0_height );
 
@@ -804,10 +800,6 @@ class Stage_Reference_Base extends Recyclable.Root {
       {
         if ( stage_or_stageParamsBase instanceof Stage.ParamsBase ) {
 
-//!!! (2022/07/31 Remarked) use Block.ParamsBase in Stage.Params.inferencedParams instead.
-          // block_or_blockParamsBase_asserter.propertyValue( "depthwiseFilterHeight_real", stage_or_stageParamsBase.inferencedParams.depthwiseFilterHeightArray[ blockIndex ] );
-          // block_or_blockParamsBase_asserter.propertyValue( "depthwiseFilterWidth_real", stage_or_stageParamsBase.inferencedParams.depthwiseFilterWidthArray[ blockIndex ] );
-
           block_or_blockParamsBase_asserter.propertyValue( "depthwiseFilterHeight_real",
             stage_or_stageParamsBase.inferencedParams.blockParamsArray[ blockIndex ].depthwiseFilterHeight_real );
 
@@ -931,16 +923,7 @@ class Stage_Reference_Base extends Recyclable.Root {
 
       // depthwiseActivationId
       {
-        if ( ValueDesc.ConvStageType.isMobileNetV2( stage_or_stageParamsBase.nConvStageTypeId ) ) {
-          //!!! (2022/07/16 Remarked) depthwiseBias is determined by Block.Params (and be tested there).
-          //block_or_blockParamsBase_asserter.propertyValue( "depthwiseBias", true );
-          block_or_blockParamsBase_asserter.propertyValue( "depthwiseActivationId", stage_or_stageParamsBase.nActivationId );
-
-        } else {
-          //!!! (2022/07/16 Remarked) depthwiseBias is determined by Block.Params (and be tested there).
-          //block_or_blockParamsBase_asserter.propertyValue( "depthwiseBias", false );
-          block_or_blockParamsBase_asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
-        }
+        block_or_blockParamsBase_asserter.propertyValue( "depthwiseActivationId", stage_or_stageParamsBase.nActivationId );
       }
 
       //!!! (2022/07/16 Remarked) pointwise20Bias is determined by Block.Params (and be tested there).
@@ -951,15 +934,12 @@ class Stage_Reference_Base extends Recyclable.Root {
         switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-            block_or_blockParamsBase_asserter.propertyValue( "pointwise20ActivationId", stage_or_stageParamsBase.nActivationId );
-            break;
-
-          case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
             block_or_blockParamsBase_asserter.propertyValue( "pointwise20ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
             break;
 

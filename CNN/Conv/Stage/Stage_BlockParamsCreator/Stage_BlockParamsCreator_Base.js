@@ -54,13 +54,6 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     this.output0_channelCount = undefined;
     this.output1_channelCount = undefined;
 
-//!!! (2022/07/31 Remarked)
-// This circular reference back to the still generating Stage_InferencedParams.
-// And, this seems not necessary be generated because Stage_InferencedParams
-// will have it after blockParams is created.
-    // this.output_height = undefined;
-    // this.output_width = undefined;
-
     this.bKeepInputTensor = undefined;
     this.nActivationId = undefined;
     this.bSqueezeExcitationPrefix = undefined;
@@ -134,13 +127,6 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     this.nSqueezeExcitationChannelCountDivisor = stageParams.nSqueezeExcitationChannelCountDivisor;
 
     this.bKeepInputTensor = stageParams.bKeepInputTensor; // block0 may or may not keep input tensor according to caller's necessary.
-
-//!!! (2022/07/31 Remarked)
-// This circular reference back to the still generating Stage_InferencedParams.
-// And, this seems not necessary be generated because Stage_InferencedParams
-// will have it after blockParams is created.
-    // this.output_height = stageParams.inferencedParams.blockParamsArray[ 0 ].output_height;
-    // this.output_width = stageParams.inferencedParams.blockParamsArray[ 0 ].output_width;
   }
 
   /**
@@ -158,12 +144,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
   configTo_beforeBlockN_exceptBlock0( blockIndex, input_height, input_width ) {
     let stageParams = this.stageParams;
 
-//!!! (2022/07/31 Remarked) from function parameter directly.
-//     this.input0_height = stageParams.inferencedParams.inputHeightArray[ blockIndex ];
-//     this.input0_width = stageParams.inferencedParams.inputWidthArray[ blockIndex ];
     this.input0_height = input_height;
     this.input0_width = input_width;
-
     //this.input0_channelCount; // Sub-class should determine it.
 
     // All blocks (except block0 in NoPointwise1) will not double the channel count by depthwise, because block0 has already double
@@ -175,13 +157,6 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
 
     this.bKeepInputTensor = false; // No matter bKeepInputTensor, all blocks (except block0) should not keep input tensor.
-
-//!!! (2022/07/31 Remarked)
-// This circular reference back to the still generating Stage_InferencedParams.
-// And, this seems not necessary be generated because Stage_InferencedParams
-// will have it after blockParams is created.
-    // this.output_height = stageParams.inferencedParams.blockParamsArray[ blockIndex ].output_height;
-    // this.output_width = stageParams.inferencedParams.blockParamsArray[ blockIndex ].output_width;
   }
 
   /**
@@ -202,47 +177,44 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
   activation_setup_forBlock0() {
     let stageParams = this.stageParams;
 
-!!! ...unfinished... (2022/08/04)
-// should drop bPointwise2ActivatedAtStageEnd
-// and all use MobileNetV2_Xxx's 
-//    - depthwise (bias, activation)
-//    - pointwise2 (bias, no activation)
-//
-// except squeeze-and-excitation is different:
-//   - MobileNetV2_Xxx: prefix
-//   - non-MobileNetV2_Xxx: postfix
-    
     // 1. depthwise
-    {
-      // MobileNetV2_Xxx's depthwise has activation (before prefix squeeze-and-excitation and to remedy its pointwise2's no activation).
-      //
-      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
-        this.depthwiseActivationId = stageParams.nActivationId;
-
-      // non-MobileNetV2_Xxx's depthwise has no activation. (since they will be done at pointwise2.)
-      //
-      } else {
-        this.depthwiseActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-      }
-    }
+    this.depthwiseActivationId = stageParams.nActivationId;
 
     // 2. pointwise2
-    {
-      // MobileNetV2_Xxx's pointwise2 always does not have activation function.
-      //
-      // The reason is that MobileNetV2_Xxx's pointwise2 has add-input-to-output so its block's output is not affine transformation
-      // (even if no activation function). It and the next block's pointwise1 is not continuous multiple affine transformation
-      // and will not become just one affine transformation.
-      //
-      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
-        this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+    this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
-      // For all other ConvStageType, all non-blockLast's pointwise2 must have activation function (to become non-affine transformation).
-      // The reason is to avoid the previous block's pointwise2 and the next block's pointwis1 become just one affine transformation.
-      } else {
-        this.pointwise20ActivationId = stageParams.nActivationId;
-      }
-    }
+//!!! (2022/08/05 Remarked) Old Codes.
+//     // 1. depthwise
+//     {
+//       // MobileNetV2_Xxx's depthwise has activation (before prefix squeeze-and-excitation and to remedy its pointwise2's no activation).
+//       //
+//       if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
+//         this.depthwiseActivationId = stageParams.nActivationId;
+//
+//       // non-MobileNetV2_Xxx's depthwise has no activation. (since they will be done at pointwise2.)
+//       //
+//       } else {
+//         this.depthwiseActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+//       }
+//     }
+//
+//     // 2. pointwise2
+//     {
+//       // MobileNetV2_Xxx's pointwise2 always does not have activation function.
+//       //
+//       // The reason is that MobileNetV2_Xxx's pointwise2 has add-input-to-output so its block's output is not affine transformation
+//       // (even if no activation function). It and the next block's pointwise1 is not continuous multiple affine transformation
+//       // and will not become just one affine transformation.
+//       //
+//       if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
+//         this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+//
+//       // For all other ConvStageType, all non-blockLast's pointwise2 must have activation function (to become non-affine transformation).
+//       // The reason is to avoid the previous block's pointwise2 and the next block's pointwis1 become just one affine transformation.
+//       } else {
+//         this.pointwise20ActivationId = stageParams.nActivationId;
+//       }
+//     }
 
     // 3. pointwise1 and squeeze-and-excitation
     this.nActivationId = stageParams.nActivationId;
@@ -264,26 +236,27 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
   activation_setup_forBlockLast() {
     let stageParams = this.stageParams;
 
-    // pointwise2
-    {
-      // MobileNetV2_Xxx's pointwise2 always does not have activation function.
-      //
-      // The reason is that MobileNetV2_Xxx's pointwise2 has add-input-to-output so its block's output is not affine transformation
-      // (even if no activation function). It and the next block's pointwise1 is not continuous multiple affine transformation
-      // and will not become just one affine transformation.
-      //
-      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
-        this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-
-      // For all other ConvStageType, whether blockLast's pointwise2 has activation function is according to the specified flag.
-      } else {
-        if ( stageParams.bPointwise2ActivatedAtStageEnd == false ) {
-          this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-        } else {
-          this.pointwise20ActivationId = stageParams.nActivationId;
-        }
-      }
-    }
+//!!! (2022/08/05 Remarked) Old Codes
+//     // pointwise2
+//     {
+//       // MobileNetV2_Xxx's pointwise2 always does not have activation function.
+//       //
+//       // The reason is that MobileNetV2_Xxx's pointwise2 has add-input-to-output so its block's output is not affine transformation
+//       // (even if no activation function). It and the next block's pointwise1 is not continuous multiple affine transformation
+//       // and will not become just one affine transformation.
+//       //
+//       if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
+//         this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+//
+//       // For all other ConvStageType, whether blockLast's pointwise2 has activation function is according to the specified flag.
+//       } else {
+//         if ( stageParams.bPointwise2ActivatedAtStageEnd == false ) {
+//           this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+//         } else {
+//           this.pointwise20ActivationId = stageParams.nActivationId;
+//         }
+//       }
+//     }
   }
 
   // The following read only properties is useful when debugging, although they
