@@ -59,21 +59,25 @@ function fill_numberArray( io_numberArray,
   let valueNoRand = valueBegin;
   let randomOffset;
   let value;
-  //let alter = +1; // extra value for descreasing uniform.
-  let alter = +0; // extra value for descreasing uniform.
+  let alter = +1; // extra value for descreasing uniform.
+  //let alter = +0; // extra value for descreasing uniform.
 
   if ( io_numberArray instanceof Recyclable.NumberArray_withBounds ) {
     let lowerBound = +Infinity;
     let upperBound = -Infinity;
     for ( let i = 0; i < io_numberArray.length; ++i ) {
-      randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
+
+//!!! (2022/08/04 Temp Remarked) for re-producible random.
+//      randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
+      randomOffset = randomOffsetMaxInt * alter;
+
       value = ( valueNoRand + randomOffset ) % divisorForRemainder;
       if ( value > upperBound )
         upperBound = value;
       if ( value < lowerBound )
         lowerBound = value;
       io_numberArray[ i ] = value;
-      valueNoRand += valueStep + alter;
+      valueNoRand += valueStep;
       alter = -alter;
     }
     io_numberArray.lowerBound = lowerBound;
@@ -81,10 +85,14 @@ function fill_numberArray( io_numberArray,
 
   } else {
     for ( let i = 0; i < io_numberArray.length; ++i ) {
-      randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
+
+//!!! (2022/08/04 Temp Remarked) for re-producible random.
+//      randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
+      randomOffset = randomOffsetMaxInt * alter;
+
       value = ( valueNoRand + randomOffset ) % divisorForRemainder;
       io_numberArray[ i ] = value;
-      valueNoRand += valueStep + alter;
+      valueNoRand += valueStep;
       alter = -alter;
     }
   }
