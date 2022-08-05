@@ -281,9 +281,13 @@ class Stage_TestParams_Base extends TestParams.Base {
 
 //      bPointwise1: undefined,
 //!!! (2022/08/04 Temp Remarked) For speed-up debug.
+      // bPointwise1: [
+      //   Stage.Params.bPointwise1.valueDesc.range.min,
+      //   Stage.Params.bPointwise1.valueDesc.range.max
+      // ],
       bPointwise1: [
-        Stage.Params.bPointwise1.valueDesc.range.min,
-        Stage.Params.bPointwise1.valueDesc.range.max
+        false,
+        false
       ],
 
       // (2022/05/05) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
