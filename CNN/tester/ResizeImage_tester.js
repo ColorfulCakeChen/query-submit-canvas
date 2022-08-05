@@ -132,8 +132,8 @@ async function test_by_backendName(
 
         if ( !bOk ) {
           if ( inputInfo.bDisplayed == false ) {
-            let inputInfoStr = `inputShape=[ ${inputTensor.shape} ], `
-              + `inputInfo.dtype=${inputInfo.dtype}`;
+            let inputInfoStr = `input, shape=[ ${inputTensor.shape} ], `
+              + `dtype=${inputInfo.dtype}`;
 
             if ( bDisplayFailedTensor ) {
               console.log( `\n${inputInfoStr}, inputTensor:` );
