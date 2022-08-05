@@ -123,7 +123,8 @@ async function test_by_backendName(
       } else { // Compare to result of cpu backend.
         let outputArray = resultTensor.dataSync();
         for ( let i = 0; i < outputArray.length; ++i ) {
-          if ( outputArray[ i ] == outputArray_cpu[ i ] )
+          let delta = Math.abs( outputArray[ i ] == outputArray_cpu[ i ] );
+          if ( delta < 0.001 )
             continue;
           bOk = false;
           break;
