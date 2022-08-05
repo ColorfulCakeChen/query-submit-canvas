@@ -39,16 +39,19 @@ async function testAll( bDisplayFailedTensor ) {
   const halfPixelCenters_max = 1;
   const resizeOpArray = [ "resizeBilinear", "resizeNearestNeighbor" ];
 
-  let inputInfo = {};
+  let inputInfo = { inputShape: [], inputArray: [] };
+  let outputInfo = { size: [] };
 
   for ( let inputHeight = 1; inputHeight <= inputHeight_max; ++inputHeight )
     for ( let inputWidth = 1; inputWidth <= inputWidth_max; ++inputWidth )
-      for ( let inputDepth = 1; inputDepth <= inputDepth_max; ++inputDepth ) {
-        for ( let dtypeIndex = 0; dtypeIndex < dtypeArray.length; ++dtypeIndex )
+      for ( let inputDepth = 1; inputDepth <= inputDepth_max; ++inputDepth )
+        for ( let dtypeIndex = 0; dtypeIndex < dtypeArray.length; ++dtypeIndex ) {
 
           {
-            inputInfo.inputShape = [ inputHeight, inputWidth, inputDepth ];
-            inputInfo.inputArray = new Array( tf.util.sizeFromShape( inputInfo.inputShape ) );
+            inputInfo.inputShape[ 0 ] = inputHeight;
+            inputInfo.inputShape[ 1 ] = inputWidth;
+            inputInfo.inputShape[ 2 ] = inputDepth;
+            inputInfo.inputArray.length = tf.util.sizeFromShape( inputInfo.inputShape );
             for ( let i = 0; i < inputInfo.inputArray.length; ++i ) {
               inputInfo.inputArray[ i ] = 1 + i;
             }
@@ -60,40 +63,37 @@ async function testAll( bDisplayFailedTensor ) {
             for ( let outputWidth = 1; outputWidth <= outputWidth_max; ++outputWidth )
               for ( let alignCorners = 0; alignCorners < alignCorners_max; ++alignCorners )
                 for ( let halfPixelCenters = 0; halfPixelCenters <= halfPixelCenters_max; ++halfPixelCenters )
-                  for ( let resizeOpIndex = 0; resizeOpIndex < resizeOpArray.length; ++resizeOpIndex )
+                  for ( let resizeOpIndex = 0; resizeOpIndex < resizeOpArray.length; ++resizeOpIndex ) {
+
+                    outputInfo.size[ 0 ] = outputHeight;
+                    outputInfo.size[ 1 ] = outputWidth;
+                    outputInfo.alignCorners = alignCorners;
+                    outputInfo.halfPixelCenters = halfPixelCenters;
+                    outputInfo.resizeOp = resizeOpArray[ resizeOpIndex ];
+
                     await test_by_backendName_all(
-                      bDisplayFailedTensor, inputInfo,
-                      outputHeight, outputWidth,
-                      alignCorners, halfPixelCenters,
-                      resizeOpArray[ resizeOpIndex ] );
-      }
+                      bDisplayFailedTensor, inputInfo, outputInfo );
+                  }
+        }
     
   console.log( `\ntestAll(), done.` );
 }
 
 async function test_by_backendName_all(
-  bDisplayFailedTensor,
-  inputInfo,
-  outputHeight, outputWidth, alignCorners, halfPixelCenters, resizeOp ) {
+  bDisplayFailedTensor, inputInfo, outputInfo ) {
 
   await test_by_backendName(
-    "wasm", bDisplayFailedTensor,
-    inputInfo,
-    outputHeight, outputWidth, alignCorners, halfPixelCenters, resizeOp );
+    "wasm", bDisplayFailedTensor, inputInfo, outputInfo );
 
   await test_by_backendName(
-    "webgl", bDisplayFailedTensor,
-    inputInfo,
-    outputHeight, outputWidth, alignCorners, halfPixelCenters, resizeOp );
+    "webgl", bDisplayFailedTensor, inputInfo, outputInfo );
 }
 
 /**
  * @return {boolean} Return true, if the result of specified backed is the same as "cpu" backend.
  */
 async function test_by_backendName(
-  backendNameToBeTested, bDisplayFailedTensor,
-  inputInfo,
-  outputHeight, outputWidth, alignCorners, halfPixelCenters, resizeOp ) {
+  backendNameToBeTested, bDisplayFailedTensor, inputInfo, outputInfo ) {
 
   let bOk = true;
   let outputShape_cpu, outputArray_cpu;
@@ -109,9 +109,9 @@ async function test_by_backendName(
     tf.tidy( () => {
       let inputTensor = tf.tensor( inputInfo.inputArray, inputInfo.inputShape, inputInfo.dtype );
 
-      let outputShape_requested = [ outputHeight, outputWidth ];
-      let resultTensor = tf.image[ resizeOp ](
-          inputTensor, outputShape_requested, alignCorners, halfPixelCenters );
+      let resultTensor = tf.image[ outputInfo.resizeOp ](
+          inputTensor,
+          outputInfo.size, outputInfo.alignCorners, outputInfo.halfPixelCenters );
 
       let backendName = tf.getBackend();
       if ( backendName == "cpu" ) { // Record result of cpu backend for comparison.
