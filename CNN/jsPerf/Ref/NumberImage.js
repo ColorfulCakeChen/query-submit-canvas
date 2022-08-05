@@ -1413,6 +1413,7 @@ class NumberImage_Base extends Recyclable.Root {
    */
   static create_bySequenceRandom(
     height, width, channelCount,
+    valueBegin = 0, valueStep = 1,
     randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 256
   ) {
 
@@ -1433,7 +1434,9 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     // 2. Fill .dataArray with random sequence values and got their bounds (if requested).
-    RandTools.fill_numberArray( imageNew.dataArray, randomOffsetMin, randomOffsetMax, divisorForRemainder );
+    RandTools.fill_numberArray( imageNew.dataArray,
+      valueBegin, valueStep,
+      randomOffsetMin, randomOffsetMax, divisorForRemainder );
 
     // 3. Fill .boundsArraySet
     imageNew.boundsArraySet.set_outputs_all_byLowerUpper( imageNew.dataArray.lowerBound, imageNew.dataArray.upperBound );

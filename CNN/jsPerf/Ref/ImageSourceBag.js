@@ -173,6 +173,8 @@ class ImageSourceBag_Base extends Recyclable.Root {
     if ( ( depthwiseFilterHeight == 1 ) && ( depthwiseFilterWidth == 1 ) && ( depthwiseStridesPad == 0 ) ) {
 
       image = NumberImage.Base.create_bySequenceRandom( originalHeight, originalWidth, channelCount,
+        ImageSourceBag_Base.weightsValueBegin,
+        ImageSourceBag_Base.weightsValueStep,
         ImageSourceBag_Base.weightsRandomOffset.min, ImageSourceBag_Base.weightsRandomOffset.max,
         ImageSourceBag_Base.weightsDivisorForRemainder
       );
@@ -228,6 +230,9 @@ class ImageSourceBag_Base extends Recyclable.Root {
  *   - ( weightsDivisorForRemainder == 256 ) could avoid generate pixel value larger than 255.
  *
  */ 
+
+ImageSourceBag_Base.weightsValueBegin = 0;
+ImageSourceBag_Base.weightsValueStep = 1;
 
 //!!! (2022/07/14 Temp Remarked) Fixed to non-random to simplify debug.
 ImageSourceBag_Base.weightsRandomOffset = { min: 0, max: +200 };

@@ -28,7 +28,7 @@ function getRandomIntInclusive( min, max ) {
  *   The first value of filled sequence.
  *
  * @param {number} valueStep
- *   The increment value of every next filled value in the sequence.
+ *   The incremental value of every next filled value in the sequence.
  *
  * @param {number} randomOffsetMin
  *   Every element of the generated number array will been shifted from the sequence id between
@@ -55,9 +55,6 @@ function fill_numberArray( io_numberArray,
   const randomOffsetMinInt = Math.ceil( randomOffsetMinReal );
   const randomOffsetMaxInt  = Math.floor( randomOffsetMaxReal );
   const randomOffsetKindsInt = randomOffsetMaxInt - randomOffsetMinInt + 1;
-
-// !!! ...unfinished... (2022/08/04) inline getRandomIntInclusive()
-// !!! ...unfinished... (2022/08/04) add parameter valueStep.
 
   let valueNoRand = valueBegin;
   let randomOffset;

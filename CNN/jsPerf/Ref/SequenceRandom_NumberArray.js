@@ -75,45 +75,22 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
    * @param {object} io_object        The object to be checked and modified.
    * @param {string} propertyName     The property io_object[ propertyName ] will be ensured as a number array.
    * @param {number} elementCount     The property io_object[ propertyName ].length will be ensured as elementCount.
+   * @param {number} valueBegin       The first value of filled sequence.
+   * @param {number} valueStep        The incremental value of every next filled value in the sequence.
    * @param {number} randomOffsetMin  The random number offet lower bound.
    * @param {number} randomOffsetMax  The random number offet upperer bound.
    *
    */
   get_by_elementCount_randomOffsetMin_randomOffsetMax(
     elementCount,
+    valueBegin = 0, valueStep = 1,
     randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = ( 2 ** 26 ) ) {
 
     let nRandSpecId = RandTools.getRandomIntInclusive( this.nRandSpecIdMin, this.nRandSpecIdMax );
     let numberArray = this.get_or_create_by_arguments1_etc( Bag.create_by, this,
-      elementCount, randomOffsetMin, randomOffsetMax, divisorForRemainder, nRandSpecId );
-
-// !!! (2022/07/26 Remarked) Use use Recyclable.NumberArray_withBounds instead.
-//
-// !!! ...unfinished... (2022/07/26)
-// // Bounds object should not be part of keys.
-// // Because it is changing (i.e. not constant).
-// // Perhaps, use Recyclable.NumberArray_withBounds which has properties lowerBound and upperBounds
-//
-//     let tBounds = FloatValue.Bounds.Pool.get_or_create_by();
-//     let numberArray = this.get_or_create_by_arguments1_etc( Bag.create_by, this,
-//       elementCount, randomOffsetMin, randomOffsetMax, divisorForRemainder, nRandSpecId );
-//
-//     let tBoundsExisted = this.NumberArrayToBoundsMap.get( numberArray );
-//     if ( tBoundsExisted == undefined ) {
-//       // The number array is newly created. Record its value bounds.
-//       this.NumberArrayToBoundsMap.set( numberArray, tBounds );
-//
-//       if ( oBounds )
-//         oBounds.set_byBounds( tBounds );
-//
-//     } else {
-//       // The number array is an old one. No needs to record its value bounds again.
-//       tBounds.disposeResources_and_recycleToPool();
-//       tBounds = null;
-//
-//       if ( oBounds )
-//         oBounds.set_byBounds( tBoundsExisted );
-//     }
+      elementCount,
+      valueBegin, valueStep,
+      randomOffsetMin, randomOffsetMax, divisorForRemainder, nRandSpecId );
 
     return numberArray;
   }
@@ -123,6 +100,7 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
    */
   static create_by(
     elementCount,
+    valueBegin, valueStep,
     randomOffsetMin, randomOffsetMax, divisorForRemainder,
     nRandSpecId ) {
 
@@ -134,7 +112,9 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
     let numberArray = Recyclable.NumberArray_withBounds.Pool.get_or_create_by( elementCount );
 
     // Note: nRandSpecId is not used when generating number array.
-    RandTools.fill_numberArray( numberArray, randomOffsetMin, randomOffsetMax, divisorForRemainder );
+    RandTools.fill_numberArray( numberArray,
+      valueBegin, valueStep,
+      randomOffsetMin, randomOffsetMax, divisorForRemainder );
     return numberArray;
   }
 
