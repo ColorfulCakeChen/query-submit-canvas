@@ -109,9 +109,11 @@ async function test_by_backendName(
     tf.tidy( () => {
       let inputTensor = tf.tensor( inputInfo.inputArray, inputInfo.inputShape, inputInfo.dtype );
 
+      let alignCorners = ( outputInfo.alignCorners != 0 );
+      let halfPixelCenters = ( outputInfo.halfPixelCenters != 0 );
       let resultTensor = tf.image[ outputInfo.resizeOp ](
           inputTensor,
-          outputInfo.size, outputInfo.alignCorners, outputInfo.halfPixelCenters );
+          outputInfo.size, alignCorners, halfPixelCenters );
 
       let backendName = tf.getBackend();
       if ( backendName == "cpu" ) { // Record result of cpu backend for comparison.
@@ -140,8 +142,8 @@ async function test_by_backendName(
 
           let testName = `${outputInfo.resizeOp} `
             + `size=[ ${outputInfo.size[ 0 ]}, ${outputInfo.size[ 1 ]} ], `
-            + `alignCorners=${outputInfo.alignCorners}, `
-            + `halfPixelCenters=${outputInfo.halfPixelCenters}`;
+            + `alignCorners=${alignCorners}, `
+            + `halfPixelCenters=${halfPixelCenters}`;
 
           console.log( `${testName}. ("${backendName}" failed):` );
 
