@@ -297,8 +297,8 @@ class Stage_TestParams_Base extends TestParams.Base {
 //!!! (2022/08/04 Temp Remarked) For speed-up debug.
       // depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
       // depthwiseFilterWidth: [ 2, depthwiseFilterMaxSize ],
-      depthwiseFilterHeight: [ 1, depthwiseFilterMaxSize ],
-      depthwiseFilterWidth: [ 1, depthwiseFilterMaxSize ],
+      depthwiseFilterHeight: [ 1, 1 ],
+      depthwiseFilterWidth: [ 1, 1 ],
 
 //      nSqueezeExcitationChannelCountDivisor: undefined,
 //!!! (2022/08/03 Temp Remarked) For speed-up debug.
