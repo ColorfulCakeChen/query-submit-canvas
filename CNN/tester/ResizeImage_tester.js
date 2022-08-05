@@ -59,8 +59,8 @@ async function testAll( bDisplayFailedTensor ) {
             inputInfo.bDisplayed = false; // Whether this input is showed.
           }
 
-          for ( let outputHeight = 1; outputHeight <= outputHeight_max; ++outputHeight )
-            for ( let outputWidth = 1; outputWidth <= outputWidth_max; ++outputWidth )
+          for ( let outputHeight = 2; outputHeight <= outputHeight_max; ++outputHeight )
+            for ( let outputWidth = 2; outputWidth <= outputWidth_max; ++outputWidth )
               for ( let alignCorners = 0; alignCorners < alignCorners_max; ++alignCorners )
                 for ( let halfPixelCenters = 0; halfPixelCenters <= halfPixelCenters_max; ++halfPixelCenters )
                   for ( let resizeOpIndex = 0; resizeOpIndex < resizeOpArray.length; ++resizeOpIndex ) {
