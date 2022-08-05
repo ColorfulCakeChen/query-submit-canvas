@@ -59,7 +59,8 @@ function fill_numberArray( io_numberArray,
   let valueNoRand = valueBegin;
   let randomOffset;
   let value;
-  let alter = +1; // extra value for descreasing uniform.
+  //let alter = +1; // extra value for descreasing uniform.
+  let alter = +0; // extra value for descreasing uniform.
 
   if ( io_numberArray instanceof Recyclable.NumberArray_withBounds ) {
     let lowerBound = +Infinity;
