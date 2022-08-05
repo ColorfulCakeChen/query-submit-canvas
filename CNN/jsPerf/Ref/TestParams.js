@@ -510,7 +510,7 @@ class TestParams_Base extends Recyclable.Root {
 
 }
 
-TestParams_Base.weightsValueBegin = -100; //0;
+TestParams_Base.weightsValueBegin = 0;
 TestParams_Base.weightsValueStep = 10; //10;
 
 //!!! (2022/08/03 Temp Remarked) Fixed to non-random to simplify debug.
