@@ -314,13 +314,18 @@ class Stage_Reference_Base extends Recyclable.Root {
 
       // Compare to outputTensor3d_original.
       let output_original = outputTensor3d_original.dataSync();
-      this.asserter_Equal.assert_Tensor_NumberArray(
-        outputTensor3d, output_original,
-        "Stage_toBeCompared",
-        nConvStageTypeId_toBeCompared_name,
-        nConvStageTypeId_original_name,
-        stage_toBeCompared
-      );
+      try {
+        this.asserter_Equal.assert_Tensor_NumberArray(
+          outputTensor3d, output_original,
+          "Stage_toBeCompared",
+          nConvStageTypeId_toBeCompared_name,
+          nConvStageTypeId_original_name,
+          stage_toBeCompared
+        );
+      } catch ( e ) {
+        debugger;
+        throw e;
+      }
     }
 
     tf.dispose( outputTensor3d );
