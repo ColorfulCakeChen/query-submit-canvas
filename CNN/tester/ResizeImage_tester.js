@@ -144,7 +144,7 @@ async function test_by_backendName(
             inputInfo.bDisplayed = true;
           }
 
-          let testName = `${outputInfo.resizeOp} `
+          let testName = `${outputInfo.resizeOp}, `
             + `size=[ ${outputInfo.size[ 0 ]}, ${outputInfo.size[ 1 ]} ], `
             + `alignCorners=${alignCorners}, `
             + `halfPixelCenters=${halfPixelCenters}`;
