@@ -295,8 +295,10 @@ class Stage_TestParams_Base extends TestParams.Base {
 //      depthwiseFilterHeight: [ Stage.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
 //      depthwiseFilterWidth: [ Stage.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
 //!!! (2022/08/04 Temp Remarked) For speed-up debug.
-      depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
-      depthwiseFilterWidth: [ 2, depthwiseFilterMaxSize ],
+      // depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
+      // depthwiseFilterWidth: [ 2, depthwiseFilterMaxSize ],
+      depthwiseFilterHeight: [ 1, depthwiseFilterMaxSize ],
+      depthwiseFilterWidth: [ 1, depthwiseFilterMaxSize ],
 
 //      nSqueezeExcitationChannelCountDivisor: undefined,
 //!!! (2022/08/03 Temp Remarked) For speed-up debug.
