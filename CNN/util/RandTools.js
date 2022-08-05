@@ -85,11 +85,11 @@ function fill_numberArray( io_numberArray,
         for ( let c = 0; c < channelCount; ++c, ++arrayIndex ) {
 
 //!!! (2022/08/04 Temp Remarked) for re-producible random.
-          randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
-          // if ( ( i % 2 ) == 0 )
-          //   randomOffset = randomOffsetMinInt;
-          // else
-          //   randomOffset = randomOffsetMaxInt;
+          // randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
+          if ( ( i % 2 ) == 0 )
+            randomOffset = randomOffsetMinInt;
+          else
+            randomOffset = randomOffsetMaxInt;
 
           value = ( valueNoRand + randomOffset ) % divisorForRemainder;
           io_numberArray[ arrayIndex ] = value;
@@ -110,11 +110,11 @@ function fill_numberArray( io_numberArray,
         for ( let c = 0; c < channelCount; ++c, ++arrayIndex ) {
 
 //!!! (2022/08/04 Temp Remarked) for re-producible random.
-          randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
-          // if ( ( i % 2 ) == 0 )
-          //   randomOffset = randomOffsetMinInt;
-          // else
-          //   randomOffset = randomOffsetMaxInt;
+          // randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
+          if ( ( i % 2 ) == 0 )
+            randomOffset = randomOffsetMinInt;
+          else
+            randomOffset = randomOffsetMaxInt;
 
           value = ( valueNoRand + randomOffset ) % divisorForRemainder;
           io_numberArray[ arrayIndex ] = value;
