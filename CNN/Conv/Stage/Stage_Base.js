@@ -400,7 +400,6 @@ class Stage_Base extends Recyclable.Root {
     this.bPointwise1 = params.bPointwise1;
     this.depthwiseFilterHeight = params.depthwiseFilterHeight;
     this.depthwiseFilterWidth = params.depthwiseFilterWidth;
-    this.bPointwise2ActivatedAtStageEnd = params.bPointwise2ActivatedAtStageEnd;
     this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
     this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
     this.nActivationId = params.nActivationId;
@@ -670,7 +669,6 @@ class Stage_Base extends Recyclable.Root {
       + `bPointwise1=${this.bPointwise1}, `
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
       + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
-      + `bPointwise2ActivatedAtStageEnd=${this.bPointwise2ActivatedAtStageEnd}, `
 
       + `nSqueezeExcitationChannelCountDivisorName=${this.nSqueezeExcitationChannelCountDivisorName}`
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `

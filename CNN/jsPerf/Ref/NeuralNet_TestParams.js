@@ -154,7 +154,6 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
         stageParams.blockCountRequested,
         stageParams.bPointwise1,
         stageParams.depthwiseFilterHeight, stageParams.depthwiseFilterWidth,
-        stageParams.bPointwise2ActivatedAtStageEnd,
         stageParams.nSqueezeExcitationChannelCountDivisor,
         stageParams.nActivationId,
         stageParams.bKeepInputTensor

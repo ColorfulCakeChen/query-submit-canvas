@@ -114,7 +114,6 @@ class HeightWidthDepth {
     // blockCountRequested,
     // bPointwise1,
     // depthwiseFilterHeight, depthwiseFilterWidth,
-    // bPointwise2ActivatedAtStageEnd,
     // nSqueezeExcitationChannelCountDivisor,
     // nActivationId,
     // bKeepInputTensor
@@ -129,7 +128,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
         blockCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        3, 3, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) );
 
@@ -139,7 +138,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
         blockCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        3, 3, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) );
 
@@ -149,7 +148,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
         blockCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        3, 3, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) );
 
@@ -159,7 +158,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
         blockCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        3, 3, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) );
 
@@ -169,7 +168,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
         blockCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        3, 3, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) );
 
@@ -179,7 +178,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
         blockCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        3, 3, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) );
 
@@ -189,7 +188,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
         blockCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        3, 3, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) );
 
@@ -199,7 +198,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
         blockCountRequested, true,
-        3, 3, true, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
+        3, 3, nSqueezeExcitationChannelCountDivisor, ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
       ) );
   }

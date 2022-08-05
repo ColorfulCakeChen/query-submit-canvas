@@ -71,7 +71,6 @@ class Stage_TestParams_Base extends TestParams.Base {
     blockCountRequested,
     bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth,
-    bPointwise2ActivatedAtStageEnd,
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
     bKeepInputTensor
@@ -87,7 +86,6 @@ class Stage_TestParams_Base extends TestParams.Base {
       blockCountRequested,
       bPointwise1,
       depthwiseFilterHeight, depthwiseFilterWidth,
-      bPointwise2ActivatedAtStageEnd,
       nSqueezeExcitationChannelCountDivisor,
       nActivationId,
       bKeepInputTensor
@@ -292,12 +290,6 @@ class Stage_TestParams_Base extends TestParams.Base {
       depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
       depthwiseFilterWidth: [ 2, depthwiseFilterMaxSize ],
 
-//!!! (2022/08/04 Temp Remarked) For speed-up debug.
-      bPointwise2ActivatedAtStageEnd: [
-        Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.min,
-        Stage.Params.bPointwise2ActivatedAtStageEnd.valueDesc.range.max
-      ],
-
 //      nSqueezeExcitationChannelCountDivisor: undefined,
 //!!! (2022/08/03 Temp Remarked) For speed-up debug.
       nSqueezeExcitationChannelCountDivisor: [
@@ -336,7 +328,6 @@ class Stage_TestParams_Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Stage.Params.bPointwise1,                    valueOutMinMax.bPointwise1 ),
       new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterHeight,          valueOutMinMax.depthwiseFilterHeight ),
       new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterWidth,           valueOutMinMax.depthwiseFilterWidth ),
-      new TestParams.ParamDescConfig( Stage.Params.bPointwise2ActivatedAtStageEnd, valueOutMinMax.bPointwise2ActivatedAtStageEnd ),
 
       new TestParams.ParamDescConfig( Stage.Params.nSqueezeExcitationChannelCountDivisor,
                                                                                    valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
@@ -365,7 +356,6 @@ Stage_TestParams_Base.paramsNameOrderArray_Basic = [
   Stage.Params.bPointwise1.paramName,
   Stage.Params.depthwiseFilterHeight.paramName,
   Stage.Params.depthwiseFilterWidth.paramName,
-  Stage.Params.bPointwise2ActivatedAtStageEnd.paramName,
   Stage.Params.nSqueezeExcitationChannelCountDivisor.paramName,  
   Stage.Params.nActivationId.paramName,
   Stage.Params.bKeepInputTensor.paramName,

@@ -6,9 +6,6 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Block from "../Block.js";
 import { InferencedParams } from "./Stage_InferencedParams.js";
 
-!!! ...unfinished... (2022/08/04)
-// should drop bPointwise2ActivatedAtStageEnd
-
 /**
  * Convolution stage parameters.
  *
@@ -31,7 +28,6 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
     blockCountRequested,
     bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth,
-    bPointwise2ActivatedAtStageEnd,
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
     bKeepInputTensor
@@ -43,7 +39,6 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
       blockCountRequested,
       bPointwise1,
       depthwiseFilterHeight, depthwiseFilterWidth,
-      bPointwise2ActivatedAtStageEnd,
       nSqueezeExcitationChannelCountDivisor,
       nActivationId,
       bKeepInputTensor
@@ -57,7 +52,6 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
     blockCountRequested,
     bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth,
-    bPointwise2ActivatedAtStageEnd,
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
     bKeepInputTensor
@@ -69,7 +63,6 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
       blockCountRequested,
       bPointwise1,
       depthwiseFilterHeight, depthwiseFilterWidth,
-      bPointwise2ActivatedAtStageEnd,
       nSqueezeExcitationChannelCountDivisor,
       nActivationId,
       bKeepInputTensor
@@ -84,7 +77,6 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
     blockCountRequested,
     bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth,
-    bPointwise2ActivatedAtStageEnd,
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
     bKeepInputTensor
@@ -97,7 +89,6 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
     this.bPointwise1 = bPointwise1;
     this.depthwiseFilterHeight = depthwiseFilterHeight;
     this.depthwiseFilterWidth = depthwiseFilterWidth;
-    this.bPointwise2ActivatedAtStageEnd = bPointwise2ActivatedAtStageEnd;
     this.nSqueezeExcitationChannelCountDivisor = nSqueezeExcitationChannelCountDivisor;
     this.nActivationId = nActivationId;
     this.bKeepInputTensor = bKeepInputTensor;
@@ -115,7 +106,6 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
     this.bPointwise1 = undefined;
     this.depthwiseFilterHeight = undefined;
     this.depthwiseFilterWidth = undefined;
-    this.bPointwise2ActivatedAtStageEnd = undefined;
     this.nSqueezeExcitationChannelCountDivisor = undefined;
     this.nActivationId = undefined;
     this.bKeepInputTensor = undefined;
@@ -175,8 +165,6 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
       + `blockCountRequested=${this.blockCountRequested}, `
       + `bPointwise1=${this.bPointwise1}, `
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
-
-      + `bPointwise2ActivatedAtStageEnd=${this.bPointwise2ActivatedAtStageEnd}, `
 
       + `nSqueezeExcitationChannelCountDivisorName=`
         + `${this.nSqueezeExcitationChannelCountDivisorName}`

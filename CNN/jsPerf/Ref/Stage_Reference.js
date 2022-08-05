@@ -128,7 +128,6 @@ class Stage_Reference_Base extends Recyclable.Root {
     let {
       input_height, input_width, input_channelCount,
       nConvStageTypeId,
-      bPointwise2ActivatedAtStageEnd,
       bKeepInputTensor,
     } = testParams.out;
 
@@ -220,14 +219,8 @@ class Stage_Reference_Base extends Recyclable.Root {
 
     let {
       nConvStageTypeId,
-      bPointwise2ActivatedAtStageEnd,
       bKeepInputTensor,
     } = testParams.out;
-
-    // If pointwise2 has activation function, do not this comparison. Because ShuffleNetV2 and
-    // ShuffleNetV2_byMobileNetV1 are usually different by activation escaping scale in this case.
-    if ( bPointwise2ActivatedAtStageEnd == true )
-      return;
 
     if (   ( nConvStageTypeId != ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 )
         && ( nConvStageTypeId != ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 ) )
@@ -277,7 +270,6 @@ class Stage_Reference_Base extends Recyclable.Root {
       testParams.in.blockCountRequested,
       testParams.in.bPointwise1,
       testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
-      testParams.in.bPointwise2ActivatedAtStageEnd,
       testParams.in.nSqueezeExcitationChannelCountDivisor,
       testParams.in.nActivationId,
       testParams.in.bKeepInputTensor
@@ -401,7 +393,6 @@ class Stage_Reference_Base extends Recyclable.Root {
       testParams.in.blockCountRequested,
       testParams.in.bPointwise1,
       testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
-      testParams.in.bPointwise2ActivatedAtStageEnd,
       testParams.in.nSqueezeExcitationChannelCountDivisor,
       testParams.in.nActivationId,
       testParams.in.bKeepInputTensor
@@ -451,7 +442,6 @@ class Stage_Reference_Base extends Recyclable.Root {
     stage_asserter.propertyValue( "bPointwise1", testParams.out.bPointwise1 );
     stage_asserter.propertyValue( "depthwiseFilterHeight", testParams.out.depthwiseFilterHeight );
     stage_asserter.propertyValue( "depthwiseFilterWidth", testParams.out.depthwiseFilterWidth );
-    stage_asserter.propertyValue( "bPointwise2ActivatedAtStageEnd", testParams.out.bPointwise2ActivatedAtStageEnd );
     stage_asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", testParams.out.nSqueezeExcitationChannelCountDivisor );
     stage_asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
 
@@ -953,19 +943,12 @@ class Stage_Reference_Base extends Recyclable.Root {
         switch ( nConvStageTypeId ) {
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1: // (0)
           case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID: // (1)
+          case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
+          case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2: // (4)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1: // (5)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID: // (6)
           case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21: // (7)
-            if ( stage_or_stageParamsBase.bPointwise2ActivatedAtStageEnd == false ) {
-              block_or_blockParamsBase_asserter.propertyValue( "pointwise20ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
-            } else {
-              block_or_blockParamsBase_asserter.propertyValue( "pointwise20ActivationId", stage_or_stageParamsBase.nActivationId );
-            }
-            break;
-
-          case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN: // (2)
-          case ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2: // (3)
             block_or_blockParamsBase_asserter.propertyValue( "pointwise20ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
             break;
 

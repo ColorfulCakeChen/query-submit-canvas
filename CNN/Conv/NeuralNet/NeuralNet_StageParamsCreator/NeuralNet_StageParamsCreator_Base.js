@@ -51,7 +51,6 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     this.bKeepInputTensor = undefined;
     this.nActivationId = undefined;
     this.nSqueezeExcitationChannelCountDivisor = undefined;
-    this.bPointwise2ActivatedAtStageEnd = undefined;
     this.depthwiseFilterWidth = undefined;
     this.depthwiseFilterHeight = undefined;
     this.bPointwise1 = undefined;
@@ -99,8 +98,6 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     this.depthwiseFilterHeight = 3; // Always use ( 3 * 3 ) depthwise filter.
     this.depthwiseFilterWidth = 3;
 
-    this.bPointwise2ActivatedAtStageEnd = true; // All stages (except stageLast) have activation function.
-
     // Use the suggested squeeze-and-excitation divisor.
     this.nSqueezeExcitationChannelCountDivisor = 16;
 
@@ -142,9 +139,6 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
    * Called before stageLast is about to be created. Sub-class could override this method to adjust data members.
    */
   configTo_beforeStageLast() {
-
-    // Only the final stage's output does not have activation function.
-    this.bPointwise2ActivatedAtStageEnd = false;
   }
 
   // The following read only properties is useful when debugging, although they
@@ -178,7 +172,6 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
       this.blockCountRequested,
       this.bPointwise1,
       this.depthwiseFilterHeight, this.depthwiseFilterWidth,
-      this.bPointwise2ActivatedAtStageEnd,
       this.nSqueezeExcitationChannelCountDivisor,
       this.nActivationId,
       this.bKeepInputTensor

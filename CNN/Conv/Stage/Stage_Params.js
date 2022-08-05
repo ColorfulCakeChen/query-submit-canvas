@@ -69,32 +69,6 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
    *   The width of depthwise convolution's filter. At least 2 (so that meaningless ( 1 * 1 ) could be avoided). If null, it will
    * be extracted from inputWeightArray (i.e. by evolution).
    *
-   * @param {boolean} bPointwise2ActivatedAtStageEnd
-   *   If true, the blockLast's pointwise2 will have activation function. If false, the blockLast's pointwise2 will have no activation
-   * function. If null, it will be extracted from inputWeightArray (i.e. by evolution).
-   *
-   *   - If there will be next stage after this stage, it usually should be true (i.e. has activation function). The reason is that
-   *       this stage's blockLast's pointwise2 (if has no activation function) and the next stage's block0's pointwise1 are essentially
-   *       just one pointwise convolution. (Multiple affine transformations can always be combined into just one affine transformation.)
-   *
-   *     - There is one exception: for MobileNetV2_Xxx, its pointwise2 always has no activation function no matter whether
-   *         bPointwise2ActivatedAtStageEnd is true or false. The Reason is that it has add-input-to-output to modify pointwise2
-   *         output. So, even if its stage output is not affine transformation (even it has no activation function).
-   *
-   *   - Only when this stage is the last stage of a neural network, it should be false (i.e. has no activation function). There are
-   *       two reasons:
-   *
-   *     - For ShuffleNetV2_ByMobileNetV1, let it undo activation escaping scales.
-   *         In ShuffleNetV2_ByMobileNetV1, if an operation has activation function, the pass-through half part will scale its
-   *         convolution filters for escaping the activation function's non-linear parts. This results in its output is wrong
-   *         (i.e. different from ShuffleNetV2). In order to resolve this issue, the last operation (i.e. pointwise2) should have
-   *         no activation (so it will not scale its convolution filters for escaping the activation function's non-linear parts).
-   *
-   *     - Even if not ShuffleNetV2_ByMobileNetV1 (i.e. for other ConvStageType), it does have practical advantage in fact. The
-   *         output could have any value (i.e. the whole number line). If the last operation (i.e. pointwise2) has activation
-   *         function, the output value will be restricted by the activation function (e.g. [ -1, +1 ] for tanh()).
-   *
-   *
    * @param {number} nSqueezeExcitationChannelCountDivisor
    *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
    * (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xx)
@@ -114,7 +88,6 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
     blockCountRequested,
     bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth,
-    bPointwise2ActivatedAtStageEnd,
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
     bKeepInputTensor
@@ -138,7 +111,6 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
       blockCountRequested,
       bPointwise1,
       depthwiseFilterHeight, depthwiseFilterWidth,
-      bPointwise2ActivatedAtStageEnd,
       nSqueezeExcitationChannelCountDivisor,
       nActivationId,
       bKeepInputTensor
@@ -153,7 +125,6 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
     blockCountRequested,
     bPointwise1,
     depthwiseFilterHeight, depthwiseFilterWidth,
-    bPointwise2ActivatedAtStageEnd,
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
     bKeepInputTensor
@@ -165,7 +136,6 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
       blockCountRequested,
       bPointwise1,
       depthwiseFilterHeight, depthwiseFilterWidth,
-      bPointwise2ActivatedAtStageEnd,
       nSqueezeExcitationChannelCountDivisor,
       nActivationId,
       bKeepInputTensor
@@ -223,7 +193,6 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
       this.bPointwise1 = this.getParamValue_byParamDesc( Stage_Params.bPointwise1 );
       this.depthwiseFilterHeight = this.getParamValue_byParamDesc( Stage_Params.depthwiseFilterHeight );
       this.depthwiseFilterWidth = this.getParamValue_byParamDesc( Stage_Params.depthwiseFilterWidth );
-      this.bPointwise2ActivatedAtStageEnd = this.getParamValue_byParamDesc( Stage_Params.bPointwise2ActivatedAtStageEnd );
       this.nSqueezeExcitationChannelCountDivisor = this.getParamValue_byParamDesc( Stage_Params.nSqueezeExcitationChannelCountDivisor );
       this.nActivationId = this.getParamValue_byParamDesc( Stage_Params.nActivationId );
       this.bKeepInputTensor = this.getParamValue_byParamDesc( Stage_Params.bKeepInputTensor );
@@ -248,7 +217,6 @@ Stage_Params.blockCountRequested =            new ParamDesc.Int(                
 Stage_Params.bPointwise1 =                    new ParamDesc.Bool(               "bPointwise1" );
 Stage_Params.depthwiseFilterHeight =          new ParamDesc.Int(                "depthwiseFilterHeight",      1, ( 10 * 1024 ) );
 Stage_Params.depthwiseFilterWidth =           new ParamDesc.Int(                "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
-Stage_Params.bPointwise2ActivatedAtStageEnd = new ParamDesc.Bool(               "bPointwise2ActivatedAtStageEnd" );
 
 Stage_Params.nSqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
 //Stage_Params.bSqueezeExcitationPrefix =       new ParamDesc.Bool(               "bSqueezeExcitationPrefix" );
@@ -271,7 +239,6 @@ Stage_Params.SequenceArray = new ParamDesc.SequenceArray( [
   Stage_Params.bPointwise1,
   Stage_Params.depthwiseFilterHeight,
   Stage_Params.depthwiseFilterWidth,
-  Stage_Params.bPointwise2ActivatedAtStageEnd,
   Stage_Params.nSqueezeExcitationChannelCountDivisor,
   Stage_Params.nActivationId,
   Stage_Params.bKeepInputTensor,
