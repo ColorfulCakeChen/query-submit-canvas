@@ -138,8 +138,10 @@ async function test_by_backendName(
             inputInfo.bDisplayed = true;
           }
 
-          let testName = `${resizeOp}, `
-            + `alignCorners=${alignCorners}, halfPixelCenters=${halfPixelCenters}`;
+          let testName = `${outputInfo.resizeOp} `
+            + `size=[ ${outputInfo.size[ 0 ]}, ${outputInfo.size[ 1 ]} ], `
+            + `alignCorners=${outputInfo.alignCorners}, `
+            + `halfPixelCenters=${outputInfo.halfPixelCenters}`;
 
           console.log( `${testName}. ("${backendName}" failed):` );
 
