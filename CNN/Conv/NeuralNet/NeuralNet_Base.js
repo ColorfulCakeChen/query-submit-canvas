@@ -10,6 +10,16 @@ import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
 import { Params } from "./NeuralNet_Params.js";
 import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 
+//!!! ...unfinished... (2022/08/05)
+// For neural network with recurrent (i.e. with feedback), perhaps, concatenate
+// the previous NeuralNet output (which is float32) with the current embedding
+// output (which is float32 too).
+//
+// The reason is that NeuralNet input should be int32 (for embedding layer needs)
+// while (previous) NeuralNet output is float32.
+//
+//
+
 /**
  * This is the base class of NeuralNet.
  *
