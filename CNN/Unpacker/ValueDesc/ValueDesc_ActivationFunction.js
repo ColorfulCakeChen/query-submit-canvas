@@ -99,18 +99,18 @@ class ActivationFunction extends Int {
         CLIP_BY_VALUE_N2_P2: new ActivationFunction.Info( 1, "CLIP_BY_VALUE_N2_P2",
 
 //!!! (2022/08/04 Temp Remarked) Try large range whether reduceing accumulated error.
-          ActivationFunction.clipByValue_Negative2_Positive2,
-          ActivationFunction.reference_clipByValue_Negative2_Positive2,
-          new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ) ),
+          // ActivationFunction.clipByValue_Negative2_Positive2,
+          // ActivationFunction.reference_clipByValue_Negative2_Positive2,
+          // new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ) ),
 
 //!!! (2022/08/04 Temp Remarked) Try small range whether reduceing accumulated error.
           // ActivationFunction.clipByValue_Negative8_Positive8,
           // ActivationFunction.reference_clipByValue_Negative8_Positive8,
           // new FloatValue.Bounds( -8, +8 ), new FloatValue.Bounds( -8, +8 ), new FloatValue.Bounds( -8, +8 ) ),
 
-          // ActivationFunction.clipByValue_Negative4_Positive4,
-          // ActivationFunction.reference_clipByValue_Negative4_Positive4,
-          // new FloatValue.Bounds( -4, +4 ), new FloatValue.Bounds( -4, +4 ), new FloatValue.Bounds( -4, +4 ) ),
+          ActivationFunction.clipByValue_Negative4_Positive4,
+          ActivationFunction.reference_clipByValue_Negative4_Positive4,
+          new FloatValue.Bounds( -4, +4 ), new FloatValue.Bounds( -4, +4 ), new FloatValue.Bounds( -4, +4 ) ),
 
 //!!! (2022/07/05 Remarked) For speed-up testing.
 /*
