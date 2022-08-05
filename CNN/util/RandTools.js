@@ -59,6 +59,7 @@ function fill_numberArray( io_numberArray,
   let valueNoRand = valueBegin;
   let randomOffset;
   let value;
+  let alter = +1; // extra value for descreasing uniform.
 
   if ( io_numberArray instanceof Recyclable.NumberArray_withBounds ) {
     let lowerBound = +Infinity;
@@ -71,7 +72,8 @@ function fill_numberArray( io_numberArray,
       if ( value < lowerBound )
         lowerBound = value;
       io_numberArray[ i ] = value;
-      valueNoRand += valueStep; // + i; // Note: Add extra i for descreasing uniform.
+      valueNoRand += valueStep + alter;
+      alter = -alter;
     }
     io_numberArray.lowerBound = lowerBound;
     io_numberArray.upperBound = upperBound;
@@ -81,7 +83,8 @@ function fill_numberArray( io_numberArray,
       randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
       value = ( valueNoRand + randomOffset ) % divisorForRemainder;
       io_numberArray[ i ] = value;
-      valueNoRand += valueStep; // + i; // Note: Add extra i for descreasing uniform.
+      valueNoRand += valueStep + alter;
+      alter = -alter;
     }
   }
 
