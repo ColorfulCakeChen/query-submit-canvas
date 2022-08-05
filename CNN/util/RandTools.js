@@ -71,7 +71,7 @@ function fill_numberArray( io_numberArray,
       if ( value < lowerBound )
         lowerBound = value;
       io_numberArray[ i ] = value;
-      valueNoRand += valueStep;
+      valueNoRand += valueStep + i; // Note: Add extra i for descreasing uniform.
     }
     io_numberArray.lowerBound = lowerBound;
     io_numberArray.upperBound = upperBound;
@@ -81,7 +81,7 @@ function fill_numberArray( io_numberArray,
       randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
       value = ( valueNoRand + randomOffset ) % divisorForRemainder;
       io_numberArray[ i ] = value;
-      valueNoRand += valueStep;
+      valueNoRand += valueStep + i; // Note: Add extra i for descreasing uniform.
     }
   }
 
