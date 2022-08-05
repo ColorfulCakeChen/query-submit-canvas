@@ -124,14 +124,18 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 
           if ( this.filtersShape && this.filtersArray ) {
             this.filtersTensor4d = tf.tensor( this.filtersArray, this.filtersShape );
-            this.filtersArray.disposeResources_and_recycleToPool(); this.filtersArray = null; // Release for reducing memory usage.
+
+//!!! (2022/08/05 Temp Remarked) For debug BoundsArraySet calculation error.
+//            this.filtersArray.disposeResources_and_recycleToPool(); this.filtersArray = null; // Release for reducing memory usage.
 
             // Note: Because .filtersShape will be kept by .filtersTensor4d internally, it can not be released here.
           }
 
           if ( this.biasesShape && this.biasesArray ) {
             this.biasesTensor3d = tf.tensor( this.biasesArray, this.biasesShape );
-            this.biasesArray.disposeResources_and_recycleToPool(); this.biasesArray = null; // Release for reducing memory usage.
+
+//!!! (2022/08/05 Temp Remarked) For debug BoundsArraySet calculation error.
+//            this.biasesArray.disposeResources_and_recycleToPool(); this.biasesArray = null; // Release for reducing memory usage.
 
             // Note: Because .biasesShape will be kept by .biasesTensor3d internally, it can not be released here.
           }
