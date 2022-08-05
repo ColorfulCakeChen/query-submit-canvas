@@ -42,8 +42,8 @@ async function testAll( bDisplayFailedTensor ) {
   let inputInfo = { inputShape: [], inputArray: [] };
   let outputInfo = { size: [] };
 
-  for ( let inputHeight = 1; inputHeight <= inputHeight_max; ++inputHeight )
-    for ( let inputWidth = 1; inputWidth <= inputWidth_max; ++inputWidth )
+  for ( let inputHeight = 2; inputHeight <= inputHeight_max; ++inputHeight )
+    for ( let inputWidth = 2; inputWidth <= inputWidth_max; ++inputWidth )
       for ( let inputDepth = 1; inputDepth <= inputDepth_max; ++inputDepth )
         for ( let dtypeIndex = 0; dtypeIndex < dtypeArray.length; ++dtypeIndex ) {
 
