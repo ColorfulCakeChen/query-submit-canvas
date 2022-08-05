@@ -270,14 +270,14 @@ class Stage_TestParams_Base extends TestParams.Base {
       // ],
 
 //!!! (2022/08/04 Temp Remarked) For speed-up debug.
-      blockCountRequested: [
-        Stage.Params.blockCountRequested.valueDesc.range.min,
-        Stage.Params.blockCountRequested.valueDesc.range.min + 3
-      ],
       // blockCountRequested: [
-      //   3,
-      //   3
+      //   Stage.Params.blockCountRequested.valueDesc.range.min,
+      //   Stage.Params.blockCountRequested.valueDesc.range.min + 3
       // ],
+      blockCountRequested: [
+        3,
+        3
+      ],
 
 //      bPointwise1: undefined,
 //!!! (2022/08/04 Temp Remarked) For speed-up debug.
