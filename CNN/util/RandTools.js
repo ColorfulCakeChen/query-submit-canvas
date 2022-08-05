@@ -86,7 +86,7 @@ function fill_numberArray( io_numberArray,
 
 //!!! (2022/08/04 Temp Remarked) for re-producible random.
           // randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
-          if ( ( i % 2 ) == 0 )
+          if ( ( arrayIndex % 2 ) == 0 )
             randomOffset = randomOffsetMinInt;
           else
             randomOffset = randomOffsetMaxInt;
@@ -111,7 +111,7 @@ function fill_numberArray( io_numberArray,
 
 //!!! (2022/08/04 Temp Remarked) for re-producible random.
           // randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
-          if ( ( i % 2 ) == 0 )
+          if ( ( arrayIndex % 2 ) == 0 )
             randomOffset = randomOffsetMinInt;
           else
             randomOffset = randomOffsetMaxInt;
