@@ -24,6 +24,10 @@ function getRandomIntInclusive( min, max ) {
  *   The number array to be filled. If it is an instance of Recyclable.NumberArray_withBounds, its
  * .lowerBound and .upperBound will be filled.
  *
+ * @param {number} height        The length of axis0 of the io_numberArray.
+ * @param {number} width         The length of axis1 of the io_numberArray.
+ * @param {number} channelCount  The length of axis2 of the io_numberArray.
+ *
  * @param {number} valueBegin
  *   The first value of filled sequence.
  *
@@ -46,6 +50,7 @@ function getRandomIntInclusive( min, max ) {
  *   Return the io_numberArray.
  */
 function fill_numberArray( io_numberArray,
+  height, width, channelCount,
   valueBegin = 0, valueStep = 1,
   randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = ( 2 ** 26 ) ) {
 
@@ -62,6 +67,10 @@ function fill_numberArray( io_numberArray,
   //let alter = +1; // extra value for descreasing uniform.
   //let alter = +0; // extra value for descreasing uniform.
 
+!!! ...unfinished... (2022/08/05) 
+// should let neighbor chnnael have diferent bounds
+// this.boundsArray_byChannel
+  
   if ( io_numberArray instanceof Recyclable.NumberArray_withBounds ) {
     let lowerBound = +Infinity;
     let upperBound = -Infinity;

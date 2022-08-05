@@ -1,13 +1,14 @@
 export { NumberArray_withBounds };
 
 import * as Pool from "../Pool.js";
+import * as FloatValue from "../../Unpacker/FloatValue.js";
 import { Base } from "./Recyclable_Base.js";
 import { Array as Recyclable_Array } from "./Recyclable_Array.js";
 
 /**
- * Similar to Recyclable_Array but it is mainly used for number array and has two extra properties:
- *   - lowerBounds
- *   - upperBounds
+ * Similar to Recyclable_Array but it is mainly used for number array and has
+ * extra properties:
+ *   - boundsArray_byChannel
  *
  *
  *
@@ -40,12 +41,15 @@ class NumberArray_withBounds extends Recyclable_Array {
 
   /** @override */
   static setAsConstructor_self() {
+    this.boundsArray_byChannel = FloatValue.BoundsArray.Pool.get_or_create_by();
   }
 
   /** @override */
   disposeResources() {
-    this.lowerBound = undefined;
-    this.upperBound = undefined;
+    if ( this.boundsArray_byChannel ) {
+      this.boundsArray_byChannel.disposeResources_and_recycleToPool();
+      this.boundsArray_byChannel = null;
+    }
     super.disposeResources();
   }
 
