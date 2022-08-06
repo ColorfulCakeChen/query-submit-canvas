@@ -1390,7 +1390,8 @@ class NumberImage_Base extends Recyclable.Root {
           if ( !( this.boundsArraySet.output0.boundsArray.is_one_contain_N(
                     c, this.dataArray[ i ] ) ) ) {
             throw Error( `NumberImage.Base.assert_output_BoundsArray():`
-              + ``
+              + `at ( h, w, c ) = ( ${h}, ${w}, ${c} ), `
+              + `.dataArray[ ${i} ] = ${this.dataArray[ i ]} should be `
             )
           }
         }
