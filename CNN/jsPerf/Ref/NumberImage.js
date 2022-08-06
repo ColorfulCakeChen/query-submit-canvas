@@ -1456,6 +1456,7 @@ class NumberImage_Base extends Recyclable.Root {
 
     // 3. Fill .boundsArraySet
     imageNew.boundsArraySet.set_outputs_all_byBoundsArray( imageNew.dataArray.boundsArray_byChannel );
+    //imageNew.assert_pixels_output_BoundsArray();
 
     return imageNew;
   }
