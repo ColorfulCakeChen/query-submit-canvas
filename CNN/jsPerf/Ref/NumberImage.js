@@ -636,10 +636,7 @@ class NumberImage_Base extends Recyclable.Root {
       // value). So the value bounds should contain the zero (suppose the total filter
       // are all applied to the padded (zero) pixels).
       if ( stridesPadInfo.pad_isSame() ) {
-        let boundsArray_afterFilter = imageOut.boundsArraySet.afterFilter;
-        for ( let c = 0; c < boundsArray_afterFilter.length; ++c ) {
-          boundsArray_afterFilter.enlarge_one_byN( c, 0 );
-        }
+        imageOut.boundsArraySet.afterFilter.enlarge_all_byN( 0 );
       }
     }
 

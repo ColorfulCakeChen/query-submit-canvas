@@ -549,6 +549,21 @@ class BoundsArray extends Recyclable.Root {
     return this;
   }
 
+  /**
+   * @param {number} N  Enlarge every bounds so that [ this.lowers[], this.uppers[] ] contains N.
+   *
+   * @return {Bounds} Return this (modified) object.
+   */
+   enlarge_all_byN( N ) {
+    for ( let i = 0; i < this.lowers.length; ++i ) {
+      if ( this.lowers[ i ] > N )
+        this.lowers[ i ] = N;
+      if ( this.uppers[ i ] < N )
+        this.uppers[ i ] = N;
+    }
+    return this;
+  }
+
 
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].

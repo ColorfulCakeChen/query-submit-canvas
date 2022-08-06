@@ -621,6 +621,12 @@ function test_enlarge_contain_in() {
             bShouldTrue &&= aBoundsArray.is_all_in_BoundsArray_one( aBoundsArray, 1 );
           }
 
+          {
+            aBoundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
+            aBoundsArray.enlarge_all_byN( a );
+            bShouldTrue &&= is_all_contain_N( a );
+          }
+
           if ( !bShouldTrue )
             throw Error( `jsPerf_FloatValue_Bounds.test_enlarge_contain_in(): `
               + `Something wrong. When ( a, b, c, d ) = `
