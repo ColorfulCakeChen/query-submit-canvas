@@ -1381,17 +1381,20 @@ class NumberImage_Base extends Recyclable.Root {
     }
   }
 
-!!!
-  assert_output_BoundsArray() {
+  /**
+   * Assert every pixel whether inside output bounds array of its channel.
+   */
+  assert_pixels_output_BoundsArray() {
+    let boundsArray = this.boundsArraySet.output0.boundsArray;
     let i = 0;
     for ( let y = 0; y < rHeight; ++y ) {
       for ( let x = 0; x < rWidth; ++x ) {
         for ( let c = 0; c < rDepth; ++c, ++i ) {
-          if ( !( this.boundsArraySet.output0.boundsArray.is_one_contain_N(
-                    c, this.dataArray[ i ] ) ) ) {
+          if ( !( boundsArray.is_one_contain_N( c, this.dataArray[ i ] ) ) ) {
             throw Error( `NumberImage.Base.assert_output_BoundsArray():`
               + `at ( h, w, c ) = ( ${h}, ${w}, ${c} ), `
-              + `.dataArray[ ${i} ] = ${this.dataArray[ i ]} should be `
+              + `.dataArray[ ${i} ] = ${this.dataArray[ i ]} should be in bounds `
+              + `[ ${boundsArray.lowers[ c ]}, ${boundsArray.uppers[ c ]} ].`
             )
           }
         }
