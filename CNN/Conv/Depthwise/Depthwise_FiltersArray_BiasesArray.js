@@ -547,11 +547,20 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 // padded style. And then, enlarge them with each other
 // to find out real .afterFilter BoundsArray
 //
-// let tryHeight = Math.min( effectFilterHeight, inputHeight ) + padHeight;
-// let tryWidth = Math.min( effectFilterWidth, inputWidth ) + padWidth;
+// let tryHeight = Math.min( effectFilterHeight, inputHeight );
+// let tryWidth = Math.min( effectFilterWidth, inputWidth );
+//
+// Use two virtual input images. Their size are ( tryHeight, tryWidth, channelCount ).
+// One image's values are all .afterUndoPreviousActivationEscaping.lowers[].
+// The other image's values are all .afterUndoPreviousActivationEscaping.upperers[].
+//
+// Try to calculate depthwise convolution of these two virtual
+// images (with padHeightTop, padHeightBottom, padWidthLeft,
+// padWidthRight). But store result to multiple kinds of
+// .afterFilter BoundsArray
 //
 //
-//
+
 
       this.boundsArraySet.afterFilter.set_all_byN( 0 ); // Init .afterFilter
       this.boundsArraySet.afterBias.set_all_byN( 0 );   // Init .afterBias
