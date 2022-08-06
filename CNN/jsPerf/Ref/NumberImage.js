@@ -622,7 +622,11 @@ class NumberImage_Base extends Recyclable.Root {
 
 !!! ...unfinished... (2022/08/06)
                   // For pad=same, part of filter will be applied to the padded pixels
-                  // (i.e. zero value). Perhaps, should try two? all? kinds of tBounds:
+                  // (i.e. zero value).
+//!!!
+// Perhaps, should try ( depthwiseFilterHeight * depthwiseFilterWidth ) kinds of
+// .afterFilter BoundsArray. And then, enlarge them with each other (by channel)
+// to find out real BoundsArray.
                   // one is ?
 //!!!
                   // So the value bounds should contain the zero (suppose the total filter
