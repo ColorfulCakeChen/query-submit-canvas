@@ -1279,8 +1279,8 @@ class Block_Reference_Base extends Recyclable.Root {
     }
 
     { // Assert NumberImage's pixels value whether inside its BoundsArray.
-      imageOutArray[ 0 ].assert_pixels_output_BoundsArray();
-      imageOutArray[ 1 ]?.assert_pixels_output_BoundsArray();
+      imageOutArray[ 0 ].assert_pixels_byBoundsArray_output();
+      imageOutArray[ 1 ]?.assert_pixels_byBoundsArray_output();
     }
 
     return imageOutArray;
