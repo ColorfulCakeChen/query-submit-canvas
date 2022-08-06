@@ -1278,6 +1278,9 @@ class Block_Reference_Base extends Recyclable.Root {
       this.imageNeedDisposeUniqueStack.clear();
     }
 
+!!! ...unfinished... (2022/08/06)
+// should assert NumberImage's pixels value whether inside its ( BoundsArray * ScaleArray.undo ).
+
     return imageOutArray;
   }
 
