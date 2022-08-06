@@ -423,8 +423,9 @@ class NumberImage_Base extends Recyclable.Root {
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
 
     let { channelMultiplier, dilationHeight, dilationWidth,
-          stridesHeight, stridesWidth, padHeightTop, padWidthLeft,
+          stridesHeight, stridesWidth, padHeightTop, padWidthLeft, 
           outputHeight, outputWidth, outputChannelCount, //outputElementCount
+          stridesPadInfo,
     } = padInfo;
 
     padInfo.disposeResources_and_recycleToPool();
@@ -629,6 +630,17 @@ class NumberImage_Base extends Recyclable.Root {
 
       tBounds.disposeResources_and_recycleToPool();
       tBounds = null;
+
+//!!! ...unfinished... (2022/08/06)
+      // For pad=same, part of filter will be applied to the padded pixels (i.e. zero
+      // value). So the value bounds should contain the zero (suppose the total filter
+      // are all applied to the padded (zero) pixels).
+      if ( stridesPadInfo.pad_isSame() ) {
+        let boundsArray_afterFilter = imageOut.boundsArraySet.afterFilter;
+        for ( let c = 0; c < boundsArray_afterFilter.length; ++c ) {
+          boundsArray_afterFilter.enlarge_one_byN( c, 0 );
+        }
+      }
     }
 
 //!!! (2022/08/06) For debug pixel value bounds.
