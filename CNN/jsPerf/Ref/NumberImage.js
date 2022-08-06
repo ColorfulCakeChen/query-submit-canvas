@@ -620,6 +620,14 @@ class NumberImage_Base extends Recyclable.Root {
                     .set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
                     .multiply_byN( depthwiseFiltersArray[ filterIndex ] );
 
+!!! ...unfinished... (2022/08/06)
+                  // For pad=same, part of filter will be applied to the padded pixels
+                  // (i.e. zero value). Perhaps, should try two? all? kinds of tBounds:
+                  // one is ?
+//!!!
+                  // So the value bounds should contain the zero (suppose the total filter
+                  // are all applied to the padded (zero) pixels).
+
                   imageOut.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
                 }
               }
