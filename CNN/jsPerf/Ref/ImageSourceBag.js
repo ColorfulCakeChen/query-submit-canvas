@@ -232,7 +232,7 @@ class ImageSourceBag_Base extends Recyclable.Root {
  */ 
 
 ImageSourceBag_Base.weightsValueBegin = 1;
-ImageSourceBag_Base.weightsValueStep = 10; //1;
+ImageSourceBag_Base.weightsValueStep = 100; //1;
 
 //!!! (2022/07/14 Temp Remarked) Fixed to non-random to simplify debug.
 //ImageSourceBag_Base.weightsRandomOffset = { min: 0, max: +200 };
