@@ -631,7 +631,7 @@ class NumberImage_Base extends Recyclable.Root {
       tBounds.disposeResources_and_recycleToPool();
       tBounds = null;
 
-//!!! ...unfinished... (2022/08/06)
+//!!! ...unfinished... (2022/08/06) Still wrong.
       // For pad=same, part of filter will be applied to the padded pixels (i.e. zero
       // value). So the value bounds should contain the zero (suppose the total filter
       // are all applied to the padded (zero) pixels).
