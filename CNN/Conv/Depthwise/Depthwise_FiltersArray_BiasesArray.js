@@ -547,6 +547,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 // padded style. And then, enlarge them with each other
 // to find out real .afterFilter BoundsArray
 //
+// let tryHeight = Math.min( effectFilterHeight, inputHeight ) + padHeight;
+// let tryWidth = Math.min( effectFilterWidth, inputWidth ) + padWidth;
+//
+//
+//
 
       this.boundsArraySet.afterFilter.set_all_byN( 0 ); // Init .afterFilter
       this.boundsArraySet.afterBias.set_all_byN( 0 );   // Init .afterBias
