@@ -627,7 +627,7 @@ class NumberImage_Base extends Recyclable.Root {
 // Perhaps, should try ( depthwiseFilterHeight * depthwiseFilterWidth ) kinds of
 // .afterFilter BoundsArray. And then, enlarge them with each other (by channel)
 // to find out real BoundsArray.
-                  // one is ?
+// (as BoundsArraySet.Depthwise method)
 //!!!
                   // So the value bounds should contain the zero (suppose the total filter
                   // are all applied to the padded (zero) pixels).
