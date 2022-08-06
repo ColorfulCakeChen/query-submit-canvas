@@ -708,6 +708,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     } // aFiltersBiasesPartIndex
 
+    // For pad=same, part of filter will be applied to the padded pixels (i.e. zero
+    // value). So the value bounds should contain the zero (suppose the total filter
+    // are all applied to the padded (zero) pixels).
+    if ( this.stridesPadInfo.pad_isSame() ) {
+      this.boundsArraySet.afterFilter.enlarge_all_byN( 0 );
+    }
+
     // Combine .afterFilter to .afterBias.
     //
     // Q: Why not combine when initializing .afterBias ?
