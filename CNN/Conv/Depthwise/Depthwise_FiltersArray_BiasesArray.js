@@ -708,7 +708,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     } // aFiltersBiasesPartIndex
 
-//!!! ...unfinished... (2022/08/06) Still wrong.
+!!! ...unfinished... (2022/08/06) Still wrong.
     // For pad=same, part of filter will be applied to the padded pixels (i.e. zero
     // value). So the value bounds should contain the zero (suppose the total filter
     // are all applied to the padded (zero) pixels).
