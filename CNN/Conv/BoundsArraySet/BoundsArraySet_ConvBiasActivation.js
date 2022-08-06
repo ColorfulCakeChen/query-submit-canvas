@@ -274,8 +274,9 @@ class ConvBiasActivation extends InputsOutputs {
 
     const theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfo_byId( nActivationId );
 
+    let outputChannelCount = this.afterBias.length;
     let doEscapingScale;
-    for ( let outChannel = 0; outChannel < this.afterBias.length; ++outChannel ) {
+    for ( let outChannel = 0; outChannel < outputChannelCount; ++outChannel ) {
 
       let bPassThrough = this.bPassThrough[ outChannel ]; // For pass-through half channels.
 
