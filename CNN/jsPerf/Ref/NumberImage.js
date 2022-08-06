@@ -572,7 +572,8 @@ class NumberImage_Base extends Recyclable.Root {
 
     // Calculate Depthwise BoundArraySet
     //
-    // Note: imageOut.boundsArraySet.afterUndoPreviousActivationEscaping has already been setup by BoundsArraySet.Depthwise() constructor.
+    // Note: imageOut.boundsArraySet.afterUndoPreviousActivationEscaping has
+    //       already been setup by BoundsArraySet.Depthwise() constructor.
     //
     if ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ) { // For avg/max pooling, the value bounds will not change.
       imageOut.boundsArraySet.afterFilter.set_all_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping );
@@ -580,12 +581,11 @@ class NumberImage_Base extends Recyclable.Root {
     } else { // For normal depthwise convolution, value bounds should be calculated by accumulation.
 
       // Q: Why not claculated in the above depthwise convolution for-loop?
-      // A: When pad=same, rhe calculation may be wrong because the padded pixels (especially the right-bottom padded
-      //    pixles) are not calculated (so the value bounds are not calculated).
+      // A: When pad=same, the calculation may be wrong because the padded pixels
+      //    (especially the right-bottom padded pixles) are not calculated (so the
+      //    value bounds are not calculated).
 
-      let tBounds;
-      tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
-
+      let tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
       imageOut.boundsArraySet.afterFilter.set_all_byN( 0 );
 
       for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
