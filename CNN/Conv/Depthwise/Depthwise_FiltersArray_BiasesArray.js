@@ -541,6 +541,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     // Init
     {
+!!! ...unfinished... (2022/08/06)
+// needs multiple kinds of .afterFilter BoundsArray when
+// ( this.stridesPadInfo.pad_isSame() ) for every kinds of
+// padded style. And then, enlarge them with each other
+// to find out real .afterFilter BoundsArray
+//
+
       this.boundsArraySet.afterFilter.set_all_byN( 0 ); // Init .afterFilter
       this.boundsArraySet.afterBias.set_all_byN( 0 );   // Init .afterBias
 
