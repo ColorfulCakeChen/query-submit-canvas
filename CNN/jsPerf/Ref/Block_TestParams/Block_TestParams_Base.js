@@ -257,8 +257,8 @@ class Block_TestParams_Base extends TestParams.Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
-      input0_height: [ 2, 2 ], //[ 3, 3 ],
-      input0_width: [ 2, 2 ], //[ 4, 5 ],
+      input0_height: [ 2, 4 ], //[ 3, 3 ],
+      input0_width: [ 2, 4 ], //[ 4, 5 ],
 
       input0_channelCount: [ 3, 4 ], //[ 1, 3 ],
 
@@ -306,8 +306,8 @@ class Block_TestParams_Base extends TestParams.Base {
       //   2
       // ],
       depthwise_AvgMax_Or_ChannelMultiplier: [
-        1,
-        1
+        0,
+        2
       ],
 
       // (2021/10/06) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
