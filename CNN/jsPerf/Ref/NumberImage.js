@@ -1400,11 +1400,13 @@ class NumberImage_Base extends Recyclable.Root {
    */
   assert_pixels_output_BoundsArray() {
     let boundsArray = this.boundsArraySet.output0.boundsArray;
+    let pixelValue;
     let i = 0;
     for ( let y = 0; y < this.height; ++y ) {
       for ( let x = 0; x < this.width; ++x ) {
         for ( let c = 0; c < this.depth; ++c, ++i ) {
-          if ( !( boundsArray.is_one_contain_N( c, this.dataArray[ i ] ) ) ) {
+          pixelValue = this.dataArray[ i ];
+          if ( !( boundsArray.is_one_contain_N( c, pixelValue ) ) ) {
             debugger;
             throw Error( `NumberImage.Base.assert_output_BoundsArray():`
               + `at ( x, y, c ) = ( ${x}, ${y}, ${c} ), `
