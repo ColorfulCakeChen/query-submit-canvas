@@ -1381,16 +1381,31 @@ class NumberImage_Base extends Recyclable.Root {
     }
   }
 
+!!!
+  assert_output_BoundsArray() {
+    let i = 0;
+    for ( let y = 0; y < rHeight; ++y ) {
+      for ( let x = 0; x < rWidth; ++x ) {
+        for ( let c = 0; c < rDepth; ++c, ++i ) {
+          if ( !( this.boundsArraySet.output0.boundsArray.is_one_contain_N(
+                    c, this.dataArray[ i ] ) ) ) {
+            throw Error( `NumberImage.Base.assert_output_BoundsArray():`
+              + ``
+            )
+          }
+        }
+      }
+    }
+  }
+
   /**
    *
-   * @param {number} height
-   *   The height of the generate image.
+   * @param {number} height        The height of the generate image.
+   * @param {number} width         The width of the generate image.
+   * @param {number} channelCount  The channel count of the generate image.
    *
-   * @param {number} width
-   *   The width of the generate image.
-   *
-   * @param {number} channelCount
-   *   The channel count of the generate image.
+   * @param {number} valueBegin    The first value of filled sequence.
+   * @param {number} valueStep     The incremental value of every next filled value in the sequence.
    *
    * @param {number} randomOffsetMin
    *   Every element of the generated number array will been shifted from the sequence id between
@@ -1402,10 +1417,6 @@ class NumberImage_Base extends Recyclable.Root {
    *
    * @param {number} divisorForRemainder
    *   To restrict the generated value. Default is 256, because image's evey channel of a pixel should be in [ 0, 255 ].
-   *
-   * @param {boolean} bAutoBounds
-   *   If true, the value bounds will be real bounds of the generated elements. If false, the value bounds will be
-   * Weights.Base.ValueBounds. Default is false.
    *
    * @return {NumberImage.Base}
    *   Return a newly generated image. Basically, they are sequential numbers which could be added by random offset between
