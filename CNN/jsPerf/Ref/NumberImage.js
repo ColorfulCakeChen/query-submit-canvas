@@ -333,6 +333,8 @@ class NumberImage_Base extends Recyclable.Root {
     // Activation
     NumberImage_Base.modify_byActivation_withoutAffect_BoundsArraySet( imageOut, pointwiseActivationId, parametersDesc );
 
+    imageOut.assert_pixels_output_BoundsArray(); // Verify pixels' bounds.
+
     return imageOut;
   }
 
@@ -665,6 +667,8 @@ class NumberImage_Base extends Recyclable.Root {
       }
     }
 
+    imageOut.assert_pixels_output_BoundsArray(); // Verify pixels' bounds.
+
     return imageOut;
   }
 
@@ -859,6 +863,8 @@ class NumberImage_Base extends Recyclable.Root {
          // (i.e. not across channels).
          //
         .add_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
+
+      imageOutNew.assert_pixels_output_BoundsArray(); // Verify pixels' bounds.
     }
 
     return imageOutNew;
@@ -942,6 +948,8 @@ class NumberImage_Base extends Recyclable.Root {
          // (i.e. not across channels).
          //
         .multiply_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
+
+      imageOutNew.assert_pixels_output_BoundsArray(); // Verify pixels' bounds.
     }
 
     return imageOutNew;
@@ -1160,6 +1168,8 @@ class NumberImage_Base extends Recyclable.Root {
     // Shuffle BoundsArraySet.
     this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo();
 
+    this.assert_pixels_output_BoundsArray(); // Verify pixels' bounds.
+
     return this;
   }
 
@@ -1240,6 +1250,9 @@ class NumberImage_Base extends Recyclable.Root {
       rScaleBoundsArray_higherHalf.disposeResources_and_recycleToPool();
       rScaleBoundsArray_higherHalf = null;
     }
+
+    imageOut0.assert_pixels_output_BoundsArray(); // Verify pixels' bounds.
+    imageOut1.assert_pixels_output_BoundsArray(); // Verify pixels' bounds.
   }
 
   /**
@@ -1306,6 +1319,7 @@ class NumberImage_Base extends Recyclable.Root {
 
     // Concat value bounds array.
     imageOut.boundsArraySet.set_outputs_all_by_concat_input0_input1();
+    imageOut.assert_pixels_output_BoundsArray(); // Verify pixels' bounds.
 
     return imageOut;
   }
@@ -1393,7 +1407,7 @@ class NumberImage_Base extends Recyclable.Root {
           if ( !( boundsArray.is_one_contain_N( c, this.dataArray[ i ] ) ) ) {
             throw Error( `NumberImage.Base.assert_output_BoundsArray():`
               + `at ( x, y, c ) = ( ${x}, ${y}, ${c} ), `
-              + `.dataArray[ ${i} ] = ${this.dataArray[ i ]} should be in bounds `
+              + `.dataArray[ ${i} ] = ( ${this.dataArray[ i ]} ) should be in bounds `
               + `[ ${boundsArray.lowers[ c ]}, ${boundsArray.uppers[ c ]} ].`
             )
           }
