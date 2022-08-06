@@ -641,13 +641,13 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
 //!!! (2022/08/06) For debug pixel value bounds.
-    this.assert_pixels_byBoundsArray( imageOut.boundsArraySet.afterFilter );
+    imageOut.assert_pixels_byBoundsArray( imageOut.boundsArraySet.afterFilter );
 
     // Bias
     imageOut.modify_byBias( bDepthwiseBias, depthwiseBiasesArray, parametersDesc, ...depthwiseNames, "bias" );
 
 //!!! (2022/08/06) For debug pixel value bounds.
-    this.assert_pixels_byBoundsArray( imageOut.boundsArraySet.afterBias );
+    imageOut.assert_pixels_byBoundsArray( imageOut.boundsArraySet.afterBias );
 
     // Activation Escaping.
     {
