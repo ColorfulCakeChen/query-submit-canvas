@@ -1405,6 +1405,7 @@ class NumberImage_Base extends Recyclable.Root {
       for ( let x = 0; x < this.width; ++x ) {
         for ( let c = 0; c < this.depth; ++c, ++i ) {
           if ( !( boundsArray.is_one_contain_N( c, this.dataArray[ i ] ) ) ) {
+            debugger;
             throw Error( `NumberImage.Base.assert_output_BoundsArray():`
               + `at ( x, y, c ) = ( ${x}, ${y}, ${c} ), `
               + `.dataArray[ ${i} ] = ( ${this.dataArray[ i ]} ) should be in bounds `
