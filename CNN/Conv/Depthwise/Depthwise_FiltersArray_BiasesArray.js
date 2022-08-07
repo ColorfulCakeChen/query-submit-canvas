@@ -651,6 +651,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 //!!! ...unfinished... (2022/08/07)
                       // Determine .afterFilter
                       {
+                        // Accumulate value bounds for filter position inside virtual input image.
                         for ( let getY = Math.max( 0, virtualInputBeginY + filterY ); getY < virtualInputHeight; ++getY ) {
                           for ( let getX = Math.max( 0, virtualInputBeginX + filterX ); getX < virtualInputWidth; ++getX ) {
 
