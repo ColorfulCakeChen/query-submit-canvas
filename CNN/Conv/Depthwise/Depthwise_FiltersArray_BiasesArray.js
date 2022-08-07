@@ -542,6 +542,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // Init
 
 //!!! ...unfinished... (2022/08/07)
+    // For pad=same, part of filter will be applied to the padded pixels (i.e. zero
+    // value). So the value bounds should be calculated from applying every kinds of
+    // padded or non-padded pixel configuration (i.e. virtual input image).
+
     // Virtual input image (for calculating value bounds).
     let virtualInputHeight = Math.min( this.effectFilterHeight, this.inputHeight );
     let virtualInputWidth = Math.min( this.effectFilterWidth, this.inputWidth );
@@ -562,27 +566,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     }
 
     {
-!!! ...unfinished... (2022/08/06)
-// needs multiple kinds of .afterFilter BoundsArray when
-// ( this.stridesPadInfo.pad_isSame() ) for every kinds of
-// padded style. And then, enlarge them with each other
-// to find out real .afterFilter BoundsArray
-//
-// let tryHeight = Math.min( effectFilterHeight, inputHeight );
-// let tryWidth = Math.min( effectFilterWidth, inputWidth );
-//
-// Use two virtual input images. Their size are ( tryHeight, tryWidth, channelCount ).
-// One image's values are all .afterUndoPreviousActivationEscaping.lowers[].
-// The other image's values are all .afterUndoPreviousActivationEscaping.upperers[].
-//
-// Try to calculate depthwise convolution of these two virtual
-// images (with padHeightTop, padHeightBottom, padWidthLeft,
-// padWidthRight). But store result to multiple kinds of
-// .afterFilter BoundsArray
-//
-//
-
-
 //!!! (2022/08/07 Remarked) Use enlarge instead.
 //      this.boundsArraySet.afterFilter.set_all_byN( 0 ); // Init .afterFilter
       this.boundsArraySet.afterFilter.set_all_by_PositiveInfinity_NegativeInfinity(); // Init .afterFilter (so that could be enlarged.)
@@ -662,11 +645,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                           .multiply_byN( sourceWeight );
                       }
 
-//!!! (2022/08/07 Remarked) Old Codes. Wrong!
-                      // // Determine .afterFilter
-                      // this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
+//!!! (2022/08/07 Remarked) Old Codes. Wrong! Use enlarge instead.
+//                       // Determine .afterFilter
+//                       this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
-//!!! ...unfinished... (2022/08/07)
                       // Determine .afterFilter of every virtual image pixel.
                       {
                         // Accumulate value bounds for the filter position (across the virtual input image).
@@ -684,7 +666,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                             else if ( inX >= virtualInputWidth )
                               break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
-//!!! ...unfinished... (2022/08/07) use tBounds.
                             let afterFilter_BoundsArray = afterFilter_BoundsArray_ArrayArray[ outY ][ outX ];
                             afterFilter_BoundsArray.add_one_byBounds( outChannel, tBounds );
                           }
@@ -778,24 +759,21 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     } // aFiltersBiasesPartIndex
 
-!!! ...unfinished... (2022/08/06) Still wrong.
-    // For pad=same, part of filter will be applied to the padded pixels (i.e. zero
-    // value). So the value bounds should contain the zero (suppose the total filter
-    // are all applied to the padded (zero) pixels).
-    if ( this.stridesPadInfo.pad_isSame() ) {
-      this.boundsArraySet.afterFilter.enlarge_all_byN( 0 );
-    }
+//!!! (2022/08/07 Remarked) Old Codes. Wrong! Use enlarge instead.
+//     // For pad=same, part of filter will be applied to the padded pixels (i.e. zero
+//     // value). So the value bounds should contain the zero (suppose the total filter
+//     // are all applied to the padded (zero) pixels).
+//     if ( this.stridesPadInfo.pad_isSame() ) {
+//       this.boundsArraySet.afterFilter.enlarge_all_byN( 0 );
+//     }
 
-// !!!!
     // Determine .afterFilter of all virtual image pixels (of every channel).
     {
       for ( let outY = 0; outY < virtualInputHeight; ++outY ) {
         for ( let outX = 0; outX < virtualInputWidth; ++outX ) {
           let afterFilter_BoundsArray = afterFilter_BoundsArray_ArrayArray[ outY ][ outX ];
           for ( let c = 0; c < this.outputChannelCount; ++c ) {
-            this.boundsArraySet.afterFilter.enlarge_one_byN( c, ??? );
-
-            afterFilter_BoundsArray.en( outChannel, tBounds );
+            this.boundsArraySet.afterFilter.enlarge_one_byBoundsArray_one( c, afterFilter_BoundsArray, c );
           }
         }
       }
