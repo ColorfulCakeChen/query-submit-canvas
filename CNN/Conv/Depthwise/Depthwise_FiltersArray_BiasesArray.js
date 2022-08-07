@@ -555,7 +555,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       let afterFilter_BoundsArray_Array
         = afterFilter_BoundsArray_ArrayArray[ y ] = Recyclable.OwnerArray.Pool.get_or_create_by( virtualInputWidth );
       for ( let x = 0; x < virtualInputWidth; ++x ) {
-        afterFilter_BoundsArray_Array[ x ] = FloatValue.BoundsArray.Pool.get_or_create_by( this.outputChannelCount );
+        let afterFilter_BoundsArray
+          = afterFilter_BoundsArray_Array[ x ] = FloatValue.BoundsArray.Pool.get_or_create_by( this.outputChannelCount );
+        afterFilter_BoundsArray.set_all_byN( 0 );
       }
     }
 
