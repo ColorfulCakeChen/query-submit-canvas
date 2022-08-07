@@ -664,12 +664,21 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                       // Determine .afterFilter
                       {
                         // Accumulate value bounds for filter position inside virtual input image.
-                        for ( let getY = Math.max( 0, virtualInputBeginY + filterY ); getY < virtualInputHeight; ++getY ) {
-                          for ( let getX = Math.max( 0, virtualInputBeginX + filterX ); getX < virtualInputWidth; ++getX ) {
+                        for ( let outY = 0; outY < virtualInputHeight; ++outY ) {
+                          let inY = virtualInputBeginY + filterY;
+                          if ( inY < 0 )
+                            continue; // Never access outside of input image. Continue to find out non-negative input image y position.
+                          else if ( inY >= virtualInputHeight )
+                            break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
+
+                          for ( let outX = 0; outX < virtualInputWidth; ++outX ) {
+                            let inX = virtualInputBeginX + filterX;
+                            if ( inX < 0 )
+                              continue; // Never access outside of input image. Continue to find out non-negative input image x position.
+                            else if ( inX >= virtualInputWidth )
+                              break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
 //!!! ...unfinished... (2022/08/07) use tBounds.
-                            let ???outY = getY - ( virtualInputBeginY + filterY );
-                            let ???outX = getX - ( virtualInputBeginX + filterX );
                             afterFilter_BoundsArray_ArrayArray[ ???outY ][ ???outX ];
 
                           }
