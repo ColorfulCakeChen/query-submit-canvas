@@ -549,6 +549,16 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     let virtualInputBeginY = - this.padHeightTop;
     let virtualInputBeginX = - this.padWidthLeft;
 
+    // A two dimension array. Every element is a BoundsArray.
+    let afterFilter_BoundsArray_ArrayArray = Recyclable.OwnerArray.Pool.get_or_create_by( virtualInputHeight );
+    for ( let y = 0; y < virtualInputHeight; ++y ) {
+      let afterFilter_BoundsArray_Array
+        = afterFilter_BoundsArray_ArrayArray[ y ] = Recyclable.OwnerArray.Pool.get_or_create_by( virtualInputWidth );
+      for ( let x = 0; x < virtualInputWidth; ++x ) {
+        afterFilter_BoundsArray_Array[ x ] = FloatValue.BoundsArray.Pool.get_or_create_by( this.outputChannelCount );
+      }
+    }
+
     {
 !!! ...unfinished... (2022/08/06)
 // needs multiple kinds of .afterFilter BoundsArray when
@@ -655,7 +665,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                         for ( let getY = Math.max( 0, virtualInputBeginY + filterY ); getY < virtualInputHeight; ++getY ) {
                           for ( let getX = Math.max( 0, virtualInputBeginX + filterX ); getX < virtualInputWidth; ++getX ) {
 
-                          }
+//!!! ...unfinished... (2022/08/07) use tBounds.
+}
                         }
                       }
 
