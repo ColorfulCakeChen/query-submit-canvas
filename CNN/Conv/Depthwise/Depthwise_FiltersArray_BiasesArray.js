@@ -540,6 +540,15 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     let tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
 
     // Init
+
+//!!! ...unfinished... (2022/08/07)
+    // Virtual input image (for calculating value bounds).
+    let virtualInputHeight = Math.min( this.effectFilterHeight, this.inputHeight );
+    let virtualInputWidth = Math.min( this.effectFilterWidth, this.inputWidth );
+
+    let virtualInputBeginY = - this.padHeightTop;
+    let virtualInputBeginX = - this.padWidthLeft;
+
     {
 !!! ...unfinished... (2022/08/06)
 // needs multiple kinds of .afterFilter BoundsArray when
@@ -639,6 +648,19 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                           .multiply_byN( sourceWeight );
                       }
 
+//!!! ...unfinished... (2022/08/07)
+                      // Determine .afterFilter
+                      {
+                        for ( let outY = 0; outY < virtualInputHeight; ++outY ) {
+                          let inY = outY + virtualInputBeginY;
+
+                          for ( let outX = 0; outX < virtualInputWidth; ++outX ) {
+                            let inX = outX + virtualInputBeginX;
+                          }
+                        }
+                      }
+
+//!!! ...unfinished... (2022/08/07)
                       // Determine .afterFilter
                       this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
