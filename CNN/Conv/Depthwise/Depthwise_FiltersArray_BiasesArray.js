@@ -541,7 +541,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     // 0. Init
 
-//!!! ...unfinished... (2022/08/07)
+    // 0.1 Prepare .afterFilter acccumulation.
+    //
     // For pad=same, part of filter will be applied to the padded pixels (i.e. zero
     // value). So the value bounds should be calculated from applying every kinds of
     // padded or non-padded pixel configuration (i.e. virtual input image).
@@ -567,11 +568,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       }
     }
 
-    {
-//!!! (2022/08/07 Remarked) Use enlarge instead.
-//      this.boundsArraySet.afterFilter.set_all_byN( 0 ); // Init .afterFilter
-
-      this.boundsArraySet.afterBias.set_all_byN( 0 );   // Init .afterBias
+    { // 0.2 Init .afterBias
+      this.boundsArraySet.afterBias.set_all_byN( 0 );
 
       // Because biases is fetched by adding, it should be initialized to zero. (Note: The .filtersArray is fetched by assigning, so
       // it needs not be initialized.)
@@ -652,9 +650,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 //                       // Determine .afterFilter
 //                       this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
-                      // Determine .afterFilter of every virtual image pixel.
+                      // Accumulate value bounds for the filter position (across the whole virtual input image).
                       {
-                        // Accumulate value bounds for the filter position (across the virtual input image).
                         for ( let outY = 0; outY < virtualInputHeight; ++outY ) {
                           let inY = virtualInputBeginY + filterY;
                           if ( inY < 0 )
