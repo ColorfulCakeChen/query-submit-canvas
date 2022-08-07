@@ -570,7 +570,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     {
 //!!! (2022/08/07 Remarked) Use enlarge instead.
 //      this.boundsArraySet.afterFilter.set_all_byN( 0 ); // Init .afterFilter
-      this.boundsArraySet.afterFilter.set_all_by_PositiveInfinity_NegativeInfinity(); // Init .afterFilter (so that could be enlarged.)
+
       this.boundsArraySet.afterBias.set_all_byN( 0 );   // Init .afterBias
 
       // Because biases is fetched by adding, it should be initialized to zero. (Note: The .filtersArray is fetched by assigning, so
@@ -691,9 +691,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
       } else { // ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
 
-        // For avg/max pooling, the value bounds does not change.
-        this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
-
         for ( ; inChannelEnd < this.inputChannelCount; ++inChannelEnd ) {
 
           // Confirm no need to undo previous activaction-escaping (when has bias or has activation), because
@@ -771,18 +768,25 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     // Determine .afterFilter of all virtual image pixels (of every channel).
     {
-      for ( let outY = 0; outY < virtualInputHeight; ++outY ) {
-        for ( let outX = 0; outX < virtualInputWidth; ++outX ) {
-          let afterFilter_BoundsArray = afterFilter_BoundsArray_ArrayArray[ outY ][ outX ];
-          for ( let c = 0; c < this.outputChannelCount; ++c ) {
-            this.boundsArraySet.afterFilter.enlarge_one_byBoundsArray_one( c, afterFilter_BoundsArray, c );
+      if ( this.filtersArray ) { // For depthwise convolution.
+        this.boundsArraySet.afterFilter.set_all_by_PositiveInfinity_NegativeInfinity(); // Init .afterFilter (so that could be enlarged.)
+        for ( let outY = 0; outY < virtualInputHeight; ++outY ) {
+          for ( let outX = 0; outX < virtualInputWidth; ++outX ) {
+            let afterFilter_BoundsArray = afterFilter_BoundsArray_ArrayArray[ outY ][ outX ];
+            for ( let c = 0; c < this.outputChannelCount; ++c ) {
+              this.boundsArraySet.afterFilter.enlarge_one_byBoundsArray_one( c, afterFilter_BoundsArray, c );
+            }
           }
         }
-      }
 
-      afterFilter_BoundsArray_ArrayArray.disposeResources_and_recycleToPool();
-      afterFilter_BoundsArray_ArrayArray = null;
+        afterFilter_BoundsArray_ArrayArray.disposeResources_and_recycleToPool();
+        afterFilter_BoundsArray_ArrayArray = null;
+      } else {
+        // For avg/max pooling, the value bounds does not change.
+        this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
+      }
     }
+
 
     // Combine .afterFilter to .afterBias.
     //
