@@ -654,8 +654,20 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                         for ( let outY = 0; outY < virtualInputHeight; ++outY ) {
                           let inY = outY + virtualInputBeginY;
 
+                          let getY = inY + filterY;
+                          if ( getY < 0 )
+                            continue; // Never access outside of input image. Continue to find out non-negative input image y position.
+                          else if ( getY >= virtualInputHeight )
+                            break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
+        
                           for ( let outX = 0; outX < virtualInputWidth; ++outX ) {
                             let inX = outX + virtualInputBeginX;
+                            let getX = inX + filterX;
+                            if ( getX < 0 )
+                              continue; // Never access outside of input image. Continue to find out non-negative input image x position.
+                            else if ( getX >= virtualInputWidth )
+                              break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
+
                           }
                         }
                       }
