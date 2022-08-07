@@ -554,10 +554,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     let virtualInputBeginX = - this.padWidthLeft;
 
     // A two dimension array. Every element is a BoundsArray.
-    let afterFilter_BoundsArray_ArrayArray = Recyclable.OwnerArray.Pool.get_or_create_by( ???virtualInputHeight );
+    let afterFilter_BoundsArray_ArrayArray = Recyclable.OwnerArray.Pool.get_or_create_by();
+    afterFilter_BoundsArray_ArrayArray.length = virtualInputHeight;
     for ( let y = 0; y < virtualInputHeight; ++y ) {
       let afterFilter_BoundsArray_Array
-        = afterFilter_BoundsArray_ArrayArray[ y ] = Recyclable.OwnerArray.Pool.get_or_create_by( ???virtualInputWidth );
+        = afterFilter_BoundsArray_ArrayArray[ y ] = Recyclable.OwnerArray.Pool.get_or_create_by();
+        afterFilter_BoundsArray_Array.length = virtualInputWidth;
       for ( let x = 0; x < virtualInputWidth; ++x ) {
         let afterFilter_BoundsArray
           = afterFilter_BoundsArray_Array[ x ] = FloatValue.BoundsArray.Pool.get_or_create_by( this.outputChannelCount );
@@ -777,6 +779,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           }
         }
       }
+
+      afterFilter_BoundsArray_ArrayArray.disposeResources_and_recycleToPool();
+      afterFilter_BoundsArray_ArrayArray = null;
     }
 
     // Combine .afterFilter to .afterBias.
