@@ -666,7 +666,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                           for ( let getX = Math.max( 0, virtualInputBeginX + filterX ); getX < virtualInputWidth; ++getX ) {
 
 //!!! ...unfinished... (2022/08/07) use tBounds.
-}
+                            afterFilter_BoundsArray_ArrayArray[ ??? ][ ??? ];
+
+                          }
                         }
                       }
 
