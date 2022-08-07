@@ -583,7 +583,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 //
 
 
-      this.boundsArraySet.afterFilter.set_all_byN( 0 ); // Init .afterFilter
+//!!! (2022/08/07 Remarked) Use enlarge instead.
+//      this.boundsArraySet.afterFilter.set_all_byN( 0 ); // Init .afterFilter
+      this.boundsArraySet.afterFilter.set_all_by_PositiveInfinity_NegativeInfinity(); // Init .afterFilter (so that could be enlarged.)
       this.boundsArraySet.afterBias.set_all_byN( 0 );   // Init .afterBias
 
       // Because biases is fetched by adding, it should be initialized to zero. (Note: The .filtersArray is fetched by assigning, so
@@ -660,6 +662,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                           .multiply_byN( sourceWeight );
                       }
 
+//!!! (2022/08/07 Remarked) Old Codes. Wrong!
+                      // // Determine .afterFilter
+                      // this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
+
 //!!! ...unfinished... (2022/08/07)
                       // Determine .afterFilter
                       {
@@ -679,15 +685,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                               break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
 //!!! ...unfinished... (2022/08/07) use tBounds.
-                            afterFilter_BoundsArray_ArrayArray[ ???outY ][ ???outX ];
-
+                            let afterFilter_BoundsArray = afterFilter_BoundsArray_ArrayArray[ outY ][ outX ];
+                            afterFilter_BoundsArray.add_one_byBounds( outChannel, tBounds );
                           }
                         }
                       }
-
-//!!! ...unfinished... (2022/08/07)
-                      // Determine .afterFilter
-                      this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
                       ++filterIndex;
 
@@ -783,6 +785,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     if ( this.stridesPadInfo.pad_isSame() ) {
       this.boundsArraySet.afterFilter.enlarge_all_byN( 0 );
     }
+
+// !!!!
+//     for ( )
+//     this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
     // Combine .afterFilter to .afterBias.
     //
