@@ -667,9 +667,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                       // this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
 //!!! ...unfinished... (2022/08/07)
-                      // Determine .afterFilter
+                      // Determine .afterFilter of every virtual image pixel.
                       {
-                        // Accumulate value bounds for filter position inside virtual input image.
+                        // Accumulate value bounds for the filter position (across the virtual input image).
                         for ( let outY = 0; outY < virtualInputHeight; ++outY ) {
                           let inY = virtualInputBeginY + filterY;
                           if ( inY < 0 )
@@ -787,8 +787,19 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     }
 
 // !!!!
-//     for ( )
-//     this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
+    // Determine .afterFilter of all virtual image pixels (of every channel).
+    {
+      for ( let outY = 0; outY < virtualInputHeight; ++outY ) {
+        for ( let outX = 0; outX < virtualInputWidth; ++outX ) {
+          let afterFilter_BoundsArray = afterFilter_BoundsArray_ArrayArray[ outY ][ outX ];
+          for ( let c = 0; c < this.outputChannelCount; ++c ) {
+            this.boundsArraySet.afterFilter.enlarge_one_byN( c, ??? );
+
+            afterFilter_BoundsArray.en( outChannel, tBounds );
+          }
+        }
+      }
+    }
 
     // Combine .afterFilter to .afterBias.
     //

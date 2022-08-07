@@ -539,7 +539,7 @@ class BoundsArray extends Recyclable.Root {
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {number} N          Enlarge bounds so that [ this.lowers[ thisIndex ], this.uppers[ thisIndex ] ] contains N.
    *
-   * @return {Bounds} Return this (modified) object.
+   * @return {BoundsArray} Return this (modified) object.
    */
    enlarge_one_byN( thisIndex, N ) {
     if ( this.lowers[ thisIndex ] > N )
@@ -548,6 +548,52 @@ class BoundsArray extends Recyclable.Root {
       this.uppers[ thisIndex ] = N;
     return this;
   }
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number} aLower     The lower bound to be contained.
+   * @param {number} aUpper     The upper bound to be contained.
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+   enlarge_one_byLowerUpper( thisIndex, aLower, aUpper ) {
+    let lower, upper; // Confirm ( lower <= upper ).
+    if ( aLower < aUpper ) {
+      lower = aLower;
+      upper = aUpper;
+    } else {
+      lower = aUpper;
+      upper = aLower;
+    }
+
+    if ( this.lowers[ thisIndex ] > lower )
+      this.lowers[ thisIndex ] = lower;
+    if ( this.uppers[ thisIndex ] < upper )
+      this.uppers[ thisIndex ] = upper;
+    return this;
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {Bounds} aBounds    The bounds to be contained.
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+   enlarge_one_byBounds( thisIndex, aBounds ) {
+    return this.enlarge_one_byLowerUpper( thisIndex, aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {number} thisIndex          The array index of this.lowers[] and this.uppers[].
+   * @param {BoundsArray} aBoundsArray  The bounds array to be contained.
+   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+   enlarge_one_byBoundsArray_one( thisIndex, aBoundsArray, aIndex ) {
+    return this.enlarge_one_byLowerUpper( thisIndex, aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+  }
+
 
   /**
    * @param {number} N  Enlarge every bounds so that [ this.lowers[], this.uppers[] ] contains N.
@@ -573,17 +619,6 @@ class BoundsArray extends Recyclable.Root {
    * @return {BoundsArray} Return this (modified) object.
    */
   clamp_one_byLowerUpper( thisIndex, aLower, aUpper ) {
-//!!! (2022/07/27 Remarked) Reduce comparison.
-//     let anotherLower = Math.min( aLower, aUpper ); // Confirm ( anotherLower <= anotherUpper )
-//     let anotherUpper = Math.max( aLower, aUpper );
-//
-//     // Because two bounds may be totally non-intersected, both thisLower and thisUpper needs be clamped by [ aLower, aUpper ].
-//     let lower_clamped = Math.min( Math.max( anotherLower, this.lowers[ thisIndex ] ), anotherUpper );
-//     let upper_clamped = Math.min( Math.max( anotherLower, this.uppers[ thisIndex ] ), anotherUpper );
-//     this.lowers[ thisIndex ] = Math.min( lower_clamped, upper_clamped ); // Confirm ( lower <= upper )
-//     this.uppers[ thisIndex ] = Math.max( lower_clamped, upper_clamped );
-
-
     let anotherLower, anotherUpper; // Confirm ( anotherLower <= anotherUpper )
     if ( aLower < aUpper ) {
       anotherLower = aLower;

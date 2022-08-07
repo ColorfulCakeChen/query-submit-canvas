@@ -260,6 +260,47 @@ class Bounds extends Recyclable.Root {
     return this;
   }
 
+  /**
+   * @param {number} aLower     The lower bound to be contained.
+   * @param {number} aUpper     The upper bound to be contained.
+   *
+   * @return {Bounds} Return this (modified) object.
+   */
+   enlarge_byLowerUpper( aLower, aUpper ) {
+    let lower, upper; // Confirm ( lower <= upper ).
+    if ( aLower < aUpper ) {
+      lower = aLower;
+      upper = aUpper;
+    } else {
+      lower = aUpper;
+      upper = aLower;
+    }
+
+    if ( this.lower > lower )
+      this.lower = lower;
+    if ( this.upper < upper )
+      this.upper = upper;
+    return this;
+  }
+
+  /**
+   * @param {Bounds} aBounds    The bounds to be contained.
+   *
+   * @return {Bounds} Return this (modified) object.
+   */
+   enlarge_byBounds( aBounds ) {
+    return this.enlarge_byLowerUpper( aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {BoundsArray} aBoundsArray  The bounds array to be contained.
+   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   */
+   enlarge_byBoundsArray_one( aBoundsArray, aIndex ) {
+    return this.enlarge_byLowerUpper( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+  }
+
 
   /**
    * @param {number} aLower   Clamp this.lower by aLower.
