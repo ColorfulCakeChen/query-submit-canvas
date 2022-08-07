@@ -539,7 +539,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfo_byId( this.nPassThroughStyleId );
     let tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
 
-    // Init
+    // 0. Init
 
 //!!! ...unfinished... (2022/08/07)
     // For pad=same, part of filter will be applied to the padded pixels (i.e. zero
@@ -581,7 +581,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       }
     }
 
-    // Extracting weights of filters and biases. (Including extra scale.)
+    // 1. Extracting weights of filters and biases. (Including extra scale.)
     let sourceIndex = weightElementOffsetBegin, filterIndex = 0, biasIndex = 0;
 
     let inChannelBegin = 0, inChannelEnd = 0,   // [ inChannelBegin, inChannelEnd ) are input channels of the current FiltersBiasesPart.
@@ -592,7 +592,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
       let inChannelPartInfoArray = aFiltersBiasesPartInfo;
 
-      if ( this.filtersArray ) {
+      // 1.1
+      if ( this.filtersArray ) { // 1.1.1
         inChannelBegin = inChannelEnd;                 // Begin from the ending of the previous FiltersBiasesPart.
         filterIndex = outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
 
@@ -689,7 +690,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           } // dilationFilterY
         } // filterY
 
-      } else { // ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
+      } else { // 1.1.2 ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
 
         for ( ; inChannelEnd < this.inputChannelCount; ++inChannelEnd ) {
 
@@ -715,7 +716,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         } // inChannel
       }
 
-
+      // 1.2
       if ( this.biasesArray ) {
         let biasValue;
         let inChannel = inChannelBegin;
@@ -766,7 +767,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 //       this.boundsArraySet.afterFilter.enlarge_all_byN( 0 );
 //     }
 
-    // Determine .afterFilter of all virtual image pixels (of every channel).
+    // 2. Determine .afterFilter of all virtual image pixels (of every channel).
     {
       if ( this.filtersArray ) { // For depthwise convolution.
         this.boundsArraySet.afterFilter.set_all_by_PositiveInfinity_NegativeInfinity(); // Init .afterFilter (so that could be enlarged.)
@@ -787,8 +788,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       }
     }
 
-
-    // Combine .afterFilter to .afterBias.
+    // 3. Combine .afterFilter to .afterBias.
     //
     // Q: Why not combine when initializing .afterBias ?
     // A: Because .afterFilter is unknown before FiltersBiasesPartInfoArray has been visited totally.
