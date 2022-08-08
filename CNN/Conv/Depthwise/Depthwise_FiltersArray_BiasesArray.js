@@ -537,7 +537,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     sourceWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
 
     const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfo_byId( this.nPassThroughStyleId );
-    let tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
 
     // 0. Init
 
@@ -555,11 +554,14 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // Note: Its strides will be ignored (i.e. always use STRIDES_1_PAD_Xxx), because
     //       strides does not affect value bounds.
     //
+    let tBounds;
     let virtualImageInfo;
     let virtualImageInput_BeginY, virtualImageInput_BeginX;
     let virtualImageOutput_afterFilter_BoundsArray_perPixel;
 
     if ( this.filtersArray ) { // For depthwise convolution.
+      tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
+
       let virtualImage_stridesPad;
       if ( this.stridesPadInfo.pad_isValid() )
         virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
@@ -660,10 +662,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                           .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
                           .multiply_byN( sourceWeight );
                       }
-
-//!!! (2022/08/07 Remarked) Old Codes. Wrong! Use enlarge instead.
-//                       // Determine .afterFilter
-//                       this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
                       // Accumulate value bounds for the filter position (across the whole virtual input image).
                       {
@@ -797,6 +795,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         virtualImageInfo.disposeResources_and_recycleToPool();
         virtualImageInfo = null;
 
+        tBounds.disposeResources_and_recycleToPool();
+        tBounds = null;
+    
       } else {
         // For avg/max pooling, the value bounds does not change.
         this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
@@ -814,9 +815,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       throw Error( `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
         + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total input channel count ( ${inChannelEnd} ) `
         +`should be ( ${this.inputChannelCount} ).` );
-
-    tBounds.disposeResources_and_recycleToPool();
-    tBounds = null;
   }
 
   /**
