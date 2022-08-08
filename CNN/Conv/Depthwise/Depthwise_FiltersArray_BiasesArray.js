@@ -786,8 +786,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         let virtualImageOutput_elementIndex = 0;
         for ( let outY = 0; outY < virtualImageInfo.outputHeight; ++outY ) {
           for ( let outX = 0; outX < virtualImageInfo.outputWidth; ++outX ) {
-            for ( let c = 0; c < this.outputChannelCount; ++c, ++virtualImageOutput_elementIndex ) {
-              this.boundsArraySet.afterFilter.enlarge_one_byBoundsArray_one( c,
+            for ( let outC = 0; outC < outputChannelCount; ++outC, ++virtualImageOutput_elementIndex ) {
+              this.boundsArraySet.afterFilter.enlarge_one_byBoundsArray_one( outC,
                 virtualImageOutput_afterFilter_BoundsArray_perPixel, virtualImageOutput_elementIndex );
             }
           }

@@ -603,59 +603,14 @@ class NumberImage_Base extends Recyclable.Root {
       //    (especially the right-bottom padded pixles) are not calculated (so the
       //    value bounds are not calculated).
 
-//!!!
-!!! ...unfinished... (2022/08/08) afterFilter_BoundsArray_perPixel
+      imageOut.boundsArraySet.afterFilter.set_all_by_PositiveInfinity_NegativeInfinity(); // Init .afterFilter (so that could be enlarged.)
 
-      let tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
-      imageOut.boundsArraySet.afterFilter.set_all_byN( 0 );
-
-      for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
-        let outChannelBase = inChannel * channelMultiplier;
-
-        for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
-          let outChannel = outChannelBase + outChannelSub;
-
-          FilterYLoop:
-          for ( let filterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
-            for ( let dilationFilterY = 0; dilationFilterY < dilationHeight; ++dilationFilterY ) {
-
-              let filterIndexBaseX = ( filterY * depthwiseFilterWidth );
-
-              FilterXLoop:
-              for ( let filterX = 0; filterX < depthwiseFilterWidth; ++filterX ) {
-                for ( let dilationFilterX = 0; dilationFilterX < dilationWidth; ++dilationFilterX ) {
-
-                  // No need to compute the filter's dilation part (because it is always zero).
-                  //
-                  // This shortcut check should be done after avgDivisor has been increased, so that the filter dilation will
-                  // be included by avgDivisor.
-                  if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
-                    continue;
-
-                  let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * outputChannelCount );
-                  let filterIndex = filterIndexBaseC + outChannel;
-
-                  // Note: .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
-                  tBounds
-                    .set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
-                    .multiply_byN( depthwiseFiltersArray[ filterIndex ] );
-
-!!! ...unfinished... (2022/08/06)
-                  // For pad=same, part of filter will be applied to the padded pixels
-                  // (i.e. zero value).
-//!!!
-// Perhaps, should try ( depthwiseFilterHeight * depthwiseFilterWidth ) kinds of
-// .afterFilter BoundsArray. And then, enlarge them with each other (by channel)
-// to find out real BoundsArray.
-// (as BoundsArraySet.Depthwise method)
-//!!!
-                  // So the value bounds should contain the zero (suppose the total filter
-                  // are all applied to the padded (zero) pixels).
-
-                  imageOut.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
-                }
-              }
-            }
+      let elementIndex = 0;
+      for ( let outY = 0; outY < outputHeight; ++outY ) {
+        for ( let outX = 0; outX < outputWidth; ++outX ) {
+          for ( let outC = 0; outC < outputChannelCount; ++outC, ++elementIndex ) {
+            imageOut.boundsArraySet.afterFilter.enlarge_one_byBoundsArray_one( outC,
+              afterFilter_BoundsArray_perPixel, elementIndex );
           }
         }
       }
@@ -665,14 +620,6 @@ class NumberImage_Base extends Recyclable.Root {
 
       tBounds.disposeResources_and_recycleToPool();
       tBounds = null;
-
-//!!! ...unfinished... (2022/08/06) Still wrong.
-      // For pad=same, part of filter will be applied to the padded pixels (i.e. zero
-      // value). So the value bounds should contain the zero (suppose the total filter
-      // are all applied to the padded (zero) pixels).
-      if ( stridesPadInfo.pad_isSame() ) {
-        imageOut.boundsArraySet.afterFilter.enlarge_all_byN( 0 );
-      }
     }
 
 //!!! (2022/08/06) For debug pixel value bounds.
