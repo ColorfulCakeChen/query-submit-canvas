@@ -1,7 +1,8 @@
 export { ScaleTranslate };
 
 /**
- * Describe a scale (i.e. multiplier) value, and then a translate (i.e. offset; bias) value after the scale. Note that the order
+ * Describe a scale (i.e. multiplier) 32-bits floating-point value, and then a translate
+ * (i.e. offset; bias) 32-bits floating-point value after the scale. Note that the order
  * is important: scale first, translate second.
  *
  * @member {number} scale
@@ -23,8 +24,8 @@ class ScaleTranslate {
 
   /** (Re)set all scale-translate values. Default is ( scale = 1, translate = 0 ) (i.e. no scale and no translate). */
   set_by_scale_translate( scale = 1, translate = 0 ) {
-    this.scale = scale;
-    this.translate = translate;
+    this.scale = Math.fround( scale );
+    this.translate = Math.fround( translate );
   }
 
   /**
@@ -36,7 +37,6 @@ class ScaleTranslate {
     this.translate = another.translate;
   }
 
-!!! ...unfinished... (2022/08/08) all computation should Math.fround( ) before assignment.
 
   /**
    * Set this.scale and this.translate so that they could undo the specified previous scale-translate.
@@ -45,23 +45,11 @@ class ScaleTranslate {
    *   The scale-translate to be undone.
    */
   set_byUndo_ScaleTranslate( aScaleTranslate ) {
-    this.scale = ( 1 / aScaleTranslate.scale );  // Reciprocal will undo the scale. (Note: Not work for zero.)
+    this.scale = Math.fround( 1 / aScaleTranslate.scale );  // Reciprocal will undo the scale. (Note: Not work for zero.)
 
     // Negative translate, and multiply by undo-scale because translate comes after scale.
-    this.translate = ( - aScaleTranslate.translate ) * this.scale;
+    this.translate = Math.fround( ( - aScaleTranslate.translate ) * this.scale );
   }
-
-//!!! (2021/12/12 Remarked) Use non-create mainly.
-//   /**
-//    * @return {ScaleTranslate}
-//    *   Create and return a new ScaleTranslate for undoing the this scale-translate.
-//    */
-//   createBy_undoThis() {
-//     let scale = ( 1 / this.scale );               // Reciprocal will undo the scale.
-//     let translate = ( - this.translate ) * scale; // Negative translate, and multiply by undo-scale because translate comes after scale.
-//     let result = new ScaleTranslate( scale, translate );
-//     return result;
-//   }
 
   /**
    * Set this.scale and this.translate for mapping values from source bounds to target bounds.
@@ -94,28 +82,9 @@ class ScaleTranslate {
     //   - scale  = 0.2
     //   - translate = -3.4
     //
-    this.scale = ( target.difference / source.difference );
-    this.translate = ( target.lower - ( this.scale * source.lower ) );
+    this.scale = Math.fround( target.difference / source.difference );
+    this.translate = Math.fround( target.lower - ( this.scale * source.lower ) );
   }
-
-//!!! (2021/12/12 Remarked) Use non-create mainly.
-//   /**
-//    * @param {Bounds} source
-//    *   The range of the source value.
-//    *
-//    * @param {Bounds} target
-//    *   The range of the target value.
-//    *
-//    * @return {ScaleTranslate}
-//    *   Create and return a new ScaleTranslate for mapping values from source bounds to target bounds.
-//    */
-//   static createBy_FromTo( source, target ) {
-//     // (Please see ScaleTranslate.setBy_FromTo().)
-//     let scale = ( target.difference / source.difference );
-//     let translate = ( target.lower - ( scale * source.lower ) );
-//     let result = new ScaleTranslate( scale, translate );
-//     return result;
-//   }
 
   /**
    * Scale and translate this object by specified scale-translate.
@@ -126,8 +95,8 @@ class ScaleTranslate {
    *   The another scale-translate which will be applied on this object.
    */
   scaleTranslate_byScaleTranslate( aScaleTranslate ) {
-   this.scale =     ( this.scale     * aScaleTranslate.scale ) + aScaleTranslate.translate;
-   this.translate = ( this.translate * aScaleTranslate.scale ) + aScaleTranslate.translate;
+   this.scale =     Math.fround( Math.fround( this.scale     * aScaleTranslate.scale ) + aScaleTranslate.translate );
+   this.translate = Math.fround( Math.fround( this.translate * aScaleTranslate.scale ) + aScaleTranslate.translate );
   }
 
 }
