@@ -561,7 +561,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     else
       virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
 
-    let virtualImageInfo = PadInfoCalculator.Pool.get_or_create_by(
+    let virtualImageInfo = PadInfoCalculatorRoot.Pool.get_or_create_by(
       Math.min( this.effectFilterHeight, this.inputHeight ), // virtualImageInput_height
       Math.min( this.effectFilterWidth, this.inputWidth ),   // virtualImageInput_width
       this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier,
