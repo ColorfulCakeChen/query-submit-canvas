@@ -577,8 +577,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       = FloatValue.BoundsArray.Pool.get_or_create_by( virtualImageInfo.outputElementCount )
           .set_all_byN( 0 );
 
-    const virtualImageOutput_elementCountY = virtualImageInfo.outputWidth * virtualImageInfo.outputChannelCount;
-
     { // 0.2 Init .afterBias
       this.boundsArraySet.afterBias.set_all_byN( 0 );
 
@@ -665,7 +663,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                       {
                         let virtualImageOutput_elementIndexBeginY = 0;
                         let virtualImageOutput_elementIndex = 0;
-                        for ( let outY = 0; outY < virtualImageInfo.outputHeight; ++outY, virtualImageOutput_elementIndexBeginY += virtualImageOutput_elementCountY ) {
+                        for ( let outY = 0; outY < virtualImageInfo.outputHeight; ++outY, virtualImageOutput_elementIndexBeginY += virtualImageInfo.outputElementCountY ) {
                           let inY = outY + virtualImageInput_BeginY + filterY;
                           if ( inY < 0 )
                             continue; // Never access outside of input image. Continue to find out non-negative input image y position.

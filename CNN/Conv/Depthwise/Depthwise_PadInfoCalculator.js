@@ -43,7 +43,8 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  * @member {number} outputHeight          Output image height.
  * @member {number} outputWidth           Output image width.
  * @member {number} outputChannelCount    Output image channel count.
- * @member {number} outputElementCount    Output image elements count (= ( outputHeight * outputWidth * outputChannelCount ) ).
+ * @member {number} outputElementCountY   Output image elements count per height (= ( outputWidth * outputChannelCount ) ).
+ * @member {number} outputElementCount    Output image elements count (= ( outputHeight * outputElementCountY ) ).
  */
 let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator extends Recyclable.Base( ParentClass ) {
 
@@ -120,6 +121,7 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
     this.padWidthRight = undefined;
 
     this.outputChannelCount = undefined;
+    this.outputElementCountY = undefined;
     this.outputElementCount = undefined;
 
     super.disposeResources();
@@ -212,7 +214,8 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
     }
 
     this.outputChannelCount = inputChannelCount * this.channelMultiplier;
-    this.outputElementCount = ( this.outputHeight * this.outputWidth * this.outputChannelCount );
+    this.outputElementCountY = this.outputWidth * this.outputChannelCount;
+    this.outputElementCount = this.outputHeight * this.outputElementCountY;
   }
 
 
