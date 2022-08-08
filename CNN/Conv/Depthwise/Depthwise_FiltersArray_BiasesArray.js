@@ -550,7 +550,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 //!!! ...unfinished... (2022/08/08)
 // Use a large virtualImageOut_afterFilter_BoundsArray instead of multiple afterFilter_BoundsArray_ArrayArray.
 //
-// virtualImageOut_height? virtualImageOut_width? strides?
+// virtualImageOut_height? virtualImageOut_width? (ignore strides)
 // virtualImageOut_channelCount = this.outputChannelCount;
 
     // Virtual input image (for calculating value bounds).
