@@ -7,7 +7,7 @@ import { ScaleTranslateArray } from "./ScaleTranslateArray.js";
 import { ArrayInterleaver } from "./ArrayInterleaver.js";
 
 /**
- * Describe the [ lower, upper ] bounds of an array of floating-point values.
+ * Describe the [ lower, upper ] bounds of an array of 32-bits floating-point values.
  *
  * @member {number[]} lowers
  *   The lower bound array of the range.
@@ -283,6 +283,7 @@ class BoundsArray extends Recyclable.Root {
    * @return {BoundsArray} Return this (modified) object.
    */
   set_one_byN( thisIndex, N ) {
+    N = Math.fround( N );
     this.lowers[ thisIndex ] = N;
     this.uppers[ thisIndex ] = N;
     return this;
@@ -297,11 +298,11 @@ class BoundsArray extends Recyclable.Root {
    */
   set_one_byLowerUpper( thisIndex, aLower, aUpper ) {
     if ( aLower < aUpper ) { // Confirm ( lower <= upper ).
-      this.lowers[ thisIndex ] = aLower;
-      this.uppers[ thisIndex ] = aUpper;
+      this.lowers[ thisIndex ] = Math.fround( aLower );
+      this.uppers[ thisIndex ] = Math.fround( aUpper );
     } else {
-      this.lowers[ thisIndex ] = aUpper;
-      this.uppers[ thisIndex ] = aLower;
+      this.lowers[ thisIndex ] = Math.fround( aUpper );
+      this.uppers[ thisIndex ] = Math.fround( aLower );
     }
     return this;
   }
@@ -373,6 +374,7 @@ class BoundsArray extends Recyclable.Root {
    * @return {BoundsArray} Return this (modified) object.
    */
   set_all_byN( N ) {
+    N = Math.fround( N );
     this.lowers.fill( N );
     this.uppers.fill( N );
     return this;
@@ -387,11 +389,11 @@ class BoundsArray extends Recyclable.Root {
   set_all_byLowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
     if ( aLower < aUpper ) {
-      lower = aLower;
-      upper = aUpper;
+      lower = Math.fround( aLower );
+      upper = Math.fround( aUpper );
     } else {
-      lower = aUpper;
-      upper = aLower;
+      lower = Math.fround( aUpper );
+      upper = Math.fround( aLower );
     }
 
     this.lowers.fill( lower );
@@ -542,6 +544,7 @@ class BoundsArray extends Recyclable.Root {
    * @return {BoundsArray} Return this (modified) object.
    */
    enlarge_one_byN( thisIndex, N ) {
+    N = Math.fround( N );
     if ( this.lowers[ thisIndex ] > N )
       this.lowers[ thisIndex ] = N;
     if ( this.uppers[ thisIndex ] < N )
@@ -559,11 +562,11 @@ class BoundsArray extends Recyclable.Root {
    enlarge_one_byLowerUpper( thisIndex, aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
     if ( aLower < aUpper ) {
-      lower = aLower;
-      upper = aUpper;
+      lower = Math.fround( aLower );
+      upper = Math.fround( aUpper );
     } else {
-      lower = aUpper;
-      upper = aLower;
+      lower = Math.fround( aUpper );
+      upper = Math.fround( aLower );
     }
 
     if ( this.lowers[ thisIndex ] > lower )
@@ -601,6 +604,7 @@ class BoundsArray extends Recyclable.Root {
    * @return {Bounds} Return this (modified) object.
    */
    enlarge_all_byN( N ) {
+    N = Math.fround( N );
     for ( let i = 0; i < this.lowers.length; ++i ) {
       if ( this.lowers[ i ] > N )
         this.lowers[ i ] = N;
@@ -621,11 +625,11 @@ class BoundsArray extends Recyclable.Root {
   clamp_one_byLowerUpper( thisIndex, aLower, aUpper ) {
     let anotherLower, anotherUpper; // Confirm ( anotherLower <= anotherUpper )
     if ( aLower < aUpper ) {
-      anotherLower = aLower;
-      anotherUpper = aUpper;
+      anotherLower = Math.fround( aLower );
+      anotherUpper = Math.fround( aUpper );
     } else {
-      anotherLower = aUpper;
-      anotherUpper = aLower;
+      anotherLower = Math.fround( aUpper );
+      anotherUpper = Math.fround( aLower );
     }
 
     // Because two bounds may be totally non-intersected, both thisLower and thisUpper needs be clamped by [ aLower, aUpper ].
@@ -687,11 +691,11 @@ class BoundsArray extends Recyclable.Root {
   clamp_all_byLowerUpper( aLower, aUpper ) {
     let anotherLower, anotherUpper; // Confirm ( anotherLower <= anotherUpper )
     if ( aLower < aUpper ) {
-      anotherLower = aLower;
-      anotherUpper = aUpper;
+      anotherLower = Math.fround( aLower );
+      anotherUpper = Math.fround( aUpper );
     } else {
-      anotherLower = aUpper;
-      anotherUpper = aLower;
+      anotherLower = Math.fround( aUpper );
+      anotherUpper = Math.fround( aLower );
     }
 
     // Because two bounds may be totally non-intersected, both thisLower and thisUpper needs be clamped by [ aLower, aUpper ].
@@ -742,8 +746,6 @@ class BoundsArray extends Recyclable.Root {
   }
 
 
-!!! ...unfinished... (2022/08/08) all computation should Math.fround( ) before assignment.
-
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {number} N          Add ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( N, N ).
@@ -752,10 +754,20 @@ class BoundsArray extends Recyclable.Root {
    *   Return this (modified) object which is the same as this.add_one_byLowerUpper( N, N ).
    */
   add_one_byN( thisIndex, N ) {
-    let thisLower = Math.min( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ); // Confirm ( thisLower <= thisUupper ). And then, add corresponds.
-    let thisUpper = Math.max( this.lowers[ thisIndex ], this.uppers[ thisIndex ] );
-    this.lowers[ thisIndex ] = thisLower + N;
-    this.uppers[ thisIndex ] = thisUpper + N;
+    N = Math.fround( N );
+
+    // Confirm ( thisLower <= thisUupper ). And then, add corresponds.
+    let thisLower, thisUpper;
+    if ( this.lowers[ thisIndex ] < this.uppers[ thisIndex ] ) {
+      thisLower = this.lowers[ thisIndex ];
+      thisUpper = this.uppers[ thisIndex ];
+    } else {
+      thisLower = this.uppers[ thisIndex ];
+      thisUpper = this.lowers[ thisIndex ];
+    }
+
+    this.lowers[ thisIndex ] = Math.fround( thisLower + N );
+    this.uppers[ thisIndex ] = Math.fround( thisUpper + N );
     return this;
   }
 
@@ -767,10 +779,27 @@ class BoundsArray extends Recyclable.Root {
    * @return {BoundsArray} Return this (modified) object.
    */
   add_one_byLowerUpper( thisIndex, aLower, aUpper ) {
-    let thisLower = Math.min( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ); // Confirm ( thisLower <= thisUupper ). And then, add corresponds.
-    let thisUpper = Math.max( this.lowers[ thisIndex ], this.uppers[ thisIndex ] );
-    this.lowers[ thisIndex ] = thisLower + Math.min( aLower, aUpper );
-    this.uppers[ thisIndex ] = thisUpper + Math.max( aLower, aUpper );
+    let lower, upper; // Confirm ( lower <= upper ).
+    if ( aLower < aUpper ) {
+      lower = Math.fround( aLower );
+      upper = Math.fround( aUpper );
+    } else {
+      lower = Math.fround( aUpper );
+      upper = Math.fround( aLower );
+    }
+
+    // Confirm ( thisLower <= thisUupper ). And then, add corresponds.
+    let thisLower, thisUpper;
+    if ( this.lowers[ thisIndex ] < this.uppers[ thisIndex ] ) {
+      thisLower = this.lowers[ thisIndex ];
+      thisUpper = this.uppers[ thisIndex ];
+    } else {
+      thisLower = this.uppers[ thisIndex ];
+      thisUpper = this.lowers[ thisIndex ];
+    }
+
+    this.lowers[ thisIndex ] = Math.fround( thisLower + lower );
+    this.uppers[ thisIndex ] = Math.fround( thisUpper + upper );
     return this;
   }
 
@@ -840,13 +869,29 @@ class BoundsArray extends Recyclable.Root {
    * @return {BoundsArray} Return this (modified) object.
    */
   add_all_byLowerUpper( aLower, aUpper ) {
-    let anotherLower = Math.min( aLower, aUpper ); // Confirm the ( anotherLower <= anotherUpper ).
-    let anotherUpper = Math.max( aLower, aUpper );
+    let anotherLower, anotherUpper; // Confirm ( anotherLower <= anotherUpper )
+    if ( aLower < aUpper ) {
+      anotherLower = Math.fround( aLower );
+      anotherUpper = Math.fround( aUpper );
+    } else {
+      anotherLower = Math.fround( aUpper );
+      anotherUpper = Math.fround( aLower );
+    }
+
+    let thisLower, thisUpper;
     for ( let i = 0; i < this.lowers.length; ++i ) {
-      let thisLower = Math.min( this.lowers[ i ], this.uppers[ i ] ); // Confirm ( thisLower <= thisUupper ). And then, add corresponds.
-      let thisUpper = Math.max( this.lowers[ i ], this.uppers[ i ] );
-      this.lowers[ i ] = thisLower + anotherLower;
-      this.uppers[ i ] = thisUpper + anotherUpper;
+
+      // Confirm ( thisLower <= thisUupper ). And then, add corresponds.
+      if ( this.lowers[ i ] < this.uppers[ i ] ) {
+        thisLower = this.lowers[ i ];
+        thisUpper = this.uppers[ i ];
+      } else {
+        thisLower = this.uppers[ i ];
+        thisUpper = this.lowers[ i ];
+      }
+
+      this.lowers[ i ] = Math.fround( thisLower + anotherLower );
+      this.uppers[ i ] = Math.fround( thisUpper + anotherUpper );
     }
     return this;
   }
@@ -902,9 +947,10 @@ class BoundsArray extends Recyclable.Root {
    * @return {BoundsArray} Return this (modified) object.
    */
   multiply_one_byN( thisIndex, N ) {
+    N = Math.fround( N );
     // Because the different sign of lower and upper, it needs compute all combination to determine the bounds of result.
-    let lower_N = this.lowers[ thisIndex ] * N;
-    let upper_N = this.uppers[ thisIndex ] * N;
+    let lower_N = Math.fround( this.lowers[ thisIndex ] * N );
+    let upper_N = Math.fround( this.uppers[ thisIndex ] * N );
     this.lowers[ thisIndex ] = Math.min( lower_N, upper_N );
     this.uppers[ thisIndex ] = Math.max( lower_N, upper_N );
     return this;
@@ -918,11 +964,13 @@ class BoundsArray extends Recyclable.Root {
    * @return {BoundsArray} Return this (modified) object.
    */
   multiply_one_byLowerUpper( thisIndex, aLower, aUpper ) {
+    aLower = Math.fround( aLower );
+    aUpper = Math.fround( aUpper );
     // Because the different sign of lower and upper, it needs compute all combination to determine the bounds of result.
-    let lower_lower = this.lowers[ thisIndex ] * aLower;
-    let lower_upper = this.lowers[ thisIndex ] * aUpper;
-    let upper_lower = this.uppers[ thisIndex ] * aLower;
-    let upper_upper = this.uppers[ thisIndex ] * aUpper;
+    let lower_lower = Math.fround( this.lowers[ thisIndex ] * aLower );
+    let lower_upper = Math.fround( this.lowers[ thisIndex ] * aUpper );
+    let upper_lower = Math.fround( this.uppers[ thisIndex ] * aLower );
+    let upper_upper = Math.fround( this.uppers[ thisIndex ] * aUpper );
     this.lowers[ thisIndex ] = Math.min( lower_lower, lower_upper, upper_lower, upper_upper );
     this.uppers[ thisIndex ] = Math.max( lower_lower, lower_upper, upper_lower, upper_upper );
     return this;
