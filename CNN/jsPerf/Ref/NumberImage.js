@@ -565,14 +565,12 @@ class NumberImage_Base extends Recyclable.Root {
                             )
                         );
 
-//!!!
-!!! ...unfinished... (2022/08/08)
                         // Note: .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
                         tBounds
                           .set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
                           .multiply_byN( filterValue );
 
-                        afterFilter_BoundsArray_perPixel.add_one_byBounds( ???outChannel, tBounds );
+                        afterFilter_BoundsArray_perPixel.add_one_byBounds( outIndex, tBounds );
                         break;
                     }
                   }
@@ -604,6 +602,9 @@ class NumberImage_Base extends Recyclable.Root {
       // A: When pad=same, the calculation may be wrong because the padded pixels
       //    (especially the right-bottom padded pixles) are not calculated (so the
       //    value bounds are not calculated).
+
+//!!!
+!!! ...unfinished... (2022/08/08) afterFilter_BoundsArray_perPixel
 
       let tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
       imageOut.boundsArraySet.afterFilter.set_all_byN( 0 );
