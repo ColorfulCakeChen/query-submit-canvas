@@ -7,7 +7,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Depthwise_ChannelPartInfo.js";
-import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
+import { PadInfoCalculator, PadInfoCalculatorRoot } from "./Depthwise_PadInfoCalculator.js";
 
 /**
  * Extract depthwise convolution filters and biases.
