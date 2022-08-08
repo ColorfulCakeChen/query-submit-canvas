@@ -799,20 +799,22 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     {
       if ( this.filtersArray ) { // For depthwise convolution.
         this.boundsArraySet.afterFilter.set_all_by_PositiveInfinity_NegativeInfinity(); // Init .afterFilter (so that could be enlarged.)
-        for ( let outY = 0; outY < virtualInputHeight; ++outY ) {
-          for ( let outX = 0; outX < virtualInputWidth; ++outX ) {
-            let afterFilter_BoundsArray = afterFilter_BoundsArray_ArrayArray[ outY ][ outX ];
-            for ( let c = 0; c < this.outputChannelCount; ++c ) {
-              this.boundsArraySet.afterFilter.enlarge_one_byBoundsArray_one( c, afterFilter_BoundsArray, c );
+
+        let virtualImageOutput_elementIndex = 0;
+        for ( let outY = 0; outY < virtualImageInfo.outputHeight; ++outY ) {
+          for ( let outX = 0; outX < virtualImageInfo.outputWidth; ++outX ) {
+            for ( let c = 0; c < this.outputChannelCount; ++c, ++virtualImageOutput_elementIndex ) {
+              this.boundsArraySet.afterFilter.enlarge_one_byBoundsArray_one( c,
+                virtualImageOutput_afterFilter_BoundsArray, virtualImageOutput_elementIndex );
             }
           }
         }
 
-        afterFilter_BoundsArray_ArrayArray.disposeResources_and_recycleToPool();
-        afterFilter_BoundsArray_ArrayArray = null;
+        virtualImageOutput_afterFilter_BoundsArray.disposeResources_and_recycleToPool();
+        virtualImageOutput_afterFilter_BoundsArray = null;
 
-        virtualImage.disposeResources_and_recycleToPool();
-        virtualImage = null;
+        virtualImageInfo.disposeResources_and_recycleToPool();
+        virtualImageInfo = null;
 
       } else {
         // For avg/max pooling, the value bounds does not change.
