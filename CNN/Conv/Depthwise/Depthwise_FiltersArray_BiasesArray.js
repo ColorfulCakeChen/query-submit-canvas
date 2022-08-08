@@ -552,18 +552,18 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // Its size ( height, width ) is just enough to calculate evey kinds of padded
     // or non-padded pixel configuration for depthwise convolution.
     //
-    let virtualImage = PadInfoCalculator.Pool.get_or_create_by(
+    let virtualImageInfo = PadInfoCalculator.Pool.get_or_create_by(
       Math.min( this.effectFilterHeight, this.inputHeight ), // virtualImage_inputHeight
       Math.min( this.effectFilterWidth, this.inputWidth ), // virtualImage_inputWidth
       this.inputChannelCount,
       this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.filterWidth, this.stridesPad );
 
-    let virtualImageInput_BeginY = - virtualImage.padHeightTop;
-    let virtualImageInput_BeginX = - virtualImage.padWidthLeft;
+    let virtualImageInput_BeginY = - virtualImageInfo.padHeightTop;
+    let virtualImageInput_BeginX = - virtualImageInfo.padWidthLeft;
 
     // Used to track every ( height, width, channel ) pixel's value bounds.
     let virtualImageOut_afterFilter_BoundsArray
-      = FloatValue.BoundsArray.Pool.get_or_create_by( virtualImage.outputElementCount );
+      = FloatValue.BoundsArray.Pool.get_or_create_by( virtualImageInfo.outputElementCount );
           .set_all_byN( 0 );
 
 //!!! (2022/08/08 Remarked) Use a large virtualImageOut_afterFilter_BoundsArray instead.
