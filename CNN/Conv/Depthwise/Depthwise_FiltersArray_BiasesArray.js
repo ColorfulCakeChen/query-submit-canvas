@@ -564,7 +564,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     let virtualImageInfo = PadInfoCalculator.Pool.get_or_create_by(
       Math.min( this.effectFilterHeight, this.inputHeight ), // virtualImageInput_height
       Math.min( this.effectFilterWidth, this.inputWidth ),   // virtualImageInput_width
-      this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.filterWidth,
+      this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier,
+      this.filterHeight, this.filterWidth,
       virtualImage_stridesPad
     );
 
@@ -677,18 +678,18 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 // Use a large virtualImageOut_afterFilter_BoundsArray instead of multiple afterFilter_BoundsArray_ArrayArray.
                       // Accumulate value bounds for the filter position (across the whole virtual input image).
                       {
-                        for ( let outY = 0; outY < virtualImageInput_height; ++outY ) {
-                          let inY = virtualImageInput_BeginY + filterY;
+                        for ( let outY = 0; outY < virtualImageInfo.outputHeight; ++outY ) {
+                          let inY = outY + virtualImageInput_BeginY + filterY;
                           if ( inY < 0 )
                             continue; // Never access outside of input image. Continue to find out non-negative input image y position.
-                          else if ( inY >= virtualImageInput_height )
+                          else if ( inY >= virtualImageInfo.inputHeight )
                             break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
-                          for ( let outX = 0; outX < virtualImageInput_width; ++outX ) {
-                            let inX = virtualImageInput_BeginX + filterX;
+                          for ( let outX = 0; outX < virtualImageInfo.outputWidth; ++outX ) {
+                            let inX = outX + virtualImageInput_BeginX + filterX;
                             if ( inX < 0 )
                               continue; // Never access outside of input image. Continue to find out non-negative input image x position.
-                            else if ( inX >= virtualImageInput_width )
+                            else if ( inX >= virtualImageInfo.inputWidth )
                               break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
                             let afterFilter_BoundsArray = afterFilter_BoundsArray_ArrayArray[ outY ][ outX ];
