@@ -547,6 +547,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // value). So the value bounds should be calculated from applying every kinds of
     // padded or non-padded pixel configuration (i.e. virtual input image).
 
+//!!! ...unfinished... (2022/08/08)
+// Use a large virtualImageOut_afterFilter_BoundsArray instead of multiple afterFilter_BoundsArray_ArrayArray.
+//
+// virtualImageOut_height? virtualImageOut_width? strides?
+// virtualImageOut_channelCount = this.outputChannelCount;
+
     // Virtual input image (for calculating value bounds).
     let virtualInputHeight = Math.min( this.effectFilterHeight, this.inputHeight );
     let virtualInputWidth = Math.min( this.effectFilterWidth, this.inputWidth );
