@@ -557,9 +557,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     //
     let virtualImage_stridesPad;
     if ( this.stridesPadInfo.pad_isValid() )
-      virtualImage_stridesPad = ValueDesc.StridesPad.Sinfleton.Ids.STRIDES_1_PAD_VALID;
+      virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
     else
-      virtualImage_stridesPad = ValueDesc.StridesPad.Sinfleton.Ids.STRIDES_1_PAD_SAME;
+      virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
 
     let virtualImageInfo = PadInfoCalculator.Pool.get_or_create_by(
       Math.min( this.effectFilterHeight, this.inputHeight ), // virtualImageInput_height
@@ -769,14 +769,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       }
 
     } // aFiltersBiasesPartIndex
-
-//!!! (2022/08/07 Remarked) Old Codes. Wrong! Use enlarge instead.
-//     // For pad=same, part of filter will be applied to the padded pixels (i.e. zero
-//     // value). So the value bounds should contain the zero (suppose the total filter
-//     // are all applied to the padded (zero) pixels).
-//     if ( this.stridesPadInfo.pad_isSame() ) {
-//       this.boundsArraySet.afterFilter.enlarge_all_byN( 0 );
-//     }
 
     // 2. Determine .afterFilter of all virtual image pixels (of every channel).
     {
