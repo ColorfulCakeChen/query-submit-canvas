@@ -675,9 +675,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 //                       this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
 //!!! ...unfinished... (2022/08/08)
-// Use a large virtualImageOut_afterFilter_BoundsArray instead of multiple afterFilter_BoundsArray_ArrayArray.
+// Use a large virtualImageOutput_afterFilter_BoundsArray instead of multiple afterFilter_BoundsArray_ArrayArray.
                       // Accumulate value bounds for the filter position (across the whole virtual input image).
                       {
+                        let virtualImageOutput_elementIndex = 0;
                         for ( let outY = 0; outY < virtualImageInfo.outputHeight; ++outY ) {
                           let inY = outY + virtualImageInput_BeginY + filterY;
                           if ( inY < 0 )
@@ -692,8 +693,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                             else if ( inX >= virtualImageInfo.inputWidth )
                               break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
+                            //virtualImageOutput_afterFilter_BoundsArray.Xxx( virtualImageOutput_elementIndex, )
                             let afterFilter_BoundsArray = afterFilter_BoundsArray_ArrayArray[ outY ][ outX ];
                             afterFilter_BoundsArray.add_one_byBounds( outChannel, tBounds );
+
+                            ++virtualImageOutput_elementIndex;
                           }
                         }
                       }
