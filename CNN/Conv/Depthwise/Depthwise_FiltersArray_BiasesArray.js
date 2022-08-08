@@ -555,27 +555,33 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // Note: Its strides will be ignored (i.e. always use STRIDES_1_PAD_Xxx), because
     //       strides does not affect value bounds.
     //
-    let virtualImage_stridesPad;
-    if ( this.stridesPadInfo.pad_isValid() )
-      virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
-    else
-      virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
+    let virtualImageInfo;
+    let virtualImageInput_BeginY, virtualImageInput_BeginX;
+    let virtualImageOutput_afterFilter_BoundsArray_perPixel;
 
-    let virtualImageInfo = PadInfoCalculatorRoot.Pool.get_or_create_by(
-      Math.min( this.effectFilterHeight, this.inputHeight ), // virtualImageInput_height
-      Math.min( this.effectFilterWidth, this.inputWidth ),   // virtualImageInput_width
-      this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier,
-      this.filterHeight, this.filterWidth,
-      virtualImage_stridesPad
-    );
+    if ( this.filtersArray ) { // For depthwise convolution.
+      let virtualImage_stridesPad;
+      if ( this.stridesPadInfo.pad_isValid() )
+        virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
+      else
+        virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
 
-    let virtualImageInput_BeginY = - virtualImageInfo.padHeightTop;
-    let virtualImageInput_BeginX = - virtualImageInfo.padWidthLeft;
+      virtualImageInfo = PadInfoCalculatorRoot.Pool.get_or_create_by(
+        Math.min( this.effectFilterHeight, this.inputHeight ), // virtualImageInput_height
+        Math.min( this.effectFilterWidth, this.inputWidth ),   // virtualImageInput_width
+        this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier,
+        this.filterHeight, this.filterWidth,
+        virtualImage_stridesPad
+      );
 
-    // Used to track every ( height, width, channel ) pixel's value bounds.
-    let virtualImageOutput_afterFilter_BoundsArray_perPixel
-      = FloatValue.BoundsArray.Pool.get_or_create_by( virtualImageInfo.outputElementCount )
-          .set_all_byN( 0 );
+      virtualImageInput_BeginY = - virtualImageInfo.padHeightTop;
+      virtualImageInput_BeginX = - virtualImageInfo.padWidthLeft;
+
+      // Used to track every ( height, width, channel ) pixel's value bounds.
+      virtualImageOutput_afterFilter_BoundsArray_perPixel
+        = FloatValue.BoundsArray.Pool.get_or_create_by( virtualImageInfo.outputElementCount )
+            .set_all_byN( 0 );
+    }
 
     { // 0.2 Init .afterBias
       this.boundsArraySet.afterBias.set_all_byN( 0 );
