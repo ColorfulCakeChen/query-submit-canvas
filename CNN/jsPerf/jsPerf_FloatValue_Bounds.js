@@ -693,8 +693,11 @@ function test_enlarge_contain_in() {
   aBounds.disposeResources_and_recycleToPool(); aBounds = null;
   bBounds.disposeResources_and_recycleToPool(); bBounds = null;
   cBounds.disposeResources_and_recycleToPool(); cBounds = null;
+  dBounds.disposeResources_and_recycleToPool(); dBounds = null;
   aBoundsArray.disposeResources_and_recycleToPool(); aBoundsArray = null;
   bBoundsArray.disposeResources_and_recycleToPool(); bBoundsArray = null;
+  cBoundsArray.disposeResources_and_recycleToPool(); cBoundsArray = null;
+  dBoundsArray.disposeResources_and_recycleToPool(); dBoundsArray = null;
 }
 
 
