@@ -623,8 +623,8 @@ function test_enlarge_contain_in() {
           bShouldTrue &&= cBounds.is_contain_BoundsArray_one( bBoundsArray, 1 );
           bShouldTrue &&= bBoundsArray.is_one_in_Bounds( 1, cBounds );
 
-          if ( !dBounds.is_contain_Bounds( bBounds ) )
-            cBounds.enlarge_byBoundsArray_one( bBoundsArray, 1 );
+          if ( !dBounds.is_contain_BoundsArray_one( bBoundsArray, 1 ) )
+            dBounds.enlarge_byBoundsArray_one( bBoundsArray, 1 );
 
           bShouldTrue &&= dBounds.is_contain_N( c );
           bShouldTrue &&= dBounds.is_contain_N( d );
