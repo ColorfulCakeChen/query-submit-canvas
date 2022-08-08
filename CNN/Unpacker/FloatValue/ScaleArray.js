@@ -340,6 +340,8 @@ class ScaleArray extends Recyclable.Root {
   }
 
 
+!!! ...unfinished... (2022/08/08) all computation should Math.fround( ) before assignment.
+
   /**
    * @param {number} N  Set all ( this.scales[] ) by ( N ). Default are ( N = 1 ) (i.e. no scale).
    *

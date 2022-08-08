@@ -36,6 +36,8 @@ class ScaleTranslate {
     this.translate = another.translate;
   }
 
+!!! ...unfinished... (2022/08/08) all computation should Math.fround( ) before assignment.
+
   /**
    * Set this.scale and this.translate so that they could undo the specified previous scale-translate.
    *

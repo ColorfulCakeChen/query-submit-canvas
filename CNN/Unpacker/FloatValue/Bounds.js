@@ -365,6 +365,8 @@ class Bounds extends Recyclable.Root {
   }
 
 
+!!! ...unfinished... (2022/08/08) all computation should Math.fround( ) before assignment.
+
   /**
    * @param {number} N
    *   Add this Bounds.lower by N, and also add this Bounds.upper by N.

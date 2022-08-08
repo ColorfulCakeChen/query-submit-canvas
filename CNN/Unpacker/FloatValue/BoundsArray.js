@@ -742,6 +742,8 @@ class BoundsArray extends Recyclable.Root {
   }
 
 
+!!! ...unfinished... (2022/08/08) all computation should Math.fround( ) before assignment.
+
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {number} N          Add ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( N, N ).

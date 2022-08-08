@@ -51,6 +51,8 @@ class ScaleTranslateArray {
     return this;
   }
 
+!!! ...unfinished... (2022/08/08) all computation should Math.fround( ) before assignment.
+
   /**
    * @param {ScaleTranslateArray} aScaleTranslateArray
    *   The scale-translate array to be undone.
