@@ -541,38 +541,45 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     // 0. Init
 
-    // 0.1 Prepare .afterFilter acccumulation.
+    // 0.1 Prepare .afterFilter accumulation.
+    
+    // Virtual input image (for calculating value bounds).
     //
-    // For pad=same, part of filter will be applied to the padded pixels (i.e. zero
+    // When pad=same, part of filter will be applied to the padded pixels (i.e. zero
     // value). So the value bounds should be calculated from applying every kinds of
     // padded or non-padded pixel configuration (i.e. virtual input image).
+    //
+    // Its size ( height, width ) is just enough to calculate evey kinds of padded
+    // or non-padded pixel configuration for depthwise convolution.
+    //
+    let virtualImage = PadInfoCalculator.Pool.get_or_create_by(
+      Math.min( this.effectFilterHeight, this.inputHeight ), // virtualImage_inputHeight
+      Math.min( this.effectFilterWidth, this.inputWidth ), // virtualImage_inputWidth
+      this.inputChannelCount,
+      this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.filterWidth, this.stridesPad );
 
-//!!! ...unfinished... (2022/08/08)
-// Use a large virtualImageOut_afterFilter_BoundsArray instead of multiple afterFilter_BoundsArray_ArrayArray.
-//
-// virtualImageOut_height? virtualImageOut_width? (ignore strides)
-// virtualImageOut_channelCount = this.outputChannelCount;
+    let virtualImageInput_BeginY = - virtualImage.padHeightTop;
+    let virtualImageInput_BeginX = - virtualImage.padWidthLeft;
 
-    // Virtual input image (for calculating value bounds).
-    let virtualInputHeight = Math.min( this.effectFilterHeight, this.inputHeight );
-    let virtualInputWidth = Math.min( this.effectFilterWidth, this.inputWidth );
+    // Used to track every ( height, width, channel ) pixel's value bounds.
+    let virtualImageOut_afterFilter_BoundsArray
+      = FloatValue.BoundsArray.Pool.get_or_create_by( virtualImage.outputElementCount );
+          .set_all_byN( 0 );
 
-    let virtualInputBeginY = - this.padHeightTop;
-    let virtualInputBeginX = - this.padWidthLeft;
-
-    // A two dimension array. Every element is a BoundsArray.
-    let afterFilter_BoundsArray_ArrayArray = Recyclable.OwnerArray.Pool.get_or_create_by();
-    afterFilter_BoundsArray_ArrayArray.length = virtualInputHeight;
-    for ( let y = 0; y < virtualInputHeight; ++y ) {
-      let afterFilter_BoundsArray_Array
-        = afterFilter_BoundsArray_ArrayArray[ y ] = Recyclable.OwnerArray.Pool.get_or_create_by();
-        afterFilter_BoundsArray_Array.length = virtualInputWidth;
-      for ( let x = 0; x < virtualInputWidth; ++x ) {
-        let afterFilter_BoundsArray
-          = afterFilter_BoundsArray_Array[ x ] = FloatValue.BoundsArray.Pool.get_or_create_by( this.outputChannelCount );
-        afterFilter_BoundsArray.set_all_byN( 0 );
-      }
-    }
+//!!! (2022/08/08 Remarked) Use a large virtualImageOut_afterFilter_BoundsArray instead.
+//     // A two dimension array. Every element is a BoundsArray.
+//     let afterFilter_BoundsArray_ArrayArray = Recyclable.OwnerArray.Pool.get_or_create_by();
+//     afterFilter_BoundsArray_ArrayArray.length = virtualInputHeight;
+//     for ( let y = 0; y < virtualInputHeight; ++y ) {
+//       let afterFilter_BoundsArray_Array
+//         = afterFilter_BoundsArray_ArrayArray[ y ] = Recyclable.OwnerArray.Pool.get_or_create_by();
+//         afterFilter_BoundsArray_Array.length = virtualInputWidth;
+//       for ( let x = 0; x < virtualInputWidth; ++x ) {
+//         let afterFilter_BoundsArray
+//           = afterFilter_BoundsArray_Array[ x ] = FloatValue.BoundsArray.Pool.get_or_create_by( this.outputChannelCount );
+//         afterFilter_BoundsArray.set_all_byN( 0 );
+//       }
+//     }
 
     { // 0.2 Init .afterBias
       this.boundsArraySet.afterBias.set_all_byN( 0 );
@@ -656,6 +663,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 //                       // Determine .afterFilter
 //                       this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
+//!!! ...unfinished... (2022/08/08)
+// Use a large virtualImageOut_afterFilter_BoundsArray instead of multiple afterFilter_BoundsArray_ArrayArray.
                       // Accumulate value bounds for the filter position (across the whole virtual input image).
                       {
                         for ( let outY = 0; outY < virtualInputHeight; ++outY ) {
@@ -785,6 +794,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
         afterFilter_BoundsArray_ArrayArray.disposeResources_and_recycleToPool();
         afterFilter_BoundsArray_ArrayArray = null;
+
+        virtualImage.disposeResources_and_recycleToPool();
+        virtualImage = null;
+
       } else {
         // For avg/max pooling, the value bounds does not change.
         this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
