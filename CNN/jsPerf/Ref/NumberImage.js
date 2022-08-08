@@ -424,7 +424,7 @@ class NumberImage_Base extends Recyclable.Root {
 
     let { channelMultiplier, dilationHeight, dilationWidth,
           stridesHeight, stridesWidth, padHeightTop, padWidthLeft, 
-          outputHeight, outputWidth, outputChannelCount, //outputElementCount
+          outputHeight, outputWidth, outputChannelCount, outputElementCount,
           stridesPadInfo,
     } = padInfo;
 
@@ -436,6 +436,9 @@ class NumberImage_Base extends Recyclable.Root {
     let imageInBeginY = - padHeightTop;
     let imageInBeginX = - padWidthLeft;
 
+    let tBounds;
+    let afterFilter_BoundsArray_perPixel; // Every output pixels' value bounds.
+
     // If not AVG, MAX, NONE, the filters shape should match input image channel count.
     if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
       let filtersWeightCount = depthwiseFilterHeight * depthwiseFilterWidth * imageIn.depth * channelMultiplier ;
@@ -444,6 +447,11 @@ class NumberImage_Base extends Recyclable.Root {
         throw Error( `${depthwiseNames.join( "_" )}: `
           + `filters weight count ( ${depthwiseFiltersArray.length} ) `
           + `should be ( ${filtersWeightCount} ). (${parametersDesc})` );
+
+      tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
+      afterFilter_BoundsArray_perPixel
+        = FloatValue.BoundsArray.Pool.get_or_create_by( outputElementCount )
+            .set_all_byN( 0 );
     }
 
     {
@@ -479,6 +487,7 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.boundsArraySet.set_bPassThrough_all( bPassThrough );
 
     // Depthwise Convolution
+    let filterValue;
     for ( let outY = 0; outY < outputHeight; ++outY ) {
       let outIndexBaseX = ( outY * outputWidth );
       let inYBase = imageInBeginY + ( outY * stridesHeight );
@@ -547,13 +556,23 @@ class NumberImage_Base extends Recyclable.Root {
                         break;
 
                       default: // Convolution
+                        filterValue = Math.fround( depthwiseFiltersArray[ filterIndex ] );
                         imageOut.dataArray[ outIndex ] = Math.fround( imageOut.dataArray[ outIndex ]
                           + ( Math.fround(
                                 Math.fround( imageIn.dataArray[ inIndex ] ) * undoPreviousEscapingScale
                               )
-                              * Math.fround( depthwiseFiltersArray[ filterIndex ] )
+                              * filterValue
                             )
                         );
+
+//!!!
+!!! ...unfinished... (2022/08/08)
+                        // Note: .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
+                        tBounds
+                          .set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+                          .multiply_byN( filterValue );
+
+                        afterFilter_BoundsArray_perPixel.add_one_byBounds( ???outChannel, tBounds );
                         break;
                     }
                   }
