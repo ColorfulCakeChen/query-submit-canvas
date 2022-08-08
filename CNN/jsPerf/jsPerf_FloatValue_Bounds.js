@@ -624,7 +624,7 @@ function test_enlarge_contain_in() {
           bShouldTrue &&= bBoundsArray.is_one_in_Bounds( 1, cBounds );
 
           if ( !dBounds.is_contain_Bounds( bBounds ) )
-            cBounds.enlarge_byBoundsArray( bBoundsArray, 1 );
+            cBounds.enlarge_byBoundsArray_one( bBoundsArray, 1 );
 
           bShouldTrue &&= dBounds.is_contain_N( c );
           bShouldTrue &&= dBounds.is_contain_N( d );
