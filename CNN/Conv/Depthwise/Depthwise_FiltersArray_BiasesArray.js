@@ -577,6 +577,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       = FloatValue.BoundsArray.Pool.get_or_create_by( virtualImageInfo.outputElementCount )
           .set_all_byN( 0 );
 
+    const virtualImageOutput_elementCountY = virtualImageInfo.outputWidth * virtualImageInfo.outputChannelCount;
+
 //!!! (2022/08/08 Remarked) Use a large virtualImageOut_afterFilter_BoundsArray instead.
 //     // A two dimension array. Every element is a BoundsArray.
 //     let afterFilter_BoundsArray_ArrayArray = Recyclable.OwnerArray.Pool.get_or_create_by();
@@ -678,26 +680,25 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 // Use a large virtualImageOutput_afterFilter_BoundsArray instead of multiple afterFilter_BoundsArray_ArrayArray.
                       // Accumulate value bounds for the filter position (across the whole virtual input image).
                       {
+                        let virtualImageOutput_elementIndexBeginY = 0;
                         let virtualImageOutput_elementIndex = 0;
-                        for ( let outY = 0; outY < virtualImageInfo.outputHeight; ++outY ) {
+                        for ( let outY = 0; outY < virtualImageInfo.outputHeight; ++outY, virtualImageOutput_elementIndexBeginY += virtualImageOutput_elementCountY ) {
                           let inY = outY + virtualImageInput_BeginY + filterY;
                           if ( inY < 0 )
                             continue; // Never access outside of input image. Continue to find out non-negative input image y position.
                           else if ( inY >= virtualImageInfo.inputHeight )
                             break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
-                          for ( let outX = 0; outX < virtualImageInfo.outputWidth; ++outX ) {
+                          virtualImageOutput_elementIndex = virtualImageOutput_elementIndexBeginY;
+                          for ( let outX = 0; outX < virtualImageInfo.outputWidth; ++outX, virtualImageOutput_elementIndex += virtualImageInfo.outputChannelCount ) {
                             let inX = outX + virtualImageInput_BeginX + filterX;
                             if ( inX < 0 )
                               continue; // Never access outside of input image. Continue to find out non-negative input image x position.
                             else if ( inX >= virtualImageInfo.inputWidth )
                               break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
-                            //virtualImageOutput_afterFilter_BoundsArray.Xxx( virtualImageOutput_elementIndex, )
-                            let afterFilter_BoundsArray = afterFilter_BoundsArray_ArrayArray[ outY ][ outX ];
-                            afterFilter_BoundsArray.add_one_byBounds( outChannel, tBounds );
-
-                            ++virtualImageOutput_elementIndex;
+                            virtualImageOutput_afterFilter_BoundsArray.add_one_byBounds(
+                              virtualImageOutput_elementIndex, tBounds );
                           }
                         }
                       }
