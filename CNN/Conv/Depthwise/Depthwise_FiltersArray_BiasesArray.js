@@ -663,7 +663,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                       {
                         let virtualImageOutput_elementIndexBeginY = 0;
                         let virtualImageOutput_elementIndex = 0;
-                        for ( let outY = 0; outY < virtualImageInfo.outputHeight; ++outY, virtualImageOutput_elementIndexBeginY += virtualImageInfo.outputElementCountY ) {
+                        for ( let outY = 0; outY < virtualImageInfo.outputHeight; ++outY,
+                              virtualImageOutput_elementIndexBeginY += virtualImageInfo.outputElementCountY ) {
                           let inY = outY + virtualImageInput_BeginY + filterY;
                           if ( inY < 0 )
                             continue; // Never access outside of input image. Continue to find out non-negative input image y position.
@@ -671,7 +672,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                             break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
                           virtualImageOutput_elementIndex = virtualImageOutput_elementIndexBeginY;
-                          for ( let outX = 0; outX < virtualImageInfo.outputWidth; ++outX, virtualImageOutput_elementIndex += virtualImageInfo.outputChannelCount ) {
+                          for ( let outX = 0; outX < virtualImageInfo.outputWidth; ++outX,
+                                virtualImageOutput_elementIndex += virtualImageInfo.outputChannelCount ) {
                             let inX = outX + virtualImageInput_BeginX + filterX;
                             if ( inX < 0 )
                               continue; // Never access outside of input image. Continue to find out non-negative input image x position.
