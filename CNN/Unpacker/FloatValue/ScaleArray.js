@@ -5,7 +5,7 @@ import * as Recyclable from "../../util/Recyclable.js";
 import { ArrayInterleaver } from "./ArrayInterleaver.js";
 
 /**
- * Describe an array of scale (i.e. multiplier) values.
+ * Describe an array of scale (i.e. multiplier) 32-bits floating-point values.
  *
  * @member {number[]} scales
  *   The scale (i.e. multiplier) values.
@@ -84,7 +84,7 @@ class ScaleArray extends Recyclable.Root {
    * @return {ScaleArray} Return this (modified) object.
    */
   set_one_byN( thisIndex, N = 1 ) {
-    this.scales[ thisIndex ] = N;
+    this.scales[ thisIndex ] = Math.fround( N );
     return this;
   }
 
@@ -138,7 +138,7 @@ class ScaleArray extends Recyclable.Root {
    * @return {ScaleArray} Return this (modified) object.
    */
   set_one_byUndo_N( thisIndex, N ) {
-    this.scales[ thisIndex ] = ( 1 / N );  // Reciprocal will undo the scale. (Note: Not work for zero.)
+    this.scales[ thisIndex ] = Math.fround( 1 / Math.fround( N ) );  // Reciprocal will undo the scale. (Note: Not work for zero.)
     return this;
   }
 
@@ -150,7 +150,7 @@ class ScaleArray extends Recyclable.Root {
    * @return {ScaleArray} Return this (modified) object.
    */
   set_one_byUndo_Ns( thisIndex, Ns, aIndex ) {
-    this.scales[ thisIndex ] = ( 1 / Ns[ aIndex ] );  // Reciprocal will undo the scale. (Note: Not work for zero.)
+    this.scales[ thisIndex ] = Math.fround( 1 / Math.fround( Ns[ aIndex ] ) );  // Reciprocal will undo the scale. (Note: Not work for zero.)
     return this;
   }
 
@@ -172,7 +172,7 @@ class ScaleArray extends Recyclable.Root {
    * @return {ScaleArray} Return this (modified) object.
    */
   set_all_byN( N = 1 ) {
-    this.scales.fill( N );
+    this.scales.fill( Math.fround( N ) );
     return this;
   }
 
@@ -183,7 +183,7 @@ class ScaleArray extends Recyclable.Root {
    */
   set_all_byNs( Ns ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
-      this.scales[ i ] = Ns[ i ];
+      this.scales[ i ] = Math.fround( Ns[ i ] );
     }
     return this;
   }
@@ -204,7 +204,7 @@ class ScaleArray extends Recyclable.Root {
    */
   set_all_byUndo_Ns( Ns ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
-      this.scales[ i ] = ( 1 / Ns[ i ] );  // Reciprocal will undo the scale. (Note: Not work for zero.)
+      this.scales[ i ] = Math.fround( 1 / Math.fround( Ns[ i ] ) );  // Reciprocal will undo the scale. (Note: Not work for zero.)
     }
     return this;
   }
@@ -340,8 +340,6 @@ class ScaleArray extends Recyclable.Root {
   }
 
 
-!!! ...unfinished... (2022/08/08) all computation should Math.fround( ) before assignment.
-
   /**
    * @param {number} N  Set all ( this.scales[] ) by ( N ). Default are ( N = 1 ) (i.e. no scale).
    *
@@ -349,7 +347,7 @@ class ScaleArray extends Recyclable.Root {
    */
   multiply_all_byN( N = 1 ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
-      this.scales[ i ] *= N;
+      this.scales[ i ] = Math.fround( this.scales[ i ] * Math.fround( N ) );
     }
     return this;
   }
@@ -361,7 +359,7 @@ class ScaleArray extends Recyclable.Root {
    */
   multiply_all_byNs( Ns ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
-      this.scales[ i ] *= Ns[ i ];
+      this.scales[ i ] = Math.fround( this.scales[ i ] * Math.fround( Ns[ i ] ) );
     }
     return this;
   }
@@ -393,6 +391,25 @@ class ScaleArray extends Recyclable.Root {
     let dstLower = Math.min( toLower, toUpper );
     let dstUpper = Math.max( toLower, toUpper );
 
+    // Confirm ( lower <= upper ).
+    let srcLower, srcUpper;
+    if ( fromLower < fromUpper ) {
+      srcLower = Math.fround( fromLower );
+      srcUpper = Math.fround( fromUpper );
+    } else {
+      srcLower = Math.fround( fromUpper );
+      srcUpper = Math.fround( fromLower );
+    }
+
+    let dstLower, dstUpper;
+    if ( toLower < toUpper ) {
+      dstLower = Math.fround( toLower );
+      dstUpper = Math.fround( toUpper );
+    } else {
+      dstLower = Math.fround( toUpper );
+      dstUpper = Math.fround( toLower );
+    }
+
     // Note:
     //
     // When a legal (positive) scale is found. A value of powers of two which is equal to or less than it will be returned instead.
@@ -418,26 +435,26 @@ class ScaleArray extends Recyclable.Root {
     //  (  0 / 0 ) = NaN
     //  ( +-Infinity / +-Infinity ) == NaN
     //
-    scale = dstLower / srcLower;
+    scale = Math.fround( dstLower / srcLower );
     if ( scale > 1 )
       scale = 1; // i.e. no need to scale because srcLower is already in bounds [ dstLower, dstUpper ].
 
     // 1.2 Verification.
     //   - If scale is negative or zero or -Infinity or +Infinity or NaN, it is always failed.
     //   - If scaled source upper bound is out of destination range, it is also failed.
-    let adjustedUpper = srcUpper * scale;
+    let adjustedUpper = Math.fround( srcUpper * scale );
 
     if ( ( scale <= 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedUpper < dstLower ) || ( adjustedUpper > dstUpper ) ) {
 
       // 2. Try upperer bound, since it is failed to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] by scale according to lower bound.
-      scale = dstUpper / srcUpper;
+      scale = Math.fround( dstUpper / srcUpper );
       if ( scale > 1 )
         scale = 1; // i.e. no need to scale because srcUpper is already in bounds [ dstLower, dstUpper ].
 
       // 2.2 Verification. If scale is zero, it is always failed. Otherwise, check it by lower side.
       //   - If scale is negative or zero or -Infinity or +Infinity or NaN, it is always failed.
       //   - If scaled source lower bound is out of destination range, it is also failed.
-      let adjustedLower = srcLower * scale;
+      let adjustedLower = Math.fround( srcLower * scale );
 
       if ( ( scale <= 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedLower < dstLower ) || ( adjustedLower > dstUpper ) ) {
         // 3. It is impossible to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] only by scale because all cases are tried and failed.
@@ -445,12 +462,12 @@ class ScaleArray extends Recyclable.Root {
 
       // 2.3 A legal (positive) scale is found. Make it is a value of powers of two value which is equal to or less than it.
       } else {
-        scale = 2 ** Math.floor( Math.log2( scale ) );
+        scale = Math.fround( 2 ** Math.floor( Math.log2( scale ) ) );
       }
 
     // 1.3 A legal (positive) scale is found. Make it is a value of powers of two value which is equal to or less than it.
     } else {
-      scale = 2 ** Math.floor( Math.log2( scale ) );
+      scale = Math.fround( 2 ** Math.floor( Math.log2( scale ) ) );
     }
 
     return scale;
