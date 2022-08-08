@@ -579,21 +579,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     const virtualImageOutput_elementCountY = virtualImageInfo.outputWidth * virtualImageInfo.outputChannelCount;
 
-//!!! (2022/08/08 Remarked) Use a large virtualImageOut_afterFilter_BoundsArray instead.
-//     // A two dimension array. Every element is a BoundsArray.
-//     let afterFilter_BoundsArray_ArrayArray = Recyclable.OwnerArray.Pool.get_or_create_by();
-//     afterFilter_BoundsArray_ArrayArray.length = virtualInputHeight;
-//     for ( let y = 0; y < virtualInputHeight; ++y ) {
-//       let afterFilter_BoundsArray_Array
-//         = afterFilter_BoundsArray_ArrayArray[ y ] = Recyclable.OwnerArray.Pool.get_or_create_by();
-//         afterFilter_BoundsArray_Array.length = virtualInputWidth;
-//       for ( let x = 0; x < virtualInputWidth; ++x ) {
-//         let afterFilter_BoundsArray
-//           = afterFilter_BoundsArray_Array[ x ] = FloatValue.BoundsArray.Pool.get_or_create_by( this.outputChannelCount );
-//         afterFilter_BoundsArray.set_all_byN( 0 );
-//       }
-//     }
-
     { // 0.2 Init .afterBias
       this.boundsArraySet.afterBias.set_all_byN( 0 );
 
@@ -676,8 +661,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 //                       // Determine .afterFilter
 //                       this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
-//!!! ...unfinished... (2022/08/08)
-// Use a large virtualImageOutput_afterFilter_BoundsArray instead of multiple afterFilter_BoundsArray_ArrayArray.
                       // Accumulate value bounds for the filter position (across the whole virtual input image).
                       {
                         let virtualImageOutput_elementIndexBeginY = 0;
