@@ -181,6 +181,15 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
 
         this.padHeight = this.padHeightTop = this.padHeightBottom = this.padWidth = this.padWidthLeft = this.padWidthRight = 0;
 
+        if ( ( this.outputHeight <= 0 ) || ( this.outputWidth <= 0 ) )
+          throw Error(
+            `Depthwise.PadInfoCalculator.set(): `
+              + `effect filter ( height, width )=( ${this.effectFilterHeight}, ${this.effectFilterWidth} ) `
+              + `should not be larger than `
+              + `image input ( height, width )=( ${inputHeight}, ${inputWidth} ) `
+              + `when pad="valid".`
+          );
+
       // Determine output image height and width with padding around the input image height and width.
       } else if ( this.stridesPadInfo.pad_isSame() ) {
         this.outputHeight = Math.ceil( inputHeight / this.stridesHeight );
