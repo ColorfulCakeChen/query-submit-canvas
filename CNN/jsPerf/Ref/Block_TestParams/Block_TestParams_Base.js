@@ -257,8 +257,11 @@ class Block_TestParams_Base extends TestParams.Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
-      input0_height: [ 3, 3 ],
-      input0_width: [ 4, 5 ],
+      // input0_height: [ 3, 3 ],
+      input0_height: [ 1, 5 ],
+
+      // input0_width: [ 4, 5 ],
+      input0_width: [ 1, 5 ],
 
       input0_channelCount: [ 1, 3 ],
       // input0_channelCount: [ 3, 4 ], //[ 1, 3 ],
@@ -315,12 +318,12 @@ class Block_TestParams_Base extends TestParams.Base {
 
       // (2021/10/06) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 //!!! (2022/08/04 Temp Remarked) For debug neural net (only use 3x3).
-      // depthwiseFilterHeight: [ Block.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
-      // depthwiseFilterWidth: [ Block.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
+      depthwiseFilterHeight: [ Block.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
+      depthwiseFilterWidth: [ Block.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
       // depthwiseFilterHeight: [ 3, 3 ],
       // depthwiseFilterWidth: [ 3, 3 ],
-      depthwiseFilterHeight: [ 2, 2 ],
-      depthwiseFilterWidth: [ 2, 2 ],
+      // depthwiseFilterHeight: [ 2, 2 ],
+      // depthwiseFilterWidth: [ 2, 2 ],
 
       // (2022/05/02) Note: The right-most pixel of depthwise convolution seems wrong when ( strides = 1, pad = "same" ) in backend
       // WebGL of some platforms (e.g. mobile phone Moto e40). But the issue does not exist when ( strides = 2, pad = "same" ) or
