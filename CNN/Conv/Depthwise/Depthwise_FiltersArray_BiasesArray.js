@@ -552,18 +552,28 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // Its size ( height, width ) is just enough to calculate evey kinds of padded
     // or non-padded pixel configuration for depthwise convolution.
     //
+    // Note: Its strides will be ignored (i.e. always use STRIDES_1_PAD_Xxx), because
+    //       strides does not affect value bounds.
+    //
+    let virtualImage_stridesPad;
+    if ( this.stridesPadInfo.pad_isValid() )
+      virtualImage_stridesPad = ValueDesc.StridesPad.Sinfleton.Ids.STRIDES_1_PAD_VALID;
+    else
+      virtualImage_stridesPad = ValueDesc.StridesPad.Sinfleton.Ids.STRIDES_1_PAD_SAME;
+
     let virtualImageInfo = PadInfoCalculator.Pool.get_or_create_by(
-      Math.min( this.effectFilterHeight, this.inputHeight ), // virtualImage_inputHeight
-      Math.min( this.effectFilterWidth, this.inputWidth ), // virtualImage_inputWidth
-      this.inputChannelCount,
-      this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.filterWidth, this.stridesPad );
+      Math.min( this.effectFilterHeight, this.inputHeight ), // virtualImageInput_height
+      Math.min( this.effectFilterWidth, this.inputWidth ),   // virtualImageInput_width
+      this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.filterWidth,
+      virtualImage_stridesPad
+    );
 
     let virtualImageInput_BeginY = - virtualImageInfo.padHeightTop;
     let virtualImageInput_BeginX = - virtualImageInfo.padWidthLeft;
 
     // Used to track every ( height, width, channel ) pixel's value bounds.
-    let virtualImageOut_afterFilter_BoundsArray
-      = FloatValue.BoundsArray.Pool.get_or_create_by( virtualImageInfo.outputElementCount );
+    let virtualImageOutput_afterFilter_BoundsArray
+      = FloatValue.BoundsArray.Pool.get_or_create_by( virtualImageInfo.outputElementCount )
           .set_all_byN( 0 );
 
 //!!! (2022/08/08 Remarked) Use a large virtualImageOut_afterFilter_BoundsArray instead.
@@ -667,18 +677,18 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 // Use a large virtualImageOut_afterFilter_BoundsArray instead of multiple afterFilter_BoundsArray_ArrayArray.
                       // Accumulate value bounds for the filter position (across the whole virtual input image).
                       {
-                        for ( let outY = 0; outY < virtualInputHeight; ++outY ) {
-                          let inY = virtualInputBeginY + filterY;
+                        for ( let outY = 0; outY < virtualImageInput_height; ++outY ) {
+                          let inY = virtualImageInput_BeginY + filterY;
                           if ( inY < 0 )
                             continue; // Never access outside of input image. Continue to find out non-negative input image y position.
-                          else if ( inY >= virtualInputHeight )
+                          else if ( inY >= virtualImageInput_height )
                             break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
-                          for ( let outX = 0; outX < virtualInputWidth; ++outX ) {
-                            let inX = virtualInputBeginX + filterX;
+                          for ( let outX = 0; outX < virtualImageInput_width; ++outX ) {
+                            let inX = virtualImageInput_BeginX + filterX;
                             if ( inX < 0 )
                               continue; // Never access outside of input image. Continue to find out non-negative input image x position.
-                            else if ( inX >= virtualInputWidth )
+                            else if ( inX >= virtualImageInput_width )
                               break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
                             let afterFilter_BoundsArray = afterFilter_BoundsArray_ArrayArray[ outY ][ outX ];
