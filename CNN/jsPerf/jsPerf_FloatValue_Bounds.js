@@ -680,7 +680,7 @@ function test_enlarge_contain_in() {
           {
             aBoundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
             aBoundsArray.enlarge_all_byN( a );
-            bShouldTrue &&= is_all_contain_N( a );
+            bShouldTrue &&= aBoundsArray.is_all_contain_N( a );
           }
 
           if ( !bShouldTrue )
