@@ -573,7 +573,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     let virtualImageInput_BeginX = - virtualImageInfo.padWidthLeft;
 
     // Used to track every ( height, width, channel ) pixel's value bounds.
-    let virtualImageOutput_afterFilter_BoundsArray
+    let virtualImageOutput_afterFilter_BoundsArray_perPixel
       = FloatValue.BoundsArray.Pool.get_or_create_by( virtualImageInfo.outputElementCount )
           .set_all_byN( 0 );
 
@@ -680,7 +680,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                             else if ( inX >= virtualImageInfo.inputWidth )
                               break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
-                            virtualImageOutput_afterFilter_BoundsArray.add_one_byBounds(
+                            virtualImageOutput_afterFilter_BoundsArray_perPixel.add_one_byBounds(
                               virtualImageOutput_elementIndex, tBounds );
                           }
                         }
@@ -788,13 +788,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           for ( let outX = 0; outX < virtualImageInfo.outputWidth; ++outX ) {
             for ( let c = 0; c < this.outputChannelCount; ++c, ++virtualImageOutput_elementIndex ) {
               this.boundsArraySet.afterFilter.enlarge_one_byBoundsArray_one( c,
-                virtualImageOutput_afterFilter_BoundsArray, virtualImageOutput_elementIndex );
+                virtualImageOutput_afterFilter_BoundsArray_perPixel, virtualImageOutput_elementIndex );
             }
           }
         }
 
-        virtualImageOutput_afterFilter_BoundsArray.disposeResources_and_recycleToPool();
-        virtualImageOutput_afterFilter_BoundsArray = null;
+        virtualImageOutput_afterFilter_BoundsArray_perPixel.disposeResources_and_recycleToPool();
+        virtualImageOutput_afterFilter_BoundsArray_perPixel = null;
 
         virtualImageInfo.disposeResources_and_recycleToPool();
         virtualImageInfo = null;

@@ -660,6 +660,9 @@ class NumberImage_Base extends Recyclable.Root {
         }
       }
 
+      afterFilter_BoundsArray_perPixel.disposeResources_and_recycleToPool();
+      afterFilter_BoundsArray_perPixel = null;
+
       tBounds.disposeResources_and_recycleToPool();
       tBounds = null;
 
