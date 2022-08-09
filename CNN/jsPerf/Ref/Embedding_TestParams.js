@@ -144,9 +144,9 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
       this.fill_object_property_numberArray( this.in.paramsNumberArrayObject,
         inChannel,
-        embeddingParams.vocabularyCountPerInputChannel,
-        1,
-        tableChannelCountPerInputChannel
+        embeddingParams.vocabularyCountPerInputChannel, // (height)
+        1,                                              // (width)
+        tableChannelCountPerInputChannel                // (channelCount)
       );
 
       let vocabularyElementArray = this.in.paramsNumberArrayObject[ inChannel ];
@@ -179,32 +179,39 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
           if ( embeddingParams.bEmbedVocabularyId ) {
             bBoundsOk &&= this.out_boundsArray.is_one_contain_N( outChannel, vocabularyId );
-!!!
-            bBoundsOk &&= this.out_boundsArray.is_one_in_LowerUpper( outChannel,
-              vocabularyElementArray.boundsArray_byChannel.lowers[ outChannel ],
-              vocabularyElementArray.boundsArray_byChannel.uppers[ outChannel ] );
             if ( !bBoundsOk )
               throw Error( `Embedding_TestParams.Base.set_byParamsNumberArrayObject_ParamsOut(): `
                 + `vocabularyId=${vocabularyId} `
                 + `should be in bounds `
-                + `[ ${this.out_boundsArray.lowers[ outChannel ]}, ${this.out_boundsArray.uppers[ outChannel ]} ] `
-                + `and bounds `
-                + `[ ${vocabularyElementArray.boundsArray_byChannel.lowers[ outChannel ]}, `
-                + `${vocabularyElementArray.boundsArray_byChannel.uppers[ outChannel ]} ].`
+                + `[ ${this.out_boundsArray.lowers[ outChannel ]}, ${this.out_boundsArray.uppers[ outChannel ]} ].`
               );
+
+//!!! (2022/08/09 Remarked) vlocabularyId is not in weights table.
+//             bBoundsOk &&= this.out_boundsArray.is_one_in_LowerUpper( outChannel,
+//               vocabularyElementArray.boundsArray_byChannel.lowers[ outChannel ],
+//               vocabularyElementArray.boundsArray_byChannel.uppers[ outChannel ] );
+//             if ( !bBoundsOk )
+//               throw Error( `Embedding_TestParams.Base.set_byParamsNumberArrayObject_ParamsOut(): `
+//                 + `vocabularyId=${vocabularyId} `
+//                 + `should be in bounds `
+//                 + `[ ${this.out_boundsArray.lowers[ outChannel ]}, ${this.out_boundsArray.uppers[ outChannel ]} ] `
+//                 + `and bounds `
+//                 + `[ ${vocabularyElementArray.boundsArray_byChannel.lowers[ outChannel ]}, `
+//                 + `${vocabularyElementArray.boundsArray_byChannel.uppers[ outChannel ]} ].`
+//               );
 
             ++outChannel;
           }
 
-          for ( let outChannelSub = outChannelSubBegin; outChannelSub < embeddingParams.channelMultiplier; ++outChannelSub) {
+          for ( let outChannelSub = outChannelSubBegin; outChannelSub < embeddingParams.channelMultiplier; ++outChannelSub ) {
             let vocabularyElement = vocabularyElementArray[ vocabularyElementIndex ];
             ++vocabularyElementIndex;
 
+            let tableChannel = outChannel - outChannelSubBegin;
             bBoundsOk &&= this.out_boundsArray.is_one_contain_N( outChannel, vocabularyElement );
-!!!
             bBoundsOk &&= this.out_boundsArray.is_one_in_LowerUpper( outChannel,
-              vocabularyElementArray.boundsArray_byChannel.lowers[ outChannel ],
-              vocabularyElementArray.boundsArray_byChannel.uppers[ outChannel ] );
+              vocabularyElementArray.boundsArray_byChannel.lowers[ tableChannel ],
+              vocabularyElementArray.boundsArray_byChannel.uppers[ tableChannel ] );
             if ( !bBoundsOk )
               throw Error( `Embedding_TestParams.Base.set_byParamsNumberArrayObject_ParamsOut(): `
                 + `vocabularyId=${vocabularyId}, `
@@ -213,8 +220,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
                 + `should be in bounds `
                 + `[ ${this.out_boundsArray.lowers[ outChannel ]}, ${this.out_boundsArray.uppers[ outChannel ]} ] `
                 + `and bounds `
-                + `[ ${vocabularyElementArray.boundsArray_byChannel.lowers[ outChannel ]}, `
-                + `${vocabularyElementArray.boundsArray_byChannel.uppers[ outChannel ]} ].`
+                + `[ ${vocabularyElementArray.boundsArray_byChannel.lowers[ tableChannel ]}, `
+                + `${vocabularyElementArray.boundsArray_byChannel.uppers[ tableChannel ]} ].`
               );
 
             ++outChannel;
