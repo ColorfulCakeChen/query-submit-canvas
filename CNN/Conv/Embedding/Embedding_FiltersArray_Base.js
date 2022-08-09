@@ -113,31 +113,6 @@ class Embedding_FiltersArray_Base extends Weights.Base( InferencedParams ) {
    * @return {boolean}
    *   Return true, if successfully. Return false, if failed.
    */
-
-//!!! (2022/08/03 Remarked) Embedding_FiltersArray.init() no longer has inputScaleBoundsArray.
-
-//   init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) {
-
-//     if ( this.input_channelCount != inputScaleBoundsArray.length )
-//       throw Error( `Embedding.FiltersArray_Base.init(): `
-//         + `input_channelCount ( ${this.input_channelCount} ) should be the same as `
-//         + `output_channelCount of previous operation ( ${inputScaleBoundsArray.length} ).`
-//       );
-
-//     if ( !inputScaleBoundsArray.scaleArraySet.undo.is_all_EQ_byN( 1 ) )
-//       throw Error( `Embedding.FiltersArray_Base.init(): `
-//         + `The .output.scaleArraySet.undo ( ${inputScaleBoundsArray.scaleArraySet.undo.scales} ) `
-//         + `of previous operation `
-//         + `should be all one (i.e. should not have activation escaping scaling).`
-//       );
-
-//     if ( !inputScaleBoundsArray.boundsArray.is_all_in_LowerUpper( 0, this.vocabularyIdMax ) )
-//       throw Error( `Embedding.FiltersArray_Base.init(): `
-//         + `The .output.boundsArray ( ${inputScaleBoundsArray.boundsArray} ) `
-//         + `of previous operation `
-//         + `should be all within [ 0, ${this.vocabularyIdMax} ].`
-//       );
-
   init( inputWeightArray, weightElementOffsetBegin ) {
 
     // Calcualte weights extracting beginning and ending position.
