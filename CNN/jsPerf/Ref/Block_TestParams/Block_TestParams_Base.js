@@ -789,9 +789,13 @@ class Block_TestParams_Base extends TestParams.Base {
    *
    * @param {object} io_object     The object to be checked and modified.
    * @param {string} propertyName  The property io_object[ propertyName ] will be ensured as a number array.
-   * @param {number} elementCount  The property io_object[ propertyName ].length will be ensured as elementCount.
+   * @param {number} height        The length of axis0 of the io_object[ propertyName ].
+   * @param {number} width         The length of axis1 of the io_object[ propertyName ].
+   * @param {number} channelCount  The length of axis2 of the io_object[ propertyName ].
    */
-  fill_object_property_numberArray( io_object, propertyName, elementCount ) {
+  fill_object_property_numberArray( io_object, propertyName,
+    height, width, channelCount
+  ) {
 
     //!!! (2022/05/23 Remarked)
     //Base.ensure_object_property_numberArray_length_filled( io_object, propertyName,
@@ -803,7 +807,7 @@ class Block_TestParams_Base extends TestParams.Base {
     // );
 
     super.ensure_object_property_numberArray_length_existed( io_object, propertyName,
-      elementCount,
+      height, width, channelCount,
       TestParams.Base.weightsValueBegin,
       TestParams.Base.weightsValueStep,
       TestParams.Base.weightsRandomOffset.min, TestParams.Base.weightsRandomOffset.max,
@@ -978,19 +982,22 @@ class Block_TestParams_Base extends TestParams.Base {
       if ( outputChannelCount > 0 ) {
         result_outputChannelCount = outputChannelCount;
 
-        let filtersWeightsCount = inputChannelCount * outputChannelCount;
-        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Filters, filtersWeightsCount );
+        //let filtersWeightsCount = inputChannelCount * outputChannelCount;
+        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Filters,
+          inputChannelCount, 1, outputChannelCount );
 
         if ( bBias ) {
           let biasesWeightsCount = result_outputChannelCount;
-          this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases, biasesWeightsCount );
+          this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases,
+            1, 1, biasesWeightsCount );
         } else {
-          this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases, 0 );
+          this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases,
+            1, 1, 0 );
         }
 
       } else { // No pointwise convolution.
-        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Filters, 0 );
-        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases, 0 );
+        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Filters, 1, 1, 0 );
+        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases, 1, 1, 0 );
       }
     }
 
@@ -1027,23 +1034,28 @@ class Block_TestParams_Base extends TestParams.Base {
       if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
         result_outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
 
-        let filtersWeightsCount = result_outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
-        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Filters, filtersWeightsCount );
+        //let filtersWeightsCount = result_outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
+        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Filters,
+          depthwiseFilterHeight, depthwiseFilterWidth, result_outputChannelCount );
 
       } else {
         // Note: if AVG or MAX pooling, this property will be empty array.
-        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Filters, 0 );
+        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Filters,
+          1, 1, 0 );
       }
 
       if ( depthwise_AvgMax_Or_ChannelMultiplier != 0 ) { // Include avgerage pooling, maximum pooling, convolution.
         if ( bBias ) {
           let biasesWeightsCount = result_outputChannelCount;
-          this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases, biasesWeightsCount );
+          this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases,
+            1, 1, biasesWeightsCount );
         } else { // No bias.
-          this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases, 0 );
+          this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases,
+            1, 1, 0 );
         }
       } else { // No depthwise convolution, no avg pooling, no max pooling.
-        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases, 0 );
+        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases,
+          1, 1, 0 );
       }
     }
 

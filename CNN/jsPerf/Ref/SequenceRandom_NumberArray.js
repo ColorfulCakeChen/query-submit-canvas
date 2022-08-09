@@ -74,7 +74,9 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
    *
    * @param {object} io_object        The object to be checked and modified.
    * @param {string} propertyName     The property io_object[ propertyName ] will be ensured as a number array.
-   * @param {number} elementCount     The property io_object[ propertyName ].length will be ensured as elementCount.
+   * @param {number} height           The length of axis0 of the io_object[ propertyName ].
+   * @param {number} width            The length of axis1 of the io_object[ propertyName ].
+   * @param {number} channelCount     The length of axis2 of the io_object[ propertyName ].
    * @param {number} valueBegin       The first value of filled sequence.
    * @param {number} valueStep        The incremental value of every next filled value in the sequence.
    * @param {number} randomOffsetMin  The random number offet lower bound.
@@ -82,13 +84,13 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
    *
    */
   get_by_elementCount_randomOffsetMin_randomOffsetMax(
-    elementCount,
+    height, width, channelCount,
     valueBegin = 0, valueStep = 1,
     randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = ( 2 ** 26 ) ) {
 
     let nRandSpecId = RandTools.getRandomIntInclusive( this.nRandSpecIdMin, this.nRandSpecIdMax );
     let numberArray = this.get_or_create_by_arguments1_etc( Bag.create_by, this,
-      elementCount,
+      height, width, channelCount,
       valueBegin, valueStep,
       randomOffsetMin, randomOffsetMax, divisorForRemainder, nRandSpecId );
 
@@ -99,7 +101,7 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
    *
    */
   static create_by(
-    elementCount,
+    height, width, channelCount,
     valueBegin, valueStep,
     randomOffsetMin, randomOffsetMax, divisorForRemainder,
     nRandSpecId ) {
@@ -113,7 +115,7 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
 
     // Note: nRandSpecId is not used when generating number array.
     RandTools.fill_numberArray( numberArray,
-      elementCount, 1, 1,
+      height, width, channelCount,
       valueBegin, valueStep,
       randomOffsetMin, randomOffsetMax, divisorForRemainder );
     return numberArray;

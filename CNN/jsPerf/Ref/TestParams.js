@@ -359,7 +359,9 @@ class TestParams_Base extends Recyclable.Root {
    *
    * @param {object} io_object            The object to be checked and modified.
    * @param {string} propertyName         The property io_object[ propertyName ] will be ensured as a number array.
-   * @param {number} elementCount         The property io_object[ propertyName ].length will be ensured as elementCount.
+   * @param {number} height               The length of axis0 of the io_object[ propertyName ].
+   * @param {number} width                The length of axis1 of the io_object[ propertyName ].
+   * @param {number} channelCount         The length of axis2 of the io_object[ propertyName ].
    * @param {number} valueBegin           The first value of filled sequence.
    * @param {number} valueStep            The incremental value of every next filled value in the sequence.
    * @param {number} randomOffsetMin      The random number offet lower bound.
@@ -367,7 +369,8 @@ class TestParams_Base extends Recyclable.Root {
    * @param {number} divisorForRemainder  The divisor for restricting value bounds.
    */
   static ensure_object_property_numberArray_length_filled(
-    io_object, propertyName, elementCount,
+    io_object, propertyName,
+    height, width, channelCount,
     valueBegin = 0, valueStep = 1,
     randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = ( 2 ** 26 ) ) {
 
@@ -381,7 +384,7 @@ class TestParams_Base extends Recyclable.Root {
     }
 
     RandTools.fill_numberArray( io_object[ propertyName ],
-      elementCount, 1, 1,
+      height, width, channelCount,
       valueBegin, valueStep,
       randomOffsetMin, randomOffsetMax, divisorForRemainder );
   }
@@ -395,7 +398,9 @@ class TestParams_Base extends Recyclable.Root {
    *
    * @param {object} io_object            The object to be checked and modified.
    * @param {string} propertyName         The property io_object[ propertyName ] will be ensured as a number array.
-   * @param {number} elementCount         The property io_object[ propertyName ].length will be ensured as elementCount.
+   * @param {number} height               The length of axis0 of the io_object[ propertyName ].
+   * @param {number} width                The length of axis1 of the io_object[ propertyName ].
+   * @param {number} channelCount         The length of axis2 of the io_object[ propertyName ].
    * @param {number} valueBegin           The first value of filled sequence.
    * @param {number} valueStep            The incremental value of every next filled value in the sequence.
    * @param {number} randomOffsetMin      The random number offet lower bound.
@@ -404,13 +409,14 @@ class TestParams_Base extends Recyclable.Root {
    *
    */
   ensure_object_property_numberArray_length_existed(
-    io_object, propertyName, elementCount,
+    io_object, propertyName,
+    height, width, channelCount,
     valueBegin = 0, valueStep = 1,
     randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = ( 2 ** 26 )
   ) {
 
     io_object[ propertyName ] = this.SequenceRandom_NumberArray_Bag.get_by_elementCount_randomOffsetMin_randomOffsetMax(
-      elementCount,
+      height, width, channelCount,
       valueBegin, valueStep,
       randomOffsetMin, randomOffsetMax, divisorForRemainder );
   }

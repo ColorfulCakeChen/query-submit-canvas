@@ -127,8 +127,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
       outChannelSubBegin = 0;
     }
 
-    let tableElementCountPerInputChannel
-      = embeddingParams.vocabularyCountPerInputChannel * tableChannelCountPerInputChannel;
+    // let tableElementCountPerInputChannel
+    //   = embeddingParams.vocabularyCountPerInputChannel * tableChannelCountPerInputChannel;
 
     let tableChannelCountAll
       = embeddingParams.input_channelCount * tableChannelCountPerInputChannel;
@@ -143,7 +143,11 @@ class Embedding_TestParams_Base extends TestParams.Base {
     for ( let inChannel = 0; inChannel < embeddingParams.input_channelCount; ++inChannel ) {
 
       this.fill_object_property_numberArray( this.in.paramsNumberArrayObject,
-        inChannel, tableElementCountPerInputChannel );
+        inChannel,
+        embeddingParams.vocabularyCountPerInputChannel,
+        1,
+        tableChannelCountPerInputChannel
+      );
 
       let vocabularyElementArray = this.in.paramsNumberArrayObject[ inChannel ];
 
@@ -175,6 +179,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
           if ( embeddingParams.bEmbedVocabularyId ) {
             bBoundsOk &&= this.out_boundsArray.is_one_contain_N( outChannel, vocabularyId );
+!!!
             bBoundsOk &&= this.out_boundsArray.is_one_in_LowerUpper( outChannel,
               vocabularyElementArray.boundsArray_byChannel.lowers[ outChannel ],
               vocabularyElementArray.boundsArray_byChannel.uppers[ outChannel ] );
@@ -196,6 +201,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
             ++vocabularyElementIndex;
 
             bBoundsOk &&= this.out_boundsArray.is_one_contain_N( outChannel, vocabularyElement );
+!!!
             bBoundsOk &&= this.out_boundsArray.is_one_in_LowerUpper( outChannel,
               vocabularyElementArray.boundsArray_byChannel.lowers[ outChannel ],
               vocabularyElementArray.boundsArray_byChannel.uppers[ outChannel ] );
@@ -322,12 +328,16 @@ class Embedding_TestParams_Base extends TestParams.Base {
    *
    * @param {object} io_object            The object to be checked and modified.
    * @param {string|numner} propertyName  The property io_object[ propertyName ] will be ensured as a number array.
-   * @param {number} elementCount         The property io_object[ propertyName ].length will be ensured as elementCount.
+   * @param {number} height        The length of axis0 of the io_object[ propertyName ].
+   * @param {number} width         The length of axis1 of the io_object[ propertyName ].
+   * @param {number} channelCount  The length of axis2 of the io_object[ propertyName ].
    *
    */
-  fill_object_property_numberArray( io_object, propertyName, elementCount ) {
+  fill_object_property_numberArray( io_object, propertyName,
+    height, width, channelCount
+  ) {
     super.ensure_object_property_numberArray_length_existed( io_object, propertyName,
-      elementCount,
+      height, width, channelCount,
       TestParams.Base.weightsValueBegin,
       TestParams.Base.weightsValueStep,
       TestParams.Base.weightsRandomOffset.min, TestParams.Base.weightsRandomOffset.max,

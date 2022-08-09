@@ -286,12 +286,16 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
    *
    * @param {object} io_object            The object to be checked and modified.
    * @param {string|numner} propertyName  The property io_object[ propertyName ] will be ensured as a number array.
-   * @param {number} elementCount         The property io_object[ propertyName ].length will be ensured as elementCount.
+   * @param {number} height        The length of axis0 of the io_object[ propertyName ].
+   * @param {number} width         The length of axis1 of the io_object[ propertyName ].
+   * @param {number} channelCount  The length of axis2 of the io_object[ propertyName ].
    *
    */
-  fill_object_property_numberArray( io_object, propertyName, elementCount ) {
+  fill_object_property_numberArray( io_object, propertyName,
+    height, width, channelCount
+  ) {
     super.ensure_object_property_numberArray_length_existed( io_object, propertyName,
-      elementCount,
+      height, width, channelCount,
       TestParams.Base.weightsValueBegin,
       TestParams.Base.weightsValueStep,
       TestParams.Base.weightsRandomOffset.min, TestParams.Base.weightsRandomOffset.max,
