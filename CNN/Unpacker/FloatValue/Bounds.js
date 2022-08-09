@@ -70,6 +70,7 @@ class Bounds extends Recyclable.Root {
    * @return {boolean} Return true, if ( .lower <= N ) and ( .upper >= N ).
    */
   is_contain_N( N ) {
+    N = Math.fround( N );
     if ( ( this.lower <= N ) && ( this.upper >= N ) )
       return true;
     return false;
@@ -84,11 +85,11 @@ class Bounds extends Recyclable.Root {
   is_contain_LowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
     if ( aLower < aUpper ) {
-      lower = aLower;
-      upper = aUpper;
+      lower = Math.fround( aLower );
+      upper = Math.fround( aUpper );
     } else {
-      lower = aUpper;
-      upper = aLower;
+      lower = Math.fround( aUpper );
+      upper = Math.fround( aLower );
     }
 
     if ( ( this.lower <= lower ) && ( this.upper >= upper ) )
@@ -125,11 +126,11 @@ class Bounds extends Recyclable.Root {
   is_in_LowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
     if ( aLower < aUpper ) {
-      lower = aLower;
-      upper = aUpper;
+      lower = Math.fround( aLower );
+      upper = Math.fround( aUpper );
     } else {
-      lower = aUpper;
-      upper = aLower;
+      lower = Math.fround( aUpper );
+      upper = Math.fround( aLower );
     }
 
     if ( ( this.lower >= lower ) && ( this.upper <= upper ) )
@@ -579,13 +580,14 @@ class Bounds extends Recyclable.Root {
 
   /**
    * @param {number} value
-   *   The value to be clamped.
+   *   The value to be clamped. (will be converted to 32-bits floating-point number)
    *
    * @return {number}
    *   Return value clamped between this Bounds [ this.lower, this.upper ]. If value is NaN, it will become zero first and then be clamped
    * between this Bounds [ this.lower, this.upper ].
    */
   clamp_or_zeroIfNaN( value ) {
+    value = Math.fround( value );
     if ( Number.isNaN( value ) )
       value = 0; // If NaN, view it as 0.
     return Math.max( this.lower, Math.min( value, this.upper ) );
@@ -607,7 +609,7 @@ class Bounds extends Recyclable.Root {
   Float32Array_RestrictedClone( sourceArray ) {
     let resultArray = new Float32Array( sourceArray.length );
     for ( let i = 0; i < sourceArray.length; ++i ) {
-      let element = sourceArray[ i ];
+      let element = Math.fround( sourceArray[ i ] );
       if ( !Number.isNaN( element ) ) {
         resultArray[ i ] = Math.max( this.lower, Math.min( element, this.upper ) );
       } // If NaN, let it become 0. (Just do nothing, because Float32Array is initialized to zero by default.)

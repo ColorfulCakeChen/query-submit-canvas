@@ -79,6 +79,7 @@ class BoundsArray extends Recyclable.Root {
    * @return {boolean} Return true, if ( .lowers[ thisIndex ] <= N ) and ( .uppers[ thisIndex ] >= N ).
    */
   is_one_contain_N( thisIndex, N ) {
+    N = Math.fround( N );
     if ( ( this.lowers[ thisIndex ] <= N ) && ( this.uppers[ thisIndex ] >= N ) )
       return true;
     return false;
@@ -94,11 +95,11 @@ class BoundsArray extends Recyclable.Root {
   is_one_contain_LowerUpper( thisIndex, aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
     if ( aLower < aUpper ) {
-      lower = aLower;
-      upper = aUpper;
+      lower = Math.fround( aLower );
+      upper = Math.fround( aUpper );
     } else {
-      lower = aUpper;
-      upper = aLower;
+      lower = Math.fround( aUpper );
+      upper = Math.fround( aLower );
     }
 
     if ( ( this.lowers[ thisIndex ] <= lower ) && ( this.uppers[ thisIndex ] >= upper ) )
@@ -134,6 +135,7 @@ class BoundsArray extends Recyclable.Root {
    * @return {boolean} Return true, if ( .lowers[] <= N ) and ( .uppers[] >= N ).
    */
   is_all_contain_N( N ) {
+    N = Math.fround( N );
     for ( let i = 0; i < this.lowers.length; ++i ) {
       if ( ( this.lowers[ i ] <= N ) && ( this.uppers[ i ] >= N ) )
         continue;
@@ -151,11 +153,11 @@ class BoundsArray extends Recyclable.Root {
   is_all_contain_LowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
     if ( aLower < aUpper ) {
-      lower = aLower;
-      upper = aUpper;
+      lower = Math.fround( aLower );
+      upper = Math.fround( aUpper );
     } else {
-      lower = aUpper;
-      upper = aLower;
+      lower = Math.fround( aUpper );
+      upper = Math.fround( aLower );
     }
 
     for ( let i = 0; i < this.lowers.length; ++i ) {
@@ -197,11 +199,11 @@ class BoundsArray extends Recyclable.Root {
   is_one_in_LowerUpper( thisIndex, aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
     if ( aLower < aUpper ) {
-      lower = aLower;
-      upper = aUpper;
+      lower = Math.fround( aLower );
+      upper = Math.fround( aUpper );
     } else {
-      lower = aUpper;
-      upper = aLower;
+      lower = Math.fround( aUpper );
+      upper = Math.fround( aLower );
     }
 
     if ( ( this.lowers[ thisIndex ] >= lower ) && ( this.uppers[ thisIndex ] <= upper ) )
@@ -240,11 +242,11 @@ class BoundsArray extends Recyclable.Root {
   is_all_in_LowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
     if ( aLower < aUpper ) {
-      lower = aLower;
-      upper = aUpper;
+      lower = Math.fround( aLower );
+      upper = Math.fround( aUpper );
     } else {
-      lower = aUpper;
-      upper = aLower;
+      lower = Math.fround( aUpper );
+      upper = Math.fround( aLower );
     }
 
     for ( let i = 0; i < this.lowers.length; ++i ) {
@@ -1115,13 +1117,14 @@ class BoundsArray extends Recyclable.Root {
 
   /**
    * @param {number} thisIndex  Use which Bounds of this BoundsArray to clamp the value.
-   * @param {number} value      The value to be clamped.
+   * @param {number} value      The value to be clamped. (will be converted to 32-bits floating-point number.)
    *
    * @return {number}
    *   Return value clamped between this Bounds [ this.lower, this.upper ]. If value is NaN, it will become zero first and then be clamped
    * between this BoundsArray[ arrayIndex ][ this.lower, this.upper ].
    */
   one_clamp_or_zeroIfNaN( thisIndex, value ) {
+    value = Math.fround( value );
     if ( Number.isNaN( value ) )
       value = 0; // If NaN, view it as 0.
     return Math.max( this.lowers[ thisIndex ], Math.min( value, this.uppers[ thisIndex ] ) );
