@@ -14,8 +14,8 @@ export { ScaleTranslate };
 class ScaleTranslate {
 
   constructor( scale = 1, translate = 0 ) {
-    this.scale = scale;
-    this.translate = translate;
+    this.scale = Math.fround( scale );
+    this.translate = Math.fround( translate );
   }
 
   clone() {
