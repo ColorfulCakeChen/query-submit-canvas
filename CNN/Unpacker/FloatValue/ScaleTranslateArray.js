@@ -29,6 +29,8 @@ class ScaleTranslateArray {
    *   Return this (modified) object whose values are (re)set as specified values.
    */
   set_all_by_scale_translate( scale = 1, translate = 0 ) {
+    scale = Math.fround( scale );
+    translate = Math.fround( translate );
     for ( let i = 0; i < this.scales.length; ++i ) {
       this.scales[ i ] = scale;
       this.translates[ i ] = translate;
@@ -51,8 +53,6 @@ class ScaleTranslateArray {
     return this;
   }
 
-!!! ...unfinished... (2022/08/08) all computation should Math.fround( ) before assignment.
-
   /**
    * @param {ScaleTranslateArray} aScaleTranslateArray
    *   The scale-translate array to be undone.
@@ -62,10 +62,10 @@ class ScaleTranslateArray {
    */
   set_all_byUndo_ScaleTranslateArray( aScaleTranslateArray ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
-      this.scales[ i ] = ( 1 / aScaleTranslateArray.scales[ i ] );  // Reciprocal will undo the scale. (Note: Not work for zero.)
+      this.scales[ i ] = Math.fround( 1 / aScaleTranslateArray.scales[ i ] );  // Reciprocal will undo the scale. (Note: Not work for zero.)
 
       // Negative translate, and multiply by undo-scale because translate comes after scale.
-      this.translates[ i ] = ( - aScaleTranslateArray.translates[ i ] ) * this.scales[ i ];
+      this.translates[ i ] = Math.fround( ( - aScaleTranslateArray.translates[ i ] ) * this.scales[ i ] );
     }
     return this;
   }
@@ -109,8 +109,8 @@ class ScaleTranslateArray {
     //
     for ( let i = 0; i < this.scales.length; ++i ) {
       // scale = ( target_difference / source_difference );
-      this.scales[ i ] = ( target.uppers[ i ] - target.lowers[ i ] ) / ( source.uppers[ i ] - source.lowers[ i ] );
-      this.translates[ i ] = ( target.lowers[ i ] - ( this.scales[ i ] * source.lowers[ i ] ) );
+      this.scales[ i ] = Math.fround( ( target.uppers[ i ] - target.lowers[ i ] ) / ( source.uppers[ i ] - source.lowers[ i ] ) );
+      this.translates[ i ] = Math.fround( target.lowers[ i ] - Math.fround( this.scales[ i ] * source.lowers[ i ] ) );
     }
     return this;
   }
@@ -128,8 +128,8 @@ class ScaleTranslateArray {
    */
   scaleTranslate_all_byScaleTranslateArray( aScaleTranslateArray ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
-      this.scales[ i ] =     ( this.scales[ i ]     * aScaleTranslateArray.scales[ i ] ) + aScaleTranslateArray.translates[ i ];
-      this.translates[ i ] = ( this.translates[ i ] * aScaleTranslateArray.scales[ i ] ) + aScaleTranslateArray.translates[ i ];
+      this.scales[ i ] =     Math.fround( Math.fround( this.scales[ i ]     * aScaleTranslateArray.scales[ i ] ) + aScaleTranslateArray.translates[ i ] );
+      this.translates[ i ] = Math.fround( Math.fround( this.translates[ i ] * aScaleTranslateArray.scales[ i ] ) + aScaleTranslateArray.translates[ i ] );
     }
     return this;
   }
