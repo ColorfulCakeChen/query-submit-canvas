@@ -69,6 +69,7 @@ class ScaleArray extends Recyclable.Root {
    * @return {boolean} Return true, if all .scales[] equal to N.
    */
   is_all_EQ_byN( N = 1 ) {
+    N = Math.fround( N );
     for ( let i = 0; i < this.scales.length; ++i) {
       if ( this.scales[ i ] != N )
         return false;
@@ -346,8 +347,9 @@ class ScaleArray extends Recyclable.Root {
    * @return {ScaleArray} Return this (modified) object whose values are ( this.scales[] * N ).
    */
   multiply_all_byN( N = 1 ) {
+    N = Math.fround( N );
     for ( let i = 0; i < this.scales.length; ++i ) {
-      this.scales[ i ] = Math.fround( this.scales[ i ] * Math.fround( N ) );
+      this.scales[ i ] = Math.fround( this.scales[ i ] * N );
     }
     return this;
   }
