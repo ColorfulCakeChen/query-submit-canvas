@@ -279,7 +279,7 @@ class NumberImage_Base extends Recyclable.Root {
             let filterIndex = filterIndexBase + outChannel;
 
             imageOut.dataArray[ outIndex ] = Math.fround( imageOut.dataArray[ outIndex ]
-              + ( Math.fround( Math.fround( imageIn.dataArray[ inIndex ] ) * undoPreviousEscapingScale )
+              + Math.fround( Math.fround( Math.fround( imageIn.dataArray[ inIndex ] ) * undoPreviousEscapingScale )
                     * Math.fround( pointwiseFiltersArray[ filterIndex ] )
                 )
             );
