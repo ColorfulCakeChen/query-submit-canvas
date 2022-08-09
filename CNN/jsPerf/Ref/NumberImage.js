@@ -564,7 +564,8 @@ class NumberImage_Base extends Recyclable.Root {
                       default: // Convolution
                         filterValue = Math.fround( depthwiseFiltersArray[ filterIndex ] );
                         imageOut.dataArray[ outIndex ] = Math.fround( imageOut.dataArray[ outIndex ]
-                          + ( Math.fround(
+                          + Math.fround(
+                              Math.fround(
                                 Math.fround( imageIn.dataArray[ inIndex ] ) * undoPreviousEscapingScale
                               )
                               * filterValue
