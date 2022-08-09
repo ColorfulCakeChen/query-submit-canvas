@@ -386,10 +386,6 @@ class ScaleArray extends Recyclable.Root {
    * Return Number.NaN, if it is impossible to do that.
    */
   static calc_scale_by_fromLowerUpper_toLowerUpper( fromLower, fromUpper, toLower, toUpper ) {
-    let srcLower = Math.min( fromLower, fromUpper ); // Confirm ( lower <= upper ).
-    let srcUpper = Math.max( fromLower, fromUpper );
-    let dstLower = Math.min( toLower, toUpper );
-    let dstUpper = Math.max( toLower, toUpper );
 
     // Confirm ( lower <= upper ).
     let srcLower, srcUpper;
