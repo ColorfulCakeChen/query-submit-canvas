@@ -111,7 +111,10 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
     //  debugger;
     //}
 
-    let numberArray = Recyclable.NumberArray_withBounds.Pool.get_or_create_by( elementCount );
+//!!! (2022/08/09 Remarked) RandTools.fill_numberArray() will calculate elementCount.
+//    let elementCount = height * width * channelCount;
+//    let numberArray = Recyclable.NumberArray_withBounds.Pool.get_or_create_by( elementCount );
+    let numberArray = Recyclable.NumberArray_withBounds.Pool.get_or_create_by();
 
     // Note: nRandSpecId is not used when generating number array.
     RandTools.fill_numberArray( numberArray,
