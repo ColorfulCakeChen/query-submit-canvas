@@ -207,7 +207,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
             let vocabularyElement = vocabularyElementArray[ vocabularyElementIndex ];
             ++vocabularyElementIndex;
 
-            let tableChannel = outChannel - outChannelSubBegin;
+            let tableChannel = outChannelSub - outChannelSubBegin;
             bBoundsOk &&= this.out_boundsArray.is_one_contain_N( outChannel, vocabularyElement );
             bBoundsOk &&= this.out_boundsArray.is_one_in_LowerUpper( outChannel,
               vocabularyElementArray.boundsArray_byChannel.lowers[ tableChannel ],
