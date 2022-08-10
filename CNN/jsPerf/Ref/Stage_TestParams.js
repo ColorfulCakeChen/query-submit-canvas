@@ -247,19 +247,19 @@ class Stage_TestParams_Base extends TestParams.Base {
 
 //      nConvStageTypeId: undefined,
 //!!! (2022/07/20 Temp Remarked) For speed-up debug.
-      // nConvStageTypeId: [
-      //   Stage.Params.nConvStageTypeId.valueDesc.range.min,
-      //   Stage.Params.nConvStageTypeId.valueDesc.range.max
-      // ],
       nConvStageTypeId: [
+        Stage.Params.nConvStageTypeId.valueDesc.range.min,
+        Stage.Params.nConvStageTypeId.valueDesc.range.max
+      ],
+      // nConvStageTypeId: [
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1, // (0)
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID, // (1)
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN, // (2)
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2, // (3)
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2, // (4)
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1, // (5)
+      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1, // (5)
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21, // (7)
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 // (5)
+      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 // (5)
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21 // (7)
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 // (4)
@@ -267,28 +267,28 @@ class Stage_TestParams_Base extends TestParams.Base {
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN // (2)
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID // (1)
       //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1 // (0)
-      ],
+      // ],
 
 //!!! (2022/08/04 Temp Remarked) For speed-up debug.
-      // blockCountRequested: [
-      //   Stage.Params.blockCountRequested.valueDesc.range.min,
-      //   Stage.Params.blockCountRequested.valueDesc.range.min + 3
-      // ],
       blockCountRequested: [
-        3,
-        3
+        Stage.Params.blockCountRequested.valueDesc.range.min,
+        Stage.Params.blockCountRequested.valueDesc.range.min + 3
       ],
+      // blockCountRequested: [
+      //   3,
+      //   3
+      // ],
 
 //      bPointwise1: undefined,
 //!!! (2022/08/04 Temp Remarked) For speed-up debug.
-      // bPointwise1: [
-      //   Stage.Params.bPointwise1.valueDesc.range.min,
-      //   Stage.Params.bPointwise1.valueDesc.range.max
-      // ],
       bPointwise1: [
-        false,
-        false
+        Stage.Params.bPointwise1.valueDesc.range.min,
+        Stage.Params.bPointwise1.valueDesc.range.max
       ],
+      // bPointwise1: [
+      //   false,
+      //   false
+      // ],
 
       // (2022/05/05) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 //!!! (2022/07/22 Remarked) to avoid depthwise filter 1 x N or N x 1
@@ -300,14 +300,14 @@ class Stage_TestParams_Base extends TestParams.Base {
 
 //      nSqueezeExcitationChannelCountDivisor: undefined,
 //!!! (2022/08/03 Temp Remarked) For speed-up debug.
-      // nSqueezeExcitationChannelCountDivisor: [
-      //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
-      //   3
-      // ],
       nSqueezeExcitationChannelCountDivisor: [
-        3,
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
         3
       ],
+      // nSqueezeExcitationChannelCountDivisor: [
+      //   3,
+      //   3
+      // ],
       // nSqueezeExcitationChannelCountDivisor: [
       //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION,
       //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION
@@ -319,14 +319,14 @@ class Stage_TestParams_Base extends TestParams.Base {
 
 //      bKeepInputTensor: undefined,
 //!!! (2022/08/04 Temp Remarked) For speed-up debug.
-      // bKeepInputTensor: [
-      //   Stage.Params.bKeepInputTensor.valueDesc.range.min,
-      //   Stage.Params.bKeepInputTensor.valueDesc.range.max
-      // ],
       bKeepInputTensor: [
-        false,
-        false
+        Stage.Params.bKeepInputTensor.valueDesc.range.min,
+        Stage.Params.bKeepInputTensor.valueDesc.range.max
       ],
+      // bKeepInputTensor: [
+      //   false,
+      //   false
+      // ],
     };
 
     // All the parameters to be tried.
