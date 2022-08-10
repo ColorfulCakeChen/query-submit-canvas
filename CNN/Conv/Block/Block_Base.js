@@ -850,7 +850,7 @@ class Block_Base extends Recyclable.Root {
 
     // 10.3 Reduce memory footprint by releasing unused (intermediate) bounds array set.
 //!!! (2022/08/03 Temp Remarked) For debug.
-    this.dispose_intermediate_ScaleBoundsArray();
+//    this.dispose_intermediate_ScaleBoundsArray();
 
     // 10.4
     ++progressToAdvance.value;
