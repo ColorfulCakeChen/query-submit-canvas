@@ -545,14 +545,18 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // Virtual input image (for calculating value bounds).
     //
     // When pad=same, part of filter will be applied to the padded pixels (i.e. zero
-    // value). So the value bounds should be calculated from applying every kinds of
-    // padded or non-padded pixel configuration (i.e. virtual input image).
+    // value).
     //
-    // Its size ( height, width ) is just enough to calculate evey kinds of padded
+    // Although it seems a smaller size ( height, width ) should be just enough,
+    // however, strides also affect the bounds calculating for evey kinds of padded
     // or non-padded pixel configuration for depthwise convolution.
     //
+    // So, virtual input image should use the same as real input size.
 
-// !!! (2022/08/10 Remarked) strides should still be considered
+//!!! (2022/08/10 Remarked) strides should still be considered
+//    //
+//    // Its size ( height, width ) is just enough to calculate evey kinds of padded
+//    // or non-padded pixel configuration for depthwise convolution.
 //     // Note: Its strides will be ignored (i.e. always use STRIDES_1_PAD_Xxx), because
 //     //       strides does not affect value bounds.
 
@@ -574,9 +578,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
       virtualImageInfo = PadInfoCalculatorRoot.Pool.get_or_create_by(
 
-!!! ...unfinished... (2022/08/10) strides should still be considered
-        Math.min( this.effectFilterHeight, this.inputHeight ), // virtualImageInput_height
-        Math.min( this.effectFilterWidth, this.inputWidth ),   // virtualImageInput_width
+//!!! (2022/08/10 Remarked) strides should still be considered
+//         Math.min( this.effectFilterHeight, this.inputHeight ), // virtualImageInput_height
+//         Math.min( this.effectFilterWidth, this.inputWidth ),   // virtualImageInput_width
+
+        this.inputHeight, // virtualImageInput_height
+        this.inputWidth,  // virtualImageInput_width
 
         this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier,
         this.filterHeight, this.filterWidth,
