@@ -675,6 +675,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                           else if ( inY >= virtualImageInfo.inputHeight )
                             break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
+!!! ...unfinished... (2022/08/10) outChannel?
                           virtualImageOutput_elementIndex = virtualImageOutput_elementIndexBeginY;
                           for ( let outX = 0; outX < virtualImageInfo.outputWidth; ++outX,
                                 virtualImageOutput_elementIndex += virtualImageInfo.outputChannelCount ) {
