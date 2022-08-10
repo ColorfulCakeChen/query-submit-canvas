@@ -569,30 +569,34 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     if ( this.filtersArray ) { // For depthwise convolution.
       tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
 
-//!!! (2022/08/10 Remarked) strides should still be considered
-//       let virtualImage_stridesPad;
-//       if ( this.stridesPadInfo.pad_isValid() )
-//         virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
-//       else
-//         virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
+      virtualImageInfo = this; // PadInfoCalculator
 
-      virtualImageInfo = PadInfoCalculatorRoot.Pool.get_or_create_by(
-
-//!!! (2022/08/10 Remarked) strides should still be considered
-//         Math.min( this.effectFilterHeight, this.inputHeight ), // virtualImageInput_height
-//         Math.min( this.effectFilterWidth, this.inputWidth ),   // virtualImageInput_width
-
-        this.inputHeight, // virtualImageInput_height
-        this.inputWidth,  // virtualImageInput_width
-
-        this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier,
-        this.filterHeight, this.filterWidth,
-
-//!!! (2022/08/10 Remarked) strides should still be considered
-//        virtualImage_stridesPad
-
-        this.strides
-      );
+//!!! (2022/08/10 Remarked) use real input image size.
+//
+// //!!! (2022/08/10 Remarked) strides should still be considered
+// //       let virtualImage_stridesPad;
+// //       if ( this.stridesPadInfo.pad_isValid() )
+// //         virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
+// //       else
+// //         virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
+//
+//       virtualImageInfo = PadInfoCalculatorRoot.Pool.get_or_create_by(
+//
+// //!!! (2022/08/10 Remarked) strides should still be considered
+// //         Math.min( this.effectFilterHeight, this.inputHeight ), // virtualImageInput_height
+// //         Math.min( this.effectFilterWidth, this.inputWidth ),   // virtualImageInput_width
+//
+//         this.inputHeight, // virtualImageInput_height
+//         this.inputWidth,  // virtualImageInput_width
+//
+//         this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier,
+//         this.filterHeight, this.filterWidth,
+//
+// //!!! (2022/08/10 Remarked) strides should still be considered
+// //        virtualImage_stridesPad
+//
+//         this.strides
+//       );
 
       virtualImageInput_BeginY = - virtualImageInfo.padHeightTop;
       virtualImageInput_BeginX = - virtualImageInfo.padWidthLeft;
@@ -814,8 +818,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         virtualImageOutput_afterFilter_BoundsArray_perPixel.disposeResources_and_recycleToPool();
         virtualImageOutput_afterFilter_BoundsArray_perPixel = null;
 
-        virtualImageInfo.disposeResources_and_recycleToPool();
-        virtualImageInfo = null;
+//!!! (2022/08/10 Remarked) use real input image size.
+//        virtualImageInfo.disposeResources_and_recycleToPool();
+//        virtualImageInfo = null;
+        virtualImageInfo = null; // Just nullify it (because it points to this obeject self).
 
         tBounds.disposeResources_and_recycleToPool();
         tBounds = null;
