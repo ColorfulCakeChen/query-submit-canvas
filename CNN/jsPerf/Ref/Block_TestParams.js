@@ -56,10 +56,6 @@ class Block_TestParams_Base extends TestParams.Base {
       this.out = null;
     }
 
-//!!! (2022/07/24 Remarked) this.in is already a NameNumberArrayObject.weightArray_weightElementOffsetBegin object.
-    // this.NumberArray_ElementOffsetBegin?.disposeResources_and_recycleToPool();
-    // this.NumberArray_ElementOffsetBegin = null;
-
     this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag?.disposeResources_and_recycleToPool();
     this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag = null;
 
@@ -208,21 +204,6 @@ class Block_TestParams_Base extends TestParams.Base {
       }
     }
 
-
-//!!! (2022/07/17 Remarked) Block.Params will adjust it.
-//
-//     // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
-//     //
-//     // Note: When pad is "same", this restriction does not exist.
-//     if ( ValueDesc.StridesPad.pad_isValid( this.out.depthwiseStridesPad ) ) {
-//
-//       if (   ( this.out.depthwiseFilterHeight > this.out.input0_height )
-//           || ( this.out.depthwiseFilterWidth  > this.out.input0_width  ) )
-//         return false;
-//
-//     // Otherwise, when pad is "same", it should test more filter size.
-//     }
-
     return true;
   }
   
@@ -307,14 +288,14 @@ class Block_TestParams_Base extends TestParams.Base {
       // pointwise20ChannelCount: [ 1, 8 ],
 
 //!!! (2022/07/07 Temp Remarked) For speed up debug.
-      depthwise_AvgMax_Or_ChannelMultiplier: [
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-        2
-      ],
       // depthwise_AvgMax_Or_ChannelMultiplier: [
-      //   0,
+      //   ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
       //   2
       // ],
+      depthwise_AvgMax_Or_ChannelMultiplier: [
+        0,
+        2
+      ],
 
       // (2021/10/06) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 //!!! (2022/08/04 Temp Remarked) For debug neural net (only use 3x3).
