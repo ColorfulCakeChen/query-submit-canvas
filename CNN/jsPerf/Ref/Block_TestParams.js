@@ -239,35 +239,35 @@ class Block_TestParams_Base extends TestParams.Base {
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
       // input0_height: [ 3, 3 ],
-      input0_height: [ 1, 1 ], //[ 1, 5 ],
+      input0_height: [ 1, 5 ],
 
       // input0_width: [ 4, 5 ],
-      input0_width: [ 2, 2 ], //[ 1, 5 ],
+      input0_width: [ 1, 5 ],
 
-      // input0_channelCount: [ 1, 3 ],
-      input0_channelCount: [ 2, 2 ], //[ 3, 4 ],
+      input0_channelCount: [ 1, 4 ],
+      // input0_channelCount: [ 2, 2 ], //[ 3, 4 ],
 
 //!!! (2022/07/06 Temp Remarked) For speed-up debug.
-      // nConvBlockTypeId: [
-      //   Block.Params.nConvBlockTypeId.valueDesc.range.min,
-      //   Block.Params.nConvBlockTypeId.valueDesc.range.max
-      // ],
-//!!! (2022/07/06 Temp Added and Remarked) For speed-up debug.
       nConvBlockTypeId: [
-        // Block.Params.nConvBlockTypeId.valueDesc.range.min,
-        // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL, // (1)
-        // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY, // (3)
-        // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL, // (4)
-        // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
-        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY, // (6)
-        // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL, // (7)
-        // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL // (1)
-        // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL // (4)
-        // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD // (5)
-        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY // (6)
-        // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL // (7)
-        // Block.Params.nConvBlockTypeId.valueDesc.range.max
+        Block.Params.nConvBlockTypeId.valueDesc.range.min,
+        Block.Params.nConvBlockTypeId.valueDesc.range.max
       ],
+//!!! (2022/07/06 Temp Added and Remarked) For speed-up debug.
+      // nConvBlockTypeId: [
+      //   // Block.Params.nConvBlockTypeId.valueDesc.range.min,
+      //   // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL, // (1)
+      //   // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY, // (3)
+      //   // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL, // (4)
+      //   ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
+      //   // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY, // (6)
+      //   // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL, // (7)
+      //   // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL // (1)
+      //   // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL // (4)
+      //   // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD // (5)
+      //   // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY // (6)
+      //   ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL // (7)
+      //   // Block.Params.nConvBlockTypeId.valueDesc.range.max
+      // ],
 
 //!!! (2022/07/11 Temp Remarked) For speed-up debug.
       // pointwise1ChannelCount: [ 0, 8 ],
@@ -279,14 +279,14 @@ class Block_TestParams_Base extends TestParams.Base {
       // pointwise20ChannelCount: [ 1, 8 ],
 
 //!!! (2022/07/07 Temp Remarked) For speed up debug.
-      // depthwise_AvgMax_Or_ChannelMultiplier: [
-      //   ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-      //   2
-      // ],
       depthwise_AvgMax_Or_ChannelMultiplier: [
-        1,
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
         2
       ],
+      // depthwise_AvgMax_Or_ChannelMultiplier: [
+      //   1,
+      //   2
+      // ],
 
       // (2021/10/06) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 //!!! (2022/08/04 Temp Remarked) For debug neural net (only use 3x3).
@@ -303,20 +303,20 @@ class Block_TestParams_Base extends TestParams.Base {
       //
 //      depthwiseStridesPad: undefined,
 //!!! (2022/05/01 Temp Remarked) For debug (mobile phone).
-      // depthwiseStridesPad: [
-      //   Block.Params.depthwiseStridesPad.valueDesc.range.min,
-      //   Block.Params.depthwiseStridesPad.valueDesc.range.max
-      // ],
       depthwiseStridesPad: [
-        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID, // (0)
-        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME, // (1)
-        ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME, // (2)
-        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID,  // (3)
-        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID // (0)
-        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME // (1)
-        ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME // (2)
-        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID  // (3)
+        Block.Params.depthwiseStridesPad.valueDesc.range.min,
+        Block.Params.depthwiseStridesPad.valueDesc.range.max
       ],
+      // depthwiseStridesPad: [
+      //   // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID, // (0)
+      //   // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME, // (1)
+      //   ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME, // (2)
+      //   // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID,  // (3)
+      //   // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID // (0)
+      //   // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME // (1)
+      //   ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME // (2)
+      //   // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID  // (3)
+      // ],
 
       depthwiseActivationId:
 //       undefined,
