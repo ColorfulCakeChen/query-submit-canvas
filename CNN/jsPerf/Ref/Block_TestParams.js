@@ -252,31 +252,21 @@ class Block_TestParams_Base extends TestParams.Base {
       //   Block.Params.nConvBlockTypeId.valueDesc.range.min,
       //   Block.Params.nConvBlockTypeId.valueDesc.range.max
       // ],
-//!!! (2022/07/13 Temp Added and Remarked) For speed-up debug.
-//         Block.Params.nConvBlockTypeId.valueDesc.range.min,
-//         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
-//         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL // (7)
-//       ],
-//!!! (2022/07/13 Temp Added and Remarked) For speed-up debug.
-//         Block.Params.nConvBlockTypeId.valueDesc.range.min,
-//         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2, // (8)
-//         ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL // (11)
-//       ],
 //!!! (2022/07/06 Temp Added and Remarked) For speed-up debug.
       nConvBlockTypeId: [
-        // Block.Params.nConvBlockTypeId.valueDesc.range.min,
+        Block.Params.nConvBlockTypeId.valueDesc.range.min,
         // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL, // (1)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY, // (3)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL, // (4)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
-        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY, // (6)
+        // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY, // (6)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL, // (7)
         // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL // (1)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL // (4)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD // (5)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY // (6)
-        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL // (7)
-        // Block.Params.nConvBlockTypeId.valueDesc.range.max
+        // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL // (7)
+        Block.Params.nConvBlockTypeId.valueDesc.range.max
       ],
 
 //!!! (2022/07/11 Temp Remarked) For speed-up debug.
@@ -289,14 +279,14 @@ class Block_TestParams_Base extends TestParams.Base {
       // pointwise20ChannelCount: [ 1, 8 ],
 
 //!!! (2022/07/07 Temp Remarked) For speed up debug.
-      // depthwise_AvgMax_Or_ChannelMultiplier: [
-      //   ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-      //   2
-      // ],
       depthwise_AvgMax_Or_ChannelMultiplier: [
-        1,
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
         2
       ],
+      // depthwise_AvgMax_Or_ChannelMultiplier: [
+      //   1,
+      //   2
+      // ],
 
       // (2021/10/06) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 //!!! (2022/08/04 Temp Remarked) For debug neural net (only use 3x3).
