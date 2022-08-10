@@ -319,10 +319,10 @@ class Block_TestParams_Base extends TestParams.Base {
       // ],
 
       depthwiseActivationId:
-//       undefined,
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-//        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
-//        [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        // undefined,
+        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+        // [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
       // bSqueezeExcitationPrefix: undefined,
       bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
@@ -341,17 +341,17 @@ class Block_TestParams_Base extends TestParams.Base {
 
       pointwise20ActivationId:
         // undefined,
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
         // [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
       // Because the logic of bias and activation function is simpler than other, it could be just randomly tested once
       // (i.e. ( undefined )) for speeding up testing.
  
-      ActivationId:
+      nActivationId:
         // undefined,
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
         // [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
       bKeepInputTensor: undefined,
@@ -369,7 +369,7 @@ class Block_TestParams_Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.pointwise20ChannelCount, valueOutMinMax.pointwise20ChannelCount ),
       new TestParams.ParamDescConfig( Block.Params.pointwise20ActivationId, valueOutMinMax.pointwise20ActivationId ),
 
-      new TestParams.ParamDescConfig( Block.Params.nActivationId,           valueOutMinMax.ActivationId ),
+      new TestParams.ParamDescConfig( Block.Params.nActivationId,           valueOutMinMax.nActivationId ),
 
       new TestParams.ParamDescConfig( Block.Params.input0_channelCount,     valueOutMinMax.input0_channelCount ),
 
