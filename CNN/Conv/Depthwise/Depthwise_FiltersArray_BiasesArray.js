@@ -552,9 +552,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // or non-padded pixel configuration for depthwise convolution.
     //
 
-!!! ...unfinished... (2022/08/10) strides should still be considered
-    // Note: Its strides will be ignored (i.e. always use STRIDES_1_PAD_Xxx), because
-    //       strides does not affect value bounds.
+// !!! (2022/08/10 Remarked) strides should still be considered
+//     // Note: Its strides will be ignored (i.e. always use STRIDES_1_PAD_Xxx), because
+//     //       strides does not affect value bounds.
+
     //
     let tBounds;
     let virtualImageInfo;
@@ -564,18 +565,26 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     if ( this.filtersArray ) { // For depthwise convolution.
       tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
 
-      let virtualImage_stridesPad;
-      if ( this.stridesPadInfo.pad_isValid() )
-        virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
-      else
-        virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
+//!!! (2022/08/10 Remarked) strides should still be considered
+//       let virtualImage_stridesPad;
+//       if ( this.stridesPadInfo.pad_isValid() )
+//         virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
+//       else
+//         virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
 
       virtualImageInfo = PadInfoCalculatorRoot.Pool.get_or_create_by(
+
+!!! ...unfinished... (2022/08/10) strides should still be considered
         Math.min( this.effectFilterHeight, this.inputHeight ), // virtualImageInput_height
         Math.min( this.effectFilterWidth, this.inputWidth ),   // virtualImageInput_width
+
         this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier,
         this.filterHeight, this.filterWidth,
-        virtualImage_stridesPad
+
+//!!! (2022/08/10 Remarked) strides should still be considered
+//        virtualImage_stridesPad
+
+        this.strides
       );
 
       virtualImageInput_BeginY = - virtualImageInfo.padHeightTop;
@@ -667,9 +676,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
                       // Accumulate value bounds for the filter position (across the whole virtual input image).
                       {
-
-!!! ...unfinished... (2022/08/10) strides should still be considered
-
                         let virtualImageOutput_elementIndexBeginY = outChannel;
                         let virtualImageOutput_elementIndex = outChannel;
                         for ( let outY = 0, inY = virtualImageInput_BeginY + filterY;
