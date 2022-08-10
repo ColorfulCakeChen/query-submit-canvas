@@ -548,7 +548,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // value).
     //
     // Although it seems a smaller size ( height, width ) should be just enough,
-    // however, strides also affect the bounds calculating for evey kinds of padded
+    // however, strides also affects the bounds calculating for evey kinds of padded
     // or non-padded pixel configuration for depthwise convolution.
     //
     // So, virtual input image should use the same as real input size.
