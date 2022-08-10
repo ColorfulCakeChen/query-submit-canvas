@@ -821,7 +821,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 //!!! (2022/08/10 Remarked) use real input image size.
 //        virtualImageInfo.disposeResources_and_recycleToPool();
 //        virtualImageInfo = null;
-        virtualImageInfo = null; // Just nullify it (because it points to this obeject self).
+        virtualImageInfo = null; // Just nullify it (because it points to this object self).
 
         tBounds.disposeResources_and_recycleToPool();
         tBounds = null;
