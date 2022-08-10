@@ -48,7 +48,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
   static setAsConstructor_self() {
     this.Embedding_Reference = Embedding_Reference.Base.Pool.get_or_create_by();
     this.Stage_Reference = Stage_Reference.Base.Pool.get_or_create_by();
-    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.005 );
+    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
   }
 
   /** @override */
