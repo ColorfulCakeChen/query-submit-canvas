@@ -294,7 +294,7 @@ class Block_TestParams_Base extends TestParams.Base {
       //   2
       // ],
       depthwise_AvgMax_Or_ChannelMultiplier: [
-        0,
+        1,
         2
       ],
 
