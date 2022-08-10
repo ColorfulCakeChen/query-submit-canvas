@@ -137,9 +137,6 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
             this.filtersArray.disposeResources_and_recycleToPool(); this.filtersArray = null; // Release for reducing memory usage.
 
             // Note: Because .filtersShape will be kept by .filtersTensor4d internally, it can not be released here.
-
-//!!! (2022/07/05 Remarked) Because .filtersShape will be kept by .filtersTensor4d internally, it can not be released here.
-//            this.filtersShape.disposeResources_and_recycleToPool(); this.filtersShape = null;
           }
 
           if ( this.biasesShape && this.biasesArray ) {
@@ -147,9 +144,6 @@ class Depthwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
             this.biasesArray.disposeResources_and_recycleToPool(); this.biasesArray = null; // Release for reducing memory usage.
 
             // Note: Because .biasesShape will be kept by .biasesTensor3d internally, it can not be released here.
-
-//!!! (2022/07/05 Remarked) Because .biasesShape will be kept by .biasesTensor3d internally, it can not be released here.
-//            this.biasesShape.disposeResources_and_recycleToPool(); this.biasesShape = null;
           }
 
           this.output0.set_height_width_channelCount_scaleBoundsArray(
