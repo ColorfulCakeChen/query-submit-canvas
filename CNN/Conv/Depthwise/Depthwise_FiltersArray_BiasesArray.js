@@ -551,6 +551,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // Its size ( height, width ) is just enough to calculate evey kinds of padded
     // or non-padded pixel configuration for depthwise convolution.
     //
+
+!!! ... unfinished... (2022/08/10) strides should still be considered
     // Note: Its strides will be ignored (i.e. always use STRIDES_1_PAD_Xxx), because
     //       strides does not affect value bounds.
     //
@@ -665,6 +667,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
                       // Accumulate value bounds for the filter position (across the whole virtual input image).
                       {
+
+!!! ... unfinished... (2022/08/10) strides should still be considered
+
                         let virtualImageOutput_elementIndexBeginY = outChannel;
                         let virtualImageOutput_elementIndex = outChannel;
                         for ( let outY = 0; outY < virtualImageInfo.outputHeight; ++outY,
