@@ -596,10 +596,10 @@ class Bounds extends Recyclable.Root {
   /**
    * Confirm:
    *   - Every element is not NaN. (If it is, become 0.)
-   *   - Every element is between [ lower, upper ].
+   *   - Every element is between [ this.lower, this.upper ].
    *
-   * @param {Float32Array} source
-   *   The source Float32Array.
+   * @param {number[]|Float32Array} source
+   *   The source number array or Float32Array.
    *
    * @return {Float32Array}
    *   Return a copy of source. Every element (float32):

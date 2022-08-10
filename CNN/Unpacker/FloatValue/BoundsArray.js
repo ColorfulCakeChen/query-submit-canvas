@@ -1120,8 +1120,10 @@ class BoundsArray extends Recyclable.Root {
    * @param {number} value      The value to be clamped. (will be converted to 32-bits floating-point number.)
    *
    * @return {number}
-   *   Return value clamped between this Bounds [ this.lower, this.upper ]. If value is NaN, it will become zero first and then be clamped
-   * between this BoundsArray[ arrayIndex ][ this.lower, this.upper ].
+   *   Return value clamped between bounds [ this.lowers[ thisIndex ],
+   * this.uppers[ thisIndex ] ]. If value is NaN, it will become zero first
+   * and then be clamped between bounds [ this.lowers[ thisIndex ],
+   * this.uppers[ thisIndex ] ].
    */
   one_clamp_or_zeroIfNaN( thisIndex, value ) {
     value = Math.fround( value );
