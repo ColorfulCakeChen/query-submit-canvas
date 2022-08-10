@@ -552,7 +552,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // or non-padded pixel configuration for depthwise convolution.
     //
 
-!!! ... unfinished... (2022/08/10) strides should still be considered
+!!! ...unfinished... (2022/08/10) strides should still be considered
     // Note: Its strides will be ignored (i.e. always use STRIDES_1_PAD_Xxx), because
     //       strides does not affect value bounds.
     //
@@ -668,22 +668,26 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                       // Accumulate value bounds for the filter position (across the whole virtual input image).
                       {
 
-!!! ... unfinished... (2022/08/10) strides should still be considered
+!!! ...unfinished... (2022/08/10) strides should still be considered
 
                         let virtualImageOutput_elementIndexBeginY = outChannel;
                         let virtualImageOutput_elementIndex = outChannel;
-                        for ( let outY = 0; outY < virtualImageInfo.outputHeight; ++outY,
-                              virtualImageOutput_elementIndexBeginY += virtualImageInfo.outputElementCountY ) {
-                          let inY = outY + virtualImageInput_BeginY + filterY;
+                        for ( let outY = 0, inY = virtualImageInput_BeginY + filterY;
+                              outY < virtualImageInfo.outputHeight;
+                              ++outY, inY += virtualImageInfo.stridesHeight,
+                                virtualImageOutput_elementIndexBeginY += virtualImageInfo.outputElementCountY ) {
+
                           if ( inY < 0 )
                             continue; // Never access outside of input image. Continue to find out non-negative input image y position.
                           else if ( inY >= virtualImageInfo.inputHeight )
                             break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
                           virtualImageOutput_elementIndex = virtualImageOutput_elementIndexBeginY;
-                          for ( let outX = 0; outX < virtualImageInfo.outputWidth; ++outX,
-                                virtualImageOutput_elementIndex += virtualImageInfo.outputChannelCount ) {
-                            let inX = outX + virtualImageInput_BeginX + filterX;
+                          for ( let outX = 0, inX = virtualImageInput_BeginX + filterX;
+                                outX < virtualImageInfo.outputWidth;
+                                ++outX, inX += virtualImageInfo.stridesWidth,
+                                  virtualImageOutput_elementIndex += virtualImageInfo.outputChannelCount ) {
+
                             if ( inX < 0 )
                               continue; // Never access outside of input image. Continue to find out non-negative input image x position.
                             else if ( inX >= virtualImageInfo.inputWidth )
