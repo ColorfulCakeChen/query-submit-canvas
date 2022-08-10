@@ -56,7 +56,7 @@ class Asserter_Equal extends Recyclable.Root {
    *
    * @param {number} acceptableDifferenceRate
    *   How many difference (in ratio) between the numberArray and numberArray (per element) is acceptable. Useful for large
-   * value. Default is 0.4 (i.e. 40% difference is allowed).
+   * value. Default is 0.01 (i.e. 1% difference is allowed).
    *
    * @param {number} acceptableDifference
    *   How many difference (in absolute value) between the numberArray and numberArray (per element) is acceptable. Useful
@@ -68,14 +68,14 @@ class Asserter_Equal extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor( acceptableDifferenceRate = 0.4, acceptableDifference = 0.001 ) {
+  static setAsConstructor( acceptableDifferenceRate = 0.01, acceptableDifference = 0.001 ) {
     super.setAsConstructor();
     Asserter_Equal.setAsConstructor_self.call( this, acceptableDifferenceRate, acceptableDifference );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( acceptableDifferenceRate = 0.4, acceptableDifference = 0.001 ) {
+  static setAsConstructor_self( acceptableDifferenceRate = 0.01, acceptableDifference = 0.001 ) {
     this.acceptableDifferenceRate = Math.abs( acceptableDifferenceRate );
     this.acceptableDifference = Math.abs( acceptableDifference );
     this.comparator = Asserter_Equal.ElementComparator.bind( this );
