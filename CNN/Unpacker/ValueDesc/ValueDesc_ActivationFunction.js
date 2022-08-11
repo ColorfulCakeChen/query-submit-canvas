@@ -164,6 +164,9 @@ class ActivationFunction extends Int {
 
   /**   */
   static reference_clipByValue_lowerBound_upperBound( x, lowerBound, upperBound ) {
+    x = Math.fround( x );
+    lowerBound = Math.fround( lowerBound );
+    upperBound = Math.fround( upperBound );
     if ( x < lowerBound )
       return lowerBound;
     else if ( x > upperBound )
@@ -207,11 +210,12 @@ class ActivationFunction extends Int {
     return ActivationFunction.reference_clipByValue_lowerBound_upperBound( x, -3, +3 );
   }
 
-  static reference_tanh( x ) { return Math.tanh( x ); }
-  static reference_sin( x )  { return Math.sin( x );  }
-  static reference_cos( x )  { return Math.cos( x );  }
+  static reference_tanh( x ) { return Math.fround( Math.tanh( Math.fround( x ) ) ); }
+  static reference_sin( x )  { return Math.fround( Math.sin( Math.fround( x ) ) );  }
+  static reference_cos( x )  { return Math.fround( Math.cos( Math.fround( x ) ) );  }
 
   static reference_relu6( x ) {
+    x = Math.fround( x );
     if ( x <= 0 )
       return 0;
     else if ( x >= +6 )
@@ -220,17 +224,18 @@ class ActivationFunction extends Int {
   }
 
   static reference_relu( x ) {
+    x = Math.fround( x );
     if ( x <= 0 )
       return 0;
     return x;
   }
 
   static reference_sigmoid( x ) {
-    return ( 1 / ( 1 + Math.exp( -x ) ) );
+    return Math.fround( 1 / Math.fround( 1 + Math.fround( Math.exp( Math.fround( -x ) ) ) ) );
   }
 
   static reference_softplus( x ) {
-    return Math.log( 1 + Math.exp( x ) );
+    return Math.fround( Math.log( Math.fround( 1 + Math.fround( Math.exp( Math.fround( x ) ) ) ) ) );
   }
 
 }

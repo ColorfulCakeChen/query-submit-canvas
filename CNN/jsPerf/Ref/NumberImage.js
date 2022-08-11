@@ -782,7 +782,9 @@ class NumberImage_Base extends Recyclable.Root {
       return imageIn;
 
     for ( let i = 0; i < imageIn.dataArray.length; ++i ) {
-      imageIn.dataArray[ i ] = Math.fround( pfnActivation( Math.fround( imageIn.dataArray[ i ] ) ) );
+      // (2022/08/11 Remarked) .pfnReference() has Math.fround() internally.
+      //imageIn.dataArray[ i ] = Math.fround( pfnActivation( Math.fround( imageIn.dataArray[ i ] ) ) );
+      imageIn.dataArray[ i ] = pfnActivation( imageIn.dataArray[ i ] );
     }
 
     return imageIn;
