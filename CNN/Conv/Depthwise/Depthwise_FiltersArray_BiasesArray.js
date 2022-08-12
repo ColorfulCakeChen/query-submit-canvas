@@ -8,6 +8,7 @@ import * as Weights from "../../Unpacker/Weights.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Depthwise_ChannelPartInfo.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
+import { BoundsArray_PerPixel } from "./Depthwise_BoundsArray_PerPixel.js";
 
 /**
  * Extract depthwise convolution filters and biases.
@@ -559,7 +560,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     //
     let tBounds;
     let virtualImageInfo;
-    let virtualImageOutput_afterFilter_BoundsArray_perPixel;
+    let virtualImageOutput_afterFilter_BoundsArray_PerPixel;
 
     // For Average pooling or depthwise convolution.
     if (   ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG )
@@ -570,9 +571,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       virtualImageInfo = this; // PadInfoCalculator
 
       // Used to track every ( height, width, channel ) pixel's value bounds.
-      virtualImageOutput_afterFilter_BoundsArray_perPixel
-        = FloatValue.BoundsArray.Pool.get_or_create_by( virtualImageInfo.outputElementCount )
-            .set_all_byN( 0 );
+      virtualImageOutput_afterFilter_BoundsArray_PerPixel
+        = BoundsArray_PerPixel.Pool.get_or_create_by( virtualImageInfo );
     }
 
     { // 0.2 Init .afterBias
@@ -652,37 +652,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                           .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
                           .multiply_byN( sourceWeight );
                       }
-//!!!
+
                       // Accumulate value bounds for the filter position (across the whole virtual input image).
-                      {
-                        let virtualImageOutput_elementIndexBeginY = outChannel;
-                        let virtualImageOutput_elementIndex = outChannel;
-                        for ( let outY = 0, inY = virtualImageInput_BeginY + filterY;
-                              outY < virtualImageInfo.outputHeight;
-                              ++outY, inY += virtualImageInfo.stridesHeight,
-                                virtualImageOutput_elementIndexBeginY += virtualImageInfo.outputElementCountY ) {
-
-                          if ( inY < 0 )
-                            continue; // Never access outside of input image. Continue to find out non-negative input image y position.
-                          else if ( inY >= virtualImageInfo.inputHeight )
-                            break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
-
-                          virtualImageOutput_elementIndex = virtualImageOutput_elementIndexBeginY;
-                          for ( let outX = 0, inX = virtualImageInput_BeginX + filterX;
-                                outX < virtualImageInfo.outputWidth;
-                                ++outX, inX += virtualImageInfo.stridesWidth,
-                                  virtualImageOutput_elementIndex += virtualImageInfo.outputChannelCount ) {
-
-                            if ( inX < 0 )
-                              continue; // Never access outside of input image. Continue to find out non-negative input image x position.
-                            else if ( inX >= virtualImageInfo.inputWidth )
-                              break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
-
-                            virtualImageOutput_afterFilter_BoundsArray_perPixel.add_one_byBounds(
-                              virtualImageOutput_elementIndex, tBounds );
-                          }
-                        }
-                      }
+                      virtualImageOutput_afterFilter_BoundsArray_PerPixel.add_one_outChannel_byBounds(
+                        outChannel,
+                        filterY, filterX,
+                        tBounds
+                      );
 
                       ++filterIndex;
 
@@ -780,13 +756,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           for ( let outX = 0; outX < virtualImageInfo.outputWidth; ++outX ) {
             for ( let outC = 0; outC < this.outputChannelCount; ++outC, ++virtualImageOutput_elementIndex ) {
               this.boundsArraySet.afterFilter.enlarge_one_byBoundsArray_one( outC,
-                virtualImageOutput_afterFilter_BoundsArray_perPixel, virtualImageOutput_elementIndex );
+                virtualImageOutput_afterFilter_BoundsArray_PerPixel, virtualImageOutput_elementIndex );
             }
           }
         }
 
-        virtualImageOutput_afterFilter_BoundsArray_perPixel.disposeResources_and_recycleToPool();
-        virtualImageOutput_afterFilter_BoundsArray_perPixel = null;
+        virtualImageOutput_afterFilter_BoundsArray_PerPixel.disposeResources_and_recycleToPool();
+        virtualImageOutput_afterFilter_BoundsArray_PerPixel = null;
 
         virtualImageInfo = null; // Just nullify it (because it points to this object self).
 

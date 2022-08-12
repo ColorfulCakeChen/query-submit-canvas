@@ -6,7 +6,13 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
 //import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 
 /**
- * 
+ * A helper class for calculating value bounds of depthwise operation. It will
+ * hold every pixel's value bounds.
+ *
+ * @member {Depthwise.PadInfoCalculator} imageInfo
+ *   The input/output image information of the depthwise operation. It is not owned
+ * and will not be released by this object.
+ *
  */
 class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
 
@@ -18,24 +24,29 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
 
   /**
    */
-  constructor( length ) {
+  constructor( imageInfo ) {
      super();
-     BoundsArray.setAsConstructor_self.call( this, length );
+     BoundsArray.setAsConstructor_self.call( this, imageInfo );
   }
  
   /** @override */
-  static setAsConstructor( length ) {
+  static setAsConstructor( imageInfo ) {
      super.setAsConstructor();
-     BoundsArray.setAsConstructor_self.call( this, length );
+     BoundsArray.setAsConstructor_self.call( this, imageInfo );
      return this;
   }
  
   /** @override */
-  static setAsConstructor_self( length ) {
+  static setAsConstructor_self( imageInfo ) {
+    this.imageInfo = imageInfo;
+
+    this.length = virtualImageInfo.outputElementCount;
+    this.set_all_byN( 0 );
   }
  
   /** @override */
   disposeResources() {
+    this.imageInfo = null; // Just nullify it. Do not release it here.
     super.disposeResources();
   }
 
@@ -44,57 +55,51 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
    * Note: filter dilation is not supported. It is assumed as 1.
    *
    *
-   * @param {FloatValue.BoundsArray} virtualImageOutput_afterFilter_BoundsArray_perPixel
-   *   Every pixel's value bounds for the virtual output image.
-   * 
-   * @param {Depthwise.PadInfoCalculator} virtualImageInfo
-   *   The imagined input image information.
-   *
    * @param {number} outChannel
-   *   The 
+   *   The filter will be applied and accumulated to this output channel.
    *
    * @param {number} filterY  The Y position inside the depthwise filter.
    * @param {number} filterX  The X position inside the depthwise filter.
    *
    * @param {FloatValue.Bounds} tBounds
-   *   The value bounds to be added to virtualImageOutput_afterFilter_BoundsArray_perPixel
+   *   The value bounds to be added to imageOutput_afterFilter_BoundsArray_perPixel
    * for the depthwise filter position.
    *
    */
-  add_one_byBounds(
-    virtualImageInfo, outChannel,
+  add_one_outChannel_byBounds(
+    outChannel,
     filterY, filterX,
     tBounds
   ) {
-    const virtualImageInput_BeginY = - virtualImageInfo.padHeightTop;
-    const virtualImageInput_BeginX = - virtualImageInfo.padWidthLeft;
+    const imageInput_BeginY = - imageInfo.padHeightTop;
+    const imageInput_BeginX = - imageInfo.padWidthLeft;
 
-    let virtualImageOutput_elementIndexBeginY = outChannel;
-    let virtualImageOutput_elementIndex = outChannel;
+    let imageOutput_elementIndexBeginY = outChannel;
+    let imageOutput_elementIndex = outChannel;
 
-    for ( let outY = 0, inY = virtualImageInput_BeginY + filterY;
-          outY < virtualImageInfo.outputHeight;
-          ++outY, inY += virtualImageInfo.stridesHeight,
-            virtualImageOutput_elementIndexBeginY += virtualImageInfo.outputElementCountY ) {
+    for ( let outY = 0, inY = imageInput_BeginY + filterY;
+          outY < imageInfo.outputHeight;
+          ++outY, inY += imageInfo.stridesHeight,
+            imageOutput_elementIndexBeginY += imageInfo.outputElementCountY ) {
 
       if ( inY < 0 )
         continue; // Never access outside of input image. Continue to find out non-negative input image y position.
-      else if ( inY >= virtualImageInfo.inputHeight )
+      else if ( inY >= imageInfo.inputHeight )
         break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
-      virtualImageOutput_elementIndex = virtualImageOutput_elementIndexBeginY;
-      for ( let outX = 0, inX = virtualImageInput_BeginX + filterX;
-            outX < virtualImageInfo.outputWidth;
-            ++outX, inX += virtualImageInfo.stridesWidth,
-              virtualImageOutput_elementIndex += virtualImageInfo.outputChannelCount ) {
+      imageOutput_elementIndex = imageOutput_elementIndexBeginY;
+      for ( let outX = 0, inX = imageInput_BeginX + filterX;
+            outX < imageInfo.outputWidth;
+            ++outX, inX += imageInfo.stridesWidth,
+              imageOutput_elementIndex += imageInfo.outputChannelCount ) {
 
         if ( inX < 0 )
           continue; // Never access outside of input image. Continue to find out non-negative input image x position.
-        else if ( inX >= virtualImageInfo.inputWidth )
+        else if ( inX >= imageInfo.inputWidth )
           break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
-        virtualImageOutput_afterFilter_BoundsArray_perPixel.add_one_byBounds(
-          virtualImageOutput_elementIndex, tBounds );
+        imageOutput_afterFilter_BoundsArray_perPixel.add_one_byBounds(
+          imageOutput_elementIndex, tBounds );
       }
     }
   }

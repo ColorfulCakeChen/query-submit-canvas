@@ -6,3 +6,4 @@ export { PassThrough_FiltersArray_BiasesArray } from "./Depthwise/Depthwise_Pass
 export { PassThrough_FiltersArray_BiasesArray_Root } from "./Depthwise/Depthwise_PassThrough.js";
 export { PassThrough_FiltersArray_BiasesArray_Bag } from "./Depthwise/Depthwise_PassThrough.js";
 export { PassThrough } from "./Depthwise/Depthwise_PassThrough.js";
+export { BoundsArray_PerPixel } from "./Depthwise/Depthwise_BoundsArray_PerPixel.js";
