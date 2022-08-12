@@ -13,10 +13,10 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
  *   The input/output image information of the depthwise operation. It is not owned
  * and will not be released by this object.
  *
- * @member {number[]} neighborCounts
- *   Every pixel is add from how many neighbors. Usually they are the same as
+ * @member {number[]} accumulationCounts
+ *   Every pixel is added how many times. Usually they are the same as
  * depthwise filter size. But if pad=same, the border pixels will have
- * different neighbor count.
+ * different accumulation count.
  *
  */
 class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
@@ -45,26 +45,26 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
   static setAsConstructor_self( imageInfo ) {
     this.imageInfo = imageInfo;
 
-    if ( this.neighborCounts )
-      this.neighborCounts.length = length;
+    if ( this.accumulationCounts )
+      this.accumulationCounts.length = length;
     else
-      this.neighborCounts = new Array( length );
+      this.accumulationCounts = new Array( length );
 
     this.length = imageInfo.outputElementCount;
     this.set_all_byN( 0 );
-    this.neighborCounts.fill( 0 );
+    this.accumulationCounts.fill( 0 );
   }
  
   /** @override */
   disposeResources() {
-    this.neighborCounts.length = 0;
+    this.accumulationCounts.length = 0;
     this.imageInfo = null; // Just nullify it. Do not release it here.
     super.disposeResources();
   }
 
   set length( newLength ) {
     super.length = newLength;
-    this.neighborCounts.length = newLength;
+    this.accumulationCounts.length = newLength;
   }
 
   /**
@@ -74,62 +74,62 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
   clone() {
     let result = Depthwise_BoundsArray_PerPixel.Pool.get_or_create_by( this.length );
     result.set_all_byBoundsArray( this );
-    result.neighborCounts_set_all_byBoundsArray( this );
+    result.accumulationCounts_set_all_byBoundsArray( this );
     return result;
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.neighborCounts[].
-   * @param {number} N          Set ( this.neighborCounts[ thisIndex ] ) by ( N ).
+   * @param {number} thisIndex  The array index of this.accumulationCounts[].
+   * @param {number} N          Set ( this.accumulationCounts[ thisIndex ] ) by ( N ).
    *
    * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
    */
-  neighborCounts_set_one_byN( thisIndex, N ) {
-    this.neighborCounts[ thisIndex ] = N;
+  accumulationCounts_set_one_byN( thisIndex, N ) {
+    this.accumulationCounts[ thisIndex ] = N;
     return this;
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.neighborCounts[].
-   * @param {number[]} Ns       Set ( this.neighborCounts[ thisIndex ] ) by ( Ns[ aIndex ] ).
+   * @param {number} thisIndex  The array index of this.accumulationCounts[].
+   * @param {number[]} Ns       Set ( this.accumulationCounts[ thisIndex ] ) by ( Ns[ aIndex ] ).
    * @param {number} aIndex     The array index of Ns[].
    *
    * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
    */
-  neighborCounts_set_one_byNs( thisIndex, Ns, aIndex ) {
-    this.neighborCounts[ thisIndex ] = Ns[ aIndex ];
+  accumulationCounts_set_one_byNs( thisIndex, Ns, aIndex ) {
+    this.accumulationCounts[ thisIndex ] = Ns[ aIndex ];
     return this;
   }
 
   /**
-   * @param {number} N          Set ( this.neighborCounts[] ) by ( N ).
+   * @param {number} N          Set ( this.accumulationCounts[] ) by ( N ).
    *
    * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
    */
-  neighborCounts_set_all_byN( N ) {
-    this.neighborCounts.fill( N );
+  accumulationCounts_set_all_byN( N ) {
+    this.accumulationCounts.fill( N );
     return this;
   }
 
   /**
-   * @param {number[]} Ns  Set all ( this.neighborCounts[] ) by ( Ns[] ).
+   * @param {number[]} Ns  Set all ( this.accumulationCounts[] ) by ( Ns[] ).
    *
    * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
    */
-  neighborCounts_set_all_byNs( Ns ) {
-    for ( let i = 0; i < this.neighborCounts.length; ++i ) {
-      this.neighborCounts[ i ] = Ns[ i ];
+  accumulationCounts_set_all_byNs( Ns ) {
+    for ( let i = 0; i < this.accumulationCounts.length; ++i ) {
+      this.accumulationCounts[ i ] = Ns[ i ];
     }
     return this;
   }
 
   /**
-   * @param {Depthwise_BoundsArray_PerPixel} aBoundsArray  Set all ( this.neighborCounts[] ) by ( aBoundsArray.neighborCounts[] ).
+   * @param {Depthwise_BoundsArray_PerPixel} aBoundsArray  Set all ( this.accumulationCounts[] ) by ( aBoundsArray.accumulationCounts[] ).
    *
    * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
    */
-  neighborCounts_set_all_byBoundsArray( aBoundsArray ) {
-    return this.neighborCounts_set_all_byNs( aBoundsArray.neighborCounts_set_all_byNs );
+  accumulationCounts_set_all_byBoundsArray( aBoundsArray ) {
+    return this.accumulationCounts_set_all_byNs( aBoundsArray.accumulationCounts_set_all_byNs );
   }
 
 
@@ -184,7 +184,7 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
         // For Avg pooling, the divisor should include filter dilation but exclude input image outside.
         //
         // This accumulation should be done after confirm ( inY, inX ) is inside the input image.
-        ++this.neighborCounts[ imageOutput_elementIndex ];
+        ++this.accumulationCounts[ imageOutput_elementIndex ];
 
         this.add_one_byBounds( imageOutput_elementIndex, tBounds );
       }
