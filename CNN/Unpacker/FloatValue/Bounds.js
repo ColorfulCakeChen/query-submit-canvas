@@ -568,6 +568,24 @@ class Bounds extends Recyclable.Root {
 
 
   /**
+   * @param {number} N
+   *   The divisor of this.lower and this.upper.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
+   */
+  divide_byN( N ) {
+    N = Math.fround( N );
+    // Because the different sign of lower and upper, it needs compute all combinations to determine the bounds of result.
+    let lower_N = Math.fround( this.lower / N );
+    let upper_N = Math.fround( this.upper / N );
+    this.lower = Math.min( lower_N, upper_N );
+    this.upper = Math.max( lower_N, upper_N );
+    return this;
+  }
+
+
+  /**
    * @param {ScaleTranslate} aScaleTranslate
    *   Multiply this Bounds by aScaleTranslate.scale, and then add this Bounds by aScaleTranslate.translate.
    *

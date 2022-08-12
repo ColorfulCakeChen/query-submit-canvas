@@ -997,8 +997,8 @@ class BoundsArray extends Recyclable.Root {
 
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number[]} Ns       Multiply ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
-   * @param {number} aIndex     The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {number[]} Ns       Multiply ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( Ns[ aIndex ] ).
+   * @param {number} aIndex     The array index of Ns[].
    *
    * @return {BoundsArray} Return this (modified) object.
    */
@@ -1100,7 +1100,6 @@ class BoundsArray extends Recyclable.Root {
     return this.multiply_all_byLowersUppers( aBoundsArray.lowers, aBoundsArray.uppers );
   }
 
-
   /**
    * @param {BoundsArray} aBoundsArray  The first multiplier (a BoundsArray).
    * @param {number[]} Ns               The second multiplier (a number array).
@@ -1110,6 +1109,35 @@ class BoundsArray extends Recyclable.Root {
   multiply_all_byBoundsArray_multiply_all_byNs( aBoundsArray, Ns ) {
     return this.multiply_all_byBoundsArray( aBoundsArray ).multiply_all_byNs( Ns );
   }
+
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number} N          Divide ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( N, N ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  divide_one_byN( thisIndex, N ) {
+    N = Math.fround( N );
+    // Because the different sign of lower and upper, it needs compute all combination to determine the bounds of result.
+    let lower_N = Math.fround( this.lowers[ thisIndex ] / N );
+    let upper_N = Math.fround( this.uppers[ thisIndex ] / N );
+    this.lowers[ thisIndex ] = Math.min( lower_N, upper_N );
+    this.uppers[ thisIndex ] = Math.max( lower_N, upper_N );
+    return this;
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number[]} Ns       Divide ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( Ns[ aIndex ] ).
+   * @param {number} aIndex     The array index of Ns[].
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  divide_one_byNs( thisIndex, Ns, aIndex ) {
+    return this.divide_one_byN( thisIndex, Ns[ aIndex ] );
+  }
+
 
   /**
    * @param {ScaleTranslateArray} aScaleTranslateArray

@@ -753,10 +753,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     {
       if ( virtualImageOutput_afterFilter_BoundsArray_PerPixel ) { // For Average pooling or depthwise convolution.
 
-//!!! ...unfinished... (2022/08/12) 
-        // For average pooling, value bounds should also be calculated.
+        // For average pooling, value bounds should be divided by every pixel's accumulation count.
         if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
-          virtualImageOutput_afterFilter_BoundsArray_PerPixeld.???divide_by_accumulationCount();
+          virtualImageOutput_afterFilter_BoundsArray_PerPixeld.divide_all_by_accumulationCounts();
         }
 
         virtualImageOutput_afterFilter_BoundsArray_PerPixel

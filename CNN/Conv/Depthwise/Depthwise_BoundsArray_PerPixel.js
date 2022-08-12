@@ -192,10 +192,29 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
   }
 
   /**
+   * Divide every value bounds by itself's .accumulationCounts[].
+   *
+   * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
+   */
+  divide_all_by_accumulationCounts() {
+    let imageOutput_elementIndex = 0;
+    for ( let outY = 0; outY < this.imageInfo.outputHeight; ++outY ) {
+      for ( let outX = 0; outX < this.imageInfo.outputWidth; ++outX ) {
+        for ( let outC = 0; outC < this.imageInfo.outputChannelCount; ++outC, ++imageOutput_elementIndex ) {
+          this.divide_one_byNs( imageOutput_elementIndex, this.accumulationCounts );
+        }
+      }
+    }
+    return this;
+  }
+
+  /**
    * Collapse every pixel's value bounds to per output channel value bounds.
    *
    * @param {FloatValue.BoundsArray} aBoundsArray
    *   The collapsed result will be stored to aBoundsArray.
+   *
+   * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
    */
   collapse_byOutputChannel_toBoundsArray( aBoundsArray ) {
     aBoundsArray.length = this.imageInfo.outputChannelCount;
@@ -209,6 +228,7 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
         }
       }
     }
+    return this;
   }
 
 }
