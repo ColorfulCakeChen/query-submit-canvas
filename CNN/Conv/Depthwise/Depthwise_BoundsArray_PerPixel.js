@@ -203,7 +203,7 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
     for ( let outY = 0; outY < this.imageInfo.outputHeight; ++outY ) {
       for ( let outX = 0; outX < this.imageInfo.outputWidth; ++outX ) {
         for ( let outC = 0; outC < this.imageInfo.outputChannelCount; ++outC, ++imageOutput_elementIndex ) {
-          this.divide_one_byNs( imageOutput_elementIndex, this.accumulationCounts );
+          this.divide_one_byNs( imageOutput_elementIndex, this.accumulationCounts, imageOutput_elementIndex );
         }
       }
     }
