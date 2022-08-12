@@ -656,15 +656,22 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
                       // Accumulate value bounds for the filter position (across the whole virtual input image).
                       virtualImageOutput_afterFilter_BoundsArray_PerPixel.add_one_outputChannel_byBounds(
-                        outChannel,
-                        filterY, filterX,
-                        tBounds
-                      );
+                        outChannel, filterY, filterX, tBounds );
 
                     } else { // 1.1.2 ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
 
-//!!! ...unfinished... (2022/08/12) For average pooling, value bounds should also be calculated.
-  
+                      // For average pooling, value bounds should also be calculated.
+                      if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
+                        tBounds.set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel );
+
+                        // Accumulate value bounds for the filter position (across the whole virtual input image).
+                        virtualImageOutput_afterFilter_BoundsArray_PerPixel.add_one_outputChannel_byBounds(
+                          outChannel, filterY, filterX, tBounds );
+
+                      } else {
+                        // For maximum pooling, value bounds is exactly the same as input.
+                      }
+
                       // Confirm no need to undo previous activaction-escaping (when has bias or has activation), because
                       // avg/max pooling can not do that in these situations.
                       //
@@ -682,7 +689,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                           );
                       }
                     }
-  
+
                     ++filterIndex;
 
                   } // outChannelSub, outChannel
@@ -745,6 +752,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // 2. Determine .afterFilter of all virtual image pixels (of every channel).
     {
       if ( virtualImageOutput_afterFilter_BoundsArray_PerPixel ) { // For Average pooling or depthwise convolution.
+
+//!!! ...unfinished... (2022/08/12) 
+        // For average pooling, value bounds should also be calculated.
+        if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
+          virtualImageOutput_afterFilter_BoundsArray_PerPixeld.???divide_by_accumulationCount();
+        }
+
         virtualImageOutput_afterFilter_BoundsArray_PerPixel
           .collapse_byOutputChannel_toBoundsArray( this.boundsArraySet.afterFilter );
 
