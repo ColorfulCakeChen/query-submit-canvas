@@ -654,7 +654,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                       }
 
                       // Accumulate value bounds for the filter position (across the whole virtual input image).
-                      virtualImageOutput_afterFilter_BoundsArray_PerPixel.add_one_outChannel_byBounds(
+                      virtualImageOutput_afterFilter_BoundsArray_PerPixel.add_one_outputChannel_byBounds(
                         outChannel,
                         filterY, filterX,
                         tBounds
@@ -748,7 +748,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     // 2. Determine .afterFilter of all virtual image pixels (of every channel).
     {
-      if ( virtualImageInfo ) { // For Average pooling or depthwise convolution.
+!!!
+      if ( virtualImageOutput_afterFilter_BoundsArray_PerPixel ) { // For Average pooling or depthwise convolution.
         this.boundsArraySet.afterFilter.set_all_by_PositiveInfinity_NegativeInfinity(); // Init .afterFilter (so that could be enlarged.)
 
         let virtualImageOutput_elementIndex = 0;

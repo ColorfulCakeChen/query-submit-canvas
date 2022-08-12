@@ -55,7 +55,7 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
    * Note: filter dilation is not supported. It is assumed as 1.
    *
    *
-   * @param {number} outChannel
+   * @param {number} outputChannel
    *   The filter will be applied and accumulated to this output channel.
    *
    * @param {number} filterY  The Y position inside the depthwise filter.
@@ -66,16 +66,16 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
    * for the depthwise filter position.
    *
    */
-  add_one_outChannel_byBounds(
-    outChannel,
+  add_one_outputChannel_byBounds(
+    outputChannel,
     filterY, filterX,
     tBounds
   ) {
     const imageInput_BeginY = - imageInfo.padHeightTop;
     const imageInput_BeginX = - imageInfo.padWidthLeft;
 
-    let imageOutput_elementIndexBeginY = outChannel;
-    let imageOutput_elementIndex = outChannel;
+    let imageOutput_elementIndexBeginY = outputChannel;
+    let imageOutput_elementIndex = outputChannel;
 
     for ( let outY = 0, inY = imageInput_BeginY + filterY;
           outY < imageInfo.outputHeight;
@@ -100,6 +100,24 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
 
         imageOutput_afterFilter_BoundsArray_perPixel.add_one_byBounds(
           imageOutput_elementIndex, tBounds );
+      }
+    }
+  }
+
+//!!!
+  /**
+   *
+   */
+  collapse_byOutputChannel_toBoundsArray ( aBoundsArrray ) {
+    this.boundsArraySet.afterFilter.set_all_by_PositiveInfinity_NegativeInfinity(); // Init .afterFilter (so that could be enlarged.)
+
+    let virtualImageOutput_elementIndex = 0;
+    for ( let outY = 0; outY < virtualImageInfo.outputHeight; ++outY ) {
+      for ( let outX = 0; outX < virtualImageInfo.outputWidth; ++outX ) {
+        for ( let outC = 0; outC < this.outputChannelCount; ++outC, ++virtualImageOutput_elementIndex ) {
+          this.boundsArraySet.afterFilter.enlarge_one_byBoundsArray_one( outC,
+            virtualImageOutput_afterFilter_BoundsArray_PerPixel, virtualImageOutput_elementIndex );
+        }
       }
     }
   }
