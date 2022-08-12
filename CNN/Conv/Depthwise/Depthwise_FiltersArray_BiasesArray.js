@@ -665,6 +665,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
                       // For average pooling, value bounds should also be calculated.
                       if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
+
+!!! ...unfinished... (2022/08/12)
+// Perhaps, use .input0 instead of .afterUndoPreviousActivationEscaping
+
                         tBounds.set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel );
 
                         // Accumulate value bounds for the filter position (across the whole virtual input image).
