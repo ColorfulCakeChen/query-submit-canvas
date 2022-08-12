@@ -238,20 +238,20 @@ class Block_TestParams_Base extends TestParams.Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
-      // input0_height: [ 3, 3 ],
-      input0_height: [ 2, 2 ],
+      input0_height: [ 3, 3 ],
+      // input0_height: [ 2, 2 ],
 
-      // input0_width: [ 4, 5 ],
-      input0_width: [ 3, 3 ],
+      input0_width: [ 4, 5 ],
+      // input0_width: [ 3, 3 ],
 
-      // input0_channelCount: [ 2, 4 ],
-      input0_channelCount: [ 3, 3 ], //[ 3, 4 ],
+      input0_channelCount: [ 2, 4 ],
+      // input0_channelCount: [ 3, 3 ], //[ 3, 4 ],
 
 //!!! (2022/07/06 Temp Remarked) For speed-up debug.
-      // nConvBlockTypeId: [
-      //   Block.Params.nConvBlockTypeId.valueDesc.range.min,
-      //   Block.Params.nConvBlockTypeId.valueDesc.range.max
-      // ],
+      nConvBlockTypeId: [
+        Block.Params.nConvBlockTypeId.valueDesc.range.min,
+        Block.Params.nConvBlockTypeId.valueDesc.range.max
+      ],
 //!!! (2022/07/06 Temp Added and Remarked) For speed-up debug.
       // nConvBlockTypeId: [
       //   // Block.Params.nConvBlockTypeId.valueDesc.range.min,
@@ -270,32 +270,32 @@ class Block_TestParams_Base extends TestParams.Base {
       // ],
 
 //!!! (2022/07/11 Temp Remarked) For speed-up debug.
-      // pointwise1ChannelCount: [ 0, 8 ],
+      pointwise1ChannelCount: [ 0, 2 ],
       // pointwise1ChannelCount: [ 0, 0 ],
-      // pointwise1ChannelCount: [ 0, 2 ],
-      pointwise1ChannelCount: [ 3, 3 ],
+      // pointwise1ChannelCount: [ 0, 8 ],
+      // pointwise1ChannelCount: [ 3, 3 ],
 
-      // pointwise20ChannelCount: [ 1, 3 ],
-      pointwise20ChannelCount: [ 1, 8 ],
+      pointwise20ChannelCount: [ 1, 3 ],
+      //pointwise20ChannelCount: [ 1, 8 ],
 
 //!!! (2022/07/07 Temp Remarked) For speed up debug.
-      // depthwise_AvgMax_Or_ChannelMultiplier: [
-      //   ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-      //   2
-      // ],
       depthwise_AvgMax_Or_ChannelMultiplier: [
-        1,
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
         2
       ],
+      // depthwise_AvgMax_Or_ChannelMultiplier: [
+      //   1,
+      //   2
+      // ],
 
       // (2021/10/06) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 //!!! (2022/08/04 Temp Remarked) For debug neural net (only use 3x3).
-      // depthwiseFilterHeight: [ Block.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
-      // depthwiseFilterWidth: [ Block.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
+      depthwiseFilterHeight: [ Block.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
+      depthwiseFilterWidth: [ Block.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
       // depthwiseFilterHeight: [ 3, 3 ],
       // depthwiseFilterWidth: [ 3, 3 ],
-      depthwiseFilterHeight: [ 3, 3 ],
-      depthwiseFilterWidth: [ 2, 2 ],
+      // depthwiseFilterHeight: [ 3, 3 ],
+      // depthwiseFilterWidth: [ 2, 2 ],
 
       // (2022/05/02) Note: The right-most pixel of depthwise convolution seems wrong when ( strides = 1, pad = "same" ) in backend
       // WebGL of some platforms (e.g. mobile phone Moto e40). But the issue does not exist when ( strides = 2, pad = "same" ) or
@@ -330,14 +330,14 @@ class Block_TestParams_Base extends TestParams.Base {
       // bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
 
       // nSqueezeExcitationChannelCountDivisor: undefined,
-      // nSqueezeExcitationChannelCountDivisor: [
-      //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
-      //   3
-      // ],
       nSqueezeExcitationChannelCountDivisor: [
-        0,
-        0
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+        3
       ],
+      // nSqueezeExcitationChannelCountDivisor: [
+      //   0,
+      //   0
+      // ],
 
       pointwise20ActivationId:
         // undefined,
