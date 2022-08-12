@@ -1408,7 +1408,7 @@ class NumberImage_Base extends Recyclable.Root {
    */
   assert_pixels_byBoundsArray( aBoundsArray ) {
 //!!! ...unfinished... (2022/08/12) Temp skip checking for finding out real value.
-    return;
+//    return;
 
     let pixelValue;
     let i = 0;
