@@ -7,7 +7,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
 import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Depthwise_ChannelPartInfo.js";
-import { PadInfoCalculator, PadInfoCalculatorRoot } from "./Depthwise_PadInfoCalculator.js";
+import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 
 /**
  * Extract depthwise convolution filters and biases.
@@ -559,7 +559,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     //
     let tBounds;
     let virtualImageInfo;
-    let virtualImageInput_BeginY, virtualImageInput_BeginX;
     let virtualImageOutput_afterFilter_BoundsArray_perPixel;
 
     // For Average pooling or depthwise convolution.
@@ -569,9 +568,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
 
       virtualImageInfo = this; // PadInfoCalculator
-
-      virtualImageInput_BeginY = - virtualImageInfo.padHeightTop;
-      virtualImageInput_BeginX = - virtualImageInfo.padWidthLeft;
 
       // Used to track every ( height, width, channel ) pixel's value bounds.
       virtualImageOutput_afterFilter_BoundsArray_perPixel
