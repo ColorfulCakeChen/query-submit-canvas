@@ -62,20 +62,29 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
    * @param {number} filterX  The X position inside the depthwise filter.
    *
    * @param {FloatValue.Bounds} tBounds
-   *   The value bounds to be added to imageOutput_afterFilter_BoundsArray_perPixel
-   * for the depthwise filter position.
+   *   The value bounds to be added to this BoundsArray_PerPixel for the
+   * specified depthwise filter position.
    *
+   * 
+
+!!! ???
+   * @param {boolean} bAvgPool
+   *   If true, 
    */
   add_one_outputChannel_byBounds(
     outputChannel,
     filterY, filterX,
-    tBounds
+    tBounds,
+    bAvgPool
   ) {
     const imageInput_BeginY = - this.imageInfo.padHeightTop;
     const imageInput_BeginX = - this.imageInfo.padWidthLeft;
 
     let imageOutput_elementIndexBeginY = outputChannel;
     let imageOutput_elementIndex = outputChannel;
+
+    // For Avg pooling, the divisor is effect filter size which includes dilation but excludes input image outside.
+    let avgDivisor = 0;
 
     for ( let outY = 0, inY = imageInput_BeginY + filterY;
           outY < this.imageInfo.outputHeight;
@@ -98,8 +107,12 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
         else if ( inX >= this.imageInfo.inputWidth )
           break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
-        imageOutput_afterFilter_BoundsArray_perPixel.add_one_byBounds(
-          imageOutput_elementIndex, tBounds );
+        // For Avg pooling, the divisor should include filter dilation but exclude input image outside.
+        //
+        // This accumulation should be done after confirm ( inY, inX ) is inside the input image.
+        ++avgDivisor;
+
+        this.add_one_byBounds( imageOutput_elementIndex, tBounds );
       }
     }
   }
