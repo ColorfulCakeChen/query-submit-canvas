@@ -597,9 +597,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
       let inChannelPartInfoArray = aFiltersBiasesPartInfo;
 
+      inChannelBegin = inChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
+
       // 1.1
       if ( this.filtersArray ) { // 1.1.1
-        inChannelBegin = inChannelEnd;                 // Begin from the ending of the previous FiltersBiasesPart.
+//!!! (2022/08/12 Remarked) should also do this even if no filter.
+//        inChannelBegin = inChannelEnd;                 // Begin from the ending of the previous FiltersBiasesPart.
         filterIndex = outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
 
         for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
@@ -699,6 +702,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                 + `undoPreviousEscapingScale[ ${inChannelEnd} ] ( ${undoPreviousEscapingScale} ) must be 1 .`
               );
           }
+
+//!!!
+          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+          } // outChannelSub, outChannel
 
         } // inChannel
       }
