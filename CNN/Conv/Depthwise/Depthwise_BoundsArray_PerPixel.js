@@ -40,7 +40,7 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
   static setAsConstructor_self( imageInfo ) {
     this.imageInfo = imageInfo;
 
-    this.length = virtualImageInfo.outputElementCount;
+    this.length = imageInfo.outputElementCount;
     this.set_all_byN( 0 );
   }
  
@@ -71,31 +71,31 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
     filterY, filterX,
     tBounds
   ) {
-    const imageInput_BeginY = - imageInfo.padHeightTop;
-    const imageInput_BeginX = - imageInfo.padWidthLeft;
+    const imageInput_BeginY = - this.imageInfo.padHeightTop;
+    const imageInput_BeginX = - this.imageInfo.padWidthLeft;
 
     let imageOutput_elementIndexBeginY = outputChannel;
     let imageOutput_elementIndex = outputChannel;
 
     for ( let outY = 0, inY = imageInput_BeginY + filterY;
-          outY < imageInfo.outputHeight;
-          ++outY, inY += imageInfo.stridesHeight,
-            imageOutput_elementIndexBeginY += imageInfo.outputElementCountY ) {
+          outY < this.imageInfo.outputHeight;
+          ++outY, inY += this.imageInfo.stridesHeight,
+            imageOutput_elementIndexBeginY += this.imageInfo.outputElementCountY ) {
 
       if ( inY < 0 )
         continue; // Never access outside of input image. Continue to find out non-negative input image y position.
-      else if ( inY >= imageInfo.inputHeight )
+      else if ( inY >= this.imageInfo.inputHeight )
         break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
       imageOutput_elementIndex = imageOutput_elementIndexBeginY;
       for ( let outX = 0, inX = imageInput_BeginX + filterX;
-            outX < imageInfo.outputWidth;
-            ++outX, inX += imageInfo.stridesWidth,
-              imageOutput_elementIndex += imageInfo.outputChannelCount ) {
+            outX < this.imageInfo.outputWidth;
+            ++outX, inX += this.imageInfo.stridesWidth,
+              imageOutput_elementIndex += this.imageInfo.outputChannelCount ) {
 
         if ( inX < 0 )
           continue; // Never access outside of input image. Continue to find out non-negative input image x position.
-        else if ( inX >= imageInfo.inputWidth )
+        else if ( inX >= this.imageInfo.inputWidth )
           break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
         imageOutput_afterFilter_BoundsArray_perPixel.add_one_byBounds(
@@ -104,19 +104,21 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
     }
   }
 
-//!!!
   /**
+   * Collapse every pixel's value bounds to per output channel value bounds.
    *
+   * @param {FloatValue.BoundsArray} aBoundsArray
+   *   The collapsed result will be stored to aBoundsArray.
    */
-  collapse_byOutputChannel_toBoundsArray ( aBoundsArrray ) {
-    this.boundsArraySet.afterFilter.set_all_by_PositiveInfinity_NegativeInfinity(); // Init .afterFilter (so that could be enlarged.)
+  collapse_byOutputChannel_toBoundsArray( aBoundsArray ) {
+    aBoundsArray.length = this.imageInfo.outputChannelCount;
+    aBoundsArray.set_all_by_PositiveInfinity_NegativeInfinity(); // (so that could be enlarged.)
 
-    let virtualImageOutput_elementIndex = 0;
-    for ( let outY = 0; outY < virtualImageInfo.outputHeight; ++outY ) {
-      for ( let outX = 0; outX < virtualImageInfo.outputWidth; ++outX ) {
-        for ( let outC = 0; outC < this.outputChannelCount; ++outC, ++virtualImageOutput_elementIndex ) {
-          this.boundsArraySet.afterFilter.enlarge_one_byBoundsArray_one( outC,
-            virtualImageOutput_afterFilter_BoundsArray_PerPixel, virtualImageOutput_elementIndex );
+    let imageOutput_elementIndex = 0;
+    for ( let outY = 0; outY < this.imageInfo.outputHeight; ++outY ) {
+      for ( let outX = 0; outX < this.imageInfo.outputWidth; ++outX ) {
+        for ( let outC = 0; outC < this.imageInfo.outputChannelCount; ++outC, ++imageOutput_elementIndex ) {
+          aBoundsArray.enlarge_one_byBoundsArray_one( outC, this, imageOutput_elementIndex );
         }
       }
     }
