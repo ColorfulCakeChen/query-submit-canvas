@@ -755,7 +755,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
         // For average pooling, value bounds should be divided by every pixel's accumulation count.
         if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
-          virtualImageOutput_afterFilter_BoundsArray_PerPixeld.divide_all_by_accumulationCounts();
+          virtualImageOutput_afterFilter_BoundsArray_PerPixel.divide_all_by_accumulationCounts();
         }
 
         virtualImageOutput_afterFilter_BoundsArray_PerPixel
