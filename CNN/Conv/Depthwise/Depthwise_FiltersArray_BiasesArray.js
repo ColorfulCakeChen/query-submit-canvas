@@ -552,51 +552,23 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // or non-padded pixel configuration for depthwise convolution.
     //
     // So, virtual input image should use the same as real input size.
-
-//!!! (2022/08/10 Remarked) strides should still be considered
-//    //
-//    // Its size ( height, width ) is just enough to calculate evey kinds of padded
-//    // or non-padded pixel configuration for depthwise convolution.
-//     // Note: Its strides will be ignored (i.e. always use STRIDES_1_PAD_Xxx), because
-//     //       strides does not affect value bounds.
-
+    //
+    // Note: In theroy, for average pooling, value bounds should be the same as input.
+    //       In reality, however, it should also be calculated one by one because of
+    //       floating-point accumulate error.
     //
     let tBounds;
     let virtualImageInfo;
     let virtualImageInput_BeginY, virtualImageInput_BeginX;
     let virtualImageOutput_afterFilter_BoundsArray_perPixel;
 
-    if ( this.filtersArray ) { // For depthwise convolution.
+    // For Average pooling or depthwise convolution.
+    if (   ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG )
+        || ( this.filtersArray )
+       ) {
       tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
 
       virtualImageInfo = this; // PadInfoCalculator
-
-//!!! (2022/08/10 Remarked) use real input image size.
-//
-// //!!! (2022/08/10 Remarked) strides should still be considered
-// //       let virtualImage_stridesPad;
-// //       if ( this.stridesPadInfo.pad_isValid() )
-// //         virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
-// //       else
-// //         virtualImage_stridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
-//
-//       virtualImageInfo = PadInfoCalculatorRoot.Pool.get_or_create_by(
-//
-// //!!! (2022/08/10 Remarked) strides should still be considered
-// //         Math.min( this.effectFilterHeight, this.inputHeight ), // virtualImageInput_height
-// //         Math.min( this.effectFilterWidth, this.inputWidth ),   // virtualImageInput_width
-//
-//         this.inputHeight, // virtualImageInput_height
-//         this.inputWidth,  // virtualImageInput_width
-//
-//         this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier,
-//         this.filterHeight, this.filterWidth,
-//
-// //!!! (2022/08/10 Remarked) strides should still be considered
-// //        virtualImage_stridesPad
-//
-//         this.strides
-//       );
 
       virtualImageInput_BeginY = - virtualImageInfo.padHeightTop;
       virtualImageInput_BeginX = - virtualImageInfo.padWidthLeft;
@@ -661,6 +633,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                     for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
                       // Note: The .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
+
+!!! ...unfinished... (2022/08/12) For average pooling, value bounds should also be calculated.
 
                       if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                         if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
@@ -802,7 +776,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     // 2. Determine .afterFilter of all virtual image pixels (of every channel).
     {
-      if ( this.filtersArray ) { // For depthwise convolution.
+      if ( virtualImageInfo ) { // For Average pooling or depthwise convolution.
         this.boundsArraySet.afterFilter.set_all_by_PositiveInfinity_NegativeInfinity(); // Init .afterFilter (so that could be enlarged.)
 
         let virtualImageOutput_elementIndex = 0;
@@ -818,16 +792,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         virtualImageOutput_afterFilter_BoundsArray_perPixel.disposeResources_and_recycleToPool();
         virtualImageOutput_afterFilter_BoundsArray_perPixel = null;
 
-//!!! (2022/08/10 Remarked) use real input image size.
-//        virtualImageInfo.disposeResources_and_recycleToPool();
-//        virtualImageInfo = null;
         virtualImageInfo = null; // Just nullify it (because it points to this object self).
 
         tBounds.disposeResources_and_recycleToPool();
         tBounds = null;
-    
+
       } else {
-        // For avg/max pooling, the value bounds does not change.
+        // For max pooling, the value bounds does not change.
         this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
       }
     }

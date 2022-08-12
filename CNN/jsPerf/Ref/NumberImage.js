@@ -553,11 +553,11 @@ class NumberImage_Base extends Recyclable.Root {
 
                     switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
                       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG: // Avg pooling
-
-!!! ...unfinished... (2022/08/12) For AVG pooling, should be divided every time to reduce accumulated error.
-
                         imageOut.dataArray[ outIndex ] = Math.fround(
                           Math.fround( imageOut.dataArray[ outIndex ] ) + Math.fround( imageIn.dataArray[ inIndex ] ) );
+
+!!! ...unfinished... (2022/08/12) For average pooling, value bounds should also be calculated.
+
                         break;
 
                       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX: // Max pooling
