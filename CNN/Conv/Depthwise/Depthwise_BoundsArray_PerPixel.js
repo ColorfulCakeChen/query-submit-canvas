@@ -75,6 +75,8 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
     outputChannel,
     filterY, filterX,
     tBounds,
+
+!!! ...unfinished... (2022/08/12)
     bAvgPool
   ) {
     const imageInput_BeginY = - this.imageInfo.padHeightTop;
