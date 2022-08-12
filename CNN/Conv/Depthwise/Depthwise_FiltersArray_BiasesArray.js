@@ -748,19 +748,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     // 2. Determine .afterFilter of all virtual image pixels (of every channel).
     {
-!!!
       if ( virtualImageOutput_afterFilter_BoundsArray_PerPixel ) { // For Average pooling or depthwise convolution.
-        this.boundsArraySet.afterFilter.set_all_by_PositiveInfinity_NegativeInfinity(); // Init .afterFilter (so that could be enlarged.)
-
-        let virtualImageOutput_elementIndex = 0;
-        for ( let outY = 0; outY < virtualImageInfo.outputHeight; ++outY ) {
-          for ( let outX = 0; outX < virtualImageInfo.outputWidth; ++outX ) {
-            for ( let outC = 0; outC < this.outputChannelCount; ++outC, ++virtualImageOutput_elementIndex ) {
-              this.boundsArraySet.afterFilter.enlarge_one_byBoundsArray_one( outC,
-                virtualImageOutput_afterFilter_BoundsArray_PerPixel, virtualImageOutput_elementIndex );
-            }
-          }
-        }
+        virtualImageOutput_afterFilter_BoundsArray_PerPixel
+          .collapse_byOutputChannel_toBoundsArray( this.boundsArraySet.afterFilter );
 
         virtualImageOutput_afterFilter_BoundsArray_PerPixel.disposeResources_and_recycleToPool();
         virtualImageOutput_afterFilter_BoundsArray_PerPixel = null;
