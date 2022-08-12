@@ -40,7 +40,7 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor_self( length ) {
+  static setAsConstructor_self( length = 0 ) {
     if ( this.lowers )
       this.lowers.length = length;
     else

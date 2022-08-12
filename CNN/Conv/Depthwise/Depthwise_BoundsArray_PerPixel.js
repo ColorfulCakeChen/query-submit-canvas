@@ -46,9 +46,9 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
     this.imageInfo = imageInfo;
 
     if ( this.accumulationCounts )
-      this.accumulationCounts.length = length;
+      this.accumulationCounts.length = 0;
     else
-      this.accumulationCounts = new Array( length );
+      this.accumulationCounts = new Array();
 
     this.length = imageInfo.outputElementCount;
     this.set_all_byN( 0 );

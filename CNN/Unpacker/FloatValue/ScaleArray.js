@@ -28,7 +28,7 @@ class ScaleArray extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor( length ) {
+  static setAsConstructor( length = 0 ) {
     super.setAsConstructor();
     ScaleArray.setAsConstructor_self.call( this, length );
     return this;
