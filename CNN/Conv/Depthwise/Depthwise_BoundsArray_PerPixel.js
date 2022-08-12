@@ -40,15 +40,38 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
   static setAsConstructor_self( imageInfo ) {
     this.imageInfo = imageInfo;
 
+    if ( this.counts )
+      this.counts.length = length;
+    else
+      this.counts = new Array( length );
+
     this.length = imageInfo.outputElementCount;
     this.set_all_byN( 0 );
+    this.counts.fill( 0 );
   }
  
   /** @override */
   disposeResources() {
+    this.counts.length = 0;
     this.imageInfo = null; // Just nullify it. Do not release it here.
     super.disposeResources();
   }
+
+  set length( newLength ) {
+    super.length = newLength;
+    this.counts.length = newLength;
+  }
+
+  /**
+   * @return {Depthwise_BoundsArray_PerPixel}
+   *   Return newly created object which is a copy of this BoundsArray.
+   */
+  clone() {
+    let result = Depthwise_BoundsArray_PerPixel.Pool.get_or_create_by( this.length );
+    result.set_all_byBoundsArray( this );
+    return result;
+  }
+
 
   /** Accumulate value bounds for the filter position (across the whole virtual input image).
    *
@@ -76,7 +99,7 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
     filterY, filterX,
     tBounds,
 
-!!! ...unfinished... (2022/08/12)
+!!! ...unfinished... (2022/08/12) wrong! should use an array to record every pixel's divisor
     bAvgPool
   ) {
     const imageInput_BeginY = - this.imageInfo.padHeightTop;
@@ -85,6 +108,7 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
     let imageOutput_elementIndexBeginY = outputChannel;
     let imageOutput_elementIndex = outputChannel;
 
+!!! ...unfinished... (2022/08/12) wrong! should use an array to record every pixel's divisor
     // For Avg pooling, the divisor is effect filter size which includes dilation but excludes input image outside.
     let avgDivisor = 0;
 
@@ -109,6 +133,7 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
         else if ( inX >= this.imageInfo.inputWidth )
           break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
+!!! ...unfinished... (2022/08/12) wrong! should use an array to record every pixel's divisor
         // For Avg pooling, the divisor should include filter dilation but exclude input image outside.
         //
         // This accumulation should be done after confirm ( inY, inX ) is inside the input image.

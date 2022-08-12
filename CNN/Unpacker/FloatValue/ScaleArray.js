@@ -36,7 +36,10 @@ class ScaleArray extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self( length ) {
-    this.scales = new Array( length );
+    if ( this.scales )
+      this.scales.length = length;
+    else
+      this.scales = new Array( length );
   }
 
   /** @override */
