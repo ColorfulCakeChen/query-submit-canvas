@@ -663,6 +663,9 @@ class NumberImage_Base extends Recyclable.Root {
       // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
       // by .afterBias, bPassThrough and activation function's output range.
 
+!!! ...unfinished... (2022/08/12)
+// average pooling should set .boundsArraySet.output0 by .afterBias
+
       if (   ( depthwise_AvgMax_Or_ChannelMultiplier < 0 )
           && (   ( bDepthwiseBias == false )
               && ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
