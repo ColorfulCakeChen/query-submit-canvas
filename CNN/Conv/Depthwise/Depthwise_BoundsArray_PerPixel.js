@@ -148,6 +148,7 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
    *   The value bounds to be added to this BoundsArray_PerPixel for the
    * specified depthwise filter position.
    *
+   * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
    */
   add_one_outputChannel_byBounds(
     outputChannel,
@@ -189,6 +190,7 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
         this.add_one_byBounds( imageOutput_elementIndex, tBounds );
       }
     }
+    return this;
   }
 
   /**
