@@ -634,8 +634,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
                       // Note: The .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
 
-!!! ...unfinished... (2022/08/12) For average pooling, value bounds should also be calculated.
-
                       if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                         if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
 
@@ -658,7 +656,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                           .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
                           .multiply_byN( sourceWeight );
                       }
-
+//!!!
                       // Accumulate value bounds for the filter position (across the whole virtual input image).
                       {
                         let virtualImageOutput_elementIndexBeginY = outChannel;
@@ -706,6 +704,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         } // filterY
 
       } else { // 1.1.2 ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
+
+!!! ...unfinished... (2022/08/12) For average pooling, value bounds should also be calculated.
 
         for ( ; inChannelEnd < this.inputChannelCount; ++inChannelEnd ) {
 

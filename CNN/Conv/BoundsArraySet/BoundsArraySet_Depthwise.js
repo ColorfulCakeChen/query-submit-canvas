@@ -97,5 +97,62 @@ class Depthwise extends ConvBiasActivation {
     return this;
   }
 
+  /** Accumulate value bounds for the filter position (across the whole virtual input image).
+   *
+   * Note: filter dilation is not supported. It is assumed as 1.
+   *
+   *
+   * @param {FloatValue.BoundsArray} virtualImageOutput_afterFilter_BoundsArray_perPixel
+   *   Every pixel's value bounds for the virtual output image.
+   * 
+   * @param {Depthwise.PadInfoCalculator} virtualImageInfo
+   *   The imagined input image information.
+   *
+   * @param {number} outChannel
+   *   The 
+   *
+   * @param {number} filterY  The Y position inside the depthwise filter.
+   * @param {number} filterX  The X position inside the depthwise filter.
+   *
+   * @param {FloatValue.Bounds} tBounds
+   *   The value bounds to be added to virtualImageOutput_afterFilter_BoundsArray_perPixel
+   * for the depthwise filter position.
+   *
+   */
+  static virtualImageOutput_afterFilter_BoundsArray_add_one_byBounds(
+    virtualImageOutput_afterFilter_BoundsArray_perPixel,
+    virtualImageInfo, outChannel,
+    filterY, filterX,
+    tBounds
+  ) {
+    let virtualImageOutput_elementIndexBeginY = outChannel;
+    let virtualImageOutput_elementIndex = outChannel;
+    for ( let outY = 0, inY = virtualImageInput_BeginY + filterY;
+          outY < virtualImageInfo.outputHeight;
+          ++outY, inY += virtualImageInfo.stridesHeight,
+            virtualImageOutput_elementIndexBeginY += virtualImageInfo.outputElementCountY ) {
+
+      if ( inY < 0 )
+        continue; // Never access outside of input image. Continue to find out non-negative input image y position.
+      else if ( inY >= virtualImageInfo.inputHeight )
+        break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
+
+      virtualImageOutput_elementIndex = virtualImageOutput_elementIndexBeginY;
+      for ( let outX = 0, inX = virtualImageInput_BeginX + filterX;
+            outX < virtualImageInfo.outputWidth;
+            ++outX, inX += virtualImageInfo.stridesWidth,
+              virtualImageOutput_elementIndex += virtualImageInfo.outputChannelCount ) {
+
+        if ( inX < 0 )
+          continue; // Never access outside of input image. Continue to find out non-negative input image x position.
+        else if ( inX >= virtualImageInfo.inputWidth )
+          break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
+
+        virtualImageOutput_afterFilter_BoundsArray_perPixel.add_one_byBounds(
+          virtualImageOutput_elementIndex, tBounds );
+      }
+    }
+  }
+
 }
 
