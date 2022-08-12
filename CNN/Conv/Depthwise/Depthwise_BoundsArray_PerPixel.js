@@ -181,7 +181,7 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
         else if ( inX >= this.imageInfo.inputWidth )
           break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
-        // For Avg pooling, the divisor should include filter dilation but exclude input image outside.
+        // It should include filter dilation but exclude input image outside.
         //
         // This accumulation should be done after confirm ( inY, inX ) is inside the input image.
         ++this.accumulationCounts[ imageOutput_elementIndex ];
