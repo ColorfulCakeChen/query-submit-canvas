@@ -464,7 +464,6 @@ class NumberImage_Base extends Recyclable.Root {
     if (   ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG )
         || ( depthwise_AvgMax_Or_ChannelMultiplier > 0 )
        ) {
-
       tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
       afterFilter_BoundsArray_perPixel
         = FloatValue.BoundsArray.Pool.get_or_create_by( outputElementCount )
@@ -567,8 +566,9 @@ class NumberImage_Base extends Recyclable.Root {
                         imageOut.dataArray[ outIndex ] = Math.fround(
                           Math.fround( imageOut.dataArray[ outIndex ] ) + Math.fround( imageIn.dataArray[ inIndex ] ) );
 
-!!! ...unfinished... (2022/08/12) For average pooling, value bounds should also be calculated.
-
+                        // Note: .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
+                        tBounds.set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel );
+                        afterFilter_BoundsArray_perPixel.add_one_byBounds( outIndex, tBounds );
                         break;
 
                       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX: // Max pooling
@@ -603,6 +603,8 @@ class NumberImage_Base extends Recyclable.Root {
             if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier ) {
               imageOut.dataArray[ outIndex ] = Math.fround(
                 Math.fround( imageOut.dataArray[ outIndex ] ) / Math.fround( avgDivisor ) ); // So that every sum is averaged.
+
+              afterFilter_BoundsArray_perPixel.divide_one_byN( outIndex, avgDivisor ); // value bounds is also averaged.
             }
           }
         }
@@ -614,11 +616,10 @@ class NumberImage_Base extends Recyclable.Root {
     // Note: imageOut.boundsArraySet.afterUndoPreviousActivationEscaping has
     //       already been setup by BoundsArraySet.Depthwise() constructor.
     //
-    if ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ) { // For avg/max pooling, the value bounds will not change.
-//!!! ...unfinished... (2022/08/12) For AVG pooling, should be calculated value by value.
-      imageOut.boundsArraySet.afterFilter.set_all_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping );
 
-    } else { // For normal depthwise convolution, value bounds should be calculated by accumulation.
+    // For normal depthwise convolution and average pooling, value bounds should
+    // be calculated by accumulation.
+    if ( afterFilter_BoundsArray_perPixel ) {
 
       // Q: Why not claculated in the above depthwise convolution for-loop?
       // A: When pad=same, the calculation may be wrong because the padded pixels
@@ -642,6 +643,10 @@ class NumberImage_Base extends Recyclable.Root {
 
       tBounds.disposeResources_and_recycleToPool();
       tBounds = null;
+
+    } else { // For maximum pooling, the value bounds will not change.
+      imageOut.boundsArraySet.afterFilter.set_all_byBoundsArray(
+        imageOut.boundsArraySet.afterUndoPreviousActivationEscaping );
     }
 
     //!!! (2022/08/06) For debug pixel value bounds.
