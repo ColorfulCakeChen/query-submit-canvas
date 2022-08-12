@@ -598,40 +598,38 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       let inChannelPartInfoArray = aFiltersBiasesPartInfo;
 
       inChannelBegin = inChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
+      filterIndex = outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
 
-      // 1.1
-      if ( this.filtersArray ) { // 1.1.1
-//!!! (2022/08/12 Remarked) should also do this even if no filter.
-//        inChannelBegin = inChannelEnd;                 // Begin from the ending of the previous FiltersBiasesPart.
-        filterIndex = outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
+      for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
+        for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
 
-        for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
-          for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+          for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
+            for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
 
-            for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
-              for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
+              // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
+              if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
+                continue;
 
-                // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
-                if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
-                  continue;
+              let inChannel = inChannelBegin;
+              let outChannel = outChannelBegin;
 
-                let inChannel = inChannelBegin;
-                let outChannel = outChannelBegin;
+              InChannelPartIndexLoop:
+              for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+                let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
 
-                InChannelPartIndexLoop:
-                for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-                  let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+                for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
+                  if ( inChannel >= this.inputChannelCount )
+                    break InChannelPartIndexLoop; // Never exceeds the total input channel count.
 
-                  for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
-                    if ( inChannel >= this.inputChannelCount )
-                      break InChannelPartIndexLoop; // Never exceeds the total input channel count.
+                  let undoPreviousEscapingScale = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ];
+                  let filterValuePassThrough = thePassThroughStyleInfo.filterValue * undoPreviousEscapingScale;
 
-                    let undoPreviousEscapingScale = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ];
-                    let filterValuePassThrough = thePassThroughStyleInfo.filterValue * undoPreviousEscapingScale;
+                  for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
-                    for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+                    // Note: The .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
 
-                      // Note: The .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
+                    // 1.1
+                    if ( this.filtersArray ) { // 1.1.1
 
                       if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                         if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
@@ -663,52 +661,43 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                         tBounds
                       );
 
-                      ++filterIndex;
+                    } else { // 1.1.2 ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
 
-                    } // outChannelSub, outChannel
-                  } // inChannelSub, inChannel
-                } // inChannelPartIndex
+//!!! ...unfinished... (2022/08/12) For average pooling, value bounds should also be calculated.
+  
+                      // Confirm no need to undo previous activaction-escaping (when has bias or has activation), because
+                      // avg/max pooling can not do that in these situations.
+                      //
+                      if (   ( this.bBias != false )
+                          || ( this.nActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ) {
+            
+                        if ( undoPreviousEscapingScale != 1 )
+                          throw Error(
+                              `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+                            + `For avg/max pooling, `
+                            + `if ( bBias ( ${this.bBias} ) is not false ) or `
+                            + `( nActivationId ( ${ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId )}(${this.nActivationId}) ) `
+                              + `is not ValueDesc.ActivationFunction.Singleton.Ids.NONE(0) ), `
+                            + `undoPreviousEscapingScale[ ${inChannelEnd} ] ( ${undoPreviousEscapingScale} ) must be 1 .`
+                          );
+                      }
+                    }
+  
+                    ++filterIndex;
 
-                inChannelEnd = inChannel;   // Record the ending input channel index of the current FiltersBiasesPart.
-                outChannelEnd = outChannel; // Record the ending output channel index of the current FiltersBiasesPart.
-                filterIndex += ( this.outputChannelCount - outChannel ) + outChannelBegin; // Jump to the outChannelBegin of the next inChannel.
+                  } // outChannelSub, outChannel
+                } // inChannelSub, inChannel
+              } // inChannelPartIndex
 
-              } // dilationFilterX
-            } // filterX
-          } // dilationFilterY
-        } // filterY
+              inChannelEnd = inChannel;   // Record the ending input channel index of the current FiltersBiasesPart.
+              outChannelEnd = outChannel; // Record the ending output channel index of the current FiltersBiasesPart.
+              filterIndex += ( this.outputChannelCount - outChannel ) + outChannelBegin; // Jump to the outChannelBegin of the next inChannel.
 
-      } else { // 1.1.2 ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
+            } // dilationFilterX
+          } // filterX
+        } // dilationFilterY
+      } // filterY
 
-!!! ...unfinished... (2022/08/12) For average pooling, value bounds should also be calculated.
-
-        for ( ; inChannelEnd < this.inputChannelCount; ++inChannelEnd ) {
-
-          // Confirm no need to undo previous activaction-escaping (when has bias or has activation), because
-          // avg/max pooling can not do that in these situations.
-          //
-          if (   ( this.bBias != false )
-              || ( this.nActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ) {
-
-            let undoPreviousEscapingScale = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannelEnd ];
-
-            if ( undoPreviousEscapingScale != 1 )
-              throw Error(
-                  `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-                + `For avg/max pooling, `
-                + `if ( bBias ( ${this.bBias} ) is not false ) or `
-                + `( nActivationId ( ${ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId )}(${this.nActivationId}) ) `
-                  + `is not ValueDesc.ActivationFunction.Singleton.Ids.NONE(0) ), `
-                + `undoPreviousEscapingScale[ ${inChannelEnd} ] ( ${undoPreviousEscapingScale} ) must be 1 .`
-              );
-          }
-
-//!!!
-          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
-          } // outChannelSub, outChannel
-
-        } // inChannel
-      }
 
       // 1.2
       if ( this.biasesArray ) {
