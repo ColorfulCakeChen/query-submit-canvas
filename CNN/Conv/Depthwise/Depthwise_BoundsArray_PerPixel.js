@@ -13,6 +13,11 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
  *   The input/output image information of the depthwise operation. It is not owned
  * and will not be released by this object.
  *
+ * @member {number[]} neighborCounts
+ *   Every pixel is add from how many neighbors. Usually they are the same as
+ * depthwise filter size. But if pad=same, the border pixels will have
+ * different neighbor count.
+ *
  */
 class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
 
@@ -40,26 +45,26 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
   static setAsConstructor_self( imageInfo ) {
     this.imageInfo = imageInfo;
 
-    if ( this.counts )
-      this.counts.length = length;
+    if ( this.neighborCounts )
+      this.neighborCounts.length = length;
     else
-      this.counts = new Array( length );
+      this.neighborCounts = new Array( length );
 
     this.length = imageInfo.outputElementCount;
     this.set_all_byN( 0 );
-    this.counts.fill( 0 );
+    this.neighborCounts.fill( 0 );
   }
  
   /** @override */
   disposeResources() {
-    this.counts.length = 0;
+    this.neighborCounts.length = 0;
     this.imageInfo = null; // Just nullify it. Do not release it here.
     super.disposeResources();
   }
 
   set length( newLength ) {
     super.length = newLength;
-    this.counts.length = newLength;
+    this.neighborCounts.length = newLength;
   }
 
   /**
@@ -69,7 +74,62 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
   clone() {
     let result = Depthwise_BoundsArray_PerPixel.Pool.get_or_create_by( this.length );
     result.set_all_byBoundsArray( this );
+    result.neighborCounts_set_all_byBoundsArray( this );
     return result;
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.neighborCounts[].
+   * @param {number} N          Set ( this.neighborCounts[ thisIndex ] ) by ( N ).
+   *
+   * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
+   */
+  neighborCounts_set_one_byN( thisIndex, N ) {
+    this.neighborCounts[ thisIndex ] = N;
+    return this;
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.neighborCounts[].
+   * @param {number[]} Ns       Set ( this.neighborCounts[ thisIndex ] ) by ( Ns[ aIndex ] ).
+   * @param {number} aIndex     The array index of Ns[].
+   *
+   * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
+   */
+  neighborCounts_set_one_byNs( thisIndex, Ns, aIndex ) {
+    this.neighborCounts[ thisIndex ] = Ns[ aIndex ];
+    return this;
+  }
+
+  /**
+   * @param {number} N          Set ( this.neighborCounts[] ) by ( N ).
+   *
+   * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
+   */
+  neighborCounts_set_all_byN( N ) {
+    this.neighborCounts.fill( N );
+    return this;
+  }
+
+  /**
+   * @param {number[]} Ns  Set all ( this.neighborCounts[] ) by ( Ns[] ).
+   *
+   * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
+   */
+  neighborCounts_set_all_byNs( Ns ) {
+    for ( let i = 0; i < this.neighborCounts.length; ++i ) {
+      this.neighborCounts[ i ] = Ns[ i ];
+    }
+    return this;
+  }
+
+  /**
+   * @param {Depthwise_BoundsArray_PerPixel} aBoundsArray  Set all ( this.neighborCounts[] ) by ( aBoundsArray.neighborCounts[] ).
+   *
+   * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
+   */
+  neighborCounts_set_all_byBoundsArray( aBoundsArray ) {
+    return this.neighborCounts_set_all_byNs( aBoundsArray.neighborCounts_set_all_byNs );
   }
 
 
@@ -88,29 +148,17 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
    *   The value bounds to be added to this BoundsArray_PerPixel for the
    * specified depthwise filter position.
    *
-   * 
-
-!!! ???
-   * @param {boolean} bAvgPool
-   *   If true, 
    */
   add_one_outputChannel_byBounds(
     outputChannel,
     filterY, filterX,
-    tBounds,
-
-!!! ...unfinished... (2022/08/12) wrong! should use an array to record every pixel's divisor
-    bAvgPool
+    tBounds
   ) {
     const imageInput_BeginY = - this.imageInfo.padHeightTop;
     const imageInput_BeginX = - this.imageInfo.padWidthLeft;
 
     let imageOutput_elementIndexBeginY = outputChannel;
     let imageOutput_elementIndex = outputChannel;
-
-!!! ...unfinished... (2022/08/12) wrong! should use an array to record every pixel's divisor
-    // For Avg pooling, the divisor is effect filter size which includes dilation but excludes input image outside.
-    let avgDivisor = 0;
 
     for ( let outY = 0, inY = imageInput_BeginY + filterY;
           outY < this.imageInfo.outputHeight;
@@ -133,11 +181,10 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
         else if ( inX >= this.imageInfo.inputWidth )
           break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
 
-!!! ...unfinished... (2022/08/12) wrong! should use an array to record every pixel's divisor
         // For Avg pooling, the divisor should include filter dilation but exclude input image outside.
         //
         // This accumulation should be done after confirm ( inY, inX ) is inside the input image.
-        ++avgDivisor;
+        ++this.neighborCounts[ imageOutput_elementIndex ];
 
         this.add_one_byBounds( imageOutput_elementIndex, tBounds );
       }
