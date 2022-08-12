@@ -668,7 +668,7 @@ class NumberImage_Base extends Recyclable.Root {
       // by .afterBias, bPassThrough and activation function's output range.
 
 !!! ...unfinished... (2022/08/12)
-// average pooling should set .boundsArraySet.output0 by .afterBias
+// average pooling should set .boundsArraySet.output0 by .afterBias and .input0.scaleArraySet
 
       if (   ( depthwise_AvgMax_Or_ChannelMultiplier < 0 )
           && (   ( bDepthwiseBias == false )

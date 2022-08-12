@@ -474,8 +474,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
           // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
           {
+
 !!! ...unfinished... (2022/08/12)
-// average pooling should set .boundsArraySet.output0 by .afterBias
+// average pooling should set .boundsArraySet.output0 by .afterBias and .input0.scaleArraySet
 
             if (   ( this.AvgMax_Or_ChannelMultiplier < 0 )
                 && (   ( this.bBias == false )
