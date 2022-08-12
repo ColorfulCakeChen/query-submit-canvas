@@ -1437,7 +1437,7 @@ class NumberImage_Base extends Recyclable.Root {
           pixelValue = this.dataArray[ i ];
           if ( !( aBoundsArray.is_one_contain_N( c, pixelValue ) ) ) {
             debugger;
-            throw Error( `NumberImage.Base.assert_output_BoundsArray():`
+            throw Error( `NumberImage.Base.assert_output_BoundsArray(): `
               + `at ( x, y, c ) = ( ${x}, ${y}, ${c} ), `
               + `.dataArray[ ${i} ] = ( ${pixelValue} ) should be in bounds `
               + `[ ${aBoundsArray.lowers[ c ]}, ${aBoundsArray.uppers[ c ]} ].`
