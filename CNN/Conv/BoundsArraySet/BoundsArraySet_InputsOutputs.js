@@ -265,15 +265,32 @@ class InputsOutputs extends Recyclable.Root {
     return this;
   }
 
+//!!!
   /**
-   * Set .output0 (and .output1) by .input0 (including .activationEscaping_ScaleArraySet).
+   * Set .output0 (and .output1) by specified BoundsArray and ScaleArraySet.
+   *
+   * @param {FloatValue.BoundsArray} aBoundsArray      The BoundsArray to be copied.
+   * @param {FloatValue.ScaleArraySet} aScaleArraySet  The ScaleArraySet to be copied.
+   *
+   * @return {InputsOutputs}
+   *   Return this (modified) object.
+   */
+  set_outputs_all_byBoundsArray_ScaleArraySet( aBoundsArray, aScaleArraySet ) {
+    this.output0.set_all_byBoundsArray_ScaleArraySet( aBoundsArray, aScaleArraySet );
+    this.output1?.set_all_byBoundsArray_ScaleArraySet( aBoundsArray, aScaleArraySet );
+    return this;
+  }
+
+  /**
+   * Set .output0 (and .output1) by .input0 (including (activation escaping) .scaleArraySet).
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
    */
   set_outputs_all_by_input0() {
-    this.output0.set_all_byScaleBoundsArray( this.input0 );
-    this.output1?.set_all_byScaleBoundsArray( this.input0 ); // Note: also use this.input0 (not this.input1).
+    // Note: also use this.input0 (not this.input1).
+    return this.set_outputs_all_byBoundsArray_ScaleArraySet(
+      this.input0.boundsArray, this.input0.scaleArraySet );
     return this;
   }
 
