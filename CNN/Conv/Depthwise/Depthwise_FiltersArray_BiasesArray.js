@@ -683,7 +683,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                         // (Because avg pooling can not undo previous activation
                         // escaping scale, use .input0 instead of
                         // .afterUndoPreviousActivationEscaping to calculate value bounds.)
-                        tBounds.set_byBoundsArray( this.boundsArraySet.input0, inChannel );
+                        tBounds.set_byBoundsArray( this.boundsArraySet.input0.boundsArray, inChannel );
 
                         // Accumulate value bounds for the filter position (across the whole virtual input image).
                         virtualImageOutput_afterFilter_BoundsArray_PerPixel
