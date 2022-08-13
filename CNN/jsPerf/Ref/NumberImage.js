@@ -566,12 +566,10 @@ class NumberImage_Base extends Recyclable.Root {
                         imageOut.dataArray[ outIndex ] = Math.fround(
                           Math.fround( imageOut.dataArray[ outIndex ] ) + Math.fround( imageIn.dataArray[ inIndex ] ) );
 
-!!! ...unfinished... (2022/08/12)
-// Perhaps, use .input0 instead of .afterUndoPreviousActivationEscaping
-
-
-                        // Note: .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
-                        tBounds.set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel );
+                        // (Because avg pooling can not undo previous activation
+                        // escaping scale, use .input0 instead of
+                        // .afterUndoPreviousActivationEscaping to calculate value bounds.)
+                        tBounds.set_byBoundsArray( imageOut.boundsArraySet.input0, inChannel );
                         afterFilter_BoundsArray_perPixel.add_one_byBounds( outIndex, tBounds );
                         break;
 

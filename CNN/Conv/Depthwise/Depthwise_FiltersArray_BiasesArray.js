@@ -484,7 +484,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                    )
                ) {
 
-              // For avg/max pooling, if it has no bias and no activation), the value bounds does not change (i.e. should be the same as input).
+              // For avg/max pooling, if it has no bias and no activation, the value bounds does not change (i.e. should be the same as input).
               //
               // In this case, the previous activation-escaping needs not be undo (so undoPreviousEscapingScale could be not 1). Using them
               // as this avg/max pooling's activation-escaping since they can not be calculated in fact.
@@ -667,10 +667,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                       // For average pooling, value bounds should also be calculated.
                       if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
 
-!!! ...unfinished... (2022/08/12)
-// Perhaps, use .input0 instead of .afterUndoPreviousActivationEscaping
-
-                        tBounds.set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel );
+                        // (Because avg pooling can not undo previous activation
+                        // escaping scale, use .input0 instead of
+                        // .afterUndoPreviousActivationEscaping to calculate value bounds.)
+                        tBounds.set_byBoundsArray( this.boundsArraySet.input0, inChannel );
 
                         // Accumulate value bounds for the filter position (across the whole virtual input image).
                         virtualImageOutput_afterFilter_BoundsArray_PerPixel.add_one_outputChannel_byBounds(
