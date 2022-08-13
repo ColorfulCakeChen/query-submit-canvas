@@ -665,21 +665,31 @@ class NumberImage_Base extends Recyclable.Root {
       // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
       // by .afterBias, bPassThrough and activation function's output range.
 
-!!! ...unfinished... (2022/08/12)
-// average pooling should set .boundsArraySet.output0 by .afterBias and .input0.scaleArraySet
-
       if (   ( depthwise_AvgMax_Or_ChannelMultiplier < 0 )
           && (   ( bDepthwiseBias == false )
               && ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
              )
          ) {
 
-        // For avg/max pooling, if it has no bias and no activation), the value bounds does not change (i.e. should be the same as input).
+        // For avg/max pooling, if it has no bias and no activation), the value
+        // bounds does not change (i.e. should be the same as input).
         //
-        // In this case, the previous activation-escaping needs not be undo (so undoPreviousEscapingScale could be not 1). Using them
-        // as this avg/max pooling's activation-escaping since they can not be calculated in fact.
+        // In this case, the previous activation-escaping needs not be undo
+        // (so undoPreviousEscapingScale could be not 1). Using them as this
+        // avg/max pooling's activation-escaping since they can not be
+        // calculated in fact.
         //
-        imageOut.boundsArraySet.set_outputs_all_by_input0();
+
+        // For average pooling, value bounds are re-calculated (but activation
+        // esaping scale is not and still the same as input).
+        if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
+          imageOut.boundsArraySet.set_outputs_all_byBoundsArray_ScaleArraySet(
+            imageOut.boundsArraySet.afterBias, imageOut.boundsArraySet.input0.scaleArraySet );
+
+        // For maximum pooling, value bounds is exactly the same as input.
+        } else {
+          imageOut.boundsArraySet.set_outputs_all_by_input0();
+        }
 
         // Note1: Since there is no undo previous scales, it needs not .scale_byChannel_withoutAffect_BoundsArraySet().
         // Note2: Since there is no activation, it needs not .modify_byActivation_withoutAffect_BoundsArraySet().

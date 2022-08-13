@@ -474,20 +474,19 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
           // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
           {
-
-!!! ...unfinished... (2022/08/12)
-// average pooling should set .boundsArraySet.output0 by .afterBias and .input0.scaleArraySet
-
             if (   ( this.AvgMax_Or_ChannelMultiplier < 0 )
                 && (   ( this.bBias == false )
                     && ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
                    )
                ) {
 
-              // For avg/max pooling, if it has no bias and no activation, the value bounds does not change (i.e. should be the same as input).
+              // For avg/max pooling, if it has no bias and no activation, the value
+              // bounds does not change (i.e. should be the same as input).
               //
-              // In this case, the previous activation-escaping needs not be undo (so undoPreviousEscapingScale could be not 1). Using them
-              // as this avg/max pooling's activation-escaping since they can not be calculated in fact.
+              // In this case, the previous activation-escaping needs not be undo
+              // (so undoPreviousEscapingScale could be not 1). Using them as this
+              // avg/max pooling's activation-escaping since they can not
+              // be calculated in fact.
               //
 
               // For average pooling, value bounds are re-calculated (but activation
@@ -501,10 +500,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                 this.boundsArraySet.set_outputs_all_by_input0();
               }
 
-              // Note: Since there is no undo previous scales, it needs not .apply_doEscapingScale_to_filtersArray_biasesArray().
+              // Note: Since there is no undo previous scales, it needs not
+              //       .apply_doEscapingScale_to_filtersArray_biasesArray().
 
             } else {
-              this.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( this.nActivationId );
+              this.boundsArraySet
+                .adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId(
+                  this.nActivationId );
 
               // Round 2
               this.apply_doEscapingScale_to_filtersArray_biasesArray(); // Apply doEscapingScale.
