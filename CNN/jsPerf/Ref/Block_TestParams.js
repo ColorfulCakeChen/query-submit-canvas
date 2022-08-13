@@ -248,47 +248,47 @@ class Block_TestParams_Base extends TestParams.Base {
       // input0_channelCount: [ 3, 3 ], //[ 3, 4 ],
 
 //!!! (2022/07/06 Temp Remarked) For speed-up debug.
-      // nConvBlockTypeId: [
-      //   Block.Params.nConvBlockTypeId.valueDesc.range.min,
-      //   Block.Params.nConvBlockTypeId.valueDesc.range.max
-      // ],
-//!!! (2022/07/06 Temp Added and Remarked) For speed-up debug.
       nConvBlockTypeId: [
+        Block.Params.nConvBlockTypeId.valueDesc.range.min,
+        Block.Params.nConvBlockTypeId.valueDesc.range.max
+      ],
+//!!! (2022/07/06 Temp Added and Remarked) For speed-up debug.
+      // nConvBlockTypeId: [
         // Block.Params.nConvBlockTypeId.valueDesc.range.min,
         // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL, // (1)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY, // (3)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL, // (4)
-        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
+        // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY, // (6)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL, // (7)
         // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL // (1)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL // (4)
-        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD // (5)
+        // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD // (5)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY // (6)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL // (7)
         // Block.Params.nConvBlockTypeId.valueDesc.range.max
-      ],
+      // ],
 
 //!!! (2022/07/11 Temp Remarked) For speed-up debug.
-      // pointwise1ChannelCount: [ 0, 2 ],
+      pointwise1ChannelCount: [ 0, 2 ],
       // pointwise1ChannelCount: [ 0, 0 ],
       // pointwise1ChannelCount: [ 0, 8 ],
-      pointwise1ChannelCount: [ 1, 1 ],
+      // pointwise1ChannelCount: [ 1, 1 ],
       // pointwise1ChannelCount: [ 3, 3 ],
 
-      // pointwise20ChannelCount: [ 1, 3 ],
+      pointwise20ChannelCount: [ 1, 3 ],
       // pointwise20ChannelCount: [ 1, 8 ],
-      pointwise20ChannelCount: [ 2, 2 ],
+      // pointwise20ChannelCount: [ 2, 2 ],
 
 //!!! (2022/07/07 Temp Remarked) For speed up debug.
-      // depthwise_AvgMax_Or_ChannelMultiplier: [
-      //   ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-      //   2
-      // ],
       depthwise_AvgMax_Or_ChannelMultiplier: [
-        0,
-        0
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+        2
       ],
+      // depthwise_AvgMax_Or_ChannelMultiplier: [
+      //   0,
+      //   0
+      // ],
 
       // (2021/10/06) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 //!!! (2022/08/04 Temp Remarked) For debug neural net (only use 3x3).
@@ -322,29 +322,29 @@ class Block_TestParams_Base extends TestParams.Base {
 
       depthwiseActivationId:
         // undefined,
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
         // [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
       // bSqueezeExcitationPrefix: undefined,
-      // bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
+      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
       // bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min ],
-      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
+      // bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
 
       // nSqueezeExcitationChannelCountDivisor: undefined,
-      // nSqueezeExcitationChannelCountDivisor: [
-      //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
-      //   3
-      // ],
       nSqueezeExcitationChannelCountDivisor: [
-        0,
-        0
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+        3
       ],
+      // nSqueezeExcitationChannelCountDivisor: [
+      //   0,
+      //   0
+      // ],
 
       pointwise20ActivationId:
         // undefined,
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
         // [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
       // Because the logic of bias and activation function is simpler than other, it could be just randomly tested once
@@ -352,9 +352,9 @@ class Block_TestParams_Base extends TestParams.Base {
  
       nActivationId:
         // undefined,
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
         // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        // [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
       bKeepInputTensor: undefined,
 //      bKeepInputTensor: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
