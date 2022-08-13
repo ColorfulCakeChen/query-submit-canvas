@@ -659,8 +659,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                       }
 
                       // Accumulate value bounds for the filter position (across the whole virtual input image).
-                      virtualImageOutput_afterFilter_BoundsArray_PerPixel.add_one_outputChannel_byBounds(
-                        outChannel, filterY, filterX, tBounds );
+                      virtualImageOutput_afterFilter_BoundsArray_PerPixel
+                        .add_one_outputChannel_byBounds(
+                          outChannel, filterY, filterX, tBounds );
 
                     } else { // 1.1.2 ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
 
@@ -673,8 +674,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                         tBounds.set_byBoundsArray( this.boundsArraySet.input0, inChannel );
 
                         // Accumulate value bounds for the filter position (across the whole virtual input image).
-                        virtualImageOutput_afterFilter_BoundsArray_PerPixel.add_one_outputChannel_byBounds(
-                          outChannel, filterY, filterX, tBounds );
+                        virtualImageOutput_afterFilter_BoundsArray_PerPixel
+                          .add_one_outputChannel_byBounds(
+                            outChannel, filterY, filterX, tBounds );
 
                       } else {
                         // For maximum pooling, value bounds is exactly the same as input.

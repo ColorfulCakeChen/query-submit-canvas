@@ -161,7 +161,22 @@ class ScaleBoundsArray extends Recyclable.Root {
   }
 
   /**
-   * Precondition: ( this.outputs.length == aBoundsArraySet.outputs.length ).
+   * Precondition: ( this.length == aBoundsArray.outputs.length )
+   * and  ( this.length == aScaleArraySet.length ).
+   *
+   * @param {FloatValue.BoundsArray} aBoundsArray      The BoundsArray to be copied.
+   * @param {FloatValue.ScaleArraySet} aScaleArraySet  The ScaleArraySet to be copied.
+   *
+   * @return {ScaleBoundsArray}  Return this (modified) object.
+   */
+  set_all_byBoundsArray_ScaleArraySet( aBoundsArray, aScaleArraySet ) {
+    this.boundsArray.set_all_byBoundsArray( aBoundsArray );
+    this.scaleArraySet.set_all_byScaleArraySet( aScaleArraySet );
+    return this;
+  }
+
+  /**
+   * Precondition: ( this.length == aScaleBoundsArray.outputs.length ).
    *
    * @param {ScaleBoundsArray} aScaleBoundsArray
    *   The ScaleBoundsArray to be copied (including .boundsArray and (activationEscaping) .scaleArraySet).
@@ -170,9 +185,8 @@ class ScaleBoundsArray extends Recyclable.Root {
    *   Return this (modified) object which is copied from aScaleBoundsArray.
    */
   set_all_byScaleBoundsArray( aScaleBoundsArray ) {
-    this.boundsArray.set_all_byBoundsArray( aScaleBoundsArray.boundsArray );
-    this.scaleArraySet.set_all_byScaleArraySet( aScaleBoundsArray.scaleArraySet );
-    return this;
+    return this.set_all_byBoundsArray_ScaleArraySet(
+      aScaleBoundsArray.boundsArray, aScaleBoundsArray.scaleArraySet );
   }
 
   /**
