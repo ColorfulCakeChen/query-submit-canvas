@@ -489,7 +489,17 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               // In this case, the previous activation-escaping needs not be undo (so undoPreviousEscapingScale could be not 1). Using them
               // as this avg/max pooling's activation-escaping since they can not be calculated in fact.
               //
-              this.boundsArraySet.set_outputs_all_by_input0();
+
+              // For average pooling, value bounds are re-calculated (but activation
+              // esaping scale is not and still the same as input).
+              if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
+                this.boundsArraySet.set_outputs_all_byBoundsArray_ScaleArraySet(
+                  this.boundsArraySet.afterBias, this.boundsArraySet.input0.scaleArraySet );
+
+              // For maximum pooling, value bounds is exactly the same as input.
+              } else {
+                this.boundsArraySet.set_outputs_all_by_input0();
+              }
 
               // Note: Since there is no undo previous scales, it needs not .apply_doEscapingScale_to_filtersArray_biasesArray().
 
