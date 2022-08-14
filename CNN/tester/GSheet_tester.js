@@ -28,8 +28,11 @@ let testCases = [
 async function* tester( progressParent ) {
   console.log("GSheet download testing...");
 
-  let progress1 = progressParent.addChild( new ValueMax.Percentage.Aggregate() );
-  let progress2 = progressParent.addChild( new ValueMax.Percentage.Aggregate() );
+  let progress1 = progressParent.addChild(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progress2 = progressParent.addChild(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
   let range = "A:A";

@@ -12,9 +12,13 @@ function test() {
   let delayMilliseconds = 100;
 
   // Aggregate all progress about util_tester.
-  let progress = new ValueMax.Percentage.Aggregate();
-  let progress_Base64ToUint8Array_tester = progress.addChild( new ValueMax.Percentage.Aggregate() );
-  let progress_GSheet_tester = progress.addChild( new ValueMax.Percentage.Aggregate() );
+  let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+
+  let progress_Base64ToUint8Array_tester = progress.addChild(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progress_GSheet_tester = progress.addChild(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let progressReceiver = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy("TestProgressBar");
 
@@ -40,6 +44,10 @@ function test() {
   testPromise.then(values => {
     console.log("util testing... Done.");
   });
+
+//!!! ...unfinished...
+  progress.disposeResources_and_recycleToPool();
+  progress = null;
 
 //!!! ...unfinished... test case by multipler web worker?
 }
