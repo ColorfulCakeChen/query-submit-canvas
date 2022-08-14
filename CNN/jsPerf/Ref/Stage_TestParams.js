@@ -317,8 +317,11 @@ class Stage_TestParams_Base extends TestParams.Base {
 
       // Must have ActivationFunction (i.e. can not be NONE). Otherwise, it easily results in infinity value because of multiple block.
       //
-      nActivationId: [ ValueDesc.ActivationFunction.Singleton.range.max, ValueDesc.ActivationFunction.Singleton.range.max ],
-//      nActivationId: [ false, false ],
+      nActivationId:
+        // undefined,
+        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
 //      bKeepInputTensor: undefined,
 //!!! (2022/08/04 Temp Remarked) For speed-up debug.

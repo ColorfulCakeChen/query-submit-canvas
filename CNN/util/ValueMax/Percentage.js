@@ -66,6 +66,11 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
     return this; // If no parent, this is the root.
   }
 
+!!! ...unfinished... (2022/08/14)
+// .value_advance( advancedValue )
+//  and call parent.value_cahced_invalidate()
+
+  
   /**
    * Dummy.
    * @return {number} Always 0. Sub-class should override this method.
@@ -197,6 +202,16 @@ class Aggregate extends ValueMax_Percentage_Base {
     }
     super.disposeResources();
   }
+
+
+!!! ...unfinished... (2022/08/14)
+// 
+// .value_cahced_invalidate() should call parent.value_cahced_invalidate()
+
+
+!!! ...unfinished... (2022/08/14)
+// .value_cahced
+// .value_cahced_invalidate() called when addChild()
 
   /**
    * @param {Percentage.Base} child
