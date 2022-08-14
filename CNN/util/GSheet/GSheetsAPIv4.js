@@ -60,7 +60,8 @@ class UrlComposer {
    */
   async* fetcher_JSON_ColumnMajorArray( progressParent ) {
     let progressRoot = progressParent.getRoot();
-    let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( 3 ) );
+    let progressToAdvance = progressParent.addChild(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 3 ) );
 
     try {
       // 1. Compose URL and download it as column-major JSON.
