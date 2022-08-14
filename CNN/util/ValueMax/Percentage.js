@@ -57,6 +57,12 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
     super.disposeResources();
   }
 
+
+!!! ...unfinished... (2022/08/14)
+// .valuePercentage_cached
+// .valuePercentage_cached_invalidate() should call parent.valuePercentage_cached_invalidate()
+
+
   /**
    * @return {Percentage.Base} The root Percentage.Base of the whole Percentage hierarchy. The root's valuePercentage represents the whole percentage.
    */
@@ -68,9 +74,9 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
 
 !!! ...unfinished... (2022/08/14)
 // .value_advance( advancedValue )
-//  and call parent.value_cahced_invalidate()
+//  should call this.valuePercentage_cached_invalidate()
 
-  
+
   /**
    * Dummy.
    * @return {number} Always 0. Sub-class should override this method.
@@ -204,14 +210,10 @@ class Aggregate extends ValueMax_Percentage_Base {
   }
 
 
-!!! ...unfinished... (2022/08/14)
-// 
-// .value_cahced_invalidate() should call parent.value_cahced_invalidate()
-
 
 !!! ...unfinished... (2022/08/14)
-// .value_cahced
-// .value_cahced_invalidate() called when addChild()
+// .valuePercentage_cached
+// .valuePercentage_cached_invalidate() called when addChild()
 
   /**
    * @param {Percentage.Base} child
@@ -231,6 +233,10 @@ class Aggregate extends ValueMax_Percentage_Base {
    * @return {number} The sum of all children's ( valuePercentage / maxPercentage ) as number between [0, 100] inclusive.
    */
   get valuePercentage() {
+
+!!! ...unfinished... (2022/08/14)
+// .valuePercentage_cached
+    
     let valueSum = 0, maxSum = 0;
 
     // Use integer array index is faster than iterator.
