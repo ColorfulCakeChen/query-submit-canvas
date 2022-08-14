@@ -6,7 +6,7 @@ import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
 
 /**
- * The base class for representing valuePercentage as number berween [0, 100] inclusive.
+ * The base class for representing valuePercentage as number between [0, 100] inclusive.
  * Acceptable by Receiver.Base.
  *
  *   - The maxPercentage always returns 100.
@@ -100,10 +100,14 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
 /**
  * Collect value and max and represents them as percentage.
  *
- * The Concrete.maxPercentage always returns 100. The Concrete.valuePercentage returns number berween [0, 100] inclusive.
+ * The Concrete.maxPercentage always returns 100. The Concrete.valuePercentage returns
+ * number between [ 0, 100 ] inclusive.
  *
- * @member {number} value A positive number between [ 0, max ]. Usually, caller will increase it.
- * @member {number} max   A positive number indicates the maximum value of this.value.
+ * @member {number} value
+ *   A positive number between [ 0, max ]. Usually, caller will increase it.
+ *
+ * @member {number} max
+ *   A positive number indicates the maximum value of this.value.
  */
 class Concrete extends ValueMax_Percentage_Base {
 
@@ -146,8 +150,11 @@ class Concrete extends ValueMax_Percentage_Base {
 
   /**
    * Add advancedValue to .value (and invalidate .valuePercentage_cached).
+   *
+   * @param {number} advancedValue
+   *   Add how many to .value. default is 1.
    */
-  value_advance( advancedValue ) {
+  value_advance( advancedValue = 1 ) {
     this.value += advancedValue;
     this.valuePercentage_cached_invalidate();
   }
@@ -176,10 +183,12 @@ class Concrete extends ValueMax_Percentage_Base {
 
 
 /**
- * Aggregate all children ( valuePercentage / maxPercentage ) and represents them as percentage.
+ * Aggregate all children ( valuePercentage / maxPercentage ) and represents them as
+ * percentage.
  *
  * @member {Percentage.Base[]} children
- *   An array of Percentage.Base which will be aggregated. Their parent will be set to this Percentage.Aggregate.
+ *   An array of Percentage.Base which will be aggregated. Their parent are set
+ * to this Percentage.Aggregate.
  */
 class Aggregate extends ValueMax_Percentage_Base {
 
@@ -263,10 +272,10 @@ class Aggregate extends ValueMax_Percentage_Base {
 
       let partMax = child.maxPercentage;
       if ( partMax <= 0 )
-        continue; // Skip illegal progress. (This is impossible because maxPercentage is always 100.)
+        continue; // Skip illegal progress. (Note: maxPercentage should always be 100.)
 
       let partValue = child.valuePercentage;
-      partValue = Math.max( 0, Math.min( partValue, partMax ) ); // Restrict between [0, partMax].
+      partValue = Math.max( 0, Math.min( partValue, partMax ) ); // Restrict between [ 0, partMax ].
 
       valueSum += partValue;
       maxSum += partMax;
