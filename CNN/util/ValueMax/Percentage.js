@@ -6,9 +6,11 @@ import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
 
 /**
- * The base class for representing valuePercentage as number berween [0, 100] inclusive. Acceptable by Receiver.Base.
+ * The base class for representing valuePercentage as number berween [0, 100] inclusive.
+ * Acceptable by Receiver.Base.
  *
- * The maxPercentage always returns 100. The valuePercentage returns number berween [0, 100] inclusive.
+ *   - The maxPercentage always returns 100.
+ *   - The valuePercentage returns number between [0, 100] inclusive.
  *
  * @member {Percentage.Base} parent The direct parent Percentage.Base of this Percentage.Base.
  */
@@ -38,14 +40,17 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
   /** @override */
   static setAsConstructor_self() {
     this.parent = null;
+    this.valuePercentage_cached = undefined;
   }
 
   /** @override */
   disposeResources() {
 
-    // In theory, here should remove this child object from parent (i.e. Aggregate) so that the parent will not dispose (and
-    // recycle) this child object once again. In fact, however, this is an expensive action (because a linear search should
-    // be done. So, the better choice is to dispose the whole tree from root object by caller to avoid this problem.
+    // In theory, here should remove this child object from parent (i.e. Aggregate)
+    // so that the parent will not dispose (and recycle) this child object once again.
+    // In fact, however, this is an expensive action (because a linear search should
+    // be done. So, the better choice is to dispose the whole tree from root object
+    // by caller to avoid this problem.
     //
     //if ( this.parent ) {
     //  if ( this.parent instanceof Aggregate ) {
@@ -53,15 +58,10 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
     //  }
     //}
 
+    this.valuePercentage_cached = undefined;
     this.parent = undefined;
     super.disposeResources();
   }
-
-
-!!! ...unfinished... (2022/08/14)
-// .valuePercentage_cached
-// .valuePercentage_cached_invalidate() should call parent.valuePercentage_cached_invalidate()
-
 
   /**
    * @return {Percentage.Base} The root Percentage.Base of the whole Percentage hierarchy. The root's valuePercentage represents the whole percentage.
@@ -72,10 +72,15 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
     return this; // If no parent, this is the root.
   }
 
-!!! ...unfinished... (2022/08/14)
-// .value_advance( advancedValue )
-//  should call this.valuePercentage_cached_invalidate()
-
+  /**
+   * Invalidate .valuePercentage_cached (i.e. let it become undefined). This method
+   * will invalidate parent's .valuePercentage_cached, too.
+   */
+  valuePercentage_cached_invalidate() {
+    this.valuePercentage_cached = undefined;
+    if ( this.parent )
+      this.parent.valuePercentage_cached_invalidate();
+  }
 
   /**
    * Dummy.
@@ -140,6 +145,14 @@ class Concrete extends ValueMax_Percentage_Base {
   }
 
   /**
+   * Add advancedValue to .value (and invalidate .valuePercentage_cached).
+   */
+  value_advance( advancedValue ) {
+    this.value += advancedValue;
+    this.valuePercentage_cached_invalidate();
+  }
+  
+  /**
    * @return {number}
    *   The progress as number between [0, 100] inclusive.
    *   Always 0, if this.max is negative.
@@ -147,14 +160,17 @@ class Concrete extends ValueMax_Percentage_Base {
    *   Otherwise, return the ratio of ( this.value / this.max ).
    */
   get valuePercentage() {
+    if ( this.valuePercentage_cached != undefined )
+      return this.valuePercentage_cached;
+
     if (this.max < 0)
       return 0;   // If max is negative (i.e. not initialized), return 0 (to avoid Aggregate.valuePercentage immediately 100).
     if (this.max == 0)
       return 100; // If max is indeed zero, return 100 (to avoid divide by zero and avoid Aggregate.valuePercentage never 100).
 
     let value = Math.max( 0, Math.min( this.value, this.max ) ); // Restrict between [0, total].
-    let percentage = ( value / this.max ) * 100;
-    return percentage;
+    this.valuePercentage_cached = ( value / this.max ) * 100;
+    return this.valuePercentage_cached;
   }
 }
 
@@ -209,13 +225,9 @@ class Aggregate extends ValueMax_Percentage_Base {
     super.disposeResources();
   }
 
-
-
-!!! ...unfinished... (2022/08/14)
-// .valuePercentage_cached
-// .valuePercentage_cached_invalidate() called when addChild()
-
   /**
+   * Append child (and invalidate .valuePercentage_cached).
+   *
    * @param {Percentage.Base} child
    *   Another Percentage.Base object. Its parent will be set to this object.
    *
@@ -224,8 +236,12 @@ class Aggregate extends ValueMax_Percentage_Base {
   addChild( child ) {
     if ( !child )
       return null;
+
     this.children.push( child );
     child.parent = this;
+
+    this.valuePercentage_cached_invalidate();
+     
     return child;
   }
 
@@ -233,9 +249,8 @@ class Aggregate extends ValueMax_Percentage_Base {
    * @return {number} The sum of all children's ( valuePercentage / maxPercentage ) as number between [0, 100] inclusive.
    */
   get valuePercentage() {
-
-!!! ...unfinished... (2022/08/14)
-// .valuePercentage_cached
+    if ( this.valuePercentage_cached != undefined )
+      return this.valuePercentage_cached;
     
     let valueSum = 0, maxSum = 0;
 
@@ -260,8 +275,8 @@ class Aggregate extends ValueMax_Percentage_Base {
     if ( maxSum <= 0 )
       return 0; // Return zero if the total max is illegal. (to avoid divide by zero.)
 
-    let percentage = ( valueSum / maxSum ) * 100;
-    return percentage;
+    this.valuePercentage_cached = ( valueSum / maxSum ) * 100;
+    return this.valuePercentage_cached;
   }
 
 }
