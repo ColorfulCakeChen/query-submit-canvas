@@ -141,7 +141,7 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
       this.tensorWeightCountTotal = params.inferencedParams.tensorWeightCountTotal;
     }
 
-    ++progressToAdvance.value;
+    progressToAdvance.value_advance();
     yield progressRoot;  // Parameters extracted. Report progress.
 
     try {

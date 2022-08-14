@@ -164,7 +164,7 @@ class NeuralNet_Base extends Recyclable.Root {
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
 
-    ++progressToAdvance.value;
+    progressToAdvance.value_advance();
     yield progressRoot;  // Parameters extracted. Report progress.
 
     let next_input_ScaleBoundsArray_or_TensorPlaceholder;

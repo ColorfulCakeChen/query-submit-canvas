@@ -127,7 +127,7 @@ class Embedding_AddGatherReshape extends Base {
       this.output_scaleBoundsArray = theFiltersArray_One.output_scaleBoundsArray;
       theFiltersArray_One.output_scaleBoundsArray = null; // (Because ownership transferred.)
 
-      ++progressToAdvance.value;
+      progressToAdvance.value_advance();
       yield progressRoot;  // filters array extracted. Report progress.
 
       // 3. For reducing memory re-allocation.
@@ -200,7 +200,7 @@ class Embedding_AddGatherReshape extends Base {
       // 6.
       Embedding_AddGatherReshape.setup_apply_embedding.call( this );
 
-      ++progressToAdvance.value;
+      progressToAdvance.value_advance();
       yield progressRoot;  // Embedding initialization done. Report progress.
 
       this.bInitOk = true;

@@ -217,7 +217,7 @@ class Base extends Operation.Base() {
 
     this.byteOffsetEnd = params.defaultByteOffsetEnd;
 
-    ++progressToAdvance.value;
+    progressToAdvance.value_advance();
     yield progressRoot;  // Parameters extracted. Report progress.
 
     // 2. Vocabulary Table Shape
@@ -275,7 +275,7 @@ class Base extends Operation.Base() {
           return false;  // e.g. input array does not have enough data.
         nextByteOffsetBegin = vocabularyTables[ i ].defaultByteOffsetEnd;
 
-        ++progressToAdvance.value;
+        progressToAdvance.value_advance();
         yield progressRoot;  // One vocabulary table extracted. Report progress.
       }
 
@@ -323,7 +323,7 @@ class Base extends Operation.Base() {
                 vocabularyTableTensorWithoutIds.dispose();
               }
 
-              ++progressToAdvance.value;
+              progressToAdvance.value_advance();
               yield progressRoot;  // One vocabulary table tensor3d built. Report progress.
             }
 
@@ -337,7 +337,7 @@ class Base extends Operation.Base() {
             // Create an embedding vocabulary table (without vocabulary id).
             this.vocabularyTablesTensorArray[ i ] = tf.tensor( vocabularyTables[ i ].weights, vocabularyTableShape_toExtract ); // 2d or 3d
 
-            ++progressToAdvance.value;
+            progressToAdvance.value_advance();
             yield progressRoot;  // One vocabulary table tensor2d built. Report progress.
           }
         }
@@ -363,7 +363,7 @@ class Base extends Operation.Base() {
             this.channelValueOffsetTensor3d = tf.tensor3d( channelValueOffset, [ 1, 1, inChannels ], "int32" ); // One pixel.
           }
 
-          ++progressToAdvance.value;
+          progressToAdvance.value_advance();
           yield progressRoot;  // One merged vocabulary table tensor2s built. Report progress.
         }
 

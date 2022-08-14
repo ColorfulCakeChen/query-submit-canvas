@@ -104,7 +104,7 @@ class UrlComposer {
       let url = this.getUrl_forJSON();
       let response = await fetch( url );
 
-      ++progressToAdvance.value; // 25%
+      progressToAdvance.value_advance(); // 25%
       yield progressRoot;
 
       if ( !response.ok )
@@ -113,7 +113,7 @@ class UrlComposer {
       // 2. Google Visualization Table Query returns JSONP (not JSON).
       let text = await response.text();
 
-      ++progressToAdvance.value; // 25%
+      progressToAdvance.value_advance(); // 25%
       yield progressRoot;
 
       if ( !text )
@@ -122,7 +122,7 @@ class UrlComposer {
       // 3. Try to evaluate is as JSON.
       let json = UrlComposer.evalJSONP( text );
 
-      ++progressToAdvance.value; // 25%
+      progressToAdvance.value_advance(); // 25%
       yield progressRoot;
 
       if ( !json )
@@ -131,7 +131,7 @@ class UrlComposer {
       // 4. Collect into column-major array.
       let columnMajorArray = UrlComposer.dataTableToColumnMajorArray( json.table );
 
-      ++progressToAdvance.value; // 25%
+      progressToAdvance.value_advance(); // 25%
       yield progressRoot;
 
       return columnMajorArray;

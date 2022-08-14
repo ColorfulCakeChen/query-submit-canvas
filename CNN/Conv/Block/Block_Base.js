@@ -521,7 +521,7 @@ class Block_Base extends Recyclable.Root {
     params.disposeResources_and_recycleToPool();
     params = null;
 
-    ++progressToAdvance.value;
+    progressToAdvance.value_advance();
     yield progressRoot;  // Parameters extracted. Report progress.
 
 
@@ -564,7 +564,7 @@ class Block_Base extends Recyclable.Root {
       this.operationArray.operation_append( pointwise1 );
     }
 
-    ++progressToAdvance.value;
+    progressToAdvance.value_advance();
     yield progressRoot;  // pointwise1 filters was ready. Report progress.
 
     // 3. The depthwise operation.
@@ -649,7 +649,7 @@ class Block_Base extends Recyclable.Root {
       }
     }
 
-    ++progressToAdvance.value;
+    progressToAdvance.value_advance();
     yield progressRoot;  // depthwise filters was ready. Report progress.
 
     // 4. Concat1
@@ -658,7 +658,7 @@ class Block_Base extends Recyclable.Root {
       this.operationArray.operation_append( concat1 );
     }
 
-    ++progressToAdvance.value;
+    progressToAdvance.value_advance();
     yield progressRoot;  // concat1 was ready. Report progress.
 
     // 5. The squeeze-and-excitation prefix pointwise2
@@ -672,7 +672,7 @@ class Block_Base extends Recyclable.Root {
         return false;  // e.g. input array does not have enough data.
 
     // 5.3
-    ++progressToAdvance.value;
+    progressToAdvance.value_advance();
     yield progressRoot;  // squeeze-and-excitation (prefix pointwise2) was ready. Report progress.
 
     // 6. The pointwise2 convolution.
@@ -740,7 +740,7 @@ class Block_Base extends Recyclable.Root {
     }
 
     // 6.4
-    ++progressToAdvance.value;
+    progressToAdvance.value_advance();
     yield progressRoot;  // pointwise2 filters was ready. Report progress.
 
     // 7. The squeeze-and-excitation postfix pointwise2
@@ -755,7 +755,7 @@ class Block_Base extends Recyclable.Root {
         return false;  // e.g. input array does not have enough data.
 
     // 7.2
-    ++progressToAdvance.value;
+    progressToAdvance.value_advance();
     yield progressRoot;  // squeeze-and-excitation (postfix pointwise2) was ready. Report progress.
 
     // 8. Add-input-to-output
@@ -805,7 +805,7 @@ class Block_Base extends Recyclable.Root {
     }
 
     // 8.2
-    ++progressToAdvance.value;
+    progressToAdvance.value_advance();
     yield progressRoot;  // add-input-to-output was ready. Report progress.
 
     // 9. Concat2-Shuffle-Split
@@ -834,7 +834,7 @@ class Block_Base extends Recyclable.Root {
       // Since no concat2(-shuffle-split), the final output come from pointwise2 (and add-input-to-output) directly.
     }
 
-    ++progressToAdvance.value;
+    progressToAdvance.value_advance();
     yield progressRoot;  // concat2-Shuffle-Split was ready. Report progress.
 
     // 10. Configure correct function pointers according to whether keeping or destroying input tensor.
@@ -853,7 +853,7 @@ class Block_Base extends Recyclable.Root {
     this.dispose_intermediate_ScaleBoundsArray();
 
     // 10.4
-    ++progressToAdvance.value;
+    progressToAdvance.value_advance();
     yield progressRoot;  // All pointwise1-depthwise-pointwise2 filters was ready. Report progress.
 
     this.bInitOk = true;

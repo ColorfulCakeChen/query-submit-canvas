@@ -68,11 +68,11 @@ function* decoder_FromStringArray(
   let progressParentNew = progressParent.addChild( new ValueMax.Percentage.Aggregate() );
 
   let base64EncodedStringLong = sourceBase64EncodedStringArray.join( "" );
-  ++progressToAdvance.value; // 25%
+  progressToAdvance.value_advance(); // 25%
   yield progressRoot;
 
   let base64EncodedUint8Array = textEncoder.encode( base64EncodedStringLong );
-  ++progressToAdvance.value; // 25%
+  progressToAdvance.value_advance(); // 25%
   yield progressRoot;
 
   let base64Decoder = decoder_FromUint8Array(
@@ -189,7 +189,7 @@ function* decoder_FromUint8Array(
           if (   (progressToAdvance.value < sourceByteLength)
               && (10 == sourceBytes[ progressToAdvance.value ])
              ) { 
-            ++progressToAdvance.value; // Skip it.
+            progressToAdvance.value_advance(); // Skip it.
           }
 
         } else {

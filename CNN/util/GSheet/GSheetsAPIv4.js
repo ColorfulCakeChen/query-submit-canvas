@@ -67,7 +67,7 @@ class UrlComposer {
       let url = this.getUrl_forJSON( "COLUMNS" );
       let response = await fetch( url );
 
-      ++progressToAdvance.value; // 33%
+      progressToAdvance.value_advance(); // 33%
       yield progressRoot;
 
       if ( !response.ok )
@@ -76,7 +76,7 @@ class UrlComposer {
       // 2. Google Sheets API v4 returns JSON.
       let json = await response.json();
 
-      ++progressToAdvance.value; // 33%
+      progressToAdvance.value_advance(); // 33%
       yield progressRoot;
 
       if ( !json )
@@ -85,7 +85,7 @@ class UrlComposer {
       // 3. Since already downloaded as column major. Uses it directly.
       let columnMajorArray = json.values;
 
-      ++progressToAdvance.value; // 33%
+      progressToAdvance.value_advance(); // 33%
       yield progressRoot;
 
       return columnMajorArray;
