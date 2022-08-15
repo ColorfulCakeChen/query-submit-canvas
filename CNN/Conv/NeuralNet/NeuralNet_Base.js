@@ -438,6 +438,7 @@ class NeuralNet_Base extends Recyclable.Root {
 
 !!! ...unfinished... (2022/08/15)
 // Will the height_width array be kept by the resizeBilinear() returned tensor?
+// No. Because size is 2d while result tensor is 3d.
 
       scaledSourceTensorFloat32 = tf.image.resizeBilinear( sourceTensor, this.???sourceHeightWidth, true );
     } catch ( e ) {
