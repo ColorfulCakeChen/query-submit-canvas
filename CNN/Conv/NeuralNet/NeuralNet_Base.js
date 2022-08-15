@@ -291,14 +291,12 @@ class NeuralNet_Base extends Recyclable.Root {
   }
 
   /**
-  * Initialize this object by calling initer() and advance the generator by loop until done.
-  *
-  * @return {boolean}
-  *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
-  *   Return false if failed (and progressParent.valuePercentage will be less than 100).
-  *
-  * @see Stage.Base.init()
-  */
+   * Initialize this object by calling initer() and advance the generator by loop until done.
+   *
+   * @return {boolean}
+   *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
+   *   Return false if failed (and progressParent.valuePercentage will be less than 100).
+   */
   init( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
 
     let initer = this.initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 );
@@ -403,6 +401,58 @@ class NeuralNet_Base extends Recyclable.Root {
 
     return outputTensor;
   }
+
+!!! ...unfinished... (2022/08/15)
+  /**
+   * @param {ImageData|HTMLCanvasElement} source_ImageData_or_Canvas
+   *   The image or canvas which provides image.
+   *
+   * @param {boolean} bForceInt32
+   *   If true, the dtype of the returned tf.tensor3d will guaranteed to be int32.
+   * Otherwise, the dtype of the returned tf.tensor3d may be int32 or float32 (if
+   * resized). This is useful if the result will be used by an embedding layer
+   * (which only accepts integer input).
+   *
+   * @return {tf.tensor3d}
+   *   Return the tensor3d which is the scaled image from canvas. Its size will
+   * be this.sourceImageHeightWidth. Its channel count will be this.config.sourceChannelCount.
+   */
+   create_ScaledSourceTensor_from_ImageData_or_Canvas( source_ImageData_or_Canvas, bForceInt32 ) {
+
+    let sourceTensor = tf.browser.fromPixels( source_ImageData_or_Canvas, this.sourceChannelCount ); // dtype will be int32.
+
+    // If the size (height x width) is as expected, use it directly. (dtype will still be int32.)
+    if (   ( sourceTensor.shape[ 0 ] == this.sourceHeight )
+        && ( sourceTensor.shape[ 1 ] == this.sourceWidth  ) )
+      return sourceTensor;
+
+    // Otherwise, resize to the default size (height x width) which is the input
+    // image size used for training the neural network.
+    //
+    // ( alignCorners = true ) for visual image resizing.
+    let scaledSourceTensorFloat32;
+    try {
+      scaledSourceTensorFloat32 = tf.image.resizeBilinear( sourceTensor, this.sourceHeightWidth, true );
+    } catch ( e ) {
+      throw e; // e.g. out of (GPU) memory.
+    } finally {
+      sourceTensor.dispose();
+    }
+
+    if ( !bForceInt32 )
+      return scaledSourceTensorFloat32;
+
+    // Convert to int32 if necessary. (Because the tf.resize() result's dtype is float32.)
+    try {
+      let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( 'int32' );
+      return scaledSourceTensorInt32;
+    } catch ( e ) {
+      throw e; // e.g. out of (GPU) memory.
+    } finally {
+      scaledSourceTensorFloat32.dispose();
+    }
+  }
+
 
   /** How many stages inside this neuralNet are created. (may be different from this.stageCountRequested.) */
   get stageCount() {
