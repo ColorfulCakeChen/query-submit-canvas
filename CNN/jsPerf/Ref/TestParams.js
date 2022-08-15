@@ -421,6 +421,44 @@ class TestParams_Base extends Recyclable.Root {
       randomOffsetMin, randomOffsetMax, divisorForRemainder );
   }
 
+  /**
+   * Fill an object's property as a number array.
+   * Similar to TestParams_Base.ensure_object_property_numberArray_length_filled().
+   * But the property will be a shared number array. Its value may be shared with
+   * other caller.
+   *
+   * This may have better performance because of number array re-using (instead of
+   * re-generating).
+   *
+   *
+   * @param {object} io_object     The object to be checked and modified.
+   * @param {string} propertyName  The property io_object[ propertyName ] will be ensured as a number array.
+   * @param {number} height        The length of axis0 of the io_object[ propertyName ].
+   * @param {number} width         The length of axis1 of the io_object[ propertyName ].
+   * @param {number} channelCount  The length of axis2 of the io_object[ propertyName ].
+   */
+  fill_object_property_numberArray( io_object, propertyName,
+    height, width, channelCount
+  ) {
+
+    //!!! (2022/05/23 Remarked)
+    //TestParams_Base.ensure_object_property_numberArray_length_filled( io_object, propertyName,
+    //   elementCount,
+    //   TestParams.Base.weightsValueBegin,
+    //   TestParams.Base.weightsValueStep,
+    //   TestParams.Base.weightsRandomOffset.min, TestParams.Base.weightsRandomOffset.max,
+    //   TestParams.Base.weightsDivisorForRemainder
+    // );
+
+    this.ensure_object_property_numberArray_length_existed( io_object, propertyName,
+      height, width, channelCount,
+      TestParams_Base.weightsValueBegin,
+      TestParams_Base.weightsValueStep,
+      TestParams_Base.weightsRandomOffset.min, TestParams_Base.weightsRandomOffset.max,
+      TestParams_Base.weightsDivisorForRemainder
+    );
+  }
+
 
   /**
    * Responsible for generating testing paramters combinations.
