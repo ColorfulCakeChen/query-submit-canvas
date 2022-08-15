@@ -17,24 +17,6 @@ import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
  * input to output. Since apply_and_destroy_or_keep()'s input is just vocabulary id (one channel or multiple channels),
  * pre-embedded vocabulary id inside the embedding table acheives the same effect by less computation (but more memory).
  *
- 
-//!!! (2022/08/02 Remarked) They are defined in NeuralNet_StageParamsCreator
-//  * @member {number} depthwiseFilterHeight
-//  *   The height of depthwise convolution's filter.
-//  *
-//  * @member {number} depthwiseFilterWidth
-//  *   The width of depthwise convolution's filter.
-//  *
-//  * @member {number} nSqueezeExcitationChannelCountDivisor
-//  *   An integer represents the channel count divisor for block's
-//  * squeeze-and-excitation's intermediate pointwise convolution channel count.
-//  * (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xx)
-//  *
-//  * @member {number} nActivationId
-//  *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx)
-//  * after every convolution.
-
- *
  * @member {Stage.ParamsBase[]} stageParamsArray
  *   The stages parameters of this neural network. It will be created only if
  * ( neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() == true ).
@@ -240,16 +222,6 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     let str = ``
       + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
       + `stageCount=${this.stageCount}, `
-
-//!!! (2022/08/02 Remarked) They are defined in NeuralNet_StageParamsCreator
-      // + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
-      // + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
-      // + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
-
-      // + `nSqueezeExcitationChannelCountDivisorName=`
-      //   + `${this.nSqueezeExcitationChannelCountDivisorName}`
-      //   + `(${this.nSqueezeExcitationChannelCountDivisor}), `
-
       + `output_height=${this.output_height}, `
       + `output_width=${this.output_width}, `
       + `output_channelCount=${this.output_channelCount}, `
