@@ -404,7 +404,7 @@ class NeuralNet_Base extends Recyclable.Root {
 
 !!! ...unfinished... (2022/08/15)
   /**
-   * @param {ImageData|HTMLCanvasElement} source_ImageData_or_Canvas
+   * @param {PixelData|ImageData|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_ImageData_or_Canvas
    *   The image or canvas which provides image.
    *
    * @param {boolean} bForceInt32
@@ -415,15 +415,18 @@ class NeuralNet_Base extends Recyclable.Root {
    *
    * @return {tf.tensor3d}
    *   Return the tensor3d which is the scaled image from canvas. Its size will
-   * be this.sourceImageHeightWidth. Its channel count will be this.config.sourceChannelCount.
+   * be ( this.input_height, this.input_width, this.input_channelCount ).
    */
    create_ScaledSourceTensor_from_ImageData_or_Canvas( source_ImageData_or_Canvas, bForceInt32 ) {
 
-    let sourceTensor = tf.browser.fromPixels( source_ImageData_or_Canvas, this.sourceChannelCount ); // dtype will be int32.
+!!! ...unfinished... (2022/08/15)
+// How about .fromPixelsAsync() ?
+
+    let sourceTensor = tf.browser.fromPixels( source_ImageData_or_Canvas, this.input_channelCount ); // dtype will be int32.
 
     // If the size (height x width) is as expected, use it directly. (dtype will still be int32.)
-    if (   ( sourceTensor.shape[ 0 ] == this.sourceHeight )
-        && ( sourceTensor.shape[ 1 ] == this.sourceWidth  ) )
+    if (   ( sourceTensor.shape[ 0 ] == this.input_height )
+        && ( sourceTensor.shape[ 1 ] == this.input_width  ) )
       return sourceTensor;
 
     // Otherwise, resize to the default size (height x width) which is the input
@@ -432,7 +435,11 @@ class NeuralNet_Base extends Recyclable.Root {
     // ( alignCorners = true ) for visual image resizing.
     let scaledSourceTensorFloat32;
     try {
-      scaledSourceTensorFloat32 = tf.image.resizeBilinear( sourceTensor, this.sourceHeightWidth, true );
+
+!!! ...unfinished... (2022/08/15)
+// Will the height_width array be kept by the resizeBilinear() returned tensor?
+
+      scaledSourceTensorFloat32 = tf.image.resizeBilinear( sourceTensor, this.???sourceHeightWidth, true );
     } catch ( e ) {
       throw e; // e.g. out of (GPU) memory.
     } finally {
@@ -442,9 +449,9 @@ class NeuralNet_Base extends Recyclable.Root {
     if ( !bForceInt32 )
       return scaledSourceTensorFloat32;
 
-    // Convert to int32 if necessary. (Because the tf.resize() result's dtype is float32.)
+    // Convert to int32 if necessary. (Because the tf.image.resizeXxx() result's dtype is float32.)
     try {
-      let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( 'int32' );
+      let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
       return scaledSourceTensorInt32;
     } catch ( e ) {
       throw e; // e.g. out of (GPU) memory.
