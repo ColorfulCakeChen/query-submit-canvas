@@ -185,7 +185,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       // Test correctness of NeuralNet.apply.
       this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, this.testCorrectness_imageOutReference, neuralNet );
 
-//!!! (2022/08/02 Temp Remarked) seems hard to be the same.
+//!!! (2022/08/02 Temp Remarked) seems hardly to be the same.
       // Compare result of ShuffleNetV2 and ShuffleNetV2_byMobileNetV1.
       NeuralNet_Reference_Base.neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1.call( this,
         testParams,
