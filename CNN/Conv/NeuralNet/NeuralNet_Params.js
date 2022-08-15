@@ -18,13 +18,13 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
  * NeuralNet is composed of an embedding and multiple stages.
  *
  *
- * @param {number} input_height
+ * @member {number} input_height
  *   The input image's height.
  *
- * @param {number} input_width
+ * @member {number} input_width
  *   The input image's width.
  *
- * @param {number} input_channelCount
+ * @member {number} input_channelCount
  *   The input image's channel count.
  *
  * @member {number} vocabularyChannelCount

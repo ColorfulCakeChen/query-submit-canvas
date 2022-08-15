@@ -32,11 +32,13 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  *  If true, this object initialized (i.e. initer()) successfully.
  *
  * @member {number} weightElementOffsetBegin
- *   The position which is started (inclusive) to extract from inputWeightArray by initer().
+ *   The position which is started (inclusive) to extract from inputWeightArray
+ * by initer().
  *
  * @member {number} weightElementOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
- * Only meaningful when ( this.bInitOk == true ).
+ *   The position which is ended to (non-inclusive) extract from inputWeightArray
+ * by initer(). Where to extract next weights. Only meaningful when
+ * ( this.bInitOk == true ).
  *
  * @member {Embedding.Base} embedding
  *   The embedding layer before all stages of this neuralNet.
@@ -48,7 +50,8 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  *   The first computation stage of this neuralNet.
  *
  * @member {Stage.Base} stageLast
- *   The last computation stage of this neuralNet. It may be the same as this.stage0 when there is only one stage inside this neuralNet.
+ *   The last computation stage of this neuralNet. It may be the same as this.stage0
+ * when there is only one stage inside this neuralNet.
  *
  * @member {number} output_height
  *   The output image height of this neuralNet's last stage.
@@ -60,23 +63,24 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  *   The output channel count of this neuralNet's last stage.
  *
  * @member {number} tensorWeightCountTotal
- *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
- * weights, if they are used in tensors.
+ *   The total wieght count used in tensors. Not including Params, because they are
+ * not used in tensors. Including inferenced weights, if they are used in tensors.
  *
  * @member {number} tensorWeightCountExtracted
- *   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used in
- * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputWeightArray.
+ *   The wieght count extracted from inputWeightArray and used in tensors. Not
+ * including Params, because they are not used in tensors. Not including inferenced
+ * weights (even if they are used in tensors), because they are not extracted
+ * from inputWeightArray.
  *
  */
 class NeuralNet_Base extends Recyclable.Root {
 
   /**
-  * Used as default NeuralNet.Base provider for conforming to Recyclable interface.
-  */
+   * Used as default NeuralNet.Base provider for conforming to Recyclable interface.
+   */
   static Pool = new Pool.Root( "NeuralNet.Base.Pool", NeuralNet_Base, NeuralNet_Base.setAsConstructor );
 
-  /**
-  */
+  /** */
   constructor() {
     super();
     NeuralNet_Base.setAsConstructor_self.call( this );
@@ -97,17 +101,20 @@ class NeuralNet_Base extends Recyclable.Root {
   /**
    * Generator for initializing this object.
    *
-   * Note: NeuralNet.initer() does not have argument inputScaleBoundsArray0. The reason
-   * is it has an embedding layer which is does not have inputScaleBoundsArray0 too.
-   * So, it also assumes input's value bounds is [ 0, vocabularyCountPerInputChannel ].
+   * Note: NeuralNet.initer() does not have argument inputScaleBoundsArray0. The
+   * reason is it has an embedding layer which is does not have inputScaleBoundsArray0
+   * too. So, it also assumes input's value bounds is
+   * [ 0, vocabularyCountPerInputChannel ].
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
-   * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
+   *   Some new progressToAdvance will be created and added to progressParent. The
+   * created progressToAdvance will be increased when every time advanced. The
+   * progressParent.getRoot() will be returned when every time yield.
    *
    * @param {NeuralNet.Params} params
-   *   A Params object. The params.init() will be called to extract parameters. This params will be owned and destroyed by this .initer().
-   * So caller should not use it again.
+   *   A Params object. The params.init() will be called to extract parameters.
+   * This params will be owned and destroyed by this .initer(). So caller should
+   * not use it again.
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
@@ -246,21 +253,6 @@ class NeuralNet_Base extends Recyclable.Root {
         {
           next_input_ScaleBoundsArray_or_TensorPlaceholder = stage.output0; // (This is a TensorPlaceholder.)
 
-//!!! ...unfinished... (2022/08/04)
-// This seems imply that the higher half of the final output of ShuffleNetV2 are not
-// usable because they come from the previous stage's activated output (i.e. value
-// between [ -2, + 2 ]).
-//
-// Perhaps, should change ConvBlockType SHUFFLE_NET_V2_TAIL has pointwise21 (and
-// SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL's pointwise20 uses higher_half_another_pointwise_no_shuffle
-// instead of higher_half__pass_through_no_shuffle). So that the higher-half are
-// linear transformed.
-//
-//!!! ...unfinished... (2022/08/04)
-// What if let their pointwise2 always not activated (just like MobileNetV2)?
-// Could it solve the above problem?
-//
-
           // For ShuffleNetV2_ByMobileNetV1, the previous stage's output channel count
           // will have lowerHalf and higherHalf. However, the next stage's input needs
           // lowerHalf equal whole channel count and no higherHalf. Modify it fot that.
@@ -391,14 +383,15 @@ class NeuralNet_Base extends Recyclable.Root {
   }
 
   /** Process input, destroy or keep input, return result.
-  *
-  * @param {tf.tensor3d} inputTensor
-  *   The source input image ( height x width x channel ) which will be processed. This inputTensor may or may not be disposed
-  * according to init()'s bKeepInputTensor.
-  *
-  * @return {tf.tensor3d}
-  *   Return a new tensor. All other intermediate tensors were disposed.
-  */
+   *
+   * @param {tf.tensor3d} inputTensor
+   *   The source input image ( height x width x channel ) which will be processed.
+   * This inputTensor may or may not be disposed according to init()'s
+   * NeuralNet.Params.bKeepInputTensor.
+   *
+   * @return {tf.tensor3d}
+   *   Return a new tensor. All other intermediate tensors were disposed.
+   */
   apply( inputTensor ) {
 
     let outputTensor = this.embedding.apply( inputTensor );
@@ -411,7 +404,7 @@ class NeuralNet_Base extends Recyclable.Root {
     return outputTensor;
   }
 
-  /** How many stages inside this neuralNet are created. (may different from this.stageCountRequested.) */
+  /** How many stages inside this neuralNet are created. (may be different from this.stageCountRequested.) */
   get stageCount() {
     return this.stageArray.length;
   }
@@ -433,10 +426,10 @@ class NeuralNet_Base extends Recyclable.Root {
   }
 
   /**
-  * @return {string} The description string of all (adjusted) parameters of initer().
-  *
-  * @override
-  */
+   * @return {string} The description string of all (adjusted) parameters of initer().
+   *
+   * @override
+   */
   toString() {
     let str = ``
       + `input_height=${this.input_height}, `
