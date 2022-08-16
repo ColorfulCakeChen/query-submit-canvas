@@ -122,7 +122,7 @@ class Nets_ShareInput_Base {
     } else {
 
       // Create (scaled) source image so that we can always dispose all tensors (including sourceTensor) except the returning tensor.
-      let scaledSourceTensor = this.neuralNetConfig.create_ScaledSourceTensor_from_ImageData_or_Canvas( source_ImageData_or_Canvas );
+      let scaledSourceTensor = this.neuralNetConfig.create_ScaledSourceTensor_from_PixelData( source_ImageData_or_Canvas );
 
   //!!! ...unfinished...
   // here should convert sourceImageData to tensor, get typed-array (so that the receiver worker could convert to tensor again without re-construct typed-array),

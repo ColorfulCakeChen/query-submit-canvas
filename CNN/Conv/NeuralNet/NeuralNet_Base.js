@@ -423,24 +423,24 @@ class NeuralNet_Base extends Recyclable.Root {
    * Create a tensor3d from source (e.g. canvas). Its size will be confirmed (by scaling)
    * to this neural network's acceptable input [ height, width ].
    *
-   * @param {Uint8Array|ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_ImageData_or_Canvas
+   * @param {Uint8Array|ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} sourcePixelData
    *   The image or canvas which provides image.
    *
    * @param {boolean} bForceInt32
    *   If true, the dtype of the returned tf.tensor3d will be guaranteed as int32.
    * Otherwise, the dtype of the returned tf.tensor3d may be int32 or float32 (if
    * resized). This is useful if the result will be used by an embedding layer
-   * (which only accepts integer input).
+   * (which only accepts integer input). Default is true.
    *
    * @return {tf.tensor3d}
    *   Return the tensor3d which is the scaled image from canvas. Its size will
    * be [ this.input_height, this.input_width, this.input_channelCount ].
    */
-  create_ScaledSourceTensor_from_ImageData_or_Canvas( source_ImageData_or_Canvas, bForceInt32 = true) {
+  create_ScaledSourceTensor_from_PixelData( sourcePixelData, bForceInt32 = true ) {
 
     //!!! ...unfinished... (2022/08/15) What about .fromPixelsAsync() ?
     let sourceTensor = tf.browser.fromPixels(
-      source_ImageData_or_Canvas, this.input_channelCount ); // dtype will be int32.
+      sourcePixelData, this.input_channelCount ); // dtype will be int32.
 
     // If the size ( height x width ) is as expected, use it directly.
     if (   ( sourceTensor.shape[ 0 ] == this.input_height )

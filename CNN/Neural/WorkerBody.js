@@ -72,7 +72,7 @@ class WorkerBody {
       ++this.initProgress.libraryDownload.accumulation; // The library NeuralNet has been loaded.
     }
 
-//!!! ...unfinished... the neuralNetConfig is still class NeuralNet.Config? Otherwise, the create_ScaledSourceTensor_from_ImageData_or_Canvas() will be lost.
+//!!! ...unfinished... the neuralNetConfig is still class NeuralNet.Config? Otherwise, the create_ScaledSourceTensor_from_PixelData() will be lost.
 
     this.neuralNet = new NeuralNet.Base();
     this.neuralNet.init( neuralNetConfig, bKeepInputTensor );
@@ -132,10 +132,10 @@ class WorkerBody {
     // which internally converts twice: from Uint8ClampedArray to Int32Array and from Int32Array to tensor3d.
     //
     // If passing typed-array (Float32Array), the next web worker could use it to re-create tensord3d directly.
-    let scaledSourceTensor = this.neuralNetConfig.create_ScaledSourceTensor_from_ImageData_or_Canvas( sourceImageData );
+    let scaledSourceTensor = this.neuralNetConfig.create_ScaledSourceTensor_from_PixelData( sourceImageData );
 
 //!!! ...unfinished... If the this.neuralNetConfig (which is past through web worker message) is not real NeuralNet.Config, the following should be used.
-//    let scaledSourceTensor = NeuralNet.Config.create_ScaledSourceTensor_from_ImageData_or_Canvas.call( this.neuralNetConfig, sourceImageData );
+//    let scaledSourceTensor = NeuralNet.Config.create_ScaledSourceTensor_from_PixelData.call( this.neuralNetConfig, sourceImageData );
 
     // Download the scaledSourceTensor as typed-array (asynchronously), and transfer it back to WorkerProxy (and inform WorkerController).
     //

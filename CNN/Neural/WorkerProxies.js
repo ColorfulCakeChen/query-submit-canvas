@@ -167,7 +167,7 @@ class Base {
     // Create (scaled) source tensor so that every web worker needs not scale again and easier to re-create source tensor.
     //
     // The drawback is that the tensorflow.js library should have been loaded here. And the image scaling is done here (not in web worker).
-    let scaledSourceTensor = this.neuralNetConfig.create_ScaledSourceTensor_from_ImageData_or_Canvas( sourceCanvas );
+    let scaledSourceTensor = this.neuralNetConfig.create_ScaledSourceTensor_from_PixelData( sourceCanvas );
     let sourceTypedArray = await scaledSourceTensor.data();
     scaledSourceTensor.dispose(); // Discard the source tensor because type-array (not tensor) will be past to web worker
 

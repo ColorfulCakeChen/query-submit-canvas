@@ -208,7 +208,7 @@ class NetConfig_Base {
    *   Return the tensor3d which is the scaled image from canvas. Its size will
    * be this.sourceImageHeightWidth. Its channel count will be this.config.sourceChannelCount.
    */
-  create_ScaledSourceTensor_from_ImageData_or_Canvas( source_ImageData_or_Canvas, bForceInt32 ) {
+  create_ScaledSourceTensor_from_PixelData( source_ImageData_or_Canvas, bForceInt32 ) {
 
     let sourceTensor = tf.browser.fromPixels( source_ImageData_or_Canvas, this.sourceChannelCount ); // dtype will be int32.
 
