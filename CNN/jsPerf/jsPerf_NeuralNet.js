@@ -240,7 +240,7 @@ class HeightWidthDepth {
     let neuralNet = testCase.neuralNet;
 
     let inputTensor3d = neuralNet.create_ScaledSourceTensor_from_ImageData_or_Canvas(
-      this.testCanvase );
+      this.testCanvas );
 
     let outputTensor3d = neuralNet.apply( inputTensor3d );
     tf.dispose( outputTensor3d );
