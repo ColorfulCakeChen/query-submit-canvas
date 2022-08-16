@@ -16,7 +16,7 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
 /**
  * Test CNN NeuralNet.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/20203/54/colorfulcakechen-cnn-neuralnet-4d36f0e2ffd053a25457d9b6}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/20203/74/colorfulcakechen-cnn-neuralnet-4ae5459fd402f30f14dfd544}
  */
 
 /**
