@@ -55,6 +55,7 @@ class HeightWidthDepth {
 
   disposeResources() {
     this.neuralNet_PerformanceTest_release();
+    this.testCanvas = null;
   }
 
   /**
@@ -99,6 +100,28 @@ class HeightWidthDepth {
 
     // Larger input image for performance testing.
     this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
+
+    {
+      let largerHeight = this.height * 2;
+      let largerWidth = this.width * 2;
+      let inputChannelCount = this.depth; // Must be 4;
+
+      this.testCanvas = document.createElement( "canvas" );
+      this.testCanvas.height = largerHeight;
+      this.testCanvas.width = largerWidth;
+
+      let inputImage = this.testPerformance_imageSourceBag.getImage_by(
+        largerHeight, largerWidth, inputChannelCount );
+
+      let ctx = this.testCanvas.getContext( "2d" );
+      let imageData = ctx.createImageData( largerHeight, largerWidth );
+      for ( let i = 0; i < imageData.data.length; ++i ) {
+        imageData.data[ i ] = inputImage.dataArray[ i ];
+      }
+
+      ctx.putImageData( imageData, 0 , 0 );
+    }
+
 
     if ( this.testCaseMap )
       this.testCaseMap.clear();

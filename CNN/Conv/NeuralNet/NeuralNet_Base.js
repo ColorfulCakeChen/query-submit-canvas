@@ -442,7 +442,7 @@ class NeuralNet_Base extends Recyclable.Root {
     let sourceTensor = tf.browser.fromPixels(
       source_ImageData_or_Canvas, this.input_channelCount ); // dtype will be int32.
 
-    // If the size (height x width) is as expected, use it directly.
+    // If the size ( height x width ) is as expected, use it directly.
     if (   ( sourceTensor.shape[ 0 ] == this.input_height )
         && ( sourceTensor.shape[ 1 ] == this.input_width  ) )
       return sourceTensor; // (Note: dtype will still be int32.)
