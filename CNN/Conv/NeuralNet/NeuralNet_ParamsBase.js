@@ -9,7 +9,7 @@ import * as Stage from "../Stage.js";
 import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 
 //!!! ...unfinished... (2022/08/02)
-// Perhaps, add .blockCountOfStageLast, so that the finale stage could have more blocks.
+// Perhaps, add .blockCountOfStageLast, so that the final stage could have more blocks.
 
 /**
  *

@@ -64,6 +64,28 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
    *   - this.in_weights
    *   - this.out
    *
+   * @param {NeuralNet.ParamsBase} aParamsBase
+   *   The parameters of neural network.
+   *
+   * @return {Base}
+   *   Return this object self.
+   */
+  set_byParamsBase( aParamsBase ) {
+    return this.set_byParamsScattered(
+      aParamsBase.input_height, aParamsBase.input_width, aParamsBase.input_channelCount,
+      aParamsBase.vocabularyChannelCount, aParamsBase.vocabularyCountPerInputChannel,
+      aParamsBase.nConvStageTypeId, aParamsBase.stageCountRequested,
+      aParamsBase.blockCountRequested,
+      aParamsBase.bKeepInputTensor
+    );
+  }
+
+  /**
+   * Use scattered parameters to fills the following proterties:
+   *   - this.in
+   *   - this.in_weights
+   *   - this.out
+   *
    * @return {Base}
    *   Return this object self.
    */

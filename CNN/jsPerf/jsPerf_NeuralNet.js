@@ -24,10 +24,10 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
  */
 class PerformanceTestCase {
 
-  constructor( testCaseId, testCaseName, neuralNetTestParams ) {
+  constructor( testCaseId, testCaseName, neuralNetParamsBase ) {
     this.testCaseId = testCaseId;
     this.testCaseName = testCaseName;
-    this.neuralNetTestParams = neuralNetTestParams;
+    this.neuralNetParamsBase = neuralNetParamsBase;
     this.neuralNet = undefined;
     //this.inputTensor3d = undefined;
   }
@@ -37,6 +37,10 @@ class PerformanceTestCase {
    */
   prepare() {
     try {
+      let neuralNetTestParams
+        = NeuralNet_TestParams.Base.Pool.get_or_create_by( this.testCaseId );
+
+      neuralNetTestParams.set_byParamsBase( this.neuralNetParamsBase );
 
 //!!! (2022/08/16 Remarked) Use canvas instead.
 //       // Pre-create performance test case's input image.
@@ -51,7 +55,10 @@ class PerformanceTestCase {
 //         neuralNetTestParams.out.input_width,
 //         neuralNetTestParams.out.input_channelCount );
 
-      this.neuralNet = NeuralNet_Reference.Base.NeuralNet_create( this.neuralNetTestParams );
+      this.neuralNet = NeuralNet_Reference.Base.NeuralNet_create( neuralNetTestParams );
+
+      neuralNetTestParams.disposeResources_and_recycleToPool();
+      neuralNetTestParams = null;
 
       console.log( `NeuralNet.${this.testCaseName}: tensorWeightCount = { `
         + `Extracted: ${this.neuralNet.tensorWeightCountExtracted}, `
@@ -94,9 +101,9 @@ class HeightWidthDepth {
   /**
    * 
    */
-  neuralNet_PerformanceTest_addCase( testCaseName, neuralNetTestParams ) {
+  neuralNet_PerformanceTest_addCase( testCaseId, testCaseName, neuralNetParamsBase ) {
     let aPerformanceTestCase = new PerformanceTestCase(
-      neuralNetTestParams.id, testCaseName, neuralNetTestParams );
+      neuralNetTestParams.id, testCaseName, neuralNetParamsBase );
 
     this.testCaseMap.set( testCaseName, aPerformanceTestCase );
   }
@@ -154,8 +161,8 @@ class HeightWidthDepth {
     //
 
     // Test Case 0: (MobileNetV1)
-    this.neuralNet_PerformanceTest_addCase( "MobileNetV1",
-      ( new NeuralNet_TestParams.Base( 0 ) ).set_byParamsScattered(
+    this.neuralNet_PerformanceTest_addCase( 0, "MobileNetV1",
+      new NeuralNet.ParamsBase(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
@@ -163,8 +170,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 1: (MobileNetV1_padValid)
-    this.neuralNet_PerformanceTest_addCase( "MobileNetV1_padValid",
-      ( new NeuralNet_TestParams.Base( 1 ) ).set_byParamsScattered(
+    this.neuralNet_PerformanceTest_addCase( 1, "MobileNetV1_padValid",
+      new NeuralNet.ParamsBase(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
@@ -172,8 +179,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 2: (MobileNetV2_Thin)
-    this.neuralNet_PerformanceTest_addCase( "MobileNetV2_Thin",
-      ( new NeuralNet_TestParams.Base( 2 ) ).set_byParamsScattered(
+    this.neuralNet_PerformanceTest_addCase( 2, "MobileNetV2_Thin",
+      new NeuralNet.ParamsBase(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
@@ -181,8 +188,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 3: (MobileNetV2)
-    this.neuralNet_PerformanceTest_addCase( "MobileNetV2",
-      ( new NeuralNet_TestParams.Base( 3 ) ).set_byParamsScattered(
+    this.neuralNet_PerformanceTest_addCase( 3, "MobileNetV2",
+      new NeuralNet.ParamsBase(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
@@ -190,8 +197,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 4: (ShuffleNetV2))
-    this.neuralNet_PerformanceTest_addCase( "ShuffleNetV2",
-      ( new NeuralNet_TestParams.Base( 4 ) ).set_byParamsScattered(
+    this.neuralNet_PerformanceTest_addCase( 4, "ShuffleNetV2",
+      new NeuralNet.ParamsBase(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
@@ -199,8 +206,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 5: (ShuffleNetV2_byPointwise21)
-    this.neuralNet_PerformanceTest_addCase( "ShuffleNetV2_byPointwise21",
-      ( new NeuralNet_TestParams.Base( 5 ) ).set_byParamsScattered(
+    this.neuralNet_PerformanceTest_addCase( 5, "ShuffleNetV2_byPointwise21",
+      new NeuralNet.ParamsBase(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
@@ -208,8 +215,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 6: (ShuffleNetV2_byMobileNetV1)
-    this.neuralNet_PerformanceTest_addCase( "ShuffleNetV2_byMobileNetV1",
-      ( new NeuralNet_TestParams.Base( 6 ) ).set_byParamsScattered(
+    this.neuralNet_PerformanceTest_addCase( 6, "ShuffleNetV2_byMobileNetV1",
+      new NeuralNet.ParamsBase(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
@@ -217,8 +224,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 7: (ShuffleNetV2_byMobileNetV1_padValid)
-    this.neuralNet_PerformanceTest_addCase( "ShuffleNetV2_byMobileNetV1_padValid",
-      ( new NeuralNet_TestParams.Base( 7 ) ).set_byParamsScattered(
+    this.neuralNet_PerformanceTest_addCase( 7, "ShuffleNetV2_byMobileNetV1_padValid",
+      new NeuralNet.ParamsBase(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
