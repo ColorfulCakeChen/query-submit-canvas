@@ -224,15 +224,25 @@ class HeightWidthDepth {
       ) );
   }
 
-  neuralNet_PerformanceTest_release() {
+  /** Release testCase.neuralNet, but keep testCase. */
+  neuralNet_PerformanceTest_release_neuralNet() {
     if ( this.testCaseMap ) {
-      for ( let name_testCase of this.testCaseMap.entries() ) {
-        let name = name_testCase[ 0 ];
-        let testCase = name_testCase[ 1 ];
+//!!! (2022/08/16 Remarked) Use values() instead.
+//       for ( let name_testCase of this.testCaseMap.entries() ) {
+//         let name = name_testCase[ 0 ];
+//         let testCase = name_testCase[ 1 ];
+      for ( let testCase of this.testCaseMap.values() ) {
         if ( testCase.neuralNet ) {
           testCase.neuralNet.disposeResources_and_recycleToPool();
+          testCase.neuralNet = null;
         }
       }
+    }
+  }
+
+  neuralNet_PerformanceTest_release() {
+    if ( this.testCaseMap ) {
+      this.neuralNet_PerformanceTest_release_neuralNet();
       this.testCaseMap.clear();
     }
 
@@ -245,8 +255,13 @@ class HeightWidthDepth {
   /** Test apply by Xxx */
   testNeuralNet_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
-    if ( testCase.neuralNet == undefined )
+
+    // First time test this case. Release all other neural network (so that there will
+    // be enough memory). Create the specified neural network.
+    if ( !testCase.neuralNet ) {
+      this.neuralNet_PerformanceTest_release_neuralNet();
       testCase.prepare();
+    }
 
     let neuralNet = testCase.neuralNet;
 
