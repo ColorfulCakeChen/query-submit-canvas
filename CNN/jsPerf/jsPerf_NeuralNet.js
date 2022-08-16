@@ -102,8 +102,8 @@ class HeightWidthDepth {
     this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
     {
-      let largerHeight = this.height * 2;
-      let largerWidth = this.width * 2;
+      let largerHeight = this.height * 10;
+      let largerWidth = this.width * 10;
       let inputChannelCount = this.depth; // Must be 4;
 
       this.testCanvas = document.createElement( "canvas" );
@@ -249,6 +249,8 @@ class HeightWidthDepth {
   /** Testing whether the results of different implementation are the same. */
   * testCorrectness() {
 
+    //!!! (2022/08/16 Temp Skipped) For speed up into performance testing.
+    if ( 0 )
     {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
