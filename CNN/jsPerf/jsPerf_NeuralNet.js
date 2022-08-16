@@ -130,6 +130,8 @@ class HeightWidthDepth {
       ctx.putImageData( imageData, 0 , 0 );
     }
 
+    this.testPerformance_imageSourceBag.clear(); // Reduce memory.
+
 
     if ( this.testCaseMap )
       this.testCaseMap.clear();
@@ -276,7 +278,7 @@ class HeightWidthDepth {
   * testCorrectness() {
 
     //!!! (2022/08/16 Temp Skipped) For speed up into performance testing.
-    if ( 0 )
+    //if ( 0 )
     {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 

@@ -50,7 +50,14 @@ class ImageSourceBag_Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.clear();
+    this.tensor_dtype = undefined;
 
+    super.disposeResources();
+  }
+
+  /** @override */
+  clear() {
     {
       for ( let tensor of this.tensors.values() ) {
         tensor.dispose();
@@ -65,16 +72,6 @@ class ImageSourceBag_Base extends Recyclable.Root {
       this.images.clear();
     }
 
-    this.tensor_dtype = undefined;
-
-    super.disposeResources();
-  }
-
-  /** @override */
-  clear() {
-    for ( let channelShuffler of this.values() ) {
-      channelShuffler.disposeResources_and_recycleToPool();
-    }
     super.clear();
   }
 
