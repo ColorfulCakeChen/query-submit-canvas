@@ -156,8 +156,8 @@ class HeightWidthDepth {
     this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
     {
-      let largerHeight = this.height * 10;
-      let largerWidth = this.width * 10;
+      let largerHeight = this.height * 20;
+      let largerWidth = this.width * 20;
       let inputChannelCount = this.depth; // Must be 4;
 
       this.testCanvas = document.createElement( "canvas" );
@@ -186,7 +186,7 @@ class HeightWidthDepth {
 
     let vocabularyChannelCount = 2; //4;
     let vocabularyCountPerInputChannel = 256;
-    let stageCountRequested = 7; //5;
+    let stageCountRequested = 5; //7; //5;
     let blockCountRequested = 5; //5;
 
     // The neuralNet performance testing should not keep-input-tensor. The reason input
@@ -407,7 +407,9 @@ function init() {
 
   // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
   // Using ( 1 / 10 ) of computer screen ( 1080 * 1920 ).
-  globalThis.testSet_108x192x4 = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
+//  globalThis.testSet_108x192x4 = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
+//  globalThis.testSet_108x192x4 = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
+  globalThis.testSet_108x192x4 = new HeightWidthDepth( 54, 96, depth ); // height, width, depth
 
   globalThis.testSet_All = [
     globalThis.testSet_108x192x4
