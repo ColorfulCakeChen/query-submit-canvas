@@ -133,13 +133,14 @@ class HeightWidthDepth {
     let stageCountRequested = 5;
     let blockCountRequested = 5;
 
+    // The neuralNet performance testing should not keep-input-tensor. The reason input
+    // image is created from canvas in real time.
+    let bKeepInputTensor = false;
+
     // input_height, input_width, input_channelCount,
     // vocabularyChannelCount, vocabularyCountPerInputChannel,
     // nConvStageTypeId,
     // stageCountRequested, blockCountRequested, bKeepInputTensor
-    //
-    // The neuralNet performance testing should:
-    //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
     //
 
     // Test Case 0: (MobileNetV1)
@@ -148,7 +149,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
-        stageCountRequested, blockCountRequested, true
+        stageCountRequested, blockCountRequested, bKeepInputTensor
       ) );
 
     // Test Case 1: (MobileNetV1_padValid)
@@ -157,7 +158,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
-        stageCountRequested, blockCountRequested, true
+        stageCountRequested, blockCountRequested, bKeepInputTensor
       ) );
 
     // Test Case 2: (MobileNetV2_Thin)
@@ -166,7 +167,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
-        stageCountRequested, blockCountRequested, true
+        stageCountRequested, blockCountRequested, bKeepInputTensor
       ) );
 
     // Test Case 3: (MobileNetV2)
@@ -175,7 +176,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
-        stageCountRequested, blockCountRequested, true
+        stageCountRequested, blockCountRequested, bKeepInputTensor
       ) );
 
     // Test Case 4: (ShuffleNetV2))
@@ -184,7 +185,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
-        stageCountRequested, blockCountRequested, true
+        stageCountRequested, blockCountRequested, bKeepInputTensor
       ) );
 
     // Test Case 5: (ShuffleNetV2_byPointwise21)
@@ -193,7 +194,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
-        stageCountRequested, blockCountRequested, true
+        stageCountRequested, blockCountRequested, bKeepInputTensor
       ) );
 
     // Test Case 6: (ShuffleNetV2_byMobileNetV1)
@@ -202,7 +203,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
-        stageCountRequested, blockCountRequested, true
+        stageCountRequested, blockCountRequested, bKeepInputTensor
       ) );
 
     // Test Case 7: (ShuffleNetV2_byMobileNetV1_padValid)
@@ -211,7 +212,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
-        stageCountRequested, blockCountRequested, true
+        stageCountRequested, blockCountRequested, bKeepInputTensor
       ) );
   }
 
@@ -237,7 +238,11 @@ class HeightWidthDepth {
   testNeuralNet_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
     let neuralNet = testCase.neuralNet;
-    let outputTensor3d = neuralNet.apply( testCase.inputTensor3d );
+
+    let inputTensor3d = neuralNet.create_ScaledSourceTensor_from_ImageData_or_Canvas(
+      this.testCanvase );
+
+    let outputTensor3d = neuralNet.apply( inputTensor3d );
     tf.dispose( outputTensor3d );
   }
 
