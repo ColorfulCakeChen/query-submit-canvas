@@ -278,7 +278,7 @@ class HeightWidthDepth {
   * testCorrectness() {
 
     //!!! (2022/08/16 Temp Skipped) For speed up into performance testing.
-    //if ( 0 )
+    if ( 0 )
     {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
