@@ -51,11 +51,11 @@ class PerformanceTestCase {
 //         neuralNetTestParams.out.input_width,
 //         neuralNetTestParams.out.input_channelCount );
 
-      this.neuralNet = NeuralNet_Reference.Base.NeuralNet_create( neuralNetTestParams );
+      this.neuralNet = NeuralNet_Reference.Base.NeuralNet_create( this.neuralNetTestParams );
 
-      console.log( `NeuralNet.${testCaseName}: tensorWeightCount = { `
-        + `Extracted: ${neuralNet.tensorWeightCountExtracted}, `
-        + `Total: ${neuralNet.tensorWeightCountTotal} }` );
+      console.log( `NeuralNet.${this.testCaseName}: tensorWeightCount = { `
+        + `Extracted: ${this.neuralNet.tensorWeightCountExtracted}, `
+        + `Total: ${this.neuralNet.tensorWeightCountTotal} }` );
 
     } catch ( e ) {
       debugger;
