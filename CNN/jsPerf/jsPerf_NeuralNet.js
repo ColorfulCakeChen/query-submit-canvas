@@ -409,9 +409,8 @@ function init() {
   // Using ( 1 / 10 ) of computer screen ( 1080 * 1920 ).
 //  globalThis.testSet_108x192x4 = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
 //  globalThis.testSet_108x192x4 = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
-//  globalThis.testSet_108x192x4 = new HeightWidthDepth( 54, 96, depth ); // height, width, depth
-  globalThis.testSet_108x192x4 = new HeightWidthDepth( 72, 128, depth ); // height, width, depth
-
+  globalThis.testSet_108x192x4 = new HeightWidthDepth( 54, 96, depth ); // height, width, depth
+ 
   globalThis.testSet_All = [
     globalThis.testSet_108x192x4
   ];
