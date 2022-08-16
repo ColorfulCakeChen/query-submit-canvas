@@ -322,7 +322,7 @@ class HeightWidthDepth {
   * testCorrectness() {
 
     //!!! (2022/08/16 Temp Skipped) For speed up into performance testing.
-    if ( 0 )
+    //if ( 0 )
     {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
@@ -406,13 +406,11 @@ function init() {
   let depth = 4;
 
   // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
-  // Using ( 1 / 10 ) of computer screen ( 1080 * 1920 ).
-//  globalThis.testSet_108x192x4 = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
-//  globalThis.testSet_108x192x4 = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
-  globalThis.testSet_108x192x4 = new HeightWidthDepth( 54, 96, depth ); // height, width, depth
+  // Using ( 1 / 15 ) of computer screen ( 1080 * 1920 ) (i.e. ( 72 * 128 )).
+  globalThis.testSet_72x128x4 = new HeightWidthDepth( 72, 128, depth ); // height, width, depth
  
   globalThis.testSet_All = [
-    globalThis.testSet_108x192x4
+    globalThis.testSet_72x128x4
   ];
 }
 
@@ -434,6 +432,6 @@ function disposeResources() {
     globalThis.testSet_All = null;
   }
 
-  globalThis.testSet_108x192x4
+  globalThis.testSet_72x128x4
     = null;
 }
