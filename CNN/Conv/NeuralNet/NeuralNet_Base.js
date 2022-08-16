@@ -404,7 +404,7 @@ class NeuralNet_Base extends Recyclable.Root {
 
 !!! ...unfinished... (2022/08/15)
   /**
-   * @param {PixelData|ImageData|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_ImageData_or_Canvas
+   * @param {Uint8Array|ImageData|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_ImageData_or_Canvas
    *   The image or canvas which provides image.
    *
    * @param {boolean} bForceInt32
