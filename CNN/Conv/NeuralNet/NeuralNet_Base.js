@@ -40,6 +40,10 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  * by initer(). Where to extract next weights. Only meaningful when
  * ( this.bInitOk == true ).
  *
+ * @member {number[]} input_height_width_array
+ *   An array records [ this.input_height, this.input_width ]. It is mainly used when
+ * scale input image to correct size.
+ *
  * @member {Embedding.Base} embedding
  *   The embedding layer before all stages of this neuralNet.
  *
@@ -166,6 +170,14 @@ class NeuralNet_Base extends Recyclable.Root {
     // The parameters which are determined (inferenced) from the above parameters.
     {
       this.bEmbedVocabularyId = params.inferencedParams.bEmbedVocabularyId;
+
+      if ( this.input_height_width_array ) {
+        this.input_height_width_array.length = 2;
+        this.input_height_width_array[ 0 ] = this.input_height;
+        this.input_height_width_array[ 1 ] = this.input_width;
+      } else {
+        this.input_height_width_array = new Array( this.input_height, this.input_width );
+      }
     }
 
     this.tensorWeightCountExtracted = 0;
@@ -291,11 +303,14 @@ class NeuralNet_Base extends Recyclable.Root {
   }
 
   /**
-   * Initialize this object by calling initer() and advance the generator by loop until done.
+   * Initialize this object by calling initer() and advance the generator by loop
+   * until done.
    *
    * @return {boolean}
-   *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
-   *   Return false if failed (and progressParent.valuePercentage will be less than 100).
+   *   - Return true if successfully (and progressParent.valuePercentage will be equal
+   *     to 100).
+   *   - Return false if failed (and progressParent.valuePercentage will be less than
+   *     100).
    */
   init( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
 
@@ -324,6 +339,7 @@ class NeuralNet_Base extends Recyclable.Root {
       this.embedding = null;
     }
 
+    this.input_height_width_array.length = 0; // (Keep and re-use array.)
     this.bEmbedVocabularyId = undefined;
 
     this.bKeepInputTensor = undefined;
@@ -383,7 +399,8 @@ class NeuralNet_Base extends Recyclable.Root {
   /** Process input, destroy or keep input, return result.
    *
    * @param {tf.tensor3d} inputTensor
-   *   The source input image ( height x width x channel ) which will be processed.
+   *   The source input image (which size should be [ this.input_height,
+   * this.input_width, this.input_channelCount ] ) which will be processed.
    * This inputTensor may or may not be disposed according to init()'s
    * NeuralNet.Params.bKeepInputTensor.
    *
@@ -402,45 +419,43 @@ class NeuralNet_Base extends Recyclable.Root {
     return outputTensor;
   }
 
-!!! ...unfinished... (2022/08/15)
   /**
+   * Create a tensor3d from source (e.g. canvas). Its size will be confirmed (by scaling)
+   * to this neural network's acceptable input [ height, width ].
+   *
    * @param {Uint8Array|ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_ImageData_or_Canvas
    *   The image or canvas which provides image.
    *
    * @param {boolean} bForceInt32
-   *   If true, the dtype of the returned tf.tensor3d will guaranteed to be int32.
+   *   If true, the dtype of the returned tf.tensor3d will be guaranteed as int32.
    * Otherwise, the dtype of the returned tf.tensor3d may be int32 or float32 (if
    * resized). This is useful if the result will be used by an embedding layer
    * (which only accepts integer input).
    *
    * @return {tf.tensor3d}
    *   Return the tensor3d which is the scaled image from canvas. Its size will
-   * be ( this.input_height, this.input_width, this.input_channelCount ).
+   * be [ this.input_height, this.input_width, this.input_channelCount ].
    */
-   create_ScaledSourceTensor_from_ImageData_or_Canvas( source_ImageData_or_Canvas, bForceInt32 ) {
+  create_ScaledSourceTensor_from_ImageData_or_Canvas( source_ImageData_or_Canvas, bForceInt32 = true) {
 
-!!! ...unfinished... (2022/08/15)
-// How about .fromPixelsAsync() ?
+    //!!! ...unfinished... (2022/08/15) What about .fromPixelsAsync() ?
+    let sourceTensor = tf.browser.fromPixels(
+      source_ImageData_or_Canvas, this.input_channelCount ); // dtype will be int32.
 
-    let sourceTensor = tf.browser.fromPixels( source_ImageData_or_Canvas, this.input_channelCount ); // dtype will be int32.
-
-    // If the size (height x width) is as expected, use it directly. (dtype will still be int32.)
+    // If the size (height x width) is as expected, use it directly.
     if (   ( sourceTensor.shape[ 0 ] == this.input_height )
         && ( sourceTensor.shape[ 1 ] == this.input_width  ) )
-      return sourceTensor;
+      return sourceTensor; // (Note: dtype will still be int32.)
 
     // Otherwise, resize to the default size (height x width) which is the input
     // image size used for training the neural network.
     //
-    // ( alignCorners = true ) for visual image resizing.
     let scaledSourceTensorFloat32;
     try {
-
-!!! ...unfinished... (2022/08/15)
-// Will the height_width array be kept by the resizeBilinear() returned tensor?
-// No. Because size is 2d while result tensor is 3d.
-
-      scaledSourceTensorFloat32 = tf.image.resizeBilinear( sourceTensor, this.???sourceHeightWidth, true );
+      scaledSourceTensorFloat32 = tf.image.resizeBilinear(
+        sourceTensor, this.input_height_width_array,
+        true // ( alignCorners = true ) for visual image resizing.
+      );
     } catch ( e ) {
       throw e; // e.g. out of (GPU) memory.
     } finally {
@@ -460,7 +475,6 @@ class NeuralNet_Base extends Recyclable.Root {
       scaledSourceTensorFloat32.dispose();
     }
   }
-
 
   /** How many stages inside this neuralNet are created. (may be different from this.stageCountRequested.) */
   get stageCount() {
