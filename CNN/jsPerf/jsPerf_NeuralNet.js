@@ -22,14 +22,53 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
 /**
  * 
  */
-class PerformanceTestCase {
+class PerformanceTestCase extends Recyclable.Root {
 
+  /**
+   * Used as default NeuralNet.ParamsBase provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "PerformanceTestCase.Pool",
+    PerformanceTestCase, PerformanceTestCase.setAsConstructor );
+
+  /**
+    */
   constructor( testCaseId, testCaseName, neuralNetParamsBase ) {
+    super();
+    PerformanceTestCase.setAsConstructor_self.call( this,
+      testCaseId, testCaseName, neuralNetParamsBase
+    );
+  }
+
+  /** @override */
+  static setAsConstructor( testCaseId, testCaseName, neuralNetParamsBase ) {
+    super.setAsConstructor();
+    PerformanceTestCase.setAsConstructor_self.call( this,
+      testCaseId, testCaseName, neuralNetParamsBase
+    );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( testCaseId, testCaseName, neuralNetParamsBase ) {
     this.testCaseId = testCaseId;
     this.testCaseName = testCaseName;
     this.neuralNetParamsBase = neuralNetParamsBase;
     this.neuralNet = undefined;
     //this.inputTensor3d = undefined;
+  }
+
+  /** @override */
+  disposeResources() {
+    this.neuralNet?.disposeResources_and_recycleToPool();
+    this.neuralNet = null;
+
+    this.neuralNetParamsBase?.disposeResources_and_recycleToPool();
+    this.neuralNetParamsBase = null;
+
+    this.testCaseName = undefined;
+    this.testCaseId = undefined;
+
+    super.disposeResources();
   }
 
   /**
@@ -162,7 +201,7 @@ class HeightWidthDepth {
 
     // Test Case 0: (MobileNetV1)
     this.neuralNet_PerformanceTest_addCase( 0, "MobileNetV1",
-      new NeuralNet.ParamsBase(
+      NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
@@ -171,7 +210,7 @@ class HeightWidthDepth {
 
     // Test Case 1: (MobileNetV1_padValid)
     this.neuralNet_PerformanceTest_addCase( 1, "MobileNetV1_padValid",
-      new NeuralNet.ParamsBase(
+      NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
@@ -180,7 +219,7 @@ class HeightWidthDepth {
 
     // Test Case 2: (MobileNetV2_Thin)
     this.neuralNet_PerformanceTest_addCase( 2, "MobileNetV2_Thin",
-      new NeuralNet.ParamsBase(
+      NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
@@ -189,7 +228,7 @@ class HeightWidthDepth {
 
     // Test Case 3: (MobileNetV2)
     this.neuralNet_PerformanceTest_addCase( 3, "MobileNetV2",
-      new NeuralNet.ParamsBase(
+      NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
@@ -198,7 +237,7 @@ class HeightWidthDepth {
 
     // Test Case 4: (ShuffleNetV2))
     this.neuralNet_PerformanceTest_addCase( 4, "ShuffleNetV2",
-      new NeuralNet.ParamsBase(
+      NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
@@ -207,7 +246,7 @@ class HeightWidthDepth {
 
     // Test Case 5: (ShuffleNetV2_byPointwise21)
     this.neuralNet_PerformanceTest_addCase( 5, "ShuffleNetV2_byPointwise21",
-      new NeuralNet.ParamsBase(
+      NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
@@ -216,7 +255,7 @@ class HeightWidthDepth {
 
     // Test Case 6: (ShuffleNetV2_byMobileNetV1)
     this.neuralNet_PerformanceTest_addCase( 6, "ShuffleNetV2_byMobileNetV1",
-      new NeuralNet.ParamsBase(
+      NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
@@ -225,7 +264,7 @@ class HeightWidthDepth {
 
     // Test Case 7: (ShuffleNetV2_byMobileNetV1_padValid)
     this.neuralNet_PerformanceTest_addCase( 7, "ShuffleNetV2_byMobileNetV1_padValid",
-      new NeuralNet.ParamsBase(
+      NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
@@ -236,10 +275,6 @@ class HeightWidthDepth {
   /** Release testCase.neuralNet, but keep testCase. */
   neuralNet_PerformanceTest_release_neuralNet() {
     if ( this.testCaseMap ) {
-//!!! (2022/08/16 Remarked) Use values() instead.
-//       for ( let name_testCase of this.testCaseMap.entries() ) {
-//         let name = name_testCase[ 0 ];
-//         let testCase = name_testCase[ 1 ];
       for ( let testCase of this.testCaseMap.values() ) {
         if ( testCase.neuralNet ) {
           testCase.neuralNet.disposeResources_and_recycleToPool();
@@ -251,7 +286,9 @@ class HeightWidthDepth {
 
   neuralNet_PerformanceTest_release() {
     if ( this.testCaseMap ) {
-      this.neuralNet_PerformanceTest_release_neuralNet();
+      for ( let testCase of this.testCaseMap.values() ) {
+        testCase.disposeResources_and_recycleToPool();
+      }
       this.testCaseMap.clear();
     }
 

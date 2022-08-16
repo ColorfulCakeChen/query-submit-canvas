@@ -17,7 +17,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  *   The inferenced parameters of this neural network parameters.
  *
  */
- class NeuralNet_ParamsBase extends Recyclable.Root {
+class NeuralNet_ParamsBase extends Recyclable.Root {
 
   /**
    * Used as default NeuralNet.ParamsBase provider for conforming to Recyclable interface.
