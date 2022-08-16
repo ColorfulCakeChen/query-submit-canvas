@@ -245,7 +245,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
       vocabularyChannelCount: [
         1, //NeuralNet.Params.vocabularyChannelCount.valueDesc.range.min,
-        2 //4
+        3 //4
       ],
 
       vocabularyCountPerInputChannel: [
