@@ -94,14 +94,19 @@ class PerformanceTestCase extends Recyclable.Root {
 //         neuralNetTestParams.out.input_width,
 //         neuralNetTestParams.out.input_channelCount );
 
-      this.neuralNet = NeuralNet_Reference.Base.NeuralNet_create( neuralNetTestParams );
+      let neuralNet = this.neuralNet
+        = NeuralNet_Reference.Base.NeuralNet_create( neuralNetTestParams );
 
       neuralNetTestParams.disposeResources_and_recycleToPool();
       neuralNetTestParams = null;
 
       console.log( `NeuralNet.${this.testCaseName}: tensorWeightCount = { `
-        + `Extracted: ${this.neuralNet.tensorWeightCountExtracted}, `
-        + `Total: ${this.neuralNet.tensorWeightCountTotal} }` );
+        + `Extracted: ${neuralNet.tensorWeightCountExtracted}, `
+        + `Total: ${neuralNet.tensorWeightCountTotal} }, `
+        + `output ( height, width, channelCount ) = `
+          + ` ( ${neuralNet.output_height}, ${neuralNet.output_width}, `
+          + `${neuralNet.output_channelCount} ).`
+      );
 
     } catch ( e ) {
       debugger;
