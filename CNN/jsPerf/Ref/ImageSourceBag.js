@@ -56,7 +56,7 @@ class ImageSourceBag_Base extends Recyclable.Root {
     super.disposeResources();
   }
 
-  /** @override */
+  /** Release all images and tensors. */
   clear() {
     {
       for ( let tensor of this.tensors.values() ) {
@@ -71,8 +71,6 @@ class ImageSourceBag_Base extends Recyclable.Root {
       }
       this.images.clear();
     }
-
-    super.clear();
   }
 
   /**
