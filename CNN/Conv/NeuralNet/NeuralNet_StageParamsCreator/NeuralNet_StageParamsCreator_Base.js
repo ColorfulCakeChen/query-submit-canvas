@@ -139,6 +139,11 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
    * Called before stageLast is about to be created. Sub-class could override this method to adjust data members.
    */
   configTo_beforeStageLast() {
+
+//!!! ...unfinished... (2022/08/16)
+// Perhaps, stageLast always uses avg pooling as depthwise operation.
+// So that output ( height, width ) could be ( 1, 1 ).
+
   }
 
   // The following read only properties is useful when debugging, although they
