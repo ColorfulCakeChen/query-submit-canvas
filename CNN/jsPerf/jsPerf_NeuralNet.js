@@ -5,7 +5,7 @@ import * as Recyclable from "../util/Recyclable.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 //import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
-import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
+//import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
 import * as NeuralNet_Reference from "./Ref/NeuralNet_Reference.js";
 import * as NeuralNet_TestParams from "./Ref/NeuralNet_TestParams.js"; 
