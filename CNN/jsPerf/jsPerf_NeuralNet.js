@@ -22,14 +22,47 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
 /**
  * 
  */
- class PerformanceTestCase {
-  constructor( testCaseId, testCaseName, neuralNetTestParams, neuralNet, inputTensor3d ) {
+class PerformanceTestCase {
+
+  constructor( testCaseId, testCaseName, neuralNetTestParams ) {
     this.testCaseId = testCaseId;
     this.testCaseName = testCaseName;
     this.neuralNetTestParams = neuralNetTestParams;
-    this.neuralNet = neuralNet;
-    this.inputTensor3d = inputTensor3d;
+    this.neuralNet = undefined;
+    //this.inputTensor3d = undefined;
   }
+
+  /**
+   * Create .neuralNet
+   */
+  prepare() {
+    try {
+
+//!!! (2022/08/16 Remarked) Use canvas instead.
+//       // Pre-create performance test case's input image.
+//       let inputImage = this.testPerformance_imageSourceBag.getImage_by(
+//         neuralNetTestParams.out.input_height,
+//         neuralNetTestParams.out.input_width,
+//         neuralNetTestParams.out.input_channelCount );
+//
+//       // Pre-create performance test case's input tensor.
+//       let inputTensor3d = this.testPerformance_imageSourceBag.getTensor3d_by(
+//         neuralNetTestParams.out.input_height,
+//         neuralNetTestParams.out.input_width,
+//         neuralNetTestParams.out.input_channelCount );
+
+      this.neuralNet = NeuralNet_Reference.Base.NeuralNet_create( neuralNetTestParams );
+
+      console.log( `NeuralNet.${testCaseName}: tensorWeightCount = { `
+        + `Extracted: ${neuralNet.tensorWeightCountExtracted}, `
+        + `Total: ${neuralNet.tensorWeightCountTotal} }` );
+
+    } catch ( e ) {
+      debugger;
+      throw e;
+    }
+  }
+
 }
 
 /**
@@ -62,35 +95,10 @@ class HeightWidthDepth {
    * 
    */
   neuralNet_PerformanceTest_addCase( testCaseName, neuralNetTestParams ) {
-    try {
+    let aPerformanceTestCase = new PerformanceTestCase(
+      neuralNetTestParams.id, testCaseName, neuralNetTestParams );
 
-      // Pre-create performance test case's input image.
-      let inputImage = this.testPerformance_imageSourceBag.getImage_by(
-        neuralNetTestParams.out.input_height,
-        neuralNetTestParams.out.input_width,
-        neuralNetTestParams.out.input_channelCount );
-
-      // Pre-create performance test case's input tensor.
-      let inputTensor3d = this.testPerformance_imageSourceBag.getTensor3d_by(
-        neuralNetTestParams.out.input_height,
-        neuralNetTestParams.out.input_width,
-        neuralNetTestParams.out.input_channelCount );
-
-      let neuralNet = NeuralNet_Reference.Base.NeuralNet_create( neuralNetTestParams );
-
-      let aPerformanceTestCase = new PerformanceTestCase(
-        neuralNetTestParams.id, testCaseName, neuralNetTestParams, neuralNet, inputTensor3d );
-
-      this.testCaseMap.set( testCaseName, aPerformanceTestCase );
-
-      console.log( `NeuralNet.${testCaseName}: tensorWeightCount = { `
-        + `Extracted: ${neuralNet.tensorWeightCountExtracted}, `
-        + `Total: ${neuralNet.tensorWeightCountTotal} }` );
-
-    } catch ( e ) {
-      debugger;
-      throw e;
-    }
+    this.testCaseMap.set( testCaseName, aPerformanceTestCase );
   }
 
   neuralNet_PerformanceTest_init() {
@@ -237,6 +245,9 @@ class HeightWidthDepth {
   /** Test apply by Xxx */
   testNeuralNet_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
+    if ( testCase.neuralNet == undefined )
+      testCase.prepare();
+
     let neuralNet = testCase.neuralNet;
 
     let inputTensor3d = neuralNet.create_ScaledSourceTensor_from_PixelData(
