@@ -141,7 +141,7 @@ class HeightWidthDepth {
    * 
    */
   neuralNet_PerformanceTest_addCase( testCaseId, testCaseName, neuralNetParamsBase ) {
-    let aPerformanceTestCase = new PerformanceTestCase(
+    let aPerformanceTestCase = PerformanceTestCase.Pool.get_or_create_by(
       testCaseId, testCaseName, neuralNetParamsBase );
 
     this.testCaseMap.set( testCaseName, aPerformanceTestCase );
