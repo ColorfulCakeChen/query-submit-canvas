@@ -184,10 +184,10 @@ class HeightWidthDepth {
     else
       this.testCaseMap = new Map();
 
-    let vocabularyChannelCount = 3; //4;
+    let vocabularyChannelCount = 4;
     let vocabularyCountPerInputChannel = 256;
-    let stageCountRequested = 5; //7; //5;
-    let blockCountRequested = 5; //5;
+    let stageCountRequested = 1; //5; //7; //5;
+    let blockCountRequested = 64; //5; //5;
 
     // The neuralNet performance testing should not keep-input-tensor. The reason input
     // image is created from canvas in real time.
