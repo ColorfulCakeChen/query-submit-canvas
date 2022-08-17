@@ -316,7 +316,7 @@ class NeuralNet_Base extends Recyclable.Root {
         let blockFinalParams = stageParamsCreator.blockFinalParams;
         stageParamsCreator.blockFinalParams = null; // (Because ownship has transferrred.)
 
-        blockFinal = this.blockFinal = Block.Base.Pool.get_or_create_by();
+        let blockFinal = this.blockFinal = Block.Base.Pool.get_or_create_by();
         blockIniter = block.initer( progressForBlockFinal,
           inputWeightArray, this.weightElementOffsetEnd, blockFinalParams,
           next_input_ScaleBoundsArray_or_TensorPlaceholder
