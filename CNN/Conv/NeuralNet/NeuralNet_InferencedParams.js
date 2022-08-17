@@ -227,18 +227,18 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     const input0_width = this.stageLast_output_width;
     const input0_channelCount = this.stageLast_output_channelCount;
     const nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL; // (Always MobileNetV1)
-    const pointwise1ChannelCount = this.stageLast_output_channelCount;
+    const pointwise1ChannelCount = this.stageLast_output_channelCount; // (No expanding)
     const depthwise_AvgMax_Or_ChannelMultiplier = ValueDesc.AvgMax_Or_ChannelMultiplierSingleton.Ids.AVG; // (Always global average pooling)
-    const depthwiseFilterHeight
-    const depthwiseFilterWidth
-    const depthwiseStridesPad,
-    const depthwiseActivationId,
-    const pointwise20ChannelCount
-    const pointwise20ActivationId,
-    const nSqueezeExcitationChannelCountDivisor
-    const bSqueezeExcitationPrefix,
-    const nActivationId,
-    const bKeepInputTensor
+    const depthwiseFilterHeight = this.stageLast_output_height; // (global average pooling)
+    const depthwiseFilterWidth = this.stageLast_output_width; // (global average pooling)
+    const depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID; // (global average pooling)
+    const depthwiseActivationId = neuralNetParamsBase.???;
+    const pointwise20ChannelCount = neuralNetParamsBase.output_channelCount;
+    const pointwise20ActivationId = ???;
+    const nSqueezeExcitationChannelCountDivisor = ???;
+    const bSqueezeExcitationPrefix = ???
+    const nActivationId = ???;
+    const bKeepInputTensor = false; // (Always destroy input because there is stageLast always in front of blockFinal.)
 
     this.blockFinalParams = Block.ParamsBase.Pool.get_or_create_by(
       input0_height, input0_width, input0_channelCount,
@@ -250,40 +250,10 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       nActivationId,
       bKeepInputTensor
-
-      
-      ,
-      ,
-      
-      this.stageLast_output_channelCount, //pointwise1ChannelCount,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-      depthwiseActivationId,
-      pointwise20ChannelCount, pointwise20ActivationId,
-      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
-      nActivationId,
-      bKeepInputTensor
-  
     );
 
-    blockTestParams.set_byParamsScattered(
-
-
-!!! ...unfinished... (2022/08/17)
-
-      blockParams.nConvBlockTypeId,
-      blockParams.pointwise1ChannelCount,
-      blockParams.depthwise_AvgMax_Or_ChannelMultiplier, blockParams.depthwiseFilterHeight,
-      blockParams.depthwiseFilterWidth, blockParams.depthwiseStridesPad,
-      blockParams.depthwiseActivationId,
-      blockParams.pointwise20ChannelCount, blockParams.pointwise20ActivationId,
-      blockParams.nSqueezeExcitationChannelCountDivisor, blockParams.bSqueezeExcitationPrefix,
-      blockParams.nActivationId,
-      blockParams.bKeepInputTensor
-    );
-
-
-    this.output_height = ?1;
-    this.output_width = ?1;
+    this.output_height = this.blockFinalParams.output_height; // (should be 1.)
+    this.output_width = this.blockFinalParams.output_width; // (should be 1.)
   }
 
   /**
