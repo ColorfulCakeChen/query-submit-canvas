@@ -152,7 +152,7 @@ class NeuralNet_Base extends Recyclable.Root {
     this.weightElementOffsetEnd = this.weightElementOffsetBegin = weightElementOffsetBegin;
     this.bInitOk = false;
 
-    // Estimate the maximum value of progress.
+    // 0.1 Estimate the maximum value of progress.
     let progressMax =
       1    // for extracting parameters from inputWeightArray.
       ;
@@ -161,8 +161,9 @@ class NeuralNet_Base extends Recyclable.Root {
     let progressToAdvance = progressParent.addChild( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
     let progressForEmbedding = progressParent.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for embedding extracting.
     let progressForStages = progressParent.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for stage0, stage1, stage2, ... 
+    let progressForBlockFinal = progressParent.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for blockFinal.
 
-    // 1. Extract parameters.
+    // 0.2 Extract parameters.
     if ( !params )
       return false;
 
@@ -205,7 +206,7 @@ class NeuralNet_Base extends Recyclable.Root {
 
     let next_input_ScaleBoundsArray_or_TensorPlaceholder;
 
-    // 2. Create embedding layer.
+    // 1. Create embedding layer.
     {
       let EmbeddingParamsClass = params.EmbeddingParamsClass_get();
       let embeddingParams = EmbeddingParamsClass.Pool.get_or_create_by(
@@ -232,7 +233,7 @@ class NeuralNet_Base extends Recyclable.Root {
         = this.embedding.output_scaleBoundsArray; // (This is a ScaleBoundsArray.)
     }
 
-    // 3. Create every stages.
+    // 2. Create every stages.
     let stageParamsCreator;
     try {
       let StageParamsClass = params.StageParamsClass_get();
@@ -301,11 +302,35 @@ class NeuralNet_Base extends Recyclable.Root {
       this.stage0 = this.stageArray[ 0 ]; // Shortcut to the first stage.
       this.stageLast = this.stageArray[ this.stageArray.length - 1 ]; // Shortcut to the last stage.
 
-!!! ...unfinished... (2022/08/17) blockFinal
+      // 3. Create final block.
       {
+        let BlockParamsClass = params.BlockParamsClass_get();
+
+        stageParamsCreator.configTo_beforeBlockFinal(
+          BlockParamsClass,
+          this.stageLast_output_height,
+          this.stageLast_output_width,
+          this.stageLast_output_channelCount
+        );
+
+        let blockFinalParams = stageParamsCreator.blockFinalParams;
+        stageParamsCreator.blockFinalParams = null; // (Because ownship has transferrred.)
+
+        blockFinal = this.blockFinal = Block.Base.Pool.get_or_create_by();
+        blockIniter = block.initer( progressForBlockFinal,
+          inputWeightArray, this.weightElementOffsetEnd, blockFinalParams,
+          next_input_ScaleBoundsArray_or_TensorPlaceholder
+        );
+
+        this.bInitOk = yield* blockIniter;
+        if ( !this.bInitOk )
+          return false;
+        this.weightElementOffsetEnd = stage.weightElementOffsetEnd;
 
         this.tensorWeightCountTotal += blockFinal.tensorWeightCountTotal;
         this.tensorWeightCountExtracted += blockFinal.tensorWeightCountExtracted;
+
+        next_input_ScaleBoundsArray_or_TensorPlaceholder = blockFinal.output0_scaleBoundsArray;
       }
 
       this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate stages' bounds array set for reducing memory footprint.
@@ -438,13 +463,16 @@ class NeuralNet_Base extends Recyclable.Root {
    */
   apply( inputTensor ) {
 
+    // 1. Embedding
     let outputTensor = this.embedding.apply( inputTensor );
 
+    // 2. Stages
     let stageArray = this.stageArray;
     for ( let i = 0; i < stageArray.length; ++i ) {
       outputTensor = stageArray[ i ].apply( outputTensor );
     }
 
+    // 3. BlockFinal
     {
       this.blockFinal.input0.realTensor = outputTensor;
       this.blockFinal.apply();
