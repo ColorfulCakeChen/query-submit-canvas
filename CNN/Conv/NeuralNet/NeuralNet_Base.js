@@ -316,6 +316,12 @@ class NeuralNet_Base extends Recyclable.Root {
         let blockFinalParams = stageParamsCreator.blockFinalParams;
         stageParamsCreator.blockFinalParams = null; // (Because ownship has transferrred.)
 
+        // No matter stageLast uses what kinds of block, there is always no higher and
+        // lower half in the final block. So nullify them. (Otherwise, Block.Base
+        // creation will be failed.)
+        next_input_ScaleBoundsArray_or_TensorPlaceholder.channelCount_lowerHalf = undefined;
+        next_input_ScaleBoundsArray_or_TensorPlaceholder.channelCount_higherHalf = undefined;
+
         let blockFinal = this.blockFinal = Block.Base.Pool.get_or_create_by();
         let blockIniter = blockFinal.initer( progressForBlockFinal,
           inputWeightArray, this.weightElementOffsetEnd, blockFinalParams,
