@@ -24,7 +24,8 @@ import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
  * ( neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() == true ).
  *
  * @member {Block.ParamsBase} blockFinalParams
- *   The final block's of this neural network. It will be created only if
+ *   The parameter of this neural network's final block (for squish output shape to
+ * [ 1, 1, output_channelCount ]. It will be created only if
  * ( neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() == true ).
  *
  * @member {number} stageLast_output_height
@@ -143,7 +144,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
   }
 
   /**
-   * 
+   * (Also create blockFinalParams.)
    */
   stageParamsArray_create( neuralNetParamsBase ) {
     if ( this.stageParamsArray ) {
@@ -151,6 +152,8 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     } else {
       this.stageParamsArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
     }
+
+    this.blockFinalParams_dispose();
 
     if ( !neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() )
       return; // No need to create .stageParamsArray.
@@ -199,6 +202,20 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       this.stageLast_output_width = this.stageParamsLast.inferencedParams.output_width;
       this.stageLast_output_channelCount = this.stageParamsLast.inferencedParams.output_channelCount;
 
+      // BlockFinal
+      {
+        let BlockParamsClass = neuralNetParamsBase.BlockParamsClass_get();
+
+        stageParamsCreator.configTo_beforeBlockFinal(
+          BlockParamsClass,
+          this.stageLast_output_height,
+          this.stageLast_output_width,
+          this.stageLast_output_channelCount );
+
+        this.output_height = this.blockFinalParams.output_height; // (should be 1.)
+        this.output_width = this.blockFinalParams.output_width; // (should be 1.)
+      }
+
     } finally {
       if ( stageParamsCreator ) {
         stageParamsCreator.channelShuffler = null; // (Because ownership has been transferred to this Stage object.)
@@ -214,46 +231,6 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       this.blockFinalParams.disposeResources_and_recycleToPool();
       this.blockFinalParams = null;
     }
-  }
-
-  /** */
-  blockFinalParams_create( neuralNetParamsBase ) {
-    this.blockFinalParams_dispose();
-
-    if ( !neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() )
-      return; // No need to create .stageParamsArray.
-
-    const input0_height = this.stageLast_output_height;
-    const input0_width = this.stageLast_output_width;
-    const input0_channelCount = this.stageLast_output_channelCount;
-    const nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL; // (Always MobileNetV1)
-    const pointwise1ChannelCount = this.stageLast_output_channelCount; // (No expanding)
-    const depthwise_AvgMax_Or_ChannelMultiplier = ValueDesc.AvgMax_Or_ChannelMultiplierSingleton.Ids.AVG; // (Always global average pooling)
-    const depthwiseFilterHeight = this.stageLast_output_height; // (global average pooling)
-    const depthwiseFilterWidth = this.stageLast_output_width; // (global average pooling)
-    const depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID; // (global average pooling)
-    const depthwiseActivationId = neuralNetParamsBase.???;
-    const pointwise20ChannelCount = neuralNetParamsBase.output_channelCount;
-    const pointwise20ActivationId = ???;
-    const nSqueezeExcitationChannelCountDivisor = ???;
-    const bSqueezeExcitationPrefix = ???
-    const nActivationId = ???;
-    const bKeepInputTensor = false; // (Always destroy input because there is stageLast always in front of blockFinal.)
-
-    this.blockFinalParams = Block.ParamsBase.Pool.get_or_create_by(
-      input0_height, input0_width, input0_channelCount,
-      nConvBlockTypeId,
-      pointwise1ChannelCount,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-      depthwiseActivationId,
-      pointwise20ChannelCount, pointwise20ActivationId,
-      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
-      nActivationId,
-      bKeepInputTensor
-    );
-
-    this.output_height = this.blockFinalParams.output_height; // (should be 1.)
-    this.output_width = this.blockFinalParams.output_width; // (should be 1.)
   }
 
   /**

@@ -6,6 +6,7 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Embedding from "../Embedding.js";
 import * as Stage from "../Stage.js";
+import * as Block from "../Block.js";
 import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 
 //!!! ...unfinished... (2022/08/02)
@@ -142,6 +143,14 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
    */
   StageParamsClass_get() {
     return Stage.ParamsBase;
+  }
+
+  /**
+   * @return {Block.ParamsBase|Block.Params}
+   *   Return which block parameter class should be used by InferencedParams.
+   */
+  BlockParamsClass_get() {
+    return Block.ParamsBase;
   }
 
   get nConvStageTypeName() {

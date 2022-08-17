@@ -43,6 +43,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.blockFinalParams_dispose();
 
     this.output_channelCount = undefined;
     this.output_width = undefined;
@@ -65,6 +66,14 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     this.neuralNetParams = undefined; // Just nullify it. Do not release it here.
 
     super.disposeResources();
+  }
+
+  /** */
+  blockFinalParams_dispose() {
+    if ( this.blockFinalParams ) {
+      this.blockFinalParams.disposeResources_and_recycleToPool();
+      this.blockFinalParams = null;
+    }
   }
 
   /** Called to determine stageCount.
@@ -146,6 +155,54 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 
   }
 
+  /**
+   * Called before blockFinal is about to be created. Sub-class could override this method to adjust data members.
+   *
+   * @param {Block.ParamsBase|Block.Params} BlockParamsClass
+   *   Which kinds of block parameters object should be created.
+   *
+   * @param {number} input_height        The input height of the blockFinal.
+   * @param {number} input_width         The input width of the blockFinal.
+   * @param {number} input_channelCount  The input channel counr of the blockFinal.
+   */
+  configTo_beforeBlockFinal(
+    BlockParamsClass,
+    input_height, input_width, input_channelCount ) {
+
+    this.blockFinalParams_dispose();
+
+    const input0_height = this.stageLast_output_height;
+    const input0_width = this.stageLast_output_width;
+    const input0_channelCount = this.stageLast_output_channelCount;
+    const nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL; // (Always MobileNetV1)
+    const pointwise1ChannelCount = this.stageLast_output_channelCount; // (No expanding)
+    const depthwise_AvgMax_Or_ChannelMultiplier = ValueDesc.AvgMax_Or_ChannelMultiplierSingleton.Ids.AVG; // (Always global average pooling)
+    const depthwiseFilterHeight = this.stageLast_output_height; // (global average pooling)
+    const depthwiseFilterWidth = this.stageLast_output_width; // (global average pooling)
+    const depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID; // (global average pooling)
+    const depthwiseActivationId = this.nActivationId;
+    const pointwise20ChannelCount = neuralNetParamsBase.output_channelCount;
+    const pointwise20ActivationId = this.nActivationId;
+    const nSqueezeExcitationChannelCountDivisor = this.nSqueezeExcitationChannelCountDivisor;
+    const bSqueezeExcitationPrefix = false; // (non-MobileNetV2 always uses postfix squeeze-and-excitation.)
+    const nActivationId = this.nActivationId;
+    const bKeepInputTensor = false; // (Always destroy input because there is stageLast always in front of blockFinal.)
+
+    this.blockFinalParams = BlockParamsClass.Pool.get_or_create_by(
+      input0_height, input0_width, input0_channelCount,
+      nConvBlockTypeId,
+      pointwise1ChannelCount,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwiseActivationId,
+      pointwise20ChannelCount, pointwise20ActivationId,
+      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+      nActivationId,
+      bKeepInputTensor
+    );
+
+//!!! ...unfinished... (2022/08/17)
+  }
+
   // The following read only properties is useful when debugging, although they
   // are not used in program.
 
@@ -163,7 +220,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 
   /**
    *
-   * @paramm {Stage.ParamsBase|Stage.Params} StageParamsClass
+   * @param {Stage.ParamsBase|Stage.Params} StageParamsClass
    *   Which kinds of stage parameters object should be created.
    *
    * @return {Stage.ParamsBase|Stage.Params}

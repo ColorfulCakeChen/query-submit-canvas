@@ -7,6 +7,7 @@ import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as Embedding from "../Embedding.js";
 import * as Stage from "../Stage.js";
+import * as Block from "../Block.js";
 import { ParamsBase } from "./NeuralNet_ParamsBase.js";
 
 //!!! ...unfinished... (2022/07/26)
@@ -144,6 +145,11 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
   /** @override */
   StageParamsClass_get() {
     return Stage.Params;
+  }
+
+  /** @override */
+  BlockParamsClass_get() {
+    return Block.Params;
   }
 
   /**
