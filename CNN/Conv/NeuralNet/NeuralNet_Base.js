@@ -285,7 +285,7 @@ class NeuralNet_Base extends Recyclable.Root {
 
           // For ShuffleNetV2_ByMobileNetV1, the previous stage's output channel count
           // will have lowerHalf and higherHalf. However, the next stage's input needs
-          // lowerHalf equal whole channel count and no higherHalf. Modify it fot that.
+          // lowerHalf equal whole channel count and no higherHalf. Modify it for that.
           if ( ValueDesc.ConvStageType.isShuffleNetV2_ByMobileNetV1( this.nConvStageTypeId ) ) {
             next_input_ScaleBoundsArray_or_TensorPlaceholder.channelCount_lowerHalf
               = next_input_ScaleBoundsArray_or_TensorPlaceholder.channelCount;
