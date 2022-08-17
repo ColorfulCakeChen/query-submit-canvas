@@ -506,12 +506,13 @@ class Stage_Base extends Recyclable.Root {
 //!!! (2022/08/03 Temp Remarked) For debug.
       this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
 
-      // In our Stage design, no matter which configuration, the output_channelCount
-      // always is twice as input_channelCount.
-      if ( this.output_channelCount != ( this.input_channelCount * 2 ) )
-        throw Error( `Stage.Base.initer(): `
-          + `the output_channelCount ( ${this.output_channelCount} ) should always be twice of `
-          + `input_channelCount ( ${this.input_channelCount} ).` );
+//!!! (2022/08/17 Remarked) This should already been verified in Stage_Reference.
+//       // In our Stage design, no matter which configuration, the output_channelCount
+//       // always is twice as input_channelCount.
+//       if ( this.output_channelCount != ( this.input_channelCount * 2 ) )
+//         throw Error( `Stage.Base.initer(): `
+//           + `the output_channelCount ( ${this.output_channelCount} ) should always be twice of `
+//           + `input_channelCount ( ${this.input_channelCount} ).` );
 
       this.bInitOk = true;
       return this.bInitOk;
