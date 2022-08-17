@@ -277,15 +277,15 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       // (2022/08/16) Note: Mobile Moto e40 seems necessary pad=valid to work.
       //
 
-      //!!! (2022/08/16 Temp Remarked)
-      // nConvStageTypeId: [
-      //   NeuralNet.Params.nConvStageTypeId.valueDesc.range.min,
-      //   NeuralNet.Params.nConvStageTypeId.valueDesc.range.max
-      // ],
+      //!!! (2022/08/16 Temp Remarked) For mobile phone Moto e40 could pass testing.
       nConvStageTypeId: [
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID, // (6)
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
+        NeuralNet.Params.nConvStageTypeId.valueDesc.range.min,
+        NeuralNet.Params.nConvStageTypeId.valueDesc.range.max
       ],
+      // nConvStageTypeId: [
+      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID, // (6)
+      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
+      // ],
 
       stageCountRequested: [
         NeuralNet.Params.stageCountRequested.valueDesc.range.min,
