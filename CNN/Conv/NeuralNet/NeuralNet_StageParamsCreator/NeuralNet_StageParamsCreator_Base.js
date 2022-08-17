@@ -45,11 +45,6 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
   disposeResources() {
     this.blockFinalParams_dispose();
 
-//!!! (2022/08/17 Remarked) seems not used.
-//     this.output_channelCount = undefined;
-//     this.output_width = undefined;
-//     this.output_height = undefined;
-
     this.bKeepInputTensor = undefined;
     this.nActivationId = undefined;
     this.nSqueezeExcitationChannelCountDivisor = undefined;
@@ -84,14 +79,18 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
   determine_stageCount() {
     let neuralNetParams = this.neuralNetParams;
 
+//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
+//    this.stageCount = neuralNetParams.stageCountRequested; // By default, the stage count is just the requested original stage count.
+
 //!!! ...unfinished... (2022/08/17)
 // Perhaps, determine stageCount according to output_channelCount automatically.
 //
-//   let expandFactor = Math.ceil( output_channelCount / vocabularyChannelCount );
-//   stageCount =  Math.max( 1, Math.ceil( Math.log2( expandFactor ) ) );
-//
 
-    this.stageCount = neuralNetParams.stageCountRequested; // By default, the stage count is just the requested original stage count.
+    // Because every stage will double output channel count, find out stageCount
+    // so that the stageLast's output channel count is (a little) larger than
+    // the requested output_channelCount.
+    let expandFactor = Math.ceil( output_channelCount / vocabularyChannelCount );
+    this.stageCount =  Math.max( 1, Math.ceil( Math.log2( expandFactor ) ) );
   }
 
   /**

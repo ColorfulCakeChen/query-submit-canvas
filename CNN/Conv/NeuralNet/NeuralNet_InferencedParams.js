@@ -7,7 +7,7 @@ import * as Block from "../Block.js";
 import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
 
 //!!! ...unfinished... (2022/07/31)
-// Is it possible to infer stageCountRequested, blockCountRequested?
+// Is it possible to infer blockCountRequested?
 
 /**
  * All properties inferenced from NeuralNet.Params.
@@ -18,6 +18,10 @@ import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
  * channel achieves residual connection. Residual connection means apply_and_destroy_or_keep() will append (concatenate)
  * input to output. Since apply_and_destroy_or_keep()'s input is just vocabulary id (one channel or multiple channels),
  * pre-embedded vocabulary id inside the embedding table acheives the same effect by less computation (but more memory).
+ *
+ * @member {number} stageCount
+ *   How many stages inside this neural network. It is ( >= 1 ).
+ * Every stage will halve height, halve width, double channel count.
  *
  * @member {Stage.ParamsBase[]} stageParamsArray
  *   The stages parameters of this neural network. It will be created only if
@@ -244,11 +248,12 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
    * @return {NeuralNet.StageParamsCreator.Base}
    *   Return newly created NeuralNet.StageParamsCreator.Xxx object according to neuralNetParams.nConvStageTypeId.
    */
-   static create_StageParamsCreator_byNeuralNetParams( neuralNetParams ) {
+  static create_StageParamsCreator_byNeuralNetParams( neuralNetParams ) {
 
-    if ( neuralNetParams.stageCountRequested < 1 )
-      throw Error( `NeuralNet.InferencedParams.Base.create_StageParamsCreator_byNeuralNetParams(): `
-        + `neuralNetParams.stageCountRequested ( ${neuralNetParams.stageCountRequested} ) must be >= 1.` );
+//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
+    // if ( neuralNetParams.stageCountRequested < 1 )
+    //   throw Error( `NeuralNet.InferencedParams.Base.create_StageParamsCreator_byNeuralNetParams(): `
+    //     + `neuralNetParams.stageCountRequested ( ${neuralNetParams.stageCountRequested} ) must be >= 1.` );
 
     // Currently, only one kind of NeuralNet.StageParamsCreator could be used.
     let aStageParamsCreator = StageParamsCreator.Base.Pool.get_or_create_by( neuralNetParams );
