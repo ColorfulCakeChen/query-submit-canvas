@@ -173,7 +173,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     const input0_channelCount = input_channelCount;
     const nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL; // (Always MobileNetV1)
     const pointwise1ChannelCount = input_channelCount; // (No expanding)
-    const depthwise_AvgMax_Or_ChannelMultiplier = ValueDesc.AvgMax_Or_ChannelMultiplierSingleton.Ids.AVG; // (Always global average pooling)
+    const depthwise_AvgMax_Or_ChannelMultiplier = ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG; // (Always global average pooling)
     const depthwiseFilterHeight = input_height; // (global average pooling)
     const depthwiseFilterWidth = input_width; // (global average pooling)
     const depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID; // (global average pooling)
