@@ -906,20 +906,10 @@ class Block_Base extends Recyclable.Root {
       this.operationArray = null;
     }
 
-//!!! (2022/08/03 Remarked) Wrong. Old Codes.
-//    // 3. The .inputX may or may not be created by this block (but .inputX.scaleBoundArray are always not), they should be released by
-//    //    this block according to .Xxx_bOwned flag (except .inputX.scaleBoundArray).
-
     // 3. The .inputX may or may not be created by this block, they should be released
     //    by this block according to .Xxx_bOwned flag.
     {
       if ( this.input1 ) {
-//!!! (2022/08/03 Remarked) Wrong. Old Codes.
-        // this.input1.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray0 which should not be released here. So nullify it.
-        // if ( this.input1_bOwned ) {
-        //   this.input1.disposeResources_and_recycleToPool();
-        // }
-
         if ( this.input1_bOwned ) {
           this.input1.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray0 which should not be released here. So nullify it.
           this.input1.disposeResources_and_recycleToPool();
@@ -931,12 +921,6 @@ class Block_Base extends Recyclable.Root {
       }
  
       if ( this.input0 ) {
-//!!! (2022/08/03 Remarked) Wrong. Old Codes.
-        // this.input0.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray1 which should not be released here. So nullify it.
-        // if ( this.input0_bOwned ) {
-        //   this.input0.disposeResources_and_recycleToPool();
-        // }
-
         if ( this.input0_bOwned ) {
           this.input0.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray1 which should not be released here. So nullify it.
           this.input0.disposeResources_and_recycleToPool();
