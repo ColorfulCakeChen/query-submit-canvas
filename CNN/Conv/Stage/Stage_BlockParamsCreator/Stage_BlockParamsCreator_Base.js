@@ -183,39 +183,6 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     // 2. pointwise2
     this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
-//!!! (2022/08/05 Remarked) Old Codes.
-//     // 1. depthwise
-//     {
-//       // MobileNetV2_Xxx's depthwise has activation (before prefix squeeze-and-excitation and to remedy its pointwise2's no activation).
-//       //
-//       if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
-//         this.depthwiseActivationId = stageParams.nActivationId;
-//
-//       // non-MobileNetV2_Xxx's depthwise has no activation. (since they will be done at pointwise2.)
-//       //
-//       } else {
-//         this.depthwiseActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-//       }
-//     }
-//
-//     // 2. pointwise2
-//     {
-//       // MobileNetV2_Xxx's pointwise2 always does not have activation function.
-//       //
-//       // The reason is that MobileNetV2_Xxx's pointwise2 has add-input-to-output so its block's output is not affine transformation
-//       // (even if no activation function). It and the next block's pointwise1 is not continuous multiple affine transformation
-//       // and will not become just one affine transformation.
-//       //
-//       if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
-//         this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-//
-//       // For all other ConvStageType, all non-blockLast's pointwise2 must have activation function (to become non-affine transformation).
-//       // The reason is to avoid the previous block's pointwise2 and the next block's pointwis1 become just one affine transformation.
-//       } else {
-//         this.pointwise20ActivationId = stageParams.nActivationId;
-//       }
-//     }
-
     // 3. pointwise1 and squeeze-and-excitation
     this.nActivationId = stageParams.nActivationId;
     
@@ -235,28 +202,6 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
    */
   activation_setup_forBlockLast() {
     let stageParams = this.stageParams;
-
-//!!! (2022/08/05 Remarked) Old Codes
-//     // pointwise2
-//     {
-//       // MobileNetV2_Xxx's pointwise2 always does not have activation function.
-//       //
-//       // The reason is that MobileNetV2_Xxx's pointwise2 has add-input-to-output so its block's output is not affine transformation
-//       // (even if no activation function). It and the next block's pointwise1 is not continuous multiple affine transformation
-//       // and will not become just one affine transformation.
-//       //
-//       if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
-//         this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-//
-//       // For all other ConvStageType, whether blockLast's pointwise2 has activation function is according to the specified flag.
-//       } else {
-//         if ( stageParams.bPointwise2ActivatedAtStageEnd == false ) {
-//           this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-//         } else {
-//           this.pointwise20ActivationId = stageParams.nActivationId;
-//         }
-//       }
-//     }
   }
 
   // The following read only properties is useful when debugging, although they
