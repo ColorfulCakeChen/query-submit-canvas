@@ -32,6 +32,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId, stageCountRequested,
     blockCountRequested,
+    output_channelCount,
     bKeepInputTensor
   ) {
     super();
@@ -40,6 +41,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId, stageCountRequested,
       blockCountRequested,
+      output_channelCount,
       bKeepInputTensor
     );
   }
@@ -50,6 +52,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId, stageCountRequested,
     blockCountRequested,
+    output_channelCount,
     bKeepInputTensor
   ) {
     super.setAsConstructor();
@@ -58,6 +61,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId, stageCountRequested,
       blockCountRequested,
+      output_channelCount,
       bKeepInputTensor
     );
     return this;
@@ -69,6 +73,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId, stageCountRequested,
     blockCountRequested,
+    output_channelCount,
     bKeepInputTensor
   ) {
     this.input_height = input_height;
@@ -79,6 +84,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     this.nConvStageTypeId = nConvStageTypeId;
     this.stageCountRequested = stageCountRequested;
     this.blockCountRequested = blockCountRequested;
+    this.output_channelCount = output_channelCount;
     this.bKeepInputTensor = bKeepInputTensor;
   }
 
@@ -87,6 +93,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     this.inferencedParams_dispose();
 
     this.bKeepInputTensor = undefined;
+    this.output_channelCount = undefined;
     this.blockCountRequested = undefined;
     this.stageCountRequested = undefined;
     this.nConvStageTypeId = undefined;
@@ -154,6 +161,8 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       + `stageCountRequested=${this.stageCountRequested}, `
 
       + `blockCountRequested=${this.blockCountRequested}, `
+
+      + `output_channelCount=${this.output_channelCount}, `
 
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
       + `${this.inferencedParams}`

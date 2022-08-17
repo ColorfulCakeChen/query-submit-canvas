@@ -958,7 +958,7 @@ class Block_Base extends Recyclable.Root {
   dispose_intermediate_ScaleBoundsArray() {
     this.operationArray.dispose_intermediate_ScaleBoundsArray();
   }
- 
+
   /**
    * Append a sequence operations to achieve squeeze-and-excitation.
    *
@@ -1331,10 +1331,20 @@ class Block_Base extends Recyclable.Root {
     return this.operationArray.output0.channelCount;
   }
 
+  get output0_scaleBoundsArray() {
+    return this.operationArray.output0.scaleBoundsArray;
+  }
+
   get output1_channelCount() {
     if ( this.operationArray.output1 )
       return this.operationArray.output1.channelCount;
     return 0;
+  }
+
+  get output1_scaleBoundsArray() {
+    if ( this.operationArray.output1 )
+      return this.operationArray.output1.scaleBoundsArray;
+    return null;
   }
 
   get output_channelCount() {

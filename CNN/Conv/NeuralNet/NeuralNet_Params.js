@@ -50,6 +50,9 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
  * @member {number} blockCountRequested
  *   How many blocks inside every stage are wanted. It must be ( >= 2 ).
  *
+ * @member {number} output_channelCount
+ *   The output tensor's channel count.
+ *
  * @member {boolean} bKeepInputTensor
  *   If true, apply() will not dispose inputTensor (i.e. will be kept).
  *
@@ -72,6 +75,7 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
     vocabularyChannelCount, vocabularyCountPerInputChannel = 256,
     nConvStageTypeId, stageCountRequested,
     blockCountRequested,
+    output_channelCount,
     bKeepInputTensor
   ) {
     super(
@@ -80,6 +84,7 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId, stageCountRequested,
       blockCountRequested,
+      output_channelCount,
       bKeepInputTensor
     );
     NeuralNet_Params.setAsConstructor_self.call( this );
@@ -91,6 +96,7 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
     vocabularyChannelCount, vocabularyCountPerInputChannel = 256,
     nConvStageTypeId, stageCountRequested,
     blockCountRequested,
+    output_channelCount,
     bKeepInputTensor
   ) {
     super.setAsConstructor(
@@ -99,6 +105,7 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId, stageCountRequested,
       blockCountRequested,
+      output_channelCount,
       bKeepInputTensor
     );
     NeuralNet_Params.setAsConstructor_self.call( this );
@@ -116,7 +123,8 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
   }
 
   /**
-   * @return {boolean} Always return false. NeuralNet.Params needs not and can not
+   * @return {boolean}
+   *   Always return false. NeuralNet.Params needs not and can not
    * generate Stage.Params by itself. Only NeuralNet.Base.initer() could do that.
    * The reason is NeuralNet.StageParamsCreator needs input_height and input_width
    * of previous block. And these could only be available from previous
@@ -159,6 +167,7 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
       this.nConvStageTypeId = this.getParamValue_byParamDesc( NeuralNet_Params.nConvStageTypeId );
       this.stageCountRequested = this.getParamValue_byParamDesc( NeuralNet_Params.stageCountRequested );
       this.blockCountRequested = this.getParamValue_byParamDesc( NeuralNet_Params.blockCountRequested );
+      this.output_channelCount = this.getParamValue_byParamDesc( NeuralNet_Params.output_channelCount );
       this.bKeepInputTensor = this.getParamValue_byParamDesc( NeuralNet_Params.bKeepInputTensor );
     }
 
@@ -183,6 +192,8 @@ NeuralNet_Params.stageCountRequested =            new ParamDesc.Int(           "
 
 NeuralNet_Params.blockCountRequested =            new ParamDesc.Int(           "blockCountRequested",   2, (  1 * 1024 ) );
 
+NeuralNet_Params.output_channelCount =            new ParamDesc.Int(  "output_channelCount",            1, ( 10 * 1024 ) );
+
 NeuralNet_Params.bKeepInputTensor =               new ParamDesc.Bool( "bKeepInputTensor" );
 
 
@@ -198,6 +209,7 @@ NeuralNet_Params.SequenceArray = new ParamDesc.SequenceArray( [
   NeuralNet_Params.nConvStageTypeId,
   NeuralNet_Params.stageCountRequested,
   NeuralNet_Params.blockCountRequested,
+  NeuralNet_Params.output_channelCount,
   NeuralNet_Params.bKeepInputTensor,
 ] );
 

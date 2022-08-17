@@ -429,20 +429,31 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     neuralNet_asserter.propertyValue( "stageCountRequested", testParams.out.stageCountRequested );
     neuralNet_asserter.propertyValue( "blockCountRequested", testParams.out.blockCountRequested );
     neuralNet_asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
+    neuralNet_asserter.propertyValue( "output_channelCount", testParams.out.output_channelCount );
 
     // Inferenced parameters.
-    let { stageCount, output_height, output_width, output_channelCount }
-      = testParams.out.inferencedParams;
+    let {
+      stageCount,
+      stageLast_output_height, stageLast_output_width, stageLast_output_channelCount,
+      output_height, output_width,
+    } = testParams.out.inferencedParams;
 
     neuralNet_asserter.propertyValue( "stageCount", stageCount );
     neuralNet_asserter.propertyValue( "stageCount", testParams.stageArray.length );
+
+    neuralNet_asserter.propertyValue( "stageLast_output_height", stageLast_output_height );
+    neuralNet_asserter.propertyValue( "stageLast_output_width", stageLast_output_width );
+    neuralNet_asserter.propertyValue( "stageLast_output_channelCount", stageLast_output_channelCount );
+
     neuralNet_asserter.propertyValue( "output_height", output_height );
+    neuralNet_asserter.propertyValue( "output_height", 1 );
     neuralNet_asserter.propertyValue( "output_width", output_width );
-    neuralNet_asserter.propertyValue( "output_channelCount", output_channelCount );
+    neuralNet_asserter.propertyValue( "output_width", 1 );
 
     // Every stage will double channel count.
-    let embedding_output_channelCount = testParams.out.input_channelCount * testParams.out.vocabularyChannelCount;
-    neuralNet_asserter.propertyValue( "output_channelCount",
+    let embedding_output_channelCount
+      = testParams.out.input_channelCount * testParams.out.vocabularyChannelCount;
+    neuralNet_asserter.propertyValue( "stageLast_output_channelCount",
       embedding_output_channelCount * ( 2 ** stageCount ) );
 
     // Other parameters.
@@ -465,6 +476,9 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
         tensorWeightCountTotal += stage.tensorWeightCountTotal;
         tensorWeightCountExtracted += stage.tensorWeightCountExtracted;
       }
+
+!!! ...unfinished... (2022/08/17)
+// What about blockFinal?
 
       neuralNet_asserter.propertyValue( "tensorWeightCountTotal", tensorWeightCountTotal );
       neuralNet_asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
@@ -617,6 +631,10 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
         }
       }
     }
+
+
+!!! ...unfinished... (2022/08/17)
+// What about blockFinal?
 
     return imageOut;
   }

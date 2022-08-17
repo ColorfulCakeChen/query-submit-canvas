@@ -481,21 +481,17 @@ class NeuralNet_Base extends Recyclable.Root {
     return this.stageArray.length;
   }
 
-  get output_height() {
-    return this.stageLast.output0.height;
-  }
+//!!! ...unfinished... (2022/08/17) should return the blockFinal (for output shape [ 1, 1, X ]).
+  get stageLast_output_height()           { return this.stageLast.output0.height; }
+  get stageLast_output_width()            { return this.stageLast.output0.width; }
+  get stageLast_output_channelCount()     { return this.stageLast.output0.channelCount; }
+  get stageLast_output_scaleBoundsArray() { return this.stageLast.output0.scaleBoundsArray; }
 
-  get output_width() {
-    return this.stageLast.output0.width;
-  }
-
-  get output_channelCount() {
-    return this.stageLast.output0.channelCount;
-  }
-
-  get output_scaleBoundsArray() {
-    return this.stageLast.output0.scaleBoundsArray;
-  }
+//!!! ...unfinished... (2022/08/17) should return the extraBlockLast (for output shape [ 1, 1, X ]).
+  get output_height()           { return this.blockFinal.output_height; }
+  get output_width()            { return this.blockFinal.output_width; }
+  get output_channelCount()     { return this.blockFinal.output0_channelCount; }
+  get output_scaleBoundsArray() { return this.blockFinal.output0_scaleBoundsArray; }
 
   /**
    * @return {string} The description string of all (adjusted) parameters of initer().

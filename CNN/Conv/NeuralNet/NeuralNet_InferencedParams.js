@@ -21,14 +21,20 @@ import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
  *   The stages parameters of this neural network. It will be created only if
  * ( neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() == true ).
  *
+ * @member {number} stageLast_output_height
+ *   The stageLast's output image's height of this neural network.
+ *
+ * @member {number} stageLast_output_width
+ *   The stageLast's output image's width of this neural network.
+ *
+ * @member {number} stageLast_output_channelCount
+ *   The stageLast's image's channel count of this neural network.
+ *
  * @member {number} output_height
- *   The output image's height of this neural network.
+ *   The output image's height of this neural network. It should always be 1.
  *
  * @member {number} output_width
- *   The output image's width of this neural network.
- *
- * @member {number} output_channelCount
- *   The output image's channel count of this neural network.
+ *   The output image's width of this neural network. It should always be 1.
  *
  * @see NeuralNet.Params
  */
@@ -61,13 +67,19 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
   static setAsConstructor_self( neuralNetParamsBase ) {
     this.embeddingParams_create( neuralNetParamsBase );
     this.stageParamsArray_create( neuralNetParamsBase );
+
+    this.output_height = 1;
+    this.output_width = 1;
   }
 
   /** @override */
   disposeResources() {
-    this.output_channelCount = undefined;
     this.output_width = undefined;
     this.output_height = undefined;
+
+    this.stageLast_output_channelCount = undefined;
+    this.stageLast_output_width = undefined;
+    this.stageLast_output_height = undefined;
 
     this.stageParamsLast = undefined;
     this.stageParams0 = undefined;
@@ -177,9 +189,9 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       this.stageParams0 = this.stageParamsArray[ 0 ]; // Shortcut to the first stage.
       this.stageParamsLast = this.stageParamsArray[ this.stageParamsArray.length - 1 ]; // Shortcut to the last stage.
 
-      this.output_height = this.stageParamsLast.inferencedParams.output_height;
-      this.output_width = this.stageParamsLast.inferencedParams.output_width;
-      this.output_channelCount = this.stageParamsLast.inferencedParams.output_channelCount;
+      this.stageLast_output_height = this.stageParamsLast.inferencedParams.output_height;
+      this.stageLast_output_width = this.stageParamsLast.inferencedParams.output_width;
+      this.stageLast_output_channelCount = this.stageParamsLast.inferencedParams.output_channelCount;
 
     } finally {
       if ( stageParamsCreator ) {
@@ -222,9 +234,11 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     let str = ``
       + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
       + `stageCount=${this.stageCount}, `
+      + `stageLast_output_height=${this.stageLast_output_height}, `
+      + `stageLast_output_width=${this.stageLast_output_width}, `
+      + `stageLast_output_channelCount=${this.stageLast_output_channelCount}, `
       + `output_height=${this.output_height}, `
-      + `output_width=${this.output_width}, `
-      + `output_channelCount=${this.output_channelCount}, `
+      + `output_width=${this.output_width} `
     ;
     return str;
   }
