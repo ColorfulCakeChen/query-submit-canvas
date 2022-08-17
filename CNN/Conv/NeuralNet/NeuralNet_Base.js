@@ -580,7 +580,7 @@ class NeuralNet_Base extends Recyclable.Root {
       + `stageCount=${this.stageCount}, `
       + `stageLast_output_height=${this.stageLast_output_height}, `
       + `stageLast_output_width=${this.stageLast_output_width}, `
-      + `stageLast_output_channelCount=${this.stageLast_output_channelCount}`
+      + `stageLast_output_channelCount=${this.stageLast_output_channelCount}, `
 
       + `output_height=${this.output_height}, `
       + `output_width=${this.output_width}, `

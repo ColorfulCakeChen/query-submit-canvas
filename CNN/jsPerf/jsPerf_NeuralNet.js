@@ -103,11 +103,12 @@ class PerformanceTestCase extends Recyclable.Root {
       console.log( `NeuralNet.${this.testCaseName}: tensorWeightCount = { `
         + `Extracted: ${neuralNet.tensorWeightCountExtracted}, `
         + `Total: ${neuralNet.tensorWeightCountTotal} }, `
-        + `stageLast shape`
+        + `stageCount=${neuralNet.stageCount}, `
+        + `stageLast_shape=`
           + `( ${neuralNet.stageLast_output_height}, `
           + `${neuralNet.stageLast_output_width}, `
-          + `${neuralNet.stageLast_output_channelCount} ),`
-        + `output shape `
+          + `${neuralNet.stageLast_output_channelCount} ), `
+        + `output_shape=`
           + `( ${neuralNet.output_height}, ${neuralNet.output_width}, `
           + `${neuralNet.output_channelCount} ).`
       );
