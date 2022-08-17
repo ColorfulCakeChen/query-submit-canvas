@@ -280,6 +280,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       testParams.in.vocabularyChannelCount, testParams.in.vocabularyCountPerInputChannel,
       testParams.in.nConvStageTypeId, testParams.in.stageCountRequested,
       testParams.in.blockCountRequested,
+      testParams.in.output_channelCount,
       testParams.in.bKeepInputTensor
     );
 
