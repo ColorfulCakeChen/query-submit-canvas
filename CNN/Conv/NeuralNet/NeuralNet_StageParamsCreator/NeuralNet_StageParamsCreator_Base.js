@@ -82,9 +82,6 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 //!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
 //    this.stageCount = neuralNetParams.stageCountRequested; // By default, the stage count is just the requested original stage count.
 
-//!!! ...unfinished... (2022/08/17)
-// Perhaps, determine stageCount according to output_channelCount automatically.
-//
 
     // Because every stage will double output channel count, find out stageCount
     // so that the stageLast's output channel count is (a little) larger than

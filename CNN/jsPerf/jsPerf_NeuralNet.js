@@ -196,7 +196,10 @@ class HeightWidthDepth {
 
     let vocabularyChannelCount = 4;
     let vocabularyCountPerInputChannel = 256;
-    let stageCountRequested = 3; //5; //7; //5;
+
+//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
+//    let stageCountRequested = 3; //5; //7; //5;
+
     let blockCountRequested = 4; //5; //5;
     let output_channelCount = 64;
 
@@ -207,7 +210,7 @@ class HeightWidthDepth {
     // input_height, input_width, input_channelCount,
     // vocabularyChannelCount, vocabularyCountPerInputChannel,
     // nConvStageTypeId,
-    // stageCountRequested, blockCountRequested, output_channelCount, bKeepInputTensor
+    // blockCountRequested, output_channelCount, bKeepInputTensor
     //
 
     // Test Case 0: (MobileNetV1)
@@ -216,7 +219,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
-        stageCountRequested, blockCountRequested, output_channelCount, bKeepInputTensor
+        blockCountRequested, output_channelCount, bKeepInputTensor
       ) );
 
     // Test Case 1: (MobileNetV1_padValid)
@@ -225,7 +228,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
-        stageCountRequested, blockCountRequested, output_channelCount, bKeepInputTensor
+        blockCountRequested, output_channelCount, bKeepInputTensor
       ) );
 
     // Test Case 2: (MobileNetV2_Thin)
@@ -234,7 +237,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
-        stageCountRequested, blockCountRequested, output_channelCount, bKeepInputTensor
+        blockCountRequested, output_channelCount, bKeepInputTensor
       ) );
 
     // Test Case 3: (MobileNetV2)
@@ -243,7 +246,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
-        stageCountRequested, blockCountRequested, output_channelCount, bKeepInputTensor
+        blockCountRequested, output_channelCount, bKeepInputTensor
       ) );
 
     // Test Case 4: (ShuffleNetV2))
@@ -252,7 +255,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
-        stageCountRequested, blockCountRequested, output_channelCount, bKeepInputTensor
+        blockCountRequested, output_channelCount, bKeepInputTensor
       ) );
 
     // Test Case 5: (ShuffleNetV2_byPointwise21)
@@ -261,7 +264,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
-        stageCountRequested, blockCountRequested, output_channelCount, bKeepInputTensor
+        blockCountRequested, output_channelCount, bKeepInputTensor
       ) );
 
     // Test Case 6: (ShuffleNetV2_byMobileNetV1)
@@ -270,7 +273,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
-        stageCountRequested, blockCountRequested, output_channelCount, bKeepInputTensor
+        blockCountRequested, output_channelCount, bKeepInputTensor
       ) );
 
     // Test Case 7: (ShuffleNetV2_byMobileNetV1_padValid)
@@ -279,7 +282,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
-        stageCountRequested, blockCountRequested, output_channelCount, bKeepInputTensor
+        blockCountRequested, output_channelCount, bKeepInputTensor
       ) );
   }
 
