@@ -73,8 +73,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
   /** @override */
   static setAsConstructor_self( neuralNetParamsBase ) {
     this.embeddingParams_create( neuralNetParamsBase );
-    this.stageParamsArray_create( neuralNetParamsBase );
-    this.blockFinalParams_create( neuralNetParamsBase );
+    this.stageParamsArray_blockFinalParams_create( neuralNetParamsBase );
   }
 
   /** @override */
@@ -143,10 +142,18 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     }
   }
 
+  /** */
+  blockFinalParams_dispose() {
+    if ( this.blockFinalParams ) {
+      this.blockFinalParams.disposeResources_and_recycleToPool();
+      this.blockFinalParams = null;
+    }
+  }
+
   /**
    * (Also create blockFinalParams.)
    */
-  stageParamsArray_create( neuralNetParamsBase ) {
+  stageParamsArray_blockFinalParams_create( neuralNetParamsBase ) {
     if ( this.stageParamsArray ) {
       this.stageParamsArray.clear(); // (Re-used if exists.)
     } else {
@@ -212,6 +219,9 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
           this.stageLast_output_width,
           this.stageLast_output_channelCount );
 
+        this.blockFinalParams = stageParamsCreator.blockFinalParams;
+        stageParamsCreator.blockFinalParams = null; // (Because ownship has transferrred.)
+
         this.output_height = this.blockFinalParams.output_height; // (should be 1.)
         this.output_width = this.blockFinalParams.output_width; // (should be 1.)
       }
@@ -222,14 +232,6 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
         stageParamsCreator.disposeResources_and_recycleToPool();
         stageParamsCreator = null;
       }
-    }
-  }
-
-  /** */
-  blockFinalParams_dispose() {
-    if ( this.blockFinalParams ) {
-      this.blockFinalParams.disposeResources_and_recycleToPool();
-      this.blockFinalParams = null;
     }
   }
 
