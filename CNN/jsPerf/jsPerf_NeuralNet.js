@@ -156,7 +156,7 @@ class HeightWidthDepth {
 
     this.testCaseMap.set( testCaseName, aPerformanceTestCase );
   }
- 
+
   neuralNet_PerformanceTest_init() {
 
     // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
@@ -201,7 +201,7 @@ class HeightWidthDepth {
 //    let stageCountRequested = 3; //5; //7; //5;
 
     let blockCountRequested = 4; //5; //5;
-    let output_channelCount = 64;
+    let output_channelCount = 200; //64;
 
     // The neuralNet performance testing should not keep-input-tensor. The reason input
     // image is created from canvas in real time.
