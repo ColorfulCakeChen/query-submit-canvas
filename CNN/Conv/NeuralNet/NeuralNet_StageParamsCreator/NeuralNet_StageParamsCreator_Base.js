@@ -115,8 +115,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     this.depthwiseFilterHeight = 3; // Always use ( 3 * 3 ) depthwise filter.
     this.depthwiseFilterWidth = 3;
 
-    // Use the suggested squeeze-and-excitation divisor.
-    this.nSqueezeExcitationChannelCountDivisor = 16;
+    // Use the MobileNetV3 suggested squeeze-and-excitation divisor.
+    this.nSqueezeExcitationChannelCountDivisor = 4;
 
     // Always use the only suggested activation function.
     this.nActivationId = ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2;
