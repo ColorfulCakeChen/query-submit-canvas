@@ -2,6 +2,8 @@ export { NeuralNet_InferencedParams as InferencedParams };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as Block from "../Block.js";
 import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
 
 //!!! ...unfinished... (2022/07/31)
@@ -19,6 +21,10 @@ import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
  *
  * @member {Stage.ParamsBase[]} stageParamsArray
  *   The stages parameters of this neural network. It will be created only if
+ * ( neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() == true ).
+ *
+ * @member {Block.ParamsBase} blockFinalParams
+ *   The final block's of this neural network. It will be created only if
  * ( neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() == true ).
  *
  * @member {number} stageLast_output_height
@@ -67,9 +73,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
   static setAsConstructor_self( neuralNetParamsBase ) {
     this.embeddingParams_create( neuralNetParamsBase );
     this.stageParamsArray_create( neuralNetParamsBase );
-
-    this.output_height = 1;
-    this.output_width = 1;
+    this.blockFinalParams_create( neuralNetParamsBase );
   }
 
   /** @override */
@@ -80,6 +84,8 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     this.stageLast_output_channelCount = undefined;
     this.stageLast_output_width = undefined;
     this.stageLast_output_height = undefined;
+
+    this.blockFinalParams_dispose();
 
     this.stageParamsLast = undefined;
     this.stageParams0 = undefined;
@@ -96,7 +102,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
   /**
    * 
    */
-   embeddingParams_dispose() {
+  embeddingParams_dispose() {
     if ( this.embeddingParams ) {
       this.embeddingParams.disposeResources_and_recycleToPool();
       this.embeddingParams = null;
@@ -200,6 +206,84 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
         stageParamsCreator = null;
       }
     }
+  }
+
+  /** */
+  blockFinalParams_dispose() {
+    if ( this.blockFinalParams ) {
+      this.blockFinalParams.disposeResources_and_recycleToPool();
+      this.blockFinalParams = null;
+    }
+  }
+
+  /** */
+  blockFinalParams_create( neuralNetParamsBase ) {
+    this.blockFinalParams_dispose();
+
+    if ( !neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() )
+      return; // No need to create .stageParamsArray.
+
+    const input0_height = this.stageLast_output_height;
+    const input0_width = this.stageLast_output_width;
+    const input0_channelCount = this.stageLast_output_channelCount;
+    const nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL; // (Always MobileNetV1)
+    const pointwise1ChannelCount = this.stageLast_output_channelCount;
+    const depthwise_AvgMax_Or_ChannelMultiplier = ValueDesc.AvgMax_Or_ChannelMultiplierSingleton.Ids.AVG; // (Always global average pooling)
+    const depthwiseFilterHeight
+    const depthwiseFilterWidth
+    const depthwiseStridesPad,
+    const depthwiseActivationId,
+    const pointwise20ChannelCount
+    const pointwise20ActivationId,
+    const nSqueezeExcitationChannelCountDivisor
+    const bSqueezeExcitationPrefix,
+    const nActivationId,
+    const bKeepInputTensor
+
+    this.blockFinalParams = Block.ParamsBase.Pool.get_or_create_by(
+      input0_height, input0_width, input0_channelCount,
+      nConvBlockTypeId,
+      pointwise1ChannelCount,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwiseActivationId,
+      pointwise20ChannelCount, pointwise20ActivationId,
+      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+      nActivationId,
+      bKeepInputTensor
+
+      
+      ,
+      ,
+      
+      this.stageLast_output_channelCount, //pointwise1ChannelCount,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwiseActivationId,
+      pointwise20ChannelCount, pointwise20ActivationId,
+      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+      nActivationId,
+      bKeepInputTensor
+  
+    );
+
+    blockTestParams.set_byParamsScattered(
+
+
+!!! ...unfinished... (2022/08/17)
+
+      blockParams.nConvBlockTypeId,
+      blockParams.pointwise1ChannelCount,
+      blockParams.depthwise_AvgMax_Or_ChannelMultiplier, blockParams.depthwiseFilterHeight,
+      blockParams.depthwiseFilterWidth, blockParams.depthwiseStridesPad,
+      blockParams.depthwiseActivationId,
+      blockParams.pointwise20ChannelCount, blockParams.pointwise20ActivationId,
+      blockParams.nSqueezeExcitationChannelCountDivisor, blockParams.bSqueezeExcitationPrefix,
+      blockParams.nActivationId,
+      blockParams.bKeepInputTensor
+    );
+
+
+    this.output_height = ?1;
+    this.output_width = ?1;
   }
 
   /**

@@ -8,6 +8,7 @@ import * as NeuralNet from "../../Conv/NeuralNet.js";
 import * as TestParams from "./TestParams.js";
 import * as Embedding_TestParams from "./Embedding_TestParams.js";
 import * as Stage_TestParams from "./Stage_TestParams.js";
+import * as Block_TestParams from "./Block_TestParams.js";
 
 /**
  *
@@ -48,6 +49,9 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
   disposeResources() {
     this.out?.disposeResources_and_recycleToPool();
     this.out = null;
+
+    this.blockFinal?.disposeResources_and_recycleToPool();
+    this.blockFinal = null;
 
     this.stageArray?.disposeResources_and_recycleToPool();
     this.stageArray = null;
@@ -188,8 +192,33 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       this.in.paramsNumberArrayObject.push( stageTestParams.in_weights.weightArray ); // Place every stage's parameters in sequence.
     }
 
-!!! ...unfinished... (2022/08/17)
     // 3. blockFinal
+    {
+      this.blockFinal?.disposeResources_and_recycleToPool();
+      let blockTestParams = this.blockFinal
+        = Block_TestParams.Base.Pool.get_or_create_by( this.id );
+
+      blockTestParams.set_byParamsScattered(
+        neuralNetParams.inferencedParams.stageLast_output_height,
+        neuralNetParams.inferencedParams.stageLast_output_width,
+        neuralNetParams.inferencedParams.stageLast_output_channelCount,
+        ValueDesc.
+
+!!! ...unfinished... (2022/08/17)
+
+        blockParams.nConvBlockTypeId,
+        blockParams.pointwise1ChannelCount,
+        blockParams.depthwise_AvgMax_Or_ChannelMultiplier, blockParams.depthwiseFilterHeight,
+        blockParams.depthwiseFilterWidth, blockParams.depthwiseStridesPad,
+        blockParams.depthwiseActivationId,
+        blockParams.pointwise20ChannelCount, blockParams.pointwise20ActivationId,
+        blockParams.nSqueezeExcitationChannelCountDivisor, blockParams.bSqueezeExcitationPrefix,
+        blockParams.nActivationId,
+        blockParams.bKeepInputTensor
+      );
+  
+      this.in.paramsNumberArrayObject.push( blockTestParams.in_weights.weightArray ); // Place final block's parameters in sequence.
+    }
 
     // 4. Pack all parameters, look-up tables weights into a (pre-allocated and re-used) NumberArray.
     this.in_weights.set_byConcat(
