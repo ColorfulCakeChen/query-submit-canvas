@@ -78,4 +78,13 @@ class ObjectPropertyAsserter_Base extends Recyclable.Root {
       throw Error( `${this.objectName}.${propertyName} ( ${propertyValue} ) should be <= ( ${value} ). ${this.contextDescription}` );
   }
 
+  /**
+   * Assert ( this.object[ propertyName ] >= value ).
+   */
+  propertyValueGE( propertyName, value ) {
+    let propertyValue = this.object[ propertyName ];
+    if ( propertyValue < value )
+      throw Error( `${this.objectName}.${propertyName} ( ${propertyValue} ) should be >= ( ${value} ). ${this.contextDescription}` );
+  }
+
 }
