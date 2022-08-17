@@ -169,25 +169,26 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     BlockParamsClass,
     input_height, input_width, input_channelCount ) {
 
-    this.blockFinalParams_dispose();
+    let neuralNetParams = this.neuralNetParams;
 
-    const input0_height = this.stageLast_output_height;
-    const input0_width = this.stageLast_output_width;
-    const input0_channelCount = this.stageLast_output_channelCount;
+    const input0_height = input_height;
+    const input0_width = input_width;
+    const input0_channelCount = input_channelCount;
     const nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL; // (Always MobileNetV1)
-    const pointwise1ChannelCount = this.stageLast_output_channelCount; // (No expanding)
+    const pointwise1ChannelCount = input_channelCount; // (No expanding)
     const depthwise_AvgMax_Or_ChannelMultiplier = ValueDesc.AvgMax_Or_ChannelMultiplierSingleton.Ids.AVG; // (Always global average pooling)
-    const depthwiseFilterHeight = this.stageLast_output_height; // (global average pooling)
-    const depthwiseFilterWidth = this.stageLast_output_width; // (global average pooling)
+    const depthwiseFilterHeight = input_height; // (global average pooling)
+    const depthwiseFilterWidth = input_width; // (global average pooling)
     const depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID; // (global average pooling)
     const depthwiseActivationId = this.nActivationId;
-    const pointwise20ChannelCount = neuralNetParamsBase.output_channelCount;
+    const pointwise20ChannelCount = neuralNetParams.output_channelCount;
     const pointwise20ActivationId = this.nActivationId;
     const nSqueezeExcitationChannelCountDivisor = this.nSqueezeExcitationChannelCountDivisor;
     const bSqueezeExcitationPrefix = false; // (non-MobileNetV2 always uses postfix squeeze-and-excitation.)
     const nActivationId = this.nActivationId;
     const bKeepInputTensor = false; // (Always destroy input because there is stageLast always in front of blockFinal.)
 
+    this.blockFinalParams_dispose();
     this.blockFinalParams = BlockParamsClass.Pool.get_or_create_by(
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
