@@ -445,7 +445,11 @@ class NeuralNet_Base extends Recyclable.Root {
       outputTensor = stageArray[ i ].apply( outputTensor );
     }
 
-!!! ...unfinished... (2022/08/17) blockFinal
+    {
+      this.blockFinal.input0.realTensor = outputTensor;
+      this.blockFinal.apply();
+      outputTensor = this.blockFinal.output0.realTensor;
+    }
 
     return outputTensor;
   }
