@@ -222,6 +222,8 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
         this.blockFinalParams = stageParamsCreator.blockFinalParams;
         stageParamsCreator.blockFinalParams = null; // (Because ownship has transferrred.)
 
+        this.blockFinalParams.inferencedParams_create();
+
         this.output_height = this.blockFinalParams.output_height; // (should be 1.)
         this.output_width = this.blockFinalParams.output_width; // (should be 1.)
       }
