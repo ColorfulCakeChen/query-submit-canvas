@@ -673,7 +673,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
         }
       }
 
-      let imageOut = this.imageOutArray[ 0 ]; // The blockFinal should have only input0.
+      imageOut = this.imageOutArray[ 0 ]; // The blockFinal should have only input0.
 
       // Avoid dangling tensors.
       this.imageInArray[ 0 ] = null;
