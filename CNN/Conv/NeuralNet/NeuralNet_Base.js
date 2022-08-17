@@ -183,7 +183,6 @@ class NeuralNet_Base extends Recyclable.Root {
     this.nConvStageTypeName = params.nConvStageTypeName;
     this.stageCountRequested = params.stageCountRequested;
     this.blockCountRequested = params.blockCountRequested;
-    //this.output_channelCount = params.output_channelCount;
     this.bKeepInputTensor = params.bKeepInputTensor;
 
     // The parameters which are determined (inferenced) from the above parameters.
@@ -326,7 +325,7 @@ class NeuralNet_Base extends Recyclable.Root {
         this.bInitOk = yield* blockIniter;
         if ( !this.bInitOk )
           return false;
-        this.weightElementOffsetEnd = stage.weightElementOffsetEnd;
+        this.weightElementOffsetEnd = blockFinal.weightElementOffsetEnd;
 
         this.tensorWeightCountTotal += blockFinal.tensorWeightCountTotal;
         this.tensorWeightCountExtracted += blockFinal.tensorWeightCountExtracted;
