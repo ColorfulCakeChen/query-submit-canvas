@@ -200,8 +200,8 @@ class HeightWidthDepth {
 //!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
 //    let stageCountRequested = 3; //5; //7; //5;
 
-    let blockCountRequested = 4; //5; //5;
-    let output_channelCount = 200; //64;
+    let blockCountRequested = 10;
+    let output_channelCount = 800; //64;
 
     // The neuralNet performance testing should not keep-input-tensor. The reason input
     // image is created from canvas in real time.
