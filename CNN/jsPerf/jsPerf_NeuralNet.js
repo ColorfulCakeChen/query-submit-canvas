@@ -156,7 +156,7 @@ class HeightWidthDepth {
 
     this.testCaseMap.set( testCaseName, aPerformanceTestCase );
   }
-
+ 
   neuralNet_PerformanceTest_init() {
 
     // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
