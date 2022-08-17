@@ -56,6 +56,29 @@ class Stage_TestParams_Base extends TestParams.Base {
     super.disposeResources();
   }
 
+ /**
+   * Use scattered parameters to fills the following proterties:
+   *   - this.in
+   *   - this.in_weights
+   *   - this.out
+   *
+   * @param {Stage.ParamsBase} aParamsBase  The parameters of stage.
+   *
+   * @return {Base}  Return this object self.
+   */
+  set_byParamsBase( aParamsBase ) {
+    return this.set_byParamsScattered(
+      aParamsBase.input_height, aParamsBase.input_width, aParamsBase.input_channelCount,
+      aParamsBase.nConvStageTypeId,
+      aParamsBase.blockCountRequested,
+      aParamsBase.bPointwise1,
+      aParamsBase.depthwiseFilterHeight, aParamsBase.depthwiseFilterWidth,
+      aParamsBase.nSqueezeExcitationChannelCountDivisor,
+      aParamsBase.nActivationId,
+      aParamsBase.bKeepInputTensor
+    );
+  }
+
   /**
    * Use scattered parameters to fills the following proterties:
    *   - this.in

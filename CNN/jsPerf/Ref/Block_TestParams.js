@@ -71,6 +71,37 @@ class Block_TestParams_Base extends TestParams.Base {
    *   - this.in_weights
    *   - this.out
    *
+   * @param {Block.ParamsBase} aParamsBase  The parameters of block.
+   *
+   * @return {Base}  Return this object self.
+   */
+  set_byParamsBase( aParamsBase ) {
+    return this.set_byParamsScattered(
+      aParamsBase.input0_height,
+      aParamsBase.input0_width,
+      aParamsBase.input0_channelCount,
+      aParamsBase.nConvBlockTypeId,
+      aParamsBase.pointwise1ChannelCount,
+      aParamsBase.depthwise_AvgMax_Or_ChannelMultiplier,
+      aParamsBase.depthwiseFilterHeight,
+      aParamsBase.depthwiseFilterWidth,
+      aParamsBase.depthwiseStridesPad,
+      aParamsBase.depthwiseActivationId,
+      aParamsBase.pointwise20ChannelCount,
+      aParamsBase.pointwise20ActivationId,
+      aParamsBase.nSqueezeExcitationChannelCountDivisor,
+      aParamsBase.bSqueezeExcitationPrefix,
+      aParamsBase.nActivationId,
+      aParamsBase.bKeepInputTensor
+    );
+  }
+
+  /**
+   * Use scattered parameters to fills the following proterties:
+   *   - this.in
+   *   - this.in_weights
+   *   - this.out
+   *
    * @return {Base}
    *   Return this object self.
    */

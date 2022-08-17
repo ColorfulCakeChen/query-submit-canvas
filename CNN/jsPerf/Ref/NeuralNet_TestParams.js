@@ -68,11 +68,9 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
    *   - this.in_weights
    *   - this.out
    *
-   * @param {NeuralNet.ParamsBase} aParamsBase
-   *   The parameters of neural network.
+   * @param {NeuralNet.ParamsBase} aParamsBase  The parameters of neural network.
    *
-   * @return {Base}
-   *   Return this object self.
+   * @return {Base}  Return this object self.
    */
   set_byParamsBase( aParamsBase ) {
     return this.set_byParamsScattered(
@@ -194,29 +192,14 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
     // 3. blockFinal
     {
+      let blockFinalParams = neuralNetParams.inferencedParams.blockFinalParams;
+
+      let blockTestParams = Block_TestParams.Base.Pool.get_or_create_by( this.id );
+      blockTestParams.set_byParamsBase( blockFinalParams );
+
       this.blockFinal?.disposeResources_and_recycleToPool();
-      let blockTestParams = this.blockFinal
-        = Block_TestParams.Base.Pool.get_or_create_by( this.id );
+      this.blockFinal = blockTestParams;
 
-      blockTestParams.set_byParamsScattered(
-        neuralNetParams.inferencedParams.stageLast_output_height,
-        neuralNetParams.inferencedParams.stageLast_output_width,
-        neuralNetParams.inferencedParams.stageLast_output_channelCount,
-        ValueDesc.
-
-!!! ...unfinished... (2022/08/17)
-
-        blockParams.nConvBlockTypeId,
-        blockParams.pointwise1ChannelCount,
-        blockParams.depthwise_AvgMax_Or_ChannelMultiplier, blockParams.depthwiseFilterHeight,
-        blockParams.depthwiseFilterWidth, blockParams.depthwiseStridesPad,
-        blockParams.depthwiseActivationId,
-        blockParams.pointwise20ChannelCount, blockParams.pointwise20ActivationId,
-        blockParams.nSqueezeExcitationChannelCountDivisor, blockParams.bSqueezeExcitationPrefix,
-        blockParams.nActivationId,
-        blockParams.bKeepInputTensor
-      );
-  
       this.in.paramsNumberArrayObject.push( blockTestParams.in_weights.weightArray ); // Place final block's parameters in sequence.
     }
 
@@ -254,9 +237,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
    * @override
    */
   onYield_after() {
-
-!!! ...unfinished... (2022/08/17) blockFinal
-
+    this.blockFinal?.disposeResources_and_recycleToPool();
+    this.blockFinal = null;
 
     this.stageArray.clear();
 
