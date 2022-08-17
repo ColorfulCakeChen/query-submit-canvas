@@ -51,10 +51,20 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     this.Stage_Reference = Stage_Reference.Base.Pool.get_or_create_by();
     this.Block_Reference = Block_Reference.Base.Pool.get_or_create_by();
     this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
+
+    // For reducing memory allocation.
+    this.imageInArray = Recyclable.Array.Pool.get_or_create_by( 2 );  // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
+    this.imageOutArray = Recyclable.Array.Pool.get_or_create_by( 2 );  // imageOutArray[ 0 ] is output0, imageOutArray[ 1 ] is output1.
   }
 
   /** @override */
   disposeResources() {
+    this.imageOutArray?.disposeResources_and_recycleToPool();
+    this.imageOutArray = null;
+
+    this.imageInArray?.disposeResources_and_recycleToPool();
+    this.imageInArray = null;
+
     this.asserter_Equal?.disposeResources_and_recycleToPool();
     this.asserter_Equal = null;
 
@@ -643,16 +653,33 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
       let blockRef = this.Block_Reference;
       blockRef.testParams = testParams.blockFinal;
-      imageOut = blockRef.calcResult( imageToBeProccessed );
+
+      this.imageOutArray[ 0 ] = imageToBeProccessed;
+      this.imageOutArray[ 1 ] = null;
+  
+      blockRef.calcResult( this.imageInArray, this.imageOutArray );
 
       { // Release intermediate input images.
-        if ( imageToBeProccessed ) {
-          if ( imageToBeProccessed != imageIn ) { // Do not release image from ImageSourceBag.
-            imageToBeProccessed.disposeResources_and_recycleToPool();
+        if ( this.imageInArray[ 0 ] ) {
+          if ( this.imageInArray[ 0 ] != imageIn ) { // Do not release image from ImageSourceBag.
+            this.imageInArray[ 0 ].disposeResources_and_recycleToPool();
           }
-          imageToBeProccessed = null;
+          this.imageInArray[ 0 ] = null;
+        }
+
+        if ( this.imageInArray[ 1 ] ) {
+          this.imageInArray[ 1 ].disposeResources_and_recycleToPool();
+          this.imageInArray[ 1 ] = null;
         }
       }
+
+      let imageOut = this.imageOutArray[ 0 ]; // The blockFinal should have only input0.
+
+      // Avoid dangling tensors.
+      this.imageInArray[ 0 ] = null;
+      this.imageInArray[ 1 ] = null;
+      this.imageOutArray[ 0 ] = null;
+      this.imageOutArray[ 1 ] = null;
     }
 
     return imageOut;
