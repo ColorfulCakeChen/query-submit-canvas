@@ -200,8 +200,6 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
       nActivationId,
       bKeepInputTensor
     );
-
-//!!! ...unfinished... (2022/08/17)
   }
 
   // The following read only properties is useful when debugging, although they
