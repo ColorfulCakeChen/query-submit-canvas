@@ -45,9 +45,10 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
   disposeResources() {
     this.blockFinalParams_dispose();
 
-    this.output_channelCount = undefined;
-    this.output_width = undefined;
-    this.output_height = undefined;
+//!!! (2022/08/17 Remarked) seems not used.
+//     this.output_channelCount = undefined;
+//     this.output_width = undefined;
+//     this.output_height = undefined;
 
     this.bKeepInputTensor = undefined;
     this.nActivationId = undefined;
