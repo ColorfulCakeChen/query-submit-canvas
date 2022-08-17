@@ -24,7 +24,10 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  * This is the base class of NeuralNet.
  *
  *
- * NeuralNet is composed of an embedding and multiple stages.
+ * NeuralNet is composed of:
+ *   - an embedding
+ *   - multiple stages
+ *   - final block for squish result shape to [ 1, 1, output_channelCount ]
  *
  *
  *
@@ -284,6 +287,13 @@ class NeuralNet_Base extends Recyclable.Root {
       this.stage0 = this.stageArray[ 0 ]; // Shortcut to the first stage.
       this.stageLast = this.stageArray[ this.stageArray.length - 1 ]; // Shortcut to the last stage.
 
+!!! ...unfinished... (2022/08/17) blockFinal
+      {
+
+        this.tensorWeightCountTotal += blockFinal.tensorWeightCountTotal;
+        this.tensorWeightCountExtracted += blockFinal.tensorWeightCountExtracted;
+      }
+
       this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate stages' bounds array set for reducing memory footprint.
 
       this.bInitOk = true;
@@ -481,13 +491,11 @@ class NeuralNet_Base extends Recyclable.Root {
     return this.stageArray.length;
   }
 
-//!!! ...unfinished... (2022/08/17) should return the blockFinal (for output shape [ 1, 1, X ]).
   get stageLast_output_height()           { return this.stageLast.output0.height; }
   get stageLast_output_width()            { return this.stageLast.output0.width; }
   get stageLast_output_channelCount()     { return this.stageLast.output0.channelCount; }
   get stageLast_output_scaleBoundsArray() { return this.stageLast.output0.scaleBoundsArray; }
 
-//!!! ...unfinished... (2022/08/17) should return the extraBlockLast (for output shape [ 1, 1, X ]).
   get output_height()           { return this.blockFinal.output_height; }
   get output_width()            { return this.blockFinal.output_width; }
   get output_channelCount()     { return this.blockFinal.output0_channelCount; }

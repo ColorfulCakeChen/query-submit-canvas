@@ -148,15 +148,12 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
    * Called before stageLast is about to be created. Sub-class could override this method to adjust data members.
    */
   configTo_beforeStageLast() {
-
-//!!! ...unfinished... (2022/08/16)
-// Perhaps, stageLast always uses avg pooling as depthwise operation.
-// So that output ( height, width ) could be ( 1, 1 ).
-
   }
 
   /**
-   * Called before blockFinal is about to be created. Sub-class could override this method to adjust data members.
+   * Called before blockFinal is about to be created. It will create .blockFinalParams.
+   *
+   * Sub-class could override this method to adjust data members.
    *
    * @param {Block.ParamsBase|Block.Params} BlockParamsClass
    *   Which kinds of block parameters object should be created.

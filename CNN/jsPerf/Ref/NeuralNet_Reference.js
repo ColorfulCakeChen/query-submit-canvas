@@ -13,6 +13,7 @@ import * as ImageSourceBag from "./ImageSourceBag.js";
 import * as Embedding_Reference from "./Embedding_Reference.js"; 
 // import * as Stage_TestParams from "./Stage_TestParams.js"; 
 import * as Stage_Reference from "./Stage_Reference.js"; 
+import * as Block_Reference from "./Block_Reference.js"; 
 import * as NeuralNet_TestParams from "./NeuralNet_TestParams.js"; 
 // import * as Embedding from "../../Conv/Stage.js";
 // import * as Stage from "../../Conv/Stage.js";
@@ -48,6 +49,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
   static setAsConstructor_self() {
     this.Embedding_Reference = Embedding_Reference.Base.Pool.get_or_create_by();
     this.Stage_Reference = Stage_Reference.Base.Pool.get_or_create_by();
+    this.Block_Reference = Block_Reference.Base.Pool.get_or_create_by();
     this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
   }
 
@@ -55,6 +57,9 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
   disposeResources() {
     this.asserter_Equal?.disposeResources_and_recycleToPool();
     this.asserter_Equal = null;
+
+    this.Block_Reference?.disposeResources_and_recycleToPool();
+    this.Block_Reference = null;
 
     this.Stage_Reference?.disposeResources_and_recycleToPool();
     this.Stage_Reference = null;
@@ -477,8 +482,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
         tensorWeightCountExtracted += stage.tensorWeightCountExtracted;
       }
 
-!!! ...unfinished... (2022/08/17)
-// What about blockFinal?
+      tensorWeightCountTotal += neuralNet.blockFinal.tensorWeightCountTotal;
+      tensorWeightCountExtracted += neuralNet.blockFinal.tensorWeightCountExtracted;
 
       neuralNet_asserter.propertyValue( "tensorWeightCountTotal", tensorWeightCountTotal );
       neuralNet_asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
@@ -609,12 +614,12 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     let imageOut;
     let imageToBeProccessed = imageIn;
 
-    // Calculate embedding.
+    // 1. Calculate embedding.
     let embeddingRef = this.Embedding_Reference;
     embeddingRef.testParams = testParams.embedding;
     imageOut = embeddingRef.calcResult( imageToBeProccessed );
 
-    // Calculate every stages in sequence.
+    // 2. Calculate every stages in sequence.
     let stageRef = this.Stage_Reference;
     for ( let stageIndex = 0; stageIndex < testParams.stageArray.length; ++stageIndex ) {
       imageToBeProccessed = imageOut;
@@ -632,9 +637,23 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       }
     }
 
+    // 3. Calculate blockFinal.
+    {
+      imageToBeProccessed = imageOut;
 
-!!! ...unfinished... (2022/08/17)
-// What about blockFinal?
+      let blockRef = this.Block_Reference;
+      blockRef.testParams = testParams.blockFinal;
+      imageOut = blockRef.calcResult( imageToBeProccessed );
+
+      { // Release intermediate input images.
+        if ( imageToBeProccessed ) {
+          if ( imageToBeProccessed != imageIn ) { // Do not release image from ImageSourceBag.
+            imageToBeProccessed.disposeResources_and_recycleToPool();
+          }
+          imageToBeProccessed = null;
+        }
+      }
+    }
 
     return imageOut;
   }
