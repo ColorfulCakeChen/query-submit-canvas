@@ -6,6 +6,7 @@ import * as ValueMax from "../../util/ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Embedding from "../Embedding.js";
 import * as Stage from "../Stage.js";
+import * as Block from "../Block.js";
 import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
 import { Params } from "./NeuralNet_Params.js";
 import { InferencedParams } from "./NeuralNet_InferencedParams.js";
@@ -60,14 +61,27 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  *   The last computation stage of this neuralNet. It may be the same as this.stage0
  * when there is only one stage inside this neuralNet.
  *
- * @member {number} output_height
+ * @member {Block.Base} blockFinal
+ *   The final block of this neuralNet. It is responsible for squishing output shape
+ * to [ 1, 1, output_channelCount ].
+ *
+ * @member {number} stageLast_output_height
  *   The output image height of this neuralNet's last stage.
  *
- * @member {number} output_width
+ * @member {number} stageLast_output_width
  *   The output image width of this neuralNet's last stage.
  *
- * @member {number} output_channelCount
+ * @member {number} stageLast_output_channelCount
  *   The output channel count of this neuralNet's last stage.
+ *
+ * @member {number} output_height
+ *   The output image height of this neuralNet's final block.
+ *
+ * @member {number} output_width
+ *   The output image width of this neuralNet's final block.
+ *
+ * @member {number} output_channelCount
+ *   The output channel count of this neuralNet's final block.
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are
@@ -336,6 +350,11 @@ class NeuralNet_Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    if ( this.blockFinal ) {
+      this.blockFinal.disposeResources_and_recycleToPool();
+      this.blockFinal = null;
+    }
+
     this.stageLast = null; // It is just a reference into this.stageArray[].
     this.stage0 = null; // It is just a reference into this.stageArray[].
 
@@ -425,6 +444,8 @@ class NeuralNet_Base extends Recyclable.Root {
     for ( let i = 0; i < stageArray.length; ++i ) {
       outputTensor = stageArray[ i ].apply( outputTensor );
     }
+
+!!! ...unfinished... (2022/08/17) blockFinal
 
     return outputTensor;
   }
@@ -519,7 +540,13 @@ class NeuralNet_Base extends Recyclable.Root {
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
 
       + `stageCount=${this.stageCount}, `
-      + `output_height=${this.output_height}, output_width=${this.output_width}, output_channelCount=${this.output_channelCount}`
+      + `stageLast_output_height=${this.stageLast_output_height}, `
+      + `stageLast_output_width=${this.stageLast_output_width}, `
+      + `stageLast_output_channelCount=${this.stageLast_output_channelCount}`
+
+      + `output_height=${this.output_height}, `
+      + `output_width=${this.output_width}, `
+      + `output_channelCount=${this.output_channelCount}`
     ;
     return str;
   }
