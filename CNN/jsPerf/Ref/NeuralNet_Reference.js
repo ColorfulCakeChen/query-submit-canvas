@@ -654,8 +654,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       let blockRef = this.Block_Reference;
       blockRef.testParams = testParams.blockFinal;
 
-      this.imageOutArray[ 0 ] = imageToBeProccessed;
-      this.imageOutArray[ 1 ] = null;
+      this.imageInArray[ 0 ] = imageToBeProccessed;
+      this.imageInArray[ 1 ] = null;
   
       blockRef.calcResult( this.imageInArray, this.imageOutArray );
 
