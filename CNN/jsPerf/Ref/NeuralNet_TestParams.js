@@ -304,7 +304,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
       blockCountTotalRequested: [
         NeuralNet.Params.blockCountTotalRequested.valueDesc.range.min,
-        10 //NeuralNet.Params.blockCountTotalRequested.valueDesc.range.max
+        6 //NeuralNet.Params.blockCountTotalRequested.valueDesc.range.max
       ],
 
       output_channelCount: [
