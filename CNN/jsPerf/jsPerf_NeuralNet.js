@@ -160,8 +160,10 @@ class PerformanceTestCase extends Recyclable.Root {
     }
   }
 
-  /** A simple longer weights array instead of NeuralNet_TestParams.
-   * Because NeuralNet_TestParams needs lots of memory when neural network is large.
+  /** A simple longer weights Float32Array instead of NeuralNet_TestParams.
+   *
+   * Because NeuralNet_TestParams and normal Array needs lots of memory when
+   * neural network is large.
    */
   static randomTestWeightArray;
 
