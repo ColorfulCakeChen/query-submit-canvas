@@ -10,9 +10,6 @@ import * as Stage from "../Stage.js";
 import * as Block from "../Block.js";
 import { ParamsBase } from "./NeuralNet_ParamsBase.js";
 
-//!!! ...unfinished... (2022/07/26)
-// Perhaps, add parameter bCastToInt32 for controlling whether needs cast input to integer.
-
 /**
  * NeuralNet parameters.
  *

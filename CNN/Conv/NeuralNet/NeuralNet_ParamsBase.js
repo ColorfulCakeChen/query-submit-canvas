@@ -10,6 +10,7 @@ import * as Block from "../Block.js";
 import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 
 //!!! ...unfinished... (2022/08/02)
+// Perhaps, add parameter bCastToInt32 for controlling whether needs cast input to integer.
 // Perhaps, add .blockCountOfStageLast, so that the final stage could have more blocks.
 
 /**
