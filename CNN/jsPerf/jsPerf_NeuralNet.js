@@ -11,6 +11,7 @@ import * as Weights from "../Unpacker/Weights.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
 import * as NeuralNet_Reference from "./Ref/NeuralNet_Reference.js";
 import * as NeuralNet_TestParams from "./Ref/NeuralNet_TestParams.js"; 
+import * as TestParams from "./Ref/TestParams.js"; 
 import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
 import * as NumberImage from "./Ref/NumberImage.js"; 
 import * as BatchIdCalculator from "./BatchIdCalculator.js";
