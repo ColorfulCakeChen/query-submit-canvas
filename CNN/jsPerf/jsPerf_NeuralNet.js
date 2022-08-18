@@ -156,6 +156,7 @@ class PerformanceTestCase extends Recyclable.Root {
 
     } catch ( e ) {
       debugger;
+      console.log( e );
       throw e;
     }
   }
