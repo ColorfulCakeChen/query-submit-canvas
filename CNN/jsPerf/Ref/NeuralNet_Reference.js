@@ -449,7 +449,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
     // Inferenced parameters.
     let {
-      stageCount, blockCountPerStage,
+      stageCount, blockCountPerStage, blockCountTotal,
       stageLast_output_height, stageLast_output_width, stageLast_output_channelCount,
       output_height, output_width,
     } = testParams.out.inferencedParams;
@@ -458,6 +458,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     neuralNet_asserter.propertyValue( "stageCount", testParams.stageArray.length );
 
     neuralNet_asserter.propertyValue( "blockCountPerStage", blockCountPerStage );
+    neuralNet_asserter.propertyValue( "blockCountTotal", blockCountTotal );
+    neuralNet_asserter.propertyValueGE( "blockCountTotal", testParams.out.blockCountTotalRequested );
 
     neuralNet_asserter.propertyValue( "stageLast_output_height", stageLast_output_height );
     neuralNet_asserter.propertyValue( "stageLast_output_width", stageLast_output_width );
