@@ -93,7 +93,7 @@ class PerformanceTestCase extends Recyclable.Root {
 //       neuralNetTestParams = null;
 
       if ( !PerformanceTestCase.randomTestWeightArray ) {
-        const weightArrayLength = ( 200 * 1024 * 1024 );
+        const weightArrayLength = ( 100 * 1024 * 1024 );
         PerformanceTestCase.randomTestWeightArray = new Float32Array( weightArrayLength );
 
         RandTools.fill_numberArray(
@@ -246,8 +246,8 @@ class HeightWidthDepth {
 
     let vocabularyChannelCount = 8; //4;
     let vocabularyCountPerInputChannel = 256;
-    let blockCountTotalRequested = 100; //20; //10;
-    let output_channelCount = 800; //300; //64;
+    let blockCountTotalRequested = 50; //20; //10;
+    let output_channelCount = 400; //300; //64;
 
     // ShuffleNetV2 uses twice block count to compensate reduced channel count.
     let blockCountTotalRequested_ShuffleNet = blockCountTotalRequested * 2;
