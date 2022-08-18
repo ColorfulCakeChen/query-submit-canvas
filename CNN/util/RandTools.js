@@ -57,72 +57,78 @@ function fill_numberArray( io_numberArray,
   valueBegin = 0, valueStep = 1,
   randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = ( 2 ** 26 ) ) {
 
-  // (Codes copied from getRandomIntInclusive())
-  const randomOffsetMinReal = Math.min( randomOffsetMin, randomOffsetMax );
-  const randomOffsetMaxReal = Math.max( randomOffsetMin, randomOffsetMax );
-  const randomOffsetMinInt = Math.ceil( randomOffsetMinReal );
-  const randomOffsetMaxInt  = Math.floor( randomOffsetMaxReal );
-  const randomOffsetKindsInt = randomOffsetMaxInt - randomOffsetMinInt + 1;
+    // (Codes copied from getRandomIntInclusive())
+    const randomOffsetMinReal = Math.min( randomOffsetMin, randomOffsetMax );
+    const randomOffsetMaxReal = Math.max( randomOffsetMin, randomOffsetMax );
+    const randomOffsetMinInt = Math.ceil( randomOffsetMinReal );
+    const randomOffsetMaxInt  = Math.floor( randomOffsetMaxReal );
+    const randomOffsetKindsInt = randomOffsetMaxInt - randomOffsetMinInt + 1;
 
-  io_numberArray.length = height * width * channelCount;
+    io_numberArray.length = height * width * channelCount;
 
-  let valueStepPerChannel = valueStep * channelCount;
-  let valueNoRandBegin = valueBegin;
-  let valueNoRand;
-  let randomOffset;
-  let value;
+    let valueStepPerChannel = valueStep * channelCount;
+    let valueNoRandBegin = valueBegin;
+    let valueNoRand;
+    let randomOffset;
+    let value;
 
-  let arrayIndex = 0;
+    let arrayIndex = 0;
 
-  if ( io_numberArray instanceof Recyclable.NumberArray_withBounds ) {
-    io_numberArray.boundsArray_byChannel.length = channelCount;
-    io_numberArray.boundsArray_byChannel.set_all_by_PositiveInfinity_NegativeInfinity();
+    try {
+      if ( io_numberArray instanceof Recyclable.NumberArray_withBounds ) {
+      io_numberArray.boundsArray_byChannel.length = channelCount;
+      io_numberArray.boundsArray_byChannel.set_all_by_PositiveInfinity_NegativeInfinity();
 
-    for ( let h = 0; h < height; ++h ) {
-      for ( let w = 0; w < width; ++w ) {
+      for ( let h = 0; h < height; ++h ) {
+        for ( let w = 0; w < width; ++w ) {
 
-        valueNoRand = valueNoRandBegin;
-        for ( let c = 0; c < channelCount; ++c, ++arrayIndex ) {
+          valueNoRand = valueNoRandBegin;
+          for ( let c = 0; c < channelCount; ++c, ++arrayIndex ) {
 
 //!!! (2022/08/04 Temp Remarked) for re-producible random.
-          // randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
-          if ( ( arrayIndex % 2 ) == 0 )
-            randomOffset = randomOffsetMinInt;
-          else
-            randomOffset = randomOffsetMaxInt;
+            // randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
+            if ( ( arrayIndex % 2 ) == 0 )
+              randomOffset = randomOffsetMinInt;
+            else
+              randomOffset = randomOffsetMaxInt;
 
-          value = ( valueNoRand + randomOffset ) % divisorForRemainder;
-          io_numberArray[ arrayIndex ] = value;
-          io_numberArray.boundsArray_byChannel.enlarge_one_byN( c, value );
+            value = ( valueNoRand + randomOffset ) % divisorForRemainder;
+            io_numberArray[ arrayIndex ] = value;
+            io_numberArray.boundsArray_byChannel.enlarge_one_byN( c, value );
 
-          valueNoRand += valueStepPerChannel;
+            valueNoRand += valueStepPerChannel;
+          }
+          valueNoRandBegin += valueStep;
         }
-        valueNoRandBegin += valueStep;
+      }
+
+    } else {
+
+      for ( let h = 0; h < height; ++h ) {
+        for ( let w = 0; w < width; ++w ) {
+
+          valueNoRand = valueNoRandBegin;
+          for ( let c = 0; c < channelCount; ++c, ++arrayIndex ) {
+
+//!!! (2022/08/04 Temp Remarked) for re-producible random.
+            // randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
+            if ( ( arrayIndex % 2 ) == 0 )
+              randomOffset = randomOffsetMinInt;
+            else
+              randomOffset = randomOffsetMaxInt;
+
+            value = ( valueNoRand + randomOffset ) % divisorForRemainder;
+            io_numberArray[ arrayIndex ] = value;
+            valueNoRand += valueStepPerChannel;
+          }
+          valueNoRandBegin += valueStep;
+        }
       }
     }
 
-  } else {
-
-    for ( let h = 0; h < height; ++h ) {
-      for ( let w = 0; w < width; ++w ) {
-
-        valueNoRand = valueNoRandBegin;
-        for ( let c = 0; c < channelCount; ++c, ++arrayIndex ) {
-
-//!!! (2022/08/04 Temp Remarked) for re-producible random.
-          // randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
-          if ( ( arrayIndex % 2 ) == 0 )
-            randomOffset = randomOffsetMinInt;
-          else
-            randomOffset = randomOffsetMaxInt;
-
-          value = ( valueNoRand + randomOffset ) % divisorForRemainder;
-          io_numberArray[ arrayIndex ] = value;
-          valueNoRand += valueStepPerChannel;
-        }
-        valueNoRandBegin += valueStep;
-      }
-    }
+  } catch ( e ) {
+    debugger;
+    throw e;
   }
 
   return io_numberArray;
