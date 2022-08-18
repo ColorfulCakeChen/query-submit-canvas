@@ -461,6 +461,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     neuralNet_asserter.propertyValue( "stageLast_output_width", stageLast_output_width );
     neuralNet_asserter.propertyValue( "stageLast_output_channelCount", stageLast_output_channelCount );
     neuralNet_asserter.propertyValueGE( "stageLast_output_channelCount", testParams.out.output_channelCount );
+    neuralNet_asserter.propertyValueLE( "stageLast_output_channelCount", testParams.out.output_channelCount * 2 );
 
     neuralNet_asserter.propertyValue( "output_height", output_height );
     neuralNet_asserter.propertyValue( "output_height", 1 );
