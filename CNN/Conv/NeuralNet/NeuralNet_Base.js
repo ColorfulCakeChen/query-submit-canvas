@@ -545,18 +545,18 @@ class NeuralNet_Base extends Recyclable.Root {
 
   /** How many stages inside this neuralNet are created. */
   get stageCount() {
-    return this.stageArray.length;
+    return this.stageArray?.length;
   }
 
-  get stageLast_output_height()           { return this.stageLast.output0.height; }
-  get stageLast_output_width()            { return this.stageLast.output0.width; }
-  get stageLast_output_channelCount()     { return this.stageLast.output0.channelCount; }
-  get stageLast_output_scaleBoundsArray() { return this.stageLast.output0.scaleBoundsArray; }
+  get stageLast_output_height()           { return this.stageLast?.output0.height; }
+  get stageLast_output_width()            { return this.stageLast?.output0.width; }
+  get stageLast_output_channelCount()     { return this.stageLast?.output0.channelCount; }
+  get stageLast_output_scaleBoundsArray() { return this.stageLast?.output0.scaleBoundsArray; }
 
-  get output_height()           { return this.blockFinal.output_height; }
-  get output_width()            { return this.blockFinal.output_width; }
-  get output_channelCount()     { return this.blockFinal.output0_channelCount; }
-  get output_scaleBoundsArray() { return this.blockFinal.output0_scaleBoundsArray; }
+  get output_height()           { return this.blockFinal?.output_height; }
+  get output_width()            { return this.blockFinal?.output_width; }
+  get output_channelCount()     { return this.blockFinal?.output0_channelCount; }
+  get output_scaleBoundsArray() { return this.blockFinal?.output0_scaleBoundsArray; }
 
   /**
    * @return {string} The description string of all (adjusted) parameters of initer().
