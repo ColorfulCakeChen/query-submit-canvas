@@ -249,6 +249,9 @@ class HeightWidthDepth {
     let blockCountTotalRequested = 100; //20; //10;
     let output_channelCount = 800; //300; //64;
 
+    // ShuffleNetV2 uses twice block count to compensate reduced channel count.
+    let blockCountTotalRequested_ShuffleNet = blockCountTotalRequested * 2;
+
     // The neuralNet performance testing should not keep-input-tensor. The reason input
     // image is created from canvas in real time.
     let bKeepInputTensor = false;
@@ -301,7 +304,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
-        blockCountTotalRequested, output_channelCount, bKeepInputTensor
+        blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
       ) );
 
     // Test Case 5: (ShuffleNetV2_byPointwise21)
@@ -310,7 +313,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
-        blockCountTotalRequested, output_channelCount, bKeepInputTensor
+        blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
       ) );
 
     // Test Case 6: (ShuffleNetV2_byMobileNetV1)
@@ -319,7 +322,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
-        blockCountTotalRequested, output_channelCount, bKeepInputTensor
+        blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
       ) );
 
     // Test Case 7: (ShuffleNetV2_byMobileNetV1_padValid)
@@ -328,7 +331,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
-        blockCountTotalRequested, output_channelCount, bKeepInputTensor
+        blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
       ) );
   }
 
