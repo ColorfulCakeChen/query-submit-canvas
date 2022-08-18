@@ -77,11 +77,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       aParamsBase.input_height, aParamsBase.input_width, aParamsBase.input_channelCount,
       aParamsBase.vocabularyChannelCount, aParamsBase.vocabularyCountPerInputChannel,
       aParamsBase.nConvStageTypeId,
-
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-//      aParamsBase.stageCountRequested,
-
-      aParamsBase.blockCountRequested,
+      aParamsBase.blockCountPerStage,
       aParamsBase.output_channelCount,
       aParamsBase.bKeepInputTensor
     );
@@ -100,11 +96,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId,
-
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-//    stageCountRequested,
-
-    blockCountRequested,
+    blockCountPerStage,
     output_channelCount,
     bKeepInputTensor
   ) {
@@ -118,11 +110,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
-
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-//      stageCountRequested,
-
-      blockCountRequested,
+      blockCountPerStage,
       output_channelCount,
       bKeepInputTensor
     );
@@ -315,15 +303,9 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       // ],
 
 
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-      // stageCountRequested: [
-      //   NeuralNet.Params.stageCountRequested.valueDesc.range.min,
-      //   3 //NeuralNet.Params.stageCountRequested.valueDesc.range.max
-      // ],
-
-      blockCountRequested: [
-        NeuralNet.Params.blockCountRequested.valueDesc.range.min,
-        3 //NeuralNet.Params.blockCountRequested.valueDesc.range.max
+      blockCountPerStage: [
+        NeuralNet.Params.blockCountPerStage.valueDesc.range.min,
+        3 //NeuralNet.Params.blockCountPerStage.valueDesc.range.max
       ],
 
       output_channelCount: [
@@ -351,10 +333,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
       new TestParams.ParamDescConfig( NeuralNet.Params.nConvStageTypeId,               valueOutMinMax.nConvStageTypeId ),
 
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-//      new TestParams.ParamDescConfig( NeuralNet.Params.stageCountRequested,            valueOutMinMax.stageCountRequested ),
-
-      new TestParams.ParamDescConfig( NeuralNet.Params.blockCountRequested,            valueOutMinMax.blockCountRequested ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.blockCountPerStage,             valueOutMinMax.blockCountPerStage ),
 
       new TestParams.ParamDescConfig( NeuralNet.Params.output_channelCount,            valueOutMinMax.output_channelCount ),
 
@@ -379,11 +358,7 @@ NeuralNet_TestParams_Base.paramsNameOrderArray_Basic = [
   NeuralNet.Params.vocabularyChannelCount.paramName,
   NeuralNet.Params.vocabularyCountPerInputChannel.paramName,
   NeuralNet.Params.nConvStageTypeId.paramName,
-
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-//  NeuralNet.Params.stageCountRequested.paramName,
-
-  NeuralNet.Params.blockCountRequested.paramName,
+  NeuralNet.Params.blockCountPerStage.paramName,
   NeuralNet.Params.output_channelCount.paramName,
   NeuralNet.Params.bKeepInputTensor.paramName,
 ];

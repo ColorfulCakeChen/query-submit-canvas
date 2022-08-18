@@ -181,11 +181,7 @@ class NeuralNet_Base extends Recyclable.Root {
     this.vocabularyCountPerInputChannel = params.vocabularyCountPerInputChannel;
     this.nConvStageTypeId = params.nConvStageTypeId;
     this.nConvStageTypeName = params.nConvStageTypeName;
-
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-//    this.stageCountRequested = params.stageCountRequested;
-
-    this.blockCountRequested = params.blockCountRequested;
+    this.blockCountPerStage = params.blockCountPerStage;
     this.bKeepInputTensor = params.bKeepInputTensor;
 
     // The parameters which are determined (inferenced) from the above parameters.
@@ -406,11 +402,7 @@ class NeuralNet_Base extends Recyclable.Root {
     this.bEmbedVocabularyId = undefined;
 
     this.bKeepInputTensor = undefined;
-    this.blockCountRequested = undefined;
-
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-//    this.stageCountRequested = undefined;
-
+    this.blockCountPerStage = undefined;
     this.nConvStageTypeName = undefined;
     this.nConvStageTypeId = undefined;
     this.vocabularyCountPerInputChannel = undefined;
@@ -579,11 +571,7 @@ class NeuralNet_Base extends Recyclable.Root {
       + `vocabularyChannelCount=${this.vocabularyChannelCount}, `
       + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
       + `nConvStageTypeName=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
-
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-//      + `stageCountRequested=${this.stageCountRequested}, `
-
-      + `blockCountRequested=${this.blockCountRequested}, `
+      + `blockCountPerStage=${this.blockCountPerStage}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
 
       + `stageCount=${this.stageCount}, `

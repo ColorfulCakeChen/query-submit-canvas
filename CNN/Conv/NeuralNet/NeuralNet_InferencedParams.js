@@ -7,7 +7,7 @@ import * as Block from "../Block.js";
 import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
 
 //!!! ...unfinished... (2022/07/31)
-// Is it possible to infer blockCountRequested?
+// Is it possible to infer blockCountPerStage?
 
 /**
  * All properties inferenced from NeuralNet.Params.

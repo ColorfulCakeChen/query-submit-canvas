@@ -44,13 +44,7 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
  * @member {number} nConvStageTypeId
  *   The type (ValueDesc.ConvStageType.Singleton.Ids.Xxx) of every convolution stage.
  * 
- 
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-//  * @member {number} stageCountRequested
-//  *   How many stages inside this neural network are wanted. It must be ( >= 1 ).
-//  * Every stage will halve height, halve width, double channel count.
-
- * @member {number} blockCountRequested
+ * @member {number} blockCountPerStage
  *   How many blocks inside every stage are wanted. It must be ( >= 2 ).
  *
  * @member {number} output_channelCount
@@ -77,11 +71,7 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel = 256,
     nConvStageTypeId,
-
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-//    stageCountRequested,
-
-    blockCountRequested,
+    blockCountPerStage,
     output_channelCount,
     bKeepInputTensor
   ) {
@@ -90,11 +80,7 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
-
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-//      stageCountRequested,
-
-      blockCountRequested,
+      blockCountPerStage,
       output_channelCount,
       bKeepInputTensor
     );
@@ -106,11 +92,7 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel = 256,
     nConvStageTypeId,
-
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-//    stageCountRequested,
-
-    blockCountRequested,
+    blockCountPerStage,
     output_channelCount,
     bKeepInputTensor
   ) {
@@ -119,11 +101,7 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
-
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-//      stageCountRequested,
-
-      blockCountRequested,
+      blockCountPerStage,
       output_channelCount,
       bKeepInputTensor
     );
@@ -189,11 +167,7 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
       this.vocabularyChannelCount = this.getParamValue_byParamDesc( NeuralNet_Params.vocabularyChannelCount );
       this.vocabularyCountPerInputChannel = this.getParamValue_byParamDesc( NeuralNet_Params.vocabularyCountPerInputChannel );
       this.nConvStageTypeId = this.getParamValue_byParamDesc( NeuralNet_Params.nConvStageTypeId );
-
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-//      this.stageCountRequested = this.getParamValue_byParamDesc( NeuralNet_Params.stageCountRequested );
-
-      this.blockCountRequested = this.getParamValue_byParamDesc( NeuralNet_Params.blockCountRequested );
+      this.blockCountPerStage = this.getParamValue_byParamDesc( NeuralNet_Params.blockCountPerStage );
       this.output_channelCount = this.getParamValue_byParamDesc( NeuralNet_Params.output_channelCount );
       this.bKeepInputTensor = this.getParamValue_byParamDesc( NeuralNet_Params.bKeepInputTensor );
     }
@@ -216,10 +190,7 @@ NeuralNet_Params.vocabularyCountPerInputChannel = new ParamDesc.Int(  "vocabular
 
 NeuralNet_Params.nConvStageTypeId =               new ParamDesc.ConvStageType( "nConvStageTypeId" );
 
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-//NeuralNet_Params.stageCountRequested =            new ParamDesc.Int(           "stageCountRequested",   1, (  1 * 1024 ) );
-
-NeuralNet_Params.blockCountRequested =            new ParamDesc.Int(           "blockCountRequested",   2, (  1 * 1024 ) );
+NeuralNet_Params.blockCountPerStage =             new ParamDesc.Int(  "blockCountPerStage",             2, (  1 * 1024 ) );
 
 NeuralNet_Params.output_channelCount =            new ParamDesc.Int(  "output_channelCount",            1, ( 10 * 1024 ) );
 
@@ -236,11 +207,7 @@ NeuralNet_Params.SequenceArray = new ParamDesc.SequenceArray( [
   NeuralNet_Params.vocabularyChannelCount,
   NeuralNet_Params.vocabularyCountPerInputChannel,
   NeuralNet_Params.nConvStageTypeId,
-
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-//  NeuralNet_Params.stageCountRequested,
-
-  NeuralNet_Params.blockCountRequested,
+  NeuralNet_Params.blockCountPerStage,
   NeuralNet_Params.output_channelCount,
   NeuralNet_Params.bKeepInputTensor,
 ] );
