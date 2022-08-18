@@ -310,7 +310,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
       output_channelCount: [
         1, //NeuralNet.Params.output_channelCount.valueDesc.range.min,
-        10
+        20
       ],
 
       // bKeepInputTensor: undefined,
