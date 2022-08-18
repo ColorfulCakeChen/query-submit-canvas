@@ -119,11 +119,6 @@ class ShuffleInfo extends Recyclable.Root {
     //
     let intermediateShape;
     {
-      
-//!!! (2022/06/24 Remarke) Old Codes
-//     let intermediateShape = this.intermediateShape = concatenatedShape.slice( 0, lastAxisId );
-//     intermediateShape.push( outputGroupCount, channelCountPerGroup );
-
       intermediateShape = this.intermediateShape = Recyclable.Array.Pool.get_or_create_by( concatenatedShape.length + 1 );
       for ( let i = 0; i < lastAxisId; ++i ) {
         intermediateShape[ i ] = concatenatedShape[ i ];
@@ -139,13 +134,6 @@ class ShuffleInfo extends Recyclable.Root {
     //
     let transposePermutation;
     {
-
-//!!! (2022/06/24 Remarke) Old Codes
-//    let transposePermutation = this.transposePermutation = new Array( ...intermediateShape.keys() );
-//       let last1 = transposePermutation.pop();
-//       let last2 = transposePermutation.pop();
-//       transposePermutation.push( last1, last2 );
-
       transposePermutation = this.transposePermutation = Recyclable.Array.Pool.get_or_create_by( intermediateShape.length );
       for ( let i = 0; i < transposePermutation.length; ++i ) {
         transposePermutation[ i ] = i;
