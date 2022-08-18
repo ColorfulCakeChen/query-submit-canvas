@@ -203,7 +203,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     // As requested output channel count.
     const pointwise20ChannelCount = neuralNetParams.output_channelCount;
 
-    // For the same reason of stage, pointwise20 always does not activation function.
+    // pointwise20 always has no activation function, so that any number could be
+    // generated.
     const pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
     const nSqueezeExcitationChannelCountDivisor
