@@ -87,8 +87,11 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     // so that the stageLast's output channel count is (a little) larger than
     // the requested output_channelCount.
     {
+      let embedding_output_channelCount
+        = neuralNetParams.input_channelCount * neuralNetParams.vocabularyChannelCount;
+
       let expandFactor = Math.ceil(
-        neuralNetParams.output_channelCount / neuralNetParams.vocabularyChannelCount );
+        neuralNetParams.output_channelCount / embedding_output_channelCount );
 
       this.stageCount = Math.max(
         1, // (at least, one stage.)
