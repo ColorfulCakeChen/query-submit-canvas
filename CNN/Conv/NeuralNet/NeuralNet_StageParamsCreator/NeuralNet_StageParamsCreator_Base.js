@@ -190,7 +190,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     const depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID; // (global average pooling)
     const depthwiseActivationId = this.nActivationId;
     const pointwise20ChannelCount = neuralNetParams.output_channelCount;
-    const pointwise20ActivationId = this.nActivationId;
+    const pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE; // (Just like stage, pointwise20 always does not activate.)
     const nSqueezeExcitationChannelCountDivisor = this.nSqueezeExcitationChannelCountDivisor;
     const bSqueezeExcitationPrefix = false; // (non-MobileNetV2 always uses postfix squeeze-and-excitation.)
     const nActivationId = this.nActivationId;

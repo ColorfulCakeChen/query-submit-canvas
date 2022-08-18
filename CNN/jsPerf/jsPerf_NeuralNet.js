@@ -197,7 +197,7 @@ class HeightWidthDepth {
     let vocabularyChannelCount = 4;
     let vocabularyCountPerInputChannel = 256;
     let blockCountPerStage = 5; //10;
-    let output_channelCount = 800; //64;
+    let output_channelCount = 300; //64;
 
     // The neuralNet performance testing should not keep-input-tensor. The reason input
     // image is created from canvas in real time.
