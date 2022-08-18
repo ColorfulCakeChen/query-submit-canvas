@@ -373,8 +373,8 @@ class Block_InferencedParams extends Recyclable.Root {
 
       this.pointwise1ActivationId = nActivationId;
 
-      let bLinear_between_pointwise1_and_depthwise = this.bLinear_between_pointwise1_and_depthwise =
-         ( this.pointwise1ActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ); // pointwise1 has no activation function.
+      let bLinear_between_pointwise1_and_depthwise = this.bLinear_between_pointwise1_and_depthwise
+        = ( this.pointwise1ActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ); // pointwise1 has no activation function.
 
       if ( bLinear_between_pointwise1_and_depthwise ) {
         if ( bDepthwiseRequestedAndNeeded ) {
