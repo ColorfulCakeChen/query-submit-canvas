@@ -551,6 +551,7 @@ class NeuralNet_Base extends Recyclable.Root {
 
   get stageCount()         { return this.stageArray?.length; }
   get blockCountPerStage() { return this.stageLast?.blockCount; }
+  get blockCountTotal()    { return ( this.stageCount * this.blockCountPerStage ); }
 
   get stageLast_output_height()           { return this.stageLast?.output0.height; }
   get stageLast_output_width()            { return this.stageLast?.output0.width; }
@@ -580,6 +581,7 @@ class NeuralNet_Base extends Recyclable.Root {
 
       + `stageCount=${this.stageCount}, `
       + `blockCountPerStage=${this.blockCountPerStage}, `
+      + `blockCountTotal=${this.blockCountTotal}, `
 
       + `stageLast_output_height=${this.stageLast_output_height}, `
       + `stageLast_output_width=${this.stageLast_output_width}, `

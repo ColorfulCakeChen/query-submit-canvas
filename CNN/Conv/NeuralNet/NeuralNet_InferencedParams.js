@@ -23,6 +23,9 @@ import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
  * @member {number} blockCountPerStage
  *   How many blocks inside every stage. It is ( >= 2 ).
  *
+ * @member {number} blockCountTotal
+ *   How many blocks in the whole neural network. (= ( stageCount * blockCountPerStage ) ).
+ *
  * @member {Stage.ParamsBase[]} stageParamsArray
  *   The stages parameters of this neural network. It will be created only if
  * ( neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() == true ).
@@ -94,6 +97,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     this.stageParamsLast = undefined;
     this.stageParams0 = undefined;
 
+    this.blockCountTotal = undefined;
     this.blockCountPerStage = undefined;
 
     this.stageParamsArray_dispose();
@@ -183,6 +187,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       this.stageParamsArray.length = this.stageCount;
 
       this.blockCountPerStage = stageParamsCreator.blockCountPerStage;
+      this.blockCountTotal = this.stageCount * this.blockCountPerStage;
 
       let stageParams;
       let next_input_height, next_input_width, next_input_channelCount;
@@ -278,6 +283,8 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     let str = ``
       + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
       + `stageCount=${this.stageCount}, `
+      + `blockCountPerStage=${this.blockCountPerStage}, `
+      + `blockCountTotal=${this.blockCountTotal}, `
       + `stageLast_output_height=${this.stageLast_output_height}, `
       + `stageLast_output_width=${this.stageLast_output_width}, `
       + `stageLast_output_channelCount=${this.stageLast_output_channelCount}, `

@@ -145,6 +145,7 @@ class PerformanceTestCase extends Recyclable.Root {
         + `Extracted: ${neuralNet.tensorWeightCountExtracted}, `
         + `Total: ${neuralNet.tensorWeightCountTotal} }, `
         + `stageCount=${neuralNet.stageCount}, `
+        + `blockCountTotal=${neuralNet.blockCountTotal}, `
         + `stageLast_shape=`
           + `( ${neuralNet.stageLast_output_height}, `
           + `${neuralNet.stageLast_output_width}, `
