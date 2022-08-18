@@ -244,7 +244,7 @@ class HeightWidthDepth {
 
     let vocabularyChannelCount = 4;
     let vocabularyCountPerInputChannel = 256;
-    let blockCountPerStage = 5; //10;
+    let blockCountPerStage = 10;
     let output_channelCount = 300; //64;
 
     // The neuralNet performance testing should not keep-input-tensor. The reason input
