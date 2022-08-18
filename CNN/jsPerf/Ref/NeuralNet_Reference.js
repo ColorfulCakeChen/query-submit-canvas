@@ -279,7 +279,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       testParams.in.input_height, testParams.in.input_width, testParams.in.input_channelCount,
       testParams.in.vocabularyChannelCount, testParams.in.vocabularyCountPerInputChannel,
       testParams.in.nConvStageTypeId,
-      testParams.in.blockCountPerStage,
+      testParams.in.blockCountTotalRequested,
       testParams.in.output_channelCount,
       testParams.in.bKeepInputTensor
     );
@@ -396,7 +396,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       testParams.in.input_height, testParams.in.input_width, testParams.in.input_channelCount,
       testParams.in.vocabularyChannelCount, testParams.in.vocabularyCountPerInputChannel,
       testParams.in.nConvStageTypeId,
-      testParams.in.blockCountPerStage,
+      testParams.in.blockCountTotalRequested,
       testParams.in.output_channelCount,
       testParams.in.bKeepInputTensor
     );
@@ -443,19 +443,21 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     neuralNet_asserter.propertyValue( "vocabularyChannelCount", testParams.out.vocabularyChannelCount );
     neuralNet_asserter.propertyValue( "vocabularyCountPerInputChannel", testParams.out.vocabularyCountPerInputChannel );
     neuralNet_asserter.propertyValue( "nConvStageTypeId", testParams.out.nConvStageTypeId );
-    neuralNet_asserter.propertyValue( "blockCountPerStage", testParams.out.blockCountPerStage );
+    neuralNet_asserter.propertyValue( "blockCountTotalRequested", testParams.out.blockCountTotalRequested );
     neuralNet_asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
     neuralNet_asserter.propertyValue( "output_channelCount", testParams.out.output_channelCount );
 
     // Inferenced parameters.
     let {
-      stageCount,
+      stageCount, blockCountPerStage,
       stageLast_output_height, stageLast_output_width, stageLast_output_channelCount,
       output_height, output_width,
     } = testParams.out.inferencedParams;
 
     neuralNet_asserter.propertyValue( "stageCount", stageCount );
     neuralNet_asserter.propertyValue( "stageCount", testParams.stageArray.length );
+
+    neuralNet_asserter.propertyValue( "blockCountPerStage", blockCountPerStage );
 
     neuralNet_asserter.propertyValue( "stageLast_output_height", stageLast_output_height );
     neuralNet_asserter.propertyValue( "stageLast_output_width", stageLast_output_width );

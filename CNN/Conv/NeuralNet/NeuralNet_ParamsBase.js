@@ -13,6 +13,43 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 // Perhaps, add .blockCountOfStageLast, so that the final stage could have more blocks.
 
 /**
+ * NeuralNet parameters base class.
+ *
+ *
+ * @member {number} input_height
+ *   The input image's height.
+ *
+ * @member {number} input_width
+ *   The input image's width.
+ *
+ * @member {number} input_channelCount
+ *   The input image's channel count.
+ *
+ * @member {number} vocabularyChannelCount
+ *   In the embedding layer, every vocabulary will have how many embedding channels.
+ * Every input channel will be expanded into so many embedding channels. It could
+ * be viewed as embeddingChannelCountPerInputChannel. It must be ( >= 2 ) because
+ * it always has ( bEmbedVocabularyId == true ).
+ *
+ * @member {number} vocabularyCountPerInputChannel
+ *   In the embedding layer, every input channel will have how many vocabularies.
+ * This is also vocabulary count per vocabulary table (because every input channel
+ * has a vocabulary table). For an image data (R-G-B-A four channels), there will
+ * be 256 vocabularies per input channel because every channel is represented by
+ * one byte (8 bits) which has 2^8 = 256 kinds of possible values.
+ *
+ * @member {number} nConvStageTypeId
+ *   The type (ValueDesc.ConvStageType.Singleton.Ids.Xxx) of every convolution stage.
+ * 
+ * @member {number} blockCountTotalRequested
+ *   How many blocks of the whole neural network are wanted. It will be spreaded to
+ * every stage. Note that every stage will have at least 2 blocks.
+ *
+ * @member {number} output_channelCount
+ *   The output tensor's channel count.
+ *
+ * @member {boolean} bKeepInputTensor
+ *   If true, apply() will not dispose inputTensor (i.e. will be kept).
  *
  * @member {InferencedParams} inferencedParams
  *   The inferenced parameters of this neural network parameters.
@@ -32,7 +69,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId,
-    blockCountPerStage,
+    blockCountTotalRequested,
     output_channelCount,
     bKeepInputTensor
   ) {
@@ -41,7 +78,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
-      blockCountPerStage,
+      blockCountTotalRequested,
       output_channelCount,
       bKeepInputTensor
     );
@@ -52,7 +89,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId,
-    blockCountPerStage,
+    blockCountTotalRequested,
     output_channelCount,
     bKeepInputTensor
   ) {
@@ -61,7 +98,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
-      blockCountPerStage,
+      blockCountTotalRequested,
       output_channelCount,
       bKeepInputTensor
     );
@@ -73,7 +110,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId,
-    blockCountPerStage,
+    blockCountTotalRequested,
     output_channelCount,
     bKeepInputTensor
   ) {
@@ -83,7 +120,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     this.vocabularyChannelCount = vocabularyChannelCount;
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.nConvStageTypeId = nConvStageTypeId;
-    this.blockCountPerStage = blockCountPerStage;
+    this.blockCountTotalRequested = blockCountTotalRequested;
     this.output_channelCount = output_channelCount;
     this.bKeepInputTensor = bKeepInputTensor;
   }
@@ -94,7 +131,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
 
     this.bKeepInputTensor = undefined;
     this.output_channelCount = undefined;
-    this.blockCountPerStage = undefined;
+    this.blockCountTotalRequested = undefined;
     this.nConvStageTypeId = undefined;
     this.vocabularyCountPerInputChannel = undefined;
     this.vocabularyChannelCount = undefined;
@@ -166,7 +203,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
 
       + `nConvStageTypeName=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
 
-      + `blockCountPerStage=${this.blockCountPerStage}, `
+      + `blockCountTotalRequested=${this.blockCountTotalRequested}, `
 
       + `output_channelCount=${this.output_channelCount}, `
 

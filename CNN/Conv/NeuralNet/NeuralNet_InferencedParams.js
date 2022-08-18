@@ -6,9 +6,6 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Block from "../Block.js";
 import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
 
-//!!! ...unfinished... (2022/07/31)
-// Is it possible to infer blockCountPerStage?
-
 /**
  * All properties inferenced from NeuralNet.Params.
  *
@@ -22,6 +19,9 @@ import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
  * @member {number} stageCount
  *   How many stages inside this neural network. It is ( >= 1 ).
  * Every stage will halve height, halve width, double channel count.
+ *
+ * @member {number} blockCountPerStage
+ *   How many blocks inside every stage. It is ( >= 2 ).
  *
  * @member {Stage.ParamsBase[]} stageParamsArray
  *   The stages parameters of this neural network. It will be created only if
@@ -93,6 +93,8 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
     this.stageParamsLast = undefined;
     this.stageParams0 = undefined;
+
+    this.blockCountPerStage = undefined;
 
     this.stageParamsArray_dispose();
     this.stageCount = undefined; // How many stage should be in the neuralNet.
@@ -175,10 +177,12 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
       // Create every stage.
       stageParamsCreator = NeuralNet_InferencedParams.create_StageParamsCreator_byNeuralNetParams( neuralNetParamsBase );
-      stageParamsCreator.determine_stageCount();
+      stageParamsCreator.determine_stageCount_blockCountPerStage();
 
       this.stageCount = stageParamsCreator.stageCount;
       this.stageParamsArray.length = this.stageCount;
+
+      this.blockCountPerStage = stageParamsCreator.blockCountPerStage;
 
       let stageParams;
       let next_input_height, next_input_width, next_input_channelCount;

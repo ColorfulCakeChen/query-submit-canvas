@@ -77,7 +77,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       aParamsBase.input_height, aParamsBase.input_width, aParamsBase.input_channelCount,
       aParamsBase.vocabularyChannelCount, aParamsBase.vocabularyCountPerInputChannel,
       aParamsBase.nConvStageTypeId,
-      aParamsBase.blockCountPerStage,
+      aParamsBase.blockCountTotalRequested,
       aParamsBase.output_channelCount,
       aParamsBase.bKeepInputTensor
     );
@@ -96,7 +96,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     input_height, input_width, input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId,
-    blockCountPerStage,
+    blockCountTotalRequested,
     output_channelCount,
     bKeepInputTensor
   ) {
@@ -110,7 +110,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
-      blockCountPerStage,
+      blockCountTotalRequested,
       output_channelCount,
       bKeepInputTensor
     );
@@ -303,9 +303,9 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       // ],
 
 
-      blockCountPerStage: [
-        NeuralNet.Params.blockCountPerStage.valueDesc.range.min,
-        3 //NeuralNet.Params.blockCountPerStage.valueDesc.range.max
+      blockCountTotalRequested: [
+        NeuralNet.Params.blockCountTotalRequested.valueDesc.range.min,
+        20 //NeuralNet.Params.blockCountTotalRequested.valueDesc.range.max
       ],
 
       output_channelCount: [
@@ -333,7 +333,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
       new TestParams.ParamDescConfig( NeuralNet.Params.nConvStageTypeId,               valueOutMinMax.nConvStageTypeId ),
 
-      new TestParams.ParamDescConfig( NeuralNet.Params.blockCountPerStage,             valueOutMinMax.blockCountPerStage ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.blockCountTotalRequested,       valueOutMinMax.blockCountTotalRequested ),
 
       new TestParams.ParamDescConfig( NeuralNet.Params.output_channelCount,            valueOutMinMax.output_channelCount ),
 
@@ -358,7 +358,7 @@ NeuralNet_TestParams_Base.paramsNameOrderArray_Basic = [
   NeuralNet.Params.vocabularyChannelCount.paramName,
   NeuralNet.Params.vocabularyCountPerInputChannel.paramName,
   NeuralNet.Params.nConvStageTypeId.paramName,
-  NeuralNet.Params.blockCountPerStage.paramName,
+  NeuralNet.Params.blockCountTotalRequested.paramName,
   NeuralNet.Params.output_channelCount.paramName,
   NeuralNet.Params.bKeepInputTensor.paramName,
 ];

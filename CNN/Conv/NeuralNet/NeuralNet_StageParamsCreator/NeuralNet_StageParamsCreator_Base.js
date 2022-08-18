@@ -72,17 +72,18 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     }
   }
 
-  /** Called to determine stageCount.
+  /** Called to determine stageCount and blockCountPerStage.
     *
     * Sub-class could override this method to adjust data members.
     */
-  determine_stageCount() {
+  determine_stageCount_blockCountPerStage() {
     let neuralNetParams = this.neuralNetParams;
 
 //!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
 //    this.stageCount = neuralNetParams.stageCountRequested; // By default, the stage count is just the requested original stage count.
 
-
+    // 1. stageCount
+    //
     // Because every stage will double output channel count, find out stageCount
     // so that the stageLast's output channel count is (a little) larger than
     // the requested output_channelCount.
@@ -96,6 +97,16 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
       this.stageCount = Math.max(
         1, // (at least, one stage.)
         Math.ceil( Math.log2( expandFactor ) )
+      );
+    }
+
+    // 2. blockCountPerStage
+    //
+    // Average total block count to every stage.
+    {
+      this.blockCountPerStage = Math.max(
+        2, // (at least, two blocks (i.e. blockFirst and blockLast) per stage.)
+        Math.ceil( neuralNetParams.blockCountTotalRequested / this.stageCount )
       );
     }
   }
@@ -115,7 +126,6 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 
     this.nConvStageTypeId = neuralNetParams.nConvStageTypeId;
 
-    this.blockCountPerStage = neuralNetParams.blockCountPerStage;
     this.bPointwise1 = true; // Always use pointwise1.
 
     this.depthwiseFilterHeight = 3; // Always use ( 3 * 3 ) depthwise filter.

@@ -65,6 +65,12 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  *   The final block of this neuralNet. It is responsible for squishing output shape
  * to [ 1, 1, output_channelCount ].
  *
+ * @member {number} stageCount
+ *   How many stages inside this neuralNet are created.
+ *
+ * @member {number} blockCountPerStage
+ *   How many blocks inside this neuralNet's stageLast are created.
+ *
  * @member {number} stageLast_output_height
  *   The output image height of this neuralNet's last stage.
  *
@@ -181,7 +187,7 @@ class NeuralNet_Base extends Recyclable.Root {
     this.vocabularyCountPerInputChannel = params.vocabularyCountPerInputChannel;
     this.nConvStageTypeId = params.nConvStageTypeId;
     this.nConvStageTypeName = params.nConvStageTypeName;
-    this.blockCountPerStage = params.blockCountPerStage;
+    this.blockCountTotalRequested = params.blockCountTotalRequested;
     this.bKeepInputTensor = params.bKeepInputTensor;
 
     // The parameters which are determined (inferenced) from the above parameters.
@@ -238,7 +244,7 @@ class NeuralNet_Base extends Recyclable.Root {
       let StageParamsClass = params.StageParamsClass_get();
 
       stageParamsCreator = InferencedParams.create_StageParamsCreator_byNeuralNetParams( params );
-      stageParamsCreator.determine_stageCount();
+      stageParamsCreator.determine_stageCount_blockCountPerStage();
 
       for ( let i = 0; i < stageParamsCreator.stageCount; ++i ) { // Progress for stage0, 1, 2, 3, ... 
         progressForStages.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
@@ -402,7 +408,7 @@ class NeuralNet_Base extends Recyclable.Root {
     this.bEmbedVocabularyId = undefined;
 
     this.bKeepInputTensor = undefined;
-    this.blockCountPerStage = undefined;
+    this.blockCountTotalRequested = undefined;
     this.nConvStageTypeName = undefined;
     this.nConvStageTypeId = undefined;
     this.vocabularyCountPerInputChannel = undefined;
@@ -543,10 +549,8 @@ class NeuralNet_Base extends Recyclable.Root {
     }
   }
 
-  /** How many stages inside this neuralNet are created. */
-  get stageCount() {
-    return this.stageArray?.length;
-  }
+  get stageCount()         { return this.stageArray?.length; }
+  get blockCountPerStage() { return this.stageLast?.blockCount; }
 
   get stageLast_output_height()           { return this.stageLast?.output0.height; }
   get stageLast_output_width()            { return this.stageLast?.output0.width; }
@@ -571,10 +575,12 @@ class NeuralNet_Base extends Recyclable.Root {
       + `vocabularyChannelCount=${this.vocabularyChannelCount}, `
       + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
       + `nConvStageTypeName=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
-      + `blockCountPerStage=${this.blockCountPerStage}, `
+      + `blockCountTotalRequested=${this.blockCountTotalRequested}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
 
       + `stageCount=${this.stageCount}, `
+      + `blockCountPerStage=${this.blockCountPerStage}, `
+
       + `stageLast_output_height=${this.stageLast_output_height}, `
       + `stageLast_output_width=${this.stageLast_output_width}, `
       + `stageLast_output_channelCount=${this.stageLast_output_channelCount}, `
