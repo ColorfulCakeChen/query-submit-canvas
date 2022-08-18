@@ -302,10 +302,9 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
       // ],
 
-
       blockCountTotalRequested: [
         NeuralNet.Params.blockCountTotalRequested.valueDesc.range.min,
-        20 //NeuralNet.Params.blockCountTotalRequested.valueDesc.range.max
+        10 //NeuralNet.Params.blockCountTotalRequested.valueDesc.range.max
       ],
 
       output_channelCount: [
