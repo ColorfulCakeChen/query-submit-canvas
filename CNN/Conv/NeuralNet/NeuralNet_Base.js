@@ -24,11 +24,11 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 /**
  * This is the base class of NeuralNet.
  *
- *
  * NeuralNet is composed of:
  *   - an embedding
  *   - multiple stages
  *   - final block for squish result shape to [ 1, 1, output_channelCount ]
+ *
  *
  *
  *
@@ -66,10 +66,12 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  * to [ 1, 1, output_channelCount ].
  *
  * @member {number} stageCount
- *   How many stages inside this neuralNet are created.
+ *   How many stages inside this neuralNet are created. It is related to
+ * ( output_channelCount / ( input_channelCount * vocabularyChannelCount ) ).
  *
  * @member {number} blockCountPerStage
- *   How many blocks inside this neuralNet's stageLast are created.
+ *   How many blocks inside this neuralNet's stageLast are created. It is related to
+ * ( blockCountTotalRequested / stageCount ).
  *
  * @member {number} stageLast_output_height
  *   The output image height of this neuralNet's last stage.
