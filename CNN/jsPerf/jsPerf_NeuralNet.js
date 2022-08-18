@@ -2,6 +2,8 @@ export { init, testCorrectness, disposeResources };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
+import * as ValueMax from "../../util/ValueMax.js";
+import * as ValueMax from "../../util/RandTools.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 //import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
@@ -76,29 +78,52 @@ class PerformanceTestCase extends Recyclable.Root {
    */
   prepare() {
     try {
-      let neuralNetTestParams
-        = NeuralNet_TestParams.Base.Pool.get_or_create_by( this.testCaseId );
 
-      neuralNetTestParams.set_byParamsBase( this.neuralNetParamsBase );
-
-//!!! (2022/08/16 Remarked) Use canvas instead.
-//       // Pre-create performance test case's input image.
-//       let inputImage = this.testPerformance_imageSourceBag.getImage_by(
-//         neuralNetTestParams.out.input_height,
-//         neuralNetTestParams.out.input_width,
-//         neuralNetTestParams.out.input_channelCount );
+//!!! (2022/08/18 Remarked) Use simple longer weights array instead.
+//       let neuralNetTestParams
+//         = NeuralNet_TestParams.Base.Pool.get_or_create_by( this.testCaseId );
 //
-//       // Pre-create performance test case's input tensor.
-//       let inputTensor3d = this.testPerformance_imageSourceBag.getTensor3d_by(
-//         neuralNetTestParams.out.input_height,
-//         neuralNetTestParams.out.input_width,
-//         neuralNetTestParams.out.input_channelCount );
+//       neuralNetTestParams.set_byParamsBase( this.neuralNetParamsBase );
+//
+//       let neuralNet = this.neuralNet
+//         = NeuralNet_Reference.Base.NeuralNet_create( neuralNetTestParams );
+//
+//       neuralNetTestParams.disposeResources_and_recycleToPool();
+//       neuralNetTestParams = null;
 
-      let neuralNet = this.neuralNet
-        = NeuralNet_Reference.Base.NeuralNet_create( neuralNetTestParams );
+      let neuralNetParams = this.neuralNetParamsBase;
 
-      neuralNetTestParams.disposeResources_and_recycleToPool();
-      neuralNetTestParams = null;
+      // Initialize successfully or failed.
+      let extractedParams = NeuralNet.Params.Pool.get_or_create_by(
+        neuralNetParams.input_height,
+        neuralNetParams.input_width,
+        neuralNetParams.input_channelCount,
+        neuralNetParams.vocabularyChannelCount,
+        neuralNetParams.vocabularyCountPerInputChannel,
+        neuralNetParams.nConvStageTypeId,
+        neuralNetParams.blockCountPerStage,
+        neuralNetParams.output_channelCount,
+        neuralNetParams.bKeepInputTensor
+      );
+
+      let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+      let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
+
+      let bInitOk = neuralNet.init( progress,
+        PerformanceTestCase.randomTestWeightArray, 0, extractedParams );
+
+      if ( neuralNet.bInitOk != bInitOk )
+        throw Error( `NeuralNet validation state (${neuralNet.bInitOk}) mismatches initer's result (${bInitOk}). ${neuralNet}` );
+
+      if ( false == bInitOk )
+        throw Error( `Failed to initialize neuralNet object. ${neuralNet}` );
+
+      if ( 100 != progress.valuePercentage )
+        throw Error(
+          `Progress (${progress.valuePercentage}) should be 100 when initializing stage object successfully. ${neuralNet}`);
+
+      progress.disposeResources_and_recycleToPool();
+      progress = null;
 
       console.log( `NeuralNet.${this.testCaseName}: tensorWeightCount = { `
         + `Extracted: ${neuralNet.tensorWeightCountExtracted}, `
@@ -118,6 +143,17 @@ class PerformanceTestCase extends Recyclable.Root {
       throw e;
     }
   }
+
+  /** A simple longer weights array instead of NeuralNet_TestParams.
+   * Because NeuralNet_TestParams needs lots of memory when neural network is large.
+   */
+  static randomTestWeightArray = RandTools.generate_numberArray(
+    1, 1, ( 100 * 1024 * 1024 ), // height, width, channelCount,
+    TestParams_Base.weightsValueBegin,
+    TestParams_Base.weightsValueStep,
+    TestParams_Base.weightsRandomOffset.min, TestParams_Base.weightsRandomOffset.max,
+    TestParams_Base.weightsDivisorForRemainder
+  );
 
 }
 

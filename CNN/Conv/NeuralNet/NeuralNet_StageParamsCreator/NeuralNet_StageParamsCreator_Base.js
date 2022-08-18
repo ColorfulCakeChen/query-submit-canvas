@@ -182,19 +182,43 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     const input0_height = input_height;
     const input0_width = input_width;
     const input0_channelCount = input_channelCount;
-    const nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL; // (Always MobileNetV1)
+
+    // Final block uses general pointwise-depthwise-pointwise (i.e. MobileNetV1).
+    const nConvBlockTypeId
+      = ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL;
+
     const pointwise1ChannelCount = input_channelCount; // (No expanding)
-    const depthwise_AvgMax_Or_ChannelMultiplier = ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG; // (Always global average pooling)
+
+    const depthwise_AvgMax_Or_ChannelMultiplier // (Always global average pooling)
+      = ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG;
+
     const depthwiseFilterHeight = input_height; // (global average pooling)
     const depthwiseFilterWidth = input_width; // (global average pooling)
-    const depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID; // (global average pooling)
+
+    const depthwiseStridesPad // (global average pooling)
+      = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
+
     const depthwiseActivationId = this.nActivationId;
+
+    // As requested output channel count.
     const pointwise20ChannelCount = neuralNetParams.output_channelCount;
-    const pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE; // (Just like stage, pointwise20 always does not activate.)
-    const nSqueezeExcitationChannelCountDivisor = this.nSqueezeExcitationChannelCountDivisor;
-    const bSqueezeExcitationPrefix = false; // (non-MobileNetV2 always uses postfix squeeze-and-excitation.)
+
+    // For the same reason of stage, pointwise20 always does not activation function.
+    const pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+
+    const nSqueezeExcitationChannelCountDivisor
+      = this.nSqueezeExcitationChannelCountDivisor;
+
+    // Final block is non-MobileNetV2 (in fact, is MobileNetV1) always uses postfix
+    // squeeze-and-excitation.
+    const bSqueezeExcitationPrefix = false;
+
     const nActivationId = this.nActivationId;
-    const bKeepInputTensor = false; // (Always destroy input because there is stageLast always in front of blockFinal.)
+
+    // Final block always disposes input because there is always a stageLast in front
+    // of it to be responsible for keep-input-tensor (if needs).
+    const bKeepInputTensor = false;
+
 
     this.blockFinalParams_dispose();
     this.blockFinalParams = BlockParamsClass.Pool.get_or_create_by(
