@@ -51,7 +51,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     this.depthwiseFilterWidth = undefined;
     this.depthwiseFilterHeight = undefined;
     this.bPointwise1 = undefined;
-    this.blockCountRequested = undefined;
+    this.blockCountPerStage = undefined;
     this.nConvStageTypeId = undefined;
     this.input_channelCount = undefined;
     this.input_width = undefined;
@@ -112,7 +112,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 
     this.nConvStageTypeId = neuralNetParams.nConvStageTypeId;
 
-    this.blockCountRequested = neuralNetParams.blockCountRequested;
+    this.blockCountPerStage = neuralNetParams.blockCountPerStage;
     this.bPointwise1 = true; // Always use pointwise1.
 
     this.depthwiseFilterHeight = 3; // Always use ( 3 * 3 ) depthwise filter.
@@ -238,7 +238,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     let params = StageParamsClass.Pool.get_or_create_by(
       this.input_height, this.input_width, this.input_channelCount,
       this.nConvStageTypeId,
-      this.blockCountRequested,
+      this.blockCountPerStage,
       this.bPointwise1,
       this.depthwiseFilterHeight, this.depthwiseFilterWidth,
       this.nSqueezeExcitationChannelCountDivisor,
