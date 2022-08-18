@@ -567,4 +567,5 @@ TestParams_Base.weightsRandomOffset = { min: -5, max: +5 };
 //TestParams_Base.weightsRandomOffset = { min: -11111, max: 11111 };
 //TestParams_Base.weightsRandomOffset = { min: 11, max: 11 };
 
-TestParams_Base.weightsDivisorForRemainder = 4096;
+//TestParams_Base.weightsDivisorForRemainder = 4096;
+TestParams_Base.weightsDivisorForRemainder = 1024;
