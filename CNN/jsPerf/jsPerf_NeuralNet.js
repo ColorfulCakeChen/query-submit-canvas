@@ -92,6 +92,17 @@ class PerformanceTestCase extends Recyclable.Root {
 //       neuralNetTestParams.disposeResources_and_recycleToPool();
 //       neuralNetTestParams = null;
 
+      if ( !PerformanceTestCase.randomTestWeightArray ) {
+        PerformanceTestCase.randomTestWeightArray = RandTools.generate_numberArray(
+          1, 1, ( 100 * 1024 * 1024 ), // height, width, channelCount,
+          TestParams.Base.weightsValueBegin,
+          TestParams.Base.weightsValueStep,
+          TestParams.Base.weightsRandomOffset.min,
+          TestParams.Base.weightsRandomOffset.max,
+          TestParams.Base.weightsDivisorForRemainder
+        );
+      }
+
       let neuralNetParams = this.neuralNetParamsBase;
 
       // Initialize successfully or failed.
@@ -148,13 +159,7 @@ class PerformanceTestCase extends Recyclable.Root {
   /** A simple longer weights array instead of NeuralNet_TestParams.
    * Because NeuralNet_TestParams needs lots of memory when neural network is large.
    */
-  static randomTestWeightArray = RandTools.generate_numberArray(
-    1, 1, ( 100 * 1024 * 1024 ), // height, width, channelCount,
-    TestParams.Base.weightsValueBegin,
-    TestParams.Base.weightsValueStep,
-    TestParams.Base.weightsRandomOffset.min, TestParams.Base.weightsRandomOffset.max,
-    TestParams.Base.weightsDivisorForRemainder
-  );
+  static randomTestWeightArray;
 
 }
 
