@@ -93,8 +93,12 @@ class PerformanceTestCase extends Recyclable.Root {
 //       neuralNetTestParams = null;
 
       if ( !PerformanceTestCase.randomTestWeightArray ) {
-        PerformanceTestCase.randomTestWeightArray = RandTools.generate_numberArray(
-          1, 1, ( 100 * 1024 * 1024 ), // height, width, channelCount,
+        const weightArrayLength = ( 100 * 1024 * 1024 );
+        PerformanceTestCase.randomTestWeightArray = new Float32Array( weightArrayLength );
+
+        RandTools.fill_numberArray(
+          PerformanceTestCase.randomTestWeightArray,
+          1, 1, weightArrayLength, // height, width, channelCount,
           TestParams.Base.weightsValueBegin,
           TestParams.Base.weightsValueStep,
           TestParams.Base.weightsRandomOffset.min,
