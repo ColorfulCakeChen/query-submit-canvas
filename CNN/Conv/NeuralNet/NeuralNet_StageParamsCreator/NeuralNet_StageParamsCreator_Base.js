@@ -200,7 +200,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 
     const depthwiseActivationId = this.nActivationId;
 
-    // As requested output channel count.
+    // pointwise20 uses the requested output channel count.
     const pointwise20ChannelCount = neuralNetParams.output_channelCount;
 
     // pointwise20 always has no activation function, so that any number could be
