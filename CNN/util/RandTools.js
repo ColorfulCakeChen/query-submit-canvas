@@ -64,7 +64,9 @@ function fill_numberArray( io_numberArray,
     const randomOffsetMaxInt  = Math.floor( randomOffsetMaxReal );
     const randomOffsetKindsInt = randomOffsetMaxInt - randomOffsetMinInt + 1;
 
-    io_numberArray.length = height * width * channelCount;
+    // (Note: If TypedArray, its .length can not be modified.)
+    if ( io_numberArray instanceof Array )
+      io_numberArray.length = height * width * channelCount;
 
     let valueStepPerChannel = valueStep * channelCount;
     let valueNoRandBegin = valueBegin;
