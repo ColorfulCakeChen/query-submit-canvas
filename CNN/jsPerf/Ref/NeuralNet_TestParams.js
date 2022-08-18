@@ -219,6 +219,16 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     this.in_weights.set_byConcat(
       NeuralNet_TestParams_Base.paramsNameOrderArray_Basic, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
 
+    { // 5. Release temporary intermediate array for reducing memory usage.
+      for ( let i = 0; i < this.stageArray.length; ++i ) {
+        let stageTestParams = this.stageArray[ i ];
+        stageTestParams.in_weights.weightArray.length = 0;
+      }
+
+      let blockTestParams = this.blockFinal;
+      blockTestParams.in_weights.weightArray.length = 0;
+    }
+
     return this;
   }
 
@@ -318,7 +328,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
       output_channelCount: [
         1, //NeuralNet.Params.output_channelCount.valueDesc.range.min,
-        20
+        10
       ],
 
       // bKeepInputTensor: undefined,

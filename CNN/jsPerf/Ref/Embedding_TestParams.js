@@ -186,20 +186,6 @@ class Embedding_TestParams_Base extends TestParams.Base {
                 + `[ ${this.out_boundsArray.lowers[ outChannel ]}, ${this.out_boundsArray.uppers[ outChannel ]} ].`
               );
 
-//!!! (2022/08/09 Remarked) vlocabularyId is not in weights table.
-//             bBoundsOk &&= this.out_boundsArray.is_one_in_LowerUpper( outChannel,
-//               vocabularyElementArray.boundsArray_byChannel.lowers[ outChannel ],
-//               vocabularyElementArray.boundsArray_byChannel.uppers[ outChannel ] );
-//             if ( !bBoundsOk )
-//               throw Error( `Embedding_TestParams.Base.set_byParamsNumberArrayObject_ParamsOut(): `
-//                 + `vocabularyId=${vocabularyId} `
-//                 + `should be in bounds `
-//                 + `[ ${this.out_boundsArray.lowers[ outChannel ]}, ${this.out_boundsArray.uppers[ outChannel ]} ] `
-//                 + `and bounds `
-//                 + `[ ${vocabularyElementArray.boundsArray_byChannel.lowers[ outChannel ]}, `
-//                 + `${vocabularyElementArray.boundsArray_byChannel.uppers[ outChannel ]} ].`
-//               );
-
             ++outChannel;
           }
 

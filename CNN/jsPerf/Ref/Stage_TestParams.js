@@ -151,31 +151,40 @@ class Stage_TestParams_Base extends TestParams.Base {
 
     this.in.paramsNumberArrayObject.length = 0;
 
-    let blockParams;
-    for ( let i = 0; i < blockParamsArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
-      blockParams = blockParamsArray[ i ]; // Get current block parameters.
+    { // 1. Generate every sub block test params.
+      for ( let i = 0; i < blockParamsArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
+        let blockParams = blockParamsArray[ i ]; // Get current block parameters.
 
-      let blockTestParams = Block_TestParams.Base.Pool.get_or_create_by( this.id );
-      blockTestParams.set_byParamsScattered(
-        blockParams.input0_height, blockParams.input0_width, blockParams.input0_channelCount,
-        blockParams.nConvBlockTypeId,
-        blockParams.pointwise1ChannelCount,
-        blockParams.depthwise_AvgMax_Or_ChannelMultiplier, blockParams.depthwiseFilterHeight,
-        blockParams.depthwiseFilterWidth, blockParams.depthwiseStridesPad,
-        blockParams.depthwiseActivationId,
-        blockParams.pointwise20ChannelCount, blockParams.pointwise20ActivationId,
-        blockParams.nSqueezeExcitationChannelCountDivisor, blockParams.bSqueezeExcitationPrefix,
-        blockParams.nActivationId,
-        blockParams.bKeepInputTensor
-      );
+        let blockTestParams = Block_TestParams.Base.Pool.get_or_create_by( this.id );
+        blockTestParams.set_byParamsScattered(
+          blockParams.input0_height, blockParams.input0_width, blockParams.input0_channelCount,
+          blockParams.nConvBlockTypeId,
+          blockParams.pointwise1ChannelCount,
+          blockParams.depthwise_AvgMax_Or_ChannelMultiplier, blockParams.depthwiseFilterHeight,
+          blockParams.depthwiseFilterWidth, blockParams.depthwiseStridesPad,
+          blockParams.depthwiseActivationId,
+          blockParams.pointwise20ChannelCount, blockParams.pointwise20ActivationId,
+          blockParams.nSqueezeExcitationChannelCountDivisor, blockParams.bSqueezeExcitationPrefix,
+          blockParams.nActivationId,
+          blockParams.bKeepInputTensor
+        );
 
-      this.blockArray[ i ] = blockTestParams;
-      this.in.paramsNumberArrayObject.push( blockTestParams.in_weights.weightArray ); // Place every block's parameters in sequence.
+        this.blockArray[ i ] = blockTestParams;
+        this.in.paramsNumberArrayObject.push( blockTestParams.in_weights.weightArray ); // Place every block's parameters in sequence.
+      }
     }
 
-    // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
+    // 2. Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
     this.in_weights.set_byConcat(
       Stage_TestParams_Base.paramsNameOrderArray_Basic, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
+
+    { // 3. Release temporary intermediate array for reducing memory usage.
+      let blockTestParams;
+      for ( let i = 0; i < this.blockArray.length; ++i ) {
+        blockTestParams = this.blockArray[ i ];
+        blockTestParams.in_weights.weightArray.length = 0;
+      }
+    }
 
     return this;
   }
