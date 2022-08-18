@@ -149,10 +149,10 @@ class PerformanceTestCase extends Recyclable.Root {
    */
   static randomTestWeightArray = RandTools.generate_numberArray(
     1, 1, ( 100 * 1024 * 1024 ), // height, width, channelCount,
-    TestParams_Base.weightsValueBegin,
-    TestParams_Base.weightsValueStep,
-    TestParams_Base.weightsRandomOffset.min, TestParams_Base.weightsRandomOffset.max,
-    TestParams_Base.weightsDivisorForRemainder
+    TestParams.Base.weightsValueBegin,
+    TestParams.Base.weightsValueStep,
+    TestParams.Base.weightsRandomOffset.min, TestParams.Base.weightsRandomOffset.max,
+    TestParams.Base.weightsDivisorForRemainder
   );
 
 }
