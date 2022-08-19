@@ -18,30 +18,30 @@ import { BoundsArray_PerPixel } from "./Depthwise_BoundsArray_PerPixel.js";
  *   The position which is started (inclusive) to extract from inputWeightArray by init().
  *
  * @member {number} weightElementOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputWeightArray by init(). Where to extract next weights.
- * Only meaningful if .init() returns true.
+ *   The position which is ended to (non-inclusive) extract from inputWeightArray by
+ * init(). Where to extract next weights. Only meaningful if .init() returns true.
  *
  * @member {BoundsArraySet.Depthwise} boundsArraySet
  *   The element value bounds (per channel) of this depthwise convolution.
  *
  * @member {number} inputHeight
- *   The height of input image. When ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
+ *   The height of input image.
+ * When ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
  * it will be used to create the higher-half-pass-through depthwise filters.
  *
  * @member {number} inputWidth
- *   The width of input image. When ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
+ *   The width of input image.
+ * When ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
  * it will be used to create the higher-half-pass-through depthwise filters.
  *
  * @member {number} nPassThroughStyleId
- *   The pass-through style id (ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) of this convolution. It only affect the channels
- * which need to be pass-through from input to output.
+ *   The pass-through style id (ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) of this
+ * convolution. It only affect the channels which need to be pass-through from input
+ * to output.
  *
  * @member {ValueDesc.Depthwise_HigherHalfDifferent} nHigherHalfDifferent
  *   - If ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal depthwise convolution.
  *
-
-//!!! ...unfinished... (2021/11/12) What if channel multiplier is 0? is 2?
-
  *   - If ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ):
  *
  *     - Can not be used when:
@@ -69,8 +69,8 @@ import { BoundsArray_PerPixel } from "./Depthwise_BoundsArray_PerPixel.js";
  * it will be used and must be a positive integer.
  *
  * @member {number} tensorWeightCountTotal_internal
- *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
- * weights, if they are used in tensors.
+ *   The total wieght count used in tensors. Not including Params, because they are not
+ * used in tensors. Including inferenced weights, if they are used in tensors.
  *
  * @member {number[]} filtersShape
  *   The shape of the depthwise convolution filters array.
@@ -285,15 +285,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       );
 
 
-//!!! ...unfinished... (2022/01/11) What about ( bDepthwise == false )?
-
-//!!! ...unfinished... (2022/01/09)
-// Even if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ),
-// this function should work correctly and BoundsArraySet should result in pass-through input to output.
-
-//!!! (2022/01/09 Remarked) Wrong!
-//     if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE )
-//       return false; // Nothing needs to be extracted.
+    // Note: This method may not work properly when
+    // ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ).
+    //
 
     let aFiltersBiasesPartInfoArray;
     try {
