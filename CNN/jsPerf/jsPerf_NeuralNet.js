@@ -246,7 +246,7 @@ class HeightWidthDepth {
 
     let vocabularyChannelCount = 8; //4;
     let vocabularyCountPerInputChannel = 256;
-    let blockCountTotalRequested = 50; //20; //10;
+    let blockCountTotalRequested = 100; //50; //20; //10;
     let output_channelCount = 4; //400; //300; //64;
 
     // ShuffleNetV2 uses twice block count to compensate reduced channel count.
@@ -400,7 +400,7 @@ class HeightWidthDepth {
   * testCorrectness() {
 
     //!!! (2022/08/16 Temp Skipped) For speed up into performance testing.
-    if ( 0 )
+    //if ( 0 )
     {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
