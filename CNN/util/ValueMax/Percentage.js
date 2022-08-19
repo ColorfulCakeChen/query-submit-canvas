@@ -186,8 +186,21 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
     if ( this.max == 0 )
       return 100;
 
-    // Restrict between [ 0, max ].
-    let value = Math.max( 0, Math.min( this.value, this.max ) );
+//!!! (2022/08/19 Remarked) should assert if out of bounds.
+//     // Restrict between [ 0, max ].
+//     let value = Math.max( 0, Math.min( this.value, this.max ) );
+
+    // value should be in [ 0, max ].
+    if ( value < 0 )
+      throw Error( `ValueMax.Percentage.Concrete.valuePercentage(): `
+        + `value ( ${value} ) should >= 0`
+      );
+
+    if ( value > this.max )
+      throw Error( `ValueMax.Percentage.Concrete.valuePercentage(): `
+        + `value ( ${value} ) should <= max ( ${this.max} )`
+      );
+
     this.valuePercentage_cached = ( value / this.max ) * 100;
     return this.valuePercentage_cached;
   }
