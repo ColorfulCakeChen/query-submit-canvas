@@ -27,24 +27,27 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
 
 /**
  * Generator for Base64 decoding from an array of Base64 encoded string.
- * Join the string array, convert to Uint8Array, decode as Base64, result in another Uint8Array.
+ * Join the string array, convert to Uint8Array, decode as Base64, result in another
+ * Uint8Array.
  *
  * @param {string[]} sourceBase64EncodedStringArray
  *   Every element of the array is a string whose content is base64 encoded text.
  *
  * @param {TextEncoder} textEncoder
- *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder can work.
+ *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder
+ * can work.
  *
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
- * increased when every time advanced. The progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent. The
+ * created progressToAdvance will be increased when every time advanced. The
+ * progressParent.root_get() will be returned when every time yield.
  *
  * @param {Uint32} suspendByteCount
- *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
- *   Default is 1024 bytes.
+ *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
+ * progress). Default is 1024 bytes.
  *
  * @yield {ValueMax.Percentage.Aggregate}
  *   Yield ( value = progressParent.root_get() ) when ( done = false ).
@@ -53,13 +56,17 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
 function* decoder_FromStringArray(
-  sourceBase64EncodedStringArray, textEncoder, skipLineCount, progressParent, suspendByteCount ) {
+  sourceBase64EncodedStringArray, textEncoder, skipLineCount,
+  progressParent,
+  suspendByteCount
+) {
 
   let progressRoot = progressParent.root_get();
 
-  // The ( progressToAdvance / progressParent ) ratio (50%) seems a little too large. But it is
-  // reasonable in fact because the string Array.join() and TextEncoder.encode() both will scan
-  // all input text. This is just the same as the Base64 decoder (i.e. scanning all input text).
+  // The ( progressToAdvance / progressParent ) ratio (50%) seems a little too large.
+  // But it is reasonable in fact because the string Array.join() and
+  // TextEncoder.encode() both will scan all input text. This is just the same as
+  // the Base64 decoder (i.e. scanning all input text).
 
   // 50% for this function (i.e. Array.join() and TextEncoder.encode()).
   let progressToAdvance = progressParent.child_add(
@@ -88,21 +95,23 @@ function* decoder_FromStringArray(
  * Generator for Base64 decoding from an ArrayBufffer.
  *
  * @param {ArrayBuffer} sourceBase64ArrayBuffer
- *   The input base64 data as ArrayBuffer. If the last bytes not enough 4 bytes, they will be discarded (will
- * not be decoded). If an input byte is not a legal base64 code (i.e. not A..Z, a..z, 0..9, +, /, -, _), the
- * byte will be skipped (as if it does not exist). So the input bytes can be separated by new line character
- * (which will be skipped and ignored).
+ *   The input base64 data as ArrayBuffer. If the last bytes not enough 4 bytes, they
+ * will be discarded (will not be decoded). If an input byte is not a legal base64
+ * code (i.e. not A..Z, a..z, 0..9, +, /, -, _), the byte will be skipped (as if it
+ * does not exist). So the input bytes can be separated by new line character (which
+ * will be skipped and ignored).
  *
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
- * increased when every time advanced. The progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent. The
+ * created progressToAdvance will be increased when every time advanced. The
+ * progressParent.root_get() will be returned when every time yield.
  *
  * @param {Uint32} suspendByteCount
- *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
- *   Default is 1024 bytes.
+ *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
+ * progress). Default is 1024 bytes.
  *
  * @yield {ValueMax.Percentage.Aggregate}
  *   Yield ( value = progressParent.root_get() ) when ( done = false ).
@@ -114,7 +123,8 @@ function* decoder_FromArrayBuffer(
   sourceBase64ArrayBuffer, skipLineCount, progressParent, suspendByteCount ) {
 
   let sourceBase64Uint8Array = new Uint8Array( sourceBase64ArrayBuffer );
-  let base64Decoder = decoder_FromUint8Array( sourceBase64Uint8Array, skipLineCount, progressParent, suspendByteCount );
+  let base64Decoder = decoder_FromUint8Array( sourceBase64Uint8Array,
+    skipLineCount, progressParent, suspendByteCount );
 
   let base64DecodedUint8Array = yield *base64Decoder;
   return base64DecodedUint8Array;
@@ -124,21 +134,23 @@ function* decoder_FromArrayBuffer(
  * Generator for Base64 decoding from an Uint8Array.
  *
  * @param {Uint8Array} sourceBase64Uint8Array
- *   The input base64 data as Uint8Array. If the last bytes not enough 4 bytes, they will be discarded (will
- * not be decoded). If an input byte is not a legal base64 code (i.e. not A..Z, a..z, 0..9, +, /, -, _), the
- * byte will be skipped (as if it does not exist). So the input bytes can be separated by new line character
- * (which will be skipped and ignored).
+ *   The input base64 data as Uint8Array. If the last bytes not enough 4 bytes, they
+ * will be discarded (will not be decoded). If an input byte is not a legal base64
+ * code (i.e. not A..Z, a..z, 0..9, +, /, -, _), the byte will be skipped (as if it
+ * does not exist). So the input bytes can be separated by new line character (which
+ * will be skipped and ignored).
  *
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
- * increased when every time advanced. The progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent. The
+ * created progressToAdvance will be increased when every time advanced. The
+ * progressParent.root_get() will be returned when every time yield.
  *
  * @param {Uint32} suspendByteCount
- *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
- *   Default is 1024 bytes.
+ *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
+ * progress). Default is 1024 bytes.
  *
  * @yield {ValueMax.Percentage.Aggregate}
  *   Yield ( value = progressParent.root_get() ) when ( done = false ).
@@ -152,7 +164,9 @@ function* decoder_FromUint8Array(
   // 0. Initialize.
 
   // If undefined or null or negative or zero or less than 1, set to default.
-  // Note: Bitwising OR with zero is for converting to integer (if it is undefined or null).
+  //
+  // Note: Bitwising OR with zero is for converting to integer (if it is undefined
+  //       or null).
   if ((suspendByteCount | 0) <= 0)
     suspendByteCount = 1024;
 
@@ -164,9 +178,11 @@ function* decoder_FromUint8Array(
   let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( sourceByteLength ) );
 
-  // It is important that the nextYieldValue is not greater than source length, so that
-  // it can be used as boundary checking to reduce checking times and increase performance.
-  let nextYieldValue = Math.min(sourceByteLength, progressToAdvance.value + suspendByteCount);
+  // It is important that the nextYieldValue is not greater than source length, so
+  // that it can be used as boundary checking to reduce checking times and increase
+  // performance.
+  let nextYieldValue
+    = Math.min(sourceByteLength, progressToAdvance.value + suspendByteCount);
 
   // 1. Skip specified lines.
   {
