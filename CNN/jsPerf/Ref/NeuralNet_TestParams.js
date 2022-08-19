@@ -285,7 +285,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       ],
 
       // (2022/08/16) Note: Mobile Moto e40 seems necessary pad=valid to work.
-      //
+      // (2022/08/19) Note: This Moto e40 problem seems disappeared.
 
       //!!! (2022/08/16 Temp Remarked) For mobile phone Moto e40 could pass testing.
       // nConvStageTypeId: [

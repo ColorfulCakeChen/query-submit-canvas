@@ -333,9 +333,12 @@ class Block_TestParams_Base extends TestParams.Base {
       // depthwiseFilterHeight: [ 3, 3 ],
       // depthwiseFilterWidth: [ 2, 2 ],
 
-      // (2022/05/02) Note: The right-most pixel of depthwise convolution seems wrong when ( strides = 1, pad = "same" ) in backend
-      // WebGL of some platforms (e.g. mobile phone Moto e40). But the issue does not exist when ( strides = 2, pad = "same" ) or
-      // ( pad = "valid" ) in those platforms.
+      // (2022/05/02) Note: The right-most pixel of depthwise convolution seems wrong
+      // when ( strides = 1, pad = "same" ) in backend WebGL of some platforms
+      // (e.g. mobile phone Moto e40). But the issue does not exist when
+      // ( strides = 2, pad = "same" ) or ( pad = "valid" ) in those platforms.
+      //
+      // (2022/08/19) Note: This Moto e40 problem seems disappeared.
       //
 //      depthwiseStridesPad: undefined,
 //!!! (2022/05/01 Temp Remarked) For debug (mobile phone).
