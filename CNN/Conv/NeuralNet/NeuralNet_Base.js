@@ -488,7 +488,7 @@ class NeuralNet_Base extends Recyclable.Root {
     let progressMax =
         1                    // for embedding.
       + this.blockCountTotal // for all block of all stages.
-      + 1                    // for blockFinal
+      + 1                    // for blockFinal.
       ;
 
     let progressRoot = progressParent.getRoot();
