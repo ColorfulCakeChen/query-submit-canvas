@@ -462,6 +462,43 @@ class NeuralNet_Base extends Recyclable.Root {
     }
   }
 
+  /**
+   * Generator for processing input, destroying or keeping input, returning result.
+   *
+   * @param {tf.tensor3d} inputTensor
+   *   The source input image ( height x width x channel ) which will be processed.
+   * This inputTensor may or may not be disposed according to init()'s bKeepInputTensor.
+   *
+   * @param {ValueMax.Percentage.Concrete} progressToAdvance
+   *   This progressToAdvance will be increased when every time advanced. The
+   * progressToAdvance.getRoot() will be returned when every time yield.
+   *
+   * @yield {ValueMax.Percentage.Base}
+   *   Yield ( value = progressToAdvance.getRoot() ) when ( done = false ).
+   *
+   * @yield {tf.tensor3d}
+   *   Yield ( value = outputTensor ) when ( done = true ).
+   */
+  * applier( progressParent, inputTensor ) {
+
+!!! ...unfinished... (2022/08/19) async apply
+
+   let progressRoot = progressToAdvance.getRoot();
+
+   this.block0.input0.realTensor = inputTensor; // Note: The block0 should only input one tensor.
+
+   let blockArray = this.blockArray;
+   for ( let i = 0; i < blockArray.length; ++i ) {
+     blockArray[ i ].apply();
+
+     progressToAdvance.value_advance();
+     yield progressRoot;  // One block executed. Report progress.
+   }
+
+   let outputTensor = this.blockLast.output0.realTensor; // Note: The blockLast should only output one tensor.
+   return outputTensor;
+ }
+
   /** Process input, destroy or keep input, return result.
    *
    * @param {tf.tensor3d} inputTensor

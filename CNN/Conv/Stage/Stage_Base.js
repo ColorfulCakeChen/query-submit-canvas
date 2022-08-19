@@ -50,10 +50,6 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *     - ( bPointwise1 ==  true ), pointwise1 (higher half copy input0) double of input0.
  *
  *
-
-
-!!! ...unfinished... (2022/08/04) New design
-
  * 3. Bias and Activation
  *
  * MobileNetV2_Xxx uses the following (which is MobileNetV2's original design):
@@ -322,12 +318,14 @@ class Stage_Base extends Recyclable.Root {
    * Generator for initializing this object.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
-   * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
+   *   Some new progressToAdvance will be created and added to progressParent. The
+   * created progressToAdvance will be increased when every time advanced. The
+   * progressParent.getRoot() will be returned when every time yield.
    *
    * @param {Params} params
-   *   A Params object. The params.init() will be called to extract parameters. This params will be owned and destroyed by this .initer().
-   * So caller should not use it again.
+   *   A Params object. The params.init() will be called to extract parameters. This
+   * params will be owned and destroyed by this .initer(). So caller should not use
+   * it again.
    *
    * @param {ActivationEscaping.ScaleBoundsArray|TensorPlaceholder.Base} input_ScaleBoundsArray_or_TensorPlaceholder
    *   The element value bounds (per channel) or TensorPlaceholder of this stage's input.
@@ -506,14 +504,6 @@ class Stage_Base extends Recyclable.Root {
 //!!! (2022/08/03 Temp Remarked) For debug.
       this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
 
-//!!! (2022/08/17 Remarked) This should already been verified in Stage_Reference.
-//       // In our Stage design, no matter which configuration, the output_channelCount
-//       // always is twice as input_channelCount.
-//       if ( this.output_channelCount != ( this.input_channelCount * 2 ) )
-//         throw Error( `Stage.Base.initer(): `
-//           + `the output_channelCount ( ${this.output_channelCount} ) should always be twice of `
-//           + `input_channelCount ( ${this.input_channelCount} ).` );
-
       this.bInitOk = true;
       return this.bInitOk;
 
@@ -534,8 +524,10 @@ class Stage_Base extends Recyclable.Root {
    * Initialize this object by calling initer() and advance the generator by loop until done.
    *
    * @return {boolean}
-   *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
-   *   Return false if failed (and progressParent.valuePercentage will be less than 100).
+   *   - Return true if successfully (and progressParent.valuePercentage will be equal
+   *       to 100).
+   *   - Return false if failed (and progressParent.valuePercentage will be less than
+   *       100).
    *
    * @see Block.Base.init()
    */
@@ -611,6 +603,40 @@ class Stage_Base extends Recyclable.Root {
     }
   }
 
+  /**
+   * Generator for processing input, destroying or keeping input, returning result.
+   *
+   * @param {tf.tensor3d} inputTensor
+   *   The source input image ( height x width x channel ) which will be processed.
+   * This inputTensor may or may not be disposed according to init()'s bKeepInputTensor.
+   *
+   * @param {ValueMax.Percentage.Concrete} progressToAdvance
+   *   This progressToAdvance will be increased when every time advanced. The
+   * progressToAdvance.getRoot() will be returned when every time yield.
+   *
+   * @yield {ValueMax.Percentage.Base}
+   *   Yield ( value = progressToAdvance.getRoot() ) when ( done = false ).
+   *
+   * @yield {tf.tensor3d}
+   *   Yield ( value = outputTensor ) when ( done = true ).
+   */
+  * applier( progressToAdvance, inputTensor ) {
+    let progressRoot = progressToAdvance.getRoot();
+
+    this.block0.input0.realTensor = inputTensor; // Note: The block0 should only input one tensor.
+
+    let blockArray = this.blockArray;
+    for ( let i = 0; i < blockArray.length; ++i ) {
+      blockArray[ i ].apply();
+
+      progressToAdvance.value_advance();
+      yield progressRoot;  // One block executed. Report progress.
+    }
+
+    let outputTensor = this.blockLast.output0.realTensor; // Note: The blockLast should only output one tensor.
+    return outputTensor;
+  }
+
   /** Process input, destroy or keep input, return result.
    *
    * @param {tf.tensor3d} inputTensor
@@ -631,32 +657,6 @@ class Stage_Base extends Recyclable.Root {
     let outputTensor = this.blockLast.output0.realTensor; // Note: The blockLast should only output one tensor.
     return outputTensor;
   }
-
-//!!! ...unfinished... (2022/08/19) async apply
-  /**
-   *
-   * @yield {ValueMax.Percentage.Aggregate}
-   *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
-   *
-   * @yield {tf.tensor3d}
-   *   Yield ( value = outputTensor ) when ( done = true ) successfully.
-   */
-  * applier( progressParent, inputTensor ) {
-
-!!! ...unfinished... (2022/08/19) async apply
-
-    this.block0.input0.realTensor = inputTensor; // Note: The block0 should only input one tensor.
-
-    let blockArray = this.blockArray;
-    for ( let i = 0; i < blockArray.length; ++i ) {
-      blockArray[ i ].apply();
-    }
-
-    let outputTensor = this.blockLast.output0.realTensor; // Note: The blockLast should only output one tensor.
-    return outputTensor;
-
-  }
-
 
   /** How many blocks inside this stage are created. (may different from this.blockCountRequested.) */
   get blockCount() {

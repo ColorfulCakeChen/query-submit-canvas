@@ -1,6 +1,6 @@
 export { ValueMax_Percentage_Base as Base };
-export { Concrete };
-export { Aggregate };
+export { ValueMax_Percentage_Concrete as Concrete };
+export { ValueMax_Percentage_Aggregate as Aggregate };
 
 import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
@@ -12,7 +12,8 @@ import * as Recyclable from "../Recyclable.js";
  *   - The maxPercentage always returns 100.
  *   - The valuePercentage returns number between [0, 100] inclusive.
  *
- * @member {Percentage.Base} parent The direct parent Percentage.Base of this Percentage.Base.
+ * @member {Percentage.Base} parent
+ *   The direct parent Percentage.Base of this Percentage.Base.
  */
 class ValueMax_Percentage_Base extends Recyclable.Root {
 
@@ -53,7 +54,7 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
     // by caller to avoid this problem.
     //
     //if ( this.parent ) {
-    //  if ( this.parent instanceof Aggregate ) {
+    //  if ( this.parent instanceof ValueMax_Percentage_Aggregate ) {
     //    // Do nothing currently.
     //  }
     //}
@@ -64,7 +65,9 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
   }
 
   /**
-   * @return {Percentage.Base} The root Percentage.Base of the whole Percentage hierarchy. The root's valuePercentage represents the whole percentage.
+   * @return {Percentage.Base}
+   *   The root Percentage.Base of the whole Percentage hierarchy. The root's
+   * .valuePercentage represents the whole percentage.
    */
   getRoot() {
     if ( this.parent )
@@ -109,29 +112,32 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
  * @member {number} max
  *   A positive number indicates the maximum value of this.value.
  */
-class Concrete extends ValueMax_Percentage_Base {
+class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
 
   /**
    * Used as default ValueMax.Percentage.Concrete provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "ValueMax.Percentage.Concrete.Pool", Concrete, Concrete.setAsConstructor );
+  static Pool = new Pool.Root( "ValueMax.Percentage.Concrete.Pool",
+    ValueMax_Percentage_Concrete, ValueMax_Percentage_Concrete.setAsConstructor );
 
   /**
    * @param {number} max
-   *   The possible maximum value of this.value. If negative, indicates not initialized. This is different from maxPercentage.
-   * The maxPercentage is always 100. The this.max, however, could be zero or any positive value. If max is negative, the
-   * the valuePercentage will always be 0 (to avoid Aggregate.valuePercentage immediately 100). If max is zero, the
-   * valuePercentage will always be 100 (to avoid divide by zero and avoid Aggregate.valuePercentage never 100).
+   *   The possible maximum value of this.value. If negative, indicates not
+   * initialized. This is different from maxPercentage. The maxPercentage is always
+   * 100. The this.max, however, could be zero or any positive value. If max is
+   * negative, the valuePercentage will always be 0 (to avoid Aggregate.valuePercentage
+   * immediately 100). If max is zero, the valuePercentage will always be 100 (to
+   * avoid divide by zero and avoid Aggregate.valuePercentage never 100).
    */
   constructor( max = -1 ) {
     super();
-    Concrete.setAsConstructor_self.call( this, max );
+    ValueMax_Percentage_Concrete.setAsConstructor_self.call( this, max );
   }
 
   /** @override */
   static setAsConstructor( max = -1 ) {
     super.setAsConstructor();
-    Concrete.setAsConstructor_self.call( this, max );
+    ValueMax_Percentage_Concrete.setAsConstructor_self.call( this, max );
     return this;
   }
 
@@ -190,24 +196,25 @@ class Concrete extends ValueMax_Percentage_Base {
  *   An array of Percentage.Base which will be aggregated. Their parent are set
  * to this Percentage.Aggregate.
  */
-class Aggregate extends ValueMax_Percentage_Base {
+class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
 
   /**
    * Used as default ValueMax.Percentage.Aggregate provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "ValueMax.Percentage.Aggregate.Pool", Aggregate, Aggregate.setAsConstructor );
+  static Pool = new Pool.Root( "ValueMax.Percentage.Aggregate.Pool",
+    ValueMax_Percentage_Aggregate, ValueMax_Percentage_Aggregate.setAsConstructor );
 
   /**
    */
   constructor() {
     super();
-    Aggregate.setAsConstructor_self.call( this );
+    ValueMax_Percentage_Aggregate.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    Aggregate.setAsConstructor_self.call( this );
+    ValueMax_Percentage_Aggregate.setAsConstructor_self.call( this );
     return this;
   }
 

@@ -346,15 +346,18 @@ class Block_Base extends Recyclable.Root {
    * Generator for initializing this object.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
-   * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
+   *   Some new progressToAdvance will be created and added to progressParent. The
+   * created progressToAdvance will be increased when every time advanced. The
+   * progressParent.getRoot() will be returned when every time yield.
    *
    * @param {number[]|Float32Array} inputWeightArray
-   *   The underlying weights source array to be extracted from. It will not be kept by this object.
+   *   The underlying weights source array to be extracted from. It will not be kept
+   * by this object.
    *
    * @param {Params} params
-   *   A Params object. The params.init() will be called to extract parameters. This params will be owned and destroyed by this .initer().
-   * So caller should not use it again.
+   *   A Params object. The params.init() will be called to extract parameters. This
+   * params will be owned and destroyed by this .initer(). So caller should not use
+   * it again.
    *
    * @param {ActivationEscaping.ScaleBoundsArray|TensorPlaceholder.Base} input0_ScaleBoundsArray_or_TensorPlaceholder
    *   The element value bounds (per channel) or TensorPlaceholder of input0.
@@ -363,13 +366,17 @@ class Block_Base extends Recyclable.Root {
    *         - A new TensorPlaceholder will be created.
    *         - ( .input0_bOwned == true )
    *         - TensorPlaceholder will be released by here (Block.Base).
-   *         - ActivationEscaping.ScaleBoundsArray will NOT be released by here (Block.Base).
+   *         - ActivationEscaping.ScaleBoundsArray will NOT be released by
+   *             here (Block.Base).
    *
-   *     - If it is a TensorPlaceholder.Base object (usually, it is The .output0 of the previous Block):
-   *         - It will be used (not cloned, not owned) as input0's TensorPlaceholder directly.
+   *     - If it is a TensorPlaceholder.Base object (usually, it is The .output0 of
+   *         the previous Block):
+   *         - It will be used (not cloned, not owned) as input0's TensorPlaceholder
+   *             directly.
    *         - ( .input0_bOwned == false )
    *         - TensorPlaceholder will NOT be released by here (Block.Base).
-   *         - ActivationEscaping.ScaleBoundsArray will NOT be released by here (Block.Base).
+   *         - ActivationEscaping.ScaleBoundsArray will NOT be released by
+   *             here (Block.Base).
    *
    * @param {ActivationEscaping.ScaleBoundsArray|TensorPlaceholder.Base} input1_ScaleBoundsArray_or_TensorPlaceholder
    *   The element value bounds (per channel) or TensorPlaceholder of input1.
@@ -378,13 +385,17 @@ class Block_Base extends Recyclable.Root {
    *         - A new TensorPlaceholder will be created.
    *         - ( .input1_bOwned == true )
    *         - TensorPlaceholder will be released by here (Block.Base).
-   *         - ActivationEscaping.ScaleBoundsArray will NOT be released by here (Block.Base).
+   *         - ActivationEscaping.ScaleBoundsArray will NOT be released by
+   *             here (Block.Base).
    *
-   *     - If it is a TensorPlaceholder.Base object (usually, it is The .output0 of the previous Block):
-   *         - It will be used (not cloned, not owned) as input0's TensorPlaceholder directly.
+   *     - If it is a TensorPlaceholder.Base object (usually, it is The .output0 of
+   *         the previous Block):
+   *         - It will be used (not cloned, not owned) as input0's TensorPlaceholder
+   *             directly.
    *         - ( .input1bOwned == false )
    *         - TensorPlaceholder will NOT be released by here (Block.Base).
-   *         - ActivationEscaping.ScaleBoundsArray will NOT be released by here (Block.Base).
+   *         - ActivationEscaping.ScaleBoundsArray will NOT be released by
+   *             here (Block.Base).
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
