@@ -10,7 +10,7 @@ import * as Recyclable from "../Recyclable.js";
  * Acceptable by Receiver.Base.
  *
  *   - The maxPercentage always returns 100.
- *   - The valuePercentage returns number between [0, 100] inclusive.
+ *   - The valuePercentage returns number between [ 0, 100 ] inclusive.
  *
  * @member {Percentage.Base} parent
  *   The direct parent Percentage.Base of this Percentage.Base.
@@ -164,7 +164,7 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
     this.value += advancedValue;
     this.valuePercentage_cached_invalidate();
   }
-  
+
   /**
    * @return {number}
    *   The progress as number between [ 0, 100 ] inclusive.
