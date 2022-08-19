@@ -383,8 +383,8 @@ class Stage_Base extends Recyclable.Root {
       ;
 
     let progressRoot = progressParent.getRoot();
-    let progressToAdvance = progressParent.addChild( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
-    let progressForBlocks = progressParent.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for block0, block1, block2, ... 
+    let progressToAdvance = progressParent.child_add( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
+    let progressForBlocks = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for block0, block1, block2, ... 
 
     // 1. Extract parameters.
     if ( !params )
@@ -431,7 +431,7 @@ class Stage_Base extends Recyclable.Root {
       blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
 
       for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Progress for block0, 1, 2, 3, ... 
-        progressForBlocks.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+        progressForBlocks.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
       }
 
       let blockParams, block, blockIniter;

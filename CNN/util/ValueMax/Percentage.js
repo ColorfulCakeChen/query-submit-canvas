@@ -226,21 +226,12 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
 
   /** @override */
   static setAsConstructor_self() {
-    this.children = Recyclable.Array.Pool.get_or_create_by( 0 );
+    this.children = Recyclable.OwnerArray.Pool.get_or_create_by();
   }
 
   /** @override */
   disposeResources() {
     if ( this.children ) {
-
-      for ( let i = 0; i < this.children.length; ++i ) {
-        let child = this.children[ i ];
-        if ( child ) {
-          child.disposeResources_and_recycleToPool();
-          this.children[ i ] = null;
-        }
-      }
-
       this.children.disposeResources_and_recycleToPool();
       this.children = null;
     }
@@ -255,7 +246,7 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
    *
    * @return {Percentage.Base} Return the child for cascading easily.
    */
-  addChild( child ) {
+  child_add( child ) {
     if ( !child )
       return null;
 
@@ -265,6 +256,39 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
     this.valuePercentage_cached_invalidate();
      
     return child;
+  }
+
+  /**
+   *   - Remove all children (clear their .parent, but not dispose them).
+   *   - Invalidate .valuePercentage_cached.
+   *
+   */
+  child_detachAll() {
+
+    {
+      for ( let i = 0; i < this.children.length; ++i ) {
+        let child = this.children[ i ];
+        if ( !child )
+          continue;
+
+        child.parent = null;
+        this.children[ i ] = null;
+      }
+
+      this.children.length = 0;
+    }
+
+    this.valuePercentage_cached_invalidate();
+  }
+
+  /**
+   *   - Remove all children (and dispose them).
+   *   - Invalidate .valuePercentage_cached.
+   *
+   */
+   child_clearAll() {
+    this.children.clear();
+    this.valuePercentage_cached_invalidate();
   }
 
   /**

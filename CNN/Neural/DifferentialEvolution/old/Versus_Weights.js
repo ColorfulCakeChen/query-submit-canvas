@@ -60,7 +60,7 @@ class EnitiyChromosomes {
 
     // Initialize progress.
     let progressToAdvance = new ValueMax.Percentage.Concrete( ??? );
-    progressParent.addChild( progressToAdvance );
+    progressParent.child_add( progressToAdvance );
 
 //     let base64EncodedStringLong = base64EncodedStringArray.join( "" );
 //     let base64EncodedUint8Array = textEncoder.encode( base64EncodedStringLong );

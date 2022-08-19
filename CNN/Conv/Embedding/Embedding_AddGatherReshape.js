@@ -100,7 +100,7 @@ class Embedding_AddGatherReshape extends Base {
       ;
 
     let progressRoot = progressParent.getRoot();
-    let progressToAdvance = progressParent.addChild( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
+    let progressToAdvance = progressParent.child_add( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
     // 1. Extract weights.
     let bParamInitOk = yield* super.initer( progressParent,

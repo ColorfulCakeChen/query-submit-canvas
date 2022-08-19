@@ -170,10 +170,10 @@ class NeuralNet_Base extends Recyclable.Root {
       ;
 
     let progressRoot = progressParent.getRoot();
-    let progressToAdvance = progressParent.addChild( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
-    let progressForEmbedding = progressParent.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for embedding extracting.
-    let progressForStages = progressParent.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for stage0, stage1, stage2, ... 
-    let progressForBlockFinal = progressParent.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for blockFinal.
+    let progressToAdvance = progressParent.child_add( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
+    let progressForEmbedding = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for embedding extracting.
+    let progressForStages = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for stage0, stage1, stage2, ... 
+    let progressForBlockFinal = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for blockFinal.
 
     // 0.2 Extract parameters.
     if ( !params )
@@ -253,7 +253,7 @@ class NeuralNet_Base extends Recyclable.Root {
       stageParamsCreator.determine_stageCount_blockCountPerStage();
 
       for ( let i = 0; i < stageParamsCreator.stageCount; ++i ) { // Progress for stage0, 1, 2, 3, ... 
-        progressForStages.addChild( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+        progressForStages.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
       }
 
       let stageParams, stage, stageIniter;

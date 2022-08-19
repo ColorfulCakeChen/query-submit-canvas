@@ -411,7 +411,7 @@ class Block_Base extends Recyclable.Root {
       ;
 
     let progressRoot = progressParent.getRoot();
-    let progressToAdvance = progressParent.addChild( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
+    let progressToAdvance = progressParent.child_add( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
     // 1. Extract parameters.
     if ( !params )

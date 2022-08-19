@@ -129,7 +129,7 @@ class Progress extends ValueMax.Percentage.Aggregate {
 function* tester( progressParent ) {
   console.log("Base64 decode testing...");
 
-  let progress = progressParent.addChild( new Progress() );
+  let progress = progressParent.child_add( new Progress() );
 
   for (let i = 0; i < testCases.length; ++i) {
     let testCase = testCases[ i ];
@@ -154,7 +154,7 @@ function test( progressParent ) {
   console.log("Base64 decode testing...");
   let delayMilliseconds = 1000;
 
-  let progress = progressParent.addChild( new Progress() );
+  let progress = progressParent.child_add( new Progress() );
   let progressReceiver = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy("TestProgressBar");
 
   let testPromiseAll = [];

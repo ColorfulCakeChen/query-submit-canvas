@@ -97,7 +97,7 @@ class UrlComposer {
    */
   async* fetcher_JSON_ColumnMajorArray( progressParent ) {
     let progressRoot = progressParent.getRoot();
-    let progressToAdvance = progressParent.addChild(
+    let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 4 ) );
 
     try {
