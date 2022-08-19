@@ -168,7 +168,19 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       tensorNumDifference_apply_before_after = neuralNet_outputTensorCount - inputTensorDestroyCount;
 
       let memoryInfo_apply_before = tf.memory(); // Test memory leakage of NeuralNet.apply.
-      outputTensor3d = neuralNet.apply( inputTensor3d );
+      {
+        let progressApply = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+
+        outputTensor3d = neuralNet.apply( progressApply, inputTensor3d );
+    
+        if ( 100 != progressApply.valuePercentage )
+          throw Error( `NeuralNet_Reference_Base.neuralNet_create_apply_internal(): `
+            + `Progress (${progressApply.valuePercentage}) should be 100 `
+            + `after neuralNet.apply(). ${neuralNet}`);
+    
+        progressApply.disposeResources_and_recycleToPool();
+        progressApply = null;
+      }
       let memoryInfo_apply_after = tf.memory();
 
       if ( memoryInfo_apply_after.numTensors != ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) )
@@ -284,8 +296,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       testParams.in.bKeepInputTensor
     );
 
-    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-    let bInitOk = neuralNet_toBeCompared.init( progress,
+    let progressInit = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+    let bInitOk = neuralNet_toBeCompared.init( progressInit,
       testParams.in_weights.weightArray, testParams.in_weights.weightElementOffsetBegin,
       extractedParams
     );
@@ -293,12 +305,13 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     if ( false == bInitOk )
       throw Error( `Failed to initialize neuralNet object. ${neuralNet_toBeCompared}` );
 
-    if ( 100 != progress.valuePercentage )
-      throw Error(
-        `Progress (${progress.valuePercentage}) should be 100 when initializing stage object successfully. ${neuralNet}`);
+    if ( 100 != progressInit.valuePercentage )
+      throw Error( `NeuralNet_Reference_Base.neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1(): `
+        + `Progress (${progressInit.valuePercentage}) should be 100 `
+        + `when initializing NeuralNet object successfully. ${neuralNet_toBeCompared}`);
 
-    progress.disposeResources_and_recycleToPool();
-    progress = null;
+    progressInit.disposeResources_and_recycleToPool();
+    progressInit = null;
 
     // Prepare input tensor.
     let inputTensor3d;
@@ -308,7 +321,20 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       inputTensor3d = inputTensor3d_fromBag.clone(); // Clone for being destroyed. 
     }
 
-    let outputTensor3d = neuralNet_toBeCompared.apply( inputTensor3d );
+    let outputTensor3d;
+    {
+      let progressApply = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+
+      outputTensor3d = neuralNet_toBeCompared.apply( progressApply, inputTensor3d );
+  
+      if ( 100 != progressApply.valuePercentage )
+        throw Error( `NeuralNet_Reference_Base.neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1(): `
+          + `Progress (${progressApply.valuePercentage}) should be 100 `
+          + `after neuralNet.apply(). ${neuralNet_toBeCompared}`);
+  
+      progressApply.disposeResources_and_recycleToPool();
+      progressApply = null;
+    }
 
     {
       // Test correctness of NeuralNet BoundsArraySet.
@@ -389,7 +415,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
     let neuralNet = NeuralNet.Base.Pool.get_or_create_by();
 
-    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+    let progressInit = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
     // Initialize successfully or failed.
     let extractedParams = NeuralNet.Params.Pool.get_or_create_by(
@@ -401,7 +427,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       testParams.in.bKeepInputTensor
     );
 
-    let bInitOk = neuralNet.init( progress,
+    let bInitOk = neuralNet.init( progressInit,
       testParams.in_weights.weightArray, testParams.in_weights.weightElementOffsetBegin,
       extractedParams
     );
@@ -417,12 +443,13 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     if ( false == bInitOk )
       throw Error( `Failed to initialize neuralNet object. ${neuralNet}` );
 
-    if ( 100 != progress.valuePercentage )
-      throw Error(
-        `Progress (${progress.valuePercentage}) should be 100 when initializing stage object successfully. ${neuralNet}`);
-
-    progress.disposeResources_and_recycleToPool();
-    progress = null;
+    if ( 100 != progressInit.valuePercentage )
+      throw Error( `NeuralNet_Reference_Base.NeuralNet_create(): `
+        + `Progress (${progressInit.valuePercentage}) should be 100 `
+        + `when initializing NeuralNet object successfully. ${neuralNet}`);
+  
+    progressInit.disposeResources_and_recycleToPool();
+    progressInit = null;
 
     if ( neuralNet.weightElementOffsetEnd != testParams.in_weights.weightArray.length ) { //!!! For Debug. (parsing ending position)
       debugger;
