@@ -191,6 +191,7 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
 //     let value = Math.max( 0, Math.min( this.value, this.max ) );
 
     // value should be in [ 0, max ].
+    let value = this.value;
     if ( value < 0 )
       throw Error( `ValueMax.Percentage.Concrete.valuePercentage(): `
         + `value ( ${value} ) should >= 0`
