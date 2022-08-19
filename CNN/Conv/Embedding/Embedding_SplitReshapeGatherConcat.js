@@ -100,7 +100,7 @@ class Embedding_SplitReshapeGatherConcat extends Base {
       + 1  // for creating vocabulary tables.
       ;
 
-    let progressRoot = progressParent.getRoot();
+    let progressRoot = progressParent.root_get();
     let progressToAdvance = progressParent.child_add( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
     // 1. Extract weights.

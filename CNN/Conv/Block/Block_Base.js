@@ -330,7 +330,7 @@ class Block_Base extends Recyclable.Root {
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The
    * created progressToAdvance will be increased when every time advanced. The
-   * progressParent.getRoot() will be returned when every time yield.
+   * progressParent.root_get() will be returned when every time yield.
    *
    * @param {number[]|Float32Array} inputWeightArray
    *   The underlying weights source array to be extracted from. It will not be kept
@@ -380,7 +380,7 @@ class Block_Base extends Recyclable.Root {
    *             here (Block.Base).
    *
    * @yield {ValueMax.Percentage.Aggregate}
-   *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
+   *   Yield ( value = progressParent.root_get() ) when ( done = false ).
    *
    * @yield {boolean}
    *   Yield ( value = true ) when ( done = true ) successfully.
@@ -410,7 +410,7 @@ class Block_Base extends Recyclable.Root {
       + 1  // for all pointwise1-depthwise-pointwise2 filters (and biases) ready.
       ;
 
-    let progressRoot = progressParent.getRoot();
+    let progressRoot = progressParent.root_get();
     let progressToAdvance = progressParent.child_add( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
     // 1. Extract parameters.
@@ -878,7 +878,7 @@ class Block_Base extends Recyclable.Root {
     let initerNext;
     do {
       initerNext = initer.next();
-    } while ( ! initerNext.done ); // When ( false == initerNext.done ), the ( initerNext.value ) will be progressParent.getRoot().
+    } while ( ! initerNext.done ); // When ( false == initerNext.done ), the ( initerNext.value ) will be progressParent.root_get().
 
     let bInitOk = initerNext.value; // When ( true == initerNext.done ), the ( initerNext.value ) will be initialization successfully or failed.
     return bInitOk;

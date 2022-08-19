@@ -123,7 +123,7 @@ class Progress extends ValueMax.Percentage.Aggregate {
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
  *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
- * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
+ * increased when every time advanced. The progressParent.root_get() will be returned when every time yield.
  *
  */
 function* tester( progressParent ) {

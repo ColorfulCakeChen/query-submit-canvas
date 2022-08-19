@@ -40,14 +40,14 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
  *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
- * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
+ * increased when every time advanced. The progressParent.root_get() will be returned when every time yield.
  *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
  *   Default is 1024 bytes.
  *
  * @yield {ValueMax.Percentage.Aggregate}
- *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
+ *   Yield ( value = progressParent.root_get() ) when ( done = false ).
  *
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
@@ -55,7 +55,7 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
 function* decoder_FromStringArray(
   sourceBase64EncodedStringArray, textEncoder, skipLineCount, progressParent, suspendByteCount ) {
 
-  let progressRoot = progressParent.getRoot();
+  let progressRoot = progressParent.root_get();
 
   // The ( progressToAdvance / progressParent ) ratio (50%) seems a little too large. But it is
   // reasonable in fact because the string Array.join() and TextEncoder.encode() both will scan
@@ -98,14 +98,14 @@ function* decoder_FromStringArray(
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
  *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
- * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
+ * increased when every time advanced. The progressParent.root_get() will be returned when every time yield.
  *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
  *   Default is 1024 bytes.
  *
  * @yield {ValueMax.Percentage.Aggregate}
- *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
+ *   Yield ( value = progressParent.root_get() ) when ( done = false ).
  *
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
@@ -134,14 +134,14 @@ function* decoder_FromArrayBuffer(
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
  *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
- * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
+ * increased when every time advanced. The progressParent.root_get() will be returned when every time yield.
  *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
  *   Default is 1024 bytes.
  *
  * @yield {ValueMax.Percentage.Aggregate}
- *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
+ *   Yield ( value = progressParent.root_get() ) when ( done = false ).
  *
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
@@ -160,7 +160,7 @@ function* decoder_FromUint8Array(
   let sourceBytes = sourceBase64Uint8Array;
 
   // Initialize progress.
-  let progressRoot = progressParent.getRoot();
+  let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( sourceByteLength ) );
 

@@ -69,9 +69,9 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
    *   The root Percentage.Base of the whole Percentage hierarchy. The root's
    * .valuePercentage represents the whole percentage.
    */
-  getRoot() {
+  root_get() {
     if ( this.parent )
-      return this.parent.getRoot();
+      return this.parent.root_get();
     return this; // If no parent, this is the root.
   }
 

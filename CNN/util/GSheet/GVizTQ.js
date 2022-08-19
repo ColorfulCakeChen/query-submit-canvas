@@ -86,17 +86,17 @@ class UrlComposer {
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
-   * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
+   * increased when every time advanced. The progressParent.root_get() will be returned when every time yield.
    *
    * @yield {ValueMax.Percentage.Aggregate}
-   *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
+   *   Yield ( value = progressParent.root_get() ) when ( done = false ).
    *
    * @yield {array[]}
    *   Yield ( value = a two dimension (column-major) array ) when ( done = true ) successfully.
    *   Yield ( value = null ) when ( done = true ) failed.
    */
   async* fetcher_JSON_ColumnMajorArray( progressParent ) {
-    let progressRoot = progressParent.getRoot();
+    let progressRoot = progressParent.root_get();
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 4 ) );
 

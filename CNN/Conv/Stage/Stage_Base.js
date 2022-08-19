@@ -328,7 +328,7 @@ class Stage_Base extends Recyclable.Root {
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The
    * created progressToAdvance will be increased when every time advanced. The
-   * progressParent.getRoot() will be returned when every time yield.
+   * progressParent.root_get() will be returned when every time yield.
    *
    * @param {Params} params
    *   A Params object. The params.init() will be called to extract parameters. This
@@ -339,7 +339,7 @@ class Stage_Base extends Recyclable.Root {
    *   The element value bounds (per channel) or TensorPlaceholder of this stage's input.
    *
    * @yield {ValueMax.Percentage.Aggregate}
-   *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
+   *   Yield ( value = progressParent.root_get() ) when ( done = false ).
    *
    * @yield {boolean}
    *   Yield ( value = true ) when ( done = true ) successfully.
@@ -382,7 +382,7 @@ class Stage_Base extends Recyclable.Root {
       1    // for extracting parameters from inputWeightArray.
       ;
 
-    let progressRoot = progressParent.getRoot();
+    let progressRoot = progressParent.root_get();
     let progressToAdvance = progressParent.child_add( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
     let progressForBlocks = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for block0, block1, block2, ... 
 
@@ -546,7 +546,7 @@ class Stage_Base extends Recyclable.Root {
     let initerNext;
     do {
       initerNext = initer.next();
-    } while ( ! initerNext.done ); // When ( false == initerNext.done ), the ( initerNext.value ) will be progressParent.getRoot().
+    } while ( ! initerNext.done ); // When ( false == initerNext.done ), the ( initerNext.value ) will be progressParent.root_get().
 
     let bInitOk = initerNext.value; // When ( true == initerNext.done ), the ( initerNext.value ) will be initialization successfully or failed.
     return bInitOk;
@@ -621,16 +621,16 @@ class Stage_Base extends Recyclable.Root {
    *
    * @param {ValueMax.Percentage.Concrete} progressToAdvance
    *   This progressToAdvance will be increased when every time advanced. The
-   * progressToAdvance.getRoot() will be returned when every time yield.
+   * progressToAdvance.root_get() will be returned when every time yield.
    *
    * @yield {ValueMax.Percentage.Base}
-   *   Yield ( value = progressToAdvance.getRoot() ) when ( done = false ).
+   *   Yield ( value = progressToAdvance.root_get() ) when ( done = false ).
    *
    * @yield {tf.tensor3d}
    *   Yield ( value = outputTensor ) when ( done = true ).
    */
   * applier( progressToAdvance, inputTensor ) {
-    let progressRoot = progressToAdvance.getRoot();
+    let progressRoot = progressToAdvance.root_get();
 
     this.block0.input0.realTensor = inputTensor; // Note: The block0 should only input one tensor.
 

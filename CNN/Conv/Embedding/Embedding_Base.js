@@ -80,7 +80,7 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
-   * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
+   * increased when every time advanced. The progressParent.root_get() will be returned when every time yield.
    *
    * @param {Params} params
    *   A Params object. The params.init() will be called to extract parameters. This
@@ -88,7 +88,7 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
    * it again.
    *
    * @yield {ValueMax.Percentage.Aggregate}
-   *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
+   *   Yield ( value = progressParent.root_get() ) when ( done = false ).
    *
    * @yield {boolean}
    *   Yield ( value = true ) when ( done = true ) successfully.
@@ -107,7 +107,7 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
       1    // for extracting parameters from inputWeightArray.
       ;
 
-    let progressRoot = progressParent.getRoot();
+    let progressRoot = progressParent.root_get();
     let progressToAdvance = progressParent.child_add( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
 
     // 1. Extract parameters.
@@ -172,7 +172,7 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
     let initerNext;
     do {
       initerNext = initer.next();
-    } while ( ! initerNext.done ); // When ( false == initerNext.done ), the ( initerNext.value ) will be progressParent.getRoot().
+    } while ( ! initerNext.done ); // When ( false == initerNext.done ), the ( initerNext.value ) will be progressParent.root_get().
 
     let bInitOk = initerNext.value; // When ( true == initerNext.done ), the ( initerNext.value ) will be initialization successfully or failed.
     return bInitOk;

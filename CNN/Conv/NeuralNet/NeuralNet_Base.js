@@ -142,7 +142,7 @@ class NeuralNet_Base extends Recyclable.Root {
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The
    * created progressToAdvance will be increased when every time advanced. The
-   * progressParent.getRoot() will be returned when every time yield.
+   * progressParent.root_get() will be returned when every time yield.
    *
    * @param {NeuralNet.Params} params
    *   A Params object. The params.init() will be called to extract parameters.
@@ -150,7 +150,7 @@ class NeuralNet_Base extends Recyclable.Root {
    * not use it again.
    *
    * @yield {ValueMax.Percentage.Aggregate}
-   *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
+   *   Yield ( value = progressParent.root_get() ) when ( done = false ).
    *
    * @yield {boolean}
    *   Yield ( value = true ) when ( done = true ) successfully.
@@ -169,7 +169,7 @@ class NeuralNet_Base extends Recyclable.Root {
       1    // for extracting parameters from inputWeightArray.
       ;
 
-    let progressRoot = progressParent.getRoot();
+    let progressRoot = progressParent.root_get();
     let progressToAdvance = progressParent.child_add( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
     let progressForEmbedding = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for embedding extracting.
     let progressForStages = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for stage0, stage1, stage2, ... 
@@ -396,7 +396,7 @@ class NeuralNet_Base extends Recyclable.Root {
     let initerNext;
     do {
       initerNext = initer.next();
-    } while ( ! initerNext.done ); // When ( false == initerNext.done ), the ( initerNext.value ) will be progressParent.getRoot().
+    } while ( ! initerNext.done ); // When ( false == initerNext.done ), the ( initerNext.value ) will be progressParent.root_get().
 
     let bInitOk = initerNext.value; // When ( true == initerNext.done ), the ( initerNext.value ) will be initialization successfully or failed.
     return bInitOk;
@@ -494,7 +494,7 @@ class NeuralNet_Base extends Recyclable.Root {
    * NeuralNet.Params.bKeepInputTensor.
    *
    * @yield {ValueMax.Percentage.Base}
-   *   Yield ( value = this.progressApply.getRoot() ) when ( done = false ).
+   *   Yield ( value = this.progressApply.root_get() ) when ( done = false ).
    *
    * @yield {tf.tensor3d}
    *   Yield ( value = outputTensor ) when ( done = true ).
@@ -503,7 +503,7 @@ class NeuralNet_Base extends Recyclable.Root {
 
     // 0. Reset progress.
     let progressToAdvance = this.progressApply;
-    let progressRoot = progressToAdvance.getRoot();
+    let progressRoot = progressToAdvance.root_get();
 
     progressToAdvance.value = 0;
     yield progressRoot;  // progress reset to zero. Report progress.
@@ -555,7 +555,7 @@ class NeuralNet_Base extends Recyclable.Root {
     do {
       applierNext = applier.next();
 
-    // When ( false == applierNext.done ), the ( applierNext.value ) will be this.progressApply.getRoot().
+    // When ( false == applierNext.done ), the ( applierNext.value ) will be this.progressApply.root_get().
     } while ( ! applierNext.done );
 
     // When ( true == applierNext.done ), the ( applierNext.value ) will be outputTensor.
