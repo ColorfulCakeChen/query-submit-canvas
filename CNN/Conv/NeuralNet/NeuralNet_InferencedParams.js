@@ -25,6 +25,7 @@ import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
  *
  * @member {number} blockCountTotal
  *   How many blocks in the whole neural network. (= ( stageCount * blockCountPerStage ) ).
+ * It is greater than or equal to blockCountTotalRequested.
  *
  * @member {Stage.ParamsBase[]} stageParamsArray
  *   The stages parameters of this neural network. It will be created only if
