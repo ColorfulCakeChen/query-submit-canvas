@@ -5,23 +5,24 @@ import * as ValueMax from "./ValueMax.js";
 const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 // Mapping table for base64 (as Uint8) to index.
-let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Array().
+let table_base64_Uint8_to_index = new Array( 256 ); // Faster than using Uint8Array().
 {
-  // For all non-base64 codes, using value greater than 63 (i.e. impossible base64) for identifying them.
-  for (let i = 0; i < table_base64_Uint8_to_index.length; ++i)
+  // For all non-base64 codes, using value greater than 63 (i.e. impossible base64)
+  // for identifying them.
+  for ( let i = 0; i < table_base64_Uint8_to_index.length; ++i )
     table_base64_Uint8_to_index[ i ] = 255;
 
-  // For all legal base64 codes, using value between [0, 63].
+  // For all legal base64 codes, using value between [ 0, 63 ].
   {
-    for (let i = 0; i < base64String.length; ++i) {
-      let codePoint = base64String.codePointAt(i);
+    for ( let i = 0; i < base64String.length; ++i ) {
+      let codePoint = base64String.codePointAt( i );
       table_base64_Uint8_to_index[ codePoint ] = i; 
     }
 
     // Support decoding URL-safe base64 strings, as Node.js does.
     // See: https://en.wikipedia.org/wiki/Base64#URL_applications
-    table_base64_Uint8_to_index['-'.charCodeAt(0)] = 62;
-    table_base64_Uint8_to_index['_'.charCodeAt(0)] = 63;
+    table_base64_Uint8_to_index[ "-".charCodeAt( 0 ) ] = 62;
+    table_base64_Uint8_to_index[ "_".charCodeAt( 0 ) ] = 63;
   }
 }
 
@@ -182,44 +183,48 @@ function* decoder_FromUint8Array(
   // that it can be used as boundary checking to reduce checking times and increase
   // performance.
   let nextYieldValue
-    = Math.min(sourceByteLength, progressToAdvance.value + suspendByteCount);
+    = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
 
   // 1. Skip specified lines.
   {
     let skippedLineCount = 0;
 
-    while (progressToAdvance.value < sourceByteLength) {
-      if (skippedLineCount >= skipLineCount)
-        break;                 // Already skip enough lines.
+    while ( progressToAdvance.value < sourceByteLength ) {
+      if ( skippedLineCount >= skipLineCount )
+        break;                  // Already skip enough lines.
 
-      // (This inner loop combines both source and yield boundary checking. Reducing checking to increase performance.) 
-      while (progressToAdvance.value < nextYieldValue) {
-        if (skippedLineCount >= skipLineCount)
-          break;                 // Already skip enough lines.
+      // (This inner loop combines both source and yield boundary checking. Reducing
+      // checking to increase performance.) 
+      while ( progressToAdvance.value < nextYieldValue ) {
+        if ( skippedLineCount >= skipLineCount )
+          break;                // Already skip enough lines.
 
         let rawByte = sourceBytes[ progressToAdvance.value++ ];
 
-        if (13 == rawByte) {     // "\r" (carriage return; CR)
-          ++skippedLineCount;    // One line is skipped.
+        if ( 13 == rawByte ) {  // "\r" (carriage return; CR)
+          ++skippedLineCount;   // One line is skipped.
 
-          // If a LF follows a CR, it is considered as CRLF sequence and viewed as the same one line.
+          // If a LF follows a CR, it is considered as CRLF sequence and viewed as
+          // the same one line.
           //
-          // Note: It may exceed the nextYieldValue boundary. But should not exceed sourceByteLength.
-          if (   (progressToAdvance.value < sourceByteLength)
-              && (10 == sourceBytes[ progressToAdvance.value ])
+          // Note: It may exceed the nextYieldValue boundary. But it should not
+          //       exceed sourceByteLength.
+          if (   ( progressToAdvance.value < sourceByteLength )
+              && ( 10 == sourceBytes[ progressToAdvance.value ] )
              ) { 
             progressToAdvance.value_advance(); // Skip it.
           }
 
         } else {
-          if (10 == rawByte)    // "\n" (new line; LF)
+          if ( 10 == rawByte )  // "\n" (new line; LF)
             ++skippedLineCount; // One line is skipped. 
         }
       }
 
       // Every suspendByteCount, release CPU time (and report progress).
-      if (progressToAdvance.value >= nextYieldValue) {
-        nextYieldValue = Math.min(sourceByteLength, progressToAdvance.value + suspendByteCount);
+      if ( progressToAdvance.value >= nextYieldValue ) {
+        nextYieldValue
+          = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
         yield progressRoot;
       }
     }
