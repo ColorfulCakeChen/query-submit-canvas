@@ -233,22 +233,24 @@ function* decoder_FromUint8Array(
   // 2. Decode.
 
   // Decoding base64 will result in a shorter data (about 75% (= 3 / 4) in size).
-  let possibleBase64ByteLength = (sourceByteLength - progressToAdvance.value);  // Forget the skipped lines.
-  let targetByteLength = Math.ceil(possibleBase64ByteLength * 0.75);
+  let possibleBase64ByteLength = ( sourceByteLength - progressToAdvance.value ); // Forget the skipped lines.
+  let targetByteLength = Math.ceil( possibleBase64ByteLength * 0.75 );
   let targetArrayBuffer = new ArrayBuffer( targetByteLength );
   let targetBytes = new Uint8Array( targetArrayBuffer );
 
   let resultByteCount = 0;  // Accumulate the real result byte count.
 
   {
-    while (progressToAdvance.value < sourceByteLength) {
+    while ( progressToAdvance.value < sourceByteLength ) {
 
       nextYieldLoop:
 
-      // (This inner loop combines both source and yield boundary checking. Reducing checking to increase performance.) 
-      while (progressToAdvance.value < nextYieldValue) {
+      // (This inner loop combines both source and yield boundary checking. Reducing
+      // checking to increase performance.) 
+      while ( progressToAdvance.value < nextYieldValue ) {
 
-        // Extract 4 source bytes. (A decode unit consists of 4 base64 encoded source bytes.)
+        // Extract 4 source bytes. (A decode unit consists of 4 base64 encoded source
+        // bytes.)
         //
         // Although it is verbose to loop unrolling manually, it is far more faster
         // to use 4 local variables than use a 4-element normal array. (Note: the
@@ -256,52 +258,61 @@ function* decoder_FromUint8Array(
 
         let encoded_0;
         do {
-          // Note: It may exceed the nextYieldValue boundary. But should not exceed sourceByteLength.
-          if (progressToAdvance.value >= sourceByteLength)
+          // Note: It may exceed the nextYieldValue boundary. But it should not
+          //       exceed sourceByteLength.
+          if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
-          encoded_0 = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value++ ] ];
-        } while (255 === encoded_0);
+          encoded_0
+            = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value++ ] ];
+        } while ( 255 === encoded_0 );
 
 
         let encoded_1;
         do {
-          // Note: It may exceed the nextYieldValue boundary. But should not exceed sourceByteLength.
-          if (progressToAdvance.value >= sourceByteLength)
+          // Note: It may exceed the nextYieldValue boundary. But it should not
+          //       exceed sourceByteLength.
+          if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
-          encoded_1 = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value++ ] ];
-        } while (255 === encoded_1);
+          encoded_1
+            = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value++ ] ];
+        } while ( 255 === encoded_1 );
 
 
         let encoded_2;
         do {
-          // Note: It may exceed the nextYieldValue boundary. But should not exceed sourceByteLength.
-          if (progressToAdvance.value >= sourceByteLength)
+          // Note: It may exceed the nextYieldValue boundary. But it should not
+          //       exceed sourceByteLength.
+          if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
-          encoded_2 = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value++ ] ];
-        } while (255 === encoded_2);
+          encoded_2
+            = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value++ ] ];
+        } while ( 255 === encoded_2 );
 
 
         let encoded_3;
         do {
-          // Note: It may exceed the nextYieldValue boundary. But should not exceed sourceByteLength.
-          if (progressToAdvance.value >= sourceByteLength)
+          // Note: It may exceed the nextYieldValue boundary. But it should not
+          //       exceed sourceByteLength.
+          if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
-          encoded_3 = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value++ ] ];
-        } while (255 === encoded_3);
+          encoded_3
+            = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value++ ] ];
+        } while ( 255 === encoded_3 );
 
 
-        targetBytes[resultByteCount++] =  (encoded_0       << 2) | (encoded_1 >> 4);
-        targetBytes[resultByteCount++] = ((encoded_1 & 15) << 4) | (encoded_2 >> 2);
-        targetBytes[resultByteCount++] = ((encoded_2 &  3) << 6) | (encoded_3 & 63);
+        targetBytes[ resultByteCount++ ] = ( encoded_0       << 2) | (encoded_1 >> 4);
+        targetBytes[ resultByteCount++ ] = ((encoded_1 & 15) << 4) | (encoded_2 >> 2);
+        targetBytes[ resultByteCount++ ] = ((encoded_2 &  3) << 6) | (encoded_3 & 63);
       }
 
       // Every suspendByteCount, release CPU time (and report progress).
-      if (progressToAdvance.value >= nextYieldValue) {
-        nextYieldValue = Math.min(sourceByteLength, progressToAdvance.value + suspendByteCount);
+      if ( progressToAdvance.value >= nextYieldValue ) {
+        nextYieldValue
+          = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
         yield progressRoot;
       }
 
