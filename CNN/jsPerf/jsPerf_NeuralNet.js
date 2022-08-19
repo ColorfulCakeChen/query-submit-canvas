@@ -378,7 +378,21 @@ class HeightWidthDepth {
     let inputTensor3d = neuralNet.create_ScaledSourceTensor_from_PixelData(
       this.testCanvas );
 
-    let outputTensor3d = neuralNet.apply( inputTensor3d );
+    let outputTensor3d;
+    {
+      let progressApply = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+
+      outputTensor3d = neuralNet.apply( progressApply, inputTensor3d );
+  
+      if ( 100 != progressApply.valuePercentage )
+        throw Error( `testNeuralNet_ByName(): `
+          + `Progress (${progressApply.valuePercentage}) should be 100 `
+          + `after neuralNet.apply(). ${neuralNet}`);
+  
+      progressApply.disposeResources_and_recycleToPool();
+      progressApply = null;
+    }
+
     tf.dispose( outputTensor3d );
   }
 
