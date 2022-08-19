@@ -17,8 +17,6 @@ import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
  *    pad = "same" ) in backend WebGL of some platforms (e.g. mobile phone Moto e40).
  *    But the issue does not exist when ( strides = 2, pad = "same" ) or
  *    ( pad = "valid" ) in those platforms.
- * 
- *    (2022/08/19) Note: This Moto e40 problem seems disappeared.
  *
  * For achieving ShuffleNetV2 with depthwise padding "valid", ShuffleNetV2_ByMobileNetV1
  * is necessary because other ShuffleNetV2_ByXxx (with depthwise padding "same") could
