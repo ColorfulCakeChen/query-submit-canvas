@@ -169,17 +169,12 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
       let memoryInfo_apply_before = tf.memory(); // Test memory leakage of NeuralNet.apply.
       {
-        let progressApply = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-
-        outputTensor3d = neuralNet.apply( progressApply, inputTensor3d );
+        outputTensor3d = neuralNet.apply( inputTensor3d );
     
-        if ( 100 != progressApply.valuePercentage )
+        if ( 100 != neuralNet.progressApply.valuePercentage )
           throw Error( `NeuralNet_Reference_Base.neuralNet_create_apply_internal(): `
-            + `Progress (${progressApply.valuePercentage}) should be 100 `
+            + `Progress (${neuralNet.progressApply.valuePercentage}) should be 100 `
             + `after neuralNet.apply(). ${neuralNet}`);
-    
-        progressApply.disposeResources_and_recycleToPool();
-        progressApply = null;
       }
       let memoryInfo_apply_after = tf.memory();
 
@@ -323,17 +318,12 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
     let outputTensor3d;
     {
-      let progressApply = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-
-      outputTensor3d = neuralNet_toBeCompared.apply( progressApply, inputTensor3d );
+      outputTensor3d = neuralNet_toBeCompared.apply( inputTensor3d );
   
-      if ( 100 != progressApply.valuePercentage )
+      if ( 100 != neuralNet_toBeCompared.progressApply.valuePercentage )
         throw Error( `NeuralNet_Reference_Base.neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1(): `
-          + `Progress (${progressApply.valuePercentage}) should be 100 `
+          + `Progress (${neuralNet_toBeCompared.progressApply.valuePercentage}) should be 100 `
           + `after neuralNet.apply(). ${neuralNet_toBeCompared}`);
-  
-      progressApply.disposeResources_and_recycleToPool();
-      progressApply = null;
     }
 
     {

@@ -101,13 +101,17 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  * weights (even if they are used in tensors), because they are not extracted
  * from inputWeightArray.
  *
+ * @member {ValueMax.Percentage.Concrete} progressApply
+ *   The progressToAdvance when .applier().
+ *
  */
 class NeuralNet_Base extends Recyclable.Root {
 
   /**
    * Used as default NeuralNet.Base provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "NeuralNet.Base.Pool", NeuralNet_Base, NeuralNet_Base.setAsConstructor );
+  static Pool = new Pool.Root( "NeuralNet.Base.Pool",
+    NeuralNet_Base, NeuralNet_Base.setAsConstructor );
 
   /** */
   constructor() {
@@ -348,6 +352,18 @@ class NeuralNet_Base extends Recyclable.Root {
 
       this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate stages' bounds array set for reducing memory footprint.
 
+      {
+        // Estimate the maximum value of progress for .applier().
+        let progressApplyMax =
+            1                    // for embedding.
+          + this.blockCountTotal // for all block of all stages.
+          + 1                    // for blockFinal.
+          ;
+
+        this.progressApply
+          = ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressApplyMax );
+      }
+
       this.bInitOk = true;
       return this.bInitOk;
 
@@ -388,6 +404,12 @@ class NeuralNet_Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+
+    if ( this.progressApply ) {
+      this.progressApply.disposeResources_and_recycleToPool();
+      this.progressApply = null;
+    }
+
     if ( this.blockFinal ) {
       this.blockFinal.disposeResources_and_recycleToPool();
       this.blockFinal = null;
@@ -471,29 +493,20 @@ class NeuralNet_Base extends Recyclable.Root {
    * This inputTensor may or may not be disposed according to init()'s
    * NeuralNet.Params.bKeepInputTensor.
    *
-   * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The
-   * created progressToAdvance will be increased when every time advanced. The
-   * progressParent.getRoot() will be returned when every time yield.
-   *
-   * @yield {ValueMax.Percentage.Aggregate}
-   *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
+   * @yield {ValueMax.Percentage.Base}
+   *   Yield ( value = this.progressApply.getRoot() ) when ( done = false ).
    *
    * @yield {tf.tensor3d}
    *   Yield ( value = outputTensor ) when ( done = true ).
    */
-  * applier( progressParent, inputTensor ) {
+  * applier( inputTensor ) {
 
-    // 0. Estimate the maximum value of progress.
-    let progressMax =
-        1                    // for embedding.
-      + this.blockCountTotal // for all block of all stages.
-      + 1                    // for blockFinal.
-      ;
+    // 0. Reset progress.
+    let progressToAdvance = this.progressApply;
+    let progressRoot = progressToAdvance.getRoot();
 
-    let progressRoot = progressParent.getRoot();
-    let progressToAdvance = progressParent.addChild(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
+    progressToAdvance.value = 0;
+    yield progressRoot;  // progress reset to zero. Report progress.
 
     // 1. Embedding
     let outputTensor = this.embedding.apply( inputTensor );
@@ -535,9 +548,9 @@ class NeuralNet_Base extends Recyclable.Root {
    *
    * @see this.applier()
    */
-  apply( progressParent, inputTensor ) {
+  apply( inputTensor ) {
 
-    let applier = this.applier( progressParent, inputTensor );
+    let applier = this.applier( inputTensor );
     let applierNext;
     do {
       applierNext = applier.next();
