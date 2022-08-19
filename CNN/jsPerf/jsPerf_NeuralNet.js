@@ -244,7 +244,7 @@ class HeightWidthDepth {
     else
       this.testCaseMap = new Map();
 
-    let vocabularyChannelCount = 16; //8; //4;
+    let vocabularyChannelCount = 8; //4;
     let vocabularyCountPerInputChannel = 256;
     let blockCountTotalRequested = 50; //20; //10;
     let output_channelCount = 400; //300; //64;
