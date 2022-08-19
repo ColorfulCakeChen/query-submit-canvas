@@ -555,7 +555,7 @@ class NeuralNet_Base extends Recyclable.Root {
     do {
       applierNext = applier.next();
 
-    // When ( false == applierNext.done ), the ( applierNext.value ) will be progressParent.getRoot().
+    // When ( false == applierNext.done ), the ( applierNext.value ) will be this.progressApply.getRoot().
     } while ( ! applierNext.done );
 
     // When ( true == applierNext.done ), the ( applierNext.value ) will be outputTensor.
