@@ -12,22 +12,25 @@ import { Params } from "./Stage_Params.js";
 import { InferencedParams } from "./Stage_InferencedParams.js";
 
 /**
- * Implement a stage of  or MobileNetV1 or MobileNetV2 or ShuffleNetV2 (with 2 output channel groups). It is a sequence of
- * depthwise convolution and pointwise convolution.
+ * Implement a stage of  or MobileNetV1 or MobileNetV2 or ShuffleNetV2 (with 2
+ * output channel groups). It is a sequence of depthwise convolution and pointwise
+ * convolution.
  *
  *
  * 1. Halve Height, Halve Width
  *
- * All types of stage will output an image whose height and width are only half of the input image's height and width.
+ * All types of stage will output an image whose height and width are only half of
+ * the input image's height and width.
  *
- * They all do it at block0 and by the same method: depthwise convolution with ( strides = 2 ). Most will do it with ( pad = "same" ). 
- * But some will do it with ( pad = "valid" ).
+ * They all do it at block0 and by the same method: depthwise convolution with
+ * ( strides = 2 ). Most will do it with ( pad = "same" ).  But some will do it with
+ * ( pad = "valid" ).
  *
  *
  * 2. Double channels
  *
- * All types of stage will output an image whose channel count is twice of the input image's channel count. They all do
- * it at block0 but by different ways:
+ * All types of stage will output an image whose channel count is twice of the input
+ * image's channel count. They all do it at block0 but by different ways:
  *
  *   - MobileNetV1 (0), MobileNetV1_padValid (1)
  *     - ( bPointwise1 == false ), depthwise1 double ( channelMultiplier == 2 ) of input0.
@@ -193,9 +196,10 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *
  * tf.batchNorm() has bias intrinsically.
  *
- * In modern deep learning CNN, there is batch normalization after convolution and before activation. The batch normalization
- * has bias internally. We do not have batch normalization in architecture so an explicit bias will be used before every activation
- * function.
+ * In modern deep learning CNN, there is batch normalization after convolution and
+ * before activation. The batch normalization has bias internally. We do not have
+ * batch normalization in architecture so an explicit bias will be used before every
+ * activation function.
  *
  *
  * 6. Activation Escaping
@@ -249,11 +253,12 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *  If true, this object initialized (i.e. initer()) successfully.
  *
  * @member {number} weightElementOffsetBegin
- *   The position which is started (inclusive) to extract from inputWeightArray by initer().
+ *   The position which is started (inclusive) to extract from inputWeightArray by
+ * initer().
  *
  * @member {number} weightElementOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
- * Only meaningful when ( this.bInitOk == true ).
+ *   The position which is ended to (non-inclusive) extract from inputWeightArray by
+ * initer(). Where to extract next weights. Only meaningful when ( this.bInitOk == true ).
  *
  * @member {Block.Base[]} blockArray
  *   All computation blocks of this stage.
@@ -262,7 +267,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *   The first computation block of this stage.
  *
  * @member {Block.Base} blockLast
- *   The last computation block of this stage. It may be the same as this.block0 when there is only one block inside this stage.
+ *   The last computation block of this stage. It may be the same as this.block0 when
+ * there is only one block inside this stage.
  *
  * @member {TensorPlaceholder.Base} input0
  *   The TensorPlaceholder object which represents this stage's input.
@@ -280,12 +286,14 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *   The TensorPlaceholder object which represents this stage's output.
  *
  * @member {number} tensorWeightCountTotal
- *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
- * weights, if they are used in tensors.
+ *   The total wieght count used in tensors. Not including Params, because they are
+ * not used in tensors. Including inferenced weights, if they are used in tensors.
  *
  * @member {number} tensorWeightCountExtracted
- *   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used in
- * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputWeightArray.
+ *   The wieght count extracted from inputWeightArray and used in tensors. Not
+ * including Params, because they are not used in tensors. Not including inferenced
+ * weights (even if they are used in tensors), because they are not extracted from
+ * inputWeightArray.
  *
  */
 class Stage_Base extends Recyclable.Root {
@@ -521,7 +529,8 @@ class Stage_Base extends Recyclable.Root {
   }
 
   /**
-   * Initialize this object by calling initer() and advance the generator by loop until done.
+   * Initialize this object by calling initer() and advance the generator by loop
+   * until done.
    *
    * @return {boolean}
    *   - Return true if successfully (and progressParent.valuePercentage will be equal

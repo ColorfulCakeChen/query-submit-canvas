@@ -466,40 +466,63 @@ class NeuralNet_Base extends Recyclable.Root {
    * Generator for processing input, destroying or keeping input, returning result.
    *
    * @param {tf.tensor3d} inputTensor
-   *   The source input image ( height x width x channel ) which will be processed.
-   * This inputTensor may or may not be disposed according to init()'s bKeepInputTensor.
+   *   The source input image (which size should be [ this.input_height,
+   * this.input_width, this.input_channelCount ] ) which will be processed.
+   * This inputTensor may or may not be disposed according to init()'s
+   * NeuralNet.Params.bKeepInputTensor.
    *
-   * @param {ValueMax.Percentage.Concrete} progressToAdvance
-   *   This progressToAdvance will be increased when every time advanced. The
-   * progressToAdvance.getRoot() will be returned when every time yield.
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The
+   * created progressToAdvance will be increased when every time advanced. The
+   * progressParent.getRoot() will be returned when every time yield.
    *
-   * @yield {ValueMax.Percentage.Base}
-   *   Yield ( value = progressToAdvance.getRoot() ) when ( done = false ).
+   * @yield {ValueMax.Percentage.Aggregate}
+   *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
    *
    * @yield {tf.tensor3d}
    *   Yield ( value = outputTensor ) when ( done = true ).
    */
   * applier( progressParent, inputTensor ) {
 
-!!! ...unfinished... (2022/08/19) async apply
+    // 0. Estimate the maximum value of progress.
+    let progressMax =
+        1                    // for embedding.
+      + this.blockCountTotal // for all block of all stages.
+      + 1                    // for blockFinal
+      ;
 
-   let progressRoot = progressToAdvance.getRoot();
+    let progressRoot = progressParent.getRoot();
+    let progressToAdvance = progressParent.addChild(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
-   this.block0.input0.realTensor = inputTensor; // Note: The block0 should only input one tensor.
+    // 1. Embedding
+    let outputTensor = this.embedding.apply( inputTensor );
 
-   let blockArray = this.blockArray;
-   for ( let i = 0; i < blockArray.length; ++i ) {
-     blockArray[ i ].apply();
+    progressToAdvance.value_advance();
+    yield progressRoot;  // Embedding done. Report progress.
 
-     progressToAdvance.value_advance();
-     yield progressRoot;  // One block executed. Report progress.
-   }
+    // 2. Stages
+    let stageArray = this.stageArray;
+    for ( let i = 0; i < stageArray.length; ++i ) {
+      outputTensor = yield* stageArray[ i ].applier( progressToAdvance, outputTensor );
+    }
 
-   let outputTensor = this.blockLast.output0.realTensor; // Note: The blockLast should only output one tensor.
-   return outputTensor;
- }
+    // 3. BlockFinal
+    {
+      this.blockFinal.input0.realTensor = outputTensor;
+      this.blockFinal.apply();
+      outputTensor = this.blockFinal.output0.realTensor;
 
-  /** Process input, destroy or keep input, return result.
+      progressToAdvance.value_advance();
+      yield progressRoot;  // BlockFinal done. Report progress.
+    }
+
+    return outputTensor;
+  }
+
+  /**
+   * Process input, destroy or keep input, return result by calling applier() and
+   * advance the generator by loop until done.
    *
    * @param {tf.tensor3d} inputTensor
    *   The source input image (which size should be [ this.input_height,
@@ -509,27 +532,56 @@ class NeuralNet_Base extends Recyclable.Root {
    *
    * @return {tf.tensor3d}
    *   Return a new tensor. All other intermediate tensors were disposed.
+   *
+   * @see this.applier()
    */
-  apply( inputTensor ) {
+  apply( progressParent, inputTensor ) {
 
-    // 1. Embedding
-    let outputTensor = this.embedding.apply( inputTensor );
+    let applier = this.applier( progressParent, inputTensor );
+    let applierNext;
+    do {
+      applierNext = applier.next();
 
-    // 2. Stages
-    let stageArray = this.stageArray;
-    for ( let i = 0; i < stageArray.length; ++i ) {
-      outputTensor = stageArray[ i ].apply( outputTensor );
-    }
+    // When ( false == applierNext.done ), the ( applierNext.value ) will be progressParent.getRoot().
+    } while ( ! applierNext.done );
 
-    // 3. BlockFinal
-    {
-      this.blockFinal.input0.realTensor = outputTensor;
-      this.blockFinal.apply();
-      outputTensor = this.blockFinal.output0.realTensor;
-    }
-
+    // When ( true == applierNext.done ), the ( applierNext.value ) will be outputTensor.
+    let outputTensor = applierNext.value;
     return outputTensor;
   }
+
+//!!! (2022/08/19 Remarked) Use applier() instead.
+//   /** Process input, destroy or keep input, return result.
+//    *
+//    * @param {tf.tensor3d} inputTensor
+//    *   The source input image (which size should be [ this.input_height,
+//    * this.input_width, this.input_channelCount ] ) which will be processed.
+//    * This inputTensor may or may not be disposed according to init()'s
+//    * NeuralNet.Params.bKeepInputTensor.
+//    *
+//    * @return {tf.tensor3d}
+//    *   Return a new tensor. All other intermediate tensors were disposed.
+//    */
+//   apply( inputTensor ) {
+//
+//     // 1. Embedding
+//     let outputTensor = this.embedding.apply( inputTensor );
+//
+//     // 2. Stages
+//     let stageArray = this.stageArray;
+//     for ( let i = 0; i < stageArray.length; ++i ) {
+//       outputTensor = stageArray[ i ].apply( outputTensor );
+//     }
+//
+//     // 3. BlockFinal
+//     {
+//       this.blockFinal.input0.realTensor = outputTensor;
+//       this.blockFinal.apply();
+//       outputTensor = this.blockFinal.output0.realTensor;
+//     }
+//
+//     return outputTensor;
+//   }
 
   /**
    * Create a tensor3d from source (e.g. canvas). Its size will be confirmed (by scaling)
