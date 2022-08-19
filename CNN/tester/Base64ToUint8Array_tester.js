@@ -1,7 +1,7 @@
 export { tester };
 
-import * as Base64ToUint8Array from "../Base64ToUint8Array.js";
-import * as Random from "../Random.js";
+import * as Base64ToUint8Array from "../Unpacker/Base64ToUint8Array.js";
+import * as RandTools from "../util/RandTools.js";
 import * as ScriptLoader from "../ScriptLoader.js";
 import * as ValueMax from "../ValueMax.js";
 
@@ -18,7 +18,7 @@ let originalArray = [];
   const PRINTABLE_ASCII_MAX = 126;
 
   for (let i = 0; i < ORIGINAL_TEST_STRING_LENGTH; ++i) {
-    let c = Random.getIntInclusive(PRINTABLE_ASCII_MIN, PRINTABLE_ASCII_MAX);
+    let c = RandTools.getIntInclusive(PRINTABLE_ASCII_MIN, PRINTABLE_ASCII_MAX);
     originalArray.push( String.fromCodePoint( c ) );
   }
 }
@@ -135,7 +135,8 @@ function* tester( progressParent ) {
     let testCase = testCases[ i ];
 
     let decoder = Base64ToUint8Array.decoder_FromArrayBuffer(
-        testCase.source, testCase.skipLineCount, progress.children[ i ], testCase.suspendByteCount);
+      testCase.source, testCase.skipLineCount, progress.children[ i ],
+      testCase.suspendByteCount );
 
     let r = yield* decoder;
    

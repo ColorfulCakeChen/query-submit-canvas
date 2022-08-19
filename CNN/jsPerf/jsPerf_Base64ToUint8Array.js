@@ -1,6 +1,6 @@
-import * as Base64ArrayBufferToUint8Array from "../Base64ArrayBufferToUint8Array.js";
-import * as Random from "../Random.js";
-import * as ValueMax from "../ValueMax.js";
+import * as Base64ArrayBufferToUint8Array from "../Unpacker/Base64ArrayBufferToUint8Array.js";
+import * as RandTools from "../util/RandTools.js";
+import * as ValueMax from "../util/ValueMax.js";
 
 /**
  * @see {@link https://jsperf.com/colorfulcakechen-base64-to-uint8array}
@@ -54,7 +54,7 @@ let originalArray = [];
   const PRINTABLE_ASCII_MAX = 126;
 
   for (let i = 0; i < ORIGINAL_TEST_STRING_LENGTH; ++i) {
-    let c = Random.getIntInclusive(PRINTABLE_ASCII_MIN, PRINTABLE_ASCII_MAX);
+    let c = RandTools.getIntInclusive(PRINTABLE_ASCII_MIN, PRINTABLE_ASCII_MAX);
     originalArray.push( String.fromCodePoint( c ) );
   }
 }

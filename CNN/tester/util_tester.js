@@ -4,8 +4,12 @@ import * as ScriptLoader from "../ScriptLoader.js";
 import * as ValueMax from "../ValueMax.js";
 import * as PartTime from "../PartTime.js";
 
-window.addEventListener("load", event => {
-  ScriptLoader.createPromise("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.7.0/dist/tf.min.js").then(test); });
+window.addEventListener( "load", event => {
+  ScriptLoader
+    .createPromise(
+      "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.19.0/dist/tf.min.js" )
+    .then( test );
+});
 
 function test() {
   console.log("util testing...");
