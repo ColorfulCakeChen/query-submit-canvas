@@ -632,6 +632,32 @@ class Stage_Base extends Recyclable.Root {
     return outputTensor;
   }
 
+//!!! ...unfinished... (2022/08/19) async apply
+  /**
+   *
+   * @yield {ValueMax.Percentage.Aggregate}
+   *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
+   *
+   * @yield {tf.tensor3d}
+   *   Yield ( value = outputTensor ) when ( done = true ) successfully.
+   */
+  * applier( progressParent, inputTensor ) {
+
+!!! ...unfinished... (2022/08/19) async apply
+
+    this.block0.input0.realTensor = inputTensor; // Note: The block0 should only input one tensor.
+
+    let blockArray = this.blockArray;
+    for ( let i = 0; i < blockArray.length; ++i ) {
+      blockArray[ i ].apply();
+    }
+
+    let outputTensor = this.blockLast.output0.realTensor; // Note: The blockLast should only output one tensor.
+    return outputTensor;
+
+  }
+
+
   /** How many blocks inside this stage are created. (may different from this.blockCountRequested.) */
   get blockCount() {
     return this.blockArray.length;
