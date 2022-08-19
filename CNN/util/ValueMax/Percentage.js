@@ -167,17 +167,17 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
   
   /**
    * @return {number}
-   *   The progress as number between [0, 100] inclusive.
-   *   Always 0, if this.max is negative.
-   *   Always 100, if this.max is zero.
-   *   Otherwise, return the ratio of ( this.value / this.max ).
+   *   The progress as number between [ 0, 100 ] inclusive.
+   *     - Always 0, if this.max is negative.
+   *     - Always 100, if this.max is zero.
+   *     - Otherwise, return the ratio of ( this.value / this.max ).
    */
   get valuePercentage() {
     if ( this.valuePercentage_cached != undefined )
       return this.valuePercentage_cached;
 
-    // If max is negative (i.e. not initialized), return 0
-    // (to avoid Aggregate.valuePercentage immediately 100).
+    // If max is negative (i.e. not initialized), return 0 (to avoid
+    // Aggregate.valuePercentage become 100 immediately).
     if ( this.max < 0 )
       return 0;
 
