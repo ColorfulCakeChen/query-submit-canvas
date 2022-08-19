@@ -286,7 +286,7 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
    *   - Invalidate .valuePercentage_cached.
    *
    */
-   child_clearAll() {
+   child_disposeAll() {
     this.children.clear();
     this.valuePercentage_cached_invalidate();
   }
