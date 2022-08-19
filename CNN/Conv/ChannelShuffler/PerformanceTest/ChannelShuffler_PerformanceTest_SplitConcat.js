@@ -71,6 +71,7 @@ class SplitConcat extends ChannelShuffler_SplitConcat {
 //           tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ shuffledChannelIndices[ i ] ];
 //         }
 
+//!!! ...unfinished... (2022/08/19) Wrong! Using array member access should be faster.
         // Using for-of could be a better method.
         //
         // If using shuffledChannelIndices.forEach(), there is a function call overhead.
