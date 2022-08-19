@@ -176,12 +176,18 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
     if ( this.valuePercentage_cached != undefined )
       return this.valuePercentage_cached;
 
-    if (this.max < 0)
-      return 0;   // If max is negative (i.e. not initialized), return 0 (to avoid Aggregate.valuePercentage immediately 100).
-    if (this.max == 0)
-      return 100; // If max is indeed zero, return 100 (to avoid divide by zero and avoid Aggregate.valuePercentage never 100).
+    // If max is negative (i.e. not initialized), return 0
+    // (to avoid Aggregate.valuePercentage immediately 100).
+    if ( this.max < 0 )
+      return 0;
 
-    let value = Math.max( 0, Math.min( this.value, this.max ) ); // Restrict between [0, total].
+    // If max is indeed zero, return 100 (to avoid divide by zero and avoid
+    // Aggregate.valuePercentage never 100).
+    if ( this.max == 0 )
+      return 100;
+
+    // Restrict between [ 0, max ].
+    let value = Math.max( 0, Math.min( this.value, this.max ) );
     this.valuePercentage_cached = ( value / this.max ) * 100;
     return this.valuePercentage_cached;
   }
@@ -270,7 +276,7 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
     
     let valueSum = 0, maxSum = 0;
 
-    // Use integer array index is faster than iterator.
+    // (Note: Use integer array index is faster than iterator (i.e. for-of)).
     //for (let child of this.children) {
     for ( let i = 0; i < this.children.length; ++i ) {
       let child = this.children[ i ];
@@ -282,7 +288,9 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
         continue; // Skip illegal progress. (Note: maxPercentage should always be 100.)
 
       let partValue = child.valuePercentage;
-      partValue = Math.max( 0, Math.min( partValue, partMax ) ); // Restrict between [ 0, partMax ].
+
+      // Restrict between [ 0, partMax ].
+      partValue = Math.max( 0, Math.min( partValue, partMax ) );
 
       valueSum += partValue;
       maxSum += partMax;
