@@ -1,10 +1,18 @@
 /**
- * 動態透過 IFrame 載入同源(Same Origin)網頁中的特定元素的文字內容。
+ * Load .textContent by iframe from specified HTML elemen of specified (same origin)
+ * web page.
  *
- * @param iframeSrcURL 傳入要被載入內容的網址。會使用 iframe 載入該網址的內容。並在完成後，該 iframe 會被移除與釋放。
- * @param elementIdInsideIFrame 傳入元素編號。在使用 iframe 載入指定的網頁後，會取得該網頁中該編號元素的文字內容。
+ * @param {string} iframeSrcURL
+ *   The web page to be loaded. An iframe will be used to load it. After .textContent
+ * has been extracted, the iframe will be released.
  *
- * @return 傳回 Promise，該 Promise resolve 時，會傳入指定網址中指定編號元素的文字內容。
+ * @param {string} elementIdInsideIFrame
+ *   The HTML element id. When the web page has been loaded, the .textContent of the
+ * the HTML element with this id will be extracted.
+ *
+ * @return {Promise}
+ *   Return a Promise. When the Promise resolve, the .textContent of the HTML element
+ * will be returned.
  */
 function createPromise_GetTextContent_ByIFrame(iframeSrcURL, elementIdInsideIFrame) {
   return new Promise(function(resolve, reject) {
