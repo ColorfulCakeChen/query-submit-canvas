@@ -20,39 +20,49 @@
  *   Pass in the Construct.net Runtime object. It is used to look up game object by
  * UID.
  */
-(function (theGlobal, theRuntime) {
+( function ( theGlobal, theRuntime ) {
 
   function BackgroundFormSender()
   {
-    this.theIFrame = document.createElement("iframe");      // 產生一個看不見的iframe，存放這個物件產生的所有HTML物件。
-    this.theIFrame.style.display = "none";                  // 永不顯示這個用來運作的iframe。
+    // Create an invisible iframe for placing some helper HTML elements.
+    this.theIFrame = document.createElement("iframe");
+    this.theIFrame.style.display = "none";                 // never display the iframe.
     document.body.appendChild(this.theIFrame);
 
-    this.theDocument = this.theIFrame.contentDocument;     // 接下來產生的HTML物件，都要放在這個內部文件裡。
+    // The internal document for all the helper HTML elements.
+    this.theDocument = this.theIFrame.contentDocument;
 
-                                                           // 產生用來接收form submit response的目的地iframe。
+    // The target iframe for receving form submit response.
     this.resultIFrame = this.theDocument.createElement("iframe");
     this.resultIFrame.id = "BackgroundFormSender_"
-                             + "ResultIFrame_"
-                             + Date.now();                 // 盡可能確保名稱是唯一的。(作為form submit response target。)
+      + "ResultIFrame_"
+      + Date.now(); // Ensure the (form submit response target iframe) name is unique.
     this.resultIFrame.name = this.resultIFrame.id;
     this.theDocument.body.appendChild(this.resultIFrame);
-                                                           // 產生用來傳送資料的form。
-    this.form = this.theDocument.createElement("form");    // 每次傳送資料，都會重複使用這個(看不見的)form。(減少記憶體的重複配置與釋放。)
-    this.theDocument.body.appendChild(this.form);          // To be sent, the form needs to be attached to the main document.
 
-    this.requestId = 0; // 累計已經呼叫過多少次。(For debug.)
+    // The form for sending data.
+    //
+    // This invisible form will be re-used for every time data sending (instead of
+    // re-creating a new form every time).
+    this.form = this.theDocument.createElement("form");
+
+    // To be sent, the form needs to be attached to the main document.
+    this.theDocument.body.appendChild(this.form);
+
+    this.requestId = 0; // Record how many times sending. (For debug.)
   }
 
   /**
-   * 讓這個類別所有的實體都可以存取 Construct.net 的 runtime engine。
+   * Let all instances of BackgroundFormSender could access Construct.net runtime engine.
    */
   BackgroundFormSender.prototype.theRuntime = theRuntime;
 
   /**
-   * 透過隱藏的form傳送資料。
+   * Send data by the invisible form.
    *
-   * 透過form傳送，好處是可以cross domain進行傳送，避開ajax會遭遇的same origin policy限制。
+   * Advantage:
+   *   - Sending data by form could cross domain. (i.e. The same origin policy
+   *       restriction of ajax could be avoided.)
    *
    * @param URL  傳入要接收資料的伺服器網路位址。
    * @param data 傳入要被傳送的資料，被視為是key/value pairs的物件。
