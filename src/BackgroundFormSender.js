@@ -113,23 +113,26 @@
       //if ( inputElementCreatedCount > 0 )
       //  alert( "inputElement created. (" + inputElementCreatedCount + ")" );
 
-      if (inputElement)    // 表單中的欄位數量比需要的還多，移除多出來的欄位。
-      {
-        while (this.form.lastElementChild != inputElement)   // 從最後一個欄位開始，往前逐一移除，直到有使用到的欄位的下一個欄位為止。
-        {
+      // If the form has more fields than necessary, remove th extra fields.
+      if ( inputElement ) {
+
+        // From the last field, remove every field until the next field of used field.
+        while ( this.form.lastElementChild != inputElement ) {
           this.form.removeChild(this.form.lastElementChild);
           inputElementRemovedCount++;
         }
 
-        this.form.removeChild(inputElement);  // 有使用到的欄位的下一個欄位，已經成為最後一個欄位，把它移除後，就沒有多餘的欄位了。
+        // Since the next field of used field has been the last field, there is no
+        // more extra fields after remove it.
+        this.form.removeChild( inputElement) ;
         inputElement = null;
         // For debug.
-        //alert("input element removed. (" + inputElementRemovedCount + "+1)");
+        //alert( "input element removed. (" + inputElementRemovedCount + "+1)" );
       }
 
       this.form.submit();
       // For debug.
-      //alert("form submitted.");
+      //alert( "form submitted." );
 
       this.requestId++;
     }
