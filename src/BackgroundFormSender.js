@@ -8,9 +8,12 @@
  *
  *   Browser.ExecJS( "gBackgroundFormSender.sendByArray(" & inputArray.UID & ");" )
  *
- * According to eexperiments, if the interval of two sending (to the same destination
+ * According to experiments, if the interval of two sending (to the same destination
  * url) is too short, sent data might be lost. It is suggested interval 300ms at least.
  *
+ */
+
+/**
  *
  * @param theGlobal
  *   The global variables container (i.e. globalThis. in Browser, it is usually the
@@ -22,106 +25,114 @@
  */
 ( function ( theGlobal, theRuntime ) {
 
-  function BackgroundFormSender()
-  {
-    // Create an invisible iframe for placing some helper HTML elements.
-    this.theIFrame = document.createElement("iframe");
-    this.theIFrame.style.display = "none";                 // never display the iframe.
-    document.body.appendChild(this.theIFrame);
-
-    // The internal document for all the helper HTML elements.
-    this.theDocument = this.theIFrame.contentDocument;
-
-    // The target iframe for receving form submit response.
-    this.resultIFrame = this.theDocument.createElement("iframe");
-    this.resultIFrame.id = "BackgroundFormSender_"
-      + "ResultIFrame_"
-      + Date.now(); // Ensure the (form submit response target iframe) name is unique.
-    this.resultIFrame.name = this.resultIFrame.id;
-    this.theDocument.body.appendChild(this.resultIFrame);
-
-    // The form for sending data.
-    //
-    // This invisible form will be re-used for every time data sending (instead of
-    // re-creating a new form every time).
-    this.form = this.theDocument.createElement("form");
-
-    // To be sent, the form needs to be attached to the main document.
-    this.theDocument.body.appendChild(this.form);
-
-    this.requestId = 0; // Record how many times sending. (For debug.)
-  }
-
   /**
-   * Let all instances of BackgroundFormSender could access Construct.net runtime engine.
+   * 
    */
-  BackgroundFormSender.prototype.theRuntime = theRuntime;
+  class BackgroundFormSender {
 
-  /**
-   * Send data by the invisible form.
-   *
-   * Advantage:
-   *   - Sending data by form could cross domain. (i.e. The same origin policy
-   *       restriction of ajax could be avoided.)
-   *
-   * @param URL  傳入要接收資料的伺服器網路位址。
-   * @param data 傳入要被傳送的資料，被視為是key/value pairs的物件。
-   */
-  BackgroundFormSender.prototype.sendByURL = function (URL, data) {
+    /**
+     * Let all instances of BackgroundFormSender could access Construct.net runtime engine.
+     */
+    static theRuntime = theRuntime;
 
-//  // Define what happens when the response loads
-//  resultIFrame.addEventListener("load", function () {
-//    alert("Yeah! Data sent.");
-//  });
+    /** */
+    constructor() {
+      // Create an invisible iframe for placing some helper HTML elements.
+      this.theIFrame = document.createElement("iframe");
+      this.theIFrame.style.display = "none";                 // never display the iframe.
+      document.body.appendChild(this.theIFrame);
 
-    this.form.action = URL;
-    this.form.target = this.resultIFrame.name;  // 把伺服器回傳的網頁，顯示在看不見的iframe中。
+      // The internal document for all the helper HTML elements.
+      this.theDocument = this.theIFrame.contentDocument;
 
-    var inputElementCreatedCount = 0;
-    var inputElementRemovedCount = 0;
+      // The target iframe for receving form submit response.
+      this.resultIFrame = this.theDocument.createElement("iframe");
+      this.resultIFrame.id = "BackgroundFormSender_"
+        + "ResultIFrame_"
+        + Date.now(); // Ensure the (form submit response target iframe) name is unique.
+      this.resultIFrame.name = this.resultIFrame.id;
+      this.theDocument.body.appendChild(this.resultIFrame);
 
-    var inputElement = this.form.firstElementChild;  // 這裡假定表單中所有的欄位都是text input element。
-    //var dataItemIndex = 0;
-    for (var dataItemName in data)
-    {
-      if (!inputElement)
-      {  // 表單中的欄位不夠用，需要產生新的欄位。
-        inputElement = this.theDocument.createElement("input");
-        this.form.appendChild(inputElement);
-        inputElementCreatedCount++;
-      }
+      // The form for sending data.
+      //
+      // This invisible form will be re-used for every time data sending (instead of
+      // re-creating a new form every time).
+      this.form = this.theDocument.createElement("form");
 
-      inputElement.name  = dataItemName;
-      inputElement.value = data[dataItemName].toString();
+      // To be sent, the form needs to be attached to the main document.
+      this.theDocument.body.appendChild(this.form);
 
-      inputElement = inputElement.nextElementSibling;
-      //dataItemIndex++;
+      this.requestId = 0; // Record how many times sending. (For debug.)
     }
 
-    // For debug.
-    //if (inputElementCreatedCount > 0)
-    //  alert("inputElement created. (" + inputElementCreatedCount + ")");
+    /**
+     * Send data by the invisible form.
+     *
+     * Advantage:
+     *   - Sending data by form could cross domain. (i.e. The same origin policy
+     *       restriction of ajax could be avoided.)
+     *
+     * @param {string} URL  The server url for receiving data.
+     * @param {Object} data The data to be sent. (i.e. a key/value pairs object)
+     */
+    sendByURL( URL, data ) {
 
-    if (inputElement)    // 表單中的欄位數量比需要的還多，移除多出來的欄位。
-    {
-      while (this.form.lastElementChild != inputElement)   // 從最後一個欄位開始，往前逐一移除，直到有使用到的欄位的下一個欄位為止。
-      {
-        this.form.removeChild(this.form.lastElementChild);
-        inputElementRemovedCount++;
+      // // Define what happens when the response loads
+      // resultIFrame.addEventListener( "load", function () {
+      //   alert( "Yeah! Data sent." );
+      // });
+
+      this.form.action = URL;
+
+      // Let the response web page be placed in the invisible iframe.
+      this.form.target = this.resultIFrame.name;
+
+      let inputElementCreatedCount = 0;
+      let inputElementRemovedCount = 0;
+
+      // (Assume all fields of the form are text input element.)
+      let inputElement = this.form.firstElementChild;
+      //let dataItemIndex = 0;
+      for ( let dataItemName in data ) {
+
+        if ( !inputElement ) {
+          // Since the fields of the form are not enough, generate new field.
+          inputElement = this.theDocument.createElement( "input" );
+          this.form.appendChild(inputElement);
+          inputElementCreatedCount++;
+        }
+
+        inputElement.name  = dataItemName;
+        inputElement.value = data[ dataItemName ].toString();
+
+        inputElement = inputElement.nextElementSibling;
+        //dataItemIndex++;
       }
 
-      this.form.removeChild(inputElement);  // 有使用到的欄位的下一個欄位，已經成為最後一個欄位，把它移除後，就沒有多餘的欄位了。
-      inputElement = null;
       // For debug.
-      //alert("input element removed. (" + inputElementRemovedCount + "+1)");
+      //if ( inputElementCreatedCount > 0 )
+      //  alert( "inputElement created. (" + inputElementCreatedCount + ")" );
+
+      if (inputElement)    // 表單中的欄位數量比需要的還多，移除多出來的欄位。
+      {
+        while (this.form.lastElementChild != inputElement)   // 從最後一個欄位開始，往前逐一移除，直到有使用到的欄位的下一個欄位為止。
+        {
+          this.form.removeChild(this.form.lastElementChild);
+          inputElementRemovedCount++;
+        }
+
+        this.form.removeChild(inputElement);  // 有使用到的欄位的下一個欄位，已經成為最後一個欄位，把它移除後，就沒有多餘的欄位了。
+        inputElement = null;
+        // For debug.
+        //alert("input element removed. (" + inputElementRemovedCount + "+1)");
+      }
+
+      this.form.submit();
+      // For debug.
+      //alert("form submitted.");
+
+      this.requestId++;
     }
-
-    this.form.submit();
-    // For debug.
-    //alert("form submitted.");
-
-    this.requestId++;
-  }
 
 
   /**
@@ -157,6 +168,7 @@
     }
   }
 
+  }
 
   if (!theGlobal.gBackgroundFormSender)
   { // 第一次執行時，產生用來在背景進行form submit的全域物件。
