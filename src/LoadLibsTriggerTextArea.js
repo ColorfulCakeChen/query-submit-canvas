@@ -1,8 +1,10 @@
-(function (w,d,s,urlArray,TextAreaElementTooltip){
+(function (w,d,s,urlArray,TextAreaElementTooltip) {
 
   function createPromiseLoadScript(url) {
     return new Promise((resolve, reject) => {
-      d.head.appendChild(Object.assign(d.createElement(s),{ src:url, onload:e=>resolve(e), onerror:e=>reject(e) }));
+      d.head.appendChild(Object.assign(d.createElement(s),{
+        src:url, onload:e=>resolve(e), onerror:e=>reject(e) }))
+    });
   }
 
   /*alert("hi1");*/
