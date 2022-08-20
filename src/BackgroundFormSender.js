@@ -1,17 +1,24 @@
 /**
- * 請在 Construct.net 的 On start of layout 中，使用 Browser.ExexJS() 執行這個檔案的內容。
- * 執行後會產生一個名叫 gBackgroundFormSender 的全域物件。呼叫它的函式sendByArray()，
- * 並傳入記載有相關參數的 Array UID (這裡所說的 Array 是 Construct.net 的一種 plugin)，即可傳送資料。類似這樣：
+ * In Construct.net "On start of layout" event, use Browser.ExexJS() to execute this
+ * file.
  *
- *   Browser.ExecJS("gBackgroundFormSender.sendByArray(" & inputArray.UID & ");")
+ * After execution, a global object gBackgroundFormSender will be created. Call its
+ * method .sendByArray() with arguments Array UID (note: here, the Array is a kind of
+ * Construct.net plugin) to sned data. For example,
  *
- * 根據測試，如果兩次發送資料(到同一個目的地URL)的時間間隔太短，結果可能會有資料丟失。建議至少間隔300ms以上。
+ *   Browser.ExecJS( "gBackgroundFormSender.sendByArray(" & inputArray.UID & ");" )
+ *
+ * According to eexperiments, if the interval of two sending (to the same destination
+ * url) is too short, sent data might be lost. It is suggested interval 300ms at least.
+ *
  *
  * @param theGlobal
- *   傳入記載全域變數的地方(在Browser中，通常就是window)。用來存放這個BackgroundFormSender物件。
+ *   The global variables container (i.e. globalThis. in Browser, it is usually the
+ * window object)。 It will be used to record the gBackgroundFormSender object.
  *
  * @param theRuntime
- *   傳入Construct.net的Runtime引擎物件。用來根據UID取得物件。
+ *   Pass in the Construct.net Runtime object. It is used to look up game object by
+ * UID.
  */
 (function (theGlobal, theRuntime) {
 
