@@ -16,7 +16,7 @@
  */
 function createPromise_GetTextContent_ByIFrame(iframeSrcURL, elementIdInsideIFrame) {
   return new Promise(function(resolve, reject) {
-    var theIFrame = document.createElement("iframe");
+    let theIFrame = document.createElement("iframe");
     theIFrame.style.display = "none";
     theIFrame.src           = iframeSrcURL;
     theIFrame.sandbox       ="allow-same-origin";
@@ -24,7 +24,8 @@ function createPromise_GetTextContent_ByIFrame(iframeSrcURL, elementIdInsideIFra
     document.body.appendChild(theIFrame);         // Load the URL by iframe.
 
   }).then(function(theIFrame) {
-    var theTextContent = theIFrame.contentDocument.getElementById(elementIdInsideIFrame).textContent;
+    let theTextContent = theIFrame.contentDocument
+      .getElementById(elementIdInsideIFrame).textContent;
     theIFrame.parentNode.removeChild(theIFrame);  // Release the iframe.
     return theTextContent;
   });
