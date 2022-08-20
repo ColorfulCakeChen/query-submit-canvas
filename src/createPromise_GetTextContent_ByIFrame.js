@@ -1,6 +1,6 @@
 /**
- * Load .textContent by iframe from specified HTML elemen of specified (same origin)
- * web page.
+ * Dynamically load .textContent by iframe from specified HTML elemen of specified
+ * (same origin) web page.
  *
  * @param {string} iframeSrcURL
  *   The web page to be loaded. An iframe will be used to load it. After .textContent
