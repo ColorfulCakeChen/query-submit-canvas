@@ -1,6 +1,6 @@
 /**
- * In Construct.net "On start of layout" event, use Browser.ExexJS() to execute this
- * file.
+ * Please in Construct.net "On start of layout" event, use Construct.net Browser
+ * plugin's Browser.ExexJS() to execute this file.
  *
  * After execution, a global object gBackgroundFormSender will be created. Call its
  * method .sendByArray() with arguments Array UID (note: here, the Array is a kind of
@@ -173,11 +173,13 @@
 
   }
 
-  if (!theGlobal.gBackgroundFormSender)
-  { // 第一次執行時，產生用來在背景進行form submit的全域物件。
+  if ( !theGlobal.gBackgroundFormSender ) {
+    // First time execution, create the global object for form submitting in
+    // the background.
     theGlobal.gBackgroundFormSender = new BackgroundFormSender();
   }
 
 
-// 因為是透過 Construct.net 的 Browser.ExecJS() 執行這整段程式碼，所以這裡的 this 就是 Browser plugin 自己。
-})(window, this.runtime);
+// Because thuis file is executed by Construct.net Browser.ExecJS(), the "this" here
+// will be the Construct.net Browser plugin itself.
+} )( window, this.runtime );
