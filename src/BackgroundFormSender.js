@@ -137,39 +137,39 @@
       this.requestId++;
     }
 
+    /**
+     * @param inputArrayUID
+     *   The Construct.net Array plugin's instance UID (for sending arguments).
+     * The array shape ( width, height, depth ) must be (1, 3, n). The n is the quantity
+     * of fields to be sent.
+     *
+     *     inputArray(0,0,0) = formActionURL  (form submit action url, e.g. "https://docs.google.com/forms/.../formResponse")
+     *
+     *     inputArray(0,1,0) = name of field0 (e.g. "entry.1504146089") 
+     *     inputArray(0,1,1) = name of field1 (e.g. "entry.1756834287") 
+     *       : 
+     *     inputArray(0,1,n) = name of fieldn
+     *
+     *     inputArray(0,2,0) = data of field0 (e.g. "ABC") 
+     *     inputArray(0,2,1) = data of field1 (e.g. 123) 
+     *       : 
+     *     inputArray(0,2,n) = data of fieldn
+     */
+    sendByArray( inputArrayUID ) {
+      let inputArray = this.theRuntime.getObjectByUID( inputArrayUID );
 
-  /**
-   * @param inputArrayUID
-   *   傳入存放有查詢相關參數的 Construct.net Array plugin 的 instance 的 UID。
-   *   該陣列的尺寸 (width, height, depth) 必須是 (1, 3, n)，其中 n 是要被傳送的欄位總數量。
-   *
-   *     inputArray(0,0,0) = formActionURL  (form submit action的完整網址，類似："https://docs.google.com/forms/.../formResponse")
-   *
-   *     inputArray(0,1,0) = 欄位0的名稱     (例如："entry.1504146089") 
-   *     inputArray(0,1,1) = 欄位1的名稱     (例如："entry.1756834287") 
-   *       : 
-   *     inputArray(0,1,n) = 欄位n的名稱
-   *
-   *     inputArray(0,2,0) = 欄位0的資料     (例如："ABC") 
-   *     inputArray(0,2,1) = 欄位1的資料     (例如：123) 
-   *       : 
-   *     inputArray(0,2,n) = 欄位n的資料
-   */
-  BackgroundFormSender.prototype.sendByArray = function (inputArrayUID)
-  {
-    var inputArray = this.theRuntime.getObjectByUID(inputArrayUID);
+      let formActionURL = inputArray.at(0, 0, 0);  // form submit url.
+      let formData = {};
 
-    var formActionURL = inputArray.at(0, 0, 0);  // 表單的接收網址。
-    var formData = {};
-    for (var i = 0; i < inputArray.cz; ++i)      // 陣列的depth(cz)，代表欄位的數量。
-    {
-      var fieldName = inputArray.at(0, 1, i);   // 欄位名稱。
-      var fieldData = inputArray.at(0, 2, i);   // 欄位資料。
-      formData[fieldName] = fieldData;
-      //alert("send data = " + JSON.stringify(formData));
-      this.sendByURL(formActionURL, formData);
+      // (Note: array depth(cz) represents field count.)
+      for ( let i = 0; i < inputArray.cz; ++i ) {
+        let fieldName = inputArray.at(0, 1, i);   // field name.
+        let fieldData = inputArray.at(0, 2, i);   // field data.
+        formData[fieldName] = fieldData;
+        //alert( "send data = " + JSON.stringify( formData ) );
+        this.sendByURL( formActionURL, formData );
+      }
     }
-  }
 
   }
 
