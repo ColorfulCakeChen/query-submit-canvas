@@ -4,7 +4,8 @@ export { sleep, forOf };
  * A wrapper for setTimeout( , delayMilliseconds ).
  *
  * @param {integer}
- *   delayMilliseconds The delay time (in milliseconds) when the (returned) promise will be resolved.
+ *   delayMilliseconds The delay time (in milliseconds) when the (returned) promise
+ * will be resolved.
  *
  * @return {promise}
  *   A promise resolved with undefined.
@@ -14,17 +15,27 @@ async function sleep( delayMilliseconds = 0 ) {
 }
 
 /**
- * Periodically call generator.next() by setTimeout() until ( generator.next().done == true ). The generator
- * will generate in part-time. Just like a for..of loop but executes in part-time.
+ * Periodically call generator.next() by setTimeout() until
+ * ( generator.next().done == true ). The generator will generate in part-time.
+ * Just like a for..of loop but executes in part-time.
  *
- * This seems like for-await-of. This could accept synchronus or asynchronus generator, while for-await-of only accepts asynchronus generator.
+ * This seems like for-await-of. This could accept synchronus or asynchronus generator,
+ * while for-await-of only accepts asynchronus generator.
  *
  *
- * @param {iterator}  generator         The generator.next() will be called periodically until done.
- * @param {function}  callback          will be called as callback( generator.next().value ) when ( generator.next().done == false ).
- * @param {integer}   delayMilliseconds The delay time when schedule the next run. Default 0.
+ * @param {iterator} generator
+ *   The generator.next() will be called periodically until done.
  *
- * @return A promise resolved with the ( generator.next().value ) when ( generator.next().done == true ).
+ * @param {function} callback
+ *   It will be called as callback( generator.next().value ) when
+ * ( generator.next().done == false ).
+ *
+ * @param {integer} delayMilliseconds
+ *   The delay time when schedule the next run. Default 0.
+ *
+ * @return {Promise}
+ *   A promise resolved with the ( generator.next().value ) when
+ * ( generator.next().done == true ).
  */
 function forOf( generator, callback, delayMilliseconds = 0 ) {
 
