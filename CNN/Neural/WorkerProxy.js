@@ -1,5 +1,6 @@
 /**
- * @file This file is an importable module to handle and communicate to the neural network (web) worker body.
+ * @file This file is an importable module to handle and communicate to the neural
+ * network (web) worker body.
  *
  */
 
@@ -11,13 +12,18 @@ export { PendingPromiseInfo, WorkerProxy_Base as Base };
 
 
 /**
- * Hold a processing's id, promise, resolve (fulfilling function object), reject (rejecting function object).
+ * Hold a processing's id, promise, resolve (fulfilling function object), reject
+ * (rejecting function object).
  *
  * @member {number}   workerId     The array index of the worker owns this processing.
  * @member {number}   processingId The id of the processing.
  * @member {Promise}  promise      The pending promise for the processing.
- * @member {function} resolve      The fulfilling function object of the pending promise for the processing.
- * @member {function} reject       The rejecting function object of the pending promise for the processing.
+ *
+ * @member {function} resolve
+ *   The fulfilling function object of the pending promise for the processing.
+ *
+ * @member {function} reject
+ *   The rejecting function object of the pending promise for the processing.
  */
 class PromiseResolveReject {
 
@@ -36,8 +42,11 @@ class PromiseResolveReject {
 /**
  * Hold two PromiseResolveReject.
  *
- * @member {PromiseResolveReject}   process The promise for reporting processTensor() done.
- * @member {PromiseResolveReject}   relay   The promise for reporting scaledSourceImageData is received from this web worker.
+ * @member {PromiseResolveReject} process
+ *   The promise for reporting processTensor() done.
+ *
+ * @member {PromiseResolveReject} relay
+ *   The promise for reporting scaledSourceImageData received from this web worker.
  */
 class ProcessRelayPromises {
 
@@ -49,36 +58,46 @@ class ProcessRelayPromises {
 }
 
 /**
- * Hold the worker and its related promise map. It is a wrapper of a neural network web worker for handling easily.
+ * Hold the worker and its related promise map. It is a wrapper of a neural network
+ * web worker for handling easily.
  *
- * @member {number} workerId              The array index of this worker proxy.
- * @member {Worker} worker                The worker.
- * @member {Map}    pendingPromiseInfoMap The map for promise of the unhandled processing.
+ * @member {number} workerId  The array index of this worker proxy.
+ * @member {Worker} worker    The worker.
+ *
+ * @member {Map}    pendingPromiseInfoMap
+ *   The map for promise of the unhandled processing.
  */
 class WorkerProxy_Base {
 
   /**
-   * Initialize this worker proxy. It will create one web worker and inform it to create one neural network.
+   * Initialize this worker proxy. It will create one web worker and inform it to
+   * create one neural network.
    *
    * @param {number} workerId
-   *   This id of this worker proxy (and web worker). This is the array index in the parent container (i.e. WorkerController).
+   *   This id of this worker proxy (and web worker). This is the array index in the
+   * parent container (i.e. WorkerController).
    *
    * @param {string} tensorflowJsURL
-   *   The URL of tensorflow javascript library. Every worker will load the library from the URL.
+   *   The URL of tensorflow javascript library. Every worker will load the library
+   * from the URL.
    *
    * @param {Net.Config} neuralNetConfig
    *   The configuration of the neural network which will be created by this web worker.
    *
    * @param {string} weightsSpreadsheetId
-   *   The Google Sheets spreadsheetId of neural network weights. Every worker will load weights from the spreadsheet to initialize one neural network.
+   *   The Google Sheets spreadsheetId of neural network weights. Every worker will
+   * load weights from the spreadsheet to initialize one neural network.
    *
    * @param {string} weightsAPIKey
    *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
    *
    * @param {NeuralNetProgress.InitProgress} initProgress
-   *   This worker proxy will modify initProgress to report its web worker's initialization progress.
+   *   This worker proxy will modify initProgress to report its web worker's
+   * initialization progress.
    */
-  init( workerId, tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey, initProgress ) {
+  init( workerId, tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey,
+    initProgress ) {
+
     this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
     this.neuralNetConfig = neuralNetConfig;
@@ -86,13 +105,20 @@ class WorkerProxy_Base {
     this.weightsAPIKey = weightsAPIKey;
     this.initProgress = initProgress;
 
-    // Every worker has a result pending promise map. The key of the map is processing id. The value of the map is a ProcessRelayPromises.
+    // Every worker has a result pending promise map. The key of the map is processing
+    // id. The value of the map is a ProcessRelayPromises.
     this.processRelayPromisesMap = new Map();
 
-    // Assume the main (i.e. body) javascript file of neural network web worker is a sibling file (i.e. inside the same folder) of this module file.
-    this.workerURL = new URL( import.meta.url, "WorkerBody.js" );
 
-    // Should not use "module" type worker, otherwise the worker can not use importScripts() to load tensorflow.js library.
+//!!! ...unfinished... (2022/08/24) Whay not use "./WorkerBody.js"?
+
+    // Assume the main (i.e. body) javascript file of neural network web worker is
+    // a sibling file (i.e. inside the same folder) of this module file.
+    this.workerURL = new URL( "WorkerBody.js", import.meta.url );
+
+    // Should not use "module" type worker, otherwise the worker can not use
+    // importScripts() to load tensorflow.js library.
+    //
     //this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
     this.workerOptions = null;
 
@@ -130,28 +156,44 @@ class WorkerProxy_Base {
    *   The processing id for distinguishing different processing request and result.
    *
    * @param {ImageData} sourceImageData
-   *   The source image data to be processed. Its shape should be [ height, width, channel ] = [ this.neuralNet.sourceImageHeightWidth[ 0 ],
-   * this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ]. This usually is called for the first web worker
-   * in chain. The web worker will tansfer back a scaled typed-array. The scaled typed-array should be used to call the next web worker's
-   * typedArray_transferBack_processTensor_async().
+   *   The source image data to be processed. Its shape should be [ height, width,
+   * channelCount ] = [ this.neuralNet.sourceImageHeightWidth[ 0 ],
+   * this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ].
+   * This usually is called for the first web worker in chain. The web worker will
+   * transfer back a scaled typed-array. The scaled typed-array should be used to call
+   * the next web worker's typedArray_transferBack_processTensor_async().
    *
    * @return {Promise}
-   *   Return a promise which will be resolved when this (WorkerProxy owned) web worker's neural network computing done. It resolved with
-   * a typed-array which comes from the output tensor of the web worker's neural network.
+   *   Return a promise which will be resolved when this (WorkerProxy owned) web
+   * worker's neural network computing done. It resolved with a typed-array which
+   * comes from the output tensor of the web worker's neural network.
    */
   async imageData_transferBack_processTensor_async( processingId, sourceImageData ) {
 
-    // Prepare promises and their function object (resolve and reject) in a map so that the promises can be found and resolved when processing is done.
+    // Prepare promises and their function object (resolve and reject) in a map so that
+    // the promises can be found and resolved when processing is done.
     //
-    // The processRelayPromises.relay.promise will be await by outter (i.e. WorkerController) to transfer source typed-array to every web worker serially.
-    // The processRelayPromises.process.promise will be returned as the result of this processTensor().
+    //   - The processRelayPromises.relay.promise will be await by outter (i.e.
+    //       WorkerController) to transfer source typed-array to every web worker
+    //       serially.
+    //
+    //   - The processRelayPromises.process.promise will be returned as the result
+    //       of this processTensor().
+    //
     let processRelayPromises = new ProcessRelayPromises( this.workerId, processingId );
     this.processRelayPromisesMap.set( processingId, processRelayPromises );
     
     // Transfer (not copy) the source image data to this (worker proxy owned) web worker.
-    let message = { command: "imageData_transferBack_processTensor", processingId: processingId, sourceImageData: sourceImageData };
+    let message = {
+      command: "imageData_transferBack_processTensor",
+      processingId: processingId,
+      sourceImageData: sourceImageData
+    };
+
     this.worker.postMessage( message, [ message.sourceImageData.data.buffer ] );
-    // Now, sourceImageData.data.buffer has become invalid because it is transferred (not copied) to web worker.
+
+    // Now, sourceImageData.data.buffer has become invalid because it is transferred
+    // (not copied) to web worker.
 
     return processRelayPromises.process.promise;
   }
