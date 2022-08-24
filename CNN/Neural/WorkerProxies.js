@@ -192,38 +192,56 @@ class Base {
   }
 
   /**
-   * Download image data from source canvas, convert to tensor, scale, pass source image data to every web worker parallelly by copying.
+   * Download image data from source canvas, convert to tensor, scale, pass source
+   * image data to every web worker parallelly by copying.
    *
-   * The tensorflow.js library should have been loaded so that the source image scaling could be done here (not in web worker).
+   * The tensorflow.js library should have been loaded so that the source image
+   * scaling could be done here (not in web worker).
    *
    * @param {HTMLCanvasElement} sourceCanvas
-   *   The source canvas to be processed. Its shape [ height, width, channel ] should be the same as the size which is used when
-   * training the neural network.
+   *   The source canvas to be processed. Its shape [ height, width, channelCount ]
+   * should be the same as the size which is used when training the neural network.
    *
    * @return {Promise}
-   *   Return a promise which will be resolved when all worker processing promises of the same processingId are resolved. The promise
-   * resolves with an array of typed-array. Every typed-array comes from the output tensor of one worker's neural network.
+   *   Return a promise which will be resolved when all worker processing promises of
+   * the same processingId are resolved. The promise resolves with an array of
+   * typed-array. Every typed-array comes from the output tensor of one worker's
+   * neural network.
    */
   async processCanvas_Async_ByCopy( sourceCanvas ) {
 
-    // Create (scaled) source tensor so that every web worker needs not scale again and easier to re-create source tensor.
+    // Create (scaled) source tensor so that every web worker needs not scale again
+    // and easier to re-create source tensor.
     //
-    // The drawback is that the tensorflow.js library should have been loaded here. And the image scaling is done here (not in web worker).
-    let scaledSourceTensor = this.neuralNetConfig.create_ScaledSourceTensor_from_PixelData( sourceCanvas );
-    let sourceTypedArray = await scaledSourceTensor.data();
-    scaledSourceTensor.dispose(); // Discard the source tensor because type-array (not tensor) will be past to web worker
+    // The drawback is that the tensorflow.js library should have been loaded here.
+    // And the image scaling is done here (not in web worker).
+    //
+    let scaledSourceTensor
+      = this.neuralNetConfig.create_ScaledSourceTensor_from_PixelData( sourceCanvas );
 
-    let processingId = ++this.processingId; // Generate a new processing id so that the result returned from worker could be distinguished.
+    let sourceTypedArray = await scaledSourceTensor.data();
+
+    // Discard the source tensor because type-array (not tensor) will be passed to
+    // web worker
+    scaledSourceTensor.dispose();
+
+    // Generate a new processing id so that the result returned from worker could be
+    // distinguished.
+    ++this.processingId;
+    let processingId = this.processingId;
 
     let workerProxy, processRelayPromises;
 
     for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
       workerProxy = this.workerProxyArray[ i ];
-      this.processTensorPromiseArray[ i ] = workerProxy.typedArray_processTensor_async( processingId, sourceTypedArray );
-      // The sourceTypedArray is still valid here because it is copied (not transferred) to the above web worker.
+      this.processTensorPromiseArray[ i ]
+        = workerProxy.typedArray_processTensor_async( processingId, sourceTypedArray );
+      // The sourceTypedArray is still valid here because it is copied (not
+      // transferred) to the above web worker.
     }
 
-    // Since all web worker has received the source typed-array (parallelly), wait for all them done.
+    // Since all web worker has received the source typed-array (parallelly), wait
+    // for all them done.
     let promiseAllSettled = Promise.allSettled( this.processTensorPromiseArray );
     return promiseAllSettled;
   }
