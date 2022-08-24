@@ -394,11 +394,13 @@ class WorkerProxy_Base {
         break;
 
       case "transferBackSourceTypedArray": //{ command: "transferBackSourceTypedArray", workerId, processingId, sourceTypedArray };
-        this.on_transferBackSourceTypedArray( message.workerId, message.processingId, message.sourceTypedArray );
+        this.on_transferBackSourceTypedArray(
+          message.workerId, message.processingId, message.sourceTypedArray );
         break;
 
       case "processTensorResult": //{ command: "processTensorResult", workerId, processingId, resultTypedArray };
-        this.on_processTensorResult( message.workerId, message.processingId, message.resultTypedArray );
+        this.on_processTensorResult(
+          message.workerId, message.processingId, message.resultTypedArray );
         break;
 
     }
