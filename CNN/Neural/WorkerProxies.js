@@ -38,16 +38,19 @@ export { Base };
 class Base {
 
   /**
-   * Initialize this worker proxy controller. It will create two web workers and inform them to create a neural network per worker.
+   * Initialize this worker proxy controller. It will create two web workers and inform
+   * them to create a neural network per worker.
    *
    * @param {string} tensorflowJsURL
-   *   The URL of tensorflow javascript library. Every worker will load the library from the URL.
+   *   The URL of tensorflow javascript library. Every worker will load the library
+   * from the URL.
    *
    * @param {Net.Config} neuralNetConfig
    *   The configuration of the neural network which will be created by this web worker.
    *
    * @param {string} weightsSpreadsheetId
-   *   The Google Sheets spreadsheetId of neural network weights. Every worker will load weights from the spreadsheet to initialize one neural network.
+   *   The Google Sheets spreadsheetId of neural network weights. Every worker will
+   * load weights from the spreadsheet to initialize one neural network.
    *
    * @param {string} weightsAPIKey
    *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
@@ -59,30 +62,44 @@ class Base {
     this.weightsSpreadsheetId = weightsSpreadsheetId;
     this.weightsAPIKey = weightsAPIKey;
 
-    this.processingId = -1; // The current processing id. Negative means processTensor() has not been called. Every processTensor() call will use a new id.
+//!!! ...unfinished... (2022/08/24)
+// What if processingId become too large (e.g. infinity)?
+
+    // The current processing id. Negative means processTensor() has not been called.
+    // Every processTensor() call will use a new id.
+    this.processingId = -1;
 
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
 
     // Two web workers are sufficient.
     //
-    // Although we might want create as many web worker as logical CPU count, it might not need because our neural networks are
-    // learning by differential evolution. Differential evolution evaluates just two entities every time.
+    // Although we might want create as many web worker as logical CPU count, it might
+    // not need because our neural networks are learning by differential evolution.
+    // Differential evolution evaluates just two entities every time.
     //
-    // Note: How could the two neural networks determine all the actions of so many game objects? The method is to let the output of one
-    // neural network contain all actions of all game obejcts. But only half of the output actions will be used because one neural network
-    // only control one alignment of the game world.
+    // Note: How could the two neural networks determine all the actions of so many
+    //       game objects? The method is to let the output of one neural network
+    //       contains all actions of all game objects. But only half of the output
+    //       actions will be used because one neural network only control one alignment
+    //       of the game world.
+    //
     let totalWorkerCount = this.totalWorkerCount = 2;
 
-    this.initProgressAll = new NeuralNetProgress.InitProgressAll(); // Statistics of progress of all workers' initialization.
+    // Statistics of progress of all workers' initialization.
+    this.initProgressAll = new NeuralNetProgress.InitProgressAll();
 
     this.workerProxyArray = new Array( totalWorkerCount );
     for ( let i = 0; i < totalWorkerCount; ++i ) {
       let initProgress = this.initProgressAll.childrren[ i ];
       let workerProxy = this.workerProxyArray[ i ] = new WorkerProxy.Base();
-      workerProxy.init( i, tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey, initProgress );
+      workerProxy.init(
+        i, tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey,
+        initProgress
+      );
     }
 
-    this.processTensorPromiseArray = new Array( totalWorkerCount ); // Pre-allocation for reducing re-allocation.
+    // Pre-allocation for reducing re-allocation.
+    this.processTensorPromiseArray = new Array( totalWorkerCount );
   }
 
   /**

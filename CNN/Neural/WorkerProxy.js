@@ -95,7 +95,9 @@ class WorkerProxy_Base {
    *   This worker proxy will modify initProgress to report its web worker's
    * initialization progress.
    */
-  init( workerId, tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey,
+  init(
+    workerId,
+    tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey,
     initProgress ) {
 
     this.workerId = workerId;
