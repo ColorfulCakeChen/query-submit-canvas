@@ -280,7 +280,7 @@ class WorkerBody {
 
 
 
-if ( globalThis.document ) {
+if ( globalThis.document )
   return; // In main document context (Not in worker context). Do nothing. (Should not happen)
 
 // In worker context. Register message handler.
