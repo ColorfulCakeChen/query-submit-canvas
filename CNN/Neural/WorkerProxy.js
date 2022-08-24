@@ -337,10 +337,12 @@ class WorkerProxy_Base {
     if ( !processRelayPromises )
       return; // Ignore if processing id does not existed. (e.g. already handled)
 
-    processRelayPromises.relay.resolve( sourceTypedArray ); // This will be received by WorkerController.
+    // This will be received by WorkerController.
+    processRelayPromises.relay.resolve( sourceTypedArray );
 
     // Here, the processRelayPromises should not be removed from processRelayPromisesMap.
-    // It will be removed when processTensor() done completely (i.e. inside on_processTensorResult()).
+    // It will be removed when processTensor() done completely (i.e. inside
+    // on_processTensorResult()).
   }
 
   /**
@@ -353,7 +355,8 @@ class WorkerProxy_Base {
    *   The processing id of the result.
    *
    * @param {TypedArray} resultTypedArray
-   *   The result of the returned processing. It is the downloaded data of the result tensor.
+   *   The result of the returned processing. It is the downloaded data of the result
+   * tensor.
    */
   on_processTensorResult( workerId, processingId, resultTypedArray ) {
 
@@ -371,7 +374,8 @@ class WorkerProxy_Base {
 
 //!!! ...unfinished... Whether should the older (i.e. smaller) processingId be cleared from map? (Could the processing be out of order?)
 
-    this.processRelayPromisesMap.delete( processingId ); // Clear the info entry of handled processing result.
+    // Clear the info entry of handled processing result.
+    this.processRelayPromisesMap.delete( processingId );
   }
 
   /**
