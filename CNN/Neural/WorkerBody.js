@@ -1,12 +1,14 @@
 /**
- * @file This file is the main (i.e. body) javascript file of neural network web worker. It is not an importable module.
+ * @file This file is the main (i.e. body) javascript file of neural network web worker.
+ * It is not an importable module.
  *
+ * In module (non-classic) web worker, static import is available. But at the same
+ * time, importScripts() will not be avbailable. For solving this problem, using
+ * classic (non-module) web worker so that tensorflow.js can be loaded by
+ * importScripts(). At the same time, using dynamic import() to load ourselves module
+ * because import() can be used in classic (non-module) script.
  */
- 
-// In module (non-classic) web worker, static import is available. But at the same time, importScripts() will not be avbailable.
-// For solving this problem, using classic (non-module) web worker so that tensorflow.js can be loaded by importScripts().
-// At the same time, using dynamic import() to load ourselves module because import() can be used in classic (non-module) script.
-//
+
 //import * as Net from "./Net.js";
 
 /**
@@ -18,18 +20,22 @@ class WorkerBody {
   /**
    *
    * @param {number} workerId
-   *   A non-negative integer represents this worker's id. The id of the first worker should be 0.
+   *   A non-negative integer represents this worker's id. The id of the first worker
+   * should be 0.
    *
    * @param {Net.Config} neuralNetConfig
    *   The configuration of the neural network which will be created by this web worker.
    *
    * @param {string} weightsSpreadsheetId
-   *   The Google Sheets spreadsheetId of neural network weights. Every worker will load weights from the spreadsheet to initialize one neural network.
+   *   The Google Sheets spreadsheetId of neural network weights. Every worker will
+   * load weights from the spreadsheet to initialize one neural network.
    *
    * @param {string} weightsAPIKey
    *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
    */
-  init( workerId = 0, tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey ) {
+  init(
+    workerId = 0,
+    tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey ) {
 
     if ( workerId < 0 )
       workerId = 0;
@@ -40,7 +46,8 @@ class WorkerBody {
     this.weightsSpreadsheetId = weightsSpreadsheetId;
     this.weightsAPIKey = weightsAPIKey;
 
-    let bKeepInputTensor = false; // Because every web worker will copy the input, there is not necessary to keep input.
+    // Because every web worker will copy the input, there is not necessary to keep input.
+    let bKeepInputTensor = false;
 
 //!!! ...unfinished... global scope ? report progress ?
 
@@ -109,30 +116,39 @@ class WorkerBody {
 // The capture group 1 is one cell of one column of google sheet.
 
   /**
-   * Convert source image data to tensor3d, scale it, transfer scaled source typed-array back to WorkerProxy, compute neural network,
-   * pass result back to WorkerProxy.
+   * Convert source image data to tensor3d, scale it, transfer scaled source
+   * typed-array back to WorkerProxy, compute neural network, pass result back
+   * to WorkerProxy.
    *
    * @param {number} processingId
-   *   The id of this processing. It is used when reporting processing resultso that WorkerProxy could find back corresponding promise.
+   *   The id of this processing. It is used when reporting processing result so
+   * that WorkerProxy could find out corresponding promise.
    *
    * @param {ImageData} sourceImageData
-   *   The image data to be processed. The size should be [ sourceImageData.height, sourceImageData.width ]
-   * = [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ] ]. And it should RGBA 4 channels.
+   *   The image data to be processed. The size should be [ sourceImageData.height,
+   * sourceImageData.width ] = [ this.neuralNet.sourceImageHeightWidth[ 0 ],
+   * this.neuralNet.sourceImageHeightWidth[ 1 ] ]. And it should RGBA 4 channels.
    */
   imageData_transferBack_processTensor( processingId, sourceImageData ) {
 
     // Create (scaled) source image so that then neural network can process it.
     //
-    // Usually, only the first web worker ( workerId == 0 ) is responsible for scaling the source image data to default size.
-    // After that, all other web worker received the already scaled typed-array.
+    // Usually, only the first web worker ( workerId == 0 ) is responsible for
+    // scaling the source image data to default size. After that, all other web
+    // worker received the already scaled typed-array.
     //
-    // The reason why not use source ImageData directly is that the next web worker could re-create tensor3d more effficiently.
+    // The reason why not use source ImageData directly is that the next web worker
+    // could re-create tensor3d more effficiently.
     //
-    // ImageData uses Uint8ClampedArray internally. If it is past directly, the next web worker needs create tensor3d by fromPixel()
-    // which internally converts twice: from Uint8ClampedArray to Int32Array and from Int32Array to tensor3d.
+    // ImageData uses Uint8ClampedArray internally. If it is past directly, the next
+    // web worker needs create tensor3d by fromPixels() which internally converts
+    // twice: from Uint8ClampedArray to Int32Array and from Int32Array to tensor3d.
     //
-    // If passing typed-array (Float32Array), the next web worker could use it to re-create tensord3d directly.
-    let scaledSourceTensor = this.neuralNetConfig.create_ScaledSourceTensor_from_PixelData( sourceImageData );
+    // If passing typed-array (Float32Array), the next web worker could use it to
+    // re-create tensord3d directly.
+    //
+    let scaledSourceTensor
+      = this.neuralNetConfig.create_ScaledSourceTensor_from_PixelData( sourceImageData );
 
 //!!! ...unfinished... If the this.neuralNetConfig (which is past through web worker message) is not real NeuralNet.Config, the following should be used.
 //    let scaledSourceTensor = NeuralNet.Config.create_ScaledSourceTensor_from_PixelData.call( this.neuralNetConfig, sourceImageData );
