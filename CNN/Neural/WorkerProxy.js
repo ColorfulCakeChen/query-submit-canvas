@@ -75,7 +75,7 @@ class WorkerProxy_Base {
    *
    * @param {number} workerId
    *   This id of this worker proxy (and web worker). This is the array index in the
-   * parent container (i.e. WorkerController).
+   * parent container (i.e. WorkerProxies).
    *
    * @param {string} tensorflowJsURL
    *   The URL of tensorflow javascript library. Every worker will load the library
@@ -176,7 +176,7 @@ class WorkerProxy_Base {
     // the promises can be found and resolved when processing is done.
     //
     //   - The processRelayPromises.relay.promise will be await by outter (i.e.
-    //       WorkerController) to transfer source typed-array to every web worker
+    //       WorkerProxies) to transfer source typed-array to every web worker
     //       serially.
     //
     //   - The processRelayPromises.process.promise will be returned as the result
@@ -225,7 +225,7 @@ class WorkerProxy_Base {
     // the promises can be found and resolved when processing is done.
     //
     //   - The processRelayPromises.relay.promise will be await by outter (i.e.
-    //       WorkerController) to transfer source typed-array to every web worker
+    //       WorkerProxies) to transfer source typed-array to every web worker
     //       serially.
     //
     //   - The processRelayPromises.process.promise will be returned as the result
@@ -339,7 +339,7 @@ class WorkerProxy_Base {
     if ( !processRelayPromises )
       return; // Ignore if processing id does not existed. (e.g. already handled)
 
-    // This will be received by WorkerController.
+    // This will be received by WorkerProxies.
     processRelayPromises.relay.resolve( sourceTypedArray );
 
     // Here, the processRelayPromises should not be removed from processRelayPromisesMap.

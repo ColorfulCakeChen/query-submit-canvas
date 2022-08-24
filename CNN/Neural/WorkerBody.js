@@ -137,12 +137,12 @@ class WorkerBody {
 //!!! ...unfinished... If the this.neuralNetConfig (which is past through web worker message) is not real NeuralNet.Config, the following should be used.
 //    let scaledSourceTensor = NeuralNet.Config.create_ScaledSourceTensor_from_PixelData.call( this.neuralNetConfig, sourceImageData );
 
-    // Download the scaledSourceTensor as typed-array (asynchronously), and transfer it back to WorkerProxy (and inform WorkerController).
+    // Download the scaledSourceTensor as typed-array (asynchronously), and transfer it back to WorkerProxy (and inform WorkerProxies).
     //
     // The reason why it is done asynchronously is for not blocking the following computation of neural network.
     this.transferBackSourceScaledTensorAsync( processingId, scaledSourceTensor );
 
-    // At the same time (the scaled source typed-array data is transferring back to WorkerProxy and then WorkerController), this worker is
+    // At the same time (the scaled source typed-array data is transferring back to WorkerProxy and then WorkerProxies), this worker is
     // still computing the neural network parallelly.
     this.processTensorAndDispose( processingId, scaledSourceTensor );
   }
@@ -168,7 +168,7 @@ class WorkerBody {
     // Transfer (not copy) the sourceTypedArray back to WorkerProxy). This will invalid sourceTypedArray.
     this.transferBackSourceTypedArray( processingId, sourceTypedArray );
 
-    // At the same time (the sourceTypedArray is transferring back to WorkerProxy and then WorkerController), this worker is still computing
+    // At the same time (the sourceTypedArray is transferring back to WorkerProxy and then WorkerProxies), this worker is still computing
     // the neural network parallelly.
     this.processTensorAndDispose( processingId, scaledSourceTensor );
   }
@@ -210,14 +210,14 @@ class WorkerBody {
     let resultTypedArray = resultTensor3d.dataSync(); // Download synchronously (because here is web worker).
     resultTensor3d.dispose(); // The result tensor should also be disposed.
 
-    // Pass the output of neural network to WorkerProxy (and inform WorkerController).
+    // Pass the output of neural network to WorkerProxy (and inform WorkerProxies).
     let message = { command: "processTensorResult", workerId: this.workerId, processingId: processingId, resultTypedArray: resultTypedArray };
     postMessage( message, [ message.resultTypedArray.buffer ] );
   }
 
   /**
    * Download the scaledSourceTensor as typed-array (Float32Array) asynchronously. Transfer the typed-array back to WorkerProxy
-   * (and inform WorkerController) so that it can be past to next web worker.
+   * (and inform WorkerProxies) so that it can be past to next web worker.
    *
    * @param {number} processingId
    *   The id of this processing. It is used by WorkerProxy to found back corresponding promise.
@@ -231,7 +231,7 @@ class WorkerBody {
   }
 
   /**
-   * Transfer source typed-array back to WorkerProxy (and inform WorkerController) so that it can be past to next web worker.
+   * Transfer source typed-array back to WorkerProxy (and inform WorkerProxies) so that it can be past to next web worker.
    *
    * @param {number} processingId
    *   The id of this processing. It is used by WorkerProxy to found back corresponding promise.

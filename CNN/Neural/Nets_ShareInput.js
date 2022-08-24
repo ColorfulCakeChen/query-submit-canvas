@@ -19,17 +19,19 @@ export { Nets_ShareInput_Base as Base };
 
 
 //!!! ...unfinished... (2022/05/25)
-// Using SharedArrayBuffer to pass input image between different web worker.
+// Perhaps, Using SharedArrayBuffer to pass input image between different web worker.
 //
 
 
 /**
- * There are many neural networks inside. The apply() feeds the same input to the these different neural networks.
+ * There are many neural networks inside. The apply() feeds the same input to the
+ * these different neural networks.
  *
  *
  * @member {number[]} sourceImageHeightWidth
- *   The size (i.e. [ height, width ]) of the source image. When apply() is called, the source image will be extracted from the sourceCanvas
- * and be resized to this size. Every neural network receives this resized source image.
+ *   The size (i.e. [ height, width ]) of the source image. When apply() is called,
+ * the source image will be extracted from the sourceCanvas and be resized to this
+ * size. Every neural network receives this resized source image.
  */
 class Nets_ShareInput_Base {
 

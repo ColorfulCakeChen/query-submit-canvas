@@ -27,8 +27,8 @@ export { Base };
  *
  * However, serially transferring hurts the performance. Workers are better to compute
  * parallelly. So every worker should transfer the (possible scaled) source image data
- * back to this WorkerController, and keep computing neural network at the same. And
- * then, this WorkerController will transfer the source image data to the next worker
+ * back to this WorkerProxies, and keep computing neural network at the same. And
+ * then, this WorkerProxies will transfer the source image data to the next worker
  * as soon as possible.
  *
  * Finally, this WorkerProxies collects all web workers' processTensor() results in
