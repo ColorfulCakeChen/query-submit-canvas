@@ -1,5 +1,6 @@
 /**
- * @file This file is an importable module to handle neural (web) worker body by worker proxy.
+ * @file This file is an importable module to handle neural (web) worker body by
+ * worker proxy.
  *
  */
 
@@ -11,21 +12,28 @@ export { Base };
 
 
 /**
- * The container of WorkerProxy. It orchestrates these WorkerProxy. Especially, it transfers (scaled) source image data to and from
- * web worker. This could maximize parallel computing under the restriction transferring source image data to every web worker serially.
+ * The container of WorkerProxy. It orchestrates these WorkerProxy. Especially, it
+ * transfers (scaled) source image data to and from web worker. This could maximize
+ * parallel computing under the restriction transferring source image data to every
+ * web worker serially.
  *
- * Every worker handles one neural network. When processTensor() is called, the input (usually a large memory block)
- * will be transffered to the 1st worker to start computing, and then transffered to the 2nd worker to start computing, ... etc.
+ * Every worker handles one neural network. When processTensor() is called, the input
+ * (usually a large memory block) will be transffered to the 1st worker to start
+ * computing, and then transffered to the 2nd worker to start computing, ... etc.
  *
- * When passing large data by Worker.postMessage(), it is preferred by transferring (not by copying). If the large data wants to be
- * transferred (not copied) to many workers, the only possible way is to transferring them serially.
+ * When passing large data by Worker.postMessage(), it is preferred by transferring
+ * (not by copying). If the large data wants to be transferred (not copied) to many
+ * workers, the only possible way is to transferring them serially.
  *
- * However, serially transferring hurts the performance. Workers are better to compute parallelly. So every worker should transfer the
- * (possible scaled) source image data back to this WorkerController, and keep computing neural network at the same. And then, this
- * WorkerController will transfer the source image data to the next worker as soon as possible.
+ * However, serially transferring hurts the performance. Workers are better to compute
+ * parallelly. So every worker should transfer the (possible scaled) source image data
+ * back to this WorkerController, and keep computing neural network at the same. And
+ * then, this WorkerController will transfer the source image data to the next worker
+ * as soon as possible.
  *
- * Finally, this WorkerProxies collects all web workers' processTensor() results in a promise. The promise will resolve with an
- * array of typed-array. Every typed-array is the output of one neural network.
+ * Finally, this WorkerProxies collects all web workers' processTensor() results in
+ * a promise. The promise will resolve with an array of typed-array. Every typed-array
+ * is the output of one neural network.
  */
 class Base {
 
