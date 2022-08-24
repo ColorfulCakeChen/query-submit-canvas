@@ -203,29 +203,46 @@ class WorkerProxy_Base {
    *   The processing id for distinguishing different processing request and result.
    *
    * @param {Float32Array} sourceTypedArray
-   *   The source typed-data to be processed. Its shape should be [ height, width, channel ] = [ this.neuralNet.sourceImageHeightWidth[ 0 ],
-   * this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ]. This usually is come from the previous web work
-   * by on_transferBackSourceTypedArray(). This usually is called for the second (and after) web worker in chain. The web worker will
-   * tansfer back this scaled typed-array. The scaled typed-array should continuously be used to call the next web worker's
+   *   The source typed-data to be processed. Its shape should be [ height, width,
+   * channelCount ] = [ this.neuralNet.sourceImageHeightWidth[ 0 ],
+   * this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ].
+   * This usually is come from the previous web work by on_transferBackSourceTypedArray().
+   * This usually is called for the second (and after) web worker in chain. The web
+   * worker will tansfer back this scaled typed-array. The scaled typed-array should
+   * continuously be used to call the next web worker's
    * typedArray_transferBack_processTensor_async().
    *
    * @return {Promise}
-   *   Return a promise which will be resolved when this (WorkerProxy owned) web worker's neural network computing done. It resolved with
-   * a typed-array which comes from the output tensor of the web worker's neural network.
+   *   Return a promise which will be resolved when this (WorkerProxy owned) web
+   * worker's neural network computing done. It resolved with a typed-array which
+   * comes from the output tensor of the web worker's neural network.
    */
   async typedArray_transferBack_processTensor_async( processingId, sourceTypedArray ) {
 
-    // Prepare promises and their function object (resolve and reject) in a map so that the promises can be found and resolved when processing is done.
+    // Prepare promises and their function object (resolve and reject) in a map so that
+    // the promises can be found and resolved when processing is done.
     //
-    // The processRelayPromises.relay.promise will be await by outter (i.e. WorkerController) to transfer source typed-array to every web worker serially.
-    // The processRelayPromises.process.promise will be returned as the result of this processTensor().
+    //   - The processRelayPromises.relay.promise will be await by outter (i.e.
+    //       WorkerController) to transfer source typed-array to every web worker
+    //       serially.
+    //
+    //   - The processRelayPromises.process.promise will be returned as the result
+    //       of this processTensor().
+    //
     let processRelayPromises = new ProcessRelayPromises( this.workerId, processingId );
     this.processRelayPromisesMap.set( processingId, processRelayPromises );
     
     // Transfer (not copy) the source typed-array to this (worker proxy owned) web worker.
-    let message = { command: "typedArray_transferBack_processTensor", processingId: processingId, sourceTypedArray: sourceTypedArray };
+    let message = {
+      command: "typedArray_transferBack_processTensor",
+      processingId: processingId,
+      sourceTypedArray: sourceTypedArray
+    };
+
     this.worker.postMessage( message, [ message.sourceTypedArray.buffer ] );
-    // Now, sourceTypedArray.buffer has become invalid because it is transferred (not copied) to web worker.
+
+    // Now, sourceTypedArray.buffer has become invalid because it is transferred
+    // (not copied) to web worker.
 
     return processRelayPromises.process.promise;
   }
