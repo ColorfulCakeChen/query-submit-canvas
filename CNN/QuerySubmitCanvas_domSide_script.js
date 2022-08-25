@@ -9,4 +9,8 @@
  */
 
 // Asynchronously Load other modules in a namespace.
-await import( "./QuerySubmitCanvas_ModuleLoader.js" );
+import( "./QuerySubmitCanvas_ModuleLoader.js" ).then( ( module ) => {
+  console.log( "QuerySubmitCanvas_domSide_script.js: module loaded..." );
+} )
+
+
