@@ -15,12 +15,26 @@ import * as ScriptLoader from "./util/ScriptLoader.js"
 // Ourselves neural network library should be loaded here by dynamic import() function.
 //
 
+/**
+ * Load the following modules:
+ *   - Google Visualization API
+
+//!!! ...unfinished... (2022/08/25)
+
+ *   - Google Tag Manager
+ *   - NeuralNet
+ *
+ */
 class ModuleLoader {
 
   /** */
   async initAsync() {
     return Promise.all( [
       this.googleCharts_initAsync(),
+
+  //!!! ...unfinished... (2022/08/25)
+  // should wait for Google Tag Manager and our modules.
+
     ] );
   }
 
@@ -42,11 +56,6 @@ class ModuleLoader {
 
     await googleChartsSafeLoad;
     // console.log( "QuerySubmitCanvas_module_script.js: google.charts.load() done..." );
-
-  //!!! ...unfinished... (2022/08/25)
-  // should wait for Google Visualization API, Google Tag Manager and our modules.
-  // Perhaps, not wait for window loaded.
-
   }
 
 }
