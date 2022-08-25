@@ -5,10 +5,12 @@
  * This provides a namespace to load other scripts and modules.
  */
 
+import * as ScriptLoader from "./util/ScriptLoader.js"
 
 //!!! ...unfinished... (2022/08/25)
 // Google Visualization API, Google Tag Manager should be load here
 // (before window_onload) by append HTMLScriptElement to document head.
+// (ScriptLoader.createPromise)
 //
 // Ourselves neural network library should be loaded here by dynamic import() function.
 //
