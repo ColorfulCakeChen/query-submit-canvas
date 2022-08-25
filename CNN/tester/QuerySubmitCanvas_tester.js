@@ -18,7 +18,8 @@ window.addEventListener( "load", window_onload );
 function window_onload( e ) {
   console.log( "window_onload..." );
 
-  const canvas = document.getElementById( "canvas" );
+  const canvas = document.querySelector( "canvas" );
   const ctx = canvas.getContext( "2d" );
+  ctx.fillStyle = "green";
   ctx.fillRect( 0, 0, canvas.width, canvas.height );
 }
