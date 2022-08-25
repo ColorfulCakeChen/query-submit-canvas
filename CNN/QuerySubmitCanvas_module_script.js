@@ -16,6 +16,10 @@ import * as ScriptLoader from "./util/ScriptLoader.js"
 //
 
 
+//!!! ...unfinished... (2022/08/25)
+// should wait for Google Visualization API, Google Tag Manager and our modules.
+// Perhaps, not wait for window loaded.
+
 window.addEventListener( "load", function ( e ) {
   console.log( "QuerySubmitCanvas_module_script.js: window_onload..." );
 
