@@ -15,47 +15,41 @@ import * as ScriptLoader from "./util/ScriptLoader.js"
 // Ourselves neural network library should be loaded here by dynamic import() function.
 //
 
-async function googleCharts_init() {
+class ModuleLoader {
 
-  const googleChartsLoaderUrl = "https://www.gstatic.com/charts/loader.js";
-  const googleChartsLoaderHTMLElementId = "googleChartsLoaderJs";
-  let googleChartsLoader = ScriptLoader.createPromise(
-    googleChartsLoaderUrl, false, googleChartsLoaderHTMLElementId );
+  /** */
+  async initAsync() {
+    return Promise.all( [
+      this.googleCharts_initAsync(),
+    ] );
+  }
 
-  await googleChartsLoader;
-  console.log( "QuerySubmitCanvas_module_script.js: googleChartsLoader done..." );
+  /** */
+  async googleCharts_initAsync() {
 
-//!!! (2022/08/25 Remarked) google.charts.safeLoad() is a promise already.
-//   let googleChartsSafeLoad = new Promise( ( resolve, reject ) => {
-//     google.charts.safeLoad( "current", {
-//       //packages: [ "corechart" ],
-// //        callback: () => { console.log( "Hi" ); } //resolve()
-// //        callback: resolve
-//     } );
+    const googleChartsLoaderUrl = "https://www.gstatic.com/charts/loader.js";
+    const googleChartsLoaderHTMLElementId = "googleChartsLoaderJs";
 
-//     //google.charts.setOnLoadCallback( resolve );
-//     //google.charts.setOnLoadCallback( resolve );
-//   } );
+    let googleChartsLoader = ScriptLoader.createPromise(
+      googleChartsLoaderUrl, false, googleChartsLoaderHTMLElementId );
 
-  let googleChartsSafeLoad = google.charts.safeLoad( "current", {
-      //packages: [ "corechart" ],
-//        callback: () => { console.log( "Hi" ); } //resolve()
-//        callback: resolve
-  } );
+    await googleChartsLoader;
+    // console.log( "QuerySubmitCanvas_module_script.js: googleChartsLoader done..." );
 
-  await googleChartsSafeLoad;
-  console.log( "QuerySubmitCanvas_module_script.js: google.charts.load() done..." );
+    let googleChartsSafeLoad = google.charts.safeLoad( "current", {
+      // packages: [ "corechart" ],
+    } );
 
-//!!! ...unfinished... (2022/08/25)
-// should wait for Google Visualization API, Google Tag Manager and our modules.
-// Perhaps, not wait for window loaded.
+    await googleChartsSafeLoad;
+    // console.log( "QuerySubmitCanvas_module_script.js: google.charts.load() done..." );
+
+  //!!! ...unfinished... (2022/08/25)
+  // should wait for Google Visualization API, Google Tag Manager and our modules.
+  // Perhaps, not wait for window loaded.
+
+  }
 
 }
 
-async function initAsync() {
-  return Promise.all( [
-    googleCharts_init(),
-  ] );
-}
-
-initAsync();
+ModuleLoader.Singleton = new ModuleLoader();
+ModuleLoader.Singleton.initAsync();
