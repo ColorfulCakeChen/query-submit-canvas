@@ -20,5 +20,6 @@ window.addEventListener( "load", function ( e ) {
   console.log( "QuerySubmitCanvas_domSide_script.js: window_onload..." );
 
 //!!! ...unfinished... (2022/08/25)
+  importScripts();
 
 } );
