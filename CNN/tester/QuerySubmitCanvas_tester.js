@@ -16,10 +16,9 @@
 window.addEventListener( "load", window_onload );
 
 function window_onload( e ) {
-  console.log("window_onload...");
+  console.log( "window_onload..." );
 
-  const canvas = document.querySelector('canvas');
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = 'green';
-  ctx.fillRect(10, 10, 100, 100);
+  const canvas = document.getElementById( "canvas" );
+  const ctx = canvas.getContext( "2d" );
+  ctx.fillRect( 0, 0, canvas.width, canvas.height );
 }
