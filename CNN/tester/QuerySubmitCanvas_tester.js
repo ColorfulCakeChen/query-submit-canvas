@@ -13,13 +13,11 @@
  * because import() can be used in classic (non-module) script.
  */
 
-window.addEventListener( "load", window_onload );
-
-function window_onload( e ) {
+window.addEventListener( "load", function ( e ) {
   console.log( "QuerySubmitCanvas_tester.js: window_onload..." );
 
   const canvas = document.querySelector( "canvas" );
   const ctx = canvas.getContext( "2d" );
   ctx.fillStyle = "green";
   ctx.fillRect( 0, 0, canvas.width, canvas.height );
-}
+} );

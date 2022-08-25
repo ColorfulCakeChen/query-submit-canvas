@@ -13,9 +13,7 @@
  * because import() can be used in classic (non-module) script.
  */
 
-window.addEventListener( "load", window_onload );
-
-function window_onload( e ) {
+window.addEventListener( "load", function ( e ) {
   console.log( "QuerySubmitCanvas_domSide_script.js: window_onload..." );
 
-}
+} );
