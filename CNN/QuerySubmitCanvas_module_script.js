@@ -30,7 +30,7 @@ async function googleCharts_init() {
     googleChartsSafeLoad = new Promise( ( resolve, reject ) => {
       google.charts.safeLoad( "current", {
         //packages: [ "corechart" ],
-        callback: () => resolve()
+        callback: () => { console.log( "Hi" ); } //resolve()
       } );
     } );
   }
