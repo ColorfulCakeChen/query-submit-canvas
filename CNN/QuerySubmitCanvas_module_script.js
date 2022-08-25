@@ -15,11 +15,12 @@ import * as ScriptLoader from "./util/ScriptLoader.js"
 // Ourselves neural network library should be loaded here by dynamic import() function.
 //
 
-async function init() {
+async function googleCharts_init() {
 
   const googleChartsLoaderUrl = "https://www.gstatic.com/charts/loader.js";
+  const googleChartsLoaderHTMLElementId = "googleChartsLoaderJs";
   let googleChartsLoader = ScriptLoader.createPromise(
-    googleChartsLoaderUrl, false, "googleChartsLoaderJs" );
+    googleChartsLoaderUrl, false, googleChartsLoaderHTMLElementId );
 
   await googleChartsLoader;
   console.log( "QuerySubmitCanvas_module_script.js: googleChartsLoader done..." );
@@ -43,4 +44,10 @@ async function init() {
 
 }
 
-init();
+async function initAsync() {
+  return Promise.all( [
+    googleCharts_init(),
+  ] );
+}
+
+initAsync();
