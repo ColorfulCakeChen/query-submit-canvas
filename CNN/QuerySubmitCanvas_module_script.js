@@ -31,10 +31,11 @@ async function googleCharts_init() {
       google.charts.safeLoad( "current", {
         //packages: [ "corechart" ],
 //        callback: () => { console.log( "Hi" ); } //resolve()
-        callback: resolve
+//        callback: resolve
       } );
 
       //google.charts.setOnLoadCallback( resolve );
+      google.charts.setOnLoadCallback( resolve );
     } );
   }
 
