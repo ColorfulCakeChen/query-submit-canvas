@@ -33,6 +33,8 @@ async function googleCharts_init() {
 //        callback: () => { console.log( "Hi" ); } //resolve()
         callback: resolve
       } );
+
+      //google.charts.setOnLoadCallback( resolve );
     } );
   }
 
