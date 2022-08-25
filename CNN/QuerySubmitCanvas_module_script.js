@@ -25,19 +25,23 @@ async function googleCharts_init() {
   await googleChartsLoader;
   console.log( "QuerySubmitCanvas_module_script.js: googleChartsLoader done..." );
 
-  let googleChartsSafeLoad;
-  {
-    googleChartsSafeLoad = new Promise( ( resolve, reject ) => {
-      google.charts.safeLoad( "current", {
-        //packages: [ "corechart" ],
+//!!! (2022/08/25 Remarked) google.charts.safeLoad() is a promise already.
+//   let googleChartsSafeLoad = new Promise( ( resolve, reject ) => {
+//     google.charts.safeLoad( "current", {
+//       //packages: [ "corechart" ],
+// //        callback: () => { console.log( "Hi" ); } //resolve()
+// //        callback: resolve
+//     } );
+
+//     //google.charts.setOnLoadCallback( resolve );
+//     //google.charts.setOnLoadCallback( resolve );
+//   } );
+
+  let googleChartsSafeLoad = google.charts.safeLoad( "current", {
+      //packages: [ "corechart" ],
 //        callback: () => { console.log( "Hi" ); } //resolve()
 //        callback: resolve
-      } );
-
-      //google.charts.setOnLoadCallback( resolve );
-      google.charts.setOnLoadCallback( resolve );
-    } );
-  }
+  } );
 
   await googleChartsSafeLoad;
   console.log( "QuerySubmitCanvas_module_script.js: google.charts.load() done..." );
