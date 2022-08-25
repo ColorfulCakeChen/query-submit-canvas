@@ -5,6 +5,8 @@
  * This provides a namespace to load other scripts and modules.
  */
 
+export { ModuleLoader };
+
 import * as ScriptLoader from "./util/ScriptLoader.js"
 
 //!!! ...unfinished... (2022/08/25)
@@ -61,4 +63,3 @@ class ModuleLoader {
 }
 
 ModuleLoader.Singleton = new ModuleLoader();
-ModuleLoader.Singleton.initAsync();
