@@ -58,6 +58,8 @@ class ModuleLoader {
 
     await googleChartsSafeLoad;
     console.log( "QuerySubmitCanvas_module_script.js: google.charts.load() done..." );
+
+    return true;
   }
 
 }
