@@ -11,9 +11,9 @@
 // Asynchronously Load other modules in a namespace.
 import( "./QuerySubmitCanvas_ModuleLoader.js" ).then( ( module ) => {
   module.ModuleLoader.Singleton.initAsync().then( ( data ) => {
-    console.log( `QuerySubmitCanvas_domSide_script.js: module loaded...`
-      + `( ${data} )`
-    );
+    // console.log( `QuerySubmitCanvas_domSide_script.js: module loaded...`
+    //   + `( ${data} )`
+    // );
   } );
 } )
 

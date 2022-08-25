@@ -59,7 +59,7 @@ class ModuleLoader {
     } );
 
     await googleChartsSafeLoad;
-    console.log( `${debugPrefix}: google.charts.load() done...` );
+    // console.log( `${debugPrefix}: google.charts.load() done...` );
 
     return true;
   }
