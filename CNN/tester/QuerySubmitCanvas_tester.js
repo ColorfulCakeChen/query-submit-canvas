@@ -16,7 +16,7 @@
 window.addEventListener( "load", window_onload );
 
 function window_onload( e ) {
-  console.log("util testing...");
+  console.log("window_onload...");
 
   const canvas = document.querySelector('canvas');
   const ctx = canvas.getContext('2d');
