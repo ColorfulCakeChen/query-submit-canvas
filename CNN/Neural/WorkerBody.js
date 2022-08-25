@@ -115,6 +115,9 @@ class WorkerBody {
 //
 // The capture group 1 is one cell of one column of google sheet.
 
+//!!! ...unfinished... (2022/08/25)
+// Perhaps, use ImageBitmap (transferred object) to transfer image between web worker.
+
   /**
    * Convert source image data to tensor3d, scale it, transfer scaled source
    * typed-array back to WorkerProxy, compute neural network, pass result back
