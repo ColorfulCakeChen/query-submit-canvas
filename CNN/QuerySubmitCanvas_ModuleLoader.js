@@ -17,6 +17,8 @@ import * as ScriptLoader from "./util/ScriptLoader.js"
 // Ourselves neural network library should be loaded here by dynamic import() function.
 //
 
+const debugPrefix = "QuerySubmitCanvas_ModuleLoader.js";
+
 /**
  * Load the following modules:
  *   - Google Visualization API
@@ -50,14 +52,14 @@ class ModuleLoader {
       googleChartsLoaderUrl, false, googleChartsLoaderHTMLElementId );
 
     await googleChartsLoader;
-    // console.log( "QuerySubmitCanvas_module_script.js: googleChartsLoader done..." );
+    // console.log( "${debugPrefix}: googleChartsLoader done..." );
 
     let googleChartsSafeLoad = google.charts.safeLoad( "current", {
       // packages: [ "corechart" ],
     } );
 
     await googleChartsSafeLoad;
-    console.log( "QuerySubmitCanvas_module_script.js: google.charts.load() done..." );
+    console.log( "${debugPrefix}: google.charts.load() done..." );
 
     return true;
   }
