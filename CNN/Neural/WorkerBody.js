@@ -308,6 +308,10 @@ if ( globalThis.document )
 
 // In worker context. Register message handler.
 
+//!!! ...unfinished... (2022/08/25)
+// Perhaps, use specific MessageChannel for every command so that the command string
+// is no longer necessary.
+
 globalThis.onmessage = function( e ) {
   let message = e.data;
 
