@@ -118,6 +118,9 @@ class WorkerBody {
 //!!! ...unfinished... (2022/08/25)
 // Perhaps, use ImageBitmap (transferred object) to transfer image between web worker.
 // i.e. using tf.browser.fromPixelsAsync( canvas )
+//
+// A: No. It is slower to create tf.tensor from ImageBitmap. Use ImageData is faster.
+//
 
   /**
    * Convert source image data to tensor3d, scale it, transfer scaled source
