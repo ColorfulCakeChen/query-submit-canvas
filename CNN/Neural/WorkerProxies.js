@@ -62,11 +62,13 @@ class Base {
     this.weightsSpreadsheetId = weightsSpreadsheetId;
     this.weightsAPIKey = weightsAPIKey;
 
-//!!! ...unfinished... (2022/08/24)
-// What if processingId become too large (e.g. infinity)?
-
     // The current processing id. Negative means processTensor() has not been called.
     // Every processTensor() call will use a new id.
+    //
+    // Q: What if processingId become too large (e.g. infinity)?
+    // A: Because Number.MAX_SAFE_INTEGER is pretty large (at least, 2 ** 52 ),
+    //    it is not so easy to become out of bounds.
+    //
     this.processingId = -1;
 
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
