@@ -9,4 +9,4 @@
  */
 
 // Asynchronously Load other modules in a namespace.
-import( "./QuerySubmitCanvas_ModuleLoader.js" );
+await import( "./QuerySubmitCanvas_ModuleLoader.js" );
