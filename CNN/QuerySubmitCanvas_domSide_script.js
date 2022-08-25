@@ -6,24 +6,21 @@
  * Please use their .AddRemoteScriptDependency() method to load this script as
  * type "external-dom-script"
  *
- * In module (non-classic) script, static import is available. But at the same
- * time, importScripts() will not be avbailable. For solving this problem, using
- * classic (non-module) script so that Google Visualization API, Google Tag Manager,
- * tensorflow.js can be loaded by importScripts(). At the same time, using dynamic
- * import() to load ourselves module because import() can be used in classic
- * (non-module) script.
  */
 
 
 //!!! ...unfinished... (2022/08/25)
 // Google Visualization API, Google Tag Manager should be load here
-// (before window_onload).
+// (before window_onload) by append HTMLScriptElement to document head.
+//
+// Ourselves neural network library should be loaded here by dynamic import() function.
+//
 
 
 window.addEventListener( "load", function ( e ) {
   console.log( "QuerySubmitCanvas_domSide_script.js: window_onload..." );
 
 //!!! ...unfinished... (2022/08/25)
-  importScripts();
+  import();
 
 } );
