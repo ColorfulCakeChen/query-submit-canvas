@@ -117,6 +117,7 @@ class WorkerBody {
 
 //!!! ...unfinished... (2022/08/25)
 // Perhaps, use ImageBitmap (transferred object) to transfer image between web worker.
+// i.e. using tf.browser.fromPixelsAsync( canvas )
 
   /**
    * Convert source image data to tensor3d, scale it, transfer scaled source
