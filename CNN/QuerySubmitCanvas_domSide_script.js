@@ -8,19 +8,5 @@
  *
  */
 
-
-//!!! ...unfinished... (2022/08/25)
-// Google Visualization API, Google Tag Manager should be load here
-// (before window_onload) by append HTMLScriptElement to document head.
-//
-// Ourselves neural network library should be loaded here by dynamic import() function.
-//
-
-
-window.addEventListener( "load", function ( e ) {
-  console.log( "QuerySubmitCanvas_domSide_script.js: window_onload..." );
-
-//!!! ...unfinished... (2022/08/25)
-  import();
-
-} );
+// Asynchronously Load other modules in a namespace.
+import( "QuerySubmitCanvas_module_script.js" );
