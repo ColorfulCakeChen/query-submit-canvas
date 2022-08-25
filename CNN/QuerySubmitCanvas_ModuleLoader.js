@@ -52,14 +52,14 @@ class ModuleLoader {
       googleChartsLoaderUrl, false, googleChartsLoaderHTMLElementId );
 
     await googleChartsLoader;
-    // console.log( "${debugPrefix}: googleChartsLoader done..." );
+    // console.log( `${debugPrefix}: googleChartsLoader done...` );
 
     let googleChartsSafeLoad = google.charts.safeLoad( "current", {
       // packages: [ "corechart" ],
     } );
 
     await googleChartsSafeLoad;
-    console.log( "${debugPrefix}: google.charts.load() done..." );
+    console.log( `${debugPrefix}: google.charts.load() done...` );
 
     return true;
   }
