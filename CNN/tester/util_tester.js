@@ -47,8 +47,8 @@ function test() {
 
       if ( 100 != progress.valuePercentage )
         throw Error( `util_tester.test(): `
-          `Progress (${progress.valuePercentage}) should be 100 `
-          `after testing done.`);
+          + `Progress (${progress.valuePercentage}) should be 100 `
+          + `after testing done.`);
 
       progress.disposeResources_and_recycleToPool();
       progress = null;

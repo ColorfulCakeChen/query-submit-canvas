@@ -70,6 +70,15 @@ class TestCase {
     this.suspendByteCount = suspendByteCount;
     this.note = note;
   }
+
+  toString() {
+    let str = ``
+      + `skipLineCount=${this.skipLineCount}, `
+      + `suspendByteCount=${this.suspendByteCount}, `
+      + `${this.note}.`
+      ;
+    return str;
+  }
 }
 
 let testCases = [
@@ -133,15 +142,17 @@ function* tester( progressParent ) {
     let r = yield* decoder;
    
     if ( r.toString() != testCase.result.toString() )
-      throw Error( `[${i}]`
-        + ` Skip ${testCase.skipLineCount} lines.`
-        + ` suspendByteCount=${testCase.suspendByteCount}.`
-        + ` ${testCase.note} [${r}] != [${testCase.result}]` );
+      throw Error( `Base64ToUint8Array_tester.tester(): `
+        + `testCaseIndex=${i}, `
+        + `${testCase}. `
+        + `result [${r}] != [${testCase.result}]` );
 
     if ( 100 != progressChild.valuePercentage )
       throw Error( `Base64ToUint8Array_tester.tester(): `
-        `Progress (${progressChild.valuePercentage}) should be 100 `
-        `after decoding successfully. testCaseIndex = ${i}`);
+        + `testCaseIndex=${i}, `
+        + `${testCase}. `
+        + `Progress (${progressChild.valuePercentage}) should be 100 `
+        + `after decoding successfully.`);
   }
 
   console.log( "Base64 decode testing... Done." );
