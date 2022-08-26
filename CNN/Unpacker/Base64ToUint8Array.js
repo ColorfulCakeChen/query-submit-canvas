@@ -199,7 +199,8 @@ function* decoder_FromUint8Array(
         if ( skippedLineCount >= skipLineCount )
           break;                // Already skip enough lines.
 
-        let rawByte = sourceBytes[ progressToAdvance.value++ ];
+        let rawByte = sourceBytes[ progressToAdvance.value ];
+        progressToAdvance.value_advance();
 
         if ( 13 == rawByte ) {  // "\r" (carriage return; CR)
           ++skippedLineCount;   // One line is skipped.
@@ -264,7 +265,8 @@ function* decoder_FromUint8Array(
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
           encoded_0
-            = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value++ ] ];
+            = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value ] ];
+          progressToAdvance.value_advance();
         } while ( 255 === encoded_0 );
 
 
@@ -276,7 +278,8 @@ function* decoder_FromUint8Array(
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
           encoded_1
-            = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value++ ] ];
+            = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value ] ];
+          progressToAdvance.value_advance();
         } while ( 255 === encoded_1 );
 
 
@@ -288,7 +291,8 @@ function* decoder_FromUint8Array(
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
           encoded_2
-            = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value++ ] ];
+            = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value ] ];
+          progressToAdvance.value_advance();
         } while ( 255 === encoded_2 );
 
 
@@ -300,7 +304,8 @@ function* decoder_FromUint8Array(
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
           encoded_3
-            = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value++ ] ];
+            = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value ] ];
+          progressToAdvance.value_advance();
         } while ( 255 === encoded_3 );
 
 

@@ -505,7 +505,7 @@ class NeuralNet_Base extends Recyclable.Root {
     let progressToAdvance = this.progressApply;
     let progressRoot = progressToAdvance.root_get();
 
-    progressToAdvance.value = 0;
+    progressToAdvance.value_set( 0 );
     yield progressRoot;  // progress reset to zero. Report progress.
 
     // 1. Embedding

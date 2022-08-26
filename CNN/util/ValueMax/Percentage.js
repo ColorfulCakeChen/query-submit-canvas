@@ -155,14 +155,48 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
   }
 
   /**
+   * Set .value (and invalidate .valuePercentage_cached).
+   *
+   * @param {number} newValue
+   *   The new .value. default is 0.
+   *
+   * @return {number}
+   *   Return the adjusted value.
+   */
+  value_set( newValue = 0 ) {
+    this.value = newValue;
+    this.valuePercentage_cached_invalidate();
+    return this.value;
+  }
+
+  /**
    * Add advancedValue to .value (and invalidate .valuePercentage_cached).
    *
    * @param {number} advancedValue
    *   Add how many to .value. default is 1.
+   *
+   * @return {number}
+   *   Return the adjusted value.
    */
   value_advance( advancedValue = 1 ) {
     this.value += advancedValue;
     this.valuePercentage_cached_invalidate();
+    return this.value;
+  }
+
+  /**
+   * Set .max (and invalidate .valuePercentage_cached).
+   *
+   * @param {number} newMax
+   *   The new .max. default is 1000.
+   *
+   * @return {number}
+   *   Return the adjusted max value.
+   */
+  value_max( newMax = 1000 ) {
+    this.max = newMax;
+    this.valuePercentage_cached_invalidate();
+    return this.max;
   }
 
   /**
@@ -185,10 +219,6 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
     // Aggregate.valuePercentage never 100).
     if ( this.max == 0 )
       return 100;
-
-//!!! (2022/08/19 Remarked) should assert if out of bounds.
-//     // Restrict between [ 0, max ].
-//     let value = Math.max( 0, Math.min( this.value, this.max ) );
 
     // value should be in [ 0, max ].
     let value = this.value;
