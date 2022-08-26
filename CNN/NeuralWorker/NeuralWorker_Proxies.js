@@ -157,7 +157,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /** Load all evolution versus weights ranges. */
-  async evolutionVersusRangeArrayArrayArray_loadAsync() {
+  async evolutionVersusRangeArrayArray_loadAsync() {
     // The summary is at the first column of the first (i.e. left most) sheet.
     const range = "A:A";
 
