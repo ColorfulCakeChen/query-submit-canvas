@@ -49,6 +49,8 @@ class NeuralWorker_Body {
     // Because every web worker will copy the input, there is not necessary to keep input.
     let bKeepInputTensor = false;
 
+    // Load libraries in global scope.
+    importScripts( tensorflowJsURL ); // tensorflow javascript library.
     await this.globalModules_initAsync();
 
 //!!! ...unfinished... global scope ? report progress ?
@@ -94,7 +96,7 @@ class NeuralWorker_Body {
 
   }
 
-  /** Load ourselves libraries. */
+  /** Load ourselves libraries dynamically. */
   async globalModules_initAsync() {
     globalThis.Pool = await import( "../util/Pool.js" );
     globalThis.Recyclable = await import( "../util/Recyclable.js" );
@@ -102,6 +104,7 @@ class NeuralWorker_Body {
     //globalThis.RandTools = await import( "../util/RandTools.js" );
     //globalThis.ValueDesc = await import( "../Unpacker/ValueDesc.js" );
     globalThis.Weights = await import( "../Unpacker/Weights.js" );
+    globalThis.NeuralNet = await import( "../Conv/NeuralNet.js" );
   }
 
   /** */
