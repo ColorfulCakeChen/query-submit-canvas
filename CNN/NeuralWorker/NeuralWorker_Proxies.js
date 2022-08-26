@@ -156,14 +156,22 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     const range = "A:A";
 
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-  
+
     let urlComposer = new GSheet.UrlComposer(
       this.weightsSpreadsheetId, range, this.weightsAPIKey );
 
     let fetcher = urlComposer.fetcher_JSON_ColumnMajorArray( progress );
+    let fetcherNext;
+    do {
+      fetcherNext = fetcher.next();
+      if ( fetcherNext.done == false ) {
+        let progressRoot = await fetcherNext.value;
+      } else { // ( fetcherNext.done == true )
+        this.evolutionVersusRangeArrayArray = await fetcher;
+      }
+    } while ( fetcherNext.done == false );
 
 //!!! ...unfinished... (2022/08/26)
-    this.evolutionVersusRangeArrayArray  = await yield* fetcher;
 
     progress.disposeResources_and_recycleToPool();
     progress = null;
