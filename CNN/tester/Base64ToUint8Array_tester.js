@@ -140,7 +140,7 @@ function* tester( progressParent ) {
       testCase.suspendByteCount );
 
     let r = yield* decoder;
-   
+
     if ( r.toString() != testCase.result.toString() )
       throw Error( `Base64ToUint8Array_tester.tester(): `
         + `testCaseIndex=${i}, `
