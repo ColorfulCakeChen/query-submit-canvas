@@ -156,23 +156,28 @@ class UrlComposer {
 
   /**
    * @param {string} outputFormat
-   *   Specify the data format when downloading the returned url. It should be null or "json" or "csv" or "html". If null, there
-   * will be no format specified in the generated url (means default format, usually same as "json").
+   *   Specify the data format when downloading the returned url. It should be null or
+   * "json" or "csv" or "html". If null, there will be no format specified in the
+   * generated url (means default format, usually same as "json").
    *
    * @return {string} The url for downloading the target as specified format.
    */
   getUrl_forFormat( outputFormat ) {
-    // Because sheetId could be 0, it should be checked by comparing to null directly (i.e. should not use ( !this.sheetId )).
-    let url = `${UrlComposer.spreadsheetUrlPrefix}/${encodeURIComponent(this.spreadsheetId)}/${
+    // Because sheetId could be 0, it should be checked by comparing to null directly
+    // (i.e. should not use ( !this.sheetId )).
+    let url = `${UrlComposer.spreadsheetUrlPrefix}/${
+      encodeURIComponent(this.spreadsheetId)}/${
 
       UrlComposer.GoogleVisualizationTableQueryUrlPostfix}?tqx=version:${
       UrlComposer.GoogleVisualizationTableQueryAPIVersion}${
       ( outputFormat != null ) ? `;out:${encodeURIComponent(outputFormat)}` : "" }${
-      ( this.responseHandler != null ) ? `;responseHandler=${encodeURIComponent(this.responseHandler)}` : "" }${
+      ( this.responseHandler != null ) ? `;responseHandler=${
+        encodeURIComponent(this.responseHandler)}` : "" }${
 
       ( this.sheetId != null ) ? `&gid=${encodeURIComponent(this.sheetId)}` : `${
       ( this.sheetName != null ) ? `&sheet=${encodeURIComponent(this.sheetName)}` : "" }` }${
-      ( this.range != null ) ? `&range=${encodeURIComponent(this.range)}` : "" }&headers=${encodeURIComponent(this.headers)}`
+      ( this.range != null ) ? `&range=${encodeURIComponent(this.range)}` : "" }&headers=${
+        encodeURIComponent(this.headers)}`
       ;
 
     return url;
