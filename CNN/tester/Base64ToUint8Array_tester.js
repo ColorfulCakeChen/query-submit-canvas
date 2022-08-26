@@ -24,8 +24,8 @@ let originalArray = [];
 }
 
 const originalString = originalArray.join("");
-const base64EncodedString = btoa(originalString);
-const base64DecodedString = atob(base64EncodedString);
+const base64EncodedString = btoa( originalString );
+const base64DecodedString = atob( base64EncodedString );
 
 const base64EncodedStrings_extra = [
   // Test empty base64 content.
