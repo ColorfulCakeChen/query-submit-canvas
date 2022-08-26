@@ -1,5 +1,7 @@
-export { UrlComposer };
+export { GVizTQ_UrlComposer as UrlComposer };
 
+import * as Pool from "../Pool.js";
+import * as Recyclable from "..//Recyclable.js";
 import * as ValueMax from "../ValueMax.js";
 
 /**
@@ -36,7 +38,13 @@ import * as ValueMax from "../ValueMax.js";
  * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range='Evolution.Param'!B17&headers=0&tqx=out:csv
  *
  */
-class UrlComposer {
+class GVizTQ_UrlComposer extends Recyclable.Root {
+
+  /**
+   * Used as default GSheet.GVizTQ.UrlComposer provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "GSheet.GVizTQ.UrlComposer.Pool",
+    GVizTQ_UrlComposer, GVizTQ_UrlComposer.setAsConstructor );
 
   /**
    * If sheetId is null, sheetName is null, and no sheet name in the range's A1
@@ -81,13 +89,45 @@ class UrlComposer {
   constructor(
     spreadsheetId,
     range, headers = 0, responseHandler = null, sheetId = null, sheetName = null ) {
+    super();
+    GVizTQ_UrlComposer.setAsConstructor_self.call( this,
+      spreadsheetId,
+      range, headers, responseHandler, sheetId, sheetName
+    );
+  }
 
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    GVizTQ_UrlComposer.setAsConstructor_self.call( this,
+      spreadsheetId,
+      range, headers, responseHandler, sheetId, sheetName
+    );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self(
+    spreadsheetId,
+    range, headers, responseHandler, sheetId, sheetName
+  ) {
     this.spreadsheetId = spreadsheetId;
     this.range = range;
     this.headers = headers;
     this.responseHandler = responseHandler;
     this.sheetId = sheetId;
     this.sheetName = sheetName;
+  }
+
+  /** @override */
+  disposeResources() {
+    this.sheetName = undefined;
+    this.sheetId = undefined;
+    this.responseHandler = undefined;
+    this.headers = undefined;
+    this.range = undefined;
+    this.spreadsheetId = undefined;
+    super.disposeResources();
   }
 
   /**
@@ -133,7 +173,7 @@ class UrlComposer {
         return null;
 
       // 3. Try to evaluate it as JSON.
-      let json = UrlComposer.evalJSONP( text );
+      let json = GVizTQ_UrlComposer.evalJSONP( text );
 
       progressToAdvance.value_advance(); // 25%
       yield progressRoot;
@@ -142,7 +182,7 @@ class UrlComposer {
         return null;
 
       // 4. Collect into column-major array.
-      let ColumnMajorArrayArray = UrlComposer.dataTableToColumnMajorArrayArray( json.table );
+      let ColumnMajorArrayArray = GVizTQ_UrlComposer.dataTableToColumnMajorArrayArray( json.table );
 
       progressToAdvance.value_advance(); // 25%
       yield progressRoot;
@@ -165,11 +205,11 @@ class UrlComposer {
   getUrl_forFormat( outputFormat ) {
     // Because sheetId could be 0, it should be checked by comparing to null directly
     // (i.e. should not use ( !this.sheetId )).
-    let url = `${UrlComposer.spreadsheetUrlPrefix}/${
+    let url = `${GVizTQ_UrlComposer.spreadsheetUrlPrefix}/${
       encodeURIComponent(this.spreadsheetId)}/${
 
-      UrlComposer.GoogleVisualizationTableQueryUrlPostfix}?tqx=version:${
-      UrlComposer.GoogleVisualizationTableQueryAPIVersion}${
+      GVizTQ_UrlComposer.GoogleVisualizationTableQueryUrlPostfix}?tqx=version:${
+      GVizTQ_UrlComposer.GoogleVisualizationTableQueryAPIVersion}${
       ( outputFormat != null ) ? `;out:${encodeURIComponent(outputFormat)}` : "" }${
       ( this.responseHandler != null ) ? `;responseHandler=${
         encodeURIComponent(this.responseHandler)}` : "" }${
@@ -266,10 +306,10 @@ class UrlComposer {
 }
 
 /** The url prefix of Google Sheets. */
-UrlComposer.spreadsheetUrlPrefix = "https://docs.google.com/spreadsheets/d";
+GVizTQ_UrlComposer.spreadsheetUrlPrefix = "https://docs.google.com/spreadsheets/d";
 
 /** The url postfix of Google Visualization Table Query. */
-UrlComposer.GoogleVisualizationTableQueryUrlPostfix = "gviz/tq";
+GVizTQ_UrlComposer.GoogleVisualizationTableQueryUrlPostfix = "gviz/tq";
 
 /** The version of Google Visualization Table Query API. */
-UrlComposer.GoogleVisualizationTableQueryAPIVersion = "0.7";
+GVizTQ_UrlComposer.GoogleVisualizationTableQueryAPIVersion = "0.7";
