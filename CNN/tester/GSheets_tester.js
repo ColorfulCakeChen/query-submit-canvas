@@ -45,8 +45,7 @@ async function* tester( progressParent ) {
   let result1 = yield* fetcher1;
 
   // With API key.
-  let tester2
-    = new GSheets.UrlComposer.Pool.get_or_create_by( spreadsheetId, range, apiKey );
+  let tester2 = GSheets.UrlComposer.Pool.get_or_create_by( spreadsheetId, range, apiKey );
   let fetcher2 = tester2.fetcher_JSON_ColumnMajorArrayArray( progress2 );
   let result2 = yield* fetcher2;
 
