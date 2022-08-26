@@ -145,14 +145,14 @@ function* tester( progressParent ) {
       throw Error( `Base64ToUint8Array_tester.tester(): `
         + `testCaseIndex=${i}, `
         + `${testCase}. `
-        + `result [${r}] != [${testCase.result}]` );
+        + `Result [${r}] != [${testCase.result}]` );
 
     if ( 100 != progressChild.valuePercentage )
       throw Error( `Base64ToUint8Array_tester.tester(): `
         + `testCaseIndex=${i}, `
         + `${testCase}. `
         + `Progress (${progressChild.valuePercentage}) should be 100 `
-        + `after decoding successfully.`);
+        + `after decoding successfully.` );
   }
 
   console.log( "Base64 decode testing... Done." );
