@@ -33,7 +33,7 @@ class NeuralWorker_Body {
    * @param {string} weightsAPIKey
    *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
    */
-  init(
+  async init(
     workerId = 0,
     tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey ) {
 
@@ -75,7 +75,7 @@ class NeuralWorker_Body {
       importScripts( tensorflowJsURL ); // Load tensorflow javascript library in global scope.
       ++this.initProgress.libraryDownload.accumulation; // The library tensorflow.js has been loaded.
 
-      globalThis.NeuralNet = await import( "./Net.js" ); // Load neural network library in globalThis.NeuralNet scope dynamically.
+      globalThis.NeuralNet = await import( "../Conv/NeuralNet.js" ); // Load neural network library in globalThis.NeuralNet scope dynamically.
       ++this.initProgress.libraryDownload.accumulation; // The library NeuralNet has been loaded.
     }
 
