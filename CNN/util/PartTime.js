@@ -30,6 +30,10 @@ async function sleep( delayMilliseconds = 0 ) {
  *   It will be called as callback( generator.next().value ) when
  * ( generator.next().done == false ).
  *
+ * @param {function} callbackDone
+ *   It will be called as callbackDone( generator.next().value ) when
+ * ( generator.next().done == true ).
+ *
  * @param {integer} delayMilliseconds
  *   The delay time when schedule the next run. Default 0.
  *
@@ -37,7 +41,7 @@ async function sleep( delayMilliseconds = 0 ) {
  *   A promise resolved with the ( generator.next().value ) when
  * ( generator.next().done == true ).
  */
-function forOf( generator, callback, delayMilliseconds = 0 ) {
+function forOf( generator, callback, callbackDone, delayMilliseconds = 0 ) {
 
   function promiseTimeout() {
     return new Promise( ( resolve, reject ) => {
@@ -48,6 +52,7 @@ function forOf( generator, callback, delayMilliseconds = 0 ) {
         if ( result instanceof Promise ) {
           result.then( ( r ) => {  // Wait it resolved, then process it as sync generator.
             if ( r.done ) {
+              callbackDone( r.value );
               resolve( r.value );
             } else {
               callback( r.value );
@@ -58,6 +63,7 @@ function forOf( generator, callback, delayMilliseconds = 0 ) {
         // The generator is a usually sync generator, process its result.
         } else {
           if ( result.done ) {
+            callbackDone( r.value );
             resolve( result.value );
           } else {
             callback( result.value );

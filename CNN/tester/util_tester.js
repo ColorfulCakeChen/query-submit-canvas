@@ -43,6 +43,10 @@ function test() {
       progressReceiver.setValueMax( // Report progress to UI.
         progressRoot.valuePercentage, progressRoot.maxPercentage );
     },
+    () => { // Release resource.
+      progress.disposeResources_and_recycleToPool();
+      progress = null;
+    },
     delayMilliseconds
   ).then(r => {
   });
@@ -53,9 +57,6 @@ function test() {
     console.log( "util testing... Done." );
   });
 
-//!!! ...unfinished...
-  progress.disposeResources_and_recycleToPool();
-  progress = null;
 
 //!!! ...unfinished... test case by multipler web worker?
 }
