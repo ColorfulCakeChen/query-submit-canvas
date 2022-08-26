@@ -120,7 +120,7 @@ class NeuralWorker_Body {
     let urlComposer = new GSheet.UrlComposer(
       this.weightsSpreadsheetId, range, this.weightsAPIKey );
 
-    let fetcher = urlComposer.fetcher_JSON_ColumnMajorArray( progress );
+    let fetcher = urlComposer.fetcher_JSON_ColumnMajorArrayArray( progress );
 
 //!!! ...unfinished... (2022/08/26)
     this.???  = await yield* fetcher;

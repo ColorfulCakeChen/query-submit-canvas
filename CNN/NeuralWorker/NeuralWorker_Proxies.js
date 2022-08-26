@@ -3,7 +3,7 @@ export { NeuralWorker_Proxies as Proxies };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as GSheet from "../util/GSheet.js";
-import * as ValueMax from "../util/ValueMax.js";
+//import * as ValueMax from "../util/ValueMax.js";
 import { Proxy as WorkerProxy } from "./NeuralWorker_Proxy.js";
 //import * as NeuralNetProgress from "./NetProgress.js";
 
@@ -155,28 +155,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     // The summary is at the first column of the first (i.e. left most) sheet.
     const range = "A:A";
 
-    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-
     let urlComposer = new GSheet.UrlComposer(
       this.weightsSpreadsheetId, range, this.weightsAPIKey );
 
-    let fetcher = urlComposer.fetcher_JSON_ColumnMajorArray( progress );
-    let fetcherNext;
-    do {
-      fetcherNext = fetcher.next();
-      if ( fetcherNext.done == false ) {
-        let progressRoot = await fetcherNext.value;
-      } else { // ( fetcherNext.done == true )
-        this.evolutionVersusRangeArrayArray = await fetcher;
-      }
-    } while ( fetcherNext.done == false );
-
-//!!! ...unfinished... (2022/08/26)
-
-    progress.disposeResources_and_recycleToPool();
-    progress = null;
-
-!!! ...unfinished... (2022/08/26)
+    this.evolutionVersusRangeArrayArray
+      = urlComposer.fetchAsync_JSON_ColumnMajorArrayArray();
   }
 
   /**

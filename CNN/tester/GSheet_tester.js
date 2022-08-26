@@ -41,12 +41,12 @@ async function* tester( progressParent ) {
 
   // Without API key.
   let tester1 = new GSheet.UrlComposer( spreadsheetId, range );
-  let fetcher1 = tester1.fetcher_JSON_ColumnMajorArray( progress1 );
+  let fetcher1 = tester1.fetcher_JSON_ColumnMajorArrayArray( progress1 );
   let result1 = yield* fetcher1;
 
   // With API key.
   let tester2 = new GSheet.UrlComposer( spreadsheetId, range, apiKey );
-  let fetcher2 = tester2.fetcher_JSON_ColumnMajorArray( progress2 );
+  let fetcher2 = tester2.fetcher_JSON_ColumnMajorArrayArray( progress2 );
   let result2 = yield* fetcher2;
 
   // Compare results: should the same.

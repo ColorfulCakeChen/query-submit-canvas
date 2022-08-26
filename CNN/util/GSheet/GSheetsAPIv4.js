@@ -66,7 +66,7 @@ class UrlComposer {
    *       successfully.
    *   - Yield ( value = null ) when ( done = true ) failed.
    */
-  async* fetcher_JSON_ColumnMajorArray( progressParent ) {
+  async* fetcher_JSON_ColumnMajorArrayArray( progressParent ) {
     let progressRoot = progressParent.root_get();
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 3 ) );
@@ -92,12 +92,12 @@ class UrlComposer {
         return null;
 
       // 3. Since already downloaded as column major. Uses it directly.
-      let columnMajorArray = json.values;
+      let ColumnMajorArrayArray = json.values;
 
       progressToAdvance.value_advance(); // 33%
       yield progressRoot;
 
-      return columnMajorArray;
+      return ColumnMajorArrayArray;
 
     } catch ( e ) {
       return null;

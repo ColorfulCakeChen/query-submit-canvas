@@ -107,7 +107,7 @@ class UrlComposer {
    *       successfully.
    *   - Yield ( value = null ) when ( done = true ) failed.
    */
-  async* fetcher_JSON_ColumnMajorArray( progressParent ) {
+  async* fetcher_JSON_ColumnMajorArrayArray( progressParent ) {
     let progressRoot = progressParent.root_get();
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 4 ) );
@@ -142,12 +142,12 @@ class UrlComposer {
         return null;
 
       // 4. Collect into column-major array.
-      let columnMajorArray = UrlComposer.dataTableToColumnMajorArray( json.table );
+      let ColumnMajorArrayArray = UrlComposer.dataTableToColumnMajorArrayArray( json.table );
 
       progressToAdvance.value_advance(); // 25%
       yield progressRoot;
 
-      return columnMajorArray;
+      return ColumnMajorArrayArray;
 
     } catch ( e ) {
       return null;
@@ -247,7 +247,7 @@ class UrlComposer {
    * @return {array[]}
    *   Return a two dimension (column-major) array. Return null if failed.
    */
-  static dataTableToColumnMajorArray( gvizDataTable ) {
+  static dataTableToColumnMajorArrayArray( gvizDataTable ) {
     if ( !gvizDataTable )
       return null;
 

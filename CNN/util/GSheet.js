@@ -2,6 +2,7 @@ export { UrlComposer };
 
 import * as GVizTQ from "./GSheet/GVizTQ.js";
 import * as GSheetsAPIv4 from "./GSheet/GSheetsAPIv4.js";
+import * as ValueMax from "./ValueMax.js";
 
 /**
  * Fetch data from Google Sheets.
@@ -58,10 +59,40 @@ class UrlComposer {
    *       successfully.
    *   - Yield ( value = null ) when ( done = true ) failed.
    */
-  async* fetcher_JSON_ColumnMajorArray( progressParent ) {
-    let fetcher = this.urlComposer.fetcher_JSON_ColumnMajorArray( progressParent );
-    let columnMajorArray = yield *fetcher;
-    return columnMajorArray;
+  async* fetcher_JSON_ColumnMajorArrayArray( progressParent ) {
+    let fetcher = this.urlComposer.fetcher_JSON_ColumnMajorArrayArray( progressParent );
+    let ColumnMajorArrayArray = yield *fetcher;
+    return ColumnMajorArrayArray;
+  }
+
+  /**
+   * Composing the URL (according this object's data members), download
+   * it as JSON format, extract data as a two dimension (column-major) array.
+   *
+   * @return {array[]}
+   *   - Return ( a two dimension (column-major) array ) when successful.
+   *   - Return ( null ) when failed.
+   */
+  async fetchAsync_JSON_ColumnMajorArrayArray() {
+    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+
+    let resultColumnMajorArrayArray;
+
+    let fetcher = this.fetcher_JSON_ColumnMajorArrayArray( progress );
+    let fetcherNext;
+    do {
+      fetcherNext = fetcher.next();
+      if ( fetcherNext.done == false ) {
+        //let progressRoot = await fetcherNext.value;
+      } else { // ( fetcherNext.done == true )
+        resultColumnMajorArrayArray = await fetcherNext.value;
+      }
+    } while ( fetcherNext.done == false );
+
+    progress.disposeResources_and_recycleToPool();
+    progress = null;
+
+    return resultColumnMajorArrayArray;
   }
 
 }
