@@ -4,7 +4,8 @@ export { Base };
 
 /**
  * @member {string} gidString
- *   The id of the published Google Sheet. The sheet contains entity weights of one to more versus.
+ *   The id of the published Google Sheet. The sheet contains entity weights of
+ * one to more versus.
  *
  * @member {VersusId_WinCount.Base[]} VersusId_WinCount_Array
  *   All the versus belong to the gid.
@@ -25,12 +26,14 @@ class Base {
    * Set this object by string array.
    *
    * @param {string[]} string_array
-   *   The array string contains gid and versus.
-   * (e.g. [ "gid", "EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount", "EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount", ...] ).
+   *   The array string contains gid and versus. (e.g. [ "gid",
+   * "EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount",
+   * "EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount", ...] ).
    *
    * @param {string} gidString
-   *   If null, string_array[ 0 ] will be viewed as gid and string_array[ 1 ] (and after) will be viewed as versus. Otherwise, gidString is gid
-   * and all elements of string_array[] will be viewed as versus.
+   *   If null, string_array[ 0 ] will be viewed as gid and string_array[ 1 ]
+   * (and after) will be viewed as versus. Otherwise, gidString is gid and all
+   * elements of string_array[] will be viewed as versus.
    */
   set_ByStringArray( string_array, gidString ) {
 
@@ -55,7 +58,9 @@ class Base {
 
     // 2. Parse all other elements as versus.
     for ( let i = firstVersusIndex; i < string_array.length; ++i ) {
-      this.VersusId_WinCount_Array[ i - firstVersusIndex ] = VersusId_WinCount.Base.create_By_VersusId_WinCount_String( string_array[ i ] );
+      this.VersusId_WinCount_Array[ i - firstVersusIndex ]
+        = VersusId_WinCount.Base.create_By_VersusId_WinCount_String(
+            string_array[ i ] );
     }
   }
 
@@ -69,7 +74,8 @@ class Base {
    * (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|...).
    *
    * @param {string} gidString
-   *   If null, the first part of gid_Versus_string will be viewed as gid. Otherwise, all gid_Versus_string will be viewed as versus.
+   *   If null, the first part of gid_Versus_string will be viewed as gid. Otherwise,
+   * all gid_Versus_string will be viewed as versus.
    */
   set_ByString( gid_Versus_string, gidString ) {
 
