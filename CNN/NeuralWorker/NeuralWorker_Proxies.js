@@ -33,8 +33,9 @@ import { Proxy as WorkerProxy } from "./NeuralWorker_Proxy.js";
  *
  *
  *
- * @param {string[]} evolutionVersusRangeArray
- *   A string array. Every element is the spreadsheet range for an evolution versus.
+ * @param {string[][]} evolutionVersusRangeArrayArray
+ *   A two dimension array. Every element is a string array. Every element of the
+ * string array is the spreadsheet range for an evolution versus.
  */
 class NeuralWorker_Proxies extends Recyclable.Root {
 
@@ -64,7 +65,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
-    this.evolutionVersusRangeArray = null; // Normal array. Just nullify it.
+    this.evolutionVersusRangeArrayArray = null; // Normal array. Just nullify it.
 
 //!!! ...unfinished... (2022/08/26)
     this.disposeWorkers();
@@ -156,15 +157,15 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /** Load all evolution versus weights ranges. */
-  async evolutionVersusRangeArrayArray_loadAsync() {
+  async evolutionVersusRangeArrayArrayArray_loadAsync() {
     // The summary is at the first column of the first (i.e. left most) sheet.
     const range = "A:A";
 
     let urlComposer = GSheets.UrlComposer.Pool.get_or_create_by(
       this.weightsSpreadsheetId, range, this.weightsAPIKey );
 
-    this.evolutionVersusRangeArray
-      = urlComposer.fetchAsync_JSON_ColumnMajorArray();
+    this.evolutionVersusRangeArrayArray
+      = urlComposer.fetchAsync_JSON_ColumnMajorArrayArray();
 
     urlComposer.disposeResources_and_recycleToPool();
     urlComposer = null;

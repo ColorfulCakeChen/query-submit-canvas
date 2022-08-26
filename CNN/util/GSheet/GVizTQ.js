@@ -142,12 +142,12 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.root_get() ) when ( done = false ).
    *
-   * @yield {Array|Array[]}
-   *   - Yield ( value = one or two dimension (column-major) array ) when ( done = true )
+   * @yield {Array[]}
+   *   - Yield ( value = a two dimension (column-major) array ) when ( done = true )
    *       successfully.
    *   - Yield ( value = null ) when ( done = true ) failed.
    */
-  async* fetcher_JSON_ColumnMajorArray( progressParent ) {
+  async* fetcher_JSON_ColumnMajorArrayArray( progressParent ) {
     let progressRoot = progressParent.root_get();
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 4 ) );
@@ -182,12 +182,12 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
         return null;
 
       // 4. Collect into column-major array.
-      let ColumnMajorArray = GVizTQ_UrlComposer.dataTableToColumnMajorArray( json.table );
+      let ColumnMajorArrayArray = GVizTQ_UrlComposer.dataTable_to_ColumnMajorArrayArray( json.table );
 
       progressToAdvance.value_advance(); // 25%
       yield progressRoot;
 
-      return ColumnMajorArray;
+      return ColumnMajorArrayArray;
 
     } catch ( e ) {
       return null;
@@ -284,10 +284,10 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
    * @param {DataTable} gvizDataTable
    *   The DataTable object of Google Visualization API.
    *
-   * @return {Array|Array[]}
-   *   Return a one or two dimension (column-major) array. Return null if failed.
+   * @return {Array[]}
+   *   Return a two dimension (column-major) array. Return null if failed.
    */
-  static dataTableToColumnMajorArray( gvizDataTable ) {
+  static dataTable_to_ColumnMajorArrayArray( gvizDataTable ) {
     if ( !gvizDataTable )
       return null;
 
