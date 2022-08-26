@@ -123,7 +123,7 @@ let testCases = [
  *
  */
 function* tester( progressParent ) {
-  console.log("Base64 decode testing...");
+  console.log( "Base64 decode testing..." );
 
   // 0. Prepare progressParent for every TestCase.
   for ( let i = 0; i < testCases.length; ++i ) {
