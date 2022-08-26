@@ -212,7 +212,7 @@ class UrlComposer {
    *   Handler( ... );
    *
    * This method will find the position of the first "(" and the last ")". Extract
-   * the string between these two positions. Parsing it by JSON.parse().
+   * the string between these two positions. Parse it by JSON.parse().
    *
    * @param {string} strJSONP
    *   The JSONP string to be parsed.
