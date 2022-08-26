@@ -24,7 +24,8 @@ function test() {
   let progress_GSheet_tester = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progressReceiver = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy("TestProgressBar");
+  let progressReceiver
+    = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
 
 //   for await ( let progressRoot of Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester ) ) {
 //   }
