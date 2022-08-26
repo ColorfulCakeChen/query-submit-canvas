@@ -1,8 +1,11 @@
 export { NeuralWorker_Proxies as Proxies };
 
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
+import * as GSheet from "../util/GSheet.js";
+import * as ValueMax from "../util/ValueMax.js";
 import { Proxy as WorkerProxy } from "./NeuralWorker_Proxy.js";
-import * as NeuralNetProgress from "./NetProgress.js";
-//import * as Net from "./Net.js";
+//import * as NeuralNetProgress from "./NetProgress.js";
 
 /**
  * The container of WorkerProxy. It orchestrates these WorkerProxy. Especially, it
@@ -28,7 +31,41 @@ import * as NeuralNetProgress from "./NetProgress.js";
  * a promise. The promise will resolve with an array of typed-array. Every typed-array
  * is the output of one neural network.
  */
-class NeuralWorker_Proxies {
+class NeuralWorker_Proxies extends Recyclable.Root {
+
+  /**
+   * Used as default NeuralWorker.Proxies provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "NeuralWorker.Proxies.Pool",
+    NeuralWorker_Proxies, NeuralWorker_Proxies.setAsConstructor );
+
+  /** */
+  constructor() {
+    super();
+    NeuralWorker_Proxies.setAsConstructor_self.call( this );
+  }
+
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    NeuralWorker_Proxies.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
+  }
+
+  /** @override */
+  disposeResources() {
+
+    this.evolutionVersusRangeArrayArray = null; // Normal array. Just nullify it.
+
+//!!! ...unfinished... (2022/08/26)
+    this.disposeWorkers();
+
+    super.disposeResources();
+  }
 
   /**
    * Initialize this worker proxy controller. It will create two web workers and inform
@@ -47,6 +84,8 @@ class NeuralWorker_Proxies {
    *
    * @param {string} weightsAPIKey
    *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
+   *   - If null, Google Visualization Table Query API will be used.
+   *   - If not null, Google Sheets API v4 will be used.
    */
   init( tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey ) {
 
@@ -109,6 +148,27 @@ class NeuralWorker_Proxies {
     }
 
     this.initProgressAll = null;
+  }
+
+  /** Load all evolution versus weights ranges. */
+  async evolutionVersusRangeArrayArray_loadAsync() {
+    // The summary is at the first column of the first (i.e. left most) sheet.
+    const range = "A:A";
+
+    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+  
+    let urlComposer = new GSheet.UrlComposer(
+      this.weightsSpreadsheetId, range, this.weightsAPIKey );
+
+    let fetcher = urlComposer.fetcher_JSON_ColumnMajorArray( progress );
+
+//!!! ...unfinished... (2022/08/26)
+    this.evolutionVersusRangeArrayArray  = await yield* fetcher;
+
+    progress.disposeResources_and_recycleToPool();
+    progress = null;
+
+!!! ...unfinished... (2022/08/26)
   }
 
   /**

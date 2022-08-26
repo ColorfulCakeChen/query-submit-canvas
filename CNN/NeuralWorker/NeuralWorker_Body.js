@@ -131,6 +131,13 @@ class NeuralWorker_Body {
 !!! ...unfinished... (2022/08/26)
   }
 
+  /** @override */
+  disposeResources() {
+
+
+    //super.disposeResources();
+  }
+
   /** */
   disposeWorker() {
     if ( this.neuralNet ) {

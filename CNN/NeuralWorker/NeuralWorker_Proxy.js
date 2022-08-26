@@ -1,9 +1,11 @@
 export { PendingPromiseInfo };
 export { NeuralWorker_Proxy as Proxy };
 
-//import * as ValueMax from "../ValueMax.js";
-import * as NeuralNetProgress from "./NetProgress.js";
-//import * as GVizTQ from "../util/GVizTQ.js";
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
+import * as GSheet from "../util/GSheet.js";
+import * as ValueMax from "../util/ValueMax.js";
+//import * as NeuralNetProgress from "./NetProgress.js";
 
 
 /**
@@ -62,7 +64,39 @@ class ProcessRelayPromises {
  * @member {Map}    pendingPromiseInfoMap
  *   The map for promise of the unhandled processing.
  */
-class NeuralWorker_Proxy {
+class NeuralWorker_Proxy extends Recyclable.Root {
+
+  /**
+   * Used as default NeuralWorker.Proxy provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "NeuralWorker.Proxy.Pool",
+    NeuralWorker_Proxy, NeuralWorker_Proxy.setAsConstructor );
+
+  /** */
+  constructor() {
+    super();
+    NeuralWorker_Proxy.setAsConstructor_self.call( this );
+  }
+
+  /** @override */
+  static setAsConstructor() {
+    super.setAsConstructor();
+    NeuralWorker_Proxy.setAsConstructor_self.call( this );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self() {
+  }
+
+  /** @override */
+  disposeResources() {
+
+//!!! ...unfinished... (2022/08/26)
+    this.disposeWorker();
+
+    super.disposeResources();
+  }
 
   /**
    * Initialize this worker proxy. It will create one web worker and inform it to
@@ -85,6 +119,8 @@ class NeuralWorker_Proxy {
    *
    * @param {string} weightsAPIKey
    *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
+   *   - If null, Google Visualization Table Query API will be used.
+   *   - If not null, Google Sheets API v4 will be used.
    *
    * @param {NeuralNetProgress.InitProgress} initProgress
    *   This worker proxy will modify initProgress to report its web worker's
