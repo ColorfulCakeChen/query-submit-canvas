@@ -7,7 +7,8 @@ import * as Versus_Weights from "./Versus_Weights.js";
 export { NetProgress, Base };
 
 /**
- * Download differential evolution summary and individual versus (entity vs entity) from network (a publish html of Google Sheets).
+ * Download differential evolution summary and individual versus (entity vs entity)
+ * from network (a publish html of Google Sheets).
  *
  * The format of differential evolution summary page is the following:
  *
@@ -25,11 +26,15 @@ export { NetProgress, Base };
  *   - The PopulationSize represents how many entities in the differential evolution.
  *   - The EntityChromosomeCount represents how many chromsomes in one entity.
  *   - The ChromosomeWeightCount represents how many weights in one chromsome.
- *   - The 4th (and after) line contains Google Sheet gid and the versus list which the gid has. 
- *     - The gid is the Google Sheet's id which will be used to compose the url when download every individual weights (entity versus entity).
+ *   - The 4th (and after) line contains Google Sheet gid and the versus list which
+ *       the gid has. 
+ *     - The gid is the Google Sheet's id which will be used to compose the url when
+ *         download every individual weights (entity versus entity).
  *     - Every gid contains one or more versus which are separated by vertical bar (|).
- *     - A versus contains versus id (EntityNo_ParentGenerationNo_OffspringGenerationNo) and its WinCount which are separated by colon (:).
- *     - A versus id contains EntityNo, ParentGenerationNo, OffspringGenerationNo which are separated by underline (_).
+ *     - A versus contains versus id (EntityNo_ParentGenerationNo_OffspringGenerationNo)
+ *         and its WinCount which are separated by colon (:).
+ *     - A versus id contains EntityNo, ParentGenerationNo, OffspringGenerationNo which
+ *         are separated by underline (_).
  *
  * @member {TextEncoder} textEncoder
  *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder can work.
@@ -64,20 +69,24 @@ class Base {
    * Fetch and extract.
    *
    * @param summaryURL
-   *   The published (should be html, not tsv, not csv) web page URL of the summary sheet of the differential evolution Google Sheets. For example:
+   *   The published (should be html, not tsv, not csv) web page URL of the summary
+   * sheet of the differential evolution Google Sheets. For example:
    * "https://docs.google.com/spreadsheets/d/e/2PACX-1vSzA4SXUR5VyPmJ1cLEkNMiJgfb28zzgp4HtwoBlumIIOTkL_y7mgPldqaGtsunIq5eTu5QndluyFcV/pubhtml?gid=0&single=true".
-   * The "gid=0" inside the URL will be replaced with different number when downloading other published sheet.
+   * The "gid=0" inside the URL will be replaced with different number when downloading
+   * other published sheet.
    */
   async downloadSummary( summaryURL, progress ) {
 
-    // Why using published html web page instead of tsv (or csv)? This is because Google Sheets' published html web page support cross-origin
-    // resource sharing (CORS) while its published web page tsv (or csv) does not.
+    // Why using published html web page instead of tsv (or csv)? This is because
+    // Google Sheets' published html web page support cross-origin resource sharing
+    // (CORS) while its published web page tsv (or csv) does not.
     this.summaryURL = summaryURL;
 
     let response = await fetch( summaryURL );
     let responseText = await response.text();
 
-    let lineMatches = tdTextExtracter.Base.createIterator( responseText ); // Only capture group 1 will be used.
+    // Only capture group 1 will be used.
+    let lineMatches = tdTextExtracter.Base.createIterator( responseText );
     let lineMatch;
 
     if ( ( lineMatch = lineMatches.next() ).done )
@@ -97,13 +106,18 @@ class Base {
 
     // 3.
     this.chromosomeWeightCount = Number.parseInt( lineMatch.value[ 1 ], 10 );
-    this.entityWeightCount = this.entityChromosomeCount * this.chromosomeWeightCount; // There are how many weights in one entity.
+
+    // There are how many weights in one entity.
+    this.entityWeightCount = this.entityChromosomeCount * this.chromosomeWeightCount;
 
     // 4. Parse every gid and their corresponding versus ids (with win counts).
     this.gid_versus_array = [];
     while ( !( lineMatch = lineMatch.next() ).done ) {
       let gid_versus = new gid_Versus.Base();
-      gid_versus.set_ByString( lineMatch.value[ 1 ], null ); // Split the text of a td tag. The 2nd parameter is null so that the prefix is viewed as gid.
+
+      // Split the text of a td tag. The 2nd parameter is null so that the prefix
+      // is viewed as gid.
+      gid_versus.set_ByString( lineMatch.value[ 1 ], null );
       this.gid_versus_array.push( gid_versus );
     }
 
@@ -121,7 +135,8 @@ class Base {
     let versusURL = this.summaryURL.replace( Base.gidReplacingRegExp, replaceContext );
   
     // Parent and offspring.
-    let Versus_Weights = new Versus_Weights.Base( this.entityChromosomeCount, this.textEncoder );
+    let Versus_Weights = new Versus_Weights.Base(
+      this.entityChromosomeCount, this.textEncoder );
     Versus_Weights.fetchAndReport( versusURL, progress );
 
     
@@ -130,6 +145,7 @@ class Base {
 
 }
 
-// Regular expression for replacing the "nnn" of "gid=nnn" inside the published web page URL.
+// Regular expression for replacing the "nnn" of "gid=nnn" inside the published
+// web page URL.
 Base.gidReplacingRegExp = RegExp( "(gid=)(\d+)", "g" );
 
