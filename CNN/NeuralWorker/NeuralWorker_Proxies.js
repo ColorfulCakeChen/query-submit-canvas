@@ -117,6 +117,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     // not need because our neural networks are learning by differential evolution.
     // Differential evolution evaluates just two entities every time.
     //
+
+//!!! ...unfinished... (2022/08/26) really?
+
     // Note: How could the two neural networks determine all the actions of so many
     //       game objects? The method is to let the output of one neural network
     //       contains all actions of all game objects. But only half of the output
