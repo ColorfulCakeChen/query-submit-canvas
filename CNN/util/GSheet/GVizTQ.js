@@ -1,7 +1,7 @@
 export { GVizTQ_UrlComposer as UrlComposer };
 
 import * as Pool from "../Pool.js";
-import * as Recyclable from "..//Recyclable.js";
+import * as Recyclable from "../Recyclable.js";
 import * as ValueMax from "../ValueMax.js";
 
 /**

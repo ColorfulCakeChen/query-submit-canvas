@@ -1,5 +1,7 @@
-export { UrlComposer };
+export { GSheetsAPIv4_UrlComposer as UrlComposer };
 
+import * as Pool from "../Pool.js";
+import * as Recyclable from "../Recyclable.js";
 import * as ValueMax from "../ValueMax.js";
 
 /**
@@ -16,7 +18,13 @@ import * as ValueMax from "../ValueMax.js";
  * https://sheets.googleapis.com/v4/spreadsheets/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/values/Evolution.Param!A:B?key=AIzaSyDQpdX3Z7297fkZ7M_jWdq7zjv_IIxpArU
  *
  */
-class UrlComposer {
+class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
+
+  /**
+   * Used as default GSheet.GSheetsAPIv4.UrlComposer provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "GSheet.GSheetsAPIv4.UrlComposer.Pool",
+    GSheetsAPIv4_UrlComposer, GSheetsAPIv4_UrlComposer.setAsConstructor );
 
   /**
    * If no sheet name in the range's A1 notation, the first (most left) visible sheet
@@ -44,9 +52,34 @@ class UrlComposer {
    * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values}
    */
   constructor( spreadsheetId, range, apiKey ) {
+    super();
+    GSheetsAPIv4_UrlComposer.setAsConstructor_self.call( this,
+      spreadsheetId, range, apiKey
+    );
+  }
+
+  /** @override */
+  static setAsConstructor( spreadsheetId, range, apiKey ) {
+    super.setAsConstructor();
+    GSheetsAPIv4_UrlComposer.setAsConstructor_self.call( this,
+      spreadsheetId, range, apiKey
+    );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( spreadsheetId, range, apiKey ) {
     this.spreadsheetId = spreadsheetId;
     this.range = range;
     this.apiKey = apiKey;
+  }
+
+  /** @override */
+  disposeResources() {
+    this.apiKey = undefined;
+    this.range = undefined;
+    this.spreadsheetId = undefined;
+    super.disposeResources();
   }
 
   /**
@@ -112,7 +145,7 @@ class UrlComposer {
    * @return {string} The url for downloading the target as json format.
    */
   getUrl_forJSON( majorDimension = null ) {
-    let url = `${UrlComposer.spreadsheetUrlPrefix}/${
+    let url = `${GSheetsAPIv4_UrlComposer.spreadsheetUrlPrefix}/${
       encodeURIComponent(this.spreadsheetId)}/values/${
       encodeURIComponent(this.range)}?${
       ( majorDimension != null ) ? `majorDimension=${
@@ -126,4 +159,5 @@ class UrlComposer {
 }
 
 /** The url prefix of Google Sheets API v4. */
-UrlComposer.spreadsheetUrlPrefix = "https://sheets.googleapis.com/v4/spreadsheets";
+GSheetsAPIv4_UrlComposer.spreadsheetUrlPrefix
+  = "https://sheets.googleapis.com/v4/spreadsheets";
