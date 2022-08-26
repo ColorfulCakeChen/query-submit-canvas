@@ -132,7 +132,7 @@ class UrlComposer {
       if ( !text )
         return null;
 
-      // 3. Try to evaluate is as JSON.
+      // 3. Try to evaluate it as JSON.
       let json = UrlComposer.evalJSONP( text );
 
       progressToAdvance.value_advance(); // 25%
