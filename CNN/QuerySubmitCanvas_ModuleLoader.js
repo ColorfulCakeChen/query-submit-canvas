@@ -34,10 +34,11 @@ class ModuleLoader {
   /** */
   async initAsync() {
     return Promise.all( [
-      this.googleCharts_initAsync(),
+      // (2022/08/26 Remarked) GSheet/GVizTQ.js needs not google charts library.
+      //this.googleCharts_initAsync(),
 
-  //!!! ...unfinished... (2022/08/25)
-  // should wait for Google Tag Manager and our modules.
+//!!! ...unfinished... (2022/08/25)
+// should wait for Google Tag Manager and our modules.
 
     ] );
   }
