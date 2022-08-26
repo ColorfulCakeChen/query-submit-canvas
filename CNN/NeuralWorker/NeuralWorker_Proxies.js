@@ -30,6 +30,11 @@ import { Proxy as WorkerProxy } from "./NeuralWorker_Proxy.js";
  * Finally, this WorkerProxies collects all web workers' processTensor() results in
  * a promise. The promise will resolve with an array of typed-array. Every typed-array
  * is the output of one neural network.
+ *
+ *
+ *
+ * @param {string[]} evolutionVersusRangeArray
+ *   A string array. Every element is the spreadsheet range for an evolution versus.
  */
 class NeuralWorker_Proxies extends Recyclable.Root {
 
@@ -59,7 +64,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
-    this.evolutionVersusRangeArrayArray = null; // Normal array. Just nullify it.
+    this.evolutionVersusRangeArray = null; // Normal array. Just nullify it.
 
 //!!! ...unfinished... (2022/08/26)
     this.disposeWorkers();
@@ -158,8 +163,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let urlComposer = GSheets.UrlComposer.Pool.get_or_create_by(
       this.weightsSpreadsheetId, range, this.weightsAPIKey );
 
-    this.evolutionVersusRangeArrayArray
-      = urlComposer.fetchAsync_JSON_ColumnMajorArrayArray();
+    this.evolutionVersusRangeArray
+      = urlComposer.fetchAsync_JSON_ColumnMajorArray();
 
     urlComposer.disposeResources_and_recycleToPool();
     urlComposer = null;

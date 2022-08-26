@@ -94,12 +94,12 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.root_get() ) when ( done = false ).
    *
-   * @yield {Array[]}
-   *   - Yield ( value = a two dimension (column-major) array ) when ( done = true )
+   * @yield {Array|Array[]}
+   *   - Yield ( value = one or two dimension (column-major) array ) when ( done = true )
    *       successfully.
    *   - Yield ( value = null ) when ( done = true ) failed.
    */
-  async* fetcher_JSON_ColumnMajorArrayArray( progressParent ) {
+  async* fetcher_JSON_ColumnMajorArray( progressParent ) {
     let progressRoot = progressParent.root_get();
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 3 ) );
@@ -125,12 +125,12 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
         return null;
 
       // 3. Since already downloaded as column major. Uses it directly.
-      let ColumnMajorArrayArray = json.values;
+      let ColumnMajorArray = json.values;
 
       progressToAdvance.value_advance(); // 33%
       yield progressRoot;
 
-      return ColumnMajorArrayArray;
+      return ColumnMajorArray;
 
     } catch ( e ) {
       return null;

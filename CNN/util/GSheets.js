@@ -90,45 +90,45 @@ class GSheets_UrlComposer extends Recyclable.Root {
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.root_get() ) when ( done = false ).
    *
-   * @yield {Array[]}
-   *   - Yield ( value = a two dimension (column-major) array ) when ( done = true )
+   * @yield {Array|Array[]}
+   *   - Yield ( value = one or two dimension (column-major) array ) when ( done = true )
    *       successfully.
    *   - Yield ( value = null ) when ( done = true ) failed.
    */
-  async* fetcher_JSON_ColumnMajorArrayArray( progressParent ) {
-    let fetcher = this.urlComposer.fetcher_JSON_ColumnMajorArrayArray( progressParent );
-    let ColumnMajorArrayArray = yield *fetcher;
-    return ColumnMajorArrayArray;
+  async* fetcher_JSON_ColumnMajorArray( progressParent ) {
+    let fetcher = this.urlComposer.fetcher_JSON_ColumnMajorArray( progressParent );
+    let ColumnMajorArray = yield *fetcher;
+    return ColumnMajorArray;
   }
 
   /**
    * Composing the URL (according this object's data members), download
    * it as JSON format, extract data as a two dimension (column-major) array.
    *
-   * @return {Array[]}
-   *   - Return ( a two dimension (column-major) array ) when successful.
+   * @return {Array|Array[]}
+   *   - Return ( one or two dimension (column-major) array ) when successful.
    *   - Return ( null ) when failed.
    */
-  async fetchAsync_JSON_ColumnMajorArrayArray() {
+  async fetchAsync_JSON_ColumnMajorArray() {
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
-    let resultColumnMajorArrayArray;
+    let resultColumnMajorArray;
 
-    let fetcher = this.fetcher_JSON_ColumnMajorArrayArray( progress );
+    let fetcher = this.fetcher_JSON_ColumnMajorArray( progress );
     let fetcherNext;
     do {
       fetcherNext = fetcher.next();
       if ( fetcherNext.done == false ) {
         //let progressRoot = await fetcherNext.value;
       } else { // ( fetcherNext.done == true )
-        resultColumnMajorArrayArray = await fetcherNext.value;
+        resultColumnMajorArray = await fetcherNext.value;
       }
     } while ( fetcherNext.done == false );
 
     progress.disposeResources_and_recycleToPool();
     progress = null;
 
-    return resultColumnMajorArrayArray;
+    return resultColumnMajorArray;
   }
 
 }
