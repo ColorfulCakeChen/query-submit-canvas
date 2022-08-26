@@ -272,4 +272,4 @@ UrlComposer.spreadsheetUrlPrefix = "https://docs.google.com/spreadsheets/d";
 UrlComposer.GoogleVisualizationTableQueryUrlPostfix = "gviz/tq";
 
 /** The version of Google Visualization Table Query API. */
-UrlComposer.GoogleVisualizationTableQueryAPIVersion = "0.6";
+UrlComposer.GoogleVisualizationTableQueryAPIVersion = "0.7";
