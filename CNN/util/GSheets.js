@@ -64,7 +64,7 @@ class GSheets_UrlComposer extends Recyclable.Root {
       this.urlComposer = SheetsAPIv4.UrlComposer.Pool.get_or_create_by(
         spreadsheetId, range, apiKey );
     } else {
-      this.urlComposer = new GVizTQ.UrlComposer.Pool.get_or_create_by(
+      this.urlComposer = GVizTQ.UrlComposer.Pool.get_or_create_by(
         spreadsheetId, range );
     }
   }
