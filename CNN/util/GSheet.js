@@ -28,8 +28,8 @@ class UrlComposer {
    *
    * @param {string} apiKey
    *   The API key string for accessing the spreadsheet.
-   *   - If not null, Google Sheets API v4 will be used.
    *   - If null, Google Visualization Table Query API will be used.
+   *   - If not null, Google Sheets API v4 will be used.
    *
    * @see {@link https://developers.google.com/sheets/api/guides/concepts}
    */

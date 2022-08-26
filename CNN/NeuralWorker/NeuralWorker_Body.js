@@ -32,8 +32,8 @@ class NeuralWorker_Body {
    *
    * @param {string} weightsAPIKey
    *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
-   *   - If not null, Google Sheets API v4 will be used.
    *   - If null, Google Visualization Table Query API will be used.
+   *   - If not null, Google Sheets API v4 will be used.
    */
   async init(
     workerId = 0,
@@ -110,8 +110,25 @@ class NeuralWorker_Body {
     globalThis.NeuralNet = await import( "../Conv/NeuralNet.js" );
   }
 
-  /** Load ourselves libraries dynamically. */
-  async globalModules_initAsync() {
+  /** Load weights summary. */
+  async weights_summary_loadAsync() {
+    // The summary is at the first column of the first (i.e. left most) sheet.
+    const range = "A:A";
+
+    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+  
+    let urlComposer = new GSheet.UrlComposer(
+      this.weightsSpreadsheetId, range, this.weightsAPIKey );
+
+    let fetcher = urlComposer.fetcher_JSON_ColumnMajorArray( progress );
+
+//!!! ...unfinished... (2022/08/26)
+    this.???  = await yield* fetcher;
+
+    progress.disposeResources_and_recycleToPool();
+    progress = null;
+
+!!! ...unfinished... (2022/08/26)
   }
 
   /** */
