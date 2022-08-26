@@ -143,11 +143,11 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     this.processRelayPromisesMap = new Map();
 
 
-//!!! ...unfinished... (2022/08/24) Whay not use "./WorkerBody.js"?
+//!!! ...unfinished... (2022/08/24) Whay not use "./NeuralWorker_Body.js"?
 
     // Assume the main (i.e. body) javascript file of neural network web worker is
     // a sibling file (i.e. inside the same folder) of this module file.
-    this.workerURL = new URL( "WorkerBody.js", import.meta.url );
+    this.workerURL = new URL( "NeuralWorker_Body.js", import.meta.url );
 
     // Should not use "module" type worker, otherwise the worker can not use
     // importScripts() to load tensorflow.js library.
