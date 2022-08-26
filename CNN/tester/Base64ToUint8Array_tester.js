@@ -2,8 +2,8 @@ export { tester };
 
 import * as Base64ToUint8Array from "../Unpacker/Base64ToUint8Array.js";
 import * as RandTools from "../util/RandTools.js";
-import * as ScriptLoader from "../ScriptLoader.js";
-import * as ValueMax from "../ValueMax.js";
+import * as ScriptLoader from "../util/ScriptLoader.js";
+import * as ValueMax from "../util/ValueMax.js";
 
 // This string will not fit to ASCII when base64 decoded. So can not be used to test. 
 //const base64EncodedString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -105,33 +105,24 @@ let testCases = [
 ];
 
 
-
-
-/** Aggregate all progress about downloading, JSON parsing, characters scanning, and weights scanning.  */
-class Progress extends ValueMax.Percentage.Aggregate {
-  constructor() {
-    let children = new Array( testCases.length );
-    for (let i = 0; i < testCases.length; ++i) {
-      children[ i ] = new ValueMax.Percentage.Aggregate(); // Increased when parsing the downloaded data to Uint8Array.
-    }
-
-    super(children);
-  }
-}
-
 /**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
- * increased when every time advanced. The progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent. The
+ * created progressToAdvance will be increased when every time advanced. The
+ * progressParent.root_get() will be returned when every time yield.
  *
  */
 function* tester( progressParent ) {
   console.log("Base64 decode testing...");
 
-  let progress = progressParent.child_add( new Progress() );
+  // 0. Prepare progressParent for every TestCase.
+  for ( let i = 0; i < testCases.length; ++i ) {
+    progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  }
 
-  for (let i = 0; i < testCases.length; ++i) {
+  // 1. Run every TestCase.
+  for ( let i = 0; i < testCases.length; ++i ) {
     let testCase = testCases[ i ];
 
     let decoder = Base64ToUint8Array.decoder_FromArrayBuffer(
