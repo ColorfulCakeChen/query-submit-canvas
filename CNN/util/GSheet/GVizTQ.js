@@ -211,14 +211,15 @@ class UrlComposer {
    * @example
    *   Handler( ... );
    *
-   * This method will find the position of the first "(" and the last ")". Extract the string between these two positions.
-   * Parsing it by JSON.parse().
+   * This method will find the position of the first "(" and the last ")". Extract
+   * the string between these two positions. Parsing it by JSON.parse().
    *
    * @param {string} strJSONP
    *   The JSONP string to be parsed.
    *
    * @return {Object|value}
-   *   Return the JSON parsed result. Return null, if left parenthesis or right parenthesis is not found.
+   *   Return the JSON parsed result. Return null, if left parenthesis or right
+   * parenthesis is not found.
    */
   static evalJSONP( strJSONP ) {
     let beginIndex = strJSONP.indexOf( "(" );
@@ -229,14 +230,16 @@ class UrlComposer {
     if ( endIndex < 0 )
       return null;  // right parenthesis is not found.
 
-    let strJSON = strJSONP.slice( beginIndex + 1, endIndex ); // "+ 1" for the next position of the left parenthesis.
+    // Note: "+ 1" for the next position of the left parenthesis.
+    let strJSON = strJSONP.slice( beginIndex + 1, endIndex );
     let result = JSON.parse( strJSON );
     return result;
   }
 
   /**
-   * Collects gvizDataTable.rows[ n ].c[ m ].v into a two dimension (column-major) array. The outer array has m inner
-   * sub-arrays (corresponding to m columns). Every inner sub-array has n elements (corresponding to n rows).
+   * Collects gvizDataTable.rows[ n ].c[ m ].v into a two dimension (column-major)
+   * array. The outer array has m inner sub-arrays (corresponding to m columns).
+   * Every inner sub-array has n elements (corresponding to n rows).
    *
    * @param {DataTable} gvizDataTable
    *   The DataTable object of Google Visualization API.
@@ -252,7 +255,8 @@ class UrlComposer {
     for ( let columnNo = 0; columnNo < columnArray.length; ++columnNo ) {
       let rowArray = columnArray[ columnNo ] = new Array( gvizDataTable.rows.length );
       for ( let rowNo = 0; rowNo < rowArray.length; ++rowNo ) {
-        rowArray[ rowNo ] = gvizDataTable.rows[ rowNo ].c[ columnNo ].v; // Always value (.v), ignore formatted value string (.f).
+        // Always value (.v), ignore formatted value string (.f).
+        rowArray[ rowNo ] = gvizDataTable.rows[ rowNo ].c[ columnNo ].v;
       }
     }
 
