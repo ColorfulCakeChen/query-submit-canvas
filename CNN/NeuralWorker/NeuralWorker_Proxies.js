@@ -175,6 +175,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     urlComposer.disposeResources_and_recycleToPool();
     urlComposer = null;
+
+//!!! ...unfinished... (2022/08/26) should shuffle the list.
+
   }
 
   /**
