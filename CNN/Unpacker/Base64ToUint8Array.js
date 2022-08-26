@@ -193,7 +193,7 @@ function* decoder_FromUint8Array(
       if ( skippedLineCount >= skipLineCount )
         break;                  // Already skip enough lines.
 
-      // (This inner loop combines both source and yield boundary checking. Reducing
+      // (This inner loop combines both source and yield boundary checking. Reduce
       // checking to increase performance.) 
       while ( progressToAdvance.value < nextYieldValue ) {
         if ( skippedLineCount >= skipLineCount )
