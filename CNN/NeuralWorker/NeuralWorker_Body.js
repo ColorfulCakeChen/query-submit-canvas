@@ -110,6 +110,26 @@ class NeuralWorker_Body {
     globalThis.NeuralNet = await import( "../Conv/NeuralNet.js" );
   }
 
+  /** @override */
+  disposeResources() {
+
+
+    //super.disposeResources();
+  }
+
+  /** */
+  disposeWorker() {
+    if ( this.neuralNet ) {
+      this.neuralNet.disposeTensors();
+      this.neuralNet = null;
+    }
+
+//!!!??? calling close() when the next worker disposed ?
+    close();
+  }
+
+//!!! ...unfinished... 
+
   /** Load weights summary. */
   async weights_summary_loadAsync() {
     // The summary is at the first column of the first (i.e. left most) sheet.
@@ -131,22 +151,14 @@ class NeuralWorker_Body {
 !!! ...unfinished... (2022/08/26)
   }
 
-  /** @override */
-  disposeResources() {
+  /**
+   *
+   */
+  async neuralNet_loadAsync() {
 
+//!!! ...unfinished... (2022/08/27)
+// if backend is webgl, the nueral network should be run once for compiling shader.
 
-    //super.disposeResources();
-  }
-
-  /** */
-  disposeWorker() {
-    if ( this.neuralNet ) {
-      this.neuralNet.disposeTensors();
-      this.neuralNet = null;
-    }
-
-//!!!??? calling close() when the next worker disposed ?
-    close();
   }
 
 //!!! Regular Expression for get text inside html table markup:

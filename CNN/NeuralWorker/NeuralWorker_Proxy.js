@@ -170,6 +170,11 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     };
 
     worker.postMessage( message );  // Inform the worker to initialize.
+
+!!! ...unfinished... (2022/08/27)
+// must use MessageChannel instead of window.onmessage().
+// Otherwise, original window.onmessage() will be replaced (i.e. destroyed) by our system.
+
   }
 
   /**
