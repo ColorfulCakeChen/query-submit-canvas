@@ -144,6 +144,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 
 
 //!!! ...unfinished... (2022/08/24) Whay not use "./NeuralWorker_Body.js"?
+// The import.meta.url should extract the path (exclude file name)
 
     // Assume the main (i.e. body) javascript file of neural network web worker is
     // a sibling file (i.e. inside the same folder) of this module file.
