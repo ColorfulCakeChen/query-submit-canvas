@@ -59,12 +59,12 @@ let tEncoder = new TextEncoder();
 let tDecoder = new TextDecoder();
 
 //const base64EncodedUint8Array = tDecoder.decode(base64EncodedString);
-const base64DecodedUint8Array = tEncoder.encode(base64DecodedString);
+const base64DecodedUint8Array = [ base64DecodedString);
 const emptyUint8Array = new Uint8Array(0);
 
 class TestCase {
-  constructor(source, skipLineCount, result, suspendByteCount, note) {
-    this.source = source;
+  constructor( sourceStringArray, skipLineCount, result, suspendByteCount, note ) {
+    this.sourceStringArray = sourceStringArray;
     this.skipLineCount = skipLineCount;
     this.result = result;
     this.suspendByteCount = suspendByteCount;
@@ -82,35 +82,35 @@ class TestCase {
 }
 
 let testCases = [
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 0]), 1, emptyUint8Array, undefined, "Empty. Not enough lines." ),
+  new TestCase( [ base64EncodedStrings_extra[ 0] ], 1, emptyUint8Array, undefined, "Empty. Not enough lines." ),
 
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 0]), 0, emptyUint8Array,         3, "Empty" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 1]), 1, emptyUint8Array,         2, "LF Empty" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 2]), 1, emptyUint8Array,         5, "CR Empty" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 3]), 1, emptyUint8Array, undefined, "CRLF Empty" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 4]), 2, emptyUint8Array,         5, "LFCR Empty" ),
+  new TestCase( [ base64EncodedStrings_extra[ 0] ], 0, emptyUint8Array,         3, "Empty" ),
+  new TestCase( [ base64EncodedStrings_extra[ 1] ], 1, emptyUint8Array,         2, "LF Empty" ),
+  new TestCase( [ base64EncodedStrings_extra[ 2] ], 1, emptyUint8Array,         5, "CR Empty" ),
+  new TestCase( [ base64EncodedStrings_extra[ 3] ], 1, emptyUint8Array, undefined, "CRLF Empty" ),
+  new TestCase( [ base64EncodedStrings_extra[ 4] ], 2, emptyUint8Array,         5, "LFCR Empty" ),
 
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 5]), 0, base64DecodedUint8Array,        15, "Extra 0 bytes" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 6]), 0, base64DecodedUint8Array,         7, "Extra 1 bytes" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 7]), 0, base64DecodedUint8Array,        17, "Extra 2 bytes" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 8]), 0, base64DecodedUint8Array,         8, "Extra 3 bytes" ),
+  new TestCase( [ base64EncodedStrings_extra[ 5] ], 0, base64DecodedUint8Array,        15, "Extra 0 bytes" ),
+  new TestCase( [ base64EncodedStrings_extra[ 6] ], 0, base64DecodedUint8Array,         7, "Extra 1 bytes" ),
+  new TestCase( [ base64EncodedStrings_extra[ 7] ], 0, base64DecodedUint8Array,        17, "Extra 2 bytes" ),
+  new TestCase( [ base64EncodedStrings_extra[ 8] ], 0, base64DecodedUint8Array,         8, "Extra 3 bytes" ),
 
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 9]), 0, base64DecodedUint8Array,         4, "Extra LF inside" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[10]), 0, base64DecodedUint8Array,         3, "Extra CR inside" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[11]), 0, base64DecodedUint8Array,         5, "Extra CRLF inside" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[12]), 0, base64DecodedUint8Array,        11, "Extra LFCR inside" ),
+  new TestCase( [ base64EncodedStrings_extra[ 9] ], 0, base64DecodedUint8Array,         4, "Extra LF inside" ),
+  new TestCase( [ base64EncodedStrings_extra[10] ], 0, base64DecodedUint8Array,         3, "Extra CR inside" ),
+  new TestCase( [ base64EncodedStrings_extra[11] ], 0, base64DecodedUint8Array,         5, "Extra CRLF inside" ),
+  new TestCase( [ base64EncodedStrings_extra[12] ], 0, base64DecodedUint8Array,        11, "Extra LFCR inside" ),
 
-  new TestCase( tEncoder.encode("\n"   + base64EncodedString), 1, base64DecodedUint8Array,         5, "Begin LF" ),
-  new TestCase( tEncoder.encode("\r"   + base64EncodedString), 1, base64DecodedUint8Array,         5, "Begin CR" ),
-  new TestCase( tEncoder.encode("\r\n" + base64EncodedString), 1, base64DecodedUint8Array,         5, "Begin CRLF" ),
-  new TestCase( tEncoder.encode("\n\r" + base64EncodedString), 2, base64DecodedUint8Array,         5, "Begin LFCR" ),
+  new TestCase( [ "\n"   + base64EncodedString ], 1, base64DecodedUint8Array,         5, "Begin LF" ),
+  new TestCase( [ "\r"   + base64EncodedString ], 1, base64DecodedUint8Array,         5, "Begin CR" ),
+  new TestCase( [ "\r\n" + base64EncodedString ], 1, base64DecodedUint8Array,         5, "Begin CRLF" ),
+  new TestCase( [ "\n\r" + base64EncodedString ], 2, base64DecodedUint8Array,         5, "Begin LFCR" ),
 
-  new TestCase( tEncoder.encode("qwerty\n"   + base64EncodedString), 1, base64DecodedUint8Array,         6, "Text LF" ),
-  new TestCase( tEncoder.encode("qwerty\r"   + base64EncodedString), 1, base64DecodedUint8Array, undefined, "Text CR" ),
-  new TestCase( tEncoder.encode("qwerty\r\n" + base64EncodedString), 1, base64DecodedUint8Array,      2048, "Text CRLF" ),
-  new TestCase( tEncoder.encode("qwerty\n\r" + base64EncodedString), 2, base64DecodedUint8Array,         7, "Text LFCR" ),
+  new TestCase( [ "qwerty\n"   + base64EncodedString ], 1, base64DecodedUint8Array,         6, "Text LF" ),
+  new TestCase( [ "qwerty\r"   + base64EncodedString ], 1, base64DecodedUint8Array, undefined, "Text CR" ),
+  new TestCase( [ "qwerty\r\n" + base64EncodedString ], 1, base64DecodedUint8Array,      2048, "Text CRLF" ),
+  new TestCase( [ "qwerty\n\r" + base64EncodedString ], 2, base64DecodedUint8Array,         7, "Text LFCR" ),
 
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[13]), 3, base64DecodedUint8Array, 8, "Multiple LF and CR inside" ),
+  new TestCase( [ base64EncodedStrings_extra[13] ], 3, base64DecodedUint8Array, 8, "Multiple LF and CR inside" ),
 ];
 
 
@@ -135,8 +135,9 @@ function* tester( progressParent ) {
     let testCase = testCases[ i ];
     let progressChild = progressParent.children[ i ];
 
-    let decoder = Base64ToUint8Array.decoder_FromArrayBuffer(
-      testCase.source, testCase.skipLineCount, progressChild,
+    let decoder = Base64ToUint8Array.decoder_FromStringArray(
+      testCase.sourceStringArray, tEncoder,
+      testCase.skipLineCount, progressChild,
       testCase.suspendByteCount );
 
     let r = yield* decoder;
