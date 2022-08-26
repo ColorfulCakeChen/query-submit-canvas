@@ -1,14 +1,9 @@
-/**
- * @file This file is an importable module to handle and communicate to the neural
- * network (web) worker body.
- *
- */
+export { PendingPromiseInfo };
+export { NeuralWorker_Proxy as Proxy };
 
 //import * as ValueMax from "../ValueMax.js";
 import * as NeuralNetProgress from "./NetProgress.js";
 //import * as GVizTQ from "../util/GVizTQ.js";
-
-export { PendingPromiseInfo, WorkerProxy_Base as Base };
 
 
 /**
@@ -59,7 +54,7 @@ class ProcessRelayPromises {
 
 /**
  * Hold the worker and its related promise map. It is a wrapper of a neural network
- * web worker for handling easily.
+ * web worker for handling and communicating easily.
  *
  * @member {number} workerId  The array index of this worker proxy.
  * @member {Worker} worker    The worker.
@@ -67,7 +62,7 @@ class ProcessRelayPromises {
  * @member {Map}    pendingPromiseInfoMap
  *   The map for promise of the unhandled processing.
  */
-class WorkerProxy_Base {
+class NeuralWorker_Proxy {
 
   /**
    * Initialize this worker proxy. It will create one web worker and inform it to
@@ -125,7 +120,7 @@ class WorkerProxy_Base {
     this.workerOptions = null;
 
     let worker = this.worker = new Worker( this.workerURL, this.workerOptions );
-    worker.onmessage = WorkerProxy_Base.onmessage_fromWorker.bind( this ); // Register callback from the web worker.
+    worker.onmessage = NeuralWorker_Proxy.onmessage_fromWorker.bind( this ); // Register callback from the web worker.
 
     // Worker Initialization message.
     let message = {

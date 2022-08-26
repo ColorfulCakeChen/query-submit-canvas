@@ -15,7 +15,7 @@
  * The implementation of a neural network web worker.
  *
  */
-class WorkerBody {
+class NeuralWorker_Body {
 
   /**
    *

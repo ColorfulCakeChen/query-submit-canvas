@@ -1,15 +1,8 @@
-/**
- * @file This file is an importable module to handle neural (web) worker body by
- * worker proxy.
- *
- */
+export { NeuralWorker_Proxies as Proxies };
 
-import * as WorkerProxy from "./WorkerProxy.js";
+import { Proxy as WorkerProxy } from "./NeuralWorker_Proxy.js";
 import * as NeuralNetProgress from "./NetProgress.js";
 //import * as Net from "./Net.js";
-
-export { Base };
-
 
 /**
  * The container of WorkerProxy. It orchestrates these WorkerProxy. Especially, it
@@ -35,7 +28,7 @@ export { Base };
  * a promise. The promise will resolve with an array of typed-array. Every typed-array
  * is the output of one neural network.
  */
-class Base {
+class NeuralWorker_Proxies {
 
   /**
    * Initialize this worker proxy controller. It will create two web workers and inform
@@ -93,7 +86,7 @@ class Base {
     this.workerProxyArray = new Array( totalWorkerCount );
     for ( let i = 0; i < totalWorkerCount; ++i ) {
       let initProgress = this.initProgressAll.childrren[ i ];
-      let workerProxy = this.workerProxyArray[ i ] = new WorkerProxy.Base();
+      let workerProxy = this.workerProxyArray[ i ] = new WorkerProxy();
       workerProxy.init(
         i, tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey,
         initProgress
