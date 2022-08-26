@@ -1,15 +1,32 @@
 export { VersusId_WinCount };
 
 /**
- * @member {string} versusIdString               The versus id string (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo).
- * @member {string} entityNoString               The entity id string of the versus.
- * @member {number} entityNo                     The entity id number of the versus.
- * @member {string} parentGenerationNoString     The parent generation id string of the entity of the versus.
- * @member {number} parentGenerationNo           The parent generation id number of the entity of the versus.
- * @member {string} offspringGenerationNoString  The offspring generation id string of the entity of the versus.
- * @member {number} offspringGenerationNo        The offspring generation id number of the entity of the versus.
- * @member {string} winCountString               The win count string of parent generation of the entity of the versus.
- * @member {number} winCount                     The win count number of parent generation of the entity of the versus.
+ * @member {string} versusIdString
+ *   The versus id string (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo).
+ *
+ * @member {string} entityNoString
+ *   The entity id string of the versus.
+ *
+ * @member {number} entityNo
+ *   The entity id number of the versus.
+ *
+ * @member {string} parentGenerationNoString
+ *   The parent generation id string of the entity of the versus.
+ *
+ * @member {number} parentGenerationNo
+ *   The parent generation id number of the entity of the versus.
+ *
+ * @member {string} offspringGenerationNoString
+ *   The offspring generation id string of the entity of the versus.
+ *
+ * @member {number} offspringGenerationNo
+ *   The offspring generation id number of the entity of the versus.
+ *
+ * @member {string} winCountString
+ *   The win count string of parent generation of the entity of the versus.
+ *
+ * @member {number} winCount
+ *   The win count number of parent generation of the entity of the versus.
  */
 class Base {
 
