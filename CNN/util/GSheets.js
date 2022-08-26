@@ -1,5 +1,7 @@
-export { UrlComposer };
+export { GSheets_UrlComposer as UrlComposer };
 
+import * as Pool from "./Pool.js";
+import * as Recyclable from "./Recyclable.js";
 import * as GVizTQ from "./GSheet/GVizTQ.js";
 import * as GSheetsAPIv4 from "./GSheet/GSheetsAPIv4.js";
 import * as ValueMax from "./ValueMax.js";
@@ -7,7 +9,13 @@ import * as ValueMax from "./ValueMax.js";
 /**
  * Fetch data from Google Sheets.
  */
-class UrlComposer {
+class GSheets_UrlComposer extends Recyclable.Root {
+
+  /**
+   * Used as default GSheets.UrlComposer provider for conforming to Recyclable interface.
+   */
+  static Pool = new Pool.Root( "GSheets.UrlComposer.Pool",
+    GSheets_UrlComposer, GSheets_UrlComposer.setAsConstructor );
 
   /**
    * If no sheet name in the range's A1 notation, the first (most left) visible sheet
@@ -34,12 +42,40 @@ class UrlComposer {
    *
    * @see {@link https://developers.google.com/sheets/api/guides/concepts}
    */
-  constructor( spreadsheetId, range, apiKey = null ) {
+  constructor( spreadsheetId, range, apiKey ) {
+    super();
+    GSheets_UrlComposer.setAsConstructor_self.call( this,
+      spreadsheetId, range, apiKey
+    );
+  }
+
+  /** @override */
+  static setAsConstructor( spreadsheetId, range, apiKey ) {
+    super.setAsConstructor();
+    GSheets_UrlComposer.setAsConstructor_self.call( this,
+      spreadsheetId, range, apiKey
+    );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( spreadsheetId, range, apiKey ) {
     if ( apiKey != null ) {
-      this.urlComposer = new GSheetsAPIv4.UrlComposer( spreadsheetId, range, apiKey );
+      this.urlComposer = SheetsAPIv4.UrlComposer.Pool.get_or_create_by(
+        spreadsheetId, range, apiKey );
     } else {
-      this.urlComposer = new GVizTQ.UrlComposer( spreadsheetId, range );
+      this.urlComposer = new GVizTQ.UrlComposer.Pool.get_or_create_by(
+        spreadsheetId, range );
     }
+  }
+
+  /** @override */
+  disposeResources() {
+    if ( this.urlComposer ) {
+      this.urlComposer.disposeResources_and_recycleToPool();
+      this.urlComposer = null;
+    }
+    super.disposeResources();
   }
 
   /**
@@ -54,7 +90,7 @@ class UrlComposer {
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.root_get() ) when ( done = false ).
    *
-   * @yield {array[]}
+   * @yield {Array[]}
    *   - Yield ( value = a two dimension (column-major) array ) when ( done = true )
    *       successfully.
    *   - Yield ( value = null ) when ( done = true ) failed.
@@ -69,7 +105,7 @@ class UrlComposer {
    * Composing the URL (according this object's data members), download
    * it as JSON format, extract data as a two dimension (column-major) array.
    *
-   * @return {array[]}
+   * @return {Array[]}
    *   - Return ( a two dimension (column-major) array ) when successful.
    *   - Return ( null ) when failed.
    */

@@ -94,7 +94,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.root_get() ) when ( done = false ).
    *
-   * @yield {array[]}
+   * @yield {Array[]}
    *   - Yield ( value = a two dimension (column-major) array ) when ( done = true )
    *       successfully.
    *   - Yield ( value = null ) when ( done = true ) failed.
