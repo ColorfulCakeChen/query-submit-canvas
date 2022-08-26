@@ -48,7 +48,7 @@ let table_base64_Uint8_to_index = new Array( 256 ); // Faster than using Uint8Ar
  *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
- * progress). Default is 1024 bytes.
+ * progress). Default is ( 10 * 1024 ) bytes.
  *
  * @yield {ValueMax.Percentage.Aggregate}
  *   Yield ( value = progressParent.root_get() ) when ( done = false ).
@@ -112,7 +112,7 @@ function* decoder_FromStringArray(
  *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
- * progress). Default is 1024 bytes.
+ * progress). Default is ( 10 * 1024 ) bytes.
  *
  * @yield {ValueMax.Percentage.Aggregate}
  *   Yield ( value = progressParent.root_get() ) when ( done = false ).
@@ -151,7 +151,7 @@ function* decoder_FromArrayBuffer(
  *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
- * progress). Default is 1024 bytes.
+ * progress). Default is ( 10 * 1024 ) bytes.
  *
  * @yield {ValueMax.Percentage.Aggregate}
  *   Yield ( value = progressParent.root_get() ) when ( done = false ).
@@ -168,8 +168,8 @@ function* decoder_FromUint8Array(
   //
   // Note: Bitwising OR with zero is for converting to integer (if it is undefined
   //       or null).
-  if ((suspendByteCount | 0) <= 0)
-    suspendByteCount = 1024;
+  if ( ( suspendByteCount | 0 ) <= 0 )
+    suspendByteCount = ( 10 * 1024 );
 
   let sourceByteLength = sourceBase64Uint8Array.length;
   let sourceBytes = sourceBase64Uint8Array;
