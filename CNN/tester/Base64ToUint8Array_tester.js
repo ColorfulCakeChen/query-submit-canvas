@@ -158,39 +158,3 @@ function* tester( progressParent ) {
   console.log( "Base64 decode testing... Done." );
 }
 
-/*!!! Old (2020/12/13 Remarked)
-function test( progressParent ) {
-  console.log("Base64 decode testing...");
-  let delayMilliseconds = 1000;
-
-  let progress = progressParent.child_add( new Progress() );
-  let progressReceiver = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy("TestProgressBar");
-
-  let testPromiseAll = [];
-  for (let i = 0; i < testCases.length; ++i) {
-    let testCase = testCases[ i ];
-
-    let decoder = Base64ToUint8Array.decoder_FromArrayBuffer(
-        testCase.source, testCase.skipLineCount, progress.children[ i ], testCase.suspendByteCount);
-
-    let testPromise = PartTime.forOf(
-      decoder,
-      ( valueMax ) => { progressReceiver.setValueMax( valueMax.valuePercentage, valueMax.maxPercentage ); }, // Report progress to UI.
-      delayMilliseconds
-    ).then(r => {
-      progressReceiver.informDone(r); // Inform UI progress done.
-      if ( r.toString() != testCase.result.toString() )
-        throw Error( `[${i}]`
-          + ` Skip ${testCase.skipLineCount} lines.`
-          + ` suspendByteCount=${testCase.suspendByteCount}.`
-          + ` ${testCase.note} [${r}] != [${testCase.result}]` );
-    });
-
-    testPromiseAll.push( testPromise );
-  }
-
-  Promise.all(testPromiseAll).then(values => {
-    console.log("Base64 decode testing... Done.");
-  });
-}
-*/
