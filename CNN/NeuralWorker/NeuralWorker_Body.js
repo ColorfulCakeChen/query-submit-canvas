@@ -102,7 +102,7 @@ class NeuralWorker_Body {
   async globalModules_initAsync() {
     globalThis.Pool = await import( "../util/Pool.js" );
     globalThis.Recyclable = await import( "../util/Recyclable.js" );
-    globalThis.GSheet = await import( "../util/GSheet.js" );
+    globalThis.GSheets = await import( "../util/GSheets.js" );
     globalThis.ValueMax = await import( "../util/ValueMax.js" );
     //globalThis.RandTools = await import( "../util/RandTools.js" );
     //globalThis.ValueDesc = await import( "../Unpacker/ValueDesc.js" );

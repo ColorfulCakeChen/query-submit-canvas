@@ -1,6 +1,6 @@
 export { tester };
 
-import * as GSheet from "../util/GSheet.js";
+import * as GSheets from "../util/GSheets.js";
 import * as ValueMax from "../util/ValueMax.js";
 
 /*
@@ -40,12 +40,13 @@ async function* tester( progressParent ) {
   let apiKey = "AIzaSyDQpdX3Z7297fkZ7M_jWdq7zjv_IIxpArU";
 
   // Without API key.
-  let tester1 = new GSheet.UrlComposer( spreadsheetId, range );
+  let tester1 = GSheets.UrlComposer.Pool.get_or_create_by( spreadsheetId, range );
   let fetcher1 = tester1.fetcher_JSON_ColumnMajorArrayArray( progress1 );
   let result1 = yield* fetcher1;
 
   // With API key.
-  let tester2 = new GSheet.UrlComposer( spreadsheetId, range, apiKey );
+  let tester2
+    = new GSheets.UrlComposer.Pool.get_or_create_by( spreadsheetId, range, apiKey );
   let fetcher2 = tester2.fetcher_JSON_ColumnMajorArrayArray( progress2 );
   let result2 = yield* fetcher2;
 
@@ -54,6 +55,12 @@ async function* tester( progressParent ) {
     if ( result1.toString() != result2.toString() )
       throw Error( ` ${result1} != ${result2}` );
   }
+
+  tester2.disposeResources_and_recycleToPool();
+  tester2 = null;
+
+  tester1.disposeResources_and_recycleToPool();
+  tester1 = null;
 
   console.log( "GSheet download testing... Done." );
 }
