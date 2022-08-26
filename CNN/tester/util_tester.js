@@ -3,7 +3,7 @@ import * as ValueMax from "../util/ValueMax.js";
 import * as PartTime from "../util/PartTime.js";
 import * as Pool from "../util/Pool.js";
 import * as Base64ToUint8Array_tester from "./Base64ToUint8Array_tester.js";
-import * as GSheet_tester from "./GSheet_tester.js";
+import * as GSheets_tester from "./GSheets_tester.js";
 
 window.addEventListener( "load", event => {
   ScriptLoader
@@ -24,7 +24,7 @@ function test() {
   let progress_Base64ToUint8Array_tester = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progress_GSheet_tester = progress.child_add(
+  let progress_GSheets_tester = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let progressReceiver
@@ -35,7 +35,7 @@ function test() {
 
   async function* testerAll() {
     yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
-    yield* GSheet_tester.tester( progress_GSheet_tester );
+    yield* GSheets_tester.tester( progress_GSheets_tester );
   }
 
   let tester = testerAll();
