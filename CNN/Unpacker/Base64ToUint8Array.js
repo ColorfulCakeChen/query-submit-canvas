@@ -1,4 +1,6 @@
-export { decoder_FromStringArray, decoder_FromArrayBuffer, decoder_FromUint8Array };
+export { decoder_FromStringOrStringArray };
+export { decoder_FromArrayBuffer };
+export { decoder_FromUint8Array };
 
 import * as ValueMax from "../util/ValueMax.js";
 
@@ -31,8 +33,9 @@ let table_base64_Uint8_to_index = new Array( 256 ); // Faster than using Uint8Ar
  * Join the string array, convert to Uint8Array, decode as Base64, result in another
  * Uint8Array.
  *
- * @param {string[]} sourceBase64EncodedStringArray
- *   Every element of the array is a string whose content is base64 encoded text.
+ * @param {string|string[]} sourceBase64Encoded_String_or_StringArray
+ *   A string whose content is base64 encoded text. Or, a string array whose every
+ * element is base64 encoded text.
  *
  * @param {TextEncoder} textEncoder
  *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder
@@ -56,8 +59,8 @@ let table_base64_Uint8_to_index = new Array( 256 ); // Faster than using Uint8Ar
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* decoder_FromStringArray(
-  sourceBase64EncodedStringArray, textEncoder, skipLineCount,
+function* decoder_FromStringOrStringArray(
+  sourceBase64Encoded_String_or_StringArray, textEncoder, skipLineCount,
   progressParent,
   suspendByteCount
 ) {
@@ -77,7 +80,12 @@ function* decoder_FromStringArray(
   let progressParentNew = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let base64EncodedStringLong = sourceBase64EncodedStringArray.join( "" );
+  let base64EncodedStringLong;
+  if ( sourceBase64Encoded_String_or_StringArray instanceof Array )
+    base64EncodedStringLong = sourceBase64Encoded_String_or_StringArray.join( "" );
+  else
+    base64EncodedStringLong = sourceBase64Encoded_String_or_StringArray;
+
   progressToAdvance.value_advance(); // 25%
   yield progressRoot;
 
