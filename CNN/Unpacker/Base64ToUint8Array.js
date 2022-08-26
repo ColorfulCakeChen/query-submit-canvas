@@ -1,4 +1,4 @@
-export { decoder_FromArrayBuffer, decoder_FromUint8Array };
+export { decoder_FromStringArray, decoder_FromArrayBuffer, decoder_FromUint8Array };
 
 import * as ValueMax from "../util/ValueMax.js";
 
