@@ -49,6 +49,8 @@ class NeuralWorker_Body {
     // Because every web worker will copy the input, there is not necessary to keep input.
     let bKeepInputTensor = false;
 
+    await this.globalModules_initAsync();
+
 //!!! ...unfinished... global scope ? report progress ?
 
     // If a specific library module does not existed, all libraries might have not yet been loaded. (i.e. this is the first time WorkerBody.init() is called.)
@@ -92,6 +94,17 @@ class NeuralWorker_Body {
 
   }
 
+  /** Load ourselves libraries. */
+  async globalModules_initAsync() {
+    globalThis.Pool = await import( "../util/Pool.js" );
+    globalThis.Recyclable = await import( "../util/Recyclable.js" );
+    globalThis.ValueMax = await import( "../util/ValueMax.js" );
+    //globalThis.RandTools = await import( "../util/RandTools.js" );
+    //globalThis.ValueDesc = await import( "../Unpacker/ValueDesc.js" );
+    globalThis.Weights = await import( "../Unpacker/Weights.js" );
+  }
+
+  /** */
   disposeWorker() {
     if ( this.neuralNet ) {
       this.neuralNet.disposeTensors();
