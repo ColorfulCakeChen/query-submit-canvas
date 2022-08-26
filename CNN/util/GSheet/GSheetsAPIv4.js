@@ -27,8 +27,8 @@ class UrlComposer {
    * of the spreadsheet to be accessed.
    *
    * @param {string} range
-   *   The cells' A1 notation of the cells. It describes the (name and) range of the
-   * sheet inside the spreadsheet.
+   *   The cells' A1 notation. It describes the (name and) range of the sheet inside
+   * the spreadsheet.
    *   - "A1" refers to one cell of the first (most left) visible sheet.
    *   - "B2:C5" refers to cells of a rectangle of the first (most left) visible sheet.
    *   - "Books!D8:D" refers to the column D of sheet named "Books" from rows 8 to the
