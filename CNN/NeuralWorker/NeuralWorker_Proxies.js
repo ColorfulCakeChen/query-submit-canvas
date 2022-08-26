@@ -128,10 +128,12 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     // Statistics of progress of all workers' initialization.
     this.initProgressAll = new NeuralNetProgress.InitProgressAll();
 
-    this.workerProxyArray = new Array( totalWorkerCount );
+    this.workerProxyArray = Pool.OwnerArray.Pool.get_or_create_by();
+    this.workerProxyArray.length = totalWorkerCount;
+
     for ( let i = 0; i < totalWorkerCount; ++i ) {
       let initProgress = this.initProgressAll.childrren[ i ];
-      let workerProxy = this.workerProxyArray[ i ] = new WorkerProxy();
+      let workerProxy = this.workerProxyArray[ i ] = WorkerProxy.Pool.get_or_create_by();
       workerProxy.init(
         i, tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey,
         initProgress
@@ -147,9 +149,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    */
   disposeWorkers() {
     if ( this.workerProxyArray ) {
-      for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
-        this.workerProxyArray[ i ].disposeWorker();
-      }
+      this.workerProxyArray.disposeResources_and_recycleToPool();
       this.workerProxyArray = null;
     }
 
