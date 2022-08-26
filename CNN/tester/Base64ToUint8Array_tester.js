@@ -138,7 +138,7 @@ function* tester( progressParent ) {
         + ` ${testCase.note} [${r}] != [${testCase.result}]` );
   }
 
-  console.log("Base64 decode testing... Done.");
+  console.log( "Base64 decode testing... Done." );
 }
 
 /*!!! Old (2020/12/13 Remarked)

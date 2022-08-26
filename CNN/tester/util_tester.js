@@ -38,7 +38,10 @@ function test() {
 
   let testPromise = PartTime.forOf(
     tester,
-    ( progressRoot ) => { progressReceiver.setValueMax( progressRoot.valuePercentage, progressRoot.maxPercentage ); }, // Report progress to UI.
+    ( progressRoot ) => {
+      progressReceiver.setValueMax( // Report progress to UI.
+        progressRoot.valuePercentage, progressRoot.maxPercentage );
+    },
     delayMilliseconds
   ).then(r => {
   });
@@ -46,7 +49,7 @@ function test() {
 //   progressReceiver.informDone(r); // Inform UI progress done.
 
   testPromise.then(values => {
-    console.log("util testing... Done.");
+    console.log( "util testing... Done." );
   });
 
 //!!! ...unfinished...

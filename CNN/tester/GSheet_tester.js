@@ -27,7 +27,7 @@ let testCases = [
  *
  */
 async function* tester( progressParent ) {
-  console.log("GSheet download testing...");
+  console.log( "GSheet download testing..." );
 
   let progress1 = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
@@ -55,5 +55,5 @@ async function* tester( progressParent ) {
       throw Error( ` ${result1} != ${result2}` );
   }
 
-  console.log("GSheet download testing... Done.");
+  console.log( "GSheet download testing... Done." );
 }
