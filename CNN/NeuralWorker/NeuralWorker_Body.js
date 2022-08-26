@@ -32,6 +32,8 @@ class NeuralWorker_Body {
    *
    * @param {string} weightsAPIKey
    *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
+   *   - If not null, Google Sheets API v4 will be used.
+   *   - If null, Google Visualization Table Query API will be used.
    */
   async init(
     workerId = 0,
@@ -106,6 +108,10 @@ class NeuralWorker_Body {
     //globalThis.ValueDesc = await import( "../Unpacker/ValueDesc.js" );
     globalThis.Weights = await import( "../Unpacker/Weights.js" );
     globalThis.NeuralNet = await import( "../Conv/NeuralNet.js" );
+  }
+
+  /** Load ourselves libraries dynamically. */
+  async globalModules_initAsync() {
   }
 
   /** */
