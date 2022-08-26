@@ -16,6 +16,8 @@ function test() {
   console.log("util testing...");
   let delayMilliseconds = 100;
 
+  let pool_all_issuedCount_before = Pool.All.issuedCount;
+
   // Aggregate all progress about util_tester.
   let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
@@ -35,8 +37,6 @@ function test() {
     yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
     yield* GSheet_tester.tester( progress_GSheet_tester );
   }
-
-  let pool_all_issuedCount_before = Pool.All.issuedCount;
 
   let tester = testerAll();
 
