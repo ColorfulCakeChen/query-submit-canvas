@@ -18,7 +18,7 @@ let originalArray = [];
   const PRINTABLE_ASCII_MAX = 126;
 
   for (let i = 0; i < ORIGINAL_TEST_STRING_LENGTH; ++i) {
-    let c = RandTools.getIntInclusive(PRINTABLE_ASCII_MIN, PRINTABLE_ASCII_MAX);
+    let c = RandTools.getRandomIntInclusive( PRINTABLE_ASCII_MIN, PRINTABLE_ASCII_MAX );
     originalArray.push( String.fromCodePoint( c ) );
   }
 }
