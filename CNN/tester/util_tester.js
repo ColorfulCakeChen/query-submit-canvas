@@ -1,6 +1,7 @@
 import * as ScriptLoader from "../util/ScriptLoader.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as PartTime from "../util/PartTime.js";
+import * as Pool from "../util/Pool.js";
 import * as Base64ToUint8Array_tester from "./Base64ToUint8Array_tester.js";
 import * as GSheet_tester from "./GSheet_tester.js";
 
@@ -35,6 +36,8 @@ function test() {
     yield* GSheet_tester.tester( progress_GSheet_tester );
   }
 
+  let pool_all_issuedCount_before = Pool.All.issuedCount;
+
   let tester = testerAll();
 
   let testPromise = PartTime.forOf(
@@ -52,6 +55,8 @@ function test() {
 
       progress.disposeResources_and_recycleToPool();
       progress = null;
+
+      Pool.Asserter.assert_Pool_issuedCount( "util_tester.test()", pool_all_issuedCount_before );
     },
     delayMilliseconds
   ).then(r => {
