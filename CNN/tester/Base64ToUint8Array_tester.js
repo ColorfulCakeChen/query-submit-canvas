@@ -124,9 +124,10 @@ function* tester( progressParent ) {
   // 1. Run every TestCase.
   for ( let i = 0; i < testCases.length; ++i ) {
     let testCase = testCases[ i ];
+    let progressChild = progressParent.children[ i ];
 
     let decoder = Base64ToUint8Array.decoder_FromArrayBuffer(
-      testCase.source, testCase.skipLineCount, progressParent.children[ i ],
+      testCase.source, testCase.skipLineCount, progressChild,
       testCase.suspendByteCount );
 
     let r = yield* decoder;
@@ -136,6 +137,11 @@ function* tester( progressParent ) {
         + ` Skip ${testCase.skipLineCount} lines.`
         + ` suspendByteCount=${testCase.suspendByteCount}.`
         + ` ${testCase.note} [${r}] != [${testCase.result}]` );
+
+    if ( 100 != progressChild.valuePercentage )
+      throw Error( `Base64ToUint8Array_tester.tester(): `
+        `Progress (${progressChild.valuePercentage}) should be 100 `
+        `after decoding successfully. testCaseIndex = ${i}`);
   }
 
   console.log( "Base64 decode testing... Done." );
