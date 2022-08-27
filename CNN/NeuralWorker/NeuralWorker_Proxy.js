@@ -3,7 +3,7 @@ export { NeuralWorker_Proxy as Proxy };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-import * as GSheet from "../util/GSheet.js";
+//import * as GSheets from "../util/GSheets.js";
 import * as ValueMax from "../util/ValueMax.js";
 //import * as NeuralNetProgress from "./NetProgress.js";
 
