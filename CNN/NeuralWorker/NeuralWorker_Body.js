@@ -128,28 +128,27 @@ class NeuralWorker_Body {
     close();
   }
 
-//!!! ...unfinished... 
-
-  /** Load weights summary. */
-  async weights_summary_loadAsync() {
-    // The summary is at the first column of the first (i.e. left most) sheet.
-    const range = "A:A";
-
-    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-  
-    let urlComposer = new GSheet.UrlComposer(
-      this.weightsSpreadsheetId, range, this.weightsAPIKey );
-
-    let fetcher = urlComposer.fetcher_JSON_ColumnMajorArrayArray( progress );
-
-//!!! ...unfinished... (2022/08/26)
-    this.???  = await yield* fetcher;
-
-    progress.disposeResources_and_recycleToPool();
-    progress = null;
-
-!!! ...unfinished... (2022/08/26)
-  }
+//!!! (2022/08/27 Remarked) should be sent here from NeuralWorker_Proxy
+//   /** Load weights summary. */
+//   async weights_summary_loadAsync() {
+//     // The summary is at the first column of the first (i.e. left most) sheet.
+//     const range = "A:A";
+//
+//     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+//
+//     let urlComposer = new GSheet.UrlComposer(
+//       this.weightsSpreadsheetId, range, this.weightsAPIKey );
+//
+//     let fetcher = urlComposer.fetcher_JSON_ColumnMajorArrayArray( progress );
+//
+// //!!! ...unfinished... (2022/08/26)
+//     this.???  = await yield* fetcher;
+//
+//     progress.disposeResources_and_recycleToPool();
+//     progress = null;
+//
+// !!! ...unfinished... (2022/08/26)
+//   }
 
   /**
    *
