@@ -4,6 +4,7 @@ import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as GSheets from "../util/GSheets.js";
 //import * as ValueMax from "../util/ValueMax.js";
+import * as DEvolution from "../DEvolution.js";
 import { Proxy as WorkerProxy } from "./NeuralWorker_Proxy.js";
 //import * as NeuralNetProgress from "./NetProgress.js";
 
@@ -33,9 +34,8 @@ import { Proxy as WorkerProxy } from "./NeuralWorker_Proxy.js";
  *
  *
  *
- * @param {string[]} evolutionVersusRangeArray
- *   A string array. Every element is the spreadsheet range description string for an
- * evolution versus (i.e. parent versus offspring).
+ * @member {DEvolution.VersusRangeArray} evolutionVersusRangeArray
+ *   The range list of all evolution versus (i.e. parent versus offspring).
  */
 class NeuralWorker_Proxies extends Recyclable.Root {
 
@@ -161,22 +161,15 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
   /** Load all evolution versus weights ranges. */
   async evolutionVersusRangeArray_loadAsync() {
-    // The summary is at the first column of the first (i.e. left most) sheet.
-    const range = "A:A";
 
-    let urlComposer = GSheets.UrlComposer.Pool.get_or_create_by(
-      this.weightsSpreadsheetId, range, this.weightsAPIKey );
+    if ( !this.evolutionVersusRangeArray ) {
+      this.evolutionVersusRangeArray = DEvolution.VersusRangeArray.Pool.get_or_create_by(
+        this.weightsSpreadsheetId, this.weightsAPIKey );
+    }
 
-    let evolutionVersusRangeArrayArray
-      = urlComposer.fetchAsync_JSON_ColumnMajorArrayArray();
+    this.evolutionVersusRangeArray.loadAsync();
 
-    // Only the first column (i.e. column[ 0 ]) has range description string.
-    this.evolutionVersusRangeArray = evolutionVersusRangeArrayArray[ 0 ];
-
-    urlComposer.disposeResources_and_recycleToPool();
-    urlComposer = null;
-
-//!!! ...unfinished... (2022/08/26) should shuffle the list.
+//!!! ...unfinished... (2022/08/27)
 
   }
 
