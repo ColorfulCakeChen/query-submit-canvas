@@ -20,21 +20,38 @@ let testCases = [
 
 /** */
 function array2d_compare_EQ( lhs, rhs ) {
-  if ( lhs.length != rhs.length )
-    return false;
 
+  // Note: Their length could be different, but content should be the same.
+  //       (i.e. undefined)
+
+  // if ( lhs.length != rhs.length )
+  //   return false;
+
+  // from lhs to rhs
   for ( let i = 0; i < lhs.length; ++i ) {
     let array1d_lhs = lhs[ i ];
     let array1d_rhs = rhs[ i ];
 
-    if ( array1d_lhs.length != array1d_rhs.length )
-      return false;
+    // if ( array1d_lhs.length != array1d_rhs.length )
+    //   return false;
 
     for ( let j = 0; j < array1d_lhs.length; ++j ) {
       if ( array1d_lhs[ j ] != array1d_rhs[ j ] )
         return false;
     }
   }
+
+  // from rhs to lhs
+  for ( let i = 0; i < rhs.length; ++i ) {
+    let array1d_lhs = lhs[ i ];
+    let array1d_rhs = rhs[ i ];
+
+    for ( let j = 0; j < array1d_rhs.length; ++j ) {
+      if ( array1d_lhs[ j ] != array1d_rhs[ j ] )
+        return false;
+    }
+  }
+
 
   return true;
 }
