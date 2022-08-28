@@ -1,4 +1,4 @@
-export { DEvolution_VersusRangeArray as VersusRangeArray };
+export { DEvolution_VersusSummary as rangeArray };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -6,7 +6,7 @@ import * as GSheets from "../util/GSheets.js";
 import * as RandTools from "../util/RandTools.js";
 
 /**
- * Differential evolution information downloading range list.
+ * Differential evolution summary information by downloading range list.
  *
  * @member {string} weightsSpreadsheetId
  *   The Google Sheets spreadsheetId of neural network weights. Every worker will
@@ -18,31 +18,31 @@ import * as RandTools from "../util/RandTools.js";
  *   - If null, Google Visualization Table Query API will be used.
  *   - If not null, Google Sheets API v4 will be used.
  *
- * @member {string[]} versusRangeArray
+ * @member {string[]} rangeArray
  *   A string array. Every element is the spreadsheet range description string for an
  * evolution versus (i.e. parent versus offspring).
  *
- * @member {number[]} versusVisitIndexArray
- *   A number array. Every element is the index into .versusRangeArray[]. It is used
- * for visiting .versusRangeArray[] randomly.
+ * @member {number[]} visitIndexArray
+ *   A number array. Every element is the index into .rangeArray[]. It is used
+ * for visiting .rangeArray[] randomly.
  *
- * @member {number} versusVisitCount
+ * @member {number} visitCount
  *   So many versus data has been visited. It is the next index into
- * .versusVisitIndexArray[].
+ * .visitIndexArray[].
  */
-class DEvolution_VersusRangeArray extends Recyclable.Root {
+class DEvolution_VersusSummary extends Recyclable.Root {
 
   /**
-   * Used as default DEvolution.VersusRangeArray provider for conforming to Recyclable interface.
+   * Used as default DEvolution.rangeArray provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "DEvolution.VersusRangeArray.Pool",
-    DEvolution_VersusRangeArray, DEvolution_VersusRangeArray.setAsConstructor );
+  static Pool = new Pool.Root( "DEvolution.rangeArray.Pool",
+    DEvolution_VersusSummary, DEvolution_VersusSummary.setAsConstructor );
 
   /**
    */
   constructor( weightsSpreadsheetId, weightsAPIKey ) {
     super();
-    DEvolution_VersusRangeArray.setAsConstructor_self.call( this,
+    DEvolution_VersusSummary.setAsConstructor_self.call( this,
       weightsSpreadsheetId, weightsAPIKey
     );
   }
@@ -50,7 +50,7 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
   /** @override */
   static setAsConstructor( weightsSpreadsheetId, weightsAPIKey ) {
     super.setAsConstructor();
-    DEvolution_VersusRangeArray.setAsConstructor_self.call( this,
+    DEvolution_VersusSummary.setAsConstructor_self.call( this,
       weightsSpreadsheetId, weightsAPIKey
     );
     return this;
@@ -65,14 +65,14 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
-    this.versusVisitCount = undefined;
+    this.visitCount = undefined;
 
-    if ( this.versusVisitIndexArray ) {
-      this.versusVisitIndexArray.disposeResources_and_recycleToPool();
-      this.versusVisitIndexArray = null;
+    if ( this.visitIndexArray ) {
+      this.visitIndexArray.disposeResources_and_recycleToPool();
+      this.visitIndexArray = null;
     }
 
-    this.versusRangeArray = null; // (normal array, just nullifiy it.)
+    this.rangeArray = null; // (normal array, just nullifiy it.)
 
     if ( this.urlComposer ) {
       this.urlComposer.disposeResources_and_recycleToPool();
@@ -95,39 +95,39 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
   }
 
   /** Load all evolution versus weights ranges. */
-  async versusRangeArray_loadAsync() {
+  async rangeArray_loadAsync() {
     // The summary is at the first column of the first (i.e. left most) sheet.
     const range = "A:A";
     this.urlComposer.range_set( range );
 
-    let versusRangeArrayArray
+    let rangeArrayArray
       = this.urlComposer.fetchAsync_JSON_ColumnMajorArrayArray();
 
     // Only the first column (i.e. column[ 0 ]) has range description string.
-    this.versusRangeArray = versusRangeArrayArray[ 0 ];
+    this.rangeArray = rangeArrayArray[ 0 ];
 
-    this.versusVisitIndexArray_prepare();
+    this.visitIndexArray_prepare();
   }
 
   /**
-   * Prepare a random visiting list (according to .versusRangeArray[]'s length).
-   * The .versusVisitCount will be reset to zero.
+   * Prepare a random visiting list (according to .rangeArray[]'s length).
+   * The .visitCount will be reset to zero.
    */
-  versusVisitIndexArray_prepare() {
-    if ( !this.versusVisitIndexArray )
-      this.versusVisitIndexArray = Recyclable.Array.Pool.get_or_create_by();
+  visitIndexArray_prepare() {
+    if ( !this.visitIndexArray )
+      this.visitIndexArray = Recyclable.Array.Pool.get_or_create_by();
 
     // Ordered indexes
-    if ( this.versusVisitIndexArray.length != this.versusRangeArray.length ) {
-      this.versusVisitIndexArray.length = this.versusRangeArray.length;
-      for ( let i = 0; i < this.versusVisitIndexArray.length; ++i ) {
-        this.versusVisitIndexArray[ i ] = i;
+    if ( this.visitIndexArray.length != this.rangeArray.length ) {
+      this.visitIndexArray.length = this.rangeArray.length;
+      for ( let i = 0; i < this.visitIndexArray.length; ++i ) {
+        this.visitIndexArray[ i ] = i;
       }
     }
 
     // Shuffled indexes
-    RandTools.shuffle_Array( this.versusVisitIndexArray );
-    this.versusVisitCount = 0; // Reset to zero after (re-)shuffled.
+    RandTools.shuffle_Array( this.visitIndexArray );
+    this.visitCount = 0; // Reset to zero after (re-)shuffled.
   }
 
   /**
@@ -136,8 +136,8 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
   async versus_next_loadAsync() {
 
     // If all versus data are visited, re-prepare a new random visiting list.
-    if ( this.versusVisitCount >= this.versusVisitIndexArray.length ) {
-      this.versusVisitIndexArray_prepare();
+    if ( this.visitCount >= this.visitIndexArray.length ) {
+      this.visitIndexArray_prepare();
     }
 
 //!!! ...unfinished... (2022/08/28)
