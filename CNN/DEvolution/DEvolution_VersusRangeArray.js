@@ -107,13 +107,16 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
   }
 
   /** (according to .evolutionVersusRangeArray[]'s length) */
-  shuffledIndexArray_create() {
+  shuffledIndexArray_prepare() {
     if ( !this.shuffledIndexArray )
       this.shuffledIndexArray = Recyclable.Array.Pool.get_or_create_by();
 
     // Ordered indexes
-    for ( let i = 0; i < this.shuffledIndexArray.length; ++i ) {
-      this.shuffledIndexArray[ i ] = i;
+    if ( this.shuffledIndexArray.length != this.evolutionVersusRangeArray.length ) {
+      this.shuffledIndexArray.length = this.evolutionVersusRangeArray.length;
+      for ( let i = 0; i < this.shuffledIndexArray.length; ++i ) {
+        this.shuffledIndexArray[ i ] = i;
+      }
     }
 
     // Shuffled indexes
