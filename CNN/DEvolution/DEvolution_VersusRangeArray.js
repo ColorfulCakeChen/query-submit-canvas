@@ -103,7 +103,7 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
     this.evolutionVersusRangeArray = evolutionVersusRangeArrayArray[ 0 ];
 
 //!!! ...unfinished... (2022/08/26) should shuffle the list.
-    this.shuffledIndexArray_create();
+    this.shuffledIndexArray_prepare();
   }
 
   /** (according to .evolutionVersusRangeArray[]'s length) */
