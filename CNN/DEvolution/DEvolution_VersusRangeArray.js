@@ -53,8 +53,9 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self( weightsSpreadsheetId, weightsAPIKey ) {
-    this.weightsSpreadsheetId = weightsSpreadsheetId;
-    this.weightsAPIKey = weightsAPIKey;
+    const range = "";
+    this.urlComposer = GSheets.UrlComposer.Pool.get_or_create_by(
+      weightsSpreadsheetId, range, weightsAPIKey );
   }
 
   /** @override */
@@ -67,30 +68,40 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
 
     this.evolutionVersusRangeArray = null; // (normal array, just nullifiy it.)
 
-    this.weightsAPIKey = undefined;
-    this.weightsSpreadsheetId = undefined;
+    if ( this.urlComposer ) {
+      this.urlComposer.disposeResources_and_recycleToPool();
+      this.urlComposer = null;
+    }
 
 //!!! ...unfinished... (2022/08/27)
 
     super.disposeResources();
   }
 
+  set weightsSpreadsheetId( spreadsheetId ) {
+    this.urlComposer.spreadsheetId_set( spreadsheetId );
+  }
+
+  get weightsSpreadsheetId() {
+    return this.urlComposer.spreadsheetId;
+  }
+
+  /** (Note: api key can not be changed.) */
+  get weightsAPIKey( ) {
+    return this.urlComposer.apiKey;
+  }
+
   /** Load all evolution versus weights ranges. */
   async loadAsync() {
     // The summary is at the first column of the first (i.e. left most) sheet.
     const range = "A:A";
-
-    let urlComposer = GSheets.UrlComposer.Pool.get_or_create_by(
-      this.weightsSpreadsheetId, range, this.weightsAPIKey );
+    this.urlComposer.range_set( range );
 
     let evolutionVersusRangeArrayArray
-      = urlComposer.fetchAsync_JSON_ColumnMajorArrayArray();
+      = this.urlComposer.fetchAsync_JSON_ColumnMajorArrayArray();
 
     // Only the first column (i.e. column[ 0 ]) has range description string.
     this.evolutionVersusRangeArray = evolutionVersusRangeArrayArray[ 0 ];
-
-    urlComposer.disposeResources_and_recycleToPool();
-    urlComposer = null;
 
 //!!! ...unfinished... (2022/08/26) should shuffle the list.
     this.shuffledIndexArray_create();
