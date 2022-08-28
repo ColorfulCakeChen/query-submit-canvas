@@ -103,11 +103,13 @@ function fill_numberArray( io_numberArray,
           for ( let c = 0; c < channelCount; ++c, ++arrayIndex ) {
 
 //!!! (2022/08/04 Temp Remarked) for re-producible random.
-            //randomOffset = getRandomIntInclusive_by_minInt_kindsInt( randomOffsetMinInt, randomOffsetKindsInt );
-            if ( ( arrayIndex % 2 ) == 0 )
-              randomOffset = randomOffsetMinInt;
-            else
-              randomOffset = randomOffsetMaxInt;
+            randomOffset = getRandomIntInclusive_by_minInt_kindsInt( randomOffsetMinInt, randomOffsetKindsInt );
+
+            //!!! (2022/08/27 Remarked) Used for re-producible random. (For debug.)
+            // if ( ( arrayIndex % 2 ) == 0 )
+            //   randomOffset = randomOffsetMinInt;
+            // else
+            //   randomOffset = randomOffsetMaxInt;
 
             value = ( valueNoRand + randomOffset ) % divisorForRemainder;
             io_numberArray[ arrayIndex ] = value;
@@ -128,11 +130,13 @@ function fill_numberArray( io_numberArray,
           for ( let c = 0; c < channelCount; ++c, ++arrayIndex ) {
 
 //!!! (2022/08/04 Temp Remarked) for re-producible random.
-            //randomOffset = getRandomIntInclusive_by_minInt_kindsInt( randomOffsetMinInt, randomOffsetKindsInt );
-            if ( ( arrayIndex % 2 ) == 0 )
-              randomOffset = randomOffsetMinInt;
-            else
-              randomOffset = randomOffsetMaxInt;
+            randomOffset = getRandomIntInclusive_by_minInt_kindsInt( randomOffsetMinInt, randomOffsetKindsInt );
+
+            //!!! (2022/08/27 Remarked) Used for re-producible random. (For debug.)
+            // if ( ( arrayIndex % 2 ) == 0 )
+            //   randomOffset = randomOffsetMinInt;
+            // else
+            //   randomOffset = randomOffsetMaxInt;
 
             value = ( valueNoRand + randomOffset ) % divisorForRemainder;
             io_numberArray[ arrayIndex ] = value;
@@ -167,7 +171,6 @@ function generate_numberArray(
   valueBegin = 0, valueStep = 1,
   randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = ( 2 ** 26 )
 ) {
-
   let numberArray = new Array();
   return fill_numberArray( numberArray,
     height, width, channelCount,
@@ -187,7 +190,7 @@ function shuffle_Array( io_array ) {
   const kindsInt = maxInt - minInt + 1;
 
   let swapIndex, tempElement;
-  for ( let i = 0; i < io_array.length; ++i ) {
+  for ( let i = 0; i <= maxInt; ++i ) {
     swapIndex = getRandomIntInclusive_by_minInt_kindsInt( minInt, kindsInt );
 
     tempElement = io_array[ swapIndex ];
