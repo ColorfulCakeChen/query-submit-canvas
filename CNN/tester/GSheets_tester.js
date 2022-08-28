@@ -18,40 +18,23 @@ let testCases = [
   new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 0]), 1, emptyUint8Array, undefined, "Empty. Not enough lines." ),
 */
 
-/** */
+/**
+ * (Note: Their length could be different, but content should be the same.
+ * (i.e. undefined))
+ */
 function array2d_compare_EQ( lhs, rhs ) {
 
-  // Note: Their length could be different, but content should be the same.
-  //       (i.e. undefined)
-
-  // if ( lhs.length != rhs.length )
-  //   return false;
-
-  // from lhs to rhs
-  for ( let i = 0; i < lhs.length; ++i ) {
+  let max_i = Math.max( lhs.length, rhs.length );
+  for ( let i = 0; i < max_i; ++i ) {
     let array1d_lhs = lhs[ i ];
     let array1d_rhs = rhs[ i ];
 
-    // if ( array1d_lhs.length != array1d_rhs.length )
-    //   return false;
-
-    for ( let j = 0; j < array1d_lhs.length; ++j ) {
+    let max_j = Math.max( array1d_lhs.length, array1d_rhs.length );
+    for ( let j = 0; j < max_j; ++j ) {
       if ( array1d_lhs[ j ] != array1d_rhs[ j ] )
         return false;
     }
   }
-
-  // from rhs to lhs
-  for ( let i = 0; i < rhs.length; ++i ) {
-    let array1d_lhs = lhs[ i ];
-    let array1d_rhs = rhs[ i ];
-
-    for ( let j = 0; j < array1d_rhs.length; ++j ) {
-      if ( array1d_lhs[ j ] != array1d_rhs[ j ] )
-        return false;
-    }
-  }
-
 
   return true;
 }
