@@ -320,7 +320,7 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
       let rowArray = columnArray[ columnNo ] = new Array( gvizDataTable.rows.length );
       for ( let rowNo = 0; rowNo < rowArray.length; ++rowNo ) {
         // Always value (.v), ignore formatted value string (.f).
-        rowArray[ rowNo ] = gvizDataTable.rows[ rowNo ].c[ columnNo ].v;
+        rowArray[ rowNo ] = gvizDataTable.rows[ rowNo ]?.c[ columnNo ]?.v;
       }
     }
 
