@@ -141,6 +141,11 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     }
 
 //!!! ...unfinished... (2022/08/28)
+//     const range = ???;
+//     this.urlComposer.range_set( range );
+//
+//     let ???rangeArrayArray
+//       = this.urlComposer.fetchAsync_JSON_ColumnMajorArrayArray();
   }
 
 }
