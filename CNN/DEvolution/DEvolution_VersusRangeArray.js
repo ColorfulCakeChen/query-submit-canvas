@@ -18,17 +18,17 @@ import * as RandTools from "../util/RandTools.js";
  *   - If null, Google Visualization Table Query API will be used.
  *   - If not null, Google Sheets API v4 will be used.
  *
- * @member {string[]} evolutionVersusRangeArray
+ * @member {string[]} versusRangeArray
  *   A string array. Every element is the spreadsheet range description string for an
  * evolution versus (i.e. parent versus offspring).
  *
- * @member {number[]} shuffledIndexArray
- *   A number array. Every element is the index into .evolutionVersusRangeArray[]. It
- * is used for visiting .evolutionVersusRangeArray[] randomly.
+ * @member {number[]} versusVisitIndexArray
+ *   A number array. Every element is the index into .versusRangeArray[]. It is used
+ * for visiting .versusRangeArray[] randomly.
  *
  * @member {number} versusVisitCount
  *   So many versus data has been visited. It is the next index into
- * .shuffledIndexArray[].
+ * .versusVisitIndexArray[].
  */
 class DEvolution_VersusRangeArray extends Recyclable.Root {
 
@@ -67,12 +67,12 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
 
     this.versusVisitCount = undefined;
 
-    if ( this.shuffledIndexArray ) {
-      this.shuffledIndexArray.disposeResources_and_recycleToPool();
-      this.shuffledIndexArray = null;
+    if ( this.versusVisitIndexArray ) {
+      this.versusVisitIndexArray.disposeResources_and_recycleToPool();
+      this.versusVisitIndexArray = null;
     }
 
-    this.evolutionVersusRangeArray = null; // (normal array, just nullifiy it.)
+    this.versusRangeArray = null; // (normal array, just nullifiy it.)
 
     if ( this.urlComposer ) {
       this.urlComposer.disposeResources_and_recycleToPool();
@@ -95,36 +95,52 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
   }
 
   /** Load all evolution versus weights ranges. */
-  async loadAsync() {
+  async versusRangeArray_loadAsync() {
     // The summary is at the first column of the first (i.e. left most) sheet.
     const range = "A:A";
     this.urlComposer.range_set( range );
 
-    let evolutionVersusRangeArrayArray
+    let versusRangeArrayArray
       = this.urlComposer.fetchAsync_JSON_ColumnMajorArrayArray();
 
     // Only the first column (i.e. column[ 0 ]) has range description string.
-    this.evolutionVersusRangeArray = evolutionVersusRangeArrayArray[ 0 ];
+    this.versusRangeArray = versusRangeArrayArray[ 0 ];
 
-    this.shuffledIndexArray_prepare();
-    this.versusVisitCount = 0; // Reset to zero after (re-)loaded.
+    this.versusVisitIndexArray_prepare();
   }
 
-  /** (according to .evolutionVersusRangeArray[]'s length) */
-  shuffledIndexArray_prepare() {
-    if ( !this.shuffledIndexArray )
-      this.shuffledIndexArray = Recyclable.Array.Pool.get_or_create_by();
+  /**
+   * Prepare a random visiting list (according to .versusRangeArray[]'s length).
+   * The .versusVisitCount will be reset to zero.
+   */
+  versusVisitIndexArray_prepare() {
+    if ( !this.versusVisitIndexArray )
+      this.versusVisitIndexArray = Recyclable.Array.Pool.get_or_create_by();
 
     // Ordered indexes
-    if ( this.shuffledIndexArray.length != this.evolutionVersusRangeArray.length ) {
-      this.shuffledIndexArray.length = this.evolutionVersusRangeArray.length;
-      for ( let i = 0; i < this.shuffledIndexArray.length; ++i ) {
-        this.shuffledIndexArray[ i ] = i;
+    if ( this.versusVisitIndexArray.length != this.versusRangeArray.length ) {
+      this.versusVisitIndexArray.length = this.versusRangeArray.length;
+      for ( let i = 0; i < this.versusVisitIndexArray.length; ++i ) {
+        this.versusVisitIndexArray[ i ] = i;
       }
     }
 
     // Shuffled indexes
-    RandTools.shuffle_Array( this.shuffledIndexArray );
+    RandTools.shuffle_Array( this.versusVisitIndexArray );
+    this.versusVisitCount = 0; // Reset to zero after (re-)shuffled.
+  }
+
+  /**
+   * Load the next versus data.
+   */
+  async versus_next_loadAsync() {
+
+    // If all versus data are visited, re-prepare a new random visiting list.
+    if ( this.versusVisitCount >= this.versusVisitIndexArray.length ) {
+      this.versusVisitIndexArray_prepare();
+    }
+
+//!!! ...unfinished... (2022/08/28)
   }
 
 }
