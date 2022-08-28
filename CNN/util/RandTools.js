@@ -1,10 +1,24 @@
-export { getRandomIntInclusive, fill_numberArray, generate_numberArray };
+export { getRandomIntInclusive_by_minInt_kindsInt, getRandomIntInclusive };
+export { fill_numberArray, generate_numberArray };
+export { shuffle_Array };
 
 import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as Recyclable from "./Recyclable.js";
 
 /**
- * Return a random integer between min and max. (This function comes from MDN's Math.random().)
+ * Return a random integer between [ minInt, ( minInt + kindsInt - 1 ) ]. (This
+ * function comes from MDN's Math.random() example.)
+ *
+ * @param {integer} minInt   The the minimum integer. (inclusive)
+ * @param {integer} kindsInt How many kinds between minInt and maxInt (inclusive).
+ */
+function getRandomIntInclusive_by_minInt_kindsInt( minInt, kindsInt ) {
+  return Math.floor( ( Math.random() * kindsInt ) + minInt );
+}
+
+/**
+ * Return a random integer between min and max. (This function comes from MDN's
+ * Math.random().)
  *
  * @param {number} min The the minimum integer. (inclusive)
  * @param {number} max The the maximum integer. (inclusive)
@@ -15,7 +29,8 @@ function getRandomIntInclusive( min, max ) {
   let minInt = Math.ceil( minReal );
   let maxInt  = Math.floor( maxReal );
   let kindsInt = maxInt - minInt + 1;
-  return Math.floor( ( Math.random() * kindsInt ) + minInt );
+  //return Math.floor( ( Math.random() * kindsInt ) + minInt );
+  return getRandomIntInclusive_by_minInt_kindsInt( minInt, kindsInt );
 }
 
 /**
@@ -88,7 +103,7 @@ function fill_numberArray( io_numberArray,
           for ( let c = 0; c < channelCount; ++c, ++arrayIndex ) {
 
 //!!! (2022/08/04 Temp Remarked) for re-producible random.
-            // randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
+            //randomOffset = getRandomIntInclusive_by_minInt_kindsInt( randomOffsetMinInt, randomOffsetKindsInt );
             if ( ( arrayIndex % 2 ) == 0 )
               randomOffset = randomOffsetMinInt;
             else
@@ -113,7 +128,7 @@ function fill_numberArray( io_numberArray,
           for ( let c = 0; c < channelCount; ++c, ++arrayIndex ) {
 
 //!!! (2022/08/04 Temp Remarked) for re-producible random.
-            // randomOffset = Math.floor( ( Math.random() * randomOffsetKindsInt ) + randomOffsetMinInt );
+            //randomOffset = getRandomIntInclusive_by_minInt_kindsInt( randomOffsetMinInt, randomOffsetKindsInt );
             if ( ( arrayIndex % 2 ) == 0 )
               randomOffset = randomOffsetMinInt;
             else
@@ -158,4 +173,25 @@ function generate_numberArray(
     height, width, channelCount,
     valueBegin, valueStep,
     randomOffsetMin, randomOffsetMax, divisorForRemainder );
+}
+
+/**
+ * Swap elements randomly.
+ *
+ * @param {Array} io_array
+ *   The array to be shuffled.
+ */
+function shuffle_Array( io_array ) {
+  const minInt = 0;
+  const maxInt = io_array.length - 1;
+  const kindsInt = maxInt - minInt + 1;
+
+  let swapIndex, tempElement;
+  for ( let i = 0; i < io_array.length; ++i ) {
+    swapIndex = getRandomIntInclusive_by_minInt_kindsInt( minInt, kindsInt );
+
+    tempElement = io_array[ swapIndex ];
+    io_array[ swapIndex ] = io_array[ i ];
+    io_array[ i ] = tempElement;
+  }
 }

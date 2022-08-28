@@ -3,6 +3,7 @@ export { DEvolution_VersusRangeArray as VersusRangeArray };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as GSheets from "../util/GSheets.js";
+import * as RandTools from "../util/RandTools.js";
 
 /**
  * Differential evolution information downloading range list.
@@ -19,6 +20,10 @@ import * as GSheets from "../util/GSheets.js";
  * @member {string[]} evolutionVersusRangeArray
  *   A string array. Every element is the spreadsheet range description string for an
  * evolution versus (i.e. parent versus offspring).
+ *
+ * @member {number[]} shuffledIndexArray
+ *   A number array. Every element is the index into .evolutionVersusRangeArray[]. It is
+ * used for visiting .evolutionVersusRangeArray[] randomly.
  */
 class DEvolution_VersusRangeArray extends Recyclable.Root {
 
@@ -54,6 +59,14 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+
+    if ( this.shuffledIndexArray ) {
+      this.shuffledIndexArray.disposeResources_and_recycleToPool();
+      this.shuffledIndexArray = null;
+    }
+
+    this.evolutionVersusRangeArray = null; // (normal array, just nullifiy it.)
+
     this.weightsAPIKey = undefined;
     this.weightsSpreadsheetId = undefined;
 
@@ -61,7 +74,6 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
 
     super.disposeResources();
   }
-
 
   /** Load all evolution versus weights ranges. */
   async loadAsync() {
@@ -81,7 +93,21 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
     urlComposer = null;
 
 //!!! ...unfinished... (2022/08/26) should shuffle the list.
+    this.shuffledIndexArray_create();
+  }
 
+  /** (according to .evolutionVersusRangeArray[]'s length) */
+  shuffledIndexArray_create() {
+    if ( !this.shuffledIndexArray )
+      this.shuffledIndexArray = Recyclable.Array.Pool.get_or_create_by();
+
+    // Ordered indexes
+    for ( let i = 0; i < this.shuffledIndexArray.length; ++i ) {
+      this.shuffledIndexArray[ i ] = i;
+    }
+
+    // Shuffled indexes
+    RandTools.shuffle_Array( this.shuffledIndexArray );
   }
 
 }
