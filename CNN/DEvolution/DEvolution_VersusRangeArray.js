@@ -14,6 +14,7 @@ import * as RandTools from "../util/RandTools.js";
  *
  * @member {string} weightsAPIKey
  *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
+ * (Note: api key can not be changed after this object created.)
  *   - If null, Google Visualization Table Query API will be used.
  *   - If not null, Google Sheets API v4 will be used.
  *
@@ -22,8 +23,8 @@ import * as RandTools from "../util/RandTools.js";
  * evolution versus (i.e. parent versus offspring).
  *
  * @member {number[]} shuffledIndexArray
- *   A number array. Every element is the index into .evolutionVersusRangeArray[]. It is
- * used for visiting .evolutionVersusRangeArray[] randomly.
+ *   A number array. Every element is the index into .evolutionVersusRangeArray[]. It
+ * is used for visiting .evolutionVersusRangeArray[] randomly.
  */
 class DEvolution_VersusRangeArray extends Recyclable.Root {
 
@@ -53,9 +54,8 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self( weightsSpreadsheetId, weightsAPIKey ) {
-    const range = "";
     this.urlComposer = GSheets.UrlComposer.Pool.get_or_create_by(
-      weightsSpreadsheetId, range, weightsAPIKey );
+      weightsSpreadsheetId, undefined, weightsAPIKey ); // range is undefined.
   }
 
   /** @override */
@@ -86,7 +86,6 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
     return this.urlComposer.spreadsheetId;
   }
 
-  /** (Note: api key can not be changed.) */
   get weightsAPIKey( ) {
     return this.urlComposer.apiKey;
   }
