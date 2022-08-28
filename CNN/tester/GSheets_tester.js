@@ -18,6 +18,27 @@ let testCases = [
   new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 0]), 1, emptyUint8Array, undefined, "Empty. Not enough lines." ),
 */
 
+/** */
+function array2d_compare_EQ( lhs, rhs ) {
+  if ( lhs.length != rhs.length )
+    return false;
+
+  for ( let i = 0; i < lhs.length; ++i ) {
+    let array1d_lhs = lhs[ i ];
+    let array1d_rhs = rhs[ i ];
+
+    if ( array1d_lhs.length != array1d_rhs.length )
+      return false;
+
+    for ( let j = 0; j < array1d_lhs.length; ++j ) {
+      if ( array1d_lhs[ j ] != array1d_rhs[ j ] )
+        return false;
+    }
+  }
+
+  return true;
+}
+
 /**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
@@ -56,10 +77,8 @@ async function* tester( progressParent ) {
   let result2 = yield* fetcher2;
 
   // Compare results: should the same.
-  {
-    if ( result1.toString() != result2.toString() )
-      throw Error( ` ${result1} != ${result2}` );
-  }
+  if ( !array2d_compare_EQ( result1, result2 ) )
+    throw Error( `${result1} != ${result2}` );
 
   // Test change range.
   {
@@ -72,8 +91,8 @@ async function* tester( progressParent ) {
     let fetcher21 = tester2.fetcher_JSON_ColumnMajorArrayArray( progress21 );
     let result21 = yield* fetcher21;
 
-    if ( result11.toString() != result21.toString() )
-      throw Error( ` ${result11} != ${result21}` );
+    if ( !array2d_compare_EQ( result11, result21 ) )
+      throw Error( `${result11} != ${result21}` );
   }
 
   tester2.disposeResources_and_recycleToPool();
