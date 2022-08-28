@@ -25,6 +25,10 @@ import * as RandTools from "../util/RandTools.js";
  * @member {number[]} shuffledIndexArray
  *   A number array. Every element is the index into .evolutionVersusRangeArray[]. It
  * is used for visiting .evolutionVersusRangeArray[] randomly.
+ *
+ * @member {number} versusVisitCount
+ *   So many versus data has been visited. It is the next index into
+ * .shuffledIndexArray[].
  */
 class DEvolution_VersusRangeArray extends Recyclable.Root {
 
@@ -61,6 +65,8 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
+    this.versusVisitCount = undefined;
+
     if ( this.shuffledIndexArray ) {
       this.shuffledIndexArray.disposeResources_and_recycleToPool();
       this.shuffledIndexArray = null;
@@ -72,8 +78,6 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
       this.urlComposer.disposeResources_and_recycleToPool();
       this.urlComposer = null;
     }
-
-//!!! ...unfinished... (2022/08/27)
 
     super.disposeResources();
   }
@@ -102,8 +106,8 @@ class DEvolution_VersusRangeArray extends Recyclable.Root {
     // Only the first column (i.e. column[ 0 ]) has range description string.
     this.evolutionVersusRangeArray = evolutionVersusRangeArrayArray[ 0 ];
 
-//!!! ...unfinished... (2022/08/26) should shuffle the list.
     this.shuffledIndexArray_prepare();
+    this.versusVisitCount = 0; // Reset to zero after (re-)loaded.
   }
 
   /** (according to .evolutionVersusRangeArray[]'s length) */
