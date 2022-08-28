@@ -191,6 +191,8 @@ function shuffle_Array( io_array ) {
 
   let swapIndex, tempElement;
   for ( let i = 0; i <= maxInt; ++i ) {
+
+    // Randomly select another index to be swapped.
     swapIndex = getRandomIntInclusive_by_minInt_kindsInt( minInt, kindsInt );
 
     tempElement = io_array[ swapIndex ];
