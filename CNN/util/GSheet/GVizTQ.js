@@ -111,12 +111,10 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
     spreadsheetId,
     range, headers, responseHandler, sheetId, sheetName
   ) {
-    this.spreadsheetId = spreadsheetId;
-    this.range = range;
-    this.headers = headers;
-    this.responseHandler = responseHandler;
-    this.sheetId = sheetId;
-    this.sheetName = sheetName;
+    this.set_by_spreadsheetId_range_headers_responseHandler_sheetId_sheetName(
+      spreadsheetId,
+      range, headers, responseHandler, sheetId, sheetName
+    );
   }
 
   /** @override */
@@ -128,6 +126,32 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
     this.range = undefined;
     this.spreadsheetId = undefined;
     super.disposeResources();
+  }
+
+  /**  */
+  set_by_spreadsheetId_range_headers_responseHandler_sheetId_sheetName(
+    spreadsheetId,
+    range, headers, responseHandler, sheetId, sheetName
+  ) {
+    this.spreadsheetId = spreadsheetId;
+    this.range = range;
+    this.headers = headers;
+    this.responseHandler = responseHandler;
+    this.sheetId = sheetId;
+    this.sheetName = sheetName;
+    return this;
+  }
+
+  /**  */
+  spreadsheetId_set( spreadsheetId ) {
+    this.spreadsheetId = spreadsheetId;
+    return this;
+  }
+
+  /**  */
+  range_set( range ) {
+    this.range = range;
+    return this;
   }
 
   /**

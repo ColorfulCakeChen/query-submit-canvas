@@ -69,9 +69,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self( spreadsheetId, range, apiKey ) {
-    this.spreadsheetId = spreadsheetId;
-    this.range = range;
-    this.apiKey = apiKey;
+    this.set_by_spreadsheetId_range_apiKey( spreadsheetId, range, apiKey );
   }
 
   /** @override */
@@ -80,6 +78,38 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
     this.range = undefined;
     this.spreadsheetId = undefined;
     super.disposeResources();
+  }
+
+  /**  */
+  set_by_spreadsheetId_range_apiKey( spreadsheetId, range, apiKey ) {
+    this.spreadsheetId = spreadsheetId;
+    this.range = range;
+    this.apiKey = apiKey;
+    return this;
+  }
+
+  /**  */
+  spreadsheetId_apiKey_set( spreadsheetId, apiKey ) {
+    this.spreadsheetId = spreadsheetId;
+    this.apiKey = apiKey;
+    return this;
+  }
+
+  /**  */
+  spreadsheetId_set( spreadsheetId ) {
+    this.spreadsheetId = spreadsheetId;
+    return this;
+  }
+
+  apiKey_set( apiKey ) {
+    this.apiKey = apiKey;
+    return this;
+  }
+
+  /**  */
+  range_set( range ) {
+    this.range = range;
+    return this;
   }
 
   /**

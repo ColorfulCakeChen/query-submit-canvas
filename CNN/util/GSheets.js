@@ -78,6 +78,16 @@ class GSheets_UrlComposer extends Recyclable.Root {
     super.disposeResources();
   }
 
+  /**  */
+  spreadsheetId_set( spreadsheetId ) {
+    return this.urlComposer.spreadsheetId_set( spreadsheetId );
+  }
+
+  /**  */
+  range_set( range ) {
+    return this.urlComposer.range_set( range );
+  }
+
   /**
    * Generator for composing the URL (according this object's data members), downloading
    * it as JSON format, extracting data as a two dimension (column-major) array.
