@@ -32,7 +32,13 @@ async function* tester( progressParent ) {
   let progress1 = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
+  let progress11 = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
   let progress2 = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progress21 = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
@@ -53,6 +59,21 @@ async function* tester( progressParent ) {
   {
     if ( result1.toString() != result2.toString() )
       throw Error( ` ${result1} != ${result2}` );
+  }
+
+  // Test change range.
+  {
+    let newRange = result1[ 0 ][ 0 ];
+    tester1.range_set( newRange );
+    let fetcher11 = tester1.fetcher_JSON_ColumnMajorArrayArray( progress11 );
+    let result11 = yield* fetcher11;
+
+    tester2.range_set( newRange );
+    let fetcher21 = tester2.fetcher_JSON_ColumnMajorArrayArray( progress21 );
+    let result21 = yield* fetcher21;
+
+    if ( result11.toString() != result21.toString() )
+      throw Error( ` ${result11} != ${result21}` );
   }
 
   tester2.disposeResources_and_recycleToPool();
