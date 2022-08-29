@@ -40,7 +40,7 @@ class DEvolution_VersusId extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor( weightsSpreadsheetId, weightsAPIKey ) {
+  static setAsConstructor( versusIdString ) {
     super.setAsConstructor();
     DEvolution_VersusId.setAsConstructor_self.call( this, versusIdString );
     return this;
