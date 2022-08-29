@@ -2,6 +2,7 @@ export { DEvolution_Versus as Versus };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+import * as NumberTools from "../../util/NumberTools.js";
 import { VersusId } from "../../util/DEvolution_VersusId.js";
 
 /**
@@ -81,18 +82,26 @@ class DEvolution_Versus extends Recyclable.Root {
    */
   async loadAsync( spreadsheetUrlComposer, spreadsheetRange ) {
 
-    this.spreadsheetRange = spreadsheetRange;
-    spreadsheetUrlComposer.range_set( spreadsheetRange );
+    // 0. download from remote.
+    let versusArrayArray;
+    {
+      this.spreadsheetRange = spreadsheetRange;
+      spreadsheetUrlComposer.range_set( spreadsheetRange );
 
-    let versusArrayArray
-      = this.urlComposer.fetchAsync_JSON_ColumnMajorArrayArray();
+      versusArrayArray = this.urlComposer.fetchAsync_JSON_ColumnMajorArrayArray();
+      if ( !versusArrayArray )
+        return false; // Download failure.
+    }
 
-    if ( !versusArrayArray )
-      return false; // Download failure.
+    const COLUMN_ID_versusId = 0;
+    const COLUMN_ID_parentChromosome = 1;
+    const COLUMN_ID_offspringChromosome = 2;
+    const COLUMN_ID_winCount = 3;
 
+    // 1. versusId
     {
       // The first row of the first column should be the versusId string.
-      let versusIdString = versusArrayArray[ 0 ][ 0 ];
+      let versusIdString = versusArrayArray[ COLUMN_ID_versusId ][ 0 ];
       if ( this.versusId )
         this.versusId.set_byVersusIdString( versusIdString );
       else
@@ -103,6 +112,25 @@ class DEvolution_Versus extends Recyclable.Root {
     }
 
 //!!! ...unfinished... (2022/08/29)
+    // 2. decode parent chromosome
+    {
+      this.parentChromosome
+    }
+
+    // 3. decode offspring chromosome
+    offspringChromosome
+
+    // 4. decode parent chromosome's winCount
+    {
+      // Every row of the column should have the same winCount string. Just take first one.
+      let winCountString = versusArrayArray[ COLUMN_ID_winCount ][ 0 ];
+      this.winCount = Number.parseInt( this.winCountString, 10 );
+      if ( !NumberTools.isInteger( this.winCount ) )
+        return false;
+
+      
+    }
+
 
     return true;
   }
