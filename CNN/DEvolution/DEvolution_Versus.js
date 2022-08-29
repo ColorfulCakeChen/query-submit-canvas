@@ -67,24 +67,39 @@ class DEvolution_Versus extends Recyclable.Root {
    * Load the versus data from specified spreadsheet id.
    *
    * @param {GSheets.UrlComposer} spreadsheetUrlComposer
-   *   The source spreadsheet id to be downloaded from. Its range will be set as
+   *   The source spreadsheet id to be downloaded from. Its spreadsheetId (and apiKey if
+   * necessary) should have been setup correctly. Its range will be set as
    * spreadsheetRange. It will not be released by this method.
    *
    * @param {string} spreadsheetRange
    *   The range description string for downloading this versus data.
    * (e.g. "Evolution!AH57:AK58")
    *
+   * @return {Promise}
+   *   Return a promise. It will resolve to true, if succeed. It will resolve to false,
+   * if failed.
    */
   async loadAsync( spreadsheetUrlComposer, spreadsheetRange ) {
+
+    this.spreadsheetRange = spreadsheetRange;
     spreadsheetUrlComposer.range_set( spreadsheetRange );
 
-//!!! ...unfinished... (2022/08/28)
-//     const range = ???;
-//     this.urlComposer.range_set( range );
-//
-//     let ???rangeArrayArray
-//       = this.urlComposer.fetchAsync_JSON_ColumnMajorArrayArray();
+    let versusArrayArray
+      = this.urlComposer.fetchAsync_JSON_ColumnMajorArrayArray();
 
+    if ( !versusArrayArray )
+      return false; // Download failure.
+
+    // The first row of the first column should be the versusId string.
+    let versusIdString = versusArrayArray[ 0 ][ 0 ];
+    if ( this.versusId )
+      this.versusId.set_byVersusIdString( versusIdString );
+    else
+      this.versusId = VersusId.Pool.get_or_create_by( versusIdString );
+
+//!!! ...unfinished... (2022/08/29)
+
+    return true;
   }
 
 }
