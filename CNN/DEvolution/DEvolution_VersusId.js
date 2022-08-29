@@ -91,6 +91,13 @@ class DEvolution_VersusId extends Recyclable.Root {
     this.offspringGenerationNo = Number.parseInt( this.offspringGenerationNoString, 10 );
   }
 
+  /** */
+  isValid() {
+    // Note: Bitwising with zero will generate 
+    this.entityNo | 0
+
+  }
+
 }
 
 /**
