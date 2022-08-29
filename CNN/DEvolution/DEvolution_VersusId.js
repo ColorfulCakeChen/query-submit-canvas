@@ -2,6 +2,7 @@ export { DEvolution_VersusId as VersusId };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+import * as NumberTools from "../../util/NumberTools.js";
 
 /**
  * @member {string} versusIdString
@@ -91,11 +92,17 @@ class DEvolution_VersusId extends Recyclable.Root {
     this.offspringGenerationNo = Number.parseInt( this.offspringGenerationNoString, 10 );
   }
 
-  /** */
+  /**
+   * @return {boolean} Reurn true, if these ids are legal.
+   */
   isValid() {
-    // Note: Bitwising with zero will generate 
-    this.entityNo | 0
-
+    if ( !NumberTools.isInteger( this.entityNo ) )
+      return false;
+    if ( !NumberTools.isInteger( this.parentGenerationNo ) )
+      return false;
+    if ( !NumberTools.isInteger( this.offspringGenerationNo ) )
+      return false;
+    return true;
   }
 
 }

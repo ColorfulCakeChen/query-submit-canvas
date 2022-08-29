@@ -90,12 +90,17 @@ class DEvolution_Versus extends Recyclable.Root {
     if ( !versusArrayArray )
       return false; // Download failure.
 
-    // The first row of the first column should be the versusId string.
-    let versusIdString = versusArrayArray[ 0 ][ 0 ];
-    if ( this.versusId )
-      this.versusId.set_byVersusIdString( versusIdString );
-    else
-      this.versusId = VersusId.Pool.get_or_create_by( versusIdString );
+    {
+      // The first row of the first column should be the versusId string.
+      let versusIdString = versusArrayArray[ 0 ][ 0 ];
+      if ( this.versusId )
+        this.versusId.set_byVersusIdString( versusIdString );
+      else
+        this.versusId = VersusId.Pool.get_or_create_by( versusIdString );
+
+      if ( !this.versusId.isValid() )
+        return false; // versusId is illegal.
+    }
 
 //!!! ...unfinished... (2022/08/29)
 
