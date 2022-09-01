@@ -1,6 +1,6 @@
 /**
- * Incrementally build search tree when every time search a named range from
- * currrent active spreadsheet.
+ * Incrementally build search tree when searching a named range from currrent
+ * active spreadsheet every time.
  *
  * @member {NamedRange[]} namedRangeArray
  *   The whole named ranges in a flat array.
