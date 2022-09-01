@@ -18,10 +18,6 @@ function NamedRange_copy_from_source_to_target() {
   return true;
 }
 
-/** */
-function dummy() {
-
-}
 
 /** */
 function onOpen() {
@@ -48,12 +44,9 @@ function onOpen() {
 function ranges_getByName( ...names ) {
   let spreadsheet = SpreadsheetApp.getActive();
   let ranges = new Array( names.length );
-
   for ( let i = 0; i < names.length; ++i ) {
-    if ( !( ranges[ i ] = spreadsheet.getRangeByName( names[ i ] ) ) ) {
-      let msg = `NamedRange "${names[ i ]}" not found.`;
-      throw Error( msg );
-    }
+    if ( !( ranges[ i ] = spreadsheet.getRangeByName( names[ i ] ) ) )
+      throw Error( `NamedRange "${names[ i ]}" not found.` );
   }
   return ranges;
 }
