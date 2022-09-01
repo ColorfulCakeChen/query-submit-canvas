@@ -48,16 +48,18 @@ function onOpen() {
  *   The name of the NameRange to be found.
  *
  * @return {Range}
- *   If not found, return null (and log and display errror message).
+ *   If not found, return null (and log and display error message).
  */
 function range_getByName( name ) {
-  let spreadsheet = SpreadsheetApp.getActive();
-  let range = spreadsheet.getRangeByName( name );
-  if ( !range ) {
-    let msg = `NamedRange "${name}" not found.`;
-    console.error( msg );
-    SpreadsheetApp.getUi().alert( msg );
-    return null;
-  }
-  return range;
+  let range = SpreadsheetApp.getActive().getRangeByName( name );
+  if ( range )
+    return range;
+
+  let msg = `NamedRange "${name}" not found.`;
+  console.error( msg );
+
+  // Display error mesage in the sidebar.
+  let htmlOutput = HtmlService.createHtmlOutput( msg ).setTitle( "Error" );
+  SpreadsheetApp.getUi().showSidebar( htmlOutput );
+  return null;
 }
