@@ -11,13 +11,13 @@ const RANGE_NAME_TARGET = "NamedRangeTarget";
 function NamedRange_copy_from_source_to_target() {
   let sourceNamedRange = GlobalNamedRanges.Singleton.search_byName( RANGE_NAME_SOURCE );
   if ( !sourceNamedRange ) {
-    console.log( `Source NamedRange "${RANGE_NAME_SOURCE}" not found.` );
+    console.error( `Source NamedRange "${RANGE_NAME_SOURCE}" not found.` );
     return false;
   }
 
   let targetNamedRange = GlobalNamedRanges.Singleton.search_byName( RANGE_NAME_TARGET );
   if ( !targetNamedRange ) {
-    console.log( `Target NamedRange "${RANGE_NAME_TARGET}" not found.` );
+    console.error( `Target NamedRange "${RANGE_NAME_TARGET}" not found.` );
     return false;
   }
 
