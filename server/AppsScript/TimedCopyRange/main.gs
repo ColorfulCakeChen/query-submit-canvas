@@ -12,7 +12,7 @@ function NamedRange_copy_from_source_to_target() {
 
   //let spreadsheet = SpreadsheetApp.getActive();
   let [ sourceRange, targetRange ]
-    = ranges_getByName( RANGE_NAME_SOURCE, RANGE_NAME_TARGET );
+    = ranges_getByNames( RANGE_NAME_SOURCE, RANGE_NAME_TARGET );
   sourceRange.copyTo( targetRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
 
   return true;
@@ -36,7 +36,7 @@ function onOpen() {
  * @throw {Error}           If one of names not found, throw exception.
  * @return {Range[]}        If all names found, return an array of Range object.
  */
-function ranges_getByName( ...names ) {
+function ranges_getByNames( ...names ) {
   let spreadsheet = SpreadsheetApp.getActive();
   let ranges = new Array( names.length );
   for ( let i = 0; i < names.length; ++i )
