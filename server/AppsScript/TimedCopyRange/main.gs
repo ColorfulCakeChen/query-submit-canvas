@@ -32,14 +32,9 @@ function onOpen() {
 }
 
 /**
- * @param {string[]} names
- *   The names of the NameRange to be found.
- *
- * @throw {Error}
- *   If one of names not found, throw exception.
- | *
- * @return {Range[]}
- *   If all names found, return an array of Range object.
+ * @param {string[]} names  The names of the NameRange to be found.
+ * @throw {Error}           If one of names not found, throw exception.
+ * @return {Range[]}        If all names found, return an array of Range object.
  */
 function ranges_getByName( ...names ) {
   let spreadsheet = SpreadsheetApp.getActive();
