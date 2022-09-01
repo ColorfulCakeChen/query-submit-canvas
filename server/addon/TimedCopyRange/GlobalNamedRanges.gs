@@ -7,7 +7,7 @@
  *
  * @member {number} namedRangeArrayIndexNext
  *   The next array index into .namedRangeArray[] for searching (and building
- * fast search map searincrementally).
+ * fast search map incrementally).
  *
  * @member {Map} namedRangeMap
  *   A fast search table for visited named ranges.
