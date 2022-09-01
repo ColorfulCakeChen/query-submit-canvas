@@ -11,7 +11,8 @@ const RANGE_NAME_TARGET = "NamedRangeTarget";
 function NamedRange_copy_from_source_to_target() {
 
   //let spreadsheet = SpreadsheetApp.getActive();
-  let [ sourceRange, targetRange ] = ranges_getByName( RANGE_NAME_SOURCE, RANGE_NAME_TARGET );
+  let [ sourceRange, targetRange ]
+    = ranges_getByName( RANGE_NAME_SOURCE, RANGE_NAME_TARGET );
   sourceRange.copyTo( targetRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
 
   return true;
