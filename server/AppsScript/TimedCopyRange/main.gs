@@ -39,9 +39,8 @@ function onOpen() {
 function ranges_getByName( ...names ) {
   let spreadsheet = SpreadsheetApp.getActive();
   let ranges = new Array( names.length );
-  for ( let i = 0; i < names.length; ++i ) {
+  for ( let i = 0; i < names.length; ++i )
     if ( !( ranges[ i ] = spreadsheet.getRangeByName( names[ i ] ) ) )
       throw Error( `NamedRange "${names[ i ]}" not found.` );
-  }
   return ranges;
 }
