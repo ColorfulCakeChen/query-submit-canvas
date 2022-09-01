@@ -15,8 +15,7 @@
 class GlobalNamedRanges {
 
   /** */
-  constructor() {
-    let spreadsheet = SpreadsheetApp.getActive();
+  constructor( spreadsheet = SpreadsheetApp.getActive() ) {
     this.namedRangeArray = spreadsheet.getNamedRanges();
     this.namedRangeArrayIndexNext = 0;
 
@@ -52,6 +51,8 @@ class GlobalNamedRanges {
         return namedRange;
       }
     }
+
+    // 3. Not found in both fast and slow list.
     return null;
   }
 
