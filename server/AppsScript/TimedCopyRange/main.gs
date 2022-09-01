@@ -11,16 +11,7 @@ const RANGE_NAME_TARGET = "NamedRangeTarget";
 function NamedRange_copy_from_source_to_target() {
 
   //let spreadsheet = SpreadsheetApp.getActive();
-  let sourceRange = range_getByName( RANGE_NAME_SOURCE );
-  if ( !sourceRange ) {
-    return false;
-  }
-
-  let targetRange = range_getByName( RANGE_NAME_TARGET );
-  if ( !targetRange ) {
-    return false;
-  }
-
+  let [ sourceRange, targetRange ] = ranges_getByName( RANGE_NAME_SOURCE, RANGE_NAME_TARGET );
   sourceRange.copyTo( targetRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
 
   return true;
@@ -44,22 +35,24 @@ function onOpen() {
 }
 
 /**
- * @param {string} name
- *   The name of the NameRange to be found.
+ * @param {string[]} names
+ *   The names of the NameRange to be found.
  *
- * @return {Range}
- *   If not found, return null (and log and display error message).
+ * @throw {Error}
+ *   If one of names not found, throw exception.
+ | *
+ * @return {Range[]}
+ *   If all names found, return an array of Range object.
  */
-function range_getByName( name ) {
-  let range = SpreadsheetApp.getActive().getRangeByName( name );
-  if ( range )
-    return range;
+function ranges_getByName( ...names ) {
+  let spreadsheet = SpreadsheetApp.getActive();
+  let ranges = new Array( names.length );
 
-  let msg = `NamedRange "${name}" not found.`;
-  console.error( msg );
-
-  // Display error mesage in the sidebar.
-  let htmlOutput = HtmlService.createHtmlOutput( msg ).setTitle( "Error" );
-  SpreadsheetApp.getUi().showSidebar( htmlOutput );
-  return null;
+  for ( let i = 0; i < names.length; ++i ) {
+    if ( !( ranges[ i ] = spreadsheet.getRangeByName( names[ i ] ) ) ) {
+      let msg = `NamedRange "${names[ i ]}" not found.`;
+      throw Error( msg );
+    }
+  }
+  return ranges;
 }
