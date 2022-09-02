@@ -1,20 +1,20 @@
 const RANGE_NAME = {
   FETCHER: {
     TIMER: {
-      EVERY_DAYS: "Fetcher.Timer.EveryDays",
+      EVERY_MINUTES: "Fetcher.Timer.EveryMinutes",
       AT_HOUR: "Fetcher.Timer.AtHour",
       NEAR_MINUTE: "Fetcher.Timer.NearMinute",
-      MESSAGE: "Fetcher.Timer.Message",
+      LAST_TIME: "Fetcher.Timer.LastTime",
     },
     GA4_PROPERTY_ID: "Fetcher.GA4.PropertyId",
     RESULT: "Fetcher.Result",
   },
   COPIER: {
     TIMER: {
-      EVERY_DAYS: "Copier.Timer.EveryDays",
+      EVERY_MINUTES: "Copier.Timer.EveryMinutes",
       AT_HOUR: "Copier.Timer.AtHour",
       NEAR_MINUTE: "Copier.Timer.NearMinute",
-      MESSAGE: "Copier.Timer.Message",
+      LAST_TIME: "Copier.Timer.LastTime",
     },
     SOURCE_NAME: "Copier.SourceName",
     TARGET_NAME: "Copier.TargetName",

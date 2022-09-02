@@ -16,41 +16,33 @@ function onOpen() {
 
 /** When fetcher's timer triggered. */
 function fetcherTimer_onTime_( e ) {
-  let [ fetcherTimerMessage, fetcherGA4PropertyId, fetcherResult ]
-    = ranges_getByNames_( RANGE_NAME.FETCHER.TIMER.MESSAGE,
-      RANGE_NAME.FETCHER.GA4_PROPERTY_ID, RANGE_NAME.FETCHER.RESULT );
+  EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FETCHER.TIMER.LAST_TIME );
 
-  let msg = EventObject_Timer_toString_( e );
-  fetcherTimerMessage.setValue( msg );
+  let [ fetcherGA4PropertyId, fetcherResult ]
+    = ranges_getByNames_( RANGE_NAME.FETCHER.GA4_PROPERTY_ID, RANGE_NAME.FETCHER.RESULT );
 
 //!!! ...unfinished... (2022/09/02) fetch data
 }
 
 /** When copier's timer triggered. */
 function copierTimer_onTime_( e ) {
-  let [ copierTimerMessage, copierSourceName, copierTargetName ]
-    = ranges_getByNames_( RANGE_NAME.COPIER.TIMER.MESSAGE,
-      RANGE_NAME.COPIER.SOURCE_NAME, RANGE_NAME.COPIER.TARGET_NAME );
-
-  let msg = EventObject_Timer_toString_( e );
-  copierTimerMessage.setValue( msg );
-
+  EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.COPIER.TIMER.LAST_TIME );
   NamedRange_copy_from_source_to_target_();
 }
 
 /** Install all triggers of this script. */
 function triggersAll_install_() {
-  let [ fetcherTimerEveryDays, fetcherTimerAtHour, fetcherTimerNearMinute,
-    fetcherTimerMessage, fetcherGA4PropertyId, fetcherResult ] = ranges_getByNames_(
-      RANGE_NAME.FETCHER.TIMER.EVERY_DAYS, RANGE_NAME.FETCHER.TIMER.AT_HOUR,
-      RANGE_NAME.FETCHER.TIMER.NEAR_MINUTE, RANGE_NAME.FETCHER.TIMER.MESSAGE,
+  let [ fetcherTimerEveryMinutes, fetcherTimerAtHour, fetcherTimerNearMinute,
+    fetcherTimerLastTime, fetcherGA4PropertyId, fetcherResult ] = ranges_getByNames_(
+      RANGE_NAME.FETCHER.TIMER.EVERY_MINUTES, RANGE_NAME.FETCHER.TIMER.AT_HOUR,
+      RANGE_NAME.FETCHER.TIMER.NEAR_MINUTE, RANGE_NAME.FETCHER.TIMER.LAST_TIME,
       RANGE_NAME.FETCHER.GA4_PROPERTY_ID, RANGE_NAME.FETCHER.RESULT );
 
-  let [ copierTimerEveryDays, copierTimerAtHour, copierTimerNearMinute,
-    copierTimerMessage, copierSourceName, copierTargetName ]
+  let [ copierTimerEveryMinutes, copierTimerAtHour, copierTimerNearMinute,
+    copierTimerLastTime, copierSourceName, copierTargetName ]
       = ranges_getByNames_(
-      RANGE_NAME.COPIER.TIMER.EVERY_DAYS, RANGE_NAME.COPIER.TIMER.AT_HOUR,
-      RANGE_NAME.COPIER.TIMER.NEAR_MINUTE, RANGE_NAME.COPIER.TIMER.MESSAGE,
+      RANGE_NAME.COPIER.TIMER.EVERY_MINUTES, RANGE_NAME.COPIER.TIMER.AT_HOUR,
+      RANGE_NAME.COPIER.TIMER.NEAR_MINUTE, RANGE_NAME.COPIER.TIMER.LAST_TIME,
       RANGE_NAME.COPIER.SOURCE_NAME, RANGE_NAME.COPIER.TARGET_NAME );
 
   let [ copierSource, copierTarget ] = ranges_getByNames_(
@@ -58,17 +50,23 @@ function triggersAll_install_() {
 
   triggersAll_uninstall_();
 
-  ScriptApp.newTrigger( "fetcherTimer_onTime_" ).timeBased()
-    .everyDays( fetcherTimerEveryDays.getValue() )
-    .atHour( fetcherTimerAtHour.getValue() )
-    .nearMinute( fetcherTimerNearMinute.getValue() )
-    .create();
+  let fetcherTimerBuilder = ScriptApp.newTrigger( "fetcherTimer_onTime_" ).timeBased();
+  if ( fetcherTimerEveryMinutes.isBlank() )
+    fetcherTimerBuilder.everyDays( 1 )
+      .atHour( fetcherTimerAtHour.getValue() )
+      .nearMinute( fetcherTimerNearMinute.getValue() )
+      .create();
+  else
+    fetcherTimerBuilder.everyMinutes( fetcherTimerEveryMinutes.getValue() ).create();
 
-  ScriptApp.newTrigger( "copierTimer_onTime_" ).timeBased()
-    .everyDays( copierTimerEveryDays.getValue() )
-    .atHour( copierTimerAtHour.getValue() )
-    .nearMinute( copierTimerNearMinute.getValue() )
-    .create();
+  let copierTimerBuilder = ScriptApp.newTrigger( "copierTimer_onTime_" ).timeBased();
+  if ( copierTimerEveryMinutes.isBlank() )
+    copierTimerBuilder.everyDays( 1 )
+      .atHour( copierTimerAtHour.getValue() )
+      .nearMinute( copierTimerNearMinute.getValue() )
+      .create();
+  else
+    copierTimerBuilder.everyMinutes( copierTimerEveryMinutes.getValue() ).create();
 }
 
 /** Uninstall all triggers of this script. */
@@ -88,6 +86,16 @@ function NamedRange_copy_from_source_to_target_() {
     copierSourceName.getValue(), copierTargetName.getValue() );
 
   copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
+}
+
+/**
+ * @param {Object} e          Time-driven event object.
+ * @param {string} rangeName  The target cell to record the time.
+ */
+function EventObject_Timer_recordTo_byRangeName_( e, rangeName ) {
+  let [ range ] = ranges_getByNames_( rangeName );
+  let msg = EventObject_Timer_toString_( e );
+  range.setValue( msg );
 }
 
 /**
