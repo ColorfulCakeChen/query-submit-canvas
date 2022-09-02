@@ -72,6 +72,17 @@ function copierTimer_onTime_( e ) {
   NamedRange_copy_from_source_to_target_();
 }
 
+/** Copy the values from source (NamedRange) to target (NamedRange). */
+function NamedRange_copy_from_source_to_target_() {
+  let [ copierSourceName, copierTargetName ] = ranges_getByNames_(
+    RANGE_NAME.COPIER.SOURCE_NAME, RANGE_NAME.COPIER.TARGET_NAME );
+
+  let [ copierSource, copierTarget ] = ranges_getByNames_(
+    copierSourceName.getValue(), copierTargetName.getValue() );
+
+  copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
+}
+
 /** Install all triggers of this script. */
 function triggersAll_install_() {
   let [ fetcherCopierEveryMinutes, fetcherCopierEveryHours,
@@ -142,17 +153,6 @@ function property_inc_byName_( propertyName ) {
   ++value;
   documentProperties.setProperty( propertyName, value );
   return value;
-}
-
-/** Copy the values from source (NamedRange) to target (NamedRange). */
-function NamedRange_copy_from_source_to_target_() {
-  let [ copierSourceName, copierTargetName ] = ranges_getByNames_(
-    RANGE_NAME.COPIER.SOURCE_NAME, RANGE_NAME.COPIER.TARGET_NAME );
-
-  let [ copierSource, copierTarget ] = ranges_getByNames_(
-    copierSourceName.getValue(), copierTargetName.getValue() );
-
-  copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
 }
 
 /**
