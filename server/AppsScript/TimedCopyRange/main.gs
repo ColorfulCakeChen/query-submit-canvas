@@ -189,6 +189,9 @@ function EventObject_Timer_toString_( e ) {
 function range_value_inc_( range ) {
   if ( range.isBlank() )
     value = 0;
+  else
+    value = range.getValue();
+
   ++value;
   range.setValue( value );
   return value;
