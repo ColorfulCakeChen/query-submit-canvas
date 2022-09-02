@@ -8,11 +8,29 @@ function onOpen() {
   let ui = SpreadsheetApp.getUi();
   ui.createAddonMenu()
     .addItem( "Copy range", "NamedRange_copy_from_source_to_target_" )
+    .addItem( "Triggers install", "triggersAll_install_" )
+    .addItem( "Triggers uninstall", "triggersAll_uninstall_" )
     // .addSubMenu(
     //   ui.createMenu( "Sub menu" )
     //     .addItem( "Sub item1", "dummy" )
     // )
     .addToUi();
+}
+
+/** Install all triggers of this script. */
+function triggersAll_install_() {
+  let spreadsheet = SpreadsheetApp.getActive()
+  // ScriptApp.newTrigger().timeBased().
+
+//!!! ...unfinished... (2022/09/02)
+}
+
+/** Uninstall all triggers of this script. */
+function triggersAll_uninstall_() {
+  let spreadsheet = SpreadsheetApp.getActive()
+  let triggers = ScriptApp.getUserTriggers( spreadsheet );
+  for ( let i = 0; i < triggers.length; ++i )
+    ScriptApp.deleteTrigger( triggers[ i ] );
 }
 
 /** Copy the values from source (NamedRange) to target (NamedRange).
