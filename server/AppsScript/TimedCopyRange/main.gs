@@ -16,19 +16,30 @@ function onOpen() {
 
 /** When timer triggered. */
 function timer_onTime_( e ) {
-  let [ fetcherCopierCounter,
-    fetcherCopierCounterDivisor, fetcherCopierCounterRemainder,
-    fetcherCounterRemainder, copierCounterRemainder ]
-    = ranges_getByNames_(
+  let [
+    fetcherCopierTimerCounter,
+    fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
+    fetcherTimerLastTime, fetcherTimerCounter,
+    copierTimerLastTime, copierTimerCounter,
+  ] = ranges_getByNames_(
       RANGE_NAME.FETCHER_COPIER.TIMER.COUNTER,
       RANGE_NAME.FETCHER_COPIER.TIMER.COUNTER_DIVISOR,
       RANGE_NAME.FETCHER_COPIER.TIMER.COUNTER_REMAINDER,
-      RANGE_NAME.FETCHER.TIMER.COUNTER_REMAINDER,
-      RANGE_NAME.COPIER.TIMER.COUNTER_REMAINDER,
+      RANGE_NAME.FETCHER.TIMER.LAST_TIME,
+      RANGE_NAME.FETCHER.TIMER.COUNTER,
+      RANGE_NAME.COPIER.TIMER.LAST_TIME,
+      RANGE_NAME.COPIER.TIMER.COUNTER,
     );
 
-  let timerExecutionCount = property_timerExecutionCount_inc_();
-  fetcherCopierCounter.setValue( timerExecutionCount );
+  EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FETCHER_COPIER.TIMER.LAST_TIME );
+
+  let timerExecutionCount = property_inc_byName_( PROPERTY_NAME.TIMER_EXECUTION_COUNT );
+  fetcherCopierTimerCounter.setValue( timerExecutionCount );
+
+  // fetcherTimerLastTime.clearContent();
+  // fetcherTimerCounter.clearContent();
+  // copierTimerLastTime.clearContent();
+  // copierTimerCounter.clearContent();
 
   let counterRemainder = timerExecutionCount % fetcherCopierCounterDivisor.getValue();
   fetcherCopierCounterRemainder.setValue( counterRemainder );
@@ -44,8 +55,14 @@ function timer_onTime_( e ) {
 function fetcherTimer_onTime_( e ) {
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FETCHER.TIMER.LAST_TIME );
 
-  let [ fetcherGA4PropertyId, fetcherResult ]
-    = ranges_getByNames_( RANGE_NAME.FETCHER.GA4_PROPERTY_ID, RANGE_NAME.FETCHER.RESULT );
+  let [ fetcherTimerCounter, fetcherGA4PropertyId, fetcherResult ]
+    = ranges_getByNames_(
+      RANGE_NAME.FETCHER.TIMER.COUNTER,
+      RANGE_NAME.FETCHER.GA4_PROPERTY_ID, RANGE_NAME.FETCHER.RESULT
+    );
+
+  let counter = property_inc_byName_( RANGE_NAME.FETCHER.TIMER.COUNTER );
+  fetcherTimerCounter.setValue( counter );
 
 //!!! ...unfinished... (2022/09/02) fetch data
 }
@@ -53,30 +70,49 @@ function fetcherTimer_onTime_( e ) {
 /** When copier's timer triggered. */
 function copierTimer_onTime_( e ) {
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.COPIER.TIMER.LAST_TIME );
+
+  let [ copierTimerCounter ] = ranges_getByNames_( RANGE_NAME.COPIER.TIMER.COUNTER );
+
+  let counter = property_inc_byName_( RANGE_NAME.COPIER.TIMER.COUNTER );
+  copierTimerCounter.setValue( counter );
+
   NamedRange_copy_from_source_to_target_();
 }
 
 /** Install all triggers of this script. */
 function triggersAll_install_() {
   let [ fetcherCopierEveryMinutes, fetcherCopierEveryHours,
-    fetcherCopierCounter, fetcherCopierCounterDivisor, fetcherCopierCounterRemainder,
-    fetcherCounterRemainder, fetcherTimerLastTime, fetcherGA4PropertyId, fetcherResult,
-    copierCounterRemainder, copierTimerLastTime, copierSourceName, copierTargetName ]
+    fetcherCopierTimerLastTime, fetcherCopierTimerCounter,
+    fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
+    fetcherAtRemainder, fetcherTimerLastTime, fetcherTimerCounter,
+    fetcherGA4PropertyId, fetcherResult,
+    copierAtRemainder, copierTimerLastTime, copierTimerCounter,
+    copierSourceName, copierTargetName ]
     = ranges_getByNames_(
       RANGE_NAME.FETCHER_COPIER.TIMER.EVERY_MINUTES,
       RANGE_NAME.FETCHER_COPIER.TIMER.EVERY_HOURS,
+      RANGE_NAME.FETCHER_COPIER.TIMER.LAST_TIME,
       RANGE_NAME.FETCHER_COPIER.TIMER.COUNTER,
       RANGE_NAME.FETCHER_COPIER.TIMER.COUNTER_DIVISOR,
       RANGE_NAME.FETCHER_COPIER.TIMER.COUNTER_REMAINDER,
-      RANGE_NAME.FETCHER.TIMER.COUNTER_REMAINDER,
+      RANGE_NAME.FETCHER.TIMER.AT_REMAINDER,
       RANGE_NAME.FETCHER.TIMER.LAST_TIME,
+      RANGE_NAME.FETCHER.TIMER.COUNTER,
       RANGE_NAME.FETCHER.GA4_PROPERTY_ID, RANGE_NAME.FETCHER.RESULT,
-      RANGE_NAME.COPIER.TIMER.COUNTER_REMAINDER,
+      RANGE_NAME.COPIER.TIMER.AT_REMAINDER,
       RANGE_NAME.COPIER.TIMER.LAST_TIME,
+      RANGE_NAME.COPIER.TIMER.COUNTER,
       RANGE_NAME.COPIER.SOURCE_NAME, RANGE_NAME.COPIER.TARGET_NAME );
 
   triggersAll_uninstall_();
   property_deleteAll_();
+
+  fetcherCopierTimerLastTime.clearContent();
+  fetcherCopierTimerCounter.clearContent();
+  fetcherTimerLastTime.clearContent();
+  fetcherTimerCounter.clearContent();
+  copierTimerLastTime.clearContent();
+  copierTimerCounter.clearContent();
 
   let timerBuilder = ScriptApp.newTrigger( "timer_onTime_" ).timeBased();
   if ( !fetcherCopierEveryMinutes.isBlank() )
@@ -101,17 +137,17 @@ function property_deleteAll_() {
 }
 
 /**
- * @return {number} Increase counter by one, and return the incresed count.
+ * @param {string} propertyName  The name of property to be increased.
+ * @return {number} Increase counter by one, and return the increased count.
  */
-function property_timerExecutionCount_inc_() {
+function property_inc_byName_( propertyName ) {
   let documentProperties = PropertiesService.getDocumentProperties();
-  let timerExecutionCount = documentProperties.getProperty( PROPERTY_NAME_TIMER_EXECUTION_COUNT );
-  if ( timerExecutionCount == undefined )
-    timerExecutionCount = 0;
-
-  ++timerExecutionCount;
-  documentProperties.setProperty( PROPERTY_NAME_TIMER_EXECUTION_COUNT, timerExecutionCount );
-  return timerExecutionCount;
+  let value = documentProperties.getProperty( propertyName );
+  if ( value == undefined )
+    value = 0;
+  ++value;
+  documentProperties.setProperty( propertyName, value );
+  return value;
 }
 
 /** Copy the values from source (NamedRange) to target (NamedRange). */

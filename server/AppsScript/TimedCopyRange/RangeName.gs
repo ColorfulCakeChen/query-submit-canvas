@@ -3,6 +3,7 @@ const RANGE_NAME = {
     TIMER: {
       EVERY_MINUTES: "FetcherCopier.Timer.EveryMinutes",
       EVERY_HOURS: "FetcherCopier.Timer.EveryHours",
+      LAST_TIME: "FetcherCopier.Timer.LastTime",
       COUNTER: "FetcherCopier.Timer.Counter",
       COUNTER_DIVISOR: "FetcherCopier.Timer.CounterDivisor",
       COUNTER_REMAINDER: "FetcherCopier.Timer.CounterRemainder",
@@ -10,21 +11,25 @@ const RANGE_NAME = {
   },
   FETCHER: {
     TIMER: {
-      COUNTER_REMAINDER: "Fetcher.Timer.CounterRemainder",
+      AT_REMAINDER: "Fetcher.Timer.AtRemainder",
       LAST_TIME: "Fetcher.Timer.LastTime",
+      COUNTER: "Fetcher.Timer.Counter",
     },
     GA4_PROPERTY_ID: "Fetcher.GA4.PropertyId",
     RESULT: "Fetcher.Result",
   },
   COPIER: {
     TIMER: {
-      COUNTER_REMAINDER: "Copier.Timer.CounterRemainder",
+      AT_REMAINDER: "Copier.Timer.AtRemainder",
       LAST_TIME: "Copier.Timer.LastTime",
+      COUNTER: "Copier.Timer.Counter",
     },
     SOURCE_NAME: "Copier.SourceName",
     TARGET_NAME: "Copier.TargetName",
   }
 };
 
-const PROPERTY_NAME_TIMER_EXECUTION_COUNT = "timerExecutionCount";
+const PROPERTY_NAME = {
+  TIMER_EXECUTION_COUNT: "timerExecutionCount",
+};
 
