@@ -102,6 +102,7 @@ function triggersAll_install_() {
 
   fetcherCopierTimerLastTime.clearContent();
   fetcherCopierTimerCounter.clearContent();
+  fetcherCopierTimerCounterRemainder.clearContent();
   fetcherTimerLastTime.clearContent();
   fetcherTimerCounter.clearContent();
   copierTimerLastTime.clearContent();
