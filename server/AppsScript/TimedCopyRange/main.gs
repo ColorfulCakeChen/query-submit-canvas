@@ -113,7 +113,7 @@ function triggersAll_install_() {
     timerBuilder.everyMinutes( fetcherCopierEveryMinutes.getValue() )
       .create();
   else
-    timerBuilder.everyMinutes( fetcherCopierEveryHours.getValue() )
+    timerBuilder.everyHours( fetcherCopierEveryHours.getValue() )
       .create();
 }
 
