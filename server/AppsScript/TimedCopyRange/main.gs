@@ -54,6 +54,8 @@ function triggersAll_install_() {
       RANGE_NAME.COPIER.TIMER.NEAR_MINUTE, RANGE_NAME.COPIER.TIMER.MESSAGE,
       RANGE_NAME.COPIER.SOURCE, RANGE_NAME.COPIER.TARGET );
 
+  triggersAll_uninstall_();
+
   ScriptApp.newTrigger( "fetcherTimer_onTime_" ).timeBased()
     .everyDays( fetcherTimerEveryDays.getValue() )
     .atHour( fetcherTimerAtHour.getValue() )
