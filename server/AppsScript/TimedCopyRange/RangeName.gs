@@ -15,7 +15,7 @@ const RANGE_NAME = {
       NEAR_MINUTE: "Copier.Timer.NearMinute",
       MESSAGE: "Copier.Timer.Message",
     },
-    SOURCE: "Copier.Source",
-    TARGET: "Copier.Target",
+    SOURCE_NAME: "Copier.SourceName",
+    TARGET_NAME: "Copier.TargetName",
   }
 };

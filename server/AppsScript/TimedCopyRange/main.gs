@@ -1,8 +1,5 @@
 /** @OnlyCurrentDoc */
 
-const RANGE_NAME_SOURCE = "NamedRangeSource";
-const RANGE_NAME_TARGET = "NamedRangeTarget";
-
 /** */
 function onOpen() {
   let ui = SpreadsheetApp.getUi();
@@ -30,14 +27,14 @@ function fetcherTimer_onTime_( e ) {
 
 /** When copier's timer triggered. */
 function copierTimer_onTime_( e ) {
-  let [ copierTimerMessage, copierSource, copierTarget ]
+  let [ copierTimerMessage, copierSourceName, copierTargetName ]
     = ranges_getByNames_( RANGE_NAME.COPIER.TIMER.MESSAGE,
-      RANGE_NAME.COPIER.SOURCE, RANGE_NAME.COPIER.TARGET  );
+      RANGE_NAME.COPIER.SOURCE_NAME, RANGE_NAME.COPIER.TARGET_NAME );
 
   let msg = `${e.year}/${e.month}/${e['day-of-month']} ${e.hour}:${e.minute}:${e.second}`;
   copierTimerMessage.setValue( msg );
 
-//!!! ...unfinished... (2022/09/02) copy data
+  NamedRange_copy_from_source_to_target_();
 }
 
 /** Install all triggers of this script. */
@@ -49,10 +46,14 @@ function triggersAll_install_() {
       RANGE_NAME.FETCHER.RESULT );
 
   let [ copierTimerEveryDays, copierTimerAtHour, copierTimerNearMinute,
-    copierTimerMessage, copierSource, copierTarget ] = ranges_getByNames_(
+    copierTimerMessage, copierSourceName, copierTargetName ]
+      = ranges_getByNames_(
       RANGE_NAME.COPIER.TIMER.EVERY_DAYS, RANGE_NAME.COPIER.TIMER.AT_HOUR,
       RANGE_NAME.COPIER.TIMER.NEAR_MINUTE, RANGE_NAME.COPIER.TIMER.MESSAGE,
-      RANGE_NAME.COPIER.SOURCE, RANGE_NAME.COPIER.TARGET );
+      RANGE_NAME.COPIER.SOURCE_NAME, RANGE_NAME.COPIER.TARGET_NAME );
+
+  let [ copierSource, copierTarget ] = ranges_getByNames_(
+      copierSourceName.getValue(), copierTargetName.getValue() );
 
   triggersAll_uninstall_();
 
@@ -77,17 +78,15 @@ function triggersAll_uninstall_() {
     ScriptApp.deleteTrigger( triggers[ i ] );
 }
 
-/** Copy the values from source (NamedRange) to target (NamedRange).
- * @return {boolean} Return true, if sucess. Return false, if failed.
- */
+/** Copy the values from source (NamedRange) to target (NamedRange). */
 function NamedRange_copy_from_source_to_target_() {
+  let [ copierSourceName, copierTargetName ] = ranges_getByNames_(
+    RANGE_NAME.COPIER.SOURCE_NAME, RANGE_NAME.COPIER.TARGET_NAME );
 
-  //let spreadsheet = SpreadsheetApp.getActive();
-  let [ sourceRange, targetRange ]
-    = ranges_getByNames_( RANGE_NAME_SOURCE, RANGE_NAME_TARGET );
-  sourceRange.copyTo( targetRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
+  let [ copierSource, copierTarget ] = ranges_getByNames_(
+    copierSourceName.getValue(), copierTargetName.getValue() );
 
-  return true;
+  copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
 }
 
 /**
