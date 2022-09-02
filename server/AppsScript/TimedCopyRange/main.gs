@@ -19,16 +19,14 @@ function timer_onTime_( e ) {
   let [
     fetcherCopierTimerCounter,
     fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
-    fetcherTimerLastTime, fetcherTimerCounter,
-    copierTimerLastTime, copierTimerCounter,
+    fetcherTimerAtRemainder,
+    copierTimerAtRemainder,
   ] = ranges_getByNames_(
       RANGE_NAME.FETCHER_COPIER.TIMER.COUNTER,
       RANGE_NAME.FETCHER_COPIER.TIMER.COUNTER_DIVISOR,
       RANGE_NAME.FETCHER_COPIER.TIMER.COUNTER_REMAINDER,
-      RANGE_NAME.FETCHER.TIMER.LAST_TIME,
-      RANGE_NAME.FETCHER.TIMER.COUNTER,
-      RANGE_NAME.COPIER.TIMER.LAST_TIME,
-      RANGE_NAME.COPIER.TIMER.COUNTER,
+      RANGE_NAME.FETCHER.TIMER.AT_REMAINDER,
+      RANGE_NAME.COPIER.TIMER.AT_REMAINDER,
     );
 
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FETCHER_COPIER.TIMER.LAST_TIME );
@@ -36,18 +34,13 @@ function timer_onTime_( e ) {
   let timerExecutionCount = property_inc_byName_( PROPERTY_NAME.TIMER_EXECUTION_COUNT );
   fetcherCopierTimerCounter.setValue( timerExecutionCount );
 
-  // fetcherTimerLastTime.clearContent();
-  // fetcherTimerCounter.clearContent();
-  // copierTimerLastTime.clearContent();
-  // copierTimerCounter.clearContent();
+  let counterRemainder = timerExecutionCount % fetcherCopierTimerCounterDivisor.getValue();
+  fetcherCopierTimerCounterRemainder.setValue( counterRemainder );
 
-  let counterRemainder = timerExecutionCount % fetcherCopierCounterDivisor.getValue();
-  fetcherCopierCounterRemainder.setValue( counterRemainder );
-
-  if ( fetcherCounterRemainder.getValue() == counterRemainder )
+  if ( counterRemainder == fetcherTimerAtRemainder.getValue() )
     fetcherTimer_onTime_( e );
 
-  if ( copierCounterRemainder.getValue() == counterRemainder )
+  if ( counterRemainder == copierTimerAtRemainder.getValue() )
     copierTimer_onTime_( e );
 }
 
@@ -84,9 +77,9 @@ function triggersAll_install_() {
   let [ fetcherCopierEveryMinutes, fetcherCopierEveryHours,
     fetcherCopierTimerLastTime, fetcherCopierTimerCounter,
     fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
-    fetcherAtRemainder, fetcherTimerLastTime, fetcherTimerCounter,
+    fetcherTimerAtRemainder, fetcherTimerLastTime, fetcherTimerCounter,
     fetcherGA4PropertyId, fetcherResult,
-    copierAtRemainder, copierTimerLastTime, copierTimerCounter,
+    copierTimerAtRemainder, copierTimerLastTime, copierTimerCounter,
     copierSourceName, copierTargetName ]
     = ranges_getByNames_(
       RANGE_NAME.FETCHER_COPIER.TIMER.EVERY_MINUTES,
