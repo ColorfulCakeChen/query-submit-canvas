@@ -1,6 +1,6 @@
 const RANGE_NAME = {
   FETCHER: {
-    TIEMR: {
+    TIMER: {
       EVERY_DAYS: "Fetcher.Timer.EveryDays",
       AT_HOUR: "Fetcher.Timer.AtHour",
       NEAR_MINUTE: "Fetcher.Timer.NearMinute",
@@ -9,7 +9,7 @@ const RANGE_NAME = {
     RESULT: "Fetcher.Result",
   },
   COPIER: {
-    TIEMR: {
+    TIMER: {
       EVERY_DAYS: "Copier.Timer.EveryDays",
       AT_HOUR: "Copier.Timer.AtHour",
       NEAR_MINUTE: "Copier.Timer.NearMinute",
