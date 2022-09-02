@@ -6,6 +6,7 @@ const RANGE_NAME = {
       NEAR_MINUTE: "Fetcher.Timer.NearMinute",
       MESSAGE: "Fetcher.Timer.Message",
     },
+    GA4_PROPERTY_ID: "Fetcher.GA4.PropertyId",
     RESULT: "Fetcher.Result",
   },
   COPIER: {

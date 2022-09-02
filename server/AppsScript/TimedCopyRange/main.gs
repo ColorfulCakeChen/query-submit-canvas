@@ -16,10 +16,11 @@ function onOpen() {
 
 /** When fetcher's timer triggered. */
 function fetcherTimer_onTime_( e ) {
-  let [ fetcherTimerMessage, fetcherResult ] = ranges_getByNames_(
-    RANGE_NAME.FETCHER.TIMER.MESSAGE, RANGE_NAME.FETCHER.RESULT );
+  let [ fetcherTimerMessage, fetcherGA4PropertyId, fetcherResult ]
+    = ranges_getByNames_( RANGE_NAME.FETCHER.TIMER.MESSAGE,
+      RANGE_NAME.FETCHER.GA4_PROPERTY_ID, RANGE_NAME.FETCHER.RESULT );
 
-  let msg = `${e.year}/${e.month}/${e['day-of-month']} ${e.hour}:${e.minute}:${e.second}`;
+  let msg = EventObject_Timer_toString_( e );
   fetcherTimerMessage.setValue( msg );
 
 //!!! ...unfinished... (2022/09/02) fetch data
@@ -31,7 +32,7 @@ function copierTimer_onTime_( e ) {
     = ranges_getByNames_( RANGE_NAME.COPIER.TIMER.MESSAGE,
       RANGE_NAME.COPIER.SOURCE_NAME, RANGE_NAME.COPIER.TARGET_NAME );
 
-  let msg = `${e.year}/${e.month}/${e['day-of-month']} ${e.hour}:${e.minute}:${e.second}`;
+  let msg = EventObject_Timer_toString_( e );
   copierTimerMessage.setValue( msg );
 
   NamedRange_copy_from_source_to_target_();
@@ -40,10 +41,10 @@ function copierTimer_onTime_( e ) {
 /** Install all triggers of this script. */
 function triggersAll_install_() {
   let [ fetcherTimerEveryDays, fetcherTimerAtHour, fetcherTimerNearMinute,
-    fetcherTimerMessage, fetcherResult ] = ranges_getByNames_(
+    fetcherTimerMessage, fetcherGA4PropertyId, fetcherResult ] = ranges_getByNames_(
       RANGE_NAME.FETCHER.TIMER.EVERY_DAYS, RANGE_NAME.FETCHER.TIMER.AT_HOUR,
       RANGE_NAME.FETCHER.TIMER.NEAR_MINUTE, RANGE_NAME.FETCHER.TIMER.MESSAGE,
-      RANGE_NAME.FETCHER.RESULT );
+      RANGE_NAME.FETCHER.GA4_PROPERTY_ID, RANGE_NAME.FETCHER.RESULT );
 
   let [ copierTimerEveryDays, copierTimerAtHour, copierTimerNearMinute,
     copierTimerMessage, copierSourceName, copierTargetName ]
@@ -87,6 +88,15 @@ function NamedRange_copy_from_source_to_target_() {
     copierSourceName.getValue(), copierTargetName.getValue() );
 
   copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
+}
+
+/**
+ * @param {Object} e  Time-driven event object.
+ * @return {string} Return the time string.
+ */
+function EventObject_Timer_toString_( e ) {
+  let str = `${e.year}/${e.month}/${e['day-of-month']} ${e.hour}:${e.minute}:${e.second}`;
+  return str;
 }
 
 /**
