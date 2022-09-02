@@ -29,7 +29,8 @@ const RANGE_NAME = {
   }
 };
 
-const PROPERTY_NAME = {
-  TIMER_EXECUTION_COUNT: "timerExecutionCount",
-};
+//!!! (2022/09/02 Remarked) Use range directly.
+// const PROPERTY_NAME = {
+//   TIMER_EXECUTION_COUNT: "timerExecutionCount",
+// };
 

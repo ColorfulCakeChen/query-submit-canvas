@@ -31,8 +31,10 @@ function timer_onTime_( e ) {
 
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FETCHER_COPIER.TIMER.LAST_TIME );
 
-  let timerExecutionCount = property_inc_byName_( PROPERTY_NAME.TIMER_EXECUTION_COUNT );
-  fetcherCopierTimerCounter.setValue( timerExecutionCount );
+//!!! (2022/09/02 Remarked) Use range directly.
+  // let timerExecutionCount = property_inc_byName_( PROPERTY_NAME.TIMER_EXECUTION_COUNT );
+  // fetcherCopierTimerCounter.setValue( timerExecutionCount );
+  let timerExecutionCount = range_value_inc_( fetcherCopierTimerCounter );
 
   let counterRemainder = timerExecutionCount % fetcherCopierTimerCounterDivisor.getValue();
   fetcherCopierTimerCounterRemainder.setValue( counterRemainder );
@@ -54,8 +56,10 @@ function fetcherTimer_onTime_( e ) {
       RANGE_NAME.FETCHER.GA4_PROPERTY_ID, RANGE_NAME.FETCHER.RESULT
     );
 
-  let counter = property_inc_byName_( RANGE_NAME.FETCHER.TIMER.COUNTER );
-  fetcherTimerCounter.setValue( counter );
+//!!! (2022/09/02 Remarked) Use range directly.
+  // let counter = property_inc_byName_( RANGE_NAME.FETCHER.TIMER.COUNTER );
+  // fetcherTimerCounter.setValue( counter );
+  range_value_inc_( fetcherTimerCounter );
 
 //!!! ...unfinished... (2022/09/02) fetch data
 }
@@ -66,8 +70,10 @@ function copierTimer_onTime_( e ) {
 
   let [ copierTimerCounter ] = ranges_getByNames_( RANGE_NAME.COPIER.TIMER.COUNTER );
 
-  let counter = property_inc_byName_( RANGE_NAME.COPIER.TIMER.COUNTER );
-  copierTimerCounter.setValue( counter );
+//!!! (2022/09/02 Remarked) Use range directly.
+  // let counter = property_inc_byName_( RANGE_NAME.COPIER.TIMER.COUNTER );
+  // copierTimerCounter.setValue( counter );
+  range_value_inc_( copierTimerCounter );
 
   NamedRange_copy_from_source_to_target_();
 }
@@ -109,7 +115,8 @@ function triggersAll_install_() {
       RANGE_NAME.COPIER.SOURCE_NAME, RANGE_NAME.COPIER.TARGET_NAME );
 
   triggersAll_uninstall_();
-  property_deleteAll_();
+//!!! (2022/09/02 Remarked) Use range directly.
+//  property_deleteAll_();
 
   fetcherCopierTimerLastTime.clearContent();
   fetcherCopierTimerCounter.clearContent();
@@ -136,24 +143,25 @@ function triggersAll_uninstall_() {
     ScriptApp.deleteTrigger( triggers[ i ] );
 }
 
-/** Clear all DocumentProperties.  */
-function property_deleteAll_() {
-  PropertiesService.getDocumentProperties().deleteAllProperties();
-}
-
-/**
- * @param {string} propertyName  The name of property to be increased.
- * @return {number} Increase counter by one, and return the increased count.
- */
-function property_inc_byName_( propertyName ) {
-  let documentProperties = PropertiesService.getDocumentProperties();
-  let value = documentProperties.getProperty( propertyName );
-  if ( value == undefined )
-    value = 0;
-  ++value;
-  documentProperties.setProperty( propertyName, value );
-  return value;
-}
+//!!! (2022/09/02 Remarked) Use range directly.
+// /** Clear all DocumentProperties.  */
+// function property_deleteAll_() {
+//   PropertiesService.getDocumentProperties().deleteAllProperties();
+// }
+//
+// /**
+//  * @param {string} propertyName  The name of property to be increased.
+//  * @return {number} Increase counter by one, and return the increased count.
+//  */
+// function property_inc_byName_( propertyName ) {
+//   let documentProperties = PropertiesService.getDocumentProperties();
+//   let value = documentProperties.getProperty( propertyName );
+//   if ( value == undefined )
+//     value = 0;
+//   ++value;
+//   documentProperties.setProperty( propertyName, value );
+//   return value;
+// }
 
 /**
  * @param {Object} e          Time-driven event object.
@@ -172,6 +180,18 @@ function EventObject_Timer_recordTo_byRangeName_( e, rangeName ) {
 function EventObject_Timer_toString_( e ) {
   let str = `${e.year}/${e.month}/${e['day-of-month']} ${e.hour}:${e.minute}:${e.second}`;
   return str;
+}
+
+/**
+ * @param {Range} range  The range's value will be increased.
+ * @return {number} Increase range's value by one, and return the increased value.
+ */
+function range_value_inc_( range ) {
+  if ( range.isBlank() )
+    value = 0;
+  ++value;
+  range.setValue( value );
+  return value;
 }
 
 /**
