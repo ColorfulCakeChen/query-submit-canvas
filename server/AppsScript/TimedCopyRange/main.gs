@@ -17,17 +17,59 @@ function onOpen() {
     .addToUi();
 }
 
+/** When fetcher's timer triggered. */
+function fetcherTimer_onTime_( e ) {
+  let [ fetcherTimerMessage, fetcherResult ] = ranges_getByNames_(
+    RANGE_NAME.FETCHER.TIMER.MESSAGE, RANGE_NAME.FETCHER.RESULT );
+
+  let msg = `${e.year}/${e.month}/${e['day-of-month']} ${e.hour}:${e.minute}:${e.second}`;
+  fetcherTimerMessage.setValue( msg );
+
+//!!! ...unfinished... (2022/09/02) fetch data
+}
+
+/** When copier's timer triggered. */
+function copierTimer_onTime_( e ) {
+  let [ copierTimerMessage, copierSource, copierTarget ]
+    = ranges_getByNames_( RANGE_NAME.COPIER.TIMER.MESSAGE,
+      RANGE_NAME.COPIER.SOURCE, RANGE_NAME.COPIER.TARGET  );
+
+  let msg = `${e.year}/${e.month}/${e['day-of-month']} ${e.hour}:${e.minute}:${e.second}`;
+  copierTimerMessage.setValue( msg );
+
+//!!! ...unfinished... (2022/09/02) copy data
+}
+
 /** Install all triggers of this script. */
 function triggersAll_install_() {
-  let spreadsheet = SpreadsheetApp.getActive()
-  // ScriptApp.newTrigger().timeBased().
+  let [ fetcherTimerEveryDays, fetcherTimerAtHour, fetcherTimerNearMinute,
+    fetcherTimerMessage, fetcherResult ] = ranges_getByNames_(
+      RANGE_NAME.FETCHER.TIMER.EVERY_DAYS, RANGE_NAME.FETCHER.TIMER.AT_HOUR,
+      RANGE_NAME.FETCHER.TIMER.NEAR_MINUTE, RANGE_NAME.FETCHER.TIMER.MESSAGE,
+      RANGE_NAME.FETCHER.RESULT );
 
-//!!! ...unfinished... (2022/09/02)
+  let [ copierTimerEveryDays, copierTimerAtHour, copierTimerNearMinute,
+    copierTimerMessage, copierSource, copierTarget ] = ranges_getByNames_(
+      RANGE_NAME.COPIER.TIMER.EVERY_DAYS, RANGE_NAME.COPIER.TIMER.AT_HOUR,
+      RANGE_NAME.COPIER.TIMER.NEAR_MINUTE, RANGE_NAME.COPIER.TIMER.MESSAGE,
+      RANGE_NAME.COPIER.SOURCE, RANGE_NAME.COPIER.TARGET );
+
+  ScriptApp.newTrigger( "fetcherTimer_onTime_" ).timeBased()
+    .everyDays( fetcherTimerEveryDays.getValue() )
+    .atHour( fetcherTimerAtHour.getValue() )
+    .nearMinute( fetcherTimerNearMinute.getValue() )
+    .create();
+
+  ScriptApp.newTrigger( "copierTimer_onTime_" ).timeBased()
+    .everyDays( copierTimerEveryDays.getValue() )
+    .atHour( copierTimerAtHour.getValue() )
+    .nearMinute( copierTimerNearMinute.getValue() )
+    .create();
 }
 
 /** Uninstall all triggers of this script. */
 function triggersAll_uninstall_() {
-  let spreadsheet = SpreadsheetApp.getActive()
+  let spreadsheet = SpreadsheetApp.getActive();
   let triggers = ScriptApp.getUserTriggers( spreadsheet );
   for ( let i = 0; i < triggers.length; ++i )
     ScriptApp.deleteTrigger( triggers[ i ] );
