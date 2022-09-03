@@ -13,6 +13,13 @@ import { VersusId } from "../../util/DEvolution_VersusId.js";
 
 /**
  * 
+ *
+ *
+ * @member {string} measurement_id
+ *   The measurement id of stream of property of Google Analytics v4.
+ *
+ * @member {string} api_secret
+ *   The measurement api secret of stream of property of Google Analytics v4.
  */
 class Devolution_VersusSubmitter extends Recyclable.Root {
 
@@ -23,30 +30,30 @@ class Devolution_VersusSubmitter extends Recyclable.Root {
     Devolution_VersusSubmitter, Devolution_VersusSubmitter.setAsConstructor );
 
   /** */
-  constructor( api_secret, measurement_id ) {
+  constructor( measurement_id, api_secret ) {
     super();
     Devolution_VersusSubmitter.setAsConstructor_self.call( this,
-      api_secret, measurement_id );
+      measurement_id, api_secret );
   }
 
   /** @override */
-  static setAsConstructor( api_secret, measurement_id ) {
+  static setAsConstructor( measurement_id, api_secret ) {
     super.setAsConstructor();
     Devolution_VersusSubmitter.setAsConstructor_self.call( this,
-      api_secret, measurement_id );
+      measurement_id, api_secret );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( api_secret, measurement_id ) {
-    this.api_secret = api_secret;
+  static setAsConstructor_self( measurement_id, api_secret ) {
     this.measurement_id = measurement_id;
+    this.api_secret = api_secret;
   }
 
   /** @override */
   disposeResources() {
-    this.measurement_id = undefined;
     this.api_secret = undefined;
+    this.measurement_id = undefined;
     super.disposeResources();
   }
 
