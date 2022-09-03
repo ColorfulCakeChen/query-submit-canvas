@@ -62,5 +62,30 @@ class Devolution_VersusSubmitter extends Recyclable.Root {
     super.disposeResources();
   }
 
+  /**
+   * 
+   * @param {number} nNegativeZeroPositive
+   *   The lose/draw/win value of the versus. (-1 or 0 or +1)
+   */
+  send( versusId, nNegativeZeroPositive ) {
+
+//!!! ...unfinished... (2022/09/03)
+
+    const urlBase = "https://www.google-analytics.com/mp/collect";
+
+    let url = `${urlBase}?measurement_id=${
+      this.measurement_id}&api_secret=${this.api_secret}`;
+
+    fetch( url, {
+      method: "POST",
+      body: JSON.stringify( {
+        client_id: this.client_id, //'XXXXXXXXXX.YYYYYYYYYY'
+        events: [ {
+          name: '???',
+          params: {},
+        } ]
+      } )
+    } );
+  }
 
 }
