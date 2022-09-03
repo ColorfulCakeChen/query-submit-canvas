@@ -16,7 +16,10 @@ const RANGE_NAME = {
       COUNTER: "Fetcher.Timer.Counter",
     },
     GA4_PROPERTY_ID: "Fetcher.GA4.PropertyId",
-    RESULT: "Fetcher.Result",
+    RESULT: {
+      HEADERS: "Fetcher.Result.Headers",
+      ROWS: "Fetcher.Result.Headers",
+    },
   },
   COPIER: {
     TIMER: {

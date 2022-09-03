@@ -48,12 +48,15 @@ function timer_onTime_( e ) {
 
 /** When fetcher's timer triggered. */
 function fetcherTimer_onTime_( e ) {
+  console.log( `fetcherTimer_onTime_()` );
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FETCHER.TIMER.LAST_TIME );
 
-  let [ fetcherTimerCounter, fetcherGA4PropertyId, fetcherResult ]
+  let [ fetcherTimerCounter,
+    fetcherGA4PropertyId, fetcherResultHeaders, fetcherResultRows ]
     = ranges_getByNames_(
       RANGE_NAME.FETCHER.TIMER.COUNTER,
-      RANGE_NAME.FETCHER.GA4_PROPERTY_ID, RANGE_NAME.FETCHER.RESULT
+      RANGE_NAME.FETCHER.GA4_PROPERTY_ID,
+      RANGE_NAME.FETCHER.RESULT.HEADERS, RANGE_NAME.FETCHER.RESULT.ROWS,
     );
 
 //!!! (2022/09/02 Remarked) Use range directly.
@@ -66,6 +69,7 @@ function fetcherTimer_onTime_( e ) {
 
 /** When copier's timer triggered. */
 function copierTimer_onTime_( e ) {
+  console.log( `copierTimer_onTime_()` );
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.COPIER.TIMER.LAST_TIME );
 
   let [ copierTimerCounter ] = ranges_getByNames_( RANGE_NAME.COPIER.TIMER.COUNTER );
@@ -95,7 +99,7 @@ function triggersAll_install_() {
     fetcherCopierTimerLastTime, fetcherCopierTimerCounter,
     fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
     fetcherTimerAtRemainder, fetcherTimerLastTime, fetcherTimerCounter,
-    fetcherGA4PropertyId, fetcherResult,
+    fetcherGA4PropertyId, fetcherResultHeaders, fetcherResultRows,
     copierTimerAtRemainder, copierTimerLastTime, copierTimerCounter,
     copierSourceName, copierTargetName ]
     = ranges_getByNames_(
@@ -108,7 +112,8 @@ function triggersAll_install_() {
       RANGE_NAME.FETCHER.TIMER.AT_REMAINDER,
       RANGE_NAME.FETCHER.TIMER.LAST_TIME,
       RANGE_NAME.FETCHER.TIMER.COUNTER,
-      RANGE_NAME.FETCHER.GA4_PROPERTY_ID, RANGE_NAME.FETCHER.RESULT,
+      RANGE_NAME.FETCHER.GA4_PROPERTY_ID,
+      RANGE_NAME.FETCHER.RESULT.HEADERS, RANGE_NAME.FETCHER.RESULT.ROWS,
       RANGE_NAME.COPIER.TIMER.AT_REMAINDER,
       RANGE_NAME.COPIER.TIMER.LAST_TIME,
       RANGE_NAME.COPIER.TIMER.COUNTER,
