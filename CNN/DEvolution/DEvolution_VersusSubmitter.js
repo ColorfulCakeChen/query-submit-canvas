@@ -82,7 +82,7 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
 // Whether should use transaction_id? 
 //
 // Perhaps, use refud event for versus lose.
-// Problem: refund needs a purchase event in advance.
+// Problem: refund even needs a purchase event before it.
 //
 
     // Every versus result viewed as purchasing an item.
