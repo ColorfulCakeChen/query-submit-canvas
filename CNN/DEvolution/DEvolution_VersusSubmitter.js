@@ -78,6 +78,10 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
     let url = `${DEvolution_VersusSubmitter.urlBase}?measurement_id=${
       this.measurement_id}&api_secret=${this.api_secret}`;
 
+//!!! ...unfinshed... (2022/09/04)
+// Whether should use transaction_id?
+// Perhaps, use refud event for versus lose.
+
     // Every versus result viewed as purchasing an item.
     //   - itemId is versus id
     //   - price is -1 or 0 or +1 representing versus result.
