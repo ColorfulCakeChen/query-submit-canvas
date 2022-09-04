@@ -79,8 +79,11 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
       this.measurement_id}&api_secret=${this.api_secret}`;
 
 //!!! ...unfinshed... (2022/09/04)
-// Whether should use transaction_id?
+// Whether should use transaction_id? 
+//
 // Perhaps, use refud event for versus lose.
+// Problem: refund needs a purchase event in advance.
+//
 
     // Every versus result viewed as purchasing an item.
     //   - itemId is versus id
