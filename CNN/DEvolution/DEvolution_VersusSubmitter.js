@@ -1,4 +1,4 @@
-export { Devolution_VersusSubmitter as VersusSubmitter };
+export { DEvolution_VersusSubmitter as VersusSubmitter };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -24,25 +24,25 @@ import { VersusId } from "../../util/DEvolution_VersusId.js";
  * @member {string} client_id
  *   The client id when sending measurement protocol.
  */
-class Devolution_VersusSubmitter extends Recyclable.Root {
+class DEvolution_VersusSubmitter extends Recyclable.Root {
 
   /**
    * Used as default DEvolution.VersusSubmitter provider for conforming to Recyclable interface.
    */
   static Pool = new Pool.Root( "DEvolution.VersusSubmitter.Pool",
-    Devolution_VersusSubmitter, Devolution_VersusSubmitter.setAsConstructor );
+    DEvolution_VersusSubmitter, DEvolution_VersusSubmitter.setAsConstructor );
 
   /** */
   constructor( measurement_id, api_secret, client_id ) {
     super();
-    Devolution_VersusSubmitter.setAsConstructor_self.call( this,
+    DEvolution_VersusSubmitter.setAsConstructor_self.call( this,
       measurement_id, api_secret, client_id );
   }
 
   /** @override */
   static setAsConstructor( measurement_id, api_secret, client_id ) {
     super.setAsConstructor();
-    Devolution_VersusSubmitter.setAsConstructor_self.call( this,
+    DEvolution_VersusSubmitter.setAsConstructor_self.call( this,
       measurement_id, api_secret, client_id );
     return this;
   }
@@ -63,29 +63,47 @@ class Devolution_VersusSubmitter extends Recyclable.Root {
   }
 
   /**
-   * 
+   *
+   * @param {string} versusIdString
+   *   The versus id string. (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo).
+   *
    * @param {number} nNegativeZeroPositive
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
    */
-  send( versusId, nNegativeZeroPositive ) {
+  send( versusIdString, nNegativeZeroPositive ) {
 
-//!!! ...unfinished... (2022/09/03)
+//!!! ...unfinished... (2022/09/04)
 
-    let url = `${Devolution_VersusSubmitter.urlBase}?measurement_id=${
+    let url = `${DEvolution_VersusSubmitter.urlBase}?measurement_id=${
       this.measurement_id}&api_secret=${this.api_secret}`;
 
-    fetch( url, {
+    let eventPurchase = {
+      name: "purchase",
+      params: {
+        items: [
+          {
+            item_id: versusIdString,
+            quantity: 1,
+            price: nNegativeZeroPositive
+          }
+        ]
+      }
+    };
+
+    let payload = {
+      client_id: this.client_id, // XXXXXXXXXX.YYYYYYYYYY
+      events: [ eventPurchase  ]
+    };
+
+    let payloadString = JSON.stringify( payload );
+    let options = {
       method: "POST",
-      body: JSON.stringify( {
-        client_id: this.client_id, //'XXXXXXXXXX.YYYYYYYYYY'
-        events: [ {
-          name: '???',
-          params: {},
-        } ]
-      } )
-    } );
+      body: payloadString
+    };
+
+    fetch( url, options );
   }
 
 }
 
-Devolution_VersusSubmitter.urlBase = "https://www.google-analytics.com/mp/collect";
+DEvolution_VersusSubmitter.urlBase = "https://www.google-analytics.com/mp/collect";
