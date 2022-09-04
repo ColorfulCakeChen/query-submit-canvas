@@ -69,14 +69,19 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
    *
    * @param {number} nNegativeZeroPositive
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
+   *     - -1 (if parent lose offspring)
+   *     -  0 (if parent draw offspring)
+   *     - +1 (if parent win offspring)
    */
   send( versusIdString, nNegativeZeroPositive ) {
-
-//!!! ...unfinished... (2022/09/04)
 
     let url = `${DEvolution_VersusSubmitter.urlBase}?measurement_id=${
       this.measurement_id}&api_secret=${this.api_secret}`;
 
+    // Every versus result viewed as purchasing an item.
+    //   - itemId is versus id
+    //   - price is -1 or 0 or +1 representing versus result.
+    //
     let itemVersusResult = {
       item_id: versusIdString,
       quantity: 1,
@@ -88,15 +93,15 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
       params: { items: [ itemVersusResult ] }
     };
 
-    let payload = {
-      client_id: this.client_id, // XXXXXXXXXX.YYYYYYYYYY
+    let postBody = {
+      client_id: this.client_id, // (e.g. "XXXXXXXXXX.YYYYYYYYYY")
       events: [ eventPurchase  ]
     };
 
-    let payloadString = JSON.stringify( payload );
+    let postBodyString = JSON.stringify( postBody );
     let options = {
       method: "POST",
-      body: payloadString
+      body: postBodyString
     };
 
     fetch( url, options );
