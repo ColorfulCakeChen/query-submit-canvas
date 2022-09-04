@@ -71,9 +71,7 @@ class Devolution_VersusSubmitter extends Recyclable.Root {
 
 //!!! ...unfinished... (2022/09/03)
 
-    const urlBase = "https://www.google-analytics.com/mp/collect";
-
-    let url = `${urlBase}?measurement_id=${
+    let url = `${Devolution_VersusSubmitter.urlBase}?measurement_id=${
       this.measurement_id}&api_secret=${this.api_secret}`;
 
     fetch( url, {
@@ -89,3 +87,5 @@ class Devolution_VersusSubmitter extends Recyclable.Root {
   }
 
 }
+
+Devolution_VersusSubmitter.urlBase = "https://www.google-analytics.com/mp/collect";
