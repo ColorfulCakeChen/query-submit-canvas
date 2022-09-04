@@ -77,17 +77,15 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
     let url = `${DEvolution_VersusSubmitter.urlBase}?measurement_id=${
       this.measurement_id}&api_secret=${this.api_secret}`;
 
+    let itemVersusResult = {
+      item_id: versusIdString,
+      quantity: 1,
+      price: nNegativeZeroPositive
+    };
+
     let eventPurchase = {
       name: "purchase",
-      params: {
-        items: [
-          {
-            item_id: versusIdString,
-            quantity: 1,
-            price: nNegativeZeroPositive
-          }
-        ]
-      }
+      params: { items: [ itemVersusResult ] }
     };
 
     let payload = {
