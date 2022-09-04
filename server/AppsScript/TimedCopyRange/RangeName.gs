@@ -31,9 +31,3 @@ const RANGE_NAME = {
     TARGET_NAME: "Copier.TargetName",
   }
 };
-
-//!!! (2022/09/02 Remarked) Use range directly.
-// const PROPERTY_NAME = {
-//   TIMER_EXECUTION_COUNT: "timerExecutionCount",
-// };
-

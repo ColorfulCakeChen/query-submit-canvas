@@ -31,12 +31,8 @@ function timer_onTime_( e ) {
 
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FETCHER_COPIER.TIMER.LAST_TIME );
 
-//!!! (2022/09/02 Remarked) Use range directly.
-  // let timerExecutionCount = property_inc_byName_( PROPERTY_NAME.TIMER_EXECUTION_COUNT );
-  // fetcherCopierTimerCounter.setValue( timerExecutionCount );
-  let timerExecutionCount = range_value_inc_( fetcherCopierTimerCounter );
-
-  let counterRemainder = timerExecutionCount % fetcherCopierTimerCounterDivisor.getValue();
+  let fetcherCopierTimerCounterValue = range_value_inc_( fetcherCopierTimerCounter );
+  let counterRemainder = fetcherCopierTimerCounterValue % fetcherCopierTimerCounterDivisor.getValue();
   fetcherCopierTimerCounterRemainder.setValue( counterRemainder );
 
   if ( counterRemainder == fetcherTimerAtRemainder.getValue() )
@@ -59,9 +55,6 @@ function fetcherTimer_onTime_( e ) {
       RANGE_NAME.FETCHER.RESULT.HEADERS, RANGE_NAME.FETCHER.RESULT.ROWS,
     );
 
-//!!! (2022/09/02 Remarked) Use range directly.
-  // let counter = property_inc_byName_( RANGE_NAME.FETCHER.TIMER.COUNTER );
-  // fetcherTimerCounter.setValue( counter );
   range_value_inc_( fetcherTimerCounter );
 
 //!!! ...unfinished... (2022/09/02) fetch data
@@ -74,9 +67,6 @@ function copierTimer_onTime_( e ) {
 
   let [ copierTimerCounter ] = ranges_getByNames_( RANGE_NAME.COPIER.TIMER.COUNTER );
 
-//!!! (2022/09/02 Remarked) Use range directly.
-  // let counter = property_inc_byName_( RANGE_NAME.COPIER.TIMER.COUNTER );
-  // copierTimerCounter.setValue( counter );
   range_value_inc_( copierTimerCounter );
 
   NamedRange_copy_from_source_to_target_();
@@ -120,11 +110,12 @@ function triggersAll_install_() {
       RANGE_NAME.COPIER.SOURCE_NAME, RANGE_NAME.COPIER.TARGET_NAME );
 
   triggersAll_uninstall_();
-//!!! (2022/09/02 Remarked) Use range directly.
-//  property_deleteAll_();
 
   fetcherCopierTimerLastTime.clearContent();
-  fetcherCopierTimerCounter.clearContent();
+
+  // (2022/09/04 Remarked) Let user can specify its initial value.
+  //fetcherCopierTimerCounter.clearContent();
+
   fetcherCopierTimerCounterRemainder.clearContent();
   fetcherTimerLastTime.clearContent();
   fetcherTimerCounter.clearContent();
@@ -147,26 +138,6 @@ function triggersAll_uninstall_() {
   for ( let i = 0; i < triggers.length; ++i )
     ScriptApp.deleteTrigger( triggers[ i ] );
 }
-
-//!!! (2022/09/02 Remarked) Use range directly.
-// /** Clear all DocumentProperties.  */
-// function property_deleteAll_() {
-//   PropertiesService.getDocumentProperties().deleteAllProperties();
-// }
-//
-// /**
-//  * @param {string} propertyName  The name of property to be increased.
-//  * @return {number} Increase counter by one, and return the increased count.
-//  */
-// function property_inc_byName_( propertyName ) {
-//   let documentProperties = PropertiesService.getDocumentProperties();
-//   let value = documentProperties.getProperty( propertyName );
-//   if ( value == undefined )
-//     value = 0;
-//   ++value;
-//   documentProperties.setProperty( propertyName, value );
-//   return value;
-// }
 
 /**
  * @param {Object} e          Time-driven event object.
