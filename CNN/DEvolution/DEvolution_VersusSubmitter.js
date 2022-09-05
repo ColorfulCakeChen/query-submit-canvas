@@ -90,6 +90,10 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
     //   - price is -1 or 0 or +1 representing versus result.
     //
     let itemVersusResult = {
+
+//!!! ...unfinished... (2022/09/05) Perhaps, item_name instead of item_id
+// transaction_id?
+
       item_id: versusIdString,
       quantity: 1,
       price: nNegativeZeroPositive
