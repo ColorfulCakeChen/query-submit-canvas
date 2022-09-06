@@ -133,13 +133,11 @@ function GA4_run_report_() {
       outputRows[ rowIndex ] = emptyColumns;
 
     fetcherResultRows.setValues( outputRows );
-
     console.log( `GA4_run_report_(): ${reportRowCount} rows extracted.` );
 
-    if ( reportRowCount > maxRowCount ) {
+    if ( reportRowCount > maxRowCount )
       console.error( `GA4_run_report_(): Fetcher.Result.Rows is too small. `
         + `Only ${maxRowCount} rows filled.` );
-    }
   }
 }
 
