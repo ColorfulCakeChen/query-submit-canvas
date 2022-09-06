@@ -4,6 +4,7 @@
 function onOpen() {
   let ui = SpreadsheetApp.getUi();
   ui.createAddonMenu()
+    .addItem( "Fetch data", "GA4_run_report_" )
     .addItem( "Copy range", "NamedRange_copy_from_source_to_target_" )
     .addItem( "Triggers install", "triggersAll_install_" )
     .addItem( "Triggers uninstall", "triggersAll_uninstall_" )
@@ -47,17 +48,10 @@ function fetcherTimer_onTime_( e ) {
   console.log( `fetcherTimer_onTime_()` );
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FETCHER.TIMER.LAST_TIME );
 
-  let [ fetcherTimerCounter,
-    fetcherGA4PropertyId, fetcherResultHeaders, fetcherResultRows ]
-    = ranges_getByNames_(
-      RANGE_NAME.FETCHER.TIMER.COUNTER,
-      RANGE_NAME.FETCHER.GA4_PROPERTY_ID,
-      RANGE_NAME.FETCHER.RESULT.HEADERS, RANGE_NAME.FETCHER.RESULT.ROWS,
-    );
-
+  let [ fetcherTimerCounter ] = ranges_getByNames_( RANGE_NAME.FETCHER.TIMER.COUNTER );
   range_value_inc_( fetcherTimerCounter );
 
-//!!! ...unfinished... (2022/09/02) fetch data
+  GA4_run_report_();
 }
 
 /** When copier's timer triggered. */
@@ -70,6 +64,73 @@ function copierTimer_onTime_( e ) {
   range_value_inc_( copierTimerCounter );
 
   NamedRange_copy_from_source_to_target_();
+}
+
+/** Run a GA4 report to fetch data. */
+function GA4_run_report_() {
+  let [ fetcherGA4PropertyId, fetcherResultHeaders, fetcherResultRows ]
+    = ranges_getByNames_(
+      RANGE_NAME.FETCHER.GA4_PROPERTY_ID,
+      RANGE_NAME.FETCHER.RESULT.HEADERS, RANGE_NAME.FETCHER.RESULT.ROWS,
+    );
+
+  fetcherResultHeaders.clearContent();
+  fetcherResultRows.clearContent();
+
+  const propertyId = fetcherGA4PropertyId.getValue();
+
+  const dimension = AnalyticsData.newDimension();
+  dimension.name = 'itemName';
+
+  const metric = AnalyticsData.newMetric();
+  metric.name = "itemsPurchased"; //"itemRevenue"
+
+  const dateRange = AnalyticsData.newDateRange();
+  dateRange.startDate = "30daysAgo"; //"yesterday";
+  dateRange.endDate = "yesterday";
+
+  const request = AnalyticsData.newRunReportRequest();
+  request.dimensions = [ dimension ];
+  request.metrics = [ metric ];
+  request.dateRanges = dateRange;
+
+  const report = AnalyticsData.Properties.runReport( request,
+    `properties/${propertyId}` );
+
+  if ( !report.rows ) {
+    console.log( "GA4_run_report_(): No rows returned." );
+    return;
+  }
+
+  // Extract headers.
+  {
+    let resultHeaders = [ [] ];
+    for ( let i = 0; i < report.dimensionHeaders.length; ++i ) {
+      resultHeaders.push( report.dimensionHeaders[ 0 ][ i ].name )
+    }
+    for ( let i = 0; i < report.metricHeaders.length; ++i ) {
+      resultHeaders.push( report.metricHeaders[ 0 ][ i ].name )
+    }
+    fetcherResultHeaders.setValues( resultHeaders );
+  }
+
+  // Extract rows.
+  let resultRowCount = report.rows.length;
+  {
+    let resultRows = new Array( resultRowCount );
+    for ( let rowIndex = 0; rowIndex < resultRowCount; ++rowIndex ) {
+      let resultRow = resultRows[ rowIndex ];
+      for ( let i = 0; i < resultRow.dimensionValues.length; ++i ) {
+        resultRow.push( report.rows[ rowIndex ].dimensionValues[ i ].value );
+      }
+      for ( let i = 0; i < resultRow.metricValues.length; ++i ) {
+        resultRow.push( report.rows[ rowIndex ].metricValues[ i ].value );
+      }
+      fetcherResultRows.setValues( resultRows );
+    }
+  }
+
+  console.log( 'GA4_run_report_(): ${resultRowCount} rows extracted.' );
 }
 
 /** Copy the values from source (NamedRange) to target (NamedRange). */
