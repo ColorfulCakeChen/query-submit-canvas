@@ -18,7 +18,7 @@ const RANGE_NAME = {
     GA4_PROPERTY_ID: "Fetcher.GA4.PropertyId",
     RESULT: {
       HEADERS: "Fetcher.Result.Headers",
-      ROWS: "Fetcher.Result.Headers",
+      ROWS: "Fetcher.Result.Rows",
     },
   },
   COPIER: {
