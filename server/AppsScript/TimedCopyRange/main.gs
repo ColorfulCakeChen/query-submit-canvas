@@ -170,9 +170,9 @@ function NamedRange_copy_from_source_to_target_() {
   let targetNames = targetNamesString.split( "," );
 
   for ( let i = 0; i < sourceNames.length; ++i ) {
-    let [ copierSource, copierTarget ] = ranges_getByNames_(
-      sourceNames[ i ], targetNames[ i ] );
-
+    let sourceName = sourceNames[ i ].trim();
+    let targetName = targetNames[ i ].trim();
+    let [ copierSource, copierTarget ] = ranges_getByNames_( sourceName, targetName );
     copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
   }
 }
