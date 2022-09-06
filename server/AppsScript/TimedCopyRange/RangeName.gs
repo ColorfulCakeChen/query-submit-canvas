@@ -17,7 +17,7 @@ const RANGE_NAME = {
     },
     GA4: {
       PROPERTY_ID: "Fetcher.GA4.PropertyId",
-      FILTER_NAME: "Fetcher.GA4.FilterName",
+      ITEM_NAME_IN_LIST_FILTER_NAME: "Fetcher.GA4.ItemNameInListFilterName",
     },
     RESULT: {
       HEADERS: "Fetcher.Result.Headers",
