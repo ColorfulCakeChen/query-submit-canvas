@@ -139,26 +139,24 @@ function GA4_run_report_() {
       let reportRow = report.rows[ rowIndex ];
       let outputRow = outputRows[ rowIndex ] = new Array( maxColumnCount );
       columnIndex = 0;
-      for ( let i = 0; i < reportRow.dimensionValues.length; ++i, ++columnIndex ) {
+      for ( let i = 0; i < reportRow.dimensionValues.length; ++i, ++columnIndex )
         outputRow[ columnIndex ] = reportRow.dimensionValues[ i ].value;
-      }
-      for ( let i = 0; i < reportRow.metricValues.length; ++i, ++columnIndex ) {
+      for ( let i = 0; i < reportRow.metricValues.length; ++i, ++columnIndex )
         outputRow[ columnIndex ] = reportRow.metricValues[ i ].value;
-      }
     }
-
-    const emptyColumns = new Array( maxColumnCount );
-    for ( ; rowIndex < maxRowCount; ++rowIndex ) { // Fill extra cells as empty.
-      outputRows[ rowIndex ] = emptyColumns;
-    }
-
-    fetcherResultRows.setValues( outputRows );
 
     console.log( `GA4_run_report_(): ${reportRowCount} rows extracted.` );
 
-    if ( reportRowCount > maxRowCount )
+    if ( reportRowCount > maxRowCount ) {
+      const emptyColumns = new Array( maxColumnCount );
+      for ( ; rowIndex < maxRowCount; ++rowIndex ) // Fill extra cells as empty.
+        outputRows[ rowIndex ] = emptyColumns;
+
       console.error( `GA4_run_report_(): Fetcher.Result.Rows is too small. `
         + `Only ${maxRowCount} rows filled.` );
+    }
+
+    fetcherResultRows.setValues( outputRows );
   }
 }
 
