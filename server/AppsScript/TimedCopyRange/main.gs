@@ -112,11 +112,6 @@ function GA4_run_report_() {
   const report = AnalyticsData.Properties.runReport( request,
     `properties/${propertyId}` );
 
-  if ( !report.rows ) {
-    console.log( "GA4_run_report_(): No rows returned." );
-    return;
-  }
-
   // Extract headers.
   {
     let outputHeaders = [ [] ];
@@ -130,32 +125,37 @@ function GA4_run_report_() {
   }
 
   // Extract rows.
-  let reportRowCount = report.rows.length;
-  {
-    let outputRows = new Array( maxRowCount );
-    let fillRowCount = Math.min( maxRowCount, reportRowCount );
+  if ( !report.rows ) {
+    console.log( "GA4_run_report_(): No rows returned." );
 
-    let rowIndex, columnIndex;
-    for ( rowIndex = 0; rowIndex < fillRowCount; ++rowIndex ) {
-      let reportRow = report.rows[ rowIndex ];
-      let outputRow = outputRows[ rowIndex ] = new Array( maxColumnCount );
-      columnIndex = 0;
-      for ( let i = 0; i < reportRow.dimensionValues.length; ++i, ++columnIndex )
-        outputRow[ columnIndex ] = reportRow.dimensionValues[ i ].value;
-      for ( let i = 0; i < reportRow.metricValues.length; ++i, ++columnIndex )
-        outputRow[ columnIndex ] = reportRow.metricValues[ i ].value;
+  } else {
+    let reportRowCount = report.rows.length;
+    {
+      let outputRows = new Array( maxRowCount );
+      let fillRowCount = Math.min( maxRowCount, reportRowCount );
+
+      let rowIndex, columnIndex;
+      for ( rowIndex = 0; rowIndex < fillRowCount; ++rowIndex ) {
+        let reportRow = report.rows[ rowIndex ];
+        let outputRow = outputRows[ rowIndex ] = new Array( maxColumnCount );
+        columnIndex = 0;
+        for ( let i = 0; i < reportRow.dimensionValues.length; ++i, ++columnIndex )
+          outputRow[ columnIndex ] = reportRow.dimensionValues[ i ].value;
+        for ( let i = 0; i < reportRow.metricValues.length; ++i, ++columnIndex )
+          outputRow[ columnIndex ] = reportRow.metricValues[ i ].value;
+      }
+
+      const emptyColumns = new Array( maxColumnCount );
+      for ( ; rowIndex < maxRowCount; ++rowIndex ) // Fill extra cells as empty.
+        outputRows[ rowIndex ] = emptyColumns;
+
+      fetcherResultRows.setValues( outputRows );
+      console.log( `GA4_run_report_(): ${reportRowCount} rows extracted.` );
+
+      if ( reportRowCount > maxRowCount )
+        console.error( `GA4_run_report_(): Fetcher.Result.Rows is too small. `
+          + `Only ${maxRowCount} rows filled.` );
     }
-
-    const emptyColumns = new Array( maxColumnCount );
-    for ( ; rowIndex < maxRowCount; ++rowIndex ) // Fill extra cells as empty.
-      outputRows[ rowIndex ] = emptyColumns;
-
-    fetcherResultRows.setValues( outputRows );
-    console.log( `GA4_run_report_(): ${reportRowCount} rows extracted.` );
-
-    if ( reportRowCount > maxRowCount )
-      console.error( `GA4_run_report_(): Fetcher.Result.Rows is too small. `
-        + `Only ${maxRowCount} rows filled.` );
   }
 }
 
