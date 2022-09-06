@@ -90,6 +90,7 @@ function GA4_run_report_() {
   dateRange.endDate = "yesterday";
 
   const maxRowCount = fetcherResultRows.getNumRows();
+  const maxColumnCount = fetcherResultRows.getNumColumns();
 
   const request = AnalyticsData.newRunReportRequest();
   request.setDimensions( [ dimension ] );
@@ -122,16 +123,25 @@ function GA4_run_report_() {
   {
     let outputRows = new Array( maxRowCount );
     let fillRowCount = Math.min( maxRowCount, reportRowCount );
-    for ( let rowIndex = 0; rowIndex < fillRowCount; ++rowIndex ) {
+
+    let rowIndex, columnIndex;
+    for ( rowIndex = 0; rowIndex < fillRowCount; ++rowIndex ) {
       let reportRow = report.rows[ rowIndex ];
-      let outputRow = outputRows[ rowIndex ] = [];
-      for ( let i = 0; i < reportRow.dimensionValues.length; ++i ) {
-        outputRow.push( reportRow.dimensionValues[ i ].value );
+      let outputRow = outputRows[ rowIndex ] = new Array( maxColumnCount );
+      columnIndex = 0;
+      for ( let i = 0; i < reportRow.dimensionValues.length; ++i, ++columnIndex ) {
+        outputRow[ columnIndex ] = reportRow.dimensionValues[ i ].value;
       }
-      for ( let i = 0; i < reportRow.metricValues.length; ++i ) {
-        outputRow.push( reportRow.metricValues[ i ].value );
+      for ( let i = 0; i < reportRow.metricValues.length; ++i, ++columnIndex ) {
+        outputRow[ columnIndex ] = reportRow.metricValues[ i ].value;
       }
     }
+
+    const emptyColumns = new Array( maxColumnCount );
+    for ( ; rowIndex < maxRowCount; ++rowIndex ) { // Fill extra cells as empty.
+      outputRows[ rowIndex ] = emptyColumns;
+    }
+
     fetcherResultRows.setValues( outputRows );
 
     console.log( `GA4_run_report_(): ${reportRowCount} rows extracted.` );
