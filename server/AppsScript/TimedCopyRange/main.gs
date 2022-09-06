@@ -106,10 +106,10 @@ function GA4_run_report_() {
   {
     let resultHeaders = [ [] ];
     for ( let i = 0; i < report.dimensionHeaders.length; ++i ) {
-      resultHeaders.push( report.dimensionHeaders[ 0 ][ i ].name )
+      resultHeaders[ 0 ].push( report.dimensionHeaders[ i ].name )
     }
     for ( let i = 0; i < report.metricHeaders.length; ++i ) {
-      resultHeaders.push( report.metricHeaders[ 0 ][ i ].name )
+      resultHeaders[ 0 ].push( report.metricHeaders[ i ].name )
     }
     fetcherResultHeaders.setValues( resultHeaders );
   }
