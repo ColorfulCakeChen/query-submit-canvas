@@ -68,9 +68,9 @@ function copierTimer_onTime_( e ) {
 
 /** Run a GA4 report to fetch data. */
 function GA4_run_report_() {
-  let [ fetcherGA4PropertyId, fetcherResultHeaders, fetcherResultRows ]
-    = ranges_getByNames_(
-      RANGE_NAME.FETCHER.GA4_PROPERTY_ID,
+  let [ fetcherGA4PropertyId, fetcherGA4FilterName,
+    fetcherResultHeaders, fetcherResultRows ] = ranges_getByNames_(
+      RANGE_NAME.FETCHER.GA4.PROPERTY_ID, RANGE_NAME.FETCHER.GA4.FILTER_NAME,
       RANGE_NAME.FETCHER.RESULT.HEADERS, RANGE_NAME.FETCHER.RESULT.ROWS,
     );
 
@@ -87,9 +87,24 @@ function GA4_run_report_() {
     dateRanges: {
       startDate: "7daysAgo", //"yesterday",
       endDate: "yesterday"
-    }
+    },
     //limit: maxRowCount,
   };
+
+  if ( !fetcherGA4FilterName.isBlank() ) { // If has specified, use as filter.
+    let [ fetcherGAFilter ] = ranges_getByNames_( fetcherGA4FilterName.getValue() );
+    let fetcherGAFilterString = fetcherGAFilter.getValue();
+    let itemNameArray = fetcherGAFilterString.split( "|" );
+    request.dimensionFilter = {
+      filter: {
+        fieldName: "itemName",
+        inListFilter: {
+          values: itemNameArray,
+          caseSensitive: true,
+        },
+      }
+    };
+  }    
 
   const report = AnalyticsData.Properties.runReport( request,
     `properties/${propertyId}` );
@@ -158,7 +173,8 @@ function triggersAll_install_() {
     fetcherCopierTimerLastTime, fetcherCopierTimerCounter,
     fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
     fetcherTimerAtRemainder, fetcherTimerLastTime, fetcherTimerCounter,
-    fetcherGA4PropertyId, fetcherResultHeaders, fetcherResultRows,
+    fetcherGA4PropertyId, fetcherGA4FilterName,
+    fetcherResultHeaders, fetcherResultRows,
     copierTimerAtRemainder, copierTimerLastTime, copierTimerCounter,
     copierSourceName, copierTargetName ]
     = ranges_getByNames_(
@@ -171,7 +187,7 @@ function triggersAll_install_() {
       RANGE_NAME.FETCHER.TIMER.AT_REMAINDER,
       RANGE_NAME.FETCHER.TIMER.LAST_TIME,
       RANGE_NAME.FETCHER.TIMER.COUNTER,
-      RANGE_NAME.FETCHER.GA4_PROPERTY_ID,
+      RANGE_NAME.FETCHER.GA4.PROPERTY_ID, RANGE_NAME.FETCHER.GA4.FILTER_NAME,
       RANGE_NAME.FETCHER.RESULT.HEADERS, RANGE_NAME.FETCHER.RESULT.ROWS,
       RANGE_NAME.COPIER.TIMER.AT_REMAINDER,
       RANGE_NAME.COPIER.TIMER.LAST_TIME,

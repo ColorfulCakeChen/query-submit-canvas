@@ -15,7 +15,10 @@ const RANGE_NAME = {
       LAST_TIME: "Fetcher.Timer.LastTime",
       COUNTER: "Fetcher.Timer.Counter",
     },
-    GA4_PROPERTY_ID: "Fetcher.GA4.PropertyId",
+    GA4: {
+      PROPERTY_ID: "Fetcher.GA4.PropertyId",
+      FILTER_NAME: "Fetcher.GA4.FilterName",
+    },
     RESULT: {
       HEADERS: "Fetcher.Result.Headers",
       ROWS: "Fetcher.Result.Rows",
