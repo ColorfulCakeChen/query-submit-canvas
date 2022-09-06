@@ -89,10 +89,13 @@ function GA4_run_report_() {
   dateRange.startDate = "30daysAgo"; //"yesterday";
   dateRange.endDate = "yesterday";
 
+  const maxRowCount = fetcherResultRows.getNumRows();
+
   const request = AnalyticsData.newRunReportRequest();
-  request.dimensions = [ dimension ];
-  request.metrics = [ metric ];
-  request.dateRanges = dateRange;
+  request.setDimensions( [ dimension ] );
+  request.setMetrics( [ metric ] );
+  request.setDateRanges( dateRange );
+  //request.setLimit( maxRowCount );
 
   const report = AnalyticsData.Properties.runReport( request,
     `properties/${propertyId}` );
@@ -117,21 +120,26 @@ function GA4_run_report_() {
   // Extract rows.
   let reportRowCount = report.rows.length;
   {
-    let outputRows = new Array( reportRowCount );
-    for ( let rowIndex = 0; rowIndex < reportRowCount; ++rowIndex ) {
+    let outputRows = new Array( maxRowCount );
+    let fillRowCount = Math.min( maxRowCount, reportRowCount );
+    for ( let rowIndex = 0; rowIndex < fillRowCount; ++rowIndex ) {
       let reportRow = report.rows[ rowIndex ];
-      let outputRow = resultRows[ rowIndex ];
+      let outputRow = outputRows[ rowIndex ] = [];
       for ( let i = 0; i < reportRow.dimensionValues.length; ++i ) {
         outputRow.push( reportRow.dimensionValues[ i ].value );
       }
       for ( let i = 0; i < reportRow.metricValues.length; ++i ) {
         outputRow.push( reportRow.metricValues[ i ].value );
       }
-      fetcherResultRows.setValues( outputRows );
     }
-  }
+    fetcherResultRows.setValues( outputRows );
 
-  console.log( 'GA4_run_report_(): ${resultRowCount} rows extracted.' );
+    console.log( `GA4_run_report_(): ${reportRowCount} rows extracted.` );
+
+    if ( reportRowCount > maxRowCount )
+      console.error( `GA4_run_report_(): Fetcher.Result.Rows is too small. `
+        + `Only ${maxRowCount} rows filled.` );
+  }
 }
 
 /** Copy the values from source (NamedRange) to target (NamedRange). */
