@@ -81,23 +81,6 @@ function GA4_run_report_() {
   const maxRowCount = fetcherResultRows.getNumRows();
   const maxColumnCount = fetcherResultRows.getNumColumns();
 
-//!!! (2022/09/06 Remarked) Use normal object instead;
-//   const dimension = AnalyticsData.newDimension();
-//   dimension.name = "itemName";
-//
-//   const metric = AnalyticsData.newMetric();
-//   metric.name = "itemsPurchased"; //"itemRevenue"
-//
-//   const dateRange = AnalyticsData.newDateRange();
-//   dateRange.startDate = "7daysAgo"; //"yesterday";
-//   dateRange.endDate = "yesterday";
-//
-//   const request = AnalyticsData.newRunReportRequest();
-//   request.setDimensions( [ dimension ] );
-//   request.setMetrics( [ metric ] );
-//   request.setDateRanges( dateRange );
-//   //request.setLimit( maxRowCount );
-
   const request = {
     dimensions: [ { name: "itemName" } ],
     metrics: [ { name: "itemsPurchased" } ],
@@ -145,18 +128,18 @@ function GA4_run_report_() {
         outputRow[ columnIndex ] = reportRow.metricValues[ i ].value;
     }
 
+    const emptyColumns = new Array( maxColumnCount );
+    for ( ; rowIndex < maxRowCount; ++rowIndex ) // Fill extra cells as empty.
+      outputRows[ rowIndex ] = emptyColumns;
+
+    fetcherResultRows.setValues( outputRows );
+
     console.log( `GA4_run_report_(): ${reportRowCount} rows extracted.` );
 
     if ( reportRowCount > maxRowCount ) {
-      const emptyColumns = new Array( maxColumnCount );
-      for ( ; rowIndex < maxRowCount; ++rowIndex ) // Fill extra cells as empty.
-        outputRows[ rowIndex ] = emptyColumns;
-
       console.error( `GA4_run_report_(): Fetcher.Result.Rows is too small. `
         + `Only ${maxRowCount} rows filled.` );
     }
-
-    fetcherResultRows.setValues( outputRows );
   }
 }
 
