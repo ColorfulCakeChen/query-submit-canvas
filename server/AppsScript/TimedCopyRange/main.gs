@@ -104,29 +104,30 @@ function GA4_run_report_() {
 
   // Extract headers.
   {
-    let resultHeaders = [ [] ];
+    let outputHeaders = [ [] ];
     for ( let i = 0; i < report.dimensionHeaders.length; ++i ) {
-      resultHeaders[ 0 ].push( report.dimensionHeaders[ i ].name )
+      outputHeaders[ 0 ].push( report.dimensionHeaders[ i ].name )
     }
     for ( let i = 0; i < report.metricHeaders.length; ++i ) {
-      resultHeaders[ 0 ].push( report.metricHeaders[ i ].name )
+      outputHeaders[ 0 ].push( report.metricHeaders[ i ].name )
     }
-    fetcherResultHeaders.setValues( resultHeaders );
+    fetcherResultHeaders.setValues( outputHeaders );
   }
 
   // Extract rows.
-  let resultRowCount = report.rows.length;
+  let reportRowCount = report.rows.length;
   {
-    let resultRows = new Array( resultRowCount );
-    for ( let rowIndex = 0; rowIndex < resultRowCount; ++rowIndex ) {
-      let resultRow = resultRows[ rowIndex ];
-      for ( let i = 0; i < resultRow.dimensionValues.length; ++i ) {
-        resultRow.push( report.rows[ rowIndex ].dimensionValues[ i ].value );
+    let outputRows = new Array( reportRowCount );
+    for ( let rowIndex = 0; rowIndex < reportRowCount; ++rowIndex ) {
+      let reportRow = report.rows[ rowIndex ];
+      let outputRow = resultRows[ rowIndex ];
+      for ( let i = 0; i < reportRow.dimensionValues.length; ++i ) {
+        outputRow.push( reportRow.dimensionValues[ i ].value );
       }
-      for ( let i = 0; i < resultRow.metricValues.length; ++i ) {
-        resultRow.push( report.rows[ rowIndex ].metricValues[ i ].value );
+      for ( let i = 0; i < reportRow.metricValues.length; ++i ) {
+        outputRow.push( reportRow.metricValues[ i ].value );
       }
-      fetcherResultRows.setValues( resultRows );
+      fetcherResultRows.setValues( outputRows );
     }
   }
 
