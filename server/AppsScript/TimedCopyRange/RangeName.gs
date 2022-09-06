@@ -30,7 +30,7 @@ const RANGE_NAME = {
       LAST_TIME: "Copier.Timer.LastTime",
       COUNTER: "Copier.Timer.Counter",
     },
-    SOURCE_NAME: "Copier.SourceName",
-    TARGET_NAME: "Copier.TargetName",
+    SOURCE_NAMES: "Copier.SourceNames",
+    TARGET_NAMES: "Copier.TargetNames",
   }
 };

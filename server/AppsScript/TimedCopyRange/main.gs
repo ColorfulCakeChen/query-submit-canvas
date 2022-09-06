@@ -5,7 +5,7 @@ function onOpen() {
   let ui = SpreadsheetApp.getUi();
   ui.createAddonMenu()
     .addItem( "Fetch data", "GA4_run_report_" )
-    .addItem( "Copy range", "NamedRange_copy_from_source_to_target_" )
+    .addItem( "Copy ranges", "NamedRange_copy_from_source_to_target_" )
     .addItem( "Triggers install", "triggersAll_install_" )
     .addItem( "Triggers uninstall", "triggersAll_uninstall_" )
     // .addSubMenu(
@@ -130,44 +130,51 @@ function GA4_run_report_() {
 
   } else {
     let reportRowCount = report.rows.length;
-    {
-      let outputRows = new Array( maxRowCount );
-      let fillRowCount = Math.min( maxRowCount, reportRowCount );
 
-      let rowIndex, columnIndex;
-      for ( rowIndex = 0; rowIndex < fillRowCount; ++rowIndex ) {
-        let reportRow = report.rows[ rowIndex ];
-        let outputRow = outputRows[ rowIndex ] = new Array( maxColumnCount );
-        columnIndex = 0;
-        for ( let i = 0; i < reportRow.dimensionValues.length; ++i, ++columnIndex )
-          outputRow[ columnIndex ] = reportRow.dimensionValues[ i ].value;
-        for ( let i = 0; i < reportRow.metricValues.length; ++i, ++columnIndex )
-          outputRow[ columnIndex ] = reportRow.metricValues[ i ].value;
-      }
+    let outputRows = new Array( maxRowCount );
+    let fillRowCount = Math.min( maxRowCount, reportRowCount );
 
-      const emptyColumns = new Array( maxColumnCount );
-      for ( ; rowIndex < maxRowCount; ++rowIndex ) // Fill extra cells as empty.
-        outputRows[ rowIndex ] = emptyColumns;
-
-      fetcherResultRows.setValues( outputRows );
-      console.log( `GA4_run_report_(): ${reportRowCount} rows extracted.` );
-
-      if ( reportRowCount > maxRowCount )
-        console.error( `GA4_run_report_(): Fetcher.Result.Rows is too small. `
-          + `Only ${maxRowCount} rows filled.` );
+    let rowIndex, columnIndex;
+    for ( rowIndex = 0; rowIndex < fillRowCount; ++rowIndex ) {
+      let reportRow = report.rows[ rowIndex ];
+      let outputRow = outputRows[ rowIndex ] = new Array( maxColumnCount );
+      columnIndex = 0;
+      for ( let i = 0; i < reportRow.dimensionValues.length; ++i, ++columnIndex )
+        outputRow[ columnIndex ] = reportRow.dimensionValues[ i ].value;
+      for ( let i = 0; i < reportRow.metricValues.length; ++i, ++columnIndex )
+        outputRow[ columnIndex ] = reportRow.metricValues[ i ].value;
     }
+
+    const emptyColumns = new Array( maxColumnCount );
+    for ( ; rowIndex < maxRowCount; ++rowIndex ) // Fill extra cells as empty.
+      outputRows[ rowIndex ] = emptyColumns;
+
+    fetcherResultRows.setValues( outputRows );
+    console.log( `GA4_run_report_(): ${reportRowCount} rows extracted.` );
+
+    if ( reportRowCount > maxRowCount )
+      console.error( `GA4_run_report_(): Fetcher.Result.Rows is too small. `
+        + `Only ${maxRowCount} rows filled.` );
   }
 }
 
 /** Copy the values from source (NamedRange) to target (NamedRange). */
 function NamedRange_copy_from_source_to_target_() {
-  let [ copierSourceName, copierTargetName ] = ranges_getByNames_(
-    RANGE_NAME.COPIER.SOURCE_NAME, RANGE_NAME.COPIER.TARGET_NAME );
+  let [ copierSourceNames, copierTargetNames ] = ranges_getByNames_(
+    RANGE_NAME.COPIER.SOURCE_NAMES, RANGE_NAME.COPIER.TARGET_NAMES );
 
-  let [ copierSource, copierTarget ] = ranges_getByNames_(
-    copierSourceName.getValue(), copierTargetName.getValue() );
+  let sourceNamesString = copierSourceNames.getValue();
+  let sourceNames = sourceNamesString.split( "," );
 
-  copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
+  let targetNamesString = copierTargetNames.getValue();
+  let targetNames = targetNamesString.split( "," );
+
+  for ( let i = 0; i < sourceNames.length; ++i ) {
+    let [ copierSource, copierTarget ] = ranges_getByNames_(
+      sourceNames[ i ], targetNames[ i ] );
+
+    copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
+  }
 }
 
 /** Install all triggers of this script. */
@@ -180,7 +187,7 @@ function triggersAll_install_() {
     fetcherGA4ItemNameInListFilterName,
     fetcherResultHeaders, fetcherResultRows,
     copierTimerAtRemainder, copierTimerLastTime, copierTimerCounter,
-    copierSourceName, copierTargetName ]
+    copierSourceNames, copierTargetNames ]
     = ranges_getByNames_(
       RANGE_NAME.FETCHER_COPIER.TIMER.EVERY_MINUTES,
       RANGE_NAME.FETCHER_COPIER.TIMER.EVERY_HOURS,
@@ -197,7 +204,7 @@ function triggersAll_install_() {
       RANGE_NAME.COPIER.TIMER.AT_REMAINDER,
       RANGE_NAME.COPIER.TIMER.LAST_TIME,
       RANGE_NAME.COPIER.TIMER.COUNTER,
-      RANGE_NAME.COPIER.SOURCE_NAME, RANGE_NAME.COPIER.TARGET_NAME );
+      RANGE_NAME.COPIER.SOURCE_NAMES, RANGE_NAME.COPIER.TARGET_NAMES );
 
   triggersAll_uninstall_();
 
