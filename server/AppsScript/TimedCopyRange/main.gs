@@ -86,7 +86,7 @@ function GA4_run_report_() {
   metric.name = "itemsPurchased"; //"itemRevenue"
 
   const dateRange = AnalyticsData.newDateRange();
-  dateRange.startDate = "30daysAgo"; //"yesterday";
+  dateRange.startDate = "7daysAgo"; //"yesterday";
   dateRange.endDate = "yesterday";
 
   const maxRowCount = fetcherResultRows.getNumRows();
