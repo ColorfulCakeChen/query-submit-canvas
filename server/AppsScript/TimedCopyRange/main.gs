@@ -78,25 +78,35 @@ function GA4_run_report_() {
   fetcherResultRows.clearContent();
 
   const propertyId = fetcherGA4PropertyId.getValue();
-
-  const dimension = AnalyticsData.newDimension();
-  dimension.name = 'itemName';
-
-  const metric = AnalyticsData.newMetric();
-  metric.name = "itemsPurchased"; //"itemRevenue"
-
-  const dateRange = AnalyticsData.newDateRange();
-  dateRange.startDate = "7daysAgo"; //"yesterday";
-  dateRange.endDate = "yesterday";
-
   const maxRowCount = fetcherResultRows.getNumRows();
   const maxColumnCount = fetcherResultRows.getNumColumns();
 
-  const request = AnalyticsData.newRunReportRequest();
-  request.setDimensions( [ dimension ] );
-  request.setMetrics( [ metric ] );
-  request.setDateRanges( dateRange );
-  //request.setLimit( maxRowCount );
+//!!! (2022/09/06 Remarked) Use normal object instead;
+//   const dimension = AnalyticsData.newDimension();
+//   dimension.name = "itemName";
+//
+//   const metric = AnalyticsData.newMetric();
+//   metric.name = "itemsPurchased"; //"itemRevenue"
+//
+//   const dateRange = AnalyticsData.newDateRange();
+//   dateRange.startDate = "7daysAgo"; //"yesterday";
+//   dateRange.endDate = "yesterday";
+//
+//   const request = AnalyticsData.newRunReportRequest();
+//   request.setDimensions( [ dimension ] );
+//   request.setMetrics( [ metric ] );
+//   request.setDateRanges( dateRange );
+//   //request.setLimit( maxRowCount );
+
+  const request = {
+    dimensions: [ { name: "itemName" } ],
+    metrics: [ { name: "itemsPurchased" } ],
+    dateRanges: {
+      startDate: "7daysAgo", //"yesterday",
+      endDate: "yesterday"
+    }
+    //limit: maxRowCount,
+  };
 
   const report = AnalyticsData.Properties.runReport( request,
     `properties/${propertyId}` );
