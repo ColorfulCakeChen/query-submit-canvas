@@ -97,6 +97,9 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
 //!!! ...unfinished... (2022/09/06)
 // Perhaps, quantity instead of price for nNegativeZeroPositive
 
+//!!! ...unfinished... (2022/09/07)
+// Perhaps, itemVariant (-1/0/+1) instead of itemsPurchased.
+
       item_id: versusIdString,
       quantity: 1,
       price: nNegativeZeroPositive

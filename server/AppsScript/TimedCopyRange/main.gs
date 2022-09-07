@@ -83,6 +83,10 @@ function GA4_run_report_() {
   const maxRowCount = fetcherResultRows.getNumRows();
   const maxColumnCount = fetcherResultRows.getNumColumns();
 
+//!!! ...unfinished... (2022/09/07)
+// Perhaps, itemVariant (-1/0/+1) instead of itemsPurchased.
+
+
   const request = {
     dimensions: [ { name: "itemName" } ],
     metrics: [ { name: "itemsPurchased" } ],
@@ -218,6 +222,9 @@ function triggersAll_install_() {
   fetcherTimerCounter.clearContent();
   copierTimerLastTime.clearContent();
   copierTimerCounter.clearContent();
+
+//!!! ...unfinished... (2022/09/07)
+// If copier target isBlank, copy from source to target immediately.
 
   let timerBuilder = ScriptApp.newTrigger( "timer_onTime_" ).timeBased();
   if ( !fetcherCopierEveryMinutes.isBlank() )
