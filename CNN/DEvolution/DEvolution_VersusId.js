@@ -12,7 +12,7 @@ import * as NumberTools from "../../util/NumberTools.js";
  *   The entity id string of the versus.
  *
  * @member {number} entityNo
- *   The entity id number of the versus. It is a 1-base integer.
+ *   The entity id number of the versus. It is a 0-base integer.
  *
  * @member {string} parentGenerationNoString
  *   The parent generation id string of the entity of the versus.
@@ -99,7 +99,7 @@ class DEvolution_VersusId extends Recyclable.Root {
   isValid() {
     if ( !NumberTools.isInteger( this.entityNo ) )
       return false;
-    if ( this.entityNo < ???1 ) // entity id is 1-base.
+    if ( this.entityNo < 0 ) // entity id is 0-base.
       return false;
 
     if ( !NumberTools.isInteger( this.parentGenerationNo ) )
