@@ -162,8 +162,13 @@ function GA4_run_report_() {
   }
 }
 
-/** Copy the values from source (NamedRange) to target (NamedRange). */
-function NamedRange_copy_from_source_to_target_() {
+/**
+ * Copy the values from source (NamedRange) to target (NamedRange).
+ *
+ * @param {boolean} bCopyOnlyIfTargetBlank
+ *   If true, copy a source to a target only if the target is totally blank.
+ */
+function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
   let [ copierSourceNames, copierTargetNames ] = ranges_getByNames_(
     RANGE_NAME.COPIER.SOURCE_NAMES, RANGE_NAME.COPIER.TARGET_NAMES );
 
@@ -177,6 +182,11 @@ function NamedRange_copy_from_source_to_target_() {
     let sourceName = sourceNames[ i ].trim();
     let targetName = targetNames[ i ].trim();
     let [ copierSource, copierTarget ] = ranges_getByNames_( sourceName, targetName );
+
+    if ( bCopyOnlyIfTargetBlank )
+      if ( !copierTarget.isBlank() )
+        continue;
+
     copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
   }
 }
@@ -223,8 +233,8 @@ function triggersAll_install_() {
   copierTimerLastTime.clearContent();
   copierTimerCounter.clearContent();
 
-//!!! ...unfinished... (2022/09/07)
-// If copier target isBlank, copy from source to target immediately.
+  // If copier target isBlank, copy from source to target immediately.
+  NamedRange_copy_from_source_to_target_( true );
 
   let timerBuilder = ScriptApp.newTrigger( "timer_onTime_" ).timeBased();
   if ( !fetcherCopierEveryMinutes.isBlank() )
