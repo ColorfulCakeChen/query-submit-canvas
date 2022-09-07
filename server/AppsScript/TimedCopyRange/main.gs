@@ -87,7 +87,7 @@ function GA4_run_report_() {
     dimensions: [ { name: "itemName" } ],
     metrics: [ { name: "itemsPurchased" } ],
     dateRanges: {
-      startDate: "7daysAgo", //"yesterday",
+      startDate: "yesterday", //"7daysAgo",
       endDate: "yesterday"
     },
     //limit: maxRowCount,
