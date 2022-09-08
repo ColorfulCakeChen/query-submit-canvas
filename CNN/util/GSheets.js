@@ -112,7 +112,7 @@ class GSheets_UrlComposer extends Recyclable.Root {
   }
 
   /**
-   * Composing the URL (according this object's data members), download
+   * Composing the URL (according to this object's data members), download
    * it as JSON format, extract data as a two dimension (column-major) array.
    *
    * @return {Array[]}
