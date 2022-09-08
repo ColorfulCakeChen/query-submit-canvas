@@ -131,12 +131,16 @@ class DEvolution_Versus extends Recyclable.Root {
         return false; // Download failure.
     }
 
+    // 2. decode.
     const COLUMN_ID_versusId = 0;
     const COLUMN_ID_parentChromosome = 1;
     const COLUMN_ID_offspringChromosome = 2;
     const COLUMN_ID_winCount = 3;
 
-    // 2. versusId
+    const Base64_skipLineCount = 0;
+    const Base64_suspendByteCount = 1024 * 1024;
+
+    // 2.1 versusId
     {
       // The first row of the first column should be the versusId string.
       let versusIdString = versusArrayArray[ COLUMN_ID_versusId ][ 0 ];
@@ -148,22 +152,18 @@ class DEvolution_Versus extends Recyclable.Root {
       if ( !this.versusId.isValid() )
         return false; // versusId is illegal.
 
-      progressToAdvance.value_advance(); // 25%
+      progressToAdvance.value_advance();
       yield progressRoot;
     }
 
 //!!! ...unfinished... (2022/09/08)
-    const skipLineCount = 0;
-    const suspendByteCount = 1024 * 1024;
-
-    // 2. decode parent chromosome
+    // 2.2 parent chromosome
     {
       let parentChromosomeArray = versusArrayArray[ COLUMN_ID_parentChromosome ];
-      let decoder = Base64ToUint8Array.decoder_FromStringOrStringArray(
-        parentChromosomeArray,
-        textEncoder, skipLineCount,
+      let parentChromosomeDecoder = Base64ToUint8Array.decoder_fromStringOrStringArray(
         progressForParentChromosome,
-        suspendByteCount
+        parentChromosomeArray, textEncoder,
+        Base64_skipLineCount, Base64_suspendByteCount
       );
 
       let decoderNext;
@@ -173,10 +173,10 @@ class DEvolution_Versus extends Recyclable.Root {
       this.parentChromosome
     }
 
-    // 3. decode offspring chromosome
+    // 2.3 offspring chromosome
     offspringChromosome
 
-    // 4. decode parent chromosome's winCount
+    // 2.4 parent chromosome's winCount
     {
       // Every row of the column should have the same winCount string. Just take first one.
       let winCountString = versusArrayArray[ COLUMN_ID_winCount ][ 0 ];
@@ -184,9 +184,9 @@ class DEvolution_Versus extends Recyclable.Root {
       if ( !NumberTools.isInteger( this.winCount ) )
         return false;
 
-      
+      progressToAdvance.value_advance();
+      yield progressRoot;
     }
-
 
     return true;
   }

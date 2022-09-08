@@ -1,6 +1,6 @@
-export { decoder_FromStringOrStringArray };
-export { decoder_FromArrayBuffer };
-export { decoder_FromUint8Array };
+export { decoder_fromStringOrStringArray };
+export { decoder_fromArrayBuffer };
+export { decoder_fromUint8Array };
 
 import * as ValueMax from "../util/ValueMax.js";
 
@@ -33,6 +33,11 @@ let table_base64_Uint8_to_index = new Array( 256 ); // Faster than using Uint8Ar
  * Join the string array, convert to Uint8Array, decode as Base64, result in another
  * Uint8Array.
  *
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   Some new progressToAdvance will be created and added to progressParent. The
+ * created progressToAdvance will be increased when every time advanced. The
+ * progressParent.root_get() will be returned when every time yield.
+ *
  * @param {string|string[]} sourceBase64Encoded_String_or_StringArray
  *   A string whose content is base64 encoded text. Or, a string array whose every
  * element is base64 encoded text.
@@ -44,11 +49,6 @@ let table_base64_Uint8_to_index = new Array( 256 ); // Faster than using Uint8Ar
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
- * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
- *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
  * progress). Default is ( 10 * 1024 ) bytes.
@@ -59,10 +59,10 @@ let table_base64_Uint8_to_index = new Array( 256 ); // Faster than using Uint8Ar
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* decoder_FromStringOrStringArray(
-  sourceBase64Encoded_String_or_StringArray, textEncoder, skipLineCount,
+function* decoder_fromStringOrStringArray(
   progressParent,
-  suspendByteCount
+  sourceBase64Encoded_String_or_StringArray, textEncoder,
+  skipLineCount, suspendByteCount
 ) {
 
   let progressRoot = progressParent.root_get();
@@ -93,8 +93,8 @@ function* decoder_FromStringOrStringArray(
   progressToAdvance.value_advance(); // 25%
   yield progressRoot;
 
-  let base64Decoder = decoder_FromUint8Array(
-    base64EncodedUint8Array, skipLineCount, progressParentNew, suspendByteCount );
+  let base64Decoder = decoder_fromUint8Array( progressParentNew,
+    base64EncodedUint8Array, skipLineCount, suspendByteCount );
 
   let base64DecodedUint8Array = yield *base64Decoder;
   return base64DecodedUint8Array;
@@ -102,6 +102,11 @@ function* decoder_FromStringOrStringArray(
 
 /**
  * Generator for Base64 decoding from an ArrayBufffer.
+ *
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   Some new progressToAdvance will be created and added to progressParent. The
+ * created progressToAdvance will be increased when every time advanced. The
+ * progressParent.root_get() will be returned when every time yield.
  *
  * @param {ArrayBuffer} sourceBase64ArrayBuffer
  *   The input base64 data as ArrayBuffer. If the last bytes not enough 4 bytes, they
@@ -113,11 +118,6 @@ function* decoder_FromStringOrStringArray(
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
- * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
- *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
  * progress). Default is ( 10 * 1024 ) bytes.
@@ -128,12 +128,12 @@ function* decoder_FromStringOrStringArray(
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* decoder_FromArrayBuffer(
-  sourceBase64ArrayBuffer, skipLineCount, progressParent, suspendByteCount ) {
+function* decoder_fromArrayBuffer( progressParent,
+  sourceBase64ArrayBuffer, skipLineCount, suspendByteCount ) {
 
   let sourceBase64Uint8Array = new Uint8Array( sourceBase64ArrayBuffer );
-  let base64Decoder = decoder_FromUint8Array( sourceBase64Uint8Array,
-    skipLineCount, progressParent, suspendByteCount );
+  let base64Decoder = decoder_fromUint8Array( progressParent,
+    sourceBase64Uint8Array, skipLineCount, suspendByteCount );
 
   let base64DecodedUint8Array = yield *base64Decoder;
   return base64DecodedUint8Array;
@@ -141,6 +141,11 @@ function* decoder_FromArrayBuffer(
 
 /**
  * Generator for Base64 decoding from an Uint8Array.
+ *
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   Some new progressToAdvance will be created and added to progressParent. The
+ * created progressToAdvance will be increased when every time advanced. The
+ * progressParent.root_get() will be returned when every time yield.
  *
  * @param {Uint8Array} sourceBase64Uint8Array
  *   The input base64 data as Uint8Array. If the last bytes not enough 4 bytes, they
@@ -152,11 +157,6 @@ function* decoder_FromArrayBuffer(
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
- * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
- *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
  * progress). Default is ( 10 * 1024 ) bytes.
@@ -167,8 +167,8 @@ function* decoder_FromArrayBuffer(
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* decoder_FromUint8Array(
-  sourceBase64Uint8Array, skipLineCount, progressParent, suspendByteCount ) {
+function* decoder_fromUint8Array( progressParent,
+  sourceBase64Uint8Array, skipLineCount, suspendByteCount ) {
 
   // 0. Initialize.
 

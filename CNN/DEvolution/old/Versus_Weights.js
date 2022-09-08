@@ -75,7 +75,7 @@ class EnitiyChromosomes {
 //???
     let suspendByteCount = 1024;
 
-    let base64Decoder = Base64ToUint8Array.decoder_FromStringArray(
+    let base64Decoder = Base64ToUint8Array.decoder_fromStringArray(
       base64EncodedStringArray, skipLineCount, progressRoot, progressParent,
       suspendByteCount );
 
