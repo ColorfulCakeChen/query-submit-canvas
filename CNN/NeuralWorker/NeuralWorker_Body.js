@@ -196,6 +196,11 @@ class NeuralWorker_Body {
    */
   imageData_transferBack_processTensor( processingId, sourceImageData ) {
 
+//!!! ...unfinished... (2022/09/08)
+// Before converting Uint8Array to tf.tensor, a mark (representing this neural network)
+// should be put at a fixed position in the image (e.g. the first pixel) so that
+// this neural network could know what its alignment is.
+
     // Create (scaled) source image so that then neural network can process it.
     //
     // Usually, only the first web worker ( workerId == 0 ) is responsible for
@@ -239,7 +244,13 @@ class NeuralWorker_Body {
    * [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ].
    */
   typedArray_transferBack_processTensor( processingId, sourceTypedArray ) {
-    let shape = [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ];
+
+//!!! ...unfinished... (2022/09/08)
+// Before converting Uint8Array to tf.tensor, a mark (representing this neural network)
+// should be put at a fixed position in the image (e.g. the first pixel) so that
+// this neural network could know what its alignment is.
+
+let shape = [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ];
 
     // Re-create (scaled) source tensor.
     //

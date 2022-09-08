@@ -226,7 +226,15 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     let message = {
       command: "imageData_transferBack_processTensor",
       processingId: processingId,
+
+//!!! ...unfinished... (2022/09/08)
+// ImageData may not be transferred directly. Perhaps, transfer its .data.buffer
+// (a Uint8Array) directly along with its ( height, width, channelCount ) information.
       sourceImageData: sourceImageData
+
+      height: ???,
+      width: ???,
+      channelCount: ???,
     };
 
     this.worker.postMessage( message, [ message.sourceImageData.data.buffer ] );
