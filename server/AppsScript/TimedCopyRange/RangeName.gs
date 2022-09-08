@@ -17,11 +17,17 @@ const RANGE_NAME = {
     },
     GA4: {
       PROPERTY_ID: "Fetcher.GA4.PropertyId",
-      ITEM_NAME_IN_LIST_FILTER_NAME: "Fetcher.GA4.ItemNameInListFilterName",
-    },
-    RESULT: {
-      HEADERS: "Fetcher.Result.Headers",
-      ROWS: "Fetcher.Result.Rows",
+      ITEM_NAME_IN_LIST_FILTER: {
+        RANGE_NAME: "Fetcher.GA4.ItemNameInListFilter.RangeName",
+      },
+      REPORT: {
+        HEADER: {
+          RANGE_NAME: "Fetcher.GA4.Report.Headers.RangeName",
+        },
+        ROWS: {
+          RANGE_NAME: "Fetcher.GA4.Report.Rows.RangeName",
+        },
+      },
     },
   },
   COPIER: {
@@ -30,7 +36,11 @@ const RANGE_NAME = {
       LAST_TIME: "Copier.Timer.LastTime",
       COUNTER: "Copier.Timer.Counter",
     },
-    SOURCE_NAMES: "Copier.SourceNames",
-    TARGET_NAMES: "Copier.TargetNames",
+    SOURCE: {
+      RANGE_NAMES: "Copier.Source.RangeNames",
+    },
+    TARGET: {
+      RANGE_NAMES: "Copier.Target.RangeNames",
+    },
   }
 };
