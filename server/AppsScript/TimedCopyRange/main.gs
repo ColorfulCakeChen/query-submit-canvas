@@ -23,17 +23,18 @@ function timer_onTime_( e ) {
     fetcherTimerAtRemainder,
     copierTimerAtRemainder,
   ] = ranges_getByNames_(
-      RANGE_NAME.FETCHER_COPIER.TIMER.COUNTER,
-      RANGE_NAME.FETCHER_COPIER.TIMER.COUNTER_DIVISOR,
-      RANGE_NAME.FETCHER_COPIER.TIMER.COUNTER_REMAINDER,
-      RANGE_NAME.FETCHER.TIMER.AT_REMAINDER,
-      RANGE_NAME.COPIER.TIMER.AT_REMAINDER,
+      RANGE_NAME.FC.TIMER.COUNTER,
+      RANGE_NAME.FC.TIMER.COUNTER_DIVISOR,
+      RANGE_NAME.FC.TIMER.COUNTER_REMAINDER,
+      RANGE_NAME.FC.FETCHER.TIMER.AT_REMAINDER,
+      RANGE_NAME.FC.COPIER.TIMER.AT_REMAINDER,
     );
 
-  EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FETCHER_COPIER.TIMER.LAST_TIME );
+  EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.TIMER.LAST_TIME );
 
   let fetcherCopierTimerCounterValue = range_value_inc_( fetcherCopierTimerCounter );
-  let counterRemainder = fetcherCopierTimerCounterValue % fetcherCopierTimerCounterDivisor.getValue();
+  let divisor = fetcherCopierTimerCounterDivisor.getValue();
+  let counterRemainder = fetcherCopierTimerCounterValue % divisor;
   fetcherCopierTimerCounterRemainder.setValue( counterRemainder );
 
   if ( counterRemainder == fetcherTimerAtRemainder.getValue() )
@@ -46,9 +47,9 @@ function timer_onTime_( e ) {
 /** When fetcher's timer triggered. */
 function fetcherTimer_onTime_( e ) {
   console.log( `fetcherTimer_onTime_()` );
-  EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FETCHER.TIMER.LAST_TIME );
+  EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.FETCHER.TIMER.LAST_TIME );
 
-  let [ fetcherTimerCounter ] = ranges_getByNames_( RANGE_NAME.FETCHER.TIMER.COUNTER );
+  let [ fetcherTimerCounter ] = ranges_getByNames_( RANGE_NAME.FC.FETCHER.TIMER.COUNTER );
   range_value_inc_( fetcherTimerCounter );
 
   GA4_run_report_();
@@ -57,9 +58,9 @@ function fetcherTimer_onTime_( e ) {
 /** When copier's timer triggered. */
 function copierTimer_onTime_( e ) {
   console.log( `copierTimer_onTime_()` );
-  EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.COPIER.TIMER.LAST_TIME );
+  EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.COPIER.TIMER.LAST_TIME );
 
-  let [ copierTimerCounter ] = ranges_getByNames_( RANGE_NAME.COPIER.TIMER.COUNTER );
+  let [ copierTimerCounter ] = ranges_getByNames_( RANGE_NAME.FC.COPIER.TIMER.COUNTER );
 
   range_value_inc_( copierTimerCounter );
 
@@ -72,10 +73,10 @@ function GA4_run_report_() {
     fetcherGA4ItemNameInListFilterRangeName,
     fetcherGA4ReportHeadersRangeName, fetcherGA4ReportRowsRangeName ]
     = ranges_getByNames_(
-      RANGE_NAME.FETCHER.GA4.PROPERTY_ID,
-      RANGE_NAME.FETCHER.GA4.ITEM_NAME_IN_LIST_FILTER.RANGE_NAME,
-      RANGE_NAME.FETCHER.GA4.REPORT.HEADERS.RANGE_NAME,
-      RANGE_NAME.FETCHER.GA4.REPORT.ROWS.RANGE_NAME,
+      RANGE_NAME.FC.FETCHER.GA4.PROPERTY_ID,
+      RANGE_NAME.FC.FETCHER.GA4.ITEM_NAME_IN_LIST_FILTER.RANGE_NAME,
+      RANGE_NAME.FC.FETCHER.GA4.REPORT.HEADERS.RANGE_NAME,
+      RANGE_NAME.FC.FETCHER.GA4.REPORT.ROWS.RANGE_NAME,
     );
 
   let [ reportHeadersRange, reportRowsRange ] = ranges_getByNames_(
@@ -178,7 +179,7 @@ function GA4_run_report_() {
  */
 function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
   let [ copierSourceRangeNames, copierTargetRangeNames ] = ranges_getByNames_(
-    RANGE_NAME.COPIER.SOURCE.RANGE_NAMES, RANGE_NAME.COPIER.TARGET.RANGE_NAMES );
+    RANGE_NAME.FC.COPIER.SOURCE.RANGE_NAMES, RANGE_NAME.FC.COPIER.TARGET.RANGE_NAMES );
 
   let sourceRangeNamesString = copierSourceRangeNames.getValue();
   let sourceRangeNames = sourceRangeNamesString.split( "," );
@@ -189,7 +190,8 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
   for ( let i = 0; i < sourceRangeNames.length; ++i ) {
     let sourceRangeName = sourceRangeNames[ i ].trim();
     let targetRangeName = targetRangeNames[ i ].trim();
-    let [ copierSource, copierTarget ] = ranges_getByNames_( sourceRangeName, targetRangeName );
+    let [ copierSource, copierTarget ] = ranges_getByNames_(
+      sourceRangeName, targetRangeName );
 
     if ( bCopyOnlyIfTargetBlank )
       if ( !copierTarget.isBlank() )
@@ -211,23 +213,23 @@ function timer_start_() {
     copierTimerAtRemainder, copierTimerLastTime, copierTimerCounter,
     copierSourceRangeNames, copierTargetRangeNames ]
     = ranges_getByNames_(
-      RANGE_NAME.FETCHER_COPIER.TIMER.EVERY_MINUTES,
-      RANGE_NAME.FETCHER_COPIER.TIMER.EVERY_HOURS,
-      RANGE_NAME.FETCHER_COPIER.TIMER.LAST_TIME,
-      RANGE_NAME.FETCHER_COPIER.TIMER.COUNTER,
-      RANGE_NAME.FETCHER_COPIER.TIMER.COUNTER_DIVISOR,
-      RANGE_NAME.FETCHER_COPIER.TIMER.COUNTER_REMAINDER,
-      RANGE_NAME.FETCHER.TIMER.AT_REMAINDER,
-      RANGE_NAME.FETCHER.TIMER.LAST_TIME,
-      RANGE_NAME.FETCHER.TIMER.COUNTER,
-      RANGE_NAME.FETCHER.GA4.PROPERTY_ID,
-      RANGE_NAME.FETCHER.GA4.ITEM_NAME_IN_LIST_FILTER.RANGE_NAME,
-      RANGE_NAME.FETCHER.GA4.REPORT.HEADERS.RANGE_NAME,
-      RANGE_NAME.FETCHER.GA4.REPORT.ROWS.RANGE_NAME,
-      RANGE_NAME.COPIER.TIMER.AT_REMAINDER,
-      RANGE_NAME.COPIER.TIMER.LAST_TIME,
-      RANGE_NAME.COPIER.TIMER.COUNTER,
-      RANGE_NAME.COPIER.SOURCE.RANGE_NAMES, RANGE_NAME.COPIER.TARGET.RANGE_NAMES );
+      RANGE_NAME.FC.TIMER.EVERY_MINUTES,
+      RANGE_NAME.FC.TIMER.EVERY_HOURS,
+      RANGE_NAME.FC.TIMER.LAST_TIME,
+      RANGE_NAME.FC.TIMER.COUNTER,
+      RANGE_NAME.FC.TIMER.COUNTER_DIVISOR,
+      RANGE_NAME.FC.TIMER.COUNTER_REMAINDER,
+      RANGE_NAME.FC.FETCHER.TIMER.AT_REMAINDER,
+      RANGE_NAME.FC.FETCHER.TIMER.LAST_TIME,
+      RANGE_NAME.FC.FETCHER.TIMER.COUNTER,
+      RANGE_NAME.FC.FETCHER.GA4.PROPERTY_ID,
+      RANGE_NAME.FC.FETCHER.GA4.ITEM_NAME_IN_LIST_FILTER.RANGE_NAME,
+      RANGE_NAME.FC.FETCHER.GA4.REPORT.HEADERS.RANGE_NAME,
+      RANGE_NAME.FC.FETCHER.GA4.REPORT.ROWS.RANGE_NAME,
+      RANGE_NAME.FC.COPIER.TIMER.AT_REMAINDER,
+      RANGE_NAME.FC.COPIER.TIMER.LAST_TIME,
+      RANGE_NAME.FC.COPIER.TIMER.COUNTER,
+      RANGE_NAME.FC.COPIER.SOURCE.RANGE_NAMES, RANGE_NAME.FC.COPIER.TARGET.RANGE_NAMES );
 
   timer_stop_();
 

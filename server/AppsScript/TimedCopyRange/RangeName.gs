@@ -1,46 +1,46 @@
 const RANGE_NAME = {
-  FETCHER_COPIER: {
+  FC: {
     TIMER: {
-      EVERY_MINUTES: "FetcherCopier.Timer.EveryMinutes",
-      EVERY_HOURS: "FetcherCopier.Timer.EveryHours",
-      LAST_TIME: "FetcherCopier.Timer.LastTime",
-      COUNTER: "FetcherCopier.Timer.Counter",
-      COUNTER_DIVISOR: "FetcherCopier.Timer.CounterDivisor",
-      COUNTER_REMAINDER: "FetcherCopier.Timer.CounterRemainder",
+      EVERY_MINUTES: "FC.Timer.EveryMinutes",
+      EVERY_HOURS: "FC.Timer.EveryHours",
+      LAST_TIME: "FC.Timer.LastTime",
+      COUNTER: "FC.Timer.Counter",
+      COUNTER_DIVISOR: "FC.Timer.CounterDivisor",
+      COUNTER_REMAINDER: "FC.Timer.CounterRemainder",
     },
-  },
-  FETCHER: {
-    TIMER: {
-      AT_REMAINDER: "Fetcher.Timer.AtRemainder",
-      LAST_TIME: "Fetcher.Timer.LastTime",
-      COUNTER: "Fetcher.Timer.Counter",
-    },
-    GA4: {
-      PROPERTY_ID: "Fetcher.GA4.PropertyId",
-      ITEM_NAME_IN_LIST_FILTER: {
-        RANGE_NAME: "Fetcher.GA4.ItemNameInListFilter.RangeName",
+    FETCHER: {
+      TIMER: {
+        AT_REMAINDER: "FC.Fetcher.Timer.AtRemainder",
+        LAST_TIME: "FC.Fetcher.Timer.LastTime",
+        COUNTER: "FC.Fetcher.Timer.Counter",
       },
-      REPORT: {
-        HEADERS: {
-          RANGE_NAME: "Fetcher.GA4.Report.Headers.RangeName",
+      GA4: {
+        PROPERTY_ID: "FC.Fetcher.GA4.PropertyId",
+        ITEM_NAME_IN_LIST_FILTER: {
+          RANGE_NAME: "FC.Fetcher.GA4.ItemNameInListFilter.RangeName",
         },
-        ROWS: {
-          RANGE_NAME: "Fetcher.GA4.Report.Rows.RangeName",
+        REPORT: {
+          HEADERS: {
+            RANGE_NAME: "FC.Fetcher.GA4.Report.Headers.RangeName",
+          },
+          ROWS: {
+            RANGE_NAME: "FC.Fetcher.GA4.Report.Rows.RangeName",
+          },
         },
       },
     },
+    COPIER: {
+      TIMER: {
+        AT_REMAINDER: "FC.Copier.Timer.AtRemainder",
+        LAST_TIME: "FC.Copier.Timer.LastTime",
+        COUNTER: "FC.Copier.Timer.Counter",
+      },
+      SOURCE: {
+        RANGE_NAMES: "FC.Copier.Source.RangeNames",
+      },
+      TARGET: {
+        RANGE_NAMES: "FC.Copier.Target.RangeNames",
+      },
+    }
   },
-  COPIER: {
-    TIMER: {
-      AT_REMAINDER: "Copier.Timer.AtRemainder",
-      LAST_TIME: "Copier.Timer.LastTime",
-      COUNTER: "Copier.Timer.Counter",
-    },
-    SOURCE: {
-      RANGE_NAMES: "Copier.Source.RangeNames",
-    },
-    TARGET: {
-      RANGE_NAMES: "Copier.Target.RangeNames",
-    },
-  }
 };
