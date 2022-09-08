@@ -124,6 +124,8 @@ class NeuralWorker_Body {
       this.neuralNet = null;
     }
 
+//!!! ...unfinished... (2022/09/08) also MessagePort.close().
+
 //!!!??? calling close() when the next worker disposed ?
     close();
   }

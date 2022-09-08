@@ -181,6 +181,9 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    * 
    */
   disposeWorker() {
+
+//!!! ...unfinished... (2022/09/08) also MessagePort.close().
+
     {
       let message = { command: "disposeWorker" };
       this.worker.postMessage( message );
