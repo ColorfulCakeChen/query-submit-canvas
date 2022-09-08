@@ -86,8 +86,8 @@ function GA4_run_report_() {
   reportRowsRange.clearContent();
 
   const propertyId = fetcherGA4PropertyId.getValue();
-  const maxRowCount = fetcherResultRows.getNumRows();
-  const maxColumnCount = fetcherResultRows.getNumColumns();
+  const maxRowCount = reportRowsRange.getNumRows();
+  const maxColumnCount = reportRowsRange.getNumColumns();
 
 //!!! ...unfinished... (2022/09/07)
 // Perhaps, itemVariant (-1/0/+1) instead of itemsPurchased.
@@ -97,7 +97,8 @@ function GA4_run_report_() {
     dimensions: [ { name: "itemName" } ],
     metrics: [ { name: "itemsPurchased" } ],
     dateRanges: {
-      startDate: "yesterday", //"7daysAgo",
+      startDate: "yesterday",
+      //startDate: "30daysAgo",
       endDate: "yesterday"
     },
     //limit: maxRowCount,
