@@ -94,7 +94,6 @@ class DEvolution_Versus extends Recyclable.Root {
    *       The .versusId, .parentChromosome, .offspringChromosome and .winCount will
    *       be set.
    *   - Yield a promise resolves to { value: false, done: true } when failed.
-   *
    */
   async* asyncLoader( progressParent,
     spreadsheetUrlComposer, spreadsheetRange, textEncoder ) {
@@ -104,13 +103,29 @@ class DEvolution_Versus extends Recyclable.Root {
     this.offspringChromosome = undefined;
     this.winCount = undefined;
 
-    // 0.2 download from remote.
+    // 0.2 Prepare progress.
+    let progressRoot = progressParent.root_get();
+
+    let progressForDownload = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+    let progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) ); // versusId and winCount
+  
+    let progressForParentChromosome = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+    let progressForOffspringChromosome = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  
+    // 1. download from remote.
     let versusArrayArray;
     {
       this.spreadsheetRange = spreadsheetRange;
       spreadsheetUrlComposer.range_set( spreadsheetRange );
 
-      let fetcherVersus = this.urlComposer.fetcher_JSON_ColumnMajorArrayArray();
+      let fetcherVersus
+        = this.urlComposer.fetcher_JSON_ColumnMajorArrayArray( progressForDownload );
       versusArrayArray = yield* fetcherVersus;
       if ( !versusArrayArray )
         return false; // Download failure.
@@ -121,7 +136,7 @@ class DEvolution_Versus extends Recyclable.Root {
     const COLUMN_ID_offspringChromosome = 2;
     const COLUMN_ID_winCount = 3;
 
-    // 1. versusId
+    // 2. versusId
     {
       // The first row of the first column should be the versusId string.
       let versusIdString = versusArrayArray[ COLUMN_ID_versusId ][ 0 ];
@@ -132,12 +147,14 @@ class DEvolution_Versus extends Recyclable.Root {
 
       if ( !this.versusId.isValid() )
         return false; // versusId is illegal.
+
+      progressToAdvance.value_advance(); // 25%
+      yield progressRoot;
     }
 
 //!!! ...unfinished... (2022/09/08)
     const skipLineCount = 0;
-    let progressParent = 
-  suspendByteCount
+    const suspendByteCount = 1024 * 1024;
 
     // 2. decode parent chromosome
     {
@@ -145,7 +162,7 @@ class DEvolution_Versus extends Recyclable.Root {
       let decoder = Base64ToUint8Array.decoder_FromStringOrStringArray(
         parentChromosomeArray,
         textEncoder, skipLineCount,
-        progressParent,
+        progressForParentChromosome,
         suspendByteCount
       );
 
