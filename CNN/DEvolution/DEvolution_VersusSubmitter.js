@@ -7,7 +7,7 @@ import { VersusId } from "../../util/DEvolution_VersusId.js";
 //!!! ...unfinished... (2022/09/03)
 // For measurement protocol.
 // Perhaps,
-//   - trancactionId = `t${versusId}`
+//   - trancactionId = `t${versusId}_${Date.now()}`
 //   - itemId = versusId
 //
 
