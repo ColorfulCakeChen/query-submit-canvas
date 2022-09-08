@@ -160,6 +160,18 @@ class NeuralWorker_Body {
 
   }
 
+//!!! ...unfinished... (2022/09/08)
+  /**
+   * @param {number} alignmentMarkValue
+   *   A value representing which alignment this neural network plays currently.
+   * For example, in a OX (connect-three) game:
+   *   - ( markValue == 0 ) means this neural network plays O side currently.
+   *   - ( markValue == 100 ) means this neural network plays X side currently.
+   */
+  alignmentMarkValue_set( alignmentMarkValue ) {
+    this.alignmentMarkValue = alignmentMarkValue;
+  }
+
 //!!! Regular Expression for get text inside html table markup:
 //
 //  /(?<=<table[^>]*>.*)(?<=>)[^<]+(?=<)(?=.*</table>)/g
@@ -250,7 +262,7 @@ class NeuralWorker_Body {
 // should be put at a fixed position in the image (e.g. the first pixel) so that
 // this neural network could know what its alignment is.
 
-let shape = [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ];
+    let shape = [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ];
 
     // Re-create (scaled) source tensor.
     //

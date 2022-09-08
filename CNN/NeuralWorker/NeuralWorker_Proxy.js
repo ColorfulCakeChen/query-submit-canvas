@@ -191,6 +191,18 @@ class NeuralWorker_Proxy extends Recyclable.Root {
   }
 
   /**
+   * @param {number} alignmentMarkValue
+   *   A value representing which alignment this neural network plays currently.
+   */
+  alignmentMarkValue_set( alignmentMarkValue ) {
+
+//!!! ...unfinished... (2022/09/08)
+// post message to worker to set alignmentMarkValue
+
+  }
+
+
+  /**
    * @param {number} processingId
    *   The processing id for distinguishing different processing request and result.
    *
