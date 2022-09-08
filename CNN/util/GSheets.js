@@ -97,13 +97,13 @@ class GSheets_UrlComposer extends Recyclable.Root {
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
    *
-   * @yield {ValueMax.Percentage.Aggregate}
-   *   Yield ( value = progressParent.root_get() ) when ( done = false ).
+   * @yield {Promise( ValueMax.Percentage.Aggregate )}
+   *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
    *
-   * @yield {Array[]}
-   *   - Yield ( value = a two dimension (column-major) array ) when ( done = true )
-   *       successfully.
-   *   - Yield ( value = null ) when ( done = true ) failed.
+   * @yield {Promise( Array[] )}
+   *   - Yield a promise resolves to { value: ( a two dimension (column-major) array ),
+   *       done: true } when successfully.
+   *   - Yield a promise resolves to { value: null, done: true } when failed.
    */
   async* fetcher_JSON_ColumnMajorArrayArray( progressParent ) {
     let fetcher = this.urlComposer.fetcher_JSON_ColumnMajorArrayArray( progressParent );
