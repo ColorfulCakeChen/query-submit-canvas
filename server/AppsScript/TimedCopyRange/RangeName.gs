@@ -21,7 +21,7 @@ const RANGE_NAME = {
         RANGE_NAME: "Fetcher.GA4.ItemNameInListFilter.RangeName",
       },
       REPORT: {
-        HEADER: {
+        HEADERS: {
           RANGE_NAME: "Fetcher.GA4.Report.Headers.RangeName",
         },
         ROWS: {
