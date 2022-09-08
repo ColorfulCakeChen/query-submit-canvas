@@ -115,9 +115,10 @@ class GSheets_UrlComposer extends Recyclable.Root {
    * Composing the URL (according to this object's data members), download
    * it as JSON format, extract data as a two dimension (column-major) array.
    *
-   * @return {Array[]}
-   *   - Return ( a two dimension (column-major) array ) when successful.
-   *   - Return ( null ) when failed.
+   * @return {Promise( Array[] )}
+   *   Return a promise.
+   *   - It will resolve to ( a two dimension (column-major) array ) when successful.
+   *   - It will resolve to ( null ) when failed.
    */
   async fetchAsync_JSON_ColumnMajorArrayArray() {
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();

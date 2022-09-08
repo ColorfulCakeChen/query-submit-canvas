@@ -198,7 +198,7 @@ class DEvolution_Versus extends Recyclable.Root {
    * Load this object by calling asyncLoader() and advance the generator by loop
    * until done.
    *
-   * @return {Promise}
+   * @return {Promise( boolean )}
    *   Return a promise.
    *   - It will resolve to true, if succeed. The .versusId, .parentChromosome,
    *       .offspringChromosome and .winCount will be set. (and
@@ -209,19 +209,21 @@ class DEvolution_Versus extends Recyclable.Root {
   async asyncLoad( progressParent,
     spreadsheetUrlComposer, spreadsheetRange, textEncoder ) {
 
+    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+
     let loader = this.asyncLoader( progressParent,
       spreadsheetUrlComposer, spreadsheetRange, textEncoder);
 
+    let bLoadOk;
     let loaderNext;
     do {
-      loaderNext = loader.next();
-    } while ( !loaderNext.done ); // When ( false == loaderNext.done ), the ( loaderNext.value ) will be progressParent.root_get().
+      loaderNext = await loader.next();
+      if ( loaderNext.done ) {
+        bLoadOk = loaderNext.value;
+      }
+    } while ( loaderNext.done == false );
 
-    let bLoadOk??? = loaderNext.value; // When ( true == loaderNext.done ), the ( loaderNext.value ) will be a Promise.
-    return bInitOk;
-
-!!!
-
+    return bLoadOk;
  }
 
 }
