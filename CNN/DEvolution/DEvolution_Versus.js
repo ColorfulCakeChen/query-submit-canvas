@@ -95,7 +95,7 @@ class DEvolution_Versus extends Recyclable.Root {
    *       be set.
    *   - Yield a promise resolves to { value: false, done: true } when failed.
    */
-  async* loaderAsync( progressParent,
+  async* loader( progressParent,
     spreadsheetUrlComposer, spreadsheetRange, textEncoder ) {
 
     // 0.1
@@ -194,7 +194,7 @@ class DEvolution_Versus extends Recyclable.Root {
   }
 
   /**
-   * Load this object by calling loaderAsync() and advance the generator by loop
+   * Load this object by calling loader() and advance the generator by loop
    * until done.
    *
    * @return {Promise( boolean )}
@@ -210,7 +210,7 @@ class DEvolution_Versus extends Recyclable.Root {
 
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
-    let loader = this.loaderAsync( progressParent,
+    let loader = this.loader( progressParent,
       spreadsheetUrlComposer, spreadsheetRange, textEncoder);
 
     let bLoadOk;
