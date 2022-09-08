@@ -193,7 +193,6 @@ class DEvolution_Versus extends Recyclable.Root {
     return true;
   }
 
-//!!! ...unfinished... (2022/09/08)
   /**
    * Load this object by calling asyncLoader() and advance the generator by loop
    * until done.
