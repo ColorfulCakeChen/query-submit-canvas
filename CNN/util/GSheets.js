@@ -127,11 +127,11 @@ class GSheets_UrlComposer extends Recyclable.Root {
     let fetcher = this.fetcher_JSON_ColumnMajorArrayArray( progress );
     let fetcherNext;
     do {
-      fetcherNext = fetcher.next();
+      fetcherNext = await fetcher.next();
       if ( fetcherNext.done == false ) {
-        //let progressRoot = await fetcherNext.value;
+        //let progressRoot = fetcherNext.value;
       } else { // ( fetcherNext.done == true )
-        resultColumnMajorArrayArray = await fetcherNext.value;
+        resultColumnMajorArrayArray = fetcherNext.value;
       }
     } while ( fetcherNext.done == false );
 
