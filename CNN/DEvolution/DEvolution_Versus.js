@@ -86,20 +86,17 @@ class DEvolution_Versus extends Recyclable.Root {
    * @param {TextEncoder} textEncoder
    *   For converting text string to Uint8Array.
    *
-   * @yield {ValueMax.Percentage.Aggregate}
-   *   Yield ( value = progressParent.root_get() ) when ( done = false ).
+   * @yield {Promise( ValueMax.Percentage.Aggregate )}
+   *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
    *
-   * @yield {boolean}
-   *   Yield ( value = true ) when ( done = true ) successfully.
-   *   Yield ( value = false ) when ( done = true ) failed.
+   * @yield {Promise( boolean )}
+   *   - Yield a promise resolves to { value: true, done: true } when successfully.
+   *       The .versusId, .parentChromosome, .offspringChromosome and .winCount will
+   *       be set.
+   *   - Yield a promise resolves to { value: false, done: true } when failed.
    *
-   * @return {Promise}
-   *   Return a promise.
-   *   - It will resolve to true, if succeed. The .versusId, .parentChromosome,
-   *       .offspringChromosome and .winCount will be set.
-   *   - It will resolve to false, if failed.
    */
-  async * asyncLoader( progressParent,
+  async* asyncLoader( progressParent,
     spreadsheetUrlComposer, spreadsheetRange, textEncoder ) {
 
     // 0.1
@@ -113,7 +110,8 @@ class DEvolution_Versus extends Recyclable.Root {
       this.spreadsheetRange = spreadsheetRange;
       spreadsheetUrlComposer.range_set( spreadsheetRange );
 
-      versusArrayArray = this.urlComposer.fetchAsync_JSON_ColumnMajorArrayArray();
+      let fetcherVersus = this.urlComposer.fetcher_JSON_ColumnMajorArrayArray();
+      versusArrayArray = yield* fetcherVersus;
       if ( !versusArrayArray )
         return false; // Download failure.
     }
