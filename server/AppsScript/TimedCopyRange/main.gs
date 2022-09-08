@@ -6,8 +6,8 @@ function onOpen() {
   ui.createAddonMenu()
     .addItem( "Fetch data", "GA4_run_report_" )
     .addItem( "Copy ranges", "NamedRange_copy_from_source_to_target_" )
-    .addItem( "Triggers install", "triggersAll_install_" )
-    .addItem( "Triggers uninstall", "triggersAll_uninstall_" )
+    .addItem( "Timer start", "timer_start_" )
+    .addItem( "Timer stop", "timer_stop_" )
     // .addSubMenu(
     //   ui.createMenu( "Sub menu" )
     //     .addItem( "Sub item1", "dummy" )
@@ -69,15 +69,21 @@ function copierTimer_onTime_( e ) {
 /** Run a GA4 report to fetch data. */
 function GA4_run_report_() {
   let [ fetcherGA4PropertyId,
-    fetcherGA4ItemNameInListFilterName,
-    fetcherResultHeaders, fetcherResultRows ] = ranges_getByNames_(
+    fetcherGA4ItemNameInListFilterRangeName,
+    fetcherGA4ReportHeadersRangeName, fetcherGA4ReportRowsRangeName ]
+    = ranges_getByNames_(
       RANGE_NAME.FETCHER.GA4.PROPERTY_ID,
-      RANGE_NAME.FETCHER.GA4.ITEM_NAME_IN_LIST_FILTER_NAME,
-      RANGE_NAME.FETCHER.RESULT.HEADERS, RANGE_NAME.FETCHER.RESULT.ROWS,
+      RANGE_NAME.FETCHER.GA4.ITEM_NAME_IN_LIST_FILTER.RANGE_NAME,
+      RANGE_NAME.FETCHER.GA4.REPORT.HEADERS.RANGE_NAME,
+      RANGE_NAME.FETCHER.GA4.REPORT.ROWS.RANGE_NAME,
     );
 
-  fetcherResultHeaders.clearContent();
-  fetcherResultRows.clearContent();
+  let [ reportHeadersRange, reportRowsRange ] = ranges_getByNames_(
+    fetcherGA4ReportHeadersRangeName.getValue(),
+    fetcherGA4ReportRowsRangeName.getValue() );
+
+  reportHeadersRange.clearContent();
+  reportRowsRange.clearContent();
 
   const propertyId = fetcherGA4PropertyId.getValue();
   const maxRowCount = fetcherResultRows.getNumRows();
@@ -97,9 +103,10 @@ function GA4_run_report_() {
     //limit: maxRowCount,
   };
 
-  if ( !fetcherGA4ItemNameInListFilterName.isBlank() ) {
+  // Add in-list-filter for itemName.
+  if ( !fetcherGA4ItemNameInListFilterRangeName.isBlank() ) {
     let [ itemNameInListFilter ] = ranges_getByNames_(
-      fetcherGA4ItemNameInListFilterName.getValue() );
+      fetcherGA4ItemNameInListFilterRangeName.getValue() );
     let itemNameInListFilterString = itemNameInListFilter.getValue();
     let itemNameArray = itemNameInListFilterString.split( "|" );
     request.dimensionFilter = {
@@ -125,7 +132,7 @@ function GA4_run_report_() {
     for ( let i = 0; i < report.metricHeaders.length; ++i ) {
       outputHeaders[ 0 ].push( report.metricHeaders[ i ].name )
     }
-    fetcherResultHeaders.setValues( outputHeaders );
+    reportHeadersRange.setValues( outputHeaders );
   }
 
   // Extract rows.
@@ -153,7 +160,7 @@ function GA4_run_report_() {
     for ( ; rowIndex < maxRowCount; ++rowIndex ) // Fill extra cells as empty.
       outputRows[ rowIndex ] = emptyColumns;
 
-    fetcherResultRows.setValues( outputRows );
+    reportRowsRange.setValues( outputRows );
     console.log( `GA4_run_report_(): ${reportRowCount} rows extracted.` );
 
     if ( reportRowCount > maxRowCount )
@@ -169,19 +176,19 @@ function GA4_run_report_() {
  *   If true, copy a source to a target only if the target is totally blank.
  */
 function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
-  let [ copierSourceNames, copierTargetNames ] = ranges_getByNames_(
-    RANGE_NAME.COPIER.SOURCE_NAMES, RANGE_NAME.COPIER.TARGET_NAMES );
+  let [ copierSourceRangeNames, copierTargetRangeNames ] = ranges_getByNames_(
+    RANGE_NAME.COPIER.SOURCE.RANGE_NAMES, RANGE_NAME.COPIER.TARGET.RANGE_NAMES );
 
-  let sourceNamesString = copierSourceNames.getValue();
-  let sourceNames = sourceNamesString.split( "," );
+  let sourceRangeNamesString = copierSourceRangeNames.getValue();
+  let sourceRangeNames = sourceRangeNamesString.split( "," );
 
-  let targetNamesString = copierTargetNames.getValue();
-  let targetNames = targetNamesString.split( "," );
+  let targetRangeNamesString = copierTargetRangeNames.getValue();
+  let targetRangeNames = targetRangeNamesString.split( "," );
 
-  for ( let i = 0; i < sourceNames.length; ++i ) {
-    let sourceName = sourceNames[ i ].trim();
-    let targetName = targetNames[ i ].trim();
-    let [ copierSource, copierTarget ] = ranges_getByNames_( sourceName, targetName );
+  for ( let i = 0; i < sourceRangeNames.length; ++i ) {
+    let sourceRangeName = sourceRangeNames[ i ].trim();
+    let targetRangeName = targetRangeNames[ i ].trim();
+    let [ copierSource, copierTarget ] = ranges_getByNames_( sourceRangeName, targetRangeName );
 
     if ( bCopyOnlyIfTargetBlank )
       if ( !copierTarget.isBlank() )
@@ -192,16 +199,16 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
 }
 
 /** Install all triggers of this script. */
-function triggersAll_install_() {
+function timer_start_() {
   let [ fetcherCopierEveryMinutes, fetcherCopierEveryHours,
     fetcherCopierTimerLastTime, fetcherCopierTimerCounter,
     fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
     fetcherTimerAtRemainder, fetcherTimerLastTime, fetcherTimerCounter,
     fetcherGA4PropertyId,
-    fetcherGA4ItemNameInListFilterName,
-    fetcherResultHeaders, fetcherResultRows,
+    fetcherGA4ItemNameInListFilterRangeName,
+    fetcherGA4ReportHeadersRangeName, fetcherGA4ReportRowsRangeName,
     copierTimerAtRemainder, copierTimerLastTime, copierTimerCounter,
-    copierSourceNames, copierTargetNames ]
+    copierSourceRangeNames, copierTargetRangeNames ]
     = ranges_getByNames_(
       RANGE_NAME.FETCHER_COPIER.TIMER.EVERY_MINUTES,
       RANGE_NAME.FETCHER_COPIER.TIMER.EVERY_HOURS,
@@ -213,14 +220,15 @@ function triggersAll_install_() {
       RANGE_NAME.FETCHER.TIMER.LAST_TIME,
       RANGE_NAME.FETCHER.TIMER.COUNTER,
       RANGE_NAME.FETCHER.GA4.PROPERTY_ID,
-      RANGE_NAME.FETCHER.GA4.ITEM_NAME_IN_LIST_FILTER_NAME,
-      RANGE_NAME.FETCHER.RESULT.HEADERS, RANGE_NAME.FETCHER.RESULT.ROWS,
+      RANGE_NAME.FETCHER.GA4.ITEM_NAME_IN_LIST_FILTER.RANGE_NAME,
+      RANGE_NAME.FETCHER.GA4.REPORT.HEADERS.RANGE_NAME,
+      RANGE_NAME.FETCHER.GA4.REPORT.ROWS.RANGE_NAME,
       RANGE_NAME.COPIER.TIMER.AT_REMAINDER,
       RANGE_NAME.COPIER.TIMER.LAST_TIME,
       RANGE_NAME.COPIER.TIMER.COUNTER,
-      RANGE_NAME.COPIER.SOURCE_NAMES, RANGE_NAME.COPIER.TARGET_NAMES );
+      RANGE_NAME.COPIER.SOURCE.RANGE_NAMES, RANGE_NAME.COPIER.TARGET.RANGE_NAMES );
 
-  triggersAll_uninstall_();
+  timer_stop_();
 
   fetcherCopierTimerLastTime.clearContent();
 
@@ -246,9 +254,8 @@ function triggersAll_install_() {
 }
 
 /** Uninstall all triggers of this script. */
-function triggersAll_uninstall_() {
-  let spreadsheet = SpreadsheetApp.getActive();
-  let triggers = ScriptApp.getUserTriggers( spreadsheet );
+function timer_stop_() {
+  let triggers = ScriptApp.getUserTriggers( SpreadsheetApp.getActive() );
   for ( let i = 0; i < triggers.length; ++i )
     ScriptApp.deleteTrigger( triggers[ i ] );
 }
