@@ -156,7 +156,6 @@ class DEvolution_Versus extends Recyclable.Root {
       yield progressRoot;
     }
 
-//!!! ...unfinished... (2022/09/08)
     // 2.2 parent chromosome
     {
       let parentChromosomeArray = versusArrayArray[ COLUMN_ID_parentChromosome ];
@@ -165,16 +164,19 @@ class DEvolution_Versus extends Recyclable.Root {
         parentChromosomeArray, textEncoder,
         Base64_skipLineCount, Base64_suspendByteCount
       );
-
-      let decoderNext;
-      do {
-        decoderNext = decoder.next();
-      } 
-      this.parentChromosome
+      this.parentChromosome = yield* parentChromosomeDecoder;
     }
 
     // 2.3 offspring chromosome
-    offspringChromosome
+    {
+      let offspringChromosomeArray = versusArrayArray[ COLUMN_ID_offspringChromosome ];
+      let offspringChromosomeDecoder = Base64ToUint8Array.decoder_fromStringOrStringArray(
+        progressForOffspringChromosome,
+        offspringChromosomeArray, textEncoder,
+        Base64_skipLineCount, Base64_suspendByteCount
+      );
+      this.offspringChromosome = yield* offspringChromosomeDecoder;
+    }
 
     // 2.4 parent chromosome's winCount
     {
@@ -191,6 +193,7 @@ class DEvolution_Versus extends Recyclable.Root {
     return true;
   }
 
+//!!! ...unfinished... (2022/09/08)
   /**
    * Load this object by calling asyncLoader() and advance the generator by loop
    * until done.
