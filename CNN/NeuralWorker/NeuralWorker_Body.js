@@ -439,7 +439,13 @@ class NeuralWorker_Body {
   static onmessage_from_NeuralWorker_Proxy( e ) {
 
 //!!! ...unfinished... (2022/09/09)
-//    this[ e.data.command ]( e.data.args );
+    // { command, args };
+    let command = e.data.command;
+    let func = this[ command ];
+    let p = func( e.data.args );
+    p.then( r => {
+      postMessage( ???r );
+    } );
 //
 //!!! ...unfinished... (2022/09/09) Report done to NeuralWorker_Proxy.
 
