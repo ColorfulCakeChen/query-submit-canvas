@@ -94,12 +94,15 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
 //!!! ...unfinished... (2022/09/05) Perhaps, item_name instead of item_id
 // transaction_id?
 
+//!!! ...unfinished... (2022/09/07)
+// Perhaps, itemVariant (-1/0/+1) instead of itemsPurchased.
+
 //!!! ...unfinished... (2022/09/08)
 // Perhaps, quantity instead of price for nNegativeZeroPositive
 // (quantity seems possible negative value)
 
-//!!! ...unfinished... (2022/09/07)
-// Perhaps, itemVariant (-1/0/+1) instead of itemsPurchased.
+//!!! ...unfinished... (2022/09/09)
+// It seems currency should be set (e.g. TWD). Otherwise, itemRevenue will be 0.
 
       item_id: versusIdString,
       quantity: 1,
