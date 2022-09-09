@@ -38,16 +38,16 @@ class PromiseResolveReject {
  * Hold two PromiseResolveReject.
  *
  * @member {PromiseResolveReject} process
- *   The promise for reporting processTensor() done.
+ *   The promise for reporting worker's function execution done.
  *
  * @member {PromiseResolveReject} relay
  *   The promise for reporting scaledSourceImageData received from this web worker.
  */
 class ProcessRelayPromises {
 
-  constructor( workerId, processingId ) {
-    this.process = new PromiseResolveReject( workerId, processingId );
-    this.relay = new PromiseResolveReject( workerId, processingId );
+  constructor( processingId, workerId ) {
+    this.process = new PromiseResolveReject( processingId, workerId );
+    this.relay = new PromiseResolveReject( processingId, workerId );
   }
 
 }
@@ -448,7 +448,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     if ( !processRelayPromises )
       return; // Discard result with non-existed processing id. (e.g. already handled old processing result)
 
-    processRelayPromises.process.resolve( resultTypedArray );
+    processRelayPromises.process.promise.resolve( resultTypedArray );
 
 //!!! ...unfinished... When will fail?
     //processRelayPromises.reject();
