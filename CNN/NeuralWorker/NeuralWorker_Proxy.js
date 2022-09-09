@@ -140,19 +140,16 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     // Register callback from the web worker.
     worker.onmessage = NeuralWorker_Proxy.onmessage_from_NeuralWorker_Body.bind( this );
 
-//!!! ...unfinished... (2022/09/09) needs processingId for reporting.
-
     // Worker Initialization message.
-    let message = {
-      command: "initWorker",
+    let data = {
       processingId: processingId,
-      workerId: workerId,
-      tensorflowJsURL: tensorflowJsURL,
-//!!!
-      neuralNetParamsBase: neuralNetParamsBase,
+      command: "initWorker_async",
+      args: {
+        workerId: workerId,
+        tensorflowJsURL: tensorflowJsURL,
+      }
     };
-
-    worker.postMessage( message );  // Inform the worker to initialize.
+    worker.postMessage( data );  // Inform the worker to initialize.
 
 //!!! ...unfinished... (2022/08/27)
 // Perhaps, use MessageChannel instead of window.onmessage().
@@ -171,8 +168,8 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 //!!! ...unfinished... (2022/09/08) also MessagePort.close().
 
     {
-      let message = { command: "disposeWorker" };
-      this.worker.postMessage( message );
+      let data = { command: "disposeWorker" };
+      this.worker.postMessage( data );
       this.worker = null;
     }
 
@@ -186,17 +183,15 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    *   The neural network's weights. It will be interpreted as Float32Array.
    */
   async neuralNet_create_async( processingId, neuralNetParamsBase, weightArrayBuffer ) {
-
-
-//!!! ...unfinished... (2022/09/09) needs processingId for reporting.
-
-    let message = {
+    let data = {
       processingId: processingId,
-      command: "neuralNet_create",
-      neuralNetParamsBase: neuralNetParamsBase,
-      weightArrayBuffer: weightArrayBuffer,
+      command: "neuralNet_create_async",
+      args: {
+        neuralNetParamsBase: neuralNetParamsBase,
+        weightArrayBuffer: weightArrayBuffer,
+      }
     };
-    this.worker.postMessage( message, [ weightArrayBuffer ] );
+    this.worker.postMessage( data, [ weightArrayBuffer ] );
 
 //!!! ...unfinished... (2022/09/09)
 // should await its done.
@@ -212,12 +207,14 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 
 //!!! ...unfinished... (2022/09/09) needs processingId for reporting.
 
-    let message = {
-      command: "alignmentMark_setValue",
+    let data = {
       processingId: processingId,
-      markValue: markValue,
+      command: "alignmentMark_setValue",
+      args: {
+        markValue: markValue,
+      }
     };
-    worker.postMessage( message );
+    worker.postMessage( data );
 
 //!!! ...unfinished... (2022/09/09)
 // should await its done.

@@ -40,7 +40,7 @@ class NeuralWorker_Body {
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
    *   The configuration of the neural network to be created by web worker.
    */
-  async initWorker_async( workerId = 0, tensorflowJsURL, neuralNetParamsBase ) {
+  async initWorker_async( { workerId = 0, tensorflowJsURL, neuralNetParamsBase } ) {
     if ( workerId < 0 )
       workerId = 0;
 
@@ -91,7 +91,7 @@ class NeuralWorker_Body {
    * @param {ArrayBuffer} weightArrayBuffer
    *   The neural network's weights. It will be interpreted as Float32Array.
    */
-  async neuralNet_create_async( neuralNetParamsBase, weightArrayBuffer ) {
+  async neuralNet_create_async( { neuralNetParamsBase, weightArrayBuffer } ) {
 
     try {
       let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
@@ -174,7 +174,7 @@ class NeuralWorker_Body {
    *   - ( markValue == 0 ) means this neural network plays O side currently.
    *   - ( markValue == 255 ) means this neural network plays X side currently.
    */
-  alignmentMark_setValue( markValue ) {
+  alignmentMark_setValue( { markValue } ) {
     this.alignmentMarkValue = markValue;
     return markValue;
   }
