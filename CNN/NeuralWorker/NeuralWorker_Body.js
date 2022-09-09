@@ -445,7 +445,7 @@ class NeuralWorker_Body {
     let func = method.bind( this );
     let p = func( e.data.args ); // Assume return a Promise.
     p.then( r => {
-      let resultMessage = { processingId: processingId, r };
+      let resultMessage = { processingId: e.data.processingId, r };
       postMessage( resultMessage );
     } );
 //
