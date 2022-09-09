@@ -6,7 +6,6 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
 import { ProcessRelayPromises } from "./NeuralWorker_ProcessRelayPromises.js";
 
-
 /**
  * Hold the worker and its related promise map. It is a wrapper of a neural network
  * web worker for handling and communicating easily.
