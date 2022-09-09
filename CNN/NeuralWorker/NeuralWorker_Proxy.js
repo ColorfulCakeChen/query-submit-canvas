@@ -465,47 +465,33 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    */
   static onmessage_from_NeuralWorker_Body( e ) {
 
-//!!! ...unfinished... (2022/09/09)
-
     // e.data == { processingId, workerId, result }
     let processingId = e.data.processingId;
     let workerId = e.data.workerId;
     let result = e.data.result;
 
-//!!!
-    let method = this[ command ]; // command name as method name.
-    let func = method.bind( this );
+    if ( workerId != this.workerId )
+      return; // Ignore if wrong worker id.
 
-    try {
-      let p = func( e.data.args );
+    // Discard result with non-existed processing id. (e.g. already handled old
+    // processing result)
+    let processRelayPromises = this.processRelayPromisesMap.get( processingId );
+    if ( !processRelayPromises )
+      return;
 
-      // For asynchronous function, wait result and then return it.
-      if ( p instanceof Promise ) {
-        p.then( r => {
-          let resultMessage = { processingId: e.data.processingId, r };
-          postMessage( resultMessage );
+    processRelayPromises.process.resolve( result );
 
-        } ).catch( errorReason => {
-          let msg = `NeuralWorker_Body.onmessage_from_NeuralWorker_Proxy(): `
-            + `command="${command}", asynchronous, failed. `
-            + `${errorReason}`
-          console.err( msg );
-          //debugger;
-        } );
+//!!! ...unfinished... When will fail?
+    //processRelayPromises.reject();
 
-      // For synchronous function, return result immediately.
-      } else {
-        let resultMessage = { processingId: e.data.processingId, p };
-        postMessage( resultMessage );
-      }
+//!!! ...unfinished... Whether should the older (i.e. smaller) processingId be cleared from map? (Could the processing be out of order?)
 
-    } catch ( errorReason ) {
-      let msg = `NeuralWorker_Body.onmessage_from_NeuralWorker_Proxy(): `
-        + `command="${command}", synchronous, failed. `
-        + `${errorReason}`
-      console.err( msg );
-      //debugger;
-    }
+//!!! ...unfinished... (2022/09/09)
+// What about processRelayPromises.relay?
+// When to resolve it (before the promise be deleted)?
+
+    // Clear the info entry of handled processing result.
+    this.processRelayPromisesMap.delete( processingId );
 
 
 //!!! (2022/09/09 Remarked) Using processingId look up instead.
