@@ -186,7 +186,7 @@ class NeuralWorker_Body {
    * by .alignmentMarkValue so that this neural network could distunguish which
    * alignment it represents.
    */
-  alignmentMark_fillToImage( imageUint8Array ) {
+  static alignmentMark_fillToImage( imageUint8Array ) {
 
     // Q: Why fill top-left ( 3 * 3 ) pixels? Why not just fill top-left ( 1 * 1 ) pixel?
     // A: NeuralNet mainly uses ( 3 * 3 ) depthwise filter.
