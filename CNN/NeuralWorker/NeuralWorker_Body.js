@@ -439,13 +439,14 @@ class NeuralWorker_Body {
   static onmessage_from_NeuralWorker_Proxy( e ) {
 
 //!!! ...unfinished... (2022/09/09)
-    // e.data == { command, args }
+    // e.data == { command, processingId, args }
     let command = e.data.command;
     let method = this[ command ];
     let func = method.bind( this );
     let p = func( e.data.args ); // Assume return a Promise.
     p.then( r => {
-      postMessage( ???r );
+      let resultMessage = { processingId: processingId, r };
+      postMessage( resultMessage );
     } );
 //
 //!!! ...unfinished... (2022/09/09) Report done to NeuralWorker_Proxy.
