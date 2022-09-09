@@ -136,7 +136,8 @@ class PerformanceTestCase extends Recyclable.Root {
 
       if ( 100 != progress.valuePercentage )
         throw Error(
-          `Progress (${progress.valuePercentage}) should be 100 when initializing stage object successfully. ${neuralNet}`);
+          `Progress (${progress.valuePercentage}) should be 100 when initializing `
+          + `NeuralNet object successfully. ${neuralNet}`);
 
       progress.disposeResources_and_recycleToPool();
       progress = null;

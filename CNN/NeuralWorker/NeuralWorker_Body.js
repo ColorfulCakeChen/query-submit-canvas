@@ -154,17 +154,7 @@ class NeuralWorker_Body {
 
     try {
 
-      let neuralNetParams = NeuralNet.Params.Pool.get_or_create_by(
-        neuralNetParamsBase.input_height,
-        neuralNetParamsBase.input_width,
-        neuralNetParamsBase.input_channelCount,
-        neuralNetParamsBase.vocabularyChannelCount,
-        neuralNetParamsBase.vocabularyCountPerInputChannel,
-        neuralNetParamsBase.nConvStageTypeId,
-        neuralNetParamsBase.blockCountTotalRequested,
-        neuralNetParamsBase.output_channelCount,
-        neuralNetParamsBase.bKeepInputTensor
-      );
+      let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
 //!!! ...unfinished... (2022/09/08)
 // should handle NaN to 0.
@@ -180,26 +170,33 @@ class NeuralWorker_Body {
         inputWeightArray = new Float32Array( weightArrayBuffer, byteOffset, byteLength );
       }
 
-      let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+      let neuralNetParams = NeuralNet.Params.Pool.get_or_create_by(
+        neuralNetParamsBase.input_height,
+        neuralNetParamsBase.input_width,
+        neuralNetParamsBase.input_channelCount,
+        neuralNetParamsBase.vocabularyChannelCount,
+        neuralNetParamsBase.vocabularyCountPerInputChannel,
+        neuralNetParamsBase.nConvStageTypeId,
+        neuralNetParamsBase.blockCountTotalRequested,
+        neuralNetParamsBase.output_channelCount,
+        neuralNetParamsBase.bKeepInputTensor
+      );
+
       let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
-
-      let bInitOk = neuralNet.init( progress,
-        ???PerformanceTestCase.randomTestWeightArray, 0, extractedParams );
-
-      if ( neuralNet.bInitOk != bInitOk )
-        throw Error( `NeuralNet validation state (${neuralNet.bInitOk}) mismatches initer's result (${bInitOk}). ${neuralNet}` );
+      let bInitOk = neuralNet.init( progress, inputWeightArray, 0, neuralNetParams );
 
       if ( false == bInitOk )
-        throw Error( `Failed to initialize neuralNet object. ${neuralNet}` );
-
-      if ( 100 != progress.valuePercentage )
-        throw Error(
-          `Progress (${progress.valuePercentage}) should be 100 when initializing stage object successfully. ${neuralNet}`);
+        throw Error( `NeuralWorker_Body.neuralNet_loadAsync(): `
+          + `Failed to initialize neuralNet object. `
+          + `Progress ( ${progress.valuePercentage} ). `
+          + `${neuralNetParams}`
+        );
 
       progress.disposeResources_and_recycleToPool();
       progress = null;
 
-      console.log( `NeuralNet.${this.testCaseName}: tensorWeightCount = { `
+      console.log( `NeuralWorker_Body.neuralNet_loadAsync(): `
+        + `tensorWeightCount = { `
         + `Extracted: ${neuralNet.tensorWeightCountExtracted}, `
         + `Total: ${neuralNet.tensorWeightCountTotal} }, `
         + `stageCount=${neuralNet.stageCount}, `
@@ -214,11 +211,10 @@ class NeuralWorker_Body {
       );
 
     } catch ( e ) {
-      debugger;
-      console.log( e );
+      // debugger;
+      // console.log( e );
       throw e;
     }
-
   }
 
 //!!! ...unfinished... (2022/09/08)
