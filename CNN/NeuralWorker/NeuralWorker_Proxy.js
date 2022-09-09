@@ -145,6 +145,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     // Worker Initialization message.
     let message = {
       command: "initWorker",
+      processingId: processingId,
       workerId: workerId,
       tensorflowJsURL: tensorflowJsURL,
 //!!!
@@ -191,6 +192,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 
     let message = {
       command: "neuralNet_create",
+      processingId: processingId,
       neuralNetParamsBase: neuralNetParamsBase,
       weightArrayBuffer: weightArrayBuffer,
     };
@@ -212,6 +214,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 
     let message = {
       command: "alignmentMark_setValue",
+      processingId: processingId,
       markValue: markValue,
     };
     worker.postMessage( message );
@@ -253,7 +256,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     //
     let processRelayPromises = new ProcessRelayPromises( this.workerId, processingId );
     this.processRelayPromisesMap.set( processingId, processRelayPromises );
-    
+
     // Transfer (not copy) the source image data to this (worker proxy owned) web worker.
     let message = {
       command: "imageData_transferBack_processTensor",
