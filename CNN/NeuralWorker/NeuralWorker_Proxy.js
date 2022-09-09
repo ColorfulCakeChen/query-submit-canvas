@@ -4,7 +4,7 @@ import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 //import * as ValueMax from "../util/ValueMax.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
-import { ProcessRelayPromises } from "./ProcessRelayPromises.js";"
+import { ProcessRelayPromises } from "./NeuralWorker_ProcessRelayPromises.js";
 
 
 /**
