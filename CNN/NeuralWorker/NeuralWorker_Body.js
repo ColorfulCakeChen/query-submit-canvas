@@ -389,38 +389,6 @@ class NeuralWorker_Body {
     postMessage( message, [ message.sourceTypedArray.buffer ] );
   }
 
-//!!! ...unfinished... How to know and set total of the following:
-//       this.initProgress.libraryDownload;
-//       this.initProgress.weightsDownload;
-//       this.initProgress.weightsParse;
-
-//       this.initProgress.libraryDownload.total = 3; // There are 3 libraries should be loaded: NetProgress, tensorflow.js, NeuralNet.
-//       this.initProgress.libraryDownload.accumulation = 0;
-
-  /** Inform WorkerProxy to set total of every progress of initProgress. */
-  reportInitProgress_setTotal() {
-    let message = { command: "reportInitProgress", subCommand: "setTotal", workerId: this.workerId,
-      libraryDownload: this.initProgress.libraryDownload.total,
-      weightsDownload: this.initProgress.weightsDownload.total,
-      weightsParse: this.initProgress.weightsParse.total,
-    };
-    postMessage( message );
-  }
-
-  /** Inform WorkerProxy to reset initProgress. */
-  reportInitProgress_restAccumulation() {
-    let message = { command: "reportInitProgress", subCommand: "restAccumulation", workerId: this.workerId };
-    postMessage( message );
-  }
-
-  /** Inform WorkerProxy to advance initProgress.libraryDownload. */
-  reportInitProgress_libraryDownload() {
-//    let message = { command: "initProgress_libraryDownload", workerId: this.workerId, total: this.initProgress.libraryDownload.total, accumulation: this.initProgress.libraryDownload.accumulation };
-//    let message = { command: "initProgress_libraryDownload", workerId: this.workerId, initProgress: this.initProgress.libraryDownload };
-    let message = { command: "reportInitProgress", subCommand: "libraryDownload", workerId: this.workerId, total: this.initProgress.libraryDownload.total, accumulation: this.initProgress.libraryDownload.accumulation };
-    postMessage( message );
-  }
-
   /** Handle message from NeuralWorker_Proxy. */
   static onmessage_from_NeuralWorker_Proxy( e ) {
 
