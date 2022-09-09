@@ -267,9 +267,9 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 // (a Uint8Array) directly along with its ( height, width, channelCount ) information.
       sourceImageData: sourceImageData
 
-      height: ???,
-      width: ???,
-      channelCount: ???,
+      // height: ???,
+      // width: ???,
+      // channelCount: ???,
     };
 
     this.worker.postMessage( message, [ message.sourceImageData.data.buffer ] );
@@ -467,29 +467,71 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    *   Should be binded to this object.
    */
   static onmessage_from_NeuralWorker_Body( e ) {
-    let message = e.data;
 
-    switch ( message.command ) {
-//!!! ...unfinished... 
-      case "initWorker_done": //{ command: "initWorker_done",  };
-        break;
+//!!! ...unfinished... (2022/09/09)
 
-//!!! ...unfinished... 
-      case "reportInitProgress": //{ command: "reportInitProgress", subCommand, workerId, ,  };
-        this.on_reportInitProgress( message );
-        break;
+    // e.data == { processingId, result }
+    let processingId = e.data.processingId;
 
-      case "transferBackSourceTypedArray": //{ command: "transferBackSourceTypedArray", workerId, processingId, sourceTypedArray };
-        this.on_transferBackSourceTypedArray(
-          message.workerId, message.processingId, message.sourceTypedArray );
-        break;
+    let method = this[ command ]; // command name as method name.
+    let func = method.bind( this );
 
-      case "processTensorResult": //{ command: "processTensorResult", workerId, processingId, resultTypedArray };
-        this.on_processTensorResult(
-          message.workerId, message.processingId, message.resultTypedArray );
-        break;
+    try {
+      let p = func( e.data.args );
 
+      // For asynchronous function, wait result and then return it.
+      if ( p instanceof Promise ) {
+        p.then( r => {
+          let resultMessage = { processingId: e.data.processingId, r };
+          postMessage( resultMessage );
+
+        } ).catch( errorReason => {
+          let msg = `NeuralWorker_Body.onmessage_from_NeuralWorker_Proxy(): `
+            + `command="${command}", asynchronous, failed. `
+            + `${errorReason}`
+          console.err( msg );
+          //debugger;
+        } );
+
+      // For synchronous function, return result immediately.
+      } else {
+        let resultMessage = { processingId: e.data.processingId, p };
+        postMessage( resultMessage );
+      }
+
+    } catch ( errorReason ) {
+      let msg = `NeuralWorker_Body.onmessage_from_NeuralWorker_Proxy(): `
+        + `command="${command}", synchronous, failed. `
+        + `${errorReason}`
+      console.err( msg );
+      //debugger;
     }
+
+
+//!!! (2022/09/09 Remarked) Using processingId look up instead.
+//     let message = e.data;
+//
+//     switch ( message.command ) {
+// //!!! ...unfinished... 
+//       case "initWorker_done": //{ command: "initWorker_done",  };
+//         break;
+//
+// //!!! ...unfinished... 
+//       case "reportInitProgress": //{ command: "reportInitProgress", subCommand, workerId, ,  };
+//         this.on_reportInitProgress( message );
+//         break;
+//
+//       case "transferBackSourceTypedArray": //{ command: "transferBackSourceTypedArray", workerId, processingId, sourceTypedArray };
+//         this.on_transferBackSourceTypedArray(
+//           message.workerId, message.processingId, message.sourceTypedArray );
+//         break;
+//
+//       case "processTensorResult": //{ command: "processTensorResult", workerId, processingId, resultTypedArray };
+//         this.on_processTensorResult(
+//           message.workerId, message.processingId, message.resultTypedArray );
+//         break;
+//
+//     }
   }
 
 }

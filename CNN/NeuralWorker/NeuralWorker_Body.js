@@ -392,7 +392,8 @@ class NeuralWorker_Body {
   /** Handle message from NeuralWorker_Proxy. */
   static onmessage_from_NeuralWorker_Proxy( e ) {
 
-    // e.data == { command, processingId, args }
+    // e.data == { processingId, command, args }
+    let processingId = e.data.processingId;
     let command = e.data.command;
     let method = this[ command ]; // command name as method name.
     let func = method.bind( this );
@@ -403,33 +404,35 @@ class NeuralWorker_Body {
       // For asynchronous function, wait result and then return it.
       if ( p instanceof Promise ) {
         p.then( r => {
-          let resultMessage = { processingId: e.data.processingId, r };
-          postMessage( resultMessage );
+          let resultData = { workerId: this.workerId, processingId: processingId, r };
+          postMessage( resultData );
 
         } ).catch( errorReason => {
           let msg = `NeuralWorker_Body.onmessage_from_NeuralWorker_Proxy(): `
+            + `workerId=${this.workerId}, processingId=${processingId}, `
             + `command="${command}", asynchronous, failed. `
-            + `${errorReason}`
+            + `${errorReason}`;
           console.err( msg );
           //debugger;
         } );
 
       // For synchronous function, return result immediately.
       } else {
-        let resultMessage = { processingId: e.data.processingId, p };
-        postMessage( resultMessage );
+        let resultData = { workerId: this.workerId, processingId: processingId, r };
+        postMessage( resultData );
       }
 
     } catch ( errorReason ) {
       let msg = `NeuralWorker_Body.onmessage_from_NeuralWorker_Proxy(): `
+        + `workerId=${this.workerId}, processingId=${processingId}, `
         + `command="${command}", synchronous, failed. `
-        + `${errorReason}`
+        + `${errorReason}`;
       console.err( msg );
       //debugger;
     }
 
 
-// //!!! (2022/09/09 Remarked) Using property look up instead.
+//!!! (2022/09/09 Remarked) Using property look up instead.
 //     let message = e.data;
 //
 //     switch ( message.command ) {
