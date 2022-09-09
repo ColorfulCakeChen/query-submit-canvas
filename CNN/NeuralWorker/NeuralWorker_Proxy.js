@@ -110,30 +110,19 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    *
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
    *   The configuration of the neural network to be created by web worker.
-   *
-   * @param {NeuralNetProgress.InitProgress} initProgress
-   *   This worker proxy will modify initProgress to report its web worker's
-   * initialization progress.
    */
-  init(
-    workerId,
-    tensorflowJsURL, weightsSpreadsheetId, weightsAPIKey,
-    neuralNetParamsBase,
-    initProgress ) {
+  async initAsync( workerId, tensorflowJsURL,  neuralNetParamsBase ) {
 
     this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
-    this.weightsSpreadsheetId = weightsSpreadsheetId;
-    this.weightsAPIKey = weightsAPIKey;
     this.neuralNetParamsBase = neuralNetParamsBase;
-    this.initProgress = initProgress;
 
     // Every worker has a result pending promise map. The key of the map is processing
     // id. The value of the map is a ProcessRelayPromises.
     this.processRelayPromisesMap = new Map();
 
 
-//!!! ...unfinished... (2022/08/24) Whay not use "./NeuralWorker_Body.js"?
+//!!! ...unfinished... (2022/08/24) Why not use "./NeuralWorker_Body.js"?
 // The import.meta.url should extract the path (exclude file name)
 
     // Assume the main (i.e. body) javascript file of neural network web worker is
@@ -151,11 +140,10 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 
     // Worker Initialization message.
     let message = {
-      command: "init",
+      command: "initWorker",
       workerId: workerId,
       tensorflowJsURL: tensorflowJsURL,
-      // weightsSpreadsheetId: weightsSpreadsheetId,
-      // weightsAPIKey: weightsAPIKey,
+//!!!
       neuralNetParamsBase: neuralNetParamsBase,
     };
 
@@ -164,6 +152,9 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 //!!! ...unfinished... (2022/08/27)
 // Perhaps, use MessageChannel instead of window.onmessage().
 // Otherwise, original window.onmessage() will be replaced (i.e. destroyed) by our system.
+
+//!!! ...unfinished... (2022/09/09)
+// should await NeuralWorker_Body report init done.
 
   }
 
@@ -180,17 +171,43 @@ class NeuralWorker_Proxy extends Recyclable.Root {
       this.worker  = null;
     }
 
-    this.initProgress = null;
+  }
+
+  /**
+   * @param {Object} neuralNetParamsBase
+   *   The configuration of the neural network to be created.
+   *
+   * @param {ArrayBuffer} weightArrayBuffer
+   *   The neural network's weights. It will be interpreted as Float32Array.
+   */
+  async neuralNet_createAsync( neuralNetParamsBase, weightArrayBuffer ) {
+
+    let message = {
+      command: "neuralNet_create",
+      neuralNetParamsBase: neuralNetParamsBase,
+      weightArrayBuffer: weightArrayBuffer,
+    };
+    worker.postMessage( message );
+
+//!!! ...unfinished... (2022/09/09)
+// should await its done.
+
   }
 
   /**
    * @param {number} markValue
    *   A value representing which alignment this neural network plays currently.
    */
-  alignmentMark_setValue( markValue ) {
+  async alignmentMark_setValueAsync( markValue ) {
 
-//!!! ...unfinished... (2022/09/08)
-// post message to worker to set alignmentMarkValue
+    let message = {
+      command: "alignmentMark_setValue",
+      markValue: markValue,
+    };
+    worker.postMessage( message );
+
+//!!! ...unfinished... (2022/09/09)
+// should await its done.
 
   }
 

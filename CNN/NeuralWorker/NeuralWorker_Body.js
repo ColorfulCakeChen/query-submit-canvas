@@ -22,19 +22,6 @@ class NeuralWorker_Body {
     //super.disposeResources();
   }
 
-  /** */
-  disposeWorker() {
-    if ( this.neuralNet ) {
-      this.neuralNet.disposeResources();
-      this.neuralNet = null;
-    }
-
-//!!! ...unfinished... (2022/09/08) also MessagePort.close().
-
-//!!!??? calling close() when the next worker disposed ?
-    close();
-  }
-
   /**
    *
    * @param {number} workerId
@@ -48,7 +35,7 @@ class NeuralWorker_Body {
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
    *   The configuration of the neural network to be created by web worker.
    */
-  async initAsync( workerId = 0, tensorflowJsURL, neuralNetParamsBase ) {
+  async initWorkerAsync( workerId = 0, tensorflowJsURL, neuralNetParamsBase ) {
 
     if ( workerId < 0 )
       workerId = 0;
@@ -82,9 +69,22 @@ class NeuralWorker_Body {
     globalThis.NeuralNet = await import( "../Conv/NeuralNet.js" );
   }
 
+  /** */
+  disposeWorker() {
+    if ( this.neuralNet ) {
+      this.neuralNet.disposeResources();
+      this.neuralNet = null;
+    }
+
+//!!! ...unfinished... (2022/09/08) also MessagePort.close().
+
+//!!!??? calling close() when the next worker disposed ?
+    close();
+  }
+
   /**
    * @param {Object} neuralNetParamsBase
-   *   An object look like NeuralNet.ParamsBase.
+   *   An object looks like NeuralNet.ParamsBase.
    *
    * @param {ArrayBuffer} weightArrayBuffer
    *   The neural network's weights. It will be interpreted as Float32Array.
@@ -161,7 +161,6 @@ class NeuralWorker_Body {
     }
   }
 
-//!!! ...unfinished... (2022/09/08)
   /**
    * @param {number} markValue
    *   A value representing which alignment this neural network plays currently.
@@ -171,6 +170,8 @@ class NeuralWorker_Body {
    */
   alignmentMark_setValue( markValue ) {
     this.alignmentMarkValue = markValue;
+
+//!!! ...unfinished... (2022/09/09) Report done to NeuralWorker_Proxy.
   }
 
   /**
@@ -432,18 +433,22 @@ globalThis.onmessage = function( e ) {
   let message = e.data;
 
   switch ( message.command ) {
-    case "init": //{ command: "init", workerId, tensorflowJsURL };
+    case "initWorker": //{ command: "initWorker", workerId, tensorflowJsURL };
       globalThis.workerBody = new WorkerBody();
-      globalThis.workerBody.initAsync( message.workerId, message.tensorflowJsURL );
-      break;
-
-    case "neuralNet_create": //{ command: "neuralNet_create", neuralNetParamsBase, weightArrayBuffer };
-      globalThis.workerBody.neuralNet_createAsync(
-        message.workerId, message.neuralNetParamsBase, message.weightArrayBuffer );
+      globalThis.workerBody.initWorkerAsync( message.workerId, message.tensorflowJsURL );
       break;
 
     case "disposeWorker": //{ command: "disposeWorker" };
       globalThis.workerBody.disposeWorker();
+      break;
+
+    case "neuralNet_create": //{ command: "neuralNet_create", neuralNetParamsBase, weightArrayBuffer };
+      globalThis.workerBody.neuralNet_createAsync(
+        message.neuralNetParamsBase, message.weightArrayBuffer );
+      break;
+
+    case "alignmentMark_setValue": //{ command: "alignmentMark_setValue", markValue };
+      globalThis.workerBody.alignmentMark_setValue( message.markValue );
       break;
 
     case "imageData_transferBack_processTensor": //{ command: "imageData_transferBack_processTensor", processingId, sourceImageData };
