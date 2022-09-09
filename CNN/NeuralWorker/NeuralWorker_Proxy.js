@@ -241,7 +241,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    * worker's neural network computing done. It resolved with a typed-array which
    * comes from the output tensor of the web worker's neural network.
    */
-  async imageData_transferBack_processTensor_async( processingId, sourceImageData ) {
+  imageData_transferBack_processTensor_async( processingId, sourceImageData ) {
 
     // Prepare promises and their function object (resolve and reject) in a map so that
     // the promises can be found and resolved when processing is done.
@@ -298,7 +298,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    * worker's neural network computing done. It resolved with a typed-array which
    * comes from the output tensor of the web worker's neural network.
    */
-  async typedArray_transferBack_processTensor_async( processingId, sourceTypedArray ) {
+  typedArray_transferBack_processTensor_async( processingId, sourceTypedArray ) {
 
     // Prepare promises and their function object (resolve and reject) in a map so that
     // the promises can be found and resolved when processing is done.
@@ -346,7 +346,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    * worker's neural network computing done. It resolved with a typed-array which
    * comes from the output tensor of the web worker's neural network.
    */
-  async typedArray_processTensor_async( processingId, sourceTypedArray ) {
+  typedArray_processTensor_async( processingId, sourceTypedArray ) {
 
     // Prepare promises and their function object (resolve and reject) in a map so that
     // the promises can be found and resolved when processing is done.
@@ -373,40 +373,6 @@ class NeuralWorker_Proxy extends Recyclable.Root {
   }
 
   /**
-   * Handle messages from the progress of loading library of web workers.
-   */
-  initLibraryProgress_onReport( workerId ) {
-//!!! ...unfinished...
-    this.initProgress.libraryDownload;
-    this.initProgress.weightsDownload;
-    this.initProgress.weightsParse;
-
-  }
-
-  /**
-   * Handle messages from the progress of loading neural network of web workers.
-   */
-  initNeuralNetProgress_onReport( workerId ) {
-//!!! ...unfinished...
-  }
-
-  /**
-   * Handle messages from the progress of initialization of web workers.
-   */
-  on_reportInitProgress( message ) {
-//!!! ...unfinished...
-    switch ( message.subCommand ) {
-      case "restAccumulation": //{ command: "reportInitProgress", subCommand: "restAccumulation", workerId, ,  };
-        //this.on_initProgress_restAccumulation( message.workerId, ,  );
-        break;
-
-      case "libraryDownload": //{ command: "reportInitProgress", subCommand: "libraryDownload", workerId, ,  };
-        //this.on_initProgress_libraryDownload( message.workerId, ,  );
-        break;
-    }
-  }
-
-  /**
    * Called when the scaled source typed-array from web worker is received.
    */
   on_transferBackSourceTypedArray( workerId, processingId, sourceTypedArray ) {
@@ -426,38 +392,39 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     // on_processTensorResult()).
   }
 
-  /**
-   * Called when the processed tensor from web worker is received.
-   *
-   * @param {number} workerId
-   *   The id of the worker which sent the result back.
-   *
-   * @param {number} processingId
-   *   The processing id of the result.
-   *
-   * @param {TypedArray} resultTypedArray
-   *   The result of the returned processing. It is the downloaded data of the result
-   * tensor.
-   */
-  on_processTensorResult( workerId, processingId, resultTypedArray ) {
-
-    if ( workerId != this.workerId )
-      return; // Ignore if wrong worker id.
-
-    let processRelayPromises = this.processRelayPromisesMap.get( processingId );
-    if ( !processRelayPromises )
-      return; // Discard result with non-existed processing id. (e.g. already handled old processing result)
-
-    processRelayPromises.process.promise.resolve( resultTypedArray );
-
-//!!! ...unfinished... When will fail?
-    //processRelayPromises.reject();
-
-//!!! ...unfinished... Whether should the older (i.e. smaller) processingId be cleared from map? (Could the processing be out of order?)
-
-    // Clear the info entry of handled processing result.
-    this.processRelayPromisesMap.delete( processingId );
-  }
+//!!! (2022/09/09 Remarked) no longer necessary.
+//   /**
+//    * Called when the processed tensor from web worker is received.
+//    *
+//    * @param {number} workerId
+//    *   The id of the worker which sent the result back.
+//    *
+//    * @param {number} processingId
+//    *   The processing id of the result.
+//    *
+//    * @param {TypedArray} resultTypedArray
+//    *   The result of the returned processing. It is the downloaded data of the result
+//    * tensor.
+//    */
+//   on_processTensorResult( workerId, processingId, resultTypedArray ) {
+//
+//     if ( workerId != this.workerId )
+//       return; // Ignore if wrong worker id.
+//
+//     let processRelayPromises = this.processRelayPromisesMap.get( processingId );
+//     if ( !processRelayPromises )
+//       return; // Discard result with non-existed processing id. (e.g. already handled old processing result)
+//
+//     processRelayPromises.process.promise.resolve( resultTypedArray );
+//
+// //!!! ...unfinished... When will fail?
+//     //processRelayPromises.reject();
+//
+// //!!! ...unfinished... Whether should the older (i.e. smaller) processingId be cleared from map? (Could the processing be out of order?)
+//
+//     // Clear the info entry of handled processing result.
+//     this.processRelayPromisesMap.delete( processingId );
+//   }
 
   /**
    * Dispatch messages come from the owned web worker.
