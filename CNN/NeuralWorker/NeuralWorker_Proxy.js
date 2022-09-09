@@ -118,8 +118,11 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    * @param {string} tensorflowJsURL
    *   The URL of tensorflow javascript library. Every worker will load the library
    * from the URL.
+   *
+   * @return {Promise}
+   *   Resolved to true, if success. Resolved to false, if failed.
    */
-  async init_async( processingId, workerId, tensorflowJsURL ) {
+  init_async( processingId, workerId, tensorflowJsURL ) {
 
     this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
@@ -160,6 +163,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 //!!! ...unfinished... (2022/09/09)
 // should await NeuralWorker_Body report init done.
 
+    return create_and_return_ProcessRelayPromises( processingId ).process.promise;
   }
 
   /**
@@ -169,6 +173,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 
 //!!! ...unfinished... (2022/09/08) also MessagePort.close().
 
+    // Note: No processingId, because this command needs not return value.
     {
       let data = { command: "disposeWorker" };
       this.worker.postMessage( data );
@@ -183,8 +188,11 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    *
    * @param {ArrayBuffer} weightArrayBuffer
    *   The neural network's weights. It will be interpreted as Float32Array.
+   *
+   * @return {Promise}
+   *   Resolved to true, if success. Resolved to false, if failed.
    */
-  async neuralNet_create_async( processingId, neuralNetParamsBase, weightArrayBuffer ) {
+  neuralNet_create_async( processingId, neuralNetParamsBase, weightArrayBuffer ) {
     let data = {
       processingId: processingId,
       command: "neuralNet_create_async",
@@ -194,21 +202,17 @@ class NeuralWorker_Proxy extends Recyclable.Root {
       }
     };
     this.worker.postMessage( data, [ weightArrayBuffer ] );
-
-//!!! ...unfinished... (2022/09/09)
-// should await its done.
-
+    return create_and_return_ProcessRelayPromises( processingId ).process.promise;
   }
 
   /**
    * @param {number} markValue
    *   A value representing which alignment this neural network plays currently.
+   *
+   * @return {Promise}
+   *   Resolved to markValue, if success.
    */
-  async alignmentMark_setValue_async( processingId, markValue ) {
-
-
-//!!! ...unfinished... (2022/09/09) needs processingId for reporting.
-
+  alignmentMark_setValue_async( processingId, markValue ) {
     let data = {
       processingId: processingId,
       command: "alignmentMark_setValue",
@@ -217,10 +221,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
       }
     };
     worker.postMessage( data );
-
-//!!! ...unfinished... (2022/09/09)
-// should await its done.
-
+    return create_and_return_ProcessRelayPromises( processingId ).process.promise;
   }
 
 
@@ -243,18 +244,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    */
   imageData_transferBack_processTensor_async( processingId, sourceImageData ) {
 
-    // Prepare promises and their function object (resolve and reject) in a map so that
-    // the promises can be found and resolved when processing is done.
-    //
-    //   - The processRelayPromises.relay.promise will be await by outter (i.e.
-    //       WorkerProxies) to transfer source typed-array to every web worker
-    //       serially.
-    //
-    //   - The processRelayPromises.process.promise will be returned as the result
-    //       of this processTensor().
-    //
-    let processRelayPromises = new ProcessRelayPromises( processingId, this.workerId );
-    this.processRelayPromisesMap.set( processingId, processRelayPromises );
+    let processRelayPromises = create_and_return_ProcessRelayPromises( processingId );
 
     // Transfer (not copy) the source image data to this (worker proxy owned) web worker.
     let message = {
@@ -300,18 +290,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    */
   typedArray_transferBack_processTensor_async( processingId, sourceTypedArray ) {
 
-    // Prepare promises and their function object (resolve and reject) in a map so that
-    // the promises can be found and resolved when processing is done.
-    //
-    //   - The processRelayPromises.relay.promise will be await by outter (i.e.
-    //       WorkerProxies) to transfer source typed-array to every web worker
-    //       serially.
-    //
-    //   - The processRelayPromises.process.promise will be returned as the result
-    //       of this processTensor().
-    //
-    let processRelayPromises = new ProcessRelayPromises( processingId, this.workerId );
-    this.processRelayPromisesMap.set( processingId, processRelayPromises );
+    let processRelayPromises = create_and_return_ProcessRelayPromises( processingId );
     
     // Transfer (not copy) the source typed-array to this (worker proxy owned) web worker.
     let message = {
@@ -348,17 +327,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    */
   typedArray_processTensor_async( processingId, sourceTypedArray ) {
 
-    // Prepare promises and their function object (resolve and reject) in a map so that
-    // the promises can be found and resolved when processing is done.
-    //
-    //   - The processRelayPromises.relay.promise will not be used because the source
-    //       typed-array will not be transferred back here.
-    //
-    //   - The processRelayPromises.process.promise will be returned as the result
-    //       of this processTensor().
-    //
-    let processRelayPromises = new ProcessRelayPromises( processingId, this.workerId );
-    this.processRelayPromisesMap.set( processingId, processRelayPromises );
+    let processRelayPromises = create_and_return_ProcessRelayPromises( processingId );
 
     // Copy (not transfer) the source typed-array to this (worker proxy owned) web worker.
     let message = {
@@ -425,6 +394,24 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 //     // Clear the info entry of handled processing result.
 //     this.processRelayPromisesMap.delete( processingId );
 //   }
+
+  /** 
+   * Prepare promises and their function object (resolve and reject) in a map so that
+   * the promises can be found and resolved when processing is done.
+   *
+   *   - The processRelayPromises.relay.promise will be await by outter (i.e.
+   *       WorkerProxies) to transfer source typed-array to every web worker
+   *       serially.
+   *
+   *   - The processRelayPromises.process.promise will be returned as the result
+   *       of this processTensor().
+   * 
+   */
+  create_and_return_ProcessRelayPromises( processingId ) {
+    let processRelayPromises = new ProcessRelayPromises( processingId, this.workerId );
+    this.processRelayPromisesMap.set( processingId, processRelayPromises );
+    return processRelayPromises;
+  }
 
   /**
    * Dispatch messages come from the owned web worker.
