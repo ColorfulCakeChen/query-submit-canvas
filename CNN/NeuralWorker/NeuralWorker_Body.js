@@ -437,6 +437,12 @@ class NeuralWorker_Body {
 
   /** Handle message from NeuralWorker_Proxy. */
   static onmessage_from_NeuralWorker_Proxy( e ) {
+
+//!!! ...unfinished... (2022/09/09)
+//    this[ e.data.command ]( e.data.args );
+//
+//!!! ...unfinished... (2022/09/09) Report done to NeuralWorker_Proxy.
+
     let message = e.data;
   
     switch ( message.command ) {
