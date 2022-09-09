@@ -66,15 +66,20 @@ class NeuralWorker_Body {
   async globalModules_init_async() {
     importScripts( this.tensorflowJsURL ); // Load tensorflow.js library in global scope.
 
-    globalThis.Pool = await import( "../util/Pool.js" );
-    globalThis.Recyclable = await import( "../util/Recyclable.js" );
-    //globalThis.GSheets = await import( "../util/GSheets.js" );
-    globalThis.ValueMax = await import( "../util/ValueMax.js" );
-    //globalThis.RandTools = await import( "../util/RandTools.js" );
-    //globalThis.FloatValue = await import( "../Unpacker/FloatValue.js" );
-    //globalThis.ValueDesc = await import( "../Unpacker/ValueDesc.js" );
-    globalThis.Weights = await import( "../Unpacker/Weights.js" );
-    globalThis.NeuralNet = await import( "../Conv/NeuralNet.js" );
+    [ globalThis.Pool,
+      globalThis.Recyclable,
+      globalThis.ValueMax,
+      //globalThis.ValueDesc,
+      globalThis.Weights,
+      globalThis.NeuralNet,
+    ] = await Promise.all( [
+      import( "../util/Pool.js" ),
+      import( "../util/Recyclable.js" ),
+      import( "../util/ValueMax.js" ),
+      //import( "../Unpacker/ValueDesc.js" ),
+      import( "../Unpacker/Weights.js" ),
+      import( "../Conv/NeuralNet.js" ),
+    ];
   }
 
   /** */
