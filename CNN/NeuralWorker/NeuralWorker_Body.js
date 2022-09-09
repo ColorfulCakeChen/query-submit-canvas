@@ -9,8 +9,6 @@
  * because import() can be used in classic (non-module) script.
  */
 
-//import * as Net from "./Net.js";
-
 /**
  * The implementation of a neural network web worker.
  *
@@ -65,42 +63,7 @@ class NeuralWorker_Body {
 
     await this.globalModules_initAsync(); // Load libraries in global scope.
 
-//!!! ...unfinished... global scope ? report progress ?
-
-    // If a specific library module does not existed, all libraries might have not yet been loaded. (i.e. this is the first time WorkerBody.init() is called.)
-    if ( !globalThis.NeuralNetProgress ) {
-
-      globalThis.NeuralNetProgress = await import( "./NetProgress.js" ); // Load progress library in globalThis.ValueMax scope dynamically.
-
-      this.initProgress = new NeuralNetProgress.InitProgress(); // The progress object could be created only after the progress library has been loaded.
-      this.initProgress.libraryDownload.total = 3; // There are 3 libraries should be loaded: NetProgress, tensorflow.js, NeuralNet.
-
-      this.initProgress.weightsDownload.total = 1; // There are ??? 1 weights file will be loaded.
-
-//!!! How to know this? According to neural net architecture? It will be known only after it has been downloaded.
-      this.initProgress.weightsParse.total = 10000; // There are ??? weights will be parsed.
-
-//!!! It seems that the libraryDownload and weightsDownload should not be included.
-// Because the weightsParse.total is unknown when downloading library and weights, it not possible to set total of every progress at one time.
-
-
-      ++this.initProgress.libraryDownload.accumulation; // The library NetProgress has been loaded.
-
-//!!! ...unfinished... inform WorkerProxy progress changed.
-
-      importScripts( tensorflowJsURL ); // Load tensorflow javascript library in global scope.
-      ++this.initProgress.libraryDownload.accumulation; // The library tensorflow.js has been loaded.
-
-      globalThis.NeuralNet = await import( "../Conv/NeuralNet.js" ); // Load neural network library in globalThis.NeuralNet scope dynamically.
-      ++this.initProgress.libraryDownload.accumulation; // The library NeuralNet has been loaded.
-    }
-
-
-//!!! ...unfinished... 
-    // Download and parse neural network weights. Also report downloading and parsing progress.
-
-//       this.initProgress.weightsDownload;
-//       this.initProgress.weightsParse;
+//!!! ...unfinished... (2022/09/09) Report init done to NeuralWorker_Proxy
 
   }
 
@@ -118,28 +81,6 @@ class NeuralWorker_Body {
     globalThis.Weights = await import( "../Unpacker/Weights.js" );
     globalThis.NeuralNet = await import( "../Conv/NeuralNet.js" );
   }
-
-//!!! (2022/08/27 Remarked) should be sent here from NeuralWorker_Proxy
-//   /** Load weights summary. */
-//   async weights_summary_loadAsync() {
-//     // The summary is at the first column of the first (i.e. left most) sheet.
-//     const range = "A:A";
-//
-//     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-//
-//     let urlComposer = new GSheet.UrlComposer(
-//       this.weightsSpreadsheetId, range, this.weightsAPIKey );
-//
-//     let fetcher = urlComposer.fetcher_JSON_ColumnMajorArrayArray( progress );
-//
-// //!!! ...unfinished... (2022/08/26)
-//     this.???  = await yield* fetcher;
-//
-//     progress.disposeResources_and_recycleToPool();
-//     progress = null;
-//
-// !!! ...unfinished... (2022/08/26)
-//   }
 
   /**
    * @param {Object} neuralNetParamsBase
@@ -210,6 +151,8 @@ class NeuralWorker_Body {
           + `( ${neuralNet.output_height}, ${neuralNet.output_width}, `
           + `${neuralNet.output_channelCount} ).`
       );
+
+//!!! ...unfinished... (2022/09/09) Report neuralNet_create() done to NeuralWorker_Proxy.
 
     } catch ( e ) {
       // debugger;

@@ -108,15 +108,6 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    *   The URL of tensorflow javascript library. Every worker will load the library
    * from the URL.
    *
-   * @param {string} weightsSpreadsheetId
-   *   The Google Sheets spreadsheetId of neural network weights. Every worker will
-   * load weights from the spreadsheet to initialize one neural network.
-   *
-   * @param {string} weightsAPIKey
-   *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
-   *   - If null, Google Visualization Table Query API will be used.
-   *   - If not null, Google Sheets API v4 will be used.
-   *
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
    *   The configuration of the neural network to be created by web worker.
    *
