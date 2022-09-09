@@ -333,8 +333,10 @@ class Block_Base extends Recyclable.Root {
    * progressParent.root_get() will be returned when every time yield.
    *
    * @param {number[]|Float32Array} inputWeightArray
-   *   The underlying weights source array to be extracted from. It will not be kept
-   * by this object.
+   *   The weights source array to be extracted from. It will not be kept by this object.
+   *
+   * @param {number} weightElementOffsetBegin
+   *   The beginning position (i.e. array index) to extract from inputWeightArray.
    *
    * @param {Params} params
    *   A Params object. The params.init() will be called to extract parameters. This

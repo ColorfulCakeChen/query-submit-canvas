@@ -141,9 +141,13 @@ class NeuralWorker_Body {
 //   }
 
   /**
+   * @param {Object} neuralNetParamsBase
+   *   An object look like NeuralNet.ParamsBase.
    *
+   * @param {ArrayBuffer} weightArrayBuffer
+   *   The neural network's weights. It will be interpreted as Float32Array.
    */
-  async neuralNet_loadAsync( neuralNetParamsBase, aWeightArray ) {
+  async neuralNet_loadAsync( neuralNetParamsBase, weightArrayBuffer ) {
 
 //!!! ...unfinished... (2022/08/27)
 // if backend is webgl, the nueral network should be run once for compiling shader.
@@ -161,6 +165,20 @@ class NeuralWorker_Body {
         neuralNetParamsBase.output_channelCount,
         neuralNetParamsBase.bKeepInputTensor
       );
+
+//!!! ...unfinished... (2022/09/08)
+// should handle NaN to 0.
+      let inputWeightArray;
+      {
+        let weightElementOffsetBegin = 0;
+        let byteOffset
+          = weightElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT;
+
+        let byteLength = Math.floor(
+          weightArrayBuffer.byteLength / Float32Array.BYTES_PER_ELEMENT );
+
+        inputWeightArray = new Float32Array( weightArrayBuffer, byteOffset, byteLength );
+      }
 
       let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
       let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
@@ -460,8 +478,9 @@ class NeuralWorker_Body {
 
 
 
+// In main document context (Not in worker context). Do nothing. (Should not happen)
 if ( globalThis.document )
-  return; // In main document context (Not in worker context). Do nothing. (Should not happen)
+  return;
 
 // In worker context. Register message handler.
 
@@ -473,16 +492,15 @@ globalThis.onmessage = function( e ) {
   let message = e.data;
 
   switch ( message.command ) {
-    case "init": //{ command: "init", workerId, tensorflowJsURL, neuralNetParamsBase, weightsSpreadsheetId, weightsAPIKey };
+    case "init": //{ command: "init", workerId, tensorflowJsURL };
       globalThis.workerBody = new WorkerBody();
       globalThis.workerBody.init(
-        message.workerId, message.tensorflowJsURL, message.neuralNetParamsBase, message.weightsSpreadsheetId, message.weightsAPIKey );
+        message.workerId, message.tensorflowJsURL );
       break;
 
-    case "neuralNet_create": //{ command: "neuralNet_create", neuralNetParamsBase, weightUint8Array };
-      globalThis.workerBody = new WorkerBody();
-      globalThis.workerBody.init(
-        message.workerId, message.tensorflowJsURL, message.neuralNetParamsBase, message.weightsSpreadsheetId, message.weightsAPIKey );
+    case "neuralNet_create": //{ command: "neuralNet_create", neuralNetParamsBase, weightArrayBuffer };
+      globalThis.workerBody.neuralNet_create(
+        message.workerId, message.neuralNetParamsBase, message.weightArrayBuffer );
       break;
 
     case "disposeWorker": //{ command: "disposeWorker" };
