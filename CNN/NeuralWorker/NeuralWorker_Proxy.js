@@ -111,7 +111,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
    *   The configuration of the neural network to be created by web worker.
    */
-  async init_async( workerId, tensorflowJsURL,  neuralNetParamsBase ) {
+  async init_async( processingId, workerId, tensorflowJsURL, neuralNetParamsBase ) {
 
     this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
@@ -139,6 +139,8 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 
     // Register callback from the web worker.
     worker.onmessage = NeuralWorker_Proxy.onmessage_from_NeuralWorker_Body.bind( this );
+
+//!!! ...unfinished... (2022/09/09) needs processingId for reporting.
 
     // Worker Initialization message.
     let message = {
@@ -170,7 +172,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     {
       let message = { command: "disposeWorker" };
       this.worker.postMessage( message );
-      this.worker  = null;
+      this.worker = null;
     }
 
   }
@@ -182,7 +184,10 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    * @param {ArrayBuffer} weightArrayBuffer
    *   The neural network's weights. It will be interpreted as Float32Array.
    */
-  async neuralNet_create_async( neuralNetParamsBase, weightArrayBuffer ) {
+  async neuralNet_create_async( processingId, neuralNetParamsBase, weightArrayBuffer ) {
+
+
+//!!! ...unfinished... (2022/09/09) needs processingId for reporting.
 
     let message = {
       command: "neuralNet_create",
@@ -200,7 +205,10 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    * @param {number} markValue
    *   A value representing which alignment this neural network plays currently.
    */
-  async alignmentMark_setValue_async( markValue ) {
+  async alignmentMark_setValue_async( processingId, markValue ) {
+
+
+//!!! ...unfinished... (2022/09/09) needs processingId for reporting.
 
     let message = {
       command: "alignmentMark_setValue",

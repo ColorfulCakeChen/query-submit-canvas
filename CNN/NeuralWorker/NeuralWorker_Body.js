@@ -42,6 +42,8 @@ class NeuralWorker_Body {
    */
   async initWorker_async( workerId = 0, tensorflowJsURL, neuralNetParamsBase ) {
 
+//!!! ...unfinished... (2022/09/09) needs processingId for reporting.
+
     if ( workerId < 0 )
       workerId = 0;
 
@@ -95,6 +97,9 @@ class NeuralWorker_Body {
    *   The neural network's weights. It will be interpreted as Float32Array.
    */
   async neuralNet_create_async( neuralNetParamsBase, weightArrayBuffer ) {
+
+//!!! ...unfinished... (2022/09/09) needs processingId for reporting.
+
     try {
       let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
@@ -174,6 +179,9 @@ class NeuralWorker_Body {
    *   - ( markValue == 255 ) means this neural network plays X side currently.
    */
   alignmentMark_setValue( markValue ) {
+
+//!!! ...unfinished... (2022/09/09) needs processingId for reporting.
+
     this.alignmentMarkValue = markValue;
 
 //!!! ...unfinished... (2022/09/09) Report done to NeuralWorker_Proxy.
