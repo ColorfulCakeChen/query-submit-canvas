@@ -438,52 +438,66 @@ class NeuralWorker_Body {
   /** Handle message from NeuralWorker_Proxy. */
   static onmessage_from_NeuralWorker_Proxy( e ) {
 
-//!!! ...unfinished... (2022/09/09)
     // e.data == { command, processingId, args }
     let command = e.data.command;
-    let method = this[ command ];
+    let method = this[ command ]; // command name as method name.
     let func = method.bind( this );
-    let p = func( e.data.args ); // Assume return a Promise.
-    p.then( r => {
-      let resultMessage = { processingId: e.data.processingId, r };
-      postMessage( resultMessage );
-    } );
-//
-//!!! ...unfinished... (2022/09/09) Report done to NeuralWorker_Proxy.
+    let p = func( e.data.args );
 
-    let message = e.data;
-  
-    switch ( message.command ) {
-      case "initWorker": //{ command: "initWorker", processingId, workerId, tensorflowJsURL };
-        this.initWorker_async(
-          message.processingId, message.workerId, message.tensorflowJsURL );
-        break;
-  
-      case "disposeWorker": //{ command: "disposeWorker" };
-        this.workerBody.disposeWorker();
-        break;
-  
-      case "neuralNet_create": //{ command: "neuralNet_create", processingId, neuralNetParamsBase, weightArrayBuffer };
-        this.neuralNet_create_async(
-          message.processingId, message.neuralNetParamsBase, message.weightArrayBuffer );
-        break;
-  
-      case "alignmentMark_setValue": //{ command: "alignmentMark_setValue", processingId, markValue };
-        this.alignmentMark_setValue( message.processingId, message.markValue );
-        break;
-  
-      case "imageData_transferBack_processTensor": //{ command: "imageData_transferBack_processTensor", processingId, sourceImageData };
-        this.imageData_transferBack_processTensor( message.processingId, message.sourceImageData );
-        break;
-  
-      case "typedArray_transferBack_processTensor": //{ command: "typedArray_transferBack_processTensor", processingId, sourceTypedArray };
-        this.typedArray_transferBack_processTensor( message.processingId, message.sourceTypedArray );
-        break;
-  
-      case "typedArray_processTensor": //{ command: "typedArray_processTensor", processingId, sourceTypedArray };
-        this.typedArray_processTensor( message.processingId, message.sourceTypedArray );
-        break;
+    // For asynchronous function, wait result and then return it.
+    if ( p instanceof Promise ) {
+      p.then( r => {
+        let resultMessage = { processingId: e.data.processingId, r };
+        postMessage( resultMessage );
+
+      } ).catch( errorReason => {
+        let msg = `NeuralWorker_Body.onmessage_from_NeuralWorker_Proxy(): `
+          + `command="${command}", failed. `
+          + `${errorReason}`
+        console.err( msg );
+      } );
+
+    // For synchronous function, return result immediately.
+    } else {
+      let resultMessage = { processingId: e.data.processingId, p };
+      postMessage( resultMessage );
     }
+
+
+// //!!! (2022/09/09 Remarked) Using property look up instead.
+//     let message = e.data;
+//
+//     switch ( message.command ) {
+//       case "initWorker": //{ command: "initWorker", processingId, workerId, tensorflowJsURL };
+//         this.initWorker_async(
+//           message.processingId, message.workerId, message.tensorflowJsURL );
+//         break;
+//
+//       case "disposeWorker": //{ command: "disposeWorker" };
+//         this.workerBody.disposeWorker();
+//         break;
+//
+//       case "neuralNet_create": //{ command: "neuralNet_create", processingId, neuralNetParamsBase, weightArrayBuffer };
+//         this.neuralNet_create_async(
+//           message.processingId, message.neuralNetParamsBase, message.weightArrayBuffer );
+//         break;
+//
+//       case "alignmentMark_setValue": //{ command: "alignmentMark_setValue", processingId, markValue };
+//         this.alignmentMark_setValue( message.processingId, message.markValue );
+//         break;
+// 
+//       case "imageData_transferBack_processTensor": //{ command: "imageData_transferBack_processTensor", processingId, sourceImageData };
+//         this.imageData_transferBack_processTensor( message.processingId, message.sourceImageData );
+//         break;
+//
+//       case "typedArray_transferBack_processTensor": //{ command: "typedArray_transferBack_processTensor", processingId, sourceTypedArray };
+//         this.typedArray_transferBack_processTensor( message.processingId, message.sourceTypedArray );
+//         break;
+//
+//       case "typedArray_processTensor": //{ command: "typedArray_processTensor", processingId, sourceTypedArray };
+//         this.typedArray_processTensor( message.processingId, message.sourceTypedArray );
+//         break;
+//     }
   }
   
 }
