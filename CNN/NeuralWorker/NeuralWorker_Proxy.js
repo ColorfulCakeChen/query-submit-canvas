@@ -460,6 +460,10 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 
     switch ( message.command ) {
 //!!! ...unfinished... 
+      case "init_done": //{ command: "init_done",  };
+        break;
+
+//!!! ...unfinished... 
       case "reportInitProgress": //{ command: "reportInitProgress", subCommand, workerId, ,  };
         this.on_reportInitProgress( message );
         break;
