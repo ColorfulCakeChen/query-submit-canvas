@@ -164,15 +164,44 @@ class NeuralWorker_Body {
 
 //!!! ...unfinished... (2022/09/08)
   /**
-   * @param {number} alignmentMarkValue
+   * @param {number} markValue
    *   A value representing which alignment this neural network plays currently.
    * For example, in a OX (connect-three) game:
    *   - ( markValue == 0 ) means this neural network plays O side currently.
-   *   - ( markValue == 100 ) means this neural network plays X side currently.
+   *   - ( markValue == 255 ) means this neural network plays X side currently.
    */
-  alignmentMarkValue_set( alignmentMarkValue ) {
-    this.alignmentMarkValue = alignmentMarkValue;
+  alignmentMark_setValue( markValue ) {
+    this.alignmentMarkValue = markValue;
   }
+
+  /**
+   * @param {Uint8Array} imageUint8Array
+   *   It is viewed as an image whose size ( height, width, channelCount ) could be
+   * processed by this neural network. This method will fille some part of the image
+   * by .alignmentMarkValue so that this neural network could distunguish which
+   * alignment it represents.
+   */
+  alignmentMark_fillToImage( imageUint8Array ) {
+
+    // Q: Why fill top-left ( 3 * 3 ) pixels? Why not just fill top-left ( 1 * 1 ) pixel?
+    // A: NeuralNet mainly uses ( 3 * 3 ) depthwise filter.
+    //
+    //      - If alignment mark just occupies ( 1 * 1 ) pixel, it could only be detected
+    //          a special depthwise filter.
+    //
+    //      - If alignment mark occupies ( 3 * 3 ) pixel, it could be detected by most
+    //          kinds of depthwise filter easily.
+    //
+    const markHeight = 3;
+    const markWidth = 3;
+
+//!!! ...unfinished... (2022/09/08)
+// Before converting Uint8Array to tf.tensor, a mark (representing this neural network)
+// should be put at a fixed position in the image (e.g. the first pixel) so that
+// this neural network could know what its alignment is.
+
+  }
+
 
 //!!! Regular Expression for get text inside html table markup:
 //
@@ -214,6 +243,8 @@ class NeuralWorker_Body {
 // Before converting Uint8Array to tf.tensor, a mark (representing this neural network)
 // should be put at a fixed position in the image (e.g. the first pixel) so that
 // this neural network could know what its alignment is.
+//
+//    this.alignmentMark_fillToImage( ??? );
 
     // Create (scaled) source image so that then neural network can process it.
     //
@@ -263,6 +294,8 @@ class NeuralWorker_Body {
 // Before converting Uint8Array to tf.tensor, a mark (representing this neural network)
 // should be put at a fixed position in the image (e.g. the first pixel) so that
 // this neural network could know what its alignment is.
+//
+//    this.alignmentMark_fillToImage( ??? );
 
     let shape = [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ];
 
