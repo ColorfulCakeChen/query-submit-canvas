@@ -443,7 +443,7 @@ class NeuralWorker_Body {
     let command = e.data.command;
     let method = this[ command ];
     let func = method.bind( this );
-    let p = func( e.data.args );
+    let p = func( e.data.args ); // Assume return a Promise.
     p.then( r => {
       postMessage( ???r );
     } );
