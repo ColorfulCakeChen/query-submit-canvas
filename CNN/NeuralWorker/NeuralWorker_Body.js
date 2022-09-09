@@ -17,6 +17,26 @@
  */
 class NeuralWorker_Body {
 
+
+  /** @override */
+  disposeResources() {
+    this.disposeWorker();
+    //super.disposeResources();
+  }
+
+  /** */
+  disposeWorker() {
+    if ( this.neuralNet ) {
+      this.neuralNet.disposeResources();
+      this.neuralNet = null;
+    }
+
+//!!! ...unfinished... (2022/09/08) also MessagePort.close().
+
+//!!!??? calling close() when the next worker disposed ?
+    close();
+  }
+
   /**
    *
    * @param {number} workerId
@@ -30,7 +50,7 @@ class NeuralWorker_Body {
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
    *   The configuration of the neural network to be created by web worker.
    */
-  async init( workerId = 0, tensorflowJsURL, neuralNetParamsBase ) {
+  async initAsync( workerId = 0, tensorflowJsURL, neuralNetParamsBase ) {
 
     if ( workerId < 0 )
       workerId = 0;
@@ -99,26 +119,6 @@ class NeuralWorker_Body {
     globalThis.NeuralNet = await import( "../Conv/NeuralNet.js" );
   }
 
-  /** @override */
-  disposeResources() {
-
-
-    //super.disposeResources();
-  }
-
-  /** */
-  disposeWorker() {
-    if ( this.neuralNet ) {
-      this.neuralNet.disposeTensors();
-      this.neuralNet = null;
-    }
-
-//!!! ...unfinished... (2022/09/08) also MessagePort.close().
-
-//!!!??? calling close() when the next worker disposed ?
-    close();
-  }
-
 //!!! (2022/08/27 Remarked) should be sent here from NeuralWorker_Proxy
 //   /** Load weights summary. */
 //   async weights_summary_loadAsync() {
@@ -148,7 +148,7 @@ class NeuralWorker_Body {
    * @param {ArrayBuffer} weightArrayBuffer
    *   The neural network's weights. It will be interpreted as Float32Array.
    */
-  async neuralNet_loadAsync( neuralNetParamsBase, weightArrayBuffer ) {
+  async neuralNet_createAsync( neuralNetParamsBase, weightArrayBuffer ) {
     try {
       let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
@@ -491,12 +491,11 @@ globalThis.onmessage = function( e ) {
   switch ( message.command ) {
     case "init": //{ command: "init", workerId, tensorflowJsURL };
       globalThis.workerBody = new WorkerBody();
-      globalThis.workerBody.init(
-        message.workerId, message.tensorflowJsURL );
+      globalThis.workerBody.initAsync( message.workerId, message.tensorflowJsURL );
       break;
 
     case "neuralNet_create": //{ command: "neuralNet_create", neuralNetParamsBase, weightArrayBuffer };
-      globalThis.workerBody.neuralNet_create(
+      globalThis.workerBody.neuralNet_createAsync(
         message.workerId, message.neuralNetParamsBase, message.weightArrayBuffer );
       break;
 
