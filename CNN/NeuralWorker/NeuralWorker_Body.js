@@ -40,11 +40,7 @@ class NeuralWorker_Body {
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
    *   The configuration of the neural network to be created by web worker.
    */
-  async initWorker_async( processingId,
-    workerId = 0, tensorflowJsURL, neuralNetParamsBase ) {
-
-//!!! ...unfinished... (2022/09/09) needs processingId for reporting.
-
+  async initWorker_async( workerId = 0, tensorflowJsURL, neuralNetParamsBase ) {
     if ( workerId < 0 )
       workerId = 0;
 
@@ -52,34 +48,27 @@ class NeuralWorker_Body {
     this.tensorflowJsURL = tensorflowJsURL;
     this.neuralNetParamsBase = neuralNetParamsBase;
 
-//!!! ...unfinished... (2022/09/09) should be set in neuralNetParamsBase.
-    // Because every web worker will copy the input, there is not necessary to keep input.
-    let bKeepInputTensor = false;
+    // Load libraries dynamically in global scope.
+    {
+      importScripts( this.tensorflowJsURL ); // Load tensorflow.js library in global scope.
 
-    await this.globalModules_init_async(); // Load libraries in global scope.
+      [ globalThis.Pool,
+        globalThis.Recyclable,
+        globalThis.ValueMax,
+        //globalThis.ValueDesc,
+        globalThis.Weights,
+        globalThis.NeuralNet,
+      ] = await Promise.all( [
+        import( "../util/Pool.js" ),
+        import( "../util/Recyclable.js" ),
+        import( "../util/ValueMax.js" ),
+        //import( "../Unpacker/ValueDesc.js" ),
+        import( "../Unpacker/Weights.js" ),
+        import( "../Conv/NeuralNet.js" ),
+      ] );
+    }
 
-//!!! ...unfinished... (2022/09/09) Report init done to NeuralWorker_Proxy
-
-  }
-
-  /** Load ourselves libraries dynamically. */
-  async globalModules_init_async() {
-    importScripts( this.tensorflowJsURL ); // Load tensorflow.js library in global scope.
-
-    [ globalThis.Pool,
-      globalThis.Recyclable,
-      globalThis.ValueMax,
-      //globalThis.ValueDesc,
-      globalThis.Weights,
-      globalThis.NeuralNet,
-    ] = await Promise.all( [
-      import( "../util/Pool.js" ),
-      import( "../util/Recyclable.js" ),
-      import( "../util/ValueMax.js" ),
-      //import( "../Unpacker/ValueDesc.js" ),
-      import( "../Unpacker/Weights.js" ),
-      import( "../Conv/NeuralNet.js" ),
-    ] );
+    return true;
   }
 
   /** */
@@ -102,9 +91,7 @@ class NeuralWorker_Body {
    * @param {ArrayBuffer} weightArrayBuffer
    *   The neural network's weights. It will be interpreted as Float32Array.
    */
-  async neuralNet_create_async( processingId, neuralNetParamsBase, weightArrayBuffer ) {
-
-//!!! ...unfinished... (2022/09/09) needs processingId for reporting.
+  async neuralNet_create_async( neuralNetParamsBase, weightArrayBuffer ) {
 
     try {
       let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
@@ -140,8 +127,8 @@ class NeuralWorker_Body {
       let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
       let bInitOk = neuralNet.init( progress, inputWeightArray, 0, neuralNetParams );
 
-//!!! ...unfinished... (2022/09/08)
-// if backend is webgl, the nueral network should be run once for compiling shader.
+  //!!! ...unfinished... (2022/09/08)
+  // if backend is webgl, the nueral network should be run once for compiling shader.
 
       if ( false == bInitOk )
         throw Error( `NeuralWorker_Body.neuralNet_load_async(): `
@@ -153,27 +140,30 @@ class NeuralWorker_Body {
       progress.disposeResources_and_recycleToPool();
       progress = null;
 
-      console.log( `NeuralWorker_Body.neuralNet_load_async(): `
-        + `tensorWeightCount = { `
-        + `Extracted: ${neuralNet.tensorWeightCountExtracted}, `
-        + `Total: ${neuralNet.tensorWeightCountTotal} }, `
-        + `stageCount=${neuralNet.stageCount}, `
-        + `blockCountTotal=${neuralNet.blockCountTotal}, `
-        + `stageLast_shape=`
-          + `( ${neuralNet.stageLast_output_height}, `
-          + `${neuralNet.stageLast_output_width}, `
-          + `${neuralNet.stageLast_output_channelCount} ), `
-        + `output_shape=`
-          + `( ${neuralNet.output_height}, ${neuralNet.output_width}, `
-          + `${neuralNet.output_channelCount} ).`
-      );
+      {
+        let logMsg = `NeuralWorker_Body.neuralNet_load_async(): `
+          + `tensorWeightCount = { `
+          + `Extracted: ${neuralNet.tensorWeightCountExtracted}, `
+          + `Total: ${neuralNet.tensorWeightCountTotal} }, `
+          + `stageCount=${neuralNet.stageCount}, `
+          + `blockCountTotal=${neuralNet.blockCountTotal}, `
+          + `stageLast_shape=`
+            + `( ${neuralNet.stageLast_output_height}, `
+            + `${neuralNet.stageLast_output_width}, `
+            + `${neuralNet.stageLast_output_channelCount} ), `
+          + `output_shape=`
+            + `( ${neuralNet.output_height}, ${neuralNet.output_width}, `
+            + `${neuralNet.output_channelCount} ).`
+      
+        console.log( logMsg );
+      }
 
-//!!! ...unfinished... (2022/09/09) Report neuralNet_create() done to NeuralWorker_Proxy.
+      return true;
 
     } catch ( e ) {
-      // debugger;
-      // console.log( e );
-      throw e;
+      console.err( e );
+      //debugger;
+      return false;
     }
   }
 
@@ -457,6 +447,7 @@ class NeuralWorker_Body {
             + `command="${command}", asynchronous, failed. `
             + `${errorReason}`
           console.err( msg );
+          //debugger;
         } );
 
       // For synchronous function, return result immediately.
@@ -470,6 +461,7 @@ class NeuralWorker_Body {
         + `command="${command}", synchronous, failed. `
         + `${errorReason}`
       console.err( msg );
+      //debugger;
     }
 
 

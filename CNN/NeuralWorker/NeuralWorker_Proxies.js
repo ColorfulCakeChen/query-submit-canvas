@@ -95,6 +95,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    */
   init( tensorflowJsURL, weightsSpreadsheetId, weightsAPIKey, neuralNetParamsBase ) {
 
+//!!! ...unfinished... (2022/09/09) should be set in neuralNetParamsBase.
+//     // Because every web worker will copy the input, there is not necessary to keep input.
+//     neuralNetParamsBase.bKeepInputTensor = false;
+
     this.tensorflowJsURL = tensorflowJsURL;
     this.weightsSpreadsheetId = weightsSpreadsheetId;
     this.weightsAPIKey = weightsAPIKey;
