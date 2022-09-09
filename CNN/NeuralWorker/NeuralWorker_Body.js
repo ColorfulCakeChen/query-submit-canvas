@@ -442,25 +442,34 @@ class NeuralWorker_Body {
     let command = e.data.command;
     let method = this[ command ]; // command name as method name.
     let func = method.bind( this );
-    let p = func( e.data.args );
 
-    // For asynchronous function, wait result and then return it.
-    if ( p instanceof Promise ) {
-      p.then( r => {
-        let resultMessage = { processingId: e.data.processingId, r };
+    try {
+      let p = func( e.data.args );
+
+      // For asynchronous function, wait result and then return it.
+      if ( p instanceof Promise ) {
+        p.then( r => {
+          let resultMessage = { processingId: e.data.processingId, r };
+          postMessage( resultMessage );
+
+        } ).catch( errorReason => {
+          let msg = `NeuralWorker_Body.onmessage_from_NeuralWorker_Proxy(): `
+            + `command="${command}", asynchronous, failed. `
+            + `${errorReason}`
+          console.err( msg );
+        } );
+
+      // For synchronous function, return result immediately.
+      } else {
+        let resultMessage = { processingId: e.data.processingId, p };
         postMessage( resultMessage );
+      }
 
-      } ).catch( errorReason => {
-        let msg = `NeuralWorker_Body.onmessage_from_NeuralWorker_Proxy(): `
-          + `command="${command}", failed. `
-          + `${errorReason}`
-        console.err( msg );
-      } );
-
-    // For synchronous function, return result immediately.
-    } else {
-      let resultMessage = { processingId: e.data.processingId, p };
-      postMessage( resultMessage );
+    } catch ( errorReason ) {
+      let msg = `NeuralWorker_Body.onmessage_from_NeuralWorker_Proxy(): `
+        + `command="${command}", synchronous, failed. `
+        + `${errorReason}`
+      console.err( msg );
     }
 
 
