@@ -174,13 +174,9 @@ class NeuralWorker_Body {
    *   - ( markValue == 0 ) means this neural network plays O side currently.
    *   - ( markValue == 255 ) means this neural network plays X side currently.
    */
-  alignmentMark_setValue( processingId, markValue ) {
-
-//!!! ...unfinished... (2022/09/09) needs processingId for reporting.
-
+  alignmentMark_setValue( markValue ) {
     this.alignmentMarkValue = markValue;
-
-//!!! ...unfinished... (2022/09/09) Report done to NeuralWorker_Proxy.
+    return markValue;
   }
 
   /**
