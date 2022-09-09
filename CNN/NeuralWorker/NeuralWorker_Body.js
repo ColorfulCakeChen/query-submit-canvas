@@ -404,7 +404,7 @@ class NeuralWorker_Body {
       // For asynchronous function, wait result and then return it.
       if ( p instanceof Promise ) {
         p.then( r => {
-          let resultData = { workerId: this.workerId, processingId: processingId, r };
+          let resultData = { processingId: processingId, workerId: this.workerId, r };
           postMessage( resultData );
 
         } ).catch( errorReason => {
@@ -418,7 +418,7 @@ class NeuralWorker_Body {
 
       // For synchronous function, return result immediately.
       } else {
-        let resultData = { workerId: this.workerId, processingId: processingId, r };
+        let resultData = { processingId: processingId, workerId: this.workerId, r };
         postMessage( resultData );
       }
 

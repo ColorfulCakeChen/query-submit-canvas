@@ -470,8 +470,11 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 
 //!!! ...unfinished... (2022/09/09)
 
-    // e.data == { processingId, result }
+    // e.data == { processingId, workerId, result }
     let processingId = e.data.processingId;
+    let workerId = e.data.workerId;
+    let result = e.data.result;
+
 
     let method = this[ command ]; // command name as method name.
     let func = method.bind( this );
