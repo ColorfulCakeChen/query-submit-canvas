@@ -93,7 +93,8 @@ class NeuralWorker_Body {
     //globalThis.GSheets = await import( "../util/GSheets.js" );
     globalThis.ValueMax = await import( "../util/ValueMax.js" );
     //globalThis.RandTools = await import( "../util/RandTools.js" );
-    globalThis.ValueDesc = await import( "../Unpacker/ValueDesc.js" );
+    //globalThis.FloatValue = await import( "../Unpacker/FloatValue.js" );
+    //globalThis.ValueDesc = await import( "../Unpacker/ValueDesc.js" );
     globalThis.Weights = await import( "../Unpacker/Weights.js" );
     globalThis.NeuralNet = await import( "../Conv/NeuralNet.js" );
   }
@@ -148,16 +149,9 @@ class NeuralWorker_Body {
    *   The neural network's weights. It will be interpreted as Float32Array.
    */
   async neuralNet_loadAsync( neuralNetParamsBase, weightArrayBuffer ) {
-
-//!!! ...unfinished... (2022/08/27)
-// if backend is webgl, the nueral network should be run once for compiling shader.
-
     try {
-
       let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
-//!!! ...unfinished... (2022/09/08)
-// should handle NaN to 0.
       let inputWeightArray;
       {
         let weightElementOffsetBegin = 0;
@@ -167,7 +161,11 @@ class NeuralWorker_Body {
         let byteLength = Math.floor(
           weightArrayBuffer.byteLength / Float32Array.BYTES_PER_ELEMENT );
 
-        inputWeightArray = new Float32Array( weightArrayBuffer, byteOffset, byteLength );
+        let aFloat32Array = new Float32Array( weightArrayBuffer, byteOffset, byteLength );
+
+        // Ensure there is no NaN value in the weight array. (Force NaN to 0.)
+        inputWeightArray
+          = Weights.Base.ValueBounds.Float32Array_RestrictedClone( aFloat32Array );
       }
 
       let neuralNetParams = NeuralNet.Params.Pool.get_or_create_by(
@@ -184,6 +182,9 @@ class NeuralWorker_Body {
 
       let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
       let bInitOk = neuralNet.init( progress, inputWeightArray, 0, neuralNetParams );
+
+//!!! ...unfinished... (2022/09/08)
+// if backend is webgl, the nueral network should be run once for compiling shader.
 
       if ( false == bInitOk )
         throw Error( `NeuralWorker_Body.neuralNet_loadAsync(): `

@@ -2,8 +2,8 @@ export { Bounds };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-import { ScaleTranslate } from "./ScaleTranslate.js";
-import { BoundsArray } from "./BoundsArray.js";
+//import { ScaleTranslate } from "./ScaleTranslate.js";
+//import { BoundsArray } from "./BoundsArray.js";
 
 /**
  * Describe the [ lower, upper ] bounds of a 32-bits floating-point value
@@ -616,7 +616,7 @@ class Bounds extends Recyclable.Root {
    *   - Every element is not NaN. (If it is, become 0.)
    *   - Every element is between [ this.lower, this.upper ].
    *
-   * @param {number[]|Float32Array} source
+   * @param {number[]|Float32Array} sourceArray
    *   The source number array or Float32Array.
    *
    * @return {Float32Array}
