@@ -79,7 +79,7 @@ class NeuralWorker_Body {
       //import( "../Unpacker/ValueDesc.js" ),
       import( "../Unpacker/Weights.js" ),
       import( "../Conv/NeuralNet.js" ),
-    ];
+    ] );
   }
 
   /** */
