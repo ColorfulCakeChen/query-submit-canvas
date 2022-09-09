@@ -10,8 +10,8 @@ import * as NeuralNet from "../Conv/NeuralNet.js";
  * Hold a processing's id, promise, resolve (fulfilling function object), reject
  * (rejecting function object).
  *
- * @member {number}   workerId     The array index of the worker owns this processing.
  * @member {number}   processingId The id of the processing.
+ * @member {number}   workerId     The array index of the worker owns this processing.
  * @member {Promise}  promise      The pending promise for the processing.
  *
  * @member {function} resolve
@@ -22,9 +22,9 @@ import * as NeuralNet from "../Conv/NeuralNet.js";
  */
 class PromiseResolveReject {
 
-  constructor( workerId, processingId ) {
-    this.workerId = workerId;
+  constructor( processingId, workerId ) {
     this.processingId = processingId;
+    this.workerId = workerId;
 
     this.promise = new Promise( ( resolve, reject ) => {
       this.resolve = resolve;
@@ -251,7 +251,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     //   - The processRelayPromises.process.promise will be returned as the result
     //       of this processTensor().
     //
-    let processRelayPromises = new ProcessRelayPromises( this.workerId, processingId );
+    let processRelayPromises = new ProcessRelayPromises( processingId, this.workerId );
     this.processRelayPromisesMap.set( processingId, processRelayPromises );
 
     // Transfer (not copy) the source image data to this (worker proxy owned) web worker.
@@ -308,7 +308,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     //   - The processRelayPromises.process.promise will be returned as the result
     //       of this processTensor().
     //
-    let processRelayPromises = new ProcessRelayPromises( this.workerId, processingId );
+    let processRelayPromises = new ProcessRelayPromises( processingId, this.workerId );
     this.processRelayPromisesMap.set( processingId, processRelayPromises );
     
     // Transfer (not copy) the source typed-array to this (worker proxy owned) web worker.
@@ -355,7 +355,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     //   - The processRelayPromises.process.promise will be returned as the result
     //       of this processTensor().
     //
-    let processRelayPromises = new ProcessRelayPromises( this.workerId, processingId );
+    let processRelayPromises = new ProcessRelayPromises( processingId, this.workerId );
     this.processRelayPromisesMap.set( processingId, processRelayPromises );
 
     // Copy (not transfer) the source typed-array to this (worker proxy owned) web worker.
