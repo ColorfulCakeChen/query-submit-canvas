@@ -441,7 +441,8 @@ class NeuralWorker_Body {
 //!!! ...unfinished... (2022/09/09)
     // { command, args };
     let command = e.data.command;
-    let func = this[ command ];
+    let method = this[ command ];
+    let func = method.bind( this );
     let p = func( e.data.args );
     p.then( r => {
       postMessage( ???r );
