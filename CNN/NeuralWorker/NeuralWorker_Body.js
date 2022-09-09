@@ -23,37 +23,27 @@ class NeuralWorker_Body {
    *   A non-negative integer represents this worker's id. The id of the first worker
    * should be 0.
    *
-   * @param {string} weightsSpreadsheetId
-   *   The Google Sheets spreadsheetId of neural network weights. Every worker will
-   * load weights from the spreadsheet to initialize one neural network.
-   *
-   * @param {string} weightsAPIKey
-   *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
-   *   - If null, Google Visualization Table Query API will be used.
-   *   - If not null, Google Sheets API v4 will be used.
+   * @param {string} tensorflowJsURL
+   *   The URL of tensorflow javascript library. Every worker will load the library
+   * from the URL.
    *
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
    *   The configuration of the neural network to be created by web worker.
    */
-  async init(
-    workerId = 0,
-    tensorflowJsURL, weightsSpreadsheetId, weightsAPIKey, neuralNetParamsBase ) {
+  async init( workerId = 0, tensorflowJsURL, neuralNetParamsBase ) {
 
     if ( workerId < 0 )
       workerId = 0;
 
     this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
-    this.weightsSpreadsheetId = weightsSpreadsheetId;
-    this.weightsAPIKey = weightsAPIKey;
     this.neuralNetParamsBase = neuralNetParamsBase;
 
+//!!! ...unfinished... (2022/09/09) should be set in neuralNetParamsBase.
     // Because every web worker will copy the input, there is not necessary to keep input.
     let bKeepInputTensor = false;
 
-    // Load libraries in global scope.
-    importScripts( tensorflowJsURL ); // tensorflow javascript library.
-    await this.globalModules_initAsync();
+    await this.globalModules_initAsync(); // Load libraries in global scope.
 
 //!!! ...unfinished... global scope ? report progress ?
 
@@ -85,10 +75,6 @@ class NeuralWorker_Body {
       ++this.initProgress.libraryDownload.accumulation; // The library NeuralNet has been loaded.
     }
 
-//!!! ...unfinished... the neuralNetConfig is still class NeuralNet.Config? Otherwise, the create_ScaledSourceTensor_from_PixelData() will be lost.
-
-    this.neuralNet = new NeuralNet.Base();
-    this.neuralNet.init( neuralNetConfig, bKeepInputTensor );
 
 //!!! ...unfinished... 
     // Download and parse neural network weights. Also report downloading and parsing progress.
@@ -100,12 +86,14 @@ class NeuralWorker_Body {
 
   /** Load ourselves libraries dynamically. */
   async globalModules_initAsync() {
+    importScripts( this.tensorflowJsURL ); // Load tensorflow.js library in global scope.
+
     globalThis.Pool = await import( "../util/Pool.js" );
     globalThis.Recyclable = await import( "../util/Recyclable.js" );
-    globalThis.GSheets = await import( "../util/GSheets.js" );
+    //globalThis.GSheets = await import( "../util/GSheets.js" );
     globalThis.ValueMax = await import( "../util/ValueMax.js" );
     //globalThis.RandTools = await import( "../util/RandTools.js" );
-    //globalThis.ValueDesc = await import( "../Unpacker/ValueDesc.js" );
+    globalThis.ValueDesc = await import( "../Unpacker/ValueDesc.js" );
     globalThis.Weights = await import( "../Unpacker/Weights.js" );
     globalThis.NeuralNet = await import( "../Conv/NeuralNet.js" );
   }
@@ -155,10 +143,63 @@ class NeuralWorker_Body {
   /**
    *
    */
-  async neuralNet_loadAsync() {
+  async neuralNet_loadAsync( neuralNetParamsBase, aWeightArray ) {
 
 //!!! ...unfinished... (2022/08/27)
 // if backend is webgl, the nueral network should be run once for compiling shader.
+
+    try {
+
+      let neuralNetParams = NeuralNet.Params.Pool.get_or_create_by(
+        neuralNetParamsBase.input_height,
+        neuralNetParamsBase.input_width,
+        neuralNetParamsBase.input_channelCount,
+        neuralNetParamsBase.vocabularyChannelCount,
+        neuralNetParamsBase.vocabularyCountPerInputChannel,
+        neuralNetParamsBase.nConvStageTypeId,
+        neuralNetParamsBase.blockCountTotalRequested,
+        neuralNetParamsBase.output_channelCount,
+        neuralNetParamsBase.bKeepInputTensor
+      );
+
+      let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+      let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
+
+      let bInitOk = neuralNet.init( progress,
+        ???PerformanceTestCase.randomTestWeightArray, 0, extractedParams );
+
+      if ( neuralNet.bInitOk != bInitOk )
+        throw Error( `NeuralNet validation state (${neuralNet.bInitOk}) mismatches initer's result (${bInitOk}). ${neuralNet}` );
+
+      if ( false == bInitOk )
+        throw Error( `Failed to initialize neuralNet object. ${neuralNet}` );
+
+      if ( 100 != progress.valuePercentage )
+        throw Error(
+          `Progress (${progress.valuePercentage}) should be 100 when initializing stage object successfully. ${neuralNet}`);
+
+      progress.disposeResources_and_recycleToPool();
+      progress = null;
+
+      console.log( `NeuralNet.${this.testCaseName}: tensorWeightCount = { `
+        + `Extracted: ${neuralNet.tensorWeightCountExtracted}, `
+        + `Total: ${neuralNet.tensorWeightCountTotal} }, `
+        + `stageCount=${neuralNet.stageCount}, `
+        + `blockCountTotal=${neuralNet.blockCountTotal}, `
+        + `stageLast_shape=`
+          + `( ${neuralNet.stageLast_output_height}, `
+          + `${neuralNet.stageLast_output_width}, `
+          + `${neuralNet.stageLast_output_channelCount} ), `
+        + `output_shape=`
+          + `( ${neuralNet.output_height}, ${neuralNet.output_width}, `
+          + `${neuralNet.output_channelCount} ).`
+      );
+
+    } catch ( e ) {
+      debugger;
+      console.log( e );
+      throw e;
+    }
 
   }
 
@@ -433,6 +474,12 @@ globalThis.onmessage = function( e ) {
 
   switch ( message.command ) {
     case "init": //{ command: "init", workerId, tensorflowJsURL, neuralNetParamsBase, weightsSpreadsheetId, weightsAPIKey };
+      globalThis.workerBody = new WorkerBody();
+      globalThis.workerBody.init(
+        message.workerId, message.tensorflowJsURL, message.neuralNetParamsBase, message.weightsSpreadsheetId, message.weightsAPIKey );
+      break;
+
+    case "neuralNet_create": //{ command: "neuralNet_create", neuralNetParamsBase, weightUint8Array };
       globalThis.workerBody = new WorkerBody();
       globalThis.workerBody.init(
         message.workerId, message.tensorflowJsURL, message.neuralNetParamsBase, message.weightsSpreadsheetId, message.weightsAPIKey );
