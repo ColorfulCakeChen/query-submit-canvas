@@ -191,12 +191,12 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 //!!! ...unfinished... (2022/09/09) needs processingId for reporting.
 
     let message = {
-      command: "neuralNet_create",
       processingId: processingId,
+      command: "neuralNet_create",
       neuralNetParamsBase: neuralNetParamsBase,
       weightArrayBuffer: weightArrayBuffer,
     };
-    worker.postMessage( message );
+    this.worker.postMessage( message, [ weightArrayBuffer ] );
 
 //!!! ...unfinished... (2022/09/09)
 // should await its done.
@@ -475,7 +475,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     let workerId = e.data.workerId;
     let result = e.data.result;
 
-
+//!!!
     let method = this[ command ]; // command name as method name.
     let func = method.bind( this );
 

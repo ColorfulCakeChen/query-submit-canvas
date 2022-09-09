@@ -404,8 +404,10 @@ class NeuralWorker_Body {
       // For asynchronous function, wait result and then return it.
       if ( p instanceof Promise ) {
         p.then( r => {
-          let resultData = { processingId: processingId, workerId: this.workerId, r };
-          postMessage( resultData );
+          if ( processingId != undefined ) {
+            let resultData = { processingId: processingId, workerId: this.workerId, r };
+            postMessage( resultData );
+          } // Otherwise, no processingId means no need report return value.
 
         } ).catch( errorReason => {
           let msg = `NeuralWorker_Body.onmessage_from_NeuralWorker_Proxy(): `
@@ -418,8 +420,10 @@ class NeuralWorker_Body {
 
       // For synchronous function, return result immediately.
       } else {
-        let resultData = { processingId: processingId, workerId: this.workerId, r };
-        postMessage( resultData );
+        if ( processingId != undefined ) {
+          let resultData = { processingId: processingId, workerId: this.workerId, r };
+          postMessage( resultData );
+        } // Otherwise, no processingId means no need report return value.
       }
 
     } catch ( errorReason ) {
