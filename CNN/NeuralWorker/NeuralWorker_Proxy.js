@@ -85,14 +85,25 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self() {
+    // Every worker has a result pending promise map. The key of the map is processing
+    // id. The value of the map is a ProcessRelayPromises.
+    if ( this.processRelayPromisesMap )
+      this.processRelayPromisesMap.clear();
+    else
+      this.processRelayPromisesMap = new Map();
   }
 
   /** @override */
   disposeResources() {
-
-//!!! ...unfinished... (2022/08/26)
     this.disposeWorker();
 
+    this.workerOptions = undefined;
+    this.workerURL = undefined;
+
+    this.tensorflowJsURL = undefined;
+    this.workerId = undefined;
+
+    this.processRelayPromisesMap.clear();
     super.disposeResources();
   }
 
@@ -107,20 +118,11 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    * @param {string} tensorflowJsURL
    *   The URL of tensorflow javascript library. Every worker will load the library
    * from the URL.
-   *
-   * @param {NeuralNet.ParamsBase} neuralNetParamsBase
-   *   The configuration of the neural network to be created by web worker.
    */
-  async init_async( processingId, workerId, tensorflowJsURL, neuralNetParamsBase ) {
+  async init_async( processingId, workerId, tensorflowJsURL ) {
 
     this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
-    this.neuralNetParamsBase = neuralNetParamsBase;
-
-    // Every worker has a result pending promise map. The key of the map is processing
-    // id. The value of the map is a ProcessRelayPromises.
-    this.processRelayPromisesMap = new Map();
-
 
 //!!! ...unfinished... (2022/08/24) Why not use "./NeuralWorker_Body.js"?
 // The import.meta.url should extract the path (exclude file name)
