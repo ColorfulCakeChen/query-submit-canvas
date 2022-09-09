@@ -23,9 +23,6 @@ class NeuralWorker_Body {
    *   A non-negative integer represents this worker's id. The id of the first worker
    * should be 0.
    *
-   * @param {Net.Config} neuralNetConfig
-   *   The configuration of the neural network which will be created by this web worker.
-   *
    * @param {string} weightsSpreadsheetId
    *   The Google Sheets spreadsheetId of neural network weights. Every worker will
    * load weights from the spreadsheet to initialize one neural network.
@@ -34,19 +31,22 @@ class NeuralWorker_Body {
    *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
    *   - If null, Google Visualization Table Query API will be used.
    *   - If not null, Google Sheets API v4 will be used.
+   *
+   * @param {NeuralNet.ParamsBase} neuralNetParamsBase
+   *   The configuration of the neural network to be created by web worker.
    */
   async init(
     workerId = 0,
-    tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey ) {
+    tensorflowJsURL, weightsSpreadsheetId, weightsAPIKey, neuralNetParamsBase ) {
 
     if ( workerId < 0 )
       workerId = 0;
 
     this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
-    this.neuralNetConfig = neuralNetConfig;
     this.weightsSpreadsheetId = weightsSpreadsheetId;
     this.weightsAPIKey = weightsAPIKey;
+    this.neuralNetParamsBase = neuralNetParamsBase;
 
     // Because every web worker will copy the input, there is not necessary to keep input.
     let bKeepInputTensor = false;
@@ -432,10 +432,10 @@ globalThis.onmessage = function( e ) {
   let message = e.data;
 
   switch ( message.command ) {
-    case "init": //{ command: "init", workerId, tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey };
+    case "init": //{ command: "init", workerId, tensorflowJsURL, neuralNetParamsBase, weightsSpreadsheetId, weightsAPIKey };
       globalThis.workerBody = new WorkerBody();
       globalThis.workerBody.init(
-        message.workerId, message.tensorflowJsURL, message.neuralNetConfig, message.weightsSpreadsheetId, message.weightsAPIKey );
+        message.workerId, message.tensorflowJsURL, message.neuralNetParamsBase, message.weightsSpreadsheetId, message.weightsAPIKey );
       break;
 
     case "disposeWorker": //{ command: "disposeWorker" };

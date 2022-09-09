@@ -3,10 +3,8 @@ export { NeuralWorker_Proxy as Proxy };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-//import * as GSheets from "../util/GSheets.js";
-import * as ValueMax from "../util/ValueMax.js";
-//import * as NeuralNetProgress from "./NetProgress.js";
-
+//import * as ValueMax from "../util/ValueMax.js";
+import * as NeuralNet from "../Conv/NeuralNet.js";
 
 /**
  * Hold a processing's id, promise, resolve (fulfilling function object), reject
@@ -110,9 +108,6 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    *   The URL of tensorflow javascript library. Every worker will load the library
    * from the URL.
    *
-   * @param {Net.Config} neuralNetConfig
-   *   The configuration of the neural network which will be created by this web worker.
-   *
    * @param {string} weightsSpreadsheetId
    *   The Google Sheets spreadsheetId of neural network weights. Every worker will
    * load weights from the spreadsheet to initialize one neural network.
@@ -122,20 +117,24 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    *   - If null, Google Visualization Table Query API will be used.
    *   - If not null, Google Sheets API v4 will be used.
    *
+   * @param {NeuralNet.ParamsBase} neuralNetParamsBase
+   *   The configuration of the neural network to be created by web worker.
+   *
    * @param {NeuralNetProgress.InitProgress} initProgress
    *   This worker proxy will modify initProgress to report its web worker's
    * initialization progress.
    */
   init(
     workerId,
-    tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey,
+    tensorflowJsURL, weightsSpreadsheetId, weightsAPIKey,
+    neuralNetParamsBase,
     initProgress ) {
 
     this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
-    this.neuralNetConfig = neuralNetConfig;
     this.weightsSpreadsheetId = weightsSpreadsheetId;
     this.weightsAPIKey = weightsAPIKey;
+    this.neuralNetParamsBase = neuralNetParamsBase;
     this.initProgress = initProgress;
 
     // Every worker has a result pending promise map. The key of the map is processing
@@ -164,15 +163,15 @@ class NeuralWorker_Proxy extends Recyclable.Root {
       command: "init",
       workerId: workerId,
       tensorflowJsURL: tensorflowJsURL,
-      neuralNetConfig: neuralNetConfig,
-      weightsSpreadsheetId: weightsSpreadsheetId,
-      weightsAPIKey: weightsAPIKey
+      // weightsSpreadsheetId: weightsSpreadsheetId,
+      // weightsAPIKey: weightsAPIKey,
+      neuralNetParamsBase: neuralNetParamsBase,
     };
 
     worker.postMessage( message );  // Inform the worker to initialize.
 
-!!! ...unfinished... (2022/08/27)
-// must use MessageChannel instead of window.onmessage().
+//!!! ...unfinished... (2022/08/27)
+// Perhaps, use MessageChannel instead of window.onmessage().
 // Otherwise, original window.onmessage() will be replaced (i.e. destroyed) by our system.
 
   }

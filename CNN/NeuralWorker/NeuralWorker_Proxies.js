@@ -1,12 +1,12 @@
 export { NeuralWorker_Proxies as Proxies };
 
-import * as Pool from "../../util/Pool.js";
-import * as Recyclable from "../../util/Recyclable.js";
+import * as Pool from "../util/Pool.js";
+import * as Recyclable from "../util/Recyclable.js";
 import * as GSheets from "../util/GSheets.js";
 //import * as ValueMax from "../util/ValueMax.js";
+import * as NeuralNet from "../Conv/NeuralNet.js";
 import * as DEvolution from "../DEvolution.js";
 import { Proxy as WorkerProxy } from "./NeuralWorker_Proxy.js";
-//import * as NeuralNetProgress from "./NetProgress.js";
 
 /**
  * The container of WorkerProxy. It orchestrates these WorkerProxy. Especially, it
@@ -81,9 +81,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   The URL of tensorflow javascript library. Every worker will load the library
    * from the URL.
    *
-   * @param {Net.Config} neuralNetConfig
-   *   The configuration of the neural network which will be created by this web worker.
-   *
    * @param {string} weightsSpreadsheetId
    *   The Google Sheets spreadsheetId of neural network weights. Every worker will
    * load weights from the spreadsheet to initialize one neural network.
@@ -92,13 +89,16 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
    *   - If null, Google Visualization Table Query API will be used.
    *   - If not null, Google Sheets API v4 will be used.
+   *
+   * @param {NeuralNet.ParamsBase} neuralNetParamsBase
+   *   The configuration of the neural network to be created by web worker.
    */
-  init( tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey ) {
+  init( tensorflowJsURL, weightsSpreadsheetId, weightsAPIKey, neuralNetParamsBase ) {
 
     this.tensorflowJsURL = tensorflowJsURL;
-    this.neuralNetConfig = neuralNetConfig;
     this.weightsSpreadsheetId = weightsSpreadsheetId;
     this.weightsAPIKey = weightsAPIKey;
+    this.neuralNetParamsBase = neuralNetParamsBase;
 
     // The current processing id. Negative means processTensor() has not been called.
     // Every processTensor() call will use a new id.
@@ -135,7 +135,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.workerProxyArray.length = totalWorkerCount;
 
     for ( let i = 0; i < totalWorkerCount; ++i ) {
-      let initProgress = this.initProgressAll.childrren[ i ];
+      let initProgress = this.initProgressAll.children[ i ];
       let workerProxy = this.workerProxyArray[ i ] = WorkerProxy.Pool.get_or_create_by();
       workerProxy.init(
         i, tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey,
