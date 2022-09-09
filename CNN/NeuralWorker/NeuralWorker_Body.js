@@ -15,6 +15,11 @@
  */
 class NeuralWorker_Body {
 
+  /** It will register callback from NeuralWorker_Proxy. */
+  constructor() {
+    globalThis.onmessage
+      = NeuralWorker_Body.onmessage_from_NeuralWorker_Proxy.bind( this );
+  }
 
   /** @override */
   disposeResources() {
@@ -460,10 +465,4 @@ if ( globalThis.document )
   return;
 
 // In worker context.
-
-// Create worker body.
-NeuralWorker_Body.Singleton = new NeuralWorker_Body();
-
-// Register callback from the web worker.
-globalThis.onmessage = NeuralWorker_Body.onmessage_from_NeuralWorker_Proxy.bind(
-  NeuralWorker_Body.Singleton );
+NeuralWorker_Body.Singleton = new NeuralWorker_Body(); // Create worker body.
