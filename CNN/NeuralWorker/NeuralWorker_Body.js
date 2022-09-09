@@ -415,52 +415,54 @@ class NeuralWorker_Body {
     let message = { command: "reportInitProgress", subCommand: "libraryDownload", workerId: this.workerId, total: this.initProgress.libraryDownload.total, accumulation: this.initProgress.libraryDownload.accumulation };
     postMessage( message );
   }
-}
 
+  /** Handle message from NeuralNet_Proxy. */
+  onmessage( e ) {
+    let message = e.data;
+  
+    switch ( message.command ) {
+      case "initWorker": //{ command: "initWorker", workerId, tensorflowJsURL };
+        this.initWorkerAsync( message.workerId, message.tensorflowJsURL );
+        break;
+  
+      case "disposeWorker": //{ command: "disposeWorker" };
+        this.workerBody.disposeWorker();
+        break;
+  
+      case "neuralNet_create": //{ command: "neuralNet_create", neuralNetParamsBase, weightArrayBuffer };
+        this.neuralNet_createAsync(
+          message.neuralNetParamsBase, message.weightArrayBuffer );
+        break;
+  
+      case "alignmentMark_setValue": //{ command: "alignmentMark_setValue", markValue };
+        this.alignmentMark_setValue( message.markValue );
+        break;
+  
+      case "imageData_transferBack_processTensor": //{ command: "imageData_transferBack_processTensor", processingId, sourceImageData };
+        this.imageData_transferBack_processTensor( message.processingId, message.sourceImageData );
+        break;
+  
+      case "typedArray_transferBack_processTensor": //{ command: "typedArray_transferBack_processTensor", processingId, sourceTypedArray };
+        this.typedArray_transferBack_processTensor( message.processingId, message.sourceTypedArray );
+        break;
+  
+      case "typedArray_processTensor": //{ command: "typedArray_processTensor", processingId, sourceTypedArray };
+        this.typedArray_processTensor( message.processingId, message.sourceTypedArray );
+        break;
+    }
+  }
+  
+}
 
 
 // In main document context (Not in worker context). Do nothing. (Should not happen)
 if ( globalThis.document )
   return;
 
-// In worker context. Register message handler.
+// In worker context.
 
-//!!! ...unfinished... (2022/08/25)
-// Perhaps, use specific MessageChannel for every command so that the command string
-// is no longer necessary.
+// Create worker body.
+NeuralWorker_Body.Singleton = new NeuralWorker_Body();
 
-globalThis.onmessage = function( e ) {
-  let message = e.data;
-
-  switch ( message.command ) {
-    case "initWorker": //{ command: "initWorker", workerId, tensorflowJsURL };
-      globalThis.workerBody = new WorkerBody();
-      globalThis.workerBody.initWorkerAsync( message.workerId, message.tensorflowJsURL );
-      break;
-
-    case "disposeWorker": //{ command: "disposeWorker" };
-      globalThis.workerBody.disposeWorker();
-      break;
-
-    case "neuralNet_create": //{ command: "neuralNet_create", neuralNetParamsBase, weightArrayBuffer };
-      globalThis.workerBody.neuralNet_createAsync(
-        message.neuralNetParamsBase, message.weightArrayBuffer );
-      break;
-
-    case "alignmentMark_setValue": //{ command: "alignmentMark_setValue", markValue };
-      globalThis.workerBody.alignmentMark_setValue( message.markValue );
-      break;
-
-    case "imageData_transferBack_processTensor": //{ command: "imageData_transferBack_processTensor", processingId, sourceImageData };
-      globalThis.workerBody.imageData_transferBack_processTensor( message.processingId, message.sourceImageData );
-      break;
-
-    case "typedArray_transferBack_processTensor": //{ command: "typedArray_transferBack_processTensor", processingId, sourceTypedArray };
-      globalThis.workerBody.typedArray_transferBack_processTensor( message.processingId, message.sourceTypedArray );
-      break;
-
-    case "typedArray_processTensor": //{ command: "typedArray_processTensor", processingId, sourceTypedArray };
-      globalThis.workerBody.typedArray_processTensor( message.processingId, message.sourceTypedArray );
-      break;
-  }
-}
+// Register callback from the web worker.
+globalThis.onmessage = NeuralWorker_Body.onmessage.bind( NeuralWorker_Body.Singleton );
