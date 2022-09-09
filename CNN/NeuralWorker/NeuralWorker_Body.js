@@ -40,7 +40,8 @@ class NeuralWorker_Body {
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
    *   The configuration of the neural network to be created by web worker.
    */
-  async initWorker_async( workerId = 0, tensorflowJsURL, neuralNetParamsBase ) {
+  async initWorker_async( processingId,
+    workerId = 0, tensorflowJsURL, neuralNetParamsBase ) {
 
 //!!! ...unfinished... (2022/09/09) needs processingId for reporting.
 
@@ -96,7 +97,7 @@ class NeuralWorker_Body {
    * @param {ArrayBuffer} weightArrayBuffer
    *   The neural network's weights. It will be interpreted as Float32Array.
    */
-  async neuralNet_create_async( neuralNetParamsBase, weightArrayBuffer ) {
+  async neuralNet_create_async( processingId, neuralNetParamsBase, weightArrayBuffer ) {
 
 //!!! ...unfinished... (2022/09/09) needs processingId for reporting.
 
@@ -178,7 +179,7 @@ class NeuralWorker_Body {
    *   - ( markValue == 0 ) means this neural network plays O side currently.
    *   - ( markValue == 255 ) means this neural network plays X side currently.
    */
-  alignmentMark_setValue( markValue ) {
+  alignmentMark_setValue( processingId, markValue ) {
 
 //!!! ...unfinished... (2022/09/09) needs processingId for reporting.
 
@@ -434,21 +435,22 @@ class NeuralWorker_Body {
     let message = e.data;
   
     switch ( message.command ) {
-      case "initWorker": //{ command: "initWorker", workerId, tensorflowJsURL };
-        this.initWorker_async( message.workerId, message.tensorflowJsURL );
+      case "initWorker": //{ command: "initWorker", processingId, workerId, tensorflowJsURL };
+        this.initWorker_async(
+          message.processingId, message.workerId, message.tensorflowJsURL );
         break;
   
       case "disposeWorker": //{ command: "disposeWorker" };
         this.workerBody.disposeWorker();
         break;
   
-      case "neuralNet_create": //{ command: "neuralNet_create", neuralNetParamsBase, weightArrayBuffer };
+      case "neuralNet_create": //{ command: "neuralNet_create", processingId, neuralNetParamsBase, weightArrayBuffer };
         this.neuralNet_create_async(
-          message.neuralNetParamsBase, message.weightArrayBuffer );
+          message.processingId, message.neuralNetParamsBase, message.weightArrayBuffer );
         break;
   
-      case "alignmentMark_setValue": //{ command: "alignmentMark_setValue", markValue };
-        this.alignmentMark_setValue( message.markValue );
+      case "alignmentMark_setValue": //{ command: "alignmentMark_setValue", processingId, markValue };
+        this.alignmentMark_setValue( message.processingId, message.markValue );
         break;
   
       case "imageData_transferBack_processTensor": //{ command: "imageData_transferBack_processTensor", processingId, sourceImageData };
