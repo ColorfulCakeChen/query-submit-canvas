@@ -36,9 +36,9 @@ class AsyncWorker_Body {
    *   - e.data.command will be used as this object's method name. The method must
    *       be an async generator.
    *       - The method should yield and return an object { value, transfer }.
-   *       - The value is the real result.
-   *       - The tansfer is the transferable object array when postMessage. It could
-   *           be undefined (but can not be null).
+   *       - The value is the real result of the function.
+   *       - The tansfer is the transferable object array when postMessage. It
+   *           could be undefined (but can not be null).
    *
    *   - e.data.args will be passed to the function this[ e.data.command ]().
    */
