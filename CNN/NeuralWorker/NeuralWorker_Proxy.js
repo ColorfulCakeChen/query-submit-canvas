@@ -1,10 +1,11 @@
 export { NeuralWorker_Proxy as Proxy };
 
-import * as Pool from "../../util/Pool.js";
-import * as Recyclable from "../../util/Recyclable.js";
+import * as Pool from "../util/Pool.js";
+import * as Recyclable from "../util/Recyclable.js";
 //import * as ValueMax from "../util/ValueMax.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
 import { ProcessRelayPromises } from "./NeuralWorker_ProcessRelayPromises.js";
+import { PromiseResolveRejectMap } from "./NeuralWorker_ProcessRelayPromises.js";
 
 /**
  * Hold the worker and its related promise map. It is a wrapper of a neural network
@@ -13,8 +14,16 @@ import { ProcessRelayPromises } from "./NeuralWorker_ProcessRelayPromises.js";
  * @member {number} workerId  The array index of this worker proxy.
  * @member {Worker} worker    The worker.
  *
- * @member {Map}    processRelayPromisesMap
- *   The map for promise of the unhandled processing.
+
+//!!! (2022/09/10 Remarked)
+//  * @member {Map}    processRelayPromisesMap
+//  *   The map for promise of the unhandled processing.
+
+ *
+ * @member {PromiseResolveRejectMap} thePromiseResolveRejectMap
+ *   Every worker has a result pending promise map. The key of the map is processing
+ * id. The value of the map is a PromiseResolveReject.
+ *
  */
 class NeuralWorker_Proxy extends Recyclable.Root {
 
@@ -39,12 +48,19 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self() {
-    // Every worker has a result pending promise map. The key of the map is processing
-    // id. The value of the map is a ProcessRelayPromises.
-    if ( this.processRelayPromisesMap )
-      this.processRelayPromisesMap.clear();
+
+//!!! (2022/09/10 Remarked)
+//     // Every worker has a result pending promise map. The key of the map is processing
+//     // id. The value of the map is a ProcessRelayPromises.
+//     if ( this.processRelayPromisesMap )
+//       this.processRelayPromisesMap.clear();
+//     else
+//       this.processRelayPromisesMap = new Map();
+
+    if ( this.thePromiseResolveRejectMap )
+      this.thePromiseResolveRejectMap.clear();
     else
-      this.processRelayPromisesMap = new Map();
+      this.thePromiseResolveRejectMap = new PromiseResolveRejectMap();
   }
 
   /** @override */
@@ -57,7 +73,10 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     this.tensorflowJsURL = undefined;
     this.workerId = undefined;
 
-    this.processRelayPromisesMap.clear();
+//!!! (2022/09/10 Remarked)
+//    this.processRelayPromisesMap.clear();
+    this.thePromiseResolveRejectMap.clear();
+
     super.disposeResources();
   }
 
