@@ -383,6 +383,16 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     if ( workerId != this.workerId )
       return; // Ignore if wrong worker id.
 
+//!!! ...unfinished... (2022/09/10)
+// Every WorkerProxy method function should be an async generator.
+//
+// Here should receive { done, value } object from WorkerBody.
+// Place the { done, value } in map by processingId as key.
+//
+// When the WorkerProxy original function's async generator's .next() is called,
+// yield value if ( done == false ), return value if ( done == true ).
+//
+
     // Discard result with non-existed processing id. (e.g. already handled old
     // processing result)
     let processRelayPromises = this.processRelayPromisesMap.get( processingId );

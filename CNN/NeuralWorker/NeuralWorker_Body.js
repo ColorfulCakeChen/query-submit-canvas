@@ -398,6 +398,10 @@ class NeuralWorker_Body {
     let method = this[ command ]; // command name as method name.
     let func = method.bind( this );
 
+//!!! ...unfinished... (2022/09/10)
+// Every function should be an async generator.
+// Here will postMessage() the { done, value } object back to WorkerProxy.
+
     try {
       let p = func( e.data.args );
 
