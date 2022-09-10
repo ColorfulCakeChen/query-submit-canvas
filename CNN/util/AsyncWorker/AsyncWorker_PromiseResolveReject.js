@@ -67,20 +67,24 @@ class PromiseResolveRejectMap {
   }
 
   /**
+   * This async generator could be used as the processing method's result.
+   *
    * @return {AsyncGenerator}
-   *   An async generator:
+   *   An async generator. Its .next() returns a promise resolved to { done, value }.
+   * The value will be:
    *
-   *   - Always yield the corresponding PromiseResolveReject.promise of the processingId,
-   *      if it exists. (i.e. { done: false, value: PromiseResolveReject.promise } )
+   *   - The resolved value of the processingId's PromiseResolveReject.promise, if
+   *       the processingId's PromiseResolveReject exists.
+   *       (i.e. { done: false, value: resolved_PromiseResolveReject.promise } )
    *
-   *   - Return, if the corresponding PromiseResolveReject does not exist.
+   *   - undefined, if the corresponding PromiseResolveReject does not exist.
    *       (i.e. { done: true, value: undefined } )
    *
    */
   async *resulter( processingId ) {
     let thePromiseResolveReject = this.map.get( processingId );
     if ( thePromiseResolveReject )
-      yield thePromiseResolveReject;
+      yield thePromiseResolveReject.promise;
     else
       return;
   }
