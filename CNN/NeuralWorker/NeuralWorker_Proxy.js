@@ -2,10 +2,9 @@ export { NeuralWorker_Proxy as Proxy };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
+import * as AsyncWorker from "../util/AsyncWorker.js";
 //import * as ValueMax from "../util/ValueMax.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
-import { ProcessRelayPromises } from "./NeuralWorker_ProcessRelayPromises.js";
-import { PromiseResolveRejectMap } from "./NeuralWorker_ProcessRelayPromises.js";
 
 /**
  * Hold the worker and its related promise map. It is a wrapper of a neural network
@@ -19,13 +18,8 @@ import { PromiseResolveRejectMap } from "./NeuralWorker_ProcessRelayPromises.js"
 //  * @member {Map}    processRelayPromisesMap
 //  *   The map for promise of the unhandled processing.
 
- *
- * @member {PromiseResolveRejectMap} thePromiseResolveRejectMap
- *   Every worker has a result pending promise map. The key of the map is processing
- * id. The value of the map is a PromiseResolveReject.
- *
  */
-class NeuralWorker_Proxy extends Recyclable.Root {
+class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
   /**
    * Used as default NeuralWorker.Proxy provider for conforming to Recyclable interface.
@@ -48,25 +42,22 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self() {
-
-//!!! (2022/09/10 Remarked)
-//     // Every worker has a result pending promise map. The key of the map is processing
-//     // id. The value of the map is a ProcessRelayPromises.
-//     if ( this.processRelayPromisesMap )
-//       this.processRelayPromisesMap.clear();
-//     else
-//       this.processRelayPromisesMap = new Map();
-
-    if ( this.thePromiseResolveRejectMap )
-      this.thePromiseResolveRejectMap.clear();
-    else
-      this.thePromiseResolveRejectMap = new PromiseResolveRejectMap();
   }
 
   /** @override */
   disposeResources() {
-    this.disposeWorker();
 
+    {
+//!!! ...unfinished... (2022/09/08) also MessagePort.close().
+
+      // Note: No processingId, because this command needs not return value.
+      {
+        let data = { command: "disposeResources" };
+        this.worker.postMessage( data );
+        this.worker = null;
+      }
+    }
+     
     this.workerOptions = undefined;
     this.workerURL = undefined;
 
@@ -75,7 +66,6 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 
 //!!! (2022/09/10 Remarked)
 //    this.processRelayPromisesMap.clear();
-    this.thePromiseResolveRejectMap.clear();
 
     super.disposeResources();
   }
@@ -116,7 +106,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     let worker = this.worker = new Worker( this.workerURL, this.workerOptions );
 
     // Register callback from the web worker.
-    worker.onmessage = NeuralWorker_Proxy.onmessage_from_NeuralWorker_Body.bind( this );
+    worker.onmessage = NeuralWorker_Proxy.onmessage_from_AsyncWorker_Body.bind( this );
 
     // Worker Initialization message.
     let data = {
@@ -158,22 +148,6 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     // let processRelayPromises = new ProcessRelayPromises( processingId, this.workerId );
     // this.processRelayPromisesMap.set( processingId, processRelayPromises );
     // return processRelayPromises;
-
-  }
-
-  /**
-   * 
-   */
-  disposeWorker() {
-
-//!!! ...unfinished... (2022/09/08) also MessagePort.close().
-
-    // Note: No processingId, because this command needs not return value.
-    {
-      let data = { command: "disposeWorker" };
-      this.worker.postMessage( data );
-      this.worker = null;
-    }
 
   }
 
@@ -408,58 +382,15 @@ class NeuralWorker_Proxy extends Recyclable.Root {
     return processRelayPromises;
   }
 
-  /**
-   * Dispatch messages come from the owned web worker.
-   *
-   * @param {Base} this
-   *   Should be binded to this object.
-   */
-  static onmessage_from_NeuralWorker_Body( e ) {
-
-    // e.data == { processingId, workerId, result }
-    let processingId = e.data.processingId;
-    let workerId = e.data.workerId;
-    let result = e.data.result;
-
-    if ( workerId != this.workerId )
-      return; // Ignore if wrong worker id.
-
-//!!! ...unfinished... (2022/09/10)
-// Every WorkerProxy method function should be an async generator.
+//!!! (2022/09/09 Remarked) Using super class (AsyncWorker_Proxy) instead.
+//   /**
+//    * Dispatch messages come from the owned web worker.
+//    *
+//    * @param {Base} this
+//    *   Should be binded to this object.
+//    */
+//   static onmessage_from_NeuralWorker_Body( e ) {
 //
-// Here should receive { done, value } object from WorkerBody.
-// The corresponding PromiseResolveReject.resolve() to the value.
-//
-//   - if ( done == false ), create a new PromiseResolveReject placed at the
-//       smae position (i.e. replace old one) for waiting future result.
-//
-//   - if ( done == true ), delete the entry of processingId from PromiseResolveRejectMap.
-//       because there will be no more result coming in the future.
-// 
-//
-
-    // Discard result with non-existed processing id. (e.g. already handled old
-    // processing result)
-    let processRelayPromises = this.processRelayPromisesMap.get( processingId );
-    if ( !processRelayPromises )
-      return;
-
-    processRelayPromises.process.resolve( result );
-
-//!!! ...unfinished... When will fail?
-    //processRelayPromises.reject();
-
-//!!! ...unfinished... Whether should the older (i.e. smaller) processingId be cleared from map? (Could the processing be out of order?)
-
-//!!! ...unfinished... (2022/09/09)
-// What about processRelayPromises.relay?
-// When to resolve it (before the promise be deleted)?
-
-    // Clear the info entry of handled processing result.
-    this.processRelayPromisesMap.delete( processingId );
-
-
-//!!! (2022/09/09 Remarked) Using processingId look up instead.
 //     let message = e.data;
 //
 //     switch ( message.command ) {
@@ -483,6 +414,6 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 //         break;
 //
 //     }
-  }
+//  }
 
 }

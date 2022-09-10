@@ -48,25 +48,13 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-
-    {
- //!!! ...unfinished... (2022/09/08) also MessagePort.close().
-
-      // Note: No processingId, because this command needs not return value.
-      {
-        let data = { command: "disposeResources" };
-        this.worker.postMessage( data );
-        this.worker = null;
-      }
-    }
-
     this.thePromiseResolveRejectMap.clear();
-
     super.disposeResources();
   }
 
   /**
-   * Dispatch messages come from the owned web worker.
+   * Dispatch messages come from the owned web worker. Please register this method
+   * as this WorkerProxy's Worker.onmessage.
    *
    * @param {AsyncWorker_Proxy} this
    *   The "this" should be binded to this AsyncWorker_Proxy object.
