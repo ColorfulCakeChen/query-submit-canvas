@@ -30,9 +30,8 @@ export { PromiseResolveRejectMap };
 
 }
 
-//!!! ...unfinished... (2022/09/10)
 /**
- * A collection PromiseResolveReject by processingid as key.
+ * A collection PromiseResolveReject by processingId as key.
  */
 class PromiseResolveRejectMap {
 
