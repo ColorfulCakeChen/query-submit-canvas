@@ -428,10 +428,14 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 // Every WorkerProxy method function should be an async generator.
 //
 // Here should receive { done, value } object from WorkerBody.
-// Place the { done, value } in map by processingId as key.
+// The corresponding PromiseResolveReject.resolve() to the value.
 //
-// When the WorkerProxy original function's async generator's .next() is called,
-// yield value if ( done == false ), return value if ( done == true ).
+//   - if ( done == false ), create a new PromiseResolveReject placed at the
+//       smae position (i.e. replace old one) for waiting future result.
+//
+//   - if ( done == true ), delete the entry of processingId from PromiseResolveRejectMap.
+//       because there will be no more result coming in the future.
+// 
 //
 
     // Discard result with non-existed processing id. (e.g. already handled old

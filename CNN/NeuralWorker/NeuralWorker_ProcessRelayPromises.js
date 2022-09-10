@@ -54,24 +54,28 @@ class PromiseResolveRejectMap {
    * @return {PromiseResolveReject}
    *   Return the created PromiseResolveReject object.
    */
-  add_by_processingId( processingId, workerId ) {
+  set_new_by_processingId_workerId( processingId, workerId ) {
     let thePromiseResolveReject = new PromiseResolveReject( processingId, workerId );
     this.map.set( processingId, thePromiseResolveReject );
     return thePromiseResolveReject;
   }
 
-  /** */
-  async * ( processingId ) {
-    let done_value = processingId_done_value_Map.get( processingId );
-    if ( done_value ) {
-      if ( done_value.done ) {
-        return done_value.value;
-      } else {
-        yield done_value.value;
-      }
-    } else {
-      yield undefined;
-    }
+  /**
+   * An async iterator:
+   *
+   *   - Always yield (i.e. ( done == false ) ) the corresponding PromiseResolveReject
+   *       of the processingId, if it exists .
+   *
+   *   - Return (i.e. ( done == true ) ), if the corresponding PromiseResolveReject
+   *       does not exist.
+   *
+   */
+  async *resulter( processingId ) {
+    let thePromiseResolveReject = this.map.get( processingId );
+    if ( thePromiseResolveReject )
+      yield thePromiseResolveReject;
+    else
+      return;
   }
 
 }
