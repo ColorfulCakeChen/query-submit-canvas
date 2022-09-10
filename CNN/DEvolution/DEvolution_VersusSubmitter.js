@@ -86,8 +86,19 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
 //
 
     // Every versus result viewed as purchasing an item.
-    //   - itemId is versus id
-    //   - price is -1 or 0 or +1 representing versus result.
+    //   - itemName is versus id
+    //   - quantity is -1 or 0 or +1 representing versus result.
+    //
+    // Q1: Why use item_name (rather than item_id)?
+    // A1: For report viewing convenience. Because in Google Analytics Report UI,
+    //     the default e-commerce report uses itemName (not itemId).
+    //
+    // Q2: Why use quantity (rather than price)?
+    // A2: According to experiment, if Google Analytics Data report's itemRevenue
+    //     only work if ( quantity, price, currency ) all used (and some floating-point
+    //     accumulation error might be introduced). However, report's itemsPurchased
+    //     only needs ( quantity ) and no floating-point accumulation error (because
+    //     it is integer).
     //
     let itemVersusResult = {
 
@@ -104,9 +115,13 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
 //!!! ...unfinished... (2022/09/09)
 // It seems currency should be set (e.g. TWD). Otherwise, itemRevenue will be 0.
 
-      item_id: versusIdString,
-      quantity: 1,
-      price: nNegativeZeroPositive
+      item_name: versusIdString,
+      quantity: nNegativeZeroPositive,
+
+//!!! (2022/09/10 Remarked) Use item_name and quantity instead.
+//       item_id: versusIdString,
+//       quantity: 1,
+//       price: nNegativeZeroPositive
     };
 
     let eventPurchase = {
