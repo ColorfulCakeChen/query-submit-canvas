@@ -9,22 +9,28 @@
  * because import() can be used in classic (non-module) script.
  */
 
+
+globalThis.AsyncWorker = await import( "../util/AsyncWorker.js";
+
 /**
  * The implementation of a neural network web worker.
  *
  */
-class NeuralWorker_Body {
+class NeuralWorker_Body extends AsyncWorker.Body {
 
   /** It will register callback from NeuralWorker_Proxy. */
   constructor() {
-    globalThis.onmessage
-      = NeuralWorker_Body.onmessage_from_NeuralWorker_Proxy.bind( this );
+    super(); // register callback from NeuralWorker_Proxy.
   }
 
   /** @override */
   disposeResources() {
-    this.disposeWorker();
-    //super.disposeResources();
+    if ( this.neuralNet ) {
+      this.neuralNet.disposeResources();
+      this.neuralNet = null;
+    }
+
+    super.disposeResources();
   }
 
   /**
@@ -69,19 +75,6 @@ class NeuralWorker_Body {
     }
 
     return true;
-  }
-
-  /** */
-  disposeWorker() {
-    if ( this.neuralNet ) {
-      this.neuralNet.disposeResources();
-      this.neuralNet = null;
-    }
-
-//!!! ...unfinished... (2022/09/08) also MessagePort.close().
-
-//!!!??? calling close() when the next worker disposed ?
-    close();
   }
 
   /**
@@ -389,58 +382,10 @@ class NeuralWorker_Body {
     postMessage( message, [ message.sourceTypedArray.buffer ] );
   }
 
-  /** Handle message from NeuralWorker_Proxy. */
-  static onmessage_from_NeuralWorker_Proxy( e ) {
-
-    // e.data == { processingId, command, args }
-    let processingId = e.data.processingId;
-    let command = e.data.command;
-    let method = this[ command ]; // command name as method name.
-    let func = method.bind( this );
-
-//!!! ...unfinished... (2022/09/10)
-// Every function should be an async generator.
-// Here will postMessage() the { done, value } object back to WorkerProxy.
-
-    try {
-      let p = func( e.data.args );
-
-      // For asynchronous function, wait result and then return it.
-      if ( p instanceof Promise ) {
-        p.then( r => {
-          if ( processingId != undefined ) {
-            let resultData = { processingId: processingId, workerId: this.workerId, r };
-            postMessage( resultData );
-          } // Otherwise, no processingId means no need report return value.
-
-        } ).catch( errorReason => {
-          let msg = `NeuralWorker_Body.onmessage_from_NeuralWorker_Proxy(): `
-            + `workerId=${this.workerId}, processingId=${processingId}, `
-            + `command="${command}", asynchronous, failed. `
-            + `${errorReason}`;
-          console.err( msg );
-          //debugger;
-        } );
-
-      // For synchronous function, return result immediately.
-      } else {
-        if ( processingId != undefined ) {
-          let resultData = { processingId: processingId, workerId: this.workerId, r };
-          postMessage( resultData );
-        } // Otherwise, no processingId means no need report return value.
-      }
-
-    } catch ( errorReason ) {
-      let msg = `NeuralWorker_Body.onmessage_from_NeuralWorker_Proxy(): `
-        + `workerId=${this.workerId}, processingId=${processingId}, `
-        + `command="${command}", synchronous, failed. `
-        + `${errorReason}`;
-      console.err( msg );
-      //debugger;
-    }
-
-
-//!!! (2022/09/09 Remarked) Using property look up instead.
+//!!! (2022/09/09 Remarked) Using super class instead.
+// /** Handle message from NeuralWorker_Proxy. */
+// static onmessage_from_NeuralWorker_Proxy( e ) {
+//
 //     let message = e.data;
 //
 //     switch ( message.command ) {
@@ -474,7 +419,7 @@ class NeuralWorker_Body {
 //         this.typedArray_processTensor( message.processingId, message.sourceTypedArray );
 //         break;
 //     }
-  }
+//  }
   
 }
 
