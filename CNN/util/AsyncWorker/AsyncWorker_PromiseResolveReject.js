@@ -66,6 +66,48 @@ class PromiseResolveRejectMap {
   }
 
   /**
+   * 
+   */
+  resolve_by_processingId_done_value( processingId, done, value ) {
+
+//!!! ...unfinished... (2022/09/10)
+// Every WorkerProxy method function should be an async generator.
+//
+// Here should receive { done, value } object from WorkerBody.
+// The corresponding PromiseResolveReject.resolve() to the value.
+//
+//   - if ( done == false ), create a new PromiseResolveReject placed at the
+//       smae position (i.e. replace old one) for waiting future result.
+//
+//   - if ( done == true ), delete the entry of processingId from PromiseResolveRejectMap.
+//       because there will be no more result coming in the future.
+// 
+//
+
+    let thePromiseResolveReject = this.map.get( processingId );
+    if ( !thePromiseResolveReject )
+      return; // The pending promise does not exist.
+
+    // 1. Resolve the pending promise to the specified value.
+    thePromiseResolveReject.resolve( value );
+
+    // 2. Remove or create new pending promise.
+
+    // 2.1 Since web worker says the processing is done, remove the pending promise
+    //     because the processing will have no more result coming from web worker
+    //      in the future.
+    if ( done ) {
+      this.map.delete( processingId );
+
+    // 2.2 The web worker says the processing is not yet completed, create a new
+    //     pending promise and place it at the smae position (i.e. replace old one)
+    //     for waiting future result.
+    } else {
+      this.set_new_by_processingId( processingId );
+    }
+  }
+
+  /**
    * This async generator could be used as the processing method's result.
    *
    * @return {AsyncGenerator}
