@@ -66,23 +66,22 @@ class PromiseResolveRejectMap {
   }
 
   /**
+   * Suppose every method function of WorkerProxy is an async generator.
+   *
+   * When WorkerProxy receives { done, value } object from WorkerBody, please call
+   * this method. It will resolve the corresponding pending promise by
+   * PromiseResolveReject.resolve( value ). And the,
+   *
+   *   - if ( done == false ), create a new PromiseResolveReject placed at the
+   *       same position (i.e. replace old one) for waiting future result from
+   *       web worker.
+   *
+   *   - if ( done == true ), remove the PromiseResolveReject of processingId from
+   *       this map because the processing will have no more result coming from
+   *       web worker in the future.
    * 
    */
   resolve_by_processingId_done_value( processingId, done, value ) {
-
-//!!! ...unfinished... (2022/09/10)
-// Every WorkerProxy method function should be an async generator.
-//
-// Here should receive { done, value } object from WorkerBody.
-// The corresponding PromiseResolveReject.resolve() to the value.
-//
-//   - if ( done == false ), create a new PromiseResolveReject placed at the
-//       smae position (i.e. replace old one) for waiting future result.
-//
-//   - if ( done == true ), delete the entry of processingId from PromiseResolveRejectMap.
-//       because there will be no more result coming in the future.
-// 
-//
 
     let thePromiseResolveReject = this.map.get( processingId );
     if ( !thePromiseResolveReject )
@@ -95,13 +94,13 @@ class PromiseResolveRejectMap {
 
     // 2.1 Since web worker says the processing is done, remove the pending promise
     //     because the processing will have no more result coming from web worker
-    //      in the future.
+    //     in the future.
     if ( done ) {
       this.map.delete( processingId );
 
     // 2.2 The web worker says the processing is not yet completed, create a new
-    //     pending promise and place it at the smae position (i.e. replace old one)
-    //     for waiting future result.
+    //     pending promise for the same processing for waiting future result from
+    //     web worker.
     } else {
       this.set_new_by_processingId( processingId );
     }
