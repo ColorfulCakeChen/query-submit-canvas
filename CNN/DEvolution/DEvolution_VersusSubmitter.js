@@ -89,16 +89,16 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
     //   - itemName is versus id
     //   - quantity is -1 or 0 or +1 representing versus result.
     //
-    // Q1: Why use item_name (rather than item_id)?
+    // Q1: Why send item_name (rather than item_id)?
     // A1: For report viewing convenience. Because in Google Analytics Report UI,
     //     the default e-commerce report uses itemName (not itemId).
     //
-    // Q2: Why use quantity (rather than price)?
-    // A2: According to experiment, if Google Analytics Data report's itemRevenue
-    //     only work if ( quantity, price, currency ) all used (and some floating-point
-    //     accumulation error might be introduced). However, report's itemsPurchased
-    //     only needs ( quantity ) and no floating-point accumulation error (because
-    //     it is integer).
+    // Q2: Why send quantity (rather than price)?
+    // A2: According to experiment, The Google Analytics Data report's itemRevenue
+    //     only works if ( quantity, price, currency ) all provided (and some
+    //     floating-point accumulation error might be introduced). However, report's
+    //     itemsPurchased only needs ( quantity ) and no floating-point accumulation
+    //     error (because it is an integer).
     //
     let itemVersusResult = {
 

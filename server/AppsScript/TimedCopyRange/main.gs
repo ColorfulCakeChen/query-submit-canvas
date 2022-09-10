@@ -90,10 +90,6 @@ function GA4_run_report_() {
   const maxRowCount = reportRowsRange.getNumRows();
   const maxColumnCount = reportRowsRange.getNumColumns();
 
-//!!! ...unfinished... (2022/09/07)
-// Perhaps, itemVariant (-1/0/+1) instead of itemsPurchased.
-
-
   const request = {
     dimensions: [ { name: "itemName" } ],
     metrics: [ { name: "itemsPurchased" } ],
