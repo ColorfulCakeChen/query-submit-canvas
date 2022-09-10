@@ -46,10 +46,10 @@ class AsyncWorker_Body {
 
     // e.data == { processingId, command, args }
     let { processingId, command, args } = e.data;
-    let method = this[ command ]; // command name as method name.
-    let func = method.bind( this );
 
     try {
+      let method = this[ command ]; // command name as method name.
+      let func = method.bind( this );
       let asyncGenerator = func( args );
 
       if ( processingId != undefined ) {
