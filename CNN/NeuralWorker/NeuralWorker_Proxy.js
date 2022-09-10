@@ -76,7 +76,7 @@ class NeuralWorker_Proxy extends Recyclable.Root {
    * @return {Promise}
    *   Resolved to true, if success. Resolved to false, if failed.
    */
-  init_async( processingId, workerId, tensorflowJsURL ) {
+  initer_async( processingId, workerId, tensorflowJsURL ) {
 
     this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
@@ -118,6 +118,28 @@ class NeuralWorker_Proxy extends Recyclable.Root {
 // should await NeuralWorker_Body report init done.
 
     return create_and_return_ProcessRelayPromises( processingId ).process.promise;
+
+
+//!!! ...unfinished... (2022/09/10)
+
+    return async function* ( processingId_done_value_Map, processingId ) {
+      let done_value = processingId_done_value_Map.get( processingId );
+      if ( done_value ) {
+        if ( done_value.done ) {
+          return done_value.value;
+        } else {
+          yield done_value.value;
+        }
+      } else {
+        yield undefined;
+      }
+    }
+
+//!!!    
+    // let processRelayPromises = new ProcessRelayPromises( processingId, this.workerId );
+    // this.processRelayPromisesMap.set( processingId, processRelayPromises );
+    // return processRelayPromises;
+
   }
 
   /**
