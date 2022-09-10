@@ -35,39 +35,35 @@ class AsyncWorker_Body {
    *
    *   - e.data.command will be used as this object's method name. The method must
    *       be an async generator.
+   *       - The method should yield and return an object { value, transfer }.
+   *       - The value is the real result.
+   *       - The tansfer is the transferable object array when postMessage. It could
+   *           be undefined (but can not be null).
    *
    *   - e.data.args will be passed to the function this[ e.data.command ]().
    */
   static async onmessage_from_AsyncWorker_Proxy( e ) {
 
     // e.data == { processingId, command, args }
-    let processingId = e.data.processingId;
-    let command = e.data.command;
+    let { processingId, command, args } = e.data;
     let method = this[ command ]; // command name as method name.
     let func = method.bind( this );
 
-//!!! ...unfinished... (2022/09/10)
-// Every function should be an async generator.
-// Here will postMessage() the { done, value } object back to WorkerProxy.
-
     try {
-      let asyncGenerator = func( e.data.args );
+      let asyncGenerator = func( args );
 
       if ( processingId != undefined ) {
-        let done_value;
+        let done, value;
+        let transfer; // transferable object array.
         do {
-          done_value = await asyncGenerator.next();
-            let resultData = { processingId: processingId, done_value };
+          ( { done, value: { value, transfer } } = await asyncGenerator.next() );
+          let resultData = { processingId, done, value };
+          postMessage( resultData, transfer );
 
-  //!!! ...unfinished... (2022/09/10)
-  // How to specify Transferable Objects array?
-
-            postMessage( resultData );
-
-        } while ( !done_value.done );
+        } while ( !done );
 
       } else { // Otherwise, no processingId means no need report return value.
-        for await ( let value of asyncGenerator ) {
+        for await ( let { value, transfer } of asyncGenerator ) {
           // Do nothing. Just complete the async generator.
         }
       }

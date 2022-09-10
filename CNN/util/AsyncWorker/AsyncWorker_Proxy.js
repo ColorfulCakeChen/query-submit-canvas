@@ -70,9 +70,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 //     if ( workerId != this.workerId )
 //       return; // Ignore if wrong worker id.
 
-    // ( e.data == { processingId, done_value } )
-    let processingId = e.data.processingId;
-    let { done, value } = e.data.done_value;
+    // ( e.data == { processingId, done, value } )
+    let { processingId, done, value } = e.data;
 
     this.thePromiseResolveRejectMap.resolve_by_processingId_done_value(
       processingId, done, value );
