@@ -10,7 +10,7 @@
  */
 
 
-globalThis.AsyncWorker = await import( "../util/AsyncWorker.js";
+globalThis.AsyncWorker = await import( "../util/AsyncWorker.js" );
 
 /**
  * The implementation of a neural network web worker.
@@ -74,7 +74,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       ] );
     }
 
-    return true;
+    return { value: true };
   }
 
   /**
@@ -151,12 +151,12 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         console.log( logMsg );
       }
 
-      return true;
+      return { value: true };
 
     } catch ( e ) {
       console.err( e );
       //debugger;
-      return false;
+      return { value: false };
     }
   }
 
@@ -169,7 +169,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    */
   alignmentMark_setValue( { markValue } ) {
     this.alignmentMarkValue = markValue;
-    return markValue;
+    return { value: markValue };
   }
 
   /**
