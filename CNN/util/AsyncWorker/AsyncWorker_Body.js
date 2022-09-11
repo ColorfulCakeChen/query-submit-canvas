@@ -16,8 +16,8 @@ class AsyncWorker_Body {
       = AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy.bind( this );
   }
 
-  /** @override */
-  disposeResources() {
+  /** Close this worker. */
+  async* disposeResources() {
 
 //!!! ...unfinished... (2022/09/08) also MessagePort.close().
 
@@ -26,8 +26,9 @@ class AsyncWorker_Body {
     //super.disposeResources();
   }
 
-  /** Handle message from AsyncWorker_Proxy.
-   * It will 
+  /**
+   * Handle message from AsyncWorker_Proxy.
+   *
    *
    * @param {AsyncWorker_Body} this
    *   The object which has the method function specified by e.data.command.

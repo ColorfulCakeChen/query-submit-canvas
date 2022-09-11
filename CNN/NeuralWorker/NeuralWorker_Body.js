@@ -24,13 +24,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /** @override */
-  disposeResources() {
+  async* disposeResources() {
     if ( this.neuralNet ) {
       this.neuralNet.disposeResources();
       this.neuralNet = null;
     }
 
-    super.disposeResources();
+    yield *super.disposeResources();
   }
 
   /**
