@@ -2,7 +2,7 @@ export { DEvolution_VersusSubmitter as VersusSubmitter };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-import { VersusId } from "../../util/DEvolution_VersusId.js";
+//import { VersusId } from "../../util/DEvolution_VersusId.js";
 
 /**
  * 
