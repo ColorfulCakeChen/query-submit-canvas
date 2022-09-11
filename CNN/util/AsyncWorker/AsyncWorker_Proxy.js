@@ -72,6 +72,36 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     super.disposeResources();
   }
 
+
+//!!! ...unfinished... (2022/09/11)
+// worker.js url? options?
+// called at setAsConstructor_self()?
+
+  /**
+   *
+   */
+  createWorker( workerId ) {
+    this.workerId = workerId;
+
+//!!! ...unfinished... (2022/08/24) Why not use "./NeuralWorker_Body.js"?
+// The import.meta.url should extract the path (exclude file name)
+
+    // Assume the main (i.e. body) javascript file of neural network web worker is
+    // a sibling file (i.e. inside the same folder) of this module file.
+    this.workerURL = new URL( "NeuralWorker_Body.js", import.meta.url );
+
+    // Should not use "module" type worker, otherwise the worker can not use
+    // importScripts() to load tensorflow.js library.
+    //
+    //this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
+    this.workerOptions = null;
+
+    let worker = this.worker = new Worker( this.workerURL, this.workerOptions );
+
+    // Register callback from the web worker.
+    worker.onmessage = NeuralWorker_Proxy.onmessage_from_AsyncWorker_Body.bind( this );
+  }
+
   /**
    * Dispatch messages come from the owned web worker. Please register this method
    * as this WorkerProxy's Worker.onmessage.
