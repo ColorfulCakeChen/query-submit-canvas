@@ -41,11 +41,21 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 //!!! ...unfinished... (2022/09/11)
 // should also mange processingId generating, worker creating,
 // onmessage registering.
-// provide postCommand() with/without processingId
+// provide postCommand() with/without processingId automatically.
 //
 
   /** @override */
   static setAsConstructor_self() {
+
+    // The current processing id. Negative means no command has been sent.
+    // Every postCommand_by_processingId() call will use a new id.
+    //
+    // Q: What if processingId become too large (e.g. infinity)?
+    // A: Because Number.MAX_SAFE_INTEGER is pretty large (at least, 2 ** 52 ),
+    //    it is not so easy to become out of bounds.
+    //
+    this.processingId_current = -1;
+
     if ( this.thePromiseResolveRejectMap )
       this.thePromiseResolveRejectMap.clear();
     else
@@ -55,6 +65,9 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   /** @override */
   disposeResources() {
     this.thePromiseResolveRejectMap.clear();
+
+    this.processingId_current = undefined;
+
     super.disposeResources();
   }
 
