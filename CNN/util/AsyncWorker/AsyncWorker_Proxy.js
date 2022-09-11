@@ -12,6 +12,10 @@ import { PromiseResolveRejectMap } from "./AsyncWorker_PromiseResolveReject.js";
  * @member {number} workerId  The array index of this worker proxy.
  * @member {Worker} worker    The worker.
  *
+ * @member {number} processingId_current
+ *   The current processing id. Negative means no command has been sent. Every
+ * postCommand_by_processingId() call will use a new id.
+ *
  * @member {PromiseResolveRejectMap} thePromiseResolveRejectMap
  *   Every worker has a result pending promise map. The key of the map is processing
  * id. The value of the map is a PromiseResolveReject.
@@ -47,9 +51,6 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   /** @override */
   static setAsConstructor_self() {
 
-    // The current processing id. Negative means no command has been sent.
-    // Every postCommand_by_processingId() call will use a new id.
-    //
     // Q: What if processingId become too large (e.g. infinity)?
     // A: Because Number.MAX_SAFE_INTEGER is pretty large (at least, 2 ** 52 ),
     //    it is not so easy to become out of bounds.
