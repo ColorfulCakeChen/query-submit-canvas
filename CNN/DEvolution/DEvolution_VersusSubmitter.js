@@ -4,13 +4,6 @@ import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import { VersusId } from "../../util/DEvolution_VersusId.js";
 
-//!!! ...unfinished... (2022/09/03)
-// For measurement protocol.
-// Perhaps,
-//   - trancactionId = `t${versusId}_${Date.now()}`
-//   - itemId = versusId
-//
-
 /**
  * 
  *
