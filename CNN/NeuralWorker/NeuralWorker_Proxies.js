@@ -104,14 +104,15 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.weightsAPIKey = weightsAPIKey;
     this.neuralNetParamsBase = neuralNetParamsBase;
 
-    // The current processing id. Negative means processTensor() has not been called.
-    // Every processTensor() call will use a new id.
-    //
-    // Q: What if processingId become too large (e.g. infinity)?
-    // A: Because Number.MAX_SAFE_INTEGER is pretty large (at least, 2 ** 52 ),
-    //    it is not so easy to become out of bounds.
-    //
-    this.processingId = -1;
+//!!! (2022/09/11 Remarked) Moved into AsyncWorker_Proxy.
+//     // The current processing id. Negative means processTensor() has not been called.
+//     // Every processTensor() call will use a new id.
+//     //
+//     // Q: What if processingId become too large (e.g. infinity)?
+//     // A: Because Number.MAX_SAFE_INTEGER is pretty large (at least, 2 ** 52 ),
+//     //    it is not so easy to become out of bounds.
+//     //
+//     this.processingId = -1;
 
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
 
