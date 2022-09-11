@@ -78,13 +78,6 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
     let url = `${DEvolution_VersusSubmitter.urlBase}?measurement_id=${
       this.measurement_id}&api_secret=${this.api_secret}`;
 
-//!!! ...unfinshed... (2022/09/04)
-// Whether should use transaction_id? 
-//
-// Perhaps, use refud event for versus lose.
-// Problem: refund even needs a purchase event before it.
-//
-
     // Every versus result viewed as purchasing an item.
     //   - itemName is versus id
     //   - quantity is -1 or 0 or +1 representing versus result.
@@ -101,27 +94,8 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
     //     error (because it is an integer).
     //
     let itemVersusResult = {
-
-//!!! ...unfinished... (2022/09/05) Perhaps, item_name instead of item_id
-// transaction_id?
-
-//!!! ...unfinished... (2022/09/07)
-// Perhaps, itemVariant (-1/0/+1) instead of itemsPurchased.
-
-//!!! ...unfinished... (2022/09/08)
-// Perhaps, quantity instead of price for nNegativeZeroPositive
-// (quantity seems possible negative value)
-
-//!!! ...unfinished... (2022/09/09)
-// It seems currency should be set (e.g. TWD). Otherwise, itemRevenue will be 0.
-
       item_name: versusIdString,
       quantity: nNegativeZeroPositive,
-
-//!!! (2022/09/10 Remarked) Use item_name and quantity instead.
-//       item_id: versusIdString,
-//       quantity: 1,
-//       price: nNegativeZeroPositive
     };
 
     let eventPurchase = {
