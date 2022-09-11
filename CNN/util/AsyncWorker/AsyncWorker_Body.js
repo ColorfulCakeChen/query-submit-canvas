@@ -1,9 +1,11 @@
 export { AsyncWorker_Body as Body };
 
 /**
- * The base class for web worker.
+ * The base class for web worker. It should be used in web worker context.
  *
- * It should be used in web worker context.
+ * Its methods (which could be called by AsyncWorker_Proxy) should all be
+ * async generator (so that they could be handled by onmessage_from_AsyncWorker_Proxy()
+ * automatically). The is the reason why its class name is called "Async".
  *
  */
 class AsyncWorker_Body {

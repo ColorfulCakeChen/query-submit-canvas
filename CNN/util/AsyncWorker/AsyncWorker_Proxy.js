@@ -38,6 +38,10 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     return this;
   }
 
+//!!! ...unfinished... (2022/09/11)
+// should also mange processingId generating, worker creating,
+// onmessage registering.
+
   /** @override */
   static setAsConstructor_self() {
     if ( this.thePromiseResolveRejectMap )
