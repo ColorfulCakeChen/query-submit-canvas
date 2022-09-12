@@ -10,14 +10,6 @@ import * as NeuralNet from "../Conv/NeuralNet.js";
  * Hold the worker and its related promise map. It is a wrapper of a neural network
  * web worker for handling and communicating easily.
  *
- * @member {number} workerId  The array index of this worker proxy.
- * @member {Worker} worker    The worker.
- *
-
-//!!! (2022/09/10 Remarked)
-//  * @member {Map}    processRelayPromisesMap
-//  *   The map for promise of the unhandled processing.
-
  */
 class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
@@ -51,11 +43,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 //!!! ...unfinished... (2022/09/08) also MessagePort.close().
 
       // Note: No processingId, because this command needs not return value.
-      {
-        let data = { command: "disposeResources" };
-        this.worker.postMessage( data );
-        this.worker = null;
-      }
+      this.postCommand( "disposeResources" );
+      this.worker = null;
     }
      
     this.workerOptions = undefined;
@@ -63,9 +52,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
     this.tensorflowJsURL = undefined;
     this.workerId = undefined;
-
-//!!! (2022/09/10 Remarked)
-//    this.processRelayPromisesMap.clear();
 
     super.disposeResources();
   }
@@ -82,12 +68,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   The URL of tensorflow javascript library. Every worker will load the library
    * from the URL.
    *
-   * @return {Promise}
-   *   Resolved to true, if success. Resolved to false, if failed.
+   * @return {PromiseResolveReject_Resulter}
+   *   An async generator tracking the result of this method.
    */
-  initer_async( processingId, workerId, tensorflowJsURL ) {
+  initWorker( workerId, tensorflowJsURL ) {
 
-    this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
 
 //!!! ...unfinished... (2022/08/24) Why not use "./NeuralWorker_Body.js"?
@@ -95,59 +80,22 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
     // Assume the main (i.e. body) javascript file of neural network web worker is
     // a sibling file (i.e. inside the same folder) of this module file.
-    this.workerURL = new URL( "NeuralWorker_Body.js", import.meta.url );
+    let workerURL = new URL( "NeuralWorker_Body.js", import.meta.url );
 
-    // Should not use "module" type worker, otherwise the worker can not use
-    // importScripts() to load tensorflow.js library.
-    //
-    //this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
-    this.workerOptions = null;
-
-    let worker = this.worker = new Worker( this.workerURL, this.workerOptions );
-
-    // Register callback from the web worker.
-    worker.onmessage = NeuralWorker_Proxy.onmessage_from_AsyncWorker_Body.bind( this );
-
-    // Worker Initialization message.
-    let data = {
-      processingId: processingId,
-      command: "initWorker_async",
-      args: {
+    this.createWorker( workerId, workerURL );
+    let resulter = this.postCommand_and_expectResult(
+      "initWorker",
+      {
         workerId: workerId,
         tensorflowJsURL: tensorflowJsURL,
       }
-    };
-    worker.postMessage( data );  // Inform the worker to initialize.
+    );
+
+    return resulter;
 
 //!!! ...unfinished... (2022/08/27)
 // Perhaps, use MessageChannel instead of window.onmessage().
 // Otherwise, original window.onmessage() will be replaced (i.e. destroyed) by our system.
-
-//!!! ...unfinished... (2022/09/09)
-// should await NeuralWorker_Body report init done.
-
-    return create_and_return_ProcessRelayPromises( processingId ).process.promise;
-
-
-//!!! ...unfinished... (2022/09/10)
-
-    return async function* ( processingId_done_value_Map, processingId ) {
-      let done_value = processingId_done_value_Map.get( processingId );
-      if ( done_value ) {
-        if ( done_value.done ) {
-          return done_value.value;
-        } else {
-          yield done_value.value;
-        }
-      } else {
-        yield undefined;
-      }
-    }
-
-//!!!    
-    // let processRelayPromises = new ProcessRelayPromises( processingId, this.workerId );
-    // this.processRelayPromisesMap.set( processingId, processRelayPromises );
-    // return processRelayPromises;
 
   }
 

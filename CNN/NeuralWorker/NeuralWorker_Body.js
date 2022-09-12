@@ -46,13 +46,12 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
    *   The configuration of the neural network to be created by web worker.
    */
-  async initWorker_async( { workerId = 0, tensorflowJsURL, neuralNetParamsBase } ) {
+  async* initWorker( { workerId = 0, tensorflowJsURL } ) {
     if ( workerId < 0 )
       workerId = 0;
 
     this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
-    this.neuralNetParamsBase = neuralNetParamsBase;
 
     // Load libraries dynamically in global scope.
     {
@@ -84,7 +83,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * @param {ArrayBuffer} weightArrayBuffer
    *   The neural network's weights. It will be interpreted as Float32Array.
    */
-  async neuralNet_create_async( { neuralNetParamsBase, weightArrayBuffer } ) {
+  async* neuralNet_create( { neuralNetParamsBase, weightArrayBuffer } ) {
 
     try {
       let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();

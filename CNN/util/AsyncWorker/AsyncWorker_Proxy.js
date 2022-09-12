@@ -74,15 +74,9 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   /**
    *
    */
-  createWorker( workerId ) {
+  createWorker( workerId, workerURL ) {
     this.workerId = workerId;
-
-//!!! ...unfinished... (2022/08/24) Why not use "./NeuralWorker_Body.js"?
-// The import.meta.url should extract the path (exclude file name)
-
-    // Assume the main (i.e. body) javascript file of neural network web worker is
-    // a sibling file (i.e. inside the same folder) of this module file.
-    this.workerURL = new URL( "NeuralWorker_Body.js", import.meta.url );
+    this.workerURL = workerURL;
 
     // Should not use "module" type worker, otherwise the worker can not use
     // importScripts() to load tensorflow.js library.
