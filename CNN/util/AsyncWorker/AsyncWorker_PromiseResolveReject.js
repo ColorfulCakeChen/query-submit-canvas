@@ -142,12 +142,12 @@ class processingId_PromiseResolveRejectArray_Map {
     if ( !thePromiseResolveRejectArray )
       return; // The pending promise does not exist.
 
-    if ( thePromiseResolveRejectArray.length <= 0 )
+    if ( thePromiseResolveRejectArray.array.length <= 0 )
       return; // The pending promise does not exist.
 
     // Always resolve the last promise. (Assume it is pending.)
-    let thePromiseResolveReject
-      = thePromiseResolveRejectArray[ thePromiseResolveRejectArray.length - 1 ];
+    let thePromiseResolveReject = thePromiseResolveRejectArray.array[
+      thePromiseResolveRejectArray.array.length - 1 ];
 
     // 1. Resolve the pending promise to the specified value.
     thePromiseResolveReject.resolve( value );
