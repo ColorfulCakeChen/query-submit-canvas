@@ -80,23 +80,29 @@ class processingId_PromiseResolveRejectArray_Map {
   }
 
   /**
-   * Create a new PromiseResolveReject. Append it to the processingId's result array.
+   * Create a new PromiseResolveRejectArray and Resulter. Record them in map by
+   * processingId as key.
    *
    * @param {number} processingId
    *   The numeric identifier for the processing.
    *
-   * @return {PromiseResolveReject}
-   *   Return the created PromiseResolveReject object.
+   * @return {AsyncGenerator}
+   *   Return the created Resulter() object.
    */
-  PromiseResolveReject_add_new_by_processingId( processingId ) {
+  resulter_create_by_processingId( processingId ) {
+    let resulter = processingId_PromiseResolveRejectArray_Map.Resulter( processingId );
+
+    thePromiseResolveRejectArray = new PromiseResolveRejectArray( resulter );
+    this.map.set( processingId, thePromiseResolveRejectArray );
+
+    thePromiseResolveRejectArray
+
     let thePromiseResolveRejectArray = this.map.get( processingId );
     if ( !thePromiseResolveRejectArray ) {
-      thePromiseResolveRejectArray = new Array();
-      this.map.set( processingId, thePromiseResolveRejectArray );
     }
 
     let thePromiseResolveReject = new PromiseResolveReject( processingId );
-    thePromiseResolveRejectArray.push( thePromiseResolveReject );
+    thePromiseResolveRejectArray.array.push( thePromiseResolveReject );
 
     return thePromiseResolveReject;
   }
@@ -198,31 +204,41 @@ class processingId_PromiseResolveRejectArray_Map {
    *       (i.e. { done: true, value: undefined } )
    *
    */
-  async *resulter( processingId ) {
-    let thePromiseResolveRejectArray = this.map.get( processingId );
-    if ( !thePromiseResolveRejectArray )
-      return; // No pending promise for the processing.
+  async *Resulter( processingId ) {
 
-    if ( thePromiseResolveRejectArray.length <= 0 ) {
-      // No more pending promise for the processing.
+    try {
+
+      let thePromiseResolveRejectArray = this.map.get( processingId );
+      if ( !thePromiseResolveRejectArray )
+        return; // No pending promise for the processing.
+
+      if ( thePromiseResolveRejectArray.length <= 0 ) {
+        // No more pending promise for the processing.
+        this.map.delete( processingId );
+        return;
+      }
+
+  //!!! ...unfinished... (2022/09/12)
+      // Always yield/return the first promise.
+      let thePromiseResolveReject = thePromiseResolveRejectArray[ 0 ];
+      if ( thePromiseResolveReject.bPending ) {
+
+      } else {
+
+      }
+
+      let thePromiseResolveReject = this.map.get( processingId );
+      if ( thePromiseResolveReject )
+        yield thePromiseResolveReject.promise;
+      else
+        return;
+
+    } finally {
+      // When this resulter return, it means all no more pending promise for the
+      // processing. So remove the PromiseResolveRejectArray of the processing.
       this.map.delete( processingId );
-      return;
     }
 
-//!!! ...unfinished... (2022/09/12)
-    // Always yield/return the first promise.
-    let thePromiseResolveReject = thePromiseResolveRejectArray[ 0 ];
-    if ( thePromiseResolveReject.bPending ) {
-
-    } else {
-
-    }
-
-    let thePromiseResolveReject = this.map.get( processingId );
-    if ( thePromiseResolveReject )
-      yield thePromiseResolveReject.promise;
-    else
-      return;
   }
 
 }
