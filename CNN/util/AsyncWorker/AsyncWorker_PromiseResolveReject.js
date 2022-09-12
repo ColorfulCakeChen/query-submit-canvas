@@ -262,6 +262,13 @@ class processingId_PromiseResolveRejectArray_Map {
         }
       }
 
+      // 3. In theory, never executed here. (i.e. thePromiseResolveRejectArray should
+      //    never be empty. It should has at least one promise for this resulter to
+      //    yield/return.)
+      throw Error( `processingId_PromiseResolveRejectArray_Map.Resulter(): `
+        + `PromiseResolveRejectArray should never be empty.`
+      );
+
     } finally {
       // When this resulter return, it means no more pending promise for the
       // processing. So remove the PromiseResolveRejectArray of the processing.
