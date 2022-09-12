@@ -275,14 +275,12 @@ class processingId_PromiseResolveRejectArray_Map {
 }
 
 /**
- * This async generator could be used as the processing method's result.
+ * An async generator. Its .next() returns a promise resolved to { done, value }
+ * which represents the WorkerBody's result of the processing.
  * 
  * This async generator is the consumer of the processingId's
  * PromiseResolveRejectArray.
  *
- * @return {AsyncGenerator}
- *   An async generator. Its .next() returns a promise resolved to { done, value }
- * which represents the WorkerBody's result.
  */
 class PromiseResolveReject_Resulter {
 
