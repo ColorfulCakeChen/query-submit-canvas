@@ -83,6 +83,8 @@ class processingId_PromiseResolveRejectArray_Map {
    * Create a new PromiseResolveRejectArray and Resulter. Record them in this map
    * by processingId as key.
    *
+   * This method is the initializer the processingId's PromiseResolveRejectArray.
+   *
    * @param {number} processingId
    *   The numeric identifier for the processing.
    *
@@ -130,7 +132,10 @@ class processingId_PromiseResolveRejectArray_Map {
    *   - if ( done == true ), remove the PromiseResolveReject of processingId from
    *       this map because the processing will have no more result coming from
    *       web worker in the future.
-   * 
+   *
+   *
+   * This method is the producer the processingId's PromiseResolveRejectArray.
+   *
    */
   resolve_by_processingId_done_value( processingId, done, value ) {
     let thePromiseResolveRejectArray = this.map.get( processingId );
@@ -186,6 +191,9 @@ class processingId_PromiseResolveRejectArray_Map {
 
   /**
    * This async generator could be used as the processing method's result.
+   * 
+   * This async generator is the consumer of the processingId's
+   * PromiseResolveRejectArray.
    *
    * @return {AsyncGenerator}
    *   An async generator. Its .next() returns a promise resolved to { done, value }.
@@ -230,7 +238,7 @@ class processingId_PromiseResolveRejectArray_Map {
       }
 
     } finally {
-      // When this resulter return, it means all no more pending promise for the
+      // When this resulter return, it means no more pending promise for the
       // processing. So remove the PromiseResolveRejectArray of the processing.
       this.map.delete( processingId );
     }
