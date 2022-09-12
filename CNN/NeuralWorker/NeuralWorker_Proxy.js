@@ -64,10 +64,10 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   The URL of tensorflow javascript library. Every worker will load the library
    * from the URL.
    *
-   * @return {PromiseResolveReject_Resulter}
-   *   An async generator tracking the result of this method. Its final promise:
-   *   - Resolved to { done: true, value: true }, if success.
-   *   - Resolved to { done: true, value: false }, if failed.
+   * @return {Promise}
+   *   Return a promise:
+   *   - Resolved to true, if success.
+   *   - Resolved to false, if failed.
    */
   initWorker( workerId, tensorflowJsURL ) {
 
@@ -88,10 +88,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
         tensorflowJsURL: tensorflowJsURL,
       }
     );
-    return resulter;
 
-//!!! ...unfinished... (2022/09/12)
-// could become a async method and automatically .next() until done.
+//!!! (2022/09/12 Remarked) become a async method and automatically .next() until done.
+//    return resulter;
+
+    return resulter.donePromise();
 
 
 //!!! ...unfinished... (2022/08/27)
