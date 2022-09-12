@@ -327,7 +327,6 @@ class PromiseResolveReject_Resulter {
     // 1.2 Otherwise, the promise has been fulfilled. remove it so that it will not
     //     be yielded again in the future.
     } else {
-
       thePromiseResolveRejectArray.shift();
 
       // 2. Handle final promise.
