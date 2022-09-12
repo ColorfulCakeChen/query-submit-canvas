@@ -9,8 +9,11 @@ import { processingId_Resulter_Map } from "./AsyncWorker_PromiseResolveReject.js
  * Hold the worker and its related promise map. It is a wrapper of a neural network
  * web worker for handling and communicating easily.
  *
- * @member {number} workerId  The array index of this worker proxy.
- * @member {Worker} worker    The worker.
+ * @member {string} workerURL
+ *   The worker's source codes URL.
+ *
+ * @member {Worker} worker
+ *   The worker.
  *
  * @member {number} processingId_next
  *   The next processing id. Zero means no command has been sent. Every
@@ -30,20 +33,20 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     AsyncWorker_Proxy, AsyncWorker_Proxy.setAsConstructor );
 
   /** */
-  constructor() {
+  constructor( workerURL ) {
     super();
-    AsyncWorker_Proxy.setAsConstructor_self.call( this );
+    AsyncWorker_Proxy.setAsConstructor_self.call( this, workerURL );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    AsyncWorker_Proxy.setAsConstructor_self.call( this );
+    AsyncWorker_Proxy.setAsConstructor_self.call( this, workerURL );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self() {
+  static setAsConstructor_self( workerURL ) {
 
     // Q: What if processingId become too large (e.g. infinity)?
     // A: Because Number.MAX_SAFE_INTEGER is pretty large (at least, 2 ** 52 ),
@@ -55,13 +58,21 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       this.the_processingId_Resulter_Map.clear();
     else
       this.the_processingId_Resulter_Map = new processingId_Resulter_Map();
+
+    AsyncWorker_Proxy.createWorker.call( this, workerURL );
   }
 
   /** @override */
   disposeResources() {
+
+    if ( this.worker ) {
+      // Note: No processingId, because this command needs not return value.
+      this.postCommand( "disposeResources" );
+      this.worker = null;
+    }
+
     this.workerOptions = undefined;
     this.workerURL = workerURL;
-    this.workerId = workerURL;
 
     this.the_processingId_Resulter_Map.clear();
 
@@ -70,16 +81,11 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     super.disposeResources();
   }
 
-
-//!!! ...unfinished... (2022/09/11)
-// worker.js url? options?
-// called at setAsConstructor_self()?
-
   /**
-   *
+   * @param {AsyncWorker_Proxy} this
+   *   The worker proxy.
    */
-  createWorker( workerId, workerURL ) {
-    this.workerId = workerId;
+  static createWorker( workerURL ) {
     this.workerURL = workerURL;
 
     // Should not use "module" type worker, otherwise the worker can not use
@@ -155,15 +161,6 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    *   The "this" should be binded to this AsyncWorker_Proxy object.
    */
   static onmessage_from_AsyncWorker_Body( e ) {
-
-//!!! (2022/09/10 Remarked) no workerId
-//     // e.data == { processingId, workerId, result }
-//     let processingId = e.data.processingId;
-//     let workerId = e.data.workerId;
-//     let result = e.data.result;
-//
-//     if ( workerId != this.workerId )
-//       return; // Ignore if wrong worker id.
 
     // ( e.data == { processingId, done, value } )
     let { processingId, done, value } = e.data;

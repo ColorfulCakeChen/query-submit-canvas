@@ -20,13 +20,13 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
 
   /** */
   constructor() {
-    super();
+    super( AsyncWorker_Proxy_tester.workerURL );
     AsyncWorker_Proxy_tester.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
-    super.setAsConstructor();
+    super.setAsConstructor( AsyncWorker_Proxy_tester.workerURL );
     AsyncWorker_Proxy_tester.setAsConstructor_self.call( this );
     return this;
   }
@@ -37,13 +37,6 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
 
   /** @override */
   disposeResources() {
-
-    if ( this.worker ) {
-      // Note: No processingId, because this command needs not return value.
-      this.postCommand( "disposeResources" );
-      this.worker = null;
-    }
-
     super.disposeResources();
   }
 
@@ -56,15 +49,6 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
    *   - Resolved to false, if failed.
    */
   initWorker( workerId ) {
-
-//!!! ...unfinished... (2022/08/24) Why not use "./AsyncWorker_Body.js"?
-// The import.meta.url should extract the path (exclude file name)
-
-    // Assume the main (i.e. body) javascript file of neural network web worker is
-    // a sibling file (i.e. inside the same folder) of this module file.
-    let workerURL = new URL( "AsyncWorker_Body_tester.js", import.meta.url );
-
-    this.createWorker( workerId, workerURL );
     let resulter = this.postCommand_and_expectResult(
       "initWorker",
       {
@@ -125,3 +109,12 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
   }
 
 }
+
+
+//!!! ...unfinished... (2022/08/24) Why not use "./AsyncWorker_Body.js"?
+// The import.meta.url should extract the path (exclude file name)
+
+// Assume the main (i.e. body) javascript file of neural network web worker is
+// a sibling file (i.e. inside the same folder) of this module file.
+AsyncWorker_Proxy_tester.workerURL
+  = new URL( "AsyncWorker_Body_tester.js", import.meta.url );
