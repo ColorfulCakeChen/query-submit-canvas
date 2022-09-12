@@ -224,37 +224,35 @@ class processingId_PromiseResolveRejectArray_Map {
    *
    */
   async *Resulter( processingId ) {
-
     try {
 
       let thePromiseResolveRejectArray = this.map.get( processingId );
       if ( !thePromiseResolveRejectArray )
-        return; // No pending promise for the processing.
+        return; // No pending promise for the processing. (should not happen)
 
-      if ( thePromiseResolveRejectArray.length <= 0 ) {
-        return; // No more pending promise for the processing.
-      }
-
-//!!! ...unfinished... (2022/09/12)
-      while ( ??? ) {
+      while ( thePromiseResolveRejectArray.length >= 1 ) {
 
         // Always yield the first promise.
         let thePromiseResolveReject = thePromiseResolveRejectArray[ 0 ];
 
-        // If the promise has been fulfilled, remove it so that it will not be
-        // yielded again in the future.
+        // 1. Advance to next promise.
+
+        // 1.1 If the promise has been fulfilled, remove it so that it will not be
+        //     yielded again in the future.
         if ( !thePromiseResolveReject.pending ) {
           thePromiseResolveRejectArray.shift();
 
-        // Otherwise, the first pending promise will be yielded again and again
-        // (until it has been fulfilled).
+        // 1.2 Otherwise, the first pending promise will be yielded again and again
+        //     (until it has been fulfilled).
         }
 
-        // If this is the final promise, return it (and end this resulter).
+        // 2. Yield or return the promise.
+
+        // 2.1 If this is the final promise, return it (and end this resulter).
         if ( thePromiseResolveReject.done ) {
           return thePromiseResolveReject.promise;
 
-        // Otherwise, yield the promise.
+        // 2.2 Otherwise, yield the promise.
         //
         // Note: If this yielded pending promise become done in the later, the
         //       resolve_by_processingId_done_value() will focibly terminate
