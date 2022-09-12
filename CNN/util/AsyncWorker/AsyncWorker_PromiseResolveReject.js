@@ -8,24 +8,42 @@ export { processingId_PromiseResolveRejectArray_Map };
  * Hold a processing's id, promise, resolve (fulfilling function object), reject
  * (rejecting function object).
  *
- * @member {number}   processingId The id of the processing.
- * @member {Promise}  promise      The pending promise for the processing.
+ * @member {number} processingId
+ *   The id of the processing.
  *
- * @member {function} resolve
- *   The fulfilling function object of the pending promise for the processing.
+ * @member {boolean} bPending
+ *   If true, the promise is still pending. If false, the promise is fulfilled.
+ * 
+ * @member {Promise} promise
+ *   The pending promise for the processing.
  *
- * @member {function} reject
- *   The rejecting function object of the pending promise for the processing.
  */
  class PromiseResolveReject {
 
   constructor( processingId ) {
     this.processingId = processingId;
+    this.bPending = true;
 
     this.promise = new Promise( ( resolve, reject ) => {
-      this.resolve = resolve;
-      this.reject = reject;
+      this.resolve_internal = resolve;
+      this.reject_internal = reject;
     });
+  }
+
+  /** Resolve the pending promise for the processing. */
+  resolve( value ) {
+    if ( !this.bPending )
+      return; // A fulfilled promise can not be changed again.
+    this.resolve_internal( value );
+    this.bPending = fasle;
+  }
+
+  /** Reject the pending promise for the processing. */
+  reject( value ) {
+    if ( !this.bPending )
+      return; // A fulfilled promise can not be changed again.
+    this.reject_internal( value );
+    this.bPending = fasle;
   }
 
 }
@@ -154,6 +172,21 @@ class processingId_PromiseResolveRejectArray_Map {
    *
    */
   async *resulter( processingId ) {
+    let thePromiseResolveRejectArray = this.map.get( processingId );
+    if ( !thePromiseResolveRejectArray )
+      return; // No pending promise for the processing.
+
+    if ( thePromiseResolveRejectArray.length <= 0 ) {
+      // No more pending promise for the processing.
+      this.map.delete( processingId );
+      return;
+    }
+
+//!!! ...unfinished... (2022/09/12)
+    // Always resolve the last promise. (Assume it is pending.)
+    let thePromiseResolveReject
+      = thePromiseResolveRejectArray[ 0 ];
+
     let thePromiseResolveReject = this.map.get( processingId );
     if ( thePromiseResolveReject )
       yield thePromiseResolveReject.promise;
