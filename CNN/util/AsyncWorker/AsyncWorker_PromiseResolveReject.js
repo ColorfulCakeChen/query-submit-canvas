@@ -68,11 +68,11 @@ export { PromiseResolveReject_Resulter };
 /**
  *
  *
- * @member {PromiseResolveReject[]} array
- *   All promises for resulter to yield/return.
- *
  * @member {AsyncGenerator} resulter
  *   The result sync generator for passing result of WorkerBody to WorkerProxy's caller.
+ *
+ * @member {PromiseResolveReject[]} array
+ *   All promises for resulter to yield/return.
  */
 class PromiseResolveRejectArray {
 
@@ -83,7 +83,6 @@ class PromiseResolveRejectArray {
   }
 
 }
-
 
 /**
  * A collection PromiseResolveReject[] by processingId as key.
@@ -105,10 +104,11 @@ class processingId_PromiseResolveRejectArray_Map {
    *   The numeric identifier for the processing.
    *
    * @return {AsyncGenerator}
-   *   Return the created Resulter() object.
+   *   Return the created PromiseResolveReject_Resulter() object.
    */
   resulter_PromiseResolveRejectArray_create_by_processingId( processingId ) {
-    let resulter = processingId_PromiseResolveRejectArray_Map.Resulter( processingId );
+    let resulter = new PromiseResolveReject_Resulter(
+      processingId, processingId_PromiseResolveRejectArray_Map );
 
     thePromiseResolveRejectArray = new PromiseResolveRejectArray( resulter );
     this.map.set( processingId, thePromiseResolveRejectArray );
@@ -295,9 +295,6 @@ class PromiseResolveReject_Resulter {
       = processingId_PromiseResolveRejectArray_Map;
   }
 
-//!!! ...unfinished... (2022/09/12)
-// yield PromiseResolveReject directly.
-
   /**
    * @return {Promise}
    *   Return a promise resolved to { done, value } which represents the WorkerBody's
@@ -311,7 +308,7 @@ class PromiseResolveReject_Resulter {
     // PromiseResolveRejectArray should never be empty. It should has at least
     // one promise for this resulter to yield/return.
     //
-    if ( thePromiseResolveRejectArray.length < 1 ) {
+    if ( thePromiseResolveRejectArray.length < 1 )
       throw Error( `PromiseResolveReject.Resulter(): `
         + `processingId=${processingId}. `
         + `PromiseResolveRejectArray should never be empty.`
