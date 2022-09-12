@@ -319,22 +319,25 @@ class PromiseResolveReject_Resulter {
 
     // 1. Prepare the next promise.
 
-    // 1.1 If the promise has been fulfilled, remove it so that it will not be
-    //     yielded again in the future.
-    if ( !thePromiseResolveReject.pending ) {
+    // 1.1 The first pending promise will be yielded again and again
+    //     (until it has been fulfilled and handled by here).
+    if ( thePromiseResolveReject.pending ) {
+      // Do nothing.
+
+    // 1.2 Otherwise, the promise has been fulfilled. remove it so that it will not
+    //     be yielded again in the future.
+    } else {
+
       thePromiseResolveRejectArray.shift();
 
-    // 1.2 Otherwise, the first pending promise will be yielded again and again
-    //     (until it has been fulfilled and handled by here).
-    }
-
-    // 2. Handle final promise.
-    //
-    // If the promise is done (so it is also not pending), it means no more result
-    // will be received from the WorkerBody. So remove the entire result queue
-    // (i.e. PromiseResolveRejectArray) of the processing.
-    if ( thePromiseResolveReject.done ) {
-      this.map.delete( this.processingId );
+      // 2. Handle final promise.
+      //
+      // If the promise is done (so it is also not pending), it means no more result
+      // will be received from the WorkerBody. So remove the entire result queue
+      // (i.e. PromiseResolveRejectArray) of the processing.
+      if ( thePromiseResolveReject.done ) {
+        this.map.delete( this.processingId );
+      }
     }
 
     // 3. Yield/Return the promise which will resolve to { done, value }.
