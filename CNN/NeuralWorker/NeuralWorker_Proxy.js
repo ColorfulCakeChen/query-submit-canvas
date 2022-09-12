@@ -47,11 +47,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
       this.worker = null;
     }
      
-    this.workerOptions = undefined;
-    this.workerURL = undefined;
-
     this.tensorflowJsURL = undefined;
-    this.workerId = undefined;
 
     super.disposeResources();
   }

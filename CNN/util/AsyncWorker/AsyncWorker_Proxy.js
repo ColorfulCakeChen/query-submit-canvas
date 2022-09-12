@@ -59,6 +59,10 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.workerOptions = undefined;
+    this.workerURL = workerURL;
+    this.workerId = workerURL;
+
     this.the_processingId_Resulter_Map.clear();
 
     this.processingId_next = undefined;
