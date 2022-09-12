@@ -275,11 +275,7 @@ class processingId_PromiseResolveRejectArray_Map {
 }
 
 /**
- * An async generator. Its .next() returns a promise resolved to { done, value }
- * which represents the WorkerBody's result of the processing.
- * 
- * This async generator is the consumer of the processingId's
- * PromiseResolveRejectArray.
+ * An async generator as the consumer of the processingId's PromiseResolveRejectArray.
  *
  */
 class PromiseResolveReject_Resulter {
@@ -294,7 +290,11 @@ class PromiseResolveReject_Resulter {
 //!!! ...unfinished... (2022/09/12)
 // yield PromiseResolveReject directly.
 
-  /** */
+  /**
+   * @return {Promise}
+   *   Return a promise resolved to { done, value } which represents the WorkerBody's
+   * result of the processing.
+   */
   next() {
     let thePromiseResolveRejectArray = this.map.get( processingId );
     if ( !thePromiseResolveRejectArray )
