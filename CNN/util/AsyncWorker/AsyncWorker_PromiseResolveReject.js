@@ -323,10 +323,11 @@ class PromiseResolveReject_Resulter {
           thePromiseResolveRejectArray.shift();
 
         // 1.2 Otherwise, the first pending promise will be yielded again and again
-        //     (until it has been fulfilled or be forcibly returned by outter).
+        //     (until it has been fulfilled and handled by here).
         }
 
-//!!!
+        // 2. Handle final promise.
+        //
         // If the promise is done (so it is also not pending), it means no more result
         // will be received from the WorkerBody. So remove the entire result queue
         // (i.e. PromiseResolveRejectArray) of the processing.
@@ -334,9 +335,7 @@ class PromiseResolveReject_Resulter {
           this.map.delete( this.processingId );
         }
 
-        // 2. Yield/Return the promise which will resolve to { done, value }.
-
-
+        // 3. Yield/Return the promise which will resolve to { done, value }.
         return thePromiseResolveReject.promiseToYieldReturn;
       }
 
