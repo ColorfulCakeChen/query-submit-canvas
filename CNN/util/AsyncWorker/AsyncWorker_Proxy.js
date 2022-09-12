@@ -42,12 +42,6 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     return this;
   }
 
-//!!! ...unfinished... (2022/09/11)
-// should also mange processingId generating, worker creating,
-// onmessage registering.
-// provide postCommand() with/without processingId automatically.
-//
-
   /** @override */
   static setAsConstructor_self() {
 
