@@ -21,6 +21,10 @@ export { PromiseResolveReject_Resulter };
  * @member {boolean} done
  *   If true, the promise is the final promise of the processing.
  *
+ * @member {Promise} promiseToYieldReturn
+ *   The promise used as the yield/return of the processing's async generator
+ * PromiseResolveReject_Resulter.
+ * 
  */
  class PromiseResolveReject {
 
@@ -35,6 +39,10 @@ export { PromiseResolveReject_Resulter };
 
     this.pending = true;
     this.done = false;
+
+    this.promiseToYieldReturn = this.promise.then( value => {
+      return { done: this.done, value: value };
+    } );
   }
 
   /** Resolve the pending promise for the processing. */
@@ -317,6 +325,16 @@ class PromiseResolveReject_Resulter {
         // 1.2 Otherwise, the first pending promise will be yielded again and again
         //     (until it has been fulfilled or be forcibly returned by outter).
         }
+
+//!!!
+        // 2. Yield or return the promise.
+        let promiseToYieldReturn = thePromiseResolveReject.promise.then( value => {
+          return {
+            done: thePromiseResolveReject.done,
+            value: value
+          }
+        } );
+        return promiseToYieldReturn;
 
         // 2. Yield or return the promise.
 
