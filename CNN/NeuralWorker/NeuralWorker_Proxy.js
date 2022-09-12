@@ -69,7 +69,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * from the URL.
    *
    * @return {PromiseResolveReject_Resulter}
-   *   An async generator tracking the result of this method.
+   *   An async generator tracking the result of this method. Its final promise:
+   *   - Resolved to { done: true, value: true }, if success.
+   *   - Resolved to { done: true, value: false }, if failed.
    */
   initWorker( workerId, tensorflowJsURL ) {
 
@@ -90,7 +92,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
         tensorflowJsURL: tensorflowJsURL,
       }
     );
-
     return resulter;
 
 //!!! ...unfinished... (2022/08/27)
@@ -106,39 +107,39 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * @param {ArrayBuffer} weightArrayBuffer
    *   The neural network's weights. It will be interpreted as Float32Array.
    *
-   * @return {Promise}
-   *   Resolved to true, if success. Resolved to false, if failed.
+   * @return {PromiseResolveReject_Resulter}
+   *   An async generator tracking the result of this method. Its final promise:
+   *   - Resolved to { done: true, value: true }, if success.
+   *   - Resolved to { done: true, value: false }, if failed.
    */
-  neuralNet_create_async( processingId, neuralNetParamsBase, weightArrayBuffer ) {
-    let data = {
-      processingId: processingId,
-      command: "neuralNet_create_async",
-      args: {
+  neuralNet_create( processingId, neuralNetParamsBase, weightArrayBuffer ) {
+    let resulter = this.postCommand_and_expectResult(
+      "neuralNet_create",
+      {
         neuralNetParamsBase: neuralNetParamsBase,
         weightArrayBuffer: weightArrayBuffer,
-      }
-    };
-    this.worker.postMessage( data, [ weightArrayBuffer ] );
-    return create_and_return_ProcessRelayPromises( processingId ).process.promise;
+      },
+      [ weightArrayBuffer ]
+    );
+    return resulter;
   }
 
   /**
    * @param {number} markValue
    *   A value representing which alignment this neural network plays currently.
    *
-   * @return {Promise}
-   *   Resolved to markValue, if success.
+   * @return {PromiseResolveReject_Resulter}
+   *   An async generator tracking the result of this method. Its final promise:
+   *   - Resolved to { done: true, value: markValue }, if success.
    */
   alignmentMark_setValue_async( processingId, markValue ) {
-    let data = {
-      processingId: processingId,
-      command: "alignmentMark_setValue",
-      args: {
+    let resulter = this.postCommand_and_expectResult(
+      "alignmentMark_setValue",
+      {
         markValue: markValue,
       }
-    };
-    worker.postMessage( data );
-    return create_and_return_ProcessRelayPromises( processingId ).process.promise;
+    );
+    return resulter;
   }
 
 

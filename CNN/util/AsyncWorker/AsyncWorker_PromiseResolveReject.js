@@ -80,6 +80,11 @@ export { processingId_Resulter_Map };
   }
 
   /**
+   * Note: This .next() should be called until promise resolved to { done: true }.
+   *       Otherwise, this resulter will not be removed from
+   *       processingId_PromiseResolveRejectArray_Map. This will result in memory
+   *       not been released.
+   *
    * @return {Promise}
    *   Return a promise resolved to { done, value } which represents the WorkerBody's
    * result of the processing.
