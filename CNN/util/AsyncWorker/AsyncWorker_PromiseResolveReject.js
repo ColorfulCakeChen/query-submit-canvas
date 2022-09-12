@@ -304,7 +304,7 @@ class PromiseResolveReject_Resulter {
    * result of the processing.
    */
   next() {
-    let thePromiseResolveRejectArray = this.map.get( processingId );
+    let thePromiseResolveRejectArray = this.map.get( this.processingId );
     if ( !thePromiseResolveRejectArray )
       return; // No pending promise for the processing. (should not happen)
 
@@ -327,29 +327,17 @@ class PromiseResolveReject_Resulter {
         }
 
 //!!!
-        // 2. Yield or return the promise.
-        let promiseToYieldReturn = thePromiseResolveReject.promise.then( value => {
-          return {
-            done: thePromiseResolveReject.done,
-            value: value
-          }
-        } );
-        return promiseToYieldReturn;
-
-        // 2. Yield or return the promise.
-
-        // 2.1 If this is the final promise, return it (and end this resulter).
+        // If the promise is done (so it is also not pending), it means no more result
+        // will be received from the WorkerBody. So remove the entire result queue
+        // (i.e. PromiseResolveRejectArray) of the processing.
         if ( thePromiseResolveReject.done ) {
-          return thePromiseResolveReject.promise;
-
-        // 2.2 Otherwise, yield the promise.
-        //
-        // Note: If this yielded pending promise become done in the later, the
-        //       resolve_by_processingId_done_value() will focibly terminate
-        //       this resulter by calling resulter.return().
-        } else {
-          yield thePromiseResolveReject.promise;
+          this.map.delete( this.processingId );
         }
+
+        // 2. Yield/Return the promise which will resolve to { done, value }.
+
+
+        return thePromiseResolveReject.promiseToYieldReturn;
       }
 
       // 3. In theory, never executed here. (i.e. thePromiseResolveRejectArray should
