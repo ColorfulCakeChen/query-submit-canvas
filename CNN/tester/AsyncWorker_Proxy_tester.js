@@ -55,7 +55,7 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
    *   - Resolved to true, if success.
    *   - Resolved to false, if failed.
    */
-  async initWorker( workerId ) {
+  initWorker( workerId ) {
 
 //!!! ...unfinished... (2022/08/24) Why not use "./AsyncWorker_Body.js"?
 // The import.meta.url should extract the path (exclude file name)
