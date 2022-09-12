@@ -266,6 +266,7 @@ class processingId_PromiseResolveRejectArray_Map {
       //    never be empty. It should has at least one promise for this resulter to
       //    yield/return.)
       throw Error( `processingId_PromiseResolveRejectArray_Map.Resulter(): `
+        + `processingId=${processingId}. `
         + `PromiseResolveRejectArray should never be empty.`
       );
 
