@@ -268,7 +268,6 @@ class processingId_PromiseResolveRejectArray_Map {
       // PromiseResolveRejectArray of the processing.
       this.map.delete( processingId );
     }
-
   }
 
 }
