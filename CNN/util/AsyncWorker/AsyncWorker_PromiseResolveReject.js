@@ -144,8 +144,8 @@ class processingId_Resulter_Map {
   }
 
   /**
-   * Create a new PromiseResolveRejectArray and Resulter. Record them in this map
-   * by processingId as key.
+   * Create a new processingId_Resulter_Map. Record it in this map by processingId
+   * as key.
    *
    * This method is the initializer the processingId's PromiseResolveRejectArray.
    *
@@ -187,29 +187,49 @@ class processingId_Resulter_Map {
    *
    */
   resolve_by_processingId_done_value( processingId, done, value ) {
-    let thePromiseResolveRejectArray = this.map.get( processingId );
-    if ( !thePromiseResolveRejectArray )
-      return; // The pending promise does not exist.
+    let resulter = this.map.get( processingId );
+    if ( !resulter )
+      throw Error( `processingId_Resulter_Map.resolve_by_processingId_done_value(): `
+        + `processingId=${processingId}. `
+        + `The resulter does not exist.`
+      );
 
-    if ( thePromiseResolveRejectArray.array.length <= 0 )
-      return; // The pending promise does not exist.
+    if ( resulter.PromiseResolveRejectArray.length <= 0 )
+      throw Error( `processingId_Resulter_Map.resolve_by_processingId_done_value(): `
+        + `processingId=${processingId}. `
+        + `The resulter.PromiseResolveRejectArray should not be empty.`
+      );
 
     // Always resolve the last promise. (Assume it is pending.)
-    let thePromiseResolveReject = thePromiseResolveRejectArray.array[
-      thePromiseResolveRejectArray.array.length - 1 ];
+    let lastArrayIndex = thePromiseResolveRejectArray.array.length - 1;
+    let currentPromiseResolveReject = resulter.PromiseResolveRejectArray[ lastArrayIndex ];
 
-    // 1. Resolve the pending promise to the specified value.
-    thePromiseResolveReject.resolve( value );
+    if ( !currentPromiseResolveReject.pending )
+      throw Error( `processingId_Resulter_Map.resolve_by_processingId_done_value(): `
+        + `processingId=${processingId}, lastArrayIndex=${lastArrayIndex}. `
+        + `The last element of PromiseResolveRejectArray should be pending.`
+      );
 
-    // 2. Prepare new pending promise.
-    let thePromiseResolveRejectNext = new PromiseResolveReject( processingId );
-    thePromiseResolveRejectNext.done = done;
+    // 1. Prepare next pending promise.
 
-    // 2.1 The web worker says the processing is not yet completed, create a new
+    // 1.1 Since web worker says the processing is done, do not create any more
+    //     pending promise because the processing will have no more result coming
+    //     from web worker in the future.
+    if ( done ) {
+      // Do nothing.
+
+    // 1.2 The web worker says the processing is not yet completed, create a new
     //     pending promise for the same processing for waiting future result from
     //     web worker.
-    if ( !done ) {
-      thePromiseResolveRejectArray.push( thePromiseResolveRejectNext );
+    } else {
+      let nextPromiseResolveReject = new PromiseResolveReject( processingId );
+      resulter.PromiseResolveRejectArray.push( nextPromiseResolveReject );
+    }
+
+    // 2. Resolve the current pending promise to the specified value.
+    currentPromiseResolveReject.done_value_resolve( done, value );
+
+
 
     // 2.2 Since web worker says the processing is done, do not create any more
     //     pending promise because the processing will have no more result coming
