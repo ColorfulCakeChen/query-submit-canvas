@@ -235,7 +235,7 @@ class processingId_PromiseResolveRejectArray_Map {
         // Always yield the first promise.
         let thePromiseResolveReject = thePromiseResolveRejectArray[ 0 ];
 
-        // 1. Advance to next promise.
+        // 1. Prepare the next promise.
 
         // 1.1 If the promise has been fulfilled, remove it so that it will not be
         //     yielded again in the future.
