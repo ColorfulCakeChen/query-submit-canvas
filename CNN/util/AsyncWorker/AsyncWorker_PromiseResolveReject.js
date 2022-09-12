@@ -243,14 +243,25 @@ class processingId_PromiseResolveRejectArray_Map {
 
         // If the promise has been fulfilled, remove it so that it will not be
         // yielded again in the future.
-        if ( !thePromiseResolveReject.bPending ) {
+        if ( !thePromiseResolveReject.pending ) {
           thePromiseResolveRejectArray.shift();
 
         // Otherwise, the first pending promise will be yielded again and again
         // (until it has been fulfilled).
         }
 
-        yield thePromiseResolveReject.promise;
+        // If this is the final promise, return it (and end this resulter).
+        if ( thePromiseResolveReject.done ) {
+          return thePromiseResolveReject.promise;
+
+        // Otherwise, yield the promise.
+        //
+        // Note: If this yielded pending promise become done in the later, the
+        //       resolve_by_processingId_done_value() will focibly terminate
+        //       this resulter by calling resulter.return().
+        } else {
+          yield thePromiseResolveReject.promise;
+        }
       }
 
     } finally {
