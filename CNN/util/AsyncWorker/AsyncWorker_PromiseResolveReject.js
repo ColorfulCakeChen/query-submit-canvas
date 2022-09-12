@@ -243,7 +243,7 @@ class processingId_PromiseResolveRejectArray_Map {
           thePromiseResolveRejectArray.shift();
 
         // 1.2 Otherwise, the first pending promise will be yielded again and again
-        //     (until it has been fulfilled).
+        //     (until it has been fulfilled or be forcibly returned by outter).
         }
 
         // 2. Yield or return the promise.
