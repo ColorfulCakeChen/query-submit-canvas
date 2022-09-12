@@ -142,7 +142,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     return resulter;
   }
 
-
+//!!! ...unfinished... (2022/09/12)
   /**
    * @param {number} processingId
    *   The processing id for distinguishing different processing request and result.
