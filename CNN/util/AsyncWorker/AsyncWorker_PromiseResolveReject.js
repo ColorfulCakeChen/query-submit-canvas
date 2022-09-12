@@ -137,6 +137,12 @@ class processingId_PromiseResolveRejectArray_Map {
     // 2.2 Since web worker says the processing is done, do not create any more
     //     pending promise because the processing will have no more result coming
     //     from web worker in the future.
+    } else {
+
+//!!! ...unfinished... (2022/09/12)
+// Perhaps, should call AsyncGenerator.return() to end the result?
+// Problem: What if the resulter still has some promise not yet yield?
+
     }
 
 //!!! (2022/09/12 Remarked) Old Codes. The delete should be done by resulter.
