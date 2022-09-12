@@ -324,7 +324,7 @@ class PromiseResolveReject_Resulter {
     if ( thePromiseResolveReject.pending ) {
       // Do nothing.
 
-    // 1.2 Otherwise, the promise has been fulfilled. remove it so that it will not
+    // 1.2 Otherwise, the promise has been fulfilled. Remove it so that it will not
     //     be yielded again in the future.
     } else {
       thePromiseResolveRejectArray.shift();
