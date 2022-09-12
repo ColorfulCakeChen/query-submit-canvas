@@ -183,9 +183,13 @@ class processingId_PromiseResolveRejectArray_Map {
     }
 
 //!!! ...unfinished... (2022/09/12)
-    // Always resolve the last promise. (Assume it is pending.)
-    let thePromiseResolveReject
-      = thePromiseResolveRejectArray[ 0 ];
+    // Always yield/return the first promise.
+    let thePromiseResolveReject = thePromiseResolveRejectArray[ 0 ];
+    if ( thePromiseResolveReject.bPending ) {
+
+    } else {
+
+    }
 
     let thePromiseResolveReject = this.map.get( processingId );
     if ( thePromiseResolveReject )
