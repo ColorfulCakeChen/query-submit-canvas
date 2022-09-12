@@ -75,7 +75,7 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
 //!!! (2022/09/12 Remarked) become a async method and automatically .next() until done.
 //    return resulter;
 
-    return resulter.donePromise();
+    return resulter.untilDone();
   }
 
 

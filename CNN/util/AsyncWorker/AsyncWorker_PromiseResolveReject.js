@@ -157,7 +157,7 @@ export { processingId_Resulter_Map };
    *   Return a promise resolved to the final value (i.e. the Xxx of the
    * { done: true, value: Xxx }) of this resulter.
    */
-  async donePromise() {
+  async untilDone() {
     let resulterNext;
     do {
       resulterNext = await this.next();

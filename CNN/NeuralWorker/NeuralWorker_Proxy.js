@@ -92,7 +92,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 //!!! (2022/09/12 Remarked) become a async method and automatically .next() until done.
 //    return resulter;
 
-    return resulter.donePromise();
+    return resulter.untilDone();
 
 
 //!!! ...unfinished... (2022/08/27)
