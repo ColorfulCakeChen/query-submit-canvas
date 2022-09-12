@@ -308,61 +308,40 @@ class PromiseResolveReject_Resulter {
     if ( !thePromiseResolveRejectArray )
       return; // No pending promise for the processing. (should not happen)
 
-    try {
-
-      while ( thePromiseResolveRejectArray.length >= 1 ) {
-
-        // Always yield the first promise.
-        let thePromiseResolveReject = thePromiseResolveRejectArray[ 0 ];
-
-        // 1. Prepare the next promise.
-
-        // 1.1 If the promise has been fulfilled, remove it so that it will not be
-        //     yielded again in the future.
-        if ( !thePromiseResolveReject.pending ) {
-          thePromiseResolveRejectArray.shift();
-
-        // 1.2 Otherwise, the first pending promise will be yielded again and again
-        //     (until it has been fulfilled and handled by here).
-        }
-
-        // 2. Handle final promise.
-        //
-        // If the promise is done (so it is also not pending), it means no more result
-        // will be received from the WorkerBody. So remove the entire result queue
-        // (i.e. PromiseResolveRejectArray) of the processing.
-        if ( thePromiseResolveReject.done ) {
-          this.map.delete( this.processingId );
-        }
-
-        // 3. Yield/Return the promise which will resolve to { done, value }.
-        return thePromiseResolveReject.promiseToYieldReturn;
-      }
-
-      // 3. In theory, never executed here. (i.e. thePromiseResolveRejectArray should
-      //    never be empty. It should has at least one promise for this resulter to
-      //    yield/return.)
-      throw Error( `processingId_PromiseResolveRejectArray_Map.Resulter(): `
+    // PromiseResolveRejectArray should never be empty. It should has at least
+    // one promise for this resulter to yield/return.
+    //
+    if ( thePromiseResolveRejectArray.length < 1 ) {
+      throw Error( `PromiseResolveReject.Resulter(): `
         + `processingId=${processingId}. `
         + `PromiseResolveRejectArray should never be empty.`
       );
 
-    } finally {
-      // When this resulter return (no matter by here or by outter calling .return()),
-      // it means no more pending promise for the processing. So remove the
-      // PromiseResolveRejectArray of the processing.
-      this.map.delete( processingId );
+    // 0. Always yield the first promise.
+    let thePromiseResolveReject = thePromiseResolveRejectArray[ 0 ];
+
+    // 1. Prepare the next promise.
+
+    // 1.1 If the promise has been fulfilled, remove it so that it will not be
+    //     yielded again in the future.
+    if ( !thePromiseResolveReject.pending ) {
+      thePromiseResolveRejectArray.shift();
+
+    // 1.2 Otherwise, the first pending promise will be yielded again and again
+    //     (until it has been fulfilled and handled by here).
     }
-  }
 
-//!!! ...unfinished... (2022/09/12)
-  return( value ) {
+    // 2. Handle final promise.
+    //
+    // If the promise is done (so it is also not pending), it means no more result
+    // will be received from the WorkerBody. So remove the entire result queue
+    // (i.e. PromiseResolveRejectArray) of the processing.
+    if ( thePromiseResolveReject.done ) {
+      this.map.delete( this.processingId );
+    }
 
-  }
-
-//!!! ...unfinished... (2022/09/12)
-  throw( value ) {
-
+    // 3. Yield/Return the promise which will resolve to { done, value }.
+    return thePromiseResolveReject.promiseToYieldReturn;
   }
 
 }
