@@ -271,8 +271,9 @@ class processingId_PromiseResolveRejectArray_Map {
       );
 
     } finally {
-      // When this resulter return, it means no more pending promise for the
-      // processing. So remove the PromiseResolveRejectArray of the processing.
+      // When this resulter return (no matter by here or by outter calling .return()),
+      // it means no more pending promise for the processing. So remove the
+      // PromiseResolveRejectArray of the processing.
       this.map.delete( processingId );
     }
 
