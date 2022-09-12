@@ -13,6 +13,17 @@
 globalThis.AsyncWorker = await import( "../util/AsyncWorker.js" );
 
 /**
+ * @return {Promise}
+ *   Return a promise which will be resolved as specified value after specified
+ * milliseconds.
+ */
+function delayedValue( milliseconds, value ) {
+  return new Promise( ( resolve /*, reject*/ ) => {
+    setTimeout( () => resolve( value ), milliseconds );
+  } );
+}
+
+/**
  * The implementation of a neural network web worker.
  *
  */
@@ -29,23 +40,8 @@ class AsyncWorker_Body_tester extends AsyncWorker.Body {
   }
 
   /**
-   *
-   * @param {number} workerId
-   *   A non-negative integer represents this worker's id. The id of the first worker
-   * should be 0.
-   *
-   * @param {string} tensorflowJsURL
-   *   The URL of tensorflow javascript library. Every worker will load the library
-   * from the URL.
-   *
-   * @param {NeuralNet.ParamsBase} neuralNetParamsBase
-   *   The configuration of the neural network to be created by web worker.
    */
-  async* initWorker( { workerId = 0 } ) {
-    if ( workerId < 0 )
-      workerId = 0;
-
-    this.workerId = workerId;
+  async* initWorker( { } ) {
 
     // Load libraries dynamically in global scope.
     {
@@ -63,20 +59,48 @@ class AsyncWorker_Body_tester extends AsyncWorker.Body {
   }
 
   /**
-   * @param {number} markValue
-   *   A value representing which alignment this neural network plays currently.
-   * For example, in a OX (connect-three) game:
-   *   - ( markValue == 0 ) means this neural network plays O side currently.
-   *   - ( markValue == 255 ) means this neural network plays X side currently.
+   * @param {number} intervalMilliseconds
+   *   How long to generate the next value.
+   *
+   * @param {number} valueBegin
+   *   The first value in the sequence.
+   *
+   * @param {number} valueCountTotal
+   *   There will be so many value be generated.
+   *
+   * @param {number} valueCountPerBoost
+   *   Every so many value, generate so many values without delay intervalMilliseconds.
    */
   async* number_sequence( {
-    delayMilliseconds,
-    valueBegin, valueEnd, valueStep,
-    valueBoostCount
-    } ) {
+    intervalMilliseconds,
+    valueBegin, valueCountTotal, valueCountPerBoost
+  } ) {
 
-    this.alignmentMarkValue = markValue;
-    return { value: markValue };
+    let bBoost = ( Math.random() < 0.5 );
+
+    let countInBlock = 0;
+    let value = valueBegin;
+    for ( let i = 0; i < ( valueCountTotal - 1 ); ++i ) {
+
+      if ( bBoost ) {
+        yield { value: value }; // No delay.
+
+      } else {
+        yield delayedValue( intervalMilliseconds, { value: value } );
+      }
+
+      // Counting how many number has been generated in the boost (non-boost) block.
+      ++countInBlock;
+      if ( countInBlock == valueCountPerBoost ) {
+        bBoost = !bBoost; // Toogle between boost and non-boost.
+        countInBlock = 0;
+      }
+
+      ++value;
+    }
+
+    // Generate the final value by return;
+    return { value: value };
   }
 
 }

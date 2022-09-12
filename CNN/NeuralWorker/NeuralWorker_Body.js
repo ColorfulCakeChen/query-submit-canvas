@@ -42,9 +42,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * @param {string} tensorflowJsURL
    *   The URL of tensorflow javascript library. Every worker will load the library
    * from the URL.
-   *
-   * @param {NeuralNet.ParamsBase} neuralNetParamsBase
-   *   The configuration of the neural network to be created by web worker.
    */
   async* initWorker( { workerId = 0, tensorflowJsURL } ) {
     if ( workerId < 0 )
