@@ -85,21 +85,39 @@ export { processingId_Resulter_Map };
    * result of the processing.
    */
   next() {
-    let thePromiseResolveRejectArray = this.map.get( this.processingId );
-    if ( !thePromiseResolveRejectArray )
-      return; // No pending promise for the processing. (should not happen)
+    let resulter
+      = this.processingId_PromiseResolveRejectArray_Map.map.get( this.processingId );
+    if ( !resulter ) {
+      throw Error( `PromiseResolveReject_Resulter.next(): `
+        + `processingId=${processingId}. `
+        + `PromiseResolveReject_Resulter not found in `
+        + `processingId_PromiseResolveRejectArray_Map.`
+      );
+      return { done: true }; // No pending promise for the processing. (should not happen)
+    }
+
+    if ( resulter != this ) {
+      throw Error( `PromiseResolveReject_Resulter.next(): `
+        + `processingId=${processingId}. `
+        + `PromiseResolveReject_Resulter in `
+        + `processingId_PromiseResolveRejectArray_Map should be this.`
+      );
+      return { done: true };
+    }
 
     // PromiseResolveRejectArray should never be empty. It should has at least
     // one promise for this resulter to yield/return.
     //
-    if ( thePromiseResolveRejectArray.length < 1 )
-      throw Error( `PromiseResolveReject.Resulter(): `
+    if ( this.PromiseResolveRejectArray.length < 1 ) {
+      throw Error( `PromiseResolveReject_Resulter.next(): `
         + `processingId=${processingId}. `
         + `PromiseResolveRejectArray should never be empty.`
       );
+      return { done: true };
+    }
 
     // 0. Always yield the first promise.
-    let thePromiseResolveReject = thePromiseResolveRejectArray[ 0 ];
+    let thePromiseResolveReject = this.PromiseResolveRejectArray[ 0 ];
 
     // 1. Prepare the next promise.
 
@@ -111,7 +129,7 @@ export { processingId_Resulter_Map };
     // 1.2 Otherwise, the promise has been fulfilled. Remove it so that it will not
     //     be yielded again in the future.
     } else {
-      thePromiseResolveRejectArray.shift();
+      this.PromiseResolveRejectArray.shift();
 
       // 2. Handle final promise.
       //

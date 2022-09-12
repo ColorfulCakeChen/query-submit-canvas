@@ -39,7 +39,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /** @override */
   disposeResources() {
 
-    {
+    if ( this.worker ) {
 //!!! ...unfinished... (2022/09/08) also MessagePort.close().
 
       // Note: No processingId, because this command needs not return value.
