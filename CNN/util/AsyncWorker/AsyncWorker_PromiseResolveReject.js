@@ -48,6 +48,27 @@ export { processingId_PromiseResolveRejectArray_Map };
 
 }
 
+
+/**
+ *
+ *
+ * @member {PromiseResolveReject[]} array
+ *   All promises for resulter to yield/return.
+ *
+ * @member {AsyncGenerator} resulter
+ *   The result sync generator for passing result of WorkerBody to WorkerProxy's caller.
+ */
+class PromiseResolveRejectArray {
+
+  /** */
+  constructor( resulter ) {
+    this.resulter = resulter;
+    this.array = new Array();
+  }
+
+}
+
+
 /**
  * A collection PromiseResolveReject[] by processingId as key.
  */
