@@ -11,39 +11,47 @@ export { processingId_PromiseResolveRejectArray_Map };
  * @member {number} processingId
  *   The id of the processing.
  *
- * @member {boolean} bPending
- *   If true, the promise is still pending. If false, the promise is fulfilled.
- * 
  * @member {Promise} promise
  *   The pending promise for the processing.
+ *
+ * @member {boolean} pending
+ *   If true, the promise is still pending. If false, the promise is fulfilled.
+ *
+ * @member {boolean} done
+ *   If true, the promise is the final promise of the processing.
  *
  */
  class PromiseResolveReject {
 
+  /** */
   constructor( processingId ) {
     this.processingId = processingId;
-    this.bPending = true;
 
     this.promise = new Promise( ( resolve, reject ) => {
       this.resolve_internal = resolve;
       this.reject_internal = reject;
     });
+
+    this.pending = true;
+    this.done = false;
   }
 
   /** Resolve the pending promise for the processing. */
-  resolve( value ) {
+  done_value_resolve( done, value ) {
     if ( !this.bPending )
       return; // A fulfilled promise can not be changed again.
+    this.done = done;
     this.resolve_internal( value );
-    this.bPending = fasle;
+    this.pending = fasle;
   }
 
   /** Reject the pending promise for the processing. */
-  reject( value ) {
+  done_value_reject( done, value ) {
     if ( !this.bPending )
       return; // A fulfilled promise can not be changed again.
+    this.done = done;
     this.reject_internal( value );
-    this.bPending = fasle;
+    this.pending = fasle;
   }
 
 }
@@ -153,12 +161,13 @@ class processingId_PromiseResolveRejectArray_Map {
     thePromiseResolveReject.resolve( value );
 
     // 2. Prepare new pending promise.
+    let thePromiseResolveRejectNext = new PromiseResolveReject( processingId );
+    thePromiseResolveRejectNext.done = done;
 
     // 2.1 The web worker says the processing is not yet completed, create a new
     //     pending promise for the same processing for waiting future result from
     //     web worker.
     if ( !done ) {
-      let thePromiseResolveRejectNext = new PromiseResolveReject( processingId );
       thePromiseResolveRejectArray.push( thePromiseResolveRejectNext );
 
     // 2.2 Since web worker says the processing is done, do not create any more
