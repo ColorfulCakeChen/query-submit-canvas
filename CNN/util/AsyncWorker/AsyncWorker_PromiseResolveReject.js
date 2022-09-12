@@ -212,16 +212,8 @@ class processingId_PromiseResolveRejectArray_Map {
    * PromiseResolveRejectArray.
    *
    * @return {AsyncGenerator}
-   *   An async generator. Its .next() returns a promise resolved to { done, value }.
-   * The value will be:
-   *
-   *   - The resolved value of the processingId's PromiseResolveReject.promise, if
-   *       the processingId's PromiseResolveReject exists.
-   *       (i.e. { done: false, value: resolved_PromiseResolveReject.promise } )
-   *
-   *   - undefined, if the corresponding PromiseResolveReject does not exist.
-   *       (i.e. { done: true, value: undefined } )
-   *
+   *   An async generator. Its .next() returns a promise resolved to { done, value }
+   * which represents the WorkerBody's result.
    */
   async *Resulter( processingId ) {
     let thePromiseResolveRejectArray = this.map.get( processingId );
