@@ -50,26 +50,33 @@ function array2d_compare_EQ( lhs, rhs ) {
 async function* tester( progressParent ) {
   console.log( "AsyncWorker testing..." );
 
+  const valueCountTotal = 100;
+
+  let progressRoot = progressParent.root_get();
+
   let progressBoostAll = progressParent.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( valueCountTotal ) );
 
   let progressNonBoostAll = progressParent.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( valueCountTotal ) );
 
   let progressBoostNonBoostInterleave = progressParent.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( valueCountTotal ) );
 
-  let workerProxy = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
 
   // All boost.
   {
+    let workerProxy = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
+
+    const workerId = 1;
     const intervalMilliseconds = 100;
     const valueBegin = 0;
-    const valueCountTotal = 100;
     const valueCountPerBoost = valueCountTotal;
 
-    let ??? = workerProxy.initWorker( 1 );
-    let numberResulter = workerProxy.number_sequence(
+    let initWorkerPromise = workerProxy.initWorker_async( workerId );
+    let initWorkerOk = await initWorkerPromise;
+
+    let numberResulter = workerProxy.number_sequence_asyncGenerator(
       intervalMilliseconds,
       valueBegin, valueCountTotal, valueCountPerBoost );
 
@@ -77,9 +84,21 @@ async function* tester( progressParent ) {
     do {
       numberResulterNext = await numberResulter.next();
       let { done, value } = numberResulterNext;
+
+//!!! ...unfinished... (2022/09/12) check value
+
+      progressBoostAll.value_advance();
+      yield progressRoot;
+  
     } while ( !done );
 
-  }
+    workerProxy.disposeResources_and_recycleToPool();
+    workerProxy = null;
+   }
+
+
+//!!! ...unfinished... (2022/09/12) check value
+
 
   let tester1 = GSheets.UrlComposer.Pool.get_or_create_by( spreadsheetId, range );
   let fetcher1 = tester1.fetcher_JSON_ColumnMajorArrayArray( progress1 );
@@ -115,5 +134,5 @@ async function* tester( progressParent ) {
   tester1.disposeResources_and_recycleToPool();
   tester1 = null;
 
-  console.log( "GSheet download testing... Done." );
+  console.log( "AsyncWorker download testing... Done." );
 }

@@ -48,7 +48,7 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
    *   - Resolved to true, if success.
    *   - Resolved to false, if failed.
    */
-  initWorker( workerId ) {
+  initWorker_async( workerId ) {
     let resulter = this.postCommand_and_expectResult(
       "initWorker",
       {
@@ -79,7 +79,7 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
    * @return {PromiseResolveReject_Resulter}
    *   An async generator tracking the results of this method.
    */
-  number_sequence(
+  number_sequence_asyncGenerator(
     intervalMilliseconds,
     valueBegin, valueCountTotal, valueCountPerBoost
   ) {

@@ -59,7 +59,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to true, if success.
    *   - Resolved to false, if failed.
    */
-  initWorker( workerId, tensorflowJsURL ) {
+  initWorker_async( workerId, tensorflowJsURL ) {
 
     this.tensorflowJsURL = tensorflowJsURL;
 
