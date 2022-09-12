@@ -150,6 +150,21 @@ export { processingId_Resulter_Map };
     return thePromiseResolveReject.promiseToYieldReturn;
   }
 
+  /**
+   * Automatically .next() until done.
+   *
+   * @return {Promise}
+   *   Return a promise resolved to the final value (i.e. the Xxx of the
+   * { done: true, value: Xxx }) of this resulter.
+   */
+  async donePromise() {
+    let resulterNext;
+    do {
+      resulterNext = await this.next();
+    } while ( !resulterNext.done );
+    return resulterNext.value;
+  }
+
 }
 
 

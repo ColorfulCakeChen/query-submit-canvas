@@ -50,12 +50,12 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
   /**
    * Initialize this worker proxy.
    *
-   * @return {PromiseResolveReject_Resulter}
-   *   An async generator tracking the result of this method. Its final promise:
-   *   - Resolved to { done: true, value: true }, if success.
-   *   - Resolved to { done: true, value: false }, if failed.
+   * @return {Promise}
+   *   Return a promise:
+   *   - Resolved to true, if success.
+   *   - Resolved to false, if failed.
    */
-  initWorker( workerId ) {
+  async initWorker( workerId ) {
 
 //!!! ...unfinished... (2022/08/24) Why not use "./AsyncWorker_Body.js"?
 // The import.meta.url should extract the path (exclude file name)
@@ -71,11 +71,11 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
         workerId: workerId,
       }
     );
-    return resulter;
 
-//!!! ...unfinished... (2022/09/12)
-// could become a async method and automatically .next() until done.
+//!!! (2022/09/12 Remarked) become a async method and automatically .next() until done.
+//    return resulter;
 
+    return resulter.donePromise();
   }
 
 
