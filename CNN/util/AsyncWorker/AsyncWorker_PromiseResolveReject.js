@@ -211,26 +211,23 @@ class processingId_PromiseResolveRejectArray_Map {
         return; // No more pending promise for the processing.
       }
 
-  //!!! ...unfinished... (2022/09/12)
-      // Always yield/return the first promise.
-      let thePromiseResolveReject = thePromiseResolveRejectArray[ 0 ];
+//!!! ...unfinished... (2022/09/12)
+      while ( ??? ) {
 
-      // If the promise has been fulfilled, remove it so that it will not be
-      // yielded again in the future.
-      if ( !thePromiseResolveReject.bPending ) {
-        thePromiseResolveRejectArray.shift();
+        // Always yield the first promise.
+        let thePromiseResolveReject = thePromiseResolveRejectArray[ 0 ];
 
-      // Otherwise, the first pending promise will be yielded again and again
-      // (until it has been fulfilled).
-      }
+        // If the promise has been fulfilled, remove it so that it will not be
+        // yielded again in the future.
+        if ( !thePromiseResolveReject.bPending ) {
+          thePromiseResolveRejectArray.shift();
 
-      yield thePromiseResolveReject.promise;
+        // Otherwise, the first pending promise will be yielded again and again
+        // (until it has been fulfilled).
+        }
 
-      let thePromiseResolveReject = this.map.get( processingId );
-      if ( thePromiseResolveReject )
         yield thePromiseResolveReject.promise;
-      else
-        return;
+      }
 
     } finally {
       // When this resulter return, it means all no more pending promise for the
