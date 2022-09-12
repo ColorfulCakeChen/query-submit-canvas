@@ -94,6 +94,10 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     );
     return resulter;
 
+//!!! ...unfinished... (2022/09/12)
+// could become a async method and automatically .next() until done.
+
+
 //!!! ...unfinished... (2022/08/27)
 // Perhaps, use MessageChannel instead of window.onmessage().
 // Otherwise, original window.onmessage() will be replaced (i.e. destroyed) by our system.
@@ -122,6 +126,10 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
       [ weightArrayBuffer ]
     );
     return resulter;
+
+//!!! ...unfinished... (2022/09/12)
+// could become a async method and automatically .next() until done.
+
   }
 
   /**
@@ -140,6 +148,10 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
       }
     );
     return resulter;
+
+//!!! ...unfinished... (2022/09/12)
+// could become a async method and automatically .next() until done.
+
   }
 
 //!!! ...unfinished... (2022/09/12)
