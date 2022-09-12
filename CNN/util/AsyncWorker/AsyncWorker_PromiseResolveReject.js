@@ -1,5 +1,5 @@
 export { PromiseResolveReject };
-export { PromiseResolveRejectMap };
+export { processingId_PromiseResolveRejectArray_Map };
 
 //!!! (2022/09/10 Remarked) replaced by AsyncIterator.
 //export { ProcessRelayPromises };
@@ -31,9 +31,9 @@ export { PromiseResolveRejectMap };
 }
 
 /**
- * A collection PromiseResolveReject by processingId as key.
+ * A collection PromiseResolveReject[] by processingId as key.
  */
-class PromiseResolveRejectMap {
+class processingId_PromiseResolveRejectArray_Map {
 
   /** */
   constructor() {
@@ -41,19 +41,30 @@ class PromiseResolveRejectMap {
   }
 
   /**
+   * Create a new PromiseResolveReject. Append it to the processingId's result array.
+   *
    * @param {number} processingId
    *   The numeric identifier for the processing.
    *
    * @return {PromiseResolveReject}
    *   Return the created PromiseResolveReject object.
    */
-  set_new_by_processingId( processingId ) {
+  PromiseResolveReject_add_new_by_processingId( processingId ) {
+    let thePromiseResolveRejectArray = this.map.get( processingId );
+    if ( !thePromiseResolveRejectArray ) {
+      thePromiseResolveRejectArray = new Array();
+      this.map.set( processingId, thePromiseResolveRejectArray );
+    }
+
     let thePromiseResolveReject = new PromiseResolveReject( processingId );
-    this.map.set( processingId, thePromiseResolveReject );
+    thePromiseResolveRejectArray.push( thePromiseResolveReject );
+
     return thePromiseResolveReject;
   }
 
   /**
+   * Remove the processingId's result array.
+   *
    * @param {number} processingId
    *   The numeric identifier for the removing from this Map.
    *
@@ -61,7 +72,7 @@ class PromiseResolveRejectMap {
    *   Return true, if processingId existed and has been removed. Return false,
    * if processingId does not exist.
    */
-  remove_by_processingId( processingId ) {
+  PromiseResolveRejectArray_remove_by_processingId( processingId ) {
     return this.map.delete( processingId );
   }
 
@@ -82,28 +93,49 @@ class PromiseResolveRejectMap {
    * 
    */
   resolve_by_processingId_done_value( processingId, done, value ) {
-
-    let thePromiseResolveReject = this.map.get( processingId );
-    if ( !thePromiseResolveReject )
+    let thePromiseResolveRejectArray = this.map.get( processingId );
+    if ( !thePromiseResolveRejectArray )
       return; // The pending promise does not exist.
+
+    if ( thePromiseResolveRejectArray.length <= 0 )
+      return; // The pending promise does not exist.
+
+    // Always resolve the last promise. (Assume it is pending.)
+    let thePromiseResolveReject
+      = thePromiseResolveRejectArray[ thePromiseResolveRejectArray.length - 1 ];
 
     // 1. Resolve the pending promise to the specified value.
     thePromiseResolveReject.resolve( value );
 
-    // 2. Remove or create new pending promise.
+    // 2. Prepare new pending promise.
 
-    // 2.1 Since web worker says the processing is done, remove the pending promise
-    //     because the processing will have no more result coming from web worker
-    //     in the future.
-    if ( done ) {
-      this.map.delete( processingId );
-
-    // 2.2 The web worker says the processing is not yet completed, create a new
+    // 2.1 The web worker says the processing is not yet completed, create a new
     //     pending promise for the same processing for waiting future result from
     //     web worker.
-    } else {
-      this.set_new_by_processingId( processingId );
+    if ( !done ) {
+      let thePromiseResolveRejectNext = new PromiseResolveReject( processingId );
+      thePromiseResolveRejectArray.push( thePromiseResolveRejectNext );
+
+    // 2.2 Since web worker says the processing is done, do not create any more
+    //     pending promise because the processing will have no more result coming
+    //     from web worker in the future.
     }
+
+//!!! (2022/09/12 Remarked) Old Codes. The delete should be done by resulter.
+//     // 2. Remove or create new pending promise.
+//
+//     // 2.1 Since web worker says the processing is done, remove the pending promise
+//     //     because the processing will have no more result coming from web worker
+//     //     in the future.
+//     if ( done ) {
+//       this.map.delete( processingId );
+//
+//     // 2.2 The web worker says the processing is not yet completed, create a new
+//     //     pending promise for the same processing for waiting future result from
+//     //     web worker.
+//     } else {
+//       this.set_new_by_processingId( processingId );
+//     }
   }
 
   /**
