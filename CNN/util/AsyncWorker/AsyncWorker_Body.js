@@ -18,12 +18,8 @@ class AsyncWorker_Body {
 
   /** Close this worker. */
   async* disposeResources() {
-
-//!!! ...unfinished... (2022/09/08) also MessagePort.close().
-
     close(); // Terminate this worker.
-
-    //super.disposeResources();
+    //yield *super.disposeResources();
   }
 
   /**
