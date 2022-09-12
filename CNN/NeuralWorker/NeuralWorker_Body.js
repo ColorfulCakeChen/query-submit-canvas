@@ -166,7 +166,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   - ( markValue == 0 ) means this neural network plays O side currently.
    *   - ( markValue == 255 ) means this neural network plays X side currently.
    */
-  alignmentMark_setValue( { markValue } ) {
+  async* alignmentMark_setValue( { markValue } ) {
     this.alignmentMarkValue = markValue;
     return { value: markValue };
   }
