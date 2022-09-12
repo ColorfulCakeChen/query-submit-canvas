@@ -89,22 +89,16 @@ class processingId_PromiseResolveRejectArray_Map {
    * @return {AsyncGenerator}
    *   Return the created Resulter() object.
    */
-  resulter_create_by_processingId( processingId ) {
+  resulter_PromiseResolveRejectArray_create_by_processingId( processingId ) {
     let resulter = processingId_PromiseResolveRejectArray_Map.Resulter( processingId );
 
     thePromiseResolveRejectArray = new PromiseResolveRejectArray( resulter );
     this.map.set( processingId, thePromiseResolveRejectArray );
 
-    thePromiseResolveRejectArray
-
-    let thePromiseResolveRejectArray = this.map.get( processingId );
-    if ( !thePromiseResolveRejectArray ) {
-    }
-
     let thePromiseResolveReject = new PromiseResolveReject( processingId );
     thePromiseResolveRejectArray.array.push( thePromiseResolveReject );
 
-    return thePromiseResolveReject;
+    return resulter;
   }
 
   /**
