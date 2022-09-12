@@ -167,8 +167,15 @@ class processingId_PromiseResolveRejectArray_Map {
     } else {
 
 //!!! ...unfinished... (2022/09/12)
-// Perhaps, should call AsyncGenerator.return() to end the result?
+// Perhaps, should call AsyncGenerator.return() to end the resulter?
 // Problem: What if the resulter still has some promise not yet yield?
+//
+// If the resulter has yielded the last pending promise, call AsyncGenerator.return()
+// to end the resulter. Otherwise, place the resolved promised at the end so
+// the resulter could return it.
+//
+// Problem: How to know resulter has yielded which promise?
+// Problem: The resulter how to know a promise is the final promise?
 
     }
 
