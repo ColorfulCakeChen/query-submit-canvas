@@ -92,6 +92,11 @@ async function* tester( progressParent ) {
   
     } while ( !done );
 
+//!!! ...unfinished... (2022/09/12) check value
+
+//!!! ...unfinished... (2022/09/12) check processing queue removed.
+
+
     workerProxy.disposeResources_and_recycleToPool();
     workerProxy = null;
    }
