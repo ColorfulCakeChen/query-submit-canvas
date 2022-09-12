@@ -80,8 +80,8 @@ class processingId_PromiseResolveRejectArray_Map {
   }
 
   /**
-   * Create a new PromiseResolveRejectArray and Resulter. Record them in map by
-   * processingId as key.
+   * Create a new PromiseResolveRejectArray and Resulter. Record them in this map
+   * by processingId as key.
    *
    * @param {number} processingId
    *   The numeric identifier for the processing.
@@ -101,19 +101,20 @@ class processingId_PromiseResolveRejectArray_Map {
     return resulter;
   }
 
-  /**
-   * Remove the processingId's result array.
-   *
-   * @param {number} processingId
-   *   The numeric identifier for the removing from this Map.
-   *
-   * @return {boolean}
-   *   Return true, if processingId existed and has been removed. Return false,
-   * if processingId does not exist.
-   */
-  PromiseResolveRejectArray_remove_by_processingId( processingId ) {
-    return this.map.delete( processingId );
-  }
+//!!! (2022/09/12 Remarked) should be done by Resulter.
+//   /**
+//    * Remove the processingId's result array.
+//    *
+//    * @param {number} processingId
+//    *   The numeric identifier for the removing from this Map.
+//    *
+//    * @return {boolean}
+//    *   Return true, if processingId existed and has been removed. Return false,
+//    * if processingId does not exist.
+//    */
+//   PromiseResolveRejectArray_remove_by_processingId( processingId ) {
+//     return this.map.delete( processingId );
+//   }
 
   /**
    * Suppose every method function of WorkerProxy is an async generator.
@@ -207,19 +208,23 @@ class processingId_PromiseResolveRejectArray_Map {
         return; // No pending promise for the processing.
 
       if ( thePromiseResolveRejectArray.length <= 0 ) {
-        // No more pending promise for the processing.
-        this.map.delete( processingId );
-        return;
+        return; // No more pending promise for the processing.
       }
 
   //!!! ...unfinished... (2022/09/12)
       // Always yield/return the first promise.
       let thePromiseResolveReject = thePromiseResolveRejectArray[ 0 ];
-      if ( thePromiseResolveReject.bPending ) {
 
-      } else {
+      // If the promise has been fulfilled, remove it so that it will not be
+      // yielded again in the future.
+      if ( !thePromiseResolveReject.bPending ) {
+        thePromiseResolveRejectArray.shift();
 
+      // Otherwise, the first pending promise will be yielded again and again
+      // (until it has been fulfilled).
       }
+
+      yield thePromiseResolveReject.promise;
 
       let thePromiseResolveReject = this.map.get( processingId );
       if ( thePromiseResolveReject )
