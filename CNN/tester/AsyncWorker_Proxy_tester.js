@@ -55,7 +55,7 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
    *   - Resolved to { done: true, value: true }, if success.
    *   - Resolved to { done: true, value: false }, if failed.
    */
-  initWorker() {
+  initWorker( workerId ) {
 
 //!!! ...unfinished... (2022/08/24) Why not use "./AsyncWorker_Body.js"?
 // The import.meta.url should extract the path (exclude file name)
@@ -99,14 +99,24 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
     intervalMilliseconds,
     valueBegin, valueCountTotal, valueCountPerBoost
   ) {
+    let valueParams = new Float32Array( [
+      valueBegin, valueCountTotal, valueCountPerBoost ] );
+
     let resulter = this.postCommand_and_expectResult(
       "number_sequence",
       {
         intervalMilliseconds,
-        valueBegin, valueCountTotal, valueCountPerBoost
+        valueParams: valueParams
       },
-      [ ???weightArrayBuffer ]
+      [ valueParams.buffer ] // Test: transferred objects
     );
+
+    // Check Test: transferred objects.
+    if ( valueParams.buffer )
+      throw Error( `AsyncWorker_Proxy_tester.number_sequence(): `
+        + `Transferred object should become null after postMessage().`
+      );
+
     return resulter;
 
 //!!! ...unfinished... (2022/09/12)

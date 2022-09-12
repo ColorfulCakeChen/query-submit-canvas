@@ -41,7 +41,8 @@ class AsyncWorker_Body_tester extends AsyncWorker.Body {
 
   /**
    */
-  async* initWorker( { } ) {
+  async* initWorker( { workerId } ) {
+    this.workerId = workerId;
 
     // Load libraries dynamically in global scope.
     {
@@ -73,7 +74,7 @@ class AsyncWorker_Body_tester extends AsyncWorker.Body {
    */
   async* number_sequence( {
     intervalMilliseconds,
-    valueBegin, valueCountTotal, valueCountPerBoost
+    valueParams: [ valueBegin, valueCountTotal, valueCountPerBoost ]
   } ) {
 
     let bBoost = ( Math.random() < 0.5 );
