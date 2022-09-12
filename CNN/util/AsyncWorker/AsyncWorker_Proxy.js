@@ -14,7 +14,7 @@ import { processingId_Resulter_Map } from "./AsyncWorker_PromiseResolveReject.js
  *
  * @member {number} processingId_next
  *   The next processing id. Zero means no command has been sent. Every
- * postCommand_with_processingId() call will use a new id.
+ * postCommand_and_expectResult() call will use a new id.
  *
  * @member {processingId_Resulter_Map} the_processingId_Resulter_Map
  *   Every worker has a result pending promise map. The key of the map is processing
@@ -103,7 +103,39 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   }
 
   /**
-   * Pack a message { processingId, command, args }. Send it to WorkerBody.
+   * Send command to WorkerBody and expect result.
+   *
+   * @param {string} commandName
+   *   The method name in the WorkerBody.
+   *
+   * @param {object} args
+   *   The argument object which will be sent to WorkerBody.
+   *
+   * @param {Array} tansfer
+   *   The transferable object array when postMessage. It could be undefined (but
+   * can not be null).
+   *
+   * @return {PromiseResolveReject_Resulter}
+   *   Return an async generator for receving result from WorkerBody of the processing.
+   */
+  postCommand_and_expectResult( commandName, args, transfer ) {
+    let processingId = this.processingId_next;
+    ++this.processingId_next;
+
+    let resulter = resulter_create_by_processingId( processingId );
+
+    let data = {
+      processingId: processingId,
+      command: commandName,
+      args: args
+    };
+    this.worker.postMessage( data, tansfer );
+
+    return resulter;
+  }
+
+  /**
+   * Send command to WorkerBody without expecting result. (i.e. fire-and-forget)
    *
    * @param {string} commandName
    *   The method name in the WorkerBody.
@@ -115,18 +147,12 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    *   The transferable object array when postMessage. It could be undefined (but
    * can not be null).
    */
-   postCommand_with_processingId( commandName, args, transfer ) {
-    let processingId = this.processingId_next;
-    ++this.processingId_next;
-
+  postCommand( commandName, args, transfer ) {
     let data = {
-      processingId: processingId,
       command: commandName,
       args: args
     };
-    this.worker.postMessage( data, tansfer );  // Inform the worker to initialize.
-
-//!!!
+    this.worker.postMessage( data, tansfer );
   }
 
   /**
