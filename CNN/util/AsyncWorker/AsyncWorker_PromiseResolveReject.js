@@ -228,42 +228,6 @@ class processingId_Resulter_Map {
 
     // 2. Resolve the current pending promise to the specified value.
     currentPromiseResolveReject.done_value_resolve( done, value );
-
-
-
-    // 2.2 Since web worker says the processing is done, do not create any more
-    //     pending promise because the processing will have no more result coming
-    //     from web worker in the future.
-    } else {
-
-//!!! ...unfinished... (2022/09/12)
-// Perhaps, should call AsyncGenerator.return() to end the resulter?
-// Problem: What if the resulter still has some promise not yet yield?
-//
-// If the resulter has yielded the last pending promise, call AsyncGenerator.return()
-// to end the resulter. Otherwise, place the resolved promised at the end so
-// the resulter could return it.
-//
-// Problem: How to know resulter has yielded which promise?
-// Problem: The resulter how to know a promise is the final promise? (ok, by done.)
-
-    }
-
-//!!! (2022/09/12 Remarked) Old Codes. The delete should be done by resulter.
-//     // 2. Remove or create new pending promise.
-//
-//     // 2.1 Since web worker says the processing is done, remove the pending promise
-//     //     because the processing will have no more result coming from web worker
-//     //     in the future.
-//     if ( done ) {
-//       this.map.delete( processingId );
-//
-//     // 2.2 The web worker says the processing is not yet completed, create a new
-//     //     pending promise for the same processing for waiting future result from
-//     //     web worker.
-//     } else {
-//       this.set_new_by_processingId( processingId );
-//     }
   }
 
 //!!! (2022/09/12 Remarked) Old Codes.
