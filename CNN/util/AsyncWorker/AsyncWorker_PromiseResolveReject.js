@@ -2,9 +2,6 @@ export { PromiseResolveReject };
 export { PromiseResolveReject_Resulter };
 export { processingId_Resulter_Map };
 
-//!!! (2022/09/10 Remarked) replaced by AsyncIterator.
-//export { ProcessRelayPromises };
-
 /**
  * Hold a processing's id, promise, resolve (fulfilling function object), reject
  * (rejecting function object).
@@ -230,93 +227,4 @@ class processingId_Resulter_Map {
     currentPromiseResolveReject.done_value_resolve( done, value );
   }
 
-//!!! (2022/09/12 Remarked) Old Codes.
-//   /**
-//    * This async generator could be used as the processing method's result.
-//    * 
-//    * This async generator is the consumer of the processingId's
-//    * PromiseResolveRejectArray.
-//    *
-//    * @return {AsyncGenerator}
-//    *   An async generator. Its .next() returns a promise resolved to { done, value }
-//    * which represents the WorkerBody's result.
-//    */
-//   async *Resulter( processingId ) {
-//     let thePromiseResolveRejectArray = this.map.get( processingId );
-//     if ( !thePromiseResolveRejectArray )
-//       return; // No pending promise for the processing. (should not happen)
-
-//     try {
-
-//       while ( thePromiseResolveRejectArray.length >= 1 ) {
-
-//         // Always yield the first promise.
-//         let thePromiseResolveReject = thePromiseResolveRejectArray[ 0 ];
-
-//         // 1. Prepare the next promise.
-
-//         // 1.1 If the promise has been fulfilled, remove it so that it will not be
-//         //     yielded again in the future.
-//         if ( !thePromiseResolveReject.pending ) {
-//           thePromiseResolveRejectArray.shift();
-
-//         // 1.2 Otherwise, the first pending promise will be yielded again and again
-//         //     (until it has been fulfilled or be forcibly returned by outter).
-//         }
-
-//         // 2. Yield or return the promise.
-
-//         // 2.1 If this is the final promise, return it (and end this resulter).
-//         if ( thePromiseResolveReject.done ) {
-//           return thePromiseResolveReject.promise;
-
-//         // 2.2 Otherwise, yield the promise.
-//         //
-//         // Note: If this yielded pending promise become done in the later, the
-//         //       resolve_by_processingId_done_value() will focibly terminate
-//         //       this resulter by calling resulter.return().
-//         } else {
-//           yield thePromiseResolveReject.promise;
-//         }
-//       }
-
-//       // 3. In theory, never executed here. (i.e. thePromiseResolveRejectArray should
-//       //    never be empty. It should has at least one promise for this resulter to
-//       //    yield/return.)
-//       throw Error( `processingId_PromiseResolveRejectArray_Map.Resulter(): `
-//         + `processingId=${processingId}. `
-//         + `PromiseResolveRejectArray should never be empty.`
-//       );
-
-//     } finally {
-//       // When this resulter return (no matter by here or by outter calling .return()),
-//       // it means no more pending promise for the processing. So remove the
-//       // PromiseResolveRejectArray of the processing.
-//       this.map.delete( processingId );
-//     }
-
-//   }
-
 }
-
-
-//!!! (2022/09/10 Remarked) replaced by AsyncIterator.
-// /**
-//  * Hold two PromiseResolveReject.
-//  *
-//  * @member {PromiseResolveReject} process
-//  *   The promise for reporting worker's function execution done.
-//  *
-//  * @member {PromiseResolveReject} relay
-//  *   The promise for reporting scaledSourceImageData received from this web worker.
-//  */
-// class ProcessRelayPromises {
-//
-//   constructor( processingId, workerId ) {
-//     this.process = new PromiseResolveReject( processingId, workerId );
-//     this.relay = new PromiseResolveReject( processingId, workerId );
-//   }
-//
-// }
-
-
