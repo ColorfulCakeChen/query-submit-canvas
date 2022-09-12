@@ -224,11 +224,11 @@ class processingId_PromiseResolveRejectArray_Map {
    *
    */
   async *Resulter( processingId ) {
-    try {
+    let thePromiseResolveRejectArray = this.map.get( processingId );
+    if ( !thePromiseResolveRejectArray )
+      return; // No pending promise for the processing. (should not happen)
 
-      let thePromiseResolveRejectArray = this.map.get( processingId );
-      if ( !thePromiseResolveRejectArray )
-        return; // No pending promise for the processing. (should not happen)
+    try {
 
       while ( thePromiseResolveRejectArray.length >= 1 ) {
 
