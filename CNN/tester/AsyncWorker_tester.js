@@ -8,7 +8,7 @@ import * as AsyncWorker_Proxy_tester from "./AsyncWorker_Proxy_tester.js";
  *
  * @param {AsyncWorker_Proxy_tester} aWorkerProxy
  */
-async function test_WorkerProxy_init( aWorkerProxy, workerId ) {
+async function test_WorkerProxy_init( { workerId, workerProxy } ) {
   let initWorkerPromise = workerProxy.initWorker_async( workerId );
   let initWorkerOk = await initWorkerPromise;
 
@@ -21,15 +21,18 @@ async function test_WorkerProxy_init( aWorkerProxy, workerId ) {
 /**
  * Test a WorkerProxy for generating number sequence.
  *
- * @param {AsyncWorker_Proxy_tester} aWorkerProxy
+ * @param {AsyncWorker_Proxy_tester} workerProxy
  */
 async function test_WorkerProxy_numberSequence(
-  aWorkerProxy, workerId,
-  intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost,
-  progressToAdvance
+  {
+    workerId,
+    intervalMilliseconds,
+    valueBegin,
+    valueCountTotal,
+    valueCountPerBoost,
+    workerProxy,
+  }
 ) {
-  let progressRoot = progressParent.root_get();
-
   let numberResulter = workerProxy.number_sequence_asyncGenerator(
     intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost );
 
@@ -64,9 +67,6 @@ async function test_WorkerProxy_numberSequence(
       + `workerId=${workerId}, `
       + `processingQueueSize ( ${processingQueueSize} ) should be 0.`
     );
-
-  progressToAdvance.value_advance( valueCountTotal );
-  yield progressRoot;
 }
 
 
@@ -83,34 +83,69 @@ async function* tester( progressParent ) {
 
   const valueCountTotal = 100;
 
-  let progressBoostAll = progressParent.child_add(
+  let progressRoot = progressParent.root_get();
+
+  let progress_allBoost = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( valueCountTotal ) );
 
-  let progressNonBoostAll = progressParent.child_add(
+  let progress_allNonBoost = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( valueCountTotal ) );
 
-  let progressBoostNonBoostInterleave = progressParent.child_add(
+  let progress_interleave_Boost_NonBoost = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( valueCountTotal ) );
 
-
-  // All boost.
   {
-    let workerProxy = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
+    // All boost.
+    let allBoost = {
+      workerId: 1,
+      intervalMilliseconds: 100,
+      valueBegin: 0,
+      valueCountTotal: valueCountTotal,
+      valueCountPerBoost: valueCountTotal,
+      workerProxy: AsyncWorker_Proxy_tester.Pool.get_or_create_by(),
+    };
 
-    const workerId = 1;
-    const intervalMilliseconds = 100;
-    const valueBegin = 0;
-    const valueCountPerBoost = valueCountTotal;
+    await test_WorkerProxy_init( allBoost );
+    yield* test_WorkerProxy_numberSequence( allBoost );
 
-    await test_WorkerProxy_init( workerProxy, workerId );
-    test_WorkerProxy_numberSequence( workerProxy, workerId,
-      intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost,
-      progressBoostAll
+    allBoost.workerProxy.disposeResources_and_recycleToPool();
+    allBoost.workerProxy = null;
+
+    progress_allBoost.value_advance( valueCountTotal );
+    yield progressRoot;
+  }
+
+  {
+    let workerProxy_allNonBoost = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
+
+    // All non-boost.
+    const allNonBoost = {
+      workerId: 2,
+      intervalMilliseconds_allNonBoost = 100;
+    const valueBegin_allNonBoost = 50;
+    valueCountTotal
+    const valueCountPerBoost_allNonBoost = 0;
+
+    // Interleave boost and non-boost.
+    const interleave_Boost_NonBoost = {
+    const workerId_interleave_Boost_NonBoost = 2;
+    const intervalMilliseconds_allNonBoost = 100;
+    const valueBegin_allNonBoost = 50;
+    valueCountTotal
+    const valueCountPerBoost_allNonBoost = 0;
+
+    await Promise.all( [
+      test_WorkerProxy_init( workerProxy_allNonBoost, workerId_allNonBoost ),
+    ];
+
+    test_WorkerProxy_numberSequence( workerProxy_allNonBoost, workerId_allNonBoost,
+      intervalMilliseconds_allNonBoost, valueBegin_allNonBoost, valueCountTotal_allNonBoost, valueCountPerBoost_allNonBoost,
+      progress_allNonBoost
     );
 
-    workerProxy.disposeResources_and_recycleToPool();
-    workerProxy = null;
-   }
+    workerProxy_allNonBoost.disposeResources_and_recycleToPool();
+    workerProxy_allNonBoost = null;
+  }
 
 
 //!!! ...unfinished... (2022/09/12) check value
