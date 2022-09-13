@@ -8,13 +8,7 @@ import * as AsyncWorker_Proxy_tester from "./AsyncWorker_Proxy_tester.js";
  *
  * @param {AsyncWorker_Proxy_tester} aWorkerProxy
  */
-async function testWorkerProxy(
-  aWorkerProxy, workerId,
-  intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost,
-  progressToAdvance
-) {
-  let progressRoot = progressParent.root_get();
-
+async function test_WorkerProxy_init( aWorkerProxy, workerId ) {
   let initWorkerPromise = workerProxy.initWorker_async( workerId );
   let initWorkerOk = await initWorkerPromise;
 
@@ -22,6 +16,19 @@ async function testWorkerProxy(
     throw Error( `AsyncWorker_tester.testWorkerProxy(): `
       `workerId=${workerId}, initWorker failed.`
     );
+}
+
+/**
+ * Test a WorkerProxy for generating number sequence.
+ *
+ * @param {AsyncWorker_Proxy_tester} aWorkerProxy
+ */
+async function test_WorkerProxy_numberSequence(
+  aWorkerProxy, workerId,
+  intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost,
+  progressToAdvance
+) {
+  let progressRoot = progressParent.root_get();
 
   let numberResulter = workerProxy.number_sequence_asyncGenerator(
     intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost );
@@ -51,8 +58,12 @@ async function testWorkerProxy(
       + `value ( ${value} ) should be the same as valueTestFinal ( ${valueTestFinal} ).`
     );
 
-
-//!!! ...unfinished... (2022/09/12) check processing queue removed.
+  let processingQueueSize = workerProxy.the_processingId_Resulter_Map.size;
+  if ( processingQueueSize != 0 )
+    throw Error( `AsyncWorker_tester.testWorkerProxy(): `
+      + `workerId=${workerId}, `
+      + `processingQueueSize ( ${processingQueueSize} ) should be 0.`
+    );
 
   progressToAdvance.value_advance( valueCountTotal );
   yield progressRoot;
@@ -91,7 +102,8 @@ async function* tester( progressParent ) {
     const valueBegin = 0;
     const valueCountPerBoost = valueCountTotal;
 
-    testWorkerProxy( workerProxy, workerId,
+    await test_WorkerProxy_init( workerProxy, workerId );
+    test_WorkerProxy_numberSequence( workerProxy, workerId,
       intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost,
       progressBoostAll
     );
