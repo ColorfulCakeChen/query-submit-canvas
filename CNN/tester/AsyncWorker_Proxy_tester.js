@@ -105,10 +105,10 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
 // a sibling file (i.e. inside the same folder) of this module file.
 
 //!!! (2022/09/13 Remarked) Try "./AsyncWorker_Body_tester.js"
-// AsyncWorker_Proxy_tester.workerURL
-//   = new URL( "AsyncWorker_Body_tester.js", import.meta.url );
+AsyncWorker_Proxy_tester.workerURL
+  = new URL( "AsyncWorker_Body_tester.js", import.meta.url );
 
 //!!! (2022/09/13 Remarked) Try stub.
-AsyncWorker_Proxy_tester.workerURL = "./AsyncWorker_Body_tester.js";
+//AsyncWorker_Proxy_tester.workerURL = "./AsyncWorker_Body_tester.js";
 //AsyncWorker_Proxy_tester.workerURL = "./AsyncWorker_BodyStub_tester.js";
 

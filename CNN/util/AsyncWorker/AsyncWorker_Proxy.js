@@ -99,11 +99,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 
   let workerDataURI;
   {
-    let url = new URL( workerURL, import.meta.url );
-    let absoluteWorkerURL = url.toString();
-
     let codes = ``
-      + `import( "${absoluteWorkerURL}" );`
+      + `import( "${workerURL}" );`
       + `onmessage = ( e ) => {`
       + `  console.log( "Hello" );`
       + `  console.log( e );`
