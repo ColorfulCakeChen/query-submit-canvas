@@ -68,6 +68,12 @@ class AsyncWorker_Body {
 
     // Ensure all messages in temporary message queue are handled first
     // because they are received before this message handler being setup.
+    //
+    // Note: Although AsyncWorker_Body constructor has schedule a timer to
+    //       do this, some messages may be received before the timer
+    //       executed (but after this message handler has been setup). So,
+    //       here needs check the temporary message queue again.
+    //
     this.globalThis_temporaryMessageQueue_processMessages();
 
     // e.data == [ processingId, command, ...args ]
