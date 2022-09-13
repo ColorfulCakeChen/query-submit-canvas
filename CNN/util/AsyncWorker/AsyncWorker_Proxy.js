@@ -95,10 +95,10 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     //this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
     this.workerOptions = null;
 
-    let worker = this.worker = new Worker( this.workerURL, this.workerOptions );
+    this.worker = new Worker( this.workerURL, this.workerOptions );
 
     // Register callback from the web worker.
-    worker.onmessage = AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body.bind( this );
+    this.worker.onmessage = AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body.bind( this );
   }
 
   /**
