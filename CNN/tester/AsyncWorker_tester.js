@@ -3,42 +3,6 @@ export { tester };
 import * as ValueMax from "../util/ValueMax.js";
 import * as AsyncWorker_Proxy_tester from "./AsyncWorker_Proxy_tester.js";
 
-/*
-class TestCase {
-  constructor( spreadsheetId, range, apiKey ) {
-    this.source = source;
-    this.skipLineCount = skipLineCount;
-    this.result = result;
-    this.suspendByteCount = suspendByteCount;
-    this.note = note;
-  }
-}
-
-let testCases = [
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 0]), 1, emptyUint8Array, undefined, "Empty. Not enough lines." ),
-*/
-
-/**
- * (Note: Their length could be different, but content should be the same.
- * (i.e. the extra elements should all bew undefined))
- */
-function array2d_compare_EQ( lhs, rhs ) {
-
-  let max_i = Math.max( lhs.length, rhs.length );
-  for ( let i = 0; i < max_i; ++i ) {
-    let array1d_lhs = lhs[ i ];
-    let array1d_rhs = rhs[ i ];
-
-    let max_j = Math.max( array1d_lhs.length, array1d_rhs.length );
-    for ( let j = 0; j < max_j; ++j ) {
-      if ( array1d_lhs[ j ] != array1d_rhs[ j ] )
-        return false;
-    }
-  }
-
-  return true;
-}
-
 /**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
@@ -76,20 +40,36 @@ async function* tester( progressParent ) {
     let initWorkerPromise = workerProxy.initWorker_async( workerId );
     let initWorkerOk = await initWorkerPromise;
 
+    if ( initWorkerOk == false )
+      throw Error( `AsyncWorker_tester.tester(): `
+        `workerId=${workerId}, initWorker failed.`
+      );
+
     let numberResulter = workerProxy.number_sequence_asyncGenerator(
       intervalMilliseconds,
       valueBegin, valueCountTotal, valueCountPerBoost );
 
-    let numberResulterNext;
+    let valueIndex = 0;
+    let valueTest = valueBegin;
+    let numberResulterNext, done, value;
     do {
       numberResulterNext = await numberResulter.next();
-      let { done, value } = numberResulterNext;
+      ( { done, value } = numberResulterNext );
+
+      if ( valueTest != value )
+        throw Error( `AsyncWorker_tester.tester(): `
+          + `workerId=${workerId}, valueIndex=${valueIndex}, `
+          + `value ( ${value} ) should be the same as valueTest ( ${valueTest} ).`
+        );
 
 //!!! ...unfinished... (2022/09/12) check value
 
       progressBoostAll.value_advance();
       yield progressRoot;
-  
+
+      ++valueIndex;
+      ++valueTest;
+
     } while ( !done );
 
 //!!! ...unfinished... (2022/09/12) check value
