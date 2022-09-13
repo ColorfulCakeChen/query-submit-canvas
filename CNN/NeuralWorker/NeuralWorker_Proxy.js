@@ -64,11 +64,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     this.tensorflowJsURL = tensorflowJsURL;
 
     let resulter = this.postCommand_and_expectResult(
-      "initWorker",
-      {
-        workerId: workerId,
-        tensorflowJsURL: tensorflowJsURL,
-      }
+      undefined, "initWorker", workerId, tensorflowJsURL
     );
 
 //!!! (2022/09/12 Remarked) become a async method and automatically .next() until done.
@@ -97,12 +93,10 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    */
   neuralNet_create( processingId, neuralNetParamsBase, weightArrayBuffer ) {
     let resulter = this.postCommand_and_expectResult(
+      [ weightArrayBuffer ],
       "neuralNet_create",
-      {
-        neuralNetParamsBase: neuralNetParamsBase,
-        weightArrayBuffer: weightArrayBuffer,
-      },
-      [ weightArrayBuffer ]
+      neuralNetParamsBase,
+      weightArrayBuffer,
     );
     return resulter;
 
@@ -121,10 +115,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    */
   alignmentMark_setValue_async( processingId, markValue ) {
     let resulter = this.postCommand_and_expectResult(
-      "alignmentMark_setValue",
-      {
-        markValue: markValue,
-      }
+      undefined, "alignmentMark_setValue", markValue
     );
     return resulter;
 

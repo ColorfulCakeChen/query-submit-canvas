@@ -43,7 +43,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   The URL of tensorflow javascript library. Every worker will load the library
    * from the URL.
    */
-  async* initWorker( { workerId = 0, tensorflowJsURL } ) {
+  async* initWorker( workerId = 0, tensorflowJsURL ) {
     if ( workerId < 0 )
       workerId = 0;
 
@@ -80,7 +80,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * @param {ArrayBuffer} weightArrayBuffer
    *   The neural network's weights. It will be interpreted as Float32Array.
    */
-  async* neuralNet_create( { neuralNetParamsBase, weightArrayBuffer } ) {
+  async* neuralNet_create( neuralNetParamsBase, weightArrayBuffer ) {
 
     try {
       let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
@@ -163,7 +163,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   - ( markValue == 0 ) means this neural network plays O side currently.
    *   - ( markValue == 255 ) means this neural network plays X side currently.
    */
-  async* alignmentMark_setValue( { markValue } ) {
+  async* alignmentMark_setValue( markValue ) {
     this.alignmentMarkValue = markValue;
     return { value: markValue };
   }

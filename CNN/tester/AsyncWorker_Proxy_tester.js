@@ -50,10 +50,7 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
    */
   initWorker_async( workerId ) {
     let resulter = this.postCommand_and_expectResult(
-      "initWorker",
-      {
-        workerId: workerId,
-      }
+      undefined, "initWorker", workerId
     );
 
 //!!! (2022/09/12 Remarked) become a async method and automatically .next() until done.
@@ -87,12 +84,10 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
       valueBegin, valueCountTotal, valueCountPerBoost ] );
 
     let resulter = this.postCommand_and_expectResult(
+      [ valueParams.buffer ], // Test: transferred objects
       "number_sequence",
-      {
-        intervalMilliseconds,
-        valueParams: valueParams
-      },
-      [ valueParams.buffer ] // Test: transferred objects
+      intervalMilliseconds,
+      valueParams
     );
 
     // Check Test: transferred objects.
