@@ -10,8 +10,9 @@ import { Resulter } from "./AsyncWorker_Resulter.js";
  * Hold the worker and its related promise map. It is a wrapper of a neural network
  * web worker for handling and communicating easily.
  *
- * @member {string} workerURL
- *   The worker's source codes URL.
+ * @member {string} workerModuleURL
+ *   The (absolute) javascript module URL which will be loaded (asynchronously) by
+ * worker body (stub).
  *
  * @member {Worker} worker
  *   The worker.
@@ -34,20 +35,20 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     AsyncWorker_Proxy, AsyncWorker_Proxy.setAsConstructor );
 
   /** */
-  constructor( workerURL ) {
+  constructor( workerModuleURL ) {
     super();
-    AsyncWorker_Proxy.setAsConstructor_self.call( this, workerURL );
+    AsyncWorker_Proxy.setAsConstructor_self.call( this, workerModuleURL );
   }
 
   /** @override */
   static setAsConstructor() {
     super.setAsConstructor();
-    AsyncWorker_Proxy.setAsConstructor_self.call( this, workerURL );
+    AsyncWorker_Proxy.setAsConstructor_self.call( this, workerModuleURL );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( workerURL ) {
+  static setAsConstructor_self( workerModuleURL ) {
 
     // Q: What if processingId become too large (e.g. infinity)?
     // A: Because Number.MAX_SAFE_INTEGER is pretty large (at least, 2 ** 52 ),
@@ -60,7 +61,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     else
       this.the_processingId_Resulter_Map = new processingId_Resulter_Map();
 
-    AsyncWorker_Proxy.createWorker.call( this, workerURL );
+    AsyncWorker_Proxy.createWorker.call( this, workerModuleURL );
   }
 
   /** @override */
@@ -73,7 +74,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     }
 
     this.workerOptions = undefined;
-    this.workerURL = workerURL;
+    this.workerURL = undefined;
+    this.workerModuleURL = undefined;
 
     this.the_processingId_Resulter_Map.clear();
 
@@ -86,18 +88,14 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    * @param {AsyncWorker_Proxy} this
    *   The worker proxy.
    */
-  static createWorker( workerURL ) {
+  static createWorker_byModuleURL( workerModuleURL ) {
 
-//!!! ...unfinished... (2022/09/13)
+    this.workerModuleURL = workerModuleURL;
 
     let workerDataURI
-      = AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI( workerURL );
+      = AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI( workerModuleURL );
 
     this.workerURL = workerDataURI;
- 
-  
-//!!! (2022/09/13 Temp Remarked) Test workerDataURI
-//    this.workerURL = workerURL;
 
     // Should not use "module" type worker, otherwise the worker can not use
     // importScripts() to load tensorflow.js library.
@@ -114,7 +112,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   /**
    * Create a data URI representing the main (i.e. body) javascript file of web worker.
    * It is viewed as a classic javascript file (i.e. not an importable module). But
-   * it will load specified workerURL as a module.
+   * it will load specified workerModuleURL as a module.
    *
    * In module (non-classic) web worker, static import is available. But the function
    * importScripts() will not be avbailable. For solving this problem, using
@@ -122,36 +120,28 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    * can be loaded by importScripts(). And use dynamic import() to load ourselves
    * modules because import() can be used in classic (non-module) script.
    *
-   * @param {string} moduleURL
+   * @param {string} workerModuleURL
    *   An (absolute) URL to a javascript module file. It will be imported
    * (asynchronously) by this generated classic javascript file (as a dataURI).
    */
-  static create_WorkerBodyStub_Codes_DataURI( moduleURL ) {
+  static create_WorkerBodyStub_Codes_DataURI( workerModuleURL ) {
 
-//!!! ...unfinished... (2022/09/13)
-// Perhaps, use a data uri contains the following source codes as workerURL:
-//
-// ( async () => {
-//   await import( worker_body_relative_path );
-// } )();
-//
-//
-
+    // The codes do the following:
+    //
+    //   - Import the specified module URL.
+    //   - Create a temporary message queue.
+    //   - Collect all messages before
+    //       AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body() be registered
+    //       as message handler.
+    //
     let codes = ``
-      + `import( "${moduleURL}" );`
-
-//!!! ...unfinished... (2022/09/13)
-// needs create a temporary message queue for collecting message before
-// AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body() be registered
-// as message handler.
-// 
-
-      + `AsyncWorker_Body_temporaryMessageQueue = [];`
-      + `onmessage = ( e ) => {`
-        // + `console.log( "Hello" );`
-        // + `console.log( e );`
-        + `AsyncWorker_Body_temporaryMessageQueue.push( e );`
-      + `};`
+      + `import( "${moduleURL}" );\n`
+      + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
+      + `onmessage = ( e ) => {\n`
+        // + `console.log( "Hello" );\n`
+        // + `console.log( e );\n`
+        + `AsyncWorker_Body_temporaryMessageQueue.push( e );\n`
+      + `};\n`
       ;
 
     let workerDataURI

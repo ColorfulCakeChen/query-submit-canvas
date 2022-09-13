@@ -20,13 +20,13 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
 
   /** */
   constructor() {
-    super( AsyncWorker_Proxy_tester.workerURL );
+    super( AsyncWorker_Proxy_tester.workerModuleURL );
     AsyncWorker_Proxy_tester.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
-    super.setAsConstructor( AsyncWorker_Proxy_tester.workerURL );
+    super.setAsConstructor( AsyncWorker_Proxy_tester.workerModuleURL );
     AsyncWorker_Proxy_tester.setAsConstructor_self.call( this );
     return this;
   }
@@ -97,7 +97,7 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
 
 }
 
-// Assume the web worker main (i.e. body) javascript file  is a sibling
-// file (i.e. inside the same folder) of this module file.
-AsyncWorker_Proxy_tester.workerURL
+// Assume the web worker module javascript file is a sibling file (i.e. inside
+// the same folder) of this module file.
+AsyncWorker_Proxy_tester.workerModuleURL
   = new URL( "AsyncWorker_Body_tester.js", import.meta.url );

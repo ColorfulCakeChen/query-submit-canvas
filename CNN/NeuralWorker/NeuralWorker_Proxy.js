@@ -21,13 +21,13 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
   /** */
   constructor() {
-    super( NeuralWorker_Proxy.workerURL );
+    super( NeuralWorker_Proxy.workerModuleURL );
     NeuralWorker_Proxy.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor() {
-    super.setAsConstructor( NeuralWorker_Proxy.workerURL );
+    super.setAsConstructor( NeuralWorker_Proxy.workerModuleURL );
     NeuralWorker_Proxy.setAsConstructor_self.call( this );
     return this;
   }
@@ -336,9 +336,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
 }
 
-//!!! ...unfinished... (2022/08/24) Why not use "./NeuralWorker_Body.js"?
-// The import.meta.url should extract the path (exclude file name)
-
-// Assume the main (i.e. body) javascript file of neural network web worker is
-// a sibling file (i.e. inside the same folder) of this module file.
-NeuralWorker_Proxy.workerURL = new URL( "NeuralWorker_Body.js", import.meta.url );
+// Assume the web worker module javascript file is a sibling file (i.e. inside
+// the same folder) of this module file.
+NeuralWorker_Proxy.workerModuleURL
+  = new URL( "NeuralWorker_Body.js", import.meta.url );
