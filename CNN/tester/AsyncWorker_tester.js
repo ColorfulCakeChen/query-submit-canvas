@@ -8,7 +8,7 @@ import { AsyncWorker_Proxy_tester } from "./AsyncWorker_Proxy_tester.js";
  *
  * @param {AsyncWorker_Proxy_tester} workerProxy
  */
-async function test_WorkerProxy_init( workerProxy, workerId ) {
+async function test_WorkerProxy_init( { workerProxy }, workerId ) {
   let initWorkerPromise = workerProxy.initWorker_async( workerId );
   let initWorkerOk = await initWorkerPromise;
   if ( initWorkerOk == false )
