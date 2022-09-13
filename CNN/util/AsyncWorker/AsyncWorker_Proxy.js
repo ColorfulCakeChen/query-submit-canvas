@@ -106,10 +106,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       + '};'
       ;
 
-    let textEncoder = new TextEncoder();
-    let codes_utf8 = textEncoder.encode( codes );
-    let codes_base64 = btoa( codes_utf8 );
-    workerDataURI = `data:text/javascript;base64,${codes_base64}`;
+    workerDataURI
+      = AsyncWorker_Proxy.createDataURI_byString( "text/javascript", codes );
   }
   this.workerURL = workerDataURI;
  
