@@ -98,7 +98,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     let worker = this.worker = new Worker( this.workerURL, this.workerOptions );
 
     // Register callback from the web worker.
-    worker.onmessage = NeuralWorker_Proxy.onmessage_from_AsyncWorker_Body.bind( this );
+    worker.onmessage = AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body.bind( this );
   }
 
   /**
