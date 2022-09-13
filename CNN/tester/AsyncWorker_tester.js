@@ -77,7 +77,6 @@ async function test_WorkerProxy_numberSequence( {
     );
 }
 
-
 /**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
@@ -161,7 +160,7 @@ async function* tester( progressParent ) {
     yield progressRoot;
   }
 
-  // One woker, three number sequence.
+  // 1. One woker, three number sequences.
   {
     const workerId = 1;
     allBoost.workerProxy
@@ -190,7 +189,7 @@ async function* tester( progressParent ) {
     yield progressRoot;
   }
 
-  // Two woker, three number sequence.
+  // 2. Two wokers, three number sequences.
   {
     allBoost.workerProxy
       = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
@@ -201,8 +200,8 @@ async function* tester( progressParent ) {
   
     await Promise.all( [
       test_WorkerProxy_init( allBoost, 2 ),
-       test_WorkerProxy_init( allNonBoost, 3 )
-    ];
+      test_WorkerProxy_init( allNonBoost, 3 )
+    ] );
 
     await Promise.all( [
       test_WorkerProxy_numberSequence( allBoost ),
@@ -225,80 +224,41 @@ async function* tester( progressParent ) {
     yield progressRoot;
   }
 
-
+  // 3. Three wokers, three number sequences.
   {
-    // All non-boost.
-    const allNonBoost = {
-      workerId: 2,
-      intervalMilliseconds: 100,
-      valueBegin: 50,
-      valueCountTotal: valueCountTotal,
-      valueCountPerBoost: 0,
-      workerProxy: AsyncWorker_Proxy_tester.Pool.get_or_create_by(),
-    };
-
-    // Interleave boost and non-boost.
-    const interleave_Boost_NonBoost = {
-      workerId: 3,
-      intervalMilliseconds: 90,
-      valueBegin: 120,
-      valueCountTotal: valueCountTotal,
-      valueCountPerBoost: Math.ceil( valueCountTotal / 10 ),
-      workerProxy: AsyncWorker_Proxy_tester.Pool.get_or_create_by(),
-    };
-
+    allBoost.workerProxy = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
+    allNonBoost.workerProxy = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
+    interleave_Boost_NonBoost.workerProxy
+      = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
+  
     await Promise.all( [
-      test_WorkerProxy_init( allNonBoost ),
-      test_WorkerProxy_init( interleave_Boost_NonBoost ),
+      test_WorkerProxy_init( allBoost, 4 ),
+      test_WorkerProxy_init( allNonBoost, 5 ),
+      test_WorkerProxy_init( interleave_Boost_NonBoost, 6 ),
     ] );
 
-    test_WorkerProxy_numberSequence( allNonBoost );
-    test_WorkerProxy_numberSequence( interleave_Boost_NonBoost );
+    await Promise.all( [
+      test_WorkerProxy_numberSequence( allBoost ),
+      test_WorkerProxy_numberSequence( allNonBoost ),
+      test_WorkerProxy_numberSequence( interleave_Boost_NonBoost )
+    ] );
+
+    test_WorkerProxy_processingQueueSize_zero( allBoost );
+    test_WorkerProxy_processingQueueSize_zero( allNonBoost );
+    test_WorkerProxy_processingQueueSize_zero( interleave_Boost_NonBoost );
+
+    allBoost.workerProxy.disposeResources_and_recycleToPool();
+    allBoost.workerProxy = null;
 
     allNonBoost.workerProxy.disposeResources_and_recycleToPool();
     allNonBoost.workerProxy = null;
 
     interleave_Boost_NonBoost.workerProxy.disposeResources_and_recycleToPool();
     interleave_Boost_NonBoost.workerProxy = null;
+
+    progressToAdvance.value_advance();
+    yield progressRoot;
   }
-
-
-//!!! ...unfinished... (2022/09/12) check value
-
-
-  let tester1 = GSheets.UrlComposer.Pool.get_or_create_by( spreadsheetId, range );
-  let fetcher1 = tester1.fetcher_JSON_ColumnMajorArrayArray( progress1 );
-  let result1 = yield* fetcher1;
-
-  // With API key.
-  let tester2 = GSheets.UrlComposer.Pool.get_or_create_by( spreadsheetId, range, apiKey );
-  let fetcher2 = tester2.fetcher_JSON_ColumnMajorArrayArray( progress2 );
-  let result2 = yield* fetcher2;
-
-  // Compare results: should the same.
-  if ( !array2d_compare_EQ( result1, result2 ) )
-    throw Error( `${result1} != ${result2}` );
-
-  // Test change range.
-  {
-    let newRange = result1[ 0 ][ 0 ];
-    tester1.range_set( newRange );
-    let fetcher11 = tester1.fetcher_JSON_ColumnMajorArrayArray( progress11 );
-    let result11 = yield* fetcher11;
-
-    tester2.range_set( newRange );
-    let fetcher21 = tester2.fetcher_JSON_ColumnMajorArrayArray( progress21 );
-    let result21 = yield* fetcher21;
-
-    if ( !array2d_compare_EQ( result11, result21 ) )
-      throw Error( `${result11} != ${result21}` );
-  }
-
-  tester2.disposeResources_and_recycleToPool();
-  tester2 = null;
-
-  tester1.disposeResources_and_recycleToPool();
-  tester1 = null;
 
   console.log( "AsyncWorker download testing... Done." );
 }
