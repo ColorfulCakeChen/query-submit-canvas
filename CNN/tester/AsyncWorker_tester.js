@@ -1,7 +1,7 @@
 export { tester };
 
 import * as ValueMax from "../util/ValueMax.js";
-import * as AsyncWorker_Proxy_tester from "./AsyncWorker_Proxy_tester.js";
+import { AsyncWorker_Proxy_tester } from "./AsyncWorker_Proxy_tester.js";
 
 /**
  * Test a WorkerProxy's initialization.
