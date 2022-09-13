@@ -53,17 +53,17 @@ class AsyncWorker_Body {
 
       if ( processingId != undefined ) {
         let done, value;
-        let transferrableObjectArray;
+        let transferableObjectArray;
         do {
-          ( { done, value: { value, transferrableObjectArray } }
+          ( { done, value: { value, transferableObjectArray } }
             = await asyncGenerator.next() );
           let resultData = [ processingId, done, value ];
-          postMessage( resultData, transferrableObjectArray );
+          postMessage( resultData, transferableObjectArray );
 
         } while ( !done );
 
       } else { // Otherwise, no processingId means no need report return value.
-        for await ( let { value, transferrableObjectArray } of asyncGenerator ) {
+        for await ( let { value, transferableObjectArray } of asyncGenerator ) {
           // Do nothing. Just complete the async generator.
         }
       }

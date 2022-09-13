@@ -103,7 +103,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   /**
    * Send command to WorkerBody and expect result.
    *
-   * @param {Array} transferrableObjectArray
+   * @param {Array} transferableObjectArray
    *   The transferable object array when postMessage. It could be undefined (but
    * can not be null).
    *
@@ -116,14 +116,14 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    * @return {PromiseResolveReject_Resulter}
    *   Return an async generator for receving result from WorkerBody of the processing.
    */
-  postCommand_and_expectResult( transferrableObjectArray, commandName, ...args ) {
+  postCommand_and_expectResult( transferableObjectArray, commandName, ...args ) {
     let processingId = this.processingId_next;
     ++this.processingId_next;
 
     let resulter = resulter_create_by_processingId( processingId );
 
     let data = [ processingId, command, ...args ];
-    this.worker.postMessage( data, transferrableObjectArray );
+    this.worker.postMessage( data, transferableObjectArray );
 
     return resulter;
   }
@@ -131,7 +131,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   /**
    * Send command to WorkerBody without expecting result. (i.e. fire-and-forget)
    *
-   * @param {Array} transferrableObjectArray
+   * @param {Array} transferableObjectArray
    *   The transferable object array when postMessage. It could be undefined (but
    * can not be null).
    *
@@ -141,9 +141,9 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    * @param {any[]} args
    *   The arguments which will be sent to WorkerBody.
    */
-  postCommand( transferrableObjectArray, command, ...args ) {
+  postCommand( transferableObjectArray, command, ...args ) {
     let data = [ command, ...args ];
-    this.worker.postMessage( data, transferrableObjectArray );
+    this.worker.postMessage( data, transferableObjectArray );
   }
 
   /**
