@@ -12,8 +12,13 @@ class AsyncWorker_Body {
 
   /** It will register callback from AsyncWorker_Proxy. */
   constructor() {
-    globalThis.onmessage
-      = AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy.bind( this );
+//!!! (2022/09/13 Temp Remarked) For debug.
+    // globalThis.onmessage
+    //   = AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy.bind( this );
+
+    globalThis.onmessage = () => {
+      console.log( "Hi" );
+    };
   }
 
   /** Close this worker. */
