@@ -66,7 +66,8 @@ class AsyncWorker_Body {
    */
   static async onmessage_from_AsyncWorker_Proxy( e ) {
 
-    // Ensure all messages in temporary message queue are handled first.
+    // Ensure all messages in temporary message queue are handled first
+    // because they are received before this message handler being setup.
     this.globalThis_temporaryMessageQueue_processMessages();
 
     // e.data == [ processingId, command, ...args ]
