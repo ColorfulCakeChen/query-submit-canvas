@@ -1,13 +1,14 @@
 export { PromiseResolveReject };
-export { PromiseResolveReject_Resulter };
 export { processingId_Resulter_Map };
+
+import { Resulter as AsyncWorker_Resulter } from "./AsyncWorker_Resulter.js";
 
 /**
  * Hold a processing's id, promise, resolve (fulfilling function object), reject
  * (rejecting function object).
  *
  * @member {number} processingId
- *   The id of the processing.
+ *   The numeric identifier of the processing.
  *
  * @member {Promise} promise
  *   The pending promise for the processing.
@@ -20,7 +21,7 @@ export { processingId_Resulter_Map };
  *
  * @member {Promise} promiseToYieldReturn
  *   The promise used as the yield/return of the processing's async generator
- * PromiseResolveReject_Resulter.
+ * AsyncWorker_Resulter.
  * 
  */
  class PromiseResolveReject {
@@ -64,112 +65,7 @@ export { processingId_Resulter_Map };
 
 
 /**
- * An async generator as the consumer of the processingId's PromiseResolveRejectArray.
- *
- * @member {PromiseResolveReject[]} PromiseResolveRejectArray
- *   All promises waiting for WorkerBody's result of the processing.
- */
- class PromiseResolveReject_Resulter {
-
-  /** */
-  constructor( processingId, processingId_PromiseResolveRejectArray_Map ) {
-    this.processingId = processingId;
-    this.PromiseResolveRejectArray = new Array();
-    this.processingId_PromiseResolveRejectArray_Map
-      = processingId_PromiseResolveRejectArray_Map;
-  }
-
-  /**
-   * Note: This .next() should be called until promise resolved to { done: true }.
-   *       Otherwise, this resulter will not be removed from
-   *       processingId_PromiseResolveRejectArray_Map. This will result in memory
-   *       not been released.
-   *
-   * @return {Promise}
-   *   Return a promise resolved to { done, value } which represents the WorkerBody's
-   * result of the processing.
-   */
-  next() {
-    let resulter
-      = this.processingId_PromiseResolveRejectArray_Map.map.get( this.processingId );
-    if ( !resulter ) {
-      throw Error( `PromiseResolveReject_Resulter.next(): `
-        + `processingId=${processingId}. `
-        + `PromiseResolveReject_Resulter not found in `
-        + `processingId_PromiseResolveRejectArray_Map.`
-      );
-      return { done: true }; // No pending promise for the processing. (should not happen)
-    }
-
-    if ( resulter != this ) {
-      throw Error( `PromiseResolveReject_Resulter.next(): `
-        + `processingId=${processingId}. `
-        + `PromiseResolveReject_Resulter in `
-        + `processingId_PromiseResolveRejectArray_Map should be this.`
-      );
-      return { done: true };
-    }
-
-    // PromiseResolveRejectArray should never be empty. It should has at least
-    // one promise for this resulter to yield/return.
-    //
-    if ( this.PromiseResolveRejectArray.length < 1 ) {
-      throw Error( `PromiseResolveReject_Resulter.next(): `
-        + `processingId=${processingId}. `
-        + `PromiseResolveRejectArray should never be empty.`
-      );
-      return { done: true };
-    }
-
-    // 0. Always yield the first promise.
-    let thePromiseResolveReject = this.PromiseResolveRejectArray[ 0 ];
-
-    // 1. Prepare the next promise.
-
-    // 1.1 The first pending promise will be yielded again and again
-    //     (until it has been fulfilled and handled by here).
-    if ( thePromiseResolveReject.pending ) {
-      // Do nothing.
-
-    // 1.2 Otherwise, the promise has been fulfilled. Remove it so that it will not
-    //     be yielded again in the future.
-    } else {
-      this.PromiseResolveRejectArray.shift();
-
-      // 2. Handle final promise.
-      //
-      // If the promise is done (so it is also not pending), it means no more result
-      // will be received from the WorkerBody. So remove the entire result queue
-      // (i.e. PromiseResolveRejectArray) of the processing.
-      if ( thePromiseResolveReject.done ) {
-        this.map.delete( this.processingId );
-      }
-    }
-
-    // 3. Yield/Return the promise which will resolve to { done, value }.
-    return thePromiseResolveReject.promiseToYieldReturn;
-  }
-
-  /**
-   * Automatically .next() until done.
-   *
-   * @return {Promise}
-   *   Return a promise resolved to the final value (i.e. the Xxx of the
-   * { done: true, value: Xxx }) of this resulter.
-   */
-  async untilDone() {
-    let resulterNext;
-    do {
-      resulterNext = await this.next();
-    } while ( !resulterNext.done );
-    return resulterNext.value;
-  }
-
-}
-
-
-/**
- * A collection PromiseResolveReject_Resulter by processingId as key.
+ * A collection AsyncWorker_Resulter by processingId as key.
  */
 class processingId_Resulter_Map {
 
@@ -185,13 +81,13 @@ class processingId_Resulter_Map {
    * This method is the initializer the processingId's PromiseResolveRejectArray.
    *
    * @param {number} processingId
-   *   The numeric identifier for the processing.
+   *   The numeric identifier of the processing.
    *
    * @return {AsyncGenerator}
-   *   Return the created PromiseResolveReject_Resulter() object.
+   *   Return the created AsyncWorker_Resulter() object.
    */
   resulter_create_by_processingId( processingId ) {
-    let resulter = new PromiseResolveReject_Resulter(
+    let resulter = new AsyncWorker_Resulter(
       processingId, processingId_PromiseResolveRejectArray_Map );
 
     this.map.set( processingId, resulter );
@@ -220,6 +116,16 @@ class processingId_Resulter_Map {
    *
    * This method is the producer the processingId's PromiseResolveRejectArray.
    *
+   *
+   * @param {number} processingId
+   *   The numeric identifier of the processing.
+   *
+   * @param {boolean} done
+   *   If true, this is the final value of the processing. If false, there will be
+   * more result values coming from the WorkerBody.
+   *
+   * @param {any} value
+   *   The result value of this step of the processing.
    */
   resolve_by_processingId_done_value( processingId, done, value ) {
     let resulter = this.map.get( processingId );
