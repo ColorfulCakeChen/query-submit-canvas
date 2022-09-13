@@ -9,6 +9,13 @@
  * modules because import() can be used in classic (non-module) script.
  */
 
+import { AsyncWorker_Body_tester } from "./AsyncWorker_Body_tester.js";
+
+globalThis.onmessage = ( e ) => {
+  console.log( "Hi4" );
+  console.log( e );
+};
+
 //import( "./AsyncWorker_Body_tester.js" );
 
 //!!! (2022/09/13 Remarked) use import() at global.
