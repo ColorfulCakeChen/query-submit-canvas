@@ -12,12 +12,12 @@
 //import( "./AsyncWorker_Body_tester.js" );
 
 //!!! (2022/09/13 Remarked) use import() at global.
-import( "./AsyncWorker_Body_tester.js" ).then( () => {
-  globalThis.onmessage = ( e ) => {
-    console.log( "Hi3" );
-    console.log( e );
-  };
-});
+// import( "./AsyncWorker_Body_tester.js" ).then( () => {
+//   globalThis.onmessage = ( e ) => {
+//     console.log( "Hi3" );
+//     console.log( e );
+//   };
+// });
 
 //!!! (2022/09/13 Remarked) use import() at global.
 // ( async () => {
@@ -25,13 +25,14 @@ import( "./AsyncWorker_Body_tester.js" ).then( () => {
 // } )();
 
 //!!! (2022/09/13 Remarked) use .then().
-globalThis.onmessage = ( e ) => {
-  console.log( "Hi2" );
-  console.log( e );
-};
+// globalThis.onmessage = ( e ) => {
+//   console.log( "Hi2" );
+//   console.log( e );
+// };
 
 //!!! ...unfinished... (2022/09/13)
 // A temporary message queue is necessary to store message to
 // wait for AsyncWorker_Body_tester created and register message
 // handler.
 
+console.log( "Hello" );

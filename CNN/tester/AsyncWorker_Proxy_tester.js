@@ -109,6 +109,6 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
 //   = new URL( "AsyncWorker_Body_tester.js", import.meta.url );
 
 //!!! (2022/09/13 Remarked) Try stub.
-//AsyncWorker_Proxy_tester.workerURL = "./AsyncWorker_Body_tester.js";
-AsyncWorker_Proxy_tester.workerURL = "./AsyncWorker_BodyStub_tester.js";
+AsyncWorker_Proxy_tester.workerURL = "./AsyncWorker_Body_tester.js";
+//AsyncWorker_Proxy_tester.workerURL = "./AsyncWorker_BodyStub_tester.js";
 
