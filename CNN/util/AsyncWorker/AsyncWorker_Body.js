@@ -16,8 +16,9 @@ class AsyncWorker_Body {
     // globalThis.onmessage
     //   = AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy.bind( this );
 
-    globalThis.onmessage = () => {
+    globalThis.onmessage = ( e ) => {
       console.log( "Hi" );
+      console.log( e );
     };
   }
 
