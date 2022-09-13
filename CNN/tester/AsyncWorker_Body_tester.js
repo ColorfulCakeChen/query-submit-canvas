@@ -11,6 +11,9 @@
 
 ( async () => {
 
+//!!! (2022/09/13 Temp Test) importScripts
+importScripts( "../util/AsyncWorker.js" );
+
 globalThis.AsyncWorker = await import( "../util/AsyncWorker.js" );
 
 /**
