@@ -97,10 +97,20 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 //
 //
   
+    let codes = '\
+      onmessage = ( e ) => {\
+        console.log( "Hello" );\
+        console.log( e );\
+      };\
+    ';
+
+    let codes_base64 = btoa( codes );
+    let workerDataURI = `data:text/javascript,${codes_base64}`;
+    this.workerURL = workerDataURI;
+ 
   
-
-
-    this.workerURL = workerURL;
+//!!! (2022/09/13 Temp Remarked) Test workerDataURI
+//    this.workerURL = workerURL;
 
     // Should not use "module" type worker, otherwise the worker can not use
     // importScripts() to load tensorflow.js library.
