@@ -105,7 +105,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     ';
 
     let codes_base64 = btoa( codes );
-    let workerDataURI = `data:text/javascript,${codes_base64}`;
+    let workerDataURI = `data:text/javascript;base64,${codes_base64}`;
     this.workerURL = workerDataURI;
  
   
