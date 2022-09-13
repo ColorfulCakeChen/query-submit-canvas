@@ -134,7 +134,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    * @return {string} Return the data URI string.
    */
   static createDataURI_byString( strMimeType, str ) {
-    let textEncoder = new TextEncoder();
+    // let textEncoder = new TextEncoder();
     // let str_utf8 = textEncoder.encode( str );
     // let str_base64 = btoa( str_utf8 );
     let str_base64 = btoa( str );
