@@ -3,7 +3,7 @@ export { AsyncWorker_Proxy as Proxy };
 import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
 import { PromiseResolveReject } from "./AsyncWorker_PromiseResolveReject.js";
-import { processingId_Resulter_Map } from "./AsyncWorker_PromiseResolveReject.js";
+import { processingId_Resulter_Map } from "./AsyncWorker_processingId_Resulter_Map.js";
 import { Resulter } from "./AsyncWorker_Resulter.js";
 
 /**
