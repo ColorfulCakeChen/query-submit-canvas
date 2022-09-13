@@ -3,7 +3,7 @@ export { AsyncWorker_processingId_Resulter_Map as processingId_Resulter_Map };
 import { Resulter } from "./AsyncWorker_Resulter.js";
 
 /**
- * A collection AsyncWorker.Resulter by processingId as key.
+ * A collection of AsyncWorker.Resulter by processingId as key.
  */
 class AsyncWorker_processingId_Resulter_Map {
 
