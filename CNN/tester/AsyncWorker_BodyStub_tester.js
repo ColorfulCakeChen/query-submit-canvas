@@ -15,3 +15,8 @@
 ( async () => {
   await import( "./AsyncWorker_Body_tester.js" );
 } )();
+
+globalThis.onmessage = ( e ) => {
+  console.log( "Hi2" );
+  console.log( e );
+};
