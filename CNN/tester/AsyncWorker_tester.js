@@ -94,22 +94,55 @@ async function* tester( progressParent ) {
   let progress_interleave_Boost_NonBoost = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( valueCountTotal ) );
 
-  {
-    // All boost.
-    let allBoost = {
-      workerId: 1,
-      intervalMilliseconds: 100,
-      valueBegin: 0,
-      valueCountTotal: valueCountTotal,
-      valueCountPerBoost: valueCountTotal,
-      workerProxy: AsyncWorker_Proxy_tester.Pool.get_or_create_by(),
-    };
+  // All boost.
+  let allBoost = {
+    workerId: 1,
+    intervalMilliseconds: 100,
+    valueBegin: 0,
+    valueCountTotal: valueCountTotal,
+    valueCountPerBoost: valueCountTotal,
+    workerProxy: undefined,
+  };
 
+  // All non-boost.
+  const allNonBoost = {
+    workerId: 2,
+    intervalMilliseconds: 100,
+    valueBegin: 50,
+    valueCountTotal: valueCountTotal,
+    valueCountPerBoost: 0,
+    workerProxy: undefined,
+  };
+
+  // Interleave boost and non-boost.
+  const interleave_Boost_NonBoost = {
+    workerId: 3,
+    intervalMilliseconds: 90,
+    valueBegin: 120,
+    valueCountTotal: valueCountTotal,
+    valueCountPerBoost: Math.ceil( valueCountTotal / 10 ),
+    workerProxy: undefined,
+  };
+
+  // One woker, three number sequence.
+  {
+    allBoost.workerProxy
+      = allNonBoost.workerProxy
+      = interleave_Boost_NonBoost.workerProxy
+      = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
+  
     await test_WorkerProxy_init( allBoost );
-    yield* test_WorkerProxy_numberSequence( allBoost );
+
+    test_WorkerProxy_numberSequence( allBoost );
+    test_WorkerProxy_numberSequence( allNonBoost );
+    test_WorkerProxy_numberSequence( interleave_Boost_NonBoost );
 
     allBoost.workerProxy.disposeResources_and_recycleToPool();
-    allBoost.workerProxy = null;
+
+    allBoost.workerProxy
+      = allNonBoost.workerProxy
+      = interleave_Boost_NonBoost.workerProxy
+      = null;
 
     progress_allBoost.value_advance( valueCountTotal );
     yield progressRoot;
