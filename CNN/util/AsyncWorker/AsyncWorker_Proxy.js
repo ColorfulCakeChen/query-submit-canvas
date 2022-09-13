@@ -155,7 +155,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 
     let resulter = this.the_processingId_Resulter_Map.createResulter_by_processingId(
       processingId );
-    this.worker.postMessage( data, transferableObjectArray );
+    this.worker.postMessage( commandArgs, transferableObjectArray );
     return resulter;
   }
 
