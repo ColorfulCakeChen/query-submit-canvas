@@ -22,10 +22,10 @@ class AsyncWorker_processingId_Resulter_Map {
    * @param {number} processingId
    *   The numeric identifier of the processing.
    *
-   * @return {AsyncGenerator}
-   *   Return the created AsyncWorker.Resulter object.
+   * @return {AsyncWorker.Resulter}
+   *   Return an async generator for receving result from WorkerBody of the processing.
    */
-  resulter_create_by_processingId( processingId ) {
+  createResulter_by_processingId( processingId ) {
     let resulter = new Resulter( processingId, this );
 
     let thePromiseResolveReject = new PromiseResolveReject( processingId );
