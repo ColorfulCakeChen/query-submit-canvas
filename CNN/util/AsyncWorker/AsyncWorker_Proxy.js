@@ -89,7 +89,6 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    *   The worker proxy.
    */
   static createWorker_byModuleURL( workerModuleURL ) {
-
     this.workerModuleURL = workerModuleURL;
 
     let workerDataURI
@@ -97,16 +96,20 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 
     this.workerURL = workerDataURI;
 
-    // Should not use "module" type worker, otherwise the worker can not use
-    // importScripts() to load tensorflow.js library.
+    // Q: Why not use "module" type worker?
+    // A: A "module" type worker can not use importScripts() to load global library.
+    //    (e.g. tensorflow.js)
     //
-    //this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
+    // On the other hand, a "classic" type worker can use both importScripts() and
+    // import() to load global library and module.
+    //
     this.workerOptions = null;
 
     this.worker = new Worker( this.workerURL, this.workerOptions );
 
     // Register callback from the web worker.
-    this.worker.onmessage = AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body.bind( this );
+    this.worker.onmessage
+      = AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body.bind( this );
   }
 
   /**
