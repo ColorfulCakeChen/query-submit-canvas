@@ -96,5 +96,6 @@ class AsyncWorker_Body_tester extends AsyncWorker.Body {
 
 AsyncWorker_Body_tester.Singleton = new AsyncWorker_Body_tester(); // Create worker body.
 
-// Handle messages received before this worker body module loaded.
-AsyncWorker_Body_tester.Singleton.globalThis_temporaryMessageQueue_processMessages();
+//!!! (2022/09/13 Remarked) AsyncWorker_Body constructor will schedule a timer to do this.
+// // Handle messages received before this worker body module loaded.
+// AsyncWorker_Body_tester.Singleton.globalThis_temporaryMessageQueue_processMessages();

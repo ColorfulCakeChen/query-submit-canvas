@@ -14,6 +14,12 @@ class AsyncWorker_Body {
   constructor() {
     globalThis.onmessage
       = AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy.bind( this );
+
+    // Process all messages received before this AsyncWorker_Body object created.
+    setTimeout( 
+      this.globalThis_temporaryMessageQueue_processMessages.bind( this ),
+      0
+    );
   }
 
   /** Close this worker. */
@@ -60,8 +66,7 @@ class AsyncWorker_Body {
    */
   static async onmessage_from_AsyncWorker_Proxy( e ) {
 
-    // Ensure all messages in temporary message queue are handled before this
-    // message handler.
+    // Ensure all messages in temporary message queue are handled first.
     this.globalThis_temporaryMessageQueue_processMessages();
 
     // e.data == [ processingId, command, ...args ]
