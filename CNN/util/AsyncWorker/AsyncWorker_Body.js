@@ -60,6 +60,10 @@ class AsyncWorker_Body {
    */
   static async onmessage_from_AsyncWorker_Proxy( e ) {
 
+    // Ensure all messages in temporary message queue are handled before this
+    // message handler.
+    this.globalThis_temporaryMessageQueue_processMessages();
+
     // e.data == [ processingId, command, ...args ]
     let [ processingId, command, ...args ] = e.data;
 
