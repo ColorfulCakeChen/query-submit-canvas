@@ -43,26 +43,27 @@ class AsyncWorker_Body {
    */
   static async onmessage_from_AsyncWorker_Proxy( e ) {
 
-    // e.data == { processingId, command, args }
-    let { processingId, command, args } = e.data;
+    // e.data == [ processingId, command, ...args ]
+    let [ processingId, command, ...args ] = e.data;
 
     try {
       let method = this[ command ]; // command name as method name.
       let func = method.bind( this );
-      let asyncGenerator = func( args );
+      let asyncGenerator = func( ...args );
 
       if ( processingId != undefined ) {
         let done, value;
-        let transfer; // transferable object array.
+        let transferrableObjectArray;
         do {
-          ( { done, value: { value, transfer } } = await asyncGenerator.next() );
-          let resultData = { processingId, done, value };
-          postMessage( resultData, transfer );
+          ( { done, value: { value, transferrableObjectArray } }
+            = await asyncGenerator.next() );
+          let resultData = [ processingId, done, value ];
+          postMessage( resultData, transferrableObjectArray );
 
         } while ( !done );
 
       } else { // Otherwise, no processingId means no need report return value.
-        for await ( let { value, transfer } of asyncGenerator ) {
+        for await ( let { value, transferrableObjectArray } of asyncGenerator ) {
           // Do nothing. Just complete the async generator.
         }
       }

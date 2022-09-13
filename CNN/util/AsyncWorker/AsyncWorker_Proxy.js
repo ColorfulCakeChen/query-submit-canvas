@@ -103,31 +103,27 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   /**
    * Send command to WorkerBody and expect result.
    *
-   * @param {string} commandName
-   *   The method name in the WorkerBody.
-   *
-   * @param {object} args
-   *   The argument object which will be sent to WorkerBody.
-   *
-   * @param {Array} tansfer
+   * @param {Array} transferrableObjectArray
    *   The transferable object array when postMessage. It could be undefined (but
    * can not be null).
+   *
+   * @param {string} command
+   *   The method name in the WorkerBody.
+   *
+   * @param {any[]} args
+   *   The arguments which will be sent to WorkerBody.
    *
    * @return {PromiseResolveReject_Resulter}
    *   Return an async generator for receving result from WorkerBody of the processing.
    */
-  postCommand_and_expectResult( commandName, args, transfer ) {
+  postCommand_and_expectResult( transferrableObjectArray, commandName, ...args ) {
     let processingId = this.processingId_next;
     ++this.processingId_next;
 
     let resulter = resulter_create_by_processingId( processingId );
 
-    let data = {
-      processingId: processingId,
-      command: commandName,
-      args: args
-    };
-    this.worker.postMessage( data, tansfer );
+    let data = [ processingId, command, ...args ];
+    this.worker.postMessage( data, transferrableObjectArray );
 
     return resulter;
   }
@@ -135,22 +131,19 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   /**
    * Send command to WorkerBody without expecting result. (i.e. fire-and-forget)
    *
-   * @param {string} commandName
-   *   The method name in the WorkerBody.
-   *
-   * @param {object} args
-   *   The argument object which will be sent to WorkerBody.
-   *
-   * @param {Array} tansfer
+   * @param {Array} transferrableObjectArray
    *   The transferable object array when postMessage. It could be undefined (but
    * can not be null).
+   *
+   * @param {string} command
+   *   The method name in the WorkerBody.
+   *
+   * @param {any[]} args
+   *   The arguments which will be sent to WorkerBody.
    */
-  postCommand( commandName, args, transfer ) {
-    let data = {
-      command: commandName,
-      args: args
-    };
-    this.worker.postMessage( data, tansfer );
+  postCommand( transferrableObjectArray, command, ...args ) {
+    let data = [ command, ...args ];
+    this.worker.postMessage( data, transferrableObjectArray );
   }
 
   /**
@@ -162,8 +155,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    */
   static onmessage_from_AsyncWorker_Body( e ) {
 
-    // ( e.data == { processingId, done, value } )
-    let { processingId, done, value } = e.data;
+    // ( e.data == [ processingId, done, value ] )
+    let [ processingId, done, value ] = e.data;
 
     this.the_processingId_Resulter_Map.resolve_by_processingId_done_value(
       processingId, done, value );
