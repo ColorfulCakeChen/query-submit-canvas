@@ -9,18 +9,23 @@
  * modules because import() can be used in classic (non-module) script.
  */
 
-import( "./AsyncWorker_Body_tester.js" );
+//import( "./AsyncWorker_Body_tester.js" );
 
 //!!! (2022/09/13 Remarked) use import() at global.
-// import( "./AsyncWorker_Body_tester.js" ).then( () => {
-// });
+import( "./AsyncWorker_Body_tester.js" ).then( () => {
+  globalThis.onmessage = ( e ) => {
+    console.log( "Hi3" );
+    console.log( e );
+  };
+});
 
 //!!! (2022/09/13 Remarked) use import() at global.
 // ( async () => {
 //   await import( "./AsyncWorker_Body_tester.js" );
 // } )();
 
-globalThis.onmessage = ( e ) => {
-  console.log( "Hi2" );
-  console.log( e );
-};
+//!!! (2022/09/13 Remarked) use .then().
+// globalThis.onmessage = ( e ) => {
+//   console.log( "Hi2" );
+//   console.log( e );
+// };
