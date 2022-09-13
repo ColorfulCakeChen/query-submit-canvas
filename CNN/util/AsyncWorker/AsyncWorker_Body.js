@@ -15,6 +15,8 @@ class AsyncWorker_Body {
 
 //!!! ...unfinished... (2022/09/13)
 // Need handle all queued message before (asynchronously) executed here.
+//
+// Or, let AsyncWorker_Body in global scope and use importScripts() to import it.
 
 //!!! (2022/09/13 Temp Remarked) For debug.
     globalThis.onmessage
