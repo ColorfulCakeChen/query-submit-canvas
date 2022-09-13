@@ -25,14 +25,12 @@
 // } )();
 
 //!!! (2022/09/13 Remarked) use .then().
-// globalThis.onmessage = ( e ) => {
-//   console.log( "Hi2" );
-//   console.log( e );
-// };
+globalThis.onmessage = ( e ) => {
+  console.log( "Hi2" );
+  console.log( e );
+};
 
 //!!! ...unfinished... (2022/09/13)
 // A temporary message queue is necessary to store message to
 // wait for AsyncWorker_Body_tester created and register message
 // handler.
-
-console.log( "Hello" );

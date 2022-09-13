@@ -105,9 +105,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     // Should not use "module" type worker, otherwise the worker can not use
     // importScripts() to load tensorflow.js library.
     //
-    this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
-//!!! (2022/09/13 Temp Remarked) Test module worker.
-//    this.workerOptions = null;
+    //this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
+    this.workerOptions = null;
 
     this.worker = new Worker( this.workerURL, this.workerOptions );
 

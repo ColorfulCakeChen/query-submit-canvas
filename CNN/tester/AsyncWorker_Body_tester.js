@@ -1,8 +1,5 @@
 import * as AsyncWorker from "../util/AsyncWorker.js";
 
-//!!! (2022/09/13 Temp Added) Test importScripts() in module js.
-importScripts( "./AsyncWorker_BodyStub_tester.js" );
-
 /**
  * @return {Promise}
  *   Return a promise which will be resolved as specified value after specified
