@@ -116,35 +116,39 @@ async function* tester( progressParent ) {
   }
 
   {
-    let workerProxy_allNonBoost = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
-
     // All non-boost.
     const allNonBoost = {
       workerId: 2,
-      intervalMilliseconds_allNonBoost = 100;
-    const valueBegin_allNonBoost = 50;
-    valueCountTotal
-    const valueCountPerBoost_allNonBoost = 0;
+      intervalMilliseconds: 100,
+      valueBegin: 50,
+      valueCountTotal: valueCountTotal,
+      valueCountPerBoost: 0,
+      workerProxy: AsyncWorker_Proxy_tester.Pool.get_or_create_by(),
+    };
 
     // Interleave boost and non-boost.
     const interleave_Boost_NonBoost = {
-    const workerId_interleave_Boost_NonBoost = 2;
-    const intervalMilliseconds_allNonBoost = 100;
-    const valueBegin_allNonBoost = 50;
-    valueCountTotal
-    const valueCountPerBoost_allNonBoost = 0;
+      workerId: 3,
+      intervalMilliseconds: 90,
+      valueBegin: 120,
+      valueCountTotal: valueCountTotal,
+      valueCountPerBoost: Math.ceil( valueCountTotal / 10 ),
+      workerProxy: AsyncWorker_Proxy_tester.Pool.get_or_create_by(),
+    };
 
     await Promise.all( [
-      test_WorkerProxy_init( workerProxy_allNonBoost, workerId_allNonBoost ),
-    ];
+      test_WorkerProxy_init( allNonBoost ),
+      test_WorkerProxy_init( interleave_Boost_NonBoost ),
+    ] );
 
-    test_WorkerProxy_numberSequence( workerProxy_allNonBoost, workerId_allNonBoost,
-      intervalMilliseconds_allNonBoost, valueBegin_allNonBoost, valueCountTotal_allNonBoost, valueCountPerBoost_allNonBoost,
-      progress_allNonBoost
-    );
+    test_WorkerProxy_numberSequence( allNonBoost );
+    test_WorkerProxy_numberSequence( interleave_Boost_NonBoost );
 
-    workerProxy_allNonBoost.disposeResources_and_recycleToPool();
-    workerProxy_allNonBoost = null;
+    allNonBoost.workerProxy.disposeResources_and_recycleToPool();
+    allNonBoost.workerProxy = null;
+
+    interleave_Boost_NonBoost.workerProxy.disposeResources_and_recycleToPool();
+    interleave_Boost_NonBoost.workerProxy = null;
   }
 
 
