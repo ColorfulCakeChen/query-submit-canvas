@@ -85,14 +85,14 @@ async function* tester( progressParent ) {
 
   let progressRoot = progressParent.root_get();
 
-  let progress_allBoost = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( valueCountTotal ) );
+  let progressMax =
+      1 // one worker
+    + 1 // two workers
+    + 1 // three workers
+    ;
 
-  let progress_allNonBoost = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( valueCountTotal ) );
-
-  let progress_interleave_Boost_NonBoost = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( valueCountTotal ) );
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
   // All boost.
   let allBoost = {
@@ -144,7 +144,7 @@ async function* tester( progressParent ) {
       = interleave_Boost_NonBoost.workerProxy
       = null;
 
-    progress_allBoost.value_advance( valueCountTotal );
+    progressToAdvance.value_advance();
     yield progressRoot;
   }
 
