@@ -126,6 +126,7 @@ async function* tester( progressParent ) {
 
   // One woker, three number sequence.
   {
+    workerId = ?
     allBoost.workerProxy
       = allNonBoost.workerProxy
       = interleave_Boost_NonBoost.workerProxy
