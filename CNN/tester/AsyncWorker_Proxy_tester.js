@@ -97,18 +97,7 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
 
 }
 
-
-//!!! ...unfinished... (2022/08/24) Why not use "./AsyncWorker_Body.js"?
-// The import.meta.url should extract the path (exclude file name)
-
-// Assume the main (i.e. body) javascript file of neural network web worker is
-// a sibling file (i.e. inside the same folder) of this module file.
-
-//!!! (2022/09/13 Remarked) Try "./AsyncWorker_Body_tester.js"
+// Assume the web worker main (i.e. body) javascript file  is a sibling
+// file (i.e. inside the same folder) of this module file.
 AsyncWorker_Proxy_tester.workerURL
-  = ( new URL( "AsyncWorker_Body_tester.js", import.meta.url ) ).toString();
-
-//!!! (2022/09/13 Remarked) Try stub.
-//AsyncWorker_Proxy_tester.workerURL = "./AsyncWorker_Body_tester.js";
-//AsyncWorker_Proxy_tester.workerURL = "./AsyncWorker_BodyStub_tester.js";
-
+  = new URL( "AsyncWorker_Body_tester.js", import.meta.url );
