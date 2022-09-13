@@ -9,6 +9,7 @@
  * because import() can be used in classic (non-module) script.
  */
 
+( async () => {
 
 globalThis.AsyncWorker = await import( "../util/AsyncWorker.js" );
 
@@ -113,3 +114,5 @@ if ( globalThis.document )
 
 // In worker context.
 AsyncWorker_Body_tester.Singleton = new AsyncWorker_Body_tester(); // Create worker body.
+
+} )();

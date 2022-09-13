@@ -9,6 +9,7 @@
  * because import() can be used in classic (non-module) script.
  */
 
+( async () => {
 
 globalThis.AsyncWorker = await import( "../util/AsyncWorker.js" );
 
@@ -426,3 +427,5 @@ if ( globalThis.document )
 
 // In worker context.
 NeuralWorker_Body.Singleton = new NeuralWorker_Body(); // Create worker body.
+
+} )();
