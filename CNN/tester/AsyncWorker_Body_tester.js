@@ -94,11 +94,4 @@ class AsyncWorker_Body_tester extends AsyncWorker.Body {
 
 }
 
-
-// In main document context (Not in worker context). Do nothing. (Should not happen)
-if ( globalThis.document )
-  return;
-
-// In worker context.
 AsyncWorker_Body_tester.Singleton = new AsyncWorker_Body_tester(); // Create worker body.
-
