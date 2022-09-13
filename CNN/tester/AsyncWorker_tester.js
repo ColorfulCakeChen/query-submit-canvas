@@ -11,7 +11,6 @@ import * as AsyncWorker_Proxy_tester from "./AsyncWorker_Proxy_tester.js";
 async function test_WorkerProxy_init( workerProxy, workerId ) {
   let initWorkerPromise = workerProxy.initWorker_async( workerId );
   let initWorkerOk = await initWorkerPromise;
-
   if ( initWorkerOk == false )
     throw Error( `AsyncWorker_tester.testWorkerProxy(): `
       `workerId=${workerId}, initWorker failed.`
@@ -26,9 +25,9 @@ async function test_WorkerProxy_init( workerProxy, workerId ) {
 async function test_WorkerProxy_processingQueueSize_zero( { workerProxy } ) {
   let processingQueueSize = workerProxy.the_processingId_Resulter_Map.size;
   if ( processingQueueSize != 0 )
-      throw Error( `AsyncWorker_tester.test_WorkerProxy_processingQueueSize(): `
-        + `workerId=${workerProxy.workerId}, `
-        + `processingQueueSize ( ${processingQueueSize} ) should be 0.`
+    throw Error( `AsyncWorker_tester.test_WorkerProxy_processingQueueSize(): `
+      + `workerId=${workerProxy.workerId}, `
+      + `processingQueueSize ( ${processingQueueSize} ) should be 0.`
     );
 }
 

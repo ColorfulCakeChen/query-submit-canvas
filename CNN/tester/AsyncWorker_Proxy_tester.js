@@ -1,4 +1,4 @@
-export { AsyncWorker_Proxy as Proxy };
+export { AsyncWorker_Proxy_tester };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
