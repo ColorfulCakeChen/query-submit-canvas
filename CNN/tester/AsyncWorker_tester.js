@@ -10,8 +10,10 @@ import * as AsyncWorker_Proxy_tester from "./AsyncWorker_Proxy_tester.js";
  */
 async function testWorkerProxy(
   aWorkerProxy, workerId,
-  intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost
+  intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost,
+  progressToAdvance
 ) {
+  let progressRoot = progressParent.root_get();
 
   let initWorkerPromise = workerProxy.initWorker_async( workerId );
   let initWorkerOk = await initWorkerPromise;
@@ -37,20 +39,23 @@ async function testWorkerProxy(
         + `value ( ${value} ) should be the same as valueTest ( ${valueTest} ).`
       );
 
-//!!! ...unfinished... (2022/09/12) check value
-
-    progressBoostAll.value_advance();
-    yield progressRoot;
-
     ++valueIndex;
     ++valueTest;
 
   } while ( !done );
 
-//!!! ...unfinished... (2022/09/12) check value
+  let valueTestFinal = valueBegin + valueCountTotal - 1;
+  if ( valueTestFinal != value )
+    throw Error( `AsyncWorker_tester.testWorkerProxy(): `
+      + `workerId=${workerId}, `
+      + `value ( ${value} ) should be the same as valueTestFinal ( ${valueTestFinal} ).`
+    );
+
 
 //!!! ...unfinished... (2022/09/12) check processing queue removed.
 
+  progressToAdvance.value_advance( valueCountTotal );
+  yield progressRoot;
 }
 
 
@@ -66,8 +71,6 @@ async function* tester( progressParent ) {
   console.log( "AsyncWorker testing..." );
 
   const valueCountTotal = 100;
-
-  let progressRoot = progressParent.root_get();
 
   let progressBoostAll = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( valueCountTotal ) );
@@ -89,7 +92,8 @@ async function* tester( progressParent ) {
     const valueCountPerBoost = valueCountTotal;
 
     testWorkerProxy( workerProxy, workerId,
-      intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost
+      intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost,
+      progressBoostAll
     );
 
     workerProxy.disposeResources_and_recycleToPool();
