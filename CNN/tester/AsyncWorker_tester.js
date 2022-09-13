@@ -130,38 +130,8 @@ async function* tester( progressParent ) {
     workerProxy: undefined,
   };
 
-  // One woker, three number sequence.
-  {
-    const workerId = 1;
-    allBoost.workerProxy
-      = allNonBoost.workerProxy
-      = interleave_Boost_NonBoost.workerProxy
-      = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
-  
-    await test_WorkerProxy_init( allBoost, workerId );
-
-    await Promise.all( [
-      test_WorkerProxy_numberSequence( allBoost ),
-      test_WorkerProxy_numberSequence( allNonBoost ),
-      test_WorkerProxy_numberSequence( interleave_Boost_NonBoost )
-    ] );
-
-    test_WorkerProxy_processingQueueSize_zero( allBoost );
-
-    allBoost.workerProxy.disposeResources_and_recycleToPool();
-
-    allBoost.workerProxy
-      = allNonBoost.workerProxy
-      = interleave_Boost_NonBoost.workerProxy
-      = null;
-
-    progressToAdvance.value_advance();
-    yield progressRoot;
-  }
-
   // 1. One woker, three number sequences.
   {
-    const workerId = 1;
     allBoost.workerProxy
       = allNonBoost.workerProxy
       = interleave_Boost_NonBoost.workerProxy
