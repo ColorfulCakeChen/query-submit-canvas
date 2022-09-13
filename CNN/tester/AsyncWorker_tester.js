@@ -104,7 +104,7 @@ async function* tester( progressParent ) {
   // All boost.
   let allBoost = {
     sequenceName: "allBoost",
-    intervalMilliseconds: 100,
+    intervalMilliseconds: 10,
     valueBegin: 0,
     valueCountTotal: valueCountTotal,
     valueCountPerBoost: valueCountTotal,
@@ -114,7 +114,7 @@ async function* tester( progressParent ) {
   // All non-boost.
   const allNonBoost = {
     sequenceName: "allNonBoost",
-    intervalMilliseconds: 100,
+    intervalMilliseconds: 150,
     valueBegin: 50,
     valueCountTotal: valueCountTotal,
     valueCountPerBoost: 0,
