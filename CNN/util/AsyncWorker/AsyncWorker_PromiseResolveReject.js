@@ -1,7 +1,7 @@
 export { PromiseResolveReject };
 export { processingId_Resulter_Map };
 
-import { Resulter as AsyncWorker_Resulter } from "./AsyncWorker_Resulter.js";
+import { Resulter } from "./AsyncWorker_Resulter.js";
 
 /**
  * Hold a processing's id, promise, resolve (fulfilling function object), reject
@@ -21,7 +21,7 @@ import { Resulter as AsyncWorker_Resulter } from "./AsyncWorker_Resulter.js";
  *
  * @member {Promise} promiseToYieldReturn
  *   The promise used as the yield/return of the processing's async generator
- * AsyncWorker_Resulter.
+ * AsyncWorker.Resulter.
  * 
  */
  class PromiseResolveReject {
@@ -65,7 +65,7 @@ import { Resulter as AsyncWorker_Resulter } from "./AsyncWorker_Resulter.js";
 
 
 /**
- * A collection AsyncWorker_Resulter by processingId as key.
+ * A collection AsyncWorker.Resulter by processingId as key.
  */
 class processingId_Resulter_Map {
 
@@ -84,10 +84,10 @@ class processingId_Resulter_Map {
    *   The numeric identifier of the processing.
    *
    * @return {AsyncGenerator}
-   *   Return the created AsyncWorker_Resulter() object.
+   *   Return the created AsyncWorker.Resulter object.
    */
   resulter_create_by_processingId( processingId ) {
-    let resulter = new AsyncWorker_Resulter(
+    let resulter = new Resulter(
       processingId, processingId_PromiseResolveRejectArray_Map );
 
     this.map.set( processingId, resulter );

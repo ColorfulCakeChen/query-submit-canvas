@@ -4,7 +4,7 @@ import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
 import { PromiseResolveReject } from "./AsyncWorker_PromiseResolveReject.js";
 import { processingId_Resulter_Map } from "./AsyncWorker_PromiseResolveReject.js";
-import { AsyncWorker_Resulter as AsyncWorker_Resulter } from "./AsyncWorker_Resulter.js";
+import { Resulter } from "./AsyncWorker_Resulter.js";
 
 /**
  * Hold the worker and its related promise map. It is a wrapper of a neural network
@@ -22,7 +22,7 @@ import { AsyncWorker_Resulter as AsyncWorker_Resulter } from "./AsyncWorker_Resu
  *
  * @member {processingId_Resulter_Map} the_processingId_Resulter_Map
  *   Every worker has a result pending promise map. The key of the map is processing
- * id. The value of the map is a AsyncWorker_Resulter.
+ * id. The value of the map is a AsyncWorker.Resulter.
  *
  */
 class AsyncWorker_Proxy extends Recyclable.Root {
@@ -103,6 +103,28 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 
   /**
    * Send command and args (perhaps, with transferable object array) to WorkerBody
+   * and expect the final result.
+   *
+   * @param {Array} commandArgs
+   *   An array (i.e. [ comand, ...args ]) which will be sent to the WorkerBody.
+   *
+   * @param {Array} transferableObjectArray
+   *   The transferable object array when postMessage. It could be undefined (but
+   * can not be null).
+   *
+   * @return {Promise}
+   *   Return a promise resolved to the final value of the processing's resulter
+   * from WorkerBody. (i.e. Only the Xxx of { done: true, value: Xxx } resolved.
+   * All other intermediate result { done: false, value: Yyy } are discarded.)
+   */
+  createPromise_by_postCommandArgs( commandArgs, transferableObjectArray ) {
+    let resulter = this.createResulter_by_postCommandArgs(
+      commandArgs, transferableObjectArray );
+    return resulter.untilDone();
+  }
+
+  /**
+   * Send command and args (perhaps, with transferable object array) to WorkerBody
    * and expect result.
    *
    * @param {Array} commandArgs
@@ -112,7 +134,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    *   The transferable object array when postMessage. It could be undefined (but
    * can not be null).
    *
-   * @return {AsyncWorker_Resulter}
+   * @return {AsyncWorker.Resulter}
    *   Return an async generator for receving result from WorkerBody of the processing.
    */
   createResulter_by_postCommandArgs( commandArgs, transferableObjectArray ) {

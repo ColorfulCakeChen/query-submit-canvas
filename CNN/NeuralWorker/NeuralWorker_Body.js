@@ -165,7 +165,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    */
   async* alignmentMark_setValue( markValue ) {
     this.alignmentMarkValue = markValue;
-    return { value: markValue };
+    return { value: true };
   }
 
   /**

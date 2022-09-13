@@ -64,7 +64,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     this.tensorflowJsURL = tensorflowJsURL;
 
     let resulter = this.createResulter_by_postCommandArgs(
-      undefined, "initWorker", workerId, tensorflowJsURL
+      [ "initWorker", workerId, tensorflowJsURL ]
     );
 
 //!!! (2022/09/12 Remarked) become a async method and automatically .next() until done.
@@ -86,42 +86,33 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * @param {ArrayBuffer} weightArrayBuffer
    *   The neural network's weights. It will be interpreted as Float32Array.
    *
-   * @return {AsyncWorker_Resulter}
-   *   An async generator tracking the result of this method. Its final promise:
-   *   - Resolved to { done: true, value: true }, if success.
-   *   - Resolved to { done: true, value: false }, if failed.
+   * @return {Promise}
+   *   Return a promise:
+   *   - Resolved to true, if success.
+   *   - Resolved to false, if failed.
    */
-  neuralNet_create( processingId, neuralNetParamsBase, weightArrayBuffer ) {
+  neuralNet_create_async( neuralNetParamsBase, weightArrayBuffer ) {
     let resulter = this.postCommand_and_expectResult(
-      [ weightArrayBuffer ],
-      "neuralNet_create",
-      neuralNetParamsBase,
-      weightArrayBuffer,
+      [ "neuralNet_create", neuralNetParamsBase, weightArrayBuffer ],
+      [ weightArrayBuffer ]
     );
-    return resulter;
-
-//!!! ...unfinished... (2022/09/12)
-// could become a async method and automatically .next() until done.
-
+    return resulter.untilDone();
   }
 
   /**
    * @param {number} markValue
    *   A value representing which alignment this neural network plays currently.
    *
-   * @return {AsyncWorker_Resulter}
-   *   An async generator tracking the result of this method. Its final promise:
-   *   - Resolved to { done: true, value: markValue }, if success.
+   * @return {Promise}
+   *   Return a promise:
+   *   - Resolved to true, if success.
+   *   - Resolved to false, if failed.
    */
-  alignmentMark_setValue_async( processingId, markValue ) {
+  alignmentMark_setValue_async( markValue ) {
     let resulter = this.postCommand_and_expectResult(
       undefined, "alignmentMark_setValue", markValue
     );
-    return resulter;
-
-//!!! ...unfinished... (2022/09/12)
-// could become a async method and automatically .next() until done.
-
+    return resulter.untilDone();
   }
 
 //!!! ...unfinished... (2022/09/12)
@@ -141,6 +132,15 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   Return a promise which will be resolved when this (WorkerProxy owned) web
    * worker's neural network computing done. It resolved with a typed-array which
    * comes from the output tensor of the web worker's neural network.
+   * 
+
+//!!! ...unfinished... (2022/09/12)
+
+   * @return {AsyncWorker.Resulter}
+   *   An async generator tracking the result of this method. Its final promise:
+   *   - Resolved to { done: false, value: ???true }, if ???success.
+   *   - Resolved to { done: true, value: true }, if success.
+   *   - Resolved to { done: true, value: false }, if failed.
    */
   imageData_transferBack_processTensor_async( processingId, sourceImageData ) {
 

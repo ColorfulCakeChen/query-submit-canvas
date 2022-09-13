@@ -34,18 +34,18 @@ class AsyncWorker_Resulter {
     let resulter
       = this.processingId_PromiseResolveRejectArray_Map.map.get( this.processingId );
     if ( !resulter ) {
-      throw Error( `AsyncWorker_Resulter.next(): `
+      throw Error( `AsyncWorker.Resulter.next(): `
         + `processingId=${processingId}. `
-        + `AsyncWorker_Resulter not found in `
+        + `AsyncWorker.Resulter not found in `
         + `processingId_PromiseResolveRejectArray_Map.`
       );
       return { done: true }; // No pending promise for the processing. (should not happen)
     }
 
     if ( resulter != this ) {
-      throw Error( `AsyncWorker_Resulter.next(): `
+      throw Error( `AsyncWorker.Resulter.next(): `
         + `processingId=${processingId}. `
-        + `AsyncWorker_Resulter in `
+        + `AsyncWorker.Resulter in `
         + `processingId_PromiseResolveRejectArray_Map should be this.`
       );
       return { done: true };
@@ -55,7 +55,7 @@ class AsyncWorker_Resulter {
     // one promise for this resulter to yield/return.
     //
     if ( this.PromiseResolveRejectArray.length < 1 ) {
-      throw Error( `AsyncWorker_Resulter.next(): `
+      throw Error( `AsyncWorker.Resulter.next(): `
         + `processingId=${processingId}. `
         + `PromiseResolveRejectArray should never be empty.`
       );

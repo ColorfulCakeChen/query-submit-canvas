@@ -3,6 +3,6 @@ export { PromiseResolveReject } from "./AsyncWorker/AsyncWorker_PromiseResolveRe
 export { processingId_PromiseResolveRejectArray_Map }
   from "./AsyncWorker/AsyncWorker_processingId_PromiseResolveRejectArray_Map.js";
 
-export { AsyncWorker_Resulter } from "./AsyncWorker/AsyncWorker_Resulter.js";
+export { Resulter } from "./AsyncWorker/AsyncWorker_Resulter.js";
 export { Body } from "./AsyncWorker/AsyncWorker_Body.js";
 export { Proxy } from "./AsyncWorker/AsyncWorker_Proxy.js";
