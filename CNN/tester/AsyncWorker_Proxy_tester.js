@@ -72,7 +72,7 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
    * @param {number} valueCountPerBoost
    *   Every so many value, generate so many values without delay intervalMilliseconds.
    *
-   * @return {PromiseResolveReject_Resulter}
+   * @return {AsyncWorker_Resulter}
    *   An async generator tracking the results of this method.
    */
   number_sequence_asyncGenerator(

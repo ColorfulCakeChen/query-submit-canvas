@@ -4,6 +4,7 @@ import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
 import { PromiseResolveReject } from "./AsyncWorker_PromiseResolveReject.js";
 import { processingId_Resulter_Map } from "./AsyncWorker_PromiseResolveReject.js";
+import { AsyncWorker_Resulter as AsyncWorker_Resulter } from "./AsyncWorker_Resulter.js";
 
 /**
  * Hold the worker and its related promise map. It is a wrapper of a neural network
@@ -21,7 +22,7 @@ import { processingId_Resulter_Map } from "./AsyncWorker_PromiseResolveReject.js
  *
  * @member {processingId_Resulter_Map} the_processingId_Resulter_Map
  *   Every worker has a result pending promise map. The key of the map is processing
- * id. The value of the map is a PromiseResolveReject_Resulter.
+ * id. The value of the map is a AsyncWorker_Resulter.
  *
  */
 class AsyncWorker_Proxy extends Recyclable.Root {
@@ -67,7 +68,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 
     if ( this.worker ) {
       // Note: No processingId, because this command needs not return value.
-      this.postCommand( "disposeResources" );
+      this.postCommandArgs( "disposeResources" );
       this.worker = null;
     }
 
@@ -111,10 +112,10 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    *   The transferable object array when postMessage. It could be undefined (but
    * can not be null).
    *
-   * @return {PromiseResolveReject_Resulter}
+   * @return {AsyncWorker_Resulter}
    *   Return an async generator for receving result from WorkerBody of the processing.
    */
-  post_commandArgs_and_expectResult( commandArgs, transferableObjectArray ) {
+  createResulter_by_postCommandArgs( commandArgs, transferableObjectArray ) {
     let processingId = this.processingId_next;
     ++this.processingId_next;
 
@@ -134,7 +135,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    *   The transferable object array when postMessage. It could be undefined (but
    * can not be null).
    */
-  post_commandArgs( commandArgs, transferableObjectArray ) {
+  postCommandArgs( commandArgs, transferableObjectArray ) {
     this.worker.postMessage( commandArgs, transferableObjectArray );
   }
 

@@ -63,7 +63,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
     this.tensorflowJsURL = tensorflowJsURL;
 
-    let resulter = this.postCommand_and_expectResult(
+    let resulter = this.createResulter_by_postCommandArgs(
       undefined, "initWorker", workerId, tensorflowJsURL
     );
 
@@ -86,7 +86,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * @param {ArrayBuffer} weightArrayBuffer
    *   The neural network's weights. It will be interpreted as Float32Array.
    *
-   * @return {PromiseResolveReject_Resulter}
+   * @return {AsyncWorker_Resulter}
    *   An async generator tracking the result of this method. Its final promise:
    *   - Resolved to { done: true, value: true }, if success.
    *   - Resolved to { done: true, value: false }, if failed.
@@ -109,7 +109,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * @param {number} markValue
    *   A value representing which alignment this neural network plays currently.
    *
-   * @return {PromiseResolveReject_Resulter}
+   * @return {AsyncWorker_Resulter}
    *   An async generator tracking the result of this method. Its final promise:
    *   - Resolved to { done: true, value: markValue }, if success.
    */
