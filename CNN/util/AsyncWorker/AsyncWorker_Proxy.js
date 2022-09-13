@@ -96,17 +96,22 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 // } )();
 //
 //
-  
-    let codes = '\
-      onmessage = ( e ) => {\
-        console.log( "Hello" );\
-        console.log( e );\
-      };\
-    ';
 
-    let codes_base64 = btoa( codes );
-    let workerDataURI = `data:text/javascript;base64,${codes_base64}`;
-    this.workerURL = workerDataURI;
+  let workerDataURI;
+  {
+    let codes = ''
+      + 'onmessage = ( e ) => {'
+      + '  console.log( "Hello" );'
+      + '  console.log( e );'
+      + '};'
+      ;
+
+    let textEncoder = new TextEncoder();
+    let codes_utf8 = textEncoder.encode( codes );
+    let codes_base64 = btoa( codes_utf8 );
+    workerDataURI = `data:text/javascript;base64,${codes_base64}`;
+  }
+  this.workerURL = workerDataURI;
  
   
 //!!! (2022/09/13 Temp Remarked) Test workerDataURI
