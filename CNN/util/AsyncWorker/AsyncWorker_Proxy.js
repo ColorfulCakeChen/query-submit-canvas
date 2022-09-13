@@ -108,7 +108,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       ;
 
     workerDataURI
-      = AsyncWorker_Proxy.createDataURI_byString( "text/javascript", codes );
+      = AsyncWorker_Proxy.createDataURI_byStringASCII( "text/javascript", codes );
   }
   this.workerURL = workerDataURI;
  
@@ -130,15 +130,15 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 
   /**
    * @param {string} strMimeType  The result mime type of the data URI.
-   * @param {string} str          The text to be embedded in data URI.
+   * @param {string} strASCII     The ASCII text to be embedded in data URI.
    *
    * @return {string} Return the data URI string.
    */
-  static createDataURI_byString( strMimeType, str ) {
+  static createDataURI_byStringASCII( strMimeType, strASCII ) {
     // let textEncoder = new TextEncoder();
     // let str_utf8 = textEncoder.encode( str );
     // let str_base64 = btoa( str_utf8 );
-    let str_base64 = btoa( str );
+    let str_base64 = btoa( strASCII );
     let dataURI = `data:${strMimeType};base64,${str_base64}`;
     return dataURI;
   }
