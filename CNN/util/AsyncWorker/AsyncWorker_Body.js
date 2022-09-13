@@ -12,13 +12,6 @@ class AsyncWorker_Body {
 
   /** It will register callback from AsyncWorker_Proxy. */
   constructor() {
-
-//!!! ...unfinished... (2022/09/13)
-// Need handle all queued message before (asynchronously) executed here.
-//
-// Or, let AsyncWorker_Body in global scope and use importScripts() to import it.
-
-//!!! (2022/09/13 Temp Remarked) For debug.
     globalThis.onmessage
       = AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy.bind( this );
   }
@@ -27,6 +20,23 @@ class AsyncWorker_Body {
   async* disposeResources() {
     close(); // Terminate this worker.
     //yield *super.disposeResources();
+  }
+
+  /**
+   * This method should be called immediately after this AsyncWorker_Body's
+   * sub-class' instance created. So that no messages are lost.
+   *
+   * Note: the AsyncWorker_Body_temporaryMessageQueue is created by
+   *       AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI()
+   *       for receiving all messages before this AsyncWorker_Body object
+   *       created completely.
+   */
+  globalThis_temporaryMessageQueue_processMessages() {
+    let temporaryMessageQueue = globalThis.AsyncWorker_Body_temporaryMessageQueue;
+    while ( temporaryMessageQueue.length > 0 ) {
+      let e = temporaryMessageQueue.shift();
+      this.AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy( e );
+    }
   }
 
   /**
