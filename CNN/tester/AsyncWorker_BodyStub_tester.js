@@ -9,10 +9,9 @@
  * modules because import() can be used in classic (non-module) script.
  */
 
-import( "./AsyncWorker_Body_tester.js" );
+//import( "./AsyncWorker_Body_tester.js" );
 
 //!!! (2022/09/13 Remarked) use import() at global.
-// ( async () => {
-// //  await import( "./AsyncWorker_Body_tester.js" );
-//   import( "./AsyncWorker_Body_tester.js" );
-// } )();
+( async () => {
+  await import( "./AsyncWorker_Body_tester.js" );
+} )();
