@@ -35,7 +35,7 @@ class AsyncWorker_Body {
     let temporaryMessageQueue = globalThis.AsyncWorker_Body_temporaryMessageQueue;
     while ( temporaryMessageQueue.length > 0 ) {
       let e = temporaryMessageQueue.shift();
-      this.AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy( e );
+      AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy.call( this, e );
     }
   }
 
