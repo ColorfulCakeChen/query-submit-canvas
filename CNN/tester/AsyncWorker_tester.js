@@ -133,9 +133,11 @@ async function* tester( progressParent ) {
   
     await test_WorkerProxy_init( allBoost );
 
-    test_WorkerProxy_numberSequence( allBoost );
-    test_WorkerProxy_numberSequence( allNonBoost );
-    test_WorkerProxy_numberSequence( interleave_Boost_NonBoost );
+    await Promise.all( [
+      test_WorkerProxy_numberSequence( allBoost ),
+      test_WorkerProxy_numberSequence( allNonBoost ),
+      test_WorkerProxy_numberSequence( interleave_Boost_NonBoost )
+    ] );
 
     allBoost.workerProxy.disposeResources_and_recycleToPool();
 
