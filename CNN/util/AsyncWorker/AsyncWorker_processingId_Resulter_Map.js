@@ -1,6 +1,7 @@
 export { AsyncWorker_processingId_Resulter_Map as processingId_Resulter_Map };
 
 import { Resulter } from "./AsyncWorker_Resulter.js";
+import { PromiseResolveReject } from "./AsyncWorker_PromiseResolveReject.js";
 
 /**
  * A collection of AsyncWorker.Resulter by processingId as key.
