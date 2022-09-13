@@ -49,14 +49,9 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
    *   - Resolved to false, if failed.
    */
   initWorker_async( workerId ) {
-    let resulter = this.postCommand_and_expectResult(
-      undefined, "initWorker", workerId
+    return this.createPromise_by_postCommandArgs(
+      [ "initWorker", workerId ]
     );
-
-//!!! (2022/09/12 Remarked) become a async method and automatically .next() until done.
-//    return resulter;
-
-    return resulter.untilDone();
   }
 
   /**
@@ -82,7 +77,7 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
     let valueParams = new Float32Array( [
       valueBegin, valueCountTotal, valueCountPerBoost ] );
 
-    let resulter = this.postCommand_and_expectResult(
+    let resulter = this.createResulter_by_postCommandArgs(
       [ valueParams.buffer ], // Test: transferable object array.
       "number_sequence",
       intervalMilliseconds,
@@ -96,10 +91,6 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
       );
 
     return resulter;
-
-//!!! ...unfinished... (2022/09/12)
-// could become a async method and automatically .next() until done.
-
   }
 
 }

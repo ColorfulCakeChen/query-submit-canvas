@@ -60,23 +60,10 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to false, if failed.
    */
   initWorker_async( workerId, tensorflowJsURL ) {
-
     this.tensorflowJsURL = tensorflowJsURL;
-
-    let resulter = this.createResulter_by_postCommandArgs(
+    return this.createPromise_by_postCommandArgs(
       [ "initWorker", workerId, tensorflowJsURL ]
     );
-
-//!!! (2022/09/12 Remarked) become a async method and automatically .next() until done.
-//    return resulter;
-
-    return resulter.untilDone();
-
-
-//!!! ...unfinished... (2022/08/27)
-// Perhaps, use MessageChannel instead of window.onmessage().
-// Otherwise, original window.onmessage() will be replaced (i.e. destroyed) by our system.
-
   }
 
   /**
@@ -92,11 +79,10 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to false, if failed.
    */
   neuralNet_create_async( neuralNetParamsBase, weightArrayBuffer ) {
-    let resulter = this.postCommand_and_expectResult(
+    return this.createPromise_by_postCommandArgs(
       [ "neuralNet_create", neuralNetParamsBase, weightArrayBuffer ],
       [ weightArrayBuffer ]
     );
-    return resulter.untilDone();
   }
 
   /**
@@ -109,10 +95,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to false, if failed.
    */
   alignmentMark_setValue_async( markValue ) {
-    let resulter = this.postCommand_and_expectResult(
-      undefined, "alignmentMark_setValue", markValue
+    return this.createPromise_by_postCommandArgs(
+      [ "alignmentMark_setValue", markValue ]
     );
-    return resulter.untilDone();
   }
 
 //!!! ...unfinished... (2022/09/12)
