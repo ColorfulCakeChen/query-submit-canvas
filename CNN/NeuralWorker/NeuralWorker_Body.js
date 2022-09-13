@@ -151,7 +151,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       return { value: true };
 
     } catch ( e ) {
-      console.err( e );
+      console.error( e );
       //debugger;
       return { value: false };
     }

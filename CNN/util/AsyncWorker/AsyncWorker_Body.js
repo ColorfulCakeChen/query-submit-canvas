@@ -95,7 +95,7 @@ class AsyncWorker_Body {
         + `processingId=${processingId}, `
         + `command="${command}", failed. `
         + `${errorReason}`;
-      console.err( msg );
+      console.error( msg );
       //debugger;
     }
 
@@ -117,7 +117,7 @@ class AsyncWorker_Body {
 //             + `workerId=${this.workerId}, processingId=${processingId}, `
 //             + `command="${command}", asynchronous, failed. `
 //             + `${errorReason}`;
-//           console.err( msg );
+//           console.error( msg );
 //           //debugger;
 //         } );
 //
@@ -134,7 +134,7 @@ class AsyncWorker_Body {
 //         + `workerId=${this.workerId}, processingId=${processingId}, `
 //         + `command="${command}", synchronous, failed. `
 //         + `${errorReason}`;
-//       console.err( msg );
+//       console.error( msg );
 //       //debugger;
 //     }
   }
