@@ -25,13 +25,12 @@ class AsyncWorker_processingId_Resulter_Map {
    *   Return the created AsyncWorker.Resulter object.
    */
   resulter_create_by_processingId( processingId ) {
-    let resulter = new Resulter(
-      processingId, processingId_PromiseResolveRejectArray_Map );
-
-    this.map.set( processingId, resulter );
+    let resulter = new Resulter( processingId, this );
 
     let thePromiseResolveReject = new PromiseResolveReject( processingId );
     resulter.PromiseResolveRejectArray.push( thePromiseResolveReject );
+
+    this.map.set( processingId, resulter );
 
     return resulter;
   }
