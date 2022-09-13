@@ -61,7 +61,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     else
       this.the_processingId_Resulter_Map = new processingId_Resulter_Map();
 
-    AsyncWorker_Proxy.createWorker.call( this, workerModuleURL );
+    AsyncWorker_Proxy.createWorker_byModuleURL.call( this, workerModuleURL );
   }
 
   /** @override */
