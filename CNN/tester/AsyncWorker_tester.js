@@ -4,6 +4,57 @@ import * as ValueMax from "../util/ValueMax.js";
 import * as AsyncWorker_Proxy_tester from "./AsyncWorker_Proxy_tester.js";
 
 /**
+ * Test a WorkerProxy for generating number sequence.
+ *
+ * @param {AsyncWorker_Proxy_tester} aWorkerProxy
+ */
+async function testWorkerProxy(
+  aWorkerProxy, workerId,
+  intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost
+) {
+
+  let initWorkerPromise = workerProxy.initWorker_async( workerId );
+  let initWorkerOk = await initWorkerPromise;
+
+  if ( initWorkerOk == false )
+    throw Error( `AsyncWorker_tester.testWorkerProxy(): `
+      `workerId=${workerId}, initWorker failed.`
+    );
+
+  let numberResulter = workerProxy.number_sequence_asyncGenerator(
+    intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost );
+
+  let valueIndex = 0;
+  let valueTest = valueBegin;
+  let numberResulterNext, done, value;
+  do {
+    numberResulterNext = await numberResulter.next();
+    ( { done, value } = numberResulterNext );
+
+    if ( valueTest != value )
+      throw Error( `AsyncWorker_tester.testWorkerProxy(): `
+        + `workerId=${workerId}, valueIndex=${valueIndex}, `
+        + `value ( ${value} ) should be the same as valueTest ( ${valueTest} ).`
+      );
+
+//!!! ...unfinished... (2022/09/12) check value
+
+    progressBoostAll.value_advance();
+    yield progressRoot;
+
+    ++valueIndex;
+    ++valueTest;
+
+  } while ( !done );
+
+//!!! ...unfinished... (2022/09/12) check value
+
+//!!! ...unfinished... (2022/09/12) check processing queue removed.
+
+}
+
+
+/**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
  *   Some new progressToAdvance will be created and added to progressParent. The
@@ -37,45 +88,9 @@ async function* tester( progressParent ) {
     const valueBegin = 0;
     const valueCountPerBoost = valueCountTotal;
 
-    let initWorkerPromise = workerProxy.initWorker_async( workerId );
-    let initWorkerOk = await initWorkerPromise;
-
-    if ( initWorkerOk == false )
-      throw Error( `AsyncWorker_tester.tester(): `
-        `workerId=${workerId}, initWorker failed.`
-      );
-
-    let numberResulter = workerProxy.number_sequence_asyncGenerator(
-      intervalMilliseconds,
-      valueBegin, valueCountTotal, valueCountPerBoost );
-
-    let valueIndex = 0;
-    let valueTest = valueBegin;
-    let numberResulterNext, done, value;
-    do {
-      numberResulterNext = await numberResulter.next();
-      ( { done, value } = numberResulterNext );
-
-      if ( valueTest != value )
-        throw Error( `AsyncWorker_tester.tester(): `
-          + `workerId=${workerId}, valueIndex=${valueIndex}, `
-          + `value ( ${value} ) should be the same as valueTest ( ${valueTest} ).`
-        );
-
-//!!! ...unfinished... (2022/09/12) check value
-
-      progressBoostAll.value_advance();
-      yield progressRoot;
-
-      ++valueIndex;
-      ++valueTest;
-
-    } while ( !done );
-
-//!!! ...unfinished... (2022/09/12) check value
-
-//!!! ...unfinished... (2022/09/12) check processing queue removed.
-
+    testWorkerProxy( workerProxy, workerId,
+      intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost
+    );
 
     workerProxy.disposeResources_and_recycleToPool();
     workerProxy = null;
