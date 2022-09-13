@@ -15,6 +15,12 @@ async function test_WorkerProxy_init( workerProxy, workerId ) {
     throw Error( `AsyncWorker_tester.testWorkerProxy(): `
       `workerId=${workerId}, initWorker failed.`
     );
+
+//!!! ...unfinished... (2022/09/12) test unknown command.
+  let not_existed_command_result
+    = await workerProxy.createPromise_by_postCommandArgs( [
+    "not_existed_command"
+  ] );
 }
 
 /**
