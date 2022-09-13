@@ -130,6 +130,20 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   }
 
   /**
+   * @param {string} strMimeType  The result mime type of the data URI.
+   * @param {string} str          The text to be embedded in data URI.
+   *
+   * @return {string} Return the data URI string.
+   */
+  static createDataURI_byString( strMimeType, str ) {
+    let textEncoder = new TextEncoder();
+    let str_utf8 = textEncoder.encode( str );
+    let str_base64 = btoa( str_utf8 );
+    let dataURI = `data:${strMimeType};base64,${str_base64}`;
+    return dataURI;
+  }
+
+  /**
    * Send command and args (perhaps, with transferable object array) to WorkerBody
    * and expect the final result.
    *
