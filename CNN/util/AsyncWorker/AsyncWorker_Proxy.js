@@ -101,49 +101,41 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   }
 
   /**
-   * Send command to WorkerBody and expect result.
+   * Send command and args (perhaps, with transferable object array) to WorkerBody
+   * and expect result.
+   *
+   * @param {Array} commandArgs
+   *   An array (i.e. [ comand, ...args ]) which will be sent to the WorkerBody.
    *
    * @param {Array} transferableObjectArray
    *   The transferable object array when postMessage. It could be undefined (but
    * can not be null).
-   *
-   * @param {string} command
-   *   The method name in the WorkerBody.
-   *
-   * @param {any[]} args
-   *   The arguments which will be sent to WorkerBody.
    *
    * @return {PromiseResolveReject_Resulter}
    *   Return an async generator for receving result from WorkerBody of the processing.
    */
-  postCommand_and_expectResult( transferableObjectArray, commandName, ...args ) {
+  post_commandArgs_and_expectResult( commandArgs, transferableObjectArray ) {
     let processingId = this.processingId_next;
     ++this.processingId_next;
 
     let resulter = resulter_create_by_processingId( processingId );
-
-    let data = [ processingId, command, ...args ];
     this.worker.postMessage( data, transferableObjectArray );
-
     return resulter;
   }
 
   /**
-   * Send command to WorkerBody without expecting result. (i.e. fire-and-forget)
+   * Send command and args (perhaps, with transferable object array) to WorkerBody
+   * without expecting result. (i.e. fire-and-forget)
+   *
+   * @param {Array} commandArgs
+   *   An array (i.e. [ comand, ...args ]) which will be sent to the WorkerBody.
    *
    * @param {Array} transferableObjectArray
    *   The transferable object array when postMessage. It could be undefined (but
    * can not be null).
-   *
-   * @param {string} command
-   *   The method name in the WorkerBody.
-   *
-   * @param {any[]} args
-   *   The arguments which will be sent to WorkerBody.
    */
-  postCommand( transferableObjectArray, command, ...args ) {
-    let data = [ command, ...args ];
-    this.worker.postMessage( data, transferableObjectArray );
+  post_commandArgs( commandArgs, transferableObjectArray ) {
+    this.worker.postMessage( commandArgs, transferableObjectArray );
   }
 
   /**

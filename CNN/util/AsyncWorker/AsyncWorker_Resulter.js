@@ -10,7 +10,7 @@ export { AsyncWorker_Resulter as Resulter };
  * @member {PromiseResolveReject[]} PromiseResolveRejectArray
  *   All promises waiting for WorkerBody's result of the processing.
  */
- class AsyncWorker_Resulter {
+class AsyncWorker_Resulter {
 
   /** */
   constructor( processingId, processingId_PromiseResolveRejectArray_Map ) {

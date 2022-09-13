@@ -47,11 +47,21 @@ class AsyncWorker_Body {
     let [ processingId, command, ...args ] = e.data;
 
     try {
+      // 1. Start the command (asynchronously).
       let method = this[ command ]; // command name as method name.
       let func = method.bind( this );
       let asyncGenerator = func( ...args );
 
-      if ( processingId != undefined ) {
+      // 2. Execute the command (asynchronously).
+
+      // 2.1 If no processingId, it means no need to report return value.
+      if ( processingId == undefined ) {
+        for await ( let { value, transferableObjectArray } of asyncGenerator ) {
+          // Do nothing. Just complete the async generator.
+        }
+
+      // 2.2 Otherwise, post every step's result back to WorkerProxy.
+      } else { 
         let done, value;
         let transferableObjectArray;
         do {
@@ -61,11 +71,6 @@ class AsyncWorker_Body {
           postMessage( resultData, transferableObjectArray );
 
         } while ( !done );
-
-      } else { // Otherwise, no processingId means no need report return value.
-        for await ( let { value, transferableObjectArray } of asyncGenerator ) {
-          // Do nothing. Just complete the async generator.
-        }
       }
 
     } catch ( errorReason ) {
