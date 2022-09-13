@@ -37,6 +37,7 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
 
   /** @override */
   disposeResources() {
+    this.workerId = undefined;
     super.disposeResources();
   }
 
@@ -49,6 +50,7 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
    *   - Resolved to false, if failed.
    */
   initWorker_async( workerId ) {
+    this.workerId = workerId;
     return this.createPromise_by_postCommandArgs(
       [ "initWorker", workerId ]
     );

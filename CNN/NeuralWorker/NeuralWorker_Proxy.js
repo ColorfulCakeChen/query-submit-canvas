@@ -39,6 +39,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /** @override */
   disposeResources() {
     this.tensorflowJsURL = undefined;
+    this.workerId = undefined;
     super.disposeResources();
   }
 
@@ -60,6 +61,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to false, if failed.
    */
   initWorker_async( workerId, tensorflowJsURL ) {
+    this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
     return this.createPromise_by_postCommandArgs(
       [ "initWorker", workerId, tensorflowJsURL ]

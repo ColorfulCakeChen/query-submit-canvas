@@ -4,11 +4,11 @@ import * as ValueMax from "../util/ValueMax.js";
 import * as AsyncWorker_Proxy_tester from "./AsyncWorker_Proxy_tester.js";
 
 /**
- * Test a WorkerProxy for generating number sequence.
+ * Test a WorkerProxy's initialization.
  *
- * @param {AsyncWorker_Proxy_tester} aWorkerProxy
+ * @param {AsyncWorker_Proxy_tester} workerProxy
  */
-async function test_WorkerProxy_init( { workerId, workerProxy } ) {
+async function test_WorkerProxy_init( workerProxy, workerId ) {
   let initWorkerPromise = workerProxy.initWorker_async( workerId );
   let initWorkerOk = await initWorkerPromise;
 
@@ -19,20 +19,34 @@ async function test_WorkerProxy_init( { workerId, workerProxy } ) {
 }
 
 /**
+ * Test a WorkerProxy's processing queue size whether is zero.
+ *
+ * @param {AsyncWorker_Proxy_tester} workerProxy
+ */
+async function test_WorkerProxy_processingQueueSize_zero( { workerProxy } ) {
+  let processingQueueSize = workerProxy.the_processingId_Resulter_Map.size;
+  if ( processingQueueSize != 0 )
+      throw Error( `AsyncWorker_tester.test_WorkerProxy_processingQueueSize(): `
+        + `workerId=${workerProxy.workerId}, `
+        + `processingQueueSize ( ${processingQueueSize} ) should be 0.`
+    );
+}
+
+/**
  * Test a WorkerProxy for generating number sequence.
  *
  * @param {AsyncWorker_Proxy_tester} workerProxy
  */
-async function test_WorkerProxy_numberSequence(
-  {
-    workerId,
+async function test_WorkerProxy_numberSequence( {
+    sequenceName,
     intervalMilliseconds,
     valueBegin,
     valueCountTotal,
     valueCountPerBoost,
     workerProxy,
-  }
-) {
+} ) {
+  const workerId = workerProxy.workerId;
+
   let numberResulter = workerProxy.number_sequence_asyncGenerator(
     intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost );
 
@@ -44,8 +58,9 @@ async function test_WorkerProxy_numberSequence(
     ( { done, value } = numberResulterNext );
 
     if ( valueTest != value )
-      throw Error( `AsyncWorker_tester.testWorkerProxy(): `
-        + `workerId=${workerId}, valueIndex=${valueIndex}, `
+      throw Error( `AsyncWorker_tester.test_WorkerProxy_numberSequence(): `
+        + `sequenceName="${sequenceName}", workerId=${workerId}, `
+        + `valueIndex=${valueIndex}, `
         + `value ( ${value} ) should be the same as valueTest ( ${valueTest} ).`
       );
 
@@ -56,16 +71,9 @@ async function test_WorkerProxy_numberSequence(
 
   let valueTestFinal = valueBegin + valueCountTotal - 1;
   if ( valueTestFinal != value )
-    throw Error( `AsyncWorker_tester.testWorkerProxy(): `
-      + `workerId=${workerId}, `
-      + `value ( ${value} ) should be the same as valueTestFinal ( ${valueTestFinal} ).`
-    );
-
-  let processingQueueSize = workerProxy.the_processingId_Resulter_Map.size;
-  if ( processingQueueSize != 0 )
-    throw Error( `AsyncWorker_tester.testWorkerProxy(): `
-      + `workerId=${workerId}, `
-      + `processingQueueSize ( ${processingQueueSize} ) should be 0.`
+      throw Error( `AsyncWorker_tester.test_WorkerProxy_numberSequence(): `
+        + `sequenceName="${sequenceName}", workerId=${workerId}, `
+        + `value ( ${value} ) should be the same as valueTestFinal ( ${valueTestFinal} ).`
     );
 }
 
@@ -96,7 +104,7 @@ async function* tester( progressParent ) {
 
   // All boost.
   let allBoost = {
-    workerId: 1,
+    sequenceName: "allBoost",
     intervalMilliseconds: 100,
     valueBegin: 0,
     valueCountTotal: valueCountTotal,
@@ -106,7 +114,7 @@ async function* tester( progressParent ) {
 
   // All non-boost.
   const allNonBoost = {
-    workerId: 2,
+    sequenceName: "allNonBoost",
     intervalMilliseconds: 100,
     valueBegin: 50,
     valueCountTotal: valueCountTotal,
@@ -116,7 +124,7 @@ async function* tester( progressParent ) {
 
   // Interleave boost and non-boost.
   const interleave_Boost_NonBoost = {
-    workerId: 3,
+    sequenceName: "interleave_Boost_NonBoost",
     intervalMilliseconds: 90,
     valueBegin: 120,
     valueCountTotal: valueCountTotal,
@@ -126,19 +134,21 @@ async function* tester( progressParent ) {
 
   // One woker, three number sequence.
   {
-    workerId = ?
+    const workerId = 1;
     allBoost.workerProxy
       = allNonBoost.workerProxy
       = interleave_Boost_NonBoost.workerProxy
       = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
   
-    await test_WorkerProxy_init( allBoost );
+    await test_WorkerProxy_init( allBoost, workerId );
 
     await Promise.all( [
       test_WorkerProxy_numberSequence( allBoost ),
       test_WorkerProxy_numberSequence( allNonBoost ),
       test_WorkerProxy_numberSequence( interleave_Boost_NonBoost )
     ] );
+
+    test_WorkerProxy_processingQueueSize_zero( allBoost );
 
     allBoost.workerProxy.disposeResources_and_recycleToPool();
 
@@ -150,6 +160,71 @@ async function* tester( progressParent ) {
     progressToAdvance.value_advance();
     yield progressRoot;
   }
+
+  // One woker, three number sequence.
+  {
+    const workerId = 1;
+    allBoost.workerProxy
+      = allNonBoost.workerProxy
+      = interleave_Boost_NonBoost.workerProxy
+      = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
+  
+    await test_WorkerProxy_init( allBoost, 1 );
+
+    await Promise.all( [
+      test_WorkerProxy_numberSequence( allBoost ),
+      test_WorkerProxy_numberSequence( allNonBoost ),
+      test_WorkerProxy_numberSequence( interleave_Boost_NonBoost )
+    ] );
+
+    test_WorkerProxy_processingQueueSize_zero( allBoost );
+
+    allBoost.workerProxy.disposeResources_and_recycleToPool();
+
+    allBoost.workerProxy
+      = allNonBoost.workerProxy
+      = interleave_Boost_NonBoost.workerProxy
+      = null;
+
+    progressToAdvance.value_advance();
+    yield progressRoot;
+  }
+
+  // Two woker, three number sequence.
+  {
+    allBoost.workerProxy
+      = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
+
+    allNonBoost.workerProxy
+      = interleave_Boost_NonBoost.workerProxy
+      = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
+  
+    await Promise.all( [
+      test_WorkerProxy_init( allBoost, 2 ),
+       test_WorkerProxy_init( allNonBoost, 3 )
+    ];
+
+    await Promise.all( [
+      test_WorkerProxy_numberSequence( allBoost ),
+      test_WorkerProxy_numberSequence( allNonBoost ),
+      test_WorkerProxy_numberSequence( interleave_Boost_NonBoost )
+    ] );
+
+    test_WorkerProxy_processingQueueSize_zero( allBoost );
+    test_WorkerProxy_processingQueueSize_zero( allNonBoost );
+
+    allBoost.workerProxy.disposeResources_and_recycleToPool();
+    allBoost.workerProxy = null;
+
+    allNonBoost.workerProxy.disposeResources_and_recycleToPool();
+    allNonBoost.workerProxy
+      = interleave_Boost_NonBoost.workerProxy
+      = null;
+
+    progressToAdvance.value_advance();
+    yield progressRoot;
+  }
+
 
   {
     // All non-boost.
