@@ -39,6 +39,15 @@ class AsyncWorker_Body {
    */
   globalThis_temporaryMessageQueue_processMessages() {
     let temporaryMessageQueue = globalThis.AsyncWorker_Body_temporaryMessageQueue;
+    if ( !temporaryMessageQueue )
+      return;
+
+    // To prevent this method be re-entranced (because
+    // AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy will also call this
+    // method), remove the temporary message queue.
+    //
+    delete globalThis.AsyncWorker_Body_temporaryMessageQueue;
+
     while ( temporaryMessageQueue.length > 0 ) {
       let e = temporaryMessageQueue.shift();
       AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy.call( this, e );
