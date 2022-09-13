@@ -421,9 +421,10 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 }
 
 
-// In main document context (Not in worker context). Do nothing. (Should not happen)
-if ( globalThis.document )
-  return;
+//!!! (2022/09/13 Remarked)
+// // In main document context (Not in worker context). Do nothing. (Should not happen)
+// if ( globalThis.document )
+//   return;
 
 // In worker context.
 NeuralWorker_Body.Singleton = new NeuralWorker_Body(); // Create worker body.
