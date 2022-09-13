@@ -59,7 +59,6 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
     return resulter.untilDone();
   }
 
-
   /**
    * @param {number} intervalMilliseconds
    *   How long to generate the next value.
@@ -84,13 +83,13 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
       valueBegin, valueCountTotal, valueCountPerBoost ] );
 
     let resulter = this.postCommand_and_expectResult(
-      [ valueParams.buffer ], // Test: transferred objects
+      [ valueParams.buffer ], // Test: transferrable object array.
       "number_sequence",
       intervalMilliseconds,
       valueParams
     );
 
-    // Check Test: transferred objects.
+    // Check Test: transferrable object array.
     if ( valueParams.buffer )
       throw Error( `AsyncWorker_Proxy_tester.number_sequence(): `
         + `Transferred object should become null after postMessage().`
