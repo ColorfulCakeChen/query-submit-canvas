@@ -87,6 +87,19 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    *   The worker proxy.
    */
   static createWorker( workerURL ) {
+
+//!!! ...unfinished... (2022/09/13)
+// Perhaps, use a data uri contains the following source codes as workerURL:
+//
+// ( async () => {
+//   await import( worker_body_relative_path );
+// } )();
+//
+//
+  
+  
+
+
     this.workerURL = workerURL;
 
     // Should not use "module" type worker, otherwise the worker can not use
