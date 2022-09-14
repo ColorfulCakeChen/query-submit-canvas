@@ -178,7 +178,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    *   - The command is a string which is the WorkerBody's method function to be
    *       called.
    *
-   *   - The args is an array which will be destructured into multiple argements
+   *   - The args is an array which will be destructured into multiple arguments
    *       and passed into the WorkerBody's method function.
    *
    * @param {Array} transferableObjectArray
@@ -206,7 +206,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    *   - The command is a string which is the WorkerBody's method function to be
    *       called.
    *
-   *   - The args is an array which will be destructured into multiple argements
+   *   - The args is an array which will be destructured into multiple arguments
    *       and passed into the WorkerBody's method function.
    *
    * @param {Array} transferableObjectArray
@@ -235,6 +235,12 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    *
    * @param {Array} commandArgs
    *   An array (i.e. [ comand, ...args ]) which will be sent to the WorkerBody.
+   *
+   *   - The command is a string which is the WorkerBody's method function to be
+   *       called.
+   *
+   *   - The args is an array which will be destructured into multiple arguments
+   *       and passed into the WorkerBody's method function.
    *
    * @param {Array} transferableObjectArray
    *   The transferable object array when postMessage. It could be undefined (but
