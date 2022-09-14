@@ -14,7 +14,13 @@ export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
  *   If true, the promise is still pending. If false, the promise is fulfilled.
  *
  * @member {boolean} done
- *   If true, the promise is the final promise of the processing.
+ *   - If undefined, the promise is rejected.
+ *   - If false, the promise is resolved to ( done == false ) or pending.
+ *   - If true, the promise is resolved to ( done == true ).
+ *
+ * @member {boolean} final
+ *   If true, the promise is the final promise of the processing. (i.e. fulfilled.
+ * either resolved ( done == true ) or rejected ( done == undefind ).)
  *
  * @member {Promise} promiseToYieldReturn
  *   The promise used as the yield/return of the processing's async generator
@@ -58,5 +64,14 @@ export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
     this.reject_internal( errorReason );
   }
 
+  get final() {
+    if ( this.pending )
+      return false;  // i.e.  not fulfilled.
+    if ( this.done ) // i.e. resolved to true.
+      return true;
+    if ( this.done == undefined ) // i.e. rejected
+      return true;
+    return false; // i.e. resolved to false, or not fulfilled.
+  }
 }
 
