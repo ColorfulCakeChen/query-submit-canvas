@@ -85,9 +85,9 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
     );
 
     // Check Test: transferable object array.
-    if ( valueParams.buffer )
+    if ( valueParams.buffer.length > 0 )
       throw Error( `AsyncWorker_Proxy_tester.number_sequence(): `
-        + `Transferred object should become null after postMessage().`
+        + `Transferred object should become zero length after postMessage().`
       );
 
     return resulter;
