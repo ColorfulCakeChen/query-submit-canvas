@@ -244,5 +244,5 @@ async function* tester( progressParent ) {
     yield progressRoot;
   }
 
-  console.log( "AsyncWorker download testing... Done." );
+  console.log( "AsyncWorker testing... Done." );
 }
