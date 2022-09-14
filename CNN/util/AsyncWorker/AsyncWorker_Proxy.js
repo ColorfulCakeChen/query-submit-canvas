@@ -137,25 +137,14 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     //       AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body() be registered
     //       as message handler.
     //
-//!!! (2022/09/14 Temp Remarked) test no new line.
-//     let codes = ``
-//       + `import( "${workerModuleURL}" );\n`
-//       + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
-//       + `onmessage = ( e ) => {\n`
-//       // + `  console.log( "Hello" );\n`
-//       // + `  console.log( e );\n`
-//       + `  AsyncWorker_Body_temporaryMessageQueue.push( e );\n`
-//       + `};\n`
-//       ;
-
     let codes = ``
-      + `import( "${workerModuleURL}" );`
-      + `AsyncWorker_Body_temporaryMessageQueue = [];`
-      + `onmessage = ( e ) => {`
-        // + `  console.log( "Hello" );`
-        // + `  console.log( e );`
-        + `  AsyncWorker_Body_temporaryMessageQueue.push( e );`
-      + `};`
+      + `import( "${workerModuleURL}" );\n`
+      + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
+      + `onmessage = ( e ) => {\n`
+      // + `  console.log( "Hello" );\n`
+      // + `  console.log( e );\n`
+      + `  AsyncWorker_Body_temporaryMessageQueue.push( e );\n`
+      + `};\n`
       ;
 
     let workerDataURI
