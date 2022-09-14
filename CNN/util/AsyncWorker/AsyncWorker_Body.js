@@ -122,6 +122,11 @@ class AsyncWorker_Body {
         + `${errorReason}`;
       console.error( msg );
       //debugger;
+
+//!!! ...unfinished... (2022/09/14)
+// still need post back failed message. Otherwise, WorkerProxy will be blocked
+// (because it still await the result).
+
     }
 
 
