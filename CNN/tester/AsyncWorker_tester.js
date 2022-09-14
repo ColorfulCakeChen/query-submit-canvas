@@ -127,8 +127,29 @@ async function test_WorkerProxy_numberSequence(
     );
 }
 
-async function test_WorkerProxy_numberSequence( NumberSequenceInfo ) {
-  
+/**
+ * Test different nextMilliseconds.
+ */
+async function test_WorkerProxy_numberSequence_multi( aNumberSequenceInfo ) {
+  // this.sequenceName = sequenceName;
+  // this.intervalMilliseconds = intervalMilliseconds;
+  // this.valueBegin = valueBegin;
+  // this.valueCountTotal = valueCountTotal;
+  // this.valueCountPerBoost = valueCountPerBoost;
+  // this.workerProxy = workerProxy;
+
+  let noMilliseconds = -1
+  let halfMilliseconds = aNumberSequenceInfo.intervalMilliseconds / 2;
+  let oneHalfMilliseconds = aNumberSequenceInfo.intervalMilliseconds + halfMilliseconds;
+  let sameMilliseconds = aNumberSequenceInfo.intervalMilliseconds;
+  let overMilliseconds
+    = aNumberSequenceInfo.intervalMilliseconds * aNumberSequenceInfo.valueCountTotal;
+
+  test_WorkerProxy_numberSequence( aNumberSequenceInfo, noMilliseconds );
+  test_WorkerProxy_numberSequence( aNumberSequenceInfo, halfMilliseconds );
+  test_WorkerProxy_numberSequence( aNumberSequenceInfo, oneHalfMilliseconds );
+  test_WorkerProxy_numberSequence( aNumberSequenceInfo, sameMilliseconds );
+  test_WorkerProxy_numberSequence( aNumberSequenceInfo, overMilliseconds );
 }
 
 /**
@@ -158,34 +179,23 @@ async function* tester( progressParent ) {
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
   // All boost.
-  let allBoost = {
-    sequenceName: "allBoost",
-    intervalMilliseconds: 10,
-    valueBegin: 0,
-    valueCountTotal: valueCountTotal,
-    valueCountPerBoost: valueCountTotal,
-    workerProxy: undefined,
-  };
+  let allBoost = new NumberSequenceInfo(
+    "allBoost", 10, 0, valueCountTotal, valueCountTotal,
+    undefined,
+  );
 
   // All non-boost.
-  const allNonBoost = {
-    sequenceName: "allNonBoost",
-    intervalMilliseconds: 150,
-    valueBegin: 50,
-    valueCountTotal: valueCountTotal,
-    valueCountPerBoost: 0,
-    workerProxy: undefined,
-  };
+  const allNonBoost = new NumberSequenceInfo(
+    "allNonBoost", 150, 50, valueCountTotal, 0,
+    undefined,
+  );
 
   // Interleave boost and non-boost.
-  const interleave_Boost_NonBoost = {
-    sequenceName: "interleave_Boost_NonBoost",
-    intervalMilliseconds: 90,
-    valueBegin: 120,
-    valueCountTotal: valueCountTotal,
-    valueCountPerBoost: Math.ceil( valueCountTotal / 11 ),
-    workerProxy: undefined,
-  };
+  const interleave_Boost_NonBoost = new NumberSequenceInfo(
+    "interleave_Boost_NonBoost",
+    90, 120, valueCountTotal, Math.ceil( valueCountTotal / 11 ),
+    undefined,
+  );
 
 //!!! ...unfinished... (2022/09/14)
 // Try whether or not delayedValue() before test_WorkerProxy_numberSequence()
@@ -199,14 +209,10 @@ async function* tester( progressParent ) {
   
     await test_WorkerProxy_init( allBoost, 1 );
 
-//!!!
-    if ( )
-      await delayedValue( ???, ?? );
-
     await Promise.all( [
-      test_WorkerProxy_numberSequence( allBoost ),
-      test_WorkerProxy_numberSequence( allNonBoost ),
-      test_WorkerProxy_numberSequence( interleave_Boost_NonBoost )
+      test_WorkerProxy_numberSequence_multi( allBoost ),
+      test_WorkerProxy_numberSequence_multi( allNonBoost ),
+      test_WorkerProxy_numberSequence_multi( interleave_Boost_NonBoost )
     ] );
 
     test_WorkerProxy_processingQueueSize_zero( allBoost );
@@ -237,9 +243,9 @@ async function* tester( progressParent ) {
     ] );
 
     await Promise.all( [
-      test_WorkerProxy_numberSequence( allBoost ),
-      test_WorkerProxy_numberSequence( allNonBoost ),
-      test_WorkerProxy_numberSequence( interleave_Boost_NonBoost )
+      test_WorkerProxy_numberSequence_multi( allBoost ),
+      test_WorkerProxy_numberSequence_multi( allNonBoost ),
+      test_WorkerProxy_numberSequence_multi( interleave_Boost_NonBoost )
     ] );
 
     test_WorkerProxy_processingQueueSize_zero( allBoost );
@@ -271,9 +277,9 @@ async function* tester( progressParent ) {
     ] );
 
     await Promise.all( [
-      test_WorkerProxy_numberSequence( allBoost ),
-      test_WorkerProxy_numberSequence( allNonBoost ),
-      test_WorkerProxy_numberSequence( interleave_Boost_NonBoost )
+      test_WorkerProxy_numberSequence_multi( allBoost ),
+      test_WorkerProxy_numberSequence_multi( allNonBoost ),
+      test_WorkerProxy_numberSequence_multi( interleave_Boost_NonBoost )
     ] );
 
     test_WorkerProxy_processingQueueSize_zero( allBoost );
