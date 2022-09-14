@@ -4,6 +4,17 @@ import * as ValueMax from "../util/ValueMax.js";
 import { AsyncWorker_Proxy_tester } from "./AsyncWorker_Proxy_tester.js";
 
 /**
+ * @return {Promise}
+ *   Return a promise which will be resolved as specified value after specified
+ * milliseconds.
+ */
+function delayedValue( milliseconds, value ) {
+  return new Promise( ( resolve /*, reject*/ ) => {
+    setTimeout( () => resolve( value ), milliseconds );
+  } );
+}
+
+/**
  * Test a WorkerProxy's initialization.
  *
  * @param {AsyncWorker_Proxy_tester} workerProxy
@@ -145,6 +156,9 @@ async function* tester( progressParent ) {
     workerProxy: undefined,
   };
 
+//!!! ...unfinished... (2022/09/14)
+// Try whether or not delayedValue() before test_WorkerProxy_numberSequence()
+
   // 1. One woker, three number sequences.
   {
     allBoost.workerProxy
@@ -153,6 +167,10 @@ async function* tester( progressParent ) {
       = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
   
     await test_WorkerProxy_init( allBoost, 1 );
+
+//!!!
+    if ( )
+      await delayedValue( ???, ?? );
 
     await Promise.all( [
       test_WorkerProxy_numberSequence( allBoost ),
