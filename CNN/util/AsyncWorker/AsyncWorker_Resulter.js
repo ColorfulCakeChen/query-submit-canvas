@@ -85,7 +85,6 @@ class AsyncWorker_Resulter {
       //     it will not be yielded again in the future.
       this.PromiseResolveRejectArray.shift();
 
-//!!! ...unfinished... (2022/09/14)
     // If the fulfilled promise has been returned by this resulter.next() before
     // (i.e. It has been returned when it was still pending), try next promise.
     // Otherwise, it will be returned duplicatedly.
