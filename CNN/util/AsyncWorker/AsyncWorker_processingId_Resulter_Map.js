@@ -47,9 +47,28 @@ class AsyncWorker_processingId_Resulter_Map {
 
   /**
    * 
-   * @param {*} thePromiseResolveReject 
-   * @param {*} final 
+   * If the (not pending; fulfilled) promise was resolved to ( done == true )
+   * or rejected, there will be no more result received from the WorkerBody
+   * in the future. So remove the resulter and its entire result queue (i.e.
+   * PromiseResolveRejectArray) of the processing.
+   *
+   *
+   * Note: Both the following two codes handle resulter removing (according to
+   * which one happen first):
+   *   - AsyncWorker_Resulter.next()
+   *   - AsyncWorker_processingId_PromiseResolveRejectArray_Map
+   *       .resolve_or_reject_by_processingId_done_value()
+   *
+   * @param {AsyncWork_PromiseResolveReject} thePromiseResolveReject 
+   *   The promise to be checked whether is final.
    */
+  removeResulter_by_PromiseResolveReject_final( aPromiseResolveReject ) {
+    if (   ( aPromiseResolveReject.final )
+        && ( aPromiseResolveReject.hasBeenYielded_byResulter )
+       ) {
+      this.map.delete( aPromiseResolveReject.processingId );
+    }
+  }
 
   /**
    * Suppose every method function of WorkerProxy is an async generator.
@@ -140,17 +159,7 @@ class AsyncWorker_processingId_Resulter_Map {
     }
 
     // 3. Handle final promise.
-    //
-    // If the (not pending; fulfilled) promise was resolved to ( done == true )
-    // or rejected, there will be no more result received from the WorkerBody
-    // in the future. So remove the resulter and its entire result queue (i.e.
-    // PromiseResolveRejectArray) of the processing.
-    //
-    if (   ( currentPromiseResolveReject.final )
-        && ( currentPromiseResolveReject.hasBeenYielded_byResulter )
-       ) {
-      this.map.delete( this.processingId );
-    }
+    this.removeResulter_by_PromiseResolveReject_final( currentPromiseResolveReject );
   }
 
 }
