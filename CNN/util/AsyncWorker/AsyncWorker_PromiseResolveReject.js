@@ -42,7 +42,7 @@ export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
 
   /** Resolve the pending promise for the processing. */
   done_value_resolve( done, value ) {
-    if ( !this.bPending )
+    if ( !this.pending )
       return; // A fulfilled promise can not be changed again.
     this.done = done;
     this.resolve_internal( value );
@@ -51,7 +51,7 @@ export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
 
   /** Reject the pending promise for the processing. */
   done_value_reject( done, value ) {
-    if ( !this.bPending )
+    if ( !this.pending )
       return; // A fulfilled promise can not be changed again.
     this.done = done;
     this.reject_internal( value );
