@@ -82,13 +82,13 @@ class AsyncWorker_Resulter {
         break;
       }
 
-      // 2.2 Otherwise, the promise has been fulfilled. Remove it so that it will not
-      //     be yielded again in the future.
+      // 2.2 Otherwise, the promise has been fulfilled. Remove it from queue so that
+      //     it will not be yielded again in the future.
       this.PromiseResolveRejectArray.shift();
 
 //!!! ...unfinished... (2022/09/14)
     // If the fulfilled promise has been returned by this resulter.next() before
-    // (i.e. It has been returned when it was still pending), then try next.
+    // (i.e. It has been returned when it was still pending), try next promise.
     // Otherwise, it will be returned duplicatedly.
     //
     } while ( thePromiseResolveReject.hasBeenYielded_byResulter );
@@ -96,9 +96,10 @@ class AsyncWorker_Resulter {
 
         // 3. Handle final promise.
         //
-        // If the promise is done (so it is also not pending), it means no more result
-        // will be received from the WorkerBody. So remove the entire result queue
-        // (i.e. PromiseResolveRejectArray) of the processing.
+        // If the (not pending; fulfilled) promise was resolved to ( done == true )
+        // or rejected, there will be no more result be received from the WorkerBody.
+        // So remove the entire result queue (i.e. PromiseResolveRejectArray) of the
+        // processing.
         if ( thePromiseResolveReject.final ) {
           this.map.delete( this.processingId );
         }
