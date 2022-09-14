@@ -99,7 +99,9 @@ async function test_WorkerProxy_numberSequence( {
 async function* tester( progressParent ) {
   console.log( "AsyncWorker testing..." );
 
-  const valueCountTotal = 100;
+//!!! (2022/09/14 Temp Remarked) lesser.
+//  const valueCountTotal = 100;
+  const valueCountTotal = 10;
 
   let progressRoot = progressParent.root_get();
 
