@@ -1,23 +1,25 @@
 export { AsyncWorker_Resulter as Resulter };
 
 //import { PromiseResolveReject } from "./AsyncWorker_PromiseResolveReject.js";
-//import { processingId_PromiseResolveRejectArray_Map }
-//  from "./AsyncWorker_PromiseResolveReject.js";
+//import { processingId_Resulter_Map }
+//  from "./AsyncWorker_processingId_Resulter_Map.js";
 
 /**
  * An async generator as the consumer of the processingId's PromiseResolveRejectArray.
  *
  * @member {PromiseResolveReject[]} PromiseResolveRejectArray
  *   All promises waiting for WorkerBody's result of the processing.
+ *
+ * @member {AsyncWorker_processingId_Resulter_Map} processingId_Resulter_Map
+ *   All resulters for WorkerBody's all responses.
  */
 class AsyncWorker_Resulter {
 
   /** */
-  constructor( processingId, processingId_PromiseResolveRejectArray_Map ) {
+  constructor( processingId, processingId_Resulter_Map ) {
     this.processingId = processingId;
     this.PromiseResolveRejectArray = new Array();
-    this.processingId_PromiseResolveRejectArray_Map
-      = processingId_PromiseResolveRejectArray_Map;
+    this.processingId_Resulter_Map = processingId_Resulter_Map;
   }
 
   /**
@@ -31,12 +33,13 @@ class AsyncWorker_Resulter {
    */
   next() {
     let resulter
-      = this.processingId_PromiseResolveRejectArray_Map.map.get( this.processingId );
+      = this.processingId_Resulter_Map.getResulter_by_processingId( this.processingId );
+
     if ( !resulter ) {
       throw Error( `AsyncWorker.Resulter.next(): `
         + `processingId=${processingId}. `
         + `AsyncWorker.Resulter not found in `
-        + `processingId_PromiseResolveRejectArray_Map.`
+        + `processingId_Resulter_Map.`
       );
       return { done: true }; // No pending promise for the processing. (should not happen)
     }
@@ -45,7 +48,7 @@ class AsyncWorker_Resulter {
       throw Error( `AsyncWorker.Resulter.next(): `
         + `processingId=${processingId}. `
         + `AsyncWorker.Resulter in `
-        + `processingId_PromiseResolveRejectArray_Map should be this.`
+        + `processingId_Resulter_Map should be this.`
       );
       return { done: true };
     }
@@ -93,7 +96,8 @@ class AsyncWorker_Resulter {
     thePromiseResolveReject.hasBeenYielded_byResulter = true;
 
     // 6. Handle final promise.
-    this.removeResulter_by_PromiseResolveReject_final( thePromiseResolveReject );
+    this.processingId_Resulter_Map.removeResulter_by_PromiseResolveReject_final(
+      thePromiseResolveReject );
 
     // 7. Yield/Return the promise which will resolve to { done, value } or reject.
     return thePromiseResolveReject.promiseToYieldReturn;

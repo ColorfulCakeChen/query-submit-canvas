@@ -56,7 +56,7 @@ class AsyncWorker_processingId_Resulter_Map {
    * Note: Both the following two codes handle resulter removing (according to
    * which one happen last):
    *   - AsyncWorker_Resulter.next()
-   *   - AsyncWorker_processingId_PromiseResolveRejectArray_Map
+   *   - AsyncWorker_processingId_Resulter_Map
    *       .resolve_or_reject_by_processingId_done_value()
    *
    * @param {AsyncWork_PromiseResolveReject} thePromiseResolveReject 
@@ -68,6 +68,18 @@ class AsyncWorker_processingId_Resulter_Map {
        ) {
       this.map.delete( aPromiseResolveReject.processingId );
     }
+  }
+
+  /**
+   * @param {number} processingId
+   *   The numeric identifier of the processing.
+   *
+   * @return {AsyncWorker_Resulter}
+   *   Return the resulter of the processing.
+   */
+  getResulter_by_processingId( processingId ) {
+    let resulter = this.map.get( processingId );
+    return resulter;
   }
 
   /**
@@ -101,7 +113,7 @@ class AsyncWorker_processingId_Resulter_Map {
    * this value represents errorReason.
    */
   resolve_or_reject_by_processingId_done_value( processingId, done, value ) {
-    let resulter = this.map.get( processingId );
+    let resulter = this.getResulter_by_processingId( processingId );
     if ( !resulter )
       throw Error(
           `AsyncWorker.processingId_Resulter_Map.resolve_by_processingId_done_value(): `
