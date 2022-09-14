@@ -63,32 +63,37 @@ class AsyncWorker_Resulter {
     }
 
     // 0. Always yield the first promise.
-    let thePromiseResolveReject = this.PromiseResolveRejectArray[ 0 ];
+    let thePromiseResolveReject;
+    do {
+      thePromiseResolveReject = this.PromiseResolveRejectArray[ 0 ];
 
-    // 1. Prepare the next promise.
+      // 1. Prepare the next promise.
 
-    // 1.1 The first pending promise will be yielded again and again
-    //     (until it has been fulfilled and handled by here).
-    if ( thePromiseResolveReject.pending ) {
-      // Do nothing.
+      // 1.1 The first pending promise will be yielded again and again
+      //     (until it has been fulfilled and handled by here).
+      if ( thePromiseResolveReject.pending )
+        break;
 
-    // 1.2 Otherwise, the promise has been fulfilled. Remove it so that it will not
-    //     be yielded again in the future.
-    } else {
+      // 1.2 Otherwise, the promise has been fulfilled. Remove it so that it will not
+      //     be yielded again in the future.
       this.PromiseResolveRejectArray.shift();
 
-      // 2. Handle final promise.
-      //
-      // If the promise is done (so it is also not pending), it means no more result
-      // will be received from the WorkerBody. So remove the entire result queue
-      // (i.e. PromiseResolveRejectArray) of the processing.
-      if ( thePromiseResolveReject.final ) {
-        this.map.delete( this.processingId );
+//!!! ...unfinished... (2022/09/14)
+    } while ( thePromiseResolveReject.hasBeenReturned_byResulter );
+
+
+        // 2. Handle final promise.
+        //
+        // If the promise is done (so it is also not pending), it means no more result
+        // will be received from the WorkerBody. So remove the entire result queue
+        // (i.e. PromiseResolveRejectArray) of the processing.
+        if ( thePromiseResolveReject.final ) {
+          this.map.delete( this.processingId );
+        }
       }
-    }
 
     // 3. Yield/Return the promise which will resolve to { done, value } or reject.
-    thePromiseResolveReject.returned_byResulter = true;
+    thePromiseResolveReject.hasBeenReturned_byResulter = true;
     return thePromiseResolveReject.promiseToYieldReturn;
   }
 
