@@ -118,7 +118,7 @@ class AsyncWorker_Body {
     } catch ( errorReason ) {
       let msg = `AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy(): `
         + `processingId=${processingId}, `
-        + `command="${command}", failed. `
+        + `command="${command}", failed.\n`
         + `${errorReason}`;
       console.error( msg );
       //debugger;
