@@ -99,7 +99,7 @@ async function test_WorkerProxy_numberSequence(
   let numberResulterNext, done, value;
   do {
     if ( nextMilliseconds >= 0 )
-      delayedValue( nextMilliseconds );
+      await delayedValue( nextMilliseconds );
 
     numberResulterNext = await numberResulter.next();
     ( { done, value } = numberResulterNext );
