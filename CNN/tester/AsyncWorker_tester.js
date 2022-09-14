@@ -7,14 +7,16 @@ import { AsyncWorker_Proxy_tester } from "./AsyncWorker_Proxy_tester.js";
 class NumberSequenceInfo {
 
   constructor(
-    sequenceName: "allBoost",
-    intervalMilliseconds: 10,
-    valueBegin: 0,
-    valueCountTotal: valueCountTotal,
-    valueCountPerBoost: valueCountTotal,
-    workerProxy: undefined,
+    sequenceName,
+    intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost,
+    workerProxy,
   ) {
-    
+    this.sequenceName = sequenceName;
+    this.intervalMilliseconds = intervalMilliseconds;
+    this.valueBegin = valueBegin;
+    this.valueCountTotal = valueCountTotal;
+    this.valueCountPerBoost = valueCountPerBoost;
+    this.workerProxy = workerProxy;
   }
 }
 
@@ -125,7 +127,9 @@ async function test_WorkerProxy_numberSequence(
     );
 }
 
-async function test_WorkerProxy_numberSequence(
+async function test_WorkerProxy_numberSequence( NumberSequenceInfo ) {
+  
+}
 
 /**
  *
