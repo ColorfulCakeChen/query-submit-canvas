@@ -52,6 +52,7 @@ export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
       return; // A fulfilled promise can not be changed again.
     this.pending = false;
     this.done = done;
+    this.value = value;
     this.resolve_internal( value );
   }
 
@@ -61,6 +62,7 @@ export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
       return; // A fulfilled promise can not be changed again.
     this.pending = false;
     this.done = undefined; // means "reject". (i.e. neither false nor true).
+    this.errorReason = errorReason;
     this.reject_internal( errorReason );
   }
 
