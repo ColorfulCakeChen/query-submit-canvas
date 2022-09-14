@@ -130,7 +130,8 @@ async function test_WorkerProxy_numberSequence(
  * Test different nextMilliseconds.
  */
 async function test_WorkerProxy_numberSequence_multi( aNumberSequenceInfo ) {
-  let noMilliseconds = -1
+  let noMilliseconds = -1;
+  let zeroMilliseconds = 0;
   let halfMilliseconds = aNumberSequenceInfo.intervalMilliseconds / 2;
   let oneHalfMilliseconds = aNumberSequenceInfo.intervalMilliseconds + halfMilliseconds;
   let sameMilliseconds = aNumberSequenceInfo.intervalMilliseconds;
@@ -139,6 +140,7 @@ async function test_WorkerProxy_numberSequence_multi( aNumberSequenceInfo ) {
 
   return Promise.all( [
     test_WorkerProxy_numberSequence( aNumberSequenceInfo, noMilliseconds ),
+    test_WorkerProxy_numberSequence( aNumberSequenceInfo, zeroMilliseconds ),
     test_WorkerProxy_numberSequence( aNumberSequenceInfo, halfMilliseconds ),
     test_WorkerProxy_numberSequence( aNumberSequenceInfo, oneHalfMilliseconds ),
     test_WorkerProxy_numberSequence( aNumberSequenceInfo, sameMilliseconds ),
