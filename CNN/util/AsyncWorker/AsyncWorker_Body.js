@@ -126,7 +126,7 @@ class AsyncWorker_Body {
       // WorkerProxy will be blocked (because it still await the result).
       //
       let done = undefined; // means "reject". (i.e. neither false nor true).
-      let value = errorReason;
+      let value = msg;
       let resultData = [ processingId, done, value ];
       postMessage( resultData );
     }
