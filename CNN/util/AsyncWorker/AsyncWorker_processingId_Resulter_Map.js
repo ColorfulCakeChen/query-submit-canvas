@@ -39,18 +39,17 @@ class AsyncWorker_processingId_Resulter_Map {
   /**
    * Suppose every method function of WorkerProxy is an async generator.
    *
-   * When WorkerProxy receives { done, value } object from WorkerBody, please call
-   * this method. It will resolve the corresponding pending promise by
-   * PromiseResolveReject.resolve( value ). And the,
+   * When WorkerProxy receives [ processingId, done, value ] object from WorkerBody,
+   * please call this method. It will resolve or reject the corresponding pending
+   * promise.
    *
-   *   - if ( done == false ), create a new PromiseResolveReject placed at the
-   *       same position (i.e. replace old one) for waiting future result from
-   *       web worker.
+   *   - if ( done == undefind ), reject the pending PromiseResolveReject.
    *
-   *   - if ( done == true ), remove the PromiseResolveReject of processingId from
-   *       this map because the processing will have no more result coming from
-   *       web worker in the future.
+   *   - if ( done == true ), resolve the pending PromiseResolveReject.
    *
+   *   - if ( done == false ), resolve the pending PromiseResolveReject. And
+   *       append a new pending PromiseResolveReject  for waiting future result
+   *       from WorkerBody.
    *
    * This method is the producer the processingId's PromiseResolveRejectArray.
    *
@@ -60,12 +59,14 @@ class AsyncWorker_processingId_Resulter_Map {
    *
    * @param {boolean} done
    *   If true, this is the final value of the processing. If false, there will be
-   * more result values coming from the WorkerBody.
+   * more result values coming from the WorkerBody. If undfined, the WorkerBody is
+   * failed to execute the processing.
    *
    * @param {any} value
-   *   The result value of this step of the processing.
+   *   The result value of this step of the processing. If ( done == undefined ),
+   * this value represents errorReason.
    */
-  resolve_by_processingId_done_value( processingId, done, value ) {
+  resolve_or_reject_by_processingId_done_value( processingId, done, value ) {
     let resulter = this.map.get( processingId );
     if ( !resulter )
       throw Error(
@@ -92,24 +93,36 @@ class AsyncWorker_processingId_Resulter_Map {
         + `The last element of PromiseResolveRejectArray should be pending.`
       );
 
-    // 1. Prepare next pending promise.
+    // 1. If the done is undefined, it means "reject". (i.e. neither false nor true).
+    if ( done == undefined ) {
 
-    // 1.1 Since web worker says the processing is done, do not create any more
-    //     pending promise because the processing will have no more result coming
-    //     from web worker in the future.
-    if ( done ) {
-      // Do nothing.
+      // 1.1 Reject the current pending promise to the errorReason.
+      //     (In this case, the value represents errorReason.)
+      currentPromiseResolveReject.errorReason_reject( value );
 
-    // 1.2 The web worker says the processing is not yet completed, create a new
-    //     pending promise for the same processing for waiting future result from
-    //     web worker.
+    // 2. Otherwise, it is a regular result message (i.e. either false (not done) or
+    //    true (done)).
     } else {
-      let nextPromiseResolveReject = new PromiseResolveReject( processingId );
-      resulter.PromiseResolveRejectArray.push( nextPromiseResolveReject );
-    }
 
-    // 2. Resolve the current pending promise to the specified value.
-    currentPromiseResolveReject.done_value_resolve( done, value );
+      // 2.1 Prepare next pending promise.
+
+      // 2.1.1 Since web worker says the processing is done, do not create any more
+      //       pending promise because the processing will have no more result coming
+      //       from web worker in the future.
+      if ( done ) {
+        // Do nothing.
+
+      // 2.1.2 The web worker says the processing is not yet completed, create a new
+      //       pending promise for the same processing for waiting future result from
+      //       web worker.
+      } else {
+        let nextPromiseResolveReject = new PromiseResolveReject( processingId );
+        resulter.PromiseResolveRejectArray.push( nextPromiseResolveReject );
+      }
+
+      // 2.2 Resolve the current pending promise to the specified value.
+      currentPromiseResolveReject.done_value_resolve( done, value );
+    }
   }
 
 }

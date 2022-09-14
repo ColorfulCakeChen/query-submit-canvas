@@ -50,12 +50,12 @@ export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
   }
 
   /** Reject the pending promise for the processing. */
-  done_value_reject( done, value ) {
+  errorReason_reject( errorReason ) {
     if ( !this.pending )
       return; // A fulfilled promise can not be changed again.
     this.pending = false;
-    this.done = done;
-    this.reject_internal( value );
+    this.done = undefined; // means "reject". (i.e. neither false nor true).
+    this.reject_internal( errorReason );
   }
 
 }

@@ -82,7 +82,7 @@ class AsyncWorker_Resulter {
       // If the promise is done (so it is also not pending), it means no more result
       // will be received from the WorkerBody. So remove the entire result queue
       // (i.e. PromiseResolveRejectArray) of the processing.
-      if ( thePromiseResolveReject.done ) {
+      if ( thePromiseResolveReject.???done ) {
         this.map.delete( this.processingId );
       }
     }
