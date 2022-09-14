@@ -3,6 +3,21 @@ export { tester };
 import * as ValueMax from "../util/ValueMax.js";
 import { AsyncWorker_Proxy_tester } from "./AsyncWorker_Proxy_tester.js";
 
+/** */
+class NumberSequenceInfo {
+
+  constructor(
+    sequenceName: "allBoost",
+    intervalMilliseconds: 10,
+    valueBegin: 0,
+    valueCountTotal: valueCountTotal,
+    valueCountPerBoost: valueCountTotal,
+    workerProxy: undefined,
+  ) {
+    
+  }
+}
+
 /**
  * @return {Promise}
  *   Return a promise which will be resolved as specified value after specified
@@ -59,15 +74,22 @@ async function test_WorkerProxy_processingQueueSize_zero( { workerProxy } ) {
  * Test a WorkerProxy for generating number sequence.
  *
  * @param {AsyncWorker_Proxy_tester} workerProxy
+ * 
+ * @param {number} nextMilliseconds
+ *   - Negative: No await before call numberResulter.next().
+ *   - Other value: await so many milliseconds before call numberResulter.next().
  */
-async function test_WorkerProxy_numberSequence( {
+async function test_WorkerProxy_numberSequence(
+  {
     sequenceName,
     intervalMilliseconds,
     valueBegin,
     valueCountTotal,
     valueCountPerBoost,
     workerProxy,
-} ) {
+  },
+  nextMilliseconds,
+) {
   const workerId = workerProxy.workerId;
 
   let numberResulter = workerProxy.number_sequence_asyncGenerator(
@@ -77,6 +99,9 @@ async function test_WorkerProxy_numberSequence( {
   let valueTest = valueBegin;
   let numberResulterNext, done, value;
   do {
+    if ( nextMilliseconds >= 0 )
+      delayedValue( nextMilliseconds );
+
     numberResulterNext = await numberResulter.next();
     ( { done, value } = numberResulterNext );
 
@@ -99,6 +124,8 @@ async function test_WorkerProxy_numberSequence( {
         + `value ( ${value} ) should be the same as valueTestFinal ( ${valueTestFinal} ).`
     );
 }
+
+async function test_WorkerProxy_numberSequence(
 
 /**
  *
