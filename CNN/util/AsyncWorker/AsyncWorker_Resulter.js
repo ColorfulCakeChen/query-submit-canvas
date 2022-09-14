@@ -33,8 +33,8 @@ class AsyncWorker_Resulter {
    */
   next() {
     let thePromiseResolveReject;
-    do {
 
+    do {
       // PromiseResolveRejectArray should never be empty. It should has at least
       // one promise for this resulter to yield/return.
       //
