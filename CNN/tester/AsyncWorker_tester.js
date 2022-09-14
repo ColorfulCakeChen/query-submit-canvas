@@ -17,10 +17,15 @@ async function test_WorkerProxy_init( { workerProxy }, workerId ) {
     );
 
 //!!! ...unfinished... (2022/09/12) test unknown command.
-  let not_existed_command_result
-    = await workerProxy.createPromise_by_postCommandArgs( [
-    "not_existed_command"
-  ] );
+  let not_existed_command_result;
+  try {
+    not_existed_command_result
+      = await workerProxy.createPromise_by_postCommandArgs( [
+      "not_existed_command"
+    ] );
+  } catch ( e ) {
+    debugger;
+  }
 }
 
 /**
