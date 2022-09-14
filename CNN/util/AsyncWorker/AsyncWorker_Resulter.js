@@ -67,10 +67,8 @@ class AsyncWorker_Resulter {
       // 1. Always yield the first promise.
       thePromiseResolveReject = this.PromiseResolveRejectArray[ 0 ];
 
-      // 2. Prepare the next promise.
-
-      // 2.1 If it is a pending promise, yield it again and again (until it has been
-      //     fulfilled and handled by here).
+      // 2. If it is a pending promise, yield it again and again (until it has been
+      //    fulfilled and handled by here).
       if ( thePromiseResolveReject.pending ) {
         if ( thePromiseResolveReject.hasBeenYielded_byResulter ) {
           throw Error( `AsyncWorker.Resulter.next(): `
@@ -81,20 +79,20 @@ class AsyncWorker_Resulter {
         break;
       }
 
-      // 2.2 Otherwise, the promise has been fulfilled. Remove it from queue so that
-      //     it will not be yielded again in the future.
+      // 3. Otherwise, the promise has been fulfilled. Remove it from queue so that
+      //    it will not be yielded again in the future.
       this.PromiseResolveRejectArray.shift();
 
-    // If the fulfilled promise has been returned by this resulter.next() before
-    // (i.e. It has been returned when it was still pending), try next promise.
-    // Otherwise, it will be returned duplicatedly.
+    // 4. If the fulfilled promise has been returned by this resulter.next() before
+    //    (i.e. It has been returned when it was still pending), try next promise.
+    //    Otherwise, it will be returned duplicatedly.
     //
     } while ( thePromiseResolveReject.hasBeenYielded_byResulter );
 
-    // Mark it as been yielded.
+    // 5. Mark it as been yielded.
     thePromiseResolveReject.hasBeenYielded_byResulter = true;
 
-    // 3. Handle final promise.
+    // 6. Handle final promise.
     //
     // If the (not pending; fulfilled) promise was resolved to ( done == true )
     // or rejected, there will be no more result received from the WorkerBody
@@ -105,7 +103,7 @@ class AsyncWorker_Resulter {
       this.map.delete( this.processingId );
     }
 
-    // 3. Yield/Return the promise which will resolve to { done, value } or reject.
+    // 7. Yield/Return the promise which will resolve to { done, value } or reject.
     return thePromiseResolveReject.promiseToYieldReturn;
   }
 
