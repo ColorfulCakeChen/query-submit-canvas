@@ -51,38 +51,43 @@ class AsyncWorker_Resulter {
       return { done: true };
     }
 
-    // PromiseResolveRejectArray should never be empty. It should has at least
-    // one promise for this resulter to yield/return.
-    //
-    if ( this.PromiseResolveRejectArray.length < 1 ) {
-      throw Error( `AsyncWorker.Resulter.next(): `
-        + `processingId=${processingId}. `
-        + `PromiseResolveRejectArray should never be empty.`
-      );
-      return { done: true };
-    }
-
-    // 0. Always yield the first promise.
     let thePromiseResolveReject;
     do {
+
+      // PromiseResolveRejectArray should never be empty. It should has at least
+      // one promise for this resulter to yield/return.
+      //
+      if ( this.PromiseResolveRejectArray.length < 1 ) {
+        throw Error( `AsyncWorker.Resulter.next(): `
+          + `processingId=${processingId}. `
+          + `PromiseResolveRejectArray should never be empty.`
+        );
+        return { done: true };
+      }
+
+      // 1. Always yield the first promise.
       thePromiseResolveReject = this.PromiseResolveRejectArray[ 0 ];
 
-      // 1. Prepare the next promise.
+      // 2. Prepare the next promise.
 
-      // 1.1 The first pending promise will be yielded again and again
+      // 2.1 The first pending promise will be yielded again and again
       //     (until it has been fulfilled and handled by here).
       if ( thePromiseResolveReject.pending )
         break;
 
-      // 1.2 Otherwise, the promise has been fulfilled. Remove it so that it will not
+      // 2.2 Otherwise, the promise has been fulfilled. Remove it so that it will not
       //     be yielded again in the future.
       this.PromiseResolveRejectArray.shift();
 
 //!!! ...unfinished... (2022/09/14)
+    // If the fulfilled promise has been returned by this resulter.next() before
+    // (i.e. It has been returned when it was still pending), then try next.
+    // Otherwise, it will be returned duplicatedly.
+    //
     } while ( thePromiseResolveReject.hasBeenReturned_byResulter );
 
 
-        // 2. Handle final promise.
+        // 3. Handle final promise.
         //
         // If the promise is done (so it is also not pending), it means no more result
         // will be received from the WorkerBody. So remove the entire result queue
