@@ -24,7 +24,8 @@ async function test_WorkerProxy_init( { workerProxy }, workerId ) {
       "not_existed_command"
     ] );
   } catch ( e ) {
-    debugger;
+    //debugger;
+    console.log( e );
   }
 }
 
