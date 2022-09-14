@@ -69,7 +69,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 
     if ( this.worker ) {
       // Note: No processingId, because this command needs not return value.
-      this.postCommandArgs( "disposeResources" );
+      this.postCommandArgs( [ "disposeResources" ] );
       this.worker = null;
     }
 
