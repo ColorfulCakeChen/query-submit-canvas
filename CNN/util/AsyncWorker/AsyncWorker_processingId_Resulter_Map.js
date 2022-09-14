@@ -54,7 +54,7 @@ class AsyncWorker_processingId_Resulter_Map {
    *
    *
    * Note: Both the following two codes handle resulter removing (according to
-   * which one happen first):
+   * which one happen last):
    *   - AsyncWorker_Resulter.next()
    *   - AsyncWorker_processingId_PromiseResolveRejectArray_Map
    *       .resolve_or_reject_by_processingId_done_value()
