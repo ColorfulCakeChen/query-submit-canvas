@@ -16,7 +16,7 @@ async function test_WorkerProxy_init( { workerProxy }, workerId ) {
       `workerId=${workerId}, initWorker failed.`
     );
 
-//!!! ...unfinished... (2022/09/12) test unknown command.
+  // Test: unknown command.
   let not_existed_command_result;
   try {
     not_existed_command_result
