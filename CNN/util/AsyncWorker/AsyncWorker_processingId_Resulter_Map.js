@@ -46,6 +46,12 @@ class AsyncWorker_processingId_Resulter_Map {
   }
 
   /**
+   * 
+   * @param {*} thePromiseResolveReject 
+   * @param {*} final 
+   */
+
+  /**
    * Suppose every method function of WorkerProxy is an async generator.
    *
    * When WorkerProxy receives [ processingId, done, value ] object from WorkerBody,
@@ -131,6 +137,19 @@ class AsyncWorker_processingId_Resulter_Map {
 
       // 2.2 Resolve the current pending promise to the specified value.
       currentPromiseResolveReject.done_value_resolve( done, value );
+    }
+
+    // 3. Handle final promise.
+    //
+    // If the (not pending; fulfilled) promise was resolved to ( done == true )
+    // or rejected, there will be no more result received from the WorkerBody
+    // in the future. So remove the resulter and its entire result queue (i.e.
+    // PromiseResolveRejectArray) of the processing.
+    //
+    if (   ( currentPromiseResolveReject.final )
+        && ( currentPromiseResolveReject.hasBeenYielded_byResulter )
+       ) {
+      this.map.delete( this.processingId );
     }
   }
 
