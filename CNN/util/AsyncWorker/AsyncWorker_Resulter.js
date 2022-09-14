@@ -87,7 +87,8 @@ class AsyncWorker_Resulter {
       }
     }
 
-    // 3. Yield/Return the promise which will resolve to { done, value }.
+    // 3. Yield/Return the promise which will resolve to { done, value } or reject.
+    thePromiseResolveReject.returned_byResulter = true;
     return thePromiseResolveReject.promiseToYieldReturn;
   }
 

@@ -25,7 +25,9 @@ export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
  * @member {Promise} promiseToYieldReturn
  *   The promise used as the yield/return of the processing's async generator
  * AsyncWorker.Resulter.
- * 
+ *
+ * @member {boolean} returned_byResulter
+ *   If true, the promiseToYieldReturn has been returned by Resulter.next().
  */
  class AsyncWorker_PromiseResolveReject {
 
@@ -44,6 +46,8 @@ export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
     this.promiseToYieldReturn = this.promise.then( value => {
       return { done: this.done, value: value };
     } );
+
+    this.returned_byResulter = false;
   }
 
   /** Resolve the pending promise for the processing. */
