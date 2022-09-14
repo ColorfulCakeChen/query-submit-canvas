@@ -241,7 +241,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    * can not be null).
    */
   postCommandArgs( commandArgs, transferableObjectArray ) {
-    this.worker.postMessage( commandArgs, transferableObjectArray );
+    let processingId_commandArgs = [ undefined, ...commandArgs ]; // no processingId.
+    this.worker.postMessage( processingId_commandArgs, transferableObjectArray );
   }
 
   /**
