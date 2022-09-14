@@ -93,20 +93,21 @@ class AsyncWorker_Resulter {
     //
     } while ( thePromiseResolveReject.hasBeenYielded_byResulter );
 
+    // Mark it as been yielded.
+    thePromiseResolveReject.hasBeenYielded_byResulter = true;
 
-        // 3. Handle final promise.
-        //
-        // If the (not pending; fulfilled) promise was resolved to ( done == true )
-        // or rejected, there will be no more result be received from the WorkerBody.
-        // So remove the entire result queue (i.e. PromiseResolveRejectArray) of the
-        // processing.
-        if ( thePromiseResolveReject.final ) {
-          this.map.delete( this.processingId );
-        }
-      }
+    // 3. Handle final promise.
+    //
+    // If the (not pending; fulfilled) promise was resolved to ( done == true )
+    // or rejected, there will be no more result received from the WorkerBody
+    // in the future. So remove the entire result queue (i.e.
+    // PromiseResolveRejectArray) of the processing.
+    //
+    if ( thePromiseResolveReject.final ) {
+      this.map.delete( this.processingId );
+    }
 
     // 3. Yield/Return the promise which will resolve to { done, value } or reject.
-    thePromiseResolveReject.hasBeenYielded_byResulter = true;
     return thePromiseResolveReject.promiseToYieldReturn;
   }
 
