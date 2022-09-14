@@ -94,6 +94,7 @@ async function test_WorkerProxy_numberSequence(
   let numberResulter = workerProxy.number_sequence_asyncGenerator(
     intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost );
 
+  const valueCountPerDelay = Math.ceil( nextMilliseconds / intervalMilliseconds );
   let valueIndex = 0;
   let valueTest = valueBegin;
   let numberResulterNext, done, value;
@@ -101,19 +102,25 @@ async function test_WorkerProxy_numberSequence(
     if ( nextMilliseconds >= 0 )
       await delayedValue( nextMilliseconds );
 
-    numberResulterNext = await numberResulter.next();
-    ( { done, value } = numberResulterNext );
+    let valueCountThisDelay = 0;
+    do {
+      numberResulterNext = await numberResulter.next();
+      ( { done, value } = numberResulterNext );
 
-    if ( valueTest != value )
-      throw Error( `AsyncWorker_tester.test_WorkerProxy_numberSequence(): `
-        + `sequenceName="${sequenceName}", workerId=${workerId}, `
-        + `nextMilliseconds="${nextMilliseconds}", `
-        + `valueIndex=${valueIndex}, `
-        + `value ( ${value} ) should be the same as valueTest ( ${valueTest} ).`
-      );
+      if ( valueTest != value )
+        throw Error( `AsyncWorker_tester.test_WorkerProxy_numberSequence(): `
+          + `sequenceName="${sequenceName}", workerId=${workerId}, `
+          + `nextMilliseconds="${nextMilliseconds}", `
+          + `valueIndex=${valueIndex}, `
+          + `value ( ${value} ) should be the same as valueTest ( ${valueTest} ).`
+        );
 
-    ++valueIndex;
-    ++valueTest;
+      ++valueIndex;
+      ++valueTest;
+
+      ++valueCountThisDelay;
+
+    } while ( ( !done ) && ( valueCountThisDelay < valueCountPerDelay ) );
 
   } while ( !done );
 
@@ -148,7 +155,7 @@ async function test_WorkerProxy_numberSequence_multi( aNumberSequenceInfo ) {
     test_WorkerProxy_numberSequence( aNumberSequenceInfo, sameMilliseconds ),
     test_WorkerProxy_numberSequence( aNumberSequenceInfo, twoMilliseconds ),
     test_WorkerProxy_numberSequence( aNumberSequenceInfo, fiveMilliseconds ),
-    // test_WorkerProxy_numberSequence( aNumberSequenceInfo, overMilliseconds ),
+    test_WorkerProxy_numberSequence( aNumberSequenceInfo, overMilliseconds ),
   ] );
 }
 
