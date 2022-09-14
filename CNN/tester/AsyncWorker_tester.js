@@ -7,8 +7,8 @@ import { AsyncWorker_Proxy_tester } from "./AsyncWorker_Proxy_tester.js";
 class NumberSequenceInfo {
 
   constructor(
-    sequenceName,
-    intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost,
+    sequenceName, intervalMilliseconds,
+    valueBegin, valueCountTotal, valueCountPerBoost,
     workerProxy,
   ) {
     this.sequenceName = sequenceName;
@@ -131,13 +131,6 @@ async function test_WorkerProxy_numberSequence(
  * Test different nextMilliseconds.
  */
 async function test_WorkerProxy_numberSequence_multi( aNumberSequenceInfo ) {
-  // this.sequenceName = sequenceName;
-  // this.intervalMilliseconds = intervalMilliseconds;
-  // this.valueBegin = valueBegin;
-  // this.valueCountTotal = valueCountTotal;
-  // this.valueCountPerBoost = valueCountPerBoost;
-  // this.workerProxy = workerProxy;
-
   let noMilliseconds = -1
   let halfMilliseconds = aNumberSequenceInfo.intervalMilliseconds / 2;
   let oneHalfMilliseconds = aNumberSequenceInfo.intervalMilliseconds + halfMilliseconds;
@@ -145,11 +138,13 @@ async function test_WorkerProxy_numberSequence_multi( aNumberSequenceInfo ) {
   let overMilliseconds
     = aNumberSequenceInfo.intervalMilliseconds * aNumberSequenceInfo.valueCountTotal;
 
-  test_WorkerProxy_numberSequence( aNumberSequenceInfo, noMilliseconds );
-  test_WorkerProxy_numberSequence( aNumberSequenceInfo, halfMilliseconds );
-  test_WorkerProxy_numberSequence( aNumberSequenceInfo, oneHalfMilliseconds );
-  test_WorkerProxy_numberSequence( aNumberSequenceInfo, sameMilliseconds );
-  test_WorkerProxy_numberSequence( aNumberSequenceInfo, overMilliseconds );
+  return Promise.all( [
+    test_WorkerProxy_numberSequence( aNumberSequenceInfo, noMilliseconds ),
+    test_WorkerProxy_numberSequence( aNumberSequenceInfo, halfMilliseconds ),
+    test_WorkerProxy_numberSequence( aNumberSequenceInfo, oneHalfMilliseconds ),
+    test_WorkerProxy_numberSequence( aNumberSequenceInfo, sameMilliseconds ),
+    test_WorkerProxy_numberSequence( aNumberSequenceInfo, overMilliseconds ),
+  ] );
 }
 
 /**
@@ -178,27 +173,31 @@ async function* tester( progressParent ) {
   let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
+  // NumberSequenceInfo:
+  //   sequenceName, intervalMilliseconds,
+  //   valueBegin, valueCountTotal, valueCountPerBoost,
+  //   workerProxy,
+
   // All boost.
   let allBoost = new NumberSequenceInfo(
-    "allBoost", 10, 0, valueCountTotal, valueCountTotal,
+    "allBoost", 10,
+    0, valueCountTotal, valueCountTotal,
     undefined,
   );
 
   // All non-boost.
   const allNonBoost = new NumberSequenceInfo(
-    "allNonBoost", 150, 50, valueCountTotal, 0,
+    "allNonBoost", 50,
+    50, valueCountTotal, 0,
     undefined,
   );
 
   // Interleave boost and non-boost.
   const interleave_Boost_NonBoost = new NumberSequenceInfo(
-    "interleave_Boost_NonBoost",
-    90, 120, valueCountTotal, Math.ceil( valueCountTotal / 11 ),
+    "interleave_Boost_NonBoost", 40,
+    120, valueCountTotal, Math.ceil( valueCountTotal / 11 ),
     undefined,
   );
-
-//!!! ...unfinished... (2022/09/14)
-// Try whether or not delayedValue() before test_WorkerProxy_numberSequence()
 
   // 1. One woker, three number sequences.
   {
