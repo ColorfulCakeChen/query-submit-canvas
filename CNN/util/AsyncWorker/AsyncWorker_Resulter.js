@@ -32,26 +32,28 @@ class AsyncWorker_Resulter {
    * will resolve to { done, value } or reject.
    */
   next() {
-    let resulter
-      = this.processingId_Resulter_Map.getResulter_by_processingId( this.processingId );
 
-    if ( !resulter ) {
-      throw Error( `AsyncWorker.Resulter.next(): `
-        + `processingId=${processingId}. `
-        + `AsyncWorker.Resulter not found in `
-        + `processingId_Resulter_Map.`
-      );
-      return { done: true }; // No pending promise for the processing. (should not happen)
-    }
-
-    if ( resulter != this ) {
-      throw Error( `AsyncWorker.Resulter.next(): `
-        + `processingId=${processingId}. `
-        + `AsyncWorker.Resulter in `
-        + `processingId_Resulter_Map should be this.`
-      );
-      return { done: true };
-    }
+//!!! (2022/09/14 Remarked) PromiseResolveRejectArray has already bee in this resulter.
+//     let resulter
+//       = this.processingId_Resulter_Map.getResulter_by_processingId( this.processingId );
+//
+//     if ( !resulter ) {
+//       throw Error( `AsyncWorker.Resulter.next(): `
+//         + `processingId=${processingId}. `
+//         + `AsyncWorker.Resulter not found in `
+//         + `processingId_Resulter_Map.`
+//       );
+//       return { done: true }; // No pending promise for the processing. (should not happen)
+//     }
+//
+//     if ( resulter != this ) {
+//       throw Error( `AsyncWorker.Resulter.next(): `
+//         + `processingId=${processingId}. `
+//         + `AsyncWorker.Resulter in `
+//         + `processingId_Resulter_Map should be this.`
+//       );
+//       return { done: true };
+//     }
 
     let thePromiseResolveReject;
     do {
