@@ -80,10 +80,8 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
       valueBegin, valueCountTotal, valueCountPerBoost ] );
 
     let resulter = this.createResulter_by_postCommandArgs(
+      [ "number_sequence", intervalMilliseconds, valueParams ],
       [ valueParams.buffer ], // Test: transferable object array.
-      "number_sequence",
-      intervalMilliseconds,
-      valueParams
     );
 
     // Check Test: transferable object array.
