@@ -135,6 +135,8 @@ async function test_WorkerProxy_numberSequence_multi( aNumberSequenceInfo ) {
   let halfMilliseconds = aNumberSequenceInfo.intervalMilliseconds / 2;
   let oneHalfMilliseconds = aNumberSequenceInfo.intervalMilliseconds + halfMilliseconds;
   let sameMilliseconds = aNumberSequenceInfo.intervalMilliseconds;
+  let twoMilliseconds = aNumberSequenceInfo.intervalMilliseconds * 2;
+  let fiveMilliseconds = aNumberSequenceInfo.intervalMilliseconds * 5;
   let overMilliseconds
     = aNumberSequenceInfo.intervalMilliseconds * aNumberSequenceInfo.valueCountTotal;
 
@@ -144,7 +146,9 @@ async function test_WorkerProxy_numberSequence_multi( aNumberSequenceInfo ) {
     test_WorkerProxy_numberSequence( aNumberSequenceInfo, halfMilliseconds ),
     test_WorkerProxy_numberSequence( aNumberSequenceInfo, oneHalfMilliseconds ),
     test_WorkerProxy_numberSequence( aNumberSequenceInfo, sameMilliseconds ),
-    test_WorkerProxy_numberSequence( aNumberSequenceInfo, overMilliseconds ),
+    test_WorkerProxy_numberSequence( aNumberSequenceInfo, twoMilliseconds ),
+    test_WorkerProxy_numberSequence( aNumberSequenceInfo, fiveMilliseconds ),
+    // test_WorkerProxy_numberSequence( aNumberSequenceInfo, overMilliseconds ),
   ] );
 }
 
