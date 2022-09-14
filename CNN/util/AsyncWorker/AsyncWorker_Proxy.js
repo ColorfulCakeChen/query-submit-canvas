@@ -256,8 +256,19 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     // ( e.data == [ processingId, done, value ] )
     let [ processingId, done, value ] = e.data;
 
-    this.the_processingId_Resulter_Map.resolve_by_processingId_done_value(
-      processingId, done, value );
+    // If the done is undefined, it means "reject". (i.e. neither false nor true).
+    // In this case, the value represents errorReason.
+    if ( done == undefined ) {
+
+//!!! ...unfinished... (2022/09/14)
+      //value = errorReason;
+
+    // Otherwise, it is a regular result message (i.e. either false (not done) or
+    // true (done)).
+    } else {
+      this.the_processingId_Resulter_Map.resolve_by_processingId_done_value(
+        processingId, done, value );
+    }
   }
 
 }

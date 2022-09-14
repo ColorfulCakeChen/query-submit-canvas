@@ -111,7 +111,6 @@ class AsyncWorker_Body {
             = await asyncGenerator.next() );
           let resultData = [ processingId, done, value ];
           postMessage( resultData, transferableObjectArray );
-
         } while ( !done );
       }
 
@@ -123,10 +122,13 @@ class AsyncWorker_Body {
       console.error( msg );
       //debugger;
 
-//!!! ...unfinished... (2022/09/14)
-// still need post back failed message. Otherwise, WorkerProxy will be blocked
-// (because it still await the result).
-
+      // When failure, it still need post back failure message. Otherwise,
+      // WorkerProxy will be blocked (because it still await the result).
+      //
+      let done = undefined; // means "reject". (i.e. neither false nor true).
+      let value = errorReason;
+      let resultData = [ processingId, done, value ];
+      postMessage( resultData );
     }
 
 
