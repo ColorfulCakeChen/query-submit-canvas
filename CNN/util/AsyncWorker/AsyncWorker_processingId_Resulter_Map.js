@@ -82,7 +82,7 @@ class AsyncWorker_processingId_Resulter_Map {
       );
 
     // Always resolve the last promise. (Assume it is pending.)
-    let lastArrayIndex = thePromiseResolveRejectArray.array.length - 1;
+    let lastArrayIndex = resulter.PromiseResolveRejectArray.array.length - 1;
     let currentPromiseResolveReject = resulter.PromiseResolveRejectArray[ lastArrayIndex ];
 
     if ( !currentPromiseResolveReject.pending )
