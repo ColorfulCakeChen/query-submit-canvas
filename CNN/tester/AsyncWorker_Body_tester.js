@@ -32,9 +32,9 @@ class AsyncWorker_Body_tester extends AsyncWorker.Body {
   async* initWorker( workerId ) {
     this.workerId = workerId;
 
-    //!!! ...unfinished... (2022/09/14) Test importScripts.
-    let tensorflowJsURL = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.19.0/dist/tf.min.js";
-    importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
+    //!!! (2022/09/14 Temp Add) Test importScripts.
+    //let tensorflowJsURL = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.19.0/dist/tf.min.js";
+    //importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
 
     // Load libraries dynamically in global scope.
     {
