@@ -101,8 +101,8 @@ async function* tester( progressParent ) {
   console.log( "AsyncWorker testing..." );
 
 //!!! (2022/09/14 Temp Remarked) lesser.
-//  const valueCountTotal = 100;
-  const valueCountTotal = 10;
+  const valueCountTotal = 100;
+  //const valueCountTotal = 10;
 
   let progressRoot = progressParent.root_get();
 
@@ -141,7 +141,7 @@ async function* tester( progressParent ) {
     intervalMilliseconds: 90,
     valueBegin: 120,
     valueCountTotal: valueCountTotal,
-    valueCountPerBoost: Math.ceil( valueCountTotal / 10 ),
+    valueCountPerBoost: Math.ceil( valueCountTotal / 11 ),
     workerProxy: undefined,
   };
 
