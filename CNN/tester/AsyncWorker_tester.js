@@ -16,17 +16,18 @@ async function test_WorkerProxy_init( { workerProxy }, workerId ) {
       `workerId=${workerId}, initWorker failed.`
     );
 
-  // Test: unknown command.
-  let not_existed_command_result;
-  try {
-    not_existed_command_result
-      = await workerProxy.createPromise_by_postCommandArgs( [
-      "not_existed_command"
-    ] );
-  } catch ( e ) {
-    //debugger;
-    console.log( e );
-  }
+  //!!! (2022/09/14 Remarked)
+  // // Test: unknown command.
+  // let not_existed_command_result;
+  // try {
+  //   not_existed_command_result
+  //     = await workerProxy.createPromise_by_postCommandArgs( [
+  //     "not_existed_command"
+  //   ] );
+  // } catch ( e ) {
+  //   //debugger;
+  //   console.log( e );
+  // }
 }
 
 /**
