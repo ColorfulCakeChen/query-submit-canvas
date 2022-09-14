@@ -110,7 +110,9 @@ async function test_WorkerProxy_numberSequence(
       if ( valueTest != value )
         throw Error( `AsyncWorker_tester.test_WorkerProxy_numberSequence(): `
           + `sequenceName="${sequenceName}", workerId=${workerId}, `
-          + `nextMilliseconds="${nextMilliseconds}", `
+          + `nextMilliseconds=${nextMilliseconds}, `
+          + `valueCountPerDelay=${valueCountPerDelay}, `
+          + `valueCountThisDelay=${valueCountThisDelay}, `
           + `valueIndex=${valueIndex}, `
           + `value ( ${value} ) should be the same as valueTest ( ${valueTest} ).`
         );
@@ -128,7 +130,8 @@ async function test_WorkerProxy_numberSequence(
   if ( valueTestFinal != value )
       throw Error( `AsyncWorker_tester.test_WorkerProxy_numberSequence(): `
         + `sequenceName="${sequenceName}", workerId=${workerId}, `
-        + `nextMilliseconds="${nextMilliseconds}", `
+        + `nextMilliseconds=${nextMilliseconds}, `
+        + `valueCountPerDelay=${valueCountPerDelay}, `
         + `value ( ${value} ) should be the same as valueTestFinal ( ${valueTestFinal} ).`
     );
 }
