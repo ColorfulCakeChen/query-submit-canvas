@@ -70,10 +70,18 @@ class AsyncWorker_Resulter {
 
       // 2. Prepare the next promise.
 
-      // 2.1 The first pending promise will be yielded again and again
-      //     (until it has been fulfilled and handled by here).
-      if ( thePromiseResolveReject.pending )
+      // 2.1 If it is a pending promise, yield it again and again (until it has been
+      //     fulfilled and handled by here).
+      if ( thePromiseResolveReject.pending ) {
+
+        if ( thePromiseResolveReject.hasBeenYielded_byResulter )
+          throw Error( `AsyncWorker.Resulter.next(): `
+            + `processingId=${processingId}. `
+            + `A pending PromiseResolveReject should not been yielded before.`
+          );
+
         break;
+      }
 
       // 2.2 Otherwise, the promise has been fulfilled. Remove it so that it will not
       //     be yielded again in the future.
@@ -84,7 +92,7 @@ class AsyncWorker_Resulter {
     // (i.e. It has been returned when it was still pending), then try next.
     // Otherwise, it will be returned duplicatedly.
     //
-    } while ( thePromiseResolveReject.hasBeenReturned_byResulter );
+    } while ( thePromiseResolveReject.hasBeenYielded_byResulter );
 
 
         // 3. Handle final promise.
@@ -98,7 +106,7 @@ class AsyncWorker_Resulter {
       }
 
     // 3. Yield/Return the promise which will resolve to { done, value } or reject.
-    thePromiseResolveReject.hasBeenReturned_byResulter = true;
+    thePromiseResolveReject.hasBeenYielded_byResulter = true;
     return thePromiseResolveReject.promiseToYieldReturn;
   }
 
