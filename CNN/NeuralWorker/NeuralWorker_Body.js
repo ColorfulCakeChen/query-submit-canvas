@@ -365,55 +365,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     let message = { command: "transferBackSourceTypedArray", workerId: this.workerId, processingId: processingId, sourceTypedArray: sourceTypedArray };
     postMessage( message, [ message.sourceTypedArray.buffer ] );
   }
-
-//!!! (2022/09/09 Remarked) Using super class instead.
-// /** Handle message from NeuralWorker_Proxy. */
-// static onmessage_from_NeuralWorker_Proxy( e ) {
-//
-//     let message = e.data;
-//
-//     switch ( message.command ) {
-//       case "initWorker": //{ command: "initWorker", processingId, workerId, tensorflowJsURL };
-//         this.initWorker_async(
-//           message.processingId, message.workerId, message.tensorflowJsURL );
-//         break;
-//
-//       case "disposeWorker": //{ command: "disposeWorker" };
-//         this.workerBody.disposeWorker();
-//         break;
-//
-//       case "neuralNet_create": //{ command: "neuralNet_create", processingId, neuralNetParamsBase, weightArrayBuffer };
-//         this.neuralNet_create_async(
-//           message.processingId, message.neuralNetParamsBase, message.weightArrayBuffer );
-//         break;
-//
-//       case "alignmentMark_setValue": //{ command: "alignmentMark_setValue", processingId, markValue };
-//         this.alignmentMark_setValue( message.processingId, message.markValue );
-//         break;
-// 
-//       case "imageData_transferBack_processTensor": //{ command: "imageData_transferBack_processTensor", processingId, sourceImageData };
-//         this.imageData_transferBack_processTensor( message.processingId, message.sourceImageData );
-//         break;
-//
-//       case "typedArray_transferBack_processTensor": //{ command: "typedArray_transferBack_processTensor", processingId, sourceTypedArray };
-//         this.typedArray_transferBack_processTensor( message.processingId, message.sourceTypedArray );
-//         break;
-//
-//       case "typedArray_processTensor": //{ command: "typedArray_processTensor", processingId, sourceTypedArray };
-//         this.typedArray_processTensor( message.processingId, message.sourceTypedArray );
-//         break;
-//     }
-//  }
   
 }
 
-
-//!!! (2022/09/13 Remarked)
-// // In main document context (Not in worker context). Do nothing. (Should not happen)
-// if ( globalThis.document )
-//   return;
-
-// In worker context.
 NeuralWorker_Body.Singleton = new NeuralWorker_Body(); // Create worker body.
-
-} )();
