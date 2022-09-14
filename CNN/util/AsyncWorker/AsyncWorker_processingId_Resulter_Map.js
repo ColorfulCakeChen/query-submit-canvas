@@ -13,6 +13,15 @@ class AsyncWorker_processingId_Resulter_Map {
     this.map = new Map();
   }
 
+  get size() {
+    return this.map.size;
+  }
+
+  /** */
+  clear() {
+    this.map.clear();
+  }
+
   /**
    * Create a new AsyncWorker.Resulter. Record it in this map by processingId
    * as key.
