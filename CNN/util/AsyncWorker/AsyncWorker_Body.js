@@ -130,45 +130,6 @@ class AsyncWorker_Body {
       let resultData = [ processingId, done, value ];
       postMessage( resultData );
     }
-
-
-// //!!! (2022/09/10 Remarked) Every function should be an async generator..
-//     try {
-//       let p = func( e.data.args );
-//
-//       // For asynchronous function, wait result and then return it.
-//       if ( p instanceof Promise ) {
-//         p.then( r => {
-//           if ( processingId != undefined ) {
-//             let resultData = { processingId: processingId, workerId: this.workerId, r };
-//             postMessage( resultData );
-//           } // Otherwise, no processingId means no need report return value.
-//
-//         } ).catch( errorReason => {
-//           let msg = `AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy(): `
-//             + `workerId=${this.workerId}, processingId=${processingId}, `
-//             + `command="${command}", asynchronous, failed. `
-//             + `${errorReason}`;
-//           console.error( msg );
-//           //debugger;
-//         } );
-//
-//       // For synchronous function, return result immediately.
-//       } else {
-//         if ( processingId != undefined ) {
-//           let resultData = { processingId: processingId, workerId: this.workerId, r };
-//           postMessage( resultData );
-//         } // Otherwise, no processingId means no need report return value.
-//       }
-//
-//     } catch ( errorReason ) {
-//       let msg = `AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy(): `
-//         + `workerId=${this.workerId}, processingId=${processingId}, `
-//         + `command="${command}", synchronous, failed. `
-//         + `${errorReason}`;
-//       console.error( msg );
-//       //debugger;
-//     }
   }
   
 }
