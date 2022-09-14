@@ -1,17 +1,4 @@
-/**
- * @file This file is the main (i.e. body) javascript file of neural network web worker.
- * It is not an importable module.
- *
- * In module (non-classic) web worker, static import is available. But at the same
- * time, importScripts() will not be avbailable. For solving this problem, using
- * classic (non-module) web worker so that tensorflow.js can be loaded by
- * importScripts(). At the same time, using dynamic import() to load ourselves module
- * because import() can be used in classic (non-module) script.
- */
-
-( async () => {
-
-globalThis.AsyncWorker = await import( "../util/AsyncWorker.js" );
+import * as AsyncWorker from "../util/AsyncWorker.js";
 
 /**
  * The implementation of a neural network web worker.
@@ -19,7 +6,7 @@ globalThis.AsyncWorker = await import( "../util/AsyncWorker.js" );
  */
 class NeuralWorker_Body extends AsyncWorker.Body {
 
-  /** It will register callback from NeuralWorker_Proxy. */
+  /** */
   constructor() {
     super(); // register callback from NeuralWorker_Proxy.
   }

@@ -1,5 +1,9 @@
 import * as AsyncWorker from "../util/AsyncWorker.js";
 
+//!!! ...unfinished... (2022/09/14) Test importScripts.
+let tensorflowJsURL = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.19.0/dist/tf.min.js";
+importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
+
 /**
  * @return {Promise}
  *   Return a promise which will be resolved as specified value after specified
