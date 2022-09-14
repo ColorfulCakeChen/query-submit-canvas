@@ -73,13 +73,12 @@ class AsyncWorker_Resulter {
       // 2.1 If it is a pending promise, yield it again and again (until it has been
       //     fulfilled and handled by here).
       if ( thePromiseResolveReject.pending ) {
-
-        if ( thePromiseResolveReject.hasBeenYielded_byResulter )
+        if ( thePromiseResolveReject.hasBeenYielded_byResulter ) {
           throw Error( `AsyncWorker.Resulter.next(): `
             + `processingId=${processingId}. `
             + `A pending PromiseResolveReject should not been yielded before.`
           );
-
+        }
         break;
       }
 
