@@ -151,14 +151,14 @@ async function test_WorkerProxy_numberSequence_multi( aNumberSequenceInfo ) {
     = aNumberSequenceInfo.intervalMilliseconds * aNumberSequenceInfo.valueCountTotal;
 
   return Promise.all( [
-    test_WorkerProxy_numberSequence( aNumberSequenceInfo, noMilliseconds ),
-    test_WorkerProxy_numberSequence( aNumberSequenceInfo, zeroMilliseconds ),
-    test_WorkerProxy_numberSequence( aNumberSequenceInfo, halfMilliseconds ),
-    test_WorkerProxy_numberSequence( aNumberSequenceInfo, oneHalfMilliseconds ),
-    test_WorkerProxy_numberSequence( aNumberSequenceInfo, sameMilliseconds ),
-    test_WorkerProxy_numberSequence( aNumberSequenceInfo, twoMilliseconds ),
-    test_WorkerProxy_numberSequence( aNumberSequenceInfo, fiveMilliseconds ),
     test_WorkerProxy_numberSequence( aNumberSequenceInfo, overMilliseconds ),
+    test_WorkerProxy_numberSequence( aNumberSequenceInfo, fiveMilliseconds ),
+    test_WorkerProxy_numberSequence( aNumberSequenceInfo, twoMilliseconds ),
+    test_WorkerProxy_numberSequence( aNumberSequenceInfo, sameMilliseconds ),
+    test_WorkerProxy_numberSequence( aNumberSequenceInfo, oneHalfMilliseconds ),
+    test_WorkerProxy_numberSequence( aNumberSequenceInfo, halfMilliseconds ),
+    test_WorkerProxy_numberSequence( aNumberSequenceInfo, zeroMilliseconds ),
+    test_WorkerProxy_numberSequence( aNumberSequenceInfo, noMilliseconds ),
   ] );
 }
 
