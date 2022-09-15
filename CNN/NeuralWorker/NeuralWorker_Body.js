@@ -1,4 +1,10 @@
+// import * as Pool from "../util/Pool.js";
+// import * as Recyclable from "../util/Recyclable.js";
+// import * as ValueMax from "../util/ValueMax.js";
 import * as AsyncWorker from "../util/AsyncWorker.js";
+import * as ValueDesc from "../Unpacker/ValueDesc.js";
+import * as Weights from "../Unpacker/Weights.js";
+import * as NeuralNet from "../Conv/NeuralNet.js";
 
 /**
  * The implementation of a neural network web worker.
@@ -50,21 +56,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 // Perhaps, needs a life-cycle manager to handle them gracefully.
 
       importScripts( this.tensorflowJsURL ); // Load tensorflow.js library in global scope.
-
-      [ globalThis.Pool,
-        globalThis.Recyclable,
-        globalThis.ValueMax,
-        //globalThis.ValueDesc,
-        globalThis.Weights,
-        globalThis.NeuralNet,
-      ] = await Promise.all( [
-        import( "../util/Pool.js" ),
-        import( "../util/Recyclable.js" ),
-        import( "../util/ValueMax.js" ),
-        //import( "../Unpacker/ValueDesc.js" ),
-        import( "../Unpacker/Weights.js" ),
-        import( "../Conv/NeuralNet.js" ),
-      ] );
     }
 
     return { value: true };
