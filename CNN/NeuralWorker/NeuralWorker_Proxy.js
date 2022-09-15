@@ -6,6 +6,15 @@ import * as AsyncWorker from "../util/AsyncWorker.js";
 //import * as ValueMax from "../util/ValueMax.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
 
+//!!! ...unfinished... (2022/09/15)
+// What if failed when:
+//   - library (tensorflow.js) downloading
+//   - worker starting (also a kind of library downloading)
+//   - versus downloading
+//   - versus result sending
+//
+// Perhaps, needs a life-cycle manager to handle them gracefully.
+
 /**
  * Hold the worker and its related promise map. It is a wrapper of a neural network
  * web worker for handling and communicating easily.

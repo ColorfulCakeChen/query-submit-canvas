@@ -40,6 +40,15 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
     // Load libraries dynamically in global scope.
     {
+//!!! ...unfinished... (2022/09/15)
+// What if failed when:
+//   - library (tensorflow.js) downloading
+//   - worker starting (also a kind of library downloading)
+//   - versus downloading
+//   - versus result sending
+//
+// Perhaps, needs a life-cycle manager to handle them gracefully.
+
       importScripts( this.tensorflowJsURL ); // Load tensorflow.js library in global scope.
 
       [ globalThis.Pool,
