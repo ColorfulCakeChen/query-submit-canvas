@@ -129,6 +129,10 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    */
   static create_WorkerBodyStub_Codes_DataURI( workerModuleURL ) {
 
+//!!! ...unfinished... (2022/09/15)
+// What if loading workerModuleURL failed?
+// Re-try (but should inform this WorkerProxy and user).
+
     // The codes do the following:
     //
     //   - Import the specified module URL.
