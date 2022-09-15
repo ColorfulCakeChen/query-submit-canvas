@@ -85,7 +85,7 @@ async function* tester( progressParent ) {
     throw Error( `${result1} != ${result2}` );
 
   // Test change range.
-  {
+  if ( result1 ) {
     let newRange = result1[ 0 ][ 0 ];
     tester1.range_set( newRange );
     let fetcher11 = tester1.fetcher_JSON_ColumnMajorArrayArray( progress11 );
@@ -97,6 +97,9 @@ async function* tester( progressParent ) {
 
     if ( !array2d_compare_EQ( result11, result21 ) )
       throw Error( `${result11} != ${result21}` );
+
+  } else {
+    // (e.g. the nework is offline.)
   }
 
   tester2.disposeResources_and_recycleToPool();
