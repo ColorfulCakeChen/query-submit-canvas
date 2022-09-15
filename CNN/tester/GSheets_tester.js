@@ -24,6 +24,10 @@ let testCases = [
  */
 function array2d_compare_EQ( lhs, rhs ) {
 
+  // If both are null (e.g. the network is offline), it is viewed as the same.
+  if ( ( lhs == null ) && ( rhs == null ) )
+    return true;
+
   let max_i = Math.max( lhs.length, rhs.length );
   for ( let i = 0; i < max_i; ++i ) {
     let array1d_lhs = lhs[ i ];
