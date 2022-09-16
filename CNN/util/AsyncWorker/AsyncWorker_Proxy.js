@@ -115,6 +115,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       = AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body.bind( this );
   }
 
+//!!! (2022/09/16 Remarked) seems Not Worked.
   /**
    * Create a URL string of AsyncWorker_BodyStub.js which is the main (i.e. body)
    * javascript file of web worker. It is viewed as a classic javascript file (i.e.
@@ -126,7 +127,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    */
   static create_WorkerBodyStub_URL( workerModuleURL ) {
     let encodedWorkerModuleURL = encodeURIComponent( workerModuleURL );
-    let url = `./AsyncWorker_BodyStub.js?${encodedWorkerModuleURL}`;
+    let workerBodyStubURL = new URL( "AsyncWorker_BodyStub.js", import.meta.url );
+    let url = `${workerBodyStubURL}?${encodedWorkerModuleURL}`;
     return url;
   }
 
