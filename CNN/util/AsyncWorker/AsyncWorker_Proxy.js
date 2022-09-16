@@ -91,10 +91,13 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   static createWorker_byModuleURL( workerModuleURL ) {
     this.workerModuleURL = workerModuleURL;
 
-    let workerDataURI
-      = AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI( workerModuleURL );
+//!!! (2022/09/16 Remarked) Use create_WorkerBodyStub_URL() instead.
+    // let workerDataURI
+    //   = AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI( workerModuleURL );
+    //
+    // this.workerURL = workerDataURI;
 
-    this.workerURL = workerDataURI;
+    this.workerURL = AsyncWorker_Proxy.create_WorkerBodyStub_URL( workerModuleURL );
 
     // Q: Why not use "module" type worker?
     // A: A "module" type worker can not use importScripts() to load global library.
@@ -110,6 +113,21 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     // Register callback from the web worker.
     this.worker.onmessage
       = AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body.bind( this );
+  }
+
+  /**
+   * Create a URL string of AsyncWorker_BodyStub.js which is the main (i.e. body)
+   * javascript file of web worker. It is viewed as a classic javascript file (i.e.
+   * not an importable module). But it will load specified workerModuleURL as a module.
+   *
+   * @param {string} workerModuleURL
+   *   An (absolute) URL to a javascript module file. It will be imported
+   * (asynchronously) by classic javascript file AsyncWorker_BodyStub.js.
+   */
+  static create_WorkerBodyStub_URL( workerModuleURL ) {
+    let encodedWorkerModuleURL = encodeURIComponent( workerModuleURL );
+    let url = `AsyncWorker_BodyStub.js?${encodedWorkerModuleURL}`;
+    return url;
   }
 
   /**
@@ -148,7 +166,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       // + `  console.log( "Hello" );\n`
       // + `  console.log( e );\n`
       + `  AsyncWorker_Body_temporaryMessageQueue.push( e );\n`
-      + `};\n`
+      + `}\n`
       ;
 
     let workerDataURI
