@@ -126,7 +126,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    */
   static create_WorkerBodyStub_URL( workerModuleURL ) {
     let encodedWorkerModuleURL = encodeURIComponent( workerModuleURL );
-    let url = `AsyncWorker_BodyStub.js?${encodedWorkerModuleURL}`;
+    let url = `./AsyncWorker_BodyStub.js?${encodedWorkerModuleURL}`;
     return url;
   }
 
