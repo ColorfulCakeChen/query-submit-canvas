@@ -3,9 +3,10 @@ export { AsyncWorker_Body as Body };
 /**
  * The base class for web worker. It should be used in web worker context.
  *
- * Its methods (which could be called by AsyncWorker_Proxy) should all be
- * async generator (so that they could be handled by onmessage_from_AsyncWorker_Proxy()
- * automatically). The is the reason why its class name is called "Async".
+ * Its methods (which could be called by AsyncWorker_Proxy by postMessage)
+ * should all be async generator (so that they could be handled by
+ * AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy() automatically). The
+ * is the reason why its class name is called "Async".
  *
  */
 class AsyncWorker_Body {
@@ -30,12 +31,13 @@ class AsyncWorker_Body {
 
   /**
    * This method should be called immediately after this AsyncWorker_Body's
-   * sub-class' instance created. So that no messages are lost.
+   * sub-class' instance created (currently, this is done by being scheduled
+   * immediately in this AsyncWorker_Body's constructor). So that no messages
+   * are lost.
    *
-   * Note: the AsyncWorker_Body_temporaryMessageQueue is created by
-   *       AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI()
-   *       for receiving all messages before this AsyncWorker_Body object
-   *       created completely.
+   * Note: The AsyncWorker_Body_temporaryMessageQueue is created by
+   *       AsyncWorker_BodyStub.js for receiving all messages before this
+   *       instance of (sub-class of) AsyncWorker_Body created completely.
    */
   globalThis_temporaryMessageQueue_processMessages() {
     let temporaryMessageQueue = globalThis.AsyncWorker_Body_temporaryMessageQueue;
@@ -55,23 +57,29 @@ class AsyncWorker_Body {
   }
 
   /**
-   * Handle message from AsyncWorker_Proxy.
+   * Handle messages from AsyncWorker_Proxy.
    *
    *
    * @param {AsyncWorker_Body} this
    *   The object which has the method function specified by e.data.command.
    *
    * @param {MessageEvent} e
-   *   - e.data.processingId is the request sequence id.
+   *   The e.data will be parsed as [ processingId, command, ...args ].
    *
-   *   - e.data.command will be used as this object's method name. The method must
+   *   - processingId is the request sequence id for sending back result. If
+   *       it is undefined, there will be no result sent back to WorkerProxy
+   *       for the method function call.
+   *
+   *   - command will be used as this object's method name. The method must
    *       be an async generator.
-   *       - The method should yield and return an object { value, transfer }.
+   *       - The method should yield and return an object
+   *           { value, transferableObjectArray }.
    *       - The value is the real result of the function.
-   *       - The tansfer is the transferable object array when postMessage. It
-   *           could be undefined (but can not be null).
+   *       - The transferableObjectArray is the transferable object array when
+   *           postMessage back to WorkerProxy. It could be undefined (but can
+   *           not be null).
    *
-   *   - e.data.args will be passed to the function this[ e.data.command ]().
+   *   - args will be passed to the function this[ command ]().
    */
   static async onmessage_from_AsyncWorker_Proxy( e ) {
 
