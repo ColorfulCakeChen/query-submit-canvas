@@ -6,6 +6,13 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
 
+// Load tensorflow.js library in global scope.
+{
+  const tensorflowJsURL
+    = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.19.0/dist/tf.min.js";
+  importScripts( tensorflowJsURL );
+}
+
 /**
  * The implementation of a neural network web worker.
  *
