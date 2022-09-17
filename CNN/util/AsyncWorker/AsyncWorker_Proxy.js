@@ -91,13 +91,11 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   static createWorker_byModuleURL( workerModuleURL ) {
     this.workerModuleURL = workerModuleURL;
 
-//!!! (2022/09/16 Remarked) Not Worked.
     this.workerURL = AsyncWorker_Proxy.create_WorkerBodyStub_URL( workerModuleURL );
 
-//!!! (2022/09/17 Remarked) Use create_WorkerBodyStub_URL() instead.
+    //(2022/09/17 Remarked) Use create_WorkerBodyStub_URL() instead.
     // let workerDataURI
     //   = AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI( workerModuleURL );
-    //
     // this.workerURL = workerDataURI;
 
     // Q: Why not use "module" type worker?
@@ -116,11 +114,11 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       = AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body.bind( this );
   }
 
-//!!! (2022/09/16 Remarked) Not Worked.
   /**
    * Create a URL string of AsyncWorker_BodyStub.js which is the main (i.e. body)
    * javascript file of web worker. It is viewed as a classic javascript file (i.e.
-   * not an importable module). But it will load specified workerModuleURL as a module.
+   * not an importable module). But it will load specified workerModuleURL (in its
+   * query string) as a module.
    *
    * @param {string} workerModuleURL
    *   An (absolute) URL to a javascript module file. It will be imported
@@ -134,6 +132,11 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     let workerBodyStubURL = new URL( "AsyncWorker_BodyStub.js", import.meta.url );
     let url = `${workerBodyStubURL}?workerModuleURL=${encodedWorkerModuleURL}`;
     return url;
+
+//!!! ...unfinished... (2022/09/15)
+// What if loading workerModuleURL failed?
+// Re-try (but should inform this WorkerProxy and user).
+
   }
 
   /**

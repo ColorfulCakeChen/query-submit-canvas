@@ -13,7 +13,6 @@
 {
   let theURLSearchParams = new URLSearchParams( location.search );
   let workerModuleURL = theURLSearchParams.get( "workerModuleURL" );
-  console.log( `AsyncWorker_BodyStub.js: workerModuleURL="${workerModuleURL}"` );
   import( workerModuleURL );
 }
 
