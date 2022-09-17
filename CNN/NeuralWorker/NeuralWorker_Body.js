@@ -92,6 +92,10 @@ class NeuralWorker_Body extends AsyncWorker.Body {
           = Weights.Base.ValueBounds.Float32Array_RestrictedClone( aFloat32Array );
       }
 
+      // In web worker, the input of neural network will not be used by others. Force
+      // the neural network release its input tensor.
+      neuralNetParamsBase.bKeepInputTensor = false;
+
       let neuralNetParams = NeuralNet.Params.Pool.get_or_create_by(
         neuralNetParamsBase.input_height,
         neuralNetParamsBase.input_width,
@@ -220,58 +224,38 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    */
   async* ImageData_process( sourceImageData ) {
 
-    let outputTensor;
+    // 1. Scale image.
+    let scaledSourceTensor;
+    let scaledInt32Array;
     try {
-
-      let scaledInt32Array;
-      try {
-        let theScaledSourceTensor
-          = this.neuralNet.create_ScaledSourceTensor_from_PixelData(
-              sourceImageData,
-              true // ( bForceInt32 == true )
-            );
-
-        scaledInt32Array = theScaledSourceTensor.dataSync();
-
-        yield {  // Post back to WorkerProxy.
-          value: scaledInt32Array,
-          transferableObjectArray: [ scaledInt32Array.buffer ]
-        };
-
-      } catch ( e ) {
-        console.error( e );
-        //debugger;
-        yield { value: new Int32Array() }; // Yield an empty Int32Array, if failed.
-      }
-
-//!!! ...unfinished... (2022/09/17)
-// Whether could call Int32Array_process() ?
-
-      this.alignmentMark_fillTo_Image_Int32Array( scaledInt32Array );
-
-      let sourceTensor3d = tf.tensor3d(
-        scaledInt32Array, this.neuralNet.input_height_width_channelCount_array, "int32"
+      scaledSourceTensor = this.neuralNet.create_ScaledSourceTensor_from_PixelData(
+        sourceImageData,
+        true // ( bForceInt32 == true )
       );
 
-      outputTensor = this.neuralNet.apply( sourceTensor3d );
-      let outputFloat32Array = outputTensor.dataSync();
-
-      return {
-        value: outputFloat32Array,
-        transferableObjectArray: [ outputFloat32Array.buffer ]
-      };
+      scaledInt32Array = scaledSourceTensor.dataSync();
 
     } catch ( e ) {
       console.error( e );
       //debugger;
-      return { value: new Float32Array() }; // Return an empty Float32Array, if failed.
+      scaledInt32Array = new Int32Array(); // Yield an empty Int32Array, if failed.
 
     } finally {
-      if ( outputTensor ) {
-        outputTensor.dispose();
-        outputTensor = null;
+      if ( scaledSourceTensor ) {
+        scaledSourceTensor.dispose();
+        scaledSourceTensor = null;
       }
     }
+
+    yield {  // Post back to WorkerProxy.
+      value: scaledInt32Array,
+      transferableObjectArray: [ scaledInt32Array.buffer ]
+    };
+
+    // 2. Process image by neural network.
+    let Int32Array_processor = Int32Array_process();
+    let result = yield* Int32Array_processor;
+    return result;
   }
 
   /**
@@ -297,6 +281,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   async* Int32Array_process( sourceInt32Array ) {
 
     let outputTensor;
+    let outputFloat32Array;
     try {
       this.alignmentMark_fillTo_Image_Int32Array( scaledInt32Array );
 
@@ -305,24 +290,31 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       );
 
       outputTensor = this.neuralNet.apply( sourceTensor3d );
-      let outputFloat32Array = outputTensor.dataSync();
-
-      return {
-        value: outputFloat32Array,
-        transferableObjectArray: [ outputFloat32Array.buffer ]
-      };
+      outputFloat32Array = outputTensor.dataSync();
 
     } catch ( e ) {
       console.error( e );
       //debugger;
-      return { value: new Float32Array() }; // Return an empty Float32Array, if failed.
+      outputFloat32Array = new Float32Array(); // Return an empty Float32Array, if failed.
 
     } finally {
       if ( outputTensor ) {
         outputTensor.dispose();
         outputTensor = null;
       }
+
+      // In theory, it should already have been released by neural network. For avoiding
+      // memory leak (e.g. some exception when .apply()), release it again.
+      if ( sourceTensor3d ) {
+        sourceTensor3d.dispose();
+        sourceTensor3d = null;
+      }
     }
+
+    return {
+      value: outputFloat32Array,
+      transferableObjectArray: [ outputFloat32Array.buffer ]
+    };
   }
 
 
