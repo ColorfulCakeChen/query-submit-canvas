@@ -1,5 +1,7 @@
 export { AsyncWorker_Body as Body };
 
+import * as Pool from "../util/Pool.js";
+
 /**
  * The base class for web worker. It should be used in web worker context.
  *
