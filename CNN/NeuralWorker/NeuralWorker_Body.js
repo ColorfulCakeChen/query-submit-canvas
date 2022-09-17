@@ -111,8 +111,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
       let bInitOk = neuralNet.init( progress, inputWeightArray, 0, neuralNetParams );
 
-//!!! ...unfinished... (2022/09/08)
-// if backend is webgl, the nueral network should be run once for compiling shader.
+      this.NeuralNet_dryRun_ifWebGL(); // compiling shaders if backend is webgl.
 
       if ( false == bInitOk )
         throw Error( `NeuralWorker_Body.neuralNet_load_async(): `
@@ -148,6 +147,43 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       console.error( e );
       //debugger;
       return { value: false };
+    }
+  }
+
+  /**
+   * If backend is webgl, run the nueral network once for compiling shaders. This could
+   * improve performance for the real run.
+   */
+  static NeuralNet_dryRun_ifWebGL() {
+    let backendName = tf.getBackend();
+    if ( backendName != "webgl" )
+      return; // Only WebGL needs compile shaders.
+
+    let sourceTensor3d;
+    let outputTensor;
+    try {
+      sourceTensor3d = tf.zeros(
+        this.neuralNet.input_height_width_channelCount_array, "int32"
+      );
+  
+      outputTensor = this.neuralNet.apply( sourceTensor3d );
+
+    } catch ( e ) {
+      console.error( e );
+      //debugger;
+
+    } finally {
+      if ( outputTensor ) {
+        outputTensor.dispose();
+        outputTensor = null;
+      }
+
+      // In theory, it should already have been released by neural network. For avoiding
+      // memory leak (e.g. some exception when .apply()), release it again.
+      if ( sourceTensor3d ) {
+        sourceTensor3d.dispose();
+        sourceTensor3d = null;
+      }
     }
   }
 
@@ -280,12 +316,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    */
   async* Int32Array_process( sourceInt32Array ) {
 
+    let sourceTensor3d;
     let outputTensor;
     let outputFloat32Array;
     try {
       this.alignmentMark_fillTo_Image_Int32Array( scaledInt32Array );
 
-      let sourceTensor3d = tf.tensor3d(
+      sourceTensor3d = tf.tensor3d(
         scaledInt32Array, this.neuralNet.input_height_width_channelCount_array, "int32"
       );
 
