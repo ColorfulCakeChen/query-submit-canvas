@@ -121,23 +121,24 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
       this.NeuralNet_dryRun_ifWebGL(); // compiling shaders if backend is webgl.
 
-      {
-        let logMsg = `NeuralWorker_Body.neuralNet_load_async(): `
-          + `tensorWeightCount = { `
-          + `Extracted: ${neuralNet.tensorWeightCountExtracted}, `
-          + `Total: ${neuralNet.tensorWeightCountTotal} }, `
-          + `stageCount=${neuralNet.stageCount}, `
-          + `blockCountTotal=${neuralNet.blockCountTotal}, `
-          + `stageLast_shape=`
-            + `( ${neuralNet.stageLast_output_height}, `
-            + `${neuralNet.stageLast_output_width}, `
-            + `${neuralNet.stageLast_output_channelCount} ), `
-          + `output_shape=`
-            + `( ${neuralNet.output_height}, ${neuralNet.output_width}, `
-            + `${neuralNet.output_channelCount} ).`
-      
-        console.log( logMsg );
-      }
+      // (2022/09/17 Remarked) For Debug.
+      // {
+      //   let logMsg = `NeuralWorker_Body.NeuralNet_create(): `
+      //     + `tensorWeightCount = { `
+      //     + `Extracted: ${neuralNet.tensorWeightCountExtracted}, `
+      //     + `Total: ${neuralNet.tensorWeightCountTotal} }, `
+      //     + `stageCount=${neuralNet.stageCount}, `
+      //     + `blockCountTotal=${neuralNet.blockCountTotal}, `
+      //     + `stageLast_shape=`
+      //       + `( ${neuralNet.stageLast_output_height}, `
+      //       + `${neuralNet.stageLast_output_width}, `
+      //       + `${neuralNet.stageLast_output_channelCount} ), `
+      //     + `output_shape=`
+      //       + `( ${neuralNet.output_height}, ${neuralNet.output_width}, `
+      //       + `${neuralNet.output_channelCount} ).`
+      //
+      //   console.log( logMsg );
+      // }
 
       return { value: true };
 
