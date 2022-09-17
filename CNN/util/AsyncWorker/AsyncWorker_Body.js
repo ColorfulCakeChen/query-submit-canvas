@@ -21,10 +21,22 @@ class AsyncWorker_Body {
       this.globalThis_temporaryMessageQueue_processMessages.bind( this ),
       0
     );
+
+    this.pool_all_issuedCount_before = Pool.All.issuedCount;
   }
 
   /** Close this worker. */
   async* disposeResources() {
+
+    // Detect whether memory leak.
+    try {
+      Pool.Asserter.assert_Pool_issuedCount(
+        "AsyncWorker_Body.disposeResources()", this.pool_all_issuedCount_before );
+    } catch ( e ) {
+      console.error( e );
+      //debugger;
+    }
+  
     close(); // Terminate this worker.
     //yield *super.disposeResources();
   }
