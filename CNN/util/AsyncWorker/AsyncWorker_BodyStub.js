@@ -18,7 +18,7 @@
 
 AsyncWorker_Body_temporaryMessageQueue = []; // Create a temporary message queue.
 
-// Collect all messages before AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body()
+// Collect all messages before AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy()
 // be registered as message handler.
 onmessage = ( e ) => {
   AsyncWorker_Body_temporaryMessageQueue.push( e );
