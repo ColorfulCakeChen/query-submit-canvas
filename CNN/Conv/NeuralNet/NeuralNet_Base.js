@@ -185,88 +185,88 @@ class NeuralNet_Base extends Recyclable.Root {
     let progressForStages = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for stage0, stage1, stage2, ... 
     let progressForBlockFinal = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for blockFinal.
 
-    // 0.2 Extract parameters.
-    if ( !params )
-      return false;
-
-    if ( !params.init( inputWeightArray, weightElementOffsetBegin ) )
-      return false;  // e.g. input array does not have enough data.
-    this.weightElementOffsetEnd = params.weightElementOffsetEnd;
-
-    // Get parameters' real (adjusted) values.
-    //
-    // Do not keep params in this.params so that the inputWeightArray could be released.
-    this.input_height = params.input_height;
-    this.input_width = params.input_width;
-    this.input_channelCount = params.input_channelCount;
-    this.vocabularyChannelCount = params.vocabularyChannelCount;
-    this.vocabularyCountPerInputChannel = params.vocabularyCountPerInputChannel;
-    this.nConvStageTypeId = params.nConvStageTypeId;
-    this.nConvStageTypeName = params.nConvStageTypeName;
-    this.blockCountTotalRequested = params.blockCountTotalRequested;
-    this.bKeepInputTensor = params.bKeepInputTensor;
-
-    // The parameters which are determined (inferenced) from the above parameters.
-    {
-      this.bEmbedVocabularyId = params.inferencedParams.bEmbedVocabularyId;
-
-      if ( this.input_height_width_array ) {
-        this.input_height_width_array.length = 2;
-        this.input_height_width_array[ 0 ] = this.input_height;
-        this.input_height_width_array[ 1 ] = this.input_width;
-      } else {
-        this.input_height_width_array = new Array( this.input_height, this.input_width );
-      }
-
-      if ( this.input_height_width_channelCount_array ) {
-        this.input_height_width_channelCount_array.length = 3;
-        this.input_height_width_channelCount_array[ 0 ] = this.input_height;
-        this.input_height_width_channelCount_array[ 1 ] = this.input_width;
-        this.input_height_width_channelCount_array[ 2 ] = this.input_channelCount;
-      } else {
-        this.input_height_width_channelCount_array = new Array(
-          this.input_height, this.input_width, this.input_channelCount );
-      }
-    }
-
-    this.tensorWeightCountExtracted = 0;
-    this.tensorWeightCountTotal = 0;
-
-    progressToAdvance.value_advance();
-    yield progressRoot;  // Parameters extracted. Report progress.
-
-    let next_input_ScaleBoundsArray_or_TensorPlaceholder;
-
-    // 1. Create embedding layer.
-    {
-      let EmbeddingParamsClass = params.EmbeddingParamsClass_get();
-      let embeddingParams = EmbeddingParamsClass.Pool.get_or_create_by(
-        this.input_height, this.input_width, this.input_channelCount,
-        this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
-        this.bEmbedVocabularyId,
-        this.bKeepInputTensor
-      );
-  
-      this.embedding = Embedding.AddGatherReshape.Pool.get_or_create_by();
-      let embeddingIniter = this.embedding.initer( progressForEmbedding,
-        inputWeightArray, this.weightElementOffsetEnd, embeddingParams
-      );
-
-      this.bInitOk = yield* embeddingIniter;
-      if ( !this.bInitOk )
-        return false;
-      this.weightElementOffsetEnd = this.embedding.weightElementOffsetEnd;
-
-      this.tensorWeightCountTotal += this.embedding.tensorWeightCountTotal;
-      this.tensorWeightCountExtracted += this.embedding.tensorWeightCountExtracted;
-
-      next_input_ScaleBoundsArray_or_TensorPlaceholder
-        = this.embedding.output_scaleBoundsArray; // (This is a ScaleBoundsArray.)
-    }
-
-    // 2. Create every stages.
     let stageParamsCreator;
     try {
+      // 0.2 Extract parameters.
+      if ( !params )
+        return false;
+
+      if ( !params.init( inputWeightArray, weightElementOffsetBegin ) )
+        return false;  // e.g. input array does not have enough data.
+      this.weightElementOffsetEnd = params.weightElementOffsetEnd;
+
+      // Get parameters' real (adjusted) values.
+      //
+      // Do not keep params in this.params for reducing memory usage.
+      this.input_height = params.input_height;
+      this.input_width = params.input_width;
+      this.input_channelCount = params.input_channelCount;
+      this.vocabularyChannelCount = params.vocabularyChannelCount;
+      this.vocabularyCountPerInputChannel = params.vocabularyCountPerInputChannel;
+      this.nConvStageTypeId = params.nConvStageTypeId;
+      this.nConvStageTypeName = params.nConvStageTypeName;
+      this.blockCountTotalRequested = params.blockCountTotalRequested;
+      this.bKeepInputTensor = params.bKeepInputTensor;
+
+      // The parameters which are determined (inferenced) from the above parameters.
+      {
+        this.bEmbedVocabularyId = params.inferencedParams.bEmbedVocabularyId;
+
+        if ( this.input_height_width_array ) {
+          this.input_height_width_array.length = 2;
+          this.input_height_width_array[ 0 ] = this.input_height;
+          this.input_height_width_array[ 1 ] = this.input_width;
+        } else {
+          this.input_height_width_array = new Array( this.input_height, this.input_width );
+        }
+
+        if ( this.input_height_width_channelCount_array ) {
+          this.input_height_width_channelCount_array.length = 3;
+          this.input_height_width_channelCount_array[ 0 ] = this.input_height;
+          this.input_height_width_channelCount_array[ 1 ] = this.input_width;
+          this.input_height_width_channelCount_array[ 2 ] = this.input_channelCount;
+        } else {
+          this.input_height_width_channelCount_array = new Array(
+            this.input_height, this.input_width, this.input_channelCount );
+        }
+      }
+
+      this.tensorWeightCountExtracted = 0;
+      this.tensorWeightCountTotal = 0;
+
+      progressToAdvance.value_advance();
+      yield progressRoot;  // Parameters extracted. Report progress.
+
+      let next_input_ScaleBoundsArray_or_TensorPlaceholder;
+
+      // 1. Create embedding layer.
+      {
+        let EmbeddingParamsClass = params.EmbeddingParamsClass_get();
+        let embeddingParams = EmbeddingParamsClass.Pool.get_or_create_by(
+          this.input_height, this.input_width, this.input_channelCount,
+          this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
+          this.bEmbedVocabularyId,
+          this.bKeepInputTensor
+        );
+    
+        this.embedding = Embedding.AddGatherReshape.Pool.get_or_create_by();
+        let embeddingIniter = this.embedding.initer( progressForEmbedding,
+          inputWeightArray, this.weightElementOffsetEnd, embeddingParams
+        );
+
+        this.bInitOk = yield* embeddingIniter;
+        if ( !this.bInitOk )
+          return false;
+        this.weightElementOffsetEnd = this.embedding.weightElementOffsetEnd;
+
+        this.tensorWeightCountTotal += this.embedding.tensorWeightCountTotal;
+        this.tensorWeightCountExtracted += this.embedding.tensorWeightCountExtracted;
+
+        next_input_ScaleBoundsArray_or_TensorPlaceholder
+          = this.embedding.output_scaleBoundsArray; // (This is a ScaleBoundsArray.)
+      }
+
+      // 2. Create every stages.
       let StageParamsClass = params.StageParamsClass_get();
 
       stageParamsCreator = InferencedParams.create_StageParamsCreator_byNeuralNetParams( params );
@@ -395,7 +395,7 @@ class NeuralNet_Base extends Recyclable.Root {
       }
       if ( params ) {
         params.disposeResources_and_recycleToPool();
-        params = undefined;
+        params = null;
       }
     }
   }

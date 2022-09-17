@@ -416,105 +416,111 @@ class Block_Base extends Recyclable.Root {
     let progressToAdvance = progressParent.child_add( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
     // 1. Extract parameters.
-    if ( !params )
-      return false;
+    try {
+      if ( !params )
+        return false;
 
-    if ( !params.init( inputWeightArray, weightElementOffsetBegin ) )
-      return false;  // e.g. input array does not have enough data.
+      if ( !params.init( inputWeightArray, weightElementOffsetBegin ) )
+        return false;  // e.g. input array does not have enough data.
 
-    // Record where to extract next weights. Only meaningful when ( this.bInitOk == true ).
-    this.weightElementOffsetEnd = params.weightElementOffsetEnd;
+      // Record where to extract next weights. Only meaningful when
+      // ( this.bInitOk == true ).
+      this.weightElementOffsetEnd = params.weightElementOffsetEnd;
 
-    // Get parameters' real (adjusted) values.
-    //
-    // Do not keep params in this.params so that the inputWeightArray could be released.
-    this.input0_height = params.input0_height;
-    this.input0_width = params.input0_width;
-    this.input0_channelCount = params.input0_channelCount;
+      // Get parameters' real (adjusted) values.
+      //
+      // Do not keep params in this.params for reducing memory usage.
+      this.input0_height = params.input0_height;
+      this.input0_width = params.input0_width;
+      this.input0_channelCount = params.input0_channelCount;
 
-    this.nConvBlockTypeId = params.nConvBlockTypeId;
-    this.nConvBlockTypeName = params.nConvBlockTypeName;
+      this.nConvBlockTypeId = params.nConvBlockTypeId;
+      this.nConvBlockTypeName = params.nConvBlockTypeName;
 
-    this.pointwise1ChannelCount = params.pointwise1ChannelCount_real;
-    this.pointwise1Bias = params.inferencedParams.pointwise1Bias;
-    this.pointwise1ActivationId = params.inferencedParams.pointwise1ActivationId;
-    this.pointwise1ActivationName = params.inferencedParams.pointwise1ActivationName;
-    this.pointwise1_nHigherHalfDifferent = params.inferencedParams.pointwise1_nHigherHalfDifferent;
-    this.pointwise1_inputChannelCount_lowerHalf = params.inferencedParams.pointwise1_inputChannelCount_lowerHalf;
-    this.pointwise1_inputChannelCount_higherHalf = params.inferencedParams.pointwise1_inputChannelCount_higherHalf;
-    this.pointwise1_outputChannelCount_lowerHalf = params.inferencedParams.pointwise1_outputChannelCount_lowerHalf;
+      this.pointwise1ChannelCount = params.pointwise1ChannelCount_real;
+      this.pointwise1Bias = params.inferencedParams.pointwise1Bias;
+      this.pointwise1ActivationId = params.inferencedParams.pointwise1ActivationId;
+      this.pointwise1ActivationName = params.inferencedParams.pointwise1ActivationName;
+      this.pointwise1_nHigherHalfDifferent = params.inferencedParams.pointwise1_nHigherHalfDifferent;
+      this.pointwise1_inputChannelCount_lowerHalf = params.inferencedParams.pointwise1_inputChannelCount_lowerHalf;
+      this.pointwise1_inputChannelCount_higherHalf = params.inferencedParams.pointwise1_inputChannelCount_higherHalf;
+      this.pointwise1_outputChannelCount_lowerHalf = params.inferencedParams.pointwise1_outputChannelCount_lowerHalf;
 
-    this.depthwise_AvgMax_Or_ChannelMultiplier = params.depthwise_AvgMax_Or_ChannelMultiplier;
-    this.depthwise_AvgMax_Or_ChannelMultiplier_Name = params.depthwise_AvgMax_Or_ChannelMultiplier_Name;
-    this.depthwiseFilterHeight = params.depthwiseFilterHeight_real;
-    this.depthwiseFilterWidth = params.depthwiseFilterWidth_real;
-    this.depthwiseStridesPad = params.depthwiseStridesPad;
-    this.depthwiseStridesPadName = params.depthwiseStridesPadName;
-    this.depthwiseBias = params.inferencedParams.depthwiseBias;
-    this.depthwiseActivationId = params.depthwiseActivationId;
-    this.depthwiseActivationName = params.depthwiseActivationName;
-    this.depthwise1_nHigherHalfDifferent = params.inferencedParams.depthwise1_nHigherHalfDifferent;
-    this.depthwise1_inputChannelCount_lowerHalf = params.inferencedParams.depthwise1_inputChannelCount_lowerHalf;
+      this.depthwise_AvgMax_Or_ChannelMultiplier = params.depthwise_AvgMax_Or_ChannelMultiplier;
+      this.depthwise_AvgMax_Or_ChannelMultiplier_Name = params.depthwise_AvgMax_Or_ChannelMultiplier_Name;
+      this.depthwiseFilterHeight = params.depthwiseFilterHeight_real;
+      this.depthwiseFilterWidth = params.depthwiseFilterWidth_real;
+      this.depthwiseStridesPad = params.depthwiseStridesPad;
+      this.depthwiseStridesPadName = params.depthwiseStridesPadName;
+      this.depthwiseBias = params.inferencedParams.depthwiseBias;
+      this.depthwiseActivationId = params.depthwiseActivationId;
+      this.depthwiseActivationName = params.depthwiseActivationName;
+      this.depthwise1_nHigherHalfDifferent = params.inferencedParams.depthwise1_nHigherHalfDifferent;
+      this.depthwise1_inputChannelCount_lowerHalf = params.inferencedParams.depthwise1_inputChannelCount_lowerHalf;
 
-    this.pointwise20ChannelCount = params.pointwise20ChannelCount;
-    this.pointwise20Bias = params.inferencedParams.pointwise20Bias;
-    this.pointwise20ActivationId = params.pointwise20ActivationId;
-    this.pointwise20ActivationName = params.pointwise20ActivationName;
-    this.pointwise20_nHigherHalfDifferent = params.inferencedParams.pointwise20_nHigherHalfDifferent;
-    this.pointwise20_outputChannelCount_lowerHalf = params.inferencedParams.pointwise20_outputChannelCount_lowerHalf;
-    this.pointwise20_channelShuffler_outputGroupCount = params.inferencedParams.pointwise20_channelShuffler_outputGroupCount;
+      this.pointwise20ChannelCount = params.pointwise20ChannelCount;
+      this.pointwise20Bias = params.inferencedParams.pointwise20Bias;
+      this.pointwise20ActivationId = params.pointwise20ActivationId;
+      this.pointwise20ActivationName = params.pointwise20ActivationName;
+      this.pointwise20_nHigherHalfDifferent = params.inferencedParams.pointwise20_nHigherHalfDifferent;
+      this.pointwise20_outputChannelCount_lowerHalf = params.inferencedParams.pointwise20_outputChannelCount_lowerHalf;
+      this.pointwise20_channelShuffler_outputGroupCount = params.inferencedParams.pointwise20_channelShuffler_outputGroupCount;
 
-    this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
-    this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
-    this.bSqueezeExcitationPrefix = params.bSqueezeExcitationPrefix;
+      this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
+      this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
+      this.bSqueezeExcitationPrefix = params.bSqueezeExcitationPrefix;
 
-    this.nActivationId = params.nActivationId;
-    this.nActivationName = params.nActivationName;
+      this.nActivationId = params.nActivationId;
+      this.nActivationName = params.nActivationName;
 
-    this.bKeepInputTensor = params.bKeepInputTensor;
+      this.bKeepInputTensor = params.bKeepInputTensor;
 
-    // The parameters which are inferenced from the above parameters.
-    {
-      this.inputTensorCount = params.inferencedParams.inputTensorCount;
-      this.input1_height = params.inferencedParams.input1_height;
-      this.input1_width = params.inferencedParams.input1_width;
-      this.input1_channelCount = params.inferencedParams.input1_channelCount;
+      // The parameters which are inferenced from the above parameters.
+      {
+        this.inputTensorCount = params.inferencedParams.inputTensorCount;
+        this.input1_height = params.inferencedParams.input1_height;
+        this.input1_width = params.inferencedParams.input1_width;
+        this.input1_channelCount = params.inferencedParams.input1_channelCount;
 
-      this.bDepthwiseRequestedAndNeeded = params.inferencedParams.bDepthwiseRequestedAndNeeded;
+        this.bDepthwiseRequestedAndNeeded = params.inferencedParams.bDepthwiseRequestedAndNeeded;
 
-      this.depthwisePadInfo = params.inferencedParams.depthwisePadInfo;
-      params.inferencedParams.depthwisePadInfo = null; // (Because ownership is transferred.)
+        this.depthwisePadInfo = params.inferencedParams.depthwisePadInfo;
+        params.inferencedParams.depthwisePadInfo = null; // (Because ownership is transferred.)
 
-      this.bDepthwise2Requested = params.inferencedParams.bDepthwise2Requested;
-      this.bConcat1Requested = params.inferencedParams.bConcat1Requested;
-      this.bAddInputToOutputRequested = params.inferencedParams.bAddInputToOutputRequested;
-      this.bConcat2ShuffleSplitRequested = params.inferencedParams.bConcat2ShuffleSplitRequested;
-      this.bHigherHalfDifferent = params.inferencedParams.bHigherHalfDifferent;
-      this.bHigherHalfDepthwise2 = params.inferencedParams.bHigherHalfDepthwise2;
+        this.bDepthwise2Requested = params.inferencedParams.bDepthwise2Requested;
+        this.bConcat1Requested = params.inferencedParams.bConcat1Requested;
+        this.bAddInputToOutputRequested = params.inferencedParams.bAddInputToOutputRequested;
+        this.bConcat2ShuffleSplitRequested = params.inferencedParams.bConcat2ShuffleSplitRequested;
+        this.bHigherHalfDifferent = params.inferencedParams.bHigherHalfDifferent;
+        this.bHigherHalfDepthwise2 = params.inferencedParams.bHigherHalfDepthwise2;
 
-      this.pointwise21ChannelCount = params.inferencedParams.pointwise21ChannelCount;
-      this.pointwise21Bias = params.inferencedParams.pointwise21Bias;
-      this.pointwise21ActivationId = params.inferencedParams.pointwise21ActivationId;
-      this.pointwise21ActivationName = params.inferencedParams.pointwise21ActivationName;
+        this.pointwise21ChannelCount = params.inferencedParams.pointwise21ChannelCount;
+        this.pointwise21Bias = params.inferencedParams.pointwise21Bias;
+        this.pointwise21ActivationId = params.inferencedParams.pointwise21ActivationId;
+        this.pointwise21ActivationName = params.inferencedParams.pointwise21ActivationName;
 
-      this.squeezeExcitationActivationId = params.inferencedParams.squeezeExcitationActivationId;
-      this.squeezeExcitationActivationName = params.inferencedParams.squeezeExcitationActivationName;
+        this.squeezeExcitationActivationId = params.inferencedParams.squeezeExcitationActivationId;
+        this.squeezeExcitationActivationName = params.inferencedParams.squeezeExcitationActivationName;
 
-      this.outputTensorCount = params.inferencedParams.outputTensorCount;
+        this.outputTensorCount = params.inferencedParams.outputTensorCount;
+      }
+
+      // No matter whether the channel shuffler is used, it is always recorded in data member.
+      this.channelShuffler_ConcatPointwiseConv = params.channelShuffler;
+      if ( this.channelShuffler_ConcatPointwiseConv ) {
+        if ( !( this.channelShuffler_ConcatPointwiseConv instanceof ChannelShuffler.ConcatPointwiseConv ) )
+          throw Error ( `Block.Base.initer(): `
+            + `channelShuffler ( ${this.channelShuffler_ConcatPointwiseConv} ) `
+            + `should be an instanceof ChannelShuffler.ConcatPointwiseConv`
+          );
+      }
+
+    } finally {
+      if ( params ) {
+        params.disposeResources_and_recycleToPool();
+        params = null;
+      }
     }
-
-    // No matter whether the channel shuffler is used, it is always recorded in data member.
-    this.channelShuffler_ConcatPointwiseConv = params.channelShuffler;
-    if ( this.channelShuffler_ConcatPointwiseConv ) {
-      if ( !( this.channelShuffler_ConcatPointwiseConv instanceof ChannelShuffler.ConcatPointwiseConv ) )
-        throw Error ( `Block.Base.initer(): `
-          + `channelShuffler ( ${this.channelShuffler_ConcatPointwiseConv} ) `
-          + `should be an instanceof ChannelShuffler.ConcatPointwiseConv`
-        );
-    }
-
-    params.disposeResources_and_recycleToPool();
-    params = null;
 
     progressToAdvance.value_advance();
     yield progressRoot;  // Parameters extracted. Report progress.

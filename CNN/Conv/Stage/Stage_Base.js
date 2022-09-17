@@ -353,7 +353,7 @@ class Stage_Base extends Recyclable.Root {
    *
    */
   * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params,
-   input_ScaleBoundsArray_or_TensorPlaceholder ) {
+    input_ScaleBoundsArray_or_TensorPlaceholder ) {
 
     // Both MobileNetV3 and ShuffleNetV2:
     //   - They all do not use (depthwise convolution) channelMultiplier.
@@ -389,47 +389,51 @@ class Stage_Base extends Recyclable.Root {
       ;
 
     let progressRoot = progressParent.root_get();
-    let progressToAdvance = progressParent.child_add( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
-    let progressForBlocks = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for block0, block1, block2, ... 
 
-    // 1. Extract parameters.
-    if ( !params )
-      return false;
+    let progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
 
-    if ( !params.init( inputWeightArray, weightElementOffsetBegin ) )
-      return false;  // e.g. input array does not have enough data.
-    this.weightElementOffsetEnd = params.weightElementOffsetEnd;
-
-    // Get parameters' real (adjusted) values.
-    //
-    // Do not keep params in this.params so that the inputWeightArray could be released.
-    this.input_height = params.input_height;
-    this.input_width = params.input_width;
-    this.input_channelCount = params.input_channelCount;
-    this.nConvStageTypeId = params.nConvStageTypeId;
-    this.nConvStageTypeName = params.nConvStageTypeName;
-    this.blockCountRequested = params.blockCountRequested;
-    this.bPointwise1 = params.bPointwise1;
-    this.depthwiseFilterHeight = params.depthwiseFilterHeight;
-    this.depthwiseFilterWidth = params.depthwiseFilterWidth;
-    this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
-    this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
-    this.nActivationId = params.nActivationId;
-    this.nActivationName = params.nActivationName;
-    this.bKeepInputTensor = params.bKeepInputTensor;
-
-    // The parameters which are determined (inferenced) from the above parameters.
-    {
-    }
-
-    this.tensorWeightCountExtracted = 0;
-    this.tensorWeightCountTotal = 0;
-
-    progressToAdvance.value_advance();
-    yield progressRoot;  // Parameters extracted. Report progress.
+    let progressForBlocks = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for block0, block1, block2, ... 
 
     let blockParamsCreator;
     try {
+      // 1. Extract parameters.
+      if ( !params )
+        return false;
+
+      if ( !params.init( inputWeightArray, weightElementOffsetBegin ) )
+        return false;  // e.g. input array does not have enough data.
+      this.weightElementOffsetEnd = params.weightElementOffsetEnd;
+
+      // Get parameters' real (adjusted) values.
+      //
+      // Do not keep params in this.params for reducing memory usage.
+      this.input_height = params.input_height;
+      this.input_width = params.input_width;
+      this.input_channelCount = params.input_channelCount;
+      this.nConvStageTypeId = params.nConvStageTypeId;
+      this.nConvStageTypeName = params.nConvStageTypeName;
+      this.blockCountRequested = params.blockCountRequested;
+      this.bPointwise1 = params.bPointwise1;
+      this.depthwiseFilterHeight = params.depthwiseFilterHeight;
+      this.depthwiseFilterWidth = params.depthwiseFilterWidth;
+      this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
+      this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
+      this.nActivationId = params.nActivationId;
+      this.nActivationName = params.nActivationName;
+      this.bKeepInputTensor = params.bKeepInputTensor;
+
+      // The parameters which are determined (inferenced) from the above parameters.
+      {
+      }
+
+      this.tensorWeightCountExtracted = 0;
+      this.tensorWeightCountTotal = 0;
+
+      progressToAdvance.value_advance();
+      yield progressRoot;  // Parameters extracted. Report progress.
+
       let BlockParamsClass = params.BlockParamsClass_get();
 
       // 2. Create every blocks.
@@ -529,7 +533,7 @@ class Stage_Base extends Recyclable.Root {
       }
       if ( params ) {
         params.disposeResources_and_recycleToPool();
-        params = undefined;
+        params = null;
       }
     }
   }
