@@ -244,7 +244,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         //debugger;
         yield { value: new Int32Array() }; // Yield an empty Int32Array, if failed.
       }
-  
+
       this.alignmentMark_fillTo_Image_Int32Array( scaledInt32Array );
 
       let sourceTensor3d = tf.tensor3d(
@@ -294,19 +294,32 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    */
   async* Int32Array_process( sourceInt32Array ) {
 
-//!!! ...unfinished... (2022/09/17)
-
-
-//!!! ...unfinished... (2022/09/17) alignmentMark_fillTo_Image_Int32Array
+    let outputTensor;
     try {
       this.alignmentMark_fillTo_Image_Int32Array( scaledInt32Array );
 
-      return { value: ???true, transferableObjectArray: [ ??? ] };
+      let sourceTensor3d = tf.tensor3d(
+        scaledInt32Array, this.neuralNet.input_height_width_channelCount_array, "int32"
+      );
+
+      outputTensor = this.neuralNet.apply( sourceTensor3d );
+      let outputFloat32Array = outputTensor.dataSync();
+
+      return {
+        value: outputFloat32Array,
+        transferableObjectArray: [ outputFloat32Array.buffer ]
+      };
 
     } catch ( e ) {
       console.error( e );
       //debugger;
       return { value: new Float32Array() }; // Return an empty Float32Array, if failed.
+
+    } finally {
+      if ( outputTensor ) {
+        outputTensor.dispose();
+        outputTensor = null;
+      }
     }
   }
 
