@@ -648,7 +648,8 @@ class NeuralNet_Base extends Recyclable.Root {
     if ( !bForceInt32 )
       return scaledSourceTensorFloat32;
 
-    // Convert to int32 if necessary. (Because the tf.image.resizeXxx() result's dtype is float32.)
+    // Convert to int32 if necessary. (Note: The dtype of tf.image.resizeXxx()'s
+    // result is float32.)
     try {
       let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
       return scaledSourceTensorInt32;

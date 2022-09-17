@@ -47,8 +47,17 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
   /** @override */
   disposeResources() {
+    this.NeuralNetParamsBase_dispose();
     this.workerId = undefined;
     super.disposeResources();
+  }
+
+  /** Release the neural network configuration. */
+  NeuralNetParamsBase_dispose() {
+    if ( this.neuralNetParamsBase ) {
+      this.neuralNetParamsBase.disposeResources_and_recycleToPool();
+      this.neuralNetParamsBase = null;
+    }
   }
 
   /**
@@ -72,8 +81,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   }
 
   /**
-   * @param {Object} neuralNetParamsBase
-   *   The configuration of the neural network to be created.
+   * @param {NeuralNet.ParamsBase} neuralNetParamsBase
+   *   The configuration of the neural network to be created. This configuration will be
+   * owned (i.e. kept and destroyed) by this NeuralWorker.Proxy.
    *
    * @param {ArrayBuffer} weightArrayBuffer
    *   The neural network's weights. It will be interpreted as Float32Array.
@@ -84,6 +94,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to false, if failed.
    */
   neuralNet_create_async( neuralNetParamsBase, weightArrayBuffer ) {
+    this.NeuralNetParamsBase_dispose();
+    this.neuralNetParamsBase = neuralNetParamsBase;
     return this.createPromise_by_postCommandArgs(
       [ "neuralNet_create", neuralNetParamsBase, weightArrayBuffer ],
       [ weightArrayBuffer ]
@@ -104,6 +116,38 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
       [ "alignmentMark_setValue", markValue ]
     );
   }
+
+//!!! ...unfinished... (2022/09/17)
+  /**
+   *
+   * @param {ImageData} sourceImageData
+   *   The source image data to be processed. Its shape needs not match
+   * this.neuralNetParamsBase's [ input_height, input_width, input_channelCount ].
+
+//!!! ...unfinished... (2022/09/17)
+   * This usually is called for the first web worker in chain. The web worker will
+   * transfer back a scaled typed-array. The scaled typed-array should be used to call
+   * the next web worker's typedArray_transferBack_processTensor_async().
+   *
+   * @return {AsyncWorker.Resulter}
+   *   Return an async generator tracking the result of processing. It will yield two
+   * times, the 1st is an Int32Array, the 2nd is a Float32Array.
+   *
+   * @yield {Int32Array}
+   *   Resolve to { done: false, value: Int32Array }. The value is an Int32Array
+   * representing the scaled image data which shape is this.neuralNetParamsBase's
+   * [ input_height, input_width, input_channelCount ].
+   *
+   * @yield {Float32Array}
+   *   Resolve to { done: true, value: Float32Array }. The value is a Float32Array
+   * representing the result of the neural network.
+   */
+  processImageData_asyncGenerator( sourceImageData ) {
+  }
+
+//!!! ...unfinished... (2022/09/17)
+// (Note: The dtype of tf.image.resizeXxx()'s result is float32.)
+
 
 //!!! ...unfinished... (2022/09/12)
   /**
