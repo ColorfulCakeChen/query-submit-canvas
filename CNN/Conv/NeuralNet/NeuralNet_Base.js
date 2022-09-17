@@ -48,7 +48,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  *   An array records [ this.input_height, this.input_width ]. It is mainly used when
  * scale input image to correct size.
  *
- * @member {number[]} input_height_width_channelCount_array
+ * @member {number[]} input_shape
  *   An array records [ this.input_height, this.input_width, this.input_channelCount ].
  * It is mainly used when create input image tensor to be applied.
  *
@@ -220,13 +220,13 @@ class NeuralNet_Base extends Recyclable.Root {
           this.input_height_width_array = new Array( this.input_height, this.input_width );
         }
 
-        if ( this.input_height_width_channelCount_array ) {
-          this.input_height_width_channelCount_array.length = 3;
-          this.input_height_width_channelCount_array[ 0 ] = this.input_height;
-          this.input_height_width_channelCount_array[ 1 ] = this.input_width;
-          this.input_height_width_channelCount_array[ 2 ] = this.input_channelCount;
+        if ( this.input_shape ) {
+          this.input_shape.length = 3;
+          this.input_shape[ 0 ] = this.input_height;
+          this.input_shape[ 1 ] = this.input_width;
+          this.input_shape[ 2 ] = this.input_channelCount;
         } else {
-          this.input_height_width_channelCount_array = new Array(
+          this.input_shape = new Array(
             this.input_height, this.input_width, this.input_channelCount );
         }
       }
@@ -448,7 +448,7 @@ class NeuralNet_Base extends Recyclable.Root {
       this.embedding = null;
     }
 
-    this.input_height_width_channelCount_array.length = 0; // (Keep and re-use array.)
+    this.input_shape.length = 0; // (Keep and re-use array.)
     this.input_height_width_array.length = 0; // (Keep and re-use array.)
     this.bEmbedVocabularyId = undefined;
 

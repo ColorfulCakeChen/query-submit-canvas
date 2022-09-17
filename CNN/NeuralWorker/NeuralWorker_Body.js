@@ -167,7 +167,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     let outputTensor;
     try {
       sourceTensor3d = tf.zeros(
-        this.neuralNet.input_height_width_channelCount_array, "int32"
+        this.neuralNet.input_shape, "int32"
       );
   
       outputTensor = this.neuralNet.apply( sourceTensor3d );
@@ -327,7 +327,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       this.alignmentMark_fillTo_Image_Int32Array( scaledInt32Array );
 
       sourceTensor3d = tf.tensor3d(
-        scaledInt32Array, this.neuralNet.input_height_width_channelCount_array, "int32"
+        scaledInt32Array, this.neuralNet.input_shape, "int32"
       );
 
       outputTensor = this.neuralNet.apply( sourceTensor3d );
