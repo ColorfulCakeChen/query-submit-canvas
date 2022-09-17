@@ -220,6 +220,27 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   async* ImageData_process( sourceImageData ) {
 
 //!!! ...unfinished... (2022/09/17)
+    try {
+      let theScaledSourceTensor = this.neuralNet.create_ScaledSourceTensor_from_PixelData(
+        sourceImageData,
+        true // ( bForceInt32 == true )
+      );
+
+      let scaledInt32Array = theScaledSourceTensor.data();
+
+//!!! ...unfinished... (2022/09/17) post back to WorkerProxy.
+
+
+//!!! ...unfinished... (2022/09/17) alignmentMark_fillToImage
+
+
+      return { value: ???true, transferableObjectArray: [ ??? ] };
+
+    } catch ( e ) {
+      console.error( e );
+      //debugger;
+      return { value: ???false };
+    }
 
   }
 
@@ -245,6 +266,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   async* Int32Array_process( sourceInt32Array ) {
 
 //!!! ...unfinished... (2022/09/17)
+
+
+//!!! ...unfinished... (2022/09/17) alignmentMark_fillToImage
 
   }
 
