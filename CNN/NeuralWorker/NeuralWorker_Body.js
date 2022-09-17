@@ -71,10 +71,11 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    */
   async* NeuralNet_create( neuralNetParamsBase, weightArrayBuffer ) {
 
+    let progress;
     try {
       this.NeuralNet_dispose();
 
-      let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+      progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
       let inputWeightArray;
       {
@@ -118,9 +119,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
           + `${neuralNetParams}`
         );
 
-      progress.disposeResources_and_recycleToPool();
-      progress = null;
-
       {
         let logMsg = `NeuralWorker_Body.neuralNet_load_async(): `
           + `tensorWeightCount = { `
@@ -147,6 +145,12 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       console.error( e );
       //debugger;
       return { value: false };
+
+    } finally {
+      if ( progress ) {
+        progress.disposeResources_and_recycleToPool();
+        progress = null;
+      }
     }
   }
 
