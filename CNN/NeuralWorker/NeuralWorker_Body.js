@@ -221,15 +221,28 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
 //!!! ...unfinished... (2022/09/17)
     try {
-      let theScaledSourceTensor = this.neuralNet.create_ScaledSourceTensor_from_PixelData(
-        sourceImageData,
-        true // ( bForceInt32 == true )
-      );
 
-      let scaledInt32Array = theScaledSourceTensor.data();
+      let scaledInt32Array;
+      try {
+        let theScaledSourceTensor
+          = this.neuralNet.create_ScaledSourceTensor_from_PixelData(
+              sourceImageData,
+              true // ( bForceInt32 == true )
+            );
 
-//!!! ...unfinished... (2022/09/17) post back to WorkerProxy.
+        scaledInt32Array = theScaledSourceTensor.dataSync();
 
+        yield {  // Post back to WorkerProxy.
+          value: scaledInt32Array,
+          transferableObjectArray: [ scaledInt32Array.buffer ]
+        };
+
+      } catch ( e ) {
+        console.error( e );
+        //debugger;
+        yield { value: new Int32Array() }; // Yield an empty Int32Array, if failed.
+      }
+  
 
 //!!! ...unfinished... (2022/09/17) alignmentMark_fillToImage
 
@@ -239,7 +252,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     } catch ( e ) {
       console.error( e );
       //debugger;
-      return { value: ???false };
+      return { value: new Float32Array() }; // Return an empty Float32Array, if failed.
     }
 
   }
