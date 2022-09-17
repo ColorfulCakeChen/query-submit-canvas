@@ -172,7 +172,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   It is viewed as an image whose size ( height, width, channelCount ) should match
    * this.neuralNet's [ input_height, input_width, input_channelCount ].
    */
-  static alignmentMark_fillToImage( imageInt32Array ) {
+  static alignmentMark_fillTo_Image_Int32Array( imageInt32Array ) {
 
     // Q: Why fill top-left ( 3 * 3 ) pixels? Why not just fill top-left ( 1 * 1 ) pixel?
     // A: NeuralNet mainly uses ( 3 * 3 ) depthwise filter.
@@ -248,8 +248,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       }
   
 
-//!!! ...unfinished... (2022/09/17) alignmentMark_fillToImage
-      this.alignmentMark_fillToImage( scaledInt32Array );
+//!!! ...unfinished... (2022/09/17) alignmentMark_fillTo_Image_Int32Array
+      this.alignmentMark_fillTo_Image_Int32Array( scaledInt32Array );
 
 
       return { value: ???true, transferableObjectArray: [ ??? ] };
@@ -287,9 +287,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 //!!! ...unfinished... (2022/09/17)
 
 
-//!!! ...unfinished... (2022/09/17) alignmentMark_fillToImage
+//!!! ...unfinished... (2022/09/17) alignmentMark_fillTo_Image_Int32Array
     try {
-      this.alignmentMark_fillToImage( scaledInt32Array );
+      this.alignmentMark_fillTo_Image_Int32Array( scaledInt32Array );
 
       return { value: ???true, transferableObjectArray: [ ??? ] };
 
@@ -342,7 +342,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 // should be put at a fixed position in the image (e.g. the first pixel) so that
 // this neural network could know what its alignment is.
 //
-//    this.alignmentMark_fillToImage( ??? );
+//    this.alignmentMark_fillTo_Image_Int32Array( ??? );
 
     // Create (scaled) source image so that then neural network can process it.
     //
@@ -393,7 +393,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 // should be put at a fixed position in the image (e.g. the first pixel) so that
 // this neural network could know what its alignment is.
 //
-//    this.alignmentMark_fillToImage( ??? );
+//    this.alignmentMark_fillTo_Image_Int32Array( ??? );
 
     let shape = [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ];
 
