@@ -132,7 +132,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     // Assume the web worker module javascript file is a sibling file (i.e. inside
     // the same folder) of this module file.
     let workerBodyStubURL = new URL( "AsyncWorker_BodyStub.js", import.meta.url );
-    let url = `${workerBodyStubURL}?${encodedWorkerModuleURL}`;
+    let url = `${workerBodyStubURL}?workerModuleURL=${encodedWorkerModuleURL}`;
     return url;
   }
 

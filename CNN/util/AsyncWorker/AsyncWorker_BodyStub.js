@@ -9,10 +9,10 @@
  * modules because import() can be used in classic (non-module) script.
  */
 
-// Import the module URL which is specified as first query parameter key.
+// Import the module URL specified in the query parameter.
 {
   let thisURL = new URL( location.href );
-  let workerModuleURL = thisURL.searchParams[ 0 ][ 0 ];
+  let workerModuleURL = thisURL.searchParams.get( "workerModuleURL" );
   console.log( `AsyncWorker_BodyStub.js: workerModuleURL="${workerModuleURL}"` );
   import( workerModuleURL );
 }
