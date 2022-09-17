@@ -23,14 +23,17 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
   /** @override */
   async* disposeResources() {
+    this.NeuralNet_dispose();
+    this.workerId = undefined;
+    yield *super.disposeResources();
+  }
+
+  /** Release the neural network. */
+  NeuralNet_dispose() {
     if ( this.neuralNet ) {
-      this.neuralNet.disposeResources();
+      this.neuralNet.disposeResources_and_recycleToPool();
       this.neuralNet = null;
     }
-
-    this.workerId = undefined;
-
-    yield *super.disposeResources();
   }
 
   /**
@@ -64,6 +67,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   async* neuralNet_create( neuralNetParamsBase, weightArrayBuffer ) {
 
     try {
+      this.NeuralNet_dispose();
+
       let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
       let inputWeightArray;
