@@ -92,12 +92,13 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     this.workerModuleURL = workerModuleURL;
 
 //!!! (2022/09/16 Remarked) Not Worked.
-//    this.workerURL = AsyncWorker_Proxy.create_WorkerBodyStub_URL( workerModuleURL );
+    this.workerURL = AsyncWorker_Proxy.create_WorkerBodyStub_URL( workerModuleURL );
 
-    let workerDataURI
-      = AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI( workerModuleURL );
-    
-    this.workerURL = workerDataURI;
+//!!! (2022/09/17 Remarked) Use create_WorkerBodyStub_URL() instead.
+    // let workerDataURI
+    //   = AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI( workerModuleURL );
+    //
+    // this.workerURL = workerDataURI;
 
     // Q: Why not use "module" type worker?
     // A: A "module" type worker can not use importScripts() to load global library.
@@ -116,21 +117,21 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   }
 
 //!!! (2022/09/16 Remarked) Not Worked.
-//   /**
-//    * Create a URL string of AsyncWorker_BodyStub.js which is the main (i.e. body)
-//    * javascript file of web worker. It is viewed as a classic javascript file (i.e.
-//    * not an importable module). But it will load specified workerModuleURL as a module.
-//    *
-//    * @param {string} workerModuleURL
-//    *   An (absolute) URL to a javascript module file. It will be imported
-//    * (asynchronously) by classic javascript file AsyncWorker_BodyStub.js.
-//    */
-//   static create_WorkerBodyStub_URL( workerModuleURL ) {
-//     let encodedWorkerModuleURL = encodeURIComponent( workerModuleURL );
-//     let workerBodyStubURL = new URL( "AsyncWorker_BodyStub.js", import.meta.url );
-//     let url = `${workerBodyStubURL}?${encodedWorkerModuleURL}`;
-//     return url;
-//   }
+  /**
+   * Create a URL string of AsyncWorker_BodyStub.js which is the main (i.e. body)
+   * javascript file of web worker. It is viewed as a classic javascript file (i.e.
+   * not an importable module). But it will load specified workerModuleURL as a module.
+   *
+   * @param {string} workerModuleURL
+   *   An (absolute) URL to a javascript module file. It will be imported
+   * (asynchronously) by classic javascript file AsyncWorker_BodyStub.js.
+   */
+  static create_WorkerBodyStub_URL( workerModuleURL ) {
+    let encodedWorkerModuleURL = encodeURIComponent( workerModuleURL );
+    let workerBodyStubURL = new URL( "AsyncWorker_BodyStub.js", import.meta.url );
+    let url = `${workerBodyStubURL}?${encodedWorkerModuleURL}`;
+    return url;
+  }
 
   /**
    * Create a data URI representing the main (i.e. body) javascript file of web worker.

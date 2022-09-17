@@ -9,11 +9,13 @@
  * modules because import() can be used in classic (non-module) script.
  */
 
-// Import the specified module URL.
-let thisURL = new URL( import.meta.url );
-let workerModuleURL = thisURL.searchParams[ 0 ][ 0 ];
-console.log( `AsyncWorker_BodyStub.js: workerModuleURL="${workerModuleURL}"` );
-import( workerModuleURL );
+// Import the module URL which is specified as first query parameter key.
+{
+  let thisURL = new URL( location.search );
+  let workerModuleURL = thisURL.searchParams[ 0 ][ 0 ];
+  console.log( `AsyncWorker_BodyStub.js: workerModuleURL="${workerModuleURL}"` );
+  import( workerModuleURL );
+}
 
 AsyncWorker_Body_temporaryMessageQueue = []; // Create a temporary message queue.
 
