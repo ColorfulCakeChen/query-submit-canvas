@@ -64,7 +64,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * @param {ArrayBuffer} weightArrayBuffer
    *   The neural network's weights. It will be interpreted as Float32Array.
    */
-  async* neuralNet_create( neuralNetParamsBase, weightArrayBuffer ) {
+  async* NeuralNet_create( neuralNetParamsBase, weightArrayBuffer ) {
 
     try {
       this.NeuralNet_dispose();
@@ -143,7 +143,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /**
-   * @param {number} markValue
+   * @param {integer} markValue
    *   A value representing which alignment this neural network plays currently.
    * For example, in a OX (connect-three) game:
    *   - ( markValue == 0 ) means this neural network plays O side currently.
@@ -155,13 +155,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /**
-   * @param {Uint8Array} imageUint8Array
+   * @param {Int32Array} imageInt32Array
    *   It is viewed as an image whose size ( height, width, channelCount ) could be
    * processed by this neural network. This method will fille some part of the image
    * by .alignmentMarkValue so that this neural network could distunguish which
    * alignment it represents.
    */
-  static alignmentMark_fillToImage( imageUint8Array ) {
+  static alignmentMark_fillToImage( imageInt32Array ) {
 
     // Q: Why fill top-left ( 3 * 3 ) pixels? Why not just fill top-left ( 1 * 1 ) pixel?
     // A: NeuralNet mainly uses ( 3 * 3 ) depthwise filter.
