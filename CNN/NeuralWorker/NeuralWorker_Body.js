@@ -220,7 +220,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    */
   async* ImageData_process( sourceImageData ) {
 
-//!!! ...unfinished... (2022/09/17)
     let outputTensor;
     try {
 
@@ -244,6 +243,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         //debugger;
         yield { value: new Int32Array() }; // Yield an empty Int32Array, if failed.
       }
+
+//!!! ...unfinished... (2022/09/17)
+// Whether could call Int32Array_process() ?
 
       this.alignmentMark_fillTo_Image_Int32Array( scaledInt32Array );
 
