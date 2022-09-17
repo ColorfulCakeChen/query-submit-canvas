@@ -63,6 +63,10 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *
    * @param {ArrayBuffer} weightArrayBuffer
    *   The neural network's weights. It will be interpreted as Float32Array.
+   *
+   * @yield {boolean}
+   *   - Yield { done: true, value: { value: true } }, if success.
+   *   - Yield { done: true, value: { value: false } }, if failed.
    */
   async* NeuralNet_create( neuralNetParamsBase, weightArrayBuffer ) {
 
@@ -148,6 +152,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * For example, in a OX (connect-three) game:
    *   - ( markValue == 0 ) means this neural network plays O side currently.
    *   - ( markValue == 255 ) means this neural network plays X side currently.
+   *
+   * @yield {boolean}
+   *   - Yield { done: true, value: { value: true } }.
    */
   async* alignmentMark_setValue( markValue ) {
     this.alignmentMarkValue = markValue;
@@ -198,25 +205,22 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *       transfer back a scaled Int32Array. The scaled Int32Array should be used to
    *       call the next web worker's .Int32Array_process_async().
    *
-   * @return {AsyncWorker.Resulter}
-   *   Return an async generator tracking the result of processing. It will yield two
-   * times, the 1st is an Int32Array, the 2nd is a Float32Array.
-   *
    * @yield {Int32Array}
-   *   Resolve to { done: false, value: Int32Array }. The value is an Int32Array
-   * representing the scaled image data whose shape is this.neuralNetParamsBase's
+   *   Resolve to { done: false, value: { value: Int32Array,
+   * transferableObjectArray: [ Int32Array.buffer ] }. The value is an Int32Array
+   * representing the scaled image data whose shape is this.neuralNet's
    * [ input_height, input_width, input_channelCount ].
    *
    * @yield {Float32Array}
-   *   Resolve to { done: true, value: Float32Array }. The value is a Float32Array
-   * representing the neural network's result whose channe count is
-   * this.neuralNetParamsBase.output_channelCount.
+   *   Resolve to { done: true, value: { value: Float32Array,
+   * transferableObjectArray: [ Float32Array.buffer ] }. The value is a Float32Array
+   * representing the neural network's result whose channel count is
+   * this.neuralNet.output_channelCount.
    */
-   ImageData_process_asyncGenerator( sourceImageData ) {
-    return this.createResulter_by_postCommandArgs(
-      [ "ImageData_process_asyncGenerator", sourceImageData ],
-      [ sourceImageData.data.buffer ]
-    );
+  async* ImageData_process( sourceImageData ) {
+
+//!!! ...unfinished... (2022/09/17)
+
   }
 
   /**
@@ -231,20 +235,20 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *       accept a scaled Int32Array which is returned from the 1st web worker's
    *       first yieled of .ImageData_process_asyncGenerator().
    *
-   * @return {Promise}
-   *   Return a promise resolved to a Float32Array representing the neural network's
-   * result whose channe count is this.neuralNetParamsBase.output_channelCount.
+   *
+   * @yield {Float32Array}
+   *   Resolve to { done: true, value: { value: Float32Array,
+   * transferableObjectArray: [ Float32Array.buffer ] }. The value is a Float32Array
+   * representing the neural network's result whose channel count is
+   * this.neuralNet.output_channelCount.
    */
-  Int32Array_process_async( sourceInt32Array ) {
-    return this.createPromise_by_postCommandArgs(
-      [ "Int32Array_process_async", sourceInt32Array ],
-      [ sourceInt32Array.buffer ]
-    );
+  async* Int32Array_process( sourceInt32Array ) {
 
 //!!! ...unfinished... (2022/09/17)
 
   }
-  
+
+
 //!!! Regular Expression for get text inside html table markup:
 //
 //  /(?<=<table[^>]*>.*)(?<=>)[^<]+(?=<)(?=.*</table>)/g

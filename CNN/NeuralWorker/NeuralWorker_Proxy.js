@@ -141,7 +141,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *
    * @yield {Float32Array}
    *   Resolve to { done: true, value: Float32Array }. The value is a Float32Array
-   * representing the neural network's result whose channe count is
+   * representing the neural network's result whose channel count is
    * this.neuralNetParamsBase.output_channelCount.
    */
   ImageData_process_asyncGenerator( sourceImageData ) {
@@ -165,7 +165,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *
    * @return {Promise}
    *   Return a promise resolved to a Float32Array representing the neural network's
-   * result whose channe count is this.neuralNetParamsBase.output_channelCount.
+   * result whose channel count is this.neuralNetParamsBase.output_channelCount.
    */
   Int32Array_process_async( sourceInt32Array ) {
     return this.createPromise_by_postCommandArgs(
@@ -173,6 +173,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
       [ sourceInt32Array.buffer ]
     );
   }
+
 
 //!!! ...unfinished... (2022/09/12) Old Codes.
   /**
