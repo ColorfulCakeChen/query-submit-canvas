@@ -10,7 +10,7 @@ export { AsyncWorker_Body as Body };
  */
 class AsyncWorker_Body {
 
-  /** It will register callback from AsyncWorker_Proxy. */
+  /** It will register callback for handling messages sent from AsyncWorker_Proxy. */
   constructor() {
     globalThis.onmessage
       = AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy.bind( this );
