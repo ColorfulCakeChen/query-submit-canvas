@@ -11,7 +11,7 @@
 
 // Import the module URL which is specified as first query parameter key.
 {
-  let thisURL = new URL( location.search );
+  let thisURL = new URL( location.href );
   let workerModuleURL = thisURL.searchParams[ 0 ][ 0 ];
   console.log( `AsyncWorker_BodyStub.js: workerModuleURL="${workerModuleURL}"` );
   import( workerModuleURL );
