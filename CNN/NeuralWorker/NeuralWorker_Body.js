@@ -183,6 +183,68 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
 
+//!!! ...unfinished... (2022/09/17)
+
+  /**
+   *
+   * @param {ImageData} sourceImageData
+   *   The source image data to be processed.
+   *
+   *   - Its shape needs not match this.neuralNetParamsBase's [ input_height,
+   *       input_width, input_channelCount ] because it will be scaled to the correct
+   *       shape before passed into the neural network
+   *
+   *   - This usually is called for the 1st web worker in chain. The web worker will
+   *       transfer back a scaled Int32Array. The scaled Int32Array should be used to
+   *       call the next web worker's .Int32Array_process_async().
+   *
+   * @return {AsyncWorker.Resulter}
+   *   Return an async generator tracking the result of processing. It will yield two
+   * times, the 1st is an Int32Array, the 2nd is a Float32Array.
+   *
+   * @yield {Int32Array}
+   *   Resolve to { done: false, value: Int32Array }. The value is an Int32Array
+   * representing the scaled image data whose shape is this.neuralNetParamsBase's
+   * [ input_height, input_width, input_channelCount ].
+   *
+   * @yield {Float32Array}
+   *   Resolve to { done: true, value: Float32Array }. The value is a Float32Array
+   * representing the neural network's result whose channe count is
+   * this.neuralNetParamsBase.output_channelCount.
+   */
+   ImageData_process_asyncGenerator( sourceImageData ) {
+    return this.createResulter_by_postCommandArgs(
+      [ "ImageData_process_asyncGenerator", sourceImageData ],
+      [ sourceImageData.data.buffer ]
+    );
+  }
+
+  /**
+   *
+   * @param {Int32Array} sourceInt32Array
+   *   The source image data to be processed.
+   *
+   *   - Its shape must match this.neuralNetParamsBase's [ input_height, input_width,
+   *       input_channelCount ] because it will not be scaled and will be passed into neural network directly.
+   *
+   *   - This usually is called for the 2nd web worker in chain. The web worker will
+   *       accept a scaled Int32Array which is returned from the 1st web worker's
+   *       first yieled of .ImageData_process_asyncGenerator().
+   *
+   * @return {Promise}
+   *   Return a promise resolved to a Float32Array representing the neural network's
+   * result whose channe count is this.neuralNetParamsBase.output_channelCount.
+   */
+  Int32Array_process_async( sourceInt32Array ) {
+    return this.createPromise_by_postCommandArgs(
+      [ "Int32Array_process_async", sourceInt32Array ],
+      [ sourceInt32Array.buffer ]
+    );
+
+//!!! ...unfinished... (2022/09/17)
+
+  }
+  
 //!!! Regular Expression for get text inside html table markup:
 //
 //  /(?<=<table[^>]*>.*)(?<=>)[^<]+(?=<)(?=.*</table>)/g

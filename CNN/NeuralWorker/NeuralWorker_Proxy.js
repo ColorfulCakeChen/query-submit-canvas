@@ -117,7 +117,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     );
   }
 
-//!!! ...unfinished... (2022/09/17)
   /**
    *
    * @param {ImageData} sourceImageData
@@ -146,13 +145,12 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * this.neuralNetParamsBase.output_channelCount.
    */
   ImageData_process_asyncGenerator( sourceImageData ) {
-
-//!!! ...unfinished... (2022/09/17)
-
+    return this.createResulter_by_postCommandArgs(
+      [ "ImageData_process", sourceImageData ],
+      [ sourceImageData.data.buffer ]
+    );
   }
 
-
-//!!! ...unfinished... (2022/09/17)
   /**
    *
    * @param {Int32Array} sourceInt32Array
@@ -170,12 +168,13 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * result whose channe count is this.neuralNetParamsBase.output_channelCount.
    */
   Int32Array_process_async( sourceInt32Array ) {
-
-//!!! ...unfinished... (2022/09/17)
-
+    return this.createPromise_by_postCommandArgs(
+      [ "Int32Array_process", sourceInt32Array ],
+      [ sourceInt32Array.buffer ]
+    );
   }
 
-//!!! ...unfinished... (2022/09/12)
+//!!! ...unfinished... (2022/09/12) Old Codes.
   /**
    * @param {number} processingId
    *   The processing id for distinguishing different processing request and result.
