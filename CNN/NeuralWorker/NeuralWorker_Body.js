@@ -107,8 +107,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
       let bInitOk = neuralNet.init( progress, inputWeightArray, 0, neuralNetParams );
 
-  //!!! ...unfinished... (2022/09/08)
-  // if backend is webgl, the nueral network should be run once for compiling shader.
+//!!! ...unfinished... (2022/09/08)
+// if backend is webgl, the nueral network should be run once for compiling shader.
 
       if ( false == bInitOk )
         throw Error( `NeuralWorker_Body.neuralNet_load_async(): `
@@ -193,9 +193,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
           imageInt32Array[ index ] = this.alignmentMarkValue;
   }
 
-
-//!!! ...unfinished... (2022/09/17)
-
   /**
    *
    * @param {ImageData} sourceImageData
@@ -224,6 +221,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   async* ImageData_process( sourceImageData ) {
 
 //!!! ...unfinished... (2022/09/17)
+    let outputTensor;
     try {
 
       let scaledInt32Array;
@@ -247,19 +245,31 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         yield { value: new Int32Array() }; // Yield an empty Int32Array, if failed.
       }
   
-
-//!!! ...unfinished... (2022/09/17) alignmentMark_fillTo_Image_Int32Array
       this.alignmentMark_fillTo_Image_Int32Array( scaledInt32Array );
 
+      let sourceTensor3d = tf.tensor3d(
+        scaledInt32Array, this.neuralNet.input_height_width_channelCount_array, "int32"
+      );
 
-      return { value: ???true, transferableObjectArray: [ ??? ] };
+      outputTensor = this.neuralNet.apply( sourceTensor3d );
+      let outputFloat32Array = outputTensor.dataSync();
+
+      return {
+        value: outputFloat32Array,
+        transferableObjectArray: [ outputFloat32Array.buffer ]
+      };
 
     } catch ( e ) {
       console.error( e );
       //debugger;
       return { value: new Float32Array() }; // Return an empty Float32Array, if failed.
-    }
 
+    } finally {
+      if ( outputTensor ) {
+        outputTensor.dispose();
+        outputTensor = null;
+      }
+    }
   }
 
   /**

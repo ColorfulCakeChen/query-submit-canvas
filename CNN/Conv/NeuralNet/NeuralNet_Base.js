@@ -48,6 +48,10 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  *   An array records [ this.input_height, this.input_width ]. It is mainly used when
  * scale input image to correct size.
  *
+ * @member {number[]} input_height_width_channelCount_array
+ *   An array records [ this.input_height, this.input_width, this.input_channelCount ].
+ * It is mainly used when create input image tensor to be applied.
+ *
  * @member {Embedding.Base} embedding
  *   The embedding layer before all stages of this neuralNet.
  *
@@ -212,6 +216,16 @@ class NeuralNet_Base extends Recyclable.Root {
         this.input_height_width_array[ 1 ] = this.input_width;
       } else {
         this.input_height_width_array = new Array( this.input_height, this.input_width );
+      }
+
+      if ( this.input_height_width_channelCount_array ) {
+        this.input_height_width_channelCount_array.length = 3;
+        this.input_height_width_channelCount_array[ 0 ] = this.input_height;
+        this.input_height_width_channelCount_array[ 1 ] = this.input_width;
+        this.input_height_width_channelCount_array[ 2 ] = this.input_channelCount;
+      } else {
+        this.input_height_width_channelCount_array = new Array(
+          this.input_height, this.input_width, this.input_channelCount );
       }
     }
 
@@ -434,6 +448,7 @@ class NeuralNet_Base extends Recyclable.Root {
       this.embedding = null;
     }
 
+    this.input_height_width_channelCount_array.length = 0; // (Keep and re-use array.)
     this.input_height_width_array.length = 0; // (Keep and re-use array.)
     this.bEmbedVocabularyId = undefined;
 
@@ -568,39 +583,6 @@ class NeuralNet_Base extends Recyclable.Root {
     let outputTensor = applierNext.value;
     return outputTensor;
   }
-
-//!!! (2022/08/19 Remarked) Use applier() instead.
-//   /** Process input, destroy or keep input, return result.
-//    *
-//    * @param {tf.tensor3d} inputTensor
-//    *   The source input image (which size should be [ this.input_height,
-//    * this.input_width, this.input_channelCount ] ) which will be processed.
-//    * This inputTensor may or may not be disposed according to init()'s
-//    * NeuralNet.Params.bKeepInputTensor.
-//    *
-//    * @return {tf.tensor3d}
-//    *   Return a new tensor. All other intermediate tensors were disposed.
-//    */
-//   apply( inputTensor ) {
-//
-//     // 1. Embedding
-//     let outputTensor = this.embedding.apply( inputTensor );
-//
-//     // 2. Stages
-//     let stageArray = this.stageArray;
-//     for ( let i = 0; i < stageArray.length; ++i ) {
-//       outputTensor = stageArray[ i ].apply( outputTensor );
-//     }
-//
-//     // 3. BlockFinal
-//     {
-//       this.blockFinal.input0.realTensor = outputTensor;
-//       this.blockFinal.apply();
-//       outputTensor = this.blockFinal.output0.realTensor;
-//     }
-//
-//     return outputTensor;
-//   }
 
   /**
    * Create a tensor3d from source (e.g. canvas). Its size will be confirmed (by scaling)
