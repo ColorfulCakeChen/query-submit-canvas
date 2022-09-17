@@ -18,7 +18,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
   /** */
   constructor() {
-    super(); // register callback from NeuralWorker_Proxy.
+    super(); // register callback for handling messages sent from NeuralWorker_Proxy.
   }
 
   /** @override */
@@ -28,6 +28,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       this.neuralNet = null;
     }
 
+    this.workerId = undefined;
+
     yield *super.disposeResources();
   }
 
@@ -36,20 +38,10 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * @param {number} workerId
    *   A non-negative integer represents this worker's id. The id of the first worker
    * should be 0.
-   *
-   * @param {string} tensorflowJsURL
-   *   The URL of tensorflow javascript library. Every worker will load the library
-   * from the URL.
    */
-  async* initWorker( workerId = 0, tensorflowJsURL ) {
-    if ( workerId < 0 )
-      workerId = 0;
-
+  async* initWorker( workerId ) {
     this.workerId = workerId;
-    this.tensorflowJsURL = tensorflowJsURL;
 
-    // Load libraries dynamically in global scope.
-    {
 //!!! ...unfinished... (2022/09/15)
 // What if failed when:
 //   - library (tensorflow.js) downloading
@@ -58,9 +50,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 //   - versus result sending
 //
 // Perhaps, needs a life-cycle manager to handle them gracefully.
-
-      importScripts( this.tensorflowJsURL ); // Load tensorflow.js library in global scope.
-    }
 
     return { value: true };
   }
