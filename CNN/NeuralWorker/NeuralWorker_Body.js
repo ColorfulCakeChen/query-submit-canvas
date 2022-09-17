@@ -1,6 +1,6 @@
 // import * as Pool from "../util/Pool.js";
 // import * as Recyclable from "../util/Recyclable.js";
-// import * as ValueMax from "../util/ValueMax.js";
+import * as ValueMax from "../util/ValueMax.js";
 import * as AsyncWorker from "../util/AsyncWorker.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
