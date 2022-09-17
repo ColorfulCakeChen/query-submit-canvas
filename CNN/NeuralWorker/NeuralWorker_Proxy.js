@@ -157,7 +157,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   The source image data to be processed.
    *
    *   - Its shape must match this.neuralNetParamsBase's [ input_height, input_width,
-   *       input_channelCount ] because it will not be scaled and will be passed into neural network directly.
+   *       input_channelCount ] because it will not be scaled and will be passed into
+   *       neural network directly.
    *
    *   - This usually is called for the 2nd web worker in chain. The web worker will
    *       accept a scaled Int32Array which is returned from the 1st web worker's

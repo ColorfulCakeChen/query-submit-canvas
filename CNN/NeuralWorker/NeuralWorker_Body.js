@@ -162,10 +162,15 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /**
+   * Before converting Int32Array to tf.tensor, a mark (representing this neural network)
+   * should be put at a fixed position in the image (e.g. the first pixel) so that
+   * this neural network could know what its alignment is.
+   *
    * @param {Int32Array} imageInt32Array
-   *   It is viewed as an image whose size ( height, width, channelCount ) could be
-   * processed by this neural network. This method will fille some part of the image
-   * by .alignmentMarkValue so that this neural network could distunguish which
+   *   It is viewed as an image whose size ( height, width, channelCount ) should match
+   * this.neuralNet's [ input_height,
+   *       input_width, input_channelCount ]. This method will fille some part of the
+   * image by .alignmentMarkValue so that this neural network could distunguish which
    * alignment it represents.
    */
   static alignmentMark_fillToImage( imageInt32Array ) {
@@ -183,9 +188,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     const markWidth = 3;
 
 //!!! ...unfinished... (2022/09/08)
-// Before converting Uint8Array to tf.tensor, a mark (representing this neural network)
-// should be put at a fixed position in the image (e.g. the first pixel) so that
-// this neural network could know what its alignment is.
+    for ( )
 
   }
 
@@ -197,7 +200,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * @param {ImageData} sourceImageData
    *   The source image data to be processed.
    *
-   *   - Its shape needs not match this.neuralNetParamsBase's [ input_height,
+   *   - Its shape needs not match this.neuralNet's [ input_height,
    *       input_width, input_channelCount ] because it will be scaled to the correct
    *       shape before passed into the neural network
    *
@@ -262,8 +265,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * @param {Int32Array} sourceInt32Array
    *   The source image data to be processed.
    *
-   *   - Its shape must match this.neuralNetParamsBase's [ input_height, input_width,
-   *       input_channelCount ] because it will not be scaled and will be passed into neural network directly.
+   *   - Its shape must match this.neuralNet's [ input_height, input_width,
+   *       input_channelCount ] because it will not be scaled and will be passed into
+   *       neural network directly.
    *
    *   - This usually is called for the 2nd web worker in chain. The web worker will
    *       accept a scaled Int32Array which is returned from the 1st web worker's
