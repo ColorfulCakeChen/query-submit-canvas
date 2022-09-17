@@ -111,8 +111,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
       let bInitOk = neuralNet.init( progress, inputWeightArray, 0, neuralNetParams );
 
-      this.NeuralNet_dryRun_ifWebGL(); // compiling shaders if backend is webgl.
-
       if ( false == bInitOk )
         throw Error( `NeuralWorker_Body.neuralNet_load_async(): `
           + `Failed to initialize neuralNet object. `
@@ -140,6 +138,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       
         console.log( logMsg );
       }
+
+      this.NeuralNet_dryRun_ifWebGL(); // compiling shaders if backend is webgl.
 
       return { value: true };
 
