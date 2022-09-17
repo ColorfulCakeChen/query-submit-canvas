@@ -23,6 +23,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
   /** @override */
   async* disposeResources() {
+    this.alignmentMarkValue = undefined;
     this.NeuralNet_dispose();
     this.workerId = undefined;
     yield *super.disposeResources();
@@ -162,16 +163,14 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /**
-   * Before converting Int32Array to tf.tensor, a mark (representing this neural network)
-   * should be put at a fixed position in the image (e.g. the first pixel) so that
-   * this neural network could know what its alignment is.
+   * This method will fill some part of the image by .alignmentMarkValue so that this
+   * neural network could distunguish which alignment it represents.
+   * 
+   * Usually, this method should be called Before converting Int32Array to tf.tensor.
    *
    * @param {Int32Array} imageInt32Array
    *   It is viewed as an image whose size ( height, width, channelCount ) should match
-   * this.neuralNet's [ input_height,
-   *       input_width, input_channelCount ]. This method will fille some part of the
-   * image by .alignmentMarkValue so that this neural network could distunguish which
-   * alignment it represents.
+   * this.neuralNet's [ input_height, input_width, input_channelCount ].
    */
   static alignmentMark_fillToImage( imageInt32Array ) {
 
@@ -187,9 +186,11 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     const markHeight = 3;
     const markWidth = 3;
 
-//!!! ...unfinished... (2022/09/08)
-    for ( )
-
+    let index = 0;
+    for ( let y = 0; y < markHeight; ++y )
+      for ( let x = 0; x < markWidth; ++x )
+        for ( let c = 0; c < this.neuralNet.input_channelCount; ++c, ++index )
+          imageInt32Array[ index ] = this.alignmentMarkValue;
   }
 
 
@@ -248,6 +249,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   
 
 //!!! ...unfinished... (2022/09/17) alignmentMark_fillToImage
+      this.alignmentMark_fillToImage( scaledInt32Array );
 
 
       return { value: ???true, transferableObjectArray: [ ??? ] };
@@ -286,7 +288,16 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
 
 //!!! ...unfinished... (2022/09/17) alignmentMark_fillToImage
+    try {
+      this.alignmentMark_fillToImage( scaledInt32Array );
 
+      return { value: ???true, transferableObjectArray: [ ??? ] };
+
+    } catch ( e ) {
+      console.error( e );
+      //debugger;
+      return { value: new Float32Array() }; // Return an empty Float32Array, if failed.
+    }
   }
 
 
