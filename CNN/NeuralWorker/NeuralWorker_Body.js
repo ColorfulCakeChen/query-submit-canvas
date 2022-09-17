@@ -119,6 +119,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
           + `${neuralNetParams}`
         );
 
+      this.NeuralNet_dryRun_ifWebGL(); // compiling shaders if backend is webgl.
+
       {
         let logMsg = `NeuralWorker_Body.neuralNet_load_async(): `
           + `tensorWeightCount = { `
@@ -136,8 +138,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       
         console.log( logMsg );
       }
-
-      this.NeuralNet_dryRun_ifWebGL(); // compiling shaders if backend is webgl.
 
       return { value: true };
 
@@ -166,10 +166,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     let sourceTensor3d;
     let outputTensor;
     try {
-      sourceTensor3d = tf.zeros(
-        this.neuralNet.input_shape, "int32"
-      );
-  
+      sourceTensor3d = tf.zeros( this.neuralNet.input_shape, "int32" );
       outputTensor = this.neuralNet.apply( sourceTensor3d );
 
     } catch ( e ) {
