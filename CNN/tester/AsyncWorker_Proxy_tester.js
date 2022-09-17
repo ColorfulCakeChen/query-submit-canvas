@@ -98,4 +98,4 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
 // Assume the web worker module javascript file is a sibling file (i.e. inside
 // the same folder) of this module file.
 AsyncWorker_Proxy_tester.workerModuleURL
-  = new URL( "AsyncWorker_Body_testerX.js", import.meta.url );
+  = new URL( "AsyncWorker_Body_tester.js", import.meta.url );
