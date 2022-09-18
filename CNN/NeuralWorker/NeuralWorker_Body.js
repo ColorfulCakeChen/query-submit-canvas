@@ -392,6 +392,73 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     };
   }
 
+//!!! ...unfinished... (2022/09/18)
+  /**
+   *
+   * @param {ImageData} sourceImageData
+   *   The source image data to be processed.
+   *
+   *   - Its shape needs not match this.neuralNet's [ input_height,
+   *       input_width, input_channelCount ] because it will be scaled to the correct
+   *       shape before passed into the neural network
+   *
+   *   - This usually is called for the 1st web worker in chain. The web worker will
+   *       transfer back a scaled Int32Array. The scaled Int32Array should be used to
+   *       call the next web worker's .Int32Array_process_async().
+   *
+   * @param {boolean} bFork
+   *   - If true, the sourceImageData will be sent back to WorkerProxy as an ImageData.
+   *       This is used for 1st worker.
+   *
+   *   - If false, the sourceImageData will not be sent. This is used for 2nd worker.
+   *
+   * @yield {ImageData}
+   *   Resolve to { done: false, value: { value: ImageData,
+   * transferableObjectArray: [ ImageData.data.buffer ] }. The value is an ImageData
+   * which is just the (non-scaled) source image data.
+   *
+   * @yield {Float32Array}
+   *   Resolve to { done: true, value: { value: Float32Array,
+   * transferableObjectArray: [ Float32Array.buffer ] }. The value is a Float32Array
+   * representing the neural network's result whose channel count is
+   * this.neuralNet.output_channelCount.
+   */
+   async* ImageData_scale_forkable_process( sourceImageData, bFork ) {
+
+    // 1. Scale image.
+    let scaledSourceTensor;
+    try {
+      scaledSourceTensor = this.neuralNet.create_ScaledSourceTensor_from_PixelData(
+        sourceImageData,
+        true // ( bForceInt32 == true )
+      );
+
+      if ( bFork ) {
+        yield {  // Post back to WorkerProxy.
+          value: sourceImageData,
+          transferableObjectArray: [ sourceImageData.data.buffer ]
+        };
+      }
+  
+    } catch ( e ) {
+      console.error( e );
+      //debugger;
+
+    } finally {
+      if ( scaledSourceTensor ) {
+        scaledSourceTensor.dispose();
+        scaledSourceTensor = null;
+      }
+    }
+
+//!!!
+    // 2. Process image by neural network.
+    let Int32Array_processor = Int32Array_process();
+    let result = yield* Int32Array_processor;
+    return result;
+  }
+
+
 
 //!!! Regular Expression for get text inside html table markup:
 //
