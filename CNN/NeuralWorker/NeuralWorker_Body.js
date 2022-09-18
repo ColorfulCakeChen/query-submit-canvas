@@ -308,11 +308,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         true // ( bForceInt32 == true )
       );
 
-      if ( bFill ) {
-        scaledInt32Array = scaledSourceTensor.dataSync();
-      } else {
-//!!! ...unfinsihed... (2022/09/18)
-      }
+      scaledInt32Array = scaledSourceTensor.dataSync();
 
     } catch ( e ) {
       console.error( e );
@@ -337,9 +333,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     let result = yield* Int32Array_processor;
     return result;
   }
-
-
-//!!! ...unfinsihed... (2022/09/18)
 
   /**
    *
@@ -379,11 +372,21 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         true // ( bForceInt32 == true )
       );
 
-      if ( bFill ) {
-        scaledInt32Array = scaledSourceTensor.dataSync();
-      } else {
 //!!! ...unfinsihed... (2022/09/18)
-      }
+// No need to wait for downloading completely because here needs not change its content.
+
+      let scaledInt32ArrayPromise = scaledSourceTensor.data();
+      scaledInt32ArrayPromise.then( scaledInt32Array => {
+
+//!!! ...unfinsihed... (2022/09/18) problem: here can not yield
+        yield {  // Post back to WorkerProxy.
+          value: scaledInt32Array,
+          transferableObjectArray: [ scaledInt32Array.buffer ]
+        };
+
+      } ).catch( errReason => {
+
+      } );
 
     } catch ( e ) {
       console.error( e );
