@@ -21,6 +21,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     super(); // register callback for handling messages sent from NeuralWorker_Proxy.
   }
 
+//!!! ...unfinished... (2022/09/18)
+// need handle two neural network in one web worker.
+
   /** @override */
   async* disposeResources() {
     this.alignmentMarkValue = undefined;
