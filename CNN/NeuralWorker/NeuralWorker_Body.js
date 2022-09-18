@@ -431,8 +431,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *
    * @param {boolean} bFill
    *   If true, the source Int32Array will be filled by alignment mark before be
-   * converted to tensor3d. If false, it will be converted to tensor3d without
-   * filling alignment mark.
+   * converted to tensor3d. If false, it will be converted to tensor3d directly
+   * without filling alignment mark.
    *
    * @yield {Float32Array}
    *   Resolve to { done: true, value: { value: Float32Array,
