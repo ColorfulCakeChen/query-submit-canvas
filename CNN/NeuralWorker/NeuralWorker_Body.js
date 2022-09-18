@@ -392,7 +392,73 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     };
   }
 
-//!!! ...unfinished... (2022/09/18)
+  /**
+   *
+   * @param {Int32Array} sourceInt32Array
+   *   The source image data to be processed.
+   *
+   *   - Its shape must match this.neuralNet's [ input_height, input_width,
+   *       input_channelCount ] because it will not be scaled and will be passed into
+   *       neural network directly.
+   *
+   *   - This usually is called for the 2nd web worker in chain. The web worker will
+   *       accept a scaled Int32Array which is returned from the 1st web worker's
+   *       first yieled of .ImageData_process_asyncGenerator().
+   *
+   * @param {boolean} bFill
+   *   If true, the source Int32Array will be filled by alignment mark before be
+   * converted to tensor3d. If false, it will be converted to tensor3d without
+   * filling alignment mark.
+   *
+   * @yield {Float32Array}
+   *   Resolve to { done: true, value: { value: Float32Array,
+   * transferableObjectArray: [ Float32Array.buffer ] }. The value is a Float32Array
+   * representing the neural network's result whose channel count is
+   * this.neuralNet.output_channelCount.
+   */
+  async* Int32Array_fillable_process( sourceInt32Array, bFill ) {
+
+    let sourceTensor3d;
+    let outputTensor;
+    let outputFloat32Array;
+    try {
+      if ( bFill ) {
+        NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
+          this, scaledInt32Array );
+      }
+
+      sourceTensor3d = tf.tensor3d(
+        scaledInt32Array, this.neuralNet.input_shape, "int32"
+      );
+
+      outputTensor = this.neuralNet.apply( sourceTensor3d );
+      outputFloat32Array = outputTensor.dataSync();
+
+    } catch ( e ) {
+      console.error( e );
+      //debugger;
+      outputFloat32Array = new Float32Array(); // Return an empty Float32Array, if failed.
+
+    } finally {
+      if ( outputTensor ) {
+        outputTensor.dispose();
+        outputTensor = null;
+      }
+
+      // In theory, it should already have been released by neural network. For avoiding
+      // memory leak (e.g. some exception when .apply()), release it again.
+      if ( sourceTensor3d ) {
+        sourceTensor3d.dispose();
+        sourceTensor3d = null;
+      }
+    }
+
+    return {
+      value: outputFloat32Array,
+      transferableObjectArray: [ outputFloat32Array.buffer ]
+    };
+  }
+
   /**
    *
    * @param {ImageData} sourceImageData
