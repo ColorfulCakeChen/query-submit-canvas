@@ -266,6 +266,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 // of Int32Array), worker 1 could just post back the original source ImageData without
 // downloading any Int32Array.
 //
+//!!! ...unfinished... (2022/09/18)
+// should also test, if do these 2 neural network in only one worker.
+// How about their performance?
 
   /**
    *
