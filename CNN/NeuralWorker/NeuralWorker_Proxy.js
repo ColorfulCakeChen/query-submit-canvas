@@ -176,6 +176,56 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   }
 
 
+  /**
+   *
+   * @param {ImageData} sourceImageData
+   *   The source image data to be processed. Its shape needs not match
+   * this.neuralNetParamsBase's [ input_height, input_width, input_channelCount ]
+   * because it will be scaled to the correct shape before passed into the neural
+   * network.
+   *
+   * @return {AsyncWorker.Resulter}
+   *   Return an async generator tracking the result of processing. It will yield two
+   * times, the 1st is an DataImage, the 2nd is a Float32Array.
+   *
+   * @yield {ImageData}
+   *   Resolve to { done: false, value: ImageData }. The value is an ImageData
+   * which is just the (non-scaled) source image data.
+   *
+   * @yield {Float32Array}
+   *   Resolve to { done: true, value: Float32Array }. The value is a Float32Array
+   * representing the neural network's result whose channel count is
+   * this.neuralNetParamsBase.output_channelCount.
+   */
+  async* ImageData_scale_fork_process_asyncGenerator( sourceImageData ) {
+    const bFork = true;
+    return this.createResulter_by_postCommandArgs(
+      [ "ImageData_scale_forkable_process", sourceImageData, bFork ],
+      [ sourceImageData.data.buffer ]
+    );
+  }
+
+  /**
+   *
+   * @param {ImageData} sourceImageData
+   *   The source image data to be processed. Its shape needs not match
+   * this.neuralNetParamsBase's [ input_height, input_width, input_channelCount ]
+   * because it will be scaled to the correct shape before passed into the neural
+   * network.
+   *
+   * @return {Promise}
+   *   Return a promise resolved to a Float32Array representing the neural network's
+   * result whose channel count is this.neuralNetParamsBase.output_channelCount.
+   */
+   async* ImageData_scale_process_async( sourceImageData ) {
+    const bFork = false;
+    return this.createPromise_by_postCommandArgs(
+      [ "ImageData_scale_forkable_process", sourceImageData, bFork ],
+      [ sourceImageData.data.buffer ]
+    );
+  }
+
+
 //!!! ...unfinished... (2022/09/12) Old Codes.
   /**
    * @param {number} processingId

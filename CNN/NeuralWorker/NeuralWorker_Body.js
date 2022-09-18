@@ -396,17 +396,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   /**
    *
    * @param {ImageData} sourceImageData
-   *   The source image data to be processed.
-   *
-   *   - Its shape needs not match this.neuralNet's [ input_height,
-   *       input_width, input_channelCount ] because it will be scaled to the correct
-   *       shape before passed into the neural network
-   *
-   *   - This usually is called for the 1st web worker in chain. The web worker will
-   *       transfer back a scaled Int32Array. The scaled Int32Array should be used to
-   *       call the next web worker's .Int32Array_process_async().
+   *   The source image data to be processed. Its shape needs not match this.neuralNet's
+   * [ input_height, input_width, input_channelCount ] because it will be scaled to
+   * the correct shape before passed into the neural network.
    *
    * @param {boolean} bFork
+   *   Whether sent the source image data back to WorkerProxy.
+   *
    *   - If true, the sourceImageData will be sent back to WorkerProxy as an ImageData.
    *       This is used for 1st worker.
    *
@@ -423,7 +419,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * representing the neural network's result whose channel count is
    * this.neuralNet.output_channelCount.
    */
-   async* ImageData_scale_forkable_process( sourceImageData, bFork ) {
+  async* ImageData_scale_forkable_process( sourceImageData, bFork ) {
 
     let scaledSourceTensor;
     let outputTensor;
