@@ -204,6 +204,11 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     return { value: true };
   }
 
+
+//!!! ...unfinished... (2022/09/18)
+// Perhaps, alignment mark filling could also fill some of the previous result of
+// this neural network. (i.e. become recurrent neural network.)
+    
   /**
    * This method will fill some part of the image by .alignmentMarkValue so that this
    * neural network could distunguish which alignment it represents.
@@ -243,6 +248,24 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       arrayIndex = arrayIndex_rowBegin;
     }
   }
+
+//!!! ...unfinished... (2022/09/18)
+// NeuralWorker seems possible workable without filling alignment mark.
+// Let neural network always output twice channels. For example,
+//   - The neural network output 100 channels.
+//   - The channel [ 0, 49 ] are used if the neural network representing alignment 1.
+//   - The channel [ 50, 99 ] are used if the neural network representing alignment 2.
+//
+// Because WorkerProxy knows every neural network's alignment, it chooses the
+// correct part (i.e. channel 0 - 49 or 50 - 99) should be used for every neural network.
+//
+// The advantage is worker 1 could continue to compute without waiting for Int32Array
+// to be downloaded completely.
+//
+// Even, if worker 2 also does image scaling by itself (i.e. accepts ImageData instead
+// of Int32Array), worker 1 could just post back the original source ImageData without
+// downloading any Int32Array.
+//
 
   /**
    *
