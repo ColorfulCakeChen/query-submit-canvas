@@ -124,11 +124,13 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *
    *   - Its shape needs not match this.neuralNetParamsBase's [ input_height,
    *       input_width, input_channelCount ] because it will be scaled to the correct
-   *       shape before passed into the neural network
+   *       shape before passed into the neural network.
    *
-   *   - This usually is called for the 1st web worker in chain. The web worker will
-   *       transfer back a scaled Int32Array. The scaled Int32Array should be used to
-   *       call the next web worker's .Int32Array_process_async().
+   *   - This usually is called for the 1st web worker in chain. The scaled Int32Array
+   *       will be transferred back to WorkerProxy for the 2nd web worker.
+   *
+   *   - The scale Int32Array will be filled by alignment mark, and then converted into
+   *       tensor3d, and then processed by neural network.
    *
    * @return {AsyncWorker.Resulter}
    *   Return an async generator tracking the result of processing. It will yield two
