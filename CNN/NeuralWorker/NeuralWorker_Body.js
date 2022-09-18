@@ -279,14 +279,11 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *       input_width, input_channelCount ] because it will be scaled to the correct
    *       shape before passed into the neural network
    *
-   *   - This usually is called for the 1st web worker in chain. The web worker will
-   *       transfer back a scaled Int32Array. The scaled Int32Array should be used to
-   *       call the next web worker's .Int32Array_process_async().
-   *
-   * @param {boolean} bFill
-   *   If true, the scaled source ImageData will be filled by alignment mark before be
-   * converted to tensor3d. If false, it will be converted to tensor3d without
-   * filling alignment mark.
+   *   - This usually is called for the 1st web worker in chain. The scale Int32Array
+   *       will be transferred back to WorkerProxy for the 2nd web worker.
+   * 
+   *   - The scale Int32Array will be filled by alignment mark, and then converted into
+   *       tensor3d, and then processed by neural network.
    *
    * @yield {Int32Array}
    *   Resolve to { done: false, value: { value: Int32Array,
@@ -300,7 +297,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * representing the neural network's result whose channel count is
    * this.neuralNet.output_channelCount.
    */
-  async* ImageData_scale_fork_fillable_process( sourceImageData, bFill ) {
+  async* ImageData_scale_fork_fill_process( sourceImageData ) {
 
     // 1. Scale image.
     let scaledSourceTensor;
@@ -335,10 +332,83 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     };
 
     // 2. Process image by neural network.
+    const bFill = true;
     let Int32Array_processor = Int32Array_fillable_process( scaledInt32Array, bFill );
     let result = yield* Int32Array_processor;
     return result;
   }
+
+
+//!!! ...unfinsihed... (2022/09/18)
+
+  /**
+   *
+   * @param {ImageData} sourceImageData
+   *   The source image data to be processed.
+   *
+   *   - Its shape needs not match this.neuralNet's [ input_height,
+   *       input_width, input_channelCount ] because it will be scaled to the correct
+   *       shape before passed into the neural network
+   *
+   *   - This usually is called for the 1st web worker in chain. The scale Int32Array
+   *       will be transferred back to WorkerProxy for the 2nd web worker.
+   * 
+   *   - The scale Int32Array will be converted into tensor3d (without filling by
+   *       alignment mark), and then processed by neural network.
+   *
+   * @yield {Int32Array}
+   *   Resolve to { done: false, value: { value: Int32Array,
+   * transferableObjectArray: [ Int32Array.buffer ] }. The value is an Int32Array
+   * representing the scaled image data whose shape is this.neuralNet's
+   * [ input_height, input_width, input_channelCount ].
+   *
+   * @yield {Float32Array}
+   *   Resolve to { done: true, value: { value: Float32Array,
+   * transferableObjectArray: [ Float32Array.buffer ] }. The value is a Float32Array
+   * representing the neural network's result whose channel count is
+   * this.neuralNet.output_channelCount.
+   */
+  async* ImageData_scale_fork_process( sourceImageData ) {
+
+    // 1. Scale image.
+    let scaledSourceTensor;
+    let scaledInt32Array;
+    try {
+      scaledSourceTensor = this.neuralNet.create_ScaledSourceTensor_from_PixelData(
+        sourceImageData,
+        true // ( bForceInt32 == true )
+      );
+
+      if ( bFill ) {
+        scaledInt32Array = scaledSourceTensor.dataSync();
+      } else {
+//!!! ...unfinsihed... (2022/09/18)
+      }
+
+    } catch ( e ) {
+      console.error( e );
+      //debugger;
+      scaledInt32Array = new Int32Array(); // Yield an empty Int32Array, if failed.
+
+    } finally {
+      if ( scaledSourceTensor ) {
+        scaledSourceTensor.dispose();
+        scaledSourceTensor = null;
+      }
+    }
+
+    yield {  // Post back to WorkerProxy.
+      value: scaledInt32Array,
+      transferableObjectArray: [ scaledInt32Array.buffer ]
+    };
+
+    // 2. Process image by neural network.
+    const bFill = false;
+    let Int32Array_processor = Int32Array_fillable_process( scaledInt32Array, bFill );
+    let result = yield* Int32Array_processor;
+    return result;
+  }
+
 
   /**
    *
