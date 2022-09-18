@@ -335,7 +335,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     };
 
     // 2. Process image by neural network.
-    let Int32Array_processor = Int32Array_process();
+    let Int32Array_processor = Int32Array_fillable_process( scaledInt32Array, bFill );
     let result = yield* Int32Array_processor;
     return result;
   }
