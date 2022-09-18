@@ -228,11 +228,20 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     const markHeight = 3;
     const markWidth = 3;
 
-    let index = 0;
-    for ( let y = 0; y < markHeight; ++y )
-      for ( let x = 0; x < markWidth; ++x )
-        for ( let c = 0; c < this.neuralNet.input_channelCount; ++c, ++index )
-          imageInt32Array[ index ] = this.alignmentMarkValue;
+    const arrayIndex_rowStrides
+      = this.neuralNet.input_width * this.neuralNet.input_channelCount;
+
+    let arrayIndex_rowBegin = 0, arrayIndex = 0;
+    for ( let y = 0; y < markHeight; ++y ) {
+      for ( let x = 0; x < markWidth; ++x ) {
+        for ( let c = 0; c < this.neuralNet.input_channelCount; ++c ) {
+          imageInt32Array[ arrayIndex ] = this.alignmentMarkValue;
+          ++arrayIndex;
+        }
+      }
+      arrayIndex_rowBegin += arrayIndex_rowStrides;
+      arrayIndex = arrayIndex_rowBegin;
+    }
   }
 
   /**
