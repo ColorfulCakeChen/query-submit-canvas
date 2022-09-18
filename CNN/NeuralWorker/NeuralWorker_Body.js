@@ -425,9 +425,12 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    */
    async* ImageData_scale_forkable_process( sourceImageData, bFork ) {
 
-    // 1. Scale image.
     let scaledSourceTensor;
+    let outputTensor;
+    let outputFloat32Array;
     try {
+
+      // 1. Scale image.
       scaledSourceTensor = this.neuralNet.create_ScaledSourceTensor_from_PixelData(
         sourceImageData,
         true // ( bForceInt32 == true )
@@ -440,22 +443,33 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         };
       }
   
+      // 2. Process image by neural network.
+      outputTensor = this.neuralNet.apply( scaledSourceTensor );
+      outputFloat32Array = outputTensor.dataSync();
+
     } catch ( e ) {
       console.error( e );
       //debugger;
+      outputFloat32Array = new Float32Array(); // Return an empty Float32Array, if failed.
 
     } finally {
+      if ( outputTensor ) {
+        outputTensor.dispose();
+        outputTensor = null;
+      }
+
+      // In theory, it should already have been released by neural network. For avoiding
+      // memory leak (e.g. some exception when .apply()), release it again.
       if ( scaledSourceTensor ) {
         scaledSourceTensor.dispose();
         scaledSourceTensor = null;
       }
     }
 
-//!!!
-    // 2. Process image by neural network.
-    let Int32Array_processor = Int32Array_process();
-    let result = yield* Int32Array_processor;
-    return result;
+    return {
+      value: outputFloat32Array,
+      transferableObjectArray: [ outputFloat32Array.buffer ]
+    };
   }
 
 
