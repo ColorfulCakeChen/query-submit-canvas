@@ -295,7 +295,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * representing the neural network's result whose channel count is
    * this.neuralNet.output_channelCount.
    */
-  async* ImageData_process( sourceImageData ) {
+  async* ImageData_scale_fork_fill_process( sourceImageData ) {
 
     // 1. Scale image.
     let scaledSourceTensor;
@@ -351,7 +351,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * representing the neural network's result whose channel count is
    * this.neuralNet.output_channelCount.
    */
-  async* Int32Array_process( sourceInt32Array ) {
+  async* Int32Array_fill_process( sourceInt32Array ) {
 
     let sourceTensor3d;
     let outputTensor;
