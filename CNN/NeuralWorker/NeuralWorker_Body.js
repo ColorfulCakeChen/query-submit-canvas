@@ -185,8 +185,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
       try {
         neuralNet = this.neuralNetArray[ i ];
-        sourceTensor = tf.zeros( this.neuralNet.input_shape, "int32" );
-        outputTensor = this.neuralNet.apply( sourceTensor );
+        sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
+        outputTensor = neuralNet.apply( sourceTensor );
   
       } finally {
         if ( outputTensor ) {
@@ -600,49 +600,89 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *       input_width, input_channelCount ] because it will be scaled to the correct
    *       shape before passed into the neural network.
    *
+   * @param {boolean} bFill
+   *   If true, the source Int32Array will be filled by alignment mark before be
+   * converted to tensor3d. If false, it will be converted to tensor3d directly
+   * without filling alignment mark.
+   *
    * @yield {Float32Array[]}
    *   Resolve to { done: true, value: { value: [ Float32Array, Float32Array ],
    * transferableObjectArray: [ Float32Array.buffer, Float32Array.buffer ] }. The value
    * is an array of Float32Array representing all neural networks' result whose channel
    * count is this.neuralNetArray[].output_channelCount.
    */
-   async* ImageData_scale_fill_process_fill_process( sourceImageData ) {
+  async* ImageData_scale_once_process_multiple( sourceImageData, bFill ) {
 
 //!!! ...unfinished... (2022/09/20)
 
-    // 1. Scale image.
-    let scaledSourceTensor;
-    let scaledInt32Array;
     try {
-      scaledSourceTensor = this.neuralNet.create_ScaledSourceTensor_from_PixelData(
-        sourceImageData,
-        true // ( bForceInt32 == true )
-      );
 
-      scaledInt32Array = scaledSourceTensor.dataSync();
+      let scaledInt32Array;
+      for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
+        neuralNet = this.neuralNetArray[ i ];
 
-    } catch ( e ) {
-      console.error( e );
-      //debugger;
-      scaledInt32Array = new Int32Array(); // Yield an empty Int32Array, if failed.
+        // 1. Scale image.
+        if ( !scaledInt32Array ) {
+          let scaledSourceTensor;
+          try {
+            scaledSourceTensor = neuralNet.create_ScaledSourceTensor_from_PixelData(
+              sourceImageData,
+              true // ( bForceInt32 == true )
+            );
 
-    } finally {
-      if ( scaledSourceTensor ) {
-        scaledSourceTensor.dispose();
-        scaledSourceTensor = null;
-      }
-    }
+            scaledInt32Array = scaledSourceTensor.dataSync();
 
-    yield {  // Post back to WorkerProxy.
-      value: scaledInt32Array,
-      transferableObjectArray: [ scaledInt32Array.buffer ]
+          } finally {
+            if ( scaledSourceTensor ) {
+              scaledSourceTensor.dispose();
+              scaledSourceTensor = null;
+            }
+          }
+        }
+
+//!!!
+
+        // 2. Process image by neural network.
+
+        let sourceTensor3d;
+        let outputTensor;
+        let outputFloat32Array;
+
+        if ( bFill ) {
+          NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
+            this, scaledInt32Array );
+        }
+
+        sourceTensor3d = tf.tensor3d(
+          scaledInt32Array, this.neuralNet.input_shape, "int32"
+        );
+
+          outputTensor = this.neuralNet.apply( sourceTensor3d );
+          outputFloat32Array = outputTensor.dataSync();
+
+        } catch ( e ) {
+          console.error( e );
+          //debugger;
+          outputFloat32Array = new Float32Array(); // Return an empty Float32Array, if failed.
+
+        } finally {
+          if ( outputTensor ) {
+            outputTensor.dispose();
+            outputTensor = null;
+          }
+
+          // In theory, it should already have been released by neural network. For avoiding
+          // memory leak (e.g. some exception when .apply()), release it again.
+          if ( sourceTensor3d ) {
+            sourceTensor3d.dispose();
+            sourceTensor3d = null;
+          }
+        }
+
+    return {
+      value: outputFloat32Array,
+      transferableObjectArray: [ outputFloat32Array.buffer ]
     };
-
-    // 2. Process image by neural network.
-    const bFill = true;
-    let Int32Array_processor = Int32Array_fillable_process( scaledInt32Array, bFill );
-    let result = yield* Int32Array_processor;
-    return result;
   }
 
 }
