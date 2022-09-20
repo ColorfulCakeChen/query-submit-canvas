@@ -5,27 +5,27 @@ import { Int } from "../Unpacker/ValueDesc/ValueDesc_Base.js";
 /** Describe id, range, name of NeuralWorker_Mode.
  *
  * Convert number value into integer between [ 0, 3 ] representing neural worker mode:
- *   -  0: FILL_WORKER_2_SMALLER
- *   -  1: NO_FILL_WORKER_2_SMALLER
- *   -  2: NO_FILL_WORKER_2_SAME
- *   -  3: NO_FILL_ONE_WORKER
+ *   -  0: WORKER_2_NO_SCALE__FILL
+ *   -  1: WORKER_2_NO_SCALE__NO_FILL
+ *   -  2: WORKER_2_SCALE__NO_FILL
+ *   -  3: ONE_WORKER__NO_FILL
  */
 class NeuralWorker_Mode extends Int {
 
   constructor() {
     super( 0, 3,
       {
-         MOBILE_NET_V1_HEAD_BODY_TAIL:                     new NeuralWorker_Mode.Info(  0, "MOBILE_NET_V1_HEAD_BODY_TAIL",
-           1, ),
+        WORKER_2_NO_SCALE__FILL:     new NeuralWorker_Mode.Info(
+          0, "WORKER_2_NO_SCALE__FILL", 1 ),
 
-         MOBILE_NET_V2_BODY_TAIL:                          new NeuralWorker_Mode.Info(  1, "MOBILE_NET_V2_BODY_TAIL",
-           1, ),
+        WORKER_2_NO_SCALE__NO_FILL:  new NeuralWorker_Mode.Info(
+          1, "WORKER_2_NO_SCALE__NO_FILL", 1 ),
 
-         SHUFFLE_NET_V2_HEAD:                              new NeuralWorker_Mode.Info(  2, "SHUFFLE_NET_V2_HEAD",
-           1, ),
+          WORKER_2_SCALE__NO_FILL:   new NeuralWorker_Mode.Info(
+          2, "WORKER_2_SCALE__NO_FILL", 1 ),
 
-         SHUFFLE_NET_V2_BODY:                              new NeuralWorker_Mode.Info(  3, "SHUFFLE_NET_V2_BODY",
-           2, ),
+          ONE_WORKER__NO_FILL:       new NeuralWorker_Mode.Info(
+          3, "ONE_WORKER__NO_FILL", 2 ),
       }
     );
   }
