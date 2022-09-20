@@ -5,10 +5,10 @@ import { Int } from "../Unpacker/ValueDesc/ValueDesc_Base.js";
 /** Describe id, range, name of NeuralWorker_Mode.
  *
  * Convert number value into integer between [ 0, 3 ] representing neural worker mode:
- *   -  0: 
- *   -  1: MOBILE_NET_V2_BODY_TAIL
- *   -  2: SHUFFLE_NET_V2_HEAD
- *   -  3: SHUFFLE_NET_V2_BODY
+ *   -  0: FILL_WORKER_2_SMALLER
+ *   -  1: NO_FILL_WORKER_2_SMALLER
+ *   -  2: NO_FILL_WORKER_2_SAME
+ *   -  3: NO_FILL_ONE_WORKER
  */
 class NeuralWorker_Mode extends Int {
 
@@ -16,16 +16,16 @@ class NeuralWorker_Mode extends Int {
     super( 0, 3,
       {
          MOBILE_NET_V1_HEAD_BODY_TAIL:                     new NeuralWorker_Mode.Info(  0, "MOBILE_NET_V1_HEAD_BODY_TAIL",
-           1, 1, false, false, false, false, false, false, 0, false ),
+           1, ),
 
          MOBILE_NET_V2_BODY_TAIL:                          new NeuralWorker_Mode.Info(  1, "MOBILE_NET_V2_BODY_TAIL",
-           1, 1, false, false,  true, false, false, false, 0, false ),
+           1, ),
 
          SHUFFLE_NET_V2_HEAD:                              new NeuralWorker_Mode.Info(  2, "SHUFFLE_NET_V2_HEAD",
-           1, 2,  true, false, false,  true, false, false, 0,  true ),
+           1, ),
 
          SHUFFLE_NET_V2_BODY:                              new NeuralWorker_Mode.Info(  3, "SHUFFLE_NET_V2_BODY",
-           2, 2, false, false, false,  true, false, false, 0, false ),
+           2, ),
       }
     );
   }
