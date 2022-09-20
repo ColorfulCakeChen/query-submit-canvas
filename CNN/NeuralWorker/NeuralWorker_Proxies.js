@@ -219,6 +219,51 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     return createOk;
   }
 
+  /**
+   * @param {integer[]} markValueArray
+   *   An array of values representing every neural network playing which alignment.
+   *
+   * @return {Promise}
+   *   Return a promise:
+   *   - Resolved to true, if success.
+   *   - Resolved to false, if failed.
+   */
+  alignmentMarkArray_setValue_async( markValueArray ) {
+
+    if ( markValueArray.length != 2 )
+      throw Error( `NeuralWorker.Proxies.alignmentMarkArray_setValue_async(): `
+        + `markValueArray.length ( ${markValueArray.length} ) `
+        + `should be 2.`
+      );
+
+    let resultOk;
+
+    // 1. Every worker set one alignment mark value.
+    if ( bTwoWorkers ) {
+
+      let resultPromiseArray = new Array( this.workerProxyArray.length );
+      for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
+        resultPromiseArray[ i ]
+          = this.workerProxyArray[ i ].alignmentMarkArray_setValue_async(
+            [ markValueArray[ i ] ] );
+      }
+
+      let resultOkArray = await Promise.all( resultPromiseArray );
+
+      resultOk = resultOkArray.reduce(
+        ( previousValue, currentValue ) => ( previousValue && currentValue ),
+        true
+      );
+  
+    // 2. The only worker sets all alignment mark values.
+    } else {
+      resultOk = await this.workerProxyArray[ 0 ].alignmentMarkArray_setValue_async(
+        markValueArray );
+    }
+
+    return resultOk;
+  }
+
 
 //!!! ...unfinished... (2022/09/20)
 

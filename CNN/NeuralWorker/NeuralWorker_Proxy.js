@@ -125,17 +125,17 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   }
 
   /**
-   * @param {integer} markValue
-   *   A value representing which alignment this neural network plays currently.
+   * @param {integer[]} markValueArray
+   *   An array of values representing every neural network playing which alignment.
    *
    * @return {Promise}
    *   Return a promise:
    *   - Resolved to true, if success.
    *   - Resolved to false, if failed.
    */
-  alignmentMark_setValue_async( markValue ) {
+  alignmentMarkArray_setValue_async( markValueArray ) {
     return this.createPromise_by_postCommandArgs(
-      [ "alignmentMarkArray_setValue", [ markValue ] ]
+      [ "alignmentMarkArray_setValue", markValueArray ]
     );
   }
 
