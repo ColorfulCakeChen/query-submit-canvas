@@ -131,6 +131,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     else
       totalWorkerCount = 1;
 
+    this.disposeWorkers();
     this.workerProxyArray = Pool.OwnerArray.Pool.get_or_create_by();
     this.workerProxyArray.length = totalWorkerCount;
 

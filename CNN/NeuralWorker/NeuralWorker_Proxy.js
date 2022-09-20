@@ -46,16 +46,16 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
   /** @override */
   disposeResources() {
-    this.NeuralNetParamsBase_dispose();
+    this.NeuralNetParamsBaseArray_dispose();
     this.workerId = undefined;
     super.disposeResources();
   }
 
   /** Release the neural network configuration. */
-  NeuralNetParamsBase_dispose() {
-    if ( this.neuralNetParamsBase ) {
-      this.neuralNetParamsBase.disposeResources_and_recycleToPool();
-      this.neuralNetParamsBase = null;
+  NeuralNetParamsBaseArray_dispose() {
+    if ( this.neuralNetParamsBaseArray ) {
+      this.neuralNetParamsBaseArray.disposeResources_and_recycleToPool();
+      this.neuralNetParamsBaseArray = null;
     }
   }
 
@@ -82,24 +82,46 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /**
    * Create one neural network in the web worker body.
    *
-   * @param {NeuralNet.ParamsBase} neuralNetParamsBase
-   *   The configuration of the neural network to be created. This configuration will be
-   * owned (i.e. kept and destroyed) by this NeuralWorker.Proxy.
+   * @param {NeuralNet.ParamsBase[]} neuralNetParamsBase
+   *   An array of configurations for the neural network to be created. These
+   * configurations (exclude the array) will be owned (i.e. kept and destroyed)
+   * by this NeuralWorker.Proxy.
    *
-   * @param {ArrayBuffer} weightArrayBuffer
-   *   The neural network's weights. It will be interpreted as Float32Array.
+   * @param {ArrayBuffer[]} weightArrayBuffer
+   *   An array of every neural network's weights. Every element  will be interpreted
+   * as Float32Array.
    *
    * @return {Promise}
    *   Return a promise:
    *   - Resolved to true, if success.
    *   - Resolved to false, if failed.
    */
-  NeuralNet_create_async( neuralNetParamsBase, weightArrayBuffer ) {
-    this.NeuralNetParamsBase_dispose();
-    this.neuralNetParamsBase = neuralNetParamsBase;
+  NeuralNetArray_create_async( neuralNetParamsBaseArray, weightArrayBufferArray ) {
+    this.NeuralNetParamsBaseArray_dispose();
+
+    // 1. Record neural network configuration.
+    {
+      if ( this.neuralNetParamsBaseArray )
+        this.neuralNetParamsBaseArray.clear();
+      else
+        this.neuralNetParamsBaseArray = Recyclable.OwnerArray.Pool.get_or_create_by();
+
+      this.neuralNetParamsBaseArray.length = neuralNetParamsBaseArray.length;
+      for ( let i = 0; i < weightArrayBufferArray.length; ++i ) {
+        this.neuralNetParamsBaseArray[ i ] = neuralNetParamsBaseArray[ i ];
+      }
+    }
+
+    // 2. Collect the transferable object array. 
+    let transferableObjectArray = weightArrayBufferArray.length;
+    for ( let i = 0; i < weightArrayBufferArray.length; ++i ) {
+      transferableObjectArray[ i ] = weightArrayBufferArray[ i ].buffer;
+    }
+
+    // 3. Inform web work to create neural networks.
     return this.createPromise_by_postCommandArgs(
-      [ "NeuralNetArray_create", [ neuralNetParamsBase ], [ weightArrayBuffer ] ],
-      [ weightArrayBuffer ]
+      [ "NeuralNetArray_create", neuralNetParamsBaseArray, weightArrayBufferArray ],
+      transferableObjectArray
     );
   }
 
