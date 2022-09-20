@@ -262,6 +262,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * because it will be scaled to the correct shape before passed into the neural
    * network.
    *
+   * @param {boolean} bFill
+   *   If true, the source Int32Array will be filled by alignment mark before be
+   * converted to tensor3d. If false, it will be converted to tensor3d directly
+   * without filling alignment mark.
+   *
    * @return {Promise}
    *   Return a promise resolved to an array of Float32Array representing the neural
    * networks' result.
