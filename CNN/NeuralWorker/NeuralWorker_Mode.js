@@ -5,27 +5,27 @@ import { Int } from "../Unpacker/ValueDesc/ValueDesc_Base.js";
 /** Describe id, range, name of NeuralWorker_Mode.
  *
  * Convert number value into integer between [ 0, 3 ] representing neural worker mode:
- *   -  0: WORKER_2_NO_SCALE__FILL
- *   -  1: WORKER_2_NO_SCALE__NO_FILL
- *   -  2: WORKER_2_SCALE__NO_FILL
- *   -  3: ONE_WORKER__NO_FILL
+ *   -  0: TWO_WORKER__FILL__ONE_SCALE
+ *   -  1: TWO_WORKER__NO_FILL__ONE_SCALE
+ *   -  2: TWO_WORKER__NO_FILL__TWO_SCALE
+ *   -  3: ONE_WORKER__NO_FILL__ONE_SCALE
  */
 class NeuralWorker_Mode extends Int {
 
   constructor() {
     super( 0, 3,
       {
-        WORKER_2_NO_SCALE__FILL:     new NeuralWorker_Mode.Info(
-          0, "WORKER_2_NO_SCALE__FILL",    1,  true ),
+        TWO_WORKER__FILL__ONE_SCALE:     new NeuralWorker_Mode.Info(
+          0, "TWO_WORKER__FILL__ONE_SCALE",    1,  true ),
 
-        WORKER_2_NO_SCALE__NO_FILL:  new NeuralWorker_Mode.Info(
-          1, "WORKER_2_NO_SCALE__NO_FILL", 1, false ),
+        TWO_WORKER__NO_FILL__ONE_SCALE:  new NeuralWorker_Mode.Info(
+          1, "TWO_WORKER__NO_FILL__ONE_SCALE", 1, false ),
 
-        WORKER_2_SCALE__NO_FILL:     new NeuralWorker_Mode.Info(
-          2, "WORKER_2_SCALE__NO_FILL",    1, false ),
+        TWO_WORKER__NO_FILL__TWO_SCALE:     new NeuralWorker_Mode.Info(
+          2, "TWO_WORKER__NO_FILL__TWO_SCALE",    1, false ),
 
-        ONE_WORKER__NO_FILL:         new NeuralWorker_Mode.Info(
-          3, "ONE_WORKER__NO_FILL",        2, false ),
+        ONE_WORKER__NO_FILL__ONE_SCALE:         new NeuralWorker_Mode.Info(
+          3, "ONE_WORKER__NO_FILL__ONE_SCALE",        2, false ),
       }
     );
   }
