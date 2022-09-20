@@ -307,7 +307,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * @param {ImageData} sourceImageData
    *   The source image data to be processed.
    *
-   *   - Its shape needs not match this.neuralNet's [ input_height,
+   *   - Its shape needs not match this.neuralNet[ 0 ]'s [ input_height,
    *       input_width, input_channelCount ] because it will be scaled to the correct
    *       shape before passed into the neural network.
    *
@@ -320,22 +320,25 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * @yield {Int32Array}
    *   Resolve to { done: false, value: { value: Int32Array,
    * transferableObjectArray: [ Int32Array.buffer ] }. The value is an Int32Array
-   * representing the scaled image data whose shape is this.neuralNet's
+   * representing the scaled image data whose shape is this.neuralNet[ 0 ]'s
    * [ input_height, input_width, input_channelCount ].
    *
    * @yield {Float32Array}
    *   Resolve to { done: true, value: { value: Float32Array,
    * transferableObjectArray: [ Float32Array.buffer ] }. The value is a Float32Array
    * representing the neural network's result whose channel count is
-   * this.neuralNet.output_channelCount.
+   * this.neuralNet[ 0 ].output_channelCount.
    */
   async* ImageData_scale_fork_fill_process( sourceImageData ) {
+
+    const neuralNetIndex = 0; // Always use the first neural network.
+    let neuralNet = this.neuralNetArray[ i ];
 
     // 1. Scale image.
     let scaledSourceTensor;
     let scaledInt32Array;
     try {
-      scaledSourceTensor = this.neuralNet.create_ScaledSourceTensor_from_PixelData(
+      scaledSourceTensor = neuralNet.create_ScaledSourceTensor_from_PixelData(
         sourceImageData,
         true // ( bForceInt32 == true )
       );
@@ -375,7 +378,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 //    * @param {ImageData} sourceImageData
 //    *   The source image data to be processed.
 //    *
-//    *   - Its shape needs not match this.neuralNet's [ input_height,
+//    *   - Its shape needs not match this.neuralNet[ 0 ]'s [ input_height,
 //    *       input_width, input_channelCount ] because it will be scaled to the correct
 //    *       shape before passed into the neural network
 //    *
@@ -388,22 +391,25 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 //    * @yield {Int32Array}
 //    *   Resolve to { done: false, value: { value: Int32Array,
 //    * transferableObjectArray: [ Int32Array.buffer ] }. The value is an Int32Array
-//    * representing the scaled image data whose shape is this.neuralNet's
+//    * representing the scaled image data whose shape is this.neuralNet[ 0 ]'s
 //    * [ input_height, input_width, input_channelCount ].
 //    *
 //    * @yield {Float32Array}
 //    *   Resolve to { done: true, value: { value: Float32Array,
 //    * transferableObjectArray: [ Float32Array.buffer ] }. The value is a Float32Array
 //    * representing the neural network's result whose channel count is
-//    * this.neuralNet.output_channelCount.
+//    * this.neuralNet[ 0 ].output_channelCount.
 //    */
 //   async* ImageData_scale_fork_process( sourceImageData ) {
+//
+//      const neuralNetIndex = 0; // Always use the first neural network.
+//      let neuralNet = this.neuralNetArray[ i ];
 //
 //     // 1. Scale image.
 //     let scaledSourceTensor;
 //     let scaledInt32Array;
 //     try {
-//       scaledSourceTensor = this.neuralNet.create_ScaledSourceTensor_from_PixelData(
+//       scaledSourceTensor = neuralNet.create_ScaledSourceTensor_from_PixelData(
 //         sourceImageData,
 //         true // ( bForceInt32 == true )
 //       );
@@ -453,7 +459,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * @param {Int32Array} sourceInt32Array
    *   The source image data to be processed.
    *
-   *   - Its shape must match this.neuralNet's [ input_height, input_width,
+   *   - Its shape must match this.neuralNet[ 0 ]'s [ input_height, input_width,
    *       input_channelCount ] because it will not be scaled and will be passed into
    *       neural network directly.
    *
@@ -470,9 +476,12 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   Resolve to { done: true, value: { value: Float32Array,
    * transferableObjectArray: [ Float32Array.buffer ] }. The value is a Float32Array
    * representing the neural network's result whose channel count is
-   * this.neuralNet.output_channelCount.
+   * this.neuralNet[ 0 ].output_channelCount.
    */
   async* Int32Array_fillable_process( sourceInt32Array, bFill ) {
+
+    const neuralNetIndex = 0; // Always use the first neural network.
+    let neuralNet = this.neuralNetArray[ i ];
 
     let sourceTensor3d;
     let outputTensor;
@@ -484,10 +493,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
       sourceTensor3d = tf.tensor3d(
-        scaledInt32Array, this.neuralNet.input_shape, "int32"
-      );
+        scaledInt32Array, neuralNet.input_shape, "int32" );
 
-      outputTensor = this.neuralNet.apply( sourceTensor3d );
+      outputTensor = neuralNet.apply( sourceTensor3d );
       outputFloat32Array = outputTensor.dataSync();
 
     } catch ( e ) {
@@ -516,11 +524,28 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /**
+   * This method is used for:
+   *   - Two web workers.
+   *     - Both workers call this metohd.
+   *       - The 1st worker uses ( bFork == true ).
+   *       - The 2nd worker uses ( bFork == false ).
    *
+   *   - Both workers scale source image data by themselves.
+   *     - Advantage: The 1st worker needs not wait for downloading scaled Int32Array
+   *         from GPU memory.
+   *     - Disadvantage: The source image data is scaled twice.
+   *
+   *   - No alignment mark filling.
+   *     - So every neural network always output twice channels. For example,
+   *       - The neural network output 100 channels.
+   *       - channel [ 0, 49 ] are used if the neural network representing alignment A.
+   *       - channel [ 50, 99 ] are used if the neural network representing alignment B.
+   *
+   * 
    * @param {ImageData} sourceImageData
-   *   The source image data to be processed. Its shape needs not match this.neuralNet's
-   * [ input_height, input_width, input_channelCount ] because it will be scaled to
-   * the correct shape before passed into the neural network.
+   *   The source image data to be processed. Its shape needs not match
+   * this.neuralNet[ 0 ]'s [ input_height, input_width, input_channelCount ] because
+   * it will be scaled to the correct shape before passed into the neural network.
    *
    * @param {boolean} bFork
    *   Whether sent the source image data back to WorkerProxy.
@@ -539,7 +564,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   Resolve to { done: true, value: { value: Float32Array,
    * transferableObjectArray: [ Float32Array.buffer ] }. The value is a Float32Array
    * representing the neural network's result whose channel count is
-   * this.neuralNet.output_channelCount.
+   * this.neuralNet[ 0 ].output_channelCount.
    */
   async* ImageData_scale_forkable_process( sourceImageData, bFork ) {
 
@@ -547,9 +572,11 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     let outputTensor;
     let outputFloat32Array;
     try {
+      const neuralNetIndex = 0; // Always use the first neural network.
+      let neuralNet = this.neuralNetArray[ i ];
 
       // 1. Scale image.
-      scaledSourceTensor = this.neuralNet.create_ScaledSourceTensor_from_PixelData(
+      scaledSourceTensor = neuralNet.create_ScaledSourceTensor_from_PixelData(
         sourceImageData,
         true // ( bForceInt32 == true )
       );
@@ -562,7 +589,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       }
   
       // 2. Process image by neural network.
-      outputTensor = this.neuralNet.apply( scaledSourceTensor );
+      outputTensor = neuralNet.apply( scaledSourceTensor );
       outputFloat32Array = outputTensor.dataSync();
 
     } catch ( e ) {
@@ -648,10 +675,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
             }
           }
 
-  //!!!
-
           // 2. Process image by neural network.
-
           let sourceTensor;
           let outputTensor;
           try {
