@@ -616,84 +616,81 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     let resultValueArray = new Array( this.neuralNetArray.length );
     let resultTransferableObjectArray = new Array( this.neuralNetArray.length );
 
-    try {
+    // Ensure all tensors be released, even if .apply() has exception.
+    tf.tidy( () => {
+      try {
 
-      let scaledSourceTensor; // Only kept if need not fill alignment mark.
-      let scaledInt32Array; // Only used if need fill alignment mark.
-      for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
-        neuralNet = this.neuralNetArray[ i ];
+        let scaledSourceTensor; // Only kept if need not fill alignment mark.
+        let scaledInt32Array; // Only used if need fill alignment mark.
+        for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
+          neuralNet = this.neuralNetArray[ i ];
 
-        // 1. Scale image (only do it once).
-        if (   ( !bFill && !scaledSourceTensor )
-            || (  bFill && !scaledInt32Array )
-           ) {
+          // 1. Scale image (only do it once).
+          if (   ( !bFill && !scaledSourceTensor )
+              || (  bFill && !scaledInt32Array )
+            ) {
+            try {
+              scaledSourceTensor = neuralNet.create_ScaledSourceTensor_from_PixelData(
+                sourceImageData,
+                true // ( bForceInt32 == true )
+              );
+
+              if ( bFill )
+                scaledInt32Array = scaledSourceTensor.dataSync();
+
+            } finally {
+              // If need fill alignment mark, the source tensor will be re-created for
+              // every neural network, the scaled source tensor needs not be kept.
+              if ( bFill && scaledSourceTensor ) {
+                scaledSourceTensor.dispose();
+                scaledSourceTensor = null;
+              }
+            }
+          }
+
+  //!!!
+
+          // 2. Process image by neural network.
+
+          let sourceTensor;
+          let outputTensor;
+          let outputFloat32Array;
           try {
-            scaledSourceTensor = neuralNet.create_ScaledSourceTensor_from_PixelData(
-              sourceImageData,
-              true // ( bForceInt32 == true )
-            );
+            if ( bFill ) {
+              NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
+                this, i, scaledInt32Array );
 
-            if ( bFill )
-              scaledInt32Array = scaledSourceTensor.dataSync();
+              sourceTensor = tf.tensor3d(
+                scaledInt32Array, neuralNet.input_shape, "int32"
+              );
 
+            } else {
+              sourceTensor = scaledSourceTensor.clone();
+            }
+
+  //!!! ...unfinished... (2022/09/20)
+  // If ( bFill = fasle ), no need to re-create sourceTensor.
+
+            outputTensor = neuralNet.apply( sourceTensor );
+
+            resultValueArray[ i ] = outputTensor.dataSync();
+            resultTransferableObjectArray[ i ] = resultValueArray[ i ].buffer;
+      
           } finally {
-            // If need fill alignment mark, the source tensor will be re-created for
-            // every neural network, the scaled source tensor needs not be kept.
-            if ( bFill && scaledSourceTensor ) {
-              scaledSourceTensor.dispose();
-              scaledSourceTensor = null;
+            if ( outputTensor ) {
+              outputTensor.dispose();
+              outputTensor = null;
             }
           }
         }
 
-//!!!
-
-        // 2. Process image by neural network.
-
-        let sourceTensor;
-        let outputTensor;
-        let outputFloat32Array;
-        try {
-          if ( bFill ) {
-            NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
-              this, i, scaledInt32Array );
-          }
-
-//!!! ...unfinished... (2022/09/20)
-// If ( bFill = fasle ), no need to re-create sourceTensor.
-
-          sourceTensor = tf.tensor3d(
-            scaledInt32Array, neuralNet.input_shape, "int32"
-          );
-
-          outputTensor = neuralNet.apply( sourceTensor );
-
-          resultValueArray[ i ] = outputTensor.dataSync();
-          resultTransferableObjectArray[ i ] = resultValueArray[ i ].buffer;
-    
-        } finally {
-          if ( outputTensor ) {
-            outputTensor.dispose();
-            outputTensor = null;
-          }
-
-          // In theory, it should already have been released by neural network.
-          // For avoiding memory leak (e.g. some exception when .apply()),
-          // release it again.
-          //
-          if ( sourceTensor ) {
-            sourceTensor.dispose();
-            sourceTensor = null;
-          }
+      } finally {
+        if ( scaledSourceTensor ) {
+          scaledSourceTensor.dispose();
+          scaledSourceTensor = null;
         }
       }
-
-    } finally {
-      if ( bFill && scaledSourceTensor ) {
-        scaledSourceTensor.dispose();
-        scaledSourceTensor = null;
-      }
-    }
+    } );
 
     return {
       value: resultValueArray,
