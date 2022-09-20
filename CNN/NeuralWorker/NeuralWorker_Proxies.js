@@ -33,6 +33,8 @@ import { Proxy as WorkerProxy } from "./NeuralWorker_Proxy.js";
  * is the output of one neural network.
  *
  *
+ * @member {number} totalWorkerCount
+ *   There are how many web worker(s) created.
  *
  * @member {DEvolution.VersusRangeArray} evolutionVersusRangeArray
  *   The range list of all evolution versus (i.e. parent versus offspring).
@@ -77,8 +79,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 // How to specify one worker or two workers?
 
   /**
-   * Initialize this worker proxy controller. It will create two web workers and inform
-   * them to create a neural network per worker.
+   * Initialize this worker proxy controller. It will create two neural networks in
+   * one or two web worker(s).
    *
    * @param {string} weightsSpreadsheetId
    *   The Google Sheets spreadsheetId of neural network weights. Every worker will
@@ -91,8 +93,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
    *   The configuration of the neural network to be created by web worker.
+   *
+   * @param {boolean} bTwoWorkers
+   *   If true, two web workers will be created. If false, one worker will be created.
    */
-  async init( weightsSpreadsheetId, weightsAPIKey, neuralNetParamsBase ) {
+  async init( weightsSpreadsheetId, weightsAPIKey, neuralNetParamsBase, bTwoWorkers ) {
 
 //!!! ...unfinished... (2022/09/09) should be set in neuralNetParamsBase.
 //     // Because every web worker will copy the input, there is not necessary to keep input.
@@ -101,6 +106,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.weightsSpreadsheetId = weightsSpreadsheetId;
     this.weightsAPIKey = weightsAPIKey;
     this.neuralNetParamsBase = neuralNetParamsBase;
+    this.bTwoWorkers = bTwoWorkers;
 
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
 
@@ -119,7 +125,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     //       actions will be used because one neural network only control one alignment
     //       of the game world.
     //
-    let totalWorkerCount = this.totalWorkerCount = 2;
+    let totalWorkerCount;
+    if ( bTwoWorkers )
+      totalWorkerCount = 2;
+    else
+      totalWorkerCount = 1;
 
     this.workerProxyArray = Pool.OwnerArray.Pool.get_or_create_by();
     this.workerProxyArray.length = totalWorkerCount;
@@ -153,6 +163,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 //!!! ...unfinished... (2022/08/27)
 
   }
+
+
+
+//!!! ...unfinished... (2022/09/20) Old Codes.
 
   /**
    * Download image data from source canvas. Pass source image data to every web
@@ -282,6 +296,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     // for all them done.
     let promiseAllSettled = Promise.allSettled( this.processTensorPromiseArray );
     return promiseAllSettled;
+  }
+
+  get totalWorkerCount() {
+    return this.workerProxyArray.length;
   }
 
 }
