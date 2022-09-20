@@ -75,8 +75,15 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     super.disposeResources();
   }
 
-//!!! ...unfinished... (2022/09/20)
-// How to specify one worker or two workers?
+  /**
+   * 
+   */
+   disposeWorkers() {
+    if ( this.workerProxyArray ) {
+      this.workerProxyArray.disposeResources_and_recycleToPool();
+      this.workerProxyArray = null;
+    }
+  }
 
   /**
    * Initialize this worker proxy controller. It will create two neural networks in
@@ -97,7 +104,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {boolean} bTwoWorkers
    *   If true, two web workers will be created. If false, one worker will be created.
    */
-  async init( weightsSpreadsheetId, weightsAPIKey, neuralNetParamsBase, bTwoWorkers ) {
+  async init_async(
+    weightsSpreadsheetId, weightsAPIKey, neuralNetParamsBase, bTwoWorkers ) {
 
 //!!! ...unfinished... (2022/09/09) should be set in neuralNetParamsBase.
 //     // Because every web worker will copy the input, there is not necessary to keep input.
@@ -132,21 +140,50 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       totalWorkerCount = 1;
 
     // 1. Create web workers.
+    let initOkArray;
     {
       this.disposeWorkers();
       this.workerProxyArray = Pool.OwnerArray.Pool.get_or_create_by();
       this.workerProxyArray.length = totalWorkerCount;
 
-      let initArray = new Array( totalWorkerCount );
+      let initPromiseArray = new Array( totalWorkerCount );
       for ( let i = 0; i < totalWorkerCount; ++i ) {
         this.workerProxyArray[ i ] = WorkerProxy.Pool.get_or_create_by();
         initArray[ i ] = this.workerProxyArray[ i ].initWorker_async( i );
       }
 
-//!!! ...unfinished... (2022/09/20)
-// could also await neural network creating?
-      await Promise.all( initArray );
+      initOkArray = await Promise.all( initPromiseArray );
     }
+
+    // 2. Summary.
+    let initOk = initOkArray.reduce(
+      ( previousValue, currentValue ) => ( previousValue && currentValue ),
+      true
+    );
+
+    return initOk;
+  }
+
+  /**
+   * Create neural networks in the web worker body.
+   *
+   * @param {NeuralNet.ParamsBase[]} neuralNetParamsBase
+   *   An array of configurations for the neural network to be created. These
+   * configurations (exclude the array) will be owned (i.e. kept and destroyed)
+   * by this NeuralWorker.Proxy.
+   *
+   * @param {ArrayBuffer[]} weightArrayBuffer
+   *   An array of every neural network's weights. Every element  will be interpreted
+   * as Float32Array.
+   *
+   * @return {Promise}
+   *   Return a promise:
+   *   - Resolved to true, if success.
+   *   - Resolved to false, if failed.
+   */
+  async NeuralNetArray_create_async( neuralNetParamsBaseArray, weightArrayBufferArray ) {
+
+//!!! ...unfinished... (2022/09/20)
 
     // 2. Create neural networks.
     if ( bTwoWorkers ) {
@@ -154,16 +191,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     } else {
 
     }
-  }
 
-  /**
-   * 
-   */
-  disposeWorkers() {
-    if ( this.workerProxyArray ) {
-      this.workerProxyArray.disposeResources_and_recycleToPool();
-      this.workerProxyArray = null;
-    }
   }
 
   /** Load all evolution versus weights ranges. */

@@ -80,7 +80,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   }
 
   /**
-   * Create one neural network in the web worker body.
+   * Create neural network(s) in the web worker body.
    *
    * @param {NeuralNet.ParamsBase[]} neuralNetParamsBase
    *   An array of configurations for the neural network to be created. These
@@ -97,7 +97,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to false, if failed.
    */
   NeuralNetArray_create_async( neuralNetParamsBaseArray, weightArrayBufferArray ) {
-    this.NeuralNetParamsBaseArray_dispose();
 
     // 1. Record neural network configuration.
     {
