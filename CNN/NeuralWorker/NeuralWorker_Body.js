@@ -239,16 +239,19 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 // this neural network. (i.e. become recurrent neural network.)
     
   /**
-   * This method will fill some part of the image by .alignmentMarkValue so that this
+   * This method will fill some part of the image by alignment mark value so that the
    * neural network could distunguish which alignment it represents.
    * 
    * Usually, this method should be called Before converting Int32Array to tf.tensor.
+   *
+   * @param {integer} neuralNetIndex
+   *   Which neural network's alignment mark value will be used.
    *
    * @param {Int32Array} imageInt32Array
    *   It is viewed as an image whose size ( height, width, channelCount ) should match
    * this.neuralNet's [ input_height, input_width, input_channelCount ].
    */
-  static alignmentMark_fillTo_Image_Int32Array( imageInt32Array ) {
+  static alignmentMark_fillTo_Image_Int32Array( neuralNetIndex, imageInt32Array ) {
 
     // Q: Why fill top-left ( 3 * 3 ) pixels? Why not just fill top-left ( 1 * 1 ) pixel?
     // A: NeuralNet mainly uses ( 3 * 3 ) depthwise filter.
@@ -262,13 +265,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     const markHeight = 3;
     const markWidth = 3;
 
-    const arrayIndex_rowStrides
-      = this.neuralNet.input_width * this.neuralNet.input_channelCount;
+    let neuralNet = this.neuralNetArray[ neuralNetIndex ];
+    const arrayIndex_rowStrides = neuralNet.input_width * neuralNet.input_channelCount;
 
     let arrayIndex_rowBegin = 0, arrayIndex = 0;
     for ( let y = 0; y < markHeight; ++y ) {
       for ( let x = 0; x < markWidth; ++x ) {
-        for ( let c = 0; c < this.neuralNet.input_channelCount; ++c ) {
+        for ( let c = 0; c < neuralNet.input_channelCount; ++c ) {
           imageInt32Array[ arrayIndex ] = this.alignmentMarkValue;
           ++arrayIndex;
         }
