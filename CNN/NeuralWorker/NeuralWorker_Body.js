@@ -1,5 +1,5 @@
 // import * as Pool from "../util/Pool.js";
-// import * as Recyclable from "../util/Recyclable.js";
+import * as Recyclable from "../util/Recyclable.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as AsyncWorker from "../util/AsyncWorker.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
@@ -7,8 +7,7 @@ import * as Weights from "../Unpacker/Weights.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
 import { tensorflowJsURL } from "./NeuralWorker/NeuralWorker_Common.js";
 
-// Load tensorflow.js library in global scope.
-importScripts( tensorflowJsURL );
+importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
 
 /**
  * The implementation of a neural network web worker.
@@ -26,17 +25,21 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
   /** @override */
   async* disposeResources() {
-    this.alignmentMarkValue = undefined;
-    this.NeuralNet_dispose();
+    if ( this.alignmentMarkValueArray ) {
+      this.alignmentMarkValueArray.disposeResources_and_recycleToPool();
+      this.alignmentMarkValueArray = null;
+    }
+
+    this.NeuralNetArray_dispose();
     this.workerId = undefined;
     yield *super.disposeResources();
   }
 
   /** Release the neural network. */
-  NeuralNet_dispose() {
-    if ( this.neuralNet ) {
-      this.neuralNet.disposeResources_and_recycleToPool();
-      this.neuralNet = null;
+  NeuralNetArray_dispose() {
+    if ( this.neuralNetArray ) {
+      this.neuralNetArray.disposeResources_and_recycleToPool();
+      this.neuralNetArray = null;
     }
   }
 
@@ -62,76 +65,102 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /**
-   * @param {Object} neuralNetParamsBase
-   *   An object looks like NeuralNet.ParamsBase.
+   * @param {Object[]} neuralNetParamsBase
+   *   An array of object. Every element is an object looks like NeuralNet.ParamsBase.
    *
-   * @param {ArrayBuffer} weightArrayBuffer
-   *   The neural network's weights. It will be interpreted as Float32Array.
+   * @param {ArrayBuffer[]} weightArrayBuffer
+   *   An array of every neural network's weights. Every element  will be interpreted
+   * as Float32Array.
    *
    * @yield {boolean}
    *   - Yield { done: true, value: { value: true } }, if success.
    *   - Yield { done: true, value: { value: false } }, if failed.
    */
-  async* NeuralNet_create( neuralNetParamsBase, weightArrayBuffer ) {
+  async* NeuralNetArray_create( neuralNetParamsBaseArray, weightArrayBufferArray ) {
 
+    // 0. Prepare container for all neural networks.
+    {
+      if ( this.neuralNetArray )
+        this.neuralNetArray.clear();
+      else
+        this.neuralNetArray = Recyclable.OwnerArray.Pool.get_or_create_by();
+
+      this.neuralNetArray.length = neuralNetParamsBaseArray.length;
+    }
+
+    // 2.
     let progress;
     try {
-      this.NeuralNet_dispose();
+      let bAllOk = true;
+      for ( let i = 0; i < neuralNetParamsBaseArray.length; ++i ) {
+        let neuralNetParamsBase = neuralNetParamsBaseArray[ i ];
+        let weightArrayBuffer = weightArrayBufferArray[ i ];
 
-      progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+        progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
-      let inputWeightArray;
-      {
-        let weightElementOffsetBegin = 0;
-        let byteOffset
-          = weightElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT;
+        let inputWeightArray;
+        {
+          let weightElementOffsetBegin = 0;
+          let byteOffset
+            = weightElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT;
 
-        let byteLength = Math.floor(
-          weightArrayBuffer.byteLength / Float32Array.BYTES_PER_ELEMENT );
+          let byteLength = Math.floor(
+            weightArrayBuffer.byteLength / Float32Array.BYTES_PER_ELEMENT );
 
-        let aFloat32Array = new Float32Array( weightArrayBuffer, byteOffset, byteLength );
+          let aFloat32Array
+            = new Float32Array( weightArrayBuffer, byteOffset, byteLength );
 
-        // Ensure there is no NaN value in the weight array. (Force NaN to 0.)
-        inputWeightArray
-          = Weights.Base.ValueBounds.Float32Array_RestrictedClone( aFloat32Array );
-      }
+          // Ensure there is no NaN value in the weight array. (Force NaN to 0.)
+          inputWeightArray
+            = Weights.Base.ValueBounds.Float32Array_RestrictedClone( aFloat32Array );
+        }
 
-      // In web worker, the input of neural network will not be used by others. Force
-      // the neural network release its input tensor.
-      neuralNetParamsBase.bKeepInputTensor = false;
+        // In web worker, the input of neural network will not be used by others. Force
+        // the neural network release its input tensor.
+        neuralNetParamsBase.bKeepInputTensor = false;
 
-      let neuralNetParams = NeuralNet.Params.Pool.get_or_create_by(
-        neuralNetParamsBase.input_height,
-        neuralNetParamsBase.input_width,
-        neuralNetParamsBase.input_channelCount,
-        neuralNetParamsBase.vocabularyChannelCount,
-        neuralNetParamsBase.vocabularyCountPerInputChannel,
-        neuralNetParamsBase.nConvStageTypeId,
-        neuralNetParamsBase.blockCountTotalRequested,
-        neuralNetParamsBase.output_channelCount,
-        neuralNetParamsBase.bKeepInputTensor
-      );
-
-      let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
-      let bInitOk = neuralNet.init( progress, inputWeightArray, 0, neuralNetParams );
-
-      if ( false == bInitOk )
-        throw Error( `NeuralWorker_Body.NeuralNet_create(): `
-          + `Failed to initialize neuralNet object. `
-          + `Progress ( ${progress.valuePercentage} ). `
-          + `${neuralNetParams}`
+        let neuralNetParams = NeuralNet.Params.Pool.get_or_create_by(
+          neuralNetParamsBase.input_height,
+          neuralNetParamsBase.input_width,
+          neuralNetParamsBase.input_channelCount,
+          neuralNetParamsBase.vocabularyChannelCount,
+          neuralNetParamsBase.vocabularyCountPerInputChannel,
+          neuralNetParamsBase.nConvStageTypeId,
+          neuralNetParamsBase.blockCountTotalRequested,
+          neuralNetParamsBase.output_channelCount,
+          neuralNetParamsBase.bKeepInputTensor
         );
 
-      this.NeuralNet_dryRun_ifWebGL(); // compiling shaders if backend is webgl.
+        let neuralNet = NeuralNet.Base.Pool.get_or_create_by();
+        let bInitOk = neuralNet.init( progress, inputWeightArray, 0, neuralNetParams );
 
-      // (2022/09/17 Remarked) For Debug.
-      // {
-      //   let strWeightCountInfo = neuralNet.toString_WeightCount();
-      //   let logMsg = `NeuralWorker_Body.NeuralNet_create(): ${strWeightCountInfo}.`;
-      //   console.log( logMsg );
-      // }
+        if ( false == bInitOk )
+          throw Error( `NeuralWorker_Body.NeuralNet_create(): `
+            + `Failed to initialize neuralNetArray[ ${i} ] object. `
+            + `Progress ( ${progress.valuePercentage} ). `
+            + `${neuralNetParams}`
+          );
 
-      return { value: true };
+        progress.disposeResources_and_recycleToPool();
+        progress = null;
+  
+        bAllOk = bAllOk && bInitOk;
+        this.neuralNetArray[ i ] = neuralNet;
+//!!!
+        this.NeuralNet_dryRun_ifWebGL(); // compiling shaders if backend is webgl.
+
+        // (2022/09/17 Remarked) For Debug.
+        // {
+        //   let strWeightCountInfo = neuralNet.toString_WeightCount();
+        //   let logMsg = `NeuralWorker_Body.NeuralNet_create(): ${strWeightCountInfo}.`;
+        //   console.log( logMsg );
+        // }
+      }
+
+      if ( bAllOk )
+        return { value: true };
+      else
+        return { value: false };
 
     } catch ( e ) {
       console.error( e );
@@ -144,6 +173,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         progress = null;
       }
     }
+
   }
 
   /**
