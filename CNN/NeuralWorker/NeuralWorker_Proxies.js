@@ -149,7 +149,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       let initPromiseArray = new Array( totalWorkerCount );
       for ( let i = 0; i < totalWorkerCount; ++i ) {
         this.workerProxyArray[ i ] = WorkerProxy.Pool.get_or_create_by();
-        initArray[ i ] = this.workerProxyArray[ i ].initWorker_async( i );
+        initPromiseArray[ i ] = this.workerProxyArray[ i ].initWorker_async( i );
       }
 
       initOkArray = await Promise.all( initPromiseArray );
@@ -189,22 +189,41 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         + `should be 2.`
       );
 
-      if ( weightArrayBufferArray.length != 2 )
+    if ( weightArrayBufferArray.length != 2 )
       throw Error( `NeuralWorker.Proxies.NeuralNetArray_create_async(): `
         + `weightArrayBufferArray.length ( ${weightArrayBufferArray.length} ) `
         + `should be 2.`
       );
 
-//!!! ...unfinished... (2022/09/20)
+    let createOk;
 
-    // 2. Create neural networks.
+    // 1. Every worker create one neural network.
     if ( bTwoWorkers ) {
-      await workerProxy.NeuralNetArray_create_async( )
-    } else {
 
+      let createPromiseArray = new Array( this.workerProxyArray.length );
+      for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
+        createPromiseArray[ i ] = this.workerProxyArray[ i ].NeuralNetArray_create_async(
+          neuralNetParamsBaseArray[ i ], weightArrayBufferArray[ i ] );
+      }
+
+      let createOkArray = await Promise.all( createPromiseArray );
+
+      createOk = createOkArray.reduce(
+        ( previousValue, currentValue ) => ( previousValue && currentValue ),
+        true
+      );
+  
+    // 2. The only worker creates all neural networks.
+    } else {
+      createOk = await this.workerProxyArray[ 0 ].NeuralNetArray_create_async(
+        neuralNetParamsBaseArray, weightArrayBufferArray );
     }
 
+    return createOk;
   }
+
+
+//!!! ...unfinished... (2022/09/20)
 
   /** Load all evolution versus weights ranges. */
   async evolutionVersusRangeArray_loadAsync() {
