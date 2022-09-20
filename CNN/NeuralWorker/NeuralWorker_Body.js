@@ -88,15 +88,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       this.neuralNetArray.length = neuralNetParamsBaseArray.length;
     }
 
-    // 2.
+    // 2. Create every neural network.
     let progress;
     try {
       let bAllOk = true;
       for ( let i = 0; i < neuralNetParamsBaseArray.length; ++i ) {
         let neuralNetParamsBase = neuralNetParamsBaseArray[ i ];
         let weightArrayBuffer = weightArrayBufferArray[ i ];
-
-        progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
         let inputWeightArray;
         {
@@ -131,6 +129,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
           neuralNetParamsBase.bKeepInputTensor
         );
 
+        progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
         let neuralNet = NeuralNet.Base.Pool.get_or_create_by();
         let bInitOk = neuralNet.init( progress, inputWeightArray, 0, neuralNetParams );
 
@@ -146,8 +145,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   
         bAllOk = bAllOk && bInitOk;
         this.neuralNetArray[ i ] = neuralNet;
-//!!!
-        this.NeuralNet_dryRun_ifWebGL(); // compiling shaders if backend is webgl.
 
         // (2022/09/17 Remarked) For Debug.
         // {
@@ -157,10 +154,14 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         // }
       }
 
-      if ( bAllOk )
+      if ( bAllOk ) {
+        // compiling shaders if backend is webgl.
+        NeuralWorker_Body.NeuralNetArray_dryRun_ifWebGL.call( this );
         return { value: true };
-      else
+
+      } else {
         return { value: false };
+      }
 
     } catch ( e ) {
       console.error( e );
@@ -173,39 +174,42 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         progress = null;
       }
     }
-
   }
 
   /**
    * If backend is webgl, run the nueral network once for compiling shaders. This could
    * improve performance for the real run.
    */
-  static NeuralNet_dryRun_ifWebGL() {
+  static NeuralNetArray_dryRun_ifWebGL() {
     let backendName = tf.getBackend();
     if ( backendName != "webgl" )
       return; // Only WebGL needs compile shaders.
 
-    let sourceTensor3d;
+    let neuralNet;
+    let sourceTensor;
     let outputTensor;
-    try {
-      sourceTensor3d = tf.zeros( this.neuralNet.input_shape, "int32" );
-      outputTensor = this.neuralNet.apply( sourceTensor3d );
+    for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
+      try {
+        neuralNet = this.neuralNetArray[ i ];
+        sourceTensor = tf.zeros( this.neuralNet.input_shape, "int32" );
+        outputTensor = this.neuralNet.apply( sourceTensor );
 
-    } catch ( e ) {
-      console.error( e );
-      //debugger;
-
-    } finally {
-      if ( outputTensor ) {
-        outputTensor.dispose();
-        outputTensor = null;
-      }
-
-      // In theory, it should already have been released by neural network. For avoiding
-      // memory leak (e.g. some exception when .apply()), release it again.
-      if ( sourceTensor3d ) {
-        sourceTensor3d.dispose();
-        sourceTensor3d = null;
+      } catch ( e ) {
+        console.error( e );
+        //debugger;
+  
+      } finally {
+        if ( outputTensor ) {
+          outputTensor.dispose();
+          outputTensor = null;
+        }
+  
+        // In theory, it should already have been released by neural network. For
+        // avoiding memory leak (e.g. some exception when .apply()), release it again.
+        if ( sourceTensor ) {
+          sourceTensor.dispose();
+          sourceTensor = null;
+        }
       }
     }
   }
