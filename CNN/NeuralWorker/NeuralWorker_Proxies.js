@@ -73,13 +73,12 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     super.disposeResources();
   }
 
+//!!! ...unfinished... (2022/09/20)
+// How to specify one worker or two workers?
+
   /**
    * Initialize this worker proxy controller. It will create two web workers and inform
    * them to create a neural network per worker.
-   *
-   * @param {string} tensorflowJsURL
-   *   The URL of tensorflow javascript library. Every worker will load the library
-   * from the URL.
    *
    * @param {string} weightsSpreadsheetId
    *   The Google Sheets spreadsheetId of neural network weights. Every worker will
@@ -93,26 +92,15 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
    *   The configuration of the neural network to be created by web worker.
    */
-  init( tensorflowJsURL, weightsSpreadsheetId, weightsAPIKey, neuralNetParamsBase ) {
+  async init( weightsSpreadsheetId, weightsAPIKey, neuralNetParamsBase ) {
 
 //!!! ...unfinished... (2022/09/09) should be set in neuralNetParamsBase.
 //     // Because every web worker will copy the input, there is not necessary to keep input.
 //     neuralNetParamsBase.bKeepInputTensor = false;
 
-    this.tensorflowJsURL = tensorflowJsURL;
     this.weightsSpreadsheetId = weightsSpreadsheetId;
     this.weightsAPIKey = weightsAPIKey;
     this.neuralNetParamsBase = neuralNetParamsBase;
-
-//!!! (2022/09/11 Remarked) Moved into AsyncWorker_Proxy.
-//     // The current processing id. Negative means processTensor() has not been called.
-//     // Every processTensor() call will use a new id.
-//     //
-//     // Q: What if processingId become too large (e.g. infinity)?
-//     // A: Because Number.MAX_SAFE_INTEGER is pretty large (at least, 2 ** 52 ),
-//     //    it is not so easy to become out of bounds.
-//     //
-//     this.processingId = -1;
 
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
 
@@ -133,23 +121,13 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     //
     let totalWorkerCount = this.totalWorkerCount = 2;
 
-    // Statistics of progress of all workers' initialization.
-    this.initProgressAll = new NeuralNetProgress.InitProgressAll();
-
     this.workerProxyArray = Pool.OwnerArray.Pool.get_or_create_by();
     this.workerProxyArray.length = totalWorkerCount;
 
     for ( let i = 0; i < totalWorkerCount; ++i ) {
-      let initProgress = this.initProgressAll.children[ i ];
       let workerProxy = this.workerProxyArray[ i ] = WorkerProxy.Pool.get_or_create_by();
-      workerProxy.init(
-        i, tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey,
-        initProgress
-      );
+      workerProxy.initWorker_async( i );
     }
-
-    // Pre-allocation for reducing re-allocation.
-    this.processTensorPromiseArray = new Array( totalWorkerCount );
   }
 
   /**
@@ -160,8 +138,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       this.workerProxyArray.disposeResources_and_recycleToPool();
       this.workerProxyArray = null;
     }
-
-    this.initProgressAll = null;
   }
 
   /** Load all evolution versus weights ranges. */
