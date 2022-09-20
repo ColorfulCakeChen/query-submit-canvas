@@ -202,7 +202,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let createOk;
 
     // 1. Every worker create one neural network.
-    if ( bTwoWorkers ) {
+    if ( this.workerProxyArray.length > 1 ) { // (i.e. two workers)
 
       let createPromiseArray = new Array( this.workerProxyArray.length );
       for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
@@ -246,7 +246,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let resultOk;
 
     // 1. Every worker set one alignment mark value.
-    if ( bTwoWorkers ) {
+    if ( this.workerProxyArray.length > 1 ) { // (i.e. two workers)
 
       let resultPromiseArray = new Array( this.workerProxyArray.length );
       for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
@@ -284,12 +284,14 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   async ImageData_process_async( sourceImageData, bFill ) {
 
 //!!! ...unfinished... (2022/09/20)
+// NeuralWorker_Mode.workerCount_get( this.nNeuralWorker_ModeId );
+// NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
 
     //let resultOk;
     let resultFloat32ArrayArray = new Array( this.neuralNetCount );
 
     // 1. Every worker has one neural network to process image.
-    if ( bTwoWorkers ) {
+    if ( this.workerProxyArray.length > 1 ) { // (i.e. two workers)
 
       let resultPromiseArray = new Array( this.workerProxyArray.length );
       for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
