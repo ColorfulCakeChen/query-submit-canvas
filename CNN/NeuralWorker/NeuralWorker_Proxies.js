@@ -75,6 +75,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.hardwareConcurrency = undefined;
 
     this.bTwoWorkers = undefined;
+    this.neuralNetCount = undefined;
     this.weightsAPIKey = undefined;
     this.weightsSpreadsheetId = undefined;
 
@@ -111,6 +112,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     this.weightsSpreadsheetId = weightsSpreadsheetId;
     this.weightsAPIKey = weightsAPIKey;
+    this.neuralNetCount = 2; // Always two neural network (for differential evolution).
     this.bTwoWorkers = bTwoWorkers;
 
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
@@ -180,16 +182,16 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    */
   async NeuralNetArray_create_async( neuralNetParamsBaseArray, weightArrayBufferArray ) {
 
-    if ( neuralNetParamsBaseArray.length != 2 )
+    if ( neuralNetParamsBaseArray.length != this.neuralNetCount )
       throw Error( `NeuralWorker.Proxies.NeuralNetArray_create_async(): `
         + `neuralNetParamsBaseArray.length ( ${neuralNetParamsBaseArray.length} ) `
-        + `should be 2.`
+        + `should be ${this.neuralNetCount}.`
       );
 
-    if ( weightArrayBufferArray.length != 2 )
+    if ( weightArrayBufferArray.length != this.neuralNetCount )
       throw Error( `NeuralWorker.Proxies.NeuralNetArray_create_async(): `
         + `weightArrayBufferArray.length ( ${weightArrayBufferArray.length} ) `
-        + `should be 2.`
+        + `should be ${this.neuralNetCount}.`
       );
 
     let createOk;
@@ -230,10 +232,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    */
   async alignmentMarkArray_setValue_async( markValueArray ) {
 
-    if ( markValueArray.length != 2 )
+    if ( markValueArray.length != this.neuralNetCount )
       throw Error( `NeuralWorker.Proxies.alignmentMarkArray_setValue_async(): `
         + `markValueArray.length ( ${markValueArray.length} ) `
-        + `should be 2.`
+        + `should be ${this.neuralNetCount}.`
       );
 
     let resultOk;
@@ -263,6 +265,52 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     return resultOk;
   }
+
+  /**
+   *
+   * @param {ImageData} sourceImageData
+   *   The source image data to be processed. It will be scaled to the correct shape
+   * before passed into the neural network.
+   *
+   * @return {Promise}
+   *   Return a promise resolved to an array of Float32Array representing the neural
+   * networks' result.
+   */
+  async ImageData_process_async( sourceImageData, bFill ) {
+
+//!!! ...unfinished... (2022/09/20)
+
+    //let resultOk;
+    let resultFloat32ArrayArray = new Array( this.neuralNetCount );
+
+    // 1. Every worker has one neural network to process image.
+    if ( bTwoWorkers ) {
+
+      let resultPromiseArray = new Array( this.workerProxyArray.length );
+      for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
+
+//!!! ...unfinished... (2022/09/20)
+        resultPromiseArray[ i ]
+          = this.workerProxyArray[ i ].alignmentMarkArray_setValue_async(
+            [ markValueArray[ i ] ] );
+      }
+
+      let resultOkArray = await Promise.all( resultPromiseArray );
+
+      resultOk = resultOkArray.reduce(
+        ( previousValue, currentValue ) => ( previousValue && currentValue ),
+        true
+      );
+  
+    // 2. The only worker has two neural networks to process image.
+    } else {
+      resultOk = await this.workerProxyArray[ 0 ].alignmentMarkArray_setValue_async(
+        markValueArray );
+    }
+
+    return resultOk;
+  }
+
 
 
 //!!! ...unfinished... (2022/09/20)

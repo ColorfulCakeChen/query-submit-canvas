@@ -204,7 +204,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     );
   }
 
-
   /**
    *
    * @param {ImageData} sourceImageData
@@ -226,7 +225,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * representing the neural network's result whose channel count is
    * this.neuralNetParamsBase.output_channelCount.
    */
-  async* ImageData_scale_fork_process_asyncGenerator( sourceImageData ) {
+  ImageData_scale_fork_process_asyncGenerator( sourceImageData ) {
     const bFork = true;
     return this.createResulter_by_postCommandArgs(
       [ "ImageData_scale_forkable_process", sourceImageData, bFork ],
@@ -246,7 +245,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   Return a promise resolved to a Float32Array representing the neural network's
    * result whose channel count is this.neuralNetParamsBase.output_channelCount.
    */
-   async* ImageData_scale_process_async( sourceImageData ) {
+  ImageData_scale_process_async( sourceImageData ) {
     const bFork = false;
     return this.createPromise_by_postCommandArgs(
       [ "ImageData_scale_forkable_process", sourceImageData, bFork ],
