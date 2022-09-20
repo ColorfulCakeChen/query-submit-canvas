@@ -32,24 +32,17 @@ class NeuralWorker_Mode extends Int {
 
 
   /**
-   * @param {number} nNeuralWorker_ModeId  The numeric identifier of NeuralWorker_Mode. (NeuralWorker_Mode.Singleton.Ids.Xxx)
-   * @return {number} Return the input tensor count (1 or 2) of the NeuralWorker_Mode.Singleton.Ids.Xxx.
+   * @param {number} nNeuralWorker_ModeId
+   *   The numeric identifier of NeuralWorker_Mode. (NeuralWorker.Mode.Singleton.Ids.Xxx)
+   *
+   * @return {number}
+   *   Return the web worker tensor count (1 or 2) of the
+   * NeuralWorker_Mode.Singleton.Ids.Xxx.
    */
-  static inputTensorCount_get( nNeuralWorker_ModeId ) {
+  static workerCount_get( nNeuralWorker_ModeId ) {
     let info = NeuralWorker_Mode.Singleton.getInfo_byId( nNeuralWorker_ModeId );
     if ( info )
-      return info.inputTensorCount;
-    return NaN;
-  }
-
-  /**
-   * @param {number} nNeuralWorker_ModeId  The numeric identifier of NeuralWorker_Mode. (NeuralWorker_Mode.Singleton.Ids.Xxx)
-   * @return {number} Return the output tensor count (1 or 2) of the NeuralWorker_Mode.Singleton.Ids.Xxx.
-   */
-  static outputTensorCount_get( nNeuralWorker_ModeId ) {
-    let info = NeuralWorker_Mode.Singleton.getInfo_byId( nNeuralWorker_ModeId );
-    if ( info )
-      return info.outputTensorCount;
+      return info.workerCount;
     return NaN;
   }
 

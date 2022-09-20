@@ -26,49 +26,64 @@ class ConvBlockType extends Int {
   constructor() {
     super( 0, 11,
       {
-         MOBILE_NET_V1_HEAD_BODY_TAIL:                     new ConvBlockType.Info(  0, "MOBILE_NET_V1_HEAD_BODY_TAIL",
-           1, 1, false, false, false, false, false, false, 0, false ),
+         MOBILE_NET_V1_HEAD_BODY_TAIL:                     new ConvBlockType.Info(
+            0, "MOBILE_NET_V1_HEAD_BODY_TAIL",
+            1, 1, false, false, false, false, false, false, 0, false ),
 
-         MOBILE_NET_V2_BODY_TAIL:                          new ConvBlockType.Info(  1, "MOBILE_NET_V2_BODY_TAIL",
-           1, 1, false, false,  true, false, false, false, 0, false ),
+         MOBILE_NET_V2_BODY_TAIL:                          new ConvBlockType.Info(
+            1, "MOBILE_NET_V2_BODY_TAIL",
+            1, 1, false, false,  true, false, false, false, 0, false ),
 
-         SHUFFLE_NET_V2_HEAD:                              new ConvBlockType.Info(  2, "SHUFFLE_NET_V2_HEAD",
-           1, 2,  true, false, false,  true, false, false, 0,  true ),
+         SHUFFLE_NET_V2_HEAD:                              new ConvBlockType.Info(
+            2, "SHUFFLE_NET_V2_HEAD",
+            1, 2,  true, false, false,  true, false, false, 0,  true ),
 
-         SHUFFLE_NET_V2_BODY:                              new ConvBlockType.Info(  3, "SHUFFLE_NET_V2_BODY",
-           2, 2, false, false, false,  true, false, false, 0, false ),
+         SHUFFLE_NET_V2_BODY:                              new ConvBlockType.Info(
+            3, "SHUFFLE_NET_V2_BODY",
+            2, 2, false, false, false,  true, false, false, 0, false ),
 
-         SHUFFLE_NET_V2_TAIL:                              new ConvBlockType.Info(  4, "SHUFFLE_NET_V2_TAIL",
-           2, 1, false, false, false,  true, false, false, 0, false ),
+         SHUFFLE_NET_V2_TAIL:                              new ConvBlockType.Info(
+            4, "SHUFFLE_NET_V2_TAIL",
+            2, 1, false, false, false,  true, false, false, 0, false ),
 
-         SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD:             new ConvBlockType.Info(  5, "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD",
-           1, 1, false, false, false, false,  true,  true, 2, false ),
+         SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD:             new ConvBlockType.Info( 
+            5, "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD",
+            1, 1, false, false, false, false,  true,  true, 2, false ),
 
-         SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY:             new ConvBlockType.Info(  6, "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY",
-           1, 1, false, false, false, false,  true, false, 2, false ),
+         SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY:             new ConvBlockType.Info(
+            6, "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY",
+            1, 1, false, false, false, false,  true, false, 2, false ),
 
-         SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL:             new ConvBlockType.Info(  7, "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL",
-           1, 1, false, false, false, false,  true, false, 0, false ),
+         SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL:             new ConvBlockType.Info(
+            7, "SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL",
+            1, 1, false, false, false, false,  true, false, 0, false ),
 
-         SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2: new ConvBlockType.Info(  8, "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2",
-           1, 2, false, false, false, false, false, false, 0,  true ),
+         SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2: new ConvBlockType.Info(
+            8, "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2",
+            1, 2, false, false, false, false, false, false, 0,  true ),
 
-         SHUFFLE_NET_V2_BY_POINTWISE21_HEAD:               new ConvBlockType.Info(  9, "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD",
-           1, 2,  true,  true, false, false, false, false, 0,  true ),
+         SHUFFLE_NET_V2_BY_POINTWISE21_HEAD:               new ConvBlockType.Info(
+            9, "SHUFFLE_NET_V2_BY_POINTWISE21_HEAD",
+            1, 2,  true,  true, false, false, false, false, 0,  true ),
 
-         SHUFFLE_NET_V2_BY_POINTWISE21_BODY:               new ConvBlockType.Info( 10, "SHUFFLE_NET_V2_BY_POINTWISE21_BODY",
-           2, 2, false,  true, false, false, false, false, 0,  true ),
+         SHUFFLE_NET_V2_BY_POINTWISE21_BODY:               new ConvBlockType.Info(
+           10, "SHUFFLE_NET_V2_BY_POINTWISE21_BODY",
+            2, 2, false,  true, false, false, false, false, 0,  true ),
 
-         SHUFFLE_NET_V2_BY_POINTWISE21_TAIL:               new ConvBlockType.Info( 11, "SHUFFLE_NET_V2_BY_POINTWISE21_TAIL",
-           2, 1, false,  true, false, false, false, false, 0, false ),
+         SHUFFLE_NET_V2_BY_POINTWISE21_TAIL:               new ConvBlockType.Info(
+           11, "SHUFFLE_NET_V2_BY_POINTWISE21_TAIL",
+            2, 1, false,  true, false, false, false, false, 0, false ),
       }
     );
   }
 
 
   /**
-   * @param {number} nConvBlockTypeId  The numeric identifier of ConvBlockType. (ConvBlockType.Singleton.Ids.Xxx)
-   * @return {number} Return the input tensor count (1 or 2) of the ConvBlockType.Singleton.Ids.Xxx.
+   * @param {number} nConvBlockTypeId
+   *   The numeric identifier of ConvBlockType. (ConvBlockType.Singleton.Ids.Xxx)
+   *
+   * @return {number}
+   *   Return the input tensor count (1 or 2) of the ConvBlockType.Singleton.Ids.Xxx.
    */
   static inputTensorCount_get( nConvBlockTypeId ) {
     let info = ConvBlockType.Singleton.getInfo_byId( nConvBlockTypeId );
@@ -78,8 +93,11 @@ class ConvBlockType extends Int {
   }
 
   /**
-   * @param {number} nConvBlockTypeId  The numeric identifier of ConvBlockType. (ConvBlockType.Singleton.Ids.Xxx)
-   * @return {number} Return the output tensor count (1 or 2) of the ConvBlockType.Singleton.Ids.Xxx.
+   * @param {number} nConvBlockTypeId
+   *   The numeric identifier of ConvBlockType. (ConvBlockType.Singleton.Ids.Xxx)
+   *
+   * @return {number}
+   *   Return the output tensor count (1 or 2) of the ConvBlockType.Singleton.Ids.Xxx.
    */
   static outputTensorCount_get( nConvBlockTypeId ) {
     let info = ConvBlockType.Singleton.getInfo_byId( nConvBlockTypeId );
@@ -126,7 +144,8 @@ class ConvBlockType extends Int {
  *
  * @member {number} pointwise20_channelShuffler_outputGroupCount
  *   The output group count of the pointwise20's channel shuffler when
- * ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ).
+ * ( nHigherHalfDifferent
+ *     == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ).
  * Either 0 or 2. Usually 2 only if
  * SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD or SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY.
  *
@@ -147,8 +166,10 @@ ConvBlockType.Info = class ConvBlockType_Info extends Int.Info {
    */
   constructor( nConvBlockTypeId, nameForMessage,
     inputTensorCount, outputTensorCount,
-    bDepthwise2Requested, bConcat1Requested, bAddInputToOutputRequested, bConcat2ShuffleSplitRequested,
-    bHigherHalfDifferent, bHigherHalfDepthwise2, pointwise20_channelShuffler_outputGroupCount,
+    bDepthwise2Requested, bConcat1Requested, bAddInputToOutputRequested,
+    bConcat2ShuffleSplitRequested,
+    bHigherHalfDifferent, bHigherHalfDepthwise2,
+    pointwise20_channelShuffler_outputGroupCount,
     bPointwise21
   ) {
     super( nConvBlockTypeId, nameForMessage );
