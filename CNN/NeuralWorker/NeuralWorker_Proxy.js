@@ -208,6 +208,13 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
   /**
    *
+   * This method is used for:
+   *   - Two web workers. Every worker has one neural network.
+   *   - Both workers scale source image data by themselves.
+   *   - No alignment mark filling.
+   *   - The 1st worker call this method.
+   *
+   *
    * @param {ImageData} sourceImageData
    *   The source image data to be processed. Its shape needs not match
    * this.neuralNetParamsBase's [ input_height, input_width, input_channelCount ]
@@ -235,7 +242,14 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     );
   }
 
+
   /**
+   * This method is used for:
+   *   - Two web workers. Every worker has one neural network.
+   *   - Both workers scale source image data by themselves.
+   *   - No alignment mark filling.
+   *   - The 2nd worker call this method.
+   *
    *
    * @param {ImageData} sourceImageData
    *   The source image data to be processed. Its shape needs not match
@@ -257,6 +271,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
 
   /**
+   * This method is used for:
+   *   - One web worker. The worker has two neural networks.
+   *   - If ( bFill == true ), alignment mark filling.
+   *   - If ( bFill == false ), no alignment mark filling.
+   *
    *
    * @param {ImageData} sourceImageData
    *   The source image data to be processed. Its shape needs not match

@@ -556,7 +556,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *       - channel [ 0, 49 ] are used if the neural network representing alignment A.
    *       - channel [ 50, 99 ] are used if the neural network representing alignment B.
    *
-   * 
+   *
    * @param {ImageData} sourceImageData
    *   The source image data to be processed. Its shape needs not match
    * this.neuralNet[ 0 ]'s [ input_height, input_width, input_channelCount ] because
