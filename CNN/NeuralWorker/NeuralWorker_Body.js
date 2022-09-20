@@ -618,23 +618,28 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
     try {
 
-      let scaledInt32Array;
+      let scaledSourceTensor; // Only kept if need not fill alignment mark.
+      let scaledInt32Array; // Only used if need fill alignment mark.
       for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
         neuralNet = this.neuralNetArray[ i ];
 
-        // 1. Scale image.
-        if ( !scaledInt32Array ) {
-          let scaledSourceTensor;
+        // 1. Scale image (only do it once).
+        if (   ( !bFill && !scaledSourceTensor )
+            || (  bFill && !scaledInt32Array )
+           ) {
           try {
             scaledSourceTensor = neuralNet.create_ScaledSourceTensor_from_PixelData(
               sourceImageData,
               true // ( bForceInt32 == true )
             );
 
-            scaledInt32Array = scaledSourceTensor.dataSync();
+            if ( bFill )
+              scaledInt32Array = scaledSourceTensor.dataSync();
 
           } finally {
-            if ( scaledSourceTensor ) {
+            // If need fill alignment mark, the source tensor will be re-created for
+            // every neural network, the scaled source tensor needs not be kept.
+            if ( bFill && scaledSourceTensor ) {
               scaledSourceTensor.dispose();
               scaledSourceTensor = null;
             }
@@ -681,6 +686,14 @@ class NeuralWorker_Body extends AsyncWorker.Body {
             sourceTensor = null;
           }
         }
+      }
+
+    } finally {
+      if ( bFill && scaledSourceTensor ) {
+        scaledSourceTensor.dispose();
+        scaledSourceTensor = null;
+      }
+    }
 
     return {
       value: resultValueArray,
