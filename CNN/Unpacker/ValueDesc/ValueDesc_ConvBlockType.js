@@ -93,49 +93,56 @@ class ConvBlockType extends Int {
 
 /**
  *
- * @member {number} nConvBlockTypeId
- *   The convolution block type id (ValueDesc.ConvBlockType.Singleton.Ids.Xxx).
- *
  * @member {number} inputTensorCount
- *   The input tensor count for The convolution block type. Either 1 or 2.
+ *   The input tensor count for the convolution block type. Either 1 or 2.
  *
  * @member {number} outputTensorCount
- *   The output tensor count for The convolution block type. Either 1 or 2.
+ *   The output tensor count for the convolution block type. Either 1 or 2.
  *
  * @member {boolean} bDepthwise2Requested
- *   Whether needs depthwise2. Usually true only if SHUFFLE_NET_V2_BY_HEAD and SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (except
+ *   Whether needs depthwise2. Usually true only if SHUFFLE_NET_V2_BY_HEAD and
+ * SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (except
  * SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE).
  *
  * @member {boolean} bConcat1Requested
- *   Whether needs concat1 (i.e. concat after depthwise). Usually true only if SHUFFLE_NET_V2_BY_POINTWISE21_Xxx (except
+ *   Whether needs concat1 (i.e. concat after depthwise). Usually true only if
+ * SHUFFLE_NET_V2_BY_POINTWISE21_Xxx (except
  * SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE).
  *
  * @member {boolean} bAddInputToOutputRequested
  *   Whether needs add-input-to-output. Usually true only if MOBILE_NET_V2_BODY_TAIL.
  *
  * @member {boolean} bConcat2ShuffleSplitRequested
- *   Whether needs add-input-to-output. Usually true only if SHUFFLE_NET_V2_HEAD, SHUFFLE_NET_V2_BODY, SHUFFLE_NET_V2_TAIL.
+ *   Whether needs add-input-to-output. Usually true only if SHUFFLE_NET_V2_HEAD,
+ * SHUFFLE_NET_V2_BODY, SHUFFLE_NET_V2_TAIL.
  *
  * @member {boolean} bHigherHalfDifferent
- *   Whether the higher half channels will be handled different. Usually true only if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_Xxx.
+ *   Whether the higher half channels will be handled different. Usually true only if
+ * SHUFFLE_NET_V2_BY_MOBILE_NET_V1_Xxx.
  *
  * @member {boolean} bHigherHalfDepthwise2
- *   Whether the higher half channels will be processed by depthwise2. Usually true only if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD.
+ *   Whether the higher half channels will be processed by depthwise2. Usually true
+ * only if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD.
  *
  * @member {number} pointwise20_channelShuffler_outputGroupCount
  *   The output group count of the pointwise20's channel shuffler when
- * ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ). Either 0 or 2.
- * Usually 2 ony if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD or SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY.
+ * ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ).
+ * Either 0 or 2. Usually 2 only if
+ * SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD or SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY.
  *
  * @member {boolean} bPointwise21
- *   Whether the 2nd pointwise2 existed. Usually true only if SHUFFLE_NET_V2_HEAD, SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE,
- * SHUFFLE_NET_V2_BY_POINTWISE21_HEAD, SHUFFLE_NET_V2_BY_POINTWISE21_BODY. Note: Even if ( outputTensorCount == 2 ), it does not
- * means pointwise21 existed.
+ *   Whether the 2nd pointwise2 existed. Usually true only if SHUFFLE_NET_V2_HEAD,
+ * SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_POINTWISE,
+ * SHUFFLE_NET_V2_BY_POINTWISE21_HEAD, SHUFFLE_NET_V2_BY_POINTWISE21_BODY. Note:
+ * Even if ( outputTensorCount == 2 ), it does not mean pointwise21 existed.
  *
  */
 ConvBlockType.Info = class ConvBlockType_Info extends Int.Info {
 
   /**
+   * @param {number} nConvBlockTypeId
+   *   The convolution block type id (ValueDesc.ConvBlockType.Singleton.Ids.Xxx).
+   *
    *
    */
   constructor( nConvBlockTypeId, nameForMessage,
