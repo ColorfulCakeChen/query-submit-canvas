@@ -16,16 +16,16 @@ class NeuralWorker_Mode extends Int {
     super( 0, 3,
       {
         WORKER_2_NO_SCALE__FILL:     new NeuralWorker_Mode.Info(
-          0, "WORKER_2_NO_SCALE__FILL", 1 ),
+          0, "WORKER_2_NO_SCALE__FILL",    1 ),
 
         WORKER_2_NO_SCALE__NO_FILL:  new NeuralWorker_Mode.Info(
           1, "WORKER_2_NO_SCALE__NO_FILL", 1 ),
 
-          WORKER_2_SCALE__NO_FILL:   new NeuralWorker_Mode.Info(
-          2, "WORKER_2_SCALE__NO_FILL", 1 ),
+        WORKER_2_SCALE__NO_FILL:     new NeuralWorker_Mode.Info(
+          2, "WORKER_2_SCALE__NO_FILL",    1 ),
 
-          ONE_WORKER__NO_FILL:       new NeuralWorker_Mode.Info(
-          3, "ONE_WORKER__NO_FILL", 2 ),
+        ONE_WORKER__NO_FILL:         new NeuralWorker_Mode.Info(
+          3, "ONE_WORKER__NO_FILL",        2 ),
       }
     );
   }
