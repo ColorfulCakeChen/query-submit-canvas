@@ -16,16 +16,16 @@ class NeuralWorker_Mode extends Int {
     super( 0, 3,
       {
         WORKER_2_NO_SCALE__FILL:     new NeuralWorker_Mode.Info(
-          0, "WORKER_2_NO_SCALE__FILL",    1 ),
+          0, "WORKER_2_NO_SCALE__FILL",    1,  true ),
 
         WORKER_2_NO_SCALE__NO_FILL:  new NeuralWorker_Mode.Info(
-          1, "WORKER_2_NO_SCALE__NO_FILL", 1 ),
+          1, "WORKER_2_NO_SCALE__NO_FILL", 1, false ),
 
         WORKER_2_SCALE__NO_FILL:     new NeuralWorker_Mode.Info(
-          2, "WORKER_2_SCALE__NO_FILL",    1 ),
+          2, "WORKER_2_SCALE__NO_FILL",    1, false ),
 
         ONE_WORKER__NO_FILL:         new NeuralWorker_Mode.Info(
-          3, "ONE_WORKER__NO_FILL",        2 ),
+          3, "ONE_WORKER__NO_FILL",        2, false ),
       }
     );
   }
@@ -36,13 +36,26 @@ class NeuralWorker_Mode extends Int {
    *   The numeric identifier of NeuralWorker_Mode. (NeuralWorker.Mode.Singleton.Ids.Xxx)
    *
    * @return {number}
-   *   Return the web worker tensor count (1 or 2) of the
-   * NeuralWorker_Mode.Singleton.Ids.Xxx.
+   *   The web worker count (1 or 2) of the NeuralWorker_Mode.Singleton.Ids.Xxx.
    */
   static workerCount_get( nNeuralWorker_ModeId ) {
     let info = NeuralWorker_Mode.Singleton.getInfo_byId( nNeuralWorker_ModeId );
     if ( info )
       return info.workerCount;
+    return NaN;
+  }
+
+  /**
+   * @param {number} nNeuralWorker_ModeId
+   *   The numeric identifier of NeuralWorker_Mode. (NeuralWorker.Mode.Singleton.Ids.Xxx)
+   *
+   * @return {boolean}
+   *   Whether the worker mode will fill alignment mark in image before process it.
+   */
+  static bFill_get( nNeuralWorker_ModeId ) {
+    let info = NeuralWorker_Mode.Singleton.getInfo_byId( nNeuralWorker_ModeId );
+    if ( info )
+      return info.bFill;
     return NaN;
   }
 
@@ -52,8 +65,10 @@ class NeuralWorker_Mode extends Int {
 /**
  *
  * @member {number} workerCount
- *   The web worker tensor count for The convolution block type. Either 1 or 2.
+ *   The web worker count for The convolution block type. Either 1 or 2.
  *
+ * @member {boolean} bFill
+ *   Whether the worker mode will fill alignment mark in image before process it.
  *
  */
 NeuralWorker_Mode.Info = class NeuralWorker_Mode_Info extends Int.Info {
@@ -70,11 +85,12 @@ NeuralWorker_Mode.Info = class NeuralWorker_Mode_Info extends Int.Info {
    *
    */
   constructor( nNeuralWorker_ModeId, nameForMessage,
-    workerCount,
+    workerCount, bFill
   ) {
     super( nNeuralWorker_ModeId, nameForMessage );
 
     this.workerCount = workerCount;
+    this.bFill = bFill;
   }
 
 }

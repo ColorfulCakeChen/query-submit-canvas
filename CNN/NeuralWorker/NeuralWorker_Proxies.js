@@ -138,7 +138,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     // Note: How could the two neural networks determine all the actions of so many
     //       game objects? The method is to let the output of one neural network
-    //       contains all actions of all game objects. But only half of the output
+    //       contains all actions of all game objects.
+    
+    But only half of the output
     //       actions will be used because one neural network only control one alignment
     //       of the game world.
     //
