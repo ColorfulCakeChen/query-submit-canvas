@@ -131,13 +131,28 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     else
       totalWorkerCount = 1;
 
-    this.disposeWorkers();
-    this.workerProxyArray = Pool.OwnerArray.Pool.get_or_create_by();
-    this.workerProxyArray.length = totalWorkerCount;
+    // 1. Create web workers.
+    {
+      this.disposeWorkers();
+      this.workerProxyArray = Pool.OwnerArray.Pool.get_or_create_by();
+      this.workerProxyArray.length = totalWorkerCount;
 
-    for ( let i = 0; i < totalWorkerCount; ++i ) {
-      let workerProxy = this.workerProxyArray[ i ] = WorkerProxy.Pool.get_or_create_by();
-      workerProxy.initWorker_async( i );
+      let initArray = new Array( totalWorkerCount );
+      for ( let i = 0; i < totalWorkerCount; ++i ) {
+        this.workerProxyArray[ i ] = WorkerProxy.Pool.get_or_create_by();
+        initArray[ i ] = this.workerProxyArray[ i ].initWorker_async( i );
+      }
+
+//!!! ...unfinished... (2022/09/20)
+// could also await neural network creating?
+      await Promise.all( initArray );
+    }
+
+    // 2. Create neural networks.
+    if ( bTwoWorkers ) {
+      await workerProxy.NeuralNetArray_create_async( )
+    } else {
+
     }
   }
 
