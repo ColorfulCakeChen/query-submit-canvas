@@ -173,8 +173,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *
    * @yield {Float32Array}
    *   Resolve to { done: true, value: Float32Array }. The value is a Float32Array
-   * representing the neural network's result whose channel count is
-   * this.neuralNetParamsBase.output_channelCount.
+   * representing the neural network's result.
    */
   ImageData_scale_fork_fill_process_asyncGenerator( sourceImageData ) {
     return this.createResulter_by_postCommandArgs(
@@ -209,7 +208,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *
    * @return {Promise}
    *   Return a promise resolved to a Float32Array representing the neural network's
-   * result whose channel count is this.neuralNetParamsBase.output_channelCount.
+   * result.
    */
   Int32Array_fillable_process_async( sourceInt32Array, bFill ) {
     return this.createPromise_by_postCommandArgs(
@@ -243,8 +242,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *
    * @yield {Float32Array}
    *   Resolve to { done: true, value: Float32Array }. The value is a Float32Array
-   * representing the neural network's result whose channel count is
-   * this.neuralNetParamsBase.output_channelCount.
+   * representing the neural network's result.
    */
   ImageData_scale_fork_process_asyncGenerator( sourceImageData ) {
     const bFork = true;
@@ -271,7 +269,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *
    * @return {Promise}
    *   Return a promise resolved to a Float32Array representing the neural network's
-   * result whose channel count is this.neuralNetParamsBase.output_channelCount.
+   * result.
    */
   ImageData_scale_process_async( sourceImageData ) {
     const bFork = false;
