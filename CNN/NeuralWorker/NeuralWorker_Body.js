@@ -303,7 +303,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 // How about their performance?
 
   /**
+   * This method is used for:
+   *   - The 1st worker of two web workers. (Every worker has one neural network.)
+   *     - It will download scaled Int32Array from GPU memory. And post it back to
+   *         WorkerProxy.
+   *     - Fill alignment mark of this neural network, upload and process it.
    *
+   * 
    * @param {ImageData} sourceImageData
    *   The source image data to be processed.
    *
@@ -373,7 +379,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 // Because yield must before return, it seems not possible to transfer back without
 // waiting downloading completely.
 //
-//   /**
+//    /**
+//     * This method is used for:
+//     *   - The 1st worker of two web workers. (Every worker has one neural network.)
+//     *     - It will download scaled Int32Array from GPU memory. And post it back to
+//     *         WorkerProxy.
+//     *     - Continue to process the scale tensor (without waiting for dowloading it
+//     *         from GPU because there is no alignment mark filling).
 //    *
 //    * @param {ImageData} sourceImageData
 //    *   The source image data to be processed.
@@ -455,6 +467,11 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 //   }
 
   /**
+   * This method is used for:
+   *   - The 2nd worker of two web workers. (Every worker has one neural network.)
+   *     - It may or may not fill alignment mark acccording bFill.
+   *     - Upload to GPU and process it.
+   *
    *
    * @param {Int32Array} sourceInt32Array
    *   The source image data to be processed.
@@ -636,7 +653,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *       - channel [ 0, 49 ] are used if the neural network representing alignment A.
    *       - channel [ 50, 99 ] are used if the neural network representing alignment B.
    *
-   *    
+   *
    * @param {ImageData} sourceImageData
    *   The source image data to be processed.
    *
