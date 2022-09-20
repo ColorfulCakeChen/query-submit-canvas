@@ -654,25 +654,27 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
           let sourceTensor;
           let outputTensor;
-          let outputFloat32Array;
           try {
+
+            // 2.1 Prepare source tensor of every neural network.
+
+            // 2.1.1 Fill alignment mark and create new source tensor.
             if ( bFill ) {
               NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
                 this, i, scaledInt32Array );
 
               sourceTensor = tf.tensor3d(
-                scaledInt32Array, neuralNet.input_shape, "int32"
-              );
+                scaledInt32Array, neuralNet.input_shape, "int32" );
 
+            // 2.1.2 Clone the scaled source tensor since no need fill alignment mark.
             } else {
               sourceTensor = scaledSourceTensor.clone();
             }
 
-  //!!! ...unfinished... (2022/09/20)
-  // If ( bFill = fasle ), no need to re-create sourceTensor.
-
+            // 2.2 Process source tensor. (The sourceTensor will be released (in theroy).)
             outputTensor = neuralNet.apply( sourceTensor );
 
+            // 2.3 Record result.
             resultValueArray[ i ] = outputTensor.dataSync();
             resultTransferableObjectArray[ i ] = resultValueArray[ i ].buffer;
       
