@@ -139,6 +139,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     );
   }
 
+
   /**
    *
    * @param {ImageData} sourceImageData
@@ -203,6 +204,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
       [ sourceInt32Array.buffer ]
     );
   }
+
 
   /**
    *
