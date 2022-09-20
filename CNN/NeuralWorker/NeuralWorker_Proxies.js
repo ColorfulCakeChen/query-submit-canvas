@@ -223,7 +223,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 //!!! ...unfinished... (2022/09/20)
 
   /** Load all evolution versus weights ranges. */
-  async evolutionVersusRangeArray_loadAsync() {
+  async evolutionVersusRangeArray_load_async() {
 
     if ( !this.evolutionVersusRangeArray ) {
       this.evolutionVersusRangeArray = DEvolution.VersusRangeArray.Pool.get_or_create_by(
