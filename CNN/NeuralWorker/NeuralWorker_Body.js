@@ -302,10 +302,11 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
   /**
    * This method is used for:
-   *   - The 1st worker of two web workers. (Every worker has one neural network.)
-   *     - It will download scaled Int32Array from GPU memory. And post it back to
+   *   - Two web workers. Every worker has one neural network.
+   *   - It will download scaled Int32Array from GPU memory. And post it back to
    *         WorkerProxy.
-   *     - Fill alignment mark of this neural network, upload and process it.
+   *   - Fill alignment mark of this neural network, upload to GPU and process it.
+   *   - The 1st worker calls this method.
    *
    * 
    * @param {ImageData} sourceImageData
@@ -466,9 +467,10 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
   /**
    * This method is used for:
-   *   - The 2nd worker of two web workers. (Every worker has one neural network.)
-   *     - It may or may not fill alignment mark acccording bFill.
-   *     - Upload to GPU and process it.
+   *   - Two web workers. Every worker has one neural network.
+   *   - (may or may not) Fill alignment mark of this neural network, upload to GPU
+   *       and process it.
+   *   - The 2nd worker calls this method.
    *
    *
    * @param {Int32Array} sourceInt32Array
