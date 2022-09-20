@@ -589,7 +589,62 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       transferableObjectArray: [ outputFloat32Array.buffer ]
     };
   }
-  
+
+  /**
+   * Process input image data by all (suppose two) neural networks in this web worker.
+   *
+   * @param {ImageData} sourceImageData
+   *   The source image data to be processed.
+   *
+   *   - Its shape needs not match this.neuralNet's [ input_height,
+   *       input_width, input_channelCount ] because it will be scaled to the correct
+   *       shape before passed into the neural network.
+   *
+   * @yield {Float32Array[]}
+   *   Resolve to { done: true, value: { value: [ Float32Array, Float32Array ],
+   * transferableObjectArray: [ Float32Array.buffer, Float32Array.buffer ] }. The value
+   * is an array of Float32Array representing all neural networks' result whose channel
+   * count is this.neuralNetArray[].output_channelCount.
+   */
+   async* ImageData_scale_fill_process_fill_process( sourceImageData ) {
+
+//!!! ...unfinished... (2022/09/20)
+
+    // 1. Scale image.
+    let scaledSourceTensor;
+    let scaledInt32Array;
+    try {
+      scaledSourceTensor = this.neuralNet.create_ScaledSourceTensor_from_PixelData(
+        sourceImageData,
+        true // ( bForceInt32 == true )
+      );
+
+      scaledInt32Array = scaledSourceTensor.dataSync();
+
+    } catch ( e ) {
+      console.error( e );
+      //debugger;
+      scaledInt32Array = new Int32Array(); // Yield an empty Int32Array, if failed.
+
+    } finally {
+      if ( scaledSourceTensor ) {
+        scaledSourceTensor.dispose();
+        scaledSourceTensor = null;
+      }
+    }
+
+    yield {  // Post back to WorkerProxy.
+      value: scaledInt32Array,
+      transferableObjectArray: [ scaledInt32Array.buffer ]
+    };
+
+    // 2. Process image by neural network.
+    const bFill = true;
+    let Int32Array_processor = Int32Array_fillable_process( scaledInt32Array, bFill );
+    let result = yield* Int32Array_processor;
+    return result;
+  }
+
 }
 
 NeuralWorker_Body.Singleton = new NeuralWorker_Body(); // Create worker body.
