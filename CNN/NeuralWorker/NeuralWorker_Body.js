@@ -613,7 +613,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    */
   async* ImageData_scale_once_process_multiple( sourceImageData, bFill ) {
 
-//!!! ...unfinished... (2022/09/20)
+    let resultValueArray = new Array( this.neuralNetArray.length );
+    let resultTransferableObjectArray = new Array( this.neuralNetArray.length );
 
     try {
 
@@ -644,44 +645,46 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
         // 2. Process image by neural network.
 
-        let sourceTensor3d;
+        let sourceTensor;
         let outputTensor;
         let outputFloat32Array;
+        try {
+          if ( bFill ) {
+            NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
+              this, i, scaledInt32Array );
+          }
 
-        if ( bFill ) {
-          NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
-            this, scaledInt32Array );
-        }
+//!!! ...unfinished... (2022/09/20)
+// If ( bFill = fasle ), no need to re-create sourceTensor.
 
-        sourceTensor3d = tf.tensor3d(
-          scaledInt32Array, this.neuralNet.input_shape, "int32"
-        );
+          sourceTensor = tf.tensor3d(
+            scaledInt32Array, neuralNet.input_shape, "int32"
+          );
 
-          outputTensor = this.neuralNet.apply( sourceTensor3d );
-          outputFloat32Array = outputTensor.dataSync();
+          outputTensor = neuralNet.apply( sourceTensor );
 
-        } catch ( e ) {
-          console.error( e );
-          //debugger;
-          outputFloat32Array = new Float32Array(); // Return an empty Float32Array, if failed.
-
+          resultValueArray[ i ] = outputTensor.dataSync();
+          resultTransferableObjectArray[ i ] = resultValueArray[ i ].buffer;
+    
         } finally {
           if ( outputTensor ) {
             outputTensor.dispose();
             outputTensor = null;
           }
 
-          // In theory, it should already have been released by neural network. For avoiding
-          // memory leak (e.g. some exception when .apply()), release it again.
-          if ( sourceTensor3d ) {
-            sourceTensor3d.dispose();
-            sourceTensor3d = null;
+          // In theory, it should already have been released by neural network.
+          // For avoiding memory leak (e.g. some exception when .apply()),
+          // release it again.
+          //
+          if ( sourceTensor ) {
+            sourceTensor.dispose();
+            sourceTensor = null;
           }
         }
 
     return {
-      value: outputFloat32Array,
-      transferableObjectArray: [ outputFloat32Array.buffer ]
+      value: resultValueArray,
+      transferableObjectArray: resultTransferableObjectArray
     };
   }
 
