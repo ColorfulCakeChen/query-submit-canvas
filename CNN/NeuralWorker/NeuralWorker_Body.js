@@ -154,19 +154,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         // }
       }
 
-      if ( bAllOk ) {
-        // compiling shaders if backend is webgl.
-        NeuralWorker_Body.NeuralNetArray_dryRun_ifWebGL.call( this );
+      // compiling shaders if backend is webgl.
+      NeuralWorker_Body.NeuralNetArray_dryRun_ifWebGL.call( this );
+
+      if ( bAllOk )
         return { value: true };
-
-      } else {
+      else
         return { value: false };
-      }
-
-    } catch ( e ) {
-      console.error( e );
-      //debugger;
-      return { value: false };
 
     } finally {
       if ( progress ) {
@@ -193,10 +187,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         neuralNet = this.neuralNetArray[ i ];
         sourceTensor = tf.zeros( this.neuralNet.input_shape, "int32" );
         outputTensor = this.neuralNet.apply( sourceTensor );
-
-      } catch ( e ) {
-        console.error( e );
-        //debugger;
   
       } finally {
         if ( outputTensor ) {
@@ -215,17 +205,31 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /**
-   * @param {integer} markValue
-   *   A value representing which alignment this neural network plays currently.
+   * @param {integer[]} markValueArray
+   *   An array of values representing every neural network playing which alignment.
    * For example, in a OX (connect-three) game:
-   *   - ( markValue == 0 ) means this neural network plays O side currently.
-   *   - ( markValue == 255 ) means this neural network plays X side currently.
+   *   - ( markValueArray[ 0 ] == 0 ) means neural network 0 plays O side currently.
+   *   - ( markValueArray[ 1 ] == 255 ) means neural network 1 plays X side currently.
    *
    * @yield {boolean}
    *   - Yield { done: true, value: { value: true } }.
    */
-  async* alignmentMark_setValue( markValue ) {
-    this.alignmentMarkValue = markValue;
+  async* alignmentMarkArray_setValue( markValueArray ) {
+
+    // 0. Prepare container for all neural networks' mark value.
+    {
+      if ( this.alignmentMarkValueArray )
+        this.alignmentMarkValueArray.length = markValueArray.length;
+      else
+        this.alignmentMarkValueArray
+          = Recyclable.Array.Pool.get_or_create_by( markValueArray.length );
+    }
+
+    // 1. Copy the alignment mark values.
+    for ( let i = 0; i < this.alignmentMarkValueArray.length; ++i ) {
+      this.alignmentMarkValueArray[ i ] = markValueArray[ i ];
+    }
+
     return { value: true };
   }
 
