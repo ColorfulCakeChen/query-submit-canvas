@@ -142,19 +142,8 @@ class PerformanceTestCase extends Recyclable.Root {
       progress.disposeResources_and_recycleToPool();
       progress = null;
 
-      console.log( `NeuralNet.${this.testCaseName}: tensorWeightCount = { `
-        + `Extracted: ${neuralNet.tensorWeightCountExtracted}, `
-        + `Total: ${neuralNet.tensorWeightCountTotal} }, `
-        + `stageCount=${neuralNet.stageCount}, `
-        + `blockCountTotal=${neuralNet.blockCountTotal}, `
-        + `stageLast_shape=`
-          + `( ${neuralNet.stageLast_output_height}, `
-          + `${neuralNet.stageLast_output_width}, `
-          + `${neuralNet.stageLast_output_channelCount} ), `
-        + `output_shape=`
-          + `( ${neuralNet.output_height}, ${neuralNet.output_width}, `
-          + `${neuralNet.output_channelCount} ).`
-      );
+      let strWeightCountInfo = neuralNet.toString_WeightCount();
+      console.log( `NeuralNet.${this.testCaseName}: ${strWeightCountInfo}.` );
 
     } catch ( e ) {
       debugger;

@@ -687,5 +687,26 @@ class NeuralNet_Base extends Recyclable.Root {
     return str;
   }
 
+  /**
+   * @return {string} The description string of the weight count.
+   */
+  toString_WeightCount() {
+    let str = ``
+      + `tensorWeightCount = { `
+      + `Extracted: ${this.tensorWeightCountExtracted}, `
+      + `Total: ${this.tensorWeightCountTotal} }, `
+      + `stageCount=${this.stageCount}, `
+      + `blockCountTotal=${this.blockCountTotal}, `
+      + `stageLast_shape=`
+        + `( ${this.stageLast_output_height}, `
+        + `${this.stageLast_output_width}, `
+        + `${this.stageLast_output_channelCount} ), `
+      + `output_shape=`
+        + `( ${this.output_height}, ${this.output_width}, `
+        + `${this.output_channelCount} )`
+      ;
+    return str;
+  }
+
 }
 

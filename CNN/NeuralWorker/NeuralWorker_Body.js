@@ -116,7 +116,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       let bInitOk = neuralNet.init( progress, inputWeightArray, 0, neuralNetParams );
 
       if ( false == bInitOk )
-        throw Error( `NeuralWorker_Body.neuralNet_load_async(): `
+        throw Error( `NeuralWorker_Body.NeuralNet_create(): `
           + `Failed to initialize neuralNet object. `
           + `Progress ( ${progress.valuePercentage} ). `
           + `${neuralNetParams}`
@@ -126,20 +126,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
       // (2022/09/17 Remarked) For Debug.
       // {
-      //   let logMsg = `NeuralWorker_Body.NeuralNet_create(): `
-      //     + `tensorWeightCount = { `
-      //     + `Extracted: ${neuralNet.tensorWeightCountExtracted}, `
-      //     + `Total: ${neuralNet.tensorWeightCountTotal} }, `
-      //     + `stageCount=${neuralNet.stageCount}, `
-      //     + `blockCountTotal=${neuralNet.blockCountTotal}, `
-      //     + `stageLast_shape=`
-      //       + `( ${neuralNet.stageLast_output_height}, `
-      //       + `${neuralNet.stageLast_output_width}, `
-      //       + `${neuralNet.stageLast_output_channelCount} ), `
-      //     + `output_shape=`
-      //       + `( ${neuralNet.output_height}, ${neuralNet.output_width}, `
-      //       + `${neuralNet.output_channelCount} ).`
-      //
+      //   let strWeightCountInfo = neuralNet.toString_WeightCount();
+      //   let logMsg = `NeuralWorker_Body.NeuralNet_create(): ${strWeightCountInfo}.`;
       //   console.log( logMsg );
       // }
 
