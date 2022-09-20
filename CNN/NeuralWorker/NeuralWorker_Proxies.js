@@ -228,7 +228,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Resolved to true, if success.
    *   - Resolved to false, if failed.
    */
-  alignmentMarkArray_setValue_async( markValueArray ) {
+  async alignmentMarkArray_setValue_async( markValueArray ) {
 
     if ( markValueArray.length != 2 )
       throw Error( `NeuralWorker.Proxies.alignmentMarkArray_setValue_async(): `
