@@ -72,6 +72,12 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 //!!! ...unfinished... (2022/08/26)
     this.disposeWorkers();
 
+    this.hardwareConcurrency = undefined;
+
+    this.bTwoWorkers = undefined;
+    this.weightsAPIKey = undefined;
+    this.weightsSpreadsheetId = undefined;
+
     super.disposeResources();
   }
 
@@ -98,22 +104,13 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - If null, Google Visualization Table Query API will be used.
    *   - If not null, Google Sheets API v4 will be used.
    *
-   * @param {NeuralNet.ParamsBase} neuralNetParamsBase
-   *   The configuration of the neural network to be created by web worker.
-   *
    * @param {boolean} bTwoWorkers
    *   If true, two web workers will be created. If false, one worker will be created.
    */
-  async init_async(
-    weightsSpreadsheetId, weightsAPIKey, neuralNetParamsBase, bTwoWorkers ) {
-
-//!!! ...unfinished... (2022/09/09) should be set in neuralNetParamsBase.
-//     // Because every web worker will copy the input, there is not necessary to keep input.
-//     neuralNetParamsBase.bKeepInputTensor = false;
+  async init_async( weightsSpreadsheetId, weightsAPIKey, bTwoWorkers ) {
 
     this.weightsSpreadsheetId = weightsSpreadsheetId;
     this.weightsAPIKey = weightsAPIKey;
-    this.neuralNetParamsBase = neuralNetParamsBase;
     this.bTwoWorkers = bTwoWorkers;
 
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
@@ -203,7 +200,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       let createPromiseArray = new Array( this.workerProxyArray.length );
       for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
         createPromiseArray[ i ] = this.workerProxyArray[ i ].NeuralNetArray_create_async(
-          neuralNetParamsBaseArray[ i ], weightArrayBufferArray[ i ] );
+          [ neuralNetParamsBaseArray[ i ] ], [ weightArrayBufferArray[ i ] ] );
       }
 
       let createOkArray = await Promise.all( createPromiseArray );
