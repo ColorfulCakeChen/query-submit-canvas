@@ -253,6 +253,27 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     );
   }
 
+
+  /**
+   *
+   * @param {ImageData} sourceImageData
+   *   The source image data to be processed. Its shape needs not match
+   * this.neuralNetParamsBase's [ input_height, input_width, input_channelCount ]
+   * because it will be scaled to the correct shape before passed into the neural
+   * network.
+   *
+   * @return {Promise}
+   *   Return a promise resolved to an array of Float32Array representing the neural
+   * networks' result.
+   */
+  ImageData_scale_once_process_multiple_async( sourceImageData, bFill ) {
+    const bFork = false;
+    return this.createPromise_by_postCommandArgs(
+      [ "ImageData_scale_once_process_multiple", sourceImageData, bFill ],
+      [ sourceImageData.data.buffer ]
+    );
+  }
+
 }
 
 // Assume the web worker module javascript file is a sibling file (i.e. inside
