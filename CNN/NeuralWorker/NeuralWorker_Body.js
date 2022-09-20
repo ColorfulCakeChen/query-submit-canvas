@@ -10,7 +10,8 @@ import { tensorflowJsURL } from "./NeuralWorker/NeuralWorker_Common.js";
 importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
 
 /**
- * The implementation of a neural network web worker.
+ * The implementation of a neural network web worker. It may own one or two neural
+ * network.
  *
  */
 class NeuralWorker_Body extends AsyncWorker.Body {
@@ -19,9 +20,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   constructor() {
     super(); // register callback for handling messages sent from NeuralWorker_Proxy.
   }
-
-//!!! ...unfinished... (2022/09/18)
-// need handle two neural network in one web worker.
 
   /** @override */
   async* disposeResources() {
@@ -237,7 +235,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 //!!! ...unfinished... (2022/09/18)
 // Perhaps, alignment mark filling could also fill some of the previous result of
 // this neural network. (i.e. become recurrent neural network.)
-    
+
   /**
    * This method will fill some part of the image by alignment mark value so that the
    * neural network could distunguish which alignment it represents.

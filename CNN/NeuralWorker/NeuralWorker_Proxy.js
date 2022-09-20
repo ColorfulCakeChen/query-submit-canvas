@@ -3,7 +3,6 @@ export { NeuralWorker_Proxy as Proxy };
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
 import * as AsyncWorker from "../util/AsyncWorker.js";
-//import * as ValueMax from "../util/ValueMax.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
 
 //!!! ...unfinished... (2022/09/15)
@@ -81,6 +80,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   }
 
   /**
+   * Create one neural network in the web worker body.
+   *
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
    *   The configuration of the neural network to be created. This configuration will be
    * owned (i.e. kept and destroyed) by this NeuralWorker.Proxy.
@@ -97,7 +98,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     this.NeuralNetParamsBase_dispose();
     this.neuralNetParamsBase = neuralNetParamsBase;
     return this.createPromise_by_postCommandArgs(
-      [ "NeuralNet_create", neuralNetParamsBase, weightArrayBuffer ],
+      [ "NeuralNetArray_create", [ neuralNetParamsBase ], [ weightArrayBuffer ] ],
       [ weightArrayBuffer ]
     );
   }
@@ -113,7 +114,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    */
   alignmentMark_setValue_async( markValue ) {
     return this.createPromise_by_postCommandArgs(
-      [ "alignmentMark_setValue", markValue ]
+      [ "alignmentMarkArray_setValue", [ markValue ] ]
     );
   }
 
