@@ -183,6 +183,18 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    */
   async NeuralNetArray_create_async( neuralNetParamsBaseArray, weightArrayBufferArray ) {
 
+    if ( neuralNetParamsBaseArray.length != 2 )
+      throw Error( `NeuralWorker.Proxies.NeuralNetArray_create_async(): `
+        + `neuralNetParamsBaseArray.length ( ${neuralNetParamsBaseArray.length} ) `
+        + `should be 2.`
+      );
+
+      if ( weightArrayBufferArray.length != 2 )
+      throw Error( `NeuralWorker.Proxies.NeuralNetArray_create_async(): `
+        + `weightArrayBufferArray.length ( ${weightArrayBufferArray.length} ) `
+        + `should be 2.`
+      );
+
 //!!! ...unfinished... (2022/09/20)
 
     // 2. Create neural networks.
