@@ -82,12 +82,12 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /**
    * Create neural network(s) in the web worker body.
    *
-   * @param {NeuralNet.ParamsBase[]} neuralNetParamsBase
+   * @param {NeuralNet.ParamsBase[]} neuralNetParamsBaseArray
    *   An array of configurations for the neural network to be created. These
    * configurations (exclude the array) will be owned (i.e. kept and destroyed)
    * by this NeuralWorker.Proxy.
    *
-   * @param {ArrayBuffer[]} weightArrayBuffer
+   * @param {ArrayBuffer[]} weightArrayBufferArray
    *   An array of every neural network's weights. Every element  will be interpreted
    * as Float32Array.
    *

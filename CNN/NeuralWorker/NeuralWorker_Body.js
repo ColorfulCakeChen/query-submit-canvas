@@ -63,10 +63,10 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /**
-   * @param {Object[]} neuralNetParamsBase
+   * @param {Object[]} neuralNetParamsBaseArray
    *   An array of object. Every element is an object looks like NeuralNet.ParamsBase.
    *
-   * @param {ArrayBuffer[]} weightArrayBuffer
+   * @param {ArrayBuffer[]} weightArrayBufferArray
    *   An array of every neural network's weights. Every element  will be interpreted
    * as Float32Array.
    *
