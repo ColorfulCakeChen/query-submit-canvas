@@ -6,7 +6,8 @@ import * as GSheets from "../util/GSheets.js";
 //import * as ValueMax from "../util/ValueMax.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
 import * as DEvolution from "../DEvolution.js";
-import { Proxy as WorkerProxy } from "./NeuralWorker_Proxy.js";
+import { Proxy as NeuralWorker_Proxy } from "./NeuralWorker_Proxy.js";
+import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
 
 /**
  * The container of WorkerProxy. It orchestrates these WorkerProxy. Especially, it
@@ -32,6 +33,26 @@ import { Proxy as WorkerProxy } from "./NeuralWorker_Proxy.js";
  * a promise. The promise will resolve with an array of typed-array. Every typed-array
  * is the output of one neural network.
  *
+ *
+ * @member {string} weightsSpreadsheetId
+ *   The Google Sheets spreadsheetId of neural network weights. Every worker will
+ * load weights from the spreadsheet to initialize one neural network.
+ *
+ * @member {string} weightsAPIKey
+ *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
+ *   - If null, Google Visualization Table Query API will be used.
+ *   - If not null, Google Sheets API v4 will be used.
+ *
+ * @member {numner} nNeuralWorker_ModeId
+ *   The numeric identifier of neural worker mode (i.e.
+ * NeuralWorker.Mode.Singleton.Ids.Xxx).
+ *
+ * @member {number} neuralNetCount
+ *   There are how many neural networks created. It is always 2 (because of differential
+ * evolution) no matter how totalWorkerCount is.
+ *
+ * @member {number} totalWorkerCount
+ *   There are how many web worker(s) created.
  *
  * @member {number} totalWorkerCount
  *   There are how many web worker(s) created.
@@ -73,9 +94,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.disposeWorkers();
 
     this.hardwareConcurrency = undefined;
-
-    this.bTwoWorkers = undefined;
     this.neuralNetCount = undefined;
+
+    this.nNeuralWorker_ModeId = undefined;
     this.weightsAPIKey = undefined;
     this.weightsSpreadsheetId = undefined;
 
@@ -96,25 +117,14 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * Initialize this worker proxy controller. It will create two neural networks in
    * one or two web worker(s).
    *
-   * @param {string} weightsSpreadsheetId
-   *   The Google Sheets spreadsheetId of neural network weights. Every worker will
-   * load weights from the spreadsheet to initialize one neural network.
-   *
-   * @param {string} weightsAPIKey
-   *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
-   *   - If null, Google Visualization Table Query API will be used.
-   *   - If not null, Google Sheets API v4 will be used.
-   *
-   * @param {boolean} bTwoWorkers
-   *   If true, two web workers will be created. If false, one worker will be created.
    */
-  async init_async( weightsSpreadsheetId, weightsAPIKey, bTwoWorkers ) {
+  async init_async( weightsSpreadsheetId, weightsAPIKey, nNeuralWorker_ModeId ) {
 
     this.weightsSpreadsheetId = weightsSpreadsheetId;
     this.weightsAPIKey = weightsAPIKey;
-    this.neuralNetCount = 2; // Always two neural network (for differential evolution).
-    this.bTwoWorkers = bTwoWorkers;
+    this.nNeuralWorker_ModeId = nNeuralWorker_ModeId;
 
+    this.neuralNetCount = 2; // Always two neural network (for differential evolution).
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
 
     // Two web workers are sufficient.
@@ -132,11 +142,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     //       actions will be used because one neural network only control one alignment
     //       of the game world.
     //
-    let totalWorkerCount;
-    if ( bTwoWorkers )
-      totalWorkerCount = 2;
-    else
-      totalWorkerCount = 1;
+    let totalWorkerCount = NeuralWorker_Mode.workerCount_get( nNeuralWorker_ModeId );
 
     // 1. Create web workers.
     let initOkArray;
