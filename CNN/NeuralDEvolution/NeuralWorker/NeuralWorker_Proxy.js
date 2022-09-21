@@ -88,8 +88,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * by this NeuralWorker.Proxy.
    *
    * @param {ArrayBuffer[]} weightArrayBufferArray
-   *   An array of every neural network's weights. Every element  will be interpreted
-   * as Float32Array.
+   *   An array of every neural network's weights. Every element will be interpreted
+   * as Float32Array. Every element will be transferred to web worker (i.e. their
+   * .byteLength will become zero).
    *
    * @return {Promise}
    *   Return a promise:
@@ -112,9 +113,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     }
 
     // 2. Collect the transferable object array. 
-    let transferableObjectArray = weightArrayBufferArray.length;
+    let transferableObjectArray = new Array( weightArrayBufferArray.length );
     for ( let i = 0; i < weightArrayBufferArray.length; ++i ) {
-      transferableObjectArray[ i ] = weightArrayBufferArray[ i ].buffer;
+      transferableObjectArray[ i ] = weightArrayBufferArray[ i ];
     }
 
     // 3. Inform web work to create neural networks.

@@ -84,6 +84,11 @@ class PerformanceTestCase extends Recyclable.Root {
   async prepare_async() {
     try {
 
+      let neuralWorkerProxies = this.neuralWorkerProxies
+        = NeuralWorker.Proxies.Pool.get_or_create_by();
+
+      let bInitOkPromise = neuralWorkerProxies.init_async( this.nNeuralWorker_ModeId );
+
       if ( !PerformanceTestCase.randomTestWeightArray ) {
         const weightArrayLength = ( 100 * 1024 * 1024 );
         PerformanceTestCase.randomTestWeightArray = new Float32Array( weightArrayLength );
@@ -99,11 +104,6 @@ class PerformanceTestCase extends Recyclable.Root {
         );
       }
 
-      let neuralWorkerProxies = this.neuralWorkerProxies
-        = NeuralWorker.Proxies.Pool.get_or_create_by();
-
-      let bInitOkPromise = neuralWorkerProxies.init_async( this.nNeuralWorker_ModeId );
-
       let neuralNetParamsBaseArray;
       {
         let neuralNetParams0 = this.neuralNetParamsBase.clone();
@@ -111,11 +111,11 @@ class PerformanceTestCase extends Recyclable.Root {
         neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
       }
 
-//!!! ...unfinished... (2022/09/21)
       let weightArrayBufferArray;
       {
-
-        weightArrayBufferArray = [ ???, ??? ];
+        let weightArray0 = new Float32Array( PerformanceTestCase.randomTestWeightArray );
+        let weightArray1 = new Float32Array( PerformanceTestCase.randomTestWeightArray );
+        weightArrayBufferArray = [ weightArray0.buffer, weightArray1.buffer ];
       }
   
       let bInitOk = await bInitOkPromise;
@@ -125,9 +125,7 @@ class PerformanceTestCase extends Recyclable.Root {
 
 //!!! ...unfinished... (2022/09/21)
       let bCreateOk = neuralWorkerProxies.NeuralNetArray_create_async(
-        neuralNetParamsBaseArray, ???? weightArrayBufferArray
-
-        PerformanceTestCase.randomTestWeightArray, 0, extractedParams );
+        neuralNetParamsBaseArray, weightArrayBufferArray );
 
       if ( false == bCreateOk )
         throw Error( `Failed to create neural networks by neuralWorkerProxies. `
