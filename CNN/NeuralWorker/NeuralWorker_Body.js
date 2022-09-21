@@ -300,6 +300,131 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 // should also test, if do these 2 neural network in only one worker.
 // How about their performance?
 
+
+  /**
+   * Process input image data by all (suppose two) neural networks in this web worker.
+   *
+   * This method is used for:
+   *   - One web worker. The worker has two neural networks.
+   *
+   *   - If ( bFill == true ), alignment mark filling.
+   *     - The worker will download scaled Int32Array from GPU memory.
+   *     - Fill alignment mark of the 1st neural network, upload and process it.
+   *     - Fill alignment mark of the 2nd neural network, upload and process it.
+   *
+   *   - If ( bFill == false ), no alignment mark filling.
+   *     - The worker needs not wait for downloading scaled Int32Array from GPU memory.
+   *         and needs not upload alignment mark filled Int32Array to GPU.
+   *     - So every neural network always output twice channels. For example,
+   *       - The neural network output 100 channels.
+   *       - channel [ 0, 49 ] are used if the neural network representing alignment A.
+   *       - channel [ 50, 99 ] are used if the neural network representing alignment B.
+   *
+   *
+   * @param {ImageData} sourceImageData
+   *   The source image data to be processed.
+   *
+   *   - Its shape needs not match this.neuralNet's [ input_height,
+   *       input_width, input_channelCount ] because it will be scaled to the correct
+   *       shape before passed into the neural network.
+   *
+   * @param {boolean} bFill
+   *   If true, the source Int32Array will be filled by alignment mark before be
+   * converted to tensor3d. If false, it will be converted to tensor3d directly
+   * without filling alignment mark.
+   *
+   * @yield {Float32Array[]}
+   *   Resolve to { done: true, value: { value: [ Float32Array, Float32Array ],
+   * transferableObjectArray: [ Float32Array.buffer, Float32Array.buffer ] }. The value
+   * is an array of Float32Array representing all neural networks' result whose channel
+   * count is this.neuralNetArray[].output_channelCount.
+   */
+  async* ImageData_scale_once_process_multiple( sourceImageData, bFill ) {
+
+    let resultValueArray = new Array( this.neuralNetArray.length );
+    let resultTransferableObjectArray = new Array( this.neuralNetArray.length );
+
+    // Ensure all tensors be released, even if .apply() has exception.
+    tf.tidy( () => {
+      try {
+
+        let scaledSourceTensor; // Only kept if need not fill alignment mark.
+        let scaledInt32Array; // Only used if need fill alignment mark.
+        for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
+          neuralNet = this.neuralNetArray[ i ];
+
+          // 1. Scale image (only do it once).
+          if (   ( !bFill && !scaledSourceTensor )
+              || (  bFill && !scaledInt32Array )
+            ) {
+            try {
+              scaledSourceTensor = neuralNet.create_ScaledSourceTensor_from_PixelData(
+                sourceImageData,
+                true // ( bForceInt32 == true )
+              );
+
+              if ( bFill )
+                scaledInt32Array = scaledSourceTensor.dataSync();
+
+            } finally {
+              // If need fill alignment mark, the source tensor will be re-created for
+              // every neural network, the scaled source tensor needs not be kept.
+              if ( bFill && scaledSourceTensor ) {
+                scaledSourceTensor.dispose();
+                scaledSourceTensor = null;
+              }
+            }
+          }
+
+          // 2. Process image by neural network.
+          let sourceTensor;
+          let outputTensor;
+          try {
+
+            // 2.1 Prepare source tensor of every neural network.
+
+            // 2.1.1 Fill alignment mark and create new source tensor.
+            if ( bFill ) {
+              NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
+                this, i, scaledInt32Array );
+
+              sourceTensor = tf.tensor3d(
+                scaledInt32Array, neuralNet.input_shape, "int32" );
+
+            // 2.1.2 Clone the scaled source tensor since no need fill alignment mark.
+            } else {
+              sourceTensor = scaledSourceTensor.clone();
+            }
+
+            // 2.2 Process source tensor. (The sourceTensor will be released (in theroy).)
+            outputTensor = neuralNet.apply( sourceTensor );
+
+            // 2.3 Record result.
+            resultValueArray[ i ] = outputTensor.dataSync();
+            resultTransferableObjectArray[ i ] = resultValueArray[ i ].buffer;
+      
+          } finally {
+            if ( outputTensor ) {
+              outputTensor.dispose();
+              outputTensor = null;
+            }
+          }
+        }
+
+      } finally {
+        if ( scaledSourceTensor ) {
+          scaledSourceTensor.dispose();
+          scaledSourceTensor = null;
+        }
+      }
+    } );
+
+    return {
+      value: resultValueArray,
+      transferableObjectArray: resultTransferableObjectArray
+    };
+  }
+
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
@@ -638,130 +763,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     return {
       value: outputFloat32Array,
       transferableObjectArray: [ outputFloat32Array.buffer ]
-    };
-  }
-
-  /**
-   * Process input image data by all (suppose two) neural networks in this web worker.
-   *
-   * This method is used for:
-   *   - One web worker. The worker has two neural networks.
-   *
-   *   - If ( bFill == true ), alignment mark filling.
-   *     - The worker will download scaled Int32Array from GPU memory.
-   *     - Fill alignment mark of the 1st neural network, upload and process it.
-   *     - Fill alignment mark of the 2nd neural network, upload and process it.
-   *
-   *   - If ( bFill == false ), no alignment mark filling.
-   *     - The worker needs not wait for downloading scaled Int32Array from GPU memory.
-   *         and needs not upload alignment mark filled Int32Array to GPU.
-   *     - So every neural network always output twice channels. For example,
-   *       - The neural network output 100 channels.
-   *       - channel [ 0, 49 ] are used if the neural network representing alignment A.
-   *       - channel [ 50, 99 ] are used if the neural network representing alignment B.
-   *
-   *
-   * @param {ImageData} sourceImageData
-   *   The source image data to be processed.
-   *
-   *   - Its shape needs not match this.neuralNet's [ input_height,
-   *       input_width, input_channelCount ] because it will be scaled to the correct
-   *       shape before passed into the neural network.
-   *
-   * @param {boolean} bFill
-   *   If true, the source Int32Array will be filled by alignment mark before be
-   * converted to tensor3d. If false, it will be converted to tensor3d directly
-   * without filling alignment mark.
-   *
-   * @yield {Float32Array[]}
-   *   Resolve to { done: true, value: { value: [ Float32Array, Float32Array ],
-   * transferableObjectArray: [ Float32Array.buffer, Float32Array.buffer ] }. The value
-   * is an array of Float32Array representing all neural networks' result whose channel
-   * count is this.neuralNetArray[].output_channelCount.
-   */
-  async* ImageData_scale_once_process_multiple( sourceImageData, bFill ) {
-
-    let resultValueArray = new Array( this.neuralNetArray.length );
-    let resultTransferableObjectArray = new Array( this.neuralNetArray.length );
-
-    // Ensure all tensors be released, even if .apply() has exception.
-    tf.tidy( () => {
-      try {
-
-        let scaledSourceTensor; // Only kept if need not fill alignment mark.
-        let scaledInt32Array; // Only used if need fill alignment mark.
-        for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
-          neuralNet = this.neuralNetArray[ i ];
-
-          // 1. Scale image (only do it once).
-          if (   ( !bFill && !scaledSourceTensor )
-              || (  bFill && !scaledInt32Array )
-            ) {
-            try {
-              scaledSourceTensor = neuralNet.create_ScaledSourceTensor_from_PixelData(
-                sourceImageData,
-                true // ( bForceInt32 == true )
-              );
-
-              if ( bFill )
-                scaledInt32Array = scaledSourceTensor.dataSync();
-
-            } finally {
-              // If need fill alignment mark, the source tensor will be re-created for
-              // every neural network, the scaled source tensor needs not be kept.
-              if ( bFill && scaledSourceTensor ) {
-                scaledSourceTensor.dispose();
-                scaledSourceTensor = null;
-              }
-            }
-          }
-
-          // 2. Process image by neural network.
-          let sourceTensor;
-          let outputTensor;
-          try {
-
-            // 2.1 Prepare source tensor of every neural network.
-
-            // 2.1.1 Fill alignment mark and create new source tensor.
-            if ( bFill ) {
-              NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
-                this, i, scaledInt32Array );
-
-              sourceTensor = tf.tensor3d(
-                scaledInt32Array, neuralNet.input_shape, "int32" );
-
-            // 2.1.2 Clone the scaled source tensor since no need fill alignment mark.
-            } else {
-              sourceTensor = scaledSourceTensor.clone();
-            }
-
-            // 2.2 Process source tensor. (The sourceTensor will be released (in theroy).)
-            outputTensor = neuralNet.apply( sourceTensor );
-
-            // 2.3 Record result.
-            resultValueArray[ i ] = outputTensor.dataSync();
-            resultTransferableObjectArray[ i ] = resultValueArray[ i ].buffer;
-      
-          } finally {
-            if ( outputTensor ) {
-              outputTensor.dispose();
-              outputTensor = null;
-            }
-          }
-        }
-
-      } finally {
-        if ( scaledSourceTensor ) {
-          scaledSourceTensor.dispose();
-          scaledSourceTensor = null;
-        }
-      }
-    } );
-
-    return {
-      value: resultValueArray,
-      transferableObjectArray: resultTransferableObjectArray
     };
   }
 

@@ -142,6 +142,37 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
   /**
    * This method is used for:
+   *   - One web worker. The worker has two neural networks.
+   *   - If ( bFill == true ), alignment mark filling.
+   *   - If ( bFill == false ), no alignment mark filling.
+   *
+   *
+   * @param {ImageData} sourceImageData
+   *   The source image data to be processed. Its shape needs not match
+   * this.neuralNetParamsBase's [ input_height, input_width, input_channelCount ]
+   * because it will be scaled to the correct shape before passed into the neural
+   * network.
+   *
+   * @param {boolean} bFill
+   *   If true, the source Int32Array will be filled by alignment mark before be
+   * converted to tensor3d. If false, it will be converted to tensor3d directly
+   * without filling alignment mark.
+   *
+   * @return {Promise}
+   *   Return a promise resolved to an array of Float32Array representing the neural
+   * networks' result.
+   */
+  ImageData_scale_once_process_multiple_async( sourceImageData, bFill ) {
+    const bFork = false;
+    return this.createPromise_by_postCommandArgs(
+      [ "ImageData_scale_once_process_multiple", sourceImageData, bFill ],
+      [ sourceImageData.data.buffer ]
+    );
+  }
+
+
+  /**
+   * This method is used for:
    *   - Two web workers. Every worker has one neural network.
    *   - It will download scaled Int32Array from GPU memory. And post it back to
    *         WorkerProxy.
@@ -258,37 +289,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   ImageData_scale_forkable_process_asyncGenerator( sourceImageData, bFork ) {
     return this.createResulter_by_postCommandArgs(
       [ "ImageData_scale_forkable_process", sourceImageData, bFork ],
-      [ sourceImageData.data.buffer ]
-    );
-  }
-
-
-  /**
-   * This method is used for:
-   *   - One web worker. The worker has two neural networks.
-   *   - If ( bFill == true ), alignment mark filling.
-   *   - If ( bFill == false ), no alignment mark filling.
-   *
-   *
-   * @param {ImageData} sourceImageData
-   *   The source image data to be processed. Its shape needs not match
-   * this.neuralNetParamsBase's [ input_height, input_width, input_channelCount ]
-   * because it will be scaled to the correct shape before passed into the neural
-   * network.
-   *
-   * @param {boolean} bFill
-   *   If true, the source Int32Array will be filled by alignment mark before be
-   * converted to tensor3d. If false, it will be converted to tensor3d directly
-   * without filling alignment mark.
-   *
-   * @return {Promise}
-   *   Return a promise resolved to an array of Float32Array representing the neural
-   * networks' result.
-   */
-  ImageData_scale_once_process_multiple_async( sourceImageData, bFill ) {
-    const bFork = false;
-    return this.createPromise_by_postCommandArgs(
-      [ "ImageData_scale_once_process_multiple", sourceImageData, bFill ],
       [ sourceImageData.data.buffer ]
     );
   }
