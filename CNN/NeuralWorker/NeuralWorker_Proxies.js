@@ -75,11 +75,13 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * @member {number} totalWorkerCount
  *   There are how many web worker(s) created.
  *
- * @member {number} totalWorkerCount
- *   There are how many web worker(s) created.
- *
  * @member {DEvolution.VersusSummary} evolutionVersusSummary
  *   The range list of all differential evolution versus (i.e. parent versus offspring).
+ *
+ * @member {function} ImageData_process_async
+ *   This is a data member which is a pointer to a function. The function accepts
+ * ImageData as input. It returns a promise resolved to an array
+ * [ Float32Array, Float32Array ] representing the neural networks' results.
  */
 class NeuralWorker_Proxies extends Recyclable.Root {
 
@@ -191,8 +193,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       true
     );
 
-    // 3. Determine .apply_async
-    NeuralWorker_Proxies.setup_apply.call( this );
+    // 3. Determine .ImageData_process_async
+    NeuralWorker_Proxies.setup_ImageData_process.call( this );
 
     return initOk;
   }
@@ -327,42 +329,29 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     return resultOk;
   }
 
-  /**
-   *
-   * @param {ImageData} sourceImageData
-   *   The source image data to be processed. It will be scaled to the correct shape
-   * before passed into the neural network.
-   *
-   * @return {Promise}
-   *   Return a promise resolved to an array of Float32Array representing the neural
-   * networks' result.
-   */
-  ImageData_process_async( sourceImageData ) {
-    return this.apply_async( sourceImageData );
-  }
-
 
   /**
-   * Setup .apply_async according to .nNeuralWorker_ModeId.
+   * Setup .ImageData_process_async according to .nNeuralWorker_ModeId.
    *
    * @param {NeuralWorker_Proxies} this
    */
-  static setup_apply() {
+  static setup_ImageData_process() {
     switch ( this.nNeuralWorker_ModeId ) {
       case NeuralWorker_Mode.Ids.ONE_WORKER__ONE_SCALE__FILL: // (0)
       case NeuralWorker_Mode.Ids.ONE_WORKER__ONE_SCALE__NO_FILL: // (1)
-        this.apply_async
+        this.ImageData_process_async
           = NeuralWorker_Proxies.apply__ONE_WORKER__ONE_SCALE__FILL__OR__NO_FILL;
         break;
 
       case NeuralWorker_Mode.Ids.TWO_WORKER__ONE_SCALE__FILL: // (2)
       case NeuralWorker_Mode.Ids.TWO_WORKER__ONE_SCALE__NO_FILL: // (3)
-        this.apply_async
+        this.ImageData_process_async
           = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__OR__NO_FILL;
         break;
 
       case NeuralWorker_Mode.Ids.TWO_WORKER__TWO_SCALE__NO_FILL: // (4)
-        this.apply_async = NeuralWorker_Proxies.apply__TWO_WORKER__TWO_SCALE__NO_FILL;
+        this.ImageData_process_async
+          = NeuralWorker_Proxies.apply__TWO_WORKER__TWO_SCALE__NO_FILL;
         break;
 
       default:
