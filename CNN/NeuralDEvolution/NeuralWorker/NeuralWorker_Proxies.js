@@ -97,6 +97,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.ImageData_process_async = undefined;
+
     this.workerProxyArray_dispose();
 
     this.hardwareConcurrency = undefined;
