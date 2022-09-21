@@ -1,7 +1,6 @@
 export { ActivationFunction };
 
 import { Int } from "./ValueDesc_Base.js";
-import * as Weights from "../Weights.js";
 import * as FloatValue from "../FloatValue.js";
 
 /**
@@ -27,15 +26,6 @@ import * as FloatValue from "../FloatValue.js";
  *   - SOFTPLUS: Avoid. Backend WASM does not support it.
  *   - ERF: Avoid. Backend WASM does not support it.
  *
-
-//!!! ...unfinished... (2022/01/11)
-// What about: (tf.clipByValue() is also supported by WASM)
-//   - tf.clipByValue( -1, +1 )?
-//   - tf.clipByValue( -2, +2 )?
-//   - tf.clipByValue( -3, +3 )?
-//   - tf.clipByValue( -64, +64 )?
-//   - tf.clipByValue( -128, +128 )?
-
  *   - CLIP_BY_VALUE, TANH, SIN, ERF are good if pass-through by only scale (i.e.
  *       without translate) is needed. Because the output range of them includes
  *       both negative value and positive value near the origin point. (On the
@@ -88,7 +78,8 @@ import * as FloatValue from "../FloatValue.js";
  *   - Advantage: Its activated value (i.e. 2) is easier to become any other value
  *       by a floating-point finite scaling. This reduces the floating-point
  *       accumulated error. In this point of view, not only 2, any powers of two
- *       (i.e. 0.25, 0.5, 1, 2, 4, 8, ...) is good enough for this task.
+ *       (i.e. 0.25, 0.5, 1, 2, 4, 8, ..., 64, 128, ...) is good enough for this task.
+ *
  *
  */
 class ActivationFunction extends Int {
