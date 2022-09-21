@@ -291,7 +291,8 @@ class HeightWidthDepth {
           );
       }
 
-      Pool.Asserter.assert_Pool_issuedCount( "jsPerf_Block.HeightWidthDepth.testCorrectness()", pool_all_issuedCount_before );
+      Pool.Asserter.assert_Pool_issuedCount(
+        "jsPerf_Stage.HeightWidthDepth.testCorrectness()", pool_all_issuedCount_before );
       yield;
     }
 

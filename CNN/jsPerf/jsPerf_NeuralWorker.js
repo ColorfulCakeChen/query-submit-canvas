@@ -327,9 +327,6 @@ class HeightWidthDepth {
     }
   }
 
-
-//!!! ...unfinished... (2022/09/21)
-
   /** Test .ImageData_process_async by Xxx */
   async testNeuralWorker_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
@@ -358,8 +355,6 @@ class HeightWidthDepth {
   /** Testing whether the results of different implementation are the same. */
   async* testCorrectness_asyncGenerator() {
 
-//!!! ...unfinished... (2022/09/21)
-
     //!!! (2022/09/21 Temp Skipped) For speed up into performance testing.
     //if ( 0 )
     {
@@ -376,32 +371,39 @@ class HeightWidthDepth {
         {
           this.neuralWorker_PerformanceTest_init();
 
-          let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
+          yield await testNeuralWorker_ByName( "ONE_WORKER__ONE_SCALE__FILL" );
+          yield await testNeuralWorker_ByName( "ONE_WORKER__ONE_SCALE__NO_FILL" );
+          yield await testNeuralWorker_ByName( "TWO_WORKER__ONE_SCALE__FILL" );
+          yield await testNeuralWorker_ByName( "TWO_WORKER__ONE_SCALE__NO_FILL" );
+          yield await testNeuralWorker_ByName( "TWO_WORKER__TWO_SCALE__NO_FILL" );
 
-          try {
-            for ( testParams of testParamsGenerator ) {
-              let bDisplayed = batchIdCalculator.checkAndDisplay( testParams.id );
-              if ( bDisplayed )
-                yield; // Since just entering a new batch section, take a break so that memory garbage collector could be activated to work.
-
-              testReference.testCorrectness( imageSourceBag, testParams );
-            }
-
-          } catch ( e ) {
-            let backendName = tf.getBackend();
-            let msg = `jsPerf_NeuralWorker.js: testCorrectness(): `
-              + `backendName=${backendName}, `
-              + `NeuralNet, (yieldCount == ${testParams.yieldCount}), `
-              + `testParams.id == ${testParams.id}`;
-
-            console.log( msg );
-            alert( `${msg}\n${e}` );
-
-            //debugger;
-            throw e;
-          }
-
-          batchIdCalculator.checkAndDisplay( testParams.id );
+// //!!! (2022/09/21 Remarked)
+//           let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
+//
+//           try {
+//             for ( testParams of testParamsGenerator ) {
+//               let bDisplayed = batchIdCalculator.checkAndDisplay( testParams.id );
+//               if ( bDisplayed )
+//                 yield; // Since just entering a new batch section, take a break so that memory garbage collector could be activated to work.
+//
+//               testReference.testCorrectness( imageSourceBag, testParams );
+//             }
+//
+//           } catch ( e ) {
+//             let backendName = tf.getBackend();
+//             let msg = `jsPerf_NeuralWorker.js: testCorrectness(): `
+//               + `backendName=${backendName}, `
+//               + `NeuralNet, (yieldCount == ${testParams.yieldCount}), `
+//               + `testParams.id == ${testParams.id}`;
+//
+//             console.log( msg );
+//             alert( `${msg}\n${e}` );
+//
+//             //debugger;
+//             throw e;
+//           }
+//
+//           batchIdCalculator.checkAndDisplay( testParams.id );
 
           this.neuralWorker_PerformanceTest_release();
         }
@@ -415,7 +417,10 @@ class HeightWidthDepth {
           );
       }
 
-      Pool.Asserter.assert_Pool_issuedCount( "jsPerf_Block.HeightWidthDepth.testCorrectness()", pool_all_issuedCount_before );
+      Pool.Asserter.assert_Pool_issuedCount(
+        "jsPerf_NeuralWorker.HeightWidthDepth.testCorrectness_asyncGenerator()",
+        pool_all_issuedCount_before );
+
       yield;
     }
 
