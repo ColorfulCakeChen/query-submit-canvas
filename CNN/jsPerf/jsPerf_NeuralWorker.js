@@ -240,6 +240,7 @@ class HeightWidthDepth {
 
     let blockCountTotalRequested = 100; //50; //20; //10;
     let output_channelCount = 4; //400; //300; //64;
+    let output_channelCount_twice = output_channelCount * 2; // For NO_FILL
 
     // ShuffleNetV2 uses twice block count to compensate reduced channel count.
     //let blockCountTotalRequested_ShuffleNet = blockCountTotalRequested * 2;
@@ -272,7 +273,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         nConvStageType,
-        blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
+        blockCountTotalRequested_ShuffleNet, output_channelCount_twice, bKeepInputTensor
       ),
       NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL
     );
@@ -294,7 +295,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         nConvStageType,
-        blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
+        blockCountTotalRequested_ShuffleNet, output_channelCount_twice, bKeepInputTensor
       ),
       NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL
     );
@@ -305,7 +306,7 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         nConvStageType,
-        blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
+        blockCountTotalRequested_ShuffleNet, output_channelCount_twice, bKeepInputTensor
       ),
       NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__TWO_SCALE__NO_FILL
     );
