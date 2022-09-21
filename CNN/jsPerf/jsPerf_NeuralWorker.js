@@ -133,13 +133,16 @@ class PerformanceTestCase extends Recyclable.Root {
         throw Error( `Failed to create neural networks by neuralWorkerProxies. `
           + `${neuralWorkerProxies}` );
 
-      let bSetOkPromise
-        = neuralWorkerProxies.alignmentMarkArray_setValue_async( markValueArray );
+      let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
+      if ( bFill ) {
+        let bSetOkPromise
+          = neuralWorkerProxies.alignmentMarkArray_setValue_async( markValueArray );
 
-      let bSetOk = await bSetOkPromise;
-      if ( false == bSetOk )
-        throw Error( `Failed to set alignment mark by neuralWorkerProxies. `
-          + `${neuralWorkerProxies}` );
+        let bSetOk = await bSetOkPromise;
+        if ( false == bSetOk )
+          throw Error( `Failed to set alignment mark by neuralWorkerProxies. `
+            + `${neuralWorkerProxies}` );
+      }
 
     } catch ( e ) {
       debugger;
