@@ -272,6 +272,65 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /**
+   * @param {NeuralWorker_Proxies} this
+   */
+  static setup_apply() {
+    switch ( this.nNeuralWorker_ModeId ) {
+      case NeuralWorker_Mode.Ids.TWO_WORKER__ONE_SCALE__FILL: // (0)
+        this.apply = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL;
+        break;
+
+      case NeuralWorker_Mode.Ids.TWO_WORKER__ONE_SCALE__NO_FILL: // (1)
+        this.apply = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__NO_FILL;
+        break;
+
+      case NeuralWorker_Mode.Ids.TWO_WORKER__TWO_SCALE__NO_FILL: // (2)
+        this.apply = NeuralWorker_Proxies.apply__TWO_WORKER__TWO_SCALE__NO_FILL;
+        break;
+
+      case NeuralWorker_Mode.Ids.ONE_WORKER__ONE_SCALE__NO_FILL: // (3)
+        this.apply = NeuralWorker_Proxies.apply__ONE_WORKER__ONE_SCALE__NO_FILL;
+        break;
+
+      default:
+        throw Error( `NeuralWorker_Proxies.setup_apply(): `
+          + `Unknown nNeuralWorker_ModeId ( ${nNeuralWorker_ModeId} ).`
+        );
+        break;
+    }
+  }
+
+
+  /** */
+  static async apply__TWO_WORKER__ONE_SCALE__FILL( sourceImageData ) {
+   
+//!!! ...unfinished... (2022/09/21)
+
+  }
+
+  /** */
+  static async apply__TWO_WORKER__ONE_SCALE__NO_FILL( sourceImageData ) {
+   
+//!!! ...unfinished... (2022/09/21)
+
+  }
+
+  /** */
+  static async apply__TWO_WORKER__TWO_SCALE__NO_FILL( sourceImageData ) {
+   
+//!!! ...unfinished... (2022/09/21)
+
+  }
+
+  /** */
+  static async apply__ONE_WORKER__ONE_SCALE__NO_FILL( sourceImageData ) {
+   
+//!!! ...unfinished... (2022/09/21)
+
+  }
+
+
+  /**
    *
    * @param {ImageData} sourceImageData
    *   The source image data to be processed. It will be scaled to the correct shape
@@ -282,7 +341,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * networks' result.
    */
   async ImageData_process_async( sourceImageData, bFill ) {
-
+   
 //!!! ...unfinished... (2022/09/20)
 // NeuralWorker_Mode.workerCount_get( this.nNeuralWorker_ModeId );
 // NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
@@ -475,3 +534,4 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
 }
+
