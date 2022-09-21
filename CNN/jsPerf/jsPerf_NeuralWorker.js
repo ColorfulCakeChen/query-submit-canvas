@@ -1,4 +1,4 @@
-export { init, testCorrectness, disposeResources };
+export { init, testCorrectness_asyncGenerator, disposeResources };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
@@ -18,7 +18,7 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
 /**
  * Test CNN NeuralWorker.
  *
- * @see {@link ???https://www.measurethat.net/Benchmarks/Show/20203/74/colorfulcakechen-cnn-neuralnet-4ae5459fd402f30f14dfd544}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/21143/5/colorfulcakechen-cnn-neuralworker-edaf1fa0c096fb41e860b}
  */
 
 /**
