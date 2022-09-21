@@ -262,24 +262,33 @@ class ActivationFunction extends Int {
  *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx).
  *
  * @member {Function} pfn
- *   The activation function by tensorflow.js (e.g. tf.relu6, tf.tanh, tf.sin, tf.cos, tf.sigmoid, tf.relu).
+ *   The activation function by tensorflow.js (e.g. tf.relu6, tf.tanh, tf.sin, tf.cos,
+ * tf.sigmoid, tf.relu).
  *
  * @member {Function} pfnReference
- *   The activation function by CPU. It is used by NumberImage.Base for comparing correctness.
+ *   The activation function by CPU. It is used by NumberImage.Base for comparing
+ * correctness.
  *
  * @member {FloatValue.Bounds} outputRange
- *   The output value lower and upper bounds of the activation function for the whole input domain.
+ *   The output value lower and upper bounds of the activation function for the whole
+ * input domain.
  *
  * @member {FloatValue.Bounds} inputDomainLinear
- *   The input value lower and upper bounds of the activation function for keeping the mapping from input to output almost linear. In
- * general speaking, an activation function is non-linear in the whole domain. However, inside this special part of the domain, it looks
- * almost like a linear function.
+ *   The input value lower and upper bounds of the activation function for keeping the
+ * mapping from input to output almost linear. In general speaking, an activation
+ * function is non-linear in the whole domain. However, inside this special part of
+ * the domain, it looks almost like a linear function.
  *
  * @member {FloatValue.Bounds} outputRangeLinear
- *   The activattion function's output range when its input is in domain this.inputDomainLinear.
+ *   The activation function's output range when its input is in domain
+ * this.inputDomainLinear.
  */
 ActivationFunction.Info = class ActivationFunction_Info extends Int.Info {
-  constructor( nActivationId, nameForMessage, pfn, pfnReference, outputRange, inputDomainLinear, outputRangeLinear ) {
+  constructor(
+    nActivationId, nameForMessage, pfn, pfnReference,
+    outputRange, inputDomainLinear, outputRangeLinear
+  ) {
+
     super( nActivationId, nameForMessage );
     this.pfn = pfn;
     this.pfnReference = pfnReference;
