@@ -281,11 +281,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   static setup_apply() {
     switch ( this.nNeuralWorker_ModeId ) {
       case NeuralWorker_Mode.Ids.TWO_WORKER__ONE_SCALE__FILL: // (0)
-        this.apply_async = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL;
-        break;
-
       case NeuralWorker_Mode.Ids.TWO_WORKER__ONE_SCALE__NO_FILL: // (1)
-        this.apply_async = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__NO_FILL;
+        this.apply_async
+          = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__OR__NO_FILL;
         break;
 
       case NeuralWorker_Mode.Ids.TWO_WORKER__TWO_SCALE__NO_FILL: // (2)
@@ -305,15 +303,13 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
 
-  /** Note: The .alignmentMarkArray_setValue_async() should have been called. */
-  static async apply__TWO_WORKER__ONE_SCALE__FILL( sourceImageData ) {
-
-//!!! ...unfinished... (2022/09/21)
-
-    let worker0_resulter = this.workerProxyArray[ 0 ]
-      .ImageData_scale_fork_fill_process_asyncGenerator( sourceImageData );
+  /** */
+  static async apply__TWO_WORKER__ONE_SCALE__FILL__OR__NO_FILL( sourceImageData ) {
 
     let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
+
+    let worker0_resulter = this.workerProxyArray[ 0 ]
+      .ImageData_scale_fork_fillable_process_asyncGenerator( sourceImageData, bFill );
 
     let { done: worker0_done_false, value: worker0_value_Int32Array }
       = await worker0_resulter.next();
@@ -327,13 +323,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     ] = await Promise.all( [ worker0_resulter.next(), worker1_promise ] );
 
     return [ worker0_value_Float32Array, worker1_value_Float32Array ];
-  }
-
-  /** */
-  static async apply__TWO_WORKER__ONE_SCALE__NO_FILL( sourceImageData ) {
-   
-//!!! ...unfinished... (2022/09/21)
-
   }
 
   /** */

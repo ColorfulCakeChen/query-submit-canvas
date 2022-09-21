@@ -305,7 +305,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Two web workers. Every worker has one neural network.
    *   - It will download scaled Int32Array from GPU memory. And post it back to
    *         WorkerProxy.
-   *   - Fill alignment mark of this neural network, upload to GPU and process it.
+   *   - (may or may not) Fill alignment mark of this neural network, upload to GPU
+   *       and process it.
    *   - The 1st worker calls this method.
    *
    * 
@@ -322,6 +323,11 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   - The scale Int32Array will be filled by alignment mark, and then converted into
    *       tensor3d, and then processed by neural network.
    *
+   * @param {boolean} bFill
+   *   If true, the source Int32Array will be filled by alignment mark before be
+   * converted to tensor3d. If false, it will be converted to tensor3d directly
+   * without filling alignment mark.
+   *
    * @yield {Int32Array}
    *   Resolve to { done: false, value: { value: Int32Array,
    * transferableObjectArray: [ Int32Array.buffer ] }. The value is an Int32Array
@@ -334,7 +340,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * representing the neural network's result whose channel count is
    * this.neuralNet[ 0 ].output_channelCount.
    */
-  async* ImageData_scale_fork_fill_process( sourceImageData ) {
+  async* ImageData_scale_fork_fillable_process( sourceImageData, bFill ) {
 
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ i ];
@@ -368,7 +374,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     };
 
     // 2. Process image by neural network.
-    const bFill = true;
+//!!! (2022/09/21 Remarked) according to parameter.
+//    const bFill = true;
     let Int32Array_processor = Int32Array_fillable_process( scaledInt32Array, bFill );
     let result = yield* Int32Array_processor;
     return result;

@@ -145,7 +145,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Two web workers. Every worker has one neural network.
    *   - It will download scaled Int32Array from GPU memory. And post it back to
    *         WorkerProxy.
-   *   - Fill alignment mark of this neural network, upload to GPU and process it.
+   *   - (may or may not) Fill alignment mark of this neural network, upload to GPU
+   *       and process it.
    *   - The 1st worker calls this method.
    *
    *
@@ -175,9 +176,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   Resolve to { done: true, value: Float32Array }. The value is a Float32Array
    * representing the neural network's result.
    */
-  ImageData_scale_fork_fill_process_asyncGenerator( sourceImageData ) {
+  ImageData_scale_fork_fillable_process_asyncGenerator( sourceImageData, bFill ) {
     return this.createResulter_by_postCommandArgs(
-      [ "ImageData_scale_fork_fill_process", sourceImageData ],
+      [ "ImageData_scale_fork_fillable_process", sourceImageData, bFill ],
       [ sourceImageData.data.buffer ]
     );
   }
