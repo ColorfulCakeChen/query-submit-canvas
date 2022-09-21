@@ -78,8 +78,8 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * @member {number} totalWorkerCount
  *   There are how many web worker(s) created.
  *
- * @member {DEvolution.VersusRangeArray} evolutionVersusRangeArray
- *   The range list of all evolution versus (i.e. parent versus offspring).
+ * @member {DEvolution.VersusSummary} evolutionVersusSummary
+ *   The range list of all differential evolution versus (i.e. parent versus offspring).
  */
 class NeuralWorker_Proxies extends Recyclable.Root {
 
@@ -109,9 +109,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
-    this.evolutionVersusRangeArray = null; // Normal array. Just nullify it.
+    if ( this.evolutionVersusSummary ) {
+      this.evolutionVersusSummary.disposeResources_and_recycleToPool();
+      this.evolutionVersusSummary = null;
+    }
 
-//!!! ...unfinished... (2022/08/26)
     this.disposeWorkers();
 
     this.hardwareConcurrency = undefined;
@@ -411,17 +413,17 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
 
 
-//!!! ...unfinished... (2022/09/20)
+//!!! ...unfinished... (2022/09/21)
 
-  /** Load all evolution versus weights ranges. */
-  async evolutionVersusRangeArray_load_async() {
+  /** Load all differential evolution versus weights ranges. */
+  async evolutionVersusSummary_load_async() {
 
-    if ( !this.evolutionVersusRangeArray ) {
-      this.evolutionVersusRangeArray = DEvolution.VersusRangeArray.Pool.get_or_create_by(
+    if ( !this.evolutionVersusSummary ) {
+      this.evolutionVersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
         this.weightsSpreadsheetId, this.weightsAPIKey );
     }
 
-    this.evolutionVersusRangeArray.loadAsync();
+    this.evolutionVersusSummary.rangeArray_load_async();
 
 //!!! ...unfinished... (2022/08/27)
 
