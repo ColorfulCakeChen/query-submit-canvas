@@ -110,7 +110,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   disposeResources() {
 
     this.evolutionVersusSummary_dispose();
-    this.disposeWorkers();
+    this.workerProxyArray_dispose();
 
     this.hardwareConcurrency = undefined;
     this.neuralNetCount = undefined;
@@ -120,16 +120,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.weightsSpreadsheetId = undefined;
 
     super.disposeResources();
-  }
-
-  /**
-   * 
-   */
-   disposeWorkers() {
-    if ( this.workerProxyArray ) {
-      this.workerProxyArray.disposeResources_and_recycleToPool();
-      this.workerProxyArray = null;
-    }
   }
 
   /**
@@ -179,7 +169,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       // 2.0 Prepare container of all worker proxy.
       {
         if ( this.workerProxyArray )
-          this.workerProxyArray.clear();
+          this.workerProxyArray.clear(); // Release old worker proxy.
         else
           this.workerProxyArray = Pool.OwnerArray.Pool.get_or_create_by();
 
@@ -206,6 +196,14 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     NeuralWorker_Proxies.setup_apply.call( this );
 
     return initOk;
+  }
+
+  /** */
+  workerProxyArray_dispose() {
+    if ( this.workerProxyArray ) {
+      this.workerProxyArray.disposeResources_and_recycleToPool();
+      this.workerProxyArray = null;
+    }
   }
 
   /** */
