@@ -1,4 +1,4 @@
-export { DEvolution_VersusSummary as rangeArray };
+export { DEvolution_VersusSummary as VersusSummary };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
