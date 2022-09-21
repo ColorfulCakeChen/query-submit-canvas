@@ -381,11 +381,11 @@ class HeightWidthDepth {
         {
           this.neuralWorker_PerformanceTest_init();
 
-          yield await testNeuralWorker_ByName( "ONE_WORKER__ONE_SCALE__FILL" );
-          yield await testNeuralWorker_ByName( "ONE_WORKER__ONE_SCALE__NO_FILL" );
-          yield await testNeuralWorker_ByName( "TWO_WORKER__ONE_SCALE__FILL" );
-          yield await testNeuralWorker_ByName( "TWO_WORKER__ONE_SCALE__NO_FILL" );
-          yield await testNeuralWorker_ByName( "TWO_WORKER__TWO_SCALE__NO_FILL" );
+          yield await this.testNeuralWorker_ByName( "ONE_WORKER__ONE_SCALE__FILL" );
+          yield await this.testNeuralWorker_ByName( "ONE_WORKER__ONE_SCALE__NO_FILL" );
+          yield await this.testNeuralWorker_ByName( "TWO_WORKER__ONE_SCALE__FILL" );
+          yield await this.testNeuralWorker_ByName( "TWO_WORKER__ONE_SCALE__NO_FILL" );
+          yield await this.testNeuralWorker_ByName( "TWO_WORKER__TWO_SCALE__NO_FILL" );
 
 // //!!! (2022/09/21 Remarked)
 //           let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
