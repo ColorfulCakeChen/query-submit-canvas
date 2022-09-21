@@ -144,7 +144,7 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
    * neuralNetParamsBase.
    */
   static get_or_create_by_NeuralNetParamsBase( neuralNetParamsBase ) {
-    let neuralNetParams = Params.Pool.get_or_create_by(
+    let neuralNetParams = NeuralNet_Params.Pool.get_or_create_by(
       neuralNetParamsBase.input_height,
       neuralNetParamsBase.input_width,
       neuralNetParamsBase.input_channelCount,
