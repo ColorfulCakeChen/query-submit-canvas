@@ -61,11 +61,12 @@ class PerformanceTestCase extends Recyclable.Root {
     this.neuralNetParamsBase = neuralNetParamsBase;
     this.nNeuralWorker_ModeId = nNeuralWorker_ModeId;
     this.neuralWorkerProxies = undefined;
-    //this.inputTensor3d = undefined;
   }
 
   /** @override */
   disposeResources() {
+    this.preparePromise = undefined;
+
     this.neuralWorkerProxies?.disposeResources_and_recycleToPool();
     this.neuralWorkerProxies = null;
 
@@ -322,6 +323,8 @@ class HeightWidthDepth {
         if ( testCase.neuralWorkerProxies ) {
           testCase.neuralWorkerProxies.disposeResources_and_recycleToPool();
           testCase.neuralWorkerProxies = null;
+
+          testCase.preparePromise = null;
         }
       }
     }
@@ -345,16 +348,26 @@ class HeightWidthDepth {
   async testNeuralWorker_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
 
-//!!! ...unfinished... (2022/09/21)
-// The previous testNeuralWorker_ByName() still await,
-// but the next testNeuralWorker_ByName() will continue to come here.
+//!!! (2022/09/21 Remarked) check testCase.preparePromise instead.
+//     // First time test this case. Release all other test cases' neural networks
+//     // (so that there will be enough memory). Create the specified neural network.
+//     if ( !testCase.neuralWorkerProxies ) {
+//       this.neuralWorker_PerformanceTest_release_neuralWorkerProxies();
+//       testCase.preparePromise = testCase.prepare_async();
+//       await testCase.preparePromise;
+//     }
 
     // First time test this case. Release all other test cases' neural networks
     // (so that there will be enough memory). Create the specified neural network.
-    if ( !testCase.neuralWorkerProxies ) {
+    if ( !testCase.preparePromise ) {
       this.neuralWorker_PerformanceTest_release_neuralWorkerProxies();
-      await testCase.prepare_async();
+      testCase.preparePromise = testCase.prepare_async();
     }
+
+    // Note: Even if non-first time test this case, it is still necessary to wait for
+    //       its initialization completely (which is doing/done by this case's first
+    //       time testing).
+    await testCase.preparePromise;
 
     let imageData;
     {
