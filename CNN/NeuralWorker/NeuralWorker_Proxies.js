@@ -305,11 +305,28 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
 
-  /** */
+  /** Note: The .alignmentMarkArray_setValue_async() should have been called. */
   static async apply__TWO_WORKER__ONE_SCALE__FILL( sourceImageData ) {
-   
+
 //!!! ...unfinished... (2022/09/21)
 
+    let worker0_resulter = this.workerProxyArray[ 0 ]
+      .ImageData_scale_fork_fill_process_asyncGenerator( sourceImageData );
+
+    let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
+
+    let { done: worker0_done_false, value: worker0_value_Int32Array }
+      = await worker0_resulter.next();
+
+    let worker1_promise = this.workerProxyArray[ 1 ]
+      .Int32Array_fillable_process_async( worker0_value_Int32Array, bFill );
+
+    let [
+      { done: worker0_done_true, value: worker0_value_Float32Array },
+      worker1_value_Float32Array
+    ] = await Promise.all( [ worker0_resulter.next(), worker1_promise ] );
+
+    return [ worker0_value_Float32Array, worker1_value_Float32Array ];
   }
 
   /** */
@@ -346,7 +363,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    */
   ImageData_process_async( sourceImageData ) {
     return this.apply_async( sourceImageData );
-   
+
 //!!! ...unfinished... (2022/09/20)
 // NeuralWorker_Mode.workerCount_get( this.nNeuralWorker_ModeId );
 // NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
