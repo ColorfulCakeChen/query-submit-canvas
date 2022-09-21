@@ -146,6 +146,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    */
   async init_async( weightsSpreadsheetId, weightsAPIKey, nNeuralWorker_ModeId ) {
 
+    // 0.
     this.weightsSpreadsheetId = weightsSpreadsheetId;
     this.weightsAPIKey = weightsAPIKey;
     this.nNeuralWorker_ModeId = nNeuralWorker_ModeId;
@@ -197,6 +198,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       true
     );
 
+    // 3.
     NeuralWorker_Proxies.setup_apply.call( this );
 
     return initOk;
