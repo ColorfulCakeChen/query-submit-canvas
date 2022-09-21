@@ -7,8 +7,8 @@ import * as FloatValue from "../FloatValue.js";
 /**
  * Describe activation function parameter's id, range, name.
  *
- * The activation function ActivationFunction.Info.pfn( x ) is almost linear when x is inside inputDomainLinear. Its output is
- * outputRangeLinear.
+ * The activation function ActivationFunction.Info.pfn( x ) is almost linear when x
+ * is inside inputDomainLinear. Its output is outputRangeLinear.
  *
  *   - CLIP_BY_VALUE_N2_P2( [ -2, +2 ] ) = [ -2, +2 ]
  *   - CLIP_BY_VALUE_N3_P3( [ -3, +3 ] ) = [ -3, +3 ]
@@ -22,15 +22,11 @@ import * as FloatValue from "../FloatValue.js";
  *
  *
  * Note:
- *   - NONE: Beware. It easily results in infinity value because it does not have upper bound.
- *   - RELU: Beware. It easily results in infinity value because it does not have upper bound.
+ *   - NONE: Beware. It easily results in infinity value because it has no upper bound.
+ *   - RELU: Beware. It easily results in infinity value because it has no upper bound.
  *   - SOFTPLUS: Avoid. Backend WASM does not support it.
  *   - ERF: Avoid. Backend WASM does not support it.
  *
-
-//!!! ...unfinished... (2022/07/14)
-// Could [ -2, +2 ] be better than [ -3, +3 ]? Does two's power reduce floating-point accumulated error (after ShuffleNetV2_byMobileNetV2
-// pass-through by scaling and un-scaling repeately)?
 
 //!!! ...unfinished... (2022/01/11)
 // What about: (tf.clipByValue() is also supported by WASM)
@@ -40,24 +36,29 @@ import * as FloatValue from "../FloatValue.js";
 //   - tf.clipByValue( -64, +64 )?
 //   - tf.clipByValue( -128, +128 )?
 
- *   - CLIP_BY_VALUE, TANH, SIN, ERF are good if pass-through by only scale (i.e. without translate) is needed. Because the output
- *       range of them includes both negative value and positive value near the origin point. (On the other hand, RELU, RELU6 are
- *       not good for this purpose.)
+ *   - CLIP_BY_VALUE, TANH, SIN, ERF are good if pass-through by only scale (i.e.
+ *       without translate) is needed. Because the output range of them includes
+ *       both negative value and positive value near the origin point. (On the
+ *       other hand, RELU, RELU6 are not good for this purpose.)
  *
  *
  *
- * Q1: Since activation by clipByValue() is enough, why not just using saturated integer for convolution?
- * A1: Although saturated integer could achieve clipByValue automatically without activation function (i.e. less computation time).
- *     It has some disadvantages:
+ * Q1: Since activation by clipByValue() is enough, why not just using saturated
+ *       integer for convolution?
+ * A1: Although saturated integer could achieve clipByValue automatically without
+ *       activation function (i.e. less computation time). It has some disadvantages:
  *
- *      - It can not escape saturation (i.e. escape activation) by scaling. The reason is that needs multiply a number less
- *         than one which can not be represented by integer (i.e. floatig-point number is required).
+ *      - It can not escape saturation (i.e. escape activation) by scaling. Because
+ *          that needs multiply a number less than one which can not be represented
+ *          by integer (i.e. floatig-point number is required).
  *
- *      - It may not be saturated (i.e. activated) by bias. When the input value is the minimum value (e.g. -255), adding a
- *         bias (even if adding the maximum value 255) can not saturate it to maximum value (e.g. +255).
+ *      - It may not be saturated (i.e. activated) by bias. When the input value is
+ *          the minimum value (e.g. -255), adding a bias (even if adding the maximum
+ *          value 255) can not saturate it to maximum value (e.g. +255).
  *
- * On the other hand, floating-point number has already been similar to a kind of saturated number (i.e. maximum is saturated to
- * +Infinity, and minimum is saturated to -Infinity).
+ * On the other hand, floating-point number has already been similar to a kind of
+ * saturated number (i.e. maximum is saturated to +Infinity, and minimum is saturated
+ * to -Infinity).
  *
  *
  *
@@ -66,23 +67,28 @@ import * as FloatValue from "../FloatValue.js";
  *
  * CLIP_BY_VALUE_N3_P3:
  *
- *   - Advantage: It has larger inputDomainLinear so that activation-escaping could use a larger scale. This reduces floating-point
- *       truncation error.
+ *   - Advantage: It has larger inputDomainLinear so that activation-escaping could
+ *       use a larger scale. This reduces floating-point truncation error.
  *
- *   - Disadvantage: Its activated value (i.e. 3) seems harder to become any other value by a floating-point finite scaling.
- *       This increases the floating-point accumulated error. For example, in order to let 3 become 100, a scale 33.333...
- *       should be used. However, 33.3 can not be represented by a finite floating-point number.
+ *   - Disadvantage: Its activated value (i.e. 3) seems harder to become any other
+ *       value by a floating-point finite scaling. This increases the floating-point
+ *       accumulated error. For example, in order to let 3 become 100, a scale 33.333...
+ *       should be used. However, 33.3 can not be represented by a finite
+ *       floating-point number.
  *
  * CLIP_BY_VALUE_N2_P2:
  *
- *   - Disadvantage: It has smaller inputDomainLinear [ -2, +2 ] (than CLIP_BY_VALUE_N3_P3 [ -3, +3 ]) so that activation-escaping
- *       needs use a smaller scale. This increases floating-point truncation error. Fortunately, if a just enough input value
- *       bounds is used (e.g. for RGBA image, uses 2^8 (instead of 2^24) as every channel's input value bounds), this issue could
+ *   - Disadvantage: It has smaller inputDomainLinear [ -2, +2 ] (than
+ *       CLIP_BY_VALUE_N3_P3 [ -3, +3 ]) so that activation-escaping needs use a
+ *       smaller scale. This increases floating-point truncation error. Fortunately,
+ *       if a just enough input value bounds is used (e.g. for RGBA image, uses 2^8
+ *       (instead of 2^24) as every channel's input value bounds), this issue could
  *       be less problematic.
  *
- *   - Advantage: Its activated value (i.e. 2) is easier to become any other value by a floating-point finite scaling.
- *       This reduces the floating-point accumulated error. In this point of view, not only 2, any powers of two (i.e. 0.25, 0.5, 1,
- *       2, 4, 8, ...) is good enough for this task.
+ *   - Advantage: Its activated value (i.e. 2) is easier to become any other value
+ *       by a floating-point finite scaling. This reduces the floating-point
+ *       accumulated error. In this point of view, not only 2, any powers of two
+ *       (i.e. 0.25, 0.5, 1, 2, 4, 8, ...) is good enough for this task.
  *
  */
 class ActivationFunction extends Int {
@@ -98,47 +104,55 @@ class ActivationFunction extends Int {
 
         CLIP_BY_VALUE_N2_P2: new ActivationFunction.Info( 1, "CLIP_BY_VALUE_N2_P2",
 
-//!!! (2022/08/04 Temp Remarked) Try large range whether reduceing accumulated error.
           ActivationFunction.clipByValue_Negative2_Positive2,
           ActivationFunction.reference_clipByValue_Negative2_Positive2,
-          new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ) ),
+          new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ),
+          new FloatValue.Bounds( -2, +2 ) ),
 
-//!!! (2022/08/04 Temp Remarked) Try small range whether reduceing accumulated error.
+          //!!! (2022/08/04 Remarked) Try small range whether reduceing accumulated error.
           // ActivationFunction.clipByValue_Negative8_Positive8,
           // ActivationFunction.reference_clipByValue_Negative8_Positive8,
-          // new FloatValue.Bounds( -8, +8 ), new FloatValue.Bounds( -8, +8 ), new FloatValue.Bounds( -8, +8 ) ),
+          // new FloatValue.Bounds( -8, +8 ), new FloatValue.Bounds( -8, +8 ),
+          // new FloatValue.Bounds( -8, +8 ) ),
 
           // ActivationFunction.clipByValue_Negative4_Positive4,
           // ActivationFunction.reference_clipByValue_Negative4_Positive4,
-          // new FloatValue.Bounds( -4, +4 ), new FloatValue.Bounds( -4, +4 ), new FloatValue.Bounds( -4, +4 ) ),
+          // new FloatValue.Bounds( -4, +4 ), new FloatValue.Bounds( -4, +4 ),
+          // new FloatValue.Bounds( -4, +4 ) ),
 
 //!!! (2022/07/05 Remarked) For speed-up testing.
 /*
         CLIP_BY_VALUE_N3_P3: new ActivationFunction.Info( 2, "CLIP_BY_VALUE_N3_P3",
           ActivationFunction.clipByValue_Negative3_Positive3,
           ActivationFunction.reference_clipByValue_Negative3_Positive3,
-          new FloatValue.Bounds( -3, +3 ), new FloatValue.Bounds( -3, +3 ), new FloatValue.Bounds( -3, +3 ) ),
+          new FloatValue.Bounds( -3, +3 ), new FloatValue.Bounds( -3, +3 ),
+          new FloatValue.Bounds( -3, +3 ) ),
 
         TANH: new ActivationFunction.Info( 3, "TANH",
           tf.tanh, ActivationFunction.reference_tanh,
-          new FloatValue.Bounds( -1, +1 ), new FloatValue.Bounds( -0.005, +0.005 ), new FloatValue.Bounds( -0.005, +0.005 ) ),
+          new FloatValue.Bounds( -1, +1 ), new FloatValue.Bounds( -0.005, +0.005 ),
+          new FloatValue.Bounds( -0.005, +0.005 ) ),
 
         SIN: new ActivationFunction.Info( 4, "SIN",
           tf.sin, ActivationFunction.reference_sin,
-          new FloatValue.Bounds( -1, +1 ), new FloatValue.Bounds( -0.005, +0.005 ), new FloatValue.Bounds( -0.005, +0.005 ) ),
+          new FloatValue.Bounds( -1, +1 ), new FloatValue.Bounds( -0.005, +0.005 ),
+          new FloatValue.Bounds( -0.005, +0.005 ) ),
 
         RELU6: new ActivationFunction.Info( 5, "RELU6",
           tf.relu6, ActivationFunction.reference_relu6,
-          new FloatValue.Bounds( 0, 6 ), new FloatValue.Bounds( 0, 6 ), new FloatValue.Bounds( 0, 6 ) ),
+          new FloatValue.Bounds( 0, 6 ), new FloatValue.Bounds( 0, 6 ),
+          new FloatValue.Bounds( 0, 6 ) ),
 
         COS: new ActivationFunction.Info( 6, "COS",
           tf.cos, ActivationFunction.reference_cos,
           new FloatValue.Bounds( -1, +1 ),
-          new FloatValue.Bounds( -( ( Math.PI / 2 ) + 0.005 ), -( ( Math.PI / 2 ) - 0.005 ) ), new FloatValue.Bounds( -0.005, +0.005 ) ),
+          new FloatValue.Bounds( -( ( Math.PI / 2 ) + 0.005 ), -( ( Math.PI / 2 ) - 0.005 ) ),
+          new FloatValue.Bounds( -0.005, +0.005 ) ),
 
         SIGMOID: new ActivationFunction.Info( 7, "SIGMOID",
           tf.sigmoid, ActivationFunction.reference_sigmoid,
-          new FloatValue.Bounds( 0, 1 ), new FloatValue.Bounds( -0.125, +0.125 ), new FloatValue.Bounds( +0.468, +0.532 ) ),
+          new FloatValue.Bounds( 0, 1 ), new FloatValue.Bounds( -0.125, +0.125 ),
+          new FloatValue.Bounds( +0.468, +0.532 ) ),
 
         // (2021/12/09)
         // The input linear domain and output range of RELU are [ 0, +Infinity ]. However, it is not so friendly to interact with Infinity
@@ -150,12 +164,14 @@ class ActivationFunction extends Int {
         // not a problem.
         RELU: new ActivationFunction.Info( 8, "RELU",
           tf.relu, ActivationFunction.reference_relu,
-          new FloatValue.Bounds( 0, +Infinity ), new FloatValue.Bounds( 0, +Infinity ), new FloatValue.Bounds( 0, +Infinity ) ),
+          new FloatValue.Bounds( 0, +Infinity ), new FloatValue.Bounds( 0, +Infinity ),
+          new FloatValue.Bounds( 0, +Infinity ) ),
 
         //SOFTPLUS: new ActivationFunction.Info( 9, "SOFTPLUS",
         //  tf.softplus, ActivationFunction.reference_softplus,
         //  new FloatValue.Bounds( 0, +Infinity ),
-        //  new FloatValue.Bounds( +5, +Infinity ), new FloatValue.Bounds( +5, +Infinity ) ),
+        //  new FloatValue.Bounds( +5, +Infinity ),
+        //  new FloatValue.Bounds( +5, +Infinity ) ),
 */
       }
     );
