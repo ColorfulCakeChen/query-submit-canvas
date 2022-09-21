@@ -382,6 +382,9 @@ class HeightWidthDepth {
         {
           this.neuralWorker_PerformanceTest_init();
 
+//!!! ...unfinished... (2022/09/21)
+// For NO_FILL, should compare with normal sync NeuralNet result.
+
           yield await this.testNeuralWorker_ByName( "ONE_WORKER__ONE_SCALE__FILL" );
           yield await this.testNeuralWorker_ByName( "ONE_WORKER__ONE_SCALE__NO_FILL" );
           yield await this.testNeuralWorker_ByName( "TWO_WORKER__ONE_SCALE__FILL" );
