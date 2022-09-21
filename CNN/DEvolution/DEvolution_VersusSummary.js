@@ -132,7 +132,7 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   /**
    * Load the next versus data.
    */
-  async versus_next_loadAsync() {
+  async versus_next_load_async() {
 
     // If all versus data are visited, re-prepare a new random visiting list.
     if ( this.visitCount >= this.visitIndexArray.length ) {
