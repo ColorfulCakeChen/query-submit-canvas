@@ -65,9 +65,6 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * @member {number} totalWorkerCount
  *   There are how many web worker(s) created.
  *
- * @member {DEvolution.VersusSummary} evolutionVersusSummary
- *   The range list of all differential evolution versus (i.e. parent versus offspring).
- *
  * @member {function} ImageData_process_async
  *   This is a data member which is a pointer to a function. The function accepts
  * ImageData as input. It returns a promise resolved to an array
@@ -144,15 +141,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     //
     let totalWorkerCount = NeuralWorker_Mode.workerCount_get( nNeuralWorker_ModeId );
 
-    // 1. Differential Evolution Versus Summary.
-    this.evolutionVersusSummary_dispose();
-    this.evolutionVersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
-      this.weightsSpreadsheetId, this.weightsAPIKey );
-
-    // 2. Web workers.
+    // 1. Web workers.
     let initOkArray;
     {
-      // 2.0 Prepare container of all worker proxy.
+      // 1.0 Prepare container of all worker proxy.
       {
         if ( this.workerProxyArray )
           this.workerProxyArray.clear(); // Release old worker proxy.
@@ -162,7 +154,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         this.workerProxyArray.length = totalWorkerCount;
       }
 
-      // 2.1 Create workers.
+      // 1.1 Create workers.
       let initPromiseArray = new Array( totalWorkerCount );
       for ( let i = 0; i < totalWorkerCount; ++i ) {
         this.workerProxyArray[ i ] = WorkerProxy.Pool.get_or_create_by();
@@ -172,13 +164,13 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       initOkArray = await Promise.all( initPromiseArray );
     }
 
-    // 2.2 Summary workers.
+    // 1.2 Summary workers.
     let initOk = initOkArray.reduce(
       ( previousValue, currentValue ) => ( previousValue && currentValue ),
       true
     );
 
-    // 3. Determine .ImageData_process_async
+    // 2. Determine .ImageData_process_async
     NeuralWorker_Proxies.setup_ImageData_process.call( this );
 
     return initOk;
