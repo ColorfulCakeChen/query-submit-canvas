@@ -124,9 +124,10 @@ class PerformanceTestCase extends Recyclable.Root {
           + `${neuralWorkerProxies}` );
 
 //!!! ...unfinished... (2022/09/21)
-      let bCreateOk = neuralWorkerProxies.NeuralNetArray_create_async(
+      let bCreateOkPromise = neuralWorkerProxies.NeuralNetArray_create_async(
         neuralNetParamsBaseArray, weightArrayBufferArray );
 
+      let bCreateOk = await bCreateOkPromise;
       if ( false == bCreateOk )
         throw Error( `Failed to create neural networks by neuralWorkerProxies. `
           + `${neuralWorkerProxies}` );
