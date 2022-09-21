@@ -54,7 +54,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  *
  *
- * @member {numner} nNeuralWorker_ModeId
+ * @member {number} nNeuralWorker_ModeId
  *   The numeric identifier of neural worker mode (i.e.
  * NeuralWorker.Mode.Singleton.Ids.Xxx).
  *

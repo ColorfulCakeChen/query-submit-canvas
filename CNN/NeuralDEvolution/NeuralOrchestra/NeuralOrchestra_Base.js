@@ -19,6 +19,10 @@ import * as DEvolution from "../DEvolution.js";
  *   - If null, Google Visualization Table Query API will be used.
  *   - If not null, Google Sheets API v4 will be used.
  *
+ * @member {number} nNeuralWorker_ModeId
+ *   The numeric identifier of neural worker mode (i.e.
+ * NeuralWorker.Mode.Singleton.Ids.Xxx).
+ *
  */
 class NeuralOrchestra_Base extends Recyclable.Root {
 
@@ -62,6 +66,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.evolutionVersusSummary_dispose();
 
     super.disposeResources();
+  }
+
+  get weightsSpreadsheetId() {
+    return this.evolutionVersusSummary.weightsSpreadsheetId;
+  }
+
+  get weightsAPIKey( ) {
+    return this.evolutionVersusSummary.weightsAPIKey;
+  }
+
+  get nNeuralWorker_ModeId() {
+    return this.workerProxies.nNeuralWorker_ModeId;
   }
 
   /** */
