@@ -179,21 +179,21 @@ class HeightWidthDepth {
    * 
    */
   neuralWorker_PerformanceTest_addCase(
-    testCaseId, testCaseName, nNeuralWorker_ModeId, neuralNetParamsBase ) {
+    testCaseId, testCaseName, neuralNetParamsBase, nNeuralWorker_ModeId ) {
 
     let aPerformanceTestCase = PerformanceTestCase.Pool.get_or_create_by(
-      testCaseId, testCaseName, nNeuralWorker_ModeId, neuralNetParamsBase );
+      testCaseId, testCaseName, neuralNetParamsBase, nNeuralWorker_ModeId );
 
     this.testCaseMap.set( testCaseName, aPerformanceTestCase );
   }
 
   neuralWorker_PerformanceTest_init() {
 
-    // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
     this.disposeResources();
 
     // Larger input image for performance testing.
-    this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
+    this.testPerformance_imageSourceBag
+      = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
     {
       let largerHeight = this.height * 20;
@@ -226,6 +226,9 @@ class HeightWidthDepth {
 
     let vocabularyChannelCount = 8; //4;
     let vocabularyCountPerInputChannel = 256;
+    let nConvStageType
+      = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID;
+
     let blockCountTotalRequested = 100; //50; //20; //10;
     let output_channelCount = 4; //400; //300; //64;
 
@@ -233,8 +236,8 @@ class HeightWidthDepth {
     //let blockCountTotalRequested_ShuffleNet = blockCountTotalRequested * 2;
     let blockCountTotalRequested_ShuffleNet = blockCountTotalRequested;
 
-    // The neuralNet performance testing should not keep-input-tensor. The reason input
-    // image is created from canvas in real time.
+    // The neuralNet performance testing should not keep-input-tensor becuse the
+    // input image is created from canvas in real time.
     let bKeepInputTensor = false;
 
     // input_height, input_width, input_channelCount,
@@ -243,86 +246,72 @@ class HeightWidthDepth {
     // blockCountTotalRequested, output_channelCount, bKeepInputTensor
     //
 
-    // Test Case 0: (MobileNetV1)
-    this.neuralWorker_PerformanceTest_addCase( 0, "MobileNetV1",
+    // Test Case 0: (ONE_WORKER__ONE_SCALE__FILL)
+    this.neuralWorker_PerformanceTest_addCase( 0, "ONE_WORKER__ONE_SCALE__FILL",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
-        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
-        blockCountTotalRequested, output_channelCount, bKeepInputTensor
-      ) );
-
-    // Test Case 1: (MobileNetV1_padValid)
-    this.neuralWorker_PerformanceTest_addCase( 1, "MobileNetV1_padValid",
-      NeuralNet.ParamsBase.Pool.get_or_create_by(
-        this.height, this.width, this.depth,
-        vocabularyChannelCount, vocabularyCountPerInputChannel,
-        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
-        blockCountTotalRequested, output_channelCount, bKeepInputTensor
-      ) );
-
-    // Test Case 2: (MobileNetV2_Thin)
-    this.neuralWorker_PerformanceTest_addCase( 2, "MobileNetV2_Thin",
-      NeuralNet.ParamsBase.Pool.get_or_create_by(
-        this.height, this.width, this.depth,
-        vocabularyChannelCount, vocabularyCountPerInputChannel,
-        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
-        blockCountTotalRequested, output_channelCount, bKeepInputTensor
-      ) );
-
-    // Test Case 3: (MobileNetV2)
-    this.neuralWorker_PerformanceTest_addCase( 3, "MobileNetV2",
-      NeuralNet.ParamsBase.Pool.get_or_create_by(
-        this.height, this.width, this.depth,
-        vocabularyChannelCount, vocabularyCountPerInputChannel,
-        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
-        blockCountTotalRequested, output_channelCount, bKeepInputTensor
-      ) );
-
-    // Test Case 4: (ShuffleNetV2))
-    this.neuralWorker_PerformanceTest_addCase( 4, "ShuffleNetV2",
-      NeuralNet.ParamsBase.Pool.get_or_create_by(
-        this.height, this.width, this.depth,
-        vocabularyChannelCount, vocabularyCountPerInputChannel,
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
+        nConvStageType,
         blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
-      ) );
+      ),
+      NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__FILL
+    );
 
-    // Test Case 5: (ShuffleNetV2_byPointwise21)
-    this.neuralWorker_PerformanceTest_addCase( 5, "ShuffleNetV2_byPointwise21",
+    // Test Case 1: (ONE_WORKER__ONE_SCALE__NO_FILL)
+    this.neuralWorker_PerformanceTest_addCase( 1, "ONE_WORKER__ONE_SCALE__NO_FILL",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
+        nConvStageType,
         blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
-      ) );
+      ),
+      NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL
+    );
 
-    // Test Case 6: (ShuffleNetV2_byMobileNetV1)
-    this.neuralWorker_PerformanceTest_addCase( 6, "ShuffleNetV2_byMobileNetV1",
+    // Test Case 2: (TWO_WORKER__ONE_SCALE__FILL)
+    this.neuralWorker_PerformanceTest_addCase( 2, "TWO_WORKER__ONE_SCALE__FILL",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
+        nConvStageType,
         blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
-      ) );
+      ),
+      NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL
+    );
 
-    // Test Case 7: (ShuffleNetV2_byMobileNetV1_padValid)
-    this.neuralWorker_PerformanceTest_addCase( 7, "ShuffleNetV2_byMobileNetV1_padValid",
+    // Test Case 3: (TWO_WORKER__ONE_SCALE__NO_FILL)
+    this.neuralWorker_PerformanceTest_addCase( 3, "TWO_WORKER__ONE_SCALE__NO_FILL",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
+        nConvStageType,
         blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
-      ) );
+      ),
+      NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL
+    );
+
+    // Test Case 4: (TWO_WORKER__TWO_SCALE__NO_FILL)
+    this.neuralWorker_PerformanceTest_addCase( 4, "TWO_WORKER__TWO_SCALE__NO_FILL",
+      NeuralNet.ParamsBase.Pool.get_or_create_by(
+        this.height, this.width, this.depth,
+        vocabularyChannelCount, vocabularyCountPerInputChannel,
+        nConvStageType,
+        blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
+      ),
+      NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__TWO_SCALE__NO_FILL
+    );
   }
 
-  /** Release testCase.neuralNet, but keep testCase. */
-  neuralWorker_PerformanceTest_release_neuralNet() {
+
+//!!! ...unfinished... (2022/09/21)
+
+  /** Release testCase.neuralWorkerProxies, but keep testCase. */
+  neuralWorker_PerformanceTest_release_neuralWorkerProxies() {
     if ( this.testCaseMap ) {
       for ( let testCase of this.testCaseMap.values() ) {
-        if ( testCase.neuralNet ) {
-          testCase.neuralNet.disposeResources_and_recycleToPool();
-          testCase.neuralNet = null;
+        if ( testCase.neuralWorkerProxies ) {
+          testCase.neuralWorkerProxies.disposeResources_and_recycleToPool();
+          testCase.neuralWorkerProxies = null;
         }
       }
     }

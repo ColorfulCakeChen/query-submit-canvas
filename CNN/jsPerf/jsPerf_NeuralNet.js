@@ -192,7 +192,8 @@ class HeightWidthDepth {
     this.disposeResources();
 
     // Larger input image for performance testing.
-    this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
+    this.testPerformance_imageSourceBag
+      = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
     {
       let largerHeight = this.height * 20;
@@ -232,8 +233,8 @@ class HeightWidthDepth {
     //let blockCountTotalRequested_ShuffleNet = blockCountTotalRequested * 2;
     let blockCountTotalRequested_ShuffleNet = blockCountTotalRequested;
 
-    // The neuralNet performance testing should not keep-input-tensor. The reason input
-    // image is created from canvas in real time.
+    // The neuralNet performance testing should not keep-input-tensor becuse the
+    // input image is created from canvas in real time.
     let bKeepInputTensor = false;
 
     // input_height, input_width, input_channelCount,
