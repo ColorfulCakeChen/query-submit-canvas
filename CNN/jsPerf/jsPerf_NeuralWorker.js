@@ -118,6 +118,8 @@ class PerformanceTestCase extends Recyclable.Root {
         weightArrayBufferArray = [ weightArray0.buffer, weightArray1.buffer ];
       }
   
+      let markValueArray = [ 0, 255 ];
+
       let bInitOk = await bInitOkPromise;
       if ( false == bInitOk )
         throw Error( `Failed to initialize neuralWorkerProxies object. `
@@ -129,6 +131,14 @@ class PerformanceTestCase extends Recyclable.Root {
       let bCreateOk = await bCreateOkPromise;
       if ( false == bCreateOk )
         throw Error( `Failed to create neural networks by neuralWorkerProxies. `
+          + `${neuralWorkerProxies}` );
+
+      let bSetOkPromise
+        = neuralWorkerProxies.alignmentMarkArray_setValue_async( markValueArray );
+
+      let bSetOk = await bSetOkPromise;
+      if ( false == bSetOk )
+        throw Error( `Failed to set alignment mark by neuralWorkerProxies. `
           + `${neuralWorkerProxies}` );
 
     } catch ( e ) {
