@@ -159,8 +159,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * without filling alignment mark.
    *
    * @return {Promise}
-   *   Return a promise resolved to an array of Float32Array representing the neural
-   * networks' result.
+   *   Return a promise resolved to an array [ Float32Array, Float32Array ] representing
+   * the neural networks' result.
    */
   ImageData_scale_once_process_multiple_async( sourceImageData, bFill ) {
     const bFork = false;
