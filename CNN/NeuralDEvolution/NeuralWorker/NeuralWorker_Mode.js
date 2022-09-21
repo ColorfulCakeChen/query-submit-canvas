@@ -1,6 +1,6 @@
 export { NeuralWorker_Mode as Mode };
 
-import { Int } from "../Unpacker/ValueDesc/ValueDesc_Base.js";
+import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
 
 /** Describe id, range, name of NeuralWorker_Mode.
  *

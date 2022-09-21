@@ -1,9 +1,9 @@
 export { NeuralWorker_Proxy as Proxy };
 
-import * as Pool from "../util/Pool.js";
-import * as Recyclable from "../util/Recyclable.js";
-import * as AsyncWorker from "../util/AsyncWorker.js";
-import * as NeuralNet from "../Conv/NeuralNet.js";
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
+import * as AsyncWorker from "../../util/AsyncWorker.js";
+import * as NeuralNet from "../../Conv/NeuralNet.js";
 
 //!!! ...unfinished... (2022/09/15)
 // What if failed when:

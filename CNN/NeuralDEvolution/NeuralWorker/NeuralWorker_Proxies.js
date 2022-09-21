@@ -1,11 +1,10 @@
 export { NeuralWorker_Proxies as Proxies };
 
-import * as Pool from "../util/Pool.js";
-import * as Recyclable from "../util/Recyclable.js";
-//import * as GSheets from "../util/GSheets.js";
-//import * as ValueMax from "../util/ValueMax.js";
-import * as NeuralNet from "../Conv/NeuralNet.js";
-import * as DEvolution from "../DEvolution.js";
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
+//import * as GSheets from "../../til/GSheets.js";
+//import * as ValueMax from "../../util/ValueMax.js";
+import * as NeuralNet from "../../Conv/NeuralNet.js";
 import { Proxy as NeuralWorker_Proxy } from "./NeuralWorker_Proxy.js";
 import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
 
@@ -111,7 +110,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   /** @override */
   disposeResources() {
     this.workerProxyArray_dispose();
-    this.evolutionVersusSummary_dispose();
 
     this.hardwareConcurrency = undefined;
     this.neuralNetCount = undefined;
@@ -215,14 +213,13 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     }
   }
 
-//!!! ...unfinished... (2022/09/21)
-
   /** Load all differential evolution versus weights ranges. */
   async evolutionVersusSummary_load_async() {
 
     this.evolutionVersusSummary.rangeArray_load_async();
 
-//!!! ...unfinished... (2022/08/27)
+//!!! ...unfinished... (2022/09/21)
+
 
   }
 

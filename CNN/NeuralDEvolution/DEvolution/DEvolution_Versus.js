@@ -3,8 +3,8 @@ export { DEvolution_Versus as Versus };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as NumberTools from "../../util/NumberTools.js";
-import * as ValueMax from "../util/ValueMax.js";
-import * as Base64ToUint8Array from "../Unpacker/Base64ToUint8Array.js";
+import * as ValueMax from "../../util/ValueMax.js";
+import * as Base64ToUint8Array from "../../Unpacker/Base64ToUint8Array.js";
 import { VersusId } from "./DEvolution_VersusId.js";
 
 /**
