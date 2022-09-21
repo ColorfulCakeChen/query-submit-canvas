@@ -345,6 +345,10 @@ class HeightWidthDepth {
   async testNeuralWorker_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
 
+//!!! ...unfinished... (2022/09/21)
+// The previous testNeuralWorker_ByName() still await,
+// but the next testNeuralWorker_ByName() will continue to come here.
+
     // First time test this case. Release all other test cases' neural networks
     // (so that there will be enough memory). Create the specified neural network.
     if ( !testCase.neuralWorkerProxies ) {
