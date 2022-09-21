@@ -6,20 +6,19 @@ import * as ValueMax from "../util/ValueMax.js";
 import * as RandTools from "../util/RandTools.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
-//import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
-//import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
-import * as NeuralNet_Reference from "./Ref/NeuralNet_Reference.js";
-import * as NeuralNet_TestParams from "./Ref/NeuralNet_TestParams.js"; 
-import * as TestParams from "./Ref/TestParams.js"; 
+// import * as NeuralNet_Reference from "./Ref/NeuralNet_Reference.js";
+// import * as NeuralNet_TestParams from "./Ref/NeuralNet_TestParams.js"; 
+import * as NeuralWorker from "../NeuralDEvolution/NeuralWorker.js";
+//import * as TestParams from "./Ref/TestParams.js"; 
 import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
 import * as NumberImage from "./Ref/NumberImage.js"; 
 import * as BatchIdCalculator from "./BatchIdCalculator.js";
 
 /**
- * Test CNN NeuralNet.
+ * Test CNN NeuralWorker.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/20203/74/colorfulcakechen-cnn-neuralnet-4ae5459fd402f30f14dfd544}
+ * @see {@link ???https://www.measurethat.net/Benchmarks/Show/20203/74/colorfulcakechen-cnn-neuralnet-4ae5459fd402f30f14dfd544}
  */
 
 /**
@@ -43,27 +42,32 @@ class PerformanceTestCase extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor( testCaseId, testCaseName, neuralNetParamsBase ) {
+  static setAsConstructor(
+    testCaseId, testCaseName, neuralNetParamsBase, nNeuralWorker_ModeId ) {
+
     super.setAsConstructor();
     PerformanceTestCase.setAsConstructor_self.call( this,
-      testCaseId, testCaseName, neuralNetParamsBase
+      testCaseId, testCaseName, neuralNetParamsBase, nNeuralWorker_ModeId
     );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( testCaseId, testCaseName, neuralNetParamsBase ) {
+  static setAsConstructor_self(
+    testCaseId, testCaseName, neuralNetParamsBase, nNeuralWorker_ModeId ) {
+
     this.testCaseId = testCaseId;
     this.testCaseName = testCaseName;
     this.neuralNetParamsBase = neuralNetParamsBase;
-    this.neuralNet = undefined;
+    this.nNeuralWorker_ModeId = nNeuralWorker_ModeId;
+    this.neuralWorkerProxies = undefined;
     //this.inputTensor3d = undefined;
   }
 
   /** @override */
   disposeResources() {
-    this.neuralNet?.disposeResources_and_recycleToPool();
-    this.neuralNet = null;
+    this.neuralWorkerProxies?.disposeResources_and_recycleToPool();
+    this.neuralWorkerProxies = null;
 
     this.neuralNetParamsBase?.disposeResources_and_recycleToPool();
     this.neuralNetParamsBase = null;
@@ -75,22 +79,10 @@ class PerformanceTestCase extends Recyclable.Root {
   }
 
   /**
-   * Create .neuralNet
+   * Create .neuralWorkerProxies
    */
-  prepare() {
+  async prepare_async() {
     try {
-
-//!!! (2022/08/18 Remarked) Use simple longer weights array instead.
-//       let neuralNetTestParams
-//         = NeuralNet_TestParams.Base.Pool.get_or_create_by( this.testCaseId );
-//
-//       neuralNetTestParams.set_byParamsBase( this.neuralNetParamsBase );
-//
-//       let neuralNet = this.neuralNet
-//         = NeuralNet_Reference.Base.NeuralNet_create( neuralNetTestParams );
-//
-//       neuralNetTestParams.disposeResources_and_recycleToPool();
-//       neuralNetTestParams = null;
 
       if ( !PerformanceTestCase.randomTestWeightArray ) {
         const weightArrayLength = ( 100 * 1024 * 1024 );
@@ -122,25 +114,27 @@ class PerformanceTestCase extends Recyclable.Root {
         neuralNetParams.bKeepInputTensor
       );
 
-      let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-      let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
+      let neuralWorkerProxies = this.neuralWorkerProxies
+        = NeuralWorker.Proxies.Pool.get_or_create_by();
 
-      let bInitOk = neuralNet.init( progress,
-        PerformanceTestCase.randomTestWeightArray, 0, extractedParams );
-
-      if ( neuralNet.bInitOk != bInitOk )
-        throw Error( `NeuralNet validation state (${neuralNet.bInitOk}) mismatches initer's result (${bInitOk}). ${neuralNet}` );
+      let bInitOk = await neuralWorkerProxies.init_async( this.nNeuralWorker_ModeId );
 
       if ( false == bInitOk )
-        throw Error( `Failed to initialize neuralNet object. ${neuralNet}` );
+        throw Error( `Failed to initialize neuralWorkerProxies object. ${neuralWorkerProxies}` );
+
+//!!! ...unfinished... (2022/09/21)
+      let bCreateOk = neuralWorkerProxies.NeuralNetArray_create_async(
+        ???? neuralNetParamsBaseArray, weightArrayBufferArray
+
+        PerformanceTestCase.randomTestWeightArray, 0, extractedParams );
+
+      if ( false == bCreateOk )
+        throw Error( `Failed to create neural networks by neuralWorkerProxies. ${neuralWorkerProxies}` );
 
       if ( 100 != progress.valuePercentage )
         throw Error(
           `Progress (${progress.valuePercentage}) should be 100 when initializing `
           + `NeuralNet object successfully. ${neuralNet}`);
-
-      progress.disposeResources_and_recycleToPool();
-      progress = null;
 
       let strWeightCountInfo = neuralNet.toString_WeightCount();
       console.log( `NeuralNet.${this.testCaseName}: ${strWeightCountInfo}.` );
@@ -183,21 +177,21 @@ class HeightWidthDepth {
   }
 
   disposeResources() {
-    this.neuralNet_PerformanceTest_release();
+    this.neuralWorker_PerformanceTest_release();
     this.testCanvas = null;
   }
 
   /**
    * 
    */
-  neuralNet_PerformanceTest_addCase( testCaseId, testCaseName, neuralNetParamsBase ) {
+  neuralWorker_PerformanceTest_addCase( testCaseId, testCaseName, neuralNetParamsBase ) {
     let aPerformanceTestCase = PerformanceTestCase.Pool.get_or_create_by(
       testCaseId, testCaseName, neuralNetParamsBase );
 
     this.testCaseMap.set( testCaseName, aPerformanceTestCase );
   }
 
-  neuralNet_PerformanceTest_init() {
+  neuralWorker_PerformanceTest_init() {
 
     // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
     this.disposeResources();
@@ -254,7 +248,7 @@ class HeightWidthDepth {
     //
 
     // Test Case 0: (MobileNetV1)
-    this.neuralNet_PerformanceTest_addCase( 0, "MobileNetV1",
+    this.neuralWorker_PerformanceTest_addCase( 0, "MobileNetV1",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
@@ -263,7 +257,7 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 1: (MobileNetV1_padValid)
-    this.neuralNet_PerformanceTest_addCase( 1, "MobileNetV1_padValid",
+    this.neuralWorker_PerformanceTest_addCase( 1, "MobileNetV1_padValid",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
@@ -272,7 +266,7 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 2: (MobileNetV2_Thin)
-    this.neuralNet_PerformanceTest_addCase( 2, "MobileNetV2_Thin",
+    this.neuralWorker_PerformanceTest_addCase( 2, "MobileNetV2_Thin",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
@@ -281,7 +275,7 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 3: (MobileNetV2)
-    this.neuralNet_PerformanceTest_addCase( 3, "MobileNetV2",
+    this.neuralWorker_PerformanceTest_addCase( 3, "MobileNetV2",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
@@ -290,7 +284,7 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 4: (ShuffleNetV2))
-    this.neuralNet_PerformanceTest_addCase( 4, "ShuffleNetV2",
+    this.neuralWorker_PerformanceTest_addCase( 4, "ShuffleNetV2",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
@@ -299,7 +293,7 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 5: (ShuffleNetV2_byPointwise21)
-    this.neuralNet_PerformanceTest_addCase( 5, "ShuffleNetV2_byPointwise21",
+    this.neuralWorker_PerformanceTest_addCase( 5, "ShuffleNetV2_byPointwise21",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
@@ -308,7 +302,7 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 6: (ShuffleNetV2_byMobileNetV1)
-    this.neuralNet_PerformanceTest_addCase( 6, "ShuffleNetV2_byMobileNetV1",
+    this.neuralWorker_PerformanceTest_addCase( 6, "ShuffleNetV2_byMobileNetV1",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
@@ -317,7 +311,7 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 7: (ShuffleNetV2_byMobileNetV1_padValid)
-    this.neuralNet_PerformanceTest_addCase( 7, "ShuffleNetV2_byMobileNetV1_padValid",
+    this.neuralWorker_PerformanceTest_addCase( 7, "ShuffleNetV2_byMobileNetV1_padValid",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
@@ -327,7 +321,7 @@ class HeightWidthDepth {
   }
 
   /** Release testCase.neuralNet, but keep testCase. */
-  neuralNet_PerformanceTest_release_neuralNet() {
+  neuralWorker_PerformanceTest_release_neuralNet() {
     if ( this.testCaseMap ) {
       for ( let testCase of this.testCaseMap.values() ) {
         if ( testCase.neuralNet ) {
@@ -338,7 +332,7 @@ class HeightWidthDepth {
     }
   }
 
-  neuralNet_PerformanceTest_release() {
+  neuralWorker_PerformanceTest_release() {
     if ( this.testCaseMap ) {
       for ( let testCase of this.testCaseMap.values() ) {
         testCase.disposeResources_and_recycleToPool();
@@ -359,7 +353,7 @@ class HeightWidthDepth {
     // First time test this case. Release all other neural network (so that there will
     // be enough memory). Create the specified neural network.
     if ( !testCase.neuralNet ) {
-      this.neuralNet_PerformanceTest_release_neuralNet();
+      this.neuralWorker_PerformanceTest_release_neuralNet();
       testCase.prepare();
     }
 
@@ -451,7 +445,7 @@ class HeightWidthDepth {
 
     try {
       // After correctness testing done, create all NeuralNet for performance testing.
-      this.neuralNet_PerformanceTest_init();
+      this.neuralWorker_PerformanceTest_init();
     } catch ( e ) {
       debugger;
       throw e;
