@@ -108,9 +108,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-
-    this.evolutionVersusSummary_dispose();
     this.workerProxyArray_dispose();
+    this.evolutionVersusSummary_dispose();
 
     this.hardwareConcurrency = undefined;
     this.neuralNetCount = undefined;
