@@ -336,8 +336,8 @@ class HeightWidthDepth {
   testNeuralWorker_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
 
-    // First time test this case. Release all other neural network (so that there will
-    // be enough memory). Create the specified neural network.
+    // First time test this case. Release all other test cases' neural networks
+    // (so that there will be enough memory). Create the specified neural network.
     if ( !testCase.neuralWorkerProxies ) {
       this.neuralWorker_PerformanceTest_release_neuralWorkerProxies();
 !!!??? await
@@ -351,7 +351,7 @@ class HeightWidthDepth {
     }
 
     let neuralWorkerProxies = testCase.neuralWorkerProxies;
-    let outputTensor3d;
+    let Float32Array outputTensor3d;
     {
       outputTensor3d = neuralWorkerProxies.ImageData_process_async( imageData );
   

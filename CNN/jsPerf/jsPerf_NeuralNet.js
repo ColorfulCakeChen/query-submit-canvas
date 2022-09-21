@@ -346,8 +346,8 @@ class HeightWidthDepth {
   testNeuralNet_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
 
-    // First time test this case. Release all other neural network (so that there will
-    // be enough memory). Create the specified neural network.
+    // First time test this case. Release all other test cases' neural networks
+    // (so that there will be enough memory). Create the specified neural network.
     if ( !testCase.neuralNet ) {
       this.neuralNet_PerformanceTest_release_neuralNet();
       testCase.prepare();
