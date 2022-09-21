@@ -187,6 +187,7 @@ class HeightWidthDepth {
     this.testCaseMap.set( testCaseName, aPerformanceTestCase );
   }
 
+  /** */
   neuralWorker_PerformanceTest_init() {
 
     this.disposeResources();
@@ -302,9 +303,6 @@ class HeightWidthDepth {
     );
   }
 
-
-//!!! ...unfinished... (2022/09/21)
-
   /** Release testCase.neuralWorkerProxies, but keep testCase. */
   neuralWorker_PerformanceTest_release_neuralWorkerProxies() {
     if ( this.testCaseMap ) {
@@ -331,25 +329,31 @@ class HeightWidthDepth {
     }
   }
 
-  /** Test apply by Xxx */
-  testNeuralNet_ByName( testCaseName ) {
+
+//!!! ...unfinished... (2022/09/21)
+
+  /** Test .ImageData_process_async by Xxx */
+  testNeuralWorker_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
 
     // First time test this case. Release all other neural network (so that there will
     // be enough memory). Create the specified neural network.
-    if ( !testCase.neuralNet ) {
-      this.neuralWorker_PerformanceTest_release_neuralNet();
+    if ( !testCase.neuralWorkerProxies ) {
+      this.neuralWorker_PerformanceTest_release_neuralWorkerProxies();
+!!!??? await
       testCase.prepare();
     }
 
-    let neuralNet = testCase.neuralNet;
+    let imageData;
+    {
+      let ctx = this.testCanvas.getContext( "2d" );
+      imageData = ctx.getImageData( 0, 0, this.testCanvas.width, this.testCanvas.height );
+    }
 
-    let inputTensor3d = neuralNet.create_ScaledSourceTensor_from_PixelData(
-      this.testCanvas );
-
+    let neuralWorkerProxies = testCase.neuralWorkerProxies;
     let outputTensor3d;
     {
-      outputTensor3d = neuralNet.apply( inputTensor3d );
+      outputTensor3d = neuralWorkerProxies.ImageData_process_async( imageData );
   
       if ( 100 != neuralNet.progressApply.valuePercentage )
         throw Error( `testNeuralNet_ByName(): `
