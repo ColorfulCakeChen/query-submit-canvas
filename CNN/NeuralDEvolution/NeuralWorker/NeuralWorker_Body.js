@@ -5,7 +5,7 @@ import * as AsyncWorker from "../util/../AsyncWorker.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
-import { tensorflowJsURL } from "./NeuralWorker/NeuralWorker_Common.js";
+import { tensorflowJsURL } from "./NeuralWorker_Common.js";
 
 importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
 
