@@ -233,9 +233,19 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * because it will be scaled to the correct shape before passed into the neural
    * network.
    *
+   * @param {boolean} bFork
+   *   Whether yield the source image data.
+   *
+   *   - If true, the sourceImageData will be yielded as an ImageData.
+   *       This is used for 1st worker.
+   *
+   *   - If false, the sourceImageData will not yielded. This is used for 2nd worker.
+   *
    * @return {AsyncWorker.Resulter}
-   *   Return an async generator tracking the result of processing. It will yield two
-   * times, the 1st is an DataImage, the 2nd is a Float32Array.
+   *   Return an async generator tracking the result of processing.
+   *   - If ( bFork == true ), it will yield two times, the 1st is an DataImage,
+   *       the 2nd is a Float32Array.
+   *   - If ( bFork == false ), it will yield only one times, the Float32Array.
    *
    * @yield {ImageData}
    *   Resolve to { done: false, value: ImageData }. The value is an ImageData
@@ -245,36 +255,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   Resolve to { done: true, value: Float32Array }. The value is a Float32Array
    * representing the neural network's result.
    */
-  ImageData_scale_fork_process_asyncGenerator( sourceImageData ) {
-    const bFork = true;
+  ImageData_scale_forkable_process_asyncGenerator( sourceImageData, bFork ) {
     return this.createResulter_by_postCommandArgs(
-      [ "ImageData_scale_forkable_process", sourceImageData, bFork ],
-      [ sourceImageData.data.buffer ]
-    );
-  }
-
-
-  /**
-   * This method is used for:
-   *   - Two web workers. Every worker has one neural network.
-   *   - Both workers scale source image data by themselves.
-   *   - No alignment mark filling.
-   *   - The 2nd worker call this method.
-   *
-   *
-   * @param {ImageData} sourceImageData
-   *   The source image data to be processed. Its shape needs not match
-   * this.neuralNetParamsBase's [ input_height, input_width, input_channelCount ]
-   * because it will be scaled to the correct shape before passed into the neural
-   * network.
-   *
-   * @return {Promise}
-   *   Return a promise resolved to a Float32Array representing the neural network's
-   * result.
-   */
-  ImageData_scale_process_async( sourceImageData ) {
-    const bFork = false;
-    return this.createPromise_by_postCommandArgs(
       [ "ImageData_scale_forkable_process", sourceImageData, bFork ],
       [ sourceImageData.data.buffer ]
     );
