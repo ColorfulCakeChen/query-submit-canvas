@@ -165,6 +165,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       true
     );
 
+    NeuralWorker_Proxies.setup_apply.call( this );
+
     return initOk;
   }
 
@@ -272,24 +274,26 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /**
+   * Setup .apply_async according to .nNeuralWorker_ModeId.
+   *
    * @param {NeuralWorker_Proxies} this
    */
   static setup_apply() {
     switch ( this.nNeuralWorker_ModeId ) {
       case NeuralWorker_Mode.Ids.TWO_WORKER__ONE_SCALE__FILL: // (0)
-        this.apply = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL;
+        this.apply_async = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL;
         break;
 
       case NeuralWorker_Mode.Ids.TWO_WORKER__ONE_SCALE__NO_FILL: // (1)
-        this.apply = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__NO_FILL;
+        this.apply_async = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__NO_FILL;
         break;
 
       case NeuralWorker_Mode.Ids.TWO_WORKER__TWO_SCALE__NO_FILL: // (2)
-        this.apply = NeuralWorker_Proxies.apply__TWO_WORKER__TWO_SCALE__NO_FILL;
+        this.apply_async = NeuralWorker_Proxies.apply__TWO_WORKER__TWO_SCALE__NO_FILL;
         break;
 
       case NeuralWorker_Mode.Ids.ONE_WORKER__ONE_SCALE__NO_FILL: // (3)
-        this.apply = NeuralWorker_Proxies.apply__ONE_WORKER__ONE_SCALE__NO_FILL;
+        this.apply_async = NeuralWorker_Proxies.apply__ONE_WORKER__ONE_SCALE__NO_FILL;
         break;
 
       default:
@@ -340,7 +344,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   Return a promise resolved to an array of Float32Array representing the neural
    * networks' result.
    */
-  async ImageData_process_async( sourceImageData, bFill ) {
+  ImageData_process_async( sourceImageData ) {
+    return this.apply_async( sourceImageData );
    
 //!!! ...unfinished... (2022/09/20)
 // NeuralWorker_Mode.workerCount_get( this.nNeuralWorker_ModeId );
