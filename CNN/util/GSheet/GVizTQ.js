@@ -167,11 +167,11 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
    *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
    *
    * @yield {Promise( Array[] )}
-   *   - Yield a promise resolves to { value: ( a two dimension (column-major) array ),
-   *       done: true } when successfully.
-   *   - Yield a promise resolves to { value: null, done: true } when failed.
+   *   - Yield a promise resolves to { done: true,
+   *       value: ( a two dimension (column-major) array ) } when successfully.
+   *   - Yield a promise resolves to { done: true, value: null } when failed.
    */
-  async* fetcher_JSON_ColumnMajorArrayArray( progressParent ) {
+  async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progressParent ) {
     let progressRoot = progressParent.root_get();
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 4 ) );

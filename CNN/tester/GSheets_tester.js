@@ -72,12 +72,12 @@ async function* tester( progressParent ) {
 
   // Without API key.
   let tester1 = GSheets.UrlComposer.Pool.get_or_create_by( spreadsheetId, range );
-  let fetcher1 = tester1.fetcher_JSON_ColumnMajorArrayArray( progress1 );
+  let fetcher1 = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progress1 );
   let result1 = yield* fetcher1;
 
   // With API key.
   let tester2 = GSheets.UrlComposer.Pool.get_or_create_by( spreadsheetId, range, apiKey );
-  let fetcher2 = tester2.fetcher_JSON_ColumnMajorArrayArray( progress2 );
+  let fetcher2 = tester2.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progress2 );
   let result2 = yield* fetcher2;
 
   // Compare results: should the same.
@@ -88,11 +88,11 @@ async function* tester( progressParent ) {
   if ( result1 ) {
     let newRange = result1[ 0 ][ 0 ];
     tester1.range_set( newRange );
-    let fetcher11 = tester1.fetcher_JSON_ColumnMajorArrayArray( progress11 );
+    let fetcher11 = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progress11 );
     let result11 = yield* fetcher11;
 
     tester2.range_set( newRange );
-    let fetcher21 = tester2.fetcher_JSON_ColumnMajorArrayArray( progress21 );
+    let fetcher21 = tester2.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progress21 );
     let result21 = yield* fetcher21;
 
     if ( !array2d_compare_EQ( result11, result21 ) )

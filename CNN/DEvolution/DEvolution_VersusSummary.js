@@ -100,8 +100,7 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     const range = "A:A";
     this.urlComposer.range_set( range );
 
-    let rangeArrayArray
-      = this.urlComposer.fetchAsync_JSON_ColumnMajorArrayArray();
+    let rangeArrayArray = await this.urlComposer.JSON_ColumnMajorArrayArray_fetch_async();
 
     // Only the first column (i.e. column[ 0 ]) has range description string.
     this.rangeArray = rangeArrayArray[ 0 ];
@@ -145,7 +144,7 @@ class DEvolution_VersusSummary extends Recyclable.Root {
 //     this.urlComposer.range_set( range );
 //
 //     let ???rangeArrayArray
-//       = this.urlComposer.fetchAsync_JSON_ColumnMajorArrayArray();
+//       = this.urlComposer.JSON_ColumnMajorArrayArray_fetch_async();
   }
 
 }

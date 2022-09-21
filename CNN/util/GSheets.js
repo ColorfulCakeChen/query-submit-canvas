@@ -105,8 +105,8 @@ class GSheets_UrlComposer extends Recyclable.Root {
    *       done: true } when successfully.
    *   - Yield a promise resolves to { value: null, done: true } when failed.
    */
-  async* fetcher_JSON_ColumnMajorArrayArray( progressParent ) {
-    let fetcher = this.urlComposer.fetcher_JSON_ColumnMajorArrayArray( progressParent );
+  async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progressParent ) {
+    let fetcher = this.urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progressParent );
     let ColumnMajorArrayArray = yield *fetcher;
     return ColumnMajorArrayArray;
   }
@@ -120,12 +120,12 @@ class GSheets_UrlComposer extends Recyclable.Root {
    *   - It will resolve to ( a two dimension (column-major) array ) when successful.
    *   - It will resolve to ( null ) when failed.
    */
-  async fetchAsync_JSON_ColumnMajorArrayArray() {
+  async JSON_ColumnMajorArrayArray_fetch_async() {
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
     let resultColumnMajorArrayArray;
 
-    let fetcher = this.fetcher_JSON_ColumnMajorArrayArray( progress );
+    let fetcher = this.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progress );
     let fetcherNext;
     do {
       fetcherNext = await fetcher.next();
