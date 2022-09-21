@@ -351,17 +351,11 @@ class HeightWidthDepth {
     }
 
     let neuralWorkerProxies = testCase.neuralWorkerProxies;
-    let Float32Array outputTensor3d;
-    {
-      outputTensor3d = neuralWorkerProxies.ImageData_process_async( imageData );
-  
-      if ( 100 != neuralNet.progressApply.valuePercentage )
-        throw Error( `testNeuralNet_ByName(): `
-          + `Progress (${neuralNet.progressApply.valuePercentage}) should be 100 `
-          + `after neuralNet.apply(). ${neuralNet}`);
-    }
 
-    tf.dispose( outputTensor3d );
+    let resultArrayArayPromise
+      = neuralWorkerProxies.ImageData_process_async( imageData );
+
+    let resultArrayAray = await resultArrayArayPromise;
   }
 
   /** Testing whether the results of different implementation are the same. */
