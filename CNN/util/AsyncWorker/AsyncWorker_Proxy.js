@@ -73,6 +73,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       this.worker = null;
     }
 
+    this.workerBlobObjectURL_dispose();
+
     this.workerOptions = undefined;
     this.workerURL = undefined;
     this.workerModuleURL = undefined;
@@ -82,6 +84,14 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     this.processingId_next = undefined;
 
     super.disposeResources();
+  }
+
+  /** */
+  workerBlobObjectURL_dispose() {
+    if ( this.workerBlobObjectURL ) {
+      URL.revokeObjectURL( this.workerBlobObjectURL );
+      this.workerBlobObjectURL = null;
+    }
   }
 
   /**
@@ -101,7 +111,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     //  = AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI( workerModuleURL );
     //this.workerURL = workerDataURI;
 
-    // Use blob object URL to workaround cross origin web worker problem.
+    // Use blob object URL to workaround cross origin web worker problem (which
+    // will be encountered when use WorkerBodyStub_URL or WorkerBodyStub_Codes_DataURI).
     this.workerBlobObjectURL
       = AsyncWorker_Proxy.WorkerBodyStub_create_Codes_BlobObjectURL( workerModuleURL );
     this.workerURL = this.workerBlobObjectURL;
@@ -332,11 +343,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 
     // If the web worker source is blob object URL, revoke it after worker created
     // successfully for release resource.
-    if ( this.workerBlobObjectURL ) {
-      URL.revokeObjectURL( this.workerBlobObjectURL );
-      this.workerBlobObjectURL = null;
-      this.workerURL = null;
-    }
+    this.workerBlobObjectURL_dispose();
 
     // ( e.data == [ processingId, done, value ] )
     let [ processingId, done, value ] = e.data;
