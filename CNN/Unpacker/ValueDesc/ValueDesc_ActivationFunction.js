@@ -95,12 +95,12 @@ class ActivationFunction extends Int {
 
   constructor() {
 
-//!!! (2022/07/05 Remarked) For speed-up testing.
-//    super( 0, 8,
-//      [ "NONE",  "CLIP_BY_VALUE_N2_P2", "CLIP_BY_VALUE_N3_P3", "TANH",  "SIN", "RELU6",  "COS",  "SIGMOID", "RELU" ], //  "SOFTPLUS" ],
+    //!!! (2022/07/05 Remarked) For speed-up testing.
+    //super( 0, 8,
 
     super( 0, 1,
-      { NONE : new ActivationFunction.Info( 0, "NONE", null, null, null, null, null ),
+      {
+        NONE : new ActivationFunction.Info( 0, "NONE", null, null, null, null, null ),
 
         CLIP_BY_VALUE_N2_P2: new ActivationFunction.Info( 1, "CLIP_BY_VALUE_N2_P2",
 
