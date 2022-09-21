@@ -99,20 +99,9 @@ class PerformanceTestCase extends Recyclable.Root {
         );
       }
 
-      let neuralNetParams = this.neuralNetParamsBase;
-
       // Initialize successfully or failed.
-      let extractedParams = NeuralNet.Params.Pool.get_or_create_by(
-        neuralNetParams.input_height,
-        neuralNetParams.input_width,
-        neuralNetParams.input_channelCount,
-        neuralNetParams.vocabularyChannelCount,
-        neuralNetParams.vocabularyCountPerInputChannel,
-        neuralNetParams.nConvStageTypeId,
-        neuralNetParams.blockCountTotalRequested,
-        neuralNetParams.output_channelCount,
-        neuralNetParams.bKeepInputTensor
-      );
+      let neuralNetParams0 = NeuralNet.Params.Pool.get_or_create_by_NeuralNetParamsBase(
+        this.neuralNetParamsBase );
 
       let neuralWorkerProxies = this.neuralWorkerProxies
         = NeuralWorker.Proxies.Pool.get_or_create_by();
@@ -120,7 +109,8 @@ class PerformanceTestCase extends Recyclable.Root {
       let bInitOk = await neuralWorkerProxies.init_async( this.nNeuralWorker_ModeId );
 
       if ( false == bInitOk )
-        throw Error( `Failed to initialize neuralWorkerProxies object. ${neuralWorkerProxies}` );
+        throw Error( `Failed to initialize neuralWorkerProxies object. `
+          + `${neuralWorkerProxies}` );
 
 //!!! ...unfinished... (2022/09/21)
       let bCreateOk = neuralWorkerProxies.NeuralNetArray_create_async(
@@ -129,7 +119,8 @@ class PerformanceTestCase extends Recyclable.Root {
         PerformanceTestCase.randomTestWeightArray, 0, extractedParams );
 
       if ( false == bCreateOk )
-        throw Error( `Failed to create neural networks by neuralWorkerProxies. ${neuralWorkerProxies}` );
+        throw Error( `Failed to create neural networks by neuralWorkerProxies. `
+          + `${neuralWorkerProxies}` );
 
       if ( 100 != progress.valuePercentage )
         throw Error(

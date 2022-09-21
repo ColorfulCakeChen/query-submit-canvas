@@ -21,7 +21,8 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
   /**
    * Used as default NeuralNet.Params provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "NeuralNet.Params.Pool", NeuralNet_Params, NeuralNet_Params.setAsConstructor );
+  static Pool = new Pool.Root( "NeuralNet.Params.Pool",
+    NeuralNet_Params, NeuralNet_Params.setAsConstructor );
 
   /**
    * If a parameter's value is null, it will be extracted from inputWeightArray (i.e. by evolution).
@@ -135,6 +136,26 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
     this.inferencedParams_create();
 
     return bExtractOk;
+  }
+
+  /**
+   * @param {NeuralNet.ParamsBase} neuralNetParamsBase
+   *   Get or create (from pool) NeuralNet.Params according to the specified
+   * neuralNetParamsBase.
+   */
+  static get_or_create_by_NeuralNetParamsBase( neuralNetParamsBase ) {
+    let neuralNetParams = Params.Pool.get_or_create_by(
+      neuralNetParamsBase.input_height,
+      neuralNetParamsBase.input_width,
+      neuralNetParamsBase.input_channelCount,
+      neuralNetParamsBase.vocabularyChannelCount,
+      neuralNetParamsBase.vocabularyCountPerInputChannel,
+      neuralNetParamsBase.nConvStageTypeId,
+      neuralNetParamsBase.blockCountTotalRequested,
+      neuralNetParamsBase.output_channelCount,
+      neuralNetParamsBase.bKeepInputTensor
+    );
+    return neuralNetParams;
   }
 
 }

@@ -115,17 +115,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         // the neural network release its input tensor.
         neuralNetParamsBase.bKeepInputTensor = false;
 
-        let neuralNetParams = NeuralNet.Params.Pool.get_or_create_by(
-          neuralNetParamsBase.input_height,
-          neuralNetParamsBase.input_width,
-          neuralNetParamsBase.input_channelCount,
-          neuralNetParamsBase.vocabularyChannelCount,
-          neuralNetParamsBase.vocabularyCountPerInputChannel,
-          neuralNetParamsBase.nConvStageTypeId,
-          neuralNetParamsBase.blockCountTotalRequested,
-          neuralNetParamsBase.output_channelCount,
-          neuralNetParamsBase.bKeepInputTensor
-        );
+        let neuralNetParams = NeuralNet.Params.get_or_create_by_NeuralNetParamsBase(
+          neuralNetParamsBase );
 
         progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
         let neuralNet = NeuralNet.Base.Pool.get_or_create_by();

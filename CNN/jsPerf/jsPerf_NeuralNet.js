@@ -107,26 +107,15 @@ class PerformanceTestCase extends Recyclable.Root {
         );
       }
 
-      let neuralNetParams = this.neuralNetParamsBase;
-
       // Initialize successfully or failed.
-      let extractedParams = NeuralNet.Params.Pool.get_or_create_by(
-        neuralNetParams.input_height,
-        neuralNetParams.input_width,
-        neuralNetParams.input_channelCount,
-        neuralNetParams.vocabularyChannelCount,
-        neuralNetParams.vocabularyCountPerInputChannel,
-        neuralNetParams.nConvStageTypeId,
-        neuralNetParams.blockCountTotalRequested,
-        neuralNetParams.output_channelCount,
-        neuralNetParams.bKeepInputTensor
-      );
+      let neuralNetParams = NeuralNet.Params.get_or_create_by_NeuralNetParamsBase(
+        this.neuralNetParamsBase );
 
       let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
       let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
 
       let bInitOk = neuralNet.init( progress,
-        PerformanceTestCase.randomTestWeightArray, 0, extractedParams );
+        PerformanceTestCase.randomTestWeightArray, 0, neuralNetParams );
 
       if ( neuralNet.bInitOk != bInitOk )
         throw Error( `NeuralNet validation state (${neuralNet.bInitOk}) mismatches initer's result (${bInitOk}). ${neuralNet}` );
