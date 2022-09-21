@@ -99,9 +99,14 @@ class PerformanceTestCase extends Recyclable.Root {
         );
       }
 
-      // Initialize successfully or failed.
-      let neuralNetParams0 = NeuralNet.Params.Pool.get_or_create_by_NeuralNetParamsBase(
-        this.neuralNetParamsBase );
+      let neuralNetParamsBaseArray;
+      {
+        let neuralNetParams0 = this.neuralNetParamsBase.clone();
+        let neuralNetParams1 = this.neuralNetParamsBase.clone();
+        neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
+      }
+
+      weightArrayBufferArray
 
       let neuralWorkerProxies = this.neuralWorkerProxies
         = NeuralWorker.Proxies.Pool.get_or_create_by();
@@ -114,7 +119,7 @@ class PerformanceTestCase extends Recyclable.Root {
 
 //!!! ...unfinished... (2022/09/21)
       let bCreateOk = neuralWorkerProxies.NeuralNetArray_create_async(
-        ???? neuralNetParamsBaseArray, weightArrayBufferArray
+        neuralNetParamsBaseArray, ???? weightArrayBufferArray
 
         PerformanceTestCase.randomTestWeightArray, 0, extractedParams );
 

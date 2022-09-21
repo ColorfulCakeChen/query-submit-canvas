@@ -143,6 +143,24 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     super.disposeResources();
   }
 
+  /**
+   * Get or create (from pool) NeuralNet.ParamsBase according to this NeuralNet.ParamsBase.
+   */
+  clone() {
+    let another = ParamsBase.Pool.get_or_create_by(
+      this.input_height,
+      this.input_width,
+      this.input_channelCount,
+      this.vocabularyChannelCount,
+      this.vocabularyCountPerInputChannel,
+      this.nConvStageTypeId,
+      this.blockCountTotalRequested,
+      this.output_channelCount,
+      this.bKeepInputTensor
+    );
+    return another;
+  }
+
   /** Release .inferencedParams */
   inferencedParams_dispose() {
     if ( this.inferencedParams ) {
