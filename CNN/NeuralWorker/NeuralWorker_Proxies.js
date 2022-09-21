@@ -109,11 +109,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
-    if ( this.evolutionVersusSummary ) {
-      this.evolutionVersusSummary.disposeResources_and_recycleToPool();
-      this.evolutionVersusSummary = null;
-    }
-
+    this.evolutionVersusSummary_dispose();
     this.disposeWorkers();
 
     this.hardwareConcurrency = undefined;
@@ -172,10 +168,15 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     //
     let totalWorkerCount = NeuralWorker_Mode.workerCount_get( nNeuralWorker_ModeId );
 
-    // 1. Create web workers.
+    // 1. Differential Evolution Versus Summary.
+    this.evolutionVersusSummary_dispose();
+    this.evolutionVersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
+      this.weightsSpreadsheetId, this.weightsAPIKey );
+
+    // 2. Web workers.
     let initOkArray;
     {
-      // Prepare container of all worker proxy.
+      // 2.0 Prepare container of all worker proxy.
       {
         if ( this.workerProxyArray )
           this.workerProxyArray.clear();
@@ -185,6 +186,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         this.workerProxyArray.length = totalWorkerCount;
       }
 
+      // 2.1 Create workers.
       let initPromiseArray = new Array( totalWorkerCount );
       for ( let i = 0; i < totalWorkerCount; ++i ) {
         this.workerProxyArray[ i ] = WorkerProxy.Pool.get_or_create_by();
@@ -194,28 +196,30 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       initOkArray = await Promise.all( initPromiseArray );
     }
 
-    // 2. Summary.
+    // 2.2 Summary workers.
     let initOk = initOkArray.reduce(
       ( previousValue, currentValue ) => ( previousValue && currentValue ),
       true
     );
 
-    // 3.
+    // 3. Determine .apply_async
     NeuralWorker_Proxies.setup_apply.call( this );
 
     return initOk;
   }
 
+  /** */
+  evolutionVersusSummary_dispose() {
+    if ( this.evolutionVersusSummary ) {
+      this.evolutionVersusSummary.disposeResources_and_recycleToPool();
+      this.evolutionVersusSummary = null;
+    }
+  }
 
 //!!! ...unfinished... (2022/09/21)
 
   /** Load all differential evolution versus weights ranges. */
   async evolutionVersusSummary_load_async() {
-
-    if ( !this.evolutionVersusSummary ) {
-      this.evolutionVersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
-        this.weightsSpreadsheetId, this.weightsAPIKey );
-    }
 
     this.evolutionVersusSummary.rangeArray_load_async();
 
