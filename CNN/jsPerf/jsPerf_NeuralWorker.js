@@ -99,6 +99,11 @@ class PerformanceTestCase extends Recyclable.Root {
         );
       }
 
+      let neuralWorkerProxies = this.neuralWorkerProxies
+        = NeuralWorker.Proxies.Pool.get_or_create_by();
+
+      let bInitOkPromise = neuralWorkerProxies.init_async( this.nNeuralWorker_ModeId );
+
       let neuralNetParamsBaseArray;
       {
         let neuralNetParams0 = this.neuralNetParamsBase.clone();
@@ -106,13 +111,14 @@ class PerformanceTestCase extends Recyclable.Root {
         neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
       }
 
-      weightArrayBufferArray
+//!!! ...unfinished... (2022/09/21)
+      let weightArrayBufferArray;
+      {
 
-      let neuralWorkerProxies = this.neuralWorkerProxies
-        = NeuralWorker.Proxies.Pool.get_or_create_by();
-
-      let bInitOk = await neuralWorkerProxies.init_async( this.nNeuralWorker_ModeId );
-
+        weightArrayBufferArray = [ ???, ??? ];
+      }
+  
+      let bInitOk = await bInitOkPromise;
       if ( false == bInitOk )
         throw Error( `Failed to initialize neuralWorkerProxies object. `
           + `${neuralWorkerProxies}` );
