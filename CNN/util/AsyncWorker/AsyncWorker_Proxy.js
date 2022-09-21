@@ -91,12 +91,15 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   static createWorker_byModuleURL( workerModuleURL ) {
     this.workerModuleURL = workerModuleURL;
 
-    this.workerURL = AsyncWorker_Proxy.create_WorkerBodyStub_URL( workerModuleURL );
+//!!! (2022/09/21 Remarked) 
+// For workaround cross origin web worker problem,
+// use create_WorkerBodyStub_Codes_DataURI() instead.
+//    this.workerURL = AsyncWorker_Proxy.create_WorkerBodyStub_URL( workerModuleURL );
 
     //(2022/09/17 Remarked) Use create_WorkerBodyStub_URL() instead.
-    // let workerDataURI
-    //   = AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI( workerModuleURL );
-    // this.workerURL = workerDataURI;
+    let workerDataURI
+      = AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI( workerModuleURL );
+    this.workerURL = workerDataURI;
 
     // Q: Why not use "module" type worker?
     // A: A "module" type worker can not use importScripts() to load global library.
