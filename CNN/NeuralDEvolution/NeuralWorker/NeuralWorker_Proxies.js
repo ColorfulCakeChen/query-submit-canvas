@@ -54,15 +54,6 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  *
  *
- * @member {string} weightsSpreadsheetId
- *   The Google Sheets spreadsheetId of neural network weights. Every worker will
- * load weights from the spreadsheet to initialize one neural network.
- *
- * @member {string} weightsAPIKey
- *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
- *   - If null, Google Visualization Table Query API will be used.
- *   - If not null, Google Sheets API v4 will be used.
- *
  * @member {numner} nNeuralWorker_ModeId
  *   The numeric identifier of neural worker mode (i.e.
  * NeuralWorker.Mode.Singleton.Ids.Xxx).
@@ -115,8 +106,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.neuralNetCount = undefined;
 
     this.nNeuralWorker_ModeId = undefined;
-    this.weightsAPIKey = undefined;
-    this.weightsSpreadsheetId = undefined;
 
     super.disposeResources();
   }
@@ -131,11 +120,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Resolved to true, if success.
    *   - Resolved to false, if failed.
    */
-  async init_async( weightsSpreadsheetId, weightsAPIKey, nNeuralWorker_ModeId ) {
+  async init_async( nNeuralWorker_ModeId ) {
 
     // 0.
-    this.weightsSpreadsheetId = weightsSpreadsheetId;
-    this.weightsAPIKey = weightsAPIKey;
     this.nNeuralWorker_ModeId = nNeuralWorker_ModeId;
 
     this.neuralNetCount = 2; // Always two neural network (for differential evolution).
@@ -203,24 +190,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       this.workerProxyArray.disposeResources_and_recycleToPool();
       this.workerProxyArray = null;
     }
-  }
-
-  /** */
-  evolutionVersusSummary_dispose() {
-    if ( this.evolutionVersusSummary ) {
-      this.evolutionVersusSummary.disposeResources_and_recycleToPool();
-      this.evolutionVersusSummary = null;
-    }
-  }
-
-  /** Load all differential evolution versus weights ranges. */
-  async evolutionVersusSummary_load_async() {
-
-    this.evolutionVersusSummary.rangeArray_load_async();
-
-//!!! ...unfinished... (2022/09/21)
-
-
   }
 
   /**

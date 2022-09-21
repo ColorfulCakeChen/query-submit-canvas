@@ -4,8 +4,6 @@ import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as GSheets from "../../util/GSheets.js";
 import * as RandTools from "../../util/RandTools.js";
-import * as NeuralNet from "../../Conv/NeuralNet.js";
-import * as NeuralWorker from "../NeuralWorker.js";
 
 /**
  * Differential evolution summary information by downloading range list.
@@ -62,8 +60,6 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   static setAsConstructor_self( weightsSpreadsheetId, weightsAPIKey ) {
     this.urlComposer = GSheets.UrlComposer.Pool.get_or_create_by(
       weightsSpreadsheetId, undefined, weightsAPIKey ); // range is undefined.
-
-//    this.neuralWorker = NeuralWorker.Pool.get_or_create_by(
   }
 
   /** @override */
