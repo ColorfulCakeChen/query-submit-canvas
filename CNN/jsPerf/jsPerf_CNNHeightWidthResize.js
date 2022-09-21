@@ -20,6 +20,10 @@ let testCase_Depth = 24;
 
 //globalThis.testSet_101x101x24 = new HeightWidthDepth.Base( 101, 101, 24 ); // height, width, depth
 
+
+//!!! ...unfinished... (2022/09/21)
+// Use ValueMax.Percentage.Xxx.Pool.get_or_create_by() instead of new ValueMax.Percentage.Xxx
+
 /** Aggregate all progress about WebGL an CPU.  */
 class Progress extends ValueMax.Percentage.Aggregate {
   constructor() {

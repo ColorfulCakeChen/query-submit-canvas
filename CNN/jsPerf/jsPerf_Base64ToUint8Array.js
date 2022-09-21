@@ -7,6 +7,9 @@ import * as ValueMax from "../util/ValueMax.js";
  */
 
 
+//!!! ...unfinished... (2022/09/21)
+// Use ValueMax.Percentage.Xxx.Pool.get_or_create_by() instead of new ValueMax.Percentage.Xxx
+
 /** Aggregate all progress.  */
 class Progress extends ValueMax.Percentage.Aggregate {
   constructor() {
