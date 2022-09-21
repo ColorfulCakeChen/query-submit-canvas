@@ -206,7 +206,8 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
         return null;
 
       // 4. Collect into column-major array.
-      let ColumnMajorArrayArray = GVizTQ_UrlComposer.dataTable_to_ColumnMajorArrayArray( json.table );
+      let ColumnMajorArrayArray
+        = GVizTQ_UrlComposer.dataTable_to_ColumnMajorArrayArray( json.table );
 
       progressToAdvance.value_advance(); // 25%
       yield progressRoot;

@@ -95,7 +95,7 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   }
 
   /** Load all evolution versus weights ranges. */
-  async rangeArray_loadAsync() {
+  async rangeArray_load_async() {
     // The summary is at the first column of the first (i.e. left most) sheet.
     const range = "A:A";
     this.urlComposer.range_set( range );
