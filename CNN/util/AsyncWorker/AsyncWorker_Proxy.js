@@ -96,10 +96,15 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 // use create_WorkerBodyStub_Codes_DataURI() instead.
 //    this.workerURL = AsyncWorker_Proxy.create_WorkerBodyStub_URL( workerModuleURL );
 
-    //(2022/09/17 Remarked) Use create_WorkerBodyStub_URL() instead.
-    let workerDataURI
-      = AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI( workerModuleURL );
-    this.workerURL = workerDataURI;
+    //(2022/09/21 Remarked) Use WorkerBodyStub_create_Codes_BlobObjectURL() instead.
+    //let workerDataURI
+    //  = AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI( workerModuleURL );
+    //this.workerURL = workerDataURI;
+
+    // Use blob object URL to workaround cross origin web worker problem.
+    this.workerBlobObjectURL
+      = AsyncWorker_Proxy.WorkerBodyStub_create_Codes_BlobObjectURL( workerModuleURL );
+    this.workerURL = this.workerBlobObjectURL;
 
     // Q: Why not use "module" type worker?
     // A: A "module" type worker can not use importScripts() to load global library.
@@ -147,42 +152,15 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    * It is viewed as a classic javascript file (i.e. not an importable module). But
    * it will load specified workerModuleURL as a module.
    *
-   * In module (non-classic) web worker, static import is available. But the function
-   * importScripts() will not be avbailable. For solving this problem, using
-   * classic (non-module) web worker so that some global library (e.g. tensorflow.js)
-   * can be loaded by importScripts(). And use dynamic import() to load ourselves
-   * modules because import() can be used in classic (non-module) script.
-   *
    * @param {string} workerModuleURL
    *   An (absolute) URL to a javascript module file. It will be imported
    * (asynchronously) by this generated classic javascript file (as a dataURI).
    */
-  static create_WorkerBodyStub_Codes_DataURI( workerModuleURL ) {
+  static WorkerBodyStub_create_Codes_DataURI( workerModuleURL ) {
+    let codes = AsyncWorker_Proxy.WorkerBodyStub_create_Codes_String( workerModuleURL );
 
-//!!! ...unfinished... (2022/09/15)
-// What if loading workerModuleURL failed?
-// Re-try (but should inform this WorkerProxy and user).
-
-    // The codes do the following:
-    //
-    //   - Import the specified module URL.
-    //   - Create a temporary message queue.
-    //   - Collect all messages before
-    //       AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body() be registered
-    //       as message handler.
-    //
-    let codes = ``
-      + `import( "${workerModuleURL}" );\n`
-      + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
-      + `onmessage = ( e ) => {\n`
-      // + `  console.log( "Hello" );\n`
-      // + `  console.log( e );\n`
-      + `  AsyncWorker_Body_temporaryMessageQueue.push( e );\n`
-      + `}\n`
-      ;
-
-    let workerDataURI
-      = AsyncWorker_Proxy.createDataURI_byStringASCII( "text/javascript", codes );
+    let workerDataURI = AsyncWorker_Proxy.createDataURI_byStringASCII(
+      AsyncWorker_Proxy.JS_MIME_TYPE_STRING, codes );
 
     return workerDataURI;
   }
@@ -201,6 +179,64 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     let dataURI = `data:${strMimeType};base64,${str_base64}`;
     return dataURI;
   }
+
+  /**
+   * Create a data URI representing the main (i.e. body) javascript file of web worker.
+   * It is viewed as a classic javascript file (i.e. not an importable module). But
+   * it will load specified workerModuleURL as a module.
+   *
+   * @param {string} workerModuleURL
+   *   An (absolute) URL to a javascript module file. It will be imported
+   * (asynchronously) by this generated classic javascript file (as a dataURI).
+   */
+  static WorkerBodyStub_create_Codes_BlobObjectURL( workerModuleURL ) {
+    let codes = AsyncWorker_Proxy.WorkerBodyStub_create_Codes_String( workerModuleURL );
+    let blob = new Blob( [ codes ], { type: AsyncWorker_Proxy.JS_MIME_TYPE_STRING } );
+    let workerBlobObjectURL = URL.createObjectURL( blob );
+    return workerBlobObjectURL;
+  }
+
+  /**
+   * In module (non-classic) web worker, static import is available. But the function
+   * importScripts() will not be avbailable. For solving this problem, using
+   * classic (non-module) web worker so that some global library (e.g. tensorflow.js)
+   * can be loaded by importScripts(). And use dynamic import() to load ourselves
+   * modules because import() can be used in classic (non-module) script.
+   *
+   * @param {string} workerModuleURL
+   *   An (absolute) URL to a javascript module file. It will be imported
+   * (asynchronously) by this generated classic javascript file (as a dataURI).
+   *
+   * @return {string}
+   *   Return javascript codes string representing the main (i.e. body) javascript
+   * file of web worker.
+   */
+  static WorkerBodyStub_create_Codes_String( workerModuleURL ) {
+
+//!!! ...unfinished... (2022/09/15)
+// What if loading workerModuleURL failed?
+// Re-try (but should inform this WorkerProxy and user).
+  
+      // The codes do the following:
+      //
+      //   - Import the specified module URL.
+      //   - Create a temporary message queue.
+      //   - Collect all messages before
+      //       AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body() be registered
+      //       as message handler.
+      //
+      let codes = ``
+        + `import( "${workerModuleURL}" );\n`
+        + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
+        + `onmessage = ( e ) => {\n`
+        // + `  console.log( "Hello" );\n`
+        // + `  console.log( e );\n`
+        + `  AsyncWorker_Body_temporaryMessageQueue.push( e );\n`
+        + `}\n`
+        ;
+  
+      return codes;
+    }
 
   /**
    * Send command and args (perhaps, with transferable object array) to WorkerBody
@@ -294,6 +330,14 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    */
   static onmessage_from_AsyncWorker_Body( e ) {
 
+    // If the web worker source is blob object URL, revoke it after worker created
+    // successfully for release resource.
+    if ( this.workerBlobObjectURL ) {
+      URL.revokeObjectURL( this.workerBlobObjectURL );
+      this.workerBlobObjectURL = null;
+      this.workerURL = null;
+    }
+
     // ( e.data == [ processingId, done, value ] )
     let [ processingId, done, value ] = e.data;
 
@@ -302,3 +346,6 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   }
 
 }
+
+AsyncWorker_Proxy.JS_MIME_TYPE_STRING = "text/javascript";
+
