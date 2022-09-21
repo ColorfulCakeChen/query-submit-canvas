@@ -206,6 +206,23 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     return initOk;
   }
 
+
+//!!! ...unfinished... (2022/09/21)
+
+  /** Load all differential evolution versus weights ranges. */
+  async evolutionVersusSummary_load_async() {
+
+    if ( !this.evolutionVersusSummary ) {
+      this.evolutionVersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
+        this.weightsSpreadsheetId, this.weightsAPIKey );
+    }
+
+    this.evolutionVersusSummary.rangeArray_load_async();
+
+//!!! ...unfinished... (2022/08/27)
+
+  }
+
   /**
    * Create neural networks in the web worker body.
    *
@@ -409,24 +426,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     ] = await Promise.all( [ worker0_resulter.next(), worker1_resulter.next() ] );
 
     return [ worker0_value_Float32Array, worker1_value_Float32Array ];
-  }
-
-
-
-//!!! ...unfinished... (2022/09/21)
-
-  /** Load all differential evolution versus weights ranges. */
-  async evolutionVersusSummary_load_async() {
-
-    if ( !this.evolutionVersusSummary ) {
-      this.evolutionVersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
-        this.weightsSpreadsheetId, this.weightsAPIKey );
-    }
-
-    this.evolutionVersusSummary.rangeArray_load_async();
-
-//!!! ...unfinished... (2022/08/27)
-
   }
 
 
