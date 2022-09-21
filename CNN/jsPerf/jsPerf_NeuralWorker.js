@@ -123,7 +123,6 @@ class PerformanceTestCase extends Recyclable.Root {
         throw Error( `Failed to initialize neuralWorkerProxies object. `
           + `${neuralWorkerProxies}` );
 
-//!!! ...unfinished... (2022/09/21)
       let bCreateOkPromise = neuralWorkerProxies.NeuralNetArray_create_async(
         neuralNetParamsBaseArray, weightArrayBufferArray );
 
@@ -131,14 +130,6 @@ class PerformanceTestCase extends Recyclable.Root {
       if ( false == bCreateOk )
         throw Error( `Failed to create neural networks by neuralWorkerProxies. `
           + `${neuralWorkerProxies}` );
-
-      if ( 100 != progress.valuePercentage )
-        throw Error(
-          `Progress (${progress.valuePercentage}) should be 100 when initializing `
-          + `NeuralNet object successfully. ${neuralNet}`);
-
-      let strWeightCountInfo = neuralNet.toString_WeightCount();
-      console.log( `NeuralNet.${this.testCaseName}: ${strWeightCountInfo}.` );
 
     } catch ( e ) {
       debugger;
@@ -179,15 +170,19 @@ class HeightWidthDepth {
 
   disposeResources() {
     this.neuralWorker_PerformanceTest_release();
+
+//!!! ...unfinished... (2022/09/21)
     this.testCanvas = null;
   }
 
   /**
    * 
    */
-  neuralWorker_PerformanceTest_addCase( testCaseId, testCaseName, neuralNetParamsBase ) {
+  neuralWorker_PerformanceTest_addCase(
+    testCaseId, testCaseName, nNeuralWorker_ModeId, neuralNetParamsBase ) {
+
     let aPerformanceTestCase = PerformanceTestCase.Pool.get_or_create_by(
-      testCaseId, testCaseName, neuralNetParamsBase );
+      testCaseId, testCaseName, nNeuralWorker_ModeId, neuralNetParamsBase );
 
     this.testCaseMap.set( testCaseName, aPerformanceTestCase );
   }
