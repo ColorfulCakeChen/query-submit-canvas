@@ -274,6 +274,21 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /**
+   *
+   * @param {ImageData} sourceImageData
+   *   The source image data to be processed. It will be scaled to the correct shape
+   * before passed into the neural network.
+   *
+   * @return {Promise}
+   *   Return a promise resolved to an array of Float32Array representing the neural
+   * networks' result.
+   */
+  ImageData_process_async( sourceImageData ) {
+    return this.apply_async( sourceImageData );
+  }
+
+
+  /**
    * Setup .apply_async according to .nNeuralWorker_ModeId.
    *
    * @param {NeuralWorker_Proxies} this
@@ -359,55 +374,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     ] = await Promise.all( [ worker0_resulter.next(), worker1_resulter.next() ] );
 
     return [ worker0_value_Float32Array, worker1_value_Float32Array ];
-  }
-
-
-  /**
-   *
-   * @param {ImageData} sourceImageData
-   *   The source image data to be processed. It will be scaled to the correct shape
-   * before passed into the neural network.
-   *
-   * @return {Promise}
-   *   Return a promise resolved to an array of Float32Array representing the neural
-   * networks' result.
-   */
-  ImageData_process_async( sourceImageData ) {
-    return this.apply_async( sourceImageData );
-
-//!!! ...unfinished... (2022/09/20)
-// NeuralWorker_Mode.workerCount_get( this.nNeuralWorker_ModeId );
-// NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
-
-    //let resultOk;
-    let resultFloat32ArrayArray = new Array( this.neuralNetCount );
-
-    // 1. Every worker has one neural network to process image.
-    if ( this.workerProxyArray.length > 1 ) { // (i.e. two workers)
-
-      let resultPromiseArray = new Array( this.workerProxyArray.length );
-      for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
-
-//!!! ...unfinished... (2022/09/20)
-        resultPromiseArray[ i ]
-          = this.workerProxyArray[ i ].alignmentMarkArray_setValue_async(
-            [ markValueArray[ i ] ] );
-      }
-
-      let resultOkArray = await Promise.all( resultPromiseArray );
-
-      resultOk = resultOkArray.reduce(
-        ( previousValue, currentValue ) => ( previousValue && currentValue ),
-        true
-      );
-  
-    // 2. The only worker has two neural networks to process image.
-    } else {
-      resultOk = await this.workerProxyArray[ 0 ].alignmentMarkArray_setValue_async(
-        markValueArray );
-    }
-
-    return resultOk;
   }
 
 
