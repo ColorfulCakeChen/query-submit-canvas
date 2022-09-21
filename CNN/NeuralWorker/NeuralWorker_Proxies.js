@@ -9,15 +9,35 @@ import * as DEvolution from "../DEvolution.js";
 import { Proxy as NeuralWorker_Proxy } from "./NeuralWorker_Proxy.js";
 import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
 
+//!!! ...unfinished... (2022/05/25)
+// Perhaps, Using SharedArrayBuffer to pass input image between different web worker.
+//
+
 /**
  * The container of WorkerProxy. It orchestrates these WorkerProxy. Especially, it
  * transfers (scaled) source image data to and from web worker. This could maximize
  * parallel computing under the restriction transferring source image data to every
  * web worker serially.
  *
- * Every worker handles one neural network. When processTensor() is called, the input
- * (usually a large memory block) will be transffered to the 1st worker to start
- * computing, and then transffered to the 2nd worker to start computing, ... etc.
+ *
+ * 1. For NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__Xxx
+ *
+ * Since it is slow to transfer data between CPU and GPU (for WebGL), it seems not
+ * feasible to use multiple workers (which will transfer data between CPU and GPU
+ * multiple times) to process both competition side of an diffential evolution
+ * iteration.
+ *
+ * So these ONE_WORKER__Xxx mode combine two neural networks of both competition
+ * sides in one web worker. Although they compute serially (not parallelly), they
+ * still may be faster than compute them in two worker because the reduced memory
+ * transferring between CPU and GPU.
+ *
+ *
+ * 2. For NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__Xxx
+ * 
+ * Every worker handles one neural network. When .ImageData_process_async() is called,
+ * the input (usually a large memory block) will be transffered to the 1st worker to
+ * start computing, and then transffered to the 2nd worker to start computing, ... etc.
  *
  * When passing large data by Worker.postMessage(), it is preferred by transferring
  * (not by copying). If the large data wants to be transferred (not copied) to many
@@ -25,13 +45,14 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  * However, serially transferring hurts the performance. Workers are better to compute
  * parallelly. So every worker should transfer the (possible scaled) source image data
- * back to this WorkerProxies, and keep computing neural network at the same. And
+ * back to this WorkerProxies, and keep computing neural network at the same time. And
  * then, this WorkerProxies will transfer the source image data to the next worker
  * as soon as possible.
  *
- * Finally, this WorkerProxies collects all web workers' processTensor() results in
- * a promise. The promise will resolve with an array of typed-array. Every typed-array
- * is the output of one neural network.
+ * Finally, this WorkerProxies collects all web workers' results in a promise. The
+ * promise will resolve with an array of Float32Array. Every Float32Array is the
+ * output of one neural network.
+ *
  *
  *
  * @member {string} weightsSpreadsheetId
