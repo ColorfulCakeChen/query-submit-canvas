@@ -101,12 +101,10 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   static createWorker_byModuleURL( workerModuleURL ) {
     this.workerModuleURL = workerModuleURL;
 
-//!!! (2022/09/21 Remarked) 
-// For workaround cross origin web worker problem,
-// use create_WorkerBodyStub_Codes_DataURI() instead.
-//    this.workerURL = AsyncWorker_Proxy.create_WorkerBodyStub_URL( workerModuleURL );
+    // (2022/09/21 Remarked) Use WorkerBodyStub_create_Codes_BlobObjectURL() instead. 
+    //this.workerURL = AsyncWorker_Proxy.create_WorkerBodyStub_URL( workerModuleURL );
 
-    //(2022/09/21 Remarked) Use WorkerBodyStub_create_Codes_BlobObjectURL() instead.
+    // (2022/09/21 Remarked) Use WorkerBodyStub_create_Codes_BlobObjectURL() instead.
     //let workerDataURI
     //  = AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI( workerModuleURL );
     //this.workerURL = workerDataURI;
@@ -134,6 +132,9 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   }
 
   /**
+   * (Deprecated, because of cross origin web worker issue. Please use
+   * .WorkerBodyStub_create_Codes_BlobObjectURL() instead.)
+   *
    * Create a URL string of AsyncWorker_BodyStub.js which is the main (i.e. body)
    * javascript file of web worker. It is viewed as a classic javascript file (i.e.
    * not an importable module). But it will load specified workerModuleURL (in its
@@ -151,14 +152,12 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     let workerBodyStubURL = new URL( "AsyncWorker_BodyStub.js", import.meta.url );
     let url = `${workerBodyStubURL}?workerModuleURL=${encodedWorkerModuleURL}`;
     return url;
-
-//!!! ...unfinished... (2022/09/15)
-// What if loading workerModuleURL failed?
-// Re-try (but should inform this WorkerProxy and user).
-
   }
 
   /**
+   * (Deprecated, because of cross origin web worker issue. Please use
+   * .WorkerBodyStub_create_Codes_BlobObjectURL() instead.)
+   *
    * Create a data URI representing the main (i.e. body) javascript file of web worker.
    * It is viewed as a classic javascript file (i.e. not an importable module). But
    * it will load specified workerModuleURL as a module.
@@ -183,9 +182,6 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    * @return {string} Return the data URI string.
    */
   static createDataURI_byStringASCII( strMimeType, strASCII ) {
-    // let textEncoder = new TextEncoder();
-    // let str_utf8 = textEncoder.encode( str );
-    // let str_base64 = btoa( str_utf8 );
     let str_base64 = btoa( strASCII );
     let dataURI = `data:${strMimeType};base64,${str_base64}`;
     return dataURI;
