@@ -147,7 +147,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
    * Get or create (from pool) NeuralNet.ParamsBase according to this NeuralNet.ParamsBase.
    */
   clone() {
-    let another = ParamsBase.Pool.get_or_create_by(
+    let another = NeuralNet_ParamsBase.Pool.get_or_create_by(
       this.input_height,
       this.input_width,
       this.input_channelCount,
