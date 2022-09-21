@@ -170,8 +170,6 @@ class HeightWidthDepth {
 
   disposeResources() {
     this.neuralWorker_PerformanceTest_release();
-
-//!!! ...unfinished... (2022/09/21)
     this.testCanvas = null;
   }
 
@@ -333,15 +331,14 @@ class HeightWidthDepth {
 //!!! ...unfinished... (2022/09/21)
 
   /** Test .ImageData_process_async by Xxx */
-  testNeuralWorker_ByName( testCaseName ) {
+  async testNeuralWorker_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
 
     // First time test this case. Release all other test cases' neural networks
     // (so that there will be enough memory). Create the specified neural network.
     if ( !testCase.neuralWorkerProxies ) {
       this.neuralWorker_PerformanceTest_release_neuralWorkerProxies();
-!!!??? await
-      testCase.prepare();
+      await testCase.prepare_async();
     }
 
     let imageData;
@@ -359,9 +356,11 @@ class HeightWidthDepth {
   }
 
   /** Testing whether the results of different implementation are the same. */
-  * testCorrectness() {
+  async* testCorrectness_asyncGenerator() {
 
-    //!!! (2022/08/16 Temp Skipped) For speed up into performance testing.
+//!!! ...unfinished... (2022/09/21)
+
+    //!!! (2022/09/21 Temp Skipped) For speed up into performance testing.
     //if ( 0 )
     {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
@@ -375,13 +374,7 @@ class HeightWidthDepth {
         let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
 
         {
-          // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors
-          //       dynamically created in them.
-          let imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
-
-          let testParams = NeuralNet_TestParams.Base.Pool.get_or_create_by();
-          let testParamsGenerator = testParams.ParamsGenerator();
-          let testReference = NeuralNet_Reference.Base.Pool.get_or_create_by();
+          this.neuralWorker_PerformanceTest_init();
 
           let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
 
@@ -396,8 +389,10 @@ class HeightWidthDepth {
 
           } catch ( e ) {
             let backendName = tf.getBackend();
-            let msg = `jsPerf_NeuralNet.js: testCorrectness(): backendName=${backendName}, `
-              + `NeuralNet, (yieldCount == ${testParams.yieldCount}), testParams.id == ${testParams.id}`;
+            let msg = `jsPerf_NeuralWorker.js: testCorrectness(): `
+              + `backendName=${backendName}, `
+              + `NeuralNet, (yieldCount == ${testParams.yieldCount}), `
+              + `testParams.id == ${testParams.id}`;
 
             console.log( msg );
             alert( `${msg}\n${e}` );
@@ -408,9 +403,7 @@ class HeightWidthDepth {
 
           batchIdCalculator.checkAndDisplay( testParams.id );
 
-          testReference.disposeResources_and_recycleToPool(); testReference = null;
-          testParams.disposeResources_and_recycleToPool(); testParams = null;
-          imageSourceBag.disposeResources_and_recycleToPool(); imageSourceBag = null;
+          this.neuralWorker_PerformanceTest_release();
         }
 
         let memoryInfo_testCorrectness_after = tf.memory();
@@ -455,10 +448,10 @@ function init() {
   ];
 }
 
-function* testCorrectness() {
+async function* testCorrectness_asyncGenerator() {
   for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
     let testSet = globalThis.testSet_All[ i ];
-    yield* testSet.testCorrectness();
+    yield* testSet.testCorrectness_asyncGenerator();
   }
 }
 
