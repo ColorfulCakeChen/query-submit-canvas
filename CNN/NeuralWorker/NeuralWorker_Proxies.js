@@ -138,6 +138,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * Initialize this worker proxy controller. It will create two neural networks in
    * one or two web worker(s).
    *
+   *
+   * @return {Promise}
+   *   Return a promise:
+   *   - Resolved to true, if success.
+   *   - Resolved to false, if failed.
    */
   async init_async( weightsSpreadsheetId, weightsAPIKey, nNeuralWorker_ModeId ) {
 
@@ -167,9 +172,15 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     // 1. Create web workers.
     let initOkArray;
     {
-      this.disposeWorkers();
-      this.workerProxyArray = Pool.OwnerArray.Pool.get_or_create_by();
-      this.workerProxyArray.length = totalWorkerCount;
+      // Prepare container of all worker proxy.
+      {
+        if ( this.workerProxyArray )
+          this.workerProxyArray.clear();
+        else
+          this.workerProxyArray = Pool.OwnerArray.Pool.get_or_create_by();
+
+        this.workerProxyArray.length = totalWorkerCount;
+      }
 
       let initPromiseArray = new Array( totalWorkerCount );
       for ( let i = 0; i < totalWorkerCount; ++i ) {
