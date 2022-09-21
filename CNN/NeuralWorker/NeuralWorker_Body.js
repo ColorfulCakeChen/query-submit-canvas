@@ -79,7 +79,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     // 0. Prepare container for all neural networks.
     {
       if ( this.neuralNetArray )
-        this.neuralNetArray.clear();
+        this.neuralNetArray.clear(); // Release old neural networks.
       else
         this.neuralNetArray = Recyclable.OwnerArray.Pool.get_or_create_by();
 
