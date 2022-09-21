@@ -157,7 +157,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       // 1.1 Create workers.
       let initPromiseArray = new Array( totalWorkerCount );
       for ( let i = 0; i < totalWorkerCount; ++i ) {
-        this.workerProxyArray[ i ] = WorkerProxy.Pool.get_or_create_by();
+        this.workerProxyArray[ i ] = NeuralWorker_Proxy.Pool.get_or_create_by();
         initPromiseArray[ i ] = this.workerProxyArray[ i ].initWorker_async( i );
       }
 
