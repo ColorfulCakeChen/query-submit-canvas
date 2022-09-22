@@ -382,7 +382,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
               NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
                 this, i, scaledInt32Array );
 
-              sourceTensor = tf.tensor3d(
+              sourceTensor = tf.tensor(
                 scaledInt32Array, neuralNet.input_shape, "int32" );
 
             // 2.1.2 Clone the scaled source tensor since no need fill alignment mark.
@@ -638,10 +638,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
             this, sourceInt32Array );
         }
 
-        let sourceTensor3d = tf.tensor3d(
-          sourceInt32Array, neuralNet.input_shape, "int32" );
+        let sourceTensor = tf.tensor( sourceInt32Array, neuralNet.input_shape, "int32" );
 
-        outputTensor = neuralNet.apply( sourceTensor3d );
+        outputTensor = neuralNet.apply( sourceTensor );
         outputFloat32Array = outputTensor.dataSync();
 
       } catch ( e ) {
