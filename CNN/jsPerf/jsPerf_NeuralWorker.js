@@ -5,6 +5,7 @@ import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as RandTools from "../util/RandTools.js";
+import * as TensorTools from "../util/TensorTools.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
@@ -537,6 +538,9 @@ class HeightWidthDepth {
         let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
 
         {
+          let asserter_Equal
+            = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
+
           this.neuralWorker_PerformanceTest_init();
 
           for ( testCase of this.testCaseMap.values() ) {
@@ -554,9 +558,22 @@ class HeightWidthDepth {
             let resultFloat32ArrayArray = await testByNamePromise;
 
             if ( !bFill ) {
+              let lhsNumberArray = resultFloat32ArrayArray[ 0 ];
+              let rhsNumberArray = resultFloat32Array;
+              let prefixMsg = "NeuralNet";
+              let lhsNumberArrayName = "output0";
+              let rhsNumberArrayName = "outputRef";
+              let postfixMsg = testCase.testCaseName;
 
-//!!! ...unfinished... (2022/09/22)
-// For NO_FILL, should compare with normal sync NeuralNet result.
+              asserter_Equal.assert_NumberArray_NumberArray(
+                lhsNumberArray, rhsNumberArray,
+                prefixMsg, lhsNumberArrayName, rhsNumberArrayName, postfixMsg );
+
+              lhsNumberArray = resultFloat32ArrayArray[ 1 ];
+              lhsNumberArrayName = "output1";
+              asserter_Equal.assert_NumberArray_NumberArray(
+                lhsNumberArray, rhsNumberArray,
+                prefixMsg, lhsNumberArrayName, rhsNumberArrayName, postfixMsg );
             }
 
             progressToAdvance.value_advance();
@@ -564,6 +581,10 @@ class HeightWidthDepth {
           }
 
           this.neuralWorker_PerformanceTest_release();
+
+
+          asserter_Equal?.disposeResources_and_recycleToPool();
+          asserter_Equal = null;
         }
 
         let memoryInfo_testCorrectness_after = tf.memory();

@@ -45,22 +45,26 @@ class Asserter_Equal extends Recyclable.Root {
   /**
    * Used as default TensorTools.Asserter_Equal provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "TensorTools.Asserter_Equal.Pool", Asserter_Equal, Asserter_Equal.setAsConstructor );
+  static Pool = new Pool.Root( "TensorTools.Asserter_Equal.Pool",
+    Asserter_Equal, Asserter_Equal.setAsConstructor );
 
   /**
-   * If ( differenceRate <= acceptableDifferenceRate ) or ( difference <= acceptableDifference ), two value are viewed as
-   * the same.
+   * If ( differenceRate <= acceptableDifferenceRate )
+   * or ( difference <= acceptableDifference ), two value are viewed as the same.
    *
-   * Because floating-point accumulated error of float32 (GPU) and float64 (CPU) is different, a little difference should be
-   * allowed. Otherwise, the comparison may hardly to pass this check.
+   * Because floating-point accumulated error of float32 (GPU) and float64 (CPU)
+   * is different, a little difference should be allowed. Otherwise, the comparison
+   * may hardly to pass this check.
    *
    * @param {number} acceptableDifferenceRate
-   *   How many difference (in ratio) between the numberArray and numberArray (per element) is acceptable. Useful for large
-   * value. Default is 0.01 (i.e. 1% difference is allowed).
+   *   How many difference (in ratio) between the numberArray and numberArray (per
+   * element) is acceptable. Useful for large value. Default is 0.01 (i.e. 1%
+   * difference is allowed).
    *
    * @param {number} acceptableDifference
-   *   How many difference (in absolute value) between the numberArray and numberArray (per element) is acceptable. Useful
-   * for small value. Default is 0.001.
+   *   How many difference (in absolute value) between the numberArray and
+   * numberArray (per element) is acceptable. Useful for small value. Default
+   * is 0.001.
    */
   constructor( acceptableDifferenceRate = 0.01, acceptableDifference = 0.001 ) {
     super();
@@ -68,14 +72,17 @@ class Asserter_Equal extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor( acceptableDifferenceRate = 0.01, acceptableDifference = 0.001 ) {
+  static setAsConstructor(
+    acceptableDifferenceRate = 0.01, acceptableDifference = 0.001 ) {
     super.setAsConstructor();
-    Asserter_Equal.setAsConstructor_self.call( this, acceptableDifferenceRate, acceptableDifference );
+    Asserter_Equal.setAsConstructor_self.call(
+      this, acceptableDifferenceRate, acceptableDifference );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( acceptableDifferenceRate = 0.01, acceptableDifference = 0.001 ) {
+  static setAsConstructor_self(
+    acceptableDifferenceRate = 0.01, acceptableDifference = 0.001 ) {
     this.acceptableDifferenceRate = Math.abs( acceptableDifferenceRate );
     this.acceptableDifference = Math.abs( acceptableDifference );
     this.comparator = Asserter_Equal.ElementComparator.bind( this );
@@ -116,11 +123,15 @@ class Asserter_Equal extends Recyclable.Root {
    * @param {Object} postfixMsg
    *   Its .toString() will be displayed at the tail when comparison failed.
    */
-  assert_NumberArray_NumberArray( lhsNumberArray, rhsNumberArray, prefixMsg, lhsNumberArrayName, rhsNumberArrayName, postfixMsg ) {
+  assert_NumberArray_NumberArray(
+    lhsNumberArray, rhsNumberArray,
+    prefixMsg, lhsNumberArrayName, rhsNumberArrayName, postfixMsg ) {
 
     // Check both null or non-null.
     if ( ( lhsNumberArray == null ) != ( rhsNumberArray == null ) )
-      throw Error( `${prefixMsg} ${lhsNumberArrayName} ( ${lhsNumberArray} ) and ${rhsNumberArrayName} ( ${rhsNumberArray} ) `
+      throw Error( `${prefixMsg} `
+        + `${lhsNumberArrayName} ( ${lhsNumberArray} ) `
+        + `and ${rhsNumberArrayName} ( ${rhsNumberArray} ) `
         + `should be both null or non-null. ${postfixMsg}` );
 
     if ( !lhsNumberArray )
@@ -128,8 +139,9 @@ class Asserter_Equal extends Recyclable.Root {
 
     // Check both length.
     if ( lhsNumberArray.length != rhsNumberArray.length )
-      throw Error(
-        `${prefixMsg} ${lhsNumberArrayName} length ( ${lhsNumberArray.length} ) should be ( ${rhsNumberArray.length} ). ${postfixMsg}` );
+      throw Error( `${prefixMsg} `
+        + `${lhsNumberArrayName} length ( ${lhsNumberArray.length} ) `
+        + `should be ( ${rhsNumberArray.length} ). ${postfixMsg}` );
 
     this.rhsNumberArray = rhsNumberArray; // For ElementComparator() to access.
 
@@ -137,8 +149,10 @@ class Asserter_Equal extends Recyclable.Root {
     //
     // Note: Array.every() seems faster than for-loop.
     if ( !lhsNumberArray.every( this.comparator ) )
-      throw Error( `${prefixMsg} ${lhsNumberArrayName}[ ${this.elementIndex} ] `
-        + `( ${lhsNumberArray[ this.elementIndex ]} ) should be ( ${rhsNumberArray[ this.elementIndex ]} ). `
+      throw Error( `${prefixMsg} `
+        + `${lhsNumberArrayName}[ ${this.elementIndex} ] `
+        + `( ${lhsNumberArray[ this.elementIndex ]} ) `
+        + `should be ( ${rhsNumberArray[ this.elementIndex ]} ). `
         + `( ${lhsNumberArray} ) should be ( ${rhsNumberArray} ). `
         + `${postfixMsg}` );
   }
@@ -163,12 +177,14 @@ class Asserter_Equal extends Recyclable.Root {
    * @param {Object} postfixMsg
    *   Its .toString() will be displayed at the tail when comparison failed.
    */
-  assert_Number_Number( lhsNumber, rhsNumber, prefixMsg, lhsNumberName, rhsNumberName, postfixMsg ) {
+  assert_Number_Number(
+    lhsNumber, rhsNumber, prefixMsg, lhsNumberName, rhsNumberName, postfixMsg ) {
     this.lhsNumberArrayDefault[ 0 ] = lhsNumber;
     this.rhsNumberArrayDefault[ 0 ] = rhsNumber;
 
     this.assert_NumberArray_NumberArray(
-      this.lhsNumberArrayDefault, this.rhsNumberArrayDefault, prefixMsg, lhsNumberName, rhsNumberName, postfixMsg );
+      this.lhsNumberArrayDefault, this.rhsNumberArrayDefault,
+      prefixMsg, lhsNumberName, rhsNumberName, postfixMsg );
   }
 
   /**
@@ -191,19 +207,23 @@ class Asserter_Equal extends Recyclable.Root {
    * @param {Object} postfixMsg
    *   Its .toString() will be displayed at the tail when comparison failed.
    */
-  assert_Tensor_NumberArray( tensor, rhsNumberArray, prefixMsg, tensorName, rhsNumberArrayName, postfixMsg ) {
+  assert_Tensor_NumberArray( tensor, rhsNumberArray,
+    prefixMsg, tensorName, rhsNumberArrayName, postfixMsg ) {
 
     let tensorDataArray = null;
     if ( tensor ) {
       tensorDataArray = tensor.dataSync();
     }
 
-    this.assert_NumberArray_NumberArray( tensorDataArray, rhsNumberArray, prefixMsg, tensorName, rhsNumberArrayName, postfixMsg );
+    this.assert_NumberArray_NumberArray(
+      tensorDataArray, rhsNumberArray,
+      prefixMsg, tensorName, rhsNumberArrayName, postfixMsg );
   }
 
   /**
    * @param {Asserter_Tensor_NumberArray} this
-   *   - The this.rhsNumberArray[] and this.acceptableDifferenceRate will be read by this method.
+   *   - The this.rhsNumberArray[] and this.acceptableDifferenceRate will be read
+   *       by this method.
    *   - The this.elementIndex will be set by this method.
    */
   static ElementComparator( value, index ) {
@@ -212,7 +232,8 @@ class Asserter_Equal extends Recyclable.Root {
 
     // 0. Confirm delta is positive (or zero).
     //
-    // Note: Sometimes, value and valueRef have different sign (i.e. one is positive, the other is negative).
+    // Note: Sometimes, value and valueRef have different sign (i.e. one is positive,
+    //       the other is negative).
     let delta;
     if ( value > valueRef ) {
       delta = value - valueRef;
@@ -229,10 +250,12 @@ class Asserter_Equal extends Recyclable.Root {
       let valueAbs = Math.abs( value );
       let valueRefAbs = Math.abs( valueRef );
 
-//!!! (2022/07/14 Remarked) compare to smaller one (when it is zero), get infinity delteRate. That is worse.
+//!!! (2022/07/14 Remarked)
+// compare to smaller one (when it is zero), get infinity delteRate. That is worse.
 //       // Ratio to the smaller one.
 //       //
-//       // When one of two compared values is zero, it will always be failed if compare to the larger value (got 100% delteRate).
+//       // When one of two compared values is zero, it will always be failed if
+//       // compare to the larger value (got 100% delteRate).
 //       let deltaRateBase = Math.min( valueAbs, valueRefAbs );
 
       // Ratio to the larger one (so that the ratio will be smaller.)
@@ -240,7 +263,8 @@ class Asserter_Equal extends Recyclable.Root {
 
       let deltaRate;
       if ( deltaRateBase > 0 ) // Avoid divided by zero.
-        deltaRate = delta / deltaRateBase; // Using ratio so that the difference will not too large even if value is large.
+        // Using ratio so that the difference will not too large even if value is large.
+        deltaRate = delta / deltaRateBase;
       else
         deltaRate = delta;
 
