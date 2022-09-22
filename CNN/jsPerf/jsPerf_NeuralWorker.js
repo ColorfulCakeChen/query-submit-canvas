@@ -443,7 +443,7 @@ class HeightWidthDepth {
 
     //!!! (2022/09/21 Temp Skipped) For speed up into performance testing.
     //if ( 0 )
-    {
+    try {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
       yield;
@@ -478,6 +478,14 @@ class HeightWidthDepth {
         pool_all_issuedCount_before );
 
       yield;
+
+    } catch ( e ) {
+      let errorMsg = `jsPerf_NeuralWorker.testCorrectness_asyncGenerator(): `
+        + `${e}`;
+      console.log( errorMsg );
+      alert( errorMsg );
+      //debugger;
+      throw e;
     }
 
     try {
