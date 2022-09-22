@@ -101,13 +101,17 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   static createWorker_byModuleURL( workerModuleURL ) {
     this.workerModuleURL = workerModuleURL;
 
-    // (2022/09/21 Remarked) Use WorkerBodyStub_create_Codes_BlobObjectURL() instead. 
-    //this.workerURL = AsyncWorker_Proxy.create_WorkerBodyStub_URL( workerModuleURL );
-
-    // (2022/09/21 Remarked) Use WorkerBodyStub_create_Codes_BlobObjectURL() instead.
-    //let workerDataURI
-    //  = AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI( workerModuleURL );
-    //this.workerURL = workerDataURI;
+//!!! (2022/09/22 Remarked)
+// Deprecated, because of cross origin web worker issue. Please use
+// .WorkerBodyStub_create_Codes_BlobObjectURL() instead.)
+//
+//     // (2022/09/21 Remarked) Use WorkerBodyStub_create_Codes_BlobObjectURL() instead. 
+//     //this.workerURL = AsyncWorker_Proxy.create_WorkerBodyStub_URL( workerModuleURL );
+//
+//     // (2022/09/21 Remarked) Use WorkerBodyStub_create_Codes_BlobObjectURL() instead.
+//     //let workerDataURI
+//     //  = AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI( workerModuleURL );
+//     //this.workerURL = workerDataURI;
 
     // Use blob object URL as a workaround for cross origin web worker problem (which
     // will be encountered when use WorkerBodyStub_URL or WorkerBodyStub_Codes_DataURI).
@@ -131,61 +135,65 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       = AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body.bind( this );
   }
 
-  /**
-   * (Deprecated, because of cross origin web worker issue. Please use
-   * .WorkerBodyStub_create_Codes_BlobObjectURL() instead.)
-   *
-   * Create a URL string of AsyncWorker_BodyStub.js which is the main (i.e. body)
-   * javascript file of web worker. It is viewed as a classic javascript file (i.e.
-   * not an importable module). But it will load specified workerModuleURL (in its
-   * query string) as a module.
-   *
-   * @param {string} workerModuleURL
-   *   An (absolute) URL to a javascript module file. It will be imported
-   * (asynchronously) by classic javascript file AsyncWorker_BodyStub.js.
-   */
-  static create_WorkerBodyStub_URL( workerModuleURL ) {
-    let encodedWorkerModuleURL = encodeURIComponent( workerModuleURL );
-
-    // Assume the web worker module javascript file is a sibling file (i.e. inside
-    // the same folder) of this module file.
-    let workerBodyStubURL = new URL( "AsyncWorker_BodyStub.js", import.meta.url );
-    let url = `${workerBodyStubURL}?workerModuleURL=${encodedWorkerModuleURL}`;
-    return url;
-  }
-
-  /**
-   * (Deprecated, because of cross origin web worker issue. Please use
-   * .WorkerBodyStub_create_Codes_BlobObjectURL() instead.)
-   *
-   * Create a data URI representing the main (i.e. body) javascript file of web worker.
-   * It is viewed as a classic javascript file (i.e. not an importable module). But
-   * it will load specified workerModuleURL as a module.
-   *
-   * @param {string} workerModuleURL
-   *   An (absolute) URL to a javascript module file. It will be imported
-   * (asynchronously) by this generated classic javascript file (as a dataURI).
-   */
-  static WorkerBodyStub_create_Codes_DataURI( workerModuleURL ) {
-    let codes = AsyncWorker_Proxy.WorkerBodyStub_create_Codes_String( workerModuleURL );
-
-    let workerDataURI = AsyncWorker_Proxy.createDataURI_byStringASCII(
-      AsyncWorker_Proxy.JS_MIME_TYPE_STRING, codes );
-
-    return workerDataURI;
-  }
-
-  /**
-   * @param {string} strMimeType  The result mime type of the data URI.
-   * @param {string} strASCII     The ASCII text to be embedded in data URI.
-   *
-   * @return {string} Return the data URI string.
-   */
-  static createDataURI_byStringASCII( strMimeType, strASCII ) {
-    let str_base64 = btoa( strASCII );
-    let dataURI = `data:${strMimeType};base64,${str_base64}`;
-    return dataURI;
-  }
+// //!!! (2022/09/22 Remarked)
+// Deprecated, because of cross origin web worker issue. Please use
+// .WorkerBodyStub_create_Codes_BlobObjectURL() instead.)
+//
+//   /**
+//    * (Deprecated, because of cross origin web worker issue. Please use
+//    * .WorkerBodyStub_create_Codes_BlobObjectURL() instead.)
+//    *
+//    * Create a URL string of AsyncWorker_BodyStub.js which is the main (i.e. body)
+//    * javascript file of web worker. It is viewed as a classic javascript file (i.e.
+//    * not an importable module). But it will load specified workerModuleURL (in its
+//    * query string) as a module.
+//    *
+//    * @param {string} workerModuleURL
+//    *   An (absolute) URL to a javascript module file. It will be imported
+//    * (asynchronously) by classic javascript file AsyncWorker_BodyStub.js.
+//    */
+//   static create_WorkerBodyStub_URL( workerModuleURL ) {
+//     let encodedWorkerModuleURL = encodeURIComponent( workerModuleURL );
+//
+//     // Assume the web worker module javascript file is a sibling file (i.e. inside
+//     // the same folder) of this module file.
+//     let workerBodyStubURL = new URL( "AsyncWorker_BodyStub.js", import.meta.url );
+//     let url = `${workerBodyStubURL}?workerModuleURL=${encodedWorkerModuleURL}`;
+//     return url;
+//   }
+//
+//   /**
+//    * (Deprecated, because of cross origin web worker issue. Please use
+//    * .WorkerBodyStub_create_Codes_BlobObjectURL() instead.)
+//    *
+//    * Create a data URI representing the main (i.e. body) javascript file of web worker.
+//    * It is viewed as a classic javascript file (i.e. not an importable module). But
+//    * it will load specified workerModuleURL as a module.
+//    *
+//    * @param {string} workerModuleURL
+//    *   An (absolute) URL to a javascript module file. It will be imported
+//    * (asynchronously) by this generated classic javascript file (as a dataURI).
+//    */
+//   static WorkerBodyStub_create_Codes_DataURI( workerModuleURL ) {
+//     let codes = AsyncWorker_Proxy.WorkerBodyStub_create_Codes_String( workerModuleURL );
+//
+//     let workerDataURI = AsyncWorker_Proxy.createDataURI_byStringASCII(
+//       AsyncWorker_Proxy.JS_MIME_TYPE_STRING, codes );
+//
+//     return workerDataURI;
+//   }
+//
+//   /**
+//    * @param {string} strMimeType  The result mime type of the data URI.
+//    * @param {string} strASCII     The ASCII text to be embedded in data URI.
+//    *
+//    * @return {string} Return the data URI string.
+//    */
+//   static createDataURI_byStringASCII( strMimeType, strASCII ) {
+//     let str_base64 = btoa( strASCII );
+//     let dataURI = `data:${strMimeType};base64,${str_base64}`;
+//     return dataURI;
+//   }
 
   /**
    * Create a data URI representing the main (i.e. body) javascript file of web worker.
@@ -351,4 +359,3 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 }
 
 AsyncWorker_Proxy.JS_MIME_TYPE_STRING = "text/javascript";
-
