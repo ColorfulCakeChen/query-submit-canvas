@@ -643,29 +643,6 @@ async function* testCorrectness_asyncGenerator() {
   }
 }
 
-/**
- * (Called by util_tester.js)
- *
- * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
- *
- */
-async function* tester( progressParent ) {
-
-  let progressArray_for_testSet = new Array( globalThis.testSet_All.length );
-  for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
-    progressArray_for_testSet[ i ] = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-  }
-
-  for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
-    let testSet = globalThis.testSet_All[ i ];
-    yield* testSet.tester( progressArray_for_testSet[ i ] );
-  }
-}
-
 function disposeResources() {
   if ( globalThis.testSet_All ) {
     for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
@@ -679,4 +656,30 @@ function disposeResources() {
 
   globalThis.testSet_72x128x4
     = null;
+}
+
+/**
+ * (Called by util_tester.js)
+ *
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   Some new progressToAdvance will be created and added to progressParent. The
+ * created progressToAdvance will be increased when every time advanced. The
+ * progressParent.root_get() will be returned when every time yield.
+ *
+ */
+ async function* tester( progressParent ) {
+  init();
+
+  let progressArray_for_testSet = new Array( globalThis.testSet_All.length );
+  for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
+    progressArray_for_testSet[ i ] = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  }
+
+  for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
+    let testSet = globalThis.testSet_All[ i ];
+    yield* testSet.tester( progressArray_for_testSet[ i ] );
+  }
+
+  disposeResources();
 }
