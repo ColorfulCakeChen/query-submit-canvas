@@ -553,31 +553,35 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * this.neuralNet[ 0 ].output_channelCount.
    */
   async* Int32Array_fillable_process( sourceInt32Array, bFill ) {
+    const neuralNetIndex = 0; // Always use the first neural network.
+    let neuralNet = this.neuralNetArray[ neuralNetIndex ];
+
+    let sourceTensor;
+    let outputTensor;
     let outputFloat32Array;
-
-    // Ensure all tensors be released, even if .apply() has exception.
-    tf.tidy( () => {
-      const neuralNetIndex = 0; // Always use the first neural network.
-      let neuralNet = this.neuralNetArray[ neuralNetIndex ];
-
-      let outputTensor;
-      try {
-        if ( bFill ) {
-          NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
-            this, sourceInt32Array );
-        }
-
-        let sourceTensor = tf.tensor( sourceInt32Array, neuralNet.input_shape, "int32" );
-        outputTensor = neuralNet.apply( sourceTensor );
-        outputFloat32Array = outputTensor.dataSync();
-
-      } finally {
-        if ( outputTensor ) {
-          outputTensor.dispose();
-          outputTensor = null;
-        }
+    try {
+      if ( bFill ) {
+        NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
+          this, sourceInt32Array );
       }
-    } );
+
+      sourceTensor = tf.tensor( sourceInt32Array, neuralNet.input_shape, "int32" );
+      outputTensor = neuralNet.apply( sourceTensor );
+      outputFloat32Array = outputTensor.dataSync();
+
+    } finally {
+      if ( outputTensor ) {
+        outputTensor.dispose();
+        outputTensor = null;
+      }
+
+      // In theory, it should already have been released by neural network. For avoiding
+      // memory leak (e.g. some exception when .apply()), release it again.
+      if ( sourceTensor ) {
+        sourceTensor.dispose();
+        sourceTensor = null;
+      }
+    }
 
     return {
       value: outputFloat32Array,
