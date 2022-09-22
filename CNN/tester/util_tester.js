@@ -42,7 +42,7 @@ function test() {
 //   }
 
   async function* testerAll() {
-    yield* jsPerf_NeuralWorker.testertester( progress_jsPerf_NeuralWorker );
+    yield* jsPerf_NeuralWorker.tester( progress_jsPerf_NeuralWorker );
     yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );
     yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
     yield* GSheets_tester.tester( progress_GSheets_tester );
