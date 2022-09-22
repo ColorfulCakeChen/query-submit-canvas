@@ -460,7 +460,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * this.neuralNet[ 0 ].output_channelCount.
    */
   async* ImageData_scale_fork_fillable_process( sourceImageData, bFill ) {
-
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
 
@@ -475,11 +474,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
       scaledInt32Array = scaledSourceTensor.dataSync();
 
-    } catch ( e ) {
-      console.error( e );
-      //debugger;
-      scaledInt32Array = new Int32Array(); // Yield an empty Int32Array, if failed.
-
     } finally {
       if ( scaledSourceTensor ) {
         scaledSourceTensor.dispose();
@@ -487,19 +481,108 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       }
     }
 
-//!!! ...unfinished... (2022/09/22)
-// The transferring back will destroy the scaledInt32Array.
-    yield {  // Post back to WorkerProxy.
-      value: scaledInt32Array,
-      transferableObjectArray: [ scaledInt32Array.buffer ]
-    };
-
     // 2. Process image by neural network.
-//!!! (2022/09/21 Remarked) according to parameter.
-//    const bFill = true;
-    let Int32Array_processor = this.Int32Array_fillable_process( scaledInt32Array, bFill );
-    let result = yield* Int32Array_processor;
-    return result;
+    let sourceTensor;
+    let outputTensor;
+    let outputFloat32Array;
+    try {
+      if ( bFill ) {
+        NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
+          this, sourceInt32Array );
+      }
+
+      sourceTensor = tf.tensor( sourceInt32Array, neuralNet.input_shape, "int32" );
+
+      // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
+      yield {
+        value: scaledInt32Array,
+        transferableObjectArray: [ scaledInt32Array.buffer ]
+      };
+
+      outputTensor = neuralNet.apply( sourceTensor );
+      outputFloat32Array = outputTensor.dataSync();
+
+    } finally {
+      if ( outputTensor ) {
+        outputTensor.dispose();
+        outputTensor = null;
+      }
+
+      // In theory, it should already have been released by neural network. For avoiding
+      // memory leak (e.g. some exception when .apply()), release it again.
+      if ( sourceTensor ) {
+        sourceTensor.dispose();
+        sourceTensor = null;
+      }
+    }
+
+    return {
+      value: outputFloat32Array,
+      transferableObjectArray: [ outputFloat32Array.buffer ]
+    };
+  }
+
+  /**
+   * This method is used for:
+   *   - Two web workers. Every worker has one neural network.
+   *   - (may or may not) Fill alignment mark of this neural network, upload to GPU
+   *       and process it.
+   *   - The 2nd worker calls this method.
+   *
+   *
+   * @param {Int32Array} sourceInt32Array
+   *   The source image data to be processed.
+   *
+   *   - Its shape must match this.neuralNet[ 0 ]'s [ input_height, input_width,
+   *       input_channelCount ] because it will not be scaled and will be passed into
+   *       neural network directly.
+   *
+   *   - This usually is called for the 2nd web worker in chain. The web worker will
+   *       accept a scaled Int32Array which is returned from the 1st web worker's
+   *       first yieled of .ImageData_process_asyncGenerator().
+   *
+   * @param {boolean} bFill
+   *   If true, the source Int32Array will be filled by alignment mark before be
+   * converted to tensor3d. If false, it will be converted to tensor3d directly
+   * without filling alignment mark.
+   *
+   * @yield {Float32Array}
+   *   Resolve to { done: true, value: { value: Float32Array,
+   * transferableObjectArray: [ Float32Array.buffer ] }. The value is a Float32Array
+   * representing the neural network's result whose channel count is
+   * this.neuralNet[ 0 ].output_channelCount.
+   */
+  async* Int32Array_fillable_process( sourceInt32Array, bFill ) {
+    let outputFloat32Array;
+
+    // Ensure all tensors be released, even if .apply() has exception.
+    tf.tidy( () => {
+      const neuralNetIndex = 0; // Always use the first neural network.
+      let neuralNet = this.neuralNetArray[ neuralNetIndex ];
+
+      let outputTensor;
+      try {
+        if ( bFill ) {
+          NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
+            this, sourceInt32Array );
+        }
+
+        let sourceTensor = tf.tensor( sourceInt32Array, neuralNet.input_shape, "int32" );
+        outputTensor = neuralNet.apply( sourceTensor );
+        outputFloat32Array = outputTensor.dataSync();
+
+      } finally {
+        if ( outputTensor ) {
+          outputTensor.dispose();
+          outputTensor = null;
+        }
+      }
+    } );
+
+    return {
+      value: outputFloat32Array,
+      transferableObjectArray: [ outputFloat32Array.buffer ]
+    };
   }
 
 //!!! (2022/09/18 Remarked)
@@ -569,11 +652,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 //
 //       } );
 //
-//     } catch ( e ) {
-//       console.error( e );
-//       //debugger;
-//       scaledInt32Array = new Int32Array(); // Yield an empty Int32Array, if failed.
-//
 //     } finally {
 //       if ( scaledSourceTensor ) {
 //         scaledSourceTensor.dispose();
@@ -592,74 +670,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 //     let result = yield* Int32Array_processor;
 //     return result;
 //   }
-
-  /**
-   * This method is used for:
-   *   - Two web workers. Every worker has one neural network.
-   *   - (may or may not) Fill alignment mark of this neural network, upload to GPU
-   *       and process it.
-   *   - The 2nd worker calls this method.
-   *
-   *
-   * @param {Int32Array} sourceInt32Array
-   *   The source image data to be processed.
-   *
-   *   - Its shape must match this.neuralNet[ 0 ]'s [ input_height, input_width,
-   *       input_channelCount ] because it will not be scaled and will be passed into
-   *       neural network directly.
-   *
-   *   - This usually is called for the 2nd web worker in chain. The web worker will
-   *       accept a scaled Int32Array which is returned from the 1st web worker's
-   *       first yieled of .ImageData_process_asyncGenerator().
-   *
-   * @param {boolean} bFill
-   *   If true, the source Int32Array will be filled by alignment mark before be
-   * converted to tensor3d. If false, it will be converted to tensor3d directly
-   * without filling alignment mark.
-   *
-   * @yield {Float32Array}
-   *   Resolve to { done: true, value: { value: Float32Array,
-   * transferableObjectArray: [ Float32Array.buffer ] }. The value is a Float32Array
-   * representing the neural network's result whose channel count is
-   * this.neuralNet[ 0 ].output_channelCount.
-   */
-  async* Int32Array_fillable_process( sourceInt32Array, bFill ) {
-    let outputFloat32Array;
-
-    // Ensure all tensors be released, even if .apply() has exception.
-    tf.tidy( () => {
-      const neuralNetIndex = 0; // Always use the first neural network.
-      let neuralNet = this.neuralNetArray[ neuralNetIndex ];
-
-      let outputTensor;
-      try {
-        if ( bFill ) {
-          NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
-            this, sourceInt32Array );
-        }
-
-        let sourceTensor = tf.tensor( sourceInt32Array, neuralNet.input_shape, "int32" );
-        outputTensor = neuralNet.apply( sourceTensor );
-        outputFloat32Array = outputTensor.dataSync();
-
-      } catch ( e ) {
-        console.error( e );
-        //debugger;
-        outputFloat32Array = new Float32Array(); // Return an empty Float32Array, if failed.
-
-      } finally {
-        if ( outputTensor ) {
-          outputTensor.dispose();
-          outputTensor = null;
-        }
-      }
-    } );
-
-    return {
-      value: outputFloat32Array,
-      transferableObjectArray: [ outputFloat32Array.buffer ]
-    };
-  }
 
   /**
    * This method is used for:
@@ -729,11 +739,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       // 2. Process image by neural network.
       outputTensor = neuralNet.apply( scaledSourceTensor );
       outputFloat32Array = outputTensor.dataSync();
-
-    } catch ( e ) {
-      console.error( e );
-      //debugger;
-      outputFloat32Array = new Float32Array(); // Return an empty Float32Array, if failed.
 
     } finally {
       if ( outputTensor ) {
