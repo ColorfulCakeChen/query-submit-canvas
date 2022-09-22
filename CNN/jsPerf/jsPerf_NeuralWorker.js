@@ -667,7 +667,7 @@ function disposeResources() {
  * progressParent.root_get() will be returned when every time yield.
  *
  */
- async function* tester( progressParent ) {
+async function* tester( progressParent ) {
   init();
 
   let progressArray_for_testSet = new Array( globalThis.testSet_All.length );
