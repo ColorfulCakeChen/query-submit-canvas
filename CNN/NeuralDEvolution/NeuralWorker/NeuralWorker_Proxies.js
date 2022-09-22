@@ -300,6 +300,19 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {NeuralWorker_Proxies} this
    */
   static setup_ImageData_process() {
+
+//!!! ...unfinished... (2022/09/22) 
+    // *   -  0: ONE_WORKER__ONE_SCALE__FILL
+    // *   -  1: ONE_WORKER__ONE_SCALE__NO_FILL
+    // * 
+    // *   -  2: TWO_WORKER__ONE_SCALE__FILL__APPLY
+    // *   -  3: TWO_WORKER__ONE_SCALE__FILL__APPLIER
+    // *
+    // *   -  4: TWO_WORKER__ONE_SCALE__NO_FILL__APPLY
+    // *   -  5: TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER
+    //    
+    // *   -  6: TWO_WORKER__TWO_SCALE__NO_FILL
+   
     switch ( this.nNeuralWorker_ModeId ) {
       case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__FILL: // (0)
       case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL: // (1)
