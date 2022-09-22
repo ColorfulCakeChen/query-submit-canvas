@@ -433,9 +433,6 @@ class HeightWidthDepth {
     {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
-      //Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_NeuralNet.HeightWidthDepth.testCorrectness()", () => {
-      //}, this );
-
       yield;
 
       {
@@ -444,42 +441,8 @@ class HeightWidthDepth {
         {
           this.neuralWorker_PerformanceTest_init();
 
-//!!! ...unfinished... (2022/09/21)
-// For NO_FILL, should compare with normal sync NeuralNet result.
-
-          yield await this.testNeuralWorker_ByName( "ONE_WORKER__ONE_SCALE__FILL" );
-          yield await this.testNeuralWorker_ByName( "ONE_WORKER__ONE_SCALE__NO_FILL" );
-          yield await this.testNeuralWorker_ByName( "TWO_WORKER__ONE_SCALE__FILL" );
-          yield await this.testNeuralWorker_ByName( "TWO_WORKER__ONE_SCALE__NO_FILL" );
-          yield await this.testNeuralWorker_ByName( "TWO_WORKER__TWO_SCALE__NO_FILL" );
-
-// //!!! (2022/09/21 Remarked)
-//           let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
-//
-//           try {
-//             for ( testParams of testParamsGenerator ) {
-//               let bDisplayed = batchIdCalculator.checkAndDisplay( testParams.id );
-//               if ( bDisplayed )
-//                 yield; // Since just entering a new batch section, take a break so that memory garbage collector could be activated to work.
-//
-//               testReference.testCorrectness( imageSourceBag, testParams );
-//             }
-//
-//           } catch ( e ) {
-//             let backendName = tf.getBackend();
-//             let msg = `jsPerf_NeuralWorker.js: testCorrectness(): `
-//               + `backendName=${backendName}, `
-//               + `NeuralNet, (yieldCount == ${testParams.yieldCount}), `
-//               + `testParams.id == ${testParams.id}`;
-//
-//             console.log( msg );
-//             alert( `${msg}\n${e}` );
-//
-//             //debugger;
-//             throw e;
-//           }
-//
-//           batchIdCalculator.checkAndDisplay( testParams.id );
+          let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+          yield* this.tester( progress );
 
           this.neuralWorker_PerformanceTest_release();
         }
@@ -487,7 +450,8 @@ class HeightWidthDepth {
         let memoryInfo_testCorrectness_after = tf.memory();
 
         if ( memoryInfo_testCorrectness_after.numTensors != memoryInfo_testCorrectness_before.numTensors )
-          throw Error( `testCorrectness() memory leak. `
+          throw Error(
+              `jsPerf_NeuralWorker.testCorrectness_asyncGenerator() memory leak. `
             + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
             + `should be (${memoryInfo_testCorrectness_before.numTensors} `
           );
