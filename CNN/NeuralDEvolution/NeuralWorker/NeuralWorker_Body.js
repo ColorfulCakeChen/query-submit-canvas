@@ -623,13 +623,12 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    */
   async* Int32Array_fillable_process( sourceInt32Array, bFill ) {
 
-    const neuralNetIndex = 0; // Always use the first neural network.
-    let neuralNet = this.neuralNetArray[ neuralNetIndex ];
-
     let outputFloat32Array;
 
     // Ensure all tensors be released, even if .apply() has exception.
     tf.tidy( () => {
+      const neuralNetIndex = 0; // Always use the first neural network.
+      let neuralNet = this.neuralNetArray[ neuralNetIndex ];
 
       let outputTensor;
       try {
