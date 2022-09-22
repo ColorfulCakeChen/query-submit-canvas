@@ -299,6 +299,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *
    * This method is used for:
    *   - One web worker. The worker has two neural networks.
+   *     - NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__FILL (0)
+   *     - NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL (1)
    *
    *   - If ( bFill == true ), alignment mark filling.
    *     - The worker will download scaled Int32Array from GPU memory.
@@ -422,11 +424,15 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL (2)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL (3)
+   *     - The 1st worker calls this method.
+   *
    *   - It will download scaled Int32Array from GPU memory. And post it back to
    *         WorkerProxy.
+   *
    *   - (may or may not) Fill alignment mark of this neural network, upload to GPU
    *       and process it.
-   *   - The 1st worker calls this method.
    *
    * 
    * @param {ImageData} sourceImageData
@@ -525,9 +531,12 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL (2)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL (3)
+   *     - The 2nd worker calls this method.
+   *
    *   - (may or may not) Fill alignment mark of this neural network, upload to GPU
    *       and process it.
-   *   - The 2nd worker calls this method.
    *
    *
    * @param {Int32Array} scaledInt32Array
@@ -678,6 +687,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_SCALE__NO_FILL (4)
    *     - Both workers call this metohd.
    *       - The 1st worker uses ( bFork == true ).
    *       - The 2nd worker uses ( bFork == false ).
