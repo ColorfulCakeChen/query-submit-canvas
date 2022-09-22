@@ -622,7 +622,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * this.neuralNet[ 0 ].output_channelCount.
    */
   async* Int32Array_fillable_process( sourceInt32Array, bFill ) {
-
     let outputFloat32Array;
 
     // Ensure all tensors be released, even if .apply() has exception.
