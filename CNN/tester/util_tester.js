@@ -5,6 +5,7 @@ import * as Pool from "../util/Pool.js";
 import * as Base64ToUint8Array_tester from "./Base64ToUint8Array_tester.js";
 import * as GSheets_tester from "./GSheets_tester.js";
 import * as AsyncWorker_tester from "./AsyncWorker_tester.js";
+import * as jsPerf_NeuralWorker from "../jsPerf/jsPerf_NeuralWorker.js";
 
 window.addEventListener( "load", event => {
   ScriptLoader
@@ -31,6 +32,9 @@ function test() {
   let progress_AsyncWorker_tester = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
+  let progress_jsPerf_NeuralWorker = progress.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
   let progressReceiver
     = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
 
@@ -38,6 +42,7 @@ function test() {
 //   }
 
   async function* testerAll() {
+    yield* jsPerf_NeuralWorker.testertester( progress_jsPerf_NeuralWorker );
     yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );
     yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
     yield* GSheets_tester.tester( progress_GSheets_tester );
