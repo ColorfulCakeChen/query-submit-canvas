@@ -55,7 +55,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
     let bInitOk = true;
 
-    await tf.ready(); // Ensure tf.getBackend() correctly.
+    await tf.ready(); // Ensure tf.getBackend() workable.
 
     let currentBackendName = tf.getBackend();
     if ( currentBackendName != backendName ) {

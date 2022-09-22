@@ -90,7 +90,7 @@ class PerformanceTestCase extends Recyclable.Root {
    */
   async prepare_async() {
     try {
-      await tf.ready(); // Ensure tf.getBackend() correctly.
+      await tf.ready(); // Ensure tf.getBackend() workable.
       let backendName = tf.getBackend();
 
       let neuralWorkerProxies = this.neuralWorkerProxies
@@ -517,7 +517,7 @@ class HeightWidthDepth {
    *
    */
   async* tester( progressParent ) {
-    console.log( "NeuralWorker testing..." );
+    console.log( `NeuralWorker ( ${backendName} ) testing...` );
 
     let progressRoot = progressParent.root_get();
 
@@ -609,7 +609,7 @@ class HeightWidthDepth {
       throw e;
     }
 
-    console.log( "NeuralWorker testing... Done." );
+    console.log( `NeuralWorker ( ${backendName} ) testing... Done.` );
   }
 
 }
@@ -663,7 +663,21 @@ function disposeResources() {
  * progressParent.root_get() will be returned when every time yield.
  *
  */
-async function* tester( progressParent ) {
+async function* tester( progressParent, backendName ) {
+
+  // Ensure backend of tensorflow.js
+  {
+    await tf.ready(); // Ensure tf.getBackend() workable.
+    let backendName = tf.getBackend();
+
+    let currentBackendName = tf.getBackend();
+    if ( currentBackendName != backendName ) {
+      let setBackendOkPromise = tf.setBackend( backendName );
+      let setBackendOk = await setBackendOkPromise;
+      bInitOk = setBackendOk;
+    }
+  }
+
   init();
 
   let progressArray_for_testSet = new Array( globalThis.testSet_All.length );

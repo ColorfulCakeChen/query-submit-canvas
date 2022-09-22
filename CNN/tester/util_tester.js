@@ -32,17 +32,18 @@ function test() {
   let progress_AsyncWorker_tester = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progress_jsPerf_NeuralWorker = progress.child_add(
+  let progress_jsPerf_NeuralWorker_cpu = progress.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progress_jsPerf_NeuralWorker_webgl = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let progressReceiver
     = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
 
-//   for await ( let progressRoot of Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester ) ) {
-//   }
-
   async function* testerAll() {
-    yield* jsPerf_NeuralWorker.tester( progress_jsPerf_NeuralWorker );
+    yield* jsPerf_NeuralWorker.tester( progress_jsPerf_NeuralWorker_cpu, "cpu" );
+    yield* jsPerf_NeuralWorker.tester( progress_jsPerf_NeuralWorker_webgl, "webgl" );
     yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );
     yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
     yield* GSheets_tester.tester( progress_GSheets_tester );
