@@ -584,7 +584,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       // Solution 2: Use neuralNet.applier().
       } else {
         let applier = neuralNet.applier( sourceTensor );
-        let applierNext = applier.next();
+        let applierNext = applier.next(); // NeuralNet sets progress to 0.
+        applierNext = applier.next(); // NeuralNet processes embedding.
 
         // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
         //
