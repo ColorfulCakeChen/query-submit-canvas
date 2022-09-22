@@ -541,13 +541,18 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
       sourceTensor = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
 
+      outputTensor = neuralNet.apply( sourceTensor );
+
       // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
+      //
+      // Note: Ideally, the posting-back shoud be done before neuralNet.apply().
+      // However, that will happen exception (says the ArrayBuffer has been detached).
+      // So, do it after neuralNet.apply().
       yield {
         value: scaledInt32Array,
         transferableObjectArray: [ scaledInt32Array.buffer ]
       };
 
-      outputTensor = neuralNet.apply( sourceTensor );
       outputFloat32Array = outputTensor.dataSync();
 
     } catch ( e ) {
