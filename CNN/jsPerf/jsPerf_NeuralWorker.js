@@ -531,15 +531,8 @@ async function* tester( progressParent ) {
   let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
-  //!!! (2022/09/21 Temp Skipped) For speed up into performance testing.
-  //if ( 0 )
-  {
+  try {
     let pool_all_issuedCount_before = Pool.All.issuedCount;
-
-    //Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_NeuralNet.HeightWidthDepth.testCorrectness()", () => {
-    //}, this );
-
-    yield;
 
     {
       let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
@@ -547,46 +540,18 @@ async function* tester( progressParent ) {
       {
         this.neuralWorker_PerformanceTest_init();
 
-//!!! ...unfinished... (2022/09/21)
+//!!! ...unfinished... (2022/09/22)
 // For NO_FILL, should compare with normal sync NeuralNet result.
 
-        yield await this.testNeuralWorker_ByName( "ONE_WORKER__ONE_SCALE__FILL" );
+        await this.testNeuralWorker_ByName( "ONE_WORKER__ONE_SCALE__FILL" );
 
         progressToAdvance.value_advance();
         yield progressRoot;
 
-        yield await this.testNeuralWorker_ByName( "ONE_WORKER__ONE_SCALE__NO_FILL" );
-        yield await this.testNeuralWorker_ByName( "TWO_WORKER__ONE_SCALE__FILL" );
-        yield await this.testNeuralWorker_ByName( "TWO_WORKER__ONE_SCALE__NO_FILL" );
-        yield await this.testNeuralWorker_ByName( "TWO_WORKER__TWO_SCALE__NO_FILL" );
-
-// //!!! (2022/09/21 Remarked)
-//           let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
-//
-//           try {
-//             for ( testParams of testParamsGenerator ) {
-//               let bDisplayed = batchIdCalculator.checkAndDisplay( testParams.id );
-//               if ( bDisplayed )
-//                 yield; // Since just entering a new batch section, take a break so that memory garbage collector could be activated to work.
-//
-//               testReference.testCorrectness( imageSourceBag, testParams );
-//             }
-//
-//           } catch ( e ) {
-//             let backendName = tf.getBackend();
-//             let msg = `jsPerf_NeuralWorker.js: testCorrectness(): `
-//               + `backendName=${backendName}, `
-//               + `NeuralNet, (yieldCount == ${testParams.yieldCount}), `
-//               + `testParams.id == ${testParams.id}`;
-//
-//             console.log( msg );
-//             alert( `${msg}\n${e}` );
-//
-//             //debugger;
-//             throw e;
-//           }
-//
-//           batchIdCalculator.checkAndDisplay( testParams.id );
+        await this.testNeuralWorker_ByName( "ONE_WORKER__ONE_SCALE__NO_FILL" );
+        await this.testNeuralWorker_ByName( "TWO_WORKER__ONE_SCALE__FILL" );
+        await this.testNeuralWorker_ByName( "TWO_WORKER__ONE_SCALE__NO_FILL" );
+        await this.testNeuralWorker_ByName( "TWO_WORKER__TWO_SCALE__NO_FILL" );
 
         this.neuralWorker_PerformanceTest_release();
       }
@@ -594,19 +559,27 @@ async function* tester( progressParent ) {
       let memoryInfo_testCorrectness_after = tf.memory();
 
       if ( memoryInfo_testCorrectness_after.numTensors != memoryInfo_testCorrectness_before.numTensors )
-        throw Error( `testCorrectness() memory leak. `
+        throw Error( `jsPerf_NeuralWorker.tester() memory leak. `
           + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
           + `should be (${memoryInfo_testCorrectness_before.numTensors} `
         );
     }
 
     Pool.Asserter.assert_Pool_issuedCount(
-      "jsPerf_NeuralWorker.HeightWidthDepth.testCorrectness_asyncGenerator()",
-      pool_all_issuedCount_before );
+      "jsPerf_NeuralWorker.tester()", pool_all_issuedCount_before );
 
-    yield;
+  } catch ( e ) {
+    let backendName = tf.getBackend();
+    let msg = `jsPerf_NeuralWorker.tester(): `
+      + `backendName=${backendName}. `
+      + `${e}`;
+
+    console.log( msg );
+    alert( `${msg}` );
+
+    //debugger;
+    throw e;
   }
-
 
   console.log( "NeuralWorker testing... Done." );
 }
