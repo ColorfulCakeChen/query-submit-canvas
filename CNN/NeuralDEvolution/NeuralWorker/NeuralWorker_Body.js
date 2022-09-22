@@ -540,8 +540,11 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
       sourceTensor = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
-
       outputTensor = neuralNet.apply( sourceTensor );
+
+      // Because download from GPU to CPU is slow, start downloading before post
+      // back (i.e. another slow action).
+      let outputFloat32ArrayPromise = outputTensor.data();
 
       // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
       //
@@ -553,7 +556,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         transferableObjectArray: [ scaledInt32Array.buffer ]
       };
 
-      outputFloat32Array = outputTensor.dataSync();
+      outputFloat32Array = await outputFloat32ArrayPromise;
 
     } catch ( e ) {
       let errorMsg = `NeuralWorker_Body.ImageData_scale_fork_fillable_process(): `
