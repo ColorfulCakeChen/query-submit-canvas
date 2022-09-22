@@ -300,39 +300,28 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {NeuralWorker_Proxies} this
    */
   static setup_ImageData_process() {
-
-!!! ...unfinished... (2022/09/22) 
-    // *   -  0: ONE_WORKER__ONE_SCALE__FILL
-    // *   -  1: ONE_WORKER__ONE_SCALE__NO_FILL
-    // * 
-    // *   -  2: TWO_WORKER__ONE_SCALE__FILL__APPLY
-    // *   -  3: TWO_WORKER__ONE_SCALE__FILL__APPLIER
-    // *
-    // *   -  4: TWO_WORKER__ONE_SCALE__NO_FILL__APPLY
-    // *   -  5: TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER
-    //    
-    // *   -  6: TWO_WORKER__TWO_SCALE__NO_FILL
-
     switch ( this.nNeuralWorker_ModeId ) {
       case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__FILL: // (0)
       case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL: // (1)
         this.ImageData_process_async
-          = NeuralWorker_Proxies.apply__ONE_WORKER__ONE_SCALE__FILL__OR__NO_FILL;
+          = NeuralWorker_Proxies.apply__ONE_WORKER__ONE_SCALE__FILL__or__NO_FILL;
         break;
 
-      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL: // (2)
-      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL: // (3)
+      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLY: // (2)
+      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLIER: // (3)
+      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLY: // (4)
+      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER: // (5)
         this.ImageData_process_async
-          = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__OR__NO_FILL;
+          = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL;
         break;
 
-      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_SCALE__NO_FILL: // (4)
+      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_SCALE__NO_FILL: // (6)
         this.ImageData_process_async
           = NeuralWorker_Proxies.apply__TWO_WORKER__TWO_SCALE__NO_FILL;
         break;
 
       default:
-        throw Error( `NeuralWorker_Proxies.setup_apply(): `
+        throw Error( `NeuralWorker_Proxies.setup_ImageData_process(): `
           + `Unknown nNeuralWorker_ModeId ( ${nNeuralWorker_ModeId} ).`
         );
         break;
@@ -340,7 +329,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /** */
-  static async apply__ONE_WORKER__ONE_SCALE__FILL__OR__NO_FILL( sourceImageData ) {
+  static async apply__ONE_WORKER__ONE_SCALE__FILL__or__NO_FILL( sourceImageData ) {
     let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
 
     let worker0_promise = this.workerProxyArray[ 0 ]
@@ -351,15 +340,14 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /** */
-  static async apply__TWO_WORKER__ONE_SCALE__FILL__OR__NO_FILL( sourceImageData ) {
+  static async apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL( sourceImageData ) {
     let info = NeuralWorker_Mode.Singleton.getInfo_byId( nNeuralWorker_ModeId );
     let bFill = info.bFill;
     let bApply_or_Applier = info.bApply_or_Applier;
 
-!!!???    
-
     let worker0_resulter = this.workerProxyArray[ 0 ]
-      .ImageData_scale_fork_fillable_process_asyncGenerator( sourceImageData, bFill );
+      .ImageData_scale_fork_fillable_process_asyncGenerator(
+        sourceImageData, bFill, bApply_or_Applier );
 
     let { done: worker0_done_false, value: worker0_value_Int32Array }
       = await worker0_resulter.next();
