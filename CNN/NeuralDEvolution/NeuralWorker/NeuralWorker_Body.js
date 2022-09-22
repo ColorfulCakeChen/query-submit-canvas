@@ -151,6 +151,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       else
         return { value: false };
 
+    } catch ( e ) {
+      let errorMsg = `NeuralWorker_Body.NeuralNetArray_create(): `
+        + `workerId=${this.workerId}. ${e}`;
+      console.error( errorMsg );
+      //debugger;
+      throw e;
+
     } finally {
       if ( progress ) {
         progress.disposeResources_and_recycleToPool();
@@ -176,7 +183,14 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         neuralNet = this.neuralNetArray[ i ];
         sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
         outputTensor = neuralNet.apply( sourceTensor );
-  
+
+      } catch ( e ) {
+        let errorMsg = `NeuralWorker_Body.NeuralNetArray_dryRun_ifWebGL(): `
+          + `workerId=${this.workerId}. ${e}`;
+        console.error( errorMsg );
+        //debugger;
+        throw e;
+
       } finally {
         if ( outputTensor ) {
           outputTensor.dispose();
@@ -362,6 +376,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
                 scaledInt32Array = scaledSourceTensor.dataSync();
               }
 
+            } catch ( e ) {
+              let errorMsg = `NeuralWorker_Body.ImageData_scale_once_process_multiple(): `
+                + `workerId=${this.workerId}. ${e}`;
+              console.error( errorMsg );
+              //debugger;
+              throw e;
+
             } finally {
               // If need fill alignment mark, the source tensor will be re-created for
               // every neural network, the scaled source tensor needs not be kept.
@@ -398,7 +419,14 @@ class NeuralWorker_Body extends AsyncWorker.Body {
             // 2.3 Record result.
             resultValueArray[ i ] = outputTensor.dataSync();
             resultTransferableObjectArray[ i ] = resultValueArray[ i ].buffer;
-      
+
+          } catch ( e ) {
+            let errorMsg = `NeuralWorker_Body.ImageData_scale_once_process_multiple(): `
+              + `workerId=${this.workerId}. ${e}`;
+            console.error( errorMsg );
+            //debugger;
+            throw e;
+
           } finally {
             if ( outputTensor ) {
               outputTensor.dispose();
@@ -406,6 +434,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
             }
           }
         }
+
+      } catch ( e ) {
+        let errorMsg = `NeuralWorker_Body.ImageData_scale_once_process_multiple(): `
+          + `workerId=${this.workerId}. ${e}`;
+        console.error( errorMsg );
+        //debugger;
+        throw e;
 
       } finally {
         if ( scaledSourceTensor ) {
@@ -480,6 +515,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
       scaledInt32Array = scaledSourceTensor.dataSync();
 
+    } catch ( e ) {
+      let errorMsg = `NeuralWorker_Body.ImageData_scale_fork_fillable_process(): `
+        + `workerId=${this.workerId}. ${e}`;
+      console.error( errorMsg );
+      //debugger;
+      throw e;
+
     } finally {
       if ( scaledSourceTensor ) {
         scaledSourceTensor.dispose();
@@ -507,6 +549,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
       outputTensor = neuralNet.apply( sourceTensor );
       outputFloat32Array = outputTensor.dataSync();
+
+    } catch ( e ) {
+      let errorMsg = `NeuralWorker_Body.ImageData_scale_fork_fillable_process(): `
+        + `workerId=${this.workerId}. ${e}`;
+      console.error( errorMsg );
+      //debugger;
+      throw e;
 
     } finally {
       if ( outputTensor ) {
@@ -577,6 +626,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       sourceTensor = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
       outputTensor = neuralNet.apply( sourceTensor );
       outputFloat32Array = outputTensor.dataSync();
+
+    } catch ( e ) {
+      let errorMsg = `NeuralWorker_Body.Int32Array_fillable_process(): `
+        + `workerId=${this.workerId}. ${e}`;
+      console.error( errorMsg );
+      //debugger;
+      throw e;
 
     } finally {
       if ( outputTensor ) {
@@ -664,6 +720,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 //       } ).catch( errReason => {
 //
 //       } );
+//
+//      } catch ( e ) {
+//        let errorMsg = `NeuralWorker_Body.ImageData_scale_fork_process(): `
+//          + `workerId=${this.workerId}. ${e}`;
+//        console.error( errorMsg );
+//        //debugger;
+//        throw e;
 //
 //     } finally {
 //       if ( scaledSourceTensor ) {
@@ -753,6 +816,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       // 2. Process image by neural network.
       outputTensor = neuralNet.apply( scaledSourceTensor );
       outputFloat32Array = outputTensor.dataSync();
+
+    } catch ( e ) {
+      let errorMsg = `NeuralWorker_Body.ImageData_scale_forkable_process(): `
+        + `workerId=${this.workerId}. ${e}`;
+      console.error( errorMsg );
+      //debugger;
+      throw e;
 
     } finally {
       if ( outputTensor ) {
