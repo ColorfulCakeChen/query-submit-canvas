@@ -495,7 +495,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     // 2. Process image by neural network.
 //!!! (2022/09/21 Remarked) according to parameter.
 //    const bFill = true;
-    let Int32Array_processor = Int32Array_fillable_process( scaledInt32Array, bFill );
+    let Int32Array_processor = this.Int32Array_fillable_process( scaledInt32Array, bFill );
     let result = yield* Int32Array_processor;
     return result;
   }
@@ -586,7 +586,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 //
 //     // 2. Process image by neural network.
 //     const bFill = false;
-//     let Int32Array_processor = Int32Array_fillable_process( scaledInt32Array, bFill );
+//     let Int32Array_processor = this.Int32Array_fillable_process( scaledInt32Array, bFill );
 //     let result = yield* Int32Array_processor;
 //     return result;
 //   }
