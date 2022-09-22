@@ -82,7 +82,7 @@ class PerformanceTestCase extends Recyclable.Root {
   }
 
   get NeuralWorker_Mode_bFill() {
-    return NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
+    return NeuralWorker.Mode.bFill_get( this.nNeuralWorker_ModeId );
   }
 
   /**
