@@ -513,7 +513,7 @@ class HeightWidthDepth {
 
             // For NO_FILL mode, the result should be the same as local simulation.
             // So they can be checked.
-            let bFill = this.NeuralWorker_Mode_bFill;
+            let bFill = testCase.NeuralWorker_Mode_bFill;
             if ( !bFill ) {
               resultFloat32Array = testCase.NeuralNet_try_result( this.testCanvas );
             }
