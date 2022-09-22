@@ -301,7 +301,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    */
   static setup_ImageData_process() {
 
-//!!! ...unfinished... (2022/09/22) 
+!!! ...unfinished... (2022/09/22) 
     // *   -  0: ONE_WORKER__ONE_SCALE__FILL
     // *   -  1: ONE_WORKER__ONE_SCALE__NO_FILL
     // * 
@@ -312,7 +312,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     // *   -  5: TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER
     //    
     // *   -  6: TWO_WORKER__TWO_SCALE__NO_FILL
-   
+
     switch ( this.nNeuralWorker_ModeId ) {
       case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__FILL: // (0)
       case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL: // (1)
@@ -352,9 +352,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
   /** */
   static async apply__TWO_WORKER__ONE_SCALE__FILL__OR__NO_FILL( sourceImageData ) {
-    let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
+    let info = NeuralWorker_Mode.Singleton.getInfo_byId( nNeuralWorker_ModeId );
+    let bFill = info.bFill;
+    let bApply_or_Applier = info.bApply_or_Applier;
 
-!!!???    bApply_or_Applier
+!!!???    
 
     let worker0_resulter = this.workerProxyArray[ 0 ]
       .ImageData_scale_fork_fillable_process_asyncGenerator( sourceImageData, bFill );
