@@ -351,7 +351,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
               || (  bFill && !scaledInt32Array )
             ) {
             try {
-              scaledSourceTensor = neuralNet.create_ScaledSourceTensor_from_PixelData(
+              scaledSourceTensor= neuralNet.create_ScaledSourceTensor_from_PixelData(
                 sourceImageData,
                 true // ( bForceInt32 == true )
               );
