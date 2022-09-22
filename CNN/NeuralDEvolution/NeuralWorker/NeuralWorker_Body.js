@@ -502,6 +502,10 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * converted to tensor3d. If false, it will be converted to tensor3d directly
    * without filling alignment mark.
    *
+   * @param {boolean} bApply_or_Applier
+   *   - If true, use neuralNet.apply().
+   *   - If false, use neuralNet.applier().
+   *
    * @yield {Int32Array}
    *   Resolve to { done: false, value: { value: Int32Array,
    * transferableObjectArray: [ Int32Array.buffer ] }. The value is an Int32Array
@@ -514,7 +518,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * representing the neural network's result whose channel count is
    * this.neuralNet[ 0 ].output_channelCount.
    */
-  async* ImageData_scale_fork_fillable_process( sourceImageData, bFill ) {
+  async* ImageData_scale_fork_fillable_process(
+    sourceImageData, bFill, bApply_or_Applier ) {
+
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
 
@@ -555,9 +561,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
       sourceTensor = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
 
-//!!! ...unfinished... (2022/09/22) How to choose which solution?
-      // Solution 1:
-      {
+      // Solution 1: Use neuralNet.apply().
+      if ( bApply_or_Applier ) {
         outputTensor = neuralNet.apply( sourceTensor );
 
         // Because downloading from GPU to CPU is slow, start downloading before
@@ -575,11 +580,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         };
 
         outputFloat32Array = await outputFloat32ArrayPromise;
-      }
 
-//!!! ...unfinished... (2022/09/22) How to choose which solution?
       // Solution 2: Use neuralNet.applier().
-      {
+      } else {
         let applier = neuralNet.applier( sourceTensor );
         let applierNext = applier.next();
 

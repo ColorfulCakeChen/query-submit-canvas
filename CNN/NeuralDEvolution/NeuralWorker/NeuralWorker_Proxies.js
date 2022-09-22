@@ -341,6 +341,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   static async apply__TWO_WORKER__ONE_SCALE__FILL__OR__NO_FILL( sourceImageData ) {
     let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
 
+!!!???    bApply_or_Applier
+
     let worker0_resulter = this.workerProxyArray[ 0 ]
       .ImageData_scale_fork_fillable_process_asyncGenerator( sourceImageData, bFill );
 

@@ -4,32 +4,56 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
 
 /** Describe id, range, name of NeuralWorker_Mode.
  *
- * Convert number value into integer between [ 0, 4 ] representing neural worker mode:
+ * Convert number value into integer between [ 0, 6 ] representing neural worker mode:
  *   -  0: ONE_WORKER__ONE_SCALE__FILL
  *   -  1: ONE_WORKER__ONE_SCALE__NO_FILL
- *   -  2: TWO_WORKER__ONE_SCALE__FILL
- *   -  3: TWO_WORKER__ONE_SCALE__NO_FILL
- *   -  4: TWO_WORKER__TWO_SCALE__NO_FILL
+ * 
+ *   -  2: TWO_WORKER__ONE_SCALE__FILL__APPLY
+ *   -  3: TWO_WORKER__ONE_SCALE__FILL__APPLIER
+ *
+ *   -  4: TWO_WORKER__ONE_SCALE__NO_FILL__APPLY
+ *   -  5: TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER
+ 
+//!!! ...unfinished... (2022/09/22) without fill, downloading can done before compute.
+//*   -  ?6: TWO_WORKER__ONE_SCALE__NO_FILL__APPLY
+
+ *   -  6: TWO_WORKER__TWO_SCALE__NO_FILL
  */
 class NeuralWorker_Mode extends Int {
 
   constructor() {
-    super( 0, 4,
+    super( 0, 6,
       {
         ONE_WORKER__ONE_SCALE__FILL:     new NeuralWorker_Mode.Info(
-          0, "ONE_WORKER__ONE_SCALE__NO_FILL", 1,  true ),
+          0, "ONE_WORKER__ONE_SCALE__FILL",           1,
+          true, undefined ),
 
         ONE_WORKER__ONE_SCALE__NO_FILL:  new NeuralWorker_Mode.Info(
-          1, "ONE_WORKER__ONE_SCALE__NO_FILL", 1, false ),
+          1, "ONE_WORKER__ONE_SCALE__NO_FILL",          1,
+          false, undefined ),
 
-        TWO_WORKER__ONE_SCALE__FILL:     new NeuralWorker_Mode.Info(
-          2, "TWO_WORKER__ONE_SCALE__FILL",    2,  true ),
 
-        TWO_WORKER__ONE_SCALE__NO_FILL:  new NeuralWorker_Mode.Info(
-          3, "TWO_WORKER__ONE_SCALE__NO_FILL", 2, false ),
+        TWO_WORKER__ONE_SCALE__FILL__APPLY:     new NeuralWorker_Mode.Info(
+          2, "TWO_WORKER__ONE_SCALE__FILL__APPLY",      2,
+          true,  true ),
+
+        TWO_WORKER__ONE_SCALE__FILL__APPLIER:     new NeuralWorker_Mode.Info(
+          3, "TWO_WORKER__ONE_SCALE__FILL__APPLIER",    2,
+          true, false ),
+
+
+        TWO_WORKER__ONE_SCALE__NO_FILL__APPLY:  new NeuralWorker_Mode.Info(
+          4, "TWO_WORKER__ONE_SCALE__NO_FILL__APPLY",   2,
+          false,  true ),
+
+        TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER:  new NeuralWorker_Mode.Info(
+          5, "TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER", 2,
+          false, false ),
+
 
         TWO_WORKER__TWO_SCALE__NO_FILL:  new NeuralWorker_Mode.Info(
-          4, "TWO_WORKER__TWO_SCALE__NO_FILL", 2, false ),
+          6, "TWO_WORKER__TWO_SCALE__NO_FILL",          2,
+          false, undefined ),
       }
     );
   }
@@ -63,6 +87,22 @@ class NeuralWorker_Mode extends Int {
     return NaN;
   }
 
+  /**
+   * @param {number} nNeuralWorker_ModeId
+   *   The numeric identifier of NeuralWorker_Mode. (NeuralWorker.Mode.Singleton.Ids.Xxx)
+   *
+   * @return {boolean}
+   *   Only meaningful for mode XXX_APPLY and XXX_APPLIER.
+   *   - If true, use neuralNet.apply().
+   *   - If false, use neuralNet.applier().
+   */
+   static bApply_or_Applier_get( nNeuralWorker_ModeId ) {
+    let info = NeuralWorker_Mode.Singleton.getInfo_byId( nNeuralWorker_ModeId );
+    if ( info )
+      return info.bApply_or_Applier;
+    return NaN;
+  }
+  
 }
 
 
@@ -73,6 +113,11 @@ class NeuralWorker_Mode extends Int {
  *
  * @member {boolean} bFill
  *   Whether the worker mode will fill alignment mark in image before process it.
+ *
+ * @member {boolean} bApply_or_Applier
+ *   Only meaningful for mode XXX_APPLY and XXX_APPLIER.
+ *   - If true, use neuralNet.apply().
+ *   - If false, use neuralNet.applier().
  *
  */
 NeuralWorker_Mode.Info = class NeuralWorker_Mode_Info extends Int.Info {
@@ -89,12 +134,13 @@ NeuralWorker_Mode.Info = class NeuralWorker_Mode_Info extends Int.Info {
    *
    */
   constructor( nNeuralWorker_ModeId, nameForMessage,
-    workerCount, bFill
+    workerCount, bFill, bApply_or_Applier
   ) {
     super( nNeuralWorker_ModeId, nameForMessage );
 
     this.workerCount = workerCount;
     this.bFill = bFill;
+    this.bApply_or_Applier = bApply_or_Applier;
   }
 
 }

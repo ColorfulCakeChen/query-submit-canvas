@@ -211,9 +211,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   Resolve to { done: true, value: Float32Array }. The value is a Float32Array
    * representing the neural network's result.
    */
-  ImageData_scale_fork_fillable_process_asyncGenerator( sourceImageData, bFill ) {
+  ImageData_scale_fork_fillable_process_asyncGenerator(
+    sourceImageData, bFill, bApply_or_Applier ) {
     return this.createResulter_by_postCommandArgs(
-      [ "ImageData_scale_fork_fillable_process", sourceImageData, bFill ],
+      [ "ImageData_scale_fork_fillable_process",
+        sourceImageData, bFill, bApply_or_Applier ],
       [ sourceImageData.data.buffer ]
     );
   }
