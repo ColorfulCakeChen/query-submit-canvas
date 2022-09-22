@@ -526,7 +526,7 @@ async function* tester( progressParent ) {
   let progressRoot = progressParent.root_get();
 
   // Test every neural worker mode once.
-  let progressMax = NeuralWorker.Mode.integerToInfoMap.size;
+  let progressMax = NeuralWorker.Mode.Singleton.integerToInfoMap.size;
 
   let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
