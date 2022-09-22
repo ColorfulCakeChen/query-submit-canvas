@@ -418,10 +418,8 @@ class HeightWidthDepth {
       imageData = ctx.getImageData( 0, 0, this.testCanvas.width, this.testCanvas.height );
     }
 
-    let neuralWorkerProxies = testCase.neuralWorkerProxies;
-
     let resultFloat32ArrayArrayPromise
-      = neuralWorkerProxies.ImageData_process_async( imageData );
+      = testCase.neuralWorkerProxies.ImageData_process_async( imageData );
 
     let resultFloat32ArrayArray = await resultFloat32ArrayArrayPromise;
     return resultFloat32ArrayArray;
