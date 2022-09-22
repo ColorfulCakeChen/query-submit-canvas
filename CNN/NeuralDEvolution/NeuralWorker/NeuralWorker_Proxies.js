@@ -109,6 +109,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     super.disposeResources();
   }
 
+//!!! ...unfinished... (2022/09/22) should specify tf.setBackendName.
   /**
    * Initialize this worker proxy controller. It will create two neural networks in
    * one or two web worker(s).

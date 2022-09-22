@@ -59,6 +59,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     }
   }
 
+
+//!!! ...unfinished... (2022/09/22) should specify tf.setBackendName.
   /**
    * Initialize this worker proxy. It will create one web worker and inform it to
    * create one neural network.
