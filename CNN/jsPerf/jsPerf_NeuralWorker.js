@@ -531,6 +531,7 @@ async function* tester( progressParent ) {
   let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
+  let testCase;
   try {
     let pool_all_issuedCount_before = Pool.All.issuedCount;
 
@@ -540,18 +541,15 @@ async function* tester( progressParent ) {
       {
         this.neuralWorker_PerformanceTest_init();
 
+        for ( testCase of this.testCaseMap.values() ) {
+          await this.testNeuralWorker_ByName( testCase.testCaseName );
+  
 //!!! ...unfinished... (2022/09/22)
 // For NO_FILL, should compare with normal sync NeuralNet result.
 
-        await this.testNeuralWorker_ByName( "ONE_WORKER__ONE_SCALE__FILL" );
-
-        progressToAdvance.value_advance();
-        yield progressRoot;
-
-        await this.testNeuralWorker_ByName( "ONE_WORKER__ONE_SCALE__NO_FILL" );
-        await this.testNeuralWorker_ByName( "TWO_WORKER__ONE_SCALE__FILL" );
-        await this.testNeuralWorker_ByName( "TWO_WORKER__ONE_SCALE__NO_FILL" );
-        await this.testNeuralWorker_ByName( "TWO_WORKER__TWO_SCALE__NO_FILL" );
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        }
 
         this.neuralWorker_PerformanceTest_release();
       }
@@ -571,7 +569,8 @@ async function* tester( progressParent ) {
   } catch ( e ) {
     let backendName = tf.getBackend();
     let msg = `jsPerf_NeuralWorker.tester(): `
-      + `backendName=${backendName}. `
+      + `backendName=${backendName}, `
+      + `testCaseId=${testCase.testCaseId}, testCaseName=${testCase.testCaseName}. `
       + `${e}`;
 
     console.log( msg );
