@@ -342,7 +342,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         let scaledSourceTensor; // Only kept if need not fill alignment mark.
         let scaledInt32Array; // Only used if need fill alignment mark.
         for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
-          neuralNet = this.neuralNetArray[ i ];
+          let neuralNet = this.neuralNetArray[ i ];
 
           // 1. Scale image (only do it once).
           if (   ( !bFill && !scaledSourceTensor )
