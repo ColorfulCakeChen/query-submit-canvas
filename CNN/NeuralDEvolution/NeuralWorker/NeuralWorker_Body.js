@@ -488,10 +488,10 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     try {
       if ( bFill ) {
         NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
-          this, sourceInt32Array );
+          this, scaledInt32Array );
       }
 
-      sourceTensor = tf.tensor( sourceInt32Array, neuralNet.input_shape, "int32" );
+      sourceTensor = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
 
       // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
       yield {
@@ -530,7 +530,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   - The 2nd worker calls this method.
    *
    *
-   * @param {Int32Array} sourceInt32Array
+   * @param {Int32Array} scaledInt32Array
    *   The source image data to be processed.
    *
    *   - Its shape must match this.neuralNet[ 0 ]'s [ input_height, input_width,
@@ -552,7 +552,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * representing the neural network's result whose channel count is
    * this.neuralNet[ 0 ].output_channelCount.
    */
-  async* Int32Array_fillable_process( sourceInt32Array, bFill ) {
+  async* Int32Array_fillable_process( scaledInt32Array, bFill ) {
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
 
@@ -562,10 +562,10 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     try {
       if ( bFill ) {
         NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
-          this, sourceInt32Array );
+          this, scaledInt32Array );
       }
 
-      sourceTensor = tf.tensor( sourceInt32Array, neuralNet.input_shape, "int32" );
+      sourceTensor = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
       outputTensor = neuralNet.apply( sourceTensor );
       outputFloat32Array = outputTensor.dataSync();
 
