@@ -72,27 +72,27 @@ function fill_numberArray( io_numberArray,
   valueBegin = 0, valueStep = 1,
   randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = ( 2 ** 26 ) ) {
 
-    // (Codes copied from getRandomIntInclusive())
-    const randomOffsetMinReal = Math.min( randomOffsetMin, randomOffsetMax );
-    const randomOffsetMaxReal = Math.max( randomOffsetMin, randomOffsetMax );
-    const randomOffsetMinInt = Math.ceil( randomOffsetMinReal );
-    const randomOffsetMaxInt  = Math.floor( randomOffsetMaxReal );
-    const randomOffsetKindsInt = randomOffsetMaxInt - randomOffsetMinInt + 1;
+  // (Codes copied from getRandomIntInclusive())
+  const randomOffsetMinReal = Math.min( randomOffsetMin, randomOffsetMax );
+  const randomOffsetMaxReal = Math.max( randomOffsetMin, randomOffsetMax );
+  const randomOffsetMinInt = Math.ceil( randomOffsetMinReal );
+  const randomOffsetMaxInt  = Math.floor( randomOffsetMaxReal );
+  const randomOffsetKindsInt = randomOffsetMaxInt - randomOffsetMinInt + 1;
 
-    // (Note: If TypedArray, its .length can not be modified.)
-    if ( io_numberArray instanceof Array )
-      io_numberArray.length = height * width * channelCount;
+  // (Note: If TypedArray, its .length can not be modified.)
+  if ( io_numberArray instanceof Array )
+    io_numberArray.length = height * width * channelCount;
 
-    let valueStepPerChannel = valueStep * channelCount;
-    let valueNoRandBegin = valueBegin;
-    let valueNoRand;
-    let randomOffset;
-    let value;
+  let valueStepPerChannel = valueStep * channelCount;
+  let valueNoRandBegin = valueBegin;
+  let valueNoRand;
+  let randomOffset;
+  let value;
 
-    let arrayIndex = 0;
+  let arrayIndex = 0;
 
-    try {
-      if ( io_numberArray instanceof Recyclable.NumberArray_withBounds ) {
+  try {
+    if ( io_numberArray instanceof Recyclable.NumberArray_withBounds ) {
       io_numberArray.boundsArray_byChannel.length = channelCount;
       io_numberArray.boundsArray_byChannel.set_all_by_PositiveInfinity_NegativeInfinity();
 
@@ -103,7 +103,8 @@ function fill_numberArray( io_numberArray,
           for ( let c = 0; c < channelCount; ++c, ++arrayIndex ) {
 
 //!!! (2022/08/04 Temp Remarked) for re-producible random.
-            randomOffset = getRandomIntInclusive_by_minInt_kindsInt( randomOffsetMinInt, randomOffsetKindsInt );
+            randomOffset = getRandomIntInclusive_by_minInt_kindsInt(
+              randomOffsetMinInt, randomOffsetKindsInt );
 
             //!!! (2022/08/27 Remarked) Used for re-producible random. (For debug.)
             // if ( ( arrayIndex % 2 ) == 0 )
@@ -130,7 +131,8 @@ function fill_numberArray( io_numberArray,
           for ( let c = 0; c < channelCount; ++c, ++arrayIndex ) {
 
 //!!! (2022/08/04 Temp Remarked) for re-producible random.
-            randomOffset = getRandomIntInclusive_by_minInt_kindsInt( randomOffsetMinInt, randomOffsetKindsInt );
+            randomOffset = getRandomIntInclusive_by_minInt_kindsInt(
+              randomOffsetMinInt, randomOffsetKindsInt );
 
             //!!! (2022/08/27 Remarked) Used for re-producible random. (For debug.)
             // if ( ( arrayIndex % 2 ) == 0 )
