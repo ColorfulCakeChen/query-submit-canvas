@@ -487,6 +487,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       }
     }
 
+//!!! ...unfinished... (2022/09/22)
+// The transferring back will destroy the scaledInt32Array.
     yield {  // Post back to WorkerProxy.
       value: scaledInt32Array,
       transferableObjectArray: [ scaledInt32Array.buffer ]
@@ -637,7 +639,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         }
 
         let sourceTensor = tf.tensor( sourceInt32Array, neuralNet.input_shape, "int32" );
-
         outputTensor = neuralNet.apply( sourceTensor );
         outputFloat32Array = outputTensor.dataSync();
 
