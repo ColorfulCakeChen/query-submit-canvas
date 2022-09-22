@@ -554,23 +554,54 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
       sourceTensor = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
-      outputTensor = neuralNet.apply( sourceTensor );
 
-      // Because downloading from GPU to CPU is slow, start downloading before
-      // posting back to WorkerProxy (i.e. another slow action).
-      let outputFloat32ArrayPromise = outputTensor.data();
+      // Solution 1:
+      {
+        outputTensor = neuralNet.apply( sourceTensor );
 
-      // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
-      //
-      // Note: Ideally, the posting-back should be done before neuralNet.apply().
-      // However, that will happen exception (says the ArrayBuffer has been detached).
-      // So, do it after neuralNet.apply().
-      yield {
-        value: scaledInt32Array,
-        transferableObjectArray: [ scaledInt32Array.buffer ]
-      };
+        // Because downloading from GPU to CPU is slow, start downloading before
+        // posting back to WorkerProxy (i.e. another slow action).
+        let outputFloat32ArrayPromise = outputTensor.data();
 
-      outputFloat32Array = await outputFloat32ArrayPromise;
+        // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
+        //
+        // Note: Ideally, the posting-back should be done before neuralNet.apply().
+        // However, that will happen exception (says the ArrayBuffer has been detached).
+        // So, do it after neuralNet.apply().
+        yield {
+          value: scaledInt32Array,
+          transferableObjectArray: [ scaledInt32Array.buffer ]
+        };
+
+        outputFloat32Array = await outputFloat32ArrayPromise;
+      }
+
+//!!!
+      // Solution 2: Use neuralNet.applier().
+      {
+        let applier = neuralNet.applier( sourceTensor );
+        let applierNext = applier.next();
+
+        // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
+        //
+        // Note: Ideally, the posting-back should be done before neuralNet.apply().
+        // However, that will happen exception (says the ArrayBuffer has been detached).
+        // So, do it after first operation (i.e. embedding) completely.
+        yield {
+          value: scaledInt32Array,
+          transferableObjectArray: [ scaledInt32Array.buffer ]
+        };
+
+        // Because posting back to WorkerProxy is slow, continue to compute neural
+        // network (i.e. another slow action) posting back.
+        while ( !applierNext.done ) {
+          applierNext = applier.next();
+        }
+        outputTensor = applierNext.value;
+
+        let outputFloat32ArrayPromise = outputTensor.data();
+        outputFloat32Array = await outputFloat32ArrayPromise;
+      }
 
     } catch ( e ) {
       let errorMsg = `NeuralWorker_Body.ImageData_scale_fork_fillable_process(): `
