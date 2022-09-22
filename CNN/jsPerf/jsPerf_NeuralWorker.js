@@ -90,11 +90,13 @@ class PerformanceTestCase extends Recyclable.Root {
    */
   async prepare_async() {
     try {
+      let backendName = tf.getBackend();
 
       let neuralWorkerProxies = this.neuralWorkerProxies
         = NeuralWorker.Proxies.Pool.get_or_create_by();
 
-      let bInitOkPromise = neuralWorkerProxies.init_async( this.nNeuralWorker_ModeId );
+      let bInitOkPromise = neuralWorkerProxies.init_async(
+        this.nNeuralWorker_ModeId, backendName );
 
       PerformanceTestCase.randomTestWeightArray_create();
 
