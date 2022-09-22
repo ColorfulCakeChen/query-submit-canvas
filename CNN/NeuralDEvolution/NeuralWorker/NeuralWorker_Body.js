@@ -593,7 +593,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         };
 
         // Because posting back to WorkerProxy is slow, continue to compute neural
-        // network (i.e. another slow action) posting back.
+        // network (i.e. another slow action) when posting back.
         while ( !applierNext.done ) {
           applierNext = applier.next();
         }
