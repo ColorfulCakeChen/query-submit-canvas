@@ -325,41 +325,41 @@ class HeightWidthDepth {
     //
 
 //!!! (2022/09/22 Temp Remarked) For speed up testing.
-//     // Test Case 0: (ONE_WORKER__ONE_SCALE__FILL)
-//     this.neuralWorker_PerformanceTest_addCase(
-//       0, "ONE_WORKER__ONE_SCALE__FILL",
-//       NeuralNet.ParamsBase.Pool.get_or_create_by(
-//         this.height, this.width, this.depth,
-//         vocabularyChannelCount, vocabularyCountPerInputChannel,
-//         nConvStageType,
-//         blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
-//       ),
-//       NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__FILL
-//     );
-//
-//     // Test Case 1: (ONE_WORKER__ONE_SCALE__NO_FILL)
-//     this.neuralWorker_PerformanceTest_addCase(
-//       1, "ONE_WORKER__ONE_SCALE__NO_FILL",
-//       NeuralNet.ParamsBase.Pool.get_or_create_by(
-//         this.height, this.width, this.depth,
-//         vocabularyChannelCount, vocabularyCountPerInputChannel,
-//         nConvStageType,
-//         blockCountTotalRequested_ShuffleNet, output_channelCount_twice, bKeepInputTensor
-//       ),
-//       NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL
-//     );
-//
-//     // Test Case 2: (TWO_WORKER__ONE_SCALE__FILL__APPLY)
-//     this.neuralWorker_PerformanceTest_addCase(
-//       2, "TWO_WORKER__ONE_SCALE__FILL__APPLY",
-//       NeuralNet.ParamsBase.Pool.get_or_create_by(
-//         this.height, this.width, this.depth,
-//         vocabularyChannelCount, vocabularyCountPerInputChannel,
-//         nConvStageType,
-//         blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
-//       ),
-//       NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLY
-//     );
+    // Test Case 0: (ONE_WORKER__ONE_SCALE__FILL)
+    this.neuralWorker_PerformanceTest_addCase(
+      0, "ONE_WORKER__ONE_SCALE__FILL",
+      NeuralNet.ParamsBase.Pool.get_or_create_by(
+        this.height, this.width, this.depth,
+        vocabularyChannelCount, vocabularyCountPerInputChannel,
+        nConvStageType,
+        blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
+      ),
+      NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__FILL
+    );
+
+    // Test Case 1: (ONE_WORKER__ONE_SCALE__NO_FILL)
+    this.neuralWorker_PerformanceTest_addCase(
+      1, "ONE_WORKER__ONE_SCALE__NO_FILL",
+      NeuralNet.ParamsBase.Pool.get_or_create_by(
+        this.height, this.width, this.depth,
+        vocabularyChannelCount, vocabularyCountPerInputChannel,
+        nConvStageType,
+        blockCountTotalRequested_ShuffleNet, output_channelCount_twice, bKeepInputTensor
+      ),
+      NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL
+    );
+
+    // Test Case 2: (TWO_WORKER__ONE_SCALE__FILL__APPLY)
+    this.neuralWorker_PerformanceTest_addCase(
+      2, "TWO_WORKER__ONE_SCALE__FILL__APPLY",
+      NeuralNet.ParamsBase.Pool.get_or_create_by(
+        this.height, this.width, this.depth,
+        vocabularyChannelCount, vocabularyCountPerInputChannel,
+        nConvStageType,
+        blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
+      ),
+      NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLY
+    );
 
     // Test Case 3: (TWO_WORKER__ONE_SCALE__FILL__APPLIER)
     this.neuralWorker_PerformanceTest_addCase(
