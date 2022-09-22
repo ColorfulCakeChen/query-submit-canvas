@@ -337,9 +337,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
     // Ensure all tensors be released, even if .apply() has exception.
     tf.tidy( () => {
+      let scaledSourceTensor; // Only kept if need not fill alignment mark.
       try {
 
-        let scaledSourceTensor; // Only kept if need not fill alignment mark.
         let scaledInt32Array; // Only used if need fill alignment mark.
         for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
           let neuralNet = this.neuralNetArray[ i ];
@@ -354,8 +354,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
                 true // ( bForceInt32 == true )
               );
 
-              if ( bFill )
+              if ( bFill ) {
                 scaledInt32Array = scaledSourceTensor.dataSync();
+              }
 
             } finally {
               // If need fill alignment mark, the source tensor will be re-created for
