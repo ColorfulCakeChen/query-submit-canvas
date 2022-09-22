@@ -324,7 +324,7 @@ class HeightWidthDepth {
     // blockCountTotalRequested, output_channelCount, bKeepInputTensor
     //
 
-//!!! (2022/09/22 Temp Remarked) For speed uip testing.
+//!!! (2022/09/22 Temp Remarked) For speed up testing.
 //     // Test Case 0: (ONE_WORKER__ONE_SCALE__FILL)
 //     this.neuralWorker_PerformanceTest_addCase(
 //       0, "ONE_WORKER__ONE_SCALE__FILL",
@@ -336,7 +336,7 @@ class HeightWidthDepth {
 //       ),
 //       NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__FILL
 //     );
-
+//
 //     // Test Case 1: (ONE_WORKER__ONE_SCALE__NO_FILL)
 //     this.neuralWorker_PerformanceTest_addCase(
 //       1, "ONE_WORKER__ONE_SCALE__NO_FILL",
@@ -348,7 +348,7 @@ class HeightWidthDepth {
 //       ),
 //       NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL
 //     );
-
+//
 //     // Test Case 2: (TWO_WORKER__ONE_SCALE__FILL__APPLY)
 //     this.neuralWorker_PerformanceTest_addCase(
 //       2, "TWO_WORKER__ONE_SCALE__FILL__APPLY",
