@@ -706,7 +706,6 @@ async function* tester( progressParent, backendName ) {
     if ( currentBackendName != backendName ) {
       let setBackendOkPromise = tf.setBackend( backendName );
       let setBackendOk = await setBackendOkPromise;
-      bInitOk = setBackendOk;
     }
   }
 
