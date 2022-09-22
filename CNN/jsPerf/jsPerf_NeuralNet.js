@@ -80,18 +80,6 @@ class PerformanceTestCase extends Recyclable.Root {
   prepare() {
     try {
 
-//!!! (2022/08/18 Remarked) Use simple longer weights array instead.
-//       let neuralNetTestParams
-//         = NeuralNet_TestParams.Base.Pool.get_or_create_by( this.testCaseId );
-//
-//       neuralNetTestParams.set_byParamsBase( this.neuralNetParamsBase );
-//
-//       let neuralNet = this.neuralNet
-//         = NeuralNet_Reference.Base.NeuralNet_create( neuralNetTestParams );
-//
-//       neuralNetTestParams.disposeResources_and_recycleToPool();
-//       neuralNetTestParams = null;
-
       if ( !PerformanceTestCase.randomTestWeightArray ) {
         const weightArrayLength = ( 100 * 1024 * 1024 );
         PerformanceTestCase.randomTestWeightArray = new Float32Array( weightArrayLength );

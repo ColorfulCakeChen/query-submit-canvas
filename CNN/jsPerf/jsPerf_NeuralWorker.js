@@ -153,6 +153,43 @@ class PerformanceTestCase extends Recyclable.Root {
     }
   }
 
+  /** Try to compute neural network result in this worker. */
+  NeuralNet_try_result( theCanvas ) {
+
+    let resultFloat32Array;
+    tf.tidy( () => {
+      // Initialize successfully or failed.
+      let neuralNetParams = NeuralNet.Params.get_or_create_by_NeuralNetParamsBase(
+        this.neuralNetParamsBase );
+
+      let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+      let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
+
+      let bInitOk = neuralNet.init( progress,
+        PerformanceTestCase.randomTestWeightArray, 0, neuralNetParams );
+
+      if ( false == bInitOk )
+        throw Error( `Failed to initialize neuralNet object. ${neuralNet}` );
+
+      if ( 100 != progress.valuePercentage )
+        throw Error(
+          `Progress (${progress.valuePercentage}) should be 100 when initializing `
+          + `NeuralNet object successfully. ${neuralNet}`);
+
+      progress.disposeResources_and_recycleToPool();
+      progress = null;
+
+      let inputTensor3d = neuralNet.create_ScaledSourceTensor_from_PixelData( theCanvas );
+      let outputTensor3d = neuralNet.apply( inputTensor3d );
+      resultFloat32Array = outputTensor3d.dataSync();
+
+      tf.dispose( outputTensor3d );
+      outputTensor3d = null;
+    } );
+
+    return resultFloat32Array;
+  }
+
   /** A simple longer weights Float32Array instead of NeuralNet_TestParams.
    *
    * Because NeuralNet_TestParams and normal Array needs lots of memory when
@@ -468,6 +505,82 @@ class HeightWidthDepth {
     }
   }
 
+  /**
+   * (Called by util_tester.js)
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The
+   * created progressToAdvance will be increased when every time advanced. The
+   * progressParent.root_get() will be returned when every time yield.
+   *
+   */
+  async* tester( progressParent ) {
+    console.log( "NeuralWorker testing..." );
+
+    let progressRoot = progressParent.root_get();
+
+    // Test every neural worker mode once.
+    let progressMax = NeuralWorker.Mode.Singleton.integerToInfoMap.size;
+
+    let progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
+
+    let testCase;
+    try {
+      let pool_all_issuedCount_before = Pool.All.issuedCount;
+
+      {
+        let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
+
+        {
+          this.neuralWorker_PerformanceTest_init();
+
+          for ( testCase of this.testCaseMap.values() ) {
+            this.testNeuralWorker_ByName( testCase.testCaseName );
+
+            NeuralNet_try_result( this.testCanvas );
+
+            await 
+
+  //!!! ...unfinished... (2022/09/22)
+  // For NO_FILL, should compare with normal sync NeuralNet result.
+
+            progressToAdvance.value_advance();
+            yield progressRoot;
+          }
+
+          this.neuralWorker_PerformanceTest_release();
+        }
+
+        let memoryInfo_testCorrectness_after = tf.memory();
+
+        if ( memoryInfo_testCorrectness_after.numTensors != memoryInfo_testCorrectness_before.numTensors )
+          throw Error( `jsPerf_NeuralWorker.tester() memory leak. `
+            + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
+            + `should be (${memoryInfo_testCorrectness_before.numTensors} `
+          );
+      }
+
+      Pool.Asserter.assert_Pool_issuedCount(
+        "jsPerf_NeuralWorker.tester()", pool_all_issuedCount_before );
+
+    } catch ( e ) {
+      let backendName = tf.getBackend();
+      let msg = `jsPerf_NeuralWorker.tester(): `
+        + `backendName=${backendName}, `
+        + `testCaseId=${testCase.testCaseId}, testCaseName=${testCase.testCaseName}. `
+        + `${e}`;
+
+      console.log( msg );
+      alert( `${msg}` );
+
+      //debugger;
+      throw e;
+    }
+
+    console.log( "NeuralWorker testing... Done." );
+  }
+
 }
 
 
@@ -495,6 +608,29 @@ async function* testCorrectness_asyncGenerator() {
   }
 }
 
+/**
+ * (Called by util_tester.js)
+ *
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   Some new progressToAdvance will be created and added to progressParent. The
+ * created progressToAdvance will be increased when every time advanced. The
+ * progressParent.root_get() will be returned when every time yield.
+ *
+ */
+async function* tester( progressParent ) {
+
+  let progressArray_for_testSet = new Array( globalThis.testSet_All.length );
+  for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
+    progressArray_for_testSet[ i ] = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  }
+
+  for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
+    let testSet = globalThis.testSet_All[ i ];
+    yield* testSet.tester( progressArray_for_testSet[ i ] );
+  }
+}
+
 function disposeResources() {
   if ( globalThis.testSet_All ) {
     for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
@@ -508,77 +644,4 @@ function disposeResources() {
 
   globalThis.testSet_72x128x4
     = null;
-}
-
-
-/**
- * (Called by util_tester.js)
- *
- * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
- *
- */
-async function* tester( progressParent ) {
-  console.log( "NeuralWorker testing..." );
-
-  let progressRoot = progressParent.root_get();
-
-  // Test every neural worker mode once.
-  let progressMax = NeuralWorker.Mode.Singleton.integerToInfoMap.size;
-
-  let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
-
-  let testCase;
-  try {
-    let pool_all_issuedCount_before = Pool.All.issuedCount;
-
-    {
-      let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
-
-      {
-        this.neuralWorker_PerformanceTest_init();
-
-        for ( testCase of this.testCaseMap.values() ) {
-          await this.testNeuralWorker_ByName( testCase.testCaseName );
-  
-//!!! ...unfinished... (2022/09/22)
-// For NO_FILL, should compare with normal sync NeuralNet result.
-
-          progressToAdvance.value_advance();
-          yield progressRoot;
-        }
-
-        this.neuralWorker_PerformanceTest_release();
-      }
-
-      let memoryInfo_testCorrectness_after = tf.memory();
-
-      if ( memoryInfo_testCorrectness_after.numTensors != memoryInfo_testCorrectness_before.numTensors )
-        throw Error( `jsPerf_NeuralWorker.tester() memory leak. `
-          + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
-          + `should be (${memoryInfo_testCorrectness_before.numTensors} `
-        );
-    }
-
-    Pool.Asserter.assert_Pool_issuedCount(
-      "jsPerf_NeuralWorker.tester()", pool_all_issuedCount_before );
-
-  } catch ( e ) {
-    let backendName = tf.getBackend();
-    let msg = `jsPerf_NeuralWorker.tester(): `
-      + `backendName=${backendName}, `
-      + `testCaseId=${testCase.testCaseId}, testCaseName=${testCase.testCaseName}. `
-      + `${e}`;
-
-    console.log( msg );
-    alert( `${msg}` );
-
-    //debugger;
-    throw e;
-  }
-
-  console.log( "NeuralWorker testing... Done." );
 }
