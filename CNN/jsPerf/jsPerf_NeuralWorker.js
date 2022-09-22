@@ -80,6 +80,10 @@ class PerformanceTestCase extends Recyclable.Root {
     super.disposeResources();
   }
 
+  get NeuralWorker_Mode_bFill() {
+    return NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
+  }
+
   /**
    * Create .neuralWorkerProxies
    */
@@ -135,7 +139,7 @@ class PerformanceTestCase extends Recyclable.Root {
         throw Error( `Failed to create neural networks by neuralWorkerProxies. `
           + `${neuralWorkerProxies}` );
 
-      let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
+      let bFill = this.NeuralWorker_Mode_bFill;
       if ( bFill ) {
         let bSetOkPromise
           = neuralWorkerProxies.alignmentMarkArray_setValue_async( markValueArray );
@@ -536,14 +540,24 @@ class HeightWidthDepth {
           this.neuralWorker_PerformanceTest_init();
 
           for ( testCase of this.testCaseMap.values() ) {
-            this.testNeuralWorker_ByName( testCase.testCaseName );
+            let testByNamePromise = this.testNeuralWorker_ByName( testCase.testCaseName );
 
-            NeuralNet_try_result( this.testCanvas );
+            let resultFloat32Array;
 
-            await 
+            // For NO_FILL mode, the result should be the same as local simulation.
+            // So they can be checked.
+            let bFill = this.NeuralWorker_Mode_bFill;
+            if ( !bFill ) {
+              resultFloat32Array = NeuralNet_try_result( this.testCanvas );
+            }
 
-  //!!! ...unfinished... (2022/09/22)
-  // For NO_FILL, should compare with normal sync NeuralNet result.
+            let resultFloat32ArrayArray = await testByNamePromise;
+
+            if ( !bFill ) {
+
+//!!! ...unfinished... (2022/09/22)
+// For NO_FILL, should compare with normal sync NeuralNet result.
+            }
 
             progressToAdvance.value_advance();
             yield progressRoot;
