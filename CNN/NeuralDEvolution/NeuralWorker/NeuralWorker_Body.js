@@ -555,6 +555,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
       sourceTensor = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
 
+//!!! ...unfinished... (2022/09/22) How to choose which solution?
       // Solution 1:
       {
         outputTensor = neuralNet.apply( sourceTensor );
@@ -576,7 +577,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         outputFloat32Array = await outputFloat32ArrayPromise;
       }
 
-//!!!
+//!!! ...unfinished... (2022/09/22) How to choose which solution?
       // Solution 2: Use neuralNet.applier().
       {
         let applier = neuralNet.applier( sourceTensor );
