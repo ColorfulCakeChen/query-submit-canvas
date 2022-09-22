@@ -462,7 +462,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   async* ImageData_scale_fork_fillable_process( sourceImageData, bFill ) {
 
     const neuralNetIndex = 0; // Always use the first neural network.
-    let neuralNet = this.neuralNetArray[ i ];
+    let neuralNet = this.neuralNetArray[ neuralNetIndex ];
 
     // 1. Scale image.
     let scaledSourceTensor;
@@ -624,7 +624,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   async* Int32Array_fillable_process( sourceInt32Array, bFill ) {
 
     const neuralNetIndex = 0; // Always use the first neural network.
-    let neuralNet = this.neuralNetArray[ i ];
+    let neuralNet = this.neuralNetArray[ neuralNetIndex ];
 
     let outputFloat32Array;
 
@@ -713,7 +713,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     let outputFloat32Array;
     try {
       const neuralNetIndex = 0; // Always use the first neural network.
-      let neuralNet = this.neuralNetArray[ i ];
+      let neuralNet = this.neuralNetArray[ neuralNetIndex ];
 
       // 1. Scale image.
       scaledSourceTensor = neuralNet.create_ScaledSourceTensor_from_PixelData(
