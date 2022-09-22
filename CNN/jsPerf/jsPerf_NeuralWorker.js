@@ -96,20 +96,7 @@ class PerformanceTestCase extends Recyclable.Root {
 
       let bInitOkPromise = neuralWorkerProxies.init_async( this.nNeuralWorker_ModeId );
 
-      if ( !PerformanceTestCase.randomTestWeightArray ) {
-        const weightArrayLength = ( 100 * 1024 * 1024 );
-        PerformanceTestCase.randomTestWeightArray = new Float32Array( weightArrayLength );
-
-        RandTools.fill_numberArray(
-          PerformanceTestCase.randomTestWeightArray,
-          1, 1, weightArrayLength, // height, width, channelCount,
-          TestParams.Base.weightsValueBegin,
-          TestParams.Base.weightsValueStep,
-          TestParams.Base.weightsRandomOffset.min,
-          TestParams.Base.weightsRandomOffset.max,
-          TestParams.Base.weightsDivisorForRemainder
-        );
-      }
+      PerformanceTestCase.randomTestWeightArray_create();
 
       let neuralNetParamsBaseArray;
       {
@@ -206,6 +193,24 @@ class PerformanceTestCase extends Recyclable.Root {
     } );
 
     return resultFloat32Array;
+  }
+
+  /** */
+  static randomTestWeightArray_create() {
+    if ( !PerformanceTestCase.randomTestWeightArray ) {
+      const weightArrayLength = ( 100 * 1024 * 1024 );
+      PerformanceTestCase.randomTestWeightArray = new Float32Array( weightArrayLength );
+
+      RandTools.fill_numberArray(
+        PerformanceTestCase.randomTestWeightArray,
+        1, 1, weightArrayLength, // height, width, channelCount,
+        TestParams.Base.weightsValueBegin,
+        TestParams.Base.weightsValueStep,
+        TestParams.Base.weightsRandomOffset.min,
+        TestParams.Base.weightsRandomOffset.max,
+        TestParams.Base.weightsDivisorForRemainder
+      );
+    }
   }
 
   /** A simple longer weights Float32Array instead of NeuralNet_TestParams.
@@ -440,6 +445,8 @@ class HeightWidthDepth {
 
   /** Testing whether the results of different implementation are the same. */
   async* testCorrectness_asyncGenerator() {
+
+    PerformanceTestCase.randomTestWeightArray_create();
 
     //!!! (2022/09/21 Temp Skipped) For speed up into performance testing.
     //if ( 0 )
