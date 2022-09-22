@@ -41,16 +41,26 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     }
   }
 
-
-//!!! ...unfinished... (2022/09/22) should specify tf.setBackendName.
   /**
    *
    * @param {number} workerId
    *   A non-negative integer represents this worker's id. The id of the first worker
    * should be 0.
+   *
+   * @param {string} backendName
+   *   Specify which backend should be used by tensorflow.js library.
    */
-  async* initWorker( workerId ) {
+  async* initWorker( workerId, backendName ) {
     this.workerId = workerId;
+
+    let bInitOk = true;
+
+    let currentBackendName = tf.getBackend();
+    if ( currentBackendName != backendName ) {
+      let setBackendOkPromise = tf.setBackend( backendName );
+      let setBackendOk = await setBackendOkPromise;
+      bInitOk = setBackendOk;
+    }
 
 //!!! ...unfinished... (2022/09/15)
 // What if failed when:
@@ -61,7 +71,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 //
 // Perhaps, needs a life-cycle manager to handle them gracefully.
 
-    return { value: true };
+    return { value: bInitOk };
   }
 
   /**

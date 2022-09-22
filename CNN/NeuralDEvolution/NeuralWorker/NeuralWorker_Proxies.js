@@ -109,18 +109,20 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     super.disposeResources();
   }
 
-//!!! ...unfinished... (2022/09/22) should specify tf.setBackendName.
   /**
    * Initialize this worker proxy controller. It will create two neural networks in
    * one or two web worker(s).
    *
+   *
+   * @param {string} backendName
+   *   Specify which backend should be used by tensorflow.js library.
    *
    * @return {Promise}
    *   Return a promise:
    *   - Resolved to true, if success.
    *   - Resolved to false, if failed.
    */
-  async init_async( nNeuralWorker_ModeId ) {
+  async init_async( nNeuralWorker_ModeId, backendName = "webgl" ) {
 
     // 0.
     this.nNeuralWorker_ModeId = nNeuralWorker_ModeId;
@@ -161,7 +163,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       let initPromiseArray = new Array( totalWorkerCount );
       for ( let i = 0; i < totalWorkerCount; ++i ) {
         this.workerProxyArray[ i ] = NeuralWorker_Proxy.Pool.get_or_create_by();
-        initPromiseArray[ i ] = this.workerProxyArray[ i ].initWorker_async( i );
+        initPromiseArray[ i ] = this.workerProxyArray[ i ].initWorker_async(
+          i, backendName );
       }
 
       initOkArray = await Promise.all( initPromiseArray );

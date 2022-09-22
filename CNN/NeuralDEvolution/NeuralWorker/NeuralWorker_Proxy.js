@@ -59,8 +59,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     }
   }
 
-
-//!!! ...unfinished... (2022/09/22) should specify tf.setBackendName.
   /**
    * Initialize this worker proxy. It will create one web worker and inform it to
    * create one neural network.
@@ -69,15 +67,18 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   This id of this worker proxy (and web worker). This is the array index in the
    * parent container (i.e. WorkerProxies).
    *
+   * @param {string} backendName
+   *   Specify which backend should be used by tensorflow.js library.
+   *
    * @return {Promise}
    *   Return a promise:
    *   - Resolved to true, if success.
    *   - Resolved to false, if failed.
    */
-  initWorker_async( workerId ) {
+  initWorker_async( workerId, backendName ) {
     this.workerId = workerId;
     return this.createPromise_by_postCommandArgs(
-      [ "initWorker", workerId ]
+      [ "initWorker", workerId, backendName ]
     );
   }
 
