@@ -90,6 +90,7 @@ class PerformanceTestCase extends Recyclable.Root {
    */
   async prepare_async() {
     try {
+      await tf.ready(); // Ensure tf.getBackend() correctly.
       let backendName = tf.getBackend();
 
       let neuralWorkerProxies = this.neuralWorkerProxies
