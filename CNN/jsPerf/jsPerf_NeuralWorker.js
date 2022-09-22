@@ -517,6 +517,8 @@ class HeightWidthDepth {
    *
    */
   async* tester( progressParent ) {
+
+    let backendName = tf.getBackend();
     console.log( `NeuralWorker ( ${backendName} ) testing...` );
 
     let progressRoot = progressParent.root_get();
