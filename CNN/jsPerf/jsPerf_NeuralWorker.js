@@ -558,7 +558,6 @@ class HeightWidthDepth {
 
           this.neuralWorker_PerformanceTest_release();
 
-
           asserter_Equal?.disposeResources_and_recycleToPool();
           asserter_Equal = null;
         }
