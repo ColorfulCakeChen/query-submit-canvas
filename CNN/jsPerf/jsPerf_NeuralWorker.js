@@ -420,10 +420,11 @@ class HeightWidthDepth {
 
     let neuralWorkerProxies = testCase.neuralWorkerProxies;
 
-    let resultArrayArayPromise
+    let resultFloat32ArrayArrayPromise
       = neuralWorkerProxies.ImageData_process_async( imageData );
 
-    let resultArrayAray = await resultArrayArayPromise;
+    let resultFloat32ArrayArray = await resultFloat32ArrayArrayPromise;
+    return resultFloat32ArrayArray;
   }
 
   /** Testing whether the results of different implementation are the same. */
