@@ -160,36 +160,49 @@ class PerformanceTestCase extends Recyclable.Root {
 
   /** Try to compute neural network result in this worker. */
   NeuralNet_try_result( theCanvas ) {
-
     let resultFloat32Array;
+
     tf.tidy( () => {
-      // Initialize successfully or failed.
-      let neuralNetParams = NeuralNet.Params.get_or_create_by_NeuralNetParamsBase(
-        this.neuralNetParamsBase );
+      let progress, neuralNet;
+      let outputTensor3d;
+      try {
+        let neuralNetParams = NeuralNet.Params.get_or_create_by_NeuralNetParamsBase(
+          this.neuralNetParamsBase );
 
-      let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-      let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
+        progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+        neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
 
-      let bInitOk = neuralNet.init( progress,
-        PerformanceTestCase.randomTestWeightArray, 0, neuralNetParams );
+        let bInitOk = neuralNet.init( progress,
+          PerformanceTestCase.randomTestWeightArray, 0, neuralNetParams );
 
-      if ( false == bInitOk )
-        throw Error( `Failed to initialize neuralNet object. ${neuralNet}` );
+        if ( false == bInitOk )
+          throw Error( `Failed to initialize neuralNet object. ${neuralNet}` );
 
-      if ( 100 != progress.valuePercentage )
-        throw Error(
-          `Progress (${progress.valuePercentage}) should be 100 when initializing `
-          + `NeuralNet object successfully. ${neuralNet}`);
+        if ( 100 != progress.valuePercentage )
+          throw Error(
+            `Progress (${progress.valuePercentage}) should be 100 when initializing `
+            + `NeuralNet object successfully. ${neuralNet}`);
 
-      progress.disposeResources_and_recycleToPool();
-      progress = null;
+        let inputTensor3d = neuralNet.create_ScaledSourceTensor_from_PixelData( theCanvas );
+        outputTensor3d = neuralNet.apply( inputTensor3d );
+        resultFloat32Array = outputTensor3d.dataSync();
 
-      let inputTensor3d = neuralNet.create_ScaledSourceTensor_from_PixelData( theCanvas );
-      let outputTensor3d = neuralNet.apply( inputTensor3d );
-      resultFloat32Array = outputTensor3d.dataSync();
+      } finally {
+        if ( neuralNet ) {
+          neuralNet.disposeResources_and_recycleToPool();
+          neuralNet = null;
+        }
 
-      tf.dispose( outputTensor3d );
-      outputTensor3d = null;
+        if ( progress ) {
+          progress.disposeResources_and_recycleToPool();
+          progress = null;
+        }
+
+        if ( outputTensor3d ) {
+          tf.dispose( outputTensor3d );
+          outputTensor3d = null;
+        }
+      }
     } );
 
     return resultFloat32Array;
