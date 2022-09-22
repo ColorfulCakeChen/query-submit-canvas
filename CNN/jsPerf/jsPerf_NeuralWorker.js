@@ -552,7 +552,7 @@ class HeightWidthDepth {
             // So they can be checked.
             let bFill = this.NeuralWorker_Mode_bFill;
             if ( !bFill ) {
-              resultFloat32Array = NeuralNet_try_result( this.testCanvas );
+              resultFloat32Array = testCase.NeuralNet_try_result( this.testCanvas );
             }
 
             let resultFloat32ArrayArray = await testByNamePromise;
