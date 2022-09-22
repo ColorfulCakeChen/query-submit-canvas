@@ -700,7 +700,6 @@ async function* tester( progressParent, backendName ) {
   // Ensure backend of tensorflow.js
   {
     await tf.ready(); // Ensure tf.getBackend() workable.
-    let backendName = tf.getBackend();
 
     let currentBackendName = tf.getBackend();
     if ( currentBackendName != backendName ) {
