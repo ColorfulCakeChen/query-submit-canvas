@@ -139,13 +139,13 @@ class AsyncWorker_Body {
           // Check large objects are transferred (rather than copied) to ensure performance.
           {
             let bTransferred = AsyncWorker_Checker
-              .ImageData_ArrayBuffer_TypedArray_isTransferred( resultData );
+              .ImageData_ArrayBuffer_TypedArray_isTransferred( value );
 
             if ( !bTransferred )
               throw Error( `AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy(): `
                 + `bTransferred ( ${bTransferred} ) should be ( true ) `
-                + `after resultData transferred to worker. `
-                + `resultData=[ ${resultData} ]`
+                + `after value transferred to worker. `
+                + `value=[ ${value} ]`
               );
           }
 
