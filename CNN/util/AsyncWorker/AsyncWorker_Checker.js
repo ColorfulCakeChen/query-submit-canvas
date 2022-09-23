@@ -1,4 +1,4 @@
-export { isTransferred };
+export { ArrayBuffer_ImageData_Int32Array_Float32Array_isTransferred };
 
 /**
  *
