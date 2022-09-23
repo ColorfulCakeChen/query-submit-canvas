@@ -718,7 +718,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         //
         // Note: After the neuralNet.apply(), the scaledInt32Array should have been
         // downloaded completely.
-        scaledInt32Array = await scaledInt32ArrayPromise;
+        let scaledInt32Array = await scaledInt32ArrayPromise;
         yield {
           value: scaledInt32Array,
           transferableObjectArray: [ scaledInt32Array.buffer ]
@@ -734,7 +734,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         //
         // Note: After the neuralNet's embedding, the scaledInt32Array may have been
         // downloaded completely.
-        scaledInt32Array = await scaledInt32ArrayPromise;
+        let scaledInt32Array = await scaledInt32ArrayPromise;
         yield {
           value: scaledInt32Array,
           transferableObjectArray: [ scaledInt32Array.buffer ]
