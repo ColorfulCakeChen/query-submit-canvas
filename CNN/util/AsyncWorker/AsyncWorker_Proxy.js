@@ -242,18 +242,13 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       //       as message handler.
       //
       let codes = ``
-
-//!!! ...unfinished... (2022/09/23 Temp Remarked) try await import()
-//        + `import( "${workerModuleURL}" );\n`
-//         + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
-//         + `onmessage = ( e ) => {\n`
-//         // + `  console.log( "Hello" );\n`
-//         // + `  console.log( e );\n`
-//         + `  AsyncWorker_Body_temporaryMessageQueue.push( e );\n`
-//         + `}\n`
-
-        + `await import( "${workerModuleURL}" );\n`
-
+        + `import( "${workerModuleURL}" );\n`
+        + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
+        + `onmessage = ( e ) => {\n`
+        // + `  console.log( "Hello" );\n`
+        // + `  console.log( e );\n`
+        + `  AsyncWorker_Body_temporaryMessageQueue.push( e );\n`
+        + `}\n`
         ;
   
       return codes;
