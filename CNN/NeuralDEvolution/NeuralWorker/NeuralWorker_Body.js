@@ -479,6 +479,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Two web workers. Every worker has one neural network.
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL (2)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL (3)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLY (4)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5)
    *     - The 1st worker calls this method.
    *
    *   - It will download scaled Int32Array from GPU memory. And post it back to
@@ -522,7 +524,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * representing the neural network's result whose channel count is
    * this.neuralNet[ 0 ].output_channelCount.
    */
-  async* ImageData_scale_fork_fillable_process(
+  async* TWO_WORKER__ONE_SCALE__step0_ImageData_process(
     sourceImageData, bFill, bApply_or_Applier ) {
 
     const neuralNetIndex = 0; // Always use the first neural network.
@@ -540,7 +542,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       scaledInt32Array = scaledSourceTensor.dataSync();
 
     } catch ( e ) {
-      let errorMsg = `NeuralWorker_Body.ImageData_scale_fork_fillable_process(): `
+      let errorMsg = `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__step0_ImageData_process(): `
         + `workerId=${this.workerId}. ${e}`;
       console.error( errorMsg );
       //debugger;
@@ -613,7 +615,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
     } catch ( e ) {
-      let errorMsg = `NeuralWorker_Body.ImageData_scale_fork_fillable_process(): `
+      let errorMsg = `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__step0_ImageData_process(): `
         + `workerId=${this.workerId}. ${e}`;
       console.error( errorMsg );
       //debugger;
@@ -644,6 +646,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Two web workers. Every worker has one neural network.
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL (2)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL (3)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLY (4)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5)
    *     - The 2nd worker calls this method.
    *
    *   - (may or may not) Fill alignment mark of this neural network, upload to GPU
@@ -672,7 +676,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * representing the neural network's result whose channel count is
    * this.neuralNet[ 0 ].output_channelCount.
    */
-  async* Int32Array_fillable_process( scaledInt32Array, bFill ) {
+  async* TWO_WORKER__ONE_SCALE__step1_Int32Array_process( scaledInt32Array, bFill ) {
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
 
@@ -690,7 +694,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       outputFloat32Array = outputTensor.dataSync();
 
     } catch ( e ) {
-      let errorMsg = `NeuralWorker_Body.Int32Array_fillable_process(): `
+      let errorMsg = `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__step1_Int32Array_process(): `
         + `workerId=${this.workerId}. ${e}`;
       console.error( errorMsg );
       //debugger;
@@ -804,7 +808,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 //
 //     // 2. Process image by neural network.
 //     const bFill = false;
-//     let Int32Array_processor = this.Int32Array_fillable_process( scaledInt32Array, bFill );
+//     let Int32Array_processor = this.TWO_WORKER__ONE_SCALE__step1_Int32Array_process( scaledInt32Array, bFill );
 //     let result = yield* Int32Array_processor;
 //     return result;
 //   }
