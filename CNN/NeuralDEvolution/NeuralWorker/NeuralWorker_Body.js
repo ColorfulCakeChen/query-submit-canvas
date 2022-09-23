@@ -697,6 +697,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
     // 1. Scale image.
     let scaledSourceTensor;
+    let scaledInt32ArrayPromise;
     let scaledInt32Array;
     try {
       scaledSourceTensor = neuralNet.create_ScaledSourceTensor_from_PixelData(
@@ -704,8 +705,10 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         true // ( bForceInt32 == true )
       );
 
-//!!! ...unfinished... (2022/09/23)
-      scaledInt32Array = scaledSourceTensor.dataSync();
+      scaledInt32ArrayPromise = scaledSourceTensor.data();
+
+//!!! ...unfinished... (2022/09/23) should continue to compute, not wait here.
+      scaledInt32Array = await scaledInt32ArrayPromise;
 
     } catch ( e ) {
       let errorMsg = `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__step0_ImageData_process(): `
