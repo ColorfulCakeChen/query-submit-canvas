@@ -26,7 +26,9 @@ function ImageData_ArrayBuffer_TypedArray_isTransferred( objectToBeChecked ) {
       return false;
 
   // 2. ArrayBuffer or TypedArray. (Note: They all have .byteLength)
-  } else if ( objectToBeChecked.byteLength != undefined ) {
+  } else if (   ( objectToBeChecked instanceof Object )
+             && ( objectToBeChecked.byteLength != undefined )
+            ) {
     if ( objectToBeChecked.byteLength != 0 )
       return false;
   }
