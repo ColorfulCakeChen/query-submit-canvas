@@ -19,11 +19,12 @@ class AsyncWorker_Body {
     globalThis.onmessage
       = AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy.bind( this );
 
-    // Process all messages received before this AsyncWorker_Body object created.
-    setTimeout( 
-      this.globalThis_temporaryMessageQueue_processMessages.bind( this ),
-      0
-    );
+//!!! ...unfinished... (2022/09/23 Temp Remarked) try await import() in WorkerBodyStub.
+//     // Process all messages received before this AsyncWorker_Body object created.
+//     setTimeout( 
+//       this.globalThis_temporaryMessageQueue_processMessages.bind( this ),
+//       0
+//     );
 
     this.pool_all_issuedCount_before = Pool.All.issuedCount;
   }
@@ -44,32 +45,33 @@ class AsyncWorker_Body {
     //yield *super.disposeResources();
   }
 
-  /**
-   * This method should be called immediately after this AsyncWorker_Body's
-   * sub-class' instance created (currently, this is done by being scheduled
-   * immediately in this AsyncWorker_Body's constructor). So that no messages
-   * are lost.
-   *
-   * Note: The AsyncWorker_Body_temporaryMessageQueue is created by
-   *       AsyncWorker_BodyStub.js for receiving all messages before this
-   *       instance of (sub-class of) AsyncWorker_Body created completely.
-   */
-  globalThis_temporaryMessageQueue_processMessages() {
-    let temporaryMessageQueue = globalThis.AsyncWorker_Body_temporaryMessageQueue;
-    if ( !temporaryMessageQueue )
-      return;
-
-    // To prevent this method be re-entranced (because
-    // AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy will also call this
-    // method), remove the temporary message queue.
-    //
-    delete globalThis.AsyncWorker_Body_temporaryMessageQueue;
-
-    while ( temporaryMessageQueue.length > 0 ) {
-      let e = temporaryMessageQueue.shift();
-      AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy.call( this, e );
-    }
-  }
+//!!! ...unfinished... (2022/09/23 Temp Remarked) try await import() in WorkerBodyStub.
+//   /**
+//    * This method should be called immediately after this AsyncWorker_Body's
+//    * sub-class' instance created (currently, this is done by being scheduled
+//    * immediately in this AsyncWorker_Body's constructor). So that no messages
+//    * are lost.
+//    *
+//    * Note: The AsyncWorker_Body_temporaryMessageQueue is created by
+//    *       AsyncWorker_BodyStub.js for receiving all messages before this
+//    *       instance of (sub-class of) AsyncWorker_Body created completely.
+//    */
+//   globalThis_temporaryMessageQueue_processMessages() {
+//     let temporaryMessageQueue = globalThis.AsyncWorker_Body_temporaryMessageQueue;
+//     if ( !temporaryMessageQueue )
+//       return;
+//
+//     // To prevent this method be re-entranced (because
+//     // AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy will also call this
+//     // method), remove the temporary message queue.
+//     //
+//     delete globalThis.AsyncWorker_Body_temporaryMessageQueue;
+//
+//     while ( temporaryMessageQueue.length > 0 ) {
+//       let e = temporaryMessageQueue.shift();
+//       AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy.call( this, e );
+//     }
+//   }
 
   /**
    * Handle messages from AsyncWorker_Proxy.
@@ -98,15 +100,16 @@ class AsyncWorker_Body {
    */
   static async onmessage_from_AsyncWorker_Proxy( e ) {
 
-    // Ensure all messages in temporary message queue are handled first
-    // because they are received before this message handler being setup.
-    //
-    // Note: Although AsyncWorker_Body constructor has schedule a timer to
-    //       do this, some messages may be received before the timer
-    //       executed (but after this message handler has been setup). So,
-    //       here needs check the temporary message queue again.
-    //
-    this.globalThis_temporaryMessageQueue_processMessages();
+//!!! ...unfinished... (2022/09/23 Temp Remarked) try await import() in WorkerBodyStub.
+//     // Ensure all messages in temporary message queue are handled first
+//     // because they are received before this message handler being setup.
+//     //
+//     // Note: Although AsyncWorker_Body constructor has schedule a timer to
+//     //       do this, some messages may be received before the timer
+//     //       executed (but after this message handler has been setup). So,
+//     //       here needs check the temporary message queue again.
+//     //
+//     this.globalThis_temporaryMessageQueue_processMessages();
 
     // e.data == [ processingId, command, ...args ]
     let [ processingId, command, ...args ] = e.data;
