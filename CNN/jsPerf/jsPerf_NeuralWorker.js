@@ -30,7 +30,7 @@ class ExecutionTimeInfo {
 
   constructor( times ) {
     this.name = "(unknown)";
-    this.times = 0;
+    this.times = times;
     this.begin = 0;
     this.end = 0;
     this.elapsed = 0;
@@ -621,8 +621,8 @@ class HeightWidthDepth {
                 let testByNamePromise = this.testNeuralWorker_ByName( testCase.testCaseName );
                 resultFloat32ArrayArray = await testByNamePromise;
                 timeInfo.end = Date.now();
-                timeInfo.elapsed = timeTest.end - timeTest.begin;
-                timeInfo.elapsedTotal += timeTest.elapsed;
+                timeInfo.elapsed = timeInfo.end - timeInfo.begin;
+                timeInfo.elapsedTotal += timeInfo.elapsed;
               }
               console.log( timeInfo );
             }
