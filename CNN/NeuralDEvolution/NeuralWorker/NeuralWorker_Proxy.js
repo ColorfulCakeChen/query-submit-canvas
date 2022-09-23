@@ -193,8 +193,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL (2)
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL (3)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLY (2)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLIER (3)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLY (4)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5)
    *     - The 1st worker calls this method.
@@ -216,8 +216,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - This usually is called for the 1st web worker in chain. The scaled Int32Array
    *       will be transferred back to WorkerProxy for the 2nd web worker.
    *
-   *   - The scale Int32Array will be filled by alignment mark, and then converted into
-   *       tensor3d, and then processed by neural network.
+   *   - The scaled Int32Array will be filled by alignment mark, and then converted
+   *       into tensor3d, and then processed by neural network.
    *
    * @return {AsyncWorker.Resulter}
    *   Return an async generator tracking the result of processing. It will yield two
@@ -244,8 +244,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL (2)
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL (3)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLY (2)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLIER (3)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLY (4)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5)
    *     - The 2nd worker calls this method.

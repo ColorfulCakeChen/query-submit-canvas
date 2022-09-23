@@ -482,8 +482,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL (2)
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL (3)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLY (2)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLIER (3)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLY (4)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5)
    *     - The 1st worker calls this method.
@@ -505,8 +505,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   - This usually is called for the 1st web worker in chain. The scaled Int32Array
    *       will be transferred back to WorkerProxy for the 2nd web worker.
    *
-   *   - The scale Int32Array will be filled by alignment mark, and then converted into
-   *       tensor3d, and then processed by neural network.
+   *   - The scaled Int32Array will be filled by alignment mark, and then converted
+   *       into tensor3d, and then processed by neural network.
    *
    * @param {boolean} bFill
    *   If true, the source Int32Array will be filled by alignment mark before be
@@ -649,8 +649,169 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL (2)
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL (3)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLY (4)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5)
+   *     - The 1st worker calls this method.
+   *
+   *   - It will download scaled Int32Array from GPU memory. And post it back to
+   *         WorkerProxy.
+   *
+   *   - No Fill alignment mark of this neural network, no upload to GPU,
+   *       just process scaled tensor directly.
+   *
+   * 
+   * @param {ImageData} sourceImageData
+   *   The source image data to be processed.
+   *
+   *   - Its shape needs not match this.neuralNet[ 0 ]'s [ input_height,
+   *       input_width, input_channelCount ] because it will be scaled to the correct
+   *       shape before passed into the neural network.
+   *
+   *   - This usually is called for the 1st web worker in chain. The scaled Int32Array
+   *       will be transferred back to WorkerProxy for the 2nd web worker.
+   *
+   *   - The scaled tensor (without filling alignment mark) will be processed by
+   *       neural network directly.
+   *
+   * @param {boolean} bApply_or_Applier
+   *   - If true, use neuralNet.apply().
+   *   - If false, use neuralNet.applier().
+   *
+   * @yield {Int32Array}
+   *   Resolve to { done: false, value: { value: Int32Array,
+   * transferableObjectArray: [ Int32Array.buffer ] }. The value is an Int32Array
+   * representing the scaled image data whose shape is this.neuralNet[ 0 ]'s
+   * [ input_height, input_width, input_channelCount ].
+   *
+   * @yield {Float32Array}
+   *   Resolve to { done: true, value: { value: Float32Array,
+   * transferableObjectArray: [ Float32Array.buffer ] }. The value is a Float32Array
+   * representing the neural network's result whose channel count is
+   * this.neuralNet[ 0 ].output_channelCount.
+   */
+  async* TWO_WORKER__ONE_SCALE__NO_FILL__step0_ImageData_process(
+    sourceImageData, bApply_or_Applier ) {
+
+    const neuralNetIndex = 0; // Always use the first neural network.
+    let neuralNet = this.neuralNetArray[ neuralNetIndex ];
+
+    // 1. Scale image.
+    let scaledSourceTensor;
+    let scaledInt32Array;
+    try {
+      scaledSourceTensor = neuralNet.create_ScaledSourceTensor_from_PixelData(
+        sourceImageData,
+        true // ( bForceInt32 == true )
+      );
+
+//!!! ...unfinished... (2022/09/23)
+      scaledInt32Array = scaledSourceTensor.dataSync();
+
+    } catch ( e ) {
+      let errorMsg = `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__step0_ImageData_process(): `
+        + `workerId=${this.workerId}. ${e}`;
+      console.error( errorMsg );
+      //debugger;
+      throw e;
+
+    } finally {
+      if ( scaledSourceTensor ) {
+        scaledSourceTensor.dispose();
+        scaledSourceTensor = null;
+      }
+    }
+
+    // 2. Process image by neural network.
+    let sourceTensor;
+    let outputTensor;
+    let outputFloat32Array;
+    try {
+      if ( bFill ) {
+        NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
+          this, neuralNetIndex, scaledInt32Array );
+      }
+
+      sourceTensor = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
+
+      // Solution 1: Use neuralNet.apply().
+      if ( bApply_or_Applier ) {
+        outputTensor = neuralNet.apply( sourceTensor );
+
+        // Because downloading from GPU to CPU is slow, start downloading before
+        // posting back to WorkerProxy (i.e. another slow action).
+        let outputFloat32ArrayPromise = outputTensor.data();
+
+        // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
+        //
+        // Note: Ideally, the posting-back should be done before neuralNet.apply().
+        // However, that will happen exception (says the ArrayBuffer has been detached).
+        // So, do it after neuralNet.apply().
+        yield {
+          value: scaledInt32Array,
+          transferableObjectArray: [ scaledInt32Array.buffer ]
+        };
+
+        outputFloat32Array = await outputFloat32ArrayPromise;
+
+      // Solution 2: Use neuralNet.applier().
+      } else {
+        let applier = neuralNet.applier( sourceTensor );
+        let applierNext = applier.next(); // NeuralNet sets progress to 0.
+        applierNext = applier.next(); // NeuralNet processes embedding.
+
+        // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
+        //
+        // Note: Ideally, the posting-back should be done before neuralNet.apply().
+        // However, that will happen exception (says the ArrayBuffer has been detached).
+        // So, do it after first operation (i.e. embedding) completely.
+        yield {
+          value: scaledInt32Array,
+          transferableObjectArray: [ scaledInt32Array.buffer ]
+        };
+
+        // Because posting back to WorkerProxy is slow, continue to compute neural
+        // network (i.e. another slow action) when posting back.
+        while ( !applierNext.done ) {
+          applierNext = applier.next();
+        }
+        outputTensor = applierNext.value;
+
+        let outputFloat32ArrayPromise = outputTensor.data();
+        outputFloat32Array = await outputFloat32ArrayPromise;
+      }
+
+    } catch ( e ) {
+      let errorMsg = `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__step0_ImageData_process(): `
+        + `workerId=${this.workerId}. ${e}`;
+      console.error( errorMsg );
+      //debugger;
+      throw e;
+
+    } finally {
+      if ( outputTensor ) {
+        outputTensor.dispose();
+        outputTensor = null;
+      }
+
+      // In theory, it should already have been released by neural network. For avoiding
+      // memory leak (e.g. some exception when .apply()), release it again.
+      if ( sourceTensor ) {
+        sourceTensor.dispose();
+        sourceTensor = null;
+      }
+    }
+
+    return {
+      value: outputFloat32Array,
+      transferableObjectArray: [ outputFloat32Array.buffer ]
+    };
+  }
+
+  /**
+   * This method is used for:
+   *   - Two web workers. Every worker has one neural network.
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLY (2)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLIER (3)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLY (4)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5)
    *     - The 2nd worker calls this method.
