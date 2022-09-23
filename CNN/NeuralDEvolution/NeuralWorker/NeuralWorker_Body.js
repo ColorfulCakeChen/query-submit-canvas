@@ -763,9 +763,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       // have been downloaded completely.
       outputFloat32Array = await outputFloat32ArrayPromise;
 
-
     } catch ( e ) {
-      let errorMsg = `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__step0_ImageData_process(): `
+      let errorMsg =
+          `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__NO_FILL__step0_ImageData_process(): `
         + `workerId=${this.workerId}. ${e}`;
       console.error( errorMsg );
       //debugger;
