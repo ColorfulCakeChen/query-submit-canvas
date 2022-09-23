@@ -145,10 +145,25 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
 
   /**
+   * Process input image data by all (suppose two) neural networks in this web worker.
+   *
    * This method is used for:
    *   - One web worker. The worker has two neural networks.
+   *     - NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__FILL (0)
+   *     - NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL (1)
+   *
    *   - If ( bFill == true ), alignment mark filling.
+   *     - The worker will download scaled Int32Array from GPU memory.
+   *     - Fill alignment mark of the 1st neural network, upload and process it.
+   *     - Fill alignment mark of the 2nd neural network, upload and process it.
+   *
    *   - If ( bFill == false ), no alignment mark filling.
+   *     - The worker needs not wait for downloading scaled Int32Array from GPU memory.
+   *         and needs not upload alignment mark filled Int32Array to GPU.
+   *     - So every neural network always output twice channels. For example,
+   *       - The neural network output 100 channels.
+   *       - channel [ 0, 49 ] are used if the neural network representing alignment A.
+   *       - channel [ 50, 99 ] are used if the neural network representing alignment B.
    *
    *
    * @param {ImageData} sourceImageData
@@ -178,11 +193,17 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL (2)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL (3)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLY (4)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5)
+   *     - The 1st worker calls this method.
+   *
    *   - It will download scaled Int32Array from GPU memory. And post it back to
    *         WorkerProxy.
+   *
    *   - (may or may not) Fill alignment mark of this neural network, upload to GPU
    *       and process it.
-   *   - The 1st worker calls this method.
    *
    *
    * @param {ImageData} sourceImageData
@@ -223,9 +244,14 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL (2)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL (3)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLY (4)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5)
+   *     - The 2nd worker calls this method.
+   *
    *   - (may or may not) Fill alignment mark of this neural network, upload to GPU
    *       and process it.
-   *   - The 2nd worker calls this method.
    *
    *
    * @param {Int32Array} sourceInt32Array
@@ -259,9 +285,21 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_SCALE__NO_FILL (6)
+   *     - Both workers call this metohd.
+   *       - The 1st worker uses ( bFork == true ).
+   *       - The 2nd worker uses ( bFork == false ).
+   *
    *   - Both workers scale source image data by themselves.
+   *     - Advantage: The 1st worker needs not wait for downloading scaled Int32Array
+   *         from GPU memory.
+   *     - Disadvantage: The source image data is scaled twice.
+   *
    *   - No alignment mark filling.
-   *   - The 1st worker call this method.
+   *     - So every neural network always output twice channels. For example,
+   *       - The neural network output 100 channels.
+   *       - channel [ 0, 49 ] are used if the neural network representing alignment A.
+   *       - channel [ 50, 99 ] are used if the neural network representing alignment B.
    *
    *
    * @param {ImageData} sourceImageData
