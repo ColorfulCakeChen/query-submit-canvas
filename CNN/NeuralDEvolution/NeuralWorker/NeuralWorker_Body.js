@@ -484,15 +484,12 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Two web workers. Every worker has one neural network.
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLY (2)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLIER (3)
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLY (4)
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5)
    *     - The 1st worker calls this method.
    *
    *   - It will download scaled Int32Array from GPU memory. And post it back to
    *         WorkerProxy.
    *
-   *   - (may or may not) Fill alignment mark of this neural network, upload to GPU
-   *       and process it.
+   *   - Fill alignment mark of this neural network, upload to GPU and process it.
    *
    * 
    * @param {ImageData} sourceImageData
@@ -507,11 +504,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *
    *   - The scaled Int32Array will be filled by alignment mark, and then converted
    *       into tensor3d, and then processed by neural network.
-   *
-   * @param {boolean} bFill
-   *   If true, the source Int32Array will be filled by alignment mark before be
-   * converted to tensor3d. If false, it will be converted to tensor3d directly
-   * without filling alignment mark.
    *
    * @param {boolean} bApply_or_Applier
    *   - If true, use neuralNet.apply().
@@ -529,8 +521,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * representing the neural network's result whose channel count is
    * this.neuralNet[ 0 ].output_channelCount.
    */
-  async* TWO_WORKER__ONE_SCALE__step0_ImageData_process(
-    sourceImageData, bFill, bApply_or_Applier ) {
+  async* TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process(
+    sourceImageData, bApply_or_Applier ) {
 
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
@@ -547,7 +539,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       scaledInt32Array = scaledSourceTensor.dataSync();
 
     } catch ( e ) {
-      let errorMsg = `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__step0_ImageData_process(): `
+      let errorMsg = `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process(): `
         + `workerId=${this.workerId}. ${e}`;
       console.error( errorMsg );
       //debugger;
@@ -565,10 +557,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     let outputTensor;
     let outputFloat32Array;
     try {
-      if ( bFill ) {
-        NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
-          this, neuralNetIndex, scaledInt32Array );
-      }
+      NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
+        this, neuralNetIndex, scaledInt32Array );
 
       sourceTensor = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
 
@@ -621,7 +611,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
     } catch ( e ) {
-      let errorMsg = `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__step0_ImageData_process(): `
+      let errorMsg =
+          `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process(): `
         + `workerId=${this.workerId}. ${e}`;
       console.error( errorMsg );
       //debugger;
@@ -658,7 +649,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *         WorkerProxy.
    *
    *   - No Fill alignment mark of this neural network, no upload to GPU,
-   *       just process scaled tensor directly.
+   *       just process the scaled tensor directly.
    *
    * 
    * @param {ImageData} sourceImageData

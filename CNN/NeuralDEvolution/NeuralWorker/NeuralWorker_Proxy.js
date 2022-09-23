@@ -195,15 +195,12 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Two web workers. Every worker has one neural network.
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLY (2)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLIER (3)
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLY (4)
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5)
    *     - The 1st worker calls this method.
    *
    *   - It will download scaled Int32Array from GPU memory. And post it back to
    *         WorkerProxy.
    *
-   *   - (may or may not) Fill alignment mark of this neural network, upload to GPU
-   *       and process it.
+   *   - Fill alignment mark of this neural network, upload to GPU and process it.
    *
    *
    * @param {ImageData} sourceImageData
@@ -232,11 +229,75 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   Resolve to { done: true, value: Float32Array }. The value is a Float32Array
    * representing the neural network's result.
    */
-  TWO_WORKER__ONE_SCALE__step0_ImageData_process_asyncGenerator(
-    sourceImageData, bFill, bApply_or_Applier ) {
+  TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process_asyncGenerator(
+    sourceImageData, bApply_or_Applier ) {
     return this.createResulter_by_postCommandArgs(
-      [ "TWO_WORKER__ONE_SCALE__step0_ImageData_process",
-        sourceImageData, bFill, bApply_or_Applier ],
+      [ "TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process",
+        sourceImageData, bApply_or_Applier ],
+      [ sourceImageData.data.buffer ]
+    );
+  }
+
+  /**
+
+  /**
+   * This method is used for:
+   *   - Two web workers. Every worker has one neural network.
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLY (4)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5)
+   *     - The 1st worker calls this method.
+   *
+   *   - It will download scaled Int32Array from GPU memory. And post it back to
+   *         WorkerProxy.
+   *
+   *   - No Fill alignment mark of this neural network, no upload to GPU,
+   *       just process the scaled tensor directly.
+   *
+   * 
+   * @param {ImageData} sourceImageData
+   *   The source image data to be processed.
+   *
+   *   - Its shape needs not match this.neuralNet[ 0 ]'s [ input_height,
+   *       input_width, input_channelCount ] because it will be scaled to the correct
+   *       shape before passed into the neural network.
+   *
+   *   - This usually is called for the 1st web worker in chain. The scaled Int32Array
+   *       will be transferred back to WorkerProxy for the 2nd web worker.
+   *
+   *   - The scaled tensor (without filling alignment mark) will be processed by
+   *       neural network directly.   *
+   *
+   * @param {ImageData} sourceImageData
+   *   The source image data to be processed.
+   *
+   *   - Its shape needs not match this.neuralNetParamsBase's [ input_height,
+   *       input_width, input_channelCount ] because it will be scaled to the correct
+   *       shape before passed into the neural network.
+   *
+   *   - This usually is called for the 1st web worker in chain. The scaled Int32Array
+   *       will be transferred back to WorkerProxy for the 2nd web worker.
+   *
+   *   - The scaled Int32Array will be filled by alignment mark, and then converted
+   *       into tensor3d, and then processed by neural network.
+   *
+   * @return {AsyncWorker.Resulter}
+   *   Return an async generator tracking the result of processing. It will yield two
+   * times, the 1st is an Int32Array, the 2nd is a Float32Array.
+   *
+   * @yield {Int32Array}
+   *   Resolve to { done: false, value: Int32Array }. The value is an Int32Array
+   * representing the scaled image data whose shape is this.neuralNetParamsBase's
+   * [ input_height, input_width, input_channelCount ].
+   *
+   * @yield {Float32Array}
+   *   Resolve to { done: true, value: Float32Array }. The value is a Float32Array
+   * representing the neural network's result.
+   */
+  TWO_WORKER__ONE_SCALE__NO_FILL__step0_ImageData_process_asyncGenerator(
+    sourceImageData, bApply_or_Applier ) {
+    return this.createResulter_by_postCommandArgs(
+      [ "TWO_WORKER__ONE_SCALE__NO_FILL__step0_ImageData_process",
+        sourceImageData, bApply_or_Applier ],
       [ sourceImageData.data.buffer ]
     );
   }
