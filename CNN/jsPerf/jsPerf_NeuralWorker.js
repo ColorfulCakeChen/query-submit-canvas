@@ -559,9 +559,7 @@ class HeightWidthDepth {
 
     let progressRoot = progressParent.root_get();
 
-    // Test every neural worker mode once.
-    let progressMax = this.testCaseMap.size;
-
+    let progressMax = 10000; // Temporary progress max (because it is unkown here).
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
@@ -577,6 +575,9 @@ class HeightWidthDepth {
             = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
 
           this.neuralWorker_PerformanceTest_init();
+
+          progressMax = this.testCaseMap.size;
+          progressToAdvance.value_max_set( progressMax );
 
           for ( testCase of this.testCaseMap.values() ) {
             let testByNamePromise = this.testNeuralWorker_ByName( testCase.testCaseName );
