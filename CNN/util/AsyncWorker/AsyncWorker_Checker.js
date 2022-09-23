@@ -35,12 +35,9 @@ function ArrayBuffer_ImageData_Int32Array_Float32Array_isTransferred(
             ) {
     if ( objectToBeChecked.data.length != 0 )
       return false;
-
-  } else {
-
-    return true;
   }
-  
+
+  // For non-transferable object, always return true.
   return true;
 }
 

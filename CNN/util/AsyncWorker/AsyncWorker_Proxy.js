@@ -5,6 +5,7 @@ import * as Recyclable from "../Recyclable.js";
 import { PromiseResolveReject } from "./AsyncWorker_PromiseResolveReject.js";
 import { processingId_Resulter_Map } from "./AsyncWorker_processingId_Resulter_Map.js";
 import { Resulter } from "./AsyncWorker_Resulter.js";
+import * as AsyncWorker_Checker from "./AsyncWorker_Checker.js";
 
 /**
  * Hold the worker and its related promise map. It is a wrapper of a neural network
@@ -311,6 +312,21 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 
     let processingId_commandArgs = [ processingId, ...commandArgs ];
     this.worker.postMessage( processingId_commandArgs, transferableObjectArray );
+
+    // Check large objects are transferred (rather than copied) to ensure performance.
+    {
+      let bTransferred
+        = AsyncWorker_Checker.ArrayBuffer_ImageData_Int32Array_Float32Array_isTransferred(
+            commandArgs );
+
+      if ( bTransferred != 0 )
+        throw Error( `AsyncWorker_Proxy.createResulter_by_postCommandArgs(): `
+          + `bTransferred ( ${bTransferred} ) should be ( true ) `
+          + `after commandArgs transferred to worker. `
+          + `commandArgs=[ ${commandArgs} ]`
+        );
+    }
+
     return resulter;
   }
 
@@ -334,6 +350,20 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   postCommandArgs( commandArgs, transferableObjectArray ) {
     let processingId_commandArgs = [ undefined, ...commandArgs ]; // no processingId.
     this.worker.postMessage( processingId_commandArgs, transferableObjectArray );
+
+    // Check large objects are transferred (rather than copied) to ensure performance.
+    {
+      let bTransferred
+        = AsyncWorker_Checker.ArrayBuffer_ImageData_Int32Array_Float32Array_isTransferred(
+            commandArgs );
+
+      if ( bTransferred != 0 )
+        throw Error( `AsyncWorker_Proxy.postCommandArgs(): `
+          + `bTransferred ( ${bTransferred} ) should be ( true ) `
+          + `after commandArgs transferred to worker. `
+          + `commandArgs=[ ${commandArgs} ]`
+        );
+    }
   }
 
   /**
