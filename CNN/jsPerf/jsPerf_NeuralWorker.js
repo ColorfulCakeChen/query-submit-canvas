@@ -472,6 +472,12 @@ class HeightWidthDepth {
     let resultFloat32ArrayArrayPromise
       = testCase.neuralWorkerProxies.ImageData_process_async( imageData );
 
+    if ( imageData.data.length != 0 )
+      throw Error( `jsPerf_NeuralWorker.testNeuralWorker_ByName(): `
+        + `imageData.data.length ( ${imageData.data.length} ) should be 0 `
+        + `after transferred to worker.`
+      );
+
     let resultFloat32ArrayArray = await resultFloat32ArrayArrayPromise;
     return resultFloat32ArrayArray;
   }
