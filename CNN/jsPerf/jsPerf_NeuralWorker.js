@@ -590,6 +590,8 @@ class HeightWidthDepth {
               await testCase.preparePromise;
             }
 
+            let resultFloat32ArrayArray;
+
             // Execution time testing.
             {
               timeTest.name = testCase.testCaseName;
@@ -597,7 +599,7 @@ class HeightWidthDepth {
               for ( let i = 0; i < timeTest.times; ++i ) {
                 timeTest.begin = Date.now();
                 let testByNamePromise = this.testNeuralWorker_ByName( testCase.testCaseName );
-                let resultFloat32ArrayArray = await testByNamePromise;
+                resultFloat32ArrayArray = await testByNamePromise;
                 timeTest.end = Date.now();
                 timeTest.elapsed = timeTest.end - timeTest.begin;
                 timeTest.elapsedTotal += timeTest.elapsed;
