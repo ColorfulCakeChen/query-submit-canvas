@@ -364,7 +364,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    */
   async* ImageData_scale_once_process_multiple( sourceImageData, bFill ) {
 
-    let resultValueArray = new Array( this.neuralNetArray.length );
+    let resultFloat32ArrayArray = new Array( this.neuralNetArray.length );
     let resultTransferableObjectArray = new Array( this.neuralNetArray.length );
 
     // Ensure all tensors be released, even if .apply() has exception.
@@ -430,9 +430,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
             // 2.2 Process source tensor. (The sourceTensor will be released (in theroy).)
             outputTensor = neuralNet.apply( sourceTensor );
 
+//!!! ...unfinished... (2022/09/23)
+// should continue to compute the next nerual network.
+// and await all them downloaded later.
+
             // 2.3 Record result.
-            resultValueArray[ i ] = outputTensor.dataSync();
-            resultTransferableObjectArray[ i ] = resultValueArray[ i ].buffer;
+            resultFloat32ArrayArray[ i ] = outputTensor.dataSync();
+            resultTransferableObjectArray[ i ] = resultFloat32ArrayArray[ i ].buffer;
 
           } catch ( e ) {
             let errorMsg = `NeuralWorker_Body.ImageData_scale_once_process_multiple(): `
@@ -465,7 +469,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     } );
 
     return {
-      value: resultValueArray,
+      value: resultFloat32ArrayArray,
       transferableObjectArray: resultTransferableObjectArray
     };
   }

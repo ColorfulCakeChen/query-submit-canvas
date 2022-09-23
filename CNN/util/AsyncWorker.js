@@ -4,3 +4,5 @@ export { processingId_Resulter_Map }
 export { Resulter } from "./AsyncWorker/AsyncWorker_Resulter.js";
 export { Body } from "./AsyncWorker/AsyncWorker_Body.js";
 export { Proxy } from "./AsyncWorker/AsyncWorker_Proxy.js";
+
+export { isTransferred } from "./AsyncWorker/AsyncWorker_Checker.js";

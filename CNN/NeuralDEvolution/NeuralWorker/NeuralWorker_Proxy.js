@@ -122,10 +122,24 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     }
 
     // 3. Inform web work to create neural networks.
-    return this.createPromise_by_postCommandArgs(
+    let rPromise = this.createPromise_by_postCommandArgs(
       [ "NeuralNetArray_create", neuralNetParamsBaseArray, weightArrayBufferArray ],
       transferableObjectArray
     );
+
+//!!!
+    // 4. 
+    for ( let i = 0; i < weightArrayBufferArray.length; ++i ) {
+      let arrayBuffer = weightArrayBufferArray[ i ];
+      if ( arrayBuffer.byteLength !== 0 )
+        throw Error(
+            `NeuralWorker_Proxy.Int32Array_fillable_process_async(): `
+          + `sourceInt32Array.length ( ${sourceInt32Array.length} ) should be 0 `
+          + `after transferred to worker.`
+        );
+    }
+
+    return rPromise;
   }
 
   /**
@@ -168,10 +182,19 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    */
   ImageData_scale_once_process_multiple_async( sourceImageData, bFill ) {
     const bFork = false;
-    return this.createPromise_by_postCommandArgs(
+    let rPromise = this.createPromise_by_postCommandArgs(
       [ "ImageData_scale_once_process_multiple", sourceImageData, bFill ],
       [ sourceImageData.data.buffer ]
     );
+
+    if ( sourceImageData.data.length != 0 )
+      throw Error(
+          `NeuralWorker_Proxy.ImageData_scale_once_process_multiple_async(): `
+        + `sourceImageData.data.length ( ${sourceImageData.data.length} ) should be 0 `
+        + `after transferred to worker.`
+      );
+
+    return rPromise;
   }
 
 
@@ -213,11 +236,20 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    */
   ImageData_scale_fork_fillable_process_asyncGenerator(
     sourceImageData, bFill, bApply_or_Applier ) {
-    return this.createResulter_by_postCommandArgs(
+    let rResulter = this.createResulter_by_postCommandArgs(
       [ "ImageData_scale_fork_fillable_process",
         sourceImageData, bFill, bApply_or_Applier ],
       [ sourceImageData.data.buffer ]
     );
+
+    if ( sourceImageData.data.length != 0 )
+      throw Error(
+          `NeuralWorker_Proxy.ImageData_scale_fork_fillable_process_asyncGenerator(): `
+        + `sourceImageData.data.length ( ${sourceImageData.data.length} ) should be 0 `
+        + `after transferred to worker.`
+      );
+
+    return rResulter;
   }
 
   /**
@@ -249,10 +281,19 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * result.
    */
   Int32Array_fillable_process_async( sourceInt32Array, bFill ) {
-    return this.createPromise_by_postCommandArgs(
+    let rPromise = this.createPromise_by_postCommandArgs(
       [ "Int32Array_fillable_process", sourceInt32Array, bFill ],
       [ sourceInt32Array.buffer ]
     );
+
+    if ( sourceInt32Array.length != 0 )
+      throw Error(
+          `NeuralWorker_Proxy.Int32Array_fillable_process_async(): `
+        + `sourceInt32Array.length ( ${sourceInt32Array.length} ) should be 0 `
+        + `after transferred to worker.`
+      );
+
+    return rPromise;
   }
 
 
@@ -293,10 +334,19 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * representing the neural network's result.
    */
   ImageData_scale_forkable_process_asyncGenerator( sourceImageData, bFork ) {
-    return this.createResulter_by_postCommandArgs(
+    let rResulter = this.createResulter_by_postCommandArgs(
       [ "ImageData_scale_forkable_process", sourceImageData, bFork ],
       [ sourceImageData.data.buffer ]
     );
+
+    if ( sourceImageData.data.length != 0 )
+      throw Error(
+          `NeuralWorker_Proxy.ImageData_scale_forkable_process_asyncGenerator(): `
+        + `sourceImageData.data.length ( ${sourceImageData.data.length} ) should be 0 `
+        + `after transferred to worker.`
+      );
+
+    return rResulter;
   }
 
 }
