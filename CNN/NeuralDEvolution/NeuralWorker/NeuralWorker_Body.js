@@ -816,7 +816,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_SCALE__NO_FILL (4)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_SCALE__NO_FILL (6)
    *     - Both workers call this metohd.
    *       - The 1st worker uses ( bFork == true ).
    *       - The 2nd worker uses ( bFork == false ).
@@ -857,7 +857,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * representing the neural network's result whose channel count is
    * this.neuralNet[ 0 ].output_channelCount.
    */
-  async* ImageData_scale_forkable_process( sourceImageData, bFork ) {
+  async* TWO_WORKER__TWO_SCALE__ImageData_process( sourceImageData, bFork ) {
 
     let scaledSourceTensor;
     let outputTensor;
@@ -884,7 +884,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       outputFloat32Array = outputTensor.dataSync();
 
     } catch ( e ) {
-      let errorMsg = `NeuralWorker_Body.ImageData_scale_forkable_process(): `
+      let errorMsg = `NeuralWorker_Body.TWO_WORKER__TWO_SCALE__ImageData_process(): `
         + `workerId=${this.workerId}. ${e}`;
       console.error( errorMsg );
       //debugger;
