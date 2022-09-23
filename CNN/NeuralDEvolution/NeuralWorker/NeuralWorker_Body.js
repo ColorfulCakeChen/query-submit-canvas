@@ -364,8 +364,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    */
   async* ONE_WORKER__ONE_SCALE__ImageData_process( sourceImageData, bFill ) {
 
-    let resultFloat32ArrayArray = new Array( this.neuralNetArray.length );
-    let resultTransferableObjectArray = new Array( this.neuralNetArray.length );
+    let resultFloat32ArrayPromiseArray = new Array( this.neuralNetArray.length );
 
     // Ensure all tensors be released, even if .apply() has exception.
     tf.tidy( () => {
@@ -430,13 +429,12 @@ class NeuralWorker_Body extends AsyncWorker.Body {
             // 2.2 Process source tensor. (The sourceTensor will be released (in theroy).)
             outputTensor = neuralNet.apply( sourceTensor );
 
-//!!! ...unfinished... (2022/09/23)
-// should continue to compute the next nerual network.
-// and await all them downloaded later.
-
-            // 2.3 Record result.
-            resultFloat32ArrayArray[ i ] = outputTensor.dataSync();
-            resultTransferableObjectArray[ i ] = resultFloat32ArrayArray[ i ].buffer;
+            // 2.3 Record result promise.
+            //
+            // Because downloading from GPU to CPU is slow, continue to compute the
+            // next neural network after downloading starting.
+            // 
+            resultFloat32ArrayPromiseArray[ i ] = outputTensor.data();
 
           } catch ( e ) {
             let errorMsg = `NeuralWorker_Body.ONE_WORKER__ONE_SCALE__ImageData_process(): `
@@ -467,6 +465,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         }
       }
     } );
+
+    // Wait for all downloading from GPU to CPU completely.
+    let resultFloat32ArrayArray = await Promise.all( resultFloat32ArrayPromiseArray );
+    let resultTransferableObjectArray = new Array( resultFloat32ArrayArray.length );
+    for ( let i = 0; i < resultFloat32ArrayArray.length; ++i ) {
+      resultTransferableObjectArray[ i ] = resultFloat32ArrayArray[ i ].buffer;
+    }
 
     return {
       value: resultFloat32ArrayArray,
