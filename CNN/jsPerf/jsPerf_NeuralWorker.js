@@ -26,6 +26,30 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
 /**
  * 
  */
+class ExecutionTimeInfo {
+
+  constructor( times ) {
+    this.name = "(unknown)";
+    this.times = 0;
+    this.begin = 0;
+    this.end = 0;
+    this.elapsed = 0;
+    this.elapsedTotal = 0;
+  }
+
+  get elapsedAverage() { return ( this.elapsedTotal / this.times ); }
+  get countPerSecond() { return 1 / ( this.elapsedAverage / 1000 ); }
+
+  toString() {
+    let str = `${this.name}: ${this.countPerSecond} ops/sec `
+      +  `(${this.times} runs sampled)`;
+    return str;
+  }
+}
+
+/**
+ * 
+ */
 class PerformanceTestCase extends Recyclable.Root {
 
   /**
@@ -575,11 +599,7 @@ class HeightWidthDepth {
           progressMax = this.testCaseMap.size;
           progressToAdvance.value_max_set( progressMax );
 
-          const timeTest = {
-            times: 10,
-            begin: 0, end: 0, elapsed: 0,
-            elapsedTotal: 0, elapsedAverage: 0
-          };
+          const timeInfo = new ExecutionTimeInfo( 10 );
           for ( testCase of this.testCaseMap.values() ) {
 
             // First time test the case. Release all other test cases' neural networks
@@ -594,19 +614,17 @@ class HeightWidthDepth {
 
             // Execution time testing.
             {
-              timeTest.name = testCase.testCaseName;
-              timeTest.elapsedTotal = 0;
-              for ( let i = 0; i < timeTest.times; ++i ) {
-                timeTest.begin = Date.now();
+              timeInfo.name = testCase.testCaseName;
+              timeInfo.elapsedTotal = 0;
+              for ( let i = 0; i < timeInfo.times; ++i ) {
+                timeInfo.begin = Date.now();
                 let testByNamePromise = this.testNeuralWorker_ByName( testCase.testCaseName );
                 resultFloat32ArrayArray = await testByNamePromise;
-                timeTest.end = Date.now();
-                timeTest.elapsed = timeTest.end - timeTest.begin;
-                timeTest.elapsedTotal += timeTest.elapsed;
+                timeInfo.end = Date.now();
+                timeInfo.elapsed = timeTest.end - timeTest.begin;
+                timeInfo.elapsedTotal += timeTest.elapsed;
               }
-              timeTest.elapsedAverage = timeTest.elapsedTotal / timeTest.times;
-              timeTest.countPerSecond = 1 / ( timeTest.elapsedAverage / 1000 );
-              console.log( timeTest );
+              console.log( timeInfo );
             }
 
             let resultFloat32Array;
