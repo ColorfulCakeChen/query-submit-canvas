@@ -322,7 +322,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
       default:
         throw Error( `NeuralWorker_Proxies.setup_ImageData_process(): `
-          + `Unknown nNeuralWorker_ModeId ( ${nNeuralWorker_ModeId} ).`
+          + `Unknown nNeuralWorker_ModeId ( ${this.nNeuralWorker_ModeId} ).`
         );
         break;
     }
