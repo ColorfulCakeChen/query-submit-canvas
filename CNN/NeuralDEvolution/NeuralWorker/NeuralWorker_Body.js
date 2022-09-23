@@ -572,7 +572,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
       sourceTensor = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
 
-      // Solution 1: Use neuralNet.apply().
+      // 2.1 Solution 1: Use neuralNet.apply().
       if ( bApply_or_Applier ) {
         outputTensor = neuralNet.apply( sourceTensor );
 
@@ -592,7 +592,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
         outputFloat32Array = await outputFloat32ArrayPromise;
 
-      // Solution 2: Use neuralNet.applier().
+      // 2.2 Solution 2: Use neuralNet.applier().
       } else {
         let applier = neuralNet.applier( sourceTensor );
         let applierNext = applier.next(); // NeuralNet sets progress to 0.
@@ -714,7 +714,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       // 2. Process image by neural network.
       let outputFloat32ArrayPromise;
 
-      // Solution 1: Use neuralNet.apply().
+      // 2.1 Solution 1: Use neuralNet.apply().
       if ( bApply_or_Applier ) {
         outputTensor = neuralNet.apply( scaledSourceTensor );
 
@@ -733,7 +733,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
           transferableObjectArray: [ scaledInt32Array.buffer ]
         };
 
-      // Solution 2: Use neuralNet.applier().
+      // 2.2 Solution 2: Use neuralNet.applier().
       } else {
         let applier = neuralNet.applier( scaledSourceTensor );
         let applierNext = applier.next(); // NeuralNet sets progress to 0.
