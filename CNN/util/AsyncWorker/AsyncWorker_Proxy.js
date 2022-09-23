@@ -315,9 +315,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 
     // Check large objects are transferred (rather than copied) to ensure performance.
     {
-      let bTransferred
-        = AsyncWorker_Checker.ArrayBuffer_ImageData_Int32Array_Float32Array_isTransferred(
-            commandArgs );
+      let bTransferred = AsyncWorker_Checker
+        .ArrayBuffer_ImageData_Int32Array_Float32Array_isTransferred( commandArgs );
 
       if ( bTransferred != 0 )
         throw Error( `AsyncWorker_Proxy.createResulter_by_postCommandArgs(): `
@@ -353,9 +352,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 
     // Check large objects are transferred (rather than copied) to ensure performance.
     {
-      let bTransferred
-        = AsyncWorker_Checker.ArrayBuffer_ImageData_Int32Array_Float32Array_isTransferred(
-            commandArgs );
+      let bTransferred = AsyncWorker_Checker
+        .ArrayBuffer_ImageData_Int32Array_Float32Array_isTransferred( commandArgs );
 
       if ( bTransferred != 0 )
         throw Error( `AsyncWorker_Proxy.postCommandArgs(): `

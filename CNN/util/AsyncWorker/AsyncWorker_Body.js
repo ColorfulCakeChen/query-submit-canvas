@@ -1,6 +1,7 @@
 export { AsyncWorker_Body as Body };
 
 import * as Pool from "../Pool.js";
+import * as AsyncWorker_Checker from "./AsyncWorker_Checker.js";
 
 /**
  * The base class for web worker. It should be used in web worker context.
@@ -131,8 +132,23 @@ class AsyncWorker_Body {
         do {
           ( { done, value: { value, transferableObjectArray } }
             = await asyncGenerator.next() );
+
           let resultData = [ processingId, done, value ];
           postMessage( resultData, transferableObjectArray );
+
+          // Check large objects are transferred (rather than copied) to ensure performance.
+          {
+            let bTransferred = AsyncWorker_Checker
+              .ArrayBuffer_ImageData_Int32Array_Float32Array_isTransferred( resultData );
+
+            if ( bTransferred != 0 )
+              throw Error( `AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy(): `
+                + `bTransferred ( ${bTransferred} ) should be ( true ) `
+                + `after resultData transferred to worker. `
+                + `resultData=[ ${resultData} ]`
+              );
+          }
+
         } while ( !done );
       }
 
