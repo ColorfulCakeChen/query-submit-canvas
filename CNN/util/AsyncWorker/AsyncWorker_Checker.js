@@ -14,8 +14,8 @@ function ImageData_ArrayBuffer_TypedArray_isTransferred( objectToBeChecked ) {
   // 0. If array, check elements recursively.
   if ( objectToBeChecked instanceof Array ) {
     for ( let i = 0; i < objectToBeChecked.length; ++i ) {
-      let bElementOk = ImageData_ArrayBuffer_TypedArray_isTransferred(
-        objectToBeChecked[ i ] );
+      let bElementOk
+        = ImageData_ArrayBuffer_TypedArray_isTransferred( objectToBeChecked[ i ] );
       if ( !bElementOk )
         return false;
     }
