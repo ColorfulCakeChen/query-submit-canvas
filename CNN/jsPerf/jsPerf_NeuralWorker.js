@@ -498,15 +498,11 @@ class HeightWidthDepth {
         let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
 
         {
-          this.neuralWorker_PerformanceTest_init();
-
           let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
           yield* this.tester( progress );
 
           progress.disposeResources_and_recycleToPool();
           progress = null;
-      
-          this.neuralWorker_PerformanceTest_release();
         }
 
         let memoryInfo_testCorrectness_after = tf.memory();
