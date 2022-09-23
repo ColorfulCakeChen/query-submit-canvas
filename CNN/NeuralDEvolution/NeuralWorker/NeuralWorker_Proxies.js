@@ -333,7 +333,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
 
     let worker0_promise = this.workerProxyArray[ 0 ]
-      .ImageData_scale_once_process_multiple_async( sourceImageData, bFill );
+      .ONE_WORKER__ONE_SCALE__ImageData_process_async( sourceImageData, bFill );
 
     let worker0_value_Float32ArrayArray = await worker0_promise;
     return worker0_value_Float32ArrayArray;

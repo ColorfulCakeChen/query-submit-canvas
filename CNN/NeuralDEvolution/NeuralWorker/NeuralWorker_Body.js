@@ -362,7 +362,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * is an array of Float32Array representing all neural networks' result whose channel
    * count is this.neuralNetArray[].output_channelCount.
    */
-  async* ImageData_scale_once_process_multiple( sourceImageData, bFill ) {
+  async* ONE_WORKER__ONE_SCALE__ImageData_process( sourceImageData, bFill ) {
 
     let resultFloat32ArrayArray = new Array( this.neuralNetArray.length );
     let resultTransferableObjectArray = new Array( this.neuralNetArray.length );
@@ -391,7 +391,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
               }
 
             } catch ( e ) {
-              let errorMsg = `NeuralWorker_Body.ImageData_scale_once_process_multiple(): `
+              let errorMsg = `NeuralWorker_Body.ONE_WORKER__ONE_SCALE__ImageData_process(): `
                 + `workerId=${this.workerId}. ${e}`;
               console.error( errorMsg );
               //debugger;
@@ -439,7 +439,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
             resultTransferableObjectArray[ i ] = resultFloat32ArrayArray[ i ].buffer;
 
           } catch ( e ) {
-            let errorMsg = `NeuralWorker_Body.ImageData_scale_once_process_multiple(): `
+            let errorMsg = `NeuralWorker_Body.ONE_WORKER__ONE_SCALE__ImageData_process(): `
               + `workerId=${this.workerId}. ${e}`;
             console.error( errorMsg );
             //debugger;
@@ -454,7 +454,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         }
 
       } catch ( e ) {
-        let errorMsg = `NeuralWorker_Body.ImageData_scale_once_process_multiple(): `
+        let errorMsg = `NeuralWorker_Body.ONE_WORKER__ONE_SCALE__ImageData_process(): `
           + `workerId=${this.workerId}. ${e}`;
         console.error( errorMsg );
         //debugger;

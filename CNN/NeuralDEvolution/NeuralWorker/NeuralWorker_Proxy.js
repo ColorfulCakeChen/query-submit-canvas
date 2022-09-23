@@ -166,10 +166,10 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   Return a promise resolved to an array [ Float32Array, Float32Array ] representing
    * the neural networks' result.
    */
-  ImageData_scale_once_process_multiple_async( sourceImageData, bFill ) {
+  ONE_WORKER__ONE_SCALE__ImageData_process_async( sourceImageData, bFill ) {
     const bFork = false;
     return this.createPromise_by_postCommandArgs(
-      [ "ImageData_scale_once_process_multiple", sourceImageData, bFill ],
+      [ "ONE_WORKER__ONE_SCALE__ImageData_process", sourceImageData, bFill ],
       [ sourceImageData.data.buffer ]
     );
   }
