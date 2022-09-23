@@ -345,9 +345,16 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let bFill = modeInfo.bFill;
     let bApply_or_Applier = modeInfo.bApply_or_Applier;
 
-    let worker0_resulter = this.workerProxyArray[ 0 ]
-      .TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process_asyncGenerator(
-        sourceImageData, bFill, bApply_or_Applier );
+    let worker0_resulter;
+    if ( bFill ) {
+      worker0_resulter = this.workerProxyArray[ 0 ]
+        .TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process_asyncGenerator(
+          sourceImageData, bApply_or_Applier );
+    } else {
+      worker0_resulter = this.workerProxyArray[ 0 ]
+        .TWO_WORKER__ONE_SCALE__NO_FILL__step0_ImageData_process_asyncGenerator(
+          sourceImageData, bApply_or_Applier );
+    }
 
     let { done: worker0_done_false, value: worker0_value_Int32Array }
       = await worker0_resulter.next();
