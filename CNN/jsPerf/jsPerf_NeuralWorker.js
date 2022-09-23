@@ -28,7 +28,7 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
  */
 class ExecutionTimeInfo {
 
-  constructor( times ) {
+  constructor( times = 1 ) {
     this.name = "(unknown)";
     this.times = times;
     this.begin = 0;
