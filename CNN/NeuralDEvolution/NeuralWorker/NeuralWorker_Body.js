@@ -577,14 +577,14 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         outputTensor = neuralNet.apply( sourceTensor );
 
         // Because downloading from GPU to CPU is slow, start downloading before
-        // posting back to WorkerProxy (i.e. another slow action).
+        // posting scaledInt32Array back to WorkerProxy (i.e. another slow action).
         let outputFloat32ArrayPromise = outputTensor.data();
 
         // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
         //
-        // Note: Ideally, the posting-back should be done before neuralNet.apply().
-        // However, that will happen exception (says the ArrayBuffer has been detached).
-        // So, do it after neuralNet.apply().
+        // Note: Ideally, the scaledInt32Arrayposting-back should be done before
+        // neuralNet.apply(). However, that will happen exception (says the
+        // ArrayBuffer has been detached). So, do it after neuralNet.apply().
         yield {
           value: scaledInt32Array,
           transferableObjectArray: [ scaledInt32Array.buffer ]
@@ -600,9 +600,10 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
         // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
         //
-        // Note: Ideally, the posting-back should be done before neuralNet.apply().
-        // However, that will happen exception (says the ArrayBuffer has been detached).
-        // So, do it after first operation (i.e. embedding) completely.
+        // Note: Ideally, the scaledInt32Array posting-back should be done before
+        // neuralNet.apply(). However, that will happen exception (says the
+        // ArrayBuffer has been detached). So, do it after first operation (i.e.
+        // embedding) completely.
         yield {
           value: scaledInt32Array,
           transferableObjectArray: [ scaledInt32Array.buffer ]
@@ -695,78 +696,54 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
 
-    // 1. Scale image.
     let scaledSourceTensor;
-    let scaledInt32ArrayPromise;
-    let scaledInt32Array;
+    let outputTensor;
+    let outputFloat32Array;
     try {
+      // 1. Scale image.
       scaledSourceTensor = neuralNet.create_ScaledSourceTensor_from_PixelData(
         sourceImageData,
         true // ( bForceInt32 == true )
       );
 
-      scaledInt32ArrayPromise = scaledSourceTensor.data();
+      // Because downloading from GPU to CPU is slow, start downloading
+      // scaledInt32Array before computing the neural network (i.e. another
+      // slow action).
+      let scaledInt32ArrayPromise = scaledSourceTensor.data();
 
-//!!! ...unfinished... (2022/09/23) should continue to compute, not wait here.
-      scaledInt32Array = await scaledInt32ArrayPromise;
-
-    } catch ( e ) {
-      let errorMsg = `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__step0_ImageData_process(): `
-        + `workerId=${this.workerId}. ${e}`;
-      console.error( errorMsg );
-      //debugger;
-      throw e;
-
-    } finally {
-      if ( scaledSourceTensor ) {
-        scaledSourceTensor.dispose();
-        scaledSourceTensor = null;
-      }
-    }
-
-    // 2. Process image by neural network.
-    let sourceTensor;
-    let outputTensor;
-    let outputFloat32Array;
-    try {
-      if ( bFill ) {
-        NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
-          this, neuralNetIndex, scaledInt32Array );
-      }
-
-      sourceTensor = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
+      // 2. Process image by neural network.
+      let outputFloat32ArrayPromise;
 
       // Solution 1: Use neuralNet.apply().
       if ( bApply_or_Applier ) {
-        outputTensor = neuralNet.apply( sourceTensor );
+        outputTensor = neuralNet.apply( scaledSourceTensor );
 
-        // Because downloading from GPU to CPU is slow, start downloading before
-        // posting back to WorkerProxy (i.e. another slow action).
-        let outputFloat32ArrayPromise = outputTensor.data();
+        // Because downloading from GPU to CPU is slow, start downloading
+        // outputFloat32Array before posting scaledInt32Array back to WorkerProxy
+        // (i.e. another slow action).
+        outputFloat32ArrayPromise = outputTensor.data();
 
         // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
         //
-        // Note: Ideally, the posting-back should be done before neuralNet.apply().
-        // However, that will happen exception (says the ArrayBuffer has been detached).
-        // So, do it after neuralNet.apply().
+        // Note: After the neuralNet.apply(), the scaledInt32Array should have been
+        // downloaded completely.
+        scaledInt32Array = await scaledInt32ArrayPromise;
         yield {
           value: scaledInt32Array,
           transferableObjectArray: [ scaledInt32Array.buffer ]
         };
 
-        outputFloat32Array = await outputFloat32ArrayPromise;
-
       // Solution 2: Use neuralNet.applier().
       } else {
-        let applier = neuralNet.applier( sourceTensor );
+        let applier = neuralNet.applier( scaledSourceTensor );
         let applierNext = applier.next(); // NeuralNet sets progress to 0.
         applierNext = applier.next(); // NeuralNet processes embedding.
 
         // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
         //
-        // Note: Ideally, the posting-back should be done before neuralNet.apply().
-        // However, that will happen exception (says the ArrayBuffer has been detached).
-        // So, do it after first operation (i.e. embedding) completely.
+        // Note: After the neuralNet's embedding, the scaledInt32Array may have been
+        // downloaded completely.
+        scaledInt32Array = await scaledInt32ArrayPromise;
         yield {
           value: scaledInt32Array,
           transferableObjectArray: [ scaledInt32Array.buffer ]
@@ -779,9 +756,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         }
         outputTensor = applierNext.value;
 
-        let outputFloat32ArrayPromise = outputTensor.data();
-        outputFloat32Array = await outputFloat32ArrayPromise;
+        outputFloat32ArrayPromise = outputTensor.data();
       }
+
+      // Note: After scaledInt32Array posting-back, the outputFloat32Array should
+      // have been downloaded completely.
+      outputFloat32Array = await outputFloat32ArrayPromise;
+
 
     } catch ( e ) {
       let errorMsg = `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__step0_ImageData_process(): `
@@ -798,9 +779,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
       // In theory, it should already have been released by neural network. For avoiding
       // memory leak (e.g. some exception when .apply()), release it again.
-      if ( sourceTensor ) {
-        sourceTensor.dispose();
-        sourceTensor = null;
+      if ( scaledSourceTensor ) {
+        scaledSourceTensor.dispose();
+        scaledSourceTensor = null;
       }
     }
 
