@@ -141,7 +141,7 @@ class AsyncWorker_Body {
             let bTransferred = AsyncWorker_Checker
               .ImageData_ArrayBuffer_TypedArray_isTransferred( resultData );
 
-            if ( bTransferred != 0 )
+            if ( bTransferred == false )
               throw Error( `AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy(): `
                 + `bTransferred ( ${bTransferred} ) should be ( true ) `
                 + `after resultData transferred to worker. `

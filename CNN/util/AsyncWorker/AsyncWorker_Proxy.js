@@ -318,7 +318,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       let bTransferred = AsyncWorker_Checker
         .ImageData_ArrayBuffer_TypedArray_isTransferred( commandArgs );
 
-      if ( bTransferred != 0 )
+      if ( bTransferred == false )
         throw Error( `AsyncWorker_Proxy.createResulter_by_postCommandArgs(): `
           + `bTransferred ( ${bTransferred} ) should be ( true ) `
           + `after commandArgs transferred to worker. `
@@ -355,7 +355,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       let bTransferred = AsyncWorker_Checker
         .ImageData_ArrayBuffer_TypedArray_isTransferred( commandArgs );
 
-      if ( bTransferred != 0 )
+      if ( bTransferred == false )
         throw Error( `AsyncWorker_Proxy.postCommandArgs(): `
           + `bTransferred ( ${bTransferred} ) should be ( true ) `
           + `after commandArgs transferred to worker. `
