@@ -575,8 +575,37 @@ class HeightWidthDepth {
           progressMax = this.testCaseMap.size;
           progressToAdvance.value_max_set( progressMax );
 
+          const timeTest = {
+            times: 10,
+            begin: 0, end: 0, elapsed: 0,
+            elapsedTotal: 0, elapsedAverage: 0
+          };
           for ( testCase of this.testCaseMap.values() ) {
-            let testByNamePromise = this.testNeuralWorker_ByName( testCase.testCaseName );
+
+            // First time test the case. Release all other test cases' neural networks
+            // (so that there will be enough memory). Create the specified neural network.
+            if ( !testCase.preparePromise ) {
+              this.neuralWorker_PerformanceTest_release_neuralWorkerProxies();
+              testCase.preparePromise = testCase.prepare_async();
+              await testCase.preparePromise;
+            }
+
+            // Execution time testing.
+            {
+              timeTest.name = testCase.testCaseName;
+              timeTest.elapsedTotal = 0;
+              for ( let i = 0; i < timeTest.times; ++i ) {
+                timeTest.begin = Date.now();
+                let testByNamePromise = this.testNeuralWorker_ByName( testCase.testCaseName );
+                let resultFloat32ArrayArray = await testByNamePromise;
+                timeTest.end = Date.now();
+                timeTest.elapsed = timeTest.end - timeTest.begin;
+                timeTest.elapsedTotal += timeTest.elapsed;
+              }
+              timeTest.elapsedAverage = timeTest.elapsedTotal / timeTest.times;
+              timeTest.countPerSecond = 1 / ( timeTest.elapsedAverage / 1000 );
+              console.log( timeTest );
+            }
 
             let resultFloat32Array;
 
@@ -586,8 +615,6 @@ class HeightWidthDepth {
             if ( !bFill ) {
               resultFloat32Array = testCase.NeuralNet_try_result( this.testCanvas );
             }
-
-            let resultFloat32ArrayArray = await testByNamePromise;
 
             if ( !bFill ) {
               let lhsNumberArray = resultFloat32ArrayArray[ 0 ];
