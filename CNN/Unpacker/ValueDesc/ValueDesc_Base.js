@@ -70,7 +70,7 @@ Bool.Singleton = new Bool;
  * will be valueInteger.
  *
  * @member {Object} Infos
- *   An object contains all named integer values' information. Its evey property should
+ *   An object contains all named integer values' information. Its every property should
  * a Int.Info (or sub-class) object. This Infos object will be kept (i.e. not cloned)
  * by this ValueDesc.Int object.  The Objects.keys( Infos ).length could be less than
  * .range.kinds (i.e. some number value could have no extra information object). It
