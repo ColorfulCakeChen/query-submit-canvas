@@ -33,10 +33,10 @@ tbody td {
 }
 
 tr:hover {
-  background-color: lightgrey;
+  background-color: darkgrey;
   color: black;
 }
 
-tr:nth-child(4n-1), tr:nth-child(4n) {
+/* tr:nth-child(4n-1), tr:nth-child(4n) {
   background-color: darkgrey;
-}
+} */
