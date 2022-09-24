@@ -21,8 +21,7 @@ th {
 
 thead th {
   text-align: center;
-  background-color: #4CAF50;
-  color: white;
+  background-color: #106010;
 }
 
 tbody th {
@@ -33,5 +32,11 @@ tbody td {
   text-align: right;
 }
 
-tr:hover { background-color: #d5f5f5; }
-tr:nth-child(4n-1), tr:nth-child(4n) { background-color: #d5f5d5; }
+tr:hover {
+  background-color: #959595;
+  color: black;
+}
+
+tr:nth-child(4n-1), tr:nth-child(4n) {
+  background-color: #104010;
+}
