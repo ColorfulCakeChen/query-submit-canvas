@@ -3,15 +3,16 @@ export { HTMLTable_RowAppender as RowAppender };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 
-//!!! ...unfinished... (2022/09/24)
-
 /**
  * Append table row into a HTMLTable.
  *
  *
  * @member {string} htmlTableElementId
- *   the HTML table element id for displaying data.
+ *   The HTML table element id for displaying data.
  *
+ * @member {number} digitsCount
+ *   For number data, it will be converted to text by toFix() with digitsCount (i.e.
+ * the number of digits to appear after the decimal point).
  */
 class HTMLTable_RowAppender extends Recyclable.Root {
 
@@ -22,25 +23,29 @@ class HTMLTable_RowAppender extends Recyclable.Root {
     HTMLTable_RowAppender, HTMLTable_RowAppender.setAsConstructor );
 
   /** */
-  constructor( htmlTableElementId ) {
+  constructor( htmlTableElementId, digitsCount = 2 ) {
     super();
-    HTMLTable_RowAppender.setAsConstructor_self.call( this, htmlTableElementId );
+    HTMLTable_RowAppender.setAsConstructor_self.call( this,
+      htmlTableElementId, digitsCount );
   }
 
   /** @override */
-  static setAsConstructor( weightsSpreadsheetId, weightsAPIKey, nNeuralWorker_ModeId ) {
+  static setAsConstructor( htmlTableElementId, digitsCount ) {
     super.setAsConstructor();
-    HTMLTable_RowAppender.setAsConstructor_self.call( this, htmlTableElementId );
+    HTMLTable_RowAppender.setAsConstructor_self.call( this,
+      htmlTableElementId, digitsCount );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( htmlTableElementId ) {
+  static setAsConstructor_self( htmlTableElementId, digitsCount ) {
     this.htmlTableElementId = htmlTableElementId;
+    this.digitsCount = digitsCount;
   }
 
   /** @override */
   disposeResources() {
+    this.digitsCount = undefined;
     this.htmlTableElementId = undefined;
     this.htmlTableElement = undefined;
     super.disposeResources();
@@ -58,6 +63,61 @@ class HTMLTable_RowAppender extends Recyclable.Root {
       return;
   
     this.htmlTableElement = document.getElementById( this.htmlTableElementId );
+  }
+
+  /**
+   * @param {string[]|number[]} dataArray
+   *   Append the data as the last row of the table header.
+   */
+  tHeader_append( dataArray ) {
+    this.HTMLTableElement_ensure();
+    HTMLTable_RowAppender.addOneLineCells.call( this,
+      this.htmlTableElement.tHead, dataArray );
+  }
+
+  /**
+   * @param {string[]|number[]} dataArray
+   *   Append the data as the last row of the table body.
+   */
+  tBodies_append( dataArray ) {
+    this.HTMLTableElement_ensure();
+    HTMLTable_RowAppender.addOneLineCells.call( this,
+      this.htmlTableElement.tBodies, dataArray );
+  }
+
+  /**
+   * @param {Node} htmlNode
+   *   The HTML DOM Node which will the new row will be inserted. For HTML table,
+   * it could be .tHead or .tBodies or .tFoot.
+   *
+   * @param {string[]|number[]} dataArray
+   *   The data to be displaye 
+   */
+  static addOneLineCells( htmlNode, dataArray ) {
+    let oneLine = document.createElement( "tr" );
+
+    let th_OR_td; // "th" for table header cell, "td" for table data cell.
+    let data, dataText;
+    for ( let i = 0; i < dataArray.length; ++i ) {
+      data = dataArray[ i ];
+
+      if ( 0 == i )
+        th_OR_td = "th"; // First column always use <th>
+      else
+        th_OR_td = "td";
+
+      let oneCell = document.createElement( th_OR_td );
+
+      if ( typeof data === "number" )
+        dataText = data.toFixed( this.digitsCount );
+      else
+        dataText = data;
+
+      oneCell.appendChild( document.createTextNode( dataText ) );
+      oneLine.appendChild( oneCell );
+    }
+
+    htmlNode.appendChild( oneLine );
   }
 
 }
@@ -83,30 +143,6 @@ class HTMLTable_RowAppender extends Recyclable.Root {
   if ( !htmlTable )
     return;
 
-  /**
-   * @param {HTMLNode}         htmlNode The HTML table (or thead, or tbody) as display target.
-   * @param {string}            th_OR_td  "th" for table header, "td" for table body.
-   * @param {string[]|number[]} dataArray The data to be displaye 
-   */
-  function addOneLineCells( htmlNode, th_OR_td, dataArray ) {
-    let cellElementName;
-    let oneLine = document.createElement( "tr" );
-
-    let count = dataArray.length;
-    for ( let i = 0; i < count; ++i ) {
-      let data = dataArray[ i ];
-
-      if ( 0 == i )
-        cellElementName = "th"; // First column always use <th>
-      else
-        cellElementName = th_OR_td;
-
-      let oneCell = document.createElement( cellElementName );
-      oneCell.appendChild( document.createTextNode( data ) )
-      oneLine.appendChild( oneCell );
-    }
-    htmlNode.appendChild( oneLine );
-  }
 
   let thead = document.createElement( "thead" );
   let tbody = document.createElement( "tbody" );
