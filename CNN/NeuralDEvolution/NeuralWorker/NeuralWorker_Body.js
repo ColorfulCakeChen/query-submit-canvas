@@ -437,7 +437,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
             resultFloat32ArrayPromiseArray[ i ] = outputTensor.data();
 
           } catch ( e ) {
-            let errorMsg = `NeuralWorker_Body.ONE_WORKER__ONE_SCALE__ImageData_process(): `
+            let errorMsg =
+                `NeuralWorker_Body.ONE_WORKER__ONE_SCALE__ImageData_process(): `
               + `workerId=${this.workerId}. ${e}`;
             console.error( errorMsg );
             //debugger;
@@ -452,7 +453,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         }
 
       } catch ( e ) {
-        let errorMsg = `NeuralWorker_Body.ONE_WORKER__ONE_SCALE__ImageData_process(): `
+        let errorMsg =
+            `NeuralWorker_Body.ONE_WORKER__ONE_SCALE__ImageData_process(): `
           + `workerId=${this.workerId}. ${e}`;
         console.error( errorMsg );
         //debugger;
@@ -539,7 +541,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       scaledInt32Array = scaledSourceTensor.dataSync();
 
     } catch ( e ) {
-      let errorMsg = `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process(): `
+      let errorMsg =
+          `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process(): `
         + `workerId=${this.workerId}. ${e}`;
       console.error( errorMsg );
       //debugger;
@@ -938,7 +941,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       outputFloat32ArrayPromise = outputTensor.data();
 
     } catch ( e ) {
-      let errorMsg = `NeuralWorker_Body.TWO_WORKER__TWO_SCALE__ImageData_process(): `
+      let errorMsg =
+          `NeuralWorker_Body.TWO_WORKER__TWO_SCALE__ImageData_process(): `
         + `workerId=${this.workerId}. ${e}`;
       console.error( errorMsg );
       //debugger;
