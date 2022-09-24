@@ -68,9 +68,6 @@ class HTMLTable_Operator extends Recyclable.Root {
     if ( this.htmlTableElement.tHead )
       return;
     this.htmlTableElement.createTHead();
-//!!! (2022/09/24 Remarked) use createTHead() instead.
-//     let thead = document.createElement( "thead" );
-//     this.htmlTableElement.appendChild( thead );
   }
 
   /* Ensure table body. */
@@ -79,9 +76,17 @@ class HTMLTable_Operator extends Recyclable.Root {
     if ( this.htmlTableElement.tBodies.length > 0 )
       return;
     this.htmlTableElement.createTBody();
-//!!! (2022/09/24 Remarked) use createTBody() instead.
-//     let tbody = document.createElement( "tbody" );
-//     htmlTable.appendChild( tbody );
+  }
+
+  /**
+   * @return {boolean}
+   *   Return true, if the table header already has content.
+   */
+  Header_hasChild() {
+    this.TableHeader_ensure();
+    if ( this.htmlTableElement.tHead.childElementCount > 0 )
+      return true;
+    return false;
   }
 
   /**

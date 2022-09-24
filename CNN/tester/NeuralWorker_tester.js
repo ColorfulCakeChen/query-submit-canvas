@@ -21,8 +21,6 @@ import * as HTMLTable from "../Display/HTMLTable.js";
  * @see {@link https://www.measurethat.net/Benchmarks/Show/21143/23/colorfulcakechen-cnn-neuralworker-ce01f74239d7eff2b9e53}
  */
 
-const ExecutionTimeInfoTimes = 10;
-
 /**
  * 
  */
@@ -457,6 +455,25 @@ class HeightWidthDepth {
     let backendName = tf.getBackend();
     console.log( `NeuralWorker ( ${backendName} ) testing...` );
 
+    const ExecutionTimeInfoTimes = 10;
+
+    let htmlTableOperator;
+    {
+      const htmlTableId = "NeuralWorker_Performance_Table";
+      const digitsCount = 4;
+      htmlTableOperator
+        = HTMLTable.Operator.Pool.get_or_create_by( htmlTableId, digitsCount );
+  
+      if ( !htmlTableOperator.Header_hasChild() ) {
+        htmlTableOperator.Header_addRow( [
+          "Backend",
+          "NeuralWorker.Mode",
+          `ops/sec (${ExecutionTimeInfoTimes} runs sampled)`
+        ] );
+      }
+    }
+ 
+  
     let progressRoot = progressParent.root_get();
 
     let progressMax = 10000; // Temporary progress max (because it is unkown here).
@@ -584,8 +601,12 @@ class HeightWidthDepth {
       throw e;
 
     } finally {
+      if ( htmlTableOperator ) {
+        htmlTableOperator.disposeResources_and_recycleToPool();
+        htmlTableOperator = null;
+      }
     }
-
+  
     console.log( `NeuralWorker ( ${backendName} ) testing... Done.` );
   }
 
@@ -647,37 +668,15 @@ async function* tester( progressParent, backendName ) {
 
   init();
 
-  let htmlTableOperator;
-  try {
-    {
-      const htmlTableId = "NeuralWorker_Performance_Table";
-      const digitsCount = 4;
-      htmlTableOperator
-        = HTMLTable.Operator.Pool.get_or_create_by( htmlTableId, digitsCount );
+  let progressArray_for_testSet = new Array( globalThis.testSet_All.length );
+  for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
+    progressArray_for_testSet[ i ] = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  }
 
-      htmlTableOperator.Header_addRow( [
-        "Backend",
-        "NeuralWorker.Mode",
-        `ops/sec (${ExecutionTimeInfoTimes} runs sampled)`
-      ] );
-    }
-
-    let progressArray_for_testSet = new Array( globalThis.testSet_All.length );
-    for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
-      progressArray_for_testSet[ i ] = progressParent.child_add(
-        ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-    }
-
-    for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
-      let testSet = globalThis.testSet_All[ i ];
-      yield* testSet.tester( progressArray_for_testSet[ i ], htmlTableOperator );
-    }
-
-  } finally {
-    if ( htmlTableOperator ) {
-      htmlTableOperator.disposeResources_and_recycleToPool();
-      htmlTableOperator = null;
-    }
+  for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
+    let testSet = globalThis.testSet_All[ i ];
+    yield* testSet.tester( progressArray_for_testSet[ i ], htmlTableOperator );
   }
 
   disposeResources();
