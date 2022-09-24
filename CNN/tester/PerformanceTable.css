@@ -24,13 +24,13 @@ thead th {
   background-color: darkgreen;
 }
 
-tbody th {
+/* tbody th {
   text-align: left;
 }
 
 tbody td {
   text-align: right;
-}
+} */
 
 tr:hover {
   background-color: darkgrey;

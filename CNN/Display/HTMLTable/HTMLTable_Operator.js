@@ -123,14 +123,18 @@ class HTMLTable_Operator extends Recyclable.Root {
     let oneLine = document.createElement( "tr" );
 
     let cellElementName;
+    let textAlign;
     let data, dataText;
     for ( let i = 0; i < dataArray.length; ++i ) {
       data = dataArray[ i ];
 
-      if ( typeof data === "number" )
+      if ( typeof data === "number" ) {
+        textAlign = "right";
         dataText = data.toFixed( this.digitsCount );
-      else
+      } else {
+        textAlign = "left";
         dataText = data;
+      }
 
       if ( 0 == i )
         cellElementName = "th"; // First column always use <th>
@@ -138,6 +142,8 @@ class HTMLTable_Operator extends Recyclable.Root {
         cellElementName = th_OR_td;
 
       let oneCell = document.createElement( cellElementName );
+      oneCell.style.textAlign = 
+
       oneCell.appendChild( document.createTextNode( dataText ) );
       oneLine.appendChild( oneCell );
     }
