@@ -42,6 +42,7 @@ function test() {
     = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
 
   async function* testerAll() {
+    throw Error( "Hi" );
     yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_cpu, "cpu" );
     yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_webgl, "webgl" );
     yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );

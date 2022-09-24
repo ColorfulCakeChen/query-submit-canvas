@@ -67,17 +67,21 @@ class HTMLTable_Operator extends Recyclable.Root {
     this.Table_ensure();
     if ( this.htmlTableElement.tHead )
       return;
-    let thead = document.createElement( "thead" );
-    this.htmlTableElement.appendChild( thead );
+    this.htmlTableElement.createTHead();
+//!!! (2022/09/24 Remarked) use createTHead() instead.
+//     let thead = document.createElement( "thead" );
+//     this.htmlTableElement.appendChild( thead );
   }
 
   /* Ensure table body. */
   TableBody_ensure() {
     this.Table_ensure();
-    if ( this.htmlTableElement.tBodies )
+    if ( this.htmlTableElement.tBodies.length > 0 )
       return;
-    let tbody = document.createElement( "tbody" );
-    htmlTable.appendChild( tbody );
+    this.htmlTableElement.createTBody();
+//!!! (2022/09/24 Remarked) use createTBody() instead.
+//     let tbody = document.createElement( "tbody" );
+//     htmlTable.appendChild( tbody );
   }
 
   /**
@@ -99,7 +103,7 @@ class HTMLTable_Operator extends Recyclable.Root {
   Body_addRow( dataArray ) {
     this.TableBody_ensure();
     HTMLTable_Operator.Section_addRow.call( this,
-      this.htmlTableElement.tBodies,
+      this.htmlTableElement.tBodies[ 0 ],
       "td", // Table body mainly uses "td" (except first column).
       dataArray );
   }
