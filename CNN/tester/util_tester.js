@@ -5,7 +5,7 @@ import * as Pool from "../util/Pool.js";
 import * as Base64ToUint8Array_tester from "./Base64ToUint8Array_tester.js";
 import * as GSheets_tester from "./GSheets_tester.js";
 import * as AsyncWorker_tester from "./AsyncWorker_tester.js";
-import * as NeuralWorker_tester from "../jsPerf/NeuralWorker_tester.js";
+import * as NeuralWorker_tester from "./NeuralWorker_tester.js";
 
 window.addEventListener( "load", event => {
   ScriptLoader
