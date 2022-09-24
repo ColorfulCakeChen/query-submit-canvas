@@ -74,10 +74,10 @@ function test() {
     delayMilliseconds
   );
 
-//   progressReceiver.informDone(r); // Inform UI progress done.
-
   testPromise.then( value => {
     console.log( "util testing... Done." );
+    //progressReceiver.informDone(r); // Inform UI progress done.
+
   }).catch( reason => {
     console.error( reason );
     alert( reason );
