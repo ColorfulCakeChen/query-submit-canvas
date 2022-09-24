@@ -79,7 +79,9 @@ function test() {
   testPromise.then( value => {
     console.log( "util testing... Done." );
   }).catch( reason => {
-    debugger;
+    console.error( reason );
+    alert( reason );
+    //debugger;
   });
 
 
