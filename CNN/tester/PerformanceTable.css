@@ -1,0 +1,31 @@
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+thead th {
+  text-align: center;
+  background-color: #4CAF50;
+  color: white;
+}
+
+tbody th {
+  text-align: left;
+}
+
+tbody td {
+  text-align: right;
+}
+
+tr:hover { background-color: #d5f5f5; }
+tr:nth-child(4n-1), tr:nth-child(4n) { background-color: #d5f5d5; }

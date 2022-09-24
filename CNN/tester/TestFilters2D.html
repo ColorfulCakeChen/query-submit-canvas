@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TestFilters2D</title>
+    <link href="PerformanceTable.css.css" rel="stylesheet" />
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.19.0/dist/tf.min.js"></script>
+    <!-- script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tf-backend-wasm.js"></script -->
+    <table id="profilesHTMLTable"></table>
+    <progress title="TestProgressBar"></progress>
+    <script type="module" src="../jsPerf/jsPerf_CNNHeightWidthResize.js"></script>
+    <script type="module">
+      globalThis.testCaseLoader();
+    </script>
+  </body>
+</html>
