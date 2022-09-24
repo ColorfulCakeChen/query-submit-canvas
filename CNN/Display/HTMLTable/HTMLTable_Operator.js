@@ -142,7 +142,7 @@ class HTMLTable_Operator extends Recyclable.Root {
         cellElementName = th_OR_td;
 
       let oneCell = document.createElement( cellElementName );
-      oneCell.style.textAlign = 
+      oneCell.style.textAlign = textAlign;
 
       oneCell.appendChild( document.createTextNode( dataText ) );
       oneLine.appendChild( oneCell );
