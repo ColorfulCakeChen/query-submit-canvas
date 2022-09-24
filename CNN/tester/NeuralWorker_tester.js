@@ -10,9 +10,9 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
 import * as NeuralWorker from "../NeuralDEvolution/NeuralWorker.js";
-import * as TestParams from "./Ref/TestParams.js";
-import * as ImageSourceBag from "./Ref/ImageSourceBag.js";
-import * as NumberImage from "./Ref/NumberImage.js";
+import * as TestParams from "../jsPerf/Ref/TestParams.js";
+import * as ImageSourceBag from "../jsPerf/Ref/ImageSourceBag.js";
+import * as NumberImage from "../jsPerf/Ref/NumberImage.js";
 import * as HTMLTable from "../Display/HTMLTable.js";
 
 /**
