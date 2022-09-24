@@ -348,7 +348,8 @@ class HeightWidthDepth {
     // blockCountTotalRequested, output_channelCount, bKeepInputTensor
     //
 
-//!!! (2022/09/22 Temp Remarked) For speed up testing.
+!!! ...unfinished... (2022/09/24) Ensure NO_FIL has twice output channel count
+
     // Test Case 0: (ONE_WORKER__ONE_SCALE__FILL)
     this.neuralWorker_PerformanceTest_addCase(
       0, "ONE_WORKER__ONE_SCALE__FILL",
