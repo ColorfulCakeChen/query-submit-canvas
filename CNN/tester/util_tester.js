@@ -67,7 +67,8 @@ function test() {
       progress.disposeResources_and_recycleToPool();
       progress = null;
 
-      Pool.Asserter.assert_Pool_issuedCount( "util_tester.test()", pool_all_issuedCount_before );
+      Pool.Asserter.assert_Pool_issuedCount( "util_tester.test()",
+        pool_all_issuedCount_before );
     },
     delayMilliseconds
   ).then(r => {

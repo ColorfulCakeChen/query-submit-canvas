@@ -1,6 +1,6 @@
 import * as HeightWidthDepth from "./HeightWidthDepth.js";
-import * as PartTime from "../PartTime.js";
-import * as ValueMax from "../ValueMax.js";
+import * as PartTime from "../util/PartTime.js";
+import * as ValueMax from "../util/ValueMax.js";
 //import * as TensorTools from "../util/TensorTools.js";
 
 /**
@@ -20,30 +20,22 @@ let testCase_Depth = 24;
 
 //globalThis.testSet_101x101x24 = new HeightWidthDepth.Base( 101, 101, 24 ); // height, width, depth
 
-
-//!!! ...unfinished... (2022/09/21)
-// Use ValueMax.Percentage.Xxx.Pool.get_or_create_by() instead of new ValueMax.Percentage.Xxx
-
-/** Aggregate all progress about WebGL an CPU.  */
-class Progress extends ValueMax.Percentage.Aggregate {
-  constructor() {
-    let children = [
-      new ValueMax.Percentage.Concrete(), // Increased when executing by WebGL.
-//      new ValueMax.Percentage.Concrete(), // Increased when executing by WASM.
-      new ValueMax.Percentage.Concrete(), // Increased when executing by CPU.
-    ];
-
-    super(children);
-//    [ this.WebGL, this.WASM, this.CPU ] = children;
-    [ this.WebGL, this.CPU ] = children;
-  }
-}
-
 /** Profile test case.  */
 globalThis.testCaseLoader = async function () {
+  console.log( "jsPerf_CNNHeightWidthResize testing..." );
 
-  let progress = new Progress();
-  let progressReceiver = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy("TestProgressBar");
+  let pool_all_issuedCount_before = Pool.All.issuedCount;
+
+  let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+
+  let progress_WebGL = progress.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progress_CPU = progress.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progressReceiver
+    = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
 
   let resultProfilesWebGL;
   {
@@ -53,7 +45,8 @@ globalThis.testCaseLoader = async function () {
     console.log("library WebGL compiling...");  // For pre-compile tensorflow.js GPU codes. (and Test correctness.)
 
     globalThis.testCase = new HeightWidthDepth.Base(
-      testCase_Height, testCase_Width, testCase_Depth, progress, progress.WebGL, progressReceiver );
+      testCase_Height, testCase_Width, testCase_Depth,
+      progress, progress_WebGL, progressReceiver );
 
     resultProfilesWebGL = await globalThis.testCase.generateProfiles();
     globalThis.testCase.disposeTensors();
@@ -85,7 +78,8 @@ globalThis.testCaseLoader = async function () {
     console.log("library CPU compiling...");  // For pre-compile tensorflow.js CPU codes. (and Test correctness.)
 
     globalThis.testCase = new HeightWidthDepth.Base(
-      testCase_Height, testCase_Width, testCase_Depth, progress, progress.CPU, progressReceiver );
+      testCase_Height, testCase_Width, testCase_Depth,
+      progress, progress_CPU, progressReceiver );
 
     resultProfilesCPU = await globalThis.testCase.generateProfiles();
     // DO NOT dispose it so that jsPerf can use it.
@@ -95,6 +89,20 @@ globalThis.testCaseLoader = async function () {
 
   // Display to web page.
   publishProfiles( "profilesHTMLTable", resultProfilesWebGL, resultProfilesWASM, resultProfilesCPU );
+
+  // Check memory.
+  if ( 100 != progress.valuePercentage )
+    throw Error( `util_tester.test(): `
+      + `Progress (${progress.valuePercentage}) should be 100 `
+      + `after testing done.`);
+
+  progress.disposeResources_and_recycleToPool();
+  progress = null;
+
+  Pool.Asserter.assert_Pool_issuedCount( "jsPerf_CNNHeightWidthResize.testCaseLoader()",
+    pool_all_issuedCount_before );
+
+  console.log( "jsPerf_CNNHeightWidthResize testing... Done." );
 }
 
 
