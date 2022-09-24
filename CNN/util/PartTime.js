@@ -85,10 +85,7 @@ function forOf( generator, callback, callbackDone, delayMilliseconds = 0 ) {
           }
 
         } catch ( reason ) {
-          //debugger;
           reject( reason );
-          //throw reason;
-
         }
 
       }, delayMilliseconds );
