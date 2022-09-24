@@ -1,4 +1,8 @@
 
+body {
+  background-color: black
+}
+
 table {
   border-collapse: collapse;
   width: 100%;
