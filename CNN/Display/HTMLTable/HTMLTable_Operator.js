@@ -147,7 +147,7 @@ class HTMLTable_Operator extends Recyclable.Root {
         cellElementName = th_OR_td;
 
       if ( htmlNode === this.htmlTableElement.tHead )
-        textAlign = "center"; // c
+        textAlign = "center"; // Table header always align to center.
 
       let oneCell = document.createElement( cellElementName );
       oneCell.style.textAlign = textAlign;

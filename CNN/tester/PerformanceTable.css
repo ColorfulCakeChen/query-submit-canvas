@@ -22,6 +22,7 @@ th {
 thead th {
   text-align: center;
   background-color: darkgreen;
+  border-left: 1px solid grey;
 }
 
 /* tbody th {
