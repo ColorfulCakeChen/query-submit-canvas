@@ -79,8 +79,8 @@ function test() {
     //progressReceiver.informDone(r); // Inform UI progress done.
 
   }).catch( reason => {
-    //console.error( reason );
     alert( reason );
+    console.error( reason );
     //debugger;
   });
 
