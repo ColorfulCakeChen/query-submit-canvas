@@ -21,6 +21,8 @@ import * as HTMLTable from "../Display/HTMLTable.js";
  * @see {@link https://www.measurethat.net/Benchmarks/Show/21143/23/colorfulcakechen-cnn-neuralworker-ce01f74239d7eff2b9e53}
  */
 
+const ExecutionTimeInfoTimes = 10;
+
 /**
  * 
  */
@@ -454,8 +456,6 @@ class HeightWidthDepth {
   async* tester( progressParent, htmlTableOperator ) {
     let backendName = tf.getBackend();
     console.log( `NeuralWorker ( ${backendName} ) testing...` );
-
-    const ExecutionTimeInfoTimes = 10;
 
     let progressRoot = progressParent.root_get();
 
