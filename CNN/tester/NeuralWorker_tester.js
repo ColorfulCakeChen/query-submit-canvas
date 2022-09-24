@@ -295,8 +295,9 @@ class HeightWidthDepth {
       = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
     {
-      let largerHeight = this.height * 20;
-      let largerWidth = this.width * 20;
+      const largerFactor = 10;
+      let largerHeight = this.height * largerFactor;
+      let largerWidth = this.width * largerFactor;
       let inputChannelCount = this.depth; // Must be 4;
 
       this.testCanvas = document.createElement( "canvas" );
