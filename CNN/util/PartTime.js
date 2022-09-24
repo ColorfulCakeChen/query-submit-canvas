@@ -61,7 +61,7 @@ function forOf( generator, callback, callbackDone, delayMilliseconds = 0 ) {
 
   function promiseTimeout() {
     return new Promise( ( resolve, reject ) => {
-      setTimeout( () => {
+      setTimeout( async () => {
         try {
           let generatorNext = generator.next();
           let r;
