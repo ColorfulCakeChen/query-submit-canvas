@@ -77,8 +77,10 @@ function test() {
 
 //   progressReceiver.informDone(r); // Inform UI progress done.
 
-  testPromise.then(values => {
+  testPromise.then( value => {
     console.log( "util testing... Done." );
+  }).catch( reason => {
+    debugger;
   });
 
 
