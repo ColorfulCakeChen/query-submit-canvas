@@ -64,18 +64,18 @@ class HTMLTable_Operator extends Recyclable.Root {
 
   /** Ensure table header. */
   TableHeader_ensure() {
+    this.Table_ensure();
     if ( this.htmlTableElement.tHead )
       return;
-    this.Table_ensure();
     let thead = document.createElement( "thead" );
     this.htmlTableElement.appendChild( thead );
   }
 
   /* Ensure table body. */
   TableBody_ensure() {
+    this.Table_ensure();
     if ( this.htmlTableElement.tBodies )
       return;
-    this.Table_ensure();
     let tbody = document.createElement( "tbody" );
     htmlTable.appendChild( tbody );
   }
