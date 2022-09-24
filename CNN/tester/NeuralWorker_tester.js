@@ -348,7 +348,7 @@ class HeightWidthDepth {
     // blockCountTotalRequested, output_channelCount, bKeepInputTensor
     //
 
-!!! ...unfinished... (2022/09/24) Ensure NO_FIL has twice output channel count
+!!! ...unfinished... (2022/09/24) Ensure NO_FILL has twice output channel count
 
     // Test Case 0: (ONE_WORKER__ONE_SCALE__FILL)
     this.neuralWorker_PerformanceTest_addCase(

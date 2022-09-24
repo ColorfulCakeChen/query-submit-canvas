@@ -5,7 +5,7 @@ import * as Pool from "../util/Pool.js";
 import * as Base64ToUint8Array_tester from "./Base64ToUint8Array_tester.js";
 import * as GSheets_tester from "./GSheets_tester.js";
 import * as AsyncWorker_tester from "./AsyncWorker_tester.js";
-import * as jsPerf_NeuralWorker from "../jsPerf/jsPerf_NeuralWorker.js";
+import * as NeuralWorker_tester from "../jsPerf/NeuralWorker_tester.js";
 
 window.addEventListener( "load", event => {
   ScriptLoader
@@ -32,18 +32,18 @@ function test() {
   let progress_AsyncWorker_tester = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progress_jsPerf_NeuralWorker_cpu = progress.child_add(
+  let progress_NeuralWorker_tester_cpu = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progress_jsPerf_NeuralWorker_webgl = progress.child_add(
+  let progress_NeuralWorker_tester_webgl = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let progressReceiver
     = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
 
   async function* testerAll() {
-    yield* jsPerf_NeuralWorker.tester( progress_jsPerf_NeuralWorker_cpu, "cpu" );
-    yield* jsPerf_NeuralWorker.tester( progress_jsPerf_NeuralWorker_webgl, "webgl" );
+    yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_cpu, "cpu" );
+    yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_webgl, "webgl" );
     yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );
     yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
     yield* GSheets_tester.tester( progress_GSheets_tester );

@@ -1,4 +1,4 @@
-export { HTMLTable_RowAppender as RowAppender };
+export { HTMLTable_Operator as Operator };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -14,25 +14,25 @@ import * as Recyclable from "../../util/Recyclable.js";
  *   For number data, it will be converted to text by toFix() with digitsCount (i.e.
  * the number of digits to appear after the decimal point).
  */
-class HTMLTable_RowAppender extends Recyclable.Root {
+class HTMLTable_Operator extends Recyclable.Root {
 
   /**
-   * Used as default HTMLTable.RowAppender provider for conforming to Recyclable interface.
+   * Used as default HTMLTable.Operator provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "HTMLTable.RowAppender.Pool",
-    HTMLTable_RowAppender, HTMLTable_RowAppender.setAsConstructor );
+  static Pool = new Pool.Root( "HTMLTable.Operator.Pool",
+    HTMLTable_Operator, HTMLTable_Operator.setAsConstructor );
 
   /** */
   constructor( htmlTableElementId, digitsCount = 2 ) {
     super();
-    HTMLTable_RowAppender.setAsConstructor_self.call( this,
+    HTMLTable_Operator.setAsConstructor_self.call( this,
       htmlTableElementId, digitsCount );
   }
 
   /** @override */
   static setAsConstructor( htmlTableElementId, digitsCount ) {
     super.setAsConstructor();
-    HTMLTable_RowAppender.setAsConstructor_self.call( this,
+    HTMLTable_Operator.setAsConstructor_self.call( this,
       htmlTableElementId, digitsCount );
     return this;
   }
@@ -69,9 +69,9 @@ class HTMLTable_RowAppender extends Recyclable.Root {
    * @param {string[]|number[]} dataArray
    *   Append the data as the last row of the table header.
    */
-  tHeader_append( dataArray ) {
+  tHeader_addRow( dataArray ) {
     this.HTMLTableElement_ensure();
-    HTMLTable_RowAppender.addOneLineCells.call( this,
+    HTMLTable_Operator.addOneLineCells.call( this,
       this.htmlTableElement.tHead,
       "th", // Table header always uses "th".
       dataArray );
@@ -81,9 +81,9 @@ class HTMLTable_RowAppender extends Recyclable.Root {
    * @param {string[]|number[]} dataArray
    *   Append the data as the last row of the table body.
    */
-  tBodies_append( dataArray ) {
+  tBodies_addRow( dataArray ) {
     this.HTMLTableElement_ensure();
-    HTMLTable_RowAppender.addOneLineCells.call( this,
+    HTMLTable_Operator.addOneLineCells.call( this,
       this.htmlTableElement.tBodies,
       "td", // Table body mainly uses "td" (except first column).
       dataArray );

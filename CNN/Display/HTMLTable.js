@@ -1,1 +1,1 @@
-export { RowAppender } from "./HTMLTable/HTMLTable_RowAppender.js";
+export { Operator } from "./HTMLTable/HTMLTable_Operator.js";
