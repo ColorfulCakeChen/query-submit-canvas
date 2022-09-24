@@ -72,8 +72,7 @@ function test() {
         pool_all_issuedCount_before );
     },
     delayMilliseconds
-  ).then(r => {
-  });
+  );
 
 //   progressReceiver.informDone(r); // Inform UI progress done.
 
