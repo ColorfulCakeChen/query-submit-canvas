@@ -1,9 +1,10 @@
 
 body {
-  background-color: black
+  background-color: black;
 }
 
 table {
+  background-color: black;
   border-collapse: collapse;
   width: 100%;
 }
