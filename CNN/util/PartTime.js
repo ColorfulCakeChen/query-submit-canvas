@@ -1,17 +1,33 @@
-export { sleep, forOf };
+export { delayedValue, sleep, forOf };
 
 /**
  * A wrapper for setTimeout( , delayMilliseconds ).
  *
- * @param {integer}
- *   delayMilliseconds The delay time (in milliseconds) when the (returned) promise
- * will be resolved.
+ * @param {integer} delayMilliseconds
+ *   The delay time (in milliseconds) when the (returned) promise will be resolved.
  *
- * @return {promise}
- *   A promise resolved with undefined.
+ * @return {Promise}
+ *   Return a promise which will be resolved as specified value after specified
+ * milliseconds.
  */
-async function sleep( delayMilliseconds = 0 ) {
-  return new Promise( resolve => setTimeout( resolve, delayMilliseconds ) );
+function delayedValue( delayMilliseconds, value ) {
+  return new Promise( ( resolve /*, reject*/ ) => {
+    setTimeout( () => resolve( value ), delayMilliseconds );
+  } );
+}
+
+/**
+ * A wrapper for setTimeout( , delayMilliseconds ).
+ *
+ * @param {integer} delayMilliseconds
+ *   The delay time (in milliseconds) when the (returned) promise will be resolved.
+ *
+ * @return {Promise}
+ *   Return a promise which will be resolved as undefined after specified
+ * milliseconds.
+ */
+function sleep( delayMilliseconds = 0 ) {
+  return delayedValue( delayMilliseconds, undefined );
 }
 
 /**
@@ -73,8 +89,8 @@ function forOf( generator, callback, callbackDone, delayMilliseconds = 0 ) {
 
         }
 
-      }, delayMilliseconds);
-    });
+      }, delayMilliseconds );
+    } );
   }
 
 //!!! (2022/09/24) Use await instead.

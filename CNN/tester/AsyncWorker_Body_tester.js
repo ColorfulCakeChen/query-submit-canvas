@@ -1,15 +1,5 @@
 import * as AsyncWorker from "../util/AsyncWorker.js";
-
-/**
- * @return {Promise}
- *   Return a promise which will be resolved as specified value after specified
- * milliseconds.
- */
-function delayedValue( milliseconds, value ) {
-  return new Promise( ( resolve /*, reject*/ ) => {
-    setTimeout( () => resolve( value ), milliseconds );
-  } );
-}
+import * as PartTime from "../util/PartTime.js";
 
 /**
  * The implementation of a neural network web worker.
@@ -79,7 +69,7 @@ class AsyncWorker_Body_tester extends AsyncWorker.Body {
         yield { value: value }; // No delay.
 
       } else {
-        yield delayedValue( intervalMilliseconds, { value: value } );
+        yield PartTime.delayedValue( intervalMilliseconds, { value: value } );
       }
 
       // Counting how many number has been generated in the boost (non-boost) block.
